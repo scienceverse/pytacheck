@@ -42,17 +42,11 @@
       "stat_p_nonsig": ["paper_id", "n_nonsignificant"]
     },
     "float_fields": {
-      "stat_check": ["df1", "df2", "test_value", "reported_p", "computed_p"],
-      "stat_p_exact": [
-        "p_value"
-      ],
-      "stat_p_nonsig": [
-        "p_value"
-      ]
+      "stat_check": "computed_p"
     },
     "float_abs_tolerance": 1e-10,
-    "rules": ["Preserve validated default-module order and source row order.", "Project declared shared contract fields; convert R NA and absent optional values to JSON null.", "Compare declared floating recomputations with absolute tolerance only; compare all other values exactly.", "Normalize Pytacheck power_complete null to the R aggregate zero produced by na_replace.", "Do not use text similarity or aggregate similarity scores."],
-    "intentional_pytacheck_extensions_or_omissions": ["Pytacheck retains a representative text_id on expanded power-analysis paragraphs; R drops it, so the shared oracle omits power.text_id.", "R-only statcheck one_tailed_in_txt and apa_factor diagnostics are not in the initial Pytacheck JSON contract.", "Rendered R report markup and prose are outside the JSON computation parity boundary."]
+    "rules": ["Preserve validated default-module order and source row order.", "Project declared shared contract fields; convert R NA and absent optional values to JSON null.", "Compare computed_p with absolute tolerance only; compare extracted numeric, text, and categorical values exactly.", "Normalize Pytacheck power_complete null to the R aggregate zero produced by na_replace.", "Do not use text similarity or aggregate similarity scores."],
+    "intentional_pytacheck_extensions_or_omissions": ["Pytacheck retains a representative text_id on expanded power-analysis paragraphs; R drops it, so the shared oracle omits power.text_id.", "R-only statcheck one_tailed_in_txt and apa_factor diagnostics are not in the initial Pytacheck JSON contract.", "Rendered R report markup and prose are outside the JSON computation parity boundary.", "Pytacheck rejects adversarial extraction and output amplification with bounded production budgets.", "Pytacheck does not treat malformed, out-of-domain, or non-finite statistics as valid checks.", "Pytacheck exact-zero detection follows the reported lexical token, and star-note exemptions are match-local.", "Pytacheck activates partial-omega coherence even though the current R parser leaves that branch unreachable."]
   },
   "modules_run": ["power", "marginal", "stat_check", "stat_effect_size", "stat_p_exact", "stat_p_nonsig"],
   "results": {

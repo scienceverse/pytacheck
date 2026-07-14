@@ -22,7 +22,9 @@ FastAPI, Uvicorn, and Prometheus instrumentation—no R runtime.
 The synchronous engine is intentionally small and deterministic. FastAPI dispatches it with
 `anyio.to_thread.run_sync`, keeping the event loop responsive while modules run. Threads do not make
 CPU work intrinsically faster; process workers or replicas provide throughput isolation when a
-deployment outgrows one process.
+deployment outgrows one process. Production containers deliberately run one Uvicorn worker because
+each application owns an in-process Prometheus registry. Scale with additional containers or pods so
+each metrics endpoint remains internally coherent.
 
 ## Tolerant bibr ingress
 
@@ -42,8 +44,11 @@ validates unknown or duplicate selections before work begins. The six validated 
 explicit tuple, not whatever happens to be present in a directory.
 
 Per-module timers surround only module computation. The benchmark separately measures a cold check,
-warm checks on one validated paper, and repeated `BibrPaper` validation plus checking, preventing
-parse/validation cost from disappearing inside a favorable module-only number.
+warm checks on one validated paper, and an end-to-end path that repeats JSON decoding, singleton-info
+normalization, `BibrPaper` validation, and checking. Its default profile is a deterministic generated
+full-size synthetic bibr document; the small simulated R parity fixture is intentionally not used as
+performance evidence. The result reports profile kind, serialized bytes, text rows, and text
+characters so unlike workloads cannot be compared as if they were equivalent.
 
 ## Parity boundary
 
@@ -59,6 +64,22 @@ metadata rather than hidden in test code.
 
 R and the source checkout are development-only. Neither is installed by the Python package nor copied
 into the container.
+
+## Reviewed Python production extensions
+
+The frozen aggregate fixture remains exact R parity evidence. Outside that fixture, maintainers have
+reviewed the following deliberate production-safety extensions rather than treating them as accidental
+drift:
+
+- bounded extraction and output budgets reject adversarial amplification;
+- malformed, out-of-domain, and non-finite statistics are not accepted as valid findings;
+- exact-zero lexical semantics distinguish a reported zero from an arbitrarily small nonzero value;
+- starred-p-value note exemptions are match-local instead of suppressing unrelated matches; and
+- partial omega coherence is active even though the corresponding branch in the frozen R source is
+  currently unreachable.
+
+Every extension needs focused tests, remains subject to the same normal aggregate R parity suite, and
+should be proposed upstream when it represents a generally useful correction.
 
 ## Feeding discoveries back to Metacheck
 

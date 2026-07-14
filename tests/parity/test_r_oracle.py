@@ -15,6 +15,137 @@ FIXTURE_DIR = Path(__file__).parent / "fixtures"
 PAPER_PATH = FIXTURE_DIR / "to_err_is_human.json"
 EXPECTED_PATH = FIXTURE_DIR / "to_err_is_human.expected.json"
 EXPECTED_FIXTURE_SHA256 = "c99be5ea276910a6e7fbd0301ee0b89e0ccc7c7af5d27727e018d573dc646da4"
+EXPECTED_ORACLE_SHA256 = "d19ce1b6e1135cc4a783b6584b2e173b6e45b563bd1cad3c5754cf0ed9c2e723"
+EXPECTED_METACHECK_COMMIT = "0291d575628b0c8cec56eb64c944ad269c91edc4"
+EXPECTED_MODULE_SHA256 = {
+    "power": "f24acc1d512a02a90b31d78d91eec228ae8c209f54688a56a1688a3c98cd90aa",
+    "marginal": "d641aaf05288c13ee7d618e7db9cbe0a50d36dadade14796a53ee978c77a9675",
+    "stat_check": "1c80c646d46fc90c9b31be745c0ba357e8056f159d54265402670ad271283f87",
+    "stat_effect_size": "8afee4b8f4b3e60c5c483adff2c453171cea4237cf3e85d19eb1ed22571205d8",
+    "stat_p_exact": "ce99f7d57ee6b97d37a464b68539ba2c0ed216384cd010b6fb24b47a6e1f2392",
+    "stat_p_nonsig": "db312ff1dfd096fc311279753fa46e66e29d84478b96f8e00d3eeba454e315b7",
+}
+EXPECTED_TABLE_FIELDS = {
+    "power": [
+        "text",
+        "paragraph_id",
+        "section_id",
+        "paper_id",
+        "header",
+        "section_type",
+        "power_type",
+        "complete",
+        "power_id",
+    ],
+    "marginal": [
+        "text",
+        "text_id",
+        "paragraph_id",
+        "section_id",
+        "paper_id",
+        "header",
+        "section_type",
+    ],
+    "stat_check": [
+        "test_type",
+        "df1",
+        "df2",
+        "test_comp",
+        "test_value",
+        "p_comp",
+        "reported_p",
+        "computed_p",
+        "raw",
+        "error",
+        "decision_error",
+        "text",
+        "text_id",
+        "paragraph_id",
+        "section_id",
+        "paper_id",
+        "header",
+        "section_type",
+    ],
+    "stat_effect_size": [
+        "paper_id",
+        "text_id",
+        "test",
+        "test_text",
+        "es",
+        "section_id",
+        "paragraph_id",
+        "text",
+        "d_reported",
+        "d_reported_text",
+        "t_value",
+        "df",
+        "d_implied_paired_dz",
+        "d_implied_paired_drm_r05",
+        "d_implied_indep_equal_n",
+        "d_implied_indep_unequal_min",
+        "d_implied_indep_unequal_max",
+        "d_implied_n",
+        "d_coherence",
+        "d_coherence_assumption",
+        "d_coherence_note",
+        "f_reported",
+        "f_reported_text",
+        "df1",
+        "df2",
+        "eta_implied_partial",
+        "omega_implied_partial",
+        "eta_coherence",
+        "eta_coherence_assumption",
+        "eta_coherence_note",
+    ],
+    "stat_p_exact": [
+        "text",
+        "text_id",
+        "paragraph_id",
+        "section_id",
+        "paper_id",
+        "header",
+        "section_type",
+        "p_comp",
+        "p_value",
+        "expanded",
+        "imprecise",
+        "zero",
+    ],
+    "stat_p_nonsig": [
+        "text",
+        "text_id",
+        "paragraph_id",
+        "section_id",
+        "paper_id",
+        "header",
+        "section_type",
+        "p_comp",
+        "p_value",
+        "significance",
+        "expanded",
+    ],
+}
+EXPECTED_SUMMARY_FIELDS = {
+    "power": ["paper_id", "power_n", "power_complete"],
+    "marginal": ["paper_id", "marginal"],
+    "stat_check": [
+        "paper_id",
+        "statcheck_found",
+        "statcheck_errors",
+        "statcheck_decision_errors",
+    ],
+    "stat_effect_size": [
+        "paper_id",
+        "ttests_with_es",
+        "ttests_without_es",
+        "Ftests_with_es",
+        "Ftests_without_es",
+    ],
+    "stat_p_exact": ["paper_id", "n_imprecise", "n_zero"],
+    "stat_p_nonsig": ["paper_id", "n_nonsignificant"],
+}
+EXPECTED_FLOAT_FIELDS = {"stat_check": "computed_p"}
 
 
 def _read_json(path: Path) -> dict[str, Any]:
@@ -39,17 +170,28 @@ def expected() -> dict[str, Any]:
 
 
 @pytest.fixture(scope="module")
-def response():  # type: ignore[no-untyped-def]
+def response():
     return CheckEngine().check(_paper())
 
 
 def test_upstream_fixture_and_oracle_provenance_are_frozen(expected: dict[str, Any]) -> None:
     fixture_hash = hashlib.sha256(PAPER_PATH.read_bytes()).hexdigest()
+    oracle_hash = hashlib.sha256(EXPECTED_PATH.read_bytes()).hexdigest()
+    module_hashes = expected["provenance"]["module_sha256"]
 
     assert fixture_hash == EXPECTED_FIXTURE_SHA256
+    assert oracle_hash == EXPECTED_ORACLE_SHA256
     assert expected["provenance"]["fixture_sha256"] == fixture_hash
     assert expected["provenance"]["statcheck_version"] == "1.5.0"
-    assert expected["provenance"]["metacheck_git_commit"]
+    assert expected["provenance"]["metacheck_git_commit"] == EXPECTED_METACHECK_COMMIT
+    assert expected["provenance"]["metacheck_relevant_source_dirty"] is False
+    assert module_hashes == EXPECTED_MODULE_SHA256
+    assert all(
+        isinstance(module_hash, str)
+        and len(module_hash) == 64
+        and set(module_hash) <= set("0123456789abcdef")
+        for module_hash in module_hashes.values()
+    )
     assert expected["provenance"]["llm"] == {
         "enabled": False,
         "max_calls": 0,
@@ -57,9 +199,29 @@ def test_upstream_fixture_and_oracle_provenance_are_frozen(expected: dict[str, A
     }
     assert expected["normalization"]["version"] == "field-aware-v1"
     assert expected["normalization"]["float_abs_tolerance"] == 1e-10
+    assert expected["normalization"]["table_fields"] == EXPECTED_TABLE_FIELDS
+    assert expected["normalization"]["summary_fields"] == EXPECTED_SUMMARY_FIELDS
+    assert expected["normalization"]["float_fields"] == EXPECTED_FLOAT_FIELDS
 
 
-def test_all_six_defaults_return_without_synthetic_failure(response) -> None:  # type: ignore[no-untyped-def]
+def test_capture_script_sanitizes_network_before_loading_and_rejects_dirty_source() -> None:
+    script = (Path(__file__).parents[2] / "scripts" / "capture_r_oracle.R").read_text(
+        encoding="utf-8"
+    )
+
+    sanitize_call = script.index("sanitize_capture_environment()")
+    load_call = script.index("pkgload::load_all")
+    assert sanitize_call < load_call
+    assert '"OSF_PAT"' in script
+    assert '"HTTP_PROXY"' in script
+    assert '"HTTPS_PROXY"' in script
+    assert '"ALL_PROXY"' in script
+    assert '"NO_PROXY"' in script
+    assert '"--untracked-files=all"' in script
+    assert "Refusing to capture from dirty Metacheck source" in script
+
+
+def test_all_six_defaults_return_without_synthetic_failure(response) -> None:
     assert tuple(response.modules_run) == DEFAULT_MODULES
     assert tuple(response.results) == DEFAULT_MODULES
     assert all(result.traffic_light != "fail" for result in response.results.values())
@@ -67,7 +229,7 @@ def test_all_six_defaults_return_without_synthetic_failure(response) -> None:  #
 
 def test_default_modules_match_field_aware_r_oracle(
     expected: dict[str, Any],
-    response,  # type: ignore[no-untyped-def]
+    response,
 ) -> None:
     normalization = expected["normalization"]
     expected_modules = expected["modules_run"]

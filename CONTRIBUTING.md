@@ -17,6 +17,11 @@ Tests must compare meaningful fields such as extracted tokens, classifications, 
 traffic lights, and source order. Floating recomputations use a documented absolute tolerance;
 text and categorical values remain exact.
 
+The hard-coded Python parity contract is independent of metadata emitted by the R capture. A
+recapture must come from the frozen clean Metacheck commit, verify the six module-source hashes,
+clear provider credentials before package loading, and deny network access. Never broaden numeric
+tolerance to extracted or reported values merely to make a disagreement disappear.
+
 ## Port workflow
 
 1. Establish and validate the behavior in R, including edge cases.
@@ -24,7 +29,8 @@ text and categorical values remain exact.
 3. Record the Metacheck commit, package versions, input hash, normalization, and any deliberate
    cross-language difference. Oracle capture must disable model/API calls.
 4. Add a failing Python test, implement the smallest shared computation, and make it pass.
-5. Run focused tests, the aggregate oracle, the real-paper benchmark, and all repository gates.
+5. Run focused tests, the aggregate oracle, the generated full-size synthetic benchmark, and all
+   repository gates.
 6. If the port exposes an R bug or a generally useful optimization, add an R reproduction and
    upstream the fix rather than allowing the implementations to drift silently.
 
@@ -65,5 +71,8 @@ substitute for an actual image build. Never report estimated speed as measured p
 ## Licensing
 
 Contributions are accepted under AGPL-3.0-or-later. A public network deployment can trigger source
-availability obligations for the running modified version. Maintainers and deployers should review
-those obligations with appropriate legal guidance; this is not legal advice.
+availability obligations for the running modified version. Do not cross the public-deployment gate
+until the complete-corresponding-source mechanism for that exact version has been implemented and
+reviewed. Maintainers and deployers should review those obligations with appropriate legal guidance;
+this is not legal advice. Keep [NOTICE.md](NOTICE.md) current whenever the frozen upstream commit or
+ported source paths change.

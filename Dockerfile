@@ -5,7 +5,7 @@ COPY --from=uv /uv /usr/local/bin/uv
 WORKDIR /app
 ENV UV_COMPILE_BYTECODE=1 \
     UV_LINK_MODE=copy
-COPY pyproject.toml uv.lock README.md LICENSE.md ./
+COPY pyproject.toml uv.lock README.md LICENSE.md NOTICE.md ./
 COPY pytacheck ./pytacheck
 RUN uv sync --frozen --no-dev --no-editable
 
@@ -14,6 +14,7 @@ RUN groupadd --system --gid 10001 pytacheck \
     && useradd --system --uid 10001 --gid pytacheck --home-dir /app --no-create-home pytacheck
 WORKDIR /app
 COPY --from=builder --chown=pytacheck:pytacheck /app/.venv /app/.venv
+COPY --from=builder --chown=pytacheck:pytacheck /app/NOTICE.md /app/NOTICE.md
 ENV PATH="/app/.venv/bin:$PATH" \
     PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1

@@ -50,36 +50,46 @@ docker build -t pytacheck:local .
 docker run --rm -p 2005:2005 pytacheck:local
 ```
 
+Run one Uvicorn worker per container. Pytacheck's Prometheus registry is process-local, so adding
+multiple Uvicorn workers inside one container would make `/metrics` an incomplete view. Scale with
+additional containers or pods behind the service instead.
+
 ## Measured performance
 
-This repository includes a machine-readable benchmark that validates and checks a real,
-non-empty paper fixture:
+This repository includes a machine-readable benchmark whose default workload is a deterministic,
+generated full-size synthetic bibr document:
 
 ```bash
 uv run python -m benchmarks.benchmark_default_modules --iterations 20
 ```
 
-One local run on 2026-07-14 used Python 3.12.12 on
-`macOS-26.5.1-arm64-arm-64bit`, with fixture SHA-256
-`c99be5ea276910a6e7fbd0301ee0b89e0ccc7c7af5d27727e018d573dc646da4`:
+The output identifies the profile kind and hash and reports its serialized byte count, text-row
+count, and text-character count. End-to-end measurements include JSON decoding, bibr normalization,
+Pydantic validation, and all six checks. The small simulated `to_err_is_human` R fixture remains a
+parity fixture and is not presented as a real paper or a representative performance workload.
+
+One local 20-iteration run on 2026-07-14 used Python 3.12.12 on
+`macOS-26.5.1-arm64-arm-64bit`. The `full_size_synthetic_v1` profile contained 720 text rows,
+173,963 text characters, and 217,020 serialized bytes, with input SHA-256
+`fdd33e1d0f4b3dcb7a339ad07606647f5ee806c6b3d2ea7eee249bc7fbc8e9fb`:
 
 | Measurement | Result |
 | --- | ---: |
-| Cold default check | 8.39 ms |
-| Warm default check p50 | 4.41 ms |
-| Warm default check p95 | 5.49 ms |
-| Warm throughput | 229.10 papers/s |
-| bibr validation + check p50 | 4.39 ms |
-| bibr validation + check p95 | 5.06 ms |
+| Cold default check | 23.51 ms |
+| Warm default check p50 | 22.63 ms |
+| Warm default check p95 | 23.17 ms |
+| Warm throughput | 43.89 papers/s |
+| Raw JSON to checked response p50 | 23.12 ms |
+| Raw JSON to checked response p95 | 25.48 ms |
 
 | Module | p50 | p95 |
 | --- | ---: | ---: |
-| `power` | 0.56 ms | 1.22 ms |
-| `marginal` | 0.39 ms | 0.56 ms |
-| `stat_check` | 0.68 ms | 0.88 ms |
-| `stat_effect_size` | 0.18 ms | 0.32 ms |
-| `stat_p_exact` | 0.07 ms | 0.12 ms |
-| `stat_p_nonsig` | 0.04 ms | 0.08 ms |
+| `power` | 1.07 ms | 1.11 ms |
+| `marginal` | 4.60 ms | 4.82 ms |
+| `stat_check` | 0.18 ms | 0.29 ms |
+| `stat_effect_size` | 0.13 ms | 0.17 ms |
+| `stat_p_exact` | 0.07 ms | 0.08 ms |
+| `stat_p_nonsig` | 0.06 ms | 0.07 ms |
 
 These figures describe that run, not a workstation-independent guarantee. CI uses a generous
 two-second warm smoke budget and records machine-readable results instead of treating local
@@ -98,14 +108,17 @@ hardware numbers as thresholds.
   component.
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for the R-lab/Python-production ownership model and
-[docs/architecture.md](docs/architecture.md) for the runtime and parity boundaries.
+[docs/architecture.md](docs/architecture.md) for the runtime, reviewed production extensions, and
+parity boundaries.
 
 ## License and provenance
 
 Pytacheck is a port of AGPL-licensed Metacheck behavior and is licensed under the GNU Affero
-General Public License, version 3 or later. See [LICENSE.md](LICENSE.md).
+General Public License, version 3 or later. See [LICENSE.md](LICENSE.md) and the exact upstream
+commit and source-path record in [NOTICE.md](NOTICE.md).
 
 Private development does not by itself settle the obligations of a public network deployment.
-Before offering a modified AGPL service publicly, review the corresponding-source requirements
-and the licenses of incorporated work with appropriate legal guidance. This note is practical
-project guidance, not legal advice.
+Public deployment is a release gate: do not expose a modified service publicly until the team has
+implemented and reviewed a way to offer the complete corresponding source for the running version.
+Also review the licenses of incorporated work with appropriate legal guidance. This note is
+practical project guidance, not legal advice.

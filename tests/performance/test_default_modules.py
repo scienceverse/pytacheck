@@ -5,6 +5,7 @@ import re
 import subprocess
 import sys
 import time
+import tomllib
 import tracemalloc
 from pathlib import Path
 from typing import Any
@@ -66,14 +67,12 @@ def test_high_df_effect_size_check_has_bounded_python_memory() -> None:
     assert peak_bytes < 16 * 1024 * 1024
 
 
-def test_benchmark_cli_emits_machine_readable_contract() -> None:
+def test_benchmark_cli_defaults_to_a_generated_full_size_synthetic_profile() -> None:
     completed = subprocess.run(
         [
             sys.executable,
             "-m",
             "benchmarks.benchmark_default_modules",
-            "--fixture",
-            str(FIXTURE_PATH),
             "--iterations",
             "2",
         ],
@@ -87,7 +86,12 @@ def test_benchmark_cli_emits_machine_readable_contract() -> None:
     assert completed.returncode == 0, completed.stderr
     payload = json.loads(completed.stdout)
     assert {
-        "fixture_sha256",
+        "input_sha256",
+        "profile_kind",
+        "profile_name",
+        "serialized_bytes",
+        "text_rows",
+        "text_characters",
         "iterations",
         "python_version",
         "platform",
@@ -95,17 +99,51 @@ def test_benchmark_cli_emits_machine_readable_contract() -> None:
         "warm_p50_ms",
         "warm_p95_ms",
         "papers_per_second",
-        "validation_and_check_p50_ms",
-        "validation_and_check_p95_ms",
+        "end_to_end_p50_ms",
+        "end_to_end_p95_ms",
         "per_module_ms",
     } <= payload.keys()
     assert payload["iterations"] == 2
-    assert payload["fixture_sha256"] == (
-        "c99be5ea276910a6e7fbd0301ee0b89e0ccc7c7af5d27727e018d573dc646da4"
-    )
+    assert payload["profile_kind"] == "generated_full_size_synthetic"
+    assert payload["profile_name"] == "full_size_synthetic_v1"
+    assert payload["serialized_bytes"] >= 100_000
+    assert payload["text_rows"] >= 500
+    assert payload["text_characters"] >= 80_000
     assert list(payload["per_module_ms"]) == list(DEFAULT_MODULES)
     for module_timing in payload["per_module_ms"].values():
         assert {"p50_ms", "p95_ms"} <= module_timing.keys()
+
+
+def test_end_to_end_benchmark_decodes_json_for_every_iteration(monkeypatch: Any) -> None:
+    from benchmarks import benchmark_default_modules as benchmark
+
+    original_loads = benchmark.json.loads
+    decode_calls = 0
+
+    def tracked_loads(value: str | bytes | bytearray, *args: Any, **kwargs: Any) -> Any:
+        nonlocal decode_calls
+        decode_calls += 1
+        return original_loads(value, *args, **kwargs)
+
+    monkeypatch.setattr(benchmark.json, "loads", tracked_loads)
+    report = benchmark.run_benchmark(None, 2, synthetic_text_rows=24)
+
+    assert decode_calls >= 3
+    assert report["profile_kind"] == "generated_full_size_synthetic"
+    assert report["text_rows"] == 24
+
+
+def test_python_distribution_declares_runtime_and_linux_arm64_contracts() -> None:
+    pyproject = tomllib.loads((PROJECT_ROOT / "pyproject.toml").read_text(encoding="utf-8"))
+    dependencies = pyproject["project"]["dependencies"]
+    environments = pyproject["tool"]["uv"]["environments"]
+
+    assert "starlette>=1.3.1,<1.4.0" in dependencies
+    assert "sys_platform == 'linux' and platform_machine == 'aarch64'" in environments
+    assert "NOTICE.md" in pyproject["tool"]["hatch"]["build"]["targets"]["sdist"]["include"]
+
+    lockfile = (PROJECT_ROOT / "uv.lock").read_text(encoding="utf-8")
+    assert "platform_machine == 'aarch64' and sys_platform == 'linux'" in lockfile
 
 
 def test_container_contract_is_non_root_and_excludes_developer_inputs() -> None:
@@ -121,6 +159,7 @@ def test_container_contract_is_non_root_and_excludes_developer_inputs() -> None:
     assert "pytacheck serve" in dockerfile
     assert "--host 0.0.0.0" in dockerfile
     assert "--port 2005" in dockerfile
+    assert "NOTICE.md" in dockerfile
     assert not re.search(r"(?i)apt(?:-get)?\s+install[^\n]*(?:r-base|rscript|r-cran)", dockerfile)
 
     ignored = dockerignore_path.read_text(encoding="utf-8")
@@ -141,6 +180,41 @@ def test_ci_runs_quality_build_benchmark_and_container_gates() -> None:
         "pytest",
         "python -m build",
         "benchmarks.benchmark_default_modules",
-        "docker build",
+        "docker buildx build",
     ):
         assert command in workflow
+
+    assert "docker/setup-qemu-action@v3" in workflow
+    assert "linux/amd64" in workflow
+    assert "linux/arm64" in workflow
+    assert "--push" not in workflow
+
+
+def test_notice_and_deployment_guidance_are_explicit() -> None:
+    notice = (PROJECT_ROOT / "NOTICE.md").read_text(encoding="utf-8")
+    for provenance in (
+        "https://github.com/scienceverse/metacheck",
+        "0291d575628b0c8cec56eb64c944ad269c91edc4",
+        "inst/modules/power.R",
+        "inst/modules/marginal.R",
+        "inst/modules/stat_check.R",
+        "inst/modules/stat_effect_size.R",
+        "inst/modules/stat_p_exact.R",
+        "inst/modules/stat_p_nonsig.R",
+        "R/text-extractors.R",
+        "2026-07-14",
+    ):
+        assert provenance in notice
+
+    readme = (PROJECT_ROOT / "README.md").read_text(encoding="utf-8").lower()
+    architecture = (PROJECT_ROOT / "docs" / "architecture.md").read_text(encoding="utf-8").lower()
+    assert "one uvicorn worker per container" in readme
+    assert "corresponding source" in readme and "public" in readme
+    for extension in (
+        "bounded extraction and output budgets",
+        "malformed, out-of-domain, and non-finite",
+        "exact-zero lexical semantics",
+        "match-local",
+        "partial omega",
+    ):
+        assert extension in architecture

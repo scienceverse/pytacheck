@@ -58,9 +58,14 @@ SUMMARY_FIELDS <- list(
 )
 
 FLOAT_FIELDS <- list(
-  stat_check = c("df1", "df2", "test_value", "reported_p", "computed_p"),
-  stat_p_exact = list("p_value"),
-  stat_p_nonsig = list("p_value")
+  stat_check = c("computed_p")
+)
+
+PROVIDER_CREDENTIAL_ENV <- c(
+  "OSF_PAT", "OLLAMA_BASE_URL", "GROQ_API_KEY", "OPENAI_API_KEY", "GEMINI_API_KEY",
+  "GOOGLE_API_KEY", "ANTHROPIC_API_KEY", "CLOUDFLARE_API_KEY", "DEEPSEEK_API_KEY",
+  "HUGGINGFACE_API_KEY", "MISTRAL_API_KEY", "OPENROUTER_API_KEY", "PERPLEXITY_API_KEY",
+  "PORTKEY_API_KEY", "AZURE_OPENAI_ENDPOINT", "DATABRICKS_HOST", "GITHUB_PAT"
 )
 
 usage <- function() {
@@ -109,6 +114,31 @@ git_output <- function(checkout, args) {
   output
 }
 
+relevant_source_status <- function(checkout) {
+  git_output(
+    checkout,
+    c(
+      "status", "--porcelain", "--untracked-files=all", "--", "DESCRIPTION", "R", "inst/modules"
+    )
+  )
+}
+
+sanitize_capture_environment <- function() {
+  Sys.unsetenv(PROVIDER_CREDENTIAL_ENV)
+  deny_proxy <- "http://127.0.0.1:9"
+  Sys.setenv(
+    "HTTP_PROXY" = deny_proxy,
+    "HTTPS_PROXY" = deny_proxy,
+    "ALL_PROXY" = deny_proxy,
+    "NO_PROXY" = "",
+    "http_proxy" = deny_proxy,
+    "https_proxy" = deny_proxy,
+    "all_proxy" = deny_proxy,
+    "no_proxy" = "",
+    "R_DEFAULT_INTERNET_TIMEOUT" = "1"
+  )
+}
+
 scalar_value <- function(value) {
   if (is.null(value) || length(value) == 0L || all(is.na(value))) {
     return(NULL)
@@ -152,15 +182,6 @@ block_llm_calls <- function() {
     metacheck.llm.model = NULL,
     metacheck.llm_max_calls = 0L
   )
-  key_names <- c(
-    "OLLAMA_BASE_URL", "GROQ_API_KEY", "OPENAI_API_KEY", "GEMINI_API_KEY",
-    "GOOGLE_API_KEY", "ANTHROPIC_API_KEY", "CLOUDFLARE_API_KEY", "DEEPSEEK_API_KEY",
-    "HUGGINGFACE_API_KEY", "MISTRAL_API_KEY", "OPENROUTER_API_KEY", "PERPLEXITY_API_KEY",
-    "PORTKEY_API_KEY", "AZURE_OPENAI_ENDPOINT", "DATABRICKS_HOST", "GITHUB_PAT"
-  )
-  empty_keys <- stats::setNames(as.list(rep("", length(key_names))), key_names)
-  do.call(Sys.setenv, empty_keys)
-
   namespace <- asNamespace("metacheck")
   if (exists("llm", envir = namespace, inherits = FALSE)) {
     unlockBinding("llm", namespace)
@@ -186,6 +207,16 @@ if (!file.exists(file.path(metacheck_checkout, "DESCRIPTION"))) {
   stop("--metacheck must point to a Metacheck source checkout.", call. = FALSE)
 }
 
+relevant_status <- relevant_source_status(metacheck_checkout)
+if (length(relevant_status) > 0L) {
+  stop(
+    "Refusing to capture from dirty Metacheck source:\n",
+    paste(relevant_status, collapse = "\n"),
+    call. = FALSE
+  )
+}
+
+sanitize_capture_environment()
 # attach=FALSE avoids Metacheck's interactive startup/version check, which contacts GitHub.
 pkgload::load_all(metacheck_checkout, quiet = TRUE, attach = FALSE)
 block_llm_calls()
@@ -233,21 +264,13 @@ module_hashes <- stats::setNames(
   lapply(module_paths, sha256_file),
   DEFAULT_MODULES
 )
-relevant_status <- git_output(
-  metacheck_checkout,
-  c(
-    "status", "--porcelain", "--untracked-files=no", "--", "DESCRIPTION", "R",
-    paste0("inst/modules/", DEFAULT_MODULES, ".R")
-  )
-)
-
 oracle <- list(
   provenance = list(
     oracle = "Metacheck R field-aware aggregate oracle",
     fixture_sha256 = sha256_file(input_path),
     metacheck_version = as.character(utils::packageVersion("metacheck")),
     metacheck_git_commit = git_output(metacheck_checkout, c("rev-parse", "HEAD"))[[1L]],
-    metacheck_relevant_source_dirty = length(relevant_status) > 0L,
+    metacheck_relevant_source_dirty = FALSE,
     module_sha256 = module_hashes,
     statcheck_version = as.character(utils::packageVersion("statcheck")),
     r_version = R.version.string,
@@ -269,14 +292,18 @@ oracle <- list(
     rules = c(
       "Preserve validated default-module order and source row order.",
       "Project declared shared contract fields; convert R NA and absent optional values to JSON null.",
-      "Compare declared floating recomputations with absolute tolerance only; compare all other values exactly.",
+      "Compare computed_p with absolute tolerance only; compare extracted numeric, text, and categorical values exactly.",
       "Normalize Pytacheck power_complete null to the R aggregate zero produced by na_replace.",
       "Do not use text similarity or aggregate similarity scores."
     ),
     intentional_pytacheck_extensions_or_omissions = c(
       "Pytacheck retains a representative text_id on expanded power-analysis paragraphs; R drops it, so the shared oracle omits power.text_id.",
       "R-only statcheck one_tailed_in_txt and apa_factor diagnostics are not in the initial Pytacheck JSON contract.",
-      "Rendered R report markup and prose are outside the JSON computation parity boundary."
+      "Rendered R report markup and prose are outside the JSON computation parity boundary.",
+      "Pytacheck rejects adversarial extraction and output amplification with bounded production budgets.",
+      "Pytacheck does not treat malformed, out-of-domain, or non-finite statistics as valid checks.",
+      "Pytacheck exact-zero detection follows the reported lexical token, and star-note exemptions are match-local.",
+      "Pytacheck activates partial-omega coherence even though the current R parser leaves that branch unreachable."
     )
   ),
   modules_run = DEFAULT_MODULES,
