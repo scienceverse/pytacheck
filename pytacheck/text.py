@@ -21,13 +21,23 @@ _EQUATION_PATTERN = re.compile(
     r"(?P<comp>[=<>~≈≠≤≥≪≫]{1,2})\s*"
     r"(?P<rhs>\[[^\]\r\n]+\]|[+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][+-]?\d+)?)"
 )
+_APA_WS = r"[ \t\r\n\f\v]?"
+_APA_NUMBER = r"\d*,?\d*\.?\d+"
 _APA_TEST_PATTERN = re.compile(
-    r"(?<!\w)(?P<test_type>[tF])\s*\(\s*"
-    r"(?P<dfs>\d+(?:\.\d+)?(?:\s*,\s*\d+(?:\.\d+)?)?)"
-    r"\s*\)\s*(?P<comp>[=<>~≈≠≤≥≪≫]{1,2})\s*"
-    r"(?P<statistic>[+-]?(?:\d+(?:\.\d*)?|\.\d+))\s*[,;]?\s*"
-    r"p-?(?:value)?\s*(?P<p_comp>[=<>~≈≠≤≥≪≫]{1,2})\s*"
-    r"(?P<p_value>\d?\.\d+)"
+    rf"(?<!\w)(?:"
+    rf"(?P<t_type>t){_APA_WS}\({_APA_WS}(?P<t_df>\d*\.?\d+){_APA_WS}\)"
+    rf"|"
+    rf"(?P<f_type>F){_APA_WS}\({_APA_WS}(?P<f_df1>I|l|\d*\.?\d+)"
+    rf"{_APA_WS},{_APA_WS}(?P<f_df2>\d*\.?\d+){_APA_WS}\)"
+    rf")"
+    rf"{_APA_WS}(?P<comp>[<>=]){_APA_WS}"
+    rf"(?P<stat_prefix>[^a-zA-Z\d.]{{0,3}}){_APA_WS}"
+    rf"(?P<statistic>{_APA_NUMBER}){_APA_WS},{_APA_WS}"
+    rf"(?:"
+    rf"p{_APA_WS}(?P<p_comp>[<>=]){_APA_WS}"
+    rf"(?P<p_value>\d?\.\d+e?-?\d*)"
+    rf"|(?P<ns>n\.?s\.?)"
+    rf")"
 )
 
 
@@ -184,6 +194,19 @@ def _number(value: str) -> int | float:
     return float(value) if "." in value else int(value)
 
 
+def _decimal_places(value: str) -> int:
+    match = re.search(r"\.(\d+)", value)
+    return len(match.group(1)) if match is not None else 0
+
+
+def _apa_statistic(match: re.Match[str]) -> float:
+    value = float(match.group("statistic").replace(",", ""))
+    prefix = match.group("stat_prefix")
+    if re.search(r"[^\d.\s]", prefix) is not None:
+        return -abs(value)
+    return value
+
+
 def extract_apa_tests(
     rows: Iterable[Mapping[str, Any]],
 ) -> tuple[dict[str, Any], ...]:
@@ -197,10 +220,24 @@ def extract_apa_tests(
             continue
 
         for match in _APA_TEST_PATTERN.finditer(expanded):
-            test_type = match.group("test_type")
-            degrees_of_freedom = [_number(value.strip()) for value in match.group("dfs").split(",")]
-            expected_df_count = 1 if test_type == "t" else 2
-            if len(degrees_of_freedom) != expected_df_count:
+            test_type = "t" if match.group("t_type") is not None else "F"
+            if test_type == "t":
+                degrees_of_freedom = [_number(match.group("t_df"))]
+            else:
+                raw_df1 = match.group("f_df1")
+                df1 = 1 if raw_df1 in {"I", "l"} else _number(raw_df1)
+                degrees_of_freedom = [df1, _number(match.group("f_df2"))]
+
+            p_literal = match.group("p_value")
+            if p_literal is None:
+                p_comp = "ns"
+                p_value = None
+                p_decimals = None
+            else:
+                p_comp = match.group("p_comp")
+                p_value = float(p_literal)
+                p_decimals = _decimal_places(p_literal)
+            if p_value is not None and p_value > 1:
                 continue
 
             raw = match.group(0)
@@ -210,13 +247,15 @@ def extract_apa_tests(
                 expanded=expanded,
                 raw=raw,
                 test_type=test_type,
-                statistic=float(match.group("statistic")),
+                statistic=_apa_statistic(match),
                 df=degrees_of_freedom,
                 df1=degrees_of_freedom[0],
                 df2=degrees_of_freedom[1] if len(degrees_of_freedom) == 2 else None,
                 comp=match.group("comp"),
-                p_comp=match.group("p_comp"),
-                p_value=float(match.group("p_value")),
+                p_comp=p_comp,
+                p_value=p_value,
+                _statistic_decimals=_decimal_places(match.group("statistic")),
+                _p_decimals=p_decimals,
             )
             results.append(result)
 
