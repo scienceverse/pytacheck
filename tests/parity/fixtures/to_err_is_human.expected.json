@@ -1,0 +1,368 @@
+{
+  "provenance": {
+    "oracle": "Metacheck R field-aware aggregate oracle",
+    "fixture_sha256": "c99be5ea276910a6e7fbd0301ee0b89e0ccc7c7af5d27727e018d573dc646da4",
+    "metacheck_version": "0.1.0",
+    "metacheck_git_commit": "0291d575628b0c8cec56eb64c944ad269c91edc4",
+    "metacheck_relevant_source_dirty": false,
+    "module_sha256": {
+      "power": "f24acc1d512a02a90b31d78d91eec228ae8c209f54688a56a1688a3c98cd90aa",
+      "marginal": "d641aaf05288c13ee7d618e7db9cbe0a50d36dadade14796a53ee978c77a9675",
+      "stat_check": "1c80c646d46fc90c9b31be745c0ba357e8056f159d54265402670ad271283f87",
+      "stat_effect_size": "8afee4b8f4b3e60c5c483adff2c453171cea4237cf3e85d19eb1ed22571205d8",
+      "stat_p_exact": "ce99f7d57ee6b97d37a464b68539ba2c0ed216384cd010b6fb24b47a6e1f2392",
+      "stat_p_nonsig": "db312ff1dfd096fc311279753fa46e66e29d84478b96f8e00d3eeba454e315b7"
+    },
+    "statcheck_version": "1.5.0",
+    "r_version": "R version 4.5.3 (2026-03-11)",
+    "defaults": ["power", "marginal", "stat_check", "stat_effect_size", "stat_p_exact", "stat_p_nonsig"],
+    "llm": {
+      "enabled": false,
+      "max_calls": 0,
+      "network_model_calls": "blocked"
+    },
+    "capture_command": "Rscript scripts/capture_r_oracle.R --metacheck <METACHECK_CHECKOUT> --input tests/parity/fixtures/to_err_is_human.json --output tests/parity/fixtures/to_err_is_human.expected.json"
+  },
+  "normalization": {
+    "version": "field-aware-v1",
+    "table_fields": {
+      "power": ["text", "paragraph_id", "section_id", "paper_id", "header", "section_type", "power_type", "complete", "power_id"],
+      "marginal": ["text", "text_id", "paragraph_id", "section_id", "paper_id", "header", "section_type"],
+      "stat_check": ["test_type", "df1", "df2", "test_comp", "test_value", "p_comp", "reported_p", "computed_p", "raw", "error", "decision_error", "text", "text_id", "paragraph_id", "section_id", "paper_id", "header", "section_type"],
+      "stat_effect_size": ["paper_id", "text_id", "test", "test_text", "es", "section_id", "paragraph_id", "text", "d_reported", "d_reported_text", "t_value", "df", "d_implied_paired_dz", "d_implied_paired_drm_r05", "d_implied_indep_equal_n", "d_implied_indep_unequal_min", "d_implied_indep_unequal_max", "d_implied_n", "d_coherence", "d_coherence_assumption", "d_coherence_note", "f_reported", "f_reported_text", "df1", "df2", "eta_implied_partial", "omega_implied_partial", "eta_coherence", "eta_coherence_assumption", "eta_coherence_note"],
+      "stat_p_exact": ["text", "text_id", "paragraph_id", "section_id", "paper_id", "header", "section_type", "p_comp", "p_value", "expanded", "imprecise", "zero"],
+      "stat_p_nonsig": ["text", "text_id", "paragraph_id", "section_id", "paper_id", "header", "section_type", "p_comp", "p_value", "significance", "expanded"]
+    },
+    "summary_fields": {
+      "power": ["paper_id", "power_n", "power_complete"],
+      "marginal": ["paper_id", "marginal"],
+      "stat_check": ["paper_id", "statcheck_found", "statcheck_errors", "statcheck_decision_errors"],
+      "stat_effect_size": ["paper_id", "ttests_with_es", "ttests_without_es", "Ftests_with_es", "Ftests_without_es"],
+      "stat_p_exact": ["paper_id", "n_imprecise", "n_zero"],
+      "stat_p_nonsig": ["paper_id", "n_nonsignificant"]
+    },
+    "float_fields": {
+      "stat_check": ["df1", "df2", "test_value", "reported_p", "computed_p"],
+      "stat_p_exact": [
+        "p_value"
+      ],
+      "stat_p_nonsig": [
+        "p_value"
+      ]
+    },
+    "float_abs_tolerance": 1e-10,
+    "rules": ["Preserve validated default-module order and source row order.", "Project declared shared contract fields; convert R NA and absent optional values to JSON null.", "Compare declared floating recomputations with absolute tolerance only; compare all other values exactly.", "Normalize Pytacheck power_complete null to the R aggregate zero produced by na_replace.", "Do not use text similarity or aggregate similarity scores."],
+    "intentional_pytacheck_extensions_or_omissions": ["Pytacheck retains a representative text_id on expanded power-analysis paragraphs; R drops it, so the shared oracle omits power.text_id.", "R-only statcheck one_tailed_in_txt and apa_factor diagnostics are not in the initial Pytacheck JSON contract.", "Rendered R report markup and prose are outside the JSON computation parity boundary."]
+  },
+  "modules_run": ["power", "marginal", "stat_check", "stat_effect_size", "stat_p_exact", "stat_p_nonsig"],
+  "results": {
+    "power": {
+      "module": "power",
+      "title": "Power Analysis Check",
+      "traffic_light": "yellow",
+      "table": [
+        {
+          "text": "This paper demonstrates some good and poor practices for use with the {metacheck} R package. All data are simulated. The paper shows examples of (1) open and closed OSF links; (2a) citation of retracted papers, (2b) citations without a doi, (2c) citations with Pubpeer comments, (2d) citations in the FLoRA replication database, and (2e) missing/mismatched/incorrect citations and references; (3a) R files with code on GitHub that do not load libraries in one location, (3b) load files that are not shared in the repository, (3c) lack comments, and (3d) have absolute file paths; (4) imprecise reporting of non-significant p-values; (5) tests with and without effect sizes; (6) use of \"marginally significant\" to describe non-significant findings; (7) a power analysis reporting some of the essential attributes; and (8) retrieving information from preregistrations.",
+          "paragraph_id": 1,
+          "section_id": 0,
+          "paper_id": "to_err_is_human",
+          "header": "Abstract",
+          "section_type": "abstract",
+          "power_type": "unknown",
+          "complete": null,
+          "power_id": 1
+        },
+        {
+          "text": "We conducted a sensitivity power analysis 2 to determine that a Cohen's d of 0.50 is the smallest effect size that we could detect with N = 50 participants in each group and 80% power.",
+          "paragraph_id": 11,
+          "section_id": 7,
+          "paper_id": "to_err_is_human",
+          "header": "Power Analysis",
+          "section_type": "annex",
+          "power_type": "sensitivity",
+          "complete": null,
+          "power_id": 2
+        },
+        {
+          "text": "pwr::pwr.t.test(n = 50, power = 0.8, alternative = \"greater\") is useful. We conclude the use of automated checks has potential to reduce the number of mistakes in scientific manuscripts.",
+          "paragraph_id": 14,
+          "section_id": 8,
+          "paper_id": "to_err_is_human",
+          "header": "Results",
+          "section_type": "annex",
+          "power_type": "unknown",
+          "complete": null,
+          "power_id": 3
+        }
+      ],
+      "summary_table": [
+        {
+          "paper_id": "to_err_is_human",
+          "power_n": 3,
+          "power_complete": 0
+        }
+      ]
+    },
+    "marginal": {
+      "module": "marginal",
+      "title": "Marginal Significance",
+      "traffic_light": "red",
+      "table": [
+        {
+          "text": "The paper shows examples of (1) open and closed OSF links; (2a) citation of retracted papers, (2b) citations without a doi, (2c) citations with Pubpeer comments, (2d) citations in the FLoRA replication database, and (2e) missing/mismatched/incorrect citations and references; (3a) R files with code on GitHub that do not load libraries in one location, (3b) load files that are not shared in the repository, (3c) lack comments, and (3d) have absolute file paths; (4) imprecise reporting of non-significant p-values; (5) tests with and without effect sizes; (6) use of \"marginally significant\" to describe non-significant findings; (7) a power analysis reporting some of the essential attributes; and (8) retrieving information from preregistrations.",
+          "text_id": 3,
+          "paragraph_id": 1,
+          "section_id": 0,
+          "paper_id": "to_err_is_human",
+          "header": "Abstract",
+          "section_type": "abstract"
+        },
+        {
+          "text": "On average researchers in the experimental condition found the app marginally significantly more useful (M = 5.06) than researchers in the control condition found the checklist (M = 4.5), t(97.2) = -1.96, p =0.152.",
+          "text_id": 16,
+          "paragraph_id": 5,
+          "section_id": 3,
+          "paper_id": "to_err_is_human",
+          "header": "Procedure",
+          "section_type": "method"
+        }
+      ],
+      "summary_table": [
+        {
+          "paper_id": "to_err_is_human",
+          "marginal": 2
+        }
+      ]
+    },
+    "stat_check": {
+      "module": "stat_check",
+      "title": "StatCheck",
+      "traffic_light": "red",
+      "table": [
+        {
+          "test_type": "t",
+          "df1": null,
+          "df2": 97.700000000000003,
+          "test_comp": "=",
+          "test_value": 2.8999999999999999,
+          "p_comp": "=",
+          "reported_p": 0.0050000000000000001,
+          "computed_p": 0.0046093905869008861,
+          "raw": "t(97.7) = 2.9, p = 0.005",
+          "error": false,
+          "decision_error": false,
+          "text": "On average researchers in the experimental (app) condition made fewer mistakes (M = 9.12) than researchers in the control (checklist) condition (M = 10.9), t(97.7) = 2.9, p = 0.005, d =0.59.",
+          "text_id": 15,
+          "paragraph_id": 4,
+          "section_id": 3,
+          "paper_id": "to_err_is_human",
+          "header": "Procedure",
+          "section_type": "method"
+        },
+        {
+          "test_type": "t",
+          "df1": null,
+          "df2": 97.200000000000003,
+          "test_comp": "=",
+          "test_value": -1.96,
+          "p_comp": "=",
+          "reported_p": 0.152,
+          "computed_p": 0.052859363977539972,
+          "raw": "t(97.2) = -1.96, p =0.152",
+          "error": true,
+          "decision_error": false,
+          "text": "On average researchers in the experimental condition found the app marginally significantly more useful (M = 5.06) than researchers in the control condition found the checklist (M = 4.5), t(97.2) = -1.96, p =0.152.",
+          "text_id": 16,
+          "paragraph_id": 5,
+          "section_id": 3,
+          "paper_id": "to_err_is_human",
+          "header": "Procedure",
+          "section_type": "method"
+        }
+      ],
+      "summary_table": [
+        {
+          "paper_id": "to_err_is_human",
+          "statcheck_found": 2,
+          "statcheck_errors": 1,
+          "statcheck_decision_errors": 0
+        }
+      ]
+    },
+    "stat_effect_size": {
+      "module": "stat_effect_size",
+      "title": "Effect Sizes in t-tests and F-tests",
+      "traffic_light": "yellow",
+      "table": [
+        {
+          "paper_id": "to_err_is_human",
+          "text_id": 15,
+          "test": "t-test",
+          "test_text": "t(97.7) = 2.9",
+          "es": "d = 0.59",
+          "section_id": 3,
+          "paragraph_id": 4,
+          "text": "On average researchers in the experimental (app) condition made fewer mistakes (M = 9.12) than researchers in the control (checklist) condition (M = 10.9), t(97.7) = 2.9, p = 0.005, d =0.59.",
+          "d_reported": null,
+          "d_reported_text": null,
+          "t_value": "2.9",
+          "df": "97.7",
+          "d_implied_paired_dz": null,
+          "d_implied_paired_drm_r05": null,
+          "d_implied_indep_equal_n": null,
+          "d_implied_indep_unequal_min": null,
+          "d_implied_indep_unequal_max": null,
+          "d_implied_n": null,
+          "d_coherence": "indeterminate",
+          "d_coherence_assumption": "none",
+          "d_coherence_note": "Non-integer df indicates Welch's t-test (unequal variances); sample sizes cannot be determined.",
+          "f_reported": null,
+          "f_reported_text": null,
+          "df1": null,
+          "df2": null,
+          "eta_implied_partial": null,
+          "omega_implied_partial": null,
+          "eta_coherence": null,
+          "eta_coherence_assumption": null,
+          "eta_coherence_note": null
+        },
+        {
+          "paper_id": "to_err_is_human",
+          "text_id": 16,
+          "test": "t-test",
+          "test_text": "t(97.2) = -1.96",
+          "es": null,
+          "section_id": 3,
+          "paragraph_id": 5,
+          "text": "On average researchers in the experimental condition found the app marginally significantly more useful (M = 5.06) than researchers in the control condition found the checklist (M = 4.5), t(97.2) = -1.96, p =0.152.",
+          "d_reported": null,
+          "d_reported_text": null,
+          "t_value": null,
+          "df": null,
+          "d_implied_paired_dz": null,
+          "d_implied_paired_drm_r05": null,
+          "d_implied_indep_equal_n": null,
+          "d_implied_indep_unequal_min": null,
+          "d_implied_indep_unequal_max": null,
+          "d_implied_n": null,
+          "d_coherence": "indeterminate",
+          "d_coherence_assumption": "none",
+          "d_coherence_note": "No parseable d effect size found.",
+          "f_reported": null,
+          "f_reported_text": null,
+          "df1": null,
+          "df2": null,
+          "eta_implied_partial": null,
+          "omega_implied_partial": null,
+          "eta_coherence": null,
+          "eta_coherence_assumption": null,
+          "eta_coherence_note": null
+        }
+      ],
+      "summary_table": [
+        {
+          "paper_id": "to_err_is_human",
+          "ttests_with_es": 1,
+          "ttests_without_es": 1,
+          "Ftests_with_es": 0,
+          "Ftests_without_es": 0
+        }
+      ]
+    },
+    "stat_p_exact": {
+      "module": "stat_p_exact",
+      "title": "Exact P-Values",
+      "traffic_light": "red",
+      "table": [
+        {
+          "text": "p = 0.005",
+          "text_id": 15,
+          "paragraph_id": 4,
+          "section_id": 3,
+          "paper_id": "to_err_is_human",
+          "header": "Procedure",
+          "section_type": "method",
+          "p_comp": "=",
+          "p_value": 0.0050000000000000001,
+          "expanded": "On average researchers in the experimental (app) condition made fewer mistakes (M = 9.12) than researchers in the control (checklist) condition (M = 10.9), t(97.7) = 2.9, p = 0.005, d =0.59.",
+          "imprecise": false,
+          "zero": false
+        },
+        {
+          "text": "p =0.152",
+          "text_id": 16,
+          "paragraph_id": 5,
+          "section_id": 3,
+          "paper_id": "to_err_is_human",
+          "header": "Procedure",
+          "section_type": "method",
+          "p_comp": "=",
+          "p_value": 0.152,
+          "expanded": "On average researchers in the experimental condition found the app marginally significantly more useful (M = 5.06) than researchers in the control condition found the checklist (M = 4.5), t(97.2) = -1.96, p =0.152.",
+          "imprecise": false,
+          "zero": false
+        },
+        {
+          "text": "p > .05",
+          "text_id": 17,
+          "paragraph_id": 6,
+          "section_id": 3,
+          "paper_id": "to_err_is_human",
+          "header": "Procedure",
+          "section_type": "method",
+          "p_comp": ">",
+          "p_value": 0.050000000000000003,
+          "expanded": "There was no effect of experience on the reduction in errors when using the tool (p > .05), as the correlation was non-significant (Figure 2).",
+          "imprecise": true,
+          "zero": false
+        }
+      ],
+      "summary_table": [
+        {
+          "paper_id": "to_err_is_human",
+          "n_imprecise": 1,
+          "n_zero": 0
+        }
+      ]
+    },
+    "stat_p_nonsig": {
+      "module": "stat_p_nonsig",
+      "title": "Non-Significant P Value Check",
+      "traffic_light": "yellow",
+      "table": [
+        {
+          "text": "p =0.152",
+          "text_id": 16,
+          "paragraph_id": 5,
+          "section_id": 3,
+          "paper_id": "to_err_is_human",
+          "header": "Procedure",
+          "section_type": "method",
+          "p_comp": "=",
+          "p_value": 0.152,
+          "significance": "nonsignificant",
+          "expanded": "On average researchers in the experimental condition found the app marginally significantly more useful (M = 5.06) than researchers in the control condition found the checklist (M = 4.5), t(97.2) = -1.96, p =0.152."
+        },
+        {
+          "text": "p > .05",
+          "text_id": 17,
+          "paragraph_id": 6,
+          "section_id": 3,
+          "paper_id": "to_err_is_human",
+          "header": "Procedure",
+          "section_type": "method",
+          "p_comp": ">",
+          "p_value": 0.050000000000000003,
+          "significance": "nonsignificant",
+          "expanded": "There was no effect of experience on the reduction in errors when using the tool (p > .05), as the correlation was non-significant (Figure 2)."
+        }
+      ],
+      "summary_table": [
+        {
+          "paper_id": "to_err_is_human",
+          "n_nonsignificant": 2
+        }
+      ]
+    }
+  }
+}

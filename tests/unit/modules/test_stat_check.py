@@ -243,7 +243,7 @@ def test_table_preserves_source_location_and_duplicate_rows() -> None:
             "y": source_index * 20.0,
         }
         assert row["source_marker"] == f"sentence-{source_index}"
-        assert row["text"] == expected_row["raw"]
+        assert row["text"] == texts[source_index - 1]
         assert row["raw"] == expected_row["raw"]
         assert row["expanded"] == texts[source_index - 1]
 

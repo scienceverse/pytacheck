@@ -237,6 +237,10 @@ def _checked_row(cached_row: dict[str, Any]) -> dict[str, Any] | None:
         "_p_decimals",
     ):
         row.pop(internal_name, None)
+    # R Metacheck's joined statcheck table uses ``text`` for the complete source
+    # sentence while ``raw`` retains the exact APA token. Keep ``expanded`` as an
+    # explicit alias for existing JSON consumers.
+    row["text"] = row.get("expanded", row.get("text"))
     row.update(
         df1=df1_value,
         df2=df2_value,
