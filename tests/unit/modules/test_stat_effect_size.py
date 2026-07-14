@@ -181,7 +181,7 @@ def test_fixture_has_explicit_and_complete_oracle_provenance() -> None:
     allowed_oracles = set(cast(list[str], ORACLE["labels"]))
     assert {case["oracle"] for case in CASES} <= allowed_oracles
     extension_ids = {case["id"] for case in CASES if case["oracle"] == "pytacheck-extension"}
-    assert extension_ids == {"spelled_out_partial_eta"}
+    assert extension_ids == {"omega_presence_only", "spelled_out_partial_eta"}
 
 
 @pytest.mark.parametrize("case", CASES, ids=[cast(str, case["id"]) for case in CASES])
@@ -270,6 +270,71 @@ def test_high_df_unequal_n_match_uses_bounded_memory_and_preserves_first_tie() -
     assert peak_bytes < 2_000_000
 
 
+def test_odd_total_n_uses_real_unequal_groups_instead_of_fractional_equal_groups() -> None:
+    result = stat_effect_size(context_for("t(9) = 2.00, d = 1.21."))
+
+    row = result.table[0]
+    assert result.traffic_light == "green"
+    assert row["d_coherence"] == "match_under_assumptions"
+    assert row["d_coherence_assumption"] == "independent_unequal_n_range"
+    assert row["d_implied_n"] == "n1 = 5, n2 = 6, N = 11"
+
+
+@pytest.mark.parametrize(
+    ("text", "coherence_field"),
+    [
+        ("t(0) = 1.00, d = 1.00.", "d_coherence"),
+        ("t(10) = 1e9999, d = 1.00.", "d_coherence"),
+        ("t(10) = 2.00, d = 1e9999.", "d_coherence"),
+        ("F(0, 10) = 2.00, ηp² = .00.", "eta_coherence"),
+        ("F(1, 10) = 1e9999, ηp² = .50.", "eta_coherence"),
+        ("F(1, 10) = 2.00, ηp² = 1e9999.", "eta_coherence"),
+    ],
+)
+def test_invalid_or_nonfinite_inputs_are_red_without_nonfinite_output_strings(
+    text: str,
+    coherence_field: str,
+) -> None:
+    result = stat_effect_size(context_for(text))
+
+    assert result.traffic_light == "red"
+    assert result.table[0][coherence_field] == "no_match"
+    assert "Invalid" in cast(
+        str, result.table[0][f"{coherence_field.removesuffix('_coherence')}_coherence_note"]
+    )
+    for value in result.table[0].values():
+        assert value not in {"inf", "-inf", "nan"}
+    json.dumps(result.model_dump(mode="json"), allow_nan=False)
+
+
+@pytest.mark.parametrize(
+    "text",
+    [
+        "F(1, 38) = -4.00, ηp² = .095.",
+        "F(1, 38) = 4.00, ηp² = -.095.",
+        "F(1, 38) = 4.00, ηp² = 1.095.",
+        "F(1, 38) = 4.00, η² = -.095.",
+        "F(1, 38) = 4.00, η² = 1.095.",
+        "F(1, 38) = 4.00, f = -.10.",
+    ],
+)
+def test_f_and_effect_size_domains_reject_impossible_values(text: str) -> None:
+    result = stat_effect_size(context_for(text))
+
+    row = result.table[0]
+    assert result.traffic_light == "red"
+    assert row["eta_coherence"] == "no_match"
+    assert "Invalid" in cast(str, row["eta_coherence_note"])
+
+
+def test_zero_f_and_zero_partial_eta_are_valid_domain_boundaries() -> None:
+    result = stat_effect_size(context_for("F(1, 38) = 0.00, ηp² = .00."))
+
+    assert result.traffic_light == "green"
+    assert result.table[0]["eta_coherence"] == "match_under_assumptions"
+    assert result.table[0]["eta_coherence_assumption"] == "partial_eta_squared"
+
+
 def test_d_tolerance_is_inclusive_and_values_just_beyond_it_do_not_match() -> None:
     just_inside = stat_effect_size(context_for("t(38) = 2.00, d = .622455532034."))
     just_outside = stat_effect_size(context_for("t(38) = 2.00, d = .622."))
@@ -321,25 +386,44 @@ def test_partial_eta_and_omega_formulas_are_exposed_as_strings() -> None:
     assert float(cast(str, eta["omega_implied_partial"])) == pytest.approx(3 / 43)
 
     assert float(cast(str, omega["omega_implied_partial"])) == pytest.approx(0)
-    assert omega["eta_coherence"] == "indeterminate"
-    assert omega["eta_coherence_assumption"] == "none"
+    assert omega["eta_coherence"] == "match_under_assumptions"
+    assert omega["eta_coherence_assumption"] == "partial_omega_squared"
     assert omega["eta_coherence_note"] == (
-        "Effect size reported but not verifiable from F and degrees of freedom alone."
+        "Match under partial omega-squared formula from F and dfs; negative implied values "
+        "are compared as zero."
     )
 
 
-def test_eta_tolerance_and_absolute_value_behavior_match_upstream() -> None:
+def test_negative_implied_partial_omega_is_compared_as_zero() -> None:
+    result = stat_effect_size(context_for("F(2, 151) = 0.50, ωp² = .00."))
+
+    row = result.table[0]
+    assert float(cast(str, row["omega_implied_partial"])) < 0
+    assert result.traffic_light == "green"
+    assert row["eta_coherence"] == "match_under_assumptions"
+    assert row["eta_coherence_assumption"] == "partial_omega_squared"
+
+
+@pytest.mark.parametrize("reported", ["-.01", "1.01"])
+def test_partial_omega_domain_rejects_values_outside_zero_and_one(reported: str) -> None:
+    result = stat_effect_size(context_for(f"F(2, 151) = 1.00, ωp² = {reported}."))
+
+    row = result.table[0]
+    assert result.traffic_light == "red"
+    assert row["eta_coherence"] == "no_match"
+    assert row["eta_coherence_assumption"] == "partial_omega_squared"
+    assert "Invalid" in cast(str, row["eta_coherence_note"])
+
+
+def test_eta_tolerance_and_signed_d_behavior_match_upstream() -> None:
     eta_inside = stat_effect_size(context_for("F(1, 38) = 4.00, ηp² = .085238095239."))
     eta_outside = stat_effect_size(context_for("F(1, 38) = 4.00, ηp² = .085."))
-    signed = stat_effect_size(
-        context_for("t(38) = -2.00, d = -.63; F(1, 38) = -4.00, ηp² = -.095.")
-    )
+    signed = stat_effect_size(context_for("t(38) = -2.00, d = -.63."))
 
     assert eta_inside.table[0]["eta_coherence"] == "match_under_assumptions"
     assert eta_outside.table[0]["eta_coherence"] == "no_match"
     assert eta_outside.traffic_light == "red"
     assert signed.table[0]["d_coherence"] == "match_under_assumptions"
-    assert signed.table[1]["eta_coherence"] == "match_under_assumptions"
 
 
 def test_plain_eta_and_cohens_f_have_exact_indeterminate_notes() -> None:

@@ -9,6 +9,7 @@ from pytacheck.context import PaperContext
 from pytacheck.modules.base import ModuleMetadata, ModuleResult, TrafficLight, register_module
 
 _TOLERANCE = 0.01
+_MAX_EXACT_TOTAL_N = 2**53
 _NUMBER = r"[-+]?(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][-+]?\d+)?"
 _INTEGER_F_DF_PATTERN = re.compile(r"^\(\s*[0-9]+\s*,\s*[0-9]+\s*\)$")
 _T_STAT_PATTERN = re.compile(
@@ -52,6 +53,37 @@ _GUIDANCE = (
 def _r_number(value: float) -> str:
     """Format a finite number like R's character columns in the upstream table."""
     return format(value, ".15g")
+
+
+def _finite_number(raw: str) -> float | None:
+    try:
+        value = float(raw)
+    except (OverflowError, ValueError):
+        return None
+    return value if math.isfinite(value) else None
+
+
+def _invalid_d(output: dict[str, Any], note: str) -> dict[str, Any]:
+    output.update(
+        d_coherence="no_match",
+        d_coherence_assumption="none",
+        d_coherence_note=f"Invalid t-test or Cohen's d input: {note}",
+    )
+    return output
+
+
+def _invalid_f(
+    output: dict[str, Any],
+    note: str,
+    *,
+    assumption: str = "none",
+) -> dict[str, Any]:
+    output.update(
+        eta_coherence="no_match",
+        eta_coherence_assumption=assumption,
+        eta_coherence_note=f"Invalid F-test or effect-size input: {note}",
+    )
+    return output
 
 
 def _equation_text(row: dict[str, Any]) -> str:
@@ -160,10 +192,20 @@ def _classify_d(test: str, test_text: str, effect_text: str | None) -> dict[str,
         )
         return output
 
-    t_value = float(test_match.group("value"))
-    df = float(test_match.group("df"))
-    output["t_value"] = _r_number(t_value)
-    output["df"] = _r_number(df)
+    t_value = _finite_number(test_match.group("value"))
+    df = _finite_number(test_match.group("df"))
+    if t_value is not None:
+        output["t_value"] = _r_number(t_value)
+    if df is not None:
+        output["df"] = _r_number(df)
+    if t_value is None or df is None:
+        return _invalid_d(output, "the statistic and degrees of freedom must be finite.")
+    if df <= 0:
+        return _invalid_d(output, "degrees of freedom must be greater than zero.")
+    if df + 2 > _MAX_EXACT_TOTAL_N:
+        return _invalid_d(
+            output, "degrees of freedom exceed the exact supported sample-size range."
+        )
 
     if abs(df - round(df)) > 1e-8:
         output.update(
@@ -179,7 +221,9 @@ def _classify_d(test: str, test_text: str, effect_text: str | None) -> dict[str,
     abs_t = abs(t_value)
     d_paired_dz = abs_t / math.sqrt(df + 1)
     d_paired_drm = d_paired_dz / math.sqrt(1 - 0.5)
-    d_equal = 2 * abs_t / math.sqrt(df + 2)
+    d_equal = (abs_t / math.sqrt(df + 2)) * 2
+    if not all(math.isfinite(value) for value in (d_paired_dz, d_paired_drm, d_equal)):
+        return _invalid_d(output, "the implied effect size exceeds the finite numeric range.")
     output.update(
         d_implied_paired_dz=_r_number(d_paired_dz),
         d_implied_paired_drm_r05=_r_number(d_paired_drm),
@@ -203,13 +247,19 @@ def _classify_d(test: str, test_text: str, effect_text: str | None) -> dict[str,
             d_implied_indep_unequal_max=_r_number(d_unequal_max),
         )
 
-    reported_values = [float(match.group("value")) for match in d_matches]
+    parsed_reported = [_finite_number(match.group("value")) for match in d_matches]
+    if any(value is None for value in parsed_reported):
+        output["d_reported_text"] = d_matches[0].group(0)
+        return _invalid_d(output, "reported Cohen's d values must be finite.")
+    reported_values = [value for value in parsed_reported if value is not None]
     absolute_reported = [abs(value) for value in reported_values]
     output["d_reported"] = _r_number(reported_values[0])
     output["d_reported_text"] = d_matches[0].group(0)
 
     paired_match = any(abs(value - d_paired_dz) <= _TOLERANCE for value in absolute_reported)
-    equal_match = any(abs(value - d_equal) <= _TOLERANCE for value in absolute_reported)
+    equal_match = n_total % 2 == 0 and any(
+        abs(value - d_equal) <= _TOLERANCE for value in absolute_reported
+    )
     unequal_match = (
         use_unequal
         and d_unequal_min is not None
@@ -228,9 +278,8 @@ def _classify_d(test: str, test_text: str, effect_text: str | None) -> dict[str,
             d_coherence_note="Match under paired-samples dz assumption.",
         )
     elif equal_match:
-        n_each = n_total_float / 2
-        n_each_text = _r_number(n_each)
-        n_total_text = _r_number(n_total_float)
+        n_each_text = str(n_total // 2)
+        n_total_text = str(n_total)
         implied_n = f"n1 = n2 = {n_each_text}, N = {n_total_text}"
         output.update(
             d_implied_n=implied_n,
@@ -283,10 +332,10 @@ def _empty_f_coherence() -> dict[str, Any]:
     }
 
 
-def _eta_stats(effect_text: str | None) -> list[tuple[str, float, str]]:
+def _eta_stats(effect_text: str | None) -> list[tuple[str, float | None, str]]:
     if not effect_text:
         return []
-    parsed: list[tuple[str, float, str]] = []
+    parsed: list[tuple[str, float | None, str]] = []
     for part in re.split(r"\s*;\s*", effect_text.strip()):
         match = _ETA_STAT_PATTERN.fullmatch(part)
         if match is None:
@@ -297,14 +346,17 @@ def _eta_stats(effect_text: str | None) -> list[tuple[str, float, str]]:
         elif re.fullmatch(r"f2?", raw_label) is not None or "cohen" in raw_label:
             label = "cohens_f"
         elif "ω" in raw_label or "omega" in raw_label:
-            label = "non_checkable"
+            is_partial_omega = "partial" in raw_label or re.search(
+                r"(?:ω|omega)[._{}^]*p", raw_label
+            )
+            label = "partial_omega_squared" if is_partial_omega else "non_checkable"
         elif ("η" in raw_label or "eta" in raw_label) and (
             "partial" in raw_label or "p" in raw_label
         ):
             label = "partial_eta_squared"
         else:
             label = "eta_squared"
-        parsed.append((label, float(match.group("value")), part))
+        parsed.append((label, _finite_number(match.group("value")), part))
     return parsed
 
 
@@ -322,29 +374,29 @@ def _classify_f(test: str, test_text: str, effect_text: str | None) -> dict[str,
         )
         return output
 
-    f_value = float(test_match.group("value"))
-    df1 = float(test_match.group("df1"))
-    df2 = float(test_match.group("df2"))
-    output.update(
-        f_reported=_r_number(f_value),
-        f_reported_text=test_match.group(0),
-        df1=_r_number(df1),
-        df2=_r_number(df2),
-    )
+    f_value = _finite_number(test_match.group("value"))
+    df1 = _finite_number(test_match.group("df1"))
+    df2 = _finite_number(test_match.group("df2"))
+    output["f_reported_text"] = test_match.group(0)
+    if f_value is not None:
+        output["f_reported"] = _r_number(f_value)
+    if df1 is not None:
+        output["df1"] = _r_number(df1)
+    if df2 is not None:
+        output["df2"] = _r_number(df2)
+    if f_value is None or df1 is None or df2 is None:
+        return _invalid_f(output, "the statistic and degrees of freedom must be finite.")
+    if f_value < 0:
+        return _invalid_f(output, "F statistics must be greater than or equal to zero.")
+    if df1 <= 0 or df2 <= 0:
+        return _invalid_f(output, "degrees of freedom must be greater than zero.")
+    if df1 > _MAX_EXACT_TOTAL_N or df2 > _MAX_EXACT_TOTAL_N:
+        return _invalid_f(output, "degrees of freedom exceed the exact supported integer range.")
 
-    abs_f = abs(f_value)
-    eta_denominator = df1 * abs_f + df2
-    omega_denominator = eta_denominator + 1
-    if eta_denominator == 0 or omega_denominator == 0:
-        output.update(
-            eta_coherence="indeterminate",
-            eta_coherence_assumption="none",
-            eta_coherence_note="Effect size could not be reconstructed from F and dfs.",
-        )
-        return output
-
-    eta_implied = (df1 * abs_f) / eta_denominator
-    omega_implied = (df1 * (abs_f - 1)) / omega_denominator
+    eta_implied = 0.0 if f_value == 0 else 1 / (1 + (df2 / df1) / f_value)
+    omega_implied = (f_value - 1) / (f_value + (df2 + 1) / df1)
+    if not math.isfinite(eta_implied) or not math.isfinite(omega_implied):
+        return _invalid_f(output, "the implied effect size exceeds the finite numeric range.")
     output.update(
         eta_implied_partial=_r_number(eta_implied),
         omega_implied_partial=_r_number(omega_implied),
@@ -358,6 +410,25 @@ def _classify_f(test: str, test_text: str, effect_text: str | None) -> dict[str,
             eta_coherence_note="No parseable eta-squared effect size found.",
         )
         return output
+
+    if any(value is None for _, value, _ in eta_stats):
+        return _invalid_f(output, "reported effect-size values must be finite.")
+
+    for label, value, _ in eta_stats:
+        if value is None:
+            continue
+        if label == "cohens_f" and value < 0:
+            return _invalid_f(
+                output,
+                "Cohen's f values must be greater than or equal to zero.",
+                assumption="cohens_f",
+            )
+        if label == "eta_squared" and (value < 0 or value > 1):
+            return _invalid_f(
+                output,
+                "eta-squared values must be between zero and one.",
+                assumption="eta_squared",
+            )
 
     cohens_f_present = any(label == "cohens_f" for label, _, _ in eta_stats)
     checkable = [stat for stat in eta_stats if stat[0] not in {"cohens_f", "non_checkable"}]
@@ -385,8 +456,17 @@ def _classify_f(test: str, test_text: str, effect_text: str | None) -> dict[str,
         )
         return output
 
-    partial_eta = [value for label, value, _ in checkable if label == "partial_eta_squared"]
-    if not partial_eta:
+    partial_eta = [
+        value
+        for label, value, _ in checkable
+        if label == "partial_eta_squared" and value is not None
+    ]
+    partial_omega = [
+        value
+        for label, value, _ in checkable
+        if label == "partial_omega_squared" and value is not None
+    ]
+    if not partial_eta and not partial_omega:
         output.update(
             eta_coherence="indeterminate",
             eta_coherence_assumption="none",
@@ -394,19 +474,56 @@ def _classify_f(test: str, test_text: str, effect_text: str | None) -> dict[str,
         )
         return output
 
-    if any(abs(abs(value) - eta_implied) <= _TOLERANCE for value in partial_eta):
+    if any(value < 0 or value > 1 for value in partial_eta):
+        return _invalid_f(
+            output,
+            "partial eta-squared values must be between zero and one.",
+            assumption="partial_eta_squared",
+        )
+
+    if any(value < 0 or value > 1 for value in partial_omega):
+        return _invalid_f(
+            output,
+            "partial omega-squared values must be between zero and one.",
+            assumption="partial_omega_squared",
+        )
+
+    if any(abs(value - eta_implied) <= _TOLERANCE for value in partial_eta):
         output.update(
             eta_coherence="match_under_assumptions",
             eta_coherence_assumption="partial_eta_squared",
             eta_coherence_note="Match under partial eta-squared formula from F and dfs.",
         )
-    else:
+        return output
+
+    omega_for_comparison = max(0.0, omega_implied)
+    if any(abs(value - omega_for_comparison) <= _TOLERANCE for value in partial_omega):
+        output.update(
+            eta_coherence="match_under_assumptions",
+            eta_coherence_assumption="partial_omega_squared",
+            eta_coherence_note=(
+                "Match under partial omega-squared formula from F and dfs; negative implied "
+                "values are compared as zero."
+            ),
+        )
+        return output
+
+    if partial_eta:
         output.update(
             eta_coherence="no_match",
             eta_coherence_assumption="partial_eta_squared",
             eta_coherence_note=(
                 "No match under partial eta-squared formula from F and dfs. Tolerance = 0.01. "
                 "A no-match can occur when fewer than 2 decimal places are reported."
+            ),
+        )
+    else:
+        output.update(
+            eta_coherence="no_match",
+            eta_coherence_assumption="partial_omega_squared",
+            eta_coherence_note=(
+                "No match under partial omega-squared formula from F and dfs after clipping "
+                "negative implied values to zero. Tolerance = 0.01."
             ),
         )
     return output

@@ -6,7 +6,7 @@
       "pytacheck-extension"
     ],
     "coherence_tolerance": 0.01,
-    "notes": "Current R behavior wins over unreachable omega and d-rm branches."
+    "notes": "Current R behavior wins for R-labeled cases; partial omega coherence and spelled-out partial eta are explicit Pytacheck extensions."
   },
   "cases": [
     {
@@ -371,7 +371,7 @@
     },
     {
       "id": "omega_presence_only",
-      "oracle": "metacheck-r-current",
+      "oracle": "pytacheck-extension",
       "texts": [
         "The model was F(2, 151) = 1.00, ωp² = .00."
       ],
@@ -387,8 +387,8 @@
           {
             "test": "F-test",
             "es": "ωp² = .00",
-            "eta_coherence": "indeterminate",
-            "eta_coherence_assumption": "none"
+            "eta_coherence": "match_under_assumptions",
+            "eta_coherence_assumption": "partial_omega_squared"
           }
         ]
       }
