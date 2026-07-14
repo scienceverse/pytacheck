@@ -55,6 +55,32 @@ class NativeCheckRequest(BaseModel):
     render_html: StrictBool = False
 
 
+def _native_component_schemas() -> dict[str, dict[str, Any]]:
+    request_schema = NativeCheckRequest.model_json_schema(
+        ref_template="#/components/schemas/{model}"
+    )
+    raw_definitions = request_schema.pop("$defs", {})
+    definitions = {
+        name: definition
+        for name, definition in raw_definitions.items()
+        if isinstance(name, str) and isinstance(definition, dict)
+    }
+    definitions["NativeCheckRequest"] = request_schema
+    return definitions
+
+
+_NATIVE_COMPONENT_SCHEMAS = _native_component_schemas()
+
+
+class _PytacheckFastAPI(FastAPI):
+    def openapi(self) -> dict[str, Any]:
+        document = super().openapi()
+        component_schemas = document.setdefault("components", {}).setdefault("schemas", {})
+        for name, schema in _NATIVE_COMPONENT_SCHEMAS.items():
+            component_schemas.setdefault(name, schema)
+        return document
+
+
 class CompatibilityError(Exception):
     """An error that must retain the unboxed Plumber-compatible shape."""
 
@@ -266,7 +292,7 @@ def create_app(engine: CheckEngine | None = None) -> FastAPI:
     """
 
     active_engine = CheckEngine() if engine is None else engine
-    app = FastAPI(
+    app = _PytacheckFastAPI(
         title="Pytacheck API",
         version=__version__,
         description=(
@@ -415,7 +441,20 @@ def create_app(engine: CheckEngine | None = None) -> FastAPI:
             if form is not None:
                 await form.close()
 
-    @app.post("/v1/checks", response_model=CheckResponse)
+    @app.post(
+        "/v1/checks",
+        response_model=CheckResponse,
+        openapi_extra={
+            "requestBody": {
+                "required": True,
+                "content": {
+                    "application/json": {
+                        "schema": {"$ref": "#/components/schemas/NativeCheckRequest"}
+                    }
+                },
+            }
+        },
+    )
     async def native_checks(request: Request) -> CheckResponse | Response:
         try:
             payload = _parse_native_request(await _request_body_limited(request))

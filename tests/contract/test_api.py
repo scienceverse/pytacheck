@@ -148,6 +148,37 @@ def test_create_app_builds_an_engine_when_one_is_not_injected() -> None:
     constructor.assert_called_once_with()
 
 
+def test_openapi_publishes_typed_native_json_request_body() -> None:
+    engine, _ = make_engine()
+
+    with api_client(engine) as client:
+        response = client.get("/openapi.json")
+
+    assert response.status_code == 200
+    document = response.json()
+    request_body = document["paths"]["/v1/checks"]["post"]["requestBody"]
+    assert request_body["required"] is True
+    request_schema = request_body["content"]["application/json"]["schema"]
+    assert request_schema == {"$ref": "#/components/schemas/NativeCheckRequest"}
+
+    schemas = document["components"]["schemas"]
+    native_schema = schemas["NativeCheckRequest"]
+    assert native_schema["additionalProperties"] is False
+    assert native_schema["required"] == ["paper"]
+    assert set(native_schema["properties"]) == {"paper", "modules", "render_html"}
+    assert native_schema["properties"]["paper"] == {"$ref": "#/components/schemas/BibrPaper"}
+    modules_array = next(
+        option
+        for option in native_schema["properties"]["modules"]["anyOf"]
+        if option.get("type") == "array"
+    )
+    assert modules_array["items"] == {"type": "string"}
+    assert native_schema["properties"]["render_html"]["type"] == "boolean"
+    assert native_schema["properties"]["render_html"]["default"] is False
+    assert schemas["BibrPaper"]["required"] == ["paper_id"]
+    assert engine.check_calls == []
+
+
 def test_ready_requires_every_validated_default_module() -> None:
     ready_engine, _ = make_engine()
     calls: Counter[str] = Counter()
