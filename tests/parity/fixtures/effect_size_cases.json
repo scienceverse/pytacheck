@@ -597,6 +597,126 @@
           }
         ]
       }
+    },
+    {
+      "id": "generalized_eta_one_token",
+      "oracle": "metacheck-r-current",
+      "texts": [
+        "The omnibus test was F(1, 38) = 4.00, generalized_eta_squared = .095."
+      ],
+      "expected": {
+        "traffic_light": "green",
+        "summary": {
+          "ttests_with_es": 0,
+          "ttests_without_es": 0,
+          "Ftests_with_es": 1,
+          "Ftests_without_es": 0
+        },
+        "rows": [
+          {
+            "test": "F-test",
+            "es": "generalized_eta_squared = .095",
+            "eta_coherence": "indeterminate",
+            "eta_coherence_assumption": "eta_squared"
+          }
+        ]
+      }
+    },
+    {
+      "id": "superscript_cohens_f",
+      "oracle": "metacheck-r-current",
+      "texts": [
+        "The omnibus test was F(1, 38) = 4.00, f² = .095."
+      ],
+      "expected": {
+        "traffic_light": "green",
+        "summary": {
+          "ttests_with_es": 0,
+          "ttests_without_es": 0,
+          "Ftests_with_es": 1,
+          "Ftests_without_es": 0
+        },
+        "rows": [
+          {
+            "test": "F-test",
+            "es": "f² = .095",
+            "eta_coherence": "indeterminate",
+            "eta_coherence_assumption": "none"
+          }
+        ]
+      }
+    },
+    {
+      "id": "cohen_prefixed_unknown_effect",
+      "oracle": "metacheck-r-current",
+      "texts": [
+        "The contrast was t(38) = 2.00, Cohen's h = .63."
+      ],
+      "expected": {
+        "traffic_light": "green",
+        "summary": {
+          "ttests_with_es": 1,
+          "ttests_without_es": 0,
+          "Ftests_with_es": 0,
+          "Ftests_without_es": 0
+        },
+        "rows": [
+          {
+            "test": "t-test",
+            "es": "Cohen's h = .63",
+            "d_coherence": "indeterminate",
+            "d_coherence_assumption": "none"
+          }
+        ]
+      }
+    },
+    {
+      "id": "nonsignificant_d_value",
+      "oracle": "metacheck-r-current",
+      "texts": [
+        "The contrast was t(38) = 2.00, d = n.s."
+      ],
+      "expected": {
+        "traffic_light": "green",
+        "summary": {
+          "ttests_with_es": 1,
+          "ttests_without_es": 0,
+          "Ftests_with_es": 0,
+          "Ftests_without_es": 0
+        },
+        "rows": [
+          {
+            "test": "t-test",
+            "es": "d = n.s.",
+            "d_coherence": "indeterminate",
+            "d_coherence_assumption": "none"
+          }
+        ]
+      }
+    },
+    {
+      "id": "dotted_partial_eta_one_token",
+      "oracle": "metacheck-r-current",
+      "texts": [
+        "The omnibus test was F(1, 38) = 4.00, partial.eta.squared = .095."
+      ],
+      "expected": {
+        "traffic_light": "green",
+        "summary": {
+          "ttests_with_es": 0,
+          "ttests_without_es": 0,
+          "Ftests_with_es": 1,
+          "Ftests_without_es": 0
+        },
+        "rows": [
+          {
+            "test": "F-test",
+            "es": "partial.eta.squared = .095",
+            "eta_coherence": "match_under_assumptions",
+            "eta_coherence_assumption": "partial_eta_squared"
+          }
+        ]
+      }
     }
   ]
 }

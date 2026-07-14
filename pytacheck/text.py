@@ -15,17 +15,19 @@ _EXPONENT_PATTERN = re.compile(r"(?:e\s*-\s*|[x*]\s*10\s*\^\s*-\s*)(?P<exponent>
 _EQUATION_PATTERN = re.compile(
     r"(?<!\w)"
     r"(?P<lhs>"
-    r"Cohen[^\s]{0,2}\s+(?:d(?:z)?|f2?)|"
-    r"Hedge[^\s]{0,3}\s+g|"
     r"partial\s+eta\s+squared|"
-    r"d(?:_?(?:z|s|av|rm))?|"
-    r"(?:partial[_-]?|p)?(?:eta|omega)[\w².{}^\\-]*|"
-    r"(?:partial[_-]?|p)?[ηω][\w².{}^\\-]*|"
-    r"\d+%\s+CI|χ(?:2|²)|ξ|β|f2|[tFpgbr]"
+    r"(?:(?:Hedge.{0,3}|Cronbach.{0,2}|Cohen.{0,2}|\d{1,2}%)\s+)?"
+    r"[\u0370-\u03FF²a-zA-Z0-9_.{}^\\-]+"
     r")"
     r"\s*(?P<df>\([^()]*\))?\s*"
-    r"(?P<comp>[=<>~≈≠≤≥≪≫]{1,2})\s*"
-    r"(?P<rhs>\[[^\]\r\n]+\]|[+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][+-]?\d+)?)",
+    r"(?P<comp>[=<>~≈≠≤≥≪≫]{1,3})\s*"
+    r"(?P<rhs>"
+    r"\[[^\]\r\n]+\]|"
+    r"n\.?\s*s\.?|"
+    r"[+-]?(?:\d[\d,]*(?:\.\d*)?|\.\d+)"
+    r"(?:[eE]\s*[+-]?\s*\d+)?"
+    r"(?:\s*[x*]\s*10\s*\^\s*-\s*\d+)?"
+    r")",
     re.IGNORECASE,
 )
 _APA_WS = r"[ \t\r\n\f\v]?"
@@ -182,6 +184,8 @@ def extract_equations(
         group_id += 1
 
         for match in matches:
+            if re.fullmatch(r"[0-9]", match.group("lhs")) is not None:
+                continue
             result = _copy_row(row)
             result.update(
                 text=match.group(0),

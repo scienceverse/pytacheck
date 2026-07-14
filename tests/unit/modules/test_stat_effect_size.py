@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import tracemalloc
 from copy import deepcopy
 from dataclasses import replace
 from math import sqrt
@@ -8,11 +9,11 @@ from pathlib import Path
 from typing import Any, cast
 
 import pytest
-from pytacheck.modules.stat_effect_size import stat_effect_size
 
 from pytacheck.context import PaperContext
 from pytacheck.models import BibrPaper
 from pytacheck.modules.base import MODULE_REGISTRY, ModuleMetadata
+from pytacheck.modules.stat_effect_size import stat_effect_size
 
 FIXTURE_PATH = Path(__file__).parents[2] / "parity" / "fixtures" / "effect_size_cases.json"
 FIXTURE = cast(dict[str, Any], json.loads(FIXTURE_PATH.read_text(encoding="utf-8")))
@@ -141,7 +142,7 @@ def test_fixture_has_explicit_and_complete_oracle_provenance() -> None:
     assert ORACLE["source"] == "metacheck/inst/modules/stat_effect_size.R"
     assert ORACLE["labels"] == ["metacheck-r-current", "pytacheck-extension"]
     assert ORACLE["coherence_tolerance"] == 0.01
-    assert len(CASES) == 24
+    assert len(CASES) == 29
     assert len(CASES_BY_ID) == len(CASES)
 
     required_ids = {
@@ -169,6 +170,11 @@ def test_fixture_has_explicit_and_complete_oracle_provenance() -> None:
         "non_equal_comparator_is_indeterminate",
         "wrong_family_still_counts_as_present",
         "spelled_out_partial_eta",
+        "generalized_eta_one_token",
+        "superscript_cohens_f",
+        "cohen_prefixed_unknown_effect",
+        "nonsignificant_d_value",
+        "dotted_partial_eta_one_token",
     }
     assert required_ids == CASES_BY_ID.keys()
 
@@ -240,6 +246,28 @@ def test_t_formulas_and_assumption_precedence_match_upstream() -> None:
     assert float(cast(str, unequal["d_implied_indep_unequal_max"])) >= 0.68
     assert unequal["d_coherence_assumption"] == "independent_unequal_n_range"
     assert unequal["d_implied_n"] == "n1 = 16, n2 = 24, N = 40"
+
+
+def test_high_df_unequal_n_match_uses_bounded_memory_and_preserves_first_tie() -> None:
+    df = 200_000
+    total_n = df + 2
+    expected_n1 = 1_000
+    expected_n2 = total_n - expected_n1
+    t_value = 100.0
+    reported_d = t_value * sqrt(1 / expected_n1 + 1 / expected_n2)
+    context = context_for(f"t({df}) = {t_value:.2f}, d = {reported_d:.15g}.")
+
+    tracemalloc.start()
+    try:
+        result = stat_effect_size(context)
+        _, peak_bytes = tracemalloc.get_traced_memory()
+    finally:
+        tracemalloc.stop()
+
+    row = result.table[0]
+    assert row["d_coherence_assumption"] == "independent_unequal_n_range"
+    assert row["d_implied_n"] == (f"n1 = {expected_n1}, n2 = {expected_n2}, N = {total_n}")
+    assert peak_bytes < 2_000_000
 
 
 def test_d_tolerance_is_inclusive_and_values_just_beyond_it_do_not_match() -> None:
@@ -430,6 +458,22 @@ def test_core_summary_and_report_messages_follow_traffic_state() -> None:
     )
     assert no_match.summary_text == NO_MATCH_MESSAGE
     assert "All tests had effect sizes" in no_match.report
+
+
+def test_report_detail_table_includes_assumptions_and_notes() -> None:
+    result = stat_effect_size(
+        context_for(
+            "The contrast was t(48) = 2.00, d = .57.",
+            "The omnibus test was F(1, 38) = 4.00, ηp² = .095.",
+        )
+    )
+
+    assert "| d Coherence | d Assumption | d Coherence Note |" in result.report
+    assert "| eta Coherence | eta Assumption | eta Coherence Note |" in result.report
+    assert "independent_equal_n" in result.report
+    assert "partial_eta_squared" in result.report
+    assert "Match under independent-samples equal-n assumption" in result.report
+    assert "Match under partial eta-squared formula" in result.report
 
 
 def test_empty_text_paper_retains_original_id_in_null_summary() -> None:

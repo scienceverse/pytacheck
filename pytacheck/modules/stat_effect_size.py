@@ -106,6 +106,37 @@ def _empty_d_coherence() -> dict[str, Any]:
     }
 
 
+def _unequal_d(abs_t: float, n1: int, n_total: int) -> float:
+    n2 = n_total - n1
+    return abs_t * math.sqrt(1 / n1 + 1 / n2)
+
+
+def _closest_unequal_split(abs_t: float, n_total: int, reported_d: float) -> int:
+    """Return R's first closest n1 without materializing every possible split."""
+    half = n_total // 2
+    if abs_t == 0:
+        return 2
+
+    minimum = _unequal_d(abs_t, half, n_total)
+    maximum = _unequal_d(abs_t, 2, n_total)
+    if reported_d <= minimum:
+        return half
+    if reported_d >= maximum:
+        return 2
+
+    squared_ratio = (reported_d / abs_t) ** 2
+    discriminant = max(0.0, n_total**2 - 4 * n_total / squared_ratio)
+    root = (2 * n_total / squared_ratio) / (n_total + math.sqrt(discriminant))
+    center = math.floor(root)
+    candidates = {2, half}
+    for offset in range(-2, 3):
+        candidates.add(min(half, max(2, center + offset)))
+    return min(
+        candidates,
+        key=lambda n1: (abs(_unequal_d(abs_t, n1, n_total) - reported_d), n1),
+    )
+
+
 def _classify_d(test: str, test_text: str, effect_text: str | None) -> dict[str, Any]:
     output = _empty_d_coherence()
     if test != "t-test":
@@ -162,19 +193,11 @@ def _classify_d(test: str, test_text: str, effect_text: str | None) -> dict[str,
         and n_total_float >= 4
     )
     n_total = int(round(n_total_float))
-    n1_values: list[int] = []
-    n2_values: list[int] = []
-    d_unequal_values: list[float] = []
     d_unequal_min: float | None = None
     d_unequal_max: float | None = None
     if use_unequal:
-        n1_values = list(range(2, n_total - 1))
-        n2_values = [n_total - n1 for n1 in n1_values]
-        d_unequal_values = [
-            abs_t * math.sqrt(1 / n1 + 1 / n2) for n1, n2 in zip(n1_values, n2_values, strict=True)
-        ]
-        d_unequal_min = min(d_unequal_values)
-        d_unequal_max = max(d_unequal_values)
+        d_unequal_min = _unequal_d(abs_t, n_total // 2, n_total)
+        d_unequal_max = _unequal_d(abs_t, 2, n_total)
         output.update(
             d_implied_indep_unequal_min=_r_number(d_unequal_min),
             d_implied_indep_unequal_max=_r_number(d_unequal_max),
@@ -221,11 +244,9 @@ def _classify_d(test: str, test_text: str, effect_text: str | None) -> dict[str,
             for value in absolute_reported
             if d_unequal_min - _TOLERANCE <= value <= d_unequal_max + _TOLERANCE
         )
-        best_index = min(
-            range(len(d_unequal_values)),
-            key=lambda index: abs(d_unequal_values[index] - matching_d),
-        )
-        implied_n = f"n1 = {n1_values[best_index]}, n2 = {n2_values[best_index]}, N = {n_total}"
+        best_n1 = _closest_unequal_split(abs_t, n_total, matching_d)
+        best_n2 = n_total - best_n1
+        implied_n = f"n1 = {best_n1}, n2 = {best_n2}, N = {n_total}"
         output.update(
             d_implied_n=implied_n,
             d_coherence="match_under_assumptions",
@@ -468,14 +489,26 @@ def _escape_cell(value: object) -> str:
 
 def _detail_table(rows: list[dict[str, Any]]) -> str:
     body = [
-        "| Sentence | Effect Size | Reported Test | Test Type | d Coherence | eta Coherence |",
-        "| --- | --- | --- | --- | --- | --- |",
+        "| Sentence | Effect Size | Reported Test | Test Type | d Coherence | d Assumption | "
+        "d Coherence Note | eta Coherence | eta Assumption | eta Coherence Note |",
+        "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |",
     ]
     body.extend(
         "| "
         + " | ".join(
             _escape_cell(row.get(field))
-            for field in ("text", "es", "test_text", "test", "d_coherence", "eta_coherence")
+            for field in (
+                "text",
+                "es",
+                "test_text",
+                "test",
+                "d_coherence",
+                "d_coherence_assumption",
+                "d_coherence_note",
+                "eta_coherence",
+                "eta_coherence_assumption",
+                "eta_coherence_note",
+            )
         )
         + " |"
         for row in rows

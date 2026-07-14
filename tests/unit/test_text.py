@@ -172,6 +172,24 @@ def test_extract_equations_covers_upstream_effect_size_lhs_in_source_order() -> 
     assert all(row["grp_id"] == 1 for row in result)
 
 
+def test_extract_equations_covers_canonical_one_token_prefix_superscript_and_ns_forms() -> None:
+    text = (
+        "generalized_eta_squared = .095; f² = .095; Cohen's h = .63; "
+        "d = n.s.; partial.eta.squared = .095."
+    )
+
+    result = extract_equations((_row(text),))
+
+    assert [(row["lhs"], row["rhs"]) for row in result] == [
+        ("generalized_eta_squared", ".095"),
+        ("f²", ".095"),
+        ("Cohen's h", ".63"),
+        ("d", "n.s."),
+        ("partial.eta.squared", ".095"),
+    ]
+    assert all(row["expanded"] == text for row in result)
+
+
 def test_extract_equations_preserves_original_test_label_case_for_module_labeling() -> None:
     text = "T(20) = 2.00; f(1, 20) = 4.00; d = .50."
 
