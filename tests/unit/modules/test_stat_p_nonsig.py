@@ -93,6 +93,20 @@ def test_exact_alpha_with_equal_or_less_than_is_significant() -> None:
     assert result.traffic_light == "green"
 
 
+def test_invalid_probability_above_one_is_not_called_nonsignificant() -> None:
+    result = stat_p_nonsig(context_for("The malformed report was p = 1.2."))
+
+    assert result.table == []
+    assert result.summary_table == [{"paper_id": "test", "n_nonsignificant": 0}]
+
+
+def test_private_match_metadata_is_removed_from_public_nonsignificant_rows() -> None:
+    result = stat_p_nonsig(context_for("The result was p > .05."))
+
+    assert len(result.table) == 1
+    assert not any(key.startswith("_") for key in result.table[0])
+
+
 def test_non_numeric_above_alpha_and_unsupported_comparators_are_yellow() -> None:
     result = stat_p_nonsig(context_for("The tests gave p = .051, p > .05, p = n.s., and p ≠ .01."))
 
@@ -132,7 +146,6 @@ def test_result_preserves_expansion_location_and_source_context() -> None:
     assert row["header"] == "Results"
     assert row["section_type"] == "results"
     assert row["page_number"] == 3
-    assert row["source_marker"] == "sentence-1"
     assert result.summary_table == [{"paper_id": "test", "n_nonsignificant": 1}]
     assert result.summary_text == (
         "We found 1 non-significant p value that should be checked for appropriate interpretation."

@@ -7,6 +7,7 @@ from unittest.mock import patch
 
 import pytest
 
+import pytacheck.engine as engine_module
 from pytacheck import __version__
 from pytacheck.context import PaperContext
 from pytacheck.engine import (
@@ -257,3 +258,114 @@ def test_engine_does_not_catch_base_exceptions() -> None:
 
     with pytest.raises(KeyboardInterrupt):
         engine.check(minimal_paper(), ["interrupted"])
+
+
+def test_repeated_source_amplification_returns_small_bounded_fail_results() -> None:
+    sentence = ("p = .5; " * 1_000).ljust(9_000, "x")
+    paper = BibrPaper.model_validate(
+        {
+            "paper_id": "amplification",
+            "text": [{"text": sentence, "text_id": 1, "paragraph_id": 1}],
+        }
+    )
+
+    response = CheckEngine().check(paper, ["stat_p_exact", "stat_p_nonsig"])
+    encoded = response.model_dump_json()
+
+    assert len(sentence) == 9_000
+    assert all(result.traffic_light == "fail" for result in response.results.values())
+    assert all(result.table == [] for result in response.results.values())
+    assert len(encoded) < 10_000
+
+
+def test_malformed_huge_exponent_does_not_break_unrelated_selected_module() -> None:
+    exponent = "9" * 5_000
+    paper = BibrPaper.model_validate(
+        {
+            "paper_id": "huge-exponent",
+            "text": [
+                {
+                    "text": f"The result was marginally significant, p = .1e-{exponent}.",
+                    "text_id": 1,
+                    "paragraph_id": 1,
+                }
+            ],
+        }
+    )
+
+    response = CheckEngine().check(paper, ["marginal"])
+
+    assert response.results["marginal"].traffic_light == "red"
+
+
+def test_mutating_failed_module_cannot_corrupt_later_module_context() -> None:
+    observed_text: list[str] = []
+
+    def mutating(context: PaperContext) -> ModuleResult:
+        context.sentences[0]["text"] = "corrupted"
+        return result("mutating")
+
+    def observing(context: PaperContext) -> ModuleResult:
+        observed_text.append(context.sentences[0]["text"])
+        return result("observing")
+
+    response = CheckEngine(registry={"mutating": mutating, "observing": observing}).check(
+        minimal_paper(), ["mutating", "observing"]
+    )
+
+    assert response.results["mutating"].traffic_light == "fail"
+    assert response.results["observing"].traffic_light == "green"
+    assert observed_text == ["A result was reported."]
+
+
+def test_generic_module_row_budget_replaces_oversized_result_with_bounded_fail() -> None:
+    def oversized(context: PaperContext) -> ModuleResult:
+        del context
+        module_result = result("oversized")
+        module_result.table = [
+            {"row": index} for index in range(engine_module.MAX_MODULE_RESULT_ROWS + 1)
+        ]
+        return module_result
+
+    response = CheckEngine(registry={"oversized": oversized}).check(minimal_paper(), ["oversized"])
+
+    assert response.results["oversized"].traffic_light == "fail"
+    assert response.results["oversized"].table == []
+    assert len(response.model_dump_json()) < 10_000
+
+
+def test_generic_module_byte_budget_counts_json_escaping_conservatively() -> None:
+    escaped_payload = '"' * ((engine_module.MAX_MODULE_RESULT_BYTES // 2) + 1_000)
+
+    def escape_heavy(context: PaperContext) -> ModuleResult:
+        del context
+        module_result = result("escape_heavy")
+        module_result.table = [{"payload": escaped_payload}]
+        return module_result
+
+    response = CheckEngine(registry={"escape_heavy": escape_heavy}).check(
+        minimal_paper(), ["escape_heavy"]
+    )
+
+    assert response.results["escape_heavy"].traffic_light == "fail"
+    assert response.results["escape_heavy"].table == []
+    assert len(response.model_dump_json()) < 10_000
+
+
+def test_generic_aggregate_budget_bounds_multiple_individually_legal_results() -> None:
+    payload_size = engine_module.MAX_MODULE_RESULT_BYTES // 2
+
+    def large(name: str) -> Callable[[PaperContext], ModuleResult]:
+        def module(context: PaperContext) -> ModuleResult:
+            del context
+            module_result = result(name)
+            module_result.table = [{"payload": "x" * payload_size}]
+            return module_result
+
+        return module
+
+    registry = {name: large(name) for name in ("first", "second", "third")}
+    response = CheckEngine(registry=registry).check(minimal_paper(), ["first", "second", "third"])
+
+    assert response.results["third"].traffic_light == "fail"
+    assert len(response.model_dump_json()) <= engine_module.MAX_AGGREGATE_RESULT_BYTES + 10_000

@@ -133,6 +133,14 @@ def _error_response(error: CompatibilityError) -> JSONResponse:
     return JSONResponse(status_code=error.status_code, content={"error": error.message})
 
 
+def _model_json_response(model: BaseModel) -> JSONResponse:
+    return JSONResponse(content=model.model_dump(mode="json"))
+
+
+async def _offloaded_model_response(model: BaseModel) -> JSONResponse:
+    return await anyio.to_thread.run_sync(_model_json_response, model)
+
+
 def _available_modules(engine: CheckEngine) -> list[str]:
     return sorted(engine._registry)
 
@@ -395,7 +403,7 @@ def create_app(engine: CheckEngine | None = None) -> FastAPI:
             selection = _validate_selection(active_engine, [raw_name])
             paper = await _uploaded_paper(form)
             response = await run_check(paper, selection)
-            return JSONResponse(content=response.results[selection[0]].model_dump(mode="json"))
+            return await _offloaded_model_response(response.results[selection[0]])
         except CompatibilityError as exc:
             return _error_response(exc)
         finally:
@@ -435,7 +443,7 @@ def create_app(engine: CheckEngine | None = None) -> FastAPI:
 
             # The compatibility `report` form field is accepted but intentionally ignored.
             response = await run_check(paper, selection)
-            return JSONResponse(content=response.model_dump(mode="json"))
+            return await _offloaded_model_response(response)
         except CompatibilityError as exc:
             return _error_response(exc)
         finally:
@@ -463,7 +471,8 @@ def create_app(engine: CheckEngine | None = None) -> FastAPI:
             selection = _native_selection(active_engine, payload.modules)
         except CompatibilityError as exc:
             return _error_response(exc)
-        return await run_check(payload.paper, selection)
+        response = await run_check(payload.paper, selection)
+        return await _offloaded_model_response(response)
 
     @app.get("/metrics")
     async def metrics() -> Response:

@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from copy import deepcopy
+from collections.abc import Mapping
 from typing import Any, TypeGuard
 
 from pytacheck.context import PaperContext
@@ -42,9 +42,23 @@ def _is_numeric(value: object) -> TypeGuard[int | float]:
     return isinstance(value, (int, float)) and not isinstance(value, bool)
 
 
-def _is_significant(row: dict[str, Any]) -> bool:
+def _is_valid_p(row: Mapping[str, Any]) -> bool:
+    marker = row.get("_p_valid")
+    if isinstance(marker, bool):
+        return marker
+    value = row.get("p_value")
+    if value is None:
+        return row.get("p_comp") == "ns"
+    return _is_numeric(value) and 0 <= value <= 1
+
+
+def _is_significant(row: Mapping[str, Any]) -> bool:
     value = row.get("p_value")
     return _is_numeric(value) and value <= 0.05 and row.get("p_comp") in {"=", "<"}
+
+
+def _public_row(row: Mapping[str, Any]) -> dict[str, Any]:
+    return {key: value for key, value in row.items() if not key.startswith("_")}
 
 
 def _escape_table_cell(value: object) -> str:
@@ -78,9 +92,9 @@ def _yellow_report(rows: list[dict[str, Any]]) -> str:
 def stat_p_nonsig(context: PaperContext) -> ModuleResult:
     table: list[dict[str, Any]] = []
     for cached_row in context.p_values:
-        if _is_significant(cached_row):
+        if not _is_valid_p(cached_row) or _is_significant(cached_row):
             continue
-        row = deepcopy(cached_row)
+        row = _public_row(cached_row)
         row["significance"] = "nonsignificant"
         table.append(row)
 

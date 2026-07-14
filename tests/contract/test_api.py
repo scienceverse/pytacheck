@@ -900,6 +900,56 @@ def test_legal_request_parsing_runs_off_the_event_loop_thread(
         assert native_parse_thread_ids == []
 
 
+@pytest.mark.parametrize(
+    "ingress",
+    ["compatibility_json", "native_json", "multipart", "paper_module"],
+)
+def test_success_response_encoding_runs_off_the_event_loop_thread(
+    ingress: str,
+    paper_payload: dict[str, Any],
+    paper_bytes: bytes,
+) -> None:
+    from fastapi.testclient import TestClient
+    from starlette.responses import JSONResponse as StarletteJSONResponse
+
+    engine, _ = make_engine()
+    app = create_app(engine)
+    event_loop_thread_ids: list[int] = []
+    render_thread_ids: list[int] = []
+    original_render = StarletteJSONResponse.render
+
+    def record_render(response: StarletteJSONResponse, content: Any) -> bytes:
+        render_thread_ids.append(threading.get_ident())
+        return original_render(response, content)
+
+    @app.middleware("http")
+    async def record_event_loop_thread(request: Any, call_next: Callable[[Any], Any]) -> Any:
+        event_loop_thread_ids.append(threading.get_ident())
+        return await call_next(request)
+
+    with patch.object(StarletteJSONResponse, "render", record_render), TestClient(app) as client:
+        if ingress == "compatibility_json":
+            response = client.post("/paper/check?modules=power", json=paper_payload)
+        elif ingress == "native_json":
+            response = client.post(
+                "/v1/checks",
+                json={"paper": paper_payload, "modules": ["power"]},
+            )
+        else:
+            endpoint = "/paper/module" if ingress == "paper_module" else "/paper/check"
+            form = {"name": "power"} if ingress == "paper_module" else {"modules": "power"}
+            response = client.post(
+                endpoint,
+                files={"file": ("paper.json", paper_bytes, "application/json")},
+                data=form,
+            )
+
+    assert response.status_code == 200
+    assert len(event_loop_thread_ids) == 1
+    assert len(render_thread_ids) == 1
+    assert render_thread_ids[0] != event_loop_thread_ids[0]
+
+
 def test_metrics_use_app_local_registry_bounded_labels_and_no_sensitive_values(
     paper_payload: dict[str, Any],
 ) -> None:

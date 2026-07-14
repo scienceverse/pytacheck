@@ -5,6 +5,18 @@ from collections.abc import Iterable, Mapping
 from copy import deepcopy
 from typing import Any
 
+MAX_SEARCH_RESULTS = 5_000
+MAX_EXTRACTED_ROWS = 5_000
+MAX_MATCHES_PER_SOURCE = 256
+MAX_REPEATED_SOURCE_CHARS = 1_000_000
+MAX_ASSEMBLED_PARAGRAPH_CHARS = 1_000_000
+MAX_P_EXPONENT_DIGITS = 4
+
+
+class ExtractionLimitError(ValueError):
+    """Raised when text extraction would amplify a paper beyond safe limits."""
+
+
 P_VALUE_PATTERN = re.compile(
     r"\bp-?(?:value)?\s*(?P<p_comp>[=<>~≈≠≤≥≪≫]{1,2})\s*"
     r"(?P<value>n\.?s\.?|\d?\.\d+)(?:\s*e\s*-\d+)?"
@@ -64,6 +76,26 @@ def _copy_row(row: Mapping[str, Any]) -> dict[str, Any]:
     return deepcopy(dict(row))
 
 
+def _check_result_budget(
+    *,
+    result_count: int,
+    source_match_count: int,
+    repeated_source_chars: int,
+    row_limit: int,
+) -> None:
+    if source_match_count > MAX_MATCHES_PER_SOURCE:
+        raise ExtractionLimitError(
+            f"Extraction per-source match limit exceeded ({MAX_MATCHES_PER_SOURCE})"
+        )
+    if result_count > row_limit:
+        raise ExtractionLimitError(f"Extraction row limit exceeded ({row_limit})")
+    if repeated_source_chars > MAX_REPEATED_SOURCE_CHARS:
+        raise ExtractionLimitError(
+            "Extraction repeated source text budget exceeded "
+            f"({MAX_REPEATED_SOURCE_CHARS} characters)"
+        )
+
+
 def _compile_pattern(pattern: str | re.Pattern[str], *, ignore_case: bool) -> re.Pattern[str]:
     if isinstance(pattern, re.Pattern):
         flags = pattern.flags
@@ -86,6 +118,7 @@ def search_rows(
 ) -> tuple[dict[str, Any], ...]:
     compiled = _compile_pattern(pattern, ignore_case=ignore_case)
     results: list[dict[str, Any]] = []
+    repeated_source_chars = 0
 
     for row in rows:
         if not _is_searchable(row):
@@ -94,13 +127,26 @@ def search_rows(
         if text is None:
             continue
 
-        matches = compiled.finditer(text)
         if return_matches:
-            for match in matches:
+            for source_match_count, match in enumerate(compiled.finditer(text), start=1):
+                repeated_source_chars += len(text)
+                _check_result_budget(
+                    result_count=len(results) + 1,
+                    source_match_count=source_match_count,
+                    repeated_source_chars=repeated_source_chars,
+                    row_limit=MAX_SEARCH_RESULTS,
+                )
                 result = _copy_row(row)
                 result["text"] = match.group(0)
                 results.append(result)
         elif compiled.search(text) is not None:
+            repeated_source_chars += len(text)
+            _check_result_budget(
+                result_count=len(results) + 1,
+                source_match_count=1,
+                repeated_source_chars=repeated_source_chars,
+                row_limit=MAX_SEARCH_RESULTS,
+            )
             results.append(_copy_row(row))
 
     return tuple(results)
@@ -111,16 +157,30 @@ def assemble_paragraphs(
 ) -> tuple[dict[str, Any], ...]:
     grouped: dict[tuple[Any, Any, Any], dict[str, Any]] = {}
     parts: dict[tuple[Any, Any, Any], list[str]] = {}
+    assembled_chars: dict[tuple[Any, Any, Any], int] = {}
 
     for row in rows:
         key = (row.get("paper_id"), row.get("section_id"), row.get("paragraph_id"))
         if key not in grouped:
+            if len(grouped) >= MAX_SEARCH_RESULTS:
+                raise ExtractionLimitError(
+                    f"Paragraph assembly row limit exceeded ({MAX_SEARCH_RESULTS})"
+                )
             grouped[key] = _copy_row(row)
             parts[key] = []
+            assembled_chars[key] = 0
 
         text = _row_text(row)
         if text:
+            separator_chars = 1 if parts[key] else 0
+            next_size = assembled_chars[key] + separator_chars + len(text)
+            if next_size > MAX_ASSEMBLED_PARAGRAPH_CHARS:
+                raise ExtractionLimitError(
+                    "Assembled paragraph text budget exceeded "
+                    f"({MAX_ASSEMBLED_PARAGRAPH_CHARS} characters)"
+                )
             parts[key].append(text)
+            assembled_chars[key] = next_size
 
     for key, paragraph in grouped.items():
         paragraph["text"] = " ".join(parts[key])
@@ -128,22 +188,41 @@ def assemble_paragraphs(
     return tuple(grouped.values())
 
 
-def _numeric_p_value(match: re.Match[str]) -> float | None:
+def _numeric_p_value(match: re.Match[str]) -> tuple[float | None, bool]:
     value = match.group("value")
     if value.replace(".", "").casefold() == "ns":
-        return None
+        return None, True
 
     numeric = float(value)
     exponent_match = _EXPONENT_PATTERN.search(match.group(0))
     if exponent_match is not None:
-        numeric *= 10 ** -int(exponent_match.group("exponent"))
-    return numeric
+        exponent = exponent_match.group("exponent")
+        if len(exponent) > MAX_P_EXPONENT_DIGITS:
+            return None, False
+        numeric *= 10 ** -int(exponent)
+    return numeric, 0 <= numeric <= 1
+
+
+def _lexical_zero(match: re.Match[str]) -> bool:
+    value = match.group("value")
+    digits = value.replace(".", "")
+    return bool(digits) and digits.isdigit() and set(digits) == {"0"}
+
+
+def _is_star_note(expanded: str, match: re.Match[str]) -> bool:
+    if match.group("p_comp") != "<":
+        return False
+    if re.fullmatch(r"0?\.0+[15]", match.group("value")) is None:
+        return False
+    prefix = expanded[max(0, match.start() - 16) : match.start()]
+    return re.search(r"\*\s*$", prefix) is not None
 
 
 def extract_p_values(
     rows: Iterable[Mapping[str, Any]],
 ) -> tuple[dict[str, Any], ...]:
     results: list[dict[str, Any]] = []
+    repeated_source_chars = 0
 
     for row in rows:
         if not _is_searchable(row):
@@ -152,13 +231,26 @@ def extract_p_values(
         if expanded is None:
             continue
 
-        for match in P_VALUE_PATTERN.finditer(expanded):
+        for source_match_count, match in enumerate(P_VALUE_PATTERN.finditer(expanded), start=1):
+            repeated_source_chars += len(expanded)
+            _check_result_budget(
+                result_count=len(results) + 1,
+                source_match_count=source_match_count,
+                repeated_source_chars=repeated_source_chars,
+                row_limit=MAX_EXTRACTED_ROWS,
+            )
+            p_value, p_valid = _numeric_p_value(match)
             result = _copy_row(row)
             result.update(
                 text=match.group(0),
                 expanded=expanded,
                 p_comp=match.group("p_comp"),
-                p_value=_numeric_p_value(match),
+                p_value=p_value,
+                _p_valid=p_valid,
+                _p_lexical_zero=_lexical_zero(match),
+                _star_note=_is_star_note(expanded, match),
+                _match_start=match.start(),
+                _match_end=match.end(),
             )
             results.append(result)
 
@@ -170,6 +262,7 @@ def extract_equations(
 ) -> tuple[dict[str, Any], ...]:
     results: list[dict[str, Any]] = []
     group_id = 0
+    repeated_source_chars = 0
 
     for row in rows:
         if not _is_searchable(row):
@@ -178,14 +271,22 @@ def extract_equations(
         if expanded is None:
             continue
 
-        matches = tuple(_EQUATION_PATTERN.finditer(expanded))
-        if not matches:
-            continue
-        group_id += 1
-
-        for match in matches:
+        source_match_count = 0
+        source_group_id: int | None = None
+        for match in _EQUATION_PATTERN.finditer(expanded):
             if re.fullmatch(r"[0-9]", match.group("lhs")) is not None:
                 continue
+            source_match_count += 1
+            repeated_source_chars += len(expanded)
+            _check_result_budget(
+                result_count=len(results) + 1,
+                source_match_count=source_match_count,
+                repeated_source_chars=repeated_source_chars,
+                row_limit=MAX_EXTRACTED_ROWS,
+            )
+            if source_group_id is None:
+                group_id += 1
+                source_group_id = group_id
             result = _copy_row(row)
             result.update(
                 text=match.group(0),
@@ -194,7 +295,7 @@ def extract_equations(
                 df=match.group("df"),
                 comp=match.group("comp"),
                 rhs=match.group("rhs"),
-                grp_id=group_id,
+                grp_id=source_group_id,
             )
             results.append(result)
 
@@ -222,6 +323,7 @@ def extract_apa_tests(
     rows: Iterable[Mapping[str, Any]],
 ) -> tuple[dict[str, Any], ...]:
     results: list[dict[str, Any]] = []
+    repeated_source_chars = 0
 
     for row in rows:
         if not _is_searchable(row):
@@ -230,9 +332,19 @@ def extract_apa_tests(
         if expanded is None:
             continue
 
+        source_match_count = 0
         for match in _APA_TEST_PATTERN.finditer(expanded):
             if re.search(r"[<>=]", match.group("stat_prefix")) is not None:
                 continue
+
+            source_match_count += 1
+            repeated_source_chars += len(expanded)
+            _check_result_budget(
+                result_count=len(results) + 1,
+                source_match_count=source_match_count,
+                repeated_source_chars=repeated_source_chars,
+                row_limit=MAX_EXTRACTED_ROWS,
+            )
 
             test_type = "t" if match.group("t_type") is not None else "F"
             if test_type == "t":
@@ -277,3 +389,20 @@ def extract_apa_tests(
             results.append(result)
 
     return tuple(results)
+
+
+__all__ = [
+    "MAX_ASSEMBLED_PARAGRAPH_CHARS",
+    "MAX_EXTRACTED_ROWS",
+    "MAX_MATCHES_PER_SOURCE",
+    "MAX_P_EXPONENT_DIGITS",
+    "MAX_REPEATED_SOURCE_CHARS",
+    "MAX_SEARCH_RESULTS",
+    "ExtractionLimitError",
+    "P_VALUE_PATTERN",
+    "assemble_paragraphs",
+    "extract_apa_tests",
+    "extract_equations",
+    "extract_p_values",
+    "search_rows",
+]

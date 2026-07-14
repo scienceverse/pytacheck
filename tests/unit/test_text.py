@@ -1,6 +1,9 @@
 from copy import deepcopy
 from typing import Any
 
+import pytest
+
+import pytacheck.text as text_module
 from pytacheck.text import (
     extract_apa_tests,
     extract_equations,
@@ -111,6 +114,44 @@ def test_extract_p_values_rejects_non_upstream_forms() -> None:
     text = "up = 0.05; p = stuff; p = -0.05; p less than 0.05; p = 12.05; P = .05"
 
     assert extract_p_values((_row(text),)) == ()
+
+
+def test_p_value_exponents_preserve_lexical_zero_and_reject_unbounded_tokens() -> None:
+    huge_exponent = "9" * 5_000
+    result = extract_p_values(
+        (_row(f"Tiny p = .1e-400; invalid p = 1.2; malformed p = .1e-{huge_exponent}."),)
+    )
+
+    assert [row["p_value"] for row in result] == [0.0, 1.2, None]
+    assert [row["_p_lexical_zero"] for row in result] == [False, False, False]
+    assert [row["_p_valid"] for row in result] == [True, False, False]
+
+
+def test_p_value_matches_retain_individual_star_and_position_metadata() -> None:
+    sentence = "Table note: * p < .05, while the result was p > .05."
+
+    result = extract_p_values((_row(sentence),))
+
+    assert [row["text"] for row in result] == ["p < .05", "p > .05"]
+    assert [row["_star_note"] for row in result] == [True, False]
+    assert [sentence[row["_match_start"] : row["_match_end"]] for row in result] == [
+        "p < .05",
+        "p > .05",
+    ]
+
+
+def test_extractor_repeated_source_budget_prevents_quadratic_expansion() -> None:
+    sentence = ("p = .5; " * 1_000).ljust(9_000, "x")
+
+    with pytest.raises(text_module.ExtractionLimitError, match="repeated source"):
+        extract_p_values((_row(sentence),))
+
+
+def test_search_match_budget_is_explicit_and_bounded() -> None:
+    matches = " ".join("hit" for _ in range(text_module.MAX_MATCHES_PER_SOURCE + 1))
+
+    with pytest.raises(text_module.ExtractionLimitError, match="per-source"):
+        search_rows((_row(matches),), "hit", return_matches=True)
 
 
 def test_extract_equations_groups_matches_by_sentence() -> None:

@@ -194,6 +194,39 @@ def test_starred_table_note_is_detected_but_not_flagged_as_imprecise() -> None:
     assert result.traffic_light == "green"
 
 
+def test_star_note_exemption_is_scoped_to_the_individual_match() -> None:
+    result = stat_p_exact(context_for("Table note: * p < .05, but the estimate was p > .05."))
+
+    assert [(row["text"], row["imprecise"]) for row in result.table] == [
+        ("p < .05", False),
+        ("p > .05", True),
+    ]
+    assert result.summary_table == [{"paper_id": "test", "n_imprecise": 1, "n_zero": 0}]
+    assert all(not any(key.startswith("_") for key in row) for row in result.table)
+
+
+def test_underflowed_nonzero_scientific_p_is_not_reported_as_exact_zero() -> None:
+    result = stat_p_exact(context_for("The tiny result was p = .1e-400."))
+
+    assert result.table[0]["p_value"] == 0.0
+    assert result.table[0]["zero"] is False
+    assert result.summary_table == [{"paper_id": "test", "n_imprecise": 0, "n_zero": 0}]
+    assert not any(key.startswith("_") for key in result.table[0])
+
+
+def test_invalid_probability_is_explicitly_flagged_and_treated_as_imprecise() -> None:
+    result = stat_p_exact(context_for("The malformed report was p = 1.2."))
+
+    assert result.table[0]["invalid"] is True
+    assert result.table[0]["imprecise"] is True
+    assert result.table[0]["zero"] is False
+    assert result.traffic_light == "red"
+    assert not any(key.startswith("_") for key in result.table[0])
+
+    valid = stat_p_exact(context_for("The result was p = .051."))
+    assert "invalid" not in valid.table[0]
+
+
 def test_mixed_values_preserve_rows_and_report_both_problem_counts() -> None:
     imprecise_sentence = "Imprecise p-value example (p < .05)."
     zero_sentence = "Zero p-value example (p = .000)."
@@ -220,7 +253,6 @@ def test_mixed_values_preserve_rows_and_report_both_problem_counts() -> None:
     assert result.table[0]["header"] == "Results"
     assert result.table[0]["section_type"] == "results"
     assert result.table[0]["page_number"] == 3
-    assert result.table[0]["source_marker"] == "sentence-1"
     assert result.summary_table == [{"paper_id": "test", "n_imprecise": 1, "n_zero": 1}]
     assert result.traffic_light == "red"
     assert result.summary_text == (
@@ -236,15 +268,14 @@ def test_mixed_values_preserve_rows_and_report_both_problem_counts() -> None:
 def test_repeated_calls_use_cached_p_values_without_mutating_or_rescanning() -> None:
     context = context_for("The result was p < .05.")
     cached_p_values = context.p_values
-    cached_p_values[0]["cached_only_marker"] = "precomputed-p-values"
+    with pytest.raises(TypeError, match="read-only"):
+        cached_p_values[0]["cached_only_marker"] = "precomputed-p-values"
     cached_snapshot = deepcopy(cached_p_values)
 
     first = stat_p_exact(context)
     second = stat_p_exact(context)
 
     assert first.model_dump(mode="json") == second.model_dump(mode="json")
-    assert first.table[0]["cached_only_marker"] == "precomputed-p-values"
-    assert second.table[0]["cached_only_marker"] == "precomputed-p-values"
     assert context.p_values is cached_p_values
     assert context.p_values == cached_snapshot
     assert "imprecise" not in context.p_values[0]

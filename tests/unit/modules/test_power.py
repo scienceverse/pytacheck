@@ -63,11 +63,9 @@ def test_power_is_registered_with_upstream_validated_method_metadata() -> None:
         name="power",
         title="Power Analysis Check",
         description=(
-            "This module uses uses regular expressions to identify sentences that contain a "
-            "statistical power analysis. If specified by the user, it also uses a large language "
-            "module (LLM) to extract information reported in power analyses, including the "
-            "statistical test, sample size, alpha level, desired level of power, and magnitude and "
-            "type of effect size."
+            "This module uses regular expressions only to identify text that may contain a "
+            "statistical power analysis. The Python production module does not call an LLM or "
+            "remote service."
         ),
         section="method",
         validated=True,
@@ -180,7 +178,6 @@ def test_downstream_whitespace_is_normalized_without_changing_returned_paragraph
     assert row["paragraph_id"] == 1
     assert row["section_id"] == 1
     assert row["page_number"] == 3
-    assert row["source_marker"] == "sentence-1"
 
 
 @pytest.mark.parametrize(
@@ -285,8 +282,6 @@ def test_match_preserves_assembled_paragraph_and_bibr_location_fields() -> None:
     assert row["paragraph_id"] == 1
     assert row["section_id"] == 1
     assert row["page_number"] == 3
-    assert row["coordinates"] == {"x": 10.0, "y": 20.0}
-    assert row["source_marker"] == "sentence-1"
     assert row["header"] == "Methods"
     assert row["section_type"] == "methods"
 
@@ -328,15 +323,14 @@ def test_repeated_calls_use_cached_paragraphs_without_mutating_or_rescanning() -
         "An a priori power analysis used 64 participants to achieve 80% power."
     )
     cached_paragraphs = context.paragraphs
-    cached_paragraphs[0]["cached_only_marker"] = "precomputed-paragraphs"
+    with pytest.raises(TypeError, match="read-only"):
+        cached_paragraphs[0]["cached_only_marker"] = "precomputed-paragraphs"
     cached_snapshot = deepcopy(cached_paragraphs)
 
     first = power(context)
     second = power(context)
 
     assert first.model_dump(mode="json") == second.model_dump(mode="json")
-    assert first.table[0]["cached_only_marker"] == "precomputed-paragraphs"
-    assert second.table[0]["cached_only_marker"] == "precomputed-paragraphs"
     assert context.paragraphs is cached_paragraphs
     assert context.paragraphs == cached_snapshot
     assert "power_type" not in context.paragraphs[0]

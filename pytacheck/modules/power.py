@@ -82,11 +82,9 @@ def _candidate_rows(context: PaperContext) -> list[dict[str, Any]]:
         name="power",
         title="Power Analysis Check",
         description=(
-            "This module uses uses regular expressions to identify sentences that contain a "
-            "statistical power analysis. If specified by the user, it also uses a large language "
-            "module (LLM) to extract information reported in power analyses, including the "
-            "statistical test, sample size, alpha level, desired level of power, and magnitude and "
-            "type of effect size."
+            "This module uses regular expressions only to identify text that may contain a "
+            "statistical power analysis. The Python production module does not call an LLM or "
+            "remote service."
         ),
         section="method",
         validated=True,

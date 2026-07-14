@@ -163,8 +163,6 @@ def test_match_preserves_sentence_and_bibr_location_fields() -> None:
             "paragraph_id": 1,
             "section_id": 1,
             "page_number": 3,
-            "coordinates": {"x": 10.0, "y": 20.0},
-            "source_marker": "sentence-1",
             "paper_id": "test",
             "header": "Results",
             "section_type": "results",

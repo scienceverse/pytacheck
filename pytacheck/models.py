@@ -9,6 +9,12 @@ from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 SUPPORTED_SCHEMA_MAJOR = 10
 LATEST_KNOWN_SCHEMA_MINOR = 6
+MAX_TEXT_CHARS = 200_000
+MAX_TEXT_RECORDS = 50_000
+MAX_SECTIONS = 10_000
+MAX_AUTHORS = 1_000
+MAX_REFERENCES = 100_000
+MAX_CROSS_REFERENCES = 250_000
 
 _SCHEMA_VERSION_PATTERN = re.compile(r"^(?P<major>\d+)(?:\.(?P<minor>\d+))?(?:\.\d+)*$")
 _LEGACY_SCHEMA_VERSION_PATTERN = re.compile(r"^10\.\d+$")
@@ -17,10 +23,12 @@ _LEGACY_SCHEMA_VERSION_PATTERN = re.compile(r"^10\.\d+$")
 class TextRecord(BaseModel):
     model_config = ConfigDict(extra="allow")
 
-    text: str
+    text: str = Field(max_length=MAX_TEXT_CHARS)
     text_id: int
     paragraph_id: int | None = None
     section_id: int | None = None
+    page_number: int | None = None
+    formatted: str | None = Field(default=None, max_length=MAX_TEXT_CHARS)
 
 
 class SectionRecord(BaseModel):
@@ -36,11 +44,14 @@ class BibrPaper(BaseModel):
 
     paper_id: str
     info: dict[str, Any] = Field(default_factory=dict)
-    text: list[TextRecord] = Field(default_factory=list)
-    section: list[SectionRecord] = Field(default_factory=list)
-    author: list[dict[str, Any]] = Field(default_factory=list)
-    bib: list[dict[str, Any]] = Field(default_factory=list)
-    xref: list[dict[str, Any]] = Field(default_factory=list)
+    text: list[TextRecord] = Field(default_factory=list, max_length=MAX_TEXT_RECORDS)
+    section: list[SectionRecord] = Field(default_factory=list, max_length=MAX_SECTIONS)
+    author: list[dict[str, Any]] = Field(default_factory=list, max_length=MAX_AUTHORS)
+    bib: list[dict[str, Any]] = Field(default_factory=list, max_length=MAX_REFERENCES)
+    xref: list[dict[str, Any]] = Field(
+        default_factory=list,
+        max_length=MAX_CROSS_REFERENCES,
+    )
 
     @model_validator(mode="before")
     @classmethod
@@ -57,7 +68,7 @@ class BibrPaper(BaseModel):
         else:
             return value
 
-        if "schema_version" not in info:
+        if info.get("schema_version") is None:
             legacy_version = info.get("bibr_version")
             if isinstance(legacy_version, str) and _LEGACY_SCHEMA_VERSION_PATTERN.fullmatch(
                 legacy_version
@@ -98,3 +109,18 @@ class BibrPaper(BaseModel):
     def schema_version(self) -> str | None:
         value = self.info.get("schema_version")
         return str(value) if value is not None else None
+
+
+__all__ = [
+    "LATEST_KNOWN_SCHEMA_MINOR",
+    "MAX_AUTHORS",
+    "MAX_CROSS_REFERENCES",
+    "MAX_REFERENCES",
+    "MAX_SECTIONS",
+    "MAX_TEXT_CHARS",
+    "MAX_TEXT_RECORDS",
+    "SUPPORTED_SCHEMA_MAJOR",
+    "BibrPaper",
+    "SectionRecord",
+    "TextRecord",
+]

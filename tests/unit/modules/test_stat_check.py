@@ -190,7 +190,7 @@ def test_nonvalidated_chi_square_cached_row_is_ignored() -> None:
     case = CASES_BY_ID["chi_square_ignored"]
     context = context_for_case(case)
     oracle_row = cast(list[dict[str, Any]], case["ignored_oracle_rows"])[0]
-    cached_row = deepcopy(context.sentences[0])
+    cached_row = deepcopy(dict(context.sentences[0]))
     cached_row.update(
         {
             "text": oracle_row["raw"],
@@ -238,11 +238,6 @@ def test_table_preserves_source_location_and_duplicate_rows() -> None:
         assert row["header"] == "Results"
         assert row["section_type"] == "results"
         assert row["page_number"] == source_index + 2
-        assert row["coordinates"] == {
-            "x": source_index * 10.0,
-            "y": source_index * 20.0,
-        }
-        assert row["source_marker"] == f"sentence-{source_index}"
         assert row["text"] == texts[source_index - 1]
         assert row["raw"] == expected_row["raw"]
         assert row["expanded"] == texts[source_index - 1]
@@ -372,14 +367,14 @@ def test_green_red_and_plural_summaries_match_wrapper_behavior() -> None:
 def test_stat_check_does_not_mutate_cached_context_rows() -> None:
     context = context_for("The result was t(18) = 2.10, p = .050.")
     cached_rows = context.apa_tests
-    cached_rows[0]["cached_only_marker"] = "precomputed-apa-test"
+    with pytest.raises(TypeError, match="read-only"):
+        cached_rows[0]["cached_only_marker"] = "precomputed-apa-test"
     snapshot = deepcopy(cached_rows)
 
     first = stat_check(context)
     second = stat_check(context)
 
     assert first.model_dump(mode="json") == second.model_dump(mode="json")
-    assert first.table[0]["cached_only_marker"] == "precomputed-apa-test"
     assert context.apa_tests is cached_rows
     assert context.apa_tests == snapshot
     assert "computed_p" not in context.apa_tests[0]

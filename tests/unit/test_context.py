@@ -6,6 +6,7 @@ from typing import Any, cast
 import pytest
 from pydantic import ValidationError
 
+import pytacheck.models as models_module
 from pytacheck.context import PaperContext
 from pytacheck.models import BibrPaper
 
@@ -65,7 +66,7 @@ def test_unknown_bibr_fields_do_not_break_validation(golden_payload: dict[str, A
     assert paper.paper_id
     assert paper.model_extra is not None
     assert paper.model_extra["future_table"] == [{"new": "field"}]
-    assert context.sentences[0]["future_location"] == {"column": 2}
+    assert "future_location" not in context.sentences[0]
 
 
 def test_schema_version_is_preferred_over_producer_version() -> None:
@@ -89,6 +90,67 @@ def test_legacy_bibr_version_is_used_only_for_10_x() -> None:
     assert legacy.info["schema_version"] == "10.2"
     assert producer_only.schema_version is None
     assert "schema_version" not in producer_only.info
+
+
+def test_null_schema_version_falls_back_to_valid_legacy_bibr_version() -> None:
+    paper = BibrPaper.model_validate(
+        {
+            "paper_id": "legacy-null",
+            "info": {"schema_version": None, "bibr_version": "10.2"},
+        }
+    )
+
+    assert paper.schema_version == "10.2"
+    assert paper.info["schema_version"] == "10.2"
+
+
+def test_structural_text_and_list_limits_reject_pathological_papers() -> None:
+    with pytest.raises(ValidationError, match="string_too_long"):
+        BibrPaper.model_validate(
+            {
+                "paper_id": "long-text",
+                "text": [
+                    {
+                        "text": "x" * (models_module.MAX_TEXT_CHARS + 1),
+                        "text_id": 1,
+                    }
+                ],
+            }
+        )
+
+    with pytest.raises(ValidationError, match="too_long"):
+        BibrPaper.model_validate(
+            {
+                "paper_id": "many-authors",
+                "author": [{} for _ in range(models_module.MAX_AUTHORS + 1)],
+            }
+        )
+
+
+def test_context_rows_are_deeply_read_only_and_drop_unknown_text_extras() -> None:
+    paper = BibrPaper.model_validate(
+        {
+            "paper_id": "immutable",
+            "text": [
+                {
+                    "text": "The result was t(18) = 2.10, p = .050.",
+                    "text_id": 1,
+                    "paragraph_id": 1,
+                    "section_id": 1,
+                    "page_number": 3,
+                    "unknown_large_payload": {"nested": ["secret"]},
+                }
+            ],
+        }
+    )
+
+    context = PaperContext.from_paper(paper)
+
+    assert "unknown_large_payload" not in context.sentences[0]
+    with pytest.raises(TypeError):
+        context.sentences[0]["text"] = "corrupted"
+    with pytest.raises(TypeError):
+        context.apa_tests[0]["df"][0] = 999
 
 
 def test_newer_minor_schema_warns_but_validates() -> None:
@@ -153,7 +215,7 @@ def test_paragraphs_group_in_source_order_and_keep_first_location() -> None:
     assert paragraph["text"] == "First sentence. Second sentence."
     assert paragraph["text_id"] == 8
     assert paragraph["page_number"] == 2
-    assert paragraph["coordinates"] == {"x": 1}
+    assert "coordinates" not in paragraph
     assert paragraph["header"] == "Methods"
 
 
@@ -200,7 +262,9 @@ def test_context_rows_do_not_alias_the_pydantic_input() -> None:
     paper = BibrPaper.model_validate(deepcopy(payload))
     row = PaperContext.from_paper(paper).sentences[0]
 
-    row["metadata"]["nested"].append(2)
+    assert "metadata" not in row
+    with pytest.raises(TypeError, match="read-only"):
+        row["text"] = "changed"
 
     assert paper.text[0].model_extra is not None
     assert paper.text[0].model_extra["metadata"] == {"nested": [1]}

@@ -1,13 +1,10 @@
 from __future__ import annotations
 
-import re
-from copy import deepcopy
+from collections.abc import Mapping
 from typing import Any, TypeGuard
 
 from pytacheck.context import PaperContext
 from pytacheck.modules.base import ModuleMetadata, ModuleResult, TrafficLight, register_module
-
-_STAR_NOTE_PATTERN = re.compile(r"\*\s*p\s*<\s*0?\.0+[15]")
 
 _IMPRECISE_REPORT_TEXT = (
     "Reporting *p* values imprecisely (e.g., *p* < .05) reduces transparency, "
@@ -44,7 +41,9 @@ def _is_numeric(value: object) -> TypeGuard[int | float]:
     return isinstance(value, (int, float)) and not isinstance(value, bool)
 
 
-def _is_imprecise(row: dict[str, Any]) -> bool:
+def _is_imprecise(row: Mapping[str, Any]) -> bool:
+    if row.get("_p_valid") is False:
+        return True
     comparator = row.get("p_comp")
     value = row.get("p_value")
     imprecise = (
@@ -52,14 +51,20 @@ def _is_imprecise(row: dict[str, Any]) -> bool:
         or comparator not in {"=", "<"}
         or value is None
     )
-    expanded = row.get("expanded")
-    is_star_note = isinstance(expanded, str) and _STAR_NOTE_PATTERN.search(expanded) is not None
+    is_star_note = row.get("_star_note") is True
     return imprecise and not is_star_note
 
 
-def _is_zero(row: dict[str, Any]) -> bool:
+def _is_zero(row: Mapping[str, Any]) -> bool:
     value = row.get("p_value")
+    lexical_zero = row.get("_p_lexical_zero")
+    if isinstance(lexical_zero, bool):
+        return row.get("p_comp") == "=" and lexical_zero
     return row.get("p_comp") == "=" and _is_numeric(value) and value == 0
+
+
+def _public_row(row: Mapping[str, Any]) -> dict[str, Any]:
+    return {key: value for key, value in row.items() if not key.startswith("_")}
 
 
 def _plural(count: int) -> str:
@@ -121,9 +126,11 @@ def _red_report(
 def stat_p_exact(context: PaperContext) -> ModuleResult:
     table: list[dict[str, Any]] = []
     for cached_row in context.p_values:
-        row = deepcopy(cached_row)
-        row["imprecise"] = _is_imprecise(row)
-        row["zero"] = _is_zero(row)
+        row = _public_row(cached_row)
+        if cached_row.get("_p_valid") is False:
+            row["invalid"] = True
+        row["imprecise"] = _is_imprecise(cached_row)
+        row["zero"] = _is_zero(cached_row)
         table.append(row)
 
     imprecise_rows = [row for row in table if row["imprecise"]]

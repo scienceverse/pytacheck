@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import math
-from copy import deepcopy
+from collections.abc import Mapping, Sequence
 from typing import Any, TypeGuard
 
 from scipy.stats import f as f_distribution  # type: ignore[import-untyped]
@@ -46,9 +46,13 @@ def _compute_p(
     return float(f_distribution.sf(test_value, df1, df2))
 
 
-def _normalized_dfs(row: dict[str, Any]) -> tuple[int | float | None, int | float] | None:
+def _normalized_dfs(
+    row: Mapping[str, Any],
+) -> tuple[int | float | None, int | float] | None:
     degrees_of_freedom = row.get("df")
-    if not isinstance(degrees_of_freedom, list):
+    if not isinstance(degrees_of_freedom, Sequence) or isinstance(
+        degrees_of_freedom, (str, bytes, bytearray)
+    ):
         return None
 
     test_type = row.get("test_type")
@@ -171,7 +175,7 @@ def _is_decision_error(
     return False
 
 
-def _checked_row(cached_row: dict[str, Any]) -> dict[str, Any] | None:
+def _checked_row(cached_row: Mapping[str, Any]) -> dict[str, Any] | None:
     test_type = cached_row.get("test_type")
     if test_type not in {"t", "F"}:
         return None
@@ -227,7 +231,7 @@ def _checked_row(cached_row: dict[str, Any]) -> dict[str, Any] | None:
         p_comp=p_comp,
     )
 
-    row = deepcopy(cached_row)
+    row = dict(cached_row)
     for internal_name in (
         "statistic",
         "df",
@@ -237,6 +241,8 @@ def _checked_row(cached_row: dict[str, Any]) -> dict[str, Any] | None:
         "_p_decimals",
     ):
         row.pop(internal_name, None)
+    for internal_name in tuple(name for name in row if name.startswith("_")):
+        row.pop(internal_name)
     # R Metacheck's joined statcheck table uses ``text`` for the complete source
     # sentence while ``raw`` retains the exact APA token. Keep ``expanded`` as an
     # explicit alias for existing JSON consumers.
