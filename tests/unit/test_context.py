@@ -36,11 +36,23 @@ def test_supported_bibr_fixtures_validate(fixture_name: str, schema_version: str
 def test_context_joins_sections_and_adds_paper_id(golden_payload: dict[str, Any]) -> None:
     context = PaperContext.from_paper(BibrPaper.model_validate(golden_payload))
 
+    assert context.paper_id == golden_payload["paper_id"]
     first = context.sentences[0]
     assert first["paper_id"] == golden_payload["paper_id"]
     assert first["header"] == golden_payload["section"][0]["header"]
     assert first["section_type"] == "title"
     assert first["page_number"] == golden_payload["text"][0]["page_number"]
+
+
+def test_empty_context_retains_paper_id() -> None:
+    paper = BibrPaper.model_validate(
+        {"paper_id": "empty-context", "info": {"schema_version": "10.6"}}
+    )
+
+    context = PaperContext.from_paper(paper)
+
+    assert context.paper_id == "empty-context"
+    assert context.sentences == ()
 
 
 def test_unknown_bibr_fields_do_not_break_validation(golden_payload: dict[str, Any]) -> None:

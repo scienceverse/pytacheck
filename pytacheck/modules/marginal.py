@@ -41,11 +41,11 @@ def _paper_counts(
     table: list[dict[str, Any]],
 ) -> list[dict[str, Any]]:
     counts = Counter(row.get("paper_id") for row in table)
-    paper_ids = dict.fromkeys(row.get("paper_id") for row in context.sentences)
     return [
-        {"paper_id": paper_id, "marginal": counts[paper_id]}
-        for paper_id in paper_ids
-        if paper_id is not None
+        {
+            "paper_id": context.paper_id,
+            "marginal": counts[context.paper_id],
+        }
     ]
 
 

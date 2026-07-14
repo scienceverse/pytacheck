@@ -78,6 +78,17 @@ def test_no_relevant_text_is_green() -> None:
     )
 
 
+def test_empty_text_paper_has_one_zero_summary_row_with_original_id() -> None:
+    paper = BibrPaper.model_validate(
+        {"paper_id": "empty-marginal", "info": {"schema_version": "10.6"}}
+    )
+
+    result = marginal(PaperContext.from_paper(paper))
+
+    assert result.summary_table == [{"paper_id": "empty-marginal", "marginal": 0}]
+    assert result.traffic_light == "green"
+
+
 def test_upstream_marginal_and_approached_examples_are_red_and_counted() -> None:
     texts = (
         "This effect was marginally significant (p = .065).",

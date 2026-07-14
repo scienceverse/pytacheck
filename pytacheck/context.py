@@ -15,6 +15,7 @@ from pytacheck.text import (
 
 @dataclass(frozen=True, slots=True)
 class PaperContext:
+    paper_id: str
     sentences: tuple[dict[str, Any], ...]
     paragraphs: tuple[dict[str, Any], ...]
     p_values: tuple[dict[str, Any], ...]
@@ -37,6 +38,7 @@ class PaperContext:
         sentences = tuple(sentence_rows)
         paragraphs = assemble_paragraphs(sentences)
         return cls(
+            paper_id=paper.paper_id,
             sentences=sentences,
             paragraphs=paragraphs,
             p_values=extract_p_values(sentences),

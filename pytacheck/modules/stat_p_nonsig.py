@@ -47,15 +47,6 @@ def _is_significant(row: dict[str, Any]) -> bool:
     return _is_numeric(value) and value <= 0.05 and row.get("p_comp") in {"=", "<"}
 
 
-def _paper_id(context: PaperContext) -> str | None:
-    for rows in (context.p_values, context.sentences):
-        for row in rows:
-            paper_id = row.get("paper_id")
-            if isinstance(paper_id, str):
-                return paper_id
-    return None
-
-
 def _escape_table_cell(value: object) -> str:
     return str(value if value is not None else "").replace("|", r"\|").replace("\n", "<br>")
 
@@ -113,7 +104,7 @@ def stat_p_nonsig(context: PaperContext) -> ModuleResult:
         table=table,
         summary_table=[
             {
-                "paper_id": _paper_id(context),
+                "paper_id": context.paper_id,
                 "n_nonsignificant": count,
             }
         ],

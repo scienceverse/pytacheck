@@ -62,15 +62,6 @@ def _is_zero(row: dict[str, Any]) -> bool:
     return row.get("p_comp") == "=" and _is_numeric(value) and value == 0
 
 
-def _paper_id(context: PaperContext) -> str | None:
-    for rows in (context.p_values, context.sentences):
-        for row in rows:
-            paper_id = row.get("paper_id")
-            if isinstance(paper_id, str):
-                return paper_id
-    return None
-
-
 def _plural(count: int) -> str:
     return "" if count == 1 else "s"
 
@@ -79,7 +70,7 @@ def _escape_table_cell(value: object) -> str:
     return str(value if value is not None else "").replace("|", r"\|").replace("\n", "<br>")
 
 
-def _report_table(rows: list[dict[str, Any]]) -> str:
+def _unique_issue_rows(rows: list[dict[str, Any]]) -> list[tuple[object, object]]:
     unique_rows: list[tuple[object, object]] = []
     seen: set[tuple[str, str]] = set()
     for row in rows:
@@ -90,10 +81,13 @@ def _report_table(rows: list[dict[str, Any]]) -> str:
             continue
         seen.add(key)
         unique_rows.append((text, expanded))
+    return unique_rows
 
+
+def _report_table(rows: list[dict[str, Any]]) -> str:
     table_rows = [
         f"| {_escape_table_cell(text)} | {_escape_table_cell(expanded)} |"
-        for text, expanded in unique_rows
+        for text, expanded in _unique_issue_rows(rows)
     ]
     return "\n".join(["| P-Value | Text |", "| --- | --- |", *table_rows])
 
@@ -136,6 +130,8 @@ def stat_p_exact(context: PaperContext) -> ModuleResult:
     zero_rows = [row for row in table if row["zero"]]
     n_imprecise = len(imprecise_rows)
     n_zero = len(zero_rows)
+    n_unique_imprecise = len(_unique_issue_rows(imprecise_rows))
+    n_unique_zero = len(_unique_issue_rows(zero_rows))
     count = len(table)
 
     if count == 0:
@@ -153,9 +149,13 @@ def stat_p_exact(context: PaperContext) -> ModuleResult:
         traffic_light = "red"
         summary_parts: list[str] = []
         if n_imprecise:
-            summary_parts.append(f"{n_imprecise} imprecise *p* value{_plural(n_imprecise)}")
+            summary_parts.append(
+                f"{n_unique_imprecise} imprecise *p* value{_plural(n_unique_imprecise)}"
+            )
         if n_zero:
-            summary_parts.append(f"{n_zero} *p* value{_plural(n_zero)} reported as exactly zero")
+            summary_parts.append(
+                f"{n_unique_zero} *p* value{_plural(n_unique_zero)} reported as exactly zero"
+            )
         summary_text = (
             f"We found {' and '.join(summary_parts)} out of {count} detected "
             f"*p* value{_plural(count)}."
@@ -168,7 +168,7 @@ def stat_p_exact(context: PaperContext) -> ModuleResult:
         table=table,
         summary_table=[
             {
-                "paper_id": _paper_id(context),
+                "paper_id": context.paper_id,
                 "n_imprecise": n_imprecise,
                 "n_zero": n_zero,
             }

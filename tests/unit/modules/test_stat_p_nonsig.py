@@ -39,17 +39,20 @@ def context_for(*texts: str) -> PaperContext:
 
 
 def test_stat_p_nonsig_is_registered_with_validated_results_metadata() -> None:
-    metadata = stat_p_nonsig.__pytacheck_metadata__
-    entry = MODULE_REGISTRY["stat_p_nonsig"]
+    expected = ModuleMetadata(
+        name="stat_p_nonsig",
+        title="Non-Significant P Value Check",
+        description=(
+            "This module checks for imprecisely reported p values. If p > .05 is "
+            "detected, it warns for misinterpretations."
+        ),
+        section="results",
+        validated=True,
+    )
 
-    assert isinstance(metadata, ModuleMetadata)
-    assert metadata.name == "stat_p_nonsig"
-    assert metadata.title == "Non-Significant P Value Check"
-    assert metadata.description
-    assert metadata.section == "results"
-    assert metadata.validated is True
-    assert entry.metadata == metadata
-    assert entry.function is stat_p_nonsig
+    assert stat_p_nonsig.__pytacheck_metadata__ == expected
+    assert MODULE_REGISTRY["stat_p_nonsig"].metadata == expected
+    assert MODULE_REGISTRY["stat_p_nonsig"].function is stat_p_nonsig
 
 
 @pytest.mark.parametrize(
@@ -69,6 +72,17 @@ def test_no_p_or_only_significant_p_values_is_green(text: str) -> None:
     assert result.traffic_light == "green"
     assert result.summary_text == "We detected no nonsignificant p values."
     assert result.report == result.summary_text
+
+
+def test_empty_text_paper_has_one_zero_summary_row_with_original_id() -> None:
+    paper = BibrPaper.model_validate(
+        {"paper_id": "empty-nonsig", "info": {"schema_version": "10.6"}}
+    )
+
+    result = stat_p_nonsig(PaperContext.from_paper(paper))
+
+    assert result.summary_table == [{"paper_id": "empty-nonsig", "n_nonsignificant": 0}]
+    assert result.traffic_light == "green"
 
 
 def test_exact_alpha_with_equal_or_less_than_is_significant() -> None:

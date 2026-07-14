@@ -3,11 +3,11 @@ from __future__ import annotations
 from copy import deepcopy
 
 import pytest
-from pytacheck.modules.stat_p_exact import stat_p_exact
 
 from pytacheck.context import PaperContext
 from pytacheck.models import BibrPaper
 from pytacheck.modules.base import MODULE_REGISTRY, ModuleMetadata
+from pytacheck.modules.stat_p_exact import stat_p_exact
 
 
 def context_for(*texts: str) -> PaperContext:
@@ -39,17 +39,20 @@ def context_for(*texts: str) -> PaperContext:
 
 
 def test_stat_p_exact_is_registered_with_validated_results_metadata() -> None:
-    metadata = stat_p_exact.__pytacheck_metadata__
-    entry = MODULE_REGISTRY["stat_p_exact"]
+    expected = ModuleMetadata(
+        name="stat_p_exact",
+        title="Exact P-Values",
+        description=(
+            "List any p-values reported with insufficient precision (e.g., p < .05 or "
+            "p = n.s.) or reported as exactly zero (e.g., p = .000)."
+        ),
+        section="results",
+        validated=True,
+    )
 
-    assert isinstance(metadata, ModuleMetadata)
-    assert metadata.name == "stat_p_exact"
-    assert metadata.title == "Exact P-Values"
-    assert metadata.description
-    assert metadata.section == "results"
-    assert metadata.validated is True
-    assert entry.metadata == metadata
-    assert entry.function is stat_p_exact
+    assert stat_p_exact.__pytacheck_metadata__ == expected
+    assert MODULE_REGISTRY["stat_p_exact"].metadata == expected
+    assert MODULE_REGISTRY["stat_p_exact"].function is stat_p_exact
 
 
 def test_no_detected_p_values_is_na() -> None:
@@ -62,6 +65,17 @@ def test_no_detected_p_values_is_na() -> None:
     assert result.traffic_light == "na"
     assert result.summary_text == "We detected no *p* values."
     assert result.report == result.summary_text
+
+
+def test_empty_text_paper_has_one_zero_summary_row_with_original_id() -> None:
+    paper = BibrPaper.model_validate(
+        {"paper_id": "empty-exact", "info": {"schema_version": "10.6"}}
+    )
+
+    result = stat_p_exact(PaperContext.from_paper(paper))
+
+    assert result.summary_table == [{"paper_id": "empty-exact", "n_imprecise": 0, "n_zero": 0}]
+    assert result.traffic_light == "na"
 
 
 def test_exact_values_and_thresholds_at_or_below_point_zero_zero_one_are_green() -> None:
@@ -141,6 +155,32 @@ def test_all_exact_zero_forms_are_flagged_separately_from_imprecision() -> None:
         "We found 3 *p* values reported as exactly zero out of 3 detected *p* values."
     )
     assert "*P* values are never exactly zero." in result.report
+
+
+def test_duplicate_imprecise_rows_use_unique_issue_count_in_summary_text() -> None:
+    first_sentence = "The first estimate was p < .05."
+    second_sentence = "The second estimate was p < .05."
+
+    result = stat_p_exact(context_for(first_sentence, first_sentence, second_sentence))
+
+    assert result.summary_table == [{"paper_id": "test", "n_imprecise": 3, "n_zero": 0}]
+    assert result.summary_text == ("We found 2 imprecise *p* values out of 3 detected *p* values.")
+    assert result.report.count(f"| p < .05 | {first_sentence} |") == 1
+    assert result.report.count(f"| p < .05 | {second_sentence} |") == 1
+
+
+def test_duplicate_zero_rows_use_unique_issue_count_in_summary_text() -> None:
+    first_sentence = "The first estimate was p = .000."
+    second_sentence = "The second estimate was p = .000."
+
+    result = stat_p_exact(context_for(first_sentence, first_sentence, second_sentence))
+
+    assert result.summary_table == [{"paper_id": "test", "n_imprecise": 0, "n_zero": 3}]
+    assert result.summary_text == (
+        "We found 2 *p* values reported as exactly zero out of 3 detected *p* values."
+    )
+    assert result.report.count(f"| p = .000 | {first_sentence} |") == 1
+    assert result.report.count(f"| p = .000 | {second_sentence} |") == 1
 
 
 def test_starred_table_note_is_detected_but_not_flagged_as_imprecise() -> None:
