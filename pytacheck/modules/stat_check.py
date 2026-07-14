@@ -185,9 +185,6 @@ def _checked_row(cached_row: dict[str, Any]) -> dict[str, Any] | None:
     df2 = _finite_float(df2_value)
     if df2 is None or (test_type == "F" and df1 is None):
         return None
-    if test_type == "F" and test_value < 0:
-        return None
-
     statistic_decimals = cached_row.get("_statistic_decimals")
     p_decimals = cached_row.get("_p_decimals")
     if not isinstance(statistic_decimals, int) or isinstance(statistic_decimals, bool):

@@ -7,11 +7,11 @@ from pathlib import Path
 from typing import Any, cast
 
 import pytest
-from pytacheck.modules.stat_check import stat_check
 
 from pytacheck.context import PaperContext
 from pytacheck.models import BibrPaper
 from pytacheck.modules.base import MODULE_REGISTRY, ModuleMetadata
+from pytacheck.modules.stat_check import stat_check
 
 FIXTURE_PATH = Path(__file__).parents[2] / "parity" / "fixtures" / "statcheck_cases.json"
 FIXTURE = cast(dict[str, Any], json.loads(FIXTURE_PATH.read_text(encoding="utf-8")))
@@ -96,7 +96,7 @@ def test_r_oracle_fixture_records_required_statcheck_1_5_0_cases() -> None:
     assert ORACLE["version"] == "1.5.0"
     assert ORACLE["validated_test_types"] == ["t", "F"]
     assert ORACLE["computed_p_abs_tolerance"] == 1e-12
-    assert len(CASES) == 34
+    assert len(CASES) == 40
 
     required_ids = {
         "consistent_t",
@@ -124,6 +124,12 @@ def test_r_oracle_fixture_records_required_statcheck_1_5_0_cases() -> None:
         "nonsignificant_shorthand",
         "scientific_p_literal",
         "multiple_matches_one_sentence",
+        "negative_f_retained",
+        "greater_equal_test_discarded",
+        "less_equal_test_discarded",
+        "malformed_scientific_e_ignored",
+        "malformed_scientific_e_minus_ignored",
+        "embedded_t_without_boundary",
     }
     assert required_ids <= CASES_BY_ID.keys()
 
@@ -290,6 +296,47 @@ def test_multiple_matches_in_one_sentence_remain_in_source_order() -> None:
     assert [row["test_type"] for row in result.table] == ["t", "F", "t"]
     assert [row["text_id"] for row in result.table] == [1, 1, 1]
     assert all(row["expanded"] == cast(list[str], case["texts"])[0] for row in result.table)
+
+
+def test_negative_f_is_retained_as_a_decision_error() -> None:
+    result = stat_check(context_for_case(CASES_BY_ID["negative_f_retained"]))
+
+    assert len(result.table) == 1
+    assert result.table[0]["test_value"] == -5.0
+    assert result.table[0]["computed_p"] == 1.0
+    assert result.table[0]["error"] is True
+    assert result.table[0]["decision_error"] is True
+    assert result.summary_table[0]["statcheck_found"] == 1
+
+
+@pytest.mark.parametrize(
+    "case_id",
+    ["greater_equal_test_discarded", "less_equal_test_discarded"],
+)
+def test_repeated_test_comparators_are_discarded(case_id: str) -> None:
+    context = context_for_case(CASES_BY_ID[case_id])
+
+    assert context.apa_tests == ()
+    assert stat_check(context).traffic_light == "na"
+
+
+@pytest.mark.parametrize(
+    "case_id",
+    ["malformed_scientific_e_ignored", "malformed_scientific_e_minus_ignored"],
+)
+def test_malformed_p_exponents_do_not_abort_paper_context(case_id: str) -> None:
+    context = context_for_case(CASES_BY_ID[case_id])
+    result = stat_check(context)
+
+    assert context.apa_tests == ()
+    assert result.table == []
+    assert result.traffic_light == "na"
+
+
+def test_r_boundary_behavior_extracts_t_embedded_after_a_word_character() -> None:
+    result = stat_check(context_for_case(CASES_BY_ID["embedded_t_without_boundary"]))
+
+    assert [row["raw"] for row in result.table] == ["t(18) = 2.10, p = .050"]
 
 
 def test_green_red_and_plural_summaries_match_wrapper_behavior() -> None:

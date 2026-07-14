@@ -1127,6 +1127,128 @@
           }
         ]
       }
+    },
+    {
+      "id": "negative_f_retained",
+      "texts": [
+        "F(2, 30) = -5.00, p = .013"
+      ],
+      "expected": {
+        "traffic_light": "red",
+        "counts": {
+          "statcheck_found": 1,
+          "statcheck_errors": 1,
+          "statcheck_decision_errors": 1
+        },
+        "table": [
+          {
+            "source_text_index": 1,
+            "test_type": "F",
+            "raw": "F(2, 30) = -5.00, p = .013",
+            "df1": 2,
+            "df2": 30,
+            "test_comp": "=",
+            "test_value": -5.0,
+            "p_comp": "=",
+            "reported_p": 0.013,
+            "computed_p": 1.0,
+            "error": true,
+            "decision_error": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "greater_equal_test_discarded",
+      "texts": [
+        "t(18) >= 2.10, p = .050"
+      ],
+      "expected": {
+        "traffic_light": "na",
+        "counts": {
+          "statcheck_found": 0,
+          "statcheck_errors": 0,
+          "statcheck_decision_errors": 0
+        },
+        "table": []
+      }
+    },
+    {
+      "id": "less_equal_test_discarded",
+      "texts": [
+        "t(18) <= 2.10, p = .050"
+      ],
+      "expected": {
+        "traffic_light": "na",
+        "counts": {
+          "statcheck_found": 0,
+          "statcheck_errors": 0,
+          "statcheck_decision_errors": 0
+        },
+        "table": []
+      }
+    },
+    {
+      "id": "malformed_scientific_e_ignored",
+      "texts": [
+        "t(20) = 4.23, p = .4e"
+      ],
+      "oracle_error": "missing value where TRUE/FALSE needed",
+      "expected": {
+        "traffic_light": "na",
+        "counts": {
+          "statcheck_found": 0,
+          "statcheck_errors": 0,
+          "statcheck_decision_errors": 0
+        },
+        "table": []
+      }
+    },
+    {
+      "id": "malformed_scientific_e_minus_ignored",
+      "texts": [
+        "t(20) = 4.23, p = .4e-"
+      ],
+      "oracle_error": "missing value where TRUE/FALSE needed",
+      "expected": {
+        "traffic_light": "na",
+        "counts": {
+          "statcheck_found": 0,
+          "statcheck_errors": 0,
+          "statcheck_decision_errors": 0
+        },
+        "table": []
+      }
+    },
+    {
+      "id": "embedded_t_without_boundary",
+      "texts": [
+        "xt(18) = 2.10, p = .050"
+      ],
+      "expected": {
+        "traffic_light": "green",
+        "counts": {
+          "statcheck_found": 1,
+          "statcheck_errors": 0,
+          "statcheck_decision_errors": 0
+        },
+        "table": [
+          {
+            "source_text_index": 1,
+            "test_type": "t",
+            "raw": "t(18) = 2.10, p = .050",
+            "df1": null,
+            "df2": 18,
+            "test_comp": "=",
+            "test_value": 2.1,
+            "p_comp": "=",
+            "reported_p": 0.05,
+            "computed_p": 0.0500904057095683,
+            "error": false,
+            "decision_error": false
+          }
+        ]
+      }
     }
   ]
 }

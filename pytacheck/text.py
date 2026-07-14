@@ -31,7 +31,7 @@ _EQUATION_PATTERN = re.compile(
 _APA_WS = r"[ \t\r\n\f\v]?"
 _APA_NUMBER = r"\d*,?\d*\.?\d+"
 _APA_TEST_PATTERN = re.compile(
-    rf"(?<!\w)(?:"
+    rf"(?:"
     rf"(?P<t_type>t){_APA_WS}\({_APA_WS}(?P<t_df>\d*\.?\d+){_APA_WS}\)"
     rf"|"
     rf"(?P<f_type>F){_APA_WS}\({_APA_WS}(?P<f_df1>I|l|\d*\.?\d+)"
@@ -227,6 +227,9 @@ def extract_apa_tests(
             continue
 
         for match in _APA_TEST_PATTERN.finditer(expanded):
+            if re.search(r"[<>=]", match.group("stat_prefix")) is not None:
+                continue
+
             test_type = "t" if match.group("t_type") is not None else "F"
             if test_type == "t":
                 degrees_of_freedom = [_number(match.group("t_df"))]
@@ -242,7 +245,10 @@ def extract_apa_tests(
                 p_decimals = None
             else:
                 p_comp = match.group("p_comp")
-                p_value = float(p_literal)
+                try:
+                    p_value = float(p_literal)
+                except ValueError:
+                    continue
                 p_decimals = _decimal_places(p_literal)
             if p_value is not None and p_value > 1:
                 continue
