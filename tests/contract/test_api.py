@@ -10,12 +10,13 @@ from unittest.mock import patch
 
 import pytest
 from prometheus_client.parser import text_string_to_metric_families
+from starlette.datastructures import FormData, UploadFile
+
+from pytacheck import __version__
 
 # Import the production boundary before importing FastAPI's test client. This keeps the
 # intended RED signal (the missing API module) distinct from optional test-client tooling.
 from pytacheck.api import MAX_UPLOAD_BYTES, create_app
-
-from pytacheck import __version__
 from pytacheck.context import PaperContext
 from pytacheck.engine import DEFAULT_MODULES, CheckEngine, CheckResponse
 from pytacheck.models import BibrPaper
@@ -432,6 +433,141 @@ def test_upload_limit_is_exactly_fifty_mebibytes_and_rejects_larger_body() -> No
     assert engine.check_calls == []
 
 
+def test_native_body_is_stream_limited_before_envelope_validation() -> None:
+    engine, _ = make_engine()
+    oversized_invalid_json = b"{" + (b"x" * MAX_UPLOAD_BYTES)
+
+    with api_client(engine) as client:
+        response = client.post(
+            "/v1/checks",
+            content=oversized_invalid_json,
+            headers={
+                "content-type": "application/json",
+                # The stream, not a caller-controlled header, is authoritative.
+                "content-length": "1",
+            },
+        )
+
+    assert_unboxed_error(response, 413, "50")
+    assert engine.check_calls == []
+
+
+def test_multipart_file_limit_is_enforced_before_oversize_bytes_are_spooled(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    engine, _ = make_engine()
+    written_bytes = 0
+    original_write = UploadFile.write
+
+    async def tracked_write(upload: UploadFile, data: bytes) -> None:
+        nonlocal written_bytes
+        written_bytes += len(data)
+        await original_write(upload, data)
+
+    monkeypatch.setattr("pytacheck.api.MAX_UPLOAD_BYTES", 128)
+    monkeypatch.setattr(UploadFile, "write", tracked_write)
+
+    with api_client(engine) as client:
+        response = client.post(
+            "/paper/check",
+            files={"file": ("oversized.json", b"x" * 129, "application/json")},
+        )
+
+    assert response.status_code == 413
+    assert written_bytes <= 128
+    assert engine.check_calls == []
+
+
+def test_multipart_parser_rejects_too_many_text_fields(paper_bytes: bytes) -> None:
+    engine, _ = make_engine()
+
+    with api_client(engine) as client:
+        response = client.post(
+            "/paper/check",
+            files=[
+                ("file", ("paper.json", paper_bytes, "application/json")),
+                ("modules", (None, "power")),
+                ("report", (None, "false")),
+                ("extra", (None, "not allowed")),
+            ],
+        )
+
+    assert_unboxed_error(response, 400, "fields")
+    assert engine.check_calls == []
+
+
+@pytest.mark.parametrize(
+    "extra_part",
+    [
+        ("unexpected", (None, "text")),
+        ("attachment", ("extra.json", b"{}", "application/json")),
+    ],
+)
+def test_multipart_rejects_unexpected_parts(
+    paper_bytes: bytes,
+    extra_part: tuple[str, tuple[Any, ...]],
+) -> None:
+    engine, _ = make_engine()
+
+    with api_client(engine) as client:
+        response = client.post(
+            "/paper/check",
+            files=[
+                ("file", ("paper.json", paper_bytes, "application/json")),
+                extra_part,
+            ],
+        )
+
+    assert_unboxed_error(response, 400)
+    assert engine.check_calls == []
+
+
+def test_multipart_parser_limits_text_field_bytes(paper_bytes: bytes) -> None:
+    engine, _ = make_engine()
+
+    with api_client(engine) as client:
+        response = client.post(
+            "/paper/check",
+            files={"file": ("paper.json", paper_bytes, "application/json")},
+            data={"modules": "x" * (64 * 1024 + 1)},
+        )
+
+    assert_unboxed_error(response, 400, "maximum")
+    assert engine.check_calls == []
+
+
+def test_multipart_form_and_files_close_when_prevalidation_fails(
+    paper_bytes: bytes,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    engine, _ = make_engine()
+    closed_forms: list[FormData] = []
+    closed_uploads: list[UploadFile] = []
+    original_close = FormData.close
+
+    async def tracked_close(form: FormData) -> None:
+        closed_forms.append(form)
+        closed_uploads.extend(
+            value for _, value in form.multi_items() if isinstance(value, UploadFile)
+        )
+        await original_close(form)
+
+    monkeypatch.setattr(FormData, "close", tracked_close)
+
+    with api_client(engine) as client:
+        response = client.post(
+            "/paper/check",
+            files={"file": ("paper.json", paper_bytes, "application/json")},
+            data={"modules": "missing"},
+        )
+
+    assert response.status_code == 400
+    assert len(closed_forms) == 1
+    assert len(closed_uploads) == 1
+    assert closed_uploads[0].file.closed is True
+    assert engine.check_calls == []
+
+
 @pytest.mark.parametrize(
     ("content", "content_type", "error_text"),
     [
@@ -455,6 +591,29 @@ def test_compatibility_decode_and_content_type_errors_are_unboxed(
         )
 
     assert_unboxed_error(response, 400, error_text)
+    assert engine.check_calls == []
+
+
+@pytest.mark.parametrize(
+    "pathological_json",
+    [
+        b'{"paper_id":"paper","info":{"number":' + (b"9" * 5_000) + b"}}",
+        (b"[" * 10_000) + b"0" + (b"]" * 10_000),
+    ],
+)
+def test_compatibility_pathological_json_errors_remain_unboxed_400(
+    pathological_json: bytes,
+) -> None:
+    engine, _ = make_engine()
+
+    with api_client(engine) as client:
+        response = client.post(
+            "/paper/check",
+            content=pathological_json,
+            headers={"content-type": "application/json"},
+        )
+
+    assert_unboxed_error(response, 400, "json")
     assert engine.check_calls == []
 
 
@@ -563,6 +722,21 @@ def test_native_envelope_shape_errors_remain_pydantic_422(
 
     with api_client(engine) as client:
         response = client.post("/v1/checks", json=invalid_envelope)
+
+    assert response.status_code == 422
+    assert "detail" in response.json()
+    assert engine.check_calls == []
+
+
+def test_native_malformed_json_remains_pydantic_422() -> None:
+    engine, _ = make_engine()
+
+    with api_client(engine) as client:
+        response = client.post(
+            "/v1/checks",
+            content=b"{not-json",
+            headers={"content-type": "application/json"},
+        )
 
     assert response.status_code == 422
     assert "detail" in response.json()
