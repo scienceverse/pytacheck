@@ -227,9 +227,9 @@ async def _multipart_form(request: Request) -> FormData:
         else:
             message = f"Invalid multipart form: {exc.message}"
         raise CompatibilityError(400, message) from exc
-    except Exception as exc:
+    except Exception:
         parser.close_files()
-        raise CompatibilityError(400, f"Invalid multipart form: {exc}") from exc
+        raise
 
 
 def _validate_form_parts(form: FormData, *, allowed_fields: frozenset[str]) -> None:
@@ -273,7 +273,7 @@ async def _uploaded_paper(form: FormData) -> BibrPaper:
 
     if len(raw) > MAX_UPLOAD_BYTES:
         raise CompatibilityError(413, "File too large. Maximum size is 50MB.")
-    return _parse_paper(raw)
+    return await anyio.to_thread.run_sync(_parse_paper, raw)
 
 
 def _request_outcome(status_code: int) -> str:
@@ -420,7 +420,8 @@ def create_app(engine: CheckEngine | None = None) -> FastAPI:
                 paper = await _uploaded_paper(form)
             elif media_type == "application/json" or media_type.endswith("+json"):
                 selection = _csv_selection(active_engine, request.query_params.get("modules"))
-                paper = _parse_paper(await _request_body_limited(request))
+                raw = await _request_body_limited(request)
+                paper = await anyio.to_thread.run_sync(_parse_paper, raw)
             elif not media_type and request.headers.get("content-length", "0") == "0":
                 raise CompatibilityError(
                     400,
@@ -457,7 +458,8 @@ def create_app(engine: CheckEngine | None = None) -> FastAPI:
     )
     async def native_checks(request: Request) -> CheckResponse | Response:
         try:
-            payload = _parse_native_request(await _request_body_limited(request))
+            raw = await _request_body_limited(request)
+            payload = await anyio.to_thread.run_sync(_parse_native_request, raw)
             selection = _native_selection(active_engine, payload.modules)
         except CompatibilityError as exc:
             return _error_response(exc)

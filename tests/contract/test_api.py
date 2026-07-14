@@ -599,6 +599,45 @@ def test_multipart_form_and_files_close_when_prevalidation_fails(
     assert engine.check_calls == []
 
 
+def test_unexpected_multipart_parser_failure_closes_spools_and_remains_a_500(
+    paper_bytes: bytes,
+) -> None:
+    from fastapi.testclient import TestClient
+
+    engine, _ = make_engine()
+    app = create_app(engine)
+
+    class FailingParser:
+        def __init__(self) -> None:
+            self.closed = False
+
+        async def parse(self) -> NoReturn:
+            raise RuntimeError("sensitive internal parser failure")
+
+        def close_files(self) -> None:
+            self.closed = True
+
+    parser = FailingParser()
+    with (
+        patch("pytacheck.api._BoundedMultiPartParser", return_value=parser),
+        TestClient(app, raise_server_exceptions=False) as client,
+    ):
+        response = client.post(
+            "/paper/check",
+            files={"file": ("paper.json", paper_bytes, "application/json")},
+        )
+        metrics = client.get("/metrics")
+
+    assert response.status_code == 500
+    assert "sensitive internal parser failure" not in response.text
+    assert parser.closed is True
+    assert engine.check_calls == []
+    assert (
+        'pytacheck_http_requests_total{endpoint="/paper/check",outcome="server_error"} 1.0'
+        in metrics.text
+    )
+
+
 @pytest.mark.parametrize(
     ("content", "content_type", "error_text"),
     [
@@ -796,6 +835,69 @@ def test_engine_check_runs_off_the_event_loop_thread(paper_payload: dict[str, An
     assert len(request_thread_ids) == 1
     assert len(engine.check_thread_ids) == 1
     assert engine.check_thread_ids[0] != request_thread_ids[0]
+
+
+@pytest.mark.parametrize("ingress", ["compatibility_json", "native_json", "multipart"])
+def test_legal_request_parsing_runs_off_the_event_loop_thread(
+    ingress: str,
+    paper_payload: dict[str, Any],
+    paper_bytes: bytes,
+) -> None:
+    from fastapi.testclient import TestClient
+
+    import pytacheck.api as api_module
+
+    engine, _ = make_engine()
+    app = create_app(engine)
+    event_loop_thread_ids: list[int] = []
+    paper_parse_thread_ids: list[int] = []
+    native_parse_thread_ids: list[int] = []
+    original_parse_paper = api_module._parse_paper
+    original_parse_native_request = api_module._parse_native_request
+
+    def record_paper_parse(raw: bytes) -> BibrPaper:
+        paper_parse_thread_ids.append(threading.get_ident())
+        return original_parse_paper(raw)
+
+    def record_native_parse(raw: bytes) -> api_module.NativeCheckRequest:
+        native_parse_thread_ids.append(threading.get_ident())
+        return original_parse_native_request(raw)
+
+    @app.middleware("http")
+    async def record_event_loop_thread(request: Any, call_next: Callable[[Any], Any]) -> Any:
+        event_loop_thread_ids.append(threading.get_ident())
+        return await call_next(request)
+
+    with (
+        patch.object(api_module, "_parse_paper", record_paper_parse),
+        patch.object(api_module, "_parse_native_request", record_native_parse),
+        TestClient(app) as client,
+    ):
+        if ingress == "compatibility_json":
+            response = client.post("/paper/check?modules=power", json=paper_payload)
+        elif ingress == "native_json":
+            response = client.post(
+                "/v1/checks",
+                json={"paper": paper_payload, "modules": ["power"]},
+            )
+        else:
+            response = client.post(
+                "/paper/check",
+                files={"file": ("paper.json", paper_bytes, "application/json")},
+                data={"modules": "power"},
+            )
+
+    assert response.status_code == 200
+    assert len(event_loop_thread_ids) == 1
+    parse_thread_ids = (
+        native_parse_thread_ids if ingress == "native_json" else paper_parse_thread_ids
+    )
+    assert len(parse_thread_ids) == 1
+    assert parse_thread_ids[0] != event_loop_thread_ids[0]
+    if ingress == "native_json":
+        assert paper_parse_thread_ids == []
+    else:
+        assert native_parse_thread_ids == []
 
 
 def test_metrics_use_app_local_registry_bounded_labels_and_no_sensitive_values(
