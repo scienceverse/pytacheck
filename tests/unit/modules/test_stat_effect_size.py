@@ -307,6 +307,57 @@ def test_invalid_or_nonfinite_inputs_are_red_without_nonfinite_output_strings(
     json.dumps(result.model_dump(mode="json"), allow_nan=False)
 
 
+def test_nonfinite_reported_d_is_invalid_even_when_df_indicates_welch() -> None:
+    result = stat_effect_size(context_for("t(97.2) = 1.96, d = 1e9999."))
+
+    row = result.table[0]
+    assert result.traffic_light == "red"
+    assert row["d_coherence"] == "no_match"
+    assert row["d_coherence_assumption"] == "none"
+    assert row["d_reported_text"] == "d = 1e9999"
+    assert "reported Cohen's d values must be finite" in cast(str, row["d_coherence_note"])
+
+
+@pytest.mark.parametrize("df", [2**53 - 2, 2**53 - 1])
+def test_t_df_rejects_exact_and_just_over_unsafe_total_n_boundaries(df: int) -> None:
+    result = stat_effect_size(context_for(f"t({df}) = 94906265.62425156, d = 2.00."))
+
+    row = result.table[0]
+    assert result.traffic_light == "red"
+    assert row["d_coherence"] == "no_match"
+    assert "exact supported" in cast(str, row["d_coherence_note"])
+    assert row["d_implied_n"] is None
+
+
+def test_arbitrarily_long_integer_df_is_rejected_before_integer_conversion() -> None:
+    huge_df = "9" * 5_000
+
+    result = stat_effect_size(context_for(f"t({huge_df}) = 1.96, d = .20."))
+
+    row = result.table[0]
+    assert result.traffic_light == "red"
+    assert row["d_coherence"] == "no_match"
+    assert "exact supported" in cast(str, row["d_coherence_note"])
+
+
+@pytest.mark.parametrize(
+    "text",
+    [
+        f"F({2**53}, 1) = 1.00, ηp² = 1.00.",
+        f"F({2**53 + 1}, 1) = 1.00, ηp² = 1.00.",
+        f"F(1, {2**53}) = 1.00, ηp² = .00.",
+        f"F(1, {2**53 + 1}) = 1.00, ηp² = .00.",
+    ],
+)
+def test_f_df_rejects_exact_and_just_over_unsafe_integer_boundaries(text: str) -> None:
+    result = stat_effect_size(context_for(text))
+
+    row = result.table[0]
+    assert result.traffic_light == "red"
+    assert row["eta_coherence"] == "no_match"
+    assert "exact supported" in cast(str, row["eta_coherence_note"])
+
+
 @pytest.mark.parametrize(
     "text",
     [

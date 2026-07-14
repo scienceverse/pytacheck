@@ -9,7 +9,7 @@ from pytacheck.context import PaperContext
 from pytacheck.modules.base import ModuleMetadata, ModuleResult, TrafficLight, register_module
 
 _TOLERANCE = 0.01
-_MAX_EXACT_TOTAL_N = 2**53
+_MAX_EXACT_INTEGER = 2**53 - 1
 _NUMBER = r"[-+]?(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][-+]?\d+)?"
 _INTEGER_F_DF_PATTERN = re.compile(r"^\(\s*[0-9]+\s*,\s*[0-9]+\s*\)$")
 _T_STAT_PATTERN = re.compile(
@@ -61,6 +61,19 @@ def _finite_number(raw: str) -> float | None:
     except (OverflowError, ValueError):
         return None
     return value if math.isfinite(value) else None
+
+
+def _integer_token_digits(raw: str) -> str | None:
+    match = re.fullmatch(r"(?P<digits>[0-9]+)(?:\.0+)?", raw)
+    return match.group("digits") if match is not None else None
+
+
+def _bounded_integer(digits: str, *, headroom: int = 0) -> int | None:
+    normalized = digits.lstrip("0") or "0"
+    bound = str(_MAX_EXACT_INTEGER - headroom)
+    if len(normalized) > len(bound) or (len(normalized) == len(bound) and normalized > bound):
+        return None
+    return int(normalized)
 
 
 def _invalid_d(output: dict[str, Any], note: str) -> dict[str, Any]:
@@ -193,21 +206,38 @@ def _classify_d(test: str, test_text: str, effect_text: str | None) -> dict[str,
         return output
 
     t_value = _finite_number(test_match.group("value"))
-    df = _finite_number(test_match.group("df"))
     if t_value is not None:
         output["t_value"] = _r_number(t_value)
-    if df is not None:
-        output["df"] = _r_number(df)
-    if t_value is None or df is None:
+    if t_value is None:
         return _invalid_d(output, "the statistic and degrees of freedom must be finite.")
-    if df <= 0:
-        return _invalid_d(output, "degrees of freedom must be greater than zero.")
-    if df + 2 > _MAX_EXACT_TOTAL_N:
-        return _invalid_d(
-            output, "degrees of freedom exceed the exact supported sample-size range."
-        )
 
-    if abs(df - round(df)) > 1e-8:
+    raw_df = test_match.group("df")
+    df_digits = _integer_token_digits(raw_df)
+    df: int | None = None
+    noninteger_df: float | None = None
+    if df_digits is not None:
+        df = _bounded_integer(df_digits, headroom=2)
+        if df is None:
+            return _invalid_d(
+                output, "degrees of freedom exceed the exact supported sample-size range."
+            )
+        output["df"] = str(df)
+    else:
+        noninteger_df = _finite_number(raw_df)
+        if noninteger_df is None:
+            return _invalid_d(output, "the statistic and degrees of freedom must be finite.")
+        output["df"] = _r_number(noninteger_df)
+
+    if (df is not None and df <= 0) or (noninteger_df is not None and noninteger_df <= 0):
+        return _invalid_d(output, "degrees of freedom must be greater than zero.")
+
+    parsed_reported = [_finite_number(match.group("value")) for match in d_matches]
+    if any(value is None for value in parsed_reported):
+        output["d_reported_text"] = d_matches[0].group(0)
+        return _invalid_d(output, "reported Cohen's d values must be finite.")
+    reported_values = [value for value in parsed_reported if value is not None]
+
+    if df is None:
         output.update(
             d_coherence="indeterminate",
             d_coherence_assumption="none",
@@ -230,13 +260,8 @@ def _classify_d(test: str, test_text: str, effect_text: str | None) -> dict[str,
         d_implied_indep_equal_n=_r_number(d_equal),
     )
 
-    n_total_float = df + 2
-    use_unequal = (
-        math.isfinite(n_total_float)
-        and abs(n_total_float - round(n_total_float)) < 1e-8
-        and n_total_float >= 4
-    )
-    n_total = int(round(n_total_float))
+    n_total = df + 2
+    use_unequal = n_total >= 4
     d_unequal_min: float | None = None
     d_unequal_max: float | None = None
     if use_unequal:
@@ -247,11 +272,6 @@ def _classify_d(test: str, test_text: str, effect_text: str | None) -> dict[str,
             d_implied_indep_unequal_max=_r_number(d_unequal_max),
         )
 
-    parsed_reported = [_finite_number(match.group("value")) for match in d_matches]
-    if any(value is None for value in parsed_reported):
-        output["d_reported_text"] = d_matches[0].group(0)
-        return _invalid_d(output, "reported Cohen's d values must be finite.")
-    reported_values = [value for value in parsed_reported if value is not None]
     absolute_reported = [abs(value) for value in reported_values]
     output["d_reported"] = _r_number(reported_values[0])
     output["d_reported_text"] = d_matches[0].group(0)
@@ -272,7 +292,7 @@ def _classify_d(test: str, test_text: str, effect_text: str | None) -> dict[str,
 
     if paired_match:
         output.update(
-            d_implied_n=f"n = {int(df + 1)}",
+            d_implied_n=f"n = {df + 1}",
             d_coherence="match_under_assumptions",
             d_coherence_assumption="paired_dz",
             d_coherence_note="Match under paired-samples dz assumption.",
@@ -375,23 +395,26 @@ def _classify_f(test: str, test_text: str, effect_text: str | None) -> dict[str,
         return output
 
     f_value = _finite_number(test_match.group("value"))
-    df1 = _finite_number(test_match.group("df1"))
-    df2 = _finite_number(test_match.group("df2"))
     output["f_reported_text"] = test_match.group(0)
     if f_value is not None:
         output["f_reported"] = _r_number(f_value)
-    if df1 is not None:
-        output["df1"] = _r_number(df1)
-    if df2 is not None:
-        output["df2"] = _r_number(df2)
-    if f_value is None or df1 is None or df2 is None:
+    if f_value is None:
         return _invalid_f(output, "the statistic and degrees of freedom must be finite.")
+
+    df1_digits = _integer_token_digits(test_match.group("df1"))
+    df2_digits = _integer_token_digits(test_match.group("df2"))
+    if df1_digits is None or df2_digits is None:
+        return _invalid_f(output, "degrees of freedom must be integer values.")
+    df1 = _bounded_integer(df1_digits)
+    df2 = _bounded_integer(df2_digits, headroom=1)
+    if df1 is None or df2 is None:
+        return _invalid_f(output, "degrees of freedom exceed the exact supported integer range.")
+    output["df1"] = str(df1)
+    output["df2"] = str(df2)
     if f_value < 0:
         return _invalid_f(output, "F statistics must be greater than or equal to zero.")
     if df1 <= 0 or df2 <= 0:
         return _invalid_f(output, "degrees of freedom must be greater than zero.")
-    if df1 > _MAX_EXACT_TOTAL_N or df2 > _MAX_EXACT_TOTAL_N:
-        return _invalid_f(output, "degrees of freedom exceed the exact supported integer range.")
 
     eta_implied = 0.0 if f_value == 0 else 1 / (1 + (df2 / df1) / f_value)
     omega_implied = (f_value - 1) / (f_value + (df2 + 1) / df1)
