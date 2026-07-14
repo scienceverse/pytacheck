@@ -7,6 +7,7 @@ from pytacheck.modules.base import (
     TrafficLight,
     register_module,
 )
+from pytacheck.modules.marginal import marginal
 
 __all__ = [
     "MODULE_REGISTRY",
@@ -15,5 +16,6 @@ __all__ = [
     "ModuleMetadata",
     "ModuleResult",
     "TrafficLight",
+    "marginal",
     "register_module",
 ]
