@@ -9,6 +9,7 @@ from pytacheck.modules.base import (
 )
 from pytacheck.modules.marginal import marginal
 from pytacheck.modules.stat_p_exact import stat_p_exact
+from pytacheck.modules.stat_p_nonsig import stat_p_nonsig
 
 __all__ = [
     "MODULE_REGISTRY",
@@ -20,4 +21,5 @@ __all__ = [
     "marginal",
     "register_module",
     "stat_p_exact",
+    "stat_p_nonsig",
 ]
