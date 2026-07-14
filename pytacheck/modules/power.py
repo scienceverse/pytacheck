@@ -30,6 +30,7 @@ _POWER_ANALYSIS_PATTERN = re.compile(
     re.IGNORECASE,
 )
 _NON_YEAR_NUMBER_PATTERN = re.compile(r"\b(?!\d{4}\b)\d+(?:[.,]\d+)?\b")
+_WHITESPACE_PATTERN = re.compile(r"\s+")
 
 _APRIORI_PATTERN = re.compile(r"a[- ]?priori", re.IGNORECASE)
 _SENSITIVITY_PATTERN = re.compile(r"sensitivity", re.IGNORECASE)
@@ -63,12 +64,13 @@ def _candidate_rows(context: PaperContext) -> list[dict[str, Any]]:
         text = row["text"]
         if not isinstance(text, str):
             continue
-        if _POWER_ANALYSIS_PATTERN.search(text) is None:
+        search_text = _WHITESPACE_PATTERN.sub(" ", text)
+        if _POWER_ANALYSIS_PATTERN.search(search_text) is None:
             continue
-        if _NON_YEAR_NUMBER_PATTERN.search(text) is None:
+        if _NON_YEAR_NUMBER_PATTERN.search(search_text) is None:
             continue
 
-        row["power_type"] = _power_type(text)
+        row["power_type"] = _power_type(search_text)
         row["complete"] = None
         row["power_id"] = len(candidates) + 1
         candidates.append(row)

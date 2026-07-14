@@ -160,6 +160,32 @@ def test_upstream_power_analysis_phrase_families_are_detected(text: str) -> None
 @pytest.mark.parametrize(
     ("text", "expected_type"),
     [
+        ("A power\nanalysis used 64 participants.", "unknown"),
+        ("An a\tpriori power analysis used 64 participants.", "apriori"),
+        ("A compromise   power analysis used 64 participants.", "compromise"),
+    ],
+    ids=("newline-detection", "tab-classification", "repeated-space-classification"),
+)
+def test_downstream_whitespace_is_normalized_without_changing_returned_paragraph(
+    text: str,
+    expected_type: str,
+) -> None:
+    result = power(context_for_paragraphs(text))
+
+    assert len(result.table) == 1
+    row = result.table[0]
+    assert row["power_type"] == expected_type
+    assert row["text"] == text
+    assert row["text_id"] == 1
+    assert row["paragraph_id"] == 1
+    assert row["section_id"] == 1
+    assert row["page_number"] == 3
+    assert row["source_marker"] == "sentence-1"
+
+
+@pytest.mark.parametrize(
+    ("text", "expected_type"),
+    [
         ("An a priori power analysis used 64 participants.", "apriori"),
         ("An a-priori power analysis used 64 participants.", "apriori"),
         ("A sensitivity power analysis considered 64 participants.", "sensitivity"),
