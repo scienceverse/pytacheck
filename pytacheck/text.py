@@ -15,11 +15,18 @@ _EXPONENT_PATTERN = re.compile(r"(?:e\s*-\s*|[x*]\s*10\s*\^\s*-\s*)(?P<exponent>
 _EQUATION_PATTERN = re.compile(
     r"(?<!\w)"
     r"(?P<lhs>"
-    r"Cohen(?:['’]s)\s+d|partial\s+eta\s+squared|\d+%\s+CI|χ(?:2|²)|[tFp]"
+    r"Cohen[^\s]{0,2}\s+(?:d(?:z)?|f2?)|"
+    r"Hedge[^\s]{0,3}\s+g|"
+    r"partial\s+eta\s+squared|"
+    r"d(?:_?(?:z|s|av|rm))?|"
+    r"(?:partial[_-]?|p)?(?:eta|omega)[\w².{}^\\-]*|"
+    r"(?:partial[_-]?|p)?[ηω][\w².{}^\\-]*|"
+    r"\d+%\s+CI|χ(?:2|²)|ξ|β|f2|[tFpgbr]"
     r")"
     r"\s*(?P<df>\([^()]*\))?\s*"
     r"(?P<comp>[=<>~≈≠≤≥≪≫]{1,2})\s*"
-    r"(?P<rhs>\[[^\]\r\n]+\]|[+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][+-]?\d+)?)"
+    r"(?P<rhs>\[[^\]\r\n]+\]|[+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][+-]?\d+)?)",
+    re.IGNORECASE,
 )
 _APA_WS = r"[ \t\r\n\f\v]?"
 _APA_NUMBER = r"\d*,?\d*\.?\d+"

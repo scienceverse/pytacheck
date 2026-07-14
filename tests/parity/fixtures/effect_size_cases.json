@@ -1,0 +1,602 @@
+{
+  "oracle": {
+    "source": "metacheck/inst/modules/stat_effect_size.R",
+    "labels": [
+      "metacheck-r-current",
+      "pytacheck-extension"
+    ],
+    "coherence_tolerance": 0.01,
+    "notes": "Current R behavior wins over unreachable omega and d-rm branches."
+  },
+  "cases": [
+    {
+      "id": "no_statistics",
+      "oracle": "metacheck-r-current",
+      "texts": [
+        "There are no stats."
+      ],
+      "expected": {
+        "traffic_light": "na",
+        "summary": {},
+        "rows": []
+      }
+    },
+    {
+      "id": "all_effect_sizes_missing",
+      "oracle": "metacheck-r-current",
+      "texts": [
+        "A was bigger than B, t(124) = 1.23, p = .013.",
+        "We also ran an ANOVA, F(1, 13) = 2.34, p = .23."
+      ],
+      "expected": {
+        "traffic_light": "red",
+        "summary": {
+          "ttests_with_es": 0,
+          "ttests_without_es": 1,
+          "Ftests_with_es": 0,
+          "Ftests_without_es": 1
+        },
+        "rows": [
+          {
+            "test": "t-test",
+            "test_text": "t(124) = 1.23",
+            "es": null
+          },
+          {
+            "test": "F-test",
+            "test_text": "F(1, 13) = 2.34",
+            "es": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "some_effect_sizes_missing",
+      "oracle": "metacheck-r-current",
+      "texts": [
+        "A was bigger than B, t(124) = 1.23, p = .013, d = .34.",
+        "We also ran an ANOVA, F(1, 13) = 2.34, p = .23."
+      ],
+      "expected": {
+        "traffic_light": "yellow",
+        "summary": {
+          "ttests_with_es": 1,
+          "ttests_without_es": 0,
+          "Ftests_with_es": 0,
+          "Ftests_without_es": 1
+        },
+        "rows": [
+          {
+            "test": "t-test",
+            "es": "d = .34",
+            "d_coherence": "match_under_assumptions"
+          },
+          {
+            "test": "F-test",
+            "es": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "no_match_precedes_partial_missing",
+      "oracle": "metacheck-r-current",
+      "texts": [
+        "The contrast was t(20) = 1.00, d = 3.00.",
+        "The omnibus test was F(1, 13) = 2.34."
+      ],
+      "expected": {
+        "traffic_light": "red",
+        "summary": {
+          "ttests_with_es": 1,
+          "ttests_without_es": 0,
+          "Ftests_with_es": 0,
+          "Ftests_without_es": 1
+        },
+        "rows": [
+          {
+            "test": "t-test",
+            "d_coherence": "no_match",
+            "d_coherence_assumption": "none"
+          },
+          {
+            "test": "F-test",
+            "es": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "paired_dz_match",
+      "oracle": "metacheck-r-current",
+      "texts": [
+        "The paired contrast was t(23) = 2.73, d = .56."
+      ],
+      "expected": {
+        "traffic_light": "green",
+        "summary": {
+          "ttests_with_es": 1,
+          "ttests_without_es": 0,
+          "Ftests_with_es": 0,
+          "Ftests_without_es": 0
+        },
+        "rows": [
+          {
+            "test": "t-test",
+            "test_text": "t(23) = 2.73",
+            "es": "d = .56",
+            "d_coherence": "match_under_assumptions",
+            "d_coherence_assumption": "paired_dz",
+            "d_implied_n": "n = 24"
+          }
+        ]
+      }
+    },
+    {
+      "id": "independent_equal_n_match",
+      "oracle": "metacheck-r-current",
+      "texts": [
+        "The independent contrast was t(48) = 2.00, d = .57."
+      ],
+      "expected": {
+        "traffic_light": "green",
+        "summary": {
+          "ttests_with_es": 1,
+          "ttests_without_es": 0,
+          "Ftests_with_es": 0,
+          "Ftests_without_es": 0
+        },
+        "rows": [
+          {
+            "test": "t-test",
+            "d_coherence": "match_under_assumptions",
+            "d_coherence_assumption": "independent_equal_n",
+            "d_implied_n": "n1 = n2 = 25, N = 50"
+          }
+        ]
+      }
+    },
+    {
+      "id": "independent_unequal_n_match",
+      "oracle": "metacheck-r-current",
+      "texts": [
+        "The independent contrast was t(38) = 2.10, d = .68."
+      ],
+      "expected": {
+        "traffic_light": "green",
+        "summary": {
+          "ttests_with_es": 1,
+          "ttests_without_es": 0,
+          "Ftests_with_es": 0,
+          "Ftests_without_es": 0
+        },
+        "rows": [
+          {
+            "test": "t-test",
+            "d_coherence": "match_under_assumptions",
+            "d_coherence_assumption": "independent_unequal_n_range",
+            "d_implied_n": "n1 = 16, n2 = 24, N = 40"
+          }
+        ]
+      }
+    },
+    {
+      "id": "d_no_match",
+      "oracle": "metacheck-r-current",
+      "texts": [
+        "The contrast was t(20) = 1.00, d = 3.00."
+      ],
+      "expected": {
+        "traffic_light": "red",
+        "summary": {
+          "ttests_with_es": 1,
+          "ttests_without_es": 0,
+          "Ftests_with_es": 0,
+          "Ftests_without_es": 0
+        },
+        "rows": [
+          {
+            "test": "t-test",
+            "d_coherence": "no_match",
+            "d_coherence_assumption": "none"
+          }
+        ]
+      }
+    },
+    {
+      "id": "noninteger_t_df",
+      "oracle": "metacheck-r-current",
+      "texts": [
+        "Welch's test was t(97.2) = -1.96, d = .40."
+      ],
+      "expected": {
+        "traffic_light": "green",
+        "summary": {
+          "ttests_with_es": 1,
+          "ttests_without_es": 0,
+          "Ftests_with_es": 0,
+          "Ftests_without_es": 0
+        },
+        "rows": [
+          {
+            "test": "t-test",
+            "d_coherence": "indeterminate",
+            "d_coherence_assumption": "none",
+            "d_reported": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "d_rm_presence_only",
+      "oracle": "metacheck-r-current",
+      "texts": [
+        "The repeated contrast was t(23) = 2.73, d_rm = .79."
+      ],
+      "expected": {
+        "traffic_light": "green",
+        "summary": {
+          "ttests_with_es": 1,
+          "ttests_without_es": 0,
+          "Ftests_with_es": 0,
+          "Ftests_without_es": 0
+        },
+        "rows": [
+          {
+            "test": "t-test",
+            "es": "d_rm = .79",
+            "d_coherence": "indeterminate",
+            "d_coherence_assumption": "none"
+          }
+        ]
+      }
+    },
+    {
+      "id": "hedges_g_presence_only",
+      "oracle": "metacheck-r-current",
+      "texts": [
+        "The contrast was t(23) = 2.73, Hedges's g = .56."
+      ],
+      "expected": {
+        "traffic_light": "green",
+        "summary": {
+          "ttests_with_es": 1,
+          "ttests_without_es": 0,
+          "Ftests_with_es": 0,
+          "Ftests_without_es": 0
+        },
+        "rows": [
+          {
+            "test": "t-test",
+            "es": "Hedges's g = .56",
+            "d_coherence": "indeterminate",
+            "d_coherence_assumption": "none"
+          }
+        ]
+      }
+    },
+    {
+      "id": "partial_eta_match",
+      "oracle": "metacheck-r-current",
+      "texts": [
+        "The omnibus test was F(1, 38) = 4.00, ηp² = .095."
+      ],
+      "expected": {
+        "traffic_light": "green",
+        "summary": {
+          "ttests_with_es": 0,
+          "ttests_without_es": 0,
+          "Ftests_with_es": 1,
+          "Ftests_without_es": 0
+        },
+        "rows": [
+          {
+            "test": "F-test",
+            "test_text": "F(1, 38) = 4.00",
+            "es": "ηp² = .095",
+            "eta_coherence": "match_under_assumptions",
+            "eta_coherence_assumption": "partial_eta_squared"
+          }
+        ]
+      }
+    },
+    {
+      "id": "partial_eta_no_match",
+      "oracle": "metacheck-r-current",
+      "texts": [
+        "The omnibus test was F(1, 38) = 4.00, ηp² = .50."
+      ],
+      "expected": {
+        "traffic_light": "red",
+        "summary": {
+          "ttests_with_es": 0,
+          "ttests_without_es": 0,
+          "Ftests_with_es": 1,
+          "Ftests_without_es": 0
+        },
+        "rows": [
+          {
+            "test": "F-test",
+            "eta_coherence": "no_match",
+            "eta_coherence_assumption": "partial_eta_squared"
+          }
+        ]
+      }
+    },
+    {
+      "id": "plain_eta_presence_only",
+      "oracle": "metacheck-r-current",
+      "texts": [
+        "The model was F(5, 120) = 91.32, η² = .79."
+      ],
+      "expected": {
+        "traffic_light": "green",
+        "summary": {
+          "ttests_with_es": 0,
+          "ttests_without_es": 0,
+          "Ftests_with_es": 1,
+          "Ftests_without_es": 0
+        },
+        "rows": [
+          {
+            "test": "F-test",
+            "eta_coherence": "indeterminate",
+            "eta_coherence_assumption": "eta_squared"
+          }
+        ]
+      }
+    },
+    {
+      "id": "cohens_f_presence_only",
+      "oracle": "metacheck-r-current",
+      "texts": [
+        "The model was F(1, 48) = 5.23, Cohen's f = .37."
+      ],
+      "expected": {
+        "traffic_light": "green",
+        "summary": {
+          "ttests_with_es": 0,
+          "ttests_without_es": 0,
+          "Ftests_with_es": 1,
+          "Ftests_without_es": 0
+        },
+        "rows": [
+          {
+            "test": "F-test",
+            "eta_coherence": "indeterminate",
+            "eta_coherence_assumption": "none"
+          }
+        ]
+      }
+    },
+    {
+      "id": "omega_presence_only",
+      "oracle": "metacheck-r-current",
+      "texts": [
+        "The model was F(2, 151) = 1.00, ωp² = .00."
+      ],
+      "expected": {
+        "traffic_light": "green",
+        "summary": {
+          "ttests_with_es": 0,
+          "ttests_without_es": 0,
+          "Ftests_with_es": 1,
+          "Ftests_without_es": 0
+        },
+        "rows": [
+          {
+            "test": "F-test",
+            "es": "ωp² = .00",
+            "eta_coherence": "indeterminate",
+            "eta_coherence_assumption": "none"
+          }
+        ]
+      }
+    },
+    {
+      "id": "decimal_f_df_ignored",
+      "oracle": "metacheck-r-current",
+      "texts": [
+        "The model was F(1.5, 20) = 4.00, ηp² = .23."
+      ],
+      "expected": {
+        "traffic_light": "na",
+        "summary": {},
+        "rows": []
+      }
+    },
+    {
+      "id": "three_t_tests_pair_positionally",
+      "oracle": "metacheck-r-current",
+      "texts": [
+        "A was bigger than B, t(23) = 2.73; t(23) = 2.98; t(23) = 4.74, d = .56; d = .61; d = .97."
+      ],
+      "expected": {
+        "traffic_light": "green",
+        "summary": {
+          "ttests_with_es": 3,
+          "ttests_without_es": 0,
+          "Ftests_with_es": 0,
+          "Ftests_without_es": 0
+        },
+        "rows": [
+          {
+            "test_text": "t(23) = 2.73",
+            "es": "d = .56",
+            "d_coherence_assumption": "paired_dz"
+          },
+          {
+            "test_text": "t(23) = 2.98",
+            "es": "d = .61",
+            "d_coherence_assumption": "paired_dz"
+          },
+          {
+            "test_text": "t(23) = 4.74",
+            "es": "d = .97",
+            "d_coherence_assumption": "paired_dz"
+          }
+        ]
+      }
+    },
+    {
+      "id": "three_f_tests_pair_positionally",
+      "oracle": "metacheck-r-current",
+      "texts": [
+        "The model was significant, F(5, 120) = 91.32; F(5, 120) = 74.45; F(5, 120) = 388.16, η² = .79; η² = .67; η² = .94."
+      ],
+      "expected": {
+        "traffic_light": "green",
+        "summary": {
+          "ttests_with_es": 0,
+          "ttests_without_es": 0,
+          "Ftests_with_es": 3,
+          "Ftests_without_es": 0
+        },
+        "rows": [
+          {
+            "test_text": "F(5, 120) = 91.32",
+            "es": "η² = .79",
+            "eta_coherence": "indeterminate",
+            "eta_coherence_assumption": "eta_squared"
+          },
+          {
+            "test_text": "F(5, 120) = 74.45",
+            "es": "η² = .67",
+            "eta_coherence": "indeterminate",
+            "eta_coherence_assumption": "eta_squared"
+          },
+          {
+            "test_text": "F(5, 120) = 388.16",
+            "es": "η² = .94",
+            "eta_coherence": "indeterminate",
+            "eta_coherence_assumption": "eta_squared"
+          }
+        ]
+      }
+    },
+    {
+      "id": "one_effect_broadcast_to_multiple_tests",
+      "oracle": "metacheck-r-current",
+      "texts": [
+        "Two replications gave t(38) = 2.00; t(38) = 2.00, d = .63."
+      ],
+      "expected": {
+        "traffic_light": "green",
+        "summary": {
+          "ttests_with_es": 2,
+          "ttests_without_es": 0,
+          "Ftests_with_es": 0,
+          "Ftests_without_es": 0
+        },
+        "rows": [
+          {
+            "test_text": "t(38) = 2.00",
+            "es": "d = .63",
+            "d_coherence_assumption": "independent_equal_n"
+          },
+          {
+            "test_text": "t(38) = 2.00",
+            "es": "d = .63",
+            "d_coherence_assumption": "independent_equal_n"
+          }
+        ]
+      }
+    },
+    {
+      "id": "later_d_candidate_controls_match",
+      "oracle": "metacheck-r-current",
+      "texts": [
+        "The contrast was t(38) = 2.00, d = 3.00; d = .63."
+      ],
+      "expected": {
+        "traffic_light": "green",
+        "summary": {
+          "ttests_with_es": 1,
+          "ttests_without_es": 0,
+          "Ftests_with_es": 0,
+          "Ftests_without_es": 0
+        },
+        "rows": [
+          {
+            "es": "d = 3.00; d = .63",
+            "d_reported": "3",
+            "d_reported_text": "d = 3.00",
+            "d_coherence": "match_under_assumptions",
+            "d_coherence_assumption": "independent_equal_n"
+          }
+        ]
+      }
+    },
+    {
+      "id": "non_equal_comparator_is_indeterminate",
+      "oracle": "metacheck-r-current",
+      "texts": [
+        "The contrast was t(38) ≈ 2.00, d = .63."
+      ],
+      "expected": {
+        "traffic_light": "green",
+        "summary": {
+          "ttests_with_es": 1,
+          "ttests_without_es": 0,
+          "Ftests_with_es": 0,
+          "Ftests_without_es": 0
+        },
+        "rows": [
+          {
+            "test_text": "t(38) ≈ 2.00",
+            "d_coherence": "indeterminate",
+            "d_coherence_assumption": "none"
+          }
+        ]
+      }
+    },
+    {
+      "id": "wrong_family_still_counts_as_present",
+      "oracle": "metacheck-r-current",
+      "texts": [
+        "The contrast was t(20) = 2.00, η² = .10."
+      ],
+      "expected": {
+        "traffic_light": "green",
+        "summary": {
+          "ttests_with_es": 1,
+          "ttests_without_es": 0,
+          "Ftests_with_es": 0,
+          "Ftests_without_es": 0
+        },
+        "rows": [
+          {
+            "test": "t-test",
+            "es": "η² = .10",
+            "d_coherence": "indeterminate",
+            "d_coherence_assumption": "none"
+          }
+        ]
+      }
+    },
+    {
+      "id": "spelled_out_partial_eta",
+      "oracle": "pytacheck-extension",
+      "texts": [
+        "The omnibus test was F(1, 38) = 4.00, partial eta squared = .095."
+      ],
+      "expected": {
+        "traffic_light": "green",
+        "summary": {
+          "ttests_with_es": 0,
+          "ttests_without_es": 0,
+          "Ftests_with_es": 1,
+          "Ftests_without_es": 0
+        },
+        "rows": [
+          {
+            "test": "F-test",
+            "es": "partial eta squared = .095",
+            "eta_coherence": "match_under_assumptions",
+            "eta_coherence_assumption": "partial_eta_squared"
+          }
+        ]
+      }
+    }
+  ]
+}

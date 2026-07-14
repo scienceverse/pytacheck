@@ -144,6 +144,52 @@ def test_extract_equations_handles_complex_effect_size_names() -> None:
     ]
 
 
+def test_extract_equations_covers_upstream_effect_size_lhs_in_source_order() -> None:
+    text = (
+        "d = .34; dz = .56; d_rm = .79; Hedges's g = .32; Cohen's f = .37; "
+        "η² = .15; ηp² = .10; omega_p2 = .00; ωp² = .00; ξ = .10; β = .20; "
+        "b = .30; r = .40."
+    )
+
+    result = extract_equations((_row(text),))
+
+    assert [row["lhs"] for row in result] == [
+        "d",
+        "dz",
+        "d_rm",
+        "Hedges's g",
+        "Cohen's f",
+        "η²",
+        "ηp²",
+        "omega_p2",
+        "ωp²",
+        "ξ",
+        "β",
+        "b",
+        "r",
+    ]
+    assert all(row["expanded"] == text for row in result)
+    assert all(row["grp_id"] == 1 for row in result)
+
+
+def test_extract_equations_preserves_original_test_label_case_for_module_labeling() -> None:
+    text = "T(20) = 2.00; f(1, 20) = 4.00; d = .50."
+
+    result = extract_equations((_row(text),))
+
+    assert [(row["lhs"], row["df"]) for row in result] == [
+        ("T", "(20)"),
+        ("f", "(1, 20)"),
+        ("d", None),
+    ]
+
+
+def test_extract_equations_discards_single_numeric_lhs_after_broadening() -> None:
+    result = extract_equations((_row("2 = 3; d = .50."),))
+
+    assert [(row["lhs"], row["rhs"]) for row in result] == [("d", ".50")]
+
+
 def test_extract_apa_tests_exposes_normalized_t_and_f_fields() -> None:
     rows = (
         _row("t(97.2) = -1.96, p = 0.152", text_id=1),
