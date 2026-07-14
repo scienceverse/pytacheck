@@ -4,7 +4,7 @@ import json
 import tracemalloc
 from copy import deepcopy
 from dataclasses import replace
-from math import sqrt
+from math import inf, nextafter, sqrt
 from pathlib import Path
 from typing import Any, cast
 
@@ -13,7 +13,11 @@ import pytest
 from pytacheck.context import PaperContext
 from pytacheck.models import BibrPaper
 from pytacheck.modules.base import MODULE_REGISTRY, ModuleMetadata
-from pytacheck.modules.stat_effect_size import stat_effect_size
+from pytacheck.modules.stat_effect_size import (
+    _closest_unequal_split,
+    _unequal_d,
+    stat_effect_size,
+)
 
 FIXTURE_PATH = Path(__file__).parents[2] / "parity" / "fixtures" / "effect_size_cases.json"
 FIXTURE = cast(dict[str, Any], json.loads(FIXTURE_PATH.read_text(encoding="utf-8")))
@@ -119,6 +123,13 @@ def expected_for(case: dict[str, Any]) -> dict[str, Any]:
 
 def result_for(case_id: str):
     return stat_effect_size(context_for_case(CASES_BY_ID[case_id]))
+
+
+def brute_force_closest_unequal_split(abs_t: float, n_total: int, reported_d: float) -> int:
+    return min(
+        range(2, n_total // 2 + 1),
+        key=lambda n1: (abs(_unequal_d(abs_t, n1, n_total) - reported_d), n1),
+    )
 
 
 def test_stat_effect_size_is_registered_with_upstream_metadata() -> None:
@@ -268,6 +279,57 @@ def test_high_df_unequal_n_match_uses_bounded_memory_and_preserves_first_tie() -
     assert row["d_coherence_assumption"] == "independent_unequal_n_range"
     assert row["d_implied_n"] == (f"n1 = {expected_n1}, n2 = {expected_n2}, N = {total_n}")
     assert peak_bytes < 2_000_000
+
+
+def test_maximum_total_n_unequal_match_preserves_first_floating_plateau_tie() -> None:
+    result = stat_effect_size(
+        context_for("t(9007199254740989) = 20030802.451010626, d = 0.422692443945607.")
+    )
+
+    row = result.table[0]
+    assert row["d_coherence_assumption"] == "independent_unequal_n_range"
+    assert row["d_implied_n"] == (
+        "n1 = 4268803746083885, n2 = 4738395508657106, N = 9007199254740991"
+    )
+
+
+def test_closest_unequal_split_matches_brute_force_across_totals() -> None:
+    totals = [*range(4, 129), 257, 512, 1_025, 4_097, 10_003]
+    for n_total in totals:
+        half = n_total // 2
+        for abs_t in (0.125, 1.0, 37.5):
+            positions = {2, half, max(2, half // 3), max(2, half // 2), max(2, half - 1)}
+            reported_values = {
+                nextafter(_unequal_d(abs_t, half, n_total), -inf),
+                _unequal_d(abs_t, half, n_total),
+                _unequal_d(abs_t, 2, n_total),
+                nextafter(_unequal_d(abs_t, 2, n_total), inf),
+            }
+            for n1 in positions:
+                value = _unequal_d(abs_t, n1, n_total)
+                reported_values.add(value)
+                if n1 < half:
+                    adjacent = _unequal_d(abs_t, n1 + 1, n_total)
+                    reported_values.add((value + adjacent) / 2)
+
+            for reported_d in reported_values:
+                expected = brute_force_closest_unequal_split(abs_t, n_total, reported_d)
+                actual = _closest_unequal_split(abs_t, n_total, reported_d)
+                assert actual == expected, (abs_t, n_total, reported_d)
+
+
+def test_closest_unequal_split_preserves_midpoint_tie_and_range_endpoints() -> None:
+    abs_t = 0.125
+    n_total = 6
+    left = _unequal_d(abs_t, 2, n_total)
+    right = _unequal_d(abs_t, 3, n_total)
+    midpoint = (left + right) / 2
+
+    assert abs(left - midpoint) == abs(right - midpoint)
+    assert _closest_unequal_split(abs_t, n_total, midpoint) == 2
+    assert _closest_unequal_split(abs_t, n_total, nextafter(left, inf)) == 2
+    assert _closest_unequal_split(abs_t, n_total, nextafter(right, -inf)) == 3
+    assert _closest_unequal_split(0.0, n_total, 0.0) == 2
 
 
 def test_odd_total_n_uses_real_unequal_groups_instead_of_fractional_equal_groups() -> None:

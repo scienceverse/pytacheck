@@ -162,24 +162,38 @@ def _closest_unequal_split(abs_t: float, n_total: int, reported_d: float) -> int
     if abs_t == 0:
         return 2
 
-    minimum = _unequal_d(abs_t, half, n_total)
-    maximum = _unequal_d(abs_t, 2, n_total)
-    if reported_d <= minimum:
-        return half
-    if reported_d >= maximum:
+    def first_at_or_below(threshold: float) -> int | None:
+        """Find the first n1 whose monotone implied d is at most threshold."""
+        if _unequal_d(abs_t, half, n_total) > threshold:
+            return None
+
+        low = 2
+        high = half
+        while low < high:
+            midpoint = (low + high) // 2
+            if _unequal_d(abs_t, midpoint, n_total) <= threshold:
+                high = midpoint
+            else:
+                low = midpoint + 1
+        return low
+
+    crossing = first_at_or_below(reported_d)
+    if crossing is None:
+        minimum = _unequal_d(abs_t, half, n_total)
+        minimum_start = first_at_or_below(minimum)
+        return half if minimum_start is None else minimum_start
+    if crossing == 2:
         return 2
 
-    squared_ratio = (reported_d / abs_t) ** 2
-    discriminant = max(0.0, n_total**2 - 4 * n_total / squared_ratio)
-    root = (2 * n_total / squared_ratio) / (n_total + math.sqrt(discriminant))
-    center = math.floor(root)
-    candidates = {2, half}
-    for offset in range(-2, 3):
-        candidates.add(min(half, max(2, center + offset)))
-    return min(
-        candidates,
-        key=lambda n1: (abs(_unequal_d(abs_t, n1, n_total) - reported_d), n1),
-    )
+    below_distance = abs(_unequal_d(abs_t, crossing, n_total) - reported_d)
+    above = crossing - 1
+    above_value = _unequal_d(abs_t, above, n_total)
+    above_distance = abs(above_value - reported_d)
+    above_start = first_at_or_below(above_value)
+    if above_start is None:
+        above_start = above
+
+    return above_start if above_distance <= below_distance else crossing
 
 
 def _classify_d(test: str, test_text: str, effect_text: str | None) -> dict[str, Any]:
