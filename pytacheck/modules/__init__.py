@@ -8,6 +8,7 @@ from pytacheck.modules.base import (
     register_module,
 )
 from pytacheck.modules.marginal import marginal
+from pytacheck.modules.stat_p_exact import stat_p_exact
 
 __all__ = [
     "MODULE_REGISTRY",
@@ -18,4 +19,5 @@ __all__ = [
     "TrafficLight",
     "marginal",
     "register_module",
+    "stat_p_exact",
 ]
