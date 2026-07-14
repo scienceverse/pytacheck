@@ -4,6 +4,7 @@ import math
 import re
 from collections.abc import Iterable, Mapping
 from copy import deepcopy
+from types import MappingProxyType
 from typing import Any
 
 MAX_SEARCH_RESULTS = 5_000
@@ -75,6 +76,8 @@ def _row_text(row: Mapping[str, Any]) -> str | None:
 
 
 def _copy_row(row: Mapping[str, Any]) -> dict[str, Any]:
+    if isinstance(row, MappingProxyType):
+        return dict(row)
     return deepcopy(dict(row))
 
 
@@ -312,7 +315,13 @@ def extract_equations(
 
 
 def _number(value: str) -> int | float:
-    return float(value) if "." in value else int(value)
+    normalized = value.replace(",", "")
+    if len(normalized) > MAX_P_MANTISSA_CHARS:
+        raise ValueError("APA numeric token is too long")
+    number = float(normalized) if "." in normalized else int(normalized)
+    if isinstance(number, float) and not math.isfinite(number):
+        raise ValueError("APA numeric token must be finite")
+    return number
 
 
 def _decimal_places(value: str) -> int:
@@ -321,7 +330,7 @@ def _decimal_places(value: str) -> int:
 
 
 def _apa_statistic(match: re.Match[str]) -> float:
-    value = float(match.group("statistic").replace(",", ""))
+    value = float(_number(match.group("statistic")))
     prefix = match.group("stat_prefix")
     if re.search(r"[^\d.\s]", prefix) is not None:
         return -abs(value)
@@ -356,12 +365,16 @@ def extract_apa_tests(
             )
 
             test_type = "t" if match.group("t_type") is not None else "F"
-            if test_type == "t":
-                degrees_of_freedom = [_number(match.group("t_df"))]
-            else:
-                raw_df1 = match.group("f_df1")
-                df1 = 1 if raw_df1 in {"I", "l"} else _number(raw_df1)
-                degrees_of_freedom = [df1, _number(match.group("f_df2"))]
+            try:
+                if test_type == "t":
+                    degrees_of_freedom = [_number(match.group("t_df"))]
+                else:
+                    raw_df1 = match.group("f_df1")
+                    df1 = 1 if raw_df1 in {"I", "l"} else _number(raw_df1)
+                    degrees_of_freedom = [df1, _number(match.group("f_df2"))]
+                statistic = _apa_statistic(match)
+            except (OverflowError, ValueError):
+                continue
 
             p_literal = match.group("p_value")
             if p_literal is None:
@@ -370,12 +383,14 @@ def extract_apa_tests(
                 p_decimals = None
             else:
                 p_comp = match.group("p_comp")
+                if len(p_literal) > MAX_P_MANTISSA_CHARS:
+                    continue
                 try:
                     p_value = float(p_literal)
                 except ValueError:
                     continue
                 p_decimals = _decimal_places(p_literal)
-            if p_value is not None and p_value > 1:
+            if p_value is not None and (not math.isfinite(p_value) or p_value > 1):
                 continue
 
             raw = match.group(0)
@@ -385,7 +400,7 @@ def extract_apa_tests(
                 expanded=expanded,
                 raw=raw,
                 test_type=test_type,
-                statistic=_apa_statistic(match),
+                statistic=statistic,
                 df=degrees_of_freedom,
                 df1=degrees_of_freedom[0],
                 df2=degrees_of_freedom[1] if len(degrees_of_freedom) == 2 else None,

@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from copy import deepcopy
-
 import pytest
 
 from pytacheck.context import PaperContext
@@ -268,9 +266,9 @@ def test_mixed_values_preserve_rows_and_report_both_problem_counts() -> None:
 def test_repeated_calls_use_cached_p_values_without_mutating_or_rescanning() -> None:
     context = context_for("The result was p < .05.")
     cached_p_values = context.p_values
-    with pytest.raises(TypeError, match="read-only"):
+    with pytest.raises(TypeError):
         cached_p_values[0]["cached_only_marker"] = "precomputed-p-values"
-    cached_snapshot = deepcopy(cached_p_values)
+    cached_snapshot = tuple(dict(row) for row in cached_p_values)
 
     first = stat_p_exact(context)
     second = stat_p_exact(context)

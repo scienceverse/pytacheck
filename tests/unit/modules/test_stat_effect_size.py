@@ -2,8 +2,6 @@ from __future__ import annotations
 
 import json
 import tracemalloc
-from copy import deepcopy
-from dataclasses import replace
 from math import inf, nextafter, sqrt
 from pathlib import Path
 from typing import Any, cast
@@ -575,14 +573,13 @@ def test_equal_cardinality_pairing_is_positional_and_family_blind() -> None:
 
 def test_only_cached_equations_are_consumed_without_rescanning_sentences() -> None:
     context = context_for("t(48) = 2.00, d = .57.", paper_id="cached-only")
-    equations_only = replace(
-        context,
+    equations_only = context._replace(
         sentences=(),
         paragraphs=(),
         p_values=(),
         apa_tests=(),
     )
-    sentences_only = replace(context, equations=())
+    sentences_only = context._replace(equations=())
 
     cached_result = stat_effect_size(equations_only)
     no_equations_result = stat_effect_size(sentences_only)
@@ -595,7 +592,7 @@ def test_only_cached_equations_are_consumed_without_rescanning_sentences() -> No
 
 def test_cached_equations_and_nested_source_metadata_are_not_mutated_or_aliased() -> None:
     context = context_for("t(48) = 2.00, d = .57.")
-    before = deepcopy(context.equations)
+    before = tuple(dict(row) for row in context.equations)
 
     first = stat_effect_size(context)
     second = stat_effect_size(context)

@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from copy import deepcopy
-
 import pytest
 
 from pytacheck.context import PaperContext
@@ -130,7 +128,7 @@ def test_result_preserves_expansion_location_and_source_context() -> None:
     sentence = "The primary result was p = .051 and deserves careful interpretation."
     context = context_for(sentence)
     original_p_values = context.p_values
-    original_snapshot = deepcopy(original_p_values)
+    original_snapshot = tuple(dict(row) for row in original_p_values)
 
     result = stat_p_nonsig(context)
 

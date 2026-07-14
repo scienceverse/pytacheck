@@ -238,6 +238,24 @@ def _bounded_json_bytes(value: object, limit: int) -> bytes:
     return rendered
 
 
+def _validate_module_name(name: object) -> str:
+    if not isinstance(name, str):
+        raise ModuleSelectionLimitError("Module names must be strings")
+    if not name or name != name.strip():
+        raise ModuleSelectionLimitError(
+            "Module names must be non-empty and have no surrounding whitespace"
+        )
+    if len(name) > MAX_MODULE_NAME_CHARS:
+        raise ModuleSelectionLimitError(
+            f"Module name character limit exceeded ({MAX_MODULE_NAME_CHARS})"
+        )
+    try:
+        _bounded_json_bytes(name, MAX_MODULE_NAME_BYTES)
+    except ResultLimitError as exc:
+        raise ModuleSelectionLimitError("Module name is not JSON-renderable") from exc
+    return name
+
+
 def _checked_result(name: str, result: ModuleResult) -> tuple[ModuleResult, int]:
     row_count = len(result.table) + len(result.summary_table)
     if row_count > MAX_MODULE_RESULT_ROWS:
@@ -255,6 +273,8 @@ def _checked_result(name: str, result: ModuleResult) -> tuple[ModuleResult, int]
 class CheckEngine:
     def __init__(self, registry: Mapping[str, RegistryValue] | None = None) -> None:
         source = MODULE_REGISTRY if registry is None else registry
+        for name in source:
+            _validate_module_name(name)
         self._registry = _normalize_registry(source)
 
     def _selection(self, modules: Sequence[str] | None) -> list[str]:
@@ -266,16 +286,7 @@ class CheckEngine:
             )
 
         for name in selected:
-            if not isinstance(name, str):
-                raise ModuleSelectionLimitError("Module names must be strings")
-            if len(name) > MAX_MODULE_NAME_CHARS:
-                raise ModuleSelectionLimitError(
-                    f"Module name character limit exceeded ({MAX_MODULE_NAME_CHARS})"
-                )
-            try:
-                _bounded_json_bytes(name, MAX_MODULE_NAME_BYTES)
-            except ResultLimitError as exc:
-                raise ModuleSelectionLimitError("Module name is not JSON-renderable") from exc
+            _validate_module_name(name)
 
         unknown = [name for name in dict.fromkeys(selected) if name not in self._registry]
         if unknown:
@@ -392,14 +403,13 @@ class CheckEngine:
         results: dict[str, ModuleResult],
         timings_ms: dict[str, float],
     ) -> CheckResponse:
-        paper_payload = paper.model_dump(mode="json")
         return CheckResponse.model_validate(
             {
                 "metacheck_version": __version__,
-                "paper_info": paper_payload["info"],
-                "authors": paper_payload["author"],
-                "references": paper_payload["bib"],
-                "cross_references": paper_payload["xref"],
+                "paper_info": paper.info,
+                "authors": paper.author,
+                "references": paper.bib,
+                "cross_references": paper.xref,
                 "modules_run": selected,
                 "results": results,
                 "report_html": "",

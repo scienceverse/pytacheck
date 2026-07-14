@@ -75,20 +75,20 @@ One local 20-iteration run on 2026-07-14 used Python 3.12.12 on
 
 | Measurement | Result |
 | --- | ---: |
-| Cold default check | 24.78 ms |
-| Warm default check p50 | 24.02 ms |
-| Warm default check p95 | 25.78 ms |
-| Warm throughput | 40.57 papers/s |
-| Raw JSON to checked response p50 | 24.95 ms |
-| Raw JSON to checked response p95 | 25.71 ms |
+| Cold default check | 23.34 ms |
+| Warm default check p50 | 22.64 ms |
+| Warm default check p95 | 23.93 ms |
+| Warm throughput | 43.30 papers/s |
+| Raw JSON to checked response p50 | 25.67 ms |
+| Raw JSON to checked response p95 | 27.39 ms |
 
 | Module | p50 | p95 |
 | --- | ---: | ---: |
-| `power` | 1.07 ms | 1.13 ms |
-| `marginal` | 4.65 ms | 4.78 ms |
-| `stat_check` | 0.20 ms | 0.26 ms |
+| `power` | 1.06 ms | 1.12 ms |
+| `marginal` | 4.63 ms | 4.78 ms |
+| `stat_check` | 0.19 ms | 0.26 ms |
 | `stat_effect_size` | 0.08 ms | 0.10 ms |
-| `stat_p_exact` | 0.02 ms | 0.03 ms |
+| `stat_p_exact` | 0.02 ms | 0.02 ms |
 | `stat_p_nonsig` | 0.01 ms | 0.01 ms |
 
 These figures describe that run, not a workstation-independent guarantee. CI uses a generous

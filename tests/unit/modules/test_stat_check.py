@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import json
 from copy import deepcopy
-from dataclasses import replace
 from pathlib import Path
 from typing import Any, cast
 
@@ -206,7 +205,7 @@ def test_nonvalidated_chi_square_cached_row_is_ignored() -> None:
             "p_value": oracle_row["reported_p"],
         }
     )
-    context = replace(context, apa_tests=(cached_row,))
+    context = context._replace(apa_tests=(cached_row,))
 
     result = stat_check(context)
 
@@ -367,9 +366,9 @@ def test_green_red_and_plural_summaries_match_wrapper_behavior() -> None:
 def test_stat_check_does_not_mutate_cached_context_rows() -> None:
     context = context_for("The result was t(18) = 2.10, p = .050.")
     cached_rows = context.apa_tests
-    with pytest.raises(TypeError, match="read-only"):
+    with pytest.raises(TypeError):
         cached_rows[0]["cached_only_marker"] = "precomputed-apa-test"
-    snapshot = deepcopy(cached_rows)
+    snapshot = tuple(dict(row) for row in cached_rows)
 
     first = stat_check(context)
     second = stat_check(context)

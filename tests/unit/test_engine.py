@@ -14,6 +14,7 @@ from pytacheck.engine import (
     DEFAULT_MODULES,
     CheckEngine,
     DuplicateModuleError,
+    ModuleSelectionLimitError,
     UnknownModuleError,
 )
 from pytacheck.models import BibrPaper
@@ -377,6 +378,65 @@ def test_inherited_dict_bypass_cannot_corrupt_later_module_context() -> None:
     assert response.results["mutating"].traffic_light == "fail"
     assert response.results["observing"].traffic_light == "green"
     assert observed_text == ["A result was reported."]
+
+
+def test_object_setattr_cannot_replace_context_storage_for_later_modules() -> None:
+    observed_text: list[str] = []
+
+    def mutating(context: PaperContext) -> NoReturn:
+        object.__setattr__(context.sentences[0], "_data", {"text": "corrupted"})
+        raise RuntimeError("fail after mutation")
+
+    def observing(context: PaperContext) -> ModuleResult:
+        observed_text.append(context.sentences[0]["text"])
+        return result("observing")
+
+    response = CheckEngine(registry={"mutating": mutating, "observing": observing}).check(
+        minimal_paper(), ["mutating", "observing"]
+    )
+
+    assert response.results["mutating"].traffic_light == "fail"
+    assert response.results["observing"].traffic_light == "green"
+    assert observed_text == ["A result was reported."]
+
+
+def test_object_setattr_cannot_replace_context_fields_for_later_modules() -> None:
+    observed_text: list[str] = []
+
+    def mutating(context: PaperContext) -> NoReturn:
+        object.__setattr__(context, "sentences", ({"text": "corrupted"},))
+        raise RuntimeError("fail after mutation")
+
+    def observing(context: PaperContext) -> ModuleResult:
+        observed_text.append(context.sentences[0]["text"])
+        return result("observing")
+
+    response = CheckEngine(registry={"mutating": mutating, "observing": observing}).check(
+        minimal_paper(), ["mutating", "observing"]
+    )
+
+    assert response.results["mutating"].traffic_light == "fail"
+    assert response.results["observing"].traffic_light == "green"
+    assert observed_text == ["A result was reported."]
+
+
+def test_registry_rejects_module_names_that_discovery_cannot_render() -> None:
+    def selected(context: PaperContext) -> ModuleResult:
+        del context
+        return result("unreachable")
+
+    with pytest.raises(ModuleSelectionLimitError, match="Module name is not JSON-renderable"):
+        CheckEngine(registry={"\ud800": selected})
+
+
+@pytest.mark.parametrize("name", ["", " ", " leading", "trailing "])
+def test_registry_rejects_module_names_that_api_normalization_cannot_select(name: str) -> None:
+    def selected(context: PaperContext) -> ModuleResult:
+        del context
+        return result("unreachable")
+
+    with pytest.raises(ModuleSelectionLimitError, match="non-empty.*surrounding whitespace"):
+        CheckEngine(registry={name: selected})
 
 
 def test_generic_module_row_budget_replaces_oversized_result_with_bounded_fail() -> None:

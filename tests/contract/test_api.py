@@ -664,6 +664,85 @@ def test_compatibility_decode_and_content_type_errors_are_unboxed(
     assert engine.check_calls == []
 
 
+def test_compatibility_rejects_unpaired_surrogate_before_response_encoding() -> None:
+    engine, _ = make_engine()
+    raw = b'{"paper_id":"paper","info":{"schema_version":"10.6","title":"\\ud800"}}'
+
+    with api_client(engine) as client:
+        response = client.post(
+            "/paper/check?modules=power",
+            content=raw,
+            headers={"content-type": "application/json"},
+        )
+
+    assert_unboxed_error(response, 400, "surrogate")
+    assert engine.check_calls == []
+
+
+@pytest.mark.parametrize("location", ["info", "top-level-extra", "text-extra"])
+def test_compatibility_rejects_excessive_json_nesting_before_check(location: str) -> None:
+    engine, _ = make_engine()
+    nested: Any = 0
+    for _ in range(256):
+        nested = [nested]
+    paper: dict[str, Any] = {
+        "paper_id": "deep-json",
+        "info": {"schema_version": "10.6"},
+        "text": [{"text": "No result.", "text_id": 1}],
+    }
+    if location == "info":
+        paper["info"]["deep"] = nested
+    elif location == "top-level-extra":
+        paper["future"] = nested
+    else:
+        paper["text"][0]["future"] = nested
+
+    with api_client(engine) as client:
+        response = client.post("/paper/check?modules=power", json=paper)
+
+    assert_unboxed_error(response, 400, "nesting")
+    assert engine.check_calls == []
+
+
+def test_native_rejects_excessive_json_nesting_as_validation_error() -> None:
+    engine, _ = make_engine()
+    nested: Any = 0
+    for _ in range(256):
+        nested = [nested]
+    paper = {
+        "paper_id": "deep-native-json",
+        "info": {"schema_version": "10.6", "deep": nested},
+    }
+
+    with api_client(engine) as client:
+        response = client.post("/v1/checks", json={"paper": paper, "modules": ["power"]})
+
+    assert response.status_code == 422
+    assert any(term in response.text.lower() for term in ("nesting", "recursion"))
+    assert engine.check_calls == []
+
+
+def test_compatibility_contains_overlong_apa_numeric_tokens() -> None:
+    from fastapi.testclient import TestClient
+
+    paper = {
+        "paper_id": "overlong-apa-number",
+        "info": {"schema_version": "10.6"},
+        "text": [
+            {
+                "text": f"The malformed result was t({'9' * 4_301}) = 1, p = .5.",
+                "text_id": 1,
+            }
+        ],
+    }
+
+    with TestClient(create_app(CheckEngine()), raise_server_exceptions=False) as client:
+        response = client.post("/paper/check?modules=stat_check", json=paper)
+
+    assert response.status_code == 200
+    assert response.json()["results"]["stat_check"]["table"] == []
+
+
 @pytest.mark.parametrize(
     "pathological_json",
     [

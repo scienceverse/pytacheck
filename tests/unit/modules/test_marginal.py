@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from copy import deepcopy
-
 import pytest
 
 from pytacheck.context import PaperContext
@@ -173,7 +171,7 @@ def test_match_preserves_sentence_and_bibr_location_fields() -> None:
 def test_marginal_does_not_mutate_context_sentences() -> None:
     context = context_for("The estimate was marginally significant.")
     original_sentences = context.sentences
-    snapshot = deepcopy(original_sentences)
+    snapshot = tuple(dict(row) for row in original_sentences)
 
     result = marginal(context)
 

@@ -11,7 +11,7 @@ from pathlib import Path
 from typing import Any
 
 from pytacheck.engine import DEFAULT_MODULES, CheckEngine
-from pytacheck.models import BibrPaper
+from pytacheck.models import MAX_SECTION_HEADER_CHARS, MAX_SECTION_TYPE_CHARS, BibrPaper
 
 PROJECT_ROOT = Path(__file__).parents[2]
 FIXTURE_PATH = PROJECT_ROOT / "tests" / "parity" / "fixtures" / "to_err_is_human.json"
@@ -65,6 +65,57 @@ def test_high_df_effect_size_check_has_bounded_python_memory() -> None:
 
     assert response.results["stat_effect_size"].traffic_light != "fail"
     assert peak_bytes < 16 * 1024 * 1024
+
+
+def test_repeated_section_metadata_at_ingress_limits_has_bounded_memory() -> None:
+    paper = BibrPaper.model_validate(
+        {
+            "paper_id": "repeated-section-metadata",
+            "section": [
+                {
+                    "section_id": 1,
+                    "header": "h" * MAX_SECTION_HEADER_CHARS,
+                    "section_type": "s" * MAX_SECTION_TYPE_CHARS,
+                }
+            ],
+            "text": [
+                {
+                    "text": "The result was marginally significant.",
+                    "text_id": index,
+                    "section_id": 1,
+                }
+                for index in range(1_000)
+            ],
+        }
+    )
+
+    tracemalloc.start()
+    try:
+        response = CheckEngine().check(paper, modules=["marginal"])
+        _, peak_bytes = tracemalloc.get_traced_memory()
+    finally:
+        tracemalloc.stop()
+
+    assert response.results["marginal"].traffic_light == "fail"
+    assert len(response.model_dump_json()) < 10_000
+    assert peak_bytes < 24 * 1024 * 1024
+
+
+def test_wide_metadata_validation_uses_depth_bounded_working_memory() -> None:
+    payload = {
+        "paper_id": "wide-metadata",
+        "info": {"wide": [[] for _ in range(100_000)]},
+    }
+
+    tracemalloc.start()
+    try:
+        paper = BibrPaper.model_validate(payload)
+        _, peak_bytes = tracemalloc.get_traced_memory()
+    finally:
+        tracemalloc.stop()
+
+    assert len(paper.info["wide"]) == 100_000
+    assert peak_bytes < 4 * 1024 * 1024
 
 
 def test_benchmark_cli_defaults_to_a_generated_full_size_synthetic_profile() -> None:

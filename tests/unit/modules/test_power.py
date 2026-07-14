@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from copy import deepcopy
-
 import pytest
 
 from pytacheck.context import PaperContext
@@ -323,9 +321,9 @@ def test_repeated_calls_use_cached_paragraphs_without_mutating_or_rescanning() -
         "An a priori power analysis used 64 participants to achieve 80% power."
     )
     cached_paragraphs = context.paragraphs
-    with pytest.raises(TypeError, match="read-only"):
+    with pytest.raises(TypeError):
         cached_paragraphs[0]["cached_only_marker"] = "precomputed-paragraphs"
-    cached_snapshot = deepcopy(cached_paragraphs)
+    cached_snapshot = tuple(dict(row) for row in cached_paragraphs)
 
     first = power(context)
     second = power(context)

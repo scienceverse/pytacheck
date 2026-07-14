@@ -128,6 +128,52 @@ def test_structural_text_and_list_limits_reject_pathological_papers() -> None:
         )
 
 
+@pytest.mark.parametrize(
+    ("field", "limit"),
+    [
+        pytest.param("header", 512, id="section-header"),
+        pytest.param("section_type", 128, id="section-type"),
+    ],
+)
+def test_repeated_section_location_strings_are_bounded_at_ingress(
+    field: str,
+    limit: int,
+) -> None:
+    accepted = BibrPaper.model_validate(
+        {
+            "paper_id": "bounded-section",
+            "section": [{"section_id": 1, field: "x" * limit}],
+        }
+    )
+
+    assert getattr(accepted.section[0], field) == "x" * limit
+    with pytest.raises(ValidationError, match="string_too_long"):
+        BibrPaper.model_validate(
+            {
+                "paper_id": "oversized-section",
+                "section": [{"section_id": 1, field: "x" * (limit + 1)}],
+            }
+        )
+
+
+def test_programmatic_metadata_rejects_unrenderable_integer_size() -> None:
+    accepted = BibrPaper.model_validate(
+        {
+            "paper_id": "large-renderable-integer",
+            "info": {"number": 10**639},
+        }
+    )
+
+    assert accepted.info["number"] == 10**639
+    with pytest.raises(ValidationError, match="integer digit limit"):
+        BibrPaper.model_validate(
+            {
+                "paper_id": "huge-integer",
+                "info": {"number": 10**5_000},
+            }
+        )
+
+
 def test_context_rows_are_deeply_read_only_and_drop_unknown_text_extras() -> None:
     paper = BibrPaper.model_validate(
         {
@@ -164,8 +210,7 @@ def test_context_rows_have_no_inherited_dict_mutation_bypass() -> None:
     row = PaperContext.from_paper(paper).sentences[0]
 
     assert not isinstance(row, dict)
-    with pytest.raises(TypeError, match="read-only"):
-        row.__init__({"text": "reinitialized"})
+    row.__init__({"text": "reinitialized"})
     with pytest.raises(TypeError):
         dict.__setitem__(row, "text", "dict bypass")  # type: ignore[arg-type]
     assert row["text"] == "Original."
@@ -294,7 +339,7 @@ def test_context_rows_do_not_alias_the_pydantic_input() -> None:
     row = PaperContext.from_paper(paper).sentences[0]
 
     assert "metadata" not in row
-    with pytest.raises(TypeError, match="read-only"):
+    with pytest.raises(TypeError):
         row["text"] = "changed"
 
     assert paper.text[0].model_extra is not None

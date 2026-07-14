@@ -1,8 +1,9 @@
 from __future__ import annotations
 
+import math
 import re
 import warnings
-from collections.abc import Mapping
+from collections.abc import Iterator, Mapping
 from typing import Any
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
@@ -15,9 +16,68 @@ MAX_SECTIONS = 10_000
 MAX_AUTHORS = 1_000
 MAX_REFERENCES = 100_000
 MAX_CROSS_REFERENCES = 250_000
+MAX_JSON_INTEGER_DIGITS = 640
+MAX_JSON_NESTING_DEPTH = 64
+MAX_SECTION_HEADER_CHARS = 512
+MAX_SECTION_TYPE_CHARS = 128
 
 _SCHEMA_VERSION_PATTERN = re.compile(r"^(?P<major>\d+)(?:\.(?P<minor>\d+))?(?:\.\d+)*$")
 _LEGACY_SCHEMA_VERSION_PATTERN = re.compile(r"^10\.\d+$")
+_SURROGATE_PATTERN = re.compile("[\ud800-\udfff]")
+
+
+def _mapping_children(value: Mapping[Any, Any]) -> Iterator[Any]:
+    for key, nested in value.items():
+        if not isinstance(key, str):
+            raise ValueError("JSON object keys must be strings")
+        yield key
+        yield nested
+
+
+def _validate_json_structure(value: Any) -> None:
+    stack: list[tuple[Iterator[Any], int, int | None]] = [(iter((value,)), 0, None)]
+    active_containers: set[int] = set()
+    while stack:
+        iterator, depth, container_id = stack[-1]
+        try:
+            item = next(iterator)
+        except StopIteration:
+            stack.pop()
+            if container_id is not None:
+                active_containers.remove(container_id)
+            continue
+        if depth > MAX_JSON_NESTING_DEPTH:
+            raise ValueError(f"JSON nesting depth limit exceeded ({MAX_JSON_NESTING_DEPTH})")
+        if isinstance(item, str):
+            if _SURROGATE_PATTERN.search(item) is not None:
+                raise ValueError("Unpaired Unicode surrogate is not allowed")
+            continue
+        if item is None or isinstance(item, bool):
+            continue
+        if isinstance(item, int):
+            decimal_digits = max(1, (item.bit_length() * 30_103 + 99_999) // 100_000)
+            if decimal_digits > MAX_JSON_INTEGER_DIGITS:
+                raise ValueError(f"JSON integer digit limit exceeded ({MAX_JSON_INTEGER_DIGITS})")
+            continue
+        if isinstance(item, float):
+            if not math.isfinite(item):
+                raise ValueError("Non-finite JSON numbers are not allowed")
+            continue
+        if isinstance(item, Mapping):
+            identity = id(item)
+            if identity in active_containers:
+                raise ValueError("Circular JSON containers are not allowed")
+            active_containers.add(identity)
+            stack.append((_mapping_children(item), depth + 1, identity))
+            continue
+        if isinstance(item, (list, tuple)):
+            identity = id(item)
+            if identity in active_containers:
+                raise ValueError("Circular JSON containers are not allowed")
+            active_containers.add(identity)
+            stack.append((iter(item), depth + 1, identity))
+            continue
+        raise ValueError(f"Unsupported JSON value type: {type(item).__name__}")
 
 
 class TextRecord(BaseModel):
@@ -35,8 +95,8 @@ class SectionRecord(BaseModel):
     model_config = ConfigDict(extra="allow")
 
     section_id: int
-    header: str | None = None
-    section_type: str | None = None
+    header: str | None = Field(default=None, max_length=MAX_SECTION_HEADER_CHARS)
+    section_type: str | None = Field(default=None, max_length=MAX_SECTION_TYPE_CHARS)
 
 
 class BibrPaper(BaseModel):
@@ -56,6 +116,7 @@ class BibrPaper(BaseModel):
     @model_validator(mode="before")
     @classmethod
     def normalize_schema_version(cls, value: Any) -> Any:
+        _validate_json_structure(value)
         if not isinstance(value, Mapping):
             return value
 
@@ -115,8 +176,12 @@ __all__ = [
     "LATEST_KNOWN_SCHEMA_MINOR",
     "MAX_AUTHORS",
     "MAX_CROSS_REFERENCES",
+    "MAX_JSON_INTEGER_DIGITS",
+    "MAX_JSON_NESTING_DEPTH",
     "MAX_REFERENCES",
     "MAX_SECTIONS",
+    "MAX_SECTION_HEADER_CHARS",
+    "MAX_SECTION_TYPE_CHARS",
     "MAX_TEXT_CHARS",
     "MAX_TEXT_RECORDS",
     "SUPPORTED_SCHEMA_MAJOR",
