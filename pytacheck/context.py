@@ -1,7 +1,8 @@
 from __future__ import annotations
 
-from collections.abc import Mapping
+from collections.abc import Iterator, Mapping
 from dataclasses import dataclass
+from types import MappingProxyType
 from typing import Any, NoReturn
 
 from pytacheck.models import BibrPaper
@@ -13,71 +14,74 @@ from pytacheck.text import (
 )
 
 
-class FrozenDict(dict[str, Any]):
-    """A JSON-compatible mapping whose contents cannot be changed after creation."""
+class FrozenMapping(Mapping[str, Any]):
+    """Deeply immutable context row backed by read-only mapping composition."""
 
-    @staticmethod
-    def _immutable() -> NoReturn:
+    __slots__ = ("_data",)
+    _data: Mapping[str, Any]
+
+    def __init__(self, values: Mapping[str, Any]) -> None:
+        try:
+            object.__getattribute__(self, "_data")
+        except AttributeError:
+            frozen = {str(key): _freeze(value) for key, value in values.items()}
+            object.__setattr__(self, "_data", MappingProxyType(frozen))
+            return
         raise TypeError("PaperContext rows are read-only")
 
-    def __delitem__(self, key: str, /) -> NoReturn:
-        del key
-        self._immutable()
+    def __getitem__(self, key: str) -> Any:
+        return self._data[key]
 
-    def __ior__(self, value: object, /) -> FrozenDict:  # type: ignore[override, misc]
-        del value
-        self._immutable()
+    def __iter__(self) -> Iterator[str]:
+        return iter(self._data)
 
-    def __setitem__(self, key: str, value: Any, /) -> NoReturn:
+    def __len__(self) -> int:
+        return len(self._data)
+
+    def __setitem__(self, key: str, value: object) -> NoReturn:
         del key, value
-        self._immutable()
+        raise TypeError("PaperContext rows are read-only")
 
-    def clear(self) -> NoReturn:
-        self._immutable()
+    def __delitem__(self, key: str) -> NoReturn:
+        del key
+        raise TypeError("PaperContext rows are read-only")
 
-    def pop(self, key: str, default: Any = None, /) -> NoReturn:
-        del key, default
-        self._immutable()
+    def __setattr__(self, name: str, value: object) -> NoReturn:
+        del name, value
+        raise TypeError("PaperContext rows are read-only")
 
-    def popitem(self) -> NoReturn:
-        self._immutable()
+    def __delattr__(self, name: str) -> NoReturn:
+        del name
+        raise TypeError("PaperContext rows are read-only")
 
-    def setdefault(self, key: str, default: Any = None, /) -> NoReturn:
-        del key, default
-        self._immutable()
-
-    def update(self, *args: Any, **kwargs: Any) -> NoReturn:
-        del args, kwargs
-        self._immutable()
-
-    def __copy__(self) -> FrozenDict:
+    def __copy__(self) -> FrozenMapping:
         return self
 
-    def __deepcopy__(self, memo: dict[int, object]) -> FrozenDict:
+    def __deepcopy__(self, memo: dict[int, object]) -> FrozenMapping:
         memo[id(self)] = self
         return self
 
 
 def _freeze(value: Any) -> Any:
     if isinstance(value, Mapping):
-        return FrozenDict({str(key): _freeze(item) for key, item in value.items()})
+        return FrozenMapping(value)
     if isinstance(value, (list, tuple)):
         return tuple(_freeze(item) for item in value)
     return value
 
 
-def _freeze_rows(rows: tuple[dict[str, Any], ...]) -> tuple[FrozenDict, ...]:
+def _freeze_rows(rows: tuple[dict[str, Any], ...]) -> tuple[FrozenMapping, ...]:
     return tuple(_freeze(row) for row in rows)
 
 
 @dataclass(frozen=True, slots=True)
 class PaperContext:
     paper_id: str
-    sentences: tuple[FrozenDict, ...]
-    paragraphs: tuple[FrozenDict, ...]
-    p_values: tuple[FrozenDict, ...]
-    equations: tuple[FrozenDict, ...]
-    apa_tests: tuple[FrozenDict, ...]
+    sentences: tuple[FrozenMapping, ...]
+    paragraphs: tuple[FrozenMapping, ...]
+    p_values: tuple[FrozenMapping, ...]
+    equations: tuple[FrozenMapping, ...]
+    apa_tests: tuple[FrozenMapping, ...]
 
     @classmethod
     def from_paper(cls, paper: BibrPaper) -> PaperContext:
@@ -113,4 +117,4 @@ class PaperContext:
         )
 
 
-__all__ = ["FrozenDict", "PaperContext"]
+__all__ = ["FrozenMapping", "PaperContext"]

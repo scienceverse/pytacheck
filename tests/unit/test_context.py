@@ -1,4 +1,5 @@
 import json
+from collections.abc import Mapping
 from copy import deepcopy
 from pathlib import Path
 from typing import Any, cast
@@ -7,7 +8,7 @@ import pytest
 from pydantic import ValidationError
 
 import pytacheck.models as models_module
-from pytacheck.context import PaperContext
+from pytacheck.context import FrozenMapping, PaperContext
 from pytacheck.models import BibrPaper
 
 FIXTURE_DIR = Path(__file__).parents[1] / "contract" / "fixtures"
@@ -153,6 +154,36 @@ def test_context_rows_are_deeply_read_only_and_drop_unknown_text_extras() -> Non
         context.apa_tests[0]["df"][0] = 999
 
 
+def test_context_rows_have_no_inherited_dict_mutation_bypass() -> None:
+    paper = BibrPaper.model_validate(
+        {
+            "paper_id": "immutable-bypass",
+            "text": [{"text": "Original.", "text_id": 1}],
+        }
+    )
+    row = PaperContext.from_paper(paper).sentences[0]
+
+    assert not isinstance(row, dict)
+    with pytest.raises(TypeError, match="read-only"):
+        row.__init__({"text": "reinitialized"})
+    with pytest.raises(TypeError):
+        dict.__setitem__(row, "text", "dict bypass")  # type: ignore[arg-type]
+    assert row["text"] == "Original."
+
+
+def test_frozen_mapping_deeply_freezes_nested_mappings_and_sequences() -> None:
+    row = FrozenMapping({"nested": {"items": [{"value": 1}]}})
+
+    nested = row["nested"]
+    assert isinstance(nested, Mapping)
+    items = nested["items"]
+    assert isinstance(items, tuple)
+    item = items[0]
+    assert isinstance(item, Mapping)
+    with pytest.raises(TypeError):
+        item["value"] = 2
+
+
 def test_newer_minor_schema_warns_but_validates() -> None:
     with pytest.warns(UserWarning, match=r"schema version 10\.7 is newer"):
         paper = BibrPaper.model_validate({"paper_id": "future", "info": {"schema_version": "10.7"}})
@@ -242,7 +273,7 @@ def test_shared_features_are_cached_json_safe_tuples() -> None:
         second = getattr(context, name)
         assert isinstance(first, tuple)
         assert first is second
-        json.dumps(first)
+        json.dumps([dict(row) for row in first])
 
 
 def test_context_rows_do_not_alias_the_pydantic_input() -> None:

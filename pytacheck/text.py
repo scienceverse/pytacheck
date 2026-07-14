@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import math
 import re
 from collections.abc import Iterable, Mapping
 from copy import deepcopy
@@ -11,6 +12,7 @@ MAX_MATCHES_PER_SOURCE = 256
 MAX_REPEATED_SOURCE_CHARS = 1_000_000
 MAX_ASSEMBLED_PARAGRAPH_CHARS = 1_000_000
 MAX_P_EXPONENT_DIGITS = 4
+MAX_P_MANTISSA_CHARS = 64
 
 
 class ExtractionLimitError(ValueError):
@@ -19,7 +21,7 @@ class ExtractionLimitError(ValueError):
 
 P_VALUE_PATTERN = re.compile(
     r"\bp-?(?:value)?\s*(?P<p_comp>[=<>~≈≠≤≥≪≫]{1,2})\s*"
-    r"(?P<value>n\.?s\.?|\d?\.\d+)(?:\s*e\s*-\d+)?"
+    r"(?P<value>n\.?s\.?|(?:\d+\.\d+|\.\d+))(?:\s*e\s*-\d+)?"
     r"(?:\s*[x*]\s*10\s*\^\s*-\d+)?"
 )
 
@@ -193,7 +195,14 @@ def _numeric_p_value(match: re.Match[str]) -> tuple[float | None, bool]:
     if value.replace(".", "").casefold() == "ns":
         return None, True
 
-    numeric = float(value)
+    if len(value) > MAX_P_MANTISSA_CHARS:
+        return None, False
+    try:
+        numeric = float(value)
+    except (OverflowError, ValueError):
+        return None, False
+    if not math.isfinite(numeric):
+        return None, False
     exponent_match = _EXPONENT_PATTERN.search(match.group(0))
     if exponent_match is not None:
         exponent = exponent_match.group("exponent")
@@ -396,6 +405,7 @@ __all__ = [
     "MAX_EXTRACTED_ROWS",
     "MAX_MATCHES_PER_SOURCE",
     "MAX_P_EXPONENT_DIGITS",
+    "MAX_P_MANTISSA_CHARS",
     "MAX_REPEATED_SOURCE_CHARS",
     "MAX_SEARCH_RESULTS",
     "ExtractionLimitError",

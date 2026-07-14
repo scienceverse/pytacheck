@@ -111,9 +111,28 @@ def test_extract_p_values_preserves_token_expansion_and_location() -> None:
 
 
 def test_extract_p_values_rejects_non_upstream_forms() -> None:
-    text = "up = 0.05; p = stuff; p = -0.05; p less than 0.05; p = 12.05; P = .05"
+    text = "up = 0.05; p = stuff; p = -0.05; p less than 0.05; P = .05"
 
     assert extract_p_values((_row(text),)) == ()
+
+
+def test_p_value_extractor_captures_multi_digit_invalid_probability() -> None:
+    result = extract_p_values((_row("The malformed result was p = 10.2."),))
+
+    assert len(result) == 1
+    assert result[0]["text"] == "p = 10.2"
+    assert result[0]["p_value"] == 10.2
+    assert result[0]["_p_valid"] is False
+
+
+def test_p_value_extractor_bounds_mantissa_before_float_conversion() -> None:
+    mantissa = "9" * 5_000
+
+    result = extract_p_values((_row(f"The malformed result was p = {mantissa}.2."),))
+
+    assert len(result) == 1
+    assert result[0]["p_value"] is None
+    assert result[0]["_p_valid"] is False
 
 
 def test_p_value_exponents_preserve_lexical_zero_and_reject_unbounded_tokens() -> None:

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 from collections.abc import Mapping, Sequence
 from time import perf_counter
 
@@ -29,6 +30,10 @@ MAX_MODULE_RESULT_ROWS = 5_000
 MAX_MODULE_RESULT_BYTES = 1_000_000
 MAX_AGGREGATE_RESULT_BYTES = 1_250_000
 MAX_FAILURE_MESSAGE_CHARS = 512
+MAX_FAILURE_TITLE_CHARS = 256
+MAX_MODULE_NAME_CHARS = 128
+MAX_MODULE_NAME_BYTES = 1_024
+MAX_SELECTED_MODULES = 64
 
 
 class UnknownModuleError(ValueError):
@@ -37,6 +42,10 @@ class UnknownModuleError(ValueError):
 
 class DuplicateModuleError(ValueError):
     """Raised when a module is selected more than once."""
+
+
+class ModuleSelectionLimitError(ValueError):
+    """Raised when a requested module selection cannot be safely represented."""
 
 
 class ResultLimitError(ValueError):
@@ -99,17 +108,33 @@ def _duplicates(names: Sequence[str]) -> list[str]:
     return duplicates
 
 
+def _bounded_text(value: str, limit: int) -> str:
+    if len(value) > limit:
+        value = f"{value[: limit - 3]}..."
+    return value.encode("utf-8", errors="replace").decode("utf-8")
+
+
 def _bounded_message(message: str) -> str:
-    if len(message) <= MAX_FAILURE_MESSAGE_CHARS:
-        return message
-    return f"{message[: MAX_FAILURE_MESSAGE_CHARS - 3]}..."
+    return _bounded_text(message, MAX_FAILURE_MESSAGE_CHARS)
+
+
+def _exception_message(exc: Exception) -> str:
+    exception_name = _bounded_text(type(exc).__name__, 64)
+    try:
+        detail = str(exc)
+    except Exception:
+        detail = "unprintable error"
+    if not detail:
+        return exception_name
+    detail_budget = MAX_FAILURE_MESSAGE_CHARS - len(exception_name) - 2
+    return f"{exception_name}: {_bounded_text(detail, detail_budget)}"
 
 
 def _failure_result(name: str, title: str, message: str) -> ModuleResult:
     bounded = _bounded_message(message)
     return ModuleResult(
         module=name,
-        title=title,
+        title=_bounded_text(title, MAX_FAILURE_TITLE_CHARS),
         table=[],
         summary_table=[],
         summary_text=bounded,
@@ -144,6 +169,7 @@ def _bounded_json_size(value: object, limit: int) -> int:
 
     total = 0
     stack = [value]
+    seen_containers: set[int] = set()
     while stack:
         item = stack.pop()
         if item is None:
@@ -159,12 +185,20 @@ def _bounded_json_size(value: object, limit: int) -> int:
         elif isinstance(item, float):
             total += 32
         elif isinstance(item, Mapping):
+            identity = id(item)
+            if identity in seen_containers:
+                return limit + 1
+            seen_containers.add(identity)
             separators = max(0, (2 * len(item)) - 1)
             total += 2 + separators
             for key, nested in item.items():
                 stack.append(str(key))
                 stack.append(nested)
         elif isinstance(item, Sequence) and not isinstance(item, (str, bytes, bytearray)):
+            identity = id(item)
+            if identity in seen_containers:
+                return limit + 1
+            seen_containers.add(identity)
             total += 2 + max(0, len(item) - 1)
             stack.extend(item)
         else:
@@ -174,8 +208,8 @@ def _bounded_json_size(value: object, limit: int) -> int:
     return total
 
 
-def _module_result_size(result: ModuleResult) -> int:
-    payload = {
+def _module_result_payload(result: ModuleResult) -> dict[str, object]:
+    return {
         "module": result.module,
         "title": result.title,
         "table": result.table,
@@ -184,19 +218,38 @@ def _module_result_size(result: ModuleResult) -> int:
         "report": result.report,
         "traffic_light": result.traffic_light,
     }
-    return _bounded_json_size(payload, MAX_MODULE_RESULT_BYTES)
+
+
+def _bounded_json_bytes(value: object, limit: int) -> bytes:
+    if _bounded_json_size(value, limit) > limit:
+        raise ResultLimitError(f"JSON byte budget exceeded ({limit})")
+    try:
+        rendered = json.dumps(
+            value,
+            ensure_ascii=False,
+            allow_nan=False,
+            indent=None,
+            separators=(",", ":"),
+        ).encode("utf-8")
+    except (OverflowError, RecursionError, TypeError, UnicodeError, ValueError) as exc:
+        raise ResultLimitError("value is not JSONResponse-renderable") from exc
+    if len(rendered) > limit:
+        raise ResultLimitError(f"JSON byte budget exceeded ({limit})")
+    return rendered
 
 
 def _checked_result(name: str, result: ModuleResult) -> tuple[ModuleResult, int]:
     row_count = len(result.table) + len(result.summary_table)
     if row_count > MAX_MODULE_RESULT_ROWS:
         raise ResultLimitError(f"module result row limit exceeded ({MAX_MODULE_RESULT_ROWS})")
-    size = _module_result_size(result)
-    if size > MAX_MODULE_RESULT_BYTES:
+    payload = _module_result_payload(result)
+    if _bounded_json_size(payload, MAX_MODULE_RESULT_BYTES) > MAX_MODULE_RESULT_BYTES:
         raise ResultLimitError(f"module result byte budget exceeded ({MAX_MODULE_RESULT_BYTES})")
-    if result.module != name:
-        raise ValueError(f"Module {name!r} returned result for {result.module!r}")
-    return result, size
+    validated = ModuleResult.model_validate(payload)
+    if validated.module != name:
+        raise ValueError(f"Module {name!r} returned result for {validated.module!r}")
+    rendered = _bounded_json_bytes(validated.model_dump(mode="json"), MAX_MODULE_RESULT_BYTES)
+    return validated, len(rendered)
 
 
 class CheckEngine:
@@ -206,6 +259,23 @@ class CheckEngine:
 
     def _selection(self, modules: Sequence[str] | None) -> list[str]:
         selected = list(DEFAULT_MODULES if modules is None else modules)
+
+        if len(selected) > MAX_SELECTED_MODULES:
+            raise ModuleSelectionLimitError(
+                f"Module selection limit exceeded ({MAX_SELECTED_MODULES})"
+            )
+
+        for name in selected:
+            if not isinstance(name, str):
+                raise ModuleSelectionLimitError("Module names must be strings")
+            if len(name) > MAX_MODULE_NAME_CHARS:
+                raise ModuleSelectionLimitError(
+                    f"Module name character limit exceeded ({MAX_MODULE_NAME_CHARS})"
+                )
+            try:
+                _bounded_json_bytes(name, MAX_MODULE_NAME_BYTES)
+            except ResultLimitError as exc:
+                raise ModuleSelectionLimitError("Module name is not JSON-renderable") from exc
 
         unknown = [name for name in dict.fromkeys(selected) if name not in self._registry]
         if unknown:
@@ -225,39 +295,93 @@ class CheckEngine:
         selected = self._selection(modules)
         results: dict[str, ModuleResult] = {}
         timings_ms: dict[str, float] = {}
-        aggregate_result_bytes = 0
+        aggregate_result_bytes = 2
+
+        fallback_results: list[tuple[ModuleResult, int]] = []
+        result_key_sizes: list[int] = []
+        for name in selected:
+            entry = self._registry[name]
+            fallback_results.append(
+                _checked_result(
+                    name,
+                    _failure_result(name, entry.metadata.title, "Module result unavailable."),
+                )
+            )
+            result_key_sizes.append(len(_bounded_json_bytes(name, MAX_MODULE_NAME_BYTES)))
+
+        fallback_entry_sizes = [
+            key_size + 1 + fallback_size
+            for key_size, (_, fallback_size) in zip(result_key_sizes, fallback_results, strict=True)
+        ]
+        minimum_result_bytes = (
+            aggregate_result_bytes + sum(fallback_entry_sizes) + max(0, len(selected) - 1)
+        )
+        if minimum_result_bytes > MAX_AGGREGATE_RESULT_BYTES:
+            raise ResultLimitError(
+                "selected module failures cannot fit aggregate result byte budget "
+                f"({MAX_AGGREGATE_RESULT_BYTES})"
+            )
+
+        def emit(index: int, candidate: ModuleResult) -> None:
+            nonlocal aggregate_result_bytes
+            name = selected[index]
+            entry = self._registry[name]
+            try:
+                checked, checked_size = _checked_result(name, candidate)
+            except Exception as exc:
+                checked, checked_size = _checked_result(
+                    name,
+                    _failure_result(name, entry.metadata.title, _exception_message(exc)),
+                )
+
+            remaining_fallback_bytes = sum(fallback_entry_sizes[index + 1 :]) + (
+                len(selected) - index - 1
+            )
+            entry_size = result_key_sizes[index] + 1 + checked_size + int(index > 0)
+            if (
+                aggregate_result_bytes + entry_size + remaining_fallback_bytes
+                > MAX_AGGREGATE_RESULT_BYTES
+            ):
+                aggregate_failure = _failure_result(
+                    name,
+                    entry.metadata.title,
+                    "ResultLimitError: aggregate module result byte budget exceeded "
+                    f"({MAX_AGGREGATE_RESULT_BYTES})",
+                )
+                checked, checked_size = _checked_result(name, aggregate_failure)
+                entry_size = result_key_sizes[index] + 1 + checked_size + int(index > 0)
+                if (
+                    aggregate_result_bytes + entry_size + remaining_fallback_bytes
+                    > MAX_AGGREGATE_RESULT_BYTES
+                ):
+                    checked, checked_size = fallback_results[index]
+                    entry_size = result_key_sizes[index] + 1 + checked_size + int(index > 0)
+
+            aggregate_result_bytes += entry_size
+            results[name] = checked
 
         try:
             context = PaperContext.from_paper(paper)
         except ExtractionLimitError as exc:
-            message = f"{type(exc).__name__}: {exc}"
-            for name in selected:
+            message = _exception_message(exc)
+            for index, name in enumerate(selected):
                 entry = self._registry[name]
-                results[name] = _failure_result(name, entry.metadata.title, message)
+                emit(index, _failure_result(name, entry.metadata.title, message))
                 timings_ms[name] = 0.0
             return self._response(paper, selected, results, timings_ms)
 
-        for name in selected:
+        for index, name in enumerate(selected):
             entry = self._registry[name]
             started = perf_counter()
             try:
-                module_result, result_size = _checked_result(
-                    name,
-                    entry.function(context),
-                )
-                if aggregate_result_bytes + result_size > MAX_AGGREGATE_RESULT_BYTES:
-                    raise ResultLimitError(
-                        "aggregate module result byte budget exceeded "
-                        f"({MAX_AGGREGATE_RESULT_BYTES})"
-                    )
-                aggregate_result_bytes += result_size
+                module_result = entry.function(context)
             except Exception as exc:
-                message = f"{type(exc).__name__}: {exc}"
+                message = _exception_message(exc)
                 module_result = _failure_result(name, entry.metadata.title, message)
             finally:
                 timings_ms[name] = (perf_counter() - started) * 1_000
 
-            results[name] = module_result
+            emit(index, module_result)
 
         return self._response(paper, selected, results, timings_ms)
 
@@ -288,11 +412,14 @@ __all__ = [
     "DEFAULT_MODULES",
     "MAX_AGGREGATE_RESULT_BYTES",
     "MAX_FAILURE_MESSAGE_CHARS",
+    "MAX_MODULE_NAME_CHARS",
     "MAX_MODULE_RESULT_BYTES",
     "MAX_MODULE_RESULT_ROWS",
+    "MAX_SELECTED_MODULES",
     "CheckEngine",
     "CheckResponse",
     "DuplicateModuleError",
+    "ModuleSelectionLimitError",
     "ResultLimitError",
     "UnknownModuleError",
 ]

@@ -950,6 +950,30 @@ def test_success_response_encoding_runs_off_the_event_loop_thread(
     assert render_thread_ids[0] != event_loop_thread_ids[0]
 
 
+def test_renderer_hostile_module_payload_is_bounded_before_http_response(
+    paper_payload: dict[str, Any],
+) -> None:
+    from fastapi.testclient import TestClient
+
+    def hostile(context: PaperContext) -> ModuleResult:
+        del context
+        result = module_result("hostile")
+        result.table = [{"payload": "\ud800"}]
+        return result
+
+    app = create_app(CheckEngine(registry={"hostile": hostile}))
+    with TestClient(app, raise_server_exceptions=False) as client:
+        response = client.post(
+            "/v1/checks",
+            json={"paper": paper_payload, "modules": ["hostile"]},
+        )
+
+    assert response.status_code == 200
+    payload = response.json()
+    assert payload["results"]["hostile"]["traffic_light"] == "fail"
+    assert payload["results"]["hostile"]["table"] == []
+
+
 def test_metrics_use_app_local_registry_bounded_labels_and_no_sensitive_values(
     paper_payload: dict[str, Any],
 ) -> None:

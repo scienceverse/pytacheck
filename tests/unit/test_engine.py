@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import json
 from collections.abc import Callable
-from typing import NoReturn
+from typing import Any, NoReturn, cast
 from unittest.mock import patch
 
 import pytest
@@ -56,6 +56,21 @@ def result(module: str, *, traffic_light: TrafficLight = "green") -> ModuleResul
         summary_text="One result",
         report="All good",
         traffic_light=traffic_light,
+    )
+
+
+def encoded_results_size(response: engine_module.CheckResponse) -> int:
+    payload = {
+        name: module_result.model_dump(mode="json")
+        for name, module_result in response.results.items()
+    }
+    return len(
+        json.dumps(
+            payload,
+            ensure_ascii=False,
+            allow_nan=False,
+            separators=(",", ":"),
+        ).encode("utf-8")
     )
 
 
@@ -200,6 +215,31 @@ def test_engine_rejects_duplicate_modules_before_context_or_execution() -> None:
     assert executed is False
 
 
+def test_engine_rejects_oversized_selection_before_context_or_execution() -> None:
+    executed = False
+
+    def make_module(name: str) -> Callable[[PaperContext], ModuleResult]:
+        def selected(context: PaperContext) -> ModuleResult:
+            nonlocal executed
+            del context
+            executed = True
+            return result(name)
+
+        return selected
+
+    names = [f"module_{index}" for index in range(engine_module.MAX_SELECTED_MODULES + 1)]
+    registry = {name: make_module(name) for name in names}
+
+    with (
+        patch("pytacheck.engine.PaperContext.from_paper") as context_factory,
+        pytest.raises(ValueError, match="selection.*limit"),
+    ):
+        CheckEngine(registry=registry).check(minimal_paper(), names)
+
+    context_factory.assert_not_called()
+    assert executed is False
+
+
 def test_response_contains_json_serializable_compatibility_metadata() -> None:
     def successful(context: PaperContext) -> ModuleResult:
         del context
@@ -318,6 +358,27 @@ def test_mutating_failed_module_cannot_corrupt_later_module_context() -> None:
     assert observed_text == ["A result was reported."]
 
 
+def test_inherited_dict_bypass_cannot_corrupt_later_module_context() -> None:
+    observed_text: list[str] = []
+
+    def mutating(context: PaperContext) -> ModuleResult:
+        row = cast(dict[str, Any], context.sentences[0])
+        dict.__setitem__(row, "text", "corrupted")
+        return result("mutating")
+
+    def observing(context: PaperContext) -> ModuleResult:
+        observed_text.append(context.sentences[0]["text"])
+        return result("observing")
+
+    response = CheckEngine(registry={"mutating": mutating, "observing": observing}).check(
+        minimal_paper(), ["mutating", "observing"]
+    )
+
+    assert response.results["mutating"].traffic_light == "fail"
+    assert response.results["observing"].traffic_light == "green"
+    assert observed_text == ["A result was reported."]
+
+
 def test_generic_module_row_budget_replaces_oversized_result_with_bounded_fail() -> None:
     def oversized(context: PaperContext) -> ModuleResult:
         del context
@@ -369,3 +430,91 @@ def test_generic_aggregate_budget_bounds_multiple_individually_legal_results() -
 
     assert response.results["third"].traffic_light == "fail"
     assert len(response.model_dump_json()) <= engine_module.MAX_AGGREGATE_RESULT_BYTES + 10_000
+
+
+@pytest.mark.parametrize(
+    "payload",
+    [
+        pytest.param(10**5_000, id="huge-integer"),
+        pytest.param("\ud800", id="lone-surrogate"),
+        pytest.param(object(), id="non-json-object"),
+    ],
+)
+def test_renderer_hostile_module_payload_becomes_bounded_failure(payload: object) -> None:
+    def hostile(context: PaperContext) -> ModuleResult:
+        del context
+        module_result = result("hostile")
+        module_result.table = cast(Any, [{"payload": payload}])
+        return module_result
+
+    response = CheckEngine(registry={"hostile": hostile}).check(minimal_paper(), ["hostile"])
+
+    assert response.results["hostile"].traffic_light == "fail"
+    assert response.results["hostile"].table == []
+    json.dumps(
+        response.model_dump(mode="json"),
+        ensure_ascii=False,
+        allow_nan=False,
+        separators=(",", ":"),
+    ).encode("utf-8")
+
+
+def test_every_module_failure_counts_toward_actual_aggregate_bytes(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    names = [f"module_{index}" for index in range(8)]
+
+    def broken(context: PaperContext) -> NoReturn:
+        del context
+        raise RuntimeError("x" * 10_000)
+
+    monkeypatch.setattr(engine_module, "MAX_AGGREGATE_RESULT_BYTES", 2_000)
+    response = CheckEngine(registry=dict.fromkeys(names, broken)).check(minimal_paper(), names)
+
+    assert list(response.results) == names
+    assert all(item.traffic_light == "fail" for item in response.results.values())
+    assert encoded_results_size(response) <= engine_module.MAX_AGGREGATE_RESULT_BYTES
+
+
+def test_shared_extraction_failures_count_toward_actual_aggregate_bytes(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    names = [f"module_{index}" for index in range(8)]
+    paper = BibrPaper.model_validate(
+        {
+            "paper_id": "shared-failure",
+            "text": [
+                {
+                    "text": "p = .5; " * (engine_module.MAX_SELECTED_MODULES * 8),
+                    "text_id": 1,
+                    "paragraph_id": 1,
+                }
+            ],
+        }
+    )
+
+    def unused(context: PaperContext) -> ModuleResult:
+        raise AssertionError(f"shared extraction should fail first: {context.paper_id}")
+
+    monkeypatch.setattr(engine_module, "MAX_AGGREGATE_RESULT_BYTES", 1_600)
+    response = CheckEngine(registry=dict.fromkeys(names, unused)).check(paper, names)
+
+    assert list(response.results) == names
+    assert all(item.traffic_light == "fail" for item in response.results.values())
+    assert encoded_results_size(response) <= engine_module.MAX_AGGREGATE_RESULT_BYTES
+
+
+def test_multi_digit_invalid_probability_reaches_stat_p_exact() -> None:
+    paper = BibrPaper.model_validate(
+        {
+            "paper_id": "invalid-probability",
+            "text": [{"text": "The malformed result was p = 10.2.", "text_id": 1}],
+        }
+    )
+
+    response = CheckEngine().check(paper, ["stat_p_exact"])
+
+    module_result = response.results["stat_p_exact"]
+    assert module_result.traffic_light == "red"
+    assert module_result.table[0]["p_value"] == 10.2
+    assert module_result.table[0]["invalid"] is True
