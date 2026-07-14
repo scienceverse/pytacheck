@@ -3,6 +3,7 @@ from __future__ import annotations
 import hashlib
 import json
 import math
+import re
 from pathlib import Path
 from typing import Any
 
@@ -146,6 +147,27 @@ EXPECTED_SUMMARY_FIELDS = {
     "stat_p_nonsig": ["paper_id", "n_nonsignificant"],
 }
 EXPECTED_FLOAT_FIELDS = {"stat_check": "computed_p"}
+REQUIRED_CAPTURE_CREDENTIAL_ENV = {
+    "ANTHROPIC_API_KEY",
+    "AZURE_OPENAI_ENDPOINT",
+    "CLOUDFLARE_API_KEY",
+    "DATABRICKS_HOST",
+    "DEEPSEEK_API_KEY",
+    "GEMINI_API_KEY",
+    "GITHUB_PAT",
+    "GOOGLE_API_KEY",
+    "GROQ_API_KEY",
+    "HUGGINGFACE_API_KEY",
+    "MISTRAL_API_KEY",
+    "OLLAMA_BASE_URL",
+    "OPENAI_API_KEY",
+    "OPENROUTER_API_KEY",
+    "OSF_PAT",
+    "PERPLEXITY_API_KEY",
+    "PORTKEY_API_KEY",
+    "REGCHECK_API_TOKEN",
+    "SCIVRS_API_KEY",
+}
 
 
 def _read_json(path: Path) -> dict[str, Any]:
@@ -211,7 +233,8 @@ def test_capture_script_sanitizes_network_before_loading_and_rejects_dirty_sourc
 
     sanitize_call = script.index("sanitize_capture_environment()")
     load_call = script.index("pkgload::load_all")
-    assert sanitize_call < load_call
+    llm_trap_call = script.index("block_llm_calls()")
+    assert sanitize_call < load_call < llm_trap_call
     assert '"OSF_PAT"' in script
     assert '"HTTP_PROXY"' in script
     assert '"HTTPS_PROXY"' in script
@@ -219,6 +242,29 @@ def test_capture_script_sanitizes_network_before_loading_and_rejects_dirty_sourc
     assert '"NO_PROXY"' in script
     assert '"--untracked-files=all"' in script
     assert "Refusing to capture from dirty Metacheck source" in script
+
+
+def test_capture_script_clears_complete_frozen_metacheck_credential_set_before_loading() -> None:
+    script = (Path(__file__).parents[2] / "scripts" / "capture_r_oracle.R").read_text(
+        encoding="utf-8"
+    )
+    credential_block = re.search(
+        r"PROVIDER_CREDENTIAL_ENV\s*<-\s*c\((?P<body>.*?)\n\)",
+        script,
+        flags=re.DOTALL,
+    )
+    sanitizer_definition = re.search(
+        r"sanitize_capture_environment\s*<-\s*function\(\)\s*\{(?P<body>.*?)\n\}",
+        script,
+        flags=re.DOTALL,
+    )
+
+    assert credential_block is not None
+    assert sanitizer_definition is not None
+    declared_credentials = set(re.findall(r'"([A-Z][A-Z0-9_]*)"', credential_block.group("body")))
+    assert declared_credentials == REQUIRED_CAPTURE_CREDENTIAL_ENV
+    assert "Sys.unsetenv(PROVIDER_CREDENTIAL_ENV)" in sanitizer_definition.group("body")
+    assert script.index("sanitize_capture_environment()") < script.index("pkgload::load_all")
 
 
 def test_all_six_defaults_return_without_synthetic_failure(response) -> None:
