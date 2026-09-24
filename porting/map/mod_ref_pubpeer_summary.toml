@@ -7,7 +7,8 @@
 "module:ref_pubpeer" = "pytacheck.modules.ref_pubpeer:ref_pubpeer"
 "module:ref_summary" = "pytacheck.modules.ref_summary:ref_summary"
 # (dplyr::inner_join()/left_join() as used by both modules -- rows in x order, NA keys
-#  matching, int/double keys by value, .x/.y suffixes, no many-to-many warning inside a
-#  module -- is ported as pytacheck.modules.ref_summary:_join; ref_summary's
-#  pivot_longer()/summarise() of ref_accuracy's *_mismatch columns as
-#  pytacheck.modules.ref_summary:_accuracy_mismatches)
+#  matching, int/double keys by value, .x/.y suffixes repeated until unique as in
+#  dplyr:::add_suffixes(), no many-to-many warning inside a module -- is ported as
+#  pytacheck.modules.ref_summary:_join; ref_summary's pivot_longer()/summarise() of
+#  ref_accuracy's *_mismatch columns, including pivot_longer()'s "Can't combine" type
+#  check, as pytacheck.modules.ref_summary:_accuracy_mismatches)

@@ -156,6 +156,26 @@ def main() -> None:
         _module_dois(H.pp_nourl_some()),
         [_fb("10.9999/pp.nourl", 3, "No Url", url=None), _fb("10.9999/pp.zero", 0, "Nobody")],
     )
+    # SICI and non-ASCII DOIs: PubPeer answers with the lower-cased ids
+    _write_json(
+        _module_dois(H.pp_sici()),
+        [
+            _fb("10.1002/(sici)1099-0720(199908)13:4<333::aid-acp588>3.0.co;2-z", 3, "Sici Fan"),
+            _fb("10.9999/pp.ä", 1, "Umlaut"),
+            _fb("10.9999/ß.x", 2, "Eszett"),
+        ],
+    )
+    # bibr export schema 12.0 fixture papers (DOIs from ref_table(), bib_match included)
+    for name in ("preprint", "PMC4383902"):
+        dois = _module_dois(H.bibr12(name))
+        _write_json(
+            dois,
+            [
+                _fb(dois[1], 4, "Reviewer One"),
+                _fb(dois[-1], 1, "Statcheck "),
+                _fb(dois[len(dois) // 2], 2, ["Reviewer Two", "Statcheck"]),
+            ],
+        )
     # mixed-case paper ids with a bib_match table (DOIs in ref_table()'s C-locale order)
     _write_json(
         _module_dois(H.pp_case_list()),

@@ -1,0 +1,29 @@
+{
+    "status": "good",
+    "feedbacks": [
+        {
+            "id": "10.1093/nar/gkt1146",
+            "title": "A paper (10.1093/nar/gkt1146)",
+            "total_comments": 4,
+            "url": "https://pubpeer.com/publications/GKT1146",
+            "users": "Reviewer One"
+        },
+        {
+            "id": "10.1186/1471-2105-13-108",
+            "title": "A paper (10.1186/1471-2105-13-108)",
+            "total_comments": 1,
+            "url": "https://pubpeer.com/publications/1471-2105-13-108",
+            "users": "Statcheck "
+        },
+        {
+            "id": "10.1371/journal.pone.0063184",
+            "title": "A paper (10.1371/journal.pone.0063184)",
+            "total_comments": 2,
+            "url": "https://pubpeer.com/publications/JOURNAL.PONE.0063184",
+            "users": [
+                "Reviewer Two",
+                "Statcheck"
+            ]
+        }
+    ]
+}

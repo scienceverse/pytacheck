@@ -215,9 +215,9 @@ def _arrange(table: pd.DataFrame, paper_ids: Sequence[str]) -> pd.DataFrame:
 
 
 def _summarise(
-    table: pd.DataFrame, flag: str, statements: str
+    table: pd.DataFrame, flag: str, column: str
 ) -> dict[Any, tuple[bool, list[str] | None]]:
-    """``summarise(any(flag), statements = list(unique(text[flag])), .by = paper_id)``.
+    """``summarise(any(flag), <column> = list(unique(text[flag])), .by = paper_id)``.
 
     Returns ``{paper_id: (any, statements)}`` in first-appearance order; empty
     statements are ``None`` (R's ``NA_character_``). R only summarises a table
@@ -229,7 +229,7 @@ def _summarise(
     if "text" not in table.columns:
         # R: no `text` column in the data mask, so `text` is graphics::text(), and
         # subsetting it fails ("object of type 'closure' is not subsettable")
-        raise TypeError(f"In argument: `{statements} = list(unique(text[{flag}]))`.")
+        raise TypeError(f"In argument: `{column} = list(unique(text[{flag}]))`.")
     groups: dict[Any, tuple[list[bool | None], list[Any]]] = {}
     flags = [bool(f) if not pd.isna(f) else None for f in table[flag].tolist()]
     texts = table["text"].tolist()

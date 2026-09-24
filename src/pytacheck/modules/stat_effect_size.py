@@ -14,7 +14,7 @@ from __future__ import annotations
 import functools
 import math
 import warnings
-from collections.abc import Iterable, Sequence
+from collections.abc import Iterable, Iterator, Sequence
 from typing import Any, NamedTuple
 
 import pandas as pd
@@ -222,8 +222,7 @@ def _ld_pow10_exact(k: int) -> tuple[int, int]:
 # format.c's tbl[] of powers of ten: long doubles initialised from *double*
 # literals, so 1e23..1e27 are not exact
 _TBL = [
-    (lambda n, d: (n, -(d.bit_length() - 1)))(*float(10**k).as_integer_ratio())
-    for k in range(28)
+    (lambda n, d: (n, -(d.bit_length() - 1)))(*float(10**k).as_integer_ratio()) for k in range(28)
 ]
 
 
@@ -532,6 +531,28 @@ def _parse_eta_stats(es_text: str | None) -> list[_EtaStat]:
 # ---------------------------------------------------------------------------
 
 
+# group-size splits evaluated per block, so a huge df needs no huge arrays
+_UNEQUAL_BLOCK = 1 << 20
+
+
+def _unequal_d(n_total: int, abs_t: float) -> Iterator[tuple[int, Any]]:
+    """R ``abs_t * sqrt(1 / n1 + 1 / n2)`` for ``n1 <- 2:(n_total - 2)``, ``n2 <- n_total - n1``.
+
+    Yields ``(first n1, d values)`` blocks in order; the same IEEE operations as R.
+    """
+    import numpy as np
+
+    for start in range(2, n_total - 1, _UNEQUAL_BLOCK):
+        n = np.arange(start, min(start + _UNEQUAL_BLOCK, n_total - 1), dtype=np.float64)
+        d = np.divide(1.0, n)
+        np.subtract(n_total, n, out=n)
+        np.divide(1.0, n, out=n)
+        d += n
+        np.sqrt(d, out=d)
+        d *= abs_t
+        yield start, d
+
+
 def _classify_d_coherence(
     test: str | None, test_text: str | None, es_text: str | None, tol: float = _TOL
 ) -> dict[str, str | None]:
@@ -605,25 +626,16 @@ def _classify_d_coherence(
     d_unequal_min = math.nan
     d_unequal_max = math.nan
     n_total = 0
-    d_vals = None
     if use_unequal:
         n_total = int(_round0(n_total_f))
         if n_total > _INT_MAX:
             # as.integer() gives NA (with a warning) and `2:(NA - 2)` errors
             warnings.warn("NAs introduced by coercion to integer range", stacklevel=2)
             raise ValueError("NA/NaN argument")
-        # d for every split n1 = 2..(N - 2), n2 = N - n1: abs_t * sqrt(1/n1 + 1/n2),
-        # computed in place (the same IEEE operations as R, less memory)
-        n = np.arange(2, n_total - 1, dtype=np.float64)
-        d_vals = np.divide(1.0, n)
-        np.subtract(n_total, n, out=n)
-        np.divide(1.0, n, out=n)
-        d_vals += n
-        del n
-        np.sqrt(d_vals, out=d_vals)
-        d_vals *= abs_t
-        d_unequal_min = float(d_vals.min())
-        d_unequal_max = float(d_vals.max())
+        d_unequal_min, d_unequal_max = math.inf, -math.inf
+        for _, d in _unequal_d(n_total, abs_t):
+            d_unequal_min = min(d_unequal_min, float(d.min()))
+            d_unequal_max = max(d_unequal_max, float(d.max()))
         out["d_implied_indep_unequal_min"] = _chr(d_unequal_min)
         out["d_implied_indep_unequal_max"] = _chr(d_unequal_max)
 
@@ -661,13 +673,16 @@ def _classify_d_coherence(
     elif _cond(unequal_match):
         # Report the single group-size split whose implied d is closest to the
         # reported d, so users can manually check the assumed sample sizes.
-        assert d_vals is not None
         out["d_coherence"] = "match_under_assumptions"
         out["d_coherence_assumption"] = "independent_unequal_n_range"
         matched_d = next(a for a, ok in zip(abs_d, in_range, strict=True) if ok)
-        # which.min(): the first split closest to the matched d (n1 = index + 2)
-        best = int(np.argmin(np.abs(d_vals - matched_d)))
-        n1 = best + 2
+        # which.min(abs(d_vals - matched_d)): the first split closest to the matched d
+        n1, best_dist = 0, math.inf
+        for start, d in _unequal_d(n_total, abs_t):
+            dist = np.abs(d - matched_d)
+            i = int(np.argmin(dist))
+            if dist[i] < best_dist:
+                n1, best_dist = start + i, float(dist[i])
         split = f"n1 = {n1:d}, n2 = {n_total - n1:d}, N = {n_total:d}"
         out["d_implied_n"] = split
         out["d_coherence_note"] = (

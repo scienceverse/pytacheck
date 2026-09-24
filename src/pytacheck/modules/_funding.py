@@ -326,7 +326,7 @@ def _is_posix_only_class(body: str) -> bool:
             if end == -1 or body[j + 2 : end] in ("^upper", "^lower"):
                 return False
             j = end + 2
-        elif body[j] == "\\" and j + 1 < len(body) and body[j + 1] in "wWdDsShHvV":
+        elif body[j] == "\\" and j + 1 < len(body) and body[j + 1] in "wdshv":
             j += 2
         else:
             return False

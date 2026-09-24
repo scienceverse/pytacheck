@@ -693,23 +693,25 @@ def _jsonlite(x: Any) -> str:
     """``jsonlite::toJSON(x, auto_unbox = TRUE, digits = 22, null = "null")`` of plain data.
 
     Doubles are written with 17 significant digits (``0.1`` is
-    ``0.10000000000000001``, ``2.0`` is ``2``), non-finite ones as the strings
-    ``"NaN"``/``"Inf"``/``"-Inf"``, ``NA``/``NULL`` as ``null``; an empty
-    list is ``[]`` and an empty dict ``{}``.
+    ``0.10000000000000001``, ``2.0`` is ``2``); a missing double (NaN) as the
+    string ``"NA"`` and infinities as ``"Inf"``/``"-Inf"``, as jsonlite writes
+    ``NA_real_``; ``None``/``pd.NA`` (R's ``NULL`` or a logical/character
+    ``NA``) as ``null``. An empty list is ``[]`` and an empty dict ``{}``.
     """
     import math
     import numbers
 
-    if x is None or (not isinstance(x, list | tuple | Mapping | str) and is_na(x)):
-        return "null"
     if isinstance(x, bool):
         return "true" if x else "false"
+    if isinstance(x, numbers.Real) and not isinstance(x, numbers.Integral) and math.isnan(x):
+        # a missing double (pytacheck's NaN is R's NA_real_) is the string "NA"
+        return '"NA"'
+    if x is None or (not isinstance(x, list | tuple | Mapping | str) and is_na(x)):
+        return "null"
     if isinstance(x, numbers.Integral):
         return str(int(x))
     if isinstance(x, numbers.Real):
         v = float(x)
-        if math.isnan(v):
-            return '"NaN"'
         if math.isinf(v):
             return '"Inf"' if v > 0 else '"-Inf"'
         return format(v, ".17g")

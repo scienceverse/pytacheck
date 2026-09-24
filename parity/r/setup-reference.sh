@@ -17,6 +17,8 @@ if ! command -v micromamba >/dev/null 2>&1; then
   echo "micromamba not found: see https://mamba.readthedocs.io/en/latest/installation/micromamba-installation.html" >&2
   exit 1
 fi
+# non-ASCII names in metacheck's code only survive a UTF-8 install locale
+export LANG=C.UTF-8 LC_ALL=C.UTF-8
 micromamba create -y -p "$PREFIX" --file "$ROOT/parity/r/conda-linux-64.lock"
 # httptest2 (for parity cases that replay recorded API responses) is not on
 # conda-forge: install the pinned commit from GitHub.

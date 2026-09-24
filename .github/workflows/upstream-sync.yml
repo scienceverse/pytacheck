@@ -100,6 +100,10 @@ jobs:
           cache-environment: true
 
       - name: Install the new metacheck (adding any new R dependencies)
+        env:
+          # non-ASCII names in metacheck's code only survive a UTF-8 install locale
+          LANG: C.UTF-8
+          LC_ALL: C.UTF-8
         run: |
           git clone --quiet https://github.com/nealrichardson/httptest2.git /tmp/httptest2
           git -C /tmp/httptest2 checkout --quiet 37efe13ff4c51504570c5e6ac2d93fff71a416a2

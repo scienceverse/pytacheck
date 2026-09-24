@@ -467,3 +467,88 @@ def test_text_table_input() -> None:
     out = ses.stat_effect_size(tt)
     assert out["traffic_light"] == "red"
     assert out["table"]["test"].tolist() == ["t-test"]
+
+
+def test_text_table_summary_table_has_one_row_per_table_row() -> None:
+    # R module_run(): summary_table <- data.frame(paper_id = paper$paper_id)
+    p = pc.test_paper(["A, t(40) = 2.9, d = 0.45.", "B, t(30) = 2.0.", "No stats."])
+    tt = pc.text_search(p, "[0-9]")
+    out = module_run(tt, MODULE)
+    s = out.summary_table
+    assert s["paper_id"].tolist() == [p.paper_id] * 2
+    assert s["ttests_with_es"].tolist() == [1, 1]
+    assert s["ttests_without_es"].tolist() == [1, 1]
+
+
+def test_as_numeric_is_r_strtod_in_long_double() -> None:
+    # R: sprintf("%a", as.numeric(x)); float() is correctly rounded, R is not
+    assert ses._num("0.8050473192") == float.fromhex("0x1.9c2f298764982p-1")
+    assert float("0.8050473192") == float.fromhex("0x1.9c2f298764981p-1")
+    assert ses._num(".7246706653776675") == float.fromhex("0x1.7308089055d52p-1")
+    assert ses._num("281412004015158280215") == float.fromhex("0x1.e82c08d558c9ep+67")
+    for s in ("2.9", "0.45", ".17", "-0", "+2.9", "1e5", "4.5E-2", "5.", "1e-400"):
+        assert ses._num(s) == float(s)
+    assert ses._num("9" * 400) == float("inf")
+    assert ses._num("-" + "9" * 400) == float("-inf")
+
+
+def test_as_character_uses_long_double_digits() -> None:
+    # R: as.character() of doubles on near-ties (format.c scientific())
+    assert ses._chr(float.fromhex("0x1.9714938037f2cp-1")) == "0.79507885875862"
+    assert ses._chr(float.fromhex("0x1.8807e0e187f07p-2")) == "0.3828425538686"
+    assert ses._chr(float.fromhex("0x1.53b4226af62abp-35")) == "3.8619833750799e-11"
+    cases = {
+        1 / 3: "0.333333333333333",
+        1e5: "1e+05",
+        123456.0: "123456",
+        100000.5: "100000.5",
+        0.0001: "1e-04",
+        0.00015: "0.00015",
+        99999.99999999999: "1e+05",
+        0.1 + 0.2: "0.3",
+        -2.5: "-2.5",
+        -0.0: "0",
+        float("nan"): "NaN",
+        float("inf"): "Inf",
+        5e-324: "4.94065645841247e-324",
+    }
+    for x, want in cases.items():
+        assert ses._chr(x) == want, x
+    # format(): 7 significant digits, no dropping of zeros
+    assert ses._format(20.5) == "20.5"
+    assert ses._format(1234567.5) == "1234568"
+    assert ses._format(5e5) == "5e+05"
+    assert ses._format(1000000.0) == "1e+06"
+
+
+def test_papers_without_digit_sentences_sort_by_icu_paper_id() -> None:
+    def mk(text: str | list[str], pid: str) -> pc.Paper:
+        p = pc.test_paper(text)
+        p.paper_id = pid
+        return p
+
+    pl = pc.PaperList(
+        [mk("No digits, t = n.s.", "b"), mk("Sig, t(20) = 2.1, d = 0.9.", "mm")]
+        + [mk("B, t = n.s., d = n.s.", pid) for pid in ("Ab", "B", "_x", "aa")]
+    )
+    out = module_run(pl, MODULE)
+    assert out.table["paper_id"].tolist() == ["mm", "_x", "aa", "Ab", "b", "B"]
+
+
+def test_unequal_n_blocks(monkeypatch: pytest.MonkeyPatch) -> None:
+    # the group-size grid is evaluated in blocks: results must not depend on the block size
+    texts = [
+        ("t(58) = 2.5", "d = 1.2"),
+        ("t(10) = 3.0", "d = 2.33"),
+        ("t(10) = 3.0", "d = 1.90"),
+        ("t(97) = 2.1", "d = 0.6"),
+        ("t(2) = 2.0", "d = 2.0"),
+    ]
+    want = [ses._classify_d_coherence("t-test", t, e) for t, e in texts]
+    for block in (1, 2, 3, 7):
+        monkeypatch.setattr(ses, "_UNEQUAL_BLOCK", block)
+        assert [ses._classify_d_coherence("t-test", t, e) for t, e in texts] == want
+    # R (parity golden stat_effect_size.review.d_variants)
+    assert want[0]["d_implied_n"] == "n1 = 5, n2 = 55, N = 60"
+    assert want[1]["d_implied_n"] == "n1 = 2, n2 = 10, N = 12"
+    assert want[2]["d_implied_n"] == "n1 = 4, n2 = 8, N = 12"

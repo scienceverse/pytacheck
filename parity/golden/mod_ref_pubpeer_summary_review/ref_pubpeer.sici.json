@@ -1,0 +1,160 @@
+{
+  "id": "ref_pubpeer.sici",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "ref_pubpeer"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "PubPeer Comments"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "reference"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 3,
+        "names": [
+          "paper_id",
+          "bib_id",
+          "doi",
+          "text",
+          "total_comments",
+          "url",
+          "users"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "sici",
+              "sici",
+              "sici"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              1,
+              2
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "10.1002/(SICI)1099-0720(199908)13:4<333::AID-ACP588>3.0.CO;2-Z",
+              "10.9999/PP.Ä",
+              "10.9999/ẞ.x"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Reference 0. https://doi.org/10.1002/(SICI)1099-0720(199908)13:4<333::AID-ACP588>3.0.CO;2-Z",
+              "Reference 1. https://doi.org/10.9999/PP.Ä",
+              "Reference 2. https://doi.org/10.9999/ẞ.x"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              3,
+              1,
+              2
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://pubpeer.com/publications/(SICI)1099-0720(199908)13:4<333::AID-ACP588>3.0.CO;2-Z",
+              "https://pubpeer.com/publications/PP.Ä",
+              "https://pubpeer.com/publications/SS.X"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Sici Fan",
+              "Umlaut",
+              "Eszett"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "We checked 3 references with DOIs. You cited 3 references with comments in PubPeer.\n\nPubpeer is a platform for post-publication peer review. We have filtered out Pubpeer comments by 'Statcheck'. You can check out the comments by visiting the URLs below:",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Reference = c(\"Reference 0. https://doi.org/10.1002/(SICI)1099-0720(199908)13:4<333::AID-ACP588>3.0.CO;2-Z\", \n\"Reference 1. https://doi.org/10.9999/PP.Ä\", \"Reference 2. https://doi.org/10.9999/ẞ.x\"\n), Comments = c(3, 1, 2), \"PubPeer Link\" = c(\"<a href='https://pubpeer.com/publications/(SICI)1099-0720(199908)13:4<333::AID-ACP588>3.0.CO;2-Z' target='_blank'>link<\/a>\", \n\"<a href='https://pubpeer.com/publications/PP.Ä' target='_blank'>link<\/a>\", \n\"<a href='https://pubpeer.com/publications/SS.X' target='_blank'>link<\/a>\"\n)), row.names = c(NA, -3L), class = c(\"tbl_df\", \"tbl\", \"data.frame\"\n))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "info"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "You cited 3 references with comments in PubPeer."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "pubpeer_comments"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "sici"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              6
+            ]
+          }
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

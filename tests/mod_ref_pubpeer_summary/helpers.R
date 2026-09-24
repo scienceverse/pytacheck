@@ -261,3 +261,14 @@ test_paper_id <- function(text, id) {
   p$paper_id <- id
   p
 }
+
+# SICI and non-ASCII DOIs (lower-cased for the request, joined back in their own case).
+pp_dois$sici <- c("10.1002/(SICI)1099-0720(199908)13:4<333::AID-ACP588>3.0.CO;2-Z",
+                  "10.9999/PP.Ä", "10.9999/ẞ.x")
+pp_sici <- function() pp_paper(pp_dois$sici, "sici")
+
+# A bibr export schema 12.0 fixture paper.
+bibr12 <- function(name) {
+  read(file.path(root, "upstream/metacheck/tests/testthat/fixtures/bibr12",
+                 paste0(name, ".json")))
+}

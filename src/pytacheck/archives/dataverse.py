@@ -664,7 +664,31 @@ def _info_table(x: Any, id_col: int | str, url_col: str, drop: Sequence[str]) ->
     return pd.DataFrame({url_col: pd.Series(uniq)})
 
 
-def _link_matches(paper: Any, pattern: str, prefilter: str | None = None) -> pd.DataFrame:
+def _search_frame(paper: Any) -> pd.DataFrame | None:
+    """The sentence table ``text_search()`` builds for a paper or paper list.
+
+    ``None`` for anything else (or a table without text), which
+    :func:`_link_matches` then hands to ``text_search()`` unchanged. Built once
+    per ``*_links()`` call and shared by its searches.
+    """
+    if isinstance(paper, str | pd.DataFrame):
+        return None
+    try:
+        from pytacheck.text.search import _text_frame
+    except ImportError:  # pragma: no cover - search the whole paper instead
+        return None
+    frame, is_vector = _text_frame(paper)
+    if is_vector or "text" not in frame.columns:
+        return None
+    return frame
+
+
+def _link_matches(
+    paper: Any,
+    pattern: str,
+    prefilter: str | None = None,
+    frame: pd.DataFrame | None = None,
+) -> pd.DataFrame:
     """``text_search(paper, pattern, return = "match", perl = TRUE) |>
     dplyr::select(href = text, dplyr::any_of(c("text_id", "paper_id")))``.
 
@@ -672,20 +696,17 @@ def _link_matches(paper: Any, pattern: str, prefilter: str | None = None) -> pd.
     contains a match of (under the same flags: caseless, PCRE). Sentences
     without one cannot match, so only the others are searched: the same
     result, without running an expensive pattern over every sentence.
+    *frame* is *paper*'s :func:`_search_frame`, when already built.
     """
     from pytacheck.text.search import text_search
 
     target = paper
-    if prefilter is not None and not isinstance(paper, str | pd.DataFrame):
-        try:
-            from pytacheck.text.search import _text_frame
-        except ImportError:  # pragma: no cover - search the whole paper instead
-            _text_frame = None
-        if _text_frame is not None:
-            frame, is_vector = _text_frame(paper)
-            if not is_vector and "text" in frame.columns:
-                keep = grepl(prefilter, frame["text"].tolist(), ignore_case=True, perl=True)
-                target = frame.loc[[bool(k) for k in keep]]
+    if prefilter is not None:
+        if frame is None:
+            frame = _search_frame(paper)
+        if frame is not None:
+            keep = grepl(prefilter, frame["text"].tolist(), ignore_case=True, perl=True)
+            target = frame.loc[[bool(k) for k in keep]]
     found = text_search(target, pattern, return_="match", perl=True)
     ids = [c for c in ("text_id", "paper_id") if c in found.columns]
     if "text" not in found.columns:
@@ -727,8 +748,10 @@ def _url_rows(paper: Any, pattern: str, ignore_case: bool = True) -> pd.DataFram
 
 
 def _cap_on(cap: float | None) -> bool:
-    """``!is.null(cap) && is.finite(cap) && cap > 0``."""
-    return cap is not None and not is_na(cap) and math.isfinite(cap) and cap > 0
+    """``!is.null(cap) && is.finite(cap) && cap > 0`` (``is.finite()`` of a string is FALSE)."""
+    if not isinstance(cap, numbers.Real) or is_na(cap):
+        return False
+    return math.isfinite(cap) and cap > 0
 
 
 def _is_zip(name: Sequence[str | None]) -> list[bool]:
@@ -1307,12 +1330,13 @@ def dataverse_links(paper: Any) -> pd.DataFrame:
     """
     host_regex = _dataverse_host_regex()
     found_href = _url_rows(paper, host_regex)
+    frame = _search_frame(paper)  # built once for both searches
     dv_bare_regex = f"(?:https?://)?(?:www\\.)?(?:{host_regex})/[A-Za-z0-9/danddoi:._?=&%-]*"
-    other_dv = _link_matches(paper, dv_bare_regex, _dataverse_prefilter())
+    other_dv = _link_matches(paper, dv_bare_regex, _dataverse_prefilter(), frame)
     dv_doi_regex = (
         f"(?:https?://)?(?:doi\\.org/)?(?:{_dataverse_doi_prefix_regex()})/[A-Za-z0-9/._-]+"
     )
-    other_dv_doi = _link_matches(paper, dv_doi_regex, _dataverse_doi_prefilter())
+    other_dv_doi = _link_matches(paper, dv_doi_regex, _dataverse_doi_prefilter(), frame)
 
     links = _collect_links([found_href, other_dv, other_dv_doi])
     links["dataverse_url"] = links["href"]

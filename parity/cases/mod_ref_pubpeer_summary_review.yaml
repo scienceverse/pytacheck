@@ -42,6 +42,22 @@
         "r": "source(file.path(root, \"tests/mod_ref_pubpeer_summary/helpers.R\")); pp_case_list()"
         "py": "(lambda H: H.pp_case_list())(__import__(\"tests.mod_ref_pubpeer_summary.helpers\", fromlist=[\"x\"]))"
   "mock_dir": "tests/mod_ref_pubpeer_summary/mock"
+- "id": "ref_pubpeer.sici"
+  "module": "ref_pubpeer"
+  "args":
+    "paper":
+      "$expr":
+        "r": "source(file.path(root, \"tests/mod_ref_pubpeer_summary/helpers.R\")); pp_sici()"
+        "py": "(lambda H: H.pp_sici())(__import__(\"tests.mod_ref_pubpeer_summary.helpers\", fromlist=[\"x\"]))"
+  "mock_dir": "tests/mod_ref_pubpeer_summary/mock"
+- "id": "ref_pubpeer.twice"
+  "module": "ref_pubpeer"
+  "args":
+    "paper":
+      "$expr":
+        "r": "source(file.path(root, \"tests/mod_ref_pubpeer_summary/helpers.R\")); chain(pp_single(), c(\"ref_pubpeer\"))"
+        "py": "(lambda H: H.chain(H.pp_single(), ['ref_pubpeer']))(__import__(\"tests.mod_ref_pubpeer_summary.helpers\", fromlist=[\"x\"]))"
+  "mock_dir": "tests/mod_ref_pubpeer_summary/mock"
 - "id": "ref_pubpeer.extra_arg"
   "module": "ref_pubpeer"
   "args":
@@ -91,6 +107,52 @@
         "r": "source(file.path(root, \"tests/mod_ref_pubpeer_summary/helpers.R\")); rv_pp_url_na()"
         "py": "(lambda H: H.rv_pp_url_na())(__import__(\"tests.mod_ref_pubpeer_summary.helpers\", fromlist=[\"x\"]))"
   "mock_dir": "apis"
+- "id": "ref_pubpeer.bibr12.preprint"
+  "module": "ref_pubpeer"
+  "args":
+    "paper":
+      "$expr":
+        "r": "source(file.path(root, \"tests/mod_ref_pubpeer_summary/helpers.R\")); bibr12(\"preprint\")"
+        "py": "(lambda H: H.bibr12('preprint'))(__import__(\"tests.mod_ref_pubpeer_summary.helpers\", fromlist=[\"x\"]))"
+  "mock_dir": "tests/mod_ref_pubpeer_summary/mock"
+- "id": "ref_pubpeer.bibr12.pmc"
+  "module": "ref_pubpeer"
+  "args":
+    "paper":
+      "$expr":
+        "r": "source(file.path(root, \"tests/mod_ref_pubpeer_summary/helpers.R\")); bibr12(\"PMC4383902\")"
+        "py": "(lambda H: H.bibr12('PMC4383902'))(__import__(\"tests.mod_ref_pubpeer_summary.helpers\", fromlist=[\"x\"]))"
+  "mock_dir": "tests/mod_ref_pubpeer_summary/mock"
+- "id": "ref_summary.bibr12.preprint"
+  "module": "ref_summary"
+  "args":
+    "paper":
+      "$expr":
+        "r": "source(file.path(root, \"tests/mod_ref_pubpeer_summary/helpers.R\")); bibr12(\"preprint\")"
+        "py": "(lambda H: H.bibr12('preprint'))(__import__(\"tests.mod_ref_pubpeer_summary.helpers\", fromlist=[\"x\"]))"
+- "id": "ref_summary.bibr12.full"
+  "module": "ref_summary"
+  "args":
+    "paper":
+      "$expr":
+        "r": "source(file.path(root, \"tests/mod_ref_pubpeer_summary/helpers.R\")); bibr12(\"full\")"
+        "py": "(lambda H: H.bibr12('full'))(__import__(\"tests.mod_ref_pubpeer_summary.helpers\", fromlist=[\"x\"]))"
+- "id": "ref_summary.bibr12.preprint.chain_pubpeer"
+  "module": "ref_summary"
+  "args":
+    "paper":
+      "$expr":
+        "r": "source(file.path(root, \"tests/mod_ref_pubpeer_summary/helpers.R\")); chain(bibr12(\"preprint\"), c(\"ref_pubpeer\"))"
+        "py": "(lambda H: H.chain(H.bibr12('preprint'), ['ref_pubpeer']))(__import__(\"tests.mod_ref_pubpeer_summary.helpers\", fromlist=[\"x\"]))"
+  "mock_dir": "tests/mod_ref_pubpeer_summary/mock"
+- "id": "ref_summary.bibr12.pmc.chain_all"
+  "module": "ref_summary"
+  "args":
+    "paper":
+      "$expr":
+        "r": "source(file.path(root, \"tests/mod_ref_pubpeer_summary/helpers.R\")); chain(bibr12(\"PMC4383902\"), c(\"ref_accuracy\", \"ref_pubpeer\", \"ref_replication\", \"ref_retraction\"))"
+        "py": "(lambda H: H.chain(H.bibr12('PMC4383902'), ['ref_accuracy', 'ref_pubpeer', 'ref_replication', 'ref_retraction']))(__import__(\"tests.mod_ref_pubpeer_summary.helpers\", fromlist=[\"x\"]))"
+  "mock_dir": "tests/mod_ref_pubpeer_summary/mock"
 - "id": "ref_summary.ret_collide"
   "module": "ref_summary"
   "args":

@@ -86,8 +86,8 @@
           {
             "t": "dbl",
             "v": [
-              null,
-              null,
+              1,
+              2.5,
               null,
               null
             ]

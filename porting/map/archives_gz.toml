@@ -4,7 +4,7 @@
 "R/archive-gitlab.R" = ["src/pytacheck/archives/gitlab.py"]
 "R/archive-zenodo.R" = ["src/pytacheck/archives/zenodo.py"]
 "R/archive-zenodo-upload.R" = ["src/pytacheck/archives/zenodo_upload.py"]
-"data/file_types.rda" = ["src/pytacheck/archives/github.py"]
+"data/file_types.rda" = ["src/pytacheck/fileinfo/types.py", "src/pytacheck/archives/github.py"]
 
 [functions]
 "github_links" = "pytacheck.archives.github:github_links"

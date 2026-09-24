@@ -12,6 +12,24 @@ suppressPackageStartupMessages({
   library(yaml)
 })
 
+# R turns non-ASCII argument names (c("\u03b1" = "alpha")) into "<U+03B1>" when a
+# package is installed under a non-UTF-8 locale, silently changing its behaviour.
+local({
+  ns <- asNamespace("metacheck")
+  mangled <- Filter(function(n) {
+    f <- get(n, envir = ns)
+    is.function(f) && any(grepl("<U\\+[0-9A-Fa-f]{4,}>", deparse(f), perl = TRUE))
+  }, ls(ns, all.names = TRUE))
+  if (length(mangled)) {
+    stop(
+      "metacheck was installed under a non-UTF-8 locale (mangled names in ",
+      paste(head(mangled, 3), collapse = ", "), "): reinstall it with ",
+      "LANG=C.UTF-8 LC_ALL=C.UTF-8 R CMD INSTALL --no-test-load upstream/metacheck",
+      call. = FALSE
+    )
+  }
+})
+
 argv <- commandArgs(trailingOnly = TRUE)
 root <- normalizePath(argv[[1]])
 only <- NULL
