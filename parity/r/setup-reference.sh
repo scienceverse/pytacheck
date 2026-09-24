@@ -18,6 +18,12 @@ if ! command -v micromamba >/dev/null 2>&1; then
   exit 1
 fi
 micromamba create -y -p "$PREFIX" --file "$ROOT/parity/r/conda-linux-64.lock"
+# httptest2 (for parity cases that replay recorded API responses) is not on
+# conda-forge: install the pinned commit from GitHub.
+tmp=$(mktemp -d)
+git clone --quiet https://github.com/nealrichardson/httptest2.git "$tmp/httptest2"
+git -C "$tmp/httptest2" checkout --quiet 37efe13ff4c51504570c5e6ac2d93fff71a416a2
+"$PREFIX/bin/R" CMD INSTALL "$tmp/httptest2"
 "$PREFIX/bin/R" CMD INSTALL --no-test-load "$ROOT/upstream/metacheck"
 "$PREFIX/bin/Rscript" -e 'suppressPackageStartupMessages(library(metacheck)); cat("metacheck", as.character(packageVersion("metacheck")), "ready\n")'
 echo "export PYTACHECK_RSCRIPT=$PREFIX/bin/Rscript"

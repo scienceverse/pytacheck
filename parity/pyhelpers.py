@@ -39,3 +39,14 @@ def r_round(x: list[Any], digits: int = 0) -> list[Any]:
 
 def signif(x: list[Any], digits: int = 6) -> list[Any]:
     return [rb.signif(v, digits) for v in x]
+
+
+def github_readme_probe(repo: str) -> str:
+    """Harness self-test for mock_dir (replays the recorded GitHub readme)."""
+    import base64
+
+    from pytacheck import http
+
+    resp = http.request("GET", f"https://api.github.com/repos/{repo}/readme")
+    assert resp is not None
+    return base64.b64decode(resp.json()["content"]).decode("utf-8")

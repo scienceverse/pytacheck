@@ -31,6 +31,18 @@ source(file.path(root, "parity", "r", "canonical.R"))
 source(file.path(root, "parity", "r", "helpers.R"))
 options(warn = 1, scienceverse.verbose = FALSE)
 Sys.setenv(TZ = "UTC")
+# Same isolation as metacheck's tests/testthat/setup.R: throwaway caches, no
+# session OSF listing cache.
+.pc_cache <- file.path(tempdir(), "pytacheck-parity-cache")
+dir.create(.pc_cache, showWarnings = FALSE, recursive = TRUE)
+options(metacheck.cache.dir = .pc_cache, metacheck.osf.cache = FALSE)
+Sys.setenv(METACHECK_LLM_CACHE_DIR = file.path(.pc_cache, "llm"))
+mock_root <- file.path(root, "upstream", "metacheck", "tests", "testthat")
+mock_path <- function(d) {
+  if (grepl("^/", d)) d
+  else if (startsWith(d, "tests/") || startsWith(d, "parity/")) file.path(root, d)
+  else file.path(mock_root, d)
+}
 
 upstream <- tryCatch({
   as.character(utils::packageDescription("metacheck")$Version)
@@ -106,8 +118,16 @@ get_fn <- function(name) {
 run_case <- function(case) {
   set.seed(8675309)
   warnings <- character(0)
+  evaluate <- function(expr_fn) {
+    if (!is.null(case$mock_dir)) {
+      if (!requireNamespace("httptest2", quietly = TRUE)) stop("httptest2 is needed for mock_dir cases")
+      httptest2::with_mock_dir(mock_path(case$mock_dir), expr_fn())
+    } else {
+      expr_fn()
+    }
+  }
   value <- withCallingHandlers(
-    tryCatch({
+    tryCatch(evaluate(function() {
       if (!is.null(case$module)) {
         args <- decode_args(case$args %||% list())
         paper <- args$paper
@@ -117,7 +137,7 @@ run_case <- function(case) {
         fn <- get_fn(case$r)
         do.call(fn, decode_args(case$args %||% list()))
       }
-    }, error = function(e) structure(list(message = conditionMessage(e)), class = "pc_error")),
+    }), error = function(e) structure(list(message = conditionMessage(e)), class = "pc_error")),
     warning = function(w) {
       warnings <<- c(warnings, conditionMessage(w))
       invokeRestart("muffleWarning")

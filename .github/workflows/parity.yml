@@ -47,8 +47,11 @@ jobs:
           environment-name: r-reference
           cache-environment: true
 
-      - name: Install metacheck at the pinned commit
+      - name: Install httptest2 and metacheck at the pinned commits
         run: |
+          git clone --quiet https://github.com/nealrichardson/httptest2.git /tmp/httptest2
+          git -C /tmp/httptest2 checkout --quiet 37efe13ff4c51504570c5e6ac2d93fff71a416a2
+          R CMD INSTALL /tmp/httptest2
           R CMD INSTALL --no-test-load upstream/metacheck
           echo "PYTACHECK_RSCRIPT=$(command -v Rscript)" >> "$GITHUB_ENV"
 

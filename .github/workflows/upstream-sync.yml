@@ -101,6 +101,9 @@ jobs:
 
       - name: Install the new metacheck (adding any new R dependencies)
         run: |
+          git clone --quiet https://github.com/nealrichardson/httptest2.git /tmp/httptest2
+          git -C /tmp/httptest2 checkout --quiet 37efe13ff4c51504570c5e6ac2d93fff71a416a2
+          R CMD INSTALL /tmp/httptest2
           Rscript -e 'if (!requireNamespace("remotes", quietly = TRUE)) install.packages("remotes", repos = "https://cloud.r-project.org"); remotes::install_deps("upstream/metacheck", dependencies = NA, upgrade = "never", repos = "https://cloud.r-project.org")'
           R CMD INSTALL --no-test-load upstream/metacheck
           echo "PYTACHECK_RSCRIPT=$(command -v Rscript)" >> "$GITHUB_ENV"

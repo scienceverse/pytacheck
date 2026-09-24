@@ -52,6 +52,13 @@ What is compared (`parity/compare.py`):
 * representation-only differences are ignored: `NULL` vs empty vs single `NA`,
   NaN vs NA, a list of scalars vs a vector, a 1-row matrix vs a vector.
 
+## Network-dependent functions
+
+Cases with  (or another metacheck mock directory) run against
+metacheck's recorded API responses on both sides — R inside
+, Python inside  — so API
+clients and network-backed modules are parity-tested offline and deterministically.
+
 ## CI
 
 * **every push**: `pytest -m parity` against the committed goldens (no R needed);

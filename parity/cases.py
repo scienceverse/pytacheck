@@ -35,6 +35,12 @@ Argument constructors (a one-key mapping whose key starts with ``$``):
 
 A case may set ``known_divergence: <reason>`` to record an intentional,
 documented difference from R (the test is then an expected failure).
+
+``mock_dir: apis`` runs the case against recorded HTTP responses on both
+sides: R inside ``httptest2::with_mock_dir()``, Python inside
+``tests.httpmock.replay()``. Relative names are metacheck test mock
+directories (``apis``, ``apis_papers_retag``, ...); paths starting with
+``tests/`` or ``parity/`` are relative to this repository.
 """
 
 from __future__ import annotations
@@ -157,8 +163,28 @@ def decode_args(
     return out
 
 
+def _mock_dir(spec: dict[str, Any]) -> Any:
+    """``replay()`` context for a case's ``mock_dir`` (a no-op without one)."""
+    import contextlib
+
+    d = spec.get("mock_dir")
+    if not d:
+        return contextlib.nullcontext()
+    from tests.httpmock import replay
+
+    path = Path(d)
+    if not path.is_absolute() and (d.startswith("tests/") or d.startswith("parity/")):
+        path = ROOT / d
+    return replay(path if path.is_absolute() else d)
+
+
 def run_python(case: Case) -> Any:
     """Run the Python side of *case* and return its result."""
+    with _mock_dir(case.spec):
+        return _run_python(case)
+
+
+def _run_python(case: Case) -> Any:
     spec = case.spec
     args = decode_args(spec.get("args") or {}, spec.get("py_args"), spec.get("py_drop"))
     if "module" in spec:
