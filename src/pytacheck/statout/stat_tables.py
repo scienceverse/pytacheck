@@ -81,6 +81,8 @@ def read_stat_tables(path: str | os.PathLike[str]) -> list[dict[str, Any]]:
         if aj:
             try:
                 structured = _jasp_structured_tables(aj[0])
+            except ImportError:
+                raise
             except Exception:
                 structured = None
             if structured:
@@ -99,6 +101,8 @@ def read_stat_tables(path: str | os.PathLike[str]) -> list[dict[str, Any]]:
             af = sorted(af, key=order_key)
             try:
                 structured = _jmv_structured_tables(af)
+            except ImportError:
+                raise
             except Exception:
                 structured = None
             if structured:
@@ -106,9 +110,9 @@ def read_stat_tables(path: str | os.PathLike[str]) -> list[dict[str, Any]]:
 
         sv = [f for f, b in zip(files, base, strict=True) if grepl("^outputViewer[0-9]+(_heading)?\\.xml$", b)]
         if sv:
-            try:
-                from pytacheck.statout.spv import _spv_read  # type: ignore[import-not-found]
+            from pytacheck.statout.spv import _spv_read  # type: ignore[import-not-found]
 
+            try:
                 structured = _spv_read(tmp)
             except Exception:
                 structured = None
@@ -138,7 +142,14 @@ def read_stat_tables(path: str | os.PathLike[str]) -> list[dict[str, Any]]:
 
 
 def _unzip(path: str, exdir: str) -> list[str]:
-    """``utils::unzip(path, exdir = exdir)``: the extracted file paths (zip order)."""
+    """``utils::unzip(path, exdir = exdir)``: the extracted file paths (zip order).
+
+    R's ``unzip()`` returns ``NULL`` for a file that is not a zip archive, and
+    ``read_stat_tables()`` then fails in ``basename(NULL)``; that error is
+    reproduced.
+    """
+    if not zipfile.is_zipfile(path):
+        raise TypeError("a character vector argument expected")
     try:
         with zipfile.ZipFile(path) as zf:
             out = []

@@ -144,3 +144,58 @@
       - "one two"
       - "1   2"
       - "NA  Inf"
+# ---------------------------------------------------------------------------
+# read_stat_tables()
+# ---------------------------------------------------------------------------
+- "id": "read_stat_tables.jasp.structured"
+  "r": "read_stat_tables"
+  "py": "pytacheck.statout.stat_tables.read_stat_tables"
+  "args": {"path": {"$file": "upstream/metacheck/tests/testthat/fixtures/formats/sample.jasp"}}
+- "id": "read_stat_tables.omv.structured"
+  "r": "read_stat_tables"
+  "py": "pytacheck.statout.stat_tables.read_stat_tables"
+  "args": {"path": {"$file": "upstream/metacheck/tests/testthat/fixtures/formats/sample.omv"}}
+- "id": "read_stat_tables.jasp.html_only"
+  "r": "read_stat_tables"
+  "py": "pytacheck.statout.stat_tables.read_stat_tables"
+  "args": {"path": {"$file": "tests/statout_core/data/html_only.jasp"}}
+- "id": "read_stat_tables.omv.html_only"
+  "r": "read_stat_tables"
+  "py": "pytacheck.statout.stat_tables.read_stat_tables"
+  "args": {"path": {"$file": "tests/statout_core/data/html_only.omv"}}
+- "id": "read_stat_tables.html.custom"
+  "r": "read_stat_tables"
+  "py": "pytacheck.statout.stat_tables.read_stat_tables"
+  "args": {"path": {"$file": "tests/statout_core/data/custom_html.jasp"}}
+- "id": "read_stat_tables.not_zip"
+  "r": "read_stat_tables"
+  "py": "pytacheck.statout.stat_tables.read_stat_tables"
+  "args": {"path": {"$file": "tests/statout_core/data/not_zip.jasp"}}
+- "id": "read_stat_tables.missing_file"
+  "r": "read_stat_tables"
+  "py": "pytacheck.statout.stat_tables.read_stat_tables"
+  "args": {"path": "no_such_file.jasp"}
+- "id": "read_stat_tables.ipynb.python"
+  "r": "read_stat_tables"
+  "py": "pytacheck.statout.stat_tables.read_stat_tables"
+  "args": {"path": {"$file": "upstream/metacheck/tests/testthat/fixtures/notebooks/notebook_python.ipynb"}}
+- "id": "read_stat_tables.ipynb.r"
+  "r": "read_stat_tables"
+  "py": "pytacheck.statout.stat_tables.read_stat_tables"
+  "args": {"path": {"$file": "upstream/metacheck/tests/testthat/fixtures/notebooks/notebook_r.ipynb"}}
+- "id": "read_stat_tables.ipynb.mixed"
+  "r": "read_stat_tables"
+  "py": "pytacheck.statout.stat_tables.read_stat_tables"
+  "args": {"path": {"$file": "tests/statout_core/data/notebook_mixed.ipynb"}}
+- "id": "read_stat_tables.ipynb.not_notebook"
+  "r": "read_stat_tables"
+  "py": "pytacheck.statout.stat_tables.read_stat_tables"
+  "args": {"path": {"$file": "tests/statout_core/data/not_a_notebook.ipynb"}}
+- "id": "read_stat_tables.ipynb.array"
+  "r": "read_stat_tables"
+  "py": "pytacheck.statout.stat_tables.read_stat_tables"
+  "args": {"path": {"$file": "tests/statout_core/data/array.ipynb"}}
+- "id": "read_stat_tables.ipynb.stripped"
+  "r": "read_stat_tables"
+  "py": "pytacheck.statout.stat_tables.read_stat_tables"
+  "args": {"path": {"$file": "tests/statout_core/data/stripped.ipynb"}}

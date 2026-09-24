@@ -1,0 +1,9 @@
+{
+  "id": "read_stat_tables.not_zip",
+  "ok": false,
+  "error": "a character vector argument expected",
+  "warnings": [],
+  "value": null,
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.3.3 (2024-02-29)"
+}

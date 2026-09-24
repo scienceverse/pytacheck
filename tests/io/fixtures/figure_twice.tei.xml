@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0">
+	<teiHeader><fileDesc><titleStmt><title>Two figure sentences</title></titleStmt></fileDesc></teiHeader>
+	<text><body>
+		<div><p>Figure 1 is here. Figure 2 is there.</p></div>
+		<div><head>Results</head><p>Done.</p></div>
+	</body></text>
+</TEI>

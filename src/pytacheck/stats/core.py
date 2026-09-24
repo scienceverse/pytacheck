@@ -70,4 +70,3 @@ def stats(text: Any, **kwargs: Any) -> pd.DataFrame:
         left = left.rename(columns={c: f"{c}.x" for c in dupes})
         right = right.rename(columns={c: f"{c}.y" for c in dupes})
     return pd.concat([left, right], axis=1)
-

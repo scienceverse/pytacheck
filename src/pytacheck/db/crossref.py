@@ -176,7 +176,10 @@ def _df_dollar(df: pd.DataFrame, name: str) -> Any:
         if len(hits) != 1:
             return None
         col = hits[0]
-    return [None if (not isinstance(v, list | tuple | Mapping) and is_na(v)) else v for v in df[col].tolist()]
+    return [
+        None if (not isinstance(v, list | tuple | Mapping) and is_na(v)) else v
+        for v in df[col].tolist()
+    ]
 
 
 def _encode_query(value: Any) -> str:
@@ -202,9 +205,7 @@ def _datacite_row(bd: Any) -> dict[str, Any]:
     for a in creators.values() if isinstance(creators, Mapping) else creators or []:
         if a is None or _r_length(a) == 0:
             continue
-        authors.append(
-            {"given": r_dollar(a, "givenName"), "family": r_dollar(a, "familyName")}
-        )
+        authors.append({"given": r_dollar(a, "givenName"), "family": r_dollar(a, "familyName")})
 
     info = {
         "service": "datacite",
@@ -284,7 +285,7 @@ def datacite_doi(doi: Any) -> pd.DataFrame | None:
 # ---------------------------------------------------------------------------
 
 
-def _bibtype_convert(type: Any) -> Any:  # noqa: A002 - R argument name
+def _bibtype_convert(type: Any) -> Any:
     """Convert Crossref/DOI types to BibTeX types (port of ``.bibtype_convert()``).
 
     Unknown types are returned unchanged and ``NA`` stays ``NA``.
@@ -413,7 +414,9 @@ def _parse_item_record(item: Mapping[str, Any], select: Sequence[str]) -> dict[s
     return record
 
 
-def _crossref_parse_item(item: Mapping[str, Any], select: Sequence[str] = CROSSREF_DOI_SELECT) -> pd.DataFrame:
+def _crossref_parse_item(
+    item: Mapping[str, Any], select: Sequence[str] = CROSSREF_DOI_SELECT
+) -> pd.DataFrame:
     """Parse a Crossref work into a one-row data frame (port of ``.crossref_parse_item()``).
 
     Titles and container titles are reduced to their first element, ``year``
@@ -449,7 +452,9 @@ def _crossref_query_parse(items: Any, min_score: float, select: Sequence[str]) -
     return records_frame(_query_parse_records(items, min_score, select))
 
 
-def _crossref_doi_one(doi: Any, resp: httpx.Response | None, select: Sequence[str]) -> dict[str, Any]:
+def _crossref_doi_one(
+    doi: Any, resp: httpx.Response | None, select: Sequence[str]
+) -> dict[str, Any]:
     try:
         if resp is None:
             raise TypeError("`resp` must be an HTTP response object, not `NULL`.")
@@ -683,7 +688,10 @@ def add_bib_match(paper: Any, min_score: float = 50) -> Any:
     def col(name: str) -> list[Any]:
         if name not in bib.columns:
             return [None] * len(bib)
-        return [None if (not isinstance(v, list | tuple) and is_na(v)) else v for v in bib[name].tolist()]
+        return [
+            None if (not isinstance(v, list | tuple) and is_na(v)) else v
+            for v in bib[name].tolist()
+        ]
 
     dois = col("doi")
     has_doi = [v is True for v in doi_valid_format(dois)]
@@ -763,7 +771,9 @@ def add_bib_match(paper: Any, min_score: float = 50) -> Any:
             "bib_id": pd.array(get("bib_id"), dtype="Int64"),
             "service": pd.array(["crossref"] * n, dtype="string"),
             "service_id": pd.array([None] * n, dtype="string"),
-            "score": pd.array([float("nan") if s is None else float(s) for s in scores], dtype="float64"),
+            "score": pd.array(
+                [float("nan") if s is None else float(s) for s in scores], dtype="float64"
+            ),
             "bib_type": pd.array(_bibtype_convert(types), dtype="string"),
             "doi": pd.array(_str_list(get("DOI")), dtype="string"),
             "title": pd.array(_str_list(get("title")), dtype="string"),
@@ -823,8 +833,7 @@ def _openalex_add_abstract(info: Any) -> Any:
     pairs: list[tuple[Any, str]] = []
     if isinstance(aii, Mapping):
         for word, positions in aii.items():
-            for pos in unlist(positions):
-                pairs.append((pos, str(word)))
+            pairs.extend((pos, str(word)) for pos in unlist(positions))
     pairs.sort(key=lambda p: p[0])
     out = dict(info)
     out["abstract"] = " ".join(w for _, w in pairs)

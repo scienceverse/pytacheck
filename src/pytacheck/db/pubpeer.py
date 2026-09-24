@@ -25,7 +25,9 @@ def _request_body(dois: list[str]) -> str:
 
 def _feedback_record(fb: Any) -> dict[str, Any]:
     users = r_dollar(fb, "users")
-    user_list = unlist(users) if isinstance(users, list | dict) else ([] if users is None else [users])
+    user_list = (
+        unlist(users) if isinstance(users, list | dict) else ([] if users is None else [users])
+    )
     trimmed = trimws([u if isinstance(u, str) else str(u) for u in user_list])
     rec = {
         "doi": r_dollar(fb, "id"),
@@ -92,12 +94,9 @@ def pubpeer_comments(doi: Any) -> pd.DataFrame | None:
         hits = by_doi.get(d, [])
         if not hits:
             rows.append({"doi": d})
-        for i in hits:
-            rows.append({"doi": d, **{c: fb_frame[c].iat[i] for c in fb_cols}})
+        rows.extend({"doi": d, **{c: fb_frame[c].iat[i] for c in fb_cols}} for i in hits)
     if len(rows) != len(values):
-        raise ValueError(
-            f"replacement has {len(values)} rows, data has {len(rows)}"
-        )
+        raise ValueError(f"replacement has {len(values)} rows, data has {len(rows)}")
     for row, original in zip(rows, values, strict=True):
         row["doi"] = None if is_na(original) else original
         for c in fb_cols:

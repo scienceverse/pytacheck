@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xml:space="preserve" xmlns="http://www.tei-c.org/ns/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.tei-c.org/ns/1.0 grobid.xsd" xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Edge Cases: A Synthetic   Paper</title>
+			</titleStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName><forename type="first">Ann</forename><forename type="middle">B</forename><surname>Smith</surname></persName>
+							<email>ann@example.org</email>
+							<idno type="ORCID">0000-0002-1825-0097</idno>
+							<affiliation key="aff0"><orgName type="institution">Uni   A</orgName>
+								<address><country>NL</country></address></affiliation>
+						</author>
+						<author>
+							<persName><surname>Doe</surname></persName>
+						</author>
+						<author>
+							<orgName>No Person Consortium</orgName>
+						</author>
+					</analytic>
+					<idno type="DOI">10.1234/edge.1</idno>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<encodingDesc>
+			<appInfo>
+				<application version="0.8.1" ident="GROBID" when="2024-01-01T00:00+0000">
+					<label>GROBID</label>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<profileDesc>
+			<textClass>
+				<keywords>
+					<term>replication</term>
+					<term>meta  science</term>
+				</keywords>
+			</textClass>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div><p>Figure 1 shows the design. The effect was r p 2 = .05 and η p 2 = .10 and η G 2 = .2, with R 2 M = .3, χ 2 ( 12 ) = 4.5, r ( 45 ) = .30, d z = 0.4 and BF 10 = 3.2.</p></div>
+<div><head n="1.">Introduction to J. Smith et al. Work</head><p>Prior work by J. K. Rowling (p. 45) and <ref type="bibr" target="#b0">Smith (2020)</ref> found effects<ref type="foot" target="#foot_0">1</ref>. see also results reported earlier. This one ends without a stop</p><p>and continues in the next paragraph. Data are at <ref type="url" target="https://osf.io/abcde">https:// osf.io/abcde</ref> and <ref type="url" target="https://github.com/a/b.">the GitHub repo</ref>.</p>
+<div><head>Nested Method</head><p>Participants (N = 40) were tested.   A second    sentence? Yes! "Quoted." Then more <ref type="figure" target="#fig_0">Fig. 1</ref> and <ref type="table" target="#tab_0">Table 1</ref> and <ref target="#b1">no type</ref>.</p></div>
+</div>
+<div><head>Results and Discussion</head></div>
+<div><head>Study 1. Methods</head><p>We used the U.S.A. sample e.g. with 5.5 x 10^-3 values.</p></div>
+<div><head>Abstract</head><p>A body abstract? Strange but possible.</p></div>
+<div><p>Unheaded paragraph after the abstract-headed div.</p></div>
+<div><head>General Discussion</head><p>We conclude. <ref type="bibr" target="#b2">(Anon, n.d.)</ref> <ref type="bibr" target="#b3">(Book, 1999)</ref></p></div>
+			<figure xml:id="fig_0">
+				<head>Figure 1 .</head>
+				<label>1</label>
+				<figDesc>The design. Error bars show 95% CI.</figDesc>
+			</figure>
+			<figure xml:id="fig_1">
+				<head>Figure 2</head>
+			</figure>
+			<figure type="table" xml:id="tab_0">
+				<head>Table 1</head>
+				<label>1</label>
+				<figDesc>Descriptives.</figDesc>
+				<table><row><cell cols="2">Group</cell><cell>Measure</cell></row><row><cell>A</cell><cell>B</cell><cell>M (SD)</cell></row><row><cell>1.</cell><cell>2.</cell><cell>3.</cell></row><row><cell>x</cell><cell>0.5</cell><cell>[0.1, 0.9]</cell><cell>extra</cell></row><row><cell>y</cell><cell>-</cell></row></table>
+			</figure>
+			<note place="foot" n="1" xml:id="foot_0">A footnote with <ref type="url" target="https://example.org/x y">https://example.org/x y</ref>.</note>
+		</body>
+		<back>
+			<div type="acknowledgement">
+<div><head>Acknowledgements</head><p>We thank A. B. Cee.</p><p>And D. E. Fgh.</p></div>
+<div><p>Headless acknowledgement paragraph.</p></div>
+			</div>
+			<div type="annex">
+<div><head>Appendix A</head></div>
+<div><head>Appendix B</head><p>Supplement text.</p></div>
+			</div>
+			<div type="references">
+				<listBibl>
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">An article title</title>
+		<author><persName><forename type="first">J</forename><forename type="middle">K</forename><surname>Smith</surname></persName></author>
+		<author><persName><forename type="first">A</forename><surname>van der</surname><surname>Berg</surname></persName></author>
+		<idno type="DOI">10.1000/abc</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Tests</title>
+		<imprint>
+			<biblScope unit="volume">12</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="45" to="67" />
+			<date type="published" when="2020">2020a</date>
+		</imprint>
+	</monogr>
+	<note type="raw_reference">Smith, J. K., &amp; van der Berg, A. (2020a). An article title.   Journal of Tests, 12(3), 45-67.</note>
+</biblStruct>
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">No year article</title>
+	</analytic>
+	<monogr>
+		<title level="j">Some Journal</title>
+		<imprint>
+			<biblScope unit="page">e123</biblScope>
+		</imprint>
+	</monogr>
+	<note>in press 2019b</note>
+	<note type="raw_reference">No year article. Some Journal, e123. In press.</note>
+</biblStruct>
+<biblStruct xml:id="b2">
+	<monogr>
+		<title level="m" type="main">A Whole Book</title>
+		<editor><persName><forename>E</forename><surname>Ditor</surname></persName></editor>
+		<imprint>
+			<publisher>Big Press</publisher>
+		</imprint>
+	</monogr>
+	<note type="raw_reference">Anon. (n.d.). A Whole Book. Big Press.</note>
+</biblStruct>
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">A Chapter</title>
+		<author><persName><surname>Chapman</surname></persName></author>
+	</analytic>
+	<monogr>
+		<title level="m">The Collection</title>
+		<imprint>
+			<date type="published" when="1999">1999</date>
+		</imprint>
+	</monogr>
+	<note type="raw_reference">Chapman (1999). A Chapter. In The Collection.</note>
+</biblStruct>
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">Journal no year no note</title>
+	</analytic>
+	<monogr>
+		<title level="j">Another Journal</title>
+		<imprint/>
+	</monogr>
+	<note type="raw_reference">Journal no year no note. Another Journal.</note>
+</biblStruct>
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>
