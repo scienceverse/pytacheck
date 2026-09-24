@@ -88,22 +88,31 @@ def _union_columns(records: Sequence[Mapping[str, Any]]) -> list[str]:
     return list(order)
 
 
-def from_bibr(data: Mapping[str, Any] | Any, include_images: bool = False) -> Paper:
+def from_bibr(
+    data: Mapping[str, Any] | Any, include_images: bool = False, upgrade: bool = True
+) -> Paper:
     """Build a :class:`Paper` from parsed bibr JSON (a dict) or a ``bibr.Result``.
 
     This is the in-memory equivalent of ``.read_bibr()`` and is what the
-    bibr integration uses, so no JSON round trip is needed.
+    bibr integration uses, so no JSON round trip is needed. Output of current
+    bibr (schema v11/v12) is converted to the v10.x layout metacheck's
+    modules expect (see :mod:`pytacheck.io.bibr_schema`) unless
+    ``upgrade=False``; older payloads are read exactly as metacheck does.
     """
     if not isinstance(data, Mapping):
         data = getattr(data, "data", data)
     if not isinstance(data, Mapping):
         raise TypeError("from_bibr() needs a dict of bibr JSON or a bibr.Result")
+    if upgrade:
+        from pytacheck.io.bibr_schema import to_metacheck_schema
+
+        data = to_metacheck_schema(data)
 
     p = Paper(data.get("paper_id"))
     # R: paper$paper_id <- data$paper_id (NULL when missing)
     p.paper_id = data.get("paper_id")
-    if "info" in data:
-        p.info = _info_frame(data["info"])
+    # R: info <- data$info (NULL when absent) still yields a one-row table
+    p.info = _info_frame(data.get("info"))
 
     for name in _BIBR_TABLES:
         records = data.get(name)
