@@ -1,5 +1,5 @@
 {
-  "id": ".grobid_to_bibr.grobidorg.pfd-d2308a",
+  "id": ".grobid_to_bibr.synthetic.edge_body",
   "ok": true,
   "error": null,
   "warnings": [],
@@ -22,7 +22,7 @@
       {
         "t": "chr",
         "v": [
-          "processFulltextDocument-d2308a-POST"
+          "edge_body.tei"
         ]
       },
       {
@@ -46,7 +46,7 @@
           {
             "t": "chr",
             "v": [
-              "To Err is Human: An Empirical Investigation"
+              "Edge Cases: A Synthetic Paper"
             ]
           },
           {
@@ -54,32 +54,36 @@
             "names": null,
             "v": [
               {
-                "t": "null"
+                "t": "chr",
+                "v": [
+                  "replication",
+                  "meta science"
+                ]
               }
             ]
           },
           {
             "t": "chr",
             "v": [
-              "10.5281/zenodo.2669586"
+              "10.1234/edge.1"
             ]
           },
           {
             "t": "chr",
             "v": [
-              "029e6a9d759586d3"
+              "b492ed2c29228f25"
             ]
           },
           {
             "t": "chr",
             "v": [
-              "grobid 0.9.0"
+              "grobid 0.8.1"
             ]
           },
           {
             "t": "chr",
             "v": [
-              "/home/user/pytacheck/upstream/metacheck/tests/testthat/apis/grobidorg-grobid.hf.space/api/processFulltextDocument-d2308a-POST.xml"
+              "/home/user/pytacheck/tests/io/fixtures/edge_body.tei.xml"
             ]
           },
           {
@@ -122,7 +126,7 @@
       },
       {
         "t": "df",
-        "nrow": 3,
+        "nrow": 2,
         "names": [
           "author_id",
           "given",
@@ -138,39 +142,34 @@
             "t": "int",
             "v": [
               1,
-              2,
-              3
+              2
             ]
           },
           {
             "t": "chr",
             "v": [
-              "Daniel",
-              "Lisa",
-              "Jakub"
-            ]
-          },
-          {
-            "t": "chr",
-            "v": [
-              "Lakens",
-              "Debruine",
-              "Werner"
-            ]
-          },
-          {
-            "t": "chr",
-            "v": [
-              "",
-              "",
+              "Ann",
               ""
             ]
           },
           {
             "t": "chr",
             "v": [
-              "",
-              "",
+              "Smith",
+              "Doe"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Uni A\n\t\t\t\t\t\t\t\tNL",
+              ""
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ann@example.org",
               ""
             ]
           },
@@ -178,15 +177,13 @@
             "t": "lgl",
             "v": [
               false,
-              false,
               false
             ]
           },
           {
             "t": "chr",
             "v": [
-              "",
-              "",
+              "0000-0002-1825-0097",
               ""
             ]
           },
@@ -201,10 +198,6 @@
               {
                 "t": "chr",
                 "v": []
-              },
-              {
-                "t": "chr",
-                "v": []
               }
             ]
           }
@@ -212,7 +205,7 @@
       },
       {
         "t": "df",
-        "nrow": 37,
+        "nrow": 33,
         "names": [
           "text",
           "text_id",
@@ -225,43 +218,39 @@
           {
             "t": "chr",
             "v": [
-              "This paper demonstrates some good and poor practices for use with the {metacheck} R package.",
-              "All data are simulated.",
-              "The paper shows examples of (1) open and closed OSF links; (2a) citation of retracted papers, (2b) citations without a doi, (2c) citations with Pubpeer comments, (2d) citations in the FLoRA replication database, and (2e) missing/mismatched/incorrect citations and references; (3a) R files with code on GitHub that do not load libraries in one location, (3b) load files that are not shared in the repository, (3c) lack comments, and (3d) have absolute file paths; (4) imprecise reporting of non-significant p-values; (5) tests with and without effect sizes; (6) use of \"marginally significant\" to describe non-significant findings; (7) a power analysis reporting some of the essential attributes; and (8) retrieving information from preregistrations.",
-              "Although intentional dishonesty might be a successful way to boost creativity (Gino and Wiltermuth 2014), it is safe to say most mistakes researchers make are unintentional.",
-              "From a human factors perspective, human error is a symptom of a poor design (Smithy, 2020).",
-              "Automation can be used to check for errors in scientific manuscripts, and inform authors about possible corrections.",
-              "In this study we examine the usefulness of metacheck to improve best practices.",
-              "In this studyfoot_0 we examine whether automated checks reduce the amount of errors that researchers make in scientific manuscripts.",
-              "This study was preregistered at https://osf.io/48ncu and on AsPredicted at https://aspredicted.org/by8i8v.pdf.",
-              "We randomly assigned 50 scientists to a condition where their manuscript was automatically checked for errors, and 50 scientists to a control condition with a checklist.",
-              "Scientists had the opportunity to make changes to their manuscript based on the feedback of the tool.",
-              "We subsequently coded all manuscripts for mistakes, and counted the total number of mistakes.",
-              "We also measured the expertise of researchers (in years) to explore whether the automated tool would be more useful, the less research experience researchers had.",
-              "We also asked researchers to rate how useful they found the checklist or app on a scale from 1 (not at all) to 7 (extremely useful).",
-              "On average researchers in the experimental (app) condition made fewer mistakes (M = 9.12) than researchers in the control (checklist) condition (M = 10.9), t(97.7) = 2.9, p = 0.005, d =0.59.",
-              "On average researchers in the experimental condition found the app marginally significantly more useful (M = 5.06) than researchers in the control condition found the checklist (M = 4.5), t(97.2) = -1.96, p =0.152.",
-              "There was no effect of experience on the reduction in errors when using the tool (p > .05), as the correlation was non-significant (Figure 2).",
-              "Since our data are simulated for demonstration purposes, of course they confirm our hypotheses.",
-              "It seems automated tools can help prevent errors by providing researchers with feedback about potential mistakes, and researchers feel the app",
-              "Data and analysis code is available on GitHub from https://github.com/Lak-ens/to_err_is_human and from https://researchbox.org/4377.",
-              "Data is also available from https://osf.io/5tbm9 and code is also available from https://osf.io/629bx.",
-              "The authors declare a conflict of interest.",
-              "We really want to see this project succeed and help researchers make their papers better.",
-              "We conducted a sensitivity power analysis 2 to determine that a Cohen's d of 0.50 is the smallest effect size that we could detect with N = 50 participants in each group and 80% power.",
-              "We simulated the data using Faux (DeBruine 2025) (Table 1, Figure 1).2",
-              "The code we used for this analysis is as follows.",
-              "pwr::pwr.t.test(n = 50, power = 0.8, alternative = \"greater\") is useful.",
-              "We conclude the use of automated checks has potential to reduce the number of mistakes in scientific manuscripts.",
-              "Figure2: The effect of experience on the reduction in errors.",
-              "The average number of mistakes and usefulness score for the control and experimental conditions.",
-              "The simulated data.",
-              "Remember, this is a demo and none of this is real.",
-              "DeBruine, Lisa. 2025. Faux: Simulation for Factorial Designs. Zenodo. https: //doi.org/10.5281/zenodo.2669586.",
-              "Eagly, Alice H., and Wendy Wood. 1999. \"The Origins of Sex Differences in Human Behavior: Evolved Dispositions Versus Social Roles.\" American Psychologist 54 (6): 408-23. https://doi.org/10.1037/0003-066x.54.6.408.",
-              "Gino, Francesca, and Scott S. Wiltermuth. 2014. \"Evil Genius? How Dishonesty Can Lead to Greater Creativity.\" Psychological Science 25 (4): 973-81. https://doi.org/10.1177/0956797614520714.",
-              "Lakens, Daniël. 2018. \"Equivalence Testing for Psychological Research.\" Ad- vances in Methods and Practices in Psychological Science 1: 259-70.",
-              "Smith, F. 2021. \"Human Error Is a Symptom of a Poor Design.\" Journal of Journals. https://doi.org/10.0000/0123456789."
+              "Figure 1 shows the design.",
+              "The effect was rp² = .05 and ηp² = .10 and ηG² = .2, with R²M = .3, χ 2 ( 12 ) = 4.5, r( 45) = .30, dz = 0.4 and BF10 =3.2.",
+              "Prior work by J. K. Rowling (p. 45) and Smith (2020) found effects1. see also results reported earlier.",
+              "This one ends without a stop and continues in the next paragraph.",
+              "Data are at https://osf.io/abcde and https://github.com/a/b.",
+              "Participants (N = 40) were tested.",
+              "A second    sentence?",
+              "Yes!",
+              "\"Quoted.\"",
+              "Then more Fig.1 and Table1 and no type.",
+              "Participants (N = 40) were tested.",
+              "A second    sentence?",
+              "Yes!",
+              "\"Quoted.\"",
+              "Then more Fig.1 and Table1 and no type.",
+              "We used the U.S.A. sample e.g. with 5.5 x 10^-3 values.",
+              "A body abstract?",
+              "Strange but possible.",
+              "Unheaded paragraph after the abstract-headed div.",
+              "We conclude. (Anon, n.d.) (Book, 1999)",
+              "We thank A. B. Cee.",
+              "And D. E. Fgh.",
+              "Headless acknowledgement paragraph.",
+              "Supplement text.",
+              "The design.",
+              "Error bars show 95% CI.",
+              "Descriptives.",
+              "A footnote with https://example.org/xy.",
+              "Smith, J. K., & van der Berg, A. (2020a). An article title. Journal of Tests, 12(3), 45-67.",
+              "No year article. Some Journal, e123. In press.",
+              "Anon. (n.d.). A Whole Book. Big Press.",
+              "Chapman (1999). A Chapter. In The Collection.",
+              "Journal no year no note. Another Journal."
             ]
           },
           {
@@ -282,7 +271,6 @@
               13,
               14,
               15,
-              16,
               17,
               18,
               19,
@@ -300,10 +288,7 @@
               31,
               32,
               33,
-              34,
-              35,
-              36,
-              37
+              34
             ]
           },
           {
@@ -311,32 +296,29 @@
             "v": [
               1,
               1,
-              1,
-              2,
-              2,
               2,
               2,
               3,
-              3,
-              4,
               4,
               4,
               4,
               4,
               4,
               5,
-              6,
-              7,
+              5,
+              5,
+              5,
+              5,
               7,
               8,
+              8,
               9,
-              10,
               10,
               11,
               12,
               13,
               14,
-              14,
+              15,
               15,
               16,
               17,
@@ -344,20 +326,20 @@
               19,
               20,
               21,
-              22,
-              23
+              22
             ]
           },
           {
             "t": "int",
             "v": [
-              0,
-              0,
-              0,
               1,
               1,
-              1,
-              1,
+              2,
+              2,
+              2,
+              2,
+              2,
+              2,
               2,
               2,
               3,
@@ -365,38 +347,29 @@
               3,
               3,
               3,
-              3,
-              3,
-              3,
-              4,
-              4,
-              5,
               5,
               6,
               6,
               7,
               8,
-              8,
-              8,
-              8,
+              9,
               9,
               10,
               11,
               12,
+              12,
               13,
-              13,
-              13,
-              13,
-              13
+              14,
+              15,
+              15,
+              15,
+              15,
+              15
             ]
           },
           {
             "t": "int",
             "v": [
-              null,
-              null,
-              null,
-              null,
               null,
               null,
               null,
@@ -437,36 +410,32 @@
             "v": [
               null,
               null,
+              "Prior work by J. K. Rowling (p. 45) and <ref type=\"bibr\" target=\"#b0\">Smith (2020)<\/ref> found effects<ref type=\"foot\" target=\"#foot_0\">1<\/ref>. see also results reported earlier.",
               null,
-              "Although intentional dishonesty might be a successful way to boost creativity <ref type=\"bibr\" target=\"#b2\">(Gino and Wiltermuth 2014)<\/ref>, it is safe to say most mistakes researchers make are unintentional.",
-              null,
-              null,
-              null,
-              "In this study<ref type=\"foot\" target=\"#foot_0\">foot_0<\/ref> we examine whether automated checks reduce the amount of errors that researchers make in scientific manuscripts.",
-              "This study was preregistered at <ref type=\"url\" target=\"https://osf.io/48ncu\">https://osf.io/48ncu<\/ref> and on AsPredicted at <ref type=\"url\" target=\"https://aspredicted.org/by8i8v.pdf\">https://aspredicted.org/by8i8v.pdf<\/ref>.",
+              "Data are at <ref type=\"url\" target=\"https://osf.io/abcde\">https://osf.io/abcde<\/ref> and <ref type=\"url\" target=\"https://github.com/a/b.\">the GitHub repo<\/ref>.",
               null,
               null,
               null,
               null,
+              "Then more <ref type=\"figure\" target=\"#fig_0\">Fig.1<\/ref> and <ref type=\"table\" target=\"#tab_0\">Table1<\/ref> and <ref target=\"#b1\">no type<\/ref>.",
               null,
               null,
               null,
-              "There was no effect of experience on the reduction in errors when using the tool (p &gt; .05), as the correlation was non-significant (Figure <ref type=\"figure\" target=\"#fig_0\">2<\/ref>).",
               null,
-              null,
-              "Data and analysis code is available on GitHub from <ref type=\"url\" target=\"https://github.com/Lak-\">https://github.com/Lak-<\/ref>ens/to_err_is_human and from <ref type=\"url\" target=\"https://researchbox.org/4377\">https://researchbox.org/4377<\/ref>.",
-              "Data is also available from <ref type=\"url\" target=\"https://osf.io/5tbm9\">https://osf.io/5tbm9<\/ref> and code is also available from <ref type=\"url\" target=\"https://osf.io/629bx\">https://osf.io/629bx<\/ref>.",
+              "Then more <ref type=\"figure\" target=\"#fig_0\">Fig.1<\/ref> and <ref type=\"table\" target=\"#tab_0\">Table1<\/ref> and <ref target=\"#b1\">no type<\/ref>.",
               null,
               null,
               null,
-              "We simulated the data using Faux (DeBruine 2025) (Table <ref type=\"table\">1<\/ref>, Figure <ref type=\"figure\" target=\"#fig_1\">1<\/ref>).2",
+              null,
+              "We conclude. <ref type=\"bibr\" target=\"#b2\">(Anon, n.d.)<\/ref> <ref type=\"bibr\" target=\"#b3\">(Book, 1999)<\/ref>",
               null,
               null,
               null,
               null,
               null,
               null,
-              "<note place=\"foot\" n=\"1\" xml:id=\"foot_0\">   <p>Remember, this is a demo and none of this is real.<\/p> <\/note>",
+              null,
+              "<note place=\"foot\" n=\"1\" xml:id=\"foot_0\">A footnote with <ref type=\"url\" target=\"https://example.org/x y\">https://example.org/x y<\/ref>.<\/note>",
               null,
               null,
               null,
@@ -478,7 +447,7 @@
       },
       {
         "t": "df",
-        "nrow": 14,
+        "nrow": 15,
         "names": [
           "section_id",
           "header",
@@ -490,7 +459,6 @@
           {
             "t": "int",
             "v": [
-              0,
               1,
               2,
               3,
@@ -503,24 +471,27 @@
               10,
               11,
               12,
-              13
+              13,
+              14,
+              15
             ]
           },
           {
             "t": "chr",
             "v": [
-              "Abstract",
               "[div-01]",
-              "Method",
-              "Procedure",
-              "Discussion",
-              "Data Availability",
-              "Author Notes",
-              "Power Analysis",
-              "Results",
-              "Figure 2 :",
-              "Table 1 :",
-              "Figure 1 :",
+              "1. Introduction to J. Smith et al. Work",
+              "Nested Method",
+              "Results and Discussion",
+              "Study 1. Methods",
+              "Abstract",
+              "[div-07]",
+              "General Discussion",
+              "Acknowledgements",
+              null,
+              "Appendix B",
+              "Figure 1.",
+              "Table1",
               "",
               "References"
             ]
@@ -541,24 +512,26 @@
               null,
               null,
               null,
+              null,
               null
             ]
           },
           {
             "t": "chr",
             "v": [
-              "abstract",
+              "figure",
               "intro",
               "method",
+              "results",
               "method",
+              "abstract",
+              null,
               "discussion",
-              "availability",
-              "contribution",
-              "annex",
+              "acknowledgement",
+              "acknowledgement",
               "annex",
               "figure",
               "table",
-              "figure",
               "foot",
               "references"
             ]
@@ -579,6 +552,7 @@
               null,
               null,
               null,
+              null,
               null
             ]
           }
@@ -586,7 +560,7 @@
       },
       {
         "t": "df",
-        "nrow": 6,
+        "nrow": 3,
         "names": [
           "href",
           "link_text",
@@ -596,34 +570,25 @@
           {
             "t": "chr",
             "v": [
-              "https://osf.io/48ncu",
-              "https://aspredicted.org/by8i8v.pdf",
-              "https://github.com/Lak-",
-              "https://researchbox.org/4377",
-              "https://osf.io/5tbm9",
-              "https://osf.io/629bx"
+              "https://osf.io/abcde",
+              "https://github.com/a/b",
+              "https://example.org/xy"
             ]
           },
           {
             "t": "chr",
             "v": [
               null,
-              null,
-              null,
-              null,
-              null,
+              "the GitHub repo",
               null
             ]
           },
           {
             "t": "int",
             "v": [
-              9,
-              9,
-              20,
-              20,
-              21,
-              21
+              5,
+              5,
+              29
             ]
           }
         ]
@@ -652,47 +617,17 @@
           {
             "t": "chr",
             "v": [
+              "article",
+              "article",
               "book",
-              "article",
-              "article",
-              "article",
+              "incollection",
               "article"
             ]
           },
           {
             "t": "chr",
             "v": [
-              "10.5281/zenodo.2669586",
-              "10.1037/0003-066x.54.6.408",
-              "10.1177/0956797614520714",
-              "",
-              "10.0000/0123456789"
-            ]
-          },
-          {
-            "t": "chr",
-            "v": [
-              "Faux: Simulation for Factorial Designs",
-              "The Origins of Sex Differences in Human Behavior: Evolved Dispositions Versus Social Roles",
-              "Evil Genius? How Dishonesty Can Lead to Greater Creativity",
-              "Equivalence Testing for Psychological Research",
-              "Human Error Is a Symptom of a Poor Design"
-            ]
-          },
-          {
-            "t": "chr",
-            "v": [
-              "Debruine, Lisa",
-              "Eagly, Alice H; Wood, Wendy",
-              "Gino, Francesca; Wiltermuth, Scott S",
-              "Lakens, Daniël",
-              "Smith, F"
-            ]
-          },
-          {
-            "t": "chr",
-            "v": [
-              "",
+              "10.1000/abc",
               "",
               "",
               "",
@@ -702,9 +637,39 @@
           {
             "t": "chr",
             "v": [
+              "An article title",
+              "No year article",
+              "A Whole Book",
+              "A Chapter",
+              "Journal no year no note"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Smith, J K; van der Berg, A",
               "",
               "",
+              "Chapman, ",
+              ""
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
               "",
+              "",
+              "Ditor, E",
+              "",
+              ""
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "",
+              "",
+              "Big Press",
               "",
               ""
             ]
@@ -712,29 +677,19 @@
           {
             "t": "int",
             "v": [
-              2025,
+              2020,
+              2019,
+              null,
               1999,
-              2014,
-              2018,
-              2021
+              null
             ]
           },
           {
             "t": "chr",
             "v": [
+              "12",
               "",
-              "54",
-              "25",
-              "1",
-              ""
-            ]
-          },
-          {
-            "t": "chr",
-            "v": [
               "",
-              "6",
-              "4",
               "",
               ""
             ]
@@ -742,31 +697,41 @@
           {
             "t": "chr",
             "v": [
+              "3",
+              "",
+              "",
+              "",
+              ""
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "45",
+              "e123",
               null,
-              "408",
-              "973",
-              "259",
+              null,
               null
             ]
           },
           {
             "t": "chr",
             "v": [
+              "67",
               null,
-              "423",
-              "981",
-              "270",
+              null,
+              null,
               null
             ]
           },
           {
             "t": "chr",
             "v": [
+              "Journal of Tests",
+              "Some Journal",
               null,
-              "American Psychologist",
-              "Psychological Science",
-              "Psychological Science",
-              "Journal of Journals"
+              "The Collection",
+              "Another Journal"
             ]
           },
           {
@@ -782,28 +747,28 @@
           {
             "t": "chr",
             "v": [
+              "a",
+              "b",
+              null,
               "",
-              "",
-              "",
-              "",
-              ""
+              null
             ]
           },
           {
             "t": "int",
             "v": [
+              30,
+              31,
+              32,
               33,
-              34,
-              35,
-              36,
-              37
+              34
             ]
           }
         ]
       },
       {
         "t": "df",
-        "nrow": 5,
+        "nrow": 8,
         "names": [
           "xref_id",
           "xref_type",
@@ -814,11 +779,14 @@
           {
             "t": "int",
             "v": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
               2,
-              0,
-              0,
-              null,
-              1
+              3
             ]
           },
           {
@@ -828,27 +796,80 @@
               "foot",
               "figure",
               "table",
-              "figure"
+              "figure",
+              "table",
+              "bibr",
+              "bibr"
             ]
           },
           {
             "t": "chr",
             "v": [
-              "(Gino and Wiltermuth 2014)",
-              "foot_0",
-              "2",
+              "Smith (2020)",
               "1",
-              "1"
+              "Fig.1",
+              "Table1",
+              "Fig.1",
+              "Table1",
+              "(Anon, n.d.)",
+              "(Book, 1999)"
             ]
           },
           {
             "t": "int",
             "v": [
-              4,
-              8,
-              17,
-              25,
-              25
+              3,
+              3,
+              10,
+              10,
+              15,
+              15,
+              21,
+              21
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 3,
+        "names": [
+          "figure_id",
+          "section_id",
+          "image",
+          "page_number"
+        ],
+        "v": [
+          {
+            "t": "int",
+            "v": [
+              1,
+              2,
+              3
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1,
+              null,
+              12
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              null,
+              null,
+              null
             ]
           }
         ]
@@ -857,9 +878,10 @@
         "t": "df",
         "nrow": 2,
         "names": [
-          "figure_id",
+          "table_id",
           "section_id",
-          "image",
+          "html",
+          "contents",
           "page_number"
         ],
         "v": [
@@ -873,8 +895,8 @@
           {
             "t": "int",
             "v": [
-              9,
-              11
+              null,
+              13
             ]
           },
           {
@@ -882,44 +904,6 @@
             "v": [
               null,
               null
-            ]
-          },
-          {
-            "t": "int",
-            "v": [
-              null,
-              null
-            ]
-          }
-        ]
-      },
-      {
-        "t": "df",
-        "nrow": 1,
-        "names": [
-          "table_id",
-          "section_id",
-          "html",
-          "contents",
-          "page_number"
-        ],
-        "v": [
-          {
-            "t": "int",
-            "v": [
-              1
-            ]
-          },
-          {
-            "t": "int",
-            "v": [
-              10
-            ]
-          },
-          {
-            "t": "chr",
-            "v": [
-              "<table>\n  <row>\n    <cell>Condition<\/cell>\n    <cell cols=\"2\">Mistakes Usefulness<\/cell>\n  <\/row>\n  <row>\n    <cell>control<\/cell>\n    <cell>10.90<\/cell>\n    <cell>4.50<\/cell>\n  <\/row>\n  <row>\n    <cell>experimental<\/cell>\n    <cell>9.12<\/cell>\n    <cell>5.06<\/cell>\n  <\/row>\n<\/table>"
             ]
           },
           {
@@ -927,40 +911,17 @@
             "names": null,
             "v": [
               {
-                "t": "list",
-                "names": null,
-                "v": [
-                  {
-                    "t": "chr",
-                    "v": [
-                      "Condition",
-                      "Mistakes Usefulness",
-                      "Mistakes Usefulness"
-                    ]
-                  },
-                  {
-                    "t": "chr",
-                    "v": [
-                      "control",
-                      "10.90",
-                      "4.50"
-                    ]
-                  },
-                  {
-                    "t": "chr",
-                    "v": [
-                      "experimental",
-                      "9.12",
-                      "5.06"
-                    ]
-                  }
-                ]
+                "t": "null"
+              },
+              {
+                "t": "null"
               }
             ]
           },
           {
             "t": "int",
             "v": [
+              null,
               null
             ]
           }
@@ -968,7 +929,7 @@
       },
       {
         "t": "df",
-        "nrow": 13,
+        "nrow": 9,
         "names": [
           "text_id",
           "grp_id",
@@ -981,19 +942,15 @@
           {
             "t": "int",
             "v": [
-              15,
-              15,
-              15,
-              15,
-              15,
-              16,
-              16,
-              16,
-              16,
-              17,
-              24,
-              27,
-              27
+              2,
+              2,
+              2,
+              2,
+              2,
+              2,
+              2,
+              6,
+              11
             ]
           },
           {
@@ -1004,32 +961,24 @@
               1,
               1,
               1,
+              1,
+              1,
               2,
-              2,
-              2,
-              2,
-              5,
-              3,
-              4,
-              4
+              3
             ]
           },
           {
             "t": "chr",
             "v": [
-              "M",
-              "M",
-              "t",
-              "p",
-              "d",
-              "M",
-              "M",
-              "t",
-              "p",
-              "p",
+              "rp²",
+              "ηp²",
+              "ηG²",
+              "R²M",
+              "r",
+              "dz",
+              "BF10",
               "N",
-              "n",
-              "power"
+              "N"
             ]
           },
           {
@@ -1037,13 +986,9 @@
             "v": [
               null,
               null,
-              "(97.7)",
               null,
               null,
-              null,
-              null,
-              "(97.2)",
-              null,
+              "( 45)",
               null,
               null,
               null,
@@ -1061,29 +1006,21 @@
               "=",
               "=",
               "=",
-              "=",
-              ">",
-              "=",
-              "=",
               "="
             ]
           },
           {
             "t": "chr",
             "v": [
-              "9.12",
-              "10.9",
-              "2.9",
-              "0.005",
-              "0.59",
-              "5.06",
-              "4.5",
-              "-1.96",
-              "0.152",
               ".05",
-              "50",
-              "50",
-              "0.8"
+              ".10",
+              ".2",
+              ".3",
+              ".30",
+              "0.4",
+              "3.2",
+              "40",
+              "40"
             ]
           }
         ]

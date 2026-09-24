@@ -1,5 +1,5 @@
 {
-  "id": ".grobid_to_bibr.formats.preprint.cermine",
+  "id": ".grobid_to_bibr.synthetic.figure_first",
   "ok": true,
   "error": null,
   "warnings": [],
@@ -22,7 +22,7 @@
       {
         "t": "chr",
         "v": [
-          "preprint.cermine"
+          "figure_first.tei"
         ]
       },
       {
@@ -46,7 +46,7 @@
           {
             "t": "chr",
             "v": [
-              ""
+              "Unlabelled figure and table divs"
             ]
           },
           {
@@ -67,7 +67,7 @@
           {
             "t": "chr",
             "v": [
-              "e9a52dc9c664c1d4"
+              "d4392c792ab2d38b"
             ]
           },
           {
@@ -79,7 +79,7 @@
           {
             "t": "chr",
             "v": [
-              "/home/user/pytacheck/upstream/metacheck/tests/testthat/fixtures/formats/preprint.cermine.xml"
+              "/home/user/pytacheck/tests/io/fixtures/figure_first.tei.xml"
             ]
           },
           {
@@ -128,7 +128,7 @@
       },
       {
         "t": "df",
-        "nrow": 1,
+        "nrow": 4,
         "names": [
           "text",
           "text_id",
@@ -141,36 +141,54 @@
           {
             "t": "chr",
             "v": [
-              "Author Notes"
+              "Table 3 lists all the values.",
+              "It is long.",
+              "Unclassified text here.",
+              "Done."
             ]
           },
           {
             "t": "int",
             "v": [
-              1
+              1,
+              2,
+              3,
+              4
             ]
           },
           {
             "t": "int",
             "v": [
-              1
+              1,
+              1,
+              2,
+              3
             ]
           },
           {
             "t": "int",
             "v": [
-              0
+              1,
+              1,
+              2,
+              3
             ]
           },
           {
             "t": "int",
             "v": [
+              null,
+              null,
+              null,
               null
             ]
           },
           {
             "t": "chr",
             "v": [
+              null,
+              null,
+              null,
               null
             ]
           }
@@ -178,7 +196,7 @@
       },
       {
         "t": "df",
-        "nrow": 1,
+        "nrow": 3,
         "names": [
           "section_id",
           "header",
@@ -190,30 +208,40 @@
           {
             "t": "int",
             "v": [
-              0
+              1,
+              2,
+              3
             ]
           },
           {
             "t": "chr",
             "v": [
-              "Abstract"
+              "[div-01]",
+              "[div-02]",
+              "Discussion"
             ]
           },
           {
             "t": "int",
             "v": [
+              null,
+              null,
               null
             ]
           },
           {
             "t": "chr",
             "v": [
-              "abstract"
+              "table",
+              "intro",
+              "discussion"
             ]
           },
           {
             "t": "dbl",
             "v": [
+              null,
+              null,
               null
             ]
           }
@@ -313,7 +341,7 @@
       },
       {
         "t": "df",
-        "nrow": 0,
+        "nrow": 1,
         "names": [
           "table_id",
           "section_id",
@@ -324,24 +352,36 @@
         "v": [
           {
             "t": "int",
-            "v": []
+            "v": [
+              1
+            ]
           },
           {
             "t": "int",
-            "v": []
+            "v": [
+              1
+            ]
           },
           {
             "t": "chr",
-            "v": []
+            "v": [
+              null
+            ]
           },
           {
             "t": "list",
             "names": null,
-            "v": []
+            "v": [
+              {
+                "t": "null"
+              }
+            ]
           },
           {
             "t": "int",
-            "v": []
+            "v": [
+              null
+            ]
           }
         ]
       },

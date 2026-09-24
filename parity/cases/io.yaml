@@ -135,3 +135,269 @@
   "py": "pytacheck.io.grobid._grobid_to_bibr"
   "args":
     "xml_path": {"$file": "upstream/metacheck/tests/testthat/apis/grobidorg-grobid.hf.space/api/processFulltextDocument-d67d70-POST.xml"}
+# synthetic TEI fixtures (tests/io/fixtures) ------------------------------
+- "id": ".grobid_to_bibr.synthetic.edge_body"
+  "r": ".grobid_to_bibr"
+  "py": "pytacheck.io.grobid._grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "tests/io/fixtures/edge_body.tei.xml"}
+- "id": ".grobid_to_bibr.synthetic.crlf_nonamespace"
+  "r": ".grobid_to_bibr"
+  "py": "pytacheck.io.grobid._grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "tests/io/fixtures/crlf_nonamespace.tei.xml"}
+- "id": ".grobid_to_bibr.synthetic.empty_body"
+  "r": ".grobid_to_bibr"
+  "py": "pytacheck.io.grobid._grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "tests/io/fixtures/empty_body.tei.xml"}
+- "id": ".grobid_to_bibr.synthetic.table_norows"
+  "r": ".grobid_to_bibr"
+  "py": "pytacheck.io.grobid._grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "tests/io/fixtures/table_norows.tei.xml"}
+- "id": ".grobid_to_bibr.synthetic.url_empty"
+  "r": ".grobid_to_bibr"
+  "py": "pytacheck.io.grobid._grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "tests/io/fixtures/url_empty.tei.xml"}
+- "id": ".grobid_to_bibr.synthetic.bib_page_from"
+  "r": ".grobid_to_bibr"
+  "py": "pytacheck.io.grobid._grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "tests/io/fixtures/bib_page_from.tei.xml"}
+- "id": ".grobid_to_bibr.synthetic.figure_first"
+  "r": ".grobid_to_bibr"
+  "py": "pytacheck.io.grobid._grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "tests/io/fixtures/figure_first.tei.xml"}
+- "id": ".grobid_to_bibr.synthetic.figure_twice"
+  "r": ".grobid_to_bibr"
+  "py": "pytacheck.io.grobid._grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "tests/io/fixtures/figure_twice.tei.xml"}
+- "id": ".grobid_to_bibr.missing_file"
+  "r": ".grobid_to_bibr"
+  "py": "pytacheck.io.grobid._grobid_to_bibr"
+  "args":
+    "xml_path": "no/such/file.xml"
+# grobid_to_bibr() / read() ------------------------------------------------
+- "id": "grobid_to_bibr.null_save.one"
+  "r": "grobid_to_bibr"
+  "py": "pytacheck.io.grobid.grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "upstream/metacheck/inst/demos/to_err_is_human.xml"}
+    "save_path": {"$null": true}
+- "id": "grobid_to_bibr.null_save.multiple_with_failure"
+  "r": "grobid_to_bibr"
+  "py": "pytacheck.io.grobid.grobid_to_bibr"
+  "args":
+    "xml_path": {"$expr": {"r": "file.path(getwd(), c('upstream/metacheck/tests/testthat/fixtures/formats/preprint.pdf.tei.xml', 'upstream/metacheck/tests/testthat/fixtures/problems/corrupt.xml', 'tests/io/fixtures/edge_body.tei.xml'))", "py": "[str(__import__('pathlib').Path.cwd() / p) for p in ['upstream/metacheck/tests/testthat/fixtures/formats/preprint.pdf.tei.xml', 'upstream/metacheck/tests/testthat/fixtures/problems/corrupt.xml', 'tests/io/fixtures/edge_body.tei.xml']]"}}
+    "save_path": {"$null": true}
+- "id": "grobid_to_bibr.null_save.one_failure"
+  "r": "grobid_to_bibr"
+  "py": "pytacheck.io.grobid.grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "upstream/metacheck/tests/testthat/fixtures/problems/corrupt.xml"}
+    "save_path": {"$null": true}
+- "id": "grobid_to_bibr.bad_arg"
+  "r": "grobid_to_bibr"
+  "py": "pytacheck.io.grobid.grobid_to_bibr"
+  "args":
+    "xml_path": 1
+- "id": "read.xml.demo"
+  "r": "read"
+  "py": "pytacheck.read"
+  "args":
+    "file_path": {"$file": "upstream/metacheck/inst/demos/to_err_is_human.xml"}
+- "id": "read.xml_and_json"
+  "r": "read"
+  "py": "pytacheck.read"
+  "args":
+    "file_path": {"$expr": {"r": "file.path(getwd(), c('upstream/metacheck/tests/testthat/fixtures/formats/preprint.pdf.tei.xml', 'upstream/metacheck/inst/demos/to_err_is_human.json'))", "py": "[str(__import__('pathlib').Path.cwd() / p) for p in ['upstream/metacheck/tests/testthat/fixtures/formats/preprint.pdf.tei.xml', 'upstream/metacheck/inst/demos/to_err_is_human.json']]"}}
+# internals on a parsed TEI document ----------------------------------------
+- "id": ".tei_text.edge_body"
+  "r": ".tei_text"
+  "py": "pytacheck.io.grobid._tei_text"
+  "args":
+    "xml": {"$call": {"r": ".xml_read_grobid", "py": "pytacheck.io.xml._xml_read_grobid", "args": {"path": {"$file": "tests/io/fixtures/edge_body.tei.xml"}}}}
+- "id": ".tei_text.0956797617737129"
+  "r": ".tei_text"
+  "py": "pytacheck.io.grobid._tei_text"
+  "args":
+    "xml": {"$call": {"r": ".xml_read_grobid", "py": "pytacheck.io.xml._xml_read_grobid", "args": {"path": {"$file": "upstream/metacheck/tests/testthat/fixtures/problems/0956797617737129.xml"}}}}
+- "id": ".tei_text.empty_body"
+  "r": ".tei_text"
+  "py": "pytacheck.io.grobid._tei_text"
+  "args":
+    "xml": {"$call": {"r": ".xml_read_grobid", "py": "pytacheck.io.xml._xml_read_grobid", "args": {"path": {"$file": "tests/io/fixtures/empty_body.tei.xml"}}}}
+- "id": ".tei_authors.edge_body"
+  "r": ".tei_authors"
+  "py": "pytacheck.io.grobid._tei_authors"
+  "args":
+    "xml": {"$call": {"r": ".xml_read_grobid", "py": "pytacheck.io.xml._xml_read_grobid", "args": {"path": {"$file": "tests/io/fixtures/edge_body.tei.xml"}}}}
+- "id": ".tei_authors.none"
+  "r": ".tei_authors"
+  "py": "pytacheck.io.grobid._tei_authors"
+  "args":
+    "xml": {"$call": {"r": ".xml_read_grobid", "py": "pytacheck.io.xml._xml_read_grobid", "args": {"path": {"$file": "tests/io/fixtures/empty_body.tei.xml"}}}}
+- "id": ".tei_bib.edge_body"
+  "r": ".tei_bib"
+  "py": "pytacheck.io.grobid._tei_bib"
+  "args":
+    "xml": {"$call": {"r": ".xml_read_grobid", "py": "pytacheck.io.xml._xml_read_grobid", "args": {"path": {"$file": "tests/io/fixtures/edge_body.tei.xml"}}}}
+- "id": ".tei_bib.none"
+  "r": ".tei_bib"
+  "py": "pytacheck.io.grobid._tei_bib"
+  "args":
+    "xml": {"$call": {"r": ".xml_read_grobid", "py": "pytacheck.io.xml._xml_read_grobid", "args": {"path": {"$file": "tests/io/fixtures/empty_body.tei.xml"}}}}
+- "id": ".tei_bib.biblstruct_monogr"
+  "r": ".tei_bib"
+  "py": "pytacheck.io.grobid._tei_bib"
+  "args":
+    "xml": {"$expr": {"r": "xml2::read_xml('<listBibl><biblStruct status=\"extracted\" xml:id=\"b37\"><monogr><title level=\"m\" type=\"main\">When are organizations punished for organizational misconduct? A review and research agenda</title><author><persName><forename type=\"first\">M</forename><forename type=\"middle\">H</forename><surname>Mcdonnell</surname></persName></author><author><persName><forename type=\"first\">S</forename><surname>Nurmohamed</surname></persName></author><idno type=\"DOI\">10.1016/j.riob.2021.100150</idno><imprint><date type=\"published\" when=\"2021\">2021</date></imprint></monogr><note>Research in Organizational Behavior, 41, Article 100150</note><note type=\"raw_reference\">McDonnell, M. H., &amp; Nurmohamed, S. (2021). When are organizations punished? https://doi.org/10.1016/j .riob.2021.100150</note></biblStruct></listBibl>')", "py": "__import__('pytacheck.io.xml', fromlist=['x']).read_xml('<listBibl><biblStruct status=\"extracted\" xml:id=\"b37\"><monogr><title level=\"m\" type=\"main\">When are organizations punished for organizational misconduct? A review and research agenda</title><author><persName><forename type=\"first\">M</forename><forename type=\"middle\">H</forename><surname>Mcdonnell</surname></persName></author><author><persName><forename type=\"first\">S</forename><surname>Nurmohamed</surname></persName></author><idno type=\"DOI\">10.1016/j.riob.2021.100150</idno><imprint><date type=\"published\" when=\"2021\">2021</date></imprint></monogr><note>Research in Organizational Behavior, 41, Article 100150</note><note type=\"raw_reference\">McDonnell, M. H., &amp; Nurmohamed, S. (2021). When are organizations punished? https://doi.org/10.1016/j .riob.2021.100150</note></biblStruct></listBibl>')"}}
+- "id": ".tei_bib.raw_reference_mismatch"
+  "r": ".tei_bib"
+  "py": "pytacheck.io.grobid._tei_bib"
+  "args":
+    "xml": {"$expr": {"r": "xml2::read_xml('<listBibl><biblStruct xml:id=\"b0\"><monogr><title level=\"j\">J</title></monogr><note type=\"raw_reference\">One</note></biblStruct><biblStruct xml:id=\"b1\"><monogr><title level=\"j\">K</title></monogr></biblStruct><biblStruct xml:id=\"b2\"><monogr><title level=\"j\">L</title></monogr><note type=\"raw_reference\">Three</note></biblStruct></listBibl>')", "py": "__import__('pytacheck.io.xml', fromlist=['x']).read_xml('<listBibl><biblStruct xml:id=\"b0\"><monogr><title level=\"j\">J</title></monogr><note type=\"raw_reference\">One</note></biblStruct><biblStruct xml:id=\"b1\"><monogr><title level=\"j\">K</title></monogr></biblStruct><biblStruct xml:id=\"b2\"><monogr><title level=\"j\">L</title></monogr><note type=\"raw_reference\">Three</note></biblStruct></listBibl>')"}}
+- "id": ".xml2bib.pages_attrs"
+  "r": ".xml2bib"
+  "py": "pytacheck.io.grobid._xml2bib"
+  "args":
+    "ref": {"$expr": {"r": "xml2::xml_find_first(xml2::read_xml('<biblStruct><analytic><title level=\"a\">A</title><author><persName><forename>X</forename><forename>Y</forename><surname>Z</surname></persName></author></analytic><monogr><title level=\"j\">J</title><imprint><biblScope unit=\"page\" to=\"9\" from=\"3\"/><date type=\"published\">1987</date></imprint></monogr></biblStruct>'), '//biblStruct')", "py": "__import__('pytacheck.io.xml', fromlist=['x']).xml_find_first(__import__('pytacheck.io.xml', fromlist=['x']).read_xml('<biblStruct><analytic><title level=\"a\">A</title><author><persName><forename>X</forename><forename>Y</forename><surname>Z</surname></persName></author></analytic><monogr><title level=\"j\">J</title><imprint><biblScope unit=\"page\" to=\"9\" from=\"3\"/><date type=\"published\">1987</date></imprint></monogr></biblStruct>'), '//biblStruct')"}}
+- "id": ".xml2bib.misc"
+  "r": ".xml2bib"
+  "py": "pytacheck.io.grobid._xml2bib"
+  "args":
+    "ref": {"$expr": {"r": "xml2::xml_find_first(xml2::read_xml('<biblStruct><monogr><imprint/></monogr></biblStruct>'), '//biblStruct')", "py": "__import__('pytacheck.io.xml', fromlist=['x']).xml_find_first(__import__('pytacheck.io.xml', fromlist=['x']).read_xml('<biblStruct><monogr><imprint/></monogr></biblStruct>'), '//biblStruct')"}}
+- "id": ".tei_table_contents.demo"
+  "r": ".tei_table_contents"
+  "py": "pytacheck.io.grobid._tei_table_contents"
+  "args":
+    "tab_node": {"$expr": {"r": "xml2::xml_find_first(metacheck:::.xml_read_grobid('upstream/metacheck/inst/demos/to_err_is_human.xml'), '//figure[@type=\"table\"]//table')", "py": "__import__('pytacheck.io.xml', fromlist=['x']).xml_find_first(__import__('pytacheck.io.xml', fromlist=['x'])._xml_read_grobid('upstream/metacheck/inst/demos/to_err_is_human.xml'), '//figure[@type=\"table\"]//table')"}}
+- "id": ".tei_table_contents.multirow_header"
+  "r": ".tei_table_contents"
+  "py": "pytacheck.io.grobid._tei_table_contents"
+  "args":
+    "tab_node": {"$expr": {"r": "xml2::xml_find_first(xml2::read_xml('<table><row><cell cols=\"3\">Association with mean reappraisal</cell></row><row><cell></cell><cell>Model 1</cell><cell cols=\"x\">Model 2</cell></row><row><cell>Predictor</cell><cell>&#946;01 (SE)</cell><cell>&#946;01 (SE)</cell></row><row><cell>Age</cell><cell>0.059 (0.018)</cell><cell>&lt;.001</cell></row><row><cell>Sex</cell><cell>n.s.</cell><cell>n.s.</cell></row></table>'), '//table')", "py": "__import__('pytacheck.io.xml', fromlist=['x']).xml_find_first(__import__('pytacheck.io.xml', fromlist=['x']).read_xml('<table><row><cell cols=\"3\">Association with mean reappraisal</cell></row><row><cell></cell><cell>Model 1</cell><cell cols=\"x\">Model 2</cell></row><row><cell>Predictor</cell><cell>&#946;01 (SE)</cell><cell>&#946;01 (SE)</cell></row><row><cell>Age</cell><cell>0.059 (0.018)</cell><cell>&lt;.001</cell></row><row><cell>Sex</cell><cell>n.s.</cell><cell>n.s.</cell></row></table>'), '//table')"}}
+- "id": ".tei_table_contents.ordinal_header"
+  "r": ".tei_table_contents"
+  "py": "pytacheck.io.grobid._tei_table_contents"
+  "args":
+    "tab_node": {"$expr": {"r": "xml2::xml_find_first(xml2::read_xml('<table><row><cell>Measure</cell><cell>M (SD)</cell><cell>1.</cell><cell>2.</cell><cell>3</cell></row><row><cell>1. Depression</cell><cell>6.38 (6.60)</cell><cell>-</cell><cell>.45</cell><cell>[.1, .2]</cell></row><row><cell>2. Anxiety</cell><cell>2.1</cell><cell cols=\"0\">.3</cell></row></table>'), '//table')", "py": "__import__('pytacheck.io.xml', fromlist=['x']).xml_find_first(__import__('pytacheck.io.xml', fromlist=['x']).read_xml('<table><row><cell>Measure</cell><cell>M (SD)</cell><cell>1.</cell><cell>2.</cell><cell>3</cell></row><row><cell>1. Depression</cell><cell>6.38 (6.60)</cell><cell>-</cell><cell>.45</cell><cell>[.1, .2]</cell></row><row><cell>2. Anxiety</cell><cell>2.1</cell><cell cols=\"0\">.3</cell></row></table>'), '//table')"}}
+- "id": ".tei_table_contents.empty"
+  "r": ".tei_table_contents"
+  "py": "pytacheck.io.grobid._tei_table_contents"
+  "args":
+    "tab_node": {"$expr": {"r": "xml2::xml_find_first(xml2::read_xml('<table><row/></table>'), '//table')", "py": "__import__('pytacheck.io.xml', fromlist=['x']).xml_find_first(__import__('pytacheck.io.xml', fromlist=['x']).read_xml('<table><row/></table>'), '//table')"}}
+- "id": ".tei_table_contents.null"
+  "r": ".tei_table_contents"
+  "py": "pytacheck.io.grobid._tei_table_contents"
+  "args":
+    "tab_node": {"$null": true}
+# .process_full_text(), .tei_xrefs(), .tei_url() on data frames ------------
+- "id": ".process_full_text.view_only"
+  "r": ".process_full_text"
+  "py": "pytacheck.io.grobid._process_full_text"
+  "args":
+    "full_text":
+      "$df":
+        "p": [1, 1, 1]
+        "div": [1, 1, 1]
+        "section": [1, 1, 1]
+        "header": ["demo", "demo", "demo"]
+        "formatted": ["<p>The stimuli used in the main think/no-think task reported in this article are available at <ref type=\"url\" target=\"https://osf.io/t9j8e/?view_only=f171281f212f4435917b16a9e581a73b\">https://osf.io/t9j8e/?view_only=f171  281f212f4435917b16a9e581a73b</ref>. The complete Open Practices Disclosure for this article can be found at <ref type=\"url\" target=\"http://pss.sagepub.com/content/by/supplemental-data\">http://pss.sagepub  .com/content/by/supplemental-data</ref>.</p>", "<p>No urls here!</p>", "<p>A non-problematic <ref type=\"url\" target=\"https://osf.io/t9j8e\">URL</ref>.</p>"]
+- "id": ".process_full_text.page_numbers"
+  "r": ".process_full_text"
+  "py": "pytacheck.io.grobid._process_full_text"
+  "args":
+    "full_text":
+      "$df":
+        "p": [1, 2]
+        "div": [1, 1]
+        "section": ["intro", "intro"]
+        "header": ["demo", "demo"]
+        "formatted": ["<p>The authors used structural equation modeling (SEM) assuming linear relationships between the variables, and it is essential to test this assumption <ref type=\"bibr\">(Bentler &amp; Chou, 1987, p. 86;</ref> <ref type=\"bibr\">Ullman, 2007, p. 683)</ref>.</p>", "This research (Frith &amp; Singer, 2008, p. 3876)."]
+- "id": ".process_full_text.headers_and_merge"
+  "r": ".process_full_text"
+  "py": "pytacheck.io.grobid._process_full_text"
+  "args":
+    "full_text":
+      "$df":
+        "header": ["Abstract", "[div-01]", "[div-02]", "<head>Material and Methods</head>", "<head>Results</head>", "<head>General Discussion</head>", "<head>Bibliography</head>", "<head>Other</head>", ""]
+        "formatted": ["<p>We did things. and more</p>", "<p>First unheaded div without end</p>", "[div-02]", "<p>Some methods e.g. this</p>", "<p>the results were fine. A. B. Author said so.</p>", "<p>Discussion here \"quoted.\"</p>", "<p>Ref list</p>", "<p>More stuff?</p>", "<p></p>"]
+        "div": [0, 1, 2, 3, 4, 5, 6, 7, 8]
+        "section": ["abstract", null, null, null, null, null, null, null, "foot"]
+        "p": [1, 2, 3, 4, 5, 6, 7, 8, 9]
+- "id": ".process_full_text.empty"
+  "r": ".process_full_text"
+  "py": "pytacheck.io.grobid._process_full_text"
+  "args":
+    "full_text": {"$null": true}
+- "id": ".tei_xrefs.query_string"
+  "r": ".tei_xrefs"
+  "py": "pytacheck.io.grobid._tei_xrefs"
+  "args":
+    "text_table":
+      "$df":
+        "text_id": [1, 2, 3]
+        "text": ["The gridded soil data are available at ORNL DAAC for download.", "See Fig 1 and (Smith, 2020).", "Plain."]
+        "formatted": ["The gridded soil data are available at <ref type=\"url\" target=\"https://daac.ornl.gov/cgi-bin/dsviewer.pl?ds_id=2358\">ORNL DAAC</ref> for download.", "See <ref type=\"figure\" target=\"#fig_0\">Fig 1</ref> and <ref type=\"bibr\" target=\"#b12\">(Smith, 2020)</ref> <REF type=\"table\">T</REF> <ref target=\"#b1\">untyped</ref>.", null]
+- "id": ".tei_xrefs.empty"
+  "r": ".tei_xrefs"
+  "py": "pytacheck.io.grobid._tei_xrefs"
+  "args":
+    "text_table":
+      "$df":
+        "text_id": {"$int": []}
+        "formatted": {"$chr": []}
+- "id": ".tei_url.basic"
+  "r": ".tei_url"
+  "py": "pytacheck.io.grobid._tei_url"
+  "args":
+    "text_table":
+      "$df":
+        "text_id": [1, 2, 3]
+        "formatted": ["Data at <ref type=\"url\" target=\"https://osf.io/abc\">https://osf.io/ abc</ref> and <ref type=\"url\">no target</ref>.", "No refs.", "<ref type=\"bibr\" target=\"#b0\">(A, 2020)</ref>"]
+# xml utilities ---------------------------------------------------------------
+- "id": ".xml_read_grobid.demo"
+  "r": "as.character"
+  "py": "pytacheck.io.xml.as_character"
+  "args":
+    "x": {"$call": {"r": ".xml_read_grobid", "py": "pytacheck.io.xml._xml_read_grobid", "args": {"path": {"$file": "upstream/metacheck/inst/demos/to_err_is_human.xml"}}}}
+- "id": ".xml_read_grobid.edge_body"
+  "r": "as.character"
+  "py": "pytacheck.io.xml.as_character"
+  "args":
+    "x": {"$call": {"r": ".xml_read_grobid", "py": "pytacheck.io.xml._xml_read_grobid", "args": {"path": {"$file": "tests/io/fixtures/edge_body.tei.xml"}}}}
+- "id": ".xml_read_grobid.missing"
+  "r": ".xml_read_grobid"
+  "py": "pytacheck.io.xml._xml_read_grobid"
+  "args":
+    "path": "no/such/file.xml"
+- "id": ".xml_find_text.terms"
+  "r": ".xml_find_text"
+  "py": "pytacheck.io.xml._xml_find_text"
+  "args":
+    "xml": {"$call": {"r": ".xml_read_grobid", "py": "pytacheck.io.xml._xml_read_grobid", "args": {"path": {"$file": "tests/io/fixtures/edge_body.tei.xml"}}}}
+    "xpath": ".//textClass/keywords/term"
+- "id": ".xml_find_text.join"
+  "r": ".xml_find_text"
+  "py": "pytacheck.io.xml._xml_find_text"
+  "args":
+    "xml": {"$call": {"r": ".xml_read_grobid", "py": "pytacheck.io.xml._xml_read_grobid", "args": {"path": {"$file": "tests/io/fixtures/edge_body.tei.xml"}}}}
+    "xpath": "//affiliation"
+    "join": " | "
+- "id": ".xml_find_text.none"
+  "r": ".xml_find_text"
+  "py": "pytacheck.io.xml._xml_find_text"
+  "args":
+    "xml": {"$call": {"r": ".xml_read_grobid", "py": "pytacheck.io.xml._xml_read_grobid", "args": {"path": {"$file": "tests/io/fixtures/edge_body.tei.xml"}}}}
+    "xpath": "//nosuchnode"
+- "id": ".xml_find1_text.title"
+  "r": ".xml_find1_text"
+  "py": "pytacheck.io.xml._xml_find1_text"
+  "args":
+    "xml": {"$call": {"r": ".xml_read_grobid", "py": "pytacheck.io.xml._xml_read_grobid", "args": {"path": {"$file": "tests/io/fixtures/edge_body.tei.xml"}}}}
+    "xpath": ".//titleStmt/title"

@@ -1,7 +1,7 @@
 {
-  "id": ".grobid_to_bibr.problems.corrupt",
+  "id": ".grobid_to_bibr.synthetic.url_empty",
   "ok": false,
-  "error": "Extra content at the end of the document [5]",
+  "error": "zero-length pattern",
   "warnings": [],
   "value": null,
   "metacheck_version": "0.3.1",

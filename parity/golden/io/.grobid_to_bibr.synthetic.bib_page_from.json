@@ -1,7 +1,7 @@
 {
-  "id": ".grobid_to_bibr.problems.corrupt",
+  "id": ".grobid_to_bibr.synthetic.bib_page_from",
   "ok": false,
-  "error": "Extra content at the end of the document [5]",
+  "error": "subscript out of bounds",
   "warnings": [],
   "value": null,
   "metacheck_version": "0.3.1",
