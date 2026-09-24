@@ -386,3 +386,22 @@ def test_paper_id(text: Sequence[str], id: str) -> Any:
     p = pc.test_paper(list(text))
     p.paper_id = id
     return p
+
+
+PP_DOIS["sici"] = [
+    "10.1002/(SICI)1099-0720(199908)13:4<333::AID-ACP588>3.0.CO;2-Z",
+    "10.9999/PP.Ä",
+    "10.9999/ẞ.x",
+]
+
+
+def pp_sici() -> Any:
+    """SICI and non-ASCII DOIs (lower-cased for the request, joined back in their own case)."""
+    return pp_paper(PP_DOIS["sici"], "sici")
+
+
+def bibr12(name: str) -> Any:
+    """A bibr export schema 12.0 fixture paper."""
+    import pytacheck as pc
+
+    return pc.read(ROOT / "upstream/metacheck/tests/testthat/fixtures/bibr12" / f"{name}.json")

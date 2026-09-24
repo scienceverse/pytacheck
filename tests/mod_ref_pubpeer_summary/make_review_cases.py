@@ -40,6 +40,11 @@ CASES: list[tuple[str, str, str, str, str | None, dict[str, Any]]] = [
     ("ref_pubpeer.list_empty", "ref_pubpeer", "pp_list_empty()", "H.pp_list_empty()", MOCK, {}),
     # mixed-case paper ids with bib_match: ref_table() arranges in the C locale
     ("ref_pubpeer.case_list", "ref_pubpeer", "pp_case_list()", "H.pp_case_list()", MOCK, {}),
+    # SICI and non-ASCII DOIs (tolower() for the request, original case for the join)
+    ("ref_pubpeer.sici", "ref_pubpeer", "pp_sici()", "H.pp_sici()", MOCK, {}),
+    # run twice: module_run() suffixes the second pubpeer_comments column
+    ("ref_pubpeer.twice", "ref_pubpeer", *_chain("pp_single()", "H.pp_single()",
+     ["ref_pubpeer"]), MOCK, {}),
     # R's module_run() passes `...` on: ref_pubpeer(paper, ...) has no `...`
     (
         "ref_pubpeer.extra_arg",
@@ -59,6 +64,18 @@ CASES: list[tuple[str, str, str, str, str | None, dict[str, Any]]] = [
     ("ref_summary.list_empty.chain_all", "ref_summary", f"chain(pp_list_empty(), c({ALL}))",
      f"H.chain(H.pp_list_empty(), [{ALL_PY}])", MOCK, {}),
     ("ref_summary.pp_url_na", "ref_summary", "rv_pp_url_na()", "H.rv_pp_url_na()", APIS, {}),
+    # ---- bibr export schema 12.0 papers -----------------------------------------------
+    ("ref_pubpeer.bibr12.preprint", "ref_pubpeer", 'bibr12("preprint")',
+     "H.bibr12('preprint')", MOCK, {}),
+    ("ref_pubpeer.bibr12.pmc", "ref_pubpeer", 'bibr12("PMC4383902")',
+     "H.bibr12('PMC4383902')", MOCK, {}),
+    ("ref_summary.bibr12.preprint", "ref_summary", 'bibr12("preprint")',
+     "H.bibr12('preprint')", None, {}),
+    ("ref_summary.bibr12.full", "ref_summary", 'bibr12("full")', "H.bibr12('full')", None, {}),
+    ("ref_summary.bibr12.preprint.chain_pubpeer", "ref_summary", *_chain(
+        'bibr12("preprint")', "H.bibr12('preprint')", ["ref_pubpeer"]), MOCK, {}),
+    ("ref_summary.bibr12.pmc.chain_all", "ref_summary", f'chain(bibr12("PMC4383902"), c({ALL}))',
+     f"H.chain(H.bibr12('PMC4383902'), [{ALL_PY}])", MOCK, {}),
     # ---- ref_summary after edited ref_accuracy / ref_replication / ref_retraction ----
     ("ref_summary.ret_collide", "ref_summary", "rv_ret_collide()", "H.rv_ret_collide()", APIS,
      {}),

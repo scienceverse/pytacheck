@@ -1,0 +1,28 @@
+{
+  "id": "rtransparent_funding.boundaries",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "The pilot was funded partly by a charity.",
+      "The pilot was funded partly by a charity.",
+      "",
+      "The pilot was funded partly by a charity.",
+      "",
+      "The pilot was funded partly by a charity.",
+      "The pilot was funded partly by a charity.",
+      "The pilot was funded partly by a charity. Financial information: No information about funding was received.",
+      "Financial information: No information about funding was received.",
+      "",
+      "",
+      "Funding",
+      "Funding: NA",
+      "Acknowledgements and funding NA",
+      "The work was supported by the NIH. Disclosures: No grants."
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

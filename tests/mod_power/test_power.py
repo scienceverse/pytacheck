@@ -879,7 +879,9 @@ def test_power_empty_paper(llm_off: None) -> None:
         ("post[- ]?hoc", "POſT HOC", False),
     ],
 )
-def test_tre_ignore_case_is_ascii_for_ascii_letters(pattern: str, text: str, expected: bool) -> None:
+def test_tre_ignore_case_is_ascii_for_ascii_letters(
+    pattern: str, text: str, expected: bool
+) -> None:
     from pytacheck._r import grepl
 
     assert grepl(pattern, [text], ignore_case=True) == [expected]

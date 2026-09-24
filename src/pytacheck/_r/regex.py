@@ -27,7 +27,7 @@ alternation ``a|ab``       longest (``"ab"``)          first (``"a"``)
 ``.``                      matches ``\\n``             does not match ``\\n``
 ``$``                      only at the very end        end or before final ``\\n``
 ``\\<`` ``\\>``            word start / end            (literal ``<`` / ``>``)
-case-insensitive           Unicode                     Unicode
+case-insensitive           a letter's own upper/lower  Unicode case folding
 =========================  ==========================  ==========================
 
 Patterns passed to these functions are the *regex* after R string-literal
@@ -180,7 +180,11 @@ def _translate_tre(pattern: str, icase: bool = False) -> str:
                 out.append(_ascii_icase(e) if icase else regex.escape(e))
             i += 2
         elif c == "[":
-            i = _copy_bracket_icase(pattern, i, out) if icase else _copy_posix_bracket(pattern, i, out)
+            i = (
+                _copy_bracket_icase(pattern, i, out)
+                if icase
+                else _copy_posix_bracket(pattern, i, out)
+            )
         elif icase and c.isascii() and c.isalpha():
             out.append(_ascii_icase(c))
             i += 1

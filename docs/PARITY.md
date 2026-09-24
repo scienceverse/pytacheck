@@ -21,8 +21,10 @@ parity/
 ## Workflow
 
 ```bash
-# once: an R (>= 4.5) with metacheck at the pinned commit
-Rscript -e 'install.packages("pak"); pak::local_install("upstream/metacheck")'
+# once: an R (>= 4.5) with metacheck at the pinned commit, installed under a
+# UTF-8 locale (otherwise R mangles non-ASCII names in metacheck's code and
+# `generate` refuses to run)
+LANG=C.UTF-8 LC_ALL=C.UTF-8 Rscript -e 'install.packages("pak"); pak::local_install("upstream/metacheck")'
 export PYTACHECK_RSCRIPT=$(which Rscript)
 
 python -m parity generate --area text      # R -> parity/golden/text/*.json

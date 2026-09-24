@@ -433,8 +433,9 @@ def gitlab_more(root: Path) -> None:
                 {"x-next-page": nxt},
             ),
         )
-    # Filter() keeps entries 1, 3, 4, 5 and 6 (the untyped one shifts the flags)
-    paths = ["a.txt", "d", "c.txt", "", "e.txt"]
+    # Filter() keeps entries 1, 3, 4 and 5 of the six (the untyped one shifts
+    # the flags, so the tree "d" is kept and the blob "e.txt" lost)
+    paths = ["a.txt", "d", "c.txt", ""]
     write(
         root,
         f"gitlab.com/api/graphql-{h(graphql_body('rv/glq', paths), native=True)}-POST.json",
@@ -489,6 +490,12 @@ def zenodo_upload_more(root: Path) -> None:
         '"tiny":1.0000000000000001e-05,"keywords":["a",null]}}'
     )
     write(root, f"{api}/123-{h(body, native=True)}-PUT.json", jdump({"id": 123}))
+    # published only when the metadata PUT above matched
+    write(
+        root,
+        f"{api}/123/actions/publish-POST.json",
+        jdump({"id": 123, "doi": "10.5072/zenodo.123.pub"}),
+    )
 
 
 def main() -> None:

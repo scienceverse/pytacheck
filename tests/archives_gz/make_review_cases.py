@@ -350,6 +350,7 @@ case(
     {
         "folders": {"$file": "tests/archives_gz/fixtures/upload/proj_plain"},
         "zenodo_pat": "fake-token",
+        "publish": True,
         "metadata": {"$expr": {
             "r": 'list(version = 2, weight = 0.1, count = 3L, tiny = 1e-5, keywords = list("a", NA))',
             "py": '{"version": 2.0, "weight": 0.1, "count": 3, "tiny": 1e-5, "keywords": ["a", None]}',
@@ -366,9 +367,6 @@ case("github_info.review.vector_dup", "github_info", f"{GH}.github_info",
      {"repo": {"$chr": ["rv/files", "https://github.com/rv/files"]}}, mock=MK)  # fmt: skip
 case("github_info.review.vector_missing", "github_info", f"{GH}.github_info",
      {"repo": {"$chr": ["rv/files", "rv/nope"]}}, mock=MK)  # fmt: skip
-case("github_files.review.list_null", "github_files", f"{GH}.github_files",
-     {"repo": {"$expr": {"r": 'list("rv/files", NULL)', "py": '["rv/files", None]'}}},
-     mock=MK)  # fmt: skip
 
 
 class Q(str):

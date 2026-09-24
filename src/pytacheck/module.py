@@ -921,6 +921,14 @@ def module_run(
     elif isinstance(paper, list | tuple) and all(isinstance(p, Paper) for p in paper):
         paper = PaperList(paper)
         summary_table = pd.DataFrame({"paper_id": pd.Series(paper.names, dtype="string")})
+    elif isinstance(paper, pd.DataFrame):
+        # a text table: data.frame(paper_id = paper$paper_id) has one row per table
+        # row, or no columns at all when the table has no paper_id column
+        summary_table = (
+            pd.DataFrame({"paper_id": paper["paper_id"].astype("string").reset_index(drop=True)})
+            if "paper_id" in paper.columns
+            else pd.DataFrame()
+        )
     else:
         summary_table = pd.DataFrame(
             {"paper_id": pd.Series([getattr(paper, "paper_id", None)], dtype="string")}

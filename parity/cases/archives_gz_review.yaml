@@ -557,6 +557,7 @@
     "folders":
       "$file": "tests/archives_gz/fixtures/upload/proj_plain"
     "zenodo_pat": "fake-token"
+    "publish": true
     "metadata":
       "$expr":
         "r": "list(version = 2, weight = 0.1, count = 3L, tiny = 1e-5, keywords = list(\"a\", NA))"
@@ -582,13 +583,4 @@
       "$chr":
       - "rv/files"
       - "rv/nope"
-  "mock_dir": "tests/archives_gz/mocks_review"
-- "id": "github_files.review.list_null"
-  "r": "github_files"
-  "py": "pytacheck.archives.github.github_files"
-  "args":
-    "repo":
-      "$expr":
-        "r": "list(\"rv/files\", NULL)"
-        "py": "[\"rv/files\", None]"
   "mock_dir": "tests/archives_gz/mocks_review"

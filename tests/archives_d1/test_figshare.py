@@ -272,3 +272,32 @@ def test_link_prefilters_are_exact(
     for got, paper in zip(fast, papers, strict=True):
         assert_frame_equal(got, getattr(mod, fn)(paper))
     assert len(fast[2]) >= 10  # the generated shapes do produce links
+
+
+# ---------------------------------------------------------------- review round 2
+
+
+def test_figshare_file_download_aborts_on_an_empty_body(mock_api: object, tmp_path: Path) -> None:
+    with pytest.raises(ValueError, match="Can't retrieve empty body"):
+        figshare.figshare_file_download("700006", download_to=str(tmp_path))
+    # a vectorised call warns and drops that article
+    with pytest.warns(UserWarning, match="700006 resulted in an error"):
+        out = figshare.figshare_file_download(["700006", "700009"], download_to=str(tmp_path))
+    assert out is not None
+    assert set(out["figshare_id"]) == {"700009"}
+
+
+def test_figshare_file_listing_given_as_an_object(mock_api: object, tmp_path: Path) -> None:
+    # R: rec$files is a named list; lapply() visits its values
+    out = figshare.figshare_file_download("700009", download_to=str(tmp_path))
+    assert out is not None
+    assert out["key"].tolist() == ["first.csv", "second.txt"]
+    assert out["downloaded"].tolist() == [True, True]
+
+
+def test_figshare_info_list_valued_fields(mock_api: object) -> None:
+    out = figshare.figshare_info("700007")
+    assert out["title"].iloc[0] == ["Only title"]
+    assert out["license"].iloc[0] == ["CC BY"]
+    with pytest.raises(ValueError, match="replacement has 2 rows, data has 1"):
+        figshare.figshare_info("700008")

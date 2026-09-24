@@ -501,3 +501,28 @@ def test_dryad_verify_downloads(tmp_path: Path) -> None:
     assert out["downloaded"].tolist() == [True, False, False]
     assert out["checksum_ok"].tolist()[0] is True
     assert files["downloaded"].tolist() == [True, True, True]  # input untouched
+
+
+# ---------------------------------------------------------------- review round 2
+
+
+def test_dryad_doi_escapes_decoding_to_invalid_utf8_find_nothing() -> None:
+    # R: regexec(perl = TRUE) warns "input string 1 is invalid UTF-8" and matches nothing
+    with pytest.warns(UserWarning, match="invalid UTF-8"):
+        out = dryad._dryad_doi(
+            ["10.5061/dryad.abc%E2%80", "%FF10.5061/dryad.abc", "10.5061/dryad.ok"]
+        )
+    assert out == [None, None, "10.5061/dryad.ok"]
+    # a valid multi-byte escape is fine
+    assert dryad._dryad_doi("10.5061/dryad.abc%E2%80%93x") == "10.5061/dryad.abc"
+
+
+def test_dryad_links_on_an_empty_paper_list() -> None:
+    out = dryad.dryad_links(pc.PaperList([]))
+    assert out.columns.tolist() == ["text_id", "paper_id", "href", "dryad_url", "dryad_doi"]
+    assert len(out) == 0
+
+
+def test_dryad_file_download_aborts_on_an_empty_body(mock_api: object, tmp_path: Path) -> None:
+    with pytest.raises(ValueError, match="Can't retrieve empty body"):
+        dryad.dryad_file_download("10.5061/dryad.rev2", download_to=str(tmp_path))

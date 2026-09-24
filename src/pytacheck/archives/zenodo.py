@@ -580,7 +580,8 @@ def _zenodo_download_one(
 
     def drop(rows: list[int]) -> None:
         nonlocal files, unzippable
-        keep = [i for i in range(len(files)) if i not in set(rows)]
+        gone = set(rows)
+        keep = [i for i in range(len(files)) if i not in gone]
         files = files.iloc[keep].reset_index(drop=True)
         unzippable = [unzippable[i] for i in keep]
 

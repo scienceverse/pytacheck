@@ -896,7 +896,12 @@ def github_info(repo: Any, recursive: bool = False) -> dict[str, Any] | None:
     if clean is None:
         return None
     if isinstance(clean, list):
-        # several repositories: R passes the vector on to each function
+        # several repositories: R passes the vector on to each function. With
+        # a missing one it is a list holding NULL, and github_files()'s
+        # data.frame(repo = <that list>) stops
+        if any(c is None for c in clean):
+            lengths = ", ".join("0" if c is None else "1" for c in clean)
+            raise ValueError(f"arguments imply differing number of rows: {lengths}")
         return {
             "repo": clean,
             "readme": github_readme(clean),

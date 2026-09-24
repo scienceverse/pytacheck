@@ -185,10 +185,9 @@
   "args":
     "paper": {"$paper": "upstream/metacheck/tests/testthat/fixtures/debruine/debruine-sex.xml"}
 # ---------------------------------------------------------------- text table input
-# module_run() also takes a text table; the module's summary_table is then
-# data.frame(paper_id = paper$paper_id). pytacheck.module.module_run() builds its
-# initial summary_table from getattr(paper, "paper_id") (a whole Series for a data
-# frame), so the joined summary_table is not compared here; see tests/mod_effect_size.
+# module_run() also takes a text table; module_run()'s summary_table (and the
+# module's own early-return one) is then data.frame(paper_id = paper$paper_id):
+# one row per table row
 - "id": "stat_effect_size.review.text_table"
   "module": "stat_effect_size"
   "args":
@@ -197,7 +196,6 @@
         "r": "text_search"
         "py": "pytacheck.text.text_search"
         "args": {"paper": {"$paper": "demo"}, "pattern": "significant"}
-  "compare": {"ignore": ["summary_table"]}
 - "id": "stat_effect_size.review.text_table_no_tests"
   "module": "stat_effect_size"
   "args":
@@ -206,7 +204,6 @@
         "r": "text_search"
         "py": "pytacheck.text.text_search"
         "args": {"paper": {"$paper": "demo"}, "pattern": "Introduction|design"}
-  "compare": {"ignore": ["summary_table"]}
 # ---------------------------------------------------------------- near-integer df, LaTeX labels
 # |df - round(df)| <= 1e-8 counts as an integer df: as.integer() truncates df + 1 and
 # format() rounds (df + 2) / 2 to 7 significant digits
@@ -324,4 +321,18 @@
         - "Upper eta, F(1, 20) = 4.10, Ηp² = .17."
         - "Latin eta p, F(1, 20) = 4.10, eta_p^2 = .17."
         - "Partial word, F(1, 20) = 4.10, partial-eta2 = .17."
+  "compare": {"ignore": ["paper_id", "table.paper_id", "summary_table.paper_id"]}
+# a match-level text table: several rows share a text_id, so text_search("[0-9]")
+# repeats sentences and left_join() multiplies the test rows
+- "id": "stat_effect_size.review.text_table_matches"
+  "module": "stat_effect_size"
+  "args":
+    "paper":
+      "$call":
+        "r": "text_search"
+        "py": "pytacheck.text.text_search"
+        "args":
+          "paper": {"$test_paper": {"text": ["A, t(40) = 2.9, p = .01, d = 0.45 and t(40) = 3.1, d = 0.48.", "B, F(1, 20) = 4.10, ηp² = .17.", "C, t(30) = 2.0."]}}
+          "pattern": "[tF]\\([0-9, ]+\\) = [0-9.]+|[dη]p?²? = [0-9.]+"
+          "return": "match"
   "compare": {"ignore": ["paper_id", "table.paper_id", "summary_table.paper_id"]}
