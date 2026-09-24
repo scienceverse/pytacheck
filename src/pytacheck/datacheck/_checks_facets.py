@@ -6,8 +6,9 @@ Port of the "Column facets" section of ``R/data_check_helpers.R``:
 
 ``.parse_frac()`` asks how many values ``as.POSIXct(v, format = f)`` parses,
 so this module carries a small emulation of R's ``strptime()`` for the
-directives the date formats use (``%Y %y %m %d %H %M %S %b %B``): greedy
-digit fields that stop early when another digit would overflow the field,
+directives the date formats use (``%Y %y %m %d %H %M %S %b %B``): digit
+fields that greedily take up to their width in digits (R's ``get_number()``
+has no glibc-style early stop, so ``"523"`` under ``%H%M`` reads hour 52),
 leading blanks skipped inside numbers, a blank in the format matching any run
 of blanks, trailing input ignored, and the calendar validation R applies
 afterwards (day within the month, ``24:00:00`` only as midnight, seconds up
@@ -111,18 +112,15 @@ _NUMBER_FIELDS = {
 _DAYS_IN_MONTH = (31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)
 
 
-def _number_regex(_lo: int, hi: int, width: int) -> str:
-    """The digits ``get_number(lo, hi, width)`` consumes (value checked later).
+def _number_regex(width: int) -> str:
+    """The digits R's ``get_number(from, to, width)`` consumes (value checked later).
 
-    Digits are read greedily while fewer than *width* are taken and the value
-    times ten does not exceed *hi*; there is no backtracking.
+    Up to *width* digits are read greedily with no backtracking, and unlike
+    glibc's ``strptime()`` the read does not stop early when one more digit
+    would overflow the field: ``"2020-05-45"`` under ``%Y-%m-%d`` reads day 45
+    (NA), where glibc would read day 4 and ignore the trailing ``5``.
     """
-    if width == 4:
-        return "[0-9]{1,4}+"
-    d1 = "".join(str(d) for d in range(10) if d * 10 <= hi)
-    d2 = "".join(str(d) for d in range(10) if d * 10 > hi)
-    alt = f"[{d1}][0-9]?+"
-    return f"(?:{alt}|[{d2}])" if d2 else alt
+    return f"[0-9]{{1,{width}}}+"
 
 
 @functools.cache
@@ -137,7 +135,7 @@ def _format_regex(fmt: str) -> tuple[Any, tuple[str, ...]]:
             d = fmt[i + 1]
             i += 2
             if d in _NUMBER_FIELDS:
-                parts.append(" *(" + _number_regex(*_NUMBER_FIELDS[d]) + ")")
+                parts.append(" *(" + _number_regex(_NUMBER_FIELDS[d][2]) + ")")
                 fields.append(d)
             elif d in ("b", "B", "h"):
                 names = "|".join(f"{m}|{m[:3]}" for m in _MONTHS)

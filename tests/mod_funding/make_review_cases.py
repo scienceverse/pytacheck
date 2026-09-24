@@ -279,6 +279,15 @@ DUP_PY = (
 
 BLANKS = ["This research was funded by NIH.", None, "", "Funding", "", "We thank NIH."]
 
+TRE_CASELESS = [
+    "The fellowſhip was funded.",
+    "Our wor" + KELVIN + " was funded.",
+    "ſupport came from the study.",
+    "1 supports)/:-] fellowſhipsZ/:-]reported",
+    "FUNDİNG for the STUDY.",
+    "Support came from the study.",
+]
+
 ORDER = [
     "The project was funded by X.",
     "We thank the funder for support of this work.",
@@ -307,6 +316,9 @@ def add_module_cases() -> None:
         module_case(f"{mod}.blanks", mod, test_paper(BLANKS), compare=IGNORE_IDS)
         module_case(f"{mod}.order", mod, test_paper(ORDER), compare=IGNORE_IDS)
         module_case(f"{mod}.all_blank", mod, test_paper(["", None, " ", ""]), compare=IGNORE_IDS)
+        # text_search()'s TRE ignore.case matches a letter's towupper/towlower
+        # forms only: not the long s for "s" or the Kelvin sign for "k"
+        module_case(f"{mod}.tre_caseless", mod, test_paper(TRE_CASELESS), compare=IGNORE_IDS)
     sentences = [
         "This work was supported by grant 1.",
         "Our study was funded by the ERC.",

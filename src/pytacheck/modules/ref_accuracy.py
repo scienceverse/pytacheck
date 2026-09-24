@@ -458,7 +458,9 @@ def _correction(label: str, cited: Any, record: Any) -> str:
             "for references with no DOI, the minimum CrossRef\n"
             "relevance score for a DOI found by title search to be offered as a\n"
             "suggested DOI. Low-scoring matches are usually the wrong paper, so they are\n"
-            "not suggested. Raise to be more conservative, lower to suggest more."
+            "not suggested. Raise to be more conservative, lower to suggest more.\n"
+            "Papers read from bibr 12.x exports score their matches 0-1, so for them\n"
+            "the score is compared with `suggest_score / 100`."
         ),
     },
     returns="report list",
@@ -627,7 +629,7 @@ def ref_accuracy(
     inc_report = _incoherent_report(table, max_authors)
     if inc_report is not None:
         report += [_INC_HEAD, _INC_TEXT, inc_report]
-    nodoi_report = _nodoi_report(table, suggest_score)
+    nodoi_report = _nodoi_report(table, suggest_score, paper)
     if nodoi_report is not None:
         report += [_NODOI_HEAD, _NODOI_TEXT, nodoi_report]
 
@@ -705,7 +707,8 @@ def _incoherent_report(table: pd.DataFrame, max_authors: int) -> Any:
     return scroll_table(out, maxrows=5, colwidths=[0.45, 0.4, 0.15])
 
 
-def _nodoi_report(table: pd.DataFrame, suggest_score: float) -> Any:
+def _nodoi_report(table: pd.DataFrame, suggest_score: float, paper: Any) -> Any:
+    from pytacheck.io.bibr12 import _bibr12_paper_ids
     from pytacheck.report import link, scroll_table
 
     mask = table["no_doi"].fillna(False).to_numpy(dtype=bool) & table["text"].notna().to_numpy()
@@ -714,10 +717,16 @@ def _nodoi_report(table: pd.DataFrame, suggest_score: float) -> Any:
     rows = table.loc[mask]
     scores = rows["score"].tolist()
     dois = _chr(rows["doi.match"])
-    # only offer a suggested DOI when the title-search match scored high enough
+    # only offer a suggested DOI when the title-search match scored high enough;
+    # bibr 12.x papers score their matches 0-1
+    ids12 = set(_bibr12_paper_ids(paper))
+    min_scores = [
+        suggest_score / 100 if pid in ids12 else suggest_score
+        for pid in rows["paper_id"].tolist()
+    ]
     suggested = []
-    for s, d in zip(scores, dois, strict=True):
-        if not _na(s) and float(s) >= suggest_score and d is not None and d != "":
+    for s, d, min_score in zip(scores, dois, min_scores, strict=True):
+        if not _na(s) and float(s) >= min_score and d is not None and d != "":
             suggested.append(link("https://doi.org/" + d, d))
         else:
             suggested.append("")

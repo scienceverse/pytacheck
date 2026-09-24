@@ -172,6 +172,16 @@ def ref_miscitation(paper: Any, db: pd.DataFrame | None = None) -> dict[str, Any
     # consolidate xrefs, filter, and expand
     text = paper_table(paper, "text")
     xref = paper_table(paper, "xref")
+    # bibr 12.x papers cite a reference with a "bib" xref whose target_id is
+    # the bib_id (their xref_id is the row's own key)
+    if "paper_id" in xref.columns:
+        from pytacheck.io.bibr12 import _bibr12_paper_ids
+
+        v12 = xref["paper_id"].isin(_bibr12_paper_ids(paper)).to_numpy(dtype=bool)
+        if v12.any():
+            is_bib = xref["xref_type"].isin(["bib"]).to_numpy(dtype=bool)
+            xref = xref.copy()
+            xref.loc[v12, "xref_id"] = xref["target_id"].where(is_bib, pd.NA)[v12]
     xref = xref.loc[xref["xref_id"].notna().to_numpy(dtype=bool)]
     joined = xref.merge(
         text, on=["paper_id", "text_id"], how="left", sort=False, suffixes=(".x", ".y")

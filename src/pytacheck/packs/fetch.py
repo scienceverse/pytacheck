@@ -3,8 +3,10 @@
 Sources (``index.json`` and pins use the same shapes):
 
 * ``{"github": "owner/repo", "subdir": ...}``, ``{"gitlab": "group/repo"}`` and
-  ``{"codeberg": "owner/repo"}``: the commit's tarball is downloaded through
-  :mod:`pytacheck.http` (no git binary needed), falling back to git;
+  ``{"codeberg": "owner/repo"}``: the commit's tarball is downloaded over HTTPS
+  (no git binary needed), falling back to git. With a GitHub token in the
+  environment (:mod:`pytacheck.packs.auth`), GitHub tarballs come from the API
+  first, so private repositories work; git uses the user's own credentials;
 * ``{"git": "<https, ssh or local url>"}``: hardened git;
 * ``{"path": "<folder>"}``: a local folder (local and test stores).
 
@@ -31,6 +33,7 @@ from pathlib import Path, PurePosixPath
 from typing import Any
 from urllib.parse import quote, urlsplit
 
+from pytacheck.packs.auth import AUTH_HELP, DownloadError, github_token, redact
 from pytacheck.packs.manifest import PackError
 from pytacheck.packs.tree import INSTALL_RECORD
 
@@ -40,12 +43,14 @@ __all__ = [
     "MAX_DOWNLOAD",
     "MAX_FILES",
     "DownloadError",
+    "api_tarball_url",
     "clone_url",
     "copy_tree",
     "describe_source",
     "extract_tarball",
     "fetch_source",
     "git_fetch",
+    "git_rev",
     "resolve_rev",
     "tarball_url",
 ]
@@ -72,10 +77,6 @@ def _refuse_native(rel: str) -> None:
             f"Refusing to install: {rel} is a compiled extension module "
             "(packs may only contain Python source)"
         )
-
-
-class DownloadError(PackError):
-    """A source could not be downloaded (network or HTTP error): git may still work."""
 
 
 def _slug(source: Mapping[str, Any], host: str) -> str:
@@ -130,6 +131,13 @@ def tarball_url(source: Mapping[str, Any], rev: str) -> str | None:
     return f"https://codeberg.org/{slug}/archive/{rev}.tar.gz"
 
 
+def api_tarball_url(source: Mapping[str, Any], rev: str) -> str | None:
+    """GitHub's API tarball URL of a commit (it redirects to a short-lived download URL)."""
+    if _host(source) != "github":
+        return None
+    return f"https://api.github.com/repos/{_slug(source, 'github')}/tarball/{rev}"
+
+
 def clone_url(source: Mapping[str, Any]) -> str | None:
     """The URL git clones a source from."""
     host = _host(source)
@@ -145,30 +153,57 @@ def clone_url(source: Mapping[str, Any]) -> str | None:
 # ---------------------------------------------------------------------------
 
 
-def download(url: str, *, limit: int = MAX_DOWNLOAD) -> bytes:
-    """GET *url* through the shared client, refusing bodies over *limit* bytes."""
-    import httpx
+def download(url: str, *, limit: int = MAX_DOWNLOAD, token: bool = False) -> bytes:
+    """GET *url*, refusing bodies over *limit* bytes.
 
-    from pytacheck.http import client
+    With ``token=True`` a GitHub token may be sent (only to GitHub's https
+    hosts, see :mod:`pytacheck.packs.auth`). Errors name *url*, never a
+    redirect target.
+    """
+    from pytacheck.packs.auth import get
 
-    last: str = ""
-    for _ in range(2):
+    res = get(url, token=token, limit=limit, tries=2, timeout=60.0)
+    if res.status != 200:
+        raise DownloadError(f"Downloading {url} failed: {res.problem()}", status=res.status)
+    return res.content
+
+
+def _download_tarball(source: Mapping[str, Any], rev: str) -> bytes:
+    """A commit's tarball: GitHub's API with a token first, then the public download URL."""
+    urls: list[tuple[str, bool]] = []
+    api = api_tarball_url(source, rev)
+    if api is not None and github_token():
+        urls.append((api, True))
+    public = tarball_url(source, rev)
+    if public is not None:
+        urls.append((public, False))
+    errors: list[DownloadError] = []
+    for url, token in urls:
         try:
-            with client().stream("GET", url, timeout=60.0) as resp:
-                if resp.status_code != 200:
-                    raise DownloadError(f"Downloading {url} failed: HTTP {resp.status_code}")
-                size = int(resp.headers.get("Content-Length") or 0)
-                if size > limit:
-                    raise PackError(f"{url} is too large ({size} bytes; limit {limit})")
-                buf = io.BytesIO()
-                for chunk in resp.iter_bytes():
-                    buf.write(chunk)
-                    if buf.tell() > limit:
-                        raise PackError(f"{url} is too large (limit {limit} bytes)")
-                return buf.getvalue()
-        except httpx.HTTPError as exc:
-            last = str(exc) or type(exc).__name__
-    raise DownloadError(f"Downloading {url} failed: {last}")
+            return download(url, token=token)
+        except DownloadError as exc:
+            errors.append(exc)
+    statuses = [e.status for e in errors if e.status is not None]
+    denied = [st for st in statuses if st in (401, 403, 404)]
+    status = denied[0] if denied else (statuses[-1] if statuses else None)
+    raise DownloadError("; ".join(str(e) for e in errors), status=status)
+
+
+def _one_line(text: str) -> str:
+    return " ".join(redact(text).split())
+
+
+def _auth_failure(
+    source: Mapping[str, Any], rev: str, http: DownloadError, git: PackError | None
+) -> DownloadError:
+    """Why a source could not be fetched, and (for 401/403/404) how to authenticate."""
+    text = f"Cannot download {describe_source(source)} at {rev[:12]}: {_one_line(str(http))}"
+    if git is not None:
+        text += f"; git: {_one_line(str(git))}"
+    if http.status in (401, 403, 404):
+        private = "If the repository is private, configure git credentials for it"
+        text += f". {AUTH_HELP if _host(source) == 'github' else private}"
+    return DownloadError(text, status=http.status)
 
 
 def _unsafe(name: str, why: str) -> PackError:
@@ -312,7 +347,7 @@ _GIT_CONFIG = (
 
 def _check_git_url(url: str) -> str:
     if not url or url.startswith("-"):
-        raise PackError(f"Invalid git URL {url!r}")
+        raise PackError(f"Invalid git URL {redact(url)!r}")
     if re.match(r"^[\w.-]+@[\w.-]+:", url):  # scp-like ssh (git@host:owner/repo)
         return url
     scheme = urlsplit(url).scheme.lower()
@@ -321,7 +356,7 @@ def _check_git_url(url: str) -> str:
     if not scheme and Path(url).expanduser().is_absolute():
         return url
     raise PackError(
-        f"Refusing the git URL {url!r}: only https://, ssh:// (or git@host:...), file:// and "
+        f"Refusing the git URL {redact(url)!r}: only https://, ssh:// (or git@host:...), file:// and "
         "absolute local paths are allowed"
     )
 
@@ -388,10 +423,14 @@ def git_fetch(url: str, rev: str, dest: str | os.PathLike[str], subdir: str = ""
                 "clone", "-q", "--no-checkout", "--no-recurse-submodules", "--", url, str(work)
             )
             if res.returncode != 0:
-                raise DownloadError(f"git could not fetch {url}: {res.stderr.strip()}")
+                raise DownloadError(
+                    f"git could not fetch {redact(url)}: {redact(res.stderr.strip())}"
+                )
             res = _run_git("checkout", "-q", "--detach", rev, cwd=work)
             if res.returncode != 0:
-                raise PackError(f"git could not check out {rev} of {url}: {res.stderr.strip()}")
+                raise PackError(
+                    f"git could not check out {rev} of {redact(url)}: {redact(res.stderr.strip())}"
+                )
         head = _run_git("rev-parse", "HEAD", cwd=work).stdout.strip()
         if head != rev:
             raise PackError(f"git checked out {head or 'nothing'}, not the pinned {rev}")
@@ -405,7 +444,7 @@ def _ls_remote(url: str, ref: str | None) -> str:
     _check_git_url(url)
     res = _run_git("ls-remote", "--", url, ref or "HEAD")
     if res.returncode != 0:
-        raise DownloadError(f"git ls-remote {url} failed: {res.stderr.strip()}")
+        raise DownloadError(f"git ls-remote {redact(url)} failed: {redact(res.stderr.strip())}")
     rows = [line.split("\t", 1) for line in res.stdout.splitlines() if "\t" in line]
     want = ref or "HEAD"
     names = (want, f"refs/heads/{want}", f"refs/tags/{want}")
@@ -414,43 +453,63 @@ def _ls_remote(url: str, ref: str | None) -> str:
         for sha, name in rows:
             if name == n:
                 return peeled.get(name, sha)
-    raise PackError(f"The ref {want!r} does not exist in {url}")
+    raise PackError(f"The ref {want!r} does not exist in {redact(url)}")
+
+
+def git_rev(url: str, ref: str | None = None) -> str:
+    """The commit a branch or tag (default: the default branch) of a git remote points at."""
+    if ref and _SHA.match(ref.lower()):
+        return ref.lower()
+    return _ls_remote(url, ref)
 
 
 def resolve_rev(source: Mapping[str, Any], ref: str | None = None) -> str:
     """Resolve a tag, branch or short SHA (default: the default branch) to a commit SHA, once.
 
-    GitHub sources ask the GitHub API; everything else (and GitHub when the
-    API cannot be reached) uses ``git ls-remote``.
+    GitHub sources ask the GitHub API (with a token when one is set, see
+    :mod:`pytacheck.packs.auth`); everything else, and GitHub when the API
+    cannot be reached or does not show the repository (private, no token), uses
+    ``git ls-remote`` with the user's git credentials.
     """
     if ref and _SHA.match(ref.lower()):
         return ref.lower()
     if "path" in source:
         raise PackError("Local folders have no commits to resolve")
+    denied: str | None = None  # the API's 401/403/404: private, or no access
     if "github" in source:
-        from pytacheck.http import request
+        from pytacheck.packs.auth import get
 
         slug = _slug(source, "github")
         url = f"https://api.github.com/repos/{slug}/commits/{quote(ref or 'HEAD', safe='')}"
-        resp = request("GET", url, max_tries=2, headers={"Accept": "application/vnd.github.sha"})
-        if resp is not None and resp.status_code == 200:
-            sha = resp.text.strip().lower()
+        try:
+            res = get(url, token=True, accept="application/vnd.github.sha", limit=4096)
+        except DownloadError:
+            res = None
+        if res is not None and res.status == 200:
+            sha = res.text.strip().lower()
             if _SHA.match(sha):
                 return sha
-        if resp is not None and resp.status_code in (404, 422):
+        if res is not None and res.status == 422:
             raise PackError(f"{ref or 'HEAD'} is not a branch, tag or commit of github {slug}")
+        if res is not None and res.denied:
+            denied = f"github {slug}: {res.problem()}"
     remote = clone_url(source)
     if remote is None:
         raise PackError(f"Cannot resolve a revision for the source {dict(source)}")
-    if ref and re.match(r"^[0-9a-f]{4,39}$", ref.lower()):
-        try:
-            return _ls_remote(remote, ref)
-        except PackError:
+    short = bool(ref and re.match(r"^[0-9a-f]{4,39}$", ref.lower()))
+    try:
+        return _ls_remote(remote, ref)
+    except PackError as exc:
+        if denied is not None and isinstance(exc, DownloadError):
+            raise DownloadError(
+                f"Cannot read {denied}; git: {_one_line(str(exc))}. {AUTH_HELP}"
+            ) from None
+        if short:
             raise PackError(
                 f"Cannot resolve the short commit id {ref!r} without the GitHub API; "
                 "give the full 40-character SHA"
             ) from None
-    return _ls_remote(remote, ref)
+        raise
 
 
 def fetch_source(
@@ -482,17 +541,16 @@ def fetch_source(
         return copy_tree(folder, dest)
     if not rev or not _SHA.match(rev):
         raise PackError(f"A pack source needs a full 40-character commit SHA, not {rev!r}")
-    url = tarball_url(source, rev)
-    if url is not None:
+    if tarball_url(source, rev) is not None:
         try:
-            data = download(url)
+            data = _download_tarball(source, rev)
         except DownloadError as exc:
             if shutil.which("git") is None:
-                raise
+                raise _auth_failure(source, rev, exc, None) from None
             try:
                 return git_fetch(str(clone_url(source)), rev, dest, sub)
-            except DownloadError:
-                raise exc from None
+            except DownloadError as git_exc:
+                raise _auth_failure(source, rev, exc, git_exc) from None
         return extract_tarball(data, dest, sub)
     if "git" in source:
         return git_fetch(str(source["git"]), rev, dest, sub)
