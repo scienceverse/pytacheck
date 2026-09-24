@@ -63,6 +63,23 @@ def _perform(method: str, url: str, **kwargs: Any) -> httpx.Response:
     return resp
 
 
+def _dollar(x: Any, name: str) -> Any:
+    """R ``x$name`` on parsed JSON (``simplifyVector = FALSE``).
+
+    ``NULL`` for ``NULL`` or an unnamed list (a JSON array), the exact or
+    unique partial match on a named list, and R's error on an atomic value.
+    """
+    from collections.abc import Mapping
+
+    from pytacheck.db._utils import r_dollar
+
+    if x is None or isinstance(x, list | tuple):
+        return None
+    if isinstance(x, Mapping):
+        return r_dollar(x, name)
+    raise TypeError("$ operator is invalid for atomic vectors")
+
+
 def _body_json(resp: httpx.Response) -> Any:
     """``httr2::resp_body_json()`` (content type checked, errors raise)."""
     from pytacheck.archives.osf_helpers import _resp_body_json
@@ -84,6 +101,125 @@ def _as_list(x: Any) -> list[Any]:
     if _is_vector(x):
         return [None if is_na(v) else v for v in x]
     return [x]
+
+
+_INT_MAX = 2**31 - 1
+
+
+def _r_value_type(v: Any) -> str:
+    """The R type jsonlite gives a JSON scalar (``int`` past 32 bits is a double)."""
+    if isinstance(v, bool):
+        return "logical"
+    if isinstance(v, int):
+        return "integer" if -_INT_MAX <= v <= _INT_MAX else "double"
+    if isinstance(v, float):
+        return "double"
+    return "character"
+
+
+_TYPE_ORDER = {"logical": 0, "integer": 1, "double": 2, "character": 3}
+_TYPE_DTYPE = {"logical": "boolean", "integer": "Int64", "double": "float64", "character": "string"}
+
+
+def _r_unlist(values: Sequence[Any]) -> pd.Series:
+    """R ``unlist()`` of parsed JSON values: nested lists flattened, ``NULL`` dropped.
+
+    The result has the highest R type present (logical < integer < double <
+    character), as ``unlist()`` coerces.
+    """
+    from pytacheck._r import as_character
+
+    flat: list[Any] = []
+
+    def walk(v: Any) -> None:
+        if v is None:
+            return
+        if isinstance(v, dict):
+            for x in v.values():
+                walk(x)
+        elif isinstance(v, list | tuple):
+            for x in v:
+                walk(x)
+        else:
+            flat.append(v)
+
+    for v in values:
+        walk(v)
+    if not flat:
+        return pd.Series([], dtype="object")
+    rtype = max((_r_value_type(v) for v in flat), key=_TYPE_ORDER.__getitem__)
+    if rtype == "character":
+        out = [
+            ("TRUE" if v else "FALSE") if isinstance(v, bool) else as_character(v) for v in flat
+        ]
+        return pd.Series(out, dtype="string")
+    if rtype == "double":
+        return pd.Series([float(v) for v in flat], dtype="float64")
+    return pd.Series(flat, dtype=_TYPE_DTYPE[rtype])
+
+
+def _r_data_frame(cols: dict[str, Any]) -> pd.DataFrame:
+    """``data.frame(...)`` of vectors: shorter ones recycled, as R does.
+
+    Every length must divide the longest (and none be zero unless all are),
+    else R's "arguments imply differing number of rows" error.
+    """
+    series = {k: v if isinstance(v, pd.Series) else pd.Series(v) for k, v in cols.items()}
+    lengths = [len(s) for s in series.values()]
+    nr = max(lengths, default=0)
+    if any((n == 0 and nr > 0) or (n > 0 and nr % n) for n in lengths):
+        raise ValueError(
+            "arguments imply differing number of rows: " + ", ".join(str(n) for n in lengths)
+        )
+    out = {}
+    for k, s in series.items():
+        s = s.reset_index(drop=True)
+        if 0 < len(s) < nr:
+            s = pd.concat([s] * (nr // len(s)), ignore_index=True)
+        out[k] = s
+    return pd.DataFrame(out)
+
+
+def _r_col_type(col: pd.Series) -> str:
+    """The R type of a column: logical/integer/double/character/list (``unspecified`` = all-NA logical)."""
+    dtype = col.dtype
+    if pd.api.types.is_bool_dtype(dtype):
+        return "unspecified" if bool(col.isna().all()) else "logical"
+    if pd.api.types.is_integer_dtype(dtype):
+        return "integer"
+    if pd.api.types.is_float_dtype(dtype):
+        return "double"
+    if pd.api.types.is_string_dtype(dtype) and not pd.api.types.is_object_dtype(dtype):
+        return "character"
+    if isinstance(dtype, pd.CategoricalDtype):
+        return "factor"
+    return "list"
+
+
+def _check_combine(frames: Sequence[pd.DataFrame | None]) -> None:
+    """Raise as ``dplyr::bind_rows()`` (vctrs) does when column types cannot be combined.
+
+    Logical, integer and double combine; character only with character; a
+    list column only with list columns. An all-``NA`` logical column combines
+    with anything. Factors are left to the caller.
+    """
+    numeric = {"logical", "integer", "double"}
+    parts = [f for f in frames if f is not None]
+    seen: dict[str, tuple[int, str]] = {}
+    for i, f in enumerate(parts, start=1):
+        for c in f.columns:
+            t = _r_col_type(f[c])
+            if t in ("unspecified", "factor"):
+                continue
+            if c not in seen:
+                seen[c] = (i, t)
+                continue
+            j, prev = seen[c]
+            if prev == t or (prev in numeric and t in numeric):
+                if _TYPE_ORDER.get(t, -1) > _TYPE_ORDER.get(prev, -1):
+                    seen[c] = (j, t)
+                continue
+            raise TypeError(f"Can't combine `..{j}${c}` <{prev}> and `..{i}${c}` <{t}>.")
 
 
 def _r_basename(path: str) -> str:
@@ -211,6 +347,38 @@ def _add_file_types(files: pd.DataFrame, drop_ext: bool) -> pd.DataFrame:
 # ---------------------------------------------------------------------------
 
 
+def _plusminus(host: str, texts: list[Any]) -> str:
+    """metacheck's "+-10 words around the host name" pattern, as R's TRE applies it.
+
+    R runs the TRE pattern
+    ``(?:\\b\\w+\\b\\W+){0,10}\\b<host>(\\.com)?\\b(?:\\W+\\b\\w+\\b){0,10}``
+    over every sentence at once. When any sentence it matches is non-ASCII, R
+    switches TRE to its wide-character matcher. That matcher ignores the
+    ``{0,10}`` upper bounds here (nested ``\\w+``/``\\W+`` inside a bounded
+    group), so the match runs to the ends of the sentence, and so does the
+    owner/repo search that follows. Checked against R on 3000 random
+    sentences: wide mode equals the unbounded pattern in every case. So the
+    unbounded pattern is used exactly when R would be in wide mode.
+    """
+    rep ="*" if _tre_wide(rf"\b{host}(\.com)?\b", texts) else "{0,10}"
+    return rf"(?:\b\w+\b\W+){rep}\b{host}(\.com)?\b(?:\W+\b\w+\b){rep}"
+
+
+def _tre_wide(match_pattern: str, texts: list[Any]) -> bool:
+    """Would R's ``gregexpr()`` use TRE's wide-character mode on the matching *texts*?
+
+    ``text_search()`` calls ``gregexpr()`` on the rows that match; R uses the
+    wide-character matcher when any of them (NA aside) is not pure ASCII.
+    """
+    from pytacheck._r import grepl
+
+    hits = grepl(match_pattern, texts, ignore_case=True)
+    return any(
+        bool(h) and isinstance(t, str) and not t.isascii()
+        for t, h in zip(texts, hits, strict=True)
+    )
+
+
 def _host_links(paper: Any, host: str, host_regex: str) -> pd.DataFrame:
     """The shared body of github_links() / gitlab_links()."""
     from pytacheck._r import bind_rows
@@ -224,12 +392,11 @@ def _host_links(paper: Any, host: str, host_regex: str) -> pd.DataFrame:
     found = found[["href", "text_id", "paper_id"]]
 
     # repos referenced only by owner/repo near the host name (+-10 words)
-    plusminus = rf"(?:\b\w+\b\W+){{0,10}}\b{host}(\.com)?\b(?:\W+\b\w+\b){{0,10}}"
     no_host_regex = r"[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+(?:\.git)?"
     other = text_search(strip_text, host)
     other = text_search(other, host_regex, exclude=True, perl=True)
     other = text_search(other, f"{host}.io", exclude=True)
-    other = text_search(other, plusminus, return_="match")
+    other = text_search(other, _plusminus(host, other["text"].tolist()), return_="match")
     other = text_search(other, no_host_regex, return_="match", perl=True)
     other = other[["text", "text_id", "paper_id"]].rename(columns={"text": "href"})
     return bind_rows([found, other])
@@ -380,7 +547,9 @@ def github_languages(repo: Any) -> pd.DataFrame | None:
     from pytacheck._r import bind_rows
 
     if _is_vector(repo) and len(_as_list(repo)) > 1:
-        return bind_rows([github_languages(r) for r in _as_list(repo)])
+        tables = [github_languages(r) for r in _as_list(repo)]
+        _check_combine(tables)
+        return bind_rows(tables)
     clean = github_repo(repo)
     if clean is None:
         return None
@@ -395,20 +564,20 @@ def _github_languages(clean_repo: str) -> pd.DataFrame:
         languages = _body_json(resp)
     except Exception:
         languages = []
-    if languages:
-        if not isinstance(languages, dict):
-            # R: data.frame(language = names(<unnamed list>)) -- a NULL column
-            raise ValueError("arguments imply differing number of rows: 1, 0")
-        names = list(languages)
-        values = list(languages.values())
-        bytes_dtype = "float64" if any(isinstance(v, float) for v in values) else "Int64"
-        return pd.DataFrame(
+    # metacheck does not check the status: an error body such as
+    # {"message": "Not Found", ...} becomes "languages" named after its fields
+    n = 0 if languages is None else len(languages) if isinstance(languages, list | dict) else 1
+    if n:
+        names = list(languages) if isinstance(languages, dict) else []
+        values = list(languages.values()) if isinstance(languages, dict) else [languages]
+        out = _r_data_frame(
             {
-                "repo": pd.Series([clean_repo] * len(names), dtype="string"),
+                "repo": pd.Series([clean_repo], dtype="string"),
                 "language": pd.Series(names, dtype="string"),
-                "bytes": pd.Series(values, dtype=bytes_dtype),
+                "bytes": _r_unlist(values),
             }
         )
+        return out
     return pd.DataFrame(
         {
             "repo": pd.Series([clean_repo], dtype="string"),
@@ -468,7 +637,6 @@ def _github_files(repo: Any, clean_repo: str, dir: str, recursive: bool) -> pd.D
 
     from pytacheck._r import as_character, gsub, r_sort_key
     from pytacheck.archives import _message
-    from pytacheck.db._utils import r_dollar
 
     url = _url_encode(f"https://api.github.com/repos/{clean_repo}/contents/{dir}")
     resp = _perform("GET", url, headers=_github_config())
@@ -488,7 +656,7 @@ def _github_files(repo: Any, clean_repo: str, dir: str, recursive: bool) -> pd.D
             )
             _message("Rate limit exceeded, resetting at ", reset)
         else:
-            _message(dir, ": ", r_dollar(contents, "message") or "")
+            _message(dir, ": ", _dollar(contents, "message") or "")
         # NULL rather than an error, so a rate limit at the end of a file
         # list still returns the files up to that point
         return None
@@ -592,13 +760,11 @@ def github_tree_files(repo: Any) -> dict[str, Any]:
     if meta_resp is None or meta_resp.status_code != 200:
         return fallback("main", None)
 
-    from pytacheck.db._utils import r_dollar
-
     meta = _body_json(meta_resp)
-    default_branch = r_dollar(meta, "default_branch")
+    default_branch = _dollar(meta, "default_branch")
     if default_branch is None:
         default_branch = "main"
-    license_id = _empty_or(r_dollar(r_dollar(meta, "license"), "spdx_id"))
+    license_id = _empty_or(_dollar(_dollar(meta, "license"), "spdx_id"))
 
     # 2. the Git tree (recursive, one request)
     try:
@@ -613,7 +779,7 @@ def github_tree_files(repo: Any) -> dict[str, Any]:
         return fallback(default_branch, license_id)
 
     tree = _body_json(tree_resp)
-    if r_dollar(tree, "truncated") is True:
+    if _dollar(tree, "truncated") is True:
         return {
             "gated": True,
             "reason": "GitHub repo tree truncated (>100 000 items); too large to list",
@@ -622,9 +788,9 @@ def github_tree_files(repo: Any) -> dict[str, Any]:
             "license": license_id,
         }
 
-    entries = r_dollar(tree, "tree") or []
-    blobs = [x for x in entries if r_dollar(x, "type") == "blob"]
-    paths = [_empty_or(r_dollar(x, "path"), "") for x in blobs]
+    entries = _dollar(tree, "tree") or []
+    blobs = [x for x in entries if _dollar(x, "type") == "blob"]
+    paths = [_empty_or(_dollar(x, "path"), "") for x in blobs]
     if not blobs:
         files_df = _empty_tree_files()
     else:
@@ -639,7 +805,7 @@ def github_tree_files(repo: Any) -> dict[str, Any]:
                 "path": pd.Series(paths, dtype="string"),
                 "download_url": pd.Series([raw_base + p for p in paths], dtype="string"),
                 "size": pd.Series(
-                    [_num(_empty_or(r_dollar(x, "size"))) for x in blobs], dtype="float64"
+                    [_num(_empty_or(_dollar(x, "size"))) for x in blobs], dtype="float64"
                 ),
                 "ft": pd.Series(["file"] * len(blobs), dtype="string"),
             }

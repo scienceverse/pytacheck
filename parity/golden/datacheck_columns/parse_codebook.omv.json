@@ -1,0 +1,142 @@
+{
+  "id": "parse_codebook.omv",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 8,
+    "names": [
+      "codebook_variable",
+      "label",
+      "codebook_source",
+      "group",
+      "value_labels",
+      "missing_values",
+      "question",
+      "coding_instructions",
+      "parse_method"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "Experiment",
+          "Manipulation check",
+          "H1 test",
+          "H2 test",
+          "H3 confirmatory confidence",
+          "H3 dissent confidence",
+          "H4 test",
+          "Guess hypothesis"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "1",
+          "Diagnoses after hearing first half of symptoms should match those symptoms heard so far",
+          "Diagnoses after hearing second half of symptoms should match the first half of the symptoms",
+          "Instances of seeking confirming info",
+          "Average confidence stated on diagnosis preceding confirmatory info request",
+          "Average confidence stated on diagnosis preceding dissenting information request",
+          "Average change in certainty for consistent diagnosis and confirmatory information request",
+          "I feltet under skriver du inn hva du tror hypotesen i vårt eksperiment/ formålet med denne studien er. Skriv kort, 1-2 setninger eller stikkord."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "sample.omv",
+          "sample.omv",
+          "sample.omv",
+          "sample.omv",
+          "sample.omv",
+          "sample.omv",
+          "sample.omv",
+          "sample.omv"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "{\"1\":\"1\",\"2\":\"2\",\"3\":\"3\"}",
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "haven",
+          "haven",
+          "haven",
+          "haven",
+          "haven",
+          "haven",
+          "haven",
+          "haven"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

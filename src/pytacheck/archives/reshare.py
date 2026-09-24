@@ -265,7 +265,12 @@ def _set_content(f: Any, content: Any) -> Any:
         return out
     if isinstance(f, list):
         return [*f, value]  # an unnamed list gains one (named) element
-    raise TypeError("invalid assignment to an atomic vector")
+    if f is None:  # a JSON null: R's NULL$content <- x is list(content = x)
+        return {"content": value}
+    # R: `$<-` on an atomic value warns "Coercing LHS to a list" and gives
+    # list(<value>, content = ...): an unnamed element, then a named one
+    warnings.warn("Coercing LHS to a list", stacklevel=3)
+    return {"": f, "content": value}
 
 
 def _reshare_headers(req: dict[str, Any]) -> dict[str, Any]:

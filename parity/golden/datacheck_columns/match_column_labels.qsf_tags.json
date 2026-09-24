@@ -1,0 +1,226 @@
+{
+  "id": "match_column_labels.qsf_tags",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 9,
+    "names": [
+      "paper_id",
+      "source_file",
+      "column_name",
+      "group",
+      "label",
+      "codebook_variable",
+      "label_source",
+      "label_status",
+      "label_method",
+      "value_labels",
+      "missing_values",
+      "question",
+      "coding_instructions",
+      "scale_group"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "p",
+          "p",
+          "p",
+          "p",
+          "p",
+          "p",
+          "p",
+          "p",
+          "p"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "d.csv",
+          "d.csv",
+          "d.csv",
+          "d.csv",
+          "d.csv",
+          "d.csv",
+          "d.csv",
+          "d.csv",
+          "d.csv"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Q1914_1_1",
+          "Q1914_2_1",
+          "Q1914_First.Click",
+          "Q1914_page.submit",
+          "SAT",
+          "SAT_TEXT",
+          "POWER.PP1_7",
+          "POWER_2",
+          "OTHER_1"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Text entry matrix",
+          "Text entry matrix",
+          null,
+          null,
+          "Satisfied?",
+          null,
+          "Rate",
+          "Power q",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Q1914",
+          "Q1914",
+          null,
+          null,
+          "SAT",
+          "SAT",
+          "POWER.PP1",
+          "POWER",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "s.qsf",
+          "s.qsf",
+          null,
+          null,
+          "s.qsf",
+          "s.qsf",
+          "s.qsf",
+          "s.qsf",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "labelled",
+          "labelled",
+          "unlabelled",
+          "unlabelled",
+          "labelled",
+          "labelled",
+          "labelled",
+          "labelled",
+          "unlabelled"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "qsf_question_tag",
+          "qsf_question_tag",
+          null,
+          null,
+          "rules",
+          "qsf_question_tag",
+          "qsf_question_tag",
+          "qsf_question_tag",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "{\"1\":\"a\"}",
+          "{\"1\":\"a\"}",
+          null,
+          null,
+          "{\"1\":\"yes\"}",
+          "{\"1\":\"yes\"}",
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Text entry matrix",
+          "Text entry matrix",
+          null,
+          null,
+          null,
+          null,
+          "Rate",
+          "Power q",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Q1914",
+          "Q1914",
+          null,
+          null,
+          "SAT",
+          "SAT",
+          "POWER.PP1",
+          "POWER",
+          null
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

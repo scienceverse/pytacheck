@@ -1,0 +1,479 @@
+{
+  "id": "stat_effect_size.review.large_df_format",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "stat_effect_size"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Effect Sizes in t-tests and F-tests"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "results"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 6,
+        "names": [
+          "paper_id",
+          "text_id",
+          "test",
+          "test_text",
+          "es",
+          "section_id",
+          "paragraph_id",
+          "text",
+          "d_reported",
+          "d_reported_text",
+          "t_value",
+          "df",
+          "d_implied_paired_dz",
+          "d_implied_paired_drm_r05",
+          "d_implied_indep_equal_n",
+          "d_implied_indep_unequal_min",
+          "d_implied_indep_unequal_max",
+          "d_implied_n",
+          "d_coherence",
+          "d_coherence_assumption",
+          "d_coherence_note",
+          "f_reported",
+          "f_reported_text",
+          "df1",
+          "df2",
+          "eta_implied_partial",
+          "omega_implied_partial",
+          "eta_coherence",
+          "eta_coherence_assumption",
+          "eta_coherence_note"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "46df1c2fecd58b",
+              "46df1c2fecd58b",
+              "46df1c2fecd58b",
+              "46df1c2fecd58b",
+              "46df1c2fecd58b",
+              "46df1c2fecd58b"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "t-test",
+              "t-test",
+              "t-test",
+              "t-test",
+              "t-test",
+              "t-test"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "t(99998) = 10",
+              "t(999998) = 20",
+              "t(1999999) = 20",
+              "t(100000) = 2",
+              "t(3999998) = 20",
+              "t(123456) = 2"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "d = 0.063",
+              "d = 0.04",
+              "d = 0.0283",
+              "d = 0.0063",
+              "d = 0.03",
+              "d = 0.5"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Equal n, format(N) = 1e+05, t(99998) = 10, d = 0.063.",
+              "Equal n, format(n) = 5e+05, t(999998) = 20, d = 0.04.",
+              "Equal n, half n, t(1999999) = 20, d = 0.0283.",
+              "Paired, as.character(df) = 1e+05, t(100000) = 2, d = 0.0063.",
+              "Unequal, t(3999998) = 20, d = 0.03.",
+              "No match, t(123456) = 2, d = 0.5."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "0.063",
+              "0.04",
+              "0.0283",
+              "0.0063",
+              "0.03",
+              "0.5"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "d = 0.063",
+              "d = 0.04",
+              "d = 0.0283",
+              "d = 0.0063",
+              "d = 0.03",
+              "d = 0.5"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "10",
+              "20",
+              "20",
+              "2",
+              "20",
+              "2"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "99998",
+              "999998",
+              "1999999",
+              "1e+05",
+              "3999998",
+              "123456"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "0.0316229347167527",
+              "0.0200000100000075",
+              "0.014142135623731",
+              "0.00632452369779733",
+              "0.0100000012500002",
+              "0.00569209495002443"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "0.0447215831584706",
+              "0.0282842853896081",
+              "0.02",
+              "0.00894422718897502",
+              "0.0141421373914982",
+              "0.00804983787663996"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "0.0632455532033676",
+              "0.04",
+              "0.0282842641763967",
+              "0.0126489841514644",
+              "0.02",
+              "0.0113841437944382"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "0.0632455532033676",
+              "0.04",
+              "0.0282842641764003",
+              "0.0126489841514644",
+              "0.02",
+              "0.0113841437944382"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "7.07113852360427",
+              "14.1421497658878",
+              "14.1421426948005",
+              "1.41422770443801",
+              "14.1421391592662",
+              "1.41422501752987"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "n1 = n2 = 50000, N = 1e+05",
+              "n1 = n2 = 5e+05, N = 1e+06",
+              "n1 = n2 = 1e+06, N = 2000001",
+              "n = 100001",
+              "n1 = n2 = 2e+06, N = 4e+06",
+              "n1 = 16, n2 = 123442, N = 123458"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "match_under_assumptions",
+              "match_under_assumptions",
+              "match_under_assumptions",
+              "match_under_assumptions",
+              "match_under_assumptions",
+              "match_under_assumptions"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "independent_equal_n",
+              "independent_equal_n",
+              "independent_equal_n",
+              "paired_dz",
+              "independent_equal_n",
+              "independent_unequal_n_range"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Match under independent-samples equal-n assumption (n1 = n2 = 50000, N = 1e+05).",
+              "Match under independent-samples equal-n assumption (n1 = n2 = 5e+05, N = 1e+06).",
+              "Match under independent-samples equal-n assumption (n1 = n2 = 1e+06, N = 2000001).",
+              "Match under paired-samples dz assumption.",
+              "Match under independent-samples equal-n assumption (n1 = n2 = 2e+06, N = 4e+06).",
+              "Match under independent-samples unequal-n range assumption (closest split n1 = 16, n2 = 123442, N = 123458)."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "All detected t-tests and F-tests had an effect size reported in the same sentence.",
+          "For t-tests with a reported d, coherence checks yielded 6 matches under assumptions.",
+          "::: {.callout-tip title=\"All detected and assessed stats\" collapse=\"true\"}\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Sentence = c(\"Equal n, format(N) = 1e+05, t(99998) = 10, d = 0.063.\", \n\"Equal n, format(n) = 5e+05, t(999998) = 20, d = 0.04.\", \"Equal n, half n, t(1999999) = 20, d = 0.0283.\", \n\"Paired, as.character(df) = 1e+05, t(100000) = 2, d = 0.0063.\", \n\"Unequal, t(3999998) = 20, d = 0.03.\", \"No match, t(123456) = 2, d = 0.5.\"\n), \"Effect Size\" = c(\"d = 0.063\", \"d = 0.04\", \"d = 0.0283\", \"d = 0.0063\", \n\"d = 0.03\", \"d = 0.5\"), \"Reported Test\" = c(\"t(99998) = 10\", \n\"t(999998) = 20\", \"t(1999999) = 20\", \"t(100000) = 2\", \"t(3999998) = 20\", \n\"t(123456) = 2\"), \"Test Type\" = c(\"t-test\", \"t-test\", \"t-test\", \n\"t-test\", \"t-test\", \"t-test\"), \"d Coherence\" = c(\"match_under_assumptions\", \n\"match_under_assumptions\", \"match_under_assumptions\", \"match_under_assumptions\", \n\"match_under_assumptions\", \"match_under_assumptions\"), \"d Assumption\" = c(\"independent_equal_n\", \n\"independent_equal_n\", \"independent_equal_n\", \"paired_dz\", \"independent_equal_n\", \n\"independent_unequal_n_range\"), \"d Coherence Note\" = c(\"Match under independent-samples equal-n assumption (n1 = n2 = 50000, N = 1e+05).\", \n\"Match under independent-samples equal-n assumption (n1 = n2 = 5e+05, N = 1e+06).\", \n\"Match under independent-samples equal-n assumption (n1 = n2 = 1e+06, N = 2000001).\", \n\"Match under paired-samples dz assumption.\", \"Match under independent-samples equal-n assumption (n1 = n2 = 2e+06, N = 4e+06).\", \n\"Match under independent-samples unequal-n range assumption (closest split n1 = 16, n2 = 123442, N = 123458).\"\n), \"eta Coherence\" = c(NA_character_, NA_character_, NA_character_, \nNA_character_, NA_character_, NA_character_), \"eta Assumption\" = c(NA_character_, \nNA_character_, NA_character_, NA_character_, NA_character_, NA_character_\n), \"eta Coherence Note\" = c(NA_character_, NA_character_, NA_character_, \nNA_character_, NA_character_, NA_character_)), row.names = c(NA, \n-6L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 5, FALSE)\n```\n\n\n:::\n"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "green"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "All detected t-tests and F-tests had an effect size reported in the same sentence."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "ttests_with_es",
+          "ttests_without_es",
+          "Ftests_with_es",
+          "Ftests_without_es"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "46df1c2fecd58b"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              6
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          }
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

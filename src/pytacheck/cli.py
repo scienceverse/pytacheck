@@ -64,20 +64,34 @@ def _module_args(pairs: Sequence[str]) -> tuple[dict[str, dict[str, Any]], dict[
     return per, bare
 
 
-def _accepts(ref: Any, key: str) -> bool:
+def _params(ref: Any) -> list[inspect.Parameter] | None:
+    """A module's parameters after the paper, or ``None`` when it cannot be loaded."""
     from pytacheck.module import ModuleError, module_find
 
     try:
-        params = list(inspect.signature(module_find(ref).func).parameters.values())[1:]
+        return list(inspect.signature(module_find(ref).func).parameters.values())[1:]
     except (ModuleError, TypeError, ValueError):
+        return None
+
+
+def _accepts(ref: Any, key: str) -> bool:
+    params = _params(ref)
+    if params is None:
         return False
     return any(p.name == key or p.kind is inspect.Parameter.VAR_KEYWORD for p in params)
+
+
+class _Failure(Exception):
+    """A command failed for a reason worth one line (``main`` prints it, exit 1)."""
 
 
 def _read(paths: Sequence[str]) -> Any:
     from pytacheck.io.read import read
 
-    return read(paths[0] if len(paths) == 1 else list(paths))
+    try:
+        return read(paths[0] if len(paths) == 1 else list(paths))
+    except (OSError, ValueError) as exc:
+        raise _Failure(f"Cannot read {', '.join(paths)}: {exc}") from exc
 
 
 def _err(message: str) -> int:
@@ -140,6 +154,7 @@ def _selection(ns: argparse.Namespace) -> Any:
         use_config=True,
         offline=True if ns.offline else None,
     )
+    _check_module_args(sel, per)
     for key, value in bare.items():
         hits = [i for i, (ref, _) in enumerate(sel) if _accepts(ref, key)]
         if not hits:
@@ -149,6 +164,39 @@ def _selection(ns: argparse.Namespace) -> Any:
             if key not in _entry_args(ref, per):  # MODULE.KEY beats a bare KEY
                 sel[i] = (ref, {**a, key: value})
     return sel
+
+
+def _check_module_args(sel: Any, per: dict[str, dict[str, Any]]) -> None:
+    """``-a MOD.KEY=...`` must name a selected module and one of its arguments."""
+    from pytacheck.presets import _qualified, label
+
+    dropped = {label(d) for d in sel.dropped}
+    for mod, keys in per.items():
+        hits = [
+            ref
+            for ref, _ in sel
+            if mod in {label(ref), ref if isinstance(ref, str) else None}
+            or (isinstance(ref, str) and _qualified(ref) == mod)
+        ]
+        if not hits:
+            if label(mod) in dropped:
+                continue  # left out by --offline
+            names = ", ".join(label(ref) for ref, _ in sel) or "none"
+            raise SystemExit(
+                f"-a {mod}.{next(iter(keys))}=...: '{mod}' is not among the selected modules "
+                f"({names})"
+            )
+        for key in keys:
+            params = [_params(ref) for ref in hits]
+            known = [p for p in params if p is not None]
+            if known and not any(
+                q.name == key or q.kind is inspect.Parameter.VAR_KEYWORD for ps in known for q in ps
+            ):
+                takes = ", ".join(q.name for q in known[0]) or "no arguments"
+                raise SystemExit(
+                    f"-a {mod}.{key}=...: the module '{label(mod)}' has no argument '{key}' "
+                    f"(it takes: {takes})"
+                )
 
 
 def _announce(sel: Any) -> None:
@@ -161,6 +209,24 @@ def _announce(sel: Any) -> None:
         con.print(f"[dim]Offline: skipped {_escape(', '.join(map(str, sel.dropped)))}[/]")
 
 
+def _failed(o: Any) -> bool:
+    """Whether an output is a module that failed to run (not a module's own verdict)."""
+    return (o.run_provenance or {}).get("status") == "fail"
+
+
+def _error_text(o: Any) -> str:
+    """Why a module failed, in one line (with a note for metacheck modules not ported yet)."""
+    from pytacheck.module import _builtin_names
+    from pytacheck.presets import _declared_builtin
+
+    text = str(o.report or (o.run_provenance or {}).get("error") or "").strip()
+    first = text.splitlines()[0] if text else "unknown error"
+    unported = o.module in _declared_builtin() and o.module not in _builtin_names()
+    if unported and first.startswith("There were no modules that matched"):
+        return f"metacheck's '{o.module}' is not ported to pytacheck yet"
+    return first
+
+
 def _print_outputs(outputs: Sequence[Any], as_json: bool) -> None:
     import orjson
 
@@ -171,7 +237,10 @@ def _print_outputs(outputs: Sequence[Any], as_json: bool) -> None:
                 "title": o.title,
                 "traffic_light": o.traffic_light,
                 "summary_text": o.summary_text,
-                "table": None if o.table is None else o.table.to_dict(orient="records"),
+                "table": (
+                    o.table.to_dict(orient="records") if hasattr(o.table, "to_dict") else o.table
+                ),
+                **({"error": _error_text(o)} if _failed(o) else {}),
             }
             for o in outputs
         ]
@@ -189,9 +258,11 @@ def _print_outputs(outputs: Sequence[Any], as_json: bool) -> None:
     colours = {"red": "red", "yellow": "yellow", "green": "green", "fail": "magenta"}
     for o in outputs:
         colour = colours.get(o.traffic_light, "cyan")
-        pack = (o.provenance or {}).get("pack")
+        pack = (o.run_provenance or {}).get("pack")
         tag = f" [dim]\\[{_escape(pack)}][/]" if pack and pack != "metacheck" else ""
         console.print(f"[{colour}]●[/] [bold]{_escape(o.title)}[/]{tag}: {_escape(o.summary_text)}")
+        if _failed(o):
+            console.print(f"  [magenta]error:[/] {_escape(_error_text(o))}")
     if outputs and outputs[-1].summary_table is not None:
         console.print(outputs[-1].summary_table.to_string(index=False))
 
@@ -282,7 +353,18 @@ def cmd_run(ns: argparse.Namespace) -> int:
         path = chain.run_record.write(ns.record)
         console().print(f"[dim]Run record: {_escape(path)}[/]")
     _print_outputs(list(chain), ns.json)
-    return 0
+    return _exit_status(chain)
+
+
+def _exit_status(outputs: Sequence[Any]) -> int:
+    """1 when a module failed to run (after printing every result), else 0."""
+    from pytacheck.packs.ui import console
+
+    failed = [o.module for o in outputs if _failed(o)]
+    if not failed:
+        return 0
+    console().print(f"[red]{len(failed)} module(s) failed to run:[/] {_escape(', '.join(failed))}")
+    return 1
 
 
 def cmd_report(ns: argparse.Namespace) -> int:
@@ -314,7 +396,12 @@ def cmd_report(ns: argparse.Namespace) -> int:
         outputs: Any = result
         if not hasattr(result, "paper"):  # a ReportList: record the first report
             outputs = next((r for r in result.values() if r is not None), {})
-        path = RunRecord.build(outputs, selection=sel, papers=papers).write(ns.record)
+        # the report is sorted by section: record the order the modules ran in
+        ordered = list(outputs.values()) if hasattr(outputs, "values") else list(outputs)
+        by_label = {o.module: o for o in ordered}
+        ordered = [by_label.pop(label(ref)) for ref, _ in sel if label(ref) in by_label]
+        ordered += list(by_label.values())
+        path = RunRecord.build(ordered, selection=sel, papers=papers).write(ns.record)
         console().print(f"[dim]Run record: {_escape(path)}[/]")
     print(result)
     return 0
@@ -332,7 +419,7 @@ def cmd_rerun(ns: argparse.Namespace) -> int:
         path = chain.run_record.write(ns.record)
         console().print(f"[dim]Run record: {_escape(path)}[/]")
     _print_outputs(list(chain), ns.json)
-    return 0
+    return _exit_status(chain)
 
 
 def cmd_read(ns: argparse.Namespace) -> int:
@@ -405,7 +492,7 @@ def cmd_pack(ns: argparse.Namespace) -> int:
         if not len(df):
             print("No packs found.")
             return 0
-        cols = ["name", "store", "version", "fields", "modules", "validated", "reviewed", "title"]
+        cols = ["name", "store", "version", "fields", "modules", "validation", "reviewed", "title"]
         _print_table(df, cols)
         for _, row in df[df["yanked"].notna()].iterrows():
             print(f"{row['name']} is yanked: {row['yanked']}")
@@ -426,11 +513,14 @@ def cmd_pack(ns: argparse.Namespace) -> int:
     if action == "update":
         rows = inst.pack_update(ns.name, yes=ns.yes)
         for r in rows:
-            change = (
-                f"{str(r['from'])[:12]} -> {str(r['to'])[:12]}" if r["updated"] else "unchanged"
-            )
+            if r.get("status") in ("cancelled", "error"):
+                change = str(r["status"])
+            elif r["updated"]:
+                change = f"{str(r['from'])[:12]} -> {str(r['to'])[:12]}"
+            else:
+                change = "unchanged"
             print(f"{r['name']}: {change}")
-        return 0
+        return 1 if any(r.get("status") in ("cancelled", "error") for r in rows) else 0
     if action == "show":
         info = inst.pack_show(ns.name)
         if ns.json:
@@ -443,15 +533,24 @@ def cmd_pack(ns: argparse.Namespace) -> int:
         from pytacheck.packs.scaffold import pack_new
 
         root = pack_new(ns.name, ns.path)
+        shown = root.as_posix()
+        if not root.is_absolute() and not shown.startswith(("./", "../")):
+            shown = f"./{shown}"  # a bare name would be read as a store pack
         print(f"Created {root}")
         print(
-            f"Next: edit it, then `pytacheck pack check {root}` and `pytacheck pack install {root}`"
+            f"Next: edit it, then `pytacheck pack check {shown}` and "
+            f"`pytacheck pack install {shown}`"
         )
         return 0
     if action == "check":
         from pytacheck.packs.check import pack_check
 
-        issues = pack_check(ns.dir)
+        if ns.dir.endswith(".json") and Path(ns.dir).is_file():
+            from pytacheck.packs.build import check_entry_file
+
+            issues = check_entry_file(ns.dir)  # a store's packs/<name>.json: fetch, then check
+        else:
+            issues = pack_check(ns.dir)
         errors = [i for i in issues if i.level == "error"]
         if ns.json:
             payload = {"ok": not errors, "issues": [i.to_dict() for i in issues]}
@@ -638,6 +737,29 @@ def _preset_pack(ref: str) -> str | None:
     return ref
 
 
+def _pin_in_project(pack: str, *, yes: bool) -> None:
+    """Pin *pack* in the project config: the user's pin if it has one, else from a store."""
+    from pytacheck.config import load_config, update_config
+    from pytacheck.packs.install import pack_install
+
+    config = load_config()
+    pin = config.packs.get(pack)
+    scope, _where = config.source(f"packs.{pack}") or ("", "")
+    if scope == "project":
+        return
+    if isinstance(pin, dict) and "path" not in pin and pin.get("source"):
+
+        def edit(cfg: dict[str, Any]) -> None:
+            packs = cfg.get("packs")
+            if not isinstance(packs, dict):
+                packs = cfg["packs"] = {}
+            packs[pack] = dict(pin)
+
+        update_config("project", edit)  # the same commit and hash as the user's pin
+        return
+    pack_install(pack, scope="project", yes=yes)
+
+
 def cmd_init(ns: argparse.Namespace) -> int:
     from pytacheck.config import config_path, update_config
     from pytacheck.packs import ui
@@ -659,7 +781,13 @@ def cmd_init(ns: argparse.Namespace) -> int:
             )
     for ref in refs:
         pack = _preset_pack(ref)
-        if pack is not None and pack not in active_packs():
+        if pack is None:
+            continue
+        if scope == "project":
+            # the project file is the team's lock file: pin every pack it needs there,
+            # even one already installed for this user (an intact install is only re-pinned)
+            _pin_in_project(pack, yes=ns.yes)
+        elif pack not in active_packs():
             pack_install(pack, scope=scope, yes=ns.yes)
     count = {}
     for ref in refs:
@@ -784,7 +912,9 @@ def build_parser() -> argparse.ArgumentParser:
     q = psub.add_parser("new", help="create a pack folder")
     q.add_argument("name")
     q.add_argument("--path", default=".", help="parent folder (default: .)")
-    q = psub.add_parser("check", help="check a pack folder (exit 1 on errors)")
+    q = psub.add_parser(
+        "check", help="check a pack folder or a store's packs/<name>.json (exit 1 on errors)"
+    )
     q.add_argument("dir", nargs="?", default=".")
     q.add_argument("--json", action="store_true")
     p.set_defaults(func=cmd_pack)
@@ -833,7 +963,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         warnings.showwarning = _show_warning  # restored on exit
         try:
             return int(ns.func(ns))
-        except (ModuleError, ConfigError) as exc:
+        except (ModuleError, ConfigError, _Failure) as exc:
             return _err(str(exc))
 
 

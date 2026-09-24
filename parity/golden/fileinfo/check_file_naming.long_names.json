@@ -1,0 +1,56 @@
+{
+  "id": "check_file_naming.long_names",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 4,
+    "names": [
+      "file_name",
+      "rule",
+      "severity",
+      "detail"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "ééééééééééééééééééééééééééééééééééééééééééééééééé.R",
+          "ééééééééééééééééééééééééééééééééééééééééééééééééé.R",
+          "nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn.R",
+          "ééééééééééééééééééééééééééééééééééééééééééééééééé.R"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "special-characters",
+          "diacritics",
+          "filename-length-50",
+          "filename-length-50"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "bad",
+          "bad",
+          "suggestion",
+          "suggestion"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "contains a character other than letters, digits, underscore, or dash",
+          "contains non-ASCII characters (e.g. accented letters)",
+          "filename-length-50 is 52 characters, over the 50-character budget",
+          "filename-length-50 is 51 characters, over the 50-character budget"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

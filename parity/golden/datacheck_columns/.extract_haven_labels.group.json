@@ -1,0 +1,88 @@
+{
+  "id": ".extract_haven_labels.group",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 3,
+    "names": [
+      "codebook_variable",
+      "label",
+      "codebook_source",
+      "group",
+      "value_labels",
+      "missing_values",
+      "question",
+      "coding_instructions"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "sex",
+          "age",
+          "q1"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Sex",
+          "Age in years",
+          "1"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "study.sav",
+          "study.sav",
+          "study.sav"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "ex2",
+          "ex2",
+          "ex2"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "{\"1\":\"Male\",\"2\":\"Female\",\"-99\":\"Refused\"}",
+          null,
+          "{\"1\":\"Strongly disagree\",\"5\":\"Strongly agree\"}"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "{\"-99\":\"Refused\"}",
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

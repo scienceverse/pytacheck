@@ -16,7 +16,14 @@ from pathlib import Path
 
 from pytacheck.packs.manifest import PackError, validate_pack_name
 
-__all__ = ["module_template", "pack_new"]
+__all__ = ["INSTALL_SPEC", "module_template", "pack_new"]
+
+#: What CI installs to check a pack: the pip requirement the pytacheck-modules
+#: store's workflow uses too (pytacheck is not on PyPI yet). One place to change.
+INSTALL_SPEC = (
+    "pytacheck @ git+https://github.com/thesanogoeffect/pytacheck"
+    "@claude/pytacheck-metacheck-fork-0x7q73"
+)
 
 #: template file -> path inside a new pack ("{module}" is the example module's name)
 PACK_FILES = {
@@ -95,6 +102,7 @@ def pack_new(
         "{{year}}": str(now.year),
         "{{date}}": now.strftime("%Y-%m-%d"),
         "{{pytacheck_version}}": base_version.group(0) if base_version else "0.3",
+        "{{install_spec}}": INSTALL_SPEC,
     }
     for template, target in PACK_FILES.items():
         text = _template(template)

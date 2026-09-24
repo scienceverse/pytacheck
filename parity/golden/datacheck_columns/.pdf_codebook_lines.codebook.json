@@ -1,0 +1,20 @@
+{
+  "id": ".pdf_codebook_lines.codebook",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "Codebook",
+      "age:    Age of the participant in years",
+      "sex:    Participant sex (1 = male, 2 = female)",
+      "cond:    Experimental condition",
+      "rt_mean:    Mean reaction time in ms",
+      "acc:    Proportion of correct responses",
+      "block:    Block number of the trial"
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

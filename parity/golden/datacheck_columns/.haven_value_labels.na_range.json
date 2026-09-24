@@ -1,0 +1,29 @@
+{
+  "id": ".haven_value_labels.na_range",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "value_labels",
+      "missing_values"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "{\"1\":\"Low\",\"5\":\"High\"}"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "{\"90\":\"range\",\"99\":\"range\"}"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

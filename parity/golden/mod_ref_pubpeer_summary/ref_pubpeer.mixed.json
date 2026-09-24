@@ -1,0 +1,153 @@
+{
+  "id": "ref_pubpeer.mixed",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "ref_pubpeer"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "PubPeer Comments"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "reference"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 2,
+        "names": [
+          "paper_id",
+          "bib_id",
+          "doi",
+          "text",
+          "total_comments",
+          "url",
+          "users"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "mixed",
+              "mixed"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2,
+              5
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "10.9999/pp.one",
+              "10.1177/0956797614520714"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Reference 2. https://doi.org/10.9999/pp.one",
+              "Reference 5. https://doi.org/10.1177/0956797614520714"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              2,
+              3
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://pubpeer.com/publications/PP.ONE",
+              "https://pubpeer.com/publications/3FA648ECECB88454C91804F09E2E56"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Jane Doe, John Roe",
+              "Statcheck , Aioliops Novaeguineae, Hoya Camphorifolia"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "We checked 5 references with DOIs. You cited 2 references with comments in PubPeer.\n\nPubpeer is a platform for post-publication peer review. We have filtered out Pubpeer comments by 'Statcheck'. You can check out the comments by visiting the URLs below:",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Reference = c(\"Reference 2. https://doi.org/10.9999/pp.one\", \n\"Reference 5. https://doi.org/10.1177/0956797614520714\"), Comments = c(2, \n3), \"PubPeer Link\" = c(\"<a href='https://pubpeer.com/publications/PP.ONE' target='_blank'>link<\/a>\", \n\"<a href='https://pubpeer.com/publications/3FA648ECECB88454C91804F09E2E56' target='_blank'>link<\/a>\"\n)), row.names = c(NA, -2L), class = c(\"tbl_df\", \"tbl\", \"data.frame\"\n))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "info"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "You cited 2 references with comments in PubPeer."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "pubpeer_comments"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "mixed"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              5
+            ]
+          }
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

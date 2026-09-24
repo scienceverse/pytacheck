@@ -1,0 +1,64 @@
+{
+  "id": "file_category.data_frame",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 6,
+    "names": [
+      "name",
+      "category",
+      "filetype",
+      "file_category"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "a.csv",
+          "b.R",
+          "codebook.xlsx",
+          "readme.txt",
+          "ambiguous",
+          "file.json"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "code",
+          "data",
+          "data",
+          "code",
+          "code",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "data",
+          "code",
+          "data",
+          "text",
+          "text",
+          "code;data"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "data",
+          "code",
+          "codebook",
+          "readme",
+          null,
+          null
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -1,0 +1,46 @@
+{
+  "id": "file_naming_check_length.paths",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 4,
+    "names": [
+      "file_name",
+      "rule",
+      "detail"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx/y.R",
+          "./yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy",
+          "zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz/",
+          "/wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "directory-length-100",
+          "filename-length-50",
+          "filename-length-50",
+          "filename-length-50"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "directory-length-100 is 120 characters, over the 100-character budget",
+          "filename-length-50 is 51 characters, over the 50-character budget",
+          "filename-length-50 is 101 characters, over the 50-character budget",
+          "filename-length-50 is 60 characters, over the 50-character budget"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

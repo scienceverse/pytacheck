@@ -160,7 +160,7 @@ def gitlab_tree_files(repo: Any) -> dict[str, Any]:
         _r_basename,
         _url_encode,
     )
-    from pytacheck.db._utils import r_dollar
+    from pytacheck.archives.github import _dollar as r_dollar
 
     clean_repo = gitlab_repo(repo)
     if clean_repo is None:
@@ -276,7 +276,7 @@ def _gitlab_blob_sizes(clean_repo: str, paths: list[str]) -> pd.Series:
     numeric vector); failed batches contribute nothing.
     """
     from pytacheck.archives.github import _empty_or, _num
-    from pytacheck.db._utils import r_dollar
+    from pytacheck.archives.github import _dollar as r_dollar
 
     if not paths:
         return pd.Series([], dtype="float64")
@@ -297,7 +297,7 @@ def _blob_batch(clean_repo: str, batch: list[str]) -> list[Any]:
     ``errors`` and no data, which also gives no nodes.
     """
     from pytacheck.archives.github import _body_json, _perform
-    from pytacheck.db._utils import r_dollar
+    from pytacheck.archives.github import _dollar as r_dollar
 
     try:
         resp = _perform(

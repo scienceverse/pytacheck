@@ -103,6 +103,15 @@ def researchdata4tu_info(
 
     if isinstance(researchdata4tu_url, pd.DataFrame):
         raw = researchdata4tu_url[_column(researchdata4tu_url, id_col)].tolist()
+    elif researchdata4tu_url is None:
+        # R: data.frame(researchdata4tu_url = NULL) has no columns, so the final
+        # left_join() by "researchdata4tu_url" fails (after the online() check)
+        if not online(_HOST):
+            raise ConnectionError("data.4tu.nl seems to be offline")
+        raise ValueError(
+            "Join columns in `x` must be present in the data.\n"
+            "✖ Problem with `researchdata4tu_url`."
+        )
     else:
         raw, _ = _as_values(researchdata4tu_url)
     raw = [None if is_na(v) else v for v in raw]

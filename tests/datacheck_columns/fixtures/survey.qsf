@@ -1,0 +1,185 @@
+{
+ "SurveyEntry": {
+  "SurveyID": "SV_test",
+  "SurveyName": "Test"
+ },
+ "SurveyElements": [
+  {
+   "SurveyID": "SV_test",
+   "Element": "BL",
+   "Payload": [
+    {
+     "Type": "Default"
+    }
+   ]
+  },
+  {
+   "Element": "SQ",
+   "PrimaryAttribute": "QID1",
+   "Payload": {
+    "QuestionText": "<p>How <b>satisfied</b>&nbsp;are you?</p>",
+    "DataExportTag": "SAT",
+    "QuestionType": "MC",
+    "Selector": "SAVR",
+    "Choices": {
+     "1": {
+      "Display": "Very unsatisfied"
+     },
+     "2": {
+      "Display": "Neutral"
+     },
+     "3": {
+      "Display": "Very satisfied"
+     },
+     "4": {
+      "Display": "Refused"
+     }
+    },
+    "QuestionID": "QID1"
+   }
+  },
+  {
+   "Element": "SQ",
+   "PrimaryAttribute": "QID2",
+   "Payload": {
+    "QuestionText": "Rate each statement",
+    "DataExportTag": "POWER.PP1",
+    "QuestionType": "Matrix",
+    "Selector": "Likert",
+    "Choices": {
+     "1": {
+      "Display": "I feel <i>powerful</i>"
+     },
+     "2": {
+      "Display": "I feel weak"
+     },
+     "8": {
+      "Display": "Status item"
+     },
+     "9": {
+      "DisplayLogic": {
+       "x": 1
+      }
+     }
+    },
+    "ChoiceDataExportTags": {
+     "1": "POWER.PP1_1",
+     "2": "2",
+     "8": "STATUS.PP1_8"
+    },
+    "Answers": {
+     "1": {
+      "Display": "Disagree"
+     },
+     "2": {
+      "Display": "Agree"
+     }
+    },
+    "QuestionID": "QID2"
+   }
+  },
+  {
+   "Element": "SQ",
+   "PrimaryAttribute": "QID3",
+   "Payload": {
+    "QuestionText": "Which apply?",
+    "DataExportTag": "Q3",
+    "QuestionType": "MC",
+    "Selector": "MAVR",
+    "Choices": {
+     "1": {
+      "Display": "Option A"
+     },
+     "2": {
+      "Display": [
+       "Option",
+       "B"
+      ]
+     },
+     "4": {
+      "Display": "Other",
+      "TextEntry": "true"
+     }
+    },
+    "ChoiceDataExportTags": false,
+    "QuestionID": "QID3"
+   }
+  },
+  {
+   "Element": "SQ",
+   "PrimaryAttribute": "QID4",
+   "Payload": {
+    "QuestionText": "Any comments?",
+    "DataExportTag": "Q1914",
+    "QuestionType": "TE",
+    "Selector": "ML",
+    "QuestionID": "QID4"
+   }
+  },
+  {
+   "Element": "SQ",
+   "PrimaryAttribute": "QID5",
+   "Payload": {
+    "QuestionText_Unsafe": "Unsafe text",
+    "QuestionID": "QID5",
+    "QuestionType": "DB",
+    "Selector": "TB"
+   }
+  },
+  {
+   "Element": "SQ",
+   "PrimaryAttribute": "QID6",
+   "Payload": {
+    "QuestionText": "Empty tag",
+    "DataExportTag": "",
+    "QuestionID": "QID6"
+   }
+  },
+  {
+   "Element": "SQ",
+   "PrimaryAttribute": "QID7",
+   "Payload": null
+  },
+  {
+   "Element": "SQ",
+   "PrimaryAttribute": "QID8",
+   "Payload": {
+    "QuestionText": "",
+    "DataExportTag": "SV",
+    "QuestionType": "Matrix",
+    "Selector": "Likert",
+    "Choices": {
+     "1": {
+      "Display": "Item one"
+     },
+     "2": {
+      "Display": "Item two"
+     }
+    },
+    "ChoiceDataExportTags": {
+     "1": "SV_1",
+     "2": "sv"
+    },
+    "Answers": [
+     {
+      "Display": "a"
+     }
+    ]
+   }
+  },
+  {
+   "Element": "SQ",
+   "PrimaryAttribute": "QID9",
+   "Payload": {
+    "QuestionText": "Slider",
+    "DataExportTag": "SL",
+    "QuestionType": "Slider",
+    "Choices": [
+     {
+      "Display": "x"
+     }
+    ]
+   }
+  }
+ ]
+}

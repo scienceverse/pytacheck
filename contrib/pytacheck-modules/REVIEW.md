@@ -1,10 +1,19 @@
 # Review checklist (maintainers)
 
 A review is a careful read of the exact files that will be installed, at the
-commit the index lists. Record the result by setting `"reviewed": "YYYY-MM-DD"`
-in `packs/<name>.json` (create the file next to a folder pack, holding only
-`reviewed` / `yanked`). Any later change to the pack clears the review date in
-the next `store build`, so re-review after every update.
+commit the index lists. Record the result in `packs/<name>.json` (create the
+file next to a folder pack, holding only these maintainer fields):
+
+```json
+{"reviewed": "YYYY-MM-DD", "reviewed_tree_sha256": "<the tree hash you reviewed>"}
+```
+
+The tree hash is the pack's `tree_sha256` in `index.json` for the commit you
+reviewed (`store build` also prints it when a review is out of date, and
+`pytacheck pack show <name>` shows it after installing). A review holds
+only for those exact files: when the pack changes, `store build` clears the
+review date, and `store build --check` (CI) fails until a maintainer reviews
+the new files and updates both fields.
 
 ## Must pass
 

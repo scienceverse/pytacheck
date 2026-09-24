@@ -120,7 +120,11 @@ def _write_cache(name: str, url: str, data: dict[str, Any]) -> None:
 
 
 def validate_index(data: Any, where: str) -> dict[str, Any]:
-    """Check the shape of an ``index.json`` (tolerant of extra keys)."""
+    """Check the shape of an ``index.json`` (tolerant of extra keys).
+
+    Keys starting with ``_`` are pytacheck's own annotations (``_location``
+    of a local store); an index cannot set them, so they are dropped.
+    """
     if not isinstance(data, Mapping):
         raise StoreError(f"{where} is not a store index (a JSON object)")
     schema = data.get("schema", INDEX_SCHEMA)
@@ -131,7 +135,9 @@ def validate_index(data: Any, where: str) -> dict[str, Any]:
         isinstance(p, Mapping) and isinstance(p.get("name"), str) for p in packs
     ):
         raise StoreError(f"{where}: 'packs' must be a list of objects with a 'name'")
-    return dict(data)
+    out = {k: v for k, v in data.items() if not str(k).startswith("_")}
+    out["packs"] = [{k: v for k, v in p.items() if not str(k).startswith("_")} for p in packs]
+    return out
 
 
 def _fetch(url: str) -> dict[str, Any]:
@@ -388,7 +394,8 @@ def store_search(text: str = "", field: str | None = None) -> pd.DataFrame:
     Every word of *text* must appear (case-insensitively) in a pack's name,
     title, description, keywords, fields, module names or descriptions, or
     preset names. *field* must be one of the pack's ``fields``. Unreachable
-    stores are skipped with a warning.
+    stores are skipped with a warning. ``validated`` counts the modules with
+    validation numbers and ``validation`` gives their PPV and sensitivity.
     """
     import pandas as pd
 
@@ -410,7 +417,8 @@ def store_search(text: str = "", field: str | None = None) -> pd.DataFrame:
             if any(w not in hay for w in words):
                 continue
             modules = [m for m in entry.get("modules") or [] if isinstance(m, Mapping)]
-            validated = sum(1 for m in modules if validation_metrics(m.get("validation")))
+            metrics = {str(m.get("name")): validation_metrics(m.get("validation")) for m in modules}
+            validated = sum(1 for v in metrics.values() if v)
             rev = str((entry.get("source") or {}).get("rev") or entry.get("tree_sha256") or "")
             name = str(entry["name"])
             rows.append(
@@ -424,6 +432,7 @@ def store_search(text: str = "", field: str | None = None) -> pd.DataFrame:
                     "code": bool(entry.get("code", bool(modules))),
                     "modules": ", ".join(str(m.get("name")) for m in modules),
                     "validated": f"{validated}/{len(modules)}" if modules else "",
+                    "validation": _validation_text(metrics),
                     "presets": ", ".join(entry.get("presets") or {}),
                     "reviewed": entry.get("reviewed"),
                     "yanked": entry.get("yanked"),
@@ -432,7 +441,7 @@ def store_search(text: str = "", field: str | None = None) -> pd.DataFrame:
             )
     cols = [
         "store", "name", "version", "title", "description", "fields", "code", "modules",
-        "validated", "presets", "reviewed", "yanked", "installed",
+        "validated", "validation", "presets", "reviewed", "yanked", "installed",
     ]  # fmt: skip
     df = pd.DataFrame(rows, columns=cols)
     for col in cols:
@@ -441,6 +450,20 @@ def store_search(text: str = "", field: str | None = None) -> pd.DataFrame:
         elif col != "yanked":
             df[col] = df[col].astype("string")
     return df
+
+
+def _validation_text(metrics: Mapping[str, Mapping[str, Any]]) -> str:
+    """``"apa_df: PPV 0.91, sensitivity 0.84; ..."`` for the modules with numbers."""
+    parts = []
+    for name, v in metrics.items():
+        nums = [
+            f"{label} {v[key]}"
+            for label, key in (("PPV", "ppv"), ("sensitivity", "sensitivity"))
+            if v.get(key) is not None
+        ]
+        if nums:
+            parts.append(f"{name}: {', '.join(nums)}")
+    return "; ".join(parts)
 
 
 def find_entry(

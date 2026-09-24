@@ -283,31 +283,60 @@ def dataone_info(
 # ---------------------------------------------------------------------------
 
 
-def _read_xml(content: bytes | str | None) -> etree._Element:
-    """``xml2::read_xml(x)`` of a response body (xml2's default ``NOBLANKS`` option).
+def _resp_body_string(resp: Any) -> str | None:
+    """``httr2::resp_body_string(resp)``: the body as text.
 
-    Raises on anything that is not well-formed XML (R: an error, which the
-    callers catch). External entities and network access are never resolved.
+    The body is read as ``readBin(body, character())`` does (up to the first
+    NUL byte) and converted from the response's charset (UTF-8 when the
+    ``Content-Type`` names none) with ``iconv()``: bytes that are not valid in
+    that encoding give ``None`` (R's ``NA``). An empty body and an unknown
+    charset are errors, as in R.
     """
-    from lxml import etree
+    import codecs
 
-    if content is None:
-        raise ValueError("no XML content")
-    data = content.encode("utf-8") if isinstance(content, str) else content
-    parser = etree.XMLParser(
-        remove_blank_text=True, resolve_entities=False, no_network=True, load_dtd=False
-    )
-    root = etree.fromstring(data, parser)
-    if root is None:
-        raise ValueError("Document is empty")
-    return root
+    content = resp.content
+    if not content:
+        raise ValueError("Can't retrieve empty body.")
+    content = content.split(b"\x00", 1)[0]
+    encoding = resp.charset_encoding or "UTF-8"
+    try:
+        codec = codecs.lookup(encoding).name
+    except LookupError:
+        raise ValueError(f"unsupported conversion from '{encoding}' to 'UTF-8'") from None
+    try:
+        return content.decode(codec)
+    except UnicodeDecodeError:
+        return None
+
+
+def _read_xml(text: str | None) -> etree._Element:
+    """``xml2::read_xml(x)`` of a string (``read_xml.character()``); returns the root element.
+
+    As in xml2, a string with markup is parsed as UTF-8 whatever its XML
+    declaration says, blank nodes are dropped (``NOBLANKS``) and only a fatal
+    libxml2 error fails (non-fatal ones, e.g. an undeclared namespace prefix,
+    are warnings). ``NA`` is an error, and a string without ``<`` or ``>``
+    is taken as a file path, which the callers never have: an error too.
+    """
+    from pytacheck.io.xml import read_xml
+
+    if text is None:
+        raise ValueError("`x` must be a single string, not a character `NA`.")
+    if "<" not in text and ">" not in text:
+        raise FileNotFoundError(f"'{text}' does not exist in current working directory.")
+    return read_xml(text).getroot()
 
 
 def _local_name(node: etree._Element) -> str:
-    """``xml2::xml_name()`` of an element: its name without namespace."""
-    from lxml import etree
+    """``xml2::xml_name()`` of an element: its name without namespace.
 
-    return str(etree.QName(node).localname)
+    An element whose prefix was never declared keeps its qualified name
+    (``"eml:eml"``), as libxml2 stores it.
+    """
+    tag = node.tag
+    if not isinstance(tag, str):
+        return ""
+    return tag.rsplit("}", 1)[1] if tag.startswith("{") else tag
 
 
 def _find_first(node: etree._Element, xpath: str) -> etree._Element | None:
@@ -386,8 +415,14 @@ def _dataone_info(pid: Any, host: Any, pb: Any = None) -> pd.DataFrame:
             obj["error"] = _cell("unfound")
             return pd.DataFrame(obj)
 
+        # R: body <- tryCatch(resp_body_string(resp), error = NULL);
+        #    doc <- tryCatch(read_xml(body %||% ""), error = NULL)
         try:
-            doc = _read_xml(resp.content)
+            body: str | None = _resp_body_string(resp)
+        except Exception:
+            body = ""
+        try:
+            doc = _read_xml(body)
         except Exception:
             doc = None
         if doc is None or _local_name(doc) != "eml":

@@ -1,0 +1,15 @@
+{
+  "id": "parse_codebook.readme.txt",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "This is a prose readme.",
+      "No variable table here."
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

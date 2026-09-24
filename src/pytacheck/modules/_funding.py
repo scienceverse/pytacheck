@@ -303,6 +303,62 @@ def _prefilter_pieces(pattern: str) -> tuple[tuple[str, ...], ...]:
 
 _Key = tuple[str, bool, bool]
 
+#: R's PCRE2 does not match Turkish ``İ`` (U+0130) / ``ı`` (U+0131) caselessly
+#: with ``i`` / ``I`` (they have no simple case folding), the `regex` engine
+#: does. For caseless PCRE patterns they are replaced by ``×`` (U+00D7), which
+#: every construct of these (ASCII) patterns treats alike (``.`` and negated
+#: classes match it; ``\\w``, ``\\s``, ``\\d``, ``\\b``, ``[[:alnum:]]`` and
+#: literals do not).
+_DOTTED_I = str.maketrans({"\u0130": "\u00d7", "\u0131": "\u00d7"})
+
+
+def _is_posix_only_class(body: str) -> bool:
+    """Is a class body (between ``[`` and ``]``) made only of POSIX classes and
+    ``\\w``-like escapes (the members PCRE2 does not case-fold)?"""
+    j = 1 if body.startswith("^") else 0
+    if j >= len(body):
+        return False
+    while j < len(body):
+        if body.startswith("[:", j):
+            end = body.find(":]", j + 2)
+            if end == -1:
+                return False
+            j = end + 2
+        elif body[j] == "\\" and j + 1 < len(body) and body[j + 1] in "wWdDsShHvV":
+            j += 2
+        else:
+            return False
+    return True
+
+
+@cache
+def _caseless_pcre(pattern: str) -> str:
+    """*pattern* with ``\\w`` / ``\\W`` and POSIX-only classes scoped case-sensitive.
+
+    In PCRE2, caseless matching folds literals and explicit class members
+    (``[a-z]`` matches ``ſ`` and the Kelvin sign) but not ``\\w``, ``\\W`` or
+    ``[[:alnum:]]``; the `regex` translation of those is an explicit ASCII
+    class, which it would fold. ``(?-i:...)`` gives PCRE's meaning in both
+    engines.
+    """
+    out: list[str] = []
+    i, n = 0, len(pattern)
+    while i < n:
+        c = pattern[i]
+        if c == "\\" and i + 1 < n:
+            e = pattern[i + 1]
+            out.append(f"(?-i:\\{e})" if e in "wW" else pattern[i : i + 2])
+            i += 2
+        elif c == "[":
+            j = _class_end(pattern, i)
+            cls = pattern[i:j]
+            out.append(f"(?-i:{cls})" if _is_posix_only_class(cls[1:-1]) else cls)
+            i = j
+        else:
+            out.append(c)
+            i += 1
+    return "".join(out)
+
 
 class _Article:
     """A character vector ``texts[start:stop]`` whose regex matches are cached.
@@ -389,21 +445,50 @@ class _Article:
             cand = m if cand is None else cand & m
         return cand
 
+    def _dotted_i_rows(self) -> np.ndarray:
+        """Rows containing a Turkish ``İ`` / ``ı`` (see :data:`_DOTTED_I`)."""
+        rows = self._cache.get("dotted_i")
+        if rows is None:
+            rows = np.fromiter(
+                (
+                    i
+                    for i, t in enumerate(self._texts)
+                    if t is not None and ("İ" in t or "ı" in t)
+                ),
+                dtype=np.intp,
+            )
+            self._cache["dotted_i"] = rows
+        return rows
+
     def _column_mask(self, pattern: str, ignore_case: bool, perl: bool) -> np.ndarray:
         key = (pattern, ignore_case, perl)
         mask = self._cache.get(key)
         if mask is None:
             texts = self._texts
             cand = self._candidates(pattern, perl)
+            caseless = perl and (ignore_case or "(?i)" in pattern)
+            run = _caseless_pcre(pattern) if caseless else pattern
             if cand is None:
-                hits = grepl(pattern, texts, ignore_case=ignore_case, perl=perl)
+                hits = grepl(run, texts, ignore_case=ignore_case, perl=perl)
                 mask = np.fromiter(hits, dtype=bool, count=len(texts))
             else:
                 mask = np.zeros(len(texts), dtype=bool)
                 rows = np.flatnonzero(cand)
                 if len(rows):
+                    hits = grepl(run, [texts[i] for i in rows], ignore_case=ignore_case, perl=perl)
+                    mask[rows] = np.fromiter(hits, dtype=bool, count=len(rows))
+            if caseless:
+                # PCRE2's caseless matching leaves U+0130/U+0131 alone; the
+                # `regex` engine folds them to i/I: rematch those rows without them
+                rows = self._dotted_i_rows()
+                if cand is not None:
+                    rows = rows[cand[rows]]
+                if len(rows):
                     hits = grepl(
-                        pattern, [texts[i] for i in rows], ignore_case=ignore_case, perl=perl
+                        run,
+                        [texts[i].translate(_DOTTED_I) for i in rows],  # type: ignore[union-attr]
+                        ignore_case=ignore_case,
+                        perl=perl,
                     )
                     mask[rows] = np.fromiter(hits, dtype=bool, count=len(rows))
             self._cache[key] = mask

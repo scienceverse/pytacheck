@@ -111,6 +111,19 @@ _SECTIONS: tuple[tuple[str, str], ...] = (
 _REDIRECT = r"(?<=window\.location\.replace\(')https://researchbox.org/\d+(?='\))"
 
 
+def _curl_url(url: str) -> str:
+    """The URL libcurl requests for *url*: one without a scheme gets ``http://``.
+
+    ``rbox_links()`` returns bare text mentions such as ``researchbox.org/801``,
+    which httr2 hands to libcurl as they are; libcurl guesses the scheme.
+    """
+    from pytacheck._r import grepl
+
+    if grepl("^[A-Za-z][A-Za-z0-9+.-]*://", url):
+        return url
+    return "http://" + url
+
+
 def _get(url: str) -> Any:
     """``httr2::request(url) |> req_headers(<rbox headers>) |> req_error(FALSE) |> req_perform()``.
 
@@ -118,20 +131,41 @@ def _get(url: str) -> Any:
     """
     from pytacheck import http
 
-    resp = http.request("GET", url, headers=_rbox_headers(), max_tries=1)
+    resp = http.request("GET", _curl_url(url), headers=_rbox_headers(), max_tries=1)
     if resp is None:
         raise ConnectionError(f"Failed to perform HTTP request: {url}")
     return resp
 
 
-def _body_string(resp: Any) -> str:
-    """``httr2::resp_body_string()`` (UTF-8 unless the response names a charset)."""
-    if not resp.content:
-        raise ValueError("Can't retrieve empty body.")
-    try:
-        return str(resp.content.decode(resp.charset_encoding or "utf-8"))
-    except (LookupError, UnicodeDecodeError):
-        return str(resp.content.decode("utf-8", errors="replace"))
+def _body_string(resp: Any) -> str | None:
+    """``httr2::resp_body_string()`` (see :func:`pytacheck.archives.dataone._resp_body_string`)."""
+    from pytacheck.archives.dataone import _resp_body_string
+
+    return _resp_body_string(resp)
+
+
+def _read_html(text: str | None) -> Any:
+    """``xml2::read_html(text, encoding = "UTF-8")`` of a page body.
+
+    libxml2's HTML parser with xml2's options (``RECOVER``, ``NOERROR``,
+    ``NOBLANKS``, ``HUGE``), reading the string as UTF-8. ``NA`` is an error,
+    and a string without ``<`` or ``>`` is taken as a file path by xml2: an
+    error here.
+    """
+    from lxml import etree
+    from lxml import html as lxml_html
+
+    if text is None:
+        raise ValueError("`x` must be a single string, not a character `NA`.")
+    if "<" not in text and ">" not in text:
+        raise FileNotFoundError(f"'{text}' does not exist in current working directory.")
+    parser = lxml_html.HTMLParser(
+        encoding="utf-8", recover=True, remove_blank_text=True, huge_tree=True, no_network=True
+    )
+    root = etree.fromstring(text.encode("utf-8", "surrogateescape"), parser)
+    if root is None:
+        raise ValueError("Document is empty")
+    return root
 
 
 def _rbox_info(rb_url: Any, pb: Any = None) -> pd.DataFrame:
@@ -143,8 +177,6 @@ def _rbox_info(rb_url: Any, pb: Any = None) -> pd.DataFrame:
     ``reference`` (what the zip download needs) and the ``RB_*`` sections of
     the page.
     """
-    from lxml import html as lxml_html
-
     from pytacheck._r import regextract_all, strsplit, trimws
     from pytacheck.archives import _spinner, _tick
     from pytacheck.archives.aspredicted import _html_text2
@@ -157,10 +189,11 @@ def _rbox_info(rb_url: Any, pb: Any = None) -> pd.DataFrame:
 
         resp = _get(_paste(rb_url))
         body_text = _body_string(resp)
-        redirect = regextract_all(_REDIRECT, body_text, perl=True)
+        # R: grepl(pattern, NA) is FALSE
+        redirect = [] if body_text is None else regextract_all(_REDIRECT, body_text, perl=True)
         if redirect:
             if len(redirect) > 1:
-                raise ValueError("`url` must be a single string")
+                raise ValueError("`base_url` must be a single string, not a character vector.")
             resp = _get(redirect[0])
 
         if resp.status_code != 200:
@@ -168,8 +201,7 @@ def _rbox_info(rb_url: Any, pb: Any = None) -> pd.DataFrame:
             obj["error"] = _cell("unfound")
             return pd.DataFrame(obj)
 
-        html = _body_string(resp).encode("utf-8")
-        doc = lxml_html.document_fromstring(html, parser=lxml_html.HTMLParser(encoding="utf-8"))
+        doc = _read_html(_body_string(resp))
 
         file_names = [str(p.xpath("string()")) for p in doc.xpath("//p [@class='file_name']")]
         file_ids = [
@@ -239,12 +271,20 @@ def _cache_subdir(rb_url: str) -> str:
 
 def _list_files(root: str) -> list[str]:
     """``list.files(root, recursive = TRUE)``: relative paths of files, sorted as R does
-    (locale collation, which R does with ICU)."""
+    (locale collation, which R does with ICU).
+
+    As in R (``all.files = FALSE``), files and directories whose names start
+    with ``.`` are left out (a zip made on a Mac holds ``.DS_Store`` and
+    ``__MACOSX/._*`` entries).
+    """
     from pytacheck._r import r_sorted
 
     out = []
-    for d, _dirs, files in os.walk(root):
+    for d, dirs, files in os.walk(root):
+        dirs[:] = [x for x in dirs if not x.startswith(".")]
         for f in files:
+            if f.startswith("."):
+                continue
             rel = os.path.relpath(os.path.join(d, f), root).replace(os.sep, "/")
             out.append(rel)
     return list(r_sorted(out))
@@ -354,11 +394,20 @@ def _download_zip(file_ids: list[Any], box_id: str, reference: str, path: str) -
     from pytacheck.archives.dataverse import _as_numeric
 
     # R: req_body_json(list(files = as.numeric(file_ids), ...)) -- jsonlite writes whole
-    # doubles without a decimal point and unboxes a length-one vector
+    # doubles without a decimal point, NA / NaN / Inf as the strings "NA", "NaN",
+    # "Inf" / "-Inf", and unboxes a length-one vector
     nums: list[Any] = []
     for v in file_ids:
-        x = _as_numeric(v)
-        nums.append(int(x) if x == x and float(x).is_integer() else (None if x != x else x))
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")  # R warns "NAs introduced by coercion" here too
+            x = _as_numeric(v)
+        if x != x:
+            nan = isinstance(v, str) and v.strip().lower() == "nan"
+            nums.append("NaN" if nan else "NA")
+        elif x in (float("inf"), float("-inf")):
+            nums.append("Inf" if x > 0 else "-Inf")
+        else:
+            nums.append(int(x) if float(x).is_integer() else x)
     body = {
         "files": nums[0] if len(nums) == 1 else nums,
         "box_id": box_id,

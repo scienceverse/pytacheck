@@ -31,6 +31,9 @@ from pytacheck.datacheck._columns_labels import (
     chr_frame,
 )
 
+#: R's NULL for an argument that was not passed (distinct from NA, ``None``)
+_NULL = object()
+
 
 def _dollar(x: Any, name: str) -> Any:
     """R's ``x$name`` on a jsonlite list: exact match first, else a unique prefix."""
@@ -173,11 +176,13 @@ def parse_qsf(path: str | os.PathLike[str]) -> pd.DataFrame | None:
         return None
     rows: list[pd.DataFrame] = []
 
-    def add(var: str, label: Any, scale_group: Any, value_labels: Any = None, question: Any = None) -> None:
+    def add(
+        var: str, label: Any, scale_group: Any, value_labels: Any = None, question: Any = _NULL
+    ) -> None:
         v = trimws(var)
         if v == "":
             return
-        q = question if question is not None else label
+        q = label if question is _NULL else question
         rows.append(
             chr_frame(
                 {

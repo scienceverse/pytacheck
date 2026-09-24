@@ -1,0 +1,157 @@
+{
+  "id": "ref_pubpeer.psychsci",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "ref_pubpeer"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "PubPeer Comments"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "reference"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 2,
+        "names": [
+          "paper_id",
+          "bib_id",
+          "doi",
+          "text",
+          "total_comments",
+          "url",
+          "users"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "0956797613520608",
+              "0956797614527830"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              36
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "10.1093/brain/110.3.747",
+              "10.1038/sj.npp.1300932"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Basso, A., Capitani, E., Della Sala, S., Laiacona, M., & Spinnler, H. (1987). Recovery from ideomotor apraxia: A study on acute stroke patients. Brain, 110, 747-760.",
+              "Wood, R. M., Rilling, J. K., Sanfey, A. G., Bhagwagar, Z., & Rogers, R. D. (2006). Effects of tryptophan depletion on the performance of an iterated prisoner's dilemma game in healthy adults. Neuropsychopharmacology, 31, 1075-1084."
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              2,
+              5
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://pubpeer.com/publications/110.3.747",
+              "https://pubpeer.com/publications/SJ.NPP.1300932"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Reviewer One",
+              "Reviewer Two, Reviewer Three"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "We checked 91 references with DOIs. You cited 2 references with comments in PubPeer.\n\nPubpeer is a platform for post-publication peer review. We have filtered out Pubpeer comments by 'Statcheck'. You can check out the comments by visiting the URLs below:",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Reference = c(\"Basso, A., Capitani, E., Della Sala, S., Laiacona, M., & Spinnler, H. (1987). Recovery from ideomotor apraxia: A study on acute stroke patients. Brain, 110, 747-760.\", \n\"Wood, R. M., Rilling, J. K., Sanfey, A. G., Bhagwagar, Z., & Rogers, R. D. (2006). Effects of tryptophan depletion on the performance of an iterated prisoner's dilemma game in healthy adults. Neuropsychopharmacology, 31, 1075-1084.\"\n), Comments = c(2, 5), \"PubPeer Link\" = c(\"<a href='https://pubpeer.com/publications/110.3.747' target='_blank'>link<\/a>\", \n\"<a href='https://pubpeer.com/publications/SJ.NPP.1300932' target='_blank'>link<\/a>\"\n)), row.names = c(NA, -2L), class = c(\"tbl_df\", \"tbl\", \"data.frame\"\n))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "info"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "You cited 2 references with comments in PubPeer."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 3,
+        "names": [
+          "paper_id",
+          "pubpeer_comments"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "0956797613520608",
+              "0956797614522816",
+              "0956797614527830"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              2,
+              0,
+              5
+            ]
+          }
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

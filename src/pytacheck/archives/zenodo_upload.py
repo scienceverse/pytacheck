@@ -179,7 +179,7 @@ def _zenodo_check_resp(resp: httpx.Response, what: str) -> Any:
     """
     from pytacheck._r import as_character
     from pytacheck.archives.github import _body_json
-    from pytacheck.db._utils import r_dollar
+    from pytacheck.archives.github import _dollar as r_dollar
 
     status = resp.status_code
     try:
@@ -190,7 +190,7 @@ def _zenodo_check_resp(resp: httpx.Response, what: str) -> Any:
         return body
 
     message = r_dollar(body, "message")
-    detail = resp.reason_phrase if message is None else as_character(message)
+    detail = _resp_status_desc(resp) if message is None else as_character(message)
     fields = ""
     errors = r_dollar(body, "errors")
     if errors:
@@ -212,6 +212,32 @@ def _zenodo_check_resp(resp: httpx.Response, what: str) -> Any:
             "See ?zenodo_pat"
         )
     raise RuntimeError(f"{what} failed (HTTP {status}): {detail}{fields}")
+
+
+#: httr2's status descriptions where they differ from Python's (None: R's NA)
+_HTTR2_STATUS_DESC = {
+    300: "Multiple Choice",
+    413: "Payload Too Large",
+    414: "URI Too Long",
+    416: "Range Not Satisfiable",
+    431: None,
+}
+
+
+def _resp_status_desc(resp: httpx.Response) -> str:
+    """``httr2::resp_status_desc()`` as ``sprintf("%s")`` shows it (``"NA"`` when unknown).
+
+    From the status code alone (a static table, as httr2 does), never from
+    the reason phrase the server sent.
+    """
+    import httpx
+
+    code = resp.status_code
+    if code in _HTTR2_STATUS_DESC:
+        desc = _HTTR2_STATUS_DESC[code]
+    else:
+        desc = httpx.codes.get_reason_phrase(code)
+    return desc or "NA"
 
 
 def _zenodo_license_id(osf_license: Any) -> str | None:
@@ -269,7 +295,7 @@ def _osf_zenodo_metadata(osf_id: Any, pb: Any = None) -> dict[str, dict[str, Any
 
 
 def _dig(x: Any, *path: str) -> Any:
-    from pytacheck.db._utils import r_dollar
+    from pytacheck.archives.github import _dollar as r_dollar
 
     for key in path:
         x = r_dollar(x, key)
@@ -447,7 +473,7 @@ def _zenodo_meta_from_folder(folder: str) -> dict[str, Any] | None:
     if not isinstance(m, Mapping) or m.get("osf_id") is None:
         return None
 
-    from pytacheck.db._utils import r_dollar
+    from pytacheck.archives.github import _dollar as r_dollar
 
     creators = []
     for c in r_dollar(m, "contributors") or []:
@@ -494,7 +520,7 @@ def _zenodo_build_metadata(
     """
     from pytacheck._r import as_character
     from pytacheck.archives.github import _as_list, _r_basename
-    from pytacheck.db._utils import r_dollar
+    from pytacheck.archives.github import _dollar as r_dollar
 
     title = r_dollar(meta, "title")
     if title is None or is_na(title) or title == "":
@@ -925,7 +951,7 @@ def zenodo_upload(
                 )
                 continue
 
-            from pytacheck.db._utils import r_dollar
+            from pytacheck.archives.github import _dollar as r_dollar
 
             dep_id = r_dollar(dep, "id")
             bucket = _dig(dep, "links", "bucket")

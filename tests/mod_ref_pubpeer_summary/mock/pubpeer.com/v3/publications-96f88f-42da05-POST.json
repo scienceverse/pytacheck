@@ -1,0 +1,26 @@
+{
+    "status": "good",
+    "feedbacks": [
+        {
+            "id": "10.9999/pp.one",
+            "title": "A paper (10.9999/pp.one)",
+            "total_comments": 2,
+            "url": "https://pubpeer.com/publications/PP.ONE",
+            "users": "Jane Doe, John Roe"
+        },
+        {
+            "id": "10.9999/pp.stat",
+            "title": "A paper (10.9999/pp.stat)",
+            "total_comments": 1,
+            "url": "https://pubpeer.com/publications/PP.STAT",
+            "users": "Statcheck "
+        },
+        {
+            "id": "10.1177/0956797614520714",
+            "title": "A paper (10.1177/0956797614520714)",
+            "total_comments": 3,
+            "url": "https://pubpeer.com/publications/3FA648ECECB88454C91804F09E2E56",
+            "users": "Statcheck , Aioliops Novaeguineae, Hoya Camphorifolia"
+        }
+    ]
+}

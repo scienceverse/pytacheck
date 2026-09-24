@@ -302,9 +302,9 @@ def test_preset_as_r(lab) -> None:
     )
     apa_r = str(lab.root / "lab" / "apa.R")
     assert preset_as_r("t") == (
-        "# no metacheck (.R) version of: lab::llmcheck\n"
+        "# left out (no metacheck .R version): lab::llmcheck\n"
         "report(paper,\n"
-        f'       modules = c("power", "{apa_r}", "llmcheck"),\n'
+        f'       modules = c("power", "{apa_r}"),\n'
         '       args = list(power = list(seed = 8675309, alpha = 0.05, tails = c("a", "b"), '
         f'go = TRUE, x = NULL), `{apa_r}` = list(`odd name` = list(1, "b"))))'
     )

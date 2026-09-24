@@ -26,7 +26,7 @@ from __future__ import annotations
 import functools
 import importlib
 import math
-from collections.abc import Mapping, Sequence
+from collections.abc import Sequence
 from typing import Any
 
 import numpy as np
@@ -75,7 +75,6 @@ from pytacheck.datacheck._columns_labels import (
     _vec,
     _vl_is_numeric,
     _vl_split_pairs,
-    chr_frame,
     normalize_label,
     normalize_varname,
 )
@@ -245,8 +244,8 @@ def _as_numeric_str(s: str | None) -> float | None:
         if is_blank(b):
             return None
         x, end = strtod(b, False)
-        if x is None or not is_blank(b[end:]) or (end == 0 and b[:1] not in (b"",)):
-            return None if x is None or not is_blank(b[end:]) else x
+        if x is None or not is_blank(b[end:]):
+            return None
     except ValueError:
         return None
     return x  # type: ignore[no-any-return]
@@ -416,9 +415,7 @@ def data_col_stats(x_for_stats: Any, x_raw: Any) -> pd.DataFrame:
     A nested (data-frame / matrix / list) column gets counts only.
     """
     if _is_non_atomic(x_raw):
-        n_val = len(x_raw) if not isinstance(x_raw, dict) else len(x_raw)
-        if isinstance(x_raw, np.ndarray):
-            n_val = x_raw.shape[0]
+        n_val = x_raw.shape[0] if isinstance(x_raw, np.ndarray) else len(x_raw)
         return _stats_frame(n_val, 0, None)
     raw = _values_list(x_raw)
     n_unique_val = _n_unique([v for v in raw if not _na(v)])
@@ -433,9 +430,8 @@ def data_col_stats(x_for_stats: Any, x_raw: Any) -> pd.DataFrame:
         return _stats_frame(0, n_miss, n_unique_val)
     mn = _r_mean(x)
     s = math.nan
-    if n > 1:
-        if math.isfinite(mn):
-            s = math.sqrt(math.fsum((v - mn) ** 2 for v in x) / (n - 1))
+    if n > 1 and math.isfinite(mn):
+        s = math.sqrt(math.fsum((v - mn) ** 2 for v in x) / (n - 1))
     p25 = _r_quantile7(x, 0.25)
     p75 = _r_quantile7(x, 0.75)
     half = (n + 1) // 2
@@ -468,8 +464,10 @@ def data_col_stats(x_for_stats: Any, x_raw: Any) -> pd.DataFrame:
 
 def _osd_slug(name: Any = None, prefix: Any = None, max_chars: int = 60) -> str | None:
     """Port of ``.osd_slug()``: a lowercase, underscore-joined slug (file name + code)."""
-    x = name if name is not None and not _na(name) and _chr(name) != "" else prefix
-    x = "" if x is None and prefix is None else x
+    if name is not None and not _na(name) and _chr(name) != "":
+        x = name
+    else:
+        x = "" if prefix is None else prefix
     s = _chr(x)
     if s is None:
         return None
@@ -479,10 +477,7 @@ def _osd_slug(name: Any = None, prefix: Any = None, max_chars: int = 60) -> str 
         return "scale"
     if len(s) > max_chars:
         trunc = s[:max_chars]
-        m = regextract("_[^_]*$", trunc)
-        at = trunc.rfind(m) + 1 if m is not None else -1
-        if m is not None:
-            at = _first_pos("_[^_]*$", trunc)
+        at = _first_pos("_[^_]*$", trunc)
         if at > 1:
             trunc = trunc[: at - 1]
         s = gsub("_+$", "", trunc)
@@ -532,18 +527,20 @@ def _dict_rows(dict_: Any, scale: Any) -> list[int]:
     return [i for i, nm in enumerate(names) if nm is not None and _tolower(nm) == target]
 
 
-def _osd_code_and_provenance(scale: Any, prefix: Any, scale_source: Any, dict_: Any) -> dict[str, Any]:
+def _osd_code_and_provenance(
+    scale: Any, prefix: Any, scale_source: Any, dict: Any  # noqa: A002 - R's argument name
+) -> Any:
     """Port of ``.osd_code_and_provenance()``: OSD code, reference code and provenance.
 
-    *dict_* is the scale dictionary (a data frame with ``name`` and ``code``).
+    *dict* is the scale dictionary (a data frame with ``name`` and ``code``).
     Returns ``{"code", "ref_code", "source", "provenance"}``.
     """
     src = "" if scale_source is None else scale_source
     in_dict = False
     if not _na(scale) and _chr(scale) != "":
-        in_dict = bool(_dict_rows(dict_, scale))
+        in_dict = bool(_dict_rows(dict, scale))
     code = _osd_slug(name=scale, prefix=prefix)
-    ref_code = _scale_ref_code(scale, dict_)
+    ref_code = _scale_ref_code(scale, dict)
     if in_dict:
         source = "dictionary"
     elif src == "self_generated":
@@ -575,14 +572,14 @@ def _scale_ref_data() -> dict[str, Any]:
     return {"meta": get_ds("scale_meta"), "items": get_ds("scale_items"), "scoring": get_ds("scale_scoring")}
 
 
-def _scale_ref_code(scale: Any, dict_: Any) -> str | None:
+def _scale_ref_code(scale: Any, dict: Any) -> str | None:  # noqa: A002 - R's argument name
     """Port of ``.scale_ref_code()``: the OpenScales code of a dictionary scale, or ``None``."""
     if scale is None or isinstance(scale, list | tuple) or _na(scale) or _chr(scale) == "":
         return None
-    rows = _dict_rows(dict_, scale)
+    rows = _dict_rows(dict, scale)
     if not rows:
         return None
-    code = _chr(_chr_vec(dict_["code"])[rows[0]])
+    code = _chr(_chr_vec(dict["code"])[rows[0]])
     if code is None or code == "":
         return None
     ref = _scale_ref_data()["meta"]
@@ -983,12 +980,12 @@ def match_column_labels(columns_df: pd.DataFrame | None, codebook_vars_df: pd.Da
             if hit is None:
                 continue
             r = tag_row[hit]
-            if cb_vl is None:
+            if cb_vl is None or cb_src is None:
                 raise ValueError("replacement has length zero")
             status_out[i] = "labelled"
             label_out[i] = cb_q[r]
             cbk_out[i] = qsf_tags[hit]
-            src_out[i] = cb_src[r] if cb_src is not None else None
+            src_out[i] = cb_src[r]
             method_out[i] = "qsf_question_tag"
             vl_out[i] = cb_vl[r]
             q_out[i] = cb_q[r]
@@ -1049,9 +1046,3 @@ def _r_round0(x: float) -> float:
 
     return float(r_round(x, 0))
 
-
-def __getattr__(name: str) -> Any:
-    raise AttributeError(f"module 'pytacheck.datacheck.columns' has no attribute {name!r}")
-
-
-_ = (Mapping,)

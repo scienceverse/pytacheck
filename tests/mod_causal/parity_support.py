@@ -99,3 +99,43 @@ def untitled(text: Sequence[str], title: str | None = "", id: str | None = None)
     if id is not None:
         p.paper_id = id
     return p
+
+
+def fake_causal_relations_na(sentence: Any, *args: Any, **kwargs: Any) -> pd.DataFrame:
+    """:func:`fake_causal_relations`, but sentences containing ``"maybe"`` get ``causal = NA``.
+
+    The real classifier never returns a missing flag (``isTRUE()``); this fake
+    checks that the module keeps R's ``NA`` semantics (``sum()`` propagates it,
+    ``dplyr::filter()`` drops it, ``if (!any(NA))`` is an error).
+    R twin: ``R_FAKE_NA`` in ``gen_review_cases.py``.
+    """
+    out = fake_causal_relations(sentence)
+    maybe = [isinstance(s, str) and "maybe" in s.lower() for s in out["sentence"].tolist()]
+    causal = out["causal"].astype("boolean").copy()
+    causal[pd.Series(maybe, index=out.index, dtype=bool)] = pd.NA
+    out["causal"] = causal
+    return out
+
+
+def run_fake_causal_na(x: Callable[[], Any]) -> Any:
+    """Call *x* with ``causal_relations()`` replaced by :func:`fake_causal_relations_na`."""
+    with mock.patch("pytacheck.text.causal.causal_relations", fake_causal_relations_na):
+        return x()
+
+
+def with_section_ids(p: Any, section_id: Sequence[float | None]) -> Any:
+    """R ``p$text$section_id <- section_id`` (``None`` -> ``NA``)."""
+    text = p.text.copy()
+    text["section_id"] = pd.Series(
+        [float("nan") if v is None else float(v) for v in section_id],
+        index=text.index,
+        dtype="float64",
+    )
+    p.text = text
+    return p
+
+
+def without_title(p: Any) -> Any:
+    """R ``p$info$title <- NULL``."""
+    p.info = p.info.drop(columns=["title"])
+    return p

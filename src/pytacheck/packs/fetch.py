@@ -462,7 +462,8 @@ def fetch_source(
 ) -> int:
     """Put the pack folder of *source* at commit *rev* into *dest*; returns the file count.
 
-    ``base`` resolves a relative ``{"path": ...}`` source (a local store's folder).
+    ``base`` resolves a relative ``{"path": ...}`` source (a local store's folder);
+    with a *base*, the folder must be inside it.
     """
     sub = _subdir(source)
     if "path" in source:
@@ -474,6 +475,8 @@ def fetch_source(
                     "store is not a local folder (its CI regenerates the index with commits)"
                 )
             folder = Path(base) / folder
+        if base is not None and not folder.resolve().is_relative_to(Path(base).resolve()):
+            raise PackError(f"The source folder {folder} is outside its store ({base})")
         if sub:
             folder = folder.joinpath(*sub.split("/"))
         return copy_tree(folder, dest)

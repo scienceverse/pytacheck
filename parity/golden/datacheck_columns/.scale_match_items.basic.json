@@ -1,0 +1,66 @@
+{
+  "id": ".scale_match_items.basic",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 4,
+    "names": [
+      "column_name",
+      "ref_item_id",
+      "ref_text",
+      "ref_reverse",
+      "ref_dimension"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "e1",
+          "e2",
+          "n1",
+          "z"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "A1",
+          "A2",
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "I don't like crowds.",
+          "I am the life of the party",
+          null,
+          null
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true,
+          false,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "E",
+          "E",
+          null,
+          null
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

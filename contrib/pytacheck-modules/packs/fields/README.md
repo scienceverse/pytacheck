@@ -8,7 +8,7 @@ of pack to review and trust.
 |---|---|
 | `fields::general` (also `fields`) | metacheck's default report + `ethics_check`, `open_practices` |
 | `fields::psychology` | general + `all_p_values`, `causal_claims` |
-| `fields::medicine` | general without `ref_replication` (FLoRA covers psychology); install `clinical_trials` for trial registration numbers |
+| `fields::medicine` | general without `ref_replication` (FLoRA covers psychology); add `clinical_trials::only` for trial registration numbers (`clinical_trials`, its default, extends metacheck's default and so brings `ref_replication` back) |
 | `fields::open-science` | `prereg_check`, `open_practices`, `repo_check`, `code_check`, `data_check`, `codebook_check`, `psychds_check` |
 
 ```bash

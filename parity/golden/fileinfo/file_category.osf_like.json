@@ -1,0 +1,76 @@
+{
+  "id": "file_category.osf_like",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 4,
+    "names": [
+      "osf_id",
+      "name",
+      "kind",
+      "filetype",
+      "category",
+      "file_category"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "abc12",
+          "def34",
+          "ghi56",
+          "jkl78"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "analysis.R",
+          "Data",
+          "study1.sav",
+          "codebook.pdf"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "file",
+          "folder",
+          "file",
+          "file"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "code",
+          null,
+          "data",
+          "text"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "data",
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "code",
+          null,
+          "data",
+          "codebook"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

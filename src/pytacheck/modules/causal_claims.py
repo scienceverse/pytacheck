@@ -135,6 +135,17 @@ def _title(paper: Any) -> list[Any]:
     return [None if pd.isna(v) else str(v) for v in info["title"].tolist()]
 
 
+def _any(causal: pd.Series) -> bool:
+    """R ``if (any(x))``: ``any()`` is ``NA`` when *x* has ``NA`` and no ``TRUE``,
+    and ``if (NA)`` is an error."""
+    x = causal.astype("boolean")
+    if bool(x.eq(True).fillna(False).any()):
+        return True
+    if bool(x.isna().any()):
+        raise ValueError("missing value where TRUE/FALSE needed")
+    return False
+
+
 def _summarise_causal(causal_abstract: pd.DataFrame, table: pd.DataFrame) -> pd.DataFrame:
     """``left_join(causal_abstract, table, by = c(sentence = "text")) |>
     summarise(causal = sum(causal), .by = "paper_id")``."""
@@ -151,8 +162,12 @@ def _summarise_causal(causal_abstract: pd.DataFrame, table: pd.DataFrame) -> pd.
                 "causal": pd.Series([], dtype="Int64"),
             }
         )
+    # R `sum()` propagates NA (module_run() later replaces it with na_replace)
     counts = (
-        joined["causal"].astype("Int64").groupby(joined["paper_id"], sort=False, dropna=False).sum()
+        joined["causal"]
+        .astype("Int64")
+        .groupby(joined["paper_id"], sort=False, dropna=False)
+        .sum(skipna=False)
     )
     return pd.DataFrame(
         {
@@ -185,8 +200,16 @@ def causal_claims(paper: Any) -> dict[str, Any]:
     """
     from pytacheck.text import causal
 
+    # R calls text_search() twice: text_search(paper, "random") and, below,
+    # text_search(paper) for the abstract. The first is the second filtered on
+    # grepl("random", text, ignore.case = TRUE): text_search() matches the raw
+    # text, but whitespace normalisation and unique() cannot change whether a
+    # row contains "random", so one search of the whole table is enough.
+    sentences = text_search(paper)
+
     # randomisation ----
-    random_sentences = text_search(paper, "random")
+    has_random = grepl("random", sentences["text"], ignore_case=True)
+    random_sentences = sentences[pd.Series(has_random, index=sentences.index, dtype=bool)]
     texts = random_sentences["text"]
     inc = pd.Series(grepl(_INCLUDE_RE, texts, perl=True), index=texts.index, dtype=bool)
     exc = pd.Series(grepl(_EXCLUDE_RE, texts, perl=True), index=texts.index, dtype=bool)
@@ -207,8 +230,7 @@ def causal_claims(paper: Any) -> dict[str, Any]:
         ]
 
     # causal claims ----
-    table = text_search(paper)
-    table = table[table["section_type"].eq("abstract").fillna(False).astype(bool)]
+    table = sentences[sentences["section_type"].eq("abstract").fillna(False).astype(bool)]
     table = table.reset_index(drop=True)
     causal_title = causal.causal_relations(_title(paper))
     causal_abstract = causal.causal_relations(table["text"].tolist())
@@ -221,7 +243,7 @@ def causal_claims(paper: Any) -> dict[str, Any]:
     ].reset_index(drop=True)
 
     ## causal title ----
-    title_causal = bool(causal_title["causal"].fillna(False).astype(bool).any())
+    title_causal = _any(causal_title["causal"])
     if not title_causal:
         summary_text_title = "No causal claims were observed in the title."
         report_causal_title: list[Any] = [summary_text_title]
@@ -233,7 +255,7 @@ def causal_claims(paper: Any) -> dict[str, Any]:
         ]
 
     ## causal abstract ----
-    abstract_causal = bool(causal_abstract["causal"].fillna(False).astype(bool).any())
+    abstract_causal = _any(causal_abstract["causal"])
     if not abstract_causal:
         summary_text_abstract = "No causal claims were observed in the abstract."
         report_text_causal_abstract = ""

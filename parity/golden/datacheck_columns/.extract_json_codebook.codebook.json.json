@@ -1,0 +1,96 @@
+{
+  "id": ".extract_json_codebook.codebook.json",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 4,
+    "names": [
+      "codebook_variable",
+      "label",
+      "codebook_source",
+      "group",
+      "value_labels",
+      "missing_values",
+      "question",
+      "coding_instructions"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "sex",
+          "age",
+          "cond",
+          "7"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Sex",
+          "Age in years",
+          "Which condition?",
+          "Numeric id"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "codebook.json",
+          "codebook.json",
+          "codebook.json",
+          "codebook.json"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "{\"1\":\"Male\",\"2\":\"2\",\"9\":\"Refused\"}",
+          "{\"1\":\"young\",\"2\":\"old\"}",
+          "{\"0\":\"control\",\"1\":\"treat\"}",
+          "{\"1\":\"yes\",\"2\":\"no\"}"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "{\"9\":\"Refused\"}",
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          "Which condition?",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

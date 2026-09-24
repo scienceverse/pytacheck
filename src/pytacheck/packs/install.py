@@ -54,7 +54,7 @@ from pytacheck.packs.registry import (
     pin_rev12,
     registry,
 )
-from pytacheck.packs.scan import FileScan, module_metadata, scan_tree
+from pytacheck.packs.scan import FileScan, module_metadata, scan_file, scan_tree
 from pytacheck.packs.tree import INSTALL_RECORD, file_sha256, tree_files, tree_sha256
 
 if TYPE_CHECKING:
@@ -244,6 +244,23 @@ def _parse_ref(ref: str) -> tuple[str, Any]:
     return "store", (m.group("store"), m.group("name"), (m.group("rev") or "").lower() or None)
 
 
+def _store_path(store: str, name: str, path: str, base: str | None) -> Path:
+    """The folder of a store entry's ``{"path": ...}`` source: inside a local store only."""
+    if not base:
+        raise PackError(
+            f"The store '{store}' lists '{name}' with the local-folder source {path!r}; only "
+            "a store that is itself a local folder may (a remote store's CI lists commits)"
+        )
+    root = Path(base).resolve()
+    folder = (root / path).resolve()
+    if Path(path).is_absolute() or not folder.is_relative_to(root):
+        raise PackError(
+            f"The store '{store}' lists '{name}' with the source {path!r}, which is outside "
+            f"the store's folder {root}"
+        )
+    return folder
+
+
 def _store_candidate(
     store: str | None, name: str, rev_prefix: str | None, *, refresh: bool = False
 ) -> _Candidate:
@@ -253,9 +270,9 @@ def _store_candidate(
     source = _source_without_rev(entry.get("source"))
     if not source:
         raise PackError(f"The store '{store_name}' entry for '{name}' has no source")
-    base = entry.get("_location")
-    if "path" in source and base and not Path(str(source["path"])).is_absolute():
-        source["path"] = str(Path(base) / str(source["path"]))  # a local store's folder
+    base = entry.get("_location")  # set only for a store that is a local folder
+    if "path" in source:
+        source["path"] = str(_store_path(store_name, name, str(source["path"]), base))
     index_rev = (entry.get("source") or {}).get("rev")
     cand = _Candidate(
         name=name,
@@ -589,20 +606,20 @@ def _install_path(ref: str, *, scope: str, yes: bool) -> Pack:
         validate_manifest({"name": name}, where=str(root))
     target = config_path(scope)
     value = str(root)
-    if scope == "project" and root.is_relative_to(target.parent.resolve()):
-        # a project lock file keeps working when the project folder moves
-        value = root.relative_to(target.parent.resolve()).as_posix() or "."
-    con = ui.console()
-    con.print()
-    con.rule(f"[bold]Use the local folder as pack '{name}'[/]")
-    con.print(f"folder: {root}\ntrust: local (live: edits take effect at once, nothing is pinned)")
-    code = [s for s in scan_tree(root) if not s.path.startswith(("tests/", "data/"))]
-    if code:
-        _print_scan(code)
+    project_dir = target.parent.resolve()
+    if scope == "project" and root.is_relative_to(project_dir.parent):
+        # under or next to the project: a relative path keeps the shared lock file
+        # working for teammates and when the project folder moves
+        value = Path(os.path.relpath(root, project_dir)).as_posix()
+    _local_card(name, root)
     if not yes and not ui.confirm(f"Add the path pack '{name}' to {target}?"):
         raise Cancelled(f"Adding '{name}' cancelled; nothing was changed")
     where = _write_pin(name, {"path": value}, scope)
-    con.print(f"Pinned the path pack '{name}' in {where}")
+    if scope == "project":
+        from pytacheck.config import trust_local
+
+        trust_local([root])  # the user just agreed to run it
+    ui.console().print(f"Pinned the path pack '{name}' in {where}")
     try:
         return get_pack(name)
     except PackError:
@@ -611,11 +628,57 @@ def _install_path(ref: str, *, scope: str, yes: bool) -> Pack:
         return _path_pack(name, {"path": str(root)}, str(where))
 
 
+def _local_card(name: str, root: Path) -> None:
+    """What a path pack is, before the user agrees to run it."""
+    con = ui.console()
+    con.print()
+    con.rule(f"[bold]Use the local folder as pack '{name}'[/]")
+    con.print(f"folder: {root}\ntrust: local (live: edits take effect at once, nothing is pinned)")
+    code = [s for s in scan_tree(root) if not s.path.startswith(("tests/", "data/"))]
+    if code:
+        _print_scan(code)
+
+
+def _trust_project_code(config: Any, *, yes: bool) -> int:
+    """Ask about the local code a project config names and the user has not trusted yet.
+
+    Returns how many entries were asked about; declined ones stay inactive.
+    """
+    from rich.markup import escape
+
+    from pytacheck.config import trust_local
+
+    asked = 0
+    for key, (where, _entry, code) in config.untrusted.items():
+        section, _, name = key.partition(".")
+        asked += 1
+        if section == "packs":
+            _local_card(name, Path(code[0]))
+            question = f"Trust the path pack '{name}' named by {where}?"
+        else:
+            con = ui.console()
+            con.print()
+            con.rule(f"[bold]Local modules in the preset '{escape(name)}'[/]")
+            con.print(f"project config: {escape(where)}")
+            for file in code:
+                con.print(f"  {escape(file)}")
+            scans = [scan_file(f, rel=f) for f in code if Path(f).is_file()]
+            if scans:
+                _print_scan(scans)
+            question = f"Trust the local modules of the preset '{name}' in {where}?"
+        if yes or ui.confirm(question):
+            trust_local(code)
+            ui.console().print(f"Trusted: {', '.join(code)}")
+        else:
+            ui.console().print(f"[yellow]Not trusted: '{escape(name)}' stays inactive[/]")
+    return asked
+
+
 def _sync(*, yes: bool) -> list[Pack]:
     config = load_config()
     done: list[Pack] = []
     problems: list[str] = []
-    todo = 0
+    todo = _trust_project_code(config, yes=yes)
     for name, pin in config.packs.items():
         if not isinstance(pin, Mapping) or "path" in pin:
             continue
@@ -659,7 +722,20 @@ def _enrich_from_store(cand: _Candidate) -> None:
             _, entry = find_entry(cand.name, store=cand.store)
     except PackError:
         return
-    if (entry.get("source") or {}).get("rev") == cand.rev:
+    source = _source_without_rev(entry.get("source"))
+    if "path" in source:
+        try:
+            source["path"] = str(
+                _store_path(cand.store, cand.name, source["path"], entry.get("_location"))
+            )
+        except PackError:
+            return
+    same = (
+        (entry.get("source") or {}).get("rev") == cand.rev
+        and source == cand.source
+        and entry.get("tree_sha256") in (None, cand.tree_sha256)
+    )
+    if same:  # the store lists exactly this pin: show its review and any yank
         cand.reviewed = entry.get("reviewed")
         cand.yanked = entry.get("yanked")
         cand.base = cand.base or entry.get("_location")
@@ -755,7 +831,8 @@ def pack_update(name: str | None = None, *, yes: bool = False) -> list[dict[str,
     Shows the version and rev change and a file-level diff summary. Store
     packs follow their store's index; unlisted git packs follow their default
     branch; path and dist packs are not updated. Returns one row per pack:
-    ``name``, ``from``, ``to`` and ``updated``.
+    ``name``, ``from``, ``to`` and ``updated`` (plus ``status`` ``"cancelled"``
+    or ``"error"`` for a pack that was not updated because of that).
     """
     config = load_config()
     if name is not None:
@@ -808,7 +885,10 @@ def pack_update(name: str | None = None, *, yes: bool = False) -> list[dict[str,
             if name is not None:
                 raise
             problems.append(f"{n}: {exc}")
-            rows.append({"name": n, "from": old_rev, "to": None, "updated": False})
+            status = "cancelled" if isinstance(exc, Cancelled) else "error"
+            rows.append(
+                {"name": n, "from": old_rev, "to": None, "updated": False, "status": status}
+            )
     for p in problems:
         warnings.warn(p, stacklevel=2)
     return rows

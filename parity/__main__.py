@@ -137,13 +137,20 @@ def cmd_list(ns: argparse.Namespace) -> int:
     return 0
 
 
+_DATA_DIR: Any = None  # the throwaway data dir, removed at exit
+
+
 def _hermetic_env() -> None:
     """No user/project config and a throwaway data dir, unless the caller set them."""
+    global _DATA_DIR
     os.environ.setdefault("PYTACHECK_CONFIG", "none")
     if not os.environ.get("PYTACHECK_DATA_DIR"):
+        import atexit
         import tempfile
 
-        os.environ["PYTACHECK_DATA_DIR"] = tempfile.mkdtemp(prefix="pytacheck-parity-data-")
+        _DATA_DIR = tempfile.TemporaryDirectory(prefix="pytacheck-parity-data-")
+        atexit.register(_DATA_DIR.cleanup)
+        os.environ["PYTACHECK_DATA_DIR"] = _DATA_DIR.name
 
 
 def main(argv: list[str] | None = None) -> int:

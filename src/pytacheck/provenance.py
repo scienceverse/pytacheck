@@ -509,7 +509,9 @@ def _failed_output(
     )
 
 
-def run_modules(paper: Any, selection: Any = None) -> ModuleChain:
+def run_modules(
+    paper: Any, selection: Any = None, *, record: str | os.PathLike[str] | None = None
+) -> ModuleChain:
     """Run a selection in order, chaining outputs, inside a run session.
 
     *selection* is a :class:`pytacheck.presets.Selection` (from
@@ -517,7 +519,7 @@ def run_modules(paper: Any, selection: Any = None) -> ModuleChain:
     or one ref; ``None`` runs ``select()``'s default. As in metacheck's
     ``report_module_run()``, a module that errors becomes a ``"fail"``
     output (with a warning) and the chain goes on. The result carries a
-    :class:`RunRecord` as ``run_record``.
+    :class:`RunRecord` as ``run_record``, also written to *record* when given.
     """
     import warnings
 
@@ -538,6 +540,8 @@ def run_modules(paper: Any, selection: Any = None) -> ModuleChain:
             outputs.append(op)
     chain = ModuleChain(outputs, paper=paper, selection=selection)
     chain.run_record = RunRecord.build(chain, selection=selection, papers=paper)
+    if record is not None:
+        chain.run_record.write(record)
     return chain
 
 

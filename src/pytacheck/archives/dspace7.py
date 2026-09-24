@@ -191,7 +191,6 @@ def _dspace7_info(host: Any, uuid: Any = None, handle: Any = None, pb: Any = Non
     from pytacheck.archives.dataverse import (
         _as_numeric,
         _cell,
-        _chr_elt,
         _dollar,
         _dollars,
         _elements,
@@ -199,7 +198,7 @@ def _dspace7_info(host: Any, uuid: Any = None, handle: Any = None, pb: Any = Non
         _paste,
         _url_encode_reserved,
     )
-    from pytacheck.archives.psycharchives import _obj_cell, _paste_json
+    from pytacheck.archives.psycharchives import _chr1, _obj_cell, _paste_json
 
     uuid = None if is_na(uuid) else uuid
     handle = None if is_na(handle) else handle
@@ -236,7 +235,7 @@ def _dspace7_info(host: Any, uuid: Any = None, handle: Any = None, pb: Any = Non
                     isinstance(entries, list | dict) and len(entries) == 0
                 ):
                     vals = [
-                        _chr_elt(_empty_or(_dollar(m, "value"), None)) for m in _elements(entries)
+                        _chr1(_empty_or(_dollar(m, "value"), None)) for m in _elements(entries)
                     ]
                     vals = [v for v in vals if v is not None]
                     if vals:
@@ -269,11 +268,11 @@ def _dspace7_info(host: Any, uuid: Any = None, handle: Any = None, pb: Any = Non
             )
             bitstreams = _elements(_bracket(_bracket(bs, "_embedded"), "bitstreams"))
             for b in bitstreams:
-                names.append(_chr_elt(_empty_or(_dollar(b, "name"), None)))
+                names.append(_chr1(_empty_or(_dollar(b, "name"), None)))
                 sizes.append(_as_numeric(_empty_or(_dollar(b, "sizeBytes"), None)))
-                checksums.append(_chr_elt(_empty_or(_dollars(b, "checkSum", "value"), None)))
+                checksums.append(_chr1(_empty_or(_dollars(b, "checkSum", "value"), None)))
                 retrieve.append(
-                    _chr_elt(
+                    _chr1(
                         _empty_or(
                             _bracket(_bracket(_bracket(b, "_links"), "content"), "href"), None
                         )
