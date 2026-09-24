@@ -31,3 +31,11 @@ regextract = rx.regextract
 regextract_all = rx.regextract_all
 regexec = rx.regexec
 strsplit = rx.strsplit
+
+
+def r_round(x: list[Any], digits: int = 0) -> list[Any]:
+    return [rb.r_round(v, digits) for v in x]
+
+
+def signif(x: list[Any], digits: int = 6) -> list[Any]:
+    return [rb.signif(v, digits) for v in x]

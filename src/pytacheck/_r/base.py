@@ -24,6 +24,7 @@ __all__ = [
     "paste",
     "paste0",
     "plural",
+    "r_round",
     "r_sort_key",
     "r_sorted",
     "signif",
@@ -181,11 +182,110 @@ def substr(x: str, start: int, stop: int) -> str:
     return x[start - 1 : stop]
 
 
-def signif(x: float, digits: int = 6) -> float:
-    """R ``signif()``."""
-    if is_na(x) or x == 0 or not math.isfinite(x):
+_LOG10_2 = math.log10(2.0)
+_MAX10E = 308
+_MAX_DIGITS = 308 + 15
+
+
+def _r_pow_di(x: float, n: int) -> float:
+    """R's ``R_pow_di()``: x^n by repeated squaring (matches R bit for bit)."""
+    xn = 1.0
+    if n != 0:
+        neg = n < 0
+        if neg:
+            n = -n
+        while True:
+            if n & 1:
+                xn *= x
+            n >>= 1
+            if n:
+                x *= x
+            else:
+                break
+        if neg:
+            xn = 1.0 / xn
+    return xn
+
+
+def r_round(x: Any, digits: int = 0) -> Any:
+    """R ``round()`` (R >= 4.0 algorithm, ``src/nmath/fround.c``).
+
+    Python's :func:`round` rounds the exact binary value, R picks the nearer
+    of the two decimal candidates computed in double arithmetic (ties to
+    even); they disagree on a few percent of "half" cases such as
+    ``round(0.12355, 4)`` (R: 0.1236, Python: 0.1235). Use this wherever the
+    R code calls ``round()``. ``NA`` is returned unchanged.
+    """
+    if is_na(x):
         return x
-    return float(f"{x:.{max(digits, 1) - 1}e}")
+    x = float(x)
+    if math.isinf(x) or x == 0.0 or digits > _MAX_DIGITS:
+        return x
+    if digits < -_MAX10E:
+        return 0.0
+    if digits == 0:
+        return float(round(x))
+    dig = math.floor(digits + 0.5)
+    sgn = 1.0
+    if x < 0:
+        sgn, x = -1.0, -x
+    if _LOG10_2 * (0.5 + (math.frexp(x)[1] - 1)) + dig > 15:
+        return sgn * x
+    if dig <= _MAX10E:
+        pow10 = _r_pow_di(10.0, dig)
+        x10 = x * pow10
+        i10 = math.floor(x10)
+        xd = i10 / pow10
+        xu = math.ceil(x10) / pow10
+    else:
+        e10 = dig - _MAX10E
+        p10 = _r_pow_di(10.0, e10)
+        pow10 = _r_pow_di(10.0, _MAX10E)
+        x10 = (x * pow10) * p10
+        i10 = math.floor(x10)
+        xd = i10 / pow10 / p10
+        xu = math.ceil(x10) / pow10 / p10
+    du = xu - x
+    dd = x - xd
+    return sgn * (xu if (du < dd or (math.fmod(i10, 2.0) == 1 and du == dd)) else xd)
+
+
+def signif(x: Any, digits: int = 6) -> Any:
+    """R ``signif()`` (``src/nmath/fprec.c``)."""
+    if is_na(x):
+        return x
+    x = float(x)
+    if math.isinf(x) or x == 0.0:
+        return x
+    dig = round(digits)
+    if dig > _MAX_DIGITS:
+        return x
+    dig = max(dig, 1)
+    sgn = 1.0
+    if x < 0:
+        sgn, x = -1.0, -x
+    l10 = math.log10(x)
+    e10 = dig - 1 - math.floor(l10)
+    if abs(l10) < _MAX10E - 2:
+        p10 = 1.0
+        if e10 > _MAX10E:
+            p10 = _r_pow_di(10.0, e10 - _MAX10E)
+            e10 = _MAX10E
+        if e10 > 0:
+            pow10 = _r_pow_di(10.0, e10)
+            return sgn * (round((x * pow10) * p10) / pow10) / p10
+        pow10 = _r_pow_di(10.0, -e10)
+        return sgn * (round(x / pow10) * pow10)
+    do_round = math.log10(1.7976931348623157e308) - l10 >= _r_pow_di(10.0, -dig)
+    e2 = dig + (1 if e10 > 0 else -1) * _MAX_DIGITS
+    p10 = _r_pow_di(10.0, e2)
+    big_p10 = _r_pow_di(10.0, e10 - e2)
+    x *= p10
+    x *= big_p10
+    if do_round:
+        x += 0.5
+    x = math.floor(x) / p10
+    return sgn * x / big_p10
 
 
 # ---------------------------------------------------------------------------

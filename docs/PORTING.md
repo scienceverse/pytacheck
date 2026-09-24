@@ -107,7 +107,10 @@ R's `paste()`/`as.character()` of a double uses 15 significant digits and may sw
 to scientific notation (`1e+05`); `format()` uses 7. Use `pytacheck._r.as_character`
 and `pytacheck._r.format_num(x, digits)`; `sprintf("%.2f", x)` is `f"{x:.2f}"`,
 `sprintf("%d", n)` is `f"{n:d}"`, `sprintf("%s", x)` is `as_character(x)` (and `"NA"`
-for missing). R `round()` matches Python `round()`; `signif()` is `_r.signif`.
+for missing). **R `round()` is not Python `round()`**: they disagree on ~3% of decimal
+"half" cases (`round(0.12355, 4)` is 0.1236 in R, 0.1235 in Python) — always use
+`pytacheck._r.r_round(x, digits)` where R calls `round()`, and `_r.signif()` for
+`signif()`.
 `plural(n)` is `_r.plural`.
 
 ### Missing values and types

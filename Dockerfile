@@ -7,13 +7,14 @@
 #
 #   docker run --rm -v "$PWD:/work" pytacheck run paper.json -m all_p_values
 #   docker run --rm -p 8000:8000 pytacheck serve --host 0.0.0.0
+#   --build-arg BASE_IMAGE=public.ecr.aws/docker/library/python:3.12-slim   # a Docker Hub mirror
 ARG PYTHON_VERSION=3.12
+ARG BASE_IMAGE=python:${PYTHON_VERSION}-slim
 
-FROM ghcr.io/astral-sh/uv:0.9.8 AS uv
-
-FROM python:${PYTHON_VERSION}-slim AS build
+FROM ${BASE_IMAGE} AS build
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
-COPY --from=uv /uv /usr/local/bin/uv
+ARG UV_VERSION=0.9.8
+RUN pip install --no-cache-dir "uv==${UV_VERSION}"
 ENV UV_COMPILE_BYTECODE=1 \
     UV_LINK_MODE=copy \
     UV_PYTHON_DOWNLOADS=never \
@@ -31,7 +32,7 @@ RUN --mount=type=cache,target=/root/.cache/uv \
     if [ "$WITH_BIBR" = "1" ]; then extras="$extras --extra bibr"; fi; \
     uv sync --locked --no-dev --no-editable $extras
 
-FROM python:${PYTHON_VERSION}-slim AS runtime
+FROM ${BASE_IMAGE} AS runtime
 ARG WITH_BIBR=0
 LABEL org.opencontainers.image.title="pytacheck" \
       org.opencontainers.image.description="Check research outputs for best practices (Python port of metacheck)" \

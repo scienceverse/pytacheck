@@ -19,7 +19,7 @@ import time
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from conftest import make_corpus  # noqa: E402
+from conftest import make_corpus
 
 R_SCRIPT = r"""
 suppressPackageStartupMessages(library(metacheck))
