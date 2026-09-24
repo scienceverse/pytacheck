@@ -1,0 +1,39 @@
+{
+  "id": "data_check_pii_values.mixed_patterns",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "problem",
+      "message",
+      "values"
+    ],
+    "v": [
+      {
+        "t": "lgl",
+        "v": [
+          true
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Values look like personal information: email (1 value, 20%); ip_address (1 value, 20%); ssn (1 value, 20%); credit_card (1 value, 20%). Review before sharing."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "email",
+          "ip_address",
+          "ssn",
+          "credit_card"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

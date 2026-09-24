@@ -111,6 +111,20 @@ FB_CONTROL = (
     "80% power."
 )
 
+# fallback replies whose keys collide with columns the module sets itself
+FB_ERRKEY = (
+    "An a priori power analysis for 72 participants gave 80% power, but the reply carries an "
+    "error key."
+)
+FB_COLKEYS = (
+    "A sensitivity power analysis with 58 participants gave 95% power for d = 0.7 (reply keys "
+    "clash)."
+)
+# structured replies: invalid JSON, a null array, every optional field null
+BAD_JSON = "A sensitivity power analysis for 46 participants gave 80% power (unparsable reply)."
+NULL_ARRAY = "The a priori power analysis gave 88 participants for 90% power (null array)."
+ALL_NULL = "Power analyses were mentioned for 16 participants with a large effect."
+
 # regex classification: case, Unicode and number-format variants
 UNICODE = [
     "The POWERED design had 80% POWER for Post Hoc tests.",
@@ -119,6 +133,33 @@ UNICODE = [
     "ΣΑΣ power analysis: 40 participants, a-priori, 0,80.",
     "Statistical power was high (N = 1999) in the RETROSPECTIVE analysis.",
     "A Sensitivity and a priori power analysis used 12 participants.",
+]
+
+# regex path: word boundaries, years, Unicode case/digits/spaces, classification order
+TRICKY = [
+    "An A PR\u0130OR\u0130 power analysis required 50 participants.",
+    "Our statistical power (see Fig. 3a) was sufficient.",
+    "Statistical power was \u0668\u0660% here.",
+    "Statistical power was \uff18\uff10% here.",
+    "The power\u00a0= 0.80 was fine with 4 groups.",
+    "The power\u2009= 0.80 was fine with 4 groups.",
+    "The sample\u00a0size gave power of 0.9 for 3 groups.",
+    "We achieved power of 0.9 with 1999 people.",
+    "We achieved power of 0.9 with 19999 people.",
+    "We achieved power of 0.9 with 1999.5 people.",
+    "We achieved power_x of 0.9 with 12 people.",
+    "We achieved \u00e9power of 0.9 with 12 people.",
+    "We achieved power2 of 0.9 with 12 people and 3rd.",
+    "Achieved POWERS: 12.",
+    "A PoSt HoC power analysis with 12 people, a-posteriori, retrospective power.",
+    "Compromise Power analysis: 12 people, G-Power.",
+    "A\nprior power analysis\twith 12 people; power\n=\n0.8.",
+    "Sensitivity power was 12% (a priori).",
+    "The effect was 12 (power 0.8) in the SENS\u0130T\u0130V\u0130TY analysis.",
+    "We used GPower 3 to achieve power.",
+    "Effect sizes were 1.000,5 for power.",
+    "Observed power: 12; retrospective power 13; observedpower 14.",
+    "power 12 aprioriposthoc",
 ]
 
 # -- provider replies --------------------------------------------------------------
@@ -316,6 +357,68 @@ REPLIES: dict[str, dict[str, Any]] = {
             )
         ]
     },
+    FB_ERRKEY[:40]: {
+        "structured": 400,
+        "fallback": fenced(
+            [
+                {
+                    **S.pa(
+                        power_type="apriori",
+                        sample_size=72,
+                        alpha_level=0.05,
+                        power=0.8,
+                        effect_size=0.4,
+                        effect_size_metric="Cohen's d",
+                        statistical_test="regression",
+                        software="G*Power",
+                    ),
+                    "error": "table not readable",
+                }
+            ]
+        ),
+    },
+    FB_COLKEYS[:40]: {
+        "structured": 400,
+        "fallback": fenced(
+            [
+                {
+                    "paper_id": "zzz",
+                    "complete": False,
+                    "power_id": 7,
+                    **S.pa(
+                        power_type="sensitivity",
+                        statistical_test="paired t-test",
+                        sample_size=58,
+                        alpha_level=0.05,
+                        power=0.95,
+                        effect_size=0.7,
+                        effect_size_metric="Cohen's d",
+                        software="pwrss",
+                    ),
+                }
+            ]
+        ),
+    },
+    BAD_JSON[:40]: {
+        "structured_text": "power_analyses: sensitivity, n = 46",
+        "fallback": fenced(
+            [
+                S.pa(
+                    power_type="sensitivity",
+                    statistical_test="other",
+                    statistical_test_other="Wilcoxon",
+                    sample_size=46,
+                    alpha_level=0.05,
+                    power=0.8,
+                    effect_size=0.45,
+                    effect_size_metric="Cohen's d",
+                    software="simr",
+                )
+            ]
+        ),
+    },
+    NULL_ARRAY[:40]: {"structured_raw": {"power_analyses": None}},
+    ALL_NULL[:40]: {"structured": [S.pa(power_type="unknown")]},
 }
 
 
@@ -326,12 +429,21 @@ class RawReply:
         self.value = value
 
 
+class RawText:
+    """A reply whose message content is this text, verbatim (e.g. invalid JSON)."""
+
+    def __init__(self, text: str) -> None:
+        self.text = text
+
+
 def reply_for(text: str, structured: bool) -> Any:
     """The reply to a request for *text*: this file's, else ``scenarios.py``'s."""
     for key, value in REPLIES.items():
         if key in text:
             if structured and "structured_raw" in value:
                 return RawReply(value["structured_raw"])
+            if structured and "structured_text" in value:
+                return RawText(value["structured_text"])
             return value.get("structured" if structured else "fallback", fenced([]))
     return S.reply_for(text) if structured else fenced([])
 
@@ -428,6 +540,17 @@ expr_case(
     "tryCatch(module_run(paperlist(), 'power'), error = function(e) conditionMessage(e))",
     f"{H}.catch(lambda: pc.module_run(pc.PaperList([]), 'power'))",
 )
+tricky = paras(TRICKY, list(range(1, len(TRICKY) + 1)))
+expr_case(
+    "power.review.tricky",
+    f"module_run({tricky.r}, 'power')",
+    f"pc.module_run({tricky.py}, 'power')",
+)
+expr_case(
+    "power.review.tricky.tables",
+    R_TABLES.format(run=f"module_run({tricky.r}, 'power')"),
+    f"{H}.report_tables(pc.module_run({tricky.py}, 'power'))",
+)
 nohits = plist("I love to power pose.", "The 12 moths had no power.")
 expr_case(
     "power.review.paperlist_none",
@@ -499,6 +622,15 @@ llm_case(
     plist(FB_COMPLETE, FB_NONE, FB_POSTHOC, FB_OMIT),
     tables=True,
 )
+llm_case("power.review.fallback.error_key", tp(FB_ERRKEY))
+llm_case("power.review.fallback.none_garbled", paras([FB_NONE, FB_GARBLED], [0, 1]))
+llm_case("power.review.fallback.column_keys", tp(FB_COLKEYS))
+llm_case("power.review.fallback.column_keys.tables", tp(FB_COLKEYS), tables=True)
+llm_case("power.review.llm.bad_json", tp(BAD_JSON))
+llm_case("power.review.llm.bad_json_mixed", paras([BAD_JSON, S.COMPLETE], [0, 1]))
+llm_case("power.review.llm.null_array", tp(NULL_ARRAY))
+llm_case("power.review.llm.all_null", tp(ALL_NULL))
+llm_case("power.review.llm.all_null.tables", tp(ALL_NULL), tables=True)
 llm_case(
     "power.review.fallback.partial_http_fail",
     paras([FB_COMPLETE, FB_FAIL], [0, 1]),
@@ -532,7 +664,9 @@ def record_mocks() -> dict[str, tuple[int, Any]]:
         if isinstance(reply, int):
             recorded[path] = (reply, GROQ_400)
             return httpx.Response(reply, json=GROQ_400)
-        if isinstance(reply, RawReply):
+        if isinstance(reply, RawText):
+            content = reply.text
+        elif isinstance(reply, RawReply):
             content = json.dumps(reply.value, ensure_ascii=False)
         elif structured:
             content = json.dumps({"power_analyses": reply}, ensure_ascii=False)

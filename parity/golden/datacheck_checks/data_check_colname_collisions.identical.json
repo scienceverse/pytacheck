@@ -1,0 +1,22 @@
+{
+  "id": "data_check_colname_collisions.identical",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "id"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "Column name becomes \"id\" when special characters are replaced, the same as 1 other identically named column: tools that sanitize names (R's make.names(), SPSS/SAS/Stata import, codebook section links) cannot tell these columns apart."
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

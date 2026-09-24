@@ -157,7 +157,7 @@ def _zenodo_info_table(zenodo_url: Any, id_col: int | str, pb: Any, cache: bool)
     from pytacheck import http
     from pytacheck._r import as_character, bind_rows
     from pytacheck.archives import _tick
-    from pytacheck.archives.github import _as_list
+    from pytacheck.archives.github import _as_list, _check_combine
     from pytacheck.archives.info_cache import (
         _repo_info_cache_get,
         _repo_info_cache_put,
@@ -218,6 +218,8 @@ def _zenodo_info_table(zenodo_url: Any, id_col: int | str, pb: Any, cache: bool)
             _repo_info_cache_put("zenodo", zid, info)
         id_info.append(info)
 
+    # bind_rows() refuses records whose fields have incompatible types
+    _check_combine(id_info)
     info = bind_rows(id_info)
     data = left_join(table, ids, by="zenodo_url")
     data = left_join(data, info, by="zenodo_id", suffix=("", ".zenodo"))

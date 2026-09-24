@@ -39,6 +39,7 @@ from pytacheck.archives.dataverse import (
     _file_frame,
     _finish_file_table,
     _info_table,
+    _invalid_utf8,
     _link_matches,
     _list_cell,
     _mark_named_ids,
@@ -147,6 +148,11 @@ def _dryad_doi_one(url: str | None) -> str | None:
     if url == "":
         return None
     url = _url_decode(url)
+    if _invalid_utf8(url):
+        # R: regexec(perl = TRUE) warns about invalid UTF-8 and finds nothing, per pattern
+        for _ in _dryad_doi_patterns():
+            warnings.warn("input string 1 is invalid UTF-8", stacklevel=3)
+        return None
     for rx in _dryad_doi_patterns():
         m = rx.search(url)
         if m is not None:

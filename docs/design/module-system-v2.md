@@ -732,3 +732,72 @@ code deliberately differs:
   is one, else every available module (plumber's behaviour). Modules still
   run independently on the paper, as in plumber. Every upload endpoint's
   blocking work runs in a worker thread behind a per-event-loop semaphore.
+
+## Implementation notes (review fixes)
+
+Changes made after the review of phases 1 and 2, where the code now differs
+from the text above:
+
+* **`run_provenance`.** The provenance field is `ModuleOutput.run_provenance`.
+  `out.provenance` still reads it, unless the module returned an element
+  called `provenance` (a module's own elements win, as before v2).
+* **Memo keys.** Module identity is the pack, the rev, the file hash *and* the
+  function object (two functions can share a name and a file: a factory, a
+  redefinition, `replace(spec, func=...)`); `./name.py` files, re-executed on
+  every call, are identified by file hash and qualified name. The paper part
+  of the key is the generation (bumped by the `Paper` API only), the ids of
+  its table objects and its frozen `extra`; the LLM options (`llm_use()`,
+  `llm_model()`, ...) are part of the key too. Edits *inside* a table are not
+  seen, so "bumped by any mutation" above does not hold: papers must not be
+  mutated in place within a session. Hits deep-copy containers (lists, dicts)
+  as well as viewing DataFrames.
+* **`pack::name`** is only a qualified ref when both sides are valid names and
+  no file of that name exists, so legacy paths containing `::` still load. A
+  malformed config file makes a lookup raise `ModuleError` (naming the config
+  problem), not `ConfigError`.
+* **Provenance `args`.** Large objects (DataFrames, arrays, papers) are stored
+  as `<Type shape>`, and other `repr`s are cut at 1000 characters, so
+  building provenance stays cheap.
+* **Extraction.** What the tree hash leaves out (`.git/`, `__pycache__/`,
+  `*.pyc`, an install record) is never written, and compiled extension
+  modules (`*.so`, `*.pyd`) are refused, so the installed files are exactly
+  the hashed, recorded and reviewed ones. The `pytacheck_packs.*` finder is
+  authoritative: a name with no `.py` source raises `ModuleNotFoundError`
+  instead of falling through to bytecode, extensions or namespace packages.
+* **Reviews.** Maintainers record `reviewed` together with
+  `reviewed_tree_sha256` (the tree they read) in `packs/<name>.json`; a date
+  without it, or for another tree, is dropped with a warning, and
+  `store build --check` makes that an error.
+* **Remote stores** cannot list `{"path": ...}` sources: `_`-prefixed keys are
+  stripped from every index, `_location` is set only for local-folder stores,
+  and a local store's paths must stay inside its folder.
+* **Project config trust** (like git's `safe.directory`). The upward search
+  stops at the home folder and at filesystem boundaries. A `pytacheck.json`
+  owned by another user, or writable by others (a world-writable folder
+  without the sticky bit, or a group other than the user's), is ignored with
+  a warning. Local code it names (path packs, `.py` modules in presets) stays
+  inactive until the user trusts it (`<data>/trusted.json`; `pack install`
+  shows the code and asks, and adding a path pack with `--project` trusts
+  it). Such path pins are written relative to the project file.
+* **Reruns** hash every file before importing it, ask before running a
+  recorded module file outside the working directory (a record is shareable
+  data), and replay a module that failed in the record and still cannot be
+  resolved as a failed output instead of stopping.
+* **CLI.** `run` and `rerun` print why each failed module failed (with a note
+  for metacheck modules not ported yet), add `error` to `--json`, run the
+  remaining modules and exit 1. `-a MOD.KEY` must name a selected module and
+  one of its arguments. `init --project` pins every pack its presets need in
+  the project file (copying the user's pin when there is one), so the file is
+  a working lock file. `pack check packs/<name>.json` fetches an external
+  entry at its rev and checks it (store CI runs it). `presets --as-r` leaves
+  modules without an `.R` twin out of the call (listed in a comment).
+  `report --record` records the order the modules ran in. `pack search`
+  shows PPV and sensitivity. `run_modules(..., record=path)` writes the run
+  record. Unreadable paper files are a one-line error; a cancelled
+  `pack update` says so and exits 1.
+* **Still open.** The report renderer does not run modules through
+  `run_modules()` yet, so HTML reports neither embed the run record nor show
+  pack names (MODULES.md says so). The default store must be published from
+  `contrib/pytacheck-modules` before `pack search` / `init` work for users;
+  until its CI rebuilds `index.json`, the seed's path sources install only
+  from a local copy.

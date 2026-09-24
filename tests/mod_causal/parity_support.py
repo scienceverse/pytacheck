@@ -139,3 +139,34 @@ def without_title(p: Any) -> Any:
     """R ``p$info$title <- NULL``."""
     p.info = p.info.drop(columns=["title"])
     return p
+
+
+def without_text(p: Any) -> Any:
+    """R ``p$text$text <- NULL``."""
+    p.text = p.text.drop(columns=["text"])
+    return p
+
+
+def with_section_types(p: Any, section_type: Sequence[str]) -> Any:
+    """R ``p$section$section_type <- section_type``."""
+    section = p.section.copy()
+    section["section_type"] = pd.Series(list(section_type), index=section.index, dtype="string")
+    p.section = section
+    return p
+
+
+def error_message(x: Callable[[], Any]) -> Any:
+    """R ``tryCatch(x, error = function(e) conditionMessage(e))``."""
+    try:
+        return x()
+    except Exception as exc:
+        return str(exc)
+
+
+def report_qmd(out: Any) -> list[str]:
+    """``module_run(...)$report`` as R holds it: table blocks become the R
+    chunk ``scroll_table()`` returns, so tables are compared too."""
+    from pytacheck.report import ReportTable
+    from pytacheck.report.render import table_chunk
+
+    return [table_chunk(x) if isinstance(x, ReportTable) else x for x in out.report]

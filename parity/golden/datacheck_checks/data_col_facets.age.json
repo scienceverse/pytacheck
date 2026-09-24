@@ -1,0 +1,99 @@
+{
+  "id": "data_col_facets.age",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "representation",
+      "measurement_level",
+      "concept",
+      "role",
+      "unit",
+      "quality",
+      "parse_note",
+      "numeric_values",
+      "n_coerced",
+      "is_numeric",
+      "ambiguous"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "numeric"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "ratio"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "age"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "measure"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "years"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "ok"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          23,
+          45,
+          31,
+          29,
+          55,
+          19,
+          67,
+          40
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -837,7 +837,7 @@ def formats() -> None:
             ("loop", df(**{"trials.thisN": [0], "resp.keys": ["a"]})),
             ("timing", df(**{"text.started": [1.5]})),
             ("meta", df(expName=["x"], participant=[1])),
-            ("plain", df(**{"trials_thisN": [0], "rt": [1]})),
+            ("underscore_names", df(**{"trials_thisN": [0], "rt": [1]})),
             ("fixture", read_head("psychopy.csv")),
         ],
     }.items():

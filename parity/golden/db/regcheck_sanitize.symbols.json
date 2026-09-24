@@ -6,7 +6,7 @@
   "value": {
     "t": "chr",
     "v": [
-      "p <= .05 - a \"result\""
+      "p  .05  a result"
     ]
   },
   "metacheck_version": "0.3.1",

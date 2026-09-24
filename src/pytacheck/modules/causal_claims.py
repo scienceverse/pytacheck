@@ -149,6 +149,10 @@ def _any(causal: pd.Series) -> bool:
 def _summarise_causal(causal_abstract: pd.DataFrame, table: pd.DataFrame) -> pd.DataFrame:
     """``left_join(causal_abstract, table, by = c(sentence = "text")) |>
     summarise(causal = sum(causal), .by = "paper_id")``."""
+    if "text" not in table.columns:
+        # text_search() drops the text column when the text table has none
+        # (e.g. an empty paper list)
+        raise ValueError("Join columns in `y` must be present in the data.")
     # A sentence occurring several times (e.g. in two papers) matches each row
     # (many-to-many). dplyr only warns about that when called from the global
     # environment, never from module code, so no warning here.
@@ -208,12 +212,14 @@ def causal_claims(paper: Any) -> dict[str, Any]:
     sentences = text_search(paper)
 
     # randomisation ----
-    has_random = grepl("random", sentences["text"], ignore_case=True)
-    random_sentences = sentences[pd.Series(has_random, index=sentences.index, dtype=bool)]
-    texts = random_sentences["text"]
+    # R: `random_sentences$text` is NULL when text_search() returned no text
+    # column (an empty paper list), so nothing matches
+    all_text = sentences["text"] if "text" in sentences.columns else pd.Series([], dtype="string")
+    has_random = grepl("random", all_text, ignore_case=True)
+    texts = all_text[pd.Series(has_random, index=all_text.index, dtype=bool)]
     inc = pd.Series(grepl(_INCLUDE_RE, texts, perl=True), index=texts.index, dtype=bool)
     exc = pd.Series(grepl(_EXCLUDE_RE, texts, perl=True), index=texts.index, dtype=bool)
-    random_assignment_subset = random_sentences[inc & ~exc]
+    random_assignment_subset = texts[inc & ~exc]
     n_random = len(random_assignment_subset)
 
     if n_random == 0:
@@ -225,7 +231,7 @@ def causal_claims(paper: Any) -> dict[str, Any]:
         )
         report_randomization = [
             summary_text_randomization,
-            scroll_table(random_assignment_subset["text"].tolist()),
+            scroll_table(random_assignment_subset.tolist()),
             *_JARS_RANDOMIZATION,
         ]
 
@@ -233,7 +239,9 @@ def causal_claims(paper: Any) -> dict[str, Any]:
     table = sentences[sentences["section_type"].eq("abstract").fillna(False).astype(bool)]
     table = table.reset_index(drop=True)
     causal_title = causal.causal_relations(_title(paper))
-    causal_abstract = causal.causal_relations(table["text"].tolist())
+    causal_abstract = causal.causal_relations(
+        table["text"].tolist() if "text" in table.columns else []
+    )
 
     ## summary_table ----
     summary_table = _summarise_causal(causal_abstract, table)

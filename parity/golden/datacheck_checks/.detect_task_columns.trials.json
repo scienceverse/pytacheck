@@ -1,0 +1,60 @@
+{
+  "id": ".detect_task_columns.trials",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 5,
+    "names": [
+      "column_name",
+      "kind",
+      "by_name",
+      "by_value"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "stroop_rt",
+          "stroop_correct",
+          "condition",
+          "block",
+          "accuracy_prop"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "rt",
+          "accuracy",
+          "condition",
+          "condition",
+          "accuracy"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true,
+          true,
+          true,
+          true,
+          true
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true,
+          true,
+          false,
+          false,
+          true
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

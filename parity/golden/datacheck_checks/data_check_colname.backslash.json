@@ -1,0 +1,36 @@
+{
+  "id": "data_check_colname.backslash",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "problem",
+      "message",
+      "values"
+    ],
+    "v": [
+      {
+        "t": "lgl",
+        "v": [
+          true
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Column name has characters not allowed in file names (\"\\\"). Such names break when reused as file names or in code; prefer short names of letters, digits and underscores. A name like this can also mean the file's header was not parsed as intended."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "\\"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

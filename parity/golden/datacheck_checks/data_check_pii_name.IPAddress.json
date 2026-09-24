@@ -1,0 +1,38 @@
+{
+  "id": "data_check_pii_name.IPAddress",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "problem",
+      "message",
+      "values"
+    ],
+    "v": [
+      {
+        "t": "lgl",
+        "v": [
+          true
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Column name suggests personal information (matched: ip, address, ipaddress). Review before sharing."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "ip",
+          "address",
+          "ipaddress"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

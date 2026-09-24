@@ -533,7 +533,10 @@ def _github_readme(clean_repo: str) -> str:
     if resp.status_code != 200:
         return ""
     content = _body_json(resp)
-    raw = base64.b64decode(str(content.get("content") or ""))
+    raw = base64.b64decode(str(_dollar(content, "content") or ""))
+    if b"\x00" in raw:
+        # R: rawToChar() refuses a NUL byte
+        raise ValueError("embedded nul in string")
     return raw.decode("utf-8", errors="replace")
 
 
@@ -568,16 +571,16 @@ def _github_languages(clean_repo: str) -> pd.DataFrame:
     # {"message": "Not Found", ...} becomes "languages" named after its fields
     n = 0 if languages is None else len(languages) if isinstance(languages, list | dict) else 1
     if n:
-        names = list(languages) if isinstance(languages, dict) else []
-        values = list(languages.values()) if isinstance(languages, dict) else [languages]
-        out = _r_data_frame(
-            {
-                "repo": pd.Series([clean_repo], dtype="string"),
-                "language": pd.Series(names, dtype="string"),
-                "bytes": _r_unlist(values),
-            }
-        )
-        return out
+        cols: dict[str, Any] = {"repo": pd.Series([clean_repo], dtype="string")}
+        if isinstance(languages, dict):
+            cols["language"] = pd.Series(list(languages), dtype="string")
+            values = list(languages.values())
+        else:
+            # names() of a JSON array or scalar is NULL, and data.frame()
+            # drops a NULL column
+            values = languages if isinstance(languages, list) else [languages]
+        cols["bytes"] = _r_unlist(values)
+        return _r_data_frame(cols)
     return pd.DataFrame(
         {
             "repo": pd.Series([clean_repo], dtype="string"),
@@ -750,6 +753,11 @@ def github_tree_files(repo: Any) -> dict[str, Any]:
             "license": license,
         }
 
+    if isinstance(clean_repo, list):
+        # several repositories: R's request() refuses a vector of URLs, and
+        # the error sends it to the github_files() fallback
+        return fallback("main", None)
+
     # 1. repository metadata (default branch + detected licence)
     try:
         meta_resp = _perform(
@@ -788,8 +796,7 @@ def github_tree_files(repo: Any) -> dict[str, Any]:
             "license": license_id,
         }
 
-    entries = _dollar(tree, "tree") or []
-    blobs = [x for x in entries if _dollar(x, "type") == "blob"]
+    blobs = _filter_blobs(_dollar(tree, "tree") or [])
     paths = [_empty_or(_dollar(x, "path"), "") for x in blobs]
     if not blobs:
         files_df = _empty_tree_files()
@@ -804,9 +811,7 @@ def github_tree_files(repo: Any) -> dict[str, Any]:
                 "name": pd.Series(names, dtype="string"),
                 "path": pd.Series(paths, dtype="string"),
                 "download_url": pd.Series([raw_base + p for p in paths], dtype="string"),
-                "size": pd.Series(
-                    [_num(_empty_or(_dollar(x, "size"))) for x in blobs], dtype="float64"
-                ),
+                "size": pd.Series([_vapply_num(_dollar(x, "size")) for x in blobs], dtype="float64"),
                 "ft": pd.Series(["file"] * len(blobs), dtype="string"),
             }
         )
@@ -820,6 +825,19 @@ def github_tree_files(repo: Any) -> dict[str, Any]:
         "default_branch": default_branch,
         "license": license_id,
     }
+
+
+def _filter_blobs(entries: Any) -> list[Any]:
+    """``Filter(\\(x) x$type == "blob", entries)`` on parsed JSON tree entries.
+
+    ``Filter()`` keeps ``x[which(unlist(lapply(x, f)))]``: an entry without a
+    ``type`` gives ``logical(0)``, which ``unlist()`` drops, so the flags after
+    it shift onto earlier entries, as in R.
+    """
+    if isinstance(entries, dict):
+        entries = list(entries.values())
+    flags = [t == "blob" for t in (_dollar(x, "type") for x in entries) if t is not None]
+    return [entries[i] for i, keep in enumerate(flags) if keep is True]
 
 
 def _empty_tree_files() -> pd.DataFrame:
@@ -841,6 +859,18 @@ def _empty_or(x: Any, y: Any = None) -> Any:
     if x is None or (isinstance(x, list | tuple | dict) and len(x) == 0):
         return y
     return x
+
+
+def _vapply_num(x: Any) -> float | None:
+    """``vapply(..., \\(x) x %empty_or% NA_real_, numeric(1))`` for one value."""
+    x = _empty_or(x)
+    if x is None:
+        return None
+    if isinstance(x, list | dict):
+        raise ValueError("values must be length 1")
+    if isinstance(x, str):
+        raise TypeError("values must be type 'double', but FUN(X[[1]]) result is type 'character'")
+    return float(x)
 
 
 def _num(x: Any) -> float | None:

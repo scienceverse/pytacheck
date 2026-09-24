@@ -1,0 +1,330 @@
+{
+  "id": "power.review.tricky",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "power"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Power Analysis Check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "method"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 14,
+        "names": [
+          "text_id",
+          "section_id",
+          "paragraph_id",
+          "text",
+          "formatted",
+          "paper_id",
+          "header",
+          "section_type",
+          "power_type",
+          "complete",
+          "power_id"
+        ],
+        "v": [
+          {
+            "t": "lgl",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1,
+              15,
+              16,
+              17,
+              21,
+              20,
+              18,
+              23,
+              8,
+              9,
+              10,
+              14,
+              22,
+              6
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "An A PRİORİ power analysis required 50 participants.",
+              "A PoSt HoC power analysis with 12 people, a-posteriori, retrospective power.",
+              "Compromise Power analysis: 12 people, G-Power.",
+              "A prior power analysis with 12 people; power = 0.8.",
+              "Effect sizes were 1.000,5 for power.",
+              "We used GPower 3 to achieve power.",
+              "Sensitivity power was 12% (a priori).",
+              "power 12 aprioriposthoc",
+              "We achieved power of 0.9 with 1999 people.",
+              "We achieved power of 0.9 with 19999 people.",
+              "We achieved power of 0.9 with 1999.5 people.",
+              "Achieved POWERS: 12.",
+              "Observed power: 12; retrospective power 13; observedpower 14.",
+              "The power = 0.80 was fine with 4 groups."
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Test",
+              "Test",
+              "Test",
+              "Test",
+              "Test",
+              "Test",
+              "Test",
+              "Test",
+              "Test",
+              "Test",
+              "Test",
+              "Test",
+              "Test",
+              "Test"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "unknown",
+              "unknown",
+              "unknown",
+              "unknown",
+              "unknown",
+              "unknown",
+              "unknown",
+              "unknown",
+              "unknown",
+              "unknown",
+              "unknown",
+              "unknown",
+              "unknown",
+              "unknown"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "apriori",
+              "posthoc",
+              "compromise",
+              "unknown",
+              "unknown",
+              "unknown",
+              "apriori",
+              "apriori",
+              "unknown",
+              "unknown",
+              "unknown",
+              "unknown",
+              "posthoc",
+              "unknown"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13,
+              14
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "You chose to not use an LLM to assess if all information was reported, so please check for all required information manually.",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(power_id = 1:14, power_type = c(\"apriori\", \"posthoc\", \n\"compromise\", \"unknown\", \"unknown\", \"unknown\", \"apriori\", \"apriori\", \n\"unknown\", \"unknown\", \"unknown\", \"unknown\", \"posthoc\", \"unknown\"\n)), row.names = c(NA, -14L), class = c(\"tbl_df\", \"tbl\", \"data.frame\"\n))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 5, FALSE)\n```\n",
+          "You reported a power analysis that has been classified as 'post-hoc'. Calculating observed power is [almost never useful](https://lakens.github.io/statistical_inferences/08-samplesizejustification.html#sec-posthocpower). If you actually performed a sensitivity power analysis, label it as such explicitly.",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(power_id = c(\"1\", \"2\", \"3\", \"4\", \"5\", \"6\", \"7\", \n\"8\", \"9\", \"10\", \"11\", \"12\", \"13\", \"14\"), text = c(\"An A PRİORİ <strong>power<\/strong> analysis required 50 participants.\", \n\"A <strong>PoSt HoC<\/strong> <strong>power<\/strong> analysis with 12 people, <strong>a-posteriori<\/strong>, <strong>retrospective power<\/strong>.\", \n\"Compromise <strong>Power<\/strong> analysis: 12 people, G-<strong>Power<\/strong>.\", \n\"A prior <strong>power<\/strong> analysis with 12 people; <strong>power<\/strong> = 0.8.\", \n\"Effect sizes were 1.000,5 for <strong>power<\/strong>.\", \"We used G<strong>Power<\/strong> 3 to achieve <strong>power<\/strong>.\", \n\"<strong>Sensitivity<\/strong> <strong>power<\/strong> was 12% (<strong>a priori<\/strong>).\", \n\"<strong>power<\/strong> 12 <strong>apriori<\/strong><strong>posthoc<\/strong>\", \n\"We achieved <strong>power<\/strong> of 0.9 with 1999 people.\", \n\"We achieved <strong>power<\/strong> of 0.9 with 19999 people.\", \n\"We achieved <strong>power<\/strong> of 0.9 with 1999.5 people.\", \n\"Achieved <strong>POWER<\/strong>S: 12.\", \"<strong>Observed power<\/strong>: 12; <strong>retrospective power<\/strong> 13; observed<strong>power<\/strong> 14.\", \n\"The <strong>power<\/strong> = 0.80 was fine with 4 groups.\")), row.names = c(NA, \n-14L), class = c(\"tbl_df\", \"tbl\", \"data.frame\"))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 5, FALSE)\n```\n",
+          "::: {.callout-tip title=\"Learn More\" collapse=\"true\"}\n\nPower analyses need to contain the following information to be interpretable: the type of power analysis, the statistical test, the software used, sample size, critical alpha criterion, power level, effect size, and an effect size metric. In addition, it is recommended to make sure the power analysis is reproducible (by sharing the code, or a screenshot, of the power analysis), and to provide good arguments for why the study was designed to detect an effect of this size.\n\nFor an a-priori power analysis, where the sample size is determined, reporting all information would look like:\n\n> An a priori power analysis for an independent samples t-test, conducted using the pwr.t.test function from pwr (Champely, 2020), indicated that for a Cohen's d = 0.5, an alpha level of 0.05, and a desired power level of 80% required at least 64 participants in each group.\n\nFor a sensitivity power analysis, this sentence would look like:\n\n> A sensitivity power analysis for an independent samples t-test, conducted using the pwr.t.test function from pwr (Champely, 2020), indicated that with 64 participants in each group, and an alpha level of 0.05, a desired power level of 80% was reached for an effect size of d = 0.5.\n\n:::\n"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "yellow"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "We detected 14 potential power analyses."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "power_n",
+          "power_complete"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "p1"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              14
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              null
+            ]
+          }
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0
+        ],
+        "names": [
+          "power_n"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

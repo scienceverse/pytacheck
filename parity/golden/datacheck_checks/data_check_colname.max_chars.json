@@ -1,0 +1,33 @@
+{
+  "id": "data_check_colname.max_chars",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "problem",
+      "message",
+      "values"
+    ],
+    "v": [
+      {
+        "t": "lgl",
+        "v": [
+          true
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Column name has a length of 11 characters (SPSS allows at most 64, SAS and Stata 32, so this name cannot be imported there without renaming). Such names break when reused as file names or in code; prefer short names of letters, digits and underscores."
+        ]
+      },
+      {
+        "t": "null"
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

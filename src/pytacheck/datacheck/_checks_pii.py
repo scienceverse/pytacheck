@@ -18,6 +18,7 @@ from pytacheck.datacheck._checks_rvec import (
     is_whole,
     median,
     rvec,
+    scalar_chr,
     tolower,
     trim,
     unique,
@@ -244,13 +245,15 @@ def data_check_pii_values(x: Any, broad_min_frac: float = 0.30) -> dict[str, Any
     }
 
 
-def _pii_split_name(x: str | None) -> list[str | None]:
+def _pii_split_name(x: Any) -> list[str | None]:
     """Split a column name into lower-case word tokens (separators and camelCase).
 
     Port of ``R/data_check_helpers.R::.pii_split_name()``: both readings of a
     capital run (``IPAddress`` -> ip/address, ``ZIPcode`` -> zip/code) are
-    produced.
+    produced. A vector argument uses its first element (as R's
+    ``strsplit(x)[[1]]`` does); ``NA`` gives ``[None]``.
     """
+    x = scalar_chr(x)
     if x is None:
         return [None]
     a = gsub(r"(?<=[a-z0-9])(?=[A-Z])", " ", x, perl=True)

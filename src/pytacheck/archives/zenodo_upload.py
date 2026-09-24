@@ -111,6 +111,13 @@ def zenodo_pat(pat: Any = None, sandbox: bool = True) -> Any:
         value = get_option(opt)
         return os.environ.get(env, "") if value is None else value
     if not isinstance(pat, str):
+        # R accepts any character vector of length one
+        from pytacheck.archives.github import _as_list, _is_vector
+
+        values = _as_list(pat) if _is_vector(pat) else []
+        if len(values) == 1 and isinstance(values[0], str):
+            pat = values[0]
+    if not isinstance(pat, str):
         raise ValueError("Set zenodo_pat with a single string containing your Zenodo token")
     options({opt: pat})
     return pat
@@ -255,6 +262,9 @@ def _zenodo_license_id(osf_license: Any) -> str | None:
         values = list(osf_license)
         if not values:
             return None
+        if len(values) > 1:
+            # R: `is.na(osf_license) || ...` on a longer vector
+            raise ValueError(f"'length = {len(values)}' in coercion to 'logical(1)'")
         osf_license = values[0]
     if is_na(osf_license) or osf_license == "":
         return None
