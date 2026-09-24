@@ -54,9 +54,9 @@ What is compared (`parity/compare.py`):
 
 ## Network-dependent functions
 
-Cases with  (or another metacheck mock directory) run against
+Cases with `mock_dir: apis` (or another metacheck mock directory) run against
 metacheck's recorded API responses on both sides — R inside
-, Python inside  — so API
+`httptest2::with_mock_dir()`, Python inside `tests.httpmock.replay()` — so API
 clients and network-backed modules are parity-tested offline and deterministically.
 
 ## CI
