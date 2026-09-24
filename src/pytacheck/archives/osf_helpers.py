@@ -217,6 +217,42 @@ def _as_num(v: Any) -> Any:
         return None
 
 
+# httr2's parse_content_type() pattern (type, subtype, suffix)
+_CONTENT_TYPE = (
+    r"^(application|audio|font|example|image|message|model|multipart|text|video)/"
+    r"((?:(?:vnd|prs|x)\.)?(?:[^+;])+)(?:\+((?:[^;])+))?(?:;((?:.)+))?$"
+)
+
+
+def _resp_body_json(resp: httpx.Response) -> Any:
+    """``httr2::resp_body_json()``: the parsed body, refusing a non-JSON content type.
+
+    As in httr2, the media type must be ``application/json`` or carry a
+    ``+json`` suffix (``application/vnd.api+json``); anything else raises.
+    """
+    import json
+
+    from pytacheck._r import regexec
+
+    header = resp.headers.get("content-type")
+    media = None if header is None else header.split(";", 1)[0].strip()
+    m = regexec(_CONTENT_TYPE, media, perl=True) if media is not None else []
+    base = f"{m[1]}/{m[2]}" if m else ""
+    suffix = (m[3] or "") if m else ""
+    if base != "application/json" and suffix != "json":
+        shown = "NA" if media is None else media
+        raise ValueError(
+            f'Unexpected content type "{shown}".\n'
+            '* Expecting type "application/json" or suffix "json".'
+        )
+    return json.loads(resp.content.decode(resp.encoding or "utf-8"))
+
+
+def _data_of(body: Any) -> Any:
+    """R ``body$data`` on a parsed JSON body (``NULL`` unless it is an object)."""
+    return body.get("data") if isinstance(body, dict) else None
+
+
 # ---------------------------------------------------------------------------
 # authentication
 # ---------------------------------------------------------------------------
@@ -425,7 +461,7 @@ def _osf_parse_response(
             raise TypeError("`resp` must be an HTTP response object")
         sc = resp.status_code
         if sc == 200:
-            content = resp.json()
+            content = _resp_body_json(resp)
             all_data = content.get("data") if isinstance(content, dict) else None
             single = isinstance(all_data, dict)
         elif sc in (401, 403):
@@ -750,10 +786,10 @@ def osf_user_projects(user_id: Any, pb: Any = None) -> pd.DataFrame:
                     public[i] = False
                 continue
             try:
-                body = resp.json()
-            except ValueError:
+                body = _resp_body_json(resp)
+            except Exception:
                 continue
-            att = _get(body, "data", "attributes") or {}
+            att = _get(_data_of(body), "attributes") or {}
             names[i] = att.get("title")
             cats[i] = att.get("category")
             public[i] = att.get("public")

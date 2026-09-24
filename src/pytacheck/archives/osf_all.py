@@ -50,7 +50,7 @@ def _osf_walk_nodes(osf_id: str, pb: Any = None) -> pd.DataFrame:
     """
     from pytacheck import http
     from pytacheck.archives import _tick
-    from pytacheck.archives.osf_helpers import _get, _osf_headers
+    from pytacheck.archives.osf_helpers import _data_of, _get, _osf_headers, _resp_body_json
 
     api = _api()
     ids: list[str] = []
@@ -76,7 +76,7 @@ def _osf_walk_nodes(osf_id: str, pb: Any = None) -> pd.DataFrame:
             "GET", f"{api}/nodes/{osf_id}/", headers=_osf_headers()["headers"], max_tries=1
         )
         if resp is not None and resp.status_code == 200:
-            root_title = _get(resp.json(), "data", "attributes", "title")
+            root_title = _get(_data_of(_resp_body_json(resp)), "attributes", "title")
     except Exception:
         root_title = None
 

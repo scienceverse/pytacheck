@@ -1291,7 +1291,8 @@ def llm(
                     answer = chat_obj.chat(ut)
                     out = {"answer": trimws(answer)}
                     if key is not None:
-                        _llm_cache_put(key, out)
+                        # chat$chat() returns an "ellmer_output"; trimws() keeps the class
+                        _llm_cache_put(key, {"answer": _ellmer_output(out["answer"])})
                     responses.append(out)
         except Exception as e:  # noqa: BLE001 - R's tryCatch(error = )
             msg = _llm_error_message(e)
@@ -1354,6 +1355,12 @@ def llm(
                 f"There were errors in the following rows: 1 \n  *  {m}", stacklevel=2
             )
     return answer_df
+
+
+def _ellmer_output(x: str) -> Any:
+    from pytacheck.llm._rds import RVec
+
+    return RVec("chr", [x], {"class": RVec("chr", ["ellmer_output"])})
 
 
 def _na_chr(x: str | None) -> Any:
