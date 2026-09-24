@@ -1,0 +1,36 @@
+# pytacheck REST API + a self-hosted bibr extraction server.
+#
+#   docker compose up
+#   curl -F file=@paper.pdf http://localhost:8000/...   (see the API docs at /docs)
+#
+# pytacheck talks to bibr in-process when built with WITH_BIBR=1; the separate
+# bibr service is for convert_bibr(backend = "selfhosted", api_url = "http://bibr:8000")
+# and for sharing one warm extraction server between several clients.
+services:
+  pytacheck:
+    build:
+      context: .
+      args:
+        WITH_BIBR: "1"
+    image: ghcr.io/thesanogoeffect/pytacheck:bibr
+    command: ["serve", "--host", "0.0.0.0", "--port", "8000"]
+    ports:
+      - "8000:8000"
+    environment:
+      PYTACHECK_EMAIL: ${PYTACHECK_EMAIL:-}
+      PYTACHECK_BIBR_URL: http://bibr:8000
+    volumes:
+      - pytacheck-cache:/cache
+    depends_on:
+      - bibr
+
+  bibr:
+    image: ghcr.io/scienceverse/bibr:latest
+    ports:
+      - "8001:8000"
+    volumes:
+      - bibr-cache:/root/.cache
+
+volumes:
+  pytacheck-cache:
+  bibr-cache:

@@ -22,3 +22,4 @@ parity/_out/
 .idea/
 .vscode/
 .DS_Store
+.upstream-sync/

@@ -200,6 +200,47 @@ def coerce_column(values: Sequence[Any] | pd.Series, schema_type: str) -> pd.Ser
     return series
 
 
+_NONE = type(None)
+_INT32 = 2147483647
+
+
+def _fast_column(values: list[Any], schema_type: str | None) -> pd.Series | None:
+    """Build a typed column in one vectorised step when the values allow it.
+
+    Returns ``None`` when the values need the exact (slow) R coercion rules,
+    e.g. numbers in a character column (R formats them with 15 significant
+    digits, not like ``str()``).
+    """
+    types = set(map(type, values))
+    types.discard(_NONE)
+    if schema_type is None:
+        if not types or types == {bool}:
+            schema_type = "boolean"
+        elif types <= {str}:
+            schema_type = "string"
+        elif types <= {int}:
+            schema_type = "integer"
+        elif types <= {int, float}:
+            schema_type = "number"
+        elif types & {list, dict}:
+            return pd.Series(values, dtype=object)
+        else:
+            return None
+    if schema_type == "string" and types <= {str}:
+        return pd.Series(pd.array(values, dtype="string"))
+    if schema_type == "integer" and types <= {int}:
+        arr = pd.array(values, dtype="Int64")
+        present = arr[~arr.isna()]
+        if len(present) and (present.max() > _INT32 or present.min() < -_INT32):
+            return None
+        return pd.Series(arr)
+    if schema_type == "number" and types <= {int, float}:
+        return pd.Series(values, dtype="float64")
+    if schema_type == "boolean" and types <= {bool}:
+        return pd.Series(pd.array(values, dtype="boolean"))
+    return None
+
+
 def infer_column(values: Sequence[Any]) -> pd.Series:
     """Infer a column type from parsed JSON like ``jsonlite`` simplification.
 
@@ -207,6 +248,10 @@ def infer_column(values: Sequence[Any]) -> pd.Series:
     without a decimal point -> integer; any other number -> double; strings
     (possibly mixed with numbers/bools) -> character; lists/dicts -> list.
     """
+    values = list(values)
+    fast = _fast_column(values, None)
+    if fast is not None:
+        return fast
     kinds: set[str] = set()
     for v in values:
         if v is None:
@@ -222,13 +267,13 @@ def infer_column(values: Sequence[Any]) -> pd.Series:
         else:
             kinds.add("list")
     if not kinds or kinds == {"lgl"}:
-        return pd.Series(list(values), dtype="boolean")
+        return pd.Series(values, dtype="boolean")
     if "list" in kinds:
-        return pd.Series(list(values), dtype=object)
+        return pd.Series(values, dtype=object)
     if "chr" in kinds:
         return pd.Series([as_character(v) for v in values], dtype="string")
-    if kinds == {"int"} and all(v is None or abs(v) <= 2147483647 for v in values):
-        return pd.Series(list(values), dtype="Int64")
+    if kinds == {"int"} and all(v is None or abs(v) <= _INT32 for v in values):
+        return pd.Series(values, dtype="Int64")
     return pd.Series([math.nan if v is None else float(v) for v in values], dtype="float64")
 
 
@@ -267,7 +312,8 @@ def records_to_frame(
         elif typ in ("array", "object"):
             data[col] = pd.Series(vals, dtype=object)
         else:
-            data[col] = coerce_column(infer_column(vals), typ)
+            fast = _fast_column(vals, typ)
+            data[col] = fast if fast is not None else coerce_column(infer_column(vals), typ)
     if not data:
         return pd.DataFrame(index=range(len(rows)))
     return pd.DataFrame(data)

@@ -1,0 +1,184 @@
+name: Upstream sync
+
+# Keeps pytacheck in step with metacheck's dev branch. When dev moves:
+#   1. move the upstream/metacheck submodule + pin to the new commit;
+#   2. install the new metacheck in the pinned R environment and regenerate every
+#      golden (changed goldens = upstream behaviour changes);
+#   3. let Claude Code port the changes (brief: .upstream-sync/brief.md, rules:
+#      docs/PORTING.md, prompt: .github/prompts/upstream-sync.md);
+#   4. verify (parity, tests, lint) and open a pull request. The PR can only be
+#      merged once the CI and Parity workflows are green (branch protection).
+#
+# Requires the repository secret ANTHROPIC_API_KEY (or CLAUDE_CODE_OAUTH_TOKEN).
+
+on:
+  schedule:
+    - cron: "23 5 * * *" # daily
+  workflow_dispatch:
+    inputs:
+      to:
+        description: "metacheck commit to sync to (default: head of dev)"
+        required: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: upstream-sync
+  cancel-in-progress: false
+
+jobs:
+  detect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    outputs:
+      behind: ${{ steps.status.outputs.behind }}
+      head: ${{ steps.status.outputs.head }}
+      open_pr: ${{ steps.pr.outputs.open }}
+    permissions:
+      contents: read
+      pull-requests: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v6.0.2
+        with:
+          persist-credentials: false
+          submodules: true
+      - id: status
+        run: |
+          json=$(python3 scripts/upstream_sync.py status)
+          echo "$json"
+          head="${{ inputs.to }}"
+          [ -n "$head" ] || head=$(echo "$json" | python3 -c 'import json,sys; print(json.load(sys.stdin)["head"])')
+          echo "head=$head" >> "$GITHUB_OUTPUT"
+          echo "behind=$(echo "$json" | python3 -c 'import json,sys; print(json.load(sys.stdin)["behind"])')" >> "$GITHUB_OUTPUT"
+      - id: pr
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          n=$(gh pr list --repo "$GITHUB_REPOSITORY" --label upstream-sync --state open --json number --jq length)
+          echo "open=$n" >> "$GITHUB_OUTPUT"
+
+  sync:
+    needs: detect
+    if: needs.detect.outputs.behind != '0' && needs.detect.outputs.open_pr == '0'
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    permissions:
+      contents: write
+      pull-requests: write
+      id-token: write
+    defaults:
+      run:
+        shell: bash -el {0}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v6.0.2
+        with:
+          submodules: true
+          fetch-depth: 0
+
+      - name: Branch
+        id: branch
+        run: |
+          short=$(echo "${{ needs.detect.outputs.head }}" | cut -c1-10)
+          echo "name=upstream-sync/$short" >> "$GITHUB_OUTPUT"
+          git switch -c "upstream-sync/$short"
+
+      - uses: astral-sh/setup-uv@bec219d24cd3e171d82865faccec33120bb574f4 # v10.1.0
+        with:
+          version: "0.9.8"
+          python-version: "3.12"
+      - run: uv sync --locked --all-extras
+
+      - name: Move the pin and write the brief
+        run: uv run python scripts/upstream_sync.py prepare --to "${{ needs.detect.outputs.head }}"
+
+      - name: R reference environment
+        uses: mamba-org/setup-micromamba@v2
+        with:
+          environment-file: parity/r/conda-linux-64.lock
+          environment-name: r-reference
+          cache-environment: true
+
+      - name: Install the new metacheck (adding any new R dependencies)
+        run: |
+          Rscript -e 'if (!requireNamespace("remotes", quietly = TRUE)) install.packages("remotes", repos = "https://cloud.r-project.org"); remotes::install_deps("upstream/metacheck", dependencies = NA, upgrade = "never", repos = "https://cloud.r-project.org")'
+          R CMD INSTALL --no-test-load upstream/metacheck
+          echo "PYTACHECK_RSCRIPT=$(command -v Rscript)" >> "$GITHUB_ENV"
+
+      - name: Regenerate goldens with the new metacheck
+        run: |
+          uv run python -m parity generate || true
+          {
+            echo ""
+            echo "## Goldens that changed with the new metacheck"
+            echo ""
+            git diff --stat -- parity/golden | sed 's/^/    /'
+            echo ""
+            echo "## Parity after regeneration (before porting)"
+            echo ""
+            uv run python -m parity check 2>&1 | tail -n 80 | sed 's/^/    /'
+          } >> .upstream-sync/brief.md
+
+      - name: Load the porting prompt
+        id: prompt
+        run: |
+          {
+            echo "text<<PROMPT_EOF"
+            cat .github/prompts/upstream-sync.md
+            echo "PROMPT_EOF"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Port the changes with Claude Code
+        uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          github_token: ${{ github.token }}
+          prompt: ${{ steps.prompt.outputs.text }}
+          claude_args: >-
+            --max-turns 400
+            --allowedTools "Bash,Read,Write,Edit,Glob,Grep"
+
+      - name: Verify
+        id: verify
+        run: |
+          set +e
+          uv run ruff format . >/dev/null
+          uv run python -m parity check > .upstream-sync/parity.txt 2>&1; parity=$?
+          uv run pytest -n auto -m "not network and not r" -q > .upstream-sync/pytest.txt 2>&1; tests=$?
+          uv run ruff check . > .upstream-sync/ruff.txt 2>&1; lint=$?
+          ok=$([ $parity -eq 0 ] && [ $tests -eq 0 ] && [ $lint -eq 0 ] && echo true || echo false)
+          echo "ok=$ok" >> "$GITHUB_OUTPUT"
+
+      - name: Commit, push and open the pull request
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          meta=.upstream-sync/meta.json
+          version=$(python3 -c "import json; print(json.load(open('$meta'))['version'])")
+          to=$(python3 -c "import json; print(json.load(open('$meta'))['to'])")
+          git config user.name "pytacheck upstream sync"
+          git config user.email "upstream-sync@users.noreply.github.com"
+          git add -A -- . ':!.upstream-sync'
+          git commit -m "Sync with metacheck dev ${to:0:10} (${version})"
+          git push -u origin "${{ steps.branch.outputs.name }}"
+          {
+            echo "Automated port of metacheck \`dev\` → \`${to:0:10}\` (metacheck ${version})."
+            echo
+            if [ "${{ steps.verify.outputs.ok }}" = "true" ]; then
+              echo "✅ Parity, tests and lint pass."
+            else
+              echo "❌ Verification failed — needs attention (see below)."
+            fi
+            echo
+            [ -f .upstream-sync/notes.md ] && { echo "## Notes from the porting agent"; cat .upstream-sync/notes.md; echo; }
+            echo "## Parity"; echo '```'; tail -n 40 .upstream-sync/parity.txt; echo '```'
+            echo "## Tests"; echo '```'; tail -n 20 .upstream-sync/pytest.txt; echo '```'
+            echo "<details><summary>Upstream brief</summary>"; echo; head -c 50000 .upstream-sync/brief.md; echo; echo "</details>"
+          } > .upstream-sync/pr.md
+          draft=$([ "${{ steps.verify.outputs.ok }}" = "true" ] || echo --draft)
+          gh label create upstream-sync --color 0e8a16 --description "Automated metacheck sync" 2>/dev/null || true
+          gh pr create --base main --head "${{ steps.branch.outputs.name }}" $draft \
+            --label upstream-sync \
+            --title "Sync with metacheck dev ${to:0:10} (${version})" \
+            --body-file .upstream-sync/pr.md
