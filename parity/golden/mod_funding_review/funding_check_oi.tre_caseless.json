@@ -1,5 +1,5 @@
 {
-  "id": "funding_check.sectioned_references",
+  "id": "funding_check_oi.tre_caseless",
   "ok": true,
   "error": null,
   "warnings": [],
@@ -20,13 +20,13 @@
       {
         "t": "chr",
         "v": [
-          "funding_check"
+          "funding_check_oi"
         ]
       },
       {
         "t": "chr",
         "v": [
-          "Funding Check"
+          "Funding Check (Overinclusive)"
         ]
       },
       {
@@ -46,13 +46,13 @@
           {
             "t": "chr",
             "v": [
-              "e9d8704a401154"
+              "3874d1c32de6b9"
             ]
           },
           {
             "t": "chr",
             "v": [
-              "Our study was funded by the ERC. The authors declare no funding."
+              "Support came from the study."
             ]
           }
         ]
@@ -61,7 +61,7 @@
         "t": "chr",
         "v": [
           "The following funding statement was detected:",
-          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(\"Our study was funded by the ERC. The authors declare no funding.\"), names = \"\", class = \"data.frame\", row.names = c(NA, \n-1L))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 2, FALSE)\n```\n"
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(\"Support came from the study.\"), names = \"\", class = \"data.frame\", row.names = c(NA, \n-1L))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 2, FALSE)\n```\n"
         ]
       },
       {
@@ -87,7 +87,7 @@
           {
             "t": "chr",
             "v": [
-              "e9d8704a401154"
+              "3874d1c32de6b9"
             ]
           },
           {

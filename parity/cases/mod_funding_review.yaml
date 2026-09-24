@@ -399,6 +399,19 @@
         - " "
         - ""
   "compare": *id002
+- "id": "funding_check.tre_caseless"
+  "module": "funding_check"
+  "args":
+    "paper":
+      "$test_paper":
+        "text": &id008
+        - "The fellowſhip was funded."
+        - "Our worK was funded."
+        - "ſupport came from the study."
+        - "1 supports)/:-] fellowſhipsZ/:-]reported"
+        - "FUNDİNG for the STUDY."
+        - "Support came from the study."
+  "compare": *id002
 - "id": "funding_check_oi.duplicate_ids"
   "module": "funding_check_oi"
   "args":
@@ -438,6 +451,13 @@
         - null
         - " "
         - ""
+  "compare": *id002
+- "id": "funding_check_oi.tre_caseless"
+  "module": "funding_check_oi"
+  "args":
+    "paper":
+      "$test_paper":
+        "text": *id008
   "compare": *id002
 - "id": "funding_check_oi.sectioned_acknowledgement"
   "module": "funding_check_oi"

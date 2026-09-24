@@ -1,5 +1,5 @@
 {
-  "id": "funding_check.sectioned_references",
+  "id": "funding_check.tre_caseless",
   "ok": true,
   "error": null,
   "warnings": [],
@@ -37,7 +37,7 @@
       },
       {
         "t": "df",
-        "nrow": 1,
+        "nrow": 0,
         "names": [
           "paper_id",
           "text"
@@ -45,35 +45,30 @@
         "v": [
           {
             "t": "chr",
-            "v": [
-              "e9d8704a401154"
-            ]
+            "v": []
           },
           {
             "t": "chr",
-            "v": [
-              "Our study was funded by the ERC. The authors declare no funding."
-            ]
+            "v": []
           }
         ]
       },
       {
         "t": "chr",
         "v": [
-          "The following funding statement was detected:",
-          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(\"Our study was funded by the ERC. The authors declare no funding.\"), names = \"\", class = \"data.frame\", row.names = c(NA, \n-1L))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 2, FALSE)\n```\n"
+          "No funding statement was detected. Consider adding one."
         ]
       },
       {
         "t": "chr",
         "v": [
-          "green"
+          "red"
         ]
       },
       {
         "t": "chr",
         "v": [
-          "A funding statement was detected."
+          "No funding statement was detected."
         ]
       },
       {
@@ -87,13 +82,13 @@
           {
             "t": "chr",
             "v": [
-              "e9d8704a401154"
+              "14c9aae7d3568c"
             ]
           },
           {
             "t": "lgl",
             "v": [
-              true
+              false
             ]
           }
         ]

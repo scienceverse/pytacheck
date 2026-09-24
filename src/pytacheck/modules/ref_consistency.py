@@ -127,6 +127,7 @@ def _flag_counts(table: pd.DataFrame, flag: pd.Series, papers: pd.Series) -> pd.
 def ref_consistency(paper: Any) -> dict[str, Any]:
     """Port of ``inst/modules/ref_consistency.R::ref_consistency()``."""
     from pytacheck._r.frames import count
+    from pytacheck.io.bibr12 import _bibr12_paper_ids
     from pytacheck.papers.tables import paper_id, paper_table, ref_table
     from pytacheck.report import scroll_table
 
@@ -135,10 +136,21 @@ def ref_consistency(paper: Any) -> dict[str, Any]:
     bibs = refs.loc[:, ["paper_id", "bib_id", "text"]].rename(columns={"text": "reference"})
     xref_all = paper_table(paper, "xref")
     if len(xref_all.columns) == 0:
-        # a paper list with no xref tables at all: dplyr::filter() would fail on it
-        raise ValueError("object 'xref_type' not found")
-    is_bibr = (xref_all["xref_type"] == "bibr").fillna(False).astype(bool)
-    xrefs = xref_all.loc[is_bibr, ["paper_id", "xref_id", "contents", "text_id"]].rename(
+        # a paper list with no xref tables at all: dplyr::select() would fail on it
+        raise ValueError("Can't select columns that don't exist.\n✖ Column `paper_id` doesn't exist.")
+    # bibr 12.x papers cite a reference with a "bib" xref whose target_id is
+    # the bib_id (their xref_id is the row's own key)
+    v12 = xref_all["paper_id"].isin(_bibr12_paper_ids(paper)).to_numpy(dtype=bool)
+    if v12.any():
+        xref_all = xref_all.copy()
+        xref_all.loc[v12, "xref_id"] = xref_all.loc[v12, "target_id"]
+    xref_type = xref_all["xref_type"]
+    is_bib = np.where(
+        v12,
+        xref_type.isin(["bib"]).to_numpy(dtype=bool),
+        xref_type.isin(["bibr"]).to_numpy(dtype=bool),
+    )
+    xrefs = xref_all.loc[is_bib, ["paper_id", "xref_id", "contents", "text_id"]].rename(
         columns={"xref_id": "bib_id"}
     )
     xrefs = xrefs.reset_index(drop=True)

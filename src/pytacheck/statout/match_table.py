@@ -343,20 +343,31 @@ def _table_tests(paper: Any) -> list[dict[str, Any]]:
     tab = paper.get("table") if hasattr(paper, "get") else None
     if not isinstance(tab, pd.DataFrame) or len(tab) == 0 or "contents" not in tab.columns:
         return []
+    from pytacheck.io.bibr12 import is_bibr12
+
     contents = tab["contents"].tolist()
     has_sid = "section_id" in tab.columns
     has_tid = "table_id" in tab.columns
     section_ids = tab["section_id"].tolist() if has_sid else [None] * len(tab)
     table_ids = tab["table_id"].tolist() if has_tid else [None] * len(tab)
+    # bibr 12.x: section_id is the section the table is printed in, and the
+    # caption is the table's own
+    v12 = is_bibr12(paper)
+    captions = (
+        tab["caption"].tolist() if v12 and "caption" in tab.columns else [None] * len(tab)
+    )
     out: list[dict[str, Any]] = []
     for i in range(len(tab)):
         content = contents[i]
         if content is None:
             continue
-        if not has_sid:
+        if v12:
+            caption = _scalar(captions[i])
+        elif not has_sid:
             # .table_caption(paper, NULL): is.na(NULL) || ... errors
             raise ValueError("missing value where TRUE/FALSE needed")
-        caption = _table_caption(paper, _scalar(section_ids[i]))
+        else:
+            caption = _table_caption(paper, _scalar(section_ids[i]))
         tests = _table_tests_one(table_ids[i], content, caption)
         if not has_tid:
             # -(NULL * 1000000L + ri) is integer(0): a zero-length text_id
