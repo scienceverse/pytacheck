@@ -56,7 +56,9 @@ def _no_prereg_summary(paper: Any) -> pd.DataFrame:
 
     ids = paper_id(paper)
     if not ids:
-        return pd.DataFrame({"preregistration": [0.0]})
+        # an empty paper list: paper_id() is NULL, and R 4.5's data.frame()
+        # does not recycle the length-one column to zero rows
+        raise ValueError("arguments imply differing number of rows: 0, 1")
     return pd.DataFrame(
         {"paper_id": pd.Series(ids, dtype="string"), "preregistration": [0.0] * len(ids)}
     )
@@ -290,7 +292,9 @@ def prereg_check(paper: Any) -> dict[str, Any]:
         *(full if isinstance(full, list) else [full]),
         collapse_section(guidance),
     ]
-    report = [b for b in blocks if b is not None and not (isinstance(b, str) and b == "")]
+    # c(): NULL blocks vanish, but scroll_table(NULL) is "" and stays (R's report
+    # then has an empty paragraph where the sample size table would be)
+    report = [b for b in blocks if b is not None]
 
     return {
         "table": prereg_info,

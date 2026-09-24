@@ -1,0 +1,57 @@
+{
+  "id": "data_promote_header_row.factor_header",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "df",
+      "promoted",
+      "stripped"
+    ],
+    "v": [
+      {
+        "t": "df",
+        "nrow": 4,
+        "names": [
+          "V1",
+          "V2"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "id",
+              "1",
+              "2",
+              "3"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "score",
+              "5",
+              "6",
+              "7"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          0
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": []
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

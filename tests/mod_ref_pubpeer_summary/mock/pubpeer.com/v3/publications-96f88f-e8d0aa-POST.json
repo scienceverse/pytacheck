@@ -1,0 +1,49 @@
+{
+    "status": "good",
+    "feedbacks": [
+        {
+            "id": "10.9999/pp.emptyusers",
+            "title": "A paper (10.9999/pp.emptyusers)",
+            "total_comments": 2,
+            "url": "https://pubpeer.com/publications/PP.EMPTYUSERS",
+            "users": []
+        },
+        {
+            "id": "10.9999/pp.nulltc",
+            "title": "A paper (10.9999/pp.nulltc)",
+            "total_comments": null,
+            "url": "https://pubpeer.com/publications/PP.NULLTC",
+            "users": "Someone"
+        },
+        {
+            "id": "10.9999/pp.statlist",
+            "title": "A paper (10.9999/pp.statlist)",
+            "total_comments": 4,
+            "url": "https://pubpeer.com/publications/PP.STATLIST",
+            "users": [
+                "Statcheck"
+            ]
+        },
+        {
+            "id": "10.9999/pp.emptyurl",
+            "title": "A paper (10.9999/pp.emptyurl)",
+            "total_comments": 1,
+            "url": "",
+            "users": "Empty Url"
+        },
+        {
+            "id": "10.9999/pp.statcase",
+            "title": "A paper (10.9999/pp.statcase)",
+            "total_comments": 1,
+            "url": "https://pubpeer.com/publications/PP.STATCASE",
+            "users": "statcheck"
+        },
+        {
+            "id": "10.9999/pp.unrequested",
+            "title": "A paper (10.9999/pp.unrequested)",
+            "total_comments": 9,
+            "url": "https://pubpeer.com/publications/PP.UNREQUESTED",
+            "users": "Not Asked"
+        }
+    ]
+}

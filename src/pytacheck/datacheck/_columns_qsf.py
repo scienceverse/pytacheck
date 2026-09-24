@@ -131,7 +131,9 @@ def _qsf_export_col(tag: Any, choice_tag: Any, code: Any) -> str:
     ct0 = _chr(choice_tag)
     if ct0 is not None and ct0 != "":
         ct = trimws(ct0)
-        if _tolower(ct).startswith(_tolower(tp + "_")) or (t is not None and _tolower(ct) == _tolower(t)):
+        if _tolower(ct).startswith(_tolower(tp + "_")) or (
+            t is not None and _tolower(ct) == _tolower(t)
+        ):
             return ct
         if grepl(r"[A-Za-z].*[._-]", ct, perl=True):
             return ct

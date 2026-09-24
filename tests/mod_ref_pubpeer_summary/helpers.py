@@ -217,7 +217,10 @@ def pp_case_list() -> Any:
     b = pp_paper(["10.9999/pp.one", "10.9999/pp.dup"], "b")
     A = pp_paper(["10.9999/pp.none", "10.9999/pp.stat"], "A")
     A.bib_match = pd.DataFrame(
-        {"bib_id": pd.array([1], dtype="Int64"), "doi": pd.array(["10.9999/pp.many"], dtype="string")}
+        {
+            "bib_id": pd.array([1], dtype="Int64"),
+            "doi": pd.array(["10.9999/pp.many"], dtype="string"),
+        }
     )
     a = pp_paper(["10.9999/pp.zero"], "a")
     return pc.PaperList([b, A, a])
@@ -261,9 +264,7 @@ def rv_ret_collide() -> Any:
     import pytacheck as pc
 
     out = chain(pc.demopaper(), ["ref_accuracy", "ref_pubpeer", "ref_retraction"])
-    return set_table_cols(
-        out, {"pubpeer": ["P"], "pubpeer.x": ["PX"], "accuracy_mismatch": ["AM"]}
-    )
+    return set_table_cols(out, {"pubpeer": ["P"], "pubpeer.x": ["PX"], "accuracy_mismatch": ["AM"]})
 
 
 def rv_ret_keys() -> Any:

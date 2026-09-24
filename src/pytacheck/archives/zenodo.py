@@ -121,7 +121,16 @@ def _zenodo_id(zenodo_url: Any) -> Any:
 def _column_name(table: pd.DataFrame, id_col: int | str) -> str:
     """R ``table[[id_col]]``: a 1-based position or a name."""
     if isinstance(id_col, int | float) and not isinstance(id_col, bool):
-        return str(table.columns[int(id_col) - 1])
+        pos = int(id_col)
+        ncol = len(table.columns)
+        if pos < 0 and ncol == 2 and -pos <= 2:
+            # `[[-1]]` on a two-column table drops one and returns the other
+            return str(table.columns[1 if pos == -1 else 0])
+        if pos < 0:
+            raise IndexError("invalid negative subscript in get1index <real>")
+        if pos == 0 or pos > ncol:
+            raise IndexError("subscript out of bounds")
+        return str(table.columns[pos - 1])
     if id_col not in table.columns:
         raise KeyError(f"Can't extract column that doesn't exist: {id_col}")
     return str(id_col)
@@ -178,9 +187,15 @@ def _zenodo_info_table(zenodo_url: Any, id_col: int | str, pb: Any, cache: bool)
         table = pd.DataFrame({"zenodo_url": pd.Series(raw_urls, dtype="string")})
 
     urls = table["zenodo_url"].tolist()
-    if len(urls) > 1 and _is_character(table["zenodo_url"]) and any(is_na(u) for u in urls):
+    if (
+        len(urls) > 1
+        and _is_character(table["zenodo_url"])
+        and any(is_na(u) for u in urls)
+        and len({None if is_na(u) else u for u in urls}) == len(urls)
+    ):
         # metacheck: .zenodo_id() names its result by the URLs, and data.frame()
-        # refuses the NA name as a row name
+        # takes those names as row names unless some are duplicated (then it
+        # warns and drops them), refusing an NA one
         raise ValueError("row names contain missing values")
     ids = pd.DataFrame(
         {
@@ -388,9 +403,7 @@ def _zenodo_info(zenodo_id: Any, pb: Any = None, resp: Any = _UNSET) -> pd.DataF
             "updated_date": _scalar_field(r_dollar(rec, "updated")),
             "creators": r_dollar(metadata, "creators"),
             "keywords": r_dollar(metadata, "keywords"),
-            "resource_type": _scalar_field(
-                r_dollar(r_dollar(metadata, "resource_type"), "type")
-            ),
+            "resource_type": _scalar_field(r_dollar(r_dollar(metadata, "resource_type"), "type")),
             "journal": r_dollar(metadata, "journal"),
             "owners": r_dollar(rec, "owners"),
             "license": _scalar_field(license_value),

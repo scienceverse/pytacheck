@@ -300,8 +300,8 @@ def _gitlab_blob_sizes(clean_repo: str, paths: list[str]) -> pd.Series:
     query-complexity budget). Returns sizes indexed by path (R: a named
     numeric vector); failed batches contribute nothing.
     """
-    from pytacheck.archives.github import _empty_or, _num
     from pytacheck.archives.github import _dollar as r_dollar
+    from pytacheck.archives.github import _empty_or, _num
 
     if not paths:
         return pd.Series([], dtype="float64")

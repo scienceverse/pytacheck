@@ -1076,7 +1076,7 @@
       "$dbl":
       - !!float "1.5"
       - !!int "100000"
-      - !!int "123456789012"
+      - !!float "123456789012.5"
     "labels":
       "$dbl":
       - !!int "3"
@@ -2146,12 +2146,6 @@
     "path":
       "$file": "tests/datacheck_columns/fixtures/codebook.pdf"
     "min_defs": !!int "7"
-- "id": ".pdf_codebook_lines.paper"
-  "r": "metacheck:::.pdf_codebook_lines"
-  "py": "pytacheck.datacheck.columns._pdf_codebook_lines"
-  "args":
-    "path":
-      "$file": "upstream/metacheck/tests/testthat/fixtures/debruine/debruine-child.pdf"
 - "id": ".extract_rich_text.codebook.docx.docx"
   "r": "metacheck:::.extract_rich_text"
   "py": "pytacheck.datacheck.columns._extract_rich_text"
@@ -2459,11 +2453,34 @@
   "py": "pytacheck.datacheck.columns.parse_codebook"
   "args":
     "path":
-      "$expr":
-        "r": "local({ d <- tempfile(fileext = \".csv\"); writeLines(c(\"varname,description\", \"id,participant\
-          \ identifier\", \"score,outcome measure\"), d); d })"
-        "py": "(lambda d: (open(d, 'w').write('varname,description\\nid,participant identifier\\nscore,outcome\
-          \ measure\\n'), d)[1])(__import__('tempfile').mkstemp(suffix='.csv')[1])"
+      "$file": "tests/datacheck_columns/fixtures/testthat_codebook.csv"
+- "id": "parse_codebook.bom_qsf"
+  "r": "parse_codebook"
+  "py": "pytacheck.datacheck.columns.parse_codebook"
+  "args":
+    "path":
+      "$file": "tests/datacheck_columns/fixtures/bom.qsf"
+    "group": "ex1"
+- "id": "parse_codebook.directory"
+  "r": "parse_codebook"
+  "py": "pytacheck.datacheck.columns.parse_codebook"
+  "args":
+    "path":
+      "$file": "tests/datacheck_columns/fixtures/"
+- "id": "parse_codebook.lookahead_zero"
+  "r": "parse_codebook"
+  "py": "pytacheck.datacheck.columns.parse_codebook"
+  "args":
+    "path":
+      "$file": "tests/datacheck_columns/fixtures/structured.csv"
+    "header_lookahead": !!int "0"
+- "id": "parse_codebook.xlsx_lookahead"
+  "r": "parse_codebook"
+  "py": "pytacheck.datacheck.columns.parse_codebook"
+  "args":
+    "path":
+      "$file": "tests/datacheck_columns/fixtures/codebook.xlsx"
+    "header_lookahead": !!int "1"
 - "id": ".qsf_strip_html.html"
   "r": "metacheck:::.qsf_strip_html"
   "py": "pytacheck.datacheck.columns._qsf_strip_html"
@@ -2645,6 +2662,48 @@
     "tag": " Q3 "
     "choice_tag": " 2 "
     "code": "2"
+- "id": ".qsf_export_col.na_tag"
+  "r": "metacheck:::.qsf_export_col"
+  "py": "pytacheck.datacheck.columns._qsf_export_col"
+  "args":
+    "tag": *id003
+    "choice_tag": "na"
+    "code": "1"
+- "id": ".qsf_export_col.na_tag_prefix"
+  "r": "metacheck:::.qsf_export_col"
+  "py": "pytacheck.datacheck.columns._qsf_export_col"
+  "args":
+    "tag": *id003
+    "choice_tag": "NA_2"
+    "code": "1"
+- "id": ".qsf_export_col.na_tag_none"
+  "r": "metacheck:::.qsf_export_col"
+  "py": "pytacheck.datacheck.columns._qsf_export_col"
+  "args":
+    "tag": *id003
+    "choice_tag": *id003
+    "code": "3"
+- "id": ".qsf_export_col.case_insensitive"
+  "r": "metacheck:::.qsf_export_col"
+  "py": "pytacheck.datacheck.columns._qsf_export_col"
+  "args":
+    "tag": "q3"
+    "choice_tag": "Q3_7"
+    "code": "7"
+- "id": ".qsf_export_col.own_dash"
+  "r": "metacheck:::.qsf_export_col"
+  "py": "pytacheck.datacheck.columns._qsf_export_col"
+  "args":
+    "tag": "Q3"
+    "choice_tag": "a-b"
+    "code": "1"
+- "id": ".qsf_export_col.digits_dot"
+  "r": "metacheck:::.qsf_export_col"
+  "py": "pytacheck.datacheck.columns._qsf_export_col"
+  "args":
+    "tag": "Q3"
+    "choice_tag": "1.5"
+    "code": "1"
 - "id": "parse_qsf.survey.qsf"
   "r": "parse_qsf"
   "py": "pytacheck.datacheck.columns.parse_qsf"
@@ -2675,6 +2734,18 @@
   "args":
     "path":
       "$file": "tests/datacheck_columns/fixtures/does_not_exist.qsf"
+- "id": "parse_qsf.bom.qsf"
+  "r": "parse_qsf"
+  "py": "pytacheck.datacheck.columns.parse_qsf"
+  "args":
+    "path":
+      "$file": "tests/datacheck_columns/fixtures/bom.qsf"
+- "id": "parse_qsf.empty.csv"
+  "r": "parse_qsf"
+  "py": "pytacheck.datacheck.columns.parse_qsf"
+  "args":
+    "path":
+      "$file": "tests/datacheck_columns/fixtures/empty.csv"
 - "id": "parse_qsf.scalar_json"
   "r": "parse_qsf"
   "py": "pytacheck.datacheck.columns.parse_qsf"
@@ -3230,7 +3301,7 @@
         - "POWER.PP1_7"
         - "POWER_2"
         - "OTHER_1"
-    "codebook_vars_df":
+    "codebook_vars_df": &id008
       "$df":
         "codebook_variable":
         - "Q1914_4"
@@ -3376,6 +3447,232 @@
         - "cb"
         "group":
         - !!null "null"
+- "id": "match_column_labels.no_source_col"
+  "r": "match_column_labels"
+  "py": "pytacheck.datacheck.columns.match_column_labels"
+  "args":
+    "columns_df":
+      "$df":
+        "paper_id":
+        - "p"
+        - "p"
+        "column_name":
+        - "age"
+        - "x"
+    "codebook_vars_df":
+      "$df":
+        "codebook_variable":
+        - "age"
+        "label":
+        - "Age"
+        "codebook_source":
+        - "cb"
+        "group":
+        - !!null "null"
+- "id": "match_column_labels.no_paper_col_empty_cb"
+  "r": "match_column_labels"
+  "py": "pytacheck.datacheck.columns.match_column_labels"
+  "args":
+    "columns_df":
+      "$df":
+        "source_file":
+        - "d.csv"
+        - "e.csv"
+        "column_name":
+        - "age"
+        - "x"
+    "codebook_vars_df": *id001
+- "id": "match_column_labels.no_colname_qsf"
+  "r": "match_column_labels"
+  "py": "pytacheck.datacheck.columns.match_column_labels"
+  "args":
+    "columns_df":
+      "$df":
+        "paper_id":
+        - "p"
+        "source_file":
+        - "d.csv"
+    "codebook_vars_df": *id008
+- "id": "match_column_labels.na_colname_qsf"
+  "r": "match_column_labels"
+  "py": "pytacheck.datacheck.columns.match_column_labels"
+  "args":
+    "columns_df":
+      "$df":
+        "paper_id":
+        - "p"
+        "source_file":
+        - "d.csv"
+        "column_name":
+        - !!null "null"
+    "codebook_vars_df": *id008
+- "id": "match_column_labels.no_cbvar_col"
+  "r": "match_column_labels"
+  "py": "pytacheck.datacheck.columns.match_column_labels"
+  "args":
+    "columns_df":
+      "$df":
+        "paper_id":
+        - "p"
+        "source_file":
+        - "d.csv"
+        "column_name":
+        - "age"
+    "codebook_vars_df":
+      "$df":
+        "label":
+        - "Age"
+        "codebook_source":
+        - "cb"
+        "group":
+        - !!null "null"
+- "id": "match_column_labels.haven_all_na_labels"
+  "r": "match_column_labels"
+  "py": "pytacheck.datacheck.columns.match_column_labels"
+  "args":
+    "columns_df":
+      "$df":
+        "paper_id":
+        - "p"
+        "source_file":
+        - "d.csv"
+        "column_name":
+        - "x"
+    "codebook_vars_df":
+      "$df":
+        "codebook_variable":
+        - "x"
+        - "x"
+        "label":
+        - "X one"
+        - "X two"
+        "codebook_source":
+        - "a.sav"
+        - "b.csv"
+        "group":
+        - !!null "null"
+        - !!null "null"
+        "parse_method":
+        - "haven"
+        - "structured"
+- "id": "match_column_labels.numeric_paper_ids"
+  "r": "match_column_labels"
+  "py": "pytacheck.datacheck.columns.match_column_labels"
+  "args":
+    "columns_df":
+      "$df":
+        "paper_id":
+        - !!int "1"
+        - !!int "2"
+        "source_file":
+        - "d.csv"
+        - "d.csv"
+        "column_name":
+        - "age"
+        - "age"
+    "codebook_vars_df":
+      "$df":
+        "codebook_variable":
+        - "age"
+        "label":
+        - "Age"
+        "codebook_source":
+        - "cb"
+        "group":
+        - !!null "null"
+        "paper_id":
+        - "2"
+- "id": "match_column_labels.carry_props"
+  "r": "match_column_labels"
+  "py": "pytacheck.datacheck.columns.match_column_labels"
+  "args":
+    "columns_df":
+      "$df":
+        "paper_id":
+        - "p"
+        "source_file":
+        - "d.csv"
+        "column_name":
+        - "sex"
+    "codebook_vars_df":
+      "$df":
+        "codebook_variable":
+        - "sex"
+        - "sex"
+        "label":
+        - "Sex"
+        - "Sex"
+        "codebook_source":
+        - "a"
+        - "b"
+        "group":
+        - !!null "null"
+        - !!null "null"
+        "value_labels":
+        - ""
+        - "{\"1\":\"M\"}"
+        "missing_values":
+        - !!null "null"
+        - "[\"-9\"]"
+        "question":
+        - "  "
+        - "Q?"
+        "coding_instructions":
+        - !!null "null"
+        - !!null "null"
+        "scale_group":
+        - "S"
+        - !!null "null"
+- "id": "normalize_label.stems"
+  "r": "metacheck:::normalize_label"
+  "py": "pytacheck.datacheck.columns.normalize_label"
+  "args":
+    "x":
+      "$chr":
+      - "generalizations happily connected"
+      - "Relational ponies caresses"
+      - "agreed agreement"
+      - "conditional hopefulness"
+      - "The participants' ratings of attractiveness"
+- "id": "normalize_label.empty"
+  "r": "metacheck:::normalize_label"
+  "py": "pytacheck.datacheck.columns.normalize_label"
+  "args":
+    "x":
+      "$chr": []
+- "id": "data_col_type.latin1_name"
+  "r": "data_col_type"
+  "py": "pytacheck.datacheck.columns.data_col_type"
+  "args":
+    "col_name":
+      "$expr":
+        "r": "paste0(rawToChar(as.raw(0xef)), \"PeronalData_fullname\")"
+        "py": "b'\\xefPeronalData_fullname'"
+    "values":
+      "$int":
+      - !!int "1"
+      - !!int "2"
+      - !!int "3"
+      - !!int "4"
+      - !!int "5"
+      - !!int "6"
+      - !!int "7"
+      - !!int "8"
+      - !!int "9"
+      - !!int "10"
+- "id": "data_col_type.latin1_id_name"
+  "r": "data_col_type"
+  "py": "pytacheck.datacheck.columns.data_col_type"
+  "args":
+    "col_name":
+      "$expr":
+        "r": "paste0(\"subj\", rawToChar(as.raw(0xe9)), \"_id\")"
+        "py": "b'subj\\xe9_id'"
+    "values":
+      "$dbl":
+      - !!int "1"
+      - !!int "2"
+      - !!int "3"
 - "id": ".scale_typo_of.repeat"
   "r": "metacheck:::.scale_typo_of"
   "py": "pytacheck.datacheck.columns._scale_typo_of"

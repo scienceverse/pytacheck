@@ -293,6 +293,182 @@ def test_does_not_mutate_input() -> None:
     pd.testing.assert_frame_equal(paper.text, text)
 
 
+# -- review: inputs R handles in particular ways (measured with metacheck) ------------
+
+_NOT_A_PAPER = (
+    "The paper argument doesn't seem to be a scivrs_paper object or a list of paper objects"
+)
+
+
+def direct(paper: Any) -> dict[str, Any]:
+    """The module function's own return value (R: the sourced ``ethics_check(paper)``)."""
+    from pytacheck.modules.ethics_check import ethics_check
+
+    return ethics_check(paper)
+
+
+def _select_text(paper: Any, cols: list[str]) -> Any:
+    paper.text = paper.text.loc[:, cols]
+    return paper
+
+
+def _no_info(paper: Any) -> Any:
+    paper.info = paper.info.iloc[0:0]
+    return paper
+
+
+_FORMATTED_FIRST = ["formatted", "text_id", "section_id", "paragraph_id"]
+
+
+@pytest.mark.parametrize(
+    ("paper", "exc", "message"),
+    [
+        # text_search() runs first: a character vector per pattern, which bind_rows()
+        # refuses; anything else that is not a paper, a paper list or a table
+        (lambda: "The IRB approved it.", ValueError, "Argument 1 must be a data frame or"),
+        (lambda: None, TypeError, _NOT_A_PAPER),
+        (lambda: 5, TypeError, _NOT_A_PAPER),
+        (lambda: [1, 2], TypeError, _NOT_A_PAPER),
+        # a table passes text_search() but not paper_id()
+        (
+            lambda: ec_paper(["The IRB approved it."]).text,
+            TypeError,
+            "paper must be a paper or paperlist object.",
+        ),
+        # list() is a paper list without papers, like paperlist()
+        (lambda: [], ValueError, "Join columns in `x` must be present in the data."),
+        # no `text` column and a first column that matches: character(0) cannot be
+        # assigned to a table with rows; `text` is graphics::text() in summarise()
+        (
+            lambda: _select_text(
+                ec_paper(["The IRB approved it.", "Participants were recruited."]),
+                _FORMATTED_FIRST,
+            ),
+            ValueError,
+            "Assigned data `character(0)` must be compatible with existing data.",
+        ),
+        (
+            lambda: _select_text(
+                ec_paper(["Nothing.", "Participants were recruited."]), _FORMATTED_FIRST
+            ),
+            TypeError,
+            "In argument: `live_data_statements = list(unique(text[live_data]))`.",
+        ),
+        # a paper without an info row has no paper ID
+        (
+            lambda: _no_info(ec_paper(["The IRB approved it."])),
+            TypeError,
+            "invalid subscript type 'list'",
+        ),
+    ],
+)
+def test_direct_r_errors(paper: Any, exc: type[Exception], message: str) -> None:
+    with pytest.raises(exc, match=re.escape(message)):
+        direct(paper())
+
+
+def test_module_run_error_message() -> None:
+    paper = _select_text(
+        ec_paper(["The IRB approved it.", "Participants were recruited."]), _FORMATTED_FIRST
+    )
+    with pytest.raises(ModuleError) as err:
+        run(paper)
+    assert str(err.value) == (
+        "Running the module 'ethics_check' produced errors: "
+        "Assigned data `character(0)` must be compatible with existing data."
+    )
+
+
+@pytest.mark.parametrize("container", [list, tuple, lambda ps: {"x": ps[0], "y": ps[1]}])
+def test_plain_lists_of_papers(container: Any) -> None:
+    # R's .is_paper_list(): any list made only of papers (list(p1, p2), list(x = p1, ...))
+    papers = [
+        ec_paper(["The IRB approved it."], "a"),
+        ec_paper(["Participants were recruited."], "b"),
+    ]
+    out = direct(container(papers))
+    ref = direct(pc.PaperList(papers))
+    pd.testing.assert_frame_equal(out["table"], ref["table"])
+    pd.testing.assert_frame_equal(out["summary_table"], ref["summary_table"])
+    assert out["summary_table"]["paper_id"].tolist() == ["a", "b"]
+    assert (out["traffic_light"], out["report"]) == ("red", None)
+    assert out["summary_text"] == (
+        "1 of 2 papers appeared to involve live data collection and lacked an ethics "
+        "approval statement."
+    )
+
+
+def test_plain_list_of_one_paper_gets_a_report() -> None:
+    out = direct([ec_paper(["Participants were recruited.", "The IRB approved it."], "a")])
+    assert out["traffic_light"] == "green"
+    assert out["report"] == (
+        "Based on the following text, we would expect an ethics approval statement, and it "
+        "was present:\n\n> Participants were recruited.\n\nEthics approval statement:\n\n"
+        "> The IRB approved it."
+    )
+
+
+def test_text_table_without_text_column() -> None:
+    # text_search() searches the first column (text_id) and drops `text`; the module
+    # adds an empty `text` column after `ethics`
+    paper = _select_text(
+        ec_paper(["The IRB approved it.", "Participants were recruited."]),
+        ["text_id", "section_id", "paragraph_id", "formatted"],
+    )
+    out = direct(paper)
+    assert out["table"].columns.tolist() == [
+        "text_id",
+        "section_id",
+        "paragraph_id",
+        "formatted",
+        "paper_id",
+        "header",
+        "section_type",
+        "ethics",
+        "text",
+        "live_data",
+    ]
+    assert len(out["table"]) == 0
+    assert out["traffic_light"] == "na"
+    assert out["summary_table"]["ethics_approved"].tolist() == [False]
+    assert out["summary_table"]["needs_ethics"].tolist() == [False]
+
+
+def test_sentences_of_a_paper_without_info_row() -> None:
+    # paper_id() skips a paper without an info row: its sentences have no factor
+    # level (NA paper_id, sorted last), the list gets a one-paper report that
+    # quotes them, and its live-data sentences count for no paper
+    p1 = _no_info(ec_paper(["The IRB approved it.", "Participants were recruited."], "p1"))
+    p2 = ec_paper(["The ethics committee approved it."], "p2")
+    out = direct(pc.PaperList([p1, p2]))
+    table = out["table"]
+    assert table["paper_id"].tolist() == ["p2", pd.NA, pd.NA]
+    assert table["text"].tolist() == [
+        "The ethics committee approved it.",
+        "The IRB approved it.",
+        "Participants were recruited.",
+    ]
+    assert out["summary_table"]["paper_id"].tolist() == ["p2"]
+    assert out["summary_table"]["needs_ethics"].tolist() == [False]
+    assert out["traffic_light"] == "na"
+    assert out["report"] == (
+        "An ethics approval statement was detected, based on the following text:\n\n"
+        "> The ethics committee approved it.\n\n> The IRB approved it."
+    )
+
+
+def test_rows_sorted_by_text_id_with_missing_last() -> None:
+    paper = ec_paper(
+        ["The IRB approved it.", "Participants were recruited.", "Ethics approval was obtained."]
+    )
+    text = paper.text.copy()
+    text["text_id"] = pd.array([None, 3, 1], dtype="Int64")
+    paper.text = text
+    out = direct(paper)
+    ethics = out["table"].loc[out["table"]["ethics"].fillna(False).astype(bool)]
+    assert ethics["text"].tolist() == ["Ethics approval was obtained.", "The IRB approved it."]
+
+
 # -- the Python-only prefilter ---------------------------------------------------
 
 _LITERALS = _ETHICS_ANY.split("|")

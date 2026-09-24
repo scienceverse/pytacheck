@@ -20,6 +20,7 @@ import pytest
 import respx
 
 import pytacheck as pc
+from parity.cases import ROOT
 from pytacheck.module import ModuleError
 from pytacheck.modules.causal_claims import _EXCLUDE_RE, _INCLUDE_RE
 from pytacheck.report.blocks import ReportTable
@@ -285,3 +286,102 @@ def test_with_mocked_space() -> None:
     assert title_table["cause"].tolist() == ["Tobacco use"]
     assert title_table["effect"].isna().tolist() == [True]
     assert res["summary_table"].to_dict("list") == {"paper_id": ["smk"], "causal": [2]}
+
+
+# -- review: branches the first cases did not reach -----------------------------
+
+
+def test_any_follows_r_if_any() -> None:
+    from pytacheck.modules.causal_claims import _any
+
+    assert _any(pd.Series([], dtype="boolean")) is False
+    assert _any(pd.Series([False, False], dtype="boolean")) is False
+    assert _any(pd.Series([pd.NA, True], dtype="boolean")) is True
+    # R: if (!any(c(NA, FALSE))) -> "missing value where TRUE/FALSE needed"
+    with pytest.raises(ValueError, match="missing value where TRUE/FALSE needed"):
+        _any(pd.Series([pd.NA, False], dtype="boolean"))
+
+
+def test_na_causal_flag_keeps_r_semantics() -> None:
+    from tests.mod_causal.parity_support import run_fake_causal_na
+
+    paper = mk(["X causes Y.", "Maybe noise causes Z.", "Nothing."], [], title="", id="na1")
+    res = run_fake_causal_na(lambda: pc.module_run(paper, "causal_claims"))
+    # dplyr::filter() drops the NA row; sum() gives NA, which na_replace turns into 0
+    assert res["table"]["sentence"].tolist() == ["X causes Y."]
+    assert res["summary_table"].to_dict("list") == {"paper_id": ["na1"], "causal": [0]}
+    assert res["traffic_light"] == "yellow"
+
+
+@pytest.mark.parametrize(
+    "paper",
+    [
+        pytest.param(lambda: pc.PaperList([]), id="empty-paper-list"),
+        pytest.param(
+            lambda: (lambda p: (setattr(p, "text", p.text.drop(columns=["text"])), p)[1])(
+                untitled(["Participants were randomly assigned."], id="nt")
+            ),
+            id="no-text-column",
+        ),
+    ],
+)
+def test_no_text_column_is_a_join_error(paper: Any) -> None:
+    # R: text_search() returns no `text` column, so the left_join() fails
+    with pytest.raises(ModuleError, match=r"Join columns in `y` must be present in the data\."):
+        pc.module_run(paper(), "causal_claims")
+
+
+def test_references_are_not_searched() -> None:
+    from tests.mod_causal.parity_support import with_section_types
+
+    paper = with_section_types(
+        mk(["X causes Y."], ["Participants were randomly assigned."], title="", id="refs"),
+        ["abstract", "references"],
+    )
+    res = _run(paper)
+    assert res["summary_text"].startswith("\n-  We identified no sentences describing")
+    assert res["traffic_light"] == "yellow"
+
+
+@pytest.mark.parametrize("which", ["demo", "psychsci"])
+def test_one_search_equals_rs_two_searches(which: str) -> None:
+    """R searches twice (text_search(paper, "random") and text_search(paper));
+    the port filters one search: the randomization sentences must be the same."""
+    from pytacheck._r import grepl
+    from pytacheck.modules.causal_claims import _EXCLUDE_RE, _INCLUDE_RE
+    from tests.mod_causal.gen_parity_cases import PSYCHSCI
+
+    paper = (
+        pc.demopaper() if which == "demo" else pc.PaperList(pc.read([ROOT / p for p in PSYCHSCI]))
+    )
+    direct = pc.text_search(paper, "random")["text"]
+    keep = [
+        i and not e
+        for i, e in zip(
+            grepl(_INCLUDE_RE, direct, perl=True),
+            grepl(_EXCLUDE_RE, direct, perl=True),
+            strict=True,
+        )
+    ]
+    expected = direct[keep].tolist()
+    res = _run(paper)
+    n = len(expected)
+    if n == 0:
+        assert NO_RANDOM_REPORT[0] in res["report"]
+    else:
+        i = res["report"].index(
+            f"We identified {n} sentence{'' if n == 1 else 's'} describing randomization."
+        )
+        assert res["report"][i + 1].data.iloc[:, 0].tolist() == expected
+
+
+def test_report_tables_render_like_r() -> None:
+    """Report tables render to the R chunks scroll_table() returns (parity: report.*)."""
+    from tests.mod_causal.parity_support import report_qmd
+
+    paper = mk(["X causes Y."], ["Participants were randomly assigned."], title="A causes B")
+    report = report_qmd(_run(paper))
+    chunks = [s for s in report if "```{r}" in s]
+    assert len(chunks) == 3
+    assert "metacheck::report_table(table, 1, 2, FALSE)" in chunks[1]
+    assert 'metacheck::report_table(table, "auto", 2, FALSE)' in chunks[0]

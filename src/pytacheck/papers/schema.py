@@ -6,6 +6,16 @@ held as a list of data frames. This module loads that schema and reproduces
 schema's type with R's ``as.character``/``as.integer``/``as.double``/
 ``as.logical`` rules; unknown columns are left alone.
 
+Two schemas are in play, as in metacheck:
+
+* :func:`load_schema` is ``paper.json`` (``.paper_schema()``): the tables and
+  columns ``paper()`` creates (:func:`empty_table`, :func:`required_tables`);
+* :func:`load_schema_bibr12` is ``paper.json`` merged with
+  ``paper-bibr12.json`` (``.paper_schema_bibr12()``): the optional tables and
+  columns of a paper read from a bibr export schema 12.x file. Coercion
+  (:func:`table_columns`, :func:`coerce_table`, :func:`records_to_frame`) and
+  validation use it, for papers in either format.
+
 Canonical pandas dtypes for schema types:
 
 =========  ===================  =========================================
@@ -25,7 +35,7 @@ from __future__ import annotations
 import functools
 import math
 import re
-from collections.abc import Iterable, Sequence
+from collections.abc import Iterable, Mapping, Sequence
 from importlib import resources
 from typing import Any
 
@@ -43,6 +53,7 @@ __all__ = [
     "empty_table",
     "infer_column",
     "load_schema",
+    "load_schema_bibr12",
     "table_columns",
     "table_names",
 ]
@@ -57,18 +68,53 @@ SCHEMA_DTYPES: dict[str, Any] = {
 }
 
 
-@functools.cache
-def load_schema() -> dict[str, Any]:
-    """The bibr paper JSON schema bundled with this release."""
-    raw = resources.files("pytacheck.resources.schema").joinpath("paper.json").read_bytes()
+def _read_schema(name: str) -> dict[str, Any]:
+    raw = resources.files("pytacheck.resources.schema").joinpath(name).read_bytes()
     schema: dict[str, Any] = orjson.loads(raw)
     return schema
 
 
 @functools.cache
+def load_schema() -> dict[str, Any]:
+    """The bibr paper JSON schema bundled with this release (``.paper_schema()``)."""
+    return _read_schema("paper.json")
+
+
+def _schema_merge(base: Any, add: Mapping[str, Any]) -> dict[str, Any]:
+    """The ``merge()`` of ``.paper_schema_bibr12()``.
+
+    Objects merge key by key, an ``enum`` is the union of both (base values
+    first), and any other value of *add* replaces the base value.
+    """
+    out = dict(base) if isinstance(base, Mapping) else {}
+    for name, a in add.items():
+        b = out.get(name)
+        if isinstance(b, Mapping) and isinstance(a, Mapping):
+            out[name] = _schema_merge(b, a)
+        elif name == "enum":
+            out[name] = list(dict.fromkeys([*(b or []), *a]))
+        else:
+            out[name] = a
+    return out
+
+
+@functools.cache
+def load_schema_bibr12() -> dict[str, Any]:
+    """Port of ``R/import-bibr12.R::.paper_schema_bibr12()``.
+
+    ``paper.json`` merged with ``paper-bibr12.json``: the tables and columns a
+    paper read from a bibr export schema 12.x file adds. Every addition is
+    optional, so papers in the older format validate as before.
+    """
+    add = dict(_read_schema("paper-bibr12.json"))
+    add.pop("description", None)
+    return _schema_merge(load_schema(), add)
+
+
+@functools.cache
 def table_names() -> tuple[str, ...]:
-    """Every table the schema defines (``properties`` minus ``paper_id``)."""
-    return tuple(k for k in load_schema()["properties"] if k != "paper_id")
+    """Every table the (merged) schema defines (``properties`` minus ``paper_id``)."""
+    return tuple(k for k in load_schema_bibr12()["properties"] if k != "paper_id")
 
 
 @functools.cache
@@ -77,20 +123,13 @@ def required_tables() -> tuple[str, ...]:
     return tuple(k for k in load_schema()["required"] if k != "paper_id")
 
 
-@functools.cache
-def table_columns(table: str) -> tuple[tuple[str, str], ...]:
-    """``(column, schema type)`` pairs for *table*, in schema order.
-
-    The schema type is the *first* listed type (``["integer", "null"]`` ->
-    ``"integer"``), exactly like ``.paper_coerce()``.
-    """
-    schema = load_schema()
+def _def_columns(schema: Mapping[str, Any], table: str) -> tuple[tuple[str, str], ...]:
     prop = schema["properties"].get(table)
     if prop is None:
         return ()
     ref = prop.get("$ref") or (prop.get("items") or {}).get("$ref")
     if not ref:
-        return ()
+        return ()  # not a table, e.g. extraction
     definition = schema["$defs"][ref.split("/")[2]]
     cols = []
     for name, spec in definition.get("properties", {}).items():
@@ -102,16 +141,34 @@ def table_columns(table: str) -> tuple[tuple[str, str], ...]:
 
 
 @functools.cache
+def table_columns(table: str) -> tuple[tuple[str, str], ...]:
+    """``(column, schema type)`` pairs for *table*, in schema order.
+
+    From the merged schema (:func:`load_schema_bibr12`), which
+    ``.paper_coerce()`` and ``paper_validate()`` use. The schema type is the
+    *first* listed type (``["integer", "null"]`` -> ``"integer"``), exactly
+    like ``.paper_coerce()``.
+    """
+    return _def_columns(load_schema_bibr12(), table)
+
+
+@functools.cache
+def base_table_columns(table: str) -> tuple[tuple[str, str], ...]:
+    """``(column, schema type)`` pairs of ``paper.json`` alone: what ``paper()`` creates."""
+    return _def_columns(load_schema(), table)
+
+
+@functools.cache
 def _column_types(table: str) -> dict[str, str]:
     return dict(table_columns(table))
 
 
 def empty_table(table: str) -> pd.DataFrame:
-    """A zero-row table with every schema column, as ``paper()`` builds them."""
+    """A zero-row table with every ``paper.json`` column, as ``paper()`` builds them."""
     return pd.DataFrame(
         {
             name: pd.Series([], dtype=SCHEMA_DTYPES.get(typ, object))
-            for name, typ in table_columns(table)
+            for name, typ in base_table_columns(table)
         }
     )
 

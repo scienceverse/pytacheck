@@ -1,0 +1,28 @@
+{
+ "tree": [
+  {
+   "path": "a.txt",
+   "type": "blob",
+   "size": 1
+  },
+  {
+   "path": "notype.txt",
+   "size": 2
+  },
+  {
+   "path": "d",
+   "type": "tree"
+  },
+  {
+   "path": "c.txt",
+   "type": "blob",
+   "size": 3
+  },
+  {
+   "path": "e.txt",
+   "type": "blob",
+   "size": 4
+  }
+ ],
+ "truncated": false
+}

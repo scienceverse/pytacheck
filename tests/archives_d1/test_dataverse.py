@@ -458,3 +458,73 @@ def test_dataverse_verify_downloads_only_hashes_md5(tmp_path: Path) -> None:
     out = _dataverse_verify_downloads(files, str(tmp_path))
     assert out["downloaded"].tolist() == [True, False, False]
     assert out["checksum_ok"].isna().tolist() == [True, False, True]
+
+
+# ---------------------------------------------------------------- review round 2
+
+
+def test_dataverse_parse_invalid_utf8_escape_is_an_error_like_r() -> None:
+    # R: URLdecode() gives invalid UTF-8, which sub("\\.$", "", doi) refuses
+    urls = [
+        "https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/Y",
+        "https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/X%FF",
+    ]
+    with (
+        pytest.warns(UserWarning, match=r"unable to translate '10\.7910/DVN/X<ff>'"),
+        pytest.raises(ValueError, match="input string 2 is invalid"),
+    ):
+        _dataverse_parse(urls)
+    # valid multi-byte escapes decode normally
+    out = _dataverse_parse(
+        ["https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/X%E2%80%93."]
+    )
+    assert out["doi"].tolist() == ["10.7910/DVN/X–"]
+
+
+def test_links_on_an_empty_paper_list_keep_rs_columns() -> None:
+    out = dataverse_links(pc.PaperList([]))
+    assert out.columns.tolist() == [
+        "text_id",
+        "paper_id",
+        "href",
+        "dataverse_url",
+        "dataverse_host",
+        "dataverse_doi",
+    ]
+    assert len(out) == 0
+
+
+def test_file_download_aborts_on_an_empty_body_like_r(mock_api: Any, tmp_path: Path) -> None:
+    # R: writeBin(httr2::resp_body_raw(resp), ...) sits outside the tryCatch,
+    # and resp_body_raw() refuses an empty body
+    with pytest.raises(ValueError, match="Can't retrieve empty body"):
+        dataverse_file_download(
+            "dataverse.harvard.edu", "10.7910/DVN/EMPTY", download_to=str(tmp_path)
+        )
+    # a vectorised call warns and drops that dataset
+    with pytest.warns(UserWarning, match="10.7910/DVN/EMPTY resulted in an error"):
+        out = dataverse_file_download(
+            "dataverse.harvard.edu",
+            ["10.7910/DVN/EMPTY", "10.7910/DVN/REV2"],
+            download_to=str(tmp_path),
+        )
+    assert out is not None
+    assert set(out["dataverse_doi"]) == {"10.7910/DVN/REV2"}
+
+
+def test_one_element_json_arrays_become_list_cells(mock_api: Any) -> None:
+    out = dataverse_info(
+        "https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/LISTS"
+    )
+    assert out["title"].iloc[0] == ["Listed"]
+    assert out["doi"].iloc[0] == ["https://doi.org/10.7910/DVN/LISTS"]
+    assert out["publication_date"].iloc[0] == ["2020-01-01"]
+
+
+def test_cell_follows_r_replacement_rules() -> None:
+    from pytacheck.archives.dataverse import _field_cell as _cell
+
+    assert _cell({"name": "x"}).iloc[0] == ["x"]  # R keeps the element, not the object
+    assert _cell([{"k": 1}]).iloc[0] == {"k": 1}
+    with pytest.raises(ValueError, match="replacement has 2 rows, data has 1"):
+        _cell(["a", "b"])

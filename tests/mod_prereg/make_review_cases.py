@@ -55,6 +55,11 @@ def r_expr(spec):
     run = f'module_run({r_paper(spec)}, "prereg_check")'
     if spec.get("tables"):
         run = f"{R_TABLES}({run})"
+    if spec.get("report"):
+        run = (
+            r'gsub("(?s)\n```\\{r\\}.*?\n```\n", "\n<R-CHUNK>\n", '
+            f"module_report({run}), perl = TRUE)"
+        )
     return (
         "(function() { .r <- httptest2::get_current_redactor(); "
         "httptest2::set_redactor(function(req) { req$url <- "
@@ -232,6 +237,47 @@ CASES = [
         "tables.synthetic.prsp_deparse",
         "report tables: deparsed prsp values",
         one(osf("prspz", "arrys"), "p_prspz", mock="local", tables=True),
+    ),
+    # --- second review pass
+    (
+        "report.no_sample_size",
+        "module_report() without a sample size: scroll_table(NULL) leaves an empty block",
+        one(osf("5xysn"), "p_oer", report=True),
+    ),
+    (
+        "empty_paperlist",
+        "an empty paper list (R errors in data.frame(): paper_id() is NULL)",
+        {"papers": [], "paperlist": True},
+    ),
+    (
+        "ap.with_invalid_osf",
+        "an AsPredicted page next to an OSF link without a valid id (osf_type(NA))",
+        one([AP1, "https://osf.io/abc"], "p_ap_invalid"),
+    ),
+    (
+        "ap.no_registration",
+        "one AsPredicted page next to an OSF link that is not a registration",
+        one([AP1, *osf("pngda")], "p_ap_node"),
+    ),
+    (
+        "synthetic.deparse_escapes",
+        "deparsed prsp values with control, separator and unassigned characters",
+        one(osf("escps"), "p_escps", mock="local"),
+    ),
+    (
+        "tables.synthetic.deparse_escapes",
+        "report tables: deparsed prsp values with escapes",
+        one(osf("escps"), "p_escps", mock="local", tables=True),
+    ),
+    (
+        "synthetic.label_scalars",
+        "blocks schema labels that are numbers or logicals (as.character())",
+        one(osf("lblsc"), "p_lblsc", mock="local"),
+    ),
+    (
+        "synthetic.title_scalars",
+        "pages schema titles that are numbers or logicals (as.character())",
+        one(osf("lblpg"), "p_lblpg", mock="local"),
     ),
 ]
 

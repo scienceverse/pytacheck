@@ -1,0 +1,127 @@
+{
+  "id": "dryad_file_download.review.empty_body_multi",
+  "ok": true,
+  "error": null,
+  "warnings": [
+    "10.5061/dryad.rev2 resulted in an error:\n  Can't retrieve empty body.\n",
+    "1 of 3 files from Dryad dataset 10.5061/dryad.rev1 did not arrive intact (e.g. NA). The returned table marks it downloaded = FALSE. Run again to retry."
+  ],
+  "value": {
+    "t": "df",
+    "nrow": 3,
+    "names": [
+      "folder",
+      "dryad_doi",
+      "id",
+      "key",
+      "path",
+      "size",
+      "size_on_disk",
+      "checksum",
+      "checksum_ok",
+      "self",
+      "downloaded",
+      "extracted"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "10.5061_dryad.rev1",
+          "10.5061_dryad.rev1",
+          "10.5061_dryad.rev1"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "10.5061/dryad.rev1",
+          "10.5061/dryad.rev1",
+          "10.5061/dryad.rev1"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "70012",
+          "70013"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "",
+          "nested/deeper/file.txt"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "70012",
+          "nested/deeper/file.txt"
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          8,
+          5,
+          11
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          null,
+          5,
+          11
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "344fd2323dd33d5c058b7cf27de029e8",
+          "4358b5009c67d0e31d7fbf1663fcd3bf",
+          "426e712f0524e4dee5de612f6520bf86"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          null,
+          true,
+          true
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://datadryad.org/api/v2/files/70011/download",
+          "https://datadryad.org/api/v2/files/70012/download",
+          "https://datadryad.org/api/v2/files/70013/download"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false,
+          true,
+          true
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          null,
+          null,
+          null
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

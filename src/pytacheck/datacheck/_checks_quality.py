@@ -6,6 +6,7 @@ Port of ``R/data_check_helpers.R``: ``data_check_scale_values()`` through
 
 from __future__ import annotations
 
+import itertools
 import math
 from typing import Any
 
@@ -135,7 +136,7 @@ def data_check_scale_values(
         is_contig_int = (
             all(f == round(f) for f in valid_set)
             and len(valid_set) >= 2
-            and all(b - a == 1 for a, b in zip(valid_set, valid_set[1:], strict=False))
+            and all(b - a == 1 for a, b in itertools.pairwise(valid_set))
         )
         if is_contig_int and lo >= 0:
             x_int = sorted({e for e in xv if e == round(e)})
@@ -441,9 +442,7 @@ def data_check_whitespace(x: Any) -> dict[str, Any]:
     v = rvec(x)
     if v.is_numeric:
         return none
-    padded = unique(
-        s for s in chr(v) if s is not None and (t := trim(s)) != s and t != ""
-    )
+    padded = unique(s for s in chr(v) if s is not None and (t := trim(s)) != s and t != "")
     if not padded:
         return none
     shown = ", ".join(f'"{s}"' for s in padded[:10])

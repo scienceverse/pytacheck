@@ -1,0 +1,9 @@
+{
+  "id": "ethics_check.no_info_single_with_text",
+  "ok": false,
+  "error": "Running the module 'ethics_check' produced errors: invalid subscript type 'list'",
+  "warnings": [],
+  "value": null,
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

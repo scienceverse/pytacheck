@@ -1,0 +1,98 @@
+{
+  "id": "parse_qsf.bom.qsf",
+  "ok": true,
+  "error": null,
+  "warnings": [
+    "JSON string contains (illegal) UTF8 byte-order-mark!"
+  ],
+  "value": {
+    "t": "df",
+    "nrow": 2,
+    "names": [
+      "codebook_variable",
+      "label",
+      "codebook_source",
+      "group",
+      "value_labels",
+      "missing_values",
+      "question",
+      "coding_instructions",
+      "scale_group",
+      "parse_method"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "Q1",
+          "QID3"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Hi?",
+          "Pick"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "bom.qsf",
+          "bom.qsf"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "{\"1\":\"Yes\",\"2\":\"N/A\"}"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Hi?",
+          "Pick"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Q1",
+          "QID3"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "qsf",
+          "qsf"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

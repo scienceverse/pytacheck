@@ -314,14 +314,16 @@ _DOTTED_I = str.maketrans({"\u0130": "\u00d7", "\u0131": "\u00d7"})
 
 def _is_posix_only_class(body: str) -> bool:
     """Is a class body (between ``[`` and ``]``) made only of POSIX classes and
-    ``\\w``-like escapes (the members PCRE2 does not case-fold)?"""
+    ``\\w``-like escapes (the members PCRE2 does not case-fold)?
+
+    ``[:^upper:]`` / ``[:^lower:]`` are left to the engine (not scoped)."""
     j = 1 if body.startswith("^") else 0
     if j >= len(body):
         return False
     while j < len(body):
         if body.startswith("[:", j):
             end = body.find(":]", j + 2)
-            if end == -1:
+            if end == -1 or body[j + 2 : end] in ("^upper", "^lower"):
                 return False
             j = end + 2
         elif body[j] == "\\" and j + 1 < len(body) and body[j + 1] in "wWdDsShHvV":
@@ -339,7 +341,9 @@ def _caseless_pcre(pattern: str) -> str:
     (``[a-z]`` matches ``ſ`` and the Kelvin sign) but not ``\\w``, ``\\W`` or
     ``[[:alnum:]]``; the `regex` translation of those is an explicit ASCII
     class, which it would fold. ``(?-i:...)`` gives PCRE's meaning in both
-    engines.
+    engines. Caseless ``[:upper:]`` and ``[:lower:]`` match every ASCII letter
+    in PCRE2 (and still not ``ſ`` or the Kelvin sign): they become
+    ``[:alpha:]``.
     """
     out: list[str] = []
     i, n = 0, len(pattern)
@@ -352,7 +356,10 @@ def _caseless_pcre(pattern: str) -> str:
         elif c == "[":
             j = _class_end(pattern, i)
             cls = pattern[i:j]
-            out.append(f"(?-i:{cls})" if _is_posix_only_class(cls[1:-1]) else cls)
+            if _is_posix_only_class(cls[1:-1]):
+                cls = cls.replace("[:upper:]", "[:alpha:]").replace("[:lower:]", "[:alpha:]")
+                cls = f"(?-i:{cls})"
+            out.append(cls)
             i = j
         else:
             out.append(c)

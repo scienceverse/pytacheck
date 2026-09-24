@@ -210,6 +210,8 @@ def test_file_paths_containing_double_colons_still_load(ms) -> None:
     assert module_find("proj::v2/mod.py").title == "Inner"
     with pytest.raises(ModuleError, match="no active pack named 'nopack'"):
         module_find("nopack::thing")
+    (ms.work / "nopack::thing.py").write_text(mod_src("legacy"))  # legacy ./<name>.py lookup
+    assert module_find("nopack::thing").title == "Legacy"
 
 
 def test_a_malformed_config_does_not_change_the_not_found_error(ms) -> None:

@@ -1,0 +1,19 @@
+{
+  "id": 700009,
+  "title": "Object listing",
+  "files": {
+    "first": {
+      "id": 700901,
+      "name": "first.csv",
+      "size": 8,
+      "computed_md5": "344fd2323dd33d5c058b7cf27de029e8",
+      "download_url": "https://ndownloader.figshare.com/files/700901"
+    },
+    "second": {
+      "id": 700902,
+      "name": "second.txt",
+      "size": 5,
+      "download_url": "https://ndownloader.figshare.com/files/700902"
+    }
+  }
+}

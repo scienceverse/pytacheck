@@ -36,6 +36,7 @@ from pytacheck.archives.dataverse import (
     _download_many,
     _elements,
     _empty_or,
+    _field_cell,
     _file_frame,
     _finish_file_table,
     _info_table,
@@ -279,12 +280,12 @@ def _dryad_info(dryad_doi: Any, pb: Any = None) -> pd.DataFrame:
                 listed = _dollars(files_rec, "_embedded", "stash:files")
                 files_list = listed if listed is not None else []
 
-        obj["title"] = _cell(_empty_or(_dollar(rec, "title"), None))
-        obj["doi"] = _cell(_empty_or(_dollar(rec, "identifier"), None))
-        obj["publication_date"] = _cell(_empty_or(_dollar(rec, "publicationDate"), None))
-        obj["updated_date"] = _cell(_empty_or(_dollar(rec, "lastModificationDate"), None))
+        obj["title"] = _field_cell(_empty_or(_dollar(rec, "title"), None))
+        obj["doi"] = _field_cell(_empty_or(_dollar(rec, "identifier"), None))
+        obj["publication_date"] = _field_cell(_empty_or(_dollar(rec, "publicationDate"), None))
+        obj["updated_date"] = _field_cell(_empty_or(_dollar(rec, "lastModificationDate"), None))
         obj["authors"] = _list_cell(authors)
-        obj["license"] = _cell(_empty_or(_dollar(rec, "license"), None))
+        obj["license"] = _field_cell(_empty_or(_dollar(rec, "license"), None))
         obj["files"] = _list_cell(files_list)
         return pd.DataFrame(obj)
 

@@ -94,7 +94,10 @@ _MONTHS = (
     "january", "february", "march", "april", "may", "june",
     "july", "august", "september", "october", "november", "december",
 )  # fmt: skip
-_MONTH_NUM = {**{m: i + 1 for i, m in enumerate(_MONTHS)}, **{m[:3]: i + 1 for i, m in enumerate(_MONTHS)}}
+_MONTH_NUM = {
+    **{m: i + 1 for i, m in enumerate(_MONTHS)},
+    **{m[:3]: i + 1 for i, m in enumerate(_MONTHS)},
+}
 # (directive -> (from, to, width)) as in R's Rstrptime.h get_number()
 _NUMBER_FIELDS = {
     "Y": (0, 9999, 4),
@@ -108,7 +111,7 @@ _NUMBER_FIELDS = {
 _DAYS_IN_MONTH = (31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)
 
 
-def _number_regex(lo: int, hi: int, width: int) -> str:
+def _number_regex(_lo: int, hi: int, width: int) -> str:
     """The digits ``get_number(lo, hi, width)`` consumes (value checked later).
 
     Digits are read greedily while fewer than *width* are taken and the value
@@ -274,7 +277,7 @@ def _concept_is_accuracy(col_name: Any, x: Any) -> bool:
     return is01 or is_bool
 
 
-def _concept_is_condition(col_name: Any, x: Any) -> bool:
+def _concept_is_condition(col_name: Any, x: Any) -> bool:  # noqa: ARG001 - R's signature
     """A condition/group assignment column, by name only.
 
     Port of ``R/data_check_helpers.R::.concept_is_condition()``.
@@ -348,7 +351,10 @@ _COLTYPE_FACETS: dict[str, tuple[str | None, str | None]] = {
 }
 
 
-def _coltype_to_facets(ct: str | None, is_numeric_hint: Any = None) -> dict[str, str | None]:
+def _coltype_to_facets(
+    ct: Any,
+    is_numeric_hint: Any = None,  # noqa: ARG001 - R's signature (unused there too)
+) -> dict[str, str | None]:
     """Map a ``data_col_type()`` type to ``{"rep": representation, "lvl": level}``.
 
     Port of ``R/data_check_helpers.R::.coltype_to_facets()``.
@@ -391,13 +397,20 @@ def data_col_facets(col_name: Any, values: Any, in_scale_block: Any = None) -> d
     rv = rvec(values).drop_na()
     n_nona = len(rv)
     n_unique = len(unique(rv.values))
+    parsed: list[list[float]] = []
+
+    def nums() -> list[float]:
+        """``as.numeric(gsub(",", ".", as.character(x_noNA)))`` without NA (parsed once)."""
+        if not parsed:
+            parsed.append(_numbers(rv))
+        return parsed[0]
 
     f = _coltype_to_facets(ct, prim.get("is_numeric"))
     representation = f["rep"]
     measurement_level = f["lvl"]
 
     if representation is None and n_nona > 0:
-        representation = "numeric" if len(_numbers(rv)) / n_nona >= 0.8 else "text"
+        representation = "numeric" if len(nums()) / n_nona >= 0.8 else "text"
 
     if ct == "empty" or n_nona == 0:
         quality = "empty"
@@ -437,13 +450,13 @@ def data_col_facets(col_name: Any, values: Any, in_scale_block: Any = None) -> d
         and not _is_true(prim.get("is_numeric"))
         and representation != "empty"
         and n_nona > 0
-        and len(_numbers(rv)) / n_nona < 0.5
+        and len(nums()) / n_nona < 0.5
     ):
         measurement_level = "nominal"
 
     unit: str | None = None
     if concept == "reaction_time":
-        pos = [v for v in _numbers(rv) if v > 0]
+        pos = [v for v in nums() if v > 0]
         if pos:
             unit = "milliseconds" if median(pos) >= 100 else "seconds"
         if measurement_level is None:

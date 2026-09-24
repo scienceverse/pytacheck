@@ -278,7 +278,9 @@ def _find_codebook_cols(col_names: Any) -> dict[str, Any] | None:
     nm = [_normalize_header_one(v) for v in _chr_vec(names)]
     is_lab = grepl(_CB_LAB_HEADER_RE, nm, perl=True)
     is_var = grepl(_CB_VAR_HEADER_RE, nm, perl=True)
-    var_col = next((c for c, v, lab in zip(names, is_var, is_lab, strict=True) if v and not lab), None)
+    var_col = next(
+        (c for c, v, lab in zip(names, is_var, is_lab, strict=True) if v and not lab), None
+    )
     lab_col = next((c for c, lab in zip(names, is_lab, strict=True) if lab), None)
     if _na(var_col) or _na(lab_col):
         return None
@@ -603,8 +605,12 @@ def _haven_value_labels(col: Any, attrs: Mapping[str, Any] | None = None) -> dic
     vl: str | None = None
     miss_codes: list[Any] = []
     miss_reasons: list[str | None] = []
-    if pairs and _looks_like_freetext_labels([p[0] for p in pairs]):
-        pairs = []
+    if pairs:
+        freetext = _looks_like_freetext_labels([p[0] for p in pairs])
+        if freetext is None:  # R: `&& NA` inside if()
+            raise ValueError("missing value where TRUE/FALSE needed")
+        if freetext:
+            pairs = []
     if pairs:
         codes = [p[1] for p in pairs]
         reasons = [p[0] for p in pairs]
@@ -633,7 +639,11 @@ def _haven_value_labels(col: Any, attrs: Mapping[str, Any] | None = None) -> dic
             seen.add(k)
         kc = [c for c, k in zip(miss_codes, keep, strict=True) if k]
         kr = [r for r, k in zip(miss_reasons, keep, strict=True) if k]
-        mv = _encode_missing_values(kc) if all(r is None for r in kr) else _encode_value_labels(kc, kr)
+        mv = (
+            _encode_missing_values(kc)
+            if all(r is None for r in kr)
+            else _encode_value_labels(kc, kr)
+        )
     return {"value_labels": vl, "missing_values": mv}
 
 
@@ -916,7 +926,9 @@ def _extract_structured_codebook(
     if m_col is not None:
         mvals = _chr_vec(_col(df, m_col))
         declared = [_declared_missing(mvals[i]) for i in sel]
-        missing_values = [m if d is None else d for m, d in zip(missing_values, declared, strict=True)]
+        missing_values = [
+            m if d is None else d for m, d in zip(missing_values, declared, strict=True)
+        ]
     question: Any = None
     if q_col is not None:
         qv = _chr_vec(_col(df, q_col))
@@ -962,7 +974,9 @@ def _col_attrs(df: pd.DataFrame, j: int) -> Mapping[str, Any]:
     return a if isinstance(a, Mapping) else {}
 
 
-def _extract_haven_labels(df: pd.DataFrame, src: str, group: str | None = None) -> pd.DataFrame | None:
+def _extract_haven_labels(
+    df: pd.DataFrame, src: str, group: str | None = None
+) -> pd.DataFrame | None:
     """Embedded variable / value labels of a haven-read data frame.
 
     Port of ``.extract_haven_labels()``; column attributes come from
@@ -1013,4 +1027,3 @@ def _cb_is_definition_line(x: Any) -> Any:
         x,
         perl=True,
     )
-

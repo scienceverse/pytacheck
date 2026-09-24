@@ -8,36 +8,54 @@
     if (is.null(lines)) lines <- readLines(file_path, warn = FALSE, skipNul = TRUE)
     lines <- iconv(lines, to = "UTF-8", sub = "byte")
 
-Each stage is reproduced here on the raw bytes:
+Each stage is reproduced here on the raw bytes of the file:
 
-* :func:`read_lines_raw` -- readr's ``read_lines_raw()`` (BOM skipped, lines
-  split on LF, CRLF or CR, a last line without terminator kept when non-empty);
+* :func:`read_lines_raw` -- readr's ``read_lines_raw()`` (``TokenizerLine``:
+  byte order mark skipped, lines split on LF, CRLF or CR, a last line without
+  terminator kept when non-empty);
 * :func:`guess_encoding` -- ``readr::guess_encoding()``: pure ASCII (bytes
   1..127) short-cuts to ``"ASCII"``, anything else goes through ICU's charset
-  detector (:mod:`._icu`), keeping guesses with confidence > 0.2;
-* :func:`vroom_lines` -- ``readr::read_lines()`` (which is
-  ``vroom::vroom_lines()``): the line-ending style is taken from the first line
-  ending in the file, lines are split on that character only, one trailing CR
-  is stripped per line, and an unterminated remainder is kept only when the file
-  does not end in a line ending at all. Text is converted from the guessed
-  encoding with glibc ``iconv`` semantics; a conversion failure, an embedded NUL
-  or a ``\\x01`` byte (vroom's internal delimiter) makes it fail;
+  detector (:mod:`._icu`), keeping guesses with confidence > 0.2 (an input ICU
+  cannot place at all gives stringi's single ``NA`` row);
+* :func:`vroom_lines` -- ``readr::read_lines()``, i.e. ``vroom::vroom_lines()``
+  (vroom 1.7.1): a faithful emulation of vroom's indexer (``delimited_index``
+  for memory-mapped files that end in ``"\\n"``, ``delimited_index_connection``
+  -- 128 KiB chunks -- for every other file and for decompressed input), of
+  its cell extraction (one trailing CR dropped, strings cut at an embedded NUL
+  with the "embedded null" parse problem when the cut string is shorter than
+  the raw cell) and of the glibc ``iconv`` conversion from the guessed
+  encoding. Everything R reports as an error or a warning (unknown encoding,
+  conversion failure, parse problems) raises :class:`ReadFailed`, which is
+  what ``code_read()``'s ``tryCatch()`` turns into the fallback;
 * :func:`read_lines_base` -- base ``readLines(warn = FALSE, skipNul = TRUE)``;
 * :func:`iconv_sub_byte` -- ``iconv(x, to = "UTF-8", sub = "byte")``.
 
-Upstream divergence: when the conversion fails inside vroom's worker threads, R
-crashes with a segfault rather than raising an error (see the report); pytacheck
-takes the fallback path that ``code_read()`` was written to take.
+Known limits (documented in ``porting/map/codecheck.toml``): vroom indexes
+large files on several threads, each of which re-detects the newline type at
+its own chunk boundary; files that mix CR-only line endings with LF/CRLF can
+split differently there than in this single-threaded emulation. R crashes
+(segfaults) on a few malformed inputs when a conversion error is raised inside
+vroom; pytacheck takes the fallback path ``code_read()`` was written to take.
+``ISO-2022-CN`` (glibc can decode it, Python cannot) also takes the fallback.
 """
 
 from __future__ import annotations
 
+import bz2
 import codecs
+import gzip
+import io
+import lzma
 import re
+import zipfile
+import zlib
 from collections.abc import Callable
 
 __all__ = [
+    "ReadFailed",
     "code_read_bytes",
+    "decompress",
+    "detect_compression",
     "guess_encoding",
     "iconv_sub_byte",
     "read_lines_base",
@@ -46,8 +64,68 @@ __all__ = [
 ]
 
 
-class _ReadFailed(Exception):
+class ReadFailed(Exception):
     """``readr::read_lines()`` raised an error or a warning."""
+
+
+# ---------------------------------------------------------------------------
+# compression (vroom/readr detect_compression(), R connections)
+# ---------------------------------------------------------------------------
+
+
+def detect_compression(data: bytes) -> str | None:
+    """``detect_compression()`` (identical in readr and vroom): magic bytes."""
+    if data[:2] == b"\x1f\x8b":
+        return "gz"
+    if data[:6] == b"\xfd7zXZ\x00":
+        return "xz"
+    if data[:3] == b"BZh":
+        return "bz2"
+    if data[:4] in (b"PK\x03\x04", b"PK\x05\x06", b"PK\x07\x08"):
+        return "zip"
+    return None
+
+
+def decompress(data: bytes, kind: str) -> bytes:
+    """What R's ``gzfile()``/``bzfile()``/``xzfile()``/``unz()`` connections read.
+
+    ``gzfile()`` and ``xzfile()`` read an uncompressed file as it is; a zip
+    archive yields its first member (vroom/readr ``zipfile()``). Raises
+    :class:`ReadFailed` where R's connection fails.
+    """
+    try:
+        if kind == "gz":
+            if data[:2] != b"\x1f\x8b":
+                return data
+            return _gunzip(data)
+        if kind == "xz":
+            if data[:6] != b"\xfd7zXZ\x00":
+                return data
+            return lzma.decompress(data)
+        if kind == "bz2":
+            return bz2.decompress(data)
+        if kind == "zip":
+            with zipfile.ZipFile(io.BytesIO(data)) as zf:
+                names = zf.namelist()
+                if not names:
+                    raise ReadFailed("subscript out of bounds")
+                return zf.read(names[0])
+    except (OSError, EOFError, ValueError, lzma.LZMAError, zipfile.BadZipFile) as exc:
+        raise ReadFailed(str(exc)) from exc
+    return data
+
+
+def _gunzip(data: bytes) -> bytes:
+    """R's gzfile: concatenated members are read in turn, trailing junk ignored."""
+    out = []
+    while data[:2] == b"\x1f\x8b":
+        d = zlib.decompressobj(31)
+        try:
+            out.append(d.decompress(data))
+        except zlib.error:
+            break
+        data = d.unused_data
+    return b"".join(out)
 
 
 # ---------------------------------------------------------------------------
@@ -82,13 +160,17 @@ def read_lines_raw(data: bytes, n_max: int = -1) -> list[bytes]:
     return lines
 
 
+_NON_ASCII = re.compile(rb"[\x00\x80-\xff]")
+
+
 def guess_encoding(
     data: bytes, n_max: int = 10000, threshold: float = 0.2
-) -> list[tuple[str, float]]:
+) -> list[tuple[str | None, float | None]]:
     """``readr::guess_encoding()``: ``(encoding, confidence)`` pairs, best first.
 
     Raises ``ValueError`` when the file has no lines at all (R fails with
-    "missing value where TRUE/FALSE needed").
+    "missing value where TRUE/FALSE needed"). When ICU recognises nothing,
+    stringi returns one ``NA`` row, which the confidence filter keeps.
     """
     from pytacheck.codecheck._icu import detect_all
 
@@ -96,9 +178,12 @@ def guess_encoding(
     if not lines:
         raise ValueError("missing value where TRUE/FALSE needed")
     joined = b"".join(lines)
-    if all(0 < b < 0x80 for b in set(joined)):
+    if _NON_ASCII.search(joined) is None:
         return [("ASCII", 1.0)]
-    return [(name, conf / 100) for name, _lang, conf in detect_all(joined) if conf / 100 > threshold]
+    matches = detect_all(joined)
+    if not matches:
+        return [(None, None)]
+    return [(name, conf / 100) for name, _lang, conf in matches if conf / 100 > threshold]
 
 
 # ---------------------------------------------------------------------------
@@ -126,6 +211,11 @@ _SIMPLE_CODECS = {
     "ISO-2022-JP": "iso2022_jp",
     "ISO-2022-KR": "iso2022_kr",
 }
+
+# encodings readr's locale() does not know ("Unknown encoding" warning)
+_UNKNOWN_ENCODINGS = frozenset(
+    {"ISO-8859-8-I", "IBM424_rtl", "IBM424_ltr", "IBM420_rtl", "IBM420_ltr"}
+)
 
 # encodings glibc converts from but whose output is not ASCII-compatible:
 # vroom re-encodes the whole file to UTF-8 before reading it
@@ -238,73 +328,317 @@ def _decoder(enc: str) -> Callable[[bytes], str]:
     if enc == "windows-1255":
         # glibc's CP1255 composes base letters with following points; only
         # the uncomposed mapping is reproduced (plus glibc's 0xCA)
-        return lambda b: b.replace(b"\xca", b"\x00\xca").decode("cp1255", "strict").replace(
-            "\x00�", "ֺ"
+        return lambda b: (
+            b.replace(b"\xca", b"\x00\xca").decode("cp1255", "strict").replace("\x00�", "ֺ")
         )
     if enc in _PY_CJK:
         return lambda b: _decode_cjk(b, enc)
     raise LookupError(enc)
 
 
-# ---------------------------------------------------------------------------
-# vroom::vroom_lines()
-# ---------------------------------------------------------------------------
-
-
 def _reencode_wide(data: bytes, enc: str) -> bytes:
-    """vroom ``reencode_file()``: whole-file conversion, trailing partial unit dropped."""
+    """vroom ``convert_connection()`` to UTF-8: an incomplete trailing unit is dropped."""
     unit = _WIDE_UNIT[enc]
     usable = len(data) - len(data) % unit
+    body = data[:usable]
+    if unit == 2 and usable >= 2:
+        # a high surrogate with nothing after it is an incomplete sequence too
+        last = body[-2:]
+        code = int.from_bytes(last, "big" if enc == "UTF-16BE" else "little")
+        if 0xD800 <= code <= 0xDBFF:
+            body = body[:-2]
     try:
-        return data[:usable].decode(_WIDE_CODECS[enc]).encode("utf-8")
+        return body.decode(_WIDE_CODECS[enc]).encode("utf-8")
     except UnicodeDecodeError as exc:
-        raise _ReadFailed(str(exc)) from exc
+        raise ReadFailed("iconv failed") from exc
 
 
-def vroom_lines(data: bytes, encoding: str) -> list[str]:
+# ---------------------------------------------------------------------------
+# vroom's delimited indexer (delim "\1", no quote, no comment, no escapes)
+# ---------------------------------------------------------------------------
+
+_CHUNK = (1 << 17) - 1  # VROOM_CONNECTION_SIZE - 1 bytes per R_ReadConnection()
+_LF, _CR = 0x0A, 0x0D
+_ARCHIVE_EXTS = frozenset(
+    {
+        "7z",
+        "cpio",
+        "iso",
+        "mtree",
+        "tar",
+        "tgz",
+        "taz",
+        "tar.gz",
+        "tbz",
+        "tbz2",
+        "tz2",
+        "tar.bz2",
+        "tlz",
+        "tar.lzma",
+        "txz",
+        "tar.xz",
+        "tzo",
+        "taZ",
+        "tZ",
+        "tar.zst",
+        "warc",
+        "jar",
+        "Z",
+        "zst",
+    }
+)
+
+
+def _find_next_newline(buf: bytes, start: int) -> tuple[int, str]:
+    """``find_next_newline()`` (type NA, no quotes): strcspn for CR, LF or NUL."""
+    n = len(buf)
+    if start >= n:
+        return n - 1, "NA"
+    pos = start
+    while pos < n and buf[pos] not in (_LF, _CR, 0):
+        pos += 1
+    if pos >= n:  # ran into the zero padding after the mapped file
+        return pos, "NA"
+    c = buf[pos]
+    if c == _LF:
+        return pos, "LF"
+    if c == _CR:
+        if pos + 1 < n and buf[pos + 1] == _LF:
+            return pos + 1, "CRLF"
+        return pos, "CR"
+    return pos, "NA"
+
+
+class _Indexer:
+    """``index_region()`` state carried across calls (and connection chunks)."""
+
+    __slots__ = ("errors", "num_delims", "record_start")
+
+    def __init__(self) -> None:
+        self.record_start = True
+        self.num_delims = 0
+        self.errors = False
+
+    def region(
+        self,
+        buf: bytes,
+        dest: list[int],
+        newline: int,
+        start: int,
+        end: int,
+        offset: int,
+        num_cols: int,
+    ) -> int:
+        n = len(buf)
+        stops = re.compile(b"[\\x01\\\\\\x00" + (b"\\r" if newline == _CR else b"\\n") + b"]")
+        pos = start
+        lines = 0
+        while pos < end:
+            c = buf[pos] if pos < n else 0
+            if self.record_start:
+                dest.append(pos + offset)
+            if c == 0x01:
+                self.record_start = False
+                dest.append(pos + offset)
+                self.num_delims += 1
+            elif c == newline:
+                if num_cols > 0 and pos > start:
+                    self._resolve(pos + offset, num_cols, dest)
+                self.record_start = True
+                self.num_delims = 0
+                dest.append(pos + offset)
+                lines += 1
+            else:
+                self.record_start = False
+                pos += 1
+                if pos < end:
+                    m = stops.search(buf, pos)
+                    pos = m.start() if m is not None else n
+                continue
+            pos += 1
+        return lines
+
+    def _resolve(self, pos: int, num_cols: int, dest: list[int]) -> None:
+        if self.num_delims != num_cols - 1:
+            self.errors = True
+        while self.num_delims > 0 and self.num_delims >= num_cols:
+            dest.pop()
+            self.num_delims -= 1
+        while self.num_delims < num_cols - 1:
+            dest.append(pos)
+            self.num_delims += 1
+
+
+def _index_mmap(data: bytes) -> tuple[list[list[int]], int, bool]:
+    """``delimited_index`` on a memory-mapped file (which ends in ``"\\n"``)."""
+    size = len(data)
+    start = _skip_bom(data)
+    if start >= size - 1:  # an empty file, or a file with only a newline
+        return [], 0, False
+    first_nl, nl = _find_next_newline(data, start)
+    newline = _CR if nl == "CR" else _LF
+    ix = _Indexer()
+    idx0: list[int] = []
+    ix.region(data, idx0, newline, start, first_nl + 1, 0, 0)
+    columns = len(idx0) - 1 if idx0 else 0
+    idx1: list[int] = []
+    ix.region(data, idx1, newline, first_nl + 1, size, 0, columns)
+    return [idx0, idx1], columns, ix.errors
+
+
+def _index_connection(data: bytes) -> tuple[list[list[int]], int, bool]:
+    """``delimited_index_connection``: the input read in 128 KiB chunks."""
+    chunks = [data[i : i + _CHUNK] for i in range(0, len(data), _CHUNK)] or [b""]
+    first = chunks[0]
+    sz = len(first)
+    if sz == 0:
+        return [], 0, False
+    buf = first + b"\x00"
+    start = _skip_bom(buf)
+    first_nl, nl = _find_next_newline(buf, start)
+    single_line = first_nl == len(buf) - 1
+    ending = buf[first_nl] if first_nl < len(buf) else 0
+    expected = ending == _LF or (nl == "CR" and ending == _CR)
+    if sz > 1 and not expected and len(chunks) > 1:
+        raise ReadFailed("The size of the connection buffer (131072) was not large enough")
+    newline = _CR if nl == "CR" else _LF
+    ix = _Indexer()
+    idx0: list[int] = []
+    ix.region(buf, idx0, newline, start, first_nl + 1, 0, 0)
+    columns = len(idx0) - 1 if idx0 else 0
+    idx1: list[int] = []
+    total = 0
+    region_start = first_nl + 1
+    for chunk in chunks:
+        cbuf = chunk + b"\x00"
+        ix.region(cbuf, idx1, newline, region_start, len(chunk), total, columns)
+        total += len(chunk)
+        region_start = 0
+    last = data[-1]
+    if not (last == _LF or (nl == "CR" and last == _CR)):
+        if columns == 0 or single_line:
+            idx0.append(len(data))
+            columns += 1
+        else:
+            idx1.append(len(data))
+    return [idx0, idx1], columns, ix.errors
+
+
+def _cells(idx: list[list[int]], columns: int) -> list[list[tuple[int, int]]]:
+    """``get_cell()`` for every row and column: ``[(begin, end), ...]`` per column."""
+    if columns <= 0:
+        return []
+    total = sum(len(v) for v in idx)
+    rows = total // (columns + 1)
+    out: list[list[tuple[int, int]]] = [[] for _ in range(columns)]
+    for row in range(rows):
+        for col in range(columns):
+            i = row * (columns + 1) + col
+            for v in idx:
+                if i + 1 < len(v):
+                    begin, end = v[i], v[i + 1]
+                    if begin != end and col > 0:
+                        begin += 1  # skip the delimiter
+                    out[col].append((begin, end))
+                    break
+                i -= len(v)
+            else:  # pragma: no cover - vroom throws std::out_of_range here
+                raise ReadFailed("Failure to retrieve index")
+    return out
+
+
+def _archive_ext(name: str) -> bool:
+    """vroom ``connection_or_filepath()``: an extension that needs the archive package."""
+    base = name.replace("\\", "/").rsplit("/", 1)[-1]
+    if "." not in base:
+        return False
+    ext = base.split(".", 1)[1]
+    while True:
+        if ext in _ARCHIVE_EXTS:
+            return True
+        if "." not in ext:
+            return False
+        ext = ext.split(".", 1)[1]
+
+
+def _file_ext(name: str) -> str:
+    """``tools::file_ext()``: the alphanumeric extension, case kept."""
+    m = re.search(r"\.([A-Za-z0-9]+)$", name)
+    return m.group(1) if m else ""
+
+
+def vroom_lines(data: bytes, encoding: str | None, name: str = "", url: bool = False) -> list[str]:
     """``readr::read_lines(file, locale = locale(encoding = encoding))``.
 
-    Raises ``_ReadFailed`` where R raises an error or a warning.
+    *data* are the bytes of the file called *name* (its extension matters to
+    vroom); *url* marks a downloaded URL. Raises :class:`ReadFailed` where R
+    raises an error or a warning.
     """
+    if encoding is None:
+        raise ReadFailed("`encoding` must be a string.")
+    if encoding in _UNKNOWN_ENCODINGS:
+        raise ReadFailed(f'Unknown encoding "{encoding}".')
+    decode: Callable[[bytes], str] | None = None
     if encoding in _WIDE_CODECS:
+        # reencode_file(): the whole file through iconv into a temporary file
         data = _reencode_wide(data, encoding)
-        encoding = "UTF-8"
-    else:
+        encoding, name, url = "UTF-8", "vroom-reencode-file", False
+    elif encoding != "UTF-8":
         try:
             decode = _decoder(encoding)
-        except LookupError as exc:  # iconv: unsupported conversion
-            raise _ReadFailed(f"unsupported conversion from 'ASCII' to '{encoding}'") from exc
-    n = len(data)
-    if n == 0:
+        except LookupError as exc:
+            raise ReadFailed(f"Can't convert from {encoding} to UTF-8") from exc
+
+    ext = _file_ext(name)
+    if url:
+        if ext.lower() in ("gz", "bz2", "xz", "zip"):
+            data = decompress(data, ext.lower())
+        idx, columns, errors = _index_connection(data)
+    else:
+        if _archive_ext(name):
+            raise ReadFailed("The package `archive` is required")
+        kind = detect_compression(data) or (ext if ext in ("gz", "bz2", "xz", "zip") else None)
+        if kind is not None:
+            data = decompress(data, kind)
+            idx, columns, errors = _index_connection(data)
+        elif data[-1:] != b"\n":
+            idx, columns, errors = _index_connection(data)
+        else:
+            idx, columns, errors = _index_mmap(data)
+
+    cells = _cells(idx, columns)
+    if not cells:
         return []
-    ends_nl = data[-1] in b"\r\n"
-    start = _skip_bom(data)
-    if ends_nl and start >= n - 1:
-        return []  # an empty file, or a file with only a newline
-    # the newline type comes from the first line ending (strcspn stops at NUL)
-    first = re.compile(rb"[\r\n\x00]").search(data, start)
-    if first is not None and data[first.start()] == 0:
-        return []  # vroom cannot find the first line: zero rows
-    if b"\x00" in data or b"\x01" in data:
-        raise _ReadFailed("One or more parsing issues")
-    nl = b"\n"
-    if first is not None and data[first.start()] == 13:
-        nxt = data[first.start() + 1 : first.start() + 2]
-        nl = b"\n" if nxt == b"\n" else b"\r"
-    rows = data[start:].split(nl)
-    last = rows.pop()
-    if not ends_nl:
-        # no final line ending: vroom reads through a connection and keeps
-        # the unterminated remainder as the last line (with a line ending,
-        # anything after the last newline of the detected type is dropped)
-        rows.append(last)
-    rows = [r[:-1] if r.endswith(b"\r") else r for r in rows]
-    if encoding == "UTF-8":
-        return [r.decode("utf-8", "surrogateescape") for r in rows]
-    try:
-        return [decode(r) for r in rows]
-    except (UnicodeDecodeError, UnicodeError) as exc:
-        raise _ReadFailed(str(exc)) from exc
+    out: list[str] = []
+    for col, spans in enumerate(cells):
+        is_last = col == columns - 1
+        values: list[str] = []
+        for begin, end in spans:
+            raw = data[begin:end]
+            if is_last and raw.endswith(b"\r"):
+                raw = raw[:-1]
+            if decode is None:
+                nul = raw.find(b"\x00")
+                if nul >= 0:
+                    errors = True  # "embedded null"
+                    raw = raw[:nul]
+                values.append(raw.decode("utf-8", "surrogateescape"))
+                continue
+            try:
+                text = decode(raw)
+            except (UnicodeDecodeError, UnicodeError) as exc:
+                raise ReadFailed("Invalid multibyte sequence") from exc
+            nul = text.find("\x00")
+            if nul >= 0:
+                text = text[:nul]
+                if len(text.encode("utf-8")) < len(raw):
+                    errors = True
+            values.append(text)
+        if col == 0:
+            out = values
+    if errors:
+        raise ReadFailed("One or more parsing issues")
+    return out
 
 
 # ---------------------------------------------------------------------------
@@ -312,12 +646,60 @@ def vroom_lines(data: bytes, encoding: str) -> list[str]:
 # ---------------------------------------------------------------------------
 
 
-def read_lines_base(data: bytes) -> list[str]:
-    """``readLines(con, warn = FALSE, skipNul = TRUE)`` (bytes kept as they are)."""
+def _r_text_connection(data: bytes) -> bytes:
+    """R's ``file(path, "r")``: gzip/bzip2/xz/lzma files are read decompressed.
+
+    Port of ``comp_type_from_memory()`` (R 4.5 ``connections.c``); zstd is not
+    supported by the Python standard library and is read as it is.
+    """
+    kind: str | None = None
+    if data[:2] == b"\x1f\x8b":
+        kind = "gz"
+    elif (
+        len(data) >= 10
+        and data[:3] == b"BZh"
+        and 0x31 <= data[3] <= 0x39
+        and data[4:10] in (b"\x31\x41\x59\x26\x53\x59", b"\x17\x72\x45\x38\x50\x90")
+    ):
+        kind = "bz2"
+    elif data[:5] in (b"\xfd7zXZ", b"\xffLZMA") or data[:5] == b"]\x00\x00\x80\x00":
+        kind = "lzma"
+    if kind is None:
+        return data
+    try:
+        if kind == "lzma":
+            return lzma.decompress(data)
+        return decompress(data, kind)
+    except (ReadFailed, lzma.LZMAError):
+        return data
+
+
+_R_CR = re.compile(rb"\r\n|\r\r|\r")
+
+
+def _r_cr(m: re.Match[bytes]) -> bytes:
+    return b"\n\n" if m.group() == b"\r\r" else b"\n"
+
+
+def read_lines_base(data: bytes, decompress_input: bool = True) -> list[str]:
+    """``readLines(con, warn = FALSE, skipNul = TRUE)`` in a UTF-8 locale.
+
+    Port of ``do_readLines()`` and ``Rconn_fgetc()``: CR and CRLF map to LF
+    (a CR directly after a CR becomes a LF without looking further), NULs are
+    dropped, an incomplete last line is kept, and a UTF-8 byte order mark is
+    removed from the first line. Bytes are kept as they are (undecodable ones
+    as surrogate escapes).
+    """
+    if decompress_input:
+        data = _r_text_connection(data)
+    if b"\r" in data:
+        data = _R_CR.sub(_r_cr, data)
     data = data.replace(b"\x00", b"")
-    lines = _EOL.split(data)
-    if lines and lines[-1] == b"":
+    lines = data.split(b"\n")
+    if lines[-1] == b"":
         lines.pop()
+    if lines and lines[0].startswith(b"\xef\xbb\xbf"):
+        lines[0] = lines[0][3:]
     return [line.decode("utf-8", "surrogateescape") for line in lines]
 
 
@@ -347,13 +729,40 @@ def iconv_sub_byte(x: str) -> str:
 # ---------------------------------------------------------------------------
 
 
-def code_read_bytes(data: bytes) -> list[str]:
-    """The lines metacheck's ``code_read()`` returns for a file with these bytes."""
-    guesses = guess_encoding(data)
+def _guess_input(data: bytes, name: str, url: bool) -> bytes:
+    """The bytes readr's ``read_lines_raw()`` sees (its own ``standardise_path()``)."""
+    if url:
+        ext = name.rsplit(".", 1)[-1].lower() if "." in name else ""
+        if ext in ("bz2", "xz"):
+            raise ValueError(
+                f"Reading from remote `{ext}` compressed files is not supported,\n"
+                "  download the files locally first."
+            )
+        if ext == "gz":
+            try:
+                return decompress(data, "gz")
+            except ReadFailed as exc:
+                raise ValueError(str(exc)) from exc
+        return data
+    kind = detect_compression(data)
+    if kind is None:
+        return data
+    try:
+        return decompress(data, kind)
+    except ReadFailed as exc:
+        raise ValueError(str(exc)) from exc
+
+
+def code_read_bytes(data: bytes, name: str = "", url: bool = False) -> list[str]:
+    """The lines metacheck's ``code_read()`` returns for a file with these bytes.
+
+    *name* is the file's path or URL (vroom and readr look at its extension).
+    """
+    guesses = guess_encoding(_guess_input(data, name, url))
     if not guesses:
         raise IndexError("subscript out of bounds")
     try:
-        lines = vroom_lines(data, guesses[0][0])
-    except _ReadFailed:
-        lines = read_lines_base(data)
+        lines = vroom_lines(data, guesses[0][0], name, url)
+    except ReadFailed:
+        lines = read_lines_base(data, decompress_input=not url)
     return [iconv_sub_byte(line) for line in lines]

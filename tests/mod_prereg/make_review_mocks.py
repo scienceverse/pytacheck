@@ -253,4 +253,104 @@ reg(
 # URLs; httptest2 hashes the query up to its second "?" ("view_only=abc123/")
 guid("vwonl", file="guids/vwonl-def194")
 reg("vwonl", {"300-5": "view-only hypothesis"}, file="registrations/vwonl-b9104e")
+
+# strings deparse() escapes: named ASCII escapes, octal controls, C1 controls,
+# line/paragraph separators, unassigned code points (\u / \U{}), and what it
+# keeps as is (format characters, private use, emoji, Unicode 15.1 ideographs)
+guid("escps")
+reg(
+    "escps",
+    {
+        # taken as is: a list, so each element is deparsed
+        "description-methods.design.question3b": [
+            ["a\u0007b\bc\fd\u000be\u0001f\u007fg", "h\u0085i\u2028j\u2029k"],
+            ["\u0378\ufffe\U000e01f0", 'tab\there "quoted" back\\slash'],
+            "x",
+        ],
+        # c(<list>, <character>): a list (ragged arrays), each element deparsed
+        # unless it is a single string
+        "description-hypothesis.question2a": [
+            ["\u200b\u00ad\ue000", "\U0001f600\u2ffc\U0002ebf0"],
+            ["line\nbreak"],
+        ],
+        "84-7": "plain",
+    },
+    schema=PRSP,
+    supplement="Pre-Registration in Social Psychology (van 't Veer & Giner-Sorolla, 2016): Pre-Registration",
+)
+
+# schema labels that are not strings: R's character vector of labels coerces
+# them with as.character() (2024 -> "2024", true -> "TRUE", 1e5 -> "1e+05")
+SCALARS = "fffffffffffffffffffffff6"
+scalar_labels = [2024, True, 1.5, 100000.0, 3000000000, None, False, "Sample size"]
+write(
+    f"schemas/registrations/{SCALARS}",
+    {
+        "data": {
+            "id": SCALARS,
+            "type": "registration-schemas",
+            "attributes": {
+                "name": "Synthetic Scalar Labels",
+                "schema_version": 3,
+                "schema": {
+                    "blocks": [
+                        b
+                        for label in scalar_labels
+                        for b in (
+                            {"block_type": "question-label", "display_text": label},
+                            {"block_type": "short-text-input"},
+                        )
+                    ],
+                    "version": 3,
+                },
+            },
+        }
+    },
+)
+guid("lblsc")
+reg(
+    "lblsc",
+    {f"600-{2 * i + 1}": f"scalar answer {i}" for i in range(len(scalar_labels))},
+    schema=SCALARS,
+)
+
+# the same in the pages format (a title's as.character() is also what nchar()
+# and grepl() test)
+SCALAR_PAGES = "fffffffffffffffffffffff7"
+write(
+    f"schemas/registrations/{SCALAR_PAGES}",
+    {
+        "data": {
+            "id": SCALAR_PAGES,
+            "type": "registration-schemas",
+            "attributes": {
+                "name": "Synthetic Scalar Titles",
+                "schema_version": 2,
+                "schema": {
+                    "pages": [
+                        {
+                            "id": "p1",
+                            "questions": [
+                                {"qid": "qa", "title": 5},
+                                {"qid": "qb", "title": False},
+                                {"qid": "qc", "title": 1e5},
+                                {
+                                    "qid": "qd",
+                                    "title": 12345678901234567890123456789012345678901234567890,
+                                },
+                                {"qid": "qe", "title": None},
+                            ],
+                        }
+                    ]
+                },
+            },
+        }
+    },
+)
+guid("lblpg")
+reg(
+    "lblpg",
+    {"qa": "five", "qb.question": "false", "qc": "1e5", "qd": "big", "qe": "no title"},
+    schema=SCALAR_PAGES,
+)
 print("ok")

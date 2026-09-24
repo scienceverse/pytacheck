@@ -1,11 +1,13 @@
 {
-  "id": ".pdf_codebook_lines.paper",
+  "id": ".qsf_export_col.na_tag",
   "ok": true,
   "error": null,
   "warnings": [],
   "value": {
     "t": "chr",
-    "v": []
+    "v": [
+      "NA_na"
+    ]
   },
   "metacheck_version": "0.3.1",
   "r_version": "R version 4.5.3 (2026-03-11)"

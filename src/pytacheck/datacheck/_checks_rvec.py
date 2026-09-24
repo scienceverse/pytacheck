@@ -81,7 +81,9 @@ class RVec:
 
     def subset(self, keep: Sequence[bool]) -> RVec:
         """``x[keep]`` (a logical index without NA)."""
-        return RVec(self.kind, [v for v, k in zip(self.values, keep, strict=True) if k], self.levels)
+        return RVec(
+            self.kind, [v for v, k in zip(self.values, keep, strict=True) if k], self.levels
+        )
 
     def drop_na(self) -> RVec:
         """``x[!is.na(x)]``."""
@@ -138,9 +140,7 @@ def _from_elements(items: Iterable[Any]) -> RVec:
             kinds.add("integer" if abs(int(v)) <= _INT_MAX else "double")
         elif _is_float(v):
             kinds.add("double")
-        elif isinstance(v, str):
-            kinds.add("character")
-        elif isinstance(v, bytes):
+        elif isinstance(v, str | bytes):
             kinds.add("character")
         elif isinstance(v, dt.datetime):
             kinds.add("POSIXct")
@@ -366,7 +366,7 @@ def _posix_seconds(d: Any) -> float:
     ts = getattr(d, "timestamp", None)
     if ts is not None:
         if getattr(d, "tzinfo", None) is None:
-            return float(d.replace(tzinfo=dt.timezone.utc).timestamp())
+            return float(d.replace(tzinfo=dt.UTC).timestamp())
         return float(ts())
     return float("nan")
 
@@ -510,9 +510,9 @@ def quantile7(values: Sequence[float], probs: Sequence[float]) -> list[float]:
 def r_colon(a: float, b: float) -> list[float]:
     """R ``a:b`` (steps of 1 from *a*, up or down)."""
     if a <= b:
-        n = int(math.floor(b - a + 1e-10)) + 1
+        n = math.floor(b - a + 1e-10) + 1
         return [a + i for i in range(n)]
-    n = int(math.floor(a - b + 1e-10)) + 1
+    n = math.floor(a - b + 1e-10) + 1
     return [a - i for i in range(n)]
 
 

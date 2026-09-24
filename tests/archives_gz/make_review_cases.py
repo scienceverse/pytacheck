@@ -257,6 +257,110 @@ for cid, r_args, py_args in [
     )
 
 
+# ---------------------------------------------------------------------------
+# second review round
+# ---------------------------------------------------------------------------
+for cid, repo in [("array", "rv/langarr"), ("scalar", "rv/langscalar")]:
+    case(f"github_languages.review.{cid}", "github_languages", f"{GH}.github_languages",
+         {"repo": repo}, mock=MK)  # fmt: skip
+case("github_readme.review.nul", "github_readme", f"{GH}.github_readme",
+     {"repo": "rv/readmenul"}, mock=MK)  # fmt: skip
+case("github_tree_files.review.untyped", "github_tree_files", f"{GH}.github_tree_files",
+     {"repo": "rv/tree5"}, mock=MK)  # fmt: skip
+case("github_tree_files.review.string_size", "github_tree_files", f"{GH}.github_tree_files",
+     {"repo": "rv/tree6"}, mock=MK)  # fmt: skip
+case("github_tree_files.review.vector", "github_tree_files", f"{GH}.github_tree_files",
+     {"repo": {"$chr": ["rv/files", "rv/nope"]}}, mock=MK)  # fmt: skip
+case("gitlab_tree_files.review.untyped", "gitlab_tree_files", f"{GL}.gitlab_tree_files",
+     {"repo": "rv/glq"}, mock=MK)  # fmt: skip
+case("gitlab_tree_files.review.vector", "gitlab_tree_files", f"{GL}.gitlab_tree_files",
+     {"repo": {"$chr": ["rv/glp", "https://gitlab.com/rv/glp"]}}, mock=MK)  # fmt: skip
+case("gitlab_tree_files.review.vector_missing", "gitlab_tree_files", f"{GL}.gitlab_tree_files",
+     {"repo": {"$chr": ["rv/glp", "rv/nope"]}}, mock=MK)  # fmt: skip
+
+WO = f"{imp('tests.archives_gz.parity_support')}.with_option"
+for fn, opt, mod in [
+    ("gitlab_pat", "metacheck.gitlab.pat", GL),
+    ("zenodo_pat", "metacheck.zenodo.pat.sandbox", ZU),
+]:
+    case(
+        f"{fn}.review.length_one_vector",
+        "identity",
+        PS,
+        {"x": {"$expr": {
+            "r": f'local({{ old <- getOption("{opt}"); on.exit(options({opt} = old)); '
+                 f'c(metacheck::{fn}(c("tok")), metacheck::{fn}()) }})',
+            "py": f'lambda: {WO}("{opt}", lambda: [{imp(mod)}.{fn}(["tok"]), {imp(mod)}.{fn}()])',
+        }}},
+    )  # fmt: skip
+
+# zenodo_info(): duplicated URLs switch off the NA row-name error; id_col positions
+wrapped(
+    "zenodo_info.review.na_with_duplicates",
+    'metacheck::zenodo_info(data.frame(u = c("5559007", NA, "5559007")))',
+    f'{zi}(pd.DataFrame({{"u": ["5559007", None, "5559007"]}}))',
+    mock=MK,
+)
+wrapped(
+    "zenodo_info.review.two_na",
+    'metacheck::zenodo_info(data.frame(u = c(NA, "5559007", NA)))',
+    f'{zi}(pd.DataFrame({{"u": [None, "5559007", None]}}))',
+    mock=MK,
+)
+wrapped(
+    "zenodo_info.review.id_col_zero",
+    'metacheck::zenodo_info(data.frame(u = "5559007", v = "x"), id_col = 0)',
+    f'{zi}(pd.DataFrame({{"u": ["5559007"], "v": ["x"]}}), id_col=0)',
+    mock=MK,
+)
+wrapped(
+    "zenodo_info.review.id_col_negative",
+    'metacheck::zenodo_info(data.frame(v = "x", u = "5559007"), id_col = -1)',
+    f'{zi}(pd.DataFrame({{"v": ["x"], "u": ["5559007"]}}), id_col=-1)',
+    mock=MK,
+)
+wrapped(
+    "zenodo_info.review.id_col_too_big",
+    'metacheck::zenodo_info(data.frame(u = "5559007"), id_col = 3)',
+    f'{zi}(pd.DataFrame({{"u": ["5559007"]}}), id_col=3)',
+    mock=MK,
+)
+
+# .zenodo_build_metadata(): NA tags are kept; a "" creators field has length 1
+case(".zenodo_build_metadata.review.na_tag", ".zenodo_build_metadata",
+     f"{ZU}._zenodo_build_metadata",
+     {"meta": {"title": "T", "tags": {"$expr": {"r": 'c("a", NA)', "py": '["a", None]'}},
+               "creators": ""},
+      "folder": "/tmp/f"})  # fmt: skip
+case(".zenodo_meta_from_folder.review.odd", ".zenodo_meta_from_folder",
+     f"{ZU}._zenodo_meta_from_folder",
+     {"folder": {"$expr": {
+         "r": 'local({ d <- tempfile(); dir.create(file.path(d, "_osf_metadata"), recursive = TRUE); '
+              'writeLines(\'{"osf_id": "abcde", "tags": ["a", null, ["b", 1]], '
+              '"contributors": {"x": {"name": "N"}, "y": {"family_name": "F", "given_name": "G"}}}\', '
+              'file.path(d, "_osf_metadata", "metadata.json")); d })',
+         "py": f'{imp("tests.archives_gz.parity_support")}.meta_folder()',
+     }}})  # fmt: skip
+
+# zenodo_upload(): user metadata with doubles and an NA, sent as jsonlite writes them
+case(
+    "zenodo_upload.review.numeric_metadata",
+    "zenodo_upload",
+    f"{ZU}.zenodo_upload",
+    {
+        "folders": {"$file": "tests/archives_gz/fixtures/upload/proj_plain"},
+        "zenodo_pat": "fake-token",
+        "metadata": {"$expr": {
+            "r": 'list(version = 2, weight = 0.1, count = 3L, tiny = 1e-5, keywords = list("a", NA))',
+            "py": '{"version": 2.0, "weight": 0.1, "count": 3, "tiny": 1e-5, "keywords": ["a", None]}',
+        }},
+        "as_zip": False,
+        "ask": False,
+    },
+    mock=MK,
+)  # fmt: skip
+
+
 class Q(str):
     pass
 

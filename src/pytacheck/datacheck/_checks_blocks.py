@@ -109,9 +109,7 @@ def _looks_like_rt(x: Any) -> bool:
         return False
     rng = max(xs) - min(xs)
     med = median(xs)
-    return (rng > 12 and med > 20) or (
-        any(not is_whole(f) for f in xs) and rng > 0.05 and med < 60
-    )
+    return (rng > 12 and med > 20) or (any(not is_whole(f) for f in xs) and rng > 0.05 and med < 60)
 
 
 def _looks_like_accuracy(x: Any) -> bool:
@@ -272,8 +270,10 @@ def _scale_block_range(block: Any) -> str:
         cols: list[Any] = df_columns(block)
     elif isinstance(block, Mapping):
         cols = list(block.values())
-    elif isinstance(block, list | tuple) and block and all(
-        isinstance(c, list | tuple | pd.Series | RVec) for c in block
+    elif (
+        isinstance(block, list | tuple)
+        and block
+        and all(isinstance(c, list | tuple | pd.Series | RVec) for c in block)
     ):
         cols = list(block)
     else:
@@ -310,11 +310,7 @@ def _scale_block_is_ratinglike(cols: Any, source_file: Any, columns_df: Any) -> 
     above 1.
     """
     need = ("source_file", "column_name", "min", "max")
-    if (
-        columns_df is None
-        or len(columns_df) == 0
-        or not all(c in columns_df.columns for c in need)
-    ):
+    if columns_df is None or len(columns_df) == 0 or not all(c in columns_df.columns for c in need):
         return False
     key = _as_list(
         paste(list(columns_df["source_file"]), list(columns_df["column_name"]), sep="\x01")

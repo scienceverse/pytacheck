@@ -1,0 +1,169 @@
+{
+  "id": "figshare_info.review.object_files",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 1,
+    "names": [
+      "figshare_url",
+      "figshare_id",
+      "title",
+      "doi",
+      "publication_date",
+      "updated_date",
+      "authors",
+      "license",
+      "files"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "700009"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "700009"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Object listing"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "list",
+            "names": [
+              "first",
+              "second"
+            ],
+            "v": [
+              {
+                "t": "list",
+                "names": [
+                  "id",
+                  "name",
+                  "size",
+                  "computed_md5",
+                  "download_url"
+                ],
+                "v": [
+                  {
+                    "t": "int",
+                    "v": [
+                      700901
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "first.csv"
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      8
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "344fd2323dd33d5c058b7cf27de029e8"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "https://ndownloader.figshare.com/files/700901"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "id",
+                  "name",
+                  "size",
+                  "download_url"
+                ],
+                "v": [
+                  {
+                    "t": "int",
+                    "v": [
+                      700902
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "second.txt"
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      5
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "https://ndownloader.figshare.com/files/700902"
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

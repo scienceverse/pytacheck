@@ -454,6 +454,155 @@ for fn, mod in [("dryad", "dryad"), ("figshare", "figshare"), ("dataverse", "dat
     )
 
 
+# ---------------------------------------------------------------- round 2
+# URL escapes that decode to invalid UTF-8: R's regex functions refuse the
+# decoded string (.dryad_doi() warns and finds nothing; .dataverse_parse()'s
+# sub() is an error, which aborts dataverse_links()).
+BAD_UTF8 = ["10.5061/dryad.abc%E2%80", "%FF10.5061/dryad.abc", "10.5061/dryad.ok"]
+fn_case(
+    ".dryad_doi.review.invalid_utf8",
+    "metacheck:::.dryad_doi",
+    "pytacheck.archives.dryad._dryad_doi",
+    {"dryad_url": {"$expr": {"r": r_chr(BAD_UTF8), "py": py_list(BAD_UTF8)}}},
+)
+BAD_DV = [
+    "https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/Y",
+    "https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/X%FF",
+]
+fn_case(
+    ".dataverse_parse.review.invalid_utf8_error",
+    "metacheck:::.dataverse_parse",
+    "pytacheck.archives.dataverse._dataverse_parse",
+    {"url": {"$expr": {"r": r_chr(BAD_DV), "py": py_list(BAD_DV)}}},
+)
+fn_case(
+    ".dataverse_parse.review.valid_escapes",
+    "metacheck:::.dataverse_parse",
+    "pytacheck.archives.dataverse._dataverse_parse",
+    {
+        "url": [
+            "https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/X%E2%80%93.",
+            "https://dataverse.nl/dataset.xhtml?persistentId=doi%3A10.34894%2FA%C3%A9",
+        ]
+    },
+)
+BAD_TEXT = [
+    "See datadryad.org/dataset/doi%3A10.5061%2Fdryad.abc%FF here.",
+    "Also datadryad.org/dataset/doi%3A10.5061%2Fdryad.fine and 10.5061/dryad.plain.",
+]
+for fn, mod in [("dryad_links", "dryad"), ("figshare_links", "figshare")]:
+    fn_case(
+        f"{fn}.review.invalid_utf8",
+        fn,
+        f"pytacheck.archives.{mod}.{fn}",
+        {"paper": {"$test_paper": {"text": BAD_TEXT}}},
+        compare=IGNORE_PID,
+    )
+fn_case(
+    "dataverse_links.review.invalid_utf8_error",
+    "dataverse_links",
+    "pytacheck.archives.dataverse.dataverse_links",
+    {
+        "paper": {
+            "$test_paper": {
+                "text": [
+                    "See dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/X%FF."
+                ]
+            }
+        }
+    },
+)
+expr_case(
+    "dryad_info.review.invalid_utf8",
+    online('dryad_info(c("10.5061/dryad.abc%FF", NA))'),
+    'lambda m: m.dryad.dryad_info(["10.5061/dryad.abc%FF", None])',
+)
+
+# An empty paper list: paper_table() gives a table without columns and
+# text_search() one without `text`, so `href` names dryad_links()'s own NULL
+# local variable -- R returns text_id, paper_id (logical) and then href.
+for fn, mod in [
+    ("dryad_links", "dryad"),
+    ("figshare_links", "figshare"),
+    ("dataverse_links", "dataverse"),
+]:
+    expr_case(
+        f"{fn}.review.empty_paperlist",
+        f'{fn}(paperlist(test_paper("a"))[0])',
+        f'lambda m: m.{mod}.{fn}(__import__("pytacheck").PaperList([]))',
+        mock=False,
+    )
+
+# A 200 answer with an empty body: httr2::resp_body_raw() refuses it outside
+# the tryCatch, so the download aborts (a vectorised call warns and drops it).
+dl_case(
+    "figshare_file_download.review.empty_body_error",
+    'figshare_file_download("700006", download_to = d)',
+    'm.figshare.figshare_file_download("700006", download_to=d)',
+)
+dl_case(
+    "figshare_file_download.review.empty_body_multi",
+    'figshare_file_download(c("700006", "700001"), download_to = d)',
+    'm.figshare.figshare_file_download(["700006", "700001"], download_to=d)',
+)
+dl_case(
+    "dryad_file_download.review.empty_body_error",
+    'dryad_file_download("10.5061/dryad.rev2", download_to = d)',
+    'm.dryad.dryad_file_download("10.5061/dryad.rev2", download_to=d)',
+)
+dl_case(
+    "dryad_file_download.review.empty_body_multi",
+    'dryad_file_download(c("10.5061/dryad.rev2", "10.5061/dryad.rev1"), download_to = d)',
+    'm.dryad.dryad_file_download(["10.5061/dryad.rev2", "10.5061/dryad.rev1"], download_to=d)',
+)
+dl_case(
+    "dataverse_file_download.review.empty_body_error",
+    'dataverse_file_download("dataverse.harvard.edu", "10.7910/DVN/EMPTY", download_to = d)',
+    'm.dataverse.dataverse_file_download("dataverse.harvard.edu", "10.7910/DVN/EMPTY", '
+    "download_to=d)",
+)
+dl_case(
+    "dataverse_file_download.review.empty_body_multi",
+    'dataverse_file_download("dataverse.harvard.edu", c("10.7910/DVN/EMPTY", "10.7910/DVN/REV2"), '
+    "download_to = d)",
+    'm.dataverse.dataverse_file_download("dataverse.harvard.edu", ["10.7910/DVN/EMPTY", '
+    '"10.7910/DVN/REV2"], download_to=d)',
+)
+
+
+# Scalar fields given as one-element JSON arrays: list columns in R;
+# two elements: "replacement has 2 rows, data has 1".
+expr_case(
+    "figshare_info.review.list_fields",
+    online('figshare_info("700007")'),
+    'lambda m: m.figshare.figshare_info("700007")',
+)
+expr_case(
+    "figshare_info.review.long_field_error",
+    online('figshare_info("700008")'),
+    'lambda m: m.figshare.figshare_info("700008")',
+)
+expr_case(
+    "dataverse_info.review.list_fields",
+    online(
+        'dataverse_info("https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/LISTS")'
+    ),
+    'lambda m: m.dataverse.dataverse_info("https://dataverse.harvard.edu/dataset.xhtml?'
+    'persistentId=doi:10.7910/DVN/LISTS")',
+)
+
+expr_case(
+    "figshare_info.review.object_files",
+    online('figshare_info("700009")'),
+    'lambda m: m.figshare.figshare_info("700009")',
+)
+dl_case(
+    "figshare_file_download.review.object_files",
+    'figshare_file_download("700009", download_to = d)',
+    'm.figshare.figshare_file_download("700009", download_to=d)',
+)
+
+
 def main() -> None:
     doc = {"area": "archives_d1_review", "cases": cases}
     with open(OUT, "w", encoding="utf-8") as fh:

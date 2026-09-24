@@ -302,3 +302,164 @@ def test_accuracy_mismatches_requires_no_match() -> None:
     acc = pd.DataFrame({"paper_id": ["p"], "bib_id": [0], "doi_mismatch": [True]})
     with pytest.raises(ValueError):
         _accuracy_mismatches(acc)
+
+
+# -- review: dplyr suffixes, pivot_longer() types, %in% ---------------------------------
+
+
+def test_join_repeats_suffixes_until_unique() -> None:
+    # dplyr:::add_suffixes(): x's "a" -> "a.x" clashes with x's own "a.x" -> "a.x.x"
+    x = pd.DataFrame({"k": [1, 2], "a": ["x1", "x2"], "a.x": ["ax1", "ax2"]})
+    y = pd.DataFrame({"k": [2], "a": ["y"], "a.x": ["yax"]})
+    out = _join(x, y, ["k"], "left")
+    assert list(out.columns) == ["k", "a.x.x", "a.x.x.x", "a.y", "a.x.y"]
+    assert out["a.x.x"].tolist() == ["x1", "x2"]
+    assert out["a.x.y"].isna().tolist() == [True, False]
+    assert out["a.x.y"].iloc[1] == "yax"
+    # a y name that only exists suffixed in x keeps its name
+    y2 = pd.DataFrame({"k": [1], "a": ["y"], "b.x": ["b"]})
+    x2 = pd.DataFrame({"k": [1], "a": ["x"]})
+    assert list(_join(x2, y2, ["k"], "left").columns) == ["k", "a.x", "a.y", "b.x"]
+
+
+def test_join_empty_sides() -> None:
+    x = pd.DataFrame({"k": pd.array([1, None], dtype="Int64"), "v": ["a", "b"]})
+    y = pd.DataFrame({"k": pd.array([], dtype="Int64"), "w": pd.array([], dtype="string")})
+    left = _join(x, y, ["k"], "left")
+    assert left["v"].tolist() == ["a", "b"]
+    assert left["w"].isna().all()
+    assert len(_join(x, y, ["k"], "inner")) == 0
+    assert list(_join(x.iloc[0:0], x, ["k"], "left").columns) == ["k", "v.x", "v.y"]
+
+
+def test_join_many_to_many_keeps_y_order() -> None:
+    x = pd.DataFrame({"k": ["a", "b", "a"], "i": [1, 2, 3]})
+    y = pd.DataFrame({"k": ["a", "c", "a", "b"], "j": [10, 20, 30, 40]})
+    out = _join(x, y, ["k"], "inner")
+    assert out["i"].tolist() == [1, 1, 2, 3, 3]
+    assert out["j"].tolist() == [10, 30, 40, 10, 30]
+
+
+def _acc(**cols: object) -> pd.DataFrame:
+    n = len(next(iter(cols.values())))  # type: ignore[arg-type]
+    return pd.DataFrame(
+        {
+            "paper_id": pd.array(["p"] * n, dtype="string"),
+            "bib_id": pd.array(range(n), dtype="Int64"),
+            **cols,
+        }
+    )
+
+
+def test_accuracy_mismatches_pivot_types() -> None:
+    # logical and character values cannot be combined by pivot_longer()
+    acc = _acc(
+        doi_mismatch=pd.array(["TRUE", "FALSE"], dtype="string"),
+        year_mismatch=pd.array([True, False], dtype="boolean"),
+        no_match=pd.array([False, False], dtype="boolean"),
+    )
+    with pytest.raises(ValueError, match="Can't combine `doi_mismatch` <character>"):
+        _accuracy_mismatches(acc)
+    # an all-NA logical column is "unspecified" and combines with anything
+    acc["year_mismatch"] = pd.array([None, None], dtype="boolean")
+    assert _accuracy_mismatches(acc)["accuracy_mismatch"].tolist() == ["doi, year", "year"]
+    # logical, integer and double combine
+    acc = _acc(
+        doi_mismatch=pd.array([1, 0], dtype="Int64"),
+        year_mismatch=[0.5, 0.0],
+        title_mismatch=pd.array([False, None], dtype="boolean"),
+        no_match=[1.0, 2.0],
+    )
+    out = _accuracy_mismatches(acc)
+    # 1 %in% TRUE is TRUE, 2 %in% TRUE is FALSE
+    assert out["accuracy_mismatch"].tolist() == ["no match", "title"]
+
+
+def test_accuracy_mismatches_in_semantics() -> None:
+    # `%in%` coerces FALSE / TRUE to "FALSE" / "TRUE" for character values
+    acc = _acc(
+        doi_mismatch=pd.array(["FALSE", "false", None, "0"], dtype="string"),
+        no_match=pd.array(["TRUE", "FALSE", None, "1"], dtype="string"),
+    )
+    out = _accuracy_mismatches(acc)
+    assert out["bib_id"].tolist() == [1, 2, 3]
+    assert out["accuracy_mismatch"].tolist() == ["doi", "doi", "doi"]
+    # factors compare by their labels
+    acc = _acc(
+        doi_mismatch=pd.Categorical(["FALSE", "x"]),
+        no_match=pd.array([False, True], dtype="boolean"),
+    )
+    assert _accuracy_mismatches(acc)["accuracy_mismatch"].tolist() == ["no match"]
+
+
+def test_accuracy_mismatches_group_order() -> None:
+    # groups follow their first kept cell; duplicated keys collect every name
+    acc = pd.DataFrame(
+        {
+            "paper_id": pd.array(["p", "p", "p", "p"], dtype="string"),
+            "bib_id": pd.array([0, 1, 1, 0], dtype="Int64"),
+            "doi_mismatch": pd.array([False, True, False, True], dtype="boolean"),
+            "title_mismatch": pd.array([False, False, True, True], dtype="boolean"),
+            "no_match": pd.array([False, False, False, None], dtype="boolean"),
+        }
+    )
+    out = _accuracy_mismatches(acc)
+    assert out["bib_id"].tolist() == [1, 0]
+    assert out["accuracy_mismatch"].tolist() == ["doi, title", "doi, title"]
+    # nothing kept: an empty table with R's columns
+    acc[["doi_mismatch", "title_mismatch"]] = False
+    empty = _accuracy_mismatches(acc)
+    assert list(empty.columns) == ["paper_id", "bib_id", "accuracy_mismatch"]
+    assert len(empty) == 0
+
+
+def test_ref_summary_suffix_collisions() -> None:
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        from tests.httpmock import replay
+
+        with replay("apis"):
+            out = module_run(H.rv_ret_collide(), "ref_summary")
+    assert list(out.table.columns) == [
+        "paper_id",
+        "bib_id",
+        "doi",
+        "text",
+        "accuracy_mismatch.x",
+        "pubpeer.x.x",
+        "retractionwatch",
+        "pubpeer.y",
+        "pubpeer.x",
+        "accuracy_mismatch.y",
+    ]
+
+
+def test_ref_summary_mixed_accuracy_types_error() -> None:
+    with pytest.raises(ModuleError, match="Can't combine"):
+        module_run(H.rv_acc_mixed(), "ref_summary")
+
+
+def test_ref_pubpeer_edge_feedbacks(mock_pubpeer: None) -> None:
+    out = module_run(H.pp_odd(), "ref_pubpeer")
+    # empty users kept, null total_comments / ["Statcheck"] dropped, "statcheck" kept
+    assert out.table["doi"].tolist() == [
+        "10.9999/pp.emptyusers",
+        "10.9999/pp.emptyurl",
+        "10.9999/pp.statcase",
+    ]
+    assert out.table["users"].tolist() == ["", "Empty Url", "statcheck"]
+    # an NA URL leaves an empty report table ("")
+    out = module_run(H.pp_nourl_some(), "ref_pubpeer")
+    assert out.report[1] == ""
+    # no url column at all: R's report table subsetting fails
+    with pytest.raises(ModuleError):
+        module_run(H.pp_nourl_only(), "ref_pubpeer")
+
+
+def test_ref_pubpeer_case_list_c_locale(mock_pubpeer: None) -> None:
+    out = module_run(H.pp_case_list(), "ref_pubpeer")
+    # arrange(paper_id, bib_id) in the C locale: "A" < "a" < "b"
+    assert out.table["paper_id"].tolist() == ["A", "b", "b"]
+    assert out.table["doi"].tolist() == ["10.9999/pp.many", "10.9999/pp.one", "10.9999/pp.dup"]
+    assert out.summary_table["paper_id"].tolist() == ["b", "A", "a"]
+    assert out.summary_table["pubpeer_comments"].tolist() == [3.0, 12.0, 0.0]

@@ -250,3 +250,78 @@
       "$expr":
         "r": "(function() { mk <- function(txt, id) { p <- test_paper(txt); p$paper_id <- id; p }; paperlist(mk(\"No digits, t = n.s.\", \"b\"), mk(\"Also none, t = n.s.\", \"aa\"), mk(\"Sig, t(20) = 2.1, d = 0.9.\", \"mm\"), mk(\"B, t = n.s., d = n.s.\", \"Ab\"), mk(c(\"B, t = n.s., d = n.s.\", \"C, F = n.s.\"), \"B\"), mk(\"B, t = n.s., d = n.s.\", \"_x\"), mk(c(\"Two, t = n.s.\", \"Other, t = n.s., d = n.s.\"), \"a\")) })()"
         "py": "(lambda mk: pc.PaperList([mk(\"No digits, t = n.s.\", \"b\"), mk(\"Also none, t = n.s.\", \"aa\"), mk(\"Sig, t(20) = 2.1, d = 0.9.\", \"mm\"), mk(\"B, t = n.s., d = n.s.\", \"Ab\"), mk([\"B, t = n.s., d = n.s.\", \"C, F = n.s.\"], \"B\"), mk(\"B, t = n.s., d = n.s.\", \"_x\"), mk([\"Two, t = n.s.\", \"Other, t = n.s., d = n.s.\"], \"a\")]))(lambda t, i: (lambda p: (setattr(p, \"paper_id\", i), p)[1])(pc.test_paper(t)))"
+# ---------------------------------------------------------------- as.numeric() in long double
+# R_strtod() scales the digits in 80-bit long double, then rounds to double: for some
+# 9+ digit numbers that is one ulp away from the correctly rounded value, which shows
+# in the 15 significant digits of the implied effect sizes
+- "id": "stat_effect_size.review.strtod_long_double"
+  "module": "stat_effect_size"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "Parse t, t(98) = 6.25591564, d = 0.63."
+        - "Parse t, t(20) = 1.818153880, d = 0.4."
+        - "Parse t, t(40) = 1.818153880, d = 0.4."
+        - "Parse t, t(10) = 6.793335393, d = 2.9."
+        - "Parse t, t(10) = 2.70465715726, d = 0.82."
+        - "Parse t, t(38) = 8.779758277, d = 1.99."
+        - "Parse d, t(40) = 2.9, d = 0.8050473192."
+        - "Parse F, F(1, 20) = 1.818153880, ηp² = .08."
+        - "Parse F, F(2, 57) = 6.793335393, ηp² = .19."
+        - "Parse F, F(3, 40) = 2.70465715726, ηp² = .17."
+        - "Long, t(40) = 2.90000000000000000000000001, d = 0.4500000000000000000001."
+        - "Long exp, t(40) = 290000000000000000000000e-23, d = 0.00045e3."
+        - "Tiny, t(40) = 1e-320, d = 0.0000000000000000000000000000000000000000000000000000000000000001."
+  "compare": {"ignore": ["paper_id", "table.paper_id", "summary_table.paper_id"]}
+# ---------------------------------------------------------------- as.character() near-ties
+# R finds the 15 significant digits by scaling in long double (format.c scientific()):
+# on near-ties that differs from correctly rounded conversion, e.g. the drm implied
+# by t(18) = 1.18 is "0.3828425538686" in R, not "0.382842553868599"
+- "id": "stat_effect_size.review.as_character_near_ties"
+  "module": "stat_effect_size"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "Tie drm, t(18) = 1.18, d = 0.38."
+        - "Tie equal, t(31) = 2.68, d = 0.93."
+        - "Tie dz, t(32) = 5.36, d = 0.93."
+        - "Tie drm, t(75) = 2.36, d = 0.27."
+        - "Tie eta, F(1, 19) = 8.51, ηp² = .31."
+        - "Tie omega, F(1, 17) = 9.51, ηp² = .36."
+        - "Tie omega, F(2, 35) = 9.51, ηp² = .35."
+  "compare": {"ignore": ["paper_id", "table.paper_id", "summary_table.paper_id"]}
+# ---------------------------------------------------------------- spacing, signs, comparators
+- "id": "stat_effect_size.review.tokens"
+  "module": "stat_effect_size"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "Neg F, F(1, 20) = -4.10, ηp² = .17."
+        - "Unicode minus, t(40) = −2.9, d = −0.45."
+        - "Tilde d, t(40) = 2.9, d ~ 0.45."
+        - "Not equal d, t(40) = 2.9, d ≠ 0.45."
+        - "Le d, t(40) = 2.9, d <= 0.45."
+        - "Double lt d, t(40) = 2.9, d << 0.45."
+        - "Upper D, t(40) = 2.9, D = 0.45."
+        - "D with df, t(40) = 2.9, d(40) = 0.45."
+        - "Eta d, t(40) = 2.9, ηd = 0.45."
+        - "Space paren, t (40) = 2.9, d = 0.45."
+        - "Tight, t(40)=2.9,d=0.45."
+        - "No df, t40 = 2.9, d = 0.45."
+        - "Thin space, t(40) = 2.9, d = 0.45."
+        - "No-break space, t(40) = 2.9, d = 0.45."
+        - "Cohen nbsp, t(40) = 2.9, Cohen's d = 0.45."
+        - "Hedges, t(40) = 2.9, Hedges' g = 0.45."
+        - "Many, t(40) = 2.9, d = 0.45, t(40) = 3.1, d = 0.48, t(40) = 1.0, d = 0.15."
+        - "Two t one F, t(40) = 2.9, F(1, 40) = 8.41, d = 0.45, ηp² = .17."
+        - "Pct prefix, F(1, 20) = 4.10, 90% ηp² = .17."
+        - "Semicolon es, F(1, 20) = 4.10, ηp² = .17; ω² = .12."
+        - "Sci rhs, t(40) = 2.9 x 10^-1, d = 4.5 e-2."
+        - "Bracket es, F(1, 20) = 4.10, ηp² = [.01, .40]."
+        - "Upper eta, F(1, 20) = 4.10, Ηp² = .17."
+        - "Latin eta p, F(1, 20) = 4.10, eta_p^2 = .17."
+        - "Partial word, F(1, 20) = 4.10, partial-eta2 = .17."
+  "compare": {"ignore": ["paper_id", "table.paper_id", "summary_table.paper_id"]}

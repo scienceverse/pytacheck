@@ -234,9 +234,7 @@ def _dspace7_info(host: Any, uuid: Any = None, handle: Any = None, pb: Any = Non
                 if entries is not None and not (
                     isinstance(entries, list | dict) and len(entries) == 0
                 ):
-                    vals = [
-                        _chr1(_empty_or(_dollar(m, "value"), None)) for m in _elements(entries)
-                    ]
+                    vals = [_chr1(_empty_or(_dollar(m, "value"), None)) for m in _elements(entries)]
                     vals = [v for v in vals if v is not None]
                     if vals:
                         return "; ".join(vals)

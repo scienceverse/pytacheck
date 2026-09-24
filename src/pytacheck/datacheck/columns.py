@@ -393,7 +393,9 @@ def _is_non_atomic(x: Any) -> bool:
     if isinstance(x, pd.Series):
         if x.dtype != object:
             return False
-        return any(isinstance(v, list | tuple | dict | np.ndarray | pd.DataFrame) for v in x.tolist())
+        return any(
+            isinstance(v, list | tuple | dict | np.ndarray | pd.DataFrame) for v in x.tolist()
+        )
     if isinstance(x, list | tuple):
         return any(isinstance(v, list | tuple | dict | np.ndarray | pd.DataFrame) for v in x)
     return isinstance(x, dict)
@@ -527,9 +529,7 @@ def _dict_rows(dict_: Any, scale: Any) -> list[int]:
     return [i for i, nm in enumerate(names) if nm is not None and _tolower(nm) == target]
 
 
-def _osd_code_and_provenance(
-    scale: Any, prefix: Any, scale_source: Any, dict: Any  # noqa: A002 - R's argument name
-) -> Any:
+def _osd_code_and_provenance(scale: Any, prefix: Any, scale_source: Any, dict: Any) -> Any:
     """Port of ``.osd_code_and_provenance()``: OSD code, reference code and provenance.
 
     *dict* is the scale dictionary (a data frame with ``name`` and ``code``).
@@ -569,10 +569,14 @@ def _scale_ref_data() -> dict[str, Any]:
         obj = getattr(mod, nm, None)
         return obj() if callable(obj) else obj
 
-    return {"meta": get_ds("scale_meta"), "items": get_ds("scale_items"), "scoring": get_ds("scale_scoring")}
+    return {
+        "meta": get_ds("scale_meta"),
+        "items": get_ds("scale_items"),
+        "scoring": get_ds("scale_scoring"),
+    }
 
 
-def _scale_ref_code(scale: Any, dict: Any) -> str | None:  # noqa: A002 - R's argument name
+def _scale_ref_code(scale: Any, dict: Any) -> str | None:
     """Port of ``.scale_ref_code()``: the OpenScales code of a dictionary scale, or ``None``."""
     if scale is None or isinstance(scale, list | tuple) or _na(scale) or _chr(scale) == "":
         return None
@@ -765,7 +769,9 @@ def _expand_ranges(cb: pd.DataFrame) -> pd.DataFrame:
             continue
         row = cb.iloc[[i] * (end - start + 1)].copy()
         new = [f"{prefix}{nn}" for nn in range(start, end + 1)]
-        row["codebook_variable"] = pd.Series(new, index=row.index, dtype=cb["codebook_variable"].dtype)
+        row["codebook_variable"] = pd.Series(
+            new, index=row.index, dtype=cb["codebook_variable"].dtype
+        )
         expanded.append(row)
     if not expanded:
         return cb
@@ -773,7 +779,9 @@ def _expand_ranges(cb: pd.DataFrame) -> pd.DataFrame:
     return pd.concat([keep, *expanded], ignore_index=True)
 
 
-def match_column_labels(columns_df: pd.DataFrame | None, codebook_vars_df: pd.DataFrame | None) -> pd.DataFrame:
+def match_column_labels(
+    columns_df: pd.DataFrame | None, codebook_vars_df: pd.DataFrame | None
+) -> pd.DataFrame:
     """Match data columns against codebook variable definitions (rules only).
 
     Port of ``R/data_check_helpers.R::match_column_labels()``. For each column
@@ -816,14 +824,20 @@ def match_column_labels(columns_df: pd.DataFrame | None, codebook_vars_df: pd.Da
         data: dict[str, pd.Series] = {}
         for nm, vals in (("paper_id", paper), ("source_file", source), ("column_name", colname)):
             if vals is not None:
-                data[nm] = columns_df[nm].reset_index(drop=True) if nm in columns_df.columns else pd.Series(vals)
+                data[nm] = (
+                    columns_df[nm].reset_index(drop=True)
+                    if nm in columns_df.columns
+                    else pd.Series(vals)
+                )
         gser = (
             columns_df["group"] if "group" in columns_df.columns
             else columns_df["experiment_group"] if "experiment_group" in columns_df.columns
             else None
         )  # fmt: skip
         data["group"] = (
-            gser.reset_index(drop=True) if gser is not None else pd.Series([None] * n, dtype="string")
+            gser.reset_index(drop=True)
+            if gser is not None
+            else pd.Series([None] * n, dtype="string")
         )
         for nm, vals in (("label", label), ("codebook_variable", cbk), ("label_source", src),
                          ("label_status", status), ("label_method", method),
@@ -923,7 +937,9 @@ def match_column_labels(columns_df: pd.DataFrame | None, codebook_vars_df: pd.Da
                 status_out[i] = "ambiguous_experiment"
                 label_out[i] = _paste_unique(get(cb_label, other_scoped))
                 cbk_out[i] = _paste_unique(get(cb_var, other_scoped))
-                src_out[i] = _paste_unique(get(cb_src, other_scoped) if cb_src is not None else None)
+                src_out[i] = _paste_unique(
+                    get(cb_src, other_scoped) if cb_src is not None else None
+                )
             continue
         labels = get(cb_label, applicable)
         distinct = _unique(labels)
@@ -999,7 +1015,9 @@ def match_column_labels(columns_df: pd.DataFrame | None, codebook_vars_df: pd.Da
                 continue
             if cn is None:
                 raise ValueError("missing value where TRUE/FALSE needed")
-            hit = next((t for t in ord_ if cn.startswith(qsf_tags[t] + "_") or cn == qsf_tags[t]), None)
+            hit = next(
+                (t for t in ord_ if cn.startswith(qsf_tags[t] + "_") or cn == qsf_tags[t]), None
+            )
             if hit is None:
                 continue
             r = tag_row[hit]
@@ -1015,9 +1033,12 @@ def match_column_labels(columns_df: pd.DataFrame | None, codebook_vars_df: pd.Da
             sg_out[i] = qsf_tags[hit]
 
     method_out = [
-        "rules" if s == "labelled" and m is None else m for s, m in zip(status_out, method_out, strict=True)
+        "rules" if s == "labelled" and m is None else m
+        for s, m in zip(status_out, method_out, strict=True)
     ]
-    return frame(status_out, label_out, cbk_out, src_out, method_out, vl_out, mv_out, q_out, ci_out, sg_out)
+    return frame(
+        status_out, label_out, cbk_out, src_out, method_out, vl_out, mv_out, q_out, ci_out, sg_out
+    )
 
 
 # -----------------------------------------------------------------------------
@@ -1068,4 +1089,3 @@ def _r_round0(x: float) -> float:
     from pytacheck._r.base import r_round
 
     return float(r_round(x, 0))
-

@@ -447,13 +447,17 @@ def split_ref(ref: Any) -> tuple[str, str] | None:
     """``(pack, module)`` of a ``pack::name`` ref, else ``None``.
 
     Only refs whose two sides are a valid pack and module name count, so a
-    legacy file path containing ``::`` (``"a::b.py"``, an existing file named
-    like a ref) is still a path.
+    legacy file path containing ``::`` (``"a::b.py"``, or an existing
+    ``ab::cd`` / ``./ab::cd.py`` / ``./modules/ab::cd.py`` file) is still a path.
     """
     if not isinstance(ref, str) or "::" not in ref:
         return None
     m = _QUALIFIED_RE.match(ref)
-    if m is None or (_allow_local() and Path(ref).is_file()):
+    if m is None:
+        return None
+    if _allow_local() and any(
+        p.is_file() for p in (Path(ref), Path(f"{ref}.py"), Path("modules") / f"{ref}.py")
+    ):
         return None
     return m.group(1), m.group(2)
 

@@ -21,7 +21,7 @@ HERE = Path(__file__).resolve().parent
 ROOT = HERE.parent.parent
 sys.path.insert(0, str(ROOT))
 
-from tests.archives_gz.make_mocks import (  # noqa: E402
+from tests.archives_gz.make_mocks import (
     graphql_body,
     h,
     jdump,
@@ -357,12 +357,149 @@ def zenodo(root: Path) -> None:
     )
 
 
+def github_more(root: Path) -> None:
+    """Second review round: odd /languages bodies, a README with a NUL, trees with
+    an untyped entry (Filter() realignment) and a string size."""
+    import base64
+
+    rec = h("recursive=1")
+    for repo in ("langarr", "langscalar", "readmenul", "tree5", "tree6"):
+        write(root, f"github.com/rv/{repo}-HEAD.html", "<html></html>\n")
+    # a JSON array / scalar has no names(): data.frame() drops `language`
+    write(root, "api.github.com/repos/rv/langarr/languages.json", "[1, 2.5]\n")
+    write(root, "api.github.com/repos/rv/langscalar/languages.json", '"x"\n')
+    # rawToChar() refuses an embedded NUL
+    write(
+        root,
+        "api.github.com/repos/rv/readmenul/readme.json",
+        jdump({"content": base64.b64encode(b"a\x00b").decode()}),
+    )
+    write(root, "api.github.com/repos/rv/tree5.json", jdump({"default_branch": "main"}))
+    write(
+        root,
+        f"api.github.com/repos/rv/tree5/git/trees/main-{rec}.json",
+        jdump(
+            {
+                "tree": [
+                    {"path": "a.txt", "type": "blob", "size": 1},
+                    {"path": "notype.txt", "size": 2},
+                    {"path": "d", "type": "tree"},
+                    {"path": "c.txt", "type": "blob", "size": 3},
+                    {"path": "e.txt", "type": "blob", "size": 4},
+                ],
+                "truncated": False,
+            }
+        ),
+    )
+    write(root, "api.github.com/repos/rv/tree6.json", jdump({"default_branch": "main"}))
+    write(
+        root,
+        f"api.github.com/repos/rv/tree6/git/trees/main-{rec}.json",
+        jdump({"tree": [{"path": "s.txt", "type": "blob", "size": "12"}], "truncated": False}),
+    )
+
+
+def gitlab_more(root: Path) -> None:
+    """An untyped and a pathless tree entry, a page that is a JSON object, and
+    GraphQL nodes given as an object (including a node for the path "")."""
+    import json
+
+    write(root, "gitlab.com/rv/glq-HEAD.html", "<html></html>\n")
+    write(
+        root,
+        "gitlab.com/rv/nope-HEAD.R",
+        r_response("HEAD", "https://gitlab.com/rv/nope", 404, "", {"content-type": "text/html"}),
+    )
+    api = "gitlab.com/api/v4/projects/rv%2Fglq"
+    write(root, f"{api}-{h('license=true')}.json", jdump({"default_branch": "main"}))
+    page1 = [
+        {"name": "a.txt", "path": "a.txt", "type": "blob"},
+        {"name": "notype", "path": "notype"},
+        {"name": "d", "path": "d", "type": "tree"},
+        {"name": "c.txt", "path": "c.txt", "type": "blob"},
+        {"name": "x", "type": "blob"},
+    ]
+    page2 = {"p": {"name": "e.txt", "path": "e.txt", "type": "blob"}}
+    for page, body, nxt in ((1, page1, "2"), (2, page2, "")):
+        q = f"recursive=true&per_page=100&page={page}"
+        write(
+            root,
+            f"{api}/repository/tree-{h(q)}.R",
+            r_response(
+                "GET",
+                f"https://gitlab.com/api/v4/projects/rv%2Fglq/repository/tree?{q}",
+                200,
+                json.dumps(body),
+                {"x-next-page": nxt},
+            ),
+        )
+    # Filter() keeps entries 1, 3, 4, 5 and 6 (the untyped one shifts the flags)
+    paths = ["a.txt", "d", "c.txt", "", "e.txt"]
+    write(
+        root,
+        f"gitlab.com/api/graphql-{h(graphql_body('rv/glq', paths), native=True)}-POST.json",
+        jdump(
+            {
+                "data": {
+                    "project": {
+                        "repository": {
+                            "blobs": {
+                                "nodes": {
+                                    "n1": {"path": "", "size": "7"},
+                                    "n2": {"path": "a.txt", "size": 1},
+                                    "n3": {"path": "d", "size": 2.5},
+                                    "n4": {"path": "e.txt", "size": None},
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        ),
+    )
+
+
+def zenodo_upload_more(root: Path) -> None:
+    """proj_plain uploaded with user metadata holding doubles: the PUT body must be
+    jsonlite's (digits = 22), e.g. 0.1 is 0.10000000000000001 and 2 has no ".0"."""
+    from tests.archives_gz.make_mocks import multipart_hash, upload_folders
+
+    api = "sandbox.zenodo.org/api/deposit/depositions"
+    write(root, f"{api}-{h('size=1')}.json", "[]\n")
+    write(
+        root,
+        f"{api}-{h('{}', native=True)}-POST.json",
+        jdump({"id": 123, "links": {"html": "https://sandbox.zenodo.org/deposit/123"}}),
+    )
+    files = upload_folders()["proj_plain"]
+    for rel, name in (
+        ("notes.txt", "notes.txt"),
+        ("results.csv", "results.csv"),
+        ("sub/results.csv", "sub__results.csv"),
+    ):
+        write(
+            root,
+            f"{api}/123/files-{multipart_hash(name, files[rel])}-POST.json",
+            jdump({"id": f"f-{name}", "filename": name}),
+        )
+    body = (
+        '{"metadata":{"title":"proj_plain","upload_type":"dataset",'
+        '"description":"Files archived from proj_plain","creators":[{"name":"Unknown"}],'
+        '"license":"cc-by-4.0","version":2,"weight":0.10000000000000001,"count":3,'
+        '"tiny":1.0000000000000001e-05,"keywords":["a",null]}}'
+    )
+    write(root, f"{api}/123-{h(body, native=True)}-PUT.json", jdump({"id": 123}))
+
+
 def main() -> None:
     if MOCKS.exists():
         shutil.rmtree(MOCKS)
     github(MOCKS)
+    github_more(MOCKS)
     gitlab(MOCKS)
+    gitlab_more(MOCKS)
     zenodo(MOCKS)
+    zenodo_upload_more(MOCKS)
 
 
 if __name__ == "__main__":

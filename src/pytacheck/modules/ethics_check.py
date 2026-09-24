@@ -16,7 +16,7 @@ from pytacheck._r.base import plural
 from pytacheck._r.frames import bind_rows
 from pytacheck._r.regex import grepl
 from pytacheck.module import module
-from pytacheck.papers.model import Paper, PaperList
+from pytacheck.papers.model import Paper, is_paper_list
 from pytacheck.text.search import text_search
 
 __all__ = ["ethics_check"]
@@ -155,11 +155,19 @@ def _search_frame(paper: Any) -> pd.DataFrame:
     """The sentence table ``text_search()`` builds from *paper*, built once.
 
     Both searches of the module (ethics statements and live data) run on it,
-    so the paper's text and section tables are joined only once.
+    so the paper's text and section tables are joined only once. *paper* may
+    be a paper, a paper list (also a plain list of papers, as R's
+    ``.is_paper_list()`` accepts) or a table. Raises R's errors for the
+    inputs ``text_search(paper, ethics_words)`` rejects: another type (``The
+    paper argument doesn't seem to be ...``) or a character vector, whose
+    per-pattern results ``bind_rows()`` refuses.
     """
     from pytacheck.text.search import _text_frame
 
-    return _text_frame(paper)[0]
+    frame, is_vector = _text_frame(paper)
+    if is_vector:
+        raise ValueError("Argument 1 must be a data frame or a named atomic vector.")
+    return frame
 
 
 def _may_mention_ethics(frame: pd.DataFrame) -> pd.DataFrame:
@@ -206,14 +214,23 @@ def _arrange(table: pd.DataFrame, paper_ids: Sequence[str]) -> pd.DataFrame:
     return out
 
 
-def _summarise(table: pd.DataFrame, flag: str) -> dict[Any, tuple[bool, list[str] | None]]:
-    """``summarise(any(flag), list(unique(text[flag])), .by = paper_id)``.
+def _summarise(
+    table: pd.DataFrame, flag: str, statements: str
+) -> dict[Any, tuple[bool, list[str] | None]]:
+    """``summarise(any(flag), statements = list(unique(text[flag])), .by = paper_id)``.
 
     Returns ``{paper_id: (any, statements)}`` in first-appearance order; empty
-    statements are ``None`` (R's ``NA_character_``).
+    statements are ``None`` (R's ``NA_character_``). R only summarises a table
+    with rows (``if (nrow(table) > 0)``).
     """
-    groups: dict[Any, tuple[list[bool | None], list[Any]]] = {}
+    if len(table) == 0:
+        return {}
     pids = [None if pd.isna(p) else p for p in table["paper_id"].tolist()]
+    if "text" not in table.columns:
+        # R: no `text` column in the data mask, so `text` is graphics::text(), and
+        # subsetting it fails ("object of type 'closure' is not subsettable")
+        raise TypeError(f"In argument: `{statements} = list(unique(text[{flag}]))`.")
+    groups: dict[Any, tuple[list[bool | None], list[Any]]] = {}
     flags = [bool(f) if not pd.isna(f) else None for f in table[flag].tolist()]
     texts = table["text"].tolist()
     for p, f, t in zip(pids, flags, texts, strict=True):
@@ -319,28 +336,37 @@ def ethics_check(paper: Any) -> dict[str, Any]:
     data; ``green``: every such paper has an ethics statement; ``red``: some
     lack one), a summary text and, for a single paper, the report.
 
-    Reproduces R's errors: duplicated paper IDs (``factor level [i] is
-    duplicated``), an empty paper list, and a paper whose ``info`` table is
-    empty (``paper()``), which has no paper ID.
+    Like R, *paper* may also be a plain list of papers. Reproduces R's errors:
+    duplicated paper IDs (``factor level [i] is duplicated``), an empty paper
+    list, a paper whose ``info`` table is empty (``paper()``), which has no
+    paper ID, a table or a character vector instead of a paper, and a text
+    table without a ``text`` column whose first column matches a pattern.
     """
     from pytacheck.papers.tables import paper_id
     from pytacheck.text.extract import _detect_live_data
 
+    # R runs text_search(paper, ethics_words) first, which rejects anything but a
+    # paper, a paper list (a plain list of papers too) or a table
+    frame = _search_frame(paper)
+    # a table fails here: "paper must be a paper or paperlist object."
+    paper_ids = paper_id(paper)
     # R: these checks fail later in the module (factor(), left_join() and the
     # list-column assignment on a 0-row summary table); failing first is cheaper
-    paper_ids = paper_id(paper)
     _check_levels(paper_ids)
-    if isinstance(paper, PaperList) and len(paper) == 0:
-        # data.frame(paper_id = NULL) has no columns to join by
-        raise ValueError("Join columns in `x` must be present in the data.")
     if not paper_ids:
+        if not isinstance(paper, Paper) and is_paper_list(paper) and len(paper) == 0:
+            # paper_id() is NULL, and data.frame(paper_id = NULL) has no column to join by
+            raise ValueError("Join columns in `x` must be present in the data.")
         # sapply(list(), is.null) is list(), an invalid subscript
         raise TypeError("invalid subscript type 'list'")
 
-    frame = _search_frame(paper) if isinstance(paper, Paper | PaperList) else paper
     table = text_search(_may_mention_ethics(frame), list(_ETHICS_WORDS))
     table["ethics"] = pd.Series([True] * len(table), index=table.index, dtype="boolean")
     if "text" not in table.columns:
+        # the paper's text table has no `text` column (text_search() searched its
+        # first column instead and dropped `text`)
+        if len(table) > 0:
+            raise ValueError("Assigned data `character(0)` must be compatible with existing data.")
         table["text"] = pd.Series([], dtype="string")
 
     live_table = _detect_live_data(frame).copy()
@@ -353,8 +379,8 @@ def ethics_check(paper: Any) -> dict[str, Any]:
     live_table = _arrange(live_table, paper_ids)
 
     # summary_table ----
-    ethics_summary = _summarise(table, "ethics")
-    live_summary = _summarise(live_table, "live_data")
+    ethics_summary = _summarise(table, "ethics", "ethics_statements")
+    live_summary = _summarise(live_table, "live_data", "live_data_statements")
     na: tuple[bool, None] = (False, None)
     ethics_rows = [ethics_summary.get(p, na) for p in paper_ids]
     live_rows = [live_summary.get(p, na) for p in paper_ids]

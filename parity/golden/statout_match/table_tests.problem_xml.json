@@ -2,7 +2,9 @@
   "id": "table_tests.problem_xml",
   "ok": true,
   "error": null,
-  "warnings": [],
+  "warnings": [
+    "Unknown or uninitialised column: `schema_version`."
+  ],
   "value": {
     "t": "list",
     "names": null,

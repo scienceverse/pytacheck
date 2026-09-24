@@ -72,7 +72,9 @@ def jspsych() -> str:
 def inquisit() -> str:
     lines = ["date\ttime\tsubject\tgroup\tblockcode\ttrialnum\ttrialcode\tlatency\tcorrect"]
     for i in range(1, 13):
-        lines.append(f"52021\t10:00:{i:02d}\t7\t1\tpractice\t{i}\tcongruent\t{500 + 11 * i}\t{i % 2}")
+        lines.append(
+            f"52021\t10:00:{i:02d}\t7\t1\tpractice\t{i}\tcongruent\t{500 + 11 * i}\t{i % 2}"
+        )
     return "\n".join(lines) + "\n"
 
 

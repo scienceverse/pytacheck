@@ -105,6 +105,10 @@ def _qualtrics_col_stem(nm: Any) -> str | None:
     Port of ``R/data_check_helpers.R::.qualtrics_col_stem()``; ``None`` for
     metadata columns and names whose stem has fewer than two letters.
     """
+    if nm is not None and not isinstance(nm, str):
+        v = chr(nm)
+        if len(v) > 1:  # `is.na(nm) || ...` on a vector
+            raise ValueError(f"'length = {len(v)}' in coercion to 'logical(1)'")
     nm = scalar_chr(nm)
     if nm is None or nm == "":
         return None
@@ -502,9 +506,7 @@ def _retype_numeric_safe(df: pd.DataFrame) -> pd.DataFrame:
             continue
         if all(f is not None and f == f for f in _as_num_safe(ne)):
             nums = _as_num_safe(v)
-            cols[j] = pd.Series(
-                [float("nan") if f is None else f for f in nums], dtype="float64"
-            )
+            cols[j] = pd.Series([float("nan") if f is None else f for f in nums], dtype="float64")
     if not cols:
         return df
     out = df.copy(deep=False)
