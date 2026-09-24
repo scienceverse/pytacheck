@@ -49,7 +49,9 @@ review_query_parse_all <- function(select, min_score = 0) {
 review_query_files <- function() {
   dir <- file.path(.review_apis, "api.crossref.org")
   files <- list.files(dir, "^works-.*\\.json$")
-  file.path(dir, files[order(files, method = "radix")])
+  files <- file.path(dir, files[order(files, method = "radix")])
+  ok <- vapply(files, \(f) file.size(f) > 0, logical(1))
+  files[ok]
 }
 
 review_query_parse_each <- function(select, min_score = 50) {

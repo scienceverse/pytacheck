@@ -1,0 +1,3184 @@
+{
+  "id": "crossref_query_parse.fixtures.all_default",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 82,
+    "names": [
+      "DOI",
+      "score",
+      "type",
+      "title",
+      "author",
+      "publisher",
+      "container-title",
+      "year",
+      "volume",
+      "issue",
+      "page",
+      "URL"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "10.1002/bdm.2172",
+          "10.1002/ejsp.2023",
+          "10.1002/per.2047",
+          "10.1002/per.790",
+          "10.1007/978-3-540-74997-4_9",
+          "10.1007/s10919-019-00293-3",
+          "10.1007/s11031-011-9235-8",
+          "10.1007/s11031-014-9421-6",
+          "10.1016/j.actpsy.2009.12.006",
+          "10.1016/j.copsyc.2021.06.008",
+          "10.1016/j.entcs.2019.04.009",
+          "10.1016/j.jesp.2014.05.007",
+          "10.1016/j.jrp.2015.08.001",
+          "10.1017/cbo9780511819568.004",
+          "10.1023/a:1022823221146",
+          "10.1037/0003-066x.48.4.384",
+          "10.1037/0003-066x.54.6.408",
+          "10.1037/0003-066x.65.8.698",
+          "10.1037/0022-3514.52.6.1061",
+          "10.1037/0022-3514.64.6.906",
+          "10.1037/0022-3514.70.2.205",
+          "10.1037/0022-3514.91.2.295",
+          "10.1037/0033-2909.115.1.102",
+          "10.1037/0033-2909.128.2.203",
+          "10.1037/0033-2909.133.1.46",
+          "10.1037/0033-2909.133.4.694",
+          "10.1037/0096-3445.113.3.464",
+          "10.1037/1528-3542.5.1.3",
+          "10.1037/a0015669",
+          "10.1037/a0020965",
+          "10.1037/a0023853",
+          "10.1037/a0028085",
+          "10.1037/a0038781",
+          "10.1037/emo0000032",
+          "10.1037/emo0000102",
+          "10.1037/emo0000390",
+          "10.1037/emo0000652",
+          "10.1037/pspi0000026",
+          "10.1037/pspi0000118",
+          "10.1037/xge0000535",
+          "10.1037/xge0000538",
+          "10.1073/pnas.0908239106",
+          "10.1080/02699930600814735",
+          "10.1080/02699930701516791",
+          "10.1080/02699930802613828",
+          "10.1080/02699931.2011.648174",
+          "10.1080/02699931.2017.1320978",
+          "10.1080/02699931.2019.1611542",
+          "10.1080/02699938708408362",
+          "10.1080/026999399379302",
+          "10.1093/acprof:oso/9780190228057.003.0004",
+          "10.1093/acprof:oso/9780190228057.003.0019",
+          "10.1093/oso/9780195126013.003.0029",
+          "10.1098/rspb.1998.0380",
+          "10.1098/rspb.2002.2034",
+          "10.1111/spc3.12253",
+          "10.1126/science.1224313",
+          "10.1146/annurev-psych-020821-010855",
+          "10.1146/annurev-psych-122414-033702",
+          "10.1177/0146167211400421",
+          "10.1177/053901882021004003",
+          "10.1177/0956797610363547",
+          "10.1177/0956797610370755",
+          "10.1177/0956797613520608",
+          "10.1177/0956797614520714",
+          "10.1177/0956797614522816",
+          "10.1177/1754073917749880",
+          "10.1177/1754073919873131",
+          "10.18637/jss.v040.i01",
+          "10.18637/jss.v082.i13",
+          "10.2224/sbp.5977",
+          "10.2307/3033570",
+          "10.32614/cran.package.afex",
+          "10.32614/cran.package.dplyr",
+          "10.32614/cran.package.emmeans",
+          "10.32614/cran.package.ez",
+          "10.32614/cran.package.gsdesign",
+          "10.32614/cran.package.psych",
+          "10.32614/r.manuals",
+          "10.5465/amj.2009.0804",
+          "10.5465/amr.2009.0484",
+          "10.5465/amr.2016.0191"
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "journal-article",
+          "journal-article",
+          "journal-article",
+          "journal-article",
+          "book-chapter",
+          "journal-article",
+          "journal-article",
+          "journal-article",
+          "journal-article",
+          "journal-article",
+          "journal-article",
+          "journal-article",
+          "journal-article",
+          "book-chapter",
+          "journal-article",
+          "journal-article",
+          "journal-article",
+          "journal-article",
+          "journal-article",
+          "journal-article",
+          "journal-article",
+          "journal-article",
+          "journal-article",
+          "journal-article",
+          "journal-article",
+          "journal-article",
+          "journal-article",
+          "journal-article",
+          "journal-article",
+          "journal-article",
+          "journal-article",
+          "journal-article",
+          "journal-article",
+          "journal-article",
+          "journal-article",
+          "journal-article",
+          "journal-article",
+          "journal-article",
+          "journal-article",
+          "journal-article",
+          "journal-article",
+          "journal-article",
+          "journal-article",
+          "journal-article",
+          "journal-article",
+          "journal-article",
+          "journal-article",
+          "journal-article",
+          "journal-article",
+          "journal-article",
+          "book-chapter",
+          "book-chapter",
+          "book-chapter",
+          "journal-article",
+          "journal-article",
+          "journal-article",
+          "journal-article",
+          "journal-article",
+          "journal-article",
+          "journal-article",
+          "journal-article",
+          "journal-article",
+          "journal-article",
+          "journal-article",
+          "journal-article",
+          "journal-article",
+          "journal-article",
+          "journal-article",
+          "journal-article",
+          "journal-article",
+          "journal-article",
+          "journal-article",
+          "dataset",
+          "dataset",
+          "dataset",
+          "dataset",
+          "dataset",
+          "dataset",
+          "database",
+          "journal-article",
+          "journal-article",
+          "journal-article"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Arbitrary social comparison, malicious envy, and generosity",
+          "Performing high‐powered studies efficiently with sequential analyses",
+          "The Evil Queen's Dilemma: Linking Narcissistic Admiration and Rivalry to Benign and Malicious Envy",
+          "A Closer Look at First Sight: Social Relations Lens Model Analysis of Personality and Interpersonal Attraction at Zero Acquaintance",
+          "Fuzzy Similarity of Facial Expressions of Embodied Agents",
+          "Emotional Expression: Advances in Basic Emotion Theory",
+          "Appraisal patterns of envy and related emotions",
+          "How emotional expressions shape prosocial behavior: Interpersonal effects of anger and disappointment on compliance with requests",
+          "The automatic orienting of attention to goal-relevant stimuli",
+          "Reading emotions, reading people: Emotion perception and inferences drawn from perceived emotions",
+          "Emotion Recognition from Physiological Signal Analysis: A Review",
+          "What catches the envious eye? Attentional biases within malicious and benign envy",
+          "Envy mediates the relation between low academic self-esteem and hostile tendencies",
+          "Envy and Its Transmutations",
+          "Investigating the Appraisal Patterns of Regret and Disappointment",
+          "Facial expression and emotion.",
+          "The origins of sex differences in human behavior: Evolved dispositions versus social roles.",
+          "Envy up, scorn down: How comparison divides us.",
+          "Emotion knowledge: Further exploration of a prototype approach.",
+          "Distinguishing the experiences of envy and jealousy.",
+          "Do facial expressions signal specific emotions?  Judging emotion from the face in context.",
+          "Evidence for strong dissociation between emotion and facial displays: The case of surprise.",
+          "Is there universal recognition of emotion from facial expression? A review of the cross-cultural studies.",
+          "On the universality and cultural specificity of emotion recognition: A meta-analysis.",
+          "Comprehending envy.",
+          "Gaze cueing of attention: Visual attention, social cognition, and individual differences.",
+          "Concept of emotion viewed from a prototype perspective.",
+          "Effects of Direct and Averted Gaze on the Perception of Facially Communicated Emotion.",
+          "Leveling up and down: The experiences of benign and malicious envy.",
+          "I fear your envy, I rejoice in your coveting: On the ambivalent experience of being envied by others.",
+          "Moving faces, looking places: Validation of the Amsterdam Dynamic Facial Expression Set (ADFES).",
+          "Identifying careless responses in survey data.",
+          "Is the desire for status a fundamental human motive? A review of the empirical literature.",
+          "Context is more powerful than we think: Contextual cues override facial cues even for valence.",
+          "Is envy categorical or dimensional? An empirical investigation using taxometric analysis.",
+          "Beyond essentialism: Cultural differences in emotions revisited.",
+          "Accuracy and bias in the social perception of envy.",
+          "The tango of two deadly sins: The social-functional relation of envy and pride.",
+          "The painful duality of envy: Evidence for an integrative theory and a meta-analysis on the relation of envy and schadenfreude.",
+          "Loud and unclear: Intense real-life vocalizations during affective situations are perceptually ambiguous and contextually malleable.",
+          "Mitigating malicious envy: Why successful individuals should reveal their failures.",
+          "Cross-cultural recognition of basic emotions through nonverbal emotional vocalizations",
+          "The envious mind",
+          "Facial expressions allow inference of both emotions and their components",
+          "What emotional reactions can tell us about the nature of others: An appraisal perspective on person perception",
+          "Emotion and the construal of social situations: Inferences of cooperation versus competition from expressions of anger, happiness, and disappointment",
+          "Can perceivers recognise emotions from spontaneous expressions?",
+          "Faces in the wild: A naturalistic study of children’s facial expressions in response to an Internet prank",
+          "Towards a Cognitive Theory of Emotions",
+          "Not Having What You Want versus Having What You Do Not Want: The Impact of Type of Negative Outcome on the Experience of Disappointment and Related Emotions",
+          "How Do People Respond to Threatened Social Status?",
+          "The Benefits and Threats from Being Envied in Organizations",
+          "Appraisal Processes In Emotion",
+          "Menstrual cycle variation in women's preferences for the scent of symmetrical men",
+          "Facial resemblance enhances trust",
+          "Envy and Its Consequences: Why It Is Useful to Distinguish between Benign and Malicious Envy",
+          "Body Cues, Not Facial Expressions, Discriminate Between Intense Positive and Negative Emotions",
+          "The Social Effects of Emotions",
+          "Experiments with More Than One Random Factor: Designs, Analytic Models, and Statistical Power",
+          "Why Envy Outperforms Admiration",
+          "A psychoevolutionary theory of emotions",
+          "Context Is Routinely Encoded During Emotion Perception",
+          "Cultural Variance in the Interpersonal Effects of Anger in Negotiations",
+          "Continuous Theta-Burst Stimulation Demonstrates a Causal Role of Premotor Homunculus in Action Understanding",
+          "Retracted: Evil Genius? How Dishonesty Can Lead to Greater Creativity",
+          "Beyond Gist",
+          "Bodily Communication of Emotion: Evidence for Extrafacial Behavioral Expressions and Available Coding Systems",
+          "Envy: An Adversarial Review and Comparison of Two Competing Views",
+          "The Split-Apply-Combine Strategy for Data Analysis",
+          "<b>lmerTest<\/b>\n                    Package: Tests in Linear Mixed Effects Models",
+          "Envy takes you further: The influence of benign envy on risk taking",
+          "The Perception of Envy",
+          "afex: Analysis of Factorial Experiments",
+          "dplyr: A Grammar of Data Manipulation",
+          "emmeans: Estimated Marginal Means, aka Least-Squares Means",
+          "ez: Easy Analysis and Visualization of Factorial Experiments",
+          "gsDesign: Group Sequential Design",
+          "psych: Procedures for Psychological, Psychometric, and Personality Research",
+          "R: A Language and Environment for Statistical Computing",
+          "A Social Context Model of Envy and Social Undermining",
+          "Envy As Pain: Rethinking the Nature of Envy and Its Implications for Employees and Organizations",
+          "They Want What I’ve Got (I Think): The Causes and Consequences of Attributing Coworker Behavior to Envy"
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "df",
+            "nrow": 3,
+            "names": [
+              "given",
+              "family",
+              "ORCID"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Adiel",
+                  "Marina",
+                  "Ilana"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Moyal",
+                  "Motsenok",
+                  "Ritov"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "https://orcid.org/0000-0001-6620-3175",
+                  "https://orcid.org/0000-0002-1532-9461",
+                  null
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Daniël"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Lakens"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 3,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Jens",
+                  "Jan",
+                  "Birk"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Lange",
+                  "Crusius",
+                  "Hagemeyer"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 3,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Mitja D.",
+                  "Stefan C.",
+                  "Boris"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Back",
+                  "Schmukle",
+                  "Egloff"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 2,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Radosław",
+                  "Catherine"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Niewiadomski",
+                  "Pelachaud"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 4,
+            "names": [
+              "given",
+              "family",
+              "ORCID"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Dacher",
+                  "Disa",
+                  "Jessica",
+                  "Alan"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Keltner",
+                  "Sauter",
+                  "Tracy",
+                  "Cowen"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "https://orcid.org/0000-0001-9061-5292",
+                  null,
+                  null,
+                  null
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 3,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Niels",
+                  "Marcel",
+                  "Rik"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "van de Ven",
+                  "Zeelenberg",
+                  "Pieters"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 3,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Evert A.",
+                  "Gerben A.",
+                  "Joop"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "van Doorn",
+                  "van Kleef",
+                  "van der Pligt"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 5,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Julia",
+                  "Jan",
+                  "Agnes",
+                  "Stefaan",
+                  "Geert"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Vogt",
+                  "De Houwer",
+                  "Moors",
+                  "Van Damme",
+                  "Crombez"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 3,
+            "names": [
+              "given",
+              "family",
+              "ORCID"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Jens",
+                  "Marc W.",
+                  "Gerben A."
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Lange",
+                  "Heerdink",
+                  "van Kleef"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "https://orcid.org/0000-0002-5375-3247",
+                  "https://orcid.org/0000-0002-6931-6519",
+                  "https://orcid.org/0000-0003-0823-7654"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 3,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Maria",
+                  "Matthias",
+                  "Sten"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Egger",
+                  "Ley",
+                  "Hanke"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 2,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Jan",
+                  "Jens"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Crusius",
+                  "Lange"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 3,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Katrin",
+                  "Michela",
+                  "Astrid"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Rentzsch",
+                  "Schröder-Abé",
+                  "Schütz"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Richard H."
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Smith"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 2,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Wilco W.",
+                  "Marcel"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "van Dijk",
+                  "Zeelenberg"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Paul"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Ekman"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 2,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Alice H.",
+                  "Wendy"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Eagly",
+                  "Wood"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Susan T."
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Fiske"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 4,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Phillip",
+                  "Judith",
+                  "Donald",
+                  "Cary"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Shaver",
+                  "Schwartz",
+                  "Kirson",
+                  "O'Connor"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 2,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "W. Gerrod",
+                  "Richard H."
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Parrott",
+                  "Smith"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 2,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "James M.",
+                  "James A."
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Carroll",
+                  "Russell"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 4,
+            "names": [
+              "given",
+              "family",
+              "ORCID"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Rainer",
+                  "Sandra",
+                  "Thomas",
+                  "Denise"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Reisenzein",
+                  "Bördgen",
+                  "Holtbernd",
+                  "Matz"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "https://orcid.org/0000-0002-6091-108X",
+                  null,
+                  null,
+                  null
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "James A."
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Russell"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 2,
+            "names": [
+              "given",
+              "family",
+              "ORCID"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Hillary Anger",
+                  "Nalini"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Elfenbein",
+                  "Ambady"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "https://orcid.org/0000-0002-3973-1447",
+                  null
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 2,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Richard H.",
+                  "Sung Hee"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Smith",
+                  "Kim"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 3,
+            "names": [
+              "given",
+              "family",
+              "ORCID"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Alexandra",
+                  "Andrew P.",
+                  "Steven P."
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Frischen",
+                  "Bayliss",
+                  "Tipper"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  null,
+                  "https://orcid.org/0000-0003-4810-7758",
+                  null
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 2,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Beverley",
+                  "James A."
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Fehr",
+                  "Russell"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 2,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Reginald B.",
+                  "Robert E."
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Adams",
+                  "Kleck"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 3,
+            "names": [
+              "given",
+              "family",
+              "ORCID"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Niels",
+                  "Marcel",
+                  "Rik"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "van de Ven",
+                  "Zeelenberg",
+                  "Pieters"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "https://orcid.org/0000-0002-6730-9200",
+                  null,
+                  null
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 3,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Patricia M.",
+                  "W. Gerrod",
+                  "Alejandra"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Rodriguez Mosquera",
+                  "Parrott",
+                  "Hurtado de Mendoza"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 4,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Job",
+                  "Skyler T.",
+                  "Agneta H.",
+                  "Bertjan"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "van der Schalk",
+                  "Hawk",
+                  "Fischer",
+                  "Doosje"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 2,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Adam W.",
+                  "S. Bartholomew"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Meade",
+                  "Craig"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 3,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Cameron",
+                  "John Angus D.",
+                  "Laura"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Anderson",
+                  "Hildreth",
+                  "Howland"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 3,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Mary",
+                  "Sherri",
+                  "James A."
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Kayyal",
+                  "Widen",
+                  "Russell"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Rachael G."
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Falcon"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 6,
+            "names": [
+              "given",
+              "family",
+              "ORCID"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Michael",
+                  "Eva",
+                  "Jozefien",
+                  "Yukiko",
+                  "Vinai",
+                  "Batja"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Boiger",
+                  "Ceulemans",
+                  "De Leersnyder",
+                  "Uchida",
+                  "Norasakkunkit",
+                  "Mesquita"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "https://orcid.org/0000-0003-4311-7236",
+                  "https://orcid.org/0000-0002-7611-4683",
+                  "https://orcid.org/0000-0002-4486-878X",
+                  "https://orcid.org/0000-0002-8336-2423",
+                  null,
+                  "https://orcid.org/0000-0001-8065-1089"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 4,
+            "names": [
+              "given",
+              "family",
+              "ORCID"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Jens",
+                  "Birk",
+                  "Thomas",
+                  "Katrin"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Lange",
+                  "Hagemeyer",
+                  "Lösch",
+                  "Rentzsch"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "https://orcid.org/0000-0002-5375-3247",
+                  null,
+                  "https://orcid.org/0000-0002-2582-6787",
+                  "https://orcid.org/0000-0001-8632-6842"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 2,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Jens",
+                  "Jan"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Lange",
+                  "Crusius"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 3,
+            "names": [
+              "given",
+              "family",
+              "ORCID"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Jens",
+                  "Aaron C.",
+                  "Jan"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Lange",
+                  "Weidman",
+                  "Crusius"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "https://orcid.org/0000-0002-5375-3247",
+                  null,
+                  "https://orcid.org/0000-0002-9403-6084"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 7,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Doron",
+                  "Alexander",
+                  "Shai",
+                  "Arella",
+                  "Ilan",
+                  "Yaacov",
+                  "Hillel"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Atias",
+                  "Todorov",
+                  "Liraz",
+                  "Eidinger",
+                  "Dror",
+                  "Maymon",
+                  "Aviezer"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 6,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Alison Wood",
+                  "Karen",
+                  "Nicole",
+                  "Ryan W.",
+                  "Laura",
+                  "Brian"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Brooks",
+                  "Huang",
+                  "Abi-Esber",
+                  "Buell",
+                  "Huang",
+                  "Hall"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 4,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Disa A.",
+                  "Frank",
+                  "Paul",
+                  "Sophie K."
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Sauter",
+                  "Eisner",
+                  "Ekman",
+                  "Scott"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 2,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Maria",
+                  "Cristiano"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Miceli",
+                  "Castelfranchi"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 2,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Klaus R.",
+                  "Didier"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Scherer",
+                  "Grandjean"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 2,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Shlomo",
+                  "Ursula"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Hareli",
+                  "Hess"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 3,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Evert A.",
+                  "Marc W.",
+                  "Gerben A."
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Van Doorn",
+                  "Heerdink",
+                  "Van Kleef"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 2,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Disa A.",
+                  "Agneta H."
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Sauter",
+                  "Fischer"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 4,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Michael M.",
+                  "Linda A.",
+                  "Adam",
+                  "Susan B."
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Shuster",
+                  "Camras",
+                  "Grabell",
+                  "Perlman"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 2,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Keith",
+                  "P. N."
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Oatley",
+                  "Johnson-laird"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Wilco W."
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "van Dijk"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 2,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Jan",
+                  "Jens"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Crusius",
+                  "Lange"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "W. Gerrod"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Parrott"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 2,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Phoebe C",
+                  "Klaus R"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Ellsworth",
+                  "Scherer"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 2,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Steven W.",
+                  "Randy"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Gangestad",
+                  "Thornhill"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Lisa M."
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "DeBruine"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Niels"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "van de Ven"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 3,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Hillel",
+                  "Yaacov",
+                  "Alexander"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Aviezer",
+                  "Trope",
+                  "Todorov"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 2,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Gerben A.",
+                  "Stéphane"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "van Kleef",
+                  "Côté"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 3,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Charles M.",
+                  "Jacob",
+                  "David A."
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Judd",
+                  "Westfall",
+                  "Kenny"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 3,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Niels",
+                  "Marcel",
+                  "Rik"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "van de Ven",
+                  "Zeelenberg",
+                  "Pieters"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Robert"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Plutchik"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 2,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Lisa Feldman",
+                  "Elizabeth A."
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Barrett",
+                  "Kensinger"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 3,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Hajo",
+                  "Aiwa",
+                  "William W."
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Adam",
+                  "Shirako",
+                  "Maddux"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 7,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "John",
+                  "Kristian",
+                  "Joshua",
+                  "Thomas",
+                  "Jakob",
+                  "Morten",
+                  "Chris D."
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Michael",
+                  "Sandberg",
+                  "Skewes",
+                  "Wolf",
+                  "Blicher",
+                  "Overgaard",
+                  "Frith"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 2,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Francesca",
+                  "Scott S."
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Gino",
+                  "Wiltermuth"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 3,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "George L.",
+                  "Antje",
+                  "Philippe G."
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Malcolm",
+                  "Nuthmann",
+                  "Schyns"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 2,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Zachary",
+                  "Jessica L."
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Witkower",
+                  "Tracy"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 4,
+            "names": [
+              "given",
+              "family",
+              "ORCID"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Jan",
+                  "Manuel F.",
+                  "Jens",
+                  "Yochi"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Crusius",
+                  "Gonzalez",
+                  "Lange",
+                  "Cohen-Charash"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "https://orcid.org/0000-0002-9403-6084",
+                  null,
+                  null,
+                  null
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Hadley"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Wickham"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 3,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Alexandra",
+                  "Per B.",
+                  "Rune H. B."
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Kuznetsova",
+                  "Brockhoff",
+                  "Christensen"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 3,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Mijin",
+                  "Youngjee",
+                  "Myungwoo"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Kwon",
+                  "Han",
+                  "Nam"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 2,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Maury",
+                  "John"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Silver",
+                  "Sabini"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 5,
+            "names": [
+              "given",
+              "family",
+              "ORCID"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Henrik",
+                  "Ben",
+                  "Jake",
+                  "Frederik",
+                  "Mattan S."
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Singmann",
+                  "Bolker",
+                  "Westfall",
+                  "Aust",
+                  "Ben-Shachar"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "https://orcid.org/0000-0002-4842-3657",
+                  null,
+                  null,
+                  "https://orcid.org/0000-0003-4900-788X",
+                  null
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 5,
+            "names": [
+              "given",
+              "family",
+              "ORCID"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Hadley",
+                  "Romain",
+                  "Lionel",
+                  "Kirill",
+                  "Davis"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Wickham",
+                  "François",
+                  "Henry",
+                  "Müller",
+                  "Vaughan"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "https://orcid.org/0000-0003-4757-117X",
+                  "https://orcid.org/0000-0002-2444-4226",
+                  null,
+                  "https://orcid.org/0000-0002-1416-3412",
+                  "https://orcid.org/0000-0003-4777-038X"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 2,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Russell V.",
+                  "Julia"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Lenth",
+                  "Piaskowski"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Michael A."
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Lawrence"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Keaven"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Anderson"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "given",
+              "family",
+              "ORCID"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "William"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Revelle"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "https://orcid.org/0000-0003-4880-9610"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "null"
+          },
+          {
+            "t": "df",
+            "nrow": 5,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Michelle K.",
+                  "Kristin L.",
+                  "Jason D.",
+                  "Bennett J.",
+                  "Karl"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Duffy",
+                  "Scott",
+                  "Shaw",
+                  "Tepper",
+                  "Aquino"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 3,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Kenneth",
+                  "Jayanth",
+                  "Daniel J."
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Tai",
+                  "Narayanan",
+                  "McAllister"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 4,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Harshad",
+                  "Joel",
+                  "Heather C.",
+                  "Daniel L."
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Puranik",
+                  "Koopman",
+                  "Vough",
+                  "Gamache"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Wiley",
+          "Wiley",
+          "SAGE Publications",
+          "SAGE Publications",
+          "Springer Berlin Heidelberg",
+          "Springer Science and Business Media LLC",
+          "Springer Science and Business Media LLC",
+          "Springer Science and Business Media LLC",
+          "Elsevier BV",
+          "Elsevier BV",
+          "Elsevier BV",
+          "Elsevier BV",
+          "Elsevier BV",
+          "Cambridge University Press",
+          "Springer Science and Business Media LLC",
+          "American Psychological Association (APA)",
+          "American Psychological Association (APA)",
+          "American Psychological Association (APA)",
+          "American Psychological Association (APA)",
+          "American Psychological Association (APA)",
+          "American Psychological Association (APA)",
+          "American Psychological Association (APA)",
+          "American Psychological Association (APA)",
+          "American Psychological Association (APA)",
+          "American Psychological Association (APA)",
+          "American Psychological Association (APA)",
+          "American Psychological Association (APA)",
+          "American Psychological Association (APA)",
+          "American Psychological Association (APA)",
+          "American Psychological Association (APA)",
+          "American Psychological Association (APA)",
+          "American Psychological Association (APA)",
+          "American Psychological Association (APA)",
+          "American Psychological Association (APA)",
+          "American Psychological Association (APA)",
+          "American Psychological Association (APA)",
+          "American Psychological Association (APA)",
+          "American Psychological Association (APA)",
+          "American Psychological Association (APA)",
+          "American Psychological Association (APA)",
+          "American Psychological Association (APA)",
+          "Proceedings of the National Academy of Sciences",
+          "Informa UK Limited",
+          "Informa UK Limited",
+          "Informa UK Limited",
+          "Informa UK Limited",
+          "Informa UK Limited",
+          "Informa UK Limited",
+          "Informa UK Limited",
+          "Informa UK Limited",
+          "Oxford University Press",
+          "Oxford University Press",
+          "Oxford University PressNew York, NY",
+          "The Royal Society",
+          "The Royal Society",
+          "Wiley",
+          "American Association for the Advancement of Science (AAAS)",
+          "Annual Reviews",
+          "Annual Reviews",
+          "SAGE Publications",
+          "SAGE Publications",
+          "SAGE Publications",
+          "SAGE Publications",
+          "SAGE Publications",
+          "SAGE Publications",
+          "SAGE Publications",
+          "SAGE Publications",
+          "SAGE Publications",
+          "Foundation for Open Access Statistic",
+          "Foundation for Open Access Statistic",
+          "Scientific Journal Publishers Ltd",
+          "JSTOR",
+          "The R Foundation",
+          "The R Foundation",
+          "The R Foundation",
+          "The R Foundation",
+          "The R Foundation",
+          "The R Foundation",
+          "R Foundation for Statistical Computing",
+          "Academy of Management",
+          "Academy of Management",
+          "Academy of Management"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Journal of Behavioral Decision Making",
+          "European Journal of Social Psychology",
+          "European Journal of Personality",
+          "European Journal of Personality",
+          "Lecture Notes in Computer Science",
+          "Journal of Nonverbal Behavior",
+          "Motivation and Emotion",
+          "Motivation and Emotion",
+          "Acta Psychologica",
+          "Current Opinion in Psychology",
+          "Electronic Notes in Theoretical Computer Science",
+          "Journal of Experimental Social Psychology",
+          "Journal of Research in Personality",
+          "The Social Life of Emotions",
+          "Motivation and Emotion",
+          "American Psychologist",
+          "American Psychologist",
+          "American Psychologist",
+          "Journal of Personality and Social Psychology",
+          "Journal of Personality and Social Psychology",
+          "Journal of Personality and Social Psychology",
+          "Journal of Personality and Social Psychology",
+          "Psychological Bulletin",
+          "Psychological Bulletin",
+          "Psychological Bulletin",
+          "Psychological Bulletin",
+          "Journal of Experimental Psychology: General",
+          "Emotion",
+          "Emotion",
+          "Journal of Personality and Social Psychology",
+          "Emotion",
+          "Psychological Methods",
+          "Psychological Bulletin",
+          "Emotion",
+          "Emotion",
+          "Emotion",
+          "Emotion",
+          "Journal of Personality and Social Psychology",
+          "Journal of Personality and Social Psychology",
+          "Journal of Experimental Psychology: General",
+          "Journal of Experimental Psychology: General",
+          "Proceedings of the National Academy of Sciences",
+          "Cognition &amp; Emotion",
+          "Cognition &amp; Emotion",
+          "Cognition &amp; Emotion",
+          "Cognition and Emotion",
+          "Cognition and Emotion",
+          "Cognition and Emotion",
+          "Cognition &amp; Emotion",
+          "Cognition and Emotion",
+          "Envy at Work and in Organizations",
+          "Envy at Work and in Organizations",
+          "Handbook of Affective Sciences",
+          "Proceedings of the Royal Society of London. Series B: Biological Sciences",
+          "Proceedings of the Royal Society of London. Series B: Biological Sciences",
+          "Social and Personality Psychology Compass",
+          "Science",
+          "Annual Review of Psychology",
+          "Annual Review of Psychology",
+          "Personality and Social Psychology Bulletin",
+          "Social Science Information",
+          "Psychological Science",
+          "Psychological Science",
+          "Psychological Science",
+          "Psychological Science",
+          "Psychological Science",
+          "Emotion Review",
+          "Emotion Review",
+          "Journal of Statistical Software",
+          "Journal of Statistical Software",
+          "Social Behavior and Personality: an international journal",
+          "Social Psychology",
+          "CRAN: Contributed Packages",
+          "CRAN: Contributed Packages",
+          "CRAN: Contributed Packages",
+          "CRAN: Contributed Packages",
+          "CRAN: Contributed Packages",
+          "CRAN: Contributed Packages",
+          null,
+          "Academy of Management Journal",
+          "Academy of Management Review",
+          "Academy of Management Review"
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          2020,
+          2014,
+          2016,
+          2011,
+          null,
+          2019,
+          2012,
+          2015,
+          2010,
+          2022,
+          2019,
+          2014,
+          2015,
+          2004,
+          2002,
+          1993,
+          1999,
+          2010,
+          1987,
+          1993,
+          1996,
+          2006,
+          1994,
+          2002,
+          2007,
+          2007,
+          1984,
+          2005,
+          2009,
+          2010,
+          2011,
+          2012,
+          2015,
+          2015,
+          2015,
+          2018,
+          2020,
+          2015,
+          2018,
+          2019,
+          2019,
+          2010,
+          2007,
+          2008,
+          2010,
+          2012,
+          2018,
+          2020,
+          1987,
+          1999,
+          2016,
+          2016,
+          2002,
+          1998,
+          2002,
+          2016,
+          2012,
+          2022,
+          2017,
+          2011,
+          1982,
+          2010,
+          2010,
+          2014,
+          2014,
+          2014,
+          2019,
+          2020,
+          2011,
+          2017,
+          2017,
+          1978,
+          2012,
+          2014,
+          2017,
+          2009,
+          2009,
+          2007,
+          2000,
+          2012,
+          2012,
+          2019
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "33",
+          "44",
+          "30",
+          "25",
+          null,
+          "43",
+          "36",
+          "39",
+          "134",
+          "43",
+          "343",
+          "55",
+          "58",
+          null,
+          "26",
+          "48",
+          "54",
+          "65",
+          "52",
+          "64",
+          "70",
+          "91",
+          "115",
+          "128",
+          "133",
+          "133",
+          "113",
+          "5",
+          "9",
+          "99",
+          "11",
+          "17",
+          "141",
+          "15",
+          "15",
+          "18",
+          "20",
+          "109",
+          "114",
+          "148",
+          "148",
+          "107",
+          "21",
+          "22",
+          "24",
+          "26",
+          "32",
+          "34",
+          "1",
+          "13",
+          null,
+          null,
+          null,
+          "265",
+          "269",
+          "10",
+          "338",
+          "73",
+          "68",
+          "37",
+          "21",
+          "21",
+          "21",
+          "25",
+          "25",
+          "25",
+          "11",
+          "12",
+          "40",
+          "82",
+          "45",
+          "41",
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          "55",
+          "37",
+          "44"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "4",
+          "7",
+          "2",
+          "3",
+          null,
+          "2",
+          "2",
+          "1",
+          "1",
+          null,
+          null,
+          null,
+          null,
+          null,
+          "4",
+          "4",
+          "6",
+          "8",
+          "6",
+          "6",
+          "2",
+          "2",
+          "1",
+          "2",
+          "1",
+          "4",
+          "3",
+          "1",
+          "3",
+          "5",
+          "4",
+          "3",
+          "3",
+          "3",
+          "6",
+          "8",
+          "8",
+          "3",
+          "4",
+          "10",
+          "4",
+          "6",
+          "3",
+          "5",
+          "1",
+          "3",
+          "3",
+          "2",
+          "1",
+          "2",
+          null,
+          null,
+          null,
+          "1399",
+          "1498",
+          "6",
+          "6111",
+          "1",
+          "1",
+          "6",
+          "4-5",
+          "4",
+          "6",
+          "4",
+          "4",
+          "5",
+          "2",
+          "1",
+          "1",
+          "13",
+          "1",
+          "2",
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          "3",
+          "1",
+          "2"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "444-462",
+          "701-710",
+          "168-188",
+          "225-238",
+          "86-98",
+          "133-160",
+          "195-204",
+          "128-141",
+          "61-69",
+          "85-90",
+          "35-55",
+          "1-11",
+          "143-153",
+          "43-63",
+          "321-331",
+          "384-392",
+          "408-423",
+          "698-706",
+          "1061-1086",
+          "906-920",
+          "205-218",
+          "295-315",
+          "102-141",
+          "203-235",
+          "46-64",
+          "694-724",
+          "464-486",
+          "3-11",
+          "419-429",
+          "842-854",
+          "907-920",
+          "437-455",
+          "574-601",
+          "287-291",
+          "694-698",
+          "1142-1162",
+          "1399-1410",
+          "453-472",
+          "572-598",
+          "1842-1848",
+          "667-687",
+          "2408-2412",
+          "449-479",
+          "789-801",
+          "128-140",
+          "442-461",
+          "504-515",
+          "359-366",
+          "29-50",
+          "129-148",
+          "85-110",
+          "455-474",
+          "572-595",
+          "927-933",
+          "1307-1312",
+          "337-349",
+          "1225-1229",
+          "629-658",
+          "601-625",
+          "784-795",
+          "529-553",
+          "595-599",
+          "882-889",
+          "963-972",
+          "973-981",
+          "1087-1097",
+          "184-193",
+          "3-21",
+          null,
+          null,
+          "39-50",
+          "105",
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          "643-666",
+          "107-129",
+          "424-449"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://doi.org/10.1002/bdm.2172",
+          "https://doi.org/10.1002/ejsp.2023",
+          "https://doi.org/10.1002/per.2047",
+          "https://doi.org/10.1002/per.790",
+          "https://doi.org/10.1007/978-3-540-74997-4_9",
+          "https://doi.org/10.1007/s10919-019-00293-3",
+          "https://doi.org/10.1007/s11031-011-9235-8",
+          "https://doi.org/10.1007/s11031-014-9421-6",
+          "https://doi.org/10.1016/j.actpsy.2009.12.006",
+          "https://doi.org/10.1016/j.copsyc.2021.06.008",
+          "https://doi.org/10.1016/j.entcs.2019.04.009",
+          "https://doi.org/10.1016/j.jesp.2014.05.007",
+          "https://doi.org/10.1016/j.jrp.2015.08.001",
+          "https://doi.org/10.1017/cbo9780511819568.004",
+          "https://doi.org/10.1023/a:1022823221146",
+          "https://doi.org/10.1037/0003-066x.48.4.384",
+          "https://doi.org/10.1037/0003-066x.54.6.408",
+          "https://doi.org/10.1037/0003-066x.65.8.698",
+          "https://doi.org/10.1037/0022-3514.52.6.1061",
+          "https://doi.org/10.1037/0022-3514.64.6.906",
+          "https://doi.org/10.1037/0022-3514.70.2.205",
+          "https://doi.org/10.1037/0022-3514.91.2.295",
+          "https://doi.org/10.1037/0033-2909.115.1.102",
+          "https://doi.org/10.1037/0033-2909.128.2.203",
+          "https://doi.org/10.1037/0033-2909.133.1.46",
+          "https://doi.org/10.1037/0033-2909.133.4.694",
+          "https://doi.org/10.1037/0096-3445.113.3.464",
+          "https://doi.org/10.1037/1528-3542.5.1.3",
+          "https://doi.org/10.1037/a0015669",
+          "https://doi.org/10.1037/a0020965",
+          "https://doi.org/10.1037/a0023853",
+          "https://doi.org/10.1037/a0028085",
+          "https://doi.org/10.1037/a0038781",
+          "https://doi.org/10.1037/emo0000032",
+          "https://doi.org/10.1037/emo0000102",
+          "https://doi.org/10.1037/emo0000390",
+          "https://doi.org/10.1037/emo0000652",
+          "https://doi.org/10.1037/pspi0000026",
+          "https://doi.org/10.1037/pspi0000118",
+          "https://doi.org/10.1037/xge0000535",
+          "https://doi.org/10.1037/xge0000538",
+          "https://doi.org/10.1073/pnas.0908239106",
+          "https://doi.org/10.1080/02699930600814735",
+          "https://doi.org/10.1080/02699930701516791",
+          "https://doi.org/10.1080/02699930802613828",
+          "https://doi.org/10.1080/02699931.2011.648174",
+          "https://doi.org/10.1080/02699931.2017.1320978",
+          "https://doi.org/10.1080/02699931.2019.1611542",
+          "https://doi.org/10.1080/02699938708408362",
+          "https://doi.org/10.1080/026999399379302",
+          "https://doi.org/10.1093/acprof:oso/9780190228057.003.0004",
+          "https://doi.org/10.1093/acprof:oso/9780190228057.003.0019",
+          "https://doi.org/10.1093/oso/9780195126013.003.0029",
+          "https://doi.org/10.1098/rspb.1998.0380",
+          "https://doi.org/10.1098/rspb.2002.2034",
+          "https://doi.org/10.1111/spc3.12253",
+          "https://doi.org/10.1126/science.1224313",
+          "https://doi.org/10.1146/annurev-psych-020821-010855",
+          "https://doi.org/10.1146/annurev-psych-122414-033702",
+          "https://doi.org/10.1177/0146167211400421",
+          "https://doi.org/10.1177/053901882021004003",
+          "https://doi.org/10.1177/0956797610363547",
+          "https://doi.org/10.1177/0956797610370755",
+          "https://doi.org/10.1177/0956797613520608",
+          "https://doi.org/10.1177/0956797614520714",
+          "https://doi.org/10.1177/0956797614522816",
+          "https://doi.org/10.1177/1754073917749880",
+          "https://doi.org/10.1177/1754073919873131",
+          "https://doi.org/10.18637/jss.v040.i01",
+          "https://doi.org/10.18637/jss.v082.i13",
+          "https://doi.org/10.2224/sbp.5977",
+          "https://doi.org/10.2307/3033570",
+          "https://doi.org/10.32614/cran.package.afex",
+          "https://doi.org/10.32614/cran.package.dplyr",
+          "https://doi.org/10.32614/cran.package.emmeans",
+          "https://doi.org/10.32614/cran.package.ez",
+          "https://doi.org/10.32614/cran.package.gsdesign",
+          "https://doi.org/10.32614/cran.package.psych",
+          "https://doi.org/10.32614/r.manuals",
+          "https://doi.org/10.5465/amj.2009.0804",
+          "https://doi.org/10.5465/amr.2009.0484",
+          "https://doi.org/10.5465/amr.2016.0191"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}
