@@ -1,0 +1,67 @@
+{
+ "paper_id": "coi_refs_only",
+ "info": [
+  {
+   "title": "coi_refs_only",
+   "keywords": null,
+   "doi": null
+  }
+ ],
+ "author": [],
+ "text": [
+  {
+   "text": "We studied learning.",
+   "text_id": 1,
+   "paragraph_id": 1,
+   "section_id": 0,
+   "page_number": null,
+   "formatted": null
+  },
+  {
+   "text": "The effect was significant.",
+   "text_id": 2,
+   "paragraph_id": 1,
+   "section_id": 0,
+   "page_number": null,
+   "formatted": null
+  },
+  {
+   "text": "Conflict of interest: none declared.",
+   "text_id": 3,
+   "paragraph_id": 2,
+   "section_id": 1,
+   "page_number": null,
+   "formatted": null
+  },
+  {
+   "text": "Competing interests in science.",
+   "text_id": 4,
+   "paragraph_id": 2,
+   "section_id": 1,
+   "page_number": null,
+   "formatted": null
+  }
+ ],
+ "section": [
+  {
+   "section_id": 0,
+   "header": "Introduction",
+   "parent_section_id": null,
+   "section_type": "intro",
+   "classification_score": null
+  },
+  {
+   "section_id": 1,
+   "header": "References",
+   "parent_section_id": null,
+   "section_type": "references",
+   "classification_score": null
+  }
+ ],
+ "url": [],
+ "bib": [],
+ "xref": [],
+ "figure": [],
+ "table": [],
+ "eq": []
+}

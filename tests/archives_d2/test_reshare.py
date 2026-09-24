@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import hashlib
+import warnings
 from pathlib import Path
 
 import pandas as pd
@@ -111,3 +112,52 @@ def test_verify_downloads(tmp_path: Path) -> None:
     assert out["downloaded"].tolist() == [True, False, False, True]
     assert out["checksum_ok"].tolist()[0] is True
     assert out["size_on_disk"].tolist()[:2] == [4.0, 4.0]
+
+
+def test_file_download_zip_with_unzip_types(serve: object, tmp_path: Path) -> None:
+    import io
+    import json
+    import zipfile
+
+    import httpx
+
+    buf = io.BytesIO()
+    with zipfile.ZipFile(buf, "w") as zf:
+        zf.writestr("data.csv", "a,b\n1,2\n")
+        zf.writestr("stimuli.png", b"\x89PNG....")
+    body = buf.getvalue()
+    rec = {
+        "title": "Zipped",
+        "documents": [
+            {
+                "content": "data",
+                "files": [
+                    {
+                        "fileid": 7,
+                        "filename": "all.zip",
+                        "filesize": len(body),
+                        "hash": hashlib.md5(body, usedforsecurity=False).hexdigest(),
+                        "hash_type": "MD5",
+                        "uri": "http://reshare.ukdataservice.ac.uk/id/file/7",
+                    }
+                ],
+            }
+        ],
+    }
+    serve(  # type: ignore[operator]
+        {
+            "https://reshare.ukdataservice.ac.uk/id/eprint/5": httpx.Response(
+                200, content=json.dumps(rec).encode(), headers={"content-type": "application/json"}
+            ),
+            "https://reshare.ukdataservice.ac.uk/id/file/7": httpx.Response(200, content=body),
+        }
+    )
+    # the zip is over the (tiny) size cap but exempt from it: only members are wanted
+    with warnings.catch_warnings():
+        warnings.simplefilter("error")
+        files = reshare_file_download("5", str(tmp_path), max_file_size=0.0001, unzip_types="data")
+    assert files is not None
+    assert files["key"].tolist() == ["all.zip"]
+    # either the wanted members were extracted, or (when the archive cannot be
+    # read remotely) the whole zip was fetched instead -- never skipped by the cap
+    assert files["downloaded"].tolist() == [True] or files["extracted"].notna().all()

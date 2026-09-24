@@ -8,10 +8,13 @@ Sources (``index.json`` and pins use the same shapes):
 * ``{"git": "<https, ssh or local url>"}``: hardened git;
 * ``{"path": "<folder>"}``: a local folder (local and test stores).
 
-Extraction is defensive: absolute paths, ``..``, symlinks, hardlinks and
-device files are refused, the extracted pack is capped at 50 MB and 5000
-files, the single top-level folder is stripped and ``subdir`` selected.
-Nothing fetched here is imported or run.
+Extraction is defensive: absolute paths, ``..``, symlinks, hardlinks,
+device files and compiled extension modules (``*.so``, ``*.pyd``) are
+refused, the extracted pack is capped at 50 MB and 5000 files, the single
+top-level folder is stripped and ``subdir`` selected. Whatever the tree hash
+leaves out (``.git/``, ``__pycache__/``, ``*.pyc``, an install record) is
+never written, so the files on disk are exactly the hashed, recorded and
+reviewed ones. Nothing fetched here is imported or run.
 """
 
 from __future__ import annotations
@@ -29,6 +32,7 @@ from typing import Any
 from urllib.parse import quote, urlsplit
 
 from pytacheck.packs.manifest import PackError
+from pytacheck.packs.tree import INSTALL_RECORD
 
 __all__ = [
     "HOSTS",
@@ -52,6 +56,22 @@ MAX_DOWNLOAD = 100 * 1024 * 1024  # compressed tarball (a whole store repo)
 HOSTS = {"github": "github.com", "gitlab": "gitlab.com", "codeberg": "codeberg.org"}
 _SHA = re.compile(r"^[0-9a-f]{40}$")
 _SKIP_DIRS = frozenset({".git", "__pycache__"})
+#: compiled Python extension modules: importable, but not reviewable
+_NATIVE_SUFFIXES = (".so", ".pyd")
+
+
+def _skipped(parts: tuple[str, ...] | list[str]) -> bool:
+    """Whether a pack file is left out of the tree hash (and so is never installed)."""
+    name = parts[-1]
+    return any(p in _SKIP_DIRS for p in parts) or name.endswith(".pyc") or name == INSTALL_RECORD
+
+
+def _refuse_native(rel: str) -> None:
+    if rel.lower().endswith(_NATIVE_SUFFIXES):
+        raise PackError(
+            f"Refusing to install: {rel} is a compiled extension module "
+            "(packs may only contain Python source)"
+        )
 
 
 class DownloadError(PackError):
@@ -204,12 +224,15 @@ def extract_tarball(data: bytes, dest: str | os.PathLike[str], subdir: str = "")
                 local = rel[len(sub) + 1 :] if sub else rel
                 if not local:
                     continue
+                if _skipped(local.split("/")):
+                    continue  # bytecode, .git, an install record: never hashed, never written
                 target = out.joinpath(*local.split("/"))
                 if m.isdir():
                     target.mkdir(parents=True, exist_ok=True)
                     continue
                 if not m.isfile():
                     raise _unsafe(m.name, "is not a regular file")
+                _refuse_native(local)
                 files += 1
                 total += m.size
                 if files > MAX_FILES:
@@ -256,8 +279,9 @@ def copy_tree(src: str | os.PathLike[str], dest: str | os.PathLike[str]) -> int:
             rel = full.relative_to(base)
             if full.is_symlink():
                 raise PackError(f"Refusing to install: {rel.as_posix()} is a symlink")
-            if not full.is_file() or name.endswith(".pyc"):
+            if not full.is_file() or _skipped(rel.parts):
                 continue
+            _refuse_native(rel.as_posix())
             files += 1
             total += full.stat().st_size
             if files > MAX_FILES:

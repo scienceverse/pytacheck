@@ -1,0 +1,115 @@
+{
+  "id": "github_tree_files.review.slash_branch",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "gated",
+      "reason",
+      "files",
+      "default_branch",
+      "license"
+    ],
+    "v": [
+      {
+        "t": "lgl",
+        "v": [
+          false
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 3,
+        "names": [
+          "repo",
+          "clean_repo",
+          "name",
+          "path",
+          "download_url",
+          "size",
+          "type"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "https://github.com/rv/tree4.git",
+              "https://github.com/rv/tree4.git",
+              "https://github.com/rv/tree4.git"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "rv/tree4",
+              "rv/tree4",
+              "rv/tree4"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Makefile",
+              ".gitignore",
+              "x.c++"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Makefile",
+              ".gitignore",
+              "src/x.c++"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://raw.githubusercontent.com/rv/tree4/feat/x/Makefile",
+              "https://raw.githubusercontent.com/rv/tree4/feat/x/.gitignore",
+              "https://raw.githubusercontent.com/rv/tree4/feat/x/src/x.c++"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              10,
+              11,
+              12
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "file",
+              "config",
+              "file"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "feat/x"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

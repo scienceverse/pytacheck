@@ -1,0 +1,136 @@
+{
+  "id": "gitlab_tree_files.review.branch_space",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "gated",
+      "reason",
+      "files",
+      "default_branch",
+      "license"
+    ],
+    "v": [
+      {
+        "t": "lgl",
+        "v": [
+          false
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 6,
+        "names": [
+          "repo",
+          "clean_repo",
+          "name",
+          "path",
+          "download_url",
+          "size",
+          "type"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "https://gitlab.com/rv/glp.git",
+              "https://gitlab.com/rv/glp.git",
+              "https://gitlab.com/rv/glp.git",
+              "https://gitlab.com/rv/glp.git",
+              "https://gitlab.com/rv/glp.git",
+              "https://gitlab.com/rv/glp.git"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "rv/glp",
+              "rv/glp",
+              "rv/glp",
+              "rv/glp",
+              "rv/glp",
+              "rv/glp"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "b.txt",
+              "c.R",
+              "z.csv",
+              "w.JSON",
+              "w.JSON",
+              "q.md"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "b.txt",
+              "a/c.R",
+              "z.csv",
+              "w.JSON",
+              "w.JSON",
+              "q.md"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://gitlab.com/rv/glp/-/raw/feat/x%20y/b.txt",
+              "https://gitlab.com/rv/glp/-/raw/feat/x%20y/a/c.R",
+              "https://gitlab.com/rv/glp/-/raw/feat/x%20y/z.csv",
+              "https://gitlab.com/rv/glp/-/raw/feat/x%20y/w.JSON",
+              "https://gitlab.com/rv/glp/-/raw/feat/x%20y/w.JSON",
+              "https://gitlab.com/rv/glp/-/raw/feat/x%20y/q.md"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              10,
+              null,
+              300,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "text",
+              "code",
+              "data",
+              "code",
+              "data",
+              "text"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "feat/x y"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "mit"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

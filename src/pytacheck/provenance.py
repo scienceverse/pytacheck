@@ -1,7 +1,8 @@
 """Provenance of module runs: which module, from which pack, at which commit.
 
 :func:`module_provenance` builds the dict stored in
-``ModuleOutput.provenance`` on every :func:`pytacheck.module.module_run`::
+``ModuleOutput.run_provenance`` (alias ``.provenance``) on every
+:func:`pytacheck.module.module_run`::
 
     {"id": "psych::apa_df", "name": "apa_df", "pack": "psych", "version": "1.2.0",
      "trust": "store", "reviewed": "2026-09-01",
@@ -72,8 +73,26 @@ def builtin_source() -> dict[str, str]:
     }
 
 
+def _summary(value: Any) -> str | None:
+    """A short stand-in for a large object (a DataFrame, an array, a paper), not its repr."""
+    shape = getattr(value, "shape", None)
+    if isinstance(shape, tuple) and all(isinstance(n, int) for n in shape):
+        return f"<{type(value).__name__} {'x'.join(map(str, shape))}>"
+    from pytacheck.papers.model import Paper, PaperList
+
+    if isinstance(value, Paper):
+        return f"<Paper {value.paper_id}>"
+    if isinstance(value, PaperList):
+        return f"<PaperList of {len(value)}>"
+    return None
+
+
 def json_safe(value: Any) -> Any:
-    """*value* as JSON data; anything that is not JSON is stored as its ``repr``."""
+    """*value* as JSON data; anything that is not JSON is stored as its ``repr``.
+
+    Large objects (DataFrames, arrays, papers) are summarised as their type and
+    shape instead, so provenance stays cheap to build.
+    """
     if value is None or isinstance(value, bool | int | str):
         return value
     if isinstance(value, float):
@@ -82,7 +101,11 @@ def json_safe(value: Any) -> Any:
         return [json_safe(v) for v in value]
     if isinstance(value, Mapping) and all(isinstance(k, str) for k in value):
         return {k: json_safe(v) for k, v in value.items()}
-    return repr(value)
+    summary = _summary(value)
+    if summary is not None:
+        return summary
+    text = repr(value)
+    return text if len(text) <= 1000 else text[:997] + "..."
 
 
 @lru_cache(maxsize=512)
@@ -181,10 +204,21 @@ def module_provenance(spec: ModuleSpec, args: Mapping[str, Any] | None = None) -
 
 
 def module_identity(spec: ModuleSpec, provenance: Mapping[str, Any]) -> tuple[Any, ...]:
-    """What makes two runs of a module the same code: pack, rev, file hash (or function)."""
+    """What makes two runs of a module the same code: pack, rev, file hash and function.
+
+    The function object itself is part of it: two functions can share a name
+    and a source file (a factory, a redefinition in a notebook) and still
+    differ. Only a module file loaded by path (re-executed on every call, as
+    R's ``source()``) is identified by its file hash alone, since its function
+    is new each time.
+    """
     source = provenance.get("source") or {}
     rev = source.get("rev") if isinstance(source, Mapping) else None
-    code: Any = provenance.get("sha256") or spec.func
+    sha = provenance.get("sha256")
+    modname = getattr(spec.func, "__module__", None) or ""
+    code: Any = (sha, spec.func)
+    if sha and modname.startswith("pytacheck_user_module_"):
+        code = (sha, getattr(spec.func, "__qualname__", spec.name))
     return (provenance.get("pack"), rev or provenance.get("version"), code, spec.name)
 
 
@@ -273,7 +307,7 @@ class RunRecord:
         items = list(outputs.values()) if isinstance(outputs, Mapping) else list(outputs)
         modules = []
         for out in items:
-            prov = getattr(out, "provenance", None)
+            prov = getattr(out, "run_provenance", None)
             entry = dict(prov) if isinstance(prov, Mapping) else {}
             label = str(getattr(out, "module", "") or entry.get("name") or "")
             entry.setdefault("id", label)
@@ -471,7 +505,7 @@ def _failed_output(
         summary_table=summary_table,
         paper=paper,
         prev_outputs=prev,
-        provenance=prov,
+        run_provenance=prov,
     )
 
 
@@ -507,20 +541,48 @@ def run_modules(paper: Any, selection: Any = None) -> ModuleChain:
     return chain
 
 
+def _refused(msg: str) -> Exception:
+    """A rerun refusal (never replayed as a failed module)."""
+    from pytacheck.module import ModuleError
+
+    exc = ModuleError(msg)
+    exc.__pytacheck_refused__ = True  # type: ignore[attr-defined]
+    return exc
+
+
 def _refuse(msg: str, allow: bool) -> None:
     import warnings
 
-    from pytacheck.module import ModuleError
-
     if not allow:
-        raise ModuleError(msg + " (pass allow_modified=True / --allow-modified to run it anyway)")
+        raise _refused(msg + " (pass allow_modified=True / --allow-modified to run it anyway)")
     warnings.warn(msg, stacklevel=3)
 
 
-def _rerun_pack_spec(entry: Mapping[str, Any], *, install: bool, yes: bool) -> Any:
+def _differs(path: Path, want: str | None) -> bool:
+    """Whether the file at *path* is not the recorded one (hashed, never imported)."""
+    if not want:
+        return False
+    try:
+        return file_sha256(path) != want
+    except OSError:
+        return True
+
+
+def _rerun_pack_spec(
+    entry: Mapping[str, Any], *, install: bool, yes: bool, allow_modified: bool
+) -> Any:
+    """The spec of a recorded pack module, verified *before* its code is imported."""
+    import warnings
+
     from pytacheck.module import ModuleError
     from pytacheck.packs.manifest import PackError
-    from pytacheck.packs.registry import _installed_pack, get_pack, install_dir, load_module
+    from pytacheck.packs.registry import (
+        _installed_pack,
+        get_pack,
+        install_dir,
+        integrity,
+        load_module,
+    )
 
     name, pack_name = entry["name"], entry["pack"]
     source = dict(entry.get("source") or {})
@@ -554,7 +616,54 @@ def _rerun_pack_spec(entry: Mapping[str, Any], *, install: bool, yes: bool) -> A
         pack = _installed_pack(pack_name, pin, origin="run record")
     if pack is None:
         raise ModuleError(f"The pack '{pack_name}' (used by {entry.get('id')}) is not available")
+    if pack.kind == "installed":
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            bad = integrity(pack)
+        if bad:
+            _refuse(
+                f"The installed pack '{pack_name}' was modified: {', '.join(bad)}", allow_modified
+            )
+    if pack.has_module(name) and _differs(pack.module_path(name), entry.get("sha256")):
+        _refuse(
+            f"The module file of '{entry.get('id')}' differs from the recorded one", allow_modified
+        )
     return pack, load_module(pack, name)
+
+
+def _rerun_local_ref(entry: Mapping[str, Any], *, allow_modified: bool, yes: bool) -> Any:
+    """What to run for a recorded module outside any pack, checked before it is imported.
+
+    A record is shareable data, so a recorded file outside the working
+    directory runs only after the user agrees (or with ``yes=True``).
+    """
+    from pytacheck.module import _allow_local, _locate
+    from pytacheck.packs import ui
+
+    name = str(entry.get("name") or entry.get("id"))
+    want = entry.get("sha256")
+    path = (entry.get("source") or {}).get("path")
+    if path and Path(path).is_file() and _allow_local():
+        target = Path(path).resolve()
+        if not target.is_relative_to(Path.cwd().resolve()) and not yes:
+            question = f"The run record runs the module file {target}, outside this folder. Run it?"
+            if not ui.confirm(question):
+                raise _refused(
+                    f"Not running {target} from the run record (pass yes=True / --yes to allow it)"
+                )
+        if _differs(target, want):
+            _refuse(
+                f"The module file of '{entry.get('id')}' differs from the recorded one",
+                allow_modified,
+            )
+        return str(path)
+    kind, where = _locate(name)
+    file = where if kind == "file" else where[0].module_path(name) if kind == "pack" else None
+    if file is not None and _differs(Path(file), want):
+        _refuse(
+            f"The module file of '{entry.get('id')}' differs from the recorded one", allow_modified
+        )
+    return name
 
 
 def rerun(
@@ -570,14 +679,16 @@ def rerun(
     Pack modules run from the recorded commit (``install=True`` fetches a
     missing one, asking first unless ``yes=True``; it is not pinned). A module
     whose file differs from the record's sha256, or an installed pack that
-    was modified after install, is refused unless ``allow_modified=True``.
-    Built-in modules come from this pytacheck; a different version or file
-    hash only warns.
+    was modified after install, is refused unless ``allow_modified=True``;
+    files are checked before any of their code is imported. A module that
+    failed in the recorded run and cannot be found now fails again (with a
+    warning) instead of stopping the rerun. Built-in modules come from this
+    pytacheck; a different version or file hash only warns.
     """
     import warnings
 
     from pytacheck._version import __version__
-    from pytacheck.module import module_find
+    from pytacheck.module import ModuleError, module_find
     from pytacheck.presets import Selection
 
     rec = RunRecord.read(record)
@@ -587,37 +698,33 @@ def rerun(
         args = dict(m.get("args") or {})
         pack = m.get("pack")
         want = m.get("sha256")
-        if pack == "metacheck":
-            spec = module_find(name)
-            if m.get("version") != __version__ or (want and _sha(spec) != want):
-                warnings.warn(
-                    f"The built-in module '{name}' comes from pytacheck {__version__}; "
-                    f"the record used {m.get('version')}",
-                    stacklevel=2,
-                )
-            entries.append((name, args))
-            continue
-        if pack:
-            from pytacheck.packs.registry import integrity
-
-            pk, spec = _rerun_pack_spec(m, install=install, yes=yes)
-            if pk.kind == "installed":
-                with warnings.catch_warnings():
-                    warnings.simplefilter("ignore")
-                    bad = integrity(pk)
-                if bad:
-                    _refuse(
-                        f"The installed pack '{pack}' was modified: {', '.join(bad)}",
-                        allow_modified,
+        try:
+            if pack == "metacheck":
+                spec = module_find(name)
+                if m.get("version") != __version__ or (want and _sha(spec) != want):
+                    warnings.warn(
+                        f"The built-in module '{name}' comes from pytacheck {__version__}; "
+                        f"the record used {m.get('version')}",
+                        stacklevel=2,
                     )
-        else:
-            path = (m.get("source") or {}).get("path")
-            spec = module_find(path if path and Path(path).is_file() else name)
-        if want and _sha(spec) != want:
-            _refuse(
-                f"The module file of '{m.get('id')}' differs from the recorded one", allow_modified
+                entries.append((name, args))
+                continue
+            if pack:
+                _pk, spec = _rerun_pack_spec(
+                    m, install=install, yes=yes, allow_modified=allow_modified
+                )
+                entries.append((spec, args))
+            else:
+                entries.append((_rerun_local_ref(m, allow_modified=allow_modified, yes=yes), args))
+        except ModuleError as exc:
+            if m.get("status") != "fail" or getattr(exc, "__pytacheck_refused__", False):
+                raise
+            # it failed in the recorded run too (e.g. a module not ported yet): fail it again
+            warnings.warn(
+                f"'{m.get('id') or name}' failed in the recorded run and still cannot be run: {exc}",
+                stacklevel=2,
             )
-        entries.append((spec, args))
+            entries.append((str(m.get("id") or name), args))
     selection = Selection(
         entries,
         preset=rec.preset,

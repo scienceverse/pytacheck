@@ -1,0 +1,30 @@
+{
+ "data": {
+  "id": "pidsl",
+  "type": "guids",
+  "attributes": {},
+  "relationships": {
+   "referent": {
+    "links": {
+     "related": {
+      "href": "https://api.osf.io/v2/registrations/pidsl/",
+      "meta": {
+       "type": "registrations"
+      }
+     }
+    },
+    "data": {
+     "id": "pidsl",
+     "type": "registrations"
+    }
+   }
+  },
+  "links": {
+   "self": "https://api.osf.io/v2/guids/pidsl/",
+   "html": "https://osf.io/pidsl/"
+  }
+ },
+ "meta": {
+  "version": "2.0"
+ }
+}

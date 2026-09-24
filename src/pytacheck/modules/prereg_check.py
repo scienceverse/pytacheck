@@ -65,11 +65,7 @@ def _no_prereg_summary(paper: Any) -> pd.DataFrame:
 def _rows_frame(rows: Sequence[dict[str, str]]) -> pd.DataFrame:
     """``dplyr::bind_rows()`` of one-row named lists (empty lists are skipped)."""
     rows = [r for r in rows if r]
-    columns: list[str] = []
-    for r in rows:
-        for c in r:
-            if c not in columns:
-                columns.append(c)
+    columns = list(dict.fromkeys(c for r in rows for c in r))  # first-appearance order
     return pd.DataFrame(
         {c: pd.Series([r.get(c) for r in rows], dtype="string") for c in columns},
         index=pd.RangeIndex(len(rows)),
@@ -263,11 +259,18 @@ def prereg_check(paper: Any) -> dict[str, Any]:
 
     ## prereg table ----
     keep = [c for c in prereg_info.columns if prereg_info[c].notna().any()]
-    prereg_table = pd.DataFrame({"Field": pd.Series(keep, dtype="string")})
-    for i in range(n):
-        prereg_table[f"Preregistration {i + 1}"] = pd.Series(
-            [prereg_info[c].iloc[i] for c in keep], dtype="string"
-        )
+    # t(): one row per field, one column per registration (built in one go:
+    # inserting a column per registration fragments the frame on large lists)
+    cells = prereg_info.loc[:, keep].to_numpy(dtype=object).T
+    prereg_table = pd.DataFrame(
+        {
+            "Field": pd.Series(keep, dtype="string"),
+            **{
+                f"Preregistration {i + 1}": pd.Series(cells[:, i], dtype="string")
+                for i in range(n)
+            },
+        }
+    )
 
     ## guidance ----
     guidance = [

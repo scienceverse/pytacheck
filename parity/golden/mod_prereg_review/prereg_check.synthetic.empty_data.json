@@ -1,0 +1,14 @@
+{
+  "id": "prereg_check.synthetic.empty_data",
+  "ok": false,
+  "error": "Running the module 'prereg_check' produced errors: Must group by variables found in `.data`.",
+  "warnings": [
+    "Unknown or uninitialised column: `id`.",
+    "Unknown or uninitialised column: `link`.",
+    "Unknown or uninitialised column: `title`.",
+    "Unknown or uninitialised column: `template_name`."
+  ],
+  "value": null,
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

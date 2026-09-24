@@ -1,0 +1,295 @@
+{
+  "id": "prereg_check.inaccessible.paperlist",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "prereg_check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Preregistration Check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "method"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "template_name",
+          "title",
+          "id",
+          "link",
+          "date_created",
+          "date_modified",
+          "date_registered",
+          "embargo_end_date",
+          "ia_url",
+          "research_questions",
+          "study_type",
+          "blinding",
+          "study_design_overview",
+          "randomization",
+          "existing_data",
+          "data_collection_procedures",
+          "sample_size",
+          "sample_size_rationale",
+          "stopping_rule",
+          "manipulated_variables",
+          "measured_variables",
+          "statistical_tests",
+          "inference_criteria",
+          "data_exclusion_criteria",
+          "missing_data_handling",
+          "exploratory_analyses",
+          "paper_id"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "OSF Preregistration"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Papercheck Test"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "48ncu"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://osf.io/48ncu"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2025-11-28T19:14:24.639665"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2025-08-05T11:55:35.267689"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2025-11-28T19:14:24.608826"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://archive.org/details/osf-registrations-48ncu-v1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Automation can be used to check for errors in scientific manuscripts, and inform authors about possible corrections. In this study we examine the usefulness of metacheck to improve best practices."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Experiment - A researcher randomly assigns treatments to study subjects, this includes field or lab experiments. This is also known as an intervention experiment and includes randomized controlled trials."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "No blinding is involved in this study."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Two conditions. In one, researchers receive automated feedback. In the control condition, they do not receive feedback."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "We randomly assign to conditions"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Registration prior to creation of data"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "We will include all scientists who are willing to participate."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "We randomly assigned 50 scientists to a condition where their manuscript was automatically checked for errors, and 50 scientists to a control condition with a checklist."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Based on an a-priori power analysis for an independent t-test, with an expected effect size of d = 0.6, an alpha of 0.05, and a desired power of 0.85, we needed to collect at least 50 participants per group."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "We will stop after data from 100 researchers has been collected."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Two conditions. In one, researchers receive automated feedback. In the control condition, they do not receive feedback."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "We will code all manuscripts for mistakes, and count the total number of mistakes per manuscript."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "We will perform an independent t-test on the number of mistakes in each group."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "We will interpret effects as significant if p &lt; .05"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "No exclusions are expected."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "No missing data is expected."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "We also measured the expertise of researchers (in years) to explore whether the automated tool would be more useful, the less research experience researchers had. We also asked researchers to rate how useful they found the checklist or app on a scale from 1 (not at all) to 7 (extremely useful)."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "paper_b"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "We found 1 preregistration. 2 registration links could not be accessed (private, embargoed, or withdrawn).",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(id = \"<a href='https://osf.io/48ncu' target='_blank'>48ncu<\/a>\", \n    title = \"Papercheck Test\", template = \"OSF Preregistration\"), row.names = c(NA, \n-1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 2, FALSE)\n```\n",
+          "Meta-scientific research has shown that deviations from preregistrations are often not reported or checked, and that the most common deviations concern the sample size. We recommend manually checking the full preregistration at the link above, and have provided the preregistered sample size.",
+          "The following registration links could not be accessed and may be private, embargoed, or withdrawn: https://osf.io/3cz2e, https://api.osf.io/v2/registrations/8c3kb.",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(id = \"48ncu\", sample_size = \"We randomly assigned 50 scientists to a condition where their manuscript was automatically checked for errors, and 50 scientists to a control condition with a checklist.\"), row.names = c(NA, \n-1L), class = c(\"tbl_df\", \"tbl\", \"data.frame\"))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 2, FALSE)\n```\n",
+          "::: {.callout-tip title=\"Full Preregistration\" collapse=\"true\"}\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Field = c(\"template_name\", \"title\", \"id\", \"link\", \n\"date_created\", \"date_modified\", \"date_registered\", \"embargo_end_date\", \n\"ia_url\", \"research_questions\", \"study_type\", \"blinding\", \"study_design_overview\", \n\"randomization\", \"existing_data\", \"data_collection_procedures\", \n\"sample_size\", \"sample_size_rationale\", \"stopping_rule\", \"manipulated_variables\", \n\"measured_variables\", \"statistical_tests\", \"inference_criteria\", \n\"data_exclusion_criteria\", \"missing_data_handling\", \"exploratory_analyses\", \n\"paper_id\"), \"Preregistration 1\" = c(\"OSF Preregistration\", \"Papercheck Test\", \n\"48ncu\", \"https://osf.io/48ncu\", \"2025-11-28T19:14:24.639665\", \n\"2025-08-05T11:55:35.267689\", \"2025-11-28T19:14:24.608826\", \"\", \n\"https://archive.org/details/osf-registrations-48ncu-v1\", \"Automation can be used to check for errors in scientific manuscripts, and inform authors about possible corrections. In this study we examine the usefulness of metacheck to improve best practices.\", \n\"Experiment - A researcher randomly assigns treatments to study subjects, this includes field or lab experiments. This is also known as an intervention experiment and includes randomized controlled trials.\", \n\"No blinding is involved in this study.\", \"Two conditions. In one, researchers receive automated feedback. In the control condition, they do not receive feedback.\", \n\"We randomly assign to conditions\", \"Registration prior to creation of data\", \n\"We will include all scientists who are willing to participate.\", \n\"We randomly assigned 50 scientists to a condition where their manuscript was automatically checked for errors, and 50 scientists to a control condition with a checklist.\", \n\"Based on an a-priori power analysis for an independent t-test, with an expected effect size of d = 0.6, an alpha of 0.05, and a desired power of 0.85, we needed to collect at least 50 participants per group.\", \n\"We will stop after data from 100 researchers has been collected.\", \n\"Two conditions. In one, researchers receive automated feedback. In the control condition, they do not receive feedback.\", \n\"We will code all manuscripts for mistakes, and count the total number of mistakes per manuscript.\", \n\"We will perform an independent t-test on the number of mistakes in each group.\", \n\"We will interpret effects as significant if p &lt; .05\", \"No exclusions are expected.\", \n\"No missing data is expected.\", \"We also measured the expertise of researchers (in years) to explore whether the automated tool would be more useful, the less research experience researchers had. We also asked researchers to rate how useful they found the checklist or app on a scale from 1 (not at all) to 7 (extremely useful).\", \n\"paper_b\")), row.names = c(\"template_name\", \"title\", \"id\", \"link\", \n\"date_created\", \"date_modified\", \"date_registered\", \"embargo_end_date\", \n\"ia_url\", \"research_questions\", \"study_type\", \"blinding\", \"study_design_overview\", \n\"randomization\", \"existing_data\", \"data_collection_procedures\", \n\"sample_size\", \"sample_size_rationale\", \"stopping_rule\", \"manipulated_variables\", \n\"measured_variables\", \"statistical_tests\", \"inference_criteria\", \n\"data_exclusion_criteria\", \"missing_data_handling\", \"exploratory_analyses\", \n\"paper_id\"), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 5, FALSE)\n```\n\n\n:::\n",
+          "::: {.callout-tip title=\"Learn More\" collapse=\"true\"}\n\nFor metascientific articles demonstrating the rate of deviations from preregistrations, see:\n\nvan den Akker O, Bakker M, van Assen M, Pennington C, Verweij L, Elsherif M, Claesen A, Gaillard S, Yeung S, Frankenberger J, Krautter K, Cockcroft J, Kreuer K, Evans T, Heppel F, Schoch S, Korbmacher M, Yamada Y, Albayrak-Aydemir N, Wicherts J (2024). &ldquo;The potential of preregistration in psychology: Assessing preregistration producibility and preregistration-study consistency.&rdquo; <em>Psychological Methods<\/em>. <a href=\"https://doi.org/10.1037/met0000687\">doi:10.1037/met0000687<\/a>.\n\nFor educational material on how to report deviations from preregistrations, see:\n\nLakens, Daniël (2024). &ldquo;When and How to Deviate From a Preregistration.&rdquo; <em>Collabra: Psychology<\/em>, <b>10<\/b>(1), 117094. <a href=\"https://doi.org/10.1525/collabra.117094\">doi:10.1525/collabra.117094<\/a>.\n\n:::\n"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "info"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "We found 1 preregistration. 2 registration links could not be accessed (private, embargoed, or withdrawn)."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 3,
+        "names": [
+          "paper_id",
+          "preregistration"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "paper_a",
+              "paper_b",
+              "paper_c"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0,
+              1,
+              0
+            ]
+          }
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

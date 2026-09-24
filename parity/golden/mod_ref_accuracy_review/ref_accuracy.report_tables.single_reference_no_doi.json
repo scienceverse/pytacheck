@@ -1,0 +1,36 @@
+{
+  "id": "ref_accuracy.report_tables.single_reference_no_doi",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": null,
+    "v": [
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "Reference",
+          "Suggested DOI"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Smith, F. 2021. \"Human Error Is a Symptom of a Poor Design.\" Journal of Journals. https://doi.org/10.0000/0123456789."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

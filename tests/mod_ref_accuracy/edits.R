@@ -82,3 +82,9 @@ ra_match_copy <- function(p, from, to) {
   p$bib_match <- rbind(p$bib_match, row)
   p
 }
+
+# keep only the rows of `paper[[table]]` with these bib_ids
+ra_keep <- function(p, table, bib_id) {
+  p[[table]] <- p[[table]][p[[table]]$bib_id %in% bib_id, ]
+  p
+}

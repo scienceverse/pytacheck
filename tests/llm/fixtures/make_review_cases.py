@@ -190,6 +190,12 @@ for _i, _tx in enumerate(
         f"{H}.L.llm({_tx!r}, 'Sys', {GM_PY})",
     )
 
+net_case(
+    "llm.input.sanitised_duplicates",
+    f"llm(c('hel\\x01lo', 'hello', '12'), {NUM}, {GM})",
+    f"{H}.L.llm(['hel\\x01lo', 'hello', '12'], {NUM}, {GM_PY})",
+)
+
 # ---- llm(): structured input shapes -----------------------------------------------------
 net_case(
     "llm.structured.column_clash",

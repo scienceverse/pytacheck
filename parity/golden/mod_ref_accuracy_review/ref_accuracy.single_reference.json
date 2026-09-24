@@ -1,0 +1,298 @@
+{
+  "id": "ref_accuracy.single_reference",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "ref_accuracy"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Reference Accuracy"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "reference"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "bib_id",
+          "doi.orig",
+          "title.orig",
+          "year.orig",
+          "authors.orig",
+          "container.orig",
+          "doi.match",
+          "title.match",
+          "year.match",
+          "authors.match",
+          "container.match",
+          "text",
+          "score",
+          "doi_mismatch",
+          "year_mismatch",
+          "container_mismatch",
+          "title_mismatch",
+          "author_mismatch",
+          "tier",
+          "no_match",
+          "incoherent",
+          "no_doi"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "to_err_is_human"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "10.1177/0956797614520714"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Evil Genius? How Dishonesty Can Lead to Greater Creativity"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2014
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Gino, Francesca; Wiltermuth, Scott S"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Other Journal"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "10.1177/0956797614520714"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Retracted: Evil Genius? How Dishonesty Can Lead to Greater Creativity"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2014
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "df",
+                "nrow": 2,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Francesca",
+                      "Scott S."
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Gino",
+                      "Wiltermuth"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Psychological Science"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Gino, Francesca, and Scott S. Wiltermuth. 2014. \"Evil Genius? How Dishonesty Can Lead to Greater Creativity.\" Psychological Science 25 (4): 973-81. https://doi.org/10.1177/0956797614520714."
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "provided"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "The references below supplied a DOI, but one or more of the cited details (title, authors, journal, or year) does not match the record that DOI points to. Such an incoherent is most often an error in reading the reference from the PDF, but it could be a mistake, ar an AI generated reference. Check each against the original source. Incoherent references are mostly PDF parsing errors (we are working on improving reference parsing).",
+          "### Incoherent references\n",
+          "The cited details of these references do not match the record their DOI points to.\n",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Reference = \"Gino, Francesca, and Scott S. Wiltermuth. 2014. \\\"Evil Genius? How Dishonesty Can Lead to Greater Creativity.\\\" Psychological Science 25 (4): 973-81. https://doi.org/10.1177/0956797614520714.\", \n    \"What is wrong (cited → record)\" = \"<b>journal:<\/b> <span style=\\\"color:#c00;text-decoration:line-through\\\">Other Journal<\/span> &rarr; Psychological Science\", \n    Record = \"<a href='https://doi.org/10.1177/0956797614520714' target='_blank'>10.1177/0956797614520714<\/a>\"), row.names = c(NA, \n-1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, c(0.45, 0.4, 0.15), 5, FALSE)\n```\n"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "yellow"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "We checked the 1 reference that supplied a DOI against the record that DOI points to, and found 1 incoherent reference to check for parsing errors or mistakes. 0 references had no DOI and could not be checked. Incoherent references are mostly PDF parsing errors (we are working on improving reference parsing)."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "refs_checked",
+          "incoherent",
+          "no_doi"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "to_err_is_human"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          }
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

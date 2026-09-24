@@ -62,7 +62,9 @@ def test_private_psycharchives_info(apis: object) -> None:
     # only public bitstreams are returned by the API (readme is public; the
     # restricted 1GB zip is not listed)
     assert "readme.txt" in files["name"].tolist()
-    assert all(r.startswith("https://www.psycharchives.org/rest/bitstreams/") for r in files["retrieve"])
+    assert all(
+        r.startswith("https://www.psycharchives.org/rest/bitstreams/") for r in files["retrieve"]
+    )
 
 
 def test_psycharchives_file_download(apis: object) -> None:
@@ -193,7 +195,7 @@ def test_info_uses_the_listing_cache(apis: object) -> None:
 
 def test_info_offline(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setattr("pytacheck.utils.online", lambda *a, **k: False)
-    with pytest.raises(ConnectionError, match="PsychArchives.org seems to be offline"):
+    with pytest.raises(ConnectionError, match=r"PsychArchives\.org seems to be offline"):
         psycharchives_info(PA)
 
 

@@ -49,9 +49,7 @@ def test_private_info(mock_api: object) -> None:
 
 
 def test_info_table(mock_api: object) -> None:
-    table = pd.DataFrame(
-        {"n": [1, 2], "u": ["short1", "http://x.org/a b"], "mendeley_id": "stale"}
-    )
+    table = pd.DataFrame({"n": [1, 2], "u": ["short1", "http://x.org/a b"], "mendeley_id": "stale"})
     info = mendeley_info(table, id_col=2)
     assert list(info.columns[:4]) == ["n", "u", "mendeley_url", "mendeley_id"]
     assert info["mendeley_id"].tolist()[0] == "short1"
@@ -61,5 +59,5 @@ def test_info_table(mock_api: object) -> None:
 
 def test_info_offline(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setattr("pytacheck.utils.online", lambda *a, **k: False)
-    with pytest.raises(ConnectionError, match="data.mendeley.com seems to be offline"):
+    with pytest.raises(ConnectionError, match=r"data\.mendeley\.com seems to be offline"):
         mendeley_info("short1")

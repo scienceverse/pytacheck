@@ -118,7 +118,7 @@ def _get(url: str) -> Any:
     """
     from pytacheck import http
 
-    resp = http.request("GET", url, headers=_rbox_headers())
+    resp = http.request("GET", url, headers=_rbox_headers(), max_tries=1)
     if resp is None:
         raise ConnectionError(f"Failed to perform HTTP request: {url}")
     return resp

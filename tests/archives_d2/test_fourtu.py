@@ -31,9 +31,14 @@ def test_ids() -> None:
 
 
 def test_links() -> None:
-    paper = pc.test_paper(["Data: 10.4121/16766929.v2."], ["https://data.4tu.nl/articles/16766929/"])
+    paper = pc.test_paper(
+        ["Data: 10.4121/16766929.v2."], ["https://data.4tu.nl/articles/16766929/"]
+    )
     links = researchdata4tu_links(paper)
-    assert links["href"].tolist() == ["https://data.4tu.nl/articles/16766929", "10.4121/16766929.v2"]
+    assert links["href"].tolist() == [
+        "https://data.4tu.nl/articles/16766929",
+        "10.4121/16766929.v2",
+    ]
     assert links["researchdata4tu_id"].tolist() == ["16766929", "16766929"]
 
 
@@ -58,7 +63,7 @@ def test_info_vector(mock_api: object) -> None:
 
 def test_info_offline(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setattr("pytacheck.utils.online", lambda *a, **k: False)
-    with pytest.raises(ConnectionError, match="data.4tu.nl seems to be offline"):
+    with pytest.raises(ConnectionError, match=r"data\.4tu\.nl seems to be offline"):
         researchdata4tu_info("16766929")
 
 

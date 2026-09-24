@@ -12,6 +12,7 @@ error), unsorted paper lists and odd cross-references.
 
 from __future__ import annotations
 
+import math
 from pathlib import Path
 from typing import Any
 
@@ -78,6 +79,30 @@ CASES: list[tuple[str, str, str, str, dict[str, Any], bool]] = [
         "E.ra_demo([('bib', 1, 'authors', 'Nobody, X')])",
         {"max_authors": 0},
         False,
+    ),
+    (
+        "ref_accuracy.max_authors_fractional",
+        "ref_accuracy",
+        'ra_demo(list(list("bib", 3L, "doi", "10.1177/2515245918770963"), list("bib", 3L, "authors", "Nobody, X"), list("bib", 1L, "authors", "Nobody, X")))',
+        "E.ra_demo([('bib', 3, 'doi', '10.1177/2515245918770963'), ('bib', 3, 'authors', 'Nobody, X'), ('bib', 1, 'authors', 'Nobody, X')])",
+        {"max_authors": -1.5},
+        True,
+    ),
+    (
+        "ref_accuracy.max_authors_fractional_small",
+        "ref_accuracy",
+        'ra_demo(list(list("bib", 3L, "doi", "10.1177/2515245918770963"), list("bib", 3L, "authors", "Nobody, X"), list("bib", 1L, "authors", "Nobody, X")))',
+        "E.ra_demo([('bib', 3, 'doi', '10.1177/2515245918770963'), ('bib', 3, 'authors', 'Nobody, X'), ('bib', 1, 'authors', 'Nobody, X')])",
+        {"max_authors": -0.5},
+        True,
+    ),
+    (
+        "ref_accuracy.max_authors_inf",
+        "ref_accuracy",
+        'ra_demo(list(list("bib", 3L, "doi", "10.1177/2515245918770963"), list("bib", 3L, "authors", "Lakens, D; Scheel, A")))',
+        "E.ra_demo([('bib', 3, 'doi', '10.1177/2515245918770963'), ('bib', 3, 'authors', 'Lakens, D; Scheel, A')])",
+        {"max_authors": float("inf")},
+        True,
     ),
     (
         "ref_accuracy.title_similarity_1",
@@ -215,6 +240,22 @@ CASES: list[tuple[str, str, str, str, dict[str, Any], bool]] = [
         {},
         False,
     ),
+    (
+        "ref_accuracy.single_reference",
+        "ref_accuracy",
+        'ra_set(ra_keep(ra_demo(), "bib", 2L), "bib", 2L, "container", "Other Journal")',
+        "E.ra_set(E.ra_keep(E.ra_demo(), 'bib', [2]), 'bib', 2, 'container', 'Other Journal')",
+        {},
+        True,
+    ),
+    (
+        "ref_accuracy.single_reference_no_doi",
+        "ref_accuracy",
+        'ra_keep(ra_keep(ra_demo(list(list("bib", 4L, "doi", ""))), "bib", 4L), "bib_match", 3L)',
+        "E.ra_keep(E.ra_keep(E.ra_demo([('bib', 4, 'doi', '')]), 'bib', [4]), 'bib_match', [3])",
+        {},
+        True,
+    ),
     # ---- ref_consistency ----------------------------------------------------
     (
         "ref_consistency.error.character_xref_id",
@@ -313,6 +354,14 @@ CASES: list[tuple[str, str, str, str, dict[str, Any], bool]] = [
         False,
     ),
     (
+        "ref_consistency.single_reference",
+        "ref_consistency",
+        'ra_keep(ra_demo(), "bib", 0L)',
+        "E.ra_keep(E.ra_demo(), 'bib', [0])",
+        {},
+        True,
+    ),
+    (
         "ref_consistency.paperlist.all_empty_bib",
         "ref_consistency",
         'paperlist(ra_demo(empty = "bib", paper_id = "a"), ra_xrefs(c(NA), c("(Ghost)"), paper = ra_demo(empty = "bib", paper_id = "b")))',
@@ -360,6 +409,16 @@ PLAIN_CASES: list[dict[str, Any]] = [
         "module": "ref_consistency",
         "args": {"paper": {"$paper": _FIX + "problems/203020.json"}},
     },
+    {
+        "id": "ref_consistency.bibr_golden",
+        "module": "ref_consistency",
+        "args": {"paper": {"$paper": "upstream/metacheck/inst/demos/golden_bibr_10_2.json"}},
+    },
+    {
+        "id": "ref_accuracy.bibr_golden",
+        "module": "ref_accuracy",
+        "args": {"paper": {"$paper": "upstream/metacheck/inst/demos/golden_bibr_10_2.json"}},
+    },
 ] + [
     # module_help() text: title, usage with defaults, @param texts (R keeps
     # their roxygen line breaks), details
@@ -384,8 +443,25 @@ def _r_args(args: dict[str, Any]) -> str:
     """Extra module arguments as R code (``, name = value``)."""
     out = []
     for k, v in args.items():
-        out.append(f", {k} = {v}L" if isinstance(v, int) else f", {k} = {v!r}")
+        if isinstance(v, int):
+            out.append(f", {k} = {v}L")
+        elif isinstance(v, float) and math.isinf(v):
+            out.append(f", {k} = {'-' if v < 0 else ''}Inf")
+        else:
+            out.append(f", {k} = {v!r}")
     return "".join(out)
+
+
+def _py_value(v: Any) -> str:
+    """A Python literal for *v* (``float("inf")`` has no literal)."""
+    return f"float({str(v)!r})" if isinstance(v, float) and math.isinf(v) else repr(v)
+
+
+def _yaml_value(v: Any) -> Any:
+    """A case argument; R's YAML reader turns ``.inf`` into NA, so pass infinities as code."""
+    if isinstance(v, float) and math.isinf(v):
+        return {"$expr": {"r": f"{'-' if v < 0 else ''}Inf", "py": _py_value(v)}}
+    return v
 
 
 def build() -> dict[str, Any]:
@@ -397,12 +473,12 @@ def build() -> dict[str, Any]:
                 "module": module,
                 "args": {
                     "paper": {"$expr": {"r": R_PRE + r_code, "py": PY_WRAP.format(py_code)}},
-                    **args,
+                    **{k: _yaml_value(v) for k, v in args.items()},
                 },
             }
         )
         if tables:
-            py_args = "".join(f", {k}={v!r}" for k, v in args.items())
+            py_args = "".join(f", {k}={_py_value(v)}" for k, v in args.items())
             cases.append(
                 {
                     "id": cid.replace(module + ".", module + ".report_tables.", 1),

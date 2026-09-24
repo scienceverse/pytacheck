@@ -1,0 +1,189 @@
+{
+  "id": "prereg_check.tables.demo",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": null,
+    "v": [
+      {
+        "t": "df",
+        "nrow": 2,
+        "names": [
+          "id",
+          "title",
+          "template"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "<a href='https://osf.io/48ncu' target='_blank'>48ncu<\/a>",
+              "<a href='https://aspredicted.org/by8i8v.pdf' target='_blank'>by8i8v<\/a>"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Papercheck Test",
+              "To err is human"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "OSF Preregistration",
+              "AsPredicted"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 2,
+        "names": [
+          "id",
+          "sample_size"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "48ncu",
+              "by8i8v"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "We randomly assigned 50 scientists to a condition where their manuscript was automatically checked for errors, and 50 scientists to a control condition with a checklist.",
+              "We randomly assigned 50 scientists to a condition where their manuscript was automatically checked for errors, and 50 scientists to a control condition with a checklist."
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 31,
+        "names": [
+          "Field",
+          "Preregistration 1",
+          "Preregistration 2"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "template_name",
+              "title",
+              "id",
+              "link",
+              "date_created",
+              "date_modified",
+              "date_registered",
+              "embargo_end_date",
+              "ia_url",
+              "research_questions",
+              "study_type",
+              "blinding",
+              "study_design_overview",
+              "randomization",
+              "existing_data",
+              "data_collection_procedures",
+              "sample_size",
+              "sample_size_rationale",
+              "stopping_rule",
+              "manipulated_variables",
+              "measured_variables",
+              "statistical_tests",
+              "inference_criteria",
+              "data_exclusion_criteria",
+              "missing_data_handling",
+              "exploratory_analyses",
+              "existing_data_explanation",
+              "design_dependent_variables",
+              "outliers_and_exclusions",
+              "additional_comments",
+              "paper_id"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "OSF Preregistration",
+              "Papercheck Test",
+              "48ncu",
+              "https://osf.io/48ncu",
+              "2025-11-28T19:14:24.639665",
+              "2025-08-05T11:55:35.267689",
+              "2025-11-28T19:14:24.608826",
+              "",
+              "https://archive.org/details/osf-registrations-48ncu-v1",
+              "Automation can be used to check for errors in scientific manuscripts, and inform authors about possible corrections. In this study we examine the usefulness of metacheck to improve best practices.",
+              "Experiment - A researcher randomly assigns treatments to study subjects, this includes field or lab experiments. This is also known as an intervention experiment and includes randomized controlled trials.",
+              "No blinding is involved in this study.",
+              "Two conditions. In one, researchers receive automated feedback. In the control condition, they do not receive feedback.",
+              "We randomly assign to conditions",
+              "Registration prior to creation of data",
+              "We will include all scientists who are willing to participate.",
+              "We randomly assigned 50 scientists to a condition where their manuscript was automatically checked for errors, and 50 scientists to a control condition with a checklist.",
+              "Based on an a-priori power analysis for an independent t-test, with an expected effect size of d = 0.6, an alpha of 0.05, and a desired power of 0.85, we needed to collect at least 50 participants per group.",
+              "We will stop after data from 100 researchers has been collected.",
+              "Two conditions. In one, researchers receive automated feedback. In the control condition, they do not receive feedback.",
+              "We will code all manuscripts for mistakes, and count the total number of mistakes per manuscript.",
+              "We will perform an independent t-test on the number of mistakes in each group.",
+              "We will interpret effects as significant if p &lt; .05",
+              "No exclusions are expected.",
+              "No missing data is expected.",
+              "We also measured the expertise of researchers (in years) to explore whether the automated tool would be more useful, the less research experience researchers had. We also asked researchers to rate how useful they found the checklist or app on a scale from 1 (not at all) to 7 (extremely useful).",
+              null,
+              null,
+              null,
+              null,
+              "to_err_is_human"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "AsPredicted",
+              "To err is human",
+              "by8i8v",
+              "https://aspredicted.org/by8i8v.pdf",
+              "2025/11/27 23:20 (PT)",
+              null,
+              null,
+              null,
+              null,
+              "Automation can be used to check for errors in scientific manuscripts, and inform authors about possible corrections. In this study we examine the usefulness of metacheck to improve best practices.",
+              null,
+              null,
+              "Two conditions. In one, researchers receive automated feedback. In the control condition, they do not receive feedback.",
+              null,
+              null,
+              null,
+              "We randomly assigned 50 scientists to a condition where their manuscript was automatically checked for errors, and 50 scientists to a control condition with a checklist.",
+              null,
+              null,
+              null,
+              null,
+              "We will perform an independent t-test on the number of mistakes in each group.",
+              null,
+              null,
+              null,
+              null,
+              "No, no data have been collected for this study yet.",
+              "We will code all manuscripts for mistakes, and count the total number of mistakes per manuscript.",
+              "none are expected.",
+              "We also measured the expertise of researchers (in years) to explore whether the automated tool would be more useful, the less research experience researchers had. We also asked researchers to rate how useful they found the checklist or app on a scale from 1 (not at all) to 7 (extremely useful).",
+              "to_err_is_human"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

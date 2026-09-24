@@ -32,11 +32,11 @@ from typing import Any
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 
-from tests.mod_power import scenarios as S  # noqa: E402
-from tests.mod_power.make_fixtures import (  # noqa: E402
+from tests.mod_power import scenarios as S
+from tests.mod_power.make_fixtures import (
     GROQ_400,
-    H,
     R_TABLES,
+    H,
     P,
     groq,
     paras,
@@ -58,16 +58,12 @@ FB_COMPLETE = (
     "power (alpha = .05) for d = 0.5 in an unpaired t-test."
 )
 FB_NONE = "Power was not analysed a priori; the sample of 120 was a convenience sample."
-FB_FAIL = (
-    "A sensitivity power analysis for 80 participants always fails in both extraction modes."
-)
+FB_FAIL = "A sensitivity power analysis for 80 participants always fails in both extraction modes."
 FB_OMIT = (
     "A sensitivity power analysis indicated that 40 participants give 90% power for d = 0.8 "
     "with pwr."
 )
-FB_GARBLED = (
-    "The post hoc power for the 25 participants was reported as 0.30 in the supplement."
-)
+FB_GARBLED = "The post hoc power for the 25 participants was reported as 0.30 in the supplement."
 FB_TEXTKEY = (
     "Two power analyses were run: an a priori analysis (n = 60, 80% power, r = 0.6) and a "
     "sensitivity analysis (n = 60, alpha = .05, 90% power) for our correlation."
@@ -107,7 +103,7 @@ STRING_NUMBERS = (
 # control characters: llm() strips them from the text it sends, then joins the
 # replies back on the unstripped paragraph text
 CONTROL = (
-    "A sensitivity power\x0c analysis with the CONTROL sample of 64 showed 80% power for "
+    "A sensitivity power\x02 analysis with the CONTROL sample of 64 showed 80% power for "
     "d = 0.5 (alpha = .05, unpaired t-test, pwr)."
 )
 FB_CONTROL = (
@@ -412,7 +408,9 @@ def llm_case(
 # llm_use(FALSE): regex path ----
 unicode = paras(UNICODE, list(range(len(UNICODE))))
 expr_case(
-    "power.review.unicode", f"module_run({unicode.r}, 'power')", f"pc.module_run({unicode.py}, 'power')"
+    "power.review.unicode",
+    f"module_run({unicode.r}, 'power')",
+    f"pc.module_run({unicode.py}, 'power')",
 )
 expr_case(
     "power.review.unicode.tables",

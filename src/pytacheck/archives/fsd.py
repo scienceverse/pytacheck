@@ -219,7 +219,7 @@ def _fsd_ddi_xml(study_id: str) -> etree._Element | None:
 
     url = f"{_FSD_DDI_BASE}/{study_id}/DDI/{study_id}_eng.xml"
     try:
-        resp = http.request("GET", url)
+        resp = http.request("GET", url, max_tries=1)  # httr2 default: no retries
         if resp is None or resp.status_code != 200:
             return None
         doc = _read_xml(resp.content)

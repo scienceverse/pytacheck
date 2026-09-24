@@ -1,0 +1,80 @@
+{
+  "id": "github_files.review.dir_arg",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 2,
+    "names": [
+      "repo",
+      "clean_repo",
+      "name",
+      "path",
+      "download_url",
+      "size",
+      "ext",
+      "type"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "rv/files",
+          "rv/files"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "rv/files",
+          "rv/files"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "deeper",
+          "x y.txt"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "my dir/deeper",
+          "my dir/x y.txt"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "https://raw.githubusercontent.com/rv/files/main/my dir/x y.txt"
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          0,
+          3
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "",
+          "txt"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "dir",
+          "text"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

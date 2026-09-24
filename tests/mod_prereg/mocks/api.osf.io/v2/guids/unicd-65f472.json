@@ -1,0 +1,30 @@
+{
+ "data": {
+  "id": "unicd",
+  "type": "guids",
+  "attributes": {},
+  "relationships": {
+   "referent": {
+    "links": {
+     "related": {
+      "href": "https://api.osf.io/v2/registrations/unicd/",
+      "meta": {
+       "type": "registrations"
+      }
+     }
+    },
+    "data": {
+     "id": "unicd",
+     "type": "registrations"
+    }
+   }
+  },
+  "links": {
+   "self": "https://api.osf.io/v2/guids/unicd/",
+   "html": "https://osf.io/unicd/"
+  }
+ },
+ "meta": {
+  "version": "2.0"
+ }
+}

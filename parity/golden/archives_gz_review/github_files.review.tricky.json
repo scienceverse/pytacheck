@@ -1,0 +1,168 @@
+{
+  "id": "github_files.review.tricky",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 13,
+    "names": [
+      "repo",
+      "clean_repo",
+      "name",
+      "path",
+      "download_url",
+      "size",
+      "ext",
+      "type"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "https://github.com/rv/files",
+          "https://github.com/rv/files",
+          "https://github.com/rv/files",
+          "https://github.com/rv/files",
+          "https://github.com/rv/files",
+          "https://github.com/rv/files",
+          "https://github.com/rv/files",
+          "https://github.com/rv/files",
+          "https://github.com/rv/files",
+          "https://github.com/rv/files",
+          "https://github.com/rv/files",
+          "https://github.com/rv/files",
+          "https://github.com/rv/files"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "rv/files",
+          "rv/files",
+          "rv/files",
+          "rv/files",
+          "rv/files",
+          "rv/files",
+          "rv/files",
+          "rv/files",
+          "rv/files",
+          "rv/files",
+          "rv/files",
+          "rv/files",
+          "rv/files"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "_under.txt",
+          ".gitignore",
+          "alpha.csv",
+          "analysis.R",
+          "archive.tar.gz",
+          "Beta.md",
+          "DATA.JSON",
+          "DATA.JSON",
+          "émoji.txt",
+          "file.",
+          "Makefile",
+          "my dir",
+          "Zeta.R"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "_under.txt",
+          ".gitignore",
+          "alpha.csv",
+          "analysis.R",
+          "archive.tar.gz",
+          "Beta.md",
+          "DATA.JSON",
+          "DATA.JSON",
+          "émoji.txt",
+          "file.",
+          "Makefile",
+          "my dir",
+          "Zeta.R"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://raw.githubusercontent.com/rv/files/main/_under.txt",
+          "https://raw.githubusercontent.com/rv/files/main/.gitignore",
+          "https://raw.githubusercontent.com/rv/files/main/alpha.csv",
+          null,
+          "https://raw.githubusercontent.com/rv/files/main/archive.tar.gz",
+          "https://raw.githubusercontent.com/rv/files/main/Beta.md",
+          "https://raw.githubusercontent.com/rv/files/main/DATA.JSON",
+          "https://raw.githubusercontent.com/rv/files/main/DATA.JSON",
+          "https://raw.githubusercontent.com/rv/files/main/émoji.txt",
+          "https://raw.githubusercontent.com/rv/files/main/file.",
+          "https://raw.githubusercontent.com/rv/files/main/Makefile",
+          null,
+          "https://raw.githubusercontent.com/rv/files/main/Zeta.R"
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          1,
+          1,
+          20,
+          0,
+          300,
+          1,
+          40,
+          40,
+          1,
+          1,
+          1,
+          0,
+          10
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "txt",
+          "gitignore",
+          "csv",
+          "r",
+          "gz",
+          "md",
+          "json",
+          "json",
+          "txt",
+          "",
+          "",
+          "",
+          "r"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "text",
+          "config",
+          "data",
+          "code",
+          "archive",
+          "text",
+          "code",
+          "data",
+          "text",
+          "file",
+          "file",
+          "dir",
+          "code"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -1,0 +1,161 @@
+{
+  "id": "zenodo_links.review.tricky",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 11,
+    "names": [
+      "href",
+      "link_text",
+      "text_id",
+      "paper_id",
+      "zenodo_url",
+      "zenodo_id",
+      "zenodo_link"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "http://ZENODO.org/record/3",
+          "https://zenodo.org/records/99/files/x.csv",
+          "https://zenodo.org/communities/abc",
+          "https://example.org/?ref=zenodo.org",
+          "10.5281/zenodo.123456",
+          "10.5281/ZENODO.7",
+          "https://zenodo.org/records/99",
+          "zenodo.org/record/5",
+          "zenodo.org/records/5",
+          "10.5281/zenodo.321",
+          "zenodo.org/records/1"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          1,
+          2,
+          3,
+          4,
+          1,
+          1,
+          2,
+          3,
+          3,
+          4,
+          5
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "f3e1943550ff72",
+          "f3e1943550ff72",
+          "f3e1943550ff72",
+          "f3e1943550ff72",
+          "f3e1943550ff72",
+          "f3e1943550ff72",
+          "f3e1943550ff72",
+          "f3e1943550ff72",
+          "f3e1943550ff72",
+          "f3e1943550ff72",
+          "f3e1943550ff72"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "http://ZENODO.org/record/3",
+          "https://zenodo.org/records/99/files/x.csv",
+          "https://zenodo.org/communities/abc",
+          "https://example.org/?ref=zenodo.org",
+          "10.5281/zenodo.123456",
+          "10.5281/ZENODO.7",
+          "https://zenodo.org/records/99",
+          "zenodo.org/record/5",
+          "zenodo.org/records/5",
+          "10.5281/zenodo.321",
+          "zenodo.org/records/1"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "3",
+          "99",
+          null,
+          null,
+          "123456",
+          "7",
+          "99",
+          "5",
+          "5",
+          "321",
+          "1"
+        ],
+        "names": [
+          "http://ZENODO.org/record/3",
+          "https://zenodo.org/records/99/files/x.csv",
+          "https://zenodo.org/communities/abc",
+          "https://example.org/?ref=zenodo.org",
+          "10.5281/zenodo.123456",
+          "10.5281/ZENODO.7",
+          "https://zenodo.org/records/99",
+          "zenodo.org/record/5",
+          "zenodo.org/records/5",
+          "10.5281/zenodo.321",
+          "zenodo.org/records/1"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://doi.org/10.5281/zenodo.3",
+          "https://doi.org/10.5281/zenodo.99",
+          null,
+          null,
+          "https://doi.org/10.5281/zenodo.123456",
+          "https://doi.org/10.5281/zenodo.7",
+          "https://doi.org/10.5281/zenodo.99",
+          "https://doi.org/10.5281/zenodo.5",
+          "https://doi.org/10.5281/zenodo.5",
+          "https://doi.org/10.5281/zenodo.321",
+          "https://doi.org/10.5281/zenodo.1"
+        ],
+        "names": [
+          "http://ZENODO.org/record/3",
+          "https://zenodo.org/records/99/files/x.csv",
+          "https://zenodo.org/communities/abc",
+          "https://example.org/?ref=zenodo.org",
+          "10.5281/zenodo.123456",
+          "10.5281/ZENODO.7",
+          "https://zenodo.org/records/99",
+          "zenodo.org/record/5",
+          "zenodo.org/records/5",
+          "10.5281/zenodo.321",
+          "zenodo.org/records/1"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

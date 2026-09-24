@@ -1,0 +1,52 @@
+{
+ "tree": [
+  {
+   "path": "Makefile",
+   "type": "blob",
+   "size": 10
+  },
+  {
+   "path": ".gitignore",
+   "type": "blob",
+   "size": 11
+  },
+  {
+   "path": "src/x.c++",
+   "type": "blob",
+   "size": 12
+  },
+  {
+   "path": "docs/READ ME.md",
+   "type": "blob",
+   "size": 13
+  },
+  {
+   "path": "data/d.JSON",
+   "type": "blob",
+   "size": 14
+  },
+  {
+   "path": "noext.",
+   "type": "blob",
+   "size": 15
+  },
+  {
+   "path": "nosize.bin",
+   "type": "blob"
+  },
+  {
+   "path": "src",
+   "type": "tree"
+  },
+  {
+   "path": "vendored",
+   "type": "commit"
+  },
+  {
+   "path": "Ünïcode/файл.CSV",
+   "type": "blob",
+   "size": 16
+  }
+ ],
+ "truncated": false
+}

@@ -1,0 +1,30 @@
+{
+ "data": {
+  "id": "prspz",
+  "type": "guids",
+  "attributes": {},
+  "relationships": {
+   "referent": {
+    "links": {
+     "related": {
+      "href": "https://api.osf.io/v2/registrations/prspz/",
+      "meta": {
+       "type": "registrations"
+      }
+     }
+    },
+    "data": {
+     "id": "prspz",
+     "type": "registrations"
+    }
+   }
+  },
+  "links": {
+   "self": "https://api.osf.io/v2/guids/prspz/",
+   "html": "https://osf.io/prspz/"
+  }
+ },
+ "meta": {
+  "version": "2.0"
+ }
+}

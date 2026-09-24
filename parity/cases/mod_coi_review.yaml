@@ -1,0 +1,356 @@
+# Review cases for coi_check / coi_check_oi (inst/modules/coi_check*.R): module-level
+# branches the first pass did not cover (section headers, references, errors in lists, Unicode).
+"area": "mod_coi_review"
+"cases":
+- "id": "coi_check.fixture_sections"
+  "module": "coi_check"
+  "args":
+    "paper":
+      "$read":
+      - "tests/mod_coi/fixtures/coi_headers.json"
+      - "tests/mod_coi/fixtures/coi_refs_only.json"
+      - "tests/mod_coi/fixtures/coi_heading_section.json"
+- "id": "coi_check.fixture_refs_only"
+  "module": "coi_check"
+  "args":
+    "paper":
+      "$paper": "tests/mod_coi/fixtures/coi_refs_only.json"
+- "id": "coi_check.fixture_header_only"
+  "module": "coi_check"
+  "args":
+    "paper":
+      "$paper": "tests/mod_coi/fixtures/coi_headers.json"
+- "id": "coi_check_oi.fixture_sections"
+  "module": "coi_check_oi"
+  "args":
+    "paper":
+      "$read":
+      - "tests/mod_coi/fixtures/coi_headers.json"
+      - "tests/mod_coi/fixtures/coi_refs_only.json"
+      - "tests/mod_coi/fixtures/coi_heading_section.json"
+- "id": "coi_check_oi.fixture_refs_only"
+  "module": "coi_check_oi"
+  "args":
+    "paper":
+      "$paper": "tests/mod_coi/fixtures/coi_refs_only.json"
+- "id": "coi_check_oi.fixture_header_only"
+  "module": "coi_check_oi"
+  "args":
+    "paper":
+      "$paper": "tests/mod_coi/fixtures/coi_headers.json"
+- "id": "coi_check.heading_blank_last"
+  "module": "coi_check"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "Methods were standard."
+        - "Conflict of Interest"
+        - ""
+  "compare":
+    "ignore":
+    - "paper_id"
+    - "table.paper_id"
+    - "summary_table.paper_id"
+- "id": "coi_check.heading_blank_blank"
+  "module": "coi_check"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "Conflict of Interest"
+        - ""
+        - ""
+        - "More text here."
+  "compare":
+    "ignore":
+    - "paper_id"
+    - "table.paper_id"
+    - "summary_table.paper_id"
+- "id": "coi_check.heading_none_at_start"
+  "module": "coi_check"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "Conflict of interest"
+        - "None of the authors declare anything"
+        - "Next one."
+  "compare":
+    "ignore":
+    - "paper_id"
+    - "table.paper_id"
+    - "summary_table.paper_id"
+- "id": "coi_check.heading_none_repeated"
+  "module": "coi_check"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "Competing interests"
+        - "Stated: None. And None here."
+        - "Next one."
+  "compare":
+    "ignore":
+    - "paper_id"
+    - "table.paper_id"
+    - "summary_table.paper_id"
+- "id": "coi_check.disclosure_heading_blank"
+  "module": "coi_check"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "Disclosure"
+        - ""
+        - "Nothing"
+  "compare":
+    "ignore":
+    - "paper_id"
+    - "table.paper_id"
+    - "summary_table.paper_id"
+- "id": "coi_check.disclosure_heading_lower"
+  "module": "coi_check"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "disclosure"
+        - "patient data were kept."
+  "compare":
+    "ignore":
+    - "paper_id"
+    - "table.paper_id"
+    - "summary_table.paper_id"
+- "id": "coi_check.heading_tabs"
+  "module": "coi_check"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "Conflict\tof\tinterest"
+        - "None."
+  "compare":
+    "ignore":
+    - "paper_id"
+    - "table.paper_id"
+    - "summary_table.paper_id"
+- "id": "coi_check.heading_double_space"
+  "module": "coi_check"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "Conflict  of  interest"
+        - "None."
+  "compare":
+    "ignore":
+    - "paper_id"
+    - "table.paper_id"
+    - "summary_table.paper_id"
+- "id": "coi_check.newline_in_sentence"
+  "module": "coi_check"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "Conflict of interest:\nNone.\nOther text follows."
+  "compare":
+    "ignore":
+    - "paper_id"
+    - "table.paper_id"
+    - "summary_table.paper_id"
+- "id": "coi_check_oi.newline_in_sentence"
+  "module": "coi_check_oi"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "Conflict of interest:\nNone.\nOther text follows."
+  "compare":
+    "ignore":
+    - "paper_id"
+    - "table.paper_id"
+    - "summary_table.paper_id"
+- "id": "coi_check.upper_none_stop"
+  "module": "coi_check"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "Conflict of interest: NONE. More text here."
+  "compare":
+    "ignore":
+    - "paper_id"
+    - "table.paper_id"
+    - "summary_table.paper_id"
+- "id": "coi_check.lower_nil_stop"
+  "module": "coi_check"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "conflict of interest: nil. More text here."
+  "compare":
+    "ignore":
+    - "paper_id"
+    - "table.paper_id"
+    - "summary_table.paper_id"
+- "id": "coi_check.none_mentioned_dropped"
+  "module": "coi_check"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "Competing interests: None mentioned. More text."
+  "compare":
+    "ignore":
+    - "paper_id"
+    - "table.paper_id"
+    - "summary_table.paper_id"
+- "id": "coi_check.competing_lowercase_kept"
+  "module": "coi_check"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "the competing interest model was tested in study 2."
+  "compare":
+    "ignore":
+    - "paper_id"
+    - "table.paper_id"
+    - "summary_table.paper_id"
+- "id": "coi_check.turkish_dotted_i"
+  "module": "coi_check"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "CONFLİCT OF İNTEREST: NONE."
+        - "Other text."
+  "compare":
+    "ignore":
+    - "paper_id"
+    - "table.paper_id"
+    - "summary_table.paper_id"
+- "id": "coi_check_oi.turkish_dotted_i"
+  "module": "coi_check_oi"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "CONFLİCT OF İNTEREST: NONE."
+        - "Other text."
+  "compare":
+    "ignore":
+    - "paper_id"
+    - "table.paper_id"
+    - "summary_table.paper_id"
+- "id": "coi_check.emoji"
+  "module": "coi_check"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "Conflict of interest \U0001F600: none."
+        - "Disclosure \U0001F600"
+  "compare":
+    "ignore":
+    - "paper_id"
+    - "table.paper_id"
+    - "summary_table.paper_id"
+- "id": "coi_check_oi.emoji"
+  "module": "coi_check_oi"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "Conflict of interest \U0001F600: none."
+        - "Disclosure \U0001F600"
+  "compare":
+    "ignore":
+    - "paper_id"
+    - "table.paper_id"
+    - "summary_table.paper_id"
+- "id": "coi_check_oi.coi_lowercase_word"
+  "module": "coi_check_oi"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "Our coi disclosure: none."
+        - "Coin disclosure was made."
+  "compare":
+    "ignore":
+    - "paper_id"
+    - "table.paper_id"
+    - "summary_table.paper_id"
+- "id": "coi_check_oi.interest_not_whole_word"
+  "module": "coi_check_oi"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "Interesting conflict here."
+        - "Disinterested competition."
+  "compare":
+    "ignore":
+    - "paper_id"
+    - "table.paper_id"
+    - "summary_table.paper_id"
+- "id": "coi_check.paperlist_one_errors"
+  "module": "coi_check"
+  "args":
+    "paper":
+      "$expr":
+        "r": "paperlist(test_paper(c(\"The authors declare no conflict of interest.\")), test_paper(c(\"\
+          Methods.\", \"Conflict of interest\")))"
+        "py": "pc.PaperList([pc.test_paper(['The authors declare no conflict of interest.']), pc.test_paper(['Methods.',\
+          \ 'Conflict of interest'])])"
+  "compare":
+    "ignore":
+    - "paper_id"
+    - "table.paper_id"
+    - "summary_table.paper_id"
+- "id": "coi_check_oi.paperlist_one_errors"
+  "module": "coi_check_oi"
+  "args":
+    "paper":
+      "$expr":
+        "r": "paperlist(test_paper(c(\"The authors declare no conflict of interest.\")), test_paper(c(\"\
+          Methods.\", \"Conflict of interest\")))"
+        "py": "pc.PaperList([pc.test_paper(['The authors declare no conflict of interest.']), pc.test_paper(['Methods.',\
+          \ 'Conflict of interest'])])"
+  "compare":
+    "ignore":
+    - "paper_id"
+    - "table.paper_id"
+    - "summary_table.paper_id"
+- "id": "coi_check.paperlist_empty_middle"
+  "module": "coi_check"
+  "args":
+    "paper":
+      "$expr":
+        "r": "paperlist(test_paper(c(\"Competing interests: none.\")), test_paper(character(0)), test_paper(c(\"\
+          No statement here.\")), test_paper(c(\"Conflict of interest: none declared.\")))"
+        "py": "pc.PaperList([pc.test_paper(['Competing interests: none.']), pc.test_paper([]), pc.test_paper(['No\
+          \ statement here.']), pc.test_paper(['Conflict of interest: none declared.'])])"
+  "compare":
+    "ignore":
+    - "paper_id"
+    - "table.paper_id"
+    - "summary_table.paper_id"
+- "id": "coi_check_oi.paperlist_empty_middle"
+  "module": "coi_check_oi"
+  "args":
+    "paper":
+      "$expr":
+        "r": "paperlist(test_paper(c(\"Competing interests: none.\")), test_paper(character(0)), test_paper(c(\"\
+          No statement here.\")), test_paper(c(\"Conflict of interest: none declared.\")))"
+        "py": "pc.PaperList([pc.test_paper(['Competing interests: none.']), pc.test_paper([]), pc.test_paper(['No\
+          \ statement here.']), pc.test_paper(['Conflict of interest: none declared.'])])"
+  "compare":
+    "ignore":
+    - "paper_id"
+    - "table.paper_id"
+    - "summary_table.paper_id"

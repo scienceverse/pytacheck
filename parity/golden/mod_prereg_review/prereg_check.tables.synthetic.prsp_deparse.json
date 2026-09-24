@@ -1,0 +1,216 @@
+{
+  "id": "prereg_check.tables.synthetic.prsp_deparse",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": null,
+    "v": [
+      {
+        "t": "df",
+        "nrow": 2,
+        "names": [
+          "id",
+          "title",
+          "template"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "<a href='https://osf.io/prspz' target='_blank'>prspz<\/a>",
+              "<a href='https://osf.io/arrys' target='_blank'>arrys<\/a>"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Synthetic registration prspz",
+              "Synthetic registration arrys"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Pre-Registration in Social Psychology (van 't Veer & Giner-Sorolla, 2016): Pre-Registration",
+              "Synthetic Template"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 2,
+        "names": [
+          "id",
+          "sample_size"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "prspz",
+              "arrys"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "",
+              "1 3 2 4 5 7 6 8"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 40,
+        "names": [
+          "Field",
+          "Preregistration 1",
+          "Preregistration 2"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "template_name",
+              "title",
+              "id",
+              "link",
+              "date_created",
+              "date_modified",
+              "date_registered",
+              "embargo_end_date",
+              "ia_url",
+              "research_questions",
+              "hypotheses_interactions",
+              "manipulation_checks",
+              "theoretical_rationale",
+              "design_independent_variables",
+              "design_dependent_variables",
+              "design_covariates_moderators",
+              "data_exclusion_criteria",
+              "data_collection_procedures",
+              "sample_size",
+              "stopping_rule",
+              "outliers_and_exclusions",
+              "fail_safe_exclusion_levels",
+              "indices",
+              "statistical_tests",
+              "rationale_covariate",
+              "variables_roles_in_analyses",
+              "inference_criteria",
+              "multiple_testing_correction",
+              "missing_data_handling",
+              "reliability_criteria",
+              "transformations",
+              "assumptions_and_contingencies",
+              "data_collection_started",
+              "data_looked",
+              "project_dates_start_end",
+              "additional_comments",
+              "my_custom_field_ber_weird",
+              "numbers_flags",
+              "empty_answer",
+              "paper_id"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Pre-Registration in Social Psychology (van 't Veer & Giner-Sorolla, 2016): Pre-Registration",
+              "Synthetic registration prspz",
+              "prspz",
+              "https://osf.io/prspz",
+              "2024-01-02T03:04:05.000001",
+              "2024-01-03T03:04:05.000001",
+              "2024-01-04T03:04:05.000001",
+              "",
+              "https://archive.org/details/osf-registrations-prspz-v1",
+              "1e+05 3 2 4 2.5",
+              "character(0) a c(\"b\", \"c\")",
+              "3:1 x -1:1",
+              "list(a = NULL, b = c(NA, NA)) c(NA, 1)",
+              "",
+              "",
+              "1<br><br>5<br><br>3<br><br>7<br><br>2<br><br>6<br><br>4<br><br>8",
+              "",
+              "",
+              "",
+              "list() c(1, 3, 2, 4) integer(0) 1:2",
+              "",
+              "list(character(0), \"z\", 1.5)",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "list(a = NULL, b = c(NA, NA)) c(NA, 1)",
+              null,
+              null,
+              null,
+              "p_prspz"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Synthetic Template",
+              "Synthetic registration arrys",
+              "arrys",
+              "https://osf.io/arrys",
+              "2024-01-02T03:04:05.000001",
+              "2024-01-03T03:04:05.000001",
+              "2024-01-04T03:04:05.000001",
+              "",
+              "https://archive.org/details/osf-registrations-arrys-v1",
+              "1 5 3 7 2 6 4 8 a e c g b f d h",
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              "1 3 2 4 5 7 6 8",
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              "a 3 2 1",
+              "1 5 3 7 2 6 4 x 1 3 2 4 5 6",
+              "1 1 2 0",
+              "p_prspz"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

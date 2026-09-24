@@ -115,7 +115,13 @@ class _SourceLoader(importlib.machinery.SourceFileLoader):
 
 
 class _PackFinder(importlib.abc.MetaPathFinder):
-    """Finds ``pytacheck_packs.*`` modules in the registered pack folders."""
+    """Finds ``pytacheck_packs.*`` modules in the registered pack folders.
+
+    It is authoritative for that namespace: a name with no ``.py`` source (or
+    package ``__init__.py``) raises instead of falling through to the standard
+    path finder, so bytecode, extension modules and namespace packages in a
+    pack folder are never imported.
+    """
 
     def find_spec(
         self, fullname: str, path: Any = None, _target: Any = None
@@ -128,7 +134,7 @@ class _PackFinder(importlib.abc.MetaPathFinder):
         if len(parts) == 2:
             pack = _KEYS.get(parts[1])
             if pack is None:
-                return None
+                raise ModuleNotFoundError(f"No pack is loaded as {fullname!r}", name=fullname)
             spec = importlib.machinery.ModuleSpec(
                 fullname, _PackageLoader(pack.name), is_package=True, origin=str(pack.root)
             )
@@ -149,7 +155,10 @@ class _PackFinder(importlib.abc.MetaPathFinder):
                 return importlib.util.spec_from_file_location(
                     fullname, file, loader=_SourceLoader(fullname, file)
                 )
-        return None
+        raise ModuleNotFoundError(
+            f"No module named {fullname!r} (pack code is imported from .py files only)",
+            name=fullname,
+        )
 
 
 def _install_finder() -> None:

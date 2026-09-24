@@ -841,3 +841,20 @@ def test_read_lines_url(monkeypatch: pytest.MonkeyPatch) -> None:
             return_value=httpx.Response(200, content=b"a\r\nb\rc\n\nd\n")
         )
         assert _power._read_lines_url("https://example.org/x.json") == "a\nb\nc\n\nd"
+
+
+def test_power_empty_paperlist_errors(llm_off: None) -> None:
+    # R: `summary_table$power_n <- 0` on the 0-row summary table of an empty
+    # paper list errors (reproduced; parity case power.review.empty_paperlist)
+    with pytest.raises(ModuleError, match="replacement has 1 row, data has 0"):
+        module_run(pc.PaperList([]), "power")
+
+
+def test_power_empty_paper(llm_off: None) -> None:
+    paper = pc.test_paper([])
+    paper.paper_id = "p1"
+    mo = module_run(paper, "power")
+    assert mo.traffic_light == "na"
+    assert len(mo.table) == 0
+    assert mo.summary_table["paper_id"].tolist() == ["p1"]
+    assert mo.summary_table["power_n"].tolist() == [0]

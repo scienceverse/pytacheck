@@ -85,7 +85,7 @@ def catch(fn: Callable[[], Any]) -> Any:
     """R ``tryCatch(expr, error = function(e) conditionMessage(e))``."""
     try:
         return fn()
-    except Exception as exc:  # noqa: BLE001 - mirrors R's catch-all handler
+    except Exception as exc:
         return str(exc)
 
 

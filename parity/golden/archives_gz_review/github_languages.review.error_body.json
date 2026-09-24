@@ -1,0 +1,43 @@
+{
+  "id": "github_languages.review.error_body",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 3,
+    "names": [
+      "repo",
+      "language",
+      "bytes"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "rv/langerr",
+          "rv/langerr",
+          "rv/langerr"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "message",
+          "documentation_url",
+          "status"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Not Found",
+          "https://docs.github.com",
+          "404"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

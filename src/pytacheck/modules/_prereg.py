@@ -76,10 +76,15 @@ class RFrame:
 
 @dataclass(frozen=True)
 class RMatrix:
-    """A matrix made by jsonlite from an array of equal-length scalar arrays."""
+    """A matrix (or higher array) made by jsonlite from nested equal-length arrays.
+
+    An array of equal-length scalar arrays is a matrix (``rbind()`` of the
+    rows); an array of matrices/arrays with the same ``dim`` is an array one
+    dimension up (``array(rbind(lapply(out, as.vector)))``).
+    """
 
     vec: RVec  # column-major
-    dim: tuple[int, int]
+    dim: tuple[int, ...]
 
 
 RValue = RVec | RList | RFrame | RMatrix | None
@@ -131,7 +136,10 @@ def simplify(x: Any) -> RValue:
 
     Objects become named lists (``null`` members are ``NULL``), arrays of
     scalars atomic vectors (``null`` -> ``NA``), arrays of objects data
-    frames, arrays of equal-length scalar arrays matrices; anything else a list.
+    frames, arrays of equal-length scalar arrays matrices, arrays of
+    same-shaped matrices higher arrays; anything else a list (in which an
+    empty array ``[]`` next to atomic vectors becomes an empty vector of the
+    first one's type: jsonlite's ``homoList``).
     """
     if x is None:
         return None
@@ -143,6 +151,7 @@ def simplify(x: Any) -> RValue:
 
 
 def _simplify_array(arr: list[Any], matrix: bool) -> RValue:
+    """``jsonlite:::simplify()`` of a JSON array (*matrix*: ``simplifyMatrix``)."""
     if not arr:
         return RList(())
     if all(_is_scalar(v) for v in arr):
@@ -154,16 +163,44 @@ def _simplify_array(arr: list[Any], matrix: bool) -> RValue:
         and all(isinstance(v, list) and v and all(_is_scalar(e) for e in v) for v in arr)
         and len({len(v) for v in arr}) == 1
     ):
-        rows = [_vec_from_scalars(v) for v in arr]
-        to = _promote([r.type for r in rows])
-        ncol = len(arr[0])
-        flat = [
-            _coerce(rows[i].values[j], rows[i].type, to)
-            for j in range(ncol)
-            for i in range(len(arr))
-        ]
-        return RMatrix(RVec(to, tuple(flat)), (len(arr), ncol))
-    return RList(tuple(simplify(v) for v in arr))
+        return _rbind([_vec_from_scalars(v) for v in arr], (len(arr[0]),))
+    items = [simplify(v) for v in arr]
+    if (
+        matrix
+        and all(isinstance(it, RMatrix) for it in items)
+        and len({it.dim for it in items}) == 1  # type: ignore[union-attr]
+    ):
+        arrays: list[RMatrix] = items  # type: ignore[assignment]
+        return _rbind([a.vec for a in arrays], arrays[0].dim)
+    return RList(_homo_list(items))
+
+
+def _rbind(rows: Sequence[RVec], dim: tuple[int, ...]) -> RMatrix:
+    """``array(do.call(rbind, rows), c(length(rows), dim))``: rows interleaved, column-major."""
+    to = _promote([r.type for r in rows])
+    size = len(rows[0].values)
+    flat = [_coerce(r.values[j], r.type, to) for j in range(size) for r in rows]
+    return RMatrix(RVec(to, tuple(flat)), (len(rows), *dim))
+
+
+def _is_empty_array(x: RValue) -> bool:
+    """``identical(x, list())``: an empty JSON array (``{}`` is a *named* empty list)."""
+    return isinstance(x, RList) and not x.items and x.names is None
+
+
+def _homo_list(items: list[RValue]) -> tuple[RValue, ...]:
+    """jsonlite's ``homoList``: empty arrays among data frames / atomic vectors."""
+    empty = [_is_empty_array(it) for it in items]
+    if not any(empty) or all(empty):
+        return tuple(items)
+    others = [it for it, e in zip(items, empty, strict=True) if not e]
+    if all(isinstance(it, RFrame) for it in others):
+        blank: RValue = RFrame((), (), 0)  # data.frame()
+    elif all(isinstance(it, RVec) for it in others):  # is.vector() && is.atomic()
+        blank = RVec(others[0].type, ())  # type: ignore[union-attr]
+    else:
+        return tuple(items)
+    return tuple(blank if e else it for it, e in zip(items, empty, strict=True))
 
 
 def _records_frame(arr: list[Any]) -> RFrame:
@@ -200,28 +237,34 @@ def _elem_chr(value: Any, type_: str) -> str | None:
     return str(value)
 
 
-def _leaves(x: RValue, out: list[tuple[Any, str]]) -> None:
+def _leaves(x: RValue, out: list[tuple[Any, str]], types: list[str]) -> None:
     if x is None:
         return
+    if isinstance(x, RMatrix):
+        x = x.vec
     if isinstance(x, RVec):
+        types.append(x.type)  # an empty vector still takes part in the type
         out.extend((v, x.type) for v in x.values)
-    elif isinstance(x, RMatrix):
-        out.extend((v, x.vec.type) for v in x.vec.values)
     elif isinstance(x, RFrame):
         for col in x.cols:
-            _leaves(col, out)
+            _leaves(col, out, types)
     else:
         for item in x.items:
-            _leaves(item, out)
+            _leaves(item, out, types)
 
 
 def unlist(x: RValue) -> RVec | None:
-    """``unlist(x)``: every atomic leaf, depth first (data frames column by column)."""
+    """``unlist(x)``: every atomic leaf, depth first (data frames column by column).
+
+    The result has the highest type of all atomic components, empty ones
+    included (``unlist(list(numeric(0), 100000L))`` is double, ``1e+05``).
+    """
     leaves: list[tuple[Any, str]] = []
-    _leaves(x, leaves)
-    if not leaves and not isinstance(x, RVec):
+    types: list[str] = []
+    _leaves(x, leaves, types)
+    if not types:
         return None
-    to = _promote([t for _, t in leaves])
+    to = _promote(types)
     return RVec(to, tuple(_coerce(v, t, to) for v, t in leaves))
 
 
@@ -230,8 +273,9 @@ def r_c(values: Sequence[RValue]) -> RValue:
     present = [v for v in values if v is not None]
     if not present:
         return None
-    if all(isinstance(v, RVec) for v in present):
-        vecs: list[RVec] = present  # type: ignore[assignment]
+    if all(isinstance(v, RVec | RMatrix) for v in present):
+        # matrices and arrays are atomic: c() drops their dim
+        vecs = [v.vec if isinstance(v, RMatrix) else v for v in present]  # type: ignore[union-attr]
         to = _promote([v.type for v in vecs])
         return RVec(to, tuple(_coerce(e, v.type, to) for v in vecs for e in v.values))
     items: list[RValue] = []
@@ -276,12 +320,6 @@ def paste_collapse(x: RValue, collapse: str) -> str:
 
 
 _EMPTY = {"logical": "logical(0)", "integer": "integer(0)", "double": "numeric(0)"}
-_NA_TYPED = {
-    "logical": "NA",
-    "integer": "NA_integer_",
-    "double": "NA_real_",
-    "character": "NA_character_",
-}
 
 
 def _deparse_str(s: str) -> str:
@@ -326,7 +364,12 @@ def _syntactic(name: str) -> bool:
 
 
 def deparse(x: RValue) -> str:
-    """``deparse()`` as ``as.character()`` uses it for list elements (no ``L`` suffixes)."""
+    """``deparse()`` as ``as.character()`` uses it for list elements.
+
+    R's simple deparse: no ``L`` suffixes, every ``NA`` is ``NA`` (not
+    ``NA_integer_``...), attributes (a matrix's ``dim``) dropped, and integer
+    runs increasing or decreasing by one written ``a:b``.
+    """
     if x is None:
         return "NULL"
     if isinstance(x, RMatrix):
@@ -336,15 +379,11 @@ def deparse(x: RValue) -> str:
         if not vals:
             return _EMPTY.get(x.type, "character(0)")
         if len(vals) == 1:
-            if vals[0] is None:
-                return _NA_TYPED[x.type]
             return _deparse_elem(vals[0], x.type)
-        if (
-            x.type == "integer"
-            and all(v is not None for v in vals)
-            and all(b - a == 1 for a, b in pairwise(vals))
-        ):
-            return f"{vals[0]}:{vals[-1]}"
+        if x.type == "integer" and all(v is not None for v in vals):
+            steps = {b - a for a, b in pairwise(vals)}
+            if steps in ({1}, {-1}):
+                return f"{vals[0]}:{vals[-1]}"
         return "c(" + ", ".join(_deparse_elem(v, x.type) for v in vals) + ")"
     if isinstance(x, RFrame):
         names: Sequence[str] | None = x.names
@@ -611,12 +650,23 @@ def osf_label_to_field(label: str) -> str:
     """
     from pytacheck._r import gsub, trimws
 
-    key = str(trimws(label)).lower()
+    key = _tolower(str(trimws(label)))
     if key in OSF_LABEL_FIELD:
         return OSF_LABEL_FIELD[key]
     slug = str(gsub("[^a-z0-9]+", "_", key))
     slug = str(gsub("^_+|_+$", "", slug))
     return slug if slug else "field"
+
+
+def _tolower(s: str) -> str:
+    """R ``tolower()``: ``towlower()`` character by character.
+
+    Unlike ``str.lower()`` this is the simple case mapping: ``"İ"`` gives
+    ``"i"`` (not ``"i̇"``) and a word-final ``"Σ"`` gives ``"σ"``.
+    """
+    if s.isascii():
+        return s.lower()
+    return "".join(ch.lower()[:1] or ch for ch in s)
 
 
 #: Research-core field labels (lowercased) -> canonical prereg_schema fields

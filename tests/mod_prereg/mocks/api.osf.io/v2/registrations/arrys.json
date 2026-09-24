@@ -1,0 +1,178 @@
+{
+ "data": {
+  "id": "arrys",
+  "type": "registrations",
+  "attributes": {
+   "title": "Synthetic registration arrys",
+   "description": "",
+   "date_created": "2024-01-02T03:04:05.000001",
+   "date_modified": "2024-01-03T03:04:05.000001",
+   "date_registered": "2024-01-04T03:04:05.000001",
+   "embargo_end_date": null,
+   "withdrawn": false,
+   "registration_supplement": "Synthetic Template",
+   "ia_url": "https://archive.org/details/osf-registrations-arrys-v1",
+   "registration_responses": {
+    "300-5": [
+     [
+      [
+       1,
+       2
+      ],
+      [
+       3,
+       4
+      ]
+     ],
+     [
+      [
+       5,
+       6
+      ],
+      [
+       7,
+       8
+      ]
+     ]
+    ],
+    "300-7": [
+     [
+      [
+       [
+        "a",
+        "b"
+       ]
+      ],
+      [
+       [
+        "c",
+        "d"
+       ]
+      ]
+     ],
+     [
+      [
+       [
+        "e",
+        "f"
+       ]
+      ],
+      [
+       [
+        "g",
+        "h"
+       ]
+      ]
+     ]
+    ],
+    "300-9": [
+     [],
+     [
+      "a"
+     ],
+     [
+      3,
+      2,
+      1
+     ]
+    ],
+    "300-11": [
+     {
+      "k": [
+       [
+        1,
+        2
+       ],
+       [
+        3,
+        4
+       ]
+      ]
+     },
+     {
+      "k": [
+       [
+        5,
+        6
+       ],
+       [
+        7,
+        8
+       ]
+      ]
+     }
+    ],
+    "300-20": [
+     [
+      [
+       1,
+       2
+      ],
+      [
+       3,
+       4
+      ]
+     ],
+     [
+      [
+       5,
+       6
+      ],
+      [
+       7,
+       "x"
+      ]
+     ]
+    ],
+    "300-21": [
+     [
+      [
+       1,
+       2
+      ],
+      [
+       3,
+       4
+      ]
+     ],
+     [
+      [
+       5,
+       6
+      ]
+     ]
+    ],
+    "300-23": [
+     [
+      1,
+      2
+     ],
+     [
+      true,
+      false
+     ]
+    ]
+   }
+  },
+  "relationships": {
+   "registration_schema": {
+    "data": {
+     "id": "aaaaaaaaaaaaaaaaaaaaaaa1",
+     "type": "registration-schemas"
+    },
+    "links": {
+     "related": {
+      "href": "https://api.osf.io/v2/schemas/registrations/aaaaaaaaaaaaaaaaaaaaaaa1/",
+      "meta": {}
+     }
+    }
+   }
+  },
+  "links": {
+   "html": "https://osf.io/arrys/"
+  }
+ },
+ "meta": {
+  "version": "2.0"
+ }
+}
