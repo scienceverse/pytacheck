@@ -298,3 +298,10 @@
   "py": "tests.report.parity_helpers.identity"
   "args":
     "x": {"$expr": {"r": "{source('tests/report/review_helpers.R'); f <- tempfile(fileext = '.pdf'); rv_error(report(demopaper(), 'marginal', f, 'pdf'))}", "py": "__import__('tests.report.review_helpers', fromlist=['x']).rv_error(lambda: __import__('pytacheck.report.report', fromlist=['x']).report(pc.demopaper(), 'marginal', __import__('tempfile').mktemp(suffix='.pdf'), 'pdf'))"}}
+- "id": "scroll_table.maxrows_double"
+  "r": "scroll_table"
+  "py": "pytacheck.report.render.scroll_table_qmd"
+  "args":
+    "table": {"$expr": {"r": "data.frame(a = 1:3)", "py": "pd.DataFrame({'a': pd.Series([1, 2, 3], dtype='Int64')})"}}
+    "maxrows": {"$dbl": [100000]}
+    "colwidths": {"$expr": {"r": "c(0.07)", "py": "[0.07]"}}

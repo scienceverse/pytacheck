@@ -109,7 +109,8 @@ def dryad_links(paper: Any) -> pd.DataFrame:
         "|(?:https?://)?(?:doi\\.org/)?10\\.5061/dryad\\.[A-Za-z0-9]+"
         f"|(?:https?://)?(?:doi\\.org/)?(?:{alt})/[A-Za-z0-9]+"
     )
-    other_dryad = _link_matches(paper, dryad_bare_regex)
+    # every bare match contains "datadryad.org" or a "10.<digits>/" DOI prefix
+    other_dryad = _link_matches(paper, dryad_bare_regex, r"datadryad\.org|10\.[0-9]+/")
 
     links = _collect_links([found_href, other_dryad])
     links["dryad_url"] = links["href"]

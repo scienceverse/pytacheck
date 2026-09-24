@@ -231,20 +231,31 @@ def test_whole_test_signature_is_matched() -> None:
     )
     res = match_reported_output(paper, _long(TTEST))
     assert list(res.columns) == COLUMNS
+    # the third test is re-split by the output evidence: its p sits nowhere
+    # near its t/df, so it becomes its own (unplausible) group
     assert res["reported"].tolist() == [
         "t=6.9 df=8 p=<0.001 d=2.3",
         "t=9.99 df=42 p=0.001",
-        "t=5.05 df=8 p=0.2",
+        "t=5.05 df=8",
+        "p=0.2",
     ]
-    assert res["confidence"].tolist() == ["full", "none", "partial"]
+    assert res["confidence"].tolist() == ["full", "none", "full", "none"]
     # a lone coincidental p (< .001 censored bound) is never "found"
-    assert res["n_matched"].tolist() == [4, 1, 2]
-    assert res["not_matched"].iloc[2] == "p=0.2"
+    assert res["n_matched"].tolist() == [4, 1, 2, 0]
+    assert res["plausible_split"].tolist() == [True, True, False, False]
     assert res["analysis"].iloc[0] == "analysis tt1"
     assert res.attrs["summary"] == {
-        "n_tests": 3, "n_found": 2, "n_full": 1, "n_partial": 1, "n_missing": 1,
-        "pct_found": 66.7,
+        "n_tests": 4, "n_found": 2, "n_full": 2, "n_partial": 0, "n_missing": 2,
+        "pct_found": 50.0,
     }  # fmt: skip
+
+    # without regrouping evidence (a legacy eq table), the text grouping stays
+    from pytacheck.text.extract import extract_eq
+
+    legacy = match_reported_output(extract_eq(paper), _long(TTEST))
+    assert legacy["confidence"].tolist() == ["full", "none", "partial"]
+    assert legacy["not_matched"].iloc[2] == "p=0.2"
+    assert legacy["plausible_split"].isna().all()
 
 
 def test_precision_aware_and_min_components() -> None:
