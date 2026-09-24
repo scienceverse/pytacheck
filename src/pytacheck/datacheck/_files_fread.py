@@ -1256,5 +1256,6 @@ def _column(t: int, rows: _Rows, j: int, gram: _Grammar) -> pd.Series:
     if t == CT_ISO8601_DATE:
         return pd.Series(values, dtype=object)
     # CT_ISO8601_TIME: POSIXct in UTC
-    secs = pd.Series([math.nan if v is None else v for v in values], dtype="float64")
-    return pd.to_datetime(secs, unit="s", utc=True)
+    from pytacheck.datacheck._files_time import posixct_series
+
+    return posixct_series([math.nan if v is None else v for v in values])

@@ -114,7 +114,9 @@ def r_paper(spec: dict[str, Any]) -> str:
         tid = "c(" + ", ".join(rs(int(t["table_id"])) for t in tabs) + ")"
         sid = (
             "as.integer(c("
-            + ", ".join("NA" if t.get("section_id") in (None, NA) else str(t["section_id"]) for t in tabs)
+            + ", ".join(
+                "NA" if t.get("section_id") in (None, NA) else str(t["section_id"]) for t in tabs
+            )
             + "))"
         )
         contents = "list(" + ", ".join(rcontents(t.get("contents")) for t in tabs) + ")"
@@ -438,7 +440,9 @@ def r_eq_df(cols: dict[str, list[Any]], types: dict[str, str]) -> str:
         if t == "int":
             parts.append(f"{k} = as.integer(c({', '.join(rs(x) if x != NA else 'NA' for x in v)}))")
         elif t == "dbl":
-            parts.append(f"{k} = as.numeric(c({', '.join('NA' if x == NA else repr(float(x)) for x in v)}))")
+            parts.append(
+                f"{k} = as.numeric(c({', '.join('NA' if x == NA else repr(float(x)) for x in v)}))"
+            )
         else:
             parts.append(f"{k} = {rchr(v)}")
     return f"data.frame({', '.join(parts)}, stringsAsFactors = FALSE)"
@@ -541,8 +545,7 @@ _resid = [i for i, t in enumerate(SYN["test_id"]) if t.endswith("_residuals")]
 SYN_NA_NORESID = {k: [x for i, x in enumerate(v) if i not in _resid] for k, v in SYN_NA.items()}
 LONG_SYN_NA_NORESID = {"kind": "df", "cols": SYN_NA_NORESID}
 SYN_TEXTS = [
-    "A one-way ANOVA showed an effect of gender, F(2, 2159) = 6.76, p = .001, "
-    "η² = .006.",
+    "A one-way ANOVA showed an effect of gender, F(2, 2159) = 6.76, p = .001, η² = .006.",
     "Women scored higher than men, t(2159) = 3.10, p = .002.",
     "Participants reported M = 3.28, 95% CI = [3.18, 3.38], and the scale was reliable, "
     "Cronbach's alpha = .86.",
@@ -655,8 +658,10 @@ match_case("texts_jasp.min3", {"kind": "texts", "texts": JASP_TEXTS}, LONG_JASP,
 match_case(
     "texts_list_with_empty",
     {"kind": "texts", "texts": JASP_TEXTS},
-    [{"kind": "df", "cols": {"test_id": [], "statistic": [], "value": []}, "source_file": "e.R"},
-     LONG_JASP],
+    [
+        {"kind": "df", "cols": {"test_id": [], "statistic": [], "value": []}, "source_file": "e.R"},
+        LONG_JASP,
+    ],
 )
 NUMERIC_LONG = {
     "kind": "df",
@@ -676,8 +681,14 @@ match_case(
         "cols": {
             "test_id": ["a", "a", "a", "a", "b", "b"],
             "statistic": ["t", "df", "p", "d", "M", "SD"],
-            "value": ["6.89966035949175", "8", "0.000124571109365704", "2.29988678649725",
-                      "1.925925926", "0.862454149896004"],
+            "value": [
+                "6.89966035949175",
+                "8",
+                "0.000124571109365704",
+                "2.29988678649725",
+                "1.925925926",
+                "0.862454149896004",
+            ],
         },
     },
 )
@@ -707,7 +718,9 @@ match_case(
     {**LONG_SYN, "drop": ["model_ref", "row_label", "analysis", "source_file"]},
 )
 match_case("synthetic.eq", {"kind": "eq", "texts": SYN_TEXTS}, LONG_SYN)
-match_case("synthetic.na_test_id", {"kind": "texts", "texts": SYN_TEXTS}, LONG_SYN_NA, summary=False)
+match_case(
+    "synthetic.na_test_id", {"kind": "texts", "texts": SYN_TEXTS}, LONG_SYN_NA, summary=False
+)
 match_case(
     "synthetic.na_test_id_censored_only",
     {"kind": "texts", "texts": ["The effect was t < 1.5, p > .05."]},
@@ -737,8 +750,12 @@ for name, texts in [
     )
 match_case("tables", TABLE_PAPER, TABLE_LONG, include_tables=True)
 match_case("tables.off", TABLE_PAPER, TABLE_LONG, include_tables=False)
-match_case("problem_xml.tables", {"kind": "read", "path": PROBLEM_XML}, LONG_JASP, include_tables=True)
-match_case("psychsci_first", {"kind": "read", "path": f"{PSYCHSCI}/0956797613520608.json"}, LONG_JASP)
+match_case(
+    "problem_xml.tables", {"kind": "read", "path": PROBLEM_XML}, LONG_JASP, include_tables=True
+)
+match_case(
+    "psychsci_first", {"kind": "read", "path": f"{PSYCHSCI}/0956797613520608.json"}, LONG_JASP
+)
 match_case(
     "psychsci_first.tables",
     {"kind": "read", "path": f"{PSYCHSCI}/0956797613520608.json"},
@@ -767,7 +784,22 @@ fn_case(
     "pytacheck.statout.match_table._table_caption_family",
     {"caption": {"$null": True}},
 )
-HEADERS = ["", " ", "1.", "12", "3.", "1..", "-", "---", "- -", "M", "Range", NA, "1. Depression", "a1"]
+HEADERS = [
+    "",
+    " ",
+    "1.",
+    "12",
+    "3.",
+    "1..",
+    "-",
+    "---",
+    "- -",
+    "M",
+    "Range",
+    NA,
+    "1. Depression",
+    "a1",
+]
 expr_case(
     "table_header_ambiguous.batch",
     f"lapply({rchr(HEADERS)}, metacheck:::.table_header_ambiguous)",

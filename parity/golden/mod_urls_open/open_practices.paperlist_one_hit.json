@@ -1,0 +1,316 @@
+{
+  "id": "open_practices.paperlist_one_hit",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "open_practices"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Open Practices Check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "general"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 2,
+        "names": [
+          "text_id",
+          "section_id",
+          "paragraph_id",
+          "text",
+          "formatted",
+          "paper_id",
+          "header",
+          "section_type",
+          "data",
+          "code",
+          "materials",
+          "prereg",
+          "on_request"
+        ],
+        "v": [
+          {
+            "t": "int",
+            "v": [
+              1,
+              2
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0,
+              0
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0,
+              0
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Data are available at https://osf.io/abc.",
+              "Data are also available on request."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Data are available at https://osf.io/abc.",
+              "Data are also available on request."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "7910b131e5f085",
+              "7910b131e5f085"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Test",
+              "Test"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "unknown",
+              "unknown"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true,
+              true
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false,
+              false
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false,
+              false
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false,
+              false
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false,
+              true
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Data was openly shared for this article, based on the following text:\n\n> Data are available at https://osf.io/abc.",
+          "We did not detect open sharing of code, which could be because there is no code related to this article, or the repository is not reconized by our code. If there is code, please consider sharing it in a repository.",
+          "Some materials are shared on request, which is not an acceptable method of sharing. This is based on the following text:\n\n> Data are also available on request."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "red"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Shared data detected; some sharing is only on request."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 2,
+        "names": [
+          "paper_id",
+          "data_open",
+          "code_open",
+          "materials_open",
+          "prereg_open",
+          "on_request",
+          "data_statements",
+          "code_statements",
+          "materials_statements",
+          "prereg_statements"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "f2828f0dbe3595",
+              "7910b131e5f085"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false,
+              true
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false,
+              false
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              null,
+              false
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              null,
+              false
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              null,
+              true
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "null"
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Data are available at https://osf.io/abc.",
+                  "Data are also available on request."
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "null"
+              },
+              {
+                "t": "chr",
+                "v": [
+                  null
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "null"
+              },
+              {
+                "t": "chr",
+                "v": [
+                  null
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "null"
+              },
+              {
+                "t": "chr",
+                "v": [
+                  null
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "data_open",
+          "code_open"
+        ],
+        "v": [
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

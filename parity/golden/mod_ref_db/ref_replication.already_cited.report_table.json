@@ -1,0 +1,62 @@
+{
+  "id": "ref_replication.already_cited.report_table",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "table",
+      "colwidths",
+      "maxrows",
+      "escape"
+    ],
+    "v": [
+      {
+        "t": "df",
+        "nrow": 2,
+        "names": [
+          "Reference",
+          "Replication"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Reference 0. https://doi.org/10.1038/nature11467",
+              "Reference 1. https://doi.org/10.1038/s41562-018-0399-z"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Bouwmeester, S., Verkoeijen, P. P. J. L., Aczel, B., Barbosa, F., Bègue, L., Brañas-Garza, P., Chmura, T. G. H., Cornelissen, G., Døssing, F. S., Espín, A. M., Evans, A. M., Ferreira-Santos, F., Fiedler, S., Flegr, J., Ghaffari, M., Glöckner, A., Goeschl, T., Guo, L., Hauser, O. P., … Wollbrant, C. E. (2017). Registered Replication Report: Rand, Greene, and Nowak (2012). Perspectives on Psychological Science, 12(3), 527–542. <a href='https://doi.org/10.1177/1745691617693624' target='_blank'>doi:10.1177/1745691617693624<\/a>",
+              "O’Donnell, M., Dev, A. S., Antonoplis, S., Baum, S. M., Benedetti, A. H., Brown, N. D., Carrillo, B., Choi, A. L., Connor, P., Donnelly, K., Ellwood-Lowe, M. E., Foushee, R., Jansen, R., Jarvis, S. N., Lundell-Creagh, R., Ocampo, J. M., Okafor, G. N., Azad, Z. R., Rosenblum, M., … Nelson, L. D. (2021). Empirical audit and review and an assessment of evidentiary value in research on the psychological consequences of scarcity. Proceedings of the National Academy of Sciences, 118(44). <a href='https://doi.org/10.1073/pnas.2103313118' target='_blank'>doi:10.1073/pnas.2103313118<\/a>"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0.5,
+          0.5
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          2
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

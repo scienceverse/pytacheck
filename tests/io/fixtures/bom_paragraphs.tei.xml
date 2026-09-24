@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0">
+<teiHeader><fileDesc><titleStmt><title level="a" type="main">Byte order marks</title></titleStmt></fileDesc>
+<profileDesc><abstract><div xmlns="http://www.tei-c.org/ns/1.0"><p>&#xFEFF;First sentence. Second one.</p></div></abstract></profileDesc></teiHeader>
+<text><body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Intro</head><p>&#xFEFF;&#xFEFF;&#xFEFF;Triple mark. Then more.</p><p>Mid&#xFEFF;dle mark. &#xFEFF;Next sentence.</p><p>&#xFEFF; Mark then space.</p><p>&#xFEFF;</p></div>
+</body></text></TEI>

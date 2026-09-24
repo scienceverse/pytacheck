@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import math
+from collections.abc import Iterator
 
 import pandas as pd
 import pytest
@@ -228,3 +229,106 @@ def test_json_parser_follows_yajl() -> None:
     for bad in ('{"a": 1,}', "[NaN]", "{'a': 1}", '{"a":1} x', "tru", ""):
         with pytest.raises(ValueError):
             _parse_json(bad)
+
+
+# --- review: R's typeconvert() passes, BOM, Mongo-style dates -----------------
+
+
+@pytest.mark.parametrize(
+    ("values", "dtype", "expected"),
+    [
+        # a field must start with a number to be complex
+        (["i"], "string", ["i"]),
+        (["+i"], "string", ["+i"]),
+        (["NAi"], "string", ["NAi"]),
+        (["NA+1i"], "string", ["NA+1i"]),
+        (["1i", "i"], "string", ["1i", "i"]),
+        # "NA " is never a number; "NAN" only once the integer pass has failed
+        (["NA "], "string", ["NA "]),
+        (["1.5", "NA "], "string", ["1.5", "NA "]),
+        (["NAN"], "string", ["NAN"]),
+        (["NAN", "1.5"], "string", ["NAN", "1.5"]),
+        (["1", "NAN"], "string", ["1", "NAN"]),
+        (["1.5", "NAN"], "float64", [1.5, None]),
+        (["1.5", "2", "NAN"], "float64", [1.5, 2.0, None]),
+        # hexadecimal: an exponent needs digits, a second "." restarts it
+        (["0x1p"], "string", ["0x1p"]),
+        (["0x1p1"], "float64", [2.0]),
+        (["0x1.8.8"], "float64", [24.5]),
+        (["0xp1"], "float64", [0.0]),
+        (["TRUE", None, "F"], "boolean", [True, None, False]),
+        (["T", "1"], "string", ["T", "1"]),
+    ],
+)
+def test_type_convert_r_passes(values: list, dtype: str, expected: list) -> None:
+    out = type_convert(values)
+    assert str(out.dtype) == dtype
+    assert _vals(out) == expected
+
+
+def test_type_convert_complex_values() -> None:
+    cx = type_convert(["1i", " 1+2i ", "Infi", "0x10+0x1p2i", None, "1.5e3-2.5e-3i"])
+    assert str(cx.dtype) == "complex128"
+    vals = cx.tolist()
+    assert vals[0] == complex(0, 1)
+    assert vals[1] == complex(1, 2)
+    assert vals[2] == complex(0, math.inf)
+    assert vals[3] == complex(16, 4)
+    assert math.isnan(vals[4].real) and math.isnan(vals[4].imag)
+    assert vals[5] == complex(1500, -0.0025)
+    # "1i", "NAN": complex, with NaN for "NAN" (the complex pass reads it)
+    both = type_convert(["1i", "NAN"]).tolist()
+    assert both[0] == complex(0, 1) and math.isnan(both[1].real) and both[1].imag == 0
+
+
+def test_json_expand_byte_order_mark() -> None:
+    table = pd.DataFrame(
+        {
+            "id": [1, 2, 3, 4],
+            "answer": ['﻿{"a": 1}', '```json\n﻿{"a": 2}\n```', '﻿﻿{"a": 3}', "﻿[1]"],
+        }
+    )
+    with pytest.warns(UserWarning, match="byte-order-mark"):
+        out = json_expand(table)
+    assert list(out.columns) == ["id", "answer", "a", "error"]
+    assert _vals(out["a"]) == [1, 2, None, None]
+    assert _vals(out["error"]) == [None, None, "parsing error", "not a list"]
+
+
+@pytest.fixture
+def utc(monkeypatch: pytest.MonkeyPatch) -> Iterator[None]:
+    """Run in UTC: numeric dates print in the local time zone, as in R."""
+    import time
+
+    monkeypatch.setenv("TZ", "UTC")
+    time.tzset()
+    yield
+    monkeypatch.undo()
+    time.tzset()
+
+
+@pytest.mark.usefixtures("utc")
+def test_json_expand_mongo_dates() -> None:
+    table = pd.DataFrame(
+        {
+            "id": [1, 2, 3, 4],
+            "answer": [
+                '{"a": {"$date": 1234567890123}, "b": 1}',
+                '{"a": {"$date": 1234567890000}}',
+                '[{"x": 1, "d": {"$date": 86400000}}, {"x": 2, "d": {"$date": 1500}}]',
+                '{"a": {"$date": ["2020-01-01T10:11:12.345Z", "2020-02-30T00:00:00Z"]}, "b": 2}',
+            ],
+        }
+    )
+    out = json_expand(table)
+    assert list(out.columns) == ["id", "answer", "a", "b", "error", "x", "d"]
+    # a POSIXct is pasted as R prints it; one that is the whole answer is "not a list"
+    assert _vals(out["a"]) == [
+        "2009-02-13 23:31:30.123",
+        None,
+        None,
+        None,
+        "2020-01-01 10:11:12.345;NA",
+    ]
+    assert _vals(out["error"]) == [None, "not a list", None, None, None]
+    assert _vals(out["d"]) == [None, None, "1970-01-02", "1970-01-01 00:00:01.5", None]

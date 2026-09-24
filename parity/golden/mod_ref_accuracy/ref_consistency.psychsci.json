@@ -1,0 +1,258 @@
+{
+  "id": "ref_consistency.psychsci",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "ref_consistency"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Reference Consistency"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "reference"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 19,
+        "names": [
+          "paper_id",
+          "bib_id",
+          "reference",
+          "contents",
+          "text"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "0956797613520608",
+              "0956797613520608",
+              "0956797613520608",
+              "0956797613520608",
+              "0956797613520608",
+              "0956797613520608",
+              "0956797614522816",
+              "0956797614527830",
+              "to_err_is_human",
+              "to_err_is_human",
+              "to_err_is_human",
+              "to_err_is_human",
+              "0956797613520608",
+              "0956797613520608",
+              "0956797614522816",
+              "0956797614522816",
+              "0956797614527830",
+              "0956797614527830",
+              "0956797614527830"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              5,
+              7,
+              8,
+              9,
+              25,
+              34,
+              6,
+              6,
+              0,
+              1,
+              3,
+              4,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Cook, R., Bird, G., Catmur, C., Press, C., & Heyes, C. M. (in press). Mirror neurons: From origin to function. Behavioral & Brain Sciences.",
+              "di Pellegrino, G., Fadiga, L., Fogassi, L., Gallese, V., & Rizzolatti, G. (1992). Understanding motor events: A neurophysiologi- cal study. Experimental Brain Research, 91, 176-180.",
+              "Frith, C. D., & Singer, T. (2008). The role of social cognition in decision making. Philosophical Transactions of the Royal Society B: Biological Sciences, 363, 3875-3886.",
+              "Gallese, V., Fadiga, L., Fogassi, L., & Rizzolatti, G. (1996). Action recognition in the premotor cortex. Brain, 119, 593-609.",
+              "Marquardt, T., & Sussman, H. (1984). The elusive lesion-apraxia of speech link in Broca's aphasia. In J. C. Rosenbek, M. R. McNeil, & A. E. Aronson (Eds.), Apraxia of speech: Physiology, acoustics, linguistics, management (pp. 91- 112). San Diego, CA: College-Hill Press.",
+              "Rizzolatti, G., Fadiga, L., Gallese, V., & Fogassi, L. (1996). Premotor cortex and the recognition of motor actions. Cognitive Brain Research, 3, 131-141.",
+              "Greene, M. R., & Oliva, A. (2009b). Recognition of natural scenes from global properties: Seeing the forest without representing the trees. Cognitive Psychology, 58, 137-179.",
+              "Committee on the Human Dimensions of Global Change. (2002). The drama of the commons (E. Ostrom, T. Dietz, N. Dolsak, & P. C. Stern, Eds.). Washington, DC: National Academies Press.",
+              "DeBruine, Lisa. 2025. Faux: Simulation for Factorial Designs. Zenodo. https: //doi.org/10.5281/10.5281/zenodo.2669586.",
+              "Eagly, Alice H., and Wendy Wood. 1999. \"The Origins of Sex Differences in Human Behavior: Evolved Dispositions Versus Social Roles.\" American Psychologist 54 (6): 408-23. https://doi.org/10.1037/0003-066x.54.6.408.",
+              "Lakens, Daniël. 2018. \"Equivalence Testing for Psychological Research.\" Ad- vances in Methods and Practices in Psychological Science 1: 259-70.",
+              "Smith, F. 2021. \"Human Error Is a Symptom of a Poor Design.\" Journal of Journals. https://doi.org/10.0000/0123456789.",
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              "Cook, Bird, Catmur, Press, and Heyes (in press",
+              "Marquart & Sussman, 1984;",
+              ", 2009b;",
+              "(Greene & Oliva, 2009b;",
+              "Change, 2002;",
+              "(Raven's Standard Progressive Matrices Sets A, B, C, D, & E;",
+              "Change, 2002;"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              "Because identifying the goals of bodily movements is a complex process that likely involves multiple components, we agree with Cook, Bird, Catmur, Press, and Heyes (in press) that research on the contribution of the MNS to action understanding must attempt to isolate and operationalize distinct components of action understanding.",
+              "Third, lesion studies have confirmed that patients with lesions in more dorsal areas of PMC have greater difficulties performing hand actions, whereas patients with more ventral lesions have greater difficulties performing mouth actions (Basso, Capitani, Della Sala, Laiacona, & Spinnler, 1987;Marquart & Sussman, 1984;Pazzaglia, Smania, Corato, & Aglioti, 2008).",
+              "These incredible scene-processing speeds have often led researchers to treat categorization as a perceptually driven process with semantic meaning passively emerging in a set hierarchy as critical properties become available to the visual system (Fei-Fei, Iyer, Koch, & Perona, 2007;Greene & Oliva, 2009a, 2009b;Joubert, Rousselet, Fize, & Fabre-Thorpe, 2007;Loschky & Larson, 2010;Oliva & Torralba, 2001;Rousselet, Joubert, & Fabre-Thorpe, 2005;Schyns & Oliva, 1994;Torralba & Oliva, 2003), perhaps as a result of a feed-forward network (Delorme, Richard, & Fabre-Thorpe, 2000;Serre, Oliva, & Poggio, 2007;Thorpe, Fize, & Marlot, 1996;VanRullen & Thorpe, 2002).",
+              "Several candidates have emerged, such as the spatial regularities between volumetric forms (Biederman,1987(Biederman, , 1995) ) or the variety of simple image statistics at low spatial resolutions (Greene & Oliva, 2009b;Oliva & Torralba,2001, 2006;Schyns & Oliva, 1994).",
+              "Humans, like other socialized species, must work together to manage the exploitation of valuable but finite resources (Committee on the Human Dimensions of Global Change, 2002;Ostrom, 2009).",
+              "Participants completed measures of cognitive ability (Raven's Standard Progressive Matrices Sets A, B, C, D, & E;Raven, 1996) and impulsivity (Barratt Impulsiveness Scale; Patton, Stanford, & Barratt, 1995).",
+              "Our laboratory multiplayer resource-dilemma game was also only a very approximate model of real-world resource dilemmas, as it involved no immediate survival or economic imperatives (Committee on the Human Dimensions of Global Change, 2002;Gardiner, 2001;Ostrom, 2009) or sanctions known to promote socially cooperative behavior in common-pool problems (Fehr & Gächter, 2002)."
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "This module relies on Grobid correctly parsing the references. There are likley to be some false positives.",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(bib_id = c(5L, 7L, 8L, 9L, 25L, 34L, 6L, 6L, 0L, \n1L, 3L, 4L, NA, NA, NA, NA, NA, NA, NA), type = c(\"extra\", \"extra\", \n\"extra\", \"extra\", \"extra\", \"extra\", \"extra\", \"extra\", \"extra\", \n\"extra\", \"extra\", \"extra\", \"missing\", \"missing\", \"missing\", \"missing\", \n\"missing\", \"missing\", \"missing\"), contents = c(NA, NA, NA, NA, \nNA, NA, NA, NA, NA, NA, NA, NA, \"Cook, Bird, Catmur, Press, and Heyes (in press\", \n\"Marquart & Sussman, 1984;\", \", 2009b;\", \"(Greene & Oliva, 2009b;\", \n\"Change, 2002;\", \"(Raven's Standard Progressive Matrices Sets A, B, C, D, & E;\", \n\"Change, 2002;\"), reference = c(\"Cook, R., Bird, G., Catmur, C., Press, C., & Heyes, C. M. (in press). Mirror neurons: From origin to function. Behavioral & Brain Sciences.\", \n\"di Pellegrino, G., Fadiga, L., Fogassi, L., Gallese, V., & Rizzolatti, G. (1992). Understanding motor events: A neurophysiologi- cal study. Experimental Brain Research, 91, 176-180.\", \n\"Frith, C. D., & Singer, T. (2008). The role of social cognition in decision making. Philosophical Transactions of the Royal Society B: Biological Sciences, 363, 3875-3886.\", \n\"Gallese, V., Fadiga, L., Fogassi, L., & Rizzolatti, G. (1996). Action recognition in the premotor cortex. Brain, 119, 593-609.\", \n\"Marquardt, T., & Sussman, H. (1984). The elusive lesion-apraxia of speech link in Broca's aphasia. In J. C. Rosenbek, M. R. McNeil, & A. E. Aronson (Eds.), Apraxia of speech: Physiology, acoustics, linguistics, management (pp. 91- 112). San Diego, CA: College-Hill Press.\", \n\"Rizzolatti, G., Fadiga, L., Gallese, V., & Fogassi, L. (1996). Premotor cortex and the recognition of motor actions. Cognitive Brain Research, 3, 131-141.\", \n\"Greene, M. R., & Oliva, A. (2009b). Recognition of natural scenes from global properties: Seeing the forest without representing the trees. Cognitive Psychology, 58, 137-179.\", \n\"Committee on the Human Dimensions of Global Change. (2002). The drama of the commons (E. Ostrom, T. Dietz, N. Dolsak, & P. C. Stern, Eds.). Washington, DC: National Academies Press.\", \n\"DeBruine, Lisa. 2025. Faux: Simulation for Factorial Designs. Zenodo. https: //doi.org/10.5281/10.5281/zenodo.2669586.\", \n\"Eagly, Alice H., and Wendy Wood. 1999. \\\"The Origins of Sex Differences in Human Behavior: Evolved Dispositions Versus Social Roles.\\\" American Psychologist 54 (6): 408-23. https://doi.org/10.1037/0003-066x.54.6.408.\", \n\"Lakens, Daniël. 2018. \\\"Equivalence Testing for Psychological Research.\\\" Ad- vances in Methods and Practices in Psychological Science 1: 259-70.\", \n\"Smith, F. 2021. \\\"Human Error Is a Symptom of a Poor Design.\\\" Journal of Journals. https://doi.org/10.0000/0123456789.\", \n\"Because identifying the goals of bodily movements is a complex process that likely involves multiple components, we agree with Cook, Bird, Catmur, Press, and Heyes (in press) that research on the contribution of the MNS to action understanding must attempt to isolate and operationalize distinct components of action understanding.\", \n\"Third, lesion studies have confirmed that patients with lesions in more dorsal areas of PMC have greater difficulties performing hand actions, whereas patients with more ventral lesions have greater difficulties performing mouth actions (Basso, Capitani, Della Sala, Laiacona, & Spinnler, 1987;Marquart & Sussman, 1984;Pazzaglia, Smania, Corato, & Aglioti, 2008).\", \n\"These incredible scene-processing speeds have often led researchers to treat categorization as a perceptually driven process with semantic meaning passively emerging in a set hierarchy as critical properties become available to the visual system (Fei-Fei, Iyer, Koch, & Perona, 2007;Greene & Oliva, 2009a, 2009b;Joubert, Rousselet, Fize, & Fabre-Thorpe, 2007;Loschky & Larson, 2010;Oliva & Torralba, 2001;Rousselet, Joubert, & Fabre-Thorpe, 2005;Schyns & Oliva, 1994;Torralba & Oliva, 2003), perhaps as a result of a feed-forward network (Delorme, Richard, & Fabre-Thorpe, 2000;Serre, Oliva, & Poggio, 2007;Thorpe, Fize, & Marlot, 1996;VanRullen & Thorpe, 2002).\", \n\"Several candidates have emerged, such as the spatial regularities between volumetric forms (Biederman,1987(Biederman, , 1995) ) or the variety of simple image statistics at low spatial resolutions (Greene & Oliva, 2009b;Oliva & Torralba,2001, 2006;Schyns & Oliva, 1994).\", \n\"Humans, like other socialized species, must work together to manage the exploitation of valuable but finite resources (Committee on the Human Dimensions of Global Change, 2002;Ostrom, 2009).\", \n\"Participants completed measures of cognitive ability (Raven's Standard Progressive Matrices Sets A, B, C, D, & E;Raven, 1996) and impulsivity (Barratt Impulsiveness Scale; Patton, Stanford, & Barratt, 1995).\", \n\"Our laboratory multiplayer resource-dilemma game was also only a very approximate model of real-world resource dilemmas, as it involved no immediate survival or economic imperatives (Committee on the Human Dimensions of Global Change, 2002;Gardiner, 2001;Ostrom, 2009) or sanctions known to promote socially cooperative behavior in common-pool problems (Fehr & Gächter, 2002).\"\n)), row.names = c(NA, -19L), class = c(\"tbl_df\", \"tbl\", \"data.frame\"\n))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 2, FALSE)\n```\n"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "red"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "There are cross-references that are not in the bibliography and/or bibliography entries not cross-referenced in the text"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 4,
+        "names": [
+          "paper_id",
+          "n_bib",
+          "n_xrefs",
+          "n_missing",
+          "n_extra"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "0956797613520608",
+              "0956797614522816",
+              "0956797614527830",
+              "to_err_is_human"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              41,
+              26,
+              38,
+              5
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              48,
+              34,
+              45,
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2,
+              2,
+              3,
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              6,
+              1,
+              1,
+              4
+            ]
+          }
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

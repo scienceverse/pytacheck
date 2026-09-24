@@ -84,8 +84,27 @@ _EXPORTS: dict[str, str] = {
     "read_bibr": "pytacheck.papers",
     "ref_table": "pytacheck.papers",
     "test_paper": "pytacheck.papers",
+    # reports and validation
+    "emojis": "pytacheck.report.emojis",
+    "module_report": "pytacheck.report.report",
+    "report": "pytacheck.report.report",
+    "report_module_run": "pytacheck.report.report",
+    "report_qmd": "pytacheck.report.report",
+    "report_repository": "pytacheck.report.report",
+    "report_table": "pytacheck.report.blocks",
+    "accuracy": "pytacheck.validate",
+    "validate": "pytacheck.validate",
+    # statistics
+    "stats": "pytacheck.stats.core",
+    "statcheck": "pytacheck.stats.statcheck",
     # text
+    "causal_relations": "pytacheck.text",
     "expand_text": "pytacheck.text",
+    "extract_eq": "pytacheck.text",
+    "extract_p_values": "pytacheck.text",
+    "extract_tests": "pytacheck.text",
+    "extract_urls": "pytacheck.text",
+    "json_expand": "pytacheck.text",
     "search_text": "pytacheck.text",
     "text_expand": "pytacheck.text",
     "text_search": "pytacheck.text",
@@ -160,4 +179,27 @@ if TYPE_CHECKING:  # pragma: no cover
     )
     from pytacheck.presets import preset, preset_list
     from pytacheck.provenance import ModuleChain, RunRecord, rerun, run_modules
-    from pytacheck.text import expand_text, search_text, text_expand, text_search
+    from pytacheck.report.blocks import report_table
+    from pytacheck.report.emojis import emojis
+    from pytacheck.report.report import (
+        module_report,
+        report,
+        report_module_run,
+        report_qmd,
+        report_repository,
+    )
+    from pytacheck.stats.core import stats
+    from pytacheck.stats.statcheck import statcheck
+    from pytacheck.text import (
+        causal_relations,
+        expand_text,
+        extract_eq,
+        extract_p_values,
+        extract_tests,
+        extract_urls,
+        json_expand,
+        search_text,
+        text_expand,
+        text_search,
+    )
+    from pytacheck.validate import accuracy, validate

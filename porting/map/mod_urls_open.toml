@@ -1,0 +1,8 @@
+# R source -> Python location for the all_urls and open_practices modules (see docs/PORTING.md).
+[files]
+"inst/modules/all_urls.R" = ["src/pytacheck/modules/all_urls.py"]
+"inst/modules/open_practices.R" = ["src/pytacheck/modules/open_practices.py"]
+
+[functions]
+"module:all_urls" = "pytacheck.modules.all_urls:all_urls"
+"module:open_practices" = "pytacheck.modules.open_practices:open_practices"

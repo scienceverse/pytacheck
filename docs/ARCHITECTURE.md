@@ -8,7 +8,9 @@ src/pytacheck/
   _r/            R semantics: regex engines, number formatting, collation, dplyr idioms
   papers/        Paper / PaperList (bibr JSON schema), reading/writing, cross-paper tables
   module.py      module decorator, discovery, module_run chaining
-  modules/       built-in checks, one file per metacheck module
+  modules/       built-in checks, one file per metacheck module (+ pack.json: built-in presets)
+  packs/         packs, stores, install, pack check, store build (module system v2)
+  presets.py     presets and selection; provenance.py: provenance and run records
   text/          text_search, text_expand, extractors (p-values, statistics, URLs, ...)
   stats/         statcheck port
   report/        report blocks and rendering (HTML/QMD/Markdown without R or Quarto)
@@ -65,6 +67,12 @@ metacheck's: default traffic light, `report` fallback, the `summary_table` left 
 with `.<module>` suffixes, `na_replace`, and chaining through `prev_outputs` /
 `get_prev_outputs()`. Modules are discovered among the built-ins, entry points
 (`pytacheck.modules`), `./<name>.py`, `./modules/<name>.py`, or a path.
+
+Packs (`pytacheck/packs/`), presets (`presets.py`), run records (`provenance.py`)
+and the store extend this: community modules are addressed as `pack::name`,
+pinned by commit and file hash, and recorded in every run. See
+[MODULES.md](MODULES.md) (guides) and
+[design/module-system-v2.md](design/module-system-v2.md) (design).
 
 Reports are lists of blocks: markdown strings (with Quarto-style callouts) and
 `ReportTable` objects. metacheck emits R code chunks for tables and needs Quarto; here

@@ -625,12 +625,23 @@ def _to_python(obj: Any) -> Any:
         values = obj.value if dates is None else dates
         if obj.type == 14 and dates is None:
             values = [math.nan if v is None else v for v in values]
+        dim = obj.attrs.get("dim")
+        if isinstance(dim, RObject) and len(dim.value) >= 2 and dates is None:
+            import numpy as np  # a matrix / array: column-major, like R
+
+            return np.array(values, dtype=object if obj.type == 16 else None).reshape(
+                [int(d) for d in dim.value], order="F"
+            )
         names = _names(obj)
         if names is not None:  # a named vector: a Series indexed by the names
             series = _vector_series(obj)
             series.index = pd.Index(names)
             return series
         return list(values)
+    if obj.type == 15:  # complex
+        return list(obj.value)
+    if obj.type == 24:  # raw
+        return bytes(obj.value)
     if obj.type == 2:
         return {k: _to_python(v) for k, v in obj.value}
     return obj

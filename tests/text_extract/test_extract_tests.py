@@ -143,3 +143,34 @@ def test_extract_tests_empty() -> None:
     assert len(tests) == 0
     assert list(tests.columns) == COLUMNS
     pd.testing.assert_frame_equal(tests, _empty_tests())
+
+
+def test_components_keep_every_key() -> None:
+    """R's list(name =, comp =, value =, df =, sentence_pos =) keeps NULL elements."""
+    p = pc.test_paper(["first sentence"])
+    p.paper_id = "eqp"
+    p["eq"] = pd.DataFrame(
+        {
+            "text_id": pd.Series([1, 1], dtype="Int64"),
+            "lhs": ["t", "p"],
+            "comp": pd.Series([None, "<"], dtype="string"),
+            "rhs": ["1.5", ".03"],
+        }
+    )
+    out = extract_tests(p)
+    assert len(out) == 1
+    comps = out["components"].iloc[0]
+    assert [list(c) for c in comps] == [["name", "comp", "value", "df", "sentence_pos"]] * 2
+    assert comps[0]["df"] is None and comps[0]["comp"] is None
+    # an NA comparator prints "NA"; a missing df column prints nothing
+    assert out["reported"].iloc[0] == "t NA 1.5, p < .03"
+    assert out["sentence"].iloc[0] == "first sentence"
+
+
+def test_render_test_null_elements() -> None:
+    # absent comp is R's NULL (rendered "="); absent name/value make vapply() fail
+    assert _render_test([{"name": "d", "value": "0.77"}]) == "d = 0.77"
+    import pytest
+
+    with pytest.raises(ValueError, match="length 0"):
+        _render_test([{"comp": "=", "value": "2"}])

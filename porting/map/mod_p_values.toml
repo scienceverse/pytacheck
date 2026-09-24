@@ -1,0 +1,13 @@
+# R source -> Python location for the p-value modules (see docs/PORTING.md).
+[files]
+"inst/modules/all_p_values.R" = ["src/pytacheck/modules/all_p_values.py"]
+"inst/modules/stat_p_exact.R" = ["src/pytacheck/modules/stat_p_exact.py"]
+"inst/modules/stat_p_nonsig.R" = ["src/pytacheck/modules/stat_p_nonsig.py"]
+
+[functions]
+"module:all_p_values" = "pytacheck.modules.all_p_values:all_p_values"
+"module:stat_p_exact" = "pytacheck.modules.stat_p_exact:stat_p_exact"
+"module:stat_p_nonsig" = "pytacheck.modules.stat_p_nonsig:stat_p_nonsig"
+# bibentry objects defined at the bottom of stat_p_nonsig.R, stored as their format_ref() HTML
+"aczel2018" = "pytacheck.modules.stat_p_nonsig:_ACZEL_2018"
+"murphy2025" = "pytacheck.modules.stat_p_nonsig:_MURPHY_2025"

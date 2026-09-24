@@ -1,0 +1,88 @@
+{
+  "id": "power.classify.tables",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": null,
+    "v": [
+      {
+        "t": "df",
+        "nrow": 9,
+        "names": [
+          "power_id",
+          "power_type"
+        ],
+        "v": [
+          {
+            "t": "int",
+            "v": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "apriori",
+              "sensitivity",
+              "compromise",
+              "posthoc",
+              "posthoc",
+              "posthoc",
+              "unknown",
+              "unknown",
+              "unknown"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 8,
+        "names": [
+          "power_id",
+          "text"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "1",
+              "2",
+              "3",
+              "4",
+              "5",
+              "6",
+              "7;8",
+              "9"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "An <strong>a-priori<\/strong> <strong>power<\/strong> analysis showed that 50 participants give 80% <strong>power<\/strong>.",
+              "A <strong>sensitivity<\/strong> <strong>power<\/strong> analysis showed that 50 participants give 80% <strong>power<\/strong> for d = 0.4.",
+              "A compromise <strong>power<\/strong> analysis balanced alpha and beta for 50 participants.",
+              "A <strong>post-hoc<\/strong> <strong>power<\/strong> analysis showed 45% <strong>power<\/strong>.",
+              "An <strong>A Posteriori<\/strong> <strong>power<\/strong> analysis gave 20% <strong>power<\/strong>.",
+              "The <strong>retrospective power<\/strong> was 30% for the observed effect size.",
+              "We had 95% <strong>power<\/strong> to detect our effect.",
+              "The <strong>observed power<\/strong> of the test was 0.25 (small effect)."
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

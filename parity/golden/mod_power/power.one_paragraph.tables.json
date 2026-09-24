@@ -1,0 +1,44 @@
+{
+  "id": "power.one_paragraph.tables",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": null,
+    "v": [
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "power_type"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "apriori"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "text"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "An <strong>a priori<\/strong> <strong>power<\/strong> analysis for an independent samples t-test, conducted using the pwr.t.test function from pwr (Champely, 2020), indicated that for a Cohen's d = 0.5, an alpha level of 0.05, and a desired <strong>power<\/strong> level of 80% required at least 64 participants in each group. A <strong>sensitivity<\/strong> <strong>power<\/strong> analysis for an independent samples t-test, conducted using the pwr.t.test function from pwr (Champely, 2020), indicated that with 64 participants in each group, and an alpha level of 0.05, a desired <strong>power<\/strong> level of 80% was reached for an effect size of d = 0.5."
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

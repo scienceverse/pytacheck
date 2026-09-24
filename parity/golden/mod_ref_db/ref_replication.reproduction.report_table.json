@@ -1,0 +1,62 @@
+{
+  "id": "ref_replication.reproduction.report_table",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "table",
+      "colwidths",
+      "maxrows",
+      "escape"
+    ],
+    "v": [
+      {
+        "t": "df",
+        "nrow": 2,
+        "names": [
+          "Reference",
+          "Reproduction"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Reference 0. https://doi.org/10.1038/s41562-023-01655-0",
+              "Reference 1. https://doi.org/10.1093/qje/qjac034"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Lacko, D., & Prošek, T. (2025). A comment on Combs et al. (2023) “Reducing political polarization in the United States with a mobile chat platform”. I4R Report. <a href='https://osf.io/7jy4e/files/u93pc' target='_blank'>osf.io/7jy4e/files/u93pc<\/a>",
+              "Hallman, A., Johannesson, M., & Kujansuu, E. (2024). Robustness Reproducibility of\" Improving Workplace Climate in Large Corporations: A Clustered Randomized Intervention\". (No. 118), I4R Discussion Paper Series. <a href='https://doi.org/10.10419/295247' target='_blank'>doi:10.10419/295247<\/a>"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0.5,
+          0.5
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          2
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

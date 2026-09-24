@@ -36,6 +36,27 @@ from pytacheck.archives.zenodo_upload import (
 SANDBOX = "https://sandbox.zenodo.org/api"
 
 
+@pytest.fixture(autouse=True)
+def _never_reach_zenodo(monkeypatch: pytest.MonkeyPatch) -> None:
+    """A request that escaped the mocks cannot even resolve a Zenodo host."""
+    import socket
+
+    real = socket.getaddrinfo
+
+    def guarded(host: Any, *args: Any, **kwargs: Any) -> Any:
+        if isinstance(host, str | bytes) and str(host).rstrip(".").endswith("zenodo.org"):
+            raise AssertionError(f"a test tried to reach {host!r}")
+        return real(host, *args, **kwargs)
+
+    monkeypatch.setattr(socket, "getaddrinfo", guarded)
+
+
+def test_interactive_is_false_under_pytest() -> None:
+    from pytacheck.archives.zenodo_upload import _interactive
+
+    assert _interactive() is False
+
+
 def test_zenodo_api() -> None:
     assert _zenodo_api(True) == "https://sandbox.zenodo.org/api"
     assert _zenodo_api(False) == "https://zenodo.org/api"

@@ -1,0 +1,111 @@
+{
+  "id": "coi_check.declaration_conflicting",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "coi_check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "COI Check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "general"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "text"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "52d0a9efc09a27"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Declaration of Conflicting Interests The author(s) declared no potential conflicts of interest with respect to the research, authorship, and/or publication of this article."
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "The following conflict of interest statement was detected.",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(\"Declaration of Conflicting Interests The author(s) declared no potential conflicts of interest with respect to the research, authorship, and/or publication of this article.\"), names = \"\", class = \"data.frame\", row.names = c(NA, \n-1L))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 2, FALSE)\n```\n"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "green"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "A conflict of interest statement was detected."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "coi_found"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "52d0a9efc09a27"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true
+            ]
+          }
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

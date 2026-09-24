@@ -1,0 +1,297 @@
+{
+  "id": "open_practices.code_only",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "open_practices"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Open Practices Check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "general"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 2,
+        "names": [
+          "text_id",
+          "section_id",
+          "paragraph_id",
+          "text",
+          "formatted",
+          "paper_id",
+          "header",
+          "section_type",
+          "data",
+          "code",
+          "materials",
+          "prereg",
+          "on_request"
+        ],
+        "v": [
+          {
+            "t": "int",
+            "v": [
+              1,
+              2
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0,
+              0
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0,
+              0
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "The computer code for the analyses reported here can be accessed at the Open Science Framework (https://osf.io/geq9x/).",
+              "All analysis code for this study has been made publicly available via the Open Science Framework and can be accessed at https://osf.io/geq9x/."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "The computer code for the analyses reported here can be accessed at the Open Science Framework (https://osf.io/geq9x/).",
+              "All analysis code for this study has been made publicly available via the Open Science Framework and can be accessed at https://osf.io/geq9x/."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "d65ff1e43c6a48",
+              "d65ff1e43c6a48"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Test",
+              "Test"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "unknown",
+              "unknown"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false,
+              false
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true,
+              true
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false,
+              false
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false,
+              false
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false,
+              false
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "We did not detect open sharing of data, which could be because there is no data related to this article, or the repository is not recognized by our code. If there is data, please consider sharing it in a repository.",
+          "Code was openly shared for this article, based on the following text:\n\n> The computer code for the analyses reported here can be accessed at the Open Science Framework (https://osf.io/geq9x/).\n\n> All analysis code for this study has been made publicly available via the Open Science Framework and can be accessed at https://osf.io/geq9x/."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "yellow"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Shared code detected."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "data_open",
+          "code_open",
+          "materials_open",
+          "prereg_open",
+          "on_request",
+          "data_statements",
+          "code_statements",
+          "materials_statements",
+          "prereg_statements"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "d65ff1e43c6a48"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  null
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "The computer code for the analyses reported here can be accessed at the Open Science Framework (https://osf.io/geq9x/).",
+                  "All analysis code for this study has been made publicly available via the Open Science Framework and can be accessed at https://osf.io/geq9x/."
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  null
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  null
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "data_open",
+          "code_open"
+        ],
+        "v": [
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

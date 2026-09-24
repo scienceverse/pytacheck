@@ -1,0 +1,210 @@
+{
+  "id": "all_urls.demo",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "all_urls"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "List All URLs"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "general"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 7,
+        "names": [
+          "text",
+          "text_id",
+          "paragraph_id",
+          "section_id",
+          "page_number",
+          "formatted",
+          "paper_id",
+          "header",
+          "section_type"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "https://osf.io/48ncu",
+              "https://aspredicted.org/by8i8v.pdf",
+              "https://github.com/Lak-ens/to_err_is_human",
+              "https://researchbox.org/4377",
+              "https://osf.io/5tbm9",
+              "https://osf.io/629bx",
+              "pwr.t.test"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              9,
+              9,
+              20,
+              20,
+              21,
+              21,
+              27
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              3,
+              3,
+              8,
+              8,
+              9,
+              9,
+              14
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2,
+              2,
+              5,
+              5,
+              5,
+              5,
+              8
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "This study was preregistered at <ref type=\"url\" target=\"https://osf.io/48ncu\">https://osf.io/48ncu<\/ref> and on AsPredicted at <ref type=\"url\" target=\"https://aspredicted.org/by8i8v.pdf\">https://aspredicted.org/by8i8v.pdf<\/ref>.",
+              "This study was preregistered at <ref type=\"url\" target=\"https://osf.io/48ncu\">https://osf.io/48ncu<\/ref> and on AsPredicted at <ref type=\"url\" target=\"https://aspredicted.org/by8i8v.pdf\">https://aspredicted.org/by8i8v.pdf<\/ref>.",
+              "Data and analysis code is available on GitHub from <ref type=\"url\" target=\"https://github.com/Lak-\">https://github.com/Lak-<\/ref>ens/to_err_is_human and from <ref type=\"url\" target=\"https://researchbox.org/4377\">https://researchbox.org/4377<\/ref>.",
+              "Data and analysis code is available on GitHub from <ref type=\"url\" target=\"https://github.com/Lak-\">https://github.com/Lak-<\/ref>ens/to_err_is_human and from <ref type=\"url\" target=\"https://researchbox.org/4377\">https://researchbox.org/4377<\/ref>.",
+              "Data is also available from <ref type=\"url\" target=\"https://osf.io/5tbm9\">https://osf.io/5tbm9<\/ref> and code is also available from <ref type=\"url\" target=\"https://osf.io/629bx\">https://osf.io/629bx<\/ref>.",
+              "Data is also available from <ref type=\"url\" target=\"https://osf.io/5tbm9\">https://osf.io/5tbm9<\/ref> and code is also available from <ref type=\"url\" target=\"https://osf.io/629bx\">https://osf.io/629bx<\/ref>.",
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "to_err_is_human",
+              "to_err_is_human",
+              "to_err_is_human",
+              "to_err_is_human",
+              "to_err_is_human",
+              "to_err_is_human",
+              "to_err_is_human"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Method",
+              "Method",
+              "Data Availability",
+              "Data Availability",
+              "Data Availability",
+              "Data Availability",
+              "Results"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "method",
+              "method",
+              "availability",
+              "availability",
+              "availability",
+              "availability",
+              "annex"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          ""
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "info"
+        ]
+      },
+      {
+        "t": "null"
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "urls"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "to_err_is_human"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              7
+            ]
+          }
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

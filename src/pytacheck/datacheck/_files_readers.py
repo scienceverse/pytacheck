@@ -650,8 +650,9 @@ def read_excel(
         elif t == CELL_NUMERIC:
             series.append(pd.Series([math.nan if v is None else v for v in vals], dtype="float64"))
         elif t == CELL_DATE:
-            secs = pd.Series([math.nan if v is None else v for v in vals], dtype="float64")
-            series.append(pd.to_datetime(secs, unit="s", utc=True))
+            from pytacheck.datacheck._files_time import posixct_series
+
+            series.append(posixct_series([math.nan if v is None else v for v in vals]))
         else:
             series.append(pd.Series(vals, dtype="string"))
     out = pd.DataFrame(dict(enumerate(series)))
@@ -1017,13 +1018,69 @@ def _haven_format(ext: str, fmt: str | None) -> tuple[str, str] | None:
     return "format.sas", name
 
 
+_HAVEN_VENDOR = {"sav": "spss", "por": "spss", "dta": "stata", "sas7bdat": "sas"}
+
+# haven_types.cpp numType(): format prefix -> Date / hms / POSIXct
+_HAVEN_NUM_TYPES = {
+    "sas": (
+        ("DATETIME", "datetime"), ("IS8601DT", "datetime"), ("E8601DT", "datetime"),
+        ("B8601DT", "datetime"), ("IS8601DA", "date"), ("E8601DA", "date"),
+        ("B8601DA", "date"), ("WEEKDATE", "date"), ("MMDDYY", "date"), ("DDMMYY", "date"),
+        ("YYMMDD", "date"), ("DATE", "date"), ("TIME", "time"), ("HHMM", "time"),
+        ("IS8601TM", "time"), ("E8601TM", "time"), ("B8601TM", "time"),
+    ),
+    "spss": (
+        ("DATETIME", "datetime"), ("DATE", "date"), ("ADATE", "date"), ("EDATE", "date"),
+        ("JDATE", "date"), ("SDATE", "date"), ("TIME", "time"), ("DTIME", "time"),
+    ),
+    "stata": (("%tC", "datetime"), ("%tc", "datetime"), ("%td", "date"), ("%d", "date")),
+}  # fmt: skip
+# daysOffset(): the vendor's epoch in days before 1970-01-01
+_HAVEN_DAYS_OFFSET = {"sas": 3653, "stata": 3653, "spss": 141428}
+
+
+def _haven_num_type(vendor: str, fmt: str | None) -> str:
+    if not fmt:
+        return "default"
+    for prefix, kind in _HAVEN_NUM_TYPES[vendor]:
+        if fmt.startswith(prefix):
+            return kind
+    return "default"
+
+
+def _haven_numbers(values: Sequence[Any]) -> list[float]:
+    out: list[float] = []
+    for v in values:
+        try:
+            f = float(v)
+        except (TypeError, ValueError):
+            f = math.nan
+        out.append(f)
+    return out
+
+
+def _haven_dates(days: list[float]) -> pd.Series:
+    epoch = dt.date(1970, 1, 1)
+    out: list[dt.date | None] = []
+    for d in days:
+        try:
+            out.append(None if math.isnan(d) else epoch + dt.timedelta(days=math.floor(d)))
+        except OverflowError:  # beyond datetime.date's years 1-9999
+            out.append(None)
+    return pd.Series(out, dtype=object)
+
+
 def read_stat_file(path: str, ext: str, n_rows: float) -> pd.DataFrame:
     """``haven::read_sav/read_dta/read_sas/read_por(path, n_max = n_rows)``.
 
-    Numbers are doubles (haven never returns integers), user-defined missing
-    values become ``NA``, dates are :class:`datetime.date`, date-times UTC
-    timestamps and times seconds. Variable labels, value labels and formats go
-    to ``attrs["col_attrs"]``.
+    Follows haven's ``DfReader``: a column's type comes from the file's
+    variable type (numbers are always doubles, strings character) and its
+    class from the display format (``numType()``: ``Date`` as
+    :class:`datetime.date`, ``POSIXct`` as UTC timestamps, ``hms`` as seconds),
+    never from the values; user-defined missing values become ``NA``. The
+    variable label, ``format.*``, SPSS ``display_width`` (when not 8) and value
+    labels (``haven_labelled`` unless the column already has a date/time
+    class) go to ``attrs["col_attrs"]``; names get vctrs "unique" repair.
     """
     import pyreadstat
 
@@ -1033,80 +1090,79 @@ def read_stat_file(path: str, ext: str, n_rows: float) -> pd.DataFrame:
         "sas7bdat": pyreadstat.read_sas7bdat,
         "por": pyreadstat.read_por,
     }
-    reader = readers[ext]
+    vendor = _HAVEN_VENDOR[ext]
     limit = 0 if not math.isfinite(n_rows) else max(int(n_rows), 0)
-    kwargs: dict[str, Any] = {"row_limit": limit}
+    kwargs: dict[str, Any] = {"row_limit": limit, "disable_datetime_conversion": True}
     if limit == 0 and math.isfinite(n_rows):
         kwargs["metadataonly"] = True
-    df, meta = reader(path, **kwargs)
-    col_attrs: dict[str, dict[str, Any]] = {}
-    series: dict[int, pd.Series] = {}
-    names = list(meta.column_names)
+    df, meta = readers[ext](path, **kwargs)
+    nrow = 0 if kwargs.get("metadataonly") else len(df)
+    raw_names = list(meta.column_names)
+    names = vec_as_names_unique(raw_names)
     value_labels = meta.variable_value_labels or {}
     var_labels = meta.column_names_to_labels or {}
     formats = meta.original_variable_types or {}
+    rs_types = getattr(meta, "readstat_variable_types", None) or {}
     widths = getattr(meta, "variable_display_width", None) or {}
-    for j, name in enumerate(names):
-        col = df[name] if name in df.columns else pd.Series([], dtype=object)
+    col_attrs: dict[str, dict[str, Any]] = {}
+    series: dict[int, pd.Series] = {}
+    offset = _HAVEN_DAYS_OFFSET[vendor]
+    for j, name in enumerate(raw_names):
+        values = df[name].tolist() if name in df.columns and nrow else []
+        is_string = rs_types.get(name) == "string"
         attrs: dict[str, Any] = {}
         if var_labels.get(name):
             attrs["label"] = var_labels[name]
         fmt = _haven_format(ext, formats.get(name))
+        kind = "default" if is_string else _haven_num_type(vendor, fmt[1] if fmt else None)
+        if is_string:
+            series[j] = pd.Series(
+                [None if v is None or (isinstance(v, float) and math.isnan(v)) else str(v)
+                 for v in values],
+                dtype="string",
+            )  # fmt: skip
+        else:
+            nums = _haven_numbers(values)
+            if kind == "datetime":
+                secs = [x / 1000 if vendor == "stata" else x for x in nums]
+                secs = [x - offset * 86400 for x in secs]
+                from pytacheck.datacheck._files_time import posixct_series
+
+                series[j] = posixct_series(secs)
+                attrs["class"] = ["POSIXct", "POSIXt"]
+                attrs["tzone"] = "UTC"
+            elif kind == "date":
+                days = [x / 86400 if vendor == "spss" else x for x in nums]
+                series[j] = _haven_dates([x - offset for x in days])
+                attrs["class"] = "Date"
+            else:
+                series[j] = pd.Series(nums, dtype="float64")
+                if kind == "time":
+                    attrs["class"] = ["hms", "difftime"]
+                    attrs["units"] = "secs"
         if fmt:
             attrs[fmt[0]] = fmt[1]
         width = widths.get(name)
-        if ext in ("sav", "por") and isinstance(width, int) and width > 0 and width != 8:
+        if vendor == "spss" and isinstance(width, int) and width != 8:
             attrs["display_width"] = width  # haven skips the default width 8
         labels = value_labels.get(name)
-        series[j] = _haven_column(col)
         if labels:
-            attrs["labels"] = {str(lab): code for code, lab in labels.items()}
-            base = "character" if isinstance(series[j].dtype, pd.StringDtype) else "double"
-            attrs["class"] = ["haven_labelled", "vctrs_vctr", base]
-        elif _is_time_column(col):
-            attrs["class"] = ["hms", "difftime"]
-            attrs["units"] = "secs"
-        elif pd.api.types.is_datetime64_any_dtype(series[j].dtype):
-            attrs["class"] = ["POSIXct", "POSIXt"]
-            attrs["tzone"] = "UTC"
-        elif series[j].dtype == object and any(isinstance(v, dt.date) for v in series[j]):
-            attrs["class"] = "Date"
+            if "class" not in attrs:
+                attrs["class"] = [
+                    "haven_labelled",
+                    "vctrs_vctr",
+                    "character" if is_string else "double",
+                ]
+            attrs["labels"] = {
+                str(lab): (str(code) if is_string else float(code)) for code, lab in labels.items()
+            }
         if attrs:
-            col_attrs[name] = attrs
-    out = pd.DataFrame(series)
+            col_attrs[names[j]] = attrs
+    out = pd.DataFrame(series, index=range(nrow))
     out.columns = pd.Index(names, dtype=object)
     if col_attrs:
         out.attrs["col_attrs"] = col_attrs
-    return out.reset_index(drop=True)
-
-
-def _is_time_column(col: pd.Series) -> bool:
-    return col.dtype == object and any(isinstance(v, dt.time) for v in col.tolist())
-
-
-def _haven_column(col: pd.Series) -> pd.Series:
-    values = col.tolist()
-    if pd.api.types.is_datetime64_any_dtype(col.dtype):
-        s = pd.to_datetime(col)
-        return s.dt.tz_localize("UTC") if s.dt.tz is None else s.dt.tz_convert("UTC")
-    if any(isinstance(v, dt.datetime) for v in values):
-        return pd.to_datetime(pd.Series(values, dtype=object), utc=True)
-    if any(isinstance(v, dt.date) for v in values):
-        return pd.Series([v if isinstance(v, dt.date) else None for v in values], dtype=object)
-    if any(isinstance(v, dt.time) for v in values):
-        return pd.Series(
-            [
-                v.hour * 3600 + v.minute * 60 + v.second + v.microsecond / 1e6
-                if isinstance(v, dt.time)
-                else math.nan
-                for v in values
-            ],
-            dtype="float64",
-        )
-    if pd.api.types.is_numeric_dtype(col.dtype) and not pd.api.types.is_bool_dtype(col.dtype):
-        return pd.Series(col.to_numpy(dtype="float64", na_value=math.nan), dtype="float64")
-    return pd.Series([None if v is None or (isinstance(v, float) and math.isnan(v)) else str(v)
-                      for v in values], dtype="string")  # fmt: skip
+    return out
 
 
 def read_jasp_omv(path: str, ext: str, n_rows: float) -> pd.DataFrame | None:

@@ -305,3 +305,32 @@
     "table": {"$expr": {"r": "data.frame(a = 1:3)", "py": "pd.DataFrame({'a': pd.Series([1, 2, 3], dtype='Int64')})"}}
     "maxrows": {"$expr": {"r": "1e5", "py": "100000"}}
     "colwidths": {"$expr": {"r": "c(0.07)", "py": "[0.07]"}}
+
+# --- real modules (ported by other areas) through the report pipeline --------------------
+- "id": "report_qmd.demo.real_modules"
+  "r": "identity"
+  "py": "tests.report.parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "{source('tests/report/review_helpers.R'); rp_report_qmd(demopaper(), c('stat_p_nonsig', 'all_p_values', 'rp_error', 'marginal', 'stat_check', 'rp_chained'))}", "py": "__import__('tests.report.parity_helpers', fromlist=['x']).rp_report_qmd(pc.demopaper(), ['stat_p_nonsig', 'all_p_values', 'rp_error', 'marginal', 'stat_check', 'rp_chained'])"}}
+- "id": "report_module_run.psychsci.real_modules"
+  "r": "identity"
+  "py": "tests.report.parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "{source('tests/report/review_helpers.R'); rp_report_module_run(read(c('upstream/metacheck/tests/testthat/fixtures/psychsci/0956797613520608.json', 'upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614522816.json')), c('stat_p_nonsig', 'stat_p_exact', 'marginal'))}", "py": "__import__('tests.report.parity_helpers', fromlist=['x']).rp_report_module_run(pc.read(['upstream/metacheck/tests/testthat/fixtures/psychsci/0956797613520608.json', 'upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614522816.json']), ['stat_p_nonsig', 'stat_p_exact', 'marginal'])"}}
+- "id": "module_report.stat_p_exact.headers"
+  "r": "identity"
+  "py": "tests.report.parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "{source('tests/report/review_helpers.R'); p <- read('upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614522816.json'); c(rp_module_report(p, 'stat_p_exact'), rp_module_report(p, 'stat_p_exact', header = 4), rp_module_report(p, 'stat_p_exact', header = 'Custom header'))}", "py": "(lambda h, p: [h.rp_module_report(p, 'stat_p_exact'), h.rp_module_report(p, 'stat_p_exact', header=4), h.rp_module_report(p, 'stat_p_exact', header='Custom header')])(__import__('tests.report.parity_helpers', fromlist=['x']), pc.read('upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614522816.json'))"}}
+- "id": "validate.stat_p_exact.example"
+  "r": "validate"
+  "py": "pytacheck.validate.validate"
+  "args":
+    "gt": "p < .05"
+    "module": "stat_p_exact"
+- "id": "validate.stat_p_exact.frame"
+  "r": "validate"
+  "py": "pytacheck.validate.validate"
+  "args":
+    "gt": {"$expr": {"r": "data.frame(paper_id = c('a', 'b', 'c'), text = c('The effect was significant, p < .05.', 'No test here.', 'We found t(20) = 2.1, p = .048.'), p_comp = c('<', NA, '='))", "py": "pd.DataFrame({'paper_id': ['a', 'b', 'c'], 'text': ['The effect was significant, p < .05.', 'No test here.', 'We found t(20) = 2.1, p = .048.'], 'p_comp': pd.Series(['<', None, '='], dtype='string')})"}}
+    "module": "stat_p_exact"

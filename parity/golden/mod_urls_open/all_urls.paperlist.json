@@ -1,0 +1,169 @@
+{
+  "id": "all_urls.paperlist",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "all_urls"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "List All URLs"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "general"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 3,
+        "names": [
+          "text_id",
+          "section_id",
+          "paragraph_id",
+          "text",
+          "formatted",
+          "paper_id",
+          "header",
+          "section_type"
+        ],
+        "v": [
+          {
+            "t": "int",
+            "v": [
+              1,
+              2,
+              1
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://osf.io/abcde",
+              "https://github.com/x/y",
+              "www.example.com"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "See https://osf.io/abcde/.",
+              "And https://github.com/x/y.",
+              "Visit www.example.com today."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "adea66bc0915ea",
+              "adea66bc0915ea",
+              "0a03bc071f7666"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Test",
+              "Test",
+              "Test"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "unknown",
+              "unknown",
+              "unknown"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          ""
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "info"
+        ]
+      },
+      {
+        "t": "null"
+      },
+      {
+        "t": "df",
+        "nrow": 3,
+        "names": [
+          "paper_id",
+          "urls"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "adea66bc0915ea",
+              "8ffa41d1b7fd62",
+              "0a03bc071f7666"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              2,
+              0,
+              1
+            ]
+          }
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

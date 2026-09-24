@@ -29,16 +29,22 @@ def _read_lines(path: str, n: int) -> list[str | None]:
     A line that is not valid UTF-8 is ``None``: R keeps it, but ``grepl()``
     (fixed, TRE or PCRE) never matches an invalid string.
     """
+    raw_lines: list[bytes] = []
     try:
         with open(path, "rb") as fh:
-            raw = fh.read()
+            # only the first n lines are read (a knitted report can be large);
+            # readline() splits at LF, a lone CR also ends a line
+            for chunk in fh:
+                parts = _LINE_END.split(chunk)
+                if parts and parts[-1] == b"":
+                    parts.pop()
+                raw_lines.extend(parts)
+                if len(raw_lines) >= n:
+                    break
     except OSError:
         return []
-    lines = _LINE_END.split(raw)
-    if lines and lines[-1] == b"":
-        lines.pop()
     out: list[str | None] = []
-    for line in lines[:n]:
+    for line in raw_lines[:n]:
         try:
             out.append(line.decode("utf-8"))
         except UnicodeDecodeError:

@@ -82,7 +82,7 @@ def test_references_without_any_text_fail() -> None:
 
 def test_formatted_text_has_no_inherited_namespace_declarations() -> None:
     p = _quiet_grobid(IO_FIXTURES / "xlink_ns.tei.xml")
-    formatted = [f for f in p.text["formatted"].dropna()]
+    formatted = list(p.text["formatted"].dropna())
     assert not any('xmlns:xlink="' in f for f in formatted)
     assert any('<ptr xlink:href="https://github.com/x"/>' in f for f in formatted)
     # a declaration on the paragraph itself is kept
@@ -135,7 +135,9 @@ def test_non_fatal_parse_errors_warn_and_keep_document() -> None:
 
 
 def test_fatal_parse_error_reports_first_fatal_error() -> None:
-    with pytest.raises(XmlParseError, match=r"^Opening and ending tag mismatch: c line 1 and a \[76\]$"):
+    with pytest.raises(
+        XmlParseError, match=r"^Opening and ending tag mismatch: c line 1 and a \[76\]$"
+    ):
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
             read_xml('<a><b xml:id="x"/><c xml:id="x"></a>')
@@ -319,5 +321,56 @@ def test_convert_grobid_error_uses_httr2_status_text(tmp_path: Path) -> None:
     routes = {
         ("POST", f"{GROBID_URL}/api/processFulltextDocument"): lambda _r: httpx.Response(413),
     }
-    with api("apis", routes=routes), pytest.raises(RuntimeError, match="^Payload Too Large$"):
+    with api("apis", routes=routes), pytest.raises(RuntimeError, match=r"^Payload Too Large$"):
         convert_grobid(pc.demofile("pdf"), tmp_path, api_url=GROBID_URL)
+
+
+# ---------------------------------------------------------------------------
+# sentence splitting: stringi drops a leading byte order mark per call
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.parametrize(
+    ("text", "expected"),
+    [
+        ("﻿i.e x. Y", ["i.e x.", "Y"]),
+        ("﻿﻿ab. Cd", ["ab.", "Cd"]),
+        ("﻿﻿﻿ab", ["ab"]),
+        ("﻿ ﻿ab", ["﻿ab"]),
+        (" ﻿ab", ["﻿ab"]),
+        ("﻿", []),
+        ("a ﻿b. ﻿C", ["a ﻿b. ﻿", "C"]),
+    ],
+)
+def test_tokenize_sentences_drops_leading_bom_like_stringi(text: str, expected: list[str]) -> None:
+    from pytacheck.io.grobid import _tokenize_sentences
+
+    assert _tokenize_sentences(text) == expected
+
+
+def test_bom_paragraphs_fixture() -> None:
+    p = _quiet_grobid(IO_FIXTURES / "bom_paragraphs.tei.xml")
+    texts = list(p.text["text"])
+    assert "First sentence." in texts
+    assert "Triple mark." in texts
+    assert not any(t.startswith("﻿") for t in texts if t != "﻿Mark then space.")
+
+
+def test_read_rds_matrices_are_column_major_arrays() -> None:
+    from pytacheck.io.corpus import _read_rds
+
+    out = _read_rds(IO_FIXTURES / "matrices.rds")
+    assert out["int"].tolist() == [[1, 3, 5], [2, 4, 6]]
+    assert out["chr"].tolist() == [["a", "c"], [None, "d"]]
+    assert out["dbl"].shape == (1, 3)
+
+
+def test_read_rds_real_paperlists() -> None:
+    from pytacheck.io.corpus import _read_rds
+
+    papers = _read_rds(IO_FIXTURES / "psychsci_paperlist.rds")
+    assert isinstance(papers, PaperList)
+    assert len(papers) >= 2
+    xmls = _read_rds(IO_FIXTURES / "debruine_xml_paperlist.rds")
+    assert isinstance(xmls, PaperList)
+    assert all(len(p.text) > 0 for p in xmls)

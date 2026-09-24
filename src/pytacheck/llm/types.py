@@ -623,16 +623,41 @@ def _scalar_of(v: Any) -> Any:
     return v
 
 
+def _r_elements(x: Any) -> list[Any]:
+    """The elements ``lapply(x, ...)`` visits: a JSON object's values, an array's items."""
+    if x is None:
+        return []
+    if isinstance(x, dict):
+        return list(x.values())
+    if isinstance(x, list | tuple):
+        return list(x)
+    if isinstance(x, RVec):
+        return list(x.values)
+    return [x]
+
+
+def _as_integer(v: float | None) -> int | None:
+    """``as.integer()`` of a double: truncation; ``NA`` (with R's warning) out of range."""
+    import warnings
+
+    if v is None or math.isnan(v):
+        return None
+    if math.isinf(v) or v >= 2147483648 or v <= -2147483648:
+        warnings.warn("NAs introduced by coercion to integer range", stacklevel=5)
+        return None
+    return int(v)
+
+
 def list_to_atomic(x: Any, type: str) -> RVec:
     """Port of ``ellmer:::list_to_atomic()`` (a list of JSON scalars -> vector)."""
     r_type = _R_TYPES[type]
-    items = list(x) if isinstance(x, list | tuple) else ([] if x is None else [x])
+    items = _r_elements(x)
     out: list[Any] = []
     for v in items:
         t = _r_typeof(v)
         val = _scalar_of(v)
         if r_type == "int" and t == "dbl":
-            val = None if val is None or math.isnan(val) or math.isinf(val) else int(val)
+            val = _as_integer(val)
             t = "int"
         elif r_type == "dbl" and t == "int":
             val = None if val is None else float(val)
@@ -642,6 +667,37 @@ def list_to_atomic(x: Any, type: str) -> RVec:
         else:
             out.append(val)
     return RVec(r_type, out)
+
+
+def _deparse(v: Any) -> str:
+    """``deparse()`` of a parsed-JSON value (as ``as.character()`` shows a list element)."""
+    from pytacheck._r import as_character
+
+    if v is None:
+        return "NULL"
+    if isinstance(v, bool):
+        return "TRUE" if v else "FALSE"
+    if isinstance(v, int) and _r_typeof(v) == "int":
+        return f"{v}L"
+    if isinstance(v, int | float):
+        return as_character(float(v)) or "NA"
+    if isinstance(v, str):
+        return _encode_string(v)
+    if isinstance(v, dict):
+        return "list(" + ", ".join(f"{_deparse_name(k)} = {_deparse(x)}" for k, x in v.items()) + ")"
+    if isinstance(v, list | tuple):
+        return "list(" + ", ".join(_deparse(x) for x in v) + ")"
+    return str(v)
+
+
+def _deparse_name(k: str) -> str:
+    import re
+
+    reserved = {"if", "else", "repeat", "while", "function", "for", "next", "break", "TRUE",
+                "FALSE", "NULL", "Inf", "NaN", "NA", "in"}  # fmt: skip
+    if re.fullmatch(r"(?:[A-Za-z]|[.](?![0-9]))[A-Za-z0-9._]*|[.]", k) and k not in reserved:
+        return k
+    return "`" + k.replace("\\", "\\\\").replace("`", "\\`") + "`"
 
 
 def _as_character_elem(v: Any) -> str:
@@ -654,7 +710,16 @@ def _as_character_elem(v: Any) -> str:
         return v
     if isinstance(v, bool | int | float):
         return as_character(v) or "NA"
-    return json.dumps(v)
+    return _deparse(v)
+
+
+def _subscript(y: Any, name: str) -> Any:
+    """R ``y[[name]]`` on a parsed-JSON value."""
+    if y is None:
+        return None
+    if isinstance(y, dict):
+        return y.get(name)
+    raise ValueError("subscript out of bounds")
 
 
 def _factor(labels: list[str | None], levels: list[str | None]) -> RVec:
@@ -687,32 +752,32 @@ def convert_from_type(x: Any, type: Type) -> Any:
         return None
     if isinstance(t, TypeArray):
         items = t.items
-        seq = x if isinstance(x, list) else ([] if x is None else [x])
+        seq = _r_elements(x)  # lapply() visits a JSON object's values
         if isinstance(items, TypeBasic):
-            return list_to_atomic(seq, items.type)
+            return list_to_atomic(x, items.type)
         if isinstance(items, TypeArray):
             return [convert_from_type(y, items) for y in seq]
         if isinstance(items, TypeEnum):
             return _factor([_as_character_elem(v) for v in seq], items.values)
         if isinstance(items, TypeObject):
             if items.additional_properties:
-                return [
-                    {
-                        **{k: y.get(k) for k in items.properties if isinstance(y, dict)},
-                        **{k: v for k, v in (y or {}).items() if k not in items.properties},
-                    }
-                    for y in seq
-                ]
+                out_ap = []
+                for y in seq:
+                    if not isinstance(y, dict):
+                        raise ValueError("subscript out of bounds")
+                    keys = list(dict.fromkeys([*items.properties, *y]))
+                    out_ap.append({k: y.get(k) for k in keys})
+                return out_ap
             cols = {
-                name: convert_from_type(
-                    [y.get(name) if isinstance(y, dict) else None for y in seq], TypeArray(prop)
-                )
+                name: convert_from_type([_subscript(y, name) for y in seq], TypeArray(prop))
                 for name, prop in items.properties.items()
             }
-            return _tibble(cols, len(seq))
+            return _tibble(cols, len(seq) if cols else 0)
         return x
     if isinstance(t, TypeObject):
-        src = x if isinstance(x, dict) else {}
+        if x is not None and not isinstance(x, dict):
+            raise ValueError("subscript out of bounds")  # x[[name]] on an array or scalar
+        src = x or {}
         out = {name: convert_from_type(src.get(name), prop) for name, prop in t.properties.items()}
         if t.additional_properties:
             out.update({k: v for k, v in src.items() if k not in t.properties})
@@ -720,13 +785,13 @@ def convert_from_type(x: Any, type: Type) -> Any:
     if isinstance(t, TypeBasic):
         if x is None:
             return RVec(_R_TYPES[t.type], [None])
-        if isinstance(x, list) and len(x) == 1:
-            return x[0]
+        if isinstance(x, list | dict) and len(x) == 1:
+            return _r_elements(x)[0]
         return x
     if isinstance(t, TypeEnum):
         if x is None:
             return RVec("chr", [None])
-        if isinstance(x, list):
-            return RVec("chr", [_as_character_elem(v) for v in x])
+        if isinstance(x, list | dict):
+            return RVec("chr", [_as_character_elem(v) for v in _r_elements(x)])
         return _as_character_elem(x)
     return x

@@ -1,0 +1,76 @@
+{
+  "id": "ref_replication.demo.show_outcomes.report_table",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "table",
+      "colwidths",
+      "maxrows",
+      "escape"
+    ],
+    "v": [
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "Reference",
+          "Replication",
+          "Outcome",
+          "Type"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Eagly, Alice H., and Wendy Wood. 1999. \"The Origins of Sex Differences in Human Behavior: Evolved Dispositions Versus Social Roles.\" American Psychologist 54 (6): 408-23. https://doi.org/10.1037/0003-066x.54.6.408."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Zhang, L., Lee, A. J., DeBruine, L. M., & Jones, B. C. (2019). Are Sex Differences in Preferences for Physical Attractiveness and Good Earning Capacity in Potential Mates Smaller in Countries With Greater Gender Equality? Evolutionary Psychology, 17(2). <a href='https://doi.org/10.1177/1474704919852921' target='_blank'>doi:10.1177/1474704919852921<\/a>"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "failed"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "replication"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0.3,
+          0.4,
+          0.15,
+          0.15
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          2
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

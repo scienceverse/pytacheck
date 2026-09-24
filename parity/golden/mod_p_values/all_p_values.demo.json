@@ -1,0 +1,196 @@
+{
+  "id": "all_p_values.demo",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "all_p_values"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "List All P-Values"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "results"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 3,
+        "names": [
+          "text",
+          "text_id",
+          "paragraph_id",
+          "section_id",
+          "page_number",
+          "formatted",
+          "paper_id",
+          "header",
+          "section_type",
+          "p_comp",
+          "p_value"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "p = 0.005",
+              "p =0.152",
+              "p > .05"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              15,
+              16,
+              17
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              4,
+              5,
+              6
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              3,
+              3,
+              3
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              "There was no effect of experience on the reduction in errors when using the tool (p &gt; .05), as the correlation was non-significant (Figure <ref type=\"figure\" target=\"#fig_0\">2<\/ref>)."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "to_err_is_human",
+              "to_err_is_human",
+              "to_err_is_human"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Procedure",
+              "Procedure",
+              "Procedure"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "method",
+              "method",
+              "method"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "=",
+              "=",
+              ">"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0.005,
+              0.152,
+              0.05
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Text = c(\"p = 0.005\", \"p =0.152\", \"p > .05\"), \n    Sentence = c(\"On average researchers in the experimental (app) condition made fewer mistakes (M = 9.12) than researchers in the control (checklist) condition (M = 10.9), t(97.7) = 2.9, p = 0.005, d =0.59.\", \n    \"On average researchers in the experimental condition found the app marginally significantly more useful (M = 5.06) than researchers in the control condition found the checklist (M = 4.5), t(97.2) = -1.96, p =0.152.\", \n    \"There was no effect of experience on the reduction in errors when using the tool (p > .05), as the correlation was non-significant (Figure 2).\"\n    )), row.names = c(NA, -3L), class = c(\"tbl_df\", \"tbl\", \"data.frame\"\n))\n\n# display table -----------------------------------\nmetacheck::report_table(table, c(\"5em\", NA), 2, FALSE)\n```\n",
+          "This will catch most comparators like =<>~≈≠≤≥≪≫ and most versions of scientific notation like 5.0 x 10^-2 or 5.0e-2. If you find any formats that are not correctly handled by this function, please contact debruine@gmail.com."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "info"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "We found 3 p-values"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "p_values"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "to_err_is_human"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              3
+            ]
+          }
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -134,3 +134,54 @@ def test_no_event_id() -> None:
         router.post(BASE).mock(return_value=httpx.Response(200, json={"other": 1}))
         with pytest.raises(RuntimeError, match="No `event_id`"):
             causal_relations("x causes y")
+
+
+@pytest.mark.parametrize(
+    ("value", "text"),
+    [
+        # jsonlite::toJSON(digits = 4): modp_dtoa2() in (1e-5, 2^31), "%.<n>g" outside
+        (0.5, "0.5"),
+        (1.0, "1"),
+        (1, "1"),
+        (0.0, "0"),
+        (0.12345, "0.1234"),
+        (0.12355, "0.1236"),
+        (0.123456789, "0.1235"),
+        (0.00049, "0.0005"),
+        (0.00005, "0"),
+        (0.99999, "1"),
+        (1e-5, "1e-05"),
+        (1e-10, "1e-10"),
+    ],
+)
+def test_json_number(value: float, text: str) -> None:
+    from pytacheck.text.causal import _json_number
+
+    assert _json_number(value) == text
+
+
+def test_request_body_threshold() -> None:
+    bodies: list[bytes] = []
+    with respx.mock(assert_all_called=False) as router:
+        route = _mock(router, {"x": '["[{\\"causal\\": false, \\"relations\\": []}]"]'})
+        route.side_effect = (
+            lambda f: lambda request: (bodies.append(request.content), f(request))[1]
+        )(route.side_effect)
+        causal_relations("x", rel_threshold=0.12345)
+    assert bodies == [b'{"data":["x","auto",0.1234,"cls+span"]}']
+
+
+def test_missing_sentences() -> None:
+    # R: all(trimws(sentence) == "") is NA -> if() fails
+    for sentence in ([None], [None, "  "]):
+        with pytest.raises(ValueError, match="missing value"):
+            causal_relations(sentence)
+
+
+def test_missing_sentence_is_sent_as_null() -> None:
+    payload = '["[{\\"causal\\": true, \\"relations\\": [{\\"cause\\": \\"a\\", \\"effect\\": \\"b\\"}]}]"]'
+    with respx.mock(assert_all_called=False) as router:
+        _mock(router, {None: payload, "x": payload})
+        out = causal_relations([None, "x"])
+    assert out["sentence"].isna().tolist() == [True, False]
+    assert out["cause"].tolist() == ["a", "a"]

@@ -715,7 +715,9 @@ def _column_to_pandas(col: Any, n: int) -> pd.Series:
         secs = pd.Series(
             np.where(v == NA_INTEGER, np.nan, v) if t == INTSXP else v, dtype="float64"
         )
-        out = pd.to_datetime(secs, unit="s", utc=True)
+        from pytacheck.datacheck._files_time import posixct_series
+
+        out = posixct_series(secs)
         tz = _strvec(col.attr("tzone"))
         if tz and tz[0] not in (None, "", "UTC", "GMT"):
             with contextlib.suppress(Exception):  # unknown zones stay in UTC
@@ -743,13 +745,35 @@ def _column_to_pandas(col: Any, n: int) -> pd.Series:
     return pd.Series([None] * n, dtype=object)
 
 
+def posixct_as_character(ts: Any) -> str | None:
+    """R's ``as.character.POSIXt()`` of one time (in its own time zone).
+
+    Midnight is the date alone; otherwise ``H:M:S`` with the seconds rounded to
+    6 digits and printed as R prints numbers (``"10:00:00.5"``).
+    """
+    from pytacheck._r.base import as_character, r_round
+
+    if ts is None or ts is pd.NaT or (isinstance(ts, float) and math.isnan(ts)):
+        return None
+    ts = pd.Timestamp(ts)
+    day = f"{ts.year:d}-{ts.month:02d}-{ts.day:02d}"
+    sec = ts.second + ts.microsecond / 1e6 + ts.nanosecond / 1e9
+    if ts.hour == 0 and ts.minute == 0 and sec == 0:
+        return day
+    s = r_round(sec, 6)
+    sch = ("0" if s < 10 else "") + as_character(s)
+    return f"{day} {ts.hour:02d}:{ts.minute:02d}:{sch}"
+
+
 def _as_character_vec(obj: Any) -> list[str | None]:
-    """``as.character()`` of an atomic R vector (factor labels, dates, numbers)."""
+    """``as.character()`` of an atomic R vector (factor labels, dates, times, numbers)."""
     from pytacheck._r.base import as_character
 
     if not isinstance(obj, RObject):
         return []
     t, v, classes = obj.type, obj.value, obj.classes
+    if t in (INTSXP, REALSXP) and "POSIXct" in classes:
+        return [posixct_as_character(x) for x in _column_to_pandas(obj, len(v)).tolist()]
     if t == INTSXP and "factor" in classes:
         levels = _strvec(obj.attr("levels"))
         return [None if x == NA_INTEGER else levels[x - 1] for x in v.tolist()]
@@ -769,8 +793,18 @@ def _as_character_vec(obj: Any) -> list[str | None]:
     if t == STRSXP:
         return list(v)
     if t == CPLXSXP:
-        return [str(x) for x in v.tolist()]
+        return [_complex_as_character(complex(x)) for x in v.tolist()]
     return []
+
+
+def _complex_as_character(z: complex) -> str | None:
+    """R's ``as.character()`` of a complex number (``0+1i``)."""
+    from pytacheck._r.base import as_character
+
+    if math.isnan(z.real) or math.isnan(z.imag):
+        return None
+    sign = "-" if z.imag < 0 else "+"
+    return f"{as_character(z.real)}{sign}{as_character(abs(z.imag))}i"
 
 
 def _is_na_bits(x: float) -> bool:

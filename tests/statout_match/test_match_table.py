@@ -74,9 +74,10 @@ def test_typed_cells_tiers() -> None:
         (5, "ci_lower", "ci_lower", 0.01),  # value shape wins
         (5, "ci_upper", "ci_upper", 0.09),
     ]
-    # "4 females" (a numeric prefix + a word) is rejected; "1.2a" is kept
-    gender = [(c["col"], c["value"]) for c in rows[1]]
-    assert gender == [(4, 1.2)]
+    # "4 females" (a numeric prefix + a word) is rejected; "1.2a" is kept; a
+    # plain number under "95% CI" gets the generic "ci" family from its header
+    gender = [(c["col"], c["family"], c["value"]) for c in rows[1]]
+    assert gender == [(4, "b", 1.2), (5, "ci", 0.3)]
     assert _table_typed_cells([["only header"]], None) == []
     assert _table_typed_cells(None, None) == []
 
@@ -121,6 +122,10 @@ def test_include_tables_matches_table_rows() -> None:
     off = match_reported_output(p, long)
     assert len(off) == 0
     on = match_reported_output(p, long, include_tables=True)
+    assert on["reported"].tolist()[:3] == ["α=0.86 M=2.1", "α=0.81 M=1.95", "r=0.45"]
+    # the alpha alone is not enough for a two-component row; each matrix cell
+    # is its own single-value test
     found = on[on["found"]]
-    assert found["text_id"].tolist() == [-3000001, -3002001, -3003002]
-    assert found["reported"].tolist() == ["α=0.86 M=2.1", "r=0.45", "r=0.52"]
+    assert found["text_id"].tolist() == [-3002001, -3003002]
+    assert found["reported"].tolist() == ["r=0.45", "r=0.52"]
+    assert on["n_matched"].iloc[0] == 1

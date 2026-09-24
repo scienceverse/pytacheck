@@ -651,3 +651,84 @@ code deliberately differs:
 * **Provenance** is computed before the run and never breaks one; if it
   cannot be built, `provenance` is `None` and the run is not memoised.
   `module_list(pack=...)` appends the `pack` column after `path`.
+
+## Implementation notes (phase 2: distribution, CLI, API, run records)
+
+Decisions taken while implementing stores, installation, authoring tools,
+run records, the CLI and the API, where the text above left room or where the
+code deliberately differs:
+
+* **Store layout.** `store.json` (optional) holds the store's `name`,
+  `description` and extra `fields`. Next to a folder pack, `packs/<name>.json`
+  may only carry the maintainer fields `reviewed` / `yanked` (that is where
+  maintainers record a review). `store build` keeps `reviewed` from the
+  existing index only while the pack's tree hash is unchanged (a changed pack
+  needs a new review) and always keeps `yanked`. `--check`'s version check
+  applies to the optional `version` of an external entry file. `generated` is
+  kept when nothing else changed, so CI does not commit an index every push.
+* **Index locations.** GitHub repos use `raw.githubusercontent.com/.../HEAD`,
+  GitLab repos `<url>/-/raw/HEAD/index.json`, `*.json` URLs are used as is,
+  other URLs get `/index.json`; local folders (and `file://`) are read
+  directly, without a cache. A pack name missing from a cached index is
+  looked up once more in a freshly fetched index; `pack update` always fetches.
+* **Path sources.** A store without git history (a local store, or the
+  committed contrib seed) lists in-repo packs as `{"path": "packs/<name>"}`.
+  Installing one from a local store pins the absolute folder and the tree
+  hash (the install folder is `tree_sha256[:12]`); from a remote store it is
+  refused (the store's CI replaces path sources with commits).
+* **Refs.** Besides the forms above: `.../tree/<ref>/<subdir>` GitHub/GitLab
+  browse URLs, a `git+` prefix to force git, and `file://` git repositories.
+  `name@<rev>` at a commit other than the listed one installs the pack as
+  *unlisted* (no store, no review date), with a note on the consent card.
+* **Extraction.** Members outside the selected `subdir` are skipped (they are
+  never written), but absolute and `..` paths are refused anywhere; the
+  downloaded tarball is capped at 100 MB. Git is only a fallback for download
+  errors, never for safety or hash errors.
+* **Consent.** Declining raises `pytacheck.packs.Cancelled` (a `PackError`);
+  without a terminal the answer is no. Adding a path pack also asks. The
+  staging folder and any folders created for it are removed on failure, so a
+  cancelled install leaves no trace.
+* **Remove / update.** `pack remove` of a dist pack writes `false`; it deletes
+  the install folder unless the effective config still pins that revision.
+  `pack update` follows the store index for store packs and the default
+  branch for unlisted git packs; path and dist packs are not updated. Old
+  revisions stay on disk until `pack remove`. `pack_install(ref)` returns the
+  `Pack`; `pack_install()` (sync) returns the list of packs it installed.
+* **Unported metacheck modules.** The built-in `pack.json` also lists
+  `metacheck_modules`: every metacheck module, ported or not (a test keeps it
+  equal to `upstream/metacheck/inst/modules`). Presets may name any of them,
+  not only those in the three built-in presets, so field presets can use
+  modules still being ported (they fail per module until then).
+* **`pack check`.** `registry.overlay()` makes the checked folder an active
+  pack in the current context only, so its presets and `pack::name` refs
+  resolve without touching config. Modules run on `demopaper()`, two
+  `test_paper()`s and a paper list; modules requiring `network`/`llm` are
+  not run. A preset extending a pack that is not active is a warning, not an
+  error. Each issue has a `code` (the built-in contract test filters on them).
+* **Authoring.** `module_template()` does not overwrite an existing file
+  unless `overwrite=True` (R's does). `pack_new()` names its example module
+  `<pack>_example` and requires `pytacheck>=<major.minor>` so development
+  builds pass.
+* **Run records.** Module entries carry `status` (`ok`/`fail`), `error` for
+  failures and `label` when the output label differs from the module name.
+  `run_modules(paper, selection)` accepts a `Selection`, `(ref, args)` pairs,
+  refs or one ref; failed modules have the shape of metacheck's
+  `report_module_run()` failures (as in `pytacheck.report`, `section` is
+  `None`). `rerun()` also takes `yes=`; pack modules run from the recorded
+  commit's install folder (installed, not pinned, with `install=True`);
+  built-in version or file-hash differences only warn.
+* **Report integration.** Not wired yet: `pytacheck.report` belongs to the
+  report port. The hook is `chain = run_modules(paper, selection)` (inside
+  `report()`, replacing its own loop) and embedding
+  `chain.run_record.to_html()` in the HTML. Meanwhile `pytacheck report
+  --record` builds the record from the report's module outputs.
+* **CLI.** `presets show REF` is accepted as well as `presets REF`. Tables
+  print as plain aligned text when stdout is not a terminal. Extra flags:
+  `rerun --yes/--record/--json`, `store add|remove --project --yes`,
+  `store build --repo`, `pack show --json`. `init` with several presets saves
+  a config preset `mine` extending them.
+* **API.** Without `modules` or `preset`, `/paper/check` runs a preset
+  configured for the server (`use()`, `PYTACHECK_PRESET` or config) if there
+  is one, else every available module (plumber's behaviour). Modules still
+  run independently on the paper, as in plumber. Every upload endpoint's
+  blocking work runs in a worker thread behind a per-event-loop semaphore.

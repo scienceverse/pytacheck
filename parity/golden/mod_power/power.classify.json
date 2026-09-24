@@ -1,0 +1,275 @@
+{
+  "id": "power.classify",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "power"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Power Analysis Check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "method"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 9,
+        "names": [
+          "text_id",
+          "section_id",
+          "paragraph_id",
+          "text",
+          "formatted",
+          "paper_id",
+          "header",
+          "section_type",
+          "power_type",
+          "complete",
+          "power_id"
+        ],
+        "v": [
+          {
+            "t": "lgl",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              1,
+              2,
+              3,
+              5,
+              4,
+              7,
+              9,
+              6
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "An a-priori power analysis showed that 50 participants give 80% power.",
+              "A sensitivity power analysis showed that 50 participants give 80% power for d = 0.4.",
+              "A compromise power analysis balanced alpha and beta for 50 participants.",
+              "A post-hoc power analysis showed 45% power.",
+              "An A Posteriori power analysis gave 20% power.",
+              "The retrospective power was 30% for the observed effect size.",
+              "We had 95% power to detect our effect.",
+              "We had 95% power to detect our effect.",
+              "The observed power of the test was 0.25 (small effect)."
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "12409a36dd5a12",
+              "12409a36dd5a12",
+              "12409a36dd5a12",
+              "12409a36dd5a12",
+              "12409a36dd5a12",
+              "12409a36dd5a12",
+              "12409a36dd5a12",
+              "12409a36dd5a12",
+              "12409a36dd5a12"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Test",
+              "Test",
+              "Test",
+              "Test",
+              "Test",
+              "Test",
+              "Test",
+              "Test",
+              "Test"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "unknown",
+              "unknown",
+              "unknown",
+              "unknown",
+              "unknown",
+              "unknown",
+              "unknown",
+              "unknown",
+              "unknown"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "apriori",
+              "sensitivity",
+              "compromise",
+              "posthoc",
+              "posthoc",
+              "posthoc",
+              "unknown",
+              "unknown",
+              "unknown"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "You chose to not use an LLM to assess if all information was reported, so please check for all required information manually.",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(power_id = 1:9, power_type = c(\"apriori\", \"sensitivity\", \n\"compromise\", \"posthoc\", \"posthoc\", \"posthoc\", \"unknown\", \"unknown\", \n\"unknown\")), row.names = c(NA, -9L), class = c(\"tbl_df\", \"tbl\", \n\"data.frame\"))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 5, FALSE)\n```\n",
+          "You reported a power analysis that has been classified as 'post-hoc'. Calculating observed power is [almost never useful](https://lakens.github.io/statistical_inferences/08-samplesizejustification.html#sec-posthocpower). If you actually performed a sensitivity power analysis, label it as such explicitly.",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(power_id = c(\"1\", \"2\", \"3\", \"4\", \"5\", \"6\", \"7;8\", \n\"9\"), text = c(\"An <strong>a-priori<\/strong> <strong>power<\/strong> analysis showed that 50 participants give 80% <strong>power<\/strong>.\", \n\"A <strong>sensitivity<\/strong> <strong>power<\/strong> analysis showed that 50 participants give 80% <strong>power<\/strong> for d = 0.4.\", \n\"A compromise <strong>power<\/strong> analysis balanced alpha and beta for 50 participants.\", \n\"A <strong>post-hoc<\/strong> <strong>power<\/strong> analysis showed 45% <strong>power<\/strong>.\", \n\"An <strong>A Posteriori<\/strong> <strong>power<\/strong> analysis gave 20% <strong>power<\/strong>.\", \n\"The <strong>retrospective power<\/strong> was 30% for the observed effect size.\", \n\"We had 95% <strong>power<\/strong> to detect our effect.\", \"The <strong>observed power<\/strong> of the test was 0.25 (small effect).\"\n)), row.names = c(NA, -8L), class = c(\"tbl_df\", \"tbl\", \"data.frame\"\n))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 5, FALSE)\n```\n",
+          "::: {.callout-tip title=\"Learn More\" collapse=\"true\"}\n\nPower analyses need to contain the following information to be interpretable: the type of power analysis, the statistical test, the software used, sample size, critical alpha criterion, power level, effect size, and an effect size metric. In addition, it is recommended to make sure the power analysis is reproducible (by sharing the code, or a screenshot, of the power analysis), and to provide good arguments for why the study was designed to detect an effect of this size.\n\nFor an a-priori power analysis, where the sample size is determined, reporting all information would look like:\n\n> An a priori power analysis for an independent samples t-test, conducted using the pwr.t.test function from pwr (Champely, 2020), indicated that for a Cohen's d = 0.5, an alpha level of 0.05, and a desired power level of 80% required at least 64 participants in each group.\n\nFor a sensitivity power analysis, this sentence would look like:\n\n> A sensitivity power analysis for an independent samples t-test, conducted using the pwr.t.test function from pwr (Champely, 2020), indicated that with 64 participants in each group, and an alpha level of 0.05, a desired power level of 80% was reached for an effect size of d = 0.5.\n\n:::\n"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "yellow"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "We detected 9 potential power analyses."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "power_n",
+          "power_complete"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "12409a36dd5a12"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              9
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              null
+            ]
+          }
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0
+        ],
+        "names": [
+          "power_n"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

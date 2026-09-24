@@ -76,10 +76,14 @@ def _is_empty(x: dict[str, Any]) -> bool:
 
 
 def _as_vector(x: dict[str, Any]) -> dict[str, Any] | None:
-    """View a list of length-1 vectors as a vector."""
+    """View a list of length-1 vectors as a vector.
+
+    A named list keeps its names, so an R named vector (``c(power_n = 0)``)
+    equals the Python ``dict`` of the same names and values.
+    """
     if x.get("t") in _VECTOR_TYPES:
         return x
-    if x.get("t") != "list" or x.get("names"):
+    if x.get("t") != "list":
         return None
     vals = []
     types = set()
@@ -92,7 +96,10 @@ def _as_vector(x: dict[str, Any]) -> dict[str, Any] | None:
         types.add(el["t"])
         vals.append(el["v"][0])
     t = "dbl" if types <= {"int", "dbl"} and types else (types.pop() if len(types) == 1 else "chr")
-    return {"t": t, "v": vals}
+    out: dict[str, Any] = {"t": t, "v": vals}
+    if x.get("names"):
+        out["names"] = x["names"]
+    return out
 
 
 def _records_as_frame(x: dict[str, Any]) -> dict[str, Any] | None:

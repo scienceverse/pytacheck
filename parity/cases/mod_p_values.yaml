@@ -1,0 +1,205 @@
+"area": "mod_p_values"
+"cases":
+# ---------------------------------------------------------------- all_p_values
+- "id": "all_p_values.demo"
+  "module": "all_p_values"
+  "args": {"paper": {"$paper": "demo"}}
+- "id": "all_p_values.psychsci"
+  "module": "all_p_values"
+  "args":
+    "paper": {"$read": ["upstream/metacheck/tests/testthat/fixtures/psychsci/0956797613520608.json", "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614522816.json", "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614527830.json", "upstream/metacheck/inst/demos/to_err_is_human.json"]}
+- "id": "all_p_values.none"
+  "module": "all_p_values"
+  "args":
+    "paper": {"$test_paper": {"text": ["Nothing here.", "The p-value is 0.03, a threshold discussion."]}}
+  "compare": {"ignore": ["paper_id", "table.paper_id", "summary_table.paper_id"]}
+- "id": "all_p_values.single"
+  "module": "all_p_values"
+  "args":
+    "paper": {"$test_paper": {"text": ["The effect was reliable, p = .01."]}}
+  "compare": {"ignore": ["paper_id", "table.paper_id", "summary_table.paper_id"]}
+- "id": "all_p_values.formats"
+  "module": "all_p_values"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+          - "Bad p-value example (p < .05) and p > 0.10."
+          - "Scientific: p = 5.0 x 10^-2, p = 5.0e-2, p < 2.2e-16 and P = .5."
+          - "Odd comparators: p ≤ .001, p ≈ .05, p ≠ .04, p ≥ .9, p ≪ .01, p ~ .3, p <= .02."
+          - "Non-significant p = n.s., p=ns and p-value = .031, pvalue < .1."
+          - "No p here, nor in the p-value of 0.03."
+  "compare": {"ignore": ["paper_id", "table.paper_id", "summary_table.paper_id"]}
+- "id": "all_p_values.paperlist"
+  "module": "all_p_values"
+  "args":
+    "paper":
+      "$expr":
+        "r": "paperlist(local({p <- test_paper(c('t(10) = 2.1, p = .05', 'p < .01 and p = .2')); p$paper_id <- 'b'; p}), local({p <- test_paper(c('none')); p$paper_id <- 'B'; p}), local({p <- test_paper(c('none', 'p = n.s.')); p$paper_id <- 'a'; p}))"
+        "py": "pc.PaperList([(lambda p, i: (p.__setitem__('paper_id', i), p)[1])(pc.test_paper(t), i) for t, i in [(['t(10) = 2.1, p = .05', 'p < .01 and p = .2'], 'b'), (['none'], 'B'), (['none', 'p = n.s.'], 'a')]])"
+# ---------------------------------------------------------------- stat_p_exact
+- "id": "stat_p_exact.demo"
+  "module": "stat_p_exact"
+  "args": {"paper": {"$paper": "demo"}}
+- "id": "stat_p_exact.psychsci"
+  "module": "stat_p_exact"
+  "args":
+    "paper": {"$read": ["upstream/metacheck/tests/testthat/fixtures/psychsci/0956797613520608.json", "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614522816.json", "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614527830.json", "upstream/metacheck/inst/demos/to_err_is_human.json"]}
+- "id": "stat_p_exact.none"
+  "module": "stat_p_exact"
+  "args":
+    "paper": {"$test_paper": {"text": ["Nothing here.", "Or here."]}}
+  "compare": {"ignore": ["paper_id", "table.paper_id", "summary_table.paper_id"]}
+- "id": "stat_p_exact.green"
+  "module": "stat_p_exact"
+  "args":
+    "paper": {"$test_paper": {"text": ["The p = .0123"]}}
+  "compare": {"ignore": ["paper_id", "table.paper_id", "summary_table.paper_id"]}
+- "id": "stat_p_exact.green_several"
+  "module": "stat_p_exact"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+          - "Fine: p = .031, p < .001 and p < .0005."
+          - "Scientific: p = 2.1 x 10^-5 and p < 2.2e-16."
+          - "Quirk: p < .000 is neither imprecise nor zero."
+  "compare": {"ignore": ["paper_id", "table.paper_id", "summary_table.paper_id"]}
+- "id": "stat_p_exact.imprecise"
+  "module": "stat_p_exact"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+          - "Bad p-value example (p < .05)"
+          - "Bad p-value example (p<.05)"
+          - "Bad p-value example (p < 0.05)"
+          - "Bad p-value example; p < .05"
+          - "Bad p-value example (p < .005)"
+          - "Bad p-value example (p > 0.05)"
+          - "Bad p-value example (p > .1)"
+          - "Bad p-value example (p = n.s.)"
+          - "Bad p-value example; p=ns"
+          - "Bad p-value example; p ≤ .001"
+          - "OK p-value example; p < .001"
+          - "OK p-value example; p < .0005"
+  "compare": {"ignore": ["paper_id", "table.paper_id", "summary_table.paper_id"]}
+- "id": "stat_p_exact.imprecise_single"
+  "module": "stat_p_exact"
+  "args":
+    "paper": {"$test_paper": {"text": ["Only one p ≈ .05 here."]}}
+  "compare": {"ignore": ["paper_id", "table.paper_id", "summary_table.paper_id"]}
+- "id": "stat_p_exact.zero"
+  "module": "stat_p_exact"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+          - "Significant result (p = .000)"
+          - "Significant result (p = 0.000)"
+          - "Significant result (p = 0.00)"
+  "compare": {"ignore": ["paper_id", "table.paper_id", "summary_table.paper_id"]}
+- "id": "stat_p_exact.zero_single"
+  "module": "stat_p_exact"
+  "args":
+    "paper": {"$test_paper": {"text": ["Significant result (p = .000)", "Exact result (p = .012)"]}}
+  "compare": {"ignore": ["paper_id", "table.paper_id", "summary_table.paper_id"]}
+- "id": "stat_p_exact.both"
+  "module": "stat_p_exact"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+          - "Imprecise p-value example (p < .05)"
+          - "Zero p-value example (p = .000)"
+  "compare": {"ignore": ["paper_id", "table.paper_id", "summary_table.paper_id"]}
+- "id": "stat_p_exact.stars"
+  "module": "stat_p_exact"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+          - "Note. * p < .05, ** p < .01, *** p < .001."
+          - "We found a difference, p < .05 (see Table 1; *P<0.01)."
+          - "Values marked * p < .10 were marginal."
+          - "Also *p < .005 is excluded by the star pattern."
+          - "A real imprecise value, P < .05."
+  "compare": {"ignore": ["paper_id", "table.paper_id", "summary_table.paper_id"]}
+- "id": "stat_p_exact.duplicates"
+  "module": "stat_p_exact"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+          - "Dup p < .05 and p < .05."
+          - "Dup p < .05 and p < .05."
+          - "Zero p = .000 and p = .000."
+  "compare": {"ignore": ["paper_id", "table.paper_id", "summary_table.paper_id"]}
+- "id": "stat_p_exact.paperlist"
+  "module": "stat_p_exact"
+  "args":
+    "paper":
+      "$expr":
+        "r": "paperlist(local({p <- test_paper(c('Result p < .05.', 'Another p = .031.')); p$paper_id <- 'b'; p}), local({p <- test_paper(c('Zero p = .000.')); p$paper_id <- 'B'; p}), local({p <- test_paper(c('Both p > .1 and p = 0.00.')); p$paper_id <- 'a'; p}), local({p <- test_paper(c('Fine p = .012.')); p$paper_id <- 'c'; p}), local({p <- test_paper(c('No stats here.')); p$paper_id <- 'd'; p}))"
+        "py": "pc.PaperList([(lambda p, i: (p.__setitem__('paper_id', i), p)[1])(pc.test_paper(t), i) for t, i in [(['Result p < .05.', 'Another p = .031.'], 'b'), (['Zero p = .000.'], 'B'), (['Both p > .1 and p = 0.00.'], 'a'), (['Fine p = .012.'], 'c'), (['No stats here.'], 'd')]])"
+- "id": "stat_p_exact.paperlist_green"
+  "module": "stat_p_exact"
+  "args":
+    "paper":
+      "$expr":
+        "r": "paperlist(local({p <- test_paper(c('Fine p = .012.')); p$paper_id <- 'b'; p}), local({p <- test_paper(c('No stats here.')); p$paper_id <- 'a'; p}))"
+        "py": "pc.PaperList([(lambda p, i: (p.__setitem__('paper_id', i), p)[1])(pc.test_paper(t), i) for t, i in [(['Fine p = .012.'], 'b'), (['No stats here.'], 'a')]])"
+# --------------------------------------------------------------- stat_p_nonsig
+- "id": "stat_p_nonsig.demo"
+  "module": "stat_p_nonsig"
+  "args": {"paper": {"$paper": "demo"}}
+- "id": "stat_p_nonsig.psychsci"
+  "module": "stat_p_nonsig"
+  "args":
+    "paper": {"$read": ["upstream/metacheck/tests/testthat/fixtures/psychsci/0956797613520608.json", "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614522816.json", "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614527830.json", "upstream/metacheck/inst/demos/to_err_is_human.json"]}
+- "id": "stat_p_nonsig.none"
+  "module": "stat_p_nonsig"
+  "args":
+    "paper": {"$test_paper": {"text": ["Nothing here.", "Or here."]}}
+  "compare": {"ignore": ["paper_id", "table.paper_id", "summary_table.paper_id"]}
+- "id": "stat_p_nonsig.all_significant"
+  "module": "stat_p_nonsig"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+          - "Boundary p = .05 and p < .001."
+          - "Other comparators p ≤ .01, p <= .02 and p =< .04."
+          - "Scientific p = 5.0 x 10^-2."
+  "compare": {"ignore": ["paper_id", "table.paper_id", "summary_table.paper_id"]}
+- "id": "stat_p_nonsig.single"
+  "module": "stat_p_nonsig"
+  "args":
+    "paper": {"$test_paper": {"text": ["Significant; p ≤ .01", "Nonsignificant; p = .20"]}}
+  "compare": {"ignore": ["paper_id", "table.paper_id", "summary_table.paper_id"]}
+- "id": "stat_p_nonsig.several"
+  "module": "stat_p_nonsig"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+          - "There was no difference, p > .05."
+          - "Not significant (p = n.s.) and p=ns."
+          - "Borderline p = .051, p ≥ .01 and p ≈ .03."
+          - "Significant p = .049, but p < .10 and p ~ .02."
+          - "Scientific p = 5.1 x 10^-2 and p = 5.0e-2."
+  "compare": {"ignore": ["paper_id", "table.paper_id", "summary_table.paper_id"]}
+- "id": "stat_p_nonsig.paperlist"
+  "module": "stat_p_nonsig"
+  "args":
+    "paper":
+      "$expr":
+        "r": "paperlist(local({p <- test_paper(c('p = .20 here', 'p < .01 there')); p$paper_id <- 'b'; p}), local({p <- test_paper(c('p = .03')); p$paper_id <- 'B'; p}), local({p <- test_paper(c('none', 'p = n.s.', 'p > .05')); p$paper_id <- 'a'; p}), local({p <- test_paper(c('none')); p$paper_id <- 'c'; p}))"
+        "py": "pc.PaperList([(lambda p, i: (p.__setitem__('paper_id', i), p)[1])(pc.test_paper(t), i) for t, i in [(['p = .20 here', 'p < .01 there'], 'b'), (['p = .03'], 'B'), (['none', 'p = n.s.', 'p > .05'], 'a'), (['none'], 'c')]])"
+- "id": "stat_p_nonsig.paperlist_green"
+  "module": "stat_p_nonsig"
+  "args":
+    "paper":
+      "$expr":
+        "r": "paperlist(local({p <- test_paper(c('p = .03')); p$paper_id <- 'b'; p}), local({p <- test_paper(c('none')); p$paper_id <- 'a'; p}))"
+        "py": "pc.PaperList([(lambda p, i: (p.__setitem__('paper_id', i), p)[1])(pc.test_paper(t), i) for t, i in [(['p = .03'], 'b'), (['none'], 'a')]])"

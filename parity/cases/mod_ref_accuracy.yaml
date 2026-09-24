@@ -1,0 +1,414 @@
+# Parity cases for the ref_accuracy and ref_consistency modules.
+# Edited demo papers come from tests/mod_ref_accuracy/edits.R (R) and
+# tests/mod_ref_accuracy/edits.py (Python); report_tables cases compare the
+# data behind each report table (the prose comparison skips table widgets).
+"area": "mod_ref_accuracy"
+"cases":
+- "id": "ref_accuracy.demo"
+  "module": "ref_accuracy"
+  "args":
+    "paper": &id001
+      "$paper": "demo"
+- "id": "ref_accuracy.psychsci"
+  "module": "ref_accuracy"
+  "args":
+    "paper":
+      "$read": &id002
+      - "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797613520608.json"
+      - "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614522816.json"
+      - "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614527830.json"
+      - "upstream/metacheck/inst/demos/to_err_is_human.json"
+- "id": "ref_accuracy.no_refs.test_paper"
+  "module": "ref_accuracy"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "No references here."
+  "compare": &id003
+    "ignore":
+    - "paper_id"
+    - "table.paper_id"
+    - "summary_table.paper_id"
+- "id": "ref_accuracy.no_refs.empty_bib"
+  "module": "ref_accuracy"
+  "args":
+    "paper":
+      "$expr":
+        "r": "source(file.path(root, \"tests/mod_ref_accuracy/edits.R\")); ra_demo(drop = c(\"bib_match\"), empty = c(\"bib\"))"
+        "py": "__import__(\"tests.mod_ref_accuracy.edits\", fromlist=[\"x\"]).ra_demo(drop=['bib_match'], empty=['bib'])"
+- "id": "ref_accuracy.no_refs.empty_bib_with_match"
+  "module": "ref_accuracy"
+  "args":
+    "paper":
+      "$expr":
+        "r": "source(file.path(root, \"tests/mod_ref_accuracy/edits.R\")); ra_demo(empty = c(\"bib\"))"
+        "py": "__import__(\"tests.mod_ref_accuracy.edits\", fromlist=[\"x\"]).ra_demo(empty=['bib'])"
+- "id": "ref_accuracy.no_bib_match.dropped"
+  "module": "ref_accuracy"
+  "args":
+    "paper":
+      "$expr":
+        "r": "source(file.path(root, \"tests/mod_ref_accuracy/edits.R\")); ra_demo(drop = c(\"bib_match\"))"
+        "py": "__import__(\"tests.mod_ref_accuracy.edits\", fromlist=[\"x\"]).ra_demo(drop=['bib_match'])"
+- "id": "ref_accuracy.no_bib_match.empty"
+  "module": "ref_accuracy"
+  "args":
+    "paper":
+      "$expr":
+        "r": "source(file.path(root, \"tests/mod_ref_accuracy/edits.R\")); ra_demo(empty = c(\"bib_match\"))"
+        "py": "__import__(\"tests.mod_ref_accuracy.edits\", fromlist=[\"x\"]).ra_demo(empty=['bib_match'])"
+- "id": "ref_accuracy.journal.mismatch"
+  "module": "ref_accuracy"
+  "args":
+    "paper":
+      "$expr":
+        "r": "source(file.path(root, \"tests/mod_ref_accuracy/edits.R\")); ra_demo(list(list(\"bib\", 1L, \"container\", \"A Completely Different Journal Name\")))"
+        "py": "__import__(\"tests.mod_ref_accuracy.edits\", fromlist=[\"x\"]).ra_demo([('bib', 1, 'container', 'A Completely Different Journal Name')])"
+- "id": "ref_accuracy.journal.abbreviations"
+  "module": "ref_accuracy"
+  "args":
+    "paper":
+      "$expr":
+        "r": "source(file.path(root, \"tests/mod_ref_accuracy/edits.R\")); ra_demo(list(list(\"bib\", 1L, \"container\", \"Am. Psychol.\"), list(\"bib\", 2L, \"container\", \"Psychological Review\"), list(\"bib\", 3L, \"container\", \"Adv. Methods Pract. Psychol. Sci.\"), list(\"bib\", 0L, \"container\", \"The Journal & Stuff\")))"
+        "py": "__import__(\"tests.mod_ref_accuracy.edits\", fromlist=[\"x\"]).ra_demo([('bib', 1, 'container', 'Am. Psychol.'), ('bib', 2, 'container', 'Psychological Review'), ('bib', 3, 'container', 'Adv. Methods Pract. Psychol. Sci.'), ('bib', 0, 'container', 'The Journal & Stuff')])"
+- "id": "ref_accuracy.journal.tokens"
+  "module": "ref_accuracy"
+  "args":
+    "paper":
+      "$expr":
+        "r": "source(file.path(root, \"tests/mod_ref_accuracy/edits.R\")); ra_demo(list(list(\"bib\", 1L, \"container\", \"J. Pers. Soc. Psychol.\"), list(\"bib_match\", 1L, \"container\", \"Journal of Personality &amp; Social Psychology\"), list(\"bib\", 2L, \"container\", \"!!!\"), list(\"bib\", 3L, \"container\", \"  \"), list(\"bib_match\", 3L, \"container\", \"Psychological Science (Wiley-Blackwell)\")))"
+        "py": "__import__(\"tests.mod_ref_accuracy.edits\", fromlist=[\"x\"]).ra_demo([('bib', 1, 'container', 'J. Pers. Soc. Psychol.'), ('bib_match', 1, 'container', 'Journal of Personality &amp; Social Psychology'), ('bib', 2, 'container', '!!!'), ('bib', 3, 'container', '  '), ('bib_match', 3, 'container', 'Psychological Science (Wiley-Blackwell)')])"
+- "id": "ref_accuracy.journal.order"
+  "module": "ref_accuracy"
+  "args":
+    "paper":
+      "$expr":
+        "r": "source(file.path(root, \"tests/mod_ref_accuracy/edits.R\")); ra_demo(list(list(\"bib\", 1L, \"container\", \"Psychologist American\"), list(\"bib\", 2L, \"container\", \"Science: Psychological\"), list(\"bib_match\", 3L, \"container\", \"Psychological Science\"), list(\"bib\", 3L, \"container\", \"Psychological Sciences Review\")))"
+        "py": "__import__(\"tests.mod_ref_accuracy.edits\", fromlist=[\"x\"]).ra_demo([('bib', 1, 'container', 'Psychologist American'), ('bib', 2, 'container', 'Science: Psychological'), ('bib_match', 3, 'container', 'Psychological Science'), ('bib', 3, 'container', 'Psychological Sciences Review')])"
+- "id": "ref_accuracy.missing_values"
+  "module": "ref_accuracy"
+  "args":
+    "paper":
+      "$expr":
+        "r": "source(file.path(root, \"tests/mod_ref_accuracy/edits.R\")); ra_demo(list(list(\"bib\", 1L, \"container\", NA), list(\"bib_match\", 2L, \"container\", \"\"), list(\"bib\", 2L, \"year\", NA), list(\"bib\", 1L, \"title\", NA), list(\"bib_match\", 2L, \"title\", NA), list(\"bib\", 2L, \"authors\", NA)))"
+        "py": "__import__(\"tests.mod_ref_accuracy.edits\", fromlist=[\"x\"]).ra_demo([('bib', 1, 'container', None), ('bib_match', 2, 'container', ''), ('bib', 2, 'year', None), ('bib', 1, 'title', None), ('bib_match', 2, 'title', None), ('bib', 2, 'authors', None)])"
+- "id": "ref_accuracy.authors.mismatch"
+  "module": "ref_accuracy"
+  "args":
+    "paper":
+      "$expr":
+        "r": "source(file.path(root, \"tests/mod_ref_accuracy/edits.R\")); ra_demo(list(list(\"bib\", 1L, \"authors\", \"Nonexistent, A; Madeup, B\")))"
+        "py": "__import__(\"tests.mod_ref_accuracy.edits\", fromlist=[\"x\"]).ra_demo([('bib', 1, 'authors', 'Nonexistent, A; Madeup, B')])"
+- "id": "ref_accuracy.authors.mismatch_strict"
+  "module": "ref_accuracy"
+  "args":
+    "paper":
+      "$expr":
+        "r": "source(file.path(root, \"tests/mod_ref_accuracy/edits.R\")); ra_demo(list(list(\"bib\", 1L, \"authors\", \"Nonexistent, A; Madeup, B\")))"
+        "py": "__import__(\"tests.mod_ref_accuracy.edits\", fromlist=[\"x\"]).ra_demo([('bib', 1, 'authors', 'Nonexistent, A; Madeup, B')])"
+    "min_mismatches": !!int "2"
+- "id": "ref_accuracy.authors.diacritics"
+  "module": "ref_accuracy"
+  "args":
+    "paper":
+      "$expr":
+        "r": "source(file.path(root, \"tests/mod_ref_accuracy/edits.R\")); ra_demo(list(list(\"bib_match\", 1L, \"authors\", data.frame(given = c(\"Alice H.\", \"Wendy\"), family = c(\"Éagly\", \"Wöod\"))), list(\"bib\", 2L, \"authors\", \"Gînø, F; Wiltermuth, S\"), list(\"bib\", 3L, \"doi\", \"10.1177/2515245918770963\"), list(\"bib_match\", 3L, \"authors\", data.frame(given = c(\"D\", \"A\", \"P\", \"Q\", \"R\", \"S\"), family = c(\"Lakens\", \"Straße\", \"Øverland\", \"Łódź\", \"İnce\", \"ΣΟΦΙΑ\"))), list(\"bib\", 3L, \"authors\", \"Lakens, D; Strasse, A; Overland, P; Lodz, Q; Ince, R; σοφια, S\")))"
+        "py": "__import__(\"tests.mod_ref_accuracy.edits\", fromlist=[\"x\"]).ra_demo([('bib_match', 1, 'authors', [{\"given\": 'Alice H.', \"family\": 'Éagly'}, {\"given\": 'Wendy', \"family\": 'Wöod'}]), ('bib', 2, 'authors', 'Gînø, F; Wiltermuth, S'), ('bib', 3, 'doi', '10.1177/2515245918770963'), ('bib_match', 3, 'authors', [{\"given\": 'D', \"family\": 'Lakens'}, {\"given\": 'A', \"family\": 'Straße'}, {\"given\": 'P', \"family\": 'Øverland'}, {\"given\": 'Q', \"family\": 'Łódź'}, {\"given\": 'R', \"family\": 'İnce'}, {\"given\": 'S', \"family\": 'ΣΟΦΙΑ'}]), ('bib', 3, 'authors', 'Lakens, D; Strasse, A; Overland, P; Lodz, Q; Ince, R; σοφια, S')])"
+- "id": "ref_accuracy.authors.diacritics_fail"
+  "module": "ref_accuracy"
+  "args":
+    "paper":
+      "$expr":
+        "r": "source(file.path(root, \"tests/mod_ref_accuracy/edits.R\")); ra_demo(list(list(\"bib\", 3L, \"doi\", \"10.1177/2515245918770963\"), list(\"bib_match\", 3L, \"authors\", data.frame(given = c(\"D\", \"A\"), family = c(\"Lakens\", \"Gredebäck\"))), list(\"bib\", 3L, \"authors\", \"Lakens, D; Gredeback, A\"), list(\"bib_match\", 2L, \"authors\", data.frame(given = c(\"F\", \"S\"), family = c(\"Gino\", \"Æsop\"))), list(\"bib\", 2L, \"authors\", \"Gino, F; Esop, S\")))"
+        "py": "__import__(\"tests.mod_ref_accuracy.edits\", fromlist=[\"x\"]).ra_demo([('bib', 3, 'doi', '10.1177/2515245918770963'), ('bib_match', 3, 'authors', [{\"given\": 'D', \"family\": 'Lakens'}, {\"given\": 'A', \"family\": 'Gredebäck'}]), ('bib', 3, 'authors', 'Lakens, D; Gredeback, A'), ('bib_match', 2, 'authors', [{\"given\": 'F', \"family\": 'Gino'}, {\"given\": 'S', \"family\": 'Æsop'}]), ('bib', 2, 'authors', 'Gino, F; Esop, S')])"
+- "id": "ref_accuracy.authors.string_record"
+  "module": "ref_accuracy"
+  "args":
+    "paper":
+      "$expr":
+        "r": "source(file.path(root, \"tests/mod_ref_accuracy/edits.R\")); ra_demo(list(list(\"bib_match\", 1L, \"authors\", \"Eagly, A; Wood, W\"), list(\"bib_match\", 2L, \"authors\", \"Nobody, X\"), list(\"bib_match\", 3L, \"authors\", \"; Lakens\")))"
+        "py": "__import__(\"tests.mod_ref_accuracy.edits\", fromlist=[\"x\"]).ra_demo([('bib_match', 1, 'authors', 'Eagly, A; Wood, W'), ('bib_match', 2, 'authors', 'Nobody, X'), ('bib_match', 3, 'authors', '; Lakens')])"
+- "id": "ref_accuracy.authors.string_record_edge"
+  "module": "ref_accuracy"
+  "args":
+    "paper":
+      "$expr":
+        "r": "source(file.path(root, \"tests/mod_ref_accuracy/edits.R\")); ra_demo(list(list(\"bib_match\", 1L, \"authors\", \"\"), list(\"bib_match\", 2L, \"authors\", \", Gino; Wiltermuth\"), list(\"bib_match\", 3L, \"authors\", NA_character_)))"
+        "py": "__import__(\"tests.mod_ref_accuracy.edits\", fromlist=[\"x\"]).ra_demo([('bib_match', 1, 'authors', ''), ('bib_match', 2, 'authors', ', Gino; Wiltermuth'), ('bib_match', 3, 'authors', None)])"
+- "id": "ref_accuracy.authors.no_family"
+  "module": "ref_accuracy"
+  "args":
+    "paper":
+      "$expr":
+        "r": "source(file.path(root, \"tests/mod_ref_accuracy/edits.R\")); ra_demo(list(list(\"bib_match\", 1L, \"authors\", data.frame(given = c(\"A\", \"B\"))), list(\"bib_match\", 2L, \"authors\", data.frame(given = character(0), family = character(0))), list(\"bib_match\", 3L, \"authors\", data.frame(given = c(\"A\", \"B\"), family = c(NA, \"Lakens\")))))"
+        "py": "__import__(\"tests.mod_ref_accuracy.edits\", fromlist=[\"x\"]).ra_demo([('bib_match', 1, 'authors', [{\"given\": \"A\"}, {\"given\": \"B\"}]), ('bib_match', 2, 'authors', pd.DataFrame({\"given\": pd.Series([], dtype=\"string\"), \"family\": pd.Series([], dtype=\"string\")})), ('bib_match', 3, 'authors', [{\"given\": \"A\", \"family\": None}, {\"given\": \"B\", \"family\": \"Lakens\"}])])"
+- "id": "ref_accuracy.authors.max_authors_default"
+  "module": "ref_accuracy"
+  "args":
+    "paper":
+      "$expr":
+        "r": "source(file.path(root, \"tests/mod_ref_accuracy/edits.R\")); ra_demo(list(list(\"bib\", 3L, \"doi\", \"10.1177/2515245918770963\")))"
+        "py": "__import__(\"tests.mod_ref_accuracy.edits\", fromlist=[\"x\"]).ra_demo([('bib', 3, 'doi', '10.1177/2515245918770963')])"
+- "id": "ref_accuracy.authors.max_authors_1"
+  "module": "ref_accuracy"
+  "args":
+    "paper":
+      "$expr":
+        "r": "source(file.path(root, \"tests/mod_ref_accuracy/edits.R\")); ra_demo(list(list(\"bib\", 3L, \"doi\", \"10.1177/2515245918770963\")))"
+        "py": "__import__(\"tests.mod_ref_accuracy.edits\", fromlist=[\"x\"]).ra_demo([('bib', 3, 'doi', '10.1177/2515245918770963')])"
+    "max_authors": !!int "1"
+- "id": "ref_accuracy.authors.empty_cited"
+  "module": "ref_accuracy"
+  "args":
+    "paper":
+      "$expr":
+        "r": "source(file.path(root, \"tests/mod_ref_accuracy/edits.R\")); ra_demo(list(list(\"bib\", 1L, \"authors\", \"\")))"
+        "py": "__import__(\"tests.mod_ref_accuracy.edits\", fromlist=[\"x\"]).ra_demo([('bib', 1, 'authors', '')])"
+- "id": "ref_accuracy.title.mismatch"
+  "module": "ref_accuracy"
+  "args":
+    "paper":
+      "$expr":
+        "r": "source(file.path(root, \"tests/mod_ref_accuracy/edits.R\")); ra_demo(list(list(\"bib\", 2L, \"title\", \"A Completely Unrelated Title About Frogs\"), list(\"bib\", 1L, \"title\", \"Something else entirely\")))"
+        "py": "__import__(\"tests.mod_ref_accuracy.edits\", fromlist=[\"x\"]).ra_demo([('bib', 2, 'title', 'A Completely Unrelated Title About Frogs'), ('bib', 1, 'title', 'Something else entirely')])"
+- "id": "ref_accuracy.title.and_author_strict"
+  "module": "ref_accuracy"
+  "args":
+    "paper":
+      "$expr":
+        "r": "source(file.path(root, \"tests/mod_ref_accuracy/edits.R\")); ra_demo(list(list(\"bib\", 2L, \"title\", \"A Completely Unrelated Title About Frogs\"), list(\"bib\", 1L, \"title\", \"Something else entirely\"), list(\"bib\", 2L, \"authors\", \"Nobody, X\")))"
+        "py": "__import__(\"tests.mod_ref_accuracy.edits\", fromlist=[\"x\"]).ra_demo([('bib', 2, 'title', 'A Completely Unrelated Title About Frogs'), ('bib', 1, 'title', 'Something else entirely'), ('bib', 2, 'authors', 'Nobody, X')])"
+    "min_mismatches": !!int "2"
+- "id": "ref_accuracy.title.similarity_strict"
+  "module": "ref_accuracy"
+  "args":
+    "paper": *id001
+    "title_similarity": !!float "0.9"
+- "id": "ref_accuracy.title.noise"
+  "module": "ref_accuracy"
+  "args":
+    "paper":
+      "$expr":
+        "r": "source(file.path(root, \"tests/mod_ref_accuracy/edits.R\")); ra_demo(list(list(\"bib\", 2L, \"title\", \"Retracted—Evil Genius: How Dis-honesty Can<sup>1</sup> Lead to “Greater” Creati vity.\"), list(\"bib\", 1L, \"title\", \"The <i>origins</i> of sex differences in human behaviour\")))"
+        "py": "__import__(\"tests.mod_ref_accuracy.edits\", fromlist=[\"x\"]).ra_demo([('bib', 2, 'title', 'Retracted—Evil Genius: How Dis-honesty Can<sup>1</sup> Lead to “Greater” Creati vity.'), ('bib', 1, 'title', 'The <i>origins</i> of sex differences in human behaviour')])"
+    "title_similarity": !!float "0.95"
+- "id": "ref_accuracy.year.default"
+  "module": "ref_accuracy"
+  "args":
+    "paper":
+      "$expr":
+        "r": "source(file.path(root, \"tests/mod_ref_accuracy/edits.R\")); ra_demo(list(list(\"bib\", 1L, \"year\", 2001L), list(\"bib\", 2L, \"year\", 2015L)))"
+        "py": "__import__(\"tests.mod_ref_accuracy.edits\", fromlist=[\"x\"]).ra_demo([('bib', 1, 'year', 2001), ('bib', 2, 'year', 2015)])"
+- "id": "ref_accuracy.year.tolerance_0"
+  "module": "ref_accuracy"
+  "args":
+    "paper":
+      "$expr":
+        "r": "source(file.path(root, \"tests/mod_ref_accuracy/edits.R\")); ra_demo(list(list(\"bib\", 1L, \"year\", 2001L), list(\"bib\", 2L, \"year\", 2015L)))"
+        "py": "__import__(\"tests.mod_ref_accuracy.edits\", fromlist=[\"x\"]).ra_demo([('bib', 1, 'year', 2001), ('bib', 2, 'year', 2015)])"
+    "year_tolerance": !!int "0"
+- "id": "ref_accuracy.year.tolerance_5"
+  "module": "ref_accuracy"
+  "args":
+    "paper":
+      "$expr":
+        "r": "source(file.path(root, \"tests/mod_ref_accuracy/edits.R\")); ra_demo(list(list(\"bib\", 1L, \"year\", 2001L), list(\"bib\", 2L, \"year\", 2015L)))"
+        "py": "__import__(\"tests.mod_ref_accuracy.edits\", fromlist=[\"x\"]).ra_demo([('bib', 1, 'year', 2001), ('bib', 2, 'year', 2015)])"
+    "year_tolerance": !!int "5"
+- "id": "ref_accuracy.doi.mismatch"
+  "module": "ref_accuracy"
+  "args":
+    "paper":
+      "$expr":
+        "r": "source(file.path(root, \"tests/mod_ref_accuracy/edits.R\")); ra_demo(list(list(\"bib_match\", 2L, \"doi\", \"10.1177/0956797614520999\"), list(\"bib\", 1L, \"doi\", \"10.1037/0003-066X.54.6.408\")))"
+        "py": "__import__(\"tests.mod_ref_accuracy.edits\", fromlist=[\"x\"]).ra_demo([('bib_match', 2, 'doi', '10.1177/0956797614520999'), ('bib', 1, 'doi', '10.1037/0003-066X.54.6.408')])"
+- "id": "ref_accuracy.green"
+  "module": "ref_accuracy"
+  "args":
+    "paper":
+      "$expr":
+        "r": "source(file.path(root, \"tests/mod_ref_accuracy/edits.R\")); ra_demo(list(list(\"bib\", 0L, \"doi\", \"\"), list(\"bib\", 4L, \"doi\", \"\")))"
+        "py": "__import__(\"tests.mod_ref_accuracy.edits\", fromlist=[\"x\"]).ra_demo([('bib', 0, 'doi', ''), ('bib', 4, 'doi', '')])"
+- "id": "ref_accuracy.green.no_report"
+  "module": "ref_accuracy"
+  "args":
+    "paper":
+      "$expr":
+        "r": "source(file.path(root, \"tests/mod_ref_accuracy/edits.R\")); ra_demo(list(list(\"bib\", 0L, \"doi\", \"\"), list(\"bib\", 4L, \"doi\", \"\"), list(\"bib\", 0L, \"text_id\", 999L), list(\"bib\", 4L, \"text_id\", 999L)))"
+        "py": "__import__(\"tests.mod_ref_accuracy.edits\", fromlist=[\"x\"]).ra_demo([('bib', 0, 'doi', ''), ('bib', 4, 'doi', ''), ('bib', 0, 'text_id', 999), ('bib', 4, 'text_id', 999)])"
+- "id": "ref_accuracy.duplicate_match"
+  "module": "ref_accuracy"
+  "args":
+    "paper":
+      "$expr":
+        "r": "source(file.path(root, \"tests/mod_ref_accuracy/edits.R\")); ra_demo(list(list(\"bib\", 2L, \"container\", \"Psychological Review\")), dup_match = c(2L, 3L))"
+        "py": "__import__(\"tests.mod_ref_accuracy.edits\", fromlist=[\"x\"]).ra_demo([('bib', 2, 'container', 'Psychological Review')], dup_match=[2, 3])"
+- "id": "ref_accuracy.green.na_doi"
+  "module": "ref_accuracy"
+  "args":
+    "paper":
+      "$expr":
+        "r": "source(file.path(root, \"tests/mod_ref_accuracy/edits.R\")); ra_demo(list(list(\"bib\", 0L, \"doi\", NA), list(\"bib\", 4L, \"doi\", \"\")))"
+        "py": "__import__(\"tests.mod_ref_accuracy.edits\", fromlist=[\"x\"]).ra_demo([('bib', 0, 'doi', None), ('bib', 4, 'doi', '')])"
+- "id": "ref_accuracy.suggest.default"
+  "module": "ref_accuracy"
+  "args":
+    "paper":
+      "$expr":
+        "r": "source(file.path(root, \"tests/mod_ref_accuracy/edits.R\")); ra_demo(list(list(\"bib\", 0L, \"doi\", \"\"), list(\"bib\", 4L, \"doi\", \"\"), list(\"bib_match\", 3L, \"title\", \"\")))"
+        "py": "__import__(\"tests.mod_ref_accuracy.edits\", fromlist=[\"x\"]).ra_demo([('bib', 0, 'doi', ''), ('bib', 4, 'doi', ''), ('bib_match', 3, 'title', '')])"
+- "id": "ref_accuracy.suggest.score_60"
+  "module": "ref_accuracy"
+  "args":
+    "paper":
+      "$expr":
+        "r": "source(file.path(root, \"tests/mod_ref_accuracy/edits.R\")); ra_demo(list(list(\"bib\", 0L, \"doi\", \"\"), list(\"bib\", 4L, \"doi\", \"\"), list(\"bib_match\", 3L, \"title\", \"\")))"
+        "py": "__import__(\"tests.mod_ref_accuracy.edits\", fromlist=[\"x\"]).ra_demo([('bib', 0, 'doi', ''), ('bib', 4, 'doi', ''), ('bib_match', 3, 'title', '')])"
+    "suggest_score": !!int "60"
+- "id": "ref_accuracy.everything_wrong"
+  "module": "ref_accuracy"
+  "args":
+    "paper":
+      "$expr":
+        "r": "source(file.path(root, \"tests/mod_ref_accuracy/edits.R\")); ra_demo(list(list(\"bib\", 2L, \"title\", \"Zzz\"), list(\"bib\", 2L, \"authors\", \"Nobody, X\"), list(\"bib\", 2L, \"container\", \"Journal of Nothing\"), list(\"bib\", 2L, \"year\", 1990L), list(\"bib_match\", 2L, \"doi\", \"10.9999/other\"), list(\"bib\", 1L, \"authors\", \"\")))"
+        "py": "__import__(\"tests.mod_ref_accuracy.edits\", fromlist=[\"x\"]).ra_demo([('bib', 2, 'title', 'Zzz'), ('bib', 2, 'authors', 'Nobody, X'), ('bib', 2, 'container', 'Journal of Nothing'), ('bib', 2, 'year', 1990), ('bib_match', 2, 'doi', '10.9999/other'), ('bib', 1, 'authors', '')])"
+- "id": "ref_accuracy.paperlist"
+  "module": "ref_accuracy"
+  "args":
+    "paper":
+      "$expr":
+        "r": "source(file.path(root, \"tests/mod_ref_accuracy/edits.R\")); paperlist(demopaper(), ra_demo(list(list(\"bib\", 1L, \"container\", \"A Completely Different Journal Name\")), paper_id = \"demo2\"), ra_demo(drop = c(\"bib_match\"), paper_id = \"demo3\"))"
+        "py": "pc.PaperList([pc.demopaper(), __import__(\"tests.mod_ref_accuracy.edits\", fromlist=[\"x\"]).ra_demo([('bib', 1, 'container', 'A Completely Different Journal Name')], paper_id='demo2'), __import__(\"tests.mod_ref_accuracy.edits\", fromlist=[\"x\"]).ra_demo(drop=['bib_match'], paper_id='demo3')])"
+- "id": "ref_accuracy.report_tables.demo"
+  "r": "identity"
+  "py": "copy.copy"
+  "args":
+    "x":
+      "$expr":
+        "r": "source(file.path(root, \"tests/mod_ref_accuracy/edits.R\")); ra_report_tables(module_run(demopaper(), \"ref_accuracy\"))"
+        "py": "__import__(\"tests.mod_ref_accuracy.edits\", fromlist=[\"x\"]).ra_report_tables(pc.module_run(pc.demopaper(), \"ref_accuracy\"))"
+- "id": "ref_accuracy.report_tables.everything_wrong"
+  "r": "identity"
+  "py": "copy.copy"
+  "args":
+    "x":
+      "$expr":
+        "r": "source(file.path(root, \"tests/mod_ref_accuracy/edits.R\")); ra_report_tables(module_run(ra_demo(list(list(\"bib\", 2L, \"title\", \"Zzz\"), list(\"bib\", 2L, \"authors\", \"Nobody, X\"), list(\"bib\", 2L, \"container\", \"Journal of Nothing\"), list(\"bib\", 2L, \"year\", 1990L), list(\"bib_match\", 2L, \"doi\", \"10.9999/other\"), list(\"bib\", 1L, \"authors\", \"\"))), \"ref_accuracy\"))"
+        "py": "__import__(\"tests.mod_ref_accuracy.edits\", fromlist=[\"x\"]).ra_report_tables(pc.module_run(__import__(\"tests.mod_ref_accuracy.edits\", fromlist=[\"x\"]).ra_demo([('bib', 2, 'title', 'Zzz'), ('bib', 2, 'authors', 'Nobody, X'), ('bib', 2, 'container', 'Journal of Nothing'), ('bib', 2, 'year', 1990), ('bib_match', 2, 'doi', '10.9999/other'), ('bib', 1, 'authors', '')]), \"ref_accuracy\"))"
+- "id": "ref_accuracy.report_tables.suggest_default"
+  "r": "identity"
+  "py": "copy.copy"
+  "args":
+    "x":
+      "$expr":
+        "r": "source(file.path(root, \"tests/mod_ref_accuracy/edits.R\")); ra_report_tables(module_run(ra_demo(list(list(\"bib\", 0L, \"doi\", \"\"), list(\"bib\", 4L, \"doi\", \"\"), list(\"bib_match\", 3L, \"title\", \"\"))), \"ref_accuracy\"))"
+        "py": "__import__(\"tests.mod_ref_accuracy.edits\", fromlist=[\"x\"]).ra_report_tables(pc.module_run(__import__(\"tests.mod_ref_accuracy.edits\", fromlist=[\"x\"]).ra_demo([('bib', 0, 'doi', ''), ('bib', 4, 'doi', ''), ('bib_match', 3, 'title', '')]), \"ref_accuracy\"))"
+- "id": "ref_accuracy.report_tables.suggest_60"
+  "r": "identity"
+  "py": "copy.copy"
+  "args":
+    "x":
+      "$expr":
+        "r": "source(file.path(root, \"tests/mod_ref_accuracy/edits.R\")); ra_report_tables(module_run(ra_demo(list(list(\"bib\", 0L, \"doi\", \"\"), list(\"bib\", 4L, \"doi\", \"\"), list(\"bib_match\", 3L, \"title\", \"\"))), \"ref_accuracy\", suggest_score = 60L))"
+        "py": "__import__(\"tests.mod_ref_accuracy.edits\", fromlist=[\"x\"]).ra_report_tables(pc.module_run(__import__(\"tests.mod_ref_accuracy.edits\", fromlist=[\"x\"]).ra_demo([('bib', 0, 'doi', ''), ('bib', 4, 'doi', ''), ('bib_match', 3, 'title', '')]), \"ref_accuracy\", suggest_score=60))"
+- "id": "ref_accuracy.report_tables.string_record"
+  "r": "identity"
+  "py": "copy.copy"
+  "args":
+    "x":
+      "$expr":
+        "r": "source(file.path(root, \"tests/mod_ref_accuracy/edits.R\")); ra_report_tables(module_run(ra_demo(list(list(\"bib_match\", 1L, \"authors\", \"Eagly, A; Wood, W\"), list(\"bib_match\", 2L, \"authors\", \"Nobody, X\"))), \"ref_accuracy\"))"
+        "py": "__import__(\"tests.mod_ref_accuracy.edits\", fromlist=[\"x\"]).ra_report_tables(pc.module_run(__import__(\"tests.mod_ref_accuracy.edits\", fromlist=[\"x\"]).ra_demo([('bib_match', 1, 'authors', 'Eagly, A; Wood, W'), ('bib_match', 2, 'authors', 'Nobody, X')]), \"ref_accuracy\"))"
+- "id": "ref_accuracy.report_tables.max_authors"
+  "r": "identity"
+  "py": "copy.copy"
+  "args":
+    "x":
+      "$expr":
+        "r": "source(file.path(root, \"tests/mod_ref_accuracy/edits.R\")); ra_report_tables(module_run(ra_demo(list(list(\"bib\", 3L, \"doi\", \"10.1177/2515245918770963\"), list(\"bib\", 3L, \"year\", 2010L))), \"ref_accuracy\", max_authors = 2L))"
+        "py": "__import__(\"tests.mod_ref_accuracy.edits\", fromlist=[\"x\"]).ra_report_tables(pc.module_run(__import__(\"tests.mod_ref_accuracy.edits\", fromlist=[\"x\"]).ra_demo([('bib', 3, 'doi', '10.1177/2515245918770963'), ('bib', 3, 'year', 2010)]), \"ref_accuracy\", max_authors=2))"
+- "id": "ref_accuracy.report_tables.duplicate_match"
+  "r": "identity"
+  "py": "copy.copy"
+  "args":
+    "x":
+      "$expr":
+        "r": "source(file.path(root, \"tests/mod_ref_accuracy/edits.R\")); ra_report_tables(module_run(ra_demo(list(list(\"bib\", 2L, \"container\", \"Psychological Review\")), dup_match = c(2L, 3L)), \"ref_accuracy\"))"
+        "py": "__import__(\"tests.mod_ref_accuracy.edits\", fromlist=[\"x\"]).ra_report_tables(pc.module_run(__import__(\"tests.mod_ref_accuracy.edits\", fromlist=[\"x\"]).ra_demo([('bib', 2, 'container', 'Psychological Review')], dup_match=[2, 3]), \"ref_accuracy\"))"
+- "id": "ref_accuracy.report_tables.paperlist"
+  "r": "identity"
+  "py": "copy.copy"
+  "args":
+    "x":
+      "$expr":
+        "r": "source(file.path(root, \"tests/mod_ref_accuracy/edits.R\")); ra_report_tables(module_run(paperlist(demopaper(), ra_demo(list(list(\"bib\", 1L, \"container\", \"A Completely Different Journal Name\")), paper_id = \"demo2\"), ra_demo(drop = c(\"bib_match\"), paper_id = \"demo3\")), \"ref_accuracy\"))"
+        "py": "__import__(\"tests.mod_ref_accuracy.edits\", fromlist=[\"x\"]).ra_report_tables(pc.module_run(pc.PaperList([pc.demopaper(), __import__(\"tests.mod_ref_accuracy.edits\", fromlist=[\"x\"]).ra_demo([('bib', 1, 'container', 'A Completely Different Journal Name')], paper_id='demo2'), __import__(\"tests.mod_ref_accuracy.edits\", fromlist=[\"x\"]).ra_demo(drop=['bib_match'], paper_id='demo3')]), \"ref_accuracy\"))"
+- "id": "ref_consistency.demo"
+  "module": "ref_consistency"
+  "args":
+    "paper": *id001
+- "id": "ref_consistency.psychsci"
+  "module": "ref_consistency"
+  "args":
+    "paper":
+      "$read": *id002
+- "id": "ref_consistency.test_paper"
+  "module": "ref_consistency"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "No references here."
+  "compare": *id003
+- "id": "ref_consistency.green"
+  "module": "ref_consistency"
+  "args":
+    "paper":
+      "$expr":
+        "r": "source(file.path(root, \"tests/mod_ref_accuracy/edits.R\")); ra_xrefs(c(0L, 1L, 3L, 4L), c(\"(DeBruine 2025)\", \"(Eagly and Wood 1999)\", \"(Lakens 2018)\", \"(Smith 2021)\"))"
+        "py": "__import__(\"tests.mod_ref_accuracy.edits\", fromlist=[\"x\"]).ra_xrefs([0, 1, 3, 4], ['(DeBruine 2025)', '(Eagly and Wood 1999)', '(Lakens 2018)', '(Smith 2021)'])"
+- "id": "ref_consistency.missing"
+  "module": "ref_consistency"
+  "args":
+    "paper":
+      "$expr":
+        "r": "source(file.path(root, \"tests/mod_ref_accuracy/edits.R\")); ra_xrefs(c(NA, NA), c(\"(Nobody 2020)\", \"(Ghost 2021)\"))"
+        "py": "__import__(\"tests.mod_ref_accuracy.edits\", fromlist=[\"x\"]).ra_xrefs([None, None], ['(Nobody 2020)', '(Ghost 2021)'])"
+- "id": "ref_consistency.unknown_id"
+  "module": "ref_consistency"
+  "args":
+    "paper":
+      "$expr":
+        "r": "source(file.path(root, \"tests/mod_ref_accuracy/edits.R\")); ra_xrefs(c(99L), c(\"(Ghost 2020)\"))"
+        "py": "__import__(\"tests.mod_ref_accuracy.edits\", fromlist=[\"x\"]).ra_xrefs([99], ['(Ghost 2020)'])"
+- "id": "ref_consistency.no_xref"
+  "module": "ref_consistency"
+  "args":
+    "paper":
+      "$expr":
+        "r": "source(file.path(root, \"tests/mod_ref_accuracy/edits.R\")); ra_demo(empty = c(\"xref\"))"
+        "py": "__import__(\"tests.mod_ref_accuracy.edits\", fromlist=[\"x\"]).ra_demo(empty=['xref'])"
+- "id": "ref_consistency.paperlist"
+  "module": "ref_consistency"
+  "args":
+    "paper":
+      "$expr":
+        "r": "source(file.path(root, \"tests/mod_ref_accuracy/edits.R\")); paperlist(demopaper(), ra_xrefs(c(0L, 1L, 3L, 4L, NA), c(\"(DeBruine 2025)\", \"(Eagly and Wood 1999)\", \"(Lakens 2018)\", \"(Smith 2021)\", \"(Nobody)\"), paper = ra_demo(paper_id = \"demo2\")), ra_demo(empty = c(\"bib\"), paper_id = \"demo3\"), ra_xrefs(c(0L, 1L, 3L, 4L), c(\"(DeBruine 2025)\", \"(Eagly and Wood 1999)\", \"(Lakens 2018)\", \"(Smith 2021)\"), paper = ra_demo(paper_id = \"demo4\")))"
+        "py": "pc.PaperList([pc.demopaper(), __import__(\"tests.mod_ref_accuracy.edits\", fromlist=[\"x\"]).ra_xrefs([0, 1, 3, 4, None], ['(DeBruine 2025)', '(Eagly and Wood 1999)', '(Lakens 2018)', '(Smith 2021)', '(Nobody)'], paper=__import__(\"tests.mod_ref_accuracy.edits\", fromlist=[\"x\"]).ra_demo(paper_id='demo2')), __import__(\"tests.mod_ref_accuracy.edits\", fromlist=[\"x\"]).ra_demo(empty=['bib'], paper_id='demo3'), __import__(\"tests.mod_ref_accuracy.edits\", fromlist=[\"x\"]).ra_xrefs([0, 1, 3, 4], ['(DeBruine 2025)', '(Eagly and Wood 1999)', '(Lakens 2018)', '(Smith 2021)'], paper=__import__(\"tests.mod_ref_accuracy.edits\", fromlist=[\"x\"]).ra_demo(paper_id='demo4'))])"
+- "id": "ref_consistency.report_tables.demo"
+  "r": "identity"
+  "py": "copy.copy"
+  "args":
+    "x":
+      "$expr":
+        "r": "source(file.path(root, \"tests/mod_ref_accuracy/edits.R\")); ra_report_tables(module_run(demopaper(), \"ref_consistency\"))"
+        "py": "__import__(\"tests.mod_ref_accuracy.edits\", fromlist=[\"x\"]).ra_report_tables(pc.module_run(pc.demopaper(), \"ref_consistency\"))"
+- "id": "ref_consistency.report_tables.missing"
+  "r": "identity"
+  "py": "copy.copy"
+  "args":
+    "x":
+      "$expr":
+        "r": "source(file.path(root, \"tests/mod_ref_accuracy/edits.R\")); ra_report_tables(module_run(ra_xrefs(c(NA), c(\"(Nobody 2020)\")), \"ref_consistency\"))"
+        "py": "__import__(\"tests.mod_ref_accuracy.edits\", fromlist=[\"x\"]).ra_report_tables(pc.module_run(__import__(\"tests.mod_ref_accuracy.edits\", fromlist=[\"x\"]).ra_xrefs([None], ['(Nobody 2020)']), \"ref_consistency\"))"

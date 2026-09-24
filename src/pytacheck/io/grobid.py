@@ -203,11 +203,18 @@ def _tokenize_sentences(x: str | None) -> list[str | None]:
     """
     if x is None:
         return [None]
-    s = _WHITESPACE_RX.sub(" ", x)
+    # stringi removes a leading byte order mark from every input string, so
+    # each of the three stringi calls drops one (replace, split, trim)
+    s = _WHITESPACE_RX.sub(" ", _drop_bom(x))
+    s = _drop_bom(s)
     if not s:
         return []
     cuts = [0, *_sentence_breaks(s), len(s)]
-    return [s[a:b].strip(" ") for a, b in itertools.pairwise(cuts) if b > a]
+    return [_drop_bom(s[a:b]).strip(" ") for a, b in itertools.pairwise(cuts) if b > a]
+
+
+def _drop_bom(s: str) -> str:
+    return s[1:] if s.startswith("\ufeff") else s
 
 
 # ---------------------------------------------------------------------------
@@ -1107,9 +1114,7 @@ def _grobid_to_bibr(xml_path: PathLikeStr, pb: Any = None) -> Paper:
         if not sec:
             # R: sapply() over zero headers returns list(), and bind_rows()
             # cannot combine that list column with the "References" row
-            raise ValueError(
-                "Can't combine `..1$header` <list> and `..2$header` <character>."
-            )
+            raise ValueError("Can't combine `..1$header` <list> and `..2$header` <character>.")
         section_id = _r_max(section["section_id"]) + 1
         section["section_id"].append(section_id)
         section["header"].append("References")

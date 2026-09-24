@@ -331,7 +331,7 @@ def store_update(name: str | None = None) -> pd.DataFrame:
     import pandas as pd
 
     names = [name] if name is not None else list(load_config().stores)
-    rows = []
+    rows: list[tuple[str, str, int | None, str]] = []
     for n in names:
         url = _store_url(n)
         try:

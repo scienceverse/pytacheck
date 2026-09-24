@@ -94,21 +94,32 @@ def _escape(text: Any) -> str:
 
 
 def _print_table(df: Any, columns: Sequence[str], *, title: str | None = None) -> None:
+    """A table on stdout: rich in a terminal, plain aligned text (never truncated) otherwise."""
     import pandas as pd
+
+    def cell(value: Any) -> str:
+        if value is None or value is pd.NA or (isinstance(value, float) and value != value):
+            return ""
+        return str(value)
+
+    rows = [[cell(row.get(c)) for c in columns] for _, row in df.iterrows()]
+    if not sys.stdout.isatty():
+        widths = [max([len(c), *(len(r[i]) for r in rows)]) for i, c in enumerate(columns)]
+        lines = [title] if title else []
+        lines.extend(
+            "  ".join(v.ljust(w) for v, w in zip(r, widths, strict=True)).rstrip()
+            for r in [list(columns), *rows]
+        )
+        print("\n".join(lines))
+        return
     from rich.console import Console
     from rich.table import Table
 
     table = Table(title=title, title_justify="left", show_edge=False, pad_edge=False)
     for col in columns:
-        table.add_column(col)
-    for _, row in df.iterrows():
-        cells = []
-        for col in columns:
-            value = row.get(col)
-            cells.append(
-                "" if value is None or value is pd.NA or value != value else _escape(value)
-            )
-        table.add_row(*cells)
+        table.add_column(col, overflow="fold")
+    for r in rows:
+        table.add_row(*(_escape(v) for v in r))
     Console().print(table)
 
 
@@ -267,7 +278,7 @@ def cmd_run(ns: argparse.Namespace) -> int:
     _announce(sel)
     with run_session():
         chain = run_modules(papers, sel)
-    if ns.record:
+    if ns.record and chain.run_record is not None:
         path = chain.run_record.write(ns.record)
         console().print(f"[dim]Run record: {_escape(path)}[/]")
     _print_outputs(list(chain), ns.json)
@@ -300,7 +311,7 @@ def cmd_report(ns: argparse.Namespace) -> int:
     with run_session():
         result = report(papers, modules=modules, args=args or None, **kwargs)
     if ns.record:
-        outputs = result
+        outputs: Any = result
         if not hasattr(result, "paper"):  # a ReportList: record the first report
             outputs = next((r for r in result.values() if r is not None), {})
         path = RunRecord.build(outputs, selection=sel, papers=papers).write(ns.record)
@@ -317,7 +328,7 @@ def cmd_rerun(ns: argparse.Namespace) -> int:
     chain = rerun(
         ns.record_file, papers, install=ns.install, allow_modified=ns.allow_modified, yes=ns.yes
     )
-    if ns.record:
+    if ns.record and chain.run_record is not None:
         path = chain.run_record.write(ns.record)
         console().print(f"[dim]Run record: {_escape(path)}[/]")
     _print_outputs(list(chain), ns.json)

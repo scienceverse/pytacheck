@@ -334,7 +334,9 @@ def test_many_sites_is_fast() -> None:
         rows += [(f"s{i}", "t", f"{i / 7:.4f}"), (f"s{i}", "p", f"{(i % 97) / 1000:.4f}"),
                  (f"s{i}", "df", str(i % 50 + 5)), (f"s{i}", "d", f"{i / 1000:.3f}")]  # fmt: skip
     long = _long(rows)
-    texts = [f"Test {i}: t({i % 50 + 5}) = {i / 7:.2f}, p = {(i % 97) / 1000:.3f}." for i in range(300)]
+    texts = [
+        f"Test {i}: t({i % 50 + 5}) = {i / 7:.2f}, p = {(i % 97) / 1000:.3f}." for i in range(300)
+    ]
     start = time.perf_counter()
     res = match_reported_output(pc.test_paper(texts), long)
     elapsed = time.perf_counter() - start

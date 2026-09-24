@@ -292,7 +292,26 @@ def _series(s: Any) -> Any:
         return RVec("lgl", [None if na(v) else bool(v) for v in vals])
     if not kinds:
         return RVec("lgl", [None] * len(vals))
-    return RList([None if na(v) and not isinstance(v, list) else as_robj(v) for v in vals])
+    return RList(
+        [None if na(v) and not isinstance(v, list) else _list_cell_robj(v) for v in vals]
+    )
+
+
+def _list_cell_robj(v: Any) -> Any:
+    """A list-column cell: a Python list of scalars is the atomic vector it came from."""
+    if isinstance(v, list | tuple):
+        present = [x for x in v if x is not None]
+        if all(isinstance(x, str) for x in present) and present:
+            return RVec("chr", list(v))
+        if all(isinstance(x, bool) for x in present) and present:
+            return RVec("lgl", list(v))
+        if all(isinstance(x, int) and not isinstance(x, bool) for x in present) and present:
+            return RVec("int", [None if x is None else int(x) for x in v])
+        if all(isinstance(x, int | float) and not isinstance(x, bool) for x in present) and present:
+            return RVec("dbl", [None if x is None else float(x) for x in v])
+        if not present:  # character(0) / NA_character_: string arrays are the common case
+            return RVec("chr", [None] * len(v))
+    return as_robj(v)
 
 
 def _data_frame(df: Any) -> RList:
@@ -865,13 +884,26 @@ def _to_frame(x: RList) -> pd.DataFrame:
     return pd.DataFrame(cols)
 
 
+def _list_elem(v: Any) -> Any:
+    """One element of an R list column: vectors stay lists (``character(0)`` is ``[]``)."""
+    if isinstance(v, RVec):
+        return _atomic_values(v)
+    if isinstance(v, list | tuple):
+        return [_list_elem(x) for x in v]
+    if isinstance(v, RList):
+        return to_python(v)
+    return v
+
+
 def _to_series(col: Any) -> pd.Series:
     import pandas as pd
 
     if isinstance(col, RList):
         if "data.frame" in _classes(col):  # a data-frame column: one record per row
             return pd.Series(_to_frame(col).to_dict("records"), dtype=object)
-        return pd.Series([to_python(v) for v in col.values], dtype=object)
+        return pd.Series([_list_elem(v) for v in col.values], dtype=object)
+    if isinstance(col, list | tuple):  # a list column built in Python (convert_from_type)
+        return pd.Series([_list_elem(v) for v in col], dtype=object)
     if not isinstance(col, RVec):
         return pd.Series([], dtype=object)
     cls = _classes(col)

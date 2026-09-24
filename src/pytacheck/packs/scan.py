@@ -134,20 +134,22 @@ def scan_file(path: str | os.PathLike[str], rel: str | None = None) -> FileScan:
         return FileScan(rel, len(data), (), (), error=f"{type(exc).__name__}: {exc}")
     imports, names = _imports(tree)
     risky: list[tuple[str, str]] = []
+    hits: set[str] = set()
     for name in [*imports, *names]:
         hit = _matches(name, RISKY_MODULES)
-        if hit is not None and not any(r == hit for r, _ in risky):
+        if hit is not None and hit not in hits:
+            hits.add(hit)
             risky.append((name, RISKY_MODULES[hit]))
     imports = list(dict.fromkeys([*imports, *(n for n, _ in risky if n in names)]))
     for node in ast.walk(tree):
         if not isinstance(node, ast.Call):
             continue
-        name = _dotted(node.func)
-        if name is None:
+        called = _dotted(node.func)
+        if called is None:
             continue
         for call, reason in RISKY_CALLS.items():
-            if name == call or (call.startswith("os.") and name.startswith(call)):
-                risky.append((f"{name}()", reason))
+            if called == call or (call.startswith("os.") and called.startswith(call)):
+                risky.append((f"{called}()", reason))
                 break
     return FileScan(rel, len(data), tuple(imports), tuple(dict.fromkeys(risky)))
 

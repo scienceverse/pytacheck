@@ -153,6 +153,7 @@ def _parse_brace_hex(pattern: str, i: int) -> tuple[str, int]:
 def _translate_tre(pattern: str) -> str:
     out: list[str] = []
     i, n = 0, len(pattern)
+    depth = 0  # open groups; TRE reads an unmatched ")" as a literal
     while i < n:
         c = pattern[i]
         if c == "\\":
@@ -175,6 +176,17 @@ def _translate_tre(pattern: str) -> str:
             i = _copy_posix_bracket(pattern, i, out)
         elif c == "$":
             out.append(r"\Z")
+            i += 1
+        elif c == "(":
+            depth += 1
+            out.append(c)
+            i += 1
+        elif c == ")":
+            if depth:
+                depth -= 1
+                out.append(c)
+            else:
+                out.append(r"\)")
             i += 1
         else:
             out.append(c)
@@ -530,6 +542,26 @@ def grep(
     return [items[i] if value else i for i, h in enumerate(hits) if h != invert]
 
 
+@functools.lru_cache(maxsize=4096)
+def _literal_template(repl: str, perl: bool, translated: str) -> str | None:
+    """A ``regex.sub`` template for *repl*, if it is plain text and *translated*
+    provably cannot match the empty string; otherwise ``None``."""
+    if "\\" in repl:
+        stripped = regex.sub(r"\\(.)", r"\1", repl, flags=regex.DOTALL)
+        if regex.search(r"\\[1-9]", repl) or (perl and regex.search(r"\\[ULE]", repl)):
+            return None
+    else:
+        stripped = repl
+    try:
+        import re._parser as sre_parse  # the stdlib parser computes match widths
+
+        if sre_parse.parse(translated).getwidth()[0] == 0:
+            return None
+    except Exception:  # regex-module syntax the stdlib cannot parse: slow path
+        return None
+    return stripped.replace("\\", "\\\\")
+
+
 def _r_replacement(repl: str, perl: bool) -> Callable[[regex.Match[str]], str]:
     """Build a replacement function implementing R's replacement syntax.
 
@@ -606,6 +638,18 @@ def _substitute(
 
         return _vectorize(x, fixed_sub)
     rx = compile_r(pattern, ignore_case, perl, False)
+    literal = _literal_template(repl, perl, rx.pattern)
+    if literal is not None:
+        # Fast path: a plain replacement for a pattern that can never match the
+        # empty string needs neither R's replacement syntax nor the empty-match
+        # guard below, so the substitution runs entirely in C.
+        n_sub = 1 if count == 1 else 0
+
+        def literal_sub(v: Any) -> str | None:
+            s = _as_str(v)
+            return None if s is None else rx.sub(literal, s, count=n_sub)
+
+        return _vectorize(x, literal_sub)
     fn = _r_replacement(repl, perl)
 
     def do_sub(v: Any) -> str | None:

@@ -1,0 +1,153 @@
+{
+  "id": "coi_check_oi.has_coi",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "coi_check_oi"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "COI Check Overinclusive"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "general"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "text_id",
+          "section_id",
+          "paragraph_id",
+          "text",
+          "formatted",
+          "paper_id",
+          "header",
+          "section_type"
+        ],
+        "v": [
+          {
+            "t": "lgl",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "The researchers state no conflict of interest."
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "7c22f9b1177536"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "unknown"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "The following conflict of interest statement was detected.",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(\"The researchers state no conflict of interest.\"), names = \"\", class = \"data.frame\", row.names = c(NA, \n-1L))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 2, FALSE)\n```\n"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "green"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "A conflict of interest statement was detected."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "coi_found"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "7c22f9b1177536"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true
+            ]
+          }
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

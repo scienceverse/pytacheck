@@ -11,3 +11,7 @@ from pytacheck.stats.core import stats
 from pytacheck.stats.statcheck import statcheck
 
 __all__ = ["statcheck", "stats"]
+
+from pytacheck._callable import callable_module
+
+callable_module(__name__, "stats")  # pc.stats(paper) even once this package is imported

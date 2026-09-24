@@ -1,0 +1,276 @@
+{
+  "id": "stat_p_nonsig.several",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "stat_p_nonsig"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Non-Significant P Value Check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "results"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 9,
+        "names": [
+          "text_id",
+          "section_id",
+          "paragraph_id",
+          "text",
+          "formatted",
+          "paper_id",
+          "header",
+          "section_type",
+          "p_comp",
+          "p_value",
+          "significance",
+          "expanded"
+        ],
+        "v": [
+          {
+            "t": "int",
+            "v": [
+              1,
+              2,
+              2,
+              3,
+              3,
+              3,
+              4,
+              4,
+              5
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "p > .05",
+              "p = n.s.",
+              "p=ns.",
+              "p = .051",
+              "p ≥ .01 ",
+              "p ≈ .03",
+              "p < .10 ",
+              "p ~ .02",
+              "p = 5.1 x 10^-2"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "There was no difference, p > .05.",
+              "Not significant (p = n.s.) and p=ns.",
+              "Not significant (p = n.s.) and p=ns.",
+              "Borderline p = .051, p ≥ .01 and p ≈ .03.",
+              "Borderline p = .051, p ≥ .01 and p ≈ .03.",
+              "Borderline p = .051, p ≥ .01 and p ≈ .03.",
+              "Significant p = .049, but p < .10 and p ~ .02.",
+              "Significant p = .049, but p < .10 and p ~ .02.",
+              "Scientific p = 5.1 x 10^-2 and p = 5.0e-2."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "495a3edb3a803e",
+              "495a3edb3a803e",
+              "495a3edb3a803e",
+              "495a3edb3a803e",
+              "495a3edb3a803e",
+              "495a3edb3a803e",
+              "495a3edb3a803e",
+              "495a3edb3a803e",
+              "495a3edb3a803e"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Test",
+              "Test",
+              "Test",
+              "Test",
+              "Test",
+              "Test",
+              "Test",
+              "Test",
+              "Test"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "unknown",
+              "unknown",
+              "unknown",
+              "unknown",
+              "unknown",
+              "unknown",
+              "unknown",
+              "unknown",
+              "unknown"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ">",
+              "=",
+              "=",
+              "=",
+              "≥",
+              "≈",
+              "<",
+              "~",
+              "="
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0.05,
+              null,
+              null,
+              0.051,
+              0.01,
+              0.03,
+              0.1,
+              0.02,
+              0.051
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "nonsignificant",
+              "nonsignificant",
+              "nonsignificant",
+              "nonsignificant",
+              "nonsignificant",
+              "nonsignificant",
+              "nonsignificant",
+              "nonsignificant",
+              "nonsignificant"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "There was no difference, p > .05.",
+              "Not significant (p = n.s.) and p=ns.",
+              "Not significant (p = n.s.) and p=ns.",
+              "Borderline p = .051, p ≥ .01 and p ≈ .03.",
+              "Borderline p = .051, p ≥ .01 and p ≈ .03.",
+              "Borderline p = .051, p ≥ .01 and p ≈ .03.",
+              "Significant p = .049, but p < .10 and p ~ .02.",
+              "Significant p = .049, but p < .10 and p ~ .02.",
+              "Scientific p = 5.1 x 10^-2 and p = 5.0e-2."
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Meta-scientific research has shown nonsignificant p values are commonly misinterpreted. It is incorrect to infer that there is 'no effect', 'no difference', or that groups are 'the same' after p > 0.05.\n\nIt is possible that there is a true non-zero effect, but that the study did not detect it. Make sure your inference acknowledges that it is possible that there is a non-zero effect. It is correct to include the effect is 'not significantly' different, although this just restates that p > 0.05.\n\nMetacheck does not yet analyze automatically whether sentences which include non-significant p-values are correct, but we recommend manually checking the sentences below for possible misinterpreted non-significant p values.\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Text = c(\"p > .05\", \"p = n.s.\", \"p=ns.\", \"p = .051\", \n\"p ≥ .01 \", \"p ≈ .03\", \"p < .10 \", \"p ~ .02\", \"p = 5.1 x 10^-2\"\n), Sentence = c(\"There was no difference, p > .05.\", \"Not significant (p = n.s.) and p=ns.\", \n\"Not significant (p = n.s.) and p=ns.\", \"Borderline p = .051, p ≥ .01 and p ≈ .03.\", \n\"Borderline p = .051, p ≥ .01 and p ≈ .03.\", \"Borderline p = .051, p ≥ .01 and p ≈ .03.\", \n\"Significant p = .049, but p < .10 and p ~ .02.\", \"Significant p = .049, but p < .10 and p ~ .02.\", \n\"Scientific p = 5.1 x 10^-2 and p = 5.0e-2.\")), row.names = c(NA, \n-9L), class = c(\"tbl_df\", \"tbl\", \"data.frame\"))\n\n# display table -----------------------------------\nmetacheck::report_table(table, c(0.1, 0.9), 10, FALSE)\n```\n\n\n::: {.callout-tip title=\"Learn More\" collapse=\"true\"}\n\nFor metascientific articles demonstrating the rate of misinterpretations of non-significant results is high, see:\n\nAczel B, Palfi B, Szollosi A, Kovacs M, Szaszi B, Szecsi P, Zrubka M, Gronau Q, van den Bergh D, Wagenmakers E (2018). &ldquo;Quantifying Support for the Null Hypothesis in Psychology: An Empirical Investigation.&rdquo; <em>Advances in Methods and Practices in Psychological Science<\/em>, <b>1<\/b>(3), 357&ndash;366. <a href=\"https://doi.org/10.1177/2515245918773742\">doi:10.1177/2515245918773742<\/a>.\n\nMurphy S, Merz R, Reimann L, Fernández A (2025). &ldquo;Nonsignificance misinterpreted as an effect’s absence in psychology: Prevalence and temporal analyses.&rdquo; <em>Royal Society Open Science<\/em>, <b>12<\/b>(3), 242167. <a href=\"https://doi.org/10.1098/rsos.242167\">doi:10.1098/rsos.242167<\/a>.\n\nFor educational material on preventing the misinterpretation of p values, see [Improving Your Statistical Inferences](https://lakens.github.io/statistical_inferences/01-pvalue.html#sec-misconception1).\n\n:::\n"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "yellow"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "We found 9 non-significant p values that should be checked for appropriate interpretation."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "n_nonsignificant"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "495a3edb3a803e"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              9
+            ]
+          }
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

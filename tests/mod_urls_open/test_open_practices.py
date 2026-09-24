@@ -1,0 +1,284 @@
+"""Tests for the open_practices module.
+
+Ports of metacheck's tests/testthat/test-module-open-practices.R, plus checks
+of the branches (traffic lights, reports) and of the row prefilter, which
+must never change the result of the R search chains.
+"""
+
+from __future__ import annotations
+
+import copy
+
+import pandas as pd
+import pytest
+
+import pytacheck as pc
+from pytacheck.module import SECTION_LEVELS, ModuleError
+from pytacheck.modules import open_practices as op
+
+MODULE = "open_practices"
+
+
+def run(paper: object) -> pc.ModuleOutput:
+    return pc.module_run(paper, MODULE)
+
+
+# test-module-open-practices.R ---------------------------------------------
+
+
+def test_open_practices_listed() -> None:
+    assert MODULE in pc.module_list()["name"].tolist()
+
+
+def test_essential_components() -> None:
+    info = pc.module_info(MODULE)
+    assert info.title == "Open Practices Check"
+    assert info.description.startswith("This module searches for open data")
+    assert info.details.startswith("It is much faster than the previous ODDPub")
+    assert info.keywords == ("general",)
+    assert info.keywords[0] in SECTION_LEVELS
+    assert info.requires == ()
+
+
+def test_single_paper(demo: pc.Paper) -> None:
+    mo = run(demo)
+    assert mo.traffic_light == "green"
+    assert mo.table["data"].any()
+    assert mo.table["code"].any()
+    assert not mo.table["materials"].any()
+    assert mo.table["prereg"].any()
+
+
+def test_paperlist() -> None:
+    paper = pc.PaperList(
+        [
+            pc.test_paper(["Open code is available at https://github.com/repo/mine."]),
+            pc.test_paper(["Data available upon request."]),
+        ]
+    )
+    mo = run(paper)
+    assert len(mo.table) == len(paper)
+    assert mo.table["data"].tolist() == [False, True]
+    assert mo.table["code"].tolist() == [True, False]
+    assert mo.table["on_request"].tolist() == [False, True]
+
+    # on request is flagged, but is not open sharing
+    assert mo.summary_table["data_open"].tolist() == [False, False]
+    assert mo.summary_table["on_request"].tolist() == [False, True]
+    assert mo.traffic_light == "info"
+
+    # unless the same sentence also names a repository
+    paper1 = pc.test_paper(["Data are available at https://osf.io/hk4yq/; raw data on request."])
+    mo = run(paper1)
+    assert mo.summary_table["data_open"].tolist() == [True]
+    assert mo.traffic_light == "red"
+
+
+def test_only_open_data() -> None:
+    paper = pc.test_paper(
+        [
+            "Data for all experiments have been made publicly available on OSF at "
+            "https://osf.io/hk4yq/."
+        ]
+    )
+    mo = run(paper)
+    assert mo.table["data"].tolist() == [True]
+    assert mo.traffic_light == "yellow"
+    assert mo.summary_text == "Shared data detected."
+
+
+def test_only_open_code() -> None:
+    statements = [
+        "The computer code for the analyses reported here can be accessed at the Open "
+        "Science Framework (https://osf.io/geq9x/).",
+        "All analysis code for this study has been made publicly available via the Open "
+        "Science Framework and can be accessed at https://osf.io/geq9x/.",
+    ]
+    mo = run(pc.test_paper(statements))
+    assert mo.table["data"].tolist() == [False, False]
+    assert mo.table["code"].tolist() == [True, True]
+    assert mo.table["text"].tolist() == statements
+    assert mo.summary_table["data_open"].tolist() == [False]
+    assert mo.summary_table["code_open"].tolist() == [True]
+    assert mo.traffic_light == "yellow"
+    assert mo.summary_text == "Shared code detected."
+
+
+def test_open_data_and_code() -> None:
+    paper = pc.test_paper(
+        [
+            "The data and code to reproduce the findings of this study are available at the "
+            "Open Science Framework at https://osf.io/abcde."
+        ]
+    )
+    mo = run(paper)
+    assert mo.table["data"].tolist() == [True]
+    assert mo.table["code"].tolist() == [True]
+    assert mo.summary_table["data_open"].tolist() == [True]
+    assert mo.summary_table["code_open"].tolist() == [True]
+    assert mo.traffic_light == "green"
+
+
+def test_no_matches_argument_of_length_zero(psychsci: pc.PaperList) -> None:
+    # R uses psychsci$`0956797617714811` (not in the fixtures); this fixture
+    # paper also has no open-practices statements.
+    paper = psychsci["0956797613520608"]
+    mo = run(paper)
+    assert len(mo.table) == 0
+    assert mo.summary_table["data_open"].tolist() == [False]
+    assert mo.summary_table["code_open"].tolist() == [False]
+    assert mo.traffic_light == "red"
+
+
+# branches -------------------------------------------------------------------
+
+
+def test_no_statements_report() -> None:
+    mo = run(pc.test_paper(["Nothing here.", "Or here."]))
+    assert mo.traffic_light == "red"
+    assert mo.summary_text == "Neither shared data nor code detected."
+    # R's report is NULL, so module_run() falls back to the summary text
+    assert mo.report == mo.summary_text
+    assert mo.na_replace == {"data_open": False, "code_open": False}
+    st = mo.summary_table
+    assert st.columns.tolist() == [
+        "paper_id",
+        "data_open",
+        "code_open",
+        "materials_open",
+        "prereg_open",
+        "on_request",
+        "data_statements",
+        "code_statements",
+        "materials_statements",
+        "prereg_statements",
+    ]
+    assert st["data_open"].tolist() == [False]
+    assert st["materials_open"].isna().all()
+
+
+def test_empty_paper() -> None:
+    mo = run(pc.paper())
+    assert len(mo.table) == 0
+    assert mo.table.columns[-5:].tolist() == ["data", "code", "materials", "prereg", "on_request"]
+    assert mo.traffic_light == "red"
+
+
+def test_on_request_report() -> None:
+    texts = [
+        "The analysis code is available on GitHub at https://github.com/me/code.",
+        "The data are available from the corresponding author on reasonable request.",
+        "Materials can be shared by request.",
+    ]
+    mo = run(pc.test_paper(texts))
+    assert mo.traffic_light == "red"
+    assert mo.summary_text == "Shared code detected; some sharing is only on request."
+    assert len(mo.report) == 4
+    assert mo.report[0].startswith("We did not detect open sharing of data")
+    assert mo.report[1] == (
+        "Code was openly shared for this article, based on the following text:\n\n> " + texts[0]
+    )
+    assert mo.report[2].endswith("> " + texts[1])
+    assert mo.report[3].endswith("> " + texts[2])
+
+
+def test_statements_columns(demo: pc.Paper) -> None:
+    st = run(demo).summary_table
+    assert st["materials_statements"].tolist() == [None]
+    data = st["data_statements"].iloc[0]
+    assert isinstance(data, list)
+    assert len(data) == len(set(data)) == 3
+    assert st["prereg_open"].tolist() == [True]
+
+
+def test_paperlist_single_summary_row() -> None:
+    # only one paper has statements: R's single-paper branch applies
+    paper = pc.PaperList(
+        [
+            pc.test_paper(["Nothing to see."]),
+            pc.test_paper(
+                ["Data are available at https://osf.io/abc.", "Data are also available on request."]
+            ),
+        ]
+    )
+    mo = run(paper)
+    assert mo.traffic_light == "red"
+    assert mo.summary_text == "Shared data detected; some sharing is only on request."
+    assert len(mo.report) == 3
+    assert mo.summary_table["data_open"].tolist() == [False, True]
+    assert mo.summary_table["on_request"].isna().tolist() == [True, False]
+
+
+def test_paperlist_summary_text(psychsci: pc.PaperList, demo: pc.Paper) -> None:
+    papers = pc.PaperList([*psychsci, demo])
+    mo = run(papers)
+    assert mo.traffic_light == "info"
+    assert mo.summary_text == (
+        "1 papers shared both data and code, 1 only data, 0 only code, and 0 neither."
+    )
+    assert mo.report == mo.summary_text
+    # table rows follow the paper order, then text_id
+    order = {pid: i for i, pid in enumerate(papers.names)}
+    keys = list(zip(mo.table["paper_id"].map(order), mo.table["text_id"], strict=True))
+    assert keys == sorted(keys)
+
+
+def test_duplicate_paper_ids(demo: pc.Paper) -> None:
+    with pytest.raises(ModuleError, match=r"factor level \[2\] is duplicated"):
+        run(pc.PaperList([demo, demo]))
+
+
+def test_does_not_mutate_paper(demo: pc.Paper) -> None:
+    before = demo.text.copy()
+    run(demo)
+    pd.testing.assert_frame_equal(demo.text, before)
+
+
+# the prefilter is a pure optimisation ---------------------------------------
+
+ADVERSARIAL = [
+    "Data   are available on the Open\nScience\tFramework.",
+    "Code is available on<~p~>request.",
+    "Data , , are available , , at https://osf.io/x.",
+    "Our R\ncode is available at\tgithub.",
+    "Materials were shared by\n  reasonable\trequest.",
+    "The study was not pre-registered, see https://osf.io/abc.",
+    "Non-preregistered analyses: the data are on OSF, see the archive.",
+    "All r code is on GITHUB, see the online archive.",
+    "Python software is archived at Zenodo; find it there.",
+    "Plots are available at http://kaggle.com.",
+    "Figures can be found in the repository.",
+    "Nothing to see here.",
+]
+
+
+def _naive(paper: object, monkeypatch: pytest.MonkeyPatch) -> pc.ModuleOutput:
+    with monkeypatch.context() as m:
+        m.setattr(op, "_search_frame", lambda p: p)
+        return run(paper)
+
+
+@pytest.mark.parametrize("which", ["demo", "psychsci", "adversarial", "corpus"])
+def test_prefilter_matches_plain_text_search(
+    which: str, demo: pc.Paper, psychsci: pc.PaperList, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    if which == "demo":
+        paper: object = demo
+    elif which == "psychsci":
+        paper = psychsci
+    elif which == "adversarial":
+        paper = pc.test_paper(ADVERSARIAL)
+    else:
+        papers = []
+        for i, p in enumerate([*psychsci, demo, pc.test_paper(ADVERSARIAL)]):
+            q = copy.deepcopy(p)
+            q.paper_id = f"p{i}"
+            papers.append(q)
+        paper = pc.PaperList(papers)
+    fast = run(paper)
+    slow = _naive(paper, monkeypatch)
+    pd.testing.assert_frame_equal(fast.table, slow.table)
+    pd.testing.assert_frame_equal(fast.summary_table, slow.summary_table)
+    assert fast.traffic_light == slow.traffic_light
+    assert fast.summary_text == slow.summary_text
+    assert fast.report == slow.report

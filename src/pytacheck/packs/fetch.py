@@ -415,18 +415,18 @@ def resolve_rev(source: Mapping[str, Any], ref: str | None = None) -> str:
                 return sha
         if resp is not None and resp.status_code in (404, 422):
             raise PackError(f"{ref or 'HEAD'} is not a branch, tag or commit of github {slug}")
-    url = clone_url(source)
-    if url is None:
+    remote = clone_url(source)
+    if remote is None:
         raise PackError(f"Cannot resolve a revision for the source {dict(source)}")
     if ref and re.match(r"^[0-9a-f]{4,39}$", ref.lower()):
         try:
-            return _ls_remote(url, ref)
+            return _ls_remote(remote, ref)
         except PackError:
             raise PackError(
                 f"Cannot resolve the short commit id {ref!r} without the GitHub API; "
                 "give the full 40-character SHA"
             ) from None
-    return _ls_remote(url, ref)
+    return _ls_remote(remote, ref)
 
 
 def fetch_source(
