@@ -282,3 +282,130 @@ def test_prereg_schema_template() -> None:
     assert df.shape == (1, 69)
     assert list(df.columns[:3]) == ["id", "date_created", "template_name"]
     assert df.isna().all().all()
+
+
+# -- review: jsonlite arrays / homoList, deparse, c(), unlist(), tolower() ------------
+# Expected values from R 4.5.3 / jsonlite 2.0.0.
+
+
+@pytest.mark.parametrize(
+    ("js", "unlisted", "as_list_element"),
+    [
+        # arrays of same-shaped matrices become arrays: rows interleaved, column-major
+        ("[[[1,2],[3,4]],[[5,6],[7,8]]]", "1 5 3 7 2 6 4 8", "c(1, 5, 3, 7, 2, 6, 4, 8)"),
+        ('[[[1,2],[3,4]],[[5,6],[7,"x"]]]', "1 5 3 7 2 6 4 x", None),
+        ("[[[[1,2]],[[3,4]]],[[[5,6]],[[7,8]]]]", "1 5 3 7 2 6 4 8", None),
+        # matrices of different shapes stay a list
+        ("[[[1,2],[3,4]],[[5,6]]]", "1 3 2 4 5 6", None),
+        ("[[1,2],[3,4]]", "1 3 2 4", "c(1, 3, 2, 4)"),
+        ("[[1,2],[true,false]]", "1 1 2 0", None),
+    ],
+)
+def test_arrays(js: str, unlisted: str, as_list_element: str | None) -> None:
+    value = pr.simplify(json.loads(js))
+    assert pr.paste_collapse(pr.unlist(value), " ") == unlisted
+    if as_list_element is not None:
+        assert pr.paste_collapse(RList((value,)), " ") == as_list_element
+
+
+@pytest.mark.parametrize(
+    ("js", "expected"),
+    [
+        # homoList: an empty array next to atomic vectors takes the first one's type
+        ('[[], ["a"]]', ["character(0)", "a"]),
+        ('[["a"], []]', ["a", "character(0)"]),
+        ("[[], [1.5]]", ["numeric(0)", "1.5"]),
+        ("[[], [1, 2]]", ["integer(0)", "1:2"]),
+        # ... but not next to NULL, a matrix or a list
+        ("[null, []]", ["NULL", "list()"]),
+        ("[[], [[1,2],[3,4]]]", ["list()", "c(1, 3, 2, 4)"]),
+        ('[{"a":1}, []]', ["list(a = 1)", "list()"]),
+    ],
+)
+def test_homo_list(js: str, expected: list[str]) -> None:
+    assert pr._chr_values(pr.simplify(json.loads(js))) == expected
+
+
+def test_homo_list_in_data_frame_columns() -> None:
+    value = pr.simplify(json.loads('[{"k": []}, {"k": ["z"]}]'))
+    assert isinstance(value, pr.RFrame)
+    assert pr._chr_values(value.cols[0]) == ["character(0)", "z"]
+    assert pr.paste_collapse(value, "|") == 'list(character(0), "z")'
+
+
+@pytest.mark.parametrize(
+    ("value", "expected"),
+    [
+        (RVec("integer", (3, 2, 1)), "3:1"),
+        (RVec("integer", (-3, -4, -5)), "-3:-5"),
+        (RVec("integer", (3, 2)), "3:2"),
+        (RVec("integer", (-1, 0, 1)), "-1:1"),
+        (RVec("integer", (2, None, 4)), "c(2, NA, 4)"),
+        (RVec("integer", (None, 1, 2)), "c(NA, 1, 2)"),
+        (RVec("double", (3.0, 2.0, 1.0)), "c(3, 2, 1)"),
+        # as.character() of a list deparses every NA as NA
+        (
+            RList(
+                (
+                    RVec("integer", (None,)),
+                    RVec("double", (None,)),
+                    RVec("logical", (None,)),
+                    RVec("character", (None,)),
+                ),
+                ("a", "b", "c", "d"),
+            ),
+            "list(a = NA, b = NA, c = NA, d = NA)",
+        ),
+    ],
+)
+def test_deparse_ranges_and_na(value: RVec, expected: str) -> None:
+    assert pr.paste_collapse(RList((value,)), " ") == expected
+
+
+def test_c_of_a_matrix_is_atomic() -> None:
+    m = pr.simplify([[100000, 2], [3, 4]])
+    # c(<integer matrix>, 2.5) is a double vector: 100000 prints as 1e+05
+    assert pr.paste_collapse(pr.r_c([m, RVec("double", (2.5,))]), " ") == "1e+05 3 2 4 2.5"
+    # with a list it is a list, one element per matrix cell
+    assert pr.paste_collapse(pr.r_c([m, RList((RVec("double", (2.5,)),))]), " ") == (
+        "100000 3 2 4 2.5"
+    )
+    assert pr.paste_collapse(pr.r_c([m, chr1("x")]), " ") == "1 3 2 4 x"
+
+
+def test_unlist_type_includes_empty_vectors() -> None:
+    # unlist(list(list(numeric(0)), list(a = 100000L))) is double
+    x = RList((RList((RVec("double", ()),)), RList((RVec("integer", (100000,)),), ("a",))))
+    assert pr.paste_collapse(pr.unlist(x), " ") == "1e+05"
+    assert pr.unlist(RList(())) is None
+    assert pr.unlist(RVec("character", ())) == RVec("character", ())
+
+
+@pytest.mark.parametrize(
+    ("label", "field"),
+    [
+        ("İstanbul Study", "istanbul_study"),  # simple case mapping, not "i̇"
+        ("ΟΔΟΣ Σ", "field"),
+        ("Straße ẞ", "stra_e"),
+        ("Hypotheses\n", "research_questions"),
+        (" Sample size", "sample_size"),  # trimws() keeps the no-break space
+        ("Sample\tSize", "sample_size"),
+        ("DATA  Collection", "data_collection"),
+    ],
+)
+def test_osf_label_to_field_case_mapping(label: str, field: str) -> None:
+    assert pr.osf_label_to_field(label) == field
+    assert pr._tolower("ΟΔΟΣ") == "οδοσ"  # no final sigma
+
+
+def test_mock_path_hashes_up_to_the_second_question_mark() -> None:
+    import httpx
+
+    from tests.mod_prereg.parity_support import mock_path
+
+    url = "https://api.osf.io/v2/guids/vwonl?view_only=abc123/?resolve=false&page[size]=100"
+    assert mock_path(httpx.Request("GET", url)) == "api.osf.io/v2/guids/vwonl-def194"
+    url = "https://api.osf.io/v2/registrations/vwonl?view_only=abc123&page[size]=100"
+    assert mock_path(httpx.Request("GET", url)) == "api.osf.io/v2/registrations/vwonl-b9104e"
+    url = "https://api.osf.io/v2/guids/48ncu/?resolve=false"
+    assert mock_path(httpx.Request("GET", url)) == "api.osf.io/v2/guids/48ncu-65f472"
