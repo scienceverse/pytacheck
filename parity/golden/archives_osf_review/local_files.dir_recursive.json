@@ -5,7 +5,7 @@
   "warnings": [],
   "value": {
     "t": "df",
-    "nrow": 88,
+    "nrow": 94,
     "names": [
       "repo_url",
       "file_name",
@@ -105,12 +105,24 @@
           "upstream/metacheck/tests/testthat/fixtures",
           "upstream/metacheck/tests/testthat/fixtures",
           "upstream/metacheck/tests/testthat/fixtures",
+          "upstream/metacheck/tests/testthat/fixtures",
+          "upstream/metacheck/tests/testthat/fixtures",
+          "upstream/metacheck/tests/testthat/fixtures",
+          "upstream/metacheck/tests/testthat/fixtures",
+          "upstream/metacheck/tests/testthat/fixtures",
+          "upstream/metacheck/tests/testthat/fixtures",
           "upstream/metacheck/tests/testthat/fixtures"
         ]
       },
       {
         "t": "chr",
         "v": [
+          "bibr-export-v12.schema.json",
+          "full.json",
+          "PMC4383902.json",
+          "preprint.json",
+          "probe_docx.json",
+          "probe_html.json",
           "analysis_no_comments.R",
           "analysis.R",
           "data.csv",
@@ -291,12 +303,24 @@
           null,
           null,
           null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
           null
         ]
       },
       {
         "t": "chr",
         "v": [
+          "/home/user/pytacheck/upstream/metacheck/tests/testthat/fixtures/bibr12/bibr-export-v12.schema.json",
+          "/home/user/pytacheck/upstream/metacheck/tests/testthat/fixtures/bibr12/full.json",
+          "/home/user/pytacheck/upstream/metacheck/tests/testthat/fixtures/bibr12/PMC4383902.json",
+          "/home/user/pytacheck/upstream/metacheck/tests/testthat/fixtures/bibr12/preprint.json",
+          "/home/user/pytacheck/upstream/metacheck/tests/testthat/fixtures/bibr12/probe_docx.json",
+          "/home/user/pytacheck/upstream/metacheck/tests/testthat/fixtures/bibr12/probe_html.json",
           "/home/user/pytacheck/upstream/metacheck/tests/testthat/fixtures/code_files/analysis_no_comments.R",
           "/home/user/pytacheck/upstream/metacheck/tests/testthat/fixtures/code_files/analysis.R",
           "/home/user/pytacheck/upstream/metacheck/tests/testthat/fixtures/code_files/data.csv",
@@ -390,6 +414,12 @@
       {
         "t": "dbl",
         "v": [
+          134950,
+          10221,
+          110717,
+          676833,
+          5586,
+          8770,
           85,
           166,
           12,
@@ -483,6 +513,12 @@
       {
         "t": "chr",
         "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
           "code",
           "code",
           "data",

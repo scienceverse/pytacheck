@@ -1397,6 +1397,18 @@
   "args":
     "col_names":
       "$chr": []
+- "id": "data_check_colname_collisions.blank_names"
+  "r": "data_check_colname_collisions"
+  "py": "pytacheck.datacheck.checks.data_check_colname_collisions"
+  "args":
+    "col_names":
+      "$chr":
+      - ""
+      - ""
+      - "a b"
+      - "a.b"
+  "known_divergence": "R's out[[\"\"]] <- msg appends unnamed elements that out[[\"\"]] cannot retrieve;\
+    \ the Python dict omits \"\" names (lookups agree, the unreachable entries are dropped)"
 - "id": "data_check_pii_values.email"
   "r": "data_check_pii_values"
   "py": "pytacheck.datacheck.checks.data_check_pii_values"

@@ -535,6 +535,11 @@ def data_check_colname_collisions(col_names: Any) -> dict[str, str]:
     Port of ``R/data_check_helpers.R::data_check_colname_collisions()``:
     returns a dict mapping each colliding column name to a message (empty
     when all names stay distinct).
+
+    Empty (``""``) column names get no entry: R's ``out[[""]] <- msg``
+    appends an unnamed element that ``out[[""]]`` can never retrieve, so a
+    lookup by name finds nothing in either language (the unreachable
+    elements themselves cannot be held in a dict).
     """
     nms = chr(col_names)
     keys = gsub(r"[^\p{L}\p{N}]", "_", nms, perl=True)
@@ -553,6 +558,8 @@ def data_check_colname_collisions(col_names: Any) -> dict[str, str]:
         members = [nms[i] for i in idx]
         for i in idx:
             me = nms[i]
+            if me == "":
+                continue
             others = unique(m for m in members if m != me)
             if not others:
                 n_same = sum(1 for m in members if m == me) - 1

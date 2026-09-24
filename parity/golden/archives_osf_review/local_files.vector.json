@@ -7,7 +7,7 @@
   ],
   "value": {
     "t": "df",
-    "nrow": 87,
+    "nrow": 89,
     "names": [
       "repo_url",
       "file_name",
@@ -20,6 +20,8 @@
       {
         "t": "chr",
         "v": [
+          "upstream/metacheck/R",
+          "upstream/metacheck/R",
           "upstream/metacheck/R",
           "upstream/metacheck/R",
           "upstream/metacheck/R",
@@ -152,7 +154,9 @@
           "file-naming.R",
           "html-output.R",
           "import-bibr.R",
+          "import-bibr12.R",
           "import-convert.R",
+          "import-grobid-bibr12.R",
           "import-grobid.R",
           "import-papers.R",
           "import-read.R",
@@ -290,6 +294,8 @@
           null,
           null,
           null,
+          null,
+          null,
           null
         ]
       },
@@ -336,7 +342,9 @@
           "/home/user/pytacheck/upstream/metacheck/R/file-naming.R",
           "/home/user/pytacheck/upstream/metacheck/R/html-output.R",
           "/home/user/pytacheck/upstream/metacheck/R/import-bibr.R",
+          "/home/user/pytacheck/upstream/metacheck/R/import-bibr12.R",
           "/home/user/pytacheck/upstream/metacheck/R/import-convert.R",
+          "/home/user/pytacheck/upstream/metacheck/R/import-grobid-bibr12.R",
           "/home/user/pytacheck/upstream/metacheck/R/import-grobid.R",
           "/home/user/pytacheck/upstream/metacheck/R/import-papers.R",
           "/home/user/pytacheck/upstream/metacheck/R/import-read.R",
@@ -428,20 +436,22 @@
           12387,
           11040,
           15665,
+          18616,
           4424,
-          38232,
+          17616,
+          39050,
           8322,
-          6885,
+          7053,
           13712,
           4417,
           46201,
           63852,
-          15784,
+          15934,
           195,
           21004,
           35363,
           13609,
-          16949,
+          18029,
           22224,
           46414,
           9554,
@@ -474,12 +484,14 @@
           3770,
           34265,
           3757,
-          2486
+          2504
         ]
       },
       {
         "t": "chr",
         "v": [
+          "code",
+          "code",
           "code",
           "code",
           "code",

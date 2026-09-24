@@ -70,6 +70,29 @@ text_search = "pytacheck.text.search:text_search"
 Public functions are exported lazily from `pytacheck/__init__.py` (`_EXPORTS`), with
 the R name where it is a valid Python identifier.
 
+### Not ported by design
+
+Some of metacheck has no place in a Python package whose paper schema is bibr
+export schema v12.0 (older v10.x files still read exactly as metacheck reads them),
+which runs bibr in-process, keeps the Grobid adapter, has module system v2 and ships
+its own CLI and API. [`porting/skip.toml`](../porting/skip.toml) lists it, with a
+reason for each entry:
+
+* `[skip]`: R symbols that are never ported, such as the Shiny apps (`report_app`,
+  `osf_app`), package hooks (`.onLoad`, `.onAttach`), S3 `print` methods (Python
+  uses `__repr__` instead), R graphics viewers and base-R fallbacks for things
+  Python's standard library does.
+* `[skip_files]`: upstream files and directories with nothing to port (`inst/app`,
+  the R deployment files in `inst/plumber`, `man`, `data-raw`, ...).
+* `[drop.<id>]`: ported code that has been superseded and should be removed.
+
+`scripts/port_status.py` measures coverage against what pytacheck does port and
+counts skipped symbols separately (`--missing` lists what is left). The
+upstream-sync agent does not port changes to skipped symbols or files. Add an entry
+only when something is obviously superseded or only makes sense inside an R
+session. Checks, modules, archives, reproducibility checks and report output are
+always ported.
+
 ## 3. Translating R to Python
 
 ### Regular expressions — always via `pytacheck._r`

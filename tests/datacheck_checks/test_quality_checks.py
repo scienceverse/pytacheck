@@ -234,3 +234,5 @@ def test_colname_collisions() -> None:
     assert "identically named column" in d["id"]
     assert data_check_colname_collisions(["a", "b", "a_1"]) == {}
     assert data_check_colname_collisions(["k", "k\u02b7"]) == {}
+    # blank names: R's out[[""]] entries cannot be looked up, so none are kept
+    assert data_check_colname_collisions(["", "", "x"]) == {}

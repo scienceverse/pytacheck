@@ -143,3 +143,15 @@ def test_scalar_labels_end_up_as_slugged_fields() -> None:
     assert {"2024", "true", "1_5", "1e_05", "3e_09", "false", "sample_size"} <= set(
         mo.table.columns
     )
+
+
+def test_label_with_ffff_errors_as_r_tolower() -> None:
+    from pytacheck.modules._prereg import osf_label_to_field
+
+    # R's utf8towcs() rejects U+FFFE/U+FFFF; other noncharacters are lowered as is
+    with pytest.raises(ValueError, match="in 'utf8towcs'"):
+        osf_label_to_field("Sample " + chr(0xFFFF))
+    assert osf_label_to_field("Notes " + chr(0x1FFFF)) == "notes"
+    assert osf_label_to_field("Ab" + chr(0xFDD0) + "C") == "ab_c"
+    with pytest.raises(Exception, match="utf8towcs"):
+        run_prereg(papers=[{"url": ["https://osf.io/lblnc"], "id": "p"}], mock="local")

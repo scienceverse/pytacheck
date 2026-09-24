@@ -254,3 +254,10 @@ rv_rep_no_type <- function() {
     add_rows(1L, list()) |>
     drop_table_cols("replication_type")
 }
+
+# test_paper() with a fixed paper_id (its own id comes from the clock).
+test_paper_id <- function(text, id) {
+  p <- test_paper(text)
+  p$paper_id <- id
+  p
+}

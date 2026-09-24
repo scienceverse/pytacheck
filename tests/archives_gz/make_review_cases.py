@@ -360,6 +360,16 @@ case(
     mock=MK,
 )  # fmt: skip
 
+# github_info() on several repositories passes github_repo()'s vector (or, with a
+# missing one, list) on to every function
+case("github_info.review.vector_dup", "github_info", f"{GH}.github_info",
+     {"repo": {"$chr": ["rv/files", "https://github.com/rv/files"]}}, mock=MK)  # fmt: skip
+case("github_info.review.vector_missing", "github_info", f"{GH}.github_info",
+     {"repo": {"$chr": ["rv/files", "rv/nope"]}}, mock=MK)  # fmt: skip
+case("github_files.review.list_null", "github_files", f"{GH}.github_files",
+     {"repo": {"$expr": {"r": 'list("rv/files", NULL)', "py": '["rv/files", None]'}}},
+     mock=MK)  # fmt: skip
+
 
 class Q(str):
     pass

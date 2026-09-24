@@ -307,6 +307,15 @@ def colname() -> None:
     add(f"{f}.three_identical", f, {"col_names": chr_("x", "x", "x")})
     add(f"{f}.mixed", f, {"col_names": chr_("a b", "a b", "a.b")})
     add(f"{f}.empty", f, {"col_names": chr_()})
+    add(
+        f"{f}.blank_names",
+        f,
+        {"col_names": chr_("", "", "a b", "a.b")},
+        known_divergence=(
+            'R\'s out[[""]] <- msg appends unnamed elements that out[[""]] cannot retrieve; '
+            'the Python dict omits "" names (lookups agree, the unreachable entries are dropped)'
+        ),
+    )
 
 
 # -- PII ---------------------------------------------------------------------------------
