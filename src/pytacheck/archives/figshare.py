@@ -151,6 +151,18 @@ def _figshare_host_regex() -> str:
     return f"figshare\\.com|figsh\\.com|{vanity}"
 
 
+@functools.cache
+def _figshare_prefilter() -> str:
+    """A cheap pattern every bare-mention match contains (see ``_link_matches()``).
+
+    A host match contains ``.<its last label>``; both DOI forms contain
+    ``10.<digits>/``.
+    """
+    hosts = ("figshare.com", "figsh.com", *FIGSHARE_VANITY_HOSTS)
+    labels = sorted({h.rsplit(".", 1)[1] for h in hosts})
+    return f"\\.(?:{'|'.join(labels)})|10\\.[0-9]+/"
+
+
 def _escape_prefixes(prefixes: Any) -> str:
     return "|".join(p.replace(".", r"\.") for p in prefixes)
 
@@ -180,7 +192,7 @@ def figshare_links(paper: Any) -> pd.DataFrame:
         "|(?:https?://)?(?:doi\\.org/)?10\\.6084/m9\\.figshare\\.[0-9]+(?:\\.v[0-9]+)?"
         f"|(?:https?://)?(?:doi\\.org/)?(?:{doi_prefix_regex})/[A-Za-z0-9._-]+(?:\\.v[0-9]+)?"
     )
-    other_fs = _link_matches(paper, fs_bare_regex)
+    other_fs = _link_matches(paper, fs_bare_regex, _figshare_prefilter())
 
     links = _collect_links([found_href, other_fs])
     links["figshare_url"] = links["href"]

@@ -580,12 +580,29 @@ def _info_table(x: Any, id_col: int | str, url_col: str, drop: Sequence[str]) ->
     return pd.DataFrame({url_col: pd.Series(uniq)})
 
 
-def _link_matches(paper: Any, pattern: str) -> pd.DataFrame:
+def _link_matches(paper: Any, pattern: str, prefilter: str | None = None) -> pd.DataFrame:
     """``text_search(paper, pattern, return = "match", perl = TRUE) |>
-    dplyr::select(href = text, dplyr::any_of(c("text_id", "paper_id")))``."""
+    dplyr::select(href = text, dplyr::any_of(c("text_id", "paper_id")))``.
+
+    *prefilter*, when given, must be a pattern that every match of *pattern*
+    contains a match of (under the same flags: caseless, PCRE). Sentences
+    without one cannot match, so only the others are searched: the same
+    result, without running an expensive pattern over every sentence.
+    """
     from pytacheck.text.search import text_search
 
-    found = text_search(paper, pattern, return_="match", perl=True)
+    target = paper
+    if prefilter is not None and not isinstance(paper, str | pd.DataFrame):
+        try:
+            from pytacheck.text.search import _text_frame
+        except ImportError:  # pragma: no cover - search the whole paper instead
+            _text_frame = None
+        if _text_frame is not None:
+            frame, is_vector = _text_frame(paper)
+            if not is_vector and "text" in frame.columns:
+                keep = grepl(prefilter, frame["text"].tolist(), ignore_case=True, perl=True)
+                target = frame.loc[[bool(k) for k in keep]]
+    found = text_search(target, pattern, return_="match", perl=True)
     keep = ["text"] + [c for c in ("text_id", "paper_id") if c in found.columns]
     return found.loc[:, keep].rename(columns={"text": "href"})
 

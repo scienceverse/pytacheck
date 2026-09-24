@@ -219,3 +219,16 @@ def test_message_pastes_vectors(capsys):
         assert capsys.readouterr().err == "a12.5TRUE1e+05\n"
     finally:
         verbose(old)
+
+
+def test_datatable_cells_show_numbers_like_the_browser():
+    from pytacheck.report.render import _cell_text
+
+    # htmlwidgets writes 16 significant digits; the browser prints Number#toString
+    assert _cell_text(0.1 + 0.2) == "0.3"
+    assert _cell_text(1e-7) == "1e-7"
+    assert _cell_text(1e-5) == "0.00001"
+    assert _cell_text(1.5e21) == "1.5e+21"
+    assert _cell_text(float("inf")) == ""
+    assert _cell_text(2.0) == "2"
+    assert _cell_text(True) == "true"
