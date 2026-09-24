@@ -1,0 +1,12 @@
+{
+  "_embedded": {
+    "bitstreams": [
+      {
+        "name": [
+          "a.csv"
+        ],
+        "sizeBytes": 1
+      }
+    ]
+  }
+}

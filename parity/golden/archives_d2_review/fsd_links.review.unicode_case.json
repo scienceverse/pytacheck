@@ -1,0 +1,48 @@
+{
+  "id": "fsd_links.review.unicode_case",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 2,
+    "names": [
+      "href",
+      "link_text",
+      "text_id",
+      "paper_id"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "FSD1234",
+          "fſd2345"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          3,
+          3
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "d1cd9bdd62837c",
+          "d1cd9bdd62837c"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -1,0 +1,9 @@
+[
+  {
+    "name": [
+      "x.csv"
+    ],
+    "sizeBytes": 3,
+    "retrieveLink": "/rest/bitstreams/1/retrieve"
+  }
+]

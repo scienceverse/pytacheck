@@ -1,0 +1,80 @@
+{
+  "id": "dspace7_file_download.review.shapes",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 2,
+    "names": [
+      "dspace7_url",
+      "name",
+      "file_url",
+      "file_location",
+      "size",
+      "isdir",
+      "ext",
+      "type"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "https://scholarworks.umass.edu/items/33333333-4444-5555-6666-777777777777",
+          "https://scholarworks.umass.edu/items/33333333-4444-5555-6666-777777777777"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "data.tar.gz",
+          "README"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://x/content",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          2048,
+          null
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false,
+          false
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "gz",
+          ""
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "archive",
+          null
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

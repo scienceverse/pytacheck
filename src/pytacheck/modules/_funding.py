@@ -457,11 +457,7 @@ class _Article:
         rows = self._cache.get("dotted_i")
         if rows is None:
             rows = np.fromiter(
-                (
-                    i
-                    for i, t in enumerate(self._texts)
-                    if t is not None and ("İ" in t or "ı" in t)
-                ),
+                (i for i, t in enumerate(self._texts) if t is not None and ("İ" in t or "ı" in t)),
                 dtype=np.intp,
             )
             self._cache["dotted_i"] = rows

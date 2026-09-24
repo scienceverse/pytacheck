@@ -1,0 +1,72 @@
+{
+  "id": "rbox_file_download.review.hidden_files",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 2,
+    "names": [
+      "rb_url",
+      "name",
+      "file_location",
+      "size",
+      "isdir",
+      "ext",
+      "type"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "https://researchbox.org/801",
+          "https://researchbox.org/801"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "sub/z.txt",
+          "x.csv"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "sub/z.txt",
+          "x.csv"
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          2,
+          4
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false,
+          false
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "txt",
+          "csv"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "text",
+          "data"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

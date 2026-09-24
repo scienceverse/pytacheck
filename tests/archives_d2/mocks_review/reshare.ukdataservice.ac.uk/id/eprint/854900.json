@@ -1,0 +1,32 @@
+{
+  "title": "Odd files",
+  "creators": [
+    {
+      "name": {
+        "given": "Ann",
+        "family": null
+      }
+    },
+    {
+      "name": {}
+    }
+  ],
+  "documents": [
+    {
+      "content": "data",
+      "files": [
+        "just-a-string",
+        null
+      ]
+    },
+    {
+      "files": [
+        {
+          "fileid": 7,
+          "filename": "a.csv",
+          "content": "old"
+        }
+      ]
+    }
+  ]
+}

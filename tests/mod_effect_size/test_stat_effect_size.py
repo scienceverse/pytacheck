@@ -459,7 +459,6 @@ def test_text_table_input() -> None:
     out = ses.stat_effect_size(tt)
     assert out["traffic_light"] == "na"
     assert out["summary_table"]["paper_id"].tolist() == tt["paper_id"].tolist()
-    assert ses.stat_effect_size(tt.drop(columns="paper_id").iloc[0:0]) is not None or True
     assert ses._paper_id_frame(tt.drop(columns="paper_id"), pc.Paper).shape == (0, 0)
     assert ses._paper_id_frame(pc.PaperList([]), pc.Paper).shape == (0, 0)
 

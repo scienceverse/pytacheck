@@ -1,0 +1,11 @@
+{
+  "one": {
+    "name": "a.csv",
+    "sizeBytes": "12",
+    "retrieveLink": "/rest/bitstreams/9/r"
+  },
+  "two": {
+    "name": [],
+    "sizeBytes": null
+  }
+}

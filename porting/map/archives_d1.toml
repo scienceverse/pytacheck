@@ -96,3 +96,8 @@
 "httr2 oauth_flow_parse() + oauth_token() (client-credentials token response)" = "pytacheck.archives.dryad:_token_from_body"
 "httr2 httr2_oauth* errors" = "pytacheck.archives.dryad:OAuthError"
 "httr2 req_perform() re-authentication after an OAuth invalid_token 401" = "pytacheck.archives.dryad:_dryad_reauth"
+# added by the adversarial review (round 2)
+"obj$<field> <- value on a one-row table (list column / 'replacement has n rows' error)" = "pytacheck.archives.dataverse:_field_cell"
+"URLdecode() result that is invalid UTF-8 (R regex functions refuse it)" = "pytacheck.archives.dataverse:_invalid_utf8"
+"httr2::resp_body_raw() on an empty body (aborts *_file_download())" = "pytacheck.archives.dataverse:EmptyBodyError"
+"text_search()'s sentence table, built once per *_links() call" = "pytacheck.archives.dataverse:_search_frame"

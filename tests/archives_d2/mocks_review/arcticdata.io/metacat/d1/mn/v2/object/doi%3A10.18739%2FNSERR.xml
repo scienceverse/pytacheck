@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<eml:eml xmlns:eml="https://eml.ecoinformatics.org/eml-2.2.0" packageId="doi:10.18739/NSERR">
+  <dataset>
+    <title>Permafrost <x:b>cores</x:b> 2019</title>
+    <creator><individualName><givenName>Ann</givenName><surName>Lee</surName></individualName></creator>
+    <pubDate>2020-01-02</pubDate>
+    <intellectualRights><para>CC0</para></intellectualRights>
+    <dataTable><physical><objectName>cores.csv</objectName><size unit="bytes">120</size>
+      <distribution><online><url>https://cn.dataone.org/cn/v2/resolve/urn:uuid:c1</url></online></distribution>
+    </physical></dataTable>
+  </dataset>
+</eml:eml>

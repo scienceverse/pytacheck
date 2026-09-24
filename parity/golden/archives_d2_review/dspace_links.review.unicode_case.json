@@ -1,0 +1,48 @@
+{
+  "id": "dspace_links.review.unicode_case",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 2,
+    "names": [
+      "href",
+      "link_text",
+      "text_id",
+      "paper_id"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "hdl.handle.net/20.500.12034/17526",
+          "www.pſycharchives.org/en/item/abc"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          4,
+          4
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "3a4d25995854cf",
+          "3a4d25995854cf"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -1,0 +1,1 @@
+structure(list(method = "GET", url = "https://researchbox.org/7003", status_code = 200L, headers = structure(list(`content-type` = "text/html"), class = "httr2_headers"), body = as.raw(c(0x4f, 0x4b)), cache = new.env(parent = emptyenv())), class = "httr2_response")

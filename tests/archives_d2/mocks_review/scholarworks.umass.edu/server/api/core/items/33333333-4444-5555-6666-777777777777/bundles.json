@@ -1,0 +1,18 @@
+{
+  "_embedded": {
+    "bundles": [
+      {
+        "name": "ORIGINAL",
+        "uuid": "bb-3a"
+      },
+      {
+        "name": "LICENSE",
+        "uuid": "bb-3l"
+      },
+      {
+        "name": "ORIGINAL",
+        "uuid": "bb-3b"
+      }
+    ]
+  }
+}

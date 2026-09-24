@@ -1,0 +1,80 @@
+{
+  "id": "dataone_links.review.unicode_case",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 2,
+    "names": [
+      "href",
+      "link_text",
+      "text_id",
+      "paper_id",
+      "dataone_url",
+      "dataone_host",
+      "dataone_pid"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "Knb.ecoinformatics.org/view/doi:10.5063/F1K",
+          "10.5063/KX."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          1,
+          1
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "e576847cc96bfe",
+          "e576847cc96bfe"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Knb.ecoinformatics.org/view/doi:10.5063/F1K",
+          "10.5063/KX."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "knb.ecoinformatics.org",
+          "knb.ecoinformatics.org"
+        ],
+        "names": [
+          "Knb.ecoinformatics.org/view/doi:10.5063/F1K",
+          "10.5063/KX."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "doi:10.5063/F1K",
+          "doi:10.5063/KX."
+        ],
+        "names": [
+          "Knb.ecoinformatics.org/view/doi:10.5063/F1K",
+          "10.5063/KX."
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

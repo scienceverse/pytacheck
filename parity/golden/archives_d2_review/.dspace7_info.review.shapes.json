@@ -1,0 +1,119 @@
+{
+  "id": ".dspace7_info.review.shapes",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 1,
+    "names": [
+      "dspace7_host",
+      "dspace7_uuid",
+      "title",
+      "authors",
+      "doi",
+      "license",
+      "publication_date",
+      "updated_date",
+      "files"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "scholarworks.umass.edu"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "33333333-4444-5555-6666-777777777777"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Title 3"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "C; D"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://creativecommons.org/licenses/by/4.0/"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "2020"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "df",
+            "nrow": 2,
+            "names": [
+              "name",
+              "size",
+              "checksum",
+              "retrieve"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "data.tar.gz",
+                  "README"
+                ]
+              },
+              {
+                "t": "dbl",
+                "v": [
+                  2048,
+                  null
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "abc",
+                  null
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "https://x/content",
+                  null
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}
