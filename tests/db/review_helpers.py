@@ -60,7 +60,8 @@ def query_parse_all(select: Sequence[str], min_score: float = 0) -> Any:
 
 def query_files() -> list[Path]:
     d = APIS / "api.crossref.org"
-    return sorted(d.glob("works-*.json"), key=lambda p: p.name.encode("utf-8"))
+    files = sorted(d.glob("works-*.json"), key=lambda p: p.name.encode("utf-8"))
+    return [f for f in files if f.stat().st_size > 0]
 
 
 def query_parse_each(select: Sequence[str], min_score: float = 50) -> list[Any]:

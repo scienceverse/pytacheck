@@ -1,0 +1,5663 @@
+{
+  "id": "crossref_parse_item.fixtures.single_6",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": null,
+    "v": [
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "isbn-type.type",
+              "isbn-type.value",
+              "isbn-type.type",
+              "isbn-type.value"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "print"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "9783540749967"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "electronic"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "9783540749974"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "isbn-type.value",
+              "isbn-type.type",
+              "isbn-type.value",
+              "isbn-type.type",
+              "isbn-type.value",
+              "isbn-type.type"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "9780521828116"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "print"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "9780521535298"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "print"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "9780511819568"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "electronic"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "isbn-type.value",
+              "isbn-type.type"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "9780190228057"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "electronic"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "isbn-type.value",
+              "isbn-type.type",
+              "isbn-type.value",
+              "isbn-type.type"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "9780195126013"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "print"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "9780197735596"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "electronic"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "ISBN.\"9783540749967\"",
+              "ISBN.\"9783540749974\""
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "9783540749967"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "9783540749974"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "ISBN.\"9780521828116\"",
+              "ISBN.\"9780521535298\"",
+              "ISBN.\"9780511819568\""
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "9780521828116"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "9780521535298"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "9780511819568"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "\"9780190228057\""
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "9780190228057"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "ISBN.\"9780195126013\"",
+              "ISBN.\"9780197735596\""
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "9780195126013"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "9780197735596"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "\"Portico\""
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Portico"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "\"Portico\""
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Portico"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "\"Portico\""
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Portico"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "publisher-location"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Berlin, Heidelberg"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "publisher-location"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Vienna, Austria"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "updated-by.DOI",
+              "updated-by.type",
+              "updated-by.label",
+              "updated-by.source",
+              "updated-by.updated.date-parts.2015L",
+              "updated-by.updated.date-parts.5L",
+              "updated-by.updated.date-parts.14L",
+              "updated-by.updated.date-time",
+              "updated-by.updated.timestamp"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "10.1073/pnas.1508604112"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "correction"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Correction"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "publisher"
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  2015
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  5
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  14
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "2015-05-14T00:00:00Z"
+                ]
+              },
+              {
+                "t": "dbl",
+                "v": [
+                  1431561600000
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "updated-by.DOI",
+              "updated-by.type",
+              "updated-by.label",
+              "updated-by.source",
+              "updated-by.updated.date-parts.2023L",
+              "updated-by.updated.date-parts.7L",
+              "updated-by.updated.date-parts.6L",
+              "updated-by.updated.date-time",
+              "updated-by.updated.timestamp",
+              "updated-by.record-id",
+              "updated-by.DOI",
+              "updated-by.type",
+              "updated-by.label",
+              "updated-by.source",
+              "updated-by.updated.date-parts.2023L",
+              "updated-by.updated.date-parts.7L",
+              "updated-by.updated.date-parts.6L",
+              "updated-by.updated.date-time",
+              "updated-by.updated.timestamp"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "10.1177/09567976231187595"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "retraction"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Retraction"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "retraction-watch"
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  2023
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  7
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  6
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "2023-07-06T00:00:00Z"
+                ]
+              },
+              {
+                "t": "dbl",
+                "v": [
+                  1688601600000
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "45872"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "10.1177/09567976231187595"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "retraction"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Retraction"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "publisher"
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  2023
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  7
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  6
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "2023-07-06T00:00:00Z"
+                ]
+              },
+              {
+                "t": "dbl",
+                "v": [
+                  1688601600000
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "edition-number"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "1"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "year"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": [
+                  2020
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "year"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": [
+                  2014
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "year"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": [
+                  2016
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "year"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": [
+                  2011
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "year"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": [
+                  2019
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "year"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": [
+                  2012
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "year"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": [
+                  2015
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "year"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": [
+                  2010
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "year"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": [
+                  2022
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "year"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": [
+                  2019
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "year"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": [
+                  2014
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "year"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": [
+                  2015
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "year"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": [
+                  2004
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "year"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": [
+                  2002
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "year"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": [
+                  1993
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "year"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": [
+                  1999
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "year"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": [
+                  2010
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "year"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": [
+                  1987
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "year"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": [
+                  1993
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "year"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": [
+                  1996
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "year"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": [
+                  2006
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "year"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": [
+                  1994
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "year"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": [
+                  2002
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "year"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": [
+                  2007
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "year"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": [
+                  2007
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "year"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": [
+                  1984
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "year"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": [
+                  2005
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "year"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": [
+                  2009
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "year"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": [
+                  2010
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "year"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": [
+                  2011
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "year"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": [
+                  2012
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "year"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": [
+                  2015
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "year"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": [
+                  2015
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "year"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": [
+                  2015
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "year"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": [
+                  2018
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "year"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": [
+                  2020
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "year"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": [
+                  2015
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "year"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": [
+                  2018
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "year"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": [
+                  2019
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "year"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": [
+                  2019
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "year"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": [
+                  2010
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "year"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": [
+                  2007
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "year"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": [
+                  2008
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "year"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": [
+                  2010
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "year"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": [
+                  2012
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "year"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": [
+                  2018
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "year"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": [
+                  2020
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "year"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": [
+                  1987
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "year"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": [
+                  1999
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "year"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": [
+                  2016
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "year"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": [
+                  2016
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "year"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": [
+                  2002
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "year"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": [
+                  1998
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "year"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": [
+                  2002
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "year"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": [
+                  2016
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "year"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": [
+                  2012
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "year"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": [
+                  2022
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "year"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": [
+                  2017
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "year"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": [
+                  2011
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "year"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": [
+                  1982
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "year"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": [
+                  2010
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "year"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": [
+                  2010
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "year"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": [
+                  2014
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "year"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": [
+                  2014
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "year"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": [
+                  2014
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "year"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": [
+                  2019
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "year"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": [
+                  2020
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "year"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": [
+                  2011
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "year"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": [
+                  2017
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "year"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": [
+                  2017
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "year"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": [
+                  1978
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "year"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": [
+                  2012
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "year"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": [
+                  2014
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "year"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": [
+                  2017
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "year"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": [
+                  2009
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "year"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": [
+                  2009
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "year"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": [
+                  2007
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "year"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": [
+                  2000
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "year"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": [
+                  2012
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "year"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": [
+                  2012
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "year"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": [
+                  2019
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}
