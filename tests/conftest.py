@@ -51,3 +51,9 @@ def _isolated_state(
     base = tmp_path_factory.getbasetemp()
     monkeypatch.setenv("PYTACHECK_LOG", str(base / "pytacheck.log.jsonl"))
     monkeypatch.setenv("PYTACHECK_CACHE_DIR", str(base / "cache"))
+
+
+@pytest.fixture(autouse=True)
+def _no_http_sleep(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Courtesy delays and retry backoff are pointless against mocks."""
+    monkeypatch.setenv("PYTACHECK_NO_SLEEP", "1")

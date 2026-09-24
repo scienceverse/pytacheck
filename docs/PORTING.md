@@ -189,6 +189,29 @@ def marginal(paper, ...):                  # same name as the file; R's argument
 * LLM-backed modules must work without an API key when R does (e.g. fallbacks), and
   parity cases for LLM paths use the LLM cache or are marked `skip_r`.
 
+### HTTP
+
+All network access goes through `pytacheck.http` (port of `.batch_query()` and the
+httr2 retry policy): `http.request(method, url, ...)` returns the response (error
+statuses are returned, not raised) or `None` after connection failures;
+`http.batch_query(urls, ...)` fetches many URLs politely; `http.skip_on_api_limit()`
+reproduces the `skip_on_api_limit` option; `http.Throttle` is `req_throttle()`.
+Never create your own `httpx.Client`.
+
+Tests replay metacheck's recorded responses exactly (httptest2 file naming is
+reproduced, including R's `digest()` hashes):
+
+```python
+from tests.httpmock import replay
+
+def test_github_readme(upstream_dir):
+    with replay("apis"):          # or "apis_papers_retag", ...
+        ...
+```
+
+Unrecorded requests get a 404, never the network. Parity cases must not use the
+network either; test network code through its parsing helpers with fixture inputs.
+
 ## 5. Performance
 
 pytacheck must be substantially faster than metacheck on large corpora:
