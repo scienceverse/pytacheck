@@ -1,0 +1,126 @@
+
+> dat <- mtcars
+
+> dat$g <- factor(dat$am, labels = c("a", "b"))
+
+> m <- lm(mpg ~ g, data = dat)
+
+> anova(m)
+Analysis of Variance Table
+
+Response: mpg
+          Df Sum Sq Mean Sq F value   Pr(>F)    
+g          1 405.15  405.15   16.86 0.000285 ***
+Residuals 30 720.90   24.03                     
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+> s <- summary(m)
+
+> s$coefficients[2, , drop = FALSE]
+   Estimate Std. Error  t value     Pr(>|t|)
+gb 7.244939   1.764422 4.106127 0.0002850207
+
+> m |> summary()
+
+Call:
+lm(formula = mpg ~ g, data = dat)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-9.3923 -3.0923 -0.2974  3.2439  9.5077 
+
+Coefficients:
+            Estimate Std. Error t value Pr(>|t|)    
+(Intercept)   17.147      1.125  15.247 1.13e-15 ***
+gb             7.245      1.764   4.106 0.000285 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 4.902 on 30 degrees of freedom
+Multiple R-squared:  0.3598,	Adjusted R-squared:  0.3385 
+F-statistic: 16.86 on 1 and 30 DF,  p-value: 0.000285
+
+
+> r2<-cor(dat$mpg,dat$wt)^2
+
+> cor.test(dat$mpg, dat$wt)
+
+	Pearson's product-moment correlation
+
+data:  dat$mpg and dat$wt
+t = -9.559, df = 30, p-value = 1.294e-10
+alternative hypothesis: true correlation is not equal to 0
+95 percent confidence interval:
+ -0.9338264 -0.7440872
+sample estimates:
+       cor 
+-0.8676594 
+
+
+> x <- c(2.1, 3.4, 1.9, 4.2, 3.3, 2.8)
+
+> y <- c(1.1, 2.4, 2.9, 3.2, 1.3, 2.2)
+
+> tt <- t.test(x, y)
+
+> tt
+
+	Welch Two Sample t-test
+
+data:  x and y
+t = 1.556, df = 9.9934, p-value = 0.1508
+alternative hypothesis: true difference in means is not equal to 0
+95 percent confidence interval:
+ -0.3312905  1.8646238
+sample estimates:
+mean of x mean of y 
+ 2.950000  2.183333 
+
+
+> for (k in 1:2) print(t.test(x + k, y))
+
+	Welch Two Sample t-test
+
+data:  x + k and y
+t = 3.5855, df = 9.9934, p-value = 0.004971
+alternative hypothesis: true difference in means is not equal to 0
+95 percent confidence interval:
+ 0.6687095 2.8646238
+sample estimates:
+mean of x mean of y 
+ 3.950000  2.183333 
+
+
+	Welch Two Sample t-test
+
+data:  x + k and y
+t = 5.615, df = 9.9934, p-value = 0.0002235
+alternative hypothesis: true difference in means is not equal to 0
+95 percent confidence interval:
+ 1.668710 3.864624
+sample estimates:
+mean of x mean of y 
+ 4.950000  2.183333 
+
+
+> print(head(dat, 2))
+              mpg cyl disp  hp drat    wt  qsec vs am gear carb g
+Mazda RX4      21   6  160 110  3.9 2.620 16.46  0  1    4    4 b
+Mazda RX4 Wag  21   6  160 110  3.9 2.875 17.02  0  1    4    4 b
+
+> tail(dat[, 1:3], 2)
+               mpg cyl disp
+Maserati Bora 15.0   8  301
+Volvo 142E    21.4   4  121
+
+> str(x)
+ num [1:6] 2.1 3.4 1.9 4.2 3.3 2.8
+
+> aggregate(mpg ~ g, data = dat, FUN = mean)
+  g      mpg
+1 a 17.14737
+2 b 24.39231
+
+> cor(dat$mpg, dat$wt)
+[1] -0.8676594

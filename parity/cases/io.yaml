@@ -1,0 +1,137 @@
+"area": "io"
+"cases":
+- "id": ".grobid_to_bibr.demos.to_err_is_human"
+  "r": ".grobid_to_bibr"
+  "py": "pytacheck.io.grobid._grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "upstream/metacheck/inst/demos/to_err_is_human.xml"}
+- "id": ".grobid_to_bibr.debruine.debruine-child"
+  "r": ".grobid_to_bibr"
+  "py": "pytacheck.io.grobid._grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "upstream/metacheck/tests/testthat/fixtures/debruine/debruine-child.xml"}
+- "id": ".grobid_to_bibr.debruine.debruine-fret"
+  "r": ".grobid_to_bibr"
+  "py": "pytacheck.io.grobid._grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "upstream/metacheck/tests/testthat/fixtures/debruine/debruine-fret.xml"}
+- "id": ".grobid_to_bibr.debruine.debruine-sex"
+  "r": ".grobid_to_bibr"
+  "py": "pytacheck.io.grobid._grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "upstream/metacheck/tests/testthat/fixtures/debruine/debruine-sex.xml"}
+- "id": ".grobid_to_bibr.debruine.debruine-tnl"
+  "r": ".grobid_to_bibr"
+  "py": "pytacheck.io.grobid._grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "upstream/metacheck/tests/testthat/fixtures/debruine/debruine-tnl.xml"}
+- "id": ".grobid_to_bibr.formats.apa"
+  "r": ".grobid_to_bibr"
+  "py": "pytacheck.io.grobid._grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "upstream/metacheck/tests/testthat/fixtures/formats/apa.xml"}
+- "id": ".grobid_to_bibr.formats.preprint.cermine"
+  "r": ".grobid_to_bibr"
+  "py": "pytacheck.io.grobid._grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "upstream/metacheck/tests/testthat/fixtures/formats/preprint.cermine.xml"}
+- "id": ".grobid_to_bibr.formats.preprint.pdf.tei"
+  "r": ".grobid_to_bibr"
+  "py": "pytacheck.io.grobid._grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "upstream/metacheck/tests/testthat/fixtures/formats/preprint.pdf.tei.xml"}
+- "id": ".grobid_to_bibr.formats.published.cermine"
+  "r": ".grobid_to_bibr"
+  "py": "pytacheck.io.grobid._grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "upstream/metacheck/tests/testthat/fixtures/formats/published.cermine.xml"}
+- "id": ".grobid_to_bibr.formats.published.pdf.tei"
+  "r": ".grobid_to_bibr"
+  "py": "pytacheck.io.grobid._grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "upstream/metacheck/tests/testthat/fixtures/formats/published.pdf.tei.xml"}
+- "id": ".grobid_to_bibr.problems.0956797615569889"
+  "r": ".grobid_to_bibr"
+  "py": "pytacheck.io.grobid._grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "upstream/metacheck/tests/testthat/fixtures/problems/0956797615569889.xml"}
+- "id": ".grobid_to_bibr.problems.0956797617737129"
+  "r": ".grobid_to_bibr"
+  "py": "pytacheck.io.grobid._grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "upstream/metacheck/tests/testthat/fixtures/problems/0956797617737129.xml"}
+- "id": ".grobid_to_bibr.problems.203020"
+  "r": ".grobid_to_bibr"
+  "py": "pytacheck.io.grobid._grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "upstream/metacheck/tests/testthat/fixtures/problems/203020.xml"}
+- "id": ".grobid_to_bibr.problems.corrupt"
+  "r": ".grobid_to_bibr"
+  "py": "pytacheck.io.grobid._grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "upstream/metacheck/tests/testthat/fixtures/problems/corrupt.xml"}
+- "id": ".grobid_to_bibr.grobid.pfd-06d588"
+  "r": ".grobid_to_bibr"
+  "py": "pytacheck.io.grobid._grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-06d588-POST.xml"}
+- "id": ".grobid_to_bibr.grobid.pfd-1181af"
+  "r": ".grobid_to_bibr"
+  "py": "pytacheck.io.grobid._grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-1181af-POST.xml"}
+- "id": ".grobid_to_bibr.grobid.pfd-479883"
+  "r": ".grobid_to_bibr"
+  "py": "pytacheck.io.grobid._grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-479883-POST.xml"}
+- "id": ".grobid_to_bibr.grobid.pfd-4b4691"
+  "r": ".grobid_to_bibr"
+  "py": "pytacheck.io.grobid._grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-4b4691-POST.xml"}
+- "id": ".grobid_to_bibr.grobid.pfd-619fd9"
+  "r": ".grobid_to_bibr"
+  "py": "pytacheck.io.grobid._grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-619fd9-POST.xml"}
+- "id": ".grobid_to_bibr.grobid.pfd-9c61e4"
+  "r": ".grobid_to_bibr"
+  "py": "pytacheck.io.grobid._grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-9c61e4-POST.xml"}
+- "id": ".grobid_to_bibr.grobid.pfd-d2308a"
+  "r": ".grobid_to_bibr"
+  "py": "pytacheck.io.grobid._grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-d2308a-POST.xml"}
+- "id": ".grobid_to_bibr.grobid.pfd-d67d70"
+  "r": ".grobid_to_bibr"
+  "py": "pytacheck.io.grobid._grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-d67d70-POST.xml"}
+- "id": ".grobid_to_bibr.grobidorg.pfd-06d588"
+  "r": ".grobid_to_bibr"
+  "py": "pytacheck.io.grobid._grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "upstream/metacheck/tests/testthat/apis/grobidorg-grobid.hf.space/api/processFulltextDocument-06d588-POST.xml"}
+- "id": ".grobid_to_bibr.grobidorg.pfd-1181af"
+  "r": ".grobid_to_bibr"
+  "py": "pytacheck.io.grobid._grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "upstream/metacheck/tests/testthat/apis/grobidorg-grobid.hf.space/api/processFulltextDocument-1181af-POST.xml"}
+- "id": ".grobid_to_bibr.grobidorg.pfd-9c61e4"
+  "r": ".grobid_to_bibr"
+  "py": "pytacheck.io.grobid._grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "upstream/metacheck/tests/testthat/apis/grobidorg-grobid.hf.space/api/processFulltextDocument-9c61e4-POST.xml"}
+- "id": ".grobid_to_bibr.grobidorg.pfd-d2308a"
+  "r": ".grobid_to_bibr"
+  "py": "pytacheck.io.grobid._grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "upstream/metacheck/tests/testthat/apis/grobidorg-grobid.hf.space/api/processFulltextDocument-d2308a-POST.xml"}
+- "id": ".grobid_to_bibr.grobidorg.pfd-d67d70"
+  "r": ".grobid_to_bibr"
+  "py": "pytacheck.io.grobid._grobid_to_bibr"
+  "args":
+    "xml_path": {"$file": "upstream/metacheck/tests/testthat/apis/grobidorg-grobid.hf.space/api/processFulltextDocument-d67d70-POST.xml"}

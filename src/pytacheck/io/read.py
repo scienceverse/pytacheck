@@ -18,11 +18,10 @@ SOURCE_EXTENSIONS = (".pdf", ".docx", ".doc", ".html", ".htm", ".xhtml", ".epub"
 
 
 def _read_xml(path: Path) -> Paper:
-    try:
-        from pytacheck.io.grobid import grobid_to_bibr
-    except ImportError as exc:  # pragma: no cover - until the Grobid reader lands
-        raise NotImplementedError("Reading Grobid TEI XML is not available yet") from exc
-    return grobid_to_bibr(path)
+    # R: read() calls .grobid_to_bibr(fp) (grobid_to_bibr() would save JSON)
+    from pytacheck.io.grobid import _grobid_to_bibr
+
+    return _grobid_to_bibr(path)
 
 
 def _read_one(path: Path, include_images: bool, bibr_options: dict[str, Any]) -> Paper:

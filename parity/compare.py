@@ -11,6 +11,9 @@ only about representation details that carry no meaning:
 * ``NaN`` and ``NA`` are equivalent for doubles;
 * a list whose elements are all length-1 vectors equals the vector of them;
 * a matrix with a single row or column equals the vector of its values.
+* an unnamed list of records (named lists of scalars with the same names)
+  equals the data frame of them (the Python encoder turns a list of
+  same-keyed dicts into a data frame; R keeps a list of named lists).
 
 Per-case options (``compare:`` in the case YAML):
 
@@ -90,6 +93,28 @@ def _as_vector(x: dict[str, Any]) -> dict[str, Any] | None:
         vals.append(el["v"][0])
     t = "dbl" if types <= {"int", "dbl"} and types else (types.pop() if len(types) == 1 else "chr")
     return {"t": t, "v": vals}
+
+
+def _records_as_frame(x: dict[str, Any]) -> dict[str, Any] | None:
+    """View an unnamed list of same-named records of scalars as a data frame."""
+    items = x.get("v", [])
+    if x.get("t") != "list" or x.get("names") or not items:
+        return None
+    names = items[0].get("names")
+    if not names:
+        return None
+    cols: list[list[dict[str, Any]]] = [[] for _ in names]
+    for rec in items:
+        if rec.get("t") != "list" or rec.get("names") != names:
+            return None
+        for k, el in enumerate(rec.get("v", [])):
+            if not (_is_empty(el) or (el.get("t") in _VECTOR_TYPES and len(el.get("v", [])) == 1)):
+                return None
+            cols[k].append(el)
+    columns = [_as_vector({"t": "list", "names": None, "v": col}) for col in cols]
+    if any(c is None for c in columns):
+        return None
+    return {"t": "df", "nrow": len(items), "names": list(names), "v": columns}
 
 
 def _fmt(x: Any, limit: int = 160) -> str:
@@ -281,6 +306,10 @@ class Comparator:
             r, rt = r["v"], r["v"]["t"]
         if pt == "matrix" and rt != "matrix" and 1 in p.get("dim", []):
             p, pt = p["v"], p["v"]["t"]
+        if rt == "list" and pt == "df" and (rf := _records_as_frame(r)) is not None:
+            r, rt = rf, "df"
+        if pt == "list" and rt == "df" and (pf := _records_as_frame(p)) is not None:
+            p, pt = pf, "df"
         if rt in _VECTOR_TYPES or pt in _VECTOR_TYPES:
             rv, pv = _as_vector(r), _as_vector(p)
             if rv is None or pv is None:

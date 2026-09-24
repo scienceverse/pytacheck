@@ -1,0 +1,93 @@
+{
+  "id": "read_r_output.no_prompts_with_code",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": null,
+    "v": [
+      {
+        "t": "list",
+        "names": [
+          "analysis",
+          "title",
+          "data",
+          "line",
+          "line_seq",
+          "call_fn",
+          "model_ref"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "t",
+              "df",
+              "p-value"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "2.34"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "48"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "0.02"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.3.3 (2024-02-29)"
+}

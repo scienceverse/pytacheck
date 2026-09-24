@@ -1,0 +1,192 @@
+{
+  "id": "read_r_output.tables.tricky",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": null,
+    "v": [
+      {
+        "t": "list",
+        "names": [
+          "analysis",
+          "title",
+          "data",
+          "line",
+          "line_seq",
+          "call_fn",
+          "model_ref"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Quantiles"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Quantiles"
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 2,
+            "names": [
+              "V1",
+              "Df",
+              "Sum Sq",
+              "Mean Sq",
+              "F value",
+              "Pr(>F)"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "factor(cyl)",
+                  "Residuals"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "2",
+                  "29"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "824.8",
+                  "301.3"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "412.4",
+                  "10.4"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "39.7",
+                  ""
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "4.98e-09",
+                  ""
+                ]
+              }
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "analysis",
+          "title",
+          "data",
+          "line",
+          "line_seq",
+          "call_fn",
+          "model_ref"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Quantiles"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Quantiles"
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "one",
+              "two"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "1"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "2"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.3.3 (2024-02-29)"
+}
