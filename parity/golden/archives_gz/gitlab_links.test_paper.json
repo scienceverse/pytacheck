@@ -1,0 +1,46 @@
+{
+  "id": "gitlab_links.test_paper",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 4,
+    "names": [
+      "href",
+      "text_id",
+      "paper_id"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "https://gitlab.com/gzorg/sub/glproj",
+          "http://www.gitlab.com/b/c",
+          "lab/project",
+          "group/sub"
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          1,
+          3,
+          1,
+          3
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "3a521f135960e9",
+          "3a521f135960e9",
+          "3a521f135960e9",
+          "3a521f135960e9"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

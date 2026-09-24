@@ -1,0 +1,160 @@
+{
+  "id": "data_read_head.readxl_deaths.xls",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 18,
+    "names": [
+      "Lots of people",
+      "...2",
+      "...3",
+      "...4",
+      "...5",
+      "...6"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "simply cannot resist writing",
+          "at",
+          "or",
+          "Name",
+          "David Bowie",
+          "Carrie Fisher",
+          "Chuck Berry",
+          "Bill Paxton",
+          "Prince",
+          "Alan Rickman",
+          "Florence Henderson",
+          "Harper Lee",
+          "Zsa Zsa Gábor",
+          "George Michael",
+          "Some",
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "the",
+          "merging",
+          "Profession",
+          "musician",
+          "actor",
+          "musician",
+          "actor",
+          "musician",
+          "actor",
+          "actor",
+          "author",
+          "actor",
+          "musician",
+          null,
+          "also like to write stuff",
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "top",
+          null,
+          "Age",
+          "69",
+          "60",
+          "90",
+          "61",
+          "57",
+          "69",
+          "82",
+          "89",
+          "99",
+          "53",
+          null,
+          null,
+          "at the",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          "Has kids",
+          "TRUE",
+          "TRUE",
+          "TRUE",
+          "TRUE",
+          "TRUE",
+          "FALSE",
+          "TRUE",
+          "FALSE",
+          "TRUE",
+          "FALSE",
+          null,
+          null,
+          "bottom,",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "of",
+          null,
+          "Date of birth",
+          "17175",
+          "20749",
+          "9788",
+          "20226",
+          "21343",
+          "16854",
+          "12464",
+          "9615",
+          "6247",
+          "23187",
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "some notes",
+          "their spreadsheets",
+          "cells",
+          "Date of death",
+          "42379",
+          "42731",
+          "42812",
+          "42791",
+          "42481",
+          "42383",
+          "42698",
+          "42419",
+          "42722",
+          "42729",
+          null,
+          null,
+          null,
+          "too!"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

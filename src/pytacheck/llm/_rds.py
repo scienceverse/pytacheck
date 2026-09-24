@@ -31,10 +31,14 @@ import math
 import os
 import struct
 from collections.abc import Iterable, Mapping
-from typing import Any
+from typing import TYPE_CHECKING, Any
+
+if TYPE_CHECKING:
+    import pandas as pd
 
 __all__ = [
     "R_VERSION",
+    "EllmerOutput",
     "RInt",
     "RList",
     "RVec",
@@ -72,12 +76,23 @@ NA_INTEGER = -(2**31)
 _NA_REAL_BITS = 0x7FF00000000007A2
 NA_REAL = struct.unpack(">d", struct.pack(">Q", _NA_REAL_BITS))[0]
 
-_TYPE_CODES = {"lgl": LGLSXP, "int": INTSXP, "dbl": REALSXP, "chr": STRSXP, "cplx": CPLXSXP, "raw": RAWSXP}
+_TYPE_CODES = {
+    "lgl": LGLSXP,
+    "int": INTSXP,
+    "dbl": REALSXP,
+    "chr": STRSXP,
+    "cplx": CPLXSXP,
+    "raw": RAWSXP,
+}
 _CODE_TYPES = {v: k for k, v in _TYPE_CODES.items()}
 
 
 class RInt(int):
     """An ``int`` that R should store as an integer (``1L``) rather than a double."""
+
+
+class EllmerOutput(str):
+    """A string of S3 class ``"ellmer_output"`` (what ellmer's ``chat$chat()`` returns)."""
 
 
 class RVec:
@@ -157,8 +172,6 @@ def _values_equal(a: list[Any], b: list[Any]) -> bool:
 
 
 def _obj_equal(a: Any, b: Any) -> bool:
-    if isinstance(a, RVec | RList) or isinstance(b, RVec | RList):
-        return a == b
     return bool(a == b)
 
 
@@ -171,7 +184,7 @@ def _r_version_int() -> int:
     except ImportError:  # pragma: no cover
         pass
     parts = R_VERSION if not ver else tuple(int(p) for p in str(ver).split(".")[:3])
-    major, minor, patch = (list(parts) + [0, 0, 0])[:3]
+    major, minor, patch = [*parts, 0, 0, 0][:3]
     return major * 65536 + minor * 256 + patch
 
 
@@ -192,14 +205,14 @@ def as_robj(x: Any) -> Any:
         return RVec("dbl", [float(x)])
     if isinstance(x, float):
         return RVec("dbl", [x])
+    if isinstance(x, EllmerOutput):
+        return RVec("chr", [str(x)], {"class": RVec("chr", ["ellmer_output"])})
     if isinstance(x, str):
         return RVec("chr", [x])
     if isinstance(x, dt.datetime):
         return _posixct([x])
     if isinstance(x, Mapping):
-        return RList(
-            [as_robj(v) for v in x.values()], {"names": RVec("chr", [str(k) for k in x])}
-        )
+        return RList([as_robj(v) for v in x.values()], {"names": RVec("chr", [str(k) for k in x])})
     if isinstance(x, list | tuple):
         return RList([as_robj(v) for v in x])
     try:
@@ -321,7 +334,7 @@ class _Writer:
             elif math.isinf(d):
                 s = "Inf" if d > 0 else "-Inf"
             else:
-                s = "%.16g" % d
+                s = f"{d:.16g}"
             self.out += f"{s}\n".encode()
         else:
             self.out += struct.pack(">d", NA_REAL if d is None else float(d))
@@ -507,7 +520,7 @@ class _Reader:
             bits = struct.unpack(">Q", struct.pack(">d", v))[0]
             if bits & 0xFFFFFFFF == 1954:
                 return None
-        return v
+        return float(v)
 
     def bytes_(self, n: int) -> bytes:
         if self.kind == "ascii":
@@ -537,10 +550,7 @@ class _Reader:
                         out.append(simple[e])
                     else:
                         digits = bytes([e])
-                        while (
-                            len(digits) < 3
-                            and self.data[self.pos] in b"01234567"
-                        ):
+                        while len(digits) < 3 and self.data[self.pos] in b"01234567":
                             digits += bytes([self.data[self.pos]])
                             self.pos += 1
                         out.append(int(digits, 8))
@@ -585,8 +595,14 @@ class _Reader:
             if idx == 0:
                 idx = self.int_() or 0
             return self.refs[idx - 1]
-        if typ in (EMPTYENV_SXP, BASEENV_SXP, GLOBALENV_SXP, UNBOUNDVALUE_SXP, MISSINGARG_SXP,
-                   BASENAMESPACE_SXP):
+        if typ in (
+            EMPTYENV_SXP,
+            BASEENV_SXP,
+            GLOBALENV_SXP,
+            UNBOUNDVALUE_SXP,
+            MISSINGARG_SXP,
+            BASENAMESPACE_SXP,
+        ):
             return _REnv(typ)
         if typ == PERSISTSXP:
             names = self._strvec()
@@ -624,10 +640,10 @@ class _Reader:
             info = self.item()
             state = self.item()
             attr = self.item()
-            obj = _altrep(info, state)
+            alt = _altrep(info, state)
             if attr is not None:
-                obj.attrs.update(_pairlist_dict(attr))
-            return obj
+                alt.attrs.update(_pairlist_dict(attr))
+            return alt
         if typ == CHARSXP:
             self.pos -= 0  # a bare CHARSXP (should not happen at top level)
             raise ValueError("unexpected CHARSXP")
@@ -663,10 +679,10 @@ class _Reader:
                 lst.attrs = self.attributes_pairlist()
             return lst
         if typ == S4SXP:
-            obj = RList([])
+            s4 = RList([])
             if has_attr:
-                obj.attrs = self.attributes_pairlist()
-            return obj
+                s4.attrs = self.attributes_pairlist()
+            return s4
         raise ValueError(f"unsupported SEXP type {typ} in serialized data")
 
     def _strvec(self) -> list[str | None]:
@@ -733,6 +749,8 @@ def _altrep(info: Any, state: Any) -> RVec | RList:
         return RVec("chr", vals)
     if cls.startswith("wrap_"):
         inner = state.values[0] if isinstance(state, RList) else state
+        if not isinstance(inner, RVec | RList):
+            raise ValueError(f"unsupported ALTREP state for {cls!r}")
         return inner
     raise ValueError(f"unsupported ALTREP class {cls!r}")
 
@@ -809,6 +827,8 @@ def to_python(x: Any) -> Any:
 
 def _atomic_values(x: RVec) -> list[Any]:
     cls = _classes(x)
+    if "ellmer_output" in cls and x.type == "chr":
+        return [None if v is None else EllmerOutput(v) for v in x.values]
     if "factor" in cls:
         levels = x.attrs.get("levels")
         labs = levels.values if isinstance(levels, RVec) else []
@@ -824,7 +844,7 @@ def _atomic_values(x: RVec) -> list[Any]:
     return list(x.values)
 
 
-def _to_frame(x: RList) -> Any:
+def _to_frame(x: RList) -> pd.DataFrame:
     import pandas as pd
 
     names = x.names or []
@@ -845,12 +865,12 @@ def _to_frame(x: RList) -> Any:
     return pd.DataFrame(cols)
 
 
-def _to_series(col: Any) -> Any:
+def _to_series(col: Any) -> pd.Series:
     import pandas as pd
 
     if isinstance(col, RList):
-        if "data.frame" in _classes(col):
-            return _to_frame(col).to_dict("records")
+        if "data.frame" in _classes(col):  # a data-frame column: one record per row
+            return pd.Series(_to_frame(col).to_dict("records"), dtype=object)
         return pd.Series([to_python(v) for v in col.values], dtype=object)
     if not isinstance(col, RVec):
         return pd.Series([], dtype=object)

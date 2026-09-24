@@ -1,0 +1,232 @@
+{
+  "id": ".figshare_doi_prefix_hosts",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "10.17633",
+      "10.25383",
+      "10.25917",
+      "10.26187",
+      "10.60809",
+      "10.23641",
+      "10.25573",
+      "10.23640",
+      "10.25452",
+      "10.57831",
+      "10.17028",
+      "10.26174",
+      "10.23634",
+      "10.25858",
+      "10.83056",
+      "10.25444",
+      "10.24378",
+      "10.15131",
+      "10.25422",
+      "10.17045",
+      "10.25916",
+      "10.83399",
+      "10.17608",
+      "10.25375",
+      "10.60696",
+      "10.48420",
+      "10.82444",
+      "10.60580",
+      "10.71741",
+      "10.26180",
+      "10.26188"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "brunel.figshare.com"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "city.figshare.com"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "curate.curtin.edu.au"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "dro.deakin.edu.au"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "drum.um.edu.mt"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "asha.figshare.com"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "smithsonian.figshare.com"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "orcid.figshare.com"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "plus.figshare.com"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "griffith.figshare.com"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "repository.lboro.ac.uk"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "repository.lboro.ac.uk"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "repository.mmu.ac.uk"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "repository.mmu.ac.uk"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "repository.mmu.ac.uk"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "nhlbi.figshare.com"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "ore.exeter.ac.uk"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "orda.shef.ac.uk"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "arizona.figshare.com"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "su.figshare.com"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "figshare.swinburne.edu.au"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "ucb.figshare.com"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "auckland.figshare.com"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "zivahub.uct.ac.za"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "uc.figshare.com"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "figshare.manchester.ac.uk"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "figshare.warwick.ac.uk"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "novasbe.figshare.com"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "figshare.uts.edu.au"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "bridges.monash.edu"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "melbourne.figshare.com"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

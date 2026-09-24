@@ -1,0 +1,27 @@
+{
+  "id": "apply_reasoning.ollama_qwen3_medium",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "params_list",
+      "api_args"
+    ],
+    "v": [
+      {
+        "t": "list",
+        "names": null,
+        "v": []
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": []
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

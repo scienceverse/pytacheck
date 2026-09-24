@@ -1,0 +1,529 @@
+{
+  "id": ".zenodo_info.custom",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 1,
+    "names": [
+      "zenodo_id",
+      "title",
+      "doi",
+      "description",
+      "publication_date",
+      "updated_date",
+      "creators",
+      "keywords",
+      "resource_type",
+      "journal",
+      "owners",
+      "license",
+      "downloads",
+      "unique_downloads",
+      "views",
+      "files"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "5550002"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Mixed results"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "10.5281/zenodo.5550002"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "2026-01-01"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "2026-01-02T00:00:00+00:00"
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "list",
+                "names": [
+                  "name"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Doe, Jane"
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "one"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "two"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "dataset"
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "null"
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "list",
+                "names": [
+                  "id"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "1"
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "cc-by-4.0"
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          1
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          1
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          2
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "list",
+                "names": [
+                  "id",
+                  "key",
+                  "size",
+                  "checksum",
+                  "links"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "5550002-good.csv"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "good.csv"
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      8
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "md5:b2bfedbf7a0f5bf84cea4ab7fc2fe2f5"
+                    ]
+                  },
+                  {
+                    "t": "list",
+                    "names": [
+                      "self"
+                    ],
+                    "v": [
+                      {
+                        "t": "chr",
+                        "v": [
+                          "https://zenodo.org/api/records/5550002/files/good.csv/content"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "id",
+                  "key",
+                  "size",
+                  "links",
+                  "checksum"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "5550002-bad.csv"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "bad.csv"
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      8
+                    ]
+                  },
+                  {
+                    "t": "list",
+                    "names": [
+                      "self"
+                    ],
+                    "v": [
+                      {
+                        "t": "chr",
+                        "v": [
+                          "https://zenodo.org/api/records/5550002/files/bad.csv/content"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "md5:c5562e6604237de4f57deb8f3f042fff"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "id",
+                  "key",
+                  "size",
+                  "checksum",
+                  "links"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "5550002-gone.csv"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "gone.csv"
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      12
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "md5:d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                  },
+                  {
+                    "t": "list",
+                    "names": [
+                      "self"
+                    ],
+                    "v": [
+                      {
+                        "t": "chr",
+                        "v": [
+                          "https://zenodo.org/api/records/5550002/files/gone.csv/content"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "id",
+                  "key",
+                  "size",
+                  "checksum",
+                  "links"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "5550002-huge.bin"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "huge.bin"
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      20971520
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "md5:d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                  },
+                  {
+                    "t": "list",
+                    "names": [
+                      "self"
+                    ],
+                    "v": [
+                      {
+                        "t": "chr",
+                        "v": [
+                          "https://zenodo.org/api/records/5550002/files/huge.bin/content"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "id",
+                  "key",
+                  "size",
+                  "checksum",
+                  "links"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "5550002-nolink.txt"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "nolink.txt"
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      3
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "md5:d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                  },
+                  {
+                    "t": "list",
+                    "names": [],
+                    "v": []
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "id",
+                  "key",
+                  "size",
+                  "checksum",
+                  "links"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "5550002-sha.txt"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "sha.txt"
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      7
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "sha256:abc"
+                    ]
+                  },
+                  {
+                    "t": "list",
+                    "names": [
+                      "self"
+                    ],
+                    "v": [
+                      {
+                        "t": "chr",
+                        "v": [
+                          "https://zenodo.org/api/records/5550002/files/sha.txt/content"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "id",
+                  "key",
+                  "size",
+                  "links"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "5550002-short.txt"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "short.txt"
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      10
+                    ]
+                  },
+                  {
+                    "t": "list",
+                    "names": [
+                      "self"
+                    ],
+                    "v": [
+                      {
+                        "t": "chr",
+                        "v": [
+                          "https://zenodo.org/api/records/5550002/files/short.txt/content"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

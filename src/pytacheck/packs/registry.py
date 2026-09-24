@@ -19,6 +19,8 @@ reading or writing bytecode; path packs are re-imported when any of their
 
 from __future__ import annotations
 
+import contextlib
+import contextvars
 import hashlib
 import importlib
 import importlib.abc
@@ -30,7 +32,7 @@ import re
 import sys
 import threading
 import warnings
-from collections.abc import Mapping
+from collections.abc import Iterator, Mapping
 from dataclasses import dataclass, replace
 from functools import cache
 from importlib.metadata import entry_points
@@ -62,6 +64,7 @@ __all__ = [
     "install_dir",
     "integrity",
     "load_module",
+    "overlay",
     "pack_for_spec",
     "pin_rev12",
     "refresh",
@@ -79,6 +82,11 @@ _KEYS: dict[str, Pack] = {}  # synthetic package key -> pack (installed + path p
 _BY_PACKAGE: dict[str, Pack] = {}  # python package prefix -> pack (never forgotten)
 _snapshots: dict[str, dict[str, tuple[int, int]]] = {}  # path pack key -> .py stats
 _warned: set[tuple[str, tuple[str, ...]]] = set()
+#: packs made active in one context only (``pack check`` checks a folder this way)
+_OVERLAY: contextvars.ContextVar[Mapping[str, Pack]] = contextvars.ContextVar(
+    "pytacheck_pack_overlay",
+    default={},  # noqa: B039 - never mutated
+)
 
 
 # ---------------------------------------------------------------------------
@@ -395,11 +403,26 @@ def refresh() -> None:
         importlib.invalidate_caches()
 
 
+@contextlib.contextmanager
+def overlay(*packs: Pack) -> Iterator[None]:
+    """Make *packs* active inside a ``with`` block, in this context only.
+
+    ``pack check`` uses it to resolve a folder's presets and ``pack::name``
+    refs without touching config. An overlay pack wins over a configured
+    pack of the same name.
+    """
+    token = _OVERLAY.set({**_OVERLAY.get(), **{p.name: p for p in packs}})
+    try:
+        yield
+    finally:
+        _OVERLAY.reset(token)
+
+
 def active_packs(*, allow_local: bool = True) -> dict[str, Pack]:
     """Active packs by name (built-in first); path packs only if *allow_local*."""
-    packs = registry().packs
+    packs = {**registry().packs, **_OVERLAY.get()}
     if allow_local:
-        return dict(packs)
+        return packs
     return {k: p for k, p in packs.items() if p.kind != "path"}
 
 
@@ -408,7 +431,7 @@ def get_pack(name: str, *, allow_local: bool = True) -> Pack:
     if name == "metacheck":
         return builtin_pack()
     reg = registry()
-    pack = reg.packs.get(name)
+    pack = _OVERLAY.get().get(name) or reg.packs.get(name)
     if pack is not None:
         if pack.kind == "path" and not allow_local:
             raise PackError(

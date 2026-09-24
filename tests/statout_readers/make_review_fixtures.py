@@ -32,7 +32,7 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 
-from make_fixtures import (  # noqa: E402
+from make_fixtures import (
     DBL_MAX,
     VIZ,
     dimension,
@@ -169,7 +169,7 @@ FIT_EXPRS = [
     ("formula", "~ x"),
     ("pipe", "x |> exp()"),
     ("lambda", "\\(z) z"),
-    ("raw string", "r\"(abc)\""),
+    ("raw string", 'r"(abc)"'),
     ("utf8 name", "\u00e9 + x"),
     ("trailing op", "x +"),
     ("double star", "x ** 2"),
@@ -226,6 +226,51 @@ def chart_data() -> bytes:
             )
         ]
     )
+
+
+OK_FITS = [
+    ("Linear", "0.5 * x + 1"),
+    ("missing object", "a * x"),
+    ("null", "NULL"),
+    ("special op", "x %in% 1"),
+    ("vector condition", "if (x > 160) 1 else 2"),
+    ("closure call", "(function(z, k = 2) z / k)(x)"),
+    ("logical", "x > 160"),
+    ("", "-x"),
+    ("exp", "exp(x / 100)"),
+    ("log base", "log(x, 10)"),
+    ("assign", "y <- x^2; y"),
+    ("recycled", "x * c(1, 2)"),
+]
+
+
+def point_ok_xml() -> str:
+    guides = "".join(
+        f'<functionGuide name="{xml_attr(n)}" value="{xml_attr(e)}"/>' for n, e in OK_FITS
+    )
+    return f"""<?xml version="1.0" encoding="UTF-8"?>
+<visualization xmlns="{VIZ}" lang="en">
+  <sourceVariable id="source0_x" source="source0" sourceName="height"/>
+  <sourceVariable id="source0_y" source="source0" sourceName="weight"/>
+  <graph>
+    <point><x variable="source0_x"/><y variable="source0_y"/></point>
+    {guides}
+  </graph>
+  <labelFrame><label><text>Fits</text></label></labelFrame>
+</visualization>
+"""
+
+
+BOX_NA_XML = f"""<?xml version="1.0" encoding="UTF-8"?>
+<visualization xmlns="{VIZ}">
+  <embeddedSource id="es0"><names>Category;Label;Tooltips;Value</names>
+    <row>0;;a;x</row><row>1;;b;y</row>
+  </embeddedSource>
+  <sourceVariable id="cat" source="es0" sourceName="Category"/>
+  <sourceVariable id="val" source="es0" sourceName="Value"/>
+  <graph><schema><x variable="cat"/><y variable="val"/></schema></graph>
+</visualization>
+"""
 
 
 def build_spv() -> None:
@@ -296,6 +341,31 @@ def build_spv() -> None:
             ("l2.xml", LEGACY_OK_XML),
         ],
     )
+    write_zip(
+        OUT / "spv_charts_ok.spv",
+        [
+            (
+                "outputViewer1_heading.xml",
+                doc(
+                    graph_container("c1_chartData.bin", "c1_chart.xml")
+                    + graph_container("c2_chartData.bin", "c2_chart.xml"),
+                    command="Charts",
+                ),
+            ),
+            ("c1_chartData.bin", chart_data()),
+            ("c1_chart.xml", point_ok_xml()),
+            ("c2_chartData.bin", chart_data()),
+            ("c2_chart.xml", BOX_ES_REVIEW_XML),
+        ],
+    )
+    write_zip(
+        OUT / "spv_box_na.spv",
+        [
+            ("outputViewer1_heading.xml", doc(graph_container("c_chartData.bin", "c.xml"))),
+            ("c_chartData.bin", chart_data()),
+            ("c.xml", BOX_NA_XML),
+        ],
+    )
 
 
 # ---------------------------------------------------------------------------
@@ -363,7 +433,32 @@ def build_omv_jasp() -> None:
     write_zip(OUT / "review.omv", members)
     write_zip(
         OUT / "empty_index.omv",
-        [("metadata.json", json.dumps({"dataSet": {"fields": []}})), ("data.bin", b""), ("index.html", "")],
+        [
+            ("metadata.json", json.dumps({"dataSet": {"fields": []}})),
+            ("data.bin", b""),
+            ("index.html", ""),
+        ],
+    )
+    obj_meta = {
+        "dataSet": {
+            "rowCount": 2,
+            "fields": {
+                "first": {"name": "a", "dataType": "Integer", "labels": [[1, "one"]]},
+                "second": {"name": "b", "dataType": "Decimal", "title": "B"},
+            },
+        }
+    }
+    write_zip(
+        OUT / "fields_object.omv",
+        [
+            ("metadata.json", json.dumps(obj_meta)),
+            ("data.bin", struct.pack("<2i", 1, 2) + struct.pack("<2d", 0.5, 1.5)),
+        ],
+    )
+    nameless = {"dataSet": {"rowCount": 1, "fields": [{"name": "a"}, {"dataType": "Integer"}]}}
+    write_zip(
+        OUT / "nameless.omv",
+        [("metadata.json", json.dumps(nameless)), ("data.bin", struct.pack("<2i", 1, 2))],
     )
     write_zip(OUT / "badurl.omv", [("index.html", '<p><img src="a%zz.png"></p>')])
     write_zip(
@@ -396,7 +491,10 @@ def build_omv_jasp() -> None:
     write_zip(
         OUT / "short.jasp",
         [
-            ("metadata.json", json.dumps({"dataSet": {"rowCount": 4, "fields": jmeta["dataSet"]["fields"]}})),
+            (
+                "metadata.json",
+                json.dumps({"dataSet": {"rowCount": 4, "fields": jmeta["dataSet"]["fields"]}}),
+            ),
             ("data.bin", struct.pack("<4i", 1, 2, 3, 1) + struct.pack("<2d", 1.0, 2.0)),
         ],
     )
@@ -419,17 +517,43 @@ def build_omv_jasp() -> None:
             "Column_3_DBL REAL)"
         )
         con.execute("CREATE TABLE DataSet_1 (rowNumber INT, Column_1_INT INT)")
-        con.execute(
-            "INSERT INTO DataSet_2 VALUES (1,2,2.5,7.5),(0,1,1.5,-2147483648),(2,1,NULL,3)"
-        )
+        con.execute("INSERT INTO DataSet_2 VALUES (1,2,2.5,7.5),(0,1,1.5,-2147483648),(2,1,NULL,3)")
         con.execute("CREATE TABLE Labels (columnId INT, value INT, ordering INT, label TEXT)")
-        con.execute(
-            "INSERT INTO Labels VALUES (1,2,1,'Two'),(1,1,0,NULL),(3,7,0,'seven')"
-        )
+        con.execute("INSERT INTO Labels VALUES (1,2,1,'Two'),(1,1,0,NULL),(3,7,0,'seven')")
         con.commit()
         con.close()
         write_zip(OUT / name, [("internal.sqlite", sq.read_bytes())])
         sq.unlink()
+
+    sq = OUT / "internal.sqlite"
+    if sq.exists():
+        sq.unlink()
+    con = sqlite3.connect(sq)
+    con.execute("CREATE TABLE Columns (id INT, name TEXT, columnType TEXT, colIdx INT, title TEXT)")
+    con.execute(
+        "INSERT INTO Columns VALUES (1,'mixed','scale',0,NULL),(2,'textfirst','scale',1,NULL),"
+        "(3,'intfirst','scale',2,NULL),(4,'allnull','scale',3,NULL),(5,'nom_text','nominal',4,NULL),"
+        "(6,'untyped_null','scale',5,NULL),(7,'big','scale',6,NULL)"
+    )
+    con.execute(
+        "CREATE TABLE DataSet_1 (rowNumber INT, Column_1_DBL REAL, Column_2_DBL REAL, "
+        "Column_3_DBL REAL, Column_4_DBL REAL, Column_5_INT INT, Column_6_DBL, Column_7_INT INT)"
+    )
+    con.executemany(
+        "INSERT INTO DataSet_1 VALUES (?,?,?,?,?,?,?,?)",
+        [
+            (0, 1.5, "abc", None, None, "7", None, 3000000000),
+            (1, "12x", 2.0, None, None, "x", None, 1),
+            (2, None, 1e-7, None, None, 2.5, None, None),
+        ],
+    )
+    con.execute("CREATE TABLE DataSet_2 (rowNumber INT)")
+    con.execute("CREATE TABLE Labels (columnId INT, value INT, ordering INT, label TEXT)")
+    con.execute("INSERT INTO Labels VALUES (5,'x',0,'text code'),(5,2,1,'two')")
+    con.commit()
+    con.close()
+    write_zip(OUT / "sqlite_types.jasp", [("internal.sqlite", sq.read_bytes())])
+    sq.unlink()
 
     sqlite_jasp("sqlite_review.jasp", "nominal")
     sqlite_jasp("sqlite_nulltype.jasp", None)
@@ -557,6 +681,10 @@ SAMPLE STATISTICS
 def build_text() -> None:
     (OUT / "tricky.smcl").write_text(SMCL, encoding="utf-8")
     (OUT / "tricky.out").write_text(MPLUS, encoding="utf-8")
+    (OUT / "nul.smcl").write_bytes(
+        b"{smcl}\n{com}. summarize x\x00 junk\n{txt}    Variable {c |}  Obs\n"
+        b"{hline 13}{c +}{hline 8}\n           x {c |}{res}   74\x00 9\n"
+    )
     (OUT / "latin1.smcl").write_bytes(
         b"{smcl}\n{com}. summarize caf\xe9\n{txt}\n{hline 13}{c +}{hline 20}\n"
         b"    Variable {c |}        Obs\n{hline 13}{c +}{hline 20}\n"

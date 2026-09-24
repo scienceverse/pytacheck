@@ -20,6 +20,16 @@ Uploads are multipart ``file`` fields holding bibr JSON (max 50 MB). As a
 pytacheck extension, PDF/DOCX/HTML uploads are accepted too when the
 ``bibr`` extra is installed (extracted in-process).
 
+Module system (pytacheck extensions): the server runs built-in modules (bare
+names) and the modules of active packs (``pack::name``); it always runs with
+``use(allow_local=False)`` (no ``./name.py`` files, paths or path packs) and
+never installs packs. ``/paper/check`` also takes ``preset``; without
+``modules`` or ``preset`` it runs the preset configured for the server
+(``PYTACHECK_PRESET`` or config), else every available module as plumber
+does. Parsing uploads and running modules happen off the event loop, at
+most ``PYTACHECK_API_MAX_CHECKS`` (default: the CPU count) at a time, each
+request inside a run session.
+
 Run with ``pytacheck serve`` or ``uvicorn pytacheck.api.app:create_app --factory``.
 LLM configuration follows the plumber API: when ``GEMINI_API_KEY`` is set,
 LLM use is switched on with ``METACHECK_LLM_MODEL`` (default
@@ -29,10 +39,13 @@ LLM use is switched on with ``METACHECK_LLM_MODEL`` (default
 
 from __future__ import annotations
 
+import asyncio
+import contextvars
 import logging
 import os
 import tempfile
 import uuid
+import weakref
 from collections.abc import Callable
 from datetime import datetime
 from pathlib import Path
@@ -57,10 +70,32 @@ class ApiError(Exception):
 
 
 def available_modules() -> list[str]:
-    """Module names the API accepts (every built-in module)."""
-    from pytacheck.module import _builtin_names
+    """Module names the API accepts: every built-in module, then active packs' ``pack::name``.
 
-    return list(_builtin_names())
+    Local code (path packs, ``./name.py``, file paths) is never available.
+    """
+    from pytacheck.module import _builtin_names, use
+
+    names = list(_builtin_names())
+    try:
+        from pytacheck.packs.registry import active_packs
+
+        with use(allow_local=False):
+            for pack in active_packs(allow_local=False).values():
+                if pack.kind != "builtin":
+                    names.extend(f"{pack.name}::{m}" for m in pack.modules())
+    except Exception as exc:  # a broken config must not take the API down
+        LOG.warning("packs unavailable: %s", exc)
+    return names
+
+
+def max_checks() -> int:
+    """How many uploads are parsed / checked at once (``PYTACHECK_API_MAX_CHECKS``)."""
+    try:
+        value = int(os.environ.get("PYTACHECK_API_MAX_CHECKS") or 0)
+    except ValueError:
+        value = 0
+    return value if value > 0 else (os.cpu_count() or 1)
 
 
 def parse_bool(x: str | None, default: bool = True) -> bool:
@@ -147,11 +182,40 @@ def _read_upload(data: bytes, filename: str, request_id: str) -> Any:
         raise ApiError(400, str(exc)) from exc
 
 
+def _check_selection(mp: dict[str, Any]) -> list[tuple[Any, dict[str, Any]]]:
+    """``(ref, args)`` for ``/paper/check``: modules, else a preset, else plumber's default."""
+    from pytacheck.presets import default_preset, select
+
+    if mp.get("modules"):
+        return [(m, {}) for m in parse_modules(mp["modules"])]
+    if mp.get("preset"):
+        return list(select(preset=mp["preset"], use_config=True))
+    _, source = default_preset(use_config=True)
+    if source != "default":  # the server's configured preset
+        return list(select(use_config=True))
+    return [(m, {}) for m in available_modules()]
+
+
 def create_app() -> FastAPI:
     """Build the FastAPI application."""
+    from starlette.concurrency import run_in_threadpool
+
     from pytacheck._version import __version__
+    from pytacheck.module import run_session, use
 
     _configure_llm()
+    limit = max_checks()
+    semaphores: weakref.WeakKeyDictionary[asyncio.AbstractEventLoop, asyncio.Semaphore] = (
+        weakref.WeakKeyDictionary()
+    )
+
+    def semaphore() -> asyncio.Semaphore:
+        loop = asyncio.get_running_loop()
+        sem = semaphores.get(loop)
+        if sem is None:
+            sem = semaphores[loop] = asyncio.Semaphore(limit)
+        return sem
+
     app = FastAPI(
         title="metacheck API (pytacheck)",
         description=(
@@ -160,6 +224,7 @@ def create_app() -> FastAPI:
         ),
         version=__version__,
     )
+    app.state.max_checks = limit
 
     async def with_uploaded_paper(
         request: Request,
@@ -186,19 +251,27 @@ def create_app() -> FastAPI:
             return _error(
                 413, f"File too large. Maximum size is {MAX_UPLOAD_BYTES // (1024 * 1024)}MB."
             )
-        if prevalidate is not None:
-            problem = prevalidate(fields)
-            if problem is not None:
-                return _error(*problem)
-        try:
-            paper = _read_upload(data, getattr(upload, "filename", "") or "", request_id)
-        except ApiError as exc:
-            return _error(exc.status, exc.message)
-        try:
-            result = handler(paper, fields, request_id)
-        except ApiError as exc:
-            return _error(exc.status, exc.message)
-        return result if hasattr(result, "status_code") else _json(result)
+        filename = getattr(upload, "filename", "") or ""
+
+        def work() -> Any:
+            # blocking: runs in a worker thread, never with local modules, in a run session
+            with use(allow_local=False), run_session():
+                if prevalidate is not None:
+                    problem = prevalidate(fields)
+                    if problem is not None:
+                        return _error(*problem)
+                try:
+                    paper = _read_upload(data, filename, request_id)
+                except ApiError as exc:
+                    return _error(exc.status, exc.message)
+                try:
+                    result = handler(paper, fields, request_id)
+                except ApiError as exc:
+                    return _error(exc.status, exc.message)
+                return result if hasattr(result, "status_code") else _json(result)
+
+        async with semaphore():
+            return await run_in_threadpool(contextvars.copy_context().run, work)
 
     @app.get("/health")
     def health() -> Any:
@@ -206,7 +279,8 @@ def create_app() -> FastAPI:
 
     @app.get("/paper/modules")
     def modules() -> Any:
-        mods = available_modules()
+        with use(allow_local=False):
+            mods = available_modules()
         return _json({"modules": mods, "count": len(mods)})
 
     @app.post("/paper/info")
@@ -292,7 +366,7 @@ def create_app() -> FastAPI:
 
     @app.post("/paper/check")
     async def check(request: Request) -> Any:
-        from pytacheck.module import ModuleOutput, module_run
+        from pytacheck.module import ModuleError, ModuleOutput, module_run
         from pytacheck.papers.tables import paper_table
 
         def pre(mp: dict[str, Any]) -> tuple[int, str] | None:
@@ -303,15 +377,21 @@ def create_app() -> FastAPI:
                     400,
                     f"Invalid modules: {', '.join(invalid)}. Available modules: {', '.join(mods)}",
                 )
+            if mp.get("preset") and not mp.get("modules"):
+                try:
+                    _check_selection(mp)
+                except ModuleError as exc:
+                    return 400, f"Invalid preset: {exc}"
             return None
 
         def handler(paper: Any, mp: dict[str, Any], request_id: str) -> Any:
-            names = parse_modules(mp.get("modules"))
+            entries = _check_selection(mp)
+            names = [str(ref) for ref, _ in entries]
             include_report = parse_bool(mp.get("report"), default=True)
             full: dict[str, ModuleOutput] = {}
-            for name in names:
+            for name, args in zip(names, (a for _, a in entries), strict=True):
                 try:
-                    full[name] = module_run(paper, name)
+                    full[name] = module_run(paper, name, **args)
                 except Exception as exc:
                     full[name] = ModuleOutput(
                         module=name,

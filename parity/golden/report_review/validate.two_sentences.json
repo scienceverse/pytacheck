@@ -1,0 +1,76 @@
+{
+  "id": "validate.two_sentences",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 4,
+    "names": [
+      "paper_id",
+      "text",
+      "flag.gt",
+      "flag.mod",
+      "n",
+      "flag.valid"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "1",
+          "2",
+          "3",
+          "zzz"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "It was significant. Twice significant.",
+          "No.",
+          "It was significant.",
+          "an extra row"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "TRUE",
+          "FALSE",
+          "yes",
+          null
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true,
+          false,
+          true,
+          null
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          38,
+          3,
+          19,
+          0
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true,
+          true,
+          false,
+          null
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

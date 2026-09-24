@@ -24,7 +24,7 @@ import math
 import os
 import warnings
 import zipfile
-from collections.abc import Callable
+from collections.abc import Callable, Sequence
 from pathlib import Path
 from typing import Any
 
@@ -95,7 +95,7 @@ def _suffix_pos(name: str) -> int:
     return suffix_end
 
 
-def vec_as_names_unique(names: list[str | None]) -> list[str]:
+def vec_as_names_unique(names: Sequence[str | None]) -> list[str]:
     """``vctrs::vec_as_names(names, repair = "unique")``."""
     out: list[str] = []
     for nm in names:
@@ -118,100 +118,6 @@ def vec_as_names_unique(names: list[str | None]) -> list[str]:
 # -----------------------------------------------------------------------------
 
 
-def _split_physical_lines(text: str) -> list[str]:
-    return text.replace("\r\n", "\n").replace("\r", "\n").split("\n")
-
-
-def _scan_records(text: str, sep: str) -> list[list[str]]:
-    """``scan()``'s records: fields split on *sep*, ``"``-quoted fields may
-    contain separators, newlines and doubled quotes; empty lines are skipped."""
-    records: list[list[str]] = []
-    lines = _split_physical_lines(text)
-    if lines and lines[-1] == "":
-        lines.pop()
-    i = 0
-    while i < len(lines):
-        line = lines[i]
-        i += 1
-        if line == "":
-            continue
-        fields: list[str] = []
-        cur: list[str] = []
-        k = 0
-        at_start = True
-        while True:
-            if k >= len(line):
-                fields.append("".join(cur))
-                break
-            c = line[k]
-            if at_start and c == '"':
-                # quoted field (may span lines)
-                k += 1
-                while True:
-                    if k >= len(line):
-                        if i < len(lines):
-                            cur.append("\n")
-                            line = lines[i]
-                            i += 1
-                            k = 0
-                            continue
-                        break
-                    if line[k] == '"':
-                        if k + 1 < len(line) and line[k + 1] == '"':
-                            cur.append('"')
-                            k += 2
-                            continue
-                        k += 1
-                        break
-                    cur.append(line[k])
-                    k += 1
-                at_start = False
-                continue
-            if c == sep:
-                fields.append("".join(cur))
-                cur = []
-                at_start = True
-                k += 1
-                continue
-            cur.append(c)
-            at_start = False
-            k += 1
-        records.append(fields)
-    return records
-
-
-_LOGICAL_STRINGS = {"T": True, "F": False, "TRUE": True, "FALSE": False, "true": True,
-                    "false": False, "True": True, "False": False}  # fmt: skip
-
-
-def _is_blank(s: str) -> bool:
-    return s.strip(" \t\n\r") == ""
-
-
-def _type_convert(values: list[str | None]) -> pd.Series:
-    """``type.convert(x, as.is = TRUE)`` for a character vector."""
-    from pytacheck.datacheck.files import _r_as_numeric
-
-    present = [v for v in values if v is not None and not _is_blank(v)]
-    if all(v in _LOGICAL_STRINGS for v in present):
-        return pd.Series(
-            [None if (v is None or _is_blank(v)) else _LOGICAL_STRINGS[v] for v in values],
-            dtype="boolean",
-        )
-    if all(_rx(r"[+-]?[0-9]+").fullmatch(v) and abs(int(v)) <= 2147483647 for v in present):
-        return pd.Series(
-            [None if (v is None or _is_blank(v)) else int(v) for v in values], dtype="Int64"
-        )
-    nums = [None if (v is None or _is_blank(v)) else _r_as_numeric(v) for v in values]
-    if all(
-        n is not None
-        for v, n in zip(values, nums, strict=True)
-        if v is not None and not _is_blank(v)
-    ):
-        return pd.Series([math.nan if n is None else n for n in nums], dtype="float64")
-    return pd.Series(values, dtype="string")
-
-
 def read_delim(
     path: str | os.PathLike[str],
     sep: str,
@@ -221,62 +127,12 @@ def read_delim(
 ) -> pd.DataFrame:
     """``utils::read.delim(path, sep, header, nrows, check.names = FALSE)``.
 
-    ``encoding = "latin1"`` is ``fileEncoding = "latin1"``. A NUL ends its line.
+    ``encoding = "latin1"`` is ``fileEncoding = "latin1"``. See
+    :mod:`pytacheck.datacheck._files_readtable`.
     """
-    raw = Path(path).read_bytes()
-    lines = raw.replace(b"\r\n", b"\n").replace(b"\r", b"\n").split(b"\n")
-    raw = b"\n".join(ln.split(b"\0", 1)[0] for ln in lines)
-    text = raw.decode("latin-1") if encoding == "latin1" else raw.decode("utf-8", "surrogateescape")
-    records = _scan_records(text, sep)
-    if not records:
-        raise ValueError("no lines available in input")
-    first = records[0]
-    first_stripped = [f.strip(" \t") for f in first]
-    if header and first_stripped == [""]:
-        # scan(strip.white = TRUE) sees a whitespace-only line as blank: no names
-        first_stripped = []
-    col1 = len(first_stripped) if header else len(first)
-    head = records[1:5]
-    cols = max([col1, *[len(r) for r in head]])
-    rlabp = (cols - col1) == 1
-    if not header:
-        rlabp = False
-    if header:
-        col_names = first_stripped
-        data = records[1:]
-    else:
-        col_names = [f"V{j}" for j in range(1, cols + 1)]
-        data = records
-    if len(col_names) + rlabp < cols:
-        raise ValueError("more columns than column names")
-    if len(col_names) > cols:
-        cols = len(col_names)
-    if cols == 0:
-        raise ValueError("first five rows are empty: giving up")
-    if math.isfinite(nrows) and nrows >= 0:
-        data = data[: int(nrows)]
-    columns: list[list[str | None]] = [[] for _ in range(cols)]
-    for rec in data:
-        # fill = TRUE: short records get blank fields; longer ones wrap
-        pos = 0
-        while pos < len(rec) or pos == 0:
-            chunk = rec[pos : pos + cols]
-            for j in range(cols):
-                v: str | None = chunk[j] if j < len(chunk) else ""
-                columns[j].append(None if v == "NA" else v)
-            pos += cols
-            if pos >= len(rec):
-                break
-    names = (["row.names"] if rlabp else []) + list(col_names)
-    series = [_type_convert(col) for col in columns]
-    if rlabp:
-        series = series[1:]
-        names = names[1:]
-    if not series:
-        return pd.DataFrame(index=range(len(columns[0]) if columns else 0))
-    out = pd.DataFrame(dict(enumerate(series)))
-    out.columns = pd.Index(names[: len(series)], dtype=object)
-    return out
+    from pytacheck.datacheck._files_readtable import read_table
+
+    return read_table(path, sep, header, nrows, encoding)
 
 
 # -----------------------------------------------------------------------------
@@ -510,12 +366,12 @@ class _XlsxBook:
             office = "xl/workbook.xml"
         wb = self._parse(office)
         self.sheet_names: list[str] = []
-        self.sheet_ids: list[str] = []
+        self.sheet_ids: list[str | None] = []
         self.is1904 = False
         for node in wb.iter():
             name = _local(node.tag) if isinstance(node.tag, str) else ""
             if name == "sheet":
-                self.sheet_names.append(node.get("name"))
+                self.sheet_names.append(str(node.get("name") or ""))
                 rid = next((v for k, v in node.attrib.items() if _local(k) == "id"), None)
                 self.sheet_ids.append(rid)
             elif name == "workbookPr":
@@ -995,7 +851,7 @@ def _minty_is_double(s: str) -> bool:
     return _RX_DOUBLE.fullmatch(s) is not None and s != "NA"
 
 
-def _minty_guess(values: list[str]) -> str:
+def _minty_guess(values: Sequence[str | None]) -> str:
     vals = [v for v in values if v is not None]
     if not vals:
         return "logical"
@@ -1049,7 +905,7 @@ def _minty_convert(values: list[str], guess_max: int) -> pd.Series:
             m = _RX_DATE.fullmatch(v) if v is not None else None
             dates.append(
                 dt.date(int(m.group(1)), int(m.group(2)), int(m.group(3)))
-                if _valid_date(m)
+                if m is not None and _valid_date(m)
                 else None
             )
         return pd.Series(dates, dtype=object)
@@ -1171,12 +1027,13 @@ def read_stat_file(path: str, ext: str, n_rows: float) -> pd.DataFrame:
     """
     import pyreadstat
 
-    reader = {
+    readers: dict[str, Callable[..., Any]] = {
         "sav": pyreadstat.read_sav,
         "dta": pyreadstat.read_dta,
         "sas7bdat": pyreadstat.read_sas7bdat,
         "por": pyreadstat.read_por,
-    }[ext]
+    }
+    reader = readers[ext]
     limit = 0 if not math.isfinite(n_rows) else max(int(n_rows), 0)
     kwargs: dict[str, Any] = {"row_limit": limit}
     if limit == 0 and math.isfinite(n_rows):
@@ -1188,6 +1045,7 @@ def read_stat_file(path: str, ext: str, n_rows: float) -> pd.DataFrame:
     value_labels = meta.variable_value_labels or {}
     var_labels = meta.column_names_to_labels or {}
     formats = meta.original_variable_types or {}
+    widths = getattr(meta, "variable_display_width", None) or {}
     for j, name in enumerate(names):
         col = df[name] if name in df.columns else pd.Series([], dtype=object)
         attrs: dict[str, Any] = {}
@@ -1196,12 +1054,23 @@ def read_stat_file(path: str, ext: str, n_rows: float) -> pd.DataFrame:
         fmt = _haven_format(ext, formats.get(name))
         if fmt:
             attrs[fmt[0]] = fmt[1]
+        width = widths.get(name)
+        if ext in ("sav", "por") and isinstance(width, int) and width > 0 and width != 8:
+            attrs["display_width"] = width  # haven skips the default width 8
         labels = value_labels.get(name)
         series[j] = _haven_column(col)
         if labels:
             attrs["labels"] = {str(lab): code for code, lab in labels.items()}
             base = "character" if isinstance(series[j].dtype, pd.StringDtype) else "double"
             attrs["class"] = ["haven_labelled", "vctrs_vctr", base]
+        elif _is_time_column(col):
+            attrs["class"] = ["hms", "difftime"]
+            attrs["units"] = "secs"
+        elif pd.api.types.is_datetime64_any_dtype(series[j].dtype):
+            attrs["class"] = ["POSIXct", "POSIXt"]
+            attrs["tzone"] = "UTC"
+        elif series[j].dtype == object and any(isinstance(v, dt.date) for v in series[j]):
+            attrs["class"] = "Date"
         if attrs:
             col_attrs[name] = attrs
     out = pd.DataFrame(series)
@@ -1209,6 +1078,10 @@ def read_stat_file(path: str, ext: str, n_rows: float) -> pd.DataFrame:
     if col_attrs:
         out.attrs["col_attrs"] = col_attrs
     return out.reset_index(drop=True)
+
+
+def _is_time_column(col: pd.Series) -> bool:
+    return col.dtype == object and any(isinstance(v, dt.time) for v in col.tolist())
 
 
 def _haven_column(col: pd.Series) -> pd.Series:
@@ -1268,7 +1141,7 @@ def read_rdata_first_df(path: str | os.PathLike[str], n_rows: float) -> pd.DataF
     """The first data frame ``as.list()`` lists after ``load()``, head of *n_rows*."""
     from pytacheck.datacheck._files_rdata import r_frame_to_pandas, workspace_first_data_frame
 
-    obj = workspace_first_data_frame(path)
+    obj = workspace_first_data_frame(Path(path))
     if obj is None:
         return None
     # The R child process only calls head() for a finite n_rows, and it has no

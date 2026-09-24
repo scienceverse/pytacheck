@@ -1,0 +1,61 @@
+{
+  "id": "llm.input.column_clash",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "value",
+      "warnings"
+    ],
+    "v": [
+      {
+        "t": "df",
+        "nrow": 2,
+        "names": [
+          "text",
+          "answer.x",
+          "error",
+          "answer.y"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "hello",
+              "12"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "x",
+              "y"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1,
+              2
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "FALSE",
+              "TRUE"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": []
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

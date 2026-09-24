@@ -1,0 +1,111 @@
+{
+  "schema": 1,
+  "name": "pytacheck",
+  "description": "Community modules and presets for pytacheck (and, in future, metacheck).",
+  "generated": "2026-09-24T20:17:50Z",
+  "fields": [
+    "general",
+    "psychology",
+    "medicine",
+    "neuroscience",
+    "economics",
+    "education",
+    "biology",
+    "ecology",
+    "sociology",
+    "political-science",
+    "computer-science",
+    "physics"
+  ],
+  "packs": [
+    {
+      "name": "clinical_trials",
+      "version": "0.1.0",
+      "title": "Clinical trial checks",
+      "description": "Checks for clinical trial reports: finds trial registration numbers from the major registries and flags trials that report none.",
+      "fields": [
+        "medicine"
+      ],
+      "keywords": [
+        "clinical trials",
+        "trial registration",
+        "CONSORT",
+        "ICMJE"
+      ],
+      "license": "MIT",
+      "authors": [
+        "pytacheck-modules contributors"
+      ],
+      "homepage": "https://github.com/thesanogoeffect/pytacheck-modules/tree/main/packs/clinical_trials",
+      "tree_sha256": "9a43a7c05abdfccf1a28b8295171e9fa72e40380feb3f0f3aaeae959d62ed80c",
+      "code": true,
+      "languages": [
+        "python"
+      ],
+      "requires": {
+        "pytacheck": ">=0.3"
+      },
+      "dependencies": [],
+      "modules": [
+        {
+          "name": "trial_registration",
+          "title": "Trial Registration",
+          "description": "Find clinical trial registration numbers (ClinicalTrials.gov, ISRCTN, EudraCT/CTIS, ANZCTR, ChiCTR, DRKS, CTRI) and flag trials that report none.",
+          "section": "method",
+          "requires": [],
+          "validation": null
+        }
+      ],
+      "presets": {
+        "default": "metacheck's default report plus trial registration numbers",
+        "only": "Only the trial registration check"
+      },
+      "source": {
+        "path": "packs/clinical_trials"
+      },
+      "reviewed": null,
+      "yanked": null
+    },
+    {
+      "name": "fields",
+      "version": "0.1.0",
+      "title": "Field presets",
+      "description": "Presets that pick metacheck's built-in checks for a field of research. No code: only module lists.",
+      "fields": [
+        "general",
+        "psychology",
+        "medicine"
+      ],
+      "keywords": [
+        "presets",
+        "fields",
+        "open science"
+      ],
+      "license": "CC0-1.0",
+      "authors": [
+        "pytacheck-modules contributors"
+      ],
+      "homepage": "https://github.com/thesanogoeffect/pytacheck-modules/tree/main/packs/fields",
+      "tree_sha256": "6e9a4ef6fb431766b92aea452be5eeca96e73e04d6cefb56e9a63d9e71a5a675",
+      "code": false,
+      "languages": [],
+      "requires": {
+        "pytacheck": ">=0.3"
+      },
+      "dependencies": [],
+      "modules": [],
+      "presets": {
+        "default": "Same as fields::general",
+        "general": "Any empirical paper: metacheck's default report plus ethics approval and open-practice statements, which apply across fields",
+        "psychology": "Psychology: the general checks plus every reported p-value and causal claims about non-randomised designs, common reporting problems in the field",
+        "medicine": "Medicine: the general checks without the FLoRA replication lookup (it covers psychology studies); add the clinical_trials pack for trial registration numbers",
+        "open-science": "Transparency: preregistration, open-practice statements and what the shared repositories actually contain (files, code, data, codebooks, Psych-DS)"
+      },
+      "source": {
+        "path": "packs/fields"
+      },
+      "reviewed": null,
+      "yanked": null
+    }
+  ]
+}

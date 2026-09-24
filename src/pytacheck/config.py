@@ -153,7 +153,10 @@ def config_files() -> list[tuple[str, Path]]:
     user = user_config_path()
     if user.is_file():
         out.append(("user", user))
-    project = project_config_path()
+    try:
+        project = project_config_path()
+    except OSError:  # the working directory was removed
+        project = None
     if project is not None and project != user:
         out.append(("project", project))
     return out
@@ -161,7 +164,7 @@ def config_files() -> list[tuple[str, Path]]:
 
 def config_stamp() -> tuple[Any, ...]:
     """A cheap fingerprint of everything config depends on (for cache invalidation)."""
-    files = []
+    files: list[tuple[str, str, int | None, int | None]] = []
     for scope, path in config_files():
         try:
             st = path.stat()
@@ -169,7 +172,11 @@ def config_stamp() -> tuple[Any, ...]:
         except OSError:
             files.append((scope, str(path), None, None))
     env = tuple(os.environ.get(k) for k in _ENV_KEYS)
-    return (env, os.getcwd(), tuple(files), _writes)
+    try:
+        cwd = os.getcwd()
+    except OSError:
+        cwd = ""
+    return (env, cwd, tuple(files), _writes)
 
 
 def _read_json(path: Path) -> dict[str, Any]:
@@ -269,15 +276,15 @@ class Config:
 
     @property
     def stores(self) -> dict[str, str]:
-        return self.values["stores"]
+        return self.values["stores"]  # type: ignore[no-any-return]
 
     @property
     def packs(self) -> dict[str, Any]:
-        return self.values["packs"]
+        return self.values["packs"]  # type: ignore[no-any-return]
 
     @property
     def presets(self) -> dict[str, dict[str, Any]]:
-        return self.values["presets"]
+        return self.values["presets"]  # type: ignore[no-any-return]
 
 
 def load_config() -> Config:
@@ -358,12 +365,16 @@ def update_config(scope: str, fn: Callable[[dict[str, Any]], dict[str, Any] | No
         raise ConfigError("update_config(): the new config must be a dict")
     _check_section(data, path)
     path.parent.mkdir(parents=True, exist_ok=True)
+    try:
+        mode = path.stat().st_mode & 0o777
+    except OSError:
+        mode = 0o644
     fd, tmp = tempfile.mkstemp(prefix=".pytacheck-", suffix=".tmp", dir=path.parent)
     try:
         with os.fdopen(fd, "w", encoding="utf-8") as fh:
             json.dump(data, fh, indent=2, ensure_ascii=False)
             fh.write("\n")
-        os.chmod(tmp, 0o644)
+        os.chmod(tmp, mode)
         os.replace(tmp, path)
     except BaseException:
         with contextlib.suppress(OSError):

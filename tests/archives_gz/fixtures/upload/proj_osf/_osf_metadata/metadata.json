@@ -1,0 +1,30 @@
+{
+ "osf_id": "gzosf",
+ "osf_url": "https://osf.io/gzosf",
+ "title": "A \"quoted\" study / test",
+ "description": "Café data\nsecond line",
+ "tags": [
+  "open",
+  "data"
+ ],
+ "license": "CC0 1.0 Universal",
+ "contributors": [
+  {
+   "name": "Jane Doe",
+   "given_name": "Jane",
+   "family_name": "Doe",
+   "orcid": "0000-0001-2345-6789"
+  },
+  {
+   "name": "Solo",
+   "given_name": "",
+   "family_name": null,
+   "orcid": null
+  },
+  {
+   "name": "",
+   "given_name": "",
+   "family_name": ""
+  }
+ ]
+}

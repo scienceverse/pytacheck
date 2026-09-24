@@ -1,0 +1,72 @@
+{
+  "id": "extract_urls.review.refs_excluded",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 2,
+    "names": [
+      "text",
+      "section_type",
+      "text_id",
+      "paper_id",
+      "section_id",
+      "paragraph_id",
+      "header"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "https://osf.io/abc",
+          "www.example.com"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "method",
+          "discussion"
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          1,
+          3
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "x",
+          "x"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          null,
+          null
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          null,
+          null
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          null,
+          null
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

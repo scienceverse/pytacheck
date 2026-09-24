@@ -1,0 +1,22 @@
+{
+  "id": "chatcmpl-review",
+  "object": "chat.completion",
+  "created": 1760000000,
+  "model": "probe-model",
+  "choices": [
+    {
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "{}"
+      },
+      "logprobs": null,
+      "finish_reason": "stop"
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 42,
+    "completion_tokens": 7,
+    "total_tokens": 49
+  }
+}

@@ -1,0 +1,1 @@
+structure(list(method = "GET", url = "https://api.github.com/repos/gzorg/notree/contents/", status_code = 404L, headers = structure(list(`content-type` = "application/json; charset=utf-8"), class = "httr2_headers"), body = charToRaw("{\"message\":\"This repository is empty.\"}"), cache = new.env(parent = emptyenv())), class = "httr2_response")

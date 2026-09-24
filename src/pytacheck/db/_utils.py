@@ -23,6 +23,9 @@ if TYPE_CHECKING:
 
 __all__ = [
     "DEFAULT_EMAIL",
+    "NA_character",
+    "NA_real",
+    "TypedNA",
     "as_vector",
     "default_email",
     "online",
@@ -263,6 +266,27 @@ def resp_body_json(resp: httpx.Response | None) -> Any:
 # ---------------------------------------------------------------------------
 
 
+class TypedNA:
+    """A typed R missing value in a record (``NA_character_``, ``NA_real_``).
+
+    ``bind_rows()`` refuses to combine ``NA_character_`` with numbers (only a
+    logical ``NA`` combines with anything), and an all-``NA_real_`` column is
+    double: :func:`records_frame` honours both, then stores the value as missing.
+    """
+
+    __slots__ = ("kind",)
+
+    def __init__(self, kind: str) -> None:
+        self.kind = kind
+
+    def __repr__(self) -> str:
+        return {"character": "NA_character_", "double": "NA_real_"}.get(self.kind, "NA")
+
+
+NA_character = TypedNA("character")
+NA_real = TypedNA("double")
+
+
 def _is_scalar(v: Any) -> bool:
     return v is None or isinstance(v, str | int | float | bool)
 
@@ -290,6 +314,8 @@ def _r_type(v: Any) -> str | None:
     """The vctrs type family of a cell value (``None``: missing, combines with anything)."""
     if v is None or (isinstance(v, float) and v != v):
         return None
+    if isinstance(v, TypedNA):
+        return "character" if v.kind == "character" else "numeric"
     if isinstance(v, str):
         return "character"
     if isinstance(v, bool | int | float):
@@ -301,6 +327,8 @@ _TYPE_NAMES = {"character": "character", "list": "list"}
 
 
 def _type_name(v: Any) -> str:
+    if isinstance(v, TypedNA):
+        return v.kind
     if isinstance(v, bool):
         return "logical"
     if isinstance(v, int):
@@ -347,18 +375,27 @@ def records_frame(
         columns = list(seen)
     data: dict[str, Any] = {}
     for c in columns:
-        values = [r.get(c) for r in records]
-        _check_combinable(c, values)
+        raw = [r.get(c) for r in records]
+        _check_combinable(c, raw)
+        values = [None if isinstance(v, TypedNA) else v for v in raw]
         dtype = _column_dtype(values)
+        na_kinds = {v.kind for v in raw if isinstance(v, TypedNA)}
+        if na_kinds and dtype in ("boolean", "Int64"):
+            if all(v is None for v in values) and na_kinds == {"character"}:
+                dtype = "string"
+            elif "double" in na_kinds:
+                dtype = "float64"
         if dtype == "float64":
             data[c] = pd.array(
                 [float("nan") if v is None else float(v) for v in values], dtype="float64"
             )
         elif dtype is object:
-            arr = pd.Series([None] * len(values), dtype=object)
-            for i, v in enumerate(values):
-                arr.iat[i] = v
-            data[c] = arr.array
+            import numpy as np
+
+            arr = np.empty(len(values), dtype=object)
+            for i, v in enumerate(values):  # element-wise: keeps list cells intact
+                arr[i] = v
+            data[c] = pd.Series(arr, dtype=object, copy=False).array
         else:
             data[c] = pd.array(values, dtype=dtype)
     return pd.DataFrame(data, columns=list(columns), index=pd.RangeIndex(len(records)))

@@ -8,6 +8,8 @@ from typing import TYPE_CHECKING, Any
 from pytacheck._r.base import as_character, trimws
 from pytacheck._r.regex import compile_r, is_na, sub
 from pytacheck.db._utils import (
+    NA_character,
+    NA_real,
     as_vector,
     paste_unlist,
     r_dollar,
@@ -131,7 +133,7 @@ def _resolves(resp: Any) -> bool | None:
         return False
     try:
         body = resp_body_json(resp)
-    except Exception:  # noqa: BLE001 - tryCatch(error = ) catches every error
+    except Exception:  # tryCatch(error = ) catches every error
         body = None
     code = r_dollar(body, "responseCode")
     if code is None or (isinstance(code, list | dict) and len(code) != 1):
@@ -285,12 +287,17 @@ def _lookup_row(bd: Any) -> dict[str, Any]:
         "publisher": get("publisher"),
         "url": get("URL"),
     }
-    return {k: _info_value(v) for k, v in info.items()}
+    # `%||% NA_character_` / `NA_real_`: typed missing values for bind_rows()
+    return {
+        k: (NA_real if k == "year" else NA_character) if v is None else _info_value(v)
+        for k, v in info.items()
+    }
 
 
 def _deparse_chr(values: list[str]) -> str:
-    inner = ", ".join('"' + v.replace("\\", "\\\\").replace('"', '\\"') + '"' for v in values)
-    return f"c({inner})"
+    from pytacheck.db.crossref import _deparse_chr_vector
+
+    return _deparse_chr_vector(values)
 
 
 def doi_lookup(doi: Any) -> pd.DataFrame | None:
@@ -335,7 +342,7 @@ def doi_lookup(doi: Any) -> pd.DataFrame | None:
                 # `return(NULL)` inside tryCatch() returns from doi_lookup()
                 return None
             value = resp_body_json(resp)
-        except Exception:  # noqa: BLE001 - tryCatch(error = ) catches every error
+        except Exception:  # tryCatch(error = ) catches every error
             value = None
         r_list_set(bibdata, i + 1, value)
 

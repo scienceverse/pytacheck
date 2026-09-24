@@ -1,0 +1,24 @@
+"""Tests for {{module}} (run with ``pytest`` from the pack folder)."""
+
+from __future__ import annotations
+
+from pathlib import Path
+
+import pytacheck as pc
+from pytacheck.module import module_run
+
+MODULE = str(Path(__file__).resolve().parent.parent / "{{module}}.py")
+
+
+def test_finds_matches() -> None:
+    paper = pc.test_paper(["The effect was significant.", "Nothing to see here."])
+    out = module_run(paper, MODULE)
+    assert out.traffic_light == "info"
+    assert len(out.table) == 1
+    assert out.summary_table["n_significant"].tolist() == [1]
+
+
+def test_no_matches() -> None:
+    out = module_run(pc.test_paper(["Nothing to see here."]), MODULE)
+    assert out.traffic_light == "na"
+    assert out.summary_table["n_significant"].tolist() == [0]  # na_replace fills 0

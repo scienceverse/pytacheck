@@ -41,7 +41,13 @@ def expr_case(id_, r_code, py_fn, py_args, **extra):
 
 
 def vec_case(id_, r_code, py_code, **extra):
-    add(id=id_, r="identity", py="copy.copy", args={"x": {"$expr": {"r": r_code, "py": py_code}}}, **extra)
+    add(
+        id=id_,
+        r="identity",
+        py="copy.copy",
+        args={"x": {"$expr": {"r": r_code, "py": py_code}}},
+        **extra,
+    )
 
 
 EXPORT_R = (
@@ -56,9 +62,14 @@ SYNTAX_R = (
 )
 
 # ---------------------------------------------------------------- SPV
-for name in ["spv_strings", "spv_charts"]:
+for name in ["spv_strings", "spv_charts", "spv_charts_ok", "spv_box_na"]:
     p = f"{FX}/{name}.spv"
-    fn_case(f"import_spv.{name}", "import_spv", "pytacheck.statout.spv.import_spv", {"path": {"$file": p}})
+    fn_case(
+        f"import_spv.{name}",
+        "import_spv",
+        "pytacheck.statout.spv.import_spv",
+        {"path": {"$file": p}},
+    )
     expr_case(
         f"import_spv.attrs.{name}",
         f'lapply(metacheck::import_spv(rpath("{p}")), function(t) {{ a <- attributes(t$data); '
@@ -147,6 +158,16 @@ vec_case(
     '"G": pd.array(["", "a"], dtype="string"), "S": pd.array(["s", "s"], dtype="string"), '
     '"value": pd.array(["1", "2"], dtype="string")}))',
 )
+vec_case(
+    "spv_table_html.numeric_dims",
+    '{df <- data.frame(G = c(1, 2.5, NA, 1e5), S = c("a", "a", "b", "b"), value = c("1", "2", "3", "4"), '
+    'stringsAsFactors = FALSE); attr(df, "spv_row_dims") <- "G"; attr(df, "spv_col_dims") <- "S"; '
+    "metacheck:::.spv_table_html(df)}",
+    '(lambda df: (df.attrs.update({"spv_row_dims": ["G"], "spv_col_dims": ["S"]}), '
+    "pc.statout.spv._spv_table_html(df))[1])(pd.DataFrame({"
+    '"G": [1.0, 2.5, float("nan"), 1e5], "S": pd.array(["a", "a", "b", "b"], dtype="string"), '
+    '"value": pd.array(["1", "2", "3", "4"], dtype="string")}))',
+)
 # spv_assemble_table called directly: missing n_leaves, a zero axis index
 vec_case(
     "spv_assemble_table.loose",
@@ -167,13 +188,28 @@ LAB_R = (
     'codes = unname(attr(col, "labels")), labels = names(attr(col, "labels"))))'
 )
 for fn, mod, ext, names in [
-    ("import_omv", "omv", "omv", ["review", "empty_index"]),
-    ("import_jasp", "jasp", "jasp", ["review", "short", "sqlite_review", "sqlite_nulltype"]),
+    ("import_omv", "omv", "omv", ["review", "empty_index", "fields_object", "nameless"]),
+    (
+        "import_jasp",
+        "jasp",
+        "jasp",
+        ["review", "short", "sqlite_review", "sqlite_nulltype", "sqlite_types"],
+    ),
 ]:
     for name in names:
         p = f"{FX}/{name}.{ext}"
-        fn_case(f"{fn}.{name}", fn, f"pytacheck.statout.{mod}.{fn}", {"path": {"$file": p}})
-        if name not in ("empty_index", "short", "sqlite_nulltype"):
+        if name == "sqlite_types":
+            # the canonical encoder writes bit64::integer64 as raw bits: compare as.numeric()
+            expr_case(
+                f"{fn}.{name}",
+                f'{{r <- metacheck::{fn}(rpath("{p}")); r$data[] <- lapply(r$data, function(c) '
+                'if (inherits(c, "integer64")) as.numeric(c) else c); r}',
+                f"{PH}.call",
+                {"fn": f"pytacheck.statout.{mod}.{fn}", "path": {"$file": p}},
+            )
+        else:
+            fn_case(f"{fn}.{name}", fn, f"pytacheck.statout.{mod}.{fn}", {"path": {"$file": p}})
+        if name not in ("empty_index", "short", "sqlite_nulltype", "nameless"):
             expr_case(
                 f"{fn}.labels.{name}",
                 LAB_R.format(fn=fn, p=p),
@@ -183,6 +219,7 @@ for fn, mod, ext, names in [
 for fn, mod, name in [
     ("export_omv_html", "omv", "review.omv"),
     ("export_omv_html", "omv", "trailing_pct.omv"),
+    ("export_omv_html", "omv", "empty_index.omv"),
     ("export_jasp_html", "jasp", "review.jasp"),
 ]:
     expr_case(
@@ -191,7 +228,7 @@ for fn, mod, name in [
         f"{PH}.export_lines",
         {"fn": f"pytacheck.statout.{mod}.{fn}", "path": f"{FX}/{name}"},
     )
-for fn, mod, name in [("export_omv_html", "omv", "empty_index.omv"), ("export_omv_html", "omv", "badurl.omv")]:
+for fn, mod, name in [("export_omv_html", "omv", "badurl.omv")]:
     fn_case(
         f"{fn}.{name.split('.')[0]}",
         fn,
@@ -233,8 +270,19 @@ vec_case(
 )
 
 # ---------------------------------------------------------------- Stata
+fn_case(
+    "import_stata_smcl.nul",
+    "import_stata_smcl",
+    "pytacheck.statout.stata.import_stata_smcl",
+    {"path": {"$file": f"{FX}/nul.smcl"}},
+)
 p = f"{FX}/tricky.smcl"
-fn_case("import_stata_smcl.tricky", "import_stata_smcl", "pytacheck.statout.stata.import_stata_smcl", {"path": {"$file": p}})
+fn_case(
+    "import_stata_smcl.tricky",
+    "import_stata_smcl",
+    "pytacheck.statout.stata.import_stata_smcl",
+    {"path": {"$file": p}},
+)
 expr_case(
     "export_stata_smcl_html.tricky",
     EXPORT_R.format(fn="export_stata_smcl_html", p=p, post="x"),
@@ -314,7 +362,12 @@ vec_case(
 
 # ---------------------------------------------------------------- Mplus
 p = f"{FX}/tricky.out"
-fn_case("import_mplus_output.tricky", "import_mplus_output", "pytacheck.statout.mplus.import_mplus_output", {"path": {"$file": p}})
+fn_case(
+    "import_mplus_output.tricky",
+    "import_mplus_output",
+    "pytacheck.statout.mplus.import_mplus_output",
+    {"path": {"$file": p}},
+)
 expr_case(
     "export_mplus_html.tricky",
     EXPORT_R.format(fn="export_mplus_html", p=p, post="x"),
@@ -398,7 +451,12 @@ out = Path(__file__).resolve().parents[2] / "parity" / "cases" / "statout_reader
 out.write_text(
     "# Review parity cases for the statistics-output readers (targeted branches).\n"
     "# Generated by tests/statout_readers/gen_review_cases.py.\n"
-    + yaml.dump({"area": "statout_readers_review", "cases": cases}, allow_unicode=True, sort_keys=False, width=100000),
+    + yaml.dump(
+        {"area": "statout_readers_review", "cases": cases},
+        allow_unicode=True,
+        sort_keys=False,
+        width=100000,
+    ),
     encoding="utf-8",
 )
 print(f"{len(cases)} cases -> {out}")

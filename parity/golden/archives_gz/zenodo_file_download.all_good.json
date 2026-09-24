@@ -1,0 +1,112 @@
+{
+  "id": "zenodo_file_download.all_good",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 2,
+    "names": [
+      "folder",
+      "zenodo_id",
+      "id",
+      "key",
+      "path",
+      "size",
+      "size_on_disk",
+      "checksum",
+      "checksum_ok",
+      "self",
+      "downloaded",
+      "extracted"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "5550001",
+          "5550001"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "5550001",
+          "5550001"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "5550001-data.csv",
+          "5550001-notes.txt"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "data.csv",
+          "notes.txt"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "data.csv",
+          "notes.txt"
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          9,
+          6
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          9,
+          6
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "md5:5d02e4d2354eae28589766cca211477d",
+          "md5:b1946ac92492d2347c6235b4d2611184"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true,
+          true
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://zenodo.org/api/records/5550001/files/data.csv/content",
+          "https://zenodo.org/api/records/5550001/files/notes.txt/content"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true,
+          true
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          null,
+          null
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

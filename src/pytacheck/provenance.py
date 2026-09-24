@@ -20,19 +20,26 @@ import inspect
 import math
 import os
 from collections.abc import Callable, Mapping
+from dataclasses import dataclass, field
 from functools import lru_cache
+from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
     from pytacheck.module import ModuleSpec
 
 __all__ = [
+    "RUN_SCHEMA",
+    "ModuleChain",
+    "RunRecord",
     "bind_args",
     "builtin_source",
     "file_sha256",
     "json_safe",
     "module_identity",
     "module_provenance",
+    "rerun",
+    "run_modules",
 ]
 
 _sha_cache: dict[str, tuple[tuple[int, int, int], str]] = {}
@@ -153,11 +160,10 @@ def module_provenance(spec: ModuleSpec, args: Mapping[str, Any] | None = None) -
             source = dict(found.source)
             modified = bool(integrity(found))
     else:
+        # not in a pack: a pip-installed plugin (legacy entry point) or local code
         modname = getattr(spec.func, "__module__", None) or ""
-        local = (
-            not spec.path or modname == "__main__" or modname.startswith("pytacheck_user_module_")
-        )
-        trust = "local" if local else "dist"
+        parts = set(Path(spec.path).parts) if spec.path else set()
+        trust = "dist" if parts & {"site-packages", "dist-packages"} else "local"
         source = {"path": spec.path} if spec.path else {"module": modname}
     return {
         "id": f"{pack}::{spec.name}" if pack else spec.name,
@@ -180,3 +186,443 @@ def module_identity(spec: ModuleSpec, provenance: Mapping[str, Any]) -> tuple[An
     rev = source.get("rev") if isinstance(source, Mapping) else None
     code: Any = provenance.get("sha256") or spec.func
     return (provenance.get("pack"), rev or provenance.get("version"), code, spec.name)
+
+
+# ---------------------------------------------------------------------------
+# Run records (pytacheck.run/1), running a selection, and reruns
+# ---------------------------------------------------------------------------
+
+RUN_SCHEMA = "pytacheck.run/1"
+#: ``id`` of the ``<script type="application/json">`` that embeds a record in HTML reports
+RUN_SCRIPT_ID = "pytacheck-run"
+_FAILED_TEXT = "This module failed to run"
+
+
+def _utc_now() -> str:
+    from datetime import UTC, datetime
+
+    return datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ")
+
+
+def _paper_ids(papers: Any) -> list[str]:
+    from pytacheck.papers.model import Paper, PaperList
+
+    if isinstance(papers, Paper):
+        return [str(papers.paper_id)]
+    if isinstance(papers, PaperList):
+        return [str(n) for n in papers.names]
+    if isinstance(papers, list | tuple):
+        return [i for p in papers for i in _paper_ids(p)]
+    return []
+
+
+def _environment() -> dict[str, Any]:
+    env: dict[str, Any] = {}
+    try:
+        from pytacheck.io.bibr import bibr_version
+
+        env["bibr"] = bibr_version()
+    except Exception:  # pragma: no cover - bibr probing must never break a record
+        env["bibr"] = None
+    return env
+
+
+@dataclass
+class RunRecord:
+    """What ran, from where, with which arguments (``pytacheck.run/1``).
+
+    Built by :func:`run_modules` (and the CLI, API and reports) from the
+    provenance of every module that ran. It is JSON: :meth:`write` /
+    :meth:`read` a file, :meth:`to_html` embeds it in a report as
+    ``<script type="application/json" id="pytacheck-run">``, and
+    :func:`rerun` replays it.
+    """
+
+    created: str
+    pytacheck: str
+    metacheck: dict[str, str]
+    python: str
+    platform: str
+    preset: str | None = None
+    preset_source: str | None = None
+    offline: bool = False
+    dropped: list[str] = field(default_factory=list)
+    papers: list[str] = field(default_factory=list)
+    modules: list[dict[str, Any]] = field(default_factory=list)
+    environment: dict[str, Any] = field(default_factory=dict)
+    schema: str = RUN_SCHEMA
+
+    @classmethod
+    def build(
+        cls,
+        outputs: Any = (),
+        *,
+        selection: Any = None,
+        papers: Any = None,
+    ) -> RunRecord:
+        """A record for module *outputs* (a list, or a mapping such as a report's).
+
+        *selection* (a :class:`pytacheck.presets.Selection`) supplies the
+        preset, where it came from, ``offline`` and the dropped modules.
+        """
+        import platform as _platform
+        import sys
+
+        from pytacheck._version import UPSTREAM, __version__
+
+        items = list(outputs.values()) if isinstance(outputs, Mapping) else list(outputs)
+        modules = []
+        for out in items:
+            prov = getattr(out, "provenance", None)
+            entry = dict(prov) if isinstance(prov, Mapping) else {}
+            label = str(getattr(out, "module", "") or entry.get("name") or "")
+            entry.setdefault("id", label)
+            entry.setdefault("name", label)
+            if "status" not in entry:
+                failed = (
+                    prov is None
+                    and getattr(out, "traffic_light", None) == "fail"
+                    and getattr(out, "summary_text", None) == _FAILED_TEXT
+                )
+                entry["status"] = "fail" if failed else "ok"
+                if failed:
+                    entry["error"] = str(getattr(out, "report", "") or "")
+            if label and label != entry["name"]:
+                entry["label"] = label
+            modules.append(json_safe(entry))
+        if papers is None:
+            papers = next(
+                (getattr(o, "paper", None) for o in items if getattr(o, "paper", None) is not None),
+                None,
+            )
+        return cls(
+            created=_utc_now(),
+            pytacheck=__version__,
+            metacheck={"version": UPSTREAM["version"], "commit": UPSTREAM["commit"][:10]},
+            python=_platform.python_version(),
+            platform=sys.platform,
+            preset=getattr(selection, "preset", None),
+            preset_source=getattr(selection, "source", None),
+            offline=bool(getattr(selection, "offline", False)),
+            dropped=[str(d) for d in getattr(selection, "dropped", []) or []],
+            papers=_paper_ids(papers),
+            modules=modules,
+            environment=_environment(),
+        )
+
+    def to_dict(self) -> dict[str, Any]:
+        """The record as JSON data (key order as in the spec)."""
+        return {
+            "schema": self.schema,
+            "created": self.created,
+            "pytacheck": self.pytacheck,
+            "metacheck": dict(self.metacheck),
+            "python": self.python,
+            "platform": self.platform,
+            "preset": self.preset,
+            "preset_source": self.preset_source,
+            "offline": self.offline,
+            "dropped": list(self.dropped),
+            "papers": list(self.papers),
+            "modules": [dict(m) for m in self.modules],
+            "environment": dict(self.environment),
+        }
+
+    def to_json(self, indent: int | None = 2) -> str:
+        import json
+
+        return json.dumps(self.to_dict(), indent=indent, ensure_ascii=False)
+
+    def write(self, path: str | os.PathLike[str]) -> Path:
+        """Write the record as JSON; returns the path."""
+        out = Path(path)
+        out.parent.mkdir(parents=True, exist_ok=True)
+        out.write_text(self.to_json() + "\n", encoding="utf-8")
+        return out
+
+    def to_html(self) -> str:
+        """The record as an HTML ``<script type="application/json" id="pytacheck-run">``."""
+        body = self.to_json(indent=None).replace("</", "<\\/")
+        return f'<script type="application/json" id="{RUN_SCRIPT_ID}">{body}</script>'
+
+    @classmethod
+    def from_dict(cls, data: Mapping[str, Any]) -> RunRecord:
+        from pytacheck.module import ModuleError
+
+        if not isinstance(data, Mapping) or data.get("schema") != RUN_SCHEMA:
+            raise ModuleError(f"Not a pytacheck run record (schema {RUN_SCHEMA})")
+        known = set(cls.__dataclass_fields__)
+        return cls(**{k: v for k, v in data.items() if k in known})
+
+    @classmethod
+    def from_html(cls, html: str) -> RunRecord:
+        """The record embedded in an HTML report."""
+        import json
+        import re
+
+        from pytacheck.module import ModuleError
+
+        m = re.search(rf'<script[^>]*id="{RUN_SCRIPT_ID}"[^>]*>(.*?)</script>', html, re.DOTALL)
+        if m is None:
+            raise ModuleError("This HTML file has no embedded pytacheck run record")
+        return cls.from_dict(json.loads(m.group(1).replace("<\\/", "</")))
+
+    @classmethod
+    def read(cls, source: Any) -> RunRecord:
+        """A record from a file (JSON, or an HTML report embedding one), JSON text or a dict."""
+        import json
+
+        if isinstance(source, RunRecord):
+            return source
+        if isinstance(source, Mapping):
+            return cls.from_dict(source)
+        text = str(source)
+        if not text.lstrip().startswith(("{", "<")):
+            text = Path(source).read_text(encoding="utf-8")
+        if text.lstrip().startswith("<"):
+            return cls.from_html(text)
+        return cls.from_dict(json.loads(text))
+
+
+class ModuleChain(list):  # type: ignore[type-arg]
+    """The outputs of :func:`run_modules`, in run order, with the run record.
+
+    ``last`` is the final output (its ``summary_table`` combines every
+    module's), ``paper`` the input and ``run_record`` the :class:`RunRecord`.
+    """
+
+    def __init__(
+        self,
+        outputs: Any = (),
+        *,
+        paper: Any = None,
+        selection: Any = None,
+        run_record: RunRecord | None = None,
+    ) -> None:
+        super().__init__(outputs)
+        self.paper = paper
+        self.selection = selection
+        self.run_record = run_record
+
+    @property
+    def last(self) -> Any:
+        return self[-1] if self else None
+
+    @property
+    def summary_table(self) -> Any:
+        return self[-1].summary_table if self else None
+
+    def outputs(self) -> dict[str, Any]:
+        """Outputs by label (R's ``report_module_run()`` list, before sorting)."""
+        return {o.module: o for o in self}
+
+
+def _entries(selection: Any) -> list[tuple[Any, dict[str, Any]]]:
+    if selection is None:
+        from pytacheck.presets import select
+
+        return list(select())
+    if isinstance(selection, str | os.PathLike) or callable(selection):
+        return [(os.fspath(selection) if isinstance(selection, os.PathLike) else selection, {})]
+    out = []
+    for item in selection:
+        if isinstance(item, tuple) and len(item) == 2 and isinstance(item[1], Mapping):
+            out.append((item[0], dict(item[1])))
+        else:
+            out.append((item, {}))
+    return out
+
+
+def _failed_output(
+    paper: Any, op: Any, ref: Any, label: str, args: Mapping[str, Any], exc: Exception
+) -> Any:
+    """R's ``report_module_run()`` error handler: a ``fail`` output that keeps the chain."""
+    from dataclasses import replace
+
+    import pandas as pd
+
+    from pytacheck.module import ModuleOutput, module_find
+    from pytacheck.papers.model import PaperList
+
+    prev: dict[str, Any] = {}
+    if isinstance(op, ModuleOutput):
+        prev = dict(op.prev_outputs or {})
+        prev[op.module] = replace(op, prev_outputs={}, paper=None)
+        summary_table = op.summary_table
+    else:
+        summary_table = None
+    if summary_table is None:
+        ids = paper.names if isinstance(paper, PaperList) else [getattr(paper, "paper_id", None)]
+        summary_table = pd.DataFrame({"paper_id": pd.Series(ids, dtype="string")})
+    try:
+        prov: dict[str, Any] = module_provenance(module_find(ref), args)
+    except Exception:
+        prov = {"id": str(ref), "name": label, "pack": None, "args": json_safe(dict(args))}
+    prov["status"] = "fail"
+    prov["error"] = str(exc)
+    return ModuleOutput(
+        module=label,
+        title=label,
+        section=None,  # type: ignore[arg-type]  # R's failed output has no section
+        table=None,
+        report=str(exc),
+        traffic_light="fail",
+        summary_text=_FAILED_TEXT,
+        summary_table=summary_table,
+        paper=paper,
+        prev_outputs=prev,
+        provenance=prov,
+    )
+
+
+def run_modules(paper: Any, selection: Any = None) -> ModuleChain:
+    """Run a selection in order, chaining outputs, inside a run session.
+
+    *selection* is a :class:`pytacheck.presets.Selection` (from
+    :func:`pytacheck.presets.select`), a list of ``(ref, args)`` or of refs,
+    or one ref; ``None`` runs ``select()``'s default. As in metacheck's
+    ``report_module_run()``, a module that errors becomes a ``"fail"``
+    output (with a warning) and the chain goes on. The result carries a
+    :class:`RunRecord` as ``run_record``.
+    """
+    import warnings
+
+    from pytacheck.module import module_run, run_session
+    from pytacheck.presets import label as label_of
+
+    entries = _entries(selection)
+    outputs: list[Any] = []
+    op = paper
+    with run_session():
+        for ref, args in entries:
+            label = label_of(ref)
+            try:
+                op = module_run(op, ref, **args)
+            except Exception as exc:
+                warnings.warn(f"Error in {label}", stacklevel=2)
+                op = _failed_output(paper, op, ref, label, args, exc)
+            outputs.append(op)
+    chain = ModuleChain(outputs, paper=paper, selection=selection)
+    chain.run_record = RunRecord.build(chain, selection=selection, papers=paper)
+    return chain
+
+
+def _refuse(msg: str, allow: bool) -> None:
+    import warnings
+
+    from pytacheck.module import ModuleError
+
+    if not allow:
+        raise ModuleError(msg + " (pass allow_modified=True / --allow-modified to run it anyway)")
+    warnings.warn(msg, stacklevel=3)
+
+
+def _rerun_pack_spec(entry: Mapping[str, Any], *, install: bool, yes: bool) -> Any:
+    from pytacheck.module import ModuleError
+    from pytacheck.packs.manifest import PackError
+    from pytacheck.packs.registry import _installed_pack, get_pack, install_dir, load_module
+
+    name, pack_name = entry["name"], entry["pack"]
+    source = dict(entry.get("source") or {})
+    rev = source.get("rev")
+    pack = None
+    try:
+        active = get_pack(pack_name)
+        if active.kind in ("path", "dist") or not rev or active.rev == rev:
+            pack = active
+    except PackError:
+        pass
+    if pack is None and rev:
+        pin = {"rev": rev, "source": {k: v for k, v in source.items() if k != "rev"}}
+        if not install_dir(pack_name, pin).is_dir():
+            if not install:
+                raise ModuleError(
+                    f"The pack '{pack_name}' at {rev[:12]} (used by {entry.get('id')}) is not "
+                    "installed; rerun with install=True (--install) to fetch it"
+                )
+            from pytacheck.packs.install import _Candidate, _install
+
+            cand = _Candidate(
+                name=pack_name,
+                source=pin["source"],
+                rev=rev,
+                version=entry.get("version"),
+                store=None,
+            )
+            cand.notes.append("Installed to rerun a run record; it is not pinned in config.")
+            _install(cand, scope=None, yes=yes)
+        pack = _installed_pack(pack_name, pin, origin="run record")
+    if pack is None:
+        raise ModuleError(f"The pack '{pack_name}' (used by {entry.get('id')}) is not available")
+    return pack, load_module(pack, name)
+
+
+def rerun(
+    record: Any,
+    paper: Any,
+    *,
+    install: bool = False,
+    allow_modified: bool = False,
+    yes: bool = False,
+) -> ModuleChain:
+    """Replay a run record on *paper*: the same modules, code revisions and arguments.
+
+    Pack modules run from the recorded commit (``install=True`` fetches a
+    missing one, asking first unless ``yes=True``; it is not pinned). A module
+    whose file differs from the record's sha256, or an installed pack that
+    was modified after install, is refused unless ``allow_modified=True``.
+    Built-in modules come from this pytacheck; a different version or file
+    hash only warns.
+    """
+    import warnings
+
+    from pytacheck._version import __version__
+    from pytacheck.module import module_find
+    from pytacheck.presets import Selection
+
+    rec = RunRecord.read(record)
+    entries: list[tuple[Any, dict[str, Any]]] = []
+    for m in rec.modules:
+        name = str(m.get("name") or m.get("id"))
+        args = dict(m.get("args") or {})
+        pack = m.get("pack")
+        want = m.get("sha256")
+        if pack == "metacheck":
+            spec = module_find(name)
+            if m.get("version") != __version__ or (want and _sha(spec) != want):
+                warnings.warn(
+                    f"The built-in module '{name}' comes from pytacheck {__version__}; "
+                    f"the record used {m.get('version')}",
+                    stacklevel=2,
+                )
+            entries.append((name, args))
+            continue
+        if pack:
+            from pytacheck.packs.registry import integrity
+
+            pk, spec = _rerun_pack_spec(m, install=install, yes=yes)
+            if pk.kind == "installed":
+                with warnings.catch_warnings():
+                    warnings.simplefilter("ignore")
+                    bad = integrity(pk)
+                if bad:
+                    _refuse(
+                        f"The installed pack '{pack}' was modified: {', '.join(bad)}",
+                        allow_modified,
+                    )
+        else:
+            path = (m.get("source") or {}).get("path")
+            spec = module_find(path if path and Path(path).is_file() else name)
+        if want and _sha(spec) != want:
+            _refuse(
+                f"The module file of '{m.get('id')}' differs from the recorded one", allow_modified
+            )
+        entries.append((spec, args))
+    selection = Selection(
+        entries,
+        preset=rec.preset,
+        source=f"rerun of a record created {rec.created}",
+        dropped=rec.dropped,
+        offline=rec.offline,
+    )
+    return run_modules(paper, selection)

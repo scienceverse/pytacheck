@@ -1,0 +1,11 @@
+{
+  "status": "OK",
+  "data": {
+    "persistentUrl": "https://doi.org/10.34894/XYZ999",
+    "publicationDate": "2021-03-03",
+    "latestVersion": {
+      "metadataBlocks": {},
+      "files": []
+    }
+  }
+}

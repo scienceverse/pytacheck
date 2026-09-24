@@ -118,13 +118,13 @@ def _html_to_text(raw: str) -> str:
     from pytacheck._r.regex import gsub
 
     # Remove subscripts (except for p_rep)
-    s = gsub("<sub>(?!rep).*?</sub>", "", raw, perl=True)
+    s: str = gsub("<sub>(?!rep).*?</sub>", "", raw, perl=True)
     # Remove HTML tags
     s = gsub("<(.|\n)*?>", "", s)
     s = _utf32_digits_8239(s)
     for pattern, replacement in _ENTITIES_1:
         s = s.replace(pattern, replacement)
-    s = gsub("\\s+", " ", s)
+    s = str(gsub("\\s+", " ", s))
     s = s.replace("\n", "").replace("\r", "")
     for pattern, replacement in _ENTITIES_2:
         s = s.replace(pattern, replacement)
@@ -145,8 +145,8 @@ def getHTML(x: str | os.PathLike[str] | Sequence[str | os.PathLike[str]]) -> lis
 def _run_pdftotext(pdf: str) -> None:
     """``system('pdftotext -q -enc "ASCII7" "<pdf>"')``; a missing tool is only reported."""
     try:
-        subprocess.run(
-            ["pdftotext", "-q", "-enc", "ASCII7", pdf],
+        subprocess.run(  # noqa: S603 - statcheck runs pdftotext on the given file
+            ["pdftotext", "-q", "-enc", "ASCII7", pdf],  # noqa: S607 - pdftotext on PATH, as in R
             check=False,
             stdout=subprocess.DEVNULL,
             stderr=subprocess.DEVNULL,
@@ -249,7 +249,7 @@ def _flag(x: Any, value: bool) -> bool:
 
 
 def checkHTMLdir(
-    dir: str | os.PathLike[str],  # noqa: A002 - R argument name
+    dir: str | os.PathLike[str],
     subdir: bool = True,
     extension: bool = True,
     **kwargs: Any,
@@ -274,7 +274,7 @@ def checkHTMLdir(
 
 
 def checkPDFdir(
-    dir: str | os.PathLike[str],  # noqa: A002 - R argument name
+    dir: str | os.PathLike[str],
     subdir: bool = True,
     **kwargs: Any,
 ) -> pd.DataFrame | None:
@@ -289,7 +289,7 @@ def checkPDFdir(
 
 
 def checkdir(
-    dir: str | os.PathLike[str],  # noqa: A002 - R argument name
+    dir: str | os.PathLike[str],
     subdir: bool = True,
     **kwargs: Any,
 ) -> pd.DataFrame:

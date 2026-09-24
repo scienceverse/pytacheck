@@ -1,0 +1,56 @@
+{
+  "id": "errors.validate_messages",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": null,
+    "v": [
+      {
+        "t": "list",
+        "names": [
+          "error"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "`x` and `y` must share the same src.\nℹ `x` is a <data.frame> object.\nℹ `y` is `NULL`.\nℹ Set `copy = TRUE` if `y` can be copied to the same source as `x` (may be\n  slow)."
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "error"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "`x` and `y` must share the same src.\nℹ `x` is a <data.frame> object.\nℹ `y` is the string \"All good.\".\nℹ Set `copy = TRUE` if `y` can be copied to the same source as `x` (may be\n  slow)."
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "error"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Join columns in `y` must be present in the data.\n✖ Problem with `text`."
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

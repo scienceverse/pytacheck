@@ -1,0 +1,23 @@
+{
+  "id": ".zenodo_id.vector_na",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "1",
+      null,
+      null,
+      "2"
+    ],
+    "names": [
+      "zenodo.1",
+      null,
+      "  ",
+      "10.5281/zenodo.2"
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

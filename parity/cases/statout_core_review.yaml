@@ -122,3 +122,96 @@
   "r": "stat_output_validate"
   "py": "pytacheck.statout.stat_output.stat_output_validate"
   "args": {"doc": {"$file": "tests/statout_core/data/review_validate_dupkeys.json"}}
+# ---------------------------------------------------------------------------
+# stat_results_long() / stat_output_json(): R list semantics of the tables
+# ---------------------------------------------------------------------------
+- "id": "stat_results_long.partial_fields"
+  "r": "stat_results_long"
+  "py": "pytacheck.statout.stat_output.stat_results_long"
+  "args":
+    "tables": &partial_tabs
+      "$expr":
+        "r": "list(list(analysis = 'A', data = data.frame(t = '2.5', p = '0.01'), line_seq = 3L), NULL, list(analysis = 'B', data = data.frame(t = '1'), analysis_i = 'x'), list(analysi = 'C', data = data.frame(t = '1'), table_ind = 4L), list(data_frame = data.frame(t = '3'), analysis = 'D', table_index = 5L), list(analysis = 'E', data = data.frame(t = '4'), is_chart = NA, title_x = 'TT', model = 'm', call_f = 't.test'), list(analysis = 'F', data = data.frame(W = '0.9'), call_fn_x = 'shapiro.test', line = 8L, line_seq_a = 2L, analysis_id = ''), list(analysis = 'G', data = data.frame(t = '5'), line = NA_integer_, line_seq = 1L, table_index = NA_integer_, analysis_idx = 'q', syntax_raw = 'X'))"
+        "py": "__import__('tests.statout_core.review_helpers', fromlist=['_']).partial_field_tables()"
+    "source_file": "partial.R"
+- "id": "stat_output_json.partial_fields"
+  "r": "stat_output_json"
+  "py": "pytacheck.statout.stat_output.stat_output_json"
+  "args": {"tables": *partial_tabs, "source_file": "partial.R"}
+- "id": "stat_results_long.numeric_columns"
+  "r": "stat_results_long"
+  "py": "pytacheck.statout.stat_output.stat_results_long"
+  "args":
+    "tables": &numeric_tabs
+      "$expr":
+        "r": "list(list(analysis = 'num', data = data.frame(term = c('a', NA), est = c(100000, NA), p = c(1/3, 0.05), n = c(5L, NA), flag = c(TRUE, FALSE)), table_index = 1L), list(analysis = 'allna', data = data.frame(x = c(NA_real_, NA_real_), t = c(0.1 + 0.2, 1e-20)), table_index = 2L, analysis_id = 1e5))"
+        "py": "__import__('tests.statout_core.review_helpers', fromlist=['_']).numeric_tables()"
+    "paper_id": "p9"
+    "source_file": "num.jasp"
+- "id": "stat_output_json.numeric_columns"
+  "r": "stat_output_json"
+  "py": "pytacheck.statout.stat_output.stat_output_json"
+  "args": {"tables": *numeric_tabs, "source_file": "num.jasp"}
+- "id": "stat_results_long.unicode_ids"
+  "r": "stat_results_long"
+  "py": "pytacheck.statout.stat_output.stat_results_long"
+  "args":
+    "tables": &unicode_tabs
+      "$expr":
+        "r": "list(list(analysis = 'İx Test', data = data.frame(`İ` = '1', p = '2', check.names = FALSE)), list(analysis = 'İx Test', data = data.frame(`tést` = '1', P = '2', `p ` = '3', `***` = '4', check.names = FALSE)))"
+        "py": "__import__('tests.statout_core.review_helpers', fromlist=['_']).unicode_tables()"
+    "source_file": "İstanbul Data.R"
+- "id": "stat_output_json.unicode_ids"
+  "r": "stat_output_json"
+  "py": "pytacheck.statout.stat_output.stat_output_json"
+  "args": {"tables": *unicode_tabs, "source_file": "İstanbul Data.R"}
+- "id": "stat_results_long.col_roles"
+  "r": "stat_results_long"
+  "py": "pytacheck.statout.stat_output.stat_results_long"
+  "args":
+    "tables": &roles_tabs
+      "$expr":
+        "r": "list(list(analysis = 'roles', data = structure(data.frame(a = c('x', 'y'), b = c('1', '2'), c = c('p', 'q'), d = c('3', '4'), e = c('r', 's')), col_roles = list(a = list(type = 'number'), b = list(type = 'text'), c = list(format = 'pvalue'), d = list(type = 'Text ', format = ''), e = list(type = NA, format = NA), zz = list(type = 'integer'))), table_index = 1L, analysis_id = 7L))"
+        "py": "__import__('tests.statout_core.review_helpers', fromlist=['_']).roles_tables()"
+    "source_file": "roles.omv"
+- "id": "stat_output_json.col_roles"
+  "r": "stat_output_json"
+  "py": "pytacheck.statout.stat_output.stat_output_json"
+  "args": {"tables": *roles_tabs, "source_file": "roles.omv"}
+- "id": "stat_results_long.named_list"
+  "r": "stat_results_long"
+  "py": "pytacheck.statout.stat_output.stat_results_long"
+  "args":
+    "tables": &named_tabs
+      "$expr":
+        "r": "list(first = list(analysis = 'N1', data = data.frame(t = '1.5'), table_index = 1L), second = list(analysis = 'N2', data = data.frame(t = '2.5'), table_index = 2L))"
+        "py": "__import__('tests.statout_core.review_helpers', fromlist=['_']).named_tables()"
+    "source_file": "named.jasp"
+- "id": "stat_output_json.named_list"
+  "r": "stat_output_json"
+  "py": "pytacheck.statout.stat_output.stat_output_json"
+  "args": {"tables": *named_tabs, "source_file": "named.jasp"}
+- "id": "stat_output_validate.na_fields"
+  "r": "stat_output_validate"
+  "py": "pytacheck.statout.stat_output.stat_output_validate"
+  "args":
+    "doc":
+      "$expr":
+        "r": "list(schema = 's', schema_version = '1', paper_id = NA, source_file = NA_character_, source_format = 'R', analyses = list(list(analysis = NA_character_, results = list(list(result_id = 'r1', test_id = 't', row_label = '', values = list(t = list(value = NA_character_)))))))"
+        "py": "__import__('tests.statout_core.review_helpers', fromlist=['_']).na_doc()"
+- "id": "r_merge_captures.partial_line"
+  "r": "base::identity"
+  "py": "copy.copy"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck:::.r_merge_captures(list(list(analysis = 'cap', data = data.frame(t = '1'), line = 3L, line_seq = 1L)), list(list(analysis = 'txt3', data = data.frame(t = '2'), line_seq = 3L), list(analysis = 'txt4', data = data.frame(t = '3'), line_seq = 4L), list(analysis = 'txt_none', data = data.frame(t = '4'))))"
+        "py": "__import__('tests.statout_core.review_helpers', fromlist=['_']).merge_partial()"
+- "id": "stat_output_write.tricky"
+  "r": "base::identity"
+  "py": "copy.copy"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({ tabs <- list(list(analysis = 'q \"uoted\", comma\\nnewline', data = data.frame(t = '1.5', p = 'NA'), table_index = 1L), list(analysis = 'é', data = data.frame(lab = 'x y', d = '2, 560'), table_index = 2L)); root <- tempfile('sow'); items <- list(list(file = 'a/b.c.jasp', json = metacheck::stat_output_json(tabs, paper_id = 12, source_file = 'b.c.jasp'), long = metacheck::stat_results_long(tabs, paper_id = 12, source_file = 'b.c.jasp')), list(file = '.hidden', json = metacheck::stat_output_json(tabs, source_file = '.hidden'), long = metacheck::stat_results_long(tabs, paper_id = 13, source_file = '.hidden'))); out <- metacheck::stat_output_write(items, root); fs <- sort(list.files(out, all.files = TRUE, no.. = TRUE)); c(list(fs), lapply(fs, function(f) readLines(file.path(out, f)))) })"
+        "py": "__import__('tests.statout_core.review_helpers', fromlist=['_']).write_tricky()"

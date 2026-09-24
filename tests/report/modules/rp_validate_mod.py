@@ -11,7 +11,9 @@ from pytacheck.module import module
 from pytacheck.text import text_search
 
 
-@module(title="Validate Demo", description="Flags sentences for validate() tests.", keywords=["results"])
+@module(
+    title="Validate Demo", description="Flags sentences for validate() tests.", keywords=["results"]
+)
 def rp_validate_mod(paper: Any) -> dict[str, Any]:
     t = text_search(paper, ".")
     texts = t["text"].tolist()

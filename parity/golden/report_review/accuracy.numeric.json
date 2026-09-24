@@ -1,0 +1,78 @@
+{
+  "id": "accuracy.numeric",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "hits",
+      "misses",
+      "false_alarms",
+      "correct_rejections",
+      "accuracy",
+      "sensitivity",
+      "specificity",
+      "d_prime",
+      "beta"
+    ],
+    "v": [
+      {
+        "t": "int",
+        "v": [
+          2
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          1
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          1
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          1
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0.6
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0.666666666666667
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0.5
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0.430727299295457
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0.911409475850612
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

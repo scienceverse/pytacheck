@@ -20,6 +20,7 @@ import os
 import re
 import shutil
 import subprocess
+import sys
 import tempfile
 import warnings
 from collections.abc import Callable, Iterable, Mapping, Sequence
@@ -27,6 +28,7 @@ from dataclasses import dataclass, replace
 from functools import cache
 from importlib import resources
 from pathlib import Path
+from types import ModuleType
 from typing import Any
 
 from pytacheck._r.regex import gsub, regextract_all, sub
@@ -48,6 +50,7 @@ __all__ = [
     "ReportList",
     "ReportOutput",
     "module_report",
+    "render_module_outputs",
     "report",
     "report_module_run",
     "report_qmd",
@@ -79,16 +82,36 @@ DEFAULT_MODULES: tuple[str, ...] = (
 #: the whole report.
 _UPSTREAM_MODULES = frozenset(
     {
-        *DEFAULT_MODULES,
         "all_p_values",
         "all_urls",
         "causal_claims",
+        "code_check",
         "codebook_check",
+        "coi_check",
+        "coi_check_oi",
         "data_check",
-        "exact_p",
+        "ethics_check",
+        "funding_check",
+        "funding_check_oi",
+        "marginal",
+        "open_practices",
+        "power",
+        "prereg_check",
+        "psychds_check",
+        "ref_accuracy",
+        "ref_consistency",
+        "ref_miscitation",
+        "ref_pubpeer",
+        "ref_replication",
+        "ref_retraction",
+        "ref_summary",
         "reg_check",
+        "repo_check",
         "reproducibility_check",
-        "retractionwatch",
+        "stat_check",
+        "stat_effect_size",
+        "stat_p_exact",
+        "stat_p_nonsig",
     }
 )
 
@@ -181,6 +204,31 @@ def _is_int_like(x: Any) -> bool:
     return False
 
 
+def _as_text(x: Any) -> str:
+    """R ``paste()`` of a scalar (numbers as R prints them)."""
+    from pytacheck._r.base import as_character
+
+    if isinstance(x, str):
+        return x
+    if isinstance(x, bool):
+        return "TRUE" if x else "FALSE"
+    value = as_character(x)
+    return "NA" if value is None else str(value)
+
+
+def _all_equal(summary: list[Any], blocks: list[Any], summary_is_null: bool) -> bool:
+    """R ``all(module_output$summary_text == report)`` (vectors recycled).
+
+    ``NULL == report`` is ``logical(0)``, and ``all()`` of that is ``TRUE``.
+    """
+    if summary_is_null or not summary or not blocks:
+        return True
+    a = [_block_text(b) for b in summary]
+    b = [_block_text(x) for x in blocks]
+    n = max(len(a), len(b))
+    return all(a[i % len(a)] == b[i % len(b)] for i in range(n))
+
+
 def _header_level(header: Any) -> int | None:
     """``header`` as a heading level (R compares numbers and number strings alike)."""
     if isinstance(header, str):
@@ -196,6 +244,14 @@ def _strip_email(author: str) -> str:
     # instead of roxygen's "Name (\email{email})".
     a = gsub(r"\s*\(.*email\{.+\}\)", "", author)
     return re.sub(r"\s*<[^<>]*@[^<>]*>", "", a)
+
+
+def _label(module: Any) -> str:
+    """The name a module's output is filed under (R: the ``modules`` entry itself)."""
+    if isinstance(module, str | os.PathLike):
+        return os.fspath(module)
+    spec = getattr(module, "__pytacheck_module__", module)
+    return str(getattr(spec, "name", module))
 
 
 def _module_output_list(module_output: Any) -> list[ModuleOutput]:
@@ -223,7 +279,11 @@ def _how_it_works(module: Any) -> tuple[str | None, list[str]]:
         found = regextract_all(r"<validation>.*?</validation>", details)
         if found:
             validation = [
-                sub(r"\s*</validation>", "\n:::", sub(r"<validation>\s*", "::: {.validation}\nValidation: ", v))
+                sub(
+                    r"\s*</validation>",
+                    "\n:::",
+                    sub(r"<validation>\s*", "::: {.validation}\nValidation: ", v),
+                )
                 for v in found
             ]
         author_ack = None
@@ -253,9 +313,11 @@ def _module_report_blocks(module_output: ModuleOutput, header: Any = 3) -> list[
         head = [] if tl_symbol is None else [f"{tl_symbol} {title}"]
     elif level is not None and 1 <= level <= 6:
         anchor = str(title).lower().replace(" ", "-")
-        head = [] if tl_symbol is None else [f"{'#' * level} {tl_symbol} {title} {{#{anchor} .{tl}}}"]
+        head = (
+            [] if tl_symbol is None else [f"{'#' * level} {tl_symbol} {title} {{#{anchor} .{tl}}}"]
+        )
     else:
-        head = [str(header)]
+        head = [_as_text(header)]
 
     summary_text = module_output.summary_text
     summary = _flatten(summary_text) if summary_text is not None else ["..."]
@@ -268,9 +330,7 @@ def _module_report_blocks(module_output: ModuleOutput, header: Any = 3) -> list[
 
     pre: str | None = "<details><summary>View detailed feedback</summary><div>"
     post: str | None = "</div></details>"
-    if blocks is None or summary_text is None or all(
-        isinstance(b, str) and b == summary_text for b in blocks
-    ):
+    if blocks is None or _all_equal(summary, blocks, summary_text is None):
         pre = post = None
         blocks = None
     elif len("\n\n".join(_block_text(b) for b in blocks)) < 300:
@@ -325,13 +385,16 @@ def report_module_run(
     from pytacheck.utils import pb
 
     modules = [modules] if isinstance(modules, str | os.PathLike) else list(modules)
+    if not modules:
+        # R fails here too (its progress bar, or `module_output[[op$module]]`)
+        raise ValueError("No modules to run: `modules` is empty")
     args = args or {}
     bar = pb(len(modules), ":what [:bar] :current/:total :elapsedfull")
     try:
         bar.tick(0, tokens={"what": "Running modules"})
         op: Any = paper
         for module in modules:
-            label = str(module)
+            label = _label(module)
             bar.tick(0, tokens={"what": label})
             mod_args = dict(args.get(label) or {})
             mod_args.pop("paper", None)
@@ -372,7 +435,11 @@ def report_module_run(
 
     def rank(mo: ModuleOutput) -> int:
         # factor(sections, section_levels): unknown/missing sections sort last
-        return SECTION_LEVELS.index(mo.section) if mo.section in SECTION_LEVELS else len(SECTION_LEVELS)
+        return (
+            SECTION_LEVELS.index(mo.section)
+            if mo.section in SECTION_LEVELS
+            else len(SECTION_LEVELS)
+        )
 
     ordered = sorted(outputs.items(), key=lambda kv: rank(kv[1]))
     return ReportOutput(ordered, paper=op.paper)
@@ -453,7 +520,9 @@ def _summary_line(mo: ModuleOutput) -> str:
 def _report_parts(module_output: Any, paper: Any = None) -> _ReportParts:
     if paper is None or getattr(paper, "author", None) is None:
         # R: `if (nrow(paper$author) > 0)` fails without a paper
-        raise ValueError("report_qmd() needs the paper the modules ran on (argument is of length zero)")
+        raise ValueError(
+            "report_qmd() needs the paper the modules ran on (argument is of length zero)"
+        )
     outputs = _module_output_list(module_output)
     lines = _template_lines()
     cut_after = lines.index("<!-- Demo -->")
@@ -462,7 +531,11 @@ def _report_parts(module_output: Any, paper: Any = None) -> _ReportParts:
     rt_head = re.sub(r"%(?![sdfi])", "%%", rt_head)
 
     titles = _info_values(paper, "title")
-    subtitle_raw = "" if titles is None else ("NA" if _is_na(titles[0]) else str(titles[0])) if titles else ""
+    if titles:
+        subtitle_raw = "NA" if _is_na(titles[0]) else str(titles[0])
+    else:
+        # paper$info$title %||% "" (a zero-row info table drops the header below)
+        subtitle_raw = ""
     subtitle = subtitle_raw.replace('"', '\\"')
     dois = _info_values(paper, "doi")
     version = _report_version()
@@ -481,7 +554,9 @@ def _report_parts(module_output: Any, paper: Any = None) -> _ReportParts:
     body: list[Any] = []
     for sec in SECTION_LEVELS:
         section_op = [
-            mo for mo in outputs if mo.section == sec and mo.traffic_light not in _BAD_TRAFFIC_LIGHTS
+            mo
+            for mo in outputs
+            if mo.section == sec and mo.traffic_light not in _BAD_TRAFFIC_LIGHTS
         ]
         if not section_op:
             continue
@@ -570,6 +645,26 @@ def report_markdown(module_output: Any, paper: Any = None) -> str:
     return markdown_to_gfm(text).strip() + "\n"
 
 
+def render_module_outputs(module_output: Any, paper: Any, output_format: str = "html") -> str:
+    """The report text for module outputs that have already been computed.
+
+    The REST API's ``/paper/check`` uses this (metacheck's plumber
+    ``render_report_html()``: ``report_qmd()`` rendered to one self-contained
+    page) so the report reuses the results instead of re-running modules.
+    ``module_output`` is a :class:`ReportOutput`, a mapping or a list of
+    :class:`~pytacheck.module.ModuleOutput`; ``output_format`` is ``"html"``,
+    ``"qmd"`` or ``"md"``.
+    """
+    fmt = output_format.lower()
+    if fmt == "html":
+        return report_html(module_output, paper)
+    if fmt == "qmd":
+        return report_qmd(module_output, paper)
+    if fmt == "md":
+        return report_markdown(module_output, paper)
+    raise ValueError("The output_format must be either 'html', 'qmd' or 'md'.")
+
+
 # ---------------------------------------------------------------------------
 # report()
 # ---------------------------------------------------------------------------
@@ -610,7 +705,7 @@ def _render_quarto(qmd_text: str, output_file: str) -> None:
     with tempfile.TemporaryDirectory() as tmp:
         src = Path(tmp) / "report.qmd"
         src.write_text(qmd_text + "\n", encoding="utf-8")
-        res = subprocess.run(
+        res = subprocess.run(  # noqa: S603 - quarto from PATH, our own temp file
             [quarto, "render", str(src), "--to", "html", "--quiet"],
             capture_output=True,
             text=True,
@@ -701,10 +796,12 @@ def report(
     if output_file is None:
         if not isinstance(paper, Paper):
             # R fails evaluating the default (paste0(paper$paper_id, ...)) here
-            raise TypeError("The paper argument must be a paper object (e.g., created with `read()`)")
+            raise TypeError(
+                "The paper argument must be a paper object (e.g., created with `read()`)"
+            )
         output_file = f"{paper.paper_id}_report.{fmt}"
     if not isinstance(output_file, str | os.PathLike):
-        output_file = list(output_file)[0]
+        output_file = next(iter(output_file))
     output_file = os.fspath(output_file)
 
     # check the output_file is writable before running the modules
@@ -778,7 +875,7 @@ def report_repository(
     full_path = Path(path).resolve().as_posix()
     if output_file is None:
         output_file = f"{os.path.basename(full_path)}_report.{fmt}"
-    modules = list(modules)
+    modules = [modules] if isinstance(modules, str | os.PathLike) else list(modules)
     new_args: dict[str, dict[str, Any]] = {k: dict(v) for k, v in (args or {}).items()}
     first = str(modules[0])
     new_args[first] = {**new_args.get(first, {}), "local_path": full_path, "local_only": True}
@@ -797,3 +894,13 @@ def report_repository(
         args=new_args,
         renderer=renderer,
     )
+
+
+class _CallableReportModule(ModuleType):
+    """This submodule, callable as :func:`report` (``pytacheck.report.report(paper)``)."""
+
+    def __call__(self, *args: Any, **kwargs: Any) -> ReportOutput | ReportList:
+        return report(*args, **kwargs)
+
+
+sys.modules[__name__].__class__ = _CallableReportModule

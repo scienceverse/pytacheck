@@ -1,0 +1,174 @@
+{
+  "id": "zenodo_file_download.no_limits",
+  "ok": true,
+  "error": null,
+  "warnings": [
+    "5 of 7 files from Zenodo record 5550002 did not arrive intact (e.g. bad.csv, gone.csv, huge.bin). The returned table marks them downloaded = FALSE. Run again to retry."
+  ],
+  "value": {
+    "t": "df",
+    "nrow": 7,
+    "names": [
+      "folder",
+      "zenodo_id",
+      "id",
+      "key",
+      "path",
+      "size",
+      "size_on_disk",
+      "checksum",
+      "checksum_ok",
+      "self",
+      "downloaded",
+      "extracted"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "5550002",
+          "5550002",
+          "5550002",
+          "5550002",
+          "5550002",
+          "5550002",
+          "5550002"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "5550002",
+          "5550002",
+          "5550002",
+          "5550002",
+          "5550002",
+          "5550002",
+          "5550002"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "5550002-good.csv",
+          "5550002-bad.csv",
+          "5550002-gone.csv",
+          "5550002-huge.bin",
+          "5550002-nolink.txt",
+          "5550002-sha.txt",
+          "5550002-short.txt"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "good.csv",
+          "bad.csv",
+          "gone.csv",
+          "huge.bin",
+          "nolink.txt",
+          "sha.txt",
+          "short.txt"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "good.csv",
+          "bad.csv",
+          null,
+          null,
+          null,
+          "sha.txt",
+          "short.txt"
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          8,
+          8,
+          12,
+          20971520,
+          3,
+          7,
+          10
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          8,
+          8,
+          null,
+          null,
+          null,
+          7,
+          3
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "md5:b2bfedbf7a0f5bf84cea4ab7fc2fe2f5",
+          "md5:c5562e6604237de4f57deb8f3f042fff",
+          "md5:d41d8cd98f00b204e9800998ecf8427e",
+          "md5:d41d8cd98f00b204e9800998ecf8427e",
+          "md5:d41d8cd98f00b204e9800998ecf8427e",
+          "sha256:abc",
+          null
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true,
+          false,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://zenodo.org/api/records/5550002/files/good.csv/content",
+          "https://zenodo.org/api/records/5550002/files/bad.csv/content",
+          "https://zenodo.org/api/records/5550002/files/gone.csv/content",
+          "https://zenodo.org/api/records/5550002/files/huge.bin/content",
+          null,
+          "https://zenodo.org/api/records/5550002/files/sha.txt/content",
+          "https://zenodo.org/api/records/5550002/files/short.txt/content"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true,
+          false,
+          false,
+          false,
+          false,
+          true,
+          false
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

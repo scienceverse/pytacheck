@@ -1,0 +1,152 @@
+{
+  "id": "dryad_links.all_prefixes",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 14,
+    "names": [
+      "href",
+      "link_text",
+      "text_id",
+      "paper_id",
+      "dryad_url",
+      "dryad_doi"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "https://doi.org/10.5061/dryad.j1fd7",
+          "https://doi.org/10.15146/ABC123",
+          "https://doi.org/10.25338/ABC123",
+          "https://doi.org/10.25349/ABC123",
+          "https://doi.org/10.5068/ABC123",
+          "https://doi.org/10.6071/ABC123",
+          "https://doi.org/10.6075/ABC123",
+          "https://doi.org/10.6076/ABC123",
+          "https://doi.org/10.6078/ABC123",
+          "https://doi.org/10.6086/ABC123",
+          "https://doi.org/10.7272/ABC123",
+          "https://doi.org/10.7280/ABC123",
+          "https://doi.org/10.7291/ABC123",
+          "https://doi.org/10.7941/ABC123"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "89786429ca8501",
+          "89786429ca8501",
+          "89786429ca8501",
+          "89786429ca8501",
+          "89786429ca8501",
+          "89786429ca8501",
+          "89786429ca8501",
+          "89786429ca8501",
+          "89786429ca8501",
+          "89786429ca8501",
+          "89786429ca8501",
+          "89786429ca8501",
+          "89786429ca8501",
+          "89786429ca8501"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://doi.org/10.5061/dryad.j1fd7",
+          "https://doi.org/10.15146/ABC123",
+          "https://doi.org/10.25338/ABC123",
+          "https://doi.org/10.25349/ABC123",
+          "https://doi.org/10.5068/ABC123",
+          "https://doi.org/10.6071/ABC123",
+          "https://doi.org/10.6075/ABC123",
+          "https://doi.org/10.6076/ABC123",
+          "https://doi.org/10.6078/ABC123",
+          "https://doi.org/10.6086/ABC123",
+          "https://doi.org/10.7272/ABC123",
+          "https://doi.org/10.7280/ABC123",
+          "https://doi.org/10.7291/ABC123",
+          "https://doi.org/10.7941/ABC123"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "10.5061/dryad.j1fd7",
+          "10.15146/abc123",
+          "10.25338/abc123",
+          "10.25349/abc123",
+          "10.5068/abc123",
+          "10.6071/abc123",
+          "10.6075/abc123",
+          "10.6076/abc123",
+          "10.6078/abc123",
+          "10.6086/abc123",
+          "10.7272/abc123",
+          "10.7280/abc123",
+          "10.7291/abc123",
+          "10.7941/abc123"
+        ],
+        "names": [
+          "https://doi.org/10.5061/dryad.j1fd7",
+          "https://doi.org/10.15146/ABC123",
+          "https://doi.org/10.25338/ABC123",
+          "https://doi.org/10.25349/ABC123",
+          "https://doi.org/10.5068/ABC123",
+          "https://doi.org/10.6071/ABC123",
+          "https://doi.org/10.6075/ABC123",
+          "https://doi.org/10.6076/ABC123",
+          "https://doi.org/10.6078/ABC123",
+          "https://doi.org/10.6086/ABC123",
+          "https://doi.org/10.7272/ABC123",
+          "https://doi.org/10.7280/ABC123",
+          "https://doi.org/10.7291/ABC123",
+          "https://doi.org/10.7941/ABC123"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

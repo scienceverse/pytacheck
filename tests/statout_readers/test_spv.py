@@ -289,7 +289,7 @@ def test_import_spv_charts() -> None:
     assert point["x"].tolist() == [150.0, 160.0, 170.5, 180.0]
     fits = point.attrs["spv_chart_fits"]
     assert [f["expr"] for f in fits] == ["0.5 * x + 3", "0.01 * x^2 + 1"]
-    assert fits[0]["fn"](10.0) == 8.0
+    assert fits[0]["fn"]([10.0, 2.0]) == [8.0, 4.0]
     assert point.attrs["spv_chart_xlab"] == "Height (cm)"
     assert point.attrs["spv_chart_ylab"] == "Weight (kg)"
     box = tabs[2]["data"]

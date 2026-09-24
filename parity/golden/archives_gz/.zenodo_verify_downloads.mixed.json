@@ -1,0 +1,100 @@
+{
+  "id": ".zenodo_verify_downloads.mixed",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 6,
+    "names": [
+      "path",
+      "size",
+      "checksum",
+      "downloaded",
+      "extracted",
+      "size_on_disk",
+      "checksum_ok"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "a.txt",
+          "b.txt",
+          "missing.txt",
+          null,
+          "sub",
+          "a.txt"
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          4,
+          4,
+          3,
+          1,
+          0,
+          5
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "md5:0bee89b07a248e27c83fc3d5951213c1",
+          "md5:00000000000000000000000000000000",
+          null,
+          null,
+          null,
+          "sha1:x"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true,
+          false,
+          false,
+          true,
+          false,
+          false
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          null,
+          null,
+          null,
+          2,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          4,
+          4,
+          null,
+          null,
+          null,
+          4
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true,
+          false,
+          null,
+          null,
+          null,
+          null
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

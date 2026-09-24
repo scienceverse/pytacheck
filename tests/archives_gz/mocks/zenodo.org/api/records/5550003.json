@@ -1,0 +1,35 @@
+{
+ "id": 5550003,
+ "doi": "10.5281/zenodo.5550003",
+ "metadata": {
+  "title": "No files",
+  "publication_date": "2026-01-01",
+  "resource_type": {
+   "type": "dataset"
+  },
+  "license": {
+   "id": "cc-by-4.0"
+  },
+  "creators": [
+   {
+    "name": "Doe, Jane"
+   }
+  ],
+  "keywords": [
+   "one",
+   "two"
+  ]
+ },
+ "updated": "2026-01-02T00:00:00+00:00",
+ "owners": [
+  {
+   "id": "1"
+  }
+ ],
+ "stats": {
+  "downloads": 1,
+  "unique_downloads": 1,
+  "views": 2
+ },
+ "files": []
+}

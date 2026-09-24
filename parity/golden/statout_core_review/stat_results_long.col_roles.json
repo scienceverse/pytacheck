@@ -1,0 +1,160 @@
+{
+  "id": "stat_results_long.col_roles",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 6,
+    "names": [
+      "paper_id",
+      "source_file",
+      "test_id",
+      "result_id",
+      "analysis",
+      "table_title",
+      "row_label",
+      "statistic",
+      "stato_label",
+      "stato_iri",
+      "value",
+      "model_ref"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "roles.omv",
+          "roles.omv",
+          "roles.omv",
+          "roles.omv",
+          "roles.omv",
+          "roles.omv"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "roles_omv_a7_1_3",
+          "roles_omv_a7_1_3",
+          "roles_omv_a7_1_3",
+          "roles_omv_a7_2_4",
+          "roles_omv_a7_2_4",
+          "roles_omv_a7_2_4"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "roles_omv_t1_r1_a",
+          "roles_omv_t1_r1_c",
+          "roles_omv_t1_r1_e",
+          "roles_omv_t1_r2_a",
+          "roles_omv_t1_r2_c",
+          "roles_omv_t1_r2_e"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "roles",
+          "roles",
+          "roles",
+          "roles",
+          "roles",
+          "roles"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "1 3",
+          "1 3",
+          "1 3",
+          "2 4",
+          "2 4",
+          "2 4"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "a",
+          "c",
+          "e",
+          "a",
+          "c",
+          "e"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "a",
+          "c",
+          "e",
+          "a",
+          "c",
+          "e"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "",
+          "",
+          "",
+          "",
+          "",
+          ""
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "x",
+          "p",
+          "r",
+          "y",
+          "q",
+          "s"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

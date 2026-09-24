@@ -1,0 +1,13 @@
+{
+  "id": "cap_report.basic",
+  "ok": true,
+  "error": null,
+  "warnings": [
+    "The `max_size` cap of 5 MB skipped data.zip (5.4 GB); set max_size >= 5.4e9 to include it."
+  ],
+  "value": {
+    "t": "null"
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

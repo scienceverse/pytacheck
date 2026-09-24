@@ -1,0 +1,13 @@
+{
+  "id": "zenodo_upload.missing_folder",
+  "ok": true,
+  "error": null,
+  "warnings": [
+    "1 folder could not be found and will be skipped: /no/such/folder"
+  ],
+  "value": {
+    "t": "null"
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

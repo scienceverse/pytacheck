@@ -738,7 +738,13 @@ def _r_captures_to_tables(
 
     Port of ``R/r-capture.R::.r_captures_to_tables()``.
     """
-    from pytacheck.statout.r_output import _chr_frame, _r_call_object_ref, _r_root_ref_map
+    from pytacheck.statout.r_output import (
+        _chr_frame,
+        _r_call_object_ref,
+        _r_dollar,
+        _r_dollar_found,
+        _r_root_ref_map,
+    )
     from pytacheck.statout.stat_tables import _stat_num_to_chr
 
     if not caps:
@@ -754,22 +760,22 @@ def _r_captures_to_tables(
 
     out: list[dict[str, Any]] = []
     for rec in caps:
-        rows = rec.get("rows")
+        rows = _r_dollar(rec, "rows")
         if not rows:
             continue
         keys: list[str] = []
         for r in rows:
-            for k in r.get("stats") or {}:
+            for k in _r_dollar(r, "stats") or {}:
                 if k not in keys:
                     keys.append(k)
         if not keys:
             continue
         names = ["label"]
-        cols: list[list[Any]] = [["" if "label" not in r else _label_chr(r["label"]) for r in rows]]
+        cols: list[list[Any]] = [[_label_chr(*_r_dollar_found(r, "label")) for r in rows]]
         for k in keys:
             col = []
             for r in rows:
-                v = (r.get("stats") or {}).get(k)
+                v = (_r_dollar(r, "stats") or {}).get(k)
                 col.append("" if v is None else _stat_num_to_chr(_as_numeric_value(v)))
             if k in names:
                 cols[names.index(k)] = col
@@ -777,8 +783,8 @@ def _r_captures_to_tables(
                 names.append(k)
                 cols.append(col)
         df = _chr_frame(names, cols)
-        analysis = rec.get("analysis")
-        line = rec.get("line")
+        analysis = _r_dollar(rec, "analysis")
+        line = _r_dollar(rec, "line")
         out.append(
             {
                 "analysis": analysis,
@@ -786,21 +792,24 @@ def _r_captures_to_tables(
                 "data": df,
                 "line": _as_int(line),
                 "line_seq": 1,
-                "call_fn": _r_method_to_fn(rec.get("method")),
-                "model_ref": resolve_ref(_r_call_object_ref(rec.get("call_text") or "")),
+                "call_fn": _r_method_to_fn(_r_dollar(rec, "method")),
+                "model_ref": resolve_ref(_r_call_object_ref(_r_dollar(rec, "call_text") or "")),
                 "captured": True,
             }
         )
-    lines = [_as_int(x.get("line")) for x in out]
+    lines = [_as_int(x["line"]) for x in out]
     for i, x in enumerate(out):
         same = [j for j, ln in enumerate(lines) if ln is not None and ln == lines[i]]
         x["line_seq"] = same.index(i) + 1 if i in same else None
     return out
 
 
-def _label_chr(x: Any) -> str | None:
+def _label_chr(found: bool, x: Any) -> str | None:
+    """``as.character(r$label %||% "")`` (a present ``None`` is ``NA``)."""
     from pytacheck._r.base import as_character
 
+    if not found:
+        return ""
     if isinstance(x, list):
         x = x[0] if x else None
     return as_character(x)
@@ -836,13 +845,15 @@ def _r_merge_captures(
         return txt
     if not txt:
         return cap
-    cap_lines = {ln for ln in (_as_int(x.get("line")) for x in cap) if ln is not None}
+    from pytacheck.statout.r_output import _r_dollar
+
+    cap_lines = {ln for ln in (_as_int(_r_dollar(x, "line")) for x in cap) if ln is not None}
     keep = []
     for x in txt:
-        ln = _as_int(x.get("line"))
+        ln = _as_int(_r_dollar(x, "line"))
         keep.append(ln is not None and ln not in cap_lines)
     out = [dict(x) for x in cap] + [dict(x) for x, k in zip(txt, keep, strict=True) if k]
-    lines = [_as_int(x.get("line")) for x in out]
+    lines = [_as_int(_r_dollar(x, "line")) for x in out]
     for i, x in enumerate(out):
         same = [j for j, ln in enumerate(lines) if ln is not None and ln == lines[i]]
         x["line_seq"] = same.index(i) + 1 if same else 1

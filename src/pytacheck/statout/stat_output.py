@@ -26,7 +26,16 @@ import pandas as pd
 
 from pytacheck._r.base import as_character, plural
 from pytacheck._r.regex import compile_r, grepl, gsub, regexec, sub
-from pytacheck.statout.r_output import _r_as_numeric, _trimws
+from pytacheck.statout.r_output import (
+    _r_as_numeric,
+    _r_dollar,
+    _r_dollar_found,
+    _r_names,
+    _r_values,
+    _RError,
+    _RNamedList,
+    _trimws,
+)
 
 __all__ = [
     "stat_output_json",
@@ -120,13 +129,42 @@ def _stat_sanitize_id(x: Any) -> str | None:
     s = _cell(x)
     if s is None:
         return None
-    s = (_trimws(s) or "").lower()
+    s = _r_tolower(_trimws(s) or "")
     s = gsub("[^a-z0-9]+", "_", s)
     return str(sub("^_|_$", "", s))
 
 
+def _r_tolower(s: str) -> str:
+    """R ``tolower()``: per-character (``towlower``) mapping.
+
+    Python's ``str.lower()`` applies Unicode's *full* case mapping, which
+    turns ``"\u0130"`` (I with dot above) into two characters; R maps it to
+    a plain ``"i"``.
+    """
+    return s.replace("\u0130", "i").lower()
+
+
 def _num_or_na(x: Any) -> bool:
     return not _is_na(x)
+
+
+def _tb_field(tb: Any, key: str) -> tuple[bool, Any]:
+    """``tb$key`` of one table (partial name matching; a ``NULL`` table is empty)."""
+    if tb is None:
+        return False, None
+    return _r_dollar_found(tb, key)
+
+
+def _is_true(x: Any) -> bool:
+    """R ``isTRUE()``."""
+    import numpy as np
+
+    return isinstance(x, bool | np.bool_) and bool(x)
+
+
+def _tables_list(tables: Any) -> list[Any]:
+    """The elements of a list of tables (a named list's values)."""
+    return _r_values(tables)
 
 
 def _stat_result_ids(
@@ -143,15 +181,16 @@ def _stat_result_ids(
     src = _paste_chr(_stat_sanitize_id(source_file))
     locators = []
     for tb in tables:
-        line = tb.get("line")
-        ti = tb.get("table_index")
-        analysis = tb.get("analysis")
-        if "line" in tb and _num_or_na(line):
-            seq_n = tb.get("line_seq", 1)
+        has_line, line = _tb_field(tb, "line")
+        has_ti, ti = _tb_field(tb, "table_index")
+        has_an, analysis = _tb_field(tb, "analysis")
+        if has_line and _num_or_na(line):
+            has_seq, seq = _tb_field(tb, "line_seq")
+            seq_n = seq if has_seq else 1
             locators.append(f"l{_paste_chr(line)}_{_paste_chr(seq_n)}")
-        elif "table_index" in tb and _num_or_na(ti):
+        elif has_ti and _num_or_na(ti):
             locators.append(f"t{_paste_chr(ti)}")
-        elif analysis is not None and not _is_na(analysis) and str(analysis) != "":
+        elif has_an and not _is_na(analysis) and _paste_chr(analysis) != "":
             locators.append(_paste_chr(analysis))
         else:
             locators.append("result")
@@ -167,13 +206,15 @@ def _stat_test_id(
     analysis id, else the source line (+ ``line_seq``), else the table's
     base id; the row label is appended.
     """
-    aid = tb.get("analysis_id")
-    if isinstance(aid, list):
+    aid = _tb_field(tb, "analysis_id")[1]
+    if isinstance(aid, list | tuple):
         aid = aid[0] if len(aid) == 1 else None
+    has_line, line = _tb_field(tb, "line")
     if aid is not None and not _is_na(aid) and _paste_chr(aid) != "":
         anchor = "a" + _paste_chr(aid)
-    elif "line" in tb and _num_or_na(tb.get("line")):
-        anchor = f"l{_paste_chr(tb['line'])}_{_paste_chr(tb.get('line_seq', 1))}"
+    elif has_line and _num_or_na(line):
+        has_seq, seq = _tb_field(tb, "line_seq")
+        anchor = f"l{_paste_chr(line)}_{_paste_chr(seq if has_seq else 1)}"
     else:
         anchor = sub("_r[0-9]+$", "", base_id)
     src = _paste_chr(_stat_sanitize_id(source_file))
@@ -211,8 +252,12 @@ def _stat_is_label_col(header: Any, values: Any, role: Mapping[str, Any] | None 
     numeric.
     """
     if role is not None:
-        ty = (_trimws(_paste_chr(role.get("type") or "")) or "").lower()
-        fm = (_trimws(_paste_chr(role.get("format") or "")) or "").lower()
+        # as.character(role$x %||% ""): a present None is NA, and nzchar(NA)
+        # is TRUE, so an NA format declares a statistic.
+        ty_found, ty_v = _r_dollar_found(role, "type")
+        fm_found, fm_v = _r_dollar_found(role, "format")
+        ty = (_trimws(_paste_chr(ty_v)) or "").lower() if ty_found else ""
+        fm = (_trimws(_paste_chr(fm_v)) or "").lower() if fm_found else ""
         if fm:
             return False
         if ty in ("number", "integer"):
@@ -263,18 +308,42 @@ def _col_roles(df: pd.DataFrame) -> Mapping[str, Any]:
     return roles if isinstance(roles, Mapping) else {}
 
 
-def _label_flags(df: pd.DataFrame) -> list[bool]:
+def _frame_columns(df: pd.DataFrame) -> list[list[Any]]:
+    """The cells of *df*, column by column, with ``None`` for every NA."""
+    if df.shape[1] == 0:
+        return []
+    arr = df.to_numpy(dtype=object, na_value=None)
+    return [arr[:, j].tolist() for j in range(arr.shape[1])]
+
+
+def _label_flags(df: pd.DataFrame, columns: list[list[Any]]) -> list[bool]:
     headers = [str(c) for c in df.columns]
     roles = _col_roles(df)
     return [
-        _stat_is_label_col(h, df.iloc[:, c], roles.get(h) if h != "" else None)
+        _stat_is_label_col(h, columns[c], roles.get(h) if h != "" else None)
         for c, h in enumerate(headers)
     ]
 
 
 def _frame_column(values: list[Any]) -> pd.Series:
-    if all(v is None or isinstance(v, str) for v in values):
+    """One output column with the R vector type of its values.
+
+    Everything is character except a non-character ``paper_id`` /
+    ``source_file`` argument, which R's ``data.frame()`` keeps as a
+    logical / integer / double column (``write.csv()`` then leaves it
+    unquoted).
+    """
+    import numpy as np
+
+    present = [v for v in values if v is not None]
+    if all(isinstance(v, str) for v in present):
         return pd.Series(values, dtype="string")
+    if all(isinstance(v, bool | np.bool_) for v in present):
+        return pd.Series(values, dtype="boolean")
+    if all(isinstance(v, int | np.integer) and not isinstance(v, bool) for v in present):
+        return pd.Series(values, dtype="Int64")
+    if all(isinstance(v, int | float | np.number) and not isinstance(v, bool) for v in present):
+        return pd.Series([np.nan if v is None else float(v) for v in values], dtype="float64")
     return pd.Series(values, dtype=object)
 
 
@@ -299,7 +368,7 @@ def stat_results_long(
     """
     rows: dict[str, list[Any]] = {c: [] for c in _LONG_COLUMNS}
     if tables:
-        tables = list(tables)
+        tables = _tables_list(tables)
         base_ids = _stat_result_ids(tables, source_file)
         for ti, tb in enumerate(tables):
             _long_rows(tb, base_ids[ti], paper_id, source_file, rows)
@@ -313,19 +382,20 @@ def _long_rows(
     source_file: str | None,
     rows: dict[str, list[Any]],
 ) -> None:
-    df = tb.get("data")
+    df = _tb_field(tb, "data")[1]
     if df is None or not isinstance(df, pd.DataFrame) or len(df) == 0 or df.shape[1] == 0:
         return
-    if tb.get("is_chart") is True:
+    if _is_true(_tb_field(tb, "is_chart")[1]):
         return
     headers = [str(c) for c in df.columns]
-    is_label = _label_flags(df)
+    columns = _frame_columns(df)
+    is_label = _label_flags(df, columns)
     label_cols = [i for i, lab in enumerate(is_label) if lab]
     stat_cols = [i for i, lab in enumerate(is_label) if not lab]
     if not stat_cols:
         return
 
-    is_spv = "syntax" in tb
+    is_spv = _tb_field(tb, "syntax")[0]  # !is.null(tb$syntax): NA counts
     stats_col: int | None = None
     if is_spv:
         exact = [c for c in label_cols if (_trimws(headers[c]) or "").lower() == "statistics"]
@@ -336,11 +406,10 @@ def _long_rows(
         else label_cols
     )
 
-    analysis = tb.get("analysis")
-    title = tb.get("title")
-    model_ref = tb.get("model_ref")
-    call_fn = tb.get("call_fn")
-    columns = [df.iloc[:, c].tolist() for c in range(df.shape[1])]
+    analysis = _tb_field(tb, "analysis")[1]
+    title = _tb_field(tb, "title")[1]
+    model_ref = _tb_field(tb, "model_ref")[1]
+    call_fn = _tb_field(tb, "call_fn")[1]
     stat_slugs = _ave_unique([_paste_chr(_stat_sanitize_id(headers[c])) for c in stat_cols])
 
     typ_cache: dict[str, Any] = {}
@@ -462,26 +531,26 @@ def stat_output_json(
     """
     if not tables:
         return None
-    tables = list(tables)
+    tables = _tables_list(tables)
     source_format = _source_format(source_file)
     base_ids = _stat_result_ids(tables, source_file)
     ws = compile_r("\\s+")
 
     analyses: list[dict[str, Any]] = []
     for ti, tb in enumerate(tables):
-        df = tb.get("data")
+        df = _tb_field(tb, "data")[1]
         if df is None or not isinstance(df, pd.DataFrame) or len(df) == 0 or df.shape[1] == 0:
             continue
-        if tb.get("is_chart") is True:
+        if _is_true(_tb_field(tb, "is_chart")[1]):
             continue
         headers = [str(c) for c in df.columns]
-        is_label = _label_flags(df)
+        columns = _frame_columns(df)
+        is_label = _label_flags(df, columns)
         stat_cols = [i for i, lab in enumerate(is_label) if not lab]
         label_cols = [i for i, lab in enumerate(is_label) if lab]
         if not stat_cols:
             continue
-        columns = [df.iloc[:, c].tolist() for c in range(df.shape[1])]
-        call_fn = tb.get("call_fn")
+        call_fn = _tb_field(tb, "call_fn")[1]
         typ_cache: dict[str, Any] = {}
 
         results: list[dict[str, Any]] = []
@@ -521,7 +590,7 @@ def stat_output_json(
             )
         if not results:
             continue
-        analyses.append({"analysis": tb.get("analysis"), "results": results})
+        analyses.append({"analysis": _tb_field(tb, "analysis")[1], "results": results})
     if not analyses:
         return None
     return {
@@ -539,62 +608,63 @@ def stat_output_json(
 # ---------------------------------------------------------------------------
 
 
-def _r_names(x: Any) -> list[str]:
-    return [str(k) for k in x] if isinstance(x, Mapping) else []
-
-
-def _r_elt(x: Any, key: str) -> Any:
-    """``x$key`` (``None`` when absent; errors on atomic values like R)."""
-    if x is None or isinstance(x, list):
-        return None
-    if isinstance(x, Mapping):
-        return x.get(key)
-    raise TypeError("$ operator is invalid for atomic vectors")
-
-
 def _is_list(x: Any) -> bool:
-    return isinstance(x, list | Mapping)
+    return isinstance(x, list | tuple | Mapping)
 
 
 def _r_length(x: Any) -> int:
     if x is None:
         return 0
-    if isinstance(x, list | Mapping | str):
-        return len(x) if not isinstance(x, str) else 1
+    if isinstance(x, _RNamedList):
+        return len(x.pairs)
+    if isinstance(x, list | tuple | Mapping):
+        return len(x)
     return 1
 
 
-def _iter_elems(x: Any) -> list[Any]:
-    if x is None:
-        return []
-    if isinstance(x, Mapping):
-        return list(x.values())
-    if isinstance(x, list):
-        return list(x)
-    return [x]
+def _elt(x: Any, key: str) -> tuple[bool, Any]:
+    """``x$key`` for validation: ``(is_null, value)``.
+
+    A ``None`` read from JSON is R's ``NULL``; in a document built in Python
+    (e.g. by :func:`stat_output_json`) it stands for ``NA``, which is not
+    ``NULL`` (R's ``list(analysis = NA_character_)``).
+    """
+    found, val = _r_dollar_found(x, key)
+    if not found:
+        return True, None
+    if val is None:
+        return isinstance(x, _RNamedList), None
+    return False, val
 
 
 def _sprintf_s(x: Any) -> str:
-    if isinstance(x, list):
-        x = x[0] if x else ""
+    """``sprintf("%s", x)`` of a scalar (``NA`` -> ``"NA"``)."""
+    if isinstance(x, list | tuple | Mapping):
+        vals = _r_values(x)
+        x = vals[0] if vals else ""
     return _paste_chr(x)
 
 
-def _parse_json_doc(doc: str) -> Any:
+def _parse_json_doc(doc: str | os.PathLike[str]) -> Any:
     """``jsonlite::fromJSON(if (file.exists(doc)) doc else textConnection(doc))``.
 
     jsonlite only reads *binary* connections, so metacheck's text-connection
     branch always fails: a JSON string that is not a file path is reported as
     invalid JSON. That upstream behaviour is reproduced.
     """
-
-    def reject(const: str) -> Any:
-        raise ValueError(const)
+    from pytacheck.statout.stat_tables import _read_json
 
     if not os.path.exists(doc):
         raise ValueError("can only read from a binary connection")
-    src = Path(doc).read_text(encoding="utf-8")
-    return json.loads(src, parse_constant=reject)
+    return _read_json(doc)
+
+
+def _invalid_json() -> dict[str, Any]:
+    return {
+        "valid": False,
+        "issues": ["Input is not valid JSON."],
+        "summary": {"n_errors": 1, "n_analyses": 0, "n_results": 0},
+    }
 
 
 def stat_output_validate(doc: Any) -> dict[str, Any]:
@@ -603,18 +673,19 @@ def stat_output_validate(doc: Any) -> dict[str, Any]:
     Port of ``R/stat-output.R::stat_output_validate()``. *doc* is a document
     (as from :func:`stat_output_json`) or a path to a JSON file. (A JSON
     *string* is reported as invalid JSON, as in metacheck, whose text-connection
-    branch cannot be read by jsonlite.) Returns
+    branch cannot be read by jsonlite; so is a file holding JSON ``null``.)
+    Element access follows R's ``$`` (partial name matching, first of
+    duplicated names). Returns
     ``{"valid", "issues", "summary": {"n_errors", "n_analyses", "n_results"}}``.
     """
-    if isinstance(doc, str):
+    if isinstance(doc, str | os.PathLike):
         try:
-            doc = _parse_json_doc(doc)
+            parsed = _parse_json_doc(doc)
         except (ValueError, OSError, UnicodeDecodeError):
-            return {
-                "valid": False,
-                "issues": ["Input is not valid JSON."],
-                "summary": {"n_errors": 1, "n_analyses": 0, "n_results": 0},
-            }
+            return _invalid_json()
+        if parsed is None:
+            return _invalid_json()
+        doc = parsed
 
     issues: list[str] = []
     required_top = [
@@ -625,44 +696,47 @@ def stat_output_validate(doc: Any) -> dict[str, Any]:
         "source_format",
         "analyses",
     ]
-    names = _r_names(doc)
+    names = set(_r_names(doc))
     missing_top = [k for k in required_top if k not in names]
     if missing_top:
         issues.append(
             f"Document missing top-level field{plural(len(missing_top))}: {', '.join(missing_top)}."
         )
 
-    analyses = _r_elt(doc, "analyses")
-    if analyses is None:
+    is_null, analyses = _elt(doc, "analyses")
+    if is_null:
         analyses = []
+    elif analyses is None:  # NA in a Python-built document
+        issues.append("`analyses` must be a list.")
+        raise _RError("$ operator is invalid for atomic vectors")
     if not _is_list(analyses):
         issues.append("`analyses` must be a list.")
 
     n_results = 0
-    for a in _iter_elems(analyses):
-        if _r_elt(a, "analysis") is None:
+    for a in _r_values(analyses):
+        if _elt(a, "analysis")[0]:
             issues.append("An analysis entry is missing `analysis`.")
-        results = _r_elt(a, "results")
-        if results is None:
+        is_null, results = _elt(a, "results")
+        if is_null:
             results = []
         if not _is_list(results) or not _r_length(results):
             issues.append("An analysis entry has no `results`.")
             continue
-        for r in _iter_elems(results):
+        for r in _r_values(results):
             n_results += 1
-            rid = _r_elt(r, "result_id")
-            if rid is None or _sprintf_s(rid) == "":
+            rid_null, rid = _elt(r, "result_id")
+            if rid_null or (rid is not None and _sprintf_s(rid) == ""):
                 issues.append("A result is missing `result_id`.")
-            values = _r_elt(r, "values")
-            if values is None:
+            rid_s = "?" if rid_null else _sprintf_s(rid)
+            is_null, values = _elt(r, "values")
+            if is_null:
                 values = []
-            rid_s = "?" if rid is None else _sprintf_s(rid)
             if not _is_list(values) or not _r_length(values):
                 issues.append(f'Result "{rid_s}" has no `values`.')
                 continue
             for vn in _r_names(values):
-                entry = None if vn == "" else values[vn]
-                if _r_elt(entry, "value") is None:
+                entry = values.get(vn) if isinstance(values, Mapping) and vn != "" else None
+                if _elt(entry, "value")[0]:
                     issues.append(f'Result "{rid_s}": value "{vn}" is missing `value`.')
 
     return {
@@ -769,10 +843,13 @@ def stat_output_write(
 
     if not stat_output:
         return None
+    stat_output = _r_values(stat_output)
     longs = [
-        s for s in stat_output if isinstance(s.get("long"), pd.DataFrame) and len(s["long"]) > 0
+        s
+        for s in stat_output
+        if isinstance(_r_dollar(s, "long"), pd.DataFrame) and len(_r_dollar(s, "long")) > 0
     ]
-    jsons = [s for s in stat_output if s.get("json") is not None]
+    jsons = [s for s in stat_output if _r_dollar(s, "json") is not None]
     if not longs and not jsons:
         return None
 
@@ -780,14 +857,14 @@ def stat_output_write(
     out_dir.mkdir(parents=True, exist_ok=True)
 
     if longs:
-        combined = bind_rows([s["long"] for s in longs])
+        combined = bind_rows([_r_dollar(s, "long") for s in longs])
         _write_csv(combined, out_dir / "results_long.csv")
 
     for s in jsons:
-        file = s.get("file")
+        file = _r_dollar(s, "file")
         base = os.path.basename("result" if file is None else str(file))
         fn = sub("[.][^.]+$", "", base)
         json_path = out_dir / f"{fn}.statistical_output.json"
-        json_path.write_text(_to_json_pretty(s["json"]) + "\n", encoding="utf-8")
+        json_path.write_text(_to_json_pretty(_r_dollar(s, "json")) + "\n", encoding="utf-8")
 
     return str(out_dir)

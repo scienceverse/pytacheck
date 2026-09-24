@@ -1,0 +1,96 @@
+{
+ "id": 5550002,
+ "doi": "10.5281/zenodo.5550002",
+ "metadata": {
+  "title": "Mixed results",
+  "publication_date": "2026-01-01",
+  "resource_type": {
+   "type": "dataset"
+  },
+  "license": {
+   "id": "cc-by-4.0"
+  },
+  "creators": [
+   {
+    "name": "Doe, Jane"
+   }
+  ],
+  "keywords": [
+   "one",
+   "two"
+  ]
+ },
+ "updated": "2026-01-02T00:00:00+00:00",
+ "owners": [
+  {
+   "id": "1"
+  }
+ ],
+ "stats": {
+  "downloads": 1,
+  "unique_downloads": 1,
+  "views": 2
+ },
+ "files": [
+  {
+   "id": "5550002-good.csv",
+   "key": "good.csv",
+   "size": 8,
+   "checksum": "md5:b2bfedbf7a0f5bf84cea4ab7fc2fe2f5",
+   "links": {
+    "self": "https://zenodo.org/api/records/5550002/files/good.csv/content"
+   }
+  },
+  {
+   "id": "5550002-bad.csv",
+   "key": "bad.csv",
+   "size": 8,
+   "links": {
+    "self": "https://zenodo.org/api/records/5550002/files/bad.csv/content"
+   },
+   "checksum": "md5:c5562e6604237de4f57deb8f3f042fff"
+  },
+  {
+   "id": "5550002-gone.csv",
+   "key": "gone.csv",
+   "size": 12,
+   "checksum": "md5:d41d8cd98f00b204e9800998ecf8427e",
+   "links": {
+    "self": "https://zenodo.org/api/records/5550002/files/gone.csv/content"
+   }
+  },
+  {
+   "id": "5550002-huge.bin",
+   "key": "huge.bin",
+   "size": 20971520,
+   "checksum": "md5:d41d8cd98f00b204e9800998ecf8427e",
+   "links": {
+    "self": "https://zenodo.org/api/records/5550002/files/huge.bin/content"
+   }
+  },
+  {
+   "id": "5550002-nolink.txt",
+   "key": "nolink.txt",
+   "size": 3,
+   "checksum": "md5:d41d8cd98f00b204e9800998ecf8427e",
+   "links": {}
+  },
+  {
+   "id": "5550002-sha.txt",
+   "key": "sha.txt",
+   "size": 7,
+   "checksum": "sha256:abc",
+   "links": {
+    "self": "https://zenodo.org/api/records/5550002/files/sha.txt/content"
+   }
+  },
+  {
+   "id": "5550002-short.txt",
+   "key": "short.txt",
+   "size": 10,
+   "links": {
+    "self": "https://zenodo.org/api/records/5550002/files/short.txt/content"
+   }
+  }
+ ]
+}

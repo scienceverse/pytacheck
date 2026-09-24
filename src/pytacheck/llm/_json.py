@@ -40,7 +40,7 @@ def _num(x: float) -> str:
         if math.isnan(x):
             return '"NA"'
         return '"Inf"' if x > 0 else '"-Inf"'
-    return "%.17g" % x
+    return f"{x:.17g}"
 
 
 def to_json(x: Any) -> str:

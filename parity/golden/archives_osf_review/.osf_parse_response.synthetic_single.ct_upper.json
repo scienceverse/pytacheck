@@ -1,0 +1,9 @@
+{
+  "id": ".osf_parse_response.synthetic_single.ct_upper",
+  "ok": false,
+  "error": "Unexpected content type \"Application/JSON\".\n• Expecting type \"application/json\" or suffix \"json\".",
+  "warnings": [],
+  "value": null,
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -83,11 +83,20 @@ def scroll_table(
     if len(table) == 0 or table.shape[1] == 0:
         return ""
     table = table.copy()
-    for col in table.columns:
-        if pd.api.types.is_string_dtype(table[col]) or table[col].dtype == object:
-            table[col] = [
-                v.replace("\n", "<br>") if isinstance(v, str) else v for v in table[col].tolist()
-            ]
+    seen: set[str] = set()
+    for i, col in enumerate(table.columns):
+        # R: `for (col in names(table)) if (is.character(table[[col]]))`: factors
+        # are not character, a blank name (a vector's column) selects nothing and
+        # a repeated name selects its first column again
+        s = table.iloc[:, i]
+        name = str(col)
+        if name == "" or name in seen or isinstance(s.dtype, pd.CategoricalDtype):
+            continue
+        seen.add(name)
+        if pd.api.types.is_string_dtype(s.dtype) or s.dtype == object:
+            values = [v.replace("\n", "<br>") if isinstance(v, str) else v for v in s.tolist()]
+            keep = s.dtype if pd.api.types.is_string_dtype(s.dtype) and s.dtype != object else None
+            table.isetitem(i, pd.Series(values, index=s.index, dtype=keep))
     return ReportTable(table, colwidths=colwidths, maxrows=maxrows, escape=escape, column=column)
 
 
@@ -109,7 +118,9 @@ def collapse_section(
     """
     if callout not in _CALLOUTS:
         raise ValueError(f"'arg' should be one of {', '.join(repr(c) for c in _CALLOUTS)}")
-    head = f'::: {{.callout-{callout} title="{title}" collapse="{"true" if collapse else "false"}"}}'
+    head = (
+        f'::: {{.callout-{callout} title="{title}" collapse="{"true" if collapse else "false"}"}}'
+    )
     items = _flat_blocks(text)
     if any(isinstance(t, ReportTable) for t in items):
         return [head, *items, ":::\n"]
@@ -143,22 +154,24 @@ def link(url: Any, text: Any = None, new_window: bool = True, type: str = "") ->
 
     scalar = isinstance(url, str) or url is None
     urls = [url] if scalar else list(url)
-    texts = urls if text is None else ([text] if isinstance(text, str) else list(text))
     if type == "doi":
+        # R: sprintf("https://doi.org/%s", gsub(...)) makes an NA url ".../NA"
         urls = [
-            None if u is None else "https://doi.org/" + gsub(r"https?://doi.org/", "", u)
+            "https://doi.org/" + ("NA" if _is_na(u) else gsub(r"https?://doi.org/", "", u))
             for u in urls
         ]
+    # R's default `text = url` is only evaluated now, after the doi rewrite
+    texts = urls if text is None else ([text] if isinstance(text, str) else list(text))
     nw = " target='_blank'" if new_window else ""
     out = []
     n = max(len(urls), len(texts))
     for i in range(n):
         u = urls[i % len(urls)]
         t = texts[i % len(texts)]
-        if u is None or (isinstance(u, float) and math.isnan(u)):
+        if _is_na(u):
             out.append(None)
             continue
-        shown = gsub(r"^https?://", "", "NA" if t is None else str(t))
+        shown = gsub(r"^https?://", "", "NA" if _is_na(t) else str(t))
         out.append(f"<a href='{u}'{nw}>{shown}</a>")
     return out[0] if scalar and len(out) == 1 else out
 
@@ -180,14 +193,24 @@ def format_ref(bib: str | Sequence[str]) -> str | list[str]:
     return [tidy(b) for b in bib]
 
 
+def _is_na(x: Any) -> bool:
+    return x is None or x is pd.NA or (isinstance(x, float) and math.isnan(x))
+
+
 def _cap_num(x: float | None) -> str:
-    if x is None or (isinstance(x, float) and math.isnan(x)):
+    """Port of ``.cap_num()``: a number for a cap message (never scientific)."""
+    if _is_na(x):
         return "unknown"
-    if isinstance(x, float) and math.isinf(x):
+    v = float(x)  # type: ignore[arg-type]
+    if math.isinf(v):
         return "Inf"
-    if float(x) == round(float(x)):
-        return str(round(float(x)))
-    return f"{float(x):.1f}"
+    # isTRUE(all.equal(x, round(x))): mean relative difference <= 1.5e-8
+    # (absolute when |x| itself is that small)
+    r = round(v)
+    diff = abs(v - r)
+    if (diff / abs(v) if abs(v) > 1.5e-8 else diff) <= 1.5e-8:
+        return str(int(r))
+    return f"{v:.1f}"
 
 
 def cap_gate_count(

@@ -1,0 +1,48 @@
+{
+  "id": "papers_available.retag",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 2,
+    "names": [
+      "name",
+      "tag",
+      "size_mb",
+      "cached"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "demo",
+          "other"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "demo-2026-06-20",
+          "other-2026-06-01"
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0,
+          0
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false,
+          false
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

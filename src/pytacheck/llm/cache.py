@@ -22,6 +22,7 @@ directory).
 
 from __future__ import annotations
 
+import contextlib
 import datetime as dt
 import hashlib
 import os
@@ -114,7 +115,9 @@ def _llm_cache_key(
     from pytacheck.llm.types import as_type, type_print_lines
 
     p: Any
-    if params:
+    if params is None:
+        p = None  # NULL
+    elif params:
         names = sorted(params)
         p = RList([_param_robj(params[k]) for k in names], {"names": RVec("chr", names)})
     else:
@@ -163,8 +166,6 @@ def _llm_cache_put(key: str, df: Any, raw: Any = None, thinking: Any = None) -> 
         "created": dt.datetime.now(dt.UTC),
         "version": RInt(1),
     }
-    try:
+    with contextlib.suppress(Exception):  # R: tryCatch(saveRDS(...), error = NULL)
         write_rds(entry, _llm_cache_path(key))
-    except Exception:
-        pass
     return entry

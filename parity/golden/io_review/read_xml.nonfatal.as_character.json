@@ -1,0 +1,18 @@
+{
+  "id": "read_xml.nonfatal.as_character",
+  "ok": true,
+  "error": null,
+  "warnings": [
+    "ID x already defined [513]",
+    "Namespace prefix xlink for href on ptr is not defined [201]",
+    "Namespace prefix p on q is not defined [201]"
+  ],
+  "value": {
+    "t": "chr",
+    "v": [
+      "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<a>\n  <b xml:id=\"x\"/>\n  <c xml:id=\"x\">t<\/c>\n  <ptr xlink:href=\"u\"/>\n  <p:q/>\n<\/a>\n"
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

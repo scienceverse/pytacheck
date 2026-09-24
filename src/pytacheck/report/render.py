@@ -24,10 +24,12 @@ from __future__ import annotations
 import html as _html
 import math
 import re
+import unicodedata
 from collections.abc import Callable, Iterable, Mapping, Sequence
 from dataclasses import dataclass, field
 from functools import cache
 from importlib import resources
+from itertools import pairwise
 from typing import TYPE_CHECKING, Any
 
 from pytacheck._r.base import as_character
@@ -87,12 +89,31 @@ _ESCAPES = {
     "\f": "\\f",
     "\v": "\\v",
 }
-_NEEDS_ESCAPE = re.compile(r'[\\"\x00-\x1f\x7f-\x9f\u2028\u2029]')
+_NEEDS_ESCAPE = re.compile(r'[\\"\x00-\x1f\x7f-\x9f]')
+#: Assigned in Unicode 15.1 (R 4.5's character tables) but not in Unicode 15.0
+#: (Python 3.12's ``unicodedata``): R prints them as they are.
+_UNICODE_15_1 = ((0x2EBF0, 0x2EE5D), (0x2FFC, 0x2FFF), (0x31EF, 0x31EF))
+
+
+def _r_printable(ch: str) -> bool:
+    """R's ``iswprint()`` for a non-ASCII character (UTF-8 locale).
+
+    R escapes control characters, line/paragraph separators and code points
+    unassigned in its Unicode tables (15.1); format characters, private-use
+    characters and everything else assigned print as they are.
+    """
+    cat = unicodedata.category(ch)
+    if cat in ("Cc", "Zl", "Zp", "Cs"):
+        return False
+    if cat == "Cn":
+        code = ord(ch)
+        return any(lo <= code <= hi for lo, hi in _UNICODE_15_1)
+    return True
 
 
 def _encode_string(s: str) -> str:
     """R ``EncodeString(s, quote = '"')`` in a UTF-8 locale."""
-    if _NEEDS_ESCAPE.search(s) is None:
+    if _NEEDS_ESCAPE.search(s) is None and (s.isascii() or all(map(_r_printable, s))):
         return f'"{s}"'
     out = []
     for ch in s:
@@ -103,10 +124,12 @@ def _encode_string(s: str) -> str:
         code = ord(ch)
         if code < 0x20 or code == 0x7F:
             out.append(f"\\{code:03o}")
-        elif 0x80 <= code <= 0x9F or code in (0x2028, 0x2029):
-            out.append(f"\\u{code:04x}")
-        else:
+        elif code < 0x80 or _r_printable(ch):
             out.append(ch)
+        elif code > 0xFFFF:
+            out.append(f"\\U{{{code:06x}}}")
+        else:
+            out.append(f"\\u{code:04x}")
     return '"' + "".join(out) + '"'
 
 
@@ -181,13 +204,14 @@ class _Deparser:
 
         if isinstance(x, _Vec):
             self.vector_or_list(x.kind, x.values)
+        elif isinstance(x, _Factor):
+            self.factor(x)
         elif x is None:
             self.put("NULL")
         elif isinstance(x, pd.DataFrame):
             self.frame(x)
         elif isinstance(x, pd.Series):
-            kind, values = _series_vector(x)
-            self.vector_or_list(kind, values)
+            self.value(_column_value(x))
         elif isinstance(x, Mapping):
             self.put("list(")
             self.elements([(str(k), v) for k, v in x.items()], do_names=True)
@@ -236,7 +260,7 @@ class _Deparser:
         if kind == "int" and n > 1 and not any(missing):
             ints = [int(v) for v in values]
             step = ints[1] - ints[0]
-            if abs(step) == 1 and all(b - a == step for a, b in zip(ints, ints[1:], strict=False)):
+            if abs(step) == 1 and all(b - a == step for a, b in pairwise(ints)):
                 self.put(f"{ints[0]}:{ints[-1]}")
                 return
         all_na = all(missing)
@@ -251,14 +275,19 @@ class _Deparser:
         if n > 1:
             self.put(")")
 
+    def factor(self, f: _Factor) -> None:
+        """A factor: ``structure(<codes>, levels = <levels>, class = "factor")``."""
+        self.put("structure(")
+        self.vector("int", f.codes)
+        self.put(", levels = ")
+        self.vector("chr", f.levels)
+        self.put(', class = c("ordered", "factor"))' if f.ordered else ', class = "factor")')
+
     def frame(self, df: pd.DataFrame, row_names_first: bool = False) -> None:
         names = [str(c) for c in df.columns]
         all_blank = bool(names) and all(n == "" for n in names)
         self.put("structure(list(")
-        cols = []
-        for i, name in enumerate(names):
-            kind, values = _series_vector(df.iloc[:, i])
-            cols.append((name, _Vec(kind, values)))
+        cols = [(name, _column_value(df.iloc[:, i])) for i, name in enumerate(names)]
         self.elements(cols, do_names=not all_blank)
         self.put(")")
         if all_blank:
@@ -284,6 +313,27 @@ class _Deparser:
 class _Vec:
     kind: str
     values: list[Any]
+
+
+@dataclass
+class _Factor:
+    """An R factor: 1-based codes (``None`` for NA), levels, ``ordered``."""
+
+    codes: list[int | None]
+    levels: list[str]
+    ordered: bool = False
+
+
+def _column_value(s: pd.Series) -> _Vec | _Factor:
+    """A pandas column as the R vector it stands for (categoricals are factors)."""
+    import pandas as pd
+
+    if isinstance(s.dtype, pd.CategoricalDtype):
+        codes = [None if c < 0 else int(c) + 1 for c in s.cat.codes.tolist()]
+        levels = [str(v) for v in s.cat.categories.tolist()]
+        return _Factor(codes, levels, bool(s.cat.ordered))
+    kind, values = _series_vector(s)
+    return _Vec(kind, values)
 
 
 def _encode_element(kind: str, v: Any, missing: bool, all_na: bool) -> str:
@@ -358,6 +408,15 @@ def _series_vector(s: pd.Series) -> tuple[str, list[Any]]:
     return kind, values
 
 
+def _is_character(s: pd.Series) -> bool:
+    """R ``is.character()`` of a column (factors are not character)."""
+    import pandas as pd
+
+    if isinstance(s.dtype, pd.CategoricalDtype):
+        return False
+    return _series_vector(s)[0] == "chr"
+
+
 def _deparse_table(df: pd.DataFrame) -> list[str]:
     """``deparse(table)`` inside ``scroll_table()``.
 
@@ -366,8 +425,7 @@ def _deparse_table(df: pd.DataFrame) -> list[str]:
     a named character column deparse with ``row.names`` before ``class``.
     """
     has_chr = any(
-        str(name) != "" and _series_vector(df.iloc[:, i])[0] == "chr"
-        for i, name in enumerate(df.columns)
+        str(name) != "" and _is_character(df.iloc[:, i]) for i, name in enumerate(df.columns)
     )
     p = _Deparser(60)
     p.frame(df, row_names_first=has_chr)
@@ -404,7 +462,11 @@ def _colwidths_value(colwidths: Any) -> Any:
     values = list(colwidths)
     if any(isinstance(v, str) for v in values):
         return _Vec(
-            "chr", [None if _is_missing(v) else (v if isinstance(v, str) else as_character(v)) for v in values]
+            "chr",
+            [
+                None if _is_missing(v) else (v if isinstance(v, str) else as_character(v))
+                for v in values
+            ],
         )
     if all(_is_missing(v) for v in values):
         return _Vec("lgl", [None] * len(values))
@@ -417,10 +479,11 @@ def table_chunk(block: ReportTable) -> str:
     tbl_code = "\n".join(_deparse_table(block.data))
     colwidths_code = "\n".join(deparse(_colwidths_value(block.colwidths)))
     maxrows = block.maxrows
-    maxrows_txt = (
-        str(maxrows)
+    # sprintf("%s", maxrows): module authors write R doubles (1e5 prints "1e+05")
+    maxrows_txt = str(
+        as_character(float(maxrows))
         if isinstance(maxrows, int) and not isinstance(maxrows, bool)
-        else str(as_character(maxrows))
+        else as_character(maxrows)
     )
     escape = "TRUE" if block.escape is True else "FALSE"
     return (
@@ -479,6 +542,31 @@ def _column_defs(colwidths: Any) -> list[dict[str, Any]]:
     return defs
 
 
+def _js_number(f: float) -> str:
+    """JavaScript ``Number#toString()`` of a finite double (ECMAScript 7.1.12.1)."""
+    if f == 0:
+        return "0"
+    if f < 0:
+        return "-" + _js_number(-f)
+    from decimal import Decimal
+
+    # shortest round-trip digits (as JavaScript uses) and the decimal exponent n
+    _, digit_tuple, exp = Decimal(repr(f)).normalize().as_tuple()
+    digits = "".join(map(str, digit_tuple))
+    k = len(digits)
+    n = k + int(exp)
+    if k <= n <= 21:
+        return digits + "0" * (n - k)
+    if 0 < n <= 21:
+        return digits[:n] + "." + digits[n:]
+    if -6 < n <= 0:
+        return "0." + "0" * (-n) + digits
+    e = n - 1
+    sign = "+" if e >= 0 else "-"
+    mantissa = digits if k == 1 else digits[0] + "." + digits[1:]
+    return f"{mantissa}e{sign}{abs(e)}"
+
+
 def _cell_text(v: Any) -> str:
     """How DT shows a value (JSON -> JavaScript ``toString``)."""
     import numpy as np
@@ -492,10 +580,10 @@ def _cell_text(v: Any) -> str:
     if isinstance(v, float | np.floating):
         f = float(v)
         if math.isinf(f):
-            return "Infinity" if f > 0 else "-Infinity"
-        if f.is_integer() and abs(f) < 1e21:
-            return str(int(f))
-        return repr(f)
+            return ""  # jsonlite writes Inf as null
+        # htmlwidgets serialises doubles to 16 significant digits; the browser
+        # shows the parsed number with JavaScript's Number#toString
+        return _js_number(float(f"{f:.16g}"))
     if isinstance(v, list | tuple | np.ndarray):
         return ",".join(_cell_text(e) for e in v)
     return str(v)
@@ -565,7 +653,11 @@ class DataTable:
             rows.append(f'<tr class="{parity}">' + "".join(cells) + "</tr>")
         wrapper_cls = "datatables" + (f" column-{self.column}" if self.column != "body" else "")
         attrs = f' data-page-length="{int(page_length)}"' if paged else ""
-        pager = '<div class="dt-top"><nav class="dt-paging" aria-label="pages"></nav></div>' if paged else ""
+        pager = (
+            '<div class="dt-top"><nav class="dt-paging" aria-label="pages"></nav></div>'
+            if paged
+            else ""
+        )
         return (
             f'<div class="{wrapper_cls}"{attrs}>{pager}<div class="dt-scroll">'
             f'<table class="dataTable display">{colgroup}<thead><tr>{"".join(cols)}</tr></thead>'
@@ -601,12 +693,17 @@ def report_table(
         raise TypeError("'data' must be 2-dimensional (e.g. data frame or matrix)")
     cd = _column_defs(colwidths)
     data = table.copy()
+    seen: set[str] = set()
     for col in range(data.shape[1]):
+        # R: `for (col in names(table)) if (is.character(table[[col]]))`
         s = data.iloc[:, col]
+        name = str(data.columns[col])
+        if name == "" or name in seen or isinstance(s.dtype, pd.CategoricalDtype):
+            continue
+        seen.add(name)
         if pd.api.types.is_string_dtype(s.dtype) or s.dtype == object:
-            data.iloc[:, col] = [
-                v.replace("\n", "<br>") if isinstance(v, str) else v for v in s.tolist()
-            ]
+            values = [v.replace("\n", "<br>") if isinstance(v, str) else v for v in s.tolist()]
+            data.isetitem(col, pd.Series(values, index=s.index, dtype=s.dtype))
     data.columns = [str(c).replace("_", "_<wbr>") for c in data.columns]
     # DT::datatable() adds a right-alignment class for numeric columns and a
     # name for every column to the columnDefs
@@ -648,8 +745,7 @@ def table_gfm(block: ReportTable) -> str:
         "| " + " | ".join("--:" if n else "---" for n in numeric) + " |",
     ]
     columns = [df.iloc[:, i].tolist() for i in range(df.shape[1])]
-    for r in range(len(df)):
-        lines.append("| " + " | ".join(cell(col[r]) for col in columns) + " |")
+    lines.extend("| " + " | ".join(cell(col[r]) for col in columns) + " |" for r in range(len(df)))
     return "\n".join(lines)
 
 
@@ -706,9 +802,9 @@ def _fence_step(line: str, fence: str | None) -> tuple[bool, str | None]:
     m = _CODE_FENCE.match(line)
     if fence is None:
         return (True, m.group(1)) if m else (False, None)
-    if m and m.group(1)[0] == fence[0] and len(m.group(1)) >= len(fence):
-        if line.strip() == m.group(1):
-            return True, None
+    closes = m and m.group(1)[0] == fence[0] and len(m.group(1)) >= len(fence)
+    if closes and line.strip() == m.group(1):  # type: ignore[union-attr]
+        return True, None
     return True, fence
 
 
@@ -728,7 +824,9 @@ def _parse_divs(text: str) -> list[Any]:
             continue
         m = _FENCE_OPEN.match(line)
         if m:
-            attrs = _parse_attrs(m.group(2)) if m.group(2) is not None else _Attrs(classes=[m.group(3)])
+            attrs = (
+                _parse_attrs(m.group(2)) if m.group(2) is not None else _Attrs(classes=[m.group(3)])
+            )
             div = _Div(attrs)
             target.append(div)
             stack.append(div)
@@ -849,7 +947,15 @@ def _emit_html(nodes: list[Any], inline: Callable[[str], str]) -> list[str]:
                 for k, v in attrs.kv.items()
                 if re.fullmatch(r"[\w-]+", k)
             )
-            out += ["", f"<div{id_attr}{cls}{kv}>", "", *_emit_html(children, inline), "", "</div>", ""]
+            out += [
+                "",
+                f"<div{id_attr}{cls}{kv}>",
+                "",
+                *_emit_html(children, inline),
+                "",
+                "</div>",
+                "",
+            ]
     return out
 
 
@@ -887,11 +993,9 @@ def _slugify(text: str) -> str:
 
 
 def _inline_text(token: Any) -> str:
-    parts = []
-    for child in token.children or []:
-        if child.type in ("text", "code_inline"):
-            parts.append(child.content)
-    return "".join(parts)
+    return "".join(
+        child.content for child in token.children or [] if child.type in ("text", "code_inline")
+    )
 
 
 def _attrs_rule(state: Any) -> None:
@@ -927,34 +1031,46 @@ def _attrs_rule(state: Any) -> None:
 _SMART = (("---", "\u2014"), ("--", "\u2013"), ("...", "\u2026"))
 
 
+def _link_attrs(children: list[Any], j: int) -> None:
+    """External links open in a new window; ``[text](url){.class}`` sets the link's class."""
+    link = children[j]
+    href = link.attrGet("href") or ""
+    if re.match(r"^https?://", str(href)):
+        link.attrSet("target", "_blank")
+        link.attrSet("rel", "noopener")
+    depth = 0
+    for k in range(j, len(children)):
+        if children[k].type == "link_open":
+            depth += 1
+        elif children[k].type == "link_close":
+            depth -= 1
+            if depth == 0:
+                nxt = children[k + 1] if k + 1 < len(children) else None
+                m = (
+                    re.match(r"^\{([^{}]*)\}", nxt.content)
+                    if nxt is not None and nxt.type == "text"
+                    else None
+                )
+                if m is not None and nxt is not None:
+                    attrs = _parse_attrs(m.group(1))
+                    if attrs.classes:
+                        link.attrSet("class", " ".join(attrs.classes))
+                    if attrs.id:
+                        link.attrSet("id", attrs.id)
+                    nxt.content = nxt.content[m.end() :]
+                return
+
+
 def _inline_attrs(children: list[Any]) -> None:
-    code_depth = 0
+    link_depth = 0
     for j, child in enumerate(children):
         if child.type == "link_open":
-            href = child.attrGet("href") or ""
-            if re.match(r"^https?://", str(href)):
-                child.attrSet("target", "_blank")
-                child.attrSet("rel", "noopener")
-            # find the matching link_close and a following {.class} text
-            depth = 0
-            for k in range(j, len(children)):
-                if children[k].type == "link_open":
-                    depth += 1
-                elif children[k].type == "link_close":
-                    depth -= 1
-                    if depth == 0:
-                        if k + 1 < len(children) and children[k + 1].type == "text":
-                            nxt = children[k + 1]
-                            m = re.match(r"^\{([^{}]*)\}", nxt.content)
-                            if m:
-                                attrs = _parse_attrs(m.group(1))
-                                if attrs.classes:
-                                    child.attrSet("class", " ".join(attrs.classes))
-                                if attrs.id:
-                                    child.attrSet("id", attrs.id)
-                                nxt.content = nxt.content[m.end() :]
-                        break
-        elif child.type == "text" and code_depth == 0:
+            _link_attrs(children, j)
+            link_depth += 1
+        elif child.type == "link_close":
+            link_depth -= 1
+        elif child.type == "text" and link_depth == 0:
+            # Pandoc's smart typography (quotes are done by markdown-it)
             content = child.content
             for a, b in _SMART:
                 content = content.replace(a, b)
@@ -1015,13 +1131,12 @@ def markdown_to_gfm(text: str) -> str:
 @cache
 def _asset(name: str) -> str:
     return (
-        resources.files("pytacheck.report")
-        .joinpath("templates", name)
-        .read_text(encoding="utf-8")
+        resources.files("pytacheck.report").joinpath("templates", name).read_text(encoding="utf-8")
     )
 
 
 _TABLE_MARK = "<!--pytacheck-table-{}-->"
+_TABLE_MARK_RE = re.compile(r"<!--pytacheck-table-(\d+)-->")
 
 
 def render_blocks(
@@ -1050,14 +1165,15 @@ class TableSlots:
         return "\n" + _TABLE_MARK.format(len(self.tables) - 1) + "\n"
 
     def fill(self, html: str) -> str:
-        for i, block in enumerate(self.tables):
-            html = html.replace(_TABLE_MARK.format(i), _table_html(block))
-        return html
+        """Replace the placeholders in *html* with the tables (one pass)."""
+        if not self.tables:
+            return html
+        return _TABLE_MARK_RE.sub(lambda m: _table_html(self.tables[int(m.group(1))]), html)
 
 
 def _toc(body_html: str) -> str:
     """A nested table of contents from the h2/h3 headings of the report body."""
-    heads = re.findall(r'<h([23])([^>]*)>(.*?)</h\1>', body_html, flags=re.S)
+    heads = re.findall(r"<h([23])([^>]*)>(.*?)</h\1>", body_html, flags=re.S)
     items: list[tuple[int, str, str]] = []
     for level, attrs, inner in heads:
         if "unlisted" in attrs:

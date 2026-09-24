@@ -1,0 +1,178 @@
+{
+  "id": "json_expand.review.type_convert",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 3,
+    "names": [
+      "id",
+      "answer",
+      "i",
+      "nai",
+      "nasp",
+      "nan",
+      "snan",
+      "hexp",
+      "hexdot",
+      "plusi",
+      "a",
+      "b",
+      "c",
+      "d",
+      "e",
+      "f",
+      "g",
+      "h"
+    ],
+    "v": [
+      {
+        "t": "int",
+        "v": [
+          1,
+          2,
+          3
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "{\"i\": \"i\", \"nai\": \"NAi\", \"nasp\": \"NA \", \"nan\": \"NAN\", \"snan\": \" NAN\", \"hexp\": \"0x1p\", \"hexdot\": \"0x1.8.8\", \"plusi\": \"+i\", \"a\": \"1.5\", \"b\": \"NAN\", \"c\": \"1\", \"d\": \"1.5\", \"e\": \"T\", \"f\": \"0x1p\", \"g\": \"NAN\", \"h\": \"NAN\"}",
+          "{\"i\": null, \"nai\": null, \"nasp\": null, \"nan\": null, \"snan\": null, \"hexp\": null, \"hexdot\": null, \"plusi\": null, \"a\": \"NAN\", \"b\": \"1.5\", \"c\": \"NAN\", \"d\": \"NA \", \"e\": \"1\", \"f\": \"1\", \"g\": \"nan\", \"h\": \"NaN\"}",
+          "{\"a\": \"2\", \"b\": \"2\", \"c\": \"2\", \"d\": \"2\", \"e\": null, \"f\": null, \"g\": \"-NaN\", \"h\": \"1\"}"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "i",
+          "",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "NAi",
+          "",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "NA ",
+          "",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "NAN",
+          "",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          " NAN",
+          "",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "0x1p",
+          "",
+          null
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          24.5,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "+i",
+          "",
+          null
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          1.5,
+          "NaN",
+          2
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "NAN",
+          "1.5",
+          "2"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "1",
+          "NAN",
+          "2"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "1.5",
+          "NA ",
+          "2"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "T",
+          "1",
+          ""
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "0x1p",
+          "1",
+          ""
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "NAN",
+          "nan",
+          "-NaN"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "NAN",
+          "NaN",
+          "1"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

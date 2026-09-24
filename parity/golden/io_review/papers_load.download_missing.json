@@ -1,0 +1,9 @@
+{
+  "id": "papers_load.download_missing",
+  "ok": false,
+  "error": "Download failed: GET https://github.com/scienceverse/retagtest/releases/download/other-2026-06-01/other.rds",
+  "warnings": [],
+  "value": null,
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

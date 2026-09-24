@@ -153,7 +153,9 @@ def test_get_orcid_none_and_failure() -> None:
     # unreadable XML: a warning and ""
     with respx.mock() as router:
         router.route(host="pub.orcid.org").mock(
-            return_value=httpx.Response(200, content=b"<not xml", headers={"content-type": "application/xml"})
+            return_value=httpx.Response(
+                200, content=b"<not xml", headers={"content-type": "application/xml"}
+            )
         )
         with pytest.warns(UserWarning, match="ORCID search failed"):
             assert get_orcid("Nobody") == ""

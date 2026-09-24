@@ -1,0 +1,16 @@
+{
+  "id": "link.na_url_and_text",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "<a href='http://a.com'>x<\/a>",
+      null,
+      "<a href='https://b.org/x'>NA<\/a>"
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

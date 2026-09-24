@@ -90,6 +90,94 @@
   - "x"
   "py_args":
     "path": "tests/statout_readers/fixtures/review/spv_charts.spv"
+- "id": "import_spv.spv_charts_ok"
+  "r": "import_spv"
+  "py": "pytacheck.statout.spv.import_spv"
+  "args":
+    "path":
+      "$file": "tests/statout_readers/fixtures/review/spv_charts_ok.spv"
+- "id": "import_spv.attrs.spv_charts_ok"
+  "r": "identity"
+  "py": "tests.statout_readers.parity_helpers.spv_attrs"
+  "args":
+    "x":
+      "$expr":
+        "r": "lapply(metacheck::import_spv(rpath(\"tests/statout_readers/fixtures/review/spv_charts_ok.spv\")), function(t) { a <- attributes(t$data); if (isTRUE(t$is_chart)) { fits <- a$spv_chart_fits %||% list(); list(type = a$spv_chart_type, title = a$spv_chart_title, xlab = a$spv_chart_xlab, ylab = a$spv_chart_ylab, fit_names = vapply(fits, function(f) as.character(f$name), \"\"), fit_exprs = vapply(fits, function(f) f$expr, \"\")) } else list(title = a$spv_title, rows = a$spv_row_dims, cols = a$spv_col_dims, layers = a$spv_layer_dims, footnotes = vapply(a$spv_footnotes %||% list(), function(f) paste(f$text, f$marker, sep = \"|\"), \"\")) })"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "path": "tests/statout_readers/fixtures/review/spv_charts_ok.spv"
+- "id": "export_spv_html.spv_charts_ok"
+  "r": "identity"
+  "py": "tests.statout_readers.parity_helpers.export_lines"
+  "args":
+    "x":
+      "$expr":
+        "r": "{f <- tempfile(fileext = \".html\"); metacheck::export_spv_html(rpath(\"tests/statout_readers/fixtures/review/spv_charts_ok.spv\"), f); x <- readLines(f, warn = FALSE); gsub(\"data:image/[a-z+]+;base64,[A-Za-z0-9+/=]+\", \"data:IMG\", x)}"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "fn": "pytacheck.statout.spv.export_spv_html"
+    "path": "tests/statout_readers/fixtures/review/spv_charts_ok.spv"
+    "images": true
+- "id": "spv_read_structure.spv_charts_ok"
+  "r": "identity"
+  "py": "tests.statout_readers.parity_helpers.spv_structure"
+  "args":
+    "x":
+      "$expr":
+        "r": "{d <- tempfile(); dir.create(d); utils::unzip(rpath(\"tests/statout_readers/fixtures/review/spv_charts_ok.spv\"), exdir = d); rows <- metacheck:::.spv_read_structure(d); if (!length(rows)) NULL else do.call(rbind, lapply(rows, function(r) as.data.frame(r, stringsAsFactors = FALSE)))}"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "path": "tests/statout_readers/fixtures/review/spv_charts_ok.spv"
+- "id": "import_spv.spv_box_na"
+  "r": "import_spv"
+  "py": "pytacheck.statout.spv.import_spv"
+  "args":
+    "path":
+      "$file": "tests/statout_readers/fixtures/review/spv_box_na.spv"
+- "id": "import_spv.attrs.spv_box_na"
+  "r": "identity"
+  "py": "tests.statout_readers.parity_helpers.spv_attrs"
+  "args":
+    "x":
+      "$expr":
+        "r": "lapply(metacheck::import_spv(rpath(\"tests/statout_readers/fixtures/review/spv_box_na.spv\")), function(t) { a <- attributes(t$data); if (isTRUE(t$is_chart)) { fits <- a$spv_chart_fits %||% list(); list(type = a$spv_chart_type, title = a$spv_chart_title, xlab = a$spv_chart_xlab, ylab = a$spv_chart_ylab, fit_names = vapply(fits, function(f) as.character(f$name), \"\"), fit_exprs = vapply(fits, function(f) f$expr, \"\")) } else list(title = a$spv_title, rows = a$spv_row_dims, cols = a$spv_col_dims, layers = a$spv_layer_dims, footnotes = vapply(a$spv_footnotes %||% list(), function(f) paste(f$text, f$marker, sep = \"|\"), \"\")) })"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "path": "tests/statout_readers/fixtures/review/spv_box_na.spv"
+- "id": "export_spv_html.spv_box_na"
+  "r": "identity"
+  "py": "tests.statout_readers.parity_helpers.export_lines"
+  "args":
+    "x":
+      "$expr":
+        "r": "{f <- tempfile(fileext = \".html\"); metacheck::export_spv_html(rpath(\"tests/statout_readers/fixtures/review/spv_box_na.spv\"), f); x <- readLines(f, warn = FALSE); gsub(\"data:image/[a-z+]+;base64,[A-Za-z0-9+/=]+\", \"data:IMG\", x)}"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "fn": "pytacheck.statout.spv.export_spv_html"
+    "path": "tests/statout_readers/fixtures/review/spv_box_na.spv"
+    "images": true
+- "id": "spv_read_structure.spv_box_na"
+  "r": "identity"
+  "py": "tests.statout_readers.parity_helpers.spv_structure"
+  "args":
+    "x":
+      "$expr":
+        "r": "{d <- tempfile(); dir.create(d); utils::unzip(rpath(\"tests/statout_readers/fixtures/review/spv_box_na.spv\"), exdir = d); rows <- metacheck:::.spv_read_structure(d); if (!length(rows)) NULL else do.call(rbind, lapply(rows, function(r) as.data.frame(r, stringsAsFactors = FALSE)))}"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "path": "tests/statout_readers/fixtures/review/spv_box_na.spv"
 - "id": "spv_export_syntax.spv_strings"
   "r": "identity"
   "py": "tests.statout_readers.parity_helpers.export_syntax"
@@ -169,6 +257,14 @@
       "$expr":
         "r": "{df <- data.frame(G = c(\"\", \"a\"), S = c(\"s\", \"s\"), value = c(\"1\", \"2\"), stringsAsFactors = FALSE); attr(df, \"spv_row_dims\") <- \"G\"; attr(df, \"spv_col_dims\") <- \"S\"; metacheck:::.spv_table_html(df)}"
         "py": "(lambda df: (df.attrs.update({\"spv_row_dims\": [\"G\"], \"spv_col_dims\": [\"S\"]}), pc.statout.spv._spv_table_html(df))[1])(pd.DataFrame({\"G\": pd.array([\"\", \"a\"], dtype=\"string\"), \"S\": pd.array([\"s\", \"s\"], dtype=\"string\"), \"value\": pd.array([\"1\", \"2\"], dtype=\"string\")}))"
+- "id": "spv_table_html.numeric_dims"
+  "r": "identity"
+  "py": "copy.copy"
+  "args":
+    "x":
+      "$expr":
+        "r": "{df <- data.frame(G = c(1, 2.5, NA, 1e5), S = c(\"a\", \"a\", \"b\", \"b\"), value = c(\"1\", \"2\", \"3\", \"4\"), stringsAsFactors = FALSE); attr(df, \"spv_row_dims\") <- \"G\"; attr(df, \"spv_col_dims\") <- \"S\"; metacheck:::.spv_table_html(df)}"
+        "py": "(lambda df: (df.attrs.update({\"spv_row_dims\": [\"G\"], \"spv_col_dims\": [\"S\"]}), pc.statout.spv._spv_table_html(df))[1])(pd.DataFrame({\"G\": [1.0, 2.5, float(\"nan\"), 1e5], \"S\": pd.array([\"a\", \"a\", \"b\", \"b\"], dtype=\"string\"), \"value\": pd.array([\"1\", \"2\", \"3\", \"4\"], dtype=\"string\")}))"
 - "id": "spv_assemble_table.loose"
   "r": "identity"
   "py": "copy.copy"
@@ -202,6 +298,31 @@
   "args":
     "path":
       "$file": "tests/statout_readers/fixtures/review/empty_index.omv"
+- "id": "import_omv.fields_object"
+  "r": "import_omv"
+  "py": "pytacheck.statout.omv.import_omv"
+  "args":
+    "path":
+      "$file": "tests/statout_readers/fixtures/review/fields_object.omv"
+- "id": "import_omv.labels.fields_object"
+  "r": "identity"
+  "py": "tests.statout_readers.parity_helpers.data_labels"
+  "args":
+    "x":
+      "$expr":
+        "r": "lapply(metacheck::import_omv(rpath(\"tests/statout_readers/fixtures/review/fields_object.omv\"))$data, function(col) list(label = {l <- attr(col, \"label\", exact = TRUE); if (is.numeric(l)) list(codes = unname(l), labels = names(l)) else l}, codes = unname(attr(col, \"labels\")), labels = names(attr(col, \"labels\"))))"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "fn": "pytacheck.statout.omv.import_omv"
+    "path": "tests/statout_readers/fixtures/review/fields_object.omv"
+- "id": "import_omv.nameless"
+  "r": "import_omv"
+  "py": "pytacheck.statout.omv.import_omv"
+  "args":
+    "path":
+      "$file": "tests/statout_readers/fixtures/review/nameless.omv"
 - "id": "import_jasp.review"
   "r": "import_jasp"
   "py": "pytacheck.statout.jasp.import_jasp"
@@ -252,6 +373,33 @@
   "args":
     "path":
       "$file": "tests/statout_readers/fixtures/review/sqlite_nulltype.jasp"
+- "id": "import_jasp.sqlite_types"
+  "r": "identity"
+  "py": "tests.statout_readers.parity_helpers.call"
+  "args":
+    "x":
+      "$expr":
+        "r": "{r <- metacheck::import_jasp(rpath(\"tests/statout_readers/fixtures/review/sqlite_types.jasp\")); r$data[] <- lapply(r$data, function(c) if (inherits(c, \"integer64\")) as.numeric(c) else c); r}"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "fn": "pytacheck.statout.jasp.import_jasp"
+    "path":
+      "$file": "tests/statout_readers/fixtures/review/sqlite_types.jasp"
+- "id": "import_jasp.labels.sqlite_types"
+  "r": "identity"
+  "py": "tests.statout_readers.parity_helpers.data_labels"
+  "args":
+    "x":
+      "$expr":
+        "r": "lapply(metacheck::import_jasp(rpath(\"tests/statout_readers/fixtures/review/sqlite_types.jasp\"))$data, function(col) list(label = {l <- attr(col, \"label\", exact = TRUE); if (is.numeric(l)) list(codes = unname(l), labels = names(l)) else l}, codes = unname(attr(col, \"labels\")), labels = names(attr(col, \"labels\"))))"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "fn": "pytacheck.statout.jasp.import_jasp"
+    "path": "tests/statout_readers/fixtures/review/sqlite_types.jasp"
 - "id": "export_omv_html.review"
   "r": "identity"
   "py": "tests.statout_readers.parity_helpers.export_lines"
@@ -278,6 +426,19 @@
   "py_args":
     "fn": "pytacheck.statout.omv.export_omv_html"
     "path": "tests/statout_readers/fixtures/review/trailing_pct.omv"
+- "id": "export_omv_html.empty_index"
+  "r": "identity"
+  "py": "tests.statout_readers.parity_helpers.export_lines"
+  "args":
+    "x":
+      "$expr":
+        "r": "{f <- tempfile(fileext = \".html\"); metacheck::export_omv_html(rpath(\"tests/statout_readers/fixtures/review/empty_index.omv\"), f); x <- readLines(f, warn = FALSE); x}"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "fn": "pytacheck.statout.omv.export_omv_html"
+    "path": "tests/statout_readers/fixtures/review/empty_index.omv"
 - "id": "export_jasp_html.review"
   "r": "identity"
   "py": "tests.statout_readers.parity_helpers.export_lines"
@@ -291,16 +452,6 @@
   "py_args":
     "fn": "pytacheck.statout.jasp.export_jasp_html"
     "path": "tests/statout_readers/fixtures/review/review.jasp"
-- "id": "export_omv_html.empty_index"
-  "r": "export_omv_html"
-  "py": "pytacheck.statout.omv.export_omv_html"
-  "args":
-    "path":
-      "$file": "tests/statout_readers/fixtures/review/empty_index.omv"
-    "out":
-      "$expr":
-        "r": "tempfile()"
-        "py": "__import__('tempfile').mktemp()"
 - "id": "export_omv_html.badurl"
   "r": "export_omv_html"
   "py": "pytacheck.statout.omv.export_omv_html"
@@ -339,6 +490,12 @@
       "$expr":
         "r": "vapply(c(\"a%20b.png\", \"a%\", \"a%2\", \"a%2%41\", \"%41%62c\", \"a+b.png\", \"%C3%A9\", \"%2F%2e\"), function(u) suppressWarnings(utils::URLdecode(u)), \"\", USE.NAMES = FALSE)"
         "py": "[pc.statout.jasp._url_decode(s) for s in [\"a%20b.png\", \"a%\", \"a%2\", \"a%2%41\", \"%41%62c\", \"a+b.png\", \"%C3%A9\", \"%2F%2e\"]]"
+- "id": "import_stata_smcl.nul"
+  "r": "import_stata_smcl"
+  "py": "pytacheck.statout.stata.import_stata_smcl"
+  "args":
+    "path":
+      "$file": "tests/statout_readers/fixtures/review/nul.smcl"
 - "id": "import_stata_smcl.tricky"
   "r": "import_stata_smcl"
   "py": "pytacheck.statout.stata.import_stata_smcl"

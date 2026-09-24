@@ -1,0 +1,126 @@
+{
+  "id": "report_module_run.paperlist_error_first",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "rp_error",
+      "marginal"
+    ],
+    "v": [
+      {
+        "t": "module_output",
+        "names": [
+          "module",
+          "title",
+          "table",
+          "report",
+          "summary_text",
+          "summary_table",
+          "traffic_light"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "rp_error"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "rp_error"
+            ]
+          },
+          {
+            "t": "null"
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Running the module 'rp_error' produced errors: boom"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "This module failed to run"
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": [
+              "fail"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "module_output",
+        "names": [
+          "module",
+          "title",
+          "table",
+          "report",
+          "summary_text",
+          "summary_table",
+          "traffic_light"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "marginal"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "marginal"
+            ]
+          },
+          {
+            "t": "null"
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Join columns in `x` must be present in the data."
+            ],
+            "names": [
+              ""
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "This module failed to run"
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": [
+              "fail"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

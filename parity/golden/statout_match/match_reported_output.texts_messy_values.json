@@ -1,0 +1,244 @@
+{
+  "id": "match_reported_output.texts_messy_values",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 13,
+    "names": [
+      "text_id",
+      "grp_id",
+      "reported",
+      "n_components",
+      "n_matched",
+      "found",
+      "match_values",
+      "not_matched",
+      "source_file",
+      "analysis",
+      "confidence",
+      "plausible_split"
+    ],
+    "v": [
+      {
+        "t": "int",
+        "v": [
+          1,
+          1,
+          2,
+          3,
+          3,
+          4,
+          5,
+          5,
+          6,
+          6,
+          7,
+          8,
+          8
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          1,
+          1,
+          2,
+          3,
+          3,
+          5,
+          6,
+          6,
+          8,
+          8,
+          10,
+          11,
+          11
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "t=6.9 df=8 p=<0.001",
+          "d=2.3 ci_lower=1.38 ci_upper=2.77",
+          "M=1.93 SD=0.86 N=9",
+          "t=5.05 df=8 p=0.001 d=1.68",
+          "t=9.99 df=8 p=0.5",
+          "t=5.05 df=8 p=0.01 d=2",
+          "r=0.43",
+          "d=2.3",
+          "M=-0.15 SD=1.19",
+          "M=0.7 SD=0.96",
+          "t=6.9 df=8",
+          "t=6.9 df=8 p=<0.001",
+          "t=5.05 df=8 p=<0.001"
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          3,
+          3,
+          3,
+          4,
+          3,
+          4,
+          1,
+          1,
+          2,
+          2,
+          2,
+          3,
+          3
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          3,
+          0,
+          0,
+          1,
+          1,
+          1,
+          0,
+          0,
+          0,
+          0,
+          2,
+          3,
+          2
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          true,
+          true,
+          true
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "t=6.9, df=8, p=<0.001",
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          "t=6.9, df=8",
+          "t=6.9, df=8, p=<0.001",
+          "df=8, p=<0.001"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "",
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          "",
+          "",
+          "t=5.05"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "(all)",
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          "(all)",
+          "(all)",
+          "(all)"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "full",
+          "none",
+          "none",
+          "none",
+          "none",
+          "none",
+          "none",
+          "none",
+          "none",
+          "none",
+          "full",
+          "full",
+          "partial"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false,
+          false,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

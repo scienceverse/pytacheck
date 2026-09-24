@@ -193,7 +193,7 @@
   "r": "statcheck::statcheck"
   "py": "pytacheck.stats.statcheck.statcheck"
   "args":
-    "texts": "t(28) = 2.20, p = .03"
+    "texts": "t(28) = 2.20, p = .04"
     "messages": !!bool "false"
     "pEqualAlphaSig": !!int "2"
 - "id": "statcheck.review.pEqualAlphaSig_NA.error"
@@ -207,14 +207,14 @@
   "r": "statcheck::statcheck"
   "py": "pytacheck.stats.statcheck.statcheck"
   "args":
-    "texts": "t(28) = 2.20, p = .03"
+    "texts": "t(28) = 2.20, p = .04"
     "messages": !!bool "false"
     "pEqualAlphaSig": *id001
 - "id": "statcheck.review.OneTailedTests_2"
   "r": "statcheck::statcheck"
   "py": "pytacheck.stats.statcheck.statcheck"
   "args":
-    "texts": "t(28) = 2.20, p = .03"
+    "texts": "t(28) = 2.20, p = .04"
     "messages": !!bool "false"
     "OneTailedTests": !!int "2"
 - "id": "statcheck.review.OneTailedTests_NA"
@@ -242,7 +242,7 @@
   "r": "statcheck::statcheck"
   "py": "pytacheck.stats.statcheck.statcheck"
   "args":
-    "texts": "t(28) = 2.20, p = .03"
+    "texts": "t(28) = 2.20, p = .04"
     "messages": !!bool "false"
     "pZeroError": *id001
 - "id": "statcheck.review.AllPValues_NA"
@@ -305,7 +305,7 @@
   "r": "statcheck::statcheck"
   "py": "pytacheck.stats.statcheck.statcheck"
   "args":
-    "texts": "t(28) = 2.20, p = .03"
+    "texts": "t(28) = 2.20, p = .04"
     "messages": !!bool "false"
     "alpha": *id001
 - "id": "statcheck.review.alpha_NA.error"
@@ -569,6 +569,190 @@
         - !!int "3"
         - !!int "4"
     "pEqualAlphaSig": !!int "2"
+- "id": "stats.review.AllPValues_NA"
+  "r": "stats"
+  "py": "pytacheck.stats.stats"
+  "args":
+    "text":
+      "$df":
+        "text": &id003
+        - "A t-test, t(28) = 2.20, p = .03."
+        - "An F-test, F(1, 20) = 5.1, p = .5."
+        - "Also p = .01 here, 2 of them."
+        - "Wrong, t(28) = 2.20, p = .13."
+        - "Zero, t(28) = 3.50, p = 0.000."
+        - "ns: z = 1.20, n.s."
+        "id":
+        - !!int "1"
+        - !!int "2"
+        - !!int "3"
+        - !!int "4"
+        - !!int "5"
+        - !!int "6"
+    "AllPValues": *id001
+- "id": "stats.review.AllPValues_2"
+  "r": "stats"
+  "py": "pytacheck.stats.stats"
+  "args":
+    "text":
+      "$df":
+        "text": *id003
+        "id":
+        - !!int "1"
+        - !!int "2"
+        - !!int "3"
+        - !!int "4"
+        - !!int "5"
+        - !!int "6"
+    "AllPValues": !!int "2"
+- "id": "stats.review.OneTailedTests_NA"
+  "r": "stats"
+  "py": "pytacheck.stats.stats"
+  "args":
+    "text":
+      "$df":
+        "text": *id003
+        "id":
+        - !!int "1"
+        - !!int "2"
+        - !!int "3"
+        - !!int "4"
+        - !!int "5"
+        - !!int "6"
+    "OneTailedTests": *id001
+- "id": "stats.review.pEqualAlphaSig_NA"
+  "r": "stats"
+  "py": "pytacheck.stats.stats"
+  "args":
+    "text":
+      "$df":
+        "text": *id003
+        "id":
+        - !!int "1"
+        - !!int "2"
+        - !!int "3"
+        - !!int "4"
+        - !!int "5"
+        - !!int "6"
+    "pEqualAlphaSig": *id001
+- "id": "stats.review.pZeroError_NA"
+  "r": "stats"
+  "py": "pytacheck.stats.stats"
+  "args":
+    "text":
+      "$df":
+        "text": *id003
+        "id":
+        - !!int "1"
+        - !!int "2"
+        - !!int "3"
+        - !!int "4"
+        - !!int "5"
+        - !!int "6"
+    "pZeroError": *id001
+- "id": "stats.review.alpha_NA"
+  "r": "stats"
+  "py": "pytacheck.stats.stats"
+  "args":
+    "text":
+      "$df":
+        "text": *id003
+        "id":
+        - !!int "1"
+        - !!int "2"
+        - !!int "3"
+        - !!int "4"
+        - !!int "5"
+        - !!int "6"
+    "alpha": *id001
+- "id": "stats.review.defaults"
+  "r": "stats"
+  "py": "pytacheck.stats.stats"
+  "args":
+    "text":
+      "$df":
+        "text": *id003
+        "id":
+        - !!int "1"
+        - !!int "2"
+        - !!int "3"
+        - !!int "4"
+        - !!int "5"
+        - !!int "6"
+- "id": "statcheck.review.icase.long_s_ns"
+  "r": "statcheck::statcheck"
+  "py": "pytacheck.stats.statcheck.statcheck"
+  "args":
+    "texts": "t(28) = 2.20, p = .04 and ßnſ."
+    "messages": !!bool "false"
+- "id": "statcheck.review.icase.long_s_ns.AllPValues"
+  "r": "statcheck::statcheck"
+  "py": "pytacheck.stats.statcheck.statcheck"
+  "args":
+    "texts": "t(28) = 2.20, p = .04 and ßnſ."
+    "messages": !!bool "false"
+    "AllPValues": !!bool "true"
+- "id": "statcheck.review.icase.dotted_I_ns"
+  "r": "statcheck::statcheck"
+  "py": "pytacheck.stats.statcheck.statcheck"
+  "args":
+    "texts": "t(28) = 2.20, p = .04 İnsan."
+    "messages": !!bool "false"
+- "id": "statcheck.review.icase.dotted_I_ns.AllPValues"
+  "r": "statcheck::statcheck"
+  "py": "pytacheck.stats.statcheck.statcheck"
+  "args":
+    "texts": "t(28) = 2.20, p = .04 İnsan."
+    "messages": !!bool "false"
+    "AllPValues": !!bool "true"
+- "id": "statcheck.review.icase.dotted_I_z"
+  "r": "statcheck::statcheck"
+  "py": "pytacheck.stats.statcheck.statcheck"
+  "args":
+    "texts": "Test İz = 1.96, p = .05."
+    "messages": !!bool "false"
+- "id": "statcheck.review.icase.kelvin_z"
+  "r": "statcheck::statcheck"
+  "py": "pytacheck.stats.statcheck.statcheck"
+  "args":
+    "texts": "Test Kz = 1.96, p = .05."
+    "messages": !!bool "false"
+- "id": "statcheck.review.icase.one_long_s_ided"
+  "r": "statcheck::statcheck"
+  "py": "pytacheck.stats.statcheck.statcheck"
+  "args":
+    "texts": "t(28) = 1.80, p = .04 (one-ſided)"
+    "messages": !!bool "false"
+    "OneTailedTxt": !!bool "true"
+- "id": "statcheck.review.icase.dotted_I_df"
+  "r": "statcheck::statcheck"
+  "py": "pytacheck.stats.statcheck.statcheck"
+  "args":
+    "texts": "F(İ, 20) = 5.1, p = .04 and F(i, 20) = 5.1, p = .04"
+    "messages": !!bool "false"
+- "id": "statcheck.review.icase.test_value_kelvin"
+  "r": "statcheck::statcheck"
+  "py": "pytacheck.stats.statcheck.statcheck"
+  "args":
+    "texts": "t(28) =K2.20, p = .04 and t(28) =ſ2.20, p = .04 and t(28) =İ2.20, p = .04"
+    "messages": !!bool "false"
+- "id": "stats.review.icase"
+  "r": "stats"
+  "py": "pytacheck.stats.stats"
+  "args":
+    "text":
+      "$df":
+        "text":
+        - "t(28) = 2.20, p = .04 and ßnſ."
+        - "t(28) = 2.20, p = .04 İnsan."
+        - "Test İz = 1.96, p = .05."
+        - "t(28) = 1.80, p = .04 (one-ſided)"
+        "id":
+        - !!int "1"
+        - !!int "2"
+        - !!int "3"
+        - !!int "4"
+    "OneTailedTxt": !!bool "true"
 - "id": "getHTML.review.a"
   "r": "statcheck:::getHTML"
   "py": "pytacheck.stats.statcheck_files.getHTML"

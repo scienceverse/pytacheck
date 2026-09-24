@@ -1,0 +1,122 @@
+[
+  {
+    "input": "{\"a\":1",
+    "error": "parse error: premature EOF\n                                       {\"a\":1\n                     (right here) ------^\n"
+  },
+  {
+    "input": "```json\n{\"a\":1}\n```",
+    "error": "lexical error: invalid char in json text.\n                                       ```json {\"a\":1} ```\n                     (right here) ------^\n"
+  },
+  {
+    "input": "hello",
+    "error": "lexical error: invalid char in json text.\n                                       hello\n                     (right here) ------^\n"
+  },
+  {
+    "input": "",
+    "error": "parse error: premature EOF\n                                       \n                     (right here) ------^\n"
+  },
+  {
+    "input": "{\"a\":1}x",
+    "error": "parse error: trailing garbage\n                                {\"a\":1}x\n                     (right here) ------^\n"
+  },
+  {
+    "input": "{\"a\" 1}",
+    "error": "parse error: object key and value must be separated by a colon (':')\n                                  {\"a\" 1}\n                     (right here) ------^\n"
+  },
+  {
+    "input": "[1,2",
+    "error": "parse error: premature EOF\n                                       [1,2\n                     (right here) ------^\n"
+  },
+  {
+    "input": "[1 2]",
+    "error": "parse error: after array element, I expect ',' or ']'\n                                    [1 2]\n                     (right here) ------^\n"
+  },
+  {
+    "input": "{1:2}",
+    "error": "parse error: invalid object key (must be a string)\n                                      {1:2}\n                     (right here) ------^\n"
+  },
+  {
+    "input": "{\"a\":01}",
+    "error": "parse error: after key and value, inside map, I expect ',' or '}'\n                                  {\"a\":01}\n                     (right here) ------^\n"
+  },
+  {
+    "input": "{\"a\":1.}",
+    "error": "lexical error: malformed number, a digit is required after the decimal point.\n                                 {\"a\":1.}\n                     (right here) ------^\n"
+  },
+  {
+    "input": "{\"a\":-}",
+    "error": "lexical error: malformed number, a digit is required after the minus sign.\n                                  {\"a\":-}\n                     (right here) ------^\n"
+  },
+  {
+    "input": "{\"a\":1e}",
+    "error": "lexical error: malformed number, a digit is required after the exponent.\n                                 {\"a\":1e}\n                     (right here) ------^\n"
+  },
+  {
+    "input": "{\"a\":\"\\q\"}",
+    "error": "lexical error: inside a string, '\\' occurs before a character which it may not.\n                                 {\"a\":\"\\q\"}\n                     (right here) ------^\n"
+  },
+  {
+    "input": "{\"a\":tru}",
+    "error": "lexical error: invalid string in json text.\n                                {\"a\":tru}\n                     (right here) ------^\n"
+  },
+  {
+    "input": "\"abc",
+    "error": "parse error: premature EOF\n                                       \"abc\n                     (right here) ------^\n"
+  },
+  {
+    "input": "{\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\": nul}",
+    "error": "lexical error: invalid string in json text.\n          aaaaaaaaaaaaaaaaaaaaaaaa\": nul}\n                     (right here) ------^\n"
+  },
+  {
+    "input": "[1,]",
+    "error": "parse error: unallowed token at this point in JSON text\n                                    [1,]\n                     (right here) ------^\n"
+  },
+  {
+    "input": "{\"a\":1,}",
+    "error": "parse error: invalid object key (must be a string)\n                                {\"a\":1,}\n                     (right here) ------^\n"
+  },
+  {
+    "input": "  {\"a\":[1,2,{\"b\":x}]}",
+    "error": "lexical error: invalid char in json text.\n                        {\"a\":[1,2,{\"b\":x}]}\n                     (right here) ------^\n"
+  },
+  {
+    "input": "Here is the JSON: {\"a\": 1}",
+    "error": "lexical error: invalid char in json text.\n                                       Here is the JSON: {\"a\": 1}\n                     (right here) ------^\n"
+  },
+  {
+    "input": "{\"a\":\"ééééé\" x}",
+    "error": "lexical error: invalid char in json text.\n                     {\"a\":\"ééééé\" x}\n                     (right here) ------^\n"
+  },
+  {
+    "input": "{\"a\":\"x\ty\"}",
+    "error": "lexical error: invalid character inside string.\n                                 {\"a\":\"x\ty\"}\n                     (right here) ------^\n"
+  },
+  {
+    "input": "{\"a\":1}{\"b\":2}",
+    "error": "parse error: trailing garbage\n                                {\"a\":1}{\"b\":2}\n                     (right here) ------^\n"
+  },
+  {
+    "input": "[]]",
+    "error": "parse error: trailing garbage\n                                     []]\n                     (right here) ------^\n"
+  },
+  {
+    "input": "{\"a\" : 1 \"b\": 2}",
+    "error": "parse error: after key and value, inside map, I expect ',' or '}'\n                             {\"a\" : 1 \"b\": 2}\n                     (right here) ------^\n"
+  },
+  {
+    "input": "tr",
+    "error": "lexical error: invalid string in json text.\n                                        tr\n                     (right here) ------^\n"
+  },
+  {
+    "input": "[1.",
+    "error": "lexical error: malformed number, a digit is required after the decimal point.\n                                        [1.\n                     (right here) ------^\n"
+  },
+  {
+    "input": "{\"a\":\"\\u12G4\"}",
+    "error": "lexical error: invalid (non-hex) character occurs after '\\u' inside string.\n                              {\"a\":\"\\u12G4\"}\n                     (right here) ------^\n"
+  },
+  {
+    "input": "{\"a\":[1,2,3], \"b\": {\"c\": [true, false, nul]}}",
+    "error": "lexical error: invalid string in json text.\n          , \"b\": {\"c\": [true, false, nul]}}\n                     (right here) ------^\n"
+  }
+]

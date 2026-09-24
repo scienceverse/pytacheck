@@ -1,0 +1,31 @@
+{
+  "id": "report_table.names",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "names",
+      "data"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "my_<wbr>col",
+          "n_<wbr>x"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "a<br>b",
+          "c"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

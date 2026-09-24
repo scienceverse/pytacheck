@@ -1,0 +1,416 @@
+{
+  "id": "norm_df.batch",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": null,
+    "v": [
+      {
+        "t": "list",
+        "names": [
+          "df1"
+        ],
+        "v": [
+          {
+            "t": "list",
+            "names": [
+              "num",
+              "dec",
+              "censored"
+            ],
+            "v": [
+              {
+                "t": "dbl",
+                "v": [
+                  28
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  0
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  ""
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "df1",
+          "df2"
+        ],
+        "v": [
+          {
+            "t": "list",
+            "names": [
+              "num",
+              "dec",
+              "censored"
+            ],
+            "v": [
+              {
+                "t": "dbl",
+                "v": [
+                  2
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  0
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  ""
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "num",
+              "dec",
+              "censored"
+            ],
+            "v": [
+              {
+                "t": "dbl",
+                "v": [
+                  57
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  0
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  ""
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "null"
+      },
+      {
+        "t": "null"
+      },
+      {
+        "t": "null"
+      },
+      {
+        "t": "null"
+      },
+      {
+        "t": "null"
+      },
+      {
+        "t": "null"
+      },
+      {
+        "t": "null"
+      },
+      {
+        "t": "list",
+        "names": [
+          "df1"
+        ],
+        "v": [
+          {
+            "t": "list",
+            "names": [
+              "num",
+              "dec",
+              "censored"
+            ],
+            "v": [
+              {
+                "t": "dbl",
+                "v": [
+                  97.7
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  1
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  ""
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "df1"
+        ],
+        "v": [
+          {
+            "t": "list",
+            "names": [
+              "num",
+              "dec",
+              "censored"
+            ],
+            "v": [
+              {
+                "t": "dbl",
+                "v": [
+                  28
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  0
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  ""
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "df1",
+          "df2"
+        ],
+        "v": [
+          {
+            "t": "list",
+            "names": [
+              "num",
+              "dec",
+              "censored"
+            ],
+            "v": [
+              {
+                "t": "dbl",
+                "v": [
+                  1
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  0
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  ""
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "num",
+              "dec",
+              "censored"
+            ],
+            "v": [
+              {
+                "t": "dbl",
+                "v": [
+                  234
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  0
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  ""
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "null"
+      },
+      {
+        "t": "list",
+        "names": [
+          "df1"
+        ],
+        "v": [
+          {
+            "t": "list",
+            "names": [
+              "num",
+              "dec",
+              "censored"
+            ],
+            "v": [
+              {
+                "t": "dbl",
+                "v": [
+                  2
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  0
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  ""
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "null"
+      },
+      {
+        "t": "list",
+        "names": [
+          "df1",
+          "df2"
+        ],
+        "v": [
+          {
+            "t": "list",
+            "names": [
+              "num",
+              "dec",
+              "censored"
+            ],
+            "v": [
+              {
+                "t": "dbl",
+                "v": [
+                  2
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  0
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  ""
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "num",
+              "dec",
+              "censored"
+            ],
+            "v": [
+              {
+                "t": "dbl",
+                "v": [
+                  2159
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  0
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  ""
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "df1"
+        ],
+        "v": [
+          {
+            "t": "list",
+            "names": [
+              "num",
+              "dec",
+              "censored"
+            ],
+            "v": [
+              {
+                "t": "dbl",
+                "v": [
+                  5
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  0
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "<"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

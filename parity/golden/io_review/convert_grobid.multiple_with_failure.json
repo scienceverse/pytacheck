@@ -1,0 +1,17 @@
+{
+  "id": "convert_grobid.multiple_with_failure",
+  "ok": true,
+  "error": null,
+  "warnings": [
+    "1 of 2 files did not convert: \n * /home/user/pytacheck/upstream/metacheck/tests/testthat/fixtures/problems/xml_with_pdf_extension.pdf: POST https://grobid.hti.ieis.tue.nl/api/processFulltextDocument Multipart form:\n  input = File: f21d5857a2066eb5e5f7ff2d8a4153c8\n  start = -1\n  end = -1\n  consolidateCitations = 0\n  consolidateHeader = 0\n  consolidateFunders = 0\n  includeRawCitations = 1\n"
+  ],
+  "value": {
+    "t": "chr",
+    "v": [
+      "to_err_is_human.xml",
+      null
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

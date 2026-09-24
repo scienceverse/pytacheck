@@ -186,7 +186,7 @@ def get_orcid(family: str, given: str | None = "*") -> Any:
     content = _open_url(url)
     try:
         root = _parse_xml(content)
-    except Exception:  # noqa: BLE001 - tryCatch(error = ) catches every error
+    except Exception:  # tryCatch(error = ) catches every error
         warnings.warn("ORCID search failed", stacklevel=2)
         return ""
     orcid = _find_text(root, "//common:path")  # "" when there are none

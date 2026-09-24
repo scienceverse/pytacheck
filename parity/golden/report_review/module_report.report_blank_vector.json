@@ -1,0 +1,16 @@
+{
+  "id": "module_report.report_blank_vector",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "### ℹ️ Flexible  Module {#flexible--module .info}\n\nS.\n\n::: {.callout-note title=\"How It Works\" collapse=\"true\"}\n\nReturns what it is given (report review tests).\n\nFirst details.End text.\n\nThis module was developed by A One, B Two, C Three and D Four\n\n:::\n\n\n::: {.validation}\nValidation: One.\n:::\n\n::: {.validation}\nValidation: Two.\n:::",
+      "### ℹ️ Flexible  Module {#flexible--module .info}\n\nS.\n\nS.\n\n\n\n::: {.callout-note title=\"How It Works\" collapse=\"true\"}\n\nReturns what it is given (report review tests).\n\nFirst details.End text.\n\nThis module was developed by A One, B Two, C Three and D Four\n\n:::\n\n\n::: {.validation}\nValidation: One.\n:::\n\n::: {.validation}\nValidation: Two.\n:::",
+      "### ℹ️ Flexible  Module {#flexible--module .info}\n\n...\n\n::: {.callout-note title=\"How It Works\" collapse=\"true\"}\n\nReturns what it is given (report review tests).\n\nFirst details.End text.\n\nThis module was developed by A One, B Two, C Three and D Four\n\n:::\n\n\n::: {.validation}\nValidation: One.\n:::\n\n::: {.validation}\nValidation: Two.\n:::"
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

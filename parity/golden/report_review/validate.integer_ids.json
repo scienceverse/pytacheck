@@ -1,0 +1,22 @@
+{
+  "id": "validate.integer_ids",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "error"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "Can't join `x$paper_id` with `y$paper_id` due to incompatible types.\nℹ `x$paper_id` is a <integer>.\nℹ `y$paper_id` is a <character>."
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

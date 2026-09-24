@@ -1,0 +1,70 @@
+{
+  "id": "github_languages.vector",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 12,
+    "names": [
+      "repo",
+      "language",
+      "bytes"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "scienceverse/metacheck",
+          "scienceverse/metacheck",
+          "scienceverse/metacheck",
+          "scienceverse/metacheck",
+          "scienceverse/metacheck",
+          "scienceverse/metacheck",
+          "scienceverse/metacheck",
+          "scienceverse/metacheck",
+          "scienceverse/metacheck",
+          "scienceverse/metacheck",
+          "scienceverse/metacheck",
+          "scienceverse/faux"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "HTML",
+          "R",
+          "TeX",
+          "AMPL",
+          "Python",
+          "CSS",
+          "Makefile",
+          "Dockerfile",
+          "JavaScript",
+          "SCSS",
+          "Shell",
+          "R"
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          18689007,
+          6447012,
+          47751,
+          7571,
+          6986,
+          3358,
+          1407,
+          1201,
+          1018,
+          104,
+          17,
+          372654
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

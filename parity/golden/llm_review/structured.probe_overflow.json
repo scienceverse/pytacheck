@@ -1,0 +1,102 @@
+{
+  "id": "structured.probe_overflow",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "value",
+      "warnings"
+    ],
+    "v": [
+      {
+        "t": "df",
+        "nrow": 3,
+        "names": [
+          "text",
+          "items.name",
+          "items.count",
+          "items.score",
+          "items.flag",
+          "items.kind",
+          "items.tags"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "probe overflow",
+              "probe overflow",
+              "probe overflow"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "big",
+              "frac",
+              "min"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              null,
+              2,
+              null
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              1.23456789012346e+19,
+              -0,
+              9.99988867182683e-321
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "null"
+              },
+              {
+                "t": "null"
+              },
+              {
+                "t": "null"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "NAs introduced by coercion to integer range",
+          "NAs introduced by coercion to integer range"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

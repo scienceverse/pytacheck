@@ -1,0 +1,59 @@
+{
+  "id": "msg.llm.vllm_empty_model",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "value",
+      "warnings"
+    ],
+    "v": [
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "text",
+          "answer",
+          "error",
+          "error_msg"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "hello"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "For vllm, set model as 'vllm/<model-name>'"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "There were errors in the following rows: 1 \n  *  For vllm, set model as 'vllm/<model-name>'"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -149,10 +149,10 @@ def label(ref: Any) -> str:
         return ref.name
     if callable(ref) and hasattr(ref, "__pytacheck_module__"):
         return ref.__pytacheck_module__.name  # type: ignore[no-any-return]
-    ref = str(ref)
-    if "::" in ref:
-        return ref.partition("::")[2]
-    return Path(ref).stem if _is_path(ref) else ref
+    text = str(ref)
+    if "::" in text:
+        return text.partition("::")[2]
+    return Path(text).stem if _is_path(text) else text
 
 
 def deep_merge(*dicts: Mapping[str, Any] | None) -> dict[str, Any]:
@@ -171,10 +171,13 @@ def deep_merge(*dicts: Mapping[str, Any] | None) -> dict[str, Any]:
 
 @cache
 def _declared_builtin() -> frozenset[str]:
-    """Every module named by metacheck's built-in presets (ported or not)."""
+    """Every metacheck module, ported or not: the built-in manifest's
+    ``metacheck_modules`` plus the modules its presets name."""
     from pytacheck.packs.registry import builtin_pack
 
-    return frozenset(m for body in builtin_pack().presets.values() for m in body["modules"])
+    pack = builtin_pack()
+    named = (m for body in pack.presets.values() for m in body["modules"])
+    return frozenset([*pack.manifest.get("metacheck_modules", ()), *named])
 
 
 def _is_metacheck_name(ref: str) -> bool:
@@ -265,7 +268,10 @@ def lookup(ref: str) -> Preset:
     config = load_config()
     if ref in config.presets:
         where = (config.source(f"presets.{ref}") or ("", "config"))[1]
-        body = validate_preset(ref, config.presets[ref], where=f"config preset in {where}")
+        try:
+            body = validate_preset(ref, config.presets[ref], where=f"config preset in {where}")
+        except ModuleError as exc:
+            raise PresetError(str(exc)) from None
         return Preset(ref=ref, name=ref, pack=None, body=body, defined_in=where)
     packs = active_packs(allow_local=_allow_local())
     if ref in packs:
@@ -325,10 +331,14 @@ def _expand(ref: str, seen: tuple[str, ...]) -> tuple[list[str], dict[str, Any]]
     return entries, deep_merge(*base_args, body["args"])
 
 
-def _entry_args(ref: str, args: Mapping[str, Any]) -> dict[str, Any]:
-    """Arguments for *ref* from an args mapping; a qualified key beats a bare one."""
-    qual = _qualified(ref) if isinstance(ref, str) else None
-    return deep_merge(args.get(label(ref)), args.get(qual) if qual and qual != label(ref) else None)
+def _entry_args(ref: Any, args: Mapping[str, Any]) -> dict[str, Any]:
+    """Arguments for *ref*: its label, then the ref as written (R's ``args[[module]]``,
+    e.g. a path), then its qualified ``pack::name`` -- a qualified key wins."""
+    keys = [label(ref)]
+    if isinstance(ref, str):
+        keys.append(ref)
+        keys.append(_qualified(ref) or ref)
+    return deep_merge(*(args.get(k) for k in dict.fromkeys(keys)))
 
 
 def _check_refs(refs: Iterable[Any], validate: bool) -> None:

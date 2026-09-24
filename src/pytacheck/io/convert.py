@@ -50,6 +50,22 @@ def _online(url: str) -> bool:
     return bool(online(url))
 
 
+def _tempfile(fileext: str) -> str:
+    """R's ``tempfile(fileext = ...)``: a fresh path in the temp directory (not created)."""
+    import secrets
+
+    return os.path.join(tempfile.gettempdir(), f"file{secrets.token_hex(6)}{fileext}")
+
+
+def _unlink(paths: Any) -> None:
+    """R's ``unlink()``: remove files (``NA`` / missing ones are ignored, directories kept)."""
+    if paths is None:
+        return
+    for p in [paths] if isinstance(paths, str | PathLike) else list(paths):
+        if p is not None and Path(p).is_file():
+            Path(p).unlink(missing_ok=True)
+
+
 def convert(
     file_path: PathLikeStr | Sequence[PathLikeStr],
     save_path: PathLikeStr = ".",
@@ -93,7 +109,8 @@ def convert(
     else:
         paths = [os.fspath(f) for f in file_path]
     if len(paths) == 1 and Path(paths[0]).is_dir():
-        files = sorted(p.name for p in Path(paths[0]).iterdir())
+        # list.files(): names (files and directories), dotfiles excluded
+        files = sorted(p.name for p in Path(paths[0]).iterdir() if not p.name.startswith("."))
     else:
         files = paths
     xmls = sum(grepl(r"\.xml$", files, ignore_case=True))
@@ -109,9 +126,9 @@ def convert(
     else:
         raise ValueError("No PDF, XML, DOC or DOCX files detected.")
 
-    if method not in _METHODS:
-        opts = ", ".join(f"“{m}”" for m in _METHODS)
-        raise ValueError(f"'arg' should be one of {opts}")
+    from pytacheck.utils import match_arg
+
+    method = match_arg(method, _METHODS)
 
     # auto-detect method: local grobid > local bibr > online priority list
     if method == "auto":
@@ -136,7 +153,9 @@ def convert(
             if s.get("service") == "grobid":
                 up = _grobid_isalive(s["url"], error=False)
             else:
-                api_key = args.get("api_key") or os.environ.get("SCIVRS_API_KEY", "")
+                api_key = args.get("api_key")
+                if api_key is None:  # args$api_key %||% Sys.getenv("SCIVRS_API_KEY")
+                    api_key = os.environ.get("SCIVRS_API_KEY", "")
                 up = _bibr_isalive(s["url"], api_key, error=False)
             if up:
                 _message(f"Using {s.get('id')}")
@@ -150,21 +169,22 @@ def convert(
     if method == "xml":
         return grobid_to_bibr(file_path, save_path, crossref_lookup)
     if method == "grobid":
-        tmp_xml_file: str | None = None
+        # on.exit(unlink(tmp_xml)) with keep_xml = FALSE: removes whatever
+        # tmp_xml names when the function exits (the converted XML file(s))
+        cleanup: Any = None
         if keep_xml:
             args["save_path"] = sub(r"\.json$", r"\.xml", os.fspath(save_path))
         else:
-            # R: tempfile(fileext = ".xml"), removed on exit
-            fd, tmp_xml_file = tempfile.mkstemp(prefix="file", suffix=".xml")
-            os.close(fd)
-            args["save_path"] = tmp_xml_file
+            cleanup = _tempfile(".xml")  # R's tempfile(): a name, not a file
+            args["save_path"] = cleanup
         try:
             grobid_args = ("file_path", "save_path", "api_url", "start_page", "end_page")
             tmp_xml = convert_grobid(**{k: v for k, v in args.items() if k in grobid_args})
+            if cleanup is not None:
+                cleanup = tmp_xml
             return grobid_to_bibr(tmp_xml, save_path, crossref_lookup)
         finally:
-            if tmp_xml_file is not None:
-                Path(tmp_xml_file).unlink(missing_ok=True)
+            _unlink(cleanup)
     # bibr. R passes the *names* of the valid arguments to convert_bibr()
     # (`do.call(convert_bibr, valid_args)`), which cannot work; the arguments
     # themselves are passed here.

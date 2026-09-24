@@ -1,0 +1,83 @@
+{
+  "id": "report_module_run.fail_summary_tables",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "rp_validation",
+      "marginal",
+      "rp_chained",
+      "rp_error"
+    ],
+    "v": [
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "marginal",
+          "hits"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "to_err_is_human"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              3
+            ]
+          }
+        ]
+      },
+      {
+        "t": "null"
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "marginal",
+          "hits"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "to_err_is_human"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              3
+            ]
+          }
+        ]
+      },
+      {
+        "t": "null"
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

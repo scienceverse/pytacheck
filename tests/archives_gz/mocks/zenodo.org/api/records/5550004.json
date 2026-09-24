@@ -1,0 +1,63 @@
+{
+ "id": 5550004,
+ "doi": "10.5281/zenodo.5550004",
+ "metadata": {
+  "title": "Too big in total",
+  "publication_date": "2026-01-01",
+  "resource_type": {
+   "type": "dataset"
+  },
+  "license": {
+   "id": "cc-by-4.0"
+  },
+  "creators": [
+   {
+    "name": "Doe, Jane"
+   }
+  ],
+  "keywords": [
+   "one",
+   "two"
+  ]
+ },
+ "updated": "2026-01-02T00:00:00+00:00",
+ "owners": [
+  {
+   "id": "1"
+  }
+ ],
+ "stats": {
+  "downloads": 1,
+  "unique_downloads": 1,
+  "views": 2
+ },
+ "files": [
+  {
+   "id": "5550004-a.bin",
+   "key": "a.bin",
+   "size": 5242880,
+   "checksum": "md5:d41d8cd98f00b204e9800998ecf8427e",
+   "links": {
+    "self": "https://zenodo.org/api/records/5550004/files/a.bin/content"
+   }
+  },
+  {
+   "id": "5550004-b.bin",
+   "key": "b.bin",
+   "size": 6291456,
+   "checksum": "md5:d41d8cd98f00b204e9800998ecf8427e",
+   "links": {
+    "self": "https://zenodo.org/api/records/5550004/files/b.bin/content"
+   }
+  },
+  {
+   "id": "5550004-c.txt",
+   "key": "c.txt",
+   "size": 100,
+   "checksum": "md5:ca69c3acc86e56b995aa27bba6f2acdc",
+   "links": {
+    "self": "https://zenodo.org/api/records/5550004/files/c.txt/content"
+   }
+  }
+ ]
+}

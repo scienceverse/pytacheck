@@ -3,13 +3,79 @@
   "ok": true,
   "error": null,
   "warnings": [
-    "spv: could not decode chart: Unescaped '<' not allowed in attributes values [38]",
     "spv: could not decode legacy table: spv legacy: missing dimension series"
   ],
   "value": {
     "t": "list",
     "names": null,
     "v": [
+      {
+        "t": "list",
+        "names": [
+          "analysis",
+          "title",
+          "data",
+          "syntax",
+          "is_chart",
+          "table_index"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Graph"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 2,
+            "names": [
+              "x",
+              "y"
+            ],
+            "v": [
+              {
+                "t": "dbl",
+                "v": [
+                  150,
+                  160
+                ]
+              },
+              {
+                "t": "dbl",
+                "v": [
+                  55,
+                  60
+                ]
+              }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          }
+        ]
+      },
       {
         "t": "list",
         "names": [
@@ -76,7 +142,7 @@
           {
             "t": "int",
             "v": [
-              1
+              2
             ]
           }
         ]
@@ -143,7 +209,7 @@
           {
             "t": "int",
             "v": [
-              2
+              3
             ]
           }
         ]

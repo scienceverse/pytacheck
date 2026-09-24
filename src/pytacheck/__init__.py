@@ -47,9 +47,28 @@ _EXPORTS: dict[str, str] = {
     "run_session": "pytacheck.module",
     "use": "pytacheck.module",
     # packs & presets (module system v2; pytacheck.packs is only imported on use)
+    "CheckIssue": "pytacheck.packs.check",
+    "pack_check": "pytacheck.packs.check",
+    "pack_install": "pytacheck.packs.install",
+    "pack_list": "pytacheck.packs.install",
+    "pack_remove": "pytacheck.packs.install",
+    "pack_show": "pytacheck.packs.install",
+    "pack_update": "pytacheck.packs.install",
     "refresh": "pytacheck.packs.registry",
+    "module_template": "pytacheck.packs.scaffold",
+    "pack_new": "pytacheck.packs.scaffold",
+    "store_add": "pytacheck.packs.stores",
+    "store_list": "pytacheck.packs.stores",
+    "store_remove": "pytacheck.packs.stores",
+    "store_search": "pytacheck.packs.stores",
+    "store_update": "pytacheck.packs.stores",
     "preset": "pytacheck.presets",
     "preset_list": "pytacheck.presets",
+    # run records and reproducibility
+    "ModuleChain": "pytacheck.provenance",
+    "RunRecord": "pytacheck.provenance",
+    "rerun": "pytacheck.provenance",
+    "run_modules": "pytacheck.provenance",
     # papers
     "Paper": "pytacheck.papers",
     "PaperList": "pytacheck.papers",
@@ -106,7 +125,23 @@ if TYPE_CHECKING:  # pragma: no cover
         run_session,
         use,
     )
+    from pytacheck.packs.check import CheckIssue, pack_check
+    from pytacheck.packs.install import (
+        pack_install,
+        pack_list,
+        pack_remove,
+        pack_show,
+        pack_update,
+    )
     from pytacheck.packs.registry import refresh
+    from pytacheck.packs.scaffold import module_template, pack_new
+    from pytacheck.packs.stores import (
+        store_add,
+        store_list,
+        store_remove,
+        store_search,
+        store_update,
+    )
     from pytacheck.papers import (
         Paper,
         PaperList,
@@ -124,4 +159,5 @@ if TYPE_CHECKING:  # pragma: no cover
         test_paper,
     )
     from pytacheck.presets import preset, preset_list
+    from pytacheck.provenance import ModuleChain, RunRecord, rerun, run_modules
     from pytacheck.text import expand_text, search_text, text_expand, text_search

@@ -1,0 +1,22 @@
+{
+  "id": "xml_ns.duplicates.values",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "urn:z",
+      "urn:b",
+      "urn:y",
+      "urn:a",
+      "urn:y",
+      "urn:q",
+      "urn:b",
+      "urn:b",
+      "urn:z"
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.3.3 (2024-02-29)"
+}

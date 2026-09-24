@@ -1,0 +1,12 @@
+{
+  "id": "extract_p_values.review.df_no_text_col",
+  "ok": false,
+  "error": "Assigned data `sapply(regmatches(p$text, matches), \\`[[\\`, 1)` must be\ncompatible with existing data.\n✖ Existing data has 1 row.\n✖ Assigned data has 0 rows.\nℹ Row updates require a list value. Do you need `list()` or `as.list()`?\nCaused by error in `vectbl_recycle_rhs_rows()`:\n! Can't recycle input of size 0 to size 1.",
+  "warnings": [
+    "Unknown or uninitialised column: `text`.",
+    "Unknown or uninitialised column: `text`."
+  ],
+  "value": null,
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}
