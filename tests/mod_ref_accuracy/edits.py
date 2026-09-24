@@ -134,3 +134,10 @@ def ra_match_copy(p: Paper, from_: int, to: int | None) -> Paper:
     )
     p["bib_match"] = pd.concat([bm, row], ignore_index=True)
     return p
+
+
+def ra_keep(p: Paper, table: str, bib_id: Sequence[int]) -> Paper:
+    """Keep only the rows of ``p[table]`` with these bib_ids (``ra_keep()``)."""
+    df = p[table]
+    p[table] = df.loc[df["bib_id"].isin(list(bib_id)).fillna(False).to_numpy(dtype=bool)].copy()
+    return p

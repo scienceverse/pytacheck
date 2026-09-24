@@ -30,6 +30,7 @@ from __future__ import annotations
 
 import contextlib
 import contextvars
+import copy
 import hashlib
 import importlib
 import importlib.util
@@ -275,11 +276,15 @@ _SESSION: contextvars.ContextVar[RunSession | None] = contextvars.ContextVar(
 def run_session() -> Iterator[RunSession]:
     """Memoise :func:`module_run` on plain papers inside a ``with`` block.
 
-    The key is the paper's identity and generation (bumped by any mutation),
-    the module's identity (pack, rev and file hash) and its bound arguments,
-    so implicit re-runs (``data_check`` inside ``codebook_check``...) happen
-    once. Failures are not cached; a hit returns a shallow copy. Nested
-    sessions share the outermost one.
+    The key is the paper's identity and state (its generation, bumped by
+    changes made through the ``Paper`` API, its table objects and ``extra``),
+    the module's identity (pack, rev, file hash and function), its bound
+    arguments and the LLM options, so implicit re-runs (``data_check`` inside
+    ``codebook_check``...) happen once. Edits made *inside* a table are not
+    seen, so do not mutate papers within a session (``report()``, the CLI and
+    the API never do). Failures are not cached; a hit returns a copy that can
+    be edited without changing the memo. Nested sessions share the outermost
+    one.
     """
     current = _SESSION.get()
     if current is not None:
@@ -316,14 +321,58 @@ def _freeze(value: Any) -> Any:
     raise _Unfreezable
 
 
+def _paper_state(paper: Paper) -> tuple[Any, Any, Any] | None:
+    """``(generation, table identities, frozen extra)`` of a paper, or ``None``.
+
+    The generation tracks changes made through the ``Paper`` API; the table
+    identities catch tables replaced behind its back (e.g. through a
+    ``copy.copy()`` sharing the table dict). Edits *inside* a table are not
+    seen: papers must not be mutated in place.
+    """
+    gen = getattr(paper, "_generation", None)
+    tables = getattr(paper, "_tables", None)
+    if gen is None or not isinstance(tables, dict):
+        return None
+    ids = tuple((name, id(value)) for name, value in tables.items() if value is not None)
+    try:
+        extra = _freeze(paper.extra)
+    except _Unfreezable:
+        return None
+    return gen, ids, extra
+
+
 def _paper_key(paper: Any) -> tuple[Any, ...] | None:
+    """The memo key part for a paper: ``(kind, id, generations, tables, extra)``."""
     if isinstance(paper, Paper):
-        gen = getattr(paper, "_generation", None)
-        return None if gen is None else ("paper", id(paper), gen)
+        state = _paper_state(paper)
+        return None if state is None else ("paper", id(paper), *state)
     if isinstance(paper, PaperList):
-        gens = tuple(getattr(p, "_generation", None) for p in paper)
-        return None if None in gens else ("paperlist", id(paper), gens)
+        states = [_paper_state(p) for p in paper]
+        if any(s is None for s in states):
+            return None
+        return (
+            "paperlist",
+            id(paper),
+            tuple(s[0] for s in states),  # type: ignore[index]
+            tuple(s[1] for s in states),  # type: ignore[index]
+            tuple(s[2] for s in states),  # type: ignore[index]
+        )
     return None
+
+
+#: global options that change what modules return (``llm_use()``, ``llm_model()``...)
+_MEMO_OPTIONS = (
+    "metacheck.llm.use",
+    "metacheck.llm.model",
+    "metacheck.llm_reasoning",
+    "metacheck.llm_max_tokens",
+)
+
+
+def _memo_options() -> Any:
+    from pytacheck.utils import get_option
+
+    return _freeze([get_option(k) for k in _MEMO_OPTIONS])
 
 
 # ---------------------------------------------------------------------------
@@ -391,6 +440,24 @@ def _entry_point_specs() -> dict[str, Any]:
         return {}
 
 
+_QUALIFIED_RE = re.compile(r"^([a-z][a-z0-9_-]{1,39})::([A-Za-z][A-Za-z0-9_]*)$")
+
+
+def split_ref(ref: Any) -> tuple[str, str] | None:
+    """``(pack, module)`` of a ``pack::name`` ref, else ``None``.
+
+    Only refs whose two sides are a valid pack and module name count, so a
+    legacy file path containing ``::`` (``"a::b.py"``, an existing file named
+    like a ref) is still a path.
+    """
+    if not isinstance(ref, str) or "::" not in ref:
+        return None
+    m = _QUALIFIED_RE.match(ref)
+    if m is None or (_allow_local() and Path(ref).is_file()):
+        return None
+    return m.group(1), m.group(2)
+
+
 def _locate(key: str) -> tuple[str, Any]:
     """Where a module ref resolves, without importing it.
 
@@ -407,8 +474,11 @@ def _locate(key: str) -> tuple[str, Any]:
     """
     if key in _builtin_names():
         return ("builtin", key)
-    if "::" in key:
-        pack_name, _, mod = key.partition("::")
+    from pytacheck.config import ConfigError
+
+    qualified = split_ref(key)
+    if qualified is not None:
+        pack_name, mod = qualified
         if pack_name == "metacheck":
             if mod in _builtin_names():
                 return ("builtin", mod)
@@ -418,7 +488,10 @@ def _locate(key: str) -> tuple[str, Any]:
             )
         from pytacheck.packs.registry import get_pack
 
-        pack = get_pack(pack_name, allow_local=_allow_local())
+        try:
+            pack = get_pack(pack_name, allow_local=_allow_local())
+        except ConfigError as exc:
+            raise ModuleError(f"Cannot resolve {key}: {exc}") from exc
         if not pack.has_module(mod):
             mods = pack.modules()
             raise ModuleError(
@@ -434,10 +507,15 @@ def _locate(key: str) -> tuple[str, Any]:
         for candidate in (Path(f"{key}.py"), Path("modules") / f"{key}.py"):
             if candidate.is_file():
                 return ("file", candidate)
+    problems: list[str] = []
     if _MODULE_NAME_RE.match(key):
-        from pytacheck.packs.registry import find_module
+        from pytacheck.packs.registry import find_module, registry
 
-        found = find_module(key, allow_local=local)
+        try:
+            found = find_module(key, allow_local=local)
+            problems = list(registry().problems.values())
+        except ConfigError as exc:  # a broken config file must not hide built-ins or paths
+            found, problems = [], [str(exc)]
         if len(found) > 1:
             refs = ", ".join(f'"{p.name}::{key}"' for p in found)
             raise ModuleError(
@@ -456,14 +534,8 @@ def _locate(key: str) -> tuple[str, Any]:
         f"There were no modules that matched {key}\n"
         "use module_list() to see a list of built-in modules."
     )
-    if _MODULE_NAME_RE.match(key):
-        from pytacheck.packs.registry import registry
-
-        problems = registry().problems
-        if problems:
-            msg += "\nSome configured packs are unavailable:\n" + "\n".join(
-                f"* {v}" for v in problems.values()
-            )
+    if problems:
+        msg += "\nSome configured packs are unavailable:\n" + "\n".join(f"* {v}" for v in problems)
     raise ModuleError(msg)
 
 
@@ -641,8 +713,9 @@ class ModuleOutput:
     prev_outputs: dict[str, ModuleOutput] = field(default_factory=dict)
     extras: dict[str, Any] = field(default_factory=dict)
     #: which module/pack/rev/args produced this output (see :mod:`pytacheck.provenance`);
-    #: not an element: excluded from ``keys()``, ``results()``, equality and parity
-    provenance: dict[str, Any] | None = field(default=None, repr=False, compare=False)
+    #: not an element: excluded from ``keys()``, ``results()``, equality and parity.
+    #: ``out.provenance`` is an alias, unless the module returned an element of that name.
+    run_provenance: dict[str, Any] | None = field(default=None, repr=False, compare=False)
 
     _FIELDS = (
         "module",
@@ -673,6 +746,8 @@ class ModuleOutput:
         extras = self.__dict__.get("extras", {})
         if key in extras:
             return extras[key]
+        if key == "provenance":  # alias of run_provenance (a module's own element wins)
+            return self.__dict__.get("run_provenance")
         raise AttributeError(key)
 
     def keys(self) -> list[str]:
@@ -688,8 +763,12 @@ class ModuleOutput:
 
 
 def _is_list_column(series: pd.Series) -> bool:
-    """Whether an object column holds R list cells (e.g. open_practices' ``*_statements``)."""
-    return any(isinstance(v, list | tuple | dict) for v in series.tolist())
+    """Whether an ``object`` column is an R list column (e.g. open_practices' ``*_statements``).
+
+    Character columns are ``string`` (or ``object`` holding strings); an
+    ``object`` column without strings holds list cells or only missing ones.
+    """
+    return not any(isinstance(v, str) for v in series.tolist())
 
 
 def _na_replace_list_column(series: pd.Series, value: Any) -> pd.Series:
@@ -708,9 +787,7 @@ def _na_replace_list_column(series: pd.Series, value: Any) -> pd.Series:
         return isinstance(v, list | tuple) and len(v) == 1 and (v[0] is None or v[0] is pd.NA)
 
     cells = series.tolist()
-    return pd.Series(
-        [value if is_na(v) else v for v in cells], index=series.index, dtype=object
-    )
+    return pd.Series([value if is_na(v) else v for v in cells], index=series.index, dtype=object)
 
 
 def _apply_na_replace(summary: pd.DataFrame, na_replace: Any) -> pd.DataFrame:
@@ -790,7 +867,8 @@ def module_run(
 
     spec = module_find(module)
     if isinstance(module, str):
-        module_label = module.partition("::")[2] if "::" in module else module
+        qualified = split_ref(module)
+        module_label = qualified[1] if qualified is not None else module
     else:
         module_label = spec.name
     bound = bind_args(spec.func, paper, kwargs)
@@ -803,19 +881,22 @@ def module_run(
     except Exception:  # pragma: no cover - provenance must never break a run
         provenance = None
     session = _SESSION.get()
-    memo_key: tuple[Any, ...] | None = None
-    if session is not None and bound is not None and provenance is not None:
-        pkey = _paper_key(paper)
-        if pkey is not None:
-            try:
-                args_key = _freeze(bound)
-            except _Unfreezable:
-                args_key = None
-            if args_key is not None:
-                memo_key = (str(module_label), module_identity(spec, provenance), pkey, args_key)
-                hit = session.get(memo_key)
-                if hit is not None:
-                    return hit
+    memo: tuple[Any, ...] | None = None  # the memo key, minus the paper's state
+    pkey = _paper_key(paper) if session is not None else None
+    if session is not None and bound is not None and provenance is not None and pkey is not None:
+        try:
+            memo = (
+                str(module_label),
+                module_identity(spec, provenance),
+                _freeze(bound),
+                _memo_options(),
+            )
+        except _Unfreezable:
+            memo = None
+        if memo is not None:
+            hit = session.get((*memo, pkey))
+            if hit is not None:
+                return hit
     prev_outputs: dict[str, ModuleOutput] = {}
 
     if isinstance(paper, ModuleOutput):
@@ -892,26 +973,40 @@ def module_run(
         paper=paper,
         prev_outputs=prev_outputs,
         extras=results,
-        provenance=provenance,
+        run_provenance=provenance,
     )
-    if memo_key is not None and session is not None:
-        session.put(memo_key, out)
+    if memo is not None and session is not None and pkey is not None:
+        # keyed on the paper's state after the run (lazy tables are now built),
+        # unless the module changed the paper itself
+        after = _paper_key(paper)
+        if after is not None and after[:3] == pkey[:3] and after[4] == pkey[4]:
+            session.put((*memo, after), out)
     return out
 
 
+def _detach(x: Any) -> Any:
+    """*x*, safe to edit without changing the memo: DataFrames and Series become
+    copy-on-write views, containers are deep-copied, anything else is shared."""
+    if isinstance(x, pd.DataFrame | pd.Series):
+        return x.copy(deep=False)
+    if isinstance(x, list | dict | set | tuple):
+        try:
+            return copy.deepcopy(x)
+        except Exception:  # pragma: no cover - uncopyable contents: share them
+            return x
+    return x
+
+
 def _shallow_copy(out: ModuleOutput) -> ModuleOutput:
-    """A new output sharing its values; DataFrames are copy-on-write views."""
-
-    def view(x: Any) -> Any:
-        return x.copy(deep=False) if isinstance(x, pd.DataFrame) else x
-
+    """A new output whose values can be edited without changing *out* (see :func:`_detach`)."""
+    prov = out.run_provenance
     return replace(
         out,
-        table=view(out.table),
-        summary_table=view(out.summary_table),
+        table=_detach(out.table),
+        summary_table=_detach(out.summary_table),
         prev_outputs=dict(out.prev_outputs),
-        extras={k: view(v) for k, v in out.extras.items()},
-        provenance=None if out.provenance is None else dict(out.provenance),
+        extras={k: _detach(v) for k, v in out.extras.items()},
+        run_provenance=None if prov is None else copy.deepcopy(prov),
     )
 
 

@@ -194,6 +194,7 @@ def _info_loop(
     """
     from pytacheck._r import as_character, bind_rows
     from pytacheck.archives import _spinner, _tick
+    from pytacheck.archives.dataverse import _as_values
     from pytacheck.utils import left_join
 
     with _spinner(pb, f"{label} Retrieve") as bar:
@@ -203,7 +204,7 @@ def _info_loop(
             raw = table[id_col_name].tolist()
         else:
             id_col_name = url_col
-            vals = [] if x is None else ([x] if isinstance(x, str) else list(x))
+            vals, _ = _as_values(x)
             raw = [v for v in dict.fromkeys(None if is_na(v) else v for v in vals) if v is not None]
             table = pd.DataFrame({url_col: _vector(raw)})
 
@@ -425,7 +426,7 @@ def _rest_json(url: str) -> Any:
     from pytacheck.archives.dataverse import _resp_json
 
     try:
-        resp = http.request("GET", url, headers={"Accept": "application/json"})
+        resp = http.request("GET", url, headers={"Accept": "application/json"}, max_tries=1)
     except Exception:
         return None
     if resp is None or resp.status_code != 200:

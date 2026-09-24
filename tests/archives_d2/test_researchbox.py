@@ -122,7 +122,7 @@ def test_box_without_download_tokens(mock_api: object) -> None:
 
 def test_info_offline(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setattr("pytacheck.utils.online", lambda *a, **k: False)
-    with pytest.raises(ConnectionError, match="ResearchBox.org seems to be offline"):
+    with pytest.raises(ConnectionError, match=r"ResearchBox\.org seems to be offline"):
         rbox_info("https://researchbox.org/801")
 
 
@@ -149,7 +149,7 @@ def test_file_download_posts_for_a_zip_and_lists_it(
     )
     files = rbox_file_download("https://researchbox.org/801")
     assert files is not None
-    post = [r for r in requests if r.method == "POST"][0]
+    post = next(r for r in requests if r.method == "POST")
     body = json.loads(post.content)
     assert body["box_id"] == "801"
     assert body["reference"] == "kkqtZcbEDQeScj3Ywc8pcf0hlkrBhcKipatjzfQlJHg"

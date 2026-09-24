@@ -1,0 +1,126 @@
+{
+  "id": "zenodo_file_download.review.ties",
+  "ok": true,
+  "error": null,
+  "warnings": [
+    "3 of 3 files from Zenodo record 5559102 did not arrive intact (e.g. six2.bin, one.bin, half.bin). The returned table marks them downloaded = FALSE. Run again to retry."
+  ],
+  "value": {
+    "t": "df",
+    "nrow": 3,
+    "names": [
+      "folder",
+      "zenodo_id",
+      "id",
+      "key",
+      "path",
+      "size",
+      "size_on_disk",
+      "checksum",
+      "checksum_ok",
+      "self",
+      "downloaded",
+      "extracted"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "5559102",
+          "5559102",
+          "5559102"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "5559102",
+          "5559102",
+          "5559102"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "5559102-six2.bin",
+          "5559102-one.bin",
+          "5559102-half.bin"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "six2.bin",
+          "one.bin",
+          "half.bin"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "six2.bin",
+          "one.bin",
+          "half.bin"
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          6291456,
+          1048576,
+          566231.04
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          1,
+          1,
+          1
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "md5:c81e728d9d4c2f636f067f89cc14862c",
+          "md5:eccbc87e4b5ce2fe28308fd9f2a7baf3",
+          "md5:a87ff679a2f3e71d9181a67b7542122c"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://zenodo.org/api/records/5559102/files/six2.bin/content",
+          "https://zenodo.org/api/records/5559102/files/one.bin/content",
+          "https://zenodo.org/api/records/5559102/files/half.bin/content"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false,
+          false,
+          false
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          null,
+          null,
+          null
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

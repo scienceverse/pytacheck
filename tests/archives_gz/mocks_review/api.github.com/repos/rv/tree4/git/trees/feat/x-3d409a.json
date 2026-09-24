@@ -1,0 +1,20 @@
+{
+ "tree": [
+  {
+   "path": "Makefile",
+   "type": "blob",
+   "size": 10
+  },
+  {
+   "path": ".gitignore",
+   "type": "blob",
+   "size": 11
+  },
+  {
+   "path": "src/x.c++",
+   "type": "blob",
+   "size": 12
+  }
+ ],
+ "truncated": false
+}

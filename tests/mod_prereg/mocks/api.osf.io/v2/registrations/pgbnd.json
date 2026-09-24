@@ -1,0 +1,42 @@
+{
+ "data": {
+  "id": "pgbnd",
+  "type": "registrations",
+  "attributes": {
+   "title": "Synthetic registration pgbnd",
+   "description": "",
+   "date_created": "2024-01-02T03:04:05.000001",
+   "date_modified": "2024-01-03T03:04:05.000001",
+   "date_registered": "2024-01-04T03:04:05.000001",
+   "embargo_end_date": null,
+   "withdrawn": false,
+   "registration_supplement": "Synthetic Template",
+   "ia_url": "https://archive.org/details/osf-registrations-pgbnd-v1",
+   "registration_responses": {
+    "t40": "forty",
+    "t41.question": "forty-one",
+    "dup": "duplicated qid"
+   }
+  },
+  "relationships": {
+   "registration_schema": {
+    "data": {
+     "id": "eeeeeeeeeeeeeeeeeeeeeee5",
+     "type": "registration-schemas"
+    },
+    "links": {
+     "related": {
+      "href": "https://api.osf.io/v2/schemas/registrations/eeeeeeeeeeeeeeeeeeeeeee5/",
+      "meta": {}
+     }
+    }
+   }
+  },
+  "links": {
+   "html": "https://osf.io/pgbnd/"
+  }
+ },
+ "meta": {
+  "version": "2.0"
+ }
+}

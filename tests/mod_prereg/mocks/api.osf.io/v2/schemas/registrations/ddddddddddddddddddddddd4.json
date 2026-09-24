@@ -1,0 +1,64 @@
+{
+ "data": {
+  "id": "ddddddddddddddddddddddd4",
+  "type": "registration-schemas",
+  "attributes": {
+   "name": "Synthetic Unicode",
+   "schema_version": 3,
+   "schema": {
+    "blocks": [
+     {
+      "block_type": "question-label",
+      "display_text": "İstanbul Study"
+     },
+     {
+      "block_type": "long-text-input"
+     },
+     {
+      "block_type": "question-label",
+      "display_text": "ΟΔΟΣ Σ"
+     },
+     {
+      "block_type": "long-text-input"
+     },
+     {
+      "block_type": "question-label",
+      "display_text": "Straße ẞ"
+     },
+     {
+      "block_type": "long-text-input"
+     },
+     {
+      "block_type": "question-label",
+      "display_text": "Hypotheses\n"
+     },
+     {
+      "block_type": "long-text-input"
+     },
+     {
+      "block_type": "question-label",
+      "display_text": " Sample size"
+     },
+     {
+      "block_type": "long-text-input"
+     },
+     {
+      "block_type": "question-label",
+      "display_text": "Sample\tSize"
+     },
+     {
+      "block_type": "long-text-input"
+     },
+     {
+      "block_type": "question-label",
+      "display_text": "DATA  Collection"
+     },
+     {
+      "block_type": "long-text-input"
+     }
+    ],
+    "version": 3
+   }
+  }
+ }
+}

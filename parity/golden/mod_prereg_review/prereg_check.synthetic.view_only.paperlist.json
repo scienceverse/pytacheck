@@ -1,0 +1,231 @@
+{
+  "id": "prereg_check.synthetic.view_only.paperlist",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "prereg_check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Preregistration Check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "method"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 2,
+        "names": [
+          "template_name",
+          "title",
+          "id",
+          "link",
+          "date_created",
+          "date_modified",
+          "date_registered",
+          "embargo_end_date",
+          "ia_url",
+          "research_questions",
+          "my_custom_field_ber_weird",
+          "sample_size",
+          "field",
+          "additional_comments",
+          "numbers_flags",
+          "paper_id"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Synthetic Template",
+              "Synthetic Template"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Synthetic registration vwonl",
+              "Synthetic registration blkss"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "vwonl",
+              "blkss"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://osf.io/vwonl",
+              "https://osf.io/blkss"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2024-01-02T03:04:05.000001",
+              "2024-01-02T03:04:05.000001"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2024-01-03T03:04:05.000001",
+              "2024-01-03T03:04:05.000001"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2024-01-04T03:04:05.000001",
+              "2024-01-04T03:04:05.000001"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "",
+              ""
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://archive.org/details/osf-registrations-vwonl-v1",
+              "https://archive.org/details/osf-registrations-blkss-v1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "view-only hypothesis",
+              "H1: people like cake. RQ: why?"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "Option A Option B"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "We will collect 200 participants."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "ida idb a.csv b.csv https://osf.io/h/a https://osf.io/h/b https://osf.io/d/a https://osf.io/d/b shaa shab"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "Ann Bo NA 0000-1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "1 2.5 1 3e+09"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "paper_b"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "We found 2 preregistrations.",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(id = c(\"<a href='https://osf.io/vwonl' target='_blank'>vwonl<\/a>\", \n\"<a href='https://osf.io/blkss' target='_blank'>blkss<\/a>\"), \n    title = c(\"Synthetic registration vwonl\", \"Synthetic registration blkss\"\n    ), template = c(\"Synthetic Template\", \"Synthetic Template\"\n    )), row.names = c(NA, -2L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 2, FALSE)\n```\n",
+          "Meta-scientific research has shown that deviations from preregistrations are often not reported or checked, and that the most common deviations concern the sample size. We recommend manually checking the full preregistration at the links above, and have provided the preregistered sample size.",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(id = c(\"vwonl\", \"blkss\"), sample_size = c(NA, \n\"We will collect 200 participants.\")), row.names = c(NA, -2L), class = c(\"tbl_df\", \n\"tbl\", \"data.frame\"))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 2, FALSE)\n```\n",
+          "::: {.callout-tip title=\"Full Preregistration\" collapse=\"true\"}\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Field = c(\"template_name\", \"title\", \"id\", \"link\", \n\"date_created\", \"date_modified\", \"date_registered\", \"embargo_end_date\", \n\"ia_url\", \"research_questions\", \"my_custom_field_ber_weird\", \n\"sample_size\", \"field\", \"additional_comments\", \"numbers_flags\", \n\"paper_id\"), \"Preregistration 1\" = c(\"Synthetic Template\", \"Synthetic registration vwonl\", \n\"vwonl\", \"https://osf.io/vwonl\", \"2024-01-02T03:04:05.000001\", \n\"2024-01-03T03:04:05.000001\", \"2024-01-04T03:04:05.000001\", \"\", \n\"https://archive.org/details/osf-registrations-vwonl-v1\", \"view-only hypothesis\", \nNA, NA, NA, NA, NA, NA), \"Preregistration 2\" = c(\"Synthetic Template\", \n\"Synthetic registration blkss\", \"blkss\", \"https://osf.io/blkss\", \n\"2024-01-02T03:04:05.000001\", \"2024-01-03T03:04:05.000001\", \"2024-01-04T03:04:05.000001\", \n\"\", \"https://archive.org/details/osf-registrations-blkss-v1\", \n\"H1: people like cake. RQ: why?\", \"Option A Option B\", \"We will collect 200 participants.\", \n\"ida idb a.csv b.csv https://osf.io/h/a https://osf.io/h/b https://osf.io/d/a https://osf.io/d/b shaa shab\", \n\"Ann Bo NA 0000-1\", \"1 2.5 1 3e+09\", \"paper_b\")), row.names = c(\"template_name\", \n\"title\", \"id\", \"link\", \"date_created\", \"date_modified\", \"date_registered\", \n\"embargo_end_date\", \"ia_url\", \"research_questions\", \"my_custom_field_ber_weird\", \n\"sample_size\", \"field\", \"additional_comments\", \"numbers_flags\", \n\"paper_id\"), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 5, FALSE)\n```\n\n\n:::\n",
+          "::: {.callout-tip title=\"Learn More\" collapse=\"true\"}\n\nFor metascientific articles demonstrating the rate of deviations from preregistrations, see:\n\nvan den Akker O, Bakker M, van Assen M, Pennington C, Verweij L, Elsherif M, Claesen A, Gaillard S, Yeung S, Frankenberger J, Krautter K, Cockcroft J, Kreuer K, Evans T, Heppel F, Schoch S, Korbmacher M, Yamada Y, Albayrak-Aydemir N, Wicherts J (2024). &ldquo;The potential of preregistration in psychology: Assessing preregistration producibility and preregistration-study consistency.&rdquo; <em>Psychological Methods<\/em>. <a href=\"https://doi.org/10.1037/met0000687\">doi:10.1037/met0000687<\/a>.\n\nFor educational material on how to report deviations from preregistrations, see:\n\nLakens, Daniël (2024). &ldquo;When and How to Deviate From a Preregistration.&rdquo; <em>Collabra: Psychology<\/em>, <b>10<\/b>(1), 117094. <a href=\"https://doi.org/10.1525/collabra.117094\">doi:10.1525/collabra.117094<\/a>.\n\n:::\n"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "info"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "We found 2 preregistrations."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 2,
+        "names": [
+          "paper_id",
+          "preregistration"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "paper_a",
+              "paper_b"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0,
+              1
+            ]
+          }
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

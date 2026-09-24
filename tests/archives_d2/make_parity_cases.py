@@ -46,7 +46,11 @@ def r_chr(values: list[str | None]) -> str:
 
 
 def py_list(values: list[Any]) -> str:
-    return "[" + ", ".join("None" if v is None else json.dumps(v, ensure_ascii=False) for v in values) + "]"
+    return (
+        "["
+        + ", ".join("None" if v is None else json.dumps(v, ensure_ascii=False) for v in values)
+        + "]"
+    )
 
 
 def fn_case(
@@ -245,11 +249,17 @@ expr_case(
     "dataone_info.mock.links_table",
     online(
         "dataone_info(dataone_links("
-        + tp_r(["see 10.18739/A2GT5FG86 and 10.5063/NOTEML"], ["https://doi.org/10.6085/AA/marine_ltm.20.1/"])
+        + tp_r(
+            ["see 10.18739/A2GT5FG86 and 10.5063/NOTEML"],
+            ["https://doi.org/10.6085/AA/marine_ltm.20.1/"],
+        )
         + "))"
     ),
     "lambda m: m.dataone.dataone_info(m.dataone.dataone_links("
-    + tp_py(["see 10.18739/A2GT5FG86 and 10.5063/NOTEML"], ["https://doi.org/10.6085/AA/marine_ltm.20.1/"])
+    + tp_py(
+        ["see 10.18739/A2GT5FG86 and 10.5063/NOTEML"],
+        ["https://doi.org/10.6085/AA/marine_ltm.20.1/"],
+    )
     + "))",
     compare=IGNORE_PID,
 )
@@ -330,7 +340,11 @@ links_cases(
 for label, args_r, args_py in [
     ("uuid", f"uuid = {rq(GT)}", f"uuid={rq(GT)}"),
     ("handle", 'handle = "1853/67239"', 'handle="1853/67239"'),
-    ("uuid_and_handle", f'uuid = {rq(GT)}, handle = "1853/404"', f'uuid={rq(GT)}, handle="1853/404"'),
+    (
+        "uuid_and_handle",
+        f'uuid = {rq(GT)}, handle = "1853/404"',
+        f'uuid={rq(GT)}, handle="1853/404"',
+    ),
     ("unfound_handle", 'handle = "1853/404"', 'handle="1853/404"'),
     ("nothing", "", ""),
 ]:
@@ -409,7 +423,11 @@ links_cases(
         "Data: 10.4121/16766929.v2 and https://data.4tu.nl/articles/dataset/Wind/16766929/1/.",
         "Also doi.org/10.4121/uuid:7f866e02-eb39-4a2a-8f7d-2d053ee6cde9 and www.data.4tu.nl/datasets/",
     ],
-    ["https://doi.org/10.4121/16766929.v1", "https://data.4tu.nl/articles/16766929/", "https://osf.io/x"],
+    [
+        "https://doi.org/10.4121/16766929.v1",
+        "https://data.4tu.nl/articles/16766929/",
+        "https://osf.io/x",
+    ],
 )
 T4_VEC = [
     "https://doi.org/10.4121/16766929.v1",
@@ -465,12 +483,18 @@ fn_case(
 expr_case(
     "researchdata4tu_file_download.mock.one",
     tmp_r('researchdata4tu_file_download("https://doi.org/10.4121/16766929.v1", download_to = d)'),
-    tmp_py('m.fourtu.researchdata4tu_file_download("https://doi.org/10.4121/16766929.v1", download_to=d)'),
+    tmp_py(
+        'm.fourtu.researchdata4tu_file_download("https://doi.org/10.4121/16766929.v1", download_to=d)'
+    ),
 )
 expr_case(
     "researchdata4tu_file_download.mock.uuid_only",
-    tmp_r('researchdata4tu_file_download("10.4121/ce413614-1c82-4e81-90c0-323aa7d2fabd", download_to = d)'),
-    tmp_py('m.fourtu.researchdata4tu_file_download("10.4121/ce413614-1c82-4e81-90c0-323aa7d2fabd", download_to=d)'),
+    tmp_r(
+        'researchdata4tu_file_download("10.4121/ce413614-1c82-4e81-90c0-323aa7d2fabd", download_to = d)'
+    ),
+    tmp_py(
+        'm.fourtu.researchdata4tu_file_download("10.4121/ce413614-1c82-4e81-90c0-323aa7d2fabd", download_to=d)'
+    ),
 )
 fn_case(
     "researchdata4tu_file_download.none",
@@ -660,7 +684,10 @@ RB_LINKS = [
 links_cases(
     "rbox_links",
     "researchbox",
-    ["See researchbox.org/801/ and https://researchbox.org/2257.8 for files.", "RESEARCHBOX.ORG/12"],
+    [
+        "See researchbox.org/801/ and https://researchbox.org/2257.8 for files.",
+        "RESEARCHBOX.ORG/12",
+    ],
     RB_LINKS,
 )
 expr_case(
@@ -682,7 +709,10 @@ for label, u in [
         f"lambda m: m.researchbox._rbox_info({rq(u)})",
         mock=APIS,
     )
-for label, u in [("synthetic", "https://researchbox.org/99"), ("unfound", "https://researchbox.org/404")]:
+for label, u in [
+    ("synthetic", "https://researchbox.org/99"),
+    ("unfound", "https://researchbox.org/404"),
+]:
     expr_case(
         f".rbox_info.mock.{label}",
         f"metacheck:::.rbox_info({rq(u)})",
@@ -780,7 +810,11 @@ links_cases(
         "Deposited at 10.5255/UKDA-SN-854001 and https://reshare.ukdataservice.ac.uk/854243/.",
         "Also dx.doi.org/10.5255/ukda-sn-854100 (lower case) and www.reshare.ukdataservice.ac.uk/1",
     ],
-    ["https://doi.org/10.5255/UKDA-SN-854001", "https://reshare.ukdataservice.ac.uk/854001/", "https://osf.io/x"],
+    [
+        "https://doi.org/10.5255/UKDA-SN-854001",
+        "https://reshare.ukdataservice.ac.uk/854001/",
+        "https://osf.io/x",
+    ],
 )
 for label, rid in [
     ("full", "854001"),
@@ -831,22 +865,34 @@ expr_case(
 expr_case(
     "reshare_file_download.mock.one",
     tmp_r('reshare_file_download("https://doi.org/10.5255/UKDA-SN-854001", download_to = d)'),
-    tmp_py('m.reshare.reshare_file_download("https://doi.org/10.5255/UKDA-SN-854001", download_to=d)'),
+    tmp_py(
+        'm.reshare.reshare_file_download("https://doi.org/10.5255/UKDA-SN-854001", download_to=d)'
+    ),
 )
 expr_case(
     "reshare_file_download.mock.no_caps",
-    tmp_r('reshare_file_download("854001", download_to = d, max_file_size = NULL, max_download_size = Inf)'),
-    tmp_py('m.reshare.reshare_file_download("854001", download_to=d, max_file_size=None, max_download_size=float("inf"))'),
+    tmp_r(
+        'reshare_file_download("854001", download_to = d, max_file_size = NULL, max_download_size = Inf)'
+    ),
+    tmp_py(
+        'm.reshare.reshare_file_download("854001", download_to=d, max_file_size=None, max_download_size=float("inf"))'
+    ),
 )
 expr_case(
     "reshare_file_download.mock.total_cap",
-    tmp_r('reshare_file_download("854001", download_to = d, max_file_size = 100, max_download_size = 5)'),
-    tmp_py('m.reshare.reshare_file_download("854001", download_to=d, max_file_size=100, max_download_size=5)'),
+    tmp_r(
+        'reshare_file_download("854001", download_to = d, max_file_size = 100, max_download_size = 5)'
+    ),
+    tmp_py(
+        'm.reshare.reshare_file_download("854001", download_to=d, max_file_size=100, max_download_size=5)'
+    ),
 )
 expr_case(
     "reshare_file_download.mock.multi",
     tmp_r('reshare_file_download(c("854001", "854100", "999999", "854001"), download_to = d)'),
-    tmp_py('m.reshare.reshare_file_download(["854001", "854100", "999999", "854001"], download_to=d)'),
+    tmp_py(
+        'm.reshare.reshare_file_download(["854001", "854100", "999999", "854001"], download_to=d)'
+    ),
 )
 expr_case(
     "reshare_file_download.mock.no_files",
@@ -888,7 +934,7 @@ expr_case(
 )
 expr_case(
     ".reshare_verify_downloads.no_path",
-    'metacheck:::.reshare_verify_downloads(data.frame(size = 1, downloaded = TRUE), tempdir())',
+    "metacheck:::.reshare_verify_downloads(data.frame(size = 1, downloaded = TRUE), tempdir())",
     "lambda m: m.reshare._reshare_verify_downloads(m.pd.DataFrame({'size': [1.0], 'downloaded': [True]}), '/tmp')",
     mock=None,
 )
@@ -913,7 +959,11 @@ links_cases(
         "Data: https://data.mendeley.com/datasets/vjtxybrc28/1 and 10.17632/abc123.2.",
         "Also doi.org/10.17632/xyz and DATA.MENDELEY.COM/datasets/Q9",
     ],
-    ["https://doi.org/10.17632/vjtxybrc28.1", "https://data.mendeley.com/datasets/vjtxybrc28/1/", "https://osf.io/x"],
+    [
+        "https://doi.org/10.17632/vjtxybrc28.1",
+        "https://data.mendeley.com/datasets/vjtxybrc28/1/",
+        "https://osf.io/x",
+    ],
 )
 for label, mid in [
     ("full", "vjtxybrc28"),
@@ -955,7 +1005,9 @@ expr_case(
 )
 expr_case(
     "mendeley_info.mock.id_col_position",
-    online('mendeley_info(data.frame(n = 1:2, u = c("short1", "http://x.org/a b"), mendeley_id = "stale"), id_col = 2)'),
+    online(
+        'mendeley_info(data.frame(n = 1:2, u = c("short1", "http://x.org/a b"), mendeley_id = "stale"), id_col = 2)'
+    ),
     'lambda m: m.mendeley.mendeley_info(m.pd.DataFrame({"n": [1, 2], "u": ["short1", "http://x.org/a b"], "mendeley_id": "stale"}), id_col=2)',
 )
 expr_case(
@@ -1000,7 +1052,12 @@ fn_case(
     f"{PKG}.fsd._fsd_study_id",
     {"url": {"$chr": ["FSD1234", "FSD5678"]}},
 )
-fn_case(".fsd_study_id.empty", "metacheck:::.fsd_study_id", f"{PKG}.fsd._fsd_study_id", {"url": {"$chr": []}})
+fn_case(
+    ".fsd_study_id.empty",
+    "metacheck:::.fsd_study_id",
+    f"{PKG}.fsd._fsd_study_id",
+    {"url": {"$chr": []}},
+)
 links_cases(
     "fsd_links",
     "fsd",
@@ -1026,7 +1083,12 @@ for label, u in [
         f"metacheck:::.fsd_info({rq(u)})",
         f"lambda m: m.fsd._fsd_info({rq(u)})",
     )
-fn_case(".fsd_info.invalid", "metacheck:::.fsd_info", f"{PKG}.fsd._fsd_info", {"fsd_url": "https://example.org"})
+fn_case(
+    ".fsd_info.invalid",
+    "metacheck:::.fsd_info",
+    f"{PKG}.fsd._fsd_info",
+    {"fsd_url": "https://example.org"},
+)
 FSD_VEC = ["FSD2653", "https://doi.org/10.60686/t-fsd1111", None, "FSD2653"]
 expr_case(
     "fsd_info.mock.vector",
@@ -1040,7 +1102,9 @@ expr_case(
 )
 expr_case(
     "fsd_info.mock.table",
-    online(f'fsd_info(fsd_links({tp_r(["See FSD2653."], ["https://services.fsd.tuni.fi/catalogue/FSD1111/"])}), "href")'),
+    online(
+        f'fsd_info(fsd_links({tp_r(["See FSD2653."], ["https://services.fsd.tuni.fi/catalogue/FSD1111/"])}), "href")'
+    ),
     f'lambda m: m.fsd.fsd_info(m.fsd.fsd_links({tp_py(["See FSD2653."], ["https://services.fsd.tuni.fi/catalogue/FSD1111/"])}), "href")',
     compare=IGNORE_PID,
 )

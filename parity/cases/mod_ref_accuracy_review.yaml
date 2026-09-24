@@ -79,6 +79,57 @@
         "r": "source(file.path(root, \"tests/mod_ref_accuracy/edits.R\")); ra_demo(list(list(\"bib\", 1L, \"authors\", \"Nobody, X\")))"
         "py": "(lambda E: E.ra_demo([('bib', 1, 'authors', 'Nobody, X')]))(__import__(\"tests.mod_ref_accuracy.edits\", fromlist=[\"x\"]))"
     "max_authors": !!int "0"
+- "id": "ref_accuracy.max_authors_fractional"
+  "module": "ref_accuracy"
+  "args":
+    "paper":
+      "$expr":
+        "r": "source(file.path(root, \"tests/mod_ref_accuracy/edits.R\")); ra_demo(list(list(\"bib\", 3L, \"doi\", \"10.1177/2515245918770963\"), list(\"bib\", 3L, \"authors\", \"Nobody, X\"), list(\"bib\", 1L, \"authors\", \"Nobody, X\")))"
+        "py": "(lambda E: E.ra_demo([('bib', 3, 'doi', '10.1177/2515245918770963'), ('bib', 3, 'authors', 'Nobody, X'), ('bib', 1, 'authors', 'Nobody, X')]))(__import__(\"tests.mod_ref_accuracy.edits\", fromlist=[\"x\"]))"
+    "max_authors": !!float "-1.5"
+- "id": "ref_accuracy.report_tables.max_authors_fractional"
+  "r": "identity"
+  "py": "copy.copy"
+  "args":
+    "x":
+      "$expr":
+        "r": "source(file.path(root, \"tests/mod_ref_accuracy/edits.R\")); ra_report_tables(module_run(ra_demo(list(list(\"bib\", 3L, \"doi\", \"10.1177/2515245918770963\"), list(\"bib\", 3L, \"authors\", \"Nobody, X\"), list(\"bib\", 1L, \"authors\", \"Nobody, X\"))), \"ref_accuracy\", max_authors = -1.5))"
+        "py": "(lambda E: E.ra_report_tables(pc.module_run(E.ra_demo([('bib', 3, 'doi', '10.1177/2515245918770963'), ('bib', 3, 'authors', 'Nobody, X'), ('bib', 1, 'authors', 'Nobody, X')]), 'ref_accuracy', max_authors=-1.5)))(__import__(\"tests.mod_ref_accuracy.edits\", fromlist=[\"x\"]))"
+- "id": "ref_accuracy.max_authors_fractional_small"
+  "module": "ref_accuracy"
+  "args":
+    "paper":
+      "$expr":
+        "r": "source(file.path(root, \"tests/mod_ref_accuracy/edits.R\")); ra_demo(list(list(\"bib\", 3L, \"doi\", \"10.1177/2515245918770963\"), list(\"bib\", 3L, \"authors\", \"Nobody, X\"), list(\"bib\", 1L, \"authors\", \"Nobody, X\")))"
+        "py": "(lambda E: E.ra_demo([('bib', 3, 'doi', '10.1177/2515245918770963'), ('bib', 3, 'authors', 'Nobody, X'), ('bib', 1, 'authors', 'Nobody, X')]))(__import__(\"tests.mod_ref_accuracy.edits\", fromlist=[\"x\"]))"
+    "max_authors": !!float "-0.5"
+- "id": "ref_accuracy.report_tables.max_authors_fractional_small"
+  "r": "identity"
+  "py": "copy.copy"
+  "args":
+    "x":
+      "$expr":
+        "r": "source(file.path(root, \"tests/mod_ref_accuracy/edits.R\")); ra_report_tables(module_run(ra_demo(list(list(\"bib\", 3L, \"doi\", \"10.1177/2515245918770963\"), list(\"bib\", 3L, \"authors\", \"Nobody, X\"), list(\"bib\", 1L, \"authors\", \"Nobody, X\"))), \"ref_accuracy\", max_authors = -0.5))"
+        "py": "(lambda E: E.ra_report_tables(pc.module_run(E.ra_demo([('bib', 3, 'doi', '10.1177/2515245918770963'), ('bib', 3, 'authors', 'Nobody, X'), ('bib', 1, 'authors', 'Nobody, X')]), 'ref_accuracy', max_authors=-0.5)))(__import__(\"tests.mod_ref_accuracy.edits\", fromlist=[\"x\"]))"
+- "id": "ref_accuracy.max_authors_inf"
+  "module": "ref_accuracy"
+  "args":
+    "paper":
+      "$expr":
+        "r": "source(file.path(root, \"tests/mod_ref_accuracy/edits.R\")); ra_demo(list(list(\"bib\", 3L, \"doi\", \"10.1177/2515245918770963\"), list(\"bib\", 3L, \"authors\", \"Lakens, D; Scheel, A\")))"
+        "py": "(lambda E: E.ra_demo([('bib', 3, 'doi', '10.1177/2515245918770963'), ('bib', 3, 'authors', 'Lakens, D; Scheel, A')]))(__import__(\"tests.mod_ref_accuracy.edits\", fromlist=[\"x\"]))"
+    "max_authors":
+      "$expr":
+        "r": "Inf"
+        "py": "float('inf')"
+- "id": "ref_accuracy.report_tables.max_authors_inf"
+  "r": "identity"
+  "py": "copy.copy"
+  "args":
+    "x":
+      "$expr":
+        "r": "source(file.path(root, \"tests/mod_ref_accuracy/edits.R\")); ra_report_tables(module_run(ra_demo(list(list(\"bib\", 3L, \"doi\", \"10.1177/2515245918770963\"), list(\"bib\", 3L, \"authors\", \"Lakens, D; Scheel, A\"))), \"ref_accuracy\", max_authors = Inf))"
+        "py": "(lambda E: E.ra_report_tables(pc.module_run(E.ra_demo([('bib', 3, 'doi', '10.1177/2515245918770963'), ('bib', 3, 'authors', 'Lakens, D; Scheel, A')]), 'ref_accuracy', max_authors=float('inf'))))(__import__(\"tests.mod_ref_accuracy.edits\", fromlist=[\"x\"]))"
 - "id": "ref_accuracy.title_similarity_1"
   "module": "ref_accuracy"
   "args":
@@ -282,6 +333,36 @@
       "$expr":
         "r": "source(file.path(root, \"tests/mod_ref_accuracy/edits.R\")); ra_demo(drop = \"text\")"
         "py": "(lambda E: E.ra_demo(drop=['text']))(__import__(\"tests.mod_ref_accuracy.edits\", fromlist=[\"x\"]))"
+- "id": "ref_accuracy.single_reference"
+  "module": "ref_accuracy"
+  "args":
+    "paper":
+      "$expr":
+        "r": "source(file.path(root, \"tests/mod_ref_accuracy/edits.R\")); ra_set(ra_keep(ra_demo(), \"bib\", 2L), \"bib\", 2L, \"container\", \"Other Journal\")"
+        "py": "(lambda E: E.ra_set(E.ra_keep(E.ra_demo(), 'bib', [2]), 'bib', 2, 'container', 'Other Journal'))(__import__(\"tests.mod_ref_accuracy.edits\", fromlist=[\"x\"]))"
+- "id": "ref_accuracy.report_tables.single_reference"
+  "r": "identity"
+  "py": "copy.copy"
+  "args":
+    "x":
+      "$expr":
+        "r": "source(file.path(root, \"tests/mod_ref_accuracy/edits.R\")); ra_report_tables(module_run(ra_set(ra_keep(ra_demo(), \"bib\", 2L), \"bib\", 2L, \"container\", \"Other Journal\"), \"ref_accuracy\"))"
+        "py": "(lambda E: E.ra_report_tables(pc.module_run(E.ra_set(E.ra_keep(E.ra_demo(), 'bib', [2]), 'bib', 2, 'container', 'Other Journal'), 'ref_accuracy')))(__import__(\"tests.mod_ref_accuracy.edits\", fromlist=[\"x\"]))"
+- "id": "ref_accuracy.single_reference_no_doi"
+  "module": "ref_accuracy"
+  "args":
+    "paper":
+      "$expr":
+        "r": "source(file.path(root, \"tests/mod_ref_accuracy/edits.R\")); ra_keep(ra_keep(ra_demo(list(list(\"bib\", 4L, \"doi\", \"\"))), \"bib\", 4L), \"bib_match\", 3L)"
+        "py": "(lambda E: E.ra_keep(E.ra_keep(E.ra_demo([('bib', 4, 'doi', '')]), 'bib', [4]), 'bib_match', [3]))(__import__(\"tests.mod_ref_accuracy.edits\", fromlist=[\"x\"]))"
+- "id": "ref_accuracy.report_tables.single_reference_no_doi"
+  "r": "identity"
+  "py": "copy.copy"
+  "args":
+    "x":
+      "$expr":
+        "r": "source(file.path(root, \"tests/mod_ref_accuracy/edits.R\")); ra_report_tables(module_run(ra_keep(ra_keep(ra_demo(list(list(\"bib\", 4L, \"doi\", \"\"))), \"bib\", 4L), \"bib_match\", 3L), \"ref_accuracy\"))"
+        "py": "(lambda E: E.ra_report_tables(pc.module_run(E.ra_keep(E.ra_keep(E.ra_demo([('bib', 4, 'doi', '')]), 'bib', [4]), 'bib_match', [3]), 'ref_accuracy')))(__import__(\"tests.mod_ref_accuracy.edits\", fromlist=[\"x\"]))"
 - "id": "ref_consistency.error.character_xref_id"
   "module": "ref_consistency"
   "args":
@@ -406,6 +487,21 @@
       "$expr":
         "r": "source(file.path(root, \"tests/mod_ref_accuracy/edits.R\")); ra_demo(dup_match = c(2L, 3L))"
         "py": "(lambda E: E.ra_demo(dup_match=[2, 3]))(__import__(\"tests.mod_ref_accuracy.edits\", fromlist=[\"x\"]))"
+- "id": "ref_consistency.single_reference"
+  "module": "ref_consistency"
+  "args":
+    "paper":
+      "$expr":
+        "r": "source(file.path(root, \"tests/mod_ref_accuracy/edits.R\")); ra_keep(ra_demo(), \"bib\", 0L)"
+        "py": "(lambda E: E.ra_keep(E.ra_demo(), 'bib', [0]))(__import__(\"tests.mod_ref_accuracy.edits\", fromlist=[\"x\"]))"
+- "id": "ref_consistency.report_tables.single_reference"
+  "r": "identity"
+  "py": "copy.copy"
+  "args":
+    "x":
+      "$expr":
+        "r": "source(file.path(root, \"tests/mod_ref_accuracy/edits.R\")); ra_report_tables(module_run(ra_keep(ra_demo(), \"bib\", 0L), \"ref_consistency\"))"
+        "py": "(lambda E: E.ra_report_tables(pc.module_run(E.ra_keep(E.ra_demo(), 'bib', [0]), 'ref_consistency')))(__import__(\"tests.mod_ref_accuracy.edits\", fromlist=[\"x\"]))"
 - "id": "ref_consistency.paperlist.all_empty_bib"
   "module": "ref_consistency"
   "args":
@@ -442,6 +538,16 @@
   "args":
     "paper":
       "$paper": "upstream/metacheck/tests/testthat/fixtures/problems/203020.json"
+- "id": "ref_consistency.bibr_golden"
+  "module": "ref_consistency"
+  "args":
+    "paper":
+      "$paper": "upstream/metacheck/inst/demos/golden_bibr_10_2.json"
+- "id": "ref_accuracy.bibr_golden"
+  "module": "ref_accuracy"
+  "args":
+    "paper":
+      "$paper": "upstream/metacheck/inst/demos/golden_bibr_10_2.json"
 - "id": "ref_accuracy.module_help"
   "r": "identity"
   "py": "copy.copy"

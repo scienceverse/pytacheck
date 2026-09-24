@@ -15,6 +15,7 @@ The module relies on base R's ``agrep()`` / ``agrepl()`` (TRE approximate matchi
 
 from __future__ import annotations
 
+import bisect
 import functools
 import itertools
 import math
@@ -54,7 +55,10 @@ class _Agrep:
     Matching is exact: the pattern is split into ``k + 1`` pieces, one of which
     must occur verbatim in any approximate match (pigeonhole), and the edit
     distance is then computed only in the windows around those occurrences,
-    with Myers' bit-parallel algorithm.
+    with Myers' bit-parallel algorithm. An exact occurrence at text position
+    ``pos`` of the piece at pattern offset ``o`` places the whole match inside
+    ``[pos - o - k, pos - o + m + k)``: at most ``k`` net insertions/deletions
+    happen before or after the piece.
     """
 
     __slots__ = ("high", "icase", "k", "m", "mask", "pattern", "peq", "pieces")
@@ -67,14 +71,16 @@ class _Agrep:
         self.k = math.ceil(0.1 * self.m)
         n = self.k + 1
         size, extra = divmod(self.m, n)
-        pieces: list[str] = []
+        # piece -> its offsets in the pattern (a piece string may occur twice)
+        pieces: dict[str, tuple[int, ...]] = {}
         start = 0
         for i in range(n):
             ln = size + (1 if i < extra else 0)
             if ln:
-                pieces.append(self.pattern[start : start + ln])
+                piece = self.pattern[start : start + ln]
+                pieces[piece] = (*pieces.get(piece, ()), start)
             start += ln
-        self.pieces = tuple(dict.fromkeys(pieces))
+        self.pieces = pieces
         # bit masks for Myers' algorithm: bit i set where pattern[i] == char
         peq: dict[str, int] = {}
         for i, c in enumerate(self.pattern):
@@ -115,15 +121,15 @@ class _Agrep:
 
     def match(self, s: str) -> bool:
         """``agrepl()`` for one non-missing, already :meth:`prepare`-d string."""
-        if self.m <= self.k:  # pragma: no cover - not reachable with max.distance = 0.1
+        if self.m <= self.k:  # a 1-character pattern: every string is within k = 1 edit
             return True
-        # a match is at most m + k long and contains an exact occurrence of a piece
-        span = self.m + self.k
+        # a match contains an exact occurrence of a piece; see the class docstring
+        lead, trail = self.k, self.m + self.k
         windows: list[tuple[int, int]] = []
-        for piece in self.pieces:
+        for piece, offsets in self.pieces.items():
             pos = s.find(piece)
             while pos != -1:
-                windows.append((max(0, pos + len(piece) - span), pos + span))
+                windows.extend((max(0, pos - o - lead), pos - o + trail) for o in offsets)
                 pos = s.find(piece, pos + 1)
         if not windows:
             return False
@@ -136,9 +142,35 @@ class _Agrep:
                 merged.append([lo, hi])
         return any(self._within(s[lo:hi]) for lo, hi in merged)
 
+    def which(self, xs: Sequence[str | None]) -> list[int]:
+        """0-based indices of the matches among already :meth:`prepare`-d strings (``None`` = NA).
+
+        The pigeonhole prefilter runs once over the concatenated strings (C-speed
+        ``str.find``), so only the few elements containing a piece are checked with
+        :meth:`match`. Pieces never contain the ``"\\x00"`` separator, so a piece
+        occurrence always lies inside a single element.
+        """
+        if self.m <= self.k:  # every non-NA string is within k edits (R: agrepl("a", "") is TRUE)
+            return [i for i, s in enumerate(xs) if s is not None]
+        if not xs:
+            return []
+        texts = ["" if s is None else s for s in xs]
+        big = "\x00".join(texts)
+        starts = list(itertools.accumulate((len(t) + 1 for t in texts[:-1]), initial=0))
+        ends = [*starts[1:], len(big) + 1]
+        candidates: set[int] = set()
+        for piece in self.pieces:
+            pos = big.find(piece)
+            while pos != -1:
+                i = bisect.bisect_right(starts, pos) - 1
+                candidates.add(i)
+                pos = big.find(piece, ends[i])  # one hit makes the element a candidate
+        return sorted(i for i in candidates if xs[i] is not None and self.match(texts[i]))
+
     def __call__(self, x: Sequence[Any]) -> list[bool]:
         """``agrepl()`` over a vector; ``NA`` never matches."""
-        return [False if _is_na(v) else self.match(self.prepare(str(v))) for v in x]
+        hits = set(self.which([None if _is_na(v) else self.prepare(str(v)) for v in x]))
+        return [i in hits for i in range(len(x))]
 
 
 def _ascii_lower(s: str) -> str:
@@ -158,9 +190,12 @@ def agrep(pattern: str, x: Sequence[Any], ignore_case: bool = False) -> list[int
 
 def agrepl(pattern: str, x: Any, ignore_case: bool = False) -> Any:
     """R ``agrepl(pattern, x, ignore.case = ignore_case)`` (a scalar for a scalar)."""
-    if isinstance(x, str) or _is_na(x):
-        return _matcher(pattern, ignore_case)([x])[0]
-    return _matcher(pattern, ignore_case)(list(x))
+    rx = _matcher(pattern, ignore_case)
+    if isinstance(x, str):
+        return rx.match(rx.prepare(x))
+    if _is_na(x):
+        return False
+    return rx(list(x))
 
 
 @functools.cache
@@ -257,8 +292,7 @@ def rtransparent_coi(splitted: Sequence[Any]) -> str:
     lowered = [None if s is None else _ascii_lower(s) for s in splitted]
 
     def agrep_i(pattern: str) -> list[int]:
-        rx = _matcher(pattern, True)
-        return [i for i, s in enumerate(lowered, start=1) if s is not None and rx.match(s)]
+        return [i + 1 for i in _matcher(pattern, True).which(lowered)]
 
     is_conflict = agrep_i("conflict of interest")
     is_conflicts = agrep_i("conflicts of interest")

@@ -1,0 +1,46 @@
+{
+ "data": {
+  "id": "unicd",
+  "type": "registrations",
+  "attributes": {
+   "title": "Synthetic registration unicd",
+   "description": "",
+   "date_created": "2024-01-02T03:04:05.000001",
+   "date_modified": "2024-01-03T03:04:05.000001",
+   "date_registered": "2024-01-04T03:04:05.000001",
+   "embargo_end_date": null,
+   "withdrawn": false,
+   "registration_supplement": "Synthetic Template",
+   "ia_url": "https://archive.org/details/osf-registrations-unicd-v1",
+   "registration_responses": {
+    "500-1": "answer 0",
+    "500-3": "answer 1",
+    "500-5": "answer 2",
+    "500-7": "answer 3",
+    "500-9": "answer 4",
+    "500-11": "answer 5",
+    "500-13": "answer 6"
+   }
+  },
+  "relationships": {
+   "registration_schema": {
+    "data": {
+     "id": "ddddddddddddddddddddddd4",
+     "type": "registration-schemas"
+    },
+    "links": {
+     "related": {
+      "href": "https://api.osf.io/v2/schemas/registrations/ddddddddddddddddddddddd4/",
+      "meta": {}
+     }
+    }
+   }
+  },
+  "links": {
+   "html": "https://osf.io/unicd/"
+  }
+ },
+ "meta": {
+  "version": "2.0"
+ }
+}

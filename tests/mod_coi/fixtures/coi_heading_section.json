@@ -1,0 +1,90 @@
+{
+ "paper_id": "coi_heading_section",
+ "info": [
+  {
+   "title": "coi_heading_section",
+   "keywords": null,
+   "doi": null
+  }
+ ],
+ "author": [],
+ "text": [
+  {
+   "text": "The results replicate.",
+   "text_id": 1,
+   "paragraph_id": 1,
+   "section_id": 0,
+   "page_number": null,
+   "formatted": null
+  },
+  {
+   "text": "Conflict of interest",
+   "text_id": 2,
+   "paragraph_id": 2,
+   "section_id": 1,
+   "page_number": null,
+   "formatted": null
+  },
+  {
+   "text": "The authors declared no conflicts.",
+   "text_id": 3,
+   "paragraph_id": 2,
+   "section_id": 1,
+   "page_number": null,
+   "formatted": null
+  },
+  {
+   "text": "None.",
+   "text_id": 4,
+   "paragraph_id": 2,
+   "section_id": 1,
+   "page_number": null,
+   "formatted": null
+  },
+  {
+   "text": "We thank the reviewers.",
+   "text_id": 5,
+   "paragraph_id": 3,
+   "section_id": 2,
+   "page_number": null,
+   "formatted": null
+  },
+  {
+   "text": "Disclosure of patient information was approved.",
+   "text_id": 6,
+   "paragraph_id": 3,
+   "section_id": 2,
+   "page_number": null,
+   "formatted": null
+  }
+ ],
+ "section": [
+  {
+   "section_id": 0,
+   "header": "Discussion",
+   "parent_section_id": null,
+   "section_type": "discussion",
+   "classification_score": null
+  },
+  {
+   "section_id": 1,
+   "header": "Declaration of Conflicting Interests",
+   "parent_section_id": null,
+   "section_type": "unknown",
+   "classification_score": null
+  },
+  {
+   "section_id": 2,
+   "header": "Acknowledgments",
+   "parent_section_id": null,
+   "section_type": "acknowledgement",
+   "classification_score": null
+  }
+ ],
+ "url": [],
+ "bib": [],
+ "xref": [],
+ "figure": [],
+ "table": [],
+ "eq": []
+}

@@ -30,13 +30,21 @@ _REDACT = re.compile(r"[?&]page(%5[Bb]size%5[Dd]|\[size\])=100")
 
 
 def mock_path(request: httpx.Request) -> str:
-    """``httptest2::build_mock_url()`` after metacheck's ``page[size]`` redactor."""
+    """``httptest2::build_mock_url()`` after metacheck's ``page[size]`` redactor.
+
+    httptest2 splits the URL with ``strsplit(url, "?", fixed = TRUE)`` and
+    hashes only the second piece, so a URL with two ``?`` (an OSF id carrying
+    ``?view_only=`` inside ``.../guids/<id>/?resolve=false``) is hashed up to
+    its second ``?``.
+    """
     url = _REDACT.sub("", str(request.url))
     url = re.sub(r"^.*?://", "", url, count=1)
-    base, _, query = url.partition("?")
-    path = re.sub(r"/$", "", base).replace(":", "-")
-    if query:
-        path += "-" + r_digest(query)[:6]
+    parts = url.split("?")
+    if len(parts) > 1 and parts[-1] == "":
+        parts.pop()  # strsplit() drops a trailing empty piece
+    path = re.sub(r"/$", "", parts[0]).replace(":", "-")
+    if len(parts) > 1:
+        path += "-" + r_digest(parts[1])[:6]
     if request.method != "GET":
         path += "-" + request.method
     return path
@@ -146,6 +154,30 @@ def run_prereg(
     from pytacheck.report.report import module_report
 
     return _R_CHUNK.sub("\n<R-CHUNK>\n", module_report(mo))
+
+
+def run_prereg_tables(**kwargs: Any) -> list[Any]:
+    """The tables in the report of :func:`run_prereg` (a parity case).
+
+    R deparses each ``scroll_table()`` into the report's code chunks, which the
+    report comparison skips; the R side of these cases evaluates that code
+    back into data frames, and this returns the same tables (in report order)
+    so their cells are compared.
+    """
+    from pytacheck.report.blocks import ReportTable
+
+    mo = run_prereg(**kwargs)
+    tables: list[Any] = []
+
+    def walk(x: Any) -> None:
+        if isinstance(x, ReportTable):
+            tables.append(x.data.reset_index(drop=True))
+        elif isinstance(x, list | tuple):
+            for item in x:
+                walk(item)
+
+    walk(mo["report"])
+    return tables
 
 
 def tp(url: Sequence[str] | str, paper_id: str, text: Sequence[str] | None = None) -> Any:

@@ -1,0 +1,29 @@
+{
+  "id": ".zenodo_id.review",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "123",
+      "44",
+      "1",
+      "321",
+      "99",
+      null,
+      "0123"
+    ],
+    "names": [
+      "  123  ",
+      "10.5281/ZENODO.44",
+      "https://sandbox.zenodo.org/records/1",
+      "zenodo.org/badge/DOI/10.5281/zenodo.321.svg",
+      "zenodo.99x",
+      "zenodo.org/uploads/",
+      "0123"
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

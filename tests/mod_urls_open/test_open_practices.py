@@ -282,3 +282,55 @@ def test_prefilter_matches_plain_text_search(
     assert fast.traffic_light == slow.traffic_light
     assert fast.summary_text == slow.summary_text
     assert fast.report == slow.report
+
+
+# review: paper order and chained summary tables -----------------------------
+
+
+def _paper(texts: list[str], pid: str) -> pc.Paper:
+    p = pc.test_paper(texts)
+    p.paper_id = pid
+    return p
+
+
+def test_rows_follow_paper_list_order_not_sorted_ids() -> None:
+    # R: factor(paper_id, paper_id(paper)) -> the paper list's order, not C/ICU sort order
+    papers = pc.PaperList(
+        [
+            _paper(["The analysis code is available on GitHub (https://github.com/a/b)."], "zeta"),
+            _paper(["Nothing to see."], "Alpha"),
+            _paper(["Data are archived at https://zenodo.org/1."], "beta"),
+            _paper(["Scripts are available at https://github.com/s/t, data on request."], "Beta"),
+        ]
+    )
+    mo = run(papers)
+    assert mo.table["paper_id"].tolist() == ["zeta", "beta", "Beta"]
+    assert mo.summary_table["paper_id"].tolist() == ["zeta", "Alpha", "beta", "Beta"]
+    assert mo.summary_text == (
+        "1 papers shared both data and code, 1 only data, 1 only code, and 0 neither."
+    )
+
+
+def test_chained_na_replace_keeps_list_columns_r_like() -> None:
+    # all_urls' unnamed na_replace (0) applies to every summary column, including
+    # open_practices' list columns: R replaces the NA_character_ cells with the
+    # number 0 and leaves the NULL cells of papers without any statement alone.
+    papers = pc.PaperList(
+        [
+            _paper(["The data and code are available at https://osf.io/abcde."], "p1"),
+            _paper(["Nothing to see here."], "p2"),
+            _paper(["Materials are available on request.", "See www.example.com."], "p3"),
+        ]
+    )
+    mo = pc.module_run(run(papers), "all_urls")
+    st = mo.summary_table
+    data = st["data_statements"].tolist()
+    assert data[0] == ["The data and code are available at https://osf.io/abcde."]
+    assert pd.isna(data[1])  # R: NULL (unmatched in the left join), not replaced
+    assert data[2] == 0 and not isinstance(data[2], str)
+    assert st["materials_statements"].tolist()[2] == ["Materials are available on request."]
+    assert st["prereg_statements"].tolist()[0] == 0
+    # logical NA columns become numeric 0, as `summary_table[is.na(x), col] <- 0` does
+    assert st["materials_open"].tolist() == [0.0, 0.0, 0.0]
+    assert st["on_request"].tolist() == [0.0, 0.0, 1.0]
+    assert st["urls"].tolist() == [1, 0, 1]

@@ -1,0 +1,23 @@
+{
+ "doi": "10.5281/zenodo.X",
+ "updated": "2026-01-02T00:00:00+00:00",
+ "owners": [
+  {
+   "id": 7
+  }
+ ],
+ "id": 5559001,
+ "metadata": {
+  "title": "Title only licence",
+  "license": {
+   "title": {
+    "en": "Custom licence"
+   }
+  },
+  "keywords": [],
+  "resource_type": {
+   "title": "Dataset"
+  }
+ },
+ "files": []
+}

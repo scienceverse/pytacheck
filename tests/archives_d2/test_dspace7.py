@@ -27,7 +27,9 @@ def test_host_list() -> None:
 def test_parse() -> None:
     parsed = _dspace7_parse(
         [
-            GT_URL.upper().replace("HTTPS://REPOSITORY.GATECH.EDU", "https://repository.gatech.edu"),
+            GT_URL.upper().replace(
+                "HTTPS://REPOSITORY.GATECH.EDU", "https://repository.gatech.edu"
+            ),
             "https://repository.gatech.edu/handle/1853/67239.",
             "http://hdl.handle.net/1853/67239",
             None,
@@ -46,7 +48,10 @@ def test_links() -> None:
         ["Data: repository.gatech.edu/handle/1853/67239/ and nothing else."],
         [GT_URL + "/", "https://osf.io/abcde"],
     )
-    assert dspace7_links(paper)["href"].tolist() == [GT_URL, "repository.gatech.edu/handle/1853/67239"]
+    assert dspace7_links(paper)["href"].tolist() == [
+        GT_URL,
+        "repository.gatech.edu/handle/1853/67239",
+    ]
 
 
 def test_info_by_uuid_and_by_handle(mock_api: object) -> None:

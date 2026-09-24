@@ -146,7 +146,7 @@ def test_info_uses_the_listing_cache(mock_api: object) -> None:
 
 def test_info_offline(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setattr("pytacheck.utils.online", lambda *a, **k: False)
-    with pytest.raises(ConnectionError, match="dataone.org seems to be offline"):
+    with pytest.raises(ConnectionError, match=r"dataone\.org seems to be offline"):
         dataone_info("10.18739/A2GT5FG86")
     # nothing valid: no connectivity check needed
     assert len(dataone_info("https://example.org")) == 1

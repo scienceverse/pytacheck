@@ -14,9 +14,12 @@ Everything else in an index entry is computed: the tree hash, whether the
 pack has code, its languages, each module's metadata (read statically from
 the literal ``@module(...)`` arguments -- nothing is imported), preset
 descriptions and validation-derived PPV and sensitivity. Maintainers set
-``reviewed`` and ``yanked`` in the entry files; the build otherwise keeps
-them from the existing index (``reviewed`` only while the tree hash is
-unchanged).
+``yanked`` and record a review in the entry files as ``reviewed`` (the date)
+plus ``reviewed_tree_sha256`` (the tree hash of the files they read), so a
+review never carries over to changed files. The build otherwise keeps both
+from the existing index (``reviewed`` only while the tree hash is unchanged).
+A review that no longer matches the pack is cleared, and is an error under
+``--check`` so CI fails until a maintainer reviews the new files.
 """
 
 from __future__ import annotations
@@ -48,7 +51,7 @@ from pytacheck.packs.tree import tree_sha256
 __all__ = ["store_build"]
 
 _SHA = re.compile(r"^[0-9a-f]{40}$")
-_ENTRY_KEYS = frozenset({"name", "source", "reviewed", "yanked", "version"})
+_ENTRY_KEYS = frozenset({"name", "source", "reviewed", "reviewed_tree_sha256", "yanked", "version"})
 _GITHUB_REMOTE = re.compile(
     r"^(?:https://(?:[^@/]+@)?github\.com/|git@github\.com:|ssh://git@github\.com/)"
     r"([^/]+/[^/]+?)(?:\.git)?/?$"
@@ -149,21 +152,44 @@ def _review_fields(
     entry_file: Mapping[str, Any] | None,
     old: Mapping[str, Any] | None,
     issues: list[CheckIssue],
+    *,
+    check: bool = False,
 ) -> dict[str, Any]:
+    """``reviewed`` / ``yanked`` of an index entry: a review holds only for the files read."""
     out: dict[str, Any] = {"reviewed": None, "yanked": None}
+    stale: str | None = None
     if old:
         out["yanked"] = old.get("yanked")
         if old.get("reviewed"):
             if old.get("tree_sha256") == tree:
                 out["reviewed"] = old["reviewed"]
             else:
-                issues.append(
-                    _warn(f"packs/{name}", "changed since it was reviewed: 'reviewed' is cleared")
-                )
+                stale = f"the review of {old['reviewed']} was for tree {old.get('tree_sha256')}"
     if entry_file:
-        for key in ("reviewed", "yanked"):
-            if key in entry_file:
-                out[key] = entry_file[key]
+        if "yanked" in entry_file:
+            out["yanked"] = entry_file["yanked"]
+        date = entry_file.get("reviewed")
+        reviewed_tree = entry_file.get("reviewed_tree_sha256")
+        if date and reviewed_tree == tree:
+            out["reviewed"], stale = date, None
+        elif date and not reviewed_tree:
+            out["reviewed"] = None
+            stale = (
+                f"'reviewed' ({date}) is not tied to the files that were read: add "
+                f'"reviewed_tree_sha256": "{tree}" to packs/{name}.json if they are these'
+            )
+        elif date:
+            out["reviewed"] = None
+            stale = f"the review of {date} was for tree {reviewed_tree}"
+        elif "reviewed" in entry_file:  # an explicit null withdraws a review
+            out["reviewed"], stale = None, None
+    if stale is not None:
+        message = (
+            f"changed since it was reviewed ({stale}; the pack is now tree {tree}): "
+            "'reviewed' is cleared until a maintainer reviews these files and records "
+            f'"reviewed" and "reviewed_tree_sha256" in packs/{name}.json'
+        )
+        issues.append(_err(f"packs/{name}", message) if check else _warn(f"packs/{name}", message))
     return out
 
 
@@ -302,7 +328,9 @@ def store_build(
             if has_git and not rev:
                 issues.append(_warn(where, "is not committed yet: it gets a path source"))
             entry["source"] = {"path": f"packs/{name}"}
-        entry.update(_review_fields(name, entry["tree_sha256"], extra, old.get(name), issues))
+        entry.update(
+            _review_fields(name, entry["tree_sha256"], extra, old.get(name), issues, check=check)
+        )
         entries[name] = entry
 
     for name, data in entry_files.items():
@@ -340,7 +368,9 @@ def store_build(
                 )
             entry = _pack_fields(dest, manifest)
         entry["source"] = source
-        entry.update(_review_fields(name, entry["tree_sha256"], data, old.get(name), issues))
+        entry.update(
+            _review_fields(name, entry["tree_sha256"], data, old.get(name), issues, check=check)
+        )
         entries[name] = entry
 
     fields = list(dict.fromkeys([*FIELDS, *(meta.get("fields") or [])]))

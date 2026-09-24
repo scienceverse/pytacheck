@@ -1,0 +1,44 @@
+{
+ "id": 5559102,
+ "metadata": {
+  "title": "Ties"
+ },
+ "files": [
+  {
+   "id": "5559102-six1.bin",
+   "key": "six1.bin",
+   "size": 6291456,
+   "checksum": "md5:c4ca4238a0b923820dcc509a6f75849b",
+   "links": {
+    "self": "https://zenodo.org/api/records/5559102/files/six1.bin/content"
+   }
+  },
+  {
+   "id": "5559102-six2.bin",
+   "key": "six2.bin",
+   "size": 6291456,
+   "checksum": "md5:c81e728d9d4c2f636f067f89cc14862c",
+   "links": {
+    "self": "https://zenodo.org/api/records/5559102/files/six2.bin/content"
+   }
+  },
+  {
+   "id": "5559102-one.bin",
+   "key": "one.bin",
+   "size": 1048576,
+   "checksum": "md5:eccbc87e4b5ce2fe28308fd9f2a7baf3",
+   "links": {
+    "self": "https://zenodo.org/api/records/5559102/files/one.bin/content"
+   }
+  },
+  {
+   "id": "5559102-half.bin",
+   "key": "half.bin",
+   "size": 566231.04,
+   "checksum": "md5:a87ff679a2f3e71d9181a67b7542122c",
+   "links": {
+    "self": "https://zenodo.org/api/records/5559102/files/half.bin/content"
+   }
+  }
+ ]
+}

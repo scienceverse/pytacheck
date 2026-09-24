@@ -1,0 +1,30 @@
+{
+ "data": {
+  "id": "arrys",
+  "type": "guids",
+  "attributes": {},
+  "relationships": {
+   "referent": {
+    "links": {
+     "related": {
+      "href": "https://api.osf.io/v2/registrations/arrys/",
+      "meta": {
+       "type": "registrations"
+      }
+     }
+    },
+    "data": {
+     "id": "arrys",
+     "type": "registrations"
+    }
+   }
+  },
+  "links": {
+   "self": "https://api.osf.io/v2/guids/arrys/",
+   "html": "https://osf.io/arrys/"
+  }
+ },
+ "meta": {
+  "version": "2.0"
+ }
+}

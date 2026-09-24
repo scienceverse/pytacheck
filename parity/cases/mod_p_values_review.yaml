@@ -385,3 +385,28 @@
   "py": "tests.mod_p_values.report_tables.identity"
   "args":
     "x": {"$expr": {"r": "{source('tests/mod_p_values/report_tables.R'); mp_report_tables(test_paper(c('Bad p < .05 and p < .05 again.', 'Bad p < .05 and p < .05 again.', 'Zero p = .000\nline two p > .1.', 'Fine p = .012.', 'Note * p < .05, p < .01.')), 'stat_p_nonsig')}", "py": "__import__('tests.mod_p_values.report_tables', fromlist=['x']).mp_report_tables(pc.test_paper(['Bad p < .05 and p < .05 again.', 'Bad p < .05 and p < .05 again.', 'Zero p = .000\\nline two p > .1.', 'Fine p = .012.', 'Note * p < .05, p < .01.']), 'stat_p_nonsig')"}}
+# --------------------------------------------- NA location keys (text_expand)
+- "id": "stat_p_exact.na_text_id"
+  "module": "stat_p_exact"
+  "args":
+    "paper":
+      "$expr":
+        "r": "local({p <- test_paper(c('A p < .05.', 'B p = .000.', 'C p = .2.', 'D p > .1.')); p$text$text_id[c(1, 2)] <- NA; p$text$paragraph_id[4] <- NA; p})"
+        "py": "(lambda p: (p.__setitem__('text', p.text.assign(text_id=pd.array([None, None, 3, 4], dtype='Int64'), paragraph_id=[0.0, 0.0, 0.0, float('nan')])), p)[1])(pc.test_paper(['A p < .05.', 'B p = .000.', 'C p = .2.', 'D p > .1.']))"
+  "compare": {"ignore": ["paper_id", "table.paper_id", "summary_table.paper_id"]}
+- "id": "stat_p_nonsig.na_text_id"
+  "module": "stat_p_nonsig"
+  "args":
+    "paper":
+      "$expr":
+        "r": "local({p <- test_paper(c('A p > .05.', 'B p = .01.', 'C p = .2.', 'D p > .1.')); p$text$text_id[c(1, 2)] <- NA; p$text$paragraph_id[4] <- NA; p})"
+        "py": "(lambda p: (p.__setitem__('text', p.text.assign(text_id=pd.array([None, None, 3, 4], dtype='Int64'), paragraph_id=[0.0, 0.0, 0.0, float('nan')])), p)[1])(pc.test_paper(['A p > .05.', 'B p = .01.', 'C p = .2.', 'D p > .1.']))"
+  "compare": {"ignore": ["paper_id", "table.paper_id", "summary_table.paper_id"]}
+- "id": "all_p_values.na_text_id"
+  "module": "all_p_values"
+  "args":
+    "paper":
+      "$expr":
+        "r": "local({p <- test_paper(c('A p > .05.', 'B p = .01.', 'C p = .2.', 'D p > .1.')); p$text$text_id[c(1, 2)] <- NA; p$text$paragraph_id[4] <- NA; p})"
+        "py": "(lambda p: (p.__setitem__('text', p.text.assign(text_id=pd.array([None, None, 3, 4], dtype='Int64'), paragraph_id=[0.0, 0.0, 0.0, float('nan')])), p)[1])(pc.test_paper(['A p > .05.', 'B p = .01.', 'C p = .2.', 'D p > .1.']))"
+  "compare": {"ignore": ["paper_id", "table.paper_id", "summary_table.paper_id"]}
