@@ -104,6 +104,17 @@ STRING_NUMBERS = (
     "PASS, correlation)."
 )
 
+# control characters: llm() strips them from the text it sends, then joins the
+# replies back on the unstripped paragraph text
+CONTROL = (
+    "A sensitivity power\x0c analysis with the CONTROL sample of 64 showed 80% power for "
+    "d = 0.5 (alpha = .05, unpaired t-test, pwr)."
+)
+FB_CONTROL = (
+    "An a priori power\x01 analysis for the FALLBACK CONTROL sample gave 52 participants for "
+    "80% power."
+)
+
 # regex classification: case, Unicode and number-format variants
 UNICODE = [
     "The POWERED design had 80% POWER for Post Hoc tests.",
@@ -245,6 +256,21 @@ REPLIES: dict[str, dict[str, Any]] = {
         ]
     },
     NULL_ONLY[:40]: {"structured": [S.pa(power_type=None, sample_size=3)]},
+    "the CONTROL sample of 64": {
+        "structured": [
+            S.pa(
+                power_type="sensitivity",
+                statistical_test="unpaired t-test",
+                sample_size=64,
+                alpha_level=0.05,
+                power=0.8,
+                effect_size=0.5,
+                effect_size_metric="Cohen's d",
+                software="pwr",
+            )
+        ]
+    },
+    "FALLBACK CONTROL sample": {"structured": 400, "fallback": fenced([FULL])},
     OUT_OF_ENUM[:40]: {
         "structured": [
             S.pa(
@@ -424,6 +450,10 @@ llm_case("power.review.llm.extra_keys.tables", tp(EXTRA_KEYS), tables=True)
 llm_case("power.review.llm.no_wrapper", tp(NO_WRAPPER))
 llm_case("power.review.llm.bare_array", tp(BARE_ARRAY))
 llm_case("power.review.llm.string_numbers", tp(STRING_NUMBERS))
+llm_case("power.review.llm.control_char", tp(CONTROL))
+llm_case("power.review.llm.control_char_mixed", paras([CONTROL, S.COMPLETE], [0, 1]))
+llm_case("power.review.fallback.control_char", tp(FB_CONTROL))
+llm_case("power.review.fallback.control_char_mixed", paras([FB_CONTROL, FB_COMPLETE], [0, 1]))
 llm_case("power.review.llm.seed_null", tp(S.COMPLETE), ", seed = NULL", ", seed=None")
 llm_case(
     "power.review.llm.no_key",

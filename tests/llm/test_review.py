@@ -272,3 +272,20 @@ def test_parse_r_datetime_uses_local_time_zone(monkeypatch: pytest.MonkeyPatch) 
     finally:
         monkeypatch.undo()
         time.tzset()
+
+
+@respx.mock
+def test_local_providers_missing_vs_null_model(monkeypatch: pytest.MonkeyPatch) -> None:
+    """``chat_lmstudio()`` lacks a model; ``chat("lmstudio")`` passes ``model = NULL``."""
+    monkeypatch.delenv("LMSTUDIO_BASE_URL", raising=False)
+    monkeypatch.delenv("LMSTUDIO_API_KEY", raising=False)
+    respx.get("http://localhost:1234/v1/models").mock(
+        return_value=httpx.Response(200, json={"data": [{"id": "a"}, {"id": "b"}]})
+    )
+    with pytest.raises(LLMError) as e:
+        P.chat_lmstudio()
+    assert str(e.value) == 'Must specify `model`.\nℹ Locally available models: "a" and "b".'
+    with pytest.raises(LLMError, match=r"^argument is of length zero$"):
+        P.chat("lmstudio")
+    with pytest.raises(LLMError, match="Download the model using the LM Studio GUI"):
+        P.chat("lmstudio/c")
