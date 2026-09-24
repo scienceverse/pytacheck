@@ -38,6 +38,7 @@ __all__ = [
     "data_dir",
     "email",
     "load_config",
+    "local_code",
     "project_config_path",
     "trust_local",
     "trusted_local",
@@ -479,11 +480,14 @@ def update_config(scope: str, fn: Callable[[dict[str, Any]], dict[str, Any] | No
 
     *fn* receives the file's current content (``{}`` when it does not exist)
     and may change it in place or return a replacement. With
-    ``PYTACHECK_CONFIG=<file>`` every scope writes that file.
+    ``PYTACHECK_CONFIG=<file>`` every scope writes that file. Local code that
+    this edit adds to a project file is trusted (the user added it); code the
+    file already named keeps its trust status.
     """
     global _writes
     path = config_path(scope)
     data = _read_json(path)
+    before = _local_code_of(data, path) if scope == "project" else set()
     result = fn(data)
     if result is not None:
         data = result
@@ -508,4 +512,23 @@ def update_config(scope: str, fn: Callable[[dict[str, Any]], dict[str, Any] | No
         raise
     _writes += 1
     _config_cache.clear()
+    if scope == "project" and not os.environ.get("PYTACHECK_CONFIG", "").strip():
+        added = _local_code_of(data, path) - before
+        if added:
+            trust_local(added)
     return path
+
+
+def _local_code_of(data: Any, path: Path) -> set[str]:
+    """Every piece of local code a config file's content names (resolved)."""
+    out: set[str] = set()
+    if not isinstance(data, dict):
+        return out
+    for section in ("packs", "presets"):
+        entries = data.get(section)
+        if not isinstance(entries, dict):
+            continue
+        for item in entries.values():
+            if isinstance(item, dict):
+                out.update(local_code(section, _resolve_entry(section, item, path.parent)))
+    return out

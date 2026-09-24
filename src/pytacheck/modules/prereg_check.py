@@ -266,8 +266,7 @@ def prereg_check(paper: Any) -> dict[str, Any]:
         {
             "Field": pd.Series(keep, dtype="string"),
             **{
-                f"Preregistration {i + 1}": pd.Series(cells[:, i], dtype="string")
-                for i in range(n)
+                f"Preregistration {i + 1}": pd.Series(cells[:, i], dtype="string") for i in range(n)
             },
         }
     )
