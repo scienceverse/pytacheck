@@ -1,0 +1,72 @@
+{
+  "id": "regextract_all.alt_group.pcre",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": null,
+    "v": [
+      {
+        "t": "chr",
+        "v": []
+      },
+      {
+        "t": "chr",
+        "v": []
+      },
+      {
+        "t": "chr",
+        "v": []
+      },
+      {
+        "t": "chr",
+        "v": [
+          "ac"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "ac",
+          "ac"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": []
+      },
+      {
+        "t": "chr",
+        "v": [
+          "abc",
+          "abcd"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": []
+      },
+      {
+        "t": "chr",
+        "v": []
+      },
+      {
+        "t": "chr",
+        "v": []
+      },
+      {
+        "t": "chr",
+        "v": []
+      },
+      {
+        "t": "chr",
+        "v": [
+          "abc"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

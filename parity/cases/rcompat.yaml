@@ -1,0 +1,1400 @@
+"area": "rcompat"
+"cases":
+- "id": "grepl.alt_longest.tre"
+  "r": "pc_grepl"
+  "py": "parity.pyhelpers.grepl"
+  "args":
+    "pattern": "a|ab|abc"
+    "x":
+      "$chr": &id001
+      - "The effect was significant, t(28) = 2.20, p = .036, d = 0.80."
+      - "p<0.001 and P = .04; also p ≤ .05 and p=0.5."
+      - "Café résumé naïve — Élan vital. ÉCOLE école"
+      - "non breaking space\tand tab\nnew line"
+      - "back\\slash [bracket] a.b a-b a_b"
+      - "marginally statistically significant trend towards significance"
+      - "ab abc abcd aab"
+      - "x"
+      - ""
+      - "multi\nline\ntext\n"
+      - "12,345 1.5e-3 −0.25 3·10^-4"
+      - "Data are available at https://osf.io/abc12/ and osf.io/XYZ9"
+- "id": "regextract_all.alt_longest.tre"
+  "r": "pc_regextract_all"
+  "py": "parity.pyhelpers.regextract_all"
+  "args":
+    "pattern": "a|ab|abc"
+    "x":
+      "$chr": *id001
+- "id": "grepl.alt_longest.pcre"
+  "r": "pc_grepl"
+  "py": "parity.pyhelpers.grepl"
+  "args":
+    "pattern": "a|ab|abc"
+    "x":
+      "$chr": *id001
+    "perl": true
+- "id": "regextract_all.alt_longest.pcre"
+  "r": "pc_regextract_all"
+  "py": "parity.pyhelpers.regextract_all"
+  "args":
+    "pattern": "a|ab|abc"
+    "x":
+      "$chr": *id001
+    "perl": true
+- "id": "regextract_all.alt_longest.tre.icase"
+  "r": "pc_regextract_all"
+  "py": "parity.pyhelpers.regextract_all"
+  "args":
+    "pattern": "a|ab|abc"
+    "x":
+      "$chr": *id001
+    "ignore.case": true
+- "id": "grepl.alt_group.tre"
+  "r": "pc_grepl"
+  "py": "parity.pyhelpers.grepl"
+  "args":
+    "pattern": "(a|ab)(c|bcd)"
+    "x":
+      "$chr": *id001
+- "id": "regextract_all.alt_group.tre"
+  "r": "pc_regextract_all"
+  "py": "parity.pyhelpers.regextract_all"
+  "args":
+    "pattern": "(a|ab)(c|bcd)"
+    "x":
+      "$chr": *id001
+- "id": "grepl.alt_group.pcre"
+  "r": "pc_grepl"
+  "py": "parity.pyhelpers.grepl"
+  "args":
+    "pattern": "(a|ab)(c|bcd)"
+    "x":
+      "$chr": *id001
+    "perl": true
+- "id": "regextract_all.alt_group.pcre"
+  "r": "pc_regextract_all"
+  "py": "parity.pyhelpers.regextract_all"
+  "args":
+    "pattern": "(a|ab)(c|bcd)"
+    "x":
+      "$chr": *id001
+    "perl": true
+- "id": "regextract_all.alt_group.tre.icase"
+  "r": "pc_regextract_all"
+  "py": "parity.pyhelpers.regextract_all"
+  "args":
+    "pattern": "(a|ab)(c|bcd)"
+    "x":
+      "$chr": *id001
+    "ignore.case": true
+- "id": "grepl.word.tre"
+  "r": "pc_grepl"
+  "py": "parity.pyhelpers.grepl"
+  "args":
+    "pattern": "\\w+"
+    "x":
+      "$chr": *id001
+- "id": "regextract_all.word.tre"
+  "r": "pc_regextract_all"
+  "py": "parity.pyhelpers.regextract_all"
+  "args":
+    "pattern": "\\w+"
+    "x":
+      "$chr": *id001
+- "id": "grepl.word.pcre"
+  "r": "pc_grepl"
+  "py": "parity.pyhelpers.grepl"
+  "args":
+    "pattern": "\\w+"
+    "x":
+      "$chr": *id001
+    "perl": true
+- "id": "regextract_all.word.pcre"
+  "r": "pc_regextract_all"
+  "py": "parity.pyhelpers.regextract_all"
+  "args":
+    "pattern": "\\w+"
+    "x":
+      "$chr": *id001
+    "perl": true
+- "id": "regextract_all.word.tre.icase"
+  "r": "pc_regextract_all"
+  "py": "parity.pyhelpers.regextract_all"
+  "args":
+    "pattern": "\\w+"
+    "x":
+      "$chr": *id001
+    "ignore.case": true
+- "id": "grepl.word_bound.tre"
+  "r": "pc_grepl"
+  "py": "parity.pyhelpers.grepl"
+  "args":
+    "pattern": "\\b\\w{2,4}\\b"
+    "x":
+      "$chr": *id001
+- "id": "regextract_all.word_bound.tre"
+  "r": "pc_regextract_all"
+  "py": "parity.pyhelpers.regextract_all"
+  "args":
+    "pattern": "\\b\\w{2,4}\\b"
+    "x":
+      "$chr": *id001
+- "id": "grepl.word_bound.pcre"
+  "r": "pc_grepl"
+  "py": "parity.pyhelpers.grepl"
+  "args":
+    "pattern": "\\b\\w{2,4}\\b"
+    "x":
+      "$chr": *id001
+    "perl": true
+- "id": "regextract_all.word_bound.pcre"
+  "r": "pc_regextract_all"
+  "py": "parity.pyhelpers.regextract_all"
+  "args":
+    "pattern": "\\b\\w{2,4}\\b"
+    "x":
+      "$chr": *id001
+    "perl": true
+- "id": "regextract_all.word_bound.tre.icase"
+  "r": "pc_regextract_all"
+  "py": "parity.pyhelpers.regextract_all"
+  "args":
+    "pattern": "\\b\\w{2,4}\\b"
+    "x":
+      "$chr": *id001
+    "ignore.case": true
+- "id": "grepl.digits.tre"
+  "r": "pc_grepl"
+  "py": "parity.pyhelpers.grepl"
+  "args":
+    "pattern": "\\d+"
+    "x":
+      "$chr": *id001
+- "id": "regextract_all.digits.tre"
+  "r": "pc_regextract_all"
+  "py": "parity.pyhelpers.regextract_all"
+  "args":
+    "pattern": "\\d+"
+    "x":
+      "$chr": *id001
+- "id": "grepl.digits.pcre"
+  "r": "pc_grepl"
+  "py": "parity.pyhelpers.grepl"
+  "args":
+    "pattern": "\\d+"
+    "x":
+      "$chr": *id001
+    "perl": true
+- "id": "regextract_all.digits.pcre"
+  "r": "pc_regextract_all"
+  "py": "parity.pyhelpers.regextract_all"
+  "args":
+    "pattern": "\\d+"
+    "x":
+      "$chr": *id001
+    "perl": true
+- "id": "regextract_all.digits.tre.icase"
+  "r": "pc_regextract_all"
+  "py": "parity.pyhelpers.regextract_all"
+  "args":
+    "pattern": "\\d+"
+    "x":
+      "$chr": *id001
+    "ignore.case": true
+- "id": "grepl.space.tre"
+  "r": "pc_grepl"
+  "py": "parity.pyhelpers.grepl"
+  "args":
+    "pattern": "\\s+"
+    "x":
+      "$chr": *id001
+- "id": "regextract_all.space.tre"
+  "r": "pc_regextract_all"
+  "py": "parity.pyhelpers.regextract_all"
+  "args":
+    "pattern": "\\s+"
+    "x":
+      "$chr": *id001
+- "id": "grepl.space.pcre"
+  "r": "pc_grepl"
+  "py": "parity.pyhelpers.grepl"
+  "args":
+    "pattern": "\\s+"
+    "x":
+      "$chr": *id001
+    "perl": true
+- "id": "regextract_all.space.pcre"
+  "r": "pc_regextract_all"
+  "py": "parity.pyhelpers.regextract_all"
+  "args":
+    "pattern": "\\s+"
+    "x":
+      "$chr": *id001
+    "perl": true
+- "id": "regextract_all.space.tre.icase"
+  "r": "pc_regextract_all"
+  "py": "parity.pyhelpers.regextract_all"
+  "args":
+    "pattern": "\\s+"
+    "x":
+      "$chr": *id001
+    "ignore.case": true
+- "id": "grepl.nonspace.tre"
+  "r": "pc_grepl"
+  "py": "parity.pyhelpers.grepl"
+  "args":
+    "pattern": "\\S+"
+    "x":
+      "$chr": *id001
+- "id": "regextract_all.nonspace.tre"
+  "r": "pc_regextract_all"
+  "py": "parity.pyhelpers.regextract_all"
+  "args":
+    "pattern": "\\S+"
+    "x":
+      "$chr": *id001
+- "id": "grepl.nonspace.pcre"
+  "r": "pc_grepl"
+  "py": "parity.pyhelpers.grepl"
+  "args":
+    "pattern": "\\S+"
+    "x":
+      "$chr": *id001
+    "perl": true
+- "id": "regextract_all.nonspace.pcre"
+  "r": "pc_regextract_all"
+  "py": "parity.pyhelpers.regextract_all"
+  "args":
+    "pattern": "\\S+"
+    "x":
+      "$chr": *id001
+    "perl": true
+- "id": "regextract_all.nonspace.tre.icase"
+  "r": "pc_regextract_all"
+  "py": "parity.pyhelpers.regextract_all"
+  "args":
+    "pattern": "\\S+"
+    "x":
+      "$chr": *id001
+    "ignore.case": true
+- "id": "grepl.posix_alpha.tre"
+  "r": "pc_grepl"
+  "py": "parity.pyhelpers.grepl"
+  "args":
+    "pattern": "[[:alpha:]]+"
+    "x":
+      "$chr": *id001
+- "id": "regextract_all.posix_alpha.tre"
+  "r": "pc_regextract_all"
+  "py": "parity.pyhelpers.regextract_all"
+  "args":
+    "pattern": "[[:alpha:]]+"
+    "x":
+      "$chr": *id001
+- "id": "grepl.posix_alpha.pcre"
+  "r": "pc_grepl"
+  "py": "parity.pyhelpers.grepl"
+  "args":
+    "pattern": "[[:alpha:]]+"
+    "x":
+      "$chr": *id001
+    "perl": true
+- "id": "regextract_all.posix_alpha.pcre"
+  "r": "pc_regextract_all"
+  "py": "parity.pyhelpers.regextract_all"
+  "args":
+    "pattern": "[[:alpha:]]+"
+    "x":
+      "$chr": *id001
+    "perl": true
+- "id": "regextract_all.posix_alpha.tre.icase"
+  "r": "pc_regextract_all"
+  "py": "parity.pyhelpers.regextract_all"
+  "args":
+    "pattern": "[[:alpha:]]+"
+    "x":
+      "$chr": *id001
+    "ignore.case": true
+- "id": "grepl.posix_punct.tre"
+  "r": "pc_grepl"
+  "py": "parity.pyhelpers.grepl"
+  "args":
+    "pattern": "[[:punct:]]+"
+    "x":
+      "$chr": *id001
+- "id": "regextract_all.posix_punct.tre"
+  "r": "pc_regextract_all"
+  "py": "parity.pyhelpers.regextract_all"
+  "args":
+    "pattern": "[[:punct:]]+"
+    "x":
+      "$chr": *id001
+- "id": "grepl.posix_punct.pcre"
+  "r": "pc_grepl"
+  "py": "parity.pyhelpers.grepl"
+  "args":
+    "pattern": "[[:punct:]]+"
+    "x":
+      "$chr": *id001
+    "perl": true
+- "id": "regextract_all.posix_punct.pcre"
+  "r": "pc_regextract_all"
+  "py": "parity.pyhelpers.regextract_all"
+  "args":
+    "pattern": "[[:punct:]]+"
+    "x":
+      "$chr": *id001
+    "perl": true
+- "id": "regextract_all.posix_punct.tre.icase"
+  "r": "pc_regextract_all"
+  "py": "parity.pyhelpers.regextract_all"
+  "args":
+    "pattern": "[[:punct:]]+"
+    "x":
+      "$chr": *id001
+    "ignore.case": true
+- "id": "grepl.bracket_backslash.tre"
+  "r": "pc_grepl"
+  "py": "parity.pyhelpers.grepl"
+  "args":
+    "pattern": "[\\d.]+"
+    "x":
+      "$chr": *id001
+- "id": "regextract_all.bracket_backslash.tre"
+  "r": "pc_regextract_all"
+  "py": "parity.pyhelpers.regextract_all"
+  "args":
+    "pattern": "[\\d.]+"
+    "x":
+      "$chr": *id001
+- "id": "grepl.bracket_backslash.pcre"
+  "r": "pc_grepl"
+  "py": "parity.pyhelpers.grepl"
+  "args":
+    "pattern": "[\\d.]+"
+    "x":
+      "$chr": *id001
+    "perl": true
+- "id": "regextract_all.bracket_backslash.pcre"
+  "r": "pc_regextract_all"
+  "py": "parity.pyhelpers.regextract_all"
+  "args":
+    "pattern": "[\\d.]+"
+    "x":
+      "$chr": *id001
+    "perl": true
+- "id": "regextract_all.bracket_backslash.tre.icase"
+  "r": "pc_regextract_all"
+  "py": "parity.pyhelpers.regextract_all"
+  "args":
+    "pattern": "[\\d.]+"
+    "x":
+      "$chr": *id001
+    "ignore.case": true
+- "id": "grepl.bracket_s.tre"
+  "r": "pc_grepl"
+  "py": "parity.pyhelpers.grepl"
+  "args":
+    "pattern": "[\\s,]+"
+    "x":
+      "$chr": *id001
+- "id": "regextract_all.bracket_s.tre"
+  "r": "pc_regextract_all"
+  "py": "parity.pyhelpers.regextract_all"
+  "args":
+    "pattern": "[\\s,]+"
+    "x":
+      "$chr": *id001
+- "id": "grepl.bracket_s.pcre"
+  "r": "pc_grepl"
+  "py": "parity.pyhelpers.grepl"
+  "args":
+    "pattern": "[\\s,]+"
+    "x":
+      "$chr": *id001
+    "perl": true
+- "id": "regextract_all.bracket_s.pcre"
+  "r": "pc_regextract_all"
+  "py": "parity.pyhelpers.regextract_all"
+  "args":
+    "pattern": "[\\s,]+"
+    "x":
+      "$chr": *id001
+    "perl": true
+- "id": "regextract_all.bracket_s.tre.icase"
+  "r": "pc_regextract_all"
+  "py": "parity.pyhelpers.regextract_all"
+  "args":
+    "pattern": "[\\s,]+"
+    "x":
+      "$chr": *id001
+    "ignore.case": true
+- "id": "grepl.dot_newline.tre"
+  "r": "pc_grepl"
+  "py": "parity.pyhelpers.grepl"
+  "args":
+    "pattern": "a.b|i.t"
+    "x":
+      "$chr": *id001
+- "id": "regextract_all.dot_newline.tre"
+  "r": "pc_regextract_all"
+  "py": "parity.pyhelpers.regextract_all"
+  "args":
+    "pattern": "a.b|i.t"
+    "x":
+      "$chr": *id001
+- "id": "grepl.dot_newline.pcre"
+  "r": "pc_grepl"
+  "py": "parity.pyhelpers.grepl"
+  "args":
+    "pattern": "a.b|i.t"
+    "x":
+      "$chr": *id001
+    "perl": true
+- "id": "regextract_all.dot_newline.pcre"
+  "r": "pc_regextract_all"
+  "py": "parity.pyhelpers.regextract_all"
+  "args":
+    "pattern": "a.b|i.t"
+    "x":
+      "$chr": *id001
+    "perl": true
+- "id": "regextract_all.dot_newline.tre.icase"
+  "r": "pc_regextract_all"
+  "py": "parity.pyhelpers.regextract_all"
+  "args":
+    "pattern": "a.b|i.t"
+    "x":
+      "$chr": *id001
+    "ignore.case": true
+- "id": "grepl.dollar.tre"
+  "r": "pc_grepl"
+  "py": "parity.pyhelpers.grepl"
+  "args":
+    "pattern": "t$|text$"
+    "x":
+      "$chr": *id001
+- "id": "regextract_all.dollar.tre"
+  "r": "pc_regextract_all"
+  "py": "parity.pyhelpers.regextract_all"
+  "args":
+    "pattern": "t$|text$"
+    "x":
+      "$chr": *id001
+- "id": "grepl.dollar.pcre"
+  "r": "pc_grepl"
+  "py": "parity.pyhelpers.grepl"
+  "args":
+    "pattern": "t$|text$"
+    "x":
+      "$chr": *id001
+    "perl": true
+- "id": "regextract_all.dollar.pcre"
+  "r": "pc_regextract_all"
+  "py": "parity.pyhelpers.regextract_all"
+  "args":
+    "pattern": "t$|text$"
+    "x":
+      "$chr": *id001
+    "perl": true
+- "id": "regextract_all.dollar.tre.icase"
+  "r": "pc_regextract_all"
+  "py": "parity.pyhelpers.regextract_all"
+  "args":
+    "pattern": "t$|text$"
+    "x":
+      "$chr": *id001
+    "ignore.case": true
+- "id": "grepl.caret.tre"
+  "r": "pc_grepl"
+  "py": "parity.pyhelpers.grepl"
+  "args":
+    "pattern": "^\\w+"
+    "x":
+      "$chr": *id001
+- "id": "regextract_all.caret.tre"
+  "r": "pc_regextract_all"
+  "py": "parity.pyhelpers.regextract_all"
+  "args":
+    "pattern": "^\\w+"
+    "x":
+      "$chr": *id001
+- "id": "grepl.caret.pcre"
+  "r": "pc_grepl"
+  "py": "parity.pyhelpers.grepl"
+  "args":
+    "pattern": "^\\w+"
+    "x":
+      "$chr": *id001
+    "perl": true
+- "id": "regextract_all.caret.pcre"
+  "r": "pc_regextract_all"
+  "py": "parity.pyhelpers.regextract_all"
+  "args":
+    "pattern": "^\\w+"
+    "x":
+      "$chr": *id001
+    "perl": true
+- "id": "regextract_all.caret.tre.icase"
+  "r": "pc_regextract_all"
+  "py": "parity.pyhelpers.regextract_all"
+  "args":
+    "pattern": "^\\w+"
+    "x":
+      "$chr": *id001
+    "ignore.case": true
+- "id": "grepl.word_start_end.tre"
+  "r": "pc_grepl"
+  "py": "parity.pyhelpers.grepl"
+  "args":
+    "pattern": "\\<ab"
+    "x":
+      "$chr": *id001
+- "id": "regextract_all.word_start_end.tre"
+  "r": "pc_regextract_all"
+  "py": "parity.pyhelpers.regextract_all"
+  "args":
+    "pattern": "\\<ab"
+    "x":
+      "$chr": *id001
+- "id": "grepl.word_start_end.pcre"
+  "r": "pc_grepl"
+  "py": "parity.pyhelpers.grepl"
+  "args":
+    "pattern": "\\<ab"
+    "x":
+      "$chr": *id001
+    "perl": true
+- "id": "regextract_all.word_start_end.pcre"
+  "r": "pc_regextract_all"
+  "py": "parity.pyhelpers.regextract_all"
+  "args":
+    "pattern": "\\<ab"
+    "x":
+      "$chr": *id001
+    "perl": true
+- "id": "regextract_all.word_start_end.tre.icase"
+  "r": "pc_regextract_all"
+  "py": "parity.pyhelpers.regextract_all"
+  "args":
+    "pattern": "\\<ab"
+    "x":
+      "$chr": *id001
+    "ignore.case": true
+- "id": "grepl.pval.tre"
+  "r": "pc_grepl"
+  "py": "parity.pyhelpers.grepl"
+  "args":
+    "pattern": "\\bp\\s*(=|<|>|≤|≥)\\s*0?\\.\\d+"
+    "x":
+      "$chr": *id001
+- "id": "regextract_all.pval.tre"
+  "r": "pc_regextract_all"
+  "py": "parity.pyhelpers.regextract_all"
+  "args":
+    "pattern": "\\bp\\s*(=|<|>|≤|≥)\\s*0?\\.\\d+"
+    "x":
+      "$chr": *id001
+- "id": "grepl.pval.pcre"
+  "r": "pc_grepl"
+  "py": "parity.pyhelpers.grepl"
+  "args":
+    "pattern": "\\bp\\s*(=|<|>|≤|≥)\\s*0?\\.\\d+"
+    "x":
+      "$chr": *id001
+    "perl": true
+- "id": "regextract_all.pval.pcre"
+  "r": "pc_regextract_all"
+  "py": "parity.pyhelpers.regextract_all"
+  "args":
+    "pattern": "\\bp\\s*(=|<|>|≤|≥)\\s*0?\\.\\d+"
+    "x":
+      "$chr": *id001
+    "perl": true
+- "id": "regextract_all.pval.tre.icase"
+  "r": "pc_regextract_all"
+  "py": "parity.pyhelpers.regextract_all"
+  "args":
+    "pattern": "\\bp\\s*(=|<|>|≤|≥)\\s*0?\\.\\d+"
+    "x":
+      "$chr": *id001
+    "ignore.case": true
+- "id": "grepl.pval_icase.tre"
+  "r": "pc_grepl"
+  "py": "parity.pyhelpers.grepl"
+  "args":
+    "pattern": "\\bp\\s*[=<>]\\s*[0-9.]+"
+    "x":
+      "$chr": *id001
+- "id": "regextract_all.pval_icase.tre"
+  "r": "pc_regextract_all"
+  "py": "parity.pyhelpers.regextract_all"
+  "args":
+    "pattern": "\\bp\\s*[=<>]\\s*[0-9.]+"
+    "x":
+      "$chr": *id001
+- "id": "grepl.pval_icase.pcre"
+  "r": "pc_grepl"
+  "py": "parity.pyhelpers.grepl"
+  "args":
+    "pattern": "\\bp\\s*[=<>]\\s*[0-9.]+"
+    "x":
+      "$chr": *id001
+    "perl": true
+- "id": "regextract_all.pval_icase.pcre"
+  "r": "pc_regextract_all"
+  "py": "parity.pyhelpers.regextract_all"
+  "args":
+    "pattern": "\\bp\\s*[=<>]\\s*[0-9.]+"
+    "x":
+      "$chr": *id001
+    "perl": true
+- "id": "regextract_all.pval_icase.tre.icase"
+  "r": "pc_regextract_all"
+  "py": "parity.pyhelpers.regextract_all"
+  "args":
+    "pattern": "\\bp\\s*[=<>]\\s*[0-9.]+"
+    "x":
+      "$chr": *id001
+    "ignore.case": true
+- "id": "grepl.marginal.tre"
+  "r": "pc_grepl"
+  "py": "parity.pyhelpers.grepl"
+  "args":
+    "pattern": "margin\\w* (?:\\w+\\s+){0,5}significan\\w*|trend\\w* (?:\\w+\\s+){0,1}significan\\w*"
+    "x":
+      "$chr": *id001
+- "id": "regextract_all.marginal.tre"
+  "r": "pc_regextract_all"
+  "py": "parity.pyhelpers.regextract_all"
+  "args":
+    "pattern": "margin\\w* (?:\\w+\\s+){0,5}significan\\w*|trend\\w* (?:\\w+\\s+){0,1}significan\\w*"
+    "x":
+      "$chr": *id001
+- "id": "grepl.marginal.pcre"
+  "r": "pc_grepl"
+  "py": "parity.pyhelpers.grepl"
+  "args":
+    "pattern": "margin\\w* (?:\\w+\\s+){0,5}significan\\w*|trend\\w* (?:\\w+\\s+){0,1}significan\\w*"
+    "x":
+      "$chr": *id001
+    "perl": true
+- "id": "regextract_all.marginal.pcre"
+  "r": "pc_regextract_all"
+  "py": "parity.pyhelpers.regextract_all"
+  "args":
+    "pattern": "margin\\w* (?:\\w+\\s+){0,5}significan\\w*|trend\\w* (?:\\w+\\s+){0,1}significan\\w*"
+    "x":
+      "$chr": *id001
+    "perl": true
+- "id": "regextract_all.marginal.tre.icase"
+  "r": "pc_regextract_all"
+  "py": "parity.pyhelpers.regextract_all"
+  "args":
+    "pattern": "margin\\w* (?:\\w+\\s+){0,5}significan\\w*|trend\\w* (?:\\w+\\s+){0,1}significan\\w*"
+    "x":
+      "$chr": *id001
+    "ignore.case": true
+- "id": "grepl.url.tre"
+  "r": "pc_grepl"
+  "py": "parity.pyhelpers.grepl"
+  "args":
+    "pattern": "https?://\\S+|osf\\.io/\\w+"
+    "x":
+      "$chr": *id001
+- "id": "regextract_all.url.tre"
+  "r": "pc_regextract_all"
+  "py": "parity.pyhelpers.regextract_all"
+  "args":
+    "pattern": "https?://\\S+|osf\\.io/\\w+"
+    "x":
+      "$chr": *id001
+- "id": "grepl.url.pcre"
+  "r": "pc_grepl"
+  "py": "parity.pyhelpers.grepl"
+  "args":
+    "pattern": "https?://\\S+|osf\\.io/\\w+"
+    "x":
+      "$chr": *id001
+    "perl": true
+- "id": "regextract_all.url.pcre"
+  "r": "pc_regextract_all"
+  "py": "parity.pyhelpers.regextract_all"
+  "args":
+    "pattern": "https?://\\S+|osf\\.io/\\w+"
+    "x":
+      "$chr": *id001
+    "perl": true
+- "id": "regextract_all.url.tre.icase"
+  "r": "pc_regextract_all"
+  "py": "parity.pyhelpers.regextract_all"
+  "args":
+    "pattern": "https?://\\S+|osf\\.io/\\w+"
+    "x":
+      "$chr": *id001
+    "ignore.case": true
+- "id": "grepl.lazy.tre"
+  "r": "pc_grepl"
+  "py": "parity.pyhelpers.grepl"
+  "args":
+    "pattern": "a.*?c"
+    "x":
+      "$chr": *id001
+- "id": "regextract_all.lazy.tre"
+  "r": "pc_regextract_all"
+  "py": "parity.pyhelpers.regextract_all"
+  "args":
+    "pattern": "a.*?c"
+    "x":
+      "$chr": *id001
+- "id": "grepl.lazy.pcre"
+  "r": "pc_grepl"
+  "py": "parity.pyhelpers.grepl"
+  "args":
+    "pattern": "a.*?c"
+    "x":
+      "$chr": *id001
+    "perl": true
+- "id": "regextract_all.lazy.pcre"
+  "r": "pc_regextract_all"
+  "py": "parity.pyhelpers.regextract_all"
+  "args":
+    "pattern": "a.*?c"
+    "x":
+      "$chr": *id001
+    "perl": true
+- "id": "regextract_all.lazy.tre.icase"
+  "r": "pc_regextract_all"
+  "py": "parity.pyhelpers.regextract_all"
+  "args":
+    "pattern": "a.*?c"
+    "x":
+      "$chr": *id001
+    "ignore.case": true
+- "id": "grepl.bounded.tre"
+  "r": "pc_grepl"
+  "py": "parity.pyhelpers.grepl"
+  "args":
+    "pattern": "b{1,2}c?"
+    "x":
+      "$chr": *id001
+- "id": "regextract_all.bounded.tre"
+  "r": "pc_regextract_all"
+  "py": "parity.pyhelpers.regextract_all"
+  "args":
+    "pattern": "b{1,2}c?"
+    "x":
+      "$chr": *id001
+- "id": "grepl.bounded.pcre"
+  "r": "pc_grepl"
+  "py": "parity.pyhelpers.grepl"
+  "args":
+    "pattern": "b{1,2}c?"
+    "x":
+      "$chr": *id001
+    "perl": true
+- "id": "regextract_all.bounded.pcre"
+  "r": "pc_regextract_all"
+  "py": "parity.pyhelpers.regextract_all"
+  "args":
+    "pattern": "b{1,2}c?"
+    "x":
+      "$chr": *id001
+    "perl": true
+- "id": "regextract_all.bounded.tre.icase"
+  "r": "pc_regextract_all"
+  "py": "parity.pyhelpers.regextract_all"
+  "args":
+    "pattern": "b{1,2}c?"
+    "x":
+      "$chr": *id001
+    "ignore.case": true
+- "id": "grepl.unicode_minus.tre"
+  "r": "pc_grepl"
+  "py": "parity.pyhelpers.grepl"
+  "args":
+    "pattern": "[−-]\\d"
+    "x":
+      "$chr": *id001
+- "id": "regextract_all.unicode_minus.tre"
+  "r": "pc_regextract_all"
+  "py": "parity.pyhelpers.regextract_all"
+  "args":
+    "pattern": "[−-]\\d"
+    "x":
+      "$chr": *id001
+- "id": "grepl.unicode_minus.pcre"
+  "r": "pc_grepl"
+  "py": "parity.pyhelpers.grepl"
+  "args":
+    "pattern": "[−-]\\d"
+    "x":
+      "$chr": *id001
+    "perl": true
+- "id": "regextract_all.unicode_minus.pcre"
+  "r": "pc_regextract_all"
+  "py": "parity.pyhelpers.regextract_all"
+  "args":
+    "pattern": "[−-]\\d"
+    "x":
+      "$chr": *id001
+    "perl": true
+- "id": "regextract_all.unicode_minus.tre.icase"
+  "r": "pc_regextract_all"
+  "py": "parity.pyhelpers.regextract_all"
+  "args":
+    "pattern": "[−-]\\d"
+    "x":
+      "$chr": *id001
+    "ignore.case": true
+- "id": "grepl.accented.tre"
+  "r": "pc_grepl"
+  "py": "parity.pyhelpers.grepl"
+  "args":
+    "pattern": "[éÉ]\\w*"
+    "x":
+      "$chr": *id001
+- "id": "regextract_all.accented.tre"
+  "r": "pc_regextract_all"
+  "py": "parity.pyhelpers.regextract_all"
+  "args":
+    "pattern": "[éÉ]\\w*"
+    "x":
+      "$chr": *id001
+- "id": "grepl.accented.pcre"
+  "r": "pc_grepl"
+  "py": "parity.pyhelpers.grepl"
+  "args":
+    "pattern": "[éÉ]\\w*"
+    "x":
+      "$chr": *id001
+    "perl": true
+- "id": "regextract_all.accented.pcre"
+  "r": "pc_regextract_all"
+  "py": "parity.pyhelpers.regextract_all"
+  "args":
+    "pattern": "[éÉ]\\w*"
+    "x":
+      "$chr": *id001
+    "perl": true
+- "id": "regextract_all.accented.tre.icase"
+  "r": "pc_regextract_all"
+  "py": "parity.pyhelpers.regextract_all"
+  "args":
+    "pattern": "[éÉ]\\w*"
+    "x":
+      "$chr": *id001
+    "ignore.case": true
+- "id": "grepl.nbsp.tre"
+  "r": "pc_grepl"
+  "py": "parity.pyhelpers.grepl"
+  "args":
+    "pattern": " "
+    "x":
+      "$chr": *id001
+- "id": "regextract_all.nbsp.tre"
+  "r": "pc_regextract_all"
+  "py": "parity.pyhelpers.regextract_all"
+  "args":
+    "pattern": " "
+    "x":
+      "$chr": *id001
+- "id": "grepl.nbsp.pcre"
+  "r": "pc_grepl"
+  "py": "parity.pyhelpers.grepl"
+  "args":
+    "pattern": " "
+    "x":
+      "$chr": *id001
+    "perl": true
+- "id": "regextract_all.nbsp.pcre"
+  "r": "pc_regextract_all"
+  "py": "parity.pyhelpers.regextract_all"
+  "args":
+    "pattern": " "
+    "x":
+      "$chr": *id001
+    "perl": true
+- "id": "regextract_all.nbsp.tre.icase"
+  "r": "pc_regextract_all"
+  "py": "parity.pyhelpers.regextract_all"
+  "args":
+    "pattern": " "
+    "x":
+      "$chr": *id001
+    "ignore.case": true
+- "id": "grepl.brackets_lit.tre"
+  "r": "pc_grepl"
+  "py": "parity.pyhelpers.grepl"
+  "args":
+    "pattern": "\\[[^]]*\\]"
+    "x":
+      "$chr": *id001
+- "id": "regextract_all.brackets_lit.tre"
+  "r": "pc_regextract_all"
+  "py": "parity.pyhelpers.regextract_all"
+  "args":
+    "pattern": "\\[[^]]*\\]"
+    "x":
+      "$chr": *id001
+- "id": "grepl.brackets_lit.pcre"
+  "r": "pc_grepl"
+  "py": "parity.pyhelpers.grepl"
+  "args":
+    "pattern": "\\[[^]]*\\]"
+    "x":
+      "$chr": *id001
+    "perl": true
+- "id": "regextract_all.brackets_lit.pcre"
+  "r": "pc_regextract_all"
+  "py": "parity.pyhelpers.regextract_all"
+  "args":
+    "pattern": "\\[[^]]*\\]"
+    "x":
+      "$chr": *id001
+    "perl": true
+- "id": "regextract_all.brackets_lit.tre.icase"
+  "r": "pc_regextract_all"
+  "py": "parity.pyhelpers.regextract_all"
+  "args":
+    "pattern": "\\[[^]]*\\]"
+    "x":
+      "$chr": *id001
+    "ignore.case": true
+- "id": "grepl.backref.tre"
+  "r": "pc_grepl"
+  "py": "parity.pyhelpers.grepl"
+  "args":
+    "pattern": "(a)\\1"
+    "x":
+      "$chr": *id001
+- "id": "regextract_all.backref.tre"
+  "r": "pc_regextract_all"
+  "py": "parity.pyhelpers.regextract_all"
+  "args":
+    "pattern": "(a)\\1"
+    "x":
+      "$chr": *id001
+- "id": "grepl.backref.pcre"
+  "r": "pc_grepl"
+  "py": "parity.pyhelpers.grepl"
+  "args":
+    "pattern": "(a)\\1"
+    "x":
+      "$chr": *id001
+    "perl": true
+- "id": "regextract_all.backref.pcre"
+  "r": "pc_regextract_all"
+  "py": "parity.pyhelpers.regextract_all"
+  "args":
+    "pattern": "(a)\\1"
+    "x":
+      "$chr": *id001
+    "perl": true
+- "id": "regextract_all.backref.tre.icase"
+  "r": "pc_regextract_all"
+  "py": "parity.pyhelpers.regextract_all"
+  "args":
+    "pattern": "(a)\\1"
+    "x":
+      "$chr": *id001
+    "ignore.case": true
+- "id": "gsub.ws.tre"
+  "r": "pc_gsub"
+  "py": "parity.pyhelpers.gsub"
+  "args":
+    "pattern": "\\s+"
+    "replacement": " "
+    "x":
+      "$chr": *id001
+- "id": "gsub.ws.pcre"
+  "r": "pc_gsub"
+  "py": "parity.pyhelpers.gsub"
+  "args":
+    "pattern": "\\s+"
+    "replacement": " "
+    "x":
+      "$chr": *id001
+    "perl": true
+- "id": "gsub.backref.tre"
+  "r": "pc_gsub"
+  "py": "parity.pyhelpers.gsub"
+  "args":
+    "pattern": "(\\w)(\\w*)"
+    "replacement": "\\2\\1"
+    "x":
+      "$chr": *id001
+- "id": "gsub.backref.pcre"
+  "r": "pc_gsub"
+  "py": "parity.pyhelpers.gsub"
+  "args":
+    "pattern": "(\\w)(\\w*)"
+    "replacement": "\\2\\1"
+    "x":
+      "$chr": *id001
+    "perl": true
+- "id": "gsub.empty.tre"
+  "r": "pc_gsub"
+  "py": "parity.pyhelpers.gsub"
+  "args":
+    "pattern": "x*"
+    "replacement": "-"
+    "x":
+      "$chr": *id001
+- "id": "gsub.empty.pcre"
+  "r": "pc_gsub"
+  "py": "parity.pyhelpers.gsub"
+  "args":
+    "pattern": "x*"
+    "replacement": "-"
+    "x":
+      "$chr": *id001
+    "perl": true
+- "id": "gsub.dollar.tre"
+  "r": "pc_gsub"
+  "py": "parity.pyhelpers.gsub"
+  "args":
+    "pattern": "$"
+    "replacement": "!"
+    "x":
+      "$chr": *id001
+- "id": "gsub.dollar.pcre"
+  "r": "pc_gsub"
+  "py": "parity.pyhelpers.gsub"
+  "args":
+    "pattern": "$"
+    "replacement": "!"
+    "x":
+      "$chr": *id001
+    "perl": true
+- "id": "gsub.caret.tre"
+  "r": "pc_gsub"
+  "py": "parity.pyhelpers.gsub"
+  "args":
+    "pattern": "^"
+    "replacement": ">"
+    "x":
+      "$chr": *id001
+- "id": "gsub.caret.pcre"
+  "r": "pc_gsub"
+  "py": "parity.pyhelpers.gsub"
+  "args":
+    "pattern": "^"
+    "replacement": ">"
+    "x":
+      "$chr": *id001
+    "perl": true
+- "id": "gsub.whole.tre"
+  "r": "pc_gsub"
+  "py": "parity.pyhelpers.gsub"
+  "args":
+    "pattern": "\\d+"
+    "replacement": "<\\0>"
+    "x":
+      "$chr": *id001
+- "id": "gsub.whole.pcre"
+  "r": "pc_gsub"
+  "py": "parity.pyhelpers.gsub"
+  "args":
+    "pattern": "\\d+"
+    "replacement": "<\\0>"
+    "x":
+      "$chr": *id001
+    "perl": true
+- "id": "gsub.escape_lit.tre"
+  "r": "pc_gsub"
+  "py": "parity.pyhelpers.gsub"
+  "args":
+    "pattern": "\\."
+    "replacement": "\\\\."
+    "x":
+      "$chr": *id001
+- "id": "gsub.escape_lit.pcre"
+  "r": "pc_gsub"
+  "py": "parity.pyhelpers.gsub"
+  "args":
+    "pattern": "\\."
+    "replacement": "\\\\."
+    "x":
+      "$chr": *id001
+    "perl": true
+- "id": "gsub.alt.tre"
+  "r": "pc_gsub"
+  "py": "parity.pyhelpers.gsub"
+  "args":
+    "pattern": "a|ab"
+    "replacement": "X"
+    "x":
+      "$chr": *id001
+- "id": "gsub.alt.pcre"
+  "r": "pc_gsub"
+  "py": "parity.pyhelpers.gsub"
+  "args":
+    "pattern": "a|ab"
+    "replacement": "X"
+    "x":
+      "$chr": *id001
+    "perl": true
+- "id": "gsub.case_upper.pcre"
+  "r": "pc_gsub"
+  "py": "parity.pyhelpers.gsub"
+  "args":
+    "pattern": "\\b(\\w)"
+    "replacement": "\\U\\1"
+    "x":
+      "$chr": *id001
+    "perl": true
+- "id": "sub.first"
+  "r": "pc_sub"
+  "py": "parity.pyhelpers.sub"
+  "args":
+    "pattern": "\\s"
+    "replacement": "_"
+    "x":
+      "$chr": *id001
+- "id": "gsub.fixed"
+  "r": "pc_gsub"
+  "py": "parity.pyhelpers.gsub"
+  "args":
+    "pattern": "."
+    "replacement": "!"
+    "x":
+      "$chr": *id001
+    "fixed": true
+- "id": "grepl.fixed"
+  "r": "pc_grepl"
+  "py": "parity.pyhelpers.grepl"
+  "args":
+    "pattern": "a.b"
+    "x":
+      "$chr": *id001
+    "fixed": true
+- "id": "regextract.pval"
+  "r": "pc_regextract"
+  "py": "parity.pyhelpers.regextract"
+  "args":
+    "pattern": "p\\s*[=<]\\s*[0-9.]+"
+    "x":
+      "$chr": *id001
+    "ignore.case": true
+- "id": "regexec.groups"
+  "r": "pc_regexec"
+  "py": "parity.pyhelpers.regexec"
+  "args":
+    "pattern": "(\\w+)\\s*(=|<)\\s*([0-9.]+)?"
+    "x":
+      "$chr": *id001
+- "id": "regexec.groups.pcre"
+  "r": "pc_regexec"
+  "py": "parity.pyhelpers.regexec"
+  "args":
+    "pattern": "(\\w+)\\s*(=|<)\\s*([0-9.]+)?"
+    "x":
+      "$chr": *id001
+    "perl": true
+- "id": "strsplit.comma"
+  "r": "pc_strsplit"
+  "py": "parity.pyhelpers.strsplit"
+  "args":
+    "x":
+      "$chr":
+      - "The effect was significant, t(28) = 2.20, p = .036, d = 0.80."
+      - "p<0.001 and P = .04; also p ≤ .05 and p=0.5."
+      - "Café résumé naïve — Élan vital. ÉCOLE école"
+      - "non breaking space\tand tab\nnew line"
+      - "back\\slash [bracket] a.b a-b a_b"
+      - "marginally statistically significant trend towards significance"
+      - "ab abc abcd aab"
+      - "x"
+      - ""
+      - "multi\nline\ntext\n"
+      - "12,345 1.5e-3 −0.25 3·10^-4"
+      - "Data are available at https://osf.io/abc12/ and osf.io/XYZ9"
+      - "aaa"
+      - "a,b,"
+      - ",a"
+    "split": ","
+- "id": "strsplit.space"
+  "r": "pc_strsplit"
+  "py": "parity.pyhelpers.strsplit"
+  "args":
+    "x":
+      "$chr":
+      - "The effect was significant, t(28) = 2.20, p = .036, d = 0.80."
+      - "p<0.001 and P = .04; also p ≤ .05 and p=0.5."
+      - "Café résumé naïve — Élan vital. ÉCOLE école"
+      - "non breaking space\tand tab\nnew line"
+      - "back\\slash [bracket] a.b a-b a_b"
+      - "marginally statistically significant trend towards significance"
+      - "ab abc abcd aab"
+      - "x"
+      - ""
+      - "multi\nline\ntext\n"
+      - "12,345 1.5e-3 −0.25 3·10^-4"
+      - "Data are available at https://osf.io/abc12/ and osf.io/XYZ9"
+      - "aaa"
+      - "a,b,"
+      - ",a"
+    "split": "\\s+"
+- "id": "strsplit.empty"
+  "r": "pc_strsplit"
+  "py": "parity.pyhelpers.strsplit"
+  "args":
+    "x":
+      "$chr":
+      - "The effect was significant, t(28) = 2.20, p = .036, d = 0.80."
+      - "p<0.001 and P = .04; also p ≤ .05 and p=0.5."
+      - "Café résumé naïve — Élan vital. ÉCOLE école"
+      - "non breaking space\tand tab\nnew line"
+      - "back\\slash [bracket] a.b a-b a_b"
+      - "marginally statistically significant trend towards significance"
+      - "ab abc abcd aab"
+      - "x"
+      - ""
+      - "multi\nline\ntext\n"
+      - "12,345 1.5e-3 −0.25 3·10^-4"
+      - "Data are available at https://osf.io/abc12/ and osf.io/XYZ9"
+      - "aaa"
+      - "a,b,"
+      - ",a"
+    "split": ""
+- "id": "strsplit.anchor"
+  "r": "pc_strsplit"
+  "py": "parity.pyhelpers.strsplit"
+  "args":
+    "x":
+      "$chr":
+      - "The effect was significant, t(28) = 2.20, p = .036, d = 0.80."
+      - "p<0.001 and P = .04; also p ≤ .05 and p=0.5."
+      - "Café résumé naïve — Élan vital. ÉCOLE école"
+      - "non breaking space\tand tab\nnew line"
+      - "back\\slash [bracket] a.b a-b a_b"
+      - "marginally statistically significant trend towards significance"
+      - "ab abc abcd aab"
+      - "x"
+      - ""
+      - "multi\nline\ntext\n"
+      - "12,345 1.5e-3 −0.25 3·10^-4"
+      - "Data are available at https://osf.io/abc12/ and osf.io/XYZ9"
+      - "aaa"
+      - "a,b,"
+      - ",a"
+    "split": "^a"
+- "id": "strsplit.fixed_dot"
+  "r": "pc_strsplit"
+  "py": "parity.pyhelpers.strsplit"
+  "args":
+    "x":
+      "$chr":
+      - "The effect was significant, t(28) = 2.20, p = .036, d = 0.80."
+      - "p<0.001 and P = .04; also p ≤ .05 and p=0.5."
+      - "Café résumé naïve — Élan vital. ÉCOLE école"
+      - "non breaking space\tand tab\nnew line"
+      - "back\\slash [bracket] a.b a-b a_b"
+      - "marginally statistically significant trend towards significance"
+      - "ab abc abcd aab"
+      - "x"
+      - ""
+      - "multi\nline\ntext\n"
+      - "12,345 1.5e-3 −0.25 3·10^-4"
+      - "Data are available at https://osf.io/abc12/ and osf.io/XYZ9"
+      - "aaa"
+      - "a,b,"
+      - ",a"
+    "split": "."
+    "fixed": true
+- "id": "strsplit.pcre"
+  "r": "pc_strsplit"
+  "py": "parity.pyhelpers.strsplit"
+  "args":
+    "x":
+      "$chr":
+      - "The effect was significant, t(28) = 2.20, p = .036, d = 0.80."
+      - "p<0.001 and P = .04; also p ≤ .05 and p=0.5."
+      - "Café résumé naïve — Élan vital. ÉCOLE école"
+      - "non breaking space\tand tab\nnew line"
+      - "back\\slash [bracket] a.b a-b a_b"
+      - "marginally statistically significant trend towards significance"
+      - "ab abc abcd aab"
+      - "x"
+      - ""
+      - "multi\nline\ntext\n"
+      - "12,345 1.5e-3 −0.25 3·10^-4"
+      - "Data are available at https://osf.io/abc12/ and osf.io/XYZ9"
+      - "aaa"
+      - "a,b,"
+      - ",a"
+    "split": "(?<=\\.)\\s"
+    "perl": true
+- "id": "as_character.doubles"
+  "r": "pc_as_character"
+  "py": "parity.pyhelpers.as_character"
+  "args":
+    "x":
+      "$dbl": &id002
+      - 0.3
+      - 0.3333333333333333
+      - 100000.0
+      - 123456.7
+      - 1.0e-20
+      - 1000000000000000.0
+      - 0.0001
+      - 0.001
+      - 1234567.0
+      - -2.5
+      - 0.30000000000000004
+      - 2.675
+      - 100000.1
+      - 12.0
+      - 0.05
+      - 1.0e-05
+      - 123456789012.0
+      - 0.000123
+- "id": "format_num.doubles"
+  "r": "pc_format_num"
+  "py": "parity.pyhelpers.format_num"
+  "args":
+    "x":
+      "$dbl": *id002
+- "id": "format_num.digits3"
+  "r": "pc_format_num"
+  "py": "parity.pyhelpers.format_num"
+  "args":
+    "x":
+      "$dbl": *id002
+    "digits": 3
+- "id": "trimws.both"
+  "r": "pc_trimws"
+  "py": "parity.pyhelpers.trimws"
+  "args":
+    "x":
+      "$chr":
+      - "  a  "
+      - "\tb\n"
+      - "c"
+      - "  d "
+- "id": "sort.collation"
+  "r": "pc_sort"
+  "py": "parity.pyhelpers.r_sort"
+  "args":
+    "x":
+      "$chr":
+      - "b"
+      - "A"
+      - "a"
+      - "B"
+      - "_x"
+      - "1"
+      - "é"
+      - "e"
+      - "E"
+      - "10"
+      - "2"
+      - "Z"
+      - "z"
+      - "ab"
+      - "a b"
+      - "a-b"
+      - "Ab"
+      - "aB"

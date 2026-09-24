@@ -1,0 +1,25 @@
+{
+  "id": "gsub.empty.pcre",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "-T-h-e- -e-f-f-e-c-t- -w-a-s- -s-i-g-n-i-f-i-c-a-n-t-,- -t-(-2-8-)- -=- -2-.-2-0-,- -p- -=- -.-0-3-6-,- -d- -=- -0-.-8-0-.-",
+      "-p-<-0-.-0-0-1- -a-n-d- -P- -=- -.-0-4-;- -a-l-s-o- -p- -≤- -.-0-5- -a-n-d- -p-=-0-.-5-.-",
+      "-C-a-f-é- -r-é-s-u-m-é- -n-a-ï-v-e- -—- -É-l-a-n- -v-i-t-a-l-.- -É-C-O-L-E- -é-c-o-l-e-",
+      "-n-o-n- -b-r-e-a-k-i-n-g- -s-p-a-c-e-\t-a-n-d- -t-a-b-\n-n-e-w- -l-i-n-e-",
+      "-b-a-c-k-\\-s-l-a-s-h- -[-b-r-a-c-k-e-t-]- -a-.-b- -a---b- -a-_-b-",
+      "-m-a-r-g-i-n-a-l-l-y- -s-t-a-t-i-s-t-i-c-a-l-l-y- -s-i-g-n-i-f-i-c-a-n-t- -t-r-e-n-d- -t-o-w-a-r-d-s- -s-i-g-n-i-f-i-c-a-n-c-e-",
+      "-a-b- -a-b-c- -a-b-c-d- -a-a-b-",
+      "-",
+      "-",
+      "-m-u-l-t-i-\n-l-i-n-e-\n-t-e-t-\n-",
+      "-1-2-,-3-4-5- -1-.-5-e---3- -−-0-.-2-5- -3-·-1-0-^---4-",
+      "-D-a-t-a- -a-r-e- -a-v-a-i-l-a-b-l-e- -a-t- -h-t-t-p-s-:-/-/-o-s-f-.-i-o-/-a-b-c-1-2-/- -a-n-d- -o-s-f-.-i-o-/-X-Y-Z-9-"
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

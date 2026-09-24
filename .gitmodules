@@ -1,0 +1,4 @@
+[submodule "upstream/metacheck"]
+	path = upstream/metacheck
+	url = https://github.com/ScienceVerse/metacheck.git
+	branch = dev

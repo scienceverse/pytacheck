@@ -1,0 +1,31 @@
+{
+  "id": "sort.collation",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "_x",
+      "1",
+      "10",
+      "2",
+      "a",
+      "A",
+      "a b",
+      "a-b",
+      "ab",
+      "aB",
+      "Ab",
+      "b",
+      "B",
+      "e",
+      "E",
+      "é",
+      "z",
+      "Z"
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

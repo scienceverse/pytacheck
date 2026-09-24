@@ -1,0 +1,19 @@
+"area": "mod_marginal"
+"cases":
+- "id": "marginal.demo"
+  "module": "marginal"
+  "args": {"paper": {"$paper": "demo"}}
+- "id": "marginal.psychsci"
+  "module": "marginal"
+  "args":
+    "paper": {"$read": ["upstream/metacheck/tests/testthat/fixtures/psychsci/0956797613520608.json", "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614522816.json", "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614527830.json", "upstream/metacheck/inst/demos/to_err_is_human.json"]}
+- "id": "marginal.synthetic"
+  "module": "marginal"
+  "args":
+    "paper": {"$test_paper": {"text": ["The effect was marginally significant, p = .06.", "There was a trend towards significance.", "Results approached statistical significance.", "Nothing to see here.", "It was close to being significant.", "A borderline significant result."]}}
+  "compare": {"ignore": ["paper_id", "table.paper_id", "summary_table.paper_id"]}
+- "id": "marginal.none"
+  "module": "marginal"
+  "args":
+    "paper": {"$test_paper": {"text": ["Nothing here.", "Or here."]}}
+  "compare": {"ignore": ["paper_id", "table.paper_id", "summary_table.paper_id"]}
