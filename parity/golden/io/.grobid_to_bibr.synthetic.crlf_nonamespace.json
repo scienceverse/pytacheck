@@ -1,5 +1,5 @@
 {
-  "id": ".grobid_to_bibr.formats.preprint.cermine",
+  "id": ".grobid_to_bibr.synthetic.crlf_nonamespace",
   "ok": true,
   "error": null,
   "warnings": [],
@@ -22,7 +22,7 @@
       {
         "t": "chr",
         "v": [
-          "preprint.cermine"
+          "crlf_nonamespace.tei"
         ]
       },
       {
@@ -46,7 +46,7 @@
           {
             "t": "chr",
             "v": [
-              ""
+              "No namespace, CRLF"
             ]
           },
           {
@@ -67,7 +67,7 @@
           {
             "t": "chr",
             "v": [
-              "e9a52dc9c664c1d4"
+              "c7e83836d4d7c74a"
             ]
           },
           {
@@ -79,7 +79,7 @@
           {
             "t": "chr",
             "v": [
-              "/home/user/pytacheck/upstream/metacheck/tests/testthat/fixtures/formats/preprint.cermine.xml"
+              "/home/user/pytacheck/tests/io/fixtures/crlf_nonamespace.tei.xml"
             ]
           },
           {
@@ -128,7 +128,7 @@
       },
       {
         "t": "df",
-        "nrow": 1,
+        "nrow": 3,
         "names": [
           "text",
           "text_id",
@@ -141,36 +141,48 @@
           {
             "t": "chr",
             "v": [
-              "Author Notes"
+              "Only one paragraph here.",
+              "With a CRLF line break inside.",
+              "Figure 2 shows it."
             ]
           },
           {
             "t": "int",
             "v": [
+              1,
+              2,
+              3
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1,
+              1,
               1
             ]
           },
           {
             "t": "int",
             "v": [
+              1,
+              1,
               1
             ]
           },
           {
             "t": "int",
             "v": [
-              0
-            ]
-          },
-          {
-            "t": "int",
-            "v": [
+              null,
+              null,
               null
             ]
           },
           {
             "t": "chr",
             "v": [
+              null,
+              null,
               null
             ]
           }
@@ -190,13 +202,13 @@
           {
             "t": "int",
             "v": [
-              0
+              1
             ]
           },
           {
             "t": "chr",
             "v": [
-              "Abstract"
+              "Methods"
             ]
           },
           {
@@ -208,7 +220,7 @@
           {
             "t": "chr",
             "v": [
-              "abstract"
+              "method"
             ]
           },
           {

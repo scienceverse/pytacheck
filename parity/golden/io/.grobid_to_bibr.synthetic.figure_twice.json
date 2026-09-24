@@ -1,5 +1,5 @@
 {
-  "id": ".grobid_to_bibr.formats.preprint.cermine",
+  "id": ".grobid_to_bibr.synthetic.figure_twice",
   "ok": true,
   "error": null,
   "warnings": [],
@@ -22,7 +22,7 @@
       {
         "t": "chr",
         "v": [
-          "preprint.cermine"
+          "figure_twice.tei"
         ]
       },
       {
@@ -46,7 +46,7 @@
           {
             "t": "chr",
             "v": [
-              ""
+              "Two figure sentences"
             ]
           },
           {
@@ -67,7 +67,7 @@
           {
             "t": "chr",
             "v": [
-              "e9a52dc9c664c1d4"
+              "e515c5c97ca39cab"
             ]
           },
           {
@@ -79,7 +79,7 @@
           {
             "t": "chr",
             "v": [
-              "/home/user/pytacheck/upstream/metacheck/tests/testthat/fixtures/formats/preprint.cermine.xml"
+              "/home/user/pytacheck/tests/io/fixtures/figure_twice.tei.xml"
             ]
           },
           {
@@ -128,7 +128,7 @@
       },
       {
         "t": "df",
-        "nrow": 1,
+        "nrow": 3,
         "names": [
           "text",
           "text_id",
@@ -141,36 +141,48 @@
           {
             "t": "chr",
             "v": [
-              "Author Notes"
+              "Figure 1 is here.",
+              "Figure 2 is there.",
+              "Done."
             ]
           },
           {
             "t": "int",
             "v": [
-              1
+              1,
+              2,
+              3
             ]
           },
           {
             "t": "int",
             "v": [
-              1
+              1,
+              1,
+              2
             ]
           },
           {
             "t": "int",
             "v": [
-              0
+              1,
+              1,
+              2
             ]
           },
           {
             "t": "int",
             "v": [
+              null,
+              null,
               null
             ]
           },
           {
             "t": "chr",
             "v": [
+              null,
+              null,
               null
             ]
           }
@@ -178,7 +190,7 @@
       },
       {
         "t": "df",
-        "nrow": 1,
+        "nrow": 2,
         "names": [
           "section_id",
           "header",
@@ -190,30 +202,35 @@
           {
             "t": "int",
             "v": [
-              0
+              1,
+              2
             ]
           },
           {
             "t": "chr",
             "v": [
-              "Abstract"
+              "[div-01]",
+              "Results"
             ]
           },
           {
             "t": "int",
             "v": [
+              null,
               null
             ]
           },
           {
             "t": "chr",
             "v": [
-              "abstract"
+              "intro",
+              "results"
             ]
           },
           {
             "t": "dbl",
             "v": [
+              null,
               null
             ]
           }
