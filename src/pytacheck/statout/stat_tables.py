@@ -837,11 +837,7 @@ def _stat_table_parse(tb: Any) -> dict[str, Any] | None:
     nrow = len(mat)
     keep_rows = []
     for ri in range(nrow):
-        raw_vals = [cols[c][ri] for c in range(ncol)]
-        if ncol == 1:
-            vals = [_trimws(raw_vals[0])]
-        else:
-            vals = [_trimws("NA" if v is None else v) for v in raw_vals]
+        vals = [_trimws(cols[c][ri]) for c in range(ncol)]
         vals = [v for v in vals if v is None or v != ""]
         if not vals:
             keep_rows.append(False)
