@@ -1,0 +1,79 @@
+> library(stats)
+> cohen.d(x, g)
+
+Cohen's d
+
+d estimate: 0.1811285 (negligible)
+95 percent confidence interval:
+    lower     upper 
+-0.760357  1.122614 
+
+> cohens_d(y ~ g, data = d)
+Cohen's d |        95% CI
+-------------------------
+-0.12     | [-0.73, 0.51]
+
+[36m- Estimated using pooled SD.[39m> FR_No <- t.test(x, y)
+> FR_No
+	Welch Two Sample t-test
+
+data:  x and y
+t = 1.556, df = 9.9934, p-value = 0.1508
+alternative hypothesis: true difference in means is not equal to 0
+
+> aov_car(score ~ cond + Error(id/time), data = d)
+Anova Table (Type 3 tests)
+
+Response: score
+  Effect     df  MSE     F  ges p.value
+1   cond 2, 560 1.02 41.86 *** .130  <.001
+2   time 1, 280 0.98  3.12 .   .011   .078
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘+’ 0.1 ‘ ’ 1
+
+> d %>% t_test(score ~ group)
+# A tibble: 1 × 8
+  .y.   group1 group2    n1    n2 statistic    df      p
+* <chr> <chr>  <chr>  <int> <int>     <dbl> <dbl>  <dbl>
+1 score a      b         20    20      2.31  37.8 0.0265
+> hedges_g(y ~ g, data = d)
+Hedges' g |         95% CI
+--------------------------
+0.45      | [ 0.02,  0.88]
+> repeated_measures_d(y ~ g | id, data = d)
+d (rm) | 95% CI
+---------------
+0.33   | [0.10, 0.55]
+> glass_delta(y ~ g, data = d)
+Glass' delta |         95% CI
+-----------------------------
+-0.20        | [-0.61,  0.22]
+> eta_squared(mc_model$anova_table$F[1])
+Parameter | Eta2 (partial) |       95% CI
+-----------------------------------------
+cond      |           0.13 | [0.09, 1.00]
+> emmeans(specs = "team", object = mc_model)
+ team emmean    SE  df lower.CL upper.CL
+ A      4.12 0.211 58     3.70     4.54
+ B      3.55 0.211 58     3.13     3.97
+
+Confidence level used: 0.95 
+> summary(update(m_vid, . ~ . - x))
+            Estimate Std. Error t value
+(Intercept)    1.234      0.100  12.340
+> CI.Rsq(r2_vid, n = 60, k = 2)
+       Rsq       SErsq        LCL       UCL
+1 0.1523     0.0801   -0.0047     0.3093
+> mc_model
+Anova Table (Type 3 tests)
+
+Response: score
+  Effect     df  MSE     F  ges p.value
+1   cond 2, 560 1.02 41.86 *** .130  <.001
+> statsmodels_print()
+==============================================================================
+                 coef    std err          t      P>|t|      [0.025      0.975]
+------------------------------------------------------------------------------
+const       -4.62e+04   4449.507    -10.384      0.000    -5.5e+04   -3.74e+04
+x1          -188.2184     20.093     -9.367      0.000    -228.118    -148.318
+==============================================================================
