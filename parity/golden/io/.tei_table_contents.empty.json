@@ -1,0 +1,11 @@
+{
+  "id": ".tei_table_contents.empty",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "null"
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.3.3 (2024-02-29)"
+}

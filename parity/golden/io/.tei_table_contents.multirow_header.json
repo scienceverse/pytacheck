@@ -1,0 +1,38 @@
+{
+  "id": ".tei_table_contents.multirow_header",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": null,
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "Association with mean reappraisal / Predictor",
+          "Association with mean reappraisal / Model 1 / β01 (SE)",
+          "Association with mean reappraisal / Model 2 / β01 (SE)"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Age",
+          "0.059 (0.018)",
+          "<.001"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Sex",
+          "n.s.",
+          "n.s."
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.3.3 (2024-02-29)"
+}

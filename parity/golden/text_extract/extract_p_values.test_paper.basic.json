@@ -1,9 +1,116 @@
 {
   "id": "extract_p_values.test_paper.basic",
-  "ok": false,
-  "error": "unused argument (bytes = charToRaw(format(Sys.time(), \"%s%OS6\")))",
+  "ok": true,
+  "error": null,
   "warnings": [],
-  "value": null,
+  "value": {
+    "t": "df",
+    "nrow": 4,
+    "names": [
+      "text_id",
+      "section_id",
+      "paragraph_id",
+      "text",
+      "formatted",
+      "paper_id",
+      "header",
+      "section_type",
+      "p_comp",
+      "p_value"
+    ],
+    "v": [
+      {
+        "t": "int",
+        "v": [
+          1,
+          2,
+          3,
+          5
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "p = 0.005",
+          "p = 0.152",
+          "p > .05",
+          "P = .04"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "t = 2.23, p = 0.005.",
+          "(p = 0.152)",
+          "peta = 2.3; p > .05, ppp = 2",
+          "MAP = .5, P = .04"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "22399a2a2828e6",
+          "22399a2a2828e6",
+          "22399a2a2828e6",
+          "22399a2a2828e6"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Test",
+          "Test",
+          "Test",
+          "Test"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "unknown",
+          "unknown",
+          "unknown",
+          "unknown"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "=",
+          "=",
+          ">",
+          "="
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0.005,
+          0.152,
+          0.05,
+          0.04
+        ]
+      }
+    ]
+  },
   "metacheck_version": "0.3.1",
-  "r_version": "R version 4.3.3 (2024-02-29)"
+  "r_version": "R version 4.5.3 (2026-03-11)"
 }

@@ -1,9 +1,100 @@
 {
   "id": "extract_eq.test_paper.complex",
-  "ok": false,
-  "error": "unused argument (bytes = charToRaw(format(Sys.time(), \"%s%OS6\")))",
+  "ok": true,
+  "error": null,
   "warnings": [],
-  "value": null,
+  "value": {
+    "t": "df",
+    "nrow": 6,
+    "names": [
+      "text_id",
+      "grp_id",
+      "lhs",
+      "df",
+      "comp",
+      "rhs",
+      "paper_id"
+    ],
+    "v": [
+      {
+        "t": "int",
+        "v": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "χ2",
+          "p",
+          "M",
+          "95% CI",
+          "M",
+          "95% CI"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "(1, N = 60)",
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "=",
+          "=",
+          "=",
+          "=",
+          "=",
+          "="
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "6.99",
+          ".008",
+          "307.10",
+          "[207.69, 406.51]",
+          "529.73",
+          "[408.56, 650.91]"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "aca1a45475eb31",
+          "aca1a45475eb31",
+          "aca1a45475eb31",
+          "aca1a45475eb31",
+          "aca1a45475eb31",
+          "aca1a45475eb31"
+        ]
+      }
+    ]
+  },
   "metacheck_version": "0.3.1",
-  "r_version": "R version 4.3.3 (2024-02-29)"
+  "r_version": "R version 4.5.3 (2026-03-11)"
 }

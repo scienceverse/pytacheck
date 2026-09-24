@@ -1,0 +1,9 @@
+{
+  "id": ".process_full_text.headers_and_merge",
+  "ok": false,
+  "error": "values must be type 'character',\n but FUN(X[[2]]) result is type 'logical'",
+  "warnings": [],
+  "value": null,
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.3.3 (2024-02-29)"
+}

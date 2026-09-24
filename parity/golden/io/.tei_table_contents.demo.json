@@ -1,0 +1,38 @@
+{
+  "id": ".tei_table_contents.demo",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": null,
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "Condition",
+          "Mistakes Usefulness",
+          "Mistakes Usefulness"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "control",
+          "10.90",
+          "4.50"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "experimental",
+          "9.12",
+          "5.06"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.3.3 (2024-02-29)"
+}

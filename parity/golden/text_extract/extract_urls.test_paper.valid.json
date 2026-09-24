@@ -1,9 +1,96 @@
 {
   "id": "extract_urls.test_paper.valid",
-  "ok": false,
-  "error": "unused argument (bytes = charToRaw(format(Sys.time(), \"%s%OS6\")))",
+  "ok": true,
+  "error": null,
   "warnings": [],
-  "value": null,
+  "value": {
+    "t": "df",
+    "nrow": 4,
+    "names": [
+      "text_id",
+      "section_id",
+      "paragraph_id",
+      "text",
+      "formatted",
+      "paper_id",
+      "header",
+      "section_type"
+    ],
+    "v": [
+      {
+        "t": "int",
+        "v": [
+          1,
+          2,
+          3,
+          4
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://osf.io/48ncu",
+          "http://researchbox.org/4377",
+          "osf.io/48ncu",
+          "http://researchbox.org/4377?PASWORD=10&hi"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://osf.io/48ncu",
+          "http://researchbox.org/4377",
+          "osf.io/48ncu",
+          "http://researchbox.org/4377?PASWORD=10&hi"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "ecade9444a0f10",
+          "ecade9444a0f10",
+          "ecade9444a0f10",
+          "ecade9444a0f10"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Test",
+          "Test",
+          "Test",
+          "Test"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "unknown",
+          "unknown",
+          "unknown",
+          "unknown"
+        ]
+      }
+    ]
+  },
   "metacheck_version": "0.3.1",
-  "r_version": "R version 4.3.3 (2024-02-29)"
+  "r_version": "R version 4.5.3 (2026-03-11)"
 }

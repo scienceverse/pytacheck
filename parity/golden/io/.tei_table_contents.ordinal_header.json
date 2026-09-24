@@ -1,0 +1,44 @@
+{
+  "id": ".tei_table_contents.ordinal_header",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": null,
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "Measure",
+          "M (SD)",
+          "1.",
+          "2.",
+          "3"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "1. Depression",
+          "6.38 (6.60)",
+          "-",
+          ".45",
+          "[.1, .2]"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "2. Anxiety",
+          "2.1",
+          ".3",
+          "",
+          ""
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.3.3 (2024-02-29)"
+}

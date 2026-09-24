@@ -1,0 +1,99 @@
+{
+  "id": ".xml2bib.pages_attrs",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "bib_type",
+      "doi",
+      "title",
+      "authors",
+      "editors",
+      "publisher",
+      "year",
+      "volume",
+      "issue",
+      "first_page",
+      "last_page",
+      "container"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "article"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          ""
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "A"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Z, X Y"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          ""
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          ""
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "1987"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          ""
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          ""
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "3"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "9"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "J"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.3.3 (2024-02-29)"
+}

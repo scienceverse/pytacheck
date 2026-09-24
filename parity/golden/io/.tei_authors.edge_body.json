@@ -1,0 +1,87 @@
+{
+  "id": ".tei_authors.edge_body",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 2,
+    "names": [
+      "author_id",
+      "given",
+      "family",
+      "affiliation",
+      "email",
+      "corresponding",
+      "orcid",
+      "role"
+    ],
+    "v": [
+      {
+        "t": "int",
+        "v": [
+          1,
+          2
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Ann",
+          ""
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Smith",
+          "Doe"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Uni A\n\t\t\t\t\t\t\t\tNL",
+          ""
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "ann@example.org",
+          ""
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false,
+          false
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "0000-0002-1825-0097",
+          ""
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.3.3 (2024-02-29)"
+}
