@@ -6,9 +6,9 @@ import copy
 
 import pandas as pd
 import pytest
-from parity.cases import load_cases
 
 import pytacheck as pc
+from parity.cases import load_cases
 from pytacheck.module import TRAFFIC_LIGHTS, _builtin_names
 
 BUILTINS = list(_builtin_names())

@@ -79,7 +79,9 @@ def cmd_run(ns: argparse.Namespace) -> int:
             for o in outputs
         ]
         sys.stdout.buffer.write(
-            orjson.dumps(payload, option=orjson.OPT_INDENT_2 | orjson.OPT_SERIALIZE_NUMPY, default=str)
+            orjson.dumps(
+                payload, option=orjson.OPT_INDENT_2 | orjson.OPT_SERIALIZE_NUMPY, default=str
+            )
         )
         sys.stdout.write("\n")
     else:
@@ -141,7 +143,9 @@ def cmd_version(_: argparse.Namespace) -> int:
     from pytacheck.io.bibr import bibr_version
 
     print(f"pytacheck {__version__}")
-    print(f"metacheck parity: {UPSTREAM['version']} ({UPSTREAM['branch']}@{UPSTREAM['commit'][:10]})")
+    print(
+        f"metacheck parity: {UPSTREAM['version']} ({UPSTREAM['branch']}@{UPSTREAM['commit'][:10]})"
+    )
     print(f"bibr: {bibr_version() or 'not installed'}")
     return 0
 
@@ -160,9 +164,15 @@ def build_parser() -> argparse.ArgumentParser:
     p.set_defaults(func=cmd_modules)
 
     p = sub.add_parser("run", help="run modules on papers")
-    p.add_argument("papers", nargs="+", help="bibr JSON, Grobid XML, PDF/DOCX (with bibr), or a directory")
-    p.add_argument("-m", "--module", action="append", required=True, help="module name or path (repeatable)")
-    p.add_argument("-a", "--arg", action="append", help="module argument key=value (JSON values allowed)")
+    p.add_argument(
+        "papers", nargs="+", help="bibr JSON, Grobid XML, PDF/DOCX (with bibr), or a directory"
+    )
+    p.add_argument(
+        "-m", "--module", action="append", required=True, help="module name or path (repeatable)"
+    )
+    p.add_argument(
+        "-a", "--arg", action="append", help="module argument key=value (JSON values allowed)"
+    )
     p.add_argument("--json", action="store_true", help="print results as JSON")
     p.set_defaults(func=cmd_run)
 

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import pytest
+
 from parity.__main__ import check_case
 from parity.cases import load_cases
 from parity.compare import summarize

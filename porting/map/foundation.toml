@@ -5,6 +5,7 @@
 "R/module.R" = ["src/pytacheck/module.py"]
 "R/text_search.R" = ["src/pytacheck/text/search.py"]
 "R/text_expand.R" = ["src/pytacheck/text/expand.py"]
+"R/utils.R" = ["src/pytacheck/http.py"]
 "R/utils-logging.R" = ["src/pytacheck/log.py"]
 "R/svutils-utils.R" = ["src/pytacheck/_r/base.py", "src/pytacheck/config.py"]
 "inst/schema/paper.json" = ["src/pytacheck/resources/schema/paper.json"]
@@ -48,3 +49,4 @@ collapse_section = "pytacheck.report.blocks:collapse_section"
 link = "pytacheck.report.blocks:link"
 format_ref = "pytacheck.report.blocks:format_ref"
 cap_gate_count = "pytacheck.report.blocks:cap_gate_count"
+".batch_query" = "pytacheck.http:batch_query"

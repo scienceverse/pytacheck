@@ -147,6 +147,9 @@ ignore = [
     "PERF203", # try/except in loops mirrors R tryCatch-per-item semantics
 ]
 
+[tool.ruff.lint.isort]
+known-first-party = ["pytacheck", "parity", "tests"]
+
 [tool.ruff.lint.per-file-ignores]
 "src/pytacheck/__init__.py" = ["F401"]  # TYPE_CHECKING re-exports; __all__ is built from _EXPORTS
 "tests/**/*.py" = ["S", "ARG", "E402", "SIM117", "PERF"]
