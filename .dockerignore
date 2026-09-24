@@ -1,0 +1,16 @@
+.git
+.venv
+.r-reference
+**/__pycache__
+.pytest_cache
+.mypy_cache
+.ruff_cache
+dist
+build
+upstream
+parity
+tests
+benchmarks
+docs
+scripts
+*.egg-info

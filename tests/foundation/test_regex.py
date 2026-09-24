@@ -42,3 +42,31 @@ def test_strsplit_matches_r_examples() -> None:
     # R: strsplit(c(",", ",,", "a,,", ",a"), ",")
     assert rx.strsplit([",", ",,", "a,,", ",a"], ",") == [[""], ["", ""], ["a", ""], ["", "a"]]
     assert rx.strsplit("aaa", "^a") == ["", "", ""]
+
+
+def test_prefilter_never_changes_grepl() -> None:
+    """grepl with the literal prefilter must equal a plain engine scan."""
+    import pytacheck as pc
+    from pytacheck._r.regex import _prefilter, compile_r
+
+    texts = pc.paper_table(pc.demopaper(), "text")["text"].tolist() + [
+        "Marginally SIGNIFICANT", "ſignificant", "Close to significance", "<pre>", "osf.io/abc",
+        "a borderline sig", "TREND towards significance", "ÉCOLE", "",
+    ]
+    patterns = [
+        r"margin\w* (?:\w+\s+){0,5}significan\w*|trend\w* (?:\w+\s+){0,1}significan\w*",
+        r"significan|signif", r"\<pre", r"osf\.io|github", r"close to|border", r"écol|ecol",
+        r"(?i)TREND|margin", r"data|code|material",
+    ]
+    for pat in patterns:
+        for icase in (False, True):
+            for perl in (False, True):
+                if perl and pat == r"\<pre":
+                    continue
+                rx = compile_r(pat, icase, perl, False, posix=False)
+                expected = [rx.search(t) is not None for t in texts]
+                assert rx_grepl(pat, texts, icase, perl) == expected, (pat, icase, perl, _prefilter(pat, icase))
+
+
+def rx_grepl(pattern: str, texts: list[str], icase: bool, perl: bool) -> list[bool]:
+    return rx.grepl(pattern, texts, ignore_case=icase, perl=perl)

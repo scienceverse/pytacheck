@@ -1,0 +1,4304 @@
+{
+ ".announce_rate_limit_wait": {
+  "file": "R/repo-download.R",
+  "line": 507,
+  "python": "pytacheck.archives.download:_announce_rate_limit_wait"
+ },
+ ".archive_rows": {
+  "file": "R/zip-peek.R",
+  "line": 497,
+  "python": "pytacheck.archives.zip_peek:_archive_rows"
+ },
+ ".as_num_safe": {
+  "file": "R/data_check_helpers.R",
+  "line": 6328,
+  "python": "pytacheck.datacheck.checks:_as_num_safe"
+ },
+ ".aspredicted_info": {
+  "file": "R/archive-aspredicted.R",
+  "line": 97,
+  "python": "pytacheck.archives.aspredicted:_aspredicted_info"
+ },
+ ".auth_for_url": {
+  "file": "R/repo-download.R",
+  "line": 232,
+  "python": "pytacheck.archives.download:_auth_for_url"
+ },
+ ".batch_query": {
+  "file": "R/utils.R",
+  "line": 100,
+  "ported": true,
+  "python": "pytacheck.http:batch_query"
+ },
+ ".bh_is_trial_level_file": {
+  "file": "R/data_check_helpers.R",
+  "line": 6611,
+  "python": "pytacheck.datacheck.checks:_bh_is_trial_level_file"
+ },
+ ".bibr_isalive": {
+  "file": "R/import-bibr.R",
+  "line": 183,
+  "python": "pytacheck.io.bibr_convert:_bibr_isalive"
+ },
+ ".bibr_request_scivrs": {
+  "file": "R/import-bibr.R",
+  "line": 259,
+  "python": "pytacheck.io.bibr_convert:_bibr_request_scivrs"
+ },
+ ".bibr_request_selfhosted": {
+  "file": "R/import-bibr.R",
+  "line": 351,
+  "python": "pytacheck.io.bibr_convert:_bibr_request_selfhosted"
+ },
+ ".bibr_save_result": {
+  "file": "R/import-bibr.R",
+  "line": 382,
+  "python": "pytacheck.io.bibr_convert:_bibr_save_result"
+ },
+ ".bibtype_convert": {
+  "file": "R/db-crossref.R",
+  "line": 112,
+  "python": "pytacheck.db.crossref:_bibtype_convert"
+ },
+ ".cap_num": {
+  "file": "R/report-helpers.R",
+  "line": 195,
+  "python": "pytacheck.report.blocks:_cap_num"
+ },
+ ".cap_size_str": {
+  "file": "R/cap-prompt.R",
+  "line": 18,
+  "python": "pytacheck.llm.cap_prompt:_cap_size_str"
+ },
+ ".cb_is_definition_line": {
+  "file": "R/data_check_helpers.R",
+  "line": 3674,
+  "python": "pytacheck.datacheck.columns:_cb_is_definition_line"
+ },
+ ".code_comment_flags": {
+  "file": "R/code_check.R",
+  "line": 1332,
+  "python": "pytacheck.codecheck.core:_code_comment_flags"
+ },
+ ".code_expand_html": {
+  "file": "R/code_check.R",
+  "line": 504,
+  "python": "pytacheck.codecheck.core:_code_expand_html"
+ },
+ ".code_expand_mplus": {
+  "file": "R/code_check.R",
+  "line": 439,
+  "python": "pytacheck.codecheck.core:_code_expand_mplus"
+ },
+ ".code_expand_smcl": {
+  "file": "R/code_check.R",
+  "line": 380,
+  "python": "pytacheck.codecheck.core:_code_expand_smcl"
+ },
+ ".code_expand_spv": {
+  "file": "R/code_check.R",
+  "line": 318,
+  "python": "pytacheck.codecheck.core:_code_expand_spv"
+ },
+ ".code_expand_zip": {
+  "file": "R/code_check.R",
+  "line": 594,
+  "python": "pytacheck.codecheck.core:_code_expand_zip"
+ },
+ ".code_has_docstring": {
+  "file": "R/code_check.R",
+  "line": 1424,
+  "python": "pytacheck.codecheck.core:_code_has_docstring"
+ },
+ ".code_pos_in_string": {
+  "file": "R/code_check.R",
+  "line": 1149,
+  "python": "pytacheck.codecheck.core:_code_pos_in_string"
+ },
+ ".code_predownload": {
+  "file": "R/code_check.R",
+  "line": 254,
+  "python": "pytacheck.codecheck.core:_code_predownload"
+ },
+ ".code_strip_inline_comment": {
+  "file": "R/code_check.R",
+  "line": 1168,
+  "python": "pytacheck.codecheck.core:_code_strip_inline_comment"
+ },
+ ".code_version_pin_check": {
+  "file": "R/code_check.R",
+  "line": 1776,
+  "python": "pytacheck.codecheck.core:_code_version_pin_check"
+ },
+ ".coerce_bib_authors": {
+  "file": "R/import-bibr.R",
+  "line": 401,
+  "python": "pytacheck.io.bibr_convert:_coerce_bib_authors"
+ },
+ ".col_chr": {
+  "file": "R/utils.R",
+  "line": 46,
+  "python": "pytacheck.utils:_col_chr"
+ },
+ ".coltype_to_facets": {
+  "file": "R/data_check_helpers.R",
+  "line": 5848,
+  "python": "pytacheck.datacheck.checks:_coltype_to_facets"
+ },
+ ".concept_is_accuracy": {
+  "file": "R/data_check_helpers.R",
+  "line": 5697,
+  "python": "pytacheck.datacheck.checks:_concept_is_accuracy"
+ },
+ ".concept_is_condition": {
+  "file": "R/data_check_helpers.R",
+  "line": 5713,
+  "python": "pytacheck.datacheck.checks:_concept_is_condition"
+ },
+ ".concept_is_date": {
+  "file": "R/data_check_helpers.R",
+  "line": 5790,
+  "python": "pytacheck.datacheck.checks:_concept_is_date"
+ },
+ ".concept_is_rt": {
+  "file": "R/data_check_helpers.R",
+  "line": 5686,
+  "python": "pytacheck.datacheck.checks:_concept_is_rt"
+ },
+ ".concept_is_timestamp": {
+  "file": "R/data_check_helpers.R",
+  "line": 5780,
+  "python": "pytacheck.datacheck.checks:_concept_is_timestamp"
+ },
+ ".count_fields": {
+  "file": "R/data_check_helpers.R",
+  "line": 1890,
+  "python": "pytacheck.datacheck.files:_count_fields"
+ },
+ ".crc32": {
+  "file": "R/zip-peek.R",
+  "line": 386,
+  "python": "pytacheck.archives.zip_peek:_crc32"
+ },
+ ".crossref_parse_item": {
+  "file": "R/db-crossref.R",
+  "line": 273,
+  "python": "pytacheck.db.crossref:_crossref_parse_item"
+ },
+ ".crossref_query_parse": {
+  "file": "R/db-crossref.R",
+  "line": 470,
+  "python": "pytacheck.db.crossref:_crossref_query_parse"
+ },
+ ".data_check_write_manifest": {
+  "file": "R/data_check_helpers.R",
+  "line": 847,
+  "python": "pytacheck.datacheck.files:_data_check_write_manifest"
+ },
+ ".data_code_refs": {
+  "file": "R/data_check_helpers.R",
+  "line": 1283,
+  "python": "pytacheck.datacheck.files:_data_code_refs"
+ },
+ ".data_doc_role": {
+  "file": "R/data_check_helpers.R",
+  "line": 692,
+  "python": "pytacheck.datacheck.files:_data_doc_role"
+ },
+ ".data_group_check_roster": {
+  "file": "R/data_check_helpers.R",
+  "line": 1253,
+  "python": "pytacheck.datacheck.files:_data_group_check_roster"
+ },
+ ".data_group_from_path": {
+  "file": "R/data_check_helpers.R",
+  "line": 1317,
+  "python": "pytacheck.datacheck.files:_data_group_from_path"
+ },
+ ".data_group_from_repo": {
+  "file": "R/data_check_helpers.R",
+  "line": 1376,
+  "python": "pytacheck.datacheck.files:_data_group_from_repo"
+ },
+ ".data_group_llm_impl": {
+  "file": "R/data_check_helpers.R",
+  "line": 1411,
+  "python": "pytacheck.datacheck.files:_data_group_llm_impl"
+ },
+ ".data_group_normalize": {
+  "file": "R/data_check_helpers.R",
+  "line": 1344,
+  "python": "pytacheck.datacheck.files:_data_group_normalize"
+ },
+ ".data_group_sort": {
+  "file": "R/data_check_helpers.R",
+  "line": 1241,
+  "python": "pytacheck.datacheck.files:_data_group_sort"
+ },
+ ".dataone_host": {
+  "file": "R/archive-dataone.R",
+  "line": 114,
+  "python": "pytacheck.archives.dataone:_dataone_host"
+ },
+ ".dataone_host_regex": {
+  "file": "R/archive-dataone.R",
+  "line": 44,
+  "python": "pytacheck.archives.dataone:_dataone_host_regex"
+ },
+ ".dataone_hosts": {
+  "file": "R/archive-dataone.R",
+  "line": 31,
+  "python": "pytacheck.archives.dataone:_dataone_hosts"
+ },
+ ".dataone_info": {
+  "file": "R/archive-dataone.R",
+  "line": 282,
+  "python": "pytacheck.archives.dataone:_dataone_info"
+ },
+ ".dataone_pid": {
+  "file": "R/archive-dataone.R",
+  "line": 138,
+  "python": "pytacheck.archives.dataone:_dataone_pid"
+ },
+ ".dataverse_doi_prefix_hosts": {
+  "file": "R/archive-dataverse.R",
+  "line": 245,
+  "python": "pytacheck.archives.dataverse:_dataverse_doi_prefix_hosts"
+ },
+ ".dataverse_doi_prefix_regex": {
+  "file": "R/archive-dataverse.R",
+  "line": 339,
+  "python": "pytacheck.archives.dataverse:_dataverse_doi_prefix_regex"
+ },
+ ".dataverse_headers": {
+  "file": "R/archive-dataverse.R",
+  "line": 692,
+  "python": "pytacheck.archives.dataverse:_dataverse_headers"
+ },
+ ".dataverse_host_from_doi": {
+  "file": "R/archive-dataverse.R",
+  "line": 349,
+  "python": "pytacheck.archives.dataverse:_dataverse_host_from_doi"
+ },
+ ".dataverse_host_regex": {
+  "file": "R/archive-dataverse.R",
+  "line": 197,
+  "python": "pytacheck.archives.dataverse:_dataverse_host_regex"
+ },
+ ".dataverse_hosts": {
+  "file": "R/archive-dataverse.R",
+  "line": 60,
+  "python": "pytacheck.archives.dataverse:_dataverse_hosts"
+ },
+ ".dataverse_info": {
+  "file": "R/archive-dataverse.R",
+  "line": 617,
+  "python": "pytacheck.archives.dataverse:_dataverse_info"
+ },
+ ".dataverse_parse": {
+  "file": "R/archive-dataverse.R",
+  "line": 440,
+  "python": "pytacheck.archives.dataverse:_dataverse_parse"
+ },
+ ".dataverse_pat": {
+  "file": "R/archive-dataverse.R",
+  "line": 727,
+  "python": "pytacheck.archives.dataverse:_dataverse_pat"
+ },
+ ".dataverse_verify_downloads": {
+  "file": "R/archive-dataverse.R",
+  "line": 1134,
+  "python": "pytacheck.archives.dataverse:_dataverse_verify_downloads"
+ },
+ ".dataverse_zip_members": {
+  "file": "R/archive-dataverse.R",
+  "line": 1097,
+  "python": "pytacheck.archives.dataverse:_dataverse_zip_members"
+ },
+ ".decode_value_labels": {
+  "file": "R/data_check_helpers.R",
+  "line": 2962,
+  "python": "pytacheck.datacheck.columns:_decode_value_labels"
+ },
+ ".demographic_values_ok": {
+  "file": "R/data_check_helpers.R",
+  "line": 5541,
+  "python": "pytacheck.datacheck.checks:_demographic_values_ok"
+ },
+ ".detect_accuracy_blocks": {
+  "file": "R/data_check_helpers.R",
+  "line": 6887,
+  "python": "pytacheck.datacheck.checks:_detect_accuracy_blocks"
+ },
+ ".detect_header": {
+  "file": "R/data_check_helpers.R",
+  "line": 1854,
+  "python": "pytacheck.datacheck.files:_detect_header"
+ },
+ ".detect_header_row": {
+  "file": "R/data_check_helpers.R",
+  "line": 6430,
+  "python": "pytacheck.datacheck.checks:_detect_header_row"
+ },
+ ".detect_likert_scale": {
+  "file": "R/data_check_helpers.R",
+  "line": 2339,
+  "python": "pytacheck.datacheck.files:_detect_likert_scale"
+ },
+ ".detect_live_data": {
+  "file": "R/text-extractors.R",
+  "line": 252,
+  "python": "pytacheck.text.extract:_detect_live_data"
+ },
+ ".detect_scale_blocks": {
+  "file": "R/data_check_helpers.R",
+  "line": 6940,
+  "python": "pytacheck.datacheck.checks:_detect_scale_blocks"
+ },
+ ".detect_task_columns": {
+  "file": "R/data_check_helpers.R",
+  "line": 6819,
+  "python": "pytacheck.datacheck.checks:_detect_task_columns"
+ },
+ ".download_many_parallel": {
+  "file": "R/repo-download.R",
+  "line": 731,
+  "python": "pytacheck.archives.download:_download_many_parallel"
+ },
+ ".download_one": {
+  "file": "R/repo-download.R",
+  "line": 636,
+  "python": "pytacheck.archives.download:_download_one"
+ },
+ ".download_zip_to_cache": {
+  "file": "R/repo-download.R",
+  "line": 910,
+  "python": "pytacheck.archives.download:_download_zip_to_cache"
+ },
+ ".dryad_auth": {
+  "file": "R/archive-dryad.R",
+  "line": 438,
+  "python": "pytacheck.archives.dryad:_dryad_auth"
+ },
+ ".dryad_doi": {
+  "file": "R/archive-dryad.R",
+  "line": 104,
+  "python": "pytacheck.archives.dryad:_dryad_doi"
+ },
+ ".dryad_doi_prefixes": {
+  "file": "R/archive-dryad.R",
+  "line": 34,
+  "python": "pytacheck.archives.dryad:_dryad_doi_prefixes"
+ },
+ ".dryad_headers": {
+  "file": "R/archive-dryad.R",
+  "line": 342,
+  "python": "pytacheck.archives.dryad:_dryad_headers"
+ },
+ ".dryad_info": {
+  "file": "R/archive-dryad.R",
+  "line": 246,
+  "python": "pytacheck.archives.dryad:_dryad_info"
+ },
+ ".dryad_oauth_client": {
+  "file": "R/archive-dryad.R",
+  "line": 470,
+  "python": "pytacheck.archives.dryad:_dryad_oauth_client"
+ },
+ ".dryad_pat": {
+  "file": "R/archive-dryad.R",
+  "line": 385,
+  "python": "pytacheck.archives.dryad:_dryad_pat"
+ },
+ ".dryad_verify_downloads": {
+  "file": "R/archive-dryad.R",
+  "line": 849,
+  "python": "pytacheck.archives.dryad:_dryad_verify_downloads"
+ },
+ ".dryad_zip_members": {
+  "file": "R/archive-dryad.R",
+  "line": 812,
+  "python": "pytacheck.archives.dryad:_dryad_zip_members"
+ },
+ ".dspace7_host_regex": {
+  "file": "R/archive-dspace7.R",
+  "line": 113,
+  "python": "pytacheck.archives.dspace7:_dspace7_host_regex"
+ },
+ ".dspace7_hosts": {
+  "file": "R/archive-dspace7.R",
+  "line": 44,
+  "python": "pytacheck.archives.dspace7:_dspace7_hosts"
+ },
+ ".dspace7_info": {
+  "file": "R/archive-dspace7.R",
+  "line": 213,
+  "python": "pytacheck.archives.dspace7:_dspace7_info"
+ },
+ ".dspace7_parse": {
+  "file": "R/archive-dspace7.R",
+  "line": 128,
+  "python": "pytacheck.archives.dspace7:_dspace7_parse"
+ },
+ ".dspace7_rest": {
+  "file": "R/archive-dspace7.R",
+  "line": 197,
+  "python": "pytacheck.archives.dspace7:_dspace7_rest"
+ },
+ ".dspace_legacy_host_regex": {
+  "file": "R/archive-psycharchives.R",
+  "line": 38,
+  "python": "pytacheck.archives.psycharchives:_dspace_legacy_host_regex"
+ },
+ ".dspace_legacy_hosts": {
+  "file": "R/archive-psycharchives.R",
+  "line": 27,
+  "python": "pytacheck.archives.psycharchives:_dspace_legacy_hosts"
+ },
+ ".dspace_legacy_parse": {
+  "file": "R/archive-psycharchives.R",
+  "line": 53,
+  "python": "pytacheck.archives.psycharchives:_dspace_legacy_parse"
+ },
+ ".empty_codebook_vars": {
+  "file": "R/data_check_helpers.R",
+  "line": 2741,
+  "python": "pytacheck.datacheck.columns:_empty_codebook_vars"
+ },
+ ".empty_tests": {
+  "file": "R/extract-tests.R",
+  "line": 387,
+  "python": "pytacheck.text.extract_tests:_empty_tests"
+ },
+ ".encode_missing_values": {
+  "file": "R/data_check_helpers.R",
+  "line": 2972,
+  "python": "pytacheck.datacheck.columns:_encode_missing_values"
+ },
+ ".encode_value_labels": {
+  "file": "R/data_check_helpers.R",
+  "line": 2951,
+  "python": "pytacheck.datacheck.columns:_encode_value_labels"
+ },
+ ".eprime_is_export": {
+  "file": "R/data_check_helpers.R",
+  "line": 6597,
+  "python": "pytacheck.datacheck.checks:_eprime_is_export"
+ },
+ ".expand_compressed": {
+  "file": "R/zip-peek.R",
+  "line": 590,
+  "python": "pytacheck.archives.zip_peek:_expand_compressed"
+ },
+ ".expand_tar": {
+  "file": "R/zip-peek.R",
+  "line": 571,
+  "python": "pytacheck.archives.zip_peek:_expand_tar"
+ },
+ ".expand_zip": {
+  "file": "R/zip-peek.R",
+  "line": 550,
+  "python": "pytacheck.archives.zip_peek:_expand_zip"
+ },
+ ".extract_codebook_positional": {
+  "file": "R/data_check_helpers.R",
+  "line": 3313,
+  "python": "pytacheck.datacheck.columns:_extract_codebook_positional"
+ },
+ ".extract_haven_labels": {
+  "file": "R/data_check_helpers.R",
+  "line": 3645,
+  "python": "pytacheck.datacheck.columns:_extract_haven_labels"
+ },
+ ".extract_json_codebook": {
+  "file": "R/data_check_helpers.R",
+  "line": 3463,
+  "python": "pytacheck.datacheck.columns:_extract_json_codebook"
+ },
+ ".extract_markdown_codebook": {
+  "file": "R/data_check_helpers.R",
+  "line": 3373,
+  "python": "pytacheck.datacheck.columns:_extract_markdown_codebook"
+ },
+ ".extract_rich_text": {
+  "file": "R/data_check_helpers.R",
+  "line": 3738,
+  "python": "pytacheck.datacheck.columns:_extract_rich_text"
+ },
+ ".extract_spreadsheet_codebook": {
+  "file": "R/data_check_helpers.R",
+  "line": 3524,
+  "python": "pytacheck.datacheck.columns:_extract_spreadsheet_codebook"
+ },
+ ".extract_structured_codebook": {
+  "file": "R/data_check_helpers.R",
+  "line": 3554,
+  "python": "pytacheck.datacheck.columns:_extract_structured_codebook"
+ },
+ ".figshare_doi_prefix_hosts": {
+  "file": "R/archive-figshare.R",
+  "line": 128,
+  "python": "pytacheck.archives.figshare:_figshare_doi_prefix_hosts"
+ },
+ ".figshare_headers": {
+  "file": "R/archive-figshare.R",
+  "line": 651,
+  "python": "pytacheck.archives.figshare:_figshare_headers"
+ },
+ ".figshare_host_regex": {
+  "file": "R/archive-figshare.R",
+  "line": 170,
+  "python": "pytacheck.archives.figshare:_figshare_host_regex"
+ },
+ ".figshare_id": {
+  "file": "R/archive-figshare.R",
+  "line": 260,
+  "python": "pytacheck.archives.figshare:_figshare_id"
+ },
+ ".figshare_info": {
+  "file": "R/archive-figshare.R",
+  "line": 579,
+  "python": "pytacheck.archives.figshare:_figshare_info"
+ },
+ ".figshare_pat": {
+  "file": "R/archive-figshare.R",
+  "line": 681,
+  "python": "pytacheck.archives.figshare:_figshare_pat"
+ },
+ ".figshare_project_articles": {
+  "file": "R/archive-figshare.R",
+  "line": 394,
+  "python": "pytacheck.archives.figshare:_figshare_project_articles"
+ },
+ ".figshare_project_id": {
+  "file": "R/archive-figshare.R",
+  "line": 362,
+  "python": "pytacheck.archives.figshare:_figshare_project_id"
+ },
+ ".figshare_vanity_hosts": {
+  "file": "R/archive-figshare.R",
+  "line": 73,
+  "python": "pytacheck.archives.figshare:_figshare_vanity_hosts"
+ },
+ ".figshare_verify_downloads": {
+  "file": "R/archive-figshare.R",
+  "line": 1067,
+  "python": "pytacheck.archives.figshare:_figshare_verify_downloads"
+ },
+ ".figshare_zip_members": {
+  "file": "R/archive-figshare.R",
+  "line": 1029,
+  "python": "pytacheck.archives.figshare:_figshare_zip_members"
+ },
+ ".file_naming_check_length": {
+  "file": "R/file-naming.R",
+  "line": 155,
+  "python": "pytacheck.fileinfo.naming:_file_naming_check_length"
+ },
+ ".file_naming_check_one": {
+  "file": "R/file-naming.R",
+  "line": 46,
+  "python": "pytacheck.fileinfo.naming:_file_naming_check_one"
+ },
+ ".file_naming_check_padding": {
+  "file": "R/file-naming.R",
+  "line": 108,
+  "python": "pytacheck.fileinfo.naming:_file_naming_check_padding"
+ },
+ ".find_codebook_cols": {
+  "file": "R/data_check_helpers.R",
+  "line": 2726,
+  "python": "pytacheck.datacheck.columns:_find_codebook_cols"
+ },
+ ".find_coding_instruction_col": {
+  "file": "R/data_check_helpers.R",
+  "line": 3280,
+  "python": "pytacheck.datacheck.columns:_find_coding_instruction_col"
+ },
+ ".find_missing_value_col": {
+  "file": "R/data_check_helpers.R",
+  "line": 3214,
+  "python": "pytacheck.datacheck.columns:_find_missing_value_col"
+ },
+ ".find_question_col": {
+  "file": "R/data_check_helpers.R",
+  "line": 3254,
+  "python": "pytacheck.datacheck.columns:_find_question_col"
+ },
+ ".find_value_label_col": {
+  "file": "R/data_check_helpers.R",
+  "line": 3225,
+  "python": "pytacheck.datacheck.columns:_find_value_label_col"
+ },
+ ".format_wait_duration": {
+  "file": "R/repo-download.R",
+  "line": 474,
+  "python": "pytacheck.archives.download:_format_wait_duration"
+ },
+ ".fsd_ddi_xml": {
+  "file": "R/archive-fsd.R",
+  "line": 283,
+  "python": "pytacheck.archives.fsd:_fsd_ddi_xml"
+ },
+ ".fsd_info": {
+  "file": "R/archive-fsd.R",
+  "line": 202,
+  "python": "pytacheck.archives.fsd:_fsd_info"
+ },
+ ".fsd_study_id": {
+  "file": "R/archive-fsd.R",
+  "line": 35,
+  "python": "pytacheck.archives.fsd:_fsd_study_id"
+ },
+ ".github_config": {
+  "file": "R/archive-github.R",
+  "line": 411,
+  "python": "pytacheck.archives.github:_github_config"
+ },
+ ".gitlab_blob_sizes": {
+  "file": "R/archive-gitlab.R",
+  "line": 364,
+  "python": "pytacheck.archives.gitlab:_gitlab_blob_sizes"
+ },
+ ".gitlab_config": {
+  "file": "R/archive-gitlab.R",
+  "line": 159,
+  "python": "pytacheck.archives.gitlab:_gitlab_config"
+ },
+ ".gitlab_pat": {
+  "file": "R/archive-gitlab.R",
+  "line": 188,
+  "python": "pytacheck.archives.gitlab:_gitlab_pat"
+ },
+ ".gitlab_project_id": {
+  "file": "R/archive-gitlab.R",
+  "line": 144,
+  "python": "pytacheck.archives.gitlab:_gitlab_project_id"
+ },
+ ".grobid_isalive": {
+  "file": "R/import-grobid.R",
+  "line": 246,
+  "python": "pytacheck.io.grobid:_grobid_isalive"
+ },
+ ".grobid_to_bibr": {
+  "file": "R/import-grobid.R",
+  "line": 297,
+  "python": "pytacheck.io.grobid:_grobid_to_bibr"
+ },
+ ".haven_value_labels": {
+  "file": "R/data_check_helpers.R",
+  "line": 3055,
+  "python": "pytacheck.datacheck.columns:_haven_value_labels"
+ },
+ ".host_rate_limit_record": {
+  "file": "R/repo-download.R",
+  "line": 445,
+  "python": "pytacheck.archives.download:_host_rate_limit_record"
+ },
+ ".host_rate_limit_remaining": {
+  "file": "R/repo-download.R",
+  "line": 460,
+  "python": "pytacheck.archives.download:_host_rate_limit_remaining"
+ },
+ ".html_export_r_source": {
+  "file": "R/html-output.R",
+  "line": 153,
+  "python": "pytacheck.report.html_output:_html_export_r_source"
+ },
+ ".html_inline_images": {
+  "file": "R/jasp.R",
+  "line": 274,
+  "python": "pytacheck.statout.jasp:_html_inline_images"
+ },
+ ".html_sniff_kind": {
+  "file": "R/html-output.R",
+  "line": 62,
+  "python": "pytacheck.report.html_output:_html_sniff_kind"
+ },
+ ".http_range_bytes": {
+  "file": "R/zip-peek.R",
+  "line": 110,
+  "python": "pytacheck.archives.zip_peek:_http_range_bytes"
+ },
+ ".http_range_tail": {
+  "file": "R/zip-peek.R",
+  "line": 53,
+  "python": "pytacheck.archives.zip_peek:_http_range_tail"
+ },
+ ".infer_group": {
+  "file": "R/data_check_helpers.R",
+  "line": 4228,
+  "python": "pytacheck.datacheck.columns:_infer_group"
+ },
+ ".ipynb_is_noise": {
+  "file": "R/stat-tables.R",
+  "line": 735,
+  "python": "pytacheck.statout.stat_tables:_ipynb_is_noise"
+ },
+ ".ipynb_lang": {
+  "file": "R/code_check.R",
+  "line": 69,
+  "python": "pytacheck.codecheck.core:_ipynb_lang"
+ },
+ ".ipynb_read_tables": {
+  "file": "R/stat-tables.R",
+  "line": 921,
+  "python": "pytacheck.statout.stat_tables:_ipynb_read_tables"
+ },
+ ".ipynb_result_class": {
+  "file": "R/stat-tables.R",
+  "line": 767,
+  "python": "pytacheck.statout.stat_tables:_ipynb_result_class"
+ },
+ ".ipynb_stat_kv": {
+  "file": "R/stat-tables.R",
+  "line": 876,
+  "python": "pytacheck.statout.stat_tables:_ipynb_stat_kv"
+ },
+ ".ipynb_stat_line": {
+  "file": "R/stat-tables.R",
+  "line": 802,
+  "python": "pytacheck.statout.stat_tables:_ipynb_stat_line"
+ },
+ ".ipynb_stat_table": {
+  "file": "R/stat-tables.R",
+  "line": 829,
+  "python": "pytacheck.statout.stat_tables:_ipynb_stat_table"
+ },
+ ".ipynb_strip_numpy_scalars": {
+  "file": "R/stat-tables.R",
+  "line": 784,
+  "python": "pytacheck.statout.stat_tables:_ipynb_strip_numpy_scalars"
+ },
+ ".is_accuracy_item": {
+  "file": "R/data_check_helpers.R",
+  "line": 6863,
+  "python": "pytacheck.datacheck.checks:_is_accuracy_item"
+ },
+ ".is_anchor": {
+  "file": "R/extract-tests.R",
+  "line": 130,
+  "python": "pytacheck.text.extract_tests:_is_anchor"
+ },
+ ".is_junk_above_header": {
+  "file": "R/data_check_helpers.R",
+  "line": 6390,
+  "python": "pytacheck.datacheck.checks:_is_junk_above_header"
+ },
+ ".is_likert_item": {
+  "file": "R/data_check_helpers.R",
+  "line": 6739,
+  "python": "pytacheck.datacheck.checks:_is_likert_item"
+ },
+ ".is_login_page": {
+  "file": "R/repo-download.R",
+  "line": 314,
+  "python": "pytacheck.archives.download:_is_login_page"
+ },
+ ".is_paper": {
+  "file": "R/paper.R",
+  "line": 389,
+  "ported": true,
+  "python": "pytacheck.papers.model:is_paper"
+ },
+ ".is_paper_list": {
+  "file": "R/paper.R",
+  "line": 405,
+  "ported": true,
+  "python": "pytacheck.papers.model:is_paper_list"
+ },
+ ".is_placeholder_name": {
+  "file": "R/data_check_helpers.R",
+  "line": 6336,
+  "python": "pytacheck.datacheck.checks:_is_placeholder_name"
+ },
+ ".is_primary_anchor": {
+  "file": "R/extract-tests.R",
+  "line": 147,
+  "python": "pytacheck.text.extract_tests:_is_primary_anchor"
+ },
+ ".is_r_package_file": {
+  "file": "R/data_check_helpers.R",
+  "line": 611,
+  "python": "pytacheck.datacheck.files:_is_r_package_file"
+ },
+ ".is_readable_archive": {
+  "file": "R/zip-peek.R",
+  "line": 484,
+  "python": "pytacheck.archives.zip_peek:_is_readable_archive"
+ },
+ ".is_single_compress": {
+  "file": "R/zip-peek.R",
+  "line": 481,
+  "python": "pytacheck.archives.zip_peek:_is_single_compress"
+ },
+ ".is_single_field_blob": {
+  "file": "R/data_check_helpers.R",
+  "line": 1903,
+  "python": "pytacheck.datacheck.files:_is_single_field_blob"
+ },
+ ".is_stat_name": {
+  "file": "R/extract-tests.R",
+  "line": 122,
+  "python": "pytacheck.text.extract_tests:_is_stat_name"
+ },
+ ".is_tar_archive": {
+  "file": "R/zip-peek.R",
+  "line": 476,
+  "python": "pytacheck.archives.zip_peek:_is_tar_archive"
+ },
+ ".is_task_data": {
+  "file": "R/data_check_helpers.R",
+  "line": 6910,
+  "python": "pytacheck.datacheck.checks:_is_task_data"
+ },
+ ".is_zip": {
+  "file": "R/zip-peek.R",
+  "line": 474,
+  "python": "pytacheck.archives.zip_peek:_is_zip"
+ },
+ ".item_text_key": {
+  "file": "R/data_check_helpers.R",
+  "line": 2901,
+  "python": "pytacheck.datacheck.columns:_item_text_key"
+ },
+ ".jasp_analyses_summary": {
+  "file": "R/jasp.R",
+  "line": 213,
+  "python": "pytacheck.statout.jasp:_jasp_analyses_summary"
+ },
+ ".jasp_binary_labels": {
+  "file": "R/jasp.R",
+  "line": 132,
+  "python": "pytacheck.statout.jasp:_jasp_binary_labels"
+ },
+ ".jasp_clean_colname": {
+  "file": "R/stat-tables.R",
+  "line": 167,
+  "python": "pytacheck.statout.stat_tables:_jasp_clean_colname"
+ },
+ ".jasp_structured_tables": {
+  "file": "R/stat-tables.R",
+  "line": 191,
+  "python": "pytacheck.statout.stat_tables:_jasp_structured_tables"
+ },
+ ".jasp_table_to_df": {
+  "file": "R/stat-tables.R",
+  "line": 250,
+  "python": "pytacheck.statout.stat_tables:_jasp_table_to_df"
+ },
+ ".jmv_cell": {
+  "file": "R/stat-tables.R",
+  "line": 356,
+  "python": "pytacheck.statout.stat_tables:_jmv_cell"
+ },
+ ".jmv_collect": {
+  "file": "R/stat-tables.R",
+  "line": 522,
+  "python": "pytacheck.statout.stat_tables:_jmv_collect"
+ },
+ ".jmv_is_wide_descriptives": {
+  "file": "R/stat-tables.R",
+  "line": 393,
+  "python": "pytacheck.statout.stat_tables:_jmv_is_wide_descriptives"
+ },
+ ".jmv_pivot_wide_descriptives": {
+  "file": "R/stat-tables.R",
+  "line": 426,
+  "python": "pytacheck.statout.stat_tables:_jmv_pivot_wide_descriptives"
+ },
+ ".jmv_structured_tables": {
+  "file": "R/stat-tables.R",
+  "line": 549,
+  "python": "pytacheck.statout.stat_tables:_jmv_structured_tables"
+ },
+ ".jmv_table_to_df": {
+  "file": "R/stat-tables.R",
+  "line": 470,
+  "python": "pytacheck.statout.stat_tables:_jmv_table_to_df"
+ },
+ ".json_field": {
+  "file": "R/data_check_helpers.R",
+  "line": 3415,
+  "python": "pytacheck.datacheck.columns:_json_field"
+ },
+ ".json_value_labels": {
+  "file": "R/data_check_helpers.R",
+  "line": 3436,
+  "python": "pytacheck.datacheck.columns:_json_value_labels"
+ },
+ ".le_int": {
+  "file": "R/zip-peek.R",
+  "line": 27,
+  "python": "pytacheck.archives.zip_peek:_le_int"
+ },
+ ".llm_apply_reasoning": {
+  "file": "R/llm.R",
+  "line": 955,
+  "python": "pytacheck.llm.core:_llm_apply_reasoning"
+ },
+ ".llm_cache_dir": {
+  "file": "R/llm-cache.R",
+  "line": 61,
+  "python": "pytacheck.llm.cache:_llm_cache_dir"
+ },
+ ".llm_cache_get": {
+  "file": "R/llm-cache.R",
+  "line": 93,
+  "python": "pytacheck.llm.cache:_llm_cache_get"
+ },
+ ".llm_cache_key": {
+  "file": "R/llm-cache.R",
+  "line": 73,
+  "python": "pytacheck.llm.cache:_llm_cache_key"
+ },
+ ".llm_cache_path": {
+  "file": "R/llm-cache.R",
+  "line": 88,
+  "python": "pytacheck.llm.cache:_llm_cache_path"
+ },
+ ".llm_cache_put": {
+  "file": "R/llm-cache.R",
+  "line": 101,
+  "python": "pytacheck.llm.cache:_llm_cache_put"
+ },
+ ".llm_classify_batched": {
+  "file": "R/data_check_helpers.R",
+  "line": 1109,
+  "python": "pytacheck.datacheck.files:_llm_classify_batched"
+ },
+ ".llm_error_message": {
+  "file": "R/llm.R",
+  "line": 546,
+  "python": "pytacheck.llm.core:_llm_error_message"
+ },
+ ".llm_extract_thinking": {
+  "file": "R/llm.R",
+  "line": 575,
+  "python": "pytacheck.llm.core:_llm_extract_thinking"
+ },
+ ".llm_is_systemic_error": {
+  "file": "R/llm.R",
+  "line": 489,
+  "python": "pytacheck.llm.core:_llm_is_systemic_error"
+ },
+ ".llm_json_retryable": {
+  "file": "R/llm.R",
+  "line": 441,
+  "python": "pytacheck.llm.core:_llm_json_retryable"
+ },
+ ".llm_model_list_groq": {
+  "file": "R/llm.R",
+  "line": 737,
+  "python": "pytacheck.llm.core:_llm_model_list_groq"
+ },
+ ".llm_ollama_native": {
+  "file": "R/llm.R",
+  "line": 402,
+  "python": "pytacheck.llm.core:_llm_ollama_native"
+ },
+ ".llm_sanitise_text": {
+  "file": "R/llm.R",
+  "line": 532,
+  "python": "pytacheck.llm.core:_llm_sanitise_text"
+ },
+ ".load_module_tables": {
+  "file": "R/module.R",
+  "line": 619,
+  "python": "pytacheck.module:_load_module_tables"
+ },
+ ".looks_like_accuracy": {
+  "file": "R/data_check_helpers.R",
+  "line": 6798,
+  "python": "pytacheck.datacheck.checks:_looks_like_accuracy"
+ },
+ ".looks_like_freetext_labels": {
+  "file": "R/data_check_helpers.R",
+  "line": 3043,
+  "python": "pytacheck.datacheck.columns:_looks_like_freetext_labels"
+ },
+ ".looks_like_rt": {
+  "file": "R/data_check_helpers.R",
+  "line": 6777,
+  "python": "pytacheck.datacheck.checks:_looks_like_rt"
+ },
+ ".looks_like_varnames": {
+  "file": "R/data_check_helpers.R",
+  "line": 3292,
+  "python": "pytacheck.datacheck.columns:_looks_like_varnames"
+ },
+ ".looks_like_wording": {
+  "file": "R/data_check_helpers.R",
+  "line": 3301,
+  "python": "pytacheck.datacheck.columns:_looks_like_wording"
+ },
+ ".mendeley_id": {
+  "file": "R/archive-mendeley.R",
+  "line": 86,
+  "python": "pytacheck.archives.mendeley:_mendeley_id"
+ },
+ ".mendeley_info": {
+  "file": "R/archive-mendeley.R",
+  "line": 230,
+  "python": "pytacheck.archives.mendeley:_mendeley_info"
+ },
+ ".metacheck_cache_root": {
+  "file": "R/cache.R",
+  "line": 19,
+  "python": "pytacheck.archives.cache:_metacheck_cache_root"
+ },
+ ".metacheck_cache_subdir": {
+  "file": "R/cache.R",
+  "line": 29,
+  "python": "pytacheck.archives.cache:_metacheck_cache_subdir"
+ },
+ ".metacheck_dir_size": {
+  "file": "R/cache.R",
+  "line": 37,
+  "python": "pytacheck.archives.cache:_metacheck_dir_size"
+ },
+ ".missing_from_value_labels": {
+  "file": "R/data_check_helpers.R",
+  "line": 3201,
+  "python": "pytacheck.datacheck.columns:_missing_from_value_labels"
+ },
+ ".mplus_export_syntax": {
+  "file": "R/mplus.R",
+  "line": 579,
+  "python": "pytacheck.statout.mplus:_mplus_export_syntax"
+ },
+ ".mplus_find_header": {
+  "file": "R/mplus.R",
+  "line": 229,
+  "python": "pytacheck.statout.mplus:_mplus_find_header"
+ },
+ ".mplus_is_genuine_output": {
+  "file": "R/mplus.R",
+  "line": 483,
+  "python": "pytacheck.statout.mplus:_mplus_is_genuine_output"
+ },
+ ".mplus_is_group_label": {
+  "file": "R/mplus.R",
+  "line": 202,
+  "python": "pytacheck.statout.mplus:_mplus_is_group_label"
+ },
+ ".mplus_is_level_label": {
+  "file": "R/mplus.R",
+  "line": 246,
+  "python": "pytacheck.statout.mplus:_mplus_is_level_label"
+ },
+ ".mplus_is_numlike": {
+  "file": "R/mplus.R",
+  "line": 168,
+  "python": "pytacheck.statout.mplus:_mplus_is_numlike"
+ },
+ ".mplus_is_section_header": {
+  "file": "R/mplus.R",
+  "line": 140,
+  "python": "pytacheck.statout.mplus:_mplus_is_section_header"
+ },
+ ".mplus_is_stat_header_line": {
+  "file": "R/mplus.R",
+  "line": 222,
+  "python": "pytacheck.statout.mplus:_mplus_is_stat_header_line"
+ },
+ ".mplus_is_stats_header_line": {
+  "file": "R/mplus.R",
+  "line": 361,
+  "python": "pytacheck.statout.mplus:_mplus_is_stats_header_line"
+ },
+ ".mplus_looks_header": {
+  "file": "R/mplus.R",
+  "line": 189,
+  "python": "pytacheck.statout.mplus:_mplus_looks_header"
+ },
+ ".mplus_output_labelvalue": {
+  "file": "R/mplus.R",
+  "line": 446,
+  "python": "pytacheck.statout.mplus:_mplus_output_labelvalue"
+ },
+ ".mplus_output_tables": {
+  "file": "R/mplus.R",
+  "line": 421,
+  "python": "pytacheck.statout.mplus:_mplus_output_tables"
+ },
+ ".mplus_read_grouped_table": {
+  "file": "R/mplus.R",
+  "line": 262,
+  "python": "pytacheck.statout.mplus:_mplus_read_grouped_table"
+ },
+ ".mplus_read_matrix_table": {
+  "file": "R/mplus.R",
+  "line": 319,
+  "python": "pytacheck.statout.mplus:_mplus_read_matrix_table"
+ },
+ ".mplus_read_stats_table": {
+  "file": "R/mplus.R",
+  "line": 366,
+  "python": "pytacheck.statout.mplus:_mplus_read_stats_table"
+ },
+ ".mplus_sections": {
+  "file": "R/mplus.R",
+  "line": 152,
+  "python": "pytacheck.statout.mplus:_mplus_sections"
+ },
+ ".mplus_split_block": {
+  "file": "R/mplus.R",
+  "line": 174,
+  "python": "pytacheck.statout.mplus:_mplus_split_block"
+ },
+ ".mplus_syntax_lines": {
+  "file": "R/mplus.R",
+  "line": 545,
+  "python": "pytacheck.statout.mplus:_mplus_syntax_lines"
+ },
+ ".norm_df": {
+  "file": "R/match-reported.R",
+  "line": 79,
+  "python": "pytacheck.statout.match_reported:_norm_df"
+ },
+ ".norm_interval": {
+  "file": "R/match-reported.R",
+  "line": 45,
+  "python": "pytacheck.statout.match_reported:_norm_interval"
+ },
+ ".norm_stat_name": {
+  "file": "R/extract-tests.R",
+  "line": 102,
+  "python": "pytacheck.text.extract_tests:_norm_stat_name"
+ },
+ ".norm_value": {
+  "file": "R/match-reported.R",
+  "line": 25,
+  "python": "pytacheck.statout.match_reported:_norm_value"
+ },
+ ".normalize_header": {
+  "file": "R/data_check_helpers.R",
+  "line": 2691,
+  "python": "pytacheck.datacheck.columns:_normalize_header"
+ },
+ ".numeric_col_fraction": {
+  "file": "R/data_check_helpers.R",
+  "line": 6358,
+  "python": "pytacheck.datacheck.checks:_numeric_col_fraction"
+ },
+ ".omv_analyses_summary": {
+  "file": "R/omv.R",
+  "line": 169,
+  "python": "pytacheck.statout.omv:_omv_analyses_summary"
+ },
+ ".omv_extract_syntax": {
+  "file": "R/omv.R",
+  "line": 200,
+  "python": "pytacheck.statout.omv:_omv_extract_syntax"
+ },
+ ".omv_labels": {
+  "file": "R/omv.R",
+  "line": 149,
+  "python": "pytacheck.statout.omv:_omv_labels"
+ },
+ ".onAttach": {
+  "file": "R/zzz.R",
+  "line": 70,
+  "python": "pytacheck.config:_onAttach"
+ },
+ ".onLoad": {
+  "file": "R/zzz.R",
+  "line": 10,
+  "python": "pytacheck.config:_onLoad"
+ },
+ ".openalex_add_abstract": {
+  "file": "R/db-crossref.R",
+  "line": 763,
+  "python": "pytacheck.db.crossref:_openalex_add_abstract"
+ },
+ ".osd_code_and_provenance": {
+  "file": "R/data_check_helpers.R",
+  "line": 2806,
+  "python": "pytacheck.datacheck.columns:_osd_code_and_provenance"
+ },
+ ".osd_safe_code": {
+  "file": "R/data_check_helpers.R",
+  "line": 2778,
+  "python": "pytacheck.datacheck.columns:_osd_safe_code"
+ },
+ ".osd_slug": {
+  "file": "R/data_check_helpers.R",
+  "line": 2760,
+  "python": "pytacheck.datacheck.columns:_osd_slug"
+ },
+ ".osf_cache_key": {
+  "file": "R/archive-osf.R",
+  "line": 114,
+  "python": "pytacheck.archives.osf:_osf_cache_key"
+ },
+ ".osf_download_addons": {
+  "file": "R/archive-osf-all.R",
+  "line": 97,
+  "python": "pytacheck.archives.osf_all:_osf_download_addons"
+ },
+ ".osf_download_all": {
+  "file": "R/archive-osf-all.R",
+  "line": 176,
+  "python": "pytacheck.archives.osf_all:_osf_download_all"
+ },
+ ".osf_download_logs": {
+  "file": "R/archive-osf-metadata.R",
+  "line": 102,
+  "python": "pytacheck.archives.osf_metadata:_osf_download_logs"
+ },
+ ".osf_download_wikis": {
+  "file": "R/archive-osf-metadata.R",
+  "line": 45,
+  "python": "pytacheck.archives.osf_metadata:_osf_download_wikis"
+ },
+ ".osf_error_result": {
+  "file": "R/archive-osf.R",
+  "line": 448,
+  "python": "pytacheck.archives.osf:_osf_error_result"
+ },
+ ".osf_expand_user_ids": {
+  "file": "R/archive-osf-helpers.R",
+  "line": 660,
+  "python": "pytacheck.archives.osf_helpers:_osf_expand_user_ids"
+ },
+ ".osf_file_data": {
+  "file": "R/archive-osf-helpers.R",
+  "line": 369,
+  "python": "pytacheck.archives.osf_helpers:_osf_file_data"
+ },
+ ".osf_get_one_page": {
+  "file": "R/archive-osf.R",
+  "line": 626,
+  "python": "pytacheck.archives.osf:_osf_get_one_page"
+ },
+ ".osf_get_pages_parallel": {
+  "file": "R/archive-osf.R",
+  "line": 656,
+  "python": "pytacheck.archives.osf:_osf_get_pages_parallel"
+ },
+ ".osf_headers": {
+  "file": "R/archive-osf-helpers.R",
+  "line": 18,
+  "python": "pytacheck.archives.osf_helpers:_osf_headers"
+ },
+ ".osf_info": {
+  "file": "R/archive-osf-helpers.R",
+  "line": 158,
+  "python": "pytacheck.archives.osf_helpers:_osf_info"
+ },
+ ".osf_license": {
+  "file": "R/archive-osf-metadata.R",
+  "line": 151,
+  "python": "pytacheck.archives.osf_metadata:_osf_license"
+ },
+ ".osf_max_page_size": {
+  "file": "R/archive-osf.R",
+  "line": 427,
+  "python": "pytacheck.archives.osf:_osf_max_page_size"
+ },
+ ".osf_meta_get": {
+  "file": "R/archive-osf-metadata.R",
+  "line": 26,
+  "python": "pytacheck.archives.osf_metadata:_osf_meta_get"
+ },
+ ".osf_metadata_download": {
+  "file": "R/archive-osf-metadata.R",
+  "line": 358,
+  "python": "pytacheck.archives.osf_metadata:_osf_metadata_download"
+ },
+ ".osf_node_data": {
+  "file": "R/archive-osf-helpers.R",
+  "line": 336,
+  "python": "pytacheck.archives.osf_helpers:_osf_node_data"
+ },
+ ".osf_node_metadata": {
+  "file": "R/archive-osf-metadata.R",
+  "line": 178,
+  "python": "pytacheck.archives.osf_metadata:_osf_node_metadata"
+ },
+ ".osf_parent_project": {
+  "file": "R/archive-osf-helpers.R",
+  "line": 767,
+  "python": "pytacheck.archives.osf_helpers:_osf_parent_project"
+ },
+ ".osf_parse_response": {
+  "file": "R/archive-osf-helpers.R",
+  "line": 263,
+  "python": "pytacheck.archives.osf_helpers:_osf_parse_response"
+ },
+ ".osf_pat_validate": {
+  "file": "R/archive-osf-helpers.R",
+  "line": 87,
+  "python": "pytacheck.archives.osf_helpers:_osf_pat_validate"
+ },
+ ".osf_preprint_data": {
+  "file": "R/archive-osf-helpers.R",
+  "line": 421,
+  "python": "pytacheck.archives.osf_helpers:_osf_preprint_data"
+ },
+ ".osf_reg_data": {
+  "file": "R/archive-osf-helpers.R",
+  "line": 457,
+  "python": "pytacheck.archives.osf_helpers:_osf_reg_data"
+ },
+ ".osf_status_error": {
+  "file": "R/archive-osf.R",
+  "line": 437,
+  "python": "pytacheck.archives.osf:_osf_status_error"
+ },
+ ".osf_user_data": {
+  "file": "R/archive-osf-helpers.R",
+  "line": 488,
+  "python": "pytacheck.archives.osf_helpers:_osf_user_data"
+ },
+ ".osf_user_nodes": {
+  "file": "R/archive-osf-helpers.R",
+  "line": 643,
+  "python": "pytacheck.archives.osf_helpers:_osf_user_nodes"
+ },
+ ".osf_verify_downloads": {
+  "file": "R/archive-osf-helpers.R",
+  "line": 720,
+  "python": "pytacheck.archives.osf_helpers:_osf_verify_downloads"
+ },
+ ".osf_walk_nodes": {
+  "file": "R/archive-osf-all.R",
+  "line": 29,
+  "python": "pytacheck.archives.osf_all:_osf_walk_nodes"
+ },
+ ".osf_write_readme": {
+  "file": "R/archive-osf-metadata.R",
+  "line": 242,
+  "python": "pytacheck.archives.osf_metadata:_osf_write_readme"
+ },
+ ".osf_zenodo_metadata": {
+  "file": "R/archive-zenodo-upload.R",
+  "line": 257,
+  "python": "pytacheck.archives.zenodo_upload:_osf_zenodo_metadata"
+ },
+ ".paper_coerce": {
+  "file": "R/paper.R",
+  "line": 292,
+  "ported": true,
+  "python": "pytacheck.papers.io:coerce_paper"
+ },
+ ".paper_schema": {
+  "file": "R/paper.R",
+  "line": 12,
+  "python": "pytacheck.papers:_paper_schema"
+ },
+ ".papers_cache_dir": {
+  "file": "R/import-papers.R",
+  "line": 190,
+  "python": "pytacheck.io.corpus:_papers_cache_dir"
+ },
+ ".papers_release_assets": {
+  "file": "R/import-papers.R",
+  "line": 205,
+  "python": "pytacheck.io.corpus:_papers_release_assets"
+ },
+ ".parse_author_string": {
+  "file": "R/import-bibr.R",
+  "line": 439,
+  "python": "pytacheck.io.bibr_convert:_parse_author_string"
+ },
+ ".parse_frac": {
+  "file": "R/data_check_helpers.R",
+  "line": 5740,
+  "python": "pytacheck.datacheck.checks:_parse_frac"
+ },
+ ".parse_value_label_text": {
+  "file": "R/data_check_helpers.R",
+  "line": 3173,
+  "python": "pytacheck.datacheck.columns:_parse_value_label_text"
+ },
+ ".parse_zip_central_dir": {
+  "file": "R/zip-peek.R",
+  "line": 143,
+  "python": "pytacheck.archives.zip_peek:_parse_zip_central_dir"
+ },
+ ".pb_all": {
+  "file": "R/stat-tables.R",
+  "line": 332,
+  "python": "pytacheck.statout.stat_tables:_pb_all"
+ },
+ ".pb_fields": {
+  "file": "R/stat-tables.R",
+  "line": 304,
+  "python": "pytacheck.statout.stat_tables:_pb_fields"
+ },
+ ".pb_get": {
+  "file": "R/stat-tables.R",
+  "line": 334,
+  "python": "pytacheck.statout.stat_tables:_pb_get"
+ },
+ ".pb_say": {
+  "file": "R/archive-zenodo-upload.R",
+  "line": 19,
+  "python": "pytacheck.archives.zenodo_upload:_pb_say"
+ },
+ ".pb_str": {
+  "file": "R/stat-tables.R",
+  "line": 338,
+  "python": "pytacheck.statout.stat_tables:_pb_str"
+ },
+ ".pb_varint": {
+  "file": "R/stat-tables.R",
+  "line": 287,
+  "python": "pytacheck.statout.stat_tables:_pb_varint"
+ },
+ ".pdf_codebook_lines": {
+  "file": "R/data_check_helpers.R",
+  "line": 3698,
+  "python": "pytacheck.datacheck.columns:_pdf_codebook_lines"
+ },
+ ".pii_card_ok": {
+  "file": "R/data_check_helpers.R",
+  "line": 5139,
+  "python": "pytacheck.datacheck.checks:_pii_card_ok"
+ },
+ ".pii_luhn_ok": {
+  "file": "R/data_check_helpers.R",
+  "line": 5121,
+  "python": "pytacheck.datacheck.checks:_pii_luhn_ok"
+ },
+ ".pii_split_name": {
+  "file": "R/data_check_helpers.R",
+  "line": 5298,
+  "python": "pytacheck.datacheck.checks:_pii_split_name"
+ },
+ ".process_full_text": {
+  "file": "R/import-grobid.R",
+  "line": 486,
+  "python": "pytacheck.io.grobid:_process_full_text"
+ },
+ ".psycharchives_handle": {
+  "file": "R/archive-psycharchives.R",
+  "line": 81,
+  "python": "pytacheck.archives.psycharchives:_psycharchives_handle"
+ },
+ ".psycharchives_info": {
+  "file": "R/archive-psycharchives.R",
+  "line": 276,
+  "python": "pytacheck.archives.psycharchives:_psycharchives_info"
+ },
+ ".psycharchives_rest": {
+  "file": "R/archive-psycharchives.R",
+  "line": 369,
+  "python": "pytacheck.archives.psycharchives:_psycharchives_rest"
+ },
+ ".qmd_lang": {
+  "file": "R/code_check.R",
+  "line": 131,
+  "python": "pytacheck.codecheck.core:_qmd_lang"
+ },
+ ".qsf_export_col": {
+  "file": "R/data_check_helpers.R",
+  "line": 4085,
+  "python": "pytacheck.datacheck.columns:_qsf_export_col"
+ },
+ ".qsf_option_display": {
+  "file": "R/data_check_helpers.R",
+  "line": 4051,
+  "python": "pytacheck.datacheck.columns:_qsf_option_display"
+ },
+ ".qsf_strip_html": {
+  "file": "R/data_check_helpers.R",
+  "line": 4035,
+  "python": "pytacheck.datacheck.columns:_qsf_strip_html"
+ },
+ ".qsf_value_labels": {
+  "file": "R/data_check_helpers.R",
+  "line": 4060,
+  "python": "pytacheck.datacheck.columns:_qsf_value_labels"
+ },
+ ".qualtrics_col_stem": {
+  "file": "R/data_check_helpers.R",
+  "line": 6166,
+  "python": "pytacheck.datacheck.checks:_qualtrics_col_stem"
+ },
+ ".qualtrics_is_display_order": {
+  "file": "R/data_check_helpers.R",
+  "line": 6183,
+  "python": "pytacheck.datacheck.checks:_qualtrics_is_display_order"
+ },
+ ".qualtrics_is_header_row": {
+  "file": "R/data_check_helpers.R",
+  "line": 6236,
+  "python": "pytacheck.datacheck.checks:_qualtrics_is_header_row"
+ },
+ ".qualtrics_key": {
+  "file": "R/data_check_helpers.R",
+  "line": 6153,
+  "python": "pytacheck.datacheck.checks:_qualtrics_key"
+ },
+ ".qualtrics_tag_cols": {
+  "file": "R/data_check_helpers.R",
+  "line": 6156,
+  "python": "pytacheck.datacheck.checks:_qualtrics_tag_cols"
+ },
+ ".r_call_fn": {
+  "file": "R/r-output.R",
+  "line": 237,
+  "python": "pytacheck.statout.r_output:_r_call_fn"
+ },
+ ".r_call_fun_arg": {
+  "file": "R/r-capture.R",
+  "line": 125,
+  "python": "pytacheck.statout.r_capture:_r_call_fun_arg"
+ },
+ ".r_call_object_ref": {
+  "file": "R/r-output.R",
+  "line": 309,
+  "python": "pytacheck.statout.r_output:_r_call_object_ref"
+ },
+ ".r_cap_anova": {
+  "file": "R/r-capture.R",
+  "line": 86,
+  "python": "pytacheck.statout.r_capture:_r_cap_anova"
+ },
+ ".r_cap_by_fun": {
+  "file": "R/r-capture.R",
+  "line": 164,
+  "python": "pytacheck.statout.r_capture:_r_cap_by_fun"
+ },
+ ".r_cap_coef_matrix": {
+  "file": "R/r-capture.R",
+  "line": 67,
+  "python": "pytacheck.statout.r_capture:_r_cap_coef_matrix"
+ },
+ ".r_cap_htest": {
+  "file": "R/r-capture.R",
+  "line": 35,
+  "python": "pytacheck.statout.r_capture:_r_cap_htest"
+ },
+ ".r_capture_helpers": {
+  "file": "R/r-capture.R",
+  "line": 253,
+  "python": "pytacheck.statout.r_capture:_r_capture_helpers"
+ },
+ ".r_capture_runner": {
+  "file": "R/r-capture.R",
+  "line": 297,
+  "python": "pytacheck.statout.r_capture:_r_capture_runner"
+ },
+ ".r_capture_value": {
+  "file": "R/r-capture.R",
+  "line": 218,
+  "python": "pytacheck.statout.r_capture:_r_capture_value"
+ },
+ ".r_captures_to_tables": {
+  "file": "R/r-capture.R",
+  "line": 359,
+  "python": "pytacheck.statout.r_capture:_r_captures_to_tables"
+ },
+ ".r_echo_chunks": {
+  "file": "R/r-output.R",
+  "line": 145,
+  "python": "pytacheck.statout.r_output:_r_echo_chunks"
+ },
+ ".r_is_preview_call": {
+  "file": "R/r-output.R",
+  "line": 260,
+  "python": "pytacheck.statout.r_output:_r_is_preview_call"
+ },
+ ".r_merge_captures": {
+  "file": "R/r-capture.R",
+  "line": 421,
+  "python": "pytacheck.statout.r_capture:_r_merge_captures"
+ },
+ ".r_method_to_fn": {
+  "file": "R/r-capture.R",
+  "line": 450,
+  "python": "pytacheck.statout.r_capture:_r_method_to_fn"
+ },
+ ".r_output_cohend": {
+  "file": "R/r-output.R",
+  "line": 535,
+  "python": "pytacheck.statout.r_output:_r_output_cohend"
+ },
+ ".r_output_effectsize_d": {
+  "file": "R/r-output.R",
+  "line": 589,
+  "python": "pytacheck.statout.r_output:_r_output_effectsize_d"
+ },
+ ".r_output_oneline": {
+  "file": "R/r-output.R",
+  "line": 468,
+  "python": "pytacheck.statout.r_output:_r_output_oneline"
+ },
+ ".r_output_tables": {
+  "file": "R/r-output.R",
+  "line": 626,
+  "python": "pytacheck.statout.r_output:_r_output_tables"
+ },
+ ".r_root_ref_map": {
+  "file": "R/r-output.R",
+  "line": 443,
+  "python": "pytacheck.statout.r_output:_r_root_ref_map"
+ },
+ ".r_stat_pattern": {
+  "file": "R/stat_helpers.R",
+  "line": 265,
+  "python": "pytacheck.stats.helpers:_r_stat_pattern"
+ },
+ ".rate_limit_wait": {
+  "file": "R/repo-download.R",
+  "line": 392,
+  "python": "pytacheck.archives.download:_rate_limit_wait"
+ },
+ ".rbox_headers": {
+  "file": "R/archive-researchbox.R",
+  "line": 10,
+  "python": "pytacheck.archives.researchbox:_rbox_headers"
+ },
+ ".rbox_info": {
+  "file": "R/archive-researchbox.R",
+  "line": 168,
+  "python": "pytacheck.archives.researchbox:_rbox_info"
+ },
+ ".read_bibr": {
+  "file": "R/import-read.R",
+  "line": 58,
+  "ported": true,
+  "python": "pytacheck.papers.io:read_bibr"
+ },
+ ".read_delim_fast": {
+  "file": "R/data_check_helpers.R",
+  "line": 1925,
+  "python": "pytacheck.datacheck.files:_read_delim_fast"
+ },
+ ".read_jasp_binary": {
+  "file": "R/jasp.R",
+  "line": 85,
+  "python": "pytacheck.statout.jasp:_read_jasp_binary"
+ },
+ ".read_jasp_sqlite": {
+  "file": "R/jasp.R",
+  "line": 147,
+  "python": "pytacheck.statout.jasp:_read_jasp_sqlite"
+ },
+ ".read_rdata_isolated": {
+  "file": "R/data_check_helpers.R",
+  "line": 2274,
+  "python": "pytacheck.datacheck.files:_read_rdata_isolated"
+ },
+ ".recompose_eq": {
+  "file": "R/match-reported.R",
+  "line": 270,
+  "python": "pytacheck.statout.match_reported:_recompose_eq"
+ },
+ ".regcheck_app_dir": {
+  "file": "R/regcheck-local.R",
+  "line": 7,
+  "python": "pytacheck.db.regcheck_local:_regcheck_app_dir"
+ },
+ ".regcheck_poll": {
+  "file": "R/db-regcheck.R",
+  "line": 361,
+  "python": "pytacheck.db.regcheck:_regcheck_poll"
+ },
+ ".regcheck_sanitize": {
+  "file": "R/db-regcheck.R",
+  "line": 196,
+  "python": "pytacheck.db.regcheck:_regcheck_sanitize"
+ },
+ ".regcheck_submit": {
+  "file": "R/db-regcheck.R",
+  "line": 239,
+  "python": "pytacheck.db.regcheck:_regcheck_submit"
+ },
+ ".regcheck_submit_multipart": {
+  "file": "R/db-regcheck.R",
+  "line": 311,
+  "python": "pytacheck.db.regcheck:_regcheck_submit_multipart"
+ },
+ ".regcheck_venv_dir": {
+  "file": "R/regcheck-local.R",
+  "line": 11,
+  "python": "pytacheck.db.regcheck_local:_regcheck_venv_dir"
+ },
+ ".regroup_by_evidence": {
+  "file": "R/match-reported.R",
+  "line": 460,
+  "python": "pytacheck.statout.match_reported:_regroup_by_evidence"
+ },
+ ".remote_content_length": {
+  "file": "R/repo-download.R",
+  "line": 205,
+  "python": "pytacheck.archives.download:_remote_content_length"
+ },
+ ".remote_size": {
+  "file": "R/repo-download.R",
+  "line": 180,
+  "python": "pytacheck.archives.download:_remote_size"
+ },
+ ".render_test": {
+  "file": "R/extract-tests.R",
+  "line": 398,
+  "python": "pytacheck.text.extract_tests:_render_test"
+ },
+ ".repo_cache_dir": {
+  "file": "R/repo-download.R",
+  "line": 11,
+  "python": "pytacheck.archives.download:_repo_cache_dir"
+ },
+ ".repo_cache_path": {
+  "file": "R/repo-download.R",
+  "line": 43,
+  "python": "pytacheck.archives.download:_repo_cache_path"
+ },
+ ".repo_cache_rel": {
+  "file": "R/repo-download.R",
+  "line": 30,
+  "python": "pytacheck.archives.download:_repo_cache_rel"
+ },
+ ".repo_cache_subdir": {
+  "file": "R/repo-download.R",
+  "line": 19,
+  "python": "pytacheck.archives.download:_repo_cache_subdir"
+ },
+ ".repo_info_cache_dir": {
+  "file": "R/repo-info-cache.R",
+  "line": 81,
+  "python": "pytacheck.archives.info_cache:_repo_info_cache_dir"
+ },
+ ".repo_info_cache_get": {
+  "file": "R/repo-info-cache.R",
+  "line": 102,
+  "python": "pytacheck.archives.info_cache:_repo_info_cache_get"
+ },
+ ".repo_info_cache_key": {
+  "file": "R/repo-info-cache.R",
+  "line": 88,
+  "python": "pytacheck.archives.info_cache:_repo_info_cache_key"
+ },
+ ".repo_info_cache_path": {
+  "file": "R/repo-info-cache.R",
+  "line": 97,
+  "python": "pytacheck.archives.info_cache:_repo_info_cache_path"
+ },
+ ".repo_info_cache_put": {
+  "file": "R/repo-info-cache.R",
+  "line": 110,
+  "python": "pytacheck.archives.info_cache:_repo_info_cache_put"
+ },
+ ".repo_info_list_ok": {
+  "file": "R/repo-info-cache.R",
+  "line": 132,
+  "python": "pytacheck.archives.info_cache:_repo_info_list_ok"
+ },
+ ".repo_info_ok": {
+  "file": "R/repo-info-cache.R",
+  "line": 121,
+  "python": "pytacheck.archives.info_cache:_repo_info_ok"
+ },
+ ".repo_session_dir": {
+  "file": "R/repo-download.R",
+  "line": 50,
+  "python": "pytacheck.archives.download:_repo_session_dir"
+ },
+ ".repro_base_packages": {
+  "file": "R/reproducibility_check.R",
+  "line": 119,
+  "python": "pytacheck.repro.core:_repro_base_packages"
+ },
+ ".repro_bioc_packages": {
+  "file": "R/reproducibility_check.R",
+  "line": 144,
+  "python": "pytacheck.repro.core:_repro_bioc_packages"
+ },
+ ".repro_classify_install_message": {
+  "file": "R/reproducibility_check.R",
+  "line": 1935,
+  "python": "pytacheck.repro.core:_repro_classify_install_message"
+ },
+ ".repro_common_pkgs": {
+  "file": "R/reproducibility_check.R",
+  "line": 1161,
+  "python": "pytacheck.repro.core:_repro_common_pkgs"
+ },
+ ".repro_content_sniff": {
+  "file": "R/reproducibility_check.R",
+  "line": 1332,
+  "python": "pytacheck.repro.core:_repro_content_sniff"
+ },
+ ".repro_cran_archive_install": {
+  "file": "R/reproducibility_check.R",
+  "line": 1998,
+  "python": "pytacheck.repro.core:_repro_cran_archive_install"
+ },
+ ".repro_docker_capture_preamble": {
+  "file": "R/reproducibility_check_docker.R",
+  "line": 423,
+  "python": "pytacheck.repro.docker:_repro_docker_capture_preamble"
+ },
+ ".repro_docker_container_name": {
+  "file": "R/reproducibility_check_docker.R",
+  "line": 74,
+  "python": "pytacheck.repro.docker:_repro_docker_container_name"
+ },
+ ".repro_docker_container_path": {
+  "file": "R/reproducibility_check_docker.R",
+  "line": 124,
+  "python": "pytacheck.repro.docker:_repro_docker_container_path"
+ },
+ ".repro_docker_image_for": {
+  "file": "R/reproducibility_check_docker.R",
+  "line": 177,
+  "python": "pytacheck.repro.docker:_repro_docker_image_for"
+ },
+ ".repro_docker_resource_args": {
+  "file": "R/reproducibility_check_docker.R",
+  "line": 110,
+  "python": "pytacheck.repro.docker:_repro_docker_resource_args"
+ },
+ ".repro_docker_stop": {
+  "file": "R/reproducibility_check_docker.R",
+  "line": 93,
+  "python": "pytacheck.repro.docker:_repro_docker_stop"
+ },
+ ".repro_find_export_pkg": {
+  "file": "R/reproducibility_check.R",
+  "line": 1192,
+  "python": "pytacheck.repro.core:_repro_find_export_pkg"
+ },
+ ".repro_format_call_refs": {
+  "file": "R/reproducibility_check.R",
+  "line": 215,
+  "python": "pytacheck.repro.core:_repro_format_call_refs"
+ },
+ ".repro_is_jags_model": {
+  "file": "R/reproducibility_check.R",
+  "line": 1409,
+  "python": "pytacheck.repro.core:_repro_is_jags_model"
+ },
+ ".repro_normalize_basename": {
+  "file": "R/reproducibility_check.R",
+  "line": 1038,
+  "python": "pytacheck.repro.core:_repro_normalize_basename"
+ },
+ ".repro_redirect_writes": {
+  "file": "R/reproducibility_check.R",
+  "line": 386,
+  "python": "pytacheck.repro.core:_repro_redirect_writes"
+ },
+ ".repro_simple_string_vars": {
+  "file": "R/reproducibility_check.R",
+  "line": 329,
+  "python": "pytacheck.repro.core:_repro_simple_string_vars"
+ },
+ ".repro_split_args": {
+  "file": "R/r-output.R",
+  "line": 402,
+  "python": "pytacheck.statout.r_output:_repro_split_args"
+ },
+ ".researchdata4tu_id": {
+  "file": "R/archive-4tu.R",
+  "line": 82,
+  "python": "pytacheck.archives.fourtu:_researchdata4tu_id"
+ },
+ ".researchdata4tu_pat": {
+  "file": "R/archive-4tu.R",
+  "line": 252,
+  "python": "pytacheck.archives.fourtu:_researchdata4tu_pat"
+ },
+ ".reshare_headers": {
+  "file": "R/archive-reshare.R",
+  "line": 301,
+  "python": "pytacheck.archives.reshare:_reshare_headers"
+ },
+ ".reshare_id": {
+  "file": "R/archive-reshare.R",
+  "line": 79,
+  "python": "pytacheck.archives.reshare:_reshare_id"
+ },
+ ".reshare_info": {
+  "file": "R/archive-reshare.R",
+  "line": 224,
+  "python": "pytacheck.archives.reshare:_reshare_info"
+ },
+ ".reshare_verify_downloads": {
+  "file": "R/archive-reshare.R",
+  "line": 674,
+  "python": "pytacheck.archives.reshare:_reshare_verify_downloads"
+ },
+ ".reshare_zip_members": {
+  "file": "R/archive-reshare.R",
+  "line": 637,
+  "python": "pytacheck.archives.reshare:_reshare_zip_members"
+ },
+ ".row_duplication": {
+  "file": "R/data_check_helpers.R",
+  "line": 6373,
+  "python": "pytacheck.datacheck.checks:_row_duplication"
+ },
+ ".safe_write_path": {
+  "file": "R/utils.R",
+  "line": 384,
+  "python": "pytacheck.utils:_safe_write_path"
+ },
+ ".scale_block_is_ratinglike": {
+  "file": "R/data_check_helpers.R",
+  "line": 6982,
+  "python": "pytacheck.datacheck.checks:_scale_block_is_ratinglike"
+ },
+ ".scale_block_range": {
+  "file": "R/data_check_helpers.R",
+  "line": 6927,
+  "python": "pytacheck.datacheck.checks:_scale_block_range"
+ },
+ ".scale_match_items": {
+  "file": "R/data_check_helpers.R",
+  "line": 2920,
+  "python": "pytacheck.datacheck.columns:_scale_match_items"
+ },
+ ".scale_name_prefix": {
+  "file": "R/data_check_helpers.R",
+  "line": 6919,
+  "python": "pytacheck.datacheck.checks:_scale_name_prefix"
+ },
+ ".scale_ref_code": {
+  "file": "R/data_check_helpers.R",
+  "line": 2869,
+  "python": "pytacheck.datacheck.columns:_scale_ref_code"
+ },
+ ".scale_reference": {
+  "file": "R/data_check_helpers.R",
+  "line": 2883,
+  "python": "pytacheck.datacheck.columns:_scale_reference"
+ },
+ ".scale_typo_of": {
+  "file": "R/data_check_helpers.R",
+  "line": 4544,
+  "python": "pytacheck.datacheck.columns:_scale_typo_of"
+ },
+ ".sites_share_variable": {
+  "file": "R/match-reported.R",
+  "line": 423,
+  "python": "pytacheck.statout.match_reported:_sites_share_variable"
+ },
+ ".smcl_command_chunks": {
+  "file": "R/stata.R",
+  "line": 206,
+  "python": "pytacheck.statout.stata:_smcl_command_chunks"
+ },
+ ".smcl_export_syntax": {
+  "file": "R/stata.R",
+  "line": 480,
+  "python": "pytacheck.statout.stata:_smcl_export_syntax"
+ },
+ ".smcl_render": {
+  "file": "R/stata.R",
+  "line": 184,
+  "python": "pytacheck.statout.stata:_smcl_render"
+ },
+ ".smcl_render_line": {
+  "file": "R/stata.R",
+  "line": 80,
+  "python": "pytacheck.statout.stata:_smcl_render_line"
+ },
+ ".sniff_delimiter": {
+  "file": "R/data_check_helpers.R",
+  "line": 1833,
+  "python": "pytacheck.datacheck.files:_sniff_delimiter"
+ },
+ ".split_combined_df": {
+  "file": "R/stat-output.R",
+  "line": 193,
+  "python": "pytacheck.statout.stat_output:_split_combined_df"
+ },
+ ".split_into_tests": {
+  "file": "R/extract-tests.R",
+  "line": 198,
+  "python": "pytacheck.text.extract_tests:_split_into_tests"
+ },
+ ".spv_chart_html": {
+  "file": "R/spv.R",
+  "line": 2086,
+  "python": "pytacheck.statout.spv:_spv_chart_html"
+ },
+ ".spv_decode_chart": {
+  "file": "R/spv.R",
+  "line": 870,
+  "python": "pytacheck.statout.spv:_spv_decode_chart"
+ },
+ ".spv_decode_legacy_data": {
+  "file": "R/spv.R",
+  "line": 264,
+  "python": "pytacheck.statout.spv:_spv_decode_legacy_data"
+ },
+ ".spv_decode_legacy_table": {
+  "file": "R/spv.R",
+  "line": 543,
+  "python": "pytacheck.statout.spv:_spv_decode_legacy_table"
+ },
+ ".spv_decode_light_table": {
+  "file": "R/spv.R",
+  "line": 1523,
+  "python": "pytacheck.statout.spv:_spv_decode_light_table"
+ },
+ ".spv_display_value": {
+  "file": "R/spv.R",
+  "line": 2155,
+  "python": "pytacheck.statout.spv:_spv_display_value"
+ },
+ ".spv_export_syntax": {
+  "file": "R/spv.R",
+  "line": 1978,
+  "python": "pytacheck.statout.spv:_spv_export_syntax"
+ },
+ ".spv_html_escape": {
+  "file": "R/spv.R",
+  "line": 2067,
+  "python": "pytacheck.statout.spv:_spv_html_escape"
+ },
+ ".spv_read": {
+  "file": "R/spv.R",
+  "line": 1893,
+  "python": "pytacheck.statout.spv:_spv_read"
+ },
+ ".spv_read_structure": {
+  "file": "R/spv.R",
+  "line": 1688,
+  "python": "pytacheck.statout.spv:_spv_read_structure"
+ },
+ ".spv_stato_type_label": {
+  "file": "R/stato-map.R",
+  "line": 996,
+  "python": "pytacheck.statout.stato_map:_spv_stato_type_label"
+ },
+ ".spv_table_html": {
+  "file": "R/spv.R",
+  "line": 2187,
+  "python": "pytacheck.statout.spv:_spv_table_html"
+ },
+ ".spv_table_html_pivot": {
+  "file": "R/spv.R",
+  "line": 2216,
+  "python": "pytacheck.statout.spv:_spv_table_html_pivot"
+ },
+ ".spvbin_cursor": {
+  "file": "R/spv.R",
+  "line": 56,
+  "python": "pytacheck.statout.spv:_spvbin_cursor"
+ },
+ ".spvbin_eof": {
+  "file": "R/spv.R",
+  "line": 58,
+  "python": "pytacheck.statout.spv:_spvbin_eof"
+ },
+ ".spvbin_expect_bytes": {
+  "file": "R/spv.R",
+  "line": 161,
+  "python": "pytacheck.statout.spv:_spvbin_expect_bytes"
+ },
+ ".spvbin_match_byte": {
+  "file": "R/spv.R",
+  "line": 159,
+  "python": "pytacheck.statout.spv:_spvbin_match_byte"
+ },
+ ".spvbin_match_bytes": {
+  "file": "R/spv.R",
+  "line": 151,
+  "python": "pytacheck.statout.spv:_spvbin_match_bytes"
+ },
+ ".spvbin_read_be16": {
+  "file": "R/spv.R",
+  "line": 115,
+  "python": "pytacheck.statout.spv:_spvbin_read_be16"
+ },
+ ".spvbin_read_be32": {
+  "file": "R/spv.R",
+  "line": 116,
+  "python": "pytacheck.statout.spv:_spvbin_read_be32"
+ },
+ ".spvbin_read_be64": {
+  "file": "R/spv.R",
+  "line": 117,
+  "python": "pytacheck.statout.spv:_spvbin_read_be64"
+ },
+ ".spvbin_read_bestring": {
+  "file": "R/spv.R",
+  "line": 145,
+  "python": "pytacheck.statout.spv:_spvbin_read_bestring"
+ },
+ ".spvbin_read_bool": {
+  "file": "R/spv.R",
+  "line": 78,
+  "python": "pytacheck.statout.spv:_spvbin_read_bool"
+ },
+ ".spvbin_read_byte": {
+  "file": "R/spv.R",
+  "line": 73,
+  "python": "pytacheck.statout.spv:_spvbin_read_byte"
+ },
+ ".spvbin_read_bytes": {
+  "file": "R/spv.R",
+  "line": 66,
+  "python": "pytacheck.statout.spv:_spvbin_read_bytes"
+ },
+ ".spvbin_read_count": {
+  "file": "R/spv.R",
+  "line": 175,
+  "python": "pytacheck.statout.spv:_spvbin_read_count"
+ },
+ ".spvbin_read_double": {
+  "file": "R/spv.R",
+  "line": 119,
+  "python": "pytacheck.statout.spv:_spvbin_read_double"
+ },
+ ".spvbin_read_float": {
+  "file": "R/spv.R",
+  "line": 125,
+  "python": "pytacheck.statout.spv:_spvbin_read_float"
+ },
+ ".spvbin_read_int": {
+  "file": "R/spv.R",
+  "line": 89,
+  "python": "pytacheck.statout.spv:_spvbin_read_int"
+ },
+ ".spvbin_read_int16": {
+  "file": "R/spv.R",
+  "line": 112,
+  "python": "pytacheck.statout.spv:_spvbin_read_int16"
+ },
+ ".spvbin_read_int32": {
+  "file": "R/spv.R",
+  "line": 113,
+  "python": "pytacheck.statout.spv:_spvbin_read_int32"
+ },
+ ".spvbin_read_int64": {
+  "file": "R/spv.R",
+  "line": 114,
+  "python": "pytacheck.statout.spv:_spvbin_read_int64"
+ },
+ ".spvbin_read_string": {
+  "file": "R/spv.R",
+  "line": 144,
+  "python": "pytacheck.statout.spv:_spvbin_read_string"
+ },
+ ".spvbin_read_string_": {
+  "file": "R/spv.R",
+  "line": 137,
+  "python": "pytacheck.statout.spv:_spvbin_read_string_"
+ },
+ ".spvdx_data_value_text": {
+  "file": "R/spv.R",
+  "line": 620,
+  "python": "pytacheck.statout.spv:_spvdx_data_value_text"
+ },
+ ".spvdx_nest_series_ids": {
+  "file": "R/spv.R",
+  "line": 523,
+  "python": "pytacheck.statout.spv:_spvdx_nest_series_ids"
+ },
+ ".spvdx_read_all_series": {
+  "file": "R/spv.R",
+  "line": 487,
+  "python": "pytacheck.statout.spv:_spvdx_read_all_series"
+ },
+ ".spvdx_read_derived_variable": {
+  "file": "R/spv.R",
+  "line": 474,
+  "python": "pytacheck.statout.spv:_spvdx_read_derived_variable"
+ },
+ ".spvdx_read_source_variable": {
+  "file": "R/spv.R",
+  "line": 434,
+  "python": "pytacheck.statout.spv:_spvdx_read_source_variable"
+ },
+ ".spvlb_read_argument": {
+  "file": "R/spv.R",
+  "line": 1129,
+  "python": "pytacheck.statout.spv:_spvlb_read_argument"
+ },
+ ".spvlb_read_axes": {
+  "file": "R/spv.R",
+  "line": 1478,
+  "python": "pytacheck.statout.spv:_spvlb_read_axes"
+ },
+ ".spvlb_read_category": {
+  "file": "R/spv.R",
+  "line": 1262,
+  "python": "pytacheck.statout.spv:_spvlb_read_category"
+ },
+ ".spvlb_read_cells": {
+  "file": "R/spv.R",
+  "line": 1495,
+  "python": "pytacheck.statout.spv:_spvlb_read_cells"
+ },
+ ".spvlb_read_dim_properties": {
+  "file": "R/spv.R",
+  "line": 1277,
+  "python": "pytacheck.statout.spv:_spvlb_read_dim_properties"
+ },
+ ".spvlb_read_dimension": {
+  "file": "R/spv.R",
+  "line": 1293,
+  "python": "pytacheck.statout.spv:_spvlb_read_dimension"
+ },
+ ".spvlb_read_footnotes": {
+  "file": "R/spv.R",
+  "line": 1391,
+  "python": "pytacheck.statout.spv:_spvlb_read_footnotes"
+ },
+ ".spvlb_read_formats": {
+  "file": "R/spv.R",
+  "line": 1461,
+  "python": "pytacheck.statout.spv:_spvlb_read_formats"
+ },
+ ".spvlb_read_group": {
+  "file": "R/spv.R",
+  "line": 1244,
+  "python": "pytacheck.statout.spv:_spvlb_read_group"
+ },
+ ".spvlb_read_header": {
+  "file": "R/spv.R",
+  "line": 1355,
+  "python": "pytacheck.statout.spv:_spvlb_read_header"
+ },
+ ".spvlb_read_leaf": {
+  "file": "R/spv.R",
+  "line": 1235,
+  "python": "pytacheck.statout.spv:_spvlb_read_leaf"
+ },
+ ".spvlb_read_titles": {
+  "file": "R/spv.R",
+  "line": 1367,
+  "python": "pytacheck.statout.spv:_spvlb_read_titles"
+ },
+ ".spvlb_read_value": {
+  "file": "R/spv.R",
+  "line": 1156,
+  "python": "pytacheck.statout.spv:_spvlb_read_value"
+ },
+ ".spvlb_read_value_mod": {
+  "file": "R/spv.R",
+  "line": 1039,
+  "python": "pytacheck.statout.spv:_spvlb_read_value_mod"
+ },
+ ".spvlb_skip_area": {
+  "file": "R/spv.R",
+  "line": 1411,
+  "python": "pytacheck.statout.spv:_spvlb_skip_area"
+ },
+ ".spvlb_skip_areas": {
+  "file": "R/spv.R",
+  "line": 1428,
+  "python": "pytacheck.statout.spv:_spvlb_skip_areas"
+ },
+ ".spvlb_skip_borders": {
+  "file": "R/spv.R",
+  "line": 1437,
+  "python": "pytacheck.statout.spv:_spvlb_skip_borders"
+ },
+ ".spvlb_skip_cell_style": {
+  "file": "R/spv.R",
+  "line": 1118,
+  "python": "pytacheck.statout.spv:_spvlb_skip_cell_style"
+ },
+ ".spvlb_skip_font_style": {
+  "file": "R/spv.R",
+  "line": 1111,
+  "python": "pytacheck.statout.spv:_spvlb_skip_font_style"
+ },
+ ".spvlb_skip_print_settings": {
+  "file": "R/spv.R",
+  "line": 1442,
+  "python": "pytacheck.statout.spv:_spvlb_skip_print_settings"
+ },
+ ".spvlb_skip_style_pair": {
+  "file": "R/spv.R",
+  "line": 1101,
+  "python": "pytacheck.statout.spv:_spvlb_skip_style_pair"
+ },
+ ".spvlb_skip_table_settings": {
+  "file": "R/spv.R",
+  "line": 1447,
+  "python": "pytacheck.statout.spv:_spvlb_skip_table_settings"
+ },
+ ".spvlb_skip_template_string": {
+  "file": "R/spv.R",
+  "line": 1080,
+  "python": "pytacheck.statout.spv:_spvlb_skip_template_string"
+ },
+ ".spvlb_value_text": {
+  "file": "R/spv.R",
+  "line": 1332,
+  "python": "pytacheck.statout.spv:_spvlb_value_text"
+ },
+ ".spvob_apply_strings": {
+  "file": "R/spv.R",
+  "line": 371,
+  "python": "pytacheck.statout.spv:_spvob_apply_strings"
+ },
+ ".spvob_fixed_string": {
+  "file": "R/spv.R",
+  "line": 242,
+  "python": "pytacheck.statout.spv:_spvob_fixed_string"
+ },
+ ".spvob_read_metadata": {
+  "file": "R/spv.R",
+  "line": 216,
+  "python": "pytacheck.statout.spv:_spvob_read_metadata"
+ },
+ ".spvob_read_strings": {
+  "file": "R/spv.R",
+  "line": 337,
+  "python": "pytacheck.statout.spv:_spvob_read_strings"
+ },
+ ".spvsx_html_text": {
+  "file": "R/spv.R",
+  "line": 1829,
+  "python": "pytacheck.statout.spv:_spvsx_html_text"
+ },
+ ".spvsx_walk_heading": {
+  "file": "R/spv.R",
+  "line": 1734,
+  "python": "pytacheck.statout.spv:_spvsx_walk_heading"
+ },
+ ".spvviz_axis_label": {
+  "file": "R/spv.R",
+  "line": 714,
+  "python": "pytacheck.statout.spv:_spvviz_axis_label"
+ },
+ ".spvviz_chart_title": {
+  "file": "R/spv.R",
+  "line": 726,
+  "python": "pytacheck.statout.spv:_spvviz_chart_title"
+ },
+ ".spvviz_decode_boxplot_databin": {
+  "file": "R/spv.R",
+  "line": 750,
+  "python": "pytacheck.statout.spv:_spvviz_decode_boxplot_databin"
+ },
+ ".spvviz_decode_boxplot_source": {
+  "file": "R/spv.R",
+  "line": 777,
+  "python": "pytacheck.statout.spv:_spvviz_decode_boxplot_source"
+ },
+ ".spvviz_decode_xy": {
+  "file": "R/spv.R",
+  "line": 815,
+  "python": "pytacheck.statout.spv:_spvviz_decode_xy"
+ },
+ ".spvviz_function_guide": {
+  "file": "R/spv.R",
+  "line": 689,
+  "python": "pytacheck.statout.spv:_spvviz_function_guide"
+ },
+ ".spvviz_resolve_variable": {
+  "file": "R/spv.R",
+  "line": 669,
+  "python": "pytacheck.statout.spv:_spvviz_resolve_variable"
+ },
+ ".stat_display_value": {
+  "file": "R/stat_helpers.R",
+  "line": 58,
+  "python": "pytacheck.stats.helpers:_stat_display_value"
+ },
+ ".stat_family": {
+  "file": "R/match-reported.R",
+  "line": 107,
+  "python": "pytacheck.statout.match_reported:_stat_family"
+ },
+ ".stat_html_escape": {
+  "file": "R/stat_helpers.R",
+  "line": 88,
+  "python": "pytacheck.stats.helpers:_stat_html_escape"
+ },
+ ".stat_is_label_col": {
+  "file": "R/stat-output.R",
+  "line": 147,
+  "python": "pytacheck.statout.stat_output:_stat_is_label_col"
+ },
+ ".stat_is_placeholder": {
+  "file": "R/stat-output.R",
+  "line": 126,
+  "python": "pytacheck.statout.stat_output:_stat_is_placeholder"
+ },
+ ".stat_num_to_chr": {
+  "file": "R/stat-tables.R",
+  "line": 152,
+  "python": "pytacheck.statout.stat_tables:_stat_num_to_chr"
+ },
+ ".stat_result_ids": {
+  "file": "R/stat-output.R",
+  "line": 58,
+  "python": "pytacheck.statout.stat_output:_stat_result_ids"
+ },
+ ".stat_sanitize_id": {
+  "file": "R/stat-output.R",
+  "line": 45,
+  "python": "pytacheck.statout.stat_output:_stat_sanitize_id"
+ },
+ ".stat_table_parse": {
+  "file": "R/stat-tables.R",
+  "line": 584,
+  "python": "pytacheck.statout.stat_tables:_stat_table_parse"
+ },
+ ".stat_test_id": {
+  "file": "R/stat-output.R",
+  "line": 99,
+  "python": "pytacheck.statout.stat_output:_stat_test_id"
+ },
+ ".stata_is_numlike": {
+  "file": "R/stata.R",
+  "line": 233,
+  "python": "pytacheck.statout.stata:_stata_is_numlike"
+ },
+ ".stata_is_rule_line": {
+  "file": "R/stata.R",
+  "line": 262,
+  "python": "pytacheck.statout.stata:_stata_is_rule_line"
+ },
+ ".stata_output_oneline": {
+  "file": "R/stata.R",
+  "line": 327,
+  "python": "pytacheck.statout.stata:_stata_output_oneline"
+ },
+ ".stata_output_tables": {
+  "file": "R/stata.R",
+  "line": 273,
+  "python": "pytacheck.statout.stata:_stata_output_tables"
+ },
+ ".stata_split_block": {
+  "file": "R/stata.R",
+  "line": 243,
+  "python": "pytacheck.statout.stata:_stata_split_block"
+ },
+ ".stato_by_call": {
+  "file": "R/stato-map.R",
+  "line": 838,
+  "python": "pytacheck.statout.stato_map:_stato_by_call"
+ },
+ ".stato_strip_variant": {
+  "file": "R/stat_helpers.R",
+  "line": 136,
+  "python": "pytacheck.stats.helpers:_stato_strip_variant"
+ },
+ ".storage_backoff": {
+  "file": "R/repo-download.R",
+  "line": 363,
+  "python": "pytacheck.archives.download:_storage_backoff"
+ },
+ ".storage_is_transient": {
+  "file": "R/repo-download.R",
+  "line": 354,
+  "python": "pytacheck.archives.download:_storage_is_transient"
+ },
+ ".storage_is_transient_factory": {
+  "file": "R/repo-download.R",
+  "line": 576,
+  "python": "pytacheck.archives.download:_storage_is_transient_factory"
+ },
+ ".storage_retry_after_factory": {
+  "file": "R/repo-download.R",
+  "line": 540,
+  "python": "pytacheck.archives.download:_storage_retry_after_factory"
+ },
+ ".strip_llm_wrapper": {
+  "file": "R/data_check_helpers.R",
+  "line": 1356,
+  "python": "pytacheck.datacheck.files:_strip_llm_wrapper"
+ },
+ ".strip_rtf": {
+  "file": "R/data_check_helpers.R",
+  "line": 3728,
+  "python": "pytacheck.datacheck.columns:_strip_rtf"
+ },
+ ".table_caption": {
+  "file": "R/match-table.R",
+  "line": 60,
+  "python": "pytacheck.statout.match_table:_table_caption"
+ },
+ ".table_caption_family": {
+  "file": "R/match-table.R",
+  "line": 44,
+  "python": "pytacheck.statout.match_table:_table_caption_family"
+ },
+ ".table_header_ambiguous": {
+  "file": "R/match-table.R",
+  "line": 75,
+  "python": "pytacheck.statout.match_table:_table_header_ambiguous"
+ },
+ ".table_matrix_cols": {
+  "file": "R/match-table.R",
+  "line": 190,
+  "python": "pytacheck.statout.match_table:_table_matrix_cols"
+ },
+ ".table_tests": {
+  "file": "R/match-table.R",
+  "line": 274,
+  "python": "pytacheck.statout.match_table:_table_tests"
+ },
+ ".table_tests_one": {
+  "file": "R/match-table.R",
+  "line": 221,
+  "python": "pytacheck.statout.match_table:_table_tests_one"
+ },
+ ".table_typed_cells": {
+  "file": "R/match-table.R",
+  "line": 86,
+  "python": "pytacheck.statout.match_table:_table_typed_cells"
+ },
+ ".tabular_usable": {
+  "file": "R/data_check_helpers.R",
+  "line": 6074,
+  "python": "pytacheck.datacheck.checks:_tabular_usable"
+ },
+ ".tei_authors": {
+  "file": "R/import-grobid.R",
+  "line": 796,
+  "python": "pytacheck.io.grobid:_tei_authors"
+ },
+ ".tei_bib": {
+  "file": "R/import-grobid.R",
+  "line": 903,
+  "python": "pytacheck.io.grobid:_tei_bib"
+ },
+ ".tei_table_contents": {
+  "file": "R/import-grobid.R",
+  "line": 979,
+  "python": "pytacheck.io.grobid:_tei_table_contents"
+ },
+ ".tei_text": {
+  "file": "R/import-grobid.R",
+  "line": 648,
+  "python": "pytacheck.io.grobid:_tei_text"
+ },
+ ".tei_url": {
+  "file": "R/import-grobid.R",
+  "line": 869,
+  "python": "pytacheck.io.grobid:_tei_url"
+ },
+ ".tei_xrefs": {
+  "file": "R/import-grobid.R",
+  "line": 828,
+  "python": "pytacheck.io.grobid:_tei_xrefs"
+ },
+ ".tests_from_extract": {
+  "file": "R/match-reported.R",
+  "line": 337,
+  "python": "pytacheck.statout.match_reported:_tests_from_extract"
+ },
+ ".unnest_result": {
+  "file": "R/llm.R",
+  "line": 600,
+  "python": "pytacheck.llm.core:_unnest_result"
+ },
+ ".utf8_lines": {
+  "file": "R/data_check_helpers.R",
+  "line": 1708,
+  "python": "pytacheck.datacheck.files:_utf8_lines"
+ },
+ ".utf8_repair_df": {
+  "file": "R/data_check_helpers.R",
+  "line": 1972,
+  "python": "pytacheck.datacheck.files:_utf8_repair_df"
+ },
+ ".vl_is_numeric": {
+  "file": "R/data_check_helpers.R",
+  "line": 3102,
+  "python": "pytacheck.datacheck.columns:_vl_is_numeric"
+ },
+ ".vl_split_pairs": {
+  "file": "R/data_check_helpers.R",
+  "line": 3106,
+  "python": "pytacheck.datacheck.columns:_vl_split_pairs"
+ },
+ ".wait_out_known_rate_limit": {
+  "file": "R/repo-download.R",
+  "line": 605,
+  "python": "pytacheck.archives.download:_wait_out_known_rate_limit"
+ },
+ ".xml2bib": {
+  "file": "R/import-grobid.R",
+  "line": 1077,
+  "python": "pytacheck.io.grobid:_xml2bib"
+ },
+ ".xml_find1_text": {
+  "file": "R/svutils-xml.R",
+  "line": 32,
+  "python": "pytacheck.io.xml:_xml_find1_text"
+ },
+ ".xml_find_text": {
+  "file": "R/svutils-xml.R",
+  "line": 12,
+  "python": "pytacheck.io.xml:_xml_find_text"
+ },
+ ".xml_read_grobid": {
+  "file": "R/svutils-xml.R",
+  "line": 50,
+  "python": "pytacheck.io.xml:_xml_read_grobid"
+ },
+ ".zenodo_api": {
+  "file": "R/archive-zenodo-upload.R",
+  "line": 34,
+  "python": "pytacheck.archives.zenodo_upload:_zenodo_api"
+ },
+ ".zenodo_auth": {
+  "file": "R/archive-zenodo-upload.R",
+  "line": 95,
+  "python": "pytacheck.archives.zenodo_upload:_zenodo_auth"
+ },
+ ".zenodo_build_metadata": {
+  "file": "R/archive-zenodo-upload.R",
+  "line": 462,
+  "python": "pytacheck.archives.zenodo_upload:_zenodo_build_metadata"
+ },
+ ".zenodo_check_resp": {
+  "file": "R/archive-zenodo-upload.R",
+  "line": 161,
+  "python": "pytacheck.archives.zenodo_upload:_zenodo_check_resp"
+ },
+ ".zenodo_check_token": {
+  "file": "R/archive-zenodo-upload.R",
+  "line": 123,
+  "python": "pytacheck.archives.zenodo_upload:_zenodo_check_token"
+ },
+ ".zenodo_classify": {
+  "file": "R/archive-zenodo-upload.R",
+  "line": 337,
+  "python": "pytacheck.archives.zenodo_upload:_zenodo_classify"
+ },
+ ".zenodo_flat_names": {
+  "file": "R/archive-zenodo-upload.R",
+  "line": 364,
+  "python": "pytacheck.archives.zenodo_upload:_zenodo_flat_names"
+ },
+ ".zenodo_id": {
+  "file": "R/archive-zenodo.R",
+  "line": 58,
+  "python": "pytacheck.archives.zenodo:_zenodo_id"
+ },
+ ".zenodo_info": {
+  "file": "R/archive-zenodo.R",
+  "line": 251,
+  "python": "pytacheck.archives.zenodo:_zenodo_info"
+ },
+ ".zenodo_license_id": {
+  "file": "R/archive-zenodo-upload.R",
+  "line": 199,
+  "python": "pytacheck.archives.zenodo_upload:_zenodo_license_id"
+ },
+ ".zenodo_meta_from_folder": {
+  "file": "R/archive-zenodo-upload.R",
+  "line": 416,
+  "python": "pytacheck.archives.zenodo_upload:_zenodo_meta_from_folder"
+ },
+ ".zenodo_regex_escape": {
+  "file": "R/archive-zenodo-upload.R",
+  "line": 1145,
+  "python": "pytacheck.archives.zenodo_upload:_zenodo_regex_escape"
+ },
+ ".zenodo_unread": {
+  "file": "R/archive-zenodo.R",
+  "line": 220,
+  "python": "pytacheck.archives.zenodo:_zenodo_unread"
+ },
+ ".zenodo_verify_downloads": {
+  "file": "R/archive-zenodo.R",
+  "line": 765,
+  "python": "pytacheck.archives.zenodo:_zenodo_verify_downloads"
+ },
+ ".zenodo_zip_members": {
+  "file": "R/archive-zenodo.R",
+  "line": 714,
+  "python": "pytacheck.archives.zenodo:_zenodo_zip_members"
+ },
+ ".zip_crc_ok": {
+  "file": "R/zip-peek.R",
+  "line": 408,
+  "python": "pytacheck.archives.zip_peek:_zip_crc_ok"
+ },
+ ".zip_fetch_members": {
+  "file": "R/zip-peek.R",
+  "line": 433,
+  "python": "pytacheck.archives.zip_peek:_zip_fetch_members"
+ },
+ ".zip_inflate_member": {
+  "file": "R/zip-peek.R",
+  "line": 329,
+  "python": "pytacheck.archives.zip_peek:_zip_inflate_member"
+ },
+ ".zip_member_fetch": {
+  "file": "R/zip-peek.R",
+  "line": 350,
+  "python": "pytacheck.archives.zip_peek:_zip_member_fetch"
+ },
+ ".zip_timeout_for_size": {
+  "file": "R/repo-download.R",
+  "line": 904,
+  "python": "pytacheck.archives.download:_zip_timeout_for_size"
+ },
+ "FLoRA": {
+  "file": "R/db-replications.R",
+  "line": 23,
+  "python": "pytacheck.db.replications:FLoRA"
+ },
+ "FLoRA_date": {
+  "file": "R/db-replications.R",
+  "line": 50,
+  "python": "pytacheck.db.replications:FLoRA_date"
+ },
+ "FLoRA_update": {
+  "file": "R/db-replications.R",
+  "line": 61,
+  "python": "pytacheck.db.replications:FLoRA_update"
+ },
+ "accuracy": {
+  "file": "R/validate.R",
+  "line": 10,
+  "python": "pytacheck.validate:accuracy"
+ },
+ "add_bib_match": {
+  "file": "R/db-crossref.R",
+  "line": 502,
+  "python": "pytacheck.db.crossref:add_bib_match"
+ },
+ "aspredicted_info": {
+  "file": "R/archive-aspredicted.R",
+  "line": 28,
+  "python": "pytacheck.archives.aspredicted:aspredicted_info"
+ },
+ "aspredicted_links": {
+  "file": "R/archive-aspredicted.R",
+  "line": 13,
+  "python": "pytacheck.archives.aspredicted:aspredicted_links"
+ },
+ "cap_gate_count": {
+  "file": "R/report-helpers.R",
+  "line": 226,
+  "ported": true,
+  "python": "pytacheck.report.blocks:cap_gate_count"
+ },
+ "cap_report": {
+  "file": "R/cap-prompt.R",
+  "line": 11,
+  "python": "pytacheck.llm.cap_prompt:cap_report"
+ },
+ "capture_module_tables": {
+  "file": "R/module.R",
+  "line": 505,
+  "python": "pytacheck.module:capture_module_tables"
+ },
+ "causal_relations": {
+  "file": "R/causal_sentences.R",
+  "line": 64,
+  "python": "pytacheck.text.causal:causal_relations"
+ },
+ "check_file_naming": {
+  "file": "R/file-naming.R",
+  "line": 216,
+  "python": "pytacheck.fileinfo.naming:check_file_naming"
+ },
+ "check_orcid": {
+  "file": "R/svutils-orcid.R",
+  "line": 76,
+  "python": "pytacheck.db.orcid:check_orcid"
+ },
+ "code_abs_path": {
+  "file": "R/code_check.R",
+  "line": 906,
+  "python": "pytacheck.codecheck.core:code_abs_path"
+ },
+ "code_extract_py": {
+  "file": "R/code_check.R",
+  "line": 734,
+  "python": "pytacheck.codecheck.core:code_extract_py"
+ },
+ "code_extract_qmd_py": {
+  "file": "R/code_check.R",
+  "line": 803,
+  "python": "pytacheck.codecheck.core:code_extract_qmd_py"
+ },
+ "code_extract_r": {
+  "file": "R/code_check.R",
+  "line": 642,
+  "python": "pytacheck.codecheck.core:code_extract_r"
+ },
+ "code_file_refs": {
+  "file": "R/code_check.R",
+  "line": 1956,
+  "python": "pytacheck.codecheck.core:code_file_refs"
+ },
+ "code_install_packages": {
+  "file": "R/code_check.R",
+  "line": 1071,
+  "python": "pytacheck.codecheck.core:code_install_packages"
+ },
+ "code_lang": {
+  "file": "R/code_check.R",
+  "line": 195,
+  "python": "pytacheck.codecheck.core:code_lang"
+ },
+ "code_library_lines": {
+  "file": "R/code_check.R",
+  "line": 1498,
+  "python": "pytacheck.codecheck.core:code_library_lines"
+ },
+ "code_library_names": {
+  "file": "R/code_check.R",
+  "line": 1598,
+  "python": "pytacheck.codecheck.core:code_library_names"
+ },
+ "code_line_stats": {
+  "file": "R/code_check.R",
+  "line": 1448,
+  "python": "pytacheck.codecheck.core:code_line_stats"
+ },
+ "code_packages": {
+  "file": "R/code_check.R",
+  "line": 1706,
+  "python": "pytacheck.codecheck.core:code_packages"
+ },
+ "code_parse_r": {
+  "file": "R/code_check.R",
+  "line": 862,
+  "python": "pytacheck.codecheck.core:code_parse_r"
+ },
+ "code_read": {
+  "file": "R/code_check.R",
+  "line": 11,
+  "python": "pytacheck.codecheck.core:code_read"
+ },
+ "code_remove_comments": {
+  "file": "R/code_check.R",
+  "line": 1211,
+  "python": "pytacheck.codecheck.core:code_remove_comments"
+ },
+ "code_setwd": {
+  "file": "R/code_check.R",
+  "line": 996,
+  "python": "pytacheck.codecheck.core:code_setwd"
+ },
+ "collapse_section": {
+  "file": "R/report-helpers.R",
+  "line": 158,
+  "ported": true,
+  "python": "pytacheck.report.blocks:collapse_section"
+ },
+ "collect_module_tables": {
+  "file": "R/module.R",
+  "line": 567,
+  "python": "pytacheck.module:collect_module_tables"
+ },
+ "convert": {
+  "file": "R/import-convert.R",
+  "line": 16,
+  "python": "pytacheck.io.convert:convert"
+ },
+ "convert_bibr": {
+  "file": "R/import-bibr.R",
+  "line": 54,
+  "python": "pytacheck.io.bibr_convert:convert_bibr"
+ },
+ "convert_grobid": {
+  "file": "R/import-grobid.R",
+  "line": 19,
+  "python": "pytacheck.io.grobid:convert_grobid"
+ },
+ "credit_roles": {
+  "file": "R/svutils-orcid.R",
+  "line": 11,
+  "python": "pytacheck.db.orcid:credit_roles"
+ },
+ "crossref_doi": {
+  "file": "R/db-crossref.R",
+  "line": 178,
+  "python": "pytacheck.db.crossref:crossref_doi"
+ },
+ "crossref_query": {
+  "file": "R/db-crossref.R",
+  "line": 343,
+  "python": "pytacheck.db.crossref:crossref_query"
+ },
+ "data_check_case_issues": {
+  "file": "R/data_check_helpers.R",
+  "line": 4866,
+  "python": "pytacheck.datacheck.checks:data_check_case_issues"
+ },
+ "data_check_colname": {
+  "file": "R/data_check_helpers.R",
+  "line": 4983,
+  "python": "pytacheck.datacheck.checks:data_check_colname"
+ },
+ "data_check_colname_collisions": {
+  "file": "R/data_check_helpers.R",
+  "line": 5039,
+  "python": "pytacheck.datacheck.checks:data_check_colname_collisions"
+ },
+ "data_check_constant": {
+  "file": "R/data_check_helpers.R",
+  "line": 4768,
+  "python": "pytacheck.datacheck.checks:data_check_constant"
+ },
+ "data_check_demographic": {
+  "file": "R/data_check_helpers.R",
+  "line": 5619,
+  "python": "pytacheck.datacheck.checks:data_check_demographic"
+ },
+ "data_check_design_name": {
+  "file": "R/data_check_helpers.R",
+  "line": 4822,
+  "python": "pytacheck.datacheck.checks:data_check_design_name"
+ },
+ "data_check_empty": {
+  "file": "R/data_check_helpers.R",
+  "line": 4797,
+  "python": "pytacheck.datacheck.checks:data_check_empty"
+ },
+ "data_check_is_behaverse": {
+  "file": "R/data_check_helpers.R",
+  "line": 6665,
+  "python": "pytacheck.datacheck.checks:data_check_is_behaverse"
+ },
+ "data_check_is_inquisit": {
+  "file": "R/data_check_helpers.R",
+  "line": 6682,
+  "python": "pytacheck.datacheck.checks:data_check_is_inquisit"
+ },
+ "data_check_is_jspsych": {
+  "file": "R/data_check_helpers.R",
+  "line": 6692,
+  "python": "pytacheck.datacheck.checks:data_check_is_jspsych"
+ },
+ "data_check_is_psychopy": {
+  "file": "R/data_check_helpers.R",
+  "line": 6702,
+  "python": "pytacheck.datacheck.checks:data_check_is_psychopy"
+ },
+ "data_check_is_qualtrics": {
+  "file": "R/data_check_helpers.R",
+  "line": 6202,
+  "python": "pytacheck.datacheck.checks:data_check_is_qualtrics"
+ },
+ "data_check_numeric_in_text": {
+  "file": "R/data_check_helpers.R",
+  "line": 4923,
+  "python": "pytacheck.datacheck.checks:data_check_numeric_in_text"
+ },
+ "data_check_outliers": {
+  "file": "R/data_check_helpers.R",
+  "line": 4736,
+  "python": "pytacheck.datacheck.checks:data_check_outliers"
+ },
+ "data_check_pii_freetext": {
+  "file": "R/data_check_helpers.R",
+  "line": 5473,
+  "python": "pytacheck.datacheck.checks:data_check_pii_freetext"
+ },
+ "data_check_pii_geo": {
+  "file": "R/data_check_helpers.R",
+  "line": 5407,
+  "python": "pytacheck.datacheck.checks:data_check_pii_geo"
+ },
+ "data_check_pii_name": {
+  "file": "R/data_check_helpers.R",
+  "line": 5345,
+  "python": "pytacheck.datacheck.checks:data_check_pii_name"
+ },
+ "data_check_pii_values": {
+  "file": "R/data_check_helpers.R",
+  "line": 5252,
+  "python": "pytacheck.datacheck.checks:data_check_pii_values"
+ },
+ "data_check_scale_values": {
+  "file": "R/data_check_helpers.R",
+  "line": 4623,
+  "python": "pytacheck.datacheck.checks:data_check_scale_values"
+ },
+ "data_check_spss_filter": {
+  "file": "R/data_check_helpers.R",
+  "line": 4841,
+  "python": "pytacheck.datacheck.checks:data_check_spss_filter"
+ },
+ "data_check_whitespace": {
+  "file": "R/data_check_helpers.R",
+  "line": 4892,
+  "python": "pytacheck.datacheck.checks:data_check_whitespace"
+ },
+ "data_classify_files": {
+  "file": "R/data_check_helpers.R",
+  "line": 476,
+  "python": "pytacheck.datacheck.files:data_classify_files"
+ },
+ "data_col_concept": {
+  "file": "R/data_check_helpers.R",
+  "line": 5818,
+  "python": "pytacheck.datacheck.checks:data_col_concept"
+ },
+ "data_col_facets": {
+  "file": "R/data_check_helpers.R",
+  "line": 5898,
+  "python": "pytacheck.datacheck.checks:data_col_facets"
+ },
+ "data_col_stats": {
+  "file": "R/data_check_helpers.R",
+  "line": 2567,
+  "python": "pytacheck.datacheck.columns:data_col_stats"
+ },
+ "data_col_type": {
+  "file": "R/data_check_helpers.R",
+  "line": 2473,
+  "python": "pytacheck.datacheck.columns:data_col_type"
+ },
+ "data_format": {
+  "file": "R/data_check_helpers.R",
+  "line": 757,
+  "python": "pytacheck.datacheck.files:data_format"
+ },
+ "data_group_llm": {
+  "file": "R/data_check_helpers.R",
+  "line": 1194,
+  "python": "pytacheck.datacheck.files:data_group_llm"
+ },
+ "data_is_manifest": {
+  "file": "R/data_check_helpers.R",
+  "line": 786,
+  "python": "pytacheck.datacheck.files:data_is_manifest"
+ },
+ "data_promote_header_row": {
+  "file": "R/data_check_helpers.R",
+  "line": 6519,
+  "python": "pytacheck.datacheck.checks:data_promote_header_row"
+ },
+ "data_read_head": {
+  "file": "R/data_check_helpers.R",
+  "line": 2086,
+  "python": "pytacheck.datacheck.files:data_read_head"
+ },
+ "data_strip_qualtrics_header": {
+  "file": "R/data_check_helpers.R",
+  "line": 6289,
+  "python": "pytacheck.datacheck.checks:data_strip_qualtrics_header"
+ },
+ "data_study_roster": {
+  "file": "R/data_check_helpers.R",
+  "line": 1219,
+  "python": "pytacheck.datacheck.files:data_study_roster"
+ },
+ "datacite_doi": {
+  "file": "R/db-crossref.R",
+  "line": 13,
+  "python": "pytacheck.db.crossref:datacite_doi"
+ },
+ "dataone_info": {
+  "file": "R/archive-dataone.R",
+  "line": 185,
+  "python": "pytacheck.archives.dataone:dataone_info"
+ },
+ "dataone_links": {
+  "file": "R/archive-dataone.R",
+  "line": 74,
+  "python": "pytacheck.archives.dataone:dataone_links"
+ },
+ "dataverse_file_download": {
+  "file": "R/archive-dataverse.R",
+  "line": 796,
+  "python": "pytacheck.archives.dataverse:dataverse_file_download"
+ },
+ "dataverse_info": {
+  "file": "R/archive-dataverse.R",
+  "line": 523,
+  "python": "pytacheck.archives.dataverse:dataverse_info"
+ },
+ "dataverse_links": {
+  "file": "R/archive-dataverse.R",
+  "line": 383,
+  "python": "pytacheck.archives.dataverse:dataverse_links"
+ },
+ "dataverse_pat": {
+  "file": "R/archive-dataverse.R",
+  "line": 723,
+  "python": "pytacheck.archives.dataverse:dataverse_pat"
+ },
+ "demofile": {
+  "file": "R/paper.R",
+  "line": 494,
+  "ported": true,
+  "python": "pytacheck.papers.io:demofile"
+ },
+ "demopaper": {
+  "file": "R/paper.R",
+  "line": 475,
+  "ported": true,
+  "python": "pytacheck.papers.io:demopaper"
+ },
+ "doi_clean": {
+  "file": "R/doi.R",
+  "line": 12,
+  "python": "pytacheck.db.doi:doi_clean"
+ },
+ "doi_lookup": {
+  "file": "R/doi.R",
+  "line": 131,
+  "python": "pytacheck.db.doi:doi_lookup"
+ },
+ "doi_resolves": {
+  "file": "R/doi.R",
+  "line": 76,
+  "python": "pytacheck.db.doi:doi_resolves"
+ },
+ "doi_valid_format": {
+  "file": "R/doi.R",
+  "line": 44,
+  "python": "pytacheck.db.doi:doi_valid_format"
+ },
+ "download_repo_files": {
+  "file": "R/repo-download.R",
+  "line": 1171,
+  "python": "pytacheck.archives.download:download_repo_files"
+ },
+ "dryad_auth": {
+  "file": "R/archive-dryad.R",
+  "line": 433,
+  "python": "pytacheck.archives.dryad:dryad_auth"
+ },
+ "dryad_file_download": {
+  "file": "R/archive-dryad.R",
+  "line": 523,
+  "python": "pytacheck.archives.dryad:dryad_file_download"
+ },
+ "dryad_info": {
+  "file": "R/archive-dryad.R",
+  "line": 159,
+  "python": "pytacheck.archives.dryad:dryad_info"
+ },
+ "dryad_links": {
+  "file": "R/archive-dryad.R",
+  "line": 59,
+  "python": "pytacheck.archives.dryad:dryad_links"
+ },
+ "dryad_pat": {
+  "file": "R/archive-dryad.R",
+  "line": 381,
+  "python": "pytacheck.archives.dryad:dryad_pat"
+ },
+ "dspace7_file_download": {
+  "file": "R/archive-dspace7.R",
+  "line": 313,
+  "python": "pytacheck.archives.dspace7:dspace7_file_download"
+ },
+ "dspace7_links": {
+  "file": "R/archive-dspace7.R",
+  "line": 177,
+  "python": "pytacheck.archives.dspace7:dspace7_links"
+ },
+ "dspace_links": {
+  "file": "R/archive-psycharchives.R",
+  "line": 107,
+  "python": "pytacheck.archives.psycharchives:dspace_links"
+ },
+ "email": {
+  "file": "R/utils.R",
+  "line": 246,
+  "ported": true,
+  "python": "pytacheck.config:email"
+ },
+ "expand_text": {
+  "file": "",
+  "line": 0,
+  "ported": true,
+  "python": "pytacheck.text.expand:expand_text"
+ },
+ "export_jasp_html": {
+  "file": "R/jasp.R",
+  "line": 243,
+  "python": "pytacheck.statout.jasp:export_jasp_html"
+ },
+ "export_mplus_html": {
+  "file": "R/mplus.R",
+  "line": 609,
+  "python": "pytacheck.statout.mplus:export_mplus_html"
+ },
+ "export_omv_html": {
+  "file": "R/omv.R",
+  "line": 238,
+  "python": "pytacheck.statout.omv:export_omv_html"
+ },
+ "export_spv_html": {
+  "file": "R/spv.R",
+  "line": 2024,
+  "python": "pytacheck.statout.spv:export_spv_html"
+ },
+ "export_stata_smcl_html": {
+  "file": "R/stata.R",
+  "line": 418,
+  "python": "pytacheck.statout.stata:export_stata_smcl_html"
+ },
+ "extract_eq": {
+  "file": "R/text-extractors.R",
+  "line": 97,
+  "python": "pytacheck.text.extract:extract_eq"
+ },
+ "extract_p_values": {
+  "file": "R/text-extractors.R",
+  "line": 41,
+  "python": "pytacheck.text.extract:extract_p_values"
+ },
+ "extract_tests": {
+  "file": "R/extract-tests.R",
+  "line": 331,
+  "python": "pytacheck.text.extract_tests:extract_tests"
+ },
+ "extract_urls": {
+  "file": "R/text-extractors.R",
+  "line": 13,
+  "python": "pytacheck.text.extract:extract_urls"
+ },
+ "fig_image_view": {
+  "file": "R/paper.R",
+  "line": 661,
+  "python": "pytacheck.papers:fig_image_view"
+ },
+ "figshare_file_download": {
+  "file": "R/archive-figshare.R",
+  "line": 749,
+  "python": "pytacheck.archives.figshare:figshare_file_download"
+ },
+ "figshare_info": {
+  "file": "R/archive-figshare.R",
+  "line": 449,
+  "python": "pytacheck.archives.figshare:figshare_info"
+ },
+ "figshare_links": {
+  "file": "R/archive-figshare.R",
+  "line": 194,
+  "python": "pytacheck.archives.figshare:figshare_links"
+ },
+ "figshare_pat": {
+  "file": "R/archive-figshare.R",
+  "line": 677,
+  "python": "pytacheck.archives.figshare:figshare_pat"
+ },
+ "file_category": {
+  "file": "R/file_category.R",
+  "line": 10,
+  "python": "pytacheck.fileinfo.category:file_category"
+ },
+ "filetype": {
+  "file": "R/file_category.R",
+  "line": 137,
+  "python": "pytacheck.fileinfo.category:filetype"
+ },
+ "format_bib_authors": {
+  "file": "R/import-bibr.R",
+  "line": 160,
+  "python": "pytacheck.io.bibr_convert:format_bib_authors"
+ },
+ "format_ref": {
+  "file": "R/report-helpers.R",
+  "line": 294,
+  "ported": true,
+  "python": "pytacheck.report.blocks:format_ref"
+ },
+ "fsd_info": {
+  "file": "R/archive-fsd.R",
+  "line": 110,
+  "python": "pytacheck.archives.fsd:fsd_info"
+ },
+ "fsd_links": {
+  "file": "R/archive-fsd.R",
+  "line": 61,
+  "python": "pytacheck.archives.fsd:fsd_links"
+ },
+ "get_orcid": {
+  "file": "R/svutils-orcid.R",
+  "line": 124,
+  "python": "pytacheck.db.orcid:get_orcid"
+ },
+ "get_prev_outputs": {
+  "file": "R/module.R",
+  "line": 465,
+  "ported": true,
+  "python": "pytacheck.module:get_prev_outputs"
+ },
+ "github_files": {
+  "file": "R/archive-github.R",
+  "line": 177,
+  "python": "pytacheck.archives.github:github_files"
+ },
+ "github_info": {
+  "file": "R/archive-github.R",
+  "line": 58,
+  "python": "pytacheck.archives.github:github_info"
+ },
+ "github_languages": {
+  "file": "R/archive-github.R",
+  "line": 442,
+  "python": "pytacheck.archives.github:github_languages"
+ },
+ "github_links": {
+  "file": "R/archive-github.R",
+  "line": 15,
+  "python": "pytacheck.archives.github:github_links"
+ },
+ "github_readme": {
+  "file": "R/archive-github.R",
+  "line": 134,
+  "python": "pytacheck.archives.github:github_readme"
+ },
+ "github_repo": {
+  "file": "R/archive-github.R",
+  "line": 87,
+  "python": "pytacheck.archives.github:github_repo"
+ },
+ "github_tree_files": {
+  "file": "R/archive-github.R",
+  "line": 306,
+  "python": "pytacheck.archives.github:github_tree_files"
+ },
+ "gitlab_links": {
+  "file": "R/archive-gitlab.R",
+  "line": 65,
+  "python": "pytacheck.archives.gitlab:gitlab_links"
+ },
+ "gitlab_pat": {
+  "file": "R/archive-gitlab.R",
+  "line": 184,
+  "python": "pytacheck.archives.gitlab:gitlab_pat"
+ },
+ "gitlab_repo": {
+  "file": "R/archive-gitlab.R",
+  "line": 104,
+  "python": "pytacheck.archives.gitlab:gitlab_repo"
+ },
+ "gitlab_tree_files": {
+  "file": "R/archive-gitlab.R",
+  "line": 230,
+  "python": "pytacheck.archives.gitlab:gitlab_tree_files"
+ },
+ "grobid_to_bibr": {
+  "file": "R/import-grobid.R",
+  "line": 173,
+  "python": "pytacheck.io.grobid:grobid_to_bibr"
+ },
+ "import_jasp": {
+  "file": "R/jasp.R",
+  "line": 48,
+  "python": "pytacheck.statout.jasp:import_jasp"
+ },
+ "import_mplus_output": {
+  "file": "R/mplus.R",
+  "line": 508,
+  "python": "pytacheck.statout.mplus:import_mplus_output"
+ },
+ "import_omv": {
+  "file": "R/omv.R",
+  "line": 50,
+  "python": "pytacheck.statout.omv:import_omv"
+ },
+ "import_spv": {
+  "file": "R/spv.R",
+  "line": 1874,
+  "python": "pytacheck.statout.spv:import_spv"
+ },
+ "import_stata_smcl": {
+  "file": "R/stata.R",
+  "line": 375,
+  "python": "pytacheck.statout.stata:import_stata_smcl"
+ },
+ "json_expand": {
+  "file": "R/text-json_expand.R",
+  "line": 26,
+  "python": "pytacheck.text.json_expand:json_expand"
+ },
+ "lastlog": {
+  "file": "R/utils-logging.R",
+  "line": 97,
+  "ported": true,
+  "python": "pytacheck.log:lastlog"
+ },
+ "link": {
+  "file": "R/report-helpers.R",
+  "line": 254,
+  "ported": true,
+  "python": "pytacheck.report.blocks:link"
+ },
+ "llm": {
+  "file": "R/llm.R",
+  "line": 47,
+  "python": "pytacheck.llm.core:llm"
+ },
+ "llm_cache": {
+  "file": "R/llm-cache.R",
+  "line": 34,
+  "python": "pytacheck.llm.cache:llm_cache"
+ },
+ "llm_cache_clear": {
+  "file": "R/llm-cache.R",
+  "line": 51,
+  "python": "pytacheck.llm.cache:llm_cache_clear"
+ },
+ "llm_max_calls": {
+  "file": "R/llm.R",
+  "line": 768,
+  "python": "pytacheck.llm.core:llm_max_calls"
+ },
+ "llm_max_tokens": {
+  "file": "R/llm.R",
+  "line": 838,
+  "python": "pytacheck.llm.core:llm_max_tokens"
+ },
+ "llm_model": {
+  "file": "R/llm.R",
+  "line": 1015,
+  "python": "pytacheck.llm.core:llm_model"
+ },
+ "llm_model_list": {
+  "file": "R/llm.R",
+  "line": 667,
+  "python": "pytacheck.llm.core:llm_model_list"
+ },
+ "llm_reasoning": {
+  "file": "R/llm.R",
+  "line": 909,
+  "python": "pytacheck.llm.core:llm_reasoning"
+ },
+ "llm_timeout": {
+  "file": "R/llm.R",
+  "line": 806,
+  "python": "pytacheck.llm.core:llm_timeout"
+ },
+ "llm_use": {
+  "file": "R/llm.R",
+  "line": 1045,
+  "python": "pytacheck.llm.core:llm_use"
+ },
+ "local_files": {
+  "file": "R/archive-local.R",
+  "line": 17,
+  "python": "pytacheck.archives.local:local_files"
+ },
+ "logger": {
+  "file": "R/utils-logging.R",
+  "line": 44,
+  "ported": true,
+  "python": "pytacheck.log:logger"
+ },
+ "logpath": {
+  "file": "R/utils-logging.R",
+  "line": 9,
+  "ported": true,
+  "python": "pytacheck.log:logpath"
+ },
+ "manifest_merge": {
+  "file": "R/data_check_helpers.R",
+  "line": 1083,
+  "python": "pytacheck.datacheck.files:manifest_merge"
+ },
+ "match_column_labels": {
+  "file": "R/data_check_helpers.R",
+  "line": 4265,
+  "python": "pytacheck.datacheck.columns:match_column_labels"
+ },
+ "match_reported_output": {
+  "file": "R/match-reported.R",
+  "line": 693,
+  "python": "pytacheck.statout.match_reported:match_reported_output"
+ },
+ "mendeley_info": {
+  "file": "R/archive-mendeley.R",
+  "line": 142,
+  "python": "pytacheck.archives.mendeley:mendeley_info"
+ },
+ "mendeley_links": {
+  "file": "R/archive-mendeley.R",
+  "line": 48,
+  "python": "pytacheck.archives.mendeley:mendeley_links"
+ },
+ "message": {
+  "file": "R/svutils-message.R",
+  "line": 14,
+  "python": "pytacheck.utils:message"
+ },
+ "metacheck_cache_info": {
+  "file": "R/cache.R",
+  "line": 63,
+  "python": "pytacheck.archives.cache:metacheck_cache_info"
+ },
+ "module:all_p_values": {
+  "file": "inst/modules/all_p_values.R",
+  "line": 1,
+  "python": "pytacheck.modules.all_p_values:all_p_values"
+ },
+ "module:all_urls": {
+  "file": "inst/modules/all_urls.R",
+  "line": 1,
+  "python": "pytacheck.modules.all_urls:all_urls"
+ },
+ "module:causal_claims": {
+  "file": "inst/modules/causal_claims.R",
+  "line": 1,
+  "python": "pytacheck.modules.causal_claims:causal_claims"
+ },
+ "module:code_check": {
+  "file": "inst/modules/code_check.R",
+  "line": 1,
+  "python": "pytacheck.modules.code_check:code_check"
+ },
+ "module:codebook_check": {
+  "file": "inst/modules/codebook_check.R",
+  "line": 1,
+  "python": "pytacheck.modules.codebook_check:codebook_check"
+ },
+ "module:coi_check": {
+  "file": "inst/modules/coi_check.R",
+  "line": 1,
+  "python": "pytacheck.modules.coi_check:coi_check"
+ },
+ "module:coi_check_oi": {
+  "file": "inst/modules/coi_check_oi.R",
+  "line": 1,
+  "python": "pytacheck.modules.coi_check_oi:coi_check_oi"
+ },
+ "module:data_check": {
+  "file": "inst/modules/data_check.R",
+  "line": 1,
+  "python": "pytacheck.modules.data_check:data_check"
+ },
+ "module:ethics_check": {
+  "file": "inst/modules/ethics_check.R",
+  "line": 1,
+  "python": "pytacheck.modules.ethics_check:ethics_check"
+ },
+ "module:funding_check": {
+  "file": "inst/modules/funding_check.R",
+  "line": 1,
+  "python": "pytacheck.modules.funding_check:funding_check"
+ },
+ "module:funding_check_oi": {
+  "file": "inst/modules/funding_check_oi.R",
+  "line": 1,
+  "python": "pytacheck.modules.funding_check_oi:funding_check_oi"
+ },
+ "module:marginal": {
+  "file": "inst/modules/marginal.R",
+  "line": 1,
+  "python": "pytacheck.modules.marginal:marginal"
+ },
+ "module:open_practices": {
+  "file": "inst/modules/open_practices.R",
+  "line": 1,
+  "python": "pytacheck.modules.open_practices:open_practices"
+ },
+ "module:power": {
+  "file": "inst/modules/power.R",
+  "line": 1,
+  "python": "pytacheck.modules.power:power"
+ },
+ "module:prereg_check": {
+  "file": "inst/modules/prereg_check.R",
+  "line": 1,
+  "python": "pytacheck.modules.prereg_check:prereg_check"
+ },
+ "module:psychds_check": {
+  "file": "inst/modules/psychds_check.R",
+  "line": 1,
+  "python": "pytacheck.modules.psychds_check:psychds_check"
+ },
+ "module:ref_accuracy": {
+  "file": "inst/modules/ref_accuracy.R",
+  "line": 1,
+  "python": "pytacheck.modules.ref_accuracy:ref_accuracy"
+ },
+ "module:ref_consistency": {
+  "file": "inst/modules/ref_consistency.R",
+  "line": 1,
+  "python": "pytacheck.modules.ref_consistency:ref_consistency"
+ },
+ "module:ref_miscitation": {
+  "file": "inst/modules/ref_miscitation.R",
+  "line": 1,
+  "python": "pytacheck.modules.ref_miscitation:ref_miscitation"
+ },
+ "module:ref_pubpeer": {
+  "file": "inst/modules/ref_pubpeer.R",
+  "line": 1,
+  "python": "pytacheck.modules.ref_pubpeer:ref_pubpeer"
+ },
+ "module:ref_replication": {
+  "file": "inst/modules/ref_replication.R",
+  "line": 1,
+  "python": "pytacheck.modules.ref_replication:ref_replication"
+ },
+ "module:ref_retraction": {
+  "file": "inst/modules/ref_retraction.R",
+  "line": 1,
+  "python": "pytacheck.modules.ref_retraction:ref_retraction"
+ },
+ "module:ref_summary": {
+  "file": "inst/modules/ref_summary.R",
+  "line": 1,
+  "python": "pytacheck.modules.ref_summary:ref_summary"
+ },
+ "module:reg_check": {
+  "file": "inst/modules/reg_check.R",
+  "line": 1,
+  "python": "pytacheck.modules.reg_check:reg_check"
+ },
+ "module:repo_check": {
+  "file": "inst/modules/repo_check.R",
+  "line": 1,
+  "python": "pytacheck.modules.repo_check:repo_check"
+ },
+ "module:reproducibility_check": {
+  "file": "inst/modules/reproducibility_check.R",
+  "line": 1,
+  "python": "pytacheck.modules.reproducibility_check:reproducibility_check"
+ },
+ "module:stat_check": {
+  "file": "inst/modules/stat_check.R",
+  "line": 1,
+  "python": "pytacheck.modules.stat_check:stat_check"
+ },
+ "module:stat_effect_size": {
+  "file": "inst/modules/stat_effect_size.R",
+  "line": 1,
+  "python": "pytacheck.modules.stat_effect_size:stat_effect_size"
+ },
+ "module:stat_p_exact": {
+  "file": "inst/modules/stat_p_exact.R",
+  "line": 1,
+  "python": "pytacheck.modules.stat_p_exact:stat_p_exact"
+ },
+ "module:stat_p_nonsig": {
+  "file": "inst/modules/stat_p_nonsig.R",
+  "line": 1,
+  "python": "pytacheck.modules.stat_p_nonsig:stat_p_nonsig"
+ },
+ "module_find": {
+  "file": "R/module.R",
+  "line": 173,
+  "ported": true,
+  "python": "pytacheck.module:module_find"
+ },
+ "module_help": {
+  "file": "R/module.R",
+  "line": 306,
+  "ported": true,
+  "python": "pytacheck.module:module_help"
+ },
+ "module_info": {
+  "file": "R/module.R",
+  "line": 254,
+  "ported": true,
+  "python": "pytacheck.module:module_info"
+ },
+ "module_list": {
+  "file": "R/module.R",
+  "line": 211,
+  "ported": true,
+  "python": "pytacheck.module:module_list"
+ },
+ "module_report": {
+  "file": "R/report.R",
+  "line": 473,
+  "python": "pytacheck.report.report:module_report"
+ },
+ "module_run": {
+  "file": "R/module.R",
+  "line": 15,
+  "ported": true,
+  "python": "pytacheck.module:module_run"
+ },
+ "module_template": {
+  "file": "R/module.R",
+  "line": 420,
+  "python": "pytacheck.module:module_template"
+ },
+ "normalize_label": {
+  "file": "R/data_check_helpers.R",
+  "line": 2674,
+  "python": "pytacheck.datacheck.columns:normalize_label"
+ },
+ "normalize_varname": {
+  "file": "R/data_check_helpers.R",
+  "line": 2642,
+  "python": "pytacheck.datacheck.columns:normalize_varname"
+ },
+ "online": {
+  "file": "R/svutils-utils.R",
+  "line": 116,
+  "python": "pytacheck.utils:online"
+ },
+ "openalex_doi": {
+  "file": "R/db-crossref.R",
+  "line": 702,
+  "python": "pytacheck.db.crossref:openalex_doi"
+ },
+ "openalex_query": {
+  "file": "R/db-crossref.R",
+  "line": 788,
+  "python": "pytacheck.db.crossref:openalex_query"
+ },
+ "orcid_person": {
+  "file": "R/svutils-orcid.R",
+  "line": 179,
+  "python": "pytacheck.db.orcid:orcid_person"
+ },
+ "osf_api_check": {
+  "file": "R/archive-osf.R",
+  "line": 20,
+  "python": "pytacheck.archives.osf:osf_api_check"
+ },
+ "osf_app": {
+  "file": "R/app.R",
+  "line": 56,
+  "python": "pytacheck.report.app:osf_app"
+ },
+ "osf_cache_clear": {
+  "file": "R/archive-osf.R",
+  "line": 124,
+  "python": "pytacheck.archives.osf:osf_cache_clear"
+ },
+ "osf_check_id": {
+  "file": "R/archive-osf.R",
+  "line": 307,
+  "python": "pytacheck.archives.osf:osf_check_id"
+ },
+ "osf_delay": {
+  "file": "R/archive-osf.R",
+  "line": 692,
+  "python": "pytacheck.archives.osf:osf_delay"
+ },
+ "osf_file_download": {
+  "file": "R/archive-osf.R",
+  "line": 828,
+  "python": "pytacheck.archives.osf:osf_file_download"
+ },
+ "osf_get_all_pages": {
+  "file": "R/archive-osf.R",
+  "line": 478,
+  "python": "pytacheck.archives.osf:osf_get_all_pages"
+ },
+ "osf_info": {
+  "file": "R/archive-osf.R",
+  "line": 156,
+  "python": "pytacheck.archives.osf:osf_info"
+ },
+ "osf_links": {
+  "file": "R/archive-osf.R",
+  "line": 76,
+  "python": "pytacheck.archives.osf:osf_links"
+ },
+ "osf_pat": {
+  "file": "R/archive-osf-helpers.R",
+  "line": 66,
+  "python": "pytacheck.archives.osf_helpers:osf_pat"
+ },
+ "osf_preprint_list": {
+  "file": "R/archive-osf.R",
+  "line": 1634,
+  "python": "pytacheck.archives.osf:osf_preprint_list"
+ },
+ "osf_type": {
+  "file": "R/archive-osf.R",
+  "line": 385,
+  "python": "pytacheck.archives.osf:osf_type"
+ },
+ "osf_user_projects": {
+  "file": "R/archive-osf-helpers.R",
+  "line": 552,
+  "python": "pytacheck.archives.osf_helpers:osf_user_projects"
+ },
+ "paper": {
+  "file": "R/paper.R",
+  "line": 29,
+  "ported": true,
+  "python": "pytacheck.papers.io:paper"
+ },
+ "paper_id": {
+  "file": "R/paper.R",
+  "line": 558,
+  "ported": true,
+  "python": "pytacheck.papers.tables:paper_id"
+ },
+ "paper_table": {
+  "file": "R/paper.R",
+  "line": 520,
+  "ported": true,
+  "python": "pytacheck.papers.tables:paper_table"
+ },
+ "paper_validate": {
+  "file": "R/paper.R",
+  "line": 189,
+  "ported": true,
+  "python": "pytacheck.papers.validate:paper_validate"
+ },
+ "paper_write": {
+  "file": "R/paper.R",
+  "line": 618,
+  "ported": true,
+  "python": "pytacheck.papers.io:paper_write"
+ },
+ "paperlist": {
+  "file": "R/paper.R",
+  "line": 83,
+  "ported": true,
+  "python": "pytacheck.papers.model:PaperList"
+ },
+ "papers_available": {
+  "file": "R/import-papers.R",
+  "line": 16,
+  "python": "pytacheck.io.corpus:papers_available"
+ },
+ "papers_load": {
+  "file": "R/import-papers.R",
+  "line": 55,
+  "python": "pytacheck.io.corpus:papers_load"
+ },
+ "papers_metadata": {
+  "file": "R/import-papers.R",
+  "line": 157,
+  "python": "pytacheck.io.corpus:papers_metadata"
+ },
+ "papers_remove": {
+  "file": "R/import-papers.R",
+  "line": 121,
+  "python": "pytacheck.io.corpus:papers_remove"
+ },
+ "parse_codebook": {
+  "file": "R/data_check_helpers.R",
+  "line": 3804,
+  "python": "pytacheck.datacheck.columns:parse_codebook"
+ },
+ "parse_qsf": {
+  "file": "R/data_check_helpers.R",
+  "line": 4126,
+  "python": "pytacheck.datacheck.columns:parse_qsf"
+ },
+ "path_sanitize": {
+  "file": "R/utils.R",
+  "line": 278,
+  "python": "pytacheck.utils:path_sanitize"
+ },
+ "pb": {
+  "file": "R/svutils-pb.R",
+  "line": 45,
+  "python": "pytacheck.utils:pb"
+ },
+ "plural": {
+  "file": "R/report-helpers.R",
+  "line": 187,
+  "ported": true,
+  "python": "pytacheck._r.base:plural"
+ },
+ "print.metacheck_module_help": {
+  "file": "R/module.R",
+  "line": 379,
+  "python": "pytacheck.module:print_metacheck_module_help"
+ },
+ "print.metacheck_module_list": {
+  "file": "R/module.R",
+  "line": 330,
+  "python": "pytacheck.module:print_metacheck_module_list"
+ },
+ "print.metacheck_module_output": {
+  "file": "R/module.R",
+  "line": 355,
+  "python": "pytacheck.module:print_metacheck_module_output"
+ },
+ "print.scivrs_paper": {
+  "file": "R/paper.R",
+  "line": 427,
+  "python": "pytacheck.papers:print_scivrs_paper"
+ },
+ "print.scivrs_paperlist": {
+  "file": "R/paper.R",
+  "line": 449,
+  "python": "pytacheck.papers:print_scivrs_paperlist"
+ },
+ "psycharchives_file_download": {
+  "file": "R/archive-psycharchives.R",
+  "line": 397,
+  "python": "pytacheck.archives.psycharchives:psycharchives_file_download"
+ },
+ "psycharchives_info": {
+  "file": "R/archive-psycharchives.R",
+  "line": 187,
+  "python": "pytacheck.archives.psycharchives:psycharchives_info"
+ },
+ "psycharchives_links": {
+  "file": "R/archive-psycharchives.R",
+  "line": 145,
+  "python": "pytacheck.archives.psycharchives:psycharchives_links"
+ },
+ "pubpeer_comments": {
+  "file": "R/db-pubpeer.R",
+  "line": 16,
+  "python": "pytacheck.db.pubpeer:pubpeer_comments"
+ },
+ "rbox_file_download": {
+  "file": "R/archive-researchbox.R",
+  "line": 280,
+  "python": "pytacheck.archives.researchbox:rbox_file_download"
+ },
+ "rbox_info": {
+  "file": "R/archive-researchbox.R",
+  "line": 87,
+  "python": "pytacheck.archives.researchbox:rbox_info"
+ },
+ "rbox_links": {
+  "file": "R/archive-researchbox.R",
+  "line": 42,
+  "python": "pytacheck.archives.researchbox:rbox_links"
+ },
+ "read": {
+  "file": "R/import-read.R",
+  "line": 9,
+  "ported": true,
+  "python": "pytacheck.io.read:read"
+ },
+ "read_r_output": {
+  "file": "R/r-output.R",
+  "line": 60,
+  "python": "pytacheck.statout.r_output:read_r_output"
+ },
+ "read_stat_tables": {
+  "file": "R/stat-tables.R",
+  "line": 48,
+  "python": "pytacheck.statout.stat_tables:read_stat_tables"
+ },
+ "ref_table": {
+  "file": "R/paper.R",
+  "line": 576,
+  "ported": true,
+  "python": "pytacheck.papers.tables:ref_table"
+ },
+ "regcheck_base_url": {
+  "file": "R/db-regcheck.R",
+  "line": 28,
+  "python": "pytacheck.db.regcheck:regcheck_base_url"
+ },
+ "regcheck_compare": {
+  "file": "R/db-regcheck.R",
+  "line": 99,
+  "python": "pytacheck.db.regcheck:regcheck_compare"
+ },
+ "regcheck_setup_local": {
+  "file": "R/regcheck-local.R",
+  "line": 37,
+  "python": "pytacheck.db.regcheck_local:regcheck_setup_local"
+ },
+ "regcheck_start_local": {
+  "file": "R/regcheck-local.R",
+  "line": 127,
+  "python": "pytacheck.db.regcheck_local:regcheck_start_local"
+ },
+ "regcheck_stop_local": {
+  "file": "R/regcheck-local.R",
+  "line": 253,
+  "python": "pytacheck.db.regcheck_local:regcheck_stop_local"
+ },
+ "regcheck_tidy": {
+  "file": "R/db-regcheck.R",
+  "line": 406,
+  "python": "pytacheck.db.regcheck:regcheck_tidy"
+ },
+ "rep_if": {
+  "file": "R/svutils-utils.R",
+  "line": 55,
+  "python": "pytacheck.utils:rep_if"
+ },
+ "repo_cache_clear": {
+  "file": "R/repo-download.R",
+  "line": 126,
+  "python": "pytacheck.archives.download:repo_cache_clear"
+ },
+ "repo_cache_dir": {
+  "file": "R/repo-download.R",
+  "line": 80,
+  "python": "pytacheck.archives.download:repo_cache_dir"
+ },
+ "repo_cache_size": {
+  "file": "R/repo-download.R",
+  "line": 95,
+  "python": "pytacheck.archives.download:repo_cache_size"
+ },
+ "repo_info_cache": {
+  "file": "R/repo-info-cache.R",
+  "line": 51,
+  "python": "pytacheck.archives.info_cache:repo_info_cache"
+ },
+ "repo_info_cache_clear": {
+  "file": "R/repo-info-cache.R",
+  "line": 70,
+  "python": "pytacheck.archives.info_cache:repo_info_cache_clear"
+ },
+ "report": {
+  "file": "R/report.R",
+  "line": 24,
+  "python": "pytacheck.report.report:report"
+ },
+ "report_app": {
+  "file": "R/app.R",
+  "line": 18,
+  "python": "pytacheck.report.app:report_app"
+ },
+ "report_module_run": {
+  "file": "R/report.R",
+  "line": 279,
+  "python": "pytacheck.report.report:report_module_run"
+ },
+ "report_qmd": {
+  "file": "R/report.R",
+  "line": 367,
+  "python": "pytacheck.report.report:report_qmd"
+ },
+ "report_repository": {
+  "file": "R/report.R",
+  "line": 207,
+  "python": "pytacheck.report.report:report_repository"
+ },
+ "report_table": {
+  "file": "R/report-helpers.R",
+  "line": 89,
+  "python": "pytacheck.report.blocks:report_table"
+ },
+ "repro_defined_vars": {
+  "file": "R/reproducibility_check.R",
+  "line": 1126,
+  "python": "pytacheck.repro.core:repro_defined_vars"
+ },
+ "repro_dependencies": {
+  "file": "R/reproducibility_check.R",
+  "line": 51,
+  "python": "pytacheck.repro.core:repro_dependencies"
+ },
+ "repro_docker_available": {
+  "file": "R/reproducibility_check_docker.R",
+  "line": 47,
+  "python": "pytacheck.repro.docker:repro_docker_available"
+ },
+ "repro_file_io": {
+  "file": "R/reproducibility_check.R",
+  "line": 1057,
+  "python": "pytacheck.repro.core:repro_file_io"
+ },
+ "repro_install_deps": {
+  "file": "R/reproducibility_check.R",
+  "line": 1777,
+  "python": "pytacheck.repro.core:repro_install_deps"
+ },
+ "repro_install_deps_docker": {
+  "file": "R/reproducibility_check_docker.R",
+  "line": 233,
+  "python": "pytacheck.repro.docker:repro_install_deps_docker"
+ },
+ "repro_materialize_layout": {
+  "file": "R/reproducibility_check.R",
+  "line": 1465,
+  "python": "pytacheck.repro.core:repro_materialize_layout"
+ },
+ "repro_missing_inputs": {
+  "file": "R/reproducibility_check.R",
+  "line": 1227,
+  "python": "pytacheck.repro.core:repro_missing_inputs"
+ },
+ "repro_rewrite_paths": {
+  "file": "R/reproducibility_check.R",
+  "line": 642,
+  "python": "pytacheck.repro.core:repro_rewrite_paths"
+ },
+ "repro_run_order": {
+  "file": "R/reproducibility_check.R",
+  "line": 881,
+  "python": "pytacheck.repro.core:repro_run_order"
+ },
+ "repro_run_scripts": {
+  "file": "R/reproducibility_check.R",
+  "line": 2092,
+  "python": "pytacheck.repro.core:repro_run_scripts"
+ },
+ "repro_run_scripts_docker": {
+  "file": "R/reproducibility_check_docker.R",
+  "line": 467,
+  "python": "pytacheck.repro.docker:repro_run_scripts_docker"
+ },
+ "repro_write_scripts": {
+  "file": "R/reproducibility_check.R",
+  "line": 1594,
+  "python": "pytacheck.repro.core:repro_write_scripts"
+ },
+ "researchdata4tu_file_download": {
+  "file": "R/archive-4tu.R",
+  "line": 308,
+  "python": "pytacheck.archives.fourtu:researchdata4tu_file_download"
+ },
+ "researchdata4tu_info": {
+  "file": "R/archive-4tu.R",
+  "line": 150,
+  "python": "pytacheck.archives.fourtu:researchdata4tu_info"
+ },
+ "researchdata4tu_links": {
+  "file": "R/archive-4tu.R",
+  "line": 45,
+  "python": "pytacheck.archives.fourtu:researchdata4tu_links"
+ },
+ "researchdata4tu_pat": {
+  "file": "R/archive-4tu.R",
+  "line": 248,
+  "python": "pytacheck.archives.fourtu:researchdata4tu_pat"
+ },
+ "reshare_file_download": {
+  "file": "R/archive-reshare.R",
+  "line": 353,
+  "python": "pytacheck.archives.reshare:reshare_file_download"
+ },
+ "reshare_info": {
+  "file": "R/archive-reshare.R",
+  "line": 136,
+  "python": "pytacheck.archives.reshare:reshare_info"
+ },
+ "reshare_links": {
+  "file": "R/archive-reshare.R",
+  "line": 45,
+  "python": "pytacheck.archives.reshare:reshare_links"
+ },
+ "retractionwatch": {
+  "file": "R/db-retractionwatch.R",
+  "line": 17,
+  "python": "pytacheck.db.retractionwatch:retractionwatch"
+ },
+ "rscript_path": {
+  "file": "R/data_check_helpers.R",
+  "line": 2305,
+  "python": "pytacheck.datacheck.files:rscript_path"
+ },
+ "rw_date": {
+  "file": "R/db-retractionwatch.R",
+  "line": 48,
+  "python": "pytacheck.db.retractionwatch:rw_date"
+ },
+ "rw_update": {
+  "file": "R/db-retractionwatch.R",
+  "line": 59,
+  "python": "pytacheck.db.retractionwatch:rw_update"
+ },
+ "scroll_table": {
+  "file": "R/report-helpers.R",
+  "line": 20,
+  "ported": true,
+  "python": "pytacheck.report.blocks:scroll_table"
+ },
+ "search_text": {
+  "file": "",
+  "line": 0,
+  "ported": true,
+  "python": "pytacheck.text.search:search_text"
+ },
+ "spv_assemble_table": {
+  "file": "R/spv.R",
+  "line": 1565,
+  "python": "pytacheck.statout.spv:spv_assemble_table"
+ },
+ "stat_output_json": {
+  "file": "R/stat-output.R",
+  "line": 429,
+  "python": "pytacheck.statout.stat_output:stat_output_json"
+ },
+ "stat_output_validate": {
+  "file": "R/stat-output.R",
+  "line": 527,
+  "python": "pytacheck.statout.stat_output:stat_output_validate"
+ },
+ "stat_output_write": {
+  "file": "R/stat-output.R",
+  "line": 607,
+  "python": "pytacheck.statout.stat_output:stat_output_write"
+ },
+ "stat_results_long": {
+  "file": "R/stat-output.R",
+  "line": 237,
+  "python": "pytacheck.statout.stat_output:stat_results_long"
+ },
+ "stato_type_column": {
+  "file": "R/stato-map.R",
+  "line": 873,
+  "python": "pytacheck.statout.stato_map:stato_type_column"
+ },
+ "stats": {
+  "file": "R/stats.R",
+  "line": 12,
+  "python": "pytacheck.stats.core:stats"
+ },
+ "test_paper": {
+  "file": "R/paper.R",
+  "line": 134,
+  "ported": true,
+  "python": "pytacheck.papers.io:test_paper"
+ },
+ "text_expand": {
+  "file": "R/text_expand.R",
+  "line": 26,
+  "ported": true,
+  "python": "pytacheck.text.expand:text_expand"
+ },
+ "text_peek": {
+  "file": "R/data_check_helpers.R",
+  "line": 1737,
+  "python": "pytacheck.datacheck.files:text_peek"
+ },
+ "text_search": {
+  "file": "R/text_search.R",
+  "line": 27,
+  "ported": true,
+  "python": "pytacheck.text.search:text_search"
+ },
+ "txt_classify_content": {
+  "file": "R/data_check_helpers.R",
+  "line": 1799,
+  "python": "pytacheck.datacheck.files:txt_classify_content"
+ },
+ "validate": {
+  "file": "R/validate.R",
+  "line": 75,
+  "python": "pytacheck.validate:validate"
+ },
+ "verbose": {
+  "file": "R/svutils-utils.R",
+  "line": 79,
+  "ported": true,
+  "python": "pytacheck.config:verbose"
+ },
+ "zenodo_file_download": {
+  "file": "R/archive-zenodo.R",
+  "line": 356,
+  "python": "pytacheck.archives.zenodo:zenodo_file_download"
+ },
+ "zenodo_info": {
+  "file": "R/archive-zenodo.R",
+  "line": 111,
+  "python": "pytacheck.archives.zenodo:zenodo_info"
+ },
+ "zenodo_links": {
+  "file": "R/archive-zenodo.R",
+  "line": 20,
+  "python": "pytacheck.archives.zenodo:zenodo_links"
+ },
+ "zenodo_pat": {
+  "file": "R/archive-zenodo-upload.R",
+  "line": 71,
+  "python": "pytacheck.archives.zenodo_upload:zenodo_pat"
+ },
+ "zenodo_upload": {
+  "file": "R/archive-zenodo-upload.R",
+  "line": 620,
+  "python": "pytacheck.archives.zenodo_upload:zenodo_upload"
+ },
+ "zip_decision": {
+  "file": "R/zip-peek.R",
+  "line": 635,
+  "python": "pytacheck.archives.zip_peek:zip_decision"
+ },
+ "zip_peek": {
+  "file": "R/zip-peek.R",
+  "line": 227,
+  "python": "pytacheck.archives.zip_peek:zip_peek"
+ }
+}

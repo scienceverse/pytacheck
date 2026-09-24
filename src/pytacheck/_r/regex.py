@@ -402,6 +402,89 @@ def _as_str(x: Any) -> str | None:
 # ---------------------------------------------------------------------------
 
 
+_INLINE_FLAGS = regex.compile(r"\(\?[a-zA-Z-]*[a-zA-Z]")
+_META = set("\\[](){}.*+?|^$")
+
+
+def _branches(pattern: str) -> list[str] | None:
+    """Split *pattern* on top-level ``|`` (``None`` if it cannot be done safely)."""
+    out, depth, start, i, in_set = [], 0, 0, 0, False
+    while i < len(pattern):
+        c = pattern[i]
+        if c == "\\":
+            i += 2
+            continue
+        if in_set:
+            if c == "]":
+                in_set = False
+        elif c == "[":
+            in_set = True
+            if pattern[i + 1 : i + 2] == "^":
+                i += 1
+            if pattern[i + 1 : i + 2] == "]":
+                i += 1
+        elif c == "(":
+            depth += 1
+        elif c == ")":
+            depth -= 1
+        elif c == "|" and depth == 0:
+            out.append(pattern[start:i])
+            start = i + 1
+        i += 1
+    if depth != 0 or in_set:
+        return None
+    out.append(pattern[start:])
+    return out
+
+
+def _leading_literal(branch: str) -> str:
+    """The literal text every match of *branch* must start with."""
+    i = 0
+    while branch.startswith(("\\b", "\\<", "\\>", "^"), i):  # zero-width prefixes
+        i += 1 if branch[i] == "^" else 2
+    lit: list[str] = []
+    while i < len(branch):
+        c = branch[i]
+        if c == "\\" and i + 1 < len(branch) and branch[i + 1] in "<>":
+            break  # word anchors in TRE
+        if c == "\\" and i + 1 < len(branch) and not branch[i + 1].isalnum():
+            lit.append(branch[i + 1])  # escaped punctuation is a literal
+            i += 2
+        elif c in _META:
+            break
+        else:
+            lit.append(c)
+            i += 1
+        if i < len(branch) and branch[i] in "*?{":
+            lit.pop()  # the last literal is optional/repeated
+            break
+    return "".join(lit)
+
+
+@functools.lru_cache(maxsize=4096)
+def _prefilter(pattern: str, ignore_case: bool) -> tuple[str, ...] | None:
+    """Literals of which every match must contain one, or ``None``.
+
+    Used to skip the regex engine for text that cannot match: metacheck's
+    patterns are mostly keyword alternations, so this avoids running the
+    engine on nearly every sentence of a corpus. The test only ever keeps
+    too much (never too little): texts are casefolded, which folds at least
+    as much as the engine's case-insensitive matching.
+    """
+    if _INLINE_FLAGS.search(pattern):
+        return None
+    branches = _branches(pattern)
+    if not branches:
+        return None
+    literals = []
+    for b in branches:
+        lit = _leading_literal(b)
+        if len(lit) < 3 or not lit.isascii():
+            return None
+        literals.append(lit.casefold() if ignore_case else lit)
+    return tuple(dict.fromkeys(literals))
+
+
 def grepl(
     pattern: str,
     x: Any,
@@ -414,7 +497,20 @@ def grepl(
         return _vectorize(x, lambda v: (s := _as_str(v)) is not None and pattern in s)
     rx = compile_r(pattern, ignore_case, perl, False, posix=False)
     search = rx.search
-    return _vectorize(x, lambda v: (s := _as_str(v)) is not None and search(s) is not None)
+    literals = _prefilter(pattern, ignore_case)
+    if literals is None:
+        return _vectorize(x, lambda v: (s := _as_str(v)) is not None and search(s) is not None)
+
+    def match(v: Any) -> bool:
+        s = _as_str(v)
+        if s is None:
+            return False
+        folded = s.casefold() if ignore_case else s
+        if not any(lit in folded for lit in literals):
+            return False
+        return search(s) is not None
+
+    return _vectorize(x, match)
 
 
 def grep(
