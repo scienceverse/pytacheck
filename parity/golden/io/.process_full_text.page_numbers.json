@@ -1,0 +1,64 @@
+{
+  "id": ".process_full_text.page_numbers",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 2,
+    "names": [
+      "text",
+      "section",
+      "header",
+      "div",
+      "p",
+      "formatted"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "The authors used structural equation modeling (SEM) assuming linear relationships between the variables, and it is essential to test this assumption (Bentler & Chou, 1987, p. 86; Ullman, 2007, p. 683).",
+          "This research (Frith & Singer, 2008, p. 3876)."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "intro",
+          "intro"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "demo",
+          "demo"
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          1,
+          1
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          1,
+          2
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "The authors used structural equation modeling (SEM) assuming linear relationships between the variables, and it is essential to test this assumption <ref type=\"bibr\">(Bentler &amp; Chou, 1987, p. 86;<\/ref> <ref type=\"bibr\">Ullman, 2007, p. 683)<\/ref>.",
+          "This research (Frith &amp; Singer, 2008, p. 3876)."
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.3.3 (2024-02-29)"
+}

@@ -1,0 +1,36 @@
+{
+  "id": ".tei_xrefs.empty",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 0,
+    "names": [
+      "xref_id",
+      "xref_type",
+      "contents",
+      "text_id"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": []
+      },
+      {
+        "t": "chr",
+        "v": []
+      },
+      {
+        "t": "chr",
+        "v": []
+      },
+      {
+        "t": "int",
+        "v": []
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.3.3 (2024-02-29)"
+}

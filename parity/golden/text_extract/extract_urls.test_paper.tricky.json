@@ -1,9 +1,160 @@
 {
   "id": "extract_urls.test_paper.tricky",
-  "ok": false,
-  "error": "unused argument (bytes = charToRaw(format(Sys.time(), \"%s%OS6\")))",
+  "ok": true,
+  "error": null,
   "warnings": [],
-  "value": null,
+  "value": {
+    "t": "df",
+    "nrow": 12,
+    "names": [
+      "text_id",
+      "section_id",
+      "paragraph_id",
+      "text",
+      "formatted",
+      "paper_id",
+      "header",
+      "section_type"
+    ],
+    "v": [
+      {
+        "t": "int",
+        "v": [
+          1,
+          2,
+          2,
+          3,
+          3,
+          4,
+          4,
+          5,
+          6,
+          6,
+          8,
+          8
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://doi.org/10.1177/0956797614520608",
+          "HTTPS://OSF.IO/ABCDE",
+          "www.example.com/path?x=1&y=2",
+          "192.168.0.1:8080/api/v1",
+          "10.0.0.1",
+          "data.csv",
+          "github.com/user/repo",
+          "3.full",
+          "https://a.org/x,https://b.org/y",
+          "https://c.org/z",
+          "https://example.org/caf",
+          "https://example.org/a b"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "See doi:10.1177/0956797614520608 and https://doi.org/10.1177/0956797614520608.",
+          "Data at HTTPS://OSF.IO/ABCDE/ (accessed) and www.example.com/path?x=1&y=2.",
+          "Data at HTTPS://OSF.IO/ABCDE/ (accessed) and www.example.com/path?x=1&y=2.",
+          "Server 192.168.0.1:8080/api/v1 and 10.0.0.1 were used.",
+          "Server 192.168.0.1:8080/api/v1 and 10.0.0.1 were used.",
+          "The file data.csv and analysis.R are on GitHub (github.com/user/repo).",
+          "The file data.csv and analysis.R are on GitHub (github.com/user/repo).",
+          "3.full text is available; e.g. the value was 12.5.",
+          "Two links: https://a.org/x,https://b.org/y and https://c.org/z;",
+          "Two links: https://a.org/x,https://b.org/y and https://c.org/z;",
+          "Unicode https://example.org/café path and https://example.org/a b",
+          "Unicode https://example.org/café path and https://example.org/a b"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "d92210275bc46b",
+          "d92210275bc46b",
+          "d92210275bc46b",
+          "d92210275bc46b",
+          "d92210275bc46b",
+          "d92210275bc46b",
+          "d92210275bc46b",
+          "d92210275bc46b",
+          "d92210275bc46b",
+          "d92210275bc46b",
+          "d92210275bc46b",
+          "d92210275bc46b"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Test",
+          "Test",
+          "Test",
+          "Test",
+          "Test",
+          "Test",
+          "Test",
+          "Test",
+          "Test",
+          "Test",
+          "Test",
+          "Test"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "unknown",
+          "unknown",
+          "unknown",
+          "unknown",
+          "unknown",
+          "unknown",
+          "unknown",
+          "unknown",
+          "unknown",
+          "unknown",
+          "unknown",
+          "unknown"
+        ]
+      }
+    ]
+  },
   "metacheck_version": "0.3.1",
-  "r_version": "R version 4.3.3 (2024-02-29)"
+  "r_version": "R version 4.5.3 (2026-03-11)"
 }

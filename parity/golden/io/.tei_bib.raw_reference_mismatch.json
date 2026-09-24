@@ -1,0 +1,9 @@
+{
+  "id": ".tei_bib.raw_reference_mismatch",
+  "ok": false,
+  "error": "Assigned data `trimws(gsub(\"\\\\\\\\s+\", \" \", x = .xml_find_text(refs,\n\".//note[@type='raw_reference']\")))` must be compatible with existing data.\n✖ Existing data has 3 rows.\n✖ Assigned data has 2 rows.\nℹ Only vectors of size 1 are recycled.\nCaused by error in `vectbl_recycle_rhs_rows()`:\n! Can't recycle input of size 2 to size 3.",
+  "warnings": [],
+  "value": null,
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.3.3 (2024-02-29)"
+}

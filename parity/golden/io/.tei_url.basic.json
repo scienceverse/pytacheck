@@ -1,0 +1,40 @@
+{
+  "id": ".tei_url.basic",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 2,
+    "names": [
+      "href",
+      "link_text",
+      "text_id"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "https://osf.io/abc",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://osf.io/ abc",
+          "no target"
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          1,
+          1
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.3.3 (2024-02-29)"
+}
