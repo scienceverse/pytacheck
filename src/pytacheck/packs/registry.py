@@ -340,6 +340,10 @@ def _build(config: Config) -> Registry:
     problems: dict[str, str] = {}
     hidden: set[str] = set()
     dirs: list[str] = []
+    for key, (where, _entry, code) in config.untrusted.items():
+        section, _, name = key.partition(".")
+        if section == "packs":
+            problems[name] = _untrusted_message(name, where, code)
     for name, pin in config.packs.items():
         if pin is False:
             hidden.add(name)
@@ -373,6 +377,14 @@ def _build(config: Config) -> Registry:
         hidden=frozenset(hidden),
         install_dirs=tuple(dirs),
         exists=tuple(os.path.isdir(d) for d in dirs),
+    )
+
+
+def _untrusted_message(name: str, where: str, code: tuple[str, ...]) -> str:
+    return (
+        f"The project config {where} names the local folder {code[0]} as the pack '{name}', "
+        "which you have not trusted yet: its code would run with your permissions. Review "
+        "it, then run `pytacheck pack install` in that project to trust it."
     )
 
 

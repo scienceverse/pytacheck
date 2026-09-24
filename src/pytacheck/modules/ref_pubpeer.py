@@ -33,6 +33,8 @@ def _commented(pp: pd.DataFrame | None) -> pd.DataFrame:
     if pp is None:
         # R: NULL[...] is NULL, and inner_join(bib, NULL) fails
         raise TypeError("`y` must be a data frame, not NULL.")
+    if "total_comments" not in pp.columns or "users" not in pp.columns:
+        return pp.iloc[0:0]  # R: `NULL > 0` is logical(0), which selects no rows
     tc = pd.to_numeric(pp["total_comments"], errors="coerce")
     keep = (tc > 0) & (pp["users"].astype("string") != "Statcheck")
     return pp.loc[keep.fillna(False).to_numpy(dtype=bool)].reset_index(drop=True)
