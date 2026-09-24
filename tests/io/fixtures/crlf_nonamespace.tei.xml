@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI>
+<teiHeader><fileDesc><titleStmt><title>No namespace, CRLF</title></titleStmt></fileDesc></teiHeader>
+<text><body>
+<div><head>Methods</head><p>Only one paragraph here.
+With a CRLF line break inside. Figure. 2 shows it.</p></div>
+</body></text>
+</TEI>

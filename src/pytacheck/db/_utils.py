@@ -109,9 +109,7 @@ def _dns_online(url: str, tries: int = 3, wait: float = 1.0) -> bool:
 
 
 def _has_escape(s: str) -> bool:
-    return any(
-        s[i] == "%" and s[i + 1] in _HEX and s[i + 2] in _HEX for i in range(len(s) - 2)
-    )
+    return any(s[i] == "%" and s[i + 1] in _HEX and s[i + 2] in _HEX for i in range(len(s) - 2))
 
 
 def url_encode(url: Any, reserved: bool = False, repeated: bool = False) -> str:
@@ -274,7 +272,8 @@ def _column_dtype(values: Sequence[Any]) -> Any:
     if not all(_is_scalar(v) for v in present):
         return object
     if not present:
-        return "boolean"
+        # all missing: NA_real_ (a float NaN) makes a double column, NA a logical one
+        return "float64" if any(isinstance(v, float) for v in values) else "boolean"
     kinds = {type(v) for v in present}
     if kinds <= {bool}:
         return "boolean"

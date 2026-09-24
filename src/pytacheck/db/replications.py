@@ -18,7 +18,7 @@ _OSF_ID = "t4j8f"
 _COLUMNS = ["doi_o", "apa_ref_o", "doi_r", "apa_ref_r", "url_r", "outcome", "outcome_quote", "type"]
 
 
-def FLoRA() -> pd.DataFrame:  # noqa: N802 - R name
+def FLoRA() -> pd.DataFrame:
     """FORRT Replication Database (port of ``FLoRA()``).
 
     DOIs of original studies and their replications, with columns ``doi_o``,
@@ -30,7 +30,7 @@ def FLoRA() -> pd.DataFrame:  # noqa: N802 - R name
     return load_database(_NAME)
 
 
-def FLoRA_date() -> dt.date | None:  # noqa: N802 - R name
+def FLoRA_date() -> dt.date | None:
     """The date the FLoRA data was downloaded (port of ``FLoRA_date()``)."""
     return database_date(_NAME)
 
@@ -45,9 +45,7 @@ def summarise_flora(csv_path: str | Path) -> pd.DataFrame:
     """
     import pandas as pd
 
-    raw = pd.read_csv(
-        csv_path, dtype=str, keep_default_na=False, na_values=[], encoding="utf-8"
-    )
+    raw = pd.read_csv(csv_path, dtype=str, keep_default_na=False, na_values=[], encoding="utf-8")
     missing = [c for c in _COLUMNS if c not in raw.columns]
     if missing:
         raise ValueError(f"Can't subset columns that don't exist: {', '.join(missing)}")
@@ -92,7 +90,7 @@ def _download_csv(dest: Path) -> Path:
     return path
 
 
-def FLoRA_update() -> Path:  # noqa: N802 - R name
+def FLoRA_update() -> Path:
     """Download the newest FLoRA data (port of ``FLoRA_update()``).
 
     Downloads flora.csv from the OSF (file ``t4j8f``), keeps the rows and

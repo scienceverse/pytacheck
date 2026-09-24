@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0">
+	<teiHeader><fileDesc><titleStmt><title>Unlabelled figure and table divs</title></titleStmt></fileDesc></teiHeader>
+	<text><body>
+		<div><p>Table 3 lists all the values. It is long.</p></div>
+		<div><p>Unclassified text here.</p></div>
+		<div><head>Discussion</head><p>Done.</p></div>
+	</body></text>
+</TEI>

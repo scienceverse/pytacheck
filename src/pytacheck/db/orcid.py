@@ -56,7 +56,7 @@ def credit_roles(display: str | list[str] = ("explain", "names", "abbr")) -> lis
     abbreviation and definition and returns ``None``; ``"abbr"`` returns the
     abbreviations and anything else the role names.
     """
-    first = display if isinstance(display, str) else list(display)[0]
+    first = display if isinstance(display, str) else next(iter(display))
     if first == "explain":
         for i, (name, desc) in enumerate(_CREDIT_ROLES.items(), start=1):
             print(f"[{i}/{_CREDIT_ABBR[i - 1]}] {name}: {desc}")
@@ -144,7 +144,9 @@ def _find_text(root: etree._Element, xpath: str, join: str | None = None) -> Any
     except Exception:  # an undeclared prefix: xml2 finds nothing
         nodes = []
     texts = [
-        re.sub(" +", " ", "".join(n.itertext()).strip() if hasattr(n, "itertext") else str(n).strip())
+        re.sub(
+            " +", " ", "".join(n.itertext()).strip() if hasattr(n, "itertext") else str(n).strip()
+        )
         for n in nodes
     ]
     if join is not None:

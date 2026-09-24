@@ -608,14 +608,10 @@ def r2t(r: float, df: float) -> float:
     return r / s
 
 
-def compute_p(
-    test_type: str, test_stat: float, df1: float, df2: float, two_tailed: bool
-) -> float:
+def compute_p(test_type: str, test_stat: float, df1: float, df2: float, two_tailed: bool) -> float:
     """Port of ``statcheck:::compute_p()``: the p-value implied by a test statistic."""
     if test_type not in _TEST_TYPES:
-        raise RError(
-            'test_type %in% c("t", "F", "Z", "r", "Chi2", "Q", "Qb", "Qw") is not TRUE'
-        )
+        raise RError('test_type %in% c("t", "F", "Z", "r", "Chi2", "Q", "Qb", "Qw") is not TRUE')
     if test_type == "t":
         computed = pt(-1 * abs(test_stat), df2, True, _r_warning)
     elif test_type == "F":
@@ -747,7 +743,7 @@ def decision_error_test(
     return None
 
 
-def process_stats(
+def _process_stats(
     test_type: str,
     test_stat: float,
     df1: float,
@@ -765,7 +761,7 @@ def process_stats(
     OneTailedTxt: bool,
     OneTailedTests: bool,
 ) -> tuple[float, bool, Lgl]:
-    """Port of ``statcheck:::process_stats()``: ``(computed_p, error, decision_error)``."""
+    """``process_stats()`` as a tuple ``(computed_p, error, decision_error)``."""
     computed_p = compute_p(test_type, test_stat, df1, df2, two_tailed)
     error = error_test(
         reported_p,
@@ -815,6 +811,57 @@ def process_stats(
             decision_error = decision_error_1tail
     assert error is not None
     return computed_p, error, decision_error
+
+
+def process_stats(
+    test_type: str,
+    test_stat: float,
+    df1: float,
+    df2: float,
+    reported_p: float,
+    p_comparison: str,
+    test_comparison: str,
+    p_dec: float,
+    test_dec: float,
+    OneTailedInTxt: bool,
+    two_tailed: bool,
+    alpha: float,
+    pZeroError: bool,
+    pEqualAlphaSig: bool,
+    OneTailedTxt: bool,
+    OneTailedTests: bool,
+) -> pd.DataFrame:
+    """Port of ``statcheck:::process_stats()``: recompute p, test for (decision) errors.
+
+    Returns a one-row DataFrame with ``computed_p``, ``error`` and
+    ``decision_error``; with ``OneTailedTxt=True`` an error in a text that
+    mentions one-sided testing is re-evaluated as a one-tailed test.
+    """
+    computed_p, error, decision_error = _process_stats(
+        test_type,
+        test_stat,
+        df1,
+        df2,
+        reported_p,
+        p_comparison,
+        test_comparison,
+        p_dec,
+        test_dec,
+        OneTailedInTxt,
+        two_tailed,
+        alpha,
+        pZeroError,
+        pEqualAlphaSig,
+        OneTailedTxt,
+        OneTailedTests,
+    )
+    return pd.DataFrame(
+        {
+            "computed_p": pd.Series([computed_p], dtype="float64"),
+            "error": pd.Series([error], dtype="boolean"),
+            "decision_error": pd.Series([decision_error], dtype="boolean"),
+        }
+    )
 
 
 # ---------------------------------------------------------------------------
@@ -883,7 +930,7 @@ def _check_texts(
         for res in results:
             r = res.row
             assert r.statistic is not None and r.test_comp is not None and r.p_comp is not None
-            res.computed, res.error, res.decision_error = process_stats(
+            res.computed, res.error, res.decision_error = _process_stats(
                 test_type=r.statistic,
                 test_stat=r.value,
                 df1=r.df1,
@@ -1086,9 +1133,7 @@ def summary_statcheck(x: pd.DataFrame) -> pd.DataFrame:
         rows.append(
             (s, len(sub), int(sub[VAR_ERROR].sum(skipna=True)), int(sub[VAR_DEC_ERROR].sum()))
         )
-    rows.append(
-        ("Total", len(x), int(x[VAR_ERROR].sum(skipna=True)), int(x[VAR_DEC_ERROR].sum()))
-    )
+    rows.append(("Total", len(x), int(x[VAR_ERROR].sum(skipna=True)), int(x[VAR_DEC_ERROR].sum())))
     return pd.DataFrame(
         {
             VAR_SOURCE: pd.Series([r[0] for r in rows], dtype="string"),

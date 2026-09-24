@@ -162,8 +162,7 @@ def doi_resolves(doi: Any, timeout: float = 10) -> Any:
     valid = _valid_values(cleaned)
     na_or_empty = [v is None or v == "" for v in cleaned]
     res: list[bool | None] = [
-        None if na else (None if ok else False)
-        for na, ok in zip(na_or_empty, valid, strict=True)
+        None if na else (None if ok else False) for na, ok in zip(na_or_empty, valid, strict=True)
     ]
     needs = [i for i, (na, ok) in enumerate(zip(na_or_empty, valid, strict=True)) if not na and ok]
     if needs:
@@ -206,9 +205,7 @@ def _paste_author(a: Any) -> list[str]:
         return []
     n = max(len(p) for p in parts)
     return [
-        ", ".join(
-            "NA" if (s := as_character(p[k % len(p)])) is None else s for p in parts
-        )
+        ", ".join("NA" if (s := as_character(p[k % len(p)])) is None else s for p in parts)
         for k in range(n)
     ]
 

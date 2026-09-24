@@ -27,7 +27,7 @@ __all__ = ["RegCheckError", "regcheck_base_url", "regcheck_compare", "regcheck_t
 # default server locations per client
 _REGCHECK_HOSTED_URL = "https://preregpt-8584b32c9141.herokuapp.com"
 _REGCHECK_LOCAL_URL = "http://localhost:8000"
-_REGCHECK_DEFAULT_TOKEN = "metacheck-local"
+_REGCHECK_DEFAULT_TOKEN = "metacheck-local"  # noqa: S105 - public token of the local server
 _CLIENTS = ("ollama", "groq", "openai", "deepseek")
 _BOOK = "http://www.scienceverse.org/metacheck_book/"
 
@@ -421,7 +421,9 @@ def regcheck_compare(
     task_id = r_dollar(created, "task_id")
     message(f"RegCheck task {task_id} queued on {url}")
 
-    result = _regcheck_poll(url, api_token, str(task_id), poll_interval=poll_interval, timeout=timeout)
+    result = _regcheck_poll(
+        url, api_token, str(task_id), poll_interval=poll_interval, timeout=timeout
+    )
     tidy = regcheck_tidy(result)
     tidy.attrs["regcheck_result"] = result
     return tidy

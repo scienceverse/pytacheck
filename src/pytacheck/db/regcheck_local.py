@@ -32,7 +32,7 @@ from pytacheck.db._utils import message, user_data_dir
 __all__ = ["regcheck_setup_local", "regcheck_start_local", "regcheck_stop_local"]
 
 _ARCHIVE = "regcheck_app.tar.gz"
-_DEFAULT_TOKEN = "metacheck-local"
+_DEFAULT_TOKEN = "metacheck-local"  # noqa: S105 - public token of the local server
 _state: dict[str, Any] = {}
 
 
@@ -60,7 +60,10 @@ def _regcheck_app_dir() -> Path:
         shutil.rmtree(tmp, ignore_errors=True)
         tmp.mkdir(parents=True)
         with tarfile.open(fileobj=io.BytesIO(raw), mode="r:gz") as tar:
-            tar.extractall(tmp, filter="data")
+            try:
+                tar.extractall(tmp, filter="data")
+            except TypeError:  # Python < 3.11.4: no extraction filters (our own archive)
+                tar.extractall(tmp)  # noqa: S202
         shutil.rmtree(target, ignore_errors=True)
         tmp.rename(target)
     return target
@@ -71,7 +74,9 @@ def _regcheck_venv_dir() -> Path:
     return _regcheck_app_dir() / ".venv"
 
 
-def _build_app_archive(src: str | os.PathLike[str], dest: str | os.PathLike[str] | None = None) -> Path:
+def _build_app_archive(
+    src: str | os.PathLike[str], dest: str | os.PathLike[str] | None = None
+) -> Path:
     """Pack metacheck's ``inst/regcheck`` into the bundled, reproducible archive."""
     src_path = Path(src)
     dest_path = Path(dest) if dest else Path(__file__).with_name(_ARCHIVE)
@@ -123,7 +128,7 @@ def regcheck_setup_local(python: str | None = None) -> Path:
             "and ensure it is on your PATH."
         )
     try:
-        ver = subprocess.run(
+        ver = subprocess.run(  # noqa: S603 - trusted arguments
             [python, "-c", "import sys; print(sys.version_info[:2])"],
             capture_output=True,
             text=True,
@@ -135,7 +140,8 @@ def regcheck_setup_local(python: str | None = None) -> Path:
 
     if not venv_dir.exists():
         message("Creating Python virtual environment...")
-        if subprocess.run([python, "-m", "venv", str(venv_dir)], check=False).returncode != 0:
+        venv_cmd = [python, "-m", "venv", str(venv_dir)]
+        if subprocess.run(venv_cmd, check=False).returncode != 0:  # noqa: S603
             raise RuntimeError("Failed to create virtual environment.")
     else:
         message("Virtual environment already exists, skipping creation.")
@@ -143,11 +149,16 @@ def regcheck_setup_local(python: str | None = None) -> Path:
     pip = _venv_bin(venv_dir, "pip")
     message("Installing Python dependencies (this may take a few minutes)...")
     req_file = app_dir / "requirements.txt"
-    if subprocess.run([str(pip), "install", "-r", str(req_file), "--quiet"], check=False).returncode != 0:
+    if (
+        subprocess.run(  # noqa: S603 - trusted arguments
+            [str(pip), "install", "-r", str(req_file), "--quiet"], check=False
+        ).returncode
+        != 0
+    ):
         raise RuntimeError("pip install failed.")
 
     message("Downloading NLTK sentence tokeniser data...")
-    subprocess.run(
+    subprocess.run(  # noqa: S603 - trusted arguments
         [
             str(_venv_bin(venv_dir, "python")),
             "-c",
@@ -236,7 +247,7 @@ def regcheck_start_local(
     """
     choices = ("docker", "python")
     if not isinstance(method, str):
-        method = list(method)[0]
+        method = next(iter(method))
     if method not in choices:
         raise ValueError("'arg' should be one of “docker”, “python”")
 
@@ -249,8 +260,12 @@ def regcheck_start_local(
     if method == "docker":
         docker = shutil.which("docker")
         if not docker:
-            raise RuntimeError("Docker not found. Install it from https://www.docker.com/get-started/")
-        message(f"Starting local RegCheck server via Docker at http://localhost:{port} (model: {model}) ...")
+            raise RuntimeError(
+                "Docker not found. Install it from https://www.docker.com/get-started/"
+            )
+        message(
+            f"Starting local RegCheck server via Docker at http://localhost:{port} (model: {model}) ..."
+        )
         message("(First run will build the image -- this takes a few minutes.)")
         cmd = [docker, "compose", "up", "--build", "--force-recreate"]
     else:
@@ -258,7 +273,9 @@ def regcheck_start_local(
         if not venv_dir.exists():
             raise RuntimeError("Virtual environment not found. Run regcheck_setup_local() first.")
         uvicorn = _venv_bin(venv_dir, "uvicorn")
-        message(f"Starting local RegCheck server (Python) at http://localhost:{port} (model: {model}) ...")
+        message(
+            f"Starting local RegCheck server (Python) at http://localhost:{port} (model: {model}) ..."
+        )
         cmd = [
             str(uvicorn),
             "backend.main:create_app",
@@ -271,7 +288,7 @@ def regcheck_start_local(
 
     log_path = app_dir / "regcheck-server.log"
     log = log_path.open("wb")
-    proc = subprocess.Popen(cmd, cwd=app_dir, env=env, stdout=log, stderr=subprocess.STDOUT)
+    proc = subprocess.Popen(cmd, cwd=app_dir, env=env, stdout=log, stderr=subprocess.STDOUT)  # noqa: S603
     log.close()
     atexit.register(_terminate, proc)
 

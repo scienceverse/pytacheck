@@ -71,7 +71,7 @@ def _align(f: pd.DataFrame, columns: list[str], parts: Sequence[pd.DataFrame]) -
     f = f.copy()
     for c in missing:
         dtype = _first_dtype(parts, c)
-        f[c] = pd.Series([pd.NA] * len(f), index=f.index, dtype=_nullable(dtype))
+        f[c] = pd.Series([None] * len(f), index=f.index, dtype=_nullable(dtype))
     return f
 
 
