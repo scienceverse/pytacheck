@@ -1,0 +1,98 @@
+{
+  "id": "psycharchives_file_download.mock.vector",
+  "ok": true,
+  "error": null,
+  "warnings": [
+    "https://osf.io/x is not a valid PsychArchives handle"
+  ],
+  "value": {
+    "t": "df",
+    "nrow": 4,
+    "names": [
+      "pa_url",
+      "name",
+      "file_url",
+      "file_location",
+      "size",
+      "isdir",
+      "ext",
+      "type"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "https://hdl.handle.net/20.500.12034/17526",
+          null,
+          "https://hdl.handle.net/20.500.12034/17526",
+          "https://osf.io/x"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "readme.txt",
+          null,
+          "readme.txt",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://www.psycharchives.org/rest/bitstreams/112719a3-3346-447a-96dc-e253af34a9b3/retrieve",
+          null,
+          "https://www.psycharchives.org/rest/bitstreams/112719a3-3346-447a-96dc-e253af34a9b3/retrieve",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          4644,
+          null,
+          4644,
+          null
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false,
+          null,
+          false,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "txt",
+          null,
+          "txt",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "text",
+          null,
+          "text",
+          null
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

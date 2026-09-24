@@ -797,7 +797,7 @@ add(
             "x": {
                 "$expr": {
                     "r": (
-                        'local({p <- tempfile(fileext = ".json"); '
+                        'local({stable <- function(m) {m$generated <- "<volatile>"; m$provenance <- "<volatile>"; m}; p <- tempfile(fileext = ".json"); '
                         f"files <- {manifest_files}; "
                         "metacheck:::.data_check_write_manifest(p, files, c(TRUE, TRUE, FALSE, TRUE, TRUE, FALSE), "
                         'gated = NULL, paper_id = "p1", download = "data", max_file_size = 100, '
@@ -805,7 +805,7 @@ add(
                         'oversize = data.frame(repo_url = "https://osf.io/xxxxx", file_name = "big.rdata", file_size = 5e8), '
                         'failed = data.frame(repo_url = "https://osf.io/xxxxx", file_name = "lost.csv", '
                         'error = "HTTP 429 Too Many Requests.\\ndetails"), model = "test-model"); '
-                        "jsonlite::fromJSON(p, simplifyVector = FALSE)})"
+                        "stable(jsonlite::fromJSON(p, simplifyVector = FALSE))})"
                     ),
                     "py": "None",
                 }
@@ -825,14 +825,14 @@ add(
             "x": {
                 "$expr": {
                     "r": (
-                        'local({p <- tempfile(fileext = ".json"); '
+                        'local({stable <- function(m) {m$generated <- "<volatile>"; m$provenance <- "<volatile>"; m}; p <- tempfile(fileext = ".json"); '
                         'files <- data.frame(repo_url = "https://osf.io/xxxxx", file_name = "a.csv", '
                         'file_path = "a.csv", file_url = "https://osf.io/download/x/", file_size = 10, '
                         'data_type = "data", data_format = "tabular", file_location = NA_character_, '
                         'provider = "osfstorage", stringsAsFactors = FALSE); '
                         "metacheck:::.data_check_write_manifest(p, files, want = TRUE, gated = NULL, "
                         'paper_id = "p1", download = "none", max_file_size = 100, max_download_size = 500, '
-                        'skip_types = "materials"); jsonlite::fromJSON(p, simplifyVector = FALSE)})'
+                        'skip_types = "materials"); stable(jsonlite::fromJSON(p, simplifyVector = FALSE))})'
                     ),
                     "py": "None",
                 }
@@ -852,7 +852,7 @@ add(
             "x": {
                 "$expr": {
                     "r": (
-                        "local({d <- tempfile(); "
+                        'local({stable <- function(m) {m$generated <- "<volatile>"; m$provenance <- "<volatile>"; m}; d <- tempfile(); '
                         'files <- data.frame(paper_id = c("paperA", "paperB"), '
                         'repo_url = c("https://osf.io/aaaaa", "https://osf.io/bbbbb"), '
                         'file_name = c("dataA.csv", "dataB.csv"), file_path = c("dataA.csv", "dataB.csv"), '
@@ -865,8 +865,8 @@ add(
                         "paths <- metacheck:::.data_check_write_manifest(d, files, want = c(TRUE, TRUE), "
                         'gated = NULL, paper_id = c("paperA", "paperB"), download = "data", max_file_size = 100, '
                         "max_download_size = 500, failed = failed); "
-                        "lapply(sort(basename(paths)), function(b) jsonlite::fromJSON(file.path(d, b), "
-                        "simplifyVector = FALSE))})"
+                        "lapply(sort(basename(paths)), function(b) stable(jsonlite::fromJSON(file.path(d, b), "
+                        "simplifyVector = FALSE)))})"
                     ),
                     "py": "None",
                 }
@@ -888,12 +888,12 @@ add(
             "x": {
                 "$expr": {
                     "r": (
-                        "local({d <- tempfile(); "
+                        'local({stable <- function(m) {m$generated <- "<volatile>"; m$provenance <- "<volatile>"; m}; d <- tempfile(); '
                         "files <- data.frame(repo_url = character(0), file_name = character(0)); "
                         "paths <- metacheck:::.data_check_write_manifest(d, files, logical(0), NULL, "
                         'paper_id = c("p1", "p2"), download = "data", max_file_size = NULL, max_download_size = Inf); '
-                        "lapply(sort(basename(paths)), function(b) jsonlite::fromJSON(file.path(d, b), "
-                        "simplifyVector = FALSE))})"
+                        "lapply(sort(basename(paths)), function(b) stable(jsonlite::fromJSON(file.path(d, b), "
+                        "simplifyVector = FALSE)))})"
                     ),
                     "py": "None",
                 }

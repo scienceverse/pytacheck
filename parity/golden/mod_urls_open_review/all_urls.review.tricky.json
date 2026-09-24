@@ -1,0 +1,269 @@
+{
+  "id": "all_urls.review.tricky",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "all_urls"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "List All URLs"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "general"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 16,
+        "names": [
+          "text_id",
+          "section_id",
+          "paragraph_id",
+          "text",
+          "formatted",
+          "paper_id",
+          "header",
+          "section_type"
+        ],
+        "v": [
+          {
+            "t": "int",
+            "v": [
+              1,
+              3,
+              3,
+              4,
+              5,
+              5,
+              5,
+              6,
+              6,
+              7,
+              7,
+              8,
+              8,
+              9,
+              9,
+              10
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "HTTPS://OSF.IO/ABC_def-1",
+              "1.2.3.4",
+              "999.999.999.999",
+              "www.site.co.uk/path?x=1&y=2#frag",
+              "https://osf.io/x",
+              "https://a.bc/d",
+              "xyz.abc",
+              "data.csv",
+              "fig.png",
+              "ve.org/x",
+              "ber.de",
+              "example.com",
+              "files.example.net/pub",
+              "https://osf.io/abc",
+              "https://osf.io/d,e,f",
+              "https://github.com"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "See HTTPS://OSF.IO/ABC_def-1/ and http://localhost:8080/x.",
+              "Values 1.2.3.4 and 999.999.999.999 and 10.1234/abc.",
+              "Values 1.2.3.4 and 999.999.999.999 and 10.1234/abc.",
+              "Visit www.site.co.uk/path?x=1&y=2#frag today.",
+              "Links (https://osf.io/x), <https://a.bc/d> and [doi:10.5555/xyz.abc].",
+              "Links (https://osf.io/x), <https://a.bc/d> and [doi:10.5555/xyz.abc].",
+              "Links (https://osf.io/x), <https://a.bc/d> and [doi:10.5555/xyz.abc].",
+              "The file data.csv and script analysis.R and fig.png were used.",
+              "The file data.csv and script analysis.R and fig.png were used.",
+              "Café.com and naïve.org/x and über.de are sites.",
+              "Café.com and naïve.org/x and über.de are sites.",
+              "Mail me at someone@example.com or ftp://files.example.net/pub.",
+              "Mail me at someone@example.com or ftp://files.example.net/pub.",
+              "Trailing dots https://osf.io/abc... and commas https://osf.io/d,e,f.",
+              "Trailing dots https://osf.io/abc... and commas https://osf.io/d,e,f.",
+              "A URL with spaces https://osf. io/abc and a tab https://github.com/\tx."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "a6fb32dc5e39e1",
+              "a6fb32dc5e39e1",
+              "a6fb32dc5e39e1",
+              "a6fb32dc5e39e1",
+              "a6fb32dc5e39e1",
+              "a6fb32dc5e39e1",
+              "a6fb32dc5e39e1",
+              "a6fb32dc5e39e1",
+              "a6fb32dc5e39e1",
+              "a6fb32dc5e39e1",
+              "a6fb32dc5e39e1",
+              "a6fb32dc5e39e1",
+              "a6fb32dc5e39e1",
+              "a6fb32dc5e39e1",
+              "a6fb32dc5e39e1",
+              "a6fb32dc5e39e1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Test",
+              "Test",
+              "Test",
+              "Test",
+              "Test",
+              "Test",
+              "Test",
+              "Test",
+              "Test",
+              "Test",
+              "Test",
+              "Test",
+              "Test",
+              "Test",
+              "Test",
+              "Test"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "unknown",
+              "unknown",
+              "unknown",
+              "unknown",
+              "unknown",
+              "unknown",
+              "unknown",
+              "unknown",
+              "unknown",
+              "unknown",
+              "unknown",
+              "unknown",
+              "unknown",
+              "unknown",
+              "unknown",
+              "unknown"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          ""
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "info"
+        ]
+      },
+      {
+        "t": "null"
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "urls"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "a6fb32dc5e39e1"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              16
+            ]
+          }
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

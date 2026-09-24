@@ -91,3 +91,57 @@ def demo_no_dois() -> Any:
     paper.bib = bib.loc[bib["doi"].isna().to_numpy(dtype=bool)].reset_index(drop=True)
     del paper["bib_match"]
     return paper
+
+
+def flora_originals(by: int = 1) -> list[str]:
+    """Every *by*-th original DOI in the bundled FLoRA database (in order of first appearance)."""
+    from pytacheck.db.replications import FLoRA
+
+    return list(dict.fromkeys(FLoRA()["doi_o"].tolist()))[::by]
+
+
+def rw_sample(by: int = 100) -> list[str]:
+    """One RetractionWatch DOI per notice type plus every *by*-th DOI."""
+    from pytacheck.db.retractionwatch import retractionwatch
+
+    d = retractionwatch()
+    first = d.loc[~d["retractionwatch"].duplicated().to_numpy(dtype=bool), "doi"].tolist()
+    return list(dict.fromkeys(first + d["doi"].iloc[::by].tolist()))
+
+
+def set_col(p: Any, table: str, col: str, values: Sequence[Any]) -> Any:
+    """Replace one column of one of the paper's tables (R: ``p[[table]][[col]] <- values``)."""
+    df = p[table].copy()
+    vals = list(values)
+    if all(v is None or isinstance(v, int) for v in vals):
+        df[col] = pd.array(vals, dtype="Int64")
+    else:
+        df[col] = pd.array(vals, dtype="string")
+    p[table] = df
+    return p
+
+
+def stress_papers() -> Any:
+    """A deterministic paper list with many miscitation hits (see :func:`stress_db`)."""
+    import pytacheck as pc
+
+    pool = [f"10.1000/s{i:02d}" for i in range(15)]
+    ids = ["p10", "p2", "P1"]
+    papers = []
+    for k, pid in enumerate(ids, start=1):
+        dois = [pool[(i + 4 * k) % 15] for i in range(12)]
+        cites = [(i * (k + 2)) % 12 for i in range(10 + 5 * k)]
+        papers.append(ref_paper(dois, id=pid, cites=cites))
+    return pc.PaperList(papers)
+
+
+def stress_db() -> pd.DataFrame:
+    """The miscitation database for :func:`stress_papers`."""
+    pool = [f"10.1000/s{i:02d}" for i in range(15)]
+    return pd.DataFrame(
+        {
+            "doi": [pool[i] for i in (0, 2, 4, 4, 7, 11, 13)],
+            "reftext": [f"Ref {i}" for i in range(1, 8)],
+            "warning": [f"Warn {i}" for i in range(1, 8)],
+        }
+    )

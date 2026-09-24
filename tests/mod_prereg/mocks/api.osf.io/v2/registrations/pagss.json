@@ -1,0 +1,76 @@
+{
+ "data": {
+  "id": "pagss",
+  "type": "registrations",
+  "attributes": {
+   "title": "Synthetic registration pagss",
+   "description": "",
+   "date_created": "2024-01-02T03:04:05.000001",
+   "date_modified": "2024-01-03T03:04:05.000001",
+   "date_registered": "2024-01-04T03:04:05.000001",
+   "embargo_end_date": "2030-01-01",
+   "withdrawn": false,
+   "registration_supplement": null,
+   "ia_url": "https://archive.org/details/osf-registrations-pagss-v1",
+   "registration_responses": {
+    "q1": "120 students",
+    "q2.question": "long-title answer",
+    "q3.uploader": [
+     {
+      "file_id": "idc",
+      "file_name": "c.csv",
+      "file_urls": {
+       "html": "https://osf.io/h/c",
+       "download": "https://osf.io/d/c"
+      },
+      "file_hashes": {
+       "sha256": "shac"
+      }
+     }
+    ],
+    "q4": null,
+    "sample": "N = 50",
+    "q6.question": {
+     "value": "t-test",
+     "extra": [
+      {
+       "k": 1
+      }
+     ]
+    },
+    "q7": "empty title uses the qid",
+    "q8": "not in the schema",
+    "nested": [
+     [
+      "a",
+      "b"
+     ],
+     [
+      "c",
+      "d"
+     ]
+    ]
+   }
+  },
+  "relationships": {
+   "registration_schema": {
+    "data": {
+     "id": "bbbbbbbbbbbbbbbbbbbbbbb2",
+     "type": "registration-schemas"
+    },
+    "links": {
+     "related": {
+      "href": "https://api.osf.io/v2/schemas/registrations/bbbbbbbbbbbbbbbbbbbbbbb2/",
+      "meta": {}
+     }
+    }
+   }
+  },
+  "links": {
+   "html": "https://osf.io/pagss/"
+  }
+ },
+ "meta": {
+  "version": "2.0"
+ }
+}

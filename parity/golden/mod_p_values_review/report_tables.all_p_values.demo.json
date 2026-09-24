@@ -1,0 +1,70 @@
+{
+  "id": "report_tables.all_p_values.demo",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": null,
+    "v": [
+      {
+        "t": "list",
+        "names": [
+          "table",
+          "colwidths",
+          "maxrows",
+          "escape"
+        ],
+        "v": [
+          {
+            "t": "df",
+            "nrow": 3,
+            "names": [
+              "Text",
+              "Sentence"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "p = 0.005",
+                  "p =0.152",
+                  "p > .05"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "On average researchers in the experimental (app) condition made fewer mistakes (M = 9.12) than researchers in the control (checklist) condition (M = 10.9), t(97.7) = 2.9, p = 0.005, d =0.59.",
+                  "On average researchers in the experimental condition found the app marginally significantly more useful (M = 5.06) than researchers in the control condition found the checklist (M = 4.5), t(97.2) = -1.96, p =0.152.",
+                  "There was no effect of experience on the reduction in errors when using the tool (p > .05), as the correlation was non-significant (Figure 2)."
+                ]
+              }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "5em",
+              null
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              2
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

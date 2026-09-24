@@ -1,0 +1,51 @@
+{
+  "id": ".dataone_pid.shapes",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "doi:10.18739/A2GT5FG86",
+      "doi:10.18739/A2GT5FG86",
+      "doi:10.5063/PG1Q4B",
+      "doi:10.18739/X1",
+      "doi:10.6085/AA/marine_ltm.20.1",
+      null,
+      "doi:10.1/x",
+      "doi:10.9999/x",
+      null,
+      null,
+      "doi:10.5063/ABC",
+      "doi:10.1/Y",
+      "doi:10.18739/A2GT5FG86",
+      "doi:10.18739/abc",
+      "doi:10.18739/A2GT5FG86.",
+      null,
+      null,
+      "doi:10.5063/F1Z60M87"
+    ],
+    "names": [
+      "https://arcticdata.io/catalog/view/doi:10.18739/A2GT5FG86",
+      "https://doi.org/10.18739/A2GT5FG86",
+      "10.5063/PG1Q4B",
+      "https://knb.ecoinformatics.org/view/doi:10.18739/X1",
+      "https://doi.org/10.6085/AA/marine_ltm.20.1",
+      "https://metacat.tfri.gov.tw/metacat/d1/mn/v2/object/abc",
+      "https://smithsonian.dataone.org/view/doi:10.1/x",
+      "https://example.org/10.9999/x",
+      "",
+      null,
+      "  10.5063/ABC  ",
+      "ARCTICDATA.IO/view/doi:10.1/Y",
+      "https://arcticdata.io/metacat/d1/mn/v2/view/doi:10.18739/A2GT5FG86/extra",
+      "DOI:10.18739/abc",
+      "https://doi.org/10.18739/A2GT5FG86.",
+      "https://doi.org/10.18739/A2GT5FG86?x=1",
+      "no doi here",
+      "doi:10.5063/F1Z60M87 and 10.18739/second"
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

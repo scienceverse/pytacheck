@@ -928,7 +928,13 @@ def fread(
     out = pd.DataFrame(dict(enumerate(cols)))
     out.columns = pd.Index(names, dtype=object)
     col_attrs: dict[str, dict[str, Any]] = {}
+    seen: set[str] = set()
     for j, t in enumerate(types):
+        # attrs are keyed by name: with duplicated names they describe the
+        # first column, the one R's df[[name]] / df$name returns
+        if names[j] in seen:
+            continue
+        seen.add(names[j])
         if t == CT_ISO8601_DATE:
             col_attrs[names[j]] = {"class": ["IDate", "Date"]}
         elif t == CT_ISO8601_TIME:

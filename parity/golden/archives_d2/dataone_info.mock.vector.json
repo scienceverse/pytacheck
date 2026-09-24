@@ -1,0 +1,585 @@
+{
+  "id": "dataone_info.mock.vector",
+  "ok": true,
+  "error": null,
+  "warnings": [
+    "doi:10.18739/MISSING could not be found on arcticdata.io"
+  ],
+  "value": {
+    "t": "df",
+    "nrow": 9,
+    "names": [
+      "dataone_url",
+      "dataone_host",
+      "dataone_pid",
+      "title",
+      "doi",
+      "publication_date",
+      "authors",
+      "license",
+      "files",
+      "error"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "https://doi.org/10.18739/A2GT5FG86",
+          "https://doi.org/10.18739/A2GT5FG86",
+          "https://arcticdata.io/catalog/view/doi:10.18739/A2GT5FG86",
+          "https://arcticdata.io/catalog/view/doi:10.18739/A2GT5FG86",
+          "10.6085/AA/marine_ltm.20.1",
+          "10.5063/NOTEML",
+          "10.5063/BROKEN",
+          "10.18739/MISSING",
+          "https://example.org/x"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "arcticdata.io",
+          "arcticdata.io",
+          "arcticdata.io",
+          "arcticdata.io",
+          "data.piscoweb.org",
+          "knb.ecoinformatics.org",
+          "knb.ecoinformatics.org",
+          "arcticdata.io",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "doi:10.18739/A2GT5FG86",
+          "doi:10.18739/A2GT5FG86",
+          "doi:10.18739/A2GT5FG86",
+          "doi:10.18739/A2GT5FG86",
+          "doi:10.6085/AA/marine_ltm.20.1",
+          "doi:10.5063/NOTEML",
+          "doi:10.5063/BROKEN",
+          "doi:10.18739/MISSING",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Soil temperature, Utqiagvik, Alaska, 2015-2020",
+          "Soil temperature, Utqiagvik, Alaska, 2015-2020",
+          "Soil temperature, Utqiagvik, Alaska, 2015-2020",
+          "Soil temperature, Utqiagvik, Alaska, 2015-2020",
+          "PISCO: Intertidal Community Structure Surveys",
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "doi:10.18739/A2GT5FG86",
+          "doi:10.18739/A2GT5FG86",
+          "doi:10.18739/A2GT5FG86",
+          "doi:10.18739/A2GT5FG86",
+          "doi:10.6085/AA/marine_ltm.20.1",
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "2021-03-04",
+          "2021-03-04",
+          "2021-03-04",
+          "2021-03-04",
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Jane Doe",
+              "NA Smith",
+              "NA NA",
+              "Blank Org",
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Jane Doe",
+              "NA Smith",
+              "NA NA",
+              "Blank Org",
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Jane Doe",
+              "NA Smith",
+              "NA NA",
+              "Blank Org",
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Jane Doe",
+              "NA Smith",
+              "NA NA",
+              "Blank Org",
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "null"
+          },
+          {
+            "t": "null"
+          },
+          {
+            "t": "null"
+          },
+          {
+            "t": "null"
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "This work is dedicated to the public domain under the Creative Commons Universal 1.0 Public Domain Dedication.Cite the data.",
+          "This work is dedicated to the public domain under the Creative Commons Universal 1.0 Public Domain Dedication.Cite the data.",
+          "This work is dedicated to the public domain under the Creative Commons Universal 1.0 Public Domain Dedication.Cite the data.",
+          "This work is dedicated to the public domain under the Creative Commons Universal 1.0 Public Domain Dedication.Cite the data.",
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "list",
+                "names": [
+                  "key",
+                  "size",
+                  "pid"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "soil_temp.csv"
+                    ]
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      20480
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "urn%3Auuid%3Aabc-123"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "key",
+                  "size",
+                  "pid"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "readme.txt"
+                    ]
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      null
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      null
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "key",
+                  "size",
+                  "pid"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      null
+                    ]
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      1000
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      null
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "list",
+                "names": [
+                  "key",
+                  "size",
+                  "pid"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "soil_temp.csv"
+                    ]
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      20480
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "urn%3Auuid%3Aabc-123"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "key",
+                  "size",
+                  "pid"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "readme.txt"
+                    ]
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      null
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      null
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "key",
+                  "size",
+                  "pid"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      null
+                    ]
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      1000
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      null
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "list",
+                "names": [
+                  "key",
+                  "size",
+                  "pid"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "soil_temp.csv"
+                    ]
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      20480
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "urn%3Auuid%3Aabc-123"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "key",
+                  "size",
+                  "pid"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "readme.txt"
+                    ]
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      null
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      null
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "key",
+                  "size",
+                  "pid"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      null
+                    ]
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      1000
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      null
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "list",
+                "names": [
+                  "key",
+                  "size",
+                  "pid"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "soil_temp.csv"
+                    ]
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      20480
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "urn%3Auuid%3Aabc-123"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "key",
+                  "size",
+                  "pid"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "readme.txt"
+                    ]
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      null
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      null
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "key",
+                  "size",
+                  "pid"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      null
+                    ]
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      1000
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      null
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": []
+          },
+          {
+            "t": "null"
+          },
+          {
+            "t": "null"
+          },
+          {
+            "t": "null"
+          },
+          {
+            "t": "null"
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          "unsupported_metadata_format",
+          "unsupported_metadata_format",
+          "unfound",
+          null
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

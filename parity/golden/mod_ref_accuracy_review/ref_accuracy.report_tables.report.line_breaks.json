@@ -1,0 +1,68 @@
+{
+  "id": "ref_accuracy.report_tables.report.line_breaks",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": null,
+    "v": [
+      {
+        "t": "df",
+        "nrow": 2,
+        "names": [
+          "Reference",
+          "What is wrong (cited → record)",
+          "Record"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "DeBruine, Lisa. 2025. Faux: Simulation for Factorial Designs. Zenodo. https: //doi.org/10.5281/10.5281/zenodo.2669586.",
+              "Gino, F.<br>Evil genius.<br>"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "<b>DOI:<\/b> the cited DOI <span style=\"color:#c00;text-decoration:line-through\">10.32614/10.5281/zenodo.2669586<\/span> could not be found in CrossRef",
+              "<b>title:<\/b> <span style=\"color:#c00;text-decoration:line-through\">Zzz<\/span> &rarr; Retracted: Evil Genius? How Dishonesty Can Lead to Greater Creativity"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "<a href='https://doi.org/10.32614/10.5281/zenodo.2669586' target='_blank'>10.32614/10.5281/zenodo.2669586<\/a>",
+              "<a href='https://doi.org/10.1177/0956797614520714' target='_blank'>10.1177/0956797614520714<\/a>"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "Reference",
+          "Suggested DOI"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Line one<br>line two"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

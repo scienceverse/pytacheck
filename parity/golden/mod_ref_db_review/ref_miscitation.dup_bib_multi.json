@@ -1,0 +1,217 @@
+{
+  "id": "ref_miscitation.dup_bib_multi",
+  "ok": true,
+  "error": null,
+  "warnings": [
+    "Values from `bib_id` are not uniquely identified; output will contain\nlist-cols.\n• Use `values_fn = list` to suppress this warning.\n• Use `values_fn = {summary_fun}` to summarise duplicates.\n• Use the following dplyr code to identify duplicates.\n  {data} |>\n  dplyr::summarise(n = dplyr::n(), .by = c(paper_id, doi)) |>\n  dplyr::filter(n > 1L)"
+  ],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "ref_miscitation"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Miscitation"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "reference"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 7,
+        "names": [
+          "paper_id",
+          "bib_id",
+          "doi",
+          "citation",
+          "reftext",
+          "warning"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p0",
+              "p0"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              2,
+              0,
+              2,
+              1,
+              1,
+              0
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "10.1000/a",
+              "10.1000/a",
+              "10.1000/a",
+              "10.1000/a",
+              "10.1000/b",
+              "10.1000/c",
+              "10.1000/b"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Body sentence 1 cites 0.",
+              "Body sentence 2 cites 2.",
+              "Body sentence 3 cites 0 and 2.",
+              "Body sentence 3 cites 0 and 2.",
+              "Body sentence 4 cites 1.",
+              "Body sentence 1 cites 1.",
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Ref A",
+              "Ref A",
+              "Ref A",
+              "Ref A",
+              "Ref B",
+              "Ref C",
+              "Ref B"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Warn A",
+              "Warn A",
+              "Warn A",
+              "Warn A",
+              "Warn B",
+              "Warn C",
+              "Warn B"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "**10.1000/a**\n\nRef A\n\nWarn A\n\n*4 Instances:*\n\n> Body sentence 1 cites 0.\n\n> Body sentence 2 cites 2.\n\n> Body sentence 3 cites 0 and 2.\n\n> Body sentence 3 cites 0 and 2.",
+          "**10.1000/b**\n\nRef B\n\nWarn B\n\n*2 Instances:*\n\n> Body sentence 4 cites 1.\n\n> NA",
+          "**10.1000/c**\n\nRef C\n\nWarn C\n\n*1 Instance:*\n\n> Body sentence 1 cites 1."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "yellow"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "We found 7 citations to papers that are commonly miscited."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 2,
+        "names": [
+          "paper_id",
+          "miscite_10.1000/b",
+          "miscite_10.1000/c",
+          "miscite_10.1000/a"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "p1",
+              "p0"
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "int",
+                "v": [
+                  1
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  0
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "null"
+              },
+              {
+                "t": "int",
+                "v": [
+                  1
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "int",
+                "v": [
+                  0,
+                  2
+                ]
+              },
+              {
+                "t": "null"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

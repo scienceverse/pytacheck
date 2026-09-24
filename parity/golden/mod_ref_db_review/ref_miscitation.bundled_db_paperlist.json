@@ -1,0 +1,178 @@
+{
+  "id": "ref_miscitation.bundled_db_paperlist",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "ref_miscitation"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Miscitation"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "reference"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 7,
+        "names": [
+          "paper_id",
+          "bib_id",
+          "doi",
+          "citation",
+          "reftext",
+          "warning"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "b",
+              "b",
+              "b",
+              "b",
+              "b",
+              "b",
+              "b"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              0
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "10.1016/j.jml.2012.11.001",
+              "10.1016/j.jml.2012.11.001",
+              "10.1016/j.jml.2012.11.001",
+              "10.1016/j.jml.2012.11.001",
+              "10.1016/j.jml.2012.11.001",
+              "10.1016/j.jml.2012.11.001",
+              "10.1371/journal.pone.0090779"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Body sentence 1 cites 1.",
+              "Body sentence 2 cites 1.",
+              "Body sentence 3 cites 1.",
+              "Body sentence 4 cites 1.",
+              "Body sentence 5 cites 1.",
+              "Body sentence 6 cites 1.",
+              "Body sentence 7 cites 0."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Barr, D. J., Levy, R., Scheepers, C., & Tily, H. J. (2013). Random effects structure for confirmatory hypothesis testing: Keep it maximal. _Journal of Memory and Language_, *68*(3), 255-278.",
+              "Barr, D. J., Levy, R., Scheepers, C., & Tily, H. J. (2013). Random effects structure for confirmatory hypothesis testing: Keep it maximal. _Journal of Memory and Language_, *68*(3), 255-278.",
+              "Barr, D. J., Levy, R., Scheepers, C., & Tily, H. J. (2013). Random effects structure for confirmatory hypothesis testing: Keep it maximal. _Journal of Memory and Language_, *68*(3), 255-278.",
+              "Barr, D. J., Levy, R., Scheepers, C., & Tily, H. J. (2013). Random effects structure for confirmatory hypothesis testing: Keep it maximal. _Journal of Memory and Language_, *68*(3), 255-278.",
+              "Barr, D. J., Levy, R., Scheepers, C., & Tily, H. J. (2013). Random effects structure for confirmatory hypothesis testing: Keep it maximal. _Journal of Memory and Language_, *68*(3), 255-278.",
+              "Barr, D. J., Levy, R., Scheepers, C., & Tily, H. J. (2013). Random effects structure for confirmatory hypothesis testing: Keep it maximal. _Journal of Memory and Language_, *68*(3), 255-278.",
+              "McAleer, P., Todorov, A., & Belin, P. (2014). How do you say ‘Hello’? Personality impressions from brief novel voices. _PloS one_, *9*(3), e90779."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "This paper is often miscited by stating that it recommends using a data-driven approach to justify the random effect structure, e.g., 'We chose the model with the maximal random effect structure that would converge justified by the data'. This is the opposite of what we argued in this paper, which is that one should choose the maximal random effects structure justified by the design.",
+              "This paper is often miscited by stating that it recommends using a data-driven approach to justify the random effect structure, e.g., 'We chose the model with the maximal random effect structure that would converge justified by the data'. This is the opposite of what we argued in this paper, which is that one should choose the maximal random effects structure justified by the design.",
+              "This paper is often miscited by stating that it recommends using a data-driven approach to justify the random effect structure, e.g., 'We chose the model with the maximal random effect structure that would converge justified by the data'. This is the opposite of what we argued in this paper, which is that one should choose the maximal random effects structure justified by the design.",
+              "This paper is often miscited by stating that it recommends using a data-driven approach to justify the random effect structure, e.g., 'We chose the model with the maximal random effect structure that would converge justified by the data'. This is the opposite of what we argued in this paper, which is that one should choose the maximal random effects structure justified by the design.",
+              "This paper is often miscited by stating that it recommends using a data-driven approach to justify the random effect structure, e.g., 'We chose the model with the maximal random effect structure that would converge justified by the data'. This is the opposite of what we argued in this paper, which is that one should choose the maximal random effects structure justified by the design.",
+              "This paper is often miscited by stating that it recommends using a data-driven approach to justify the random effect structure, e.g., 'We chose the model with the maximal random effect structure that would converge justified by the data'. This is the opposite of what we argued in this paper, which is that one should choose the maximal random effects structure justified by the design.",
+              "This paper is often cited as \"people make rapid judgements of personality impressions from peoples' voices\", however, we never analysed reaction times. More accurately it would be \"people make judgements of personality from short exerpts of peoples' voices\". The voices were short (<500 msecs) but we never looked at how long it take to make those judgements."
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "**10.1016/j.jml.2012.11.001**\n\nBarr, D. J., Levy, R., Scheepers, C., & Tily, H. J. (2013). Random effects structure for confirmatory hypothesis testing: Keep it maximal. _Journal of Memory and Language_, *68*(3), 255-278.\n\nThis paper is often miscited by stating that it recommends using a data-driven approach to justify the random effect structure, e.g., 'We chose the model with the maximal random effect structure that would converge justified by the data'. This is the opposite of what we argued in this paper, which is that one should choose the maximal random effects structure justified by the design.\n\n*5 of 6 Instances:*\n\n> Body sentence 1 cites 1.\n\n> Body sentence 2 cites 1.\n\n> Body sentence 3 cites 1.\n\n> Body sentence 4 cites 1.\n\n> Body sentence 5 cites 1.",
+          "**10.1371/journal.pone.0090779**\n\nMcAleer, P., Todorov, A., & Belin, P. (2014). How do you say ‘Hello’? Personality impressions from brief novel voices. _PloS one_, *9*(3), e90779.\n\nThis paper is often cited as \"people make rapid judgements of personality impressions from peoples' voices\", however, we never analysed reaction times. More accurately it would be \"people make judgements of personality from short exerpts of peoples' voices\". The voices were short (<500 msecs) but we never looked at how long it take to make those judgements.\n\n*1 Instance:*\n\n> Body sentence 7 cites 0."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "yellow"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "We found 7 citations to papers that are commonly miscited."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 2,
+        "names": [
+          "paper_id",
+          "miscite_10.1371/journal.pone.0090779",
+          "miscite_10.1016/j.jml.2012.11.001"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "to_err_is_human",
+              "b"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              null,
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              null,
+              1
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -1,0 +1,136 @@
+{
+  "id": "report_tables.stat_p_nonsig.real",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": null,
+    "v": [
+      {
+        "t": "list",
+        "names": [
+          "table",
+          "colwidths",
+          "maxrows",
+          "escape"
+        ],
+        "v": [
+          {
+            "t": "df",
+            "nrow": 36,
+            "names": [
+              "Text",
+              "Sentence"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "p = .31",
+                  "p = .67",
+                  "p = .52",
+                  "p = .12",
+                  "p = .13",
+                  "p = .31",
+                  "p = .36",
+                  "p = .96",
+                  "p = .19",
+                  "p = .31",
+                  "p = .32",
+                  "p = .14",
+                  "p = .77",
+                  "p = .18",
+                  "p = .13",
+                  "p = .07",
+                  "p = .46",
+                  "p = .28",
+                  "p = .58",
+                  "p = .13",
+                  "p = .30",
+                  "p = .07",
+                  "p = .81",
+                  "p = .75",
+                  "p = .45",
+                  "p = .99",
+                  "p = .17",
+                  "p = .62",
+                  "p = .34",
+                  "p = .073 ",
+                  "p =.27",
+                  "p = .37",
+                  "p = .45",
+                  "p = .16",
+                  "p = .95",
+                  "p = .386 "
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "The multivariate effects of Object, Λ = .72, F(24, 229.73) = 1.14, p = .31, Object X Emotion, Λ = .77, F(48, 476.67) = 0.90, p = .67, Object X Turning, Λ = .76, F(24, 229.73) = 0.96, p = .52, and the three-way interaction, Λ = .70, F(48, 476.67) = 1.26, p = .12, were not significant.",
+                  "The multivariate effects of Object, Λ = .72, F(24, 229.73) = 1.14, p = .31, Object X Emotion, Λ = .77, F(48, 476.67) = 0.90, p = .67, Object X Turning, Λ = .76, F(24, 229.73) = 0.96, p = .52, and the three-way interaction, Λ = .70, F(48, 476.67) = 1.26, p = .12, were not significant.",
+                  "The multivariate effects of Object, Λ = .72, F(24, 229.73) = 1.14, p = .31, Object X Emotion, Λ = .77, F(48, 476.67) = 0.90, p = .67, Object X Turning, Λ = .76, F(24, 229.73) = 0.96, p = .52, and the three-way interaction, Λ = .70, F(48, 476.67) = 1.26, p = .12, were not significant.",
+                  "The multivariate effects of Object, Λ = .72, F(24, 229.73) = 1.14, p = .31, Object X Emotion, Λ = .77, F(48, 476.67) = 0.90, p = .67, Object X Turning, Λ = .76, F(24, 229.73) = 0.96, p = .52, and the three-way interaction, Λ = .70, F(48, 476.67) = 1.26, p = .12, were not significant.",
+                  "For benign envy, there were main effects of Emotion, F(2, 178) = 60.05, p < .001, ηG² = .20 and Turning, F(1, 89) = 17.75, p < .001, ηG² = .01, but, unexpectedly, no overall interaction, F(2, 178) = 2.10, p = .13, ηG² = .001.",
+                  "However, contrary to predictions, it led to similar ratings as the condition in which the target turned with an angry expression towards the object (M = 4.32, SD = 1.23), t(89) = 1.01, p = .31, dZ =0.11.",
+                  "The main effect of Turning, F(1, 89) = 0.83, p = .36, ηG² < .001, and the interaction of Emotion X Turning, F(2, 178) = 0.04, p = .96, ηG² < .001, were not significant.",
+                  "The main effect of Turning, F(1, 89) = 0.83, p = .36, ηG² < .001, and the interaction of Emotion X Turning, F(2, 178) = 0.04, p = .96, ηG² < .001, were not significant.",
+                  "Furthermore, there was no difference between anger and sadness for benign envy, ΔM = -0.14, SE = 0.11, t(89) = -1.33, p = .19, dZ = -0.14, but anger led to higher ratings than sadness for malicious envy, ΔM = 2.75, SE = 0.12, t(89) = 22.15, p < .001, dZ = 2.33.",
+                  "The effect of Turning was not significant, F(1, 97) = 1.04, p = .31, ηG² < .001, as was the interaction of Emotion X Turning, F(2, 194) = 1.14, p = .32, ηG² < .001.",
+                  "The effect of Turning was not significant, F(1, 97) = 1.04, p = .31, ηG² < .001, as was the interaction of Emotion X Turning, F(2, 194) = 1.14, p = .32, ηG² < .001.",
+                  "The analysis resulted in main effects for Scale, F(1, 97) = 22.44, p < .001, ηG² = .02, Emotion, F(2, 194) = 218.31, p < .001, ηG² = .43, and Turning, F(1, 97) = 7.13, p = .01, ηG² = .002, but no interaction of Emotion X Turning, F(2, 194) = 1.95, p = .14, ηG² < .001, and no three-way-interaction, F(2, 194) = 0.26, p = .77, ηG² < .001.",
+                  "The analysis resulted in main effects for Scale, F(1, 97) = 22.44, p < .001, ηG² = .02, Emotion, F(2, 194) = 218.31, p < .001, ηG² = .43, and Turning, F(1, 97) = 7.13, p = .01, ηG² = .002, but no interaction of Emotion X Turning, F(2, 194) = 1.95, p = .14, ηG² < .001, and no three-way-interaction, F(2, 194) = 0.26, p = .77, ηG² < .001.",
+                  "Finally, the predicted Scale X Turning interaction was not significant, F(1, 97) = 1.80, p = .18, ηG² < .001.",
+                  "That is, contrary to predictions, ratings tended to be higher when the target turned towards the person as compared to the object for both benign, ΔM = 0.15, SE = 0.05, t(97) = 2.91, p = .01, dZ = 0.29, and malicious envy, ΔM = 0.08, SE = 0.05, t(97) = 1.54, p = .13, dZ =0.16.",
+                  "The analysis resulted in main effects of Scale, F(1, 97) = 50.06, p < .001, ηG² = .06, and Emotion, F(2, 194) = 284.08, p < .001, ηG² = .38, a marginally significant effect of Turning, F(1, 97) = 3.24, p = .07, ηG² < .001, but no interaction of Emotion X Turning, F(2, 194) = 0.77, p = .46, ηG² <.001.",
+                  "The analysis resulted in main effects of Scale, F(1, 97) = 50.06, p < .001, ηG² = .06, and Emotion, F(2, 194) = 284.08, p < .001, ηG² = .38, a marginally significant effect of Turning, F(1, 97) = 3.24, p = .07, ηG² < .001, but no interaction of Emotion X Turning, F(2, 194) = 0.77, p = .46, ηG² <.001.",
+                  "Next to this, there was no Scale X Turning interaction, F(1, 97) = 1.19, p = .28, ηG² < .001.",
+                  "Nevertheless, turning towards the person as compared to the object led to higher malicious envy, ΔM = 0.12, SE = 0.05, t(97) = 2.48, p = .01, dZ = 0.25, but there was no effect for benign envy, ΔM = 0.04, SE = 0.06, t(97) = 0.56, p = .58, dZ = 0.06.",
+                  "The picture in which the target expressed anger towards the bike was mostly rated at least marginally significantly higher on anger (M = 5.00, SE = 0.34) than any other emotion (Ms < 4.21, ps < .10), except for contempt (M = 4.30, SE = 0.39, p = .13).",
+                  "The picture in which the target expressed anger towards the bike was rated higher on anger (M = 4.67, SE = 0.31) than most other emotions (Ms < 3.83, ps < .04), except for sadness (M = 4.08, SE = 0.34, p = .30).",
+                  "The ANOVA resulted in main effects for Emotion, F(1, 493) = 157.40, p < .001, ηG² = .02, a marginally significant main effect for Turning, F(1, 493) = 3.35, p = .07, ηG² < .001, and a significant interaction for Emotion X Turning, F(1, 493) = 30.07, p < .001, ηG² = .002.",
+                  "The effect of Scale was not significant, F(1, 493) = 0.06, p = .81, ηG² < .001.",
+                  "The effect of Turning was not significant, F(1, 491) = 0.10, p = .75, ηp² < .001.",
+                  "In contrast to the within-subjects analysis and Study 2, but in line with Study 1, anger did not lead to lower ratings of benign envy than sadness, ΔM = -0.11, SE = 0.15, t(491) = -0.76, p = .45, d = -0.07, but the effect tended in the predicted direction.",
+                  "The effect of Turning was not significant, F(1, 491) < 0.01, p = .99, ηp² < .001.",
+                  "The effect on benign envy was still not significant, yet the effect increased slightly, ΔM = -0.24, SE = 0.17, t(491) = -1.37, p = .17, d = -0.12, still tending in the predicted direction.",
+                  "The interaction between valence and target was not significant, F(1, 66) = 0.24, p = .62, indicating that the size of the optimistic learning bias was similar for the self and friend conditions.",
+                  "Participants showed significantly greater vicarious optimism for friends than for unidentifiable strangers, F(1, 77) = 7.58, p = .007, but this difference vanished when the stranger was identifiable, F(1, 89) = 0.92, p = .34.",
+                  "We also found tentative support for the predicted two-way interaction between valence and identifiability, F(1, 167) = 3.25, p = .073 (see https://journals.sagepub.com/doi/suppl/10.1177/0956797617737129. 3a).",
+                  "Identifiability increased vicarious optimism specifically by reducing updating from bad news, t(168) = 3.19, p = .002; identifiability did not affect updating from good news, t(168) = 1.11, p =.27.",
+                  "As in Study 2a, identifiability reduced updating from bad news, t(468) = 3.17, p = .002, but did not affect updating from good news, t(168) = 0.89, p = .37.",
+                  "Using paired-samples t tests, we found a main effect of stranger (liked vs. disliked) on the likability dimension, t(39) = 7.79, p < .001, but not on intelligence, t(39) = 0.75, p = .45, or health, t(39) = 1.43, p = .16.",
+                  "Using paired-samples t tests, we found a main effect of stranger (liked vs. disliked) on the likability dimension, t(39) = 7.79, p < .001, but not on intelligence, t(39) = 0.75, p = .45, or health, t(39) = 1.43, p = .16.",
+                  "We found the expected main effect of valence, F(1, 282) = 64.61, p < .0001, ηp² = .18; no main effect of person, F(1, 282) = .003, p = .95; and the predicted interaction effect between valence and likability, F(1, 282) = 50.73, p < .001, ηp² = .15.",
+                  "The learning bias for the self condition and the learning bias for the stranger condition were not significantly correlated, r(76) = .10, p = .386 (see https://journals.sagepub.com/doi/suppl/10.1177/0956797617737129. S3b in the https://journals.sagepub.com/doi/suppl/10.1177/0956797617737129)."
+                ]
+              }
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0.1,
+              0.9
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              10
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

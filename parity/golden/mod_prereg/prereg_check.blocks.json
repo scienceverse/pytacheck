@@ -1,0 +1,290 @@
+{
+  "id": "prereg_check.blocks",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "prereg_check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Preregistration Check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "method"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "template_name",
+          "title",
+          "id",
+          "link",
+          "date_created",
+          "date_modified",
+          "date_registered",
+          "embargo_end_date",
+          "ia_url",
+          "research_questions",
+          "foreknowledge_of_data_or_evidence",
+          "study_type",
+          "blinding",
+          "study_design_overview",
+          "data_collection_procedures",
+          "sample_size",
+          "sample_size_rationale",
+          "stopping_rule",
+          "manipulated_variables",
+          "measured_variables",
+          "indices",
+          "statistical_tests",
+          "transformations",
+          "inference_criteria",
+          "data_exclusion_criteria",
+          "missing_data_handling",
+          "paper_id"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "OSF Preregistration"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Intellectual Justice Project 2026"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "9h2pj"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://osf.io/9h2pj"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2026-02-26T14:35:24.643386"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2026-04-22T10:35:42.654131"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2026-02-26T14:35:24.621911"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://archive.org/details/osf-registrations-9h2pj-v1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Research Question 1:\nDoes the proposed 3‑factor structure of the 9‑item Intellectual Justice Scale demonstrate acceptable model fit in a confirmatory factor analysis?\nHypothesis 1:\nH1: The 9‑item Intellectual Justice Scale will show good model fit, as indicated by established fit criteria.\n\nResearch Question 2:\nDoes the Intellectual Justice Scale show adequate internal consistency?\nHypothesis 2:\nH2: The scale and its subscales will demonstrate satisfactory internal consistency.\n\nResearch Question 3:\nDoes the Intellectual Justice Scale correlate positively and moderately with theoretically related constructs?\nHypothesis 3:\nH3: Intellectual Justice will correlate moderately and positively with Intellectual Humility and HEXACO.\n\nResearch Question 4:\nIs the Intellectual Justice Scale empirically distinct from related constructs?\nHypothesis 4a:\nH4a: Intellectual Justice should be related, yet distinguishable, from the Social Justice Scale and the Justice Sensitivity Short Scales-8.\n\nWe include a longer 18‑item version in the CFA because it may be valuable in research scenarios that require more specific measurement of epistemic justice. While the 9‑item scale is preferred for its efficiency, the longer 18‑item version may offer important advantages in studies that require more detailed assessment of testimonial injustice, as its expanded item set provides greater conceptual depth and sensitivity to subtle differences within this concept. We therefore will also test the 18-item version for model fit and internal consistency."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Data does not yet exist. No part of the data that will be used for this analysis plan exists, and no part will be generated until after this plan is registered."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Non-randomized study: Does not include random assignment of subjects to treatments or conditions. This usually includes correlational studies, observational studies, surveys, natural experiments, real-world evidence studies, regression discontinuity designs, and descriptive studies."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "No blinding is involved."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "The study uses a single‑session, cross‑sectional survey design. All participants complete the survey once, and there are no experimental conditions, randomization procedures, or between‑group manipulations.\n\nParticipants are asked to complete an online survey lasting approximately 20 minutes."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Data will be collected through the online research platform Prolific, targeting approximately 400 UK‑based participants. Recruitment will be restricted to individuals who have not taken part in the earlier pilot test or the previous EFA study to avoid duplicate participation. We will use Prolific’s stratified sampling option to ensure balanced representation across sex, age, and ethnicity. Participants who meet the inclusion criteria will complete a one‑time survey. Data collection is expected to be completed within a single day ."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "The total sample size will be 400."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "We chose a sample size of 400 because it fits our budget, matches what other scale‑validation studies typically use (around 200–400 participants), and is large enough to reliably run our planned analyses such as confirmatory factor analysis and validity testing"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "The pilot test and exploratory factor analysis (EFA) have already been completed. After preregistration is finalized, the main study will be launched on Prolific. Data collection will continue until 400 participants have fully completed the survey. No additional data will be collected after this."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "None."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "The study measures participants’ responses to items from all included scales. All items use Likert‑type response options similar to: “Strongly disagree” to “Strongly agree.” These item responses serve as indicators of participants’ attitudes or tendencies related to each construct."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "All items use a Likert response scale, which will be numerically coded according to agreement strength, for example:\n\nStrongly agree = 2\nAgree = 1\nNeutral = 0\nDisagree = –1\nStrongly disagree = –2\n\nFor each construct, a score will be created by calculating the mean of the coded item responses belonging to that scale or subscale. Higher scores indicate stronger agreement of the construct being measured."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "To evaluate the proposed three‑factor structure of the 9‑item Intellectual Justice Scale, we will fit a confirmatory factor analysis (CFA) using the lavaan package in R. The model will specify three latent variables, each measured by three items. Analyses will be conducted using the WLSMV estimator, which is appropriate for ordinal Likert‑scale data. Model estimates, standardized loadings, residual variances, and factor correlations will be reported. A parallel CFA will also be conducted for the 18‑item version to compare structural performance.\n\nInternal consistency will be assessed for the total scale and each factor. We will compute Cronbach’s alpha and McDonald’s omega. Reliability will be evaluated separately for the 9‑item and 18‑item versions to determine whether the longer version provides added consistency.\n\nConvergent validity will be examined by estimating latent correlations between Intellectual Justice and related constructs, including Intellectual Humility and relevant HEXACO domains.These correlations will be obtained from a joint latent‑variable model in which all constructs are included as separate factors.\nDiscriminant validity will be assessed by testing whether Intellectual Justice remains statistically distinguishable from conceptually adjacent constructs such as Social Justice and the Justice Sensitivity subscales. We will evaluate this using latent correlations and the HTMT ratio, computed within a model that includes all relevant constructs simultaneously."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "No major transformations will be performed on the data. All questionnaire items use Likert‑type response options, which will be coded numerically from –3 to +3 to reflect the strength of agreement."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Values of CFI/TLI ≥ .90, RMSEA ≤ .08, and SRMR ≤ .08 will be interpreted as indicators of acceptable model fit, although decisions will be based on the overall pattern rather than strict cutoffs.\n\nInternal consistency will be assessed using Cronbach’s alpha and McDonald’s omega, with values ≥ .70 considered acceptable.\nDiscriminant validity will be evaluated using the HTMT criterion, with HTMT &lt; .90 indicating that constructs are distinguishable."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Prolific’s system flags respondents who complete the survey significantly faster than expected, and these participants will be removed from the dataset to ensure data validity. In addition, the survey contains three attention‑check items; participants who fail two or more of these checks will be excluded from analysis."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "There will be no missing data because all survey items are mandatory. Participants cannot submit the survey without completing every question, so all analyses will be conducted on complete data."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "p_9h2pj"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "We found 1 preregistration.",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(id = \"<a href='https://osf.io/9h2pj' target='_blank'>9h2pj<\/a>\", \n    title = \"Intellectual Justice Project 2026\", template = \"OSF Preregistration\"), row.names = c(NA, \n-1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 2, FALSE)\n```\n",
+          "Meta-scientific research has shown that deviations from preregistrations are often not reported or checked, and that the most common deviations concern the sample size. We recommend manually checking the full preregistration at the link above, and have provided the preregistered sample size.",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(id = \"9h2pj\", sample_size = \"The total sample size will be 400.\"), row.names = c(NA, \n-1L), class = c(\"tbl_df\", \"tbl\", \"data.frame\"))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 2, FALSE)\n```\n",
+          "::: {.callout-tip title=\"Full Preregistration\" collapse=\"true\"}\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Field = c(\"template_name\", \"title\", \"id\", \"link\", \n\"date_created\", \"date_modified\", \"date_registered\", \"embargo_end_date\", \n\"ia_url\", \"research_questions\", \"foreknowledge_of_data_or_evidence\", \n\"study_type\", \"blinding\", \"study_design_overview\", \"data_collection_procedures\", \n\"sample_size\", \"sample_size_rationale\", \"stopping_rule\", \"manipulated_variables\", \n\"measured_variables\", \"indices\", \"statistical_tests\", \"transformations\", \n\"inference_criteria\", \"data_exclusion_criteria\", \"missing_data_handling\", \n\"paper_id\"), \"Preregistration 1\" = c(\"OSF Preregistration\", \"Intellectual Justice Project 2026\", \n\"9h2pj\", \"https://osf.io/9h2pj\", \"2026-02-26T14:35:24.643386\", \n\"2026-04-22T10:35:42.654131\", \"2026-02-26T14:35:24.621911\", \"\", \n\"https://archive.org/details/osf-registrations-9h2pj-v1\", \"Research Question 1:<br>Does the proposed 3‑factor structure of the 9‑item Intellectual Justice Scale demonstrate acceptable model fit in a confirmatory factor analysis?<br>Hypothesis 1:<br>H1: The 9‑item Intellectual Justice Scale will show good model fit, as indicated by established fit criteria.<br><br>Research Question 2:<br>Does the Intellectual Justice Scale show adequate internal consistency?<br>Hypothesis 2:<br>H2: The scale and its subscales will demonstrate satisfactory internal consistency.<br><br>Research Question 3:<br>Does the Intellectual Justice Scale correlate positively and moderately with theoretically related constructs?<br>Hypothesis 3:<br>H3: Intellectual Justice will correlate moderately and positively with Intellectual Humility and HEXACO.<br><br>Research Question 4:<br>Is the Intellectual Justice Scale empirically distinct from related constructs?<br>Hypothesis 4a:<br>H4a: Intellectual Justice should be related, yet distinguishable, from the Social Justice Scale and the Justice Sensitivity Short Scales-8.<br><br>We include a longer 18‑item version in the CFA because it may be valuable in research scenarios that require more specific measurement of epistemic justice. While the 9‑item scale is preferred for its efficiency, the longer 18‑item version may offer important advantages in studies that require more detailed assessment of testimonial injustice, as its expanded item set provides greater conceptual depth and sensitivity to subtle differences within this concept. We therefore will also test the 18-item version for model fit and internal consistency.\", \n\"Data does not yet exist. No part of the data that will be used for this analysis plan exists, and no part will be generated until after this plan is registered.\", \n\"Non-randomized study: Does not include random assignment of subjects to treatments or conditions. This usually includes correlational studies, observational studies, surveys, natural experiments, real-world evidence studies, regression discontinuity designs, and descriptive studies.\", \n\"No blinding is involved.\", \"The study uses a single‑session, cross‑sectional survey design. All participants complete the survey once, and there are no experimental conditions, randomization procedures, or between‑group manipulations.<br><br>Participants are asked to complete an online survey lasting approximately 20 minutes.\", \n\"Data will be collected through the online research platform Prolific, targeting approximately 400 UK‑based participants. Recruitment will be restricted to individuals who have not taken part in the earlier pilot test or the previous EFA study to avoid duplicate participation. We will use Prolific’s stratified sampling option to ensure balanced representation across sex, age, and ethnicity. Participants who meet the inclusion criteria will complete a one‑time survey. Data collection is expected to be completed within a single day .\", \n\"The total sample size will be 400.\", \"We chose a sample size of 400 because it fits our budget, matches what other scale‑validation studies typically use (around 200–400 participants), and is large enough to reliably run our planned analyses such as confirmatory factor analysis and validity testing\", \n\"The pilot test and exploratory factor analysis (EFA) have already been completed. After preregistration is finalized, the main study will be launched on Prolific. Data collection will continue until 400 participants have fully completed the survey. No additional data will be collected after this.\", \n\"None.\", \"The study measures participants’ responses to items from all included scales. All items use Likert‑type response options similar to: “Strongly disagree” to “Strongly agree.” These item responses serve as indicators of participants’ attitudes or tendencies related to each construct.\", \n\"All items use a Likert response scale, which will be numerically coded according to agreement strength, for example:<br><br>Strongly agree = 2<br>Agree = 1<br>Neutral = 0<br>Disagree = –1<br>Strongly disagree = –2<br><br>For each construct, a score will be created by calculating the mean of the coded item responses belonging to that scale or subscale. Higher scores indicate stronger agreement of the construct being measured.\", \n\"To evaluate the proposed three‑factor structure of the 9‑item Intellectual Justice Scale, we will fit a confirmatory factor analysis (CFA) using the lavaan package in R. The model will specify three latent variables, each measured by three items. Analyses will be conducted using the WLSMV estimator, which is appropriate for ordinal Likert‑scale data. Model estimates, standardized loadings, residual variances, and factor correlations will be reported. A parallel CFA will also be conducted for the 18‑item version to compare structural performance.<br><br>Internal consistency will be assessed for the total scale and each factor. We will compute Cronbach’s alpha and McDonald’s omega. Reliability will be evaluated separately for the 9‑item and 18‑item versions to determine whether the longer version provides added consistency.<br><br>Convergent validity will be examined by estimating latent correlations between Intellectual Justice and related constructs, including Intellectual Humility and relevant HEXACO domains.These correlations will be obtained from a joint latent‑variable model in which all constructs are included as separate factors.<br>Discriminant validity will be assessed by testing whether Intellectual Justice remains statistically distinguishable from conceptually adjacent constructs such as Social Justice and the Justice Sensitivity subscales. We will evaluate this using latent correlations and the HTMT ratio, computed within a model that includes all relevant constructs simultaneously.\", \n\"No major transformations will be performed on the data. All questionnaire items use Likert‑type response options, which will be coded numerically from –3 to +3 to reflect the strength of agreement.\", \n\"Values of CFI/TLI ≥ .90, RMSEA ≤ .08, and SRMR ≤ .08 will be interpreted as indicators of acceptable model fit, although decisions will be based on the overall pattern rather than strict cutoffs.<br><br>Internal consistency will be assessed using Cronbach’s alpha and McDonald’s omega, with values ≥ .70 considered acceptable.<br>Discriminant validity will be evaluated using the HTMT criterion, with HTMT &lt; .90 indicating that constructs are distinguishable.\", \n\"Prolific’s system flags respondents who complete the survey significantly faster than expected, and these participants will be removed from the dataset to ensure data validity. In addition, the survey contains three attention‑check items; participants who fail two or more of these checks will be excluded from analysis.\", \n\"There will be no missing data because all survey items are mandatory. Participants cannot submit the survey without completing every question, so all analyses will be conducted on complete data.\", \n\"p_9h2pj\")), row.names = c(\"template_name\", \"title\", \"id\", \"link\", \n\"date_created\", \"date_modified\", \"date_registered\", \"embargo_end_date\", \n\"ia_url\", \"research_questions\", \"foreknowledge_of_data_or_evidence\", \n\"study_type\", \"blinding\", \"study_design_overview\", \"data_collection_procedures\", \n\"sample_size\", \"sample_size_rationale\", \"stopping_rule\", \"manipulated_variables\", \n\"measured_variables\", \"indices\", \"statistical_tests\", \"transformations\", \n\"inference_criteria\", \"data_exclusion_criteria\", \"missing_data_handling\", \n\"paper_id\"), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 5, FALSE)\n```\n\n\n:::\n",
+          "::: {.callout-tip title=\"Learn More\" collapse=\"true\"}\n\nFor metascientific articles demonstrating the rate of deviations from preregistrations, see:\n\nvan den Akker O, Bakker M, van Assen M, Pennington C, Verweij L, Elsherif M, Claesen A, Gaillard S, Yeung S, Frankenberger J, Krautter K, Cockcroft J, Kreuer K, Evans T, Heppel F, Schoch S, Korbmacher M, Yamada Y, Albayrak-Aydemir N, Wicherts J (2024). &ldquo;The potential of preregistration in psychology: Assessing preregistration producibility and preregistration-study consistency.&rdquo; <em>Psychological Methods<\/em>. <a href=\"https://doi.org/10.1037/met0000687\">doi:10.1037/met0000687<\/a>.\n\nFor educational material on how to report deviations from preregistrations, see:\n\nLakens, Daniël (2024). &ldquo;When and How to Deviate From a Preregistration.&rdquo; <em>Collabra: Psychology<\/em>, <b>10<\/b>(1), 117094. <a href=\"https://doi.org/10.1525/collabra.117094\">doi:10.1525/collabra.117094<\/a>.\n\n:::\n"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "info"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "We found 1 preregistration."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "preregistration"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "p_9h2pj"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          }
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

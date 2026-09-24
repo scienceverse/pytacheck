@@ -1,0 +1,30 @@
+{
+ "data": {
+  "id": "prspx",
+  "type": "guids",
+  "attributes": {},
+  "relationships": {
+   "referent": {
+    "links": {
+     "related": {
+      "href": "https://api.osf.io/v2/registrations/prspx/",
+      "meta": {
+       "type": "registrations"
+      }
+     }
+    },
+    "data": {
+     "id": "prspx",
+     "type": "registrations"
+    }
+   }
+  },
+  "links": {
+   "self": "https://api.osf.io/v2/guids/prspx/",
+   "html": "https://osf.io/prspx/"
+  }
+ },
+ "meta": {
+  "version": "2.0"
+ }
+}

@@ -33,7 +33,8 @@ w("bom_nohdr_blob.csv", b"\xef\xbb\xbf" + b"x" * 10 + b"\n" + b"y" * 5000 + b"\n
 # fread countfields(): an invalid line leaves the position where it was
 w(
     "tab_in_quotes.tsv",
-    "﻿NA,1\n" + "".join(f"{v},00:00:01\n" for v in ["F", "T", "1", "0", "TRUE"] * 6)
+    "﻿NA,1\n"
+    + "".join(f"{v},00:00:01\n" for v in ["F", "T", "1", "0", "TRUE"] * 6)
     + '"tab\there",00:00:01',
 )
 # fread: a column name with a NUL is an error (-> read.delim), NULs in values are dropped
@@ -62,4 +63,6 @@ w("rt_wrap.csv", 'a\n"x"y\n1,2,3\n4\n5,6\n')
 w("rt_nul_quote_header.csv", b'"a"\0b a\tb TRUE he said "hi"\n"a,b"\n')
 w("rt_nul_value.csv", b'v\n"x"y\nab\0cd\n"q"\0r\n')
 w("rt_cr_cr.csv", b'v\r"x"y\r\r\na\r\rb\r')
+# fread fails (NUL in the name), read.delim() reads an NA -> the latin1 re-read
+w("rt_fallback_latin1.csv", b'v\0x\n"a"b\nNA\ncaf\xc3\xa9\n')
 w("rt_nrows.csv", 'v\n"x"y\n' + "".join(f"r{i}\n" for i in range(10)))

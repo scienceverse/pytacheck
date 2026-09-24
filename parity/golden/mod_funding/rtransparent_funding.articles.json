@@ -1,0 +1,32 @@
+{
+  "id": "rtransparent_funding.articles",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "This study was funded by the Wellcome Trust.",
+      "Supported by the ERC. We thank the NIH for grant 12345.",
+      "",
+      "The authors received funding from the ERC.",
+      "No funding was received for this study.",
+      "Thanks to the lab; this was funded partly by a charity. Project number 5 is ours.",
+      "Thanks to all; this was funded partly by a charity.",
+      "",
+      "",
+      "The pilot was funded partly by a charity.",
+      "Financial information: No information about funding was received.",
+      "",
+      "Funding NA",
+      "Funding Money came from the ERC.",
+      "",
+      "",
+      "This study was funded by the Wellcome Trust. Funding for this study came from the ESRC. Our research was supported by the Leverhulme Trust. The work was financed by a grant from the ERC. Supported by the National Institutes of Health. We acknowledge support from the Royal Society. Support from the University is gratefully acknowledged. Support was provided by the Mind Foundation. The Council provided funding for this research. The Trust funded this project in full. We thank the Academy for funding this research. This research was developed by the Institute of Psychiatry. She received funding from the ESRC. Received funding from the Medical Research Council. JMS is a recipient of a fellowship from the Royal Society. The authors received funding from the ERC. The authors have no funding to declare. We thank the ERC for financial support. We thank the council for grant 12345. Funding for this research was received from the ERC. Funding This work was supported by the ESRC. Funding: none. Financial support: none. Financial support None. Financial support for this study came from the NSF. Funding disclosure: the authors received grants. Grant support: NIH. Cette étude a été financée par l'INSERM. Supported under project no. 4. No funding was received for this study. No external funding was received. Authors were required to disclose conflicts and disclosed none. No specific funding was given for this study. There were no sources of funding. Acknowledgements and funding The lab members helped.",
+      "These studies were funded by the NIH. Our projects were supported by the MRC. funding for this research was received Researchers were funded by grants from the ERC and the NIH.",
+      "This study was funded by the ERC."
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

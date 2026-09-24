@@ -1,0 +1,173 @@
+{
+  "id": "review.read_head_attrs.stata_int_na.dta",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "names",
+      "attrs",
+      "utf8_repaired"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "i",
+          "s",
+          "d",
+          "t",
+          "l"
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "i",
+          "s",
+          "d",
+          "t",
+          "l"
+        ],
+        "v": [
+          {
+            "t": "list",
+            "names": [
+              "format.stata"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "%12.0g"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "format.stata"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "%-9s"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "class",
+              "format.stata"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Date"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "%td"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "class",
+              "format.stata",
+              "tzone"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "POSIXct",
+                  "POSIXt"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "%tc"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "UTC"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "class",
+              "format.stata",
+              "label",
+              "labels"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "haven_labelled",
+                  "vctrs_vctr",
+                  "double"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "%12.0g"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Agree?"
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "No",
+                  "Yes"
+                ],
+                "v": [
+                  {
+                    "t": "dbl",
+                    "v": [
+                      1
+                    ]
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      2
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "null"
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

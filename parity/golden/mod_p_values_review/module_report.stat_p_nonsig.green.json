@@ -1,0 +1,14 @@
+{
+  "id": "module_report.stat_p_nonsig.green",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "### ✅️ Non-Significant P Value Check {#non-significant-p-value-check .green}\n\nWe detected no nonsignificant p values.\n\n::: {.callout-note title=\"How It Works\" collapse=\"true\"}\n\nThis module checks for imprecisely reported p values. If p > .05 is detected, it warns for misinterpretations.\n\nThe nonsignificant p-value check searches for regular expressions that match a predefined pattern. The module identifies all p-values in a manuscript and selects those that are not reported to be smaller than or equal to 0.05. It returns all sentences containing non-significant p-values.\n\nIn the future, the Metacheck team aims to incorporate a machine learning classifier to only return sentences likely to contain misinterpretations. If you want to help to improve the module, reach out to the Metacheck development team.\n\nThis module only checks p-values reported in the running text of the manuscript. It cannot (yet) process p-values reported only in tables.\n\nThis module was developed by Daniel Lakens\n\n:::\n\n\n::: {.validation}\nValidation: In a sample of 194 papers with 1602 instances of non-significant p-values, this module correctly detected 1486 of them, and incorrectly identified 153. Additionally, 91% of detections were true instances (positive predictive value). That is, when this module flags non-significant p-values in a paper, it correctly identifies an issue 91% of the time.\n:::"
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

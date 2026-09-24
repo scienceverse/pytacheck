@@ -1,0 +1,30 @@
+{
+ "data": {
+  "id": "pagss",
+  "type": "guids",
+  "attributes": {},
+  "relationships": {
+   "referent": {
+    "links": {
+     "related": {
+      "href": "https://api.osf.io/v2/registrations/pagss/",
+      "meta": {
+       "type": "registrations"
+      }
+     }
+    },
+    "data": {
+     "id": "pagss",
+     "type": "registrations"
+    }
+   }
+  },
+  "links": {
+   "self": "https://api.osf.io/v2/guids/pagss/",
+   "html": "https://osf.io/pagss/"
+  }
+ },
+ "meta": {
+  "version": "2.0"
+ }
+}

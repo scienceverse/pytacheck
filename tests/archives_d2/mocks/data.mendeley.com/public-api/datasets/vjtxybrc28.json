@@ -1,0 +1,32 @@
+{
+  "id": "vjtxybrc28",
+  "name": "Survey of research data practices",
+  "doi": {
+    "id": "10.17632/vjtxybrc28.1"
+  },
+  "description": "Responses to a survey.",
+  "publish_date": "2020-01-01T00:00:00.000Z",
+  "modified_on": "2020-02-02T00:00:00.000Z",
+  "contributors": [
+    {
+      "first_name": "Ann",
+      "last_name": "Lee"
+    },
+    {
+      "last_name": "Solo"
+    },
+    {}
+  ],
+  "data_licence": {
+    "full_name": "Creative Commons Attribution 4.0"
+  },
+  "files": [
+    {
+      "filename": "survey.csv",
+      "size": 10,
+      "content_details": {
+        "download_url": "https://data.mendeley.com/x/survey.csv"
+      }
+    }
+  ]
+}

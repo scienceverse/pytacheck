@@ -1,0 +1,74 @@
+{
+  "eprintid": 854001,
+  "title": "Interviews with rural households, 2016-2018",
+  "doi": "10.5255/UKDA-SN-854001",
+  "datestamp": "2020-01-01 10:00:00",
+  "lastmod": "2021-02-03 04:05:06",
+  "creators": [
+    {
+      "name": {
+        "given": "Jane",
+        "family": "Doe"
+      },
+      "id": "jd@example.org"
+    },
+    {
+      "name": {
+        "family": "Solo"
+      }
+    },
+    {
+      "name": {}
+    },
+    {
+      "id": "nobody"
+    }
+  ],
+  "documents": [
+    {
+      "content": "data",
+      "files": [
+        {
+          "fileid": 1001,
+          "filename": "interviews.csv",
+          "filesize": 21,
+          "hash": "3eaa201f7665ca5d4d366641daaae1ec",
+          "hash_type": "MD5",
+          "uri": "http://reshare.ukdataservice.ac.uk/id/file/1001"
+        }
+      ]
+    },
+    {
+      "content": "documentation",
+      "files": [
+        {
+          "fileid": 1002,
+          "filename": "guide.pdf",
+          "filesize": 20000000,
+          "hash": "c1e29d70414fb62a0fae4d8a57850c6d",
+          "hash_type": "MD5",
+          "uri": "http://reshare.ukdataservice.ac.uk/id/file/1002"
+        }
+      ]
+    },
+    {
+      "files": [
+        {
+          "fileid": 1003,
+          "filename": "notes.txt",
+          "filesize": 7,
+          "hash": "6c7ba9c5a141421e1c03cb9807c97c74",
+          "hash_type": "MD5",
+          "uri": "http://reshare.ukdataservice.ac.uk/id/file/1003"
+        },
+        {
+          "fileid": 1004,
+          "filename": "gone.txt",
+          "filesize": 3,
+          "hash_type": "SHA1",
+          "uri": "http://reshare.ukdataservice.ac.uk/id/file/1004"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,53 @@
+{
+  "id": "unnest_raw.items_null_field",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "value",
+      "warnings"
+    ],
+    "v": [
+      {
+        "t": "df",
+        "nrow": 2,
+        "names": [
+          "a",
+          "X1L",
+          "X2L"
+        ],
+        "v": [
+          {
+            "t": "int",
+            "v": [
+              null,
+              2
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1,
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              null,
+              2
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": []
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

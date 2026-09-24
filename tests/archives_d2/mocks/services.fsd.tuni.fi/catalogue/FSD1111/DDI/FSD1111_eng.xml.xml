@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<codeBook xmlns="ddi:codebook:2_5" version="2.5">
+  <docDscr>
+    <citation><titlStmt><titl>DDI description: something</titl></titlStmt></citation>
+  </docDscr>
+  <stdyDscr>
+    <citation><titlStmt><IDNo agency="FSD">FSD1111</IDNo></titlStmt></citation>
+  </stdyDscr>
+</codeBook>

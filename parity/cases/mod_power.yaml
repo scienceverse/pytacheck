@@ -29,74 +29,61 @@
       - "upstream/metacheck/tests/testthat/fixtures/formats/published.pdf.tei.xml"
       - "upstream/metacheck/tests/testthat/fixtures/formats/published.cermine.xml"
 - "id": "power.none"
-  "module": "power"
+  "r": "base::identity"
+  "py": "tests.mod_power.parity_helpers.identity"
   "args":
-    "paper":
-      "$test_paper":
-        "text":
-        - "I love to power pose."
-  "compare":
-    "ignore": &id001
-    - "table.paper_id"
-    - "summary_table.paper_id"
+    "x":
+      "$expr":
+        "r": "module_run(local({p <- test_paper(c(\"I love to power pose.\")); p$paper_id <- \"p1\"; p}), 'power')"
+        "py": "pc.module_run(__import__('tests.mod_power.parity_helpers', fromlist=['_']).tp(['I love to power pose.'], 'p1'), 'power')"
 - "id": "power.one_paragraph"
-  "module": "power"
+  "r": "base::identity"
+  "py": "tests.mod_power.parity_helpers.identity"
   "args":
-    "paper":
-      "$test_paper":
-        "text":
-        - "An a priori power analysis for an independent samples t-test, conducted using the pwr.t.test function from pwr (Champely, 2020), indicated that for a Cohen's d = 0.5, an alpha level of 0.05, and a desired power level of 80% required at least 64 participants in each group."
-        - "A sensitivity power analysis for an independent samples t-test, conducted using the pwr.t.test function from pwr (Champely, 2020), indicated that with 64 participants in each group, and an alpha level of 0.05, a desired power level of 80% was reached for an effect size of d = 0.5."
-  "compare":
-    "ignore": *id001
+    "x":
+      "$expr":
+        "r": "module_run(local({p <- test_paper(c(\"An a priori power analysis for an independent samples t-test, conducted using the pwr.t.test function from pwr (Champely, 2020), indicated that for a Cohen's d = 0.5, an alpha level of 0.05, and a desired power level of 80% required at least 64 participants in each group.\", \"A sensitivity power analysis for an independent samples t-test, conducted using the pwr.t.test function from pwr (Champely, 2020), indicated that with 64 participants in each group, and an alpha level of 0.05, a desired power level of 80% was reached for an effect size of d = 0.5.\")); p$paper_id <- \"p1\"; p}), 'power')"
+        "py": "pc.module_run(__import__('tests.mod_power.parity_helpers', fromlist=['_']).tp([\"An a priori power analysis for an independent samples t-test, conducted using the pwr.t.test function from pwr (Champely, 2020), indicated that for a Cohen's d = 0.5, an alpha level of 0.05, and a desired power level of 80% required at least 64 participants in each group.\", 'A sensitivity power analysis for an independent samples t-test, conducted using the pwr.t.test function from pwr (Champely, 2020), indicated that with 64 participants in each group, and an alpha level of 0.05, a desired power level of 80% was reached for an effect size of d = 0.5.'], 'p1'), 'power')"
 - "id": "power.false_positive"
-  "module": "power"
+  "r": "base::identity"
+  "py": "tests.mod_power.parity_helpers.identity"
   "args":
-    "paper":
-      "$test_paper":
-        "text":
-        - "Our 12 participants have a lot of power to detect a moth."
-  "compare":
-    "ignore": *id001
+    "x":
+      "$expr":
+        "r": "module_run(local({p <- test_paper(c(\"Our 12 participants have a lot of power to detect a moth.\")); p$paper_id <- \"p1\"; p}), 'power')"
+        "py": "pc.module_run(__import__('tests.mod_power.parity_helpers', fromlist=['_']).tp(['Our 12 participants have a lot of power to detect a moth.'], 'p1'), 'power')"
 - "id": "power.no_number"
-  "module": "power"
+  "r": "base::identity"
+  "py": "tests.mod_power.parity_helpers.identity"
   "args":
-    "paper":
-      "$test_paper":
-        "text":
-        - "A power analysis was run in 2019 (see Smith, 2020)."
-  "compare":
-    "ignore": *id001
+    "x":
+      "$expr":
+        "r": "module_run(local({p <- test_paper(c(\"A power analysis was run in 2019 (see Smith, 2020).\")); p$paper_id <- \"p1\"; p}), 'power')"
+        "py": "pc.module_run(__import__('tests.mod_power.parity_helpers', fromlist=['_']).tp(['A power analysis was run in 2019 (see Smith, 2020).'], 'p1'), 'power')"
 - "id": "power.two_paragraphs"
   "r": "base::identity"
   "py": "tests.mod_power.parity_helpers.identity"
   "args":
     "x":
       "$expr":
-        "r": "module_run(local({p <- test_paper(c(\"An a priori power analysis for an independent samples t-test, conducted using the pwr.t.test function from pwr (Champely, 2020), indicated that for a Cohen's d = 0.5, an alpha level of 0.05, and a desired power level of 80% required at least 64 participants in each group.\", \"A sensitivity power analysis for an independent samples t-test, conducted using the pwr.t.test function from pwr (Champely, 2020), indicated that with 64 participants in each group, and an alpha level of 0.05, a desired power level of 80% was reached for an effect size of d = 0.5.\")); p$text$paragraph_id <- c(0L, 1L); p}), 'power')"
-        "py": "pc.module_run(__import__('tests.mod_power.parity_helpers', fromlist=['_']).paragraphs([\"An a priori power analysis for an independent samples t-test, conducted using the pwr.t.test function from pwr (Champely, 2020), indicated that for a Cohen's d = 0.5, an alpha level of 0.05, and a desired power level of 80% required at least 64 participants in each group.\", 'A sensitivity power analysis for an independent samples t-test, conducted using the pwr.t.test function from pwr (Champely, 2020), indicated that with 64 participants in each group, and an alpha level of 0.05, a desired power level of 80% was reached for an effect size of d = 0.5.'], [0, 1]), 'power')"
-  "compare":
-    "ignore": *id001
+        "r": "module_run(local({p <- test_paper(c(\"An a priori power analysis for an independent samples t-test, conducted using the pwr.t.test function from pwr (Champely, 2020), indicated that for a Cohen's d = 0.5, an alpha level of 0.05, and a desired power level of 80% required at least 64 participants in each group.\", \"A sensitivity power analysis for an independent samples t-test, conducted using the pwr.t.test function from pwr (Champely, 2020), indicated that with 64 participants in each group, and an alpha level of 0.05, a desired power level of 80% was reached for an effect size of d = 0.5.\")); p$text$paragraph_id <- c(0L, 1L); p$paper_id <- \"p1\"; p}), 'power')"
+        "py": "pc.module_run(__import__('tests.mod_power.parity_helpers', fromlist=['_']).paragraphs([\"An a priori power analysis for an independent samples t-test, conducted using the pwr.t.test function from pwr (Champely, 2020), indicated that for a Cohen's d = 0.5, an alpha level of 0.05, and a desired power level of 80% required at least 64 participants in each group.\", 'A sensitivity power analysis for an independent samples t-test, conducted using the pwr.t.test function from pwr (Champely, 2020), indicated that with 64 participants in each group, and an alpha level of 0.05, a desired power level of 80% was reached for an effect size of d = 0.5.'], [0, 1], 'p1'), 'power')"
 - "id": "power.paperlist"
   "r": "base::identity"
   "py": "tests.mod_power.parity_helpers.identity"
   "args":
     "x":
       "$expr":
-        "r": "module_run(paperlist(test_paper(\"An a priori power analysis for an independent samples t-test, conducted using the pwr.t.test function from pwr (Champely, 2020), indicated that for a Cohen's d = 0.5, an alpha level of 0.05, and a desired power level of 80% required at least 64 participants in each group.\"), test_paper(\"A sensitivity power analysis for an independent samples t-test, conducted using the pwr.t.test function from pwr (Champely, 2020), indicated that with 64 participants in each group, and an alpha level of 0.05, a desired power level of 80% was reached for an effect size of d = 0.5.\")), 'power')"
+        "r": "module_run(paperlist(local({p <- test_paper(c(\"An a priori power analysis for an independent samples t-test, conducted using the pwr.t.test function from pwr (Champely, 2020), indicated that for a Cohen's d = 0.5, an alpha level of 0.05, and a desired power level of 80% required at least 64 participants in each group.\")); p$paper_id <- \"p1\"; p}), local({p <- test_paper(c(\"A sensitivity power analysis for an independent samples t-test, conducted using the pwr.t.test function from pwr (Champely, 2020), indicated that with 64 participants in each group, and an alpha level of 0.05, a desired power level of 80% was reached for an effect size of d = 0.5.\")); p$paper_id <- \"p2\"; p})), 'power')"
         "py": "pc.module_run(__import__('tests.mod_power.parity_helpers', fromlist=['_']).papers(*[\"An a priori power analysis for an independent samples t-test, conducted using the pwr.t.test function from pwr (Champely, 2020), indicated that for a Cohen's d = 0.5, an alpha level of 0.05, and a desired power level of 80% required at least 64 participants in each group.\", 'A sensitivity power analysis for an independent samples t-test, conducted using the pwr.t.test function from pwr (Champely, 2020), indicated that with 64 participants in each group, and an alpha level of 0.05, a desired power level of 80% was reached for an effect size of d = 0.5.']), 'power')"
-  "compare":
-    "ignore": *id001
 - "id": "power.classify"
   "r": "base::identity"
   "py": "tests.mod_power.parity_helpers.identity"
   "args":
     "x":
       "$expr":
-        "r": "module_run(local({p <- test_paper(c(\"An a-priori power analysis showed that 50 participants give 80% power.\", \"A sensitivity power analysis showed that 50 participants give 80% power for d = 0.4.\", \"A compromise power analysis balanced alpha and beta for 50 participants.\", \"A post-hoc power analysis showed 45% power.\", \"The retrospective power was 30% for the observed effect size.\", \"An A Posteriori power analysis gave 20% power.\", \"The observed power of the test was 0.25 (small effect).\", \"We had 95% power to detect our effect.\", \"Power analysis: with 2019 participants we achieve power.\", \"We had 95% power to detect our effect.\")); p$text$paragraph_id <- c(0L, 1L, 2L, 3L, 4L, 5L, 6L, 7L, 8L, 9L); p}), 'power')"
-        "py": "pc.module_run(__import__('tests.mod_power.parity_helpers', fromlist=['_']).paragraphs(['An a-priori power analysis showed that 50 participants give 80% power.', 'A sensitivity power analysis showed that 50 participants give 80% power for d = 0.4.', 'A compromise power analysis balanced alpha and beta for 50 participants.', 'A post-hoc power analysis showed 45% power.', 'The retrospective power was 30% for the observed effect size.', 'An A Posteriori power analysis gave 20% power.', 'The observed power of the test was 0.25 (small effect).', 'We had 95% power to detect our effect.', 'Power analysis: with 2019 participants we achieve power.', 'We had 95% power to detect our effect.'], [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]), 'power')"
-  "compare":
-    "ignore": *id001
+        "r": "module_run(local({p <- test_paper(c(\"An a-priori power analysis showed that 50 participants give 80% power.\", \"A sensitivity power analysis showed that 50 participants give 80% power for d = 0.4.\", \"A compromise power analysis balanced alpha and beta for 50 participants.\", \"A post-hoc power analysis showed 45% power.\", \"The retrospective power was 30% for the observed effect size.\", \"An A Posteriori power analysis gave 20% power.\", \"The observed power of the test was 0.25 (small effect).\", \"We had 95% power to detect our effect.\", \"Power analysis: with 2019 participants we achieve power.\", \"We had 95% power to detect our effect.\")); p$text$paragraph_id <- c(0L, 1L, 2L, 3L, 4L, 5L, 6L, 7L, 8L, 9L); p$paper_id <- \"p1\"; p}), 'power')"
+        "py": "pc.module_run(__import__('tests.mod_power.parity_helpers', fromlist=['_']).paragraphs(['An a-priori power analysis showed that 50 participants give 80% power.', 'A sensitivity power analysis showed that 50 participants give 80% power for d = 0.4.', 'A compromise power analysis balanced alpha and beta for 50 participants.', 'A post-hoc power analysis showed 45% power.', 'The retrospective power was 30% for the observed effect size.', 'An A Posteriori power analysis gave 20% power.', 'The observed power of the test was 0.25 (small effect).', 'We had 95% power to detect our effect.', 'Power analysis: with 2019 participants we achieve power.', 'We had 95% power to detect our effect.'], [0, 1, 2, 3, 4, 5, 6, 7, 8, 9], 'p1'), 'power')"
 - "id": "power.demo.tables"
   "r": "base::identity"
   "py": "tests.mod_power.parity_helpers.identity"
@@ -111,16 +98,16 @@
   "args":
     "x":
       "$expr":
-        "r": "local({mo <- module_run(local({p <- test_paper(c(\"An a-priori power analysis showed that 50 participants give 80% power.\", \"A sensitivity power analysis showed that 50 participants give 80% power for d = 0.4.\", \"A compromise power analysis balanced alpha and beta for 50 participants.\", \"A post-hoc power analysis showed 45% power.\", \"The retrospective power was 30% for the observed effect size.\", \"An A Posteriori power analysis gave 20% power.\", \"The observed power of the test was 0.25 (small effect).\", \"We had 95% power to detect our effect.\", \"Power analysis: with 2019 participants we achieve power.\", \"We had 95% power to detect our effect.\")); p$text$paragraph_id <- c(0L, 1L, 2L, 3L, 4L, 5L, 6L, 7L, 8L, 9L); p}), 'power'); chunks <- Filter(function(s) grepl('```{r}', s, fixed = TRUE), mo$report); lapply(chunks, function(s) {code <- sub('{r}', '', strsplit(s, '```', fixed = TRUE)[[1]][2], fixed = TRUE); e <- new.env(); eval(parse(text = code)[[1]], e); as.data.frame(e$table)})})"
-        "py": "__import__('tests.mod_power.parity_helpers', fromlist=['_']).report_tables(pc.module_run(__import__('tests.mod_power.parity_helpers', fromlist=['_']).paragraphs(['An a-priori power analysis showed that 50 participants give 80% power.', 'A sensitivity power analysis showed that 50 participants give 80% power for d = 0.4.', 'A compromise power analysis balanced alpha and beta for 50 participants.', 'A post-hoc power analysis showed 45% power.', 'The retrospective power was 30% for the observed effect size.', 'An A Posteriori power analysis gave 20% power.', 'The observed power of the test was 0.25 (small effect).', 'We had 95% power to detect our effect.', 'Power analysis: with 2019 participants we achieve power.', 'We had 95% power to detect our effect.'], [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]), 'power'))"
+        "r": "local({mo <- module_run(local({p <- test_paper(c(\"An a-priori power analysis showed that 50 participants give 80% power.\", \"A sensitivity power analysis showed that 50 participants give 80% power for d = 0.4.\", \"A compromise power analysis balanced alpha and beta for 50 participants.\", \"A post-hoc power analysis showed 45% power.\", \"The retrospective power was 30% for the observed effect size.\", \"An A Posteriori power analysis gave 20% power.\", \"The observed power of the test was 0.25 (small effect).\", \"We had 95% power to detect our effect.\", \"Power analysis: with 2019 participants we achieve power.\", \"We had 95% power to detect our effect.\")); p$text$paragraph_id <- c(0L, 1L, 2L, 3L, 4L, 5L, 6L, 7L, 8L, 9L); p$paper_id <- \"p1\"; p}), 'power'); chunks <- Filter(function(s) grepl('```{r}', s, fixed = TRUE), mo$report); lapply(chunks, function(s) {code <- sub('{r}', '', strsplit(s, '```', fixed = TRUE)[[1]][2], fixed = TRUE); e <- new.env(); eval(parse(text = code)[[1]], e); as.data.frame(e$table)})})"
+        "py": "__import__('tests.mod_power.parity_helpers', fromlist=['_']).report_tables(pc.module_run(__import__('tests.mod_power.parity_helpers', fromlist=['_']).paragraphs(['An a-priori power analysis showed that 50 participants give 80% power.', 'A sensitivity power analysis showed that 50 participants give 80% power for d = 0.4.', 'A compromise power analysis balanced alpha and beta for 50 participants.', 'A post-hoc power analysis showed 45% power.', 'The retrospective power was 30% for the observed effect size.', 'An A Posteriori power analysis gave 20% power.', 'The observed power of the test was 0.25 (small effect).', 'We had 95% power to detect our effect.', 'Power analysis: with 2019 participants we achieve power.', 'We had 95% power to detect our effect.'], [0, 1, 2, 3, 4, 5, 6, 7, 8, 9], 'p1'), 'power'))"
 - "id": "power.one_paragraph.tables"
   "r": "base::identity"
   "py": "tests.mod_power.parity_helpers.identity"
   "args":
     "x":
       "$expr":
-        "r": "local({mo <- module_run(test_paper(c(\"An a priori power analysis for an independent samples t-test, conducted using the pwr.t.test function from pwr (Champely, 2020), indicated that for a Cohen's d = 0.5, an alpha level of 0.05, and a desired power level of 80% required at least 64 participants in each group.\", \"A sensitivity power analysis for an independent samples t-test, conducted using the pwr.t.test function from pwr (Champely, 2020), indicated that with 64 participants in each group, and an alpha level of 0.05, a desired power level of 80% was reached for an effect size of d = 0.5.\")), 'power'); chunks <- Filter(function(s) grepl('```{r}', s, fixed = TRUE), mo$report); lapply(chunks, function(s) {code <- sub('{r}', '', strsplit(s, '```', fixed = TRUE)[[1]][2], fixed = TRUE); e <- new.env(); eval(parse(text = code)[[1]], e); as.data.frame(e$table)})})"
-        "py": "__import__('tests.mod_power.parity_helpers', fromlist=['_']).report_tables(pc.module_run(pc.test_paper([\"An a priori power analysis for an independent samples t-test, conducted using the pwr.t.test function from pwr (Champely, 2020), indicated that for a Cohen's d = 0.5, an alpha level of 0.05, and a desired power level of 80% required at least 64 participants in each group.\", 'A sensitivity power analysis for an independent samples t-test, conducted using the pwr.t.test function from pwr (Champely, 2020), indicated that with 64 participants in each group, and an alpha level of 0.05, a desired power level of 80% was reached for an effect size of d = 0.5.']), 'power'))"
+        "r": "local({mo <- module_run(local({p <- test_paper(c(\"An a priori power analysis for an independent samples t-test, conducted using the pwr.t.test function from pwr (Champely, 2020), indicated that for a Cohen's d = 0.5, an alpha level of 0.05, and a desired power level of 80% required at least 64 participants in each group.\", \"A sensitivity power analysis for an independent samples t-test, conducted using the pwr.t.test function from pwr (Champely, 2020), indicated that with 64 participants in each group, and an alpha level of 0.05, a desired power level of 80% was reached for an effect size of d = 0.5.\")); p$paper_id <- \"p1\"; p}), 'power'); chunks <- Filter(function(s) grepl('```{r}', s, fixed = TRUE), mo$report); lapply(chunks, function(s) {code <- sub('{r}', '', strsplit(s, '```', fixed = TRUE)[[1]][2], fixed = TRUE); e <- new.env(); eval(parse(text = code)[[1]], e); as.data.frame(e$table)})})"
+        "py": "__import__('tests.mod_power.parity_helpers', fromlist=['_']).report_tables(pc.module_run(__import__('tests.mod_power.parity_helpers', fromlist=['_']).tp([\"An a priori power analysis for an independent samples t-test, conducted using the pwr.t.test function from pwr (Champely, 2020), indicated that for a Cohen's d = 0.5, an alpha level of 0.05, and a desired power level of 80% required at least 64 participants in each group.\", 'A sensitivity power analysis for an independent samples t-test, conducted using the pwr.t.test function from pwr (Champely, 2020), indicated that with 64 participants in each group, and an alpha level of 0.05, a desired power level of 80% was reached for an effect size of d = 0.5.'], 'p1'), 'power'))"
 - "id": "power.psychsci.tables"
   "r": "base::identity"
   "py": "tests.mod_power.parity_helpers.identity"
@@ -135,121 +122,99 @@
   "args":
     "x":
       "$expr":
-        "r": "withr::with_options(list(metacheck.llm.use = TRUE, metacheck.llm.cache = FALSE, metacheck.llm_reasoning = NULL, metacheck.llm_max_tokens = NULL, metacheck.llm_max_calls = 30L, metacheck.llm.model = 'groq/test-model'), withr::with_envvar(c(GROQ_API_KEY = 'test-key'), module_run(test_paper(c(\"I love to power pose.\")), 'power')))"
-        "py": "__import__('tests.mod_power.parity_helpers', fromlist=['_']).run_llm(pc.test_paper(['I love to power pose.']))"
+        "r": "withr::with_options(list(metacheck.llm.use = TRUE, metacheck.llm.cache = FALSE, metacheck.llm_reasoning = NULL, metacheck.llm_max_tokens = NULL, metacheck.llm_max_calls = 30L, metacheck.llm.model = 'groq/test-model'), withr::with_envvar(c(GROQ_API_KEY = 'test-key'), module_run(local({p <- test_paper(c(\"I love to power pose.\")); p$paper_id <- \"p1\"; p}), 'power')))"
+        "py": "__import__('tests.mod_power.parity_helpers', fromlist=['_']).run_llm(__import__('tests.mod_power.parity_helpers', fromlist=['_']).tp(['I love to power pose.'], 'p1'))"
   "mock_dir": "tests/mod_power/mocks"
-  "compare":
-    "ignore": *id001
 - "id": "power.llm.complete"
   "r": "base::identity"
   "py": "tests.mod_power.parity_helpers.identity"
   "args":
     "x":
       "$expr":
-        "r": "withr::with_options(list(metacheck.llm.use = TRUE, metacheck.llm.cache = FALSE, metacheck.llm_reasoning = NULL, metacheck.llm_max_tokens = NULL, metacheck.llm_max_calls = 30L, metacheck.llm.model = 'groq/test-model'), withr::with_envvar(c(GROQ_API_KEY = 'test-key'), module_run(test_paper(c(\"An a priori power analysis indicated 64 participants per group, d = 0.5, alpha = .05, power = 80%, using an unpaired t-test, run with pwr.\")), 'power')))"
-        "py": "__import__('tests.mod_power.parity_helpers', fromlist=['_']).run_llm(pc.test_paper(['An a priori power analysis indicated 64 participants per group, d = 0.5, alpha = .05, power = 80%, using an unpaired t-test, run with pwr.']))"
+        "r": "withr::with_options(list(metacheck.llm.use = TRUE, metacheck.llm.cache = FALSE, metacheck.llm_reasoning = NULL, metacheck.llm_max_tokens = NULL, metacheck.llm_max_calls = 30L, metacheck.llm.model = 'groq/test-model'), withr::with_envvar(c(GROQ_API_KEY = 'test-key'), module_run(local({p <- test_paper(c(\"An a priori power analysis indicated 64 participants per group, d = 0.5, alpha = .05, power = 80%, using an unpaired t-test, run with pwr.\")); p$paper_id <- \"p1\"; p}), 'power')))"
+        "py": "__import__('tests.mod_power.parity_helpers', fromlist=['_']).run_llm(__import__('tests.mod_power.parity_helpers', fromlist=['_']).tp(['An a priori power analysis indicated 64 participants per group, d = 0.5, alpha = .05, power = 80%, using an unpaired t-test, run with pwr.'], 'p1'))"
   "mock_dir": "tests/mod_power/mocks"
-  "compare":
-    "ignore": *id001
 - "id": "power.llm.seed"
   "r": "base::identity"
   "py": "tests.mod_power.parity_helpers.identity"
   "args":
     "x":
       "$expr":
-        "r": "withr::with_options(list(metacheck.llm.use = TRUE, metacheck.llm.cache = FALSE, metacheck.llm_reasoning = NULL, metacheck.llm_max_tokens = NULL, metacheck.llm_max_calls = 30L, metacheck.llm.model = 'groq/test-model'), withr::with_envvar(c(GROQ_API_KEY = 'test-key'), module_run(test_paper(c(\"An a priori power analysis indicated 64 participants per group, d = 0.5, alpha = .05, power = 80%, using an unpaired t-test, run with pwr.\")), 'power', seed = 1)))"
-        "py": "__import__('tests.mod_power.parity_helpers', fromlist=['_']).run_llm(pc.test_paper(['An a priori power analysis indicated 64 participants per group, d = 0.5, alpha = .05, power = 80%, using an unpaired t-test, run with pwr.']), seed=1)"
+        "r": "withr::with_options(list(metacheck.llm.use = TRUE, metacheck.llm.cache = FALSE, metacheck.llm_reasoning = NULL, metacheck.llm_max_tokens = NULL, metacheck.llm_max_calls = 30L, metacheck.llm.model = 'groq/test-model'), withr::with_envvar(c(GROQ_API_KEY = 'test-key'), module_run(local({p <- test_paper(c(\"An a priori power analysis indicated 64 participants per group, d = 0.5, alpha = .05, power = 80%, using an unpaired t-test, run with pwr.\")); p$paper_id <- \"p1\"; p}), 'power', seed = 1)))"
+        "py": "__import__('tests.mod_power.parity_helpers', fromlist=['_']).run_llm(__import__('tests.mod_power.parity_helpers', fromlist=['_']).tp(['An a priori power analysis indicated 64 participants per group, d = 0.5, alpha = .05, power = 80%, using an unpaired t-test, run with pwr.'], 'p1'), seed=1)"
   "mock_dir": "tests/mod_power/mocks"
-  "compare":
-    "ignore": *id001
 - "id": "power.llm.two_in_one"
   "r": "base::identity"
   "py": "tests.mod_power.parity_helpers.identity"
   "args":
     "x":
       "$expr":
-        "r": "withr::with_options(list(metacheck.llm.use = TRUE, metacheck.llm.cache = FALSE, metacheck.llm_reasoning = NULL, metacheck.llm_max_tokens = NULL, metacheck.llm_max_calls = 30L, metacheck.llm.model = 'groq/test-model'), withr::with_envvar(c(GROQ_API_KEY = 'test-key'), module_run(test_paper(c(\"An a priori power analysis was conducted to estimate the sample size required to achieve 80% power to detect a Cohen's d of 0.2 using an unpaired t-test at an alpha level of 0.05. This required a total sample size of 300 participants. A second a priori power analysis was conducted to estimate the required sample size for a secondary outcome. To achieve 80% power to detect a Cohen's f of 0.1 using a one-way ANOVA, a sample size of 350 was required. The a priori power analyses were conducted with G*Power.\")), 'power')))"
-        "py": "__import__('tests.mod_power.parity_helpers', fromlist=['_']).run_llm(pc.test_paper([\"An a priori power analysis was conducted to estimate the sample size required to achieve 80% power to detect a Cohen's d of 0.2 using an unpaired t-test at an alpha level of 0.05. This required a total sample size of 300 participants. A second a priori power analysis was conducted to estimate the required sample size for a secondary outcome. To achieve 80% power to detect a Cohen's f of 0.1 using a one-way ANOVA, a sample size of 350 was required. The a priori power analyses were conducted with G*Power.\"]))"
+        "r": "withr::with_options(list(metacheck.llm.use = TRUE, metacheck.llm.cache = FALSE, metacheck.llm_reasoning = NULL, metacheck.llm_max_tokens = NULL, metacheck.llm_max_calls = 30L, metacheck.llm.model = 'groq/test-model'), withr::with_envvar(c(GROQ_API_KEY = 'test-key'), module_run(local({p <- test_paper(c(\"An a priori power analysis was conducted to estimate the sample size required to achieve 80% power to detect a Cohen's d of 0.2 using an unpaired t-test at an alpha level of 0.05. This required a total sample size of 300 participants. A second a priori power analysis was conducted to estimate the required sample size for a secondary outcome. To achieve 80% power to detect a Cohen's f of 0.1 using a one-way ANOVA, a sample size of 350 was required. The a priori power analyses were conducted with G*Power.\")); p$paper_id <- \"p1\"; p}), 'power')))"
+        "py": "__import__('tests.mod_power.parity_helpers', fromlist=['_']).run_llm(__import__('tests.mod_power.parity_helpers', fromlist=['_']).tp([\"An a priori power analysis was conducted to estimate the sample size required to achieve 80% power to detect a Cohen's d of 0.2 using an unpaired t-test at an alpha level of 0.05. This required a total sample size of 300 participants. A second a priori power analysis was conducted to estimate the required sample size for a secondary outcome. To achieve 80% power to detect a Cohen's f of 0.1 using a one-way ANOVA, a sample size of 350 was required. The a priori power analyses were conducted with G*Power.\"], 'p1'))"
   "mock_dir": "tests/mod_power/mocks"
-  "compare":
-    "ignore": *id001
 - "id": "power.llm.empty"
   "r": "base::identity"
   "py": "tests.mod_power.parity_helpers.identity"
   "args":
     "x":
       "$expr":
-        "r": "withr::with_options(list(metacheck.llm.use = TRUE, metacheck.llm.cache = FALSE, metacheck.llm_reasoning = NULL, metacheck.llm_max_tokens = NULL, metacheck.llm_max_calls = 30L, metacheck.llm.model = 'groq/test-model'), withr::with_envvar(c(GROQ_API_KEY = 'test-key'), module_run(test_paper(c(\"Our 12 participants have a lot of power to detect a moth.\")), 'power')))"
-        "py": "__import__('tests.mod_power.parity_helpers', fromlist=['_']).run_llm(pc.test_paper(['Our 12 participants have a lot of power to detect a moth.']))"
+        "r": "withr::with_options(list(metacheck.llm.use = TRUE, metacheck.llm.cache = FALSE, metacheck.llm_reasoning = NULL, metacheck.llm_max_tokens = NULL, metacheck.llm_max_calls = 30L, metacheck.llm.model = 'groq/test-model'), withr::with_envvar(c(GROQ_API_KEY = 'test-key'), module_run(local({p <- test_paper(c(\"Our 12 participants have a lot of power to detect a moth.\")); p$paper_id <- \"p1\"; p}), 'power')))"
+        "py": "__import__('tests.mod_power.parity_helpers', fromlist=['_']).run_llm(__import__('tests.mod_power.parity_helpers', fromlist=['_']).tp(['Our 12 participants have a lot of power to detect a moth.'], 'p1'))"
   "mock_dir": "tests/mod_power/mocks"
-  "compare":
-    "ignore": *id001
 - "id": "power.llm.partial_failure"
   "r": "base::identity"
   "py": "tests.mod_power.parity_helpers.identity"
   "args":
     "x":
       "$expr":
-        "r": "withr::with_options(list(metacheck.llm.use = TRUE, metacheck.llm.cache = FALSE, metacheck.llm_reasoning = NULL, metacheck.llm_max_tokens = NULL, metacheck.llm_max_calls = 30L, metacheck.llm.model = 'groq/test-model'), withr::with_envvar(c(GROQ_API_KEY = 'test-key'), module_run(local({p <- test_paper(c(\"An a priori power analysis indicated 64 participants per group, d = 0.5, alpha = .05, power = 80%, using an unpaired t-test, run with pwr.\", \"A sensitivity power analysis showed 80% power for d = 0.4 with 100 participants, but this paragraph always errors during structured extraction.\")); p$text$paragraph_id <- c(0L, 1L); p}), 'power')))"
-        "py": "__import__('tests.mod_power.parity_helpers', fromlist=['_']).run_llm(__import__('tests.mod_power.parity_helpers', fromlist=['_']).paragraphs(['An a priori power analysis indicated 64 participants per group, d = 0.5, alpha = .05, power = 80%, using an unpaired t-test, run with pwr.', 'A sensitivity power analysis showed 80% power for d = 0.4 with 100 participants, but this paragraph always errors during structured extraction.'], [0, 1]))"
+        "r": "withr::with_options(list(metacheck.llm.use = TRUE, metacheck.llm.cache = FALSE, metacheck.llm_reasoning = NULL, metacheck.llm_max_tokens = NULL, metacheck.llm_max_calls = 30L, metacheck.llm.model = 'groq/test-model'), withr::with_envvar(c(GROQ_API_KEY = 'test-key'), module_run(local({p <- test_paper(c(\"An a priori power analysis indicated 64 participants per group, d = 0.5, alpha = .05, power = 80%, using an unpaired t-test, run with pwr.\", \"A sensitivity power analysis showed 80% power for d = 0.4 with 100 participants, but this paragraph always errors during structured extraction.\")); p$text$paragraph_id <- c(0L, 1L); p$paper_id <- \"p1\"; p}), 'power')))"
+        "py": "__import__('tests.mod_power.parity_helpers', fromlist=['_']).run_llm(__import__('tests.mod_power.parity_helpers', fromlist=['_']).paragraphs(['An a priori power analysis indicated 64 participants per group, d = 0.5, alpha = .05, power = 80%, using an unpaired t-test, run with pwr.', 'A sensitivity power analysis showed 80% power for d = 0.4 with 100 participants, but this paragraph always errors during structured extraction.'], [0, 1], 'p1'))"
   "mock_dir": "tests/mod_power/mocks"
-  "compare":
-    "ignore": *id001
 - "id": "power.llm.incomplete"
   "r": "base::identity"
   "py": "tests.mod_power.parity_helpers.identity"
   "args":
     "x":
       "$expr":
-        "r": "withr::with_options(list(metacheck.llm.use = TRUE, metacheck.llm.cache = FALSE, metacheck.llm_reasoning = NULL, metacheck.llm_max_tokens = NULL, metacheck.llm_max_calls = 30L, metacheck.llm.model = 'groq/test-model'), withr::with_envvar(c(GROQ_API_KEY = 'test-key'), module_run(test_paper(c(\"An a priori power analysis for an independent samples t-test, conducted using the pwr.t.test function from pwr (Champely, 2020), indicated that for a Cohen's d = 0.5, and a desired power level of 80% required at least 64 participants in each group.\", \"A sensitivity power analysis for a paired samples t-test, conducted using G-Power, indicated that with 64 participants, an adequate power was reached for an effect size of d = 0.5.\")), 'power')))"
-        "py": "__import__('tests.mod_power.parity_helpers', fromlist=['_']).run_llm(pc.test_paper([\"An a priori power analysis for an independent samples t-test, conducted using the pwr.t.test function from pwr (Champely, 2020), indicated that for a Cohen's d = 0.5, and a desired power level of 80% required at least 64 participants in each group.\", 'A sensitivity power analysis for a paired samples t-test, conducted using G-Power, indicated that with 64 participants, an adequate power was reached for an effect size of d = 0.5.']))"
+        "r": "withr::with_options(list(metacheck.llm.use = TRUE, metacheck.llm.cache = FALSE, metacheck.llm_reasoning = NULL, metacheck.llm_max_tokens = NULL, metacheck.llm_max_calls = 30L, metacheck.llm.model = 'groq/test-model'), withr::with_envvar(c(GROQ_API_KEY = 'test-key'), module_run(local({p <- test_paper(c(\"An a priori power analysis for an independent samples t-test, conducted using the pwr.t.test function from pwr (Champely, 2020), indicated that for a Cohen's d = 0.5, and a desired power level of 80% required at least 64 participants in each group.\", \"A sensitivity power analysis for a paired samples t-test, conducted using G-Power, indicated that with 64 participants, an adequate power was reached for an effect size of d = 0.5.\")); p$paper_id <- \"p1\"; p}), 'power')))"
+        "py": "__import__('tests.mod_power.parity_helpers', fromlist=['_']).run_llm(__import__('tests.mod_power.parity_helpers', fromlist=['_']).tp([\"An a priori power analysis for an independent samples t-test, conducted using the pwr.t.test function from pwr (Champely, 2020), indicated that for a Cohen's d = 0.5, and a desired power level of 80% required at least 64 participants in each group.\", 'A sensitivity power analysis for a paired samples t-test, conducted using G-Power, indicated that with 64 participants, an adequate power was reached for an effect size of d = 0.5.'], 'p1'))"
   "mock_dir": "tests/mod_power/mocks"
-  "compare":
-    "ignore": *id001
 - "id": "power.llm.paperlist"
   "r": "base::identity"
   "py": "tests.mod_power.parity_helpers.identity"
   "args":
     "x":
       "$expr":
-        "r": "withr::with_options(list(metacheck.llm.use = TRUE, metacheck.llm.cache = FALSE, metacheck.llm_reasoning = NULL, metacheck.llm_max_tokens = NULL, metacheck.llm_max_calls = 30L, metacheck.llm.model = 'groq/test-model'), withr::with_envvar(c(GROQ_API_KEY = 'test-key'), module_run(paperlist(test_paper(\"An a priori power analysis for an independent samples t-test, conducted using the pwr.t.test function from pwr (Champely, 2020), indicated that for a Cohen's d = 0.5, and a desired power level of 80% required at least 64 participants in each group.\"), test_paper(\"A sensitivity power analysis for a paired samples t-test, conducted using G-Power, indicated that with 64 participants, an adequate power was reached for an effect size of d = 0.5.\")), 'power')))"
+        "r": "withr::with_options(list(metacheck.llm.use = TRUE, metacheck.llm.cache = FALSE, metacheck.llm_reasoning = NULL, metacheck.llm_max_tokens = NULL, metacheck.llm_max_calls = 30L, metacheck.llm.model = 'groq/test-model'), withr::with_envvar(c(GROQ_API_KEY = 'test-key'), module_run(paperlist(local({p <- test_paper(c(\"An a priori power analysis for an independent samples t-test, conducted using the pwr.t.test function from pwr (Champely, 2020), indicated that for a Cohen's d = 0.5, and a desired power level of 80% required at least 64 participants in each group.\")); p$paper_id <- \"p1\"; p}), local({p <- test_paper(c(\"A sensitivity power analysis for a paired samples t-test, conducted using G-Power, indicated that with 64 participants, an adequate power was reached for an effect size of d = 0.5.\")); p$paper_id <- \"p2\"; p})), 'power')))"
         "py": "__import__('tests.mod_power.parity_helpers', fromlist=['_']).run_llm(__import__('tests.mod_power.parity_helpers', fromlist=['_']).papers(*[\"An a priori power analysis for an independent samples t-test, conducted using the pwr.t.test function from pwr (Champely, 2020), indicated that for a Cohen's d = 0.5, and a desired power level of 80% required at least 64 participants in each group.\", 'A sensitivity power analysis for a paired samples t-test, conducted using G-Power, indicated that with 64 participants, an adequate power was reached for an effect size of d = 0.5.']))"
   "mock_dir": "tests/mod_power/mocks"
-  "compare":
-    "ignore": *id001
 - "id": "power.llm.posthoc"
   "r": "base::identity"
   "py": "tests.mod_power.parity_helpers.identity"
   "args":
     "x":
       "$expr":
-        "r": "withr::with_options(list(metacheck.llm.use = TRUE, metacheck.llm.cache = FALSE, metacheck.llm_reasoning = NULL, metacheck.llm_max_tokens = NULL, metacheck.llm_max_calls = 30L, metacheck.llm.model = 'groq/test-model'), withr::with_envvar(c(GROQ_API_KEY = 'test-key'), module_run(test_paper(c(\"A post hoc power analysis showed that the observed power was 0.35 for the observed effect of d = 0.2 with 40 participants.\")), 'power')))"
-        "py": "__import__('tests.mod_power.parity_helpers', fromlist=['_']).run_llm(pc.test_paper(['A post hoc power analysis showed that the observed power was 0.35 for the observed effect of d = 0.2 with 40 participants.']))"
+        "r": "withr::with_options(list(metacheck.llm.use = TRUE, metacheck.llm.cache = FALSE, metacheck.llm_reasoning = NULL, metacheck.llm_max_tokens = NULL, metacheck.llm_max_calls = 30L, metacheck.llm.model = 'groq/test-model'), withr::with_envvar(c(GROQ_API_KEY = 'test-key'), module_run(local({p <- test_paper(c(\"A post hoc power analysis showed that the observed power was 0.35 for the observed effect of d = 0.2 with 40 participants.\")); p$paper_id <- \"p1\"; p}), 'power')))"
+        "py": "__import__('tests.mod_power.parity_helpers', fromlist=['_']).run_llm(__import__('tests.mod_power.parity_helpers', fromlist=['_']).tp(['A post hoc power analysis showed that the observed power was 0.35 for the observed effect of d = 0.2 with 40 participants.'], 'p1'))"
   "mock_dir": "tests/mod_power/mocks"
-  "compare":
-    "ignore": *id001
 - "id": "power.llm.omitted_key"
   "r": "base::identity"
   "py": "tests.mod_power.parity_helpers.identity"
   "args":
     "x":
       "$expr":
-        "r": "withr::with_options(list(metacheck.llm.use = TRUE, metacheck.llm.cache = FALSE, metacheck.llm_reasoning = NULL, metacheck.llm_max_tokens = NULL, metacheck.llm_max_calls = 30L, metacheck.llm.model = 'groq/test-model'), withr::with_envvar(c(GROQ_API_KEY = 'test-key'), module_run(test_paper(c(\"An a priori power analysis determined a sample size of 30 for 80% power with a medium effect size, using an unpaired t-test, run with pwr.\")), 'power')))"
-        "py": "__import__('tests.mod_power.parity_helpers', fromlist=['_']).run_llm(pc.test_paper(['An a priori power analysis determined a sample size of 30 for 80% power with a medium effect size, using an unpaired t-test, run with pwr.']))"
+        "r": "withr::with_options(list(metacheck.llm.use = TRUE, metacheck.llm.cache = FALSE, metacheck.llm_reasoning = NULL, metacheck.llm_max_tokens = NULL, metacheck.llm_max_calls = 30L, metacheck.llm.model = 'groq/test-model'), withr::with_envvar(c(GROQ_API_KEY = 'test-key'), module_run(local({p <- test_paper(c(\"An a priori power analysis determined a sample size of 30 for 80% power with a medium effect size, using an unpaired t-test, run with pwr.\")); p$paper_id <- \"p1\"; p}), 'power')))"
+        "py": "__import__('tests.mod_power.parity_helpers', fromlist=['_']).run_llm(__import__('tests.mod_power.parity_helpers', fromlist=['_']).tp(['An a priori power analysis determined a sample size of 30 for 80% power with a medium effect size, using an unpaired t-test, run with pwr.'], 'p1'))"
   "mock_dir": "tests/mod_power/mocks"
-  "compare":
-    "ignore": *id001
 - "id": "power.llm.other"
   "r": "base::identity"
   "py": "tests.mod_power.parity_helpers.identity"
   "args":
     "x":
       "$expr":
-        "r": "withr::with_options(list(metacheck.llm.use = TRUE, metacheck.llm.cache = FALSE, metacheck.llm_reasoning = NULL, metacheck.llm_max_tokens = NULL, metacheck.llm_max_calls = 30L, metacheck.llm.model = 'groq/test-model'), withr::with_envvar(c(GROQ_API_KEY = 'test-key'), module_run(test_paper(c(\"A simulation-based power analysis (1000 runs) for a linear mixed model showed 90% power to detect a 20 ms difference with 60 participants at an alpha of .005.\")), 'power')))"
-        "py": "__import__('tests.mod_power.parity_helpers', fromlist=['_']).run_llm(pc.test_paper(['A simulation-based power analysis (1000 runs) for a linear mixed model showed 90% power to detect a 20 ms difference with 60 participants at an alpha of .005.']))"
+        "r": "withr::with_options(list(metacheck.llm.use = TRUE, metacheck.llm.cache = FALSE, metacheck.llm_reasoning = NULL, metacheck.llm_max_tokens = NULL, metacheck.llm_max_calls = 30L, metacheck.llm.model = 'groq/test-model'), withr::with_envvar(c(GROQ_API_KEY = 'test-key'), module_run(local({p <- test_paper(c(\"A simulation-based power analysis (1000 runs) for a linear mixed model showed 90% power to detect a 20 ms difference with 60 participants at an alpha of .005.\")); p$paper_id <- \"p1\"; p}), 'power')))"
+        "py": "__import__('tests.mod_power.parity_helpers', fromlist=['_']).run_llm(__import__('tests.mod_power.parity_helpers', fromlist=['_']).tp(['A simulation-based power analysis (1000 runs) for a linear mixed model showed 90% power to detect a 20 ms difference with 60 participants at an alpha of .005.'], 'p1'))"
   "mock_dir": "tests/mod_power/mocks"
-  "compare":
-    "ignore": *id001
 - "id": "power.llm.demo"
   "r": "base::identity"
   "py": "tests.mod_power.parity_helpers.identity"
@@ -265,19 +230,17 @@
   "args":
     "x":
       "$expr":
-        "r": "withr::with_options(list(metacheck.llm.use = TRUE, metacheck.llm.cache = FALSE, metacheck.llm_reasoning = NULL, metacheck.llm_max_tokens = NULL, metacheck.llm_max_calls = 30L, metacheck.llm.model = 'groq/test-model'), withr::with_envvar(c(GROQ_API_KEY = 'test-key'), module_run(paperlist(test_paper(\"Our 12 participants have a lot of power to detect a moth.\"), test_paper(\"An a priori power analysis indicated 64 participants per group, d = 0.5, alpha = .05, power = 80%, using an unpaired t-test, run with pwr.\"), test_paper(\"A post hoc power analysis showed that the observed power was 0.35 for the observed effect of d = 0.2 with 40 participants.\"), test_paper(\"I love to power pose.\")), 'power')))"
+        "r": "withr::with_options(list(metacheck.llm.use = TRUE, metacheck.llm.cache = FALSE, metacheck.llm_reasoning = NULL, metacheck.llm_max_tokens = NULL, metacheck.llm_max_calls = 30L, metacheck.llm.model = 'groq/test-model'), withr::with_envvar(c(GROQ_API_KEY = 'test-key'), module_run(paperlist(local({p <- test_paper(c(\"Our 12 participants have a lot of power to detect a moth.\")); p$paper_id <- \"p1\"; p}), local({p <- test_paper(c(\"An a priori power analysis indicated 64 participants per group, d = 0.5, alpha = .05, power = 80%, using an unpaired t-test, run with pwr.\")); p$paper_id <- \"p2\"; p}), local({p <- test_paper(c(\"A post hoc power analysis showed that the observed power was 0.35 for the observed effect of d = 0.2 with 40 participants.\")); p$paper_id <- \"p3\"; p}), local({p <- test_paper(c(\"I love to power pose.\")); p$paper_id <- \"p4\"; p})), 'power')))"
         "py": "__import__('tests.mod_power.parity_helpers', fromlist=['_']).run_llm(__import__('tests.mod_power.parity_helpers', fromlist=['_']).papers(*['Our 12 participants have a lot of power to detect a moth.', 'An a priori power analysis indicated 64 participants per group, d = 0.5, alpha = .05, power = 80%, using an unpaired t-test, run with pwr.', 'A post hoc power analysis showed that the observed power was 0.35 for the observed effect of d = 0.2 with 40 participants.', 'I love to power pose.']))"
   "mock_dir": "tests/mod_power/mocks"
-  "compare":
-    "ignore": *id001
 - "id": "power.llm.two_in_one.tables"
   "r": "base::identity"
   "py": "tests.mod_power.parity_helpers.identity"
   "args":
     "x":
       "$expr":
-        "r": "local({mo <- withr::with_options(list(metacheck.llm.use = TRUE, metacheck.llm.cache = FALSE, metacheck.llm_reasoning = NULL, metacheck.llm_max_tokens = NULL, metacheck.llm_max_calls = 30L, metacheck.llm.model = 'groq/test-model'), withr::with_envvar(c(GROQ_API_KEY = 'test-key'), module_run(test_paper(c(\"An a priori power analysis was conducted to estimate the sample size required to achieve 80% power to detect a Cohen's d of 0.2 using an unpaired t-test at an alpha level of 0.05. This required a total sample size of 300 participants. A second a priori power analysis was conducted to estimate the required sample size for a secondary outcome. To achieve 80% power to detect a Cohen's f of 0.1 using a one-way ANOVA, a sample size of 350 was required. The a priori power analyses were conducted with G*Power.\")), 'power'))); chunks <- Filter(function(s) grepl('```{r}', s, fixed = TRUE), mo$report); lapply(chunks, function(s) {code <- sub('{r}', '', strsplit(s, '```', fixed = TRUE)[[1]][2], fixed = TRUE); e <- new.env(); eval(parse(text = code)[[1]], e); as.data.frame(e$table)})})"
-        "py": "__import__('tests.mod_power.parity_helpers', fromlist=['_']).run_llm_tables(pc.test_paper([\"An a priori power analysis was conducted to estimate the sample size required to achieve 80% power to detect a Cohen's d of 0.2 using an unpaired t-test at an alpha level of 0.05. This required a total sample size of 300 participants. A second a priori power analysis was conducted to estimate the required sample size for a secondary outcome. To achieve 80% power to detect a Cohen's f of 0.1 using a one-way ANOVA, a sample size of 350 was required. The a priori power analyses were conducted with G*Power.\"]))"
+        "r": "local({mo <- withr::with_options(list(metacheck.llm.use = TRUE, metacheck.llm.cache = FALSE, metacheck.llm_reasoning = NULL, metacheck.llm_max_tokens = NULL, metacheck.llm_max_calls = 30L, metacheck.llm.model = 'groq/test-model'), withr::with_envvar(c(GROQ_API_KEY = 'test-key'), module_run(local({p <- test_paper(c(\"An a priori power analysis was conducted to estimate the sample size required to achieve 80% power to detect a Cohen's d of 0.2 using an unpaired t-test at an alpha level of 0.05. This required a total sample size of 300 participants. A second a priori power analysis was conducted to estimate the required sample size for a secondary outcome. To achieve 80% power to detect a Cohen's f of 0.1 using a one-way ANOVA, a sample size of 350 was required. The a priori power analyses were conducted with G*Power.\")); p$paper_id <- \"p1\"; p}), 'power'))); chunks <- Filter(function(s) grepl('```{r}', s, fixed = TRUE), mo$report); lapply(chunks, function(s) {code <- sub('{r}', '', strsplit(s, '```', fixed = TRUE)[[1]][2], fixed = TRUE); e <- new.env(); eval(parse(text = code)[[1]], e); as.data.frame(e$table)})})"
+        "py": "__import__('tests.mod_power.parity_helpers', fromlist=['_']).run_llm_tables(__import__('tests.mod_power.parity_helpers', fromlist=['_']).tp([\"An a priori power analysis was conducted to estimate the sample size required to achieve 80% power to detect a Cohen's d of 0.2 using an unpaired t-test at an alpha level of 0.05. This required a total sample size of 300 participants. A second a priori power analysis was conducted to estimate the required sample size for a secondary outcome. To achieve 80% power to detect a Cohen's f of 0.1 using a one-way ANOVA, a sample size of 350 was required. The a priori power analyses were conducted with G*Power.\"], 'p1'))"
   "mock_dir": "tests/mod_power/mocks"
 - "id": "power.llm.demo.tables"
   "r": "base::identity"
@@ -294,8 +257,8 @@
   "args":
     "x":
       "$expr":
-        "r": "local({mo <- withr::with_options(list(metacheck.llm.use = TRUE, metacheck.llm.cache = FALSE, metacheck.llm_reasoning = NULL, metacheck.llm_max_tokens = NULL, metacheck.llm_max_calls = 30L, metacheck.llm.model = 'groq/test-model'), withr::with_envvar(c(GROQ_API_KEY = 'test-key'), module_run(test_paper(c(\"An a priori power analysis indicated 64 participants per group, d = 0.5, alpha = .05, power = 80%, using an unpaired t-test, run with pwr.\")), 'power'))); chunks <- Filter(function(s) grepl('```{r}', s, fixed = TRUE), mo$report); lapply(chunks, function(s) {code <- sub('{r}', '', strsplit(s, '```', fixed = TRUE)[[1]][2], fixed = TRUE); e <- new.env(); eval(parse(text = code)[[1]], e); as.data.frame(e$table)})})"
-        "py": "__import__('tests.mod_power.parity_helpers', fromlist=['_']).run_llm_tables(pc.test_paper(['An a priori power analysis indicated 64 participants per group, d = 0.5, alpha = .05, power = 80%, using an unpaired t-test, run with pwr.']))"
+        "r": "local({mo <- withr::with_options(list(metacheck.llm.use = TRUE, metacheck.llm.cache = FALSE, metacheck.llm_reasoning = NULL, metacheck.llm_max_tokens = NULL, metacheck.llm_max_calls = 30L, metacheck.llm.model = 'groq/test-model'), withr::with_envvar(c(GROQ_API_KEY = 'test-key'), module_run(local({p <- test_paper(c(\"An a priori power analysis indicated 64 participants per group, d = 0.5, alpha = .05, power = 80%, using an unpaired t-test, run with pwr.\")); p$paper_id <- \"p1\"; p}), 'power'))); chunks <- Filter(function(s) grepl('```{r}', s, fixed = TRUE), mo$report); lapply(chunks, function(s) {code <- sub('{r}', '', strsplit(s, '```', fixed = TRUE)[[1]][2], fixed = TRUE); e <- new.env(); eval(parse(text = code)[[1]], e); as.data.frame(e$table)})})"
+        "py": "__import__('tests.mod_power.parity_helpers', fromlist=['_']).run_llm_tables(__import__('tests.mod_power.parity_helpers', fromlist=['_']).tp(['An a priori power analysis indicated 64 participants per group, d = 0.5, alpha = .05, power = 80%, using an unpaired t-test, run with pwr.'], 'p1'))"
   "mock_dir": "tests/mod_power/mocks"
 - "id": "power.llm.paperlist.tables"
   "r": "base::identity"
@@ -303,6 +266,6 @@
   "args":
     "x":
       "$expr":
-        "r": "local({mo <- withr::with_options(list(metacheck.llm.use = TRUE, metacheck.llm.cache = FALSE, metacheck.llm_reasoning = NULL, metacheck.llm_max_tokens = NULL, metacheck.llm_max_calls = 30L, metacheck.llm.model = 'groq/test-model'), withr::with_envvar(c(GROQ_API_KEY = 'test-key'), module_run(paperlist(test_paper(\"An a priori power analysis for an independent samples t-test, conducted using the pwr.t.test function from pwr (Champely, 2020), indicated that for a Cohen's d = 0.5, and a desired power level of 80% required at least 64 participants in each group.\"), test_paper(\"A sensitivity power analysis for a paired samples t-test, conducted using G-Power, indicated that with 64 participants, an adequate power was reached for an effect size of d = 0.5.\")), 'power'))); chunks <- Filter(function(s) grepl('```{r}', s, fixed = TRUE), mo$report); lapply(chunks, function(s) {code <- sub('{r}', '', strsplit(s, '```', fixed = TRUE)[[1]][2], fixed = TRUE); e <- new.env(); eval(parse(text = code)[[1]], e); as.data.frame(e$table)})})"
+        "r": "local({mo <- withr::with_options(list(metacheck.llm.use = TRUE, metacheck.llm.cache = FALSE, metacheck.llm_reasoning = NULL, metacheck.llm_max_tokens = NULL, metacheck.llm_max_calls = 30L, metacheck.llm.model = 'groq/test-model'), withr::with_envvar(c(GROQ_API_KEY = 'test-key'), module_run(paperlist(local({p <- test_paper(c(\"An a priori power analysis for an independent samples t-test, conducted using the pwr.t.test function from pwr (Champely, 2020), indicated that for a Cohen's d = 0.5, and a desired power level of 80% required at least 64 participants in each group.\")); p$paper_id <- \"p1\"; p}), local({p <- test_paper(c(\"A sensitivity power analysis for a paired samples t-test, conducted using G-Power, indicated that with 64 participants, an adequate power was reached for an effect size of d = 0.5.\")); p$paper_id <- \"p2\"; p})), 'power'))); chunks <- Filter(function(s) grepl('```{r}', s, fixed = TRUE), mo$report); lapply(chunks, function(s) {code <- sub('{r}', '', strsplit(s, '```', fixed = TRUE)[[1]][2], fixed = TRUE); e <- new.env(); eval(parse(text = code)[[1]], e); as.data.frame(e$table)})})"
         "py": "__import__('tests.mod_power.parity_helpers', fromlist=['_']).run_llm_tables(__import__('tests.mod_power.parity_helpers', fromlist=['_']).papers(*[\"An a priori power analysis for an independent samples t-test, conducted using the pwr.t.test function from pwr (Champely, 2020), indicated that for a Cohen's d = 0.5, and a desired power level of 80% required at least 64 participants in each group.\", 'A sensitivity power analysis for a paired samples t-test, conducted using G-Power, indicated that with 64 participants, an adequate power was reached for an effect size of d = 0.5.']))"
   "mock_dir": "tests/mod_power/mocks"

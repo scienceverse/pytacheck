@@ -8,7 +8,7 @@ import pandas as pd
 
 from pytacheck._r import grepl, gsub, plural
 from pytacheck.module import module
-from pytacheck.modules._power import LLM_COLS
+from pytacheck.modules._power import LLM_COLS, _col_isna
 from pytacheck.report import collapse_section, scroll_table
 from pytacheck.text import text_search
 
@@ -128,12 +128,6 @@ def _classify(texts: list[Any]) -> list[str]:
     return [label if label is not None else "unknown" for label in out]
 
 
-def _isna_cells(s: pd.Series) -> list[bool]:
-    from pytacheck.modules._power import _col_isna
-
-    return _col_isna(s)
-
-
 def _r_sum_logical(values: list[Any]) -> Any:
     """R ``sum()`` of a logical vector: an integer, ``NA`` when any value is ``NA``."""
     total = 0
@@ -152,7 +146,7 @@ def _summary_table(table: pd.DataFrame) -> pd.DataFrame:
         key = None if pid is None or pid is pd.NA else pid
         groups.setdefault(key, []).append(i)
     complete = table["complete"].tolist()
-    na_flags = {c: _isna_cells(table[c]) for c in count_cols}
+    na_flags = {c: _col_isna(table[c]) for c in count_cols}
     data: dict[str, pd.Series] = {
         "paper_id": pd.Series(list(groups), dtype="string"),
         "power_n": pd.Series([len(rows) for rows in groups.values()], dtype="Int64"),
@@ -236,7 +230,7 @@ def power(paper: Any, seed: Any = 8675309) -> dict[str, Any]:
 
         # check for NAs in LLM columns
         na_cols = [c for c in llm_cols if c in table.columns]
-        cols_with_na = [c for c in na_cols if any(_isna_cells(table[c]))]
+        cols_with_na = [c for c in na_cols if any(_col_isna(table[c]))]
         if len(table) == 0:
             pass  # handled below
         elif not cols_with_na:
@@ -267,6 +261,10 @@ def power(paper: Any, seed: Any = 8675309) -> dict[str, Any]:
         summary_text = _LLM_FAILED_TEXT if llm_failed else "No power analyses were detected."
         report = [summary_text, collapse_section(_GUIDANCE)]
         ids = paper_id(paper)
+        if len(ids) == 0:
+            # R: `summary_table$power_n <- 0` on the 0-row data.frame(paper_id = NULL)
+            # of an empty paper list errors (an upstream bug, reproduced)
+            raise ValueError("replacement has 1 row, data has 0")
         summary_table = pd.DataFrame(
             {
                 "paper_id": pd.Series(ids, dtype="string"),

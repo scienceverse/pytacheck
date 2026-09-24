@@ -1,0 +1,129 @@
+{
+  "id": ".mendeley_info.mock.full",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 1,
+    "names": [
+      "mendeley_id",
+      "title",
+      "doi",
+      "description",
+      "publication_date",
+      "updated_date",
+      "authors",
+      "license",
+      "files"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "vjtxybrc28"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Survey of research data practices"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "10.17632/vjtxybrc28.1"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Responses to a survey."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "2020-01-01T00:00:00.000Z"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "2020-02-02T00:00:00.000Z"
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Ann Lee",
+              "Solo",
+              null
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Creative Commons Attribution 4.0"
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "list",
+                "names": [
+                  "filename",
+                  "size",
+                  "content_details"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "survey.csv"
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      10
+                    ]
+                  },
+                  {
+                    "t": "list",
+                    "names": [
+                      "download_url"
+                    ],
+                    "v": [
+                      {
+                        "t": "chr",
+                        "v": [
+                          "https://data.mendeley.com/x/survey.csv"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

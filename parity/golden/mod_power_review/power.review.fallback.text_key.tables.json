@@ -1,0 +1,118 @@
+{
+  "id": "power.review.fallback.text_key.tables",
+  "ok": true,
+  "error": null,
+  "warnings": [
+    "Note (not fatal): 1 of 1 LLM extraction failed and was left blank; the other 0 succeeded and all checks continued.\nRow 1: reason\n  HTTP 400 Bad Request.\nℹ Failed to validate JSON. Please adjust your prompt. See 'failed_generation'\n  for more details.\n  Provider says: Failed to validate JSON. Please adjust your prompt. See 'failed_generation' for more details."
+  ],
+  "value": {
+    "t": "list",
+    "names": null,
+    "v": [
+      {
+        "t": "df",
+        "nrow": 2,
+        "names": [
+          "power_id",
+          "power_type",
+          "statistical_test",
+          "sample_size",
+          "alpha_level",
+          "power",
+          "effect_size",
+          "effect_size_metric",
+          "software"
+        ],
+        "v": [
+          {
+            "t": "int",
+            "v": [
+              1,
+              2
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "apriori",
+              "sensitivity"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "correlation",
+              "correlation"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              60,
+              60
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              0.05
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0.8,
+              0.9
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0.6,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "other",
+              null
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              null,
+              null
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "power_id",
+          "text"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "1;2"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Two <strong>power<\/strong> analyses were run: an <strong>a priori<\/strong> analysis (n = 60, 80% <strong>power<\/strong>, r = 0.6) and a <strong>sensitivity<\/strong> analysis (n = 60, alpha = .05, 90% <strong>power<\/strong>) for our correlation."
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

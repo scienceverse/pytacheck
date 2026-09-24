@@ -224,8 +224,12 @@ def output_of(spec: Any) -> Any:
     if spec is None:
         return None
     if isinstance(spec, list):
-        return [{"file": s.get("source_file"), "long": long_of(s)} for s in spec]
-    out = long_of(spec)
+        return [{"file": s.get("source_file"), "long": _dropped(long_of(s), s)} for s in spec]
+    return _dropped(long_of(spec), spec)
+
+
+def _dropped(out: pd.DataFrame, spec: Mapping[str, Any]) -> pd.DataFrame:
+    """Remove the spec's ``drop`` columns (R: ``x[setdiff(names(x), drop)]``)."""
     if spec.get("drop"):
         out = out.drop(columns=spec["drop"])
     return out

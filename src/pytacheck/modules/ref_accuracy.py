@@ -46,6 +46,9 @@ _CHARTR = str.maketrans(
 # ("İ" -> "i") and no final-sigma rule ("Σ" -> "σ" everywhere)
 _LOWER_FIX = str.maketrans({"İ": "i", "Σ": "σ"})
 
+# C isspace(): what R's as.numeric() skips around a number
+_ISSPACE = " \t\n\v\f\r"
+
 _STOPWORDS = frozenset(["of", "and", "the", "for", "in", "on", "a", "an", "de", ""])
 
 _NO_REFS = "We found no references"
@@ -97,24 +100,29 @@ def _tolower(x: str | None) -> str | None:
 
 
 def _as_numeric(x: Any) -> float | None:
-    """R ``as.numeric()`` of one value (``None`` for NA)."""
+    """R ``as.numeric()`` of one value (``None`` for NA or NaN).
+
+    Strings follow R's ``String2Real()``: C ``isspace`` padding only, ASCII
+    digits only (Python's ``float()`` would also take full-width or Arabic-Indic
+    digits and Unicode spaces, R gives NA), and C99 hexadecimal numbers
+    including binary exponents (``"0x1.f8p10"`` is 2016).
+    """
     if _na(x):
         return None
     if isinstance(x, numbers.Real):
         value = float(x)
         return None if math.isnan(value) else value
-    s = str(x).strip(" \t\n\r")
-    if not s or "_" in s:
+    s = str(x).strip(_ISSPACE)
+    if not s or not s.isascii() or "_" in s:
         return None
+    body = s[1:] if s[0] in "+-" else s
     try:
-        value = float(s)
+        if body[:2] in ("0x", "0X") and len(body) > 2:
+            value = float.fromhex(body)
+            value = -value if s[0] == "-" else value
+        else:
+            value = float(s)
     except ValueError:
-        sign, digits = (-1, s[1:]) if s[:1] == "-" else (1, s.lstrip("+"))
-        if digits[:2].lower() == "0x":
-            try:
-                return float(sign * int(digits[2:], 16))
-            except ValueError:
-                return None
         return None
     return None if math.isnan(value) else value
 
@@ -160,14 +168,17 @@ def _clean(values: Sequence[str | None]) -> list[str | None]:
     """The module's ``clean()``: lower case, no tags/diacritics/dashes, uniform quotes."""
     from pytacheck._r.regex import gsub
 
-    x = [_tolower(v) for v in values]
+    uniq = list(dict.fromkeys(v for v in values if v is not None))  # clean each value once
+    x = [_tolower(v) for v in uniq]
     x = gsub("</?[a-z]+>", "", x)
     x = [_deaccent(v) for v in x]
     x = gsub(r"\p{Pd}", "", x, perl=True)  # remove dashes
     x = gsub(r"\s+", " ", x)
     x = gsub("[\u2018\u2019\u201a\u201b\u0060]", "'", x)  # single quotes
     x = gsub('["\u201c\u201d\u201e\u201f]', "'", x)  # double quotes become single
-    return list(gsub(r"\.\s*$", "", x))  # remove . at end
+    x = gsub(r"\.\s*$", "", x)  # remove . at end
+    cleaned = dict(zip(uniq, x, strict=True))
+    return [None if v is None else cleaned[v] for v in values]
 
 
 def _journal_tokens(values: Sequence[str | None]) -> list[list[str]]:
@@ -175,11 +186,16 @@ def _journal_tokens(values: Sequence[str | None]) -> list[list[str]]:
     from pytacheck._r.base import trimws
     from pytacheck._r.regex import gsub, strsplit
 
-    x = _clean(values)
+    uniq = list(dict.fromkeys(values))  # journal names repeat: tokenise each once
+    x = _clean(uniq)
     x = gsub("&amp;|&", " and ", x)
     x = gsub("[^a-z ]", " ", x)
     x = trimws(gsub(r"\s+", " ", x))
-    return [[t for t in toks if t not in _STOPWORDS] for toks in strsplit(x, " ")]
+    toks = {
+        v: [t for t in parts if t not in _STOPWORDS]
+        for v, parts in zip(uniq, strsplit(x, " "), strict=True)
+    }
+    return [toks[v] for v in values]
 
 
 def _journal_coherent(ta: list[str], tb: list[str]) -> bool:
@@ -202,13 +218,16 @@ def _journal_coherent(ta: list[str], tb: list[str]) -> bool:
     return True
 
 
-def _norm_title(values: Sequence[str | None]) -> list[str | None]:
+def _norm_title(cleaned: Sequence[str | None]) -> list[str | None]:
+    """``norm_title()`` of values already passed through :func:`_clean`."""
     from pytacheck._r.regex import gsub
 
-    x = _clean(values)  # lowercases, folds diacritics
-    x = gsub("<sup>.*?</sup>", "", x)  # footnote superscripts
+    uniq = list(dict.fromkeys(v for v in cleaned if v is not None))  # each value once
+    x = gsub("<sup>.*?</sup>", "", uniq)  # footnote superscripts
     x = gsub("</?[a-z]+>", "", x)  # any other tags
-    return list(gsub("[^a-z0-9]", "", x))  # keep only alphanumerics
+    x = gsub("[^a-z0-9]", "", x)  # keep only alphanumerics
+    normed = dict(zip(uniq, x, strict=True))
+    return [None if v is None else normed[v] for v in cleaned]
 
 
 def _is_frame_like(a: Any) -> bool:
@@ -272,8 +291,48 @@ def _head(x: list[Any], n: Any) -> list[Any]:
     return x[:n] if n >= 0 else x[: max(len(x) + n, 0)]
 
 
+def _key_kind(s: pd.Series) -> str:
+    """The vctrs type class of a join key: ``chr``, ``num``, ``lgl`` or ``unspecified``.
+
+    vctrs checks types even for zero-row or all-NA keys (a character column of
+    NAs still refuses an integer key), but R's logical ``NA`` joins anything, so
+    only untyped missing values (an object column without values, an all-NaN
+    numpy float column, an all-NA logical column) are "unspecified".
+    """
+    dt = s.dtype
+    if pd.api.types.is_object_dtype(dt):
+        kinds = {
+            "lgl"
+            if isinstance(v, bool | np.bool_)
+            else "num"
+            if isinstance(v, numbers.Number)
+            else "chr"
+            for v in s.dropna().tolist()
+        }
+        if not kinds:
+            return "unspecified"
+        return "chr" if "chr" in kinds else "num" if "num" in kinds else "lgl"
+    if (
+        len(s)
+        and not s.notna().any()
+        and (pd.api.types.is_bool_dtype(dt) or (isinstance(dt, np.dtype) and dt.kind == "f"))
+    ):
+        return "unspecified"  # NaN-filled or logical NA; typed string/Int64 keep their type
+    if pd.api.types.is_bool_dtype(dt):
+        return "lgl"
+    return "num" if pd.api.types.is_numeric_dtype(dt) else "chr"
+
+
 def _align_key(x: pd.DataFrame, y: pd.DataFrame, key: str) -> tuple[pd.DataFrame, pd.DataFrame]:
-    """Give *key* one dtype on both sides (R joins integer and double keys)."""
+    """Give *key* one dtype on both sides, as a dplyr join does.
+
+    dplyr joins integer, double and logical keys, but refuses a character key
+    against a numeric or logical one (``Can't join `x$bib_id` with `y$bib_id`
+    due to incompatible types.``), e.g. character ``xref_id``s.
+    """
+    kinds = {_key_kind(x[key]), _key_kind(y[key])}
+    if "chr" in kinds and kinds & {"num", "lgl"}:
+        raise TypeError(f"Can't join `x${key}` with `y${key}` due to incompatible types.")
     dx, dy = x[key].dtype, y[key].dtype
     if dx == dy:
         return x, y
@@ -361,37 +420,39 @@ def _correction(label: str, cited: Any, record: Any) -> str:
     params={
         "paper": "a paper object or paperlist object",
         "max_authors": (
-            "how many of the leading authors to compare against the retrieved record. Author "
-            'lists are routinely truncated with "et al." (APA abbreviates after 7), and GROBID '
-            "often drops the tail of long lists, so we only require the first `max_authors` "
-            "surnames to match."
+            "how many of the leading authors to compare against the\n"
+            'retrieved record. Author lists are routinely truncated with "et al." (APA\n'
+            "abbreviates after 7), and GROBID often drops the tail of long lists, so we\n"
+            "only require the first `max_authors` surnames to match."
         ),
         "title_similarity": (
-            "the minimum character-level similarity (0-1, after stripping case, punctuation, "
-            "footnote markers and diacritics) for a cited title to be considered a match for "
-            "the retrieved title. Lower values tolerate more formatting noise; a title below "
-            "this is flagged."
+            "the minimum character-level similarity (0-1, after\n"
+            "stripping case, punctuation, footnote markers and diacritics) for a cited\n"
+            "title to be considered a match for the retrieved title. Lower values\n"
+            "tolerate more formatting noise; a title below this is flagged."
         ),
         "min_mismatches": (
-            "how many of the parsing-sensitive fields (title and author) must disagree with the "
-            "retrieved record before a reference is flagged as incoherent. The default (1) flags "
-            "a single title or author mismatch, which catches more genuine errors; the extra "
-            "false positives this adds are minor compared with those that already come from "
-            "imperfect PDF parsing. Set to 2 to be more conservative and require two of these "
-            "fields to disagree. A mismatched DOI, journal or year always flags on its own, "
+            "how many of the parsing-sensitive fields (title and\n"
+            "author) must disagree with the retrieved record before a reference is\n"
+            "flagged as incoherent. The default (1) flags a single title or author\n"
+            "mismatch, which catches more genuine errors; the extra false positives this\n"
+            "adds are minor compared with those that already come from imperfect PDF\n"
+            "parsing. Set to 2 to be more conservative and require two of these fields\n"
+            "to disagree. A mismatched DOI, journal or year always flags on its own,\n"
             "regardless of this setting."
         ),
         "year_tolerance": (
-            "how many years the cited year may differ from the retrieved record before the "
-            "year is flagged. The default (1) allows a one-year difference, because the "
-            "online-first and print publication years of an article routinely differ by a year. "
-            "Set to 0 to require an exact match, or higher to be more lenient."
+            "how many years the cited year may differ from the\n"
+            "retrieved record before the year is flagged. The default (1) allows a\n"
+            "one-year difference, because the online-first and print publication years\n"
+            "of an article routinely differ by a year. Set to 0 to require an exact\n"
+            "match, or higher to be more lenient."
         ),
         "suggest_score": (
-            "for references with no DOI, the minimum CrossRef relevance score for a DOI found "
-            "by title search to be offered as a suggested DOI. Low-scoring matches are usually "
-            "the wrong paper, so they are not suggested. Raise to be more conservative, lower "
-            "to suggest more."
+            "for references with no DOI, the minimum CrossRef\n"
+            "relevance score for a DOI found by title search to be offered as a\n"
+            "suggested DOI. Low-scoring matches are usually the wrong paper, so they are\n"
+            "not suggested. Raise to be more conservative, lower to suggest more."
         ),
     },
     returns="report list",
@@ -463,8 +524,8 @@ def ref_accuracy(
     from pytacheck._r.base import trimws
 
     check = [
-        not (a is None or b is None or trimws(a) == "" or trimws(b) == "")
-        for a, b in zip(cont_o, cont_m, strict=True)
+        not (a is None or b is None or ta == "" or tb == "")
+        for a, b, ta, tb in zip(cont_o, cont_m, trimws(cont_o), trimws(cont_m), strict=True)
     ]
     rows = [i for i, c in enumerate(check) if c]
     toks = _journal_tokens([cont_o[i] for i in rows] + [cont_m[i] for i in rows])
@@ -474,9 +535,9 @@ def ref_accuracy(
     table["container_mismatch"] = _lgl(container_mismatch, idx)  # type: ignore[arg-type]
 
     # title: character similarity, or the record title verbatim in the reference text
-    a_t, b_t = _norm_title(title_o), _norm_title(title_m)
-    clean_text = _clean(texts)
     match_clean = _clean(title_m)
+    a_t, b_t = _norm_title(_clean(title_o)), _norm_title(match_clean)
+    clean_text = _clean(texts)
     title_mismatch: list[bool] = []
     for x, y, pattern, txt in zip(a_t, b_t, match_clean, clean_text, strict=True):
         if x is None or y is None or x == "" or y == "":

@@ -1,0 +1,68 @@
+{
+  "id": "report_tables.stat_p_exact.psychsci",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": null,
+    "v": [
+      {
+        "t": "list",
+        "names": [
+          "table",
+          "colwidths",
+          "maxrows",
+          "escape"
+        ],
+        "v": [
+          {
+            "t": "df",
+            "nrow": 2,
+            "names": [
+              "P-Value",
+              "Text"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "p < .05",
+                  "p <.05"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "(Statistical significance was tested against a threshold of p < .05; bootstrapped models that provided 95% confidence intervals for the coefficients described below can be found in Table S2 in the Supplemental Material.)",
+                  "However, the T-participants did report thinking less about the best outcome for the group when completing the game (M = 2.75, SE = 0.34) than the T+ participants did (M = 4.00, SE = 0.41), β = -1.11 (SE = 0.50), p <.05."
+                ]
+              }
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0.1,
+              0.9
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              2
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

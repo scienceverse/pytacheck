@@ -1,0 +1,126 @@
+{
+  "id": "reshare_file_download.mock.total_cap",
+  "ok": true,
+  "error": null,
+  "warnings": [
+    "2 of 3 files from ReShare deposit 854001 did not arrive intact (e.g. notes.txt, gone.txt). The returned table marks them downloaded = FALSE. Run again to retry."
+  ],
+  "value": {
+    "t": "df",
+    "nrow": 3,
+    "names": [
+      "folder",
+      "reshare_id",
+      "id",
+      "key",
+      "path",
+      "size",
+      "size_on_disk",
+      "checksum",
+      "checksum_ok",
+      "self",
+      "downloaded",
+      "extracted"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "reshare_854001",
+          "reshare_854001",
+          "reshare_854001"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "854001",
+          "854001",
+          "854001"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "1001",
+          "1003",
+          "1004"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "interviews.csv",
+          "notes.txt",
+          "gone.txt"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "interviews.csv",
+          "notes.txt",
+          null
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          21,
+          7,
+          3
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          21,
+          7,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "3eaa201f7665ca5d4d366641daaae1ec",
+          "6c7ba9c5a141421e1c03cb9807c97c74",
+          "SHA1"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true,
+          false,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://reshare.ukdataservice.ac.uk/id/file/1001",
+          "https://reshare.ukdataservice.ac.uk/id/file/1003",
+          "https://reshare.ukdataservice.ac.uk/id/file/1004"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true,
+          false,
+          false
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          null,
+          null,
+          null
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

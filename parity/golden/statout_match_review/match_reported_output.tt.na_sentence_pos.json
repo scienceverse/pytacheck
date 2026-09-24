@@ -1,0 +1,100 @@
+{
+  "id": "match_reported_output.tt.na_sentence_pos",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 1,
+    "names": [
+      "text_id",
+      "grp_id",
+      "reported",
+      "n_components",
+      "n_matched",
+      "found",
+      "match_values",
+      "not_matched",
+      "source_file",
+      "analysis",
+      "confidence",
+      "plausible_split"
+    ],
+    "v": [
+      {
+        "t": "int",
+        "v": [
+          4
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          1
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "t=2.1 p=0.048 d=0.45 p=0.048"
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          4
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          4
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "t=2.1, p=0.048, d=0.45, p=0.048"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          ""
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "p.omv"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "T-Test"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "full"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

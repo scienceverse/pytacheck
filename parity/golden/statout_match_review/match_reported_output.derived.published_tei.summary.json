@@ -1,0 +1,57 @@
+{
+  "id": "match_reported_output.derived.published_tei.summary",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "n_tests",
+      "n_found",
+      "n_full",
+      "n_partial",
+      "n_missing",
+      "pct_found"
+    ],
+    "v": [
+      {
+        "t": "int",
+        "v": [
+          205
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          79
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          78
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          1
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          126
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          38.5
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

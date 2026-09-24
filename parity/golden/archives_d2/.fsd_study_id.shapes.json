@@ -1,0 +1,23 @@
+{
+  "id": ".fsd_study_id.shapes",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "FSD2653",
+      "FSD2653",
+      "FSD3136",
+      null,
+      "FSD123456",
+      null,
+      null,
+      null,
+      null,
+      "FSD0042"
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

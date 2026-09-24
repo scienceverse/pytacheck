@@ -1,0 +1,35 @@
+{
+  "id": ".reshare_id.shapes",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "854001",
+      "854001",
+      "854243",
+      "854243",
+      "1",
+      null,
+      null,
+      null,
+      "42",
+      null
+    ],
+    "names": [
+      "854001",
+      "https://doi.org/10.5255/UKDA-SN-854001",
+      "10.5255/ukda-sn-854243-2",
+      "https://reshare.ukdataservice.ac.uk/854243/",
+      "http://dx.doi.org/10.5255/UKDA-SN-1",
+      "https://reshare.ukdataservice.ac.uk/id/eprint/854001",
+      "",
+      null,
+      " 42 ",
+      "nope"
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

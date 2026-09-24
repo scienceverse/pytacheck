@@ -133,9 +133,7 @@ def prereg_check(paper: Any) -> dict[str, Any]:
         osf_type(osf_ids)  # R: `if (is.na(id))` on a zero-length id -> error
     link_types = _parallel_map(osf_type, osf_ids)
     reg_ids = [i for i, t in zip(osf_ids, link_types, strict=True) if t == "registrations"]
-    inaccessible_ids = {
-        i for i, t in zip(osf_ids, link_types, strict=True) if t == "inaccessible"
-    }
+    inaccessible_ids = {i for i, t in zip(osf_ids, link_types, strict=True) if t == "inaccessible"}
 
     ## no registrations ----
     n_osf = len(links_osf)
@@ -243,9 +241,7 @@ def prereg_check(paper: Any) -> dict[str, Any]:
         )
 
     link_cols: dict[str, Any] = {
-        "id": pd.Series(
-            link(_col(prereg_info, "link"), _col(prereg_info, "id")), dtype="string"
-        )
+        "id": pd.Series(link(_col(prereg_info, "link"), _col(prereg_info, "id")), dtype="string")
     }
     if "title" in prereg_info.columns:
         link_cols["title"] = prereg_info["title"].reset_index(drop=True)

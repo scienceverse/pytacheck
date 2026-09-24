@@ -1,0 +1,96 @@
+{
+  "id": "researchdata4tu_links.mixed",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 6,
+    "names": [
+      "href",
+      "link_text",
+      "text_id",
+      "paper_id",
+      "researchdata4tu_url",
+      "researchdata4tu_id"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "https://doi.org/10.4121/16766929.v1",
+          "https://data.4tu.nl/articles/16766929",
+          "10.4121/16766929.v2",
+          "https://data.4tu.nl/articles/dataset/Wind/16766929/1/.",
+          "doi.org/10.4121/uuid:7f866e02-eb39-4a2a-8f7d-2d053ee6cde9",
+          "www.data.4tu.nl/datasets"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          1,
+          2,
+          1,
+          1,
+          2,
+          2
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "8a49cb38133750",
+          "8a49cb38133750",
+          "8a49cb38133750",
+          "8a49cb38133750",
+          "8a49cb38133750",
+          "8a49cb38133750"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://doi.org/10.4121/16766929.v1",
+          "https://data.4tu.nl/articles/16766929",
+          "10.4121/16766929.v2",
+          "https://data.4tu.nl/articles/dataset/Wind/16766929/1/.",
+          "doi.org/10.4121/uuid:7f866e02-eb39-4a2a-8f7d-2d053ee6cde9",
+          "www.data.4tu.nl/datasets"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "16766929",
+          "16766929",
+          "16766929",
+          "16766929",
+          "7f866e02-eb39-4a2a-8f7d-2d053ee6cde9",
+          null
+        ],
+        "names": [
+          "https://doi.org/10.4121/16766929.v1",
+          "https://data.4tu.nl/articles/16766929",
+          "10.4121/16766929.v2",
+          "https://data.4tu.nl/articles/dataset/Wind/16766929/1/.",
+          "doi.org/10.4121/uuid:7f866e02-eb39-4a2a-8f7d-2d053ee6cde9",
+          "www.data.4tu.nl/datasets"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

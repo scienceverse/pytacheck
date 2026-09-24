@@ -12,6 +12,7 @@ before they expire.
 from __future__ import annotations
 
 import functools
+import math
 import os
 import threading
 import time
@@ -23,6 +24,7 @@ import pandas as pd
 
 from pytacheck._r import compile_r, gsub, is_na, sub, trimws
 from pytacheck.archives.dataverse import (
+    RequestAbort,
     _as_numeric,
     _cell,
     _check_named_ids,
@@ -39,6 +41,7 @@ from pytacheck.archives.dataverse import (
     _info_table,
     _link_matches,
     _list_cell,
+    _mark_named_ids,
     _paste,
     _query,
     _resp_json,
@@ -53,6 +56,7 @@ from pytacheck.archives.dataverse import (
 __all__ = [
     "DRYAD_DOI_PREFIXES",
     "DryadOAuthClient",
+    "OAuthError",
     "dryad_auth",
     "dryad_file_download",
     "dryad_info",
@@ -93,6 +97,19 @@ def _alt_prefix_regex() -> str:
     return "|".join(p.replace(".", r"\.") for p in DRYAD_DOI_PREFIXES if p != "10.5061")
 
 
+@functools.cache
+def _dryad_prefilter() -> str:
+    """A cheap pattern every bare-mention match of ``dryad_links()``'s pattern contains.
+
+    Each branch only adds optional parts around a core its matches always
+    contain: ``datadryad.org/``, or ``10.<digits>/<id char>`` for 10.5061
+    (``10.5061/dryad.<id>``) and the other Dryad prefixes. Sentences without
+    one cannot match (see ``_link_matches()``).
+    """
+    digits = "|".join(p.split(".", 1)[1] for p in DRYAD_DOI_PREFIXES)
+    return f"datadryad\\.org/|10\\.(?:{digits})/[A-Za-z0-9]"
+
+
 def dryad_links(paper: Any) -> pd.DataFrame:
     """Port of R/archive-dryad.R::dryad_links(): Dryad links in papers.
 
@@ -109,13 +126,12 @@ def dryad_links(paper: Any) -> pd.DataFrame:
         "|(?:https?://)?(?:doi\\.org/)?10\\.5061/dryad\\.[A-Za-z0-9]+"
         f"|(?:https?://)?(?:doi\\.org/)?(?:{alt})/[A-Za-z0-9]+"
     )
-    # every bare match contains "datadryad.org" or a "10.<digits>/" DOI prefix
-    other_dryad = _link_matches(paper, dryad_bare_regex, r"datadryad\.org|10\.[0-9]+/")
+    other_dryad = _link_matches(paper, dryad_bare_regex, _dryad_prefilter())
 
     links = _collect_links([found_href, other_dryad])
     links["dryad_url"] = links["href"]
     links["dryad_doi"] = _string_series(_dryad_doi(links["dryad_url"].tolist()))
-    return links
+    return _mark_named_ids(links, "dryad_doi")
 
 
 @functools.cache
@@ -178,7 +194,7 @@ def dryad_info(
     with _spinner(pb, "Dryad Retrieve") as bar:
         table = _info_table(dryad_url, id_col, "dryad_url", ("dryad_doi",))
         urls = table["dryad_url"].tolist()
-        _check_named_ids(urls)
+        _check_named_ids(urls, dryad_url, id_col)
         ids = pd.DataFrame(
             {
                 "dryad_url": table["dryad_url"].to_numpy(),
@@ -229,7 +245,7 @@ def _dryad_info(dryad_doi: Any, pb: Any = None) -> pd.DataFrame:
         obj: dict[str, pd.Series] = {"dryad_doi": _cell(dryad_doi)}
         encoded = _url_encode_reserved(f"doi:{_paste(dryad_doi)}")
         api_url = f"https://datadryad.org/api/v2/datasets/{encoded}"
-        resp = _query(api_url, _dryad_headers)
+        resp = _dryad_query(api_url)
         if resp is None or resp.status_code != 200:
             warnings.warn(f"{_paste(dryad_doi)} could not be found on Dryad", stacklevel=2)
             obj["error"] = _cell("unfound")
@@ -251,9 +267,7 @@ def _dryad_info(dryad_doi: Any, pb: Any = None) -> pd.DataFrame:
         version_href = _dollars(rec, "_links", "stash:version", "href")
         files_list: Any = []
         if version_href is not None:
-            files_resp = _query(
-                f"https://datadryad.org{_paste(version_href)}/files", _dryad_headers
-            )
+            files_resp = _dryad_query(f"https://datadryad.org{_paste(version_href)}/files")
             if files_resp is not None and files_resp.status_code == 200:
                 files_rec = _resp_json(files_resp)
                 listed = _dollars(files_rec, "_embedded", "stash:files")
@@ -301,9 +315,59 @@ _TOKENS_LOCK = threading.Lock()
 _EXPIRY_MARGIN = 30.0
 
 
+class OAuthError(RequestAbort, PermissionError):
+    """httr2's ``httr2_oauth`` errors: the token endpoint refused the client or
+    answered with something that is not a token.
+
+    Not an ``httr2_error``, so in R it escapes ``.batch_query()`` and aborts
+    :func:`dryad_info` (a token endpoint that cannot be reached is an
+    ``httr2_error``, and only makes the dataset ``"unfound"``).
+    """
+
+
+def _parse_error(url: str) -> OAuthError:
+    return OAuthError(f"Failed to parse response from `client$token_url` OAuth url ({url}).")
+
+
+def _token_from_body(body: Any, url: str) -> tuple[str, float | None]:
+    """httr2 ``oauth_flow_parse()`` + ``oauth_token()``: the access token and its expiry time."""
+    from pytacheck.datacheck.files import _r_as_numeric
+
+    if not isinstance(body, dict):  # rlang::has_name() on an unnamed value
+        raise _parse_error(url)
+    expires_in: float | None = None
+    if "expires_in" in body:  # body$expires_in <- as.numeric(body$expires_in)
+        value = body["expires_in"]
+        if isinstance(value, list | dict) and len(value) == 1:  # as.numeric(list(x))
+            value = next(iter(value.values())) if isinstance(value, dict) else value[0]
+        # null or a longer array/object: not one number (numeric(0), a vector or an error)
+        num = None if value is None or isinstance(value, list | dict) else _r_as_numeric(value)
+        # oauth_token(): check_number_whole(expires_in, allow_null = TRUE)
+        if num is None or math.isnan(num) or not math.isfinite(num) or not num.is_integer():
+            raise OAuthError("`expires_in` must be a whole number.")
+        expires_in = num
+    if "access_token" in body or "device_code" in body:
+        token = body.get("access_token")
+        if not isinstance(token, str):  # check_string(access_token)
+            raise OAuthError("`access_token` must be a single string.")
+        if "token_type" in body and not isinstance(body["token_type"], str):
+            raise OAuthError("`token_type` must be a single string.")
+        return token, (None if expires_in is None else time.time() + expires_in)
+    if "error" in body:
+        raise OAuthError(f"OAuth failure [{_paste(body['error'])}]")
+    raise _parse_error(url)
+
+
 def _client_token(client: DryadOAuthClient) -> str:
-    """``req_oauth_client_credentials()``'s token fetch/cache/refresh cycle."""
+    """``req_oauth_client_credentials()``'s token fetch/cache/refresh cycle.
+
+    As httr2's ``oauth_client_get_token()``: one POST (no retries, any HTTP
+    status accepted) whose JSON body must hold an ``access_token``; an
+    ``error`` member or any other body raises :class:`OAuthError`. A token
+    endpoint that cannot be reached raises :class:`ConnectionError`.
+    """
     from pytacheck import http
+    from pytacheck.archives.osf_helpers import _resp_body_json
 
     with _TOKENS_LOCK:
         hit = _TOKENS.get(client)
@@ -311,6 +375,7 @@ def _client_token(client: DryadOAuthClient) -> str:
             tok, expires_at = hit
             if expires_at is None or time.time() + _EXPIRY_MARGIN <= expires_at:
                 return tok
+            del _TOKENS[client]
         resp = http.request(
             "POST",
             client.token_url,
@@ -322,21 +387,13 @@ def _client_token(client: DryadOAuthClient) -> str:
             headers={"Accept": "application/json"},
             max_tries=1,
         )
-        if resp is None:
+        if resp is None:  # an httr2_failure: caught as a failed request
             raise ConnectionError(f"Failed to connect to {client.token_url}")
-        body: Any
         try:
-            body = resp.json()
-        except ValueError:
-            body = None
-        if resp.status_code >= 400 or not isinstance(body, dict) or "access_token" not in body:
-            detail = body.get("error") if isinstance(body, dict) else None
-            raise PermissionError(
-                f"OAuth failure [{detail or resp.status_code}] fetching a Dryad access token"
-            )
-        tok = str(body["access_token"])
-        expires_in = body.get("expires_in")
-        expires_at = time.time() + float(expires_in) if expires_in is not None else None
+            body = _resp_body_json(resp)  # oauth_flow_body(): resp_body_json(check_type = NA)
+        except Exception as e:
+            raise _parse_error(client.token_url) from e
+        tok, expires_at = _token_from_body(body, client.token_url)
         _TOKENS[client] = (tok, expires_at)
         return tok
 
@@ -347,8 +404,9 @@ def _dryad_headers(req: dict[str, Any]) -> dict[str, Any]:
     Adds ``User-Agent: metacheck`` and a bearer token to a request spec: from
     the OAuth2 client credentials when set (:func:`dryad_auth`, fetched and
     refreshed automatically), else the static token (:func:`dryad_pat`). A
-    failure to obtain a token raises, which the callers treat as a failed
-    request (R: the error surfaces when the request is performed).
+    token endpoint that cannot be reached raises :class:`ConnectionError`
+    (a failed request); a refusal raises :class:`OAuthError`, which aborts
+    the metadata lookups as in R.
     """
     spec = dict(req)
     headers = dict(spec.get("headers") or {})
@@ -368,6 +426,45 @@ def _dryad_headers(req: dict[str, Any]) -> dict[str, Any]:
             headers["Authorization"] = f"Bearer {pat}"
     spec["headers"] = headers
     return spec
+
+
+def _dryad_reauth(resp: Any) -> dict[str, str] | None:
+    """httr2's one re-authentication: fresh headers after an OAuth ``invalid_token`` answer.
+
+    ``req_perform()`` clears the cached token and sends the request once more
+    when a request signed with OAuth client credentials gets a 401 whose
+    ``WWW-Authenticate`` header contains ``error="invalid_token"``
+    (``resp_is_invalid_oauth_token()``); otherwise ``None``.
+    """
+    if resp is None or resp.status_code != 401:
+        return None
+    if 'error="invalid_token"' not in (resp.headers.get("WWW-Authenticate") or ""):
+        return None
+    try:
+        client = _dryad_oauth_client()
+    except Exception:
+        client = None
+    if client is None:  # a static token: no OAuth policy, no re-authentication
+        return None
+    with _TOKENS_LOCK:
+        _TOKENS.pop(client, None)
+    return dict(_dryad_headers({"headers": {}})["headers"])
+
+
+def _dryad_query(url: str) -> Any:
+    """``.batch_query(url, msg = NULL, req_func = .dryad_headers)[[1]]``, with httr2's
+    re-authentication after an OAuth ``invalid_token`` answer (see :func:`_dryad_reauth`)."""
+    resp = _query(url, _dryad_headers)
+    if resp is not None and resp.status_code == 401:
+        try:
+            fresh = _dryad_reauth(resp)
+        except RequestAbort:
+            raise
+        except Exception:  # an httr2_error while re-authenticating: a NULL response
+            return None
+        if fresh is not None:
+            resp = _query(url, _dryad_headers)
+    return resp
 
 
 def dryad_pat(pat: str | None = None) -> str:
@@ -561,6 +658,7 @@ def dryad_file_download(
             unzip_types=unzip_types,
             pb=bar,
             headers=_dryad_headers,
+            reauth=_dryad_reauth,
             zip_members=lambda *a, **k: _dryad_zip_members(*a, **k),
             verify=lambda f, to: _dryad_verify_downloads(f, to),
             what="Dryad dataset",

@@ -1,0 +1,1188 @@
+{
+  "id": "helpers.create_synonyms",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "txt",
+      "This",
+      "This_singular",
+      "These",
+      "this",
+      "this_singular",
+      "these",
+      "is",
+      "is_singular",
+      "are",
+      "have",
+      "is_have",
+      "We",
+      "by",
+      "and",
+      "for",
+      "of",
+      "for_of",
+      "no",
+      "No",
+      "not",
+      "author",
+      "research",
+      "research_strict",
+      "research_lower",
+      "research_lower_strict",
+      "Research",
+      "Research_strict",
+      "research_singular",
+      "researches",
+      "funder",
+      "funds",
+      "funded",
+      "funding",
+      "funded_funding",
+      "funding_financial",
+      "funding_title",
+      "financial",
+      "financial_title",
+      "any_title",
+      "disclosure_title",
+      "support",
+      "support_only",
+      "Supported",
+      "award",
+      "grant_title",
+      "funds_award_financial",
+      "funding_financial_award",
+      "receive",
+      "received",
+      "received_strict",
+      "recipient",
+      "provide",
+      "thank",
+      "info",
+      "acknowledge",
+      "acknowledged",
+      "foundation",
+      "foundation_award",
+      "References",
+      "Methods",
+      "Abstract",
+      "Introduction",
+      "Results",
+      "Conclusion",
+      "sources",
+      "register",
+      "registered",
+      "registration",
+      "registry",
+      "registered_registration",
+      "conflict_title",
+      "conflict_title_strict",
+      "conflict",
+      "disclose",
+      "disclosure",
+      "disclosure_coi_title",
+      "no_financial_disclosure",
+      "commercial",
+      "commercial_strict",
+      "relationship",
+      "relationship_strict",
+      "related_adjectives",
+      "interests",
+      "stock",
+      "fees",
+      "consultant",
+      "consult",
+      "consult_all",
+      "speaker",
+      "proprietary",
+      "founder",
+      "played",
+      "role"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "[a-zA-Z0-9\\s,()\\[\\]/:-]*"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "This",
+          "These",
+          "The",
+          "Our",
+          "All"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "This",
+          "The",
+          "Our"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "These",
+          "Our",
+          "Research",
+          "All"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "[Tt]his",
+          "[Tt]hese",
+          "[Tt]he",
+          "[Oo]ur"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "this",
+          "the"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "these"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "is",
+          "are",
+          "was",
+          "were",
+          "been"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "is",
+          "was",
+          "have",
+          "has"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "are",
+          "were",
+          "have",
+          "had"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "have",
+          "has",
+          "had"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "is",
+          "are",
+          "was",
+          "were",
+          "been",
+          "have",
+          "has",
+          "had"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "We"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "by",
+          "from",
+          "within",
+          "under"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "and",
+          "&",
+          "or"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "for"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "of",
+          "about"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "for",
+          "of",
+          "about"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "[Nn]o",
+          "[Nn]il",
+          "[Nn]one",
+          "[Nn]othing"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "N(?i)o(?-i)",
+          "N(?i)il(?-i)",
+          "N(?i)one(?-i)",
+          "N(?i)othing(?-i)"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "not"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "author(|s|\\(s\\))",
+          "researcher(|s|\\(s\\))",
+          "investigator(|s|\\(s\\))",
+          "scientist(|s|\\(s\\))"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "[Ww]ork(|s)",
+          "[Rr]esearch",
+          "[Ss]tud(y|ies)",
+          "[Pp]roject(|s)",
+          "[Tt]rial(|s)",
+          "[Pp]ublication(|s)",
+          "[Rr]eport(|s)",
+          "[Pp]rogram(|s)",
+          "[Pp]aper(|s)",
+          "[Mm]anuscript(|s)",
+          "[Aa]nalys(is|es)",
+          "[Ii]nvestigation(|s)",
+          "[Pp]rotocol(|s)",
+          "[Cc]ohort(|s)",
+          "[Cc]ollaboration(|s)"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "[Ww]ork(|s)",
+          "[Rr]esearch",
+          "[Ss]tud(y|ies)",
+          "[Pp]roject(|s)",
+          "[Tt]rial(|s)",
+          "[Pp]rogram(|s)",
+          "[Aa]nalys(is|es)",
+          "[Ii]nvestigation(|s)",
+          "[Pp]rotocol(|s)",
+          "[Cc]ohort(|s)",
+          "[Cc]ollaboration(|s)"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "work(|s)",
+          "research",
+          "stud(y|ies)",
+          "project(|s)",
+          "trial(|s)",
+          "publication(|s)",
+          "report(|s)",
+          "program(|s)",
+          "paper(|s)",
+          "manuscript(|s)",
+          "analys(is|es)",
+          "investigation(|s)",
+          "protocol(|s)",
+          "cohort(|s)",
+          "collaboration(|s)"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "work(|s)",
+          "research",
+          "stud(y|ies)",
+          "project(|s)",
+          "trial(|s)",
+          "program(|s)",
+          "analys(is|es)",
+          "investigation(|s)",
+          "protocol(|s)",
+          "cohort(|s)",
+          "collaboration(|s)"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Work(|s)",
+          "Research",
+          "Stud(y|ies)",
+          "Project(|s)",
+          "Trial(|s)",
+          "Publication(|s)",
+          "Report(|s)",
+          "Program(|s)",
+          "Paper(|s)",
+          "Manuscript(|s)",
+          "Analys(is|es)",
+          "Investigation(|s)"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Work(|s)",
+          "Research",
+          "Stud(y|ies)",
+          "Project(|s)",
+          "Trial(|s)",
+          "Program(|s)",
+          "Analys(is|es)",
+          "Investigation(|s)"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "[Ww]ork",
+          "[Rr]esearch",
+          "[Ss]tudy",
+          "[Pp]roject",
+          "[Tt]rial",
+          "[Pp]ublication",
+          "[Rr]eport",
+          "[Pp]rogram",
+          "[Pp]aper",
+          "[Mm]anuscript",
+          "[Aa]nalysis",
+          "[Ii]nvestigation"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "[Ww]orks",
+          "[Ss]tudies",
+          "[Pp]rojects",
+          "[Tt]rials",
+          "[Pp]ublications",
+          "[Rr]eports",
+          "[Pp]rograms",
+          "[Pp]papers",
+          "[Mm]anuscripts",
+          "[Aa]nalyses",
+          "[Ii]nvestigations"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "[Ff]under",
+          "[Ss]ponsor",
+          "[Ss]upporter"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "[Ff]und(|s)",
+          "[Ff]unding",
+          "[Ss]elf-funding"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "[Ff]unded",
+          "[Ss]elf-funded",
+          "[Ff]inanced",
+          "[Ss]upported",
+          "[Ss]ponsored",
+          "[Rr]esourced",
+          "[Aa]ided"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "[Ff]unding",
+          "[Ff]unds",
+          "[Ss]elf-funding",
+          "[Ff]und support(|s)",
+          "[Ss]upport",
+          "[Ss]ponsorship",
+          "\\b[Aa]id",
+          "[Rr]esources"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "[Ff]unded",
+          "[Ss]elf-funded",
+          "[Ff]inanced",
+          "[Ss]upported",
+          "[Ss]ponsored",
+          "[Rr]esourced",
+          "[Aa]ided",
+          "[Ff]unding",
+          "[Ff]unds",
+          "[Ss]elf-funding",
+          "[Ff]und support(|s)",
+          "[Ss]upport",
+          "[Ss]ponsorship",
+          "\\b[Aa]id",
+          "[Rr]esources"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "[Ff]unding",
+          "[Ff]unds",
+          "[Ss]elf-funding",
+          "[Ff]und support(|s)",
+          "[Ss]upport",
+          "[Ss]ponsorship",
+          "\\b[Aa]id",
+          "[Rr]esources",
+          "[Ff]inancial"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "F(?i)unding(?-i)",
+          "F(?i)unding/Support(?-i)",
+          "F(?i)unding source(|s)(?-i)",
+          "S(?i)ource(|s) of funding(?-i)",
+          "F(?i)unding source(|s) for the stud(y|ies)(?-i)",
+          "F(?i)unding information(?-i)",
+          "F(?i)unding statement(|s)(?-i)",
+          "S(?i)upport statement(|s)(?-i)",
+          "S(?i)ource(|s) of support(|s)(?-i)",
+          "S(?i)ource(|s) of funding(?-i)",
+          "F(?i)unding and (|potential )(conflict(|s)|competing) (|of )interest(|s)(?-i)"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "[Ff]inancial support(|s)",
+          "[Ff]inancial source(|s)",
+          "[Ff]inancial or other support(|s)",
+          "[Ff]inancial assistance",
+          "[Ff]inancial aid(|s)",
+          "[Ff]inancial sponsorship(|s)",
+          "[Ff]inancial support(|s) and sponsorship(|s)",
+          "[Gg]rant support(|s)",
+          "[Gg]rant assistance",
+          "[Gg]rant aid(|s)",
+          "[Gg]rant sponsorship(|s)"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "F(?i)inancial support(|s)(?-i)",
+          "F(?i)inancial source(|s)(?-i)",
+          "S(?i)ource(|s) of financial support(|s)(?-i)",
+          "F(?i)inancial or other support(|s)(?-i)",
+          "F(?i)inancial assistance(?-i)",
+          "F(?i)inancial aid(?-i)",
+          "F(?i)inancial sponsorship(|s)(?-i)",
+          "F(?i)inancial support(|s) and sponsorship(|s)(?-i)",
+          "F(?i)inancial source(|s) for the stud(y|ies)(?-i)",
+          "F(?i)inancial information(?-i)",
+          "F(?i)inancial statement(|s)(?-i)",
+          "F(?i)inanciamento(?-i)"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "F(?i)unding(?-i)",
+          "F(?i)unding/Support(?-i)",
+          "F(?i)unding source(|s)(?-i)",
+          "S(?i)ource(|s) of funding(?-i)",
+          "F(?i)unding source(|s) for the stud(y|ies)(?-i)",
+          "F(?i)unding information(?-i)",
+          "F(?i)unding statement(|s)(?-i)",
+          "S(?i)upport statement(|s)(?-i)",
+          "S(?i)ource(|s) of support(|s)(?-i)",
+          "S(?i)ource(|s) of funding(?-i)",
+          "F(?i)unding and (|potential )(conflict(|s)|competing) (|of )interest(|s)(?-i)",
+          "F(?i)inancial support(|s)(?-i)",
+          "F(?i)inancial source(|s)(?-i)",
+          "S(?i)ource(|s) of financial support(|s)(?-i)",
+          "F(?i)inancial or other support(|s)(?-i)",
+          "F(?i)inancial assistance(?-i)",
+          "F(?i)inancial aid(?-i)",
+          "F(?i)inancial sponsorship(|s)(?-i)",
+          "F(?i)inancial support(|s) and sponsorship(|s)(?-i)",
+          "F(?i)inancial source(|s) for the stud(y|ies)(?-i)",
+          "F(?i)inancial information(?-i)",
+          "F(?i)inancial statement(|s)(?-i)",
+          "F(?i)inanciamento(?-i)",
+          "G(?i)rant(|s)(?-i)",
+          "G(?i)rant sponsor(|s|ship(|s))(?-i)",
+          "G(?i)rant support(|s)(?-i)",
+          "G(?i)rant assistance(?-i)",
+          "G(?i)rant aid(|s)(?-i)"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "F(?i)unding disclosure(|s)(?-i)",
+          "F(?i)inancial disclosure(|s)(?-i)",
+          "F(?i)inancial declaration(|s)(?-i)",
+          "F(?i)inancial (&|and) competing interests disclosure(|s)(?-i)",
+          "F(?i)inancial (&|and) competing interests declaration(|s)(?-i)",
+          "D(?i)isclosure(|s)(?-i)",
+          "D(?i)eclaration(|s)(?-i)"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "[Ss]upport(|s)",
+          "\\b[Aa]id(|s)",
+          "[Aa]ssistance",
+          "[Ss]ponsorship(|s)"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "[Ss]upport(|s)"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Supported"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "[Gg]rant(|s)",
+          "(?<![Ss]pecialty) [Ff]ellowship(|s)",
+          "[Aa]ward(|s|ing)",
+          "[Ss]cholar(|s|ship|ships)",
+          "[Ee]ndowment(|s)",
+          "[Ss]tipend(|s)",
+          "[Bb]ursar(y|ies)"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "G(?i)rant(|s)(?-i)",
+          "G(?i)rant sponsor(|s|ship(|s))(?-i)",
+          "G(?i)rant support(|s)(?-i)",
+          "G(?i)rant assistance(?-i)",
+          "G(?i)rant aid(|s)(?-i)",
+          "^[A-Z]\\w+ grant sponsor(|s|ship(|s))(?-i)"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "[Ff]und(|s)",
+          "[Ff]unding",
+          "[Ss]elf-funding",
+          "[Ff]inancial support(|s)",
+          "[Ff]inancial source(|s)",
+          "[Ff]inancial or other support(|s)",
+          "[Ff]inancial assistance",
+          "[Ff]inancial aid(|s)",
+          "[Ff]inancial sponsorship(|s)",
+          "[Ff]inancial support(|s) and sponsorship(|s)",
+          "[Gg]rant support(|s)",
+          "[Gg]rant assistance",
+          "[Gg]rant aid(|s)",
+          "[Gg]rant sponsorship(|s)",
+          "[Gg]rant(|s)",
+          "(?<![Ss]pecialty) [Ff]ellowship(|s)",
+          "[Aa]ward(|s|ing)",
+          "[Ss]cholar(|s|ship|ships)",
+          "[Ee]ndowment(|s)",
+          "[Ss]tipend(|s)",
+          "[Bb]ursar(y|ies)"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "[Ff]unding",
+          "[Ff]unds",
+          "[Ss]elf-funding",
+          "[Ff]und support(|s)",
+          "[Ss]upport",
+          "[Ss]ponsorship",
+          "\\b[Aa]id",
+          "[Rr]esources",
+          "[Ff]inancial support(|s)",
+          "[Ff]inancial source(|s)",
+          "[Ff]inancial or other support(|s)",
+          "[Ff]inancial assistance",
+          "[Ff]inancial aid(|s)",
+          "[Ff]inancial sponsorship(|s)",
+          "[Ff]inancial support(|s) and sponsorship(|s)",
+          "[Gg]rant support(|s)",
+          "[Gg]rant assistance",
+          "[Gg]rant aid(|s)",
+          "[Gg]rant sponsorship(|s)",
+          "[Gg]rant(|s)",
+          "(?<![Ss]pecialty) [Ff]ellowship(|s)",
+          "[Aa]ward(|s|ing)",
+          "[Ss]cholar(|s|ship|ships)",
+          "[Ee]ndowment(|s)",
+          "[Ss]tipend(|s)",
+          "[Bb]ursar(y|ies)"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "received",
+          "own(|s)",
+          "hold(|s)",
+          "ha(s|ve)",
+          "charged",
+          "invent(ed|or|ors)",
+          "declare"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "[Rr]eceived",
+          "[Aa]ccepted",
+          "[Aa]cquired",
+          "[Pp]rovided",
+          "[Gg]ranted",
+          "[Aa]warded",
+          "[Gg]iven",
+          "[Oo]ffered",
+          "[Aa]llotted",
+          "[Dd]isclosed",
+          "[Dd]eclared",
+          "[Ss]upplied",
+          "[Pp]resented"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "[Rr]eceived",
+          "[Aa]ccepted",
+          "[Aa]cquired",
+          "[Gg]iven",
+          "[Oo]ffered",
+          "[Dd]isclose(|d)",
+          "[Dd]eclare(|d)"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "[Rr]ecipient(|s)",
+          "[Aa]wardee(|s)",
+          "[Gg]rantee(|s)"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "provid(ed|ing)",
+          "g(ave|iving)",
+          "award(ed|ing)"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "[Tt]hank(|ful)",
+          "[Aa]cknowledge",
+          "[Dd]isclose",
+          "[Gg]rateful"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "info(|rmation)\\b",
+          "detail(|s)",
+          "particulars",
+          "data\\b",
+          "material\\b"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "acknowledge",
+          "recognize",
+          "disclose",
+          "declare",
+          "report",
+          "appreciate"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "acknowledged",
+          "recognized",
+          "disclosed",
+          "declared",
+          "reported",
+          "appreciated"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Ffoundation(|s)",
+          "Institut(e|es|ution)",
+          "Universit",
+          "Universit(y|ies)",
+          "Academ(y|ies)",
+          "Ministr(y|ies)",
+          "[Gg]overnment(|s)",
+          "Council(|s)",
+          "National",
+          "NIH",
+          "NSF",
+          "HHMI",
+          "Trust(|s)",
+          "Association(|s)",
+          "Societ(y|ies)",
+          "College(|s)",
+          "Commission(|s)",
+          "Center(|s)",
+          "[Oo]ffice(|s)",
+          "[Pp]rogram(|s)",
+          "[Aa]lliance(|s)",
+          "[Aa]gency"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Ffoundation(|s)",
+          "Institut(e|es|ution)",
+          "Universit",
+          "Universit(y|ies)",
+          "Academ(y|ies)",
+          "Ministr(y|ies)",
+          "[Gg]overnment(|s)",
+          "Council(|s)",
+          "National",
+          "NIH",
+          "NSF",
+          "HHMI",
+          "Trust(|s)",
+          "Association(|s)",
+          "Societ(y|ies)",
+          "College(|s)",
+          "Commission(|s)",
+          "Center(|s)",
+          "[Oo]ffice(|s)",
+          "[Pp]rogram(|s)",
+          "[Aa]lliance(|s)",
+          "[Aa]gency",
+          "[Gg]rant(|s)",
+          "(?<![Ss]pecialty) [Ff]ellowship(|s)",
+          "[Aa]ward(|s|ing)",
+          "[Ss]cholar(|s|ship|ships)",
+          "[Ee]ndowment(|s)",
+          "[Ss]tipend(|s)",
+          "[Bb]ursar(y|ies)"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "R(?i)eferences(?-i)",
+          "L(?i)terature(?-i)",
+          "L(?i)iterature Cited(?-i)",
+          "N(?i)otes and References(?-i)",
+          "W(?i)orks Cited(?-i)",
+          "^C(?i)itations(?-i)",
+          "B(?i)ibliograpy(?-i)",
+          "B(?i)ibliographic references(?-i)",
+          "R(?i)eferences and recommended reading(?-i)"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          ".{0,4}M(?i)ethod(|s)(?-i)",
+          ".{0,4}O(?i)nline method(|s)(?-i)",
+          ".{0,4}M(?i)aterial(|s) and Method(|s)(?-i)",
+          ".{0,4}M(?i)aterial(|s)/Method(|s)(?-i)",
+          ".{0,4}M(?i)ethod(|s) and Material(|s)(?-i)",
+          ".{0,4}M(?i)ethod(|s)/Material(|s)(?-i)",
+          ".{0,4}S(?i)ubjects and method(|s)(?-i)",
+          ".{0,4}P(?i)atients and method(|s)(?-i)",
+          ".{0,4}P(?i)articipants and method(|s)(?-i)",
+          ".{0,4}M(?i)ethods and preliminary analysis(?-i)",
+          ".{0,4}E(?i)xperimental section(?-i)",
+          ".{0,4}M(?i)ethodology(?-i)",
+          ".{0,4}M(?i)etodologia(?-i)",
+          ".{0,4}M(?i)etodologie(?-i)"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Abstract",
+          "Synopsis",
+          "Summary"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Introduction",
+          "Background"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Results",
+          "Findings"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Conclusion",
+          "Interpretation"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "source(|s)"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "register"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "registered"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "registration"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "[Rr]egistr(y|ies)"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "registered",
+          "registration"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "C(?i)onflict(|s) of interest(|s)(?-i)",
+          "C(?i)onflict(|s) of interest(|s) declaration(?-i)",
+          "C(?i)onflicting interest(|s)(?-i)",
+          "C(?i)onflicting interest(|s) declaration(?-i)",
+          "C(?i)onflicting financial intere",
+          "C(?i)onflicting of interest(|s)(?-i)",
+          "C(?i)onflits d'int(?-i)",
+          "C(?i)onflictos de Inter(?-i)",
+          "C(?i)ompeting interest(|s)(?-i)",
+          "C(?i)ompeting interest(|s) declaration(?-i)",
+          "C(?i)ompeting of interest(|s)(?-i)",
+          "C(?i)ompeting financial interest(|s)(?-i)",
+          "D(?i)eclaration of interest(|s)(?-i)",
+          "D(?i)eclaration of conflicting interest(|s)(?-i)",
+          "D(?i)uality of interest(|s)(?-i)",
+          "S(?i)ource(|s) of bias(?-i)",
+          "F(?i)unding and (|\\w+ )(conflict(|s)|competing) (|of )interest(|s)(?-i)"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "(|\\w+ )C(?i)onflict(|s) of interest(|s)(?-i)(| \\(?COI\\)?| \\w+)",
+          "(|\\w+ )C(?i)onflicting interest(|s)(?-i)(| \\(?COI\\)?| \\w+)",
+          "(|\\w+ )C(?i)onflicting financial interest(|s)(?-i)(| \\w+)",
+          "(|\\w+ )C(?i)onflicting of interest(|s)(?-i)(| \\(?COI\\)?| \\w+)",
+          "(|\\w+ )C(?i)onflits d'int(?-i)",
+          "(|\\w+ )C(?i)onflictos de Inter(?-i)",
+          "(|\\w+ )C(?i)ompeting interest(|s)(?-i)(| \\w+)",
+          "(|\\w+ )C(?i)ompeting of interest(|s)(?-i)(| \\(?COI\\)?| \\w+)",
+          "(|\\w+ )C(?i)ompeting financial interest(|s)(?-i)(| \\w+)",
+          "D(?i)eclaration of interest(|s)(?-i)(| \\w+)",
+          "D(?i)eclaration of conflicting interest(|s)(?-i)",
+          "D(?i)uality of interest(|s)(?-i)(| \\w+)",
+          "(|\\w+ )S(?i)ource(|s) of bias(?-i)(| \\w+)",
+          "F(?i)unding and (|\\w+ )(conflict(|s)|competing) (|of )interest(|s)(?-i)"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "[Cc]onflict(|ing)(|s)",
+          "[Cc]ompet(e|ing)",
+          "source(|s) of bias",
+          "[Cc]onflits",
+          "[Cc]onflictos"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "disclose(|s)",
+          "declare(|s)",
+          "state(|s)",
+          "disclaim(|s)",
+          "report(|s)",
+          "acknowledge(|s)"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "disclosure",
+          "declaration",
+          "statement",
+          "disclaimer",
+          "acknowledgement",
+          "reporting"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "F(?i)inancial disclosure(|s)(?-i)",
+          "F(?i)inancial declaration(|s)(?-i)",
+          "F(?i)inancial (&|and) competing interests disclosure(|s)(?-i)",
+          "F(?i)inancial (&|and) competing interests declaration(|s)(?-i)",
+          "D(?i)isclosure(|s)(?-i)",
+          "D(?i)eclaration(|s)(?-i)"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "[Nn]othing to (disclose|declare|report|acknowledge)",
+          "[Nn]o financial disclosure(|s)",
+          "[Nn]o [a-z]+ financial disclosure(|s)",
+          "[Nn]o [a-z]+ [a-z]+ financial disclosure(|s)"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "commercial(|ly)",
+          "financial(|y)"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "commercial(|ly)"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "relation(|s|ship(|s))",
+          "connection(|s)",
+          "association(|s)",
+          "involvement(|s)",
+          "tie(|s)",
+          "contract(|s)"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "relation(|s|ship(|s))",
+          "connection(|s)",
+          "association(|s)",
+          "involvement(|s)",
+          "tie(|s)"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "related",
+          "connected",
+          "associated",
+          "involved",
+          "tied"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "gain(|s)",
+          "benefit(|s)",
+          "interest(|s)"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "stock(|s)",
+          "shares",
+          "bonds"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "fe(e|es)",
+          "compensation",
+          "payment",
+          "honorari(um|a)",
+          "sponsorship"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "consultant(|s)",
+          "advis(or(|s)|er(|s))",
+          "board member(|s)",
+          "member(|s) of the board"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "consult(|s|ing)",
+          "advise(|s)",
+          "counsel(|s)"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "consult(|s|ant(|s))",
+          "advis(e(|s)|or(|s)|er(|s))",
+          "counsel(|s)"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "speaker",
+          "presenter",
+          "lectur(e|es|ing)",
+          "employee(|s)"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "proprietary",
+          "patent(|s)",
+          "copyright(|s)",
+          "license(|s)",
+          "rights",
+          "permit(|s)",
+          "priviledge(|s)",
+          "franchise(|s)"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "founder",
+          "co(|-)founder",
+          "founding member"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "played",
+          "had"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "role",
+          "hand",
+          "part",
+          "involvement"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

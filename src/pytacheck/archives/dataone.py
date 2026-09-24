@@ -15,6 +15,7 @@ from __future__ import annotations
 
 import functools
 import warnings
+from collections.abc import Sequence
 from typing import TYPE_CHECKING, Any
 
 import pandas as pd
@@ -72,12 +73,7 @@ def dataone_links(paper: Any) -> pd.DataFrame:
     prefix). Trailing slashes are stripped and duplicate rows dropped;
     ``dataone_url``, ``dataone_host`` and ``dataone_pid`` columns are added.
     """
-    from pytacheck.archives.dataverse import (
-        _collect_links,
-        _link_matches,
-        _string_series,
-        _url_rows,
-    )
+    from pytacheck.archives.dataverse import _collect_links, _string_series, _url_rows
 
     host_regex = _dataone_host_regex()
     doi_regex = _doi_regex()
@@ -86,13 +82,56 @@ def dataone_links(paper: Any) -> pd.DataFrame:
         f"(?:https?://)?(?:{host_regex})/(?:view|catalog/view)/doi:[^\\s\"'<>)]+"
         f"|(?:https?://)?(?:doi\\.org/)?(?:{doi_regex})/[A-Za-z0-9._/-]+"
     )
-    other = _link_matches(paper, bare_regex)
+    literals = [f"{h['host']}/" for h in DATAONE_HOSTS]
+    literals += [f"{h['doi_prefix']}/" for h in DATAONE_HOSTS if h["doi_prefix"]]
+    other = _scan_links(paper, bare_regex, literals)
     links = _collect_links([found_href, other])
     urls = links["href"].tolist()
     links["dataone_url"] = links["href"]
     links["dataone_host"] = _string_series([_host_one(u) for u in urls])
     links["dataone_pid"] = _string_series([_pid_one(u) for u in urls])
     return links
+
+
+def _scan_links(
+    paper: Any, pattern: str, literals: Sequence[str], anchor: str | None = "/"
+) -> pd.DataFrame:
+    """``text_search(paper, pattern, return = "match", perl = TRUE) |>
+    select(href = text, any_of(c("text_id", "paper_id")))``, searching only candidate text.
+
+    Every match of *pattern* (searched caselessly, as ``text_search()`` does)
+    must contain *anchor* (a character with no case, e.g. ``"/"``) and one of
+    the ASCII *literals*. Only the text rows that contain both are handed to
+    the regex engine: the same result as searching every row, without running
+    the pattern over every sentence of a corpus.
+    """
+    from pytacheck.archives.dataverse import _link_matches
+
+    try:
+        from pytacheck.text.search import _text_frame, text_search
+    except ImportError:  # pragma: no cover - search everything instead
+        return _link_matches(paper, pattern)
+    if isinstance(paper, str | pd.DataFrame):
+        return _link_matches(paper, pattern)
+    frame, is_vector = _text_frame(paper)
+    if is_vector or "text" not in frame.columns:
+        return _link_matches(paper, pattern)
+
+    texts = frame["text"].tolist()
+    lits = tuple(dict.fromkeys(x.casefold() for x in literals))
+    rows = (
+        (i for i, t in enumerate(texts) if isinstance(t, str) and anchor in t)
+        if anchor is not None
+        else (i for i, t in enumerate(texts) if isinstance(t, str))
+    )
+    keep = []
+    for i in rows:
+        folded = texts[i].casefold()
+        if any(lit in folded for lit in lits):
+            keep.append(i)
+    found = text_search(frame.iloc[keep], pattern, return_="match", perl=True)
+    cols = ["text"] + [c for c in ("text_id", "paper_id") if c in found.columns]
+    return found.loc[:, cols].rename(columns={"text": "href"})
 
 
 def _clean_one(x: Any) -> str | None:

@@ -15,6 +15,8 @@ The module relies on base R's ``agrep()`` / ``agrepl()`` (TRE approximate matchi
 
 from __future__ import annotations
 
+import functools
+import itertools
 import math
 from collections.abc import Sequence
 from typing import Any
@@ -27,7 +29,7 @@ from pytacheck.module import module
 from pytacheck.report import scroll_table
 from pytacheck.text import text_search
 
-__all__ = ["coi_check", "rtransparent_coi"]
+__all__ = ["agrep", "agrepl", "coi_check", "rtransparent_coi"]
 
 # ---------------------------------------------------------------------------
 # agrep(): TRE approximate matching of a literal pattern
@@ -51,11 +53,11 @@ class _Agrep:
 
     Matching is exact: the pattern is split into ``k + 1`` pieces, one of which
     must occur verbatim in any approximate match (pigeonhole), and the edit
-    distance is then computed (Sellers' algorithm) only in the windows around
-    those occurrences.
+    distance is then computed only in the windows around those occurrences,
+    with Myers' bit-parallel algorithm.
     """
 
-    __slots__ = ("icase", "k", "m", "pattern", "pieces")
+    __slots__ = ("high", "icase", "k", "m", "mask", "pattern", "peq", "pieces")
 
     def __init__(self, pattern: str, ignore_case: bool = False) -> None:
         self.icase = ignore_case
@@ -73,35 +75,46 @@ class _Agrep:
                 pieces.append(self.pattern[start : start + ln])
             start += ln
         self.pieces = tuple(dict.fromkeys(pieces))
+        # bit masks for Myers' algorithm: bit i set where pattern[i] == char
+        peq: dict[str, int] = {}
+        for i, c in enumerate(self.pattern):
+            peq[c] = peq.get(c, 0) | (1 << i)
+        self.peq = peq
+        self.mask = (1 << self.m) - 1
+        self.high = 1 << (self.m - 1)
 
     def prepare(self, s: str) -> str:
-        return s.translate(_ASCII_LOWER) if self.icase else s
+        return _ascii_lower(s) if self.icase else s
 
     def _within(self, t: str) -> bool:
-        """Whether some substring of *t* is within distance k of the pattern."""
-        p, m, k = self.pattern, self.m, self.k
-        prev = list(range(m + 1))
+        """Whether some substring of *t* is within distance k of the pattern.
+
+        Myers' bit-parallel approximate string matching (Hyyrö's formulation):
+        ``score`` is the edit distance between the pattern and the best
+        substring of *t* ending at the current character.
+        """
+        peq, k, mask, high = self.peq, self.k, self.mask, self.high
+        pv, mv, score = mask, 0, self.m
         for c in t:
-            cur = [0]
-            left = 0
-            for i in range(1, m + 1):
-                v = prev[i - 1] + (p[i - 1] != c)
-                up = prev[i] + 1
-                if up < v:
-                    v = up
-                if left + 1 < v:
-                    v = left + 1
-                cur.append(v)
-                left = v
-            if left <= k:
+            eq = peq.get(c, 0)
+            xv = eq | mv
+            xh = (((eq & pv) + pv) ^ pv) | eq
+            ph = mv | (~(xh | pv) & mask)
+            mh = pv & xh
+            if ph & high:
+                score += 1
+            elif mh & high:
+                score -= 1
+            ph = (ph << 1) & mask
+            mh = (mh << 1) & mask
+            pv = mh | (~(xv | ph) & mask)
+            mv = ph & xv
+            if score <= k:
                 return True
-            prev = cur
         return False
 
-    def match(self, s: Any) -> bool:
-        """``agrepl()`` for one (already :meth:`prepare`-d) string; ``NA`` never matches."""
-        if s is None or s is pd.NA or (isinstance(s, float) and math.isnan(s)):
-            return False
+    def match(self, s: str) -> bool:
+        """``agrepl()`` for one non-missing, already :meth:`prepare`-d string."""
         if self.m <= self.k:  # pragma: no cover - not reachable with max.distance = 0.1
             return True
         # a match is at most m + k long and contains an exact occurrence of a piece
@@ -124,7 +137,13 @@ class _Agrep:
         return any(self._within(s[lo:hi]) for lo, hi in merged)
 
     def __call__(self, x: Sequence[Any]) -> list[bool]:
-        return [self.match(None if _is_na(v) else self.prepare(str(v))) for v in x]
+        """``agrepl()`` over a vector; ``NA`` never matches."""
+        return [False if _is_na(v) else self.match(self.prepare(str(v))) for v in x]
+
+
+def _ascii_lower(s: str) -> str:
+    """Lower-case A-Z only (keeps the length, unlike :meth:`str.lower` on some letters)."""
+    return s.lower() if s.isascii() else s.translate(_ASCII_LOWER)
 
 
 def _is_na(v: Any) -> bool:
@@ -144,15 +163,9 @@ def agrepl(pattern: str, x: Any, ignore_case: bool = False) -> Any:
     return _matcher(pattern, ignore_case)(list(x))
 
 
-_MATCHERS: dict[tuple[str, bool], _Agrep] = {}
-
-
+@functools.cache
 def _matcher(pattern: str, ignore_case: bool) -> _Agrep:
-    key = (pattern, ignore_case)
-    rx = _MATCHERS.get(key)
-    if rx is None:
-        rx = _MATCHERS[key] = _Agrep(pattern, ignore_case)
-    return rx
+    return _Agrep(pattern, ignore_case)
 
 
 # ---------------------------------------------------------------------------
@@ -228,7 +241,7 @@ def rtransparent_coi(splitted: Sequence[Any]) -> str:
     Extract a conflict of interest statement from the sentences of one paper,
     adapted from rtransparent. Returns ``""`` when none is found. Indices are
     1-based, as in R. Raises :class:`ValueError` where R's ``if`` meets ``NA``
-    (a short COI heading as the last sentence, see ``docs/UPSTREAM_ISSUES.md``).
+    (a short COI heading without a "no" as the last sentence: R errors there).
     """
     splitted = [None if _is_na(s) else str(s) for s in splitted]
     n = len(splitted)
@@ -240,13 +253,20 @@ def rtransparent_coi(splitted: Sequence[Any]) -> str:
     def sel(idx: Sequence[int]) -> list[str | None]:
         return [at(i) for i in idx]
 
-    is_conflict = agrep("conflict of interest", splitted, ignore_case=True)
-    is_conflicts = agrep("conflicts of interest", splitted, ignore_case=True)
-    is_competing = agrep("competing interest", splitted, ignore_case=True)
-    is_disclosure = agrep("disclosure", splitted, ignore_case=True)
-    is_finance = agrep("competing financial interest", splitted, ignore_case=True)
-    is_declare = agrep("declaration of interest", splitted, ignore_case=True)
-    is_dual = agrep("duality of interest", splitted, ignore_case=True)
+    # agrep(<pattern>, splitted, ignore.case = T), lower-casing each sentence once
+    lowered = [None if s is None else _ascii_lower(s) for s in splitted]
+
+    def agrep_i(pattern: str) -> list[int]:
+        rx = _matcher(pattern, True)
+        return [i for i, s in enumerate(lowered, start=1) if s is not None and rx.match(s)]
+
+    is_conflict = agrep_i("conflict of interest")
+    is_conflicts = agrep_i("conflicts of interest")
+    is_competing = agrep_i("competing interest")
+    is_disclosure = agrep_i("disclosure")
+    is_finance = agrep_i("competing financial interest")
+    is_declare = agrep_i("declaration of interest")
+    is_dual = agrep_i("duality of interest")
 
     # Exclude financial disclosures
     if is_disclosure:
@@ -285,28 +305,32 @@ def rtransparent_coi(splitted: Sequence[Any]) -> str:
             index = [i for i in index if i >= cut]
 
     # If in point form, sections are missed when they do not include the keywords.
-    if len(index) > 1 and any(b - a > 1 for a, b in zip(index, index[1:], strict=False)):
-        if max(index) - min(index) < 10:
-            index = list(range(min(index), max(index) + 1))
+    if (
+        len(index) > 1
+        and any(b - a > 1 for a, b in itertools.pairwise(index))
+        and max(index) - min(index) < 10  # Safeguard
+    ):
+        index = list(range(min(index), max(index) + 1))
 
     coi_text: str = paste(sel(index), collapse=" ")
 
     # Identify text that may have been missed because it was in a new line
     if len(index) == 1:
         no_stop_words = gsub(" of ", " ", coi_text, ignore_case=True)
-        if len(strsplit(no_stop_words, " ")) < 4:
-            if not grepl("no", at(index[0]), ignore_case=True):
-                nxt = at(index[0] + 1)
-                if nxt is None:
-                    # R: if (nchar(NA_character_) == 0) -> error
-                    raise ValueError("missing value where TRUE/FALSE needed")
-                second = index[0] + 2 if len(nxt) == 0 else index[0] + 1
-                index = [index[0], second]
-                new_str = gsub("^.+(None.*$)", r"\1", at(second))
-                if grepl(r"^.*\.$", new_str):
-                    coi_text = paste(coi_text, new_str)
-                else:
-                    coi_text = paste(coi_text, new_str, at(second + 1))
+        if len(strsplit(no_stop_words, " ")) < 4 and not grepl(
+            "no", at(index[0]), ignore_case=True
+        ):
+            nxt = at(index[0] + 1)
+            if nxt is None:
+                # R: if (nchar(NA_character_) == 0) -> error
+                raise ValueError("missing value where TRUE/FALSE needed")
+            second = index[0] + 2 if len(nxt) == 0 else index[0] + 1
+            index = [index[0], second]
+            new_str = gsub("^.+(None.*$)", r"\1", at(second))
+            if grepl(r"^.*\.$", new_str):  # make sure this is a whole sentence
+                coi_text = paste(coi_text, new_str)
+            else:
+                coi_text = paste(coi_text, new_str, at(second + 1))
 
     # Exclude other mentions of disclosure that are not disclosures of interest
     if is_disclosure and not the_conflicts:

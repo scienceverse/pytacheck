@@ -1,0 +1,922 @@
+{
+  "id": "dataverse_info.review.table_duplicates",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 7,
+    "names": [
+      "u",
+      "title",
+      "dataverse_url",
+      "dataverse_host",
+      "dataverse_doi",
+      "title.dataverse",
+      "doi",
+      "publication_date",
+      "updated_date",
+      "authors",
+      "license",
+      "files"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/REV2",
+          "https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/REV2",
+          null,
+          "https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/REV2",
+          "https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/REV2",
+          "https://doi.org/10.7910/DVN/REV2",
+          "https://doi.org/10.7910/DVN/REV2"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "clash",
+          "clash",
+          "clash",
+          "clash",
+          "clash",
+          "clash",
+          "clash"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/REV2",
+          "https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/REV2",
+          null,
+          "https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/REV2",
+          "https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/REV2",
+          "https://doi.org/10.7910/DVN/REV2",
+          "https://doi.org/10.7910/DVN/REV2"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "dataverse.harvard.edu",
+          "dataverse.harvard.edu",
+          null,
+          "dataverse.harvard.edu",
+          "dataverse.harvard.edu",
+          "dataverse.harvard.edu",
+          "dataverse.harvard.edu"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "10.7910/DVN/REV2",
+          "10.7910/DVN/REV2",
+          null,
+          "10.7910/DVN/REV2",
+          "10.7910/DVN/REV2",
+          "10.7910/DVN/REV2",
+          "10.7910/DVN/REV2"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Second",
+          "Second",
+          null,
+          "Second",
+          "Second",
+          "Second",
+          "Second"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://doi.org/10.7910/DVN/REV2",
+          "https://doi.org/10.7910/DVN/REV2",
+          null,
+          "https://doi.org/10.7910/DVN/REV2",
+          "https://doi.org/10.7910/DVN/REV2",
+          "https://doi.org/10.7910/DVN/REV2",
+          "https://doi.org/10.7910/DVN/REV2"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "2022-02-02",
+          "2022-02-02",
+          null,
+          "2022-02-02",
+          "2022-02-02",
+          "2022-02-02",
+          "2022-02-02"
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "null"
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "list",
+                "names": [
+                  "label",
+                  "dataFile"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "list",
+                    "names": [
+                      "id",
+                      "filename",
+                      "filesize",
+                      "checksum"
+                    ],
+                    "v": [
+                      {
+                        "t": "chr",
+                        "v": [
+                          "2001"
+                        ]
+                      },
+                      {
+                        "t": "chr",
+                        "v": [
+                          "real_name.csv"
+                        ]
+                      },
+                      {
+                        "t": "int",
+                        "v": [
+                          8
+                        ]
+                      },
+                      {
+                        "t": "list",
+                        "names": [
+                          "type",
+                          "value"
+                        ],
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "md5"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "344fd2323dd33d5c058b7cf27de029e8"
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "dataFile"
+                ],
+                "v": [
+                  {
+                    "t": "list",
+                    "names": [
+                      "id",
+                      "filesize",
+                      "checksum"
+                    ],
+                    "v": [
+                      {
+                        "t": "int",
+                        "v": [
+                          2002
+                        ]
+                      },
+                      {
+                        "t": "int",
+                        "v": [
+                          5
+                        ]
+                      },
+                      {
+                        "t": "list",
+                        "names": [
+                          "type",
+                          "value"
+                        ],
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "MD5"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "4358B5009C67D0E31D7FBF1663FCD3BF"
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "list",
+                "names": [
+                  "label",
+                  "dataFile"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "list",
+                    "names": [
+                      "id",
+                      "filename",
+                      "filesize",
+                      "checksum"
+                    ],
+                    "v": [
+                      {
+                        "t": "chr",
+                        "v": [
+                          "2001"
+                        ]
+                      },
+                      {
+                        "t": "chr",
+                        "v": [
+                          "real_name.csv"
+                        ]
+                      },
+                      {
+                        "t": "int",
+                        "v": [
+                          8
+                        ]
+                      },
+                      {
+                        "t": "list",
+                        "names": [
+                          "type",
+                          "value"
+                        ],
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "md5"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "344fd2323dd33d5c058b7cf27de029e8"
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "dataFile"
+                ],
+                "v": [
+                  {
+                    "t": "list",
+                    "names": [
+                      "id",
+                      "filesize",
+                      "checksum"
+                    ],
+                    "v": [
+                      {
+                        "t": "int",
+                        "v": [
+                          2002
+                        ]
+                      },
+                      {
+                        "t": "int",
+                        "v": [
+                          5
+                        ]
+                      },
+                      {
+                        "t": "list",
+                        "names": [
+                          "type",
+                          "value"
+                        ],
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "MD5"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "4358B5009C67D0E31D7FBF1663FCD3BF"
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "t": "null"
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "list",
+                "names": [
+                  "label",
+                  "dataFile"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "list",
+                    "names": [
+                      "id",
+                      "filename",
+                      "filesize",
+                      "checksum"
+                    ],
+                    "v": [
+                      {
+                        "t": "chr",
+                        "v": [
+                          "2001"
+                        ]
+                      },
+                      {
+                        "t": "chr",
+                        "v": [
+                          "real_name.csv"
+                        ]
+                      },
+                      {
+                        "t": "int",
+                        "v": [
+                          8
+                        ]
+                      },
+                      {
+                        "t": "list",
+                        "names": [
+                          "type",
+                          "value"
+                        ],
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "md5"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "344fd2323dd33d5c058b7cf27de029e8"
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "dataFile"
+                ],
+                "v": [
+                  {
+                    "t": "list",
+                    "names": [
+                      "id",
+                      "filesize",
+                      "checksum"
+                    ],
+                    "v": [
+                      {
+                        "t": "int",
+                        "v": [
+                          2002
+                        ]
+                      },
+                      {
+                        "t": "int",
+                        "v": [
+                          5
+                        ]
+                      },
+                      {
+                        "t": "list",
+                        "names": [
+                          "type",
+                          "value"
+                        ],
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "MD5"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "4358B5009C67D0E31D7FBF1663FCD3BF"
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "list",
+                "names": [
+                  "label",
+                  "dataFile"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "list",
+                    "names": [
+                      "id",
+                      "filename",
+                      "filesize",
+                      "checksum"
+                    ],
+                    "v": [
+                      {
+                        "t": "chr",
+                        "v": [
+                          "2001"
+                        ]
+                      },
+                      {
+                        "t": "chr",
+                        "v": [
+                          "real_name.csv"
+                        ]
+                      },
+                      {
+                        "t": "int",
+                        "v": [
+                          8
+                        ]
+                      },
+                      {
+                        "t": "list",
+                        "names": [
+                          "type",
+                          "value"
+                        ],
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "md5"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "344fd2323dd33d5c058b7cf27de029e8"
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "dataFile"
+                ],
+                "v": [
+                  {
+                    "t": "list",
+                    "names": [
+                      "id",
+                      "filesize",
+                      "checksum"
+                    ],
+                    "v": [
+                      {
+                        "t": "int",
+                        "v": [
+                          2002
+                        ]
+                      },
+                      {
+                        "t": "int",
+                        "v": [
+                          5
+                        ]
+                      },
+                      {
+                        "t": "list",
+                        "names": [
+                          "type",
+                          "value"
+                        ],
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "MD5"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "4358B5009C67D0E31D7FBF1663FCD3BF"
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "list",
+                "names": [
+                  "label",
+                  "dataFile"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "list",
+                    "names": [
+                      "id",
+                      "filename",
+                      "filesize",
+                      "checksum"
+                    ],
+                    "v": [
+                      {
+                        "t": "chr",
+                        "v": [
+                          "2001"
+                        ]
+                      },
+                      {
+                        "t": "chr",
+                        "v": [
+                          "real_name.csv"
+                        ]
+                      },
+                      {
+                        "t": "int",
+                        "v": [
+                          8
+                        ]
+                      },
+                      {
+                        "t": "list",
+                        "names": [
+                          "type",
+                          "value"
+                        ],
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "md5"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "344fd2323dd33d5c058b7cf27de029e8"
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "dataFile"
+                ],
+                "v": [
+                  {
+                    "t": "list",
+                    "names": [
+                      "id",
+                      "filesize",
+                      "checksum"
+                    ],
+                    "v": [
+                      {
+                        "t": "int",
+                        "v": [
+                          2002
+                        ]
+                      },
+                      {
+                        "t": "int",
+                        "v": [
+                          5
+                        ]
+                      },
+                      {
+                        "t": "list",
+                        "names": [
+                          "type",
+                          "value"
+                        ],
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "MD5"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "4358B5009C67D0E31D7FBF1663FCD3BF"
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "list",
+                "names": [
+                  "label",
+                  "dataFile"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "list",
+                    "names": [
+                      "id",
+                      "filename",
+                      "filesize",
+                      "checksum"
+                    ],
+                    "v": [
+                      {
+                        "t": "chr",
+                        "v": [
+                          "2001"
+                        ]
+                      },
+                      {
+                        "t": "chr",
+                        "v": [
+                          "real_name.csv"
+                        ]
+                      },
+                      {
+                        "t": "int",
+                        "v": [
+                          8
+                        ]
+                      },
+                      {
+                        "t": "list",
+                        "names": [
+                          "type",
+                          "value"
+                        ],
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "md5"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "344fd2323dd33d5c058b7cf27de029e8"
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "dataFile"
+                ],
+                "v": [
+                  {
+                    "t": "list",
+                    "names": [
+                      "id",
+                      "filesize",
+                      "checksum"
+                    ],
+                    "v": [
+                      {
+                        "t": "int",
+                        "v": [
+                          2002
+                        ]
+                      },
+                      {
+                        "t": "int",
+                        "v": [
+                          5
+                        ]
+                      },
+                      {
+                        "t": "list",
+                        "names": [
+                          "type",
+                          "value"
+                        ],
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "MD5"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "4358B5009C67D0E31D7FBF1663FCD3BF"
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -1,0 +1,12 @@
+{
+  "data": [
+    {
+      "id": "gpt-4o",
+      "slug": "openai-gpt-4o"
+    },
+    {
+      "id": "claude",
+      "slug": "anthropic-claude"
+    }
+  ]
+}

@@ -50,10 +50,11 @@ def rbox_links(paper: Any) -> pd.DataFrame:
     the box, and duplicate rows dropped.
     """
     from pytacheck._r import sub
-    from pytacheck.archives.dataverse import _collect_links, _link_matches, _url_rows
+    from pytacheck.archives.dataone import _scan_links
+    from pytacheck.archives.dataverse import _collect_links, _url_rows
 
     found_href = _url_rows(paper, r"researchbox\.org")
-    other = _link_matches(paper, r"(?:https?://)?researchbox\.org/[0-9]+/?")
+    other = _scan_links(paper, r"(?:https?://)?researchbox\.org/[0-9]+/?", ["researchbox.org/"])
     links = _collect_links([found_href, other])
     links["href"] = pd.Series(
         sub(
@@ -237,16 +238,16 @@ def _cache_subdir(rb_url: str) -> str:
 
 
 def _list_files(root: str) -> list[str]:
-    """``list.files(root, recursive = TRUE)``: relative paths of files.
+    """``list.files(root, recursive = TRUE)``: relative paths of files, sorted as R does
+    (locale collation, which R does with ICU)."""
+    from pytacheck._r import r_sorted
 
-    Sorted by code point, as R sorts them in the C.UTF-8 locale.
-    """
     out = []
     for d, _dirs, files in os.walk(root):
         for f in files:
             rel = os.path.relpath(os.path.join(d, f), root).replace(os.sep, "/")
             out.append(rel)
-    return sorted(out)
+    return list(r_sorted(out))
 
 
 _RB_EMPTY = {
@@ -271,10 +272,10 @@ def rbox_file_download(rb_url: Any, pb: Any = None) -> pd.DataFrame | None:
     from pytacheck._r import bind_rows
     from pytacheck.archives import _spinner, _tick
     from pytacheck.archives.dataverse import _paste
-    from pytacheck.archives.psycharchives import _add_ext_type, _chr_list
+    from pytacheck.archives.psycharchives import _add_ext_type, _url_values
     from pytacheck.utils import left_join
 
-    urls = [rb_url] if isinstance(rb_url, str) else _chr_list(rb_url)
+    urls = _url_values(rb_url)
     with _spinner(pb) as bar:
         if len(urls) > 1:
             unique_rb = [u for u in dict.fromkeys(urls) if u is not None]
@@ -352,8 +353,14 @@ def _download_zip(file_ids: list[Any], box_id: str, reference: str, path: str) -
     from pytacheck import http
     from pytacheck.archives.dataverse import _as_numeric
 
+    # R: req_body_json(list(files = as.numeric(file_ids), ...)) -- jsonlite writes whole
+    # doubles without a decimal point and unboxes a length-one vector
+    nums: list[Any] = []
+    for v in file_ids:
+        x = _as_numeric(v)
+        nums.append(int(x) if x == x and float(x).is_integer() else (None if x != x else x))
     body = {
-        "files": [_as_numeric(v) for v in file_ids],
+        "files": nums[0] if len(nums) == 1 else nums,
         "box_id": box_id,
         "reference": reference,
     }

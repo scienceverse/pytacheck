@@ -1,0 +1,25 @@
+{
+  "uuid": "u-bonn-1",
+  "metadata": [
+    {
+      "key": "dc.contributor.author",
+      "value": "Author, A."
+    },
+    {
+      "key": "dc.contributor.author",
+      "value": "Author, B."
+    },
+    {
+      "key": "dc.rights",
+      "value": "openAccess"
+    },
+    {
+      "key": "dc.identifier.doi",
+      "value": null
+    },
+    {
+      "key": "dc.date.available",
+      "value": "2020-05-05"
+    }
+  ]
+}

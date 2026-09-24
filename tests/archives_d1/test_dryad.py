@@ -239,22 +239,184 @@ def test_dryad_headers_oauth_fetches_caches_and_refreshes() -> None:
         assert spec["headers"]["Authorization"] == "Bearer t2"
 
 
-def test_dryad_oauth_failure_is_a_failed_request() -> None:
+# R behaviour checked by hand (R 4.5.3, httr2 1.3.0, without httptest2, whose mocks
+# bypass the auth hook): dryad_auth() with a token endpoint answering an OAuth
+# `error`, a non-JSON body or JSON without `access_token` makes dryad_info() fail
+# with an httr2_oauth* error, which req_perform_sequential() does not catch; a
+# token endpoint that cannot be reached is an httr2_failure, so the dataset is
+# only "unfound".
+
+
+@pytest.mark.parametrize(
+    ("response", "match"),
+    [
+        (
+            httpx.Response(401, json={"error": "invalid_client"}),
+            r"OAuth failure \[invalid_client\]",
+        ),
+        (httpx.Response(200, text="<html>no</html>"), "Failed to parse"),
+        (httpx.Response(200, json={"hello": 1}), "Failed to parse"),
+        (httpx.Response(200, json={"access_token": 5}), "access_token"),
+        (httpx.Response(200, json={"access_token": "t", "expires_in": 1.5}), "expires_in"),
+    ],
+)
+def test_dryad_oauth_refusal_aborts_like_r(response: httpx.Response, match: str) -> None:
+    import respx
+
+    with respx.mock(assert_all_called=False) as router:
+        router.post("https://datadryad.org/oauth/token").mock(return_value=response)
+        api = router.get(url__startswith="https://datadryad.org/api/").mock(
+            return_value=httpx.Response(200, json={"title": "should not be reached"})
+        )
+        dryad_auth("cid", "bad")
+        with pytest.raises(dryad.OAuthError, match=match):
+            _dryad_headers({"url": "https://datadryad.org/api/v2/x", "headers": {}})
+        with pytest.raises(dryad.OAuthError, match=match):
+            _dryad_info("10.5061/dryad.x")
+        with pytest.raises(dryad.OAuthError, match=match):
+            dryad_file_download("10.5061/dryad.x", download_to="/nonexistent-never-created")
+        # several datasets: each error becomes a warning, as in R
+        with pytest.warns(UserWarning, match="resulted in an error"):
+            assert dryad_file_download(["10.5061/dryad.x", "10.5061/dryad.y"]) is None
+        assert not api.called
+
+
+def test_dryad_oauth_status_is_ignored_when_the_body_has_a_token() -> None:
+    import respx
+
+    # oauth_flow_fetch() sets req_error(is_error = FALSE): only the body counts
+    with respx.mock(assert_all_called=False) as router:
+        router.post("https://datadryad.org/oauth/token").mock(
+            return_value=httpx.Response(
+                401, json={"access_token": "tok", "expires_in": "3600", "token_type": "bearer"}
+            )
+        )
+        dryad_auth("cid", "odd")
+        spec = _dryad_headers({"url": "https://datadryad.org/api/v2/x", "headers": {}})
+    assert spec["headers"]["Authorization"] == "Bearer tok"
+
+
+def test_dryad_oauth_unreachable_is_a_failed_request() -> None:
     import respx
 
     with respx.mock(assert_all_called=False) as router:
         router.post("https://datadryad.org/oauth/token").mock(
-            return_value=httpx.Response(401, json={"error": "invalid_client"})
+            side_effect=httpx.ConnectError("refused")
         )
         router.get(url__startswith="https://datadryad.org/api/").mock(
             return_value=httpx.Response(200, json={"title": "should not be reached"})
         )
-        dryad_auth("cid", "bad")
-        with pytest.raises(PermissionError, match="invalid_client"):
+        dryad_auth("cid", "secret")
+        with pytest.raises(ConnectionError):
             _dryad_headers({"url": "https://datadryad.org/api/v2/x", "headers": {}})
         with pytest.warns(UserWarning, match="could not be found on Dryad"):
             info = _dryad_info("10.5061/dryad.x")
     assert info["error"].tolist() == ["unfound"]
+
+
+def _revoking_router(router: object, tokens: list[str]) -> list[str]:
+    """Token endpoint handing out *tokens* in turn; the API rejects all but the last."""
+    seen: list[str] = []
+    issued = iter(tokens)
+
+    def token(_req: httpx.Request) -> httpx.Response:
+        return httpx.Response(200, json={"access_token": next(issued), "expires_in": 3600})
+
+    def api(req: httpx.Request) -> httpx.Response:
+        auth = req.headers.get("Authorization", "")
+        seen.append(auth)
+        if auth != f"Bearer {tokens[-1]}":
+            return httpx.Response(
+                401, headers={"WWW-Authenticate": 'Bearer realm="x", error="invalid_token"'}
+            )
+        if req.url.path.endswith("/download"):
+            return httpx.Response(200, content=b"x,y\n1,2\n")
+        if req.url.path.endswith("/files"):
+            return httpx.Response(
+                200,
+                json={
+                    "_embedded": {
+                        "stash:files": [
+                            {
+                                "_links": {
+                                    "self": {"href": "/api/v2/files/1"},
+                                    "stash:download": {"href": "/api/v2/files/1/download"},
+                                },
+                                "path": "d.csv",
+                                "size": 8,
+                            }
+                        ]
+                    }
+                },
+            )
+        return httpx.Response(
+            200, json={"title": "T", "_links": {"stash:version": {"href": "/api/v2/versions/9"}}}
+        )
+
+    router.post("https://datadryad.org/oauth/token").mock(side_effect=token)  # type: ignore[attr-defined]
+    router.get(url__startswith="https://datadryad.org/api/").mock(side_effect=api)  # type: ignore[attr-defined]
+    return seen
+
+
+def test_dryad_oauth_reauthenticates_once_after_invalid_token(tmp_path: Path) -> None:
+    import respx
+
+    # httr2 req_perform(): a 401 with error="invalid_token" clears the cached token
+    # and sends the request once more (resp_is_invalid_oauth_token())
+    with respx.mock(assert_all_called=False) as router:
+        seen = _revoking_router(router, ["revoked", "fresh"])
+        dryad_auth("cid", "secret")
+        info = _dryad_info("10.5061/dryad.x")
+        assert info["title"].tolist() == ["T"]
+        assert seen[:2] == ["Bearer revoked", "Bearer fresh"]
+
+    with respx.mock(assert_all_called=False) as router:
+        dryad._TOKENS.clear()
+        seen = _revoking_router(router, ["old", "new"])
+        # the metadata request re-authenticates; the download then uses the fresh token
+        dl = dryad_file_download("10.5061/dryad.x", download_to=str(tmp_path))
+        assert dl is not None and dl["downloaded"].tolist() == [True]
+
+    with respx.mock(assert_all_called=False) as router:
+        dryad._TOKENS.clear()
+        seen = _revoking_router(router, ["a", "b", "c"])  # only the third is accepted
+        with pytest.warns(UserWarning, match="could not be found on Dryad"):
+            info = _dryad_info("10.5061/dryad.x")
+        assert info["error"].tolist() == ["unfound"]  # one re-authentication only
+        assert seen == ["Bearer a", "Bearer b"]
+
+
+def test_dryad_download_reauthenticates_once(tmp_path: Path) -> None:
+    import respx
+
+    from pytacheck.archives.dataverse import _fetch_file
+
+    with respx.mock(assert_all_called=False) as router:
+        seen = _revoking_router(router, ["stale", "fresh"])
+        dryad_auth("cid", "secret")
+        headers = _dryad_headers({"headers": {}})["headers"]
+        target = str(tmp_path / "f")
+        ok = _fetch_file(
+            "https://datadryad.org/api/v2/files/1/download", headers, target, dryad._dryad_reauth
+        )
+        assert ok and seen == ["Bearer stale", "Bearer fresh"]
+        # a static token has no OAuth policy: no second attempt
+        dryad._TOKENS.clear()
+        dryad_pat("static")
+        from pytacheck import utils
+
+        with utils.local_options(
+            {"metacheck.dryad.client_id": None, "metacheck.dryad.client_secret": None}
+        ):
+            seen.clear()
+            headers = _dryad_headers({"headers": {}})["headers"]
+            assert not _fetch_file(
+                "https://datadryad.org/api/v2/files/1/download",
+                headers,
+                target,
+                dryad._dryad_reauth,
+            )
+            assert seen == ["Bearer static"]
 
 
 # --------------------------------------------------------------------------- downloads

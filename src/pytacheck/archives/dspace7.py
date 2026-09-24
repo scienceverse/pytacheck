@@ -147,12 +147,14 @@ def dspace7_links(paper: Any) -> pd.DataFrame:
     in :data:`DSPACE7_HOSTS`, plus bare mentions of such a host with a path
     in the text. Trailing slashes are stripped and duplicate rows dropped.
     """
-    from pytacheck.archives.dataverse import _collect_links, _link_matches, _url_rows
+    from pytacheck.archives.dataone import _scan_links
+    from pytacheck.archives.dataverse import _collect_links, _url_rows
 
     host_regex = _dspace7_host_regex()
     found_href = _url_rows(paper, host_regex)
     bare = f"(?:https?://)?(?:www\\.)?(?:{host_regex})/[A-Za-z0-9/._-]+"
-    return _collect_links([found_href, _link_matches(paper, bare)])
+    other = _scan_links(paper, bare, [f"{h}/" for h in DSPACE7_HOSTS])
+    return _collect_links([found_href, other])
 
 
 def _dspace7_rest(path: str, host: str) -> Any:
@@ -175,9 +177,7 @@ def _bracket(x: Any, name: str) -> Any:
     raise IndexError("subscript out of bounds")
 
 
-def _dspace7_info(
-    host: Any, uuid: Any = None, handle: Any = None, pb: Any = None
-) -> pd.DataFrame:
+def _dspace7_info(host: Any, uuid: Any = None, handle: Any = None, pb: Any = None) -> pd.DataFrame:
     """Port of R/archive-dspace7.R::.dspace7_info(): one item from one installation.
 
     Resolves the item by *uuid* when given, else by *handle* (``/pid/find``).
@@ -235,7 +235,9 @@ def _dspace7_info(
                 if entries is not None and not (
                     isinstance(entries, list | dict) and len(entries) == 0
                 ):
-                    vals = [_chr_elt(_empty_or(_dollar(m, "value"), None)) for m in _elements(entries)]
+                    vals = [
+                        _chr_elt(_empty_or(_dollar(m, "value"), None)) for m in _elements(entries)
+                    ]
                     vals = [v for v in vals if v is not None]
                     if vals:
                         return "; ".join(vals)
@@ -271,7 +273,11 @@ def _dspace7_info(
                 sizes.append(_as_numeric(_empty_or(_dollar(b, "sizeBytes"), None)))
                 checksums.append(_chr_elt(_empty_or(_dollars(b, "checkSum", "value"), None)))
                 retrieve.append(
-                    _chr_elt(_empty_or(_bracket(_bracket(_bracket(b, "_links"), "content"), "href"), None))
+                    _chr_elt(
+                        _empty_or(
+                            _bracket(_bracket(_bracket(b, "_links"), "content"), "href"), None
+                        )
+                    )
                 )
         obj["files"] = _obj_cell(
             pd.DataFrame(
@@ -300,10 +306,10 @@ def dspace7_file_download(dspace7_url: Any, pb: Any = None) -> pd.DataFrame | No
     from pytacheck._r import bind_rows
     from pytacheck.archives import _spinner, _tick
     from pytacheck.archives.dataverse import _paste
-    from pytacheck.archives.psycharchives import _add_ext_type, _chr_list
+    from pytacheck.archives.psycharchives import _add_ext_type, _url_values
     from pytacheck.utils import left_join
 
-    urls = [dspace7_url] if isinstance(dspace7_url, str) else _chr_list(dspace7_url)
+    urls = _url_values(dspace7_url)
     with _spinner(pb) as bar:
         if len(urls) > 1:
             unique_urls = [u for u in dict.fromkeys(urls) if u is not None]

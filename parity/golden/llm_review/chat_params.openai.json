@@ -1,0 +1,72 @@
+{
+  "id": "chat_params.openai",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "value",
+      "warnings"
+    ],
+    "v": [
+      {
+        "t": "list",
+        "names": [
+          "temperature",
+          "top_p",
+          "frequency_penalty",
+          "max_output_tokens",
+          "log_probs",
+          "reasoning_effort"
+        ],
+        "v": [
+          {
+            "t": "dbl",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0.5
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              10
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "low"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Ignoring unsupported parameters: \"top_k\", \"presence_penalty\", \"seed\",\n\"stop_sequences\", and \"reasoning_tokens\""
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

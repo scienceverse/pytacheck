@@ -1,0 +1,220 @@
+{
+  "id": "match_reported_output.derived.psychsci_1",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 11,
+    "names": [
+      "text_id",
+      "grp_id",
+      "reported",
+      "n_components",
+      "n_matched",
+      "found",
+      "match_values",
+      "not_matched",
+      "source_file",
+      "analysis",
+      "confidence",
+      "plausible_split"
+    ],
+    "v": [
+      {
+        "t": "int",
+        "v": [
+          100,
+          100,
+          101,
+          101,
+          102,
+          102,
+          105,
+          105,
+          105,
+          99,
+          99
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          2,
+          2,
+          3,
+          3,
+          4,
+          4,
+          5,
+          5,
+          5,
+          1,
+          1
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "F=33.56",
+          "df1=1 df2=19 p=<0.001 ηp²=0.64",
+          "F=36.79 ηp²=0.67",
+          "df1=2 df2=38 p=<0.001",
+          "p=0.016 ηp²=0.27",
+          "F=6.98 df1=1 df2=19",
+          "F=20.82",
+          "df1=2 df2=38 p=<0.001 ηp²=0.52",
+          "F=51.86 df1=2 df2=38 p=<0.001 ηp²=0.73",
+          "F=16.58 ηp²=0.47",
+          "df1=2 df2=38 p=<0.001"
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          1,
+          4,
+          2,
+          3,
+          2,
+          3,
+          1,
+          4,
+          5,
+          2,
+          3
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          1,
+          0,
+          2,
+          0,
+          2,
+          0,
+          1,
+          0,
+          1,
+          2,
+          0
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true,
+          false,
+          true,
+          false,
+          true,
+          false,
+          true,
+          false,
+          false,
+          true,
+          false
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "F=33.56",
+          null,
+          "F=36.79, ηp²=0.67",
+          null,
+          "p=0.016, ηp²=0.27",
+          null,
+          "F=20.82",
+          null,
+          null,
+          "F=16.58, ηp²=0.47",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "",
+          null,
+          "",
+          null,
+          "",
+          null,
+          "",
+          null,
+          null,
+          "",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "derived.R",
+          null,
+          "derived.R",
+          null,
+          "derived.R",
+          null,
+          "derived.R",
+          null,
+          null,
+          "derived.R",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "an5",
+          null,
+          "an6",
+          null,
+          "an7",
+          null,
+          "an8",
+          null,
+          null,
+          "an4",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "full",
+          "none",
+          "full",
+          "none",
+          "full",
+          "none",
+          "full",
+          "none",
+          "none",
+          "full",
+          "none"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          true,
+          false,
+          false
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

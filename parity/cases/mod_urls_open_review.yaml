@@ -1,0 +1,452 @@
+"area": "mod_urls_open_review"
+"cases":
+- "id": "open_practices.review.read_reversed"
+  "module": "open_practices"
+  "args":
+    "paper":
+      "$read":
+      - "upstream/metacheck/inst/demos/to_err_is_human.json"
+      - "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614527830.json"
+      - "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797613520608.json"
+      - "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614522816.json"
+- "id": "open_practices.review.list_order"
+  "module": "open_practices"
+  "args":
+    "paper":
+      "$expr":
+        "r": "paperlist(local({p <- test_paper(c(\"Our analysis code is on GitHub (https://github.com/a/b).\", \"Data are available at https://osf.io/z.\")); p$paper_id <- \"zeta\"; p}), local({p <- test_paper(c(\"Nothing to see.\")); p$paper_id <- \"Alpha\"; p}), local({p <- test_paper(c(\"Data are archived at https://zenodo.org/1.\", \"The data are available on request.\")); p$paper_id <- \"beta\"; p}), local({p <- test_paper(c(\"All materials are available at https://osf.io/m.\")); p$paper_id <- \"_under\"; p}), local({p <- test_paper(c(\"Scripts are available at https://github.com/s/t, data on request.\")); p$paper_id <- \"Beta\"; p}))"
+        "py": "pc.PaperList([(lambda p: (p.__setitem__(\"paper_id\", \"zeta\"), p)[1])(pc.test_paper([\"Our analysis code is on GitHub (https://github.com/a/b).\", \"Data are available at https://osf.io/z.\"])), (lambda p: (p.__setitem__(\"paper_id\", \"Alpha\"), p)[1])(pc.test_paper([\"Nothing to see.\"])), (lambda p: (p.__setitem__(\"paper_id\", \"beta\"), p)[1])(pc.test_paper([\"Data are archived at https://zenodo.org/1.\", \"The data are available on request.\"])), (lambda p: (p.__setitem__(\"paper_id\", \"_under\"), p)[1])(pc.test_paper([\"All materials are available at https://osf.io/m.\"])), (lambda p: (p.__setitem__(\"paper_id\", \"Beta\"), p)[1])(pc.test_paper([\"Scripts are available at https://github.com/s/t, data on request.\"]))])"
+- "id": "all_urls.review.list_order"
+  "module": "all_urls"
+  "args":
+    "paper":
+      "$expr":
+        "r": "paperlist(local({p <- test_paper(c(\"Our analysis code is on GitHub (https://github.com/a/b).\", \"Data are available at https://osf.io/z.\")); p$paper_id <- \"zeta\"; p}), local({p <- test_paper(c(\"Nothing to see.\")); p$paper_id <- \"Alpha\"; p}), local({p <- test_paper(c(\"Data are archived at https://zenodo.org/1.\", \"The data are available on request.\")); p$paper_id <- \"beta\"; p}), local({p <- test_paper(c(\"All materials are available at https://osf.io/m.\")); p$paper_id <- \"_under\"; p}), local({p <- test_paper(c(\"Scripts are available at https://github.com/s/t, data on request.\")); p$paper_id <- \"Beta\"; p}))"
+        "py": "pc.PaperList([(lambda p: (p.__setitem__(\"paper_id\", \"zeta\"), p)[1])(pc.test_paper([\"Our analysis code is on GitHub (https://github.com/a/b).\", \"Data are available at https://osf.io/z.\"])), (lambda p: (p.__setitem__(\"paper_id\", \"Alpha\"), p)[1])(pc.test_paper([\"Nothing to see.\"])), (lambda p: (p.__setitem__(\"paper_id\", \"beta\"), p)[1])(pc.test_paper([\"Data are archived at https://zenodo.org/1.\", \"The data are available on request.\"])), (lambda p: (p.__setitem__(\"paper_id\", \"_under\"), p)[1])(pc.test_paper([\"All materials are available at https://osf.io/m.\"])), (lambda p: (p.__setitem__(\"paper_id\", \"Beta\"), p)[1])(pc.test_paper([\"Scripts are available at https://github.com/s/t, data on request.\"]))])"
+- "id": "open_practices.review.na_text"
+  "module": "open_practices"
+  "args":
+    "paper":
+      "$expr":
+        "r": "local({p <- test_paper(c(NA, \"Data are available at https://osf.io/x.\", NA, \"Code: https://github.com/a/b is available.\")); p$paper_id <- \"napaper\"; p})"
+        "py": "(lambda p: (p.__setitem__(\"paper_id\", \"napaper\"), p)[1])(pc.test_paper([None, \"Data are available at https://osf.io/x.\", None, \"Code: https://github.com/a/b is available.\"]))"
+- "id": "all_urls.review.na_text"
+  "module": "all_urls"
+  "args":
+    "paper":
+      "$expr":
+        "r": "local({p <- test_paper(c(NA, \"Data are available at https://osf.io/x.\", NA, \"Code: https://github.com/a/b is available.\")); p$paper_id <- \"napaper\"; p})"
+        "py": "(lambda p: (p.__setitem__(\"paper_id\", \"napaper\"), p)[1])(pc.test_paper([None, \"Data are available at https://osf.io/x.\", None, \"Code: https://github.com/a/b is available.\"]))"
+- "id": "open_practices.review.unicode_space"
+  "module": "open_practices"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "Data are available on the Open\_Science Framework."
+        - "Data are available on the Open\u2003Science\u3000Framework."
+        - "Code is available on\_request."
+        - "Code is available on\u2009request."
+        - "Code is available by\vreasonable\frequest."
+        - "Data are available on\Nrequest."
+        - "Data are available on\u200Brequest."
+        - "Scripts are shared via\LGitHub."
+        - "Data\_are\_available at https://osf.io/x."
+  "compare":
+    "ignore":
+    - "table.paper_id"
+    - "summary_table.paper_id"
+- "id": "open_practices.review.word_boundaries"
+  "module": "open_practices"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "The R_code is available at https://github.com/a/b."
+        - "The script_files are available at https://github.com/a/b."
+        - "Our re-analysis is available at https://osf.io/r."
+        - "Our reanalysis is available at https://osf.io/r."
+        - "The R2 values are available at https://osf.io/r."
+        - "R's scripts are available at osf."
+        - "We used (R) and the output is available at osf."
+        - "The \xE9code files are available at osf."
+        - "The code\xE9 files are available at osf."
+        - "We used R\xE9 and share it at osf."
+        - "Materials: see OSF_1 for the questionnaire."
+        - "Materials: see the osf2 page for the questionnaire."
+        - "See the \xE9osf page for the questionnaires."
+        - "Figures4 are available at osf."
+        - "Available in the supplementary figure at osf."
+        - "Our metadata are online at the repository."
+        - "The database is accessible at https://example.org."
+        - "The dataset can be found on Dataverse."
+        - "The Python-based pipeline is on GitHub, see there."
+        - "Detailed plots are available at https://osf.io/p."
+        - "The instrument is shared on Figshare."
+        - "Data are available (OSF)."
+        - "Code is available at OSF.io."
+  "compare":
+    "ignore":
+    - "table.paper_id"
+    - "summary_table.paper_id"
+- "id": "open_practices.review.on_request_variants"
+  "module": "open_practices"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "Data are available On request."
+        - "Data are available on Request."
+        - "Data are available upon reasonable request from the authors."
+        - "Data are available upon Reasonable request."
+        - "Code is available on-request."
+        - "Code is available by  request."
+        - "Code is available by\trequest."
+        - "The code can be requested by email."
+        - "Materials are available on reasonable  request."
+        - "Data can be obtained from the author on request at https://osf.io/q."
+        - "Scripts are available on request, see https://github.com/q."
+  "compare":
+    "ignore":
+    - "table.paper_id"
+    - "summary_table.paper_id"
+- "id": "open_practices.review.prereg_variants"
+  "module": "open_practices"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "The study was Pre-Registered at https://osf.io/abc."
+        - "The study was preregistered on AsPredicted #1234."
+        - "The hypotheses were not pre-registered at OSF."
+        - "The hypotheses were NOT preregistered at OSF."
+        - "The analyses were Non-Preregistered, see OSF."
+        - "Nonpreregistered analyses are on OSF."
+        - "The study was not\npre-registered at https://osf.io/abc."
+        - "The study was pre-registered (https://osf.io/x), but the analyses were not preregistered."
+        - "The study was not   preregistered, see https://osf.io/abc."
+        - "The preregistration is available on request."
+        - "Preregistration: aspredicted.org/xyz."
+        - "The preregistered protocol is in the online archive."
+  "compare":
+    "ignore":
+    - "table.paper_id"
+    - "summary_table.paper_id"
+- "id": "open_practices.review.green_on_request"
+  "module": "open_practices"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "The data are available at https://osf.io/abc."
+        - "The analysis code is available at https://github.com/a/b."
+        - "Additional materials are available on request."
+  "compare":
+    "ignore":
+    - "table.paper_id"
+    - "summary_table.paper_id"
+- "id": "open_practices.review.code_open_data_on_request"
+  "module": "open_practices"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "The analysis code is available at https://github.com/a/b."
+        - "The data are available from the corresponding author on reasonable request."
+  "compare":
+    "ignore":
+    - "table.paper_id"
+    - "summary_table.paper_id"
+- "id": "open_practices.review.materials_only"
+  "module": "open_practices"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "All questionnaires are available at https://osf.io/q."
+        - "Figures are shared at https://figshare.com/f."
+  "compare":
+    "ignore":
+    - "table.paper_id"
+    - "summary_table.paper_id"
+- "id": "open_practices.review.duplicate_sentences"
+  "module": "open_practices"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "Data are available at https://osf.io/x."
+        - "Code is available at https://github.com/y."
+        - "Data are available at https://osf.io/x."
+        - "Code is available at https://github.com/y."
+        - "Data are available on request."
+        - "Data are available on request."
+  "compare":
+    "ignore":
+    - "table.paper_id"
+    - "summary_table.paper_id"
+- "id": "open_practices.review.special_chars"
+  "module": "open_practices"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "Data (100% of trials, {raw}) are available at https://osf.io/x?a=1&b=%20."
+        - "Code with \\\\backslashes\\\\ and $1 is available at https://github.com/y."
+        - "Data are available on request (see {braces} and %s)."
+  "compare":
+    "ignore":
+    - "table.paper_id"
+    - "summary_table.paper_id"
+- "id": "open_practices.review.marker_repo"
+  "module": "open_practices"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "Data are available on the open<~p~>science framework."
+        - "Data are available at git<~p~>hub."
+        - "Data ,<~p~>, are available , , , at https://osf.io/x."
+        - "The code is available on<~p~>request."
+        - "Code<~p~>is available at https://github.com/c."
+        - "<~p~>"
+  "compare":
+    "ignore":
+    - "table.paper_id"
+    - "summary_table.paper_id"
+- "id": "open_practices.review.sections"
+  "module": "open_practices"
+  "args":
+    "paper":
+      "$expr":
+        "r": "local({p <- test_paper(c(\"Data are available at https://osf.io/abc.\", \"Smith (2020). Data and code are available at https://github.com/x/y.\", \"Code is shared at https://osf.io/q.\", \"Materials are available at https://osf.io/m, see www.example.org.\")); p$paper_id <- \"secpaper\"; p$text$section_id <- c(0.0, 1.0, 3.0, 2.0); p$section <- dplyr::tibble(section_id = c(0.0, 1.0, 2.0), header = c(\"Test\", \"References\", NA), parent_section_id = NA_integer_, section_type = c(\"unknown\", \"references\", NA), classification_score = 0); p})"
+        "py": "(lambda p: (p.__setitem__(\"paper_id\", \"secpaper\"), p.__setitem__(\"text\", p.text.assign(section_id=pd.Series([0.0, 1.0, 3.0, 2.0], dtype=\"float64\"))), p.__setitem__(\"section\", pd.DataFrame({\"section_id\": pd.Series([0.0, 1.0, 2.0], dtype=\"float64\"), \"header\": pd.Series([\"Test\", \"References\", None], dtype=\"string\"), \"parent_section_id\": pd.Series([None] * 3, dtype=\"Int64\"), \"section_type\": pd.Series([\"unknown\", \"references\", None], dtype=\"string\"), \"classification_score\": pd.Series([0.0] * 3, dtype=\"float64\")})), p)[-1])(pc.test_paper([\"Data are available at https://osf.io/abc.\", \"Smith (2020). Data and code are available at https://github.com/x/y.\", \"Code is shared at https://osf.io/q.\", \"Materials are available at https://osf.io/m, see www.example.org.\"]))"
+- "id": "all_urls.review.sections"
+  "module": "all_urls"
+  "args":
+    "paper":
+      "$expr":
+        "r": "local({p <- test_paper(c(\"Data are available at https://osf.io/abc.\", \"Smith (2020). Data and code are available at https://github.com/x/y.\", \"Code is shared at https://osf.io/q.\", \"Materials are available at https://osf.io/m, see www.example.org.\")); p$paper_id <- \"secpaper\"; p$text$section_id <- c(0.0, 1.0, 3.0, 2.0); p$section <- dplyr::tibble(section_id = c(0.0, 1.0, 2.0), header = c(\"Test\", \"References\", NA), parent_section_id = NA_integer_, section_type = c(\"unknown\", \"references\", NA), classification_score = 0); p})"
+        "py": "(lambda p: (p.__setitem__(\"paper_id\", \"secpaper\"), p.__setitem__(\"text\", p.text.assign(section_id=pd.Series([0.0, 1.0, 3.0, 2.0], dtype=\"float64\"))), p.__setitem__(\"section\", pd.DataFrame({\"section_id\": pd.Series([0.0, 1.0, 2.0], dtype=\"float64\"), \"header\": pd.Series([\"Test\", \"References\", None], dtype=\"string\"), \"parent_section_id\": pd.Series([None] * 3, dtype=\"Int64\"), \"section_type\": pd.Series([\"unknown\", \"references\", None], dtype=\"string\"), \"classification_score\": pd.Series([0.0] * 3, dtype=\"float64\")})), p)[-1])(pc.test_paper([\"Data are available at https://osf.io/abc.\", \"Smith (2020). Data and code are available at https://github.com/x/y.\", \"Code is shared at https://osf.io/q.\", \"Materials are available at https://osf.io/m, see www.example.org.\"]))"
+- "id": "open_practices.review.dup_sections"
+  "module": "open_practices"
+  "args":
+    "paper":
+      "$expr":
+        "r": "local({p <- test_paper(c(\"Data are available at https://osf.io/abc.\", \"Code is available at https://github.com/x/y.\", \"The study was preregistered at https://osf.io/p.\")); p$paper_id <- \"secpaper\"; p$text$section_id <- c(0.0, 0.0, 1.0); p$section <- dplyr::tibble(section_id = c(0.0, 0.0, 1.0, 1.0), header = c(\"Test A\", \"Test B\", \"Refs\", \"Method\"), parent_section_id = NA_integer_, section_type = c(\"unknown\", \"intro\", \"references\", \"method\"), classification_score = 0); p})"
+        "py": "(lambda p: (p.__setitem__(\"paper_id\", \"secpaper\"), p.__setitem__(\"text\", p.text.assign(section_id=pd.Series([0.0, 0.0, 1.0], dtype=\"float64\"))), p.__setitem__(\"section\", pd.DataFrame({\"section_id\": pd.Series([0.0, 0.0, 1.0, 1.0], dtype=\"float64\"), \"header\": pd.Series([\"Test A\", \"Test B\", \"Refs\", \"Method\"], dtype=\"string\"), \"parent_section_id\": pd.Series([None] * 4, dtype=\"Int64\"), \"section_type\": pd.Series([\"unknown\", \"intro\", \"references\", \"method\"], dtype=\"string\"), \"classification_score\": pd.Series([0.0] * 4, dtype=\"float64\")})), p)[-1])(pc.test_paper([\"Data are available at https://osf.io/abc.\", \"Code is available at https://github.com/x/y.\", \"The study was preregistered at https://osf.io/p.\"]))"
+- "id": "all_urls.review.dup_sections"
+  "module": "all_urls"
+  "args":
+    "paper":
+      "$expr":
+        "r": "local({p <- test_paper(c(\"Data are available at https://osf.io/abc.\", \"Code is available at https://github.com/x/y.\", \"The study was preregistered at https://osf.io/p.\")); p$paper_id <- \"secpaper\"; p$text$section_id <- c(0.0, 0.0, 1.0); p$section <- dplyr::tibble(section_id = c(0.0, 0.0, 1.0, 1.0), header = c(\"Test A\", \"Test B\", \"Refs\", \"Method\"), parent_section_id = NA_integer_, section_type = c(\"unknown\", \"intro\", \"references\", \"method\"), classification_score = 0); p})"
+        "py": "(lambda p: (p.__setitem__(\"paper_id\", \"secpaper\"), p.__setitem__(\"text\", p.text.assign(section_id=pd.Series([0.0, 0.0, 1.0], dtype=\"float64\"))), p.__setitem__(\"section\", pd.DataFrame({\"section_id\": pd.Series([0.0, 0.0, 1.0, 1.0], dtype=\"float64\"), \"header\": pd.Series([\"Test A\", \"Test B\", \"Refs\", \"Method\"], dtype=\"string\"), \"parent_section_id\": pd.Series([None] * 4, dtype=\"Int64\"), \"section_type\": pd.Series([\"unknown\", \"intro\", \"references\", \"method\"], dtype=\"string\"), \"classification_score\": pd.Series([0.0] * 4, dtype=\"float64\")})), p)[-1])(pc.test_paper([\"Data are available at https://osf.io/abc.\", \"Code is available at https://github.com/x/y.\", \"The study was preregistered at https://osf.io/p.\"]))"
+- "id": "open_practices.review.formats"
+  "module": "open_practices"
+  "args":
+    "paper":
+      "$read":
+      - "upstream/metacheck/tests/testthat/fixtures/formats/apa.xml"
+      - "upstream/metacheck/tests/testthat/fixtures/formats/preprint.pdf.tei.xml"
+      - "upstream/metacheck/tests/testthat/fixtures/formats/published.pdf.tei.xml"
+      - "upstream/metacheck/tests/testthat/fixtures/formats/preprint.cermine.xml"
+      - "upstream/metacheck/tests/testthat/fixtures/formats/published.cermine.xml"
+      - "upstream/metacheck/tests/testthat/fixtures/problems/0956797615569889.xml"
+      - "upstream/metacheck/tests/testthat/fixtures/problems/0956797617737129.xml"
+- "id": "all_urls.review.formats"
+  "module": "all_urls"
+  "args":
+    "paper":
+      "$read":
+      - "upstream/metacheck/tests/testthat/fixtures/formats/apa.xml"
+      - "upstream/metacheck/tests/testthat/fixtures/formats/preprint.pdf.tei.xml"
+      - "upstream/metacheck/tests/testthat/fixtures/formats/published.pdf.tei.xml"
+      - "upstream/metacheck/tests/testthat/fixtures/formats/preprint.cermine.xml"
+      - "upstream/metacheck/tests/testthat/fixtures/formats/published.cermine.xml"
+      - "upstream/metacheck/tests/testthat/fixtures/problems/0956797615569889.xml"
+      - "upstream/metacheck/tests/testthat/fixtures/problems/0956797617737129.xml"
+- "id": "open_practices.review.single_apa"
+  "module": "open_practices"
+  "args":
+    "paper":
+      "$paper": "upstream/metacheck/tests/testthat/fixtures/formats/apa.xml"
+- "id": "open_practices.review.single_preprint_pdf_tei"
+  "module": "open_practices"
+  "args":
+    "paper":
+      "$paper": "upstream/metacheck/tests/testthat/fixtures/formats/preprint.pdf.tei.xml"
+- "id": "open_practices.review.single_published_pdf_tei"
+  "module": "open_practices"
+  "args":
+    "paper":
+      "$paper": "upstream/metacheck/tests/testthat/fixtures/formats/published.pdf.tei.xml"
+- "id": "open_practices.review.single_preprint_cermine"
+  "module": "open_practices"
+  "args":
+    "paper":
+      "$paper": "upstream/metacheck/tests/testthat/fixtures/formats/preprint.cermine.xml"
+- "id": "open_practices.review.single_published_cermine"
+  "module": "open_practices"
+  "args":
+    "paper":
+      "$paper": "upstream/metacheck/tests/testthat/fixtures/formats/published.cermine.xml"
+- "id": "open_practices.review.single_0956797615569889"
+  "module": "open_practices"
+  "args":
+    "paper":
+      "$paper": "upstream/metacheck/tests/testthat/fixtures/problems/0956797615569889.xml"
+- "id": "open_practices.review.single_0956797617737129"
+  "module": "open_practices"
+  "args":
+    "paper":
+      "$paper": "upstream/metacheck/tests/testthat/fixtures/problems/0956797617737129.xml"
+- "id": "open_practices.review.chain_twice"
+  "module": "open_practices"
+  "args":
+    "paper":
+      "$call":
+        "r": "module_run"
+        "py": "pytacheck.module.module_run"
+        "args":
+          "paper":
+            "$expr":
+              "r": "paperlist(local({p <- test_paper(c(\"The data and code are available at https://osf.io/abcde.\")); p$paper_id <- \"p1\"; p}), local({p <- test_paper(c(\"Nothing to see here.\")); p$paper_id <- \"p2\"; p}), local({p <- test_paper(c(\"Materials are available on request.\", \"See www.example.com.\")); p$paper_id <- \"p3\"; p}))"
+              "py": "pc.PaperList([(lambda p: (p.__setitem__(\"paper_id\", \"p1\"), p)[1])(pc.test_paper([\"The data and code are available at https://osf.io/abcde.\"])), (lambda p: (p.__setitem__(\"paper_id\", \"p2\"), p)[1])(pc.test_paper([\"Nothing to see here.\"])), (lambda p: (p.__setitem__(\"paper_id\", \"p3\"), p)[1])(pc.test_paper([\"Materials are available on request.\", \"See www.example.com.\"]))])"
+          "module": "open_practices"
+- "id": "all_urls.review.chain_after_open_practices"
+  "module": "all_urls"
+  "args":
+    "paper":
+      "$call":
+        "r": "module_run"
+        "py": "pytacheck.module.module_run"
+        "args":
+          "paper":
+            "$expr":
+              "r": "paperlist(local({p <- test_paper(c(\"The data and code are available at https://osf.io/abcde.\")); p$paper_id <- \"p1\"; p}), local({p <- test_paper(c(\"Nothing to see here.\")); p$paper_id <- \"p2\"; p}), local({p <- test_paper(c(\"Materials are available on request.\", \"See www.example.com.\")); p$paper_id <- \"p3\"; p}))"
+              "py": "pc.PaperList([(lambda p: (p.__setitem__(\"paper_id\", \"p1\"), p)[1])(pc.test_paper([\"The data and code are available at https://osf.io/abcde.\"])), (lambda p: (p.__setitem__(\"paper_id\", \"p2\"), p)[1])(pc.test_paper([\"Nothing to see here.\"])), (lambda p: (p.__setitem__(\"paper_id\", \"p3\"), p)[1])(pc.test_paper([\"Materials are available on request.\", \"See www.example.com.\"]))])"
+          "module": "open_practices"
+- "id": "open_practices.review.chain_after_all_urls"
+  "module": "open_practices"
+  "args":
+    "paper":
+      "$call":
+        "r": "module_run"
+        "py": "pytacheck.module.module_run"
+        "args":
+          "paper":
+            "$expr":
+              "r": "paperlist(local({p <- test_paper(c(\"The data and code are available at https://osf.io/abcde.\")); p$paper_id <- \"p1\"; p}), local({p <- test_paper(c(\"Nothing to see here.\")); p$paper_id <- \"p2\"; p}), local({p <- test_paper(c(\"Materials are available on request.\", \"See www.example.com.\")); p$paper_id <- \"p3\"; p}))"
+              "py": "pc.PaperList([(lambda p: (p.__setitem__(\"paper_id\", \"p1\"), p)[1])(pc.test_paper([\"The data and code are available at https://osf.io/abcde.\"])), (lambda p: (p.__setitem__(\"paper_id\", \"p2\"), p)[1])(pc.test_paper([\"Nothing to see here.\"])), (lambda p: (p.__setitem__(\"paper_id\", \"p3\"), p)[1])(pc.test_paper([\"Materials are available on request.\", \"See www.example.com.\"]))])"
+          "module": "all_urls"
+- "id": "all_urls.review.chain_twice"
+  "module": "all_urls"
+  "args":
+    "paper":
+      "$call":
+        "r": "module_run"
+        "py": "pytacheck.module.module_run"
+        "args":
+          "paper":
+            "$expr":
+              "r": "paperlist(local({p <- test_paper(c(\"The data and code are available at https://osf.io/abcde.\")); p$paper_id <- \"p1\"; p}), local({p <- test_paper(c(\"Nothing to see here.\")); p$paper_id <- \"p2\"; p}), local({p <- test_paper(c(\"Materials are available on request.\", \"See www.example.com.\")); p$paper_id <- \"p3\"; p}))"
+              "py": "pc.PaperList([(lambda p: (p.__setitem__(\"paper_id\", \"p1\"), p)[1])(pc.test_paper([\"The data and code are available at https://osf.io/abcde.\"])), (lambda p: (p.__setitem__(\"paper_id\", \"p2\"), p)[1])(pc.test_paper([\"Nothing to see here.\"])), (lambda p: (p.__setitem__(\"paper_id\", \"p3\"), p)[1])(pc.test_paper([\"Materials are available on request.\", \"See www.example.com.\"]))])"
+          "module": "all_urls"
+- "id": "all_urls.review.chain_single_after_open_practices"
+  "module": "all_urls"
+  "args":
+    "paper":
+      "$call":
+        "r": "module_run"
+        "py": "pytacheck.module.module_run"
+        "args":
+          "paper":
+            "$expr":
+              "r": "local({p <- test_paper(c(\"Data are available on request.\", \"Code at https://github.com/a/b is available.\")); p$paper_id <- \"one\"; p})"
+              "py": "(lambda p: (p.__setitem__(\"paper_id\", \"one\"), p)[1])(pc.test_paper([\"Data are available on request.\", \"Code at https://github.com/a/b is available.\"]))"
+          "module": "open_practices"
+- "id": "open_practices.review.list_counts"
+  "module": "open_practices"
+  "args":
+    "paper":
+      "$expr":
+        "r": "paperlist(local({p <- test_paper(c(\"Data and code are available at https://osf.io/a.\")); p$paper_id <- \"a\"; p}), local({p <- test_paper(c(\"Data are available at https://osf.io/b.\")); p$paper_id <- \"b\"; p}), local({p <- test_paper(c(\"Code is available at https://github.com/c.\")); p$paper_id <- \"c\"; p}), local({p <- test_paper(c(\"Data are available on request.\")); p$paper_id <- \"d\"; p}), local({p <- test_paper(c(\"Materials are available at https://osf.io/e.\")); p$paper_id <- \"e\"; p}), local({p <- test_paper(c(\"Data and code are available at https://osf.io/f; more on request.\")); p$paper_id <- \"f\"; p}))"
+        "py": "pc.PaperList([(lambda p: (p.__setitem__(\"paper_id\", \"a\"), p)[1])(pc.test_paper([\"Data and code are available at https://osf.io/a.\"])), (lambda p: (p.__setitem__(\"paper_id\", \"b\"), p)[1])(pc.test_paper([\"Data are available at https://osf.io/b.\"])), (lambda p: (p.__setitem__(\"paper_id\", \"c\"), p)[1])(pc.test_paper([\"Code is available at https://github.com/c.\"])), (lambda p: (p.__setitem__(\"paper_id\", \"d\"), p)[1])(pc.test_paper([\"Data are available on request.\"])), (lambda p: (p.__setitem__(\"paper_id\", \"e\"), p)[1])(pc.test_paper([\"Materials are available at https://osf.io/e.\"])), (lambda p: (p.__setitem__(\"paper_id\", \"f\"), p)[1])(pc.test_paper([\"Data and code are available at https://osf.io/f; more on request.\"]))])"
+- "id": "open_practices.review.list_single_on_request"
+  "module": "open_practices"
+  "args":
+    "paper":
+      "$expr":
+        "r": "paperlist(local({p <- test_paper(c(\"Nothing.\")); p$paper_id <- \"a\"; p}), local({p <- test_paper(c(\"Data are available on request.\")); p$paper_id <- \"b\"; p}), local({p <- test_paper(c(\"Nope.\")); p$paper_id <- \"c\"; p}))"
+        "py": "pc.PaperList([(lambda p: (p.__setitem__(\"paper_id\", \"a\"), p)[1])(pc.test_paper([\"Nothing.\"])), (lambda p: (p.__setitem__(\"paper_id\", \"b\"), p)[1])(pc.test_paper([\"Data are available on request.\"])), (lambda p: (p.__setitem__(\"paper_id\", \"c\"), p)[1])(pc.test_paper([\"Nope.\"]))])"
+- "id": "open_practices.review.list_with_empty"
+  "module": "open_practices"
+  "args":
+    "paper":
+      "$expr":
+        "r": "paperlist(local({p <- test_paper(\"Data are available at https://osf.io/x.\"); p$paper_id <- \"x\"; p}), paper(\"empty\"), local({p <- test_paper(\"Code is at https://github.com/y.\"); p$paper_id <- \"y\"; p}))"
+        "py": "pc.PaperList([(lambda p: (p.__setitem__(\"paper_id\", \"x\"), p)[1])(pc.test_paper([\"Data are available at https://osf.io/x.\"])), pc.paper(\"empty\"), (lambda p: (p.__setitem__(\"paper_id\", \"y\"), p)[1])(pc.test_paper([\"Code is at https://github.com/y.\"]))])"
+- "id": "all_urls.review.list_with_empty"
+  "module": "all_urls"
+  "args":
+    "paper":
+      "$expr":
+        "r": "paperlist(local({p <- test_paper(\"Data are available at https://osf.io/x.\"); p$paper_id <- \"x\"; p}), paper(\"empty\"), local({p <- test_paper(\"Code is at https://github.com/y.\"); p$paper_id <- \"y\"; p}))"
+        "py": "pc.PaperList([(lambda p: (p.__setitem__(\"paper_id\", \"x\"), p)[1])(pc.test_paper([\"Data are available at https://osf.io/x.\"])), pc.paper(\"empty\"), (lambda p: (p.__setitem__(\"paper_id\", \"y\"), p)[1])(pc.test_paper([\"Code is at https://github.com/y.\"]))])"
+- "id": "open_practices.review.empty_list"
+  "module": "open_practices"
+  "args":
+    "paper":
+      "$expr":
+        "r": "paperlist(list())"
+        "py": "pc.PaperList([])"
+- "id": "all_urls.review.empty_list"
+  "module": "all_urls"
+  "args":
+    "paper":
+      "$expr":
+        "r": "paperlist(list())"
+        "py": "pc.PaperList([])"
+- "id": "all_urls.review.tricky"
+  "module": "all_urls"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "See HTTPS://OSF.IO/ABC_def-1/ and http://localhost:8080/x."
+        - "E.g. this, i.e. that, the U.S.A. and p.m. times."
+        - "Values 1.2.3.4 and 999.999.999.999 and 10.1234/abc."
+        - "Visit www.site.co.uk/path?x=1&y=2#frag today."
+        - "Links (https://osf.io/x), <https://a.bc/d> and [doi:10.5555/xyz.abc]."
+        - "The file data.csv and script analysis.R and fig.png were used."
+        - "Caf\xE9.com and na\xEFve.org/x and \xFCber.de are sites."
+        - "Mail me at someone@example.com or ftp://files.example.net/pub."
+        - "Trailing dots https://osf.io/abc... and commas https://osf.io/d,e,f."
+        - "A URL with spaces https://osf. io/abc and a tab https://github.com/\tx."
+        - "No links, only numbers like 3.14 and 2.5e10."
+  "compare":
+    "ignore":
+    - "table.paper_id"
+    - "summary_table.paper_id"
+- "id": "open_practices.review.tricky_urls"
+  "module": "open_practices"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "See HTTPS://OSF.IO/ABC_def-1/ and http://localhost:8080/x."
+        - "E.g. this, i.e. that, the U.S.A. and p.m. times."
+        - "Values 1.2.3.4 and 999.999.999.999 and 10.1234/abc."
+        - "Visit www.site.co.uk/path?x=1&y=2#frag today."
+        - "Links (https://osf.io/x), <https://a.bc/d> and [doi:10.5555/xyz.abc]."
+        - "The file data.csv and script analysis.R and fig.png were used."
+        - "Caf\xE9.com and na\xEFve.org/x and \xFCber.de are sites."
+        - "Mail me at someone@example.com or ftp://files.example.net/pub."
+        - "Trailing dots https://osf.io/abc... and commas https://osf.io/d,e,f."
+        - "A URL with spaces https://osf. io/abc and a tab https://github.com/\tx."
+        - "No links, only numbers like 3.14 and 2.5e10."
+  "compare":
+    "ignore":
+    - "table.paper_id"
+    - "summary_table.paper_id"

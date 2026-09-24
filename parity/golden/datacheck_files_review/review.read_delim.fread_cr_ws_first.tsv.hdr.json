@@ -1,0 +1,69 @@
+{
+  "id": "review.read_delim.fread_cr_ws_first.tsv.hdr",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "names",
+      "types",
+      "data"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "",
+          ""
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "character",
+              "character"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "logical",
+              "logical"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 2,
+        "names": [
+          "",
+          ""
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "  x"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              null,
+              null
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

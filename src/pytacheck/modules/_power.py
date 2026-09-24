@@ -373,7 +373,7 @@ def _power_llm_extract(potential_power: pd.DataFrame, seed: Any) -> dict[str, An
             model=llm_model(),
             params={"seed": seed},
         )
-    except Exception:  # noqa: BLE001 - R: tryCatch(..., error = function(e) NULL)
+    except Exception:
         structured_result = None
     model = None
     if isinstance(structured_result, pd.DataFrame):

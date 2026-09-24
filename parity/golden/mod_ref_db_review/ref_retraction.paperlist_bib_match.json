@@ -1,0 +1,156 @@
+{
+  "id": "ref_retraction.paperlist_bib_match",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "ref_retraction"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "RetractionWatch"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "reference"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 5,
+        "names": [
+          "paper_id",
+          "bib_id",
+          "doi",
+          "text",
+          "retractionwatch"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Alpha",
+              "Alpha",
+              "Alpha",
+              "to_err_is_human",
+              "zeta"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              1,
+              2,
+              2,
+              0
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "10.1371/journal.ppat.1000066",
+              "10.1177/0956797614520714",
+              "10.1177/0956797614520714",
+              "10.1177/0956797614520714",
+              "10.1177/0956797614520714"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Reference 0. https://doi.org/10.1371/journal.ppat.1000066",
+              "Reference 1. https://doi.org/10.1177/0956797614520714",
+              "Reference 2. https://doi.org/10.1177/0956797614520714",
+              "Gino, Francesca, and Scott S. Wiltermuth. 2014. \"Evil Genius? How Dishonesty Can Lead to Greater Creativity.\" Psychological Science 25 (4): 973-81. https://doi.org/10.1177/0956797614520714.",
+              "Reference 0. https://doi.org/10.1177/0956797614520714"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Retraction;Expression of concern",
+              "Retraction",
+              "Retraction",
+              "Retraction",
+              "Retraction"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "We checked 9 references with DOIs. You cited 5 articles in the RetractionWatch database.\n\nCheck if you are aware of the retraction, correction, or expression of concern for each reference, and consider whether it still supports your claims.",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Reference = c(\"Reference 0. https://doi.org/10.1371/journal.ppat.1000066\", \n\"Reference 1. https://doi.org/10.1177/0956797614520714\", \"Reference 2. https://doi.org/10.1177/0956797614520714\", \n\"Gino, Francesca, and Scott S. Wiltermuth. 2014. \\\"Evil Genius? How Dishonesty Can Lead to Greater Creativity.\\\" Psychological Science 25 (4): 973-81. https://doi.org/10.1177/0956797614520714.\", \n\"Reference 0. https://doi.org/10.1177/0956797614520714\"), \"RW Type\" = c(\"Retraction;Expression of concern\", \n\"Retraction\", \"Retraction\", \"Retraction\", \"Retraction\")), row.names = c(NA, \n-5L), class = c(\"tbl_df\", \"tbl\", \"data.frame\"))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 2, FALSE)\n```\n"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "info"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "You cited 5 articles in the RetractionWatch database."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 3,
+        "names": [
+          "paper_id",
+          "retractionwatch"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "zeta",
+              "to_err_is_human",
+              "Alpha"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1,
+              1,
+              3
+            ]
+          }
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

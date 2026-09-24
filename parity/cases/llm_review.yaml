@@ -128,6 +128,33 @@
         "r": "local({ws <- character(0); v <- tryCatch(withCallingHandlers(withr::with_options(list(metacheck.llm.use = TRUE, metacheck.llm.cache = FALSE, metacheck.llm_reasoning = NULL, metacheck.llm_max_tokens = NULL, metacheck.llm_max_calls = 30L), withr::with_envvar(c(GROQ_API_KEY = 'test-key', GEMINI_API_KEY = 'test-key', GOOGLE_API_KEY = NA, ANTHROPIC_API_KEY = 'test-key', ANTHROPIC_BASE_URL = NA, OPENAI_API_KEY = 'test-key', MISTRAL_API_KEY = 'test-key', OLLAMA_BASE_URL = NA), llm(c(TRUE, FALSE), 'Is this a number? Answer TRUE or FALSE', model = 'groq/test-model'))), warning = function(w) {ws <<- c(ws, conditionMessage(w)); invokeRestart('muffleWarning')}), error = function(e) list(error = conditionMessage(e))); list(value = v, warnings = ws)})"
         "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).catch(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).L.llm([True, False], 'Is this a number? Answer TRUE or FALSE', model='groq/test-model'), {**__import__('tests.llm.parity_helpers', fromlist=['_']).LLM_ON, 'metacheck.llm_reasoning': None, 'metacheck.llm_max_tokens': None, 'metacheck.llm_max_calls': __import__('tests.llm.parity_helpers', fromlist=['_']).RInt(30)}, {'GROQ_API_KEY': 'test-key', 'GEMINI_API_KEY': 'test-key', 'GOOGLE_API_KEY': None, 'ANTHROPIC_API_KEY': 'test-key', 'ANTHROPIC_BASE_URL': None, 'OPENAI_API_KEY': 'test-key', 'MISTRAL_API_KEY': 'test-key', 'OLLAMA_BASE_URL': None}))"
   "mock_dir": "tests/llm/mocks"
+- "id": "llm.input.mixed_order_1"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({ws <- character(0); v <- tryCatch(withCallingHandlers(withr::with_options(list(metacheck.llm.use = TRUE, metacheck.llm.cache = FALSE, metacheck.llm_reasoning = NULL, metacheck.llm_max_tokens = NULL, metacheck.llm_max_calls = 30L), withr::with_envvar(c(GROQ_API_KEY = 'test-key', GEMINI_API_KEY = 'test-key', GOOGLE_API_KEY = NA, ANTHROPIC_API_KEY = 'test-key', ANTHROPIC_BASE_URL = NA, OPENAI_API_KEY = 'test-key', MISTRAL_API_KEY = 'test-key', OLLAMA_BASE_URL = NA), llm(c('unauthorized', 'hello'), 'Sys', model = 'groq/test-model'))), warning = function(w) {ws <<- c(ws, conditionMessage(w)); invokeRestart('muffleWarning')}), error = function(e) list(error = conditionMessage(e))); list(value = v, warnings = ws)})"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).catch(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).L.llm(['unauthorized', 'hello'], 'Sys', model='groq/test-model'), {**__import__('tests.llm.parity_helpers', fromlist=['_']).LLM_ON, 'metacheck.llm_reasoning': None, 'metacheck.llm_max_tokens': None, 'metacheck.llm_max_calls': __import__('tests.llm.parity_helpers', fromlist=['_']).RInt(30)}, {'GROQ_API_KEY': 'test-key', 'GEMINI_API_KEY': 'test-key', 'GOOGLE_API_KEY': None, 'ANTHROPIC_API_KEY': 'test-key', 'ANTHROPIC_BASE_URL': None, 'OPENAI_API_KEY': 'test-key', 'MISTRAL_API_KEY': 'test-key', 'OLLAMA_BASE_URL': None}))"
+  "mock_dir": "tests/llm/mocks"
+- "id": "llm.input.mixed_order_2"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({ws <- character(0); v <- tryCatch(withCallingHandlers(withr::with_options(list(metacheck.llm.use = TRUE, metacheck.llm.cache = FALSE, metacheck.llm_reasoning = NULL, metacheck.llm_max_tokens = NULL, metacheck.llm_max_calls = 30L), withr::with_envvar(c(GROQ_API_KEY = 'test-key', GEMINI_API_KEY = 'test-key', GOOGLE_API_KEY = NA, ANTHROPIC_API_KEY = 'test-key', ANTHROPIC_BASE_URL = NA, OPENAI_API_KEY = 'test-key', MISTRAL_API_KEY = 'test-key', OLLAMA_BASE_URL = NA), llm(c('unauthorized', 'too long', 'hello'), 'Sys', model = 'groq/test-model'))), warning = function(w) {ws <<- c(ws, conditionMessage(w)); invokeRestart('muffleWarning')}), error = function(e) list(error = conditionMessage(e))); list(value = v, warnings = ws)})"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).catch(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).L.llm(['unauthorized', 'too long', 'hello'], 'Sys', model='groq/test-model'), {**__import__('tests.llm.parity_helpers', fromlist=['_']).LLM_ON, 'metacheck.llm_reasoning': None, 'metacheck.llm_max_tokens': None, 'metacheck.llm_max_calls': __import__('tests.llm.parity_helpers', fromlist=['_']).RInt(30)}, {'GROQ_API_KEY': 'test-key', 'GEMINI_API_KEY': 'test-key', 'GOOGLE_API_KEY': None, 'ANTHROPIC_API_KEY': 'test-key', 'ANTHROPIC_BASE_URL': None, 'OPENAI_API_KEY': 'test-key', 'MISTRAL_API_KEY': 'test-key', 'OLLAMA_BASE_URL': None}))"
+  "mock_dir": "tests/llm/mocks"
+- "id": "llm.input.mixed_order_3"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({ws <- character(0); v <- tryCatch(withCallingHandlers(withr::with_options(list(metacheck.llm.use = TRUE, metacheck.llm.cache = FALSE, metacheck.llm_reasoning = NULL, metacheck.llm_max_tokens = NULL, metacheck.llm_max_calls = 30L), withr::with_envvar(c(GROQ_API_KEY = 'test-key', GEMINI_API_KEY = 'test-key', GOOGLE_API_KEY = NA, ANTHROPIC_API_KEY = 'test-key', ANTHROPIC_BASE_URL = NA, OPENAI_API_KEY = 'test-key', MISTRAL_API_KEY = 'test-key', OLLAMA_BASE_URL = NA), llm(c('too long', 'hello', 'unauthorized'), 'Sys', model = 'groq/test-model'))), warning = function(w) {ws <<- c(ws, conditionMessage(w)); invokeRestart('muffleWarning')}), error = function(e) list(error = conditionMessage(e))); list(value = v, warnings = ws)})"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).catch(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).L.llm(['too long', 'hello', 'unauthorized'], 'Sys', model='groq/test-model'), {**__import__('tests.llm.parity_helpers', fromlist=['_']).LLM_ON, 'metacheck.llm_reasoning': None, 'metacheck.llm_max_tokens': None, 'metacheck.llm_max_calls': __import__('tests.llm.parity_helpers', fromlist=['_']).RInt(30)}, {'GROQ_API_KEY': 'test-key', 'GEMINI_API_KEY': 'test-key', 'GOOGLE_API_KEY': None, 'ANTHROPIC_API_KEY': 'test-key', 'ANTHROPIC_BASE_URL': None, 'OPENAI_API_KEY': 'test-key', 'MISTRAL_API_KEY': 'test-key', 'OLLAMA_BASE_URL': None}))"
+  "mock_dir": "tests/llm/mocks"
 - "id": "llm.structured.column_clash"
   "r": "base::identity"
   "py": "tests.llm.parity_helpers.identity"
@@ -365,6 +392,157 @@
       "$expr":
         "r": "local({ws <- character(0); v <- tryCatch(withCallingHandlers(withr::with_options(list(metacheck.llm.use = TRUE, metacheck.llm.cache = FALSE, metacheck.llm_max_calls = 2L), llm(paste('t', 1:3), 'summarise', model = 'groq/x')), warning = function(w) {ws <<- c(ws, conditionMessage(w)); invokeRestart('muffleWarning')}), error = function(e) list(error = conditionMessage(e))); list(value = v, warnings = ws)})"
         "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).catch(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).L.llm(['t 1', 't 2', 't 3'], 'summarise', model='groq/x'), {**__import__('tests.llm.parity_helpers', fromlist=['_']).LLM_ON, 'metacheck.llm_max_calls': __import__('tests.llm.parity_helpers', fromlist=['_']).RInt(2)}))"
+- "id": "apply_reasoning.partial_think"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({ws <- character(0); v <- tryCatch(withCallingHandlers(withr::with_options(list(metacheck.llm_reasoning = NULL), metacheck:::.llm_apply_reasoning(list(thinking = TRUE), 'ollama/qwen3:8b')), warning = function(w) {ws <<- c(ws, conditionMessage(w)); invokeRestart('muffleWarning')}), error = function(e) list(error = conditionMessage(e))); list(value = v, warnings = ws)})"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).catch(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).K._llm_apply_reasoning({'thinking': True}, 'ollama/qwen3:8b'), {'metacheck.llm_reasoning': None}))"
+- "id": "apply_reasoning.empty_option"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({ws <- character(0); v <- tryCatch(withCallingHandlers(withr::with_options(list(metacheck.llm_reasoning = ''), metacheck:::.llm_apply_reasoning(list(), 'groq/openai/gpt-oss-20b')), warning = function(w) {ws <<- c(ws, conditionMessage(w)); invokeRestart('muffleWarning')}), error = function(e) list(error = conditionMessage(e))); list(value = v, warnings = ws)})"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).catch(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).K._llm_apply_reasoning({}, 'groq/openai/gpt-oss-20b'), {'metacheck.llm_reasoning': ''}))"
+- "id": "chat_params.groq"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({ws <- character(0); v <- tryCatch(withCallingHandlers(withr::with_envvar(c(GROQ_API_KEY = 'test-key', GEMINI_API_KEY = 'test-key', GOOGLE_API_KEY = NA, ANTHROPIC_API_KEY = 'test-key', ANTHROPIC_BASE_URL = NA, OPENAI_API_KEY = 'test-key', MISTRAL_API_KEY = 'test-key', OLLAMA_BASE_URL = NA), ellmer:::chat_params(ellmer::chat('groq/x')$get_provider(), ellmer::params(temperature = 0, top_p = 0.5, top_k = 3, frequency_penalty = 1, presence_penalty = 1, seed = 2, max_tokens = 10, log_probs = TRUE, stop_sequences = c('a', 'b'), reasoning_effort = 'low', reasoning_tokens = 5))), warning = function(w) {ws <<- c(ws, conditionMessage(w)); invokeRestart('muffleWarning')}), error = function(e) list(error = conditionMessage(e))); list(value = v, warnings = ws)})"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).catch(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).P.chat('groq/x').provider.chat_params(__import__('tests.llm.parity_helpers', fromlist=['_']).P.params(temperature=0.0, top_p=0.5, top_k=3, frequency_penalty=1.0, presence_penalty=1.0, seed=2, max_tokens=10, log_probs=True, stop_sequences=['a', 'b'], reasoning_effort='low', reasoning_tokens=5)), {}, {'GROQ_API_KEY': 'test-key', 'GEMINI_API_KEY': 'test-key', 'GOOGLE_API_KEY': None, 'ANTHROPIC_API_KEY': 'test-key', 'ANTHROPIC_BASE_URL': None, 'OPENAI_API_KEY': 'test-key', 'MISTRAL_API_KEY': 'test-key', 'OLLAMA_BASE_URL': None}))"
+- "id": "chat_params.anthropic"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({ws <- character(0); v <- tryCatch(withCallingHandlers(withr::with_envvar(c(GROQ_API_KEY = 'test-key', GEMINI_API_KEY = 'test-key', GOOGLE_API_KEY = NA, ANTHROPIC_API_KEY = 'test-key', ANTHROPIC_BASE_URL = NA, OPENAI_API_KEY = 'test-key', MISTRAL_API_KEY = 'test-key', OLLAMA_BASE_URL = NA), ellmer:::chat_params(ellmer::chat('anthropic/x')$get_provider(), ellmer::params(temperature = 0, top_p = 0.5, top_k = 3, frequency_penalty = 1, presence_penalty = 1, seed = 2, max_tokens = 10, log_probs = TRUE, stop_sequences = c('a', 'b'), reasoning_effort = 'low', reasoning_tokens = 5))), warning = function(w) {ws <<- c(ws, conditionMessage(w)); invokeRestart('muffleWarning')}), error = function(e) list(error = conditionMessage(e))); list(value = v, warnings = ws)})"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).catch(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).P.chat('anthropic/x').provider.chat_params(__import__('tests.llm.parity_helpers', fromlist=['_']).P.params(temperature=0.0, top_p=0.5, top_k=3, frequency_penalty=1.0, presence_penalty=1.0, seed=2, max_tokens=10, log_probs=True, stop_sequences=['a', 'b'], reasoning_effort='low', reasoning_tokens=5)), {}, {'GROQ_API_KEY': 'test-key', 'GEMINI_API_KEY': 'test-key', 'GOOGLE_API_KEY': None, 'ANTHROPIC_API_KEY': 'test-key', 'ANTHROPIC_BASE_URL': None, 'OPENAI_API_KEY': 'test-key', 'MISTRAL_API_KEY': 'test-key', 'OLLAMA_BASE_URL': None}))"
+- "id": "chat_params.openai"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({ws <- character(0); v <- tryCatch(withCallingHandlers(withr::with_envvar(c(GROQ_API_KEY = 'test-key', GEMINI_API_KEY = 'test-key', GOOGLE_API_KEY = NA, ANTHROPIC_API_KEY = 'test-key', ANTHROPIC_BASE_URL = NA, OPENAI_API_KEY = 'test-key', MISTRAL_API_KEY = 'test-key', OLLAMA_BASE_URL = NA), ellmer:::chat_params(ellmer::chat('openai/x')$get_provider(), ellmer::params(temperature = 0, top_p = 0.5, top_k = 3, frequency_penalty = 1, presence_penalty = 1, seed = 2, max_tokens = 10, log_probs = TRUE, stop_sequences = c('a', 'b'), reasoning_effort = 'low', reasoning_tokens = 5))), warning = function(w) {ws <<- c(ws, conditionMessage(w)); invokeRestart('muffleWarning')}), error = function(e) list(error = conditionMessage(e))); list(value = v, warnings = ws)})"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).catch(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).P.chat('openai/x').provider.chat_params(__import__('tests.llm.parity_helpers', fromlist=['_']).P.params(temperature=0.0, top_p=0.5, top_k=3, frequency_penalty=1.0, presence_penalty=1.0, seed=2, max_tokens=10, log_probs=True, stop_sequences=['a', 'b'], reasoning_effort='low', reasoning_tokens=5)), {}, {'GROQ_API_KEY': 'test-key', 'GEMINI_API_KEY': 'test-key', 'GOOGLE_API_KEY': None, 'ANTHROPIC_API_KEY': 'test-key', 'ANTHROPIC_BASE_URL': None, 'OPENAI_API_KEY': 'test-key', 'MISTRAL_API_KEY': 'test-key', 'OLLAMA_BASE_URL': None}))"
+- "id": "chat_params.mistral"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({ws <- character(0); v <- tryCatch(withCallingHandlers(withr::with_envvar(c(GROQ_API_KEY = 'test-key', GEMINI_API_KEY = 'test-key', GOOGLE_API_KEY = NA, ANTHROPIC_API_KEY = 'test-key', ANTHROPIC_BASE_URL = NA, OPENAI_API_KEY = 'test-key', MISTRAL_API_KEY = 'test-key', OLLAMA_BASE_URL = NA), ellmer:::chat_params(ellmer::chat('mistral/x')$get_provider(), ellmer::params(temperature = 0, top_p = 0.5, top_k = 3, frequency_penalty = 1, presence_penalty = 1, seed = 2, max_tokens = 10, log_probs = TRUE, stop_sequences = c('a', 'b'), reasoning_effort = 'low', reasoning_tokens = 5))), warning = function(w) {ws <<- c(ws, conditionMessage(w)); invokeRestart('muffleWarning')}), error = function(e) list(error = conditionMessage(e))); list(value = v, warnings = ws)})"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).catch(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).P.chat('mistral/x').provider.chat_params(__import__('tests.llm.parity_helpers', fromlist=['_']).P.params(temperature=0.0, top_p=0.5, top_k=3, frequency_penalty=1.0, presence_penalty=1.0, seed=2, max_tokens=10, log_probs=True, stop_sequences=['a', 'b'], reasoning_effort='low', reasoning_tokens=5)), {}, {'GROQ_API_KEY': 'test-key', 'GEMINI_API_KEY': 'test-key', 'GOOGLE_API_KEY': None, 'ANTHROPIC_API_KEY': 'test-key', 'ANTHROPIC_BASE_URL': None, 'OPENAI_API_KEY': 'test-key', 'MISTRAL_API_KEY': 'test-key', 'OLLAMA_BASE_URL': None}))"
+- "id": "chat_params.deepseek"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({ws <- character(0); v <- tryCatch(withCallingHandlers(withr::with_envvar(c(GROQ_API_KEY = 'test-key', GEMINI_API_KEY = 'test-key', GOOGLE_API_KEY = NA, ANTHROPIC_API_KEY = 'test-key', ANTHROPIC_BASE_URL = NA, OPENAI_API_KEY = 'test-key', MISTRAL_API_KEY = 'test-key', OLLAMA_BASE_URL = NA), ellmer:::chat_params(ellmer::chat('deepseek/x')$get_provider(), ellmer::params(temperature = 0, top_p = 0.5, top_k = 3, frequency_penalty = 1, presence_penalty = 1, seed = 2, max_tokens = 10, log_probs = TRUE, stop_sequences = c('a', 'b'), reasoning_effort = 'low', reasoning_tokens = 5))), warning = function(w) {ws <<- c(ws, conditionMessage(w)); invokeRestart('muffleWarning')}), error = function(e) list(error = conditionMessage(e))); list(value = v, warnings = ws)})"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).catch(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).P.chat('deepseek/x').provider.chat_params(__import__('tests.llm.parity_helpers', fromlist=['_']).P.params(temperature=0.0, top_p=0.5, top_k=3, frequency_penalty=1.0, presence_penalty=1.0, seed=2, max_tokens=10, log_probs=True, stop_sequences=['a', 'b'], reasoning_effort='low', reasoning_tokens=5)), {}, {'GROQ_API_KEY': 'test-key', 'GEMINI_API_KEY': 'test-key', 'GOOGLE_API_KEY': None, 'ANTHROPIC_API_KEY': 'test-key', 'ANTHROPIC_BASE_URL': None, 'OPENAI_API_KEY': 'test-key', 'MISTRAL_API_KEY': 'test-key', 'OLLAMA_BASE_URL': None}))"
+- "id": "chat_params.google_gemini"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({ws <- character(0); v <- tryCatch(withCallingHandlers(withr::with_envvar(c(GROQ_API_KEY = 'test-key', GEMINI_API_KEY = 'test-key', GOOGLE_API_KEY = NA, ANTHROPIC_API_KEY = 'test-key', ANTHROPIC_BASE_URL = NA, OPENAI_API_KEY = 'test-key', MISTRAL_API_KEY = 'test-key', OLLAMA_BASE_URL = NA), ellmer:::chat_params(ellmer::chat('google_gemini/x')$get_provider(), ellmer::params(temperature = 0, top_p = 0.5, top_k = 3, frequency_penalty = 1, presence_penalty = 1, seed = 2, max_tokens = 10, log_probs = TRUE, stop_sequences = c('a', 'b'), reasoning_effort = 'low', reasoning_tokens = 5))), warning = function(w) {ws <<- c(ws, conditionMessage(w)); invokeRestart('muffleWarning')}), error = function(e) list(error = conditionMessage(e))); list(value = v, warnings = ws)})"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).catch(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).P.chat('google_gemini/x').provider.chat_params(__import__('tests.llm.parity_helpers', fromlist=['_']).P.params(temperature=0.0, top_p=0.5, top_k=3, frequency_penalty=1.0, presence_penalty=1.0, seed=2, max_tokens=10, log_probs=True, stop_sequences=['a', 'b'], reasoning_effort='low', reasoning_tokens=5)), {}, {'GROQ_API_KEY': 'test-key', 'GEMINI_API_KEY': 'test-key', 'GOOGLE_API_KEY': None, 'ANTHROPIC_API_KEY': 'test-key', 'ANTHROPIC_BASE_URL': None, 'OPENAI_API_KEY': 'test-key', 'MISTRAL_API_KEY': 'test-key', 'OLLAMA_BASE_URL': None}))"
+- "id": "chat_params.anthropic_three"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({ws <- character(0); v <- tryCatch(withCallingHandlers(withr::with_envvar(c(GROQ_API_KEY = 'test-key', GEMINI_API_KEY = 'test-key', GOOGLE_API_KEY = NA, ANTHROPIC_API_KEY = 'test-key', ANTHROPIC_BASE_URL = NA, OPENAI_API_KEY = 'test-key', MISTRAL_API_KEY = 'test-key', OLLAMA_BASE_URL = NA), ellmer:::chat_params(ellmer::chat('anthropic/x')$get_provider(), ellmer::params(frequency_penalty = 1, presence_penalty = 1, log_probs = TRUE))), warning = function(w) {ws <<- c(ws, conditionMessage(w)); invokeRestart('muffleWarning')}), error = function(e) list(error = conditionMessage(e))); list(value = v, warnings = ws)})"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).catch(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).P.chat('anthropic/x').provider.chat_params(__import__('tests.llm.parity_helpers', fromlist=['_']).P.params(frequency_penalty=1.0, presence_penalty=1.0, log_probs=True)), {}, {'GROQ_API_KEY': 'test-key', 'GEMINI_API_KEY': 'test-key', 'GOOGLE_API_KEY': None, 'ANTHROPIC_API_KEY': 'test-key', 'ANTHROPIC_BASE_URL': None, 'OPENAI_API_KEY': 'test-key', 'MISTRAL_API_KEY': 'test-key', 'OLLAMA_BASE_URL': None}))"
+- "id": "chat_ollama.missing_model"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({ws <- character(0); v <- tryCatch(withCallingHandlers(withr::with_envvar(c(OLLAMA_BASE_URL = NA, OLLAMA_API_KEY = NA), ellmer::chat_ollama()), warning = function(w) {ws <<- c(ws, conditionMessage(w)); invokeRestart('muffleWarning')}), error = function(e) list(error = conditionMessage(e))); list(value = v, warnings = ws)})"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).catch(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).P.chat_ollama(), {}, {'OLLAMA_BASE_URL': None, 'OLLAMA_API_KEY': None}))"
+  "mock_dir": "apis"
+- "id": "chat_ollama.not_installed"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({ws <- character(0); v <- tryCatch(withCallingHandlers(withr::with_envvar(c(OLLAMA_BASE_URL = NA, OLLAMA_API_KEY = NA), ellmer::chat_ollama(model = 'nope-model:latest-version-with-a-long-name')), warning = function(w) {ws <<- c(ws, conditionMessage(w)); invokeRestart('muffleWarning')}), error = function(e) list(error = conditionMessage(e))); list(value = v, warnings = ws)})"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).catch(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).P.chat_ollama(model='nope-model:latest-version-with-a-long-name'), {}, {'OLLAMA_BASE_URL': None, 'OLLAMA_API_KEY': None}))"
+  "mock_dir": "apis"
+- "id": "chat_ollama.null_model"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({ws <- character(0); v <- tryCatch(withCallingHandlers(withr::with_envvar(c(OLLAMA_BASE_URL = NA, OLLAMA_API_KEY = NA), ellmer::chat('ollama')), warning = function(w) {ws <<- c(ws, conditionMessage(w)); invokeRestart('muffleWarning')}), error = function(e) list(error = conditionMessage(e))); list(value = v, warnings = ws)})"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).catch(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).P.chat('ollama'), {}, {'OLLAMA_BASE_URL': None, 'OLLAMA_API_KEY': None}))"
+  "mock_dir": "apis"
+- "id": "llm.ollama.structured_no_model"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({ws <- character(0); v <- tryCatch(withCallingHandlers(withr::with_options(list(metacheck.llm.use = TRUE, metacheck.llm.cache = FALSE, metacheck.llm_reasoning = NULL, metacheck.llm_max_tokens = NULL, metacheck.llm_max_calls = 30L), withr::with_envvar(c(GROQ_API_KEY = 'test-key', GEMINI_API_KEY = 'test-key', GOOGLE_API_KEY = NA, ANTHROPIC_API_KEY = 'test-key', ANTHROPIC_BASE_URL = NA, OPENAI_API_KEY = 'test-key', MISTRAL_API_KEY = 'test-key', OLLAMA_BASE_URL = NA), llm('A', 'Sys', type = ellmer::type_object(n = ellmer::type_integer('num', required = FALSE)), model = 'ollama'))), warning = function(w) {ws <<- c(ws, conditionMessage(w)); invokeRestart('muffleWarning')}), error = function(e) list(error = conditionMessage(e))); list(value = v, warnings = ws)})"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).catch(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).L.llm('A', 'Sys', type=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_object(n=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_integer('num', required=False)), model='ollama'), {**__import__('tests.llm.parity_helpers', fromlist=['_']).LLM_ON, 'metacheck.llm_reasoning': None, 'metacheck.llm_max_tokens': None, 'metacheck.llm_max_calls': __import__('tests.llm.parity_helpers', fromlist=['_']).RInt(30)}, {'GROQ_API_KEY': 'test-key', 'GEMINI_API_KEY': 'test-key', 'GOOGLE_API_KEY': None, 'ANTHROPIC_API_KEY': 'test-key', 'ANTHROPIC_BASE_URL': None, 'OPENAI_API_KEY': 'test-key', 'MISTRAL_API_KEY': 'test-key', 'OLLAMA_BASE_URL': None}))"
+  "mock_dir": "apis"
+- "id": "chat_lmstudio.missing_model"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({ws <- character(0); v <- tryCatch(withCallingHandlers(withr::with_envvar(c(LMSTUDIO_BASE_URL = NA, LMSTUDIO_API_KEY = NA), ellmer::chat_lmstudio()), warning = function(w) {ws <<- c(ws, conditionMessage(w)); invokeRestart('muffleWarning')}), error = function(e) list(error = conditionMessage(e))); list(value = v, warnings = ws)})"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).catch(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).P.chat_lmstudio(), {}, {'LMSTUDIO_BASE_URL': None, 'LMSTUDIO_API_KEY': None}))"
+  "mock_dir": "tests/llm/mocks"
+- "id": "chat_lmstudio.not_available"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({ws <- character(0); v <- tryCatch(withCallingHandlers(withr::with_envvar(c(LMSTUDIO_BASE_URL = NA, LMSTUDIO_API_KEY = NA), ellmer::chat_lmstudio(model = 'nope')), warning = function(w) {ws <<- c(ws, conditionMessage(w)); invokeRestart('muffleWarning')}), error = function(e) list(error = conditionMessage(e))); list(value = v, warnings = ws)})"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).catch(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).P.chat_lmstudio(model='nope'), {}, {'LMSTUDIO_BASE_URL': None, 'LMSTUDIO_API_KEY': None}))"
+  "mock_dir": "tests/llm/mocks"
+- "id": "chat_lmstudio.null_model"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({ws <- character(0); v <- tryCatch(withCallingHandlers(withr::with_envvar(c(LMSTUDIO_BASE_URL = NA, LMSTUDIO_API_KEY = NA), ellmer::chat('lmstudio')), warning = function(w) {ws <<- c(ws, conditionMessage(w)); invokeRestart('muffleWarning')}), error = function(e) list(error = conditionMessage(e))); list(value = v, warnings = ws)})"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).catch(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).P.chat('lmstudio'), {}, {'LMSTUDIO_BASE_URL': None, 'LMSTUDIO_API_KEY': None}))"
+  "mock_dir": "tests/llm/mocks"
+- "id": "chat_github.defunct"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({ws <- character(0); v <- tryCatch(withCallingHandlers(ellmer::chat_github(), warning = function(w) {ws <<- c(ws, conditionMessage(w)); invokeRestart('muffleWarning')}), error = function(e) list(error = conditionMessage(e))); list(value = v, warnings = ws)})"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).catch(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).P.chat_github())"
+- "id": "llm.github_rows"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({ws <- character(0); v <- tryCatch(withCallingHandlers(withr::with_options(list(metacheck.llm.use = TRUE, metacheck.llm.cache = FALSE), llm('hi', 'repeat this', model = 'github/gpt-4o')), warning = function(w) {ws <<- c(ws, conditionMessage(w)); invokeRestart('muffleWarning')}), error = function(e) list(error = conditionMessage(e))); list(value = v, warnings = ws)})"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).catch(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).L.llm('hi', 'repeat this', model='github/gpt-4o'), __import__('tests.llm.parity_helpers', fromlist=['_']).LLM_ON))"
 - "id": "cache_key.null_params"
   "r": "base::identity"
   "py": "tests.llm.parity_helpers.identity"
@@ -571,6 +749,219 @@
       "$expr":
         "r": "local({ws <- character(0); v <- tryCatch(withCallingHandlers(withr::with_options(list(metacheck.llm.use = TRUE, metacheck.llm.cache = FALSE, metacheck.llm_reasoning = NULL, metacheck.llm_max_tokens = NULL, metacheck.llm_max_calls = 30L), withr::with_envvar(c(GROQ_API_KEY = 'test-key', GEMINI_API_KEY = 'test-key', GOOGLE_API_KEY = NA, ANTHROPIC_API_KEY = 'test-key', ANTHROPIC_BASE_URL = NA, OPENAI_API_KEY = 'test-key', MISTRAL_API_KEY = 'test-key', OLLAMA_BASE_URL = NA), llm(c('single full', 'single nulls', 'single tags'), 'Single', type = ellmer::type_object(name = ellmer::type_string('n', required = FALSE), n = ellmer::type_integer('i', required = FALSE), tags = ellmer::type_array(ellmer::type_enum(c('x', 'y')), required = FALSE), sub = ellmer::type_object(a = ellmer::type_number(required = FALSE), .required = FALSE)), model = 'groq/probe-model'))), warning = function(w) {ws <<- c(ws, conditionMessage(w)); invokeRestart('muffleWarning')}), error = function(e) list(error = conditionMessage(e))); list(value = v, warnings = ws)})"
         "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).catch(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).L.llm(['single full', 'single nulls', 'single tags'], 'Single', type=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_object(name=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_string('n', required=False), n=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_integer('i', required=False), tags=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_array(__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_enum(['x', 'y']), required=False), sub=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_object(a=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_number(required=False), required=False)), model='groq/probe-model'), {**__import__('tests.llm.parity_helpers', fromlist=['_']).LLM_ON, 'metacheck.llm_reasoning': None, 'metacheck.llm_max_tokens': None, 'metacheck.llm_max_calls': __import__('tests.llm.parity_helpers', fromlist=['_']).RInt(30)}, {'GROQ_API_KEY': 'test-key', 'GEMINI_API_KEY': 'test-key', 'GOOGLE_API_KEY': None, 'ANTHROPIC_API_KEY': 'test-key', 'ANTHROPIC_BASE_URL': None, 'OPENAI_API_KEY': 'test-key', 'MISTRAL_API_KEY': 'test-key', 'OLLAMA_BASE_URL': None}))"
+  "mock_dir": "tests/llm/mocks"
+- "id": "reply.groq_plain"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({ws <- character(0); v <- tryCatch(withCallingHandlers(withr::with_options(list(metacheck.llm.use = TRUE, metacheck.llm.cache = FALSE, metacheck.llm_reasoning = NULL, metacheck.llm_max_tokens = NULL, metacheck.llm_max_calls = 30L), withr::with_envvar(c(GROQ_API_KEY = 'test-key', GEMINI_API_KEY = 'test-key', GOOGLE_API_KEY = NA, ANTHROPIC_API_KEY = 'test-key', ANTHROPIC_BASE_URL = NA, OPENAI_API_KEY = 'test-key', MISTRAL_API_KEY = 'test-key', OLLAMA_BASE_URL = NA), llm(c('reply empty choices', 'reply null content', 'reply parts', 'reply no choices'), 'Reply', model = 'groq/probe-model'))), warning = function(w) {ws <<- c(ws, conditionMessage(w)); invokeRestart('muffleWarning')}), error = function(e) list(error = conditionMessage(e))); list(value = v, warnings = ws)})"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).catch(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).L.llm(['reply empty choices', 'reply null content', 'reply parts', 'reply no choices'], 'Reply', model='groq/probe-model'), {**__import__('tests.llm.parity_helpers', fromlist=['_']).LLM_ON, 'metacheck.llm_reasoning': None, 'metacheck.llm_max_tokens': None, 'metacheck.llm_max_calls': __import__('tests.llm.parity_helpers', fromlist=['_']).RInt(30)}, {'GROQ_API_KEY': 'test-key', 'GEMINI_API_KEY': 'test-key', 'GOOGLE_API_KEY': None, 'ANTHROPIC_API_KEY': 'test-key', 'ANTHROPIC_BASE_URL': None, 'OPENAI_API_KEY': 'test-key', 'MISTRAL_API_KEY': 'test-key', 'OLLAMA_BASE_URL': None}))"
+  "mock_dir": "tests/llm/mocks"
+- "id": "reply.groq_structured"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({ws <- character(0); v <- tryCatch(withCallingHandlers(withr::with_options(list(metacheck.llm.use = TRUE, metacheck.llm.cache = FALSE, metacheck.llm_reasoning = NULL, metacheck.llm_max_tokens = NULL, metacheck.llm_max_calls = 30L), withr::with_envvar(c(GROQ_API_KEY = 'test-key', GEMINI_API_KEY = 'test-key', GOOGLE_API_KEY = NA, ANTHROPIC_API_KEY = 'test-key', ANTHROPIC_BASE_URL = NA, OPENAI_API_KEY = 'test-key', MISTRAL_API_KEY = 'test-key', OLLAMA_BASE_URL = NA), llm(c('reply empty choices', 'reply null content', 'reply parts', 'reply no choices'), 'Reply', type = ellmer::type_object(name = ellmer::type_string('n', required = FALSE), n = ellmer::type_integer('i', required = FALSE), tags = ellmer::type_array(ellmer::type_enum(c('x', 'y')), required = FALSE), sub = ellmer::type_object(a = ellmer::type_number(required = FALSE), .required = FALSE)), model = 'groq/probe-model'))), warning = function(w) {ws <<- c(ws, conditionMessage(w)); invokeRestart('muffleWarning')}), error = function(e) list(error = conditionMessage(e))); list(value = v, warnings = ws)})"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).catch(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).L.llm(['reply empty choices', 'reply null content', 'reply parts', 'reply no choices'], 'Reply', type=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_object(name=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_string('n', required=False), n=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_integer('i', required=False), tags=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_array(__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_enum(['x', 'y']), required=False), sub=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_object(a=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_number(required=False), required=False)), model='groq/probe-model'), {**__import__('tests.llm.parity_helpers', fromlist=['_']).LLM_ON, 'metacheck.llm_reasoning': None, 'metacheck.llm_max_tokens': None, 'metacheck.llm_max_calls': __import__('tests.llm.parity_helpers', fromlist=['_']).RInt(30)}, {'GROQ_API_KEY': 'test-key', 'GEMINI_API_KEY': 'test-key', 'GOOGLE_API_KEY': None, 'ANTHROPIC_API_KEY': 'test-key', 'ANTHROPIC_BASE_URL': None, 'OPENAI_API_KEY': 'test-key', 'MISTRAL_API_KEY': 'test-key', 'OLLAMA_BASE_URL': None}))"
+  "mock_dir": "tests/llm/mocks"
+- "id": "reply.gemini_plain"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({ws <- character(0); v <- tryCatch(withCallingHandlers(withr::with_options(list(metacheck.llm.use = TRUE, metacheck.llm.cache = FALSE, metacheck.llm_reasoning = NULL, metacheck.llm_max_tokens = NULL, metacheck.llm_max_calls = 30L), withr::with_envvar(c(GROQ_API_KEY = 'test-key', GEMINI_API_KEY = 'test-key', GOOGLE_API_KEY = NA, ANTHROPIC_API_KEY = 'test-key', ANTHROPIC_BASE_URL = NA, OPENAI_API_KEY = 'test-key', MISTRAL_API_KEY = 'test-key', OLLAMA_BASE_URL = NA), llm(c('gemini blocked', 'gemini no candidates', 'gemini two parts'), 'Reply', model = 'google_gemini/gemini-2.5-flash'))), warning = function(w) {ws <<- c(ws, conditionMessage(w)); invokeRestart('muffleWarning')}), error = function(e) list(error = conditionMessage(e))); list(value = v, warnings = ws)})"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).catch(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).L.llm(['gemini blocked', 'gemini no candidates', 'gemini two parts'], 'Reply', model='google_gemini/gemini-2.5-flash'), {**__import__('tests.llm.parity_helpers', fromlist=['_']).LLM_ON, 'metacheck.llm_reasoning': None, 'metacheck.llm_max_tokens': None, 'metacheck.llm_max_calls': __import__('tests.llm.parity_helpers', fromlist=['_']).RInt(30)}, {'GROQ_API_KEY': 'test-key', 'GEMINI_API_KEY': 'test-key', 'GOOGLE_API_KEY': None, 'ANTHROPIC_API_KEY': 'test-key', 'ANTHROPIC_BASE_URL': None, 'OPENAI_API_KEY': 'test-key', 'MISTRAL_API_KEY': 'test-key', 'OLLAMA_BASE_URL': None}))"
+  "mock_dir": "tests/llm/mocks"
+- "id": "reply.gemini_structured"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({ws <- character(0); v <- tryCatch(withCallingHandlers(withr::with_options(list(metacheck.llm.use = TRUE, metacheck.llm.cache = FALSE, metacheck.llm_reasoning = NULL, metacheck.llm_max_tokens = NULL, metacheck.llm_max_calls = 30L), withr::with_envvar(c(GROQ_API_KEY = 'test-key', GEMINI_API_KEY = 'test-key', GOOGLE_API_KEY = NA, ANTHROPIC_API_KEY = 'test-key', ANTHROPIC_BASE_URL = NA, OPENAI_API_KEY = 'test-key', MISTRAL_API_KEY = 'test-key', OLLAMA_BASE_URL = NA), llm(c('gemini blocked', 'gemini no candidates', 'gemini two parts'), 'Reply', type = ellmer::type_object(name = ellmer::type_string('n', required = FALSE), n = ellmer::type_integer('i', required = FALSE), tags = ellmer::type_array(ellmer::type_enum(c('x', 'y')), required = FALSE), sub = ellmer::type_object(a = ellmer::type_number(required = FALSE), .required = FALSE)), model = 'google_gemini/gemini-2.5-flash'))), warning = function(w) {ws <<- c(ws, conditionMessage(w)); invokeRestart('muffleWarning')}), error = function(e) list(error = conditionMessage(e))); list(value = v, warnings = ws)})"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).catch(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).L.llm(['gemini blocked', 'gemini no candidates', 'gemini two parts'], 'Reply', type=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_object(name=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_string('n', required=False), n=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_integer('i', required=False), tags=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_array(__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_enum(['x', 'y']), required=False), sub=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_object(a=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_number(required=False), required=False)), model='google_gemini/gemini-2.5-flash'), {**__import__('tests.llm.parity_helpers', fromlist=['_']).LLM_ON, 'metacheck.llm_reasoning': None, 'metacheck.llm_max_tokens': None, 'metacheck.llm_max_calls': __import__('tests.llm.parity_helpers', fromlist=['_']).RInt(30)}, {'GROQ_API_KEY': 'test-key', 'GEMINI_API_KEY': 'test-key', 'GOOGLE_API_KEY': None, 'ANTHROPIC_API_KEY': 'test-key', 'ANTHROPIC_BASE_URL': None, 'OPENAI_API_KEY': 'test-key', 'MISTRAL_API_KEY': 'test-key', 'OLLAMA_BASE_URL': None}))"
+  "mock_dir": "tests/llm/mocks"
+- "id": "models.openai"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({ws <- character(0); v <- tryCatch(withCallingHandlers(withr::with_envvar(c(OPENAI_API_KEY = 'test-key', ANTHROPIC_API_KEY = 'test-key', ANTHROPIC_BASE_URL = NA, GEMINI_API_KEY = 'test-key', GOOGLE_API_KEY = NA, MISTRAL_API_KEY = 'test-key', DEEPSEEK_API_KEY = 'test-key', PORTKEY_API_KEY = 'test-key', VLLM_API_KEY = 'test-key', LMSTUDIO_API_KEY = NA), ellmer::models_openai()), warning = function(w) {ws <<- c(ws, conditionMessage(w)); invokeRestart('muffleWarning')}), error = function(e) list(error = conditionMessage(e))); list(value = v, warnings = ws)})"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).catch(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).P.models_openai(), {}, {'OPENAI_API_KEY': 'test-key', 'ANTHROPIC_API_KEY': 'test-key', 'ANTHROPIC_BASE_URL': None, 'GEMINI_API_KEY': 'test-key', 'GOOGLE_API_KEY': None, 'MISTRAL_API_KEY': 'test-key', 'DEEPSEEK_API_KEY': 'test-key', 'PORTKEY_API_KEY': 'test-key', 'VLLM_API_KEY': 'test-key', 'LMSTUDIO_API_KEY': None}))"
+  "mock_dir": "tests/llm/mocks"
+- "id": "models.anthropic"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({ws <- character(0); v <- tryCatch(withCallingHandlers(withr::with_envvar(c(OPENAI_API_KEY = 'test-key', ANTHROPIC_API_KEY = 'test-key', ANTHROPIC_BASE_URL = NA, GEMINI_API_KEY = 'test-key', GOOGLE_API_KEY = NA, MISTRAL_API_KEY = 'test-key', DEEPSEEK_API_KEY = 'test-key', PORTKEY_API_KEY = 'test-key', VLLM_API_KEY = 'test-key', LMSTUDIO_API_KEY = NA), ellmer::models_anthropic()), warning = function(w) {ws <<- c(ws, conditionMessage(w)); invokeRestart('muffleWarning')}), error = function(e) list(error = conditionMessage(e))); list(value = v, warnings = ws)})"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).catch(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).P.models_anthropic(), {}, {'OPENAI_API_KEY': 'test-key', 'ANTHROPIC_API_KEY': 'test-key', 'ANTHROPIC_BASE_URL': None, 'GEMINI_API_KEY': 'test-key', 'GOOGLE_API_KEY': None, 'MISTRAL_API_KEY': 'test-key', 'DEEPSEEK_API_KEY': 'test-key', 'PORTKEY_API_KEY': 'test-key', 'VLLM_API_KEY': 'test-key', 'LMSTUDIO_API_KEY': None}))"
+  "mock_dir": "tests/llm/mocks"
+- "id": "models.google_gemini"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({ws <- character(0); v <- tryCatch(withCallingHandlers(withr::with_envvar(c(OPENAI_API_KEY = 'test-key', ANTHROPIC_API_KEY = 'test-key', ANTHROPIC_BASE_URL = NA, GEMINI_API_KEY = 'test-key', GOOGLE_API_KEY = NA, MISTRAL_API_KEY = 'test-key', DEEPSEEK_API_KEY = 'test-key', PORTKEY_API_KEY = 'test-key', VLLM_API_KEY = 'test-key', LMSTUDIO_API_KEY = NA), ellmer::models_google_gemini()), warning = function(w) {ws <<- c(ws, conditionMessage(w)); invokeRestart('muffleWarning')}), error = function(e) list(error = conditionMessage(e))); list(value = v, warnings = ws)})"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).catch(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).P.models_google_gemini(), {}, {'OPENAI_API_KEY': 'test-key', 'ANTHROPIC_API_KEY': 'test-key', 'ANTHROPIC_BASE_URL': None, 'GEMINI_API_KEY': 'test-key', 'GOOGLE_API_KEY': None, 'MISTRAL_API_KEY': 'test-key', 'DEEPSEEK_API_KEY': 'test-key', 'PORTKEY_API_KEY': 'test-key', 'VLLM_API_KEY': 'test-key', 'LMSTUDIO_API_KEY': None}))"
+  "mock_dir": "tests/llm/mocks"
+- "id": "models.mistral"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({ws <- character(0); v <- tryCatch(withCallingHandlers(withr::with_envvar(c(OPENAI_API_KEY = 'test-key', ANTHROPIC_API_KEY = 'test-key', ANTHROPIC_BASE_URL = NA, GEMINI_API_KEY = 'test-key', GOOGLE_API_KEY = NA, MISTRAL_API_KEY = 'test-key', DEEPSEEK_API_KEY = 'test-key', PORTKEY_API_KEY = 'test-key', VLLM_API_KEY = 'test-key', LMSTUDIO_API_KEY = NA), ellmer::models_mistral()), warning = function(w) {ws <<- c(ws, conditionMessage(w)); invokeRestart('muffleWarning')}), error = function(e) list(error = conditionMessage(e))); list(value = v, warnings = ws)})"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).catch(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).P.models_mistral(), {}, {'OPENAI_API_KEY': 'test-key', 'ANTHROPIC_API_KEY': 'test-key', 'ANTHROPIC_BASE_URL': None, 'GEMINI_API_KEY': 'test-key', 'GOOGLE_API_KEY': None, 'MISTRAL_API_KEY': 'test-key', 'DEEPSEEK_API_KEY': 'test-key', 'PORTKEY_API_KEY': 'test-key', 'VLLM_API_KEY': 'test-key', 'LMSTUDIO_API_KEY': None}))"
+  "mock_dir": "tests/llm/mocks"
+- "id": "models.deepseek"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({ws <- character(0); v <- tryCatch(withCallingHandlers(withr::with_envvar(c(OPENAI_API_KEY = 'test-key', ANTHROPIC_API_KEY = 'test-key', ANTHROPIC_BASE_URL = NA, GEMINI_API_KEY = 'test-key', GOOGLE_API_KEY = NA, MISTRAL_API_KEY = 'test-key', DEEPSEEK_API_KEY = 'test-key', PORTKEY_API_KEY = 'test-key', VLLM_API_KEY = 'test-key', LMSTUDIO_API_KEY = NA), ellmer::models_deepseek()), warning = function(w) {ws <<- c(ws, conditionMessage(w)); invokeRestart('muffleWarning')}), error = function(e) list(error = conditionMessage(e))); list(value = v, warnings = ws)})"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).catch(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).P.models_deepseek(), {}, {'OPENAI_API_KEY': 'test-key', 'ANTHROPIC_API_KEY': 'test-key', 'ANTHROPIC_BASE_URL': None, 'GEMINI_API_KEY': 'test-key', 'GOOGLE_API_KEY': None, 'MISTRAL_API_KEY': 'test-key', 'DEEPSEEK_API_KEY': 'test-key', 'PORTKEY_API_KEY': 'test-key', 'VLLM_API_KEY': 'test-key', 'LMSTUDIO_API_KEY': None}))"
+  "mock_dir": "tests/llm/mocks"
+- "id": "models.portkey"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({ws <- character(0); v <- tryCatch(withCallingHandlers(withr::with_envvar(c(OPENAI_API_KEY = 'test-key', ANTHROPIC_API_KEY = 'test-key', ANTHROPIC_BASE_URL = NA, GEMINI_API_KEY = 'test-key', GOOGLE_API_KEY = NA, MISTRAL_API_KEY = 'test-key', DEEPSEEK_API_KEY = 'test-key', PORTKEY_API_KEY = 'test-key', VLLM_API_KEY = 'test-key', LMSTUDIO_API_KEY = NA), ellmer::models_portkey()), warning = function(w) {ws <<- c(ws, conditionMessage(w)); invokeRestart('muffleWarning')}), error = function(e) list(error = conditionMessage(e))); list(value = v, warnings = ws)})"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).catch(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).P.models_portkey(), {}, {'OPENAI_API_KEY': 'test-key', 'ANTHROPIC_API_KEY': 'test-key', 'ANTHROPIC_BASE_URL': None, 'GEMINI_API_KEY': 'test-key', 'GOOGLE_API_KEY': None, 'MISTRAL_API_KEY': 'test-key', 'DEEPSEEK_API_KEY': 'test-key', 'PORTKEY_API_KEY': 'test-key', 'VLLM_API_KEY': 'test-key', 'LMSTUDIO_API_KEY': None}))"
+  "mock_dir": "tests/llm/mocks"
+- "id": "models.lmstudio"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({ws <- character(0); v <- tryCatch(withCallingHandlers(withr::with_envvar(c(OPENAI_API_KEY = 'test-key', ANTHROPIC_API_KEY = 'test-key', ANTHROPIC_BASE_URL = NA, GEMINI_API_KEY = 'test-key', GOOGLE_API_KEY = NA, MISTRAL_API_KEY = 'test-key', DEEPSEEK_API_KEY = 'test-key', PORTKEY_API_KEY = 'test-key', VLLM_API_KEY = 'test-key', LMSTUDIO_API_KEY = NA), ellmer::models_lmstudio()), warning = function(w) {ws <<- c(ws, conditionMessage(w)); invokeRestart('muffleWarning')}), error = function(e) list(error = conditionMessage(e))); list(value = v, warnings = ws)})"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).catch(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).P.models_lmstudio(), {}, {'OPENAI_API_KEY': 'test-key', 'ANTHROPIC_API_KEY': 'test-key', 'ANTHROPIC_BASE_URL': None, 'GEMINI_API_KEY': 'test-key', 'GOOGLE_API_KEY': None, 'MISTRAL_API_KEY': 'test-key', 'DEEPSEEK_API_KEY': 'test-key', 'PORTKEY_API_KEY': 'test-key', 'VLLM_API_KEY': 'test-key', 'LMSTUDIO_API_KEY': None}))"
+  "mock_dir": "tests/llm/mocks"
+- "id": "models.vllm"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({ws <- character(0); v <- tryCatch(withCallingHandlers(withr::with_envvar(c(OPENAI_API_KEY = 'test-key', ANTHROPIC_API_KEY = 'test-key', ANTHROPIC_BASE_URL = NA, GEMINI_API_KEY = 'test-key', GOOGLE_API_KEY = NA, MISTRAL_API_KEY = 'test-key', DEEPSEEK_API_KEY = 'test-key', PORTKEY_API_KEY = 'test-key', VLLM_API_KEY = 'test-key', LMSTUDIO_API_KEY = NA), ellmer::models_vllm('https://vllm.test')), warning = function(w) {ws <<- c(ws, conditionMessage(w)); invokeRestart('muffleWarning')}), error = function(e) list(error = conditionMessage(e))); list(value = v, warnings = ws)})"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).catch(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).P.models_vllm('https://vllm.test'), {}, {'OPENAI_API_KEY': 'test-key', 'ANTHROPIC_API_KEY': 'test-key', 'ANTHROPIC_BASE_URL': None, 'GEMINI_API_KEY': 'test-key', 'GOOGLE_API_KEY': None, 'MISTRAL_API_KEY': 'test-key', 'DEEPSEEK_API_KEY': 'test-key', 'PORTKEY_API_KEY': 'test-key', 'VLLM_API_KEY': 'test-key', 'LMSTUDIO_API_KEY': None}))"
+  "mock_dir": "tests/llm/mocks"
+- "id": "unnest_raw.tags"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({ws <- character(0); v <- tryCatch(withCallingHandlers(metacheck:::.unnest_result(jsonlite::parse_json('{\"a\": 1, \"tags\": [\"x\", \"y\"]}')), warning = function(w) {ws <<- c(ws, conditionMessage(w)); invokeRestart('muffleWarning')}), error = function(e) list(error = conditionMessage(e))); list(value = v, warnings = ws)})"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).catch(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).K._unnest_result(__import__('tests.llm.parity_helpers', fromlist=['_']).K._as_rlists(__import__('pytacheck.llm._json', fromlist=['_']).parse_json('{\"a\": 1, \"tags\": [\"x\", \"y\"]}'))))"
+- "id": "unnest_raw.tags_one"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({ws <- character(0); v <- tryCatch(withCallingHandlers(metacheck:::.unnest_result(jsonlite::parse_json('{\"a\": 1, \"tags\": [\"x\"]}')), warning = function(w) {ws <<- c(ws, conditionMessage(w)); invokeRestart('muffleWarning')}), error = function(e) list(error = conditionMessage(e))); list(value = v, warnings = ws)})"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).catch(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).K._unnest_result(__import__('tests.llm.parity_helpers', fromlist=['_']).K._as_rlists(__import__('pytacheck.llm._json', fromlist=['_']).parse_json('{\"a\": 1, \"tags\": [\"x\"]}'))))"
+- "id": "unnest_raw.tags_empty"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({ws <- character(0); v <- tryCatch(withCallingHandlers(metacheck:::.unnest_result(jsonlite::parse_json('{\"items\": [{\"a\": 1, \"tags\": [\"x\", \"y\"]}, {\"a\": 2, \"tags\": []}]}')), warning = function(w) {ws <<- c(ws, conditionMessage(w)); invokeRestart('muffleWarning')}), error = function(e) list(error = conditionMessage(e))); list(value = v, warnings = ws)})"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).catch(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).K._unnest_result(__import__('tests.llm.parity_helpers', fromlist=['_']).K._as_rlists(__import__('pytacheck.llm._json', fromlist=['_']).parse_json('{\"items\": [{\"a\": 1, \"tags\": [\"x\", \"y\"]}, {\"a\": 2, \"tags\": []}]}'))))"
+- "id": "unnest_raw.mixed_types"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({ws <- character(0); v <- tryCatch(withCallingHandlers(metacheck:::.unnest_result(jsonlite::parse_json('{\"items\": [{\"a\": 1}, {\"a\": \"x\"}]}')), warning = function(w) {ws <<- c(ws, conditionMessage(w)); invokeRestart('muffleWarning')}), error = function(e) list(error = conditionMessage(e))); list(value = v, warnings = ws)})"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).catch(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).K._unnest_result(__import__('tests.llm.parity_helpers', fromlist=['_']).K._as_rlists(__import__('pytacheck.llm._json', fromlist=['_']).parse_json('{\"items\": [{\"a\": 1}, {\"a\": \"x\"}]}'))))"
+- "id": "unnest_raw.scalar_items"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({ws <- character(0); v <- tryCatch(withCallingHandlers(metacheck:::.unnest_result(jsonlite::parse_json('{\"items\": [\"x\", \"y\"]}')), warning = function(w) {ws <<- c(ws, conditionMessage(w)); invokeRestart('muffleWarning')}), error = function(e) list(error = conditionMessage(e))); list(value = v, warnings = ws)})"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).catch(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).K._unnest_result(__import__('tests.llm.parity_helpers', fromlist=['_']).K._as_rlists(__import__('pytacheck.llm._json', fromlist=['_']).parse_json('{\"items\": [\"x\", \"y\"]}'))))"
+- "id": "unnest_raw.nested"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({ws <- character(0); v <- tryCatch(withCallingHandlers(metacheck:::.unnest_result(jsonlite::parse_json('{\"a\": 1, \"b\": {\"c\": 2, \"d\": [1, 2]}}')), warning = function(w) {ws <<- c(ws, conditionMessage(w)); invokeRestart('muffleWarning')}), error = function(e) list(error = conditionMessage(e))); list(value = v, warnings = ws)})"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).catch(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).K._unnest_result(__import__('tests.llm.parity_helpers', fromlist=['_']).K._as_rlists(__import__('pytacheck.llm._json', fromlist=['_']).parse_json('{\"a\": 1, \"b\": {\"c\": 2, \"d\": [1, 2]}}'))))"
+- "id": "unnest_raw.nested_null"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({ws <- character(0); v <- tryCatch(withCallingHandlers(metacheck:::.unnest_result(jsonlite::parse_json('{\"a\": 1, \"b\": {\"c\": null, \"d\": 2}}')), warning = function(w) {ws <<- c(ws, conditionMessage(w)); invokeRestart('muffleWarning')}), error = function(e) list(error = conditionMessage(e))); list(value = v, warnings = ws)})"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).catch(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).K._unnest_result(__import__('tests.llm.parity_helpers', fromlist=['_']).K._as_rlists(__import__('pytacheck.llm._json', fromlist=['_']).parse_json('{\"a\": 1, \"b\": {\"c\": null, \"d\": 2}}'))))"
+- "id": "unnest_raw.nested_all_null"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({ws <- character(0); v <- tryCatch(withCallingHandlers(metacheck:::.unnest_result(jsonlite::parse_json('{\"a\": {\"c\": null}}')), warning = function(w) {ws <<- c(ws, conditionMessage(w)); invokeRestart('muffleWarning')}), error = function(e) list(error = conditionMessage(e))); list(value = v, warnings = ws)})"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).catch(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).K._unnest_result(__import__('tests.llm.parity_helpers', fromlist=['_']).K._as_rlists(__import__('pytacheck.llm._json', fromlist=['_']).parse_json('{\"a\": {\"c\": null}}'))))"
+- "id": "unnest_raw.numbers"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({ws <- character(0); v <- tryCatch(withCallingHandlers(metacheck:::.unnest_result(jsonlite::parse_json('{\"b\": [1.5, true, \"q\\\\\"x\", -2, 100000, 0.1]}')), warning = function(w) {ws <<- c(ws, conditionMessage(w)); invokeRestart('muffleWarning')}), error = function(e) list(error = conditionMessage(e))); list(value = v, warnings = ws)})"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).catch(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).K._unnest_result(__import__('tests.llm.parity_helpers', fromlist=['_']).K._as_rlists(__import__('pytacheck.llm._json', fromlist=['_']).parse_json('{\"b\": [1.5, true, \"q\\\\\"x\", -2, 100000, 0.1]}'))))"
+- "id": "unnest_raw.dup_names"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({ws <- character(0); v <- tryCatch(withCallingHandlers(metacheck:::.unnest_result(jsonlite::parse_json('{\"b\": [1, 1]}')), warning = function(w) {ws <<- c(ws, conditionMessage(w)); invokeRestart('muffleWarning')}), error = function(e) list(error = conditionMessage(e))); list(value = v, warnings = ws)})"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).catch(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).K._unnest_result(__import__('tests.llm.parity_helpers', fromlist=['_']).K._as_rlists(__import__('pytacheck.llm._json', fromlist=['_']).parse_json('{\"b\": [1, 1]}'))))"
+- "id": "unnest_raw.items_null_field"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({ws <- character(0); v <- tryCatch(withCallingHandlers(metacheck:::.unnest_result(jsonlite::parse_json('{\"items\": [{\"a\": null, \"b\": [1]}, {\"a\": 2, \"b\": [2]}]}')), warning = function(w) {ws <<- c(ws, conditionMessage(w)); invokeRestart('muffleWarning')}), error = function(e) list(error = conditionMessage(e))); list(value = v, warnings = ws)})"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).catch(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).K._unnest_result(__import__('tests.llm.parity_helpers', fromlist=['_']).K._as_rlists(__import__('pytacheck.llm._json', fromlist=['_']).parse_json('{\"items\": [{\"a\": null, \"b\": [1]}, {\"a\": 2, \"b\": [2]}]}'))))"
+- "id": "unnest_raw.top_two"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({ws <- character(0); v <- tryCatch(withCallingHandlers(metacheck:::.unnest_result(jsonlite::parse_json('{\"a\": [1, 2], \"b\": \"x\"}')), warning = function(w) {ws <<- c(ws, conditionMessage(w)); invokeRestart('muffleWarning')}), error = function(e) list(error = conditionMessage(e))); list(value = v, warnings = ws)})"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).catch(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).K._unnest_result(__import__('tests.llm.parity_helpers', fromlist=['_']).K._as_rlists(__import__('pytacheck.llm._json', fromlist=['_']).parse_json('{\"a\": [1, 2], \"b\": \"x\"}'))))"
+- "id": "structured.from_schema"
+  "r": "base::identity"
+  "py": "tests.llm.parity_helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({ws <- character(0); v <- tryCatch(withCallingHandlers(withr::with_options(list(metacheck.llm.use = TRUE, metacheck.llm.cache = FALSE, metacheck.llm_reasoning = NULL, metacheck.llm_max_tokens = NULL, metacheck.llm_max_calls = 30L), withr::with_envvar(c(GROQ_API_KEY = 'test-key', GEMINI_API_KEY = 'test-key', GOOGLE_API_KEY = NA, ANTHROPIC_API_KEY = 'test-key', ANTHROPIC_BASE_URL = NA, OPENAI_API_KEY = 'test-key', MISTRAL_API_KEY = 'test-key', OLLAMA_BASE_URL = NA), llm(c('schema two', 'schema one'), 'Schema', type = ellmer::type_from_schema('{\"type\":\"object\",\"properties\":{\"a\":{\"type\":\"integer\"},\"tags\":{\"type\":\"array\",\"items\":{\"type\":\"string\"}}},\"required\":[\"a\",\"tags\"]}'), model = 'groq/probe-model'))), warning = function(w) {ws <<- c(ws, conditionMessage(w)); invokeRestart('muffleWarning')}), error = function(e) list(error = conditionMessage(e))); list(value = v, warnings = ws)})"
+        "py": "__import__('tests.llm.parity_helpers', fromlist=['_']).catch(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).scoped(lambda: __import__('tests.llm.parity_helpers', fromlist=['_']).L.llm(['schema two', 'schema one'], 'Schema', type=__import__('tests.llm.parity_helpers', fromlist=['_']).T.type_from_schema('{\"type\":\"object\",\"properties\":{\"a\":{\"type\":\"integer\"},\"tags\":{\"type\":\"array\",\"items\":{\"type\":\"string\"}}},\"required\":[\"a\",\"tags\"]}'), model='groq/probe-model'), {**__import__('tests.llm.parity_helpers', fromlist=['_']).LLM_ON, 'metacheck.llm_reasoning': None, 'metacheck.llm_max_tokens': None, 'metacheck.llm_max_calls': __import__('tests.llm.parity_helpers', fromlist=['_']).RInt(30)}, {'GROQ_API_KEY': 'test-key', 'GEMINI_API_KEY': 'test-key', 'GOOGLE_API_KEY': None, 'ANTHROPIC_API_KEY': 'test-key', 'ANTHROPIC_BASE_URL': None, 'OPENAI_API_KEY': 'test-key', 'MISTRAL_API_KEY': 'test-key', 'OLLAMA_BASE_URL': None}))"
   "mock_dir": "tests/llm/mocks"
 - "id": "msg.llm.cache.errors_not_cached"
   "r": "base::identity"

@@ -1,0 +1,387 @@
+"area": "mod_p_values_review"
+# Adversarial review cases for the p-value modules (all_p_values, stat_p_exact,
+# stat_p_nonsig): real Grobid papers, Unicode whitespace (TRE vs PCRE \s),
+# exotic comparators, underflow / scientific zeros, the 0.05 boundary, NA and
+# empty sentences, and paper lists whose IDs are C-locale sensitive.
+"cases":
+# ------------------------------------------------------------------ real papers
+- "id": "all_p_values.real_papers"
+  "module": "all_p_values"
+  "args":
+    "paper": {"$read": ["upstream/metacheck/tests/testthat/fixtures/debruine/debruine-child.xml", "upstream/metacheck/tests/testthat/fixtures/debruine/debruine-sex.xml", "upstream/metacheck/tests/testthat/fixtures/formats/preprint.pdf.tei.xml", "upstream/metacheck/tests/testthat/fixtures/formats/published.pdf.tei.xml", "upstream/metacheck/tests/testthat/fixtures/problems/0956797615569889.xml", "upstream/metacheck/tests/testthat/fixtures/problems/0956797617737129.xml"]}
+- "id": "stat_p_exact.real_papers"
+  "module": "stat_p_exact"
+  "args":
+    "paper": {"$read": ["upstream/metacheck/tests/testthat/fixtures/debruine/debruine-child.xml", "upstream/metacheck/tests/testthat/fixtures/debruine/debruine-sex.xml", "upstream/metacheck/tests/testthat/fixtures/formats/preprint.pdf.tei.xml", "upstream/metacheck/tests/testthat/fixtures/formats/published.pdf.tei.xml", "upstream/metacheck/tests/testthat/fixtures/problems/0956797615569889.xml", "upstream/metacheck/tests/testthat/fixtures/problems/0956797617737129.xml"]}
+- "id": "stat_p_nonsig.real_papers"
+  "module": "stat_p_nonsig"
+  "args":
+    "paper": {"$read": ["upstream/metacheck/tests/testthat/fixtures/debruine/debruine-child.xml", "upstream/metacheck/tests/testthat/fixtures/debruine/debruine-sex.xml", "upstream/metacheck/tests/testthat/fixtures/formats/preprint.pdf.tei.xml", "upstream/metacheck/tests/testthat/fixtures/formats/published.pdf.tei.xml", "upstream/metacheck/tests/testthat/fixtures/problems/0956797615569889.xml", "upstream/metacheck/tests/testthat/fixtures/problems/0956797617737129.xml"]}
+- "id": "stat_p_exact.real_single"
+  "module": "stat_p_exact"
+  "args":
+    "paper": {"$paper": "upstream/metacheck/tests/testthat/fixtures/formats/preprint.pdf.tei.xml"}
+- "id": "stat_p_nonsig.real_single"
+  "module": "stat_p_nonsig"
+  "args":
+    "paper": {"$paper": "upstream/metacheck/tests/testthat/fixtures/problems/0956797617737129.xml"}
+# ------------------------------------------------------------ unicode whitespace
+- "id": "all_p_values.unicode_ws"
+  "module": "all_p_values"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+          - "Thin p = .03 here."
+          - "NBSP p < .05 here."
+          - "Mixed p = .04 and p\t=\t.02 and P　=　.5."
+          - "Sci p = 5.0 x 10^-2 and p = 1.2 e -3."
+          - "Separator p =\x1c.01 and p\x1c= .02."
+          - "Line p =\n.03 and p\n< .04."
+  "compare": {"ignore": ["paper_id", "table.paper_id", "summary_table.paper_id"]}
+- "id": "stat_p_exact.unicode_star"
+  "module": "stat_p_exact"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+          - "Thin p < .05 (* p < .05)."
+          - "NBSP p < .05 (* p < .05)."
+          - "Figure space p < .05 (* p < .05)."
+          - "Narrow NBSP p < .05 (* p < .05)."
+          - "Ideographic p < .05 (*　p < .05)."
+          - "Separator p < .05 (*\x1cp < .05)."
+          - "Unit separator p < .05 (*\x1fp<\x1f.01)."
+          - "Newline p < .05 (*\np < .05)."
+          - "Tab p < .05 (*\tp\t<\t.01)."
+          - "VT p < .05 (*\vp < .01)."
+          - "NEL p < .05 (*\x85p < .01)."
+          - "Line sep p < .05 (* p < .01)."
+          - "Zero width p < .05 (*​p < .01)."
+  "compare": {"ignore": ["paper_id", "table.paper_id", "summary_table.paper_id"]}
+- "id": "stat_p_nonsig.unicode_ws"
+  "module": "stat_p_nonsig"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+          - "Thin p = .30 here."
+          - "NBSP p > .05 here."
+          - "Separator p =\x1c.20 and p\x1f= .01."
+          - "Sci p = 5.1 x 10^-2 and p = 5.0 x 10^-2."
+  "compare": {"ignore": ["paper_id", "table.paper_id", "summary_table.paper_id"]}
+# ------------------------------------------------------------------ comparators
+- "id": "stat_p_exact.comparators"
+  "module": "stat_p_exact"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+          - "Double equals p == .03 here."
+          - "Double equals zero p == .000 here."
+          - "Reversed p =< .03 here."
+          - "Much less p ≪ .001 here."
+          - "Much greater p ≫ .5 here."
+          - "Tilde zero p ~ .000 here."
+          - "Not equal zero p ≠ .000 here."
+          - "Less than zero p < 0.0 here."
+          - "Underflow p = 1.0e-400 here."
+          - "Sci zero p = 0.0 x 10^-3 and p = 0.0e-2."
+          - "Big p = 1.5 here."
+          - "Boundary p < .001 and p < .0011 here."
+          - "Upper P > .999 here."
+          - "Weird p < n.s. and p = ns here."
+          - "Tiny p < 1.0 x 10^-400 here."
+  "compare": {"ignore": ["paper_id", "table.paper_id", "summary_table.paper_id"]}
+- "id": "stat_p_nonsig.comparators"
+  "module": "stat_p_nonsig"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+          - "Double equals p == .03 here."
+          - "Reversed p =< .05 and p <= .05 and p ≤ .05."
+          - "Much less p ≪ .01 here."
+          - "Just above p < .0500001 here."
+          - "Exact p = 0.05, p = .050 and p = 0.0500."
+          - "Sci p = 5.00 x 10^-2, p = 5.0*10^-2 and p = .05e-0."
+          - "Underflow p < 1.0e-400 here."
+          - "Others p ~ .01, p ≈ .01, p ≠ .01, p ≥ .01 and p > .01."
+          - "Upper P = .05 and p-value = .07 and pvalue < .05."
+          - "Zero p = .000 and p < .000."
+          - "Weird p < n.s. here."
+  "compare": {"ignore": ["paper_id", "table.paper_id", "summary_table.paper_id"]}
+# ----------------------------------------------------------------- star notes
+- "id": "stat_p_exact.star_variants"
+  "module": "stat_p_exact"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+          - "A p < .05 with *p<.01 note."
+          - "B p < .05 with * P < 0.001 note."
+          - "C p < .05 with *p < .0005 note."
+          - "D p < .05 with *p < .025 note."
+          - "E p < .05 with **p<.05 note."
+          - "F p < .05 with *p < 00.05 note."
+          - "G p < .05 with *p ≤ .05 note."
+          - "H p < .05 with *p <.1 note."
+          - "I p = .000 with *p < .05 note is still zero."
+          - "J p > .05 with * p < .15 note."
+          - "K p < .05 with *p = .05 note."
+          - "L p < .05 with a trailing star*"
+  "compare": {"ignore": ["paper_id", "table.paper_id", "summary_table.paper_id"]}
+# ------------------------------------------------------------ NA / empty text
+- "id": "all_p_values.na_text"
+  "module": "all_p_values"
+  "args":
+    "paper":
+      "$expr":
+        "r": "test_paper(c(NA, 'p = .03', '', 'Twice p < .01 and p < .01'))"
+        "py": "pc.test_paper([None, 'p = .03', '', 'Twice p < .01 and p < .01'])"
+  "compare": {"ignore": ["paper_id", "table.paper_id", "summary_table.paper_id"]}
+- "id": "stat_p_exact.na_text"
+  "module": "stat_p_exact"
+  "args":
+    "paper":
+      "$expr":
+        "r": "test_paper(c(NA, 'x p < .05', '', 'y p = .000', NA))"
+        "py": "pc.test_paper([None, 'x p < .05', '', 'y p = .000', None])"
+  "compare": {"ignore": ["paper_id", "table.paper_id", "summary_table.paper_id"]}
+- "id": "stat_p_nonsig.na_text"
+  "module": "stat_p_nonsig"
+  "args":
+    "paper":
+      "$expr":
+        "r": "test_paper(c(NA, 'x p > .05', '', 'y p = .01', NA))"
+        "py": "pc.test_paper([None, 'x p > .05', '', 'y p = .01', None])"
+  "compare": {"ignore": ["paper_id", "table.paper_id", "summary_table.paper_id"]}
+- "id": "stat_p_exact.only_na_text"
+  "module": "stat_p_exact"
+  "args":
+    "paper":
+      "$expr":
+        "r": "test_paper(c(NA, ''))"
+        "py": "pc.test_paper([None, ''])"
+  "compare": {"ignore": ["paper_id", "table.paper_id", "summary_table.paper_id"]}
+# ------------------------------------------------- paper lists: ids and dups
+- "id": "all_p_values.paperlist_ids"
+  "module": "all_p_values"
+  "args":
+    "paper":
+      "$expr":
+        "r": "paperlist(local({p <- test_paper(c('Same p < .05 sentence.')); p$paper_id <- 'b'; p}), local({p <- test_paper(c('Same p < .05 sentence.', 'p = .2')); p$paper_id <- 'a_b'; p}), local({p <- test_paper(c('p = .000')); p$paper_id <- 'Z'; p}), local({p <- test_paper(c('none')); p$paper_id <- '_x'; p}), local({p <- test_paper(c('p > .1')); p$paper_id <- 'a-b'; p}), local({p <- test_paper(c('p = .04')); p$paper_id <- '1'; p}), local({p <- test_paper(c('p = .04', 'p < .01')); p$paper_id <- 'a.b'; p}))"
+        "py": "pc.PaperList([(lambda p, i: (p.__setitem__('paper_id', i), p)[1])(pc.test_paper(t), i) for t, i in [(['Same p < .05 sentence.'], 'b'), (['Same p < .05 sentence.', 'p = .2'], 'a_b'), (['p = .000'], 'Z'), (['none'], '_x'), (['p > .1'], 'a-b'), (['p = .04'], '1'), (['p = .04', 'p < .01'], 'a.b')]])"
+- "id": "stat_p_exact.paperlist_ids"
+  "module": "stat_p_exact"
+  "args":
+    "paper":
+      "$expr":
+        "r": "paperlist(local({p <- test_paper(c('Same p < .05 sentence.')); p$paper_id <- 'b'; p}), local({p <- test_paper(c('Same p < .05 sentence.', 'p = .2')); p$paper_id <- 'a_b'; p}), local({p <- test_paper(c('p = .000')); p$paper_id <- 'Z'; p}), local({p <- test_paper(c('none')); p$paper_id <- '_x'; p}), local({p <- test_paper(c('p > .1')); p$paper_id <- 'a-b'; p}), local({p <- test_paper(c('p = .04')); p$paper_id <- '1'; p}), local({p <- test_paper(c('p = .00', 'p < .01')); p$paper_id <- 'a.b'; p}))"
+        "py": "pc.PaperList([(lambda p, i: (p.__setitem__('paper_id', i), p)[1])(pc.test_paper(t), i) for t, i in [(['Same p < .05 sentence.'], 'b'), (['Same p < .05 sentence.', 'p = .2'], 'a_b'), (['p = .000'], 'Z'), (['none'], '_x'), (['p > .1'], 'a-b'), (['p = .04'], '1'), (['p = .00', 'p < .01'], 'a.b')]])"
+- "id": "stat_p_exact.paperlist_zero_only"
+  "module": "stat_p_exact"
+  "args":
+    "paper":
+      "$expr":
+        "r": "paperlist(local({p <- test_paper(c('p = .000', 'p = 0.00')); p$paper_id <- 'b'; p}), local({p <- test_paper(c('p = .012')); p$paper_id <- 'a'; p}), local({p <- test_paper(c('p = .000')); p$paper_id <- 'A'; p}))"
+        "py": "pc.PaperList([(lambda p, i: (p.__setitem__('paper_id', i), p)[1])(pc.test_paper(t), i) for t, i in [(['p = .000', 'p = 0.00'], 'b'), (['p = .012'], 'a'), (['p = .000'], 'A')]])"
+- "id": "stat_p_exact.paperlist_imprecise_only"
+  "module": "stat_p_exact"
+  "args":
+    "paper":
+      "$expr":
+        "r": "paperlist(local({p <- test_paper(c('p < .05')); p$paper_id <- 'b'; p}), local({p <- test_paper(c('p < .05', 'p > .1')); p$paper_id <- 'a'; p}), local({p <- test_paper(c('none')); p$paper_id <- 'A'; p}))"
+        "py": "pc.PaperList([(lambda p, i: (p.__setitem__('paper_id', i), p)[1])(pc.test_paper(t), i) for t, i in [(['p < .05'], 'b'), (['p < .05', 'p > .1'], 'a'), (['none'], 'A')]])"
+- "id": "stat_p_nonsig.paperlist_ids"
+  "module": "stat_p_nonsig"
+  "args":
+    "paper":
+      "$expr":
+        "r": "paperlist(local({p <- test_paper(c('Same p > .05 sentence.')); p$paper_id <- 'b'; p}), local({p <- test_paper(c('Same p > .05 sentence.', 'p = .2')); p$paper_id <- 'a_b'; p}), local({p <- test_paper(c('p = .01')); p$paper_id <- 'Z'; p}), local({p <- test_paper(c('none')); p$paper_id <- '_x'; p}), local({p <- test_paper(c('p > .1')); p$paper_id <- 'a-b'; p}), local({p <- test_paper(c('p = n.s.')); p$paper_id <- '1'; p}))"
+        "py": "pc.PaperList([(lambda p, i: (p.__setitem__('paper_id', i), p)[1])(pc.test_paper(t), i) for t, i in [(['Same p > .05 sentence.'], 'b'), (['Same p > .05 sentence.', 'p = .2'], 'a_b'), (['p = .01'], 'Z'), (['none'], '_x'), (['p > .1'], 'a-b'), (['p = n.s.'], '1')]])"
+- "id": "stat_p_nonsig.many_rows"
+  "module": "stat_p_nonsig"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+          - "r1 p = .10"
+          - "r2 p = .20"
+          - "r3 p = .30"
+          - "r4 p = .40"
+          - "r5 p = .50"
+          - "r6 p = .60"
+          - "r7 p = .70"
+          - "r8 p = .80"
+          - "r9 p = .90"
+          - "r10 p = .91"
+          - "r11 p = .92 and again p = .92"
+          - "r12 p < .01"
+  "compare": {"ignore": ["paper_id", "table.paper_id", "summary_table.paper_id"]}
+# ------------------------------------------------- empty text / word boundaries
+- "id": "all_p_values.empty_text_table"
+  "module": "all_p_values"
+  "args":
+    "paper":
+      "$expr":
+        "r": "test_paper(character(0))"
+        "py": "pc.test_paper([])"
+  "compare": {"ignore": ["paper_id", "table.paper_id", "summary_table.paper_id"]}
+- "id": "stat_p_exact.empty_text_table"
+  "module": "stat_p_exact"
+  "args":
+    "paper":
+      "$expr":
+        "r": "test_paper(character(0))"
+        "py": "pc.test_paper([])"
+  "compare": {"ignore": ["paper_id", "table.paper_id", "summary_table.paper_id"]}
+- "id": "stat_p_nonsig.empty_text_table"
+  "module": "stat_p_nonsig"
+  "args":
+    "paper":
+      "$expr":
+        "r": "test_paper(character(0))"
+        "py": "pc.test_paper([])"
+  "compare": {"ignore": ["paper_id", "table.paper_id", "summary_table.paper_id"]}
+- "id": "all_p_values.word_boundaries"
+  "module": "all_p_values"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+          - "Greek αp = .05 and éP < .01 here."
+          - "Underscore _p = .3 and digit 2p = .4 and letter xp = .5."
+          - "Arabic digits p = .٣ and p = ٠.5 here."
+          - "Hyphen -p = .06 and slash /p < .07 and dot .p = .08."
+          - "Fullwidth p ＝ .05 and p =.05."
+  "compare": {"ignore": ["paper_id", "table.paper_id", "summary_table.paper_id"]}
+- "id": "stat_p_nonsig.paperlist_single"
+  "module": "stat_p_nonsig"
+  "args":
+    "paper":
+      "$expr":
+        "r": "paperlist(local({p <- test_paper(c('p > .05', 'p = .01')); p$paper_id <- 'only'; p}))"
+        "py": "pc.PaperList([(lambda p, i: (p.__setitem__('paper_id', i), p)[1])(pc.test_paper(t), i) for t, i in [(['p > .05', 'p = .01'], 'only')]])"
+- "id": "stat_p_exact.paperlist_empty_text"
+  "module": "stat_p_exact"
+  "args":
+    "paper":
+      "$expr":
+        "r": "paperlist(local({p <- test_paper(character(0)); p$paper_id <- 'b'; p}), local({p <- test_paper(c('p < .05')); p$paper_id <- 'a'; p}))"
+        "py": "pc.PaperList([(lambda p, i: (p.__setitem__('paper_id', i), p)[1])(pc.test_paper(t), i) for t, i in [([], 'b'), (['p < .05'], 'a')]])"
+# ------------------------------------------ rendered module_report() markdown
+# (tests/report/parity_helpers.{R,py}: the full markdown, R chunks masked)
+- "id": "module_report.all_p_values.na"
+  "r": "identity"
+  "py": "tests.report.parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "{source('tests/report/parity_helpers.R'); rp_module_report(test_paper(c('Nothing here.')), 'all_p_values')}", "py": "__import__('tests.report.parity_helpers', fromlist=['x']).rp_module_report(pc.test_paper(['Nothing here.']), 'all_p_values')"}}
+- "id": "module_report.all_p_values.info"
+  "r": "identity"
+  "py": "tests.report.parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "{source('tests/report/parity_helpers.R'); rp_module_report(test_paper(c('One p = .03 here.', 'Two p < .05\nand p > .1.')), 'all_p_values')}", "py": "__import__('tests.report.parity_helpers', fromlist=['x']).rp_module_report(pc.test_paper(['One p = .03 here.', 'Two p < .05\\nand p > .1.']), 'all_p_values')"}}
+- "id": "module_report.stat_p_exact.na"
+  "r": "identity"
+  "py": "tests.report.parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "{source('tests/report/parity_helpers.R'); rp_module_report(test_paper(c('Nothing here.')), 'stat_p_exact')}", "py": "__import__('tests.report.parity_helpers', fromlist=['x']).rp_module_report(pc.test_paper(['Nothing here.']), 'stat_p_exact')"}}
+- "id": "module_report.stat_p_exact.green"
+  "r": "identity"
+  "py": "tests.report.parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "{source('tests/report/parity_helpers.R'); rp_module_report(test_paper(c('Fine p = .012 here.')), 'stat_p_exact')}", "py": "__import__('tests.report.parity_helpers', fromlist=['x']).rp_module_report(pc.test_paper(['Fine p = .012 here.']), 'stat_p_exact')"}}
+- "id": "module_report.stat_p_exact.imprecise"
+  "r": "identity"
+  "py": "tests.report.parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "{source('tests/report/parity_helpers.R'); rp_module_report(test_paper(c('Bad p < .05 here.', 'Fine p = .012 here.')), 'stat_p_exact')}", "py": "__import__('tests.report.parity_helpers', fromlist=['x']).rp_module_report(pc.test_paper(['Bad p < .05 here.', 'Fine p = .012 here.']), 'stat_p_exact')"}}
+- "id": "module_report.stat_p_exact.zero"
+  "r": "identity"
+  "py": "tests.report.parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "{source('tests/report/parity_helpers.R'); rp_module_report(test_paper(c('Zero p = .000 here.', 'Zero p = 0.00 there.')), 'stat_p_exact')}", "py": "__import__('tests.report.parity_helpers', fromlist=['x']).rp_module_report(pc.test_paper(['Zero p = .000 here.', 'Zero p = 0.00 there.']), 'stat_p_exact')"}}
+- "id": "module_report.stat_p_exact.both"
+  "r": "identity"
+  "py": "tests.report.parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "{source('tests/report/parity_helpers.R'); rp_module_report(test_paper(c('Bad p < .05 here.', 'Zero p = .000 here.')), 'stat_p_exact')}", "py": "__import__('tests.report.parity_helpers', fromlist=['x']).rp_module_report(pc.test_paper(['Bad p < .05 here.', 'Zero p = .000 here.']), 'stat_p_exact')"}}
+- "id": "module_report.stat_p_nonsig.green"
+  "r": "identity"
+  "py": "tests.report.parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "{source('tests/report/parity_helpers.R'); rp_module_report(test_paper(c('Fine p = .012 here.')), 'stat_p_nonsig')}", "py": "__import__('tests.report.parity_helpers', fromlist=['x']).rp_module_report(pc.test_paper(['Fine p = .012 here.']), 'stat_p_nonsig')"}}
+- "id": "module_report.stat_p_nonsig.yellow"
+  "r": "identity"
+  "py": "tests.report.parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "{source('tests/report/parity_helpers.R'); rp_module_report(test_paper(c('No difference p > .05 here.', 'Fine p = .012 here.', 'Also p = .3.')), 'stat_p_nonsig')}", "py": "__import__('tests.report.parity_helpers', fromlist=['x']).rp_module_report(pc.test_paper(['No difference p > .05 here.', 'Fine p = .012 here.', 'Also p = .3.']), 'stat_p_nonsig')"}}
+- "id": "module_report.stat_p_nonsig.paperlist"
+  "r": "identity"
+  "py": "tests.report.parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "{source('tests/report/parity_helpers.R'); rp_module_report(read(c('upstream/metacheck/tests/testthat/fixtures/psychsci/0956797613520608.json', 'upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614522816.json')), 'stat_p_nonsig')}", "py": "__import__('tests.report.parity_helpers', fromlist=['x']).rp_module_report(pc.read(['upstream/metacheck/tests/testthat/fixtures/psychsci/0956797613520608.json', 'upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614522816.json']), 'stat_p_nonsig')"}}
+# ------------------------------------------------- report table data (chunks)
+# the prose comparison masks scroll_table() chunks; these compare their data,
+# colwidths and maxrows (tests/mod_p_values/report_tables.{R,py})
+- "id": "report_tables.all_p_values.demo"
+  "r": "identity"
+  "py": "tests.mod_p_values.report_tables.identity"
+  "args":
+    "x": {"$expr": {"r": "{source('tests/mod_p_values/report_tables.R'); mp_report_tables(demopaper(), 'all_p_values')}", "py": "__import__('tests.mod_p_values.report_tables', fromlist=['x']).mp_report_tables(pc.demopaper(), 'all_p_values')"}}
+- "id": "report_tables.all_p_values.psychsci"
+  "r": "identity"
+  "py": "tests.mod_p_values.report_tables.identity"
+  "args":
+    "x": {"$expr": {"r": "{source('tests/mod_p_values/report_tables.R'); mp_report_tables(read(c('upstream/metacheck/tests/testthat/fixtures/psychsci/0956797613520608.json', 'upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614522816.json', 'upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614527830.json')), 'all_p_values')}", "py": "__import__('tests.mod_p_values.report_tables', fromlist=['x']).mp_report_tables(pc.read(['upstream/metacheck/tests/testthat/fixtures/psychsci/0956797613520608.json', 'upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614522816.json', 'upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614527830.json']), 'all_p_values')"}}
+- "id": "report_tables.all_p_values.real"
+  "r": "identity"
+  "py": "tests.mod_p_values.report_tables.identity"
+  "args":
+    "x": {"$expr": {"r": "{source('tests/mod_p_values/report_tables.R'); mp_report_tables(read(c('upstream/metacheck/tests/testthat/fixtures/formats/preprint.pdf.tei.xml', 'upstream/metacheck/tests/testthat/fixtures/problems/0956797617737129.xml')), 'all_p_values')}", "py": "__import__('tests.mod_p_values.report_tables', fromlist=['x']).mp_report_tables(pc.read(['upstream/metacheck/tests/testthat/fixtures/formats/preprint.pdf.tei.xml', 'upstream/metacheck/tests/testthat/fixtures/problems/0956797617737129.xml']), 'all_p_values')"}}
+- "id": "report_tables.all_p_values.synthetic"
+  "r": "identity"
+  "py": "tests.mod_p_values.report_tables.identity"
+  "args":
+    "x": {"$expr": {"r": "{source('tests/mod_p_values/report_tables.R'); mp_report_tables(test_paper(c('Bad p < .05 and p < .05 again.', 'Bad p < .05 and p < .05 again.', 'Zero p = .000\nline two p > .1.', 'Fine p = .012.', 'Note * p < .05, p < .01.')), 'all_p_values')}", "py": "__import__('tests.mod_p_values.report_tables', fromlist=['x']).mp_report_tables(pc.test_paper(['Bad p < .05 and p < .05 again.', 'Bad p < .05 and p < .05 again.', 'Zero p = .000\\nline two p > .1.', 'Fine p = .012.', 'Note * p < .05, p < .01.']), 'all_p_values')"}}
+- "id": "report_tables.stat_p_exact.demo"
+  "r": "identity"
+  "py": "tests.mod_p_values.report_tables.identity"
+  "args":
+    "x": {"$expr": {"r": "{source('tests/mod_p_values/report_tables.R'); mp_report_tables(demopaper(), 'stat_p_exact')}", "py": "__import__('tests.mod_p_values.report_tables', fromlist=['x']).mp_report_tables(pc.demopaper(), 'stat_p_exact')"}}
+- "id": "report_tables.stat_p_exact.psychsci"
+  "r": "identity"
+  "py": "tests.mod_p_values.report_tables.identity"
+  "args":
+    "x": {"$expr": {"r": "{source('tests/mod_p_values/report_tables.R'); mp_report_tables(read(c('upstream/metacheck/tests/testthat/fixtures/psychsci/0956797613520608.json', 'upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614522816.json', 'upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614527830.json')), 'stat_p_exact')}", "py": "__import__('tests.mod_p_values.report_tables', fromlist=['x']).mp_report_tables(pc.read(['upstream/metacheck/tests/testthat/fixtures/psychsci/0956797613520608.json', 'upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614522816.json', 'upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614527830.json']), 'stat_p_exact')"}}
+- "id": "report_tables.stat_p_exact.real"
+  "r": "identity"
+  "py": "tests.mod_p_values.report_tables.identity"
+  "args":
+    "x": {"$expr": {"r": "{source('tests/mod_p_values/report_tables.R'); mp_report_tables(read(c('upstream/metacheck/tests/testthat/fixtures/formats/preprint.pdf.tei.xml', 'upstream/metacheck/tests/testthat/fixtures/problems/0956797617737129.xml')), 'stat_p_exact')}", "py": "__import__('tests.mod_p_values.report_tables', fromlist=['x']).mp_report_tables(pc.read(['upstream/metacheck/tests/testthat/fixtures/formats/preprint.pdf.tei.xml', 'upstream/metacheck/tests/testthat/fixtures/problems/0956797617737129.xml']), 'stat_p_exact')"}}
+- "id": "report_tables.stat_p_exact.synthetic"
+  "r": "identity"
+  "py": "tests.mod_p_values.report_tables.identity"
+  "args":
+    "x": {"$expr": {"r": "{source('tests/mod_p_values/report_tables.R'); mp_report_tables(test_paper(c('Bad p < .05 and p < .05 again.', 'Bad p < .05 and p < .05 again.', 'Zero p = .000\nline two p > .1.', 'Fine p = .012.', 'Note * p < .05, p < .01.')), 'stat_p_exact')}", "py": "__import__('tests.mod_p_values.report_tables', fromlist=['x']).mp_report_tables(pc.test_paper(['Bad p < .05 and p < .05 again.', 'Bad p < .05 and p < .05 again.', 'Zero p = .000\\nline two p > .1.', 'Fine p = .012.', 'Note * p < .05, p < .01.']), 'stat_p_exact')"}}
+- "id": "report_tables.stat_p_nonsig.demo"
+  "r": "identity"
+  "py": "tests.mod_p_values.report_tables.identity"
+  "args":
+    "x": {"$expr": {"r": "{source('tests/mod_p_values/report_tables.R'); mp_report_tables(demopaper(), 'stat_p_nonsig')}", "py": "__import__('tests.mod_p_values.report_tables', fromlist=['x']).mp_report_tables(pc.demopaper(), 'stat_p_nonsig')"}}
+- "id": "report_tables.stat_p_nonsig.psychsci"
+  "r": "identity"
+  "py": "tests.mod_p_values.report_tables.identity"
+  "args":
+    "x": {"$expr": {"r": "{source('tests/mod_p_values/report_tables.R'); mp_report_tables(read(c('upstream/metacheck/tests/testthat/fixtures/psychsci/0956797613520608.json', 'upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614522816.json', 'upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614527830.json')), 'stat_p_nonsig')}", "py": "__import__('tests.mod_p_values.report_tables', fromlist=['x']).mp_report_tables(pc.read(['upstream/metacheck/tests/testthat/fixtures/psychsci/0956797613520608.json', 'upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614522816.json', 'upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614527830.json']), 'stat_p_nonsig')"}}
+- "id": "report_tables.stat_p_nonsig.real"
+  "r": "identity"
+  "py": "tests.mod_p_values.report_tables.identity"
+  "args":
+    "x": {"$expr": {"r": "{source('tests/mod_p_values/report_tables.R'); mp_report_tables(read(c('upstream/metacheck/tests/testthat/fixtures/formats/preprint.pdf.tei.xml', 'upstream/metacheck/tests/testthat/fixtures/problems/0956797617737129.xml')), 'stat_p_nonsig')}", "py": "__import__('tests.mod_p_values.report_tables', fromlist=['x']).mp_report_tables(pc.read(['upstream/metacheck/tests/testthat/fixtures/formats/preprint.pdf.tei.xml', 'upstream/metacheck/tests/testthat/fixtures/problems/0956797617737129.xml']), 'stat_p_nonsig')"}}
+- "id": "report_tables.stat_p_nonsig.synthetic"
+  "r": "identity"
+  "py": "tests.mod_p_values.report_tables.identity"
+  "args":
+    "x": {"$expr": {"r": "{source('tests/mod_p_values/report_tables.R'); mp_report_tables(test_paper(c('Bad p < .05 and p < .05 again.', 'Bad p < .05 and p < .05 again.', 'Zero p = .000\nline two p > .1.', 'Fine p = .012.', 'Note * p < .05, p < .01.')), 'stat_p_nonsig')}", "py": "__import__('tests.mod_p_values.report_tables', fromlist=['x']).mp_report_tables(pc.test_paper(['Bad p < .05 and p < .05 again.', 'Bad p < .05 and p < .05 again.', 'Zero p = .000\\nline two p > .1.', 'Fine p = .012.', 'Note * p < .05, p < .01.']), 'stat_p_nonsig')"}}

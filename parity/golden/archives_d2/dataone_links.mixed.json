@@ -1,0 +1,125 @@
+{
+  "id": "dataone_links.mixed",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 7,
+    "names": [
+      "href",
+      "link_text",
+      "text_id",
+      "paper_id",
+      "dataone_url",
+      "dataone_host",
+      "dataone_pid"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "https://arcticdata.io/catalog/view/doi:10.18739/A2GT5FG86",
+          "https://doi.org/10.6085/AA/marine_ltm.20.1",
+          "https://knb.ecoinformatics.org/view/doi:10.5063/F1Z60M87",
+          "doi.org/10.5063/PG1Q4B.",
+          "knb.ecoinformatics.org/view/doi:10.5063/F1Z60M87",
+          "10.6085/AA/marine_ltm.20.1",
+          "ARCTICDATA.IO/catalog/view/doi:10.18739/UPPER"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          1,
+          2,
+          4,
+          1,
+          2,
+          2,
+          3
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "c3b88b3b56cd08",
+          "c3b88b3b56cd08",
+          "c3b88b3b56cd08",
+          "c3b88b3b56cd08",
+          "c3b88b3b56cd08",
+          "c3b88b3b56cd08",
+          "c3b88b3b56cd08"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://arcticdata.io/catalog/view/doi:10.18739/A2GT5FG86",
+          "https://doi.org/10.6085/AA/marine_ltm.20.1",
+          "https://knb.ecoinformatics.org/view/doi:10.5063/F1Z60M87",
+          "doi.org/10.5063/PG1Q4B.",
+          "knb.ecoinformatics.org/view/doi:10.5063/F1Z60M87",
+          "10.6085/AA/marine_ltm.20.1",
+          "ARCTICDATA.IO/catalog/view/doi:10.18739/UPPER"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "arcticdata.io",
+          "data.piscoweb.org",
+          "knb.ecoinformatics.org",
+          "knb.ecoinformatics.org",
+          "knb.ecoinformatics.org",
+          "data.piscoweb.org",
+          "arcticdata.io"
+        ],
+        "names": [
+          "https://arcticdata.io/catalog/view/doi:10.18739/A2GT5FG86",
+          "https://doi.org/10.6085/AA/marine_ltm.20.1",
+          "https://knb.ecoinformatics.org/view/doi:10.5063/F1Z60M87",
+          "doi.org/10.5063/PG1Q4B.",
+          "knb.ecoinformatics.org/view/doi:10.5063/F1Z60M87",
+          "10.6085/AA/marine_ltm.20.1",
+          "ARCTICDATA.IO/catalog/view/doi:10.18739/UPPER"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "doi:10.18739/A2GT5FG86",
+          "doi:10.6085/AA/marine_ltm.20.1",
+          "doi:10.5063/F1Z60M87",
+          "doi:10.5063/PG1Q4B.",
+          "doi:10.5063/F1Z60M87",
+          "doi:10.6085/AA/marine_ltm.20.1",
+          "doi:10.18739/UPPER"
+        ],
+        "names": [
+          "https://arcticdata.io/catalog/view/doi:10.18739/A2GT5FG86",
+          "https://doi.org/10.6085/AA/marine_ltm.20.1",
+          "https://knb.ecoinformatics.org/view/doi:10.5063/F1Z60M87",
+          "doi.org/10.5063/PG1Q4B.",
+          "knb.ecoinformatics.org/view/doi:10.5063/F1Z60M87",
+          "10.6085/AA/marine_ltm.20.1",
+          "ARCTICDATA.IO/catalog/view/doi:10.18739/UPPER"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

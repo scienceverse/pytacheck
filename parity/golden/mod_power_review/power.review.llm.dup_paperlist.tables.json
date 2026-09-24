@@ -1,0 +1,145 @@
+{
+  "id": "power.review.llm.dup_paperlist.tables",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": null,
+    "v": [
+      {
+        "t": "df",
+        "nrow": 5,
+        "names": [
+          "power_id",
+          "power_type",
+          "statistical_test",
+          "sample_size",
+          "alpha_level",
+          "power",
+          "effect_size",
+          "effect_size_metric",
+          "software"
+        ],
+        "v": [
+          {
+            "t": "int",
+            "v": [
+              1,
+              2,
+              3,
+              4,
+              5
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "apriori",
+              "sensitivity",
+              "apriori",
+              "sensitivity",
+              "apriori"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2-way ANOVA",
+              "2-way ANOVA",
+              "2-way ANOVA",
+              "2-way ANOVA",
+              "unpaired t-test"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              200,
+              200,
+              200,
+              200,
+              128
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              0.05
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0.8,
+              0.9,
+              0.8,
+              0.9,
+              0.8
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0.2,
+              0.25,
+              0.2,
+              0.25,
+              0.5
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Cohen's f",
+              "Cohen's f",
+              "Cohen's f",
+              "Cohen's f",
+              "Cohen's d"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              "pwr"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 2,
+        "names": [
+          "power_id",
+          "text"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "1;2;3;4",
+              "5"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "An <strong>a priori<\/strong> <strong>power<\/strong> analysis for the 2 x 2 design required 200 participants for 80% <strong>power<\/strong> and f = 0.2, while a <strong>sensitivity<\/strong> <strong>power<\/strong> analysis showed 90% <strong>power<\/strong> for f = 0.25.",
+              "An <strong>a priori<\/strong> <strong>power<\/strong> analysis indicated 64 participants per group, d = 0.5, alpha = .05, <strong>power<\/strong> = 80%, using an unpaired t-test, run with pwr."
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

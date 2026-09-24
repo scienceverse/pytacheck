@@ -1,0 +1,20 @@
+{
+  "id": "review.data_group_from_path.unicode",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "ex1",
+      null,
+      null,
+      "pilot1",
+      "ex2",
+      "pilot1",
+      "ex4"
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

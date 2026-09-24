@@ -1,0 +1,280 @@
+{
+  "id": "review.write_manifest.no_repo_url",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "paper_id",
+      "generated",
+      "download",
+      "caps",
+      "provenance",
+      "n_files",
+      "n_downloaded",
+      "not_downloaded",
+      "files"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "p1"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "<volatile>"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "data"
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "max_file_size_mb",
+          "max_download_size_mb"
+        ],
+        "v": [
+          {
+            "t": "int",
+            "v": [
+              100
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              500
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "<volatile>"
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          2
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          0
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "intentional_n",
+          "unintentional_n",
+          "unintentional_files",
+          "rerun_recommended"
+        ],
+        "v": [
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "list",
+                "names": [
+                  "file_name",
+                  "repo_url",
+                  "reason"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "a.csv"
+                    ]
+                  },
+                  {
+                    "t": "list",
+                    "names": [],
+                    "v": []
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "no download URL in the listing"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "list",
+            "names": [
+              "file_name",
+              "file_path",
+              "file_url",
+              "data_type",
+              "data_format",
+              "downloaded",
+              "status",
+              "skip_reason",
+              "skip_intentional"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "a.csv"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "a.csv"
+                ]
+              },
+              {
+                "t": "null"
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "data"
+                ]
+              },
+              {
+                "t": "null"
+              },
+              {
+                "t": "lgl",
+                "v": [
+                  false
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "failed"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "no download URL in the listing"
+                ]
+              },
+              {
+                "t": "lgl",
+                "v": [
+                  false
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "file_name",
+              "file_path",
+              "file_url",
+              "data_type",
+              "data_format",
+              "downloaded",
+              "status",
+              "skip_reason",
+              "skip_intentional"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "b.pdf"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "b.pdf"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "https://osf.io/b/"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "documentation"
+                ]
+              },
+              {
+                "t": "null"
+              },
+              {
+                "t": "lgl",
+                "v": [
+                  false
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "skipped"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "not a data/codebook/README file (use download = \"all\")"
+                ]
+              },
+              {
+                "t": "lgl",
+                "v": [
+                  true
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

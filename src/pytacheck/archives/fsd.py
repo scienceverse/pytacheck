@@ -74,13 +74,14 @@ def fsd_links(paper: Any) -> pd.DataFrame:
     duplicate rows dropped.
     """
     from pytacheck._r import grepl
-    from pytacheck.archives.dataverse import _collect_links, _link_matches
+    from pytacheck.archives.dataone import _scan_links
+    from pytacheck.archives.dataverse import _collect_links
     from pytacheck.papers.tables import paper_table
 
     urls = paper_table(paper, "url")
     keep = [bool(v) for v in grepl(_FSD_URL_RX, urls["href"], ignore_case=True, perl=True)]
     found_href = urls[pd.Series(keep, index=urls.index, dtype=bool)]
-    other = _link_matches(paper, "FSD[0-9]{3,6}")
+    other = _scan_links(paper, "FSD[0-9]{3,6}", ["fsd"], anchor=None)
     return _collect_links([found_href, other])
 
 
@@ -157,7 +158,9 @@ def _fsd_info(fsd_url: Any, pb: Any = None) -> pd.DataFrame:
         obj["files"] = _obj_cell(
             pd.DataFrame(
                 {
-                    "name": pd.Series([_node_text(n, ".//fileName") for n in nodes], dtype="string"),
+                    "name": pd.Series(
+                        [_node_text(n, ".//fileName") for n in nodes], dtype="string"
+                    ),
                     "format": pd.Series(
                         [_node_text(n, ".//fileType") for n in nodes], dtype="string"
                     ),

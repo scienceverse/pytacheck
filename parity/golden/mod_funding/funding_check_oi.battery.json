@@ -1,0 +1,165 @@
+{
+  "id": "funding_check_oi.battery",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "funding_check_oi"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Funding Check (Overinclusive)"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "general"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 28,
+        "names": [
+          "paper_id",
+          "text"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "fa0ecfe21bb945",
+              "fa0ecfe21bb945",
+              "fa0ecfe21bb945",
+              "fa0ecfe21bb945",
+              "fa0ecfe21bb945",
+              "fa0ecfe21bb945",
+              "fa0ecfe21bb945",
+              "fa0ecfe21bb945",
+              "fa0ecfe21bb945",
+              "fa0ecfe21bb945",
+              "fa0ecfe21bb945",
+              "fa0ecfe21bb945",
+              "fa0ecfe21bb945",
+              "fa0ecfe21bb945",
+              "fa0ecfe21bb945",
+              "fa0ecfe21bb945",
+              "fa0ecfe21bb945",
+              "fa0ecfe21bb945",
+              "fa0ecfe21bb945",
+              "fa0ecfe21bb945",
+              "fa0ecfe21bb945",
+              "fa0ecfe21bb945",
+              "fa0ecfe21bb945",
+              "fa0ecfe21bb945",
+              "fa0ecfe21bb945",
+              "fa0ecfe21bb945",
+              "fa0ecfe21bb945",
+              "fa0ecfe21bb945"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Self-funded work by the aid of friends.",
+              "Funding This work was supported by the ESRC.",
+              "The work was financed by a grant from the ERC.",
+              "This study was funded by the Wellcome Trust.",
+              "Funding for this study came from the ESRC.",
+              "No funding was received for this study.",
+              "No specific funding was given for this study.",
+              "Financial support for this study came from the NSF.",
+              "The Council provided funding for this research.",
+              "We thank the Academy for funding this research.",
+              "Received funding from the Medical Research Council.",
+              "Funding for this research was received from the ERC.",
+              "Our research was supported by the Leverhulme Trust.",
+              "The Trust funded this project in full.",
+              "Supported under project no. 4.",
+              "Funding disclosure: the authors received grants.",
+              "Grant support: NIH.",
+              "The NIH R01 award supported the pilot.",
+              "Funding: none.",
+              "Financial support: none.",
+              "Financial support None.",
+              "Disclosure: the authors have no conflicts of interest and were not funded.",
+              "The authors received funding from the ERC.",
+              "The authors have no funding to declare.",
+              "We thank the ERC for financial support.",
+              "Acknowledgements and funding",
+              "We acknowledge support from the Royal Society.",
+              "Support from the University is gratefully acknowledged."
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "The following funding statement was detected:",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(c(\"Self-funded work by the aid of friends.\", \"Funding This work was supported by the ESRC.\", \n\"The work was financed by a grant from the ERC.\", \"This study was funded by the Wellcome Trust.\", \n\"Funding for this study came from the ESRC.\", \"No funding was received for this study.\", \n\"No specific funding was given for this study.\", \"Financial support for this study came from the NSF.\", \n\"The Council provided funding for this research.\", \"We thank the Academy for funding this research.\", \n\"Received funding from the Medical Research Council.\", \"Funding for this research was received from the ERC.\", \n\"Our research was supported by the Leverhulme Trust.\", \"The Trust funded this project in full.\", \n\"Supported under project no. 4.\", \"Funding disclosure: the authors received grants.\", \n\"Grant support: NIH.\", \"The NIH R01 award supported the pilot.\", \n\"Funding: none.\", \"Financial support: none.\", \"Financial support None.\", \n\"Disclosure: the authors have no conflicts of interest and were not funded.\", \n\"The authors received funding from the ERC.\", \"The authors have no funding to declare.\", \n\"We thank the ERC for financial support.\", \"Acknowledgements and funding\", \n\"We acknowledge support from the Royal Society.\", \"Support from the University is gratefully acknowledged.\"\n)), names = \"\", class = \"data.frame\", row.names = c(NA, -28L))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 2, FALSE)\n```\n"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "green"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "A funding statement was detected."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "funding_found"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "fa0ecfe21bb945"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true
+            ]
+          }
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

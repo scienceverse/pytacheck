@@ -15,7 +15,7 @@ import contextlib
 import os
 import re
 import tempfile
-from collections.abc import Callable, Iterator, Sequence
+from collections.abc import Callable, Iterator, Mapping, Sequence
 from pathlib import Path
 from typing import Any
 
@@ -24,6 +24,8 @@ import respx
 
 from tests.httpmock import UPSTREAM_TESTS, fixture_response, r_digest
 
+ROOT = Path(__file__).resolve().parents[2]
+_R_CHUNK = re.compile(r"\n```\{r\}.*?\n```\n", re.S)
 _REDACT = re.compile(r"[?&]page(%5[Bb]size%5[Dd]|\[size\])=100")
 
 
@@ -99,6 +101,51 @@ def run_mocked(x: Callable[[], Any]) -> Any:
     """Call *x* against metacheck's recorded API responses (see module docstring)."""
     with mocked():
         return x()
+
+
+#: Synthetic OSF recordings for what metacheck's recordings do not cover
+#: (withdrawn registrations, schema edge cases, prsp partial matching).
+LOCAL_MOCKS = Path(__file__).resolve().parent / "mocks"
+
+
+def run_prereg(
+    papers: Sequence[Mapping[str, Any]] = (),
+    demo: bool = False,
+    read: Sequence[str] = (),
+    paperlist: bool = False,
+    mock: str = "apis",
+    report: bool = False,
+) -> Any:
+    """``module_run(<paper>, "prereg_check")`` on recorded responses (a parity case).
+
+    The paper is the demo paper, papers read from *read* (repository-relative
+    paths), or test papers (``{"url": [...], "id": ..., "text": [...]}``);
+    several papers, or *paperlist*, make a paper list. *mock* is ``"apis"``
+    (metacheck's recordings) or ``"local"`` (:data:`LOCAL_MOCKS`). The DNS
+    check of ``aspredicted_info()`` is skipped (the goldens were made online).
+    With *report*, returns ``module_report()`` of the output with its R code
+    chunks masked (they deparse tables, which the report area checks).
+    """
+    from unittest import mock as umock
+
+    import pytacheck as pc
+
+    items: list[Any] = []
+    if demo:
+        items.append(pc.demopaper())
+    if read:
+        got = pc.read([ROOT / r for r in read])
+        items.extend(got if isinstance(got, pc.PaperList) else [got])
+    items.extend(tp(p.get("url") or [], p["id"], p.get("text")) for p in papers)
+    paper = plist(*items) if paperlist or len(items) > 1 else items[0]
+    dirs = (LOCAL_MOCKS,) if mock == "local" else (mock,)
+    with mocked(*dirs), umock.patch("pytacheck.utils.online", return_value=True):
+        mo = pc.module_run(paper, "prereg_check")
+    if not report:
+        return mo
+    from pytacheck.report.report import module_report
+
+    return _R_CHUNK.sub("\n<R-CHUNK>\n", module_report(mo))
 
 
 def tp(url: Sequence[str] | str, paper_id: str, text: Sequence[str] | None = None) -> Any:

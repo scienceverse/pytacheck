@@ -26,6 +26,9 @@ from tests.statout_match.gen_parity_cases import (
 )
 
 R = "tests.statout_match._review"
+PSYCHSCI = "upstream/metacheck/tests/testthat/fixtures/psychsci"
+PROBLEM_XML = "upstream/metacheck/tests/testthat/fixtures/problems/0956797615569889.xml"
+FORMATS = "upstream/metacheck/tests/testthat/fixtures/formats"
 cases: list[dict[str, Any]] = []
 
 _CHR_KEYS = {"name", "comp", "value", "df"}
@@ -62,6 +65,8 @@ def r_paper_review(spec: dict[str, Any]) -> str:
     kind = spec["kind"]
     if kind == "tt":
         return r_tt(spec)
+    if kind == "eq_of":
+        return f"metacheck::extract_eq({r_paper_review(spec['paper'])})"
     if kind == "eq_paper":
         return (
             f"local({{p <- metacheck::test_paper({rchr(spec['texts'])}); "
@@ -74,6 +79,29 @@ def r_paper_review(spec: dict[str, Any]) -> str:
             f"{rchr(spec['drop'])})]; p}})"
         )
     return code
+
+
+def r_derived_long(paper: dict[str, Any]) -> str:
+    """R side of ``_review.derived_long()``."""
+    return (
+        f"local({{eq <- metacheck::extract_eq({r_paper_review(paper)}); "
+        "i <- seq_len(nrow(eq)); v <- eq$rhs; v[i %% 5L == 0L] <- paste0(v[i %% 5L == 0L], '7'); "
+        "site <- paste0('site_', eq$text_id %/% 3L, '_', "
+        "ifelse(!is.na(eq$lhs) & eq$lhs == 'df', 'residuals', eq$grp_id)); "
+        "out <- data.frame(source_file = 'derived.R', test_id = site, "
+        "analysis = paste0('an', eq$grp_id), row_label = paste0('variable', eq$text_id %% 4L), "
+        "statistic = eq$lhs, value = v, "
+        "model_ref = ifelse(i %% 2L == 1L, paste0('m', eq$text_id %/% 7L), NA_character_), "
+        "stringsAsFactors = FALSE); out[i %% 4L != 0L, , drop = FALSE]})"
+    )
+
+
+def r_output_review(spec: Any) -> str:
+    if isinstance(spec, dict) and spec.get("kind") == "derived":
+        return r_derived_long(spec["paper"])
+    if isinstance(spec, dict) and spec.get("kind") == "literal":
+        return rchr(spec["value"])
+    return r_output(spec)
 
 
 def expr_case(id_: str, r_code: str, py_fn: str, py_args: dict[str, Any], **extra: Any) -> None:
@@ -100,7 +128,7 @@ def match_case(
     **extra: Any,
 ) -> None:
     call = (
-        f"metacheck::match_reported_output({r_paper_review(paper)}, {r_output(output)}, "
+        f"metacheck::match_reported_output({r_paper_review(paper)}, {r_output_review(output)}, "
         f"include_tables = {rs(include_tables)}, min_components = {rs(min_components)})"
     )
     args = {
@@ -193,6 +221,60 @@ match_case("tt.min_components_high", tt([1, 2], [T1, T2]), LONG_T, min_component
 # include_tables is ignored for a data frame input (and isTRUE() needs TRUE)
 match_case("tt.include_tables_df", tt([1, 2], [T1, T2]), LONG_T, include_tables=True)
 
+# NA sentence_pos: dist is NA, which.min() ignores it (all NA: nothing released)
+LONG_2P = long_df(
+    [
+        ("p.omv", "p_1", "T-Test", "x", "t", "2.103"),
+        ("p.omv", "p_1", "T-Test", "x", "p", "0.0481"),
+        ("p.omv", "p_1", "T-Test", "x", "d", "0.45"),
+    ],
+    COLS,
+)
+T_NAPOS_A = [comp("t", "2.10", NA), comp("p", ".048", NA)]
+T_NAPOS_B = [comp("d", "0.45", NA), comp("p", ".048", NA)]
+match_case("tt.na_sentence_pos", tt([4, 4], [T_NAPOS_A, T_NAPOS_B]), LONG_2P)
+T_NAPOS_C = [comp("t", "2.10", 1), comp("p", ".048", NA)]
+T_NAPOS_D = [comp("d", "0.45", 3), comp("p", ".048", 4)]
+match_case("tt.na_sentence_pos_mixed", tt([4, 4], [T_NAPOS_C, T_NAPOS_D]), LONG_2P)
+# a character text_id column stays character
+match_case(
+    "tt.character_text_id",
+    {**tt(["s10", "s2"], [T1, T2]), "types": {"test_no": "int", "text_id": "chr"}},
+    LONG_T,
+)
+# double test_no / text_id
+match_case(
+    "tt.double_ids",
+    {**tt([1.5, 2.0], [T1, T2]), "types": {"test_no": "dbl", "text_id": "dbl"}},
+    LONG_T,
+)
+# residual rows: a sibling matching two residual prefixes takes the LAST one's
+# rows (by_site[[sib]] is overwritten); a residual prefix with no sibling
+LONG_RESID = long_df(
+    [
+        ("r.omv", "an_a_b_c", "ANOVA", "c", "F", "6.76"),
+        ("r.omv", "an_a_b_c", "ANOVA", "c", "df", "2"),
+        ("r.omv", "an_a_b_c", "ANOVA", "c", "p", "0.0012"),
+        ("r.omv", "an_a_b_residuals", "ANOVA", "residuals", "df", "57"),
+        ("r.omv", "an_a_residuals", "ANOVA", "residuals", "df", "2159"),
+        ("r.omv", "an_z_residuals", "ANOVA", "residuals", "df", "99"),
+        ("r.omv", "an_a_x", "ANOVA", "x", "F", "4.21"),
+        ("r.omv", "an_a_x", "ANOVA", "x", "p", "0.02"),
+    ],
+    COLS,
+)
+T_F1 = [comp("F", "6.76", 1, df="(2, 2159)"), comp("p", ".001", 2)]
+T_F2 = [comp("F", "6.76", 1, df="(2, 57)"), comp("p", ".001", 2)]
+T_F3 = [comp("F", "4.21", 1, df="(1, 2159)"), comp("p", ".020", 2)]
+match_case("tt.residual_prefixes", tt([1, 2, 3], [T_F1, T_F2, T_F3]), LONG_RESID)
+# min_components = 2: a lone component is not assessed
+match_case(
+    "tt.min_components_2",
+    tt([1, 2], [[comp("d", "0.45", 1)], T2]),
+    LONG_T,
+    min_components=2,
+)
+
 # -- value formatting: format(value, trim = TRUE) (7 significant digits)
 FMT = [
     "0.0000123", "1234567", "100000", "123456.7", "0.1234567891", "-0", "1e-300",
@@ -240,22 +322,34 @@ match_case(
 )
 # a stat_output list whose second table has no test_id: its rows get an NA
 # test_id from bind_rows() and are dropped by split()
-LONG_T2_NOID = {**long_df(
-    [
-        ("c.omv", "x", "T-Test", "dep", "t", "5.5"),
-        ("c.omv", "x", "T-Test", "dep", "p", "0.0001"),
-    ],
-    COLS,
-), "drop": ["test_id"]}
+LONG_T2_NOID = {
+    **long_df(
+        [
+            ("c.omv", "x", "T-Test", "dep", "t", "5.5"),
+            ("c.omv", "x", "T-Test", "dep", "p", "0.0001"),
+        ],
+        COLS,
+    ),
+    "drop": ["test_id"],
+}
 match_case(
     "tt.list_mixed_test_id",
     tt([1, 2, 3], [T1, T2, [comp("t", "5.50", 1), comp("p", "< .001", 2)]]),
     [LONG_T, LONG_T2_NOID],
 )
+# an output that is neither a table nor a list of stat outputs (a path):
+# s$long on a character vector errors in R
+match_case(
+    "tt.output_character", tt([1], [T1]), {"kind": "literal", "value": ["out.csv"]},
+    summary=False,
+)  # fmt: skip
 # an empty test_id: by_site[[""]] is NULL and used_sites[[""]] errors in R
 LONG_EMPTY_ID = long_df(
-    [("e.omv", "", "an", "x", "t", "2.103"), ("e.omv", "", "an", "x", "p", "0.0481")]
-    + [("e.omv", "e_1", "an", "x", "t", "2.103")],
+    [
+        ("e.omv", "", "an", "x", "t", "2.103"),
+        ("e.omv", "", "an", "x", "p", "0.0481"),
+        ("e.omv", "e_1", "an", "x", "t", "2.103"),
+    ],
     COLS,
 )
 match_case("tt.empty_test_id", tt([1], [T1]), LONG_EMPTY_ID, summary=False)
@@ -347,6 +441,46 @@ expr_case(
     ' error = function(e) "error")',
     "table_tests_or_error",
     {"paper": {**_TABLE_PAPER, "drop": ["section_id"]}},
+)
+
+# the caption lookup when paper$text has no `text` column: paste(NULL) is ""
+_TEXTLESS = {**_TABLE_PAPER, "kind": "table_paper", "drop_text": ["text"]}
+expr_case(
+    "table_caption.no_text_col",
+    f"local({{p <- {r_paper_review(_TABLE_PAPER)}; p$text$text <- NULL; "
+    "lapply(c(2L, 9L, NA), function(s) metacheck:::.table_caption(p, s))})",
+    "table_caption",
+    {"paper": _TEXTLESS, "section_ids": [2, 9, NA]},
+)
+
+# real reported text against an output derived from the paper's own eq rows
+# (partial matches, residual unions, model sites and evidence regrouping)
+DERIVED_PAPERS = {
+    "demo": {"kind": "demo"},
+    "psychsci_1": {"kind": "read", "path": f"{PSYCHSCI}/0956797613520608.json"},
+    "psychsci_2": {"kind": "read", "path": f"{PSYCHSCI}/0956797614522816.json"},
+    "psychsci_3": {"kind": "read", "path": f"{PSYCHSCI}/0956797614527830.json"},
+    "problem_xml": {"kind": "read", "path": PROBLEM_XML},
+    "apa_xml": {"kind": "read", "path": f"{FORMATS}/apa.xml"},
+    "published_tei": {"kind": "read", "path": f"{FORMATS}/published.pdf.tei.xml"},
+}
+for _name, _paper in DERIVED_PAPERS.items():
+    match_case(
+        f"derived.{_name}",
+        _paper,
+        {"kind": "derived", "paper": _paper},
+        include_tables=True,
+    )
+match_case(
+    "derived.demo.min2",
+    DERIVED_PAPERS["demo"],
+    {"kind": "derived", "paper": DERIVED_PAPERS["demo"]},
+    min_components=2,
+)
+match_case(
+    "derived.psychsci_2.eq",
+    {"kind": "eq_of", "paper": DERIVED_PAPERS["psychsci_2"]},
+    {"kind": "derived", "paper": DERIVED_PAPERS["psychsci_2"]},
 )
 
 # format() of a value, as the reported / match_values columns print it

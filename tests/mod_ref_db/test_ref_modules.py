@@ -347,3 +347,104 @@ def test_to_title_case_matches_r() -> None:
 
     inputs = [i for i, _ in TITLE_CASE]
     assert _to_title_case(inputs) == [o for _, o in TITLE_CASE]
+
+
+# -- review: db key types, NA-DOI instances, R errors, scaling ------------------------
+
+
+def test_ref_miscitation_nan_db_is_r_logical_na() -> None:
+    # an all-NaN (float64) doi column is R's logical NA column: it joins NA DOIs
+    paper = ref_paper([None, "10.1000/x"], cites=[0, 1, 0])
+    db = pd.DataFrame({"doi": [float("nan")], "reftext": ["r"], "warning": ["w"]})
+    out = module_run(paper, "ref_miscitation", db=db)
+    assert out.traffic_light == "yellow"
+    assert out.report == ["**NA**\n\nr\n\nw\n\n*2 Instances:*\n\n> NA\n\n> NA"]
+    assert out.summary_table.columns.tolist() == ["paper_id", "miscite_NA"]
+    assert db["doi"].dtype == "float64"  # the input is not modified
+
+
+@pytest.mark.parametrize(
+    "doi", [pd.Series([], dtype="float64"), pd.Series([1.0]), pd.Series([1], dtype="Int64")]
+)
+def test_ref_miscitation_incompatible_db_doi(doi: pd.Series) -> None:
+    # dplyr: "Can't join `x$doi` with `y$doi` due to incompatible types."
+    paper = ref_paper(["10.1000/x"], cites=[0])
+    db = pd.DataFrame({"doi": doi, "reftext": ["r"] * len(doi), "warning": ["w"] * len(doi)})
+    with pytest.raises(pc.ModuleError, match="incompatible types"):
+        module_run(paper, "ref_miscitation", db=db)
+
+
+def test_ref_miscitation_factor_db() -> None:
+    paper = ref_paper(["10.1000/y", "10.1000/x"], cites=[0, 1, 1])
+    db = pd.DataFrame(
+        {
+            "doi": pd.Categorical(["10.1000/x", "10.1000/y"]),
+            "reftext": ["a", "b"],
+            "warning": ["1", "2"],
+        }
+    )
+    out = module_run(paper, "ref_miscitation", db=db)
+    assert out.table["doi"].tolist() == ["10.1000/y", "10.1000/x", "10.1000/x"]
+
+
+def test_ref_miscitation_na_doi_rows_interleave_instances() -> None:
+    # xrefs rows with an NA DOI are NA instances of every DOI (R's NA subsetting),
+    # interleaved in row order and counted in "5 of N"
+    paper = ref_paper([None, "10.1000/x", "10.1000/a"], cites=[1, 0, 1, 0, 2, 1, 1, 0, 1])
+    db = pd.DataFrame(
+        {
+            "doi": ["10.1000/x", None, "10.1000/a"],
+            "reftext": ["RX", "RN", "RA"],
+            "warning": ["WX", "WN", "WA"],
+        }
+    )
+    x, na, a = module_run(paper, "ref_miscitation", db=db).report
+    assert x.endswith(
+        "*5 of 8 Instances:*\n\n> Body sentence 1 cites 1.\n\n> NA\n\n"
+        "> Body sentence 3 cites 1.\n\n> NA\n\n> Body sentence 6 cites 1."
+    )
+    assert na.endswith("*5 of 9 Instances:*\n\n" + "\n\n".join(["> NA"] * 5))
+    assert a.endswith("*4 Instances:*\n\n> NA\n\n> NA\n\n> Body sentence 5 cites 2.\n\n> NA")
+
+
+def _naive_instances(xrefs: pd.DataFrame, warn_doi: str) -> list[object]:
+    """``xrefs$citation[xrefs$doi == warn_doi]``, element by element."""
+    out: list[object] = []
+    for d, c in zip(xrefs["doi"], xrefs["citation"], strict=True):
+        if pd.isna(d):
+            out.append(None)
+        elif d == warn_doi:
+            out.append(c)
+    return out
+
+
+def test_ref_miscitation_many_citations_is_fast_and_exact() -> None:
+    import random
+    import time
+
+    rng = random.Random(1)
+    dois = [f"10.1000/m{i}" for i in range(400)]
+    cites = [rng.randrange(400) for _ in range(4000)]
+    paper = ref_paper(dois, cites=cites)
+    db = pd.DataFrame({"doi": dois[::2], "reftext": ["r"] * 200, "warning": ["w"] * 200})
+    start = time.perf_counter()
+    out = module_run(paper, "ref_miscitation", db=db)
+    assert time.perf_counter() - start < 5
+    assert len(out.report) == 200
+    assert out.summary_table.shape == (1, 201)
+    # compare the instance counts with a naive scan of the detailed table
+    table = out.table
+    for doi, rep in zip(dict.fromkeys(table["doi"]), out.report, strict=True):
+        n = len(_naive_instances(table, doi))
+        head = min(n, 5)
+        label = f"{head} of {n}" if head < n else f"{head}"
+        assert f"*{label} Instance" in rep
+
+
+@pytest.mark.parametrize("name", ["ref_retraction", "ref_replication"])
+def test_bib_without_text_id_errors_like_r(name: str, upstream_dir) -> None:
+    # R's ref_table() cannot join a bib without text_id to the text table
+    paper = pc.read(upstream_dir / "inst" / "demos" / "golden_bibr_10_2.json")
+    assert "text_id" not in paper["bib"].columns
+    with pytest.raises(pc.ModuleError, match="Join columns in `x` must be present"):
+        module_run(paper, name)

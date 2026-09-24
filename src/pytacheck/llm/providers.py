@@ -24,6 +24,7 @@ API keys come from the same environment variables as ellmer
 
 from __future__ import annotations
 
+import functools
 import http as _http
 import math
 import os
@@ -215,9 +216,9 @@ def standardise_params(p: Mapping[str, Any], mapping: Mapping[str, str]) -> dict
     known = set(mapping.values())
     unknown = [k for k in standard if k not in known]
     if unknown:
-        quoted = ", ".join(f'"{u}"' for u in unknown)
-        quoted = _cli_and(quoted.split(", "))
-        warnings.warn(f"Ignoring unsupported parameters: {quoted}", stacklevel=3)
+        quoted = _cli_and([f'"{u}"' for u in unknown])
+        # cli_warn(): wrapped at the 80-column console width
+        warnings.warn(_cli_wrap(f"Ignoring unsupported parameters: {quoted}", 80), stacklevel=3)
         standard = {k: v for k, v in standard.items() if k in known}
     inverse = {v: k for k, v in mapping.items()}
     out = {inverse[k]: v for k, v in standard.items()}
@@ -226,9 +227,12 @@ def standardise_params(p: Mapping[str, Any], mapping: Mapping[str, str]) -> dict
 
 
 def _cli_and(items: list[str]) -> str:
+    """cli's collapse of a vector: ``a and b``; ``a, b, and c``."""
     if len(items) <= 1:
         return "".join(items)
-    return ", ".join(items[:-1]) + " and " + items[-1]
+    if len(items) == 2:
+        return f"{items[0]} and {items[1]}"
+    return ", ".join(items[:-1]) + ", and " + items[-1]
 
 
 def _r_vec(v: Any) -> Any:
@@ -398,13 +402,21 @@ def perform(
     headers: Mapping[str, str] | None = None,
     body: Any = None,
     timeout: float | None = None,
-    max_tries: int = 3,
+    max_tries: int | None = None,
     transient: Sequence[int] = (429, 503),
     error_body: Callable[[httpx.Response], str | None] | None = None,
 ) -> httpx.Response:
-    """``httr2::req_perform()`` with ellmer's robustify policy and error handling."""
-    from pytacheck import http
+    """``httr2::req_perform()`` with ellmer's robustify policy and error handling.
 
+    Up to *max_tries* attempts (default: the ``ellmer_max_tries`` option, 3),
+    retrying transient statuses and transport failures, each bounded by
+    *timeout* (default: the ``ellmer_timeout_s`` option, 300 s).
+    """
+    from pytacheck import http
+    from pytacheck.utils import get_option
+
+    if max_tries is None:
+        max_tries = int(get_option("ellmer_max_tries", 3))
     hdrs = dict(headers or {})
     kwargs: dict[str, Any] = {"headers": hdrs, "timeout": timeout or _timeout_default()}
     if body is not None:
@@ -582,7 +594,9 @@ class ProviderOpenAICompatible(Provider):
         if turn.role == "system":
             return [{"role": "system", "content": turn.contents[0].text}]
         if turn.role == "user":
-            return [{"role": "user", "content": [self.content_json(c) for c in turn.contents]}]
+            # compact(): a content the provider drops (NULL) leaves no element
+            parts = [self.content_json(c) for c in turn.contents]
+            return [{"role": "user", "content": [p for p in parts if p is not None]}]
         contents = [c for c in turn.contents if not (isinstance(c, ContentText) and not c.text)]
         if not contents:
             return []
@@ -621,9 +635,13 @@ class ProviderOpenAICompatible(Provider):
         return not isinstance(type, TypeObject | TypeJsonSchema)
 
     def value_turn(self, model: Model, result: Any, has_type: bool) -> Turn:  # noqa: ARG002
-        choice = (result.get("choices") or [{}])[0] if isinstance(result, dict) else {}
+        choices = result.get("choices") if isinstance(result, dict) else None
+        if isinstance(choices, list) and not choices:
+            raise LLMError("subscript out of bounds")  # result$choices[[1]] of list()
+        choice = choices[0] if isinstance(choices, list) else {}
+        choice = choice if isinstance(choice, dict) else {}
         message = choice.get("delta") if "delta" in choice else choice.get("message")
-        message = message or {}
+        message = message if isinstance(message, dict) else {}
         contents: list[Any] = []
         reasoning = message.get("reasoning")
         if reasoning is None:
@@ -640,11 +658,16 @@ class ProviderOpenAICompatible(Provider):
             if content:
                 contents.append(ContentText(content))
         elif isinstance(content, list):
+            # lapply(content, as_content): only strings are contents; a content
+            # part object (e.g. Mistral's thinking/text chunks) is rejected
             for c in content:
                 if isinstance(c, str):
                     contents.append(ContentText(c))
-                elif isinstance(c, dict) and "text" in c:
-                    contents.append(ContentText(c.get("text")))
+                elif c is not None:
+                    raise LLMError(
+                        "`...` must be made up strings or <content> objects, not "
+                        f"{'a list' if isinstance(c, dict | list) else _friendly(c)}."
+                    )
         for call in message.get("tool_calls") or []:
             fn = call.get("function") or {}
             try:
@@ -1161,8 +1184,11 @@ class ProviderGoogleGemini(Provider):
         return err.get("message") if isinstance(err, dict) else None
 
     def value_turn(self, model: Model, result: Any, has_type: bool) -> Turn:  # noqa: ARG002
-        cands = (result or {}).get("candidates") or [{}]
-        message = cands[0].get("content") or {}
+        cands = (result or {}).get("candidates")
+        if isinstance(cands, list) and not cands:
+            raise LLMError("subscript out of bounds")  # result$candidates[[1]] of list()
+        cand = cands[0] if isinstance(cands, list) and isinstance(cands[0], dict) else {}
+        message = cand.get("content") or {}
         contents: list[Any] = []
         for part in message.get("parts") or []:
             if part.get("thought") is True and "text" in part:
@@ -1299,7 +1325,9 @@ def _google_key() -> str:
     if not key:
         raise LLMError(
             "No Google credentials are available.\n"
-            "ℹ Try suppling an API key or configuring Google's application default credentials."
+            + _cli_bullet(
+                "Try suppling an API key or configuring Google's application default credentials."
+            )
         )
     return key
 
@@ -1507,8 +1535,12 @@ def chat_vllm(
     return _mk(ProviderVllm(base_url, cred), model, params, api_args, system_prompt)
 
 
+#: ``missing(model)`` (``chat("<provider>")`` passes ``model = NULL`` instead).
+_NO_MODEL: Any = object()
+
+
 def chat_lmstudio(
-    model: str | None = None,
+    model: str | None = _NO_MODEL,
     system_prompt: str | None = None,
     params: Any = None,
     api_args: Any = None,
@@ -1521,19 +1553,28 @@ def chat_lmstudio(
         ids = [m["id"] for m in _openai_models(_url(base, "v1"), key)]
     except Exception:
         raise LLMError("Can't find locally running LM Studio.") from None
-    if model is None:
+    if model is _NO_MODEL:  # missing(model)
+        quoted = _cli_and([f'"{i}"' for i in ids])
         raise LLMError(
-            f"Must specify `model`.\nℹ Locally available models: {', '.join(repr(i) for i in ids)}."
+            "Must specify `model`.\n" + _cli_bullet(f"Locally available models: {quoted}.")
         )
+    if model is None:  # chat("lmstudio") passes model = NULL: `if (!NULL %in% models)`
+        raise LLMError("argument is of length zero")
     if model not in ids:
-        raise LLMError(f'Model "{model}" is not available in LM Studio.')
+        raise LLMError(
+            _cli_wrap(f'Model "{model}" is not available in LM Studio.')
+            + "\n"
+            + _cli_bullet("Download the model using the LM Studio GUI.")
+            + "\n"
+            + _cli_bullet("See locally available models with `ellmer::models_lmstudio()`.")
+        )
     return _mk(
         ProviderLMStudio(_url(base, "v1"), lambda: key), model, params, api_args, system_prompt
     )
 
 
 def chat_ollama(
-    model: str | None = None,
+    model: str | None = _NO_MODEL,
     system_prompt: str | None = None,
     params: Any = None,
     api_args: Any = None,
@@ -1550,12 +1591,28 @@ def chat_ollama(
         if local:
             raise LLMError("Can't find locally running ollama.") from None
         raise LLMError(f"Can't connect to ollama at <{base}>.") from None
-    if model is None:
-        raise LLMError(f"Must specify `model`.\nℹ Available models: {', '.join(names)}.")
+    if model is _NO_MODEL:  # missing(model)
+        quoted = _cli_and([f'"{n}"' for n in names])
+        raise LLMError("Must specify `model`.\n" + _cli_bullet(f"Available models: {quoted}."))
+    if model is None:  # chat("ollama") passes model = NULL: `if (!NULL %in% models)`
+        raise LLMError("argument is of length zero")
     if model not in names:
         if local:
-            raise LLMError(f'Model "{model}" is not installed locally.')
-        raise LLMError(f'Model "{model}" is not available on <{base}>.')
+            raise LLMError(
+                _cli_wrap(f'Model "{model}" is not installed locally.')
+                + "\n"
+                + _cli_bullet(
+                    f"Run `ollama pull {model}` in your terminal or "
+                    f'`ollamar::pull("{model}")` in R to install the model.'
+                )
+                + "\n"
+                + _cli_bullet("See locally installed models with `ellmer::models_ollama()`.")
+            )
+        raise LLMError(
+            _cli_wrap(f'Model "{model}" is not available on <{base}>.')
+            + "\n"
+            + _cli_bullet(f'See available models with `models_ollama(base_url = "{base}")`.')
+        )
     prov = ProviderOllama(_url(base, "v1"), lambda: key)
     return _mk(prov, model, params, api_args, system_prompt)
 
@@ -1629,8 +1686,10 @@ def chat_github(*args: Any, **kwargs: Any) -> Chat:  # noqa: ARG001
     """``ellmer::chat_github()`` is defunct (GitHub Models was retired)."""
     raise LLMError(
         "`chat_github()` was deprecated in ellmer 0.5.0 and is now defunct.\n"
-        "ℹ GitHub Models was retired on 2026-07-30.\n"
-        "ℹ `chat_google_gemini()` offers a free tier and `chat_posit()` offers a free trial."
+        "GitHub Models was retired on 2026-07-30.\n"
+        + _cli_bullet(
+            "`chat_google_gemini()` offers a free tier and `chat_posit()` offers a free trial."
+        )
     )
 
 
@@ -1703,7 +1762,10 @@ def _unsupported_provider(provider: str) -> LLMError:
     cannot authenticate (cloud SDK/OAuth credentials).
     """
     if provider == "google_vertex":
-        for arg, env in (("location", "GOOGLE_CLOUD_LOCATION"), ("project_id", "GOOGLE_CLOUD_PROJECT")):
+        for arg, env in (
+            ("location", "GOOGLE_CLOUD_LOCATION"),
+            ("project_id", "GOOGLE_CLOUD_PROJECT"),
+        ):
             if not os.environ.get(env, ""):
                 return LLMError(f'`{arg}` must be a single string, not the empty string "".')
     elif provider == "snowflake":
@@ -1796,7 +1858,10 @@ def _ollama_capabilities(base_url: str, model: str, key: str = "") -> str:
 
 
 def _parse_r_datetime(s: str) -> Any:
-    """``as.POSIXct(s)`` with R's default formats (date part only when no space follows)."""
+    """``as.POSIXct(s)`` with R's default formats (date part only when no space follows).
+
+    The wall time is read in the local time zone, as R does; the result is UTC.
+    """
     import pandas as pd
 
     from pytacheck._r import regextract
@@ -1807,7 +1872,12 @@ def _parse_r_datetime(s: str) -> Any:
     if not date:
         return pd.NaT
     text = date.replace("/", "-") + (time or "")
-    return pd.Timestamp(text, tz="UTC")
+    # as.POSIXct() reads the wall time in the session's time zone
+    naive = pd.Timestamp(text).to_pydatetime()
+    import time as _time
+
+    epoch = _time.mktime(naive.timetuple()) + naive.microsecond / 1e6
+    return pd.Timestamp(epoch, unit="s", tz="UTC")
 
 
 def models_ollama(base_url: str = "http://localhost:11434") -> Any:
@@ -1836,79 +1906,135 @@ def models_ollama(base_url: str = "http://localhost:11434") -> Any:
     return df
 
 
-def _openai_models(base_url: str, key: str) -> list[dict[str, Any]]:
+@functools.cache
+def _price_table() -> dict[tuple[str, str], tuple[float, float, float]]:
+    """ellmer's bundled price table (``ellmer:::prices``, first row per provider/model)."""
+    import csv
+    from importlib.resources import files
+
+    def num(x: str) -> float:
+        return float(x) if x not in ("", "NA") else math.nan
+
+    out: dict[tuple[str, str], tuple[float, float, float]] = {}
+    text = files("pytacheck.llm").joinpath("ellmer_prices.csv").read_text(encoding="utf-8")
+    for row in csv.DictReader(text.splitlines()):
+        key = (row["provider"], row["model"])
+        if key not in out:
+            out[key] = (num(row["cached_input"]), num(row["input"]), num(row["output"]))
+    return out
+
+
+def match_prices(provider: str, ids: Sequence[str]) -> dict[str, Any]:
+    """Port of ``ellmer:::match_prices()``: cached_input/input/output per model id."""
+    import pandas as pd
+
+    table = _price_table()
+    nan3 = (math.nan, math.nan, math.nan)
+    rows = [table.get((provider, i), nan3) for i in ids]
+    return {
+        col: pd.Series([r[j] for r in rows], dtype="float64")
+        for j, col in enumerate(("cached_input", "input", "output"))
+    }
+
+
+def _openai_models(base_url: str, key: str, path: str = "/models") -> list[dict[str, Any]]:
     headers = {"Authorization": f"Bearer {key}"} if key else {}
-    resp = perform("GET", _url(base_url, "/models"), headers=headers, error_body=_openai_error_body)
+    resp = perform("GET", _url(base_url, path), headers=headers, error_body=_openai_error_body)
     data = resp_body_json(resp).get("data") or []
     return [d for d in data if isinstance(d, dict)]
 
 
-def _models_openai_compatible(base_url: str, key: str) -> Any:
+def _models_openai_compatible(base_url: str, key: str, provider: str) -> Any:
+    """``models_list(<ProviderOpenAICompatible>)``: newest first, with prices."""
     import pandas as pd
 
     data = _openai_models(base_url, key)
     created = [
         pd.Timestamp(float(d.get("created") or 0), unit="s").normalize().date() for d in data
     ]
+    ids = [str(d.get("id")) for d in data]
     df = pd.DataFrame(
         {
-            "id": pd.Series([str(d.get("id")) for d in data], dtype="string"),
+            "id": pd.Series(ids, dtype="string"),
             "created_at": pd.Series(created, dtype=object),
             "owned_by": pd.Series([d.get("owned_by") for d in data], dtype="string"),
-            "cached_input": pd.Series([math.nan] * len(data), dtype="float64"),
-            "input": pd.Series([math.nan] * len(data), dtype="float64"),
-            "output": pd.Series([math.nan] * len(data), dtype="float64"),
+            **match_prices(provider, ids),
         }
     )
-    order = sorted(range(len(df)), key=lambda i: created[i], reverse=True)
+    order = sorted(range(len(df)), key=lambda i: created[i], reverse=True)  # stable
     return df.iloc[order]
 
 
 def models_openai(base_url: str = "https://api.openai.com/v1") -> Any:
-    """Port of ``ellmer::models_openai()`` (prices are not bundled: ``NA``)."""
-    return _models_openai_compatible(base_url, _key_get("OPENAI_API_KEY"))
+    """Port of ``ellmer::models_openai()``."""
+    return _models_openai_compatible(base_url, _key_get("OPENAI_API_KEY"), "OpenAI")
 
 
 def models_deepseek(base_url: str = "https://api.deepseek.com") -> Any:
-    """Port of ``ellmer::models_deepseek()``."""
-    return _models_openai_compatible(base_url, _key_get("DEEPSEEK_API_KEY"))
-
-
-def models_mistral() -> Any:
-    """Port of ``ellmer::models_mistral()``."""
+    """Port of ``ellmer::models_deepseek()``: id, owned_by and prices, in API order."""
     import pandas as pd
 
-    key = _key_get("MISTRAL_API_KEY")
-    data = _openai_models("https://api.mistral.ai/v1/", key)
+    data = _openai_models(base_url, _key_get("DEEPSEEK_API_KEY"))
+    ids = [str(d.get("id")) for d in data]
     return pd.DataFrame(
         {
-            "id": pd.Series([str(d.get("id")) for d in data], dtype="string"),
-            "name": pd.Series([d.get("name") for d in data], dtype="string"),
-            "created_at": pd.to_datetime(
-                pd.Series([d.get("created") for d in data], dtype="float64"), unit="s", utc=True
-            ),
+            "id": pd.Series(ids, dtype="string"),
+            "owned_by": pd.Series([d.get("owned_by") for d in data], dtype="string"),
+            **match_prices("DeepSeek", ids),
         }
     )
 
 
+def models_mistral() -> Any:
+    """Port of ``ellmer::models_mistral()``: id, name, created_at and prices."""
+    import pandas as pd
+
+    key = _key_get("MISTRAL_API_KEY")
+    data = _openai_models("https://api.mistral.ai/v1/", key)
+    ids = [str(d.get("id")) for d in data]
+    return pd.DataFrame(
+        {
+            "id": pd.Series(ids, dtype="string"),
+            "name": pd.Series([d.get("name") for d in data], dtype="string"),
+            "created_at": pd.to_datetime(
+                pd.Series([d.get("created") for d in data], dtype="float64"), unit="s", utc=True
+            ),
+            **match_prices("Mistral", ids),
+        }
+    )
+
+
+def _ids_frame(data: list[dict[str, Any]]) -> Any:
+    import pandas as pd
+
+    return pd.DataFrame({"id": pd.Series([str(d.get("id")) for d in data], dtype="string")})
+
+
 def models_vllm(base_url: str) -> Any:
-    """Port of ``ellmer::models_vllm()``."""
-    return _models_openai_compatible(base_url, _key_get("VLLM_API_KEY"))
+    """Port of ``ellmer::models_vllm()``: the ids at ``<base_url>/v1/models``."""
+    return _ids_frame(_openai_models(base_url, _key_get("VLLM_API_KEY"), "/v1/models"))
 
 
 def models_lmstudio(base_url: str = "http://localhost:1234") -> Any:
-    """Port of ``ellmer::models_lmstudio()``."""
-    return _models_openai_compatible(_url(base_url, "v1"), os.environ.get("LMSTUDIO_API_KEY", ""))
+    """Port of ``ellmer::models_lmstudio()``: the ids at ``<base_url>/v1/models``."""
+    return _ids_frame(
+        _openai_models(base_url, os.environ.get("LMSTUDIO_API_KEY", ""), "/v1/models")
+    )
 
 
 def models_portkey(base_url: str = "https://api.portkey.ai/v1") -> Any:
-    """Port of ``ellmer::models_portkey()``."""
+    """Port of ``ellmer::models_portkey()``: id and slug."""
     import pandas as pd
 
     key = _key_get("PORTKEY_API_KEY")
     resp = perform("GET", _url(base_url, "/models"), headers={"x-portkey-api-key": key})
-    data = resp_body_json(resp).get("data") or []
-    return pd.DataFrame({"id": pd.Series([str(d.get("id")) for d in data], dtype="string")})
+    data = [d for d in resp_body_json(resp).get("data") or [] if isinstance(d, dict)]
+    return pd.DataFrame(
+        {
+            "id": pd.Series([str(d.get("id")) for d in data], dtype="string"),
+            "slug": pd.Series([d.get("slug") for d in data], dtype="string"),
+        }
+    )
 
 
 def models_google_gemini(
@@ -1930,14 +2056,8 @@ def models_google_gemini(
     from pytacheck._r import r_sorted
 
     rows = r_sorted(rows)
-    n = len(rows)
     return pd.DataFrame(
-        {
-            "id": pd.Series(rows, dtype="string"),
-            "cached_input": pd.Series([math.nan] * n, dtype="float64"),
-            "input": pd.Series([math.nan] * n, dtype="float64"),
-            "output": pd.Series([math.nan] * n, dtype="float64"),
-        }
+        {"id": pd.Series(rows, dtype="string"), **match_prices("Google/Gemini", rows)}
     )
 
 
@@ -1952,14 +2072,18 @@ def models_anthropic(base_url: str | None = None) -> Any:
         headers={"anthropic-version": "2023-06-01", "x-api-key": key},
     )
     data = resp_body_json(resp).get("data") or []
+    ids = [str(d.get("id")) for d in data]
     df = pd.DataFrame(
         {
-            "id": pd.Series([str(d.get("id")) for d in data], dtype="string"),
+            "id": pd.Series(ids, dtype="string"),
             "name": pd.Series([d.get("display_name") for d in data], dtype="string"),
-            "created_at": pd.to_datetime([d.get("created_at") for d in data], utc=True),
-            "cached_input": pd.Series([math.nan] * len(data), dtype="float64"),
-            "input": pd.Series([math.nan] * len(data), dtype="float64"),
-            "output": pd.Series([math.nan] * len(data), dtype="float64"),
+            # as.POSIXct("2025-02-19T00:00:00Z"): no default format takes the "T", so
+            # only the date is read
+            "created_at": pd.Series(
+                [_parse_r_datetime(str(d.get("created_at"))) for d in data],
+                dtype="datetime64[ns, UTC]",
+            ),
+            **match_prices("Anthropic", ids),
         }
     )
     return df.sort_values("created_at", ascending=False, kind="stable")

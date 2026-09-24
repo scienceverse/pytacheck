@@ -93,9 +93,9 @@ def main() -> None:
     )
     put("ndownloader.figshare.com/files/700202", NOTES, ".txt")
     put("ndownloader.figshare.com/files/700205", CSV, ".txt")
-    r404(f"ndownloader.figshare.com/files/700201", f"{dl}/700201")
-    r404(f"ndownloader.figshare.com/files/700203", f"{dl}/700203")
-    r404(f"ndownloader.figshare.com/files/700204", f"{dl}/700204")
+    r404("ndownloader.figshare.com/files/700201", f"{dl}/700201")
+    r404("ndownloader.figshare.com/files/700203", f"{dl}/700203")
+    r404("ndownloader.figshare.com/files/700204", f"{dl}/700204")
 
     # a string licence ($ on an atomic vector is an R error) and authors that are not a list
     put(
@@ -186,7 +186,10 @@ def main() -> None:
         dv_api(harvard, "10.7910/DVN/NOVER"),
         {
             "status": "OK",
-            "data": {"persistentUrl": "https://doi.org/10.7910/DVN/NOVER", "publicationDate": "2019"},
+            "data": {
+                "persistentUrl": "https://doi.org/10.7910/DVN/NOVER",
+                "publicationDate": "2019",
+            },
         },
     )
     # data is a string: `$` on an atomic vector is an R error

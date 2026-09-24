@@ -88,3 +88,49 @@ def ra_report_tables(o: Any) -> list[pd.DataFrame]:
 
     blocks = o.report if isinstance(o.report, list) else [o.report]
     return [b.data for b in blocks if isinstance(b, ReportTable)]
+
+
+def ra_test_paper(text: str | Sequence[str], paper_id: str = "test_paper") -> Paper:
+    """``test_paper()`` with a fixed paper_id (``ra_test_paper()``)."""
+    p = pc.test_paper(text)
+    p.paper_id = paper_id
+    return p
+
+
+# ---- helpers for parity/cases/mod_ref_accuracy_review.yaml ----
+
+
+def ra_setcol(p: Paper, table: str, col: str, values: Any, dtype: Any = None) -> Paper:
+    """Replace a whole column of ``p[table]``; ``None`` drops it (``ra_setcol()``)."""
+    df = p[table].copy()
+    if values is None:
+        df = df.drop(columns=col)
+    elif dtype == "object":
+        arr = np.empty(len(values), dtype=object)
+        for i, v in enumerate(values):
+            arr[i] = v
+        df[col] = pd.Series(arr, index=df.index, dtype=object)
+    else:
+        df[col] = pd.Series(list(values), index=df.index, dtype=dtype)
+    p[table] = df
+    return p
+
+
+def ra_text(p: Paper, text_id: int, value: str | None) -> Paper:
+    """Set the text of the text-table row(s) with *text_id* (``ra_text()``)."""
+    df = p["text"].copy()
+    mask = (df["text_id"] == text_id).fillna(False).to_numpy(dtype=bool)
+    df.loc[mask, "text"] = pd.NA if value is None else value
+    p["text"] = df
+    return p
+
+
+def ra_match_copy(p: Paper, from_: int, to: int | None) -> Paper:
+    """Append a copy of the bib_match row for *from_* with bib_id *to* (``ra_match_copy()``)."""
+    bm = p["bib_match"]
+    row = bm.loc[(bm["bib_id"] == from_).fillna(False).to_numpy(dtype=bool)].copy()
+    row["bib_id"] = pd.Series([pd.NA if to is None else to] * len(row), index=row.index).astype(
+        bm["bib_id"].dtype
+    )
+    p["bib_match"] = pd.concat([bm, row], ignore_index=True)
+    return p

@@ -1,0 +1,100 @@
+{
+  "id": "researchdata4tu_file_download.mock.one",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 1,
+    "names": [
+      "folder",
+      "researchdata4tu_id",
+      "id",
+      "key",
+      "path",
+      "size",
+      "size_on_disk",
+      "checksum",
+      "checksum_ok",
+      "self",
+      "downloaded",
+      "extracted"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "figshare_16766929"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "16766929"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "501"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "readme.txt"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "readme.txt"
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          11
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          11
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "86621499bc8a27bdf497a6dedc2c545d"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://data.4tu.nl/file/7f866e02/f501"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          null
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

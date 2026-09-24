@@ -90,3 +90,9 @@
 "*_verify_downloads() body" = "pytacheck.archives.dataverse:_verify_file_table"
 "req_perform() of a file download (streamed to disk)" = "pytacheck.archives.dataverse:_fetch_file"
 "httr2::oauth_client() / req_oauth_client_credentials()" = "pytacheck.archives.dryad:DryadOAuthClient"
+# added by the adversarial review
+"httr2 req_perform_sequential(): errors that are not httr2_error abort the caller" = "pytacheck.archives.dataverse:RequestAbort"
+"vapply() names on *_links() id columns (URL-named vectors in R)" = "pytacheck.archives.dataverse:_mark_named_ids"
+"httr2 oauth_flow_parse() + oauth_token() (client-credentials token response)" = "pytacheck.archives.dryad:_token_from_body"
+"httr2 httr2_oauth* errors" = "pytacheck.archives.dryad:OAuthError"
+"httr2 req_perform() re-authentication after an OAuth invalid_token 401" = "pytacheck.archives.dryad:_dryad_reauth"

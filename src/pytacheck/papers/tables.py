@@ -134,8 +134,15 @@ def ref_table(paper: Any) -> pd.DataFrame:
 
     bib_all = paper_table(paper, "bib")
     text_all = paper_table(paper, "text")
-    if "text_id" not in bib_all.columns or "text" not in text_all.columns:
-        return bib.iloc[0:0].assign(text=pd.Series([], dtype="string"))
+    # R: dplyr::inner_join(bib, text, by = c("paper_id", "text_id")) errors when a
+    # join column is missing (e.g. a bib without text_id, or no text table)
+    for side, df in (("x", bib_all), ("y", text_all)):
+        missing = [k for k in ("paper_id", "text_id") if k not in df.columns]
+        if missing:
+            problem = ", ".join(f"`{k}`" for k in missing)
+            raise ValueError(
+                f"Join columns in `{side}` must be present in the data.\n✖ Problem with {problem}."
+            )
     ref_text = bib_all.merge(
         text_all, on=["paper_id", "text_id"], how="inner", suffixes=(".x", ".y")
     )

@@ -1,0 +1,74 @@
+{
+  "id": "power.review.unicode.tables",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": null,
+    "v": [
+      {
+        "t": "df",
+        "nrow": 5,
+        "names": [
+          "power_id",
+          "power_type"
+        ],
+        "v": [
+          {
+            "t": "int",
+            "v": [
+              1,
+              2,
+              3,
+              4,
+              5
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "apriori",
+              "apriori",
+              "unknown",
+              "posthoc",
+              "unknown"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 5,
+        "names": [
+          "power_id",
+          "text"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "1",
+              "2",
+              "3",
+              "4",
+              "5"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ΣΑΣ <strong>power<\/strong> analysis: 40 participants, <strong>a-priori<\/strong>, 0,80.",
+              "A <strong>Sensitivity<\/strong> and <strong>a priori<\/strong> <strong>power<\/strong> analysis used 12 participants.",
+              "G*<strong>Power<\/strong> 3.1 was used (<strong>power<\/strong> = .80).",
+              "The <strong>POWER<\/strong>ED design had 80% <strong>POWER<\/strong> for <strong>Post Hoc<\/strong> tests.",
+              "A <strong>power<\/strong>ful design had 90% <strong>power<\/strong> to detect small effects."
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

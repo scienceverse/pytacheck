@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<eml xmlns="https://eml.ecoinformatics.org/eml-2.2.0" packageId="doi:10.6085/AA/marine_ltm.20.1">
+  <dataset>
+    <title>PISCO: Intertidal Community Structure Surveys</title>
+  </dataset>
+</eml>

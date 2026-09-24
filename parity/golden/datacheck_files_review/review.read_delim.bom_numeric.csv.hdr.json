@@ -1,0 +1,85 @@
+{
+  "id": "review.read_delim.bom_numeric.csv.hdr",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "names",
+      "types",
+      "data"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "1",
+          "2",
+          "3"
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "integer",
+              "integer"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "integer",
+              "integer"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "integer",
+              "integer"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 2,
+        "names": [
+          "1",
+          "2",
+          "3"
+        ],
+        "v": [
+          {
+            "t": "int",
+            "v": [
+              4,
+              7
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              5,
+              8
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              6,
+              9
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

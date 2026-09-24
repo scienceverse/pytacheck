@@ -1,0 +1,28 @@
+{
+  "id": 16766929,
+  "uuid": "7f866e02-eb39-4a2a-8f7d-2d053ee6cde9",
+  "title": "Wind tunnel measurements",
+  "doi": "10.4121/16766929.v1",
+  "published_date": "2021-10-12T10:00:00",
+  "modified_date": "2022-01-01T00:00:00",
+  "authors": [
+    {
+      "full_name": "Ada Author"
+    },
+    {
+      "full_name": "Bob Builder"
+    }
+  ],
+  "license": {
+    "name": "CC BY 4.0"
+  },
+  "files": [
+    {
+      "id": 501,
+      "name": "readme.txt",
+      "size": 11,
+      "download_url": "https://data.4tu.nl/file/7f866e02/f501",
+      "computed_md5": "86621499bc8a27bdf497a6dedc2c545d"
+    }
+  ]
+}

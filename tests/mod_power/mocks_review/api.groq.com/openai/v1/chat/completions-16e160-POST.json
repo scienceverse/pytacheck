@@ -1,0 +1,22 @@
+{
+  "id": "chatcmpl-test",
+  "object": "chat.completion",
+  "created": 1760000000,
+  "model": "test-model",
+  "choices": [
+    {
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "```json\n[\n  {\n    \"power_type\": \"posthoc\",\n    \"statistical_test\": \"regression\",\n    \"statistical_test_other\": null,\n    \"sample_size\": 36,\n    \"alpha_level\": 0.05,\n    \"power\": 0.45,\n    \"effect_size\": 0.3,\n    \"effect_size_metric\": \"eta squared\",\n    \"effect_size_metric_other\": null,\n    \"software\": \"other\"\n  }\n]\n```"
+      },
+      "logprobs": null,
+      "finish_reason": "stop"
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 42,
+    "completion_tokens": 7,
+    "total_tokens": 49
+  }
+}

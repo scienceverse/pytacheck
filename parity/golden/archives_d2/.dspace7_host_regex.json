@@ -1,0 +1,14 @@
+{
+  "id": ".dspace7_host_regex",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "archive\\.uax\\.com|aura\\.abdn\\.ac\\.uk|bedl\\.asabe\\.org|comum\\.rcaap\\.pt|conservancy\\.umn\\.edu|cris\\.usm\\.cl|daks\\.uni-kassel\\.de|datakatalogi\\.helsinki\\.fi|deposita\\.ibict\\.br|digitalcollection\\.zhaw\\.ch|diglib\\.eg\\.org|dl\\.gi\\.de|dspace\\.lib\\.cranfield\\.ac\\.uk|dspace\\.ut\\.ee|ecosistema\\.buap\\.mx|hephaestus\\.nup\\.ac\\.cy|irep\\.mbzuai\\.ac\\.ae|irf\\.fhnw\\.ch|ktisis\\.cut\\.ac\\.cy|mro\\.massey\\.ac\\.nz|nalt-dspace\\.progress\\.plus|opara\\.zih\\.tu-dresden\\.de|open\\.fau\\.de|open\\.ifz-muenchen\\.de|open\\.uni-marburg\\.de|openresearch\\.ceu\\.edu|openscience\\.ub\\.uni-mainz\\.de|proforis\\.phsg\\.ch|publish\\.fid-media\\.de|recil\\.ensinolusofona\\.pt|repositorio\\.ipen\\.br|repositorio\\.ipsantarem\\.pt|repositorio\\.tec\\.mx|repositorio\\.uac\\.pt|repositorio\\.uautonoma\\.cl|repositorio\\.ucentral\\.cl|repositorio\\.ucn\\.cl|repositorio\\.ucsm\\.edu\\.pe|repositorio\\.umecit\\.edu\\.pa|repository\\.aus\\.edu|repository\\.difu\\.de|repository\\.escholarship\\.umassmed\\.edu|repository\\.gatech\\.edu|repository\\.gchumanrights\\.org|repository\\.mines\\.edu|repository\\.mu\\.edu\\.et|repository\\.universidadean\\.edu\\.co|repository\\.upol\\.cz|repozitar\\.techlib\\.cz|researchrepository\\.universityofgalway\\.ie|ridda2\\.utp\\.ac\\.pa|scholarbank\\.nus\\.edu\\.sg|scholarshare\\.temple\\.edu|scholarworks\\.umass\\.edu|share\\.swps\\.edu\\.pl|tam-datahub\\.online\\.uni-marburg\\.de|toubkal\\.imist\\.ma|tudatalib\\.ulb\\.tu-darmstadt\\.de|ulir\\.ul\\.ie|umontreal\\.scholaris\\.ca|unsworks\\.unsw\\.edu\\.au|utoronto\\.scholaris\\.ca|uwo\\.scholaris\\.ca|www\\.research-collection\\.ethz\\.ch"
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

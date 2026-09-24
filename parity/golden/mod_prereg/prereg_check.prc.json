@@ -1,0 +1,311 @@
+{
+  "id": "prereg_check.prc",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "prereg_check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Preregistration Check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "method"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "template_name",
+          "title",
+          "id",
+          "link",
+          "date_created",
+          "date_modified",
+          "date_registered",
+          "embargo_end_date",
+          "ia_url",
+          "research_questions",
+          "existing_data",
+          "existing_data_explanation",
+          "data_collection_procedures",
+          "sample_size",
+          "sample_size_rationale",
+          "stopping_rule",
+          "manipulated_variables",
+          "measured_variables",
+          "indices",
+          "study_type",
+          "blinding",
+          "study_design_overview",
+          "randomization",
+          "statistical_tests",
+          "transformations",
+          "follow_up_analyses",
+          "inference_criteria",
+          "data_exclusion_criteria",
+          "missing_data_handling",
+          "paper_id"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Prereg Challenge"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Does Honesty Require Time? A preregistered replication of SEB2012 Exp2"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "jez3g"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://osf.io/jez3g"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2018-11-02T13:55:48.394132"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2018-11-02T09:29:45.302861"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2018-11-02T13:55:48.367381"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://archive.org/details/osf-registrations-jez3g-v1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "In this experiment, we aim to replicate a study by Shalvi, Eldar and Bereby-Meyer (2012, Experiment 2) which suggested that honesty requires overcoming our natural tendency to cheat in tempting situations. We will test the same research question (i.e. are participants under time pressure more likely to cheat than participants without time pressure?) as the original study. Participants under time pressure are more likely to cheat than participants that are not under time pressure."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Registration prior to creation of data"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Not applicable in this study."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Participants will be attendees participating the testweek at the University of Amsterdam, which is a part of the propaedeutic of the Psychology program. During this testweek, a large amount of students are tested simultaneously. There are no additional prerequisites that need to be met for participation."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Based upon our power-analysis, we will test a minimum of 366 participants. We have two conditions in our design (time-pressure vs. no-time-pressure), implying we will have a minimum of 183 participants in each condition. Given the setup of Testweek (i.e., mass sessions of about 250 students each), we aim to run our study in two sessions, leading to an expected sample size of about N=500."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Following Camerer et al. (2018) we aim for 90% power to detect 50% of the original effect size. For one-sided independent Mann-Whitney U test, with alpha=.05, this implies that we should test N = 332 (n=166 in each group) to be able to detect d = .66 [ x 50% ] = .33\n\nAnticipating exclusions (2-5% in original study; conservative estimate for our study: 10%) we will test N=366"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "We expect two sessions of Testweek to suffice (2 x ca n = 250 leads to ca n = 500; which exceeds the minimal required sample size of n=366). Should the two sessions of Testweek not suffice to reach n=366, we will add sessions until we reach 366 participants."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "The between-subject manipulation of time pressure will have two conditions: time pressure (i.e. report the outcome of the die roll within 8s) vs no time pressure (i.e. report the outcome of the die roll at own pace)."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "-Primary: reported die outcome (1 to 6)\n-For manipulation check: response time. Response time will be operationalized as the time a participant needs to report their dice roll outcome since the start sign (click on response – click on start sign). Outliers (5 SD above mean) will be excluded for the manipulation check analysis."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "No."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Experiment - A researcher randomly assigns treatments to study subjects, this includes field or lab experiments. This is also known as an intervention experiment and includes randomized controlled trials."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Research personnel who interact directly with the study subjects (either human or non-human subjects) will not be aware of the assigned treatments. For studies that involve human subjects, they will not know the treatment group to which they have been assigned."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "The study employs a between-subjects design, in which the mean reported die roll outcome will be compared between the two conditions (no-time-pressure vs. time-pressure)."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Participants will be randomly assigned to either the time-pressure condition or the no-time-pressure condition using permuted block randomization, which ensures an even distribution of participants across conditions."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "The study employs a between-subjects design, in which the reported die outcome will be compared between the two conditions. We will run a one-tailed Mann-Whitney test to examine whether the reported outcome is higher in the time-pressure condition than in no-time-pressure condition."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "No."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Within each condition, we will run a Chi-square goodness of fit test between the distribution of the reported die roll outcomes and the expected distribution of die roll outcomes for each condition."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "We will use the standard α=.05 criterion."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Missing data for reported die roll outcome (e.g., due to non-response, technical failure or failure to report within the time limit (high time pressure condition))."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Participants who do not report their die roll outcome will be excluded from all analyses."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "p_prc"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "We found 1 preregistration.",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(id = \"<a href='https://osf.io/jez3g' target='_blank'>jez3g<\/a>\", \n    title = \"Does Honesty Require Time? A preregistered replication of SEB2012 Exp2\", \n    template = \"Prereg Challenge\"), row.names = c(NA, -1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 2, FALSE)\n```\n",
+          "Meta-scientific research has shown that deviations from preregistrations are often not reported or checked, and that the most common deviations concern the sample size. We recommend manually checking the full preregistration at the link above, and have provided the preregistered sample size.",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(id = \"jez3g\", sample_size = \"Based upon our power-analysis, we will test a minimum of 366 participants. We have two conditions in our design (time-pressure vs. no-time-pressure), implying we will have a minimum of 183 participants in each condition. Given the setup of Testweek (i.e., mass sessions of about 250 students each), we aim to run our study in two sessions, leading to an expected sample size of about N=500.\"), row.names = c(NA, \n-1L), class = c(\"tbl_df\", \"tbl\", \"data.frame\"))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 2, FALSE)\n```\n",
+          "::: {.callout-tip title=\"Full Preregistration\" collapse=\"true\"}\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Field = c(\"template_name\", \"title\", \"id\", \"link\", \n\"date_created\", \"date_modified\", \"date_registered\", \"embargo_end_date\", \n\"ia_url\", \"research_questions\", \"existing_data\", \"existing_data_explanation\", \n\"data_collection_procedures\", \"sample_size\", \"sample_size_rationale\", \n\"stopping_rule\", \"manipulated_variables\", \"measured_variables\", \n\"indices\", \"study_type\", \"blinding\", \"study_design_overview\", \n\"randomization\", \"statistical_tests\", \"transformations\", \"follow_up_analyses\", \n\"inference_criteria\", \"data_exclusion_criteria\", \"missing_data_handling\", \n\"paper_id\"), \"Preregistration 1\" = c(\"Prereg Challenge\", \"Does Honesty Require Time? A preregistered replication of SEB2012 Exp2\", \n\"jez3g\", \"https://osf.io/jez3g\", \"2018-11-02T13:55:48.394132\", \n\"2018-11-02T09:29:45.302861\", \"2018-11-02T13:55:48.367381\", \"\", \n\"https://archive.org/details/osf-registrations-jez3g-v1\", \"In this experiment, we aim to replicate a study by Shalvi, Eldar and Bereby-Meyer (2012, Experiment 2) which suggested that honesty requires overcoming our natural tendency to cheat in tempting situations. We will test the same research question (i.e. are participants under time pressure more likely to cheat than participants without time pressure?) as the original study. Participants under time pressure are more likely to cheat than participants that are not under time pressure.\", \n\"Registration prior to creation of data\", \"Not applicable in this study.\", \n\"Participants will be attendees participating the testweek at the University of Amsterdam, which is a part of the propaedeutic of the Psychology program. During this testweek, a large amount of students are tested simultaneously. There are no additional prerequisites that need to be met for participation.\", \n\"Based upon our power-analysis, we will test a minimum of 366 participants. We have two conditions in our design (time-pressure vs. no-time-pressure), implying we will have a minimum of 183 participants in each condition. Given the setup of Testweek (i.e., mass sessions of about 250 students each), we aim to run our study in two sessions, leading to an expected sample size of about N=500.\", \n\"Following Camerer et al. (2018) we aim for 90% power to detect 50% of the original effect size. For one-sided independent Mann-Whitney U test, with alpha=.05, this implies that we should test N = 332 (n=166 in each group) to be able to detect d = .66 [ x 50% ] = .33<br><br>Anticipating exclusions (2-5% in original study; conservative estimate for our study: 10%) we will test N=366\", \n\"We expect two sessions of Testweek to suffice (2 x ca n = 250 leads to ca n = 500; which exceeds the minimal required sample size of n=366). Should the two sessions of Testweek not suffice to reach n=366, we will add sessions until we reach 366 participants.\", \n\"The between-subject manipulation of time pressure will have two conditions: time pressure (i.e. report the outcome of the die roll within 8s) vs no time pressure (i.e. report the outcome of the die roll at own pace).\", \n\"-Primary: reported die outcome (1 to 6)<br>-For manipulation check: response time. Response time will be operationalized as the time a participant needs to report their dice roll outcome since the start sign (click on response – click on start sign). Outliers (5 SD above mean) will be excluded for the manipulation check analysis.\", \n\"No.\", \"Experiment - A researcher randomly assigns treatments to study subjects, this includes field or lab experiments. This is also known as an intervention experiment and includes randomized controlled trials.\", \n\"Research personnel who interact directly with the study subjects (either human or non-human subjects) will not be aware of the assigned treatments. For studies that involve human subjects, they will not know the treatment group to which they have been assigned.\", \n\"The study employs a between-subjects design, in which the mean reported die roll outcome will be compared between the two conditions (no-time-pressure vs. time-pressure).\", \n\"Participants will be randomly assigned to either the time-pressure condition or the no-time-pressure condition using permuted block randomization, which ensures an even distribution of participants across conditions.\", \n\"The study employs a between-subjects design, in which the reported die outcome will be compared between the two conditions. We will run a one-tailed Mann-Whitney test to examine whether the reported outcome is higher in the time-pressure condition than in no-time-pressure condition.\", \n\"No.\", \"Within each condition, we will run a Chi-square goodness of fit test between the distribution of the reported die roll outcomes and the expected distribution of die roll outcomes for each condition.\", \n\"We will use the standard α=.05 criterion.\", \"Missing data for reported die roll outcome (e.g., due to non-response, technical failure or failure to report within the time limit (high time pressure condition)).\", \n\"Participants who do not report their die roll outcome will be excluded from all analyses.\", \n\"p_prc\")), row.names = c(\"template_name\", \"title\", \"id\", \"link\", \n\"date_created\", \"date_modified\", \"date_registered\", \"embargo_end_date\", \n\"ia_url\", \"research_questions\", \"existing_data\", \"existing_data_explanation\", \n\"data_collection_procedures\", \"sample_size\", \"sample_size_rationale\", \n\"stopping_rule\", \"manipulated_variables\", \"measured_variables\", \n\"indices\", \"study_type\", \"blinding\", \"study_design_overview\", \n\"randomization\", \"statistical_tests\", \"transformations\", \"follow_up_analyses\", \n\"inference_criteria\", \"data_exclusion_criteria\", \"missing_data_handling\", \n\"paper_id\"), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 5, FALSE)\n```\n\n\n:::\n",
+          "::: {.callout-tip title=\"Learn More\" collapse=\"true\"}\n\nFor metascientific articles demonstrating the rate of deviations from preregistrations, see:\n\nvan den Akker O, Bakker M, van Assen M, Pennington C, Verweij L, Elsherif M, Claesen A, Gaillard S, Yeung S, Frankenberger J, Krautter K, Cockcroft J, Kreuer K, Evans T, Heppel F, Schoch S, Korbmacher M, Yamada Y, Albayrak-Aydemir N, Wicherts J (2024). &ldquo;The potential of preregistration in psychology: Assessing preregistration producibility and preregistration-study consistency.&rdquo; <em>Psychological Methods<\/em>. <a href=\"https://doi.org/10.1037/met0000687\">doi:10.1037/met0000687<\/a>.\n\nFor educational material on how to report deviations from preregistrations, see:\n\nLakens, Daniël (2024). &ldquo;When and How to Deviate From a Preregistration.&rdquo; <em>Collabra: Psychology<\/em>, <b>10<\/b>(1), 117094. <a href=\"https://doi.org/10.1525/collabra.117094\">doi:10.1525/collabra.117094<\/a>.\n\n:::\n"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "info"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "We found 1 preregistration."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "preregistration"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "p_prc"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          }
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

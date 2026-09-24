@@ -1,0 +1,43 @@
+{
+  "id": "chat_params.anthropic_three",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "value",
+      "warnings"
+    ],
+    "v": [
+      {
+        "t": "list",
+        "names": [
+          "max_tokens",
+          "stop_sequences"
+        ],
+        "v": [
+          {
+            "t": "dbl",
+            "v": [
+              4096
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Ignoring unsupported parameters: \"frequency_penalty\", \"presence_penalty\", and\n\"log_probs\""
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

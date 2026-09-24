@@ -1,0 +1,382 @@
+{
+  "id": "power.review.fallback.paperlist",
+  "ok": true,
+  "error": null,
+  "warnings": [
+    "Note (not fatal): 4 of 4 LLM extractions failed and were left blank; the other 0 succeeded and all checks continued.\nRows 1, 2, 3, 4: reasons\n  HTTP 400 Bad Request.\nℹ Failed to validate JSON. Please adjust your prompt. See 'failed_generation'\n  for more details.\n  Provider says: Failed to validate JSON. Please adjust your prompt. See 'failed_generation' for more details."
+  ],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "power"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Power Analysis Check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "method"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 3,
+        "names": [
+          "text_id",
+          "section_id",
+          "paragraph_id",
+          "text",
+          "formatted",
+          "paper_id",
+          "header",
+          "section_type",
+          "answer",
+          "power_type",
+          "statistical_test",
+          "statistical_test_other",
+          "sample_size",
+          "alpha_level",
+          "power",
+          "effect_size",
+          "effect_size_metric",
+          "effect_size_metric_other",
+          "software",
+          "complete",
+          "power_id"
+        ],
+        "v": [
+          {
+            "t": "lgl",
+            "v": [
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "An a priori power analysis in G*Power showed that 50 participants per group give 80% power (alpha = .05) for d = 0.5 in an unpaired t-test.",
+              "A sensitivity power analysis indicated that 40 participants give 90% power for d = 0.8 with pwr.",
+              "The observed power was 0.45 for the effect in 36 participants (post-hoc)."
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "p1",
+              "p4",
+              "p3"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Test",
+              "Test",
+              "Test"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "unknown",
+              "unknown",
+              "unknown"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "```json\n[\n  {\n    \"power_type\": \"apriori\",\n    \"statistical_test\": \"unpaired t-test\",\n    \"statistical_test_other\": null,\n    \"sample_size\": 100,\n    \"alpha_level\": 0.05,\n    \"power\": 0.8,\n    \"effect_size\": 0.5,\n    \"effect_size_metric\": \"Cohen's d\",\n    \"effect_size_metric_other\": null,\n    \"software\": \"G*Power\"\n  }\n]\n```",
+              "```json\n[\n  {\n    \"power_type\": \"sensitivity\",\n    \"statistical_test\": \"unpaired t-test\",\n    \"statistical_test_other\": null,\n    \"sample_size\": 40,\n    \"power\": 0.9,\n    \"effect_size\": 0.8,\n    \"effect_size_metric\": \"Cohen's d\",\n    \"effect_size_metric_other\": null,\n    \"software\": \"pwr\"\n  }\n]\n```",
+              "```json\n[\n  {\n    \"power_type\": \"posthoc\",\n    \"statistical_test\": \"regression\",\n    \"statistical_test_other\": null,\n    \"sample_size\": 36,\n    \"alpha_level\": 0.05,\n    \"power\": 0.45,\n    \"effect_size\": 0.3,\n    \"effect_size_metric\": \"eta squared\",\n    \"effect_size_metric_other\": null,\n    \"software\": \"other\"\n  }\n]\n```"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "apriori",
+              "sensitivity",
+              "posthoc"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "unpaired t-test",
+              "unpaired t-test",
+              "regression"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              100,
+              40,
+              36
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0.05,
+              null,
+              0.05
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0.8,
+              0.9,
+              0.45
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0.5,
+              0.8,
+              0.3
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Cohen's d",
+              "Cohen's d",
+              "eta squared"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "G*Power",
+              "pwr",
+              "other"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true,
+              false,
+              true
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1,
+              2,
+              3
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "We used the LLM model 'groq/test-model' to check the contents of 4 paragraphs that contained words suggesting they might contain power analyses.",
+          "(The provider does not support structured outputs for this schema; used prompt-based extraction instead.)",
+          "Some essential information could not be detected: alpha_level",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(power_id = 1:3, power_type = c(\"apriori\", \"sensitivity\", \n\"posthoc\"), statistical_test = c(\"unpaired t-test\", \"unpaired t-test\", \n\"regression\"), sample_size = c(100L, 40L, 36L), alpha_level = c(0.05, \nNA, 0.05), power = c(0.8, 0.9, 0.45), effect_size = c(0.5, 0.8, \n0.3), effect_size_metric = c(\"Cohen's d\", \"Cohen's d\", \"eta squared\"\n), software = c(\"G*Power\", \"pwr\", \"other\")), row.names = c(NA, \n-3L), class = c(\"tbl_df\", \"tbl\", \"data.frame\"))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 5, FALSE)\n```\n",
+          "You reported a power analysis that has been classified as 'post-hoc'. Calculating observed power is [almost never useful](https://lakens.github.io/statistical_inferences/08-samplesizejustification.html#sec-posthocpower). If you actually performed a sensitivity power analysis, label it as such explicitly.",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(power_id = c(\"1\", \"2\", \"3\"), text = c(\"An <strong>a priori<\/strong> <strong>power<\/strong> analysis in G*<strong>Power<\/strong> showed that 50 participants per group give 80% <strong>power<\/strong> (alpha = .05) for d = 0.5 in an unpaired t-test.\", \n\"A <strong>sensitivity<\/strong> <strong>power<\/strong> analysis indicated that 40 participants give 90% <strong>power<\/strong> for d = 0.8 with pwr.\", \n\"The <strong>observed power<\/strong> was 0.45 for the effect in 36 participants (<strong>post-hoc<\/strong>).\"\n)), row.names = c(NA, -3L), class = c(\"tbl_df\", \"tbl\", \"data.frame\"\n))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 5, FALSE)\n```\n",
+          "::: {.callout-tip title=\"Learn More\" collapse=\"true\"}\n\nPower analyses need to contain the following information to be interpretable: the type of power analysis, the statistical test, the software used, sample size, critical alpha criterion, power level, effect size, and an effect size metric. In addition, it is recommended to make sure the power analysis is reproducible (by sharing the code, or a screenshot, of the power analysis), and to provide good arguments for why the study was designed to detect an effect of this size.\n\nFor an a-priori power analysis, where the sample size is determined, reporting all information would look like:\n\n> An a priori power analysis for an independent samples t-test, conducted using the pwr.t.test function from pwr (Champely, 2020), indicated that for a Cohen's d = 0.5, an alpha level of 0.05, and a desired power level of 80% required at least 64 participants in each group.\n\nFor a sensitivity power analysis, this sentence would look like:\n\n> A sensitivity power analysis for an independent samples t-test, conducted using the pwr.t.test function from pwr (Champely, 2020), indicated that with 64 participants in each group, and an alpha level of 0.05, a desired power level of 80% was reached for an effect size of d = 0.5.\n\n:::\n"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "red"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "We detected 3 potential power analyses."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 4,
+        "names": [
+          "paper_id",
+          "power_n",
+          "power_complete",
+          "power_statistical_test",
+          "power_sample_size",
+          "power_alpha_level",
+          "power_power",
+          "power_effect_size",
+          "power_effect_size_metric",
+          "power_software"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "p1",
+              "p2",
+              "p3",
+              "p4"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              1,
+              0,
+              1,
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1,
+              null,
+              1,
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1,
+              null,
+              1,
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1,
+              null,
+              1,
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1,
+              null,
+              1,
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1,
+              null,
+              1,
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1,
+              null,
+              1,
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1,
+              null,
+              1,
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1,
+              null,
+              1,
+              1
+            ]
+          }
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0
+        ],
+        "names": [
+          "power_n"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

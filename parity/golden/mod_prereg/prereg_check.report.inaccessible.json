@@ -1,0 +1,14 @@
+{
+  "id": "prereg_check.report.inaccessible",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "### ⬜ Preregistration Check {#preregistration-check .na}\n\nWe found 1 OSF link, but no accessible registrations. 1 registration link could not be accessed (private, embargoed, or withdrawn).\n\nThe following registration link could not be accessed and may be private, embargoed, or withdrawn: https://osf.io/3cz2e.\n\n::: {.callout-note title=\"How It Works\" collapse=\"true\"}\n\nRetrieve information from preregistrations in a standardised way,\nand make them easier to check.\n\nThe Preregistration Check module identifies preregistrations on the OSF and AsPredicted based on links in the manuscript, retrieves the preregistration text, and organizes the information into a template. The module then uses regular expressions to identify text from AsPredicted, and the API to retrieve text from the OSF. The information in the preregistration is returned.\n\nThe module can’t extract information from non-structured preregistration templates (i.e., where the preregistration is uploaded in a single text field) and it can’t retrieve information in preregistrations that are stored as text documents on the OSF.\n\nIf you want to extend the package to be able to download information from other preregistration sites, reach out to the Metacheck development team.\n\nThis module was developed by Daniel Lakens and Lisa DeBruine\n\n:::\n"
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

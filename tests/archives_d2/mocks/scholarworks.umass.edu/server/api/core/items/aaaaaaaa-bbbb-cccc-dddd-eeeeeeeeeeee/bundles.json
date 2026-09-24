@@ -1,0 +1,10 @@
+{
+  "_embedded": {
+    "bundles": [
+      {
+        "name": "THUMBNAIL",
+        "uuid": "t"
+      }
+    ]
+  }
+}

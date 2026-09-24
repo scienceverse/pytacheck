@@ -1,0 +1,105 @@
+{
+ "data": {
+  "id": "aaaaaaaaaaaaaaaaaaaaaaa1",
+  "type": "registration-schemas",
+  "attributes": {
+   "name": "Synthetic Blocks",
+   "schema_version": 3,
+   "schema": {
+    "blocks": [
+     {
+      "block_type": "page-heading",
+      "display_text": "Overview"
+     },
+     {
+      "block_type": "short-text-input"
+     },
+     {
+      "block_type": "question-label",
+      "display_text": "Title"
+     },
+     {
+      "block_type": "short-text-input"
+     },
+     {
+      "block_type": "question-label",
+      "display_text": "Hypotheses"
+     },
+     {
+      "block_type": "long-text-input"
+     },
+     {
+      "block_type": "question-label",
+      "display_text": " Research Questions "
+     },
+     {
+      "block_type": "long-text-input"
+     },
+     {
+      "block_type": "question-label",
+      "display_text": "My Custom Field: Über-weird!"
+     },
+     {
+      "block_type": "multi-select-input"
+     },
+     {
+      "block_type": "question-label",
+      "display_text": "Sample size"
+     },
+     {
+      "block_type": "long-text-input"
+     },
+     {
+      "block_type": "question-label",
+      "display_text": "???"
+     },
+     {
+      "block_type": "file-input"
+     },
+     {
+      "block_type": "question-label"
+     },
+     {
+      "block_type": "single-select-input"
+     },
+     {
+      "block_type": "question-label",
+      "display_text": "Other"
+     },
+     {
+      "block_type": "paragraph",
+      "display_text": "not an input"
+     },
+     {
+      "block_type": "contributors-input"
+     },
+     {
+      "block_type": "question-label",
+      "display_text": "Numbers & Flags"
+     },
+     {
+      "block_type": "short-text-input"
+     },
+     {
+      "block_type": "short-text-input"
+     },
+     {
+      "block_type": "question-label",
+      "display_text": "Empty answer"
+     },
+     {
+      "block_type": "long-text-input"
+     },
+     {
+      "block_type": "question-label",
+      "display_text": "Date Created"
+     },
+     {
+      "block_type": "short-text-input"
+     }
+    ],
+    "version": 3
+   }
+  }
+ }
+}

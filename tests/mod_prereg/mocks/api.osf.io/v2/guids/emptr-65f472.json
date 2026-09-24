@@ -1,0 +1,30 @@
+{
+ "data": {
+  "id": "emptr",
+  "type": "guids",
+  "attributes": {},
+  "relationships": {
+   "referent": {
+    "links": {
+     "related": {
+      "href": "https://api.osf.io/v2/registrations/emptr/",
+      "meta": {
+       "type": "registrations"
+      }
+     }
+    },
+    "data": {
+     "id": "emptr",
+     "type": "registrations"
+    }
+   }
+  },
+  "links": {
+   "self": "https://api.osf.io/v2/guids/emptr/",
+   "html": "https://osf.io/emptr/"
+  }
+ },
+ "meta": {
+  "version": "2.0"
+ }
+}

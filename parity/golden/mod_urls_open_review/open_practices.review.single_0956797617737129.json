@@ -1,0 +1,456 @@
+{
+  "id": "open_practices.review.single_0956797617737129",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "open_practices"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Open Practices Check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "general"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 12,
+        "names": [
+          "text",
+          "text_id",
+          "paragraph_id",
+          "section_id",
+          "page_number",
+          "formatted",
+          "paper_id",
+          "header",
+          "section_type",
+          "data",
+          "code",
+          "materials",
+          "prereg",
+          "on_request"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Detailed descriptions of our planned analyses as well as the full set of materials, including all additional measures, can be found at the Open Science Framework (osf.io/6b4ag).",
+              "We examined the learning rate (the unstandardized regression coefficient indicating the strength of the relationship between the estimation error and the subsequent update) for good and bad news for the self and a friend using repeated measures analyses of variance, controlling for the differences in estimation errors between good and bad news for both conditions (see https://journals.sagepub.com/doi/suppl/10.1177/0956797617737129. 2).",
+              "For Study 2b, we preregistered the hypothesis, sampling procedures, and analysis plan (https://osf.io/a5bmw/).",
+              "We report the preregistered analyses in the https://journals.sagepub.com/doi/suppl/10.1177/0956797617737129 which produced the same results as reported here.",
+              "Because the predicted interaction between valence and identifiability was only at trend level, we conducted a preregistered replication study using a larger sample on the basis of the effect size found in Study 2a (https://osf.io/a5bmw/).",
+              "As in Study 2b, we preregistered our hypothesis, methods, participant recruitment strategy, and analysis before running the studies and analyzing the data (osf.io/zmf4c).",
+              "In a pilot study, another set of participants (N = 40) rated both strangers (liked and disliked) on likability (likability, generosity, warmth, blameworthiness, morality, friendliness; see the https://journals.sagepub.com/doi/suppl/10.1177/0956797617737129 for factor analyses confirming one general-likability dimension) as well as intelligence and health.",
+              "The learning bias for the self condition and the learning bias for the stranger condition were not significantly correlated, r(76) = .10, p = .386 (see https://journals.sagepub.com/doi/suppl/10.1177/0956797617737129. S3b in the https://journals.sagepub.com/doi/suppl/10.1177/0956797617737129).",
+              "Individual differences in the magnitude of vicarious optimism for strangers were positively correlated with donations to charity, r(76) = .26, p = .02 (see https://journals.sagepub.com/doi/suppl/10.1177/0956797617737129. S4b in the https://journals.sagepub.com/doi/suppl/10.1177/0956797617737129). This relationship was robust to controlling for the magnitude of the optimistic learning bias for self, age, gender, education, and income, partial r(70) = .29, p = .012 (see the https://journals.sagepub.com/doi/suppl/10.1177/0956797617737129 for details).",
+              "All data and materials have been made publicly available via the Open Science Framework and can be accessed at file://localhost/opt/grobid/grobid-home/tmp/osf.io/6b4ag.",
+              "The design and analysis plans for Studies 2b and 3 were preregistered at the Open Science Framework (Study 2b: http://www.osf.io/a5bmw/register/565fb3678c5e4a66b5582f67 Study 3: http://www.osf.io/zmf4c/register/564d31db8c5e4a7c9694b2be).",
+              "Preregistered hypotheses and analysis plans, materials, methods, and results for this study can be found at the Open Science Framework (http://www.osf.io/n7sfm)."
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              30,
+              83,
+              101,
+              105,
+              122,
+              138,
+              154,
+              182,
+              184,
+              213,
+              214,
+              227
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              8,
+              19,
+              22,
+              22,
+              25,
+              28,
+              31,
+              37,
+              38,
+              45,
+              45,
+              48
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1,
+              4,
+              5,
+              5,
+              6,
+              8,
+              8,
+              12,
+              12,
+              16,
+              16,
+              19
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "We examined the learning rate (the unstandardized regression coefficient indicating the strength of the relationship between the estimation error and the subsequent update) for good and bad news for the self and a friend using repeated measures analyses of variance, controlling for the differences in estimation errors between good and bad news for both conditions (see Fig. <ref type=\"figure\" target=\"#fig_0\">2<\/ref>).",
+              "For Study 2b, we preregistered the hypothesis, sampling procedures, and analysis plan (<ref type=\"url\" target=\"https://osf.io/a5bmw/\">https://osf.io/  a5bmw/<\/ref>).",
+              "We report the preregistered analyses in the <ref type=\"url\" target=\"https://journals.sagepub.com/doi/suppl/10.1177/0956797617737129\">Supplemental Material,<\/ref> which produced the same results as reported here.",
+              "Because the predicted interaction between valence and identifiability was only at trend level, we conducted a preregistered replication study using a larger sample on the basis of the effect size found in Study 2a (<ref type=\"url\" target=\"https://osf.io/a5bmw/\">osf.io/  a5bmw/<\/ref>).",
+              null,
+              "In a pilot study, another set of participants (N = 40) rated both strangers (liked and disliked) on likability (likability, generosity, warmth, blameworthiness, morality, friendliness; see the <ref type=\"url\" target=\"https://journals.sagepub.com/doi/suppl/10.1177/0956797617737129\">Supplemental Material<\/ref> for factor analyses confirming one general-likability dimension) as well as intelligence and health.",
+              "The learning bias for the self condition and the learning bias for the stranger condition were not significantly correlated, r(76) = .10, p = .386 (see <ref type=\"url\" target=\"https://journals.sagepub.com/doi/suppl/10.1177/0956797617737129\">Fig<\/ref>. <ref type=\"figure\" target=\"#fig_1\">S3b<\/ref> <ref type=\"url\" target=\"https://journals.sagepub.com/doi/suppl/10.1177/0956797617737129\">in the Supplemental Material<\/ref>).",
+              "Individual differences in the magnitude of vicarious optimism for strangers were positively correlated with donations to charity, r(76) = .26, p = .02 (see <ref type=\"url\" target=\"https://journals.sagepub.com/doi/suppl/10.1177/0956797617737129\">Fig<\/ref>. <ref type=\"figure\" target=\"#fig_2\">S4b<\/ref> <ref type=\"url\" target=\"https://journals.sagepub.com/doi/suppl/10.1177/0956797617737129\">in the Supplemental Material). This  relationship was robust to controlling for the magnitude  of the optimistic learning bias for self, age, gender,  education, and income, partial r(70) = .29, p = .012 (see  the Supplemental Material<\/ref> for details).",
+              "All data and materials have been made publicly available via the Open Science Framework and can be accessed at <ref type=\"url\" target=\"file://localhost/opt/grobid/grobid-home/tmp/osf.io/6b4ag\">osf  .io/6b4ag<\/ref>.",
+              "The design and analysis plans for Studies 2b and 3 were preregistered at the Open Science Framework (Study 2b: <ref type=\"url\" target=\"http://www.osf.io/a5bmw/register/565fb3678c5e4a66b5582f67\">osf.io/a5bmw/register/565fb3678c5e4a66b5582f67;<\/ref> Study 3: <ref type=\"url\" target=\"http://www.osf.io/zmf4c/register/564d31db8c5e4a7c9694b2be\">osf  .io/zmf4c/register/564d31db8c5e4a7c9694b2be<\/ref>).",
+              "Preregistered hypotheses and analysis plans, materials, methods, and results for this study can be found at the Open Science Framework (<ref type=\"url\" target=\"http://www.osf.io/n7sfm\">osf.io/n7sfm<\/ref>)."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "0956797617737129",
+              "0956797617737129",
+              "0956797617737129",
+              "0956797617737129",
+              "0956797617737129",
+              "0956797617737129",
+              "0956797617737129",
+              "0956797617737129",
+              "0956797617737129",
+              "0956797617737129",
+              "0956797617737129",
+              "0956797617737129"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "[div-01]",
+              "Results",
+              "Study 2: Vicarious Optimism Is Greater for Identifiable Strangers",
+              "Study 2: Vicarious Optimism Is Greater for Identifiable Strangers",
+              "Results",
+              "Method",
+              "Method",
+              "Results",
+              "Results",
+              "Open Practices",
+              "Open Practices",
+              "Supplemental Material"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "intro",
+              "results",
+              "results",
+              "results",
+              "results",
+              "method",
+              "method",
+              "results",
+              "results",
+              "availability",
+              "availability",
+              "annex"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              true,
+              false,
+              false
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true,
+              true,
+              false,
+              false,
+              false,
+              false,
+              true,
+              true,
+              true,
+              false,
+              false,
+              true
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              true,
+              false,
+              true
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false,
+              false,
+              true,
+              true,
+              true,
+              true,
+              false,
+              false,
+              false,
+              false,
+              true,
+              true
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Data was openly shared for this article, based on the following text:\n\n> All data and materials have been made publicly available via the Open Science Framework and can be accessed at file://localhost/opt/grobid/grobid-home/tmp/osf.io/6b4ag.",
+          "Code was openly shared for this article, based on the following text:\n\n> Detailed descriptions of our planned analyses as well as the full set of materials, including all additional measures, can be found at the Open Science Framework (osf.io/6b4ag).\n\n> We examined the learning rate (the unstandardized regression coefficient indicating the strength of the relationship between the estimation error and the subsequent update) for good and bad news for the self and a friend using repeated measures analyses of variance, controlling for the differences in estimation errors between good and bad news for both conditions (see https://journals.sagepub.com/doi/suppl/10.1177/0956797617737129. 2).\n\n> In a pilot study, another set of participants (N = 40) rated both strangers (liked and disliked) on likability (likability, generosity, warmth, blameworthiness, morality, friendliness; see the https://journals.sagepub.com/doi/suppl/10.1177/0956797617737129 for factor analyses confirming one general-likability dimension) as well as intelligence and health.\n\n> The learning bias for the self condition and the learning bias for the stranger condition were not significantly correlated, r(76) = .10, p = .386 (see https://journals.sagepub.com/doi/suppl/10.1177/0956797617737129. S3b in the https://journals.sagepub.com/doi/suppl/10.1177/0956797617737129).\n\n> Individual differences in the magnitude of vicarious optimism for strangers were positively correlated with donations to charity, r(76) = .26, p = .02 (see https://journals.sagepub.com/doi/suppl/10.1177/0956797617737129. S4b in the https://journals.sagepub.com/doi/suppl/10.1177/0956797617737129). This relationship was robust to controlling for the magnitude of the optimistic learning bias for self, age, gender, education, and income, partial r(70) = .29, p = .012 (see the https://journals.sagepub.com/doi/suppl/10.1177/0956797617737129 for details).\n\n> Preregistered hypotheses and analysis plans, materials, methods, and results for this study can be found at the Open Science Framework (http://www.osf.io/n7sfm)."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "green"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Shared data and code detected."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "data_open",
+          "code_open",
+          "materials_open",
+          "prereg_open",
+          "on_request",
+          "data_statements",
+          "code_statements",
+          "materials_statements",
+          "prereg_statements"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "0956797617737129"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "All data and materials have been made publicly available via the Open Science Framework and can be accessed at file://localhost/opt/grobid/grobid-home/tmp/osf.io/6b4ag."
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Detailed descriptions of our planned analyses as well as the full set of materials, including all additional measures, can be found at the Open Science Framework (osf.io/6b4ag).",
+                  "We examined the learning rate (the unstandardized regression coefficient indicating the strength of the relationship between the estimation error and the subsequent update) for good and bad news for the self and a friend using repeated measures analyses of variance, controlling for the differences in estimation errors between good and bad news for both conditions (see https://journals.sagepub.com/doi/suppl/10.1177/0956797617737129. 2).",
+                  "In a pilot study, another set of participants (N = 40) rated both strangers (liked and disliked) on likability (likability, generosity, warmth, blameworthiness, morality, friendliness; see the https://journals.sagepub.com/doi/suppl/10.1177/0956797617737129 for factor analyses confirming one general-likability dimension) as well as intelligence and health.",
+                  "The learning bias for the self condition and the learning bias for the stranger condition were not significantly correlated, r(76) = .10, p = .386 (see https://journals.sagepub.com/doi/suppl/10.1177/0956797617737129. S3b in the https://journals.sagepub.com/doi/suppl/10.1177/0956797617737129).",
+                  "Individual differences in the magnitude of vicarious optimism for strangers were positively correlated with donations to charity, r(76) = .26, p = .02 (see https://journals.sagepub.com/doi/suppl/10.1177/0956797617737129. S4b in the https://journals.sagepub.com/doi/suppl/10.1177/0956797617737129). This relationship was robust to controlling for the magnitude of the optimistic learning bias for self, age, gender, education, and income, partial r(70) = .29, p = .012 (see the https://journals.sagepub.com/doi/suppl/10.1177/0956797617737129 for details).",
+                  "Preregistered hypotheses and analysis plans, materials, methods, and results for this study can be found at the Open Science Framework (http://www.osf.io/n7sfm)."
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Detailed descriptions of our planned analyses as well as the full set of materials, including all additional measures, can be found at the Open Science Framework (osf.io/6b4ag).",
+                  "All data and materials have been made publicly available via the Open Science Framework and can be accessed at file://localhost/opt/grobid/grobid-home/tmp/osf.io/6b4ag.",
+                  "Preregistered hypotheses and analysis plans, materials, methods, and results for this study can be found at the Open Science Framework (http://www.osf.io/n7sfm)."
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "For Study 2b, we preregistered the hypothesis, sampling procedures, and analysis plan (https://osf.io/a5bmw/).",
+                  "We report the preregistered analyses in the https://journals.sagepub.com/doi/suppl/10.1177/0956797617737129 which produced the same results as reported here.",
+                  "Because the predicted interaction between valence and identifiability was only at trend level, we conducted a preregistered replication study using a larger sample on the basis of the effect size found in Study 2a (https://osf.io/a5bmw/).",
+                  "As in Study 2b, we preregistered our hypothesis, methods, participant recruitment strategy, and analysis before running the studies and analyzing the data (osf.io/zmf4c).",
+                  "The design and analysis plans for Studies 2b and 3 were preregistered at the Open Science Framework (Study 2b: http://www.osf.io/a5bmw/register/565fb3678c5e4a66b5582f67 Study 3: http://www.osf.io/zmf4c/register/564d31db8c5e4a7c9694b2be).",
+                  "Preregistered hypotheses and analysis plans, materials, methods, and results for this study can be found at the Open Science Framework (http://www.osf.io/n7sfm)."
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "data_open",
+          "code_open"
+        ],
+        "v": [
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

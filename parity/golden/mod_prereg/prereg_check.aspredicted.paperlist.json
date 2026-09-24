@@ -1,0 +1,391 @@
+{
+  "id": "prereg_check.aspredicted.paperlist",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "prereg_check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Preregistration Check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "method"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 3,
+        "names": [
+          "template_name",
+          "title",
+          "id",
+          "link",
+          "date_created",
+          "date_modified",
+          "date_registered",
+          "embargo_end_date",
+          "ia_url",
+          "research_questions",
+          "study_type",
+          "blinding",
+          "study_design_overview",
+          "randomization",
+          "existing_data",
+          "data_collection_procedures",
+          "sample_size",
+          "sample_size_rationale",
+          "stopping_rule",
+          "manipulated_variables",
+          "measured_variables",
+          "statistical_tests",
+          "inference_criteria",
+          "data_exclusion_criteria",
+          "missing_data_handling",
+          "exploratory_analyses",
+          "description",
+          "existing_data_explanation",
+          "design_dependent_variables",
+          "outliers_and_exclusions",
+          "additional_comments",
+          "paper_id"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "OSF Preregistration",
+              "Open-Ended Registration",
+              "AsPredicted\n\nAsPredicted"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Papercheck Test",
+              "Should Governments Invest More in Nudges?",
+              "To err is human\n\nHow infants encode unexpected events: a SSVEP study"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "48ncu",
+              "5xysn",
+              "by8i8v\n\nve2qn"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://osf.io/48ncu",
+              "https://osf.io/5xysn",
+              "https://aspredicted.org/by8i8v.pdf\n\nhttps://aspredicted.org/ve2qn.pdf"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2025-11-28T19:14:24.639665",
+              "2017-02-28T18:22:56.738000",
+              "2025/11/27 23:20 (PT)\n\n2017/08/18 06:55 (PT)"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2025-08-05T11:55:35.267689",
+              "2017-02-28T19:47:12.367000",
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2025-11-28T19:14:24.608826",
+              "2017-02-28T18:25:34.318000",
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "",
+              "",
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://archive.org/details/osf-registrations-48ncu-v1",
+              "https://archive.org/details/osf-registrations-5xysn-v1",
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Automation can be used to check for errors in scientific manuscripts, and inform authors about possible corrections. In this study we examine the usefulness of metacheck to improve best practices.",
+              null,
+              "Automation can be used to check for errors in scientific manuscripts, and inform authors about possible corrections. In this study we examine the usefulness of metacheck to improve best practices.\n\nWe assess infants’ brain responses to unexpected events (violation of expectation response). Specifically, we will present sequences with a physically or socially expected or unexpected outcome (e.g. a ball falling through a table), while flickering these sequences at a theta (4 Hz) or alpha (6 Hz) frequency (rapid repetition paradigm). We will look at power differences in oscillatory responses at posterior electrodes (steady state visually evoked potentials; SSVEPs). We predict power differences between the unexpected and the expected outcome, possibly interacting with the driving frequency. That is, higher theta SSVEPs for the unexpected outcome, indicating an interaction with learning processes, but higher alpha SSVEPs for the expected outcome, indicating reduced attention."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Experiment - A researcher randomly assigns treatments to study subjects, this includes field or lab experiments. This is also known as an intervention experiment and includes randomized controlled trials.",
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "No blinding is involved in this study.",
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Two conditions. In one, researchers receive automated feedback. In the control condition, they do not receive feedback.",
+              null,
+              "Two conditions. In one, researchers receive automated feedback. In the control condition, they do not receive feedback.\n\nDesign\n- 4 Core Knowledge Domains (action, number, continuity, physics), with 4 stimulus variations (for each domain)\n- 2 Outcomes (expected, unexpected)\n- 2 Frequencies (alpha, theta)\n\nComplete within-subjects design:\n- 64 trials (4 Domains in 4 Variations, 2 Outcomes, 2 Frequencies)\n- 4.5 seconds presentation of each trial: Initial situation (1.5 s), action/physical event (1.5 s), outcome (1.5 s).\n- The presentation is blocked (4 stimuli per block), but may be paused after each trial.\n- If the infant is still attentive, the whole presentation (ca. 10 minutes) will be repeated a second time"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "We randomly assign to conditions",
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Registration prior to creation of data",
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "We will include all scientists who are willing to participate.",
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "We randomly assigned 50 scientists to a condition where their manuscript was automatically checked for errors, and 50 scientists to a control condition with a checklist.",
+              null,
+              "We randomly assigned 50 scientists to a condition where their manuscript was automatically checked for errors, and 50 scientists to a control condition with a checklist.\n\nNine-month-old (9 months 0 days – 9 months 30 days) full-term born infants will be tested. The age was selected based on former studies indicating VOE responses for the core knowledge domains (e.g., Reid et al., 2009). Previous EEG studies used final samples between 10 and 50 infants (cf Hoehl & Wahl, 2012). As we apply a new EEG design and cannot yet estimate SSVEP effect sizes, we will test 35 infants, towards the upper end of the sample size range.\n\n8) Anything else you would like to pre-register?\n(e.g., data exclusions, variables collected for exploratory purposes, unusual analyses planned?)\nThere are usually high drop out rates for infant EEG studies. Although we aim to collect 35 infants with good recording quality, the completition of this samplesize depents on the drop out and the availibility of infants in the Database. Thus it is possible that the final analysis includes some infants less\n\n\nVersion of AsPredicted Questions: 1.05\n\n\nReport a bug | Make a suggestion | Terms of use | Help | About\n\n\nset_java_cookie('last_page','/ve2qn.pdf','0.041666666666667');reset_footer();"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Based on an a-priori power analysis for an independent t-test, with an expected effect size of d = 0.6, an alpha of 0.05, and a desired power of 0.85, we needed to collect at least 50 participants per group.",
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "We will stop after data from 100 researchers has been collected.",
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Two conditions. In one, researchers receive automated feedback. In the control condition, they do not receive feedback.",
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "We will code all manuscripts for mistakes, and count the total number of mistakes per manuscript.",
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "We will perform an independent t-test on the number of mistakes in each group.",
+              null,
+              "We will perform an independent t-test on the number of mistakes in each group.\n\nFor the extraction of the SSVEP signal from the EEG data see 3) Dependent Measure\n\nANOVA (3 within factors)\n- 4 Core Knowledge Domänen (action, number, continuity, physics)\n- 2 Outcomes (expected, unexpected)\n- 2 Freq (alpha, theta)\n\nHypothesis:\n1. Main Effect Outcome: Higher Amplitudes for unexpected opposed to expected outcomes\n2. Outcome*Frequency interaction (possibly): Functional differentiation between Theta (higher for unexpected) and Alpha (higher [less supression] for expected).\n\n\n6) Any secondary analyses?\n3. Explorative: Different strength in effects for the 4 core knowledge domains? (effect of cognition or stimulus material?)\n4. Explorative: temporal characteristics of the SSVEP Amplitude (similar to the temporal characteristics found in ERP Studies? Frequency Specific?)\n\n\n7) How many observations will be collected or what will determine sample size?\nNo need to justify decision, but be precise about exactly how the number will be determined.\nNine-month-old (9 months 0 days – 9 months 30 days) full-term born infants will be tested. The age was selected based on former studies indicating VOE responses for the core knowledge domains (e.g., Reid et al., 2009). Previous EEG studies used final samples between 10 and 50 infants (cf Hoehl & Wahl, 2012). As we apply a new EEG design and cannot yet estimate SSVEP effect sizes, we will test 35 infants, towards the upper end of the sample size range.\n\n8) Anything else you would like to pre-register?\n(e.g., data exclusions, variables collected for exploratory purposes, unusual analyses planned?)\nThere are usually high drop out rates for infant EEG studies. Although we aim to collect 35 infants with good recording quality, the completition of this samplesize depents on the drop out and the availibility of infants in the Database. Thus it is possible that the final analysis includes some infants less\n\n\nVersion of AsPredicted Questions: 1.05\n\n\nReport a bug | Make a suggestion | Terms of use | Help | About\n\n\nset_java_cookie('last_page','/ve2qn.pdf','0.041666666666667');reset_footer();"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "We will interpret effects as significant if p &lt; .05",
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "No exclusions are expected.",
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "No missing data is expected.",
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "We also measured the expertise of researchers (in years) to explore whether the automated tool would be more useful, the less research experience researchers had. We also asked researchers to rate how useful they found the checklist or app on a scale from 1 (not at all) to 7 (extremely useful).",
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "With many “nudge units” already established and more in the planning stages, governments must decide on the appropriate amount of resources to invest in them. An important question, then, is to determine how efficiently nudge initiatives achieve their objectives. To be maximally impactful, future policy-oriented behavioral science research will need to measure the relative effectiveness of behavioral interventions in comparison to more traditional interventions for influencing behavior, such as tax incentives and subsidies. We make this point in our paper and note that past studies of nudges designed to encourage behavior change have typically measured only the extent to which the intended behavior was changed (if at all). In the absence of relative effectiveness calculations determining whether a given nudge is more effective than, say, a tax break, policymakers lack the evidence needed to design optimal policies and to decide on the level of resources to allocate to testing and deploying behaviorally-informed interventions as either supplements to or replacements for traditional interventions.  In addition to raising these important issues, in this paper, we zoom in on four major policy areas where high-profile nudge units have focused attention to date—financial security in retirement, education, energy, and health. Within each area, we focus on one well-studied behavior that government agencies have sought to change through numerous policy interventions, and we provide relative effectiveness calculations using available evidence from published research in leading journals. In the process, we also share new results from one of the first experiments conducted by the recently-formed U.S. White House Social and Behavioral Sciences Team, which included nearly a million active duty members of the U.S. military.  We conclude that compared to traditional policy tools, recent nudge interventions have had especially favorable ratios of impact to cost, but more relative effectiveness calculations are urgently needed.",
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              "No, no data have been collected for this study yet.\n\nNo, no data have been collected for this study yet"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              "We will code all manuscripts for mistakes, and count the total number of mistakes per manuscript.\n\nThe dependent variable is the SSVEP signal at posterior recording sites (focussing on electrodes O1, O2, Oz).\n\nThe SSVEP Signal will be preprocessed as follows:\n- Artifact removal by ICA decomposition and visual inspection (Chaumon et al., 2015).\n- Wavelet Analysis at the 2 SSVEP Frequencies (4 Hz, 6 Hz)\n- Main Score: relative signal change in % (SSVEP Amplitude) for the outcome picture (3.0 – 4.5 after stimulus onset), relative to the preceding 1.5 sec (1.5 – 3 after stimulus onset). used as baseline."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              "none are expected.\n\nNA"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              "We also measured the expertise of researchers (in years) to explore whether the automated tool would be more useful, the less research experience researchers had. We also asked researchers to rate how useful they found the checklist or app on a scale from 1 (not at all) to 7 (extremely useful).\n\nNA"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "paper_a",
+              "paper_b",
+              null
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "We found 3 preregistrations.",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(id = c(\"<a href='https://osf.io/48ncu' target='_blank'>48ncu<\/a>\", \n\"<a href='https://osf.io/5xysn' target='_blank'>5xysn<\/a>\", \"<a href='https://aspredicted.org/by8i8v.pdf<br><br>https://aspredicted.org/ve2qn.pdf' target='_blank'>by8i8v<br><br>ve2qn<\/a>\"\n), title = c(\"Papercheck Test\", \"Should Governments Invest More in Nudges?\", \n\"To err is human<br><br>How infants encode unexpected events: a SSVEP study\"\n), template = c(\"OSF Preregistration\", \"Open-Ended Registration\", \n\"AsPredicted<br><br>AsPredicted\")), row.names = c(NA, -3L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 2, FALSE)\n```\n",
+          "Meta-scientific research has shown that deviations from preregistrations are often not reported or checked, and that the most common deviations concern the sample size. We recommend manually checking the full preregistration at the links above, and have provided the preregistered sample size.",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(id = c(\"48ncu\", \"5xysn\", \"by8i8v<br><br>ve2qn\"\n), sample_size = c(\"We randomly assigned 50 scientists to a condition where their manuscript was automatically checked for errors, and 50 scientists to a control condition with a checklist.\", \nNA, \"We randomly assigned 50 scientists to a condition where their manuscript was automatically checked for errors, and 50 scientists to a control condition with a checklist.<br><br>Nine-month-old (9 months 0 days – 9 months 30 days) full-term born infants will be tested. The age was selected based on former studies indicating VOE responses for the core knowledge domains (e.g., Reid et al., 2009). Previous EEG studies used final samples between 10 and 50 infants (cf Hoehl & Wahl, 2012). As we apply a new EEG design and cannot yet estimate SSVEP effect sizes, we will test 35 infants, towards the upper end of the sample size range.<br><br>8) Anything else you would like to pre-register?<br>(e.g., data exclusions, variables collected for exploratory purposes, unusual analyses planned?)<br>There are usually high drop out rates for infant EEG studies. Although we aim to collect 35 infants with good recording quality, the completition of this samplesize depents on the drop out and the availibility of infants in the Database. Thus it is possible that the final analysis includes some infants less<br><br><br>Version of AsPredicted Questions: 1.05<br><br><br>Report a bug | Make a suggestion | Terms of use | Help | About<br><br><br>set_java_cookie('last_page','/ve2qn.pdf','0.041666666666667');reset_footer();\"\n)), row.names = c(NA, -3L), class = c(\"tbl_df\", \"tbl\", \"data.frame\"\n))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 2, FALSE)\n```\n",
+          "::: {.callout-tip title=\"Full Preregistration\" collapse=\"true\"}\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Field = c(\"template_name\", \"title\", \"id\", \"link\", \n\"date_created\", \"date_modified\", \"date_registered\", \"embargo_end_date\", \n\"ia_url\", \"research_questions\", \"study_type\", \"blinding\", \"study_design_overview\", \n\"randomization\", \"existing_data\", \"data_collection_procedures\", \n\"sample_size\", \"sample_size_rationale\", \"stopping_rule\", \"manipulated_variables\", \n\"measured_variables\", \"statistical_tests\", \"inference_criteria\", \n\"data_exclusion_criteria\", \"missing_data_handling\", \"exploratory_analyses\", \n\"description\", \"existing_data_explanation\", \"design_dependent_variables\", \n\"outliers_and_exclusions\", \"additional_comments\", \"paper_id\"), \n    \"Preregistration 1\" = c(\"OSF Preregistration\", \"Papercheck Test\", \n    \"48ncu\", \"https://osf.io/48ncu\", \"2025-11-28T19:14:24.639665\", \n    \"2025-08-05T11:55:35.267689\", \"2025-11-28T19:14:24.608826\", \n    \"\", \"https://archive.org/details/osf-registrations-48ncu-v1\", \n    \"Automation can be used to check for errors in scientific manuscripts, and inform authors about possible corrections. In this study we examine the usefulness of metacheck to improve best practices.\", \n    \"Experiment - A researcher randomly assigns treatments to study subjects, this includes field or lab experiments. This is also known as an intervention experiment and includes randomized controlled trials.\", \n    \"No blinding is involved in this study.\", \"Two conditions. In one, researchers receive automated feedback. In the control condition, they do not receive feedback.\", \n    \"We randomly assign to conditions\", \"Registration prior to creation of data\", \n    \"We will include all scientists who are willing to participate.\", \n    \"We randomly assigned 50 scientists to a condition where their manuscript was automatically checked for errors, and 50 scientists to a control condition with a checklist.\", \n    \"Based on an a-priori power analysis for an independent t-test, with an expected effect size of d = 0.6, an alpha of 0.05, and a desired power of 0.85, we needed to collect at least 50 participants per group.\", \n    \"We will stop after data from 100 researchers has been collected.\", \n    \"Two conditions. In one, researchers receive automated feedback. In the control condition, they do not receive feedback.\", \n    \"We will code all manuscripts for mistakes, and count the total number of mistakes per manuscript.\", \n    \"We will perform an independent t-test on the number of mistakes in each group.\", \n    \"We will interpret effects as significant if p &lt; .05\", \n    \"No exclusions are expected.\", \"No missing data is expected.\", \n    \"We also measured the expertise of researchers (in years) to explore whether the automated tool would be more useful, the less research experience researchers had. We also asked researchers to rate how useful they found the checklist or app on a scale from 1 (not at all) to 7 (extremely useful).\", \n    NA, NA, NA, NA, NA, \"paper_a\"), \"Preregistration 2\" = c(\"Open-Ended Registration\", \n    \"Should Governments Invest More in Nudges?\", \"5xysn\", \"https://osf.io/5xysn\", \n    \"2017-02-28T18:22:56.738000\", \"2017-02-28T19:47:12.367000\", \n    \"2017-02-28T18:25:34.318000\", \"\", \"https://archive.org/details/osf-registrations-5xysn-v1\", \n    NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, \n    NA, NA, \"With many “nudge units” already established and more in the planning stages, governments must decide on the appropriate amount of resources to invest in them. An important question, then, is to determine how efficiently nudge initiatives achieve their objectives. To be maximally impactful, future policy-oriented behavioral science research will need to measure the relative effectiveness of behavioral interventions in comparison to more traditional interventions for influencing behavior, such as tax incentives and subsidies. We make this point in our paper and note that past studies of nudges designed to encourage behavior change have typically measured only the extent to which the intended behavior was changed (if at all). In the absence of relative effectiveness calculations determining whether a given nudge is more effective than, say, a tax break, policymakers lack the evidence needed to design optimal policies and to decide on the level of resources to allocate to testing and deploying behaviorally-informed interventions as either supplements to or replacements for traditional interventions.  In addition to raising these important issues, in this paper, we zoom in on four major policy areas where high-profile nudge units have focused attention to date—financial security in retirement, education, energy, and health. Within each area, we focus on one well-studied behavior that government agencies have sought to change through numerous policy interventions, and we provide relative effectiveness calculations using available evidence from published research in leading journals. In the process, we also share new results from one of the first experiments conducted by the recently-formed U.S. White House Social and Behavioral Sciences Team, which included nearly a million active duty members of the U.S. military.  We conclude that compared to traditional policy tools, recent nudge interventions have had especially favorable ratios of impact to cost, but more relative effectiveness calculations are urgently needed.\", \n    NA, NA, NA, NA, \"paper_b\"), \"Preregistration 3\" = c(\"AsPredicted<br><br>AsPredicted\", \n    \"To err is human<br><br>How infants encode unexpected events: a SSVEP study\", \n    \"by8i8v<br><br>ve2qn\", \"https://aspredicted.org/by8i8v.pdf<br><br>https://aspredicted.org/ve2qn.pdf\", \n    \"2025/11/27 23:20 (PT)<br><br>2017/08/18 06:55 (PT)\", NA, \n    NA, NA, NA, \"Automation can be used to check for errors in scientific manuscripts, and inform authors about possible corrections. In this study we examine the usefulness of metacheck to improve best practices.<br><br>We assess infants’ brain responses to unexpected events (violation of expectation response). Specifically, we will present sequences with a physically or socially expected or unexpected outcome (e.g. a ball falling through a table), while flickering these sequences at a theta (4 Hz) or alpha (6 Hz) frequency (rapid repetition paradigm). We will look at power differences in oscillatory responses at posterior electrodes (steady state visually evoked potentials; SSVEPs). We predict power differences between the unexpected and the expected outcome, possibly interacting with the driving frequency. That is, higher theta SSVEPs for the unexpected outcome, indicating an interaction with learning processes, but higher alpha SSVEPs for the expected outcome, indicating reduced attention.\", \n    NA, NA, \"Two conditions. In one, researchers receive automated feedback. In the control condition, they do not receive feedback.<br><br>Design<br>- 4 Core Knowledge Domains (action, number, continuity, physics), with 4 stimulus variations (for each domain)<br>- 2 Outcomes (expected, unexpected)<br>- 2 Frequencies (alpha, theta)<br><br>Complete within-subjects design:<br>- 64 trials (4 Domains in 4 Variations, 2 Outcomes, 2 Frequencies)<br>- 4.5 seconds presentation of each trial: Initial situation (1.5 s), action/physical event (1.5 s), outcome (1.5 s).<br>- The presentation is blocked (4 stimuli per block), but may be paused after each trial.<br>- If the infant is still attentive, the whole presentation (ca. 10 minutes) will be repeated a second time\", \n    NA, NA, NA, \"We randomly assigned 50 scientists to a condition where their manuscript was automatically checked for errors, and 50 scientists to a control condition with a checklist.<br><br>Nine-month-old (9 months 0 days – 9 months 30 days) full-term born infants will be tested. The age was selected based on former studies indicating VOE responses for the core knowledge domains (e.g., Reid et al., 2009). Previous EEG studies used final samples between 10 and 50 infants (cf Hoehl & Wahl, 2012). As we apply a new EEG design and cannot yet estimate SSVEP effect sizes, we will test 35 infants, towards the upper end of the sample size range.<br><br>8) Anything else you would like to pre-register?<br>(e.g., data exclusions, variables collected for exploratory purposes, unusual analyses planned?)<br>There are usually high drop out rates for infant EEG studies. Although we aim to collect 35 infants with good recording quality, the completition of this samplesize depents on the drop out and the availibility of infants in the Database. Thus it is possible that the final analysis includes some infants less<br><br><br>Version of AsPredicted Questions: 1.05<br><br><br>Report a bug | Make a suggestion | Terms of use | Help | About<br><br><br>set_java_cookie('last_page','/ve2qn.pdf','0.041666666666667');reset_footer();\", \n    NA, NA, NA, NA, \"We will perform an independent t-test on the number of mistakes in each group.<br><br>For the extraction of the SSVEP signal from the EEG data see 3) Dependent Measure<br><br>ANOVA (3 within factors)<br>- 4 Core Knowledge Domänen (action, number, continuity, physics)<br>- 2 Outcomes (expected, unexpected)<br>- 2 Freq (alpha, theta)<br><br>Hypothesis:<br>1. Main Effect Outcome: Higher Amplitudes for unexpected opposed to expected outcomes<br>2. Outcome*Frequency interaction (possibly): Functional differentiation between Theta (higher for unexpected) and Alpha (higher [less supression] for expected).<br><br><br>6) Any secondary analyses?<br>3. Explorative: Different strength in effects for the 4 core knowledge domains? (effect of cognition or stimulus material?)<br>4. Explorative: temporal characteristics of the SSVEP Amplitude (similar to the temporal characteristics found in ERP Studies? Frequency Specific?)<br><br><br>7) How many observations will be collected or what will determine sample size?<br>No need to justify decision, but be precise about exactly how the number will be determined.<br>Nine-month-old (9 months 0 days – 9 months 30 days) full-term born infants will be tested. The age was selected based on former studies indicating VOE responses for the core knowledge domains (e.g., Reid et al., 2009). Previous EEG studies used final samples between 10 and 50 infants (cf Hoehl & Wahl, 2012). As we apply a new EEG design and cannot yet estimate SSVEP effect sizes, we will test 35 infants, towards the upper end of the sample size range.<br><br>8) Anything else you would like to pre-register?<br>(e.g., data exclusions, variables collected for exploratory purposes, unusual analyses planned?)<br>There are usually high drop out rates for infant EEG studies. Although we aim to collect 35 infants with good recording quality, the completition of this samplesize depents on the drop out and the availibility of infants in the Database. Thus it is possible that the final analysis includes some infants less<br><br><br>Version of AsPredicted Questions: 1.05<br><br><br>Report a bug | Make a suggestion | Terms of use | Help | About<br><br><br>set_java_cookie('last_page','/ve2qn.pdf','0.041666666666667');reset_footer();\", \n    NA, NA, NA, NA, NA, \"No, no data have been collected for this study yet.<br><br>No, no data have been collected for this study yet\", \n    \"We will code all manuscripts for mistakes, and count the total number of mistakes per manuscript.<br><br>The dependent variable is the SSVEP signal at posterior recording sites (focussing on electrodes O1, O2, Oz).<br><br>The SSVEP Signal will be preprocessed as follows:<br>- Artifact removal by ICA decomposition and visual inspection (Chaumon et al., 2015).<br>- Wavelet Analysis at the 2 SSVEP Frequencies (4 Hz, 6 Hz)<br>- Main Score: relative signal change in % (SSVEP Amplitude) for the outcome picture (3.0 – 4.5 after stimulus onset), relative to the preceding 1.5 sec (1.5 – 3 after stimulus onset). used as baseline.\", \n    \"none are expected.<br><br>NA\", \"We also measured the expertise of researchers (in years) to explore whether the automated tool would be more useful, the less research experience researchers had. We also asked researchers to rate how useful they found the checklist or app on a scale from 1 (not at all) to 7 (extremely useful).<br><br>NA\", \n    NA)), row.names = c(\"template_name\", \"title\", \"id\", \"link\", \n\"date_created\", \"date_modified\", \"date_registered\", \"embargo_end_date\", \n\"ia_url\", \"research_questions\", \"study_type\", \"blinding\", \"study_design_overview\", \n\"randomization\", \"existing_data\", \"data_collection_procedures\", \n\"sample_size\", \"sample_size_rationale\", \"stopping_rule\", \"manipulated_variables\", \n\"measured_variables\", \"statistical_tests\", \"inference_criteria\", \n\"data_exclusion_criteria\", \"missing_data_handling\", \"exploratory_analyses\", \n\"description\", \"existing_data_explanation\", \"design_dependent_variables\", \n\"outliers_and_exclusions\", \"additional_comments\", \"paper_id\"), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 5, FALSE)\n```\n\n\n:::\n",
+          "::: {.callout-tip title=\"Learn More\" collapse=\"true\"}\n\nFor metascientific articles demonstrating the rate of deviations from preregistrations, see:\n\nvan den Akker O, Bakker M, van Assen M, Pennington C, Verweij L, Elsherif M, Claesen A, Gaillard S, Yeung S, Frankenberger J, Krautter K, Cockcroft J, Kreuer K, Evans T, Heppel F, Schoch S, Korbmacher M, Yamada Y, Albayrak-Aydemir N, Wicherts J (2024). &ldquo;The potential of preregistration in psychology: Assessing preregistration producibility and preregistration-study consistency.&rdquo; <em>Psychological Methods<\/em>. <a href=\"https://doi.org/10.1037/met0000687\">doi:10.1037/met0000687<\/a>.\n\nFor educational material on how to report deviations from preregistrations, see:\n\nLakens, Daniël (2024). &ldquo;When and How to Deviate From a Preregistration.&rdquo; <em>Collabra: Psychology<\/em>, <b>10<\/b>(1), 117094. <a href=\"https://doi.org/10.1525/collabra.117094\">doi:10.1525/collabra.117094<\/a>.\n\n:::\n"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "info"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "We found 3 preregistrations."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 2,
+        "names": [
+          "paper_id",
+          "preregistration"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "paper_a",
+              "paper_b"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1,
+              1
+            ]
+          }
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

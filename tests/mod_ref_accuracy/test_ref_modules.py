@@ -286,3 +286,55 @@ def test_as_numeric() -> None:
         16.0,
         1.5,
     ]
+
+
+def test_as_numeric_follows_r_string2real() -> None:
+    # R's as.numeric(): C isspace() padding, ASCII digits only, C99 hex floats
+    values = ["１９９０", "1990 ", " 2014", "٢٠١٤", "\f2018\v", "0x1p3", "0x1.f8p10"]
+    assert [ra._as_numeric(x) for x in values] == [None, None, None, None, 2018.0, 8.0, 2016.0]
+    assert [ra._as_numeric(x) for x in ["-0x10", "+0X7de", "1_000", "0x", "Inf", "NaN"]] == [
+        -16.0,
+        2014.0,
+        None,
+        None,
+        float("inf"),
+        None,
+    ]
+
+
+def test_incompatible_join_keys_error_like_dplyr() -> None:
+    from pytacheck.module import ModuleError
+    from tests.mod_ref_accuracy.edits import ra_setcol
+
+    # a character xref_id cannot be joined with the integer bib_id (dplyr refuses)
+    p = ra_setcol(ra_demo(), "xref", "xref_id", ["2", "0", "0", None, "1"], "string")
+    with pytest.raises(ModuleError, match="Can't join `x\\$bib_id` with `y\\$bib_id`"):
+        pc.module_run(p, "ref_consistency")
+    # so is a character text_id, even though every joined row has an NA text_id
+    p = ra_setcol(ra_demo(), "xref", "text_id", ["4", "8", "17", "25", "25"], "string")
+    with pytest.raises(ModuleError, match="Can't join `x\\$text_id` with `y\\$text_id`"):
+        pc.module_run(p, "ref_consistency")
+    # integer and double keys join
+    p = ra_setcol(ra_demo(), "xref", "xref_id", [2.0, 0.0, 0.0, None, 1.0], "float64")
+    assert pc.module_run(p, "ref_consistency").traffic_light == "red"
+
+
+def test_key_kind() -> None:
+    from pytacheck.modules.ref_consistency import _key_kind
+
+    assert _key_kind(pd.Series([1, 2], dtype="Int64")) == "num"
+    assert _key_kind(pd.Series([], dtype="string")) == "chr"  # vctrs checks empty keys too
+    assert _key_kind(pd.Series([None, None], dtype="string")) == "chr"
+    assert _key_kind(pd.Series([float("nan")])) == "unspecified"  # R's logical NA
+    assert _key_kind(pd.Series([None, "b0"], dtype=object)) == "chr"
+    assert _key_kind(pd.Series([None, 3], dtype=object)) == "num"
+    assert _key_kind(pd.Series([True, None], dtype="boolean")) == "lgl"
+
+
+def test_param_help_keeps_roxygen_line_breaks() -> None:
+    # module_info() keeps the line breaks of a multi-line @param, as R does
+    params = pc.module_info("ref_accuracy").params
+    assert params["max_authors"].startswith(
+        "how many of the leading authors to compare against the\nretrieved record."
+    )
+    assert "\n" not in params["paper"]
