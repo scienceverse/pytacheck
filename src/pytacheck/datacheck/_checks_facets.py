@@ -18,6 +18,7 @@ from __future__ import annotations
 
 import functools
 from collections import Counter
+from collections.abc import Mapping
 from typing import Any
 
 from pytacheck._r.regex import compile_r, grepl
@@ -352,8 +353,23 @@ def _coltype_to_facets(ct: str | None, is_numeric_hint: Any = None) -> dict[str,
 
     Port of ``R/data_check_helpers.R::.coltype_to_facets()``.
     """
+    if ct is not None and not isinstance(ct, str):
+        v = chr(ct)
+        if len(v) != 1:
+            raise ValueError("EXPR must be a length 1 vector")
+        ct = v[0]
+        if ct is None:  # switch(NA_character_, ...) takes the default
+            return {"rep": None, "lvl": None}
     rep, lvl = _COLTYPE_FACETS.get(ct if ct is not None else "unknown", (None, None))
     return {"rep": rep, "lvl": lvl}
+
+
+def _is_true(x: Any) -> bool:
+    """R ``isTRUE(x)``: a single, non-missing ``TRUE``."""
+    if x is None or isinstance(x, str):
+        return False
+    v = rvec(x)
+    return v.kind == "logical" and len(v) == 1 and v.values[0] is True
 
 
 def data_col_facets(col_name: Any, values: Any, in_scale_block: Any = None) -> dict[str, Any]:
@@ -409,7 +425,7 @@ def data_col_facets(col_name: Any, values: Any, in_scale_block: Any = None) -> d
         elif representation == "datetime":
             concept = "timestamp"
 
-    if concept is None and in_scale_block is True:
+    if concept is None and _is_true(in_scale_block):
         concept = "likert"
         measurement_level = "ordinal"
 
@@ -418,7 +434,7 @@ def data_col_facets(col_name: Any, values: Any, in_scale_block: Any = None) -> d
 
     if (
         measurement_level is None
-        and prim.get("is_numeric") is not True
+        and not _is_true(prim.get("is_numeric"))
         and representation != "empty"
         and n_nona > 0
         and len(_numbers(rv)) / n_nona < 0.5
@@ -472,6 +488,8 @@ def _tabular_usable(facets: Any, df: Any) -> dict[str, Any]:
     ``{"usable": bool, "reason": str | None}`` from the share of free-text
     columns and of mostly-empty columns.
     """
+    if isinstance(facets, Mapping):
+        facets = list(facets.values())
     p = len(facets) if facets is not None else 0
     if p == 0 or df is None or len(df) == 0:
         return {"usable": False, "reason": "the file has no data rows or columns"}

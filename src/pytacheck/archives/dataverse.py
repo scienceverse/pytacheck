@@ -452,6 +452,21 @@ def _url_decode(url: str) -> str:
     return data.decode("utf-8", errors="surrogateescape")
 
 
+def _invalid_utf8(s: str | None) -> bool:
+    """Is *s* (a :func:`_url_decode` result) invalid UTF-8 in R?
+
+    ``rawToChar()`` keeps whatever bytes the percent escapes gave; those that
+    are not valid UTF-8 come back from :func:`_url_decode` as lone surrogates
+    (``surrogateescape``). R's regex functions then refuse the string.
+    """
+    return s is not None and any("\udc80" <= ch <= "\udcff" for ch in s)
+
+
+def _r_shown(s: str) -> str:
+    """How R prints an invalid-UTF-8 string in a message (``<ff>`` for each bad byte)."""
+    return "".join(f"<{ord(ch) - 0xDC00:02x}>" if "\udc80" <= ch <= "\udcff" else ch for ch in s)
+
+
 _URL_RESERVED_OK = frozenset("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789._~-")
 
 
@@ -648,8 +663,12 @@ def _link_matches(paper: Any, pattern: str, prefilter: str | None = None) -> pd.
                 keep = grepl(prefilter, frame["text"].tolist(), ignore_case=True, perl=True)
                 target = frame.loc[[bool(k) for k in keep]]
     found = text_search(target, pattern, return_="match", perl=True)
-    keep = ["text"] + [c for c in ("text_id", "paper_id") if c in found.columns]
-    return found.loc[:, keep].rename(columns={"text": "href"})
+    ids = [c for c in ("text_id", "paper_id") if c in found.columns]
+    if "text" not in found.columns:
+        # an empty paper list: R's `href = text` then names the (NULL) local
+        # variable `text`, which selects nothing
+        return found.loc[:, ids]
+    return found.loc[:, ["text", *ids]].rename(columns={"text": "href"})
 
 
 def _collect_links(parts: Sequence[pd.DataFrame]) -> pd.DataFrame:
@@ -657,6 +676,13 @@ def _collect_links(parts: Sequence[pd.DataFrame]) -> pd.DataFrame:
     from pytacheck._r import bind_rows
 
     links = bind_rows(parts)
+    if "href" not in links.columns:
+        # R: `href` is then the (NULL) local variable, so mutate() adds a
+        # character(0) column -- which only fits a table without rows
+        if len(links) > 0:
+            raise ValueError(f"`href` must be size {len(links)} or 1, not 0.")
+        links["href"] = pd.Series([], dtype="string", index=links.index)
+        return links.reset_index(drop=True)
     links["href"] = pd.Series(sub("/+$", "", links["href"]), index=links.index, dtype="string")
     return links.drop_duplicates().reset_index(drop=True)
 
@@ -666,6 +692,12 @@ def _url_rows(paper: Any, pattern: str, ignore_case: bool = True) -> pd.DataFram
     from pytacheck.papers.tables import paper_table
 
     urls = paper_table(paper, "url")
+    if "href" not in urls.columns:
+        # an empty paper list gives a table without columns: R's `href` is then
+        # the (NULL) local variable and grepl() a logical(0) filter
+        if len(urls) > 0:
+            raise ValueError(f"`..1` must be of size {len(urls)} or 1, not size 0.")
+        return urls
     keep = [bool(v) for v in grepl(pattern, urls["href"], ignore_case=ignore_case)]
     return urls[pd.Series(keep, index=urls.index, dtype=bool)]
 
@@ -810,6 +842,10 @@ def _omit_msg(key: Any, size: float) -> str:
     return f"- omitting {_paste(key)} ({_paste(r_round(size / 1024 / 1024, 1))}MB)"
 
 
+class EmptyBodyError(ValueError):
+    """httr2's ``resp_body_raw()`` error for a response without a body."""
+
+
 def _fetch_file(
     url: str,
     headers: dict[str, str],
@@ -823,7 +859,10 @@ def _fetch_file(
     than held in memory); request failures give False, as R's ``tryCatch``.
     *reauth*, given a non-200 response, may return fresh headers to send the
     request once more with (httr2 re-authenticates once after an OAuth
-    ``invalid_token`` answer).
+    ``invalid_token`` answer). A 200 answer without a body raises
+    :class:`EmptyBodyError`: R's ``writeBin(httr2::resp_body_raw(resp), ...)``
+    sits outside that ``tryCatch``, and ``resp_body_raw()`` refuses an empty
+    body, so the whole download aborts.
     """
     import httpx
 
@@ -841,9 +880,13 @@ def _fetch_file(
                         return False
                     headers = fresh
                     continue
+                size = 0
                 with open(target, "wb") as fh:
                     for chunk in resp.iter_bytes():
                         fh.write(chunk)
+                        size += len(chunk)
+                if size == 0:
+                    raise EmptyBodyError("Can't retrieve empty body.")
                 return True
         except (httpx.HTTPError, httpx.StreamError, httpx.InvalidURL):
             return False
@@ -1193,6 +1236,11 @@ def _dataverse_parse(url: Any) -> pd.DataFrame:
                 m = bare_rx.search(u)  # type: ignore[arg-type]
                 doi[i] = m.group(1) if m else None
 
+    for i, d in enumerate(doi):
+        if _invalid_utf8(d):
+            # R: TRE's sub() cannot convert the URL-decoded DOI to wide characters
+            warnings.warn(f"unable to translate '{_r_shown(d)}' to a wide string", stacklevel=2)  # type: ignore[arg-type]
+            raise ValueError(f"input string {i + 1} is invalid")
     doi = sub(r"\.$", "", doi)
 
     needed = [i for i in range(n) if has_url[i] and not host[i] and doi[i] is not None]

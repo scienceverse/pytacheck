@@ -118,3 +118,139 @@ set_mismatch <- function(out, value) {
   }
   out
 }
+
+# ---- review scenarios (parity/cases/mod_ref_pubpeer_summary_review.yaml) ----------
+
+# More synthetic DOI sets (their PubPeer responses are in the mock directory).
+pp_dois$odd <- c("10.9999/pp.emptyusers", "10.9999/pp.nulltc", "10.9999/pp.statlist",
+                 "10.9999/pp.emptyurl", "10.9999/pp.statcase")
+pp_dois$nourl_only <- "10.9999/pp.nourl"
+pp_dois$nourl_some <- c("10.9999/pp.nourl", "10.9999/pp.zero")
+
+pp_odd <- function() pp_paper(pp_dois$odd, "odd")
+pp_nourl_only <- function() pp_paper(pp_dois$nourl_only, "nourl_only")
+pp_nourl_some <- function() pp_paper(pp_dois$nourl_some, "nourl_some")
+
+# A paper list whose second paper has no references at all.
+pp_list_empty <- function() {
+  paperlist(pp_paper(pp_dois$odd, "odd"), pp_paper(character(0), "empty"))
+}
+
+# A paper list with mixed-case paper ids and a bib_match table, so ref_table()
+# sorts the references with dplyr::arrange(paper_id, bib_id) (C locale).
+pp_case_list <- function() {
+  b <- pp_paper(c("10.9999/pp.one", "10.9999/pp.dup"), "b")
+  A <- pp_paper(c("10.9999/pp.none", "10.9999/pp.stat"), "A")
+  A$bib_match <- data.frame(bib_id = 1L, doi = "10.9999/pp.many")
+  a <- pp_paper("10.9999/pp.zero", "a")
+  paperlist(b, A, a)
+}
+
+# Append copies of rows `idx` (1-based) of a module output's table, with the
+# columns in `values` replaced.
+add_rows <- function(out, idx, values) {
+  new <- out$table[idx, ]
+  for (col in names(values)) new[[col]] <- values[[col]]
+  out$table <- dplyr::bind_rows(out$table, new)
+  out
+}
+
+# Replace several columns of a module output's table.
+set_table_cols <- function(out, values) {
+  for (col in names(values)) out$table[[col]] <- values[[col]]
+  out
+}
+
+# ref_retraction's table gains columns that collide with ref_summary's own
+# (dplyr adds .x/.y suffixes, repeating them until the names are unique).
+rv_ret_collide <- function() {
+  chain(demopaper(), c("ref_accuracy", "ref_pubpeer", "ref_retraction")) |>
+    set_table_cols(list(pubpeer = "P", pubpeer.x = "PX", accuracy_mismatch = "AM"))
+}
+
+# ref_retraction's table keeps only the join keys (and the dropped text/doi).
+rv_ret_keys <- function() {
+  chain(demopaper(), "ref_retraction") |>
+    drop_table_cols("retractionwatch")
+}
+
+# duplicated ref_accuracy rows: one in the same group (names repeat), one in a
+# new no_match group (the reference gets two rows, in group order).
+rv_acc_dup <- function() {
+  chain(demopaper(), "ref_accuracy") |>
+    add_rows(4L, list(title_mismatch = TRUE)) |>
+    add_rows(1L, list(no_match = FALSE)) |>
+    add_rows(2L, list(no_match = NA, year_mismatch = TRUE))
+}
+
+# character *_mismatch / no_match columns (`%in%` coerces FALSE to "FALSE").
+rv_acc_chr <- function() {
+  chain(demopaper(), "ref_accuracy") |>
+    set_table_cols(list(
+      doi_mismatch = c("TRUE", "FALSE", "false", NA, "0"),
+      year_mismatch = c("FALSE", "FALSE", "yes", "FALSE", "FALSE"),
+      container_mismatch = rep("FALSE", 5),
+      title_mismatch = c("FALSE", "TRUE", "FALSE", "FALSE", NA),
+      author_mismatch = rep("FALSE", 5),
+      no_match = c("TRUE", "FALSE", "FALSE", NA, "1")
+    ))
+}
+
+# integer / double *_mismatch columns mixed with logical ones (combined to integer).
+rv_acc_num <- function() {
+  chain(demopaper(), "ref_accuracy") |>
+    set_table_cols(list(
+      doi_mismatch = c(1L, 0L, NA, 2L, 0L),
+      year_mismatch = c(0, 0.5, 0, 0, 0),
+      title_mismatch = c(FALSE, FALSE, NA, FALSE, TRUE),
+      no_match = c(1, 0, NA, 0, 2)
+    ))
+}
+
+# logical and character *_mismatch columns cannot be combined by pivot_longer().
+rv_acc_mixed <- function() {
+  chain(demopaper(), "ref_accuracy") |>
+    set_table_cols(list(doi_mismatch = c("TRUE", "FALSE", "FALSE", "FALSE", "FALSE")))
+}
+
+# an all-NA logical column combines with a character one.
+rv_acc_na_chr <- function() {
+  chain(demopaper(), "ref_accuracy") |>
+    set_table_cols(list(
+      doi_mismatch = rep(NA, 5),
+      year_mismatch = c("TRUE", "FALSE", "FALSE", "x", "FALSE"),
+      container_mismatch = rep("FALSE", 5),
+      title_mismatch = rep("FALSE", 5),
+      author_mismatch = rep("FALSE", 5)
+    ))
+}
+
+# extra columns matching grep("no_match|_mismatch") but not ends_with("_mismatch"),
+# and one only ends_with() matches ignoring case.
+rv_acc_extra <- function() {
+  chain(demopaper(), "ref_accuracy") |>
+    set_table_cols(list(
+      title_mismatch_score = c(0.1, 0.2, 0.3, 0.4, 0.5),
+      no_match_reason = c("a", "b", "c", "d", "e"),
+      doi_mismatch_MISMATCH = c(FALSE, TRUE, FALSE, FALSE, NA)
+    ))
+}
+
+# ref_accuracy without any *_mismatch column (pivot_longer() selects nothing).
+rv_acc_no_mismatch <- function() {
+  out <- chain(demopaper(), "ref_accuracy")
+  drop_table_cols(out, grep("_mismatch$", names(out$table), value = TRUE))
+}
+
+# ref_pubpeer's table with missing URLs.
+rv_pp_url_na <- function() {
+  chain(demopaper(), "ref_pubpeer") |>
+    set_table_cols(list(url = NA_character_))
+}
+
+# ref_replication's table without replication_type, with a duplicated row.
+rv_rep_no_type <- function() {
+  chain(demopaper(), "ref_replication") |>
+    add_rows(1L, list()) |>
+    drop_table_cols("replication_type")
+}

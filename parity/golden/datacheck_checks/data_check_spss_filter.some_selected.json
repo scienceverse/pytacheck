@@ -1,0 +1,41 @@
+{
+  "id": "data_check_spss_filter.some_selected",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "problem",
+      "message",
+      "values"
+    ],
+    "v": [
+      {
+        "t": "lgl",
+        "v": [
+          true
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "SPSS \"Select Cases\" filter variable: 3 of 5 rows are selected (value 1). The reported analyses likely used only the selected rows; re-apply this filter to reproduce them."
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          3,
+          5
+        ],
+        "names": [
+          "selected",
+          "total"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -239,3 +239,14 @@
       "$expr":
         "r": "paperlist()"
         "py": "pc.PaperList([])"
+# ---------------------------------------------------------------- tie order of papers missing from text_search("[0-9]")
+# order() puts papers without a digit sentence last; ties (same text_id) keep split()'s
+# order, i.e. ICU-sorted factor levels of paper_id ("_x" < "aa" < "Ab" < "b" < "B"),
+# not extract_eq()'s C-locale arrange() order
+- "id": "stat_effect_size.review.missing_paper_tie_order"
+  "module": "stat_effect_size"
+  "args":
+    "paper":
+      "$expr":
+        "r": "(function() { mk <- function(txt, id) { p <- test_paper(txt); p$paper_id <- id; p }; paperlist(mk(\"No digits, t = n.s.\", \"b\"), mk(\"Also none, t = n.s.\", \"aa\"), mk(\"Sig, t(20) = 2.1, d = 0.9.\", \"mm\"), mk(\"B, t = n.s., d = n.s.\", \"Ab\"), mk(c(\"B, t = n.s., d = n.s.\", \"C, F = n.s.\"), \"B\"), mk(\"B, t = n.s., d = n.s.\", \"_x\"), mk(c(\"Two, t = n.s.\", \"Other, t = n.s., d = n.s.\"), \"a\")) })()"
+        "py": "(lambda mk: pc.PaperList([mk(\"No digits, t = n.s.\", \"b\"), mk(\"Also none, t = n.s.\", \"aa\"), mk(\"Sig, t(20) = 2.1, d = 0.9.\", \"mm\"), mk(\"B, t = n.s., d = n.s.\", \"Ab\"), mk([\"B, t = n.s., d = n.s.\", \"C, F = n.s.\"], \"B\"), mk(\"B, t = n.s., d = n.s.\", \"_x\"), mk([\"Two, t = n.s.\", \"Other, t = n.s., d = n.s.\"], \"a\")]))(lambda t, i: (lambda p: (setattr(p, \"paper_id\", i), p)[1])(pc.test_paper(t)))"

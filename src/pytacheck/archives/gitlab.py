@@ -124,6 +124,13 @@ def _gitlab_pat(pat: Any = None) -> Any:
         value = get_option(opt)
         return os.environ.get("GITLAB_PAT", "") if value is None else value
     if not isinstance(pat, str):
+        # R accepts any character vector of length one
+        from pytacheck.archives.github import _as_list, _is_vector
+
+        values = _as_list(pat) if _is_vector(pat) else []
+        if len(values) == 1 and isinstance(values[0], str):
+            pat = values[0]
+    if not isinstance(pat, str):
         raise ValueError("Set gitlab_pat with a single string containing your GitLab token")
     options({opt: pat})
     return pat
@@ -155,6 +162,7 @@ def gitlab_tree_files(repo: Any) -> dict[str, Any]:
         _empty_or,
         _empty_tree_files,
         _file_ext,
+        _filter_blobs,
         _is_vector,
         _perform,
         _r_basename,
@@ -164,6 +172,13 @@ def gitlab_tree_files(repo: Any) -> dict[str, Any]:
 
     clean_repo = gitlab_repo(repo)
     if clean_repo is None:
+        return _unset()
+    if isinstance(clean_repo, list):
+        # several projects: URLencode() of a missing one stops R outright;
+        # otherwise request() refuses the vector of URLs, which R reports
+        # as an inaccessible project
+        if any(c is None for c in clean_repo):
+            raise ValueError("missing value where TRUE/FALSE needed")
         return _unset()
     proj_id = _gitlab_project_id(clean_repo)
 
@@ -211,13 +226,20 @@ def gitlab_tree_files(repo: Any) -> dict[str, Any]:
         page_entries = _body_json(tree_resp)
         if not page_entries:
             break
-        entries.extend(page_entries)
+        # c(all_entries, page_entries): a JSON object adds its values
+        entries.extend(
+            page_entries.values()
+            if isinstance(page_entries, dict)
+            else page_entries
+            if isinstance(page_entries, list)
+            else [page_entries]
+        )
         next_page = tree_resp.headers.get("x-next-page")
         if next_page is None or next_page == "":
             break
         page = int(float(next_page))
 
-    blobs = [x for x in entries if r_dollar(x, "type") == "blob"]
+    blobs = _filter_blobs(entries)
     if not blobs:
         files_df = _empty_tree_files()
     else:
@@ -243,7 +265,10 @@ def gitlab_tree_files(repo: Any) -> dict[str, Any]:
             for key, value in zip(sizes.index.tolist(), sizes.tolist(), strict=True):
                 if key is not None and key not in lookup:
                     lookup[key] = value
-            files_df["size"] = pd.Series([lookup.get(p) for p in paths], dtype="float64")
+            # sizes[files_df$path]: "" never matches a name in R
+            files_df["size"] = pd.Series(
+                [lookup.get(p) if p != "" else None for p in paths], dtype="float64"
+            )
         files_df["ext"] = pd.Series([_file_ext(n).lower() for n in names], dtype="string")
         files_df = _add_file_types(files_df, drop_ext=True)
 
@@ -314,4 +339,6 @@ def _blob_batch(clean_repo: str, batch: list[str]) -> list[Any]:
     nodes = res
     for key in ("data", "project", "repository", "blobs", "nodes"):
         nodes = r_dollar(nodes, key)
+    if isinstance(nodes, dict):
+        return list(nodes.values())
     return list(nodes) if isinstance(nodes, list) else []

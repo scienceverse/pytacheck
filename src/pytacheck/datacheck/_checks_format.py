@@ -14,12 +14,13 @@ import pandas as pd
 
 from pytacheck._r.regex import grepl, regexec
 from pytacheck.datacheck._checks_rvec import (
+    RVec,
     as_numeric_str,
     chr,
-    column_kinds,
     df_columns,
     row_as_character,
     rvec,
+    scalar_chr,
     tolower,
     toupper,
     trim,
@@ -98,12 +99,13 @@ def _qualtrics_tag_cols(col_names: Any) -> list[str | None]:
     return [None if k is None else _QUALTRICS_META_COLS.get(k) for k in map(_key, chr(col_names))]
 
 
-def _qualtrics_col_stem(nm: str | None) -> str | None:
+def _qualtrics_col_stem(nm: Any) -> str | None:
     """The scale-block stem of a ``<stem>_<int>`` Qualtrics column (``TIPI_1`` -> ``TIPI``).
 
     Port of ``R/data_check_helpers.R::.qualtrics_col_stem()``; ``None`` for
     metadata columns and names whose stem has fewer than two letters.
     """
+    nm = scalar_chr(nm)
     if nm is None or nm == "":
         return None
     if _qualtrics_tag_cols([nm])[0] is not None:
@@ -171,12 +173,25 @@ def _qualtrics_is_header_row(row_vals: Any) -> bool:
     return n_meta >= 4 if len(vals) >= 4 else n_meta == len(vals)
 
 
-def _df_row(df: pd.DataFrame, i: int, kinds: list[str]) -> list[str | None]:
-    """``as.character(df[i, , drop = TRUE])`` (0-based *i*)."""
-    cells = df.iloc[i].tolist()
-    if df.shape[1] == 1:
-        return chr(df.iloc[i : i + 1, 0])
-    return row_as_character(cells, kinds)
+class _Rows:
+    """``as.character(df[i, , drop = TRUE])`` for rows of *df* (0-based *i*).
+
+    A one-column frame gives the cell itself (``drop = TRUE``); otherwise the
+    row is a list whose elements ``as.character()`` deparses.
+    """
+
+    __slots__ = ("cols", "kinds", "levels")
+
+    def __init__(self, df: pd.DataFrame) -> None:
+        self.cols = [rvec(c) for c in df_columns(df)]
+        self.kinds = [c.kind for c in self.cols]
+        self.levels = [c.levels for c in self.cols]
+
+    def __call__(self, i: int) -> list[str | None]:
+        if len(self.cols) == 1:
+            c = self.cols[0]
+            return chr(RVec(c.kind, [c.values[i]], c.levels))
+        return row_as_character([c.values[i] for c in self.cols], self.kinds, self.levels)
 
 
 def _is_character_column(col: pd.Series) -> bool:
@@ -200,10 +215,10 @@ def data_strip_qualtrics_header(df: Any, max_strip: int = 2) -> Any:
     """
     if df is None or len(df) == 0:
         return df
-    kinds = column_kinds(df)
+    row = _Rows(df)
     drop = 0
     for i in range(min(int(max_strip), len(df))):
-        if _qualtrics_is_header_row(_df_row(df, i, kinds)):
+        if _qualtrics_is_header_row(row(i)):
             drop = i + 1
         else:
             break
@@ -339,7 +354,16 @@ def _is_junk_above_header(
     ph = _mean(_is_placeholder_name(cells))
     if body_numeric < 0.3:
         return False
-    return filled <= max_filled or dup >= min_dup or ph >= min_placeholder
+    # R's `||` with NA (an empty row: mean(logical(0)) is NaN)
+    if filled == filled and filled <= max_filled:
+        return True
+    if dup >= min_dup:
+        return True
+    if ph == ph and ph >= min_placeholder:
+        return True
+    if filled != filled or ph != ph:
+        return None  # type: ignore[return-value]
+    return False
 
 
 _NA_LIKE = frozenset(("NA", "NAN", "NULL", "N/A", "INF", "-INF", "."))
@@ -366,7 +390,12 @@ def _detect_header_row(rows: Any, max_scan: int = 4) -> dict[str, Any]:
     # body_numeric[h - 1] = consistency of the rows below candidate header h (1-based)
     body_numeric = [_numeric_col_fraction_rows(rows[h:n], ncols) for h in range(1, scan_n + 1)]
     strip = 0
-    while strip < scan_n - 1 and _is_junk_above_header(rows[strip], body_numeric[strip + 1]):
+    while strip < scan_n - 1:
+        junk = _is_junk_above_header(rows[strip], body_numeric[strip + 1])
+        if junk is None:
+            raise ValueError("missing value where TRUE/FALSE needed")
+        if not junk:
+            break
         strip += 1
     if strip < 1:
         return none
@@ -437,9 +466,9 @@ def data_promote_header_row(df: Any, raw_rows: Any = None, max_scan: int = 4) ->
     if use_raw:
         rows = [chr(r) for r in raw_rows]
     else:
-        kinds = column_kinds(df)
+        row = _Rows(df)
         header_as_row = [str(c) for c in df.columns]
-        body_rows = [_df_row(df, i, kinds) for i in range(min(int(max_scan), len(df)))]
+        body_rows = [row(i) for i in range(min(int(max_scan), len(df)))]
         rows = [header_as_row, *body_rows]
     det = _detect_header_row(rows, max_scan=max_scan)
     if det["header_row"] < 1:

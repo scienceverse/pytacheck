@@ -40,6 +40,7 @@ __all__ = [
     "r_colon",
     "row_as_character",
     "rvec",
+    "scalar_chr",
     "tolower",
     "toupper",
     "trim",
@@ -375,22 +376,31 @@ def num_chr(values: Iterable[str | None]) -> list[float | None]:
     return [as_numeric_str(s) for s in values]
 
 
-def row_as_character(cells: Sequence[Any], kinds: Sequence[str]) -> list[str | None]:
+def row_as_character(
+    cells: Sequence[Any],
+    kinds: Sequence[str],
+    levels: Sequence[Sequence[str] | None] | None = None,
+) -> list[str | None]:
     """``as.character(df[i, , drop = TRUE])`` for a row of a multi-column frame.
 
     ``df[i, , drop = TRUE]`` is a list, and ``as.character()`` of a list
     deparses each element: a character ``NA`` stays ``NA`` but any other
     ``NA`` becomes the string ``"NA"``; a Date / POSIXct becomes its
-    underlying number and a factor its integer code.
+    underlying number and a factor its integer code (*levels* gives each
+    factor column's level set; a cell that is already a code is kept).
     """
     out: list[str | None] = []
-    for v, k in zip(cells, kinds, strict=True):
+    for j, (v, k) in enumerate(zip(cells, kinds, strict=True)):
         if is_na(v):
             out.append(None if k == "character" else "NA")
         elif k == "character":
             out.append(_scalar_chr(v))
         elif k == "factor":
-            out.append(str(v))
+            lv = levels[j] if levels is not None else None
+            if lv is not None and v in lv:
+                out.append(str(list(lv).index(v) + 1))
+            else:
+                out.append(str(v))
         elif k == "logical":
             out.append("TRUE" if v else "FALSE")
         elif k == "integer":
@@ -404,6 +414,19 @@ def row_as_character(cells: Sequence[Any], kinds: Sequence[str]) -> list[str | N
         else:
             out.append(_scalar_chr(v))
     return out
+
+
+def scalar_chr(x: Any) -> str | None:
+    """The first element of ``as.character(x)`` for a scalar argument.
+
+    ``None`` (NA or NULL) and zero-length vectors give ``None``; a string is
+    returned as is, and a longer vector gives its first element (R's
+    ``strsplit(x)[[1]]`` / ``regexec(x)[[1]]`` idiom).
+    """
+    if x is None or isinstance(x, str):
+        return x
+    v = chr(x)
+    return v[0] if v else None
 
 
 def df_columns(df: Any) -> list[Any]:

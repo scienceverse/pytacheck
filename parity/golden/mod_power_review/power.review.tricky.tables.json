@@ -1,0 +1,110 @@
+{
+  "id": "power.review.tricky.tables",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": null,
+    "v": [
+      {
+        "t": "df",
+        "nrow": 14,
+        "names": [
+          "power_id",
+          "power_type"
+        ],
+        "v": [
+          {
+            "t": "int",
+            "v": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13,
+              14
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "apriori",
+              "posthoc",
+              "compromise",
+              "unknown",
+              "unknown",
+              "unknown",
+              "apriori",
+              "apriori",
+              "unknown",
+              "unknown",
+              "unknown",
+              "unknown",
+              "posthoc",
+              "unknown"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 14,
+        "names": [
+          "power_id",
+          "text"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "1",
+              "2",
+              "3",
+              "4",
+              "5",
+              "6",
+              "7",
+              "8",
+              "9",
+              "10",
+              "11",
+              "12",
+              "13",
+              "14"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "An A PRİORİ <strong>power<\/strong> analysis required 50 participants.",
+              "A <strong>PoSt HoC<\/strong> <strong>power<\/strong> analysis with 12 people, <strong>a-posteriori<\/strong>, <strong>retrospective power<\/strong>.",
+              "Compromise <strong>Power<\/strong> analysis: 12 people, G-<strong>Power<\/strong>.",
+              "A prior <strong>power<\/strong> analysis with 12 people; <strong>power<\/strong> = 0.8.",
+              "Effect sizes were 1.000,5 for <strong>power<\/strong>.",
+              "We used G<strong>Power<\/strong> 3 to achieve <strong>power<\/strong>.",
+              "<strong>Sensitivity<\/strong> <strong>power<\/strong> was 12% (<strong>a priori<\/strong>).",
+              "<strong>power<\/strong> 12 <strong>apriori<\/strong><strong>posthoc<\/strong>",
+              "We achieved <strong>power<\/strong> of 0.9 with 1999 people.",
+              "We achieved <strong>power<\/strong> of 0.9 with 19999 people.",
+              "We achieved <strong>power<\/strong> of 0.9 with 1999.5 people.",
+              "Achieved <strong>POWER<\/strong>S: 12.",
+              "<strong>Observed power<\/strong>: 12; <strong>retrospective power<\/strong> 13; observed<strong>power<\/strong> 14.",
+              "The <strong>power<\/strong> = 0.80 was fine with 4 groups."
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

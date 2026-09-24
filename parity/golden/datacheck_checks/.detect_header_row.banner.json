@@ -1,0 +1,46 @@
+{
+  "id": ".detect_header_row.banner",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "header_row",
+      "stripped",
+      "improved"
+    ],
+    "v": [
+      {
+        "t": "int",
+        "v": [
+          2
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "CDA",
+              "CDA",
+              "CDA",
+              "CDA",
+              "CDA"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0.6
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

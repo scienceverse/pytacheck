@@ -28,6 +28,7 @@ from pytacheck.datacheck._columns_labels import (
     _json_loads,
     _json_scalar_chr,
     _JsonObject,
+    _tolower,
     chr_frame,
 )
 
@@ -124,15 +125,18 @@ def _qsf_value_labels(opts: Any) -> str | None:
 
 def _qsf_export_col(tag: Any, choice_tag: Any, code: Any) -> str:
     """Port of ``.qsf_export_col()``: the export column name of one matrix choice."""
-    t = trimws(_chr(tag) or "NA")
-    if choice_tag is not None and choice_tag != "":
-        ct = trimws(choice_tag)
-        if ct.lower().startswith((t + "_").lower()) or ct.lower() == t.lower():
+    tag_s = _chr(tag)
+    t = None if tag_s is None else trimws(tag_s)
+    tp = "NA" if t is None else t  # paste0(NA, "_") is "NA_"
+    ct0 = _chr(choice_tag)
+    if ct0 is not None and ct0 != "":
+        ct = trimws(ct0)
+        if _tolower(ct).startswith(_tolower(tp + "_")) or (t is not None and _tolower(ct) == _tolower(t)):
             return ct
         if grepl(r"[A-Za-z].*[._-]", ct, perl=True):
             return ct
-        return f"{t}_{ct}"
-    return f"{t}_{_chr(code)}"
+        return f"{tp}_{ct}"
+    return f"{tp}_{_chr(code)}"
 
 
 def _is_json_list(x: Any) -> bool:
@@ -161,8 +165,9 @@ def parse_qsf(path: str | os.PathLike[str]) -> pd.DataFrame | None:
         return None
     src = _basename(path)
     try:
-        raw = p0.read_bytes()
-        j = _json_loads(raw.decode("utf-8", "surrogateescape"))
+        text = p0.read_bytes().decode("utf-8", "surrogateescape")
+        # jsonlite parses (with a warning) past a UTF-8 byte-order mark
+        j = _json_loads(text[1:] if text.startswith("\ufeff") else text)
     except (ValueError, OSError):
         return None
     if j is None:

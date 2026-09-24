@@ -1,0 +1,40 @@
+{
+  "id": "data_strip_qualtrics_header.three_columns",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 2,
+    "names": [
+      "Progress",
+      "Duration (in seconds)",
+      "ResponseId"
+    ],
+    "v": [
+      {
+        "t": "dbl",
+        "v": [
+          100,
+          100
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          300,
+          120
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "R_abc",
+          "R_xyz"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

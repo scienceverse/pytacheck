@@ -376,6 +376,8 @@ def data_check_spss_filter(col: Any, x: Any) -> dict[str, Any]:
     is ``{"selected": n, "total": n}``.
     """
     none: dict[str, Any] = {"problem": False, "message": "", "values": None}
+    if col is None:  # grepl(p, NA) is FALSE
+        return none
     cols = chr(col)
     if not cols:
         raise ValueError("argument is of length zero")

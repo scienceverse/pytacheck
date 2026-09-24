@@ -141,9 +141,110 @@ def _tolower(s: str | None) -> str | None:
     return "".join(out)
 
 
+# ---------------------------------------------------------------------------
+# as.numeric(): R_strtod() in long double
+# ---------------------------------------------------------------------------
+#
+# R's as.numeric() of a string is R_strtod() (src/main/util.c), which reads the
+# digits and scales by powers of ten in 80-bit long double (64-bit mantissa)
+# before rounding to double. That double rounding is not always the correctly
+# rounded result Python's float() gives: as.numeric("0.8050473192") is one ulp
+# above float("0.8050473192"), which can change the 15 significant digits of
+# the implied effect sizes. Long double values are ``(m, e)`` = ``m * 2**e``.
+
+_LD_BITS = 64
+_DBL_MAX_INT = int(float.fromhex("0x1.fffffffffffffp+1023"))
+_LD_TEN = (10, 0)
+_LD_ONE = (1, 0)
+
+
+def _ld_round(
+    m: int, e: int, sticky: bool = False, bits: int = _LD_BITS, emin: int | None = None
+) -> tuple[int, int]:
+    """Round ``m * 2**e`` (plus a nonzero tail if *sticky*) to *bits* bits, half to even."""
+    if m == 0:
+        return 0, 0
+    shift = m.bit_length() - bits
+    if emin is not None:
+        shift = max(shift, emin - e)
+    if shift <= 0:
+        return m, e
+    hi = m >> shift
+    rem = m - (hi << shift)
+    half = 1 << (shift - 1)
+    if rem > half or (rem == half and (sticky or hi & 1)):
+        hi += 1
+    return hi, e + shift
+
+
+def _ld_mul(a: tuple[int, int], b: tuple[int, int]) -> tuple[int, int]:
+    return _ld_round(a[0] * b[0], a[1] + b[1])
+
+
+def _ld_div(a: tuple[int, int], b: tuple[int, int]) -> tuple[int, int]:
+    (ma, ea), (mb, eb) = a, b
+    if ma == 0:
+        return 0, 0
+    k = max(0, mb.bit_length() - ma.bit_length() + _LD_BITS + 2)
+    q, r = divmod(ma << k, mb)
+    return _ld_round(q, ea - eb - k, sticky=r != 0)
+
+
+def _ld_add_int(a: tuple[int, int], d: int) -> tuple[int, int]:
+    m, e = a
+    if e >= 0:
+        return _ld_round((m << e) + d, 0)
+    return _ld_round(m + (d << -e), e)
+
+
+def _ld_pow10(n: int, op: Any, fac: tuple[int, int]) -> tuple[int, int]:
+    """R's ``for (n...; n; n >>= 1, p10 *= p10) if (n & 1) fac = op(fac, p10)``."""
+    p10 = _LD_TEN
+    while n:
+        if n & 1:
+            fac = op(fac, p10)
+        n >>= 1
+        if n:
+            p10 = _ld_mul(p10, p10)
+    return fac
+
+
+@functools.lru_cache(maxsize=65536)
 def _num(x: str) -> float:
-    """R ``as.numeric()`` of a string matched by the number patterns."""
-    return float(x)
+    """R ``as.numeric()`` of a string matched by the number patterns (``R_strtod()``).
+
+    *x* is ``[-+]?(\\d+(\\.\\d*)?|\\.\\d+)([eE][-+]?\\d+)?``. Beyond 4900 digits
+    (mantissa or exponent) long double could overflow; ``float()`` is used there.
+    """
+    sign = -1.0 if x[:1] == "-" else 1.0
+    body = x.lstrip("+-")
+    mant, _, exp = body.replace("E", "e").partition("e")
+    whole, _, frac = mant.partition(".")
+    digits = whole + frac
+    ndigits = len(digits)
+    if ndigits > 4900 or len(exp.lstrip("+-")) > 4:
+        return float(x)
+    expn = int(exp or "0") - len(frac)
+    ans = (0, 0)
+    for c in digits:
+        ans = _ld_add_int(_ld_mul(_LD_TEN, ans), ord(c) - 48)
+    # avoid unnecessary underflow for large negative exponents
+    if expn + ndigits < -300:
+        for _ in range(ndigits):
+            ans = _ld_div(ans, _LD_TEN)
+        expn += ndigits
+    if expn < -307:  # use underflow, not overflow
+        ans = _ld_mul(ans, _ld_pow10(-expn, _ld_div, _LD_ONE))
+    elif expn < 0:  # positive powers are exact
+        ans = _ld_div(ans, _ld_pow10(-expn, _ld_mul, _LD_ONE))
+    elif ans[0] != 0:
+        ans = _ld_mul(ans, _ld_pow10(expn, _ld_mul, _LD_ONE))
+    m, e = ans
+    # explicit overflow to infinity
+    if m and (m << e if e >= 0 else m) > (_DBL_MAX_INT if e >= 0 else _DBL_MAX_INT << -e):
+        return sign * math.inf
+    m, e = _ld_round(m, e, bits=53, emin=-1074)
+    return sign * math.ldexp(m, e)
 
 
 @functools.lru_cache(maxsize=65536)
@@ -767,6 +868,15 @@ def _paper_id_frame(paper: Any, paper_cls: type) -> pd.DataFrame:
     return pd.DataFrame()
 
 
+def _icu_rank(values: Sequence[Any]) -> list[int]:
+    """Position of each value among R ``levels(factor(values))`` (``sort()``: ICU collation)."""
+    from pytacheck._r.base import r_sort_key
+
+    levels = sorted(set(values), key=r_sort_key)
+    rank = {v: i for i, v in enumerate(levels)}
+    return [rank[v] for v in values]
+
+
 def _string_frame(rows: list[dict[str, str | None]], columns: Sequence[str]) -> pd.DataFrame:
     return pd.DataFrame(
         {c: pd.Series([r[c] for r in rows], dtype="string") for c in columns},
@@ -826,15 +936,20 @@ def stat_effect_size(paper: Any) -> dict[str, Any]:
             table = built.merge(text_tbl, on=["paper_id", "text_id"], how="left", sort=False)
             # restore the original paper/sentence order
             paper_order = {pid: i for i, pid in enumerate(pd.unique(text_tbl["paper_id"]))}
-            pos = np.array(
-                [paper_order.get(pid, np.inf) for pid in table["paper_id"].tolist()],
-                dtype="float64",
-            )
+            pids = table["paper_id"].tolist()
+            pos = np.array([paper_order.get(pid, np.inf) for pid in pids], dtype="float64")
             tid = np.array(
                 [np.inf if _is_na(t) else float(t) for t in table["text_id"].tolist()],
                 dtype="float64",
             )
-            table = table.iloc[np.lexsort((tid, pos))].reset_index(drop=True)
+            keys: tuple[Any, ...] = (tid, pos)
+            if np.isinf(pos).any():
+                # Papers with no sentence matching "[0-9]" are not in paper_order: R's
+                # order() puts them last and keeps ties (same text_id) in the order
+                # split() built them, i.e. by the factor levels of paper_id, which
+                # sort() collates with ICU (extract_eq() sorted them in the C locale).
+                keys = (_icu_rank(pids), *keys)
+            table = table.iloc[np.lexsort(keys)].reset_index(drop=True)
 
     # handle no detected t-tests or F-tests ----
     if len(table) == 0:

@@ -6,7 +6,7 @@
   "value": {
     "t": "chr",
     "v": [
-      "alpha = .05, eta2 = 0.15"
+      " = .05, ² = 0.15"
     ]
   },
   "metacheck_version": "0.3.1",

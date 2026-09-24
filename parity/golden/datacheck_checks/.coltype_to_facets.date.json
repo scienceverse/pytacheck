@@ -1,0 +1,19 @@
+{
+  "id": ".coltype_to_facets.date",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "datetime",
+      null
+    ],
+    "names": [
+      "rep",
+      "lvl"
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -708,6 +708,18 @@ def _column(df: pd.DataFrame, name: str) -> list[Any] | None:
     return [None if _na(v) else v for v in _col(df, name).tolist()]
 
 
+def _check_df_rows(sizes: list[int]) -> None:
+    """R ``data.frame()``'s recycling check over its arguments' row counts.
+
+    A shorter argument is recycled only when it is non-empty and divides the
+    longest; otherwise R stops with ``unique(nrows)`` in argument order.
+    """
+    nr = max(sizes)
+    if any(s < nr and not (s > 0 and nr % s == 0) for s in sizes):
+        shown = ", ".join(str(s) for s in dict.fromkeys(sizes))
+        raise ValueError(f"arguments imply differing number of rows: {shown}")
+
+
 def _paste_unique(values: list[Any] | None) -> str:
     """``paste(unique(x), collapse = " | ")`` (``NA`` -> ``"NA"``)."""
     if values is None:
@@ -795,9 +807,12 @@ def match_column_labels(columns_df: pd.DataFrame | None, codebook_vars_df: pd.Da
 
     def frame(status: list[str], label: list[Any], cbk: list[Any], src: list[Any],
               method: list[Any], vl: list[Any], mv: list[Any], q: list[Any], ci: list[Any],
-              sg: list[Any]) -> pd.DataFrame:  # fmt: skip
-        if n == 0:
-            raise ValueError("arguments imply differing number of rows: 0, 1")
+              sg: list[Any], empty: bool = False) -> pd.DataFrame:  # fmt: skip
+        # R's data.frame(): an absent column (NULL) has 0 rows; make_empty() passes
+        # length-1 NA / status values that recycle to n.
+        sizes = [0 if v is None else n for v in (paper, source, colname)] + [n]
+        sizes.append(1 if empty else n)
+        _check_df_rows(sizes)
         data: dict[str, pd.Series] = {}
         for nm, vals in (("paper_id", paper), ("source_file", source), ("column_name", colname)):
             if vals is not None:
@@ -819,12 +834,17 @@ def match_column_labels(columns_df: pd.DataFrame | None, codebook_vars_df: pd.Da
 
     na_n: list[Any] = [None] * n
     if n == 0 or codebook_vars_df is None or len(codebook_vars_df) == 0:
-        return frame(["unlabelled"] * n, na_n, na_n, na_n, na_n, na_n, na_n, na_n, na_n, na_n)
+        return frame(["unlabelled"] * n, na_n, na_n, na_n, na_n, na_n, na_n, na_n, na_n, na_n,
+                     empty=True)  # fmt: skip
 
     cb = _expand_ranges(codebook_vars_df)
     cb = cb.reset_index(drop=True)
     norm_col = normalize_varname([_chr(v) for v in (colname or [None] * n)])
-    norm_var = normalize_varname(_chr_vec(cb["codebook_variable"]))
+    norm_var = (
+        normalize_varname(_chr_vec(cb["codebook_variable"]))
+        if "codebook_variable" in cb.columns
+        else []
+    )
     ncb = len(cb)
 
     def cbcol(name: str) -> list[Any] | None:
@@ -971,7 +991,10 @@ def match_column_labels(columns_df: pd.DataFrame | None, codebook_vars_df: pd.Da
         cb_q = carry["question"] or [None] * ncb
         cb_vl = carry["value_labels"]
         for i in [k for k in range(n) if status_out[k] == "unlabelled"]:
-            cn = _chr(colname[i]) if colname is not None else None
+            if colname is None:
+                # R: if (grepl(re, NULL)) -- a zero-length condition
+                raise ValueError("argument is of length zero")
+            cn = _chr(colname[i])
             if grepl(_QSF_PARADATA_RE, cn, perl=True, ignore_case=True):
                 continue
             if cn is None:

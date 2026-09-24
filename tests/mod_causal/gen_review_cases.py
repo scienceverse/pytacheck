@@ -10,6 +10,13 @@ quirks (word boundaries, the 60-character order/trial/block window), blank and
 duplicated abstract sentences, abstract rows whose section is unknown, a paper
 without a title column, empty papers inside a paper list, a one-paper list,
 module pipelines, and a missing ``causal`` flag (``NA``) from the classifier.
+
+``error.*`` cases return the error message (``conditionMessage()`` / ``str()``),
+so the message is compared too, not only that both sides fail. ``report.*``
+cases return ``module_run()$report`` with every table rendered as the R chunk
+``scroll_table()`` returns (``parity_support.report_qmd``), so the report is
+compared exactly, tables and empty elements included (the default ``prose``
+comparison skips both).
 """
 
 from __future__ import annotations
@@ -20,6 +27,8 @@ from typing import Any
 import yaml
 
 from tests.mod_causal.gen_parity_cases import (
+    DEMO,
+    PSYCHSCI,
     R_FAKE,
     R_MK,
     RANDOM_ONE,
@@ -28,6 +37,7 @@ from tests.mod_causal.gen_parity_cases import (
     S,
     mk,
     plist,
+    read,
     test_paper,
     untitled,
 )
@@ -74,6 +84,46 @@ def fake_case(
     )
 
 
+def error_case(id: str, paper: tuple[str, str], fake: str | None = None) -> None:
+    """``module_run()``, or its error message when it fails.
+
+    *fake* is ``None`` (the real classifier; the paper must not reach the
+    network), ``"fake"`` or ``"na"`` (see :func:`fake_case`).
+    """
+    r_run = 'tryCatch(module_run(p, "causal_claims"), error = function(e) conditionMessage(e))'
+    py_run = f'{S}.error_message(lambda: pc.module_run(p, "causal_claims"))'
+    if fake is not None:
+        fake_case(f"error.{id}", paper, na=fake == "na", run=(r_run, py_run))
+        return
+    cases.append(
+        {
+            "id": f"causal_claims.review.error.{id}",
+            "r": "identity",
+            "py": "tests.mod_causal.parity_support.error_message",
+            "args": {
+                "x": {
+                    "$expr": {
+                        "r": f"(function() {{ {R_MK}p <- {paper[0]}; {r_run} }})()",
+                        "py": f'lambda: (lambda p: pc.module_run(p, "causal_claims"))({paper[1]})',
+                    }
+                }
+            },
+        }
+    )
+
+
+def report_case(id: str, paper: tuple[str, str]) -> None:
+    """The exact report (tables as R chunks), with the fake classifier."""
+    fake_case(
+        f"report.{id}",
+        paper,
+        run=(
+            'module_run(p, "causal_claims")$report',
+            f'{S}.report_qmd(pc.module_run(p, "causal_claims"))',
+        ),
+    )
+
+
 def r_then(paper: tuple[str, str], r_code: str, py_fn: str) -> tuple[str, str]:
     """Modify a paper: R ``p <- paper; <r_code>; p``, Python ``S.<py_fn>(paper)``."""
     return (
@@ -88,6 +138,15 @@ def section_ids(paper: tuple[str, str], ids: list[int | None]) -> tuple[str, str
     return (
         f"(function() {{ p <- {paper[0]}; p$text$section_id <- c({r_ids}); p }})()",
         f"{S}.with_section_ids({paper[1]}, {ids!r})",
+    )
+
+
+def section_types(paper: tuple[str, str], types: list[str]) -> tuple[str, str]:
+    """R ``p$section$section_type <- c(...)``."""
+    r_types = ", ".join(f'"{t}"' for t in types)
+    return (
+        f"(function() {{ p <- {paper[0]}; p$section$section_type <- c({r_types}); p }})()",
+        f"{S}.with_section_types({paper[1]}, {types!r})",
     )
 
 
@@ -242,6 +301,60 @@ fake_case(
     ),
     na=True,
 )
+
+# ------------------------------------------------------------ error messages
+
+error_case("title_na", untitled(["Participants were randomly assigned."], title=None, id="na"))
+error_case("empty_paperlist", ("paperlist()", "pc.PaperList([])"))
+error_case(
+    "no_text_column",
+    r_then(untitled(RANDOM_ONE, id="nt"), "p$text$text <- NULL", "without_text"),
+)
+error_case(
+    "fake_na_title", mk(["X causes Y."], [], title="Maybe heat causes thirst", id="e1"), fake="na"
+)
+error_case(
+    "fake_ok",
+    mk(["X causes Y."], ["We randomly assigned people."], title="Heat causes thirst", id="e2"),
+    fake="fake",
+)
+
+# ------------------------------------------------- references are excluded
+
+fake_case(
+    "references_excluded",
+    section_types(
+        mk(["X causes Y."], ["Participants were randomly assigned."], title="", id="refs"),
+        ["abstract", "references"],
+    ),
+)
+fake_case(
+    "references_abstract_only",
+    section_types(
+        mk(["X causes Y.", "We randomly assigned people."], ["Nothing."], title="", id="refs2"),
+        ["references", "method"],
+    ),
+)
+
+# ------------------------------------------------------------ exact reports
+
+report_case("none", untitled(["Nothing here."], id="r0"))
+report_case(
+    "full",
+    mk(
+        ["X causes Y and more effect Z.", "Nothing."],
+        [
+            *RANDOM_SEVERAL,
+            'Participants were "randomly assigned" to groups \\ with caf\u00e9 and na\u00efve.',
+        ],
+        title="Heat causes thirst and sweat",
+        id="r1",
+    ),
+)
+report_case("yellow", mk(["Stress causes errors."], ["We measured."], title="", id="r2"))
+report_case("title_only", mk(["Nothing."], [], title="Sleep causes errors", id="r3"))
+report_case("demo", ("demopaper()", "pc.demopaper()"))
+report_case("psychsci_list", read(*PSYCHSCI, DEMO))
 
 
 def main() -> None:

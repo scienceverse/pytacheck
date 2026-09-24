@@ -427,7 +427,8 @@ def test_df_beyond_integer_range_errors_like_r() -> None:
     # without a d the check stops before building the grid, as in R
     out = _run("Huge, t(9999999999) = 2.0, p = .04.")
     assert out.table["d_coherence_note"].tolist() == ["No parseable d effect size found."]
-    assert out.table["df"].tolist() == ["9999999999"]
+    # R leaves t_value and df NA when no d parses (the early return comes first)
+    assert out.table["df"].isna().tolist() == [True]
 
 
 def test_unequal_n_grid_matches_direct_formula() -> None:

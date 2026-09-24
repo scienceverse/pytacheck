@@ -1,0 +1,41 @@
+{
+  "id": "data_check_spss_filter.all_selected",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "problem",
+      "message",
+      "values"
+    ],
+    "v": [
+      {
+        "t": "lgl",
+        "v": [
+          true
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "SPSS \"Select Cases\" filter variable: every row is selected (value 1), so the file appears to have been saved after deleting unselected cases -- the shared data are a pre-filtered subset of what was collected."
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          10,
+          10
+        ],
+        "names": [
+          "selected",
+          "total"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

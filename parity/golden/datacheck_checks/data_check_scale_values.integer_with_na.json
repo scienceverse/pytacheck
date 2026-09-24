@@ -1,0 +1,57 @@
+{
+  "id": "data_check_scale_values.integer_with_na",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "problem",
+      "message",
+      "values",
+      "lower",
+      "upper",
+      "classes"
+    ],
+    "v": [
+      {
+        "t": "lgl",
+        "v": [
+          true
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "1 value outside the 1-5 scale: 99 (looks like a missing-data code -> recode to NA)"
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          99
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          1
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          5
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "missing"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}
