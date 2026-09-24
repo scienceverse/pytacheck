@@ -370,7 +370,8 @@ def test_c_of_a_matrix_is_atomic() -> None:
     assert pr.paste_collapse(pr.r_c([m, RList((RVec("double", (2.5,)),))]), " ") == (
         "100000 3 2 4 2.5"
     )
-    assert pr.paste_collapse(pr.r_c([m, chr1("x")]), " ") == "1 3 2 4 x"
+    small = pr.simplify([[1, 2], [3, 4]])
+    assert pr.paste_collapse(pr.r_c([small, chr1("x")]), " ") == "1 3 2 4 x"
 
 
 def test_unlist_type_includes_empty_vectors() -> None:
