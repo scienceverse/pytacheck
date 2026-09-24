@@ -286,9 +286,15 @@ def _author_string(a: Any, max_authors: int) -> str | None:
 
 
 def _head(x: list[Any], n: Any) -> list[Any]:
-    """``utils::head(x, n)`` (a negative *n* drops from the end)."""
-    n = int(n)
-    return x[:n] if n >= 0 else x[: max(len(x) + n, 0)]
+    """``utils::head(x, n)`` (a negative *n* drops from the end).
+
+    As ``head.default()``: the count is ``min(n, length(x))`` or
+    ``max(length(x) + n, 0)`` and ``seq_len()`` truncates it only then, so
+    ``head(x, -1.5)`` keeps ``length(x) - 2`` values and ``head(x, Inf)`` all.
+    """
+    n = float(n)
+    k = max(len(x) + n, 0.0) if n < 0 else min(n, float(len(x)))
+    return x[: int(k)]
 
 
 def _key_kind(s: pd.Series) -> str:
