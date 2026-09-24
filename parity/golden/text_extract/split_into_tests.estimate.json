@@ -1,0 +1,278 @@
+{
+  "id": "split_into_tests.estimate",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": null,
+    "v": [
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "list",
+            "names": [
+              "name",
+              "comp",
+              "value",
+              "df",
+              "sentence_pos"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "F"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "="
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "323.77"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "(1,494)"
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  1
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "name",
+              "comp",
+              "value",
+              "df",
+              "sentence_pos"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "p"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "<"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  ".001"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  ""
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  2
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "name",
+              "comp",
+              "value",
+              "df",
+              "sentence_pos"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "95% CI"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "="
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "[.22,.29]"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  ""
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  3
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "name",
+              "comp",
+              "value",
+              "df",
+              "sentence_pos"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Cohen's d"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "="
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  ".10"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  ""
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  4
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "list",
+            "names": [
+              "name",
+              "comp",
+              "value",
+              "df",
+              "sentence_pos"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "F"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "="
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "375.81"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "(1,573)"
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  7
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "name",
+              "comp",
+              "value",
+              "df",
+              "sentence_pos"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "p"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "<"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  ".001"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  ""
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  8
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.3.3 (2024-02-29)"
+}

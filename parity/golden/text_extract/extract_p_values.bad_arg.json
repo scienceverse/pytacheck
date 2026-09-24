@@ -1,0 +1,9 @@
+{
+  "id": "extract_p_values.bad_arg",
+  "ok": false,
+  "error": "The paper argument doesn't seem to be a scivrs_paper object or a list of paper objects",
+  "warnings": [],
+  "value": null,
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.3.3 (2024-02-29)"
+}

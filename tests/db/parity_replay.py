@@ -54,3 +54,25 @@ def call(fn: str, *args: Any, mock_dir: str = "apis", **kwargs: Any) -> Any:
     func = getattr(importlib.import_module(module), name)
     with replaying(mock_dir):
         return func(*args, **kwargs)
+
+
+def test_paper_with_bib(
+    bib: dict[str, Any], text: str = "x", paper_id: str | None = None
+) -> Any:
+    """``p <- test_paper(text); p$bib <- data.frame(bib)`` (optionally with an ID)."""
+    import pandas as pd
+
+    import pytacheck as pc
+
+    p = pc.test_paper(text)
+    p.bib = pd.DataFrame(bib)
+    if paper_id is not None:
+        p.paper_id = paper_id
+    return p
+
+
+def paperlist(*papers: Any) -> Any:
+    """``paperlist(...)``."""
+    import pytacheck as pc
+
+    return pc.PaperList(papers)

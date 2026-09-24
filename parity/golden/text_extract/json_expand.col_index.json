@@ -1,0 +1,48 @@
+{
+  "id": "json_expand.col_index",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 2,
+    "names": [
+      "id",
+      "answer",
+      "a",
+      "b"
+    ],
+    "v": [
+      {
+        "t": "int",
+        "v": [
+          1,
+          2
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "{\"a\":1}",
+          "{\"b\":2}"
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          1,
+          null
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          null,
+          2
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.3.3 (2024-02-29)"
+}

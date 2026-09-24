@@ -487,7 +487,7 @@
 - "id": "json_expand.conflict"
   "r": "json_expand"
   "py": "pytacheck.text.json_expand.json_expand"
-  "args": &conflict
+  "args":
     "table":
       "$df":
         "id": [1, 2, 3, 4, 5]

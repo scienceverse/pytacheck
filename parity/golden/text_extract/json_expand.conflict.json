@@ -1,0 +1,93 @@
+{
+  "id": "json_expand.conflict",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 5,
+    "names": [
+      "id",
+      "number",
+      "answer",
+      "number.json",
+      "letter",
+      "bool",
+      "error"
+    ],
+    "v": [
+      {
+        "t": "int",
+        "v": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "{\"number\": 1, \"letter\": \"A\", \"bool\": true}",
+          "{\"number\": 2, \"letter\": \"B\", \"bool\": \"FALSE\"}",
+          "{\"number\": 3, \"letter\": \"\", \"bool\": null}",
+          "oh no, the LLM misunderstood",
+          "{\"number\": 5, \"letter\": [\"E\", \"F\"], \"bool\": false}"
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          1,
+          2,
+          3,
+          null,
+          5
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "A",
+          "B",
+          "",
+          null,
+          "E;F"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true,
+          false,
+          null,
+          null,
+          false
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          "parsing error",
+          null
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.3.3 (2024-02-29)"
+}
