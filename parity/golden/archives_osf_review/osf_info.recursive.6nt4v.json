@@ -1,0 +1,205 @@
+{
+  "id": "osf_info.recursive.6nt4v",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 3,
+    "names": [
+      "osf_url",
+      "osf_id",
+      "name",
+      "description",
+      "osf_type",
+      "public",
+      "category",
+      "registration",
+      "preprint",
+      "self",
+      "children",
+      "files",
+      "parent",
+      "project",
+      "provider",
+      "kind",
+      "filetype",
+      "size",
+      "downloads",
+      "path",
+      "download_url"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "6nt4v",
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "6nt4v",
+          "6846ec9ae295bf0267199776",
+          "6846ed6a29684b023953943e"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Processed Data",
+          "osfstorage",
+          "processed-data.csv"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "The processed data",
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "nodes",
+          "files",
+          "files"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "data",
+          null,
+          null
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://api.osf.io/v2/nodes/6nt4v/",
+          null,
+          "https://api.osf.io/v2/files/6846ed6a29684b023953943e/"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://api.osf.io/v2/nodes/6nt4v/children/",
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://api.osf.io/v2/nodes/6nt4v/files/",
+          "https://api.osf.io/v2/nodes/6nt4v/files/osfstorage/",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "ckjef",
+          "6nt4v",
+          "6846ec9ae295bf0267199776"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "pngda",
+          "6nt4v",
+          "6nt4v"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "osfstorage",
+          "osfstorage"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "folder",
+          "file"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          "data"
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          null,
+          null,
+          185
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          null,
+          null,
+          391
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "/",
+          "/processed-data.csv"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          "https://osf.io/download/75qgk/"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

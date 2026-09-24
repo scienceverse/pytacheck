@@ -1,0 +1,30 @@
+{
+  "id": ".osf_download_wikis.8uqfb",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "value",
+      "files",
+      "text"
+    ],
+    "v": [
+      {
+        "t": "null"
+      },
+      {
+        "t": "chr",
+        "v": []
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": []
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

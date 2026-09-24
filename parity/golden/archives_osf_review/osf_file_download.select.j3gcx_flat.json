@@ -1,0 +1,219 @@
+{
+  "id": "osf_file_download.select.j3gcx_flat",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "value",
+      "files"
+    ],
+    "v": [
+      {
+        "t": "df",
+        "nrow": 7,
+        "names": [
+          "folder",
+          "osf_id",
+          "name",
+          "filetype",
+          "size",
+          "downloads",
+          "provider",
+          "path",
+          "downloaded",
+          "download_path",
+          "osf_project",
+          "osf_url",
+          "size_on_disk",
+          "attempted"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "j3gcx",
+              "j3gcx",
+              "j3gcx",
+              "j3gcx",
+              "j3gcx",
+              "j3gcx",
+              "j3gcx"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "6846ed88e49694cd45ab8375",
+              "687e3369660e39044a02c313",
+              "685a4742c394e5c1c4a1c84f",
+              "687e3375988186012ef720c4",
+              "685a4750222eecf526070525",
+              "685a475da5dd9e8e81d1ad1d",
+              "685a477387125a22d8d1ad68"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data.xlsx",
+              "README",
+              "test-1.txt",
+              "README",
+              "test-2.txt",
+              "test-3.txt",
+              "test-4.txt"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data",
+              "NA",
+              "text",
+              "NA",
+              "text",
+              "text",
+              "text"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              9113,
+              52,
+              12,
+              58,
+              12,
+              12,
+              12
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              236,
+              234,
+              280,
+              272,
+              278,
+              277,
+              275
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "osfstorage",
+              "osfstorage",
+              "osfstorage",
+              "osfstorage",
+              "osfstorage",
+              "osfstorage",
+              "osfstorage"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data.xlsx",
+              "README",
+              "test-1.txt",
+              "687e3375988186012ef720c4-README",
+              "test-2.txt",
+              "test-3.txt",
+              "test-4.txt"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "j3gcx",
+              "j3gcx",
+              "j3gcx",
+              "j3gcx",
+              "j3gcx",
+              "j3gcx",
+              "j3gcx"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "j3gcx",
+              "j3gcx",
+              "j3gcx",
+              "j3gcx",
+              "j3gcx",
+              "j3gcx",
+              "j3gcx"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://osf.io/j3gcx",
+              "https://osf.io/j3gcx",
+              "https://osf.io/j3gcx",
+              "https://osf.io/j3gcx",
+              "https://osf.io/j3gcx",
+              "https://osf.io/j3gcx",
+              "https://osf.io/j3gcx"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              9113,
+              52,
+              12,
+              58,
+              12,
+              12,
+              12
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "j3gcx/687e3375988186012ef720c4-README",
+          "j3gcx/data.xlsx",
+          "j3gcx/README",
+          "j3gcx/test-1.txt",
+          "j3gcx/test-2.txt",
+          "j3gcx/test-3.txt",
+          "j3gcx/test-4.txt"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

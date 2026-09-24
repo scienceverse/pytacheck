@@ -1,0 +1,142 @@
+{
+  "id": "osf_info.recursive.75qgk",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 1,
+    "names": [
+      "osf_url",
+      "osf_id",
+      "name",
+      "description",
+      "provider",
+      "osf_type",
+      "kind",
+      "filetype",
+      "public",
+      "category",
+      "size",
+      "downloads",
+      "path",
+      "self",
+      "files",
+      "download_url",
+      "parent",
+      "project"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "75qgk"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "75qgk"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "processed-data.csv"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "osfstorage"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "files"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "file"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "data"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          185
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          361
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "/processed-data.csv"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://api.osf.io/v2/files/6846ed6a29684b023953943e/"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://osf.io/download/75qgk/"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "6846ec9ae295bf0267199776"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "6nt4v"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

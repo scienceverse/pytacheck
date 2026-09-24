@@ -1,0 +1,19 @@
+{
+  "id": "osf_check_id.numeric",
+  "ok": true,
+  "error": null,
+  "warnings": [
+    "1e+05 is not a valid OSF ID",
+    "1.5 is not a valid OSF ID"
+  ],
+  "value": {
+    "t": "chr",
+    "v": [
+      "12345",
+      null,
+      null
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

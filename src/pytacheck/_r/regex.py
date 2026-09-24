@@ -91,6 +91,8 @@ _TRE_ESCAPES = {
 # glibc classifies the no-break spaces as punctuation, not space.
 _TRE_POSIX_CLASSES = {
     "space": _TRE_SPACE_CHARS,
+    # glibc's iswcntrl() (C.UTF-8) also counts the line/paragraph separators
+    "cntrl": r"[:cntrl:]\u2028\u2029",
     "punct": r"[:punct:]\xa0\u2007\u202f",
     "blank": r"\t \u1680\u2000-\u2006\u2008-\u200a\u205f\u3000",
 }

@@ -1,0 +1,135 @@
+{
+  "id": "listing.parse.nodes.629bx.files",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 1,
+    "names": [
+      "osf_id",
+      "name",
+      "description",
+      "provider",
+      "osf_type",
+      "kind",
+      "filetype",
+      "public",
+      "category",
+      "size",
+      "downloads",
+      "path",
+      "self",
+      "files",
+      "download_url",
+      "parent",
+      "project"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "6654749f0ca5ef04ac32e776"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "osfstorage"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "osfstorage"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "files"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "folder"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "/"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://api.osf.io/v2/nodes/629bx/files/osfstorage/"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "629bx"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "629bx"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

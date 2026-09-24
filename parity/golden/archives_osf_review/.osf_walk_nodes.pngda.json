@@ -1,0 +1,46 @@
+{
+  "id": ".osf_walk_nodes.pngda",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 9,
+    "names": [
+      "osf_id",
+      "title"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "pngda",
+          "ckjef",
+          "y6a34",
+          "ybm3c",
+          "mc45x",
+          "m4nbv",
+          "6nt4v",
+          "yt32c",
+          "j3gcx"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Papercheck Test",
+          "Data",
+          "Empty",
+          "Private",
+          "Testing",
+          "No Code Files",
+          "Processed Data",
+          "Individual",
+          "Raw Data"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

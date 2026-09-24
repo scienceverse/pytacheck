@@ -1,0 +1,198 @@
+{
+  "id": "listing.combined.children_pngda_6nt4v_ckjef",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 8,
+    "names": [
+      "osf_id",
+      "name",
+      "description",
+      "osf_type",
+      "public",
+      "category",
+      "registration",
+      "preprint",
+      "self",
+      "children",
+      "files",
+      "parent",
+      "project"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "ckjef",
+          "y6a34",
+          "ybm3c",
+          "mc45x",
+          "m4nbv",
+          "6nt4v",
+          "yt32c",
+          "j3gcx"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Data",
+          "Empty",
+          "Private",
+          "Testing",
+          "No Code Files",
+          "Processed Data",
+          "Individual",
+          "Raw Data"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "All the data",
+          "This component is empty and uncategorised",
+          "Testing private components",
+          "",
+          "Has a README and a zip files, but no code files",
+          "The processed data",
+          "Contains 14 data files for testing contents greater than 10",
+          "The raw data"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "nodes",
+          "nodes",
+          "nodes",
+          "nodes",
+          "nodes",
+          "nodes",
+          "nodes",
+          "nodes"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true,
+          true,
+          false,
+          true,
+          true,
+          true,
+          true,
+          true
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "data",
+          "",
+          "hypothesis",
+          "",
+          "project",
+          "data",
+          "data",
+          "data"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://api.osf.io/v2/nodes/ckjef/",
+          "https://api.osf.io/v2/nodes/y6a34/",
+          "https://api.osf.io/v2/nodes/ybm3c/",
+          "https://api.osf.io/v2/nodes/mc45x/",
+          "https://api.osf.io/v2/nodes/m4nbv/",
+          "https://api.osf.io/v2/nodes/6nt4v/",
+          "https://api.osf.io/v2/nodes/yt32c/",
+          "https://api.osf.io/v2/nodes/j3gcx/"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://api.osf.io/v2/nodes/ckjef/children/",
+          "https://api.osf.io/v2/nodes/y6a34/children/",
+          "https://api.osf.io/v2/nodes/ybm3c/children/",
+          "https://api.osf.io/v2/nodes/mc45x/children/",
+          "https://api.osf.io/v2/nodes/m4nbv/children/",
+          "https://api.osf.io/v2/nodes/6nt4v/children/",
+          "https://api.osf.io/v2/nodes/yt32c/children/",
+          "https://api.osf.io/v2/nodes/j3gcx/children/"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://api.osf.io/v2/nodes/ckjef/files/",
+          "https://api.osf.io/v2/nodes/y6a34/files/",
+          "https://api.osf.io/v2/nodes/ybm3c/files/",
+          "https://api.osf.io/v2/nodes/mc45x/files/",
+          "https://api.osf.io/v2/nodes/m4nbv/files/",
+          "https://api.osf.io/v2/nodes/6nt4v/files/",
+          "https://api.osf.io/v2/nodes/yt32c/files/",
+          "https://api.osf.io/v2/nodes/j3gcx/files/"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "pngda",
+          "pngda",
+          "pngda",
+          "pngda",
+          "pngda",
+          "ckjef",
+          "ckjef",
+          "ckjef"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "pngda",
+          "pngda",
+          "pngda",
+          "pngda",
+          "pngda",
+          "pngda",
+          "pngda",
+          "pngda"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -1,0 +1,373 @@
+{
+  "id": "osf_info.recursive.msfcn",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 11,
+    "names": [
+      "osf_url",
+      "osf_id",
+      "name",
+      "description",
+      "osf_type",
+      "public",
+      "category",
+      "registration",
+      "preprint",
+      "self",
+      "children",
+      "files",
+      "parent",
+      "project",
+      "provider",
+      "kind",
+      "filetype",
+      "size",
+      "downloads",
+      "path",
+      "download_url"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "msfcn",
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "msfcn",
+          "q3bcs",
+          "c3stq",
+          "qv6g3",
+          "5880e4d7594d90004973e9df",
+          "5880e51aad3c48004cf21019",
+          "5880e5539ad5a10043e83e7b",
+          "58a0e30f594d9001fd668985",
+          "5880e533ad3c4800444d82a9",
+          "5880e55c6c613b0041f2cb5a",
+          "58a0e38c594d9001f7121465"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Social Reach Psychological Science-2016-Ramenzoni Liszkowski-0956797616659938",
+          "Data Exp 1",
+          "Data Exp 2",
+          "Photograph chairs used",
+          "osfstorage",
+          "osfstorage",
+          "osfstorage",
+          "osfstorage",
+          "Data_Experiment_1.xlsx",
+          "Data_Experiment_2.xlsx",
+          "Suplemental Material_Chairs used for data collection.docx"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "",
+          "",
+          "",
+          "",
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "nodes",
+          "nodes",
+          "nodes",
+          "nodes",
+          "files",
+          "files",
+          "files",
+          "files",
+          "files",
+          "files",
+          "files"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true,
+          true,
+          true,
+          true,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "project",
+          "data",
+          "data",
+          "other",
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false,
+          false,
+          false,
+          false,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false,
+          false,
+          false,
+          false,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://api.osf.io/v2/nodes/msfcn/",
+          "https://api.osf.io/v2/nodes/q3bcs/",
+          "https://api.osf.io/v2/nodes/c3stq/",
+          "https://api.osf.io/v2/nodes/qv6g3/",
+          null,
+          null,
+          null,
+          null,
+          "https://api.osf.io/v2/files/5880e533ad3c4800444d82a9/",
+          "https://api.osf.io/v2/files/5880e55c6c613b0041f2cb5a/",
+          "https://api.osf.io/v2/files/58a0e38c594d9001f7121465/"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://api.osf.io/v2/nodes/msfcn/children/",
+          "https://api.osf.io/v2/nodes/q3bcs/children/",
+          "https://api.osf.io/v2/nodes/c3stq/children/",
+          "https://api.osf.io/v2/nodes/qv6g3/children/",
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://api.osf.io/v2/nodes/msfcn/files/",
+          "https://api.osf.io/v2/nodes/q3bcs/files/",
+          "https://api.osf.io/v2/nodes/c3stq/files/",
+          "https://api.osf.io/v2/nodes/qv6g3/files/",
+          "https://api.osf.io/v2/nodes/msfcn/files/osfstorage/",
+          "https://api.osf.io/v2/nodes/q3bcs/files/osfstorage/",
+          "https://api.osf.io/v2/nodes/c3stq/files/osfstorage/",
+          "https://api.osf.io/v2/nodes/qv6g3/files/osfstorage/",
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "msfcn",
+          "msfcn",
+          "msfcn",
+          "msfcn",
+          "q3bcs",
+          "c3stq",
+          "qv6g3",
+          "5880e51aad3c48004cf21019",
+          "5880e5539ad5a10043e83e7b",
+          "58a0e30f594d9001fd668985"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "msfcn",
+          "msfcn",
+          "msfcn",
+          "msfcn",
+          "msfcn",
+          "q3bcs",
+          "c3stq",
+          "qv6g3",
+          "q3bcs",
+          "c3stq",
+          "qv6g3"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          "osfstorage",
+          "osfstorage",
+          "osfstorage",
+          "osfstorage",
+          "osfstorage",
+          "osfstorage",
+          "osfstorage"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          "folder",
+          "folder",
+          "folder",
+          "folder",
+          "file",
+          "file",
+          "file"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          "data",
+          "data",
+          "text"
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          251048,
+          181695,
+          122354
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          52,
+          49,
+          95
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          "/",
+          "/",
+          "/",
+          "/",
+          "/Data_Experiment_1.xlsx",
+          "/Data_Experiment_2.xlsx",
+          "/Suplemental Material_Chairs used for data collection.docx"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          "https://osf.io/download/5qsc6/",
+          "https://osf.io/download/4v5hd/",
+          "https://osf.io/download/x6n74/"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

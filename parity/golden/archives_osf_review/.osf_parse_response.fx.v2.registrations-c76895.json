@@ -1,0 +1,93 @@
+{
+  "id": ".osf_parse_response.fx.v2.registrations-c76895",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 1,
+    "names": [
+      "osf_id",
+      "name",
+      "osf_type",
+      "category",
+      "registration",
+      "preprint",
+      "self",
+      "children",
+      "files",
+      "parent",
+      "project"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "4v3sg"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Optimism 7575-559-59"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "registrations"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "registration"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://api.osf.io/v2/registrations/4v3sg/"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://api.osf.io/v2/registrations/4v3sg/children/"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://api.osf.io/v2/registrations/4v3sg/files/"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "fmnzy"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "4v3sg"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

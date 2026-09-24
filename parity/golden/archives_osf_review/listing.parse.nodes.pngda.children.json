@@ -1,0 +1,159 @@
+{
+  "id": "listing.parse.nodes.pngda.children",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 5,
+    "names": [
+      "osf_id",
+      "name",
+      "description",
+      "osf_type",
+      "public",
+      "category",
+      "registration",
+      "preprint",
+      "self",
+      "children",
+      "files",
+      "parent",
+      "project"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "ckjef",
+          "y6a34",
+          "ybm3c",
+          "mc45x",
+          "m4nbv"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Data",
+          "Empty",
+          "Private",
+          "Testing",
+          "No Code Files"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "All the data",
+          "This component is empty and uncategorised",
+          "Testing private components",
+          "",
+          "Has a README and a zip files, but no code files"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "nodes",
+          "nodes",
+          "nodes",
+          "nodes",
+          "nodes"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true,
+          true,
+          false,
+          true,
+          true
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "data",
+          "",
+          "hypothesis",
+          "",
+          "project"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false,
+          false,
+          false,
+          false,
+          false
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false,
+          false,
+          false,
+          false,
+          false
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://api.osf.io/v2/nodes/ckjef/",
+          "https://api.osf.io/v2/nodes/y6a34/",
+          "https://api.osf.io/v2/nodes/ybm3c/",
+          "https://api.osf.io/v2/nodes/mc45x/",
+          "https://api.osf.io/v2/nodes/m4nbv/"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://api.osf.io/v2/nodes/ckjef/children/",
+          "https://api.osf.io/v2/nodes/y6a34/children/",
+          "https://api.osf.io/v2/nodes/ybm3c/children/",
+          "https://api.osf.io/v2/nodes/mc45x/children/",
+          "https://api.osf.io/v2/nodes/m4nbv/children/"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://api.osf.io/v2/nodes/ckjef/files/",
+          "https://api.osf.io/v2/nodes/y6a34/files/",
+          "https://api.osf.io/v2/nodes/ybm3c/files/",
+          "https://api.osf.io/v2/nodes/mc45x/files/",
+          "https://api.osf.io/v2/nodes/m4nbv/files/"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "pngda",
+          "pngda",
+          "pngda",
+          "pngda",
+          "pngda"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "pngda",
+          "pngda",
+          "pngda",
+          "pngda",
+          "pngda"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

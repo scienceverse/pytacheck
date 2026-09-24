@@ -1,0 +1,256 @@
+{
+  "id": "osf_get_all_pages.preprints_pages_1",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 10,
+    "names": [
+      "osf_id",
+      "name",
+      "description",
+      "osf_type",
+      "provider",
+      "public",
+      "doi",
+      "version",
+      "is_published",
+      "date_created",
+      "date_modified",
+      "self",
+      "parent",
+      "project",
+      "primary_file"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "362zg_v1",
+          "af3mh_v1",
+          "mhjue_v4",
+          "7de3f_v2",
+          "axcmh_v2",
+          "e95w8_v2",
+          "vqnzm_v3",
+          "7exa6_v2",
+          "e95w8_v1",
+          "j2ftr_v1"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Exploring the use of funding acknowledgments for mapping global research funding flows",
+          "In AI We Verify? Literacy, Privacy Concerns, and Task Importance in Verifying LLM- Generated Information",
+          "Provocative Storytelling: Narrative, Interpretation, and the Problem of Meaning in Pedagogy",
+          "Global research funding flows according to available grant data in Dimensions",
+          "More than Just Measurement Models? Processing Insights from Population Coding Models of Visual Working Memory Retrieval",
+          "From ideal experiments to ideal research designs: What they are and why they are helpful",
+          "Occupying Autism: Structural Ableism and the Living Infrastructure of Pathology",
+          "The Limits of BPE Tokenization in Polish: Segmentation-Flexional Forms, Grammatical Anchoring, and First-Person Stability in Inflectional Language Models",
+          "From ideal experiments to ideal research designs: What they are and why they are helpful",
+          "When Climate Inaction Shapes Climate Responsibility: Moral Disengagement, Psychological Distance, and Information Seeking in Malaysia"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Funding acknowledgments (FAs) provide a potential but underexplored source for mapping global research funding flows. This study develops a framework for constructing global funding flow measures using FA data from Dimensions and assesses both the opportunities and limitations of this approach. We compare total and inter-regional funding flows based on funding grant information available in FAs of scientific publications. Our analysis identifies a key limitation arising from collaborative publications, where funding is attributed at the publication level rather than to individual authors. This obscures the interpretation of cross-border funding flows. We show that this attribution structure introduces systematic ambiguity and limits the validity of FA-based analyses. We argue that disaggregated, author-level funding attribution is essential for accurately tracing funding flows. This requires coordinated action among funders, publishers, and researchers, as well as the adoption of more standardized, machine-readable FAs formats.",
+          "As large language models (LLMs) are increasingly integrated into everyday information-seeking and decision-making contexts, concerns have grown regarding their tendency to produce inaccurate or fabricated outputs, such as hallucinations. This study investigates factors associated with users’ intention to verify LLM-generated information, focusing on three domains: user competencies (digital literacy, information literacy, and AI literacy), sociotechnical attitudes (trust in AI and privacy concerns), and usage characteristics (frequency of use and perceived task importance). Analysis of a survey of U.S. adult LLM users shows that AI literacy is the strongest and most consistent predictor of verification intention: individuals with higher AI literacy report greater intention to verify LLM outputs, including cross-checking information, requesting supporting evidence, and reporting inaccurate information to LLM platforms. Digital literacy shows a positive but smaller association with verification intention, while information literacy is not significantly related. In addition, higher privacy concerns and greater perceived task importance are positively associated with verification intention, although these effects are smaller in magnitude compared to AI literacy. These findings provide valuable initial evidence about user-level factors that shape information verification behaviors in human-AI interaction, addressing one of the pressing concerns in increasingly AI-mediated information environments.",
+          "Storytelling is widely used in education, but it is still most often treated as a tool for engagement, illustration, or representation rather than as a structure for thought. I theorize provocative storytelling as a pedagogical construct that positions narrative as a site of inquiry. Rather than delivering meaning, provocative stories are deliberately designed to generate interpretive tension, inviting learners into processes of questioning, perspective-taking, and dialogic reasoning. Drawing on narrative theory, dialogism, critical literacy, and inquiry-based learning, the article articulates the design principles that distinguish provocative storytelling from adjacent approaches such as case-based learning and dilemma pedagogy. It argues that contemporary pedagogical practices often privilege coherence, clarity, and transmission at the expense of interpretive engagement, limiting opportunities for students to grapple with complexity, ambiguity, and competing perspectives (Biesta, 2010). By framing narrative as an epistemic space rather than a rhetorical device, this article contributes a theoretically grounded approach to pedagogy that foregrounds meaning-making as a social, cultural, and interpretive process. The article concludes with implications for curriculum design, teacher education, and classroom practice, particularly in contexts that seek to engage learners in critical, interdisciplinary, and culturally responsive inquiry.",
+          "While most research funding is national, international funding plays a relatively important role, particularly for some regions of the Global South. However, the extent of funding flows between world regions remains unclear. This study represents a first attempt to map global research funding flows based on a set of grant metadata from Dimensions, augmented with data from the Gates Foundation and the European Commission (CORDIS). We find major regional gaps in the data outside of the leading scientific regions. With the data currently available, we find that Europe and Sub-Saharan Africa are the biggest recipients of inter-regional funding, with North America as main funder, and that over the last 25 years, total annual research funding has grown to above USD 60 billion, while inter-regional funding flows have stagnated at around USD 1.6 billion per year. These insights are contingent on data availability, raising the urgency for improving funding metadata infrastructures.",
+          "Recent studies of visual working memory (VWM) have investigated a population coding framework, in which items in memory are coded by an array of noisy, tuned detectors. Within this framework, heavy-tailed distributions of memory errors found in continuous-outcome VWM tasks reflect noise in the detector array rather than guessing. Studies have compared alternative tuning functions and detector noise distributions, finding differences in fit in some cases and substantial model mimicry in others. We used population coding models to look for evidence of a sample-size model of memory capacity, which predicts that memory strength will follow an inverse square-root law in set size, reflecting changes in the neural resources available to represent items. In two experiments, we independently manipulated the difficulty of the memory and decision tasks by varying the set size and the color saturation of the stimuli and the response wheel, respectively. We compared four population coding models and found that: (1) a von Mises tuning function provided better model fit and more stable estimates than a similarity-based, exponential-decay tuning function; (2) normal and Gumbel noise functions provided comparably good fits, but different patterns of parameter estimates; (3) Depending on task complexity, the amplitude of tuning function followed either an inverse square-root law or power law in set size, as predicted by the sample-size and attention-weighted sample-size model, respectively. Our results provided evidence for the sample-size account of VWM capacity in continuous outcome tasks and highlighted the potential of the models to be more than just measurement models.",
+          "Ideal experiments (IEs) describe hypothetical studies that we would carry out without practical, ethical, or resource-related constraints. IEs can help us to identify pitfalls and deficiencies in causal research projects (e.g., Angrist and Pischke 2008). We contend that the focus of IEs is too narrow and introduce the more general notion of ideal research designs (IRDs). IRDs go beyond IEs in that they also speak to issues such as measurement errors that are rarely the focus of IEs. After reviewing how researchers define and advocate using IEs, we discuss what components IRDs should encompass drawing on well-known error frameworks. After an applied example that explains how IRDs can be used in research, we explore how empirical researchers are using IRDs. While we find few examples, they attest to the usefulness of IRDs to evaluate research designs that have been realized or are planned for the future.",
+          "The history of autism scholarship is traditionally narrated as a sequence of progressive clinical discoveries. The argument advanced here proposes an alternative genealogical framework, tracing how the pathology paradigm reproduces itself independently of its scientific validity through mechanisms of institutional inheritance. Informed by epistemic injustice theory and the DisCrit framework, the analysis demonstrates how early bidirectional understandings of autistic traits were actively displaced by five historical nodes of clinical authority: Kanner, Bettelheim, Asperger, Lovaas, and Autism Speaks. To explain the durability of this deficit-based orientation across paradigmatic shifts, the analysis introduces a transmission model comprising three recursive structures: interpretive prefiguration, credential monopolization, and administrative sedimentation. Together, these mechanisms transitioned the Autistic community from a state of hermeneutical lacuna into a condition of hermeneutical domination. This theoretical model is subsequently applied to the contemporary United States federal health apparatus, documenting how 2025 and 2026 executive branch funding allocations, rhetorical strategies, and judicial rulings on compliance-oriented interventions function as convergent instruments of epistemic severance. Dismantling this living infrastructure ultimately requires accountable research governance that untethers federal grant eligibility from normative institutional affiliation and centers the intersectional knowledge produced by the Autistic community.\n\n\nKeywords: critical autism studies, epistemic injustice, hermeneutical domination, DisCrit, federal health policy, structural ableism, Double Empathy Problem, neurodiversity",
+          "This article analyzes BPE tokenization in Polish as a test case for a broader problem: the limits of statistical segmentation in an inflectional language. The starting point is the question of whether, and to what extent, frequency-based tokenization preserves units that are relevant for the linguistic description of Polish: orthographic form, the segmentation-phonemic level, syllable structure, logotomes, prefixes, derivational bases, inflectional endings, grammatical form, and the position of the speaking subject.\nThe empirical material includes the tokenization of diagnostic words, a simple children’s text, selected forms from the Preamble to the Constitution of the Republic of Poland, word-family tests, and examples containing Polish diacritics and nasal vowels. The analysis shows that BPE tokenizers may locally produce segments that coincide with syllabic, logotomic, or morphologically interpretable divisions, but they remain fundamentally dependent on the frequency of written forms. They do not systematically move from orthographic representation to the segmentation-phonemic level or to context-dependent phonetic realization.\nThe results also indicate that BPE stabilizes not grammatical categories themselves, but frequent surface fragments of their exponents. Segments such as -y, -ich, -ni, or -ć may appear as stable tokens or parts of tokens, but this does not amount to preserving the full grammatical form. A form such as ustanawiamy is not merely a sequence ending in -y; it is a verbal form anchored in conjugation, person, number, tense, mood, and aspect.\nThe article develops the concept of grammatical form anchoring, arguing that in Polish a form may not only encode syntactic relations, but also establish the position of the speaking subject. In forms such as poszłam, zrobiłam, or byłam, the grammatical “I” need not be expressed by a separate pronoun, because it is anchored in inflection. In interaction with AI, this reveals an additional problem: a language model does not possess its own stable grammatical “I”, but reconstructs it contextually, often mirroring the user’s forms or shifting grammatical gender.\nI propose treating Rocławski’s segmentation-flexional forms not as a description of how BPE operates, but as a diagnostic framework for assessing the quality of tokenization boundaries. The findings lead to the research hypothesis that more stable modeling of Polish may require several layers: sublexical stabilization inspired by Rocławski’s system, anchoring grammatical form in the inflectional system, representing sentence patterns and verbal valency structure, and maintaining the position of the grammatical “I” in dialogue. From this perspective, the problem of Polish AI is not reducible to reducing the number of tokens. Rather, it concerns maintaining relations between orthographic representation, word form, grammatical function, sentence position, and the position of the speaking subject.",
+          "Ideal experiments (IEs) describe hypothetical studies that we would carry out without practical, ethical, or resource-related constraints. IEs can help us to identify pitfalls and deficiencies in causal research projects (e.g., Angrist and Pischke 2008). We contend that the focus of IEs is too narrow and introduce the more general notion of ideal research designs (IRDs). IRDs go beyond IEs in that they also speak to issues such as measurement errors that are rarely the focus of IEs. After reviewing how researchers define and advocate using IEs, we discuss what components IRDs should encompass drawing on well-known error frameworks. After an applied example that explains how IRDs can be used in research, we explore how empirical researchers are using IRDs. While we find few examples, they attest to the usefulness of IRDs to evaluate research designs that have been realized or are planned for the future.",
+          "Public engagement with climate change remains uneven despite growing exposure to climate risks and communication. While climate inaction is often explained as a result of weak concern, less attention has been given to whether inaction itself shapes how people interpret climate responsibility and information. Drawing on cognitive dissonance theory, this study examines climate inaction from a behavior-to-attitude perspective, proposing that limited action may trigger self-justifying processes that distance individuals from climate risks and shape climate-related information engagement. A nationwide online survey of 500 Malaysian adults was analysed using structural equation modelling. Results broadly supported the proposed model: climate inaction was associated with moral disengagement, greater psychological distance, lower climate concern, and higher climate skepticism, while climate information seeking played a complex role in these attitudinal outcomes. The findings suggest that climate inaction may actively sustain future disengagement by reshaping psychological and communicative responses to climate change."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "preprints",
+          "preprints",
+          "preprints",
+          "preprints",
+          "preprints",
+          "preprints",
+          "preprints",
+          "preprints",
+          "preprints",
+          "preprints"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "socarxiv",
+          "socarxiv",
+          "socarxiv",
+          "socarxiv",
+          "osf",
+          "socarxiv",
+          "socarxiv",
+          "socarxiv",
+          "socarxiv",
+          "socarxiv"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          1,
+          1,
+          4,
+          2,
+          2,
+          2,
+          3,
+          2,
+          1,
+          1
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "2026-06-03T15:10:05.552165",
+          "2026-06-03T14:15:00.518386",
+          "2026-06-03T14:09:44.360259",
+          "2026-06-03T13:43:55.386000",
+          "2026-06-03T12:33:15.062894",
+          "2026-06-03T11:35:00.680118",
+          "2026-06-03T11:29:13.609619",
+          "2026-06-03T11:07:34.984074",
+          "2026-06-03T10:50:22.874905",
+          "2026-06-03T10:37:04.054216"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "2026-06-03T15:37:40.603538",
+          "2026-06-03T15:16:13.267034",
+          "2026-06-03T14:57:56.077188",
+          "2026-06-03T14:17:04.106921",
+          "2026-06-03T12:39:04.047692",
+          "2026-06-03T11:45:51.675963",
+          "2026-06-03T11:34:53.715955",
+          "2026-06-03T15:28:22.520766",
+          "2026-06-03T10:56:42.333064",
+          "2026-06-03T10:51:52.957386"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://api.osf.io/v2/preprints/362zg_v1/",
+          "https://api.osf.io/v2/preprints/af3mh_v1/",
+          "https://api.osf.io/v2/preprints/mhjue_v4/",
+          "https://api.osf.io/v2/preprints/7de3f_v2/",
+          "https://api.osf.io/v2/preprints/axcmh_v2/",
+          "https://api.osf.io/v2/preprints/e95w8_v2/",
+          "https://api.osf.io/v2/preprints/vqnzm_v3/",
+          "https://api.osf.io/v2/preprints/7exa6_v2/",
+          "https://api.osf.io/v2/preprints/e95w8_v1/",
+          "https://api.osf.io/v2/preprints/j2ftr_v1/"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          "6cvbm",
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://api.osf.io/v2/files/6a2044e9544576b2ffdb0cba/",
+          "https://api.osf.io/v2/files/6a2037116f6124ad6f7d6811/",
+          "https://api.osf.io/v2/files/6a2035f8331fda65dd7d654c/",
+          "https://api.osf.io/v2/files/6a202fa84eca45beba7d6a90/",
+          "https://api.osf.io/v2/files/6a20205400e59bfc247df259/",
+          "https://api.osf.io/v2/files/6a20119027d8c9b6e7b8c9ad/",
+          "https://api.osf.io/v2/files/6a20104417f6239c6c7df705/",
+          "https://api.osf.io/v2/files/6a200b1817f6239c6c7df25d/",
+          "https://api.osf.io/v2/files/6a20077dbce8ea5be8b8cbf4/",
+          "https://api.osf.io/v2/files/6a20042fa251219dc8a2eaf2/"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

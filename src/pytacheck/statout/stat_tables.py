@@ -194,8 +194,8 @@ def _stat_num_to_chr(v: Any) -> str | None:
     if v is None:
         return None
     if isinstance(v, bool):
-        v = 1 if v else 0
-    if isinstance(v, int):
+        return "TRUE" if v else "FALSE"  # format(TRUE) in R
+    if isinstance(v, int) and abs(v) < 2**31:  # an R integer
         return str(v)
     v = float(v)
     if math.isnan(v):
@@ -251,8 +251,8 @@ def _jasp_structured_tables(analyses_json: str | os.PathLike[str]) -> list[dict[
         an_name = _trimws(_chr1(_r_dollar(an, "name"), "")) or ""
         label = an_title if an_title else (an_name if an_name else None)
         an_id: Any = _r_dollar(an, "id")
-        if isinstance(an_id, list) and len(an_id) == 1:
-            an_id = an_id[0]
+        if isinstance(an_id, list | dict) and len(an_id) == 1:
+            an_id = next(iter(an_id.values())) if isinstance(an_id, dict) else an_id[0]
         an_id = None if an_id is None or isinstance(an_id, list | dict) else as_character(an_id)
 
         def collect(node: Any, label: str | None = label, an_id: str | None = an_id) -> None:
@@ -298,12 +298,8 @@ def _jasp_table_to_df(fields: Any, data_rows: Any) -> pd.DataFrame | None:
     rows = _r_iter(data_rows)
 
     def cell(row: Any, n: str) -> str | None:
-        if isinstance(row, dict):
-            v = row.get(n)
-        elif isinstance(row, list):
-            v = None
-        else:
-            raise _RError("subscript out of bounds")
+        # an atomic row (row[n] is NA) and an unnamed list give "" like NULL
+        v = row.get(n) if isinstance(row, dict) else None
         if v is None:
             return ""
         if isinstance(v, list | dict):
@@ -465,12 +461,18 @@ def _pb_fields(raw: Any) -> list[dict[str, Any]] | None:
 
 
 def _pb_all(fields: Sequence[Mapping[str, Any]], n: int) -> list[Any]:
-    """All values for field number *n* (``.pb_all()``)."""
+    """All values for field number *n*.
+
+    Port of ``R/stat-tables.R::.pb_all()``.
+    """
     return [x["value"] for x in fields if x["field"] == n]
 
 
 def _pb_get(fields: Sequence[Mapping[str, Any]], n: int) -> Any:
-    """The first value for field number *n*, or ``None`` (``.pb_get()``)."""
+    """The first value for field number *n*, or ``None``.
+
+    Port of ``R/stat-tables.R::.pb_get()``.
+    """
     for x in fields:
         if x["field"] == n:
             return x["value"]
@@ -478,7 +480,10 @@ def _pb_get(fields: Sequence[Mapping[str, Any]], n: int) -> Any:
 
 
 def _pb_str(x: Any) -> str:
-    """A length-delimited payload as a string (``.pb_str()``); ``""`` on failure."""
+    """A length-delimited payload as a string; ``""`` on failure.
+
+    Port of ``R/stat-tables.R::.pb_str()``.
+    """
     if x is None:
         return ""
     if not isinstance(x, bytes | bytearray):
@@ -520,7 +525,10 @@ def _num_value_chr(v: Any) -> str | None:
 
 
 def _jmv_cell(cell_raw: Any) -> str | None:
-    """One jamovi ``ResultsCell`` as text (``.jmv_cell()``); MISSING is ``""``."""
+    """One jamovi ``ResultsCell`` as text; an explicit MISSING is ``""``.
+
+    Port of ``R/stat-tables.R::.jmv_cell()``.
+    """
     f = _pb_fields(cell_raw)
     if f is None:
         return ""

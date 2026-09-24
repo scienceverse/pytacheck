@@ -1,0 +1,186 @@
+{
+  "id": "listing.parse.nodes.mc45x.files.github",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 4,
+    "names": [
+      "osf_id",
+      "name",
+      "description",
+      "provider",
+      "osf_type",
+      "kind",
+      "filetype",
+      "public",
+      "category",
+      "size",
+      "downloads",
+      "path",
+      "self",
+      "files",
+      "download_url",
+      "parent",
+      "project"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "6a17d11c00d51d24c806b950",
+          "68923297a7e963bc29478335",
+          "6979344e74d28a1d4cee7be5",
+          "6891f2f7157709eae14783e1"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "code",
+          "folder",
+          "good-example.R",
+          "README.md"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "github",
+          "github",
+          "github",
+          "github"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "files",
+          "files",
+          "files",
+          "files"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "folder",
+          "folder",
+          "file",
+          "file"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          "code",
+          "text"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "/code/",
+          "/folder/",
+          "/good-example.R",
+          "/README.md"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://api.osf.io/v2/files/6a17d11c00d51d24c806b950/",
+          "https://api.osf.io/v2/files/68923297a7e963bc29478335/",
+          "https://api.osf.io/v2/files/6979344e74d28a1d4cee7be5/",
+          "https://api.osf.io/v2/files/6891f2f7157709eae14783e1/"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://api.osf.io/v2/nodes/mc45x/files/github/code/",
+          "https://api.osf.io/v2/nodes/mc45x/files/github/folder/",
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          "https://osf.io/download/6979344e74d28a1d4cee7be5/",
+          "https://osf.io/download/6891f2f7157709eae14783e1/"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "mc45x",
+          "mc45x",
+          "mc45x",
+          "mc45x"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "mc45x",
+          "mc45x",
+          "mc45x",
+          "mc45x"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

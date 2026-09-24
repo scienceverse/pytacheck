@@ -1,0 +1,93 @@
+{
+  "id": ".osf_parse_response.fx.v2.registrations-89cb6d",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 1,
+    "names": [
+      "osf_id",
+      "name",
+      "osf_type",
+      "category",
+      "registration",
+      "preprint",
+      "self",
+      "children",
+      "files",
+      "parent",
+      "project"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "7qcxa"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Ego depletion pre-registered study"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "registrations"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "registration"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://api.osf.io/v2/registrations/7qcxa/"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://api.osf.io/v2/registrations/7qcxa/children/"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://api.osf.io/v2/registrations/7qcxa/files/"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "udwy6"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "7qcxa"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

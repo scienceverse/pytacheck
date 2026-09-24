@@ -1,0 +1,152 @@
+{
+  "id": "listing.parse.nodes.mjrpy.files.osfstorage",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 2,
+    "names": [
+      "osf_id",
+      "name",
+      "description",
+      "provider",
+      "osf_type",
+      "kind",
+      "filetype",
+      "public",
+      "category",
+      "size",
+      "downloads",
+      "path",
+      "self",
+      "files",
+      "download_url",
+      "parent",
+      "project"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "5f8da03537b6bb036330a7c6",
+          "5f8da03c08471203d7fdd250"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "S1.pdf",
+          "S2.pdf"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "osfstorage",
+          "osfstorage"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "files",
+          "files"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "file",
+          "file"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "text",
+          "text"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          28935,
+          23842
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          73,
+          74
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "/S1.pdf",
+          "/S2.pdf"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://api.osf.io/v2/files/5f8da03537b6bb036330a7c6/",
+          "https://api.osf.io/v2/files/5f8da03c08471203d7fdd250/"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://osf.io/download/d8a6s/",
+          "https://osf.io/download/qhc6u/"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "5bd37263b0b3a90017bc3991",
+          "5bd37263b0b3a90017bc3991"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "mjrpy",
+          "mjrpy"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

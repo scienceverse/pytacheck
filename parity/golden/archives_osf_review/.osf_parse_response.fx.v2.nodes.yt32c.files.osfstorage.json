@@ -1,0 +1,288 @@
+{
+  "id": ".osf_parse_response.fx.v2.nodes.yt32c.files.osfstorage",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 10,
+    "names": [
+      "osf_id",
+      "name",
+      "description",
+      "provider",
+      "osf_type",
+      "kind",
+      "filetype",
+      "public",
+      "category",
+      "size",
+      "downloads",
+      "path",
+      "self",
+      "files",
+      "download_url",
+      "parent",
+      "project"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "6846f857136a141c72ab8099",
+          "6846f858b1ced6859685b2ab",
+          "6846f85a132445250f85b2d8",
+          "6846f85b3ad87b0279d6a316",
+          "6846f85cdbcc454e6c85b318",
+          "6846f85edbaaa9e686ab815d",
+          "6846f85fdbaaa9e686ab8161",
+          "6846f85f132445250f85b2db",
+          "6846f86215a2e0cddf85b3df",
+          "6846f862f9e4f6c17ea4d9a8"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "data-13.csv",
+          "data-12.csv",
+          "data-11.csv",
+          "data-10.csv",
+          "data-09.csv",
+          "data-08.csv",
+          "data-07.csv",
+          "data-06.csv",
+          "data-04.csv",
+          "data-05.csv"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "osfstorage",
+          "osfstorage",
+          "osfstorage",
+          "osfstorage",
+          "osfstorage",
+          "osfstorage",
+          "osfstorage",
+          "osfstorage",
+          "osfstorage",
+          "osfstorage"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "files",
+          "files",
+          "files",
+          "files",
+          "files",
+          "files",
+          "files",
+          "files",
+          "files",
+          "files"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "file",
+          "file",
+          "file",
+          "file",
+          "file",
+          "file",
+          "file",
+          "file",
+          "file",
+          "file"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "data",
+          "data",
+          "data",
+          "data",
+          "data",
+          "data",
+          "data",
+          "data",
+          "data",
+          "data"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          185,
+          185,
+          185,
+          185,
+          185,
+          185,
+          185,
+          185,
+          185,
+          185
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          16,
+          17,
+          18,
+          19,
+          14,
+          15,
+          18,
+          18,
+          17,
+          18
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "/data-13.csv",
+          "/data-12.csv",
+          "/data-11.csv",
+          "/data-10.csv",
+          "/data-09.csv",
+          "/data-08.csv",
+          "/data-07.csv",
+          "/data-06.csv",
+          "/data-04.csv",
+          "/data-05.csv"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://api.osf.io/v2/files/6846f857136a141c72ab8099/",
+          "https://api.osf.io/v2/files/6846f858b1ced6859685b2ab/",
+          "https://api.osf.io/v2/files/6846f85a132445250f85b2d8/",
+          "https://api.osf.io/v2/files/6846f85b3ad87b0279d6a316/",
+          "https://api.osf.io/v2/files/6846f85cdbcc454e6c85b318/",
+          "https://api.osf.io/v2/files/6846f85edbaaa9e686ab815d/",
+          "https://api.osf.io/v2/files/6846f85fdbaaa9e686ab8161/",
+          "https://api.osf.io/v2/files/6846f85f132445250f85b2db/",
+          "https://api.osf.io/v2/files/6846f86215a2e0cddf85b3df/",
+          "https://api.osf.io/v2/files/6846f862f9e4f6c17ea4d9a8/"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://osf.io/download/kz37n/",
+          "https://osf.io/download/a5umt/",
+          "https://osf.io/download/dwqxt/",
+          "https://osf.io/download/hxjkp/",
+          "https://osf.io/download/rm9jq/",
+          "https://osf.io/download/fmtpv/",
+          "https://osf.io/download/dnwhm/",
+          "https://osf.io/download/6ns3w/",
+          "https://osf.io/download/uxj6r/",
+          "https://osf.io/download/5guks/"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "6846f83ac92d497818199744",
+          "6846f83ac92d497818199744",
+          "6846f83ac92d497818199744",
+          "6846f83ac92d497818199744",
+          "6846f83ac92d497818199744",
+          "6846f83ac92d497818199744",
+          "6846f83ac92d497818199744",
+          "6846f83ac92d497818199744",
+          "6846f83ac92d497818199744",
+          "6846f83ac92d497818199744"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "yt32c",
+          "yt32c",
+          "yt32c",
+          "yt32c",
+          "yt32c",
+          "yt32c",
+          "yt32c",
+          "yt32c",
+          "yt32c",
+          "yt32c"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

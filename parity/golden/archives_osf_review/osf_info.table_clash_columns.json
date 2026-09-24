@@ -1,0 +1,144 @@
+{
+  "id": "osf_info.table_clash_columns",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 2,
+    "names": [
+      "osf_url",
+      "name",
+      "osf_id",
+      "osf_id.osf",
+      "name.osf",
+      "description",
+      "osf_type",
+      "public",
+      "category",
+      "registration",
+      "preprint",
+      "self",
+      "children",
+      "files",
+      "parent",
+      "project"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "pngda",
+          "yt32c"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "a",
+          "b"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "x",
+          "y"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "pngda",
+          "yt32c"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Papercheck Test",
+          "Individual"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "This is my test description",
+          "Contains 14 data files for testing contents greater than 10"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "nodes",
+          "nodes"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true,
+          true
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "project",
+          "data"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false,
+          false
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false,
+          false
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://api.osf.io/v2/nodes/pngda/",
+          "https://api.osf.io/v2/nodes/yt32c/"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://api.osf.io/v2/nodes/pngda/children/",
+          "https://api.osf.io/v2/nodes/yt32c/children/"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://api.osf.io/v2/nodes/pngda/files/",
+          "https://api.osf.io/v2/nodes/yt32c/files/"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "ckjef"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "pngda",
+          "pngda"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

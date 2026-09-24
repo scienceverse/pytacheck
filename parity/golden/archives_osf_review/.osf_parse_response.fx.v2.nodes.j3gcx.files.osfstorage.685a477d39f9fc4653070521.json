@@ -1,0 +1,14 @@
+{
+  "id": ".osf_parse_response.fx.v2.nodes.j3gcx.files.osfstorage.685a477d39f9fc4653070521",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 0,
+    "names": [],
+    "v": []
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

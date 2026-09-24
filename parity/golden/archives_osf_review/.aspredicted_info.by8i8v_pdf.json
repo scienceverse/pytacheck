@@ -1,0 +1,107 @@
+{
+  "id": ".aspredicted_info.by8i8v_pdf",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 1,
+    "names": [
+      "ap_url",
+      "AP_title",
+      "AP_authors",
+      "AP_created",
+      "AP_data",
+      "AP_hypotheses",
+      "AP_key_dv",
+      "AP_conditions",
+      "AP_analyses",
+      "AP_outliers",
+      "AP_sample_size",
+      "AP_anything_else",
+      "AP_version"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "https://aspredicted.org/by8i8v.pdf"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "To err is human"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Daniel Lakens (Eindhoven University of Technology) - d.lakens@tue.nl"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "2025/11/27 23:20 (PT)"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "No, no data have been collected for this study yet."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Automation can be used to check for errors in scientific manuscripts, and inform authors about possible corrections. In this study we examine the usefulness of metacheck to improve best practices."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "We will code all manuscripts for mistakes, and count the total number of mistakes per manuscript."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Two conditions. In one, researchers receive automated feedback. In the control condition, they do not receive feedback."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "We will perform an independent t-test on the number of mistakes in each group."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "none are expected."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "We randomly assigned 50 scientists to a condition where their manuscript was automatically checked for errors, and 50 scientists to a control condition with a checklist."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "We also measured the expertise of researchers (in years) to explore whether the automated tool would be more useful, the less research experience researchers had. We also asked researchers to rate how useful they found the checklist or app on a scale from 1 (not at all) to 7 (extremely useful)."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "2.00"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

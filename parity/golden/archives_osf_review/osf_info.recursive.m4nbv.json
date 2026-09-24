@@ -1,0 +1,226 @@
+{
+  "id": "osf_info.recursive.m4nbv",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 4,
+    "names": [
+      "osf_url",
+      "osf_id",
+      "name",
+      "description",
+      "osf_type",
+      "public",
+      "category",
+      "registration",
+      "preprint",
+      "self",
+      "children",
+      "files",
+      "parent",
+      "project",
+      "provider",
+      "kind",
+      "filetype",
+      "size",
+      "downloads",
+      "path",
+      "download_url"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "m4nbv",
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "m4nbv",
+          "696a9041b13b8970a89cff7c",
+          "696a9633e299dcc1178da14e",
+          "696a965bf325b1d0f38da106"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "No Code Files",
+          "osfstorage",
+          "README.md",
+          "code.zip"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Has a README and a zip files, but no code files",
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "nodes",
+          "files",
+          "files",
+          "files"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "project",
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://api.osf.io/v2/nodes/m4nbv/",
+          null,
+          "https://api.osf.io/v2/files/696a9633e299dcc1178da14e/",
+          "https://api.osf.io/v2/files/696a965bf325b1d0f38da106/"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://api.osf.io/v2/nodes/m4nbv/children/",
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://api.osf.io/v2/nodes/m4nbv/files/",
+          "https://api.osf.io/v2/nodes/m4nbv/files/osfstorage/",
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "pngda",
+          "m4nbv",
+          "696a9041b13b8970a89cff7c",
+          "696a9041b13b8970a89cff7c"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "pngda",
+          "m4nbv",
+          "m4nbv",
+          "m4nbv"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "osfstorage",
+          "osfstorage",
+          "osfstorage"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "folder",
+          "file",
+          "file"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          "text",
+          "archive"
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          null,
+          null,
+          887,
+          2726
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          null,
+          null,
+          4,
+          4
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "/",
+          "/README.md",
+          "/code.zip"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          "https://osf.io/download/696a9633e299dcc1178da14e/",
+          "https://osf.io/download/696a965bf325b1d0f38da106/"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

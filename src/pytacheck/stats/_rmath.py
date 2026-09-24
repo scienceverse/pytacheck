@@ -40,6 +40,18 @@ def _warn(warn: Warn, msg: str = _NANS_PRODUCED) -> float:
     return NAN
 
 
+def _checked(value: float, args: tuple[float, ...], warn: Warn) -> float:
+    """R's ``math2``/``math3`` wrapper around an nmath function.
+
+    A ``NaN`` result from non-``NaN`` arguments warns ``"NaNs produced"``
+    (nmath itself never warns for domain errors); a ``NaN`` argument gives
+    ``NaN`` silently.
+    """
+    if math.isnan(value) and not any(math.isnan(a) for a in args):
+        _warn(warn)
+    return value
+
+
 def _dt_0(lower_tail: bool) -> float:
     return 0.0 if lower_tail else 1.0
 
@@ -58,7 +70,7 @@ def pnorm(x: float, lower_tail: bool = True) -> float:
 
 
 def pbeta(x: float, a: float, b: float, lower_tail: bool = True) -> float:
-    """R ``pbeta(x, a, b, lower.tail)`` for the parameters statcheck produces."""
+    """R ``pbeta(x, a, b, lower.tail)`` (``nmath/pbeta.c``) without the warning wrapper."""
     from scipy.special import betainc, betaincc
 
     if math.isnan(x) or math.isnan(a) or math.isnan(b):
@@ -69,17 +81,25 @@ def pbeta(x: float, a: float, b: float, lower_tail: bool = True) -> float:
         return _dt_0(lower_tail)
     if x >= 1:
         return _dt_1(lower_tail)
+    # pbeta_raw(): limit cases (point masses) for zero or infinite shapes
+    if a == 0 or b == 0 or math.isinf(a) or math.isinf(b):
+        if a == 0 and b == 0:
+            return 0.5
+        if a == 0 or (b != 0 and math.isinf(a / b)):
+            return _dt_1(lower_tail)
+        if b == 0 or (a != 0 and math.isinf(b / a)):
+            return _dt_0(lower_tail)
+        return _dt_0(lower_tail) if x < 0.5 else _dt_1(lower_tail)
     return float(betainc(a, b, x) if lower_tail else betaincc(a, b, x))
 
 
-def pt(x: float, n: float, lower_tail: bool = True, warn: Warn = None) -> float:
-    """R ``pt(x, df, lower.tail)`` (central t distribution), as in ``nmath/pt.c``."""
+def _pt(x: float, n: float, lower_tail: bool) -> float:
     from scipy.special import betaln
 
     if math.isnan(x) or math.isnan(n):
         return x + n
     if n <= 0.0:
-        return _warn(warn)
+        return NAN
     if not math.isfinite(x):
         return _dt_0(lower_tail) if x < 0 else _dt_1(lower_tail)
     if not math.isfinite(n):
@@ -102,31 +122,43 @@ def pt(x: float, n: float, lower_tail: bool = True, warn: Warn = None) -> float:
     return (0.5 - val + 0.5) if lower_tail else val
 
 
-def pchisq(x: float, df: float, lower_tail: bool = True, warn: Warn = None) -> float:
-    """R ``pchisq(x, df, lower.tail)``: ``pgamma(x, df / 2, scale = 2)``."""
+def pt(x: float, n: float, lower_tail: bool = True, warn: Warn = None) -> float:
+    """R ``pt(x, df, lower.tail)`` (central t distribution), as in ``nmath/pt.c``."""
+    return _checked(_pt(x, n, lower_tail), (x, n), warn)
+
+
+def _pgamma(x: float, alph: float, lower_tail: bool) -> float:
+    """``pgamma(x, alph, scale = 1)`` (``nmath/pgamma.c``) without the warning wrapper."""
     from scipy.special import gammainc, gammaincc
 
-    alph = df / 2.0
     if math.isnan(x) or math.isnan(alph):
         return x + alph
     if alph < 0.0:
-        return _warn(warn)
-    x = x / 2.0
+        return NAN
     if alph == 0.0:
         return _dt_0(lower_tail) if x <= 0 else _dt_1(lower_tail)
+    # pgamma_raw()
     if x <= 0:
         return _dt_0(lower_tail)
     if math.isinf(x):
         return _dt_1(lower_tail)
+    if math.isinf(alph):
+        # pgamma_smallx() overflows to NaN for x < 1; otherwise the
+        # "large alph" series gives sum = 0 and dpois_wrap() = 0.
+        return NAN if x < 1 else _dt_0(lower_tail)
     return float(gammainc(alph, x) if lower_tail else gammaincc(alph, x))
 
 
-def pf(x: float, df1: float, df2: float, lower_tail: bool = True, warn: Warn = None) -> float:
-    """R ``pf(x, df1, df2, lower.tail)``, as in ``nmath/pf.c``."""
+def pchisq(x: float, df: float, lower_tail: bool = True, warn: Warn = None) -> float:
+    """R ``pchisq(x, df, lower.tail)``: ``pgamma(x, df / 2, scale = 2)``."""
+    return _checked(_pgamma(x / 2.0, df / 2.0, lower_tail), (x, df), warn)
+
+
+def _pf(x: float, df1: float, df2: float, lower_tail: bool) -> float:
     if math.isnan(x) or math.isnan(df1) or math.isnan(df2):
         return x + df2 + df1
     if df1 <= 0.0 or df2 <= 0.0:
-        return _warn(warn)
+        return NAN
     if x <= 0.0:
         return _dt_0(lower_tail)
     if math.isinf(x):
@@ -138,12 +170,17 @@ def pf(x: float, df1: float, df2: float, lower_tail: bool = True, warn: Warn = N
             if x == 1.0:
                 return 0.5
             return _dt_1(lower_tail)
-        return pchisq(x * df1, df1, lower_tail, warn)
+        return _pgamma(x * df1 / 2.0, df1 / 2.0, lower_tail)
     if math.isinf(df1):
-        return pchisq(df2 / x, df2, not lower_tail, warn)
+        return _pgamma(df2 / x / 2.0, df2 / 2.0, not lower_tail)
     if df1 * x > df2:
         return pbeta(df2 / (df2 + df1 * x), df2 / 2.0, df1 / 2.0, not lower_tail)
     return pbeta(df1 * x / (df2 + df1 * x), df1 / 2.0, df2 / 2.0, lower_tail)
+
+
+def pf(x: float, df1: float, df2: float, lower_tail: bool = True, warn: Warn = None) -> float:
+    """R ``pf(x, df1, df2, lower.tail)``, as in ``nmath/pf.c``."""
+    return _checked(_pf(x, df1, df2, lower_tail), (x, df1, df2), warn)
 
 
 def sqrt(x: float, warn: Warn = None) -> float:
@@ -157,47 +194,31 @@ def sqrt(x: float, warn: Warn = None) -> float:
 
 # -- round() -------------------------------------------------------------------
 
-_DBL_DIG = 15
-_MAX_DIGITS = 308
-
-
-def _rint(x: float) -> float:
-    """C ``nearbyint()``: round half to even."""
-    return float(round(x))
-
 
 def r_round(x: float, digits: float = 0) -> float:
-    """R (>= 4.0.0) ``round(x, digits)`` (``nmath/fround.c``)."""
-    if math.isnan(x) or math.isnan(digits):
+    """R (>= 4.0.0) ``round(x, digits)`` (``nmath/fround.c``).
+
+    Delegates to :func:`pytacheck._r.r_round` (bit-for-bit R, including
+    ``R_pow_di()`` powers of ten and the ``logb()`` precision cut-off for many
+    digits); a ``NaN`` *digits* gives ``NaN`` as in R (``x + digits``).
+    """
+    from pytacheck._r import r_round as _r_round
+
+    if math.isnan(digits):
         return x + digits
-    if not math.isfinite(x) or digits > _MAX_DIGITS + 15 or x == 0.0:
-        return x
-    if digits < -_MAX_DIGITS:
-        return 0.0
-    if digits == 0.0:
-        return _rint(x)
-    dig = math.floor(digits + 0.5)
-    sgn = 1.0
-    if x < 0.0:
-        sgn = -1.0
-        x = -x
-    if dig > 0 and math.log10(x) + dig > _DBL_DIG:
-        return sgn * x
-    if dig > 0:
-        p10 = 10.0**dig
-        x10 = p10 * x
-        i10 = math.floor(x10)
-        xd = i10 / p10
-        xu = math.ceil(x10) / p10
-    else:
-        p10 = 10.0**-dig
-        x10 = x / p10
-        i10 = math.floor(x10)
-        xd = i10 * p10
-        xu = math.ceil(x10) * p10
-    du = xu - x
-    dd = x - xd
-    return sgn * (xu if (du < dd or (du == dd and math.fmod(i10, 2.0) == 1)) else xd)
+    return float(_r_round(x, digits))
+
+
+def r_pow(x: float, y: float) -> float:
+    """R ``x ^ y`` for doubles (``R_pow()``): overflow gives ``Inf``, never an exception."""
+    if x == 1.0 or y == 0.0:
+        return 1.0
+    try:
+        return math.pow(x, y)
+    except OverflowError:
+        return math.copysign(math.inf, x) if y % 2 == 1 else math.inf
+    except ValueError:  # negative base, fractional exponent
+        return NAN
 
 
 # -- as.numeric(<character>) ---------------------------------------------------

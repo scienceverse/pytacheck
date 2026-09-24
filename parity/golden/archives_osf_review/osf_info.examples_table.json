@@ -1,0 +1,453 @@
+{
+  "id": "osf_info.examples_table",
+  "ok": true,
+  "error": null,
+  "warnings": [
+    "xx is not a valid OSF ID"
+  ],
+  "value": {
+    "t": "df",
+    "nrow": 9,
+    "names": [
+      "url",
+      "type",
+      "osf_id",
+      "name",
+      "description",
+      "osf_type",
+      "public",
+      "category",
+      "registration",
+      "preprint",
+      "self",
+      "children",
+      "files",
+      "parent",
+      "project",
+      "provider",
+      "kind",
+      "filetype",
+      "size",
+      "downloads",
+      "path",
+      "download_url",
+      "doi",
+      "version",
+      "is_published",
+      "date_created",
+      "date_modified",
+      "primary_file",
+      "orcid"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "pngda",
+          "https://osf.io/6nt4v",
+          "ybm3c",
+          "osf.io/75qgk",
+          "xp5cy",
+          "4i578",
+          "8c3kb",
+          "6nt4v",
+          "xx"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "project",
+          "component",
+          "private",
+          "file",
+          "preprint",
+          "user",
+          "reg",
+          "duplicate",
+          "bad"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "pngda",
+          "6nt4v",
+          "ybm3c",
+          "75qgk",
+          "xp5cy",
+          "4i578",
+          "8c3kb",
+          "6nt4v",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Papercheck Test",
+          "Processed Data",
+          "Private",
+          "processed-data.csv",
+          "Understanding mixed effects models through data simulation",
+          "Lisa DeBruine",
+          "Understanding mixed effects models through data simulation",
+          "Processed Data",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "This is my test description",
+          "The processed data",
+          "Testing private components",
+          null,
+          "Experimental designs that sample both subjects and stimuli from a larger population need to account for random effects of both subjects and stimuli using mixed effects models. However, much of this research is analyzed using ANOVA on aggregated responses because researchers are not confident specifying and interpreting mixed effects models. The tutorial will explain how to simulate data with random effects structure and analyse the data using linear mixed effects regression (with the lme4 R package), with a focus on interpreting the output in light of the simulated parameters. Data simulation can not only enhance understanding of how these models work, but also enables researchers to perform power calculations for complex designs. All materials associated with this article can be accessed at https://osf.io/3cz2e/.",
+          null,
+          null,
+          "The processed data",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "nodes",
+          "nodes",
+          "nodes",
+          "files",
+          "preprints",
+          "users",
+          "registrations",
+          "nodes",
+          null
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true,
+          true,
+          false,
+          null,
+          true,
+          true,
+          null,
+          true,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "project",
+          "data",
+          "hypothesis",
+          null,
+          null,
+          null,
+          "registration",
+          "data",
+          null
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false,
+          false,
+          false,
+          null,
+          null,
+          null,
+          true,
+          false,
+          null
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false,
+          false,
+          false,
+          null,
+          null,
+          null,
+          false,
+          false,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://api.osf.io/v2/nodes/pngda/",
+          "https://api.osf.io/v2/nodes/6nt4v/",
+          "https://api.osf.io/v2/nodes/ybm3c/",
+          "https://api.osf.io/v2/files/6846ed6a29684b023953943e/",
+          "https://api.osf.io/v2/preprints/xp5cy_v1/",
+          "https://api.osf.io/v2/users/4i578/",
+          "https://api.osf.io/v2/registrations/8c3kb/",
+          "https://api.osf.io/v2/nodes/6nt4v/",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://api.osf.io/v2/nodes/pngda/children/",
+          "https://api.osf.io/v2/nodes/6nt4v/children/",
+          "https://api.osf.io/v2/nodes/ybm3c/children/",
+          null,
+          null,
+          null,
+          "https://api.osf.io/v2/registrations/8c3kb/children/",
+          "https://api.osf.io/v2/nodes/6nt4v/children/",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://api.osf.io/v2/nodes/pngda/files/",
+          "https://api.osf.io/v2/nodes/6nt4v/files/",
+          "https://api.osf.io/v2/nodes/ybm3c/files/",
+          null,
+          null,
+          null,
+          "https://api.osf.io/v2/registrations/8c3kb/files/",
+          "https://api.osf.io/v2/nodes/6nt4v/files/",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "ckjef",
+          "pngda",
+          "6846ec9ae295bf0267199776",
+          "3cz2e",
+          null,
+          "3cz2e",
+          "ckjef",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "pngda",
+          "pngda",
+          "pngda",
+          "6nt4v",
+          null,
+          null,
+          "8c3kb",
+          "pngda",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          "osfstorage",
+          "psyarxiv",
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          "file",
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          "data",
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          null,
+          null,
+          null,
+          185,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          null,
+          null,
+          null,
+          361,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          "/processed-data.csv",
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          "https://osf.io/download/75qgk/",
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          "10.1177/2515245920965119",
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          1,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          true,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          "2019-06-02T15:12:19.431294",
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          "2020-12-15T14:26:27.982334",
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          "https://api.osf.io/v2/files/5cf3e75d23fec40017f2ce1f/",
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

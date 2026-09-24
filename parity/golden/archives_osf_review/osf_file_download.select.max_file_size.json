@@ -1,0 +1,120 @@
+{
+  "id": "osf_file_download.select.max_file_size",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "value",
+      "files"
+    ],
+    "v": [
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "folder",
+          "osf_id",
+          "name",
+          "filetype",
+          "size",
+          "downloads",
+          "provider",
+          "downloaded",
+          "download_path",
+          "osf_project",
+          "osf_url",
+          "size_on_disk",
+          "attempted"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "6nt4v"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "6846ed6a29684b023953943e"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "processed-data.csv"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              185
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              391
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "osfstorage"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "6nt4v"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "6nt4v"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://osf.io/6nt4v"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": []
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

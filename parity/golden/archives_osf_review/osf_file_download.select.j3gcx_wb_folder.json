@@ -1,0 +1,189 @@
+{
+  "id": "osf_file_download.select.j3gcx_wb_folder",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "value",
+      "files"
+    ],
+    "v": [
+      {
+        "t": "df",
+        "nrow": 5,
+        "names": [
+          "folder",
+          "osf_id",
+          "name",
+          "filetype",
+          "size",
+          "downloads",
+          "provider",
+          "path",
+          "downloaded",
+          "download_path",
+          "osf_project",
+          "osf_url",
+          "size_on_disk",
+          "attempted"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "685a46eb8c103f8ab307047f",
+              "685a46eb8c103f8ab307047f",
+              "685a46eb8c103f8ab307047f",
+              "685a46eb8c103f8ab307047f",
+              "685a46eb8c103f8ab307047f"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "685a4742c394e5c1c4a1c84f",
+              "687e3375988186012ef720c4",
+              "685a4750222eecf526070525",
+              "685a475da5dd9e8e81d1ad1d",
+              "685a477387125a22d8d1ad68"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "test-1.txt",
+              "README",
+              "test-2.txt",
+              "test-3.txt",
+              "test-4.txt"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "text",
+              "NA",
+              "text",
+              "text",
+              "text"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              12,
+              58,
+              12,
+              12,
+              12
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              280,
+              272,
+              278,
+              277,
+              275
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "osfstorage",
+              "osfstorage",
+              "osfstorage",
+              "osfstorage",
+              "osfstorage"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "osfstorage/nest-1/test-1.txt",
+              "osfstorage/nest-1/README",
+              "osfstorage/nest-1/nest-2/test-2.txt",
+              "osfstorage/nest-1/nest-2/nest-3/test-3.txt",
+              "osfstorage/nest-1/nest-2/nest-3/nest-4/test-4.txt"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true,
+              true,
+              true,
+              true,
+              true
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "685a46eb8c103f8ab307047f",
+              "685a46eb8c103f8ab307047f",
+              "685a46eb8c103f8ab307047f",
+              "685a46eb8c103f8ab307047f",
+              "685a46eb8c103f8ab307047f"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "685a46eb8c103f8ab307047f",
+              "685a46eb8c103f8ab307047f",
+              "685a46eb8c103f8ab307047f",
+              "685a46eb8c103f8ab307047f",
+              "685a46eb8c103f8ab307047f"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://osf.io/685a46eb8c103f8ab307047f",
+              "https://osf.io/685a46eb8c103f8ab307047f",
+              "https://osf.io/685a46eb8c103f8ab307047f",
+              "https://osf.io/685a46eb8c103f8ab307047f",
+              "https://osf.io/685a46eb8c103f8ab307047f"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              12,
+              58,
+              12,
+              12,
+              12
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true,
+              true,
+              true,
+              true,
+              true
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "685a46eb8c103f8ab307047f/osfstorage/nest-1/nest-2/nest-3/nest-4/test-4.txt",
+          "685a46eb8c103f8ab307047f/osfstorage/nest-1/nest-2/nest-3/test-3.txt",
+          "685a46eb8c103f8ab307047f/osfstorage/nest-1/nest-2/test-2.txt",
+          "685a46eb8c103f8ab307047f/osfstorage/nest-1/README",
+          "685a46eb8c103f8ab307047f/osfstorage/nest-1/test-1.txt"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -1,0 +1,169 @@
+{
+  "id": "listing.parse.nodes.pngda.files.osfstorage",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 3,
+    "names": [
+      "osf_id",
+      "name",
+      "description",
+      "provider",
+      "osf_type",
+      "kind",
+      "filetype",
+      "public",
+      "category",
+      "size",
+      "downloads",
+      "path",
+      "self",
+      "files",
+      "download_url",
+      "parent",
+      "project"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "68472f93b21328dc7f539482",
+          "68472f85294e0f3885a4db10",
+          "687e12540f181f52331a17d5"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "test-folder",
+          "README",
+          "papercheck.png"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "osfstorage",
+          "osfstorage",
+          "osfstorage"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "files",
+          "files",
+          "files"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "folder",
+          "file",
+          "file"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "NA",
+          "image"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          null,
+          30,
+          1564236
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          null,
+          29,
+          23
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "/test-folder/",
+          "/README",
+          "/papercheck.png"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://api.osf.io/v2/files/68472f93b21328dc7f539482/",
+          "https://api.osf.io/v2/files/68472f85294e0f3885a4db10/",
+          "https://api.osf.io/v2/files/687e12540f181f52331a17d5/"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://api.osf.io/v2/nodes/pngda/files/osfstorage/68472f93b21328dc7f539482/",
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "https://osf.io/download/3a58t/",
+          "https://osf.io/download/w72ch/"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "6846ebe94ff8297687bf4917",
+          "6846ebe94ff8297687bf4917",
+          "6846ebe94ff8297687bf4917"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "pngda",
+          "pngda",
+          "pngda"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

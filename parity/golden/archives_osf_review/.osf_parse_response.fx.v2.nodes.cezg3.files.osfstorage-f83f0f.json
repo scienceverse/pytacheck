@@ -1,0 +1,288 @@
+{
+  "id": ".osf_parse_response.fx.v2.nodes.cezg3.files.osfstorage-f83f0f",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 10,
+    "names": [
+      "osf_id",
+      "name",
+      "description",
+      "provider",
+      "osf_type",
+      "kind",
+      "filetype",
+      "public",
+      "category",
+      "size",
+      "downloads",
+      "path",
+      "self",
+      "files",
+      "download_url",
+      "parent",
+      "project"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "553e9d5c8c5e4a21991ade11",
+          "553e9d5c8c5e4a21991ade12",
+          "553e9d5c8c5e4a21991ade13",
+          "553e9d5c8c5e4a21991ade14",
+          "553e9d5c8c5e4a21991ade15",
+          "553e9d5c8c5e4a21991ade16",
+          "553e9d5c8c5e4a21991ade17",
+          "553e9d5c8c5e4a21991ade18",
+          "553e9d5c8c5e4a21991ade19",
+          "553e9d5c8c5e4a21991ade06"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "accident_planecrash2.jpg",
+          "accident_railroad.jpg",
+          "accident_sportscar.jpg",
+          "animals_cow.jpg",
+          "animals_deaddog.jpg",
+          "animals_dogfight.jpg",
+          "animals_leopard.jpg",
+          "animals_starveddog.jpg",
+          "animals_whale.jpg",
+          "injury_limps.JPG"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "osfstorage",
+          "osfstorage",
+          "osfstorage",
+          "osfstorage",
+          "osfstorage",
+          "osfstorage",
+          "osfstorage",
+          "osfstorage",
+          "osfstorage",
+          "osfstorage"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "files",
+          "files",
+          "files",
+          "files",
+          "files",
+          "files",
+          "files",
+          "files",
+          "files",
+          "files"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "file",
+          "file",
+          "file",
+          "file",
+          "file",
+          "file",
+          "file",
+          "file",
+          "file",
+          "file"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "image",
+          "image",
+          "image",
+          "image",
+          "image",
+          "image",
+          "image",
+          "image",
+          "image",
+          "image"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          61800,
+          58370,
+          47824,
+          71673,
+          40371,
+          59569,
+          31764,
+          54654,
+          63495,
+          70091
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          9,
+          9,
+          9,
+          9,
+          10,
+          9,
+          9,
+          11,
+          9,
+          9
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "/accident_planecrash2.jpg",
+          "/accident_railroad.jpg",
+          "/accident_sportscar.jpg",
+          "/animals_cow.jpg",
+          "/animals_deaddog.jpg",
+          "/animals_dogfight.jpg",
+          "/animals_leopard.jpg",
+          "/animals_starveddog.jpg",
+          "/animals_whale.jpg",
+          "/injury_limps.JPG"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://api.osf.io/v2/files/553e9d5c8c5e4a21991ade11/?view_only=f171281f212f4435917b16a9e581a73b",
+          "https://api.osf.io/v2/files/553e9d5c8c5e4a21991ade12/?view_only=f171281f212f4435917b16a9e581a73b",
+          "https://api.osf.io/v2/files/553e9d5c8c5e4a21991ade13/?view_only=f171281f212f4435917b16a9e581a73b",
+          "https://api.osf.io/v2/files/553e9d5c8c5e4a21991ade14/?view_only=f171281f212f4435917b16a9e581a73b",
+          "https://api.osf.io/v2/files/553e9d5c8c5e4a21991ade15/?view_only=f171281f212f4435917b16a9e581a73b",
+          "https://api.osf.io/v2/files/553e9d5c8c5e4a21991ade16/?view_only=f171281f212f4435917b16a9e581a73b",
+          "https://api.osf.io/v2/files/553e9d5c8c5e4a21991ade17/?view_only=f171281f212f4435917b16a9e581a73b",
+          "https://api.osf.io/v2/files/553e9d5c8c5e4a21991ade18/?view_only=f171281f212f4435917b16a9e581a73b",
+          "https://api.osf.io/v2/files/553e9d5c8c5e4a21991ade19/?view_only=f171281f212f4435917b16a9e581a73b",
+          "https://api.osf.io/v2/files/553e9d5c8c5e4a21991ade06/?view_only=f171281f212f4435917b16a9e581a73b"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://osf.io/download/pnqvy/?view_only=f171281f212f4435917b16a9e581a73b",
+          "https://osf.io/download/sazjn/?view_only=f171281f212f4435917b16a9e581a73b",
+          "https://osf.io/download/ykgwn/?view_only=f171281f212f4435917b16a9e581a73b",
+          "https://osf.io/download/ms98v/?view_only=f171281f212f4435917b16a9e581a73b",
+          "https://osf.io/download/jzdhv/?view_only=f171281f212f4435917b16a9e581a73b",
+          "https://osf.io/download/6xe3m/?view_only=f171281f212f4435917b16a9e581a73b",
+          "https://osf.io/download/wxmys/?view_only=f171281f212f4435917b16a9e581a73b",
+          "https://osf.io/download/puvb6/?view_only=f171281f212f4435917b16a9e581a73b",
+          "https://osf.io/download/9u82z/?view_only=f171281f212f4435917b16a9e581a73b",
+          "https://osf.io/download/q7zxu/?view_only=f171281f212f4435917b16a9e581a73b"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "553e9d5c8c5e4a21991ade05",
+          "553e9d5c8c5e4a21991ade05",
+          "553e9d5c8c5e4a21991ade05",
+          "553e9d5c8c5e4a21991ade05",
+          "553e9d5c8c5e4a21991ade05",
+          "553e9d5c8c5e4a21991ade05",
+          "553e9d5c8c5e4a21991ade05",
+          "553e9d5c8c5e4a21991ade05",
+          "553e9d5c8c5e4a21991ade05",
+          "553e9d5c8c5e4a21991ade05"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "cezg3",
+          "cezg3",
+          "cezg3",
+          "cezg3",
+          "cezg3",
+          "cezg3",
+          "cezg3",
+          "cezg3",
+          "cezg3",
+          "cezg3"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

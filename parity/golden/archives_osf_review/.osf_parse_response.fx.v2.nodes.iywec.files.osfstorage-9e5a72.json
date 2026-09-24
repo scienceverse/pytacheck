@@ -1,0 +1,288 @@
+{
+  "id": ".osf_parse_response.fx.v2.nodes.iywec.files.osfstorage-9e5a72",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 10,
+    "names": [
+      "osf_id",
+      "name",
+      "description",
+      "provider",
+      "osf_type",
+      "kind",
+      "filetype",
+      "public",
+      "category",
+      "size",
+      "downloads",
+      "path",
+      "self",
+      "files",
+      "download_url",
+      "parent",
+      "project"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "553e9d5a8c5e4a21991addfa",
+          "553e9d5a8c5e4a21991addfb",
+          "553e9d5a8c5e4a21991addfc",
+          "553e9d5a8c5e4a21991addfd",
+          "553e9d5a8c5e4a21991addfe",
+          "553e9d5a8c5e4a21991addff",
+          "553e9d5a8c5e4a21991ade00",
+          "553e9d5a8c5e4a21991ade01",
+          "553e9d5a8c5e4a21991ade02",
+          "553e9d5a8c5e4a21991ade03"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "mug.jpg",
+          "necklace.jpg",
+          "newspaper2.jpg",
+          "puzzle.jpg",
+          "redflag.jpg",
+          "ring.jpg",
+          "rockingchair.jpg",
+          "rug.jpg",
+          "scarf.jpg",
+          "shoppingcart.jpg"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "osfstorage",
+          "osfstorage",
+          "osfstorage",
+          "osfstorage",
+          "osfstorage",
+          "osfstorage",
+          "osfstorage",
+          "osfstorage",
+          "osfstorage",
+          "osfstorage"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "files",
+          "files",
+          "files",
+          "files",
+          "files",
+          "files",
+          "files",
+          "files",
+          "files",
+          "files"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "file",
+          "file",
+          "file",
+          "file",
+          "file",
+          "file",
+          "file",
+          "file",
+          "file",
+          "file"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "image",
+          "image",
+          "image",
+          "image",
+          "image",
+          "image",
+          "image",
+          "image",
+          "image",
+          "image"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          8024,
+          5770,
+          14794,
+          6321,
+          4385,
+          8669,
+          9471,
+          27336,
+          9426,
+          19062
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          8,
+          8,
+          8,
+          8,
+          8,
+          8,
+          8,
+          8,
+          8,
+          9
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "/mug.jpg",
+          "/necklace.jpg",
+          "/newspaper2.jpg",
+          "/puzzle.jpg",
+          "/redflag.jpg",
+          "/ring.jpg",
+          "/rockingchair.jpg",
+          "/rug.jpg",
+          "/scarf.jpg",
+          "/shoppingcart.jpg"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://api.osf.io/v2/files/553e9d5a8c5e4a21991addfa/?view_only=f171281f212f4435917b16a9e581a73b",
+          "https://api.osf.io/v2/files/553e9d5a8c5e4a21991addfb/?view_only=f171281f212f4435917b16a9e581a73b",
+          "https://api.osf.io/v2/files/553e9d5a8c5e4a21991addfc/?view_only=f171281f212f4435917b16a9e581a73b",
+          "https://api.osf.io/v2/files/553e9d5a8c5e4a21991addfd/?view_only=f171281f212f4435917b16a9e581a73b",
+          "https://api.osf.io/v2/files/553e9d5a8c5e4a21991addfe/?view_only=f171281f212f4435917b16a9e581a73b",
+          "https://api.osf.io/v2/files/553e9d5a8c5e4a21991addff/?view_only=f171281f212f4435917b16a9e581a73b",
+          "https://api.osf.io/v2/files/553e9d5a8c5e4a21991ade00/?view_only=f171281f212f4435917b16a9e581a73b",
+          "https://api.osf.io/v2/files/553e9d5a8c5e4a21991ade01/?view_only=f171281f212f4435917b16a9e581a73b",
+          "https://api.osf.io/v2/files/553e9d5a8c5e4a21991ade02/?view_only=f171281f212f4435917b16a9e581a73b",
+          "https://api.osf.io/v2/files/553e9d5a8c5e4a21991ade03/?view_only=f171281f212f4435917b16a9e581a73b"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://osf.io/download/y5q2b/?view_only=f171281f212f4435917b16a9e581a73b",
+          "https://osf.io/download/b5fx4/?view_only=f171281f212f4435917b16a9e581a73b",
+          "https://osf.io/download/xbyia/?view_only=f171281f212f4435917b16a9e581a73b",
+          "https://osf.io/download/cwtn6/?view_only=f171281f212f4435917b16a9e581a73b",
+          "https://osf.io/download/pvwmh/?view_only=f171281f212f4435917b16a9e581a73b",
+          "https://osf.io/download/gv5za/?view_only=f171281f212f4435917b16a9e581a73b",
+          "https://osf.io/download/s78f5/?view_only=f171281f212f4435917b16a9e581a73b",
+          "https://osf.io/download/zsc9f/?view_only=f171281f212f4435917b16a9e581a73b",
+          "https://osf.io/download/bg6a2/?view_only=f171281f212f4435917b16a9e581a73b",
+          "https://osf.io/download/h4729/?view_only=f171281f212f4435917b16a9e581a73b"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "553e9d5a8c5e4a21991addc7",
+          "553e9d5a8c5e4a21991addc7",
+          "553e9d5a8c5e4a21991addc7",
+          "553e9d5a8c5e4a21991addc7",
+          "553e9d5a8c5e4a21991addc7",
+          "553e9d5a8c5e4a21991addc7",
+          "553e9d5a8c5e4a21991addc7",
+          "553e9d5a8c5e4a21991addc7",
+          "553e9d5a8c5e4a21991addc7",
+          "553e9d5a8c5e4a21991addc7"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "iywec",
+          "iywec",
+          "iywec",
+          "iywec",
+          "iywec",
+          "iywec",
+          "iywec",
+          "iywec",
+          "iywec",
+          "iywec"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

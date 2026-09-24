@@ -40,7 +40,7 @@ from typing import Any
 import pandas as pd
 
 from pytacheck._r.regex import compile_r, gsub, strsplit
-from pytacheck.stats._rmath import as_numeric, pchisq, pf, pnorm, pt, r_round
+from pytacheck.stats._rmath import as_numeric, pchisq, pf, pnorm, pt, r_pow, r_round
 from pytacheck.stats._rmath import sqrt as r_sqrt
 
 __all__ = [
@@ -651,7 +651,7 @@ def error_test(
 ) -> Lgl:
     """Port of ``statcheck:::error_test()``: is the reported p inconsistent? (``None`` = NA)."""
     reported_p, p_comparison = _ns(reported_p, p_comparison, alpha)
-    half = 0.5 / 10**test_dec
+    half = 0.5 / r_pow(10.0, test_dec)
     if _if(_ge(test_stat, 0)):
         low_stat, up_stat = test_stat - half, test_stat + half
     elif _if(_lt(test_stat, 0)):

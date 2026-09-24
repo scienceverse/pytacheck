@@ -1,0 +1,186 @@
+{
+  "id": ".osf_parse_response.fx.v2.nodes.629bx.files.osfstorage",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 4,
+    "names": [
+      "osf_id",
+      "name",
+      "description",
+      "provider",
+      "osf_type",
+      "kind",
+      "filetype",
+      "public",
+      "category",
+      "size",
+      "downloads",
+      "path",
+      "self",
+      "files",
+      "download_url",
+      "parent",
+      "project"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "6935bc117049c887a125cb25",
+          "6935c1fc004c154095797e46",
+          "6935c4679ca0f02ea72a1a31",
+          "6976438ff9da155d0565c720"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "bad.R",
+          "bad.Rmd",
+          "example2.csv",
+          "Archive.zip"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "osfstorage",
+          "osfstorage",
+          "osfstorage",
+          "osfstorage"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "files",
+          "files",
+          "files",
+          "files"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "file",
+          "file",
+          "file",
+          "file"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "code",
+          "code",
+          "data",
+          "archive"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          172,
+          413,
+          5,
+          6410
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          226,
+          215,
+          2,
+          4
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "/bad.R",
+          "/bad.Rmd",
+          "/example2.csv",
+          "/Archive.zip"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://api.osf.io/v2/files/6935bc117049c887a125cb25/",
+          "https://api.osf.io/v2/files/6935c1fc004c154095797e46/",
+          "https://api.osf.io/v2/files/6935c4679ca0f02ea72a1a31/",
+          "https://api.osf.io/v2/files/6976438ff9da155d0565c720/"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://osf.io/download/6935bc117049c887a125cb25/",
+          "https://osf.io/download/uq347/",
+          "https://osf.io/download/6935c4679ca0f02ea72a1a31/",
+          "https://osf.io/download/6976438ff9da155d0565c720/"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "6654749f0ca5ef04ac32e776",
+          "6654749f0ca5ef04ac32e776",
+          "6654749f0ca5ef04ac32e776",
+          "6654749f0ca5ef04ac32e776"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "629bx",
+          "629bx",
+          "629bx",
+          "629bx"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

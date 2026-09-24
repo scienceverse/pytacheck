@@ -1,0 +1,32 @@
+{
+  "id": ".osf_parse_response.fx.v2.guids.NA-65f472",
+  "ok": true,
+  "error": null,
+  "warnings": [
+    "An OSF resource could not be found on the OSF (HTTP 404). Check the ID is spelled correctly. A private project needs an OSF token; see ?osf_pat"
+  ],
+  "value": {
+    "t": "df",
+    "nrow": 1,
+    "names": [
+      "osf_id",
+      "osf_type"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "unfound"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

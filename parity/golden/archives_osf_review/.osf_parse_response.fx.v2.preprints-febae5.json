@@ -1,0 +1,256 @@
+{
+  "id": ".osf_parse_response.fx.v2.preprints-febae5",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 10,
+    "names": [
+      "osf_id",
+      "name",
+      "description",
+      "osf_type",
+      "provider",
+      "public",
+      "doi",
+      "version",
+      "is_published",
+      "date_created",
+      "date_modified",
+      "self",
+      "parent",
+      "project",
+      "primary_file"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "ecnqh_v1",
+          "nv6sk_v1",
+          "54h6r_v1",
+          "jt9f7_v1",
+          "5x6hd_v1",
+          "jfy93_v1",
+          "n78wz_v1",
+          "gh2ck_v1",
+          "6eszj_v1",
+          "k7mes_v1"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Distinguishing social cynicism from belief in a zero sum game: Confirmatory factor analysis of the social axioms scale",
+          "The Form Composition Hypothesis: When concepts combine, their central forms are privileged",
+          "Some things do last forever: The stability signature of central form",
+          "Defining Health Misinformation",
+          "A crucial source of psychological certainty in human cognition: The certainty signature of central form",
+          "Face shape and motion are perceptually separable: Support for a revised model of face processing",
+          "Revisiting the connection between Luce’s Choice Axiom and Signal Detection Theory: Application to visual memory",
+          "The Online Volunteer Subject",
+          "The alarms should no longer be ignored: A Survey of the Demand, Capacity and Provision of Adult Community Eating Disorder Services in England and Scotland before COVID-19",
+          "Procedural and Motor Learning, to appear in Oxford Handbook of Human Memory"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Social axioms – generalized beliefs about the social world – have been a prominent topic in cross-cultural psychology for decades. Recent research has expanded the taxonomy of social axioms from the original five axioms to include a sixth axiom, Belief in a Zero Sum Game (BZSG). As yet, however, there exist no studies evaluating the empirical separability of BZSG from the conceptually similar social axiom of Social Cynicism (SC). Here, we present the first factor analytic investigation of the separability of SC and BZSG in the short form of the Social Axioms Survey in a sample of 730 United States residents. Across all analyses, we find that the two axioms are factor analytically separable, yet strongly positively correlated, suggesting that researchers can (with care) proceed with research using the short form Social Axioms Survey to disentangle the causes, consequences and correlates of these two social axioms.",
+          "Humans are the only species to acquire such a huge repertoire of kind concepts - concepts like watch, house, café, pedestrian, and university. Humans are also unique in being able to combine concepts together at a rapid rate to create more complex conceptual structures. When these two capacities interface, a problem arises. Even simple sentences/thoughts involving a kind concept, such as “The café is efficient,” are consistent with numerous interpretations (e.g., that the café’s plumbing is efficient, that its electrical wiring is efficient, that its wifi is efficient, that its restrooms are efficient, and so on). The present paper proposes and tests the Form Composition Hypothesis, namely, the hypothesis that when a kind concept is recruited and combined with other concepts, its central form is privileged—a structure which has been shown to be present in all kind concepts, and which establishes a privileged set of properties for the category (e.g., representing serving hot drinks, for a café). Across three experiments, participants overwhelmingly favored these ‘form interpretations’ for familiar sentences (e.g., “the café is efficient,” “the football game was beautiful”), unfamiliar sentences (e.g., “the café was smooth,” “the football game was wavy”), and for sentences involving novel concepts, as soon as a property was encoded as part of that concept’s central form (e.g., “The dax was effective,” “The liff is large”). A simple bias to favor form interpretations, which will be adequate most of the time, would be of particular benefit to a computational system seeking to minimize computational costs.",
+          "During each moment of our lives, we draw upon our vast store of kind concepts (or category concepts) to frame our thoughts and to frame the world around us—concepts like floor and wall, house and garden, pedestrian and student, coffee shop and university. We reflexively think of the entities around us as instances of categories—even for subtle elements of our environment like cracks and crumbs—and we draw upon and combine these representations when producing complex thoughts. Recent empirical work has provided evidence for an old idea—that each of these thousands of concepts has a central form, a central structure which represents a few properties for each category as privileged, capturing the conceptual identity of the concept (e.g., what makes a watch a watch, what makes a house a house, and what makes a coffee shop a coffee shop). For a watch, the central form represents that watches tell time and are portable. The present paper proposes a new signature of central form—an inference people make about form properties which they do not make about the broader generic/factual knowledge they store about the kind. Namely, it is proposed and tested that people hold the strong belief that form properties will be permanent parts of kinds, present in instances of kinds forever. In support of this hypothesis, participants in Experiment 1 judged that form properties of familiar kinds (e.g., telling time for a watch) will be present in instances of the kind forever, and they rejected this belief for generic properties (e.g., being round, being made of steel). In Experiment 2, the same strong belief was shown to be activated for a newly acquired kind concept, as soon as a property has been encoded as part of its central form. A wide range of consequences of this proposal are discussed, including for research on functional fixedness, stereotyping, conceptual combination, and conceptual change.",
+          "In light of the ongoing debate about the nature of misinformation and the urgent need for a clear definition of health misinformation, this chapter aims to critically review current definitions of health misinformation, identify key challenges in defining health misinformation, and finally propose a tentative, unifying definition of health misinformation to guide future research. We conclude by\ndiscussing directions for future efforts in refining the definition for health misinformation.",
+          "It has long been established that humans exhibit more psychological certainty than is justified (Burton 2009; Russell 1933). People feel certain about their most deeply held beliefs (e.g., their political beliefs), and their most distinctive memories (e.g., where they were on September 11th, 2001). The present paper proposes and tests another distinctive type of psychological certainty displayed by human beings. Namely, as people navigate the world, they encounter thousands of instances of kinds/categories at any moment (e.g., floors and walls, phones and watches, houses and gardens, pedestrians and students, coffee shops and universities, not to speak of small-scale entities, like cracks and crumbs, glints and glimmers). The present paper proposes that humans possess an initial expectation of psychological certainty that the entities they encounter will possess their form properties. Recent empirical work within cognitive science has provided evidence that human category representations possess a central form, a central structure which represents a few properties of the category as capturing its conceptual identity—e.g., what makes a watch a watch, what makes a house a house, what makes a student a student. For a watch, the central form represents properties like telling time and being portable. In Experiment 1, participants provided expectations about which properties would exist in new instances of kinds. They exhibited psychological certainty that form properties would exist in these instances, but they did not exhibit this certainty for other properties that were part of their generic knowledge of the kind. In Experiment 2, the same strong certainty belief was shown to be activated for a newly acquired kind concept, as soon as a property had been encoded as part of its central form. A wide range of consequences of this proposal are discussed, including for research on conceptual structure, stereotyping, and conceptual combination.",
+          "A recent model of face processing proposes that face shape and motion are processed in parallel brain pathways. Although tested in neuroimaging, the assumptions of this theory remain relatively untested through controlled psychophysical studies until now. Recruiting undergraduate students over the age of 18, we test this hypothesis using tight control of stimulus factors, through computerized three-dimensional face models and calibration of dimensional discriminability, and of decisional factors, through a model-based analysis using general recognition theory (GRT). Theoretical links between neural and perceptual forms of independence within GRT allowed us to derive the a priori hypotheses that perceptual separability of shape and motion should hold, while other forms of independence defined within GRT might fail. We found evidence to support both of those predictions.",
+          "In many decision tasks, we have a set of alternative choices and are faced with the problem of how to use our latent beliefs and preferences about each alternative to make a single choice. Cognitive and decision models typically presume that beliefs and preferences are distilled to a scalar latent strength for each alternative, but it is also critical to model how people use these latent strengths to choose a single alternative. Most models follow one of two traditions to\nestablish this link. Modern psychophysics and memory researchers make use of signal detection theory, assuming that latent strengths are perturbed by noise, and the highest resulting signal is selected. By contrast, many modern decision theoretic modeling and machine learning approaches use the softmax function (which is based on Luce’s choice axiom; Luce, 1959) to give some weight to non-maximal-strength alternatives. Despite the prominence of these two theories of choice, current approaches rarely address the connection between them, and the choice of one or the other appears more motivated by the tradition in the relevant literature than by theoretical or empirical reasons to prefer one theory to the other. The goal of the current work is to revisit this topic by elucidating which of these two models provides a better characterization of latent processes in m-alternative decision tasks, with a particular focus on memory tasks. In a set of visual memory experiments, we show that, within the same experimental design, the softmax parameter β varies across m-alternatives, whereas the parameter d′ of the signal-detection model is stable. Together, our findings indicate that replacing softmax with signal-detection link models would yield more generalizable predictions across changes in task structure. More ambitiously, the invariance of signal detection model parameters across\ndifferent tasks suggests that the parametric assumptions of these models may be more than just a mathematical convenience, but reflect something real about human decision-making.",
+          "Research using online research participants is here to stay. Understanding who these subjects are, and specifically what kind of biases and selection mechanisms they bring to our research studies will be important for the future of human-subjects research as our studies rely more and more on the Online Volunteer Subject. Here we take a method validated to understand biases in in-person research subjects and extend it to the online laboratory. Using this method, we attempt to replicate and extend this work as a tool for other researchers to use in their own online studies to quantify potential biases and space for treatment heterogeneity. Here we show Online participants are different from the rest of the population. The Online Participant is older, more likely to be Jewish, more well educated, more intelligent, less sociable, less arousal-seeking, more conventional, less interested in religion, and less willing to self-disclose than the person who does not take online studies. This systematic bias by focusing on the types of people who take online studies create obvious problems to generalizability. Furthermore, it creates biases in estimation for all types of studies through range restriction on numerous measured (and potentially many more unmeasured) variables. In short, the type of person who participates in our online studies is not just a regular person, they are systematically different. We provide a method to measure this bias in one’s own study.",
+          "Aims/Methods: This national pre-pandemic survey compared demand and capacity of adult community eating disorder services (ACEDS) to NHSE commissioning guidance. \nResults: Thirteen services in England and Scotland responded (covering 10.7 million population). Between 2016/17 and 2019/20 mean referral rates increased by 18.8%, from 378 to 449/million population. Only 3.7% of referrals were from child and adolescent eating disorder services (CEDS-CYP), but 46% were aged 18–25, 54%&gt;25. Most ACEDS had waiting lists and rationed access. Many could not provide full medical monitoring, adapt treatment for co-morbidities, offer assertive outreach, or provide seamless transitions. For patient volume, ACEDS workforce budget was 15% compared to the NHSE workforce calculator recommendations for CEDS-CYP. Parity required £7 million investment/million population for ACEDS. \nClinical Implications: This study highlights the severe pressure in ACEDS, which has increased since the pandemic. Substantial investment is required to ensure NHS ACEDS meet national guidance for adults, offer evidence-based treatment, reduce risk and preventable deaths, and achieve parity with CEDS-CYP.",
+          "Procedural memory is a form of implicit memory whereby we may learn skills through practice without conscious awareness of what has been learned. While declarative memory is often described as “knowing that”, procedural memory is considered “knowing how”. For example, it may be hard for a pianist to verbally explicate what she does when she plays a passage but she could easily demonstrate it. While motor skill learning is the most representative example of procedural memory, perceptual and cognitive skills can also be learned through practice without awareness of what has been learned. Procedural memory is tested in the lab using tasks such as the pursuit rotor task, the serial reaction time task, and various probabilistic classification tasks. Studying clinical populations, like patients with diseases of the basal ganglia, can inform our understanding of the neural substrates of procedural memory. Patients with Parkinson’s Disease and Huntington’s Disease are impaired on procedural memory tasks but show intact performance on declarative memory tasks. The opposite is true for patients with Alzheimer’s and those who have sustained a traumatic brain injury. Patients with psychiatric illnesses such as schizophrenia, obsessive-compulsive disorder, and Gilles de la Tourette syndrome also show deficits in procedural learning. Research with different clinical populations has deepened our understanding of the neural correlates of procedural memory and points to the basal ganglia and the cerebellum as key regions. Future research should consider the role of procedural memory in childhood development, as developmental disorders likely involve procedural learning systems."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "preprints",
+          "preprints",
+          "preprints",
+          "preprints",
+          "preprints",
+          "preprints",
+          "preprints",
+          "preprints",
+          "preprints",
+          "preprints"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "psyarxiv",
+          "psyarxiv",
+          "psyarxiv",
+          "psyarxiv",
+          "psyarxiv",
+          "psyarxiv",
+          "psyarxiv",
+          "psyarxiv",
+          "psyarxiv",
+          "psyarxiv"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "2022-09-01T22:18:36.345493",
+          "2022-09-01T21:09:01.995810",
+          "2022-09-01T20:59:19.574531",
+          "2022-09-01T20:23:52.811102",
+          "2022-09-01T18:38:31.662486",
+          "2022-09-01T18:38:14.700776",
+          "2022-09-01T18:24:14.619797",
+          "2022-09-01T17:08:08.848154",
+          "2022-09-01T16:51:10.078907",
+          "2022-09-01T16:11:40.298849"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "2024-06-20T14:48:13.068545",
+          "2024-06-20T15:21:58.231473",
+          "2024-06-20T15:21:53.265902",
+          "2024-06-20T14:38:47.202256",
+          "2024-06-20T15:21:58.577524",
+          "2024-06-20T15:24:00.943165",
+          "2024-06-20T14:48:13.950748",
+          "2024-05-29T15:31:22.106230",
+          "2024-06-20T14:38:42.872236",
+          "2024-06-20T14:48:14.479093"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://api.osf.io/v2/preprints/ecnqh_v1/",
+          "https://api.osf.io/v2/preprints/nv6sk_v1/",
+          "https://api.osf.io/v2/preprints/54h6r_v1/",
+          "https://api.osf.io/v2/preprints/jt9f7_v1/",
+          "https://api.osf.io/v2/preprints/5x6hd_v1/",
+          "https://api.osf.io/v2/preprints/jfy93_v1/",
+          "https://api.osf.io/v2/preprints/n78wz_v1/",
+          "https://api.osf.io/v2/preprints/gh2ck_v1/",
+          "https://api.osf.io/v2/preprints/6eszj_v1/",
+          "https://api.osf.io/v2/preprints/k7mes_v1/"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "96yk2",
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://api.osf.io/v2/files/63112fbf09a8520092d9e56a/",
+          "https://api.osf.io/v2/files/63111f759a7d51002f9026bd/",
+          "https://api.osf.io/v2/files/63111d2c9a7d51001f9027c6/",
+          "https://api.osf.io/v2/files/631114db33e1e300a02f6bc3/",
+          "https://api.osf.io/v2/files/6310fc2e5e88d70024fc1a38/",
+          "https://api.osf.io/v2/files/6310fc198cc1bd001c168fa9/",
+          "https://api.osf.io/v2/files/6310f8d18cc1bd001d168f33/",
+          "https://api.osf.io/v2/files/6310e6fc29c1dc000d3b220f/",
+          "https://api.osf.io/v2/files/6310e30271d2cb043f8d03da/",
+          "https://api.osf.io/v2/files/6310d9c071d2cb04288d0364/"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

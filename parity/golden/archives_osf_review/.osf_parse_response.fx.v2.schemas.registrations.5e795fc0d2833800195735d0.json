@@ -1,0 +1,32 @@
+{
+  "id": ".osf_parse_response.fx.v2.schemas.registrations.5e795fc0d2833800195735d0",
+  "ok": true,
+  "error": null,
+  "warnings": [
+    "NA has unknown type: registration_schemas"
+  ],
+  "value": {
+    "t": "df",
+    "nrow": 1,
+    "names": [
+      "osf_id",
+      "osf_type"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "unknown"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -1,0 +1,133 @@
+{
+  "id": ".osf_parse_response.fx.v2.nodes-d4b9e6",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 3,
+    "names": [
+      "osf_id",
+      "name",
+      "description",
+      "osf_type",
+      "public",
+      "category",
+      "registration",
+      "preprint",
+      "self",
+      "children",
+      "files",
+      "parent",
+      "project"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "qv6g3",
+          "c3stq",
+          "q3bcs"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Photograph chairs used",
+          "Data Exp 2",
+          "Data Exp 1"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "",
+          "",
+          ""
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "nodes",
+          "nodes",
+          "nodes"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true,
+          true,
+          true
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "other",
+          "data",
+          "data"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false,
+          false,
+          false
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false,
+          false,
+          false
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://api.osf.io/v2/nodes/qv6g3/",
+          "https://api.osf.io/v2/nodes/c3stq/",
+          "https://api.osf.io/v2/nodes/q3bcs/"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://api.osf.io/v2/nodes/qv6g3/children/",
+          "https://api.osf.io/v2/nodes/c3stq/children/",
+          "https://api.osf.io/v2/nodes/q3bcs/children/"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://api.osf.io/v2/nodes/qv6g3/files/",
+          "https://api.osf.io/v2/nodes/c3stq/files/",
+          "https://api.osf.io/v2/nodes/q3bcs/files/"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "msfcn",
+          "msfcn",
+          "msfcn"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "msfcn",
+          "msfcn",
+          "msfcn"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

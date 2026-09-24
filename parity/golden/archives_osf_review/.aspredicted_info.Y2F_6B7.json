@@ -1,0 +1,107 @@
+{
+  "id": ".aspredicted_info.Y2F_6B7",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 1,
+    "names": [
+      "ap_url",
+      "AP_title",
+      "AP_authors",
+      "AP_created",
+      "AP_data",
+      "AP_hypotheses",
+      "AP_key_dv",
+      "AP_conditions",
+      "AP_analyses",
+      "AP_outliers",
+      "AP_sample_size",
+      "AP_anything_else",
+      "AP_version"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "https://aspredicted.org/Y2F_6B7"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Children's prosocial behavior in response to awe-inspiring art"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "This pre-registration is currently anonymous to enable blind peer-review.\nIt has 5 authors."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "2021/06/08 05:33 (PT)"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "It's complicated. We have already collected some data but explain in Question 8 why readers may consider this a valid pre-registration nevertheless."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Children (aged 8 to 13) who will be exposed to awe-inspiring art will show greater prosocial helping behavior than children who will be exposed to art that evokes other positive emotions (i.e., joy) or an emotionally neutral stimulus."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Prosocial helping will be measured in two ways:\n(1) Number of food items counted in an effortful task that benefits refugee families. The more items counted, the more participants help refugees. Item count can range from 0 (in case a participant did not count any items) to 210 (in case a participant counted all items).\n(2) Probability of donating a raffle ticket that participants will receive as reward for their participation. Donating the ticket to a refugee family (vs. not) indicates prosocial helping."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Three conditions in a between-subjects design: awe condition (awe-evoking film clip), joy condition (joy-evoking film clip), control condition (film clip that evokes neither awe nor joy). The videos used in each condition will be selected based on the results of a pilot study that pre-tested whether different film clips evoke the intended emotions."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "(1) Negative binomial regression to examine the effect of emotion condition on number of items counted (count data). The awe condition will be compared to the joy and control conditions.\n(2) Fisher's exact test (chi-square test) to examine the association between emotion condition and probability of donating one's raffle ticket. We will calculate odds ratios comparing the awe condition to the joy and control conditions."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Participants who will not respond to our main dependent variables (food item count, ticket donation) will be excluded from the analyses."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "According to a power analysis, to detect a small to medium effect size with .80 statistical power and alpha error probability of .05, we need:\n(1) 158 participants in the above specified negative binomial regression test\n(2) 124 participants in the above specified Fisher's exact test\nTherefore, we aim to collect data from 158 children aged 8 to 13 to satisfy the power needs of the more demanding statistical test."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "* Variables collected for exploratory purposes: 5 items measuring the psychological experience of \"small self\"; 2 items measuring overlap between self & a friend as well as self & a stranger; 1 item measuring whether the participant had previously seen the video; 1 item measuring whether the participant could understand the language of the song lyrics in the awe condition\n* Variables collected as manipulation/validity check: 6 items measuring experienced emotions in response to the film clip\n* Why this should be taken as a valid pre-registration: Although data collection started before pre-registering this study, we have finalized neither the data collection nor the analyses."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "2.00"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}
