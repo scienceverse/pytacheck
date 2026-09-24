@@ -39,6 +39,7 @@ import datetime as dt
 import math
 import struct
 import warnings
+from collections.abc import Callable
 from pathlib import Path
 from typing import Any
 
@@ -163,6 +164,23 @@ class _Grammar:
             return False
         return self.parse(tok, t) is not _INVALID
 
+    def parse_all(self, strs: list[str], t: int) -> list[Any] | None:
+        """Values of all fields as type *t*, or ``None`` if one is not valid."""
+        out: list[Any] = []
+        token, parse = self.token, self.parse
+        for s in strs:
+            tok = token(s)
+            if tok is _NA_FIELD:
+                out.append(None)
+                continue
+            if tok is None:
+                return None
+            v = parse(tok, t)
+            if v is _INVALID:
+                return None
+            out.append(v)
+        return out
+
     def value(self, s: str, t: int) -> Any:
         """The typed value of a field known to be valid for *t* (``None`` is NA)."""
         tok = self.token(s)
@@ -211,6 +229,9 @@ class _Grammar:
     def _regular(self, tok: str) -> Any:
         if self.rx_num.fullmatch(tok) is None:
             return _INVALID
+        if len(tok) <= 17 and "e" not in tok and "E" not in tok:
+            # at most 17 digits: nothing to truncate, exponent in range
+            return float(tok if self.dec == "." else tok.replace(",", "."))
         v = _regular_value(tok, self.dec)
         return _INVALID if v is None else v
 
@@ -569,6 +590,31 @@ class _Scanner:
             break
         return ncol, ch
 
+    def skip_to_nextline(self, ch: int) -> int:
+        buf, eof = self.buf, self.eof
+        while ch < eof and buf[ch] not in (_LF, _CR):
+            ch += 1
+        if ch < eof:
+            ok, e = self.eol(ch)
+            if ok:
+                ch = e
+            ch += 1
+        return ch
+
+    def next_good_line(self, ch: int, ncol: int) -> int:
+        """fread's nextGoodLine(): a line start near *ch* with *ncol* fields."""
+        ch = self.skip_to_nextline(ch)
+        if ch >= self.eof:
+            return self.eof
+        simple = ch
+        for _ in range(5):
+            if ch >= self.eof:
+                break
+            if self.countfields(ch)[0] == ncol:
+                return ch
+            ch = self.skip_to_nextline(ch)
+        return simple
+
     def read_row(self, i: int, ncol: int) -> tuple[list[tuple[int, int, int, int]], int] | None:
         """Tokenize one data row: ``([(span_start, span_end, val_off, val_len)], next)``.
 
@@ -710,7 +756,7 @@ def fread(
 
     # [6] detect the quote rule, the first line and ncol
     top_lines, top_fields, top_rule, top_start, top_sep = 0, 1, -1, -1, 127
-    found = False
+    first_jump_end = -1
     for rule in range(4):
         sc.rule = rule
         ch = pos
@@ -718,8 +764,14 @@ def fread(
         lastncol, ch = sc.countfields(ch)
         if lastncol < 0:
             continue
+        if lastncol == 0:
+            # a \r-only file starting with a blank line: fread's own assertion fails
+            raise FreadError(
+                "Internal error in freadMain: first non-empty row should always be at "
+                f"least one field; {chr(sep_b)} {rule}. Please report to the data.table "
+                "issues tracker"
+            )
         block_start, block_lines, this_row = line_start, 1, 0
-        thisncol = lastncol
         while ch < eof:
             this_row += 1
             if this_row >= jump_lines:
@@ -757,10 +809,10 @@ def fread(
             top_lines, top_fields, top_rule = block_lines, lastncol, rule
             top_sep = 127 if single_candidate else sep_b
             top_start = block_start
-            found = True
-    if not found:
+            first_jump_end = ch
+    if first_jump_end < 0:
         # single column input: pick the quote rule (0 or 1) that reads furthest
-        top_sep, top_fields, furthest = 127, 1, -1
+        top_sep, top_fields = 127, 1
         sc.sep = 127
         for rule in (0, 1):
             sc.rule = rule
@@ -774,27 +826,27 @@ def fread(
                     break
             if thisncol < 0:
                 continue
-            if furthest < 0 or ch > furthest:
-                furthest, top_rule = ch, rule
-        if furthest < 0:
+            if first_jump_end < 0 or ch > first_jump_end:
+                first_jump_end, top_rule = ch, rule
+        if first_jump_end < 0:
             raise FreadError(
                 "Single column input contains invalid quotes. Self healing only "
                 "effective when ncol>1"
             )
         top_start = pos
-    else:
-        if top_rule > 1:
-            warnings.warn(
-                f"Found and resolved improper quoting in first {jump_lines} rows. If the "
-                "fields are not quoted (e.g. field separator does not appear within any "
-                'field), try quote="" to avoid this warning.',
-                stacklevel=2,
-            )
+    elif top_rule > 1:
+        warnings.warn(
+            f"Found and resolved improper quoting in first {jump_lines} rows. If the "
+            "fields are not quoted (e.g. field separator does not appear within any "
+            'field), try quote="" to avoid this warning.',
+            stacklevel=2,
+        )
     sc.rule = top_rule
     sc.sep = top_sep
     sc.white = _SPACE if top_sep == _TAB else 0
     ncol = top_fields
-    pos = top_start
+    if top_sep != 127:  # single-column input keeps the first non-blank line
+        pos = top_start
 
     if ncol == 1 and last_eol_replaced and eof > 0 and buf[eof - 1] in (_LF, _CR):
         # multiple newlines at the end are significant for single-column files
@@ -803,14 +855,14 @@ def fread(
         sc.eof = eof
         sc._eolc = (1, 0)
 
-    # [7] dec = "auto": vote over the first jump when sep is not ","
-    dec = "." if sc.sep == ord(",") else ""
+    # [7] sample column types (and vote on dec when sep is not ","). Only the
+    # first jump is sampled up front: the others can only matter when the read
+    # below stops early or has to change the quote rule.
     white = " " if sc.sep == _TAB else " \t"
-    first_row = pos
-    if header:
-        _, first_row = sc.countfields(pos)
-    if not dec:
-        dec = _detect_dec(sc, first_row, ncol, jump_lines, white)
+    sample_args = (sc, pos, header, ncol, jump_lines, first_jump_end, nrow_limit, white)
+    first_rule = sc.rule
+    dec0 = "." if sc.sep == ord(",") else ""  # "" means dec = "auto": vote
+    sampled, tmp_types, dec = _sample(*sample_args, dec0, False)
 
     # [8] column names
     names: list[str]
@@ -831,68 +883,310 @@ def fread(
     else:
         names = [f"V{j + 1}" for j in range(ncol)]
 
-    # [11] read the rows, bumping the quote rule on a bad row
-    rows = _read_rows(sc, data_start, ncol, nrow_limit)
-    return _build_frame(sc, rows, names, ncol, _grammar(white, dec))
+    # [11] read the rows, bumping the quote rule on a bad row. An out-of-sample
+    # type bump makes fread re-read the bumped columns from the top with the
+    # quote rule in force at the end of the first pass.
+    gram = _grammar(white, dec)
+    start_types = _start_types(sampled, tmp_types, header)
+    rows = _read_rows(
+        sc,
+        data_start,
+        ncol,
+        nrow_limit,
+        lambda rs: _climb(gram, rs.spans[0], start_types[0]) == CT_STRING,
+    )
+    if rows.stop is not None or sc.rule != first_rule:
+        # sample every jump point, as fread did before reading (with the quote
+        # rule detected up front)
+        read_rule, sc.rule = sc.rule, first_rule
+        sampled, tmp_types, _ = _sample(*sample_args, dec0, True)
+        sc.rule = read_rule
+        start_types = _start_types(sampled, tmp_types, header)
+    types = [_climb(gram, rows.spans[j], start_types[j]) for j in range(ncol)]
+    bumped = [t != s0 for t, s0 in zip(types, start_types, strict=True)]
+    rows2 = rows
+    if any(bumped) and sc.rule != first_rule:
+        rows2 = _read_rows(sc, data_start, ncol, nrow_limit, lambda _rs: types[0] == CT_STRING)
+        rows.truncate(rows2.n)
+        types = [
+            _climb(gram, rows2.spans[j], types[j]) if bumped[j] else types[j] for j in range(ncol)
+        ]
+    if rows2.stop is not None:
+        _warn_stopped(sc, rows2.stop, ncol, rows2.n)
+    cols = [_column(types[j], rows2 if bumped[j] else rows, j, gram) for j in range(ncol)]
+    out = pd.DataFrame(dict(enumerate(cols)))
+    out.columns = pd.Index(names, dtype=object)
+    return out
 
 
 def _decode(b: bytes) -> str:
     return b.decode("utf-8", "surrogateescape")
 
 
-def _detect_dec(sc: _Scanner, start: int, ncol: int, jump_lines: int, white: str) -> str:
-    """fread's dec vote (detect_types() over jump 0): ',' wins only on a majority."""
-    gram = {d: _grammar(white, d) for d in (".", ",")}
+def _start_types(sampled: list[int], tmp_types: list[int], header: bool) -> list[int]:
+    """Column types after sampling; with ``header = FALSE`` fread also applies
+    tmpType (the first row's bumps, and those of a partially sampled bad line)."""
+    if header:
+        return sampled
+    return [max(a, b, key=_LADDER.index) for a, b in zip(sampled, tmp_types, strict=True)]
+
+
+def _next_type(t: int) -> int:
+    return _LADDER[_LADDER.index(t) + 1]
+
+
+def _climb(gram: _Grammar, spans: list[bytes], start: int) -> int:
+    """The lowest type at or above *start* that reads every field."""
+    return _climb_values(gram, spans, start)[0]
+
+
+def _climb_values(
+    gram: _Grammar, spans: list[bytes], start: int
+) -> tuple[int, dict[bytes, Any] | None]:
+    """:func:`_climb` plus the parsed value of each distinct field."""
+    uniq = list(dict.fromkeys(spans))
+    strs = [b.decode("latin-1") for b in uniq]
+    t = start
+    while t != CT_STRING:
+        vals = gram.parse_all(strs, t)
+        if vals is not None:
+            return t, dict(zip(uniq, vals, strict=True))
+        t = _next_type(t)
+    return CT_STRING, None
+
+
+class _DecState:
+    """fread's global ``dec`` while it is still being voted on."""
+
+    def __init__(self, dec: str) -> None:
+        self.auto = not dec
+        self.dec = dec
+        self.trial = ""
+        self.votes = 0
+
+
+def _sample(
+    sc: _Scanner,
+    pos: int,
+    header: bool,
+    ncol: int,
+    jump_lines: int,
+    first_jump_end: int,
+    nrow_limit: float,
+    white: str,
+    dec: str,
+    all_jumps: bool,
+) -> tuple[list[int], list[int], str]:
+    """fread's step [7]: sampled column types, the raw tmpType, and dec.
+
+    Samples ``jump_lines`` lines at the start (and, with *all_jumps*, for larger
+    files at 10 or 100 jump points plus the end) with detect_types().
+    """
+    eof = sc.eof
+    st = _DecState(dec)
     tmp = [CT_EMPTY] * ncol
-    lines_for_dot = 0
-    ch, line = start, 0
-    while ch < sc.eof and line < jump_lines:
-        line += 1
-        if ncol > 1 and sc.buf[ch] in (_LF, _CR) and sc.eol(ch)[0]:
+    typ = list(tmp)
+    jump0size = first_jump_end - pos
+    njumps, sz = 1, eof - pos
+    if jump0size > 0:
+        if jump0size * 200 < sz:
+            njumps = 100
+        elif jump0size * 20 < sz:
+            njumps = 10
+    njumps += 1
+    if (math.isfinite(nrow_limit) and nrow_limit > 0) or not all_jumps:
+        njumps = 1
+    last_row_end = pos
+    for jump in range(njumps):
+        if jump == 0:
+            ch = pos
+            if header:
+                _, ch = sc.countfields(ch)
+        else:
+            if jump == njumps - 1:
+                ch = eof - int(0.5 * jump0size)
+            else:
+                ch = pos + jump * ((eof - pos) // (njumps - 1))
+            ch = sc.next_good_line(ch, ncol)
+        ch = max(ch, last_row_end)
+        if ch >= eof:
             break
-        row = sc.read_row(ch, ncol)
-        if row is None:
+        bumped = False
+        st.votes = 0
+        line = 0
+        while ch < eof and line < jump_lines:
+            line += 1
+            nf, ch, b = _detect_types_line(sc, ch, ncol, tmp, st, white)
+            bumped = bumped or b
+            ok, e = sc.eol(ch)
+            if (nf < ncol and ncol > 1) or (not ok and ch != eof):
+                bumped = False
+                if jump == 0:
+                    last_row_end = eof
+                break
+            ch = e + 1 if ok else ch
+            last_row_end = ch
+            if jump == 0 and bumped:
+                typ = list(tmp)
+                bumped = False
+        if not st.dec:
+            st.dec = "," if st.votes < 0 else "."
+            st.auto = False
+        if bumped:
+            typ = list(tmp)
+    return typ, tmp, st.dec or "."
+
+
+_VALID_CACHE: dict[tuple[str, str, str, int], bool] = {}
+
+
+def _valid_cached(white: str, dec: str, span: str, t: int) -> bool:
+    key = (white, dec, span, t)
+    v = _VALID_CACHE.get(key)
+    if v is None:
+        if len(_VALID_CACHE) > 200_000:
+            _VALID_CACHE.clear()
+        v = _VALID_CACHE[key] = _grammar(white, dec).valid(span, t)
+    return v
+
+
+def _detect_types_line(
+    sc: _Scanner, ch: int, ncol: int, tmp: list[int], st: _DecState, white: str
+) -> tuple[int, int, bool]:
+    """fread's detect_types() for one line: ``(fields, position, bumped)``."""
+    buf = sc.buf
+    start = ch
+    ch = sc.skip_white(ch)
+    if sc.eol(ch)[0]:
+        return 0, start, False
+    auto = st.auto
+    bumped = False
+    field = 0
+    while field < ncol:
+        ch = sc.skip_white(ch)
+        field_start = ch
+        _off, _n, fend = sc.field(field_start)
+        span = buf[field_start:fend].decode("latin-1") if sc.end_of_field(fend) else None
+        t = tmp[field]
+        trial = ""
+        while True:
+            if auto and t in _DEC_TYPES and not trial:
+                trial = "."
+            if span is not None and _valid_cached(white, trial or st.dec or ".", span, t):
+                break
+            if t == CT_STRING:
+                break
+            if auto and t in _DEC_TYPES:
+                if trial == ".":
+                    trial = ","
+                    continue
+                trial = ""
+            t = _next_type(t)
+            bumped = True
+        tmp[field] = t
+        if auto and trial and t in _DEC_TYPES:
+            st.votes += 1 if trial == "." else -1
+        field += 1
+        if span is None:
+            ch = field_start
             break
-        fields, ch = row
-        for j, (s0, s1, _o, _n) in enumerate(fields):
-            s = sc.buf[s0:s1].decode("latin-1")
-            t = tmp[j]
-            dec = ""
-            while True:
-                if t in _DEC_TYPES and not dec:
-                    dec = "."
-                if gram[dec or "."].valid(s, t):
-                    break
-                if t == CT_STRING:
-                    break
-                if t in _DEC_TYPES:
-                    if dec == ".":
-                        dec = ","
-                        continue
-                    dec = ""
-                t = _LADDER[_LADDER.index(t) + 1]
-            tmp[j] = t
-            if dec and t in _DEC_TYPES:
-                lines_for_dot += 1 if dec == "." else -1
-    return "," if lines_for_dot < 0 else "."
+        ch = fend
+        if buf[ch] != sc.sep or field == ncol:
+            break
+        ch += 1
+    return field, ch, bumped
+
+
+class _Rows:
+    """Tokenized data rows, column-major: raw field spans and Field() values."""
+
+    def __init__(self, ncol: int) -> None:
+        self.spans: list[list[bytes]] = [[] for _ in range(ncol)]
+        self.vals: list[list[bytes | None]] = [[] for _ in range(ncol)]
+        self.n = 0
+        self.stop: int | None = None
+
+    def add(self, buf: bytes, fields: list[tuple[int, int, int, int]]) -> None:
+        for j, (s0, s1, off, n) in enumerate(fields):
+            self.spans[j].append(buf[s0:s1])
+            self.vals[j].append(None if n < 0 else buf[off : off + n])
+        self.n += 1
+
+    def truncate(self, n: int) -> None:
+        for j in range(len(self.spans)):
+            del self.spans[j][n:]
+            del self.vals[j][n:]
+        self.n = min(self.n, n)
+
+
+def _fast_rows(sc: _Scanner, ch: int, ncol: int, rows: _Rows, limit: float) -> int:
+    """Split quote-free, NUL-free ``\\n`` / ``\\r\\n`` data with bytes.split().
+
+    Adds whole rows until one does not have *ncol* fields and returns where the
+    general tokenizer must take over (eof when everything was read).
+    """
+    buf, eof = sc.buf, sc.eof
+    region = buf[ch:eof]
+    crlf = b"\r" in region
+    lines = region.split(b"\n")
+    sep = sc.sep_b
+    spans, vals = rows.spans, rows.vals
+    pos = ch
+    for line in lines:
+        if rows.n >= limit or pos >= eof:
+            break
+        body = line.rstrip(b"\r") if crlf else line
+        parts = body.split(sep)
+        if len(parts) != ncol:
+            return pos
+        for j, part in enumerate(parts):
+            spans[j].append(part)
+            v = part.strip(b" ")
+            vals[j].append(None if v == _NA_STRING else v)
+        rows.n += 1
+        pos += len(line) + 1
+    return min(pos, eof)
 
 
 def _read_rows(
-    sc: _Scanner, start: int, ncol: int, nrow_limit: float
-) -> list[list[tuple[int, int, int, int]]]:
-    rows: list[list[tuple[int, int, int, int]]] = []
+    sc: _Scanner,
+    start: int,
+    ncol: int,
+    nrow_limit: float,
+    first_is_string: Callable[[_Rows], bool],
+) -> _Rows:
+    """Tokenize the data rows as fread's read loop does.
+
+    A row without exactly *ncol* fields makes fread retry it with the next,
+    more lenient quote rule, and stop early (``rows.stop``) once none is left.
+    *first_is_string* tells whether the first column is character by then: a
+    whitespace-only last line ends the data silently unless it is (the first
+    column's parser then consumes the blanks).
+    """
+    rows = _Rows(ncol)
     ch = start
-    eof = sc.eof
-    while ch < eof and len(rows) < nrow_limit:
+    buf, eof = sc.buf, sc.eof
+    region = buf[ch:eof]
+    if (
+        ncol > 1
+        and not sc.eol_one_r
+        and b'"' not in region
+        and b"\0" not in region
+        and region.count(b"\r") == region.count(b"\r\n")
+    ):
+        ch = _fast_rows(sc, ch, ncol, rows, nrow_limit)
+    while ch < eof and rows.n < nrow_limit:
+        if sc.skip_white(ch) >= eof and not first_is_string(rows):
+            break
         row = sc.read_row(ch, ncol)
         if row is None:
             if sc.rule < 3:
                 sc.rule += 1
                 continue
-            _warn_stopped(sc, ch, ncol, len(rows))
+            rows.stop = ch
             break
         fields, ch = row
-        rows.append(fields)
+        rows.add(buf, fields)
     return rows
 
 
@@ -921,46 +1215,16 @@ def _warn_stopped(sc: _Scanner, ch: int, ncol: int, nrow: int) -> None:
         )
 
 
-def _build_frame(
-    sc: _Scanner,
-    rows: list[list[tuple[int, int, int, int]]],
-    names: list[str],
-    ncol: int,
-    gram: _Grammar,
-) -> pd.DataFrame:
-    buf = sc.buf
-    cols: dict[int, pd.Series] = {}
-    for j in range(ncol):
-        spans = [buf[r[j][0] : r[j][1]].decode("latin-1") for r in rows]
-        uniq = list(dict.fromkeys(spans))
-        t = CT_EMPTY
-        for cand in _LADDER:
-            t = cand
-            if cand == CT_STRING or all(gram.valid(s, cand) for s in uniq):
-                break
-        cols[j] = _column(t, rows, j, spans, uniq, gram, buf)
-    out = pd.DataFrame({j: cols[j] for j in range(ncol)})
-    out.columns = pd.Index(names, dtype=object)
-    return out
-
-
-def _column(
-    t: int,
-    rows: list[list[tuple[int, int, int, int]]],
-    j: int,
-    spans: list[str],
-    uniq: list[str],
-    gram: _Grammar,
-    buf: bytes,
-) -> pd.Series:
+def _column(t: int, rows: _Rows, j: int, gram: _Grammar) -> pd.Series:
     if t == CT_STRING:
-        vals: list[str | None] = []
-        for r in rows:
-            _s0, _s1, off, n = r[j]
-            vals.append(None if n < 0 else _decode(buf[off : off + n]))
-        return pd.Series(vals, dtype="string")
-    lookup = {s: gram.value(s, t) for s in uniq}
-    values = [lookup[s] for s in spans]
+        raw = rows.vals[j]
+        text = {b: _decode(b) for b in dict.fromkeys(raw) if b is not None}
+        return pd.Series([None if b is None else text[b] for b in raw], dtype="string")
+    spans = rows.spans[j]
+    t2, lookup = _climb_values(gram, spans, t)
+    if t2 != t or lookup is None:  # pragma: no cover - t was climbed on these spans
+        raise FreadError("internal error: column type changed while building")
+    values = [lookup[b] for b in spans]
     if t in (CT_EMPTY, CT_BOOL8_U, CT_BOOL8_T, CT_BOOL8_L):
         return pd.Series(values, dtype="boolean")
     if t in (CT_INT32, CT_INT64):

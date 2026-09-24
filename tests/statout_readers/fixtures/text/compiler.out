@@ -1,0 +1,2 @@
+Compiler output
+gcc -O2 main.c

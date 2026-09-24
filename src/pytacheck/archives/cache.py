@@ -42,7 +42,7 @@ def _metacheck_cache_subdir(subdir: str, override: str | os.PathLike[str] | None
     return os.path.realpath(path).replace("\\", "/")
 
 
-def _metacheck_dir_size(dir: str | os.PathLike[str]) -> float:  # noqa: A002 - R name
+def _metacheck_dir_size(dir: str | os.PathLike[str]) -> float:
     """Port of R/cache.R::.metacheck_dir_size(): total bytes of a folder's files."""
     root = Path(dir)
     if not root.is_dir():

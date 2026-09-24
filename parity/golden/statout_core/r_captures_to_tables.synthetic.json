@@ -1,0 +1,301 @@
+{
+  "id": "r_captures_to_tables.synthetic",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": null,
+    "v": [
+      {
+        "t": "list",
+        "names": [
+          "analysis",
+          "title",
+          "data",
+          "line",
+          "line_seq",
+          "call_fn",
+          "model_ref",
+          "captured"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "x"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "x"
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 2,
+            "names": [
+              "label",
+              "H",
+              "p",
+              "big",
+              "whole",
+              "inf",
+              "s",
+              "neg"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "",
+                  "7"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "2.5",
+                  "3"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "1e-20",
+                  ""
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "1e+15",
+                  ""
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "113",
+                  ""
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Inf",
+                  ""
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Inf",
+                  ""
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "-1.23456789012346e-05",
+                  ""
+                ]
+              }
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "kruskal.test"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "analysis",
+          "title",
+          "data",
+          "line",
+          "line_seq",
+          "call_fn",
+          "model_ref",
+          "captured"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "z"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "z"
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "label",
+              "p"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  null
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "0.5"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              3
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "fisher.test"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "tab"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "analysis",
+          "title",
+          "data",
+          "line",
+          "line_seq",
+          "call_fn",
+          "model_ref",
+          "captured"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "w"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "w"
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "label",
+              "p"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "q"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "0.5"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "m"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

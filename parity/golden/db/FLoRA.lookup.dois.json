@@ -1,0 +1,96 @@
+{
+  "id": "FLoRA.lookup.dois",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 4,
+    "names": [
+      "doi_o",
+      "apa_ref_o",
+      "doi_r",
+      "apa_ref_r",
+      "url_r",
+      "outcome",
+      "outcome_quote",
+      "type"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "10.1002/(sici)1099-0771(199806)11:2%3c107::aid-bdm292%3e3.0.co;2-y",
+          "10.1002/(sici)1099-0771(199806)11:2%3c107::aid-bdm292%3e3.0.co;2-y",
+          "10.1002/acp.1376",
+          "10.1037/0003-066x.54.6.408"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Hsee, C. K. (1998). Less is better: when low-value options are valued more highly than high-value options. Journal of Behavioral Decision Making, 11(2), 107–121. https://doi.org/10.1002/(sici)1099-0771(199806)11:2<107::aid-bdm292>3.0.co;2-y",
+          "Hsee, C. K. (1998). Less is better: when low-value options are valued more highly than high-value options. Journal of Behavioral Decision Making, 11(2), 107–121. https://doi.org/10.1002/(sici)1099-0771(199806)11:2<107::aid-bdm292>3.0.co;2-y",
+          "Garry, M., French, L., Kinzett, T., & Mori, K. (2007). Eyewitness memory following discussion: using the MORI technique with a Western sample. Applied Cognitive Psychology, 22(4), 431–439. Portico. https://doi.org/10.1002/acp.1376",
+          "Eagly, A. H., & Wood, W. (1999). The origins of sex differences in human behavior: Evolved dispositions versus social roles. American Psychologist, 54(6), 408–423. https://doi.org/10.1037/0003-066x.54.6.408"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "10.1177/2515245918810225",
+          "10.1525/collabra.77859",
+          "10.1037/h0101833",
+          "10.1177/1474704919852921"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Klein, R. A., Vianello, M., Hasselman, F., Adams, B. G., Adams, R. B., Alper, S., Aveyard, M., Axt, J. R., Babalola, M. T., Bahník, Š., Batra, R., Berkics, M., Bernstein, M. J., Berry, D. R., Bialobrzeska, O., Binan, E. D., Bocian, K., Brandt, M. J., Busching, R., … Nosek, B. A. (2018). Many Labs 2: Investigating Variation in Replicability Across Samples and Settings. Advances in Methods and Practices in Psychological Science, 1(4), 443–490. https://doi.org/10.1177/2515245918810225",
+          "Vonasch, A. J., Hung, W. Y., Leung, W. Y., Nguyen, A. T. B., Chan, S., Cheng, B. L., & Feldman, G. (2023). ‎“Less Is Better” in Separate Evaluations Versus “More Is Better” in Joint Evaluations: Mostly ‎Successful Close Replication and Extension of Hsee (1998)‎. Collabra: Psychology, 9(1). https://doi.org/10.1525/collabra.77859",
+          "Ito, H., Barzykowski, K., Grzesik, M., Gülgöz, S., Gürdere, C., Janssen, S. M. J., Khor, J., Rowthorn, H., Wade, K. A., Luna, K., Albuquerque, P. B., Kumar, D., Singh, A. D., Cecconello, W. W., Cadavid, S., Laird, N. C., Baldassari, M. J., Lindsay, D. S., & Mori, K. (2019). Eyewitness memory distortion following co-witness discussion: A replication of Garry, French, Kinzett, and Mori (2008) in ten countries. Journal of Applied Research in Memory and Cognition, 8(1), 68–77. https://doi.org/10.1037/h0101833",
+          "Zhang, L., Lee, A. J., DeBruine, L. M., & Jones, B. C. (2019). Are Sex Differences in Preferences for Physical Attractiveness and Good Earning Capacity in Potential Mates Smaller in Countries With Greater Gender Equality? Evolutionary Psychology, 17(2). https://doi.org/10.1177/1474704919852921"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "failed",
+          "successful",
+          "successful",
+          "failed"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "The difference was significant, p =\n.002, odds ratio (OR) = 0.87, d = −0.08, 95% CI = [−0.13,\n−0.03], but in the direction opposite the prediction of\nthe hypothesis (i.e., that affectively attractive choices\nare more preferred when they are uncertain rather than\ndefinite). The overall effect was much smaller than in\nthe original study and in the opposite direction (d =\n−0.08, 95% CI = [−0.13, −0.03], vs. original d = 0.74).",
+          "We found support for “less is better” across all studies (N = 403; Study 1 original d = 0.70\n[0.24,1.15], replication d = 0.99 [0.72,1.26]; Study 2 original d = 0.74 [0.12,1.35],\nreplication d = 0.32 [0.07,0.56]; Study 4 original d = 0.97 [0.43,1.50], replication d = 0.76\n[0.50,1.02]), with weaker support for “more is better”.",
+          "Each of the 10 samples replicated the Garry et al. finding: Participants often reported on the final test a non-witnessed answer that their co-witness had stated during the collaboration phase",
+          "Here we attempted to replicate previously reported links between sex differences in mate preferences and country-level measures of gender inequality [...]. Although women preferred mates with good earning capacity more than men did and men preferred physically attractive mates more than women did, we found little evidence that these sex differences were smaller in countries with greater gender equality. Although one analysis suggested that the sex difference in preferences for good earning capacity was smaller in countries with greater gender equality, this effect was not significant when controlling for Galton’s problem or when correcting for multiple comparisons. Collectively, these results provide little support for the social roles account of sex differences in mate preferences."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "replication",
+          "replication",
+          "replication",
+          "replication"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

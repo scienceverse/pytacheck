@@ -236,7 +236,7 @@ def r_list_set(lst: list[Any], i: int, value: Any) -> None:
 
 def resp_content_type(resp: httpx.Response) -> str:
     """``httr2::resp_content_type()``: the media type without parameters."""
-    ct = resp.headers.get("content-type", "")
+    ct = str(resp.headers.get("content-type", ""))
     return ct.split(";", 1)[0].strip().lower()
 
 

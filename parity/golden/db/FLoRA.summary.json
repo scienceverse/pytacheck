@@ -1,0 +1,651 @@
+{
+  "id": "FLoRA.summary",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "nrow",
+      "names",
+      "nchar",
+      "na",
+      "head",
+      "middle",
+      "tail"
+    ],
+    "v": [
+      {
+        "t": "int",
+        "v": [
+          1502
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "doi_o",
+          "apa_ref_o",
+          "doi_r",
+          "apa_ref_r",
+          "url_r",
+          "outcome",
+          "outcome_quote",
+          "type"
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          36370,
+          347959,
+          33870,
+          431789,
+          40518,
+          11767,
+          246597,
+          16530
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          0,
+          0,
+          27,
+          0,
+          419,
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 25,
+        "names": [
+          "doi_o",
+          "apa_ref_o",
+          "doi_r",
+          "apa_ref_r",
+          "url_r",
+          "outcome",
+          "outcome_quote",
+          "type"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "10.1002/(sici)1099-0771(199806)11:2%3c107::aid-bdm292%3e3.0.co;2-y",
+              "10.1002/(sici)1099-0771(200001/03)13:1<1::aid-bdm333>3.0.co;2-s",
+              "10.1002/(sici)1099-0771(199806)11:2%3c107::aid-bdm292%3e3.0.co;2-y",
+              "10.1002/acp.1376",
+              "10.1002/acp.2874",
+              "10.1002/ajmg.b.31028",
+              "10.1002/bdm.492",
+              "10.1002/bdm.586",
+              "10.1002/bdm.586",
+              "10.1002/ejsp.2013",
+              "10.1002/ejsp.2420170402",
+              "10.1002/ejsp.446",
+              "10.1002/jcpy.1028",
+              "10.1002/jeab.432",
+              "10.1002/jeab.705",
+              "10.1002/pam.21702",
+              "10.1002/smj.2585",
+              "10.1002/soej.12223",
+              "10.1006/cogp.1998.0708",
+              "10.1006/jesp.1996.1314",
+              "10.1007/s00221-012-3266-6",
+              "10.1007/s10071-012-0510-1",
+              "10.1007/s10802-020-00712-w",
+              "10.1007/s10803-008-0664-5",
+              "10.1007/s10803-013-1829-4"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Hsee, C. K. (1998). Less is better: when low-value options are valued more highly than high-value options. Journal of Behavioral Decision Making, 11(2), 107–121. https://doi.org/10.1002/(sici)1099-0771(199806)11:2<107::aid-bdm292>3.0.co;2-y",
+              "Finucane, M. L., Alhakami, A., Slovic, P., & Johnson, S. M. (2000). The affect heuristic in judgments of risks and benefits. Journal of Behavioral Decision Making, 13(1), 1–17. https://doi.org/10.1002/(sici)1099-0771(200001/03)13:1<1::aid-bdm333>3.0.co;2-s",
+              "Hsee, C. K. (1998). Less is better: when low-value options are valued more highly than high-value options. Journal of Behavioral Decision Making, 11(2), 107–121. https://doi.org/10.1002/(sici)1099-0771(199806)11:2<107::aid-bdm292>3.0.co;2-y",
+              "Garry, M., French, L., Kinzett, T., & Mori, K. (2007). Eyewitness memory following discussion: using the MORI technique with a Western sample. Applied Cognitive Psychology, 22(4), 431–439. Portico. https://doi.org/10.1002/acp.1376",
+              "Riekki, T., Lindeman, M., Aleneff, M., Halme, A., & Nuortimo, A. (2012). Paranormal and Religious Believers Are More Prone to Illusory Face Perception than Skeptics and Non‐believers. Applied Cognitive Psychology, 27(2), 150–155. Portico. https://doi.org/10.1002/acp.2874",
+              "Beach, S. R. H., Brody, G. H., Todorov, A. A., Gunter, T. D., & Philibert, R. A. (2010). Methylation at SLC6A4 is linked to family history of child abuse: An examination of the Iowa Adoptee sample. American Journal of Medical Genetics Part B: Neuropsychiatric Genetics, 153B(2), 710–713. Portico. https://doi.org/10.1002/ajmg.b.31028",
+              "Kogut, T., & Ritov, I. (2005). The “identified victim” effect: an identified group, or just a single individual? Journal of Behavioral Decision Making, 18(3), 157–167. https://doi.org/10.1002/bdm.492",
+              "Critcher, C. R., & Gilovich, T. (2007). Incidental environmental anchors. Journal of Behavioral Decision Making, 21(3), 241–251. Portico. https://doi.org/10.1002/bdm.586",
+              "Critcher, C. R., & Gilovich, T. (2007). Incidental environmental anchors. Journal of Behavioral Decision Making, 21(3), 241–251. Portico. https://doi.org/10.1002/bdm.586",
+              "Huang, Y., Tse, C., & Cho, K. W. (2014). Living in the north is not necessarily favorable: Different metaphoric associations between cardinal direction and valence in Hong Kong and in the United States. European Journal of Social Psychology, 44(4), 360–369. Portico. https://doi.org/10.1002/ejsp.2013",
+              "Nuttin, J. M. (1987). Affective consequences of mere ownership: The name letter effect in twelve European languages. European Journal of Social Psychology, 17(4), 381–402. Portico. https://doi.org/10.1002/ejsp.2420170402",
+              "Stelzl, M., Janes, L., & Seligman, C. (2007). Champ or chump: strategic utilization of dual social identities of others. European Journal of Social Psychology, 38(1), 128–138. Portico. https://doi.org/10.1002/ejsp.446",
+              "Lee, S., Baumgartner, H., & Winterich, K. P. (2018). Did They Earn It? Observing Unearned Luxury Consumption Decreases Brand Attitude When Observers Value Fairness. Journal of Consumer Psychology, 28(3), 412–436. Portico. https://doi.org/10.1002/jcpy.1028",
+              "Renee Renda, C., Rung, J. M., Hinnenkamp, J. E., Lenzini, S. N., & Madden, G. J. (2018). Impulsive choice and pre‐exposure to delays: iv. effects of delay‐ and immediacy‐exposure training relative to maturational changes in impulsivity. Journal of the Experimental Analysis of Behavior, 109(3), 587–599. Portico. https://doi.org/10.1002/jeab.432",
+              "Davis, W. T., Rapp, J. T., Brogan, K. M., Pinkston, J. W., & Chinnappan, B. (2021). Comparing stimulus preference and response force in a conjugate preparation. Journal of the Experimental Analysis of Behavior, 116(1), 96–113. Portico. https://doi.org/10.1002/jeab.705",
+              "Van Ryzin, G. G. (2013). An Experimental Test of the Expectancy-Disconfirmation Theory of Citizen Satisfaction. Journal of Policy Analysis and Management, 32(3), 597–614. Portico. https://doi.org/10.1002/pam.21702",
+              "McCann, B. T., & Bahl, M. (2016). The influence of competition from informal firms on new product development. Strategic Management Journal, 38(7), 1518–1535. Portico. https://doi.org/10.1002/smj.2585",
+              "Chowdhury, S. M., Jeon, J. Y., & Saha, B. (2017). Gender Differences in the Giving and Taking Variants of the Dictator Game. Southern Economic Journal, 84(2), 474–483. Portico. https://doi.org/10.1002/soej.12223",
+              "Heath, C., Larrick, R. P., & Wu, G. (1999). Goals as Reference Points. Cognitive Psychology, 38(1), 79–109. https://doi.org/10.1006/cogp.1998.0708",
+              "Malle, B. F., & Knobe, J. (1997). The Folk Concept of Intentionality. Journal of Experimental Social Psychology, 33(2), 101–121. https://doi.org/10.1006/jesp.1996.1314",
+              "Boyle, J., Kennedy, D., & Shea, C. H. (2012). Optimizing the control of high ID movements: rethinking the obvious. Experimental Brain Research, 223(3), 377–387. https://doi.org/10.1007/s00221-012-3266-6",
+              "Custance, D., & Mayer, J. (2012). Empathic-like responding by domestic dogs (Canis familiaris) to distress in humans: an exploratory study. Animal Cognition, 15(5), 851–859. https://doi.org/10.1007/s10071-012-0510-1",
+              "Abend, R., Bajaj, M. A., Matsumoto, C., Yetter, M., Harrewijn, A., Cardinale, E. M., Kircanski, K., Lebowitz, E. R., Silverman, W. K., Bar-Haim, Y., Lazarov, A., Leibenluft, E., Brotman, M., & Pine, D. S. (2020). Converging Multi-modal Evidence for Implicit Threat-Related Bias in Pediatric Anxiety Disorders. Research on Child and Adolescent Psychopathology, 49(2), 227–240. https://doi.org/10.1007/s10802-020-00712-w",
+              "Laugeson, E. A., Frankel, F., Mogil, C., & Dillon, A. R. (2008). Parent-Assisted Social Skills Training to Improve Friendships in Teens with Autism Spectrum Disorders. Journal of Autism and Developmental Disorders, 39(4), 596–606. https://doi.org/10.1007/s10803-008-0664-5",
+              "Staniland, J. J., & Byrne, M. K. (2013). The Effects of a Multi-Component Higher-Functioning Autism Anti-Stigma Program on Adolescent Boys. Journal of Autism and Developmental Disorders, 43(12), 2816–2829. https://doi.org/10.1007/s10803-013-1829-4"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "10.1177/2515245918810225",
+              "10.1177/19485506211056761",
+              "10.1525/collabra.77859",
+              "10.1037/h0101833",
+              "10.1111/jpr.12158",
+              "10.1097/psy.0b013e3181fdd074",
+              "10.1017/jdm.2024.31",
+              "10.1177/2515245918810225",
+              "10.1525/collabra.310",
+              "10.1177/2515245918810225",
+              "10.1016/j.jesp.2020.103972",
+              "10.1177/0033294120957242",
+              "10.1073/pnas.2103313118",
+              "10.1007/s40732-024-00597-x",
+              "10.1002/jeab.915",
+              "10.1111/padm.12860",
+              "10.1177/27550311251323281",
+              "10.18718/81781.27",
+              "10.17605/osf.io/wmqtb",
+              "10.1016/j.jesp.2022.104372",
+              "10.1080/00222895.2014.898608",
+              "10.1037/cep0000225",
+              "10.1016/j.xjmad.2024.100075",
+              "10.1007/s10803-013-1900-1",
+              "10.1007/s10803-014-2139-1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Klein, R. A., Vianello, M., Hasselman, F., Adams, B. G., Adams, R. B., Alper, S., Aveyard, M., Axt, J. R., Babalola, M. T., Bahník, Š., Batra, R., Berkics, M., Bernstein, M. J., Berry, D. R., Bialobrzeska, O., Binan, E. D., Bocian, K., Brandt, M. J., Busching, R., … Nosek, B. A. (2018). Many Labs 2: Investigating Variation in Replicability Across Samples and Settings. Advances in Methods and Practices in Psychological Science, 1(4), 443–490. https://doi.org/10.1177/2515245918810225",
+              "Efendić, E., Chandrashekar, S. P., Lee, C. S., Yeung, L. Y., Kim, M. J., Lee, C. Y., & Feldman, G. (2021). Risky Therefore Not Beneficial: Replication and Extension of Finucane et al.’s (2000) Affect Heuristic Experiment. Social Psychological and Personality Science, 13(7), 1173–1184. https://doi.org/10.1177/19485506211056761",
+              "Vonasch, A. J., Hung, W. Y., Leung, W. Y., Nguyen, A. T. B., Chan, S., Cheng, B. L., & Feldman, G. (2023). ‎“Less Is Better” in Separate Evaluations Versus “More Is Better” in Joint Evaluations: Mostly ‎Successful Close Replication and Extension of Hsee (1998)‎. Collabra: Psychology, 9(1). https://doi.org/10.1525/collabra.77859",
+              "Ito, H., Barzykowski, K., Grzesik, M., Gülgöz, S., Gürdere, C., Janssen, S. M. J., Khor, J., Rowthorn, H., Wade, K. A., Luna, K., Albuquerque, P. B., Kumar, D., Singh, A. D., Cecconello, W. W., Cadavid, S., Laird, N. C., Baldassari, M. J., Lindsay, D. S., & Mori, K. (2019). Eyewitness memory distortion following co-witness discussion: A replication of Garry, French, Kinzett, and Mori (2008) in ten countries. Journal of Applied Research in Memory and Cognition, 8(1), 68–77. https://doi.org/10.1037/h0101833",
+              "Miyazaki, Y. (2017). Being Watched by Anthropomorphized Objects Affects Charitable Donation in Religious People. Japanese Psychological Research, 59(3), 221–229. Portico. https://doi.org/10.1111/jpr.12158",
+              "Beach, S. R. H., Brody, G. H., Todorov, A. A., Gunter, T. D., & Philibert, R. A. (2011). Methylation at 5HTT Mediates the Impact of Child Sex Abuse on Women’s Antisocial Behavior: An Examination of the Iowa Adoptee Sample. Psychosomatic Medicine, 73(1), 83–87. https://doi.org/10.1097/psy.0b013e3181fdd074",
+              "Majumder, R., Tai, Y. L., Ziano, I., & Feldman, G. (2024). Revisiting the impact of singularity on the Identified Victim Effect: Replication and extension of Kogut and Ritov (2005a) Study 2. Judgment and Decision Making, 19. https://doi.org/10.1017/jdm.2024.31",
+              "Klein, R. A., Vianello, M., Hasselman, F., Adams, B. G., Adams, R. B., Alper, S., Aveyard, M., Axt, J. R., Babalola, M. T., Bahník, Š., Batra, R., Berkics, M., Bernstein, M. J., Berry, D. R., Bialobrzeska, O., Binan, E. D., Bocian, K., Brandt, M. J., Busching, R., … Nosek, B. A. (2018). Many Labs 2: Investigating Variation in Replicability Across Samples and Settings. Advances in Methods and Practices in Psychological Science, 1(4), 443–490. https://doi.org/10.1177/2515245918810225",
+              "Shanks, D. R., Barbieri-Hermitte, P., & Vadillo, M. A. (2020). Do Incidental Environmental Anchors Bias Consumers’ Price Estimations? Collabra: Psychology, 6(1). https://doi.org/10.1525/collabra.310",
+              "Klein, R. A., Vianello, M., Hasselman, F., Adams, B. G., Adams, R. B., Alper, S., Aveyard, M., Axt, J. R., Babalola, M. T., Bahník, Š., Batra, R., Berkics, M., Bernstein, M. J., Berry, D. R., Bialobrzeska, O., Binan, E. D., Bocian, K., Brandt, M. J., Busching, R., … Nosek, B. A. (2018). Many Labs 2: Investigating Variation in Replicability Across Samples and Settings. Advances in Methods and Practices in Psychological Science, 1(4), 443–490. https://doi.org/10.1177/2515245918810225",
+              "Ziano, I., Yao, J. D., Gao, Y., & Feldman, G. (2020). Impact of ownership on liking and value: Replications and extensions of three ownership effect experiments. Journal of Experimental Social Psychology, 89, 103972. https://doi.org/10.1016/j.jesp.2020.103972",
+              "Bernache-Assollant, I., Chantal, Y., & Laurin, R. (2020). Is Andy Murray More British Than Scottish? It Depends on His Success! Game Outcome and the MOATing Effect. Psychological Reports, 124(5), 2237–2250. https://doi.org/10.1177/0033294120957242",
+              "O’Donnell, M., Dev, A. S., Antonoplis, S., Baum, S. M., Benedetti, A. H., Brown, N. D., Carrillo, B., Choi, A. L., Connor, P., Donnelly, K., Ellwood-Lowe, M. E., Foushee, R., Jansen, R., Jarvis, S. N., Lundell-Creagh, R., Ocampo, J. M., Okafor, G. N., Azad, Z. R., Rosenblum, M., … Nelson, L. D. (2021). Empirical audit and review and an assessment of evidentiary value in research on the psychological consequences of scarcity. Proceedings of the National Academy of Sciences, 118(44). https://doi.org/10.1073/pnas.2103313118",
+              "Fox, A. E. (2024). Immediate Reinforcement Training Has Moderate Effect on Delay Discounting Behavior in Rats: A Systematic Replication. The Psychological Record, 74(2), 213–218. https://doi.org/10.1007/s40732-024-00597-x",
+              "Cook, J. L., Baruni, R. R., Pinkston, J. W., Rapp, J. T., Miltenberger, R. G., Deshmukh, S., Walker, E., & Tai, S. (2024). Comparing stimulus preference and response force in a conjugate preparation: A replication with auditory stimulation. Journal of the Experimental Analysis of Behavior, 122(1), 11–24. Portico. https://doi.org/10.1002/jeab.915",
+              "Chen, W., Dong, B., Hsieh, C., Lee, M. J., Liu, N., Walker, R. M., Wang, Y., Wen, B., Wen, W., Wu, P., Wu, X., & Zhang, J. (2022). A replication of “an experimental test of the <scp>expectancy‐disconfirmation<\/scp> theory of citizen satisfaction.” Public Administration, 100(3), 778–791. Portico. https://doi.org/10.1111/padm.12860",
+              "Skiadopoulou, A., Mortal, S., & Gupta, V. K. (2025). Does competition from informal firms impact new product development? Systematic replication and extension of McCann and Bahl (2017). Journal of Management Scientific Reports, 3(2), 151–195. https://doi.org/10.1177/27550311251323281",
+              "Von Blanckenburg, K., Tebbe, E., &amp; Iseke, A. (2023). Giving and taking in dictator games – differences by gender? A replication study of Chowdhury et al. (Southern Economic Journal, 2017). <i>Journal of Comments and Replications in Economics<\/i>, 2023–2021. https://doi.org/10.18718/81781.27",
+              "Au, I. N. Y., &amp; Feldman, G. (2024). Revisiting \"Goals as Reference Points\": Replication and extensions of Heath et al. (1999). <i>OSF<\/i>. https://doi.org/10.17605/OSF.IO/WMQTB",
+              "Chandrashekar, S. P., Chan, Y. Y., Cheng, K. L., Yao, D., Lo, C. Y. S., Cheung, T. C. A., Tang, H. Y. S., Leung, Y. T. A., Tsoi, C. N., Cheng, B. L., Ng, K. W., & Feldman, G. (2022). Revisiting the folk concept of intentionality: Replications of. Journal of Experimental Social Psychology, 102, 104372. https://doi.org/10.1016/j.jesp.2022.104372",
+              "Boyle, J. B., Kennedy, D. M., Wang, C., & Shea, C. H. (2014). The Sine Wave Protocol: Decrease Movement Time Without Increasing Errors. Journal of Motor Behavior, 46(4), 277–285. https://doi.org/10.1080/00222895.2014.898608",
+              "Meyers-Manor, J. E., & Botten, M. L. (2020). A shoulder to cry on: Heart rate variability and empathetic behavioral responses to crying and laughing in dogs. Canadian Journal of Experimental Psychology / Revue Canadienne de Psychologie Expérimentale, 74(3), 235–243. https://doi.org/10.1037/cep0000225",
+              "Byrne, M. E., Kirschner, S., Harrewijn, A., Abend, R., Lazarov, A., Liuzzi, L., Kircanski, K., Haller, S. P., Bar-Haim, Y., & Pine, D. S. (2024). Eye-tracking measurement of attention bias to social threat among youth: A replication and extension study. Journal of Mood &amp; Anxiety Disorders, 8, 100075. https://doi.org/10.1016/j.xjmad.2024.100075",
+              "Schohl, K. A., Van Hecke, A. V., Carson, A. M., Dolan, B., Karst, J., & Stevens, S. (2013). A Replication and Extension of the PEERS Intervention: Examining Effects on Social Skills and Social Anxiety in Adolescents with Autism Spectrum Disorders. Journal of Autism and Developmental Disorders, 44(3), 532–545. https://doi.org/10.1007/s10803-013-1900-1",
+              "Ranson, N. J., & Byrne, M. K. (2014). Promoting Peer Acceptance of Females with Higher-functioning Autism in a Mainstream Education Setting: A Replication and Extension of the Effects of an Autism Anti-Stigma Program. Journal of Autism and Developmental Disorders, 44(11), 2778–2796. https://doi.org/10.1007/s10803-014-2139-1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "failed",
+              "successful",
+              "successful",
+              "successful",
+              "successful",
+              "successful",
+              "failed",
+              "failed",
+              "failed",
+              "successful",
+              "successful",
+              "successful",
+              "mixed",
+              "successful",
+              "successful",
+              "successful",
+              "successful",
+              "failed",
+              "successful",
+              "successful",
+              "successful",
+              "successful",
+              "failed",
+              "successful",
+              "successful"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "The difference was significant, p =\n.002, odds ratio (OR) = 0.87, d = −0.08, 95% CI = [−0.13,\n−0.03], but in the direction opposite the prediction of\nthe hypothesis (i.e., that affectively attractive choices\nare more preferred when they are uncertain rather than\ndefinite). The overall effect was much smaller than in\nthe original study and in the opposite direction (d =\n−0.08, 95% CI = [−0.13, −0.03], vs. original d = 0.74).",
+              "In two well-powered studies, using a more stringent analytic strategy, we\nreplicated the original finding. We observed a strong negative relationship between judgments of risks and benefits across\nthree technologies, although we do find that there was no change in risks when highlighting low benefits.",
+              "We found support for “less is better” across all studies (N = 403; Study 1 original d = 0.70\n[0.24,1.15], replication d = 0.99 [0.72,1.26]; Study 2 original d = 0.74 [0.12,1.35],\nreplication d = 0.32 [0.07,0.56]; Study 4 original d = 0.97 [0.43,1.50], replication d = 0.76\n[0.50,1.02]), with weaker support for “more is better”.",
+              "Each of the 10 samples replicated the Garry et al. finding: Participants often reported on the final test a non-witnessed answer that their co-witness had stated during the collaboration phase",
+              "These results suggest that\r\nthe religious participants were more prone to perceive a face in everyday objects than less-religious participants, which is consistent with a past finding (Riekki et al., 2013).",
+              "Replicating prior work, we found that a significant effect of childhood sex abuse on methylation of the 5HTT promoter region\nemerged for women.",
+              "The replication findings failed to provide empirical support for the identified single victim effect hypothesis since we found no evidence of differences in willingness to contribute when comparing a single identified victim to a single unidentified victim [...] and no indication for the target article’s interaction between singularity and identifiability",
+              "This result does not\nsupport the hypothesis that sales estimates are influenced\nby incidental anchors. The effect size was in the same\ndirection as the original effect size, but much smaller\n(d = 0.04, 95% CI = [−0.01, 0.09], vs. original d = 0.30) and\nindistinguishable from zero.",
+              "No statistically significant evidence of incidental anchoring was obtained. In contrast, robust standard anchoring effects were found. The results suggest that anchoring is limited to situations which require explicit thinking about the anchor.",
+              "The coordinates of participants’ clicks on\nthe fictional map were recorded (x, y) from the top left\nof the image and then recentered in the analysis such\nthat clicks in the north half of the map were positive\nand clicks in the southern half of the map were negative.\n\nAcross all samples (N = 6,591), participants in the high-\nSES condition (M = 11.70, SD = 84.31) selected a further\n\nnorth location than did participants in the low-SES con-\ndition (M = −22.70, SD = 88.78), t(6554.05) = 16.12, p =\n\n2.15e−57, d = 0.40, 95% CI = [0.35, 0.45].",
+              "We successfully replicated Nuttin's (1987) name-letter effect",
+              "The results generally replicate those of prior research and suggest that MOATing primarily serves a self-enhancement function.",
+              "Only the effect of\nconsumption resources was significant, F(2, 598) = 4.28, p = .014, ηp2 = .014, η2 = .014;\nits interaction with fairness was NS, F(2, 598) = 1.05, p = .351, ηp2 = .003, η2 = .003; the effect of fairness was NS, F(1, 598) = 1.01, p = .315, ηp2 = .002, η2 = .002. The two-\nway interaction remained NS when each background measure (e.g., familiarity with the\nbrands) was included as a control variable.",
+              "These findings are consistent with previous work and have implications for understanding how experience-based interventions may affect clinically relevant impulsive choice.",
+              "These findings are consistent with those from Davis\net al. (2021) and further support using conjugate preparations for measuring the\nrelative value of some stimulus events.",
+              "We found support for the findings reported in Van Ryzin (2013) and concluded that the expectancy-disconfirmation model holds promise in a variety of settings as a framework for measuring citizen satisfaction with public services.",
+              "We find that the findings of McCann and Bahl (2017) are [...] generally supported in a different time period.",
+              "\"In contrast to the original study, we do not find support for an asymmetric gender effect.\"",
+              "Among the\nvarious findings on the multiple hypotheses, we found strong empirical support for more\nwillingness to exert effort on proximal goals than distal ones, together with higher likelihood in\nachieving the overall goal with closer subgoals as hypothesized.",
+              "The replication results provide support for the findings of the original study. Consistent with the original study, we found high inter-rater agreement across perspective (actor vs. observer) experimental conditions; and no evidence for differences in intentionality ratings depending on whether a definition of intentionality was provided.",
+              "Practice tracking a sine wave template has been shown (J. B. Boyle, D. Kennedy, & C. H. Shea, 2012) to greatly enhance performance on a difficult Fitts task of the same amplitude. [...] Participants who practiced with the sine wave templates were able to move faster on Test 2 where a 16° amplitude Fitts task was used than participants that had practiced either the 16° or 24° amplitude Fitts tasks.",
+              "Like Custance and Mayer, dogs showed more behaviours directed toward\nthe person crying, whether the owner or the stranger, than during baseline or laughing conditions.",
+              "While anxiety-related findings from the two previous studies were not replicated, the relationship between\nattention bias and facets of negative affect suggests a potential target for treatment.",
+              "This study provides the first independent replication and extension of the empirically-supported PEERS social skills intervention for adolescents with ASD.",
+              "Overall, findings provide preliminary evidence supporting the efficacy of an anti-stigma program tailored to support females with higher-functioning autism."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "replication",
+              "replication",
+              "replication",
+              "replication",
+              "replication",
+              "replication",
+              "replication",
+              "replication",
+              "replication",
+              "replication",
+              "replication",
+              "replication",
+              "replication",
+              "replication",
+              "replication",
+              "replication",
+              "replication",
+              "replication",
+              "replication",
+              "replication",
+              "replication",
+              "replication",
+              "replication",
+              "replication",
+              "replication"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 2,
+        "names": [
+          "doi_o",
+          "apa_ref_o",
+          "doi_r",
+          "apa_ref_r",
+          "url_r",
+          "outcome",
+          "outcome_quote",
+          "type"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "10.1002/(sici)1099-0771(200001/03)13:1<1::aid-bdm333>3.0.co;2-s",
+              "10.1177/0956797610362675"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Finucane, M. L., Alhakami, A., Slovic, P., & Johnson, S. M. (2000). The affect heuristic in judgments of risks and benefits. Journal of Behavioral Decision Making, 13(1), 1–17. https://doi.org/10.1002/(sici)1099-0771(200001/03)13:1<1::aid-bdm333>3.0.co;2-s",
+              "Mehl, M. R., Vazire, S., Holleran, S. E., & Clark, C. S. (2010). Eavesdropping on Happiness. Psychological Science, 21(4), 539–541. https://doi.org/10.1177/0956797610362675"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "10.1177/19485506211056761",
+              "10.1177/0956797618774252"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Efendić, E., Chandrashekar, S. P., Lee, C. S., Yeung, L. Y., Kim, M. J., Lee, C. Y., & Feldman, G. (2021). Risky Therefore Not Beneficial: Replication and Extension of Finucane et al.’s (2000) Affect Heuristic Experiment. Social Psychological and Personality Science, 13(7), 1173–1184. https://doi.org/10.1177/19485506211056761",
+              "Milek, A., Butler, E. A., Tackman, A. M., Kaplan, D. M., Raison, C. L., Sbarra, D. A., Vazire, S., & Mehl, M. R. (2018). “Eavesdropping on Happiness” Revisited: A Pooled, Multisample Replication of the Association Between Life Satisfaction and Observed Daily Conversation Quantity and Quality. Psychological Science, 29(9), 1451–1462. https://doi.org/10.1177/0956797618774252"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "https://doi.org/10.1177/0956797618774252"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "successful",
+              "mixed"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "In two well-powered studies, using a more stringent analytic strategy, we\nreplicated the original finding. We observed a strong negative relationship between judgments of risks and benefits across\nthree technologies, although we do find that there was no change in risks when highlighting low benefits.",
+              "We found moderate associations between life satisfaction and amount of alone time, conversation time, and substantive conversations, but no reliable association with small talk."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "replication",
+              "replication"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 25,
+        "names": [
+          "doi_o",
+          "apa_ref_o",
+          "doi_r",
+          "apa_ref_r",
+          "url_r",
+          "outcome",
+          "outcome_quote",
+          "type"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "10.1126/science.1162548",
+              "10.1037/0022-3514.95.5.1150",
+              "10.1371/journal.pone.0059837",
+              "10.1002/(sici)1099-0992(199912)29:8%3c1011::aid-ejsp974%3e3.0.co;2-a",
+              "10.1037/h0055756",
+              "10.1177/002224298204600109",
+              "10.1037/0022-3514.70.6.1142",
+              "10.1111/j.1467-9280.2008.02227.x",
+              "10.1016/j.jesp.2008.03.012",
+              "10.1017/s1930297500006343",
+              "10.1177/0956797610372631",
+              "10.1177/0956797611432497",
+              "10.1111/j.0956-7976.2005.00798.x",
+              "10.3389/fnagi.2022.804937",
+              "10.1016/j.paid.2023.112300",
+              "10.1073/pnas.1918952117",
+              "10.3368/jhr.47.4.991",
+              "10.1038/s41562-023-01655-0",
+              "10.1093/ej/ueab096",
+              "10.1093/qje/qjac034",
+              "10.1093/restud/rdab056",
+              "10.1162/rest_a_01182",
+              "10.2307/2586119",
+              "10.1177/0193723504273121",
+              "10.2139/ssrn.1158663"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Williams, L. E., & Bargh, J. A. (2008). Experiencing Physical Warmth Promotes Interpersonal Warmth. Science, 322(5901), 606–607. https://doi.org/10.1126/science.1162548",
+              "Elliot, A. J., & Niesta, D. (2008). Romantic red: Red enhances men’s attraction to women. Journal of Personality and Social Psychology, 95(5), 1150–1164. https://doi.org/10.1037/0022-3514.95.5.1150",
+              "Nam, H. H., Jost, J. T., & Van Bavel, J. J. (2013). “Not for All the Tea in China!” Political Ideology and the Avoidance of Dissonance-Arousing Situations. PLoS ONE, 8(4), e59837. https://doi.org/10.1371/journal.pone.0059837",
+              "Norenzayan, A., & Schwarz, N. (1999). Telling what they want to know: participants tailor causal attributions to researchers’ interests. European Journal of Social Psychology, 29(8), 1011–1020. https://doi.org/10.1002/(sici)1099-0992(199912)29:8<1011::aid-ejsp974>3.0.co;2-a",
+              "Asch, S. E. (1946). Forming impressions of personality. The Journal of Abnormal and Social Psychology, 41(3), 258–290. https://doi.org/10.1037/h0055756",
+              "Gorn, G. J. (1982). The Effects of Music in Advertising on Choice Behavior: A Classical Conditioning Approach. Journal of Marketing, 46(1), 94–101. https://doi.org/10.1177/002224298204600109",
+              "Blair, I. V., & Banaji, M. R. (1996). Automatic and controlled processes in stereotype priming. Journal of Personality and Social Psychology, 70(6), 1142–1163. https://doi.org/10.1037/0022-3514.70.6.1142",
+              "Schnall, S., Benton, J., & Harvey, S. (2008). With a Clean Conscience. Psychological Science, 19(12), 1219–1222. https://doi.org/10.1111/j.1467-9280.2008.02227.x",
+              "Eyal, T., Liberman, N., & Trope, Y. (2008). Judging near and distant virtue and vice. Journal of Experimental Social Psychology, 44(4), 1204–1209. https://doi.org/10.1016/j.jesp.2008.03.012",
+              "Gong, H., & Medin, D. L. (2012). Construal levels and moral judgment: Some complications. Judgment and Decision Making, 7(5), 628–638. https://doi.org/10.1017/s1930297500006343",
+              "Damisch, L., Stoberock, B., & Mussweiler, T. (2010). Keep Your Fingers Crossed! Psychological Science, 21(7), 1014–1020. https://doi.org/10.1177/0956797610372631",
+              "Banerjee, P., Chatterjee, P., & Sinha, J. (2012). Is It Light or Dark? Recalling Moral Behavior Changes Perception of Brightness. Psychological Science, 23(4), 407–409. https://doi.org/10.1177/0956797611432497",
+              "Nelson, L. D., & Morrison, E. L. (2005). The Symptoms of Resource Scarcity. Psychological Science, 16(2), 167–173. https://doi.org/10.1111/j.0956-7976.2005.00798.x",
+              "Guo, P., Benito Ballesteros, A., Yeung, S. P., Liu, R., Saha, A., Curtis, L., Kaser, M., Haggard, M. P., & Cheke, L. G. (2022). COVCOG 2: Cognitive and Memory Deficits in Long COVID: A Second Publication From the COVID and Cognition Study. Frontiers in Aging Neuroscience, 14. https://doi.org/10.3389/fnagi.2022.804937",
+              "Ngo, A., Petrides, K. V., & Vernon, P. A. (2023). To vaccinate or not to vaccinate? The role of personality. Personality and Individual Differences, 213, 112300. https://doi.org/10.1016/j.paid.2023.112300",
+              "Kranton, R., Pease, M., Sanders, S., & Huettel, S. (2020). Deconstructing bias in social preferences reveals groupy and not-groupy behavior. Proceedings of the National Academy of Sciences, 117(35), 21185–21193. https://doi.org/10.1073/pnas.1918952117",
+              "León, G. (2012). Civil Conflict and Human Capital Accumulation. Journal of Human Resources, 47(4), 991–1022. https://doi.org/10.3368/jhr.47.4.991",
+              "Combs, A., Tierney, G., Guay, B., Merhout, F., Bail, C. A., Hillygus, D. S., & Volfovsky, A. (2023). Reducing political polarization in the United States with a mobile chat platform. Nature Human Behaviour, 7(9), 1454–1461. https://doi.org/10.1038/s41562-023-01655-0",
+              "Forsythe, E. (2021). Why Don’t Firms Hire Young Workers During Recessions? The Economic Journal, 132(645), 1765–1789. https://doi.org/10.1093/ej/ueab096",
+              "Alan, S., Corekcioglu, G., & Sutter, M. (2022). Improving Workplace Climate in Large Corporations: A Clustered Randomized Intervention. The Quarterly Journal of Economics, 138(1), 151–203. https://doi.org/10.1093/qje/qjac034",
+              "Carrera, M., Royer, H., Stehr, M., Sydnor, J., & Taubinsky, D. (2021). Who Chooses Commitment? Evidence and Welfare Implications. The Review of Economic Studies, 89(3), 1205–1244. https://doi.org/10.1093/restud/rdab056",
+              "Siddique, A., Rahman, T., Pakrashi, D., Islam, A., & Ahmed, F. (2024). Raising Health Awareness in Rural Communities: A Randomized Experiment in Bangladesh and India. Review of Economics and Statistics, 106(3), 638–654. https://doi.org/10.1162/rest_a_01182",
+              "Wattenberg, M. P., & Brians, C. L. (1999). Negative Campaign Advertising: Demobilizer or Mobilizer? American Political Science Review, 93(4), 891–899. https://doi.org/10.2307/2586119",
+              "Hewitt, J. D., Muñoz, R., Oliver, W. L., & Regoli, R. M. (2005). Race, Performance, and Baseball Card Values. Journal of Sport and Social Issues, 29(4), 411–425. https://doi.org/10.1177/0193723504273121",
+              "Druckman, J. N., Martin, L. W., & Thies, M. F. (2005). Influence Without Confidence: Upper Chambers and Government Formation. SSRN Electronic Journal. https://doi.org/10.2139/ssrn.1158663"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "10.1027/1864-9335/a000361",
+              "10.1027/1864-9335/a000296",
+              "10.1027/1864-9335/a000300",
+              "10.1027/1864-9335/a000173",
+              "10.1027/1864-9335/a000179",
+              "10.1027/1864-9335/a000182",
+              "10.1027/1864-9335/a000183",
+              "10.1027/1864-9335/a000186",
+              "10.1027/1864-9335/a000188",
+              "10.1027/1864-9335/a000188",
+              "10.1027/1864-9335/a000190",
+              "10.1027/1864-9335/a000191",
+              "10.1027/1864-9335/a000210",
+              "10.1016/j.cortex.2025.05.019",
+              "10.1002/ijop.70199",
+              "10.26481/umagsb.2025006",
+              "10.3368/jhr.0623-12973r6",
+              null,
+              null,
+              "10.10419/295247",
+              null,
+              "10.17605/osf.io/c3k6f",
+              "10.2307/2586120",
+              null,
+              "10.1177/2053168015577969"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Chabris, C. F., Heck, P. R., Mandart, J., Benjamin, D. J., & Simons, D. J. (2019). No Evidence That Experiencing Physical Warmth Promotes Interpersonal \t\t\t\t\tWarmth. Social Psychology, 50(2), 127–132. https://doi.org/10.1027/1864-9335/a000361",
+              "Lehmann, G. K., & Calin-Jageman, R. J. (2017). Is Red Really Romantic? Social Psychology, 48(3), 174–183. https://doi.org/10.1027/1864-9335/a000296",
+              "Collins, T. P., Crawford, J. T., & Brandt, M. J. (2017). No Evidence for Ideological Asymmetry in Dissonance Avoidance. Social Psychology, 48(3), 123–134. https://doi.org/10.1027/1864-9335/a000300",
+              "Kemmelmeier, M. (2014). Telling What They Want to Know. Social Psychology, 45(5), 426–430. https://doi.org/10.1027/1864-9335/a000173",
+              "Nauts, S., Langner, O., Huijsmans, I., Vonk, R., & Wigboldus, D. H. J. (2014). Forming Impressions of Personality. Social Psychology, 45(3), 153–163. https://doi.org/10.1027/1864-9335/a000179",
+              "Vermeulen, I., Batenburg, A., Beukeboom, C. J., & Smits, T. (2014). Breakthrough or One-Hit Wonder? Social Psychology, 45(3), 179–186. https://doi.org/10.1027/1864-9335/a000182",
+              "Müller, F., & Rothermund, K. (2014). What Does It Take to Activate Stereotypes? Simple Primes Don’t Seem Enough. Social Psychology, 45(3), 187–193. https://doi.org/10.1027/1864-9335/a000183",
+              "Johnson, D. J., Cheung, F., & Donnellan, M. B. (2014). Does Cleanliness Influence Moral Judgments? Social Psychology, 45(3), 209–215. https://doi.org/10.1027/1864-9335/a000186",
+              "Žeželj, I. L., & Jokić, B. R. (2014). Replication of Experiments Evaluating Impact of Psychological Distance on Moral Judgment. Social Psychology, 45(3), 223–231. https://doi.org/10.1027/1864-9335/a000188",
+              "Žeželj, I. L., & Jokić, B. R. (2014). Replication of Experiments Evaluating Impact of Psychological Distance on Moral Judgment. Social Psychology, 45(3), 223–231. https://doi.org/10.1027/1864-9335/a000188",
+              "Calin-Jageman, R. J., & Caldwell, T. L. (2014). Replication of the Superstition and Performance Study by. Social Psychology, 45(3), 239–245. https://doi.org/10.1027/1864-9335/a000190",
+              "Brandt, M. J., IJzerman, H., & Blanken, I. (2014). Does Recalling Moral Behavior Change the Perception of Brightness? Social Psychology, 45(3), 246–252. https://doi.org/10.1027/1864-9335/a000191",
+              "Guéguen, N. (2014). Men’s Hunger, Food Consumption, and Preferences for Female Body Types. Social Psychology, 45(6), 495–497. https://doi.org/10.1027/1864-9335/a000210",
+              "Weinerova, J., Yeung, S., Guo, P., Yau, A., Horne, C., Ghinn, M., Curtis, L., Adlard, F., Bhagat, V., Zhang, S., Kaser, M., Bozic, M., Schluppeck, D., Reid, A., Tibon, R., & Cheke, L. (2025). Changes in memory function in adults following SARS-CoV-2 infection: Findings from the Covid and Cognition online study. Cortex, 189, 205–225. https://doi.org/10.1016/j.cortex.2025.05.019",
+              "Kendell, H. A., & Vernon, P. A. (2026). The Role of Personality in Vaccination Attitudes: A Replication and Extension. International Journal of Psychology, 61(2). Portico. https://doi.org/10.1002/ijop.70199",
+              "Rusch, H. (2025). Ingroup favoritism is not time-stable. https://doi.org/10.26481/umagsb.2025006",
+              "Huaroto, C. A., Gonzales, F., & Pacheco, A. (2026). Revisiting the Long-Term Effects of Political Violence on Human Capital Accumulation in Peru. Journal of Human Resources, 0623-12973R6. https://doi.org/10.3368/jhr.0623-12973r6",
+              "Lacko, D., & Prošek, T. (2025). A comment on Combs et al. (2023) “Reducing political polarization in the United States with a mobile chat platform”. I4R Report.",
+              "Créchet, J., Cui, J., Sabada, B., & Sawyer, A. (2024). Why don’t firms hire young workers during recessions? A replication of Forsythe (The Economic Journal, 2022). (I4R Discussion Paper Series No. 163)",
+              "Hallman, A., Johannesson, M., & Kujansuu, E. (2024). Robustness Reproducibility of\" Improving Workplace Climate in Large Corporations: A Clustered Randomized Intervention\". (No. 118), I4R Discussion Paper Series.",
+              "Brodeur, A. (2024). Reproduction of  \"Who Chooses Commitment? Evidence and Welfare Implications\".",
+              "Kjelsrud, A., Kotsadam, A., Rogeberg, O., & Brodeur, A. (2025, February 22). A comment on “Raising Health Awareness in Rural Communities: A Randomized Experiment in Bangladesh and India” by Siddique et al. (2024)",
+              "Ansolabehere, S. D., Iyengar, S., & Simon, A. (1999). Replicating Experiments Using Aggregate and Survey Data: The Case of Negative Advertising and Turnout. American Political Science Review, 93(4), 901–909. https://doi.org/10.2307/2586120",
+              "Findlay, D. W., & Santos, J. M. (2012). Race, ethnicity, and baseball card prices: A replication, correction, and extension of Hewitt, Munoz, Oliver, and Regoli. Econ Journal Watch, 9(2), 122-140. Retrieved from https://econjwatch.org/File+download/538/FindlaySantosMay2012.pdf",
+              "Eppner, S., & Ganghof, S. (2015). Do (weak) upper houses matter for cabinet formation? A replication and correction. Research &amp; Politics, 2(1). https://doi.org/10.1177/2053168015577969"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              "https://osf.io/7jy4e/files/u93pc",
+              "https://osf.io/7qv89",
+              "https://osf.io/txqjw/",
+              "https://osf.io/8rb5k",
+              "https://osf.io/9erj6",
+              "https://doi.org/10.2307/2586120",
+              "https://econjwatch.org/File+download/538/FindlaySantosMay2012.pdf",
+              "https://doi.org/10.1177/2053168015577969"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "failed",
+              "mixed",
+              "failed",
+              "successful",
+              "failed",
+              "failed",
+              "mixed",
+              "failed",
+              "failed",
+              "failed",
+              "failed",
+              "failed",
+              "successful",
+              "mixed",
+              "successful",
+              "successful",
+              "mixed",
+              "computationally successful, robustness challenges",
+              "computationally successful, robust",
+              "computationally successful, robustness challenges",
+              "computationally successful, robust",
+              "computationally successful, robustness challenges",
+              "computation not checked, robustness challenges",
+              "computational issues, robust",
+              "computationally successful, robustness challenges"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "In both cases, Bayesian analyses suggest there is substantially more evidence for the null hypothesis of no effect than for the original physical warmth priming hypothesis.",
+              "For men, we found a very weak effect in the predicted direction (d = 0.09, 95% CI [−0.17, 0.34], N = 242). For women, we found a very weak effect in the opposite direction (d = −0.09, 95% CI [−0.30, 0.12], N = 360). The original studies may have overestimated the red effect, our studies may be an underestimate, or there could be strong moderation of the effect of red on attraction.",
+              "A meta-analysis of Nam et al.’s (2013) two studies, the two studies presently reported, and a third supplemental study provide no evidence for asymmetry in dissonance avoidance.",
+              "Results replicated original findings without social desirability qualifying critical effects.",
+              "We found no evidence for a primacy-of-warmth effect. Instead, the role of warmth was highly context-dependent, and competence was at least as important in shaping impressions as warmth.",
+              "Aggregated, the three studies produced a null effect.",
+              "Mirroring Blair and Banaji (1996) we found strong priming effects as long as response priming was possible. However, unlike Banaji and Hardin (1996), we did not find any evidence for automatic stereotype activation, when response priming was ruled out. Our findings suggest that automatic stereotype activation is not a reliable and global phenomenon but is restricted to more specific conditions.",
+              "We did not find evidence that physical cleanliness reduced the severity of moral judgments using samples sizes that provided over .99 power to detect the original effect sizes.",
+              "We found no systematic effect of temporal distance, the effect of social distance consistent with Eyal et al., and the reversed effect of direct construal level manipulation, consistent with Gong and Medin.",
+              "We found no systematic effect of temporal distance, the effect of social distance consistent with Eyal et al., and the reversed effect of direct construal level manipulation, consistent with Gong and Medin.",
+              "Our failure to replicate the target study was not due to lack of impact, lack of statistical power, differences in task difficulty, nor differences in participant belief in luck.",
+              "Our results did not differ significantly from zero, 9 out of 10 of the effects were significantly smaller than the originally reported effects, and the effects were not consistently moderated by individual difference measures of potential discrepancies between the original and the replication samples.",
+              "Results showed that the participants entering the restaurant preferred the chubby body type more while satiated men preferred the thinner or slender body types.",
+              "We have found previously reported effect of Covid status on accuracy in 2 long-term memory tasks (verbal item memory task and nonverbal associative memory task), but did not replicate previously reported effect on reaction times.",
+              "We predicted that Supporters would score significantly higher on honesty‐humility and conscientiousness, and that Opponents would score significantly higher on narcissism and Machiavellianism, replicating previous findings (Ngo et al. 2023).",
+              "When looking at our three waves of data as cross-sections, we robustly replicate the finding that participants’ favoritism levels tend to correlate between minimal and natural group contexts and observe similar heterogeneity in individual ‘groupiness’ like Kranton et al. [7].",
+              "When using the full sample in 1993, we find statistically significant effects of exposure pre-conception, violating the parallel pre-trends assumptions of Leon (2012). We also find that the long-run effects (measured in 2007) are smaller in magnitude using the full census. Finally, we show valid evidence of an actual adverse impact of political violence, but only for those exposed in utero.",
+              "Bayesian estimation indicated that only two results were more likely than the null hypothesis according to Bayes factors",
+              "We replicate the main results in this paper by reconstructing the dataset using data from the IPUMS-CPS database and recoding the paper’s main regressions. We also conduct a robustness replicability analysis and show that the paper’s main results are robust in terms of statistical significance to (i) extending the sample period from 1994–2014 to 1994–2019 and (ii) using MSA-level unemployment variation instead of state-level variation.",
+              "We first successfully reproduce the results in Table 8 computationally based on the posted code and data, and we then carry out five robustness tests. We do not find robust support for an effect of the treatment on any of the four primary outcome variables (separation, prosocial behavior, workplace quality and support networks).",
+              "We confirm all of the main results and do not find high sensitivity of the model to changes in parameters.",
+              "Reproducing the analyses we identify many severe issues, including that the study did not in fact randomize treatment assignment.",
+              "When we correct for these biases using a valid two-stage specification, the observed effects of recall on turnout show that negative advertising indeed reduces participation.",
+              "We replicate their results using their reported data and verify that their finding of no effect of race on card prices holds after corrections of data errors.",
+              "Replication shows that the empirical results are driven exclusively by two countries with weak upper houses, one of which (Ireland) is miscoded."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "replication",
+              "replication",
+              "replication",
+              "replication",
+              "replication",
+              "replication",
+              "replication",
+              "replication",
+              "replication",
+              "replication",
+              "replication",
+              "replication",
+              "replication",
+              "replication",
+              "replication",
+              "replication",
+              "replication",
+              "reproduction",
+              "reproduction",
+              "reproduction",
+              "reproduction",
+              "reproduction",
+              "reproduction",
+              "reproduction",
+              "reproduction"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

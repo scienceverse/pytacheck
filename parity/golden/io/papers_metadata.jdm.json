@@ -1,0 +1,185 @@
+{
+  "id": "papers_metadata.jdm",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "@context",
+      "@type",
+      "dc_title",
+      "dc_creator",
+      "dc_subject",
+      "dc_description",
+      "dc_publisher",
+      "dc_date",
+      "dc_type",
+      "dc_format",
+      "dc_identifier",
+      "dc_source",
+      "dc_language",
+      "dc_relation",
+      "dc_coverage",
+      "dc_rights",
+      "dc_provenance"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "http://dublincore.org/documents/dcmi-terms/"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Dataset"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Judgment and Decision Making - Complete Open-Access Corpus (2006-2022)"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Lakens, Daniel"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "judgment",
+          "decision making",
+          "open access",
+          "natural language processing",
+          "AI validation",
+          "text mining"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "A complete corpus of 855 open-access articles published in Judgment and Decision Making (2006-2022), converted to metacheck paperlist objects for validation of AI and text-mining tools. DOIs were matched via CrossRef title search and manual verification for pre-2008 papers not indexed in CrossRef."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "scienceverse/papers (GitHub)"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "2026-06-17"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Dataset"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "application/pdf",
+          "application/x-r-rds",
+          "text/xml"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://github.com/scienceverse/papers/tree/main/jdm"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Judgment and Decision Making, ISSN 1930-2975, https://jbaron.org/journal/"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "en"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://jbaron.org/journal/",
+          "https://github.com/scienceverse/metacheck"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "2006-01-01/2022-12-31"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "CC-BY 4.0 (https://creativecommons.org/licenses/by/4.0/)"
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "pdf_source",
+          "conversion_tool",
+          "conversion_endpoint",
+          "paperlist_tool",
+          "doi_matching",
+          "conversion_date"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "https://jbaron.org/journal/ (scraped)"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "GROBID 0.8"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://grobid.hti.ieis.tue.nl"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "metacheck::grobid_to_bibr()"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "CrossRef title search + manual verification (2026-06-17)"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2026-06-17"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

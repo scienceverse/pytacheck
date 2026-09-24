@@ -32,6 +32,7 @@ if TYPE_CHECKING:
     from lxml import etree
 
 __all__ = [
+    "XmlParseError",
     "as_character",
     "html_text",
     "read_xml",
@@ -79,11 +80,25 @@ def _html_parser(noblanks: bool) -> etree.HTMLParser:
     )
 
 
+class XmlParseError(ValueError):
+    """An XML document libxml2 cannot parse (message as xml2 reports it)."""
+
+
 def read_xml(text: str) -> etree._ElementTree:
-    """``xml2::read_xml()`` of a string (parsed as UTF-8, blank nodes dropped)."""
+    """``xml2::read_xml()`` of a string (parsed as UTF-8, blank nodes dropped).
+
+    Parse failures raise :class:`XmlParseError` with xml2's message, e.g.
+    ``"Extra content at the end of the document [5]"``.
+    """
     from lxml import etree
 
-    root = etree.fromstring(text.encode("utf-8", "surrogateescape"), _xml_parser())
+    try:
+        root = etree.fromstring(text.encode("utf-8", "surrogateescape"), _xml_parser())
+    except etree.XMLSyntaxError as exc:
+        entries = list(exc.error_log)
+        last = entries[-1] if entries else None
+        msg = f"{last.message} [{last.type}]" if last is not None else str(exc)
+        raise XmlParseError(msg) from exc
     return root.getroottree()
 
 

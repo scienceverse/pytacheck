@@ -1,0 +1,116 @@
+{
+  "id": "r_output_effectsize_d.direct",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": null,
+    "v": [
+      {
+        "t": "list",
+        "names": [
+          "analysis",
+          "title",
+          "data"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "COHEN'S D"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "COHEN'S D"
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "d",
+              "ci_lower",
+              "ci_upper"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "0.1"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "0.0"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "0.2"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "analysis",
+          "title",
+          "data"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Hedges g"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Hedges g"
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "d",
+              "ci_lower",
+              "ci_upper"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "1e-2"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "-1"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "1"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

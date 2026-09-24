@@ -35,7 +35,7 @@ def _osf_meta_get(url: str) -> Any:
 
     try:
         out = osf_get_all_pages(url)
-    except Exception:  # noqa: BLE001 - one unavailable endpoint never stops the rest
+    except Exception:
         return None
     if out is None or _osf_err(out) is not None or len(out) == 0:
         return None
@@ -52,7 +52,7 @@ def _get_request(url: str, accept: str | None = None) -> Any:
         headers["Accept"] = accept
     try:
         return http.request("GET", url, headers=headers, max_tries=1)
-    except Exception:  # noqa: BLE001
+    except Exception:
         return None
 
 
@@ -129,7 +129,9 @@ def _osf_download_logs(osf_id: str, meta_dir: str) -> pd.DataFrame | None:
     out: dict[str, list[Any]] = {"date": dates, "action": actions}
 
     params = [_get(e, "attributes", "params") for e in logs]
-    if all(p is None or isinstance(p, dict) for p in params) and any(isinstance(p, dict) for p in params):
+    if all(p is None or isinstance(p, dict) for p in params) and any(
+        isinstance(p, dict) for p in params
+    ):
         keys: list[str] = []
         for p in params:
             for k in p or {}:
@@ -179,7 +181,9 @@ def _write_csv(df: pd.DataFrame, path: str) -> None:
         writer = csv.writer(fh, lineterminator="\n", quoting=csv.QUOTE_MINIMAL)
         writer.writerow(list(df.columns))
         for row in df.itertuples(index=False, name=None):
-            writer.writerow([_csv_value(None if (not isinstance(v, str) and is_na(v)) else v) for v in row])
+            writer.writerow(
+                [_csv_value(None if (not isinstance(v, str) and is_na(v)) else v) for v in row]
+            )
 
 
 def _osf_license(osf_id: str) -> str | None:
@@ -213,9 +217,7 @@ def _osf_node_metadata(osf_id: str) -> dict[str, Any]:
     from pytacheck.archives.osf_helpers import _get
 
     api = _api()
-    resp = _get_request(
-        f"{api}/nodes/{osf_id}/?embed=license&embed=bibliographic_contributors"
-    )
+    resp = _get_request(f"{api}/nodes/{osf_id}/?embed=license&embed=bibliographic_contributors")
     node = None
     if resp is not None and resp.status_code == 200:
         try:
@@ -353,10 +355,10 @@ def _osf_write_readme(
 
 def _json_ready(x: Any) -> Any:
     if isinstance(x, pd.DataFrame):
-        rows = []
-        for rec in x.to_dict(orient="records"):
-            rows.append({k: _json_ready(v) for k, v in rec.items() if not _missing(v)})
-        return rows
+        return [
+            {k: _json_ready(v) for k, v in rec.items() if not _missing(v)}
+            for rec in x.to_dict(orient="records")
+        ]
     if isinstance(x, dict):
         return {k: _json_ready(v) for k, v in x.items()}
     if isinstance(x, list | tuple):
@@ -420,7 +422,9 @@ def _osf_metadata_download(osf_id: str, download_to: str, pb: Any = None) -> str
 
     if logs is None:
         _write_csv(
-            pd.DataFrame({"date": pd.Series([], dtype="string"), "action": pd.Series([], dtype="string")}),
+            pd.DataFrame(
+                {"date": pd.Series([], dtype="string"), "action": pd.Series([], dtype="string")}
+            ),
             os.path.join(meta_dir, "logs.csv"),
         )
     _osf_write_readme(meta, wikis, logs, meta_dir)

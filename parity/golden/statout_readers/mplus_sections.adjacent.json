@@ -1,0 +1,100 @@
+{
+  "id": "mplus_sections.adjacent",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": null,
+    "v": [
+      {
+        "t": "list",
+        "names": [
+          "title",
+          "lines"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "INPUT INSTRUCTIONS"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "  TITLE: adjacent headers;"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "title",
+          "lines"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "SUMMARY OF ANALYSIS"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Number of observations      12"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "title",
+          "lines"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "MODEL RESULTS"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "R-SQUARE",
+              "MODEL RESULTS"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "title",
+          "lines"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "R-SQUARE"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "R-SQUARE"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

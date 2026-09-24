@@ -1,0 +1,880 @@
+{
+  "id": "import_stata_smcl.analysis",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": null,
+    "v": [
+      {
+        "t": "list",
+        "names": [
+          "analysis",
+          "title",
+          "data",
+          "syntax",
+          "table_index"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "summarize price mpg weight"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 3,
+            "names": [
+              "Variable",
+              "|",
+              "Obs",
+              "Mean",
+              "Std. dev.",
+              "Min",
+              "Max"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "price",
+                  "mpg",
+                  "weight"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "|",
+                  "|",
+                  "|"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "74",
+                  "74",
+                  "74"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "6165.257",
+                  "21.2973",
+                  "3019.459"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "2949.496",
+                  "5.785503",
+                  "777.1936"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "3291",
+                  "12",
+                  "1760"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "15906",
+                  "41",
+                  "4840"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "summarize price mpg weight"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "analysis",
+          "title",
+          "data",
+          "syntax",
+          "table_index"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "regress price mpg weight"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 3,
+            "names": [
+              "price |",
+              "Coefficient",
+              "Std. err.",
+              "t",
+              "P>|t|",
+              "[95% conf.",
+              "interval]"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "mpg |",
+                  "weight |",
+                  "_cons |"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "-49.51222",
+                  "1.746559",
+                  "1946.069"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "86.15604",
+                  ".6413538",
+                  "3597.05"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "-0.57",
+                  "2.72",
+                  "0.54"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "0.567",
+                  "0.008",
+                  "0.590"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "-221.3025",
+                  ".4677522",
+                  "-5226.245"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "122.2781",
+                  "3.025366",
+                  "9118.382"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "regress price mpg weight"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "analysis",
+          "title",
+          "data",
+          "syntax",
+          "table_index"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "regress price mpg weight"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "obs"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "74"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "regress price mpg weight"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              3
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "analysis",
+          "title",
+          "data",
+          "syntax",
+          "table_index"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "regress price mpg weight"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "F"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "14.74"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "regress price mpg weight"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              4
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "analysis",
+          "title",
+          "data",
+          "syntax",
+          "table_index"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "regress price mpg weight"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "F"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "0.0000"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "regress price mpg weight"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              5
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "analysis",
+          "title",
+          "data",
+          "syntax",
+          "table_index"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "regress price mpg weight"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "R-squared"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "0.2934"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "regress price mpg weight"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              6
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "analysis",
+          "title",
+          "data",
+          "syntax",
+          "table_index"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "regress price mpg weight"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "R-squared"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "0.2735"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "regress price mpg weight"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              7
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "analysis",
+          "title",
+          "data",
+          "syntax",
+          "table_index"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "regress price mpg weight"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "MSE"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "2514"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "regress price mpg weight"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              8
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "analysis",
+          "title",
+          "data",
+          "syntax",
+          "table_index"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "logit foreign mpg, nolog"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "likelihood"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "-45.03321"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "logit foreign mpg, nolog"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              9
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "analysis",
+          "title",
+          "data",
+          "syntax",
+          "table_index"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "logit foreign mpg, nolog"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "likelihood"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "-39.380959"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "logit foreign mpg, nolog"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              10
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "analysis",
+          "title",
+          "data",
+          "syntax",
+          "table_index"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "logit foreign mpg, nolog"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "obs"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "74"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "logit foreign mpg, nolog"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              11
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "analysis",
+          "title",
+          "data",
+          "syntax",
+          "table_index"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "logit foreign mpg, nolog"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "chi2"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "11.30"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "logit foreign mpg, nolog"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              12
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "analysis",
+          "title",
+          "data",
+          "syntax",
+          "table_index"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "logit foreign mpg, nolog"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "likelihood",
+              "R2"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "-39.380959"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "0.1254"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "logit foreign mpg, nolog"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              13
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "analysis",
+          "title",
+          "data",
+          "syntax",
+          "table_index"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "tabulate rep78"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 2,
+            "names": [
+              "Repair record 1978",
+              "| |",
+              "Freq.",
+              "Percent",
+              "Cum."
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "1",
+                  "2"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "|",
+                  "|"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "2",
+                  "8"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "2.90",
+                  "11.59"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "2.90",
+                  "14.49"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "tabulate rep78"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              14
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

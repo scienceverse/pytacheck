@@ -1,9 +1,58 @@
 {
   "id": ".tei_xrefs.query_string",
-  "ok": false,
-  "error": "values must be type 'character',\n but FUN(X[[3]]) result is type 'logical'",
-  "warnings": [],
-  "value": null,
+  "ok": true,
+  "error": null,
+  "warnings": [
+    "NAs introduced by coercion to integer range"
+  ],
+  "value": {
+    "t": "df",
+    "nrow": 4,
+    "names": [
+      "xref_id",
+      "xref_type",
+      "contents",
+      "text_id"
+    ],
+    "v": [
+      {
+        "t": "int",
+        "v": [
+          0,
+          12,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "figure",
+          "bibr",
+          "table",
+          "bibr"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Fig 1",
+          "(Smith, 2020)",
+          "T",
+          "big"
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          2,
+          2,
+          2,
+          2
+        ]
+      }
+    ]
+  },
   "metacheck_version": "0.3.1",
-  "r_version": "R version 4.3.3 (2024-02-29)"
+  "r_version": "R version 4.5.3 (2026-03-11)"
 }

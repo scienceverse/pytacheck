@@ -1,0 +1,127 @@
+{
+  "id": "crossref_parse_item.psychsci",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 1,
+    "names": [
+      "DOI",
+      "type",
+      "title",
+      "container-title",
+      "volume",
+      "issue",
+      "page",
+      "URL",
+      "abstract",
+      "year",
+      "author"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "10.1177/0956797613520608"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "journal-article"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Continuous Theta-Burst Stimulation Demonstrates a Causal Role of Premotor Homunculus in Action Understanding"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Psychological Science"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "25"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "4"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "963-972"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://doi.org/10.1177/0956797613520608"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "<jats:p>Although it is well established that regions of premotor cortex (PMC) are active during action observation, it remains controversial whether they play a causal role in action understanding. In the experiment reported here, we used off-line continuous theta-burst stimulation (cTBS) to investigate this question. Participants received cTBS over the hand and lip areas of left PMC, in separate sessions, before completing a pantomime-recognition task in which half of the trials contained pantomimed hand actions, and half contained pantomimed mouth actions. The results reveal a double dissociation: Participants were less accurate in recognizing pantomimed hand actions after receiving cTBS over the hand area than over the lip area and less accurate in recognizing pantomimed mouth actions after receiving cTBS over the lip area than over the hand area. This finding constrains theories of action understanding by showing that somatotopically organized regions of PMC contribute causally to action understanding and, thus, that the mechanisms underpinning action understanding and action performance overlap.<\/jats:p>"
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          2014
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "df",
+            "nrow": 7,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "John",
+                  "Kristian",
+                  "Joshua",
+                  "Thomas",
+                  "Jakob",
+                  "Morten",
+                  "Chris D."
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Michael",
+                  "Sandberg",
+                  "Skewes",
+                  "Wolf",
+                  "Blicher",
+                  "Overgaard",
+                  "Frith"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

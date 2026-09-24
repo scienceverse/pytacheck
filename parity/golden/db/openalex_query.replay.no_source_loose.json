@@ -1,0 +1,114 @@
+{
+  "id": "openalex_query.replay.no_source_loose",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 1,
+    "names": [
+      "id",
+      "doi",
+      "relevance_score",
+      "display_name",
+      "publication_year",
+      "type",
+      "biblio.volume",
+      "biblio.issue",
+      "source",
+      "authors",
+      "biblio.first_page",
+      "biblio.last_page",
+      "title_match",
+      "source_match"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "https://openalex.org/W4411461971"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://doi.org/10.4135/9781036212261"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "389.95328"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Sample Size Justification"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "2023"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "article"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          ""
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          null
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

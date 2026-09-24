@@ -19,6 +19,7 @@ from __future__ import annotations
 
 import functools
 import hashlib
+import itertools
 import math
 import os
 import tempfile
@@ -206,7 +207,7 @@ def _tokenize_sentences(x: str | None) -> list[str | None]:
     if not s:
         return []
     cuts = [0, *_sentence_breaks(s), len(s)]
-    return [s[a:b].strip(" ") for a, b in zip(cuts, cuts[1:], strict=False) if b > a]
+    return [s[a:b].strip(" ") for a, b in itertools.pairwise(cuts) if b > a]
 
 
 # ---------------------------------------------------------------------------
@@ -231,9 +232,7 @@ def _pull_and_split(cols: dict[str, list[Any]]) -> dict[str, list[Any]]:
     fmt = gsub("</p>$", "", fmt)
     fmt = gsub("^<figDesc>", "", fmt)
     fmt = gsub("</figDesc>$", "", fmt)
-    fmt = [
-        None if f is None else sub("[\t\r\n ]+$", "", sub("^[\t\r\n ]+", "", f)) for f in fmt
-    ]
+    fmt = [None if f is None else sub("[\t\r\n ]+$", "", sub("^[\t\r\n ]+", "", f)) for f in fmt]
 
     # protect inline <ref> elements from the sentence splitter: every row's
     # first occurrence of each ref string becomes a {{ref<i>-<j>}} token
@@ -278,7 +277,7 @@ def _html_to_text(x: str | None) -> str:
     src = _paste("<p>", x, "<p>")
     try:
         text = html_text(src)
-    except Exception:  # noqa: BLE001 - R's tryCatch returns the input on any error
+    except Exception:
         return "NA" if x is None else x
     return sub("[\t\r\n ]+$", "", sub("^[\t\r\n ]+", "", text))
 
@@ -300,7 +299,7 @@ def _process_columns(cols: dict[str, list[Any]]) -> dict[str, list[Any]]:
     # merge sentence fragments: a sentence without end punctuation followed by
     # one that does not start with a capital (backwards, so chains merge)
     n = len(text)
-    ends = grepl(r'[\.\?\!\"]$', text)
+    ends = grepl(r"[\.\?\!\"]$", text)
     caps = grepl("^[A-Z]", text)
     merge = [x for x in range(n - 1) if not ends[x] and not caps[x + 1]]
     if merge:
@@ -781,9 +780,7 @@ def _tei_bib_columns(xml: Any) -> dict[str, list[Any]]:
     cols["bib_id"] = list(coerce_column(pd.Series(ids, dtype=object), "integer"))
 
     raw = _xml_find_text(refs, ".//note[@type='raw_reference']")
-    raw = [
-        sub("[\t\r\n ]+$", "", sub("^[\t\r\n ]+", "", t)) for t in gsub(r"\s+", " ", raw)
-    ]
+    raw = [sub("[\t\r\n ]+$", "", sub("^[\t\r\n ]+", "", t)) for t in gsub(r"\s+", " ", raw)]
     if len(raw) == 1:
         raw = raw * n
     elif len(raw) != n:
@@ -830,9 +827,7 @@ def _is_data_shaped(g: list[str]) -> bool:
     is_ordinal = grepl(r"^[0-9]{1,2}\.?$", nz)
     looks_numeric = [
         a or b or c == "-"
-        for a, b, c in zip(
-            grepl("^[<>]?[-+]?[.0-9]", nz), grepl(r"^\[.*\]$", nz), nz, strict=True
-        )
+        for a, b, c in zip(grepl("^[<>]?[-+]?[.0-9]", nz), grepl(r"^\[.*\]$", nz), nz, strict=True)
     ]
     n_non_ord = sum(not o for o in is_ordinal)
     if n_non_ord == 0:
@@ -968,8 +963,13 @@ def _extract_eq(paper: Paper) -> pd.DataFrame:
 
 
 def _grobid_to_bibr(xml_path: PathLikeStr, pb: Any = None) -> Paper:
-    """Port of ``R/import-grobid.R::.grobid_to_bibr()``: one TEI XML file to a paper."""
+    """Port of ``R/import-grobid.R::.grobid_to_bibr()``: one TEI XML file to a paper.
+
+    ``pb`` (R's progress bar) is accepted for signature compatibility and ignored.
+    """
     from pytacheck.papers.io import coerce_paper
+
+    del pb
 
     path_str = os.fspath(xml_path)
     path = Path(path_str)
@@ -1060,9 +1060,7 @@ def _grobid_to_bibr(xml_path: PathLikeStr, pb: Any = None) -> Paper:
             if contents[i] is None:
                 # R: `contents[[i]] <- NULL` drops the element, and the
                 # shortened column no longer fits the table
-                raise ValueError(
-                    "Assigned data `contents` must be compatible with existing data."
-                )
+                raise ValueError("Assigned data `contents` must be compatible with existing data.")
     p.table = pd.DataFrame(
         {
             "table_id": _column(range(1, len(tab_sec) + 1), "Int64"),
@@ -1201,7 +1199,7 @@ def grobid_to_bibr(
     for xp in paths:
         try:
             p: Paper | None = _grobid_to_bibr(xp)
-        except Exception as exc:  # noqa: BLE001 - R logs every error and skips the file
+        except Exception as exc:
             errors += 1
             logger("grobid_to_bibr", {"xml_path": os.fspath(xp), "error": str(exc)})
             p = None
@@ -1260,7 +1258,7 @@ def _grobid_isalive(api_url: str, error: bool = True) -> bool:
     failure = None
     try:
         resp = http.request("GET", url, max_tries=3, retry_statuses=(429, 503), timeout=15)
-    except Exception as exc:  # noqa: BLE001 - invalid URLs etc. count as connection failures
+    except Exception as exc:
         resp, failure = None, str(exc)
     if resp is None:
         if error:
@@ -1339,7 +1337,7 @@ def convert_grobid(
                     consolidate_funders,
                 )
                 messages.append("")
-            except Exception as exc:  # noqa: BLE001 - R logs and reports failed files
+            except Exception as exc:
                 logger("convert_grobid", {"error": str(exc)})
                 xml, messages = None, [*messages, str(exc)]
             xmls.append(xml)
@@ -1363,23 +1361,26 @@ def convert_grobid(
     pdf = Path(paths[0])
     from pytacheck import http
 
-    fields = {
-        "start": r_as_character(start_page),
-        "end": r_as_character(end_page),
-        "consolidateCitations": r_as_character(consolidate_citations),
-        "consolidateHeader": r_as_character(consolidate_header),
-        "consolidateFunders": r_as_character(consolidate_funders),
-        "includeRawCitations": "1",
-    }
-    with pdf.open("rb") as fh:
+    # the multipart fields, in the order httr2 sends them
+    fields: list[tuple[str, Any]] = [
+        ("input", (pdf.name, pdf.read_bytes(), "application/pdf")),
+        ("start", (None, r_as_character(start_page))),
+        ("end", (None, r_as_character(end_page))),
+        ("consolidateCitations", (None, r_as_character(consolidate_citations))),
+        ("consolidateHeader", (None, r_as_character(consolidate_header))),
+        ("consolidateFunders", (None, r_as_character(consolidate_funders))),
+        ("includeRawCitations", (None, "1")),
+    ]
+    try:
         resp = http.request(
             "POST",
             _url_with_path(api_url, "/api/processFulltextDocument"),
             max_tries=1,
-            files={"input": (pdf.name, fh, "application/pdf")},
-            data=fields,
+            files=fields,
             timeout=180,
         )
+    except Exception as exc:  # invalid URL etc.
+        raise ConnectionError(f"Failed to perform HTTP request: {exc}") from exc
     if resp is None:
         raise ConnectionError(f"Failed to perform HTTP request to {api_url}")
     if resp.status_code >= 400:

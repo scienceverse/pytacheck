@@ -32,7 +32,11 @@ def aspredicted_links(paper: Any) -> pd.DataFrame:
     from pytacheck.papers.tables import paper_table
 
     urls = paper_table(paper, "url")
-    keep = [bool(v) for v in grepl(r"aspredicted\.org", urls["href"], ignore_case=True)]
+    keep = pd.Series(
+        [bool(v) for v in grepl(r"aspredicted\.org", urls["href"], ignore_case=True)],
+        index=urls.index,
+        dtype=bool,
+    )
     return urls[keep].reset_index(drop=True)
 
 
@@ -65,7 +69,9 @@ def aspredicted_info(ap_url: Any, id_col: int | str = 1, wait: float = 1) -> pd.
         uniq = list(dict.fromkeys(None if is_na(v) else v for v in vals))
         raw_urls = [v for v in uniq if v is not None]
         id_col_name = "ap_url"
-        table = pd.DataFrame({"ap_url": pd.Series([as_character(v) for v in raw_urls], dtype="string")})
+        table = pd.DataFrame(
+            {"ap_url": pd.Series([as_character(v) for v in raw_urls], dtype="string")}
+        )
 
     valid_ids = list(dict.fromkeys(as_character(u) for u in raw_urls if not is_na(u)))
     if not valid_ids:
@@ -79,7 +85,11 @@ def aspredicted_info(ap_url: Any, id_col: int | str = 1, wait: float = 1) -> pd.
         ap = _aspredicted_info(url)
         frames.append(ap)
         http.sleep(wait)
-        if "error" in ap.columns and ap["error"].iloc[0] == "captcha":
+        if (
+            "error" in ap.columns
+            and not is_na(ap["error"].iloc[0])
+            and ap["error"].iloc[0] == "captcha"
+        ):
             break
 
     from pytacheck._r import bind_rows
@@ -101,7 +111,10 @@ _SECTIONS: list[tuple[str, str]] = [
         "AP_hypotheses",
         "2) What's the main question being asked or hypothesis being tested in this study?",
     ),
-    ("AP_key_dv", "3) Describe the key dependent variable(s) specifying how they will be measured."),
+    (
+        "AP_key_dv",
+        "3) Describe the key dependent variable(s) specifying how they will be measured.",
+    ),
     ("AP_conditions", "4) How many and which conditions will participants be assigned to?"),
     (
         "AP_analyses",
@@ -347,5 +360,7 @@ def _html_text2(x: str | lxml_html.HtmlElement | list[Any], preserve_nbsp: bool 
             return None
         x = bodies[0]
     text = _PaddedText()
-    _html_text_block((x.tag.lower() if isinstance(x.tag, str) else "comment", x), text, preserve_nbsp)
+    _html_text_block(
+        (x.tag.lower() if isinstance(x.tag, str) else "comment", x), text, preserve_nbsp
+    )
     return text.output()

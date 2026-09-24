@@ -8,6 +8,7 @@ listed and fetched individually.
 
 from __future__ import annotations
 
+import contextlib
 import os
 import zipfile
 from typing import Any
@@ -21,6 +22,16 @@ def _api() -> str:
     from pytacheck.utils import get_option
 
     return str(get_option("metacheck.osf.api"))
+
+
+def _pages_or_none(url: str) -> Any:
+    """``tryCatch(osf_get_all_pages(url), error = \\(e) NULL)``."""
+    from pytacheck.archives.osf import osf_get_all_pages
+
+    try:
+        return osf_get_all_pages(url)
+    except Exception:
+        return None
 
 
 def _files_under(folder: str) -> list[str]:
@@ -39,7 +50,6 @@ def _osf_walk_nodes(osf_id: str, pb: Any = None) -> pd.DataFrame:
     """
     from pytacheck import http
     from pytacheck.archives import _tick
-    from pytacheck.archives.osf import osf_get_all_pages
     from pytacheck.archives.osf_helpers import _get, _osf_headers
 
     api = _api()
@@ -52,10 +62,7 @@ def _osf_walk_nodes(osf_id: str, pb: Any = None) -> pd.DataFrame:
         _tick(pb, f"Finding components: level {level}, {len(todo)} to check ({len(ids)} found)")
         nxt: list[str] = []
         for node in todo:
-            try:
-                kids = osf_get_all_pages(f"{api}/nodes/{node}/children/")
-            except Exception:  # noqa: BLE001
-                continue
+            kids = _pages_or_none(f"{api}/nodes/{node}/children/")
             if not isinstance(kids, list) or len(kids) == 0:
                 continue
             ids.extend(k.get("id") for k in kids)
@@ -65,10 +72,12 @@ def _osf_walk_nodes(osf_id: str, pb: Any = None) -> pd.DataFrame:
 
     root_title = None
     try:
-        resp = http.request("GET", f"{api}/nodes/{osf_id}/", headers=_osf_headers()["headers"], max_tries=1)
+        resp = http.request(
+            "GET", f"{api}/nodes/{osf_id}/", headers=_osf_headers()["headers"], max_tries=1
+        )
         if resp is not None and resp.status_code == 200:
             root_title = _get(resp.json(), "data", "attributes", "title")
-    except Exception:  # noqa: BLE001
+    except Exception:
         root_title = None
 
     return pd.DataFrame(
@@ -94,7 +103,7 @@ def _osf_download_addons(node: str, node_dir: str, pb: Any = None) -> dict[str, 
     none = {"files": 0, "bytes": 0.0}
     try:
         provs = osf_get_all_pages(f"{api}/nodes/{node}/files/")
-    except Exception:  # noqa: BLE001
+    except Exception:
         return none
     if not isinstance(provs, list) or len(provs) == 0:
         return none
@@ -108,10 +117,7 @@ def _osf_download_addons(node: str, node_dir: str, pb: Any = None) -> dict[str, 
     nbytes = 0.0
     for p in extra:
         _tick(pb, f"{node}: listing {p} files (not in the OSF archive)")
-        try:
-            listing = osf_get_all_pages(f"{api}/nodes/{node}/files/{p}/")
-        except Exception:  # noqa: BLE001
-            continue
+        listing = _pages_or_none(f"{api}/nodes/{node}/files/{p}/")
         if not isinstance(listing, list) or len(listing) == 0:
             continue
         info = _osf_parse_response(listing)
@@ -119,12 +125,7 @@ def _osf_download_addons(node: str, node_dir: str, pb: Any = None) -> dict[str, 
             continue
 
         while "files" in info.columns and info["files"].notna().any():
-            more = []
-            for u in [x for x in info["files"].tolist() if not is_na(x)]:
-                try:
-                    more.append(osf_get_all_pages(u))
-                except Exception:  # noqa: BLE001
-                    continue
+            more = [_pages_or_none(u) for u in info["files"].tolist() if not is_na(u)]
             more = [m for m in more if m is not None]
             if not more:
                 break
@@ -139,7 +140,11 @@ def _osf_download_addons(node: str, node_dir: str, pb: Any = None) -> dict[str, 
 
         kind = info["kind"].tolist() if "kind" in info else [None] * len(info)
         urls = info["download_url"].tolist() if "download_url" in info else [None] * len(info)
-        rows = [i for i, (k, u) in enumerate(zip(kind, urls, strict=True)) if k == "file" and not is_na(u)]
+        rows = [
+            i
+            for i, (k, u) in enumerate(zip(kind, urls, strict=True))
+            if not is_na(k) and k == "file" and not is_na(u)
+        ]
         if not rows:
             continue
         os.makedirs(node_dir, exist_ok=True)
@@ -188,7 +193,11 @@ def _osf_download_all(
     rows: list[dict[str, Any]] = []
     for i, (node, title) in enumerate(zip(nodes["osf_id"], nodes["title"], strict=True), start=1):
         title = None if is_na(title) else str(title)
-        folder = node if title is None or title == "" else f"{path_sanitize(title, keep_sep=False)}_{node}"
+        folder = (
+            node
+            if title is None or title == ""
+            else f"{path_sanitize(title, keep_sep=False)}_{node}"
+        )
         node_dir = os.path.join(download_to, folder)
         _tick(pb, f"Downloading {folder} ({i} of {len(nodes)})")
 
@@ -196,7 +205,7 @@ def _osf_download_all(
         zip_path = os.path.join(download_to, f"{node}.zip")
         try:
             ok = _stream_to_file(zip_url, zip_path, timeout_s=1800) == 200
-        except Exception:  # noqa: BLE001 - R: error = \(e) FALSE
+        except Exception:
             ok = False
 
         if ok and os.path.exists(zip_path) and os.path.getsize(zip_path) > 0:
@@ -257,10 +266,8 @@ def _osf_download_all(
         for r in rows:
             if r["download_path"] is None:
                 continue
-            try:
+            with contextlib.suppress(Exception):
                 _osf_metadata_download(r["osf_project"], r["download_path"], pb=pb)
-            except Exception:  # noqa: BLE001
-                pass
 
     total_files = sum(r["files"] for r in rows)
     with_files = sum(1 for r in rows if r["files"] > 0)

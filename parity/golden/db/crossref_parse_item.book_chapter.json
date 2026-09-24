@@ -1,0 +1,96 @@
+{
+  "id": "crossref_parse_item.book_chapter",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 1,
+    "names": [
+      "DOI",
+      "type",
+      "title",
+      "container-title",
+      "page",
+      "URL",
+      "year",
+      "author"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "10.1093/acprof:oso/9780190228057.003.0004"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "book-chapter"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "How Do People Respond to Threatened Social Status?"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Envy at Work and in Organizations"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "85-110"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://doi.org/10.1093/acprof:oso/9780190228057.003.0004"
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          2016
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "df",
+            "nrow": 2,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Jan",
+                  "Jens"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Crusius",
+                  "Lange"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -249,7 +249,9 @@ def read_r_output(
     return result
 
 
-def _r_echo_chunks(lines: Sequence[str | None], code_lines: Sequence[str | None]) -> list[dict[str, Any]]:
+def _r_echo_chunks(
+    lines: Sequence[str | None], code_lines: Sequence[str | None]
+) -> list[dict[str, Any]]:
     """Split ``echo = TRUE`` stdout into one chunk per top-level statement.
 
     Port of ``R/r-output.R::.r_echo_chunks()``. Returns a list of
@@ -267,9 +269,7 @@ def _r_echo_chunks(lines: Sequence[str | None], code_lines: Sequence[str | None]
     ends = [s - 1 for s in starts[1:]] + [len(lines) - 1]
 
     code_list = _as_lines(code_lines)
-    code_stripped = [
-        None if c is None else gsub("[[:space:]]+", "", _trimws(c)) for c in code_list
-    ]
+    code_stripped = [None if c is None else gsub("[[:space:]]+", "", _trimws(c)) for c in code_list]
     chunks: list[dict[str, Any]] = []
     for start, end in zip(starts, ends, strict=True):
         seg = lines[start : end + 1]
@@ -327,9 +327,7 @@ _R_STATIX_ALIASES = {
     "var_test": "var.test",
     "shapiro_test": "shapiro.test",
 }
-_TEST_CALL_PATTERNS = tuple(
-    (f, "\\b" + f.replace(".", "\\.") + "\\s*\\(") for f in _R_TEST_CALLS
-)
+_TEST_CALL_PATTERNS = tuple((f, "\\b" + f.replace(".", "\\.") + "\\s*\\(") for f in _R_TEST_CALLS)
 _STATIX_PATTERNS = tuple((f, "\\b" + f + "\\s*\\(") for f in _R_STATIX_ALIASES)
 
 
@@ -364,9 +362,7 @@ _R_PREVIEW_CALLS = (
     "nrow",
     "ncol",
 )
-_PREVIEW_PATTERNS = tuple(
-    "^(dplyr::|utils::|base::)?" + f + "\\s*\\(" for f in _R_PREVIEW_CALLS
-)
+_PREVIEW_PATTERNS = tuple("^(dplyr::|utils::|base::)?" + f + "\\s*\\(" for f in _R_PREVIEW_CALLS)
 
 
 def _r_is_preview_call(call_text: str | None) -> bool:
@@ -484,7 +480,9 @@ def _repro_split_args(args_text: str) -> list[dict[str, Any]]:
         elif ch in ")]}":
             depth -= 1
         elif ch == "," and depth == 0:
-            args.append({"text": args_text[arg_start - 1 : i - 1], "start": arg_start, "end": i - 1})
+            args.append(
+                {"text": args_text[arg_start - 1 : i - 1], "start": arg_start, "end": i - 1}
+            )
             arg_start = i + 1
         i += 1
     args.append({"text": args_text[arg_start - 1 : n], "start": arg_start, "end": n})
@@ -529,9 +527,7 @@ _TITLE_RE = (
     "(?i)(t-test|correlation|chi-squared|proportion|wilcoxon|shapiro|anova|fisher|"
     "kruskal|bartlett|mann-whitney|test)$"
 )
-_STAT_NAME_RE = (
-    "(?i)^(t|z|f|r|w|u|h|d|p|p-value|df|chi|x-squared|bf|rho|tau|s|v|estimate|mean)"
-)
+_STAT_NAME_RE = "(?i)^(t|z|f|r|w|u|h|d|p|p-value|df|chi|x-squared|bf|rho|tau|s|v|estimate|mean)"
 
 
 def _r_output_oneline(
@@ -619,7 +615,11 @@ def _r_output_cohend(lines: Sequence[str | None]) -> list[dict[str, Any]]:
             ):
                 row.extend(zip([t.lower() for t in hdr_toks], dat_toks, strict=True))
         out.append(
-            {"analysis": "Cohen's d", "title": f"Cohen's d ({magnitude})", "data": _one_row_frame(row)}
+            {
+                "analysis": "Cohen's d",
+                "title": f"Cohen's d ({magnitude})",
+                "data": _one_row_frame(row),
+            }
         )
     return out
 
@@ -655,7 +655,9 @@ def _r_output_effectsize_d(lines: Sequence[str | None]) -> list[dict[str, Any]]:
             i += 1
             continue
         label = _trimws(m.group(1)) or ""
-        df = _one_row_frame([("d", dm.group(1)), ("ci_lower", dm.group(2)), ("ci_upper", dm.group(3))])
+        df = _one_row_frame(
+            [("d", dm.group(1)), ("ci_lower", dm.group(2)), ("ci_upper", dm.group(3))]
+        )
         out.append({"analysis": label, "title": label, "data": df})
         i += 3
     return out
@@ -764,15 +766,11 @@ def _split_block(block: Sequence[str]) -> list[list[str]] | None:
             j = k
         else:
             j += 1
-    return [
-        [(_trimws(line[a:b]) or "").replace(_NBSP, " ") for line in padded] for a, b in runs
-    ]
+    return [[(_trimws(line[a:b]) or "").replace(_NBSP, " ") for line in padded] for a, b in runs]
 
 
 _SECTION_RE = "^[A-Za-z][A-Za-z0-9 .()|>-]*:$"
-_STOP_RE = (
-    "(?i)^(---|signif|residual standard|multiple r-|f-statistic|call:|data:|alternative)"
-)
+_STOP_RE = "(?i)^(---|signif|residual standard|multiple r-|f-statistic|call:|data:|alternative)"
 
 
 def _r_output_tables(lines: Sequence[str | None]) -> list[dict[str, Any]]:
@@ -832,9 +830,7 @@ def _r_output_tables(lines: Sequence[str | None]) -> list[dict[str, Any]]:
     return tables
 
 
-def _repair_columns(
-    header: list[str], body: list[list[str]]
-) -> tuple[list[str], list[list[str]]]:
+def _repair_columns(header: list[str], body: list[list[str]]) -> tuple[list[str], list[list[str]]]:
     def empty(col: list[str]) -> bool:
         return all(not (_trimws(v) or "") for v in col)
 

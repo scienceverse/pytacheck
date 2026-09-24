@@ -1,0 +1,86 @@
+{
+  "id": "spv_read_structure.legacy",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 4,
+    "names": [
+      "command_name",
+      "syntax",
+      "subtype",
+      "bin_member",
+      "xml_member",
+      "is_legacy",
+      "is_graph"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "T-Test",
+          "T-Test",
+          "T-Test",
+          "T-Test"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "T-TEST /TESTVAL=0 /VARIABLES=age score.",
+          "T-TEST /TESTVAL=0 /VARIABLES=age score.",
+          "T-TEST /TESTVAL=0 /VARIABLES=age score.",
+          "T-TEST /TESTVAL=0 /VARIABLES=age score."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "One-Sample Statistics",
+          null,
+          "Bad data",
+          "No detail"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "0000000003_tableData.bin",
+          "0000000003_tableData.bin",
+          "0000000005_tableData.bin",
+          "0000000003_tableData.bin"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "0000000003_table.xml",
+          "0000000004_table.xml",
+          "0000000003_table.xml",
+          "0000000009_table.xml"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true,
+          true,
+          true,
+          true
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false,
+          false,
+          false,
+          false
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

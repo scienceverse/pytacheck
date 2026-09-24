@@ -14,6 +14,7 @@ bar's ``pb$tick(0, list(what = ...))``).
 
 from __future__ import annotations
 
+import contextlib
 import importlib
 import sys
 from typing import Any
@@ -70,7 +71,5 @@ def _message(*parts: Any) -> None:
 def _tick(pb: Any, what: str) -> None:
     """``pb$tick(0, list(what = what))`` on a progress bar, if one was passed."""
     if pb is not None and hasattr(pb, "tick"):
-        try:
+        with contextlib.suppress(Exception):  # a progress display must never break a run
             pb.tick(0, {"what": what})
-        except Exception:  # noqa: BLE001 - a progress display must never break a run
-            pass

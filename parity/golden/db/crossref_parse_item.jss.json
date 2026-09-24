@@ -1,0 +1,105 @@
+{
+  "id": "crossref_parse_item.jss",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 1,
+    "names": [
+      "DOI",
+      "type",
+      "title",
+      "container-title",
+      "volume",
+      "issue",
+      "URL",
+      "year",
+      "author"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "10.18637/jss.v082.i13"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "journal-article"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "<b>lmerTest<\/b>\n                    Package: Tests in Linear Mixed Effects Models"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Journal of Statistical Software"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "82"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "13"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://doi.org/10.18637/jss.v082.i13"
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          2017
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "df",
+            "nrow": 3,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Alexandra",
+                  "Per B.",
+                  "Rune H. B."
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Kuznetsova",
+                  "Brockhoff",
+                  "Christensen"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

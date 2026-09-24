@@ -12,6 +12,7 @@ machine and one package, so only the key scheme needs to match).
 
 from __future__ import annotations
 
+import contextlib
 import os
 import pickle
 from pathlib import Path
@@ -61,7 +62,7 @@ def _repo_info_cache_dir() -> str:
     )
 
 
-def _repo_info_cache_key(host: str, id: Any) -> str:  # noqa: A002 - R name
+def _repo_info_cache_key(host: str, id: Any) -> str:
     """Port of R/repo-info-cache.R::.repo_info_cache_key(): filesystem-safe key."""
     ident = "unknown" if id is None else ("NA" if is_na(id) else as_character(id))
     key = f"{host}_{ident}"
@@ -72,12 +73,12 @@ def _repo_info_cache_key(host: str, id: Any) -> str:  # noqa: A002 - R name
     return key
 
 
-def _repo_info_cache_path(host: str, id: Any) -> str:  # noqa: A002 - R name
+def _repo_info_cache_path(host: str, id: Any) -> str:
     """Port of R/repo-info-cache.R::.repo_info_cache_path()."""
     return os.path.join(_repo_info_cache_dir(), _repo_info_cache_key(host, id) + _SUFFIX)
 
 
-def _repo_info_cache_get(host: str, id: Any) -> Any:  # noqa: A002 - R name
+def _repo_info_cache_get(host: str, id: Any) -> Any:
     """Port of R/repo-info-cache.R::.repo_info_cache_get(): a cached value, or ``None``."""
     path = _repo_info_cache_path(host, id)
     if not os.path.exists(path):
@@ -85,20 +86,19 @@ def _repo_info_cache_get(host: str, id: Any) -> Any:  # noqa: A002 - R name
     try:
         with open(path, "rb") as fh:
             return pickle.load(fh)  # noqa: S301 - our own local cache
-    except Exception:  # noqa: BLE001 - an unreadable entry is a miss
+    except Exception:
         return None
 
 
-def _repo_info_cache_put(host: str, id: Any, value: Any) -> Any:  # noqa: A002 - R name
+def _repo_info_cache_put(host: str, id: Any, value: Any) -> Any:
     """Port of R/repo-info-cache.R::.repo_info_cache_put(): store a value (errors ignored)."""
-    try:
+    # a caching miss is never worse than the uncached behaviour
+    with contextlib.suppress(Exception):
         path = _repo_info_cache_path(host, id)
         tmp = f"{path}.{os.getpid()}.tmp"
         with open(tmp, "wb") as fh:
             pickle.dump(value, fh, protocol=pickle.HIGHEST_PROTOCOL)
         os.replace(tmp, path)
-    except Exception:  # noqa: BLE001 - a caching miss is never worse than no cache
-        pass
     return value
 
 

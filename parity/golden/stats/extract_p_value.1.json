@@ -1,0 +1,40 @@
+{
+  "id": "extract_p_value.1",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 2,
+    "names": [
+      "p_comp",
+      "p_value",
+      "p_dec"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "=",
+          "ns"
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0.05,
+          null
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          3,
+          null
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

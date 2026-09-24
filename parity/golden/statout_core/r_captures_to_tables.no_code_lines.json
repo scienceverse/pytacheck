@@ -1,0 +1,1843 @@
+{
+  "id": "r_captures_to_tables.no_code_lines",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": null,
+    "v": [
+      {
+        "t": "list",
+        "names": [
+          "analysis",
+          "title",
+          "data",
+          "line",
+          "line_seq",
+          "call_fn",
+          "model_ref",
+          "captured"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Welch Two Sample t-test"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Welch Two Sample t-test"
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "label",
+              "t",
+              "df",
+              "p",
+              "mean of x",
+              "mean of y",
+              "conf.low",
+              "conf.high"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "x and y"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "1.555973210431"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "9.99343570644965"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "0.150788806254901"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "2.95"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "2.18333333333333"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "-0.331290472245011"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "1.86462380557834"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              4
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "t.test"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "x"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "analysis",
+          "title",
+          "data",
+          "line",
+          "line_seq",
+          "call_fn",
+          "model_ref",
+          "captured"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              " Two Sample t-test"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              " Two Sample t-test"
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "label",
+              "t",
+              "df",
+              "p",
+              "mean of x",
+              "mean of y",
+              "conf.low",
+              "conf.high"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "x and y"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "1.555973210431"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "10"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "0.150768835150095"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "2.95"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "2.18333333333333"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "-0.331192714890188"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "1.86452604822352"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              5
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "t.test"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "analysis",
+          "title",
+          "data",
+          "line",
+          "line_seq",
+          "call_fn",
+          "model_ref",
+          "captured"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              " Two Sample t-test"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              " Two Sample t-test"
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "label",
+              "t",
+              "df",
+              "p",
+              "mean of x",
+              "mean of y",
+              "conf.low",
+              "conf.high"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "x and y"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "1.555973210431"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "10"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "0.150768835150095"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "2.95"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "2.18333333333333"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "-0.331192714890188"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "1.86452604822352"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              6
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "t.test"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "tt"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "analysis",
+          "title",
+          "data",
+          "line",
+          "line_seq",
+          "call_fn",
+          "model_ref",
+          "captured"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Shapiro-Wilk normality test"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Shapiro-Wilk normality test"
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "label",
+              "W",
+              "p"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "x"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "0.954247565356166"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "0.774491530540095"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              7
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "shapiro.test"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "x"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "analysis",
+          "title",
+          "data",
+          "line",
+          "line_seq",
+          "call_fn",
+          "model_ref",
+          "captured"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Wilcoxon rank sum test with continuity correction"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Wilcoxon rank sum test with continuity correction"
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "label",
+              "W",
+              "p"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "x and y"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "26"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "0.229766270461138"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              8
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "wilcox.test"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "x"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "analysis",
+          "title",
+          "data",
+          "line",
+          "line_seq",
+          "call_fn",
+          "model_ref",
+          "captured"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Spearman's rank correlation rho"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Spearman's rank correlation rho"
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "label",
+              "S",
+              "p",
+              "rho"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "x and y"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "22"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "0.468478134110787"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "0.371428571428571"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              9
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "cor.test"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "x"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "analysis",
+          "title",
+          "data",
+          "line",
+          "line_seq",
+          "call_fn",
+          "model_ref",
+          "captured"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Pearson's Chi-squared test with Yates' continuity correction"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Pearson's Chi-squared test with Yates' continuity correction"
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "label",
+              "X-squared",
+              "df",
+              "p"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "matrix(c(12, 5, 7, 9), nrow = 2)"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "1.45599637881468"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "1"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "0.22756821457581"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              10
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "chisq.test"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "analysis",
+          "title",
+          "data",
+          "line",
+          "line_seq",
+          "call_fn",
+          "model_ref",
+          "captured"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "lm"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "lm"
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 2,
+            "names": [
+              "label",
+              "Estimate",
+              "Std. Error",
+              "t value",
+              "Pr(>|t|)"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "(Intercept)",
+                  "gb"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "2.95",
+                  "-0.766666666666667"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "0.348409082672781",
+                  "0.492724849969816"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "8.46705825625843",
+                  "-1.555973210431"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "7.13922081682268e-06",
+                  "0.150768835150095"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              13
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "m"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "analysis",
+          "title",
+          "data",
+          "line",
+          "line_seq",
+          "call_fn",
+          "model_ref",
+          "captured"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "anova"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "anova"
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 2,
+            "names": [
+              "label",
+              "Df",
+              "Sum Sq",
+              "Mean Sq",
+              "F value",
+              "Pr(>F)"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "g",
+                  "Residuals"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "1",
+                  "10"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "1.76333333333333",
+                  "7.28333333333333"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "1.76333333333333",
+                  "0.728333333333333"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "2.42105263157895",
+                  ""
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "0.150768835150095",
+                  ""
+                ]
+              }
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              14
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "m"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "analysis",
+          "title",
+          "data",
+          "line",
+          "line_seq",
+          "call_fn",
+          "model_ref",
+          "captured"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "anova"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "anova"
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 2,
+            "names": [
+              "label",
+              "Df",
+              "Sum Sq",
+              "Mean Sq",
+              "F value",
+              "Pr(>F)"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "g",
+                  "Residuals"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "1",
+                  "10"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "1.76333333333333",
+                  "7.28333333333333"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "1.76333333333333",
+                  "0.728333333333333"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "2.42105263157895",
+                  ""
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "0.150768835150095",
+                  ""
+                ]
+              }
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              15
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "analysis",
+          "title",
+          "data",
+          "line",
+          "line_seq",
+          "call_fn",
+          "model_ref",
+          "captured"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "glm"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "glm"
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 2,
+            "names": [
+              "label",
+              "Estimate",
+              "Std. Error",
+              "z value",
+              "Pr(>|z|)"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "(Intercept)",
+                  "gb"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "0.693147180559743",
+                  "-1.38629436111949"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "0.866025244772043",
+                  "1.2247446465141"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "0.800377569527081",
+                  "-1.13190481384441"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "0.423492072801965",
+                  "0.257674454643754"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              16
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "analysis",
+          "title",
+          "data",
+          "line",
+          "line_seq",
+          "call_fn",
+          "model_ref",
+          "captured"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "mean by group"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "mean by group"
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 2,
+            "names": [
+              "label",
+              "mean"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "2.95",
+                  "2.18333333333333"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              17
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "d"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "analysis",
+          "title",
+          "data",
+          "line",
+          "line_seq",
+          "call_fn",
+          "model_ref",
+          "captured"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "sd by group"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "sd by group"
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 2,
+            "names": [
+              "label",
+              "sd (y)",
+              "sd (z)"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "0.864291617453276",
+                  "0.842417157153549"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "0.842417157153549",
+                  "0.864291617453276"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              18
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "d"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "analysis",
+          "title",
+          "data",
+          "line",
+          "line_seq",
+          "call_fn",
+          "model_ref",
+          "captured"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "median by group"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "median by group"
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 2,
+            "names": [
+              "label",
+              "median"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "3.05",
+                  "2.3"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              19
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "d"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "analysis",
+          "title",
+          "data",
+          "line",
+          "line_seq",
+          "call_fn",
+          "model_ref",
+          "captured"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "mean by group"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "mean by group"
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 2,
+            "names": [
+              "label",
+              "mean"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "y",
+                  "z"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "2.56666666666667",
+                  "2.56666666666667"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              20
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "d"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "analysis",
+          "title",
+          "data",
+          "line",
+          "line_seq",
+          "call_fn",
+          "model_ref",
+          "captured"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "lm"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "lm"
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 2,
+            "names": [
+              "label",
+              "Estimate",
+              "Std. Error",
+              "t value",
+              "Pr(>|t|)"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "(Intercept)",
+                  "gb"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "2.95",
+                  "-0.766666666666667"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "0.348409082672781",
+                  "0.492724849969816"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "8.46705825625843",
+                  "-1.555973210431"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "7.13922081682268e-06",
+                  "0.150768835150095"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              24
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "analysis",
+          "title",
+          "data",
+          "line",
+          "line_seq",
+          "call_fn",
+          "model_ref",
+          "captured"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Exact binomial test"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Exact binomial test"
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "label",
+              "number of successes",
+              "number of trials",
+              "p",
+              "probability of success",
+              "conf.low",
+              "conf.high"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "7 and 20"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "7"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "20"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "0.263175964355469"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "0.35"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "0.153909204784541"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "0.592188534532828"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              26
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "analysis",
+          "title",
+          "data",
+          "line",
+          "line_seq",
+          "call_fn",
+          "model_ref",
+          "captured"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "2-sample test for equality of proportions with continuity correction"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2-sample test for equality of proportions with continuity correction"
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "label",
+              "X-squared",
+              "df",
+              "p",
+              "prop 1",
+              "prop 2",
+              "conf.low",
+              "conf.high"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "c(15, 25) out of c(50, 50)"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "3.375"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "1"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "0.0661925797221934"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "0.3"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "0.5"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "-0.407993141232296"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "0.00799314123229583"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              27
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "prop.test"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

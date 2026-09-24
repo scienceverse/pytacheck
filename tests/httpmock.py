@@ -54,6 +54,34 @@ def r_digest(text: str) -> str:
     ).hexdigest()
 
 
+def _multipart_string(request: httpx.Request, body: bytes) -> str | None:
+    """httptest2's text for a multipart body (``get_string_request_body()``).
+
+    ``"Multipart form:\\n  name = value\\n  file = File: <md5 of contents>\\n"``,
+    fields in request order.
+    """
+    ctype = request.headers.get("content-type", "")
+    if not ctype.startswith("multipart/form-data") or "boundary=" not in ctype:
+        return None
+    boundary = ctype.split("boundary=", 1)[1].split(";")[0].strip('"').encode()
+    fields = []
+    for part in body.split(b"--" + boundary)[1:]:
+        if part.startswith(b"--"):
+            break
+        head, _, content = part.partition(b"\r\n\r\n")
+        if content.endswith(b"\r\n"):
+            content = content[:-2]
+        name = re.search(rb'name="([^"]*)"', head)
+        if name is None:
+            continue
+        if b"filename=" in head:
+            value = "File: " + hashlib.md5(content, usedforsecurity=False).hexdigest()
+        else:
+            value = content.decode("utf-8", "replace")
+        fields.append(f"{name.group(1).decode()} = {value}")
+    return "\n  ".join(["Multipart form:", *fields]) + "\n"
+
+
 def mock_path(request: httpx.Request) -> str:
     """``httptest2::build_mock_url()`` for an httpx request (no extension)."""
     url = str(request.url)
@@ -62,8 +90,11 @@ def mock_path(request: httpx.Request) -> str:
     path = re.sub(r"/$", "", base).replace(":", "-")
     if query:
         path += "-" + r_digest(query)[:6]
-    body = request.content
-    if body:
+    body = request.read()
+    multipart = _multipart_string(request, body)
+    if multipart is not None:
+        path += "-" + r_digest(multipart)[:6]
+    elif body:
         path += "-" + r_digest(body.decode("utf-8", "replace"))[:6]
     if request.method != "GET":
         path += "-" + request.method

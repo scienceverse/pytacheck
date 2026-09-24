@@ -1,0 +1,88 @@
+{
+  "id": "FLoRA_update.data_step",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 3,
+    "names": [
+      "doi_o",
+      "apa_ref_o",
+      "doi_r",
+      "apa_ref_r",
+      "url_r",
+      "outcome",
+      "outcome_quote",
+      "type"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "10.1037/0003-066x.54.6.408",
+          "10.1002/acp.1376",
+          "10.1177/0956797614520714"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Eagly, A. H., & Wood, W. (1999). The origins.",
+          "Garry, M. (2007). Eyewitness.",
+          "Gino, F. (2014). Evil genius."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "10.1177/rep1",
+          null,
+          "10.1525/collabra.1"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Rep, A. (2020). A replication. https://doi.org/10.1177/rep1",
+          "Only URL (2021).",
+          "Replicator, B. (2022). Evil genius replicated."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "https://osf.io/abcde",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "successful",
+          "failed",
+          "failed"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "We replicated\nthe effect.",
+          "no effect",
+          "The \"effect\" was not found"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "replication",
+          "replication",
+          "replication"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

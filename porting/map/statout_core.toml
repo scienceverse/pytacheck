@@ -1,0 +1,76 @@
+# R source -> Python location for statout_core (see docs/PORTING.md).
+[files]
+"R/r-output.R" = ["src/pytacheck/statout/r_output.py"]
+"R/r-capture.R" = ["src/pytacheck/statout/r_capture.py"]
+"R/stat-tables.R" = ["src/pytacheck/statout/stat_tables.py"]
+"R/stat-output.R" = ["src/pytacheck/statout/stat_output.py"]
+
+[functions]
+# R/r-output.R
+read_r_output = "pytacheck.statout.r_output:read_r_output"
+".r_echo_chunks" = "pytacheck.statout.r_output:_r_echo_chunks"
+".R_TEST_CALLS" = "pytacheck.statout.r_output:_R_TEST_CALLS"
+".R_STATIX_ALIASES" = "pytacheck.statout.r_output:_R_STATIX_ALIASES"
+".r_call_fn" = "pytacheck.statout.r_output:_r_call_fn"
+".R_PREVIEW_CALLS" = "pytacheck.statout.r_output:_R_PREVIEW_CALLS"
+".r_is_preview_call" = "pytacheck.statout.r_output:_r_is_preview_call"
+".r_call_object_ref" = "pytacheck.statout.r_output:_r_call_object_ref"
+".repro_split_args" = "pytacheck.statout.r_output:_repro_split_args"
+".r_root_ref_map" = "pytacheck.statout.r_output:_r_root_ref_map"
+".r_output_oneline" = "pytacheck.statout.r_output:_r_output_oneline"
+".r_output_cohend" = "pytacheck.statout.r_output:_r_output_cohend"
+".r_output_effectsize_d" = "pytacheck.statout.r_output:_r_output_effectsize_d"
+".r_output_tables" = "pytacheck.statout.r_output:_r_output_tables"
+# R/r-capture.R -- the child-side reducers run inside an Rscript subprocess
+# (their R source is kept in _CHILD_FUNCTIONS); the Python functions of the
+# same name evaluate them in R.
+".R_CAPTURE_CLASSES" = "pytacheck.statout.r_capture:_R_CAPTURE_CLASSES"
+".r_cap_htest" = "pytacheck.statout.r_capture:_r_cap_htest"
+".r_cap_coef_matrix" = "pytacheck.statout.r_capture:_r_cap_coef_matrix"
+".r_cap_anova" = "pytacheck.statout.r_capture:_r_cap_anova"
+".r_call_fun_arg" = "pytacheck.statout.r_capture:_r_call_fun_arg"
+".r_cap_by_fun" = "pytacheck.statout.r_capture:_r_cap_by_fun"
+".r_capture_value" = "pytacheck.statout.r_capture:_r_capture_value"
+".r_capture_helpers" = "pytacheck.statout.r_capture:_r_capture_helpers"
+".r_capture_runner" = "pytacheck.statout.r_capture:_r_capture_runner"
+".r_captures_to_tables" = "pytacheck.statout.r_capture:_r_captures_to_tables"
+".r_merge_captures" = "pytacheck.statout.r_capture:_r_merge_captures"
+".r_method_to_fn" = "pytacheck.statout.r_capture:_r_method_to_fn"
+# R/stat-tables.R
+read_stat_tables = "pytacheck.statout.stat_tables:read_stat_tables"
+".stat_num_to_chr" = "pytacheck.statout.stat_tables:_stat_num_to_chr"
+".jasp_clean_colname" = "pytacheck.statout.stat_tables:_jasp_clean_colname"
+".jasp_structured_tables" = "pytacheck.statout.stat_tables:_jasp_structured_tables"
+".jasp_table_to_df" = "pytacheck.statout.stat_tables:_jasp_table_to_df"
+".pb_varint" = "pytacheck.statout.stat_tables:_pb_varint"
+".pb_fields" = "pytacheck.statout.stat_tables:_pb_fields"
+".pb_all" = "pytacheck.statout.stat_tables:_pb_all"
+".pb_get" = "pytacheck.statout.stat_tables:_pb_get"
+".pb_str" = "pytacheck.statout.stat_tables:_pb_str"
+".JMV_F" = "pytacheck.statout.stat_tables:_JMV_F"
+".jmv_cell" = "pytacheck.statout.stat_tables:_jmv_cell"
+".jmv_is_wide_descriptives" = "pytacheck.statout.stat_tables:_jmv_is_wide_descriptives"
+".jmv_pivot_wide_descriptives" = "pytacheck.statout.stat_tables:_jmv_pivot_wide_descriptives"
+".jmv_table_to_df" = "pytacheck.statout.stat_tables:_jmv_table_to_df"
+".jmv_collect" = "pytacheck.statout.stat_tables:_jmv_collect"
+".jmv_structured_tables" = "pytacheck.statout.stat_tables:_jmv_structured_tables"
+".stat_table_parse" = "pytacheck.statout.stat_tables:_stat_table_parse"
+".ipynb_is_noise" = "pytacheck.statout.stat_tables:_ipynb_is_noise"
+".ipynb_result_class" = "pytacheck.statout.stat_tables:_ipynb_result_class"
+".ipynb_strip_numpy_scalars" = "pytacheck.statout.stat_tables:_ipynb_strip_numpy_scalars"
+".ipynb_stat_line" = "pytacheck.statout.stat_tables:_ipynb_stat_line"
+".ipynb_stat_table" = "pytacheck.statout.stat_tables:_ipynb_stat_table"
+".ipynb_stat_kv" = "pytacheck.statout.stat_tables:_ipynb_stat_kv"
+".ipynb_read_tables" = "pytacheck.statout.stat_tables:_ipynb_read_tables"
+# R/stat-output.R
+".stat_sanitize_id" = "pytacheck.statout.stat_output:_stat_sanitize_id"
+".stat_result_ids" = "pytacheck.statout.stat_output:_stat_result_ids"
+".stat_test_id" = "pytacheck.statout.stat_output:_stat_test_id"
+".STAT_PLACEHOLDERS" = "pytacheck.statout.stat_output:_STAT_PLACEHOLDERS"
+".stat_is_placeholder" = "pytacheck.statout.stat_output:_stat_is_placeholder"
+".stat_is_label_col" = "pytacheck.statout.stat_output:_stat_is_label_col"
+".split_combined_df" = "pytacheck.statout.stat_output:_split_combined_df"
+stat_results_long = "pytacheck.statout.stat_output:stat_results_long"
+stat_output_json = "pytacheck.statout.stat_output:stat_output_json"
+stat_output_validate = "pytacheck.statout.stat_output:stat_output_validate"
+stat_output_write = "pytacheck.statout.stat_output:stat_output_write"

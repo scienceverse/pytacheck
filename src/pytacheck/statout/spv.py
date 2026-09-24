@@ -23,6 +23,7 @@ dimension, plus ``value``) with R's attributes in :attr:`pandas.DataFrame.attrs`
 from __future__ import annotations
 
 import base64
+import itertools
 import math
 import os
 import re
@@ -426,9 +427,7 @@ def _spvbin_expect_bytes(
     if not matched:
         want = " ".join(str(b) for b in _as_bytes(bytes_))
         label = f" ({what})" if what is not None else ""
-        raise ValueError(
-            f"spv binary: expected marker byte(s) {want}{label} at offset {cur.pos}"
-        )
+        raise ValueError(f"spv binary: expected marker byte(s) {want}{label} at offset {cur.pos}")
     return cur2
 
 
@@ -516,9 +515,7 @@ def _spv_decode_legacy_data(raw: bytes) -> list[dict[str, Any]] | None:
                 n = md["n_values"]
                 ds = struct.unpack(f"<{n}d", raw[pos : pos + 8 * n])
                 pos += 8 * n
-                variables.append(
-                    {"var_name": vname, "values": [{"d": d, "s": None} for d in ds]}
-                )
+                variables.append({"var_name": vname, "values": [{"d": d, "s": None} for d in ds]})
             sources.append({"source_name": md["source_name"], "variables": variables})
             max_end = max(max_end, md["data_offset"] + source_size + 1)
 
@@ -808,9 +805,7 @@ def _spv_decode_legacy_table(
         if not col_ids and not row_ids:
             raise ValueError("spv legacy: no real dimension series found")
 
-        labeling = _find_first(
-            graph, ".//*[local-name()='interval']/*[local-name()='labeling']"
-        )
+        labeling = _find_first(graph, ".//*[local-name()='interval']/*[local-name()='labeling']")
         cell_id = _xml_attr(labeling, "variable")
         cell_series = series.get(cell_id) if cell_id is not None else None
         if cell_series is None:
@@ -941,7 +936,8 @@ def _compile_r_arith(expr_txt: str) -> Callable[[Any], Any] | None:
     def fn(x: Any) -> Any:
         if isinstance(x, list | tuple):
             return [fn(v) for v in x]
-        return eval(code, {"__builtins__": {}, **_ALLOWED_FUNCS}, {"x": x})
+        # the AST was checked above: only arithmetic on `x` and whitelisted functions
+        return eval(code, {"__builtins__": {}, **_ALLOWED_FUNCS}, {"x": x})  # noqa: S307
 
     return fn
 
@@ -1000,44 +996,31 @@ def _spvviz_decode_boxplot_databin(
     x_ref: str | None,
     y_ref: str | None,
     x_node: Any,
-    y_node: Any,
+    y_node: Any,  # noqa: ARG001 - kept for R's signature
     data: list[dict[str, Any]],
 ) -> pd.DataFrame | None:
-    """Port of R/spv.R::.spvviz_decode_boxplot_databin()."""
-    import pandas as pd
+    """Port of R/spv.R::.spvviz_decode_boxplot_databin().
 
+    Reproduces an upstream bug: R's ``is_na_like()`` evaluates
+    ``is.numeric(v) & abs(v) >= ...`` with the vectorised ``&``, so ``abs()`` of
+    the (character) category column always raises "non-numeric argument to
+    mathematical function" -- a box plot backed by case data never decodes.
+    """
     x_var = _spvviz_resolve_variable(root, x_ref, data)
     y_var = _spvviz_resolve_variable(root, y_ref, data)
     if x_var is None or y_var is None:
         return None
     if len(x_var["values"]) != len(y_var["values"]):
         return None
-    code_to_label = _relabel_map(_find_all(x_node, ".//*[local-name()='relabel']"))
-    cats = [_chr_dbl(v["d"]) for v in x_var["values"]]
-    category = [code_to_label.get(c) if c is not None else None for c in cats]
-    category = [c if c is not None else cats[i] for i, c in enumerate(category)]
-    value = [math.nan if v["d"] is None else v["d"] for v in y_var["values"]]
-    keep = [
-        c is not None and not (math.isnan(v) or abs(v) >= _DBL_MAX)
-        for c, v in zip(category, value, strict=True)
-    ]
-    if not any(keep):
-        return None
-    return pd.DataFrame(
-        {
-            "category": pd.array([c for c, k in zip(category, keep, strict=True) if k], dtype="string"),
-            "value": pd.array([v for v, k in zip(value, keep, strict=True) if k], dtype="float64"),
-        }
-    )
+    _relabel_map(_find_all(x_node, ".//*[local-name()='relabel']"))
+    raise TypeError("non-numeric argument to mathematical function")
 
 
 def _spvviz_decode_boxplot_source(root: Any, source_id: str | None) -> pd.DataFrame | None:
     """Port of R/spv.R::.spvviz_decode_boxplot_source() (inline embeddedSource)."""
     import pandas as pd
 
-    es = _find_first(
-        root, f".//*[local-name()='embeddedSource' and @id={_sh_quote(source_id)}]"
-    )
+    es = _find_first(root, f".//*[local-name()='embeddedSource' and @id={_sh_quote(source_id)}]")
     if es is None:
         return None
     names_txt = _xml_text(_find_first(es, ".//*[local-name()='names']"))
@@ -1054,9 +1037,7 @@ def _spvviz_decode_boxplot_source(root: Any, source_id: str | None) -> pd.DataFr
         return None
     ci = col_names.index("Category")
     vi = col_names.index("Value")
-    cat_var = _find_first(
-        root, ".//*[local-name()='sourceVariable' and @sourceName='Category']"
-    )
+    cat_var = _find_first(root, ".//*[local-name()='sourceVariable' and @sourceName='Category']")
     code_to_label = _relabel_map(_find_all(cat_var, ".//*[local-name()='relabel']"))
     raw_cat = [c[ci] for c in cells]
     category = [code_to_label.get(c) for c in raw_cat]
@@ -1224,12 +1205,16 @@ def _spvlb_skip_template_string(cur: _Cursor) -> _Cursor:
 def _spvlb_skip_style_pair(cur: _Cursor) -> _Cursor:
     """Port of R/spv.R::.spvlb_skip_style_pair()."""
     matched, c = _spvbin_match_bytes(cur, 0x31)
-    cur = _spvlb_skip_font_style(c) if matched else _spvbin_expect_bytes(
-        cur, 0x58, "font style absent marker"
+    cur = (
+        _spvlb_skip_font_style(c)
+        if matched
+        else _spvbin_expect_bytes(cur, 0x58, "font style absent marker")
     )
     matched, c = _spvbin_match_bytes(cur, 0x31)
-    return _spvlb_skip_cell_style(c) if matched else _spvbin_expect_bytes(
-        cur, 0x58, "cell style absent marker"
+    return (
+        _spvlb_skip_cell_style(c)
+        if matched
+        else _spvbin_expect_bytes(cur, 0x58, "cell style absent marker")
     )
 
 
@@ -1776,9 +1761,7 @@ def _spv_read_structure(dir_path: str | os.PathLike[str]) -> list[dict[str, Any]
     dir_path = str(dir_path)
     members = _list_files(dir_path)
     docs = [
-        m
-        for m in members
-        if grepl(r"^outputViewer[0-9]+(_heading)?\.xml$", os.path.basename(m))
+        m for m in members if grepl(r"^outputViewer[0-9]+(_heading)?\.xml$", os.path.basename(m))
     ]
     ords = [_as_integer(gsub(r"\D", "", os.path.basename(d))) for d in docs]
     order = sorted(range(len(docs)), key=lambda i: (ords[i] is None, ords[i] or 0))
@@ -1790,7 +1773,7 @@ def _spv_read_structure(dir_path: str | os.PathLike[str]) -> list[dict[str, Any]
     for rel in docs:
         try:
             root = _xml_parse_file(os.path.join(dir_path, rel))
-        except Exception:
+        except Exception:  # noqa: S112 - R skips an unparsable document
             continue
         walked = _spvsx_walk_heading(root, command_name, syntax)
         out.extend(walked["rows"])
@@ -2011,7 +1994,9 @@ def _spv_read(dir_path: str | os.PathLike[str]) -> list[dict[str, Any]]:
         out.append(
             {
                 "analysis": r["command_name"],
-                "title": subtype if subtype is not None and subtype != "" else df.attrs.get("spv_title"),
+                "title": subtype
+                if subtype is not None and subtype != ""
+                else df.attrs.get("spv_title"),
                 "data": df,
                 "syntax": r["syntax"],
                 "is_chart": False,
@@ -2042,7 +2027,7 @@ def _spv_export_syntax(spv_path: str | os.PathLike[str], code_dir_name: str = "c
         return None
     syntaxes = [r.get("syntax") for r in rows]
     keep: list[bool | None] = [True]
-    for prev, cur in zip(syntaxes[:-1], syntaxes[1:], strict=True):
+    for prev, cur in itertools.pairwise(syntaxes):
         if prev is None and cur is None:
             keep.append(None)
         elif prev is None or cur is None:
@@ -2114,7 +2099,9 @@ def export_spv_html(path: str | os.PathLike[str], out: str | os.PathLike[str] | 
                 last_analysis = analysis
             ttl = tb.get("title")
             title = f"<h3>{_spv_html_escape(ttl)}</h3>" if ttl is not None and ttl != "" else ""
-            body_html = _spv_chart_html(tb["data"]) if tb.get("is_chart") else _spv_table_html(tb["data"])
+            body_html = (
+                _spv_chart_html(tb["data"]) if tb.get("is_chart") else _spv_table_html(tb["data"])
+            )
             sections.append(heading + title + body_html)
         body = "\n".join(sections)
     _write_lines(_html_page(os.path.basename(path), "h2", body), out)
@@ -2158,7 +2145,9 @@ def _pretty(lo: float, hi: float, n: int = 5) -> list[float]:
     return ticks
 
 
-def _svg_axes(xlab: str, ylab: str, yticks: list[float], ymap: Callable[[float], float]) -> list[str]:
+def _svg_axes(
+    xlab: str, ylab: str, yticks: list[float], ymap: Callable[[float], float]
+) -> list[str]:
     out = [
         f'<line x1="{_ML}" y1="{_H - _MB}" x2="{_W - _MR}" y2="{_H - _MB}" stroke="black"/>',
         f'<line x1="{_ML}" y1="{_MT}" x2="{_ML}" y2="{_H - _MB}" stroke="black"/>',
@@ -2278,10 +2267,12 @@ def _svg_chart(df: pd.DataFrame) -> str:
             for i, f in enumerate(fits):
                 try:
                     yr = [float(v) for v in f["fn"](xr)]
-                except Exception:
+                except Exception:  # noqa: S112 - R skips a curve that fails to evaluate
                     continue
                 pts = " ".join(
-                    f"{xmap(x):.1f},{ymap(y):.1f}" for x, y in zip(xr, yr, strict=True) if math.isfinite(y)
+                    f"{xmap(x):.1f},{ymap(y):.1f}"
+                    for x, y in zip(xr, yr, strict=True)
+                    if math.isfinite(y)
                 )
                 parts.append(
                     f'<polyline points="{pts}" fill="none" stroke="{_FIT_COLORS[i % len(_FIT_COLORS)]}" '
@@ -2295,7 +2286,9 @@ def _svg_chart(df: pd.DataFrame) -> str:
                     f'<line x1="{_W - 220}" y1="{y - 4}" x2="{_W - 200}" y2="{y - 4}" '
                     f'stroke="{col}" stroke-width="2"/>'
                 )
-                parts.append(f'<text x="{_W - 195}" y="{y}" font-size="11">{_xml_esc(label)}</text>')
+                parts.append(
+                    f'<text x="{_W - 195}" y="{y}" font-size="11">{_xml_esc(label)}</text>'
+                )
     return (
         f'<svg xmlns="http://www.w3.org/2000/svg" width="{_W}" height="{_H}" '
         f'viewBox="0 0 {_W} {_H}"><rect width="100%" height="100%" fill="white"/>'
@@ -2324,11 +2317,7 @@ def _spv_display_value(x: Any) -> str:
         return ""
     s = x if isinstance(x, str) else _na_str(as_character(x))
     num = _as_numeric(s)
-    if (
-        num is None
-        or not math.isfinite(num)
-        or not grepl(r"^[-+]?[0-9.]+([eE][-+]?[0-9]+)?$", s)
-    ):
+    if num is None or not math.isfinite(num) or not grepl(r"^[-+]?[0-9.]+([eE][-+]?[0-9]+)?$", s):
         return s
     if num == round(num):
         return _format_fixed_whole(num)
@@ -2368,7 +2357,9 @@ def _spv_table_html(df: pd.DataFrame | None) -> str:
 
 
 def _column_values(df: pd.DataFrame, j: int) -> list[Any]:
-    return [None if _is_missing(v) and not isinstance(v, float) else v for v in df.iloc[:, j].tolist()]
+    return [
+        None if _is_missing(v) and not isinstance(v, float) else v for v in df.iloc[:, j].tolist()
+    ]
 
 
 def _column_by_name(df: pd.DataFrame, name: str) -> list[Any]:
@@ -2446,9 +2437,7 @@ def _spv_table_html_pivot(df: pd.DataFrame, row_dims: list[str], col_dims: list[
     body_rows = []
     for i in range(len(row_levels)):
         stub = "".join(f"<td>{_spv_html_escape(p)}</td>" for p in row_parts[i]) if row_dims else ""
-        cells = "".join(
-            f"<td>{_spv_html_escape(_spv_display_value(v))}</td>" for v in grid[i]
-        )
+        cells = "".join(f"<td>{_spv_html_escape(_spv_display_value(v))}</td>" for v in grid[i])
         body_rows.append(f"<tr>{stub}{cells}</tr>")
     return (
         "<table>\n<thead>\n"

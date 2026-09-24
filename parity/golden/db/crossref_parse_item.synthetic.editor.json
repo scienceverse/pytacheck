@@ -1,0 +1,44 @@
+{
+  "id": "crossref_parse_item.synthetic.editor",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 1,
+    "names": [
+      "DOI",
+      "title",
+      "editor.given",
+      "editor.family"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "10.1/x"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "T"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "E"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "F"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

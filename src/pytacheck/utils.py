@@ -152,7 +152,7 @@ def _col_chr(df: pd.DataFrame | None, col: str, default: str | None = None) -> l
             el = items[0]
         try:
             return as_character(el)
-        except Exception:  # noqa: BLE001 - R: tryCatch(as.character(el), error = NULL)
+        except Exception:
             return default
 
     return [one(v) for v in values]
@@ -309,7 +309,11 @@ def rep_if(x: Any, y: Any, replace: Any = None) -> Any:
     """
     xs = list(x) if not isinstance(x, str) else [x]
     ys = list(y) if isinstance(y, list | tuple | range) else [y]
-    table = [] if replace is None else (list(replace) if isinstance(replace, list | tuple) else [replace])
+    table = (
+        []
+        if replace is None
+        else (list(replace) if isinstance(replace, list | tuple) else [replace])
+    )
     if not xs:
         return []
     if not ys:
@@ -410,7 +414,9 @@ def left_join(
         name = c + suffix[1] if (c in xcols) else c
         col = y[c]
         if len(y) == 0 or has_missing:
-            values = [col.iloc[j] if j >= 0 else None for j in ysel] if len(y) else [None] * len(ysel)
+            values = (
+                [col.iloc[j] if j >= 0 else None for j in ysel] if len(y) else [None] * len(ysel)
+            )
             out_cols[name] = pd.Series(values, dtype=_nullable_dtype(col.dtype))
         else:
             out_cols[name] = col.iloc[ysel].reset_index(drop=True)

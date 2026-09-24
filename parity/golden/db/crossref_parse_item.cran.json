@@ -1,0 +1,106 @@
+{
+  "id": "crossref_parse_item.cran",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 1,
+    "names": [
+      "DOI",
+      "type",
+      "title",
+      "container-title",
+      "URL",
+      "year",
+      "author"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "10.32614/cran.package.dplyr"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "dataset"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "dplyr: A Grammar of Data Manipulation"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "CRAN: Contributed Packages"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://doi.org/10.32614/cran.package.dplyr"
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          2014
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "df",
+            "nrow": 5,
+            "names": [
+              "given",
+              "family",
+              "ORCID"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Hadley",
+                  "Romain",
+                  "Lionel",
+                  "Kirill",
+                  "Davis"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Wickham",
+                  "François",
+                  "Henry",
+                  "Müller",
+                  "Vaughan"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "https://orcid.org/0000-0003-4757-117X",
+                  "https://orcid.org/0000-0002-2444-4226",
+                  null,
+                  "https://orcid.org/0000-0002-1416-3412",
+                  "https://orcid.org/0000-0003-4777-038X"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

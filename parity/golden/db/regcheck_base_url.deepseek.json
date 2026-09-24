@@ -1,0 +1,14 @@
+{
+  "id": "regcheck_base_url.deepseek",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "https://preregpt-8584b32c9141.herokuapp.com"
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

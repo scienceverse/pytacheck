@@ -323,13 +323,7 @@
   "r": ".process_full_text"
   "py": "pytacheck.io.grobid._process_full_text"
   "args":
-    "full_text":
-      "$df":
-        "header": ["Abstract", "[div-01]", "[div-02]", "<head>Material and Methods</head>", "<head>Results</head>", "<head>General Discussion</head>", "<head>Bibliography</head>", "<head>Other</head>", ""]
-        "formatted": ["<p>We did things. and more</p>", "<p>First unheaded div without end</p>", "[div-02]", "<p>Some methods e.g. this</p>", "<p>the results were fine. A. B. Author said so.</p>", "<p>Discussion here \"quoted.\"</p>", "<p>Ref list</p>", "<p>More stuff?</p>", "<p></p>"]
-        "div": [0, 1, 2, 3, 4, 5, 6, 7, 8]
-        "section": ["abstract", null, null, null, null, null, null, null, "foot"]
-        "p": [1, 2, 3, 4, 5, 6, 7, 8, 9]
+    "full_text": {"$expr": {"r": "data.frame(header = c('Abstract', '[div-01]', '[div-02]', '<head>Material and Methods</head>', '<head>Results</head>', '<head>General Discussion</head>', '<head>Bibliography</head>', '<head>Other</head>', '', NA), formatted = c('<p>We did things. and more</p>', '<p>First unheaded div without end</p>', '[div-02]', '<p>Some methods e.g. this</p>', '<p>the results were fine. A. B. Author said so.</p>', '<p>Discussion here \\\"quoted.\\\"</p>', '<p>Ref list</p>', '<p>More stuff?</p>', '<p></p>', '<figDesc>  Caption text ends  </figDesc>'), div = c(0, 1, 2, 3, 4, 5, 6, 7, 8, 9), section = c('abstract', NA, NA, NA, NA, NA, NA, NA, 'foot', 'figure'), p = 1:10, stringsAsFactors = FALSE)", "py": "pd.DataFrame({'header': ['Abstract', '[div-01]', '[div-02]', '<head>Material and Methods</head>', '<head>Results</head>', '<head>General Discussion</head>', '<head>Bibliography</head>', '<head>Other</head>', '', None], 'formatted': ['<p>We did things. and more</p>', '<p>First unheaded div without end</p>', '[div-02]', '<p>Some methods e.g. this</p>', '<p>the results were fine. A. B. Author said so.</p>', '<p>Discussion here \\\"quoted.\\\"</p>', '<p>Ref list</p>', '<p>More stuff?</p>', '<p></p>', '<figDesc>  Caption text ends  </figDesc>'], 'div': [0.0, 1, 2, 3, 4, 5, 6, 7, 8, 9], 'section': ['abstract', None, None, None, None, None, None, None, 'foot', 'figure'], 'p': list(range(1, 11))})"}}
 - "id": ".process_full_text.empty"
   "r": ".process_full_text"
   "py": "pytacheck.io.grobid._process_full_text"
@@ -339,11 +333,7 @@
   "r": ".tei_xrefs"
   "py": "pytacheck.io.grobid._tei_xrefs"
   "args":
-    "text_table":
-      "$df":
-        "text_id": [1, 2, 3]
-        "text": ["The gridded soil data are available at ORNL DAAC for download.", "See Fig 1 and (Smith, 2020).", "Plain."]
-        "formatted": ["The gridded soil data are available at <ref type=\"url\" target=\"https://daac.ornl.gov/cgi-bin/dsviewer.pl?ds_id=2358\">ORNL DAAC</ref> for download.", "See <ref type=\"figure\" target=\"#fig_0\">Fig 1</ref> and <ref type=\"bibr\" target=\"#b12\">(Smith, 2020)</ref> <REF type=\"table\">T</REF> <ref target=\"#b1\">untyped</ref>.", null]
+    "text_table": {"$expr": {"r": "data.frame(text_id = 1:3, formatted = c('The gridded soil data are available at <ref type=\\\"url\\\" target=\\\"https://daac.ornl.gov/cgi-bin/dsviewer.pl?ds_id=2358\\\">ORNL DAAC</ref> for download.', 'See <ref type=\\\"figure\\\" target=\\\"#fig_0\\\">Fig 1</ref> and <ref type=\\\"bibr\\\" target=\\\"#b12\\\">(Smith, 2020)</ref> <REF type=\\\"table\\\">T</REF> <ref target=\\\"#b1\\\">untyped</ref> <ref type=\\\"bibr\\\" target=\\\"#b99999999999\\\">big</ref>.', NA), stringsAsFactors = FALSE)", "py": "pd.DataFrame({'text_id': [1, 2, 3], 'formatted': ['The gridded soil data are available at <ref type=\\\"url\\\" target=\\\"https://daac.ornl.gov/cgi-bin/dsviewer.pl?ds_id=2358\\\">ORNL DAAC</ref> for download.', 'See <ref type=\\\"figure\\\" target=\\\"#fig_0\\\">Fig 1</ref> and <ref type=\\\"bibr\\\" target=\\\"#b12\\\">(Smith, 2020)</ref> <REF type=\\\"table\\\">T</REF> <ref target=\\\"#b1\\\">untyped</ref> <ref type=\\\"bibr\\\" target=\\\"#b99999999999\\\">big</ref>.', None]})"}}
 - "id": ".tei_xrefs.empty"
   "r": ".tei_xrefs"
   "py": "pytacheck.io.grobid._tei_xrefs"
@@ -401,3 +391,241 @@
   "args":
     "xml": {"$call": {"r": ".xml_read_grobid", "py": "pytacheck.io.xml._xml_read_grobid", "args": {"path": {"$file": "tests/io/fixtures/edge_body.tei.xml"}}}}
     "xpath": ".//titleStmt/title"
+# Grobid server (recorded responses) ------------------------------------------
+- "id": ".grobid_isalive.tue"
+  "r": ".grobid_isalive"
+  "py": "pytacheck.io.grobid._grobid_isalive"
+  "mock_dir": "apis"
+  "args":
+    "api_url": "https://grobid.hti.ieis.tue.nl"
+- "id": ".grobid_isalive.hf"
+  "r": ".grobid_isalive"
+  "py": "pytacheck.io.grobid._grobid_isalive"
+  "mock_dir": "apis"
+  "args":
+    "api_url": "https://grobidorg-grobid.hf.space"
+- "id": ".grobid_isalive.not_grobid.error"
+  "r": ".grobid_isalive"
+  "py": "pytacheck.io.grobid._grobid_isalive"
+  "mock_dir": "apis"
+  "args":
+    "api_url": "https://google.com"
+- "id": ".grobid_isalive.not_grobid.no_error"
+  "r": ".grobid_isalive"
+  "py": "pytacheck.io.grobid._grobid_isalive"
+  "mock_dir": "apis"
+  "args":
+    "api_url": "https://google.com"
+    "error": false
+- "id": "convert_grobid.demo.null_save"
+  "r": "convert_grobid"
+  "py": "pytacheck.io.grobid.convert_grobid"
+  "mock_dir": "apis"
+  "args":
+    "file_path": {"$file": "upstream/metacheck/inst/demos/to_err_is_human.pdf"}
+    "save_path": {"$null": true}
+    "api_url": "https://grobid.hti.ieis.tue.nl"
+  "compare": {"ignore": ["paper_id", "info.file_name"]}
+- "id": "convert_grobid.demo.consolidate_citations"
+  "r": "convert_grobid"
+  "py": "pytacheck.io.grobid.convert_grobid"
+  "mock_dir": "apis"
+  "args":
+    "file_path": {"$file": "upstream/metacheck/inst/demos/to_err_is_human.pdf"}
+    "save_path": {"$null": true}
+    "api_url": "https://grobid.hti.ieis.tue.nl"
+    "consolidate_citations": 1
+  "compare": {"ignore": ["paper_id", "info.file_name"]}
+- "id": "convert_grobid.demo.pages"
+  "r": "convert_grobid"
+  "py": "pytacheck.io.grobid.convert_grobid"
+  "mock_dir": "apis"
+  "args":
+    "file_path": {"$file": "upstream/metacheck/inst/demos/to_err_is_human.pdf"}
+    "save_path": {"$null": true}
+    "api_url": "https://grobid.hti.ieis.tue.nl"
+    "start_page": 2
+    "end_page": 3
+  "compare": {"ignore": ["paper_id", "info.file_name"]}
+- "id": "convert_grobid.hf.debruine"
+  "r": "convert_grobid"
+  "py": "pytacheck.io.grobid.convert_grobid"
+  "mock_dir": "apis"
+  "args":
+    "file_path": {"$file": "upstream/metacheck/tests/testthat/fixtures/debruine/debruine-child.pdf"}
+    "save_path": {"$null": true}
+    "api_url": "https://grobidorg-grobid.hf.space/"
+  "compare": {"ignore": ["paper_id", "info.file_name"]}
+- "id": "convert_grobid.server_error"
+  "r": "convert_grobid"
+  "py": "pytacheck.io.grobid.convert_grobid"
+  "mock_dir": "apis"
+  "args":
+    "file_path": {"$file": "upstream/metacheck/tests/testthat/fixtures/problems/xml_with_pdf_extension.pdf"}
+    "save_path": {"$null": true}
+    "api_url": "https://grobidorg-grobid.hf.space"
+- "id": "convert_grobid.missing_file"
+  "r": "convert_grobid"
+  "py": "pytacheck.io.grobid.convert_grobid"
+  "args":
+    "file_path": {"$chr": ["wrongfile.pdf", "wrongfile.pdf"]}
+# convert() -----------------------------------------------------------------
+- "id": "convert.no_files"
+  "r": "convert"
+  "py": "pytacheck.io.convert.convert"
+  "args":
+    "file_path": "notes.txt"
+- "id": "convert.xml.null_save"
+  "r": "convert"
+  "py": "pytacheck.io.convert.convert"
+  "args":
+    "file_path": {"$file": "upstream/metacheck/tests/testthat/fixtures/problems/0956797615569889.xml"}
+    "save_path": {"$null": true}
+    "api_url": "unused"
+- "id": "convert.bad_method"
+  "r": "convert"
+  "py": "pytacheck.io.convert.convert"
+  "args":
+    "file_path": {"$file": "upstream/metacheck/inst/demos/to_err_is_human.pdf"}
+    "method": "pandoc"
+# paper corpora (recorded GitHub responses) ------------------------------------
+- "id": "papers_available.scienceverse"
+  "r": "papers_available"
+  "py": "pytacheck.io.corpus.papers_available"
+  "mock_dir": "apis"
+  "args":
+    "repo": "scienceverse/papers"
+- "id": ".papers_release_assets.retag"
+  "r": ".papers_release_assets"
+  "py": "pytacheck.io.corpus._papers_release_assets"
+  "mock_dir": "apis_papers_retag"
+  "args":
+    "repo": "scienceverse/retagtest"
+- "id": ".papers_release_assets.empty"
+  "r": ".papers_release_assets"
+  "py": "pytacheck.io.corpus._papers_release_assets"
+  "mock_dir": "apis_papers_empty"
+  "args":
+    "repo": "scienceverse/norealeases"
+- "id": ".papers_release_assets.404"
+  "r": ".papers_release_assets"
+  "py": "pytacheck.io.corpus._papers_release_assets"
+  "mock_dir": "apis_papers_404"
+  "args":
+    "repo": "scienceverse/doesnotexist12345"
+- "id": "papers_metadata.jdm"
+  "r": "papers_metadata"
+  "py": "pytacheck.io.corpus.papers_metadata"
+  "mock_dir": "apis"
+  "args":
+    "name": "jdm"
+- "id": "papers_metadata.unknown"
+  "r": "papers_metadata"
+  "py": "pytacheck.io.corpus.papers_metadata"
+  "mock_dir": "apis"
+  "args":
+    "name": "doesnotexist999"
+- "id": "papers_load.unknown"
+  "r": "papers_load"
+  "py": "pytacheck.io.corpus.papers_load"
+  "mock_dir": "apis"
+  "args":
+    "name": "not_a_real_corpus"
+    "repo": "scienceverse/papers"
+- "id": "papers_remove.not_cached"
+  "r": "papers_remove"
+  "py": "pytacheck.io.corpus.papers_remove"
+  "args":
+    "name": "pytacheck_parity_not_cached_corpus"
+# author helpers ----------------------------------------------------------------
+- "id": "format_bib_authors.df"
+  "r": "format_bib_authors"
+  "py": "pytacheck.io.bibr_convert.format_bib_authors"
+  "args":
+    "authors": {"$df": {"given": ["Alice H.", "Wendy"], "family": ["Eagly", "Wood"]}}
+- "id": "format_bib_authors.chr"
+  "r": "format_bib_authors"
+  "py": "pytacheck.io.bibr_convert.format_bib_authors"
+  "args":
+    "authors": {"$chr": ["Eagly, A. H.", "Wood, W."]}
+- "id": "format_bib_authors.null"
+  "r": "format_bib_authors"
+  "py": "pytacheck.io.bibr_convert.format_bib_authors"
+  "args":
+    "authors": {"$null": true}
+- "id": "format_bib_authors.empty_df"
+  "r": "format_bib_authors"
+  "py": "pytacheck.io.bibr_convert.format_bib_authors"
+  "args":
+    "authors": {"$expr": {"r": "data.frame(given = character(0), family = character(0))", "py": "pd.DataFrame({'given': pd.Series([], dtype='string'), 'family': pd.Series([], dtype='string')})"}}
+- "id": "format_bib_authors.list"
+  "r": "format_bib_authors"
+  "py": "pytacheck.io.bibr_convert.format_bib_authors"
+  "args":
+    "authors": {"$list": [{"$df": {"given": ["A"], "family": ["B"]}}, {"$df": {"given": ["C", "E"], "family": ["D", "F"]}}]}
+- "id": ".parse_author_string.semicolon"
+  "r": ".parse_author_string"
+  "py": "pytacheck.io.bibr_convert._parse_author_string"
+  "args":
+    "s": "Eagly, Alice H.; Wood, Wendy; Plato"
+- "id": ".parse_author_string.and"
+  "r": ".parse_author_string"
+  "py": "pytacheck.io.bibr_convert._parse_author_string"
+  "args":
+    "s": "Smith, John, and Jane  Q. Doe & Madonna"
+- "id": ".parse_author_string.single"
+  "r": ".parse_author_string"
+  "py": "pytacheck.io.bibr_convert._parse_author_string"
+  "args":
+    "s": "Lakens, Daniel"
+- "id": ".parse_author_string.blank"
+  "r": ".parse_author_string"
+  "py": "pytacheck.io.bibr_convert._parse_author_string"
+  "args":
+    "s": "   "
+- "id": ".parse_author_string.na"
+  "r": ".parse_author_string"
+  "py": "pytacheck.io.bibr_convert._parse_author_string"
+  "args":
+    "s": {"$NA": true}
+- "id": ".parse_author_string.empty_part"
+  "r": ".parse_author_string"
+  "py": "pytacheck.io.bibr_convert._parse_author_string"
+  "args":
+    "s": "A, B;;C"
+- "id": ".coerce_bib_authors.mixed"
+  "r": ".coerce_bib_authors"
+  "py": "pytacheck.io.bibr_convert._coerce_bib_authors"
+  "args":
+    "col": {"$list": ["Eagly, Alice H.; Wood, Wendy", {"$NA": true}, {"$null": true}, {"$df": {"family": ["Doe"], "given": ["Jane"], "orcid": ["x"]}}, {"$chr": ["a", "b"]}]}
+- "id": ".coerce_bib_authors.null"
+  "r": ".coerce_bib_authors"
+  "py": "pytacheck.io.bibr_convert._coerce_bib_authors"
+  "args":
+    "col": {"$null": true}
+# readRDS() of corpus files --------------------------------------------------------
+- "id": "readRDS.papers_small"
+  "r": "readRDS"
+  "py": "pytacheck.io.corpus._read_rds"
+  "args":
+    "file": {"$file": "tests/io/fixtures/papers_small.rds"}
+- "id": "readRDS.demopaper_v2_xz"
+  "r": "readRDS"
+  "py": "pytacheck.io.corpus._read_rds"
+  "args":
+    "file": {"$file": "tests/io/fixtures/demopaper_v2.rds"}
+- "id": "readRDS.edge_paperlist_bzip2"
+  "r": "readRDS"
+  "py": "pytacheck.io.corpus._read_rds"
+  "args":
+    "file": {"$file": "tests/io/fixtures/edge_paperlist.rds"}
+- "id": "readRDS.fake_paperlist"
+  "r": "readRDS"
+  "py": "pytacheck.io.corpus._read_rds"
+  "args":
+    "file": {"$file": "tests/io/fixtures/fake_paperlist.rds"}
+- "id": "readRDS.misc_objects"
+  "r": "readRDS"
+  "py": "pytacheck.io.corpus._read_rds"
+  "args":
+    "file": {"$file": "tests/io/fixtures/misc_objects.rds"}

@@ -1,0 +1,31 @@
+{
+  "id": "spv_export_syntax.logs_only",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "path",
+      "lines"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "/code/logs_only.sps"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "GET FILE='data.sav'.",
+          "",
+          "FREQUENCIES age."
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

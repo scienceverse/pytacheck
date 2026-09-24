@@ -61,26 +61,38 @@ _ECHO_RE = r"^(\. |> |\s*[0-9]+\. )"
 _ALIGN_RE = r"^(lalign|ralign|center|rcenter) ?([0-9]*):(.*)$"
 
 
+_NA_TRUE_FALSE = "missing value where TRUE/FALSE needed"
+
+
+def _add(pos: int | None, k: int) -> int | None:
+    return None if pos is None else pos + k
+
+
 def _smcl_render_line(line: str) -> str:
-    """Port of R/stata.R::.smcl_render_line(): one SMCL line as plain text."""
+    """Port of R/stata.R::.smcl_render_line(): one SMCL line as plain text.
+
+    Mirrors R's ``NA`` propagation: a ``{dup N:...}`` whose count overflows R's
+    integer range renders ``"NA"`` and makes the running column ``NA``, so a
+    later column-dependent directive raises R's "missing value" error.
+    """
     out = line
     for code, rep in _SMCL_C_CODES.items():
         out = out.replace("{c " + code + "}", rep)
     result: list[str] = []
-    pos = 0
+    pos: int | None = 0
     i = 1
     n = len(out)
     while i <= n:
         ch = out[i - 1]
         if ch != "{":
             result.append(ch)
-            pos += 1
+            pos = _add(pos, 1)
             i += 1
             continue
         close = out.find("}", i - 1) - (i - 1) + 1
         if close <= 0:
             result.append(ch)
-            pos += 1
+            pos = _add(pos, 1)
             i += 1
             continue
         directive = out[i : i + close - 2]
@@ -88,48 +100,57 @@ def _smcl_render_line(line: str) -> str:
 
         if directive.startswith("col "):
             target = _as_integer(directive[4:])
-            if target is not None and target > pos:
-                result.append(" " * (target - pos))
-                pos = target
+            if target is not None:
+                if pos is None:
+                    raise ValueError(_NA_TRUE_FALSE)
+                if target > pos:
+                    result.append(" " * (target - pos))
+                    pos = target
             continue
         if directive.startswith("space "):
             k = _as_integer(directive[6:])
             if k is not None and k > 0:
                 result.append(" " * k)
-                pos += k
+                pos = _add(pos, k)
             continue
         if directive == "hline" or directive.startswith("hline "):
             k = _as_integer(str(sub("^hline ?", "", directive)))
             if k is None:
+                if pos is None:
+                    raise ValueError(_NA_TRUE_FALSE)
                 k = 78 - pos
             if k > 0:
                 result.append("-" * k)
-                pos += k
+                pos = _add(pos, k)
             continue
         if directive == ".-":
-            result.append("-" * max(1, 78 - pos))
+            result.append("NA" if pos is None else "-" * max(1, 78 - pos))
             pos = 78
             continue
         if directive.startswith("dup "):
             m = regexec("^dup ([0-9]+):(.*)$", directive)
             if len(m) == 3:
                 k = _as_integer(m[1])
-                txt = "NA" if k is None else m[2] * k
-                result.append(txt)
-                pos += len(txt)
+                if k is None:  # strrep(x, NA) is NA; nchar(NA_character_) is NA
+                    result.append("NA")
+                    pos = None
+                else:
+                    txt = m[2] * k
+                    result.append(txt)
+                    pos = _add(pos, len(txt))
             continue
         if directive.startswith("char ") or directive.startswith("c 0x"):
             code = _as_integer(str(sub("^char |^c 0x", "", directive)))
             if code is not None and 0 <= code <= 255:
                 result.append(chr(code) if code else "")
-                pos += 1
+                pos = _add(pos, 1)
             continue
         al = regexec(_ALIGN_RE, directive)
         if len(al) == 4 and al[0] != "":
             kind, width, txt = al[1], _as_integer(al[2]), al[3]
             if width is None or width <= len(txt):
                 result.append(txt)
-                pos += len(txt)
+                pos = _add(pos, len(txt))
             else:
                 pad = width - len(txt)
                 if kind == "lalign":
@@ -139,13 +160,13 @@ def _smcl_render_line(line: str) -> str:
                 else:
                     padded = " " * (pad // 2) + txt + " " * (pad - pad // 2)
                 result.append(padded)
-                pos += width
+                pos = _add(pos, width)
             continue
         colon = directive.find(":")
         if colon >= 0:
             txt = directive[colon + 1 :]
             result.append(txt)
-            pos += len(txt)
+            pos = _add(pos, len(txt))
             continue
         # a bare directive (style marker, comment, unknown): zero-width
     return "".join(result)
@@ -251,7 +272,9 @@ def _cols_to_frame(cols: list[list[str]], n_header: int) -> pd.DataFrame:
 
 def _any_numlike(df: pd.DataFrame, fn: Any) -> bool:
     for j in range(df.shape[1]):
-        vals = [None if v is None or type(v).__name__ == "NAType" else v for v in df.iloc[:, j].tolist()]
+        vals = [
+            None if v is None or type(v).__name__ == "NAType" else v for v in df.iloc[:, j].tolist()
+        ]
         if any(fn(vals)):
             return True
     return False
@@ -327,7 +350,10 @@ def _one_row_frame(stat: list[str], val: list[str]) -> pd.DataFrame:
     return df
 
 
-def _stata_output_oneline(lines: Sequence[str], source_label: str | None = None) -> list[dict[str, Any]]:
+def _stata_output_oneline(
+    lines: Sequence[str],
+    source_label: str | None = None,  # noqa: ARG001 - kept for R's signature
+) -> list[dict[str, Any]]:
     """Port of R/stata.R::.stata_output_oneline(): ``name = value`` results per line."""
     pattern = _stat_pattern()
     results = []
@@ -433,7 +459,9 @@ def export_stata_smcl_html(
     return out
 
 
-def _smcl_export_syntax(smcl_path: str | os.PathLike[str], code_dir_name: str = "code") -> str | None:
+def _smcl_export_syntax(
+    smcl_path: str | os.PathLike[str], code_dir_name: str = "code"
+) -> str | None:
     """Port of R/stata.R::.smcl_export_syntax().
 
     Writes the echoed Stata commands to ``<dir>/<code_dir_name>/<name>.do``;

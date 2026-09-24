@@ -1,0 +1,29 @@
+{
+  "id": "spv_export_syntax.legacy",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "path",
+      "lines"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "/code/legacy.sps"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "T-TEST /TESTVAL=0 /VARIABLES=age score."
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

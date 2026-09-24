@@ -1,0 +1,49 @@
+{
+  "id": "spv_decode_light_table.0000000012",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 5,
+    "names": [
+      "Statistic",
+      "Test Value = 0",
+      "value"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "t",
+          "df",
+          "Sig. (2-tailed)",
+          "t",
+          "Sig. (2-tailed)"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "score",
+          "score",
+          "score",
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "12.345678",
+          "117",
+          "4.7e-108",
+          "4e-04",
+          "-2.5"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

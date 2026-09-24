@@ -1,0 +1,17 @@
+{
+  "id": "doi_resolves.replay.mixed",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "lgl",
+    "v": [
+      true,
+      false,
+      false,
+      null
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

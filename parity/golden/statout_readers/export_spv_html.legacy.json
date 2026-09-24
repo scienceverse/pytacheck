@@ -1,0 +1,44 @@
+{
+  "id": "export_spv_html.legacy",
+  "ok": true,
+  "error": null,
+  "warnings": [
+    "spv: could not decode legacy table: spv legacy: expected exactly 2 nests (rows, columns), found 3",
+    "spv: could not decode legacy data: spv binary: expected marker byte(s) 0 (LegacyBinary marker) at offset 1"
+  ],
+  "value": {
+    "t": "chr",
+    "v": [
+      "<!DOCTYPE html>",
+      "<html>",
+      "<head>",
+      "<meta charset=\"utf-8\">",
+      "<title>legacy.spv<\/title>",
+      "<style>",
+      "body { font-family: sans-serif; margin: 2em; }",
+      "h2 { border-bottom: 1px solid #888; margin-top: 2em; }",
+      "table { border-collapse: collapse; margin-bottom: 1.5em; }",
+      "th, td { border: 1px solid #ccc; padding: 4px 10px; font-size: 90%; text-align: right; }",
+      "th { background: #f0f0f0; text-align: center; }",
+      "td:first-child, th:first-child { text-align: left; }",
+      "<\/style>",
+      "<\/head>",
+      "<body>",
+      "<h1>legacy.spv<\/h1>",
+      "<h2>T-Test<\/h2><h3>One-Sample Statistics<\/h3><table>",
+      "<thead>",
+      "<tr><th>dim2<\/th><th>N<\/th><th>Mean<\/th><th>Std. Error Mean<\/th><\/tr>",
+      "<\/thead>",
+      "<tbody>",
+      "<tr><td>age<\/td><td>118<\/td><td>34.500<\/td><td>.<\/td><\/tr>",
+      "<tr><td>score<\/td><td>120<\/td><td>-1.79769313486232e+308<\/td><td>0.250<\/td><\/tr>",
+      "<\/tbody>",
+      "<\/table>",
+      "<\/body>",
+      "<\/html>",
+      ""
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -136,19 +136,17 @@ def _namespaces(root: etree._Element) -> dict[str, str]:
 
 def _find_text(root: etree._Element, xpath: str, join: str | None = None) -> Any:
     """``.xml_find_text(xml, xpath, join)``: trimmed texts, runs of spaces collapsed."""
-    import re
-
     ns = _namespaces(root)
     try:
-        nodes = root.xpath(xpath, namespaces=ns)
+        nodes: Any = root.xpath(xpath, namespaces=ns)
     except Exception:  # an undeclared prefix: xml2 finds nothing
         nodes = []
-    texts = [
-        re.sub(
-            " +", " ", "".join(n.itertext()).strip() if hasattr(n, "itertext") else str(n).strip()
-        )
-        for n in nodes
+    if not isinstance(nodes, list):
+        nodes = [nodes]
+    raw = [
+        "".join(str(t) for t in n.itertext()) if hasattr(n, "itertext") else str(n) for n in nodes
     ]
+    texts: list[str] = gsub(" +", " ", [t.strip() for t in raw])
     if join is not None:
         return join.join(texts)
     return texts if texts else ""

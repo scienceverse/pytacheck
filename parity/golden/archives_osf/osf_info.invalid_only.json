@@ -1,0 +1,25 @@
+{
+  "id": "osf_info.invalid_only",
+  "ok": true,
+  "error": null,
+  "warnings": [
+    "xx is not a valid OSF ID"
+  ],
+  "value": {
+    "t": "df",
+    "nrow": 1,
+    "names": [
+      "osf_url"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "xx"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

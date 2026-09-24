@@ -1,0 +1,161 @@
+{
+  "id": "openalex_doi.replay.two",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": null,
+    "v": [
+      {
+        "t": "list",
+        "names": [
+          "id",
+          "doi",
+          "title",
+          "publication_year",
+          "is_retracted",
+          "type",
+          "abstract"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "https://openalex.org/W2106303383"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://doi.org/10.1177/0956797614520714"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Retracted: Evil Genius? How Dishonesty Can Lead to Greater Creativity"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2014
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "article"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "We propose that dishonest and creative behavior have something in common: They both involve breaking rules. Because of this shared feature, creativity may lead to dishonesty (as shown in prior work), and dishonesty may lead to creativity (the hypothesis we tested in this research). In five experiments, participants had the opportunity to behave dishonestly by overreporting their performance on various tasks. They then completed one or more tasks designed to measure creativity. Those who cheated were subsequently more creative than noncheaters, even when we accounted for individual differences in their creative ability (Experiment 1). Using random assignment, we confirmed that acting dishonestly leads to greater creativity in subsequent tasks (Experiments 2 and 3). The link between dishonesty and creativity is explained by a heightened feeling of being unconstrained by rules, as indicated by both mediation (Experiment 4) and moderation (Experiment 5)."
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "id",
+          "doi",
+          "title",
+          "publication_year",
+          "is_retracted",
+          "type",
+          "abstract"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "https://openalex.org/W2134722098"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://doi.org/10.1177/0956797613520608"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Continuous Theta-Burst Stimulation Demonstrates a Causal Role of Premotor Homunculus in Action Understanding"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2014
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "article"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Although it is well established that regions of premotor cortex (PMC) are active during action observation, it remains controversial whether they play a causal role in action understanding. In the experiment reported here, we used off-line continuous theta-burst stimulation (cTBS) to investigate this question. Participants received cTBS over the hand and lip areas of left PMC, in separate sessions, before completing a pantomime-recognition task in which half of the trials contained pantomimed hand actions, and half contained pantomimed mouth actions. The results reveal a double dissociation: Participants were less accurate in recognizing pantomimed hand actions after receiving cTBS over the hand area than over the lip area and less accurate in recognizing pantomimed mouth actions after receiving cTBS over the lip area than over the hand area. This finding constrains theories of action understanding by showing that somatotopically organized regions of PMC contribute causally to action understanding and, thus, that the mechanisms underpinning action understanding and action performance overlap."
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "DOI",
+          "error"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "bad.form"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "malformed"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "DOI"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

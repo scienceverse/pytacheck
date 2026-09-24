@@ -1,0 +1,124 @@
+{
+  "id": "crossref_query_parse.low_score_min0",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 1,
+    "names": [
+      "DOI",
+      "score",
+      "type",
+      "title",
+      "author",
+      "publisher",
+      "container-title",
+      "year",
+      "volume",
+      "issue",
+      "page",
+      "URL"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "10.1093/gerona/57.8.b291"
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          16.812752
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "journal-article"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Editorial: Position Statement on Human Aging"
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "df",
+            "nrow": 2,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "J. R.",
+                  "S. J."
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Smith",
+                  "Olshansky"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Oxford University Press (OUP)"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "The Journals of Gerontology Series A: Biological Sciences and Medical Sciences"
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          2002
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "57"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "8"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "B291-B291"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://doi.org/10.1093/gerona/57.8.b291"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

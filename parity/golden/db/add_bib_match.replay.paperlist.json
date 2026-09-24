@@ -1,0 +1,506 @@
+{
+  "id": "add_bib_match.replay.paperlist",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": null,
+    "v": [
+      {
+        "t": "df",
+        "nrow": 2,
+        "names": [
+          "bib_id",
+          "service",
+          "service_id",
+          "score",
+          "bib_type",
+          "doi",
+          "title",
+          "authors",
+          "editors",
+          "publisher",
+          "year",
+          "date",
+          "container",
+          "volume",
+          "issue",
+          "first_page",
+          "last_page",
+          "edition",
+          "version",
+          "url"
+        ],
+        "v": [
+          {
+            "t": "int",
+            "v": [
+              1,
+              2
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "crossref",
+              "crossref"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              80.36001,
+              43.307137
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "article",
+              "article"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "10.1098/rspb.2002.2034",
+              "10.1098/rspb.2004.3003"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Facial resemblance enhances trust",
+              "Trustworthy but not lust-worthy: context-specific effects of facial resemblance"
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "df",
+                "nrow": 1,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Lisa M."
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "DeBruine"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "df",
+                "nrow": 1,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Lisa M"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "DeBruine"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "df",
+                "nrow": 0,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": []
+                  },
+                  {
+                    "t": "chr",
+                    "v": []
+                  }
+                ]
+              },
+              {
+                "t": "df",
+                "nrow": 0,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": []
+                  },
+                  {
+                    "t": "chr",
+                    "v": []
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "The Royal Society",
+              "The Royal Society"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2002,
+              2005
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Proceedings of the Royal Society of London. Series B: Biological Sciences",
+              "Proceedings of the Royal Society B: Biological Sciences"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "269",
+              "272"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "1498",
+              "1566"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "1307",
+              "919"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "1312",
+              "922"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://doi.org/10.1098/rspb.2002.2034",
+              "https://doi.org/10.1098/rspb.2004.3003"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 2,
+        "names": [
+          "bib_id",
+          "service",
+          "service_id",
+          "score",
+          "bib_type",
+          "doi",
+          "title",
+          "authors",
+          "editors",
+          "publisher",
+          "year",
+          "date",
+          "container",
+          "volume",
+          "issue",
+          "first_page",
+          "last_page",
+          "edition",
+          "version",
+          "url"
+        ],
+        "v": [
+          {
+            "t": "int",
+            "v": [
+              1,
+              2
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "crossref",
+              "crossref"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              43.307137,
+              71.0658
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "article",
+              "article"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "10.1098/rspb.2004.3003",
+              "10.1177/1948550617697177"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Trustworthy but not lust-worthy: context-specific effects of facial resemblance",
+              "Equivalence Tests"
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "df",
+                "nrow": 1,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Lisa M"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "DeBruine"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "df",
+                "nrow": 1,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Daniël"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Lakens"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "df",
+                "nrow": 0,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": []
+                  },
+                  {
+                    "t": "chr",
+                    "v": []
+                  }
+                ]
+              },
+              {
+                "t": "df",
+                "nrow": 0,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": []
+                  },
+                  {
+                    "t": "chr",
+                    "v": []
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "The Royal Society",
+              "SAGE Publications"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2005,
+              2017
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Proceedings of the Royal Society B: Biological Sciences",
+              "Social Psychological and Personality Science"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "272",
+              "8"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "1566",
+              "4"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "919",
+              "355"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "922",
+              "362"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://doi.org/10.1098/rspb.2004.3003",
+              "https://doi.org/10.1177/1948550617697177"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

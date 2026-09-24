@@ -1,0 +1,51 @@
+{
+  "id": "crossref_parse_item.synthetic.abstract_score",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 1,
+    "names": [
+      "DOI",
+      "title",
+      "volume",
+      "page",
+      "abstract"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "10.1/x"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "T"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "3"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "1-10"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "<jats:p>Abs<\/jats:p>"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -1,0 +1,98 @@
+{
+  "id": "r_echo_chunks.continuations",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": null,
+    "v": [
+      {
+        "t": "list",
+        "names": [
+          "line",
+          "call",
+          "output"
+        ],
+        "v": [
+          {
+            "t": "int",
+            "v": [
+              3
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "x [1] 1 2"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "+ 3 is printed"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "line",
+          "call",
+          "output"
+        ],
+        "v": [
+          {
+            "t": "int",
+            "v": [
+              5
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "summary( m )"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "output"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "line",
+          "call",
+          "output"
+        ],
+        "v": [
+          {
+            "t": "int",
+            "v": [
+              6
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "no_space"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "result"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

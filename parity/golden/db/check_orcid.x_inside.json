@@ -1,0 +1,11 @@
+{
+  "id": "check_orcid.x_inside",
+  "ok": false,
+  "error": "missing value where TRUE/FALSE needed",
+  "warnings": [
+    "NAs introduced by coercion"
+  ],
+  "value": null,
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

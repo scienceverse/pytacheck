@@ -1,0 +1,137 @@
+{
+  "id": "mplus_output_tables.model_fit_information",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "tables",
+      "consumed",
+      "labelvalue"
+    ],
+    "v": [
+      {
+        "t": "list",
+        "names": null,
+        "v": []
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "Number of Free Parameters",
+              "H0 Value",
+              "H0 Scaling Correction Factor",
+              "H1 Value",
+              "Akaike (AIC)",
+              "Bayesian (BIC)",
+              "Sample-Size Adjusted BIC",
+              "Value",
+              "Degrees of Freedom",
+              "P-Value"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "5"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "-1423.568"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "1.0123"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "-1423.568"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "2857.136"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "2878.209"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "2862.338"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "0.000*"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "0"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "1.0000"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

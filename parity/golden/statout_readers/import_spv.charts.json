@@ -1,0 +1,234 @@
+{
+  "id": "import_spv.charts",
+  "ok": true,
+  "error": null,
+  "warnings": [
+    "spv: could not decode chart: non-numeric argument to mathematical function",
+    "spv: could not decode chart: spv chart: no <point>, <interval>, or <schema> mark (out of this port's scope)"
+  ],
+  "value": {
+    "t": "list",
+    "names": null,
+    "v": [
+      {
+        "t": "list",
+        "names": [
+          "analysis",
+          "title",
+          "data",
+          "syntax",
+          "is_chart",
+          "table_index"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Graph"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Weight by Height"
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 4,
+            "names": [
+              "x",
+              "y"
+            ],
+            "v": [
+              {
+                "t": "dbl",
+                "v": [
+                  150,
+                  160,
+                  170.5,
+                  180
+                ]
+              },
+              {
+                "t": "dbl",
+                "v": [
+                  55,
+                  60.25,
+                  70,
+                  82
+                ]
+              }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "GRAPH /SCATTERPLOT(BIVAR)=height WITH weight."
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "analysis",
+          "title",
+          "data",
+          "syntax",
+          "is_chart",
+          "table_index"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Frequencies"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 6,
+            "names": [
+              "x",
+              "y"
+            ],
+            "v": [
+              {
+                "t": "dbl",
+                "v": [
+                  1,
+                  2,
+                  2,
+                  3,
+                  3,
+                  3
+                ]
+              },
+              {
+                "t": "dbl",
+                "v": [
+                  1,
+                  1,
+                  1,
+                  1,
+                  1,
+                  1
+                ]
+              }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "GRAPH /SCATTERPLOT(BIVAR)=height WITH weight."
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "analysis",
+          "title",
+          "data",
+          "syntax",
+          "is_chart",
+          "table_index"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Box plot"
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 4,
+            "names": [
+              "category",
+              "value"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Control",
+                  "Control",
+                  "Treatment",
+                  "2"
+                ]
+              },
+              {
+                "t": "dbl",
+                "v": [
+                  1.75,
+                  2.5,
+                  3,
+                  4.25
+                ]
+              }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "GRAPH /SCATTERPLOT(BIVAR)=height WITH weight."
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              3
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

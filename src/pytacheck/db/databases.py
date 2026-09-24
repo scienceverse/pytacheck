@@ -33,6 +33,7 @@ if TYPE_CHECKING:
 __all__ = [
     "database_date",
     "load_database",
+    "miscite",
     "read_database",
     "user_database_path",
     "write_database",
@@ -51,7 +52,7 @@ def _frame(obj: dict[str, Any]) -> pd.DataFrame:
     frame = pd.DataFrame(
         {
             name: pd.array(
-                data.get(name) or [None] * n,
+                data.get(name) or [None] * n,  # type: ignore[arg-type]
                 dtype=_DTYPES.get(kind, object),  # type: ignore[call-overload]
             )
             for name, kind in columns.items()
@@ -178,3 +179,14 @@ def write_database(
     tmp.write_bytes(gzip.compress(orjson.dumps(obj), compresslevel=9, mtime=0))
     tmp.replace(p)
     return p
+
+
+def miscite() -> pd.DataFrame:
+    """The database of commonly miscited papers (metacheck's ``inst/databases/miscite.Rds``).
+
+    Columns ``doi``, ``reftext`` and ``warning``. metacheck reads it with
+    ``readRDS(system.file("databases/miscite.Rds", package = "metacheck"))``
+    as the default ``db`` of the ``ref_miscitation`` module; it is built by
+    ``data-raw/miscite.R`` and is a proof of concept (three entries).
+    """
+    return load_database("miscite")

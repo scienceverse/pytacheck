@@ -16,6 +16,7 @@ import pandas as pd
 
 from pytacheck._r.base import trimws
 from pytacheck._r.regex import compile_r, grepl, gsub, regextract, strsplit
+from pytacheck.papers.model import Paper, PaperList
 from pytacheck.text.search import text_search
 
 __all__ = ["extract_eq", "extract_p_values", "extract_urls"]
@@ -105,6 +106,26 @@ _LIVE_WORDS = (
 )
 
 
+def _search_table(paper: Any, any_of: str | None = None, perl: bool = False) -> Any:
+    """The (uncleaned) table ``text_search()`` builds from *paper*.
+
+    Searching this table gives exactly the result of searching *paper*, so a
+    search for several patterns joins the paper's text and section tables
+    once instead of once per pattern. With *any_of* (a pattern, for the
+    engine chosen by *perl*, that matches case-insensitively whenever any of
+    the searched patterns does), rows that cannot match are dropped first;
+    ``text_search()`` then returns the same rows, in the same order, faster.
+    """
+    if isinstance(paper, Paper | PaperList):
+        from pytacheck.text.search import _text_frame
+
+        paper = _text_frame(paper)[0]
+    if any_of is not None and isinstance(paper, pd.DataFrame) and "text" in paper.columns:
+        keep = grepl(any_of, paper["text"].tolist(), ignore_case=True, perl=perl)
+        paper = paper.loc[keep]
+    return paper
+
+
 def extract_urls(paper: Any) -> pd.DataFrame:
     """Extract URLs (port of ``R/text-extractors.R::extract_urls()``).
 
@@ -113,7 +134,9 @@ def extract_urls(paper: Any) -> pd.DataFrame:
     domains or IPv4 addresses) found in *paper* (a paper, paper list or
     text table).
     """
-    return text_search(paper, _URL_PATTERN, return_="match", perl=True)
+    # every URL match contains ".xx" (a domain) or "d.d" (an IPv4 address)
+    table = _search_table(paper, r"\.[a-z]{2}|\d\.\d", perl=True)
+    return text_search(table, _URL_PATTERN, return_="match", perl=True)
 
 
 def extract_p_values(paper: Any) -> pd.DataFrame:
@@ -128,7 +151,9 @@ def extract_p_values(paper: Any) -> pd.DataFrame:
     from pytacheck.text.json_expand import as_numeric
 
     p = text_search(paper, _P_PATTERN, return_="match", perl=True, ignore_case=False)
-    texts = [None if pd.isna(t) else str(t) for t in p["text"].tolist()] if "text" in p else []
+    if not isinstance(p, pd.DataFrame):  # R: `$` on the character vector of matches
+        raise TypeError("$ operator is invalid for atomic vectors")
+    texts = [None if pd.isna(t) else str(t) for t in p["text"].tolist()]
     comps = regextract(_OP_RUN, texts, perl=True)
     split = strsplit(texts, _OP_SPLIT)
     values: list[str | None] = []
@@ -180,8 +205,10 @@ def extract_eq(paper: Any) -> pd.DataFrame:
     ``lhs``, ``df`` (e.g. ``"(2, 57)"`` or ``NA``), ``comp``, ``rhs`` and
     ``paper_id``, sorted by ``paper_id``, ``text_id`` and ``grp_id``.
     """
-    eq = text_search(paper, list(_OPERATORS))
+    eq = text_search(_search_table(paper, f"[{_OPS}]"), list(_OPERATORS))
     eq = text_search(eq, _EQ_PATTERN, return_="match", perl=True, ignore_case=True)
+    if not isinstance(eq, pd.DataFrame):  # R: nrow() of a character vector is NULL
+        raise TypeError("argument is of length zero")
     if len(eq) == 0:
         return _empty_eq()
 
@@ -256,4 +283,4 @@ def _detect_live_data(paper: Any) -> pd.DataFrame:
     recruitment platforms, student pools, inclusion/exclusion criteria and
     animal data collection. Used by the ``ethics_check`` module.
     """
-    return text_search(paper, list(_LIVE_WORDS))
+    return text_search(_search_table(paper), list(_LIVE_WORDS))

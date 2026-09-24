@@ -1,0 +1,1355 @@
+# Parity cases for pytacheck.db (generated layout; edit freely).
+# Cases named *.replay.* run metacheck and pytacheck on metacheck's recorded
+# API responses (tests/db/replay.R and tests/db/parity_replay.py): no network.
+"area": "db"
+"cases":
+- "id": "doi_clean.url"
+  "r": "doi_clean"
+  "py": "pytacheck.db.doi.doi_clean"
+  "args":
+    "doi": "https://doi.org/10.1038/nphys1170"
+- "id": "doi_clean.dx_http"
+  "r": "doi_clean"
+  "py": "pytacheck.db.doi.doi_clean"
+  "args":
+    "doi": "http://dx.doi.org/10.1038/nphys1170"
+- "id": "doi_clean.upper_https"
+  "r": "doi_clean"
+  "py": "pytacheck.db.doi.doi_clean"
+  "args":
+    "doi": "HTTPS://DOI.ORG/10.1038/nphys1170"
+- "id": "doi_clean.prefix"
+  "r": "doi_clean"
+  "py": "pytacheck.db.doi.doi_clean"
+  "args":
+    "doi": "doi:10.1038/nphys1170"
+- "id": "doi_clean.prefix_spaced"
+  "r": "doi_clean"
+  "py": "pytacheck.db.doi.doi_clean"
+  "args":
+    "doi": "  DOI : 10.1038/nphys1170 "
+- "id": "doi_clean.bad"
+  "r": "doi_clean"
+  "py": "pytacheck.db.doi.doi_clean"
+  "args":
+    "doi": "bad.doi"
+- "id": "doi_clean.journal_url"
+  "r": "doi_clean"
+  "py": "pytacheck.db.doi.doi_clean"
+  "args":
+    "doi": "http://journals.plos.org/plosone/article?id=10.1371/journal.pone.0004153"
+- "id": "doi_clean.first_match"
+  "r": "doi_clean"
+  "py": "pytacheck.db.doi.doi_clean"
+  "args":
+    "doi": "10.1234/more.10.2345"
+- "id": "doi_clean.section"
+  "r": "doi_clean"
+  "py": "pytacheck.db.doi.doi_clean"
+  "args":
+    "doi": "10.1234/mypaper#section"
+- "id": "doi_clean.full"
+  "r": "doi_clean"
+  "py": "pytacheck.db.doi.doi_clean"
+  "args":
+    "doi": "10.1234/mypaper/full"
+- "id": "doi_clean.full_middle"
+  "r": "doi_clean"
+  "py": "pytacheck.db.doi.doi_clean"
+  "args":
+    "doi": "10.1234/full/paper"
+- "id": "doi_clean.empty"
+  "r": "doi_clean"
+  "py": "pytacheck.db.doi.doi_clean"
+  "args":
+    "doi": ""
+- "id": "doi_clean.newline"
+  "r": "doi_clean"
+  "py": "pytacheck.db.doi.doi_clean"
+  "args":
+    "doi": "10.1234/abc\n#more"
+- "id": "doi_clean.two_digit"
+  "r": "doi_clean"
+  "py": "pytacheck.db.doi.doi_clean"
+  "args":
+    "doi": "see 10.12/abc"
+- "id": "doi_clean.sici"
+  "r": "doi_clean"
+  "py": "pytacheck.db.doi.doi_clean"
+  "args":
+    "doi": "doi: 10.1002/(SICI)1099-1611(200001/02)9:1<11::AID-PON424>3.0.CO;2-Z"
+- "id": "doi_clean.vector"
+  "r": "doi_clean"
+  "py": "pytacheck.db.doi.doi_clean"
+  "args":
+    "doi":
+      "$expr":
+        "r": "c(\"https://doi.org/10.1038/nphys1170\", \"doi:10.1038/nphys1170\", \"  DOI : 10.1038/nphys1170 \", \"10.1038/nphys1170\", \"\", NA)"
+        "py": "['https://doi.org/10.1038/nphys1170', 'doi:10.1038/nphys1170', '  DOI : 10.1038/nphys1170 ', '10.1038/nphys1170', '', None]"
+- "id": "doi_clean.list"
+  "r": "doi_clean"
+  "py": "pytacheck.db.doi.doi_clean"
+  "args":
+    "doi":
+      "$expr":
+        "r": "as.list(c(\"https://doi.org/10.1038/nphys1170\", \"doi:10.1038/nphys1170\", \"  DOI : 10.1038/nphys1170 \", \"10.1038/nphys1170\", \"\", NA))"
+        "py": "['https://doi.org/10.1038/nphys1170', 'doi:10.1038/nphys1170', '  DOI : 10.1038/nphys1170 ', '10.1038/nphys1170', '', None]"
+- "id": "doi_clean.nested_list"
+  "r": "doi_clean"
+  "py": "pytacheck.db.doi.doi_clean"
+  "args":
+    "doi":
+      "$expr":
+        "r": "list(c(\"doi:10.1038/a\", \"10.1038/b\"), list(\"https://doi.org/10.1/c\", NA))"
+        "py": "[['doi:10.1038/a', '10.1038/b'], ['https://doi.org/10.1/c', None]]"
+- "id": "doi_clean.null"
+  "r": "doi_clean"
+  "py": "pytacheck.db.doi.doi_clean"
+  "args":
+    "doi":
+      "$chr": []
+- "id": "doi_clean.number"
+  "r": "doi_clean"
+  "py": "pytacheck.db.doi.doi_clean"
+  "args":
+    "doi": 10.5
+- "id": "doi_clean.demo_bib"
+  "r": "doi_clean"
+  "py": "pytacheck.db.doi.doi_clean"
+  "args":
+    "doi":
+      "$expr":
+        "r": "demopaper()$bib$doi"
+        "py": "pc.demopaper().bib['doi']"
+- "id": "doi_clean.psychsci_info"
+  "r": "doi_clean"
+  "py": "pytacheck.db.doi.doi_clean"
+  "args":
+    "doi":
+      "$expr":
+        "r": "paper_table(read(file.path(root, \"upstream/metacheck/tests/testthat/fixtures/psychsci\")), 'info')$doi"
+        "py": "pc.paper_table(pc.read('upstream/metacheck/tests/testthat/fixtures/psychsci'), 'info')['doi']"
+- "id": "doi_valid_format.valid"
+  "r": "doi_valid_format"
+  "py": "pytacheck.db.doi.doi_valid_format"
+  "args":
+    "doi": "10.1038/nphys1170"
+- "id": "doi_valid_format.prefixed"
+  "r": "doi_valid_format"
+  "py": "pytacheck.db.doi.doi_valid_format"
+  "args":
+    "doi": "no10.1038/nphys1170"
+- "id": "doi_valid_format.sici"
+  "r": "doi_valid_format"
+  "py": "pytacheck.db.doi.doi_valid_format"
+  "args":
+    "doi": "10.1002/(SICI)1099-1611(200001/02)9:1<11::AID-PON424>3.0.CO;2-Z"
+- "id": "doi_valid_format.trailing_dot"
+  "r": "doi_valid_format"
+  "py": "pytacheck.db.doi.doi_valid_format"
+  "args":
+    "doi": "10.1038/nphys1170."
+- "id": "doi_valid_format.two_digits"
+  "r": "doi_valid_format"
+  "py": "pytacheck.db.doi.doi_valid_format"
+  "args":
+    "doi": "10.12/abc"
+- "id": "doi_valid_format.ten_digits"
+  "r": "doi_valid_format"
+  "py": "pytacheck.db.doi.doi_valid_format"
+  "args":
+    "doi": "10.1234567890/abc"
+- "id": "doi_valid_format.nine_digits"
+  "r": "doi_valid_format"
+  "py": "pytacheck.db.doi.doi_valid_format"
+  "args":
+    "doi": "10.123456789/abc"
+- "id": "doi_valid_format.space"
+  "r": "doi_valid_format"
+  "py": "pytacheck.db.doi.doi_valid_format"
+  "args":
+    "doi": "10.1038/nphys 1170"
+- "id": "doi_valid_format.url"
+  "r": "doi_valid_format"
+  "py": "pytacheck.db.doi.doi_valid_format"
+  "args":
+    "doi": "https://doi.org/10.1038/nphys1170"
+- "id": "doi_valid_format.empty"
+  "r": "doi_valid_format"
+  "py": "pytacheck.db.doi.doi_valid_format"
+  "args":
+    "doi": ""
+- "id": "doi_valid_format.na"
+  "r": "doi_valid_format"
+  "py": "pytacheck.db.doi.doi_valid_format"
+  "args":
+    "doi":
+      "$NA": true
+- "id": "doi_valid_format.vector"
+  "r": "doi_valid_format"
+  "py": "pytacheck.db.doi.doi_valid_format"
+  "args":
+    "doi":
+      "$expr":
+        "r": "c(\"10.1038/nphys1170\", \"bad\", NA)"
+        "py": "['10.1038/nphys1170', 'bad', None]"
+- "id": "doi_valid_format.demo_bib"
+  "r": "doi_valid_format"
+  "py": "pytacheck.db.doi.doi_valid_format"
+  "args":
+    "doi":
+      "$expr":
+        "r": "demopaper()$bib$doi"
+        "py": "pc.demopaper().bib['doi']"
+- "id": "doi_resolves.offline_branches"
+  "r": "doi_resolves"
+  "py": "pytacheck.db.doi.doi_resolves"
+  "args":
+    "doi":
+      "$expr":
+        "r": "c(\"bad.doi\", NA, \"\", \"  \")"
+        "py": "['bad.doi', None, '', '  ']"
+- "id": "doi_resolves.bad"
+  "r": "doi_resolves"
+  "py": "pytacheck.db.doi.doi_resolves"
+  "args":
+    "doi": "bad.doi"
+- "id": "doi_resolves.na"
+  "r": "doi_resolves"
+  "py": "pytacheck.db.doi.doi_resolves"
+  "args":
+    "doi":
+      "$NA": true
+- "id": "doi_resolves.replay.mixed"
+  "r": "identity"
+  "py": "copy.copy"
+  "args":
+    "x":
+      "$expr":
+        "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(doi_resolves(c(\"10.1038/nphys1170\", \"10.1234/invalid.doi\", \"bad.doi\", NA))); x"
+        "py": "__import__('tests.db.parity_replay', fromlist=['x']).call('pytacheck.db.doi.doi_resolves', ['10.1038/nphys1170', '10.1234/invalid.doi', 'bad.doi', None])"
+- "id": "doi_resolves.replay.nested"
+  "r": "identity"
+  "py": "copy.copy"
+  "args":
+    "x":
+      "$expr":
+        "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(doi_resolves(list(c(\"10.1038/nphys1170\", \"10.1234/invalid.doi\"), c(\"10.1038/nphys1170\", NA)))); x"
+        "py": "__import__('tests.db.parity_replay', fromlist=['x']).call('pytacheck.db.doi.doi_resolves', [['10.1038/nphys1170', '10.1234/invalid.doi'], ['10.1038/nphys1170', None]])"
+- "id": "doi_resolves.replay.clean"
+  "r": "identity"
+  "py": "copy.copy"
+  "args":
+    "x":
+      "$expr":
+        "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(doi_resolves(c(\"https://doi.org/10.1038/nphys1170\", \"  DOI : 10.1038/nphys1170 \"))); x"
+        "py": "__import__('tests.db.parity_replay', fromlist=['x']).call('pytacheck.db.doi.doi_resolves', ['https://doi.org/10.1038/nphys1170', '  DOI : 10.1038/nphys1170 '])"
+- "id": "doi_lookup.null"
+  "r": "doi_lookup"
+  "py": "pytacheck.db.doi.doi_lookup"
+  "args":
+    "doi":
+      "$null": true
+- "id": "doi_lookup.empty"
+  "r": "doi_lookup"
+  "py": "pytacheck.db.doi.doi_lookup"
+  "args":
+    "doi":
+      "$chr": []
+- "id": "doi_lookup.replay.na"
+  "r": "identity"
+  "py": "copy.copy"
+  "args":
+    "x":
+      "$expr":
+        "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(doi_lookup(NA)); x"
+        "py": "__import__('tests.db.parity_replay', fromlist=['x']).call('pytacheck.db.doi.doi_lookup', [None])"
+- "id": "doi_lookup.replay.one"
+  "r": "identity"
+  "py": "copy.copy"
+  "args":
+    "x":
+      "$expr":
+        "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(doi_lookup(\"10.7717/peerj.4375\")); x"
+        "py": "__import__('tests.db.parity_replay', fromlist=['x']).call('pytacheck.db.doi.doi_lookup', '10.7717/peerj.4375')"
+- "id": "doi_lookup.replay.two"
+  "r": "identity"
+  "py": "copy.copy"
+  "args":
+    "x":
+      "$expr":
+        "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(doi_lookup(c(\"10.1177/2515245920970949\", \"10.1037/0003-066x.54.6.408\"))); x"
+        "py": "__import__('tests.db.parity_replay', fromlist=['x']).call('pytacheck.db.doi.doi_lookup', ['10.1177/2515245920970949', '10.1037/0003-066x.54.6.408'])"
+- "id": "doi_lookup.replay.with_na"
+  "r": "identity"
+  "py": "copy.copy"
+  "args":
+    "x":
+      "$expr":
+        "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(doi_lookup(c(\"10.7717/peerj.4375\", NA))); x"
+        "py": "__import__('tests.db.parity_replay', fromlist=['x']).call('pytacheck.db.doi.doi_lookup', ['10.7717/peerj.4375', None])"
+- "id": "doi_lookup.replay.not_found"
+  "r": "identity"
+  "py": "copy.copy"
+  "args":
+    "x":
+      "$expr":
+        "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(doi_lookup(c(\"10.7717/peerj.4375\", \"10.9999/not.recorded\"))); x"
+        "py": "__import__('tests.db.parity_replay', fromlist=['x']).call('pytacheck.db.doi.doi_lookup', ['10.7717/peerj.4375', '10.9999/not.recorded'])"
+- "id": "datacite_doi.null"
+  "r": "datacite_doi"
+  "py": "pytacheck.db.crossref.datacite_doi"
+  "args":
+    "doi":
+      "$null": true
+- "id": "datacite_doi.replay.na"
+  "r": "identity"
+  "py": "copy.copy"
+  "args":
+    "x":
+      "$expr":
+        "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(datacite_doi(NA)); x"
+        "py": "__import__('tests.db.parity_replay', fromlist=['x']).call('pytacheck.db.crossref.datacite_doi', [None])"
+  "compare":
+    "ignore":
+    - "authors"
+- "id": "datacite_doi.replay.one"
+  "r": "identity"
+  "py": "copy.copy"
+  "args":
+    "x":
+      "$expr":
+        "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(datacite_doi(\"10.5281/zenodo.2669586\")); x"
+        "py": "__import__('tests.db.parity_replay', fromlist=['x']).call('pytacheck.db.crossref.datacite_doi', '10.5281/zenodo.2669586')"
+- "id": "datacite_doi.replay.two"
+  "r": "identity"
+  "py": "copy.copy"
+  "args":
+    "x":
+      "$expr":
+        "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(datacite_doi(c(\"10.5281/zenodo.2669586\", \"10.5281/zenodo.3564348\"))); x"
+        "py": "__import__('tests.db.parity_replay', fromlist=['x']).call('pytacheck.db.crossref.datacite_doi', ['10.5281/zenodo.2669586', '10.5281/zenodo.3564348'])"
+- "id": "datacite_doi.replay.with_na"
+  "r": "identity"
+  "py": "copy.copy"
+  "args":
+    "x":
+      "$expr":
+        "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(datacite_doi(c(\"10.5281/zenodo.2669586\", NA))); x"
+        "py": "__import__('tests.db.parity_replay', fromlist=['x']).call('pytacheck.db.crossref.datacite_doi', ['10.5281/zenodo.2669586', None])"
+  "compare":
+    "ignore":
+    - "authors"
+- "id": "datacite_doi.replay.not_found"
+  "r": "identity"
+  "py": "copy.copy"
+  "args":
+    "x":
+      "$expr":
+        "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(datacite_doi(c(\"10.5281/zenodo.2669586\", \"10.9999/not.recorded\"))); x"
+        "py": "__import__('tests.db.parity_replay', fromlist=['x']).call('pytacheck.db.crossref.datacite_doi', ['10.5281/zenodo.2669586', '10.9999/not.recorded'])"
+- "id": "bibtype_convert.all"
+  "r": "metacheck:::.bibtype_convert"
+  "py": "pytacheck.db.crossref._bibtype_convert"
+  "args":
+    "type":
+      "$chr":
+      - "journal-article"
+      - "book"
+      - "book-chapter"
+      - "book-part"
+      - "book-section"
+      - "book-series"
+      - "edited-book"
+      - "reference-book"
+      - "monograph"
+      - "report"
+      - "proceedings-article"
+      - "proceedings"
+      - "conference-paper"
+      - "conference-proceeding"
+      - "posted-content"
+      - "dissertation"
+      - "thesis"
+      - "dataset"
+      - "standard"
+      - "reference-entry"
+      - "reference-work"
+      - "report-series"
+      - "other"
+      - "unmatched-type"
+- "id": "bibtype_convert.example"
+  "r": "metacheck:::.bibtype_convert"
+  "py": "pytacheck.db.crossref._bibtype_convert"
+  "args":
+    "type":
+      "$expr":
+        "r": "c(\"book-part\", \"journal-article\", \"monograph\", NA, \"unmatched-type\")"
+        "py": "['book-part', 'journal-article', 'monograph', None, 'unmatched-type']"
+- "id": "bibtype_convert.null"
+  "r": "metacheck:::.bibtype_convert"
+  "py": "pytacheck.db.crossref._bibtype_convert"
+  "args":
+    "type":
+      "$null": true
+- "id": "crossref_parse_item.retracted"
+  "r": "metacheck:::.crossref_parse_item"
+  "py": "pytacheck.db.crossref._crossref_parse_item"
+  "args":
+    "item":
+      "$expr":
+        "r": "jsonlite::read_json(file.path(root, \"upstream/metacheck/tests/testthat/apis/api.labs.crossref.org/works/10.1177%2F0956797614520714-e55db1.json\"))$message"
+        "py": "__import__('orjson').loads(open('upstream/metacheck/tests/testthat/apis/api.labs.crossref.org/works/10.1177%2F0956797614520714-e55db1.json', 'rb').read())['message']"
+- "id": "crossref_parse_item.psychsci"
+  "r": "metacheck:::.crossref_parse_item"
+  "py": "pytacheck.db.crossref._crossref_parse_item"
+  "args":
+    "item":
+      "$expr":
+        "r": "jsonlite::read_json(file.path(root, \"upstream/metacheck/tests/testthat/apis/api.labs.crossref.org/works/10.1177%2F0956797613520608-e55db1.json\"))$message"
+        "py": "__import__('orjson').loads(open('upstream/metacheck/tests/testthat/apis/api.labs.crossref.org/works/10.1177%2F0956797613520608-e55db1.json', 'rb').read())['message']"
+- "id": "crossref_parse_item.book_chapter"
+  "r": "metacheck:::.crossref_parse_item"
+  "py": "pytacheck.db.crossref._crossref_parse_item"
+  "args":
+    "item":
+      "$expr":
+        "r": "jsonlite::read_json(file.path(root, \"upstream/metacheck/tests/testthat/apis/api.labs.crossref.org/works/10.1093%2Facprof%3Aoso%2F9780190228057.003.0004-e55db1.json\"))$message"
+        "py": "__import__('orjson').loads(open('upstream/metacheck/tests/testthat/apis/api.labs.crossref.org/works/10.1093%2Facprof%3Aoso%2F9780190228057.003.0004-e55db1.json', 'rb').read())['message']"
+- "id": "crossref_parse_item.cran"
+  "r": "metacheck:::.crossref_parse_item"
+  "py": "pytacheck.db.crossref._crossref_parse_item"
+  "args":
+    "item":
+      "$expr":
+        "r": "jsonlite::read_json(file.path(root, \"upstream/metacheck/tests/testthat/apis/api.labs.crossref.org/works/10.32614%2Fcran.package.dplyr-e55db1.json\"))$message"
+        "py": "__import__('orjson').loads(open('upstream/metacheck/tests/testthat/apis/api.labs.crossref.org/works/10.32614%2Fcran.package.dplyr-e55db1.json', 'rb').read())['message']"
+- "id": "crossref_parse_item.springer"
+  "r": "metacheck:::.crossref_parse_item"
+  "py": "pytacheck.db.crossref._crossref_parse_item"
+  "args":
+    "item":
+      "$expr":
+        "r": "jsonlite::read_json(file.path(root, \"upstream/metacheck/tests/testthat/apis/api.labs.crossref.org/works/10.1007%2F978-3-540-74997-4_9-e55db1.json\"))$message"
+        "py": "__import__('orjson').loads(open('upstream/metacheck/tests/testthat/apis/api.labs.crossref.org/works/10.1007%2F978-3-540-74997-4_9-e55db1.json', 'rb').read())['message']"
+- "id": "crossref_parse_item.jss"
+  "r": "metacheck:::.crossref_parse_item"
+  "py": "pytacheck.db.crossref._crossref_parse_item"
+  "args":
+    "item":
+      "$expr":
+        "r": "jsonlite::read_json(file.path(root, \"upstream/metacheck/tests/testthat/apis/api.labs.crossref.org/works/10.18637%2Fjss.v082.i13-e55db1.json\"))$message"
+        "py": "__import__('orjson').loads(open('upstream/metacheck/tests/testthat/apis/api.labs.crossref.org/works/10.18637%2Fjss.v082.i13-e55db1.json', 'rb').read())['message']"
+- "id": "crossref_parse_item.select"
+  "r": "metacheck:::.crossref_parse_item"
+  "py": "pytacheck.db.crossref._crossref_parse_item"
+  "args":
+    "item":
+      "$expr":
+        "r": "jsonlite::read_json(file.path(root, \"upstream/metacheck/tests/testthat/apis/api.labs.crossref.org/works/10.1177%2F0956797614520714-e55db1.json\"))$message"
+        "py": "__import__('orjson').loads(open('upstream/metacheck/tests/testthat/apis/api.labs.crossref.org/works/10.1177%2F0956797614520714-e55db1.json', 'rb').read())['message']"
+    "select":
+      "$chr":
+      - "title"
+      - "DOI"
+      - "publisher"
+      - "author"
+      - "is-referenced-by-count"
+      - "nonexistent"
+- "id": "crossref_parse_item.synthetic.no_title"
+  "r": "metacheck:::.crossref_parse_item"
+  "py": "pytacheck.db.crossref._crossref_parse_item"
+  "args":
+    "item":
+      "$expr":
+        "r": "jsonlite::parse_json(\"{\\\"DOI\\\": \\\"10.1/x\\\", \\\"title\\\": [], \\\"container-title\\\": [], \\\"type\\\": \\\"other\\\"}\")"
+        "py": "__import__('json').loads('{\"DOI\": \"10.1/x\", \"title\": [], \"container-title\": [], \"type\": \"other\"}')"
+- "id": "crossref_parse_item.synthetic.year_print"
+  "r": "metacheck:::.crossref_parse_item"
+  "py": "pytacheck.db.crossref._crossref_parse_item"
+  "args":
+    "item":
+      "$expr":
+        "r": "jsonlite::parse_json(\"{\\\"DOI\\\": \\\"10.1/x\\\", \\\"title\\\": [\\\"T1\\\", \\\"T2\\\"], \\\"journal-issue\\\": {\\\"published-print\\\": {\\\"date-parts\\\": [[1999, 2]]}}, \\\"published\\\": {\\\"date-parts\\\": [[2001]]}}\")"
+        "py": "__import__('json').loads('{\"DOI\": \"10.1/x\", \"title\": [\"T1\", \"T2\"], \"journal-issue\": {\"published-print\": {\"date-parts\": [[1999, 2]]}}, \"published\": {\"date-parts\": [[2001]]}}')"
+- "id": "crossref_parse_item.synthetic.year_null"
+  "r": "metacheck:::.crossref_parse_item"
+  "py": "pytacheck.db.crossref._crossref_parse_item"
+  "args":
+    "item":
+      "$expr":
+        "r": "jsonlite::parse_json(\"{\\\"DOI\\\": \\\"10.1/x\\\", \\\"title\\\": [\\\"T\\\"], \\\"published\\\": {\\\"date-parts\\\": [[null]]}}\")"
+        "py": "__import__('json').loads('{\"DOI\": \"10.1/x\", \"title\": [\"T\"], \"published\": {\"date-parts\": [[null]]}}')"
+- "id": "crossref_parse_item.synthetic.year_published"
+  "r": "metacheck:::.crossref_parse_item"
+  "py": "pytacheck.db.crossref._crossref_parse_item"
+  "args":
+    "item":
+      "$expr":
+        "r": "jsonlite::parse_json(\"{\\\"DOI\\\": \\\"10.1/x\\\", \\\"title\\\": [\\\"T\\\"], \\\"journal-issue\\\": {\\\"issue\\\": \\\"2\\\"}, \\\"published\\\": {\\\"date-parts\\\": [[2003, 5, 1]]}}\")"
+        "py": "__import__('json').loads('{\"DOI\": \"10.1/x\", \"title\": [\"T\"], \"journal-issue\": {\"issue\": \"2\"}, \"published\": {\"date-parts\": [[2003, 5, 1]]}}')"
+- "id": "crossref_parse_item.synthetic.authors_mixed"
+  "r": "metacheck:::.crossref_parse_item"
+  "py": "pytacheck.db.crossref._crossref_parse_item"
+  "args":
+    "item":
+      "$expr":
+        "r": "jsonlite::parse_json(\"{\\\"DOI\\\": \\\"10.1/x\\\", \\\"title\\\": [\\\"T\\\"], \\\"author\\\": [{\\\"family\\\": \\\"Solo\\\"}, {\\\"given\\\": \\\"A.\\\", \\\"family\\\": \\\"B\\\", \\\"ORCID\\\": \\\"https://orcid.org/0000-0002-7523-5539\\\", \\\"sequence\\\": \\\"additional\\\"}, {\\\"name\\\": \\\"Consortium\\\"}]}\")"
+        "py": "__import__('json').loads('{\"DOI\": \"10.1/x\", \"title\": [\"T\"], \"author\": [{\"family\": \"Solo\"}, {\"given\": \"A.\", \"family\": \"B\", \"ORCID\": \"https://orcid.org/0000-0002-7523-5539\", \"sequence\": \"additional\"}, {\"name\": \"Consortium\"}]}')"
+- "id": "crossref_parse_item.synthetic.authors_orgs_only"
+  "r": "metacheck:::.crossref_parse_item"
+  "py": "pytacheck.db.crossref._crossref_parse_item"
+  "args":
+    "item":
+      "$expr":
+        "r": "jsonlite::parse_json(\"{\\\"DOI\\\": \\\"10.1/x\\\", \\\"title\\\": [\\\"T\\\"], \\\"author\\\": [{\\\"name\\\": \\\"Consortium\\\"}]}\")"
+        "py": "__import__('json').loads('{\"DOI\": \"10.1/x\", \"title\": [\"T\"], \"author\": [{\"name\": \"Consortium\"}]}')"
+- "id": "crossref_parse_item.synthetic.abstract_score"
+  "r": "metacheck:::.crossref_parse_item"
+  "py": "pytacheck.db.crossref._crossref_parse_item"
+  "args":
+    "item":
+      "$expr":
+        "r": "jsonlite::parse_json(\"{\\\"DOI\\\": \\\"10.1/x\\\", \\\"title\\\": [\\\"T\\\"], \\\"abstract\\\": \\\"<jats:p>Abs</jats:p>\\\", \\\"score\\\": 12.5, \\\"page\\\": \\\"1-10\\\", \\\"volume\\\": \\\"3\\\"}\")"
+        "py": "__import__('json').loads('{\"DOI\": \"10.1/x\", \"title\": [\"T\"], \"abstract\": \"<jats:p>Abs</jats:p>\", \"score\": 12.5, \"page\": \"1-10\", \"volume\": \"3\"}')"
+- "id": "crossref_parse_item.synthetic.editor"
+  "r": "metacheck:::.crossref_parse_item"
+  "py": "pytacheck.db.crossref._crossref_parse_item"
+  "args":
+    "item":
+      "$expr":
+        "r": "jsonlite::parse_json(\"{\\\"DOI\\\": \\\"10.1/x\\\", \\\"title\\\": [\\\"T\\\"], \\\"editor\\\": [{\\\"given\\\": \\\"E\\\", \\\"family\\\": \\\"F\\\"}]}\")"
+        "py": "__import__('json').loads('{\"DOI\": \"10.1/x\", \"title\": [\"T\"], \"editor\": [{\"given\": \"E\", \"family\": \"F\"}]}')"
+    "select":
+      "$chr":
+      - "DOI"
+      - "title"
+      - "editor"
+- "id": "crossref_parse_item.synthetic.null_field"
+  "r": "metacheck:::.crossref_parse_item"
+  "py": "pytacheck.db.crossref._crossref_parse_item"
+  "args":
+    "item":
+      "$expr":
+        "r": "jsonlite::parse_json(\"{\\\"DOI\\\": \\\"10.1/x\\\", \\\"title\\\": [\\\"T\\\"], \\\"volume\\\": null}\")"
+        "py": "__import__('json').loads('{\"DOI\": \"10.1/x\", \"title\": [\"T\"], \"volume\": null}')"
+- "id": "crossref_query_parse.match"
+  "r": "metacheck:::.crossref_query_parse"
+  "py": "pytacheck.db.crossref._crossref_query_parse"
+  "args":
+    "items":
+      "$expr":
+        "r": "jsonlite::read_json(file.path(root, \"upstream/metacheck/tests/testthat/apis/api.crossref.org/works-03837c.json\"))$message$items"
+        "py": "__import__('orjson').loads(open('upstream/metacheck/tests/testthat/apis/api.crossref.org/works-03837c.json', 'rb').read())['message']['items']"
+    "min_score": 50
+    "select":
+      "$chr": &id001
+      - "DOI"
+      - "score"
+      - "type"
+      - "title"
+      - "author"
+      - "editor"
+      - "publisher"
+      - "container-title"
+      - "year"
+      - "volume"
+      - "issue"
+      - "page"
+      - "URL"
+- "id": "crossref_query_parse.match_high"
+  "r": "metacheck:::.crossref_query_parse"
+  "py": "pytacheck.db.crossref._crossref_query_parse"
+  "args":
+    "items":
+      "$expr":
+        "r": "jsonlite::read_json(file.path(root, \"upstream/metacheck/tests/testthat/apis/api.crossref.org/works-03837c.json\"))$message$items"
+        "py": "__import__('orjson').loads(open('upstream/metacheck/tests/testthat/apis/api.crossref.org/works-03837c.json', 'rb').read())['message']['items']"
+    "min_score": 1000
+    "select":
+      "$chr": *id001
+- "id": "crossref_query_parse.low_score"
+  "r": "metacheck:::.crossref_query_parse"
+  "py": "pytacheck.db.crossref._crossref_query_parse"
+  "args":
+    "items":
+      "$expr":
+        "r": "jsonlite::read_json(file.path(root, \"upstream/metacheck/tests/testthat/apis/api.crossref.org/works-88a279.json\"))$message$items"
+        "py": "__import__('orjson').loads(open('upstream/metacheck/tests/testthat/apis/api.crossref.org/works-88a279.json', 'rb').read())['message']['items']"
+    "min_score": 50
+    "select":
+      "$chr": *id001
+- "id": "crossref_query_parse.low_score_min0"
+  "r": "metacheck:::.crossref_query_parse"
+  "py": "pytacheck.db.crossref._crossref_query_parse"
+  "args":
+    "items":
+      "$expr":
+        "r": "jsonlite::read_json(file.path(root, \"upstream/metacheck/tests/testthat/apis/api.crossref.org/works-88a279.json\"))$message$items"
+        "py": "__import__('orjson').loads(open('upstream/metacheck/tests/testthat/apis/api.crossref.org/works-88a279.json', 'rb').read())['message']['items']"
+    "min_score": 0
+    "select":
+      "$chr": *id001
+- "id": "crossref_query_parse.other"
+  "r": "metacheck:::.crossref_query_parse"
+  "py": "pytacheck.db.crossref._crossref_query_parse"
+  "args":
+    "items":
+      "$expr":
+        "r": "jsonlite::read_json(file.path(root, \"upstream/metacheck/tests/testthat/apis/api.crossref.org/works-5a74ae.json\"))$message$items"
+        "py": "__import__('orjson').loads(open('upstream/metacheck/tests/testthat/apis/api.crossref.org/works-5a74ae.json', 'rb').read())['message']['items']"
+    "min_score": 50
+    "select":
+      "$chr": *id001
+- "id": "crossref_query_parse.no_items"
+  "r": "metacheck:::.crossref_query_parse"
+  "py": "pytacheck.db.crossref._crossref_query_parse"
+  "args":
+    "items":
+      "$expr":
+        "r": "jsonlite::read_json(file.path(root, \"upstream/metacheck/tests/testthat/apis/api.crossref.org/works-bb10f1.json\"))$message$items"
+        "py": "__import__('orjson').loads(open('upstream/metacheck/tests/testthat/apis/api.crossref.org/works-bb10f1.json', 'rb').read())['message']['items']"
+    "min_score": 50
+    "select":
+      "$chr": *id001
+- "id": "crossref_query_parse.empty"
+  "r": "metacheck:::.crossref_query_parse"
+  "py": "pytacheck.db.crossref._crossref_query_parse"
+  "args":
+    "items":
+      "$list": []
+    "min_score": 50
+    "select":
+      "$chr": *id001
+- "id": "crossref_doi.empty"
+  "r": "crossref_doi"
+  "py": "pytacheck.db.crossref.crossref_doi"
+  "args":
+    "doi":
+      "$chr": []
+- "id": "crossref_doi.na"
+  "r": "crossref_doi"
+  "py": "pytacheck.db.crossref.crossref_doi"
+  "args":
+    "doi":
+      "$NA": true
+  "py_args":
+    "doi":
+    - null
+- "id": "crossref_doi.nas"
+  "r": "crossref_doi"
+  "py": "pytacheck.db.crossref.crossref_doi"
+  "args":
+    "doi":
+      "$expr":
+        "r": "c(NA, NA)"
+        "py": "[None, None]"
+- "id": "crossref_doi.replay.fake"
+  "r": "identity"
+  "py": "copy.copy"
+  "args":
+    "x":
+      "$expr":
+        "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(crossref_doi(\"10.1177/fake\")); x"
+        "py": "__import__('tests.db.parity_replay', fromlist=['x']).call('pytacheck.db.crossref.crossref_doi', '10.1177/fake')"
+- "id": "crossref_doi.replay.one"
+  "r": "identity"
+  "py": "copy.copy"
+  "args":
+    "x":
+      "$expr":
+        "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(crossref_doi(\"10.1177/0956797614520714\")); x"
+        "py": "__import__('tests.db.parity_replay', fromlist=['x']).call('pytacheck.db.crossref.crossref_doi', '10.1177/0956797614520714')"
+- "id": "crossref_doi.replay.mixed"
+  "r": "identity"
+  "py": "copy.copy"
+  "args":
+    "x":
+      "$expr":
+        "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(crossref_doi(c(\"10.1177/0956797614520714\", \"10.1177/fake\", \"bad\", NA, \"https://doi.org/10.1098/rspb.2002.2034\"))); x"
+        "py": "__import__('tests.db.parity_replay', fromlist=['x']).call('pytacheck.db.crossref.crossref_doi', ['10.1177/0956797614520714', '10.1177/fake', 'bad', None, 'https://doi.org/10.1098/rspb.2002.2034'])"
+- "id": "crossref_doi.replay.select"
+  "r": "identity"
+  "py": "copy.copy"
+  "args":
+    "x":
+      "$expr":
+        "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(crossref_doi(c(\"10.1177/0956797613520608\", \"10.1177/0956797614522816\"), c(\"DOI\", \"title\"))); x"
+        "py": "__import__('tests.db.parity_replay', fromlist=['x']).call('pytacheck.db.crossref.crossref_doi', ['10.1177/0956797613520608', '10.1177/0956797614522816'], ['DOI', 'title'])"
+- "id": "crossref_doi.replay.paper"
+  "r": "identity"
+  "py": "copy.copy"
+  "args":
+    "x":
+      "$expr":
+        "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(crossref_doi(read(file.path(root, \"upstream/metacheck/tests/testthat/fixtures/psychsci/0956797613520608.json\")), c(\"DOI\", \"title\"))); x"
+        "py": "__import__('tests.db.parity_replay', fromlist=['x']).call('pytacheck.db.crossref.crossref_doi', pc.read('upstream/metacheck/tests/testthat/fixtures/psychsci/0956797613520608.json'), ['DOI', 'title'])"
+- "id": "crossref_doi.replay.paperlist"
+  "r": "identity"
+  "py": "copy.copy"
+  "args":
+    "x":
+      "$expr":
+        "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(crossref_doi(read(file.path(root, \"upstream/metacheck/tests/testthat/fixtures/psychsci\"))[1:2], c(\"DOI\", \"title\", \"year\"))); x"
+        "py": "__import__('tests.db.parity_replay', fromlist=['x']).call('pytacheck.db.crossref.crossref_doi', pc.read('upstream/metacheck/tests/testthat/fixtures/psychsci')[0:2], ['DOI', 'title', 'year'])"
+- "id": "crossref_doi.replay.demo_bib"
+  "r": "identity"
+  "py": "copy.copy"
+  "args":
+    "x":
+      "$expr":
+        "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(crossref_doi(demopaper()$bib$doi)); x"
+        "py": "__import__('tests.db.parity_replay', fromlist=['x']).call('pytacheck.db.crossref.crossref_doi', pc.demopaper().bib['doi'])"
+- "id": "crossref_query.empty"
+  "r": "crossref_query"
+  "py": "pytacheck.db.crossref.crossref_query"
+  "args":
+    "ref":
+      "$chr": []
+- "id": "crossref_query.replay.lakens"
+  "r": "identity"
+  "py": "copy.copy"
+  "args":
+    "x":
+      "$expr":
+        "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(crossref_query(\"Lakens, D., Mesquida, C., Rasti, S., & Ditroilo, M. (2024). The benefits of preregistration and Registered Reports. Evidence-Based Toxicology, 2(1).\", min_score = 50)); x"
+        "py": "__import__('tests.db.parity_replay', fromlist=['x']).call('pytacheck.db.crossref.crossref_query', 'Lakens, D., Mesquida, C., Rasti, S., & Ditroilo, M. (2024). The benefits of preregistration and Registered Reports. Evidence-Based Toxicology, 2(1).', min_score=50)"
+- "id": "crossref_query.replay.nomatch"
+  "r": "identity"
+  "py": "copy.copy"
+  "args":
+    "x":
+      "$expr":
+        "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(crossref_query(\"DeBruine, L. (2027) I haven't written this paper. Journal of Journals.\", min_score = 50)); x"
+        "py": "__import__('tests.db.parity_replay', fromlist=['x']).call('pytacheck.db.crossref.crossref_query', \"DeBruine, L. (2027) I haven't written this paper. Journal of Journals.\", min_score=50)"
+- "id": "crossref_query.replay.select_doi"
+  "r": "identity"
+  "py": "copy.copy"
+  "args":
+    "x":
+      "$expr":
+        "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(crossref_query(\"Lakens, D., Mesquida, C., Rasti, S., & Ditroilo, M. (2024). The benefits of preregistration and Registered Reports. Evidence-Based Toxicology, 2(1).\", select = c(\"DOI\"))); x"
+        "py": "__import__('tests.db.parity_replay', fromlist=['x']).call('pytacheck.db.crossref.crossref_query', 'Lakens, D., Mesquida, C., Rasti, S., & Ditroilo, M. (2024). The benefits of preregistration and Registered Reports. Evidence-Based Toxicology, 2(1).', select=['DOI'])"
+- "id": "crossref_query.replay.select_score_title"
+  "r": "identity"
+  "py": "copy.copy"
+  "args":
+    "x":
+      "$expr":
+        "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(crossref_query(\"Lakens, D., Mesquida, C., Rasti, S., & Ditroilo, M. (2024). The benefits of preregistration and Registered Reports. Evidence-Based Toxicology, 2(1).\", select = c(\"score\", \"title\"))); x"
+        "py": "__import__('tests.db.parity_replay', fromlist=['x']).call('pytacheck.db.crossref.crossref_query', 'Lakens, D., Mesquida, C., Rasti, S., & Ditroilo, M. (2024). The benefits of preregistration and Registered Reports. Evidence-Based Toxicology, 2(1).', select=['score', 'title'])"
+- "id": "crossref_query.replay.vector"
+  "r": "identity"
+  "py": "copy.copy"
+  "args":
+    "x":
+      "$expr":
+        "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(crossref_query(c(\"Lakens, D., Mesquida, C., Rasti, S., & Ditroilo, M. (2024). The benefits of preregistration and Registered Reports. Evidence-Based Toxicology, 2(1).\", \"DeBruine, L. (2027) I haven't written this paper. Journal of Journals.\"))); x"
+        "py": "__import__('tests.db.parity_replay', fromlist=['x']).call('pytacheck.db.crossref.crossref_query', ['Lakens, D., Mesquida, C., Rasti, S., & Ditroilo, M. (2024). The benefits of preregistration and Registered Reports. Evidence-Based Toxicology, 2(1).', \"DeBruine, L. (2027) I haven't written this paper. Journal of Journals.\"])"
+- "id": "crossref_query.replay.parens"
+  "r": "identity"
+  "py": "copy.copy"
+  "args":
+    "x":
+      "$expr":
+        "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(crossref_query(\"Levi DM, Klein SA, Aitsebaomo AP, Mon-Williams M, Tresilian JR, Strang NC, Kochhar P, Wann JP (1985. 1998).\\n“Improving vision: Neural compensation for optical defocus.” _Proceedings of the Royal Society B:\\nBiological Sciences_, *25*, 71-77. doi:10.1016/0042-6989(85)90207\\n<https://doi.org/10.1016/0042-6989(85)90207>.\")); x"
+        "py": "__import__('tests.db.parity_replay', fromlist=['x']).call('pytacheck.db.crossref.crossref_query', 'Levi DM, Klein SA, Aitsebaomo AP, Mon-Williams M, Tresilian JR, Strang NC, Kochhar P, Wann JP (1985. 1998).\\n“Improving vision: Neural compensation for optical defocus.” _Proceedings of the Royal Society B:\\nBiological Sciences_, *25*, 71-77. doi:10.1016/0042-6989(85)90207\\n<https://doi.org/10.1016/0042-6989(85)90207>.')"
+- "id": "crossref_query.replay.data_frame"
+  "r": "identity"
+  "py": "copy.copy"
+  "args":
+    "x":
+      "$expr":
+        "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(crossref_query(data.frame(authors = \"Lakens, D., Mesquida, C., Rasti, S., & Ditroilo, M.\", title = \"The benefits of preregistration and Registered Reports\", container = \"Evidence-Based Toxicology\", year = 2024), select = c(\"score\", \"title\"))); x"
+        "py": "__import__('tests.db.parity_replay', fromlist=['x']).call('pytacheck.db.crossref.crossref_query', pd.DataFrame({'authors': ['Lakens, D., Mesquida, C., Rasti, S., & Ditroilo, M.'], 'title': ['The benefits of preregistration and Registered Reports'], 'container': ['Evidence-Based Toxicology'], 'year': [2024]}), select=['score', 'title'])"
+- "id": "crossref_query.replay.psychsci_bib"
+  "r": "identity"
+  "py": "copy.copy"
+  "args":
+    "x":
+      "$expr":
+        "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(crossref_query(read(file.path(root, \"upstream/metacheck/tests/testthat/fixtures/psychsci/0956797613520608.json\"))$bib[6:7, ], min_score = 50)); x"
+        "py": "__import__('tests.db.parity_replay', fromlist=['x']).call('pytacheck.db.crossref.crossref_query', pc.read('upstream/metacheck/tests/testthat/fixtures/psychsci/0956797613520608.json').bib.iloc[5:7], min_score=50)"
+- "id": "add_bib_match.replay.unmatched"
+  "r": "identity"
+  "py": "copy.copy"
+  "args":
+    "x":
+      "$expr":
+        "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(add_bib_match(local({p <- test_paper(\"x\"); p$bib <- data.frame(bib_id = 1, doi = NA, title = \"Not a real paper\", container = \"Journal of Journals\", authors = \"Not A. Realname\"); p}))); x$bib_match"
+        "py": "(lambda x: x.bib_match)(__import__('tests.db.parity_replay', fromlist=['x']).call('pytacheck.db.crossref.add_bib_match', __import__('tests.db.parity_replay', fromlist=['x']).paper_with_bib({'bib_id': [1], 'doi': [None], 'title': ['Not a real paper'], 'container': ['Journal of Journals'], 'authors': ['Not A. Realname']})))"
+  "compare":
+    "ignore":
+    - "editors"
+- "id": "add_bib_match.replay.invalid_doi"
+  "r": "identity"
+  "py": "copy.copy"
+  "args":
+    "x":
+      "$expr":
+        "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(add_bib_match(local({p <- test_paper(\"x\"); p$bib <- data.frame(bib_id = 1, doi = \"not.a.doi\", title = \"Facial resemblance enhances trust\", container = \"Proceedings of the Royal Society of London B\", authors = \"Lisa DeBruine\"); p}))); x$bib_match"
+        "py": "(lambda x: x.bib_match)(__import__('tests.db.parity_replay', fromlist=['x']).call('pytacheck.db.crossref.add_bib_match', __import__('tests.db.parity_replay', fromlist=['x']).paper_with_bib({'bib_id': [1], 'doi': ['not.a.doi'], 'title': ['Facial resemblance enhances trust'], 'container': ['Proceedings of the Royal Society of London B'], 'authors': ['Lisa DeBruine']})))"
+  "compare":
+    "ignore":
+    - "editors"
+- "id": "add_bib_match.replay.valid_doi"
+  "r": "identity"
+  "py": "copy.copy"
+  "args":
+    "x":
+      "$expr":
+        "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(add_bib_match(local({p <- test_paper(\"x\"); p$bib <- data.frame(bib_id = 1, doi = \"10.1098/rspb.2002.2034\", title = \"Facial resemblance enhances trust\", container = \"Proceedings of the Royal Society of London B\", authors = \"Lisa DeBruine\"); p}))); x$bib_match"
+        "py": "(lambda x: x.bib_match)(__import__('tests.db.parity_replay', fromlist=['x']).call('pytacheck.db.crossref.add_bib_match', __import__('tests.db.parity_replay', fromlist=['x']).paper_with_bib({'bib_id': [1], 'doi': ['10.1098/rspb.2002.2034'], 'title': ['Facial resemblance enhances trust'], 'container': ['Proceedings of the Royal Society of London B'], 'authors': ['Lisa DeBruine']})))"
+  "compare":
+    "ignore":
+    - "editors"
+- "id": "add_bib_match.replay.two_refs_min0"
+  "r": "identity"
+  "py": "copy.copy"
+  "args":
+    "x":
+      "$expr":
+        "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(add_bib_match(local({p <- test_paper(\"x\"); p$bib <- data.frame(bib_id = 1:2, doi = NA, title = c(\"Facial resemblance enhances trust\", \"Trustworthy but not Lustworthy\"), container = c(\"Proceedings of the Royal Society of London B\"), authors = I(list(\"Lisa DeBruine\", \"Lisa DeBruine\"))); p}), 0)); x$bib_match"
+        "py": "(lambda x: x.bib_match)(__import__('tests.db.parity_replay', fromlist=['x']).call('pytacheck.db.crossref.add_bib_match', __import__('tests.db.parity_replay', fromlist=['x']).paper_with_bib({'bib_id': [1, 2], 'doi': [None, None], 'title': ['Facial resemblance enhances trust', 'Trustworthy but not Lustworthy'], 'container': ['Proceedings of the Royal Society of London B'] * 2, 'authors': [['Lisa DeBruine'], ['Lisa DeBruine']]}), 0))"
+  "compare":
+    "ignore":
+    - "editors"
+- "id": "add_bib_match.replay.paperlist"
+  "r": "identity"
+  "py": "copy.copy"
+  "args":
+    "x":
+      "$expr":
+        "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(add_bib_match(paperlist(local({p <- test_paper(\"x\"); p$bib <- data.frame(bib_id = 1:2, doi = NA, title = c(\"Facial resemblance enhances trust\", \"Trustworthy but not Lustworthy\"), container = c(\"Proceedings of the Royal Society of London B\"), authors = c(\"Lisa DeBruine\", \"Lisa DeBruine\")); p$paper_id <- \"paper_a\"; p}), local({p <- test_paper(\"x\"); p$bib <- data.frame(bib_id = 1:2, doi = NA, title = c(\"Trustworthy but not Lustworthy\", \"Equivalence Tests: A Practical Primer for t Tests, Correlations, and Meta-Analyses\"), container = c(\"Proceedings of the Royal Society of London B\", \"Social Psychological and Personality Science\"), authors = c(\"Lisa DeBruine\", \"Daniel Lakens\")); p$paper_id <- \"paper_b\"; p})), 0)); unname(lapply(x, function(p) p$bib_match))"
+        "py": "(lambda x: [p.bib_match for p in x])(__import__('tests.db.parity_replay', fromlist=['x']).call('pytacheck.db.crossref.add_bib_match', __import__('tests.db.parity_replay', fromlist=['x']).paperlist(__import__('tests.db.parity_replay', fromlist=['x']).paper_with_bib({'bib_id': [1, 2], 'doi': [None, None], 'title': ['Facial resemblance enhances trust', 'Trustworthy but not Lustworthy'], 'container': ['Proceedings of the Royal Society of London B'] * 2, 'authors': ['Lisa DeBruine', 'Lisa DeBruine']}, paper_id='paper_a'), __import__('tests.db.parity_replay', fromlist=['x']).paper_with_bib({'bib_id': [1, 2], 'doi': [None, None], 'title': ['Trustworthy but not Lustworthy', 'Equivalence Tests: A Practical Primer for t Tests, Correlations, and Meta-Analyses'], 'container': ['Proceedings of the Royal Society of London B', 'Social Psychological and Personality Science'], 'authors': ['Lisa DeBruine', 'Daniel Lakens']}, paper_id='paper_b')), 0))"
+  "compare":
+    "ignore":
+    - "[0].editors"
+    - "[1].editors"
+- "id": "add_bib_match.no_refs"
+  "r": "identity"
+  "py": "copy.copy"
+  "args":
+    "x":
+      "$expr":
+        "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(add_bib_match(test_paper('No refs'))); x$bib_match"
+        "py": "(lambda x: x.bib_match)(__import__('tests.db.parity_replay', fromlist=['x']).call('pytacheck.db.crossref.add_bib_match', pc.test_paper('No refs')))"
+- "id": "add_bib_match.replay.psychsci"
+  "r": "identity"
+  "py": "copy.copy"
+  "args":
+    "x":
+      "$expr":
+        "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(add_bib_match(read(file.path(root, \"upstream/metacheck/tests/testthat/fixtures/psychsci/0956797613520608.json\")))); x$bib_match"
+        "py": "(lambda x: x.bib_match)(__import__('tests.db.parity_replay', fromlist=['x']).call('pytacheck.db.crossref.add_bib_match', pc.read('upstream/metacheck/tests/testthat/fixtures/psychsci/0956797613520608.json')))"
+  "compare":
+    "ignore":
+    - "editors"
+- "id": "add_bib_match.replay.demo"
+  "r": "identity"
+  "py": "copy.copy"
+  "args":
+    "x":
+      "$expr":
+        "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(add_bib_match(demopaper())); x$bib_match"
+        "py": "(lambda x: x.bib_match)(__import__('tests.db.parity_replay', fromlist=['x']).call('pytacheck.db.crossref.add_bib_match', pc.demopaper()))"
+  "compare":
+    "ignore":
+    - "editors"
+- "id": "crossref_doi.replay.unrecorded"
+  "r": "identity"
+  "py": "copy.copy"
+  "args":
+    "x":
+      "$expr":
+        "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(crossref_doi(c(\"10.9999/not.recorded\", \"10.1177/0956797614520714\"))); x"
+        "py": "__import__('tests.db.parity_replay', fromlist=['x']).call('pytacheck.db.crossref.crossref_doi', ['10.9999/not.recorded', '10.1177/0956797614520714'])"
+- "id": "crossref_query.replay.unrecorded"
+  "r": "identity"
+  "py": "copy.copy"
+  "args":
+    "x":
+      "$expr":
+        "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(crossref_query(c(\"An unrecorded reference text\", NA))); x"
+        "py": "__import__('tests.db.parity_replay', fromlist=['x']).call('pytacheck.db.crossref.crossref_query', ['An unrecorded reference text', None])"
+- "id": "crossref_query.replay.paper"
+  "r": "identity"
+  "py": "copy.copy"
+  "args":
+    "x":
+      "$expr":
+        "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(crossref_query(read(file.path(root, \"upstream/metacheck/tests/testthat/fixtures/psychsci/0956797613520608.json\")))); x"
+        "py": "__import__('tests.db.parity_replay', fromlist=['x']).call('pytacheck.db.crossref.crossref_query', pc.read('upstream/metacheck/tests/testthat/fixtures/psychsci/0956797613520608.json'))"
+- "id": "doi_resolves.replay.unrecorded"
+  "r": "identity"
+  "py": "copy.copy"
+  "args":
+    "x":
+      "$expr":
+        "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(doi_resolves(c(\"10.9999/not.recorded\", \"10.1038/nphys1170\"))); x"
+        "py": "__import__('tests.db.parity_replay', fromlist=['x']).call('pytacheck.db.doi.doi_resolves', ['10.9999/not.recorded', '10.1038/nphys1170'])"
+- "id": "openalex_doi.empty"
+  "r": "openalex_doi"
+  "py": "pytacheck.db.crossref.openalex_doi"
+  "args":
+    "doi":
+      "$chr": []
+- "id": "openalex_doi.na"
+  "r": "openalex_doi"
+  "py": "pytacheck.db.crossref.openalex_doi"
+  "args":
+    "doi":
+      "$NA": true
+  "py_args":
+    "doi":
+    - null
+- "id": "openalex_doi.replay.fake"
+  "r": "identity"
+  "py": "copy.copy"
+  "args":
+    "x":
+      "$expr":
+        "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(openalex_doi(\"10.1177/fake\")); x"
+        "py": "__import__('tests.db.parity_replay', fromlist=['x']).call('pytacheck.db.crossref.openalex_doi', '10.1177/fake')"
+- "id": "openalex_doi.replay.malformed"
+  "r": "identity"
+  "py": "copy.copy"
+  "args":
+    "x":
+      "$expr":
+        "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(openalex_doi(\"bad.form\")); x"
+        "py": "__import__('tests.db.parity_replay', fromlist=['x']).call('pytacheck.db.crossref.openalex_doi', 'bad.form')"
+- "id": "openalex_doi.replay.two"
+  "r": "identity"
+  "py": "copy.copy"
+  "args":
+    "x":
+      "$expr":
+        "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(openalex_doi(c(\"10.1177/0956797614520714\", \"https://doi.org/10.1177/0956797613520608\", \"bad.form\", NA))); lapply(x, function(e) e[intersect(c(\"id\", \"doi\", \"title\", \"publication_year\", \"is_retracted\", \"type\", \"abstract\", \"DOI\", \"error\"), names(e))])"
+        "py": "(lambda x: [{k: e[k] for k in ['id', 'doi', 'title', 'publication_year', 'is_retracted', 'type', 'abstract', 'DOI', 'error'] if k in e} for e in x])(__import__('tests.db.parity_replay', fromlist=['x']).call('pytacheck.db.crossref.openalex_doi', ['10.1177/0956797614520714', 'https://doi.org/10.1177/0956797613520608', 'bad.form', None]))"
+- "id": "openalex_doi.replay.paperlist"
+  "r": "identity"
+  "py": "copy.copy"
+  "args":
+    "x":
+      "$expr":
+        "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(openalex_doi(read(file.path(root, \"upstream/metacheck/tests/testthat/fixtures/psychsci\"))[1:2])); lapply(x, function(e) e[intersect(c(\"id\", \"doi\", \"title\", \"publication_year\", \"is_retracted\", \"type\", \"abstract\", \"DOI\", \"error\"), names(e))])"
+        "py": "(lambda x: [{k: e[k] for k in ['id', 'doi', 'title', 'publication_year', 'is_retracted', 'type', 'abstract', 'DOI', 'error'] if k in e} for e in x])(__import__('tests.db.parity_replay', fromlist=['x']).call('pytacheck.db.crossref.openalex_doi', pc.read('upstream/metacheck/tests/testthat/fixtures/psychsci')[0:2]))"
+- "id": "openalex_add_abstract.synthetic"
+  "r": "metacheck:::.openalex_add_abstract"
+  "py": "pytacheck.db.crossref._openalex_add_abstract"
+  "args":
+    "info":
+      "$expr":
+        "r": "jsonlite::parse_json(\"{\\\"id\\\": \\\"W1\\\", \\\"abstract_inverted_index\\\": {\\\"world\\\": [1, 4], \\\"Hello\\\": [0], \\\"again\\\": [3], \\\"big\\\": [2]}}\")"
+        "py": "__import__('json').loads('{\"id\": \"W1\", \"abstract_inverted_index\": {\"world\": [1, 4], \"Hello\": [0], \"again\": [3], \"big\": [2]}}')"
+- "id": "openalex_add_abstract.none"
+  "r": "metacheck:::.openalex_add_abstract"
+  "py": "pytacheck.db.crossref._openalex_add_abstract"
+  "args":
+    "info":
+      "$expr":
+        "r": "jsonlite::parse_json(\"{\\\"id\\\": \\\"W1\\\", \\\"abstract_inverted_index\\\": null}\")"
+        "py": "__import__('json').loads('{\"id\": \"W1\", \"abstract_inverted_index\": null}')"
+- "id": "openalex_add_abstract.recorded"
+  "r": "identity"
+  "py": "copy.copy"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck:::.openalex_add_abstract(jsonlite::read_json(file.path(root, \"upstream/metacheck/tests/testthat/apis/api.openalex.org/works/https-/doi.org/10.1177%2F0956797614520714-e55db1.json\")))$abstract"
+        "py": "__import__('pytacheck.db.crossref', fromlist=['x'])._openalex_add_abstract(__import__('orjson').loads(open('upstream/metacheck/tests/testthat/apis/api.openalex.org/works/https-/doi.org/10.1177%2F0956797614520714-e55db1.json', 'rb').read()))['abstract']"
+- "id": "openalex_query.replay.match"
+  "r": "identity"
+  "py": "copy.copy"
+  "args":
+    "x":
+      "$expr":
+        "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(openalex_query(\"Sample Size Justification\", \"Collabra Psychology\", \"Lakens, D\")); x"
+        "py": "__import__('tests.db.parity_replay', fromlist=['x']).call('pytacheck.db.crossref.openalex_query', 'Sample Size Justification', 'Collabra Psychology', 'Lakens, D')"
+- "id": "openalex_query.replay.no_source_strict"
+  "r": "identity"
+  "py": "copy.copy"
+  "args":
+    "x":
+      "$expr":
+        "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(openalex_query(\"Sample Size Justification\")); x"
+        "py": "__import__('tests.db.parity_replay', fromlist=['x']).call('pytacheck.db.crossref.openalex_query', 'Sample Size Justification')"
+- "id": "openalex_query.replay.no_source_loose"
+  "r": "identity"
+  "py": "copy.copy"
+  "args":
+    "x":
+      "$expr":
+        "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(openalex_query(\"Sample Size Justification\", strict = FALSE)); x"
+        "py": "__import__('tests.db.parity_replay', fromlist=['x']).call('pytacheck.db.crossref.openalex_query', 'Sample Size Justification', strict=False)"
+- "id": "openalex_query.replay.unrecorded"
+  "r": "identity"
+  "py": "copy.copy"
+  "args":
+    "x":
+      "$expr":
+        "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(openalex_query(\"An unrecorded title: with a subtitle\")); x"
+        "py": "__import__('tests.db.parity_replay', fromlist=['x']).call('pytacheck.db.crossref.openalex_query', 'An unrecorded title: with a subtitle')"
+- "id": "pubpeer_comments.replay.both"
+  "r": "identity"
+  "py": "copy.copy"
+  "args":
+    "x":
+      "$expr":
+        "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(pubpeer_comments(c(\"10.1038/s41598-025-24662-9\", \"10.1177/0146167211398138\"))); x"
+        "py": "__import__('tests.db.parity_replay', fromlist=['x']).call('pytacheck.db.pubpeer.pubpeer_comments', ['10.1038/s41598-025-24662-9', '10.1177/0146167211398138'])"
+- "id": "pubpeer_comments.replay.one"
+  "r": "identity"
+  "py": "copy.copy"
+  "args":
+    "x":
+      "$expr":
+        "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(pubpeer_comments(c(\"10.1038/s41598-025-24662-9\", \"10.1016/j.tics.2006.06.010\"))); x"
+        "py": "__import__('tests.db.parity_replay', fromlist=['x']).call('pytacheck.db.pubpeer.pubpeer_comments', ['10.1038/s41598-025-24662-9', '10.1016/j.tics.2006.06.010'])"
+- "id": "pubpeer_comments.replay.none"
+  "r": "identity"
+  "py": "copy.copy"
+  "args":
+    "x":
+      "$expr":
+        "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(pubpeer_comments(\"10.1016/j.tics.2006.06.010\")); x"
+        "py": "__import__('tests.db.parity_replay', fromlist=['x']).call('pytacheck.db.pubpeer.pubpeer_comments', '10.1016/j.tics.2006.06.010')"
+- "id": "pubpeer_comments.replay.invalid"
+  "r": "identity"
+  "py": "copy.copy"
+  "args":
+    "x":
+      "$expr":
+        "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(pubpeer_comments(\"nope/hasd\")); x"
+        "py": "__import__('tests.db.parity_replay', fromlist=['x']).call('pytacheck.db.pubpeer.pubpeer_comments', 'nope/hasd')"
+- "id": "pubpeer_comments.replay.with_na"
+  "r": "identity"
+  "py": "copy.copy"
+  "args":
+    "x":
+      "$expr":
+        "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(pubpeer_comments(c(\"10.1038/s41598-025-24662-9\", NA))); x"
+        "py": "__import__('tests.db.parity_replay', fromlist=['x']).call('pytacheck.db.pubpeer.pubpeer_comments', ['10.1038/s41598-025-24662-9', None])"
+- "id": "pubpeer_comments.replay.empty"
+  "r": "identity"
+  "py": "copy.copy"
+  "args":
+    "x":
+      "$expr":
+        "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(pubpeer_comments(c())); x"
+        "py": "__import__('tests.db.parity_replay', fromlist=['x']).call('pytacheck.db.pubpeer.pubpeer_comments', [])"
+- "id": "openalex_doi.replay.unrecorded"
+  "r": "identity"
+  "py": "copy.copy"
+  "args":
+    "x":
+      "$expr":
+        "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(openalex_doi(c(\"10.1177/0956797614520714\", \"10.9999/not.recorded\"))); x"
+        "py": "__import__('tests.db.parity_replay', fromlist=['x']).call('pytacheck.db.crossref.openalex_doi', ['10.1177/0956797614520714', '10.9999/not.recorded'])"
+- "id": "pubpeer_comments.replay.unrecorded"
+  "r": "identity"
+  "py": "copy.copy"
+  "args":
+    "x":
+      "$expr":
+        "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(pubpeer_comments(c(\"10.9999/a\", \"10.9999/b\", \"10.9999/c\"))); x"
+        "py": "__import__('tests.db.parity_replay', fromlist=['x']).call('pytacheck.db.pubpeer.pubpeer_comments', ['10.9999/a', '10.9999/b', '10.9999/c'])"
+- "id": "retractionwatch.summary"
+  "r": "identity"
+  "py": "copy.copy"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({x <- as.data.frame(retractionwatch()); list(nrow = nrow(x), names = names(x), nchar = unname(sapply(x, function(v) sum(nchar(v), na.rm = TRUE))), na = unname(sapply(x, function(v) sum(is.na(v)))), head = head(x, 25), middle = x[seq(2, nrow(x), by = 997), ], tail = tail(x, 25))})"
+        "py": "(lambda x: {'nrow': len(x), 'names': list(x.columns), 'nchar': [int(x[c].str.len().sum()) for c in x.columns], 'na': [int(x[c].isna().sum()) for c in x.columns], 'head': x.head(25), 'middle': x.iloc[1::997], 'tail': x.tail(25)})(__import__('pytacheck.db.retractionwatch', fromlist=['x']).retractionwatch())"
+- "id": "rw.summary"
+  "r": "identity"
+  "py": "copy.copy"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({x <- as.data.frame(rw()); list(nrow = nrow(x), names = names(x), nchar = unname(sapply(x, function(v) sum(nchar(v), na.rm = TRUE))), na = unname(sapply(x, function(v) sum(is.na(v)))), head = head(x, 25), middle = x[seq(2, nrow(x), by = 997), ], tail = tail(x, 25))})"
+        "py": "(lambda x: {'nrow': len(x), 'names': list(x.columns), 'nchar': [int(x[c].str.len().sum()) for c in x.columns], 'na': [int(x[c].isna().sum()) for c in x.columns], 'head': x.head(25), 'middle': x.iloc[1::997], 'tail': x.tail(25)})(__import__('pytacheck.db.retractionwatch', fromlist=['x']).rw())"
+- "id": "rw_date"
+  "r": "rw_date"
+  "py": "pytacheck.db.retractionwatch.rw_date"
+  "args": {}
+- "id": "FLoRA.summary"
+  "r": "identity"
+  "py": "copy.copy"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({x <- as.data.frame(FLoRA()); list(nrow = nrow(x), names = names(x), nchar = unname(sapply(x, function(v) sum(nchar(v), na.rm = TRUE))), na = unname(sapply(x, function(v) sum(is.na(v)))), head = head(x, 25), middle = x[seq(2, nrow(x), by = 997), ], tail = tail(x, 25))})"
+        "py": "(lambda x: {'nrow': len(x), 'names': list(x.columns), 'nchar': [int(x[c].str.len().sum()) for c in x.columns], 'na': [int(x[c].isna().sum()) for c in x.columns], 'head': x.head(25), 'middle': x.iloc[1::997], 'tail': x.tail(25)})(__import__('pytacheck.db.replications', fromlist=['x']).FLoRA())"
+- "id": "FLoRA_date"
+  "r": "FLoRA_date"
+  "py": "pytacheck.db.replications.FLoRA_date"
+  "args": {}
+- "id": "miscite.all"
+  "r": "identity"
+  "py": "copy.copy"
+  "args":
+    "x":
+      "$expr":
+        "r": "readRDS(system.file(\"databases/miscite.Rds\", package = \"metacheck\"))"
+        "py": "__import__('pytacheck.db.databases', fromlist=['x']).miscite()"
+- "id": "retractionwatch.join.demo"
+  "r": "identity"
+  "py": "copy.copy"
+  "args":
+    "x":
+      "$expr":
+        "r": "dplyr::inner_join(paper_table(demopaper(), \"bib\", c(\"bib_id\", \"doi\")), rw(), by = \"doi\")"
+        "py": "pc.paper_table(pc.demopaper(), 'bib', ['bib_id', 'doi']).merge(__import__('pytacheck.db.retractionwatch', fromlist=['x']).rw(), on='doi', how='inner')"
+- "id": "FLoRA.join.demo"
+  "r": "identity"
+  "py": "copy.copy"
+  "args":
+    "x":
+      "$expr":
+        "r": "dplyr::inner_join(paper_table(demopaper(), \"bib\", c(\"bib_id\", \"doi\")), FLoRA(), by = c(doi = \"doi_o\"))"
+        "py": "pc.paper_table(pc.demopaper(), 'bib', ['bib_id', 'doi']).merge(__import__('pytacheck.db.replications', fromlist=['x']).FLoRA().rename(columns={'doi_o': 'doi'}), on='doi', how='inner')"
+- "id": "retractionwatch.join.psychsci"
+  "r": "identity"
+  "py": "copy.copy"
+  "args":
+    "x":
+      "$expr":
+        "r": "dplyr::inner_join(paper_table(read(file.path(root, \"upstream/metacheck/tests/testthat/fixtures/psychsci\")), \"bib\", c(\"bib_id\", \"doi\")), rw(), by = \"doi\")"
+        "py": "pc.paper_table(pc.read('upstream/metacheck/tests/testthat/fixtures/psychsci'), 'bib', ['bib_id', 'doi']).merge(__import__('pytacheck.db.retractionwatch', fromlist=['x']).rw(), on='doi', how='inner')"
+- "id": "FLoRA.join.psychsci"
+  "r": "identity"
+  "py": "copy.copy"
+  "args":
+    "x":
+      "$expr":
+        "r": "dplyr::inner_join(paper_table(read(file.path(root, \"upstream/metacheck/tests/testthat/fixtures/psychsci\")), \"bib\", c(\"bib_id\", \"doi\")), FLoRA(), by = c(doi = \"doi_o\"))"
+        "py": "pc.paper_table(pc.read('upstream/metacheck/tests/testthat/fixtures/psychsci'), 'bib', ['bib_id', 'doi']).merge(__import__('pytacheck.db.replications', fromlist=['x']).FLoRA().rename(columns={'doi_o': 'doi'}), on='doi', how='inner')"
+- "id": "miscite.join.demo"
+  "r": "identity"
+  "py": "copy.copy"
+  "args":
+    "x":
+      "$expr":
+        "r": "dplyr::inner_join(paper_table(demopaper(), \"bib\", c(\"bib_id\", \"doi\")), readRDS(system.file(\"databases/miscite.Rds\", package = \"metacheck\")), by = \"doi\")"
+        "py": "pc.paper_table(pc.demopaper(), 'bib', ['bib_id', 'doi']).merge(__import__('pytacheck.db.databases', fromlist=['x']).miscite(), on='doi', how='inner')"
+- "id": "FLoRA.lookup.dois"
+  "r": "identity"
+  "py": "copy.copy"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({f <- FLoRA(); f[f$doi_o %in% c(\"10.1037/0003-066x.54.6.408\", \"10.1002/acp.1376\", \"10.1002/(sici)1099-0771(199806)11:2%3c107::aid-bdm292%3e3.0.co;2-y\"), ]})"
+        "py": "(lambda f: f[f['doi_o'].isin(['10.1037/0003-066x.54.6.408', '10.1002/acp.1376', '10.1002/(sici)1099-0771(199806)11:2%3c107::aid-bdm292%3e3.0.co;2-y'])])(__import__('pytacheck.db.replications', fromlist=['x']).FLoRA())"
+- "id": "rw_update.data_step"
+  "r": "identity"
+  "py": "copy.copy"
+  "args":
+    "x":
+      "$expr":
+        "r": "utils::read.csv(file.path(root, \"tests/db/data/retractions.csv\")) |> dplyr::select(doi = OriginalPaperDOI, retractionwatch = RetractionNature) |> dplyr::filter(doi != \"unavailable\", retractionwatch != \"\") |> dplyr::summarise(retractionwatch = unique(retractionwatch) |> paste(collapse = \";\"), .by = doi)"
+        "py": "__import__('pytacheck.db.retractionwatch', fromlist=['x']).summarise_retractionwatch('tests/db/data/retractions.csv')"
+- "id": "FLoRA_update.data_step"
+  "r": "identity"
+  "py": "copy.copy"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({FLoRA <- suppressMessages(readr::read_csv(file.path(root, \"tests/db/data/flora.csv\"), show_col_types = FALSE)); has_doi_o <- !is.na(FLoRA$doi_o) & FLoRA$doi_o != \"\"; has_doi_r <- !is.na(FLoRA$doi_r) & FLoRA$doi_r != \"\"; has_url_r <- !is.na(FLoRA$url_r) & FLoRA$url_r != \"\"; rows <- has_doi_o & (has_doi_r | has_url_r); cols <- c(\"doi_o\", \"apa_ref_o\", \"doi_r\", \"apa_ref_r\", \"url_r\", \"outcome\", \"outcome_quote\", \"type\"); as.data.frame(dplyr::distinct(FLoRA[rows, cols]))})"
+        "py": "__import__('pytacheck.db.replications', fromlist=['x']).summarise_flora('tests/db/data/flora.csv')"
+- "id": "check_orcid.valid"
+  "r": "check_orcid"
+  "py": "pytacheck.db.orcid.check_orcid"
+  "args":
+    "orcid": "0000-0002-7523-5539"
+- "id": "check_orcid.valid_x"
+  "r": "check_orcid"
+  "py": "pytacheck.db.orcid.check_orcid"
+  "args":
+    "orcid": "0000-0002-0247-239X"
+- "id": "check_orcid.url"
+  "r": "check_orcid"
+  "py": "pytacheck.db.orcid.check_orcid"
+  "args":
+    "orcid": "https://orcid.org/0000-0002-0247-239X"
+- "id": "check_orcid.bare"
+  "r": "check_orcid"
+  "py": "pytacheck.db.orcid.check_orcid"
+  "args":
+    "orcid": "0000000275235539"
+- "id": "check_orcid.bad_checksum"
+  "r": "check_orcid"
+  "py": "pytacheck.db.orcid.check_orcid"
+  "args":
+    "orcid": "0000-0002-0247-2394"
+- "id": "check_orcid.short"
+  "r": "check_orcid"
+  "py": "pytacheck.db.orcid.check_orcid"
+  "args":
+    "orcid": "0000-0002-0247"
+- "id": "check_orcid.lower_x"
+  "r": "check_orcid"
+  "py": "pytacheck.db.orcid.check_orcid"
+  "args":
+    "orcid": "0000-0002-0247-239x"
+- "id": "check_orcid.x_inside"
+  "r": "check_orcid"
+  "py": "pytacheck.db.orcid.check_orcid"
+  "args":
+    "orcid": "X000-0002-0247-2394"
+- "id": "check_orcid.empty"
+  "r": "check_orcid"
+  "py": "pytacheck.db.orcid.check_orcid"
+  "args":
+    "orcid": ""
+- "id": "check_orcid.na"
+  "r": "check_orcid"
+  "py": "pytacheck.db.orcid.check_orcid"
+  "args":
+    "orcid":
+      "$NA": true
+- "id": "credit_roles.default"
+  "r": "credit_roles"
+  "py": "pytacheck.db.orcid.credit_roles"
+  "args": {}
+- "id": "credit_roles.names"
+  "r": "credit_roles"
+  "py": "pytacheck.db.orcid.credit_roles"
+  "args":
+    "display": "names"
+- "id": "credit_roles.abbr"
+  "r": "credit_roles"
+  "py": "pytacheck.db.orcid.credit_roles"
+  "args":
+    "display": "abbr"
+- "id": "get_orcid.no_family"
+  "r": "get_orcid"
+  "py": "pytacheck.db.orcid.get_orcid"
+  "args":
+    "family": " "
+- "id": "regcheck_base_url.ollama"
+  "r": "regcheck_base_url"
+  "py": "pytacheck.db.regcheck.regcheck_base_url"
+  "args":
+    "client": "ollama"
+- "id": "regcheck_base_url.groq"
+  "r": "regcheck_base_url"
+  "py": "pytacheck.db.regcheck.regcheck_base_url"
+  "args":
+    "client": "groq"
+- "id": "regcheck_base_url.deepseek"
+  "r": "regcheck_base_url"
+  "py": "pytacheck.db.regcheck.regcheck_base_url"
+  "args":
+    "client": "deepseek"
+- "id": "regcheck_base_url.explicit"
+  "r": "regcheck_base_url"
+  "py": "pytacheck.db.regcheck.regcheck_base_url"
+  "args":
+    "client": "ollama"
+    "base_url": "https://my.server/"
+- "id": "regcheck_base_url.explicit_slashes"
+  "r": "regcheck_base_url"
+  "py": "pytacheck.db.regcheck.regcheck_base_url"
+  "args":
+    "client": "groq"
+    "base_url": "http://localhost:9999//"
+- "id": "regcheck_base_url.empty_explicit"
+  "r": "regcheck_base_url"
+  "py": "pytacheck.db.regcheck.regcheck_base_url"
+  "args":
+    "client": "openai"
+    "base_url": ""
+- "id": "regcheck_sanitize.greek"
+  "r": "metacheck:::.regcheck_sanitize"
+  "py": "pytacheck.db.regcheck._regcheck_sanitize"
+  "args":
+    "text": "α = .05, η² = 0.15"
+- "id": "regcheck_sanitize.symbols"
+  "r": "metacheck:::.regcheck_sanitize"
+  "py": "pytacheck.db.regcheck._regcheck_sanitize"
+  "args":
+    "text": "p ≤ .05 – a “result”"
+- "id": "regcheck_sanitize.cjk"
+  "r": "metacheck:::.regcheck_sanitize"
+  "py": "pytacheck.db.regcheck._regcheck_sanitize"
+  "args":
+    "text": "ok 中文 ok"
+- "id": "regcheck_sanitize.latin1"
+  "r": "metacheck:::.regcheck_sanitize"
+  "py": "pytacheck.db.regcheck._regcheck_sanitize"
+  "args":
+    "text": "Daniël Lakens"
+- "id": "regcheck_sanitize.mixed"
+  "r": "metacheck:::.regcheck_sanitize"
+  "py": "pytacheck.db.regcheck._regcheck_sanitize"
+  "args":
+    "text": "Ω ± 3° × 2 … ≠ ≈ −χ²(1) ‘q’ \U0001F600"
+- "id": "regcheck_tidy.canned"
+  "r": "regcheck_tidy"
+  "py": "pytacheck.db.regcheck.regcheck_tidy"
+  "args":
+    "result":
+      "$expr":
+        "r": "jsonlite::parse_json(\"{\\\"items\\\": [{\\\"dimension\\\": \\\"Sample size\\\", \\\"deviation_judgement\\\": \\\"yes\\\", \\\"paper_content_summary\\\": \\\"The paper reports 120 participants [PAPER_0001].\\\", \\\"registration_content_summary\\\": \\\"The registration plans 100 participants [REG_0001].\\\", \\\"deviation_information\\\": \\\"The paper sample (120) exceeds the preregistered sample (100).\\\", \\\"paper_content_quotes\\\": \\\"[PAPER_0001] We recruited 120 participants.\\\", \\\"registration_content_quotes\\\": \\\"[REG_0001] We will collect 100 participants.\\\"}, {\\\"dimension\\\": \\\"Hypotheses\\\", \\\"deviation_judgement\\\": \\\"no\\\", \\\"paper_content_summary\\\": \\\"H1: condition A > B.\\\", \\\"registration_content_summary\\\": \\\"H1: condition A > B.\\\", \\\"deviation_information\\\": \\\"The hypotheses are consistent.\\\", \\\"paper_content_quotes\\\": \\\"[PAPER_0002] We predicted A > B.\\\", \\\"registration_content_quotes\\\": \\\"[REG_0002] We predict A > B.\\\"}, {\\\"dimension\\\": \\\"Exclusion criteria\\\", \\\"deviation_judgement\\\": \\\"missing\\\", \\\"paper_content_summary\\\": \\\"Not described.\\\", \\\"registration_content_summary\\\": \\\"Exclude RTs under 200 ms.\\\", \\\"deviation_information\\\": \\\"The paper does not report exclusions, so this cannot be assessed.\\\", \\\"paper_content_quotes\\\": \\\"\\\", \\\"registration_content_quotes\\\": \\\"[REG_0003] We will exclude RTs under 200 ms.\\\"}]}\")"
+        "py": "__import__('json').loads('{\"items\": [{\"dimension\": \"Sample size\", \"deviation_judgement\": \"yes\", \"paper_content_summary\": \"The paper reports 120 participants [PAPER_0001].\", \"registration_content_summary\": \"The registration plans 100 participants [REG_0001].\", \"deviation_information\": \"The paper sample (120) exceeds the preregistered sample (100).\", \"paper_content_quotes\": \"[PAPER_0001] We recruited 120 participants.\", \"registration_content_quotes\": \"[REG_0001] We will collect 100 participants.\"}, {\"dimension\": \"Hypotheses\", \"deviation_judgement\": \"no\", \"paper_content_summary\": \"H1: condition A > B.\", \"registration_content_summary\": \"H1: condition A > B.\", \"deviation_information\": \"The hypotheses are consistent.\", \"paper_content_quotes\": \"[PAPER_0002] We predicted A > B.\", \"registration_content_quotes\": \"[REG_0002] We predict A > B.\"}, {\"dimension\": \"Exclusion criteria\", \"deviation_judgement\": \"missing\", \"paper_content_summary\": \"Not described.\", \"registration_content_summary\": \"Exclude RTs under 200 ms.\", \"deviation_information\": \"The paper does not report exclusions, so this cannot be assessed.\", \"paper_content_quotes\": \"\", \"registration_content_quotes\": \"[REG_0003] We will exclude RTs under 200 ms.\"}]}')"
+- "id": "regcheck_tidy.partial"
+  "r": "regcheck_tidy"
+  "py": "pytacheck.db.regcheck.regcheck_tidy"
+  "args":
+    "result":
+      "$expr":
+        "r": "jsonlite::parse_json(\"{\\\"items\\\": [{\\\"dimension\\\": \\\"Sample size\\\"}]}\")"
+        "py": "__import__('json').loads('{\"items\": [{\"dimension\": \"Sample size\"}]}')"
+- "id": "regcheck_tidy.empty_items"
+  "r": "regcheck_tidy"
+  "py": "pytacheck.db.regcheck.regcheck_tidy"
+  "args":
+    "result":
+      "$expr":
+        "r": "jsonlite::parse_json(\"{\\\"items\\\": []}\")"
+        "py": "__import__('json').loads('{\"items\": []}')"
+- "id": "regcheck_tidy.no_items"
+  "r": "regcheck_tidy"
+  "py": "pytacheck.db.regcheck.regcheck_tidy"
+  "args":
+    "result":
+      "$expr":
+        "r": "jsonlite::parse_json(\"{}\")"
+        "py": "__import__('json').loads('{}')"
+- "id": "regcheck_compare.error.no_prereg"
+  "r": "regcheck_compare"
+  "py": "pytacheck.db.regcheck.regcheck_compare"
+  "args":
+    "paper_text": "paper text"
+- "id": "regcheck_compare.error.both"
+  "r": "regcheck_compare"
+  "py": "pytacheck.db.regcheck.regcheck_compare"
+  "args":
+    "paper_text": "paper text"
+    "prereg_text": "prereg text"
+    "registration_id": "NCT01234567"
+- "id": "regcheck_compare.error.empty_paper"
+  "r": "regcheck_compare"
+  "py": "pytacheck.db.regcheck.regcheck_compare"
+  "args":
+    "paper_text": ""
+    "prereg_text": "prereg text"
+- "id": "regcheck_compare.error.two_papers"
+  "r": "regcheck_compare"
+  "py": "pytacheck.db.regcheck.regcheck_compare"
+  "args":
+    "paper_text":
+      "$chr":
+      - "a"
+      - "b"
+    "prereg_text": "prereg text"
+- "id": "regcheck_compare.error.unknown_client"
+  "r": "regcheck_compare"
+  "py": "pytacheck.db.regcheck.regcheck_compare"
+  "args":
+    "paper_text": "paper text"
+    "prereg_text": "prereg text"
+    "client": "gpt5"

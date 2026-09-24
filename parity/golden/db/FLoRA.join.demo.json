@@ -1,0 +1,86 @@
+{
+  "id": "FLoRA.join.demo",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 1,
+    "names": [
+      "bib_id",
+      "doi",
+      "paper_id",
+      "apa_ref_o",
+      "doi_r",
+      "apa_ref_r",
+      "url_r",
+      "outcome",
+      "outcome_quote",
+      "type"
+    ],
+    "v": [
+      {
+        "t": "int",
+        "v": [
+          1
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "10.1037/0003-066x.54.6.408"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "to_err_is_human"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Eagly, A. H., & Wood, W. (1999). The origins of sex differences in human behavior: Evolved dispositions versus social roles. American Psychologist, 54(6), 408–423. https://doi.org/10.1037/0003-066x.54.6.408"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "10.1177/1474704919852921"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Zhang, L., Lee, A. J., DeBruine, L. M., & Jones, B. C. (2019). Are Sex Differences in Preferences for Physical Attractiveness and Good Earning Capacity in Potential Mates Smaller in Countries With Greater Gender Equality? Evolutionary Psychology, 17(2). https://doi.org/10.1177/1474704919852921"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "failed"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Here we attempted to replicate previously reported links between sex differences in mate preferences and country-level measures of gender inequality [...]. Although women preferred mates with good earning capacity more than men did and men preferred physically attractive mates more than women did, we found little evidence that these sex differences were smaller in countries with greater gender equality. Although one analysis suggested that the sex difference in preferences for good earning capacity was smaller in countries with greater gender equality, this effect was not significant when controlling for Galton’s problem or when correcting for multiple comparisons. Collectively, these results provide little support for the social roles account of sex differences in mate preferences."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "replication"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

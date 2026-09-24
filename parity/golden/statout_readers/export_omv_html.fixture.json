@@ -1,0 +1,14 @@
+{
+  "id": "export_omv_html.fixture",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "<html><body><img src=\"data:image/png;base64,iVBORw0KGgpmYWtlcG5n\"><img src=\"01%20ttestIS/resources/plot.png\"><img src=\"missing.png\"><img src=\"https://example.org/x.png\"><img SRC=\"data:image/png;base64,AAAA\"><img src=\"data:image/jpeg;base64,/9j/4GZha2VqcGVn\"><\/body><\/html>"
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

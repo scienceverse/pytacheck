@@ -149,8 +149,8 @@ def stat_check(paper: Any) -> dict[str, Any]:
         guidance = [
             "For metascientific research on the validity of statcheck, and it's usefulness to "
             "prevent statistical reporting errors, see:",
-            format_ref(_NUIJTEN_2017),
-            format_ref(_NUIJTEN_2023),
+            str(format_ref(_NUIJTEN_2017)),
+            str(format_ref(_NUIJTEN_2023)),
         ]
         report = [
             _RED_REPORT,

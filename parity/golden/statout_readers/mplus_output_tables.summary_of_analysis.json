@@ -1,0 +1,105 @@
+{
+  "id": "mplus_output_tables.summary_of_analysis",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "tables",
+      "consumed",
+      "labelvalue"
+    ],
+    "v": [
+      {
+        "t": "list",
+        "names": null,
+        "v": []
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "Number of groups",
+              "Number of observations",
+              "Number of dependent variables",
+              "Number of independent variables",
+              "Number of continuous latent variables",
+              "Maximum number of iterations",
+              "Convergence criterion"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "1"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "500"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "1"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "2"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "0"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "100"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "0.100D-05"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

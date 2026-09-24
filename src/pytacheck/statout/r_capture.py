@@ -421,7 +421,7 @@ def _rscript(rscript: str | None = None) -> str | None:
 
 
 def _open_sink(path: str | os.PathLike[str] | None) -> Any:
-    return subprocess.DEVNULL if path is None else open(path, "wb")  # noqa: SIM115
+    return subprocess.DEVNULL if path is None else open(path, "wb")
 
 
 def _run_rscript(
@@ -759,15 +759,13 @@ def _r_captures_to_tables(
             continue
         keys: list[str] = []
         for r in rows:
-            for k in (r.get("stats") or {}):
+            for k in r.get("stats") or {}:
                 if k not in keys:
                     keys.append(k)
         if not keys:
             continue
         names = ["label"]
-        cols: list[list[Any]] = [
-            ["" if "label" not in r else _label_chr(r["label"]) for r in rows]
-        ]
+        cols: list[list[Any]] = [["" if "label" not in r else _label_chr(r["label"]) for r in rows]]
         for k in keys:
             col = []
             for r in rows:

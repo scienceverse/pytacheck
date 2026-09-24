@@ -1,0 +1,27 @@
+{
+  "id": "credit_roles.names",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "Conceptualization",
+      "Data curation",
+      "Formal analysis",
+      "Funding acquisition",
+      "Investigation",
+      "Methodology",
+      "Project administration",
+      "Resources",
+      "Software",
+      "Supervision",
+      "Validation",
+      "Visualization",
+      "Writing - original draft",
+      "Writing - review & editing"
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

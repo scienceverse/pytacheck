@@ -241,7 +241,7 @@ def _tre_match_length(rx: Any, s: str | None) -> int:
 
 def extract_pattern(
     txt: str | Sequence[str | None] | None, pattern: str, ignore_case: bool = True
-) -> list[str] | None:
+) -> list[str | None] | None:
     """Port of ``statcheck:::extract_pattern()``: all PCRE matches, or ``None`` (R ``NULL``).
 
     Like R, the match positions come from the *first* element of *txt* and
@@ -259,12 +259,21 @@ def extract_pattern(
     if not spans:
         return None
     n = max(len(texts), len(spans))
-    out: list[str] = []
+    out: list[str | None] = []
     for i in range(n):
         s = texts[i % len(texts)]
         start, end = spans[i % len(spans)]
-        out.append("NA" if s is None else s[start:end])
+        out.append(None if s is None else s[start:end])
     return out
+
+
+def _extract(txt: str | None, pattern: str, ignore_case: bool = True) -> list[str] | None:
+    """``extract_pattern()`` for a single string (``None`` is R's ``NULL``)."""
+    if txt is None:
+        return None
+    rx = compile_r(pattern, ignore_case, True)
+    found = [m.group(0) for m in _finditer(rx, txt)]
+    return found or None
 
 
 def _finditer(rx: Any, s: str) -> list[Any]:
@@ -301,7 +310,7 @@ def _extract_df(raw: str, test_type: str | None) -> tuple[float, float]:
         raise RError("missing value where TRUE/FALSE needed")
     if test_type == "Z":
         return math.nan, math.nan
-    found = extract_pattern(raw, RGX_DF)
+    found = _extract(raw, RGX_DF)
     if found is None:
         raise RError("subscript out of bounds")
     df_str = gsub(r"\(|\)", "", found[0])
@@ -352,13 +361,14 @@ def _recycled_rows(*lengths: int) -> int:
 def _test_stats(raw: str) -> tuple[list[str], list[float], list[float], int]:
     """The vectors ``extract_test_stats()`` builds its data frame from, and its row count."""
     raw_non = gsub(RGX_DF_CHI2, "", raw)
-    test_raw = extract_pattern(raw_non, RGX_TEST_VALUE)
+    test_raw = _extract(raw_non, RGX_TEST_VALUE)
     if test_raw is None:
         # extract_pattern(NULL, RGX_COMP): gregexpr(p, NULL)[[1]]
         raise RError("subscript out of bounds")
-    test_comp = extract_pattern(test_raw, RGX_COMP)
-    if test_comp is None:  # pragma: no cover - RGX_TEST_VALUE starts with a comparator
+    comps = extract_pattern(test_raw, RGX_COMP)
+    if comps is None:  # pragma: no cover - RGX_TEST_VALUE starts with a comparator
         raise RError("numbers of columns of arguments do not match")
+    test_comp = [c for c in comps if c is not None]
     values = gsub(RGX_COMP, "", test_raw)
     values = recover_minus_sign(remove_1000_sep(values))
     values = gsub(",$", "", [v.strip(_WS) for v in values])
@@ -396,7 +406,7 @@ class _P:
 
 
 def _extract_p_value(raw: str | None) -> list[_P]:
-    p_raw = extract_pattern(raw, RGX_P_NS)
+    p_raw = _extract(raw, RGX_P_NS)
     if p_raw is None:
         return []
     comps: list[str | None] = []
@@ -408,7 +418,7 @@ def _extract_p_value(raw: str | None) -> list[_P]:
             strs.append(None)
             decs.append(math.nan)
         else:
-            comp = extract_pattern(pr, RGX_COMP)
+            comp = _extract(pr, RGX_COMP)
             if comp is None or len(comp) != 1:  # pragma: no cover - RGX_P has one comparator
                 raise RError("replacement has length zero")
             comps.append(comp[0])
@@ -492,41 +502,46 @@ _NHST = compile_r(RGX_NHST, False, True)
 
 def _extract_stats_rows(txt: str | None, stat: Sequence[str]) -> list[_Row] | None:
     """``extract_stats()`` as a list of rows; ``None`` is R's ``data.frame(NULL)``."""
-    nhst_raw = extract_pattern(txt, RGX_NHST, ignore_case=False)
+    nhst_raw = _extract(txt, RGX_NHST, ignore_case=False)
     if nhst_raw is None:
         return None
-    rows: list[_Row] = []
-    types: list[str | None] = []
+    parsed: list[tuple[str, str | None, float, float, _Test]] = []
+    pvals: list[_P] = []
     for raw in nhst_raw:
-        test_type = _test_type(extract_pattern(raw, RGX_TEST_TYPE))
-        types.append(test_type)
+        # an unclassified result makes extract_df() fail on `if (NA == "Z")`
+        test_type = _test_type(_extract(raw, RGX_TEST_TYPE))
         df1, df2 = _extract_df(raw, test_type)
         n_test, test = _extract_test_stats(raw)
         if n_test > 1:
             test = _Test(None, math.nan, math.nan)
+        parsed.append((raw, test_type, df1, df2, test))
         ps = _extract_p_value(raw)
+        # rbind(pvals, p): an NA row for several p-values, nothing for none
         if len(ps) > 1:
-            p = _P(None, math.nan, math.nan)
-        elif len(ps) == 1:
-            p = ps[0]
-        else:  # pragma: no cover - the NHST match always ends in a p-value
-            raise RError("arguments imply differing number of rows")
-        rows.append(
-            _Row(
-                raw=raw.strip(_WS),
-                statistic=test_type,
-                df1=df1,
-                df2=df2,
-                test_comp=test.comp,
-                value=test.value,
-                testdec=test.dec,
-                p_comp=p.comp,
-                p_value=p.value,
-                dec=p.dec,
-            )
+            pvals.append(_P(None, math.nan, math.nan))
+        elif ps:
+            pvals.append(ps[0])
+    # data.frame(Raw = ..., Reported.Comparison = pvals$p_comp, ...): a raw
+    # whose p-value the case-insensitive RGX_P_NS misses (e.g. "Nns") leaves
+    # the p-value columns short; R recycles them when it can, else errors
+    n, m = len(parsed), len(pvals)
+    if m != n and (m == 0 or n % m != 0):
+        raise RError(f"arguments imply differing number of rows: {n}, {m}")
+    rows = [
+        _Row(
+            raw=raw.strip(_WS),
+            statistic=test_type,
+            df1=df1,
+            df2=df2,
+            test_comp=test.comp,
+            value=test.value,
+            testdec=test.dec,
+            p_comp=pvals[i % m].comp,
+            p_value=pvals[i % m].value,
+            dec=pvals[i % m].dec,
         )
-    if types and types[-1] is None:  # pragma: no cover - extract_df() raised already
-        raise RError("arguments imply differing number of rows")
+        for i, (raw, test_type, df1, df2, test) in enumerate(parsed)
+    ]
     out = []
     for r in rows:
         if not (_isna(r.p_value) or r.p_value <= 1):
@@ -541,20 +556,6 @@ def _extract_stats_rows(txt: str | None, stat: Sequence[str]) -> list[_Row] | No
             continue
         out.append(r)
     return out
-
-
-_EXTRACT_COLUMNS = (
-    "Raw",
-    "Statistic",
-    "df1",
-    "df2",
-    "Test.Comparison",
-    "Value",
-    "testdec",
-    "Reported.Comparison",
-    "Reported.P.Value",
-    "dec",
-)
 
 
 def _rows_frame(rows: list[_Row]) -> pd.DataFrame:
