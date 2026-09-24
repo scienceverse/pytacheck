@@ -207,7 +207,7 @@ def _r_pow_di(x: float, n: int) -> float:
     return xn
 
 
-def r_round(x: Any, digits: int = 0) -> Any:
+def r_round(x: Any, digits: float = 0) -> Any:
     """R ``round()`` (R >= 4.0 algorithm, ``src/nmath/fround.c``).
 
     Python's :func:`round` rounds the exact binary value, R picks the nearer
@@ -250,7 +250,7 @@ def r_round(x: Any, digits: int = 0) -> Any:
     return sgn * (xu if (du < dd or (math.fmod(i10, 2.0) == 1 and du == dd)) else xd)
 
 
-def signif(x: Any, digits: int = 6) -> Any:
+def signif(x: Any, digits: float = 6) -> Any:
     """R ``signif()`` (``src/nmath/fprec.c``)."""
     if is_na(x):
         return x
