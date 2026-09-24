@@ -149,7 +149,12 @@ def zenodo_info(
         return _zenodo_info_table(zenodo_url, id_col, bar, cache)
 
 
+def _record_url(zenodo_id: str) -> str:
+    return f"https://zenodo.org/api/records/{zenodo_id}"
+
+
 def _zenodo_info_table(zenodo_url: Any, id_col: int | str, pb: Any, cache: bool) -> pd.DataFrame:
+    from pytacheck import http
     from pytacheck._r import as_character, bind_rows
     from pytacheck.archives import _tick
     from pytacheck.archives.github import _as_list
@@ -193,13 +198,22 @@ def _zenodo_info_table(zenodo_url: Any, id_col: int | str, pb: Any, cache: bool)
 
     n = len(valid_ids)
     _tick(pb, f"Starting Zenodo retrieval for {n} file{'' if n == 1 else 's'}...")
+    cached_info = {
+        zid: _repo_info_cache_get("zenodo", zid) if cache is True else None for zid in valid_ids
+    }
+    # metacheck fetches one record at a time; the uncached records are fetched
+    # here in one polite batch instead (same requests, same results)
+    todo = [zid for zid in valid_ids if cached_info[zid] is None]
+    fetched = dict(
+        zip(todo, http.batch_query([_record_url(z) for z in todo], msg=None), strict=True)
+    )
     id_info: list[pd.DataFrame] = []
     for zid in valid_ids:
-        cached = _repo_info_cache_get("zenodo", zid) if cache is True else None
+        cached = cached_info[zid]
         if cached is not None:
             id_info.append(cached)
             continue
-        info = _zenodo_info(zid, pb=pb)
+        info = _zenodo_info(zid, pb=pb, resp=fetched[zid])
         if cache is True and _repo_info_ok(info):
             _repo_info_cache_put("zenodo", zid, info)
         id_info.append(info)
@@ -279,7 +293,10 @@ def _zenodo_unread(zenodo_id: Any, error: str) -> pd.DataFrame:
     return _info_frame(row)
 
 
-def _zenodo_info(zenodo_id: Any, pb: Any = None) -> pd.DataFrame:
+_UNSET: Any = object()
+
+
+def _zenodo_info(zenodo_id: Any, pb: Any = None, resp: Any = _UNSET) -> pd.DataFrame:
     """Port of R/archive-zenodo.R::.zenodo_info(): one record's information.
 
     A one-row table: ``zenodo_id``, ``title``, ``doi``, ``description``,
@@ -288,6 +305,8 @@ def _zenodo_info(zenodo_id: Any, pb: Any = None) -> pd.DataFrame:
     ``unique_downloads``, ``views`` and ``files`` (the record's file list).
     A record that is not found (warns) or cannot be parsed gives the same
     columns empty, with ``error`` set to ``"unfound"`` / ``"parse_error"``.
+    *resp* is the record's API response when it was already fetched
+    (:func:`zenodo_info` fetches all of its records in one batch).
     """
     from pytacheck import http
     from pytacheck.archives import _spinner, _tick
@@ -301,7 +320,8 @@ def _zenodo_info(zenodo_id: Any, pb: Any = None) -> pd.DataFrame:
         shown = "NA" if zid is None else zid
         _tick(bar, f"* Retrieving info from Zenodo ID {shown}...")
 
-        resp = http.batch_query([f"https://zenodo.org/api/records/{shown}"], msg=None)[0]
+        if resp is _UNSET:
+            resp = http.batch_query([_record_url(shown)], msg=None)[0]
         if resp is None:
             raise TypeError("`resp` must be an HTTP response object, not `NULL`.")
         if resp.status_code != 200:
