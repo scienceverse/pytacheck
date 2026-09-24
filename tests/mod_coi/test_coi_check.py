@@ -156,6 +156,38 @@ def test_coi_check_oi_merges_section() -> None:
 
 
 @pytest.mark.parametrize("module", MODULES)
+def test_coi_references_excluded(module: str) -> None:
+    # the only COI sentences are in the references: text_search() skips them
+    mo = pc.module_run(pc.read(FIXTURES / "coi_refs_only.json"), module)
+    assert mo.traffic_light == "red"
+    assert len(mo.table) == 0
+
+
+def test_coi_section_headers() -> None:
+    # expected values from R (metacheck at the pinned commit)
+    paper = pc.read(FIXTURES / "coi_headers.json")
+    # coi_check only reads sentences: headers, the null sentence and blanks add nothing
+    mo = pc.module_run(paper, "coi_check")
+    assert mo.table["text"].tolist() == ["Conflict of interest was absent."]
+    # coi_check_oi also searches headers (search_header = TRUE), then merges by section
+    mo = pc.module_run(paper, "coi_check_oi")
+    assert mo.table["text"].tolist() == [
+        "None.",
+        "Conflict of interest was absent.",
+        "The authors declare none. Funding was provided by X.\n\nSecond paragraph here.",
+        "Disclosure: none reported.",
+        "None declared.",
+    ]
+    assert mo.table["header"].tolist() == [
+        "Conflict of Interest",
+        "Financial Disclosure",
+        "Competing Interests",
+        "COI",
+        "Declaration of interests",
+    ]
+
+
+@pytest.mark.parametrize("module", MODULES)
 def test_coi_does_not_mutate(module: str, demo: pc.Paper) -> None:
     before = demo.text.copy()
     pc.module_run(demo, module)
@@ -258,6 +290,36 @@ def test_agrepl_na_and_scalar() -> None:
     assert agrepl("author", "The Authors") is True  # one substitution (A -> a)
     assert agrepl("author", "The Authors", ignore_case=True) is True
     assert agrep("author", ["x", None, "authr"], ignore_case=True) == [3]
+
+
+def test_agrepl_short_patterns() -> None:
+    # k = ceiling(0.1 * 1) = 1: every non-NA string (even "") is within one edit
+    assert agrepl("a", ["", "b", None, "xyz"]) == [True, True, False, True]
+    assert agrep("a", ["", "b", None, "xyz"]) == [1, 2, 4]
+    assert agrepl("a", "") is True
+    assert agrepl("ab", ["", "b", "x", "xy"]) == [False, True, False, False]
+
+
+def test_agrepl_repeated_pieces() -> None:
+    # the pigeonhole pieces of this pattern are all "abab" (offsets 0, 4 and 8)
+    x = [
+        "xxabababababyy",
+        "ababab",
+        "abababababa",
+        "abababXabababa",
+        "abXbabXbabab",
+        "babababababa",
+        "aabbaabbaabb",
+    ]
+    assert agrepl("abababababab", x) == [True, False, True, True, True, True, False]
+
+
+def test_agrep_does_not_match_across_elements() -> None:
+    # the batched prefilter joins the elements; a match must not span two of them
+    x = ["xx conflict of inte", "rest yy", None, "conflict of interest"]
+    assert agrep("conflict of interest", x, ignore_case=True) == [4]
+    x = ["conflict of", "interest", "CONFLICT OF INTERST"]
+    assert agrep("conflict of interest", x, ignore_case=True) == [3]
 
 
 def test_agrepl_only_ascii_case_folding() -> None:
