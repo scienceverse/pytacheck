@@ -670,7 +670,7 @@ def _osf_get_one_page(url: str) -> Any:
     Returns the parsed JSON document, or an :func:`_osf_error_result`.
     """
     from pytacheck import http
-    from pytacheck.archives.osf_helpers import _osf_headers
+    from pytacheck.archives.osf_helpers import _osf_headers, _resp_body_json
     from pytacheck.log import logger
 
     try:
@@ -687,7 +687,7 @@ def _osf_get_one_page(url: str) -> Any:
         if err is not None:
             logger("osf_get_all_pages", {"url": url, "status": resp.status_code})
             return _osf_error_result(err)
-        return resp.json()
+        return _resp_body_json(resp)
     except Exception:
         return _osf_error_result("request_failed")
 

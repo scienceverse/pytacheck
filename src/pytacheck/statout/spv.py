@@ -882,63 +882,866 @@ def _spvviz_resolve_variable(
     return {"id": var_id, "source_name": source_name, "values": var["values"]}
 
 
-_ALLOWED_FUNCS: dict[str, Callable[..., Any]] = {
-    "exp": math.exp,
-    "log": math.log,
-    "log10": math.log10,
-    "log2": math.log2,
-    "sqrt": math.sqrt,
-    "abs": abs,
-    "sin": math.sin,
-    "cos": math.cos,
-    "tan": math.tan,
+# ---------------------------------------------------------------------------
+# SPSS fitted-curve expressions: R's parse(text = ) and a small evaluator
+# ---------------------------------------------------------------------------
+#
+# .spvviz_function_guide() keeps a function guide whenever R's parser accepts
+# its text, and .spv_chart_html() evaluates it for the fitted line: an R error
+# skips that line, while a value that is not a vector as long as `x` makes
+# graphics::lines() stop ("'x' and 'y' lengths differ"). A recursive-descent
+# port of R's grammar decides the first question; the evaluator covers R's
+# vector arithmetic, comparisons, logic, a set of base math functions and
+# closures, and treats anything else as an R error.
+
+
+class _RParseError(ValueError):
+    """``parse(text = )`` failed."""
+
+
+class _REvalError(ValueError):
+    """Evaluating a fitted-curve expression raised an R error."""
+
+
+_R_RESERVED = frozenset(
+    "if else repeat while function for next break in TRUE FALSE NULL Inf NaN NA "
+    "NA_integer_ NA_real_ NA_character_ NA_complex_".split()
+)
+_R_NUMBER = re.compile(
+    r"(0[xX][0-9a-fA-F]+(?:\.[0-9a-fA-F]*)?(?:[pP][+-]?[0-9]+)?"
+    r"|(?:[0-9]+\.?[0-9]*|\.[0-9]+)(?:[eE][+-]?[0-9]+)?)([Li]?)"
+)
+_R_OPS = (
+    "<<-", "->>", ":::", "|>", "::", ":=", "<-", "->", "<=", ">=", "==", "!=", "&&", "||",
+    "**", "[[", "+", "-", "*", "/", "^", "<", ">", "!", "&", "|", "~", "?", ":", "$", "@",
+    "=", "(", ")", "{", "}", "[", "]", ",", ";", "\\",
+)  # fmt: skip
+_R_ESCAPES = set("nrtbafv\\'\"` \n01234567")
+_HEXDIGITS = set("0123456789abcdefABCDEF")
+
+
+def _r_ident_char(c: str, first: bool) -> bool:
+    if c.isalpha() or c == ".":
+        return True
+    return not first and (c == "_" or "0" <= c <= "9")
+
+
+def _r_scan_string(s: str, i: int, quote: str) -> int:
+    """End index (past the closing quote) of an R string literal starting at *i*."""
+    j = i + 1
+    while j < len(s):
+        c = s[j]
+        if c == quote:
+            return j + 1
+        if c != "\\":
+            j += 1
+            continue
+        j += 1
+        e = s[j] if j < len(s) else ""
+        if e in ("x", "u", "U"):
+            limit = {"x": 2, "u": 4, "U": 8}[e]
+            j += 1
+            braced = e != "x" and j < len(s) and s[j] == "{"
+            j += braced
+            k = 0
+            while k < limit and j < len(s) and s[j] in _HEXDIGITS:
+                j += 1
+                k += 1
+            if k == 0 or (braced and (j >= len(s) or s[j] != "}")):
+                raise _RParseError(f"malformed '\\{e}' escape")
+            j += braced
+        elif e and e in _R_ESCAPES:
+            j += 1
+        else:
+            raise _RParseError(f"'\\{e}' is an unrecognized escape")
+    raise _RParseError("unexpected INCOMPLETE_STRING")
+
+
+def _r_tokenize(s: str) -> list[tuple[str, Any]]:
+    """R's lexer: ``NUM``/``STR``/``SYM``/``KW``/``OP``/``NL`` tokens, then ``EOF``."""
+    toks: list[tuple[str, Any]] = []
+    i, n = 0, len(s)
+    while i < n:
+        c = s[i]
+        if c in " \t\f\r":
+            i += 1
+        elif c == "\n":
+            toks.append(("NL", None))
+            i += 1
+        elif c == "#":
+            while i < n and s[i] != "\n":
+                i += 1
+        elif c in "rR" and i + 1 < n and s[i + 1] in "'\"":
+            m = re.match(r"[rR](['\"])(-*)([(\[{])", s[i:])
+            if m is None:
+                raise _RParseError("malformed raw string literal")
+            closer = {"(": ")", "[": "]", "{": "}"}[m.group(3)] + m.group(2) + m.group(1)
+            end = s.find(closer, i + m.end())
+            if end < 0:
+                raise _RParseError("unexpected INCOMPLETE_STRING")
+            toks.append(("STR", s[i + m.end() : end]))
+            i = end + len(closer)
+        elif c in "'\"":
+            end = _r_scan_string(s, i, c)
+            toks.append(("STR", s[i + 1 : end - 1]))
+            i = end
+        elif c == "`":
+            end = s.find("`", i + 1)
+            if end <= i + 1:
+                raise _RParseError("attempt to use zero-length variable name")
+            toks.append(("SYM", s[i + 1 : end]))
+            i = end + 1
+        elif c.isdigit() or (c == "." and i + 1 < n and s[i + 1].isdigit()):
+            m = _R_NUMBER.match(s, i)
+            if m is None:  # pragma: no cover - the class check above guarantees a match
+                raise _RParseError("unexpected numeric constant")
+            toks.append(("NUM", (m.group(1), m.group(2))))
+            i = m.end()
+        elif _r_ident_char(c, True):
+            j = i + 1
+            while j < n and _r_ident_char(s[j], False):
+                j += 1
+            word = s[i:j]
+            toks.append(("KW" if word in _R_RESERVED else "SYM", word))
+            i = j
+        elif c == "%":
+            j = i + 1
+            while j < n and s[j] not in "%\n":
+                j += 1
+            if j >= n or s[j] != "%":
+                raise _RParseError("unexpected input")
+            toks.append(("OP", s[i : j + 1]))
+            i = j + 1
+        else:
+            op = next((o for o in _R_OPS if s.startswith(o, i)), None)
+            if op is None:
+                raise _RParseError("unexpected input")
+            toks.append(("OP", "^" if op == "**" else op))
+            i += len(op)
+    toks.append(("EOF", None))
+    return toks
+
+
+# (left binding power, right binding power) of R's binary operators
+_R_INFIX: dict[str, tuple[int, int]] = {
+    "?": (1, 2),
+    "=": (4, 3),
+    "<-": (6, 5),
+    "<<-": (6, 5),
+    ":=": (6, 5),
+    "->": (7, 8),
+    "->>": (7, 8),
+    "~": (9, 10),
+    "||": (11, 12),
+    "|": (11, 12),
+    "&&": (13, 14),
+    "&": (13, 14),
+    "==": (17, 18),
+    "!=": (17, 18),
+    "<": (17, 18),
+    ">": (17, 18),
+    "<=": (17, 18),
+    ">=": (17, 18),
+    "+": (19, 20),
+    "-": (19, 20),
+    "*": (21, 22),
+    "/": (21, 22),
+    "|>": (23, 24),
+    ":": (25, 26),
+    "^": (30, 29),
+    "$": (31, 32),
+    "@": (31, 32),
+    "(": (33, 0),
+    "[": (33, 0),
+    "[[": (33, 0),
+}
+_R_COMPARE = frozenset(("==", "!=", "<", ">", "<=", ">="))
+_R_LOW = 2  # the body of if/function/for/while/repeat extends this far
+
+
+class _RParser:
+    """A recursive-descent (Pratt) port of R's grammar, used to validate and build ASTs."""
+
+    def __init__(self, text: str) -> None:
+        self.toks = _r_tokenize(text)
+        self.i = 0
+        self.ctx = ["top"]
+
+    def peek(self, k: int = 0) -> tuple[str, Any]:
+        j, seen = self.i, -1
+        while True:
+            t = self.toks[j]
+            if t[0] == "NL" and self.ctx[-1] in ("(", "["):
+                j += 1
+                continue
+            seen += 1
+            if seen == k or t[0] == "EOF":
+                return t
+            j += 1
+
+    def take(self) -> tuple[str, Any]:
+        while self.toks[self.i][0] == "NL" and self.ctx[-1] in ("(", "["):
+            self.i += 1
+        t = self.toks[self.i]
+        if t[0] != "EOF":
+            self.i += 1
+        return t
+
+    def skip_nl(self) -> None:
+        while self.toks[self.i][0] == "NL":
+            self.i += 1
+
+    def expect(self, op: str) -> None:
+        if self.take() != ("OP", op):
+            raise _RParseError(f"expected '{op}'")
+
+    def program(self) -> list[Any]:
+        exprs = []
+        self.skip_nl()
+        while self.peek()[0] != "EOF":
+            exprs.append(self.expr(0))
+            t = self.take()
+            if t == ("OP", ";"):
+                continue
+            if t[0] == "NL":
+                self.skip_nl()
+            elif t[0] != "EOF":
+                raise _RParseError("unexpected token")
+        return exprs
+
+    def expr(self, rbp: int) -> Any:
+        left = self.nud(self.take())
+        while True:
+            t = self.peek()
+            if t[0] != "OP" or (t[1] not in _R_INFIX and not t[1].startswith("%")):
+                return left
+            lbp, nbp = _R_INFIX.get(t[1], (23, 24))
+            if lbp <= rbp:
+                return left
+            self.take()
+            left = self.led(t[1], nbp, left)
+
+    def operand(self, rbp: int) -> Any:
+        self.skip_nl()
+        return self.expr(rbp)
+
+    def nud(self, t: tuple[str, Any]) -> Any:
+        kind, val = t
+        if kind in ("SYM", "STR") and self.peek() in (("OP", "::"), ("OP", ":::")):
+            self.take()
+            name = self.take()
+            if name[0] not in ("SYM", "STR"):
+                raise _RParseError("unexpected token after '::'")
+            return ("ns", val, name[1])
+        if kind == "NUM":
+            return ("num", val)
+        if kind == "STR":
+            return ("str", val)
+        if kind == "SYM":
+            return ("sym", val)
+        if kind == "KW":
+            if val in ("function", "if", "for", "while", "repeat", "break", "next"):
+                return getattr(self, "kw_" + val)()
+            if val in ("else", "in"):
+                raise _RParseError(f"unexpected '{val}'")
+            return ("const", val)
+        if kind == "OP":
+            if val == "\\":
+                return self.kw_function()
+            if val == "(":
+                self.ctx.append("(")
+                inner = self.operand(0)
+                self.ctx.pop()
+                self.expect(")")
+                return ("paren", inner)
+            if val == "{":
+                return self.braces()
+            if val in ("-", "+"):
+                return ("unop", val, self.operand(27))
+            if val == "!":
+                return ("unop", "!", self.operand(15))
+            if val == "~":
+                return ("formula", None, self.operand(10))
+            if val == "?":
+                return ("unop", "?", self.operand(2))
+        raise _RParseError("unexpected token")
+
+    def led(self, op: str, rbp: int, left: Any) -> Any:
+        if op == "(":
+            return ("call", left, self.args(")"))
+        if op in ("[", "[["):
+            args = self.args("]")
+            if op == "[[":
+                self.expect("]")
+            return ("index", left, args, op == "[[")
+        if op in ("$", "@"):
+            name = self.take()
+            if name[0] not in ("SYM", "STR"):
+                raise _RParseError(f"unexpected token after '{op}'")
+            return ("dollar", op, left, name[1])
+        right = self.operand(rbp)
+        if op in _R_COMPARE and self.peek()[0] == "OP" and self.peek()[1] in _R_COMPARE:
+            raise _RParseError("unexpected comparison")  # %nonassoc
+        if op == "|>":
+            if right[0] != "call":
+                raise _RParseError("The pipe operator requires a function call as RHS")
+            return ("call", right[1], [(None, left), *right[2]])
+        if op == "~":
+            return ("formula", left, right)
+        if op in ("<-", "<<-", "=", ":="):
+            return ("assign", op, left, right)
+        if op in ("->", "->>"):
+            return ("assign", op, right, left)
+        return ("binop", op, left, right)
+
+    def args(self, closer: str) -> list[tuple[Any, Any]]:
+        self.ctx.append("(" if closer == ")" else "[")
+        out: list[tuple[Any, Any]] = []
+        while True:
+            t = self.peek()
+            if t == ("OP", closer) or t == ("OP", ","):
+                out.append((None, None))
+            elif (t[0] in ("SYM", "STR") or t == ("KW", "NULL")) and self.peek(1) == ("OP", "="):
+                self.take()
+                self.take()
+                nxt = self.peek()
+                value = None if nxt in (("OP", closer), ("OP", ",")) else self.expr(4)
+                out.append((t[1], value))
+            else:
+                out.append((None, self.expr(4)))
+            t = self.take()
+            if t == ("OP", closer):
+                break
+            if t != ("OP", ","):
+                raise _RParseError("unexpected token in argument list")
+        self.ctx.pop()
+        return [] if out == [(None, None)] else out
+
+    def braces(self) -> Any:
+        self.ctx.append("{")
+        body = []
+        while True:
+            self.skip_nl()
+            t = self.peek()
+            if t == ("OP", "}"):
+                self.take()
+                break
+            if t == ("OP", ";"):
+                self.take()
+                continue
+            body.append(self.expr(0))
+            if self.peek() not in (("OP", ";"), ("OP", "}")) and self.peek()[0] != "NL":
+                raise _RParseError("unexpected token in braces")
+        self.ctx.pop()
+        return ("brace", body)
+
+    def kw_function(self) -> Any:
+        self.expect("(")
+        self.ctx.append("(")
+        formals: list[tuple[str, Any]] = []
+        if self.peek() != ("OP", ")"):
+            while True:
+                t = self.take()
+                if t[0] != "SYM":
+                    raise _RParseError("unexpected token in formals")
+                if any(f[0] == t[1] for f in formals):
+                    raise _RParseError(f"repeated formal argument '{t[1]}'")
+                default = None
+                if self.peek() == ("OP", "="):
+                    self.take()
+                    default = self.expr(4)
+                formals.append((t[1], default))
+                if self.peek() != ("OP", ","):
+                    break
+                self.take()
+        self.ctx.pop()
+        self.expect(")")
+        return ("function", formals, self.operand(_R_LOW))
+
+    def kw_if(self) -> Any:
+        cond = self.condition()
+        then = self.operand(_R_LOW)
+        save = self.i
+        if self.ctx[-1] != "top":
+            self.skip_nl()
+        if self.peek() == ("KW", "else"):
+            self.take()
+            return ("if", cond, then, self.operand(_R_LOW))
+        self.i = save
+        return ("if", cond, then, None)
+
+    def condition(self) -> Any:
+        self.expect("(")
+        self.ctx.append("(")
+        cond = self.expr(0)
+        self.ctx.pop()
+        self.expect(")")
+        return cond
+
+    def kw_for(self) -> Any:
+        self.expect("(")
+        self.ctx.append("(")
+        var = self.take()
+        if var[0] != "SYM" or self.take() != ("KW", "in"):
+            raise _RParseError("unexpected token in for()")
+        seq = self.expr(0)
+        self.ctx.pop()
+        self.expect(")")
+        return ("for", var[1], seq, self.operand(_R_LOW))
+
+    def kw_while(self) -> Any:
+        return ("while", self.condition(), self.operand(_R_LOW))
+
+    def kw_repeat(self) -> Any:
+        return ("repeat", self.operand(_R_LOW))
+
+    def kw_break(self) -> Any:
+        return ("break",)
+
+    def kw_next(self) -> Any:
+        return ("next",)
+
+
+def _r_parse(text: str) -> list[Any]:
+    """R ``parse(text = text)``: the expressions, or :class:`_RParseError`."""
+    return _RParser(text).program()
+
+
+# -- evaluation (R vector semantics) ------------------------------------------
+# Values: ("num", [float|complex]), ("chr", [str|None]), ("null",),
+# ("closure", formals, body, env) or ("obj", length) for other R objects.
+
+_NA = math.nan
+
+
+def _r_num_literal(text: str, suffix: str) -> Any:
+    low = text.lower()
+    if low.startswith("0x"):
+        v = float.fromhex(text) if ("." in text or "p" in low) else float(int(text, 16))
+    else:
+        v = float(text)
+    return ("num", [complex(0, v)]) if suffix == "i" else ("num", [v])
+
+
+_R_CONST_VALUES: dict[str, Any] = {
+    "TRUE": ("num", [1.0]),
+    "FALSE": ("num", [0.0]),
+    "NULL": ("null",),
+    "Inf": ("num", [math.inf]),
+    "NaN": ("num", [math.nan]),
+    "NA": ("num", [_NA]),
+    "NA_integer_": ("num", [_NA]),
+    "NA_real_": ("num", [_NA]),
+    "NA_complex_": ("num", [_NA]),
+    "NA_character_": ("chr", [None]),
 }
 
 
-def _compile_r_arith(expr_txt: str) -> Callable[[Any], Any] | None:
-    """Compile SPSS's fitted-curve expression (R arithmetic syntax in ``x``).
+def _r_len(v: Any) -> int:
+    kind = v[0]
+    if kind in ("num", "chr"):
+        return len(v[1])
+    if kind == "null":
+        return 0
+    if kind == "closure":
+        return 1
+    return int(v[1])
 
-    R parses the text as an R expression; here the arithmetic subset SPSS
-    emits (numbers, ``x``, ``+ - * / ^``, parentheses and a few math
-    functions) is compiled to a Python function. ``None`` when it does not
-    parse.
-    """
-    import ast
 
+def _r_nums(v: Any, what: str = "non-numeric argument to binary operator") -> list[Any]:
+    if v[0] == "num":
+        return list(v[1])
+    if v[0] == "null":
+        return []
+    raise _REvalError(what)
+
+
+def _r_isna(a: Any) -> bool:
+    return isinstance(a, float) and math.isnan(a)
+
+
+def _r_arith(op: str, a: Any, b: Any) -> Any:
     try:
-        tree = ast.parse(expr_txt.replace("^", "**").strip(), mode="eval")
-    except SyntaxError:
+        if op == "+":
+            return a + b
+        if op == "-":
+            return a - b
+        if op == "*":
+            return a * b
+        if op == "/":
+            if b == 0 and not isinstance(a, complex) and not isinstance(b, complex):
+                return _NA if a == 0 or _r_isna(a) else math.copysign(math.inf, a) * (
+                    -1.0 if math.copysign(1.0, b) < 0 else 1.0
+                )
+            return a / b
+        if op == "^":
+            if a == 1 or b == 0:
+                return 1.0
+            if isinstance(a, complex) or isinstance(b, complex):
+                return complex(a) ** complex(b)
+            if a < 0 and b != int(b):
+                return _NA
+            return math.pow(a, b)
+        if isinstance(a, complex) or isinstance(b, complex):
+            raise _REvalError("invalid operation on complex numbers")
+        if op == "%%":
+            return _NA if b == 0 else a - math.floor(a / b) * b
+        if op == "%/%":
+            return math.floor(a / b) if b != 0 else _r_arith("/", a, b)
+    except OverflowError:
+        return math.inf
+    except (ValueError, ZeroDivisionError):
+        return _NA
+    raise _REvalError(f'could not find function "{op}"')
+
+
+def _r_recycle(a: list[Any], b: list[Any]) -> tuple[list[Any], list[Any]]:
+    if not a or not b:
+        return [], []
+    n = max(len(a), len(b))
+    return [a[i % len(a)] for i in range(n)], [b[i % len(b)] for i in range(n)]
+
+
+def _r_truth(v: Any, what: str) -> bool:
+    """A length-one condition, as ``if``/``&&`` require it."""
+    vals = v[1] if v[0] in ("num", "chr") else None
+    if vals is None or len(vals) == 0:
+        raise _REvalError(f"argument is of length zero in {what}")
+    if len(vals) > 1:
+        raise _REvalError("the condition has length > 1")
+    a = vals[0]
+    if isinstance(a, str):
+        if a in ("TRUE", "true", "True", "T"):
+            return True
+        if a in ("FALSE", "false", "False", "F"):
+            return False
+        a = None
+    if a is None or _r_isna(a):
+        raise _REvalError("missing value where TRUE/FALSE needed")
+    return bool(a)
+
+
+def _r_math1(fn: Callable[[float], float]) -> Callable[[list[Any]], Any]:
+    def run(args: list[Any]) -> Any:
+        if len(args) != 1:
+            raise _REvalError("wrong number of arguments")
+        out = []
+        for a in _r_nums(args[0], "non-numeric argument to mathematical function"):
+            if isinstance(a, complex):
+                raise _REvalError("unimplemented complex function")
+            try:
+                out.append(_NA if _r_isna(a) else float(fn(a)))
+            except OverflowError:
+                out.append(math.inf)
+            except ValueError:
+                out.append(_NA)
+        return ("num", out)
+
+    return run
+
+
+def _r_log(args: list[Any]) -> Any:
+    if not 1 <= len(args) <= 2:
+        raise _REvalError("wrong number of arguments")
+    base = _r_nums(args[1])[0] if len(args) == 2 else math.e
+    out = []
+    for a in _r_nums(args[0], "non-numeric argument to mathematical function"):
+        if isinstance(a, complex):
+            raise _REvalError("unimplemented complex function")
+        if _r_isna(a) or a < 0:
+            out.append(_NA)
+        elif a == 0:
+            out.append(-math.inf)
+        else:
+            out.append(math.log(a) / math.log(base))
+    return ("num", out)
+
+
+def _r_reduce(fn: Callable[[list[float]], float]) -> Callable[[list[Any]], Any]:
+    def run(args: list[Any]) -> Any:
+        vals = [a for v in args for a in _r_nums(v, "invalid 'type' of argument")]
+        return ("num", [fn(vals)])
+
+    return run
+
+
+def _r_minmax(pick: Callable[..., float], empty: float) -> Callable[[list[float]], float]:
+    def run(vals: list[float]) -> float:
+        if any(_r_isna(v) for v in vals):
+            return _NA
+        return pick(vals) if vals else empty
+
+    return run
+
+
+_R_BUILTINS: dict[str, Callable[[list[Any]], Any]] = {
+    "exp": _r_math1(math.exp),
+    "sqrt": _r_math1(math.sqrt),
+    "abs": _r_math1(abs),
+    "sin": _r_math1(math.sin),
+    "cos": _r_math1(math.cos),
+    "tan": _r_math1(math.tan),
+    "asin": _r_math1(math.asin),
+    "acos": _r_math1(math.acos),
+    "atan": _r_math1(math.atan),
+    "sinh": _r_math1(math.sinh),
+    "cosh": _r_math1(math.cosh),
+    "tanh": _r_math1(math.tanh),
+    "log10": _r_math1(math.log10),
+    "log2": _r_math1(math.log2),
+    "log1p": _r_math1(math.log1p),
+    "expm1": _r_math1(math.expm1),
+    "floor": _r_math1(math.floor),
+    "ceiling": _r_math1(math.ceil),
+    "trunc": _r_math1(math.trunc),
+    "sign": _r_math1(lambda a: float((a > 0) - (a < 0))),
+    "gamma": _r_math1(math.gamma),
+    "lgamma": _r_math1(math.lgamma),
+    "log": _r_log,
+    "c": lambda args: ("num", [a for v in args for a in _r_nums(v, "unsupported c()")]),
+    "sum": _r_reduce(lambda v: math.fsum(v) if not any(_r_isna(a) for a in v) else _NA),
+    "prod": _r_reduce(lambda v: math.prod(v)),
+    "mean": _r_reduce(lambda v: math.fsum(v) / len(v) if v else _NA),
+    "min": _r_reduce(_r_minmax(min, math.inf)),
+    "max": _r_reduce(_r_minmax(max, -math.inf)),
+    "length": lambda args: ("num", [float(_r_len(args[0]))]) if len(args) == 1 else _r_bad(),
+    "identity": lambda args: args[0] if len(args) == 1 else _r_bad(),
+    "invisible": lambda args: args[0] if len(args) == 1 else _r_bad(),
+    "list": lambda args: ("obj", len(args)),
+}
+
+
+def _r_bad() -> Any:
+    raise _REvalError("unused or missing argument")
+
+
+class _REval:
+    """Evaluates a parsed expression with R's vector semantics."""
+
+    def __init__(self, env: dict[str, Any]) -> None:
+        self.env = env
+
+    def ev(self, node: Any) -> Any:
+        return getattr(self, "e_" + node[0])(node)
+
+    def e_num(self, node: Any) -> Any:
+        return _r_num_literal(*node[1])
+
+    def e_str(self, node: Any) -> Any:
+        return ("chr", [node[1]])
+
+    def e_const(self, node: Any) -> Any:
+        return _R_CONST_VALUES[node[1]]
+
+    def e_sym(self, node: Any) -> Any:
+        name = node[1]
+        if name in self.env:
+            return self.env[name]
+        if name in ("T", "F"):
+            return ("num", [1.0 if name == "T" else 0.0])
+        if name == "pi":
+            return ("num", [math.pi])
+        raise _REvalError(f"object '{name}' not found")
+
+    def e_paren(self, node: Any) -> Any:
+        return self.ev(node[1])
+
+    def e_brace(self, node: Any) -> Any:
+        out: Any = ("null",)
+        for e in node[1]:
+            out = self.ev(e)
+        return out
+
+    def e_unop(self, node: Any) -> Any:
+        op, v = node[1], self.ev(node[2])
+        if op == "?":
+            raise _REvalError("help is not available")
+        vals = _r_nums(v, "invalid argument to unary operator")
+        if op == "-":
+            return ("num", [-a for a in vals])
+        if op == "+":
+            return ("num", vals)
+        if any(isinstance(a, complex) for a in vals):
+            raise _REvalError("invalid argument type")
+        return ("num", [a if _r_isna(a) else float(not a) for a in vals])
+
+    def e_binop(self, node: Any) -> Any:
+        op = node[1]
+        if op in ("&&", "||"):
+            left = _r_truth(self.ev(node[2]), op)
+            if (op == "&&" and not left) or (op == "||" and left):
+                return ("num", [float(left)])
+            return ("num", [float(_r_truth(self.ev(node[3]), op))])
+        a, b = self.ev(node[2]), self.ev(node[3])
+        if op == ":":
+            lo, hi = _r_nums(a)[:1], _r_nums(b)[:1]
+            if not lo or not hi or _r_isna(lo[0]) or _r_isna(hi[0]):
+                raise _REvalError("NA/NaN argument")
+            count = int(abs(hi[0] - lo[0]) + 1e-10) + 1
+            if count > 10**7:
+                raise _REvalError("result would be too long a vector")
+            step = 1.0 if hi[0] >= lo[0] else -1.0
+            return ("num", [lo[0] + step * k for k in range(count)])
+        if op in _R_COMPARE:
+            if a[0] not in ("num", "chr", "null") or b[0] not in ("num", "chr", "null"):
+                raise _REvalError("comparison is possible only for atomic types")
+            n = 0 if not _r_len(a) or not _r_len(b) else max(_r_len(a), _r_len(b))
+            if a[0] == "chr" or b[0] == "chr":
+                return ("num", [_NA] * n)
+            x, y = _r_recycle(_r_nums(a), _r_nums(b))
+            cmp = {
+                "==": lambda p, q: p == q,
+                "!=": lambda p, q: p != q,
+                "<": lambda p, q: p < q,
+                ">": lambda p, q: p > q,
+                "<=": lambda p, q: p <= q,
+                ">=": lambda p, q: p >= q,
+            }[op]
+            return ("num", [_NA if _r_isna(p) or _r_isna(q) else float(cmp(p, q)) for p, q in zip(x, y, strict=True)])
+        x, y = _r_recycle(_r_nums(a), _r_nums(b))
+        if op in ("&", "|"):
+            out = []
+            for p, q in zip(x, y, strict=True):
+                pv = None if _r_isna(p) else bool(p)
+                qv = None if _r_isna(q) else bool(q)
+                if op == "&":
+                    r = False if pv is False or qv is False else (None if pv is None or qv is None else True)
+                else:
+                    r = True if pv or qv else (None if pv is None or qv is None else False)
+                out.append(_NA if r is None else float(r))
+            return ("num", out)
+        if op.startswith("%") and op not in ("%%", "%/%"):
+            raise _REvalError(f'could not find function "{op}"')
+        return ("num", [_r_arith(op, p, q) for p, q in zip(x, y, strict=True)])
+
+    def e_formula(self, node: Any) -> Any:
+        return ("obj", 3 if node[1] is not None else 2)
+
+    def e_function(self, node: Any) -> Any:
+        return ("closure", node[1], node[2], self.env)
+
+    def e_assign(self, node: Any) -> Any:
+        op, target, value = node[1], node[2], node[3]
+        if op == ":=":
+            raise _REvalError('could not find function ":="')
+        if target[0] not in ("sym", "str"):
+            raise _REvalError("invalid assignment target")
+        v = self.ev(value)
+        self.env[target[1]] = v
+        return v
+
+    def e_if(self, node: Any) -> Any:
+        if _r_truth(self.ev(node[1]), "if"):
+            return self.ev(node[2])
+        return self.ev(node[3]) if node[3] is not None else ("null",)
+
+    def e_for(self, node: Any) -> Any:
+        raise _REvalError("loops are not evaluated")
+
+    e_while = e_repeat = e_break = e_next = e_for
+
+    def e_ns(self, node: Any) -> Any:
+        raise _REvalError("namespace objects are not evaluated")
+
+    def e_dollar(self, node: Any) -> Any:
+        raise _REvalError("$ operator is invalid for atomic vectors")
+
+    def e_index(self, node: Any) -> Any:
+        v = self.ev(node[1])
+        if v[0] not in ("num", "chr"):
+            raise _REvalError("object is not subsettable")
+        vals = v[1]
+        args = node[2]
+        if len(args) > 1:
+            raise _REvalError("incorrect number of dimensions")
+        if not args or args[0][1] is None:
+            if node[3]:
+                raise _REvalError("invalid subscript")
+            return v
+        idx = self.ev(args[0][1])
+        if idx[0] != "num":
+            raise _REvalError("invalid subscript type")
+        iv = idx[1]
+        if node[3]:
+            if len(iv) != 1 or _r_isna(iv[0]) or not 1 <= int(iv[0]) <= len(vals):
+                raise _REvalError("subscript out of bounds")
+            return (v[0], [vals[int(iv[0]) - 1]])
+        na = _NA if v[0] == "num" else None
+        pos = [int(a) for a in iv if not _r_isna(a) and int(a) != 0]
+        if pos and all(p < 0 for p in pos):
+            drop = {-p for p in pos}
+            return (v[0], [a for k, a in enumerate(vals, 1) if k not in drop])
+        if any(p < 0 for p in pos):
+            raise _REvalError("can't mix positive and negative subscripts")
+        return (v[0], [vals[p - 1] if p <= len(vals) else na for p in pos])
+
+    def e_call(self, node: Any) -> Any:
+        fn_node, args = node[1], node[2]
+        if any(a[1] is None for a in args):
+            raise _REvalError("argument is missing")
+        if fn_node[0] in ("sym", "str") and fn_node[1] not in self.env:
+            builtin = _R_BUILTINS.get(fn_node[1])
+            if builtin is None or any(a[0] is not None for a in args):
+                raise _REvalError(f'could not find function "{fn_node[1]}"')
+            return builtin([self.ev(a[1]) for a in args])
+        fn = self.ev(fn_node)
+        if fn[0] != "closure":
+            raise _REvalError("attempt to apply non-function")
+        _, formals, body, env = fn
+        local = dict(env)
+        names = [f[0] for f in formals]
+        assigned: set[str] = set()
+        for name, value in args:
+            if name is not None:
+                if name not in names:
+                    raise _REvalError(f"unused argument ({name})")
+                local[name] = self.ev(value)
+                assigned.add(name)
+        remaining = [n for n in names if n not in assigned and n != "..."]
+        positional = [value for name, value in args if name is None]
+        if len(positional) > len(remaining) and "..." not in names:
+            raise _REvalError("unused argument")
+        for name, value in zip(remaining, positional, strict=False):
+            local[name] = self.ev(value)
+            assigned.add(name)
+        for name, default in formals:
+            if name in assigned:
+                continue
+            if default is not None:
+                local[name] = _REval(local).ev(default)
+            else:
+                local.pop(name, None)  # a missing argument: an error once used
+        return _REval(local).ev(body)
+
+
+def _r_function(expr_txt: str) -> Callable[[Any], Any] | None:
+    """``f <- function(x) NULL; body(f) <- parse(text = expr_txt)[[1]]``.
+
+    ``None`` when R cannot parse the text or it holds no expression. The
+    returned function evaluates the first expression with ``x`` bound to the
+    given values and returns its value as a list (``None`` for ``NULL``); an R
+    error raises :class:`_REvalError`. A value that is not a vector (a
+    function, a formula, a list) comes back as a list of its R length.
+    """
+    try:
+        exprs = _r_parse(expr_txt)
+    except (_RParseError, RecursionError):
         return None
-    allowed = (
-        ast.Expression,
-        ast.BinOp,
-        ast.UnaryOp,
-        ast.Constant,
-        ast.Name,
-        ast.Load,
-        ast.Call,
-        ast.Add,
-        ast.Sub,
-        ast.Mult,
-        ast.Div,
-        ast.Pow,
-        ast.USub,
-        ast.UAdd,
-    )
-    for node in ast.walk(tree):
-        if not isinstance(node, allowed):
-            return None
-        if isinstance(node, ast.Name) and node.id != "x" and node.id not in _ALLOWED_FUNCS:
-            return None
-        if isinstance(node, ast.Constant) and not isinstance(node.value, int | float):
-            return None
-    code = compile(tree, "<spss-fit>", "eval")
+    if not exprs:
+        return None
+    body = exprs[0]
 
     def fn(x: Any) -> Any:
-        if isinstance(x, list | tuple):
-            return [fn(v) for v in x]
-        # the AST was checked above: only arithmetic on `x` and whitelisted functions
-        return eval(code, {"__builtins__": {}, **_ALLOWED_FUNCS}, {"x": x})  # noqa: S307
+        xs = [float(v) for v in x] if isinstance(x, list | tuple) else [float(x)]
+        try:
+            value = _REval({"x": ("num", xs)}).ev(body)
+        except RecursionError as e:
+            raise _REvalError("evaluation nested too deeply") from e
+        if value[0] == "null":
+            return None
+        if value[0] in ("num", "chr"):
+            return list(value[1])
+        return [None] * _r_len(value)
 
     return fn
 
@@ -948,7 +1751,7 @@ def _spvviz_function_guide(node: Any) -> dict[str, Any] | None:
     expr_txt = _xml_attr(node, "value")
     if expr_txt is None or expr_txt == "":
         return None
-    fn = _compile_r_arith(expr_txt)
+    fn = _r_function(expr_txt)
     if fn is None:
         return None
     return {"name": _xml_attr(node, "name"), "expr": expr_txt, "fn": fn}
@@ -2182,6 +2985,18 @@ def _fivenum(v: list[float]) -> list[float]:
     return [0.5 * (x[math.floor(di) - 1] + x[math.ceil(di) - 1]) for di in d]
 
 
+def _fit_y(v: Any) -> float:
+    """One fitted-curve value as ``xy.coords()`` coerces it (complex: real part)."""
+    if v is None:
+        return math.nan
+    if isinstance(v, complex):
+        return v.real
+    if isinstance(v, str):
+        num = _as_numeric(v)
+        return math.nan if num is None else num
+    return float(v)
+
+
 def _svg_chart(df: pd.DataFrame) -> str:
     chart_type = df.attrs.get("spv_chart_type") or "point"
     xlab = df.attrs.get("spv_chart_xlab") or "x"
@@ -2267,9 +3082,14 @@ def _svg_chart(df: pd.DataFrame) -> str:
             xr = [lo + (hi - lo) * i / 199 for i in range(200)]
             for i, f in enumerate(fits):
                 try:
-                    yr = [float(v) for v in f["fn"](xr)]
-                except Exception:  # noqa: S112 - R skips a curve that fails to evaluate
+                    val = f["fn"](xr)
+                except _REvalError:  # R: tryCatch(fits[[i]]$fn(xr), error = NULL)
                     continue
+                if val is None:
+                    continue
+                if len(val) != len(xr):
+                    raise ValueError("'x' and 'y' lengths differ")  # graphics::lines()
+                yr = [_fit_y(v) for v in val]
                 pts = " ".join(
                     f"{xmap(x):.1f},{ymap(y):.1f}"
                     for x, y in zip(xr, yr, strict=True)

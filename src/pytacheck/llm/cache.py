@@ -154,16 +154,10 @@ def _llm_cache_get(key: str) -> dict[str, Any] | None:
 
 def _llm_cache_put(key: str, df: Any, raw: Any = None, thinking: Any = None) -> dict[str, Any]:
     """Port of ``.llm_cache_put()``: write an entry (errors writing are ignored)."""
-    from pytacheck.llm._rds import RInt, RVec, write_rds
+    from pytacheck.llm._rds import RInt, write_rds
 
-    stored_df = df
-    if isinstance(df, dict) and set(df) == {"answer"} and isinstance(df["answer"], str):
-        # chat$chat() returns an "ellmer_output"; trimws() keeps the class
-        stored_df = {
-            "answer": RVec("chr", [df["answer"]], {"class": RVec("chr", ["ellmer_output"])})
-        }
     entry = {
-        "df": stored_df,
+        "df": df,
         "raw": raw,
         "thinking": thinking,
         "created": dt.datetime.now(dt.UTC),
@@ -173,4 +167,4 @@ def _llm_cache_put(key: str, df: Any, raw: Any = None, thinking: Any = None) -> 
         write_rds(entry, _llm_cache_path(key))
     except Exception:
         pass
-    return {**entry, "df": df}
+    return entry

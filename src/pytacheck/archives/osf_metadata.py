@@ -192,14 +192,14 @@ def _osf_license(osf_id: str) -> str | None:
     One request (``?embed=license``); ``None`` when no licence is set or the
     project could not be read.
     """
-    from pytacheck.archives.osf_helpers import _get
+    from pytacheck.archives.osf_helpers import _data_of, _get, _resp_body_json
 
     resp = _get_request(f"{_api()}/nodes/{osf_id}/?embed=license")
     node = None
     if resp is not None and resp.status_code == 200:
         try:
-            node = resp.json().get("data")
-        except ValueError:
+            node = _data_of(_resp_body_json(resp))
+        except Exception:
             node = None
     name = _get(node, "embeds", "license", "data", "attributes", "name")
     if isinstance(name, list):
@@ -214,15 +214,15 @@ def _osf_node_metadata(osf_id: str) -> dict[str, Any]:
     tags, and the IDs of its registrations and forks, as a dict ready to be
     written as JSON.
     """
-    from pytacheck.archives.osf_helpers import _get
+    from pytacheck.archives.osf_helpers import _data_of, _get, _resp_body_json
 
     api = _api()
     resp = _get_request(f"{api}/nodes/{osf_id}/?embed=license&embed=bibliographic_contributors")
     node = None
     if resp is not None and resp.status_code == 200:
         try:
-            node = resp.json().get("data")
-        except ValueError:
+            node = _data_of(_resp_body_json(resp))
+        except Exception:
             node = None
     att = _get(node, "attributes") or {}
 
