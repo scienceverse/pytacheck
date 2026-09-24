@@ -687,8 +687,6 @@ def _json_num(x: float) -> str:
         return '"NaN"'
     if math.isinf(x):
         return '"Inf"' if x > 0 else '"-Inf"'
-    if x == 0:
-        return "0"
     return f"{x:.15g}"
 
 

@@ -1,0 +1,238 @@
+{
+  "id": "osf_info.single_file_listing_types",
+  "ok": true,
+  "error": null,
+  "warnings": [
+    "xx is not a valid OSF ID"
+  ],
+  "value": {
+    "t": "df",
+    "nrow": 5,
+    "names": [
+      "osf_id",
+      "name",
+      "description",
+      "osf_type",
+      "public",
+      "category",
+      "registration",
+      "preprint",
+      "self",
+      "children",
+      "files",
+      "parent",
+      "project",
+      "provider",
+      "kind",
+      "filetype",
+      "size",
+      "downloads",
+      "path",
+      "download_url"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "pngda",
+          "k6gbt",
+          "6846ed88e49694cd45ab8375",
+          "xx",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Papercheck Test",
+          "data.xlsx",
+          "data.xlsx",
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "This is my test description",
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "nodes",
+          "files",
+          "files",
+          "invalid",
+          "invalid"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "project",
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://api.osf.io/v2/nodes/pngda/",
+          "https://api.osf.io/v2/files/6846ed88e49694cd45ab8375/",
+          "https://api.osf.io/v2/files/6846ed88e49694cd45ab8375/",
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://api.osf.io/v2/nodes/pngda/children/",
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://api.osf.io/v2/nodes/pngda/files/",
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "6846ec6a7704517be1addda3",
+          "6846ec6a7704517be1addda3",
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "pngda",
+          "j3gcx",
+          "j3gcx",
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "osfstorage",
+          "osfstorage",
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "file",
+          "file",
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "data",
+          "data",
+          null,
+          null
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          null,
+          9113,
+          9113,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          null,
+          222,
+          222,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "/data.xlsx",
+          "/data.xlsx",
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "https://osf.io/download/k6gbt/",
+          "https://osf.io/download/k6gbt/",
+          null,
+          null
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

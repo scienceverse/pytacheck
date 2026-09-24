@@ -1,0 +1,159 @@
+{
+  "id": "osf_file_download.select.msfcn",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "value",
+      "files"
+    ],
+    "v": [
+      {
+        "t": "df",
+        "nrow": 3,
+        "names": [
+          "folder",
+          "osf_id",
+          "name",
+          "filetype",
+          "size",
+          "downloads",
+          "provider",
+          "path",
+          "downloaded",
+          "download_path",
+          "osf_project",
+          "osf_url",
+          "size_on_disk",
+          "attempted"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "msfcn",
+              "msfcn",
+              "msfcn"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "5880e533ad3c4800444d82a9",
+              "5880e55c6c613b0041f2cb5a",
+              "58a0e38c594d9001f7121465"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Data_Experiment_1.xlsx",
+              "Data_Experiment_2.xlsx",
+              "Suplemental Material_Chairs used for data collection.docx"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data",
+              "data",
+              "text"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              251048,
+              181695,
+              122354
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              52,
+              49,
+              95
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "osfstorage",
+              "osfstorage",
+              "osfstorage"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "osfstorage/Data_Exp_1/Data_Experiment_1.xlsx",
+              "osfstorage/Data_Exp_2/Data_Experiment_2.xlsx",
+              "osfstorage/Photograph_chairs_used/Suplemental Material_Chairs used for data collection.docx"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true,
+              true,
+              true
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "msfcn",
+              "msfcn",
+              "msfcn"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "msfcn",
+              "msfcn",
+              "msfcn"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://osf.io/msfcn",
+              "https://osf.io/msfcn",
+              "https://osf.io/msfcn"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              251048,
+              181695,
+              122354
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true,
+              true,
+              true
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "msfcn/osfstorage/Data_Exp_1/Data_Experiment_1.xlsx",
+          "msfcn/osfstorage/Data_Exp_2/Data_Experiment_2.xlsx",
+          "msfcn/osfstorage/Photograph_chairs_used/Suplemental Material_Chairs used for data collection.docx"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

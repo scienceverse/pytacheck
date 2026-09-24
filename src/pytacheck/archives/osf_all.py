@@ -95,7 +95,7 @@ def _osf_download_addons(node: str, node_dir: str, pb: Any = None) -> dict[str, 
     the files into ``<node_dir>/<provider>/``. Returns ``{"files", "bytes"}``.
     """
     from pytacheck.archives import _tick
-    from pytacheck.archives.osf import osf_get_all_pages
+    from pytacheck.archives.osf import _osf_err, osf_get_all_pages
     from pytacheck.archives.osf_helpers import _get, _osf_parse_response
     from pytacheck.utils import path_sanitize
 
@@ -129,8 +129,14 @@ def _osf_download_addons(node: str, node_dir: str, pb: Any = None) -> dict[str, 
             more = [m for m in more if m is not None]
             if not more:
                 break
+            # R hands a failed listing (an empty list() carrying osf_error) to
+            # .osf_parse_response(), which then errors and aborts the whole
+            # download; a failed folder listing is skipped here instead.
             parsed = bind_rows(
-                [_osf_parse_response(m) if isinstance(m, list) else None for m in more]
+                [
+                    _osf_parse_response(m) if isinstance(m, list) and _osf_err(m) is None else None
+                    for m in more
+                ]
             )
             if len(parsed) == 0:
                 break

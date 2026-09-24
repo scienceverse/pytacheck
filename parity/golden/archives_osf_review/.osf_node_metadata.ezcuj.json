@@ -1,0 +1,1069 @@
+{
+  "id": ".osf_node_metadata.ezcuj",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "osf_id",
+      "osf_url",
+      "title",
+      "description",
+      "category",
+      "public",
+      "date_created",
+      "date_modified",
+      "tags",
+      "license",
+      "node_license",
+      "contributors",
+      "citation",
+      "registrations",
+      "forks"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "ezcuj"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://osf.io/ezcuj"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Reproducibility Project: Psychology"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Reproducibility is a defining feature of science, but the extent to which it characterizes current research is unknown. We conducted replications of 100 experimental and correlational studies published in three psychology journals using high-powered designs and original materials when available."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "project"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "2012-04-01T15:49:07.702000"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "2025-01-08T16:33:52.962281"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "crowdsource",
+          "metascience",
+          "open science",
+          "psychological science",
+          "psychology",
+          "replication",
+          "reproducibility",
+          "reproduction"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "CC0 1.0 Universal"
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "copyright_holders",
+          "year"
+        ],
+        "v": [
+          {
+            "t": "list",
+            "names": null,
+            "v": []
+          },
+          {
+            "t": "null"
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "list",
+            "names": [
+              "name",
+              "given_name",
+              "family_name",
+              "orcid"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Christopher Jon Anderson"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Christopher"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Anderson"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  null
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "name",
+              "given_name",
+              "family_name",
+              "orcid"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Joanna Anderson"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Joanna"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Anderson"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  null
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "name",
+              "given_name",
+              "family_name",
+              "orcid"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Marcel A.L.M. van Assen"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Marcel"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "van Assen"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  null
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "name",
+              "given_name",
+              "family_name",
+              "orcid"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Peter Raymond Attridge"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Peter"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Attridge"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  null
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "name",
+              "given_name",
+              "family_name",
+              "orcid"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Angela Attwood"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Angela"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Attwood"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  null
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "name",
+              "given_name",
+              "family_name",
+              "orcid"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Jordan Axt"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Jordan"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Axt"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  null
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "name",
+              "given_name",
+              "family_name",
+              "orcid"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Molly Babel"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Molly"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Babel"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  null
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "name",
+              "given_name",
+              "family_name",
+              "orcid"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Štěpán Bahník"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Štěpán"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Bahník"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  null
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "name",
+              "given_name",
+              "family_name",
+              "orcid"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Erica Baranski"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Erica"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Baranski"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  null
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "name",
+              "given_name",
+              "family_name",
+              "orcid"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Michael Barnett-Cowan"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Michael"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Barnett-Cowan"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  null
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "title",
+          "author",
+          "publisher",
+          "type"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Reproducibility Project: Psychology"
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 270,
+            "names": [
+              "family",
+              "given"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Anderson",
+                  "Anderson",
+                  "van Assen",
+                  "Attridge",
+                  "Attwood",
+                  "Axt",
+                  "Babel",
+                  "Bahník",
+                  "Baranski",
+                  "Barnett-Cowan",
+                  "Bartmess",
+                  "Beer",
+                  "Bell",
+                  "Bentley",
+                  "van den Bergh",
+                  "Beyan",
+                  "den Bezemer",
+                  "Borsboom",
+                  "Bosch",
+                  "Bosco",
+                  "Bowman",
+                  "Brandt",
+                  "Braswell",
+                  "Brohmer",
+                  "Brown",
+                  "Brown",
+                  "Brüning",
+                  "Calhoun-Sauls",
+                  "Callahan",
+                  "Chagnon",
+                  "Chandler",
+                  "Chartier",
+                  "Cheung",
+                  "Chu",
+                  "Cillessen",
+                  "Clay",
+                  "Cleary",
+                  "Cloud",
+                  "Cohn",
+                  "Cohoon",
+                  "Columbus",
+                  "Costantini",
+                  "Cramblet Alvarez",
+                  "Cremata",
+                  "Crusius",
+                  "DeCoster",
+                  "DeGaetano",
+                  "Della Penna",
+                  "Deserno",
+                  "Devitt",
+                  "Dewitte",
+                  "DiGiacomo",
+                  "Dobolyi",
+                  "Dodson",
+                  "Donnellan",
+                  "Donohue",
+                  "van Dooren",
+                  "van Doorn",
+                  "Dore",
+                  "Dorrough",
+                  "Dorsthorst",
+                  "Dreber",
+                  "Dugas",
+                  "Dunn",
+                  "Easey",
+                  "Eboigbe",
+                  "Eggleston",
+                  "Embley",
+                  "Epskamp",
+                  "Errington",
+                  "Estel",
+                  "Farach",
+                  "Feather",
+                  "Fedor",
+                  "Fernández",
+                  "Fiedler",
+                  "Field",
+                  "Fitneva",
+                  "Flagan",
+                  "Forest",
+                  "Forsell",
+                  "Foster",
+                  "Frank",
+                  "Frazier",
+                  "Fuchs",
+                  "Gable",
+                  "Galak",
+                  "Galliani",
+                  "Gampa",
+                  "Garcia",
+                  "Gazarian",
+                  "Gilbert",
+                  "Giner-Sorolla",
+                  "Glöckner",
+                  "Goellner",
+                  "Goh",
+                  "Goldberg",
+                  "Goldinger",
+                  "Goodbourn",
+                  "Gordon-McKeon",
+                  "Gorges",
+                  "Gorges",
+                  "Goss",
+                  "Graham",
+                  "Gray",
+                  "Hartgerink",
+                  "Hasselman",
+                  "Hayes",
+                  "Heikensten",
+                  "Henninger",
+                  "Hicks",
+                  "Hodsoll",
+                  "Holubar",
+                  "Hoogendoorn",
+                  "van der Hulst",
+                  "Humphries",
+                  "Hung",
+                  "Immelman",
+                  "Irsik",
+                  "Jahn",
+                  "Jäkel",
+                  "Jekel",
+                  "Johannesson",
+                  "Johnson",
+                  "Johnson-Grey",
+                  "Johnson",
+                  "Johnston",
+                  "Jonas",
+                  "Joy-Gaba",
+                  "Kappes",
+                  "Kelso",
+                  "Kidwell",
+                  "Kim",
+                  "Kirkhart",
+                  "Kleinberg",
+                  "Knezevic",
+                  "Kolorz",
+                  "Krause",
+                  "Krijnen",
+                  "Kuhlmann",
+                  "Kunkels",
+                  "Kyc",
+                  "Lai",
+                  "Laique",
+                  "Lakens",
+                  "Lane",
+                  "Lassetter",
+                  "Lazarevic",
+                  "LeBel",
+                  "Lee",
+                  "Lee",
+                  "Lemm",
+                  "Levitan",
+                  "Lewis",
+                  "Lin",
+                  "Lin",
+                  "Lippold",
+                  "Loureiro",
+                  "Lumian",
+                  "Luteijn",
+                  "Mackinnon",
+                  "Mainard",
+                  "Marigold",
+                  "Martin",
+                  "Martinez",
+                  "Masicampo",
+                  "Matacotta",
+                  "Mathur",
+                  "May",
+                  "McRae",
+                  "McElroy",
+                  "Mechin",
+                  "Mehta",
+                  "Meixner",
+                  "Melinger",
+                  "Miller",
+                  "Smith",
+                  "Moore",
+                  "Möschl",
+                  "Motyl",
+                  "Müller",
+                  "Munafo",
+                  "Muñoz",
+                  "Neijenhuijs",
+                  "Nervi",
+                  "Nicolas",
+                  "Nilsonne",
+                  "Nosek",
+                  "Olsson",
+                  "Osborne",
+                  "Ostkamp",
+                  "Pavel",
+                  "Perna",
+                  "Pernet",
+                  "Perugini",
+                  "Pipitone",
+                  "Pitts",
+                  "Plessow",
+                  "Prenoveau",
+                  "Ratliff",
+                  "Reinhard",
+                  "Renkewitz",
+                  "van Renswoude",
+                  "Ricker",
+                  "Rigney",
+                  "van Rijn",
+                  "Rivers",
+                  "Roebke",
+                  "Rutchick",
+                  "Ryan",
+                  "Sahin",
+                  "Saide",
+                  "Sandstrom",
+                  "Santos",
+                  "Saxe",
+                  "Schlegelmilch",
+                  "Schmidt",
+                  "Scholz",
+                  "Seibel",
+                  "Selterman",
+                  "Shaki",
+                  "Simpson",
+                  "Sinclair",
+                  "Skorinko",
+                  "Slowik",
+                  "Snyder",
+                  "Soderberg",
+                  "Sonnleitner",
+                  "Spencer",
+                  "Spies",
+                  "Staples",
+                  "steegen",
+                  "Steinberg",
+                  "Stieger",
+                  "Strohminger",
+                  "Sullivan",
+                  "Talhelm",
+                  "Tapia",
+                  "Thomae",
+                  "Toton",
+                  "Tibboel",
+                  "Tio",
+                  "Traets",
+                  "Tsang",
+                  "tuerlinckx",
+                  "Tullett",
+                  "Turchan",
+                  "vanpaemel",
+                  "Vásquez-Echeverría",
+                  "van 't Veer",
+                  "Vélez",
+                  "van de Ven",
+                  "Vermue",
+                  "Verschoor",
+                  "Vianello",
+                  "Voracek",
+                  "Vuu",
+                  "Wagenmakers",
+                  "Weerdmeester",
+                  "Welsh",
+                  "Westgate",
+                  "Wissink",
+                  "Wood",
+                  "",
+                  "Wright",
+                  "Wu",
+                  "Zeelenberg",
+                  "Zuni",
+                  "Hartshorne",
+                  "Grange"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Christopher J",
+                  "Joanna",
+                  "Marcel A L M",
+                  "Peter R",
+                  "Angela S",
+                  "Jordan",
+                  "Molly",
+                  "Štěpán",
+                  "Erica",
+                  "Michael",
+                  "Elizabeth",
+                  "Jennifer S",
+                  "Raoul",
+                  "Heather",
+                  "Don",
+                  "Leah",
+                  "Bobby",
+                  "Denny",
+                  "Annick",
+                  "Frank",
+                  "Sara D",
+                  "Mark",
+                  "Erin L",
+                  "Hilmar",
+                  "Benjamin T",
+                  "Kristina",
+                  "Jovita",
+                  "Ann",
+                  "Shannon P",
+                  "Elizabeth",
+                  "Jesse J",
+                  "Christopher R",
+                  "Felix",
+                  "Phuonguyen V",
+                  "Linda",
+                  "Russ",
+                  "Hayley M D",
+                  "Mark D",
+                  "Michael",
+                  "Johanna",
+                  "Simon",
+                  "Giulio",
+                  "Leslie D",
+                  "Edward",
+                  "Jan",
+                  "Jamie",
+                  "Michelle",
+                  "Nicolás",
+                  "Marie K",
+                  "Olivia",
+                  "Laura",
+                  "Philip",
+                  "David",
+                  "Geneva T",
+                  "Brent",
+                  "Ryan",
+                  "Roel",
+                  "Johnny",
+                  "Rebecca A",
+                  "Angela R",
+                  "Anniek t",
+                  "Anna",
+                  "Michelle",
+                  "Elizabeth W",
+                  "Kayleigh",
+                  "Sylvia",
+                  "Casey",
+                  "Jo",
+                  "Sacha",
+                  "Timothy M",
+                  "Vivien",
+                  "Frank J",
+                  "Jenelle",
+                  "Anna",
+                  "Belén",
+                  "Susann",
+                  "James G",
+                  "Stanka A",
+                  "Taru",
+                  "Amanda L",
+                  "Eskil",
+                  "Joshua D",
+                  "Michael C",
+                  "Rebecca S",
+                  "Heather",
+                  "Philip A",
+                  "Jeff",
+                  "Elisa M",
+                  "Anup",
+                  "Sara",
+                  "Douglas",
+                  "Elizabeth A",
+                  "Roger",
+                  "Andreas",
+                  "Lars",
+                  "Jin X",
+                  "Rebecca M",
+                  "Stephen D",
+                  "Patrick T",
+                  "Shauna",
+                  "Bryan",
+                  "Jessie",
+                  "Justin",
+                  "Jesse",
+                  "Jeremy R",
+                  "Chris",
+                  "Fred",
+                  "Timothy B",
+                  "Emma K",
+                  "Felix",
+                  "Grace",
+                  "John",
+                  "Taylor",
+                  "Geertje E A M",
+                  "Marije",
+                  "Denise",
+                  "Cathy O",
+                  "Nathali",
+                  "Vanessa C",
+                  "Georg",
+                  "Frank",
+                  "Marc",
+                  "Magnus",
+                  "David J",
+                  "Kate M",
+                  "Larissa",
+                  "William",
+                  "Kai",
+                  "Jennifer A",
+                  "Heather B",
+                  "Kim",
+                  "Mallory",
+                  "Seung K",
+                  "Matthew W",
+                  "Bennett",
+                  "Goran",
+                  "Franziska M",
+                  "Robert W",
+                  "Job M T",
+                  "Tim",
+                  "Yoram K",
+                  "Megan",
+                  "Calvin K",
+                  "Aamir",
+                  "Daniel",
+                  "Kristin A",
+                  "Bethany",
+                  "Ljiljana B",
+                  "Etienne P",
+                  "Key Jung",
+                  "Minha",
+                  "Kristi M",
+                  "Carmel",
+                  "Melissa",
+                  "Lin",
+                  "Stephanie C",
+                  "Matthias",
+                  "Darren",
+                  "Daniel S",
+                  "Ilse",
+                  "Sean P",
+                  "Heather N",
+                  "Denise C",
+                  "Daniel P",
+                  "Tylar",
+                  "E.J.",
+                  "Joshua J",
+                  "Maya B",
+                  "Michael",
+                  "Kateri",
+                  "Todd",
+                  "Nicole",
+                  "Pranjal H",
+                  "Johannes M",
+                  "Alissa",
+                  "Jeremy K, PhD",
+                  "Mallorie M",
+                  "Katherine",
+                  "Marcus",
+                  "Matt",
+                  "Stephanie M",
+                  "Marcus R",
+                  "Alisa R",
+                  "Koen I",
+                  "Taylor",
+                  "Gandalf",
+                  "Gustav",
+                  "Brian A",
+                  "Catherine",
+                  "Colleen",
+                  "Lutz",
+                  "Misha",
+                  "Olivia K",
+                  "Cyril R",
+                  "Marco",
+                  "R. Nathan",
+                  "Michael",
+                  "Franziska",
+                  "Jason M",
+                  "Kate A",
+                  "David A",
+                  "Frank",
+                  "Daan R",
+                  "Ashley A",
+                  "Anastasia E",
+                  "Hedderik",
+                  "Andrew M",
+                  "Mark A",
+                  "Abraham M",
+                  "Robert S",
+                  "Onur",
+                  "Anondah",
+                  "Gillian M",
+                  "David",
+                  "Rebecca",
+                  "René",
+                  "Kathleen",
+                  "Sabine",
+                  "Larissa",
+                  "Dylan F",
+                  "Samuel",
+                  "William B",
+                  "H. C",
+                  "Jeanine",
+                  "Agnieszka",
+                  "Joel S",
+                  "Courtney K",
+                  "Carina",
+                  "Nicholas B",
+                  "Jeffrey R",
+                  "Angela D",
+                  "sara",
+                  "Mia",
+                  "Stefan",
+                  "Nina",
+                  "Gavin B",
+                  "Thomas",
+                  "Megan",
+                  "Manuela",
+                  "Sarah L",
+                  "Helen",
+                  "Pia",
+                  "Frits",
+                  "Steve",
+                  "francis",
+                  "Alexa M",
+                  "Paul J",
+                  "wolf",
+                  "Alejandro",
+                  "Anna E",
+                  "Natalia",
+                  "Mathijs",
+                  "Marieke",
+                  "Mark",
+                  "Michelangelo",
+                  "Martin",
+                  "Gina",
+                  "Eric-Jan",
+                  "Johanna W",
+                  "Ashlee",
+                  "Erin C",
+                  "Joeri",
+                  "Michael J",
+                  "Andy",
+                  "Emily C",
+                  "Sining",
+                  "Marcel",
+                  "Kellylynn",
+                  "Joshua K",
+                  "Jim"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "OSF"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "webpage"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "null"
+      },
+      {
+        "t": "chr",
+        "v": [
+          "wusvb",
+          "eq3s2"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

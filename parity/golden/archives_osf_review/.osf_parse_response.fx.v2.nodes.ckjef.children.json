@@ -1,0 +1,133 @@
+{
+  "id": ".osf_parse_response.fx.v2.nodes.ckjef.children",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 3,
+    "names": [
+      "osf_id",
+      "name",
+      "description",
+      "osf_type",
+      "public",
+      "category",
+      "registration",
+      "preprint",
+      "self",
+      "children",
+      "files",
+      "parent",
+      "project"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "6nt4v",
+          "yt32c",
+          "j3gcx"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Processed Data",
+          "Individual",
+          "Raw Data"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "The processed data",
+          "Contains 14 data files for testing contents greater than 10",
+          "The raw data"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "nodes",
+          "nodes",
+          "nodes"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true,
+          true,
+          true
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "data",
+          "data",
+          "data"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false,
+          false,
+          false
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false,
+          false,
+          false
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://api.osf.io/v2/nodes/6nt4v/",
+          "https://api.osf.io/v2/nodes/yt32c/",
+          "https://api.osf.io/v2/nodes/j3gcx/"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://api.osf.io/v2/nodes/6nt4v/children/",
+          "https://api.osf.io/v2/nodes/yt32c/children/",
+          "https://api.osf.io/v2/nodes/j3gcx/children/"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://api.osf.io/v2/nodes/6nt4v/files/",
+          "https://api.osf.io/v2/nodes/yt32c/files/",
+          "https://api.osf.io/v2/nodes/j3gcx/files/"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "ckjef",
+          "ckjef",
+          "ckjef"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "pngda",
+          "pngda",
+          "pngda"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

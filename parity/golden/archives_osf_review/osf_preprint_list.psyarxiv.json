@@ -1,0 +1,256 @@
+{
+  "id": "osf_preprint_list.psyarxiv",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 10,
+    "names": [
+      "osf_id",
+      "name",
+      "description",
+      "osf_type",
+      "provider",
+      "public",
+      "doi",
+      "version",
+      "is_published",
+      "date_created",
+      "date_modified",
+      "self",
+      "parent",
+      "project",
+      "primary_file"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "8xutg_v3",
+          "s96ym_v1",
+          "as95m_v1",
+          "jqcv6_v1",
+          "u3vzj_v1",
+          "zva9y_v2",
+          "f6tja_v1",
+          "qe9w3_v1",
+          "86279_v1",
+          "exkzp_v2"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Modeling the Vigilance Decrement in a Two-Boundary Signal Detection Task",
+          "Transdiagnostic Predictors of Job Tenure in People Living with Mental Disorders: A Scoping Review",
+          "Cognitive control supports memory performance via internal strategy use in aging",
+          "Learning Second Language Intonation Through Multimodal High-Variability Training: The Role of Hand and Facial Gestures in Intonation–Meaning Mapping",
+          "Are personalized networks worth it? An experimental study",
+          "Stability in Daily Well-Being in Romantic Relationships Versus Singlehood Among Young Adults",
+          "Extending Reproducibility to Theory: Theoretical Reproducibility and Precision as Foundations of Cumulative Science",
+          "Attentional Advantage in Gifted Children Is Selective to High-Demand Exploitative Tasks: Evidence from TEPR",
+          "A systematic review of the effects of cognitive and perceptual factors on X-ray baggage screening performance",
+          "Difficulties in Identifying Causes of Emotions Prospectively Predict the Persistence of Suicidal Thoughts: A Six-Week Longitudinal Study"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Objective: We fit a generative model to data from a sensory monitoring task to isolate mechanisms of the vigilance decrement. Background: Although the vigilance decrement has been studied for decades, analytic constraints have impeded a theoretical agreement on the causes of the effect. Generative models offer a technique to disentangle sources of vigilance failure that are conflated by traditional performance measures. Method: Participants performed a signal detection task that required them to judge whether the position of a visual probe each trial was sampled from a narrow or a wide probability distribution, where both distributions shared the same midpoint. Data were fit with a generative cognitive model that assumed the observers could make each judgment in either an attentive or inattentive state. Attentive observers made judgments by comparing the estimated probe position to a pair of decision cutoffs on either side of the display midpoint. Inattentive observers guessed their responses. Parameters corresponding to sensitivity, response bias, attentional lapse rate, and positive guessing rate were allowed to vary across blocks of trials. Results: Target detection rates dropped over time on task, showing a clear vigilance decrement. Model fits ascribed the effect to conservative bias shifts, attention lapses, and a change in response guessing strategy. Conclusion: Generative cognitive models offer a technique to better understand the mechanisms and test theories of the vigilance decrement. Application: Theory-based computational models can improve efforts to predict and mitigate vigilance failures.",
+          "Purpose: Studying mental health in the context of employment often focuses on individual disorders, potentially overlooking underlying commonalities across different diagnoses. A transdiagnostic perspective recognizes that certain aspects of job tenure may have broad-reaching implications for employability services that cut across multiple mental disorders. This scoping review seeks to identify common predictors of job tenure in people living with mental disorders using a transdiagnostic approach. \n\nMethods: The study protocol followed PRISMA-ScR guidelines and was registered on the Open Science Framework platform (https://osf.io/rp97e/). The search strategy was completed in November 2025 and involved searches in 7 databases. \n\nResults: A total of 9715 abstracts were uploaded to Covidence for screening. This scoping review included 110 studies and identified 17 predictors of job tenure categorized based on modifiability and stakeholder responsibility, as follows – Entrusted to workplace stakeholders: (1) workplace characteristics and working conditions, (2) psychosocial work environment, (3) informal support and perceptions; Entrusted to the individual and their support teams: (4) psychological, social and practical characteristics, (5) receiving employment support, (6) psychiatric diagnosis, clinical symptoms and functioning, (7) support from relatives and broader social networks, (8) receiving therapy and counselling services, (9) daily functioning; Shared responsibilities: (10) collaboration between all stakeholders, (11) disclosure of mental illness in the workplace, (12) motivation, (13) person-job fit, (14) work-life balance, (15) financial assistance during sick leave; Immutable factors: (16) sociodemographic characteristics, (17) work and education history.\n\nConclusion: Findings support role clarification for stakeholders and guide service organization to improve job tenure across diverse mental disorders.",
+          "Control processes can be considered a cognitive resource that supports efficient memory functioning. They are primarily involved in the strategic aspects of memory. In the present study, we aimed to examine the role of both control processes and strategy use in the memory performance of older adults. More specifically, we sought to determine whether the influence of control processes on memory performance is better explained by a mediation or a moderation model involving strategy use. To precisely determine whether this relationship is better explained by a mediator or a moderator model, we used the precision and robustness of Bayesian process modeling to better understand these effects. We tested over 92 participants with cognitive control tasks (Stroop, 2-back), a metamemory questionnaire (MIA), and an episodic recall task. Bayesian analyses indicated that the mediation model provided the best fit to explain the contribution of internal strategy use to the relationship between control processes and memory performance. These findings suggest that control strategy use constitutes a key functional component linking cognitive control to memory outcomes. Overall, the results highlight the importance of cognitive control in supporting effective memory strategy use and suggest that interventions targeting cognitive control may help improve memory performance in aging populations.",
+          "Previous studies involving multimodal phonetic training – i.e., involving visual as well as acoustic cues – have shown that the use of hand gestures mimicking phonetic features of speech results in gains in pronunciation and that the use of congruent facial expressions facilitates the comprehension of intonational meaning. Moreover, High Variability Perceptual Training (HVPT) has been widely used to trigger phonetic learning, especially at a segmental level. However, little is known about (a) whether HVPT can be successfully applied to the learning of second language (L2) intonation; and (b) whether multimodal features encoding intonational form (e.g., visuospatial hand gestures) or intonational meaning (e.g., facial gestures) boost intonational learning in an HVPT context. The current study aims to determine whether HVPT regimes involving the observation of hand gestures mimicking pitch or facial gestures illustrating pragmatic meaning are more beneficial than comparable training that does not involve gestures. A total of 61 Spanish learners of English were distributed into three HVPT regimes: hand gestures (HG) that mimic pitch direction, facial gestures (FG) that convey pragmatic meaning, and a control group with no gestures (NG). The study assessed the perception and production of intonation in tag questions and statements both before and after the training period. All groups exhibited improvement from pre-test to post-test across all tasks. Notably, the FG group demonstrated a greater enhancement in perception compared to the other groups, although no significant differences were observed in production. These findings underscore the efficacy of multimodal HVPT for L2 intonation perception and application, with both hand and facial gestures aiding the learning process, albeit facial gestures offering superior benefits. This study is the first to highlight the importance of facial gestures in the acquisition of L2 intonation, particularly in the mapping of intonational form to meaning.",
+          "Objective\nPerson-specific networks derived from ecological momentary assessment (EMA) data have been used as tools for psychotherapeutic case conceptualization. However, their usefulness remains largely untested. In this preregistered experiment, we examined whether participants could recognize their own networks, how useful they found them, and whether they preferred them over time series.\nMethods\nUniversity students (N=165) completed EMA surveys five times per day for three weeks, rating six emotions and experiences (cheerful, pleasant experience, tired, stressed, connected, relaxed) and describing pleasant and stressful experiences in open text boxes. In a subsequent individual feedback session, each participant viewed three networks: their own, another participant’s randomly selected network, and a theoretical network. Participants were told that all three represented their own data processed in different ways and rated each network’s insightfulness, usefulness, and interestingness. After the deception was revealed, they guessed which network was theirs. Participants also evaluated time series annotated with open-text data.\nResults\nParticipants neither preferred nor recognized their own network above chance. They consistently rated annotated time series as more insightful, useful, and interesting than both contemporaneous and temporal networks. \nConclusions\nThese findings question the value of person-specific EMA networks for case conceptualization and suggest that simpler formats may offer more interpretable alternatives.",
+          "To prevent daily life stressors from spilling over onto general well-being, individuals often turn to support networks, such as romantic partners that help stabilize emotions, when their own emotion regulation resources are depleted. While satisfying romantic relationships have been associated with higher general well-being, the daily dynamics remain underexplored. Since increased volatility in well-being and accumulation of negative experiences may act as early warning signals of affective disorders, due to loss of resilience to adversity, we explore how stability in daily well-being differs as a function of relationship status. Using daily diary data over four months, we compared differences in day-to-day dynamics of well-being in two propensity-score matched samples of single (n = 85; k = 8,330 observations) and partnered individuals (n = 85; k = 8,362). We found that single individuals experience more negative affect and higher variability and instability in multiple well-being aspects compared to partnered individuals, but no differences in resilience in well-being could be observed. Based on statistical process control, both groups were equally resilient to accumulating negative experiences and were more vulnerable to such experiences when interpersonal emotional support was less available. We propose that the higher stability in well-being observed among partnered individuals is due to the unique emotional support partners can provide compared to other support networks. Simultaneously, partnered individuals face considerable vulnerability if they are overly reliant on their partner for emotional regulation. Therefore, both groups need to have alternative coping methods for dealing with adversity when their support networks are unavailable.",
+          "The demonstration that many published findings are not replicable has triggered intense methodological debates in psychology and related fields. While substantial efforts have been made to (re)establish methodological norms at the empirical level, comparatively little attention has been paid to reproducibility at the level of theory. This paper examines the interplay between theory and epistemic value of studies and argues that cumulative knowledge development requires extending reproducibility concerns to the theoretical domain. To address the problem of theory ambiguity - situations in which theories are described so vaguely that different theoretical contents or predictions can be inferred - we introduce the concepts of theoretical reproducibility and theoretical precision. Theoretical reproducibility refers to the extent to which a theory is specified such that independent researchers would converge on the same theoretical content and predictions. Theoretical precision captures the degree to which a theory, even if perfectly specified, yields informative predictions. We formally define both concepts and illustrate their role in cumulative knowledge development using a Bayesian framework. The difference between theoretical reproducibility and precision, on the one hand, and the background probability of a hypothesis, on the other hand, determines how much information can be gained from an empirical study. Assessing this difference is essential to ensure that empirical studies can meaningfully contribute to cumulative knowledge development. Strategies for increasing theoretical reproducibility are discussed, highlighting how better-specified theories allow empirical research to be used more efficiently for cumulative science.",
+          "The cognitive advantages of gifted children have long attracted attention, yet most evidence has been derived from behavioral outcomes such as accuracy and reaction time, offering limited insight into the underlying cognitive processes. This study adopted a process-oriented approach to examine whether and how gifted children differ from their non-gifted peers in terms of attentional resource allocation in exploitative versus exploratory tasks with different levels of difficulty. Fifty gifted (138.22±6.23 months) and fifty-one non-gifted (107.94±5.26 months) primary school children were recruited and completed an exploitative task and an exploratory task with low, medium, and high difficulties. Accuracy and reaction time were measured as behavioral level outcomes. Task-evoked pupil response (TEPR) was measured using eye-tracking and served as the physiological index of attentional allocation. Results showed that gifted children consistently outperformed non-gifted peers in accuracy across both tasks and all difficulty levels, with group differences increasing as task difficulty rose. The advantage of gifted children in reaction time was evident only at low difficulty level in both tasks. For TEPR, gifted children showed greater attentional resource allocation only in high-difficulty exploitative tasks, with no group differences in exploratory tasks. Taken together, these findings highlight both the stable behavioral-level advantages and the physiological-level selective resource investment strategies of gifted children under a variety of cognitive demands.",
+          "An X-ray baggage screener plays a critical role in aviation security. However, evidence about which cognitive and perceptual factors are important for effective threat detection during X-ray baggage screening tasks remains fragmented. This review aimed to (1) scope the existing literature examining cognitive and perceptual factors associated with X-ray baggage screening performance, and (2) systematically synthesise evidence linking these factors to X-ray baggage screening performance outcomes. Following PRISMA 2020 guidelines and a preregistered protocol, searches of six databases (2000–2025) yielded 24 eligible studies (n = 11184 participants) including manipulation and observational designs. Cognitive and perceptual processes appear central to effective X-ray baggage screening, particularly under conditions of uncertainty, time pressure, and low target prevalence. Evidence broadly supports theoretical accounts such as Feature Integration, Schema, and Signal Detection Theory, suggesting that performance relies on attentional feature binding, experience-based knowledge structures, and the ability to discriminate signal from noise. Training and experience were consistently associated with improved detection, including generalisation to novel threats, indicating development of flexible perceptual schemas rather than simple memorisation. However, this relationship is not uniform, with some cognitive assessments (e.g. mental rotation, search speed) showing limited or no improvement with experience, highlighting a tension between learned and potentially stable traits. Furthermore, existing “talent identification” tools testing specific cognitive skills are undermined by circularity issues. Therefore, despite intuitive links between cognitive skills, human factors, and X-ray screening performance, the fragmented and heterogeneous evidence base currently limits definitive conclusions and practical application within the aviation security sector.",
+          "Background: Suicidal thoughts affect approximately 10% of the population during their lifetime. In about one-third of cases, these thoughts persist, contributing to poorer health and elevated suicide risk. Emotion regulation deficits were found to be a central prospective risk factor for suicidal thought persistence. Still, little is known about the mechanisms driving these deficits. Difficulties in identifying causes of emotions could undermine emotion regulation by limiting the ability to target the source of distress. Recent cross-sectional evidence suggests that such difficulties are linked to the occurrence of suicidal thoughts. However, these associations were never examined longitudinally. This study tested whether difficulties in identifying the cause of negative emotions predicted the persistence and severity of suicidal thoughts over 6 weeks, and whether perceived regulatory success mediated this link. \nMethods: Participants who reported suicidal thoughts in the past week (N=138) completed baseline and 6-week follow-up assessments including questionnaires and Ecological Momentary Assessments (EMAs). Difficulties in identifying causes of emotions were assessed using EMAs and language processing. \nResults: Difficulties in identifying causes of negative emotions predicted greater persistence of suicidal thoughts at follow-up, even after accounting for initial suicidal thought severity and initial depressive and psychiatric symptoms. Mediation analysis revealed that this effect was partly accounted for by lower perceived success in emotion regulation. However, such difficulties did not predict suicidal thought severity. \nConclusion: Findings point to difficulties in identifying causes of emotions as a novel predictor for the persistence of suicidal thoughts, and as a potential target for intervention."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "preprints",
+          "preprints",
+          "preprints",
+          "preprints",
+          "preprints",
+          "preprints",
+          "preprints",
+          "preprints",
+          "preprints",
+          "preprints"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "psyarxiv",
+          "psyarxiv",
+          "psyarxiv",
+          "psyarxiv",
+          "psyarxiv",
+          "psyarxiv",
+          "psyarxiv",
+          "psyarxiv",
+          "psyarxiv",
+          "psyarxiv"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          3,
+          1,
+          1,
+          1,
+          1,
+          2,
+          1,
+          1,
+          1,
+          2
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "2026-05-12T21:38:06.871623",
+          "2026-05-12T20:39:59.597808",
+          "2026-05-12T16:29:55.513591",
+          "2026-05-12T16:15:56.732847",
+          "2026-05-12T15:49:18.573896",
+          "2026-05-12T13:24:26.616062",
+          "2026-05-12T13:22:10.547276",
+          "2026-05-12T10:51:13.025679",
+          "2026-05-12T10:12:32.632039",
+          "2026-05-12T09:08:15.313205"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "2026-05-12T21:50:21.236454",
+          "2026-05-12T22:15:25.665056",
+          "2026-05-12T17:11:06.376647",
+          "2026-05-12T17:11:53.940909",
+          "2026-05-12T17:26:11.010109",
+          "2026-05-12T13:54:22.257572",
+          "2026-05-12T13:57:05.720150",
+          "2026-05-12T13:39:45.488122",
+          "2026-05-12T13:39:12.476381",
+          "2026-05-12T14:09:08.049024"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://api.osf.io/v2/preprints/8xutg_v3/",
+          "https://api.osf.io/v2/preprints/s96ym_v1/",
+          "https://api.osf.io/v2/preprints/as95m_v1/",
+          "https://api.osf.io/v2/preprints/jqcv6_v1/",
+          "https://api.osf.io/v2/preprints/u3vzj_v1/",
+          "https://api.osf.io/v2/preprints/zva9y_v2/",
+          "https://api.osf.io/v2/preprints/f6tja_v1/",
+          "https://api.osf.io/v2/preprints/qe9w3_v1/",
+          "https://api.osf.io/v2/preprints/86279_v1/",
+          "https://api.osf.io/v2/preprints/exkzp_v2/"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "hxdyu",
+          null,
+          "gje29",
+          "6acxf",
+          "bgj54",
+          null,
+          "t9km7",
+          null,
+          "s3u2f",
+          "fa9es"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://api.osf.io/v2/files/6a039dde30a60c3ac96f30ea/",
+          "https://api.osf.io/v2/files/6a0395f74b416d2c0bec704c/",
+          "https://api.osf.io/v2/files/6a035598b9ecee3c7d6f3a1e/",
+          "https://api.osf.io/v2/files/6a0352fca72275aeb86f31f2/",
+          "https://api.osf.io/v2/files/6a034c19d61b59d5fa6f2e0b/",
+          "https://api.osf.io/v2/files/6a032b34c78cfe6fad521dec/",
+          "https://api.osf.io/v2/files/6a0329f14e4b0bfe82521c07/",
+          "https://api.osf.io/v2/files/6a030643fd0e7d1d64ec6ba6/",
+          "https://api.osf.io/v2/files/6a02fd1e061cf72039ec7da1/",
+          "https://api.osf.io/v2/files/6a02eee65f34d035ec3a10da/"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

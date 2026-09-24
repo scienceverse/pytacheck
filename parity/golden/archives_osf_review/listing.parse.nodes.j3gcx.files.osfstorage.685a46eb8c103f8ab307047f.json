@@ -1,0 +1,169 @@
+{
+  "id": "listing.parse.nodes.j3gcx.files.osfstorage.685a46eb8c103f8ab307047f",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 3,
+    "names": [
+      "osf_id",
+      "name",
+      "description",
+      "provider",
+      "osf_type",
+      "kind",
+      "filetype",
+      "public",
+      "category",
+      "size",
+      "downloads",
+      "path",
+      "self",
+      "files",
+      "download_url",
+      "parent",
+      "project"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "685a46f5a08505f6975cfbaa",
+          "685a4742c394e5c1c4a1c84f",
+          "687e3375988186012ef720c4"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "nest-2",
+          "test-1.txt",
+          "README"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "osfstorage",
+          "osfstorage",
+          "osfstorage"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "files",
+          "files",
+          "files"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "folder",
+          "file",
+          "file"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "text",
+          "NA"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          null,
+          12,
+          58
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          null,
+          280,
+          272
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "/nest-1/nest-2/",
+          "/nest-1/test-1.txt",
+          "/nest-1/README"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://api.osf.io/v2/files/685a46f5a08505f6975cfbaa/",
+          "https://api.osf.io/v2/files/685a4742c394e5c1c4a1c84f/",
+          "https://api.osf.io/v2/files/687e3375988186012ef720c4/"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://api.osf.io/v2/nodes/j3gcx/files/osfstorage/685a46f5a08505f6975cfbaa/",
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "https://osf.io/download/hn9fs/",
+          "https://osf.io/download/qfvpy/"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "685a46eb8c103f8ab307047f",
+          "685a46eb8c103f8ab307047f",
+          "685a46eb8c103f8ab307047f"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "j3gcx",
+          "j3gcx",
+          "j3gcx"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

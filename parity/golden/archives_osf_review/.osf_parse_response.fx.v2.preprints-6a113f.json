@@ -1,0 +1,256 @@
+{
+  "id": ".osf_parse_response.fx.v2.preprints-6a113f",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 10,
+    "names": [
+      "osf_id",
+      "name",
+      "description",
+      "osf_type",
+      "provider",
+      "public",
+      "doi",
+      "version",
+      "is_published",
+      "date_created",
+      "date_modified",
+      "self",
+      "parent",
+      "project",
+      "primary_file"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "4hkv8_v3",
+          "b6d57_v1",
+          "4hkv8_v2",
+          "dyrcf_v2",
+          "3j47p_v2",
+          "ph7cd_v3",
+          "nkdyp_v1",
+          "zcfw6_v4",
+          "5sj78_v1",
+          "b2w75_v1"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Introducing CCNL-Open: A Machine-Readable Corpus of Italy’s Collective Bargaining Agreements (1946-2026)",
+          "Cosmetocracy: Beauty, Social Media, and the Psychosocial Governance of Appearance",
+          "Introducing CCNL-Open: A Machine-Readable Corpus of Italy’s Collective Bargaining Agreements (1946-2026)",
+          "Drafting and Free-Riding in Mass-Start Triathlon: Evidence from a COVID-19 Start-Format Discontinuity",
+          "Long-term memory contributions to working memory: a contralateral delay activity study.",
+          "Developing an open multi-domain assessment battery using laboratory tasks for children in low- and middle-income countries",
+          "AI Mindset – An Empirically Tested Theoretical Framework on the Psychological Factors Shaping AI Competence and AI Use",
+          "Lies, Damned Lies, and the Orthogonality Thesis",
+          "Myths About Neurodiversity: A Community Perspective",
+          "Interbrain synchrony analysis for fNIRS –  a signal processing primer"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "This paper introduces CCNL-Open, the first open-source, machine-readable corpus of Italy's national collective bargaining agreements (CCNL - Contratti Collettivi Nazionali di Lavoro) covering the period from 1946 to 2026. Italy presents a striking paradox: it combines the OECD's most extensive collective bargaining coverage with persistent real wage stagnation, high income inequality and rising in-work poverty. Understanding this divergence requires examining the contents of Italy's collective bargaining agreements (CBAs). Yet the texts of Italy's thousands of CBAs, archived by the National Council for Economics and Labour (CNEL), are stored as scanned PDFs that cannot be analysed at scale. We address this gap by scraping all 2,512 definitive agreements from the CNEL repository and converting them into searchable Markdown files using optical character recognition techniques. We then demonstrate the corpus's analytical potential through a dictionary-based analysis of how the salience of different topics has evolved across economic sectors and over time. We find that the importance of wage indexation and cost-of-living adjustments has steadily receded while social investment and the safeguard against \"new social risks\" have become increasingly prominent objects of negotiation. By opening these texts to systematic analysis, CCNL-Open offers researchers a new resource for studying the substance of what social partners negotiate.",
+          "Beauty has long shaped social perception, desirability, status, and opportunity. However, contemporary digital and commercial environments have intensified the social power of appearance by making bodies, faces, and skin more visible, comparable, modifiable, and measurable. This article proposes the concept of cosmetocracy to describe a sociocultural order in which personal, relational, and social value is increasingly mediated by aesthetic appearance, the capacity to modify appearance, and the public visibility of such modification. The proposed framework integrates research on physical attractiveness, body image, social comparison, objectification, social media affordances, influencer marketing, dating apps, aesthetic labour, cosmetic procedures, body dysmorphic disorder, cosmeticorexia, and prevention.\nThe Cosmetocracy Model identifies several interacting domains: sociocultural beauty ideals, digital and commercial infrastructures, internalization and appearance comparison, embodied self-experience, appearance-management practices, relational feedback, clinical and psychodermatological outcomes, and prevention. The model suggests that cosmetocratic influence operates through recursive pathways in which appearance ideals are transmitted and amplified, internalized as self-evaluative standards, enacted through self-surveillance and cosmetic labour, reinforced by social and digital feedback, and, in some individuals, escalated into clinically significant distress or impairment. These processes are shaped by moderators such as age, gender, race, skin tone, body size, socioeconomic position, sexuality, disability, cultural context, and platform use.\nSpecial attention is given to adolescence, social media, pediatric skincare, dating apps, body dysmorphic disorder, and cosmeticorexia. The article argues that appearance-related distress should not be reduced to individual vulnerability or vanity. Rather, it emerges within a broader ecology of visibility, comparison, consumption, and social reward. At the same time, the framework avoids pathologizing beauty practices per se, recognizing that appearance management may also express identity, pleasure, creativity, culture, and agency.\nThe article concludes by outlining implications for prevention, clinical care, digital policy, and future research. Interventions should aim not to eliminate beauty from human life, but to weaken the link between appearance, self-worth, and social value. This requires promoting positive body image, embodiment, media and social media literacy, clinical screening, interdisciplinary psychodermatological care, and structural changes in platform design and beauty marketing. Cosmetocracy offers a conceptual vocabulary for understanding how beauty becomes a form of psychosocial governance in contemporary life.",
+          "This paper introduces CCNL-Open, the first open-source, machine-readable corpus of Italy's national collective bargaining agreements (CCNL - Contratti Collettivi Nazionali di Lavoro) covering the period from 1946 to 2026. Italy presents a striking paradox: it combines the OECD's most extensive collective bargaining coverage with persistent real wage stagnation, high income inequality and rising in-work poverty. Understanding this divergence requires examining the contents of Italy's collective bargaining agreements (CBAs). Yet the texts of Italy's thousands of CBAs, archived by the National Council for Economics and Labour (CNEL), are stored as scanned PDFs that cannot be analysed at scale. We address this gap by scraping all 2,512 definitive agreements from the CNEL repository and converting them into searchable Markdown files using optical character recognition techniques. We then demonstrate the corpus's analytical potential through a dictionary-based analysis of how the salience of different topics has evolved across economic sectors and over time. We find that the importance of wage indexation and cost-of-living adjustments has steadily receded while social investment and the safeguard against \"new social risks\" have become increasingly prominent objects of negotiation. By opening these texts to systematic analysis, CCNL-Open offers researchers a new resource for studying the substance of what social partners negotiate.",
+          "Drafting in the swim leg of mass-start triathlon transfers a hydrodynamic cost advantage to the bike and run, where it surfaces as a change in relative rank. I use cross-stage rank improvement as a reverse proxy for free-riding and study its determinants in a ten-year panel of athlete × event records centred on 2020, when COVID-19 response policies replaced mass starts with individually staggered starts and mechanically curtailed drafting. A compact two-stage contest model, in which drafting enters the bike–run stage as a multiplicative cost shifter, organises the predictions. Identification combines pooled OLS with athlete and event fixed effects and a sharp regression-discontinuity design at the 2019/2020 cut-off. Free-riding was substantial before 2020, fell sharply in 2020 (a local-linear RDD estimate of about −31 rank places; a local-cubic estimate of about −92), and recovered only partially afterwards. The gains are largest for weaker swimmers and deeper drafting positions, the gender gap is modest, and they rise with swim-group size at an estimated log–log elasticity of about 0.43. The 2020 disruption thus acts as a contraction of the feasible set for free-riding, and its recovery is uneven rather than broad-based.",
+          "How does long-term memory (LTM) support working memory (WM) performance? Proposed mechanisms include boosting, where LTM enhances WM representations through additional activation, but does not reduce WM load; chunking, where WM holds references to LTM, reducing WM load; and offloading, where LTM substitutes active maintenance in WM. To distinguish between these mechanisms, we measured the contralateral delay activity (CDA) during an alternative forced-choice WM task, in which some trials (varying in memory array set size) included a pre-learnt color-object binding. The CDA is a well-established neural correlate that indexes the amount of information actively stored in WM, allowing us to test between the three accounts by examining whether including pre-learnt bindings in a memory set of a given size reduced its amplitude compared to maintaining entirely new bindings.\nOverall, our findings supported the boosting account. Pre-learnt bindings improved performance for matching items in WM, but the benefit did not extend to newly encoded items, indicating no reduction in WM load. CDA amplitude increased with set size irrespective of whether the items were pre-learnt or new, reflecting active maintenance of all the to-be-remembered items. Overall, these results show that pre-learnt associations in LTM can boost WM performance without substituting for WM storage, providing evidence against offloading or chunking accounts in this context.",
+          "Recent years have seen growing interest in field research using randomized designs to evaluate the impacts of interventions on early child development in low- and middle-income countries. Measuring these impacts requires assessments that can track development prior to school entry in settings that are often noisy and outdoors. Drawing from research in developmental cognitive science, we created an open multi-domain assessment battery for testing children in low- and middle-income countries consisting of tasks based on experimental paradigms used in laboratory settings. These tasks were designed to target abilities that emerge across cultures early in life and predict later performance on related skills in adulthood. This battery was administered to 1435 Ghanaian children whose parent previously took part in a randomized controlled field experiment on the impacts of parent secondary education on their children, measuring performance on tasks at ages 1.5, 3.5, 5.5, and 7.5 years. Starting at age 3.5, children’s responses to the tasks were internally consistent and above chance, with overall test results predictive of later performance. There was strong evidence of validity both for tasks in numeracy and spatial reasoning, which were designed to tap into culturally invariant cognitive capacities, as well as those in language and executive functioning, which required more context-specific adaptation. In contrast, there was little evidence of validity in infant tasks or tasks focused on intuitive physics or mental state reasoning. Nevertheless, our results suggest that our approach to assessment design is effective at producing tasks that are internally consistent and sensitive to individual differences within cohort. By making our testing materials and data freely accessible, we hope to provide a foundation for the development of tools for studying cognitive development in field settings.",
+          "Artificial intelligence (AI) has emerged as a powerful tool in the educational sector. Research\nexamining the factors that facilitate its practical application by teachers has increased\nsubstantially. Although empirical studies highlight the importance of psychological factors in\nshaping engagement with AI technologies, the systematic integration of cognitive, emotional,\nand motivational variables into AI use research remains fragmented. To advance the\npsychological foundation, the present study proposed and empirically tested a model for AI\nMindset, conceptualised based on prior psychological and social-cognitive theories. The AI\nMindset framework posits a triadic structure, comprising dispositional factors, contextual and\nsituational characteristics, and technology-related appraisals, to explain teachers’ use of AI.\nStructural equation modelling of 224 teachers revealed that AI Mindset variables significantly\npredict pedagogical AI competence and AI use. Specifically, dispositional factors of openness\nand need for relatedness associated with AI use indirectly through pedagogical AI\ncompetence. Contextual and social facilitations of habit demonstrated the strongest direct\neffect on AI use and indirect effect via competence. In terms of technology-related appraisals,\nfear showed a complex pattern, with a positive direct effect on AI use but a negative indirect\neffect through AI competence. The effect of effort expectancy was fully mediated by\ncompetence, whereas hedonic motivation exerted a direct positive effect on AI use. In sum, by\nintroducing and empirically testing the AI Mindset framework, the present study integrates a\npsychological perspective into the AI use research, provides a foundation for understanding\nAI-related use patterns, and informs professional development and AI technology design.",
+          "The orthogonality thesis holds that intelligence and final goals are independent. Hence AI safety research treats alignment as a matter of choosing utility functions for neutral optimisers. Yet software has no behaviour except through the machine that runs it. Treating intelligence as a property of disembodied code is the error earlier work dubbed Computational Dualism. Once embodiment is explicit, no representation-invariant factorisation of intelligence and goals preserves realised success. The same code can succeed in one body while failing in another. The same behaviour can satisfy one goal while violating another. In a frozen stack, optimisation routines can be reused across tasks. This is why I run the same software on different computers or write code as \"disembodied\" without worrying about which system will run it. However, if intelligence measures efficiency of adaptation to novelty, it is at odds with standardisation. This is a pitfall of Computational Dualism. I do not claim every orthogonality intuition is false, but the idea that realised success can be decomposed into a software-only intelligence coordinate and an independently specifiable goal coordinate is refuted. If this strong version of the thesis fails, then alignment cannot mean attaching the right final goal to a neutral optimiser. The object to be aligned is the whole stack, embedded and extending into its environment, and alignment is the design of its weakest sufficient boundary condition. That makes it the same problem as out-of-domain generalisation, because in both the weakest sufficient constraint is the one that survives novelty.",
+          "Myths and misinformation about neurodivergent people are widespread, persistent, and potentially harmful, affecting access to diagnosis, accommodations, and support. In this community perspective, we identify and address a carefully considered selection of harmful myths about neurodivergence, drawn from an international collaboration of researchers, practitioners, and community members with lived experience. We collected 56 myths via open submission, then reviewed and organized key myths in four themes: 1) myths about causation, which commonly frame neurodivergence as preventable and assign blame to individual behaviors, most often of parents/caregivers; 2) myths about legitimacy, which question who counts as genuinely neurodivergent and deserves support; 3) myths about ability, which cast neurodivergent people as either fundamentally impaired or exceptionally gifted; and 4) myths about identity and diversity, which prescribe who can be neurodivergent based on demographic characteristics and often erase diversity within neurodivergence. Across these themes, a common thread emerges: false beliefs about neurodivergent people can affect whose experiences are validated and who receives support. We argue that effective responses require not only debunking but also prebunking strategies, media literacy and education, and the active co-production of research with neurodivergent communities.",
+          "Interbrain synchrony (IBS), also referred to as interpersonal neural synchrony (INS), has become a central construct in social neuroscience and beyond. It describes the temporal alignment of neural activity across individuals and has been studied in a range of paradigms, including sequential interactions, shared-stimulus settings, and hyperscanning, i.e., the simultaneous neuroimaging of two or more individuals during real-time interaction. Functional near-infrared spectroscopy (fNIRS) is increasingly used for such studies because it supports portable, naturalistic, face-to-face paradigms. A central goal in these experiments is to quantify IBS between interacting individuals. Wavelet transform coherence (WTC) has become the most widely used method for estimating IBS in fNIRS studies. However, its application involves several non-trivial signal-processing assumptions and time–frequency trade-offs that are often not explicitly addressed, making it difficult to apply and interpret the method consistently. Reliable estimation of IBS is crucial not only for experimental design but also for the interpretation and comparison of results within and across studies. Here, we aim to support this endeavor by providing a principled overview of the relevant signal-processing foundations. To enable researchers to make informed methodological choices, the paper first introduces key concepts in time–frequency analysis and clarifies their relation to WTC. These principles are then connected to the analysis of IBS in fNIRS datasets, with particular emphasis on the time–frequency constraints inherent to wavelet-based methods. Building on these foundations, we provide practical recommendations for experiment design, preprocessing, and frequency targeting. By making resolution limits and analysis assumptions explicit, this primer aims to support improved study planning and more consistent interpretation of IBS in the rapidly growing field of fNIRS-based investigations and beyond. Establishing a shared methodological foundation for IBS analysis is essential for advancing toward more rigorous, transparent, and reproducible measurement of interpersonal brain dynamics in naturalistic neuroscience."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "preprints",
+          "preprints",
+          "preprints",
+          "preprints",
+          "preprints",
+          "preprints",
+          "preprints",
+          "preprints",
+          "preprints",
+          "preprints"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "socarxiv",
+          "psyarxiv",
+          "socarxiv",
+          "socarxiv",
+          "psyarxiv",
+          "psyarxiv",
+          "psyarxiv",
+          "osf",
+          "psyarxiv",
+          "psyarxiv"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          3,
+          1,
+          2,
+          2,
+          2,
+          3,
+          1,
+          4,
+          1,
+          1
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "2026-06-02T13:45:32.025853",
+          "2026-06-02T13:38:27.321424",
+          "2026-06-02T13:35:15.147186",
+          "2026-06-02T13:33:45.487939",
+          "2026-06-02T13:13:05.824436",
+          "2026-06-02T12:26:43.319476",
+          "2026-06-02T11:57:37.865356",
+          "2026-06-02T11:51:25.580926",
+          "2026-06-02T11:33:39.882655",
+          "2026-06-02T11:29:19.015822"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "2026-06-02T13:46:50.544006",
+          "2026-06-02T19:19:16.001410",
+          "2026-06-02T13:45:19.659705",
+          "2026-06-02T13:35:51.770052",
+          "2026-06-02T19:16:44.147238",
+          "2026-06-02T19:08:48.236881",
+          "2026-06-02T20:46:26.507761",
+          "2026-06-02T11:54:08.710345",
+          "2026-06-02T20:47:52.687259",
+          "2026-06-02T20:46:43.219187"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://api.osf.io/v2/preprints/4hkv8_v3/",
+          "https://api.osf.io/v2/preprints/b6d57_v1/",
+          "https://api.osf.io/v2/preprints/4hkv8_v2/",
+          "https://api.osf.io/v2/preprints/dyrcf_v2/",
+          "https://api.osf.io/v2/preprints/3j47p_v2/",
+          "https://api.osf.io/v2/preprints/ph7cd_v3/",
+          "https://api.osf.io/v2/preprints/nkdyp_v1/",
+          "https://api.osf.io/v2/preprints/zcfw6_v4/",
+          "https://api.osf.io/v2/preprints/5sj78_v1/",
+          "https://api.osf.io/v2/preprints/b2w75_v1/"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          "e2mkf",
+          "fxzcu",
+          null,
+          null,
+          "f5yn6",
+          "cknvx"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://api.osf.io/v2/files/6a1edea972654ce790cfe1c5/",
+          "https://api.osf.io/v2/files/6a1edcffa808b47d8648fb15/",
+          "https://api.osf.io/v2/files/6a1edc66f68c8091b3cfe3bc/",
+          "https://api.osf.io/v2/files/6a1edbcaeec1217b08cfe3f1/",
+          "https://api.osf.io/v2/files/6a1ed7155c315666197df299/",
+          "https://api.osf.io/v2/files/6a1ecc6e6efb2d77ef7df282/",
+          "https://api.osf.io/v2/files/6a1ec54f0a8141a7357df3d0/",
+          "https://api.osf.io/v2/files/6a1ec3cb86fd07708d7df8d4/",
+          "https://api.osf.io/v2/files/6a1ebf9f8ffc0361b0d005da/",
+          "https://api.osf.io/v2/files/6a1ebe9b8ffc0361b0d005a8/"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

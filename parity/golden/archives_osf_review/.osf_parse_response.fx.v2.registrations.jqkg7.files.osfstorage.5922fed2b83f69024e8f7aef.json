@@ -1,0 +1,288 @@
+{
+  "id": ".osf_parse_response.fx.v2.registrations.jqkg7.files.osfstorage.5922fed2b83f69024e8f7aef",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 10,
+    "names": [
+      "osf_id",
+      "name",
+      "description",
+      "provider",
+      "osf_type",
+      "kind",
+      "filetype",
+      "public",
+      "category",
+      "size",
+      "downloads",
+      "path",
+      "self",
+      "files",
+      "download_url",
+      "parent",
+      "project"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "5922fed2b83f69024e8f7af0",
+          "5922fed2b83f69024e8f7af1",
+          "5922fed2b83f69024e8f7af2",
+          "5922fed2b83f69024e8f7af3",
+          "5922fed2b83f69024e8f7af4",
+          "5922fed2b83f69024e8f7af5",
+          "5922fed2b83f69024e8f7af6",
+          "5922fed2b83f69024e8f7af7",
+          "5922fed2b83f69024e8f7af8",
+          "5922fed2b83f69024e8f7af9"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Littering Condition.MOV",
+          "PickingUp Condition.mp4",
+          "Neutral Condition.mp4",
+          "Study 1 experimenter script.docx",
+          "Study 2 experimenter script.docx",
+          "Discussing Deviance Data.dta",
+          "Study 1 questionnaire.pdf",
+          "Supplementary Analyses.docx",
+          "Conversation Coding.dta",
+          "Discussion Deviance Data Guide.xlsx"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "osfstorage",
+          "osfstorage",
+          "osfstorage",
+          "osfstorage",
+          "osfstorage",
+          "osfstorage",
+          "osfstorage",
+          "osfstorage",
+          "osfstorage",
+          "osfstorage"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "files",
+          "files",
+          "files",
+          "files",
+          "files",
+          "files",
+          "files",
+          "files",
+          "files",
+          "files"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "file",
+          "file",
+          "file",
+          "file",
+          "file",
+          "file",
+          "file",
+          "file",
+          "file",
+          "file"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "video",
+          "video",
+          "video",
+          "text",
+          "text",
+          "data",
+          "text",
+          "text",
+          "data",
+          "data"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          197701336,
+          83883011,
+          83027449,
+          482743,
+          485743,
+          319875,
+          10413002,
+          636554,
+          56835,
+          41559
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          15,
+          8,
+          8,
+          4,
+          4,
+          12,
+          13,
+          7,
+          10,
+          10
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "/Archive of OSF Storage/Littering Condition.MOV",
+          "/Archive of OSF Storage/PickingUp Condition.mp4",
+          "/Archive of OSF Storage/Neutral Condition.mp4",
+          "/Archive of OSF Storage/Study 1 experimenter script.docx",
+          "/Archive of OSF Storage/Study 2 experimenter script.docx",
+          "/Archive of OSF Storage/Discussing Deviance Data.dta",
+          "/Archive of OSF Storage/Study 1 questionnaire.pdf",
+          "/Archive of OSF Storage/Supplementary Analyses.docx",
+          "/Archive of OSF Storage/Conversation Coding.dta",
+          "/Archive of OSF Storage/Discussion Deviance Data Guide.xlsx"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://api.osf.io/v2/files/5922fed2b83f69024e8f7af0/",
+          "https://api.osf.io/v2/files/5922fed2b83f69024e8f7af1/",
+          "https://api.osf.io/v2/files/5922fed2b83f69024e8f7af2/",
+          "https://api.osf.io/v2/files/5922fed2b83f69024e8f7af3/",
+          "https://api.osf.io/v2/files/5922fed2b83f69024e8f7af4/",
+          "https://api.osf.io/v2/files/5922fed2b83f69024e8f7af5/",
+          "https://api.osf.io/v2/files/5922fed2b83f69024e8f7af6/",
+          "https://api.osf.io/v2/files/5922fed2b83f69024e8f7af7/",
+          "https://api.osf.io/v2/files/5922fed2b83f69024e8f7af8/",
+          "https://api.osf.io/v2/files/5922fed2b83f69024e8f7af9/"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://osf.io/download/kn5te/",
+          "https://osf.io/download/zubp6/",
+          "https://osf.io/download/dhq3z/",
+          "https://osf.io/download/z7enp/",
+          "https://osf.io/download/y3ue9/",
+          "https://osf.io/download/96xvq/",
+          "https://osf.io/download/cwdqm/",
+          "https://osf.io/download/d2k9r/",
+          "https://osf.io/download/fz9jc/",
+          "https://osf.io/download/tzxq2/"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "5922fed2b83f69024e8f7aef",
+          "5922fed2b83f69024e8f7aef",
+          "5922fed2b83f69024e8f7aef",
+          "5922fed2b83f69024e8f7aef",
+          "5922fed2b83f69024e8f7aef",
+          "5922fed2b83f69024e8f7aef",
+          "5922fed2b83f69024e8f7aef",
+          "5922fed2b83f69024e8f7aef",
+          "5922fed2b83f69024e8f7aef",
+          "5922fed2b83f69024e8f7aef"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "jqkg7",
+          "jqkg7",
+          "jqkg7",
+          "jqkg7",
+          "jqkg7",
+          "jqkg7",
+          "jqkg7",
+          "jqkg7",
+          "jqkg7",
+          "jqkg7"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

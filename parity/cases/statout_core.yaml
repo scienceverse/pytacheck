@@ -854,3 +854,34 @@
   "r": "stat_output_write"
   "py": "pytacheck.statout.stat_output.stat_output_write"
   "args": {"stat_output": {"$null": true}, "root": "/nonexistent/should/not/be/created"}
+- "id": "read_stat_tables.spv.modern"
+  "r": "read_stat_tables"
+  "py": "pytacheck.statout.stat_tables.read_stat_tables"
+  "args": {"path": {"$file": "tests/statout_core/data/modern.spv"}}
+- "id": "read_stat_tables.spv.legacy"
+  "r": "read_stat_tables"
+  "py": "pytacheck.statout.stat_tables.read_stat_tables"
+  "args": {"path": {"$file": "tests/statout_core/data/legacy.spv"}}
+- "id": "read_stat_tables.spv.charts"
+  "r": "read_stat_tables"
+  "py": "pytacheck.statout.stat_tables.read_stat_tables"
+  "args": {"path": {"$file": "tests/statout_core/data/charts.spv"}}
+- "id": "stat_results_long.spv"
+  "r": "stat_results_long"
+  "py": "pytacheck.statout.stat_output.stat_results_long"
+  "args":
+    "tables":
+      "$expr":
+        "r": "c(metacheck::read_stat_tables('tests/statout_core/data/modern.spv'), metacheck::read_stat_tables('tests/statout_core/data/legacy.spv'), metacheck::read_stat_tables('tests/statout_core/data/charts.spv'))"
+        "py": "(lambda st, d: st.read_stat_tables(d / 'modern.spv') + st.read_stat_tables(d / 'legacy.spv') + st.read_stat_tables(d / 'charts.spv'))(__import__('pytacheck.statout.stat_tables', fromlist=['_']), __import__('tests.statout_core._helpers', fromlist=['_']).DATA)"
+    "paper_id": "p"
+    "source_file": "output.spv"
+- "id": "stat_output_json.spv"
+  "r": "stat_output_json"
+  "py": "pytacheck.statout.stat_output.stat_output_json"
+  "args":
+    "tables":
+      "$expr":
+        "r": "c(metacheck::read_stat_tables('tests/statout_core/data/modern.spv'), metacheck::read_stat_tables('tests/statout_core/data/charts.spv'))"
+        "py": "(lambda st, d: st.read_stat_tables(d / 'modern.spv') + st.read_stat_tables(d / 'charts.spv'))(__import__('pytacheck.statout.stat_tables', fromlist=['_']), __import__('tests.statout_core._helpers', fromlist=['_']).DATA)"
+    "source_file": "output.spv"

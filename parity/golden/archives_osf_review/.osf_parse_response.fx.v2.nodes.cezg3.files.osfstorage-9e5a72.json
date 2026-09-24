@@ -1,0 +1,288 @@
+{
+  "id": ".osf_parse_response.fx.v2.nodes.cezg3.files.osfstorage-9e5a72",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 10,
+    "names": [
+      "osf_id",
+      "name",
+      "description",
+      "provider",
+      "osf_type",
+      "kind",
+      "filetype",
+      "public",
+      "category",
+      "size",
+      "downloads",
+      "path",
+      "self",
+      "files",
+      "download_url",
+      "parent",
+      "project"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "553e9d5d8c5e4a21991ade38",
+          "553e9d5d8c5e4a21991ade39",
+          "553e9d5d8c5e4a21991ade3a",
+          "553e9d5d8c5e4a21991ade3b",
+          "553e9d5d8c5e4a21991ade3c",
+          "553e9d5d8c5e4a21991ade3d",
+          "553e9d5d8c5e4a21991ade3e",
+          "553e9d5d8c5e4a21991ade3f",
+          "553e9d5d8c5e4a21991ade40",
+          "553e9d5d8c5e4a21991ade41"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "fight_riotsstreetcorner.jpg",
+          "fight_robbery.jpg",
+          "hospital_baby.jpg",
+          "hospital_camera.jpg",
+          "hospital_mangrievinghospital.jpg",
+          "injury_babyfire.jpg",
+          "injury_bandage.jpg",
+          "injury_beatenup.jpg",
+          "injury_brokenleg.jpg",
+          "injury_doctors.JPG"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "osfstorage",
+          "osfstorage",
+          "osfstorage",
+          "osfstorage",
+          "osfstorage",
+          "osfstorage",
+          "osfstorage",
+          "osfstorage",
+          "osfstorage",
+          "osfstorage"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "files",
+          "files",
+          "files",
+          "files",
+          "files",
+          "files",
+          "files",
+          "files",
+          "files",
+          "files"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "file",
+          "file",
+          "file",
+          "file",
+          "file",
+          "file",
+          "file",
+          "file",
+          "file",
+          "file"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "image",
+          "image",
+          "image",
+          "image",
+          "image",
+          "image",
+          "image",
+          "image",
+          "image",
+          "image"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          53081,
+          31277,
+          48773,
+          61055,
+          55864,
+          36521,
+          29917,
+          37974,
+          48206,
+          49473
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          9,
+          9,
+          9,
+          9,
+          9,
+          9,
+          9,
+          9,
+          10,
+          9
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "/fight_riotsstreetcorner.jpg",
+          "/fight_robbery.jpg",
+          "/hospital_baby.jpg",
+          "/hospital_camera.jpg",
+          "/hospital_mangrievinghospital.jpg",
+          "/injury_babyfire.jpg",
+          "/injury_bandage.jpg",
+          "/injury_beatenup.jpg",
+          "/injury_brokenleg.jpg",
+          "/injury_doctors.JPG"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://api.osf.io/v2/files/553e9d5d8c5e4a21991ade38/?view_only=f171281f212f4435917b16a9e581a73b",
+          "https://api.osf.io/v2/files/553e9d5d8c5e4a21991ade39/?view_only=f171281f212f4435917b16a9e581a73b",
+          "https://api.osf.io/v2/files/553e9d5d8c5e4a21991ade3a/?view_only=f171281f212f4435917b16a9e581a73b",
+          "https://api.osf.io/v2/files/553e9d5d8c5e4a21991ade3b/?view_only=f171281f212f4435917b16a9e581a73b",
+          "https://api.osf.io/v2/files/553e9d5d8c5e4a21991ade3c/?view_only=f171281f212f4435917b16a9e581a73b",
+          "https://api.osf.io/v2/files/553e9d5d8c5e4a21991ade3d/?view_only=f171281f212f4435917b16a9e581a73b",
+          "https://api.osf.io/v2/files/553e9d5d8c5e4a21991ade3e/?view_only=f171281f212f4435917b16a9e581a73b",
+          "https://api.osf.io/v2/files/553e9d5d8c5e4a21991ade3f/?view_only=f171281f212f4435917b16a9e581a73b",
+          "https://api.osf.io/v2/files/553e9d5d8c5e4a21991ade40/?view_only=f171281f212f4435917b16a9e581a73b",
+          "https://api.osf.io/v2/files/553e9d5d8c5e4a21991ade41/?view_only=f171281f212f4435917b16a9e581a73b"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://osf.io/download/3wyqp/?view_only=f171281f212f4435917b16a9e581a73b",
+          "https://osf.io/download/bw92j/?view_only=f171281f212f4435917b16a9e581a73b",
+          "https://osf.io/download/xnvpz/?view_only=f171281f212f4435917b16a9e581a73b",
+          "https://osf.io/download/rhzgc/?view_only=f171281f212f4435917b16a9e581a73b",
+          "https://osf.io/download/8wx6d/?view_only=f171281f212f4435917b16a9e581a73b",
+          "https://osf.io/download/28g6m/?view_only=f171281f212f4435917b16a9e581a73b",
+          "https://osf.io/download/nwj4v/?view_only=f171281f212f4435917b16a9e581a73b",
+          "https://osf.io/download/uscdv/?view_only=f171281f212f4435917b16a9e581a73b",
+          "https://osf.io/download/zje5w/?view_only=f171281f212f4435917b16a9e581a73b",
+          "https://osf.io/download/f64gd/?view_only=f171281f212f4435917b16a9e581a73b"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "553e9d5c8c5e4a21991ade05",
+          "553e9d5c8c5e4a21991ade05",
+          "553e9d5c8c5e4a21991ade05",
+          "553e9d5c8c5e4a21991ade05",
+          "553e9d5c8c5e4a21991ade05",
+          "553e9d5c8c5e4a21991ade05",
+          "553e9d5c8c5e4a21991ade05",
+          "553e9d5c8c5e4a21991ade05",
+          "553e9d5c8c5e4a21991ade05",
+          "553e9d5c8c5e4a21991ade05"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "cezg3",
+          "cezg3",
+          "cezg3",
+          "cezg3",
+          "cezg3",
+          "cezg3",
+          "cezg3",
+          "cezg3",
+          "cezg3",
+          "cezg3"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

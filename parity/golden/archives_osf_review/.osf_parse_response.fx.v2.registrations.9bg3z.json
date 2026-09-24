@@ -1,0 +1,93 @@
+{
+  "id": ".osf_parse_response.fx.v2.registrations.9bg3z",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 1,
+    "names": [
+      "osf_id",
+      "name",
+      "osf_type",
+      "category",
+      "registration",
+      "preprint",
+      "self",
+      "children",
+      "files",
+      "parent",
+      "project"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "9bg3z"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "RR4_Does Honesty Require Time? A preregistered direct replication of SEB2012 Exp2"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "registrations"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "registration"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://api.osf.io/v2/registrations/9bg3z/"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://api.osf.io/v2/registrations/9bg3z/children/"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://api.osf.io/v2/registrations/9bg3z/files/"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "xwzpc"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "9bg3z"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

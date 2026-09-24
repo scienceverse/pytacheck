@@ -1,0 +1,436 @@
+{
+  "id": "osf_info.recursive.j3gcx",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 14,
+    "names": [
+      "osf_url",
+      "osf_id",
+      "name",
+      "description",
+      "osf_type",
+      "public",
+      "category",
+      "registration",
+      "preprint",
+      "self",
+      "children",
+      "files",
+      "parent",
+      "project",
+      "provider",
+      "kind",
+      "filetype",
+      "size",
+      "downloads",
+      "path",
+      "download_url"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "j3gcx",
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "j3gcx",
+          "6846ec6a7704517be1addda3",
+          "6846ed88e49694cd45ab8375",
+          "685a46eb8c103f8ab307047f",
+          "687e3369660e39044a02c313",
+          "685a46f5a08505f6975cfbaa",
+          "685a4742c394e5c1c4a1c84f",
+          "687e3375988186012ef720c4",
+          "685a4702bac4f4236d07045f",
+          "685a4750222eecf526070525",
+          "685a4711bac4f4236d070463",
+          "685a475da5dd9e8e81d1ad1d",
+          "685a477387125a22d8d1ad68",
+          "685a477d39f9fc4653070521"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Raw Data",
+          "osfstorage",
+          "data.xlsx",
+          "nest-1",
+          "README",
+          "nest-2",
+          "test-1.txt",
+          "README",
+          "nest-3",
+          "test-2.txt",
+          "nest-4",
+          "test-3.txt",
+          "test-4.txt",
+          "empty"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "The raw data",
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "nodes",
+          "files",
+          "files",
+          "files",
+          "files",
+          "files",
+          "files",
+          "files",
+          "files",
+          "files",
+          "files",
+          "files",
+          "files",
+          "files"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "data",
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://api.osf.io/v2/nodes/j3gcx/",
+          null,
+          "https://api.osf.io/v2/files/6846ed88e49694cd45ab8375/",
+          "https://api.osf.io/v2/files/685a46eb8c103f8ab307047f/",
+          "https://api.osf.io/v2/files/687e3369660e39044a02c313/",
+          "https://api.osf.io/v2/files/685a46f5a08505f6975cfbaa/",
+          "https://api.osf.io/v2/files/685a4742c394e5c1c4a1c84f/",
+          "https://api.osf.io/v2/files/687e3375988186012ef720c4/",
+          "https://api.osf.io/v2/files/685a4702bac4f4236d07045f/",
+          "https://api.osf.io/v2/files/685a4750222eecf526070525/",
+          "https://api.osf.io/v2/files/685a4711bac4f4236d070463/",
+          "https://api.osf.io/v2/files/685a475da5dd9e8e81d1ad1d/",
+          "https://api.osf.io/v2/files/685a477387125a22d8d1ad68/",
+          "https://api.osf.io/v2/files/685a477d39f9fc4653070521/"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://api.osf.io/v2/nodes/j3gcx/children/",
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://api.osf.io/v2/nodes/j3gcx/files/",
+          "https://api.osf.io/v2/nodes/j3gcx/files/osfstorage/",
+          null,
+          "https://api.osf.io/v2/nodes/j3gcx/files/osfstorage/685a46eb8c103f8ab307047f/",
+          null,
+          "https://api.osf.io/v2/nodes/j3gcx/files/osfstorage/685a46f5a08505f6975cfbaa/",
+          null,
+          null,
+          "https://api.osf.io/v2/nodes/j3gcx/files/osfstorage/685a4702bac4f4236d07045f/",
+          null,
+          "https://api.osf.io/v2/nodes/j3gcx/files/osfstorage/685a4711bac4f4236d070463/",
+          null,
+          null,
+          "https://api.osf.io/v2/nodes/j3gcx/files/osfstorage/685a477d39f9fc4653070521/"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "ckjef",
+          "j3gcx",
+          "6846ec6a7704517be1addda3",
+          "6846ec6a7704517be1addda3",
+          "6846ec6a7704517be1addda3",
+          "685a46eb8c103f8ab307047f",
+          "685a46eb8c103f8ab307047f",
+          "685a46eb8c103f8ab307047f",
+          "685a46f5a08505f6975cfbaa",
+          "685a46f5a08505f6975cfbaa",
+          "685a4702bac4f4236d07045f",
+          "685a4702bac4f4236d07045f",
+          "685a4711bac4f4236d070463",
+          "685a4711bac4f4236d070463"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "pngda",
+          "j3gcx",
+          "j3gcx",
+          "j3gcx",
+          "j3gcx",
+          "j3gcx",
+          "j3gcx",
+          "j3gcx",
+          "j3gcx",
+          "j3gcx",
+          "j3gcx",
+          "j3gcx",
+          "j3gcx",
+          "j3gcx"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "osfstorage",
+          "osfstorage",
+          "osfstorage",
+          "osfstorage",
+          "osfstorage",
+          "osfstorage",
+          "osfstorage",
+          "osfstorage",
+          "osfstorage",
+          "osfstorage",
+          "osfstorage",
+          "osfstorage",
+          "osfstorage"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "folder",
+          "file",
+          "folder",
+          "file",
+          "folder",
+          "file",
+          "file",
+          "folder",
+          "file",
+          "folder",
+          "file",
+          "file",
+          "folder"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          "data",
+          null,
+          "NA",
+          null,
+          "text",
+          "NA",
+          null,
+          "text",
+          null,
+          "text",
+          "text",
+          null
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          null,
+          null,
+          9113,
+          null,
+          52,
+          null,
+          12,
+          58,
+          null,
+          12,
+          null,
+          12,
+          12,
+          null
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          null,
+          null,
+          236,
+          null,
+          234,
+          null,
+          280,
+          272,
+          null,
+          278,
+          null,
+          277,
+          275,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "/",
+          "/data.xlsx",
+          "/nest-1/",
+          "/README",
+          "/nest-1/nest-2/",
+          "/nest-1/test-1.txt",
+          "/nest-1/README",
+          "/nest-1/nest-2/nest-3/",
+          "/nest-1/nest-2/test-2.txt",
+          "/nest-1/nest-2/nest-3/nest-4/",
+          "/nest-1/nest-2/nest-3/test-3.txt",
+          "/nest-1/nest-2/nest-3/nest-4/test-4.txt",
+          "/nest-1/nest-2/nest-3/nest-4/empty/"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          "https://osf.io/download/k6gbt/",
+          null,
+          "https://osf.io/download/ez87j/",
+          null,
+          "https://osf.io/download/hn9fs/",
+          "https://osf.io/download/qfvpy/",
+          null,
+          "https://osf.io/download/b7eds/",
+          null,
+          "https://osf.io/download/zyf34/",
+          "https://osf.io/download/3wv7h/",
+          null
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

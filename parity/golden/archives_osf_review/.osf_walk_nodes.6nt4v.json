@@ -1,0 +1,30 @@
+{
+  "id": ".osf_walk_nodes.6nt4v",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 1,
+    "names": [
+      "osf_id",
+      "title"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "6nt4v"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Processed Data"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

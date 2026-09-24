@@ -1,0 +1,133 @@
+{
+  "id": ".osf_parse_response.fx.v2.nodes-223ff6",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 3,
+    "names": [
+      "osf_id",
+      "name",
+      "description",
+      "osf_type",
+      "public",
+      "category",
+      "registration",
+      "preprint",
+      "self",
+      "children",
+      "files",
+      "parent",
+      "project"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "jrk3f",
+          "vae8g",
+          "twm2a"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Worst Motive Original Study Data &amp; Analysis",
+          "Replication",
+          "Supplementary Online Materials"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "",
+          "We ran a preregistered replication of our study. We tested the same 4 vignettes used in the original study and also 8 new ones. The tendency to expect the agent to prefer the bad motive did not replicate in overall, but it did replicate in the original four vignettes. However, we also found that participants treated the 'good motives' as more extreme than the bad motives in the new vignettes, which may explain why the tendency to pick the bad motives in the original vignettes did not occur again.\n\n\nYou can find the data and rscript for our analysis on this page.\n\nHere is the preregistration: https://osf.io/9djav",
+          ""
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "nodes",
+          "nodes",
+          "nodes"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true,
+          true,
+          true
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "",
+          "",
+          "methods and measures"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false,
+          false,
+          false
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false,
+          false,
+          false
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://api.osf.io/v2/nodes/jrk3f/",
+          "https://api.osf.io/v2/nodes/vae8g/",
+          "https://api.osf.io/v2/nodes/twm2a/"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://api.osf.io/v2/nodes/jrk3f/children/",
+          "https://api.osf.io/v2/nodes/vae8g/children/",
+          "https://api.osf.io/v2/nodes/twm2a/children/"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://api.osf.io/v2/nodes/jrk3f/files/",
+          "https://api.osf.io/v2/nodes/vae8g/files/",
+          "https://api.osf.io/v2/nodes/twm2a/files/"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "mjrpy",
+          "mjrpy",
+          "mjrpy"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "mjrpy",
+          "mjrpy",
+          "mjrpy"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

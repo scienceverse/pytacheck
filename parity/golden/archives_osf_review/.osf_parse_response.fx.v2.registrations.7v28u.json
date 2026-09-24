@@ -1,0 +1,93 @@
+{
+  "id": ".osf_parse_response.fx.v2.registrations.7v28u",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 1,
+    "names": [
+      "osf_id",
+      "name",
+      "osf_type",
+      "category",
+      "registration",
+      "preprint",
+      "self",
+      "children",
+      "files",
+      "parent",
+      "project"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "7v28u"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "SST in Times of Crisis: Testing socioemotional selectivity theory postulates during the 2020 Coronavirus pandemic"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "registrations"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "registration"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://api.osf.io/v2/registrations/7v28u/"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://api.osf.io/v2/registrations/7v28u/children/"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://api.osf.io/v2/registrations/7v28u/files/"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "h7uqv"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "7v28u"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

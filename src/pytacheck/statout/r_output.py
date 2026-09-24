@@ -67,13 +67,15 @@ def _make_unique(names: Sequence[str], sep: str = ".") -> list[str]:
 
 def _chr_frame(names: Sequence[str], columns: Sequence[Sequence[Any]]) -> pd.DataFrame:
     """A data.frame of character columns (duplicate names allowed, as in R)."""
-    nrow = len(columns[0]) if columns else 0
-    df = pd.DataFrame(
-        {i: pd.Series(list(col), dtype="string") for i, col in enumerate(columns)},
-        index=pd.RangeIndex(nrow),
-    )
-    df.columns = list(names)
-    return df
+    import numpy as np
+
+    if not columns:
+        return pd.DataFrame(index=pd.RangeIndex(0))
+    nrow = len(columns[0])
+    arr = np.empty((nrow, len(columns)), dtype=object)
+    for j, col in enumerate(columns):
+        arr[:, j] = list(col)
+    return pd.DataFrame(arr, columns=list(names), dtype="string")
 
 
 def _one_row_frame(pairs: Sequence[tuple[str, str]]) -> pd.DataFrame:

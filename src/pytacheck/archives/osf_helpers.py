@@ -330,13 +330,17 @@ def _osf_parse_response(
     """
     ident = osf_id
     single = False
-    if isinstance(resp, list):
+    if isinstance(resp, list) and getattr(resp, "osf_error", None) is None:
+        # R: a listing arrives as a (possibly empty) data frame
         all_data: Any = resp
         if len(all_data) == 0:
             return None
-    elif isinstance(resp, dict):
-        all_data = resp
-        single = True
+    elif isinstance(resp, list | dict):
+        # R: a single resource (a named list) or a failed listing (an empty
+        # list() carrying osf_error) is not a data frame, so it is treated as
+        # an httr2 response and httr2::resp_status() rejects it
+        what = "an empty list" if len(resp) == 0 else "a list"
+        raise TypeError(f"`resp` must be an HTTP response object, not {what}.")
     else:
         if resp is None or not hasattr(resp, "status_code"):
             raise TypeError("`resp` must be an HTTP response object")
@@ -606,7 +610,7 @@ def osf_user_projects(user_id: Any, pb: Any = None) -> pd.DataFrame:
     if _osf_err(nodes) is not None or len(nodes) == 0:
         return _empty_projects()
 
-    info = _osf_parse_response(nodes if isinstance(nodes, list) else [nodes], pb=pb)
+    info = _osf_parse_response(nodes, pb=pb)
     if info is None or len(info) == 0:
         return _empty_projects()
 

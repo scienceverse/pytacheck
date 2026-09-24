@@ -1,0 +1,29 @@
+{
+  "id": "path_sanitize.fuzz.default",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "ab",
+      "a_b",
+      "a b",
+      "a_b",
+      "a_b",
+      "ab",
+      "ab",
+      "ab",
+      "ab",
+      "ab",
+      "a_b",
+      "a/b_c",
+      "C_x_y",
+      "_a_",
+      "ab",
+      "été_résumé.pdf"
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

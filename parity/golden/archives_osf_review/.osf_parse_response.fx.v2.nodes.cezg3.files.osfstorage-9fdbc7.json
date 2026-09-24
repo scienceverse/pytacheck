@@ -1,0 +1,288 @@
+{
+  "id": ".osf_parse_response.fx.v2.nodes.cezg3.files.osfstorage-9fdbc7",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 10,
+    "names": [
+      "osf_id",
+      "name",
+      "description",
+      "provider",
+      "osf_type",
+      "kind",
+      "filetype",
+      "public",
+      "category",
+      "size",
+      "downloads",
+      "path",
+      "self",
+      "files",
+      "download_url",
+      "parent",
+      "project"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "553e9d5d8c5e4a21991ade2e",
+          "553e9d5d8c5e4a21991ade2f",
+          "553e9d5d8c5e4a21991ade30",
+          "553e9d5d8c5e4a21991ade31",
+          "553e9d5d8c5e4a21991ade32",
+          "553e9d5d8c5e4a21991ade33",
+          "553e9d5d8c5e4a21991ade34",
+          "553e9d5d8c5e4a21991ade35",
+          "553e9d5d8c5e4a21991ade36",
+          "553e9d5d8c5e4a21991ade37"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "fight_gang.JPG",
+          "fight_kidsfight.jpg",
+          "fight_manbeatingwoman2.jpg",
+          "fight_manguns.jpg",
+          "fight_manthreatgirl.jpg",
+          "fight_peoplegrabbingface.jpg",
+          "fight_policestorming.jpg",
+          "fight_prisoncell.jpg",
+          "fight_prisonhostage.jpg",
+          "fight_riot.jpg"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "osfstorage",
+          "osfstorage",
+          "osfstorage",
+          "osfstorage",
+          "osfstorage",
+          "osfstorage",
+          "osfstorage",
+          "osfstorage",
+          "osfstorage",
+          "osfstorage"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "files",
+          "files",
+          "files",
+          "files",
+          "files",
+          "files",
+          "files",
+          "files",
+          "files",
+          "files"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "file",
+          "file",
+          "file",
+          "file",
+          "file",
+          "file",
+          "file",
+          "file",
+          "file",
+          "file"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "image",
+          "image",
+          "image",
+          "image",
+          "image",
+          "image",
+          "image",
+          "image",
+          "image",
+          "image"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          47378,
+          46760,
+          30103,
+          40351,
+          40161,
+          51262,
+          47466,
+          35311,
+          37051,
+          48282
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          9,
+          9,
+          9,
+          9,
+          9,
+          9,
+          9,
+          9,
+          9,
+          10
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "/fight_gang.JPG",
+          "/fight_kidsfight.jpg",
+          "/fight_manbeatingwoman2.jpg",
+          "/fight_manguns.jpg",
+          "/fight_manthreatgirl.jpg",
+          "/fight_peoplegrabbingface.jpg",
+          "/fight_policestorming.jpg",
+          "/fight_prisoncell.jpg",
+          "/fight_prisonhostage.jpg",
+          "/fight_riot.jpg"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://api.osf.io/v2/files/553e9d5d8c5e4a21991ade2e/?view_only=f171281f212f4435917b16a9e581a73b",
+          "https://api.osf.io/v2/files/553e9d5d8c5e4a21991ade2f/?view_only=f171281f212f4435917b16a9e581a73b",
+          "https://api.osf.io/v2/files/553e9d5d8c5e4a21991ade30/?view_only=f171281f212f4435917b16a9e581a73b",
+          "https://api.osf.io/v2/files/553e9d5d8c5e4a21991ade31/?view_only=f171281f212f4435917b16a9e581a73b",
+          "https://api.osf.io/v2/files/553e9d5d8c5e4a21991ade32/?view_only=f171281f212f4435917b16a9e581a73b",
+          "https://api.osf.io/v2/files/553e9d5d8c5e4a21991ade33/?view_only=f171281f212f4435917b16a9e581a73b",
+          "https://api.osf.io/v2/files/553e9d5d8c5e4a21991ade34/?view_only=f171281f212f4435917b16a9e581a73b",
+          "https://api.osf.io/v2/files/553e9d5d8c5e4a21991ade35/?view_only=f171281f212f4435917b16a9e581a73b",
+          "https://api.osf.io/v2/files/553e9d5d8c5e4a21991ade36/?view_only=f171281f212f4435917b16a9e581a73b",
+          "https://api.osf.io/v2/files/553e9d5d8c5e4a21991ade37/?view_only=f171281f212f4435917b16a9e581a73b"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://osf.io/download/rtz9x/?view_only=f171281f212f4435917b16a9e581a73b",
+          "https://osf.io/download/945c3/?view_only=f171281f212f4435917b16a9e581a73b",
+          "https://osf.io/download/yvb76/?view_only=f171281f212f4435917b16a9e581a73b",
+          "https://osf.io/download/978gm/?view_only=f171281f212f4435917b16a9e581a73b",
+          "https://osf.io/download/6mqpy/?view_only=f171281f212f4435917b16a9e581a73b",
+          "https://osf.io/download/cq5hp/?view_only=f171281f212f4435917b16a9e581a73b",
+          "https://osf.io/download/fh8e5/?view_only=f171281f212f4435917b16a9e581a73b",
+          "https://osf.io/download/yaxpd/?view_only=f171281f212f4435917b16a9e581a73b",
+          "https://osf.io/download/a4pb9/?view_only=f171281f212f4435917b16a9e581a73b",
+          "https://osf.io/download/bnafv/?view_only=f171281f212f4435917b16a9e581a73b"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "553e9d5c8c5e4a21991ade05",
+          "553e9d5c8c5e4a21991ade05",
+          "553e9d5c8c5e4a21991ade05",
+          "553e9d5c8c5e4a21991ade05",
+          "553e9d5c8c5e4a21991ade05",
+          "553e9d5c8c5e4a21991ade05",
+          "553e9d5c8c5e4a21991ade05",
+          "553e9d5c8c5e4a21991ade05",
+          "553e9d5c8c5e4a21991ade05",
+          "553e9d5c8c5e4a21991ade05"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "cezg3",
+          "cezg3",
+          "cezg3",
+          "cezg3",
+          "cezg3",
+          "cezg3",
+          "cezg3",
+          "cezg3",
+          "cezg3",
+          "cezg3"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

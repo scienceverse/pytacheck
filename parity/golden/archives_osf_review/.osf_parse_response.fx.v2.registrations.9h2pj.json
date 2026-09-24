@@ -1,0 +1,93 @@
+{
+  "id": ".osf_parse_response.fx.v2.registrations.9h2pj",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 1,
+    "names": [
+      "osf_id",
+      "name",
+      "osf_type",
+      "category",
+      "registration",
+      "preprint",
+      "self",
+      "children",
+      "files",
+      "parent",
+      "project"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "9h2pj"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Intellectual Justice Project 2026"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "registrations"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "registration"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://api.osf.io/v2/registrations/9h2pj/"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://api.osf.io/v2/registrations/9h2pj/children/"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://api.osf.io/v2/registrations/9h2pj/files/"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "xcneu"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "9h2pj"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

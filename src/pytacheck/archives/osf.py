@@ -161,12 +161,14 @@ class _UrlParseError(ValueError):
     pass
 
 
-def _url_parse(url: str) -> tuple[str, dict[str, str]]:
+def _url_parse(url: str) -> tuple[str, list[tuple[str, str]]]:
     """The parts of ``httr2::url_parse()`` (libcurl's parser) that OSF IDs need.
 
-    Returns the (percent-decoded) path and the first value of each query
-    parameter; raises :class:`_UrlParseError` where curl refuses the URL
-    (no scheme, no slashes after it, no host, a bad port).
+    Returns the (percent-decoded) path and the query parameters as
+    ``(name, value)`` pairs, split the way ``curl::curl_parse_url()`` does
+    (``+`` is a space; a value ends at its second ``=``); raises
+    :class:`_UrlParseError` where curl refuses the URL (no scheme, no
+    slashes after it, no host, a bad port).
     """
     m = regextract(r"^[A-Za-z][A-Za-z0-9+.-]*:/{1,3}", url, perl=True)
     if m is None:
@@ -187,14 +189,26 @@ def _url_parse(url: str) -> tuple[str, dict[str, str]]:
             "Failed to parse URL: Port number was not a decimal number between 0 and 65535"
         )
     path, _, query = remainder.partition("?")
-    params: dict[str, str] = {}
+    params: list[tuple[str, str]] = []
     if query:
+        # curl:::parse_query_urlencoded(): strsplit() on "&" then "=", keeping
+        # only the first two pieces (so "a=b=c" is a = "b")
         for piece in query.split("&"):
             if piece == "":
                 continue
-            key, _, value = piece.partition("=")
-            params.setdefault(unquote_plus(key), unquote_plus(value))
+            parts = piece.split("=")
+            value = parts[1] if len(parts) > 1 else ""
+            params.append((unquote_plus(parts[0]), unquote_plus(value)))
     return unquote(path or "/"), params
+
+
+def _dollar(params: list[tuple[str, str]], name: str) -> str | None:
+    """R ``as.list(params)$name``: the first exact match, else a unique partial match."""
+    for key, value in params:
+        if key == name:
+            return value
+    partial = [value for key, value in params if key.startswith(name)]
+    return partial[0] if len(partial) == 1 else None
 
 
 def _osf_check_one(osf_id: Any) -> str | None:
@@ -219,8 +233,9 @@ def _osf_check_one(osf_id: Any) -> str | None:
             last.pop()  # R's strsplit() drops the trailing empty piece
         tail = last[-1]
         if grepl(r"^[a-z0-9]{5}(_v\d+)?$", tail):
-            if "view_only" in query:
-                tail = f"{tail}?view_only={query['view_only']}"
+            view_only = _dollar(query, "view_only")
+            if view_only is not None:
+                tail = f"{tail}?view_only={view_only}"
             return tail
         if len(tail) == 24:
             return tail

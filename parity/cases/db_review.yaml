@@ -1,0 +1,91 @@
+# Adversarial-review parity cases for pytacheck.db (see tests/db/review.R).
+"area": "db_review"
+"cases":
+- "id": "crossref_parse_item.fixtures.single_1"
+  "r": "identity"
+  "py": "copy.copy"
+  "args":
+    "x":
+      "$expr":
+        "r": "source(file.path(root, \"tests/db/review.R\")); review_parse_each(lapply(c(\"cr-labs-updates\", \"indexed\", \"reference-count\", \"publisher\", \"content-domain\", \"short-container-title\", \"DOI\", \"type\", \"created\", \"source\"), identity))"
+        "py": "__import__('tests.db.review_helpers', fromlist=['x']).parse_each([[s] for s in ['cr-labs-updates', 'indexed', 'reference-count', 'publisher', 'content-domain', 'short-container-title', 'DOI', 'type', 'created', 'source']])"
+- "id": "crossref_parse_item.fixtures.single_2"
+  "r": "identity"
+  "py": "copy.copy"
+  "args":
+    "x":
+      "$expr":
+        "r": "source(file.path(root, \"tests/db/review.R\")); review_parse_each(lapply(c(\"is-referenced-by-count\", \"title\", \"prefix\", \"author\", \"member\", \"container-title\", \"original-title\", \"deposited\", \"score\", \"resource\"), identity))"
+        "py": "__import__('tests.db.review_helpers', fromlist=['x']).parse_each([[s] for s in ['is-referenced-by-count', 'title', 'prefix', 'author', 'member', 'container-title', 'original-title', 'deposited', 'score', 'resource']])"
+- "id": "crossref_parse_item.fixtures.single_3"
+  "r": "identity"
+  "py": "copy.copy"
+  "args":
+    "x":
+      "$expr":
+        "r": "source(file.path(root, \"tests/db/review.R\")); review_parse_each(lapply(c(\"subtitle\", \"short-title\", \"issued\", \"references-count\", \"URL\", \"relation\", \"subject\", \"published\", \"page\", \"language\"), identity))"
+        "py": "__import__('tests.db.review_helpers', fromlist=['x']).parse_each([[s] for s in ['subtitle', 'short-title', 'issued', 'references-count', 'URL', 'relation', 'subject', 'published', 'page', 'language']])"
+- "id": "crossref_parse_item.fixtures.single_4"
+  "r": "identity"
+  "py": "copy.copy"
+  "args":
+    "x":
+      "$expr":
+        "r": "source(file.path(root, \"tests/db/review.R\")); review_parse_each(lapply(c(\"ISSN\", \"issn-type\", \"volume\", \"link\", \"alternative-id\", \"issue\", \"journal-issue\", \"published-print\", \"published-online\", \"license\"), identity))"
+        "py": "__import__('tests.db.review_helpers', fromlist=['x']).parse_each([[s] for s in ['ISSN', 'issn-type', 'volume', 'link', 'alternative-id', 'issue', 'journal-issue', 'published-print', 'published-online', 'license']])"
+- "id": "crossref_parse_item.fixtures.single_5"
+  "r": "identity"
+  "py": "copy.copy"
+  "args":
+    "x":
+      "$expr":
+        "r": "source(file.path(root, \"tests/db/review.R\")); review_parse_each(lapply(c(\"update-policy\", \"abstract\", \"assertion\", \"funder\", \"aliases\", \"content-created\", \"institution\", \"description\", \"content-updated\", \"special_numbering\"), identity))"
+        "py": "__import__('tests.db.review_helpers', fromlist=['x']).parse_each([[s] for s in ['update-policy', 'abstract', 'assertion', 'funder', 'aliases', 'content-created', 'institution', 'description', 'content-updated', 'special_numbering']])"
+- "id": "crossref_parse_item.fixtures.single_6"
+  "r": "identity"
+  "py": "copy.copy"
+  "args":
+    "x":
+      "$expr":
+        "r": "source(file.path(root, \"tests/db/review.R\")); review_parse_each(lapply(c(\"isbn-type\", \"ISBN\", \"archive\", \"publisher-location\", \"updated-by\", \"edition-number\", \"year\", \"editor\", \"error\"), identity))"
+        "py": "__import__('tests.db.review_helpers', fromlist=['x']).parse_each([[s] for s in ['isbn-type', 'ISBN', 'archive', 'publisher-location', 'updated-by', 'edition-number', 'year', 'editor', 'error']])"
+- "id": "crossref_parse_item.fixtures.defaults"
+  "r": "identity"
+  "py": "copy.copy"
+  "args":
+    "x":
+      "$expr":
+        "r": "source(file.path(root, \"tests/db/review.R\")); review_parse_each(list(c(\"DOI\", \"type\", \"title\", \"author\", \"container-title\", \"volume\", \"issue\", \"page\", \"URL\", \"abstract\", \"year\", \"error\"), c(\"DOI\", \"score\", \"type\", \"title\", \"author\", \"editor\", \"publisher\", \"container-title\", \"year\", \"volume\", \"issue\", \"page\", \"URL\"), c(\"DOI\", \"title\", \"ISSN\", \"subject\"), c(\"title\", \"year\", \"author\")))"
+        "py": "__import__('tests.db.review_helpers', fromlist=['x']).parse_each([['DOI', 'type', 'title', 'author', 'container-title', 'volume', 'issue', 'page', 'URL', 'abstract', 'year', 'error'], ['DOI', 'score', 'type', 'title', 'author', 'editor', 'publisher', 'container-title', 'year', 'volume', 'issue', 'page', 'URL'], ['DOI','title','ISSN','subject'], ['title','year','author']])"
+- "id": "crossref_query_parse.fixtures.all_default"
+  "r": "identity"
+  "py": "copy.copy"
+  "args":
+    "x":
+      "$expr":
+        "r": "source(file.path(root, \"tests/db/review.R\")); review_query_parse_all(c(\"DOI\", \"score\", \"type\", \"title\", \"author\", \"editor\", \"publisher\", \"container-title\", \"year\", \"volume\", \"issue\", \"page\", \"URL\"))"
+        "py": "__import__('tests.db.review_helpers', fromlist=['x']).query_parse_all(['DOI', 'score', 'type', 'title', 'author', 'editor', 'publisher', 'container-title', 'year', 'volume', 'issue', 'page', 'URL'])"
+- "id": "crossref_query_parse.fixtures.all_subject"
+  "r": "identity"
+  "py": "copy.copy"
+  "args":
+    "x":
+      "$expr":
+        "r": "source(file.path(root, \"tests/db/review.R\")); review_query_parse_all(c(\"DOI\", \"subject\", \"ISSN\", \"title\"))"
+        "py": "__import__('tests.db.review_helpers', fromlist=['x']).query_parse_all(['DOI', 'subject', 'ISSN', 'title'])"
+- "id": "crossref_query_parse.fixtures.each_default"
+  "r": "identity"
+  "py": "copy.copy"
+  "args":
+    "x":
+      "$expr":
+        "r": "source(file.path(root, \"tests/db/review.R\")); review_query_parse_each(c(\"DOI\", \"score\", \"type\", \"title\", \"author\", \"editor\", \"publisher\", \"container-title\", \"year\", \"volume\", \"issue\", \"page\", \"URL\"))"
+        "py": "__import__('tests.db.review_helpers', fromlist=['x']).query_parse_each(['DOI', 'score', 'type', 'title', 'author', 'editor', 'publisher', 'container-title', 'year', 'volume', 'issue', 'page', 'URL'])"
+- "id": "crossref_query_parse.fixtures.each_wide"
+  "r": "identity"
+  "py": "copy.copy"
+  "args":
+    "x":
+      "$expr":
+        "r": "source(file.path(root, \"tests/db/review.R\")); review_query_parse_each(c(\"DOI\", \"score\", \"ISSN\", \"subject\", \"link\", \"license\", \"funder\", \"published\", \"issued\"), 0)"
+        "py": "__import__('tests.db.review_helpers', fromlist=['x']).query_parse_each(['DOI', 'score', 'ISSN', 'subject', 'link', 'license', 'funder', 'published', 'issued'], 0)"

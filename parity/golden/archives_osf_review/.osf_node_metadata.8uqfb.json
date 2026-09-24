@@ -1,0 +1,230 @@
+{
+  "id": ".osf_node_metadata.8uqfb",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "osf_id",
+      "osf_url",
+      "title",
+      "description",
+      "category",
+      "public",
+      "date_created",
+      "date_modified",
+      "tags",
+      "license",
+      "node_license",
+      "contributors",
+      "citation",
+      "registrations",
+      "forks"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "8uqfb"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://osf.io/8uqfb"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "An Inception Cohort Study Quantifying How Many Registered Studies are Published"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "We quantified how many studies registered on the Open Science Framework (OSF) up to November 2017 are performed but not shared after at least 4 years. Examining a sample of 169 registered research studies we found that 104 (61.5%) were publicly shared. We estimate that 5316 out of 9172 (58%) registered studies on the OSF are publicly shared. Researchers use registries to make unpublished studies public, and the OSF policy to open registrations after a four year embargo substantially increases the number of studies that become known to the scientific community. In responses to emails asking researchers why studies remained unpublished logistical issues (e.g., lack of time, researchers changing jobs) were the most common cause, followed by null results, and rejections during peer review. Our exploratory study shows that a substantial amount of studies that researchers perform remain unpublished."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "project"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "2023-05-21T17:18:03.873298"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "2024-10-10T05:04:30.673579"
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": []
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "null"
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "list",
+            "names": [
+              "name",
+              "given_name",
+              "family_name",
+              "orcid"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Daniel Lakens"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Daniel"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Lakens"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  null
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "name",
+              "given_name",
+              "family_name",
+              "orcid"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Eline Ensinck"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Eline"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Ensinck"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  null
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "title",
+          "author",
+          "publisher",
+          "type"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "An Inception Cohort Study Quantifying How Many Registered Studies are Published"
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 2,
+            "names": [
+              "family",
+              "given"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Lakens",
+                  "Ensinck"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Daniel",
+                  "Eline N F"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "OSF"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "webpage"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "428fj"
+        ]
+      },
+      {
+        "t": "null"
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

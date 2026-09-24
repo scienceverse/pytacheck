@@ -1,0 +1,436 @@
+{
+  "id": "osf_info.recursive.jqkg7",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 14,
+    "names": [
+      "osf_url",
+      "osf_id",
+      "name",
+      "osf_type",
+      "category",
+      "registration",
+      "preprint",
+      "self",
+      "children",
+      "files",
+      "parent",
+      "project",
+      "description",
+      "provider",
+      "kind",
+      "filetype",
+      "public",
+      "size",
+      "downloads",
+      "path",
+      "download_url"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "jqkg7",
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "jqkg7",
+          "5922feb29ad5a10250b1cd37",
+          "5922fed2b83f69024e8f7aef",
+          "5922fed2b83f69024e8f7af0",
+          "5922fed2b83f69024e8f7af1",
+          "5922fed2b83f69024e8f7af2",
+          "5922fed2b83f69024e8f7af3",
+          "5922fed2b83f69024e8f7af4",
+          "5922fed2b83f69024e8f7af5",
+          "5922fed2b83f69024e8f7af6",
+          "5922fed2b83f69024e8f7af7",
+          "5922fed2b83f69024e8f7af8",
+          "5922fed2b83f69024e8f7af9",
+          "5922fed2b83f69024e8f7afa"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Gossiping about Deviance",
+          "osfstorage",
+          "Archive of OSF Storage",
+          "Littering Condition.MOV",
+          "PickingUp Condition.mp4",
+          "Neutral Condition.mp4",
+          "Study 1 experimenter script.docx",
+          "Study 2 experimenter script.docx",
+          "Discussing Deviance Data.dta",
+          "Study 1 questionnaire.pdf",
+          "Supplementary Analyses.docx",
+          "Conversation Coding.dta",
+          "Discussion Deviance Data Guide.xlsx",
+          "Study 2 questionnaire.pdf"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "registrations",
+          "files",
+          "files",
+          "files",
+          "files",
+          "files",
+          "files",
+          "files",
+          "files",
+          "files",
+          "files",
+          "files",
+          "files",
+          "files"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "registration",
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://api.osf.io/v2/registrations/jqkg7/",
+          null,
+          "https://api.osf.io/v2/files/5922fed2b83f69024e8f7aef/",
+          "https://api.osf.io/v2/files/5922fed2b83f69024e8f7af0/",
+          "https://api.osf.io/v2/files/5922fed2b83f69024e8f7af1/",
+          "https://api.osf.io/v2/files/5922fed2b83f69024e8f7af2/",
+          "https://api.osf.io/v2/files/5922fed2b83f69024e8f7af3/",
+          "https://api.osf.io/v2/files/5922fed2b83f69024e8f7af4/",
+          "https://api.osf.io/v2/files/5922fed2b83f69024e8f7af5/",
+          "https://api.osf.io/v2/files/5922fed2b83f69024e8f7af6/",
+          "https://api.osf.io/v2/files/5922fed2b83f69024e8f7af7/",
+          "https://api.osf.io/v2/files/5922fed2b83f69024e8f7af8/",
+          "https://api.osf.io/v2/files/5922fed2b83f69024e8f7af9/",
+          "https://api.osf.io/v2/files/5922fed2b83f69024e8f7afa/"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://api.osf.io/v2/registrations/jqkg7/children/",
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://api.osf.io/v2/registrations/jqkg7/files/",
+          "https://api.osf.io/v2/registrations/jqkg7/files/osfstorage/",
+          "https://api.osf.io/v2/registrations/jqkg7/files/osfstorage/5922fed2b83f69024e8f7aef/",
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "7xtr6",
+          "jqkg7",
+          "5922feb29ad5a10250b1cd37",
+          "5922fed2b83f69024e8f7aef",
+          "5922fed2b83f69024e8f7aef",
+          "5922fed2b83f69024e8f7aef",
+          "5922fed2b83f69024e8f7aef",
+          "5922fed2b83f69024e8f7aef",
+          "5922fed2b83f69024e8f7aef",
+          "5922fed2b83f69024e8f7aef",
+          "5922fed2b83f69024e8f7aef",
+          "5922fed2b83f69024e8f7aef",
+          "5922fed2b83f69024e8f7aef",
+          "5922fed2b83f69024e8f7aef"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "jqkg7",
+          "jqkg7",
+          "jqkg7",
+          "jqkg7",
+          "jqkg7",
+          "jqkg7",
+          "jqkg7",
+          "jqkg7",
+          "jqkg7",
+          "jqkg7",
+          "jqkg7",
+          "jqkg7",
+          "jqkg7",
+          "jqkg7"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "osfstorage",
+          "osfstorage",
+          "osfstorage",
+          "osfstorage",
+          "osfstorage",
+          "osfstorage",
+          "osfstorage",
+          "osfstorage",
+          "osfstorage",
+          "osfstorage",
+          "osfstorage",
+          "osfstorage",
+          "osfstorage"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "folder",
+          "folder",
+          "file",
+          "file",
+          "file",
+          "file",
+          "file",
+          "file",
+          "file",
+          "file",
+          "file",
+          "file",
+          "file"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          "video",
+          "video",
+          "video",
+          "text",
+          "text",
+          "data",
+          "text",
+          "text",
+          "data",
+          "data",
+          "text"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          null,
+          null,
+          null,
+          197701336,
+          83883011,
+          83027449,
+          482743,
+          485743,
+          319875,
+          10413002,
+          636554,
+          56835,
+          41559,
+          84906
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          null,
+          null,
+          null,
+          15,
+          8,
+          8,
+          4,
+          4,
+          12,
+          13,
+          7,
+          10,
+          10,
+          4
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "/",
+          "/Archive of OSF Storage/",
+          "/Archive of OSF Storage/Littering Condition.MOV",
+          "/Archive of OSF Storage/PickingUp Condition.mp4",
+          "/Archive of OSF Storage/Neutral Condition.mp4",
+          "/Archive of OSF Storage/Study 1 experimenter script.docx",
+          "/Archive of OSF Storage/Study 2 experimenter script.docx",
+          "/Archive of OSF Storage/Discussing Deviance Data.dta",
+          "/Archive of OSF Storage/Study 1 questionnaire.pdf",
+          "/Archive of OSF Storage/Supplementary Analyses.docx",
+          "/Archive of OSF Storage/Conversation Coding.dta",
+          "/Archive of OSF Storage/Discussion Deviance Data Guide.xlsx",
+          "/Archive of OSF Storage/Study 2 questionnaire.pdf"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          "https://osf.io/download/kn5te/",
+          "https://osf.io/download/zubp6/",
+          "https://osf.io/download/dhq3z/",
+          "https://osf.io/download/z7enp/",
+          "https://osf.io/download/y3ue9/",
+          "https://osf.io/download/96xvq/",
+          "https://osf.io/download/cwdqm/",
+          "https://osf.io/download/d2k9r/",
+          "https://osf.io/download/fz9jc/",
+          "https://osf.io/download/tzxq2/",
+          "https://osf.io/download/rdbwy/"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}
