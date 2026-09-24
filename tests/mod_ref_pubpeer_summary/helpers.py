@@ -377,3 +377,12 @@ def rv_rep_no_type() -> Any:
 
     out = add_rows(chain(pc.demopaper(), ["ref_replication"]), [0], {})
     return drop_table_cols(out, ["replication_type"])
+
+
+def test_paper_id(text: Sequence[str], id: str) -> Any:
+    """``test_paper()`` with a fixed ``paper_id`` (R's comes from the clock)."""
+    import pytacheck as pc
+
+    p = pc.test_paper(list(text))
+    p.paper_id = id
+    return p

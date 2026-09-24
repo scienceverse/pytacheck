@@ -1,0 +1,43 @@
+{
+  "id": "data_check_colname_collisions.blank_names",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "",
+      "",
+      "a b",
+      "a.b"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "Column name becomes \"\" when special characters are replaced, the same as 1 other identically named column: tools that sanitize names (R's make.names(), SPSS/SAS/Stata import, codebook section links) cannot tell these columns apart."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Column name becomes \"\" when special characters are replaced, the same as 1 other identically named column: tools that sanitize names (R's make.names(), SPSS/SAS/Stata import, codebook section links) cannot tell these columns apart."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Column name becomes \"a_b\" when special characters are replaced, the same as \"a.b\": tools that sanitize names (R's make.names(), SPSS/SAS/Stata import, codebook section links) cannot tell these columns apart."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Column name becomes \"a_b\" when special characters are replaced, the same as \"a b\": tools that sanitize names (R's make.names(), SPSS/SAS/Stata import, codebook section links) cannot tell these columns apart."
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

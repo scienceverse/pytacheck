@@ -275,6 +275,11 @@ CASES = [
         one(osf("lblsc"), "p_lblsc", mock="local"),
     ),
     (
+        "synthetic.label_nonchar",
+        "a schema label with U+FFFF: R's tolower() errors (utf8towcs)",
+        one(osf("lblnc"), "p_lblnc", mock="local"),
+    ),
+    (
         "synthetic.title_scalars",
         "pages schema titles that are numbers or logicals (as.character())",
         one(osf("lblpg"), "p_lblpg", mock="local"),

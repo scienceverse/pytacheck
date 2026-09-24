@@ -607,6 +607,23 @@
     - "url":
       - "https://osf.io/lblsc"
       "id": "p_lblsc"
+- "id": "prereg_check.synthetic.label_nonchar"
+  "note": "a schema label with U+FFFF: R's tolower() errors (utf8towcs)"
+  "r": "identity"
+  "py": "tests.mod_prereg.parity_support.run_prereg"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2::with_mock_dir(\"tests/mod_prereg/mocks\", module_run(tp(c(\"https://osf.io/lblnc\"), \"p_lblnc\"), \"prereg_check\")) })()"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "mock": "local"
+    "papers":
+    - "url":
+      - "https://osf.io/lblnc"
+      "id": "p_lblnc"
 - "id": "prereg_check.synthetic.title_scalars"
   "note": "pages schema titles that are numbers or logicals (as.character())"
   "r": "identity"

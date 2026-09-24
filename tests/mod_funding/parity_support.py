@@ -115,6 +115,14 @@ def call(fn: str, *args: Any, **kwargs: Any) -> Any:
     return getattr(F, _py_name(fn))(*args, **kwargs)
 
 
+def masks(patterns: Sequence[str], x: Sequence[str | None], ignore_case: bool = False) -> list[Any]:
+    """``lapply(patterns, grepl, x, perl = TRUE, ignore.case = ...)`` through
+    :class:`pytacheck.modules._funding._Article` (literal prefilter, shared
+    column cache and the PCRE caseless corrections the locators rely on)."""
+    art = F._Article([v if isinstance(v, str) else None for v in x])
+    return [art.mask(p, ignore_case).tolist() for p in patterns]
+
+
 def sectioned(text: Sequence[str], section_type: Sequence[str]) -> Any:
     """Python side of ``fc_sectioned()``: one section per sentence."""
     import pandas as pd

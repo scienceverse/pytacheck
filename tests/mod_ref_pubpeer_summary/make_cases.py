@@ -24,7 +24,6 @@ R_PRE = 'source(file.path(root, "tests/mod_ref_pubpeer_summary/helpers.R")); '
 PY_WRAP = '(lambda H: {})(__import__("tests.mod_ref_pubpeer_summary.helpers", fromlist=["x"]))'
 APIS = "apis"
 MOCK = "tests/mod_ref_pubpeer_summary/mock"
-TEST_PAPER_IGNORE = {"ignore": ["summary_table.paper_id"]}
 
 ALL = '"ref_accuracy", "ref_pubpeer", "ref_replication", "ref_retraction"'
 ALL_PY = "'ref_accuracy', 'ref_pubpeer', 'ref_replication', 'ref_retraction'"
@@ -283,14 +282,19 @@ def build() -> dict[str, Any]:
             case["mock_dir"] = mock
         case.update(extra)
         cases.append(case)
-    # a test paper (random paper_id) without references
+    # a test paper without references (R's test_paper() ids come from the clock, so
+    # the paper gets a fixed id to keep the goldens reproducible)
     for mod in ("ref_pubpeer", "ref_summary"):
         cases.append(
             {
                 "id": f"{mod}.test_paper",
                 "module": mod,
-                "args": {"paper": {"$test_paper": {"text": ["No references here."]}}},
-                "compare": TEST_PAPER_IGNORE,
+                "args": {
+                    "paper": expr(
+                        'test_paper_id("No references here.", "no_refs")',
+                        "H.test_paper_id(['No references here.'], 'no_refs')",
+                    )
+                },
             }
         )
     # the demo paper read from its JSON file

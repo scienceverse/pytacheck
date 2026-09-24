@@ -737,7 +737,13 @@ def _tolower(s: str) -> str:
     """
     if s.isascii():
         return s.lower()
+    if _NONCHARACTERS.intersection(s):
+        # R's utf8towcs() rejects U+FFFE and U+FFFF (other noncharacters pass)
+        raise ValueError(f"invalid input '{_deparse_str(s)[1:-1]}' in 'utf8towcs'")
     return "".join(ch.lower()[:1] or ch for ch in s)
+
+
+_NONCHARACTERS = frozenset({chr(0xFFFE), chr(0xFFFF)})
 
 
 #: Research-core field labels (lowercased) -> canonical prereg_schema fields

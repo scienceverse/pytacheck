@@ -1,0 +1,29 @@
+{
+ "data": {
+  "id": "fffffffffffffffffffffff8",
+  "type": "registration-schemas",
+  "attributes": {
+   "name": "Synthetic Noncharacter Label",
+   "schema_version": 3,
+   "schema": {
+    "blocks": [
+     {
+      "block_type": "question-label",
+      "display_text": "Notes 🿿"
+     },
+     {
+      "block_type": "short-text-input"
+     },
+     {
+      "block_type": "question-label",
+      "display_text": "Sample ￿"
+     },
+     {
+      "block_type": "short-text-input"
+     }
+    ],
+    "version": 3
+   }
+  }
+ }
+}

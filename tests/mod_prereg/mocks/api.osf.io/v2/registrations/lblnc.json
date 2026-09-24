@@ -1,0 +1,41 @@
+{
+ "data": {
+  "id": "lblnc",
+  "type": "registrations",
+  "attributes": {
+   "title": "Synthetic registration lblnc",
+   "description": "",
+   "date_created": "2024-01-02T03:04:05.000001",
+   "date_modified": "2024-01-03T03:04:05.000001",
+   "date_registered": "2024-01-04T03:04:05.000001",
+   "embargo_end_date": null,
+   "withdrawn": false,
+   "registration_supplement": "Synthetic Template",
+   "ia_url": "https://archive.org/details/osf-registrations-lblnc-v1",
+   "registration_responses": {
+    "700-1": "notes",
+    "700-3": "n = 20"
+   }
+  },
+  "relationships": {
+   "registration_schema": {
+    "data": {
+     "id": "fffffffffffffffffffffff8",
+     "type": "registration-schemas"
+    },
+    "links": {
+     "related": {
+      "href": "https://api.osf.io/v2/schemas/registrations/fffffffffffffffffffffff8/",
+      "meta": {}
+     }
+    }
+   }
+  },
+  "links": {
+   "html": "https://osf.io/lblnc/"
+  }
+ },
+ "meta": {
+  "version": "2.0"
+ }
+}

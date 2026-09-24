@@ -353,4 +353,31 @@ reg(
     {"qa": "five", "qb.question": "false", "qc": "1e5", "qd": "big", "qe": "no title"},
     schema=SCALAR_PAGES,
 )
+# a label with the noncharacter U+FFFF: R's tolower() fails in utf8towcs(), so
+# the module errors (a response under U+FDD0 or U+1FFFF would pass)
+NONCHAR = "fffffffffffffffffffffff8"
+write(
+    f"schemas/registrations/{NONCHAR}",
+    {
+        "data": {
+            "id": NONCHAR,
+            "type": "registration-schemas",
+            "attributes": {
+                "name": "Synthetic Noncharacter Label",
+                "schema_version": 3,
+                "schema": {
+                    "blocks": [
+                        {"block_type": "question-label", "display_text": "Notes " + chr(0x1FFFF)},
+                        {"block_type": "short-text-input"},
+                        {"block_type": "question-label", "display_text": "Sample " + chr(0xFFFF)},
+                        {"block_type": "short-text-input"},
+                    ],
+                    "version": 3,
+                },
+            },
+        }
+    },
+)
+guid("lblnc")
+reg("lblnc", {"700-1": "notes", "700-3": "n = 20"}, schema=NONCHAR)
 print("ok")

@@ -565,3 +565,30 @@
     "as_zip": false
     "ask": false
   "mock_dir": "tests/archives_gz/mocks_review"
+- "id": "github_info.review.vector_dup"
+  "r": "github_info"
+  "py": "pytacheck.archives.github.github_info"
+  "args":
+    "repo":
+      "$chr":
+      - "rv/files"
+      - "https://github.com/rv/files"
+  "mock_dir": "tests/archives_gz/mocks_review"
+- "id": "github_info.review.vector_missing"
+  "r": "github_info"
+  "py": "pytacheck.archives.github.github_info"
+  "args":
+    "repo":
+      "$chr":
+      - "rv/files"
+      - "rv/nope"
+  "mock_dir": "tests/archives_gz/mocks_review"
+- "id": "github_files.review.list_null"
+  "r": "github_files"
+  "py": "pytacheck.archives.github.github_files"
+  "args":
+    "repo":
+      "$expr":
+        "r": "list(\"rv/files\", NULL)"
+        "py": "[\"rv/files\", None]"
+  "mock_dir": "tests/archives_gz/mocks_review"

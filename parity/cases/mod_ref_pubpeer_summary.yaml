@@ -313,20 +313,16 @@
   "module": "ref_pubpeer"
   "args":
     "paper":
-      "$test_paper":
-        "text":
-        - "No references here."
-  "compare": &id001
-    "ignore":
-    - "summary_table.paper_id"
+      "$expr":
+        "r": "source(file.path(root, \"tests/mod_ref_pubpeer_summary/helpers.R\")); test_paper_id(\"No references here.\", \"no_refs\")"
+        "py": "(lambda H: H.test_paper_id(['No references here.'], 'no_refs'))(__import__(\"tests.mod_ref_pubpeer_summary.helpers\", fromlist=[\"x\"]))"
 - "id": "ref_summary.test_paper"
   "module": "ref_summary"
   "args":
     "paper":
-      "$test_paper":
-        "text":
-        - "No references here."
-  "compare": *id001
+      "$expr":
+        "r": "source(file.path(root, \"tests/mod_ref_pubpeer_summary/helpers.R\")); test_paper_id(\"No references here.\", \"no_refs\")"
+        "py": "(lambda H: H.test_paper_id(['No references here.'], 'no_refs'))(__import__(\"tests.mod_ref_pubpeer_summary.helpers\", fromlist=[\"x\"]))"
 - "id": "ref_pubpeer.to_err_is_human"
   "module": "ref_pubpeer"
   "args":
