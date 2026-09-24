@@ -96,7 +96,7 @@ def test_read_r_output_ansi_fused_prompt(data_dir: Path) -> None:
     assert fr[0]["model_ref"] == "x"
     effect = [r for r in res if r["analysis"] == "Cohen's d" and "ci_lower" in r["data"].columns]
     assert effect[0]["data"].iloc[0].tolist() == ["-0.12", "-0.73", "0.51"]
-    anova = [r for r in res if r["line"] == 6][0]
+    anova = next(r for r in res if r["line"] == 6)
     assert anova["data"]["df"].tolist() == ["2, 560", "1, 280"]
 
 

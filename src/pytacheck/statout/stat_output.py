@@ -750,8 +750,10 @@ def _write_csv(df: pd.DataFrame, path: Path) -> None:
         quoted.append(not (numeric or is_bool))
     lines = [",".join('"' + str(c).replace('"', '""') + '"' for c in df.columns)]
     cols = [df.iloc[:, c].tolist() for c in range(df.shape[1])]
-    for i in range(len(df)):
-        lines.append(",".join(_csv_field(cols[c][i], quoted[c]) for c in range(len(cols))))
+    lines.extend(
+        ",".join(_csv_field(cols[c][i], quoted[c]) for c in range(len(cols)))
+        for i in range(len(df))
+    )
     path.write_text("\n".join(lines) + "\n", encoding="utf-8")
 
 
