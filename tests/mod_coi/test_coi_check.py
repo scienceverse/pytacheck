@@ -8,6 +8,8 @@ matching) whose expected values were measured with R 4.5.3 / metacheck.
 
 from __future__ import annotations
 
+from pathlib import Path
+
 import pandas as pd
 import pytest
 
@@ -21,6 +23,7 @@ from pytacheck.modules.coi_check import (
 )
 
 MODULES = ["coi_check", "coi_check_oi"]
+FIXTURES = Path(__file__).parent / "fixtures"
 
 
 # -- test-module-declarations.R: "coi_check" -----------------------------------

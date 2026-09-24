@@ -15,9 +15,12 @@ import contextlib
 import json
 import os
 import re
+import stat
+import sys
 import tempfile
-from collections.abc import Callable
-from dataclasses import dataclass
+import warnings
+from collections.abc import Callable, Iterable
+from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
@@ -36,6 +39,8 @@ __all__ = [
     "email",
     "load_config",
     "project_config_path",
+    "trust_local",
+    "trusted_local",
     "update_config",
     "user_config_path",
     "verbose",
@@ -97,14 +102,22 @@ def cache_dir(subdir: str = "", override: str | os.PathLike[str] | None = None) 
 # user file (``<user_config_dir>/config.json``), the project file (nearest
 # ``pytacheck.json`` at or above the working directory). ``PYTACHECK_CONFIG``
 # names the only file to read, or ``none`` for no files (hermetic runs).
+#
+# A project file comes with the folder it is in, which may be a shared folder
+# or a cloned repository, so it is not trusted like the user's own config:
+# one owned by another user (or writable by others) is ignored, and the local
+# code it names (path packs, ``.py`` modules in presets) runs only once the
+# user has trusted that code (``trust_local()``; ``pack install`` asks).
 
 BUILTIN_STORE = "pytacheck"
 BUILTIN_STORE_URL = "https://github.com/thesanogoeffect/pytacheck-modules"
 PROJECT_CONFIG = "pytacheck.json"
 _SECTIONS = ("stores", "packs", "presets")
 _ENV_KEYS = ("PYTACHECK_CONFIG", "PYTACHECK_DATA_DIR", "PYTACHECK_STORE_URL", "PYTACHECK_PRESET")
+TRUST_FILE = "trusted.json"
 _config_cache: dict[str, Any] = {}
 _writes = 0  # bumped by update_config(): mtime_ns alone can miss rapid rewrites
+_warned_unsafe: set[tuple[str, str]] = set()
 
 
 class ConfigError(ValueError):
@@ -129,12 +142,50 @@ def user_config_path() -> Path:
 
 
 def project_config_path(start: str | os.PathLike[str] | None = None) -> Path | None:
-    """The nearest ``pytacheck.json`` at or above *start* (default: the cwd)."""
+    """The nearest ``pytacheck.json`` at or above *start* (default: the cwd).
+
+    The search does not go above the home folder, nor into another filesystem.
+    """
     here = Path(start) if start is not None else Path.cwd()
+    try:
+        home: Path | None = Path.home().resolve()
+    except (OSError, RuntimeError):  # pragma: no cover - no home folder
+        home = None
+    try:
+        device = here.stat().st_dev
+    except OSError:
+        return None
     for folder in (here, *here.parents):
         candidate = folder / PROJECT_CONFIG
         if candidate.is_file():
             return candidate
+        if home is not None and folder.resolve() == home:
+            break
+        try:
+            if folder.parent.stat().st_dev != device:
+                break
+        except OSError:
+            break
+    return None
+
+
+def _unsafe(path: Path) -> str | None:
+    """Why a project config file must not be read (like git's ``safe.directory``), or ``None``."""
+    if sys.platform == "win32" or not hasattr(os, "geteuid"):
+        return None
+    uid, gid = os.geteuid(), os.getegid()
+    for what, target in (("file", path), ("folder", path.parent)):
+        try:
+            st = target.stat()
+        except OSError:
+            return None
+        if st.st_uid != uid:
+            return f"its {what} is owned by another user"
+        mode = st.st_mode
+        if mode & stat.S_IWOTH and not (what == "folder" and mode & stat.S_ISVTX):
+            return f"its {what} is writable by everyone"
+        if mode & stat.S_IWGRP and st.st_gid != gid:
+            return f"its {what} is writable by a group"
     return None
 
 
@@ -158,8 +209,64 @@ def config_files() -> list[tuple[str, Path]]:
     except OSError:  # the working directory was removed
         project = None
     if project is not None and project != user:
-        out.append(("project", project))
+        why = _unsafe(project)
+        if why is None:
+            out.append(("project", project))
+        elif (str(project), why) not in _warned_unsafe:
+            _warned_unsafe.add((str(project), why))
+            warnings.warn(
+                f"Ignoring the project config {project}: {why}. If you trust it, "
+                f"use it explicitly with PYTACHECK_CONFIG={project}",
+                stacklevel=2,
+            )
     return out
+
+
+def _trust_file() -> Path:
+    return data_dir() / TRUST_FILE
+
+
+def trusted_local() -> frozenset[str]:
+    """Local code (folders and ``.py`` files) the user has trusted project configs to run."""
+    try:
+        data = json.loads(_trust_file().read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return frozenset()
+    paths = data.get("paths") if isinstance(data, dict) else None
+    return frozenset(p for p in paths or () if isinstance(p, str))
+
+
+def trust_local(paths: Iterable[str | os.PathLike[str]]) -> None:
+    """Trust local code named by project configs (path packs, ``.py`` modules in presets)."""
+    global _writes
+    new = {str(Path(p).expanduser().resolve()) for p in paths}
+    have = trusted_local()
+    if new <= have:
+        return
+    target = _trust_file()
+    target.parent.mkdir(parents=True, exist_ok=True)
+    fd, tmp = tempfile.mkstemp(prefix=".trusted-", suffix=".tmp", dir=target.parent)
+    try:
+        with os.fdopen(fd, "w", encoding="utf-8") as fh:
+            json.dump({"paths": sorted(have | new)}, fh, indent=2)
+            fh.write("\n")
+        os.replace(tmp, target)
+    except BaseException:
+        with contextlib.suppress(OSError):
+            os.unlink(tmp)
+        raise
+    _writes += 1
+    _config_cache.clear()
+
+
+def local_code(section: str, value: Any) -> list[str]:
+    """The local code a resolved config entry runs: a path pack's folder, ``.py`` modules."""
+    if section == "packs" and isinstance(value, dict) and isinstance(value.get("path"), str):
+        return [value["path"]]
+    if section == "presets" and isinstance(value, dict):
+        refs = [*(value.get("modules") or []), *(value.get("replace") or {}).values()]
+        return [r for r in refs if isinstance(r, str) and r.endswith(".py")]
+    return []
 
 
 def config_stamp() -> tuple[Any, ...]:
@@ -176,7 +283,12 @@ def config_stamp() -> tuple[Any, ...]:
         cwd = os.getcwd()
     except OSError:
         cwd = ""
-    return (env, cwd, tuple(files), _writes)
+    trust: tuple[int, int] | None = None
+    if any(scope == "project" for scope, _ in files):
+        with contextlib.suppress(OSError):
+            st = _trust_file().stat()
+            trust = (st.st_mtime_ns, st.st_size)
+    return (env, cwd, tuple(files), trust, _writes)
 
 
 def _read_json(path: Path) -> dict[str, Any]:
@@ -262,6 +374,9 @@ class Config:
     sources: dict[str, tuple[str, str]]
     files: tuple[tuple[str, Path], ...] = ()
     stamp: tuple[Any, ...] = ()
+    #: dotted key -> ``(project file, entry, untrusted local code)`` for project
+    #: entries left out because they run local code the user has not trusted
+    untrusted: dict[str, tuple[str, Any, tuple[str, ...]]] = field(default_factory=dict)
 
     def get(self, key: str, default: Any = None) -> Any:
         return self.values.get(key, default)
@@ -294,6 +409,8 @@ def load_config() -> Config:
     merged by key; ``null`` removes an entry and ``false`` hides a dist pack.
     Relative paths are resolved against the file that holds them. The store
     ``pytacheck`` is built in; ``PYTACHECK_STORE_URL`` overrides its URL.
+    Project entries that run local code the user has not trusted
+    (:func:`trust_local`) are left out and listed in ``Config.untrusted``.
     """
     stamp = config_stamp()
     cached = _config_cache.get("config")
@@ -305,7 +422,9 @@ def load_config() -> Config:
         "presets": {},
     }
     sources: dict[str, tuple[str, str]] = {f"stores.{BUILTIN_STORE}": ("builtin", "builtin")}
+    untrusted: dict[str, tuple[str, Any, tuple[str, ...]]] = {}
     files = tuple(config_files())
+    trusted = trusted_local() if any(scope == "project" for scope, _ in files) else frozenset()
     for scope, path in files:
         data = _read_json(path)
         _check_section(data, path)
@@ -316,9 +435,16 @@ def load_config() -> Config:
                     if item is None:
                         values[key].pop(name, None)
                         sources.pop(f"{key}.{name}", None)
-                    else:
-                        values[key][name] = _resolve_entry(key, item, path.parent)
-                        sources[f"{key}.{name}"] = where
+                        continue
+                    entry = _resolve_entry(key, item, path.parent)
+                    if scope == "project":
+                        code = [c for c in local_code(key, entry) if c not in trusted]
+                        if code:
+                            untrusted[f"{key}.{name}"] = (str(path), entry, tuple(code))
+                            continue
+                    untrusted.pop(f"{key}.{name}", None)
+                    values[key][name] = entry
+                    sources[f"{key}.{name}"] = where
             elif value is None:
                 values.pop(key, None)
                 sources.pop(key, None)
@@ -329,7 +455,7 @@ def load_config() -> Config:
     if url:
         values["stores"][BUILTIN_STORE] = url
         sources[f"stores.{BUILTIN_STORE}"] = ("env", "PYTACHECK_STORE_URL")
-    config = Config(values=values, sources=sources, files=files, stamp=stamp)
+    config = Config(values=values, sources=sources, files=files, stamp=stamp, untrusted=untrusted)
     _config_cache["config"] = config
     return config
 
