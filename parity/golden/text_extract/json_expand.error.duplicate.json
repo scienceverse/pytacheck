@@ -1,0 +1,9 @@
+{
+  "id": "json_expand.error.duplicate",
+  "ok": false,
+  "error": "Column name `a` must not be duplicated.\nUse `.name_repair` to specify repair.\nCaused by error in `repaired_names()`:\n! Names must be unique.\n✖ These names are duplicated:\n  * \"a\" at locations 1 and 2.",
+  "warnings": [],
+  "value": null,
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

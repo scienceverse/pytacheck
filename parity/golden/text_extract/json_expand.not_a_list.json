@@ -1,0 +1,55 @@
+{
+  "id": "json_expand.not_a_list",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 7,
+    "names": [
+      "id",
+      "answer",
+      "error"
+    ],
+    "v": [
+      {
+        "t": "int",
+        "v": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "1",
+          "true",
+          "[1, 2, 3]",
+          "[[1,2],[3,4]]",
+          "[null, null]",
+          "[1, \"a\"]",
+          "-0"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "not a list",
+          "not a list",
+          "not a list",
+          "not a list",
+          "not a list",
+          "not a list",
+          "not a list"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.3.3 (2024-02-29)"
+}

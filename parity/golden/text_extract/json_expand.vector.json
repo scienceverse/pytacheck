@@ -1,0 +1,61 @@
+{
+  "id": "json_expand.vector",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 3,
+    "names": [
+      "json",
+      "number",
+      "letter",
+      "bool",
+      "error"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "{\"number\": 1, \"letter\": \"A\", \"bool\": true}",
+          "{\"number\": 2, \"letter\": \"B\", \"bool\": \"FALSE\"}",
+          "oh no"
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          1,
+          2,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "A",
+          "B",
+          null
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true,
+          false,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          "parsing error"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.3.3 (2024-02-29)"
+}
