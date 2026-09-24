@@ -165,7 +165,7 @@ def _strip_ansi(x: str | None) -> str | None:
     if x is None:
         return None
     x = gsub(_ANSI_PROMPT, "\n\\1", x)
-    return gsub(_ANSI, "", x)
+    return str(gsub(_ANSI, "", x))
 
 
 def read_r_output(

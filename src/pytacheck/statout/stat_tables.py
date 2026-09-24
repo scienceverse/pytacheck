@@ -221,7 +221,7 @@ def _jasp_clean_colname(x: Any) -> str:
         x = ""
     s = as_character(x)
     x = "NA" if s is None else s
-    out = sub("^JaspColumn_.*?_Encoded_", "", x)
+    out = str(sub("^JaspColumn_.*?_Encoded_", "", x))
     return x if not _trimws(out) else out
 
 
@@ -628,7 +628,7 @@ def _jmv_table_to_df(tbl_raw: Any) -> pd.DataFrame | None:
     cols = _pb_all(tf, _JMV_F["tbl_columns"])
     if not cols:
         return None
-    parsed = []
+    parsed: list[dict[str, Any]] = []
     for cb in cols:
         cf = _pb_fields(cb)
         if cf is None:
@@ -926,7 +926,7 @@ def _ipynb_result_class(line: str) -> str | None:
     m = compile_r("\\b([A-Za-z_][A-Za-z0-9_]*Result)\\s*\\(", perl=True).search(line)
     if m is None:
         return None
-    return sub("\\s*\\($", "", m.group(0))
+    return str(sub("\\s*\\($", "", m.group(0)))
 
 
 def _ipynb_strip_numpy_scalars(line: str) -> str:
@@ -934,7 +934,9 @@ def _ipynb_strip_numpy_scalars(line: str) -> str:
 
     Port of ``R/stat-tables.R::.ipynb_strip_numpy_scalars()``.
     """
-    return gsub("\\bnp\\.(?:float|int|uint)(?:8|16|32|64)?\\(([^()]*)\\)", "\\1", line, perl=True)
+    return str(
+        gsub("\\bnp\\.(?:float|int|uint)(?:8|16|32|64)?\\(([^()]*)\\)", "\\1", line, perl=True)
+    )
 
 
 def _ipynb_stat_line(lines: Sequence[str] | str) -> list[dict[str, Any]] | None:

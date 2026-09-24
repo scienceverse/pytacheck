@@ -122,7 +122,7 @@ def _stat_sanitize_id(x: Any) -> str | None:
         return None
     s = (_trimws(s) or "").lower()
     s = gsub("[^a-z0-9]+", "_", s)
-    return sub("^_|_$", "", s)
+    return str(sub("^_|_$", "", s))
 
 
 def _num_or_na(x: Any) -> bool:
