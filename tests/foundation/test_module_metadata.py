@@ -20,7 +20,8 @@ def _roxygen(path: Path) -> dict[str, list[str]]:
     lines = []
     for line in path.read_text(encoding="utf-8").splitlines():
         if not line.startswith("#'"):
-            if lines:
+            # roxygen2: the block runs to the first code line (blank lines do not end it)
+            if lines and line.strip():
                 break
             continue
         lines.append(line[2:].strip())

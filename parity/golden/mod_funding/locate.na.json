@@ -1,0 +1,269 @@
+{
+  "id": "locate.na",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "get_support_1",
+      "get_support_2",
+      "get_support_3",
+      "get_support_4",
+      "get_support_5",
+      "get_support_6",
+      "get_support_7",
+      "get_support_8",
+      "get_support_9",
+      "get_support_10",
+      "get_developed_1",
+      "get_received_1",
+      "get_received_2",
+      "get_recipient_1",
+      "get_authors_1",
+      "get_authors_2",
+      "get_thank_1",
+      "get_thank_2",
+      "get_fund_1",
+      "get_fund_2",
+      "get_fund_3",
+      "get_fund_acknow",
+      "get_fund_acknow_new",
+      "get_supported_1",
+      "get_financial_1",
+      "get_financial_2",
+      "get_financial_3",
+      "get_disclosure_1",
+      "get_disclosure_2",
+      "get_grant_1",
+      "get_french_1",
+      "get_project_acknow",
+      "get_common_1",
+      "get_common_2",
+      "get_common_3",
+      "get_common_4",
+      "get_common_5",
+      "get_acknow_1",
+      "get_acknow_2",
+      "negate_disclosure_1",
+      "negate_disclosure_2",
+      "negate_conflict_1",
+      "negate_absence_1",
+      ".where_refs_txt",
+      ".where_acknows_txt",
+      ".where_methods_txt"
+    ],
+    "v": [
+      {
+        "t": "int",
+        "v": [
+          2
+        ]
+      },
+      {
+        "t": "int",
+        "v": []
+      },
+      {
+        "t": "int",
+        "v": [
+          2
+        ]
+      },
+      {
+        "t": "int",
+        "v": []
+      },
+      {
+        "t": "int",
+        "v": []
+      },
+      {
+        "t": "int",
+        "v": []
+      },
+      {
+        "t": "int",
+        "v": []
+      },
+      {
+        "t": "int",
+        "v": []
+      },
+      {
+        "t": "int",
+        "v": []
+      },
+      {
+        "t": "int",
+        "v": []
+      },
+      {
+        "t": "int",
+        "v": []
+      },
+      {
+        "t": "int",
+        "v": []
+      },
+      {
+        "t": "int",
+        "v": []
+      },
+      {
+        "t": "int",
+        "v": []
+      },
+      {
+        "t": "int",
+        "v": []
+      },
+      {
+        "t": "int",
+        "v": []
+      },
+      {
+        "t": "int",
+        "v": []
+      },
+      {
+        "t": "int",
+        "v": []
+      },
+      {
+        "t": "int",
+        "v": []
+      },
+      {
+        "t": "int",
+        "v": []
+      },
+      {
+        "t": "int",
+        "v": []
+      },
+      {
+        "t": "int",
+        "v": [
+          2
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          2
+        ]
+      },
+      {
+        "t": "int",
+        "v": []
+      },
+      {
+        "t": "int",
+        "v": []
+      },
+      {
+        "t": "int",
+        "v": []
+      },
+      {
+        "t": "int",
+        "v": []
+      },
+      {
+        "t": "int",
+        "v": []
+      },
+      {
+        "t": "int",
+        "v": []
+      },
+      {
+        "t": "int",
+        "v": []
+      },
+      {
+        "t": "int",
+        "v": []
+      },
+      {
+        "t": "int",
+        "v": []
+      },
+      {
+        "t": "int",
+        "v": []
+      },
+      {
+        "t": "int",
+        "v": []
+      },
+      {
+        "t": "int",
+        "v": []
+      },
+      {
+        "t": "int",
+        "v": []
+      },
+      {
+        "t": "int",
+        "v": []
+      },
+      {
+        "t": "int",
+        "v": []
+      },
+      {
+        "t": "int",
+        "v": []
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false,
+          false,
+          false
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false,
+          false,
+          false
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false,
+          false,
+          false
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false,
+          false,
+          false
+        ]
+      },
+      {
+        "t": "int",
+        "v": []
+      },
+      {
+        "t": "int",
+        "v": []
+      },
+      {
+        "t": "int",
+        "v": []
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -1,0 +1,371 @@
+{
+  "id": "stat_effect_size.paperlist",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "stat_effect_size"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Effect Sizes in t-tests and F-tests"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "results"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 2,
+        "names": [
+          "paper_id",
+          "text_id",
+          "test",
+          "test_text",
+          "es",
+          "section_id",
+          "paragraph_id",
+          "text",
+          "d_reported",
+          "d_reported_text",
+          "t_value",
+          "df",
+          "d_implied_paired_dz",
+          "d_implied_paired_drm_r05",
+          "d_implied_indep_equal_n",
+          "d_implied_indep_unequal_min",
+          "d_implied_indep_unequal_max",
+          "d_implied_n",
+          "d_coherence",
+          "d_coherence_assumption",
+          "d_coherence_note",
+          "f_reported",
+          "f_reported_text",
+          "df1",
+          "df2",
+          "eta_implied_partial",
+          "omega_implied_partial",
+          "eta_coherence",
+          "eta_coherence_assumption",
+          "eta_coherence_note"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "765c8dc44e43c9",
+              "9803073dc9e400"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1,
+              1
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "t-test",
+              "F-test"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "t(124) = 1.23",
+              "F(1, 13) = 2.34"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "d = 0.34",
+              null
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0,
+              0
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0,
+              0
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "A was bigger than B, t(124) = 1.23, p 0.013, d = 0.34.",
+              "We also ran an ANOVA, F(1, 13) = 2.34, p = .23."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "0.34",
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "d = 0.34",
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "1.23",
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "124",
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "0.11001454449299",
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "0.155584060880284",
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "0.219154218368188",
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "0.219154218368188",
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "0.876727327309702",
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "n1 = 15, n2 = 111, N = 126",
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "match_under_assumptions",
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "independent_unequal_n_range",
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Match under independent-samples unequal-n range assumption (closest split n1 = 15, n2 = 111, N = 126).",
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "2.34"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "F(1, 13) = 2.34"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "13"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "0.152542372881356"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "0.0820073439412485"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "indeterminate"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "none"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "No parseable eta-squared effect size found."
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "We recommend checking the sentences below, and add any missing effect sizes.",
+          "For t-tests with a reported d, coherence checks yielded 1 match under assumptions.",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(\"We also ran an ANOVA, F(1, 13) = 2.34, p = .23.\"), names = \"\", class = \"data.frame\", row.names = c(NA, \n-1L))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 2, FALSE)\n```\n",
+          "::: {.callout-tip title=\"Learn More\" collapse=\"true\"}\n\nFor metascientific articles demonstrating that effect sizes are often not reported:\n\n* Peng, C.-Y. J., Chen, L.-T., Chiang, H.-M., & Chiang, Y.-C. (2013). The Impact of APA and AERA Guidelines on Effect Size Reporting. Educational Psychology Review, 25(2), 157–209. doi:[10.1007/s10648-013-9218-2](https://doi.org/10.1007/s10648-013-9218-2).\n\nFor educational material on reporting effect sizes:\n\n* [Guide to Effect Sizes and Confidence Intervals](https://matthewbjane.quarto.pub/guide-to-effect-sizes-and-confidence-intervals/)\n\n:::\n",
+          "::: {.callout-tip title=\"All detected and assessed stats\" collapse=\"true\"}\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Sentence = c(\"A was bigger than B, t(124) = 1.23, p 0.013, d = 0.34.\", \n\"We also ran an ANOVA, F(1, 13) = 2.34, p = .23.\"), \"Effect Size\" = c(\"d = 0.34\", \nNA), \"Reported Test\" = c(\"t(124) = 1.23\", \"F(1, 13) = 2.34\"), \n    \"Test Type\" = c(\"t-test\", \"F-test\"), \"d Coherence\" = c(\"match_under_assumptions\", \n    NA), \"d Assumption\" = c(\"independent_unequal_n_range\", NA\n    ), \"d Coherence Note\" = c(\"Match under independent-samples unequal-n range assumption (closest split n1 = 15, n2 = 111, N = 126).\", \n    NA), \"eta Coherence\" = c(NA, \"indeterminate\"), \"eta Assumption\" = c(NA, \n    \"none\"), \"eta Coherence Note\" = c(NA, \"No parseable eta-squared effect size found.\"\n    )), row.names = c(NA, -2L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 5, FALSE)\n```\n\n\n:::\n"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "yellow"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "We found 1 t-test and/or F-test where effect sizes are not reported. Check these tests in the table below, and consider adding effect sizes"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 3,
+        "names": [
+          "paper_id",
+          "ttests_with_es",
+          "ttests_without_es",
+          "Ftests_with_es",
+          "Ftests_without_es"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "765c8dc44e43c9",
+              "9803073dc9e400",
+              "ea78f7eb852102"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              1,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0,
+              1,
+              0
+            ]
+          }
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

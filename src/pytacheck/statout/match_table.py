@@ -133,7 +133,9 @@ def _table_caption(paper: Any, section_id: Any) -> str | None:
     hit = (sid == section_id).fillna(False).astype(bool) & sid.notna()
     if not hit.any():
         return None
-    texts = txt["text"][hit].tolist() if "text" in txt.columns else [None] * int(hit.sum())
+    if "text" not in txt.columns:
+        return ""  # paste(NULL, collapse = " ")
+    texts = txt["text"][hit].tolist()
     return " ".join("NA" if _is_na(t) else str(t) for t in texts)
 
 
@@ -342,15 +344,23 @@ def _table_tests(paper: Any) -> list[dict[str, Any]]:
     if not isinstance(tab, pd.DataFrame) or len(tab) == 0 or "contents" not in tab.columns:
         return []
     contents = tab["contents"].tolist()
-    section_ids = tab["section_id"].tolist() if "section_id" in tab.columns else [None] * len(tab)
-    table_ids = tab["table_id"].tolist() if "table_id" in tab.columns else [None] * len(tab)
+    has_sid = "section_id" in tab.columns
+    has_tid = "table_id" in tab.columns
+    section_ids = tab["section_id"].tolist() if has_sid else [None] * len(tab)
+    table_ids = tab["table_id"].tolist() if has_tid else [None] * len(tab)
     out: list[dict[str, Any]] = []
     for i in range(len(tab)):
         content = contents[i]
-        if content is None or (
-            not isinstance(content, list | tuple | np.ndarray) and _is_na(content)
-        ):
+        if content is None:
             continue
+        if not has_sid:
+            # .table_caption(paper, NULL): is.na(NULL) || ... errors
+            raise ValueError("missing value where TRUE/FALSE needed")
         caption = _table_caption(paper, _scalar(section_ids[i]))
-        out.extend(_table_tests_one(table_ids[i], content, caption))
+        tests = _table_tests_one(table_ids[i], content, caption)
+        if not has_tid:
+            # -(NULL * 1000000L + ri) is integer(0): a zero-length text_id
+            for t in tests:
+                t["text_id"] = []
+        out.extend(tests)
     return out

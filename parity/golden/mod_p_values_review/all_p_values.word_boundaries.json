@@ -1,0 +1,217 @@
+{
+  "id": "all_p_values.word_boundaries",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "all_p_values"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "List All P-Values"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "results"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 6,
+        "names": [
+          "text_id",
+          "section_id",
+          "paragraph_id",
+          "text",
+          "formatted",
+          "paper_id",
+          "header",
+          "section_type",
+          "p_comp",
+          "p_value"
+        ],
+        "v": [
+          {
+            "t": "int",
+            "v": [
+              1,
+              1,
+              4,
+              4,
+              4,
+              5
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "p = .05 ",
+              "P < .01 ",
+              "p = .06 ",
+              "p < .07 ",
+              "p = .08",
+              "p =.05"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Greek αp = .05 and éP < .01 here.",
+              "Greek αp = .05 and éP < .01 here.",
+              "Hyphen -p = .06 and slash /p < .07 and dot .p = .08.",
+              "Hyphen -p = .06 and slash /p < .07 and dot .p = .08.",
+              "Hyphen -p = .06 and slash /p < .07 and dot .p = .08.",
+              "Fullwidth p ＝ .05 and p =.05."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "4ebb2258bba0cf",
+              "4ebb2258bba0cf",
+              "4ebb2258bba0cf",
+              "4ebb2258bba0cf",
+              "4ebb2258bba0cf",
+              "4ebb2258bba0cf"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Test",
+              "Test",
+              "Test",
+              "Test",
+              "Test",
+              "Test"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "unknown",
+              "unknown",
+              "unknown",
+              "unknown",
+              "unknown",
+              "unknown"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "=",
+              "<",
+              "=",
+              "<",
+              "=",
+              "="
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0.05,
+              0.01,
+              0.06,
+              0.07,
+              0.08,
+              0.05
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Text = c(\"p = .05 \", \"P < .01 \", \"p = .06 \", \"p < .07 \", \n\"p = .08\", \"p =.05\"), Sentence = c(\"Greek αp = .05 and éP < .01 here.\", \n\"Greek αp = .05 and éP < .01 here.\", \"Hyphen -p = .06 and slash /p < .07 and dot .p = .08.\", \n\"Hyphen -p = .06 and slash /p < .07 and dot .p = .08.\", \"Hyphen -p = .06 and slash /p < .07 and dot .p = .08.\", \n\"Fullwidth p ＝ .05 and p =.05.\")), row.names = c(NA, -6L), class = c(\"tbl_df\", \n\"tbl\", \"data.frame\"))\n\n# display table -----------------------------------\nmetacheck::report_table(table, c(\"5em\", NA), 2, FALSE)\n```\n",
+          "This will catch most comparators like =<>~≈≠≤≥≪≫ and most versions of scientific notation like 5.0 x 10^-2 or 5.0e-2. If you find any formats that are not correctly handled by this function, please contact debruine@gmail.com."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "info"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "We found 6 p-values"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "p_values"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "4ebb2258bba0cf"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              6
+            ]
+          }
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

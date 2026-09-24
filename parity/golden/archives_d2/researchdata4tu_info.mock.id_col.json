@@ -1,0 +1,147 @@
+{
+  "id": "researchdata4tu_info.mock.id_col",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 2,
+    "names": [
+      "researchdata4tu_url",
+      "researchdata4tu_id",
+      "title",
+      "doi",
+      "publication_date",
+      "updated_date",
+      "authors",
+      "license",
+      "files"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "16766929",
+          "x"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "16766929",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Wind tunnel measurements",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "10.4121/16766929.v1",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "2021-10-12T10:00:00",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "2022-01-01T00:00:00",
+          null
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Ada Author",
+              "Bob Builder"
+            ]
+          },
+          {
+            "t": "null"
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "CC BY 4.0",
+          null
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "list",
+                "names": [
+                  "id",
+                  "name",
+                  "size",
+                  "download_url",
+                  "computed_md5"
+                ],
+                "v": [
+                  {
+                    "t": "int",
+                    "v": [
+                      501
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "readme.txt"
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      11
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "https://data.4tu.nl/file/7f866e02/f501"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "86621499bc8a27bdf497a6dedc2c545d"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "t": "null"
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

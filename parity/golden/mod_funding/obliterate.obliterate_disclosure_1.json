@@ -1,0 +1,39 @@
+{
+  "id": "obliterate.obliterate_disclosure_1",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "J. R. R. Tolkien wrote it.",
+      "A. B.D. Jones.",
+      "See Fig. 2. It shows e.g. this.",
+      "Dr. Smith went.Home now.",
+      "Value was 3.2.0 ok.",
+      "Section A1.B2 here. (see below).",
+      "End of sentence. New one. ABC1 test.ABC2.",
+      "Question?. Exclaim!. Dash.- x. .",
+      "Mr.  Jones.§ sign.",
+      "Tabs. sep",
+      "(a; d; e) then x; y",
+      "It's the authors' work, isn't it? the cats' toys",
+      "Price: $5 #1 @home ~50% ^star {b} _u +p \"q\" <a> ?/=",
+      "one, two, three,four",
+      "no hash # here ##",
+      "line\nbreak\n",
+      "Smith et al. (2020) found.",
+      "Jones (2019) showed.",
+      "et al.",
+      "",
+      "",
+      "",
+      "",
+      "Nothing to see.",
+      "",
+      null
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

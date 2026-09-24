@@ -1,0 +1,119 @@
+{
+  "id": "review.read_head_attrs.zero_rows.sav",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "names",
+      "attrs",
+      "utf8_repaired"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "num",
+          "chr",
+          "day",
+          "when"
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "num",
+          "chr",
+          "day",
+          "when"
+        ],
+        "v": [
+          {
+            "t": "list",
+            "names": [
+              "format.spss"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "F8.2"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "format.spss"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "A1"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "class",
+              "format.spss"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Date"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "DATE11"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "class",
+              "format.spss",
+              "tzone"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "POSIXct",
+                  "POSIXt"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "DATETIME20"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "UTC"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "null"
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

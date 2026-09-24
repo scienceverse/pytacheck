@@ -1,0 +1,13 @@
+{
+  "id": "rbox_file_download.mock.unfound",
+  "ok": true,
+  "error": null,
+  "warnings": [
+    "https://researchbox.org/404 could not be found"
+  ],
+  "value": {
+    "t": "null"
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

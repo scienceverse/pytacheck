@@ -1,0 +1,43 @@
+{
+  "id": "bac086e5-c606-474b-af1e-4a6122694af5",
+  "uuid": "bac086e5-c606-474b-af1e-4a6122694af5",
+  "name": "Dataset for a robot study",
+  "handle": "1853/67239",
+  "metadata": {
+    "dc.contributor.author": [
+      {
+        "value": "Doe, Jane",
+        "language": null
+      },
+      {
+        "value": "Roe, Rich"
+      },
+      {
+        "value": null
+      }
+    ],
+    "dc.identifier.doi": [],
+    "dc.rights": [
+      {
+        "value": null
+      }
+    ],
+    "dc.rights.uri": [
+      {
+        "value": "http://creativecommons.org/licenses/by/4.0/"
+      }
+    ],
+    "dc.date.issued": [
+      {
+        "value": "2022-06-01"
+      }
+    ],
+    "dc.title": [
+      {
+        "value": "Title from metadata"
+      }
+    ]
+  },
+  "lastModified": "2023-01-02T03:04:05.000+00:00",
+  "type": "item"
+}

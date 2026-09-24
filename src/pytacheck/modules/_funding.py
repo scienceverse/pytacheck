@@ -23,7 +23,11 @@ Conventions of the port:
 * for speed on paper lists, the module wraps the whole text column in an
   :class:`_Article` whose regex matches are computed once for all papers and
   shared by the per-paper views (every locator matches sentence by sentence,
-  so this gives exactly R's per-paper results).
+  so this gives exactly R's per-paper results);
+* before running a PCRE pattern, :class:`_Article` skips the sentences that
+  lack the literal text every match needs (:func:`_required`, looked up in a
+  word index of the column): a necessary condition only, so results are
+  unchanged (``tests/mod_funding`` compares against full scans).
 
 The ``obliterate_*`` cleaners call ``stringr::str_replace_all()`` (the ICU
 engine) in R; their patterns are written here with ICU's Unicode classes
@@ -70,7 +74,6 @@ __all__ = [
     "get_received_2",
     "get_recipient_1",
     "get_support_1",
-    "get_support_10",
     "get_support_2",
     "get_support_3",
     "get_support_4",
@@ -79,6 +82,7 @@ __all__ = [
     "get_support_7",
     "get_support_8",
     "get_support_9",
+    "get_support_10",
     "get_supported_1",
     "get_thank_1",
     "get_thank_2",
@@ -96,6 +100,7 @@ __all__ = [
 # ---------------------------------------------------------------------------
 # Literal prefilter: skip the regex engine for sentences that cannot match
 # ---------------------------------------------------------------------------
+
 
 def _class_end(p: str, i: int) -> int:
     """Index after the ``]`` closing the character class opened at ``p[i]``."""
@@ -276,14 +281,27 @@ def _prefilter(pattern: str) -> tuple[tuple[str, ...], ...]:
         return ()
 
 
+#: shorter literals ("by", "id") are too common to make a useful prefilter
+_MIN_LITERAL = 3
+
+
+@cache
+def _prefilter_pieces(pattern: str) -> tuple[tuple[str, ...], ...]:
+    """:func:`_prefilter` for word lookups: each literal becomes its longest
+    whitespace-free piece; requirements with a short piece are dropped."""
+    out: list[tuple[str, ...]] = []
+    for disj in _prefilter(pattern):
+        pieces = [max(lit.split(), key=len, default="") for lit in disj]
+        if min(len(p) for p in pieces) >= _MIN_LITERAL:
+            out.append(tuple(dict.fromkeys(pieces)))
+    return tuple(out)
+
+
 # ---------------------------------------------------------------------------
 # Character vectors with shared, lazily computed regex matches
 # ---------------------------------------------------------------------------
 
 _Key = tuple[str, bool, bool]
-#: shorter literals ("by", " ") are too common to make a useful prefilter
-_MIN_LITERAL = 3
-_MAX_REQUIREMENTS = 2
 
 
 class _Article:
@@ -310,35 +328,52 @@ class _Article:
     def __len__(self) -> int:
         return self.stop - self.start
 
-    def _joined(self) -> tuple[str, list[int]]:
-        """The casefolded column joined by NULs, and where each text starts."""
-        joined = self._cache.get("joined")
-        if joined is None:
-            folded = [t.casefold() if t is not None else "" for t in self._texts]
-            starts = [0] * len(folded)
-            pos = 0
-            for k, f in enumerate(folded):
-                starts[k] = pos
-                pos += len(f) + 1
-            joined = ("\0".join(folded), starts)
-            self._cache["joined"] = joined  # type: ignore[assignment]
-        return joined  # type: ignore[return-value]
+    def _vocabulary(self) -> tuple[str, list[int], list[list[int]]]:
+        """An index of the column's casefolded words (whitespace-separated chunks).
 
-    def _literal_mask(self, literal: str) -> np.ndarray:
-        """Which texts contain *literal* once casefolded (one C-level scan)."""
-        key = ("literal", literal)
+        Returns the distinct words joined by NULs, where each word starts in
+        that string, and the rows each word occurs in.
+        """
+        vocab = self._cache.get("vocabulary")
+        if vocab is None:
+            index: dict[str, list[int]] = {}
+            for row, text in enumerate(self._texts):
+                if text is None:
+                    continue
+                for word in set(text.casefold().split()):
+                    rows = index.get(word)
+                    if rows is None:
+                        index[word] = [row]
+                    else:
+                        rows.append(row)
+            starts: list[int] = []
+            pos = 0
+            for word in index:
+                starts.append(pos)
+                pos += len(word) + 1
+            vocab = ("\0".join(index), starts, list(index.values()))
+            self._cache["vocabulary"] = vocab  # type: ignore[assignment]
+        return vocab  # type: ignore[return-value]
+
+    def _literal_mask(self, piece: str) -> np.ndarray:
+        """Which texts contain *piece* (casefolded, no whitespace) once casefolded.
+
+        A whitespace-free string lies within one whitespace-separated word, so
+        the words of the vocabulary that contain it give the rows.
+        """
+        key = ("literal", piece)
         mask = self._cache.get(key)
         if mask is None:
-            joined, starts = self._joined()
+            joined, starts, postings = self._vocabulary()
             n = len(starts)
-            mask = np.zeros(n, dtype=bool)
-            pos = joined.find(literal)
+            mask = np.zeros(len(self._texts), dtype=bool)
+            pos = joined.find(piece)
             while pos != -1:
                 k = bisect_right(starts, pos) - 1
-                mask[k] = True
+                mask[postings[k]] = True
                 if k + 1 >= n:
                     break
-                pos = joined.find(literal, starts[k + 1])
+                pos = joined.find(piece, starts[k + 1])
             self._cache[key] = mask
         return mask
 
@@ -346,17 +381,11 @@ class _Article:
         """Rows that can match *pattern* (``None``: all rows)."""
         if not perl:
             return None
-        conj = _prefilter(pattern)
-        if not conj:
-            return None
-        # the few most selective requirements (short literals are too common)
-        useful = [d for d in conj if min(len(lit) for lit in d) >= _MIN_LITERAL]
-        useful.sort(key=lambda d: (-min(len(lit) for lit in d), len(d)))
         cand: np.ndarray | None = None
-        for disj in useful[:_MAX_REQUIREMENTS]:
-            m = self._literal_mask(disj[0])
-            for lit in disj[1:]:
-                m = m | self._literal_mask(lit)
+        for pieces in _prefilter_pieces(pattern):
+            m = self._literal_mask(pieces[0])
+            for piece in pieces[1:]:
+                m = m | self._literal_mask(piece)
             cand = m if cand is None else cand & m
         return cand
 
@@ -402,9 +431,6 @@ class _Article:
             return self._texts[self.start + i]
         return None
 
-    def values(self) -> list[str | None]:
-        return self._texts[self.start : self.stop]
-
     def view(self, first: int, last: int) -> _Article:
         """``article[(first + 1):(last + 1)]`` for ``0 <= first <= last < length``."""
         return _Article(self._texts, self.start + first, self.start + last + 1, self._cache)
@@ -440,9 +466,7 @@ def _as_article(article: Any) -> _Article:
         return article
     if isinstance(article, str):
         return _Article([article])
-    texts: list[str | None] = []
-    for v in article:
-        texts.append(v if isinstance(v, str) else None)
+    texts: list[str | None] = [v if isinstance(v, str) else None for v in article]
     return _Article(texts)
 
 
@@ -873,7 +897,7 @@ def _joined(words: Sequence[str], sep: str = _TXT, location: str = "end") -> str
 
 # ICU classes spelled out for the PCRE helpers
 _ICU_S = "\t\n\x0b\x0c\r\x85\\p{Z}"  # \s = White_Space
-_ICU_DOT = "[^\n\x0b\x0c\r\x85  ]"  # . excludes every line terminator
+_ICU_DOT = "[^\n\x0b\x0c\r\x85\u2028\u2029]"  # . excludes every line terminator
 _ICU_PUNCT = "\\p{P}"  # [[:punct:]]
 
 _FULLSTOP_PATTERNS = (
@@ -1012,12 +1036,8 @@ def _where_acknows_txt(article: Any) -> list[int]:
     finance_index = get_financial_1(art)
     grant_index = get_grant_1(art)
 
-    found: list[int] = []
-    if acknow_index:
-        found.append(acknow_index[-1])
-    for idx in (fund_index, finance_index, grant_index):
-        if idx:
-            found.append(idx[0])
+    found = [acknow_index[-1]] if acknow_index else []
+    found.extend(idx[0] for idx in (fund_index, finance_index, grant_index) if idx)
     if not found:
         return []
     all_max, all_min = max(found), min(found)
@@ -1172,7 +1192,9 @@ def get_support_8(article: Any) -> list[int]:
 def _pattern_support_9() -> str:
     foundation = _groups(["foundation"])
     # grep("upport", v, value = TRUE, invert = TRUE) (TRE)
-    funded = [v for v, hit in zip(_syn("funded"), grepl("upport", _syn("funded"))) if not hit]
+    funded = [
+        v for v, hit in zip(_syn("funded"), grepl("upport", _syn("funded")), strict=True) if not hit
+    ]
     funding = [_encase(_bound(funded))]
     research = [g + ".{0,20}\\." for g in _groups(["research"])]
     return _TXT.join([*foundation, *funding, *research])
@@ -1688,7 +1710,7 @@ def rtransparent_funding(text: Any) -> str:
     # Remove potential mistakes (absence)
     if index:
         is_absent = art.grepl_at(_pattern_negate_absence_1(), index)
-        index = [i for i, absent in zip(index, is_absent) if not absent]
+        index = [i for i, absent in zip(index, is_absent, strict=True) if not absent]
 
     # Identify potentially missed signals within Acknowledgements
     if not index:

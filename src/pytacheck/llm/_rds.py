@@ -292,9 +292,7 @@ def _series(s: Any) -> Any:
         return RVec("lgl", [None if na(v) else bool(v) for v in vals])
     if not kinds:
         return RVec("lgl", [None] * len(vals))
-    return RList(
-        [None if na(v) and not isinstance(v, list) else _list_cell_robj(v) for v in vals]
-    )
+    return RList([None if na(v) and not isinstance(v, list) else _list_cell_robj(v) for v in vals])
 
 
 def _list_cell_robj(v: Any) -> Any:

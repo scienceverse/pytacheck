@@ -1,0 +1,360 @@
+{
+  "id": "prereg_check.synthetic.prsp",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "prereg_check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Preregistration Check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "method"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "template_name",
+          "title",
+          "id",
+          "link",
+          "date_created",
+          "date_modified",
+          "date_registered",
+          "embargo_end_date",
+          "ia_url",
+          "research_questions",
+          "hypotheses_interactions",
+          "manipulation_checks",
+          "theoretical_rationale",
+          "design_independent_variables",
+          "design_dependent_variables",
+          "design_covariates_moderators",
+          "data_exclusion_criteria",
+          "data_collection_procedures",
+          "sample_size",
+          "stopping_rule",
+          "outliers_and_exclusions",
+          "fail_safe_exclusion_levels",
+          "indices",
+          "statistical_tests",
+          "rationale_covariate",
+          "variables_roles_in_analyses",
+          "inference_criteria",
+          "multiple_testing_correction",
+          "missing_data_handling",
+          "reliability_criteria",
+          "transformations",
+          "assumptions_and_contingencies",
+          "data_collection_started",
+          "data_looked",
+          "project_dates_start_end",
+          "additional_comments",
+          "paper_id"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Pre-Registration in Social Psychology (van 't Veer & Giner-Sorolla, 2016): Pre-Registration"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Synthetic registration prspx"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "prspx"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://osf.io/prspx"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2024-01-02T03:04:05.000001"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2024-01-03T03:04:05.000001"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2024-01-04T03:04:05.000001"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://archive.org/details/osf-registrations-prspx-v1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "indices first"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "additional comments"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "iv intro iv one iv two"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "dv intro ide e.csv list(html = \"https://osf.io/h/e\", download = \"https://osf.io/d/e\") list(sha256 = \"shae\")"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "cov a\n\ncov b"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "150"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "c(\"idf\", \"idg\")\n\nc(\"f.csv\", \"g.csv\")\n\nlist(html = c(\"https://osf.io/h/f\", \"https://osf.io/h/g\"), download = c(\"https://osf.io/d/f\", \"https://osf.io/d/g\"))\n\nlist(sha256 = c(\"shaf\", \"shag\"))"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "indices first"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "partial match for datacompletion"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "additional comments"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "p_prspx"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "We found 1 preregistration.",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(id = \"<a href='https://osf.io/prspx' target='_blank'>prspx<\/a>\", \n    title = \"Synthetic registration prspx\", template = \"Pre-Registration in Social Psychology (van 't Veer & Giner-Sorolla, 2016): Pre-Registration\"), row.names = c(NA, \n-1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 2, FALSE)\n```\n",
+          "Meta-scientific research has shown that deviations from preregistrations are often not reported or checked, and that the most common deviations concern the sample size. We recommend manually checking the full preregistration at the link above, and have provided the preregistered sample size.",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(id = \"prspx\", sample_size = \"150\"), row.names = c(NA, \n-1L), class = c(\"tbl_df\", \"tbl\", \"data.frame\"))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 2, FALSE)\n```\n",
+          "::: {.callout-tip title=\"Full Preregistration\" collapse=\"true\"}\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Field = c(\"template_name\", \"title\", \"id\", \"link\", \n\"date_created\", \"date_modified\", \"date_registered\", \"embargo_end_date\", \n\"ia_url\", \"research_questions\", \"hypotheses_interactions\", \"manipulation_checks\", \n\"theoretical_rationale\", \"design_independent_variables\", \"design_dependent_variables\", \n\"design_covariates_moderators\", \"data_exclusion_criteria\", \"data_collection_procedures\", \n\"sample_size\", \"stopping_rule\", \"outliers_and_exclusions\", \"fail_safe_exclusion_levels\", \n\"indices\", \"statistical_tests\", \"rationale_covariate\", \"variables_roles_in_analyses\", \n\"inference_criteria\", \"multiple_testing_correction\", \"missing_data_handling\", \n\"reliability_criteria\", \"transformations\", \"assumptions_and_contingencies\", \n\"data_collection_started\", \"data_looked\", \"project_dates_start_end\", \n\"additional_comments\", \"paper_id\"), \"Preregistration 1\" = c(\"Pre-Registration in Social Psychology (van 't Veer & Giner-Sorolla, 2016): Pre-Registration\", \n\"Synthetic registration prspx\", \"prspx\", \"https://osf.io/prspx\", \n\"2024-01-02T03:04:05.000001\", \"2024-01-03T03:04:05.000001\", \"2024-01-04T03:04:05.000001\", \n\"\", \"https://archive.org/details/osf-registrations-prspx-v1\", \n\"indices first\", \"\", \"\", \"additional comments\", \"iv intro iv one iv two\", \n\"dv intro ide e.csv list(html = \\\"https://osf.io/h/e\\\", download = \\\"https://osf.io/d/e\\\") list(sha256 = \\\"shae\\\")\", \n\"cov a<br><br>cov b\", \"\", \"\", \"150\", \"\", \"\", \"c(\\\"idf\\\", \\\"idg\\\")<br><br>c(\\\"f.csv\\\", \\\"g.csv\\\")<br><br>list(html = c(\\\"https://osf.io/h/f\\\", \\\"https://osf.io/h/g\\\"), download = c(\\\"https://osf.io/d/f\\\", \\\"https://osf.io/d/g\\\"))<br><br>list(sha256 = c(\\\"shaf\\\", \\\"shag\\\"))\", \n\"indices first\", \"\", \"\", \"\", \"\", \"\", \"\", \"\", \"\", \"\", \"partial match for datacompletion\", \n\"\", \"\", \"additional comments\", \"p_prspx\")), row.names = c(\"template_name\", \n\"title\", \"id\", \"link\", \"date_created\", \"date_modified\", \"date_registered\", \n\"embargo_end_date\", \"ia_url\", \"research_questions\", \"hypotheses_interactions\", \n\"manipulation_checks\", \"theoretical_rationale\", \"design_independent_variables\", \n\"design_dependent_variables\", \"design_covariates_moderators\", \n\"data_exclusion_criteria\", \"data_collection_procedures\", \"sample_size\", \n\"stopping_rule\", \"outliers_and_exclusions\", \"fail_safe_exclusion_levels\", \n\"indices\", \"statistical_tests\", \"rationale_covariate\", \"variables_roles_in_analyses\", \n\"inference_criteria\", \"multiple_testing_correction\", \"missing_data_handling\", \n\"reliability_criteria\", \"transformations\", \"assumptions_and_contingencies\", \n\"data_collection_started\", \"data_looked\", \"project_dates_start_end\", \n\"additional_comments\", \"paper_id\"), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 5, FALSE)\n```\n\n\n:::\n",
+          "::: {.callout-tip title=\"Learn More\" collapse=\"true\"}\n\nFor metascientific articles demonstrating the rate of deviations from preregistrations, see:\n\nvan den Akker O, Bakker M, van Assen M, Pennington C, Verweij L, Elsherif M, Claesen A, Gaillard S, Yeung S, Frankenberger J, Krautter K, Cockcroft J, Kreuer K, Evans T, Heppel F, Schoch S, Korbmacher M, Yamada Y, Albayrak-Aydemir N, Wicherts J (2024). &ldquo;The potential of preregistration in psychology: Assessing preregistration producibility and preregistration-study consistency.&rdquo; <em>Psychological Methods<\/em>. <a href=\"https://doi.org/10.1037/met0000687\">doi:10.1037/met0000687<\/a>.\n\nFor educational material on how to report deviations from preregistrations, see:\n\nLakens, Daniël (2024). &ldquo;When and How to Deviate From a Preregistration.&rdquo; <em>Collabra: Psychology<\/em>, <b>10<\/b>(1), 117094. <a href=\"https://doi.org/10.1525/collabra.117094\">doi:10.1525/collabra.117094<\/a>.\n\n:::\n"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "info"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "We found 1 preregistration."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "preregistration"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "p_prspx"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          }
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

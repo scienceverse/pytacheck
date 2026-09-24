@@ -1,0 +1,88 @@
+{
+  "id": ".dataverse_verify_downloads.review.character_size",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 2,
+    "names": [
+      "id",
+      "key",
+      "path",
+      "size",
+      "checksum",
+      "checksum_type",
+      "downloaded",
+      "size_on_disk",
+      "checksum_ok"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "1",
+          "2"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "a.csv",
+          "b"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "a.csv",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "4",
+          "x"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "md5",
+          null
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true,
+          false
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          4,
+          null
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          null,
+          null
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

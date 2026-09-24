@@ -1,0 +1,154 @@
+{
+  "id": ".dataone_hosts",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": null,
+    "v": [
+      {
+        "t": "list",
+        "names": [
+          "host",
+          "api_base",
+          "doi_prefix"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "arcticdata.io"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "/metacat/d1/mn/v2/"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "10.18739"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "host",
+          "api_base",
+          "doi_prefix"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "knb.ecoinformatics.org"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "/knb/d1/mn/v2/"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "10.5063"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "host",
+          "api_base",
+          "doi_prefix"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "metacat.tfri.gov.tw"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "/metacat/d1/mn/v2/"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "host",
+          "api_base",
+          "doi_prefix"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "smithsonian.dataone.org"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "/metacat/d1/mn/v2/"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "host",
+          "api_base",
+          "doi_prefix"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "data.piscoweb.org"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "/metacat/d1/mn/v2/"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "10.6085"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

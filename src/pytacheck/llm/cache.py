@@ -48,10 +48,13 @@ def llm_cache(enabled: bool | None = None) -> bool:
 def llm_cache_clear() -> int:
     """Port of ``llm_cache_clear()``: delete all cached responses; return how many."""
     d = Path(_llm_cache_dir())
-    files = [f for f in d.iterdir() if f.is_file() and f.name.endswith(".rds")]
-    for f in files:
-        f.unlink(missing_ok=True)
-    return len(files)
+    # list.files(dir, pattern = "\\.rds$"): hidden names are not listed; a
+    # matching directory is counted, but unlink() (not recursive) keeps it
+    entries = [f for f in d.iterdir() if f.name.endswith(".rds") and not f.name.startswith(".")]
+    for f in entries:
+        if not f.is_dir():
+            f.unlink(missing_ok=True)
+    return len(entries)
 
 
 def _llm_cache_dir() -> str:

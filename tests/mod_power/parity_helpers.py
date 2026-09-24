@@ -62,6 +62,33 @@ def run_llm_tables(paper: Any, **kwargs: Any) -> list[pd.DataFrame]:
     return report_tables(run_llm(paper, **kwargs))
 
 
+def run_llm_with(
+    paper: Any,
+    options: dict[str, Any] | None = None,
+    env: dict[str, str | None] | None = None,
+    **kwargs: Any,
+) -> Any:
+    """:func:`run_llm` with some LLM options / environment variables overridden.
+
+    ``options`` values replace those of :func:`llm_options` (``None`` unsets
+    the option, as R's ``options(x = NULL)``); an ``env`` value of ``None``
+    unsets the variable (R ``withr::with_envvar(c(X = NA))``).
+    """
+    from pytacheck.module import module_run
+
+    opts = {**llm_options(), **(options or {})}
+    envs = {**LLM_ENV, **(env or {})}
+    return scoped(lambda: module_run(paper, "power", **kwargs), opts, envs)
+
+
+def catch(fn: Callable[[], Any]) -> Any:
+    """R ``tryCatch(expr, error = function(e) conditionMessage(e))``."""
+    try:
+        return fn()
+    except Exception as exc:  # noqa: BLE001 - mirrors R's catch-all handler
+        return str(exc)
+
+
 def report_tables(out: Any) -> list[pd.DataFrame]:
     """The data of the ``scroll_table()`` blocks of a module report.
 
@@ -74,20 +101,31 @@ def report_tables(out: Any) -> list[pd.DataFrame]:
     return [b.data for b in report if isinstance(b, ReportTable)]
 
 
-def paragraphs(texts: Sequence[str], ids: Sequence[int]) -> Any:
-    """``test_paper(texts)`` with ``paper$text$paragraph_id <- ids``."""
+def tp(texts: Sequence[str], pid: str | None = None) -> Any:
+    """``test_paper(texts)``, with ``paper$paper_id <- pid`` when given.
+
+    R's ``test_paper()`` ids come from the clock, so parity cases fix them.
+    """
     import pytacheck as pc
 
-    p = pc.test_paper(list(texts))
+    p = pc.test_paper([texts] if isinstance(texts, str) else list(texts))
+    if pid is not None:
+        p.paper_id = pid
+    return p
+
+
+def paragraphs(texts: Sequence[str], ids: Sequence[int], pid: str | None = None) -> Any:
+    """``test_paper(texts)`` with ``paper$text$paragraph_id <- ids``."""
+    p = tp(texts, pid)
     p.text = p.text.assign(paragraph_id=pd.Series(list(ids), dtype="Int64"))
     return p
 
 
 def papers(*texts: str | Sequence[str]) -> Any:
-    """``paperlist(test_paper(t1), test_paper(t2), ...)``."""
+    """``paperlist()`` of test papers with ids ``p1``, ``p2``, ..."""
     import pytacheck as pc
 
-    return pc.PaperList([pc.test_paper([t] if isinstance(t, str) else list(t)) for t in texts])
+    return pc.PaperList([tp(t, f"p{i}") for i, t in enumerate(texts, start=1)])
 
 
 def read(files: Sequence[str]) -> Any:

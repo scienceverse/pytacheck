@@ -1,0 +1,390 @@
+{
+  "id": "ref_miscitation.stress",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "ref_miscitation"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Miscitation"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "reference"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 35,
+        "names": [
+          "paper_id",
+          "bib_id",
+          "doi",
+          "citation",
+          "reftext",
+          "warning"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "p10",
+              "p10",
+              "p10",
+              "p10",
+              "p10",
+              "p10",
+              "p10",
+              "p10",
+              "p10",
+              "p10",
+              "p10",
+              "p10",
+              "p10",
+              "p10",
+              "p10",
+              "P1",
+              "P1",
+              "P1",
+              "P1",
+              "P1",
+              "P1",
+              "P1",
+              "P1",
+              "P1",
+              "P1",
+              "P1",
+              "P1",
+              "p10",
+              "p10",
+              "p2",
+              "p2",
+              "p2",
+              "p2",
+              "p2",
+              "p2"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              0,
+              3,
+              9,
+              0,
+              0,
+              3,
+              9,
+              0,
+              0,
+              3,
+              9,
+              0,
+              0,
+              3,
+              5,
+              10,
+              3,
+              1,
+              7,
+              7,
+              5,
+              10,
+              3,
+              1,
+              7,
+              7,
+              7,
+              11,
+              3,
+              5,
+              7,
+              9,
+              11,
+              11
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "10.1000/s04",
+              "10.1000/s04",
+              "10.1000/s07",
+              "10.1000/s13",
+              "10.1000/s04",
+              "10.1000/s04",
+              "10.1000/s07",
+              "10.1000/s13",
+              "10.1000/s04",
+              "10.1000/s04",
+              "10.1000/s07",
+              "10.1000/s13",
+              "10.1000/s04",
+              "10.1000/s04",
+              "10.1000/s07",
+              "10.1000/s02",
+              "10.1000/s07",
+              "10.1000/s00",
+              "10.1000/s13",
+              "10.1000/s04",
+              "10.1000/s04",
+              "10.1000/s02",
+              "10.1000/s07",
+              "10.1000/s00",
+              "10.1000/s13",
+              "10.1000/s04",
+              "10.1000/s04",
+              "10.1000/s11",
+              "10.1000/s00",
+              "10.1000/s11",
+              "10.1000/s13",
+              "10.1000/s00",
+              "10.1000/s02",
+              "10.1000/s04",
+              "10.1000/s04"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Body sentence 1 cites 0.",
+              "Body sentence 1 cites 0.",
+              "Body sentence 2 cites 3.",
+              "Body sentence 4 cites 9.",
+              "Body sentence 5 cites 0.",
+              "Body sentence 5 cites 0.",
+              "Body sentence 6 cites 3.",
+              "Body sentence 8 cites 9.",
+              "Body sentence 9 cites 0.",
+              "Body sentence 9 cites 0.",
+              "Body sentence 10 cites 3.",
+              "Body sentence 12 cites 9.",
+              "Body sentence 13 cites 0.",
+              "Body sentence 13 cites 0.",
+              "Body sentence 14 cites 3.",
+              "Body sentence 2 cites 5.",
+              "Body sentence 3 cites 10.",
+              "Body sentence 4 cites 3.",
+              "Body sentence 6 cites 1.",
+              "Body sentence 12 cites 7.",
+              "Body sentence 12 cites 7.",
+              "Body sentence 14 cites 5.",
+              "Body sentence 15 cites 10.",
+              "Body sentence 16 cites 3.",
+              "Body sentence 18 cites 1.",
+              "Body sentence 24 cites 7.",
+              "Body sentence 24 cites 7.",
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Ref 3",
+              "Ref 4",
+              "Ref 5",
+              "Ref 7",
+              "Ref 3",
+              "Ref 4",
+              "Ref 5",
+              "Ref 7",
+              "Ref 3",
+              "Ref 4",
+              "Ref 5",
+              "Ref 7",
+              "Ref 3",
+              "Ref 4",
+              "Ref 5",
+              "Ref 2",
+              "Ref 5",
+              "Ref 1",
+              "Ref 7",
+              "Ref 3",
+              "Ref 4",
+              "Ref 2",
+              "Ref 5",
+              "Ref 1",
+              "Ref 7",
+              "Ref 3",
+              "Ref 4",
+              "Ref 6",
+              "Ref 1",
+              "Ref 6",
+              "Ref 7",
+              "Ref 1",
+              "Ref 2",
+              "Ref 3",
+              "Ref 4"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Warn 3",
+              "Warn 4",
+              "Warn 5",
+              "Warn 7",
+              "Warn 3",
+              "Warn 4",
+              "Warn 5",
+              "Warn 7",
+              "Warn 3",
+              "Warn 4",
+              "Warn 5",
+              "Warn 7",
+              "Warn 3",
+              "Warn 4",
+              "Warn 5",
+              "Warn 2",
+              "Warn 5",
+              "Warn 1",
+              "Warn 7",
+              "Warn 3",
+              "Warn 4",
+              "Warn 2",
+              "Warn 5",
+              "Warn 1",
+              "Warn 7",
+              "Warn 3",
+              "Warn 4",
+              "Warn 6",
+              "Warn 1",
+              "Warn 6",
+              "Warn 7",
+              "Warn 1",
+              "Warn 2",
+              "Warn 3",
+              "Warn 4"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "**10.1000/s04**\n\nRef 3\n\nWarn 3\n\n*5 of 14 Instances:*\n\n> Body sentence 1 cites 0.\n\n> Body sentence 1 cites 0.\n\n> Body sentence 5 cites 0.\n\n> Body sentence 5 cites 0.\n\n> Body sentence 9 cites 0.",
+          "**10.1000/s04**\n\nRef 4\n\nWarn 4\n\n*5 of 14 Instances:*\n\n> Body sentence 1 cites 0.\n\n> Body sentence 1 cites 0.\n\n> Body sentence 5 cites 0.\n\n> Body sentence 5 cites 0.\n\n> Body sentence 9 cites 0.",
+          "**10.1000/s07**\n\nRef 5\n\nWarn 5\n\n*5 of 6 Instances:*\n\n> Body sentence 2 cites 3.\n\n> Body sentence 6 cites 3.\n\n> Body sentence 10 cites 3.\n\n> Body sentence 14 cites 3.\n\n> Body sentence 3 cites 10.",
+          "**10.1000/s13**\n\nRef 7\n\nWarn 7\n\n*5 of 6 Instances:*\n\n> Body sentence 4 cites 9.\n\n> Body sentence 8 cites 9.\n\n> Body sentence 12 cites 9.\n\n> Body sentence 6 cites 1.\n\n> Body sentence 18 cites 1.",
+          "**10.1000/s02**\n\nRef 2\n\nWarn 2\n\n*3 Instances:*\n\n> Body sentence 2 cites 5.\n\n> Body sentence 14 cites 5.\n\n> NA",
+          "**10.1000/s00**\n\nRef 1\n\nWarn 1\n\n*4 Instances:*\n\n> Body sentence 4 cites 3.\n\n> Body sentence 16 cites 3.\n\n> NA\n\n> NA",
+          "**10.1000/s11**\n\nRef 6\n\nWarn 6\n\n*2 Instances:*\n\n> NA\n\n> NA"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "yellow"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "We found 35 citations to papers that are commonly miscited."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 3,
+        "names": [
+          "paper_id",
+          "miscite_10.1000/s13",
+          "miscite_10.1000/s00",
+          "miscite_10.1000/s02",
+          "miscite_10.1000/s04",
+          "miscite_10.1000/s07",
+          "miscite_10.1000/s11"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "p10",
+              "p2",
+              "P1"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              9,
+              5,
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              11,
+              7,
+              3
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              null,
+              9,
+              5
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              11,
+              7
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              3,
+              null,
+              10
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              7,
+              3,
+              null
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

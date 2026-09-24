@@ -6,14 +6,14 @@ It can hold presets only (lists of existing checks, no code) or new checks.
 ## 1. Make the pack
 
 ```bash
-pip install "pytacheck @ git+https://github.com/thesanogoeffect/pytacheck@main"
+pip install "pytacheck @ git+https://github.com/thesanogoeffect/pytacheck@claude/pytacheck-metacheck-fork-0x7q73"   # not on PyPI yet
 pytacheck pack new my-pack          # a working example with a test and a workflow
 pytacheck pack install ./my-pack    # use it live while you develop
 pytacheck pack check ./my-pack      # the same checks this store's CI runs
 ```
 
 The author guide in pytacheck's
-[docs/MODULES.md](https://github.com/thesanogoeffect/pytacheck/blob/main/docs/MODULES.md)
+[docs/MODULES.md](https://github.com/thesanogoeffect/pytacheck/blob/claude/pytacheck-metacheck-fork-0x7q73/docs/MODULES.md)
 explains modules, `pack.json`, presets and validation.
 
 Before you submit:

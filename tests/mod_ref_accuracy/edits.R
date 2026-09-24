@@ -52,3 +52,33 @@ ra_report_tables <- function(o) {
     eval(parse(text = code))
   })
 }
+
+# test_paper() with a fixed paper_id (its default id is time-based, which
+# would make the goldens change on every regeneration)
+ra_test_paper <- function(text, paper_id = "test_paper") {
+  p <- test_paper(text)
+  p$paper_id <- paper_id
+  p
+}
+
+# ---- helpers for parity/cases/mod_ref_accuracy_review.yaml ----
+
+# replace a whole column of `paper[[table]]` (NULL drops it)
+ra_setcol <- function(p, table, col, value) {
+  p[[table]][[col]] <- value
+  p
+}
+
+# set the text of the text-table row(s) with `text_id`
+ra_text <- function(p, text_id, value) {
+  p$text$text[p$text$text_id == text_id] <- value
+  p
+}
+
+# append a copy of the bib_match row for `from` with bib_id `to` (may be NA)
+ra_match_copy <- function(p, from, to) {
+  row <- p$bib_match[p$bib_match$bib_id == from, ]
+  row$bib_id <- to
+  p$bib_match <- rbind(p$bib_match, row)
+  p
+}

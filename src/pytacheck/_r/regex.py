@@ -76,10 +76,10 @@ class RegexError(ValueError):
 # ---------------------------------------------------------------------------
 
 # glibc iswspace() in a UTF-8 locale: ASCII whitespace plus the Unicode space
-# separators *except* the no-break ones (U+00A0, U+2007, U+202F).
-_TRE_SPACE_CHARS = (
-    r"\t\n\x0b\x0c\r\x1c-\x1f \u1680\u2000-\u2006\u2008-\u200a\u2028\u2029\u205f\u3000"
-)
+# separators *except* the no-break ones (U+00A0, U+2007, U+202F). The ASCII
+# information separators U+001C-U+001F are *not* space for TRE (measured: R's
+# grepl("\\s") / "[[:space:]]" are FALSE for them, unlike Python's isspace()).
+_TRE_SPACE_CHARS = r"\t\n\x0b\x0c\r \u1680\u2000-\u2006\u2008-\u200a\u2028\u2029\u205f\u3000"
 _TRE_ESCAPES = {
     "d": "[0-9]",
     "D": "[^0-9]",

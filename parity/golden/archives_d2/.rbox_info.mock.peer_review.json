@@ -1,0 +1,229 @@
+{
+  "id": ".rbox_info.mock.peer_review",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 1,
+    "names": [
+      "rb_url",
+      "files",
+      "box_id",
+      "reference",
+      "RB_target",
+      "RB_license",
+      "RB_public",
+      "RB_authors",
+      "RB_abstract"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "https://researchbox.org/1150&PEER_REVIEW_passcode=MJUAAS"
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "df",
+            "nrow": 65,
+            "names": [
+              "name",
+              "file_id"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "  Qualtrics Materials for all Studies.docx",
+                  "  change log.rtf",
+                  "  SOM final.docx",
+                  "  Study 1 - AsPredicted 95029.pdf",
+                  "  Study 1.qsf",
+                  "  Study 1 - clean data.csv",
+                  "  Study 1 - data for SOM criterion 4.csv",
+                  "  Study 1 - data for SOM criterion 6.csv",
+                  "  Study 1 - raw data.csv",
+                  "  Study 1.rmd",
+                  "  Study 2 - AsPredicted 98805.pdf",
+                  "  Study 2.qsf",
+                  "  Study 2 - clean data.csv",
+                  "  Study 2 - raw.csv",
+                  "  Study 2 - raw data.csv",
+                  "  Study 2.rmd",
+                  "  Study 3 - AsPredicted 106261.pdf",
+                  "  Study 3.qsf",
+                  "  Study 3 - demographic.csv",
+                  "  study3_clean data2.csv",
+                  "  Study 3 - clean data.csv",
+                  "  study3_raw_speaker2.csv",
+                  "  Study 3 - cleaning code.r",
+                  "  Study 3.rmd",
+                  "  Study 3.rmd",
+                  "  Study 4 - AsPredicted 140678.pdf",
+                  "  Study 4.qsf",
+                  "  Study 4 - clean data.csv",
+                  "  study 4_clean data.csv",
+                  "  study 4_raw_speaker3.csv",
+                  "  Study 4_raw_speaker.csv",
+                  "  Study 4_raw_speaker.csv",
+                  "  Study 4 - cleaning code.r",
+                  "  Study 4.r",
+                  "  Study 4.rmd",
+                  "  Study 5a - AsPredicted 85485.pdf",
+                  "  Study 5a - qsf for part1.qsf",
+                  "  Study 5a - qsf for part2 recontact.qsf",
+                  "  Study 5a.csv",
+                  "  Study 5a.rmd",
+                  "  Study 5b - AsPredicted 144982.pdf",
+                  "  Study 5b.qsf",
+                  "  Study 5b.csv",
+                  "  Study 5b.r",
+                  "  Supplementary Study 1 - AsPredicted 86580.pdf",
+                  "  Supplementary Study 1.qsf",
+                  "  Supplementary Study 1 - audio recording data.csv",
+                  "  Supplementary Study 1 - lab data.csv",
+                  "  Supplementary Study 1.rmd",
+                  "  Supplementary Study 2 - AsPredicted 104552.pdf",
+                  "  Supplementary Study 2.qsf",
+                  "  Supplementary Study 2 - clean data.csv",
+                  "  Supplementary Study 2.rmd",
+                  "  Supplementary Study 3 - AsPredicted 103267.pdf",
+                  "  Supplementary Study 3.qsf",
+                  "  Supplementary Study 3 - clean data.csv",
+                  "  Supplementary Study 3 - demographic.csv",
+                  "  Supplementary Study 3.rmd",
+                  "  Supplementary Study 4 - AsPredicted 141697.pdf",
+                  "  Supplementary Study 4.qsf",
+                  "  Supplementary Study 4 - final data.csv",
+                  "  Supplementary Study 4.r",
+                  "  Supplementary Study 5 - AsPredicted 142474.pdf",
+                  "  Supplementary Study 5.csv",
+                  "  Supplementary Study 5.r"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "117",
+                  "158",
+                  "140",
+                  "6",
+                  "19",
+                  "27",
+                  "26",
+                  "28",
+                  "29",
+                  "120",
+                  "4",
+                  "20",
+                  "61",
+                  "142",
+                  "38",
+                  "118",
+                  "1",
+                  "23",
+                  "130",
+                  "155",
+                  "133",
+                  "154",
+                  "146",
+                  "119",
+                  "147",
+                  "84",
+                  "106",
+                  "82",
+                  "150",
+                  "160",
+                  "162",
+                  "151",
+                  "144",
+                  "121",
+                  "145",
+                  "7",
+                  "25",
+                  "24",
+                  "75",
+                  "141",
+                  "113",
+                  "104",
+                  "114",
+                  "123",
+                  "5",
+                  "18",
+                  "12",
+                  "16",
+                  "124",
+                  "2",
+                  "22",
+                  "52",
+                  "125",
+                  "3",
+                  "21",
+                  "138",
+                  "132",
+                  "126",
+                  "85",
+                  "103",
+                  "99",
+                  "127",
+                  "112",
+                  "109",
+                  "128"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "1150"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "vrRnVZM7jbOnWtXADi8C4_dwSI4EWI-TGHpfm_gFg3c"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Ren Z(, Schaumberg R. (2024) 'Disagreement Gets Mistaken for Bad Listening'.Psychological Science. V35(5):455-470.\ndoi: 10.1177/09567976241239935"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "All content posted to ResearchBox is under aCC By 4.0 License(all use is allowed as long as authorship of the content is attributed). When using content from ResearchBox please cite the original work, and provide a link to the URL for this box (https://researchbox.org/1150)."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "October 07, 2024"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Zhiying Ren (zhiying.ren@duke.edu)\nRebecca Schaumberg (rlschaum@wharton.upenn.edu)\n\n\n$('.file_number').css('display','none');$('.file_name').css('display','none');\n\n\nSmart Features | Report a bug | Make a suggestion | Terms of Use | Privacy Policy | About"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

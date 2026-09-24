@@ -1,0 +1,38 @@
+{
+ "data": {
+  "id": "emptr",
+  "type": "registrations",
+  "attributes": {
+   "title": "No responses",
+   "description": "",
+   "date_created": "2024-01-02T03:04:05.000001",
+   "date_modified": "2024-01-03T03:04:05.000001",
+   "date_registered": "2024-01-04T03:04:05.000001",
+   "embargo_end_date": null,
+   "withdrawn": false,
+   "registration_supplement": "Synthetic Template",
+   "ia_url": "https://archive.org/details/osf-registrations-emptr-v1",
+   "registration_responses": {}
+  },
+  "relationships": {
+   "registration_schema": {
+    "data": {
+     "id": "aaaaaaaaaaaaaaaaaaaaaaa1",
+     "type": "registration-schemas"
+    },
+    "links": {
+     "related": {
+      "href": "https://api.osf.io/v2/schemas/registrations/aaaaaaaaaaaaaaaaaaaaaaa1/",
+      "meta": {}
+     }
+    }
+   }
+  },
+  "links": {
+   "html": "https://osf.io/emptr/"
+  }
+ },
+ "meta": {
+  "version": "2.0"
+ }
+}

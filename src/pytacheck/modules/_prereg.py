@@ -19,6 +19,7 @@ from __future__ import annotations
 
 from collections.abc import Callable, Mapping, Sequence
 from dataclasses import dataclass
+from itertools import pairwise
 from typing import Any
 
 import pandas as pd
@@ -157,7 +158,9 @@ def _simplify_array(arr: list[Any], matrix: bool) -> RValue:
         to = _promote([r.type for r in rows])
         ncol = len(arr[0])
         flat = [
-            _coerce(rows[i].values[j], rows[i].type, to) for j in range(ncol) for i in range(len(arr))
+            _coerce(rows[i].values[j], rows[i].type, to)
+            for j in range(ncol)
+            for i in range(len(arr))
         ]
         return RMatrix(RVec(to, tuple(flat)), (len(arr), ncol))
     return RList(tuple(simplify(v) for v in arr))
@@ -339,7 +342,7 @@ def deparse(x: RValue) -> str:
         if (
             x.type == "integer"
             and all(v is not None for v in vals)
-            and all(b - a == 1 for a, b in zip(vals, vals[1:], strict=False))
+            and all(b - a == 1 for a, b in pairwise(vals))
         ):
             return f"{vals[0]}:{vals[-1]}"
         return "c(" + ", ".join(_deparse_elem(v, x.type) for v in vals) + ")"
@@ -394,7 +397,9 @@ Schema = dict[str, RValue]
 SchemaFetcher = Callable[[str], Any]
 
 
-def osf_prereg_extract(info: Mapping[str, Any], fetch_schema: SchemaFetcher | None = None) -> Schema:
+def osf_prereg_extract(
+    info: Mapping[str, Any], fetch_schema: SchemaFetcher | None = None
+) -> Schema:
     """Port of inst/modules/prereg_check.R::osf_prereg_extract().
 
     Identify a registration by its ``schema_id`` and extract its responses:
@@ -589,10 +594,7 @@ def osf_pages_labels(pages: Any) -> dict[str, str | None]:
             title = dollar(q, "title")
             title = title if isinstance(title, str) else None
             title_is_label = (
-                title is not None
-                and title != ""
-                and len(title) <= 40
-                and not grepl("[?]", title)
+                title is not None and title != "" and len(title) <= 40 and not grepl("[?]", title)
             )
             label = title if title_is_label else qid
             labels[qid] = label
@@ -775,9 +777,7 @@ def common_osf(info: Mapping[str, Any]) -> Schema:
         "template_name": simplify(dollar(ra, "registration_supplement")),
         "title": simplify(dollar(ra, "title")),
         "id": ident,
-        "link": RVec(
-            "character", tuple("https://osf.io/" + s for s in _chr_values(ident) or [""])
-        ),
+        "link": RVec("character", tuple("https://osf.io/" + s for s in _chr_values(ident) or [""])),
         "date_created": simplify(dollar(ra, "date_created")),
         "date_modified": simplify(dollar(ra, "date_modified")),
         "date_registered": simplify(dollar(ra, "date_registered")),

@@ -1,0 +1,257 @@
+{
+  "id": "ethics_check.phrasing_approved",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "ethics_check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Ethics Approval Check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "general"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 3,
+        "names": [
+          "text_id",
+          "section_id",
+          "paragraph_id",
+          "text",
+          "formatted",
+          "paper_id",
+          "header",
+          "section_type",
+          "ethics",
+          "live_data"
+        ],
+        "v": [
+          {
+            "t": "int",
+            "v": [
+              1,
+              1,
+              1
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "All studies were approved by the Scientific Council of Research and Creation at the West University of Timisoara regarding compliance with ethical aspects in scientific research.",
+              "The research received approval from the Basque Center on Cognition, Brain and Language (BCBL)'s Ethics and Scientific Committee (ref.: 030522SM).",
+              "All experiments were approved by the University of Western Australia's Human Research Ethics Office."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "All studies were approved by the Scientific Council of Research and Creation at the West University of Timisoara regarding compliance with ethical aspects in scientific research.",
+              "The research received approval from the Basque Center on Cognition, Brain and Language (BCBL)'s Ethics and Scientific Committee (ref.: 030522SM).",
+              "All experiments were approved by the University of Western Australia's Human Research Ethics Office."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "b1",
+              "b2",
+              "b3"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Test",
+              "Test",
+              "Test"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "unknown",
+              "unknown",
+              "unknown"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true,
+              true,
+              true
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              null,
+              null,
+              null
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "No papers appeared to involve live data collection requiring an ethics approval statement."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "na"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "No papers appeared to involve live data collection requiring an ethics approval statement."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 3,
+        "names": [
+          "paper_id",
+          "ethics_approved",
+          "ethics_statements",
+          "needs_ethics",
+          "live_data_statements"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "b1",
+              "b2",
+              "b3"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true,
+              true,
+              true
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "All studies were approved by the Scientific Council of Research and Creation at the West University of Timisoara regarding compliance with ethical aspects in scientific research."
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "The research received approval from the Basque Center on Cognition, Brain and Language (BCBL)'s Ethics and Scientific Committee (ref.: 030522SM)."
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "All experiments were approved by the University of Western Australia's Human Research Ethics Office."
+                ]
+              }
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false,
+              false,
+              false
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  null
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  null
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  null
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "ethics_approved"
+        ],
+        "v": [
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

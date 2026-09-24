@@ -315,3 +315,86 @@ def test_report_qmd(demo) -> None:
     assert "MetaCheck Report" in report_text
     assert demo.info["title"].iloc[0] in report_text
     assert module_info(modules).title in report_text
+
+
+# ------------------------------------------------------ review regressions
+# Values below were produced by R (metacheck at the pinned commit); see also
+# parity/cases/mod_p_values_review.yaml.
+
+
+def test_stat_p_exact_star_note_information_separators() -> None:
+    # TRE's \s is glibc iswspace(): U+001C-U+001F are *not* space in R (they
+    # are in Python's str.isspace()), so "*\x1cp < .05" is no star note and
+    # text_search() keeps the character instead of collapsing it to " ".
+    paper = pc.test_paper(["Separator p < .05 (*\x1cp < .05).", "Thin p < .05 (* p < .05)."])
+    out = module_run(paper, "stat_p_exact")
+    assert out.table["imprecise"].tolist() == [True, True, False, False]
+    assert ["\x1c" in s for s in out.table["expanded"]] == [True, True, False, False]
+    assert out.summary_text == "We found 2 imprecise *p* values out of 4 detected *p* values."
+
+
+def test_stat_p_exact_comparator_quirks() -> None:
+    texts = [
+        "Double equals zero p == .000 here.",
+        "Tilde zero p ~ .000 here.",
+        "Less than zero p < 0.0 here.",
+        "Underflow p = 1.0e-400 here.",
+        "Sci zero p = 0.0 x 10^-3 here.",
+        "Boundary p < .001 and p < .0011 here.",
+        "Weird p < n.s. here.",
+        "Tiny p < 1.0 x 10^-400 here.",
+    ]
+    out = module_run(pc.test_paper(texts), "stat_p_exact")
+    t = out.table
+    assert t["p_comp"].tolist() == ["==", "~", "<", "=", "=", "<", "<", "<", "<"]
+    assert t["imprecise"].tolist() == [True, True, False, False, False, False, True, True, False]
+    assert t["zero"].tolist() == [False, False, False, True, True, False, False, False, False]
+    assert out.summary_text == (
+        "We found 4 imprecise *p* values and 2 *p* values reported as exactly zero "
+        "out of 9 detected *p* values."
+    )
+
+
+def test_stat_p_nonsig_comparator_quirks() -> None:
+    # "==" and the "much less than" sign are not in the significant comparators
+    paper = pc.test_paper(
+        ["Double p == .03 here.", "Much less p ≪ .01 here.", "Fine p =< .05 and p ≤ .05."]
+    )
+    out = module_run(paper, "stat_p_nonsig")
+    assert out.traffic_light == "yellow"
+    assert out.table["p_comp"].tolist() == ["==", "≪"]
+    assert out.summary_table["n_nonsignificant"].tolist() == [2]
+
+
+def test_report_tables_match_r() -> None:
+    from tests.mod_p_values.report_tables import mp_report_tables
+
+    paper = pc.test_paper(
+        [
+            "Bad p < .05 and p < .05 again.",
+            "Bad p < .05 and p < .05 again.",
+            "Zero p = .000\nline two p > .1.",
+            "Fine p = .012.",
+            "Note * p < .05, p < .01.",
+        ]
+    )
+    imprecise, zero = mp_report_tables(paper, "stat_p_exact")
+    assert list(imprecise["table"].columns) == ["P-Value", "Text"]
+    assert imprecise["table"]["P-Value"].tolist() == ["p < .05 ", "p > .1"]
+    assert imprecise["table"]["Text"].tolist() == [
+        "Bad p < .05 and p < .05 again.",
+        "Zero p = .000 line two p > .1.",
+    ]
+    assert zero["table"]["P-Value"].tolist() == ["p = .000<br>"]
+    assert imprecise["colwidths"] == zero["colwidths"] == [0.1, 0.9]
+    assert imprecise["maxrows"] == zero["maxrows"] == 2
+
+    (nonsig,) = mp_report_tables(paper, "stat_p_nonsig")
+    assert list(nonsig["table"].columns) == ["Text", "Sentence"]
+    assert nonsig["colwidths"] == [0.1, 0.9]
+    assert nonsig["maxrows"] == 10
+
+    (allp,) = mp_report_tables(paper, "all_p_values")
+    assert list(allp["table"].columns) == ["Text", "Sentence"]
+    assert allp["colwidths"] == ["5em", None]
+    assert len(allp["table"]) == 9

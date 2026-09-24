@@ -687,6 +687,32 @@ class ModuleOutput:
         return f"{self.title}: {self.summary_text}"
 
 
+def _is_list_column(series: pd.Series) -> bool:
+    """Whether an object column holds R list cells (e.g. open_practices' ``*_statements``)."""
+    return any(isinstance(v, list | tuple | dict) for v in series.tolist())
+
+
+def _na_replace_list_column(series: pd.Series, value: Any) -> pd.Series:
+    """``summary_table[is.na(summary_table[[col]]), col] <- value`` on a list column.
+
+    ``is.na()`` of a list is TRUE only for cells holding a single ``NA`` (a
+    module's ``NA_character_``: ``None`` / ``pd.NA`` / ``[None]`` here), not
+    for the ``NULL`` cells a ``left_join()`` leaves in unmatched rows (the
+    ``NaN`` pandas' merge fills in), and the value is stored as is (``0``
+    stays a number, not ``"0"``).
+    """
+
+    def is_na(v: Any) -> bool:
+        if v is None or v is pd.NA:
+            return True
+        return isinstance(v, list | tuple) and len(v) == 1 and (v[0] is None or v[0] is pd.NA)
+
+    cells = series.tolist()
+    return pd.Series(
+        [value if is_na(v) else v for v in cells], index=series.index, dtype=object
+    )
+
+
 def _apply_na_replace(summary: pd.DataFrame, na_replace: Any) -> pd.DataFrame:
     cols = list(summary.columns)
     if isinstance(na_replace, Mapping):
@@ -696,6 +722,9 @@ def _apply_na_replace(summary: pd.DataFrame, na_replace: Any) -> pd.DataFrame:
         mapping = {c: values[i % len(values)] for i, c in enumerate(cols)} if values else {}
     for col, value in mapping.items():
         series = summary[col]
+        if series.dtype == object and _is_list_column(series):
+            summary[col] = _na_replace_list_column(series, value)
+            continue
         mask = series.isna()
         if not mask.any():
             continue

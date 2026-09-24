@@ -1,0 +1,9 @@
+{
+  "id": "ref_consistency.error.no_xref",
+  "ok": false,
+  "error": "Running the module 'ref_consistency' produced errors: In argument: `xref_type == \"bibr\"`.",
+  "warnings": [],
+  "value": null,
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

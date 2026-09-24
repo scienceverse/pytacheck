@@ -443,7 +443,8 @@ def _tests_from_extract(tt: Any) -> list[dict[str, Any]]:
     if tt is None or len(tt) == 0:
         return []
     n = len(tt)
-    text_id = _col_values(tt, "text_id") or [None] * n
+    # no text_id column: R's tt$text_id[i] is NULL (see _NULL_ID)
+    text_id: list[Any] = _col_values(tt, "text_id") or [[] for _ in range(n)]
     test_no = _col_values(tt, "test_no") or [None] * n
     sentence = _col_values(tt, "sentence") or [None] * n
     components = tt["components"].tolist()
@@ -455,8 +456,13 @@ def _tests_from_extract(tt: Any) -> list[dict[str, Any]]:
         comps: list[dict[str, Any]] = []
         for gi, c in enumerate(g, start=1):
             c = c if isinstance(c, Mapping) else {}
-            pos = c.get("sentence_pos")
-            pos = gi if pos is None else _scalar(pos)
+            # c$sentence_pos %||% gi: an absent position falls back to the
+            # local index, an NA one stays NA (NaN here)
+            if "sentence_pos" not in c:
+                pos: Any = gi
+            else:
+                pos = _scalar(c["sentence_pos"])
+                pos = math.nan if pos is None else pos
             name = _scalar(c.get("name"))
             is_anch = bool(_is_anchor(name))
             cc_raw = c.get("comp")
@@ -494,6 +500,13 @@ class _Sites:
 
     ``rows[s]`` are row positions (into the kept output rows) of site ``s``;
     ``val``/``fam``/``sf``/``an``/``rl`` are the kept rows' columns.
+
+    ``null_sites`` are the sites R reads back as ``NULL`` (``by_site[[s]]``
+    of a site NAMED ``NA`` -- an NA test_id next to a jamovi residuals row --
+    or named ``""`` -- an empty test_id): they never match, and ``val_in()``
+    on them errors for every non-censored component (``round(NULL)``).
+    ``empty_sites`` (named ``""``) additionally make ``used_sites[[""]]``
+    error in the evidence regrouping's site search.
     """
 
     def __init__(
@@ -505,20 +518,20 @@ class _Sites:
         sf: list[Any],
         an: list[Any],
         rl: list[Any],
-        na_site: int | None = None,
+        null_sites: Iterable[int] = (),
+        empty_sites: Iterable[int] = (),
     ) -> None:
         self.names = names
-        # R quirk: an NA test_id next to a jamovi residuals row adds a site
-        # named NA whose `by_site[[NA]]` is NULL; val_in() on it errors for
-        # every non-censored component (see _NA_SITE_ERROR).
-        self.na_site = na_site
-        self.rows = rows
+        self.null_sites = sorted(set(null_sites))
+        self.empty_sites = frozenset(empty_sites)
+        self.rows = [[] if s in self.null_sites else r for s, r in enumerate(rows)]
         self.val = val
         self.fam = fam
         self.sf = sf
         self.an = an
         self.rl = rl
         self._cache: dict[tuple[Any, ...], np.ndarray] = {}
+        self._err_cache: dict[tuple[Any, ...], np.ndarray | None] = {}
         self._flat: dict[str | None, tuple[list[float], np.ndarray]] = {}
         self._rounded: dict[tuple[str | None, int], np.ndarray] = {}
         self._has: dict[str, np.ndarray] = {}
@@ -526,11 +539,6 @@ class _Sites:
 
     def __len__(self) -> int:
         return len(self.names)
-
-    def check_na_site(self, comps: Iterable[Mapping[str, Any]]) -> None:
-        """Raise R's error when a non-censored component reaches the NA site."""
-        if self.na_site is not None and any(c.get("censored") == "" for c in comps):
-            raise RuntimeError(_NA_SITE_ERROR)
 
     def first(self, s: int, what: str) -> Any:
         """``by_site[[s]]$<what>[1]``."""
@@ -579,6 +587,16 @@ class _Sites:
             out[site[hit]] = True
         return out
 
+    def _nan(self, fam: str | None, dec: int, value: float) -> np.ndarray:
+        """Sites where ``abs(round(cell, dec) - value)`` is NaN (Inf - Inf)."""
+        rv, site = self._rounded_of(fam, dec)
+        out = np.zeros(len(self.names), dtype=bool)
+        if len(rv):
+            with np.errstate(invalid="ignore"):
+                bad = np.isnan(rv - value)
+            out[site[bad]] = True
+        return out
+
     def _bounds(self, fam: str | None) -> tuple[np.ndarray, np.ndarray]:
         got = self._minmax.get(fam)
         if got is None:
@@ -593,30 +611,117 @@ class _Sites:
             self._minmax[fam] = got
         return got
 
+    @staticmethod
+    def _key(comp: Mapping[str, Any]) -> tuple[Any, float, int, str]:
+        return (comp.get("family"), float(comp["value"]), int(comp["dec"]), comp["censored"])
+
     def match(self, comp: Mapping[str, Any]) -> np.ndarray:
         """``val_in(by_site[[s]], comp)`` for every site ``s`` at once."""
-        fam = comp.get("family")
-        value = float(comp["value"])
-        dec = int(comp["dec"])
-        censored = comp["censored"]
-        key = (fam, value, dec, censored)
+        key = self._key(comp)
         got = self._cache.get(key)
         if got is not None:
             return got
+        fam, value, dec, censored = key
         if censored != "":
             lo, hi = self._bounds(fam)
             got = lo < value if censored == "<" else hi > value
         else:
             tol = 0.5 / (10.0**dec)
-            if fam is None:
-                got = self._exact(None, dec, value, tol)
-            else:
-                got = self._exact(fam, dec, value, tol)
-                fallback = {"beta": "b", "d": "b", "df1": "df", "df2": "df"}.get(fam)
-                if fallback is not None:
-                    got = got | (~self.has_family(fam) & self._exact(fallback, dec, value, tol))
+            got = self._exact(fam, dec, value, tol)
+            fallback = _FALLBACK_FAMILY.get(fam) if fam is not None else None
+            if fallback is not None:
+                got = got | (~self.has_family(fam) & self._exact(fallback, dec, value, tol))
         self._cache[key] = got
         return got
+
+    def errors(self, comp: Mapping[str, Any]) -> np.ndarray | None:
+        """Per site, the error R's ``val_in(by_site[[s]], comp)`` raises (0: none).
+
+        ``_ERR_NA``: no match and an ``Inf - Inf`` NaN comparison
+        (``if (NA)``); ``_ERR_NULL``: a non-censored component against a
+        NULL site. ``None`` when no site errors (the common case).
+        """
+        key = self._key(comp)
+        if key in self._err_cache:
+            return self._err_cache[key]
+        fam, value, dec, censored = key
+        err: np.ndarray | None = None
+        if censored == "":
+            if math.isinf(value):
+                nan = self._nan(fam, dec, value)
+                fallback = _FALLBACK_FAMILY.get(fam) if fam is not None else None
+                if fallback is not None:
+                    nan = nan | (~self.has_family(fam) & self._nan(fallback, dec, value))
+                nan &= ~self.match(comp)
+                if nan.any():
+                    err = np.where(nan, _ERR_NA, 0).astype(np.int8)
+            if self.null_sites:
+                if err is None:
+                    err = np.zeros(len(self.names), dtype=np.int8)
+                err[self.null_sites] = _ERR_NULL
+        self._err_cache[key] = err
+        return err
+
+    def raise_at(self, comp: Mapping[str, Any], s: int) -> None:
+        """Raise R's error if ``val_in(by_site[[s]], comp)`` errors."""
+        err = self.errors(comp)
+        if err is not None and err[s]:
+            raise RuntimeError(_ERRORS[int(err[s])])
+
+    def best_site_for(
+        self, comp: Mapping[str, Any], used: set[int], exclude_used: bool = True
+    ) -> int | None:
+        """The first site (in ``by_site`` order), not already used, that matches.
+
+        R's ``best_site_for(comp, exclude_used)``: the loop stops at the first
+        match, so a site that errors is only reached before it.
+        """
+        hits = self.match(comp)
+        err = self.errors(comp)
+        if err is None and not (exclude_used and self.empty_sites):
+            for s in np.flatnonzero(hits).tolist():
+                if not (exclude_used and s in used):
+                    return int(s)
+            return None
+        for s in range(len(self.names)):
+            if exclude_used and s in self.empty_sites:
+                raise RuntimeError(_ERR_EMPTY_NAME)
+            if exclude_used and s in used:
+                continue
+            if err is not None and err[s]:
+                raise RuntimeError(_ERRORS[int(err[s])])
+            if hits[s]:
+                return s
+        return None
+
+    def count(self, comps: Sequence[Mapping[str, Any]]) -> tuple[list[np.ndarray], np.ndarray]:
+        """Per component match vectors, and the per-site count of matches.
+
+        Raises R's error when any ``val_in()`` of the scoring loop (every
+        site, every component) errors -- the first one in R's site-major
+        order.
+        """
+        matches = [self.match(c) for c in comps]
+        errs = [self.errors(c) for c in comps]
+        if any(e is not None and e.any() for e in errs):
+            first = min(int(np.flatnonzero(e)[0]) for e in errs if e is not None and e.any())
+            for e in errs:
+                if e is not None and e[first]:
+                    raise RuntimeError(_ERRORS[int(e[first])])
+        counts = np.zeros(len(self.names), dtype=np.int64)
+        for m in matches:
+            counts += m
+        return matches, counts
+
+
+_FALLBACK_FAMILY = {"beta": "b", "d": "b", "df1": "df", "df2": "df"}
+_ERR_NA = 1
+_ERR_NULL = 2
+_ERR_EMPTY_NAME = "attempt to use zero-length variable name"
+_ERRORS = {
+    _ERR_NA: "missing value where TRUE/FALSE needed",
+    _ERR_NULL: "non-numeric argument to mathematical function",
+}
 
 
 def _val_in(sites: _Sites, s: int, comp: Mapping[str, Any]) -> bool:
@@ -627,9 +732,22 @@ def _val_in(sites: _Sites, s: int, comp: Mapping[str, Any]) -> bool:
     to the reported decimals, equals it -- with a same-site fallback to the
     generic ``b`` family for ``beta``/``d`` and to ``df`` for ``df1``/``df2``
     when the site has no cell of the reported family. An untyped component
-    matches any value.
+    matches any value. Raises R's error where ``val_in()`` errors.
     """
+    sites.raise_at(comp, s)
     return bool(sites.match(comp)[s])
+
+
+def _is_null_id(x: Any) -> bool:
+    """Is a test's ``text_id`` zero-length (R ``NULL`` / ``integer(0)``)?
+
+    A test built from an ``extract_tests()`` table without a ``text_id``
+    column (``tt$text_id[i]`` is ``NULL``), or from a table without a
+    ``table_id`` column (``-(NULL * 1000000L + ri)`` is ``integer(0)``),
+    carries ``[]``: the evidence regrouping drops it with the NA ids, and a
+    result row for it errors (``data.frame(text_id = NULL, ...)``).
+    """
+    return isinstance(x, list) and len(x) == 0
 
 
 def _sites_share_variable(rl_a: Any, rl_b: Any) -> bool | None:
@@ -703,17 +821,11 @@ def _regroup_by_evidence(
     taggable = [t for t, h in zip(tests, has_tags, strict=True) if h]
     untouched = [t for t, h in zip(tests, has_tags, strict=True) if not h]
 
-    tids = [_chr(t.get("text_id")) for t in taggable]
+    tids = [None if _is_null_id(t.get("text_id")) else _chr(t.get("text_id")) for t in taggable]
     used_sites: set[int] = set()
 
     def best_site_for(comp: Mapping[str, Any], exclude_used: bool = False) -> int | None:
-        hits = by_site.match(comp)
-        for s in np.flatnonzero(hits).tolist():
-            if exclude_used and s in used_sites:
-                continue
-            return int(s)
-        by_site.check_na_site([comp])  # the NA site is the last one tried
-        return None
+        return by_site.best_site_for(comp, used_sites, exclude_used)
 
     regrouped: list[dict[str, Any]] = []
     for _tid, idx in _split_order(tids):
@@ -755,7 +867,10 @@ def _regroup_by_evidence(
                     pa = pool[ai].get("pos")
                     pj = math.inf if pj is None else pj
                     pa = -math.inf if pa is None else pa
-                    if abs(pj - pa) > text_proximity:
+                    gap = abs(pj - pa)
+                    if math.isnan(gap):  # an NA position: if (NA > x) errors
+                        raise RuntimeError("missing value where TRUE/FALSE needed")
+                    if gap > text_proximity:
                         candidate.append(False)
                         continue
                 candidate.append(val_in(by_site, site, c))
@@ -778,7 +893,12 @@ def _regroup_by_evidence(
                     abs((math.inf if pool[j].get("pos") is None else pool[j]["pos"]) - pa)
                     for j in tied
                 ]
-                win = dist.index(min(dist))
+                # which.min() ignores NA; with every distance NA it is
+                # integer(0) and tied[-integer(0)] releases nothing
+                ok = [k for k, d in enumerate(dist) if not math.isnan(d)]
+                if not ok:
+                    continue
+                win = min(ok, key=lambda k: dist[k])
                 for k, j in enumerate(tied):
                     if k != win:
                         candidate[j] = False
@@ -842,8 +962,6 @@ def _regroup_by_evidence(
 # match_reported_output()
 # ---------------------------------------------------------------------------
 
-_NA_SITE_ERROR = "non-numeric argument to mathematical function"
-
 _RESULT_COLUMNS = {
     "text_id": "Int64",
     "grp_id": "Int64",
@@ -871,6 +989,8 @@ def _num_series(values: list[Any]) -> pd.Series:
     vals = [_scalar(v) for v in values]
     if all(v is None or (isinstance(v, int) and not isinstance(v, bool)) for v in vals):
         return pd.Series(vals, dtype="Int64")
+    if any(isinstance(v, str) for v in vals):  # a character id column stays character
+        return pd.Series([_chr(v) for v in vals], dtype="string")
     return pd.Series([np.nan if v is None else float(v) for v in vals], dtype="float64")
 
 
@@ -889,6 +1009,8 @@ def _output_long(output: Any) -> pd.DataFrame | None:
     items = output.values() if isinstance(output, Mapping) else output
     parts = []
     for s in items:
+        if isinstance(s, str | bytes | int | float | np.generic):
+            raise TypeError("$ operator is invalid for atomic vectors")
         if isinstance(s, Mapping):
             d = s.get("long")
         else:
@@ -950,20 +1072,22 @@ def _build_sites(out_long: pd.DataFrame) -> _Sites:
             resid_prefix = [tid_keep[j][: -len("_residuals")] for j in resid_pos]  # type: ignore[index]
             name_pos = {nm: i for i, nm in reversed(list(enumerate(names)))}
             has_na_tid = any(t is None for t in tid_keep)
-            for pfx in dict.fromkeys(resid_prefix):
-                resid_rows = [j for j, p in zip(resid_pos, resid_prefix, strict=True) if p == pfx]
+            rows_of: dict[str, list[int]] = {}
+            for j, t in enumerate(tid_keep):
+                if t is not None:
+                    rows_of.setdefault(t, []).append(j)
+            # the distinct non-residual ids, in first-appearance order
+            sib_ids = [t for t in rows_of if not t.endswith("_residuals")]
+            resid_by_pfx: dict[str, list[int]] = {}
+            for j, p in zip(resid_pos, resid_prefix, strict=True):
+                resid_by_pfx.setdefault(p, []).append(j)  # type: ignore[arg-type]
+            for pfx, resid_rows in resid_by_pfx.items():
                 start = pfx + "_"
-                sib_rows = [
-                    j
-                    for j, r in enumerate(is_resid)
-                    if not r and tid_keep[j] is not None and tid_keep[j].startswith(start)  # type: ignore[union-attr]
-                ]
                 if has_na_tid:
                     na_site = True  # startsWith(NA, ...) is NA: an NA sibling
-                if not sib_rows:
-                    continue
-                for sib_tid in dict.fromkeys(tid_keep[j] for j in sib_rows):
-                    site_rows = [j for j, t in enumerate(tid_keep) if t == sib_tid] + resid_rows
+                # unique(tid_keep[sib_rows]): first-appearance order
+                for sib_tid in (t for t in sib_ids if t.startswith(start)):
+                    site_rows = rows_of[sib_tid] + resid_rows
                     pos = name_pos.get(sib_tid)  # type: ignore[arg-type]
                     if pos is None:
                         names.append(sib_tid)  # type: ignore[arg-type]
@@ -971,12 +1095,14 @@ def _build_sites(out_long: pd.DataFrame) -> _Sites:
                         name_pos[sib_tid] = len(names) - 1  # type: ignore[index]
                     else:
                         rows[pos] = site_rows
-    na_index = None
+    # by_site[[""]] and by_site[[NA]] are NULL in R (see _Sites)
+    empty = [i for i, nm in enumerate(names) if nm == ""]
+    null = list(empty)
     if na_site:
         names.append("\x00NA")
         rows.append([])
-        na_index = len(names) - 1
-    return _Sites(names, rows, k_val, k_fam, k_sf, k_an, k_rl, na_index)
+        null.append(len(names) - 1)
+    return _Sites(names, rows, k_val, k_fam, k_sf, k_an, k_rl, null, empty)
 
 
 def match_reported_output(
@@ -1071,8 +1197,14 @@ def match_reported_output(
     if len(sites) > 0:
         tests = _regroup_by_evidence(tests, sites, _val_in)
 
+    if not tests:
+        # every test was dropped by the regrouping (NA text_id): R's
+        # bind_rows(list()) is a 0x0 tibble and sum(!out$found) is !NULL
+        raise TypeError("invalid argument type")
     rows: dict[str, list[Any]] = {k: [] for k in _RESULT_COLUMNS}
     for tst in tests:
+        if _is_null_id(tst.get("text_id")):
+            raise ValueError("arguments imply differing number of rows: 0, 1")
         comps = tst["components"]
         nc = len(comps)
         plausible = tst.get("plausible_split")
@@ -1093,11 +1225,7 @@ def match_reported_output(
         if nc >= min_components and len(sites) > 0:
             # Best site = the analysis where the most components co-occur
             # (the first one on ties).
-            sites.check_na_site(comps)
-            counts = np.zeros(len(sites), dtype=np.int64)
-            matches = [sites.match(c) for c in comps]
-            for m in matches:
-                counts += m
+            matches, counts = sites.count(comps)
             best = int(np.argmax(counts))
             best_n = int(counts[best])
             res["n_matched"] = best_n

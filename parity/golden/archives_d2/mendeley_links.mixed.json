@@ -1,0 +1,116 @@
+{
+  "id": "mendeley_links.mixed",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 6,
+    "names": [
+      "href",
+      "link_text",
+      "text_id",
+      "paper_id",
+      "mendeley_url",
+      "mendeley_id",
+      "mendeley_link"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "https://doi.org/10.17632/vjtxybrc28.1",
+          "https://data.mendeley.com/datasets/vjtxybrc28/1",
+          "https://data.mendeley.com/datasets/vjtxybrc28/1",
+          "10.17632/abc123.2",
+          "doi.org/10.17632/xyz",
+          "DATA.MENDELEY.COM/datasets/Q9"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          1,
+          2,
+          1,
+          1,
+          2,
+          2
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "cf95065c2ea4c2",
+          "cf95065c2ea4c2",
+          "cf95065c2ea4c2",
+          "cf95065c2ea4c2",
+          "cf95065c2ea4c2",
+          "cf95065c2ea4c2"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://doi.org/10.17632/vjtxybrc28.1",
+          "https://data.mendeley.com/datasets/vjtxybrc28/1",
+          "https://data.mendeley.com/datasets/vjtxybrc28/1",
+          "10.17632/abc123.2",
+          "doi.org/10.17632/xyz",
+          "DATA.MENDELEY.COM/datasets/Q9"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "vjtxybrc28",
+          "vjtxybrc28",
+          "vjtxybrc28",
+          "abc123",
+          "xyz",
+          "Q9"
+        ],
+        "names": [
+          "https://doi.org/10.17632/vjtxybrc28.1",
+          "https://data.mendeley.com/datasets/vjtxybrc28/1",
+          "https://data.mendeley.com/datasets/vjtxybrc28/1",
+          "10.17632/abc123.2",
+          "doi.org/10.17632/xyz",
+          "DATA.MENDELEY.COM/datasets/Q9"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://doi.org/10.17632/vjtxybrc28",
+          "https://doi.org/10.17632/vjtxybrc28",
+          "https://doi.org/10.17632/vjtxybrc28",
+          "https://doi.org/10.17632/abc123",
+          "https://doi.org/10.17632/xyz",
+          "https://doi.org/10.17632/Q9"
+        ],
+        "names": [
+          "https://doi.org/10.17632/vjtxybrc28.1",
+          "https://data.mendeley.com/datasets/vjtxybrc28/1",
+          "https://data.mendeley.com/datasets/vjtxybrc28/1",
+          "10.17632/abc123.2",
+          "doi.org/10.17632/xyz",
+          "DATA.MENDELEY.COM/datasets/Q9"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

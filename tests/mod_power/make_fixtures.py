@@ -23,7 +23,7 @@ import yaml
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 
-from tests.mod_power import scenarios as S  # noqa: E402
+from tests.mod_power import scenarios as S
 
 MOCKS = ROOT / "tests" / "mod_power" / "mocks"
 H = "__import__('tests.mod_power.parity_helpers', fromlist=['_'])"
@@ -42,7 +42,6 @@ FORMATS = [
     f"{FIX}/formats/published.pdf.tei.xml",
     f"{FIX}/formats/published.cermine.xml",
 ]
-IGNORE_IDS = ["table.paper_id", "summary_table.paper_id"]
 
 
 # -- R / Python paper constructors ---------------------------------------------
@@ -54,7 +53,7 @@ def rq(s: str) -> str:
 
 
 def rvec(texts: list[str]) -> str:
-    return texts and ("c(" + ", ".join(rq(t) for t in texts) + ")") or "character(0)"
+    return (texts and ("c(" + ", ".join(rq(t) for t in texts) + ")")) or "character(0)"
 
 
 class P:
@@ -64,21 +63,28 @@ class P:
         self.r, self.py = r, py
 
 
-def tp(*texts: str) -> P:
-    return P(f"test_paper({rvec(list(texts))})", f"pc.test_paper({list(texts)!r})")
+def _r_test_paper(texts: list[str], pid: str, ids: list[int] | None = None) -> str:
+    """R: a test paper with a fixed id (test_paper() ids come from the clock)."""
+    code = f"p <- test_paper({rvec(texts)}); "
+    if ids is not None:
+        code += "p$text$paragraph_id <- c(" + ", ".join(f"{i}L" for i in ids) + "); "
+    return f"local({{{code}p$paper_id <- {rq(pid)}; p}})"
 
 
-def paras(texts: list[str], ids: list[int]) -> P:
-    rid = "c(" + ", ".join(f"{i}L" for i in ids) + ")"
-    return P(
-        f"local({{p <- test_paper({rvec(texts)}); p$text$paragraph_id <- {rid}; p}})",
-        f"{H}.paragraphs({texts!r}, {ids!r})",
-    )
+def tp(*texts: str, pid: str = "p1") -> P:
+    return P(_r_test_paper(list(texts), pid), f"{H}.tp({list(texts)!r}, {pid!r})")
+
+
+def paras(texts: list[str], ids: list[int], pid: str = "p1") -> P:
+    return P(_r_test_paper(texts, pid, ids), f"{H}.paragraphs({texts!r}, {ids!r}, {pid!r})")
 
 
 def plist(*texts: str) -> P:
+    """``paperlist()`` of one-sentence test papers ``p1``, ``p2``, ..."""
     return P(
-        "paperlist(" + ", ".join(f"test_paper({rq(t)})" for t in texts) + ")",
+        "paperlist("
+        + ", ".join(_r_test_paper([t], f"p{i}") for i, t in enumerate(texts, start=1))
+        + ")",
         f"{H}.papers(*{list(texts)!r})",
     )
 
@@ -159,69 +165,41 @@ def llm_case(id: str, paper: P, kwargs: dict[str, Any] | None = None, **kw: Any)
 module_case("power.demo", {"$paper": "demo"})
 module_case("power.psychsci", {"$read": PSYCHSCI})
 module_case("power.formats", {"$read": FORMATS})
-module_case("power.none", {"$test_paper": {"text": ["I love to power pose."]}}, compare={"ignore": IGNORE_IDS})
-module_case(
-    "power.one_paragraph",
-    {"$test_paper": {"text": S.POWER_TEXT}},
-    compare={"ignore": IGNORE_IDS},
-)
-module_case(
-    "power.false_positive",
-    {"$test_paper": {"text": [S.MOTH]}},
-    compare={"ignore": IGNORE_IDS},
-)
-module_case(
-    "power.no_number",
-    {"$test_paper": {"text": ["A power analysis was run in 2019 (see Smith, 2020)."]}},
-    compare={"ignore": IGNORE_IDS},
-)
-two = paras(S.POWER_TEXT, [0, 1])
-expr_case(
-    "power.two_paragraphs",
-    f"module_run({two.r}, 'power')",
-    f"pc.module_run({two.py}, 'power')",
-    compare={"ignore": IGNORE_IDS},
-)
-pl = plist(*S.POWER_TEXT)
-expr_case(
-    "power.paperlist",
-    f"module_run({pl.r}, 'power')",
-    f"pc.module_run({pl.py}, 'power')",
-    compare={"ignore": IGNORE_IDS},
-)
 classify = paras([*S.CLASSIFY, S.CLASSIFY[7]], list(range(len(S.CLASSIFY) + 1)))
-expr_case(
-    "power.classify",
-    f"module_run({classify.r}, 'power')",
-    f"pc.module_run({classify.py}, 'power')",
-    compare={"ignore": IGNORE_IDS},
-)
+for cid, paper in [
+    ("power.none", tp("I love to power pose.")),
+    ("power.one_paragraph", tp(*S.POWER_TEXT)),
+    ("power.false_positive", tp(S.MOTH)),
+    ("power.no_number", tp("A power analysis was run in 2019 (see Smith, 2020).")),
+    ("power.two_paragraphs", paras(S.POWER_TEXT, [0, 1])),
+    ("power.paperlist", plist(*S.POWER_TEXT)),
+    ("power.classify", classify),
+]:
+    expr_case(cid, f"module_run({paper.r}, 'power')", f"pc.module_run({paper.py}, 'power')")
 tables_case("power.demo.tables", DEMO)
 tables_case("power.classify.tables", classify)
 tables_case("power.one_paragraph.tables", tp(*S.POWER_TEXT))
 tables_case("power.psychsci.tables", read(PSYCHSCI))
 
 # llm_use(TRUE): structured extraction against recorded Groq replies ----
-llm_case("power.llm.no_potential", tp("I love to power pose."), compare={"ignore": IGNORE_IDS})
-llm_case("power.llm.complete", tp(S.COMPLETE), compare={"ignore": IGNORE_IDS})
-llm_case("power.llm.seed", tp(S.COMPLETE), {"seed": 1}, compare={"ignore": IGNORE_IDS})
-llm_case("power.llm.two_in_one", tp(S.TWO_IN_ONE), compare={"ignore": IGNORE_IDS})
-llm_case("power.llm.empty", tp(S.MOTH), compare={"ignore": IGNORE_IDS})
+llm_case("power.llm.no_potential", tp("I love to power pose."))
+llm_case("power.llm.complete", tp(S.COMPLETE))
+llm_case("power.llm.seed", tp(S.COMPLETE), {"seed": 1})
+llm_case("power.llm.two_in_one", tp(S.TWO_IN_ONE))
+llm_case("power.llm.empty", tp(S.MOTH))
 llm_case(
     "power.llm.partial_failure",
     paras([S.COMPLETE, S.ALWAYS_FAILS], [0, 1]),
-    compare={"ignore": IGNORE_IDS},
 )
-llm_case("power.llm.incomplete", tp(*S.INCOMPLETE_TEXT), compare={"ignore": IGNORE_IDS})
-llm_case("power.llm.paperlist", plist(*S.INCOMPLETE_TEXT), compare={"ignore": IGNORE_IDS})
-llm_case("power.llm.posthoc", tp(S.POSTHOC), compare={"ignore": IGNORE_IDS})
-llm_case("power.llm.omitted_key", tp(S.OMITTED), compare={"ignore": IGNORE_IDS})
-llm_case("power.llm.other", tp(S.OTHER), compare={"ignore": IGNORE_IDS})
+llm_case("power.llm.incomplete", tp(*S.INCOMPLETE_TEXT))
+llm_case("power.llm.paperlist", plist(*S.INCOMPLETE_TEXT))
+llm_case("power.llm.posthoc", tp(S.POSTHOC))
+llm_case("power.llm.omitted_key", tp(S.OMITTED))
+llm_case("power.llm.other", tp(S.OTHER))
 llm_case("power.llm.demo", DEMO)
 llm_case(
     "power.llm.mixed_paperlist",
     plist(S.MOTH, S.COMPLETE, S.POSTHOC, "I love to power pose."),
-    compare={"ignore": IGNORE_IDS},
 )
 for cid, paper in [
     ("power.llm.two_in_one.tables", tp(S.TWO_IN_ONE)),
@@ -306,7 +284,7 @@ def record_mocks() -> dict[str, tuple[int, Any]]:
         with respx.mock(assert_all_called=False) as router, warnings.catch_warnings():
             warnings.simplefilter("ignore")
             router.route().mock(side_effect=handler)
-            eval(code, ns)  # noqa: S307 - our own case code
+            eval(code, ns)
     return recorded
 
 

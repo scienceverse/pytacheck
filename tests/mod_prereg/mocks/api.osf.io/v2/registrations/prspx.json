@@ -1,0 +1,91 @@
+{
+ "data": {
+  "id": "prspx",
+  "type": "registrations",
+  "attributes": {
+   "title": "Synthetic registration prspx",
+   "description": "",
+   "date_created": "2024-01-02T03:04:05.000001",
+   "date_modified": "2024-01-03T03:04:05.000001",
+   "date_registered": "2024-01-04T03:04:05.000001",
+   "embargo_end_date": null,
+   "withdrawn": false,
+   "registration_supplement": "Pre-Registration in Social Psychology (van 't Veer & Giner-Sorolla, 2016): Pre-Registration",
+   "ia_url": "https://archive.org/details/osf-registrations-prspx-v1",
+   "registration_responses": {
+    "84-56": "indices first",
+    "84-140": "additional comments",
+    "84-23": [
+     "iv one",
+     "iv two"
+    ],
+    "description-methods.design.question2a": "iv intro",
+    "84-25": [
+     {
+      "file_id": "ide",
+      "file_name": "e.csv",
+      "file_urls": {
+       "html": "https://osf.io/h/e",
+       "download": "https://osf.io/d/e"
+      },
+      "file_hashes": {
+       "sha256": "shae"
+      }
+     }
+    ],
+    "description-methods.design.question2b": "dv intro",
+    "description-methods.design.question3b": [
+     "cov a",
+     "cov b"
+    ],
+    "recommended-methods.procedure.question9b": [
+     {
+      "file_id": "idf",
+      "file_name": "f.csv",
+      "file_urls": {
+       "html": "https://osf.io/h/f",
+       "download": "https://osf.io/d/f"
+      },
+      "file_hashes": {
+       "sha256": "shaf"
+      }
+     },
+     {
+      "file_id": "idg",
+      "file_name": "g.csv",
+      "file_urls": {
+       "html": "https://osf.io/h/g",
+       "download": "https://osf.io/d/g"
+      },
+      "file_hashes": {
+       "sha256": "shag"
+      }
+     }
+    ],
+    "84-34": 150,
+    "datacompletion.question": "partial match for datacompletion",
+    "looked": null
+   }
+  },
+  "relationships": {
+   "registration_schema": {
+    "data": {
+     "id": "5730e99a9ad5a102c5745a8a",
+     "type": "registration-schemas"
+    },
+    "links": {
+     "related": {
+      "href": "https://api.osf.io/v2/schemas/registrations/5730e99a9ad5a102c5745a8a/",
+      "meta": {}
+     }
+    }
+   }
+  },
+  "links": {
+   "html": "https://osf.io/prspx/"
+  }
+ },
+ "meta": {
+  "version": "2.0"
+ }
+}

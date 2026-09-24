@@ -1,0 +1,291 @@
+{
+  "id": "stat_p_nonsig.real_single",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "stat_p_nonsig"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Non-Significant P Value Check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "results"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 9,
+        "names": [
+          "text",
+          "text_id",
+          "paragraph_id",
+          "section_id",
+          "page_number",
+          "formatted",
+          "paper_id",
+          "header",
+          "section_type",
+          "p_comp",
+          "p_value",
+          "significance",
+          "expanded"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "p = .62",
+              "p = .34",
+              "p = .073 ",
+              "p =.27",
+              "p = .37",
+              "p = .45",
+              "p = .16",
+              "p = .95",
+              "p = .386 "
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              87,
+              117,
+              118,
+              121,
+              126,
+              155,
+              155,
+              157,
+              182
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              20,
+              24,
+              24,
+              24,
+              25,
+              31,
+              31,
+              32,
+              37
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              4,
+              6,
+              6,
+              6,
+              6,
+              8,
+              8,
+              9,
+              12
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              "We also found tentative support for the predicted two-way interaction between valence and identifiability, F(1, 167) = 3.25, p = .073 (see Fig. <ref type=\"figure\" target=\"#fig_1\">3a<\/ref>).",
+              null,
+              null,
+              "Using paired-samples t tests, we found a main effect of stranger (liked vs. disliked) on the likability dimension, t(39) = 7.79, p &lt; .001, but not on intelligence, t(39) = 0.75, p = .45, or health, t(39) = 1.43, p = .16.",
+              "Using paired-samples t tests, we found a main effect of stranger (liked vs. disliked) on the likability dimension, t(39) = 7.79, p &lt; .001, but not on intelligence, t(39) = 0.75, p = .45, or health, t(39) = 1.43, p = .16.",
+              "We found the expected main effect of valence, F(1, 282) = 64.61, p &lt; .0001, ηp² = .18; no main effect of person, F(1, 282) = .003, p = .95; and the predicted interaction effect between valence and likability, F(1, 282) = 50.73, p &lt; .001, ηp² = .15.",
+              "The learning bias for the self condition and the learning bias for the stranger condition were not significantly correlated, r(76) = .10, p = .386 (see <ref type=\"url\" target=\"https://journals.sagepub.com/doi/suppl/10.1177/0956797617737129\">Fig<\/ref>. <ref type=\"figure\" target=\"#fig_1\">S3b<\/ref> <ref type=\"url\" target=\"https://journals.sagepub.com/doi/suppl/10.1177/0956797617737129\">in the Supplemental Material<\/ref>)."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "0956797617737129",
+              "0956797617737129",
+              "0956797617737129",
+              "0956797617737129",
+              "0956797617737129",
+              "0956797617737129",
+              "0956797617737129",
+              "0956797617737129",
+              "0956797617737129"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Results",
+              "Results",
+              "Results",
+              "Results",
+              "Results",
+              "Method",
+              "Method",
+              "Results",
+              "Results"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "results",
+              "results",
+              "results",
+              "results",
+              "results",
+              "method",
+              "method",
+              "results",
+              "results"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "=",
+              "=",
+              "=",
+              "=",
+              "=",
+              "=",
+              "=",
+              "=",
+              "="
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0.62,
+              0.34,
+              0.073,
+              0.27,
+              0.37,
+              0.45,
+              0.16,
+              0.95,
+              0.386
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "nonsignificant",
+              "nonsignificant",
+              "nonsignificant",
+              "nonsignificant",
+              "nonsignificant",
+              "nonsignificant",
+              "nonsignificant",
+              "nonsignificant",
+              "nonsignificant"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "The interaction between valence and target was not significant, F(1, 66) = 0.24, p = .62, indicating that the size of the optimistic learning bias was similar for the self and friend conditions.",
+              "Participants showed significantly greater vicarious optimism for friends than for unidentifiable strangers, F(1, 77) = 7.58, p = .007, but this difference vanished when the stranger was identifiable, F(1, 89) = 0.92, p = .34.",
+              "We also found tentative support for the predicted two-way interaction between valence and identifiability, F(1, 167) = 3.25, p = .073 (see https://journals.sagepub.com/doi/suppl/10.1177/0956797617737129. 3a).",
+              "Identifiability increased vicarious optimism specifically by reducing updating from bad news, t(168) = 3.19, p = .002; identifiability did not affect updating from good news, t(168) = 1.11, p =.27.",
+              "As in Study 2a, identifiability reduced updating from bad news, t(468) = 3.17, p = .002, but did not affect updating from good news, t(168) = 0.89, p = .37.",
+              "Using paired-samples t tests, we found a main effect of stranger (liked vs. disliked) on the likability dimension, t(39) = 7.79, p < .001, but not on intelligence, t(39) = 0.75, p = .45, or health, t(39) = 1.43, p = .16.",
+              "Using paired-samples t tests, we found a main effect of stranger (liked vs. disliked) on the likability dimension, t(39) = 7.79, p < .001, but not on intelligence, t(39) = 0.75, p = .45, or health, t(39) = 1.43, p = .16.",
+              "We found the expected main effect of valence, F(1, 282) = 64.61, p < .0001, ηp² = .18; no main effect of person, F(1, 282) = .003, p = .95; and the predicted interaction effect between valence and likability, F(1, 282) = 50.73, p < .001, ηp² = .15.",
+              "The learning bias for the self condition and the learning bias for the stranger condition were not significantly correlated, r(76) = .10, p = .386 (see https://journals.sagepub.com/doi/suppl/10.1177/0956797617737129. S3b in the https://journals.sagepub.com/doi/suppl/10.1177/0956797617737129)."
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Meta-scientific research has shown nonsignificant p values are commonly misinterpreted. It is incorrect to infer that there is 'no effect', 'no difference', or that groups are 'the same' after p > 0.05.\n\nIt is possible that there is a true non-zero effect, but that the study did not detect it. Make sure your inference acknowledges that it is possible that there is a non-zero effect. It is correct to include the effect is 'not significantly' different, although this just restates that p > 0.05.\n\nMetacheck does not yet analyze automatically whether sentences which include non-significant p-values are correct, but we recommend manually checking the sentences below for possible misinterpreted non-significant p values.\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Text = c(\"p = .62\", \"p = .34\", \"p = .073 \", \"p =.27\", \n\"p = .37\", \"p = .45\", \"p = .16\", \"p = .95\", \"p = .386 \"), Sentence = c(\"The interaction between valence and target was not significant, F(1, 66) = 0.24, p = .62, indicating that the size of the optimistic learning bias was similar for the self and friend conditions.\", \n\"Participants showed significantly greater vicarious optimism for friends than for unidentifiable strangers, F(1, 77) = 7.58, p = .007, but this difference vanished when the stranger was identifiable, F(1, 89) = 0.92, p = .34.\", \n\"We also found tentative support for the predicted two-way interaction between valence and identifiability, F(1, 167) = 3.25, p = .073 (see https://journals.sagepub.com/doi/suppl/10.1177/0956797617737129. 3a).\", \n\"Identifiability increased vicarious optimism specifically by reducing updating from bad news, t(168) = 3.19, p = .002; identifiability did not affect updating from good news, t(168) = 1.11, p =.27.\", \n\"As in Study 2a, identifiability reduced updating from bad news, t(468) = 3.17, p = .002, but did not affect updating from good news, t(168) = 0.89, p = .37.\", \n\"Using paired-samples t tests, we found a main effect of stranger (liked vs. disliked) on the likability dimension, t(39) = 7.79, p < .001, but not on intelligence, t(39) = 0.75, p = .45, or health, t(39) = 1.43, p = .16.\", \n\"Using paired-samples t tests, we found a main effect of stranger (liked vs. disliked) on the likability dimension, t(39) = 7.79, p < .001, but not on intelligence, t(39) = 0.75, p = .45, or health, t(39) = 1.43, p = .16.\", \n\"We found the expected main effect of valence, F(1, 282) = 64.61, p < .0001, ηp² = .18; no main effect of person, F(1, 282) = .003, p = .95; and the predicted interaction effect between valence and likability, F(1, 282) = 50.73, p < .001, ηp² = .15.\", \n\"The learning bias for the self condition and the learning bias for the stranger condition were not significantly correlated, r(76) = .10, p = .386 (see https://journals.sagepub.com/doi/suppl/10.1177/0956797617737129. S3b in the https://journals.sagepub.com/doi/suppl/10.1177/0956797617737129).\"\n)), row.names = c(NA, -9L), class = c(\"tbl_df\", \"tbl\", \"data.frame\"\n))\n\n# display table -----------------------------------\nmetacheck::report_table(table, c(0.1, 0.9), 10, FALSE)\n```\n\n\n::: {.callout-tip title=\"Learn More\" collapse=\"true\"}\n\nFor metascientific articles demonstrating the rate of misinterpretations of non-significant results is high, see:\n\nAczel B, Palfi B, Szollosi A, Kovacs M, Szaszi B, Szecsi P, Zrubka M, Gronau Q, van den Bergh D, Wagenmakers E (2018). &ldquo;Quantifying Support for the Null Hypothesis in Psychology: An Empirical Investigation.&rdquo; <em>Advances in Methods and Practices in Psychological Science<\/em>, <b>1<\/b>(3), 357&ndash;366. <a href=\"https://doi.org/10.1177/2515245918773742\">doi:10.1177/2515245918773742<\/a>.\n\nMurphy S, Merz R, Reimann L, Fernández A (2025). &ldquo;Nonsignificance misinterpreted as an effect’s absence in psychology: Prevalence and temporal analyses.&rdquo; <em>Royal Society Open Science<\/em>, <b>12<\/b>(3), 242167. <a href=\"https://doi.org/10.1098/rsos.242167\">doi:10.1098/rsos.242167<\/a>.\n\nFor educational material on preventing the misinterpretation of p values, see [Improving Your Statistical Inferences](https://lakens.github.io/statistical_inferences/01-pvalue.html#sec-misconception1).\n\n:::\n"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "yellow"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "We found 9 non-significant p values that should be checked for appropriate interpretation."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "n_nonsignificant"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "0956797617737129"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              9
+            ]
+          }
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

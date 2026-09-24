@@ -13,7 +13,7 @@ nothing here runs until you install a pack.
 ## Browse and install
 
 ```bash
-pip install pytacheck
+pip install "pytacheck @ git+https://github.com/thesanogoeffect/pytacheck@claude/pytacheck-metacheck-fork-0x7q73"   # not on PyPI yet
 pytacheck pack search                       # everything in the store
 pytacheck pack search trial --field medicine
 pytacheck pack show clinical_trials         # details, without running any code
@@ -34,7 +34,7 @@ pytacheck run paper.json -m clinical_trials::trial_registration
 | [`clinical_trials`](packs/clinical_trials) | code | `trial_registration`: trial registry numbers (ClinicalTrials.gov, ISRCTN, EudraCT/CTIS, ANZCTR, ChiCTR, DRKS, CTRI) |
 
 The full user guide is pytacheck's
-[docs/MODULES.md](https://github.com/thesanogoeffect/pytacheck/blob/main/docs/MODULES.md).
+[docs/MODULES.md](https://github.com/thesanogoeffect/pytacheck/blob/claude/pytacheck-metacheck-fork-0x7q73/docs/MODULES.md).
 
 ## What "reviewed" means
 
@@ -59,9 +59,7 @@ list your own repository (`packs/<name>.json`). See
   commit), plus maintainer-only `reviewed` / `yanked` fields;
 * `store.json` -- the store's name and description;
 * `index.json` -- **generated**: CI runs `pytacheck store build` on every push to
-  `main` and commits the result. Do not edit it by hand. (The copy committed
-  with this seed was built without git history, so its in-repo packs have
-  `{"path": ...}` sources; the first CI run replaces them with commits.)
+  `main` and commits the result. Do not edit it by hand.
 
 Licence: each pack states its own licence in its `pack.json`. The repository's
 own files (this README, the workflows) are CC0-1.0.

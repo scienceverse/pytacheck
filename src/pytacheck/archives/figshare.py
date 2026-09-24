@@ -38,6 +38,7 @@ from pytacheck.archives.dataverse import (
     _json_chr,
     _link_matches,
     _list_cell,
+    _mark_named_ids,
     _paste,
     _query,
     _resp_json,
@@ -155,12 +156,17 @@ def _figshare_host_regex() -> str:
 def _figshare_prefilter() -> str:
     """A cheap pattern every bare-mention match contains (see ``_link_matches()``).
 
-    A host match contains ``.<its last label>``; both DOI forms contain
-    ``10.<digits>/``.
+    Each branch of ``figshare_links()``'s pattern only adds optional parts
+    around a core its matches always contain: a host (whose last label is
+    preceded by a dot) followed by ``/articles/`` (etc.), or
+    ``10.<digits>/<id char>`` for 10.6084 (which covers
+    ``10.6084/m9.figshare.<id>``) and the institutional prefixes. Each
+    alternative starts with a literal, so scanning sentences for it is fast.
     """
     hosts = ("figshare.com", "figsh.com", *FIGSHARE_VANITY_HOSTS)
-    labels = sorted({h.rsplit(".", 1)[1] for h in hosts})
-    return f"\\.(?:{'|'.join(labels)})|10\\.[0-9]+/"
+    labels = "|".join(sorted({h.rsplit(".", 1)[1] for h in hosts}))
+    digits = "|".join(p.split(".", 1)[1] for p in ("10.6084", *FIGSHARE_DOI_PREFIX_HOSTS))
+    return f"\\.(?:{labels})/(?:articles|ndownloader|projects|s)/|10\\.(?:{digits})/[A-Za-z0-9._-]"
 
 
 def _escape_prefixes(prefixes: Any) -> str:
@@ -202,7 +208,7 @@ def figshare_links(paper: Any) -> pd.DataFrame:
         [bool(s) and is_na(i) for s, i in zip(share, links["figshare_id"].tolist(), strict=True)],
         dtype=bool,
     )
-    return links
+    return _mark_named_ids(links, "figshare_id")
 
 
 @functools.cache
@@ -344,7 +350,7 @@ def figshare_info(
     with _spinner(pb, "Figshare Retrieve") as bar:
         table = _info_table(figshare_url, id_col, "figshare_url", ("figshare_id",))
         urls = table["figshare_url"].tolist()
-        _check_named_ids(urls)
+        _check_named_ids(urls, figshare_url, id_col)
         ids = pd.DataFrame(
             {
                 "figshare_url": table["figshare_url"].to_numpy(),

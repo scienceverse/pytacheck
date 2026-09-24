@@ -59,7 +59,7 @@
     "output": &id002
       "kind": "df"
       "source_file": "a.omv"
-      "cols": &id025
+      "cols": &id033
         "source_file":
         - "a.omv"
         - "a.omv"
@@ -663,6 +663,449 @@
     "include_tables": true
     "min_components": 1
     "what": "summary"
+- "id": "match_reported_output.tt.na_sentence_pos"
+  "r": "identity"
+  "py": "tests.statout_match._review.match"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck::match_reported_output(local({tt <- data.frame(test_no = as.integer(c(1L, 2L)), text_id = as.integer(c(4L, 4L)), sentence = as.character(c(\"sentence 1\", \"sentence 2\")), stringsAsFactors = FALSE); tt$components <- list(list(list(name = \"t\", comp = \"=\", value = \"2.10\", df = NA_character_, sentence_pos = NA_integer_), list(name = \"p\", comp = \"=\", value = \".048\", df = NA_character_, sentence_pos = NA_integer_)), list(list(name = \"d\", comp = \"=\", value = \"0.45\", df = NA_character_, sentence_pos = NA_integer_), list(name = \"p\", comp = \"=\", value = \".048\", df = NA_character_, sentence_pos = NA_integer_))); tt}), data.frame(\"source_file\" = as.character(c(\"p.omv\", \"p.omv\", \"p.omv\")), \"test_id\" = as.character(c(\"p_1\", \"p_1\", \"p_1\")), \"analysis\" = as.character(c(\"T-Test\", \"T-Test\", \"T-Test\")), \"row_label\" = as.character(c(\"x\", \"x\", \"x\")), \"statistic\" = as.character(c(\"t\", \"p\", \"d\")), \"value\" = as.character(c(\"2.103\", \"0.0481\", \"0.45\")), stringsAsFactors = FALSE, check.names = FALSE), include_tables = FALSE, min_components = 1L)"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "paper": &id016
+      "kind": "tt"
+      "cols":
+        "test_no":
+        - 1
+        - 2
+        "text_id":
+        - 4
+        - 4
+        "sentence":
+        - "sentence 1"
+        - "sentence 2"
+      "types":
+        "test_no": "int"
+        "text_id": "int"
+      "components":
+      - - "name": "t"
+          "comp": "="
+          "value": "2.10"
+          "df": "__NA__"
+          "sentence_pos": "__NA__"
+        - "name": "p"
+          "comp": "="
+          "value": ".048"
+          "df": "__NA__"
+          "sentence_pos": "__NA__"
+      - - "name": "d"
+          "comp": "="
+          "value": "0.45"
+          "df": "__NA__"
+          "sentence_pos": "__NA__"
+        - "name": "p"
+          "comp": "="
+          "value": ".048"
+          "df": "__NA__"
+          "sentence_pos": "__NA__"
+    "output": &id017
+      "kind": "df"
+      "source_file": "p.omv"
+      "cols":
+        "source_file":
+        - "p.omv"
+        - "p.omv"
+        - "p.omv"
+        "test_id":
+        - "p_1"
+        - "p_1"
+        - "p_1"
+        "analysis":
+        - "T-Test"
+        - "T-Test"
+        - "T-Test"
+        "row_label":
+        - "x"
+        - "x"
+        - "x"
+        "statistic":
+        - "t"
+        - "p"
+        - "d"
+        "value":
+        - "2.103"
+        - "0.0481"
+        - "0.45"
+    "include_tables": false
+    "min_components": 1
+- "id": "match_reported_output.tt.na_sentence_pos.summary"
+  "r": "identity"
+  "py": "tests.statout_match._review.match"
+  "args":
+    "x":
+      "$expr":
+        "r": "attr(metacheck::match_reported_output(local({tt <- data.frame(test_no = as.integer(c(1L, 2L)), text_id = as.integer(c(4L, 4L)), sentence = as.character(c(\"sentence 1\", \"sentence 2\")), stringsAsFactors = FALSE); tt$components <- list(list(list(name = \"t\", comp = \"=\", value = \"2.10\", df = NA_character_, sentence_pos = NA_integer_), list(name = \"p\", comp = \"=\", value = \".048\", df = NA_character_, sentence_pos = NA_integer_)), list(list(name = \"d\", comp = \"=\", value = \"0.45\", df = NA_character_, sentence_pos = NA_integer_), list(name = \"p\", comp = \"=\", value = \".048\", df = NA_character_, sentence_pos = NA_integer_))); tt}), data.frame(\"source_file\" = as.character(c(\"p.omv\", \"p.omv\", \"p.omv\")), \"test_id\" = as.character(c(\"p_1\", \"p_1\", \"p_1\")), \"analysis\" = as.character(c(\"T-Test\", \"T-Test\", \"T-Test\")), \"row_label\" = as.character(c(\"x\", \"x\", \"x\")), \"statistic\" = as.character(c(\"t\", \"p\", \"d\")), \"value\" = as.character(c(\"2.103\", \"0.0481\", \"0.45\")), stringsAsFactors = FALSE, check.names = FALSE), include_tables = FALSE, min_components = 1L), \"summary\")"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "paper": *id016
+    "output": *id017
+    "include_tables": false
+    "min_components": 1
+    "what": "summary"
+- "id": "match_reported_output.tt.na_sentence_pos_mixed"
+  "r": "identity"
+  "py": "tests.statout_match._review.match"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck::match_reported_output(local({tt <- data.frame(test_no = as.integer(c(1L, 2L)), text_id = as.integer(c(4L, 4L)), sentence = as.character(c(\"sentence 1\", \"sentence 2\")), stringsAsFactors = FALSE); tt$components <- list(list(list(name = \"t\", comp = \"=\", value = \"2.10\", df = NA_character_, sentence_pos = 1L), list(name = \"p\", comp = \"=\", value = \".048\", df = NA_character_, sentence_pos = NA_integer_)), list(list(name = \"d\", comp = \"=\", value = \"0.45\", df = NA_character_, sentence_pos = 3L), list(name = \"p\", comp = \"=\", value = \".048\", df = NA_character_, sentence_pos = 4L))); tt}), data.frame(\"source_file\" = as.character(c(\"p.omv\", \"p.omv\", \"p.omv\")), \"test_id\" = as.character(c(\"p_1\", \"p_1\", \"p_1\")), \"analysis\" = as.character(c(\"T-Test\", \"T-Test\", \"T-Test\")), \"row_label\" = as.character(c(\"x\", \"x\", \"x\")), \"statistic\" = as.character(c(\"t\", \"p\", \"d\")), \"value\" = as.character(c(\"2.103\", \"0.0481\", \"0.45\")), stringsAsFactors = FALSE, check.names = FALSE), include_tables = FALSE, min_components = 1L)"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "paper": &id018
+      "kind": "tt"
+      "cols":
+        "test_no":
+        - 1
+        - 2
+        "text_id":
+        - 4
+        - 4
+        "sentence":
+        - "sentence 1"
+        - "sentence 2"
+      "types":
+        "test_no": "int"
+        "text_id": "int"
+      "components":
+      - - "name": "t"
+          "comp": "="
+          "value": "2.10"
+          "df": "__NA__"
+          "sentence_pos": 1
+        - "name": "p"
+          "comp": "="
+          "value": ".048"
+          "df": "__NA__"
+          "sentence_pos": "__NA__"
+      - - "name": "d"
+          "comp": "="
+          "value": "0.45"
+          "df": "__NA__"
+          "sentence_pos": 3
+        - "name": "p"
+          "comp": "="
+          "value": ".048"
+          "df": "__NA__"
+          "sentence_pos": 4
+    "output": *id017
+    "include_tables": false
+    "min_components": 1
+- "id": "match_reported_output.tt.na_sentence_pos_mixed.summary"
+  "r": "identity"
+  "py": "tests.statout_match._review.match"
+  "args":
+    "x":
+      "$expr":
+        "r": "attr(metacheck::match_reported_output(local({tt <- data.frame(test_no = as.integer(c(1L, 2L)), text_id = as.integer(c(4L, 4L)), sentence = as.character(c(\"sentence 1\", \"sentence 2\")), stringsAsFactors = FALSE); tt$components <- list(list(list(name = \"t\", comp = \"=\", value = \"2.10\", df = NA_character_, sentence_pos = 1L), list(name = \"p\", comp = \"=\", value = \".048\", df = NA_character_, sentence_pos = NA_integer_)), list(list(name = \"d\", comp = \"=\", value = \"0.45\", df = NA_character_, sentence_pos = 3L), list(name = \"p\", comp = \"=\", value = \".048\", df = NA_character_, sentence_pos = 4L))); tt}), data.frame(\"source_file\" = as.character(c(\"p.omv\", \"p.omv\", \"p.omv\")), \"test_id\" = as.character(c(\"p_1\", \"p_1\", \"p_1\")), \"analysis\" = as.character(c(\"T-Test\", \"T-Test\", \"T-Test\")), \"row_label\" = as.character(c(\"x\", \"x\", \"x\")), \"statistic\" = as.character(c(\"t\", \"p\", \"d\")), \"value\" = as.character(c(\"2.103\", \"0.0481\", \"0.45\")), stringsAsFactors = FALSE, check.names = FALSE), include_tables = FALSE, min_components = 1L), \"summary\")"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "paper": *id018
+    "output": *id017
+    "include_tables": false
+    "min_components": 1
+    "what": "summary"
+- "id": "match_reported_output.tt.character_text_id"
+  "r": "identity"
+  "py": "tests.statout_match._review.match"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck::match_reported_output(local({tt <- data.frame(test_no = as.integer(c(1L, 2L)), text_id = as.character(c(\"s10\", \"s2\")), sentence = as.character(c(\"sentence 1\", \"sentence 2\")), stringsAsFactors = FALSE); tt$components <- list(list(list(name = \"t\", comp = \"=\", value = \"2.10\", df = \"(20)\", sentence_pos = 1L), list(name = \"p\", comp = \"=\", value = \".048\", df = NA_character_, sentence_pos = 2L), list(name = \"d\", comp = \"=\", value = \"0.45\", df = NA_character_, sentence_pos = 3L)), list(list(name = \"t\", comp = \"=\", value = \"3.10\", df = \"(30)\", sentence_pos = 1L), list(name = \"p\", comp = \"=\", value = \".002\", df = NA_character_, sentence_pos = 2L))); tt}), data.frame(\"source_file\" = as.character(c(\"a.omv\", \"a.omv\", \"a.omv\", \"a.omv\", \"b.omv\", \"b.omv\", \"b.omv\")), \"test_id\" = as.character(c(\"a_t1\", \"a_t1\", \"a_t1\", \"a_t1\", \"b_t2\", \"b_t2\", \"b_t2\")), \"analysis\" = as.character(c(\"T-Test\", \"T-Test\", \"T-Test\", \"T-Test\", \"T-Test\", \"T-Test\", \"T-Test\")), \"row_label\" = as.character(c(\"score\", \"score\", \"score\", \"score\", \"anx\", \"anx\", \"anx\")), \"statistic\" = as.character(c(\"t\", \"df\", \"p\", \"es\", \"t\", \"df\", \"p\")), \"value\" = as.character(c(\"2.103\", \"20\", \"0.0481\", \"0.452\", \"3.1\", \"30\", \"0.0021\")), stringsAsFactors = FALSE, check.names = FALSE), include_tables = FALSE, min_components = 1L)"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "paper": &id019
+      "kind": "tt"
+      "cols":
+        "test_no":
+        - 1
+        - 2
+        "text_id":
+        - "s10"
+        - "s2"
+        "sentence":
+        - "sentence 1"
+        - "sentence 2"
+      "types":
+        "test_no": "int"
+        "text_id": "chr"
+      "components":
+      - *id003
+      - *id004
+    "output": *id002
+    "include_tables": false
+    "min_components": 1
+- "id": "match_reported_output.tt.character_text_id.summary"
+  "r": "identity"
+  "py": "tests.statout_match._review.match"
+  "args":
+    "x":
+      "$expr":
+        "r": "attr(metacheck::match_reported_output(local({tt <- data.frame(test_no = as.integer(c(1L, 2L)), text_id = as.character(c(\"s10\", \"s2\")), sentence = as.character(c(\"sentence 1\", \"sentence 2\")), stringsAsFactors = FALSE); tt$components <- list(list(list(name = \"t\", comp = \"=\", value = \"2.10\", df = \"(20)\", sentence_pos = 1L), list(name = \"p\", comp = \"=\", value = \".048\", df = NA_character_, sentence_pos = 2L), list(name = \"d\", comp = \"=\", value = \"0.45\", df = NA_character_, sentence_pos = 3L)), list(list(name = \"t\", comp = \"=\", value = \"3.10\", df = \"(30)\", sentence_pos = 1L), list(name = \"p\", comp = \"=\", value = \".002\", df = NA_character_, sentence_pos = 2L))); tt}), data.frame(\"source_file\" = as.character(c(\"a.omv\", \"a.omv\", \"a.omv\", \"a.omv\", \"b.omv\", \"b.omv\", \"b.omv\")), \"test_id\" = as.character(c(\"a_t1\", \"a_t1\", \"a_t1\", \"a_t1\", \"b_t2\", \"b_t2\", \"b_t2\")), \"analysis\" = as.character(c(\"T-Test\", \"T-Test\", \"T-Test\", \"T-Test\", \"T-Test\", \"T-Test\", \"T-Test\")), \"row_label\" = as.character(c(\"score\", \"score\", \"score\", \"score\", \"anx\", \"anx\", \"anx\")), \"statistic\" = as.character(c(\"t\", \"df\", \"p\", \"es\", \"t\", \"df\", \"p\")), \"value\" = as.character(c(\"2.103\", \"20\", \"0.0481\", \"0.452\", \"3.1\", \"30\", \"0.0021\")), stringsAsFactors = FALSE, check.names = FALSE), include_tables = FALSE, min_components = 1L), \"summary\")"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "paper": *id019
+    "output": *id002
+    "include_tables": false
+    "min_components": 1
+    "what": "summary"
+- "id": "match_reported_output.tt.double_ids"
+  "r": "identity"
+  "py": "tests.statout_match._review.match"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck::match_reported_output(local({tt <- data.frame(test_no = as.numeric(c(1L, 2L)), text_id = as.numeric(c(1.5, 2.0)), sentence = as.character(c(\"sentence 1\", \"sentence 2\")), stringsAsFactors = FALSE); tt$components <- list(list(list(name = \"t\", comp = \"=\", value = \"2.10\", df = \"(20)\", sentence_pos = 1L), list(name = \"p\", comp = \"=\", value = \".048\", df = NA_character_, sentence_pos = 2L), list(name = \"d\", comp = \"=\", value = \"0.45\", df = NA_character_, sentence_pos = 3L)), list(list(name = \"t\", comp = \"=\", value = \"3.10\", df = \"(30)\", sentence_pos = 1L), list(name = \"p\", comp = \"=\", value = \".002\", df = NA_character_, sentence_pos = 2L))); tt}), data.frame(\"source_file\" = as.character(c(\"a.omv\", \"a.omv\", \"a.omv\", \"a.omv\", \"b.omv\", \"b.omv\", \"b.omv\")), \"test_id\" = as.character(c(\"a_t1\", \"a_t1\", \"a_t1\", \"a_t1\", \"b_t2\", \"b_t2\", \"b_t2\")), \"analysis\" = as.character(c(\"T-Test\", \"T-Test\", \"T-Test\", \"T-Test\", \"T-Test\", \"T-Test\", \"T-Test\")), \"row_label\" = as.character(c(\"score\", \"score\", \"score\", \"score\", \"anx\", \"anx\", \"anx\")), \"statistic\" = as.character(c(\"t\", \"df\", \"p\", \"es\", \"t\", \"df\", \"p\")), \"value\" = as.character(c(\"2.103\", \"20\", \"0.0481\", \"0.452\", \"3.1\", \"30\", \"0.0021\")), stringsAsFactors = FALSE, check.names = FALSE), include_tables = FALSE, min_components = 1L)"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "paper": &id020
+      "kind": "tt"
+      "cols":
+        "test_no":
+        - 1
+        - 2
+        "text_id":
+        - 1.5
+        - 2.0
+        "sentence":
+        - "sentence 1"
+        - "sentence 2"
+      "types":
+        "test_no": "dbl"
+        "text_id": "dbl"
+      "components":
+      - *id003
+      - *id004
+    "output": *id002
+    "include_tables": false
+    "min_components": 1
+- "id": "match_reported_output.tt.double_ids.summary"
+  "r": "identity"
+  "py": "tests.statout_match._review.match"
+  "args":
+    "x":
+      "$expr":
+        "r": "attr(metacheck::match_reported_output(local({tt <- data.frame(test_no = as.numeric(c(1L, 2L)), text_id = as.numeric(c(1.5, 2.0)), sentence = as.character(c(\"sentence 1\", \"sentence 2\")), stringsAsFactors = FALSE); tt$components <- list(list(list(name = \"t\", comp = \"=\", value = \"2.10\", df = \"(20)\", sentence_pos = 1L), list(name = \"p\", comp = \"=\", value = \".048\", df = NA_character_, sentence_pos = 2L), list(name = \"d\", comp = \"=\", value = \"0.45\", df = NA_character_, sentence_pos = 3L)), list(list(name = \"t\", comp = \"=\", value = \"3.10\", df = \"(30)\", sentence_pos = 1L), list(name = \"p\", comp = \"=\", value = \".002\", df = NA_character_, sentence_pos = 2L))); tt}), data.frame(\"source_file\" = as.character(c(\"a.omv\", \"a.omv\", \"a.omv\", \"a.omv\", \"b.omv\", \"b.omv\", \"b.omv\")), \"test_id\" = as.character(c(\"a_t1\", \"a_t1\", \"a_t1\", \"a_t1\", \"b_t2\", \"b_t2\", \"b_t2\")), \"analysis\" = as.character(c(\"T-Test\", \"T-Test\", \"T-Test\", \"T-Test\", \"T-Test\", \"T-Test\", \"T-Test\")), \"row_label\" = as.character(c(\"score\", \"score\", \"score\", \"score\", \"anx\", \"anx\", \"anx\")), \"statistic\" = as.character(c(\"t\", \"df\", \"p\", \"es\", \"t\", \"df\", \"p\")), \"value\" = as.character(c(\"2.103\", \"20\", \"0.0481\", \"0.452\", \"3.1\", \"30\", \"0.0021\")), stringsAsFactors = FALSE, check.names = FALSE), include_tables = FALSE, min_components = 1L), \"summary\")"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "paper": *id020
+    "output": *id002
+    "include_tables": false
+    "min_components": 1
+    "what": "summary"
+- "id": "match_reported_output.tt.residual_prefixes"
+  "r": "identity"
+  "py": "tests.statout_match._review.match"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck::match_reported_output(local({tt <- data.frame(test_no = as.integer(c(1L, 2L, 3L)), text_id = as.integer(c(1L, 2L, 3L)), sentence = as.character(c(\"sentence 1\", \"sentence 2\", \"sentence 3\")), stringsAsFactors = FALSE); tt$components <- list(list(list(name = \"F\", comp = \"=\", value = \"6.76\", df = \"(2, 2159)\", sentence_pos = 1L), list(name = \"p\", comp = \"=\", value = \".001\", df = NA_character_, sentence_pos = 2L)), list(list(name = \"F\", comp = \"=\", value = \"6.76\", df = \"(2, 57)\", sentence_pos = 1L), list(name = \"p\", comp = \"=\", value = \".001\", df = NA_character_, sentence_pos = 2L)), list(list(name = \"F\", comp = \"=\", value = \"4.21\", df = \"(1, 2159)\", sentence_pos = 1L), list(name = \"p\", comp = \"=\", value = \".020\", df = NA_character_, sentence_pos = 2L))); tt}), data.frame(\"source_file\" = as.character(c(\"r.omv\", \"r.omv\", \"r.omv\", \"r.omv\", \"r.omv\", \"r.omv\", \"r.omv\", \"r.omv\")), \"test_id\" = as.character(c(\"an_a_b_c\", \"an_a_b_c\", \"an_a_b_c\", \"an_a_b_residuals\", \"an_a_residuals\", \"an_z_residuals\", \"an_a_x\", \"an_a_x\")), \"analysis\" = as.character(c(\"ANOVA\", \"ANOVA\", \"ANOVA\", \"ANOVA\", \"ANOVA\", \"ANOVA\", \"ANOVA\", \"ANOVA\")), \"row_label\" = as.character(c(\"c\", \"c\", \"c\", \"residuals\", \"residuals\", \"residuals\", \"x\", \"x\")), \"statistic\" = as.character(c(\"F\", \"df\", \"p\", \"df\", \"df\", \"df\", \"F\", \"p\")), \"value\" = as.character(c(\"6.76\", \"2\", \"0.0012\", \"57\", \"2159\", \"99\", \"4.21\", \"0.02\")), stringsAsFactors = FALSE, check.names = FALSE), include_tables = FALSE, min_components = 1L)"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "paper": &id021
+      "kind": "tt"
+      "cols":
+        "test_no":
+        - 1
+        - 2
+        - 3
+        "text_id":
+        - 1
+        - 2
+        - 3
+        "sentence":
+        - "sentence 1"
+        - "sentence 2"
+        - "sentence 3"
+      "types":
+        "test_no": "int"
+        "text_id": "int"
+      "components":
+      - - "name": "F"
+          "comp": "="
+          "value": "6.76"
+          "df": "(2, 2159)"
+          "sentence_pos": 1
+        - "name": "p"
+          "comp": "="
+          "value": ".001"
+          "df": "__NA__"
+          "sentence_pos": 2
+      - - "name": "F"
+          "comp": "="
+          "value": "6.76"
+          "df": "(2, 57)"
+          "sentence_pos": 1
+        - "name": "p"
+          "comp": "="
+          "value": ".001"
+          "df": "__NA__"
+          "sentence_pos": 2
+      - - "name": "F"
+          "comp": "="
+          "value": "4.21"
+          "df": "(1, 2159)"
+          "sentence_pos": 1
+        - "name": "p"
+          "comp": "="
+          "value": ".020"
+          "df": "__NA__"
+          "sentence_pos": 2
+    "output": &id022
+      "kind": "df"
+      "source_file": "r.omv"
+      "cols":
+        "source_file":
+        - "r.omv"
+        - "r.omv"
+        - "r.omv"
+        - "r.omv"
+        - "r.omv"
+        - "r.omv"
+        - "r.omv"
+        - "r.omv"
+        "test_id":
+        - "an_a_b_c"
+        - "an_a_b_c"
+        - "an_a_b_c"
+        - "an_a_b_residuals"
+        - "an_a_residuals"
+        - "an_z_residuals"
+        - "an_a_x"
+        - "an_a_x"
+        "analysis":
+        - "ANOVA"
+        - "ANOVA"
+        - "ANOVA"
+        - "ANOVA"
+        - "ANOVA"
+        - "ANOVA"
+        - "ANOVA"
+        - "ANOVA"
+        "row_label":
+        - "c"
+        - "c"
+        - "c"
+        - "residuals"
+        - "residuals"
+        - "residuals"
+        - "x"
+        - "x"
+        "statistic":
+        - "F"
+        - "df"
+        - "p"
+        - "df"
+        - "df"
+        - "df"
+        - "F"
+        - "p"
+        "value":
+        - "6.76"
+        - "2"
+        - "0.0012"
+        - "57"
+        - "2159"
+        - "99"
+        - "4.21"
+        - "0.02"
+    "include_tables": false
+    "min_components": 1
+- "id": "match_reported_output.tt.residual_prefixes.summary"
+  "r": "identity"
+  "py": "tests.statout_match._review.match"
+  "args":
+    "x":
+      "$expr":
+        "r": "attr(metacheck::match_reported_output(local({tt <- data.frame(test_no = as.integer(c(1L, 2L, 3L)), text_id = as.integer(c(1L, 2L, 3L)), sentence = as.character(c(\"sentence 1\", \"sentence 2\", \"sentence 3\")), stringsAsFactors = FALSE); tt$components <- list(list(list(name = \"F\", comp = \"=\", value = \"6.76\", df = \"(2, 2159)\", sentence_pos = 1L), list(name = \"p\", comp = \"=\", value = \".001\", df = NA_character_, sentence_pos = 2L)), list(list(name = \"F\", comp = \"=\", value = \"6.76\", df = \"(2, 57)\", sentence_pos = 1L), list(name = \"p\", comp = \"=\", value = \".001\", df = NA_character_, sentence_pos = 2L)), list(list(name = \"F\", comp = \"=\", value = \"4.21\", df = \"(1, 2159)\", sentence_pos = 1L), list(name = \"p\", comp = \"=\", value = \".020\", df = NA_character_, sentence_pos = 2L))); tt}), data.frame(\"source_file\" = as.character(c(\"r.omv\", \"r.omv\", \"r.omv\", \"r.omv\", \"r.omv\", \"r.omv\", \"r.omv\", \"r.omv\")), \"test_id\" = as.character(c(\"an_a_b_c\", \"an_a_b_c\", \"an_a_b_c\", \"an_a_b_residuals\", \"an_a_residuals\", \"an_z_residuals\", \"an_a_x\", \"an_a_x\")), \"analysis\" = as.character(c(\"ANOVA\", \"ANOVA\", \"ANOVA\", \"ANOVA\", \"ANOVA\", \"ANOVA\", \"ANOVA\", \"ANOVA\")), \"row_label\" = as.character(c(\"c\", \"c\", \"c\", \"residuals\", \"residuals\", \"residuals\", \"x\", \"x\")), \"statistic\" = as.character(c(\"F\", \"df\", \"p\", \"df\", \"df\", \"df\", \"F\", \"p\")), \"value\" = as.character(c(\"6.76\", \"2\", \"0.0012\", \"57\", \"2159\", \"99\", \"4.21\", \"0.02\")), stringsAsFactors = FALSE, check.names = FALSE), include_tables = FALSE, min_components = 1L), \"summary\")"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "paper": *id021
+    "output": *id022
+    "include_tables": false
+    "min_components": 1
+    "what": "summary"
+- "id": "match_reported_output.tt.min_components_2"
+  "r": "identity"
+  "py": "tests.statout_match._review.match"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck::match_reported_output(local({tt <- data.frame(test_no = as.integer(c(1L, 2L)), text_id = as.integer(c(1L, 2L)), sentence = as.character(c(\"sentence 1\", \"sentence 2\")), stringsAsFactors = FALSE); tt$components <- list(list(list(name = \"d\", comp = \"=\", value = \"0.45\", df = NA_character_, sentence_pos = 1L)), list(list(name = \"t\", comp = \"=\", value = \"3.10\", df = \"(30)\", sentence_pos = 1L), list(name = \"p\", comp = \"=\", value = \".002\", df = NA_character_, sentence_pos = 2L))); tt}), data.frame(\"source_file\" = as.character(c(\"a.omv\", \"a.omv\", \"a.omv\", \"a.omv\", \"b.omv\", \"b.omv\", \"b.omv\")), \"test_id\" = as.character(c(\"a_t1\", \"a_t1\", \"a_t1\", \"a_t1\", \"b_t2\", \"b_t2\", \"b_t2\")), \"analysis\" = as.character(c(\"T-Test\", \"T-Test\", \"T-Test\", \"T-Test\", \"T-Test\", \"T-Test\", \"T-Test\")), \"row_label\" = as.character(c(\"score\", \"score\", \"score\", \"score\", \"anx\", \"anx\", \"anx\")), \"statistic\" = as.character(c(\"t\", \"df\", \"p\", \"es\", \"t\", \"df\", \"p\")), \"value\" = as.character(c(\"2.103\", \"20\", \"0.0481\", \"0.452\", \"3.1\", \"30\", \"0.0021\")), stringsAsFactors = FALSE, check.names = FALSE), include_tables = FALSE, min_components = 2L)"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "paper": &id023
+      "kind": "tt"
+      "cols":
+        "test_no":
+        - 1
+        - 2
+        "text_id":
+        - 1
+        - 2
+        "sentence":
+        - "sentence 1"
+        - "sentence 2"
+      "types":
+        "test_no": "int"
+        "text_id": "int"
+      "components":
+      - - "name": "d"
+          "comp": "="
+          "value": "0.45"
+          "df": "__NA__"
+          "sentence_pos": 1
+      - *id004
+    "output": *id002
+    "include_tables": false
+    "min_components": 2
+- "id": "match_reported_output.tt.min_components_2.summary"
+  "r": "identity"
+  "py": "tests.statout_match._review.match"
+  "args":
+    "x":
+      "$expr":
+        "r": "attr(metacheck::match_reported_output(local({tt <- data.frame(test_no = as.integer(c(1L, 2L)), text_id = as.integer(c(1L, 2L)), sentence = as.character(c(\"sentence 1\", \"sentence 2\")), stringsAsFactors = FALSE); tt$components <- list(list(list(name = \"d\", comp = \"=\", value = \"0.45\", df = NA_character_, sentence_pos = 1L)), list(list(name = \"t\", comp = \"=\", value = \"3.10\", df = \"(30)\", sentence_pos = 1L), list(name = \"p\", comp = \"=\", value = \".002\", df = NA_character_, sentence_pos = 2L))); tt}), data.frame(\"source_file\" = as.character(c(\"a.omv\", \"a.omv\", \"a.omv\", \"a.omv\", \"b.omv\", \"b.omv\", \"b.omv\")), \"test_id\" = as.character(c(\"a_t1\", \"a_t1\", \"a_t1\", \"a_t1\", \"b_t2\", \"b_t2\", \"b_t2\")), \"analysis\" = as.character(c(\"T-Test\", \"T-Test\", \"T-Test\", \"T-Test\", \"T-Test\", \"T-Test\", \"T-Test\")), \"row_label\" = as.character(c(\"score\", \"score\", \"score\", \"score\", \"anx\", \"anx\", \"anx\")), \"statistic\" = as.character(c(\"t\", \"df\", \"p\", \"es\", \"t\", \"df\", \"p\")), \"value\" = as.character(c(\"2.103\", \"20\", \"0.0481\", \"0.452\", \"3.1\", \"30\", \"0.0021\")), stringsAsFactors = FALSE, check.names = FALSE), include_tables = FALSE, min_components = 2L), \"summary\")"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "paper": *id023
+    "output": *id002
+    "include_tables": false
+    "min_components": 2
+    "what": "summary"
 - "id": "match_reported_output.tt.format_values"
   "r": "identity"
   "py": "tests.statout_match._review.match"
@@ -674,7 +1117,7 @@
   "py_drop":
   - "x"
   "py_args":
-    "paper": &id016
+    "paper": &id024
       "kind": "tt"
       "cols":
         "test_no":
@@ -762,7 +1205,7 @@
           "value": "99999.99"
           "df": "__NA__"
           "sentence_pos": 15
-    "output": &id017
+    "output": &id025
       "kind": "df"
       "source_file": "f.R"
       "cols":
@@ -803,8 +1246,8 @@
   "py_drop":
   - "x"
   "py_args":
-    "paper": *id016
-    "output": *id017
+    "paper": *id024
+    "output": *id025
     "include_tables": false
     "min_components": 1
     "what": "summary"
@@ -819,7 +1262,7 @@
   "py_drop":
   - "x"
   "py_args":
-    "paper": &id018
+    "paper": &id026
       "kind": "tt"
       "cols":
         "test_no":
@@ -833,10 +1276,10 @@
         "text_id": "int"
       "components":
       - *id003
-    "output": &id019
+    "output": &id027
       "kind": "df"
       "source_file": "b_site.omv"
-      "cols": &id020
+      "cols": &id028
         "source_file":
         - "b_site.omv"
         - "b_site.omv"
@@ -1000,8 +1443,8 @@
   "py_drop":
   - "x"
   "py_args":
-    "paper": *id018
-    "output": *id019
+    "paper": *id026
+    "output": *id027
     "include_tables": false
     "min_components": 1
     "what": "summary"
@@ -1016,7 +1459,7 @@
   "py_drop":
   - "x"
   "py_args":
-    "paper": &id021
+    "paper": &id029
       "kind": "tt"
       "cols":
         "test_no":
@@ -1030,10 +1473,10 @@
         "text_id": "int"
       "components":
       - *id003
-    "output": &id022
+    "output": &id030
       "kind": "df"
       "source_file": "b_site.omv"
-      "cols": *id020
+      "cols": *id028
       "drop":
       - "test_id"
     "include_tables": false
@@ -1049,8 +1492,8 @@
   "py_drop":
   - "x"
   "py_args":
-    "paper": *id021
-    "output": *id022
+    "paper": *id029
+    "output": *id030
     "include_tables": false
     "min_components": 1
     "what": "summary"
@@ -1065,7 +1508,7 @@
   "py_drop":
   - "x"
   "py_args":
-    "paper": &id023
+    "paper": &id031
       "kind": "tt"
       "cols":
         "test_no":
@@ -1079,7 +1522,7 @@
         "text_id": "int"
       "components":
       - *id003
-    "output": &id024
+    "output": &id032
       "kind": "df"
       "source_file": "n.omv"
       "cols":
@@ -1140,8 +1583,8 @@
   "py_drop":
   - "x"
   "py_args":
-    "paper": *id023
-    "output": *id024
+    "paper": *id031
+    "output": *id032
     "include_tables": false
     "min_components": 1
     "what": "summary"
@@ -1156,7 +1599,7 @@
   "py_drop":
   - "x"
   "py_args":
-    "paper": &id026
+    "paper": &id034
       "kind": "tt"
       "cols":
         "test_no":
@@ -1174,10 +1617,10 @@
       "components":
       - *id003
       - *id004
-    "output": &id027
+    "output": &id035
       "kind": "df"
       "source_file": "a.omv"
-      "cols": *id025
+      "cols": *id033
       "drop":
       - "statistic"
     "include_tables": false
@@ -1193,8 +1636,8 @@
   "py_drop":
   - "x"
   "py_args":
-    "paper": *id026
-    "output": *id027
+    "paper": *id034
+    "output": *id035
     "include_tables": false
     "min_components": 1
     "what": "summary"
@@ -1209,7 +1652,7 @@
   "py_drop":
   - "x"
   "py_args":
-    "paper": &id028
+    "paper": &id036
       "kind": "tt"
       "cols":
         "test_no":
@@ -1227,10 +1670,10 @@
       "components":
       - *id003
       - *id004
-    "output": &id029
+    "output": &id037
       "kind": "df"
       "source_file": "a.omv"
-      "cols": *id025
+      "cols": *id033
       "drop":
       - "value"
     "include_tables": false
@@ -1246,8 +1689,8 @@
   "py_drop":
   - "x"
   "py_args":
-    "paper": *id028
-    "output": *id029
+    "paper": *id036
+    "output": *id037
     "include_tables": false
     "min_components": 1
     "what": "summary"
@@ -1262,7 +1705,7 @@
   "py_drop":
   - "x"
   "py_args":
-    "paper": &id030
+    "paper": &id038
       "kind": "tt"
       "cols":
         "test_no":
@@ -1280,10 +1723,10 @@
       "components":
       - *id003
       - *id004
-    "output": &id031
+    "output": &id039
       "kind": "df"
       "source_file": "a.omv"
-      "cols": *id025
+      "cols": *id033
       "drop":
       - "source_file"
       - "test_id"
@@ -1302,8 +1745,8 @@
   "py_drop":
   - "x"
   "py_args":
-    "paper": *id030
-    "output": *id031
+    "paper": *id038
+    "output": *id039
     "include_tables": false
     "min_components": 1
     "what": "summary"
@@ -1318,7 +1761,7 @@
   "py_drop":
   - "x"
   "py_args":
-    "paper": &id032
+    "paper": &id040
       "kind": "tt"
       "cols":
         "test_no":
@@ -1349,7 +1792,7 @@
           "value": "< .001"
           "df": "__NA__"
           "sentence_pos": 2
-    "output": &id033
+    "output": &id041
     - *id002
     - "kind": "df"
       "source_file": "c.omv"
@@ -1387,11 +1830,42 @@
   "py_drop":
   - "x"
   "py_args":
-    "paper": *id032
-    "output": *id033
+    "paper": *id040
+    "output": *id041
     "include_tables": false
     "min_components": 1
     "what": "summary"
+- "id": "match_reported_output.tt.output_character"
+  "r": "identity"
+  "py": "tests.statout_match._review.match"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck::match_reported_output(local({tt <- data.frame(test_no = as.integer(c(1L)), text_id = as.integer(c(1L)), sentence = as.character(c(\"sentence 1\")), stringsAsFactors = FALSE); tt$components <- list(list(list(name = \"t\", comp = \"=\", value = \"2.10\", df = \"(20)\", sentence_pos = 1L), list(name = \"p\", comp = \"=\", value = \".048\", df = NA_character_, sentence_pos = 2L), list(name = \"d\", comp = \"=\", value = \"0.45\", df = NA_character_, sentence_pos = 3L))); tt}), as.character(c(\"out.csv\")), include_tables = FALSE, min_components = 1L)"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "paper":
+      "kind": "tt"
+      "cols":
+        "test_no":
+        - 1
+        "text_id":
+        - 1
+        "sentence":
+        - "sentence 1"
+      "types":
+        "test_no": "int"
+        "text_id": "int"
+      "components":
+      - *id003
+    "output":
+      "kind": "literal"
+      "value":
+      - "out.csv"
+    "include_tables": false
+    "min_components": 1
 - "id": "match_reported_output.tt.empty_test_id"
   "r": "identity"
   "py": "tests.statout_match._review.match"
@@ -1417,7 +1891,7 @@
         "text_id": "int"
       "components":
       - *id003
-    "output": &id034
+    "output": &id042
       "kind": "df"
       "source_file": "e.omv"
       "cols":
@@ -1481,7 +1955,7 @@
           "value": "< .05"
           "df": "__NA__"
           "sentence_pos": 2
-    "output": *id034
+    "output": *id042
     "include_tables": false
     "min_components": 1
 - "id": "match_reported_output.eq.empty_test_id.censored_only"
@@ -1499,7 +1973,7 @@
       "kind": "eq"
       "texts":
       - "The test gave t < 3, p < .05."
-    "output": *id034
+    "output": *id042
     "include_tables": false
     "min_components": 1
 - "id": "match_reported_output.tt.inf_value"
@@ -1536,7 +2010,7 @@
           "value": ".01"
           "df": "__NA__"
           "sentence_pos": 2
-    "output": &id035
+    "output": &id043
       "kind": "df"
       "source_file": "i.R"
       "cols":
@@ -1571,7 +2045,7 @@
   "py_drop":
   - "x"
   "py_args":
-    "paper": &id036
+    "paper": &id044
       "kind": "tt"
       "cols":
         "test_no":
@@ -1594,7 +2068,7 @@
           "value": ".01"
           "df": "__NA__"
           "sentence_pos": 2
-    "output": *id035
+    "output": *id043
     "include_tables": false
     "min_components": 1
 - "id": "match_reported_output.tt.inf_value_other_family.summary"
@@ -1608,8 +2082,8 @@
   "py_drop":
   - "x"
   "py_args":
-    "paper": *id036
-    "output": *id035
+    "paper": *id044
+    "output": *id043
     "include_tables": false
     "min_components": 1
     "what": "summary"
@@ -1688,7 +2162,7 @@
   "py_drop":
   - "x"
   "py_args":
-    "paper": &id037
+    "paper": &id045
       "kind": "eq_paper"
       "texts":
       - "No statistics are reported in this sentence."
@@ -1709,7 +2183,7 @@
   "py_drop":
   - "x"
   "py_args":
-    "paper": *id037
+    "paper": *id045
     "output": *id002
     "include_tables": false
     "min_components": 1
@@ -1725,15 +2199,15 @@
   "py_drop":
   - "x"
   "py_args":
-    "paper": &id038
+    "paper": &id046
       "kind": "table_paper"
-      "texts": &id039
+      "texts": &id047
       - "Results are in Table 1."
       - "Table 1. Tests"
-      "section_ids": &id040
+      "section_ids": &id048
       - 1
       - 2
-      "tables": &id041
+      "tables": &id049
       - "table_id": 1
         "section_id": 2
         "contents":
@@ -1759,7 +2233,7 @@
   "py_drop":
   - "x"
   "py_args":
-    "paper": *id038
+    "paper": *id046
     "output": *id002
     "include_tables": true
     "min_components": 1
@@ -1775,11 +2249,11 @@
   "py_drop":
   - "x"
   "py_args":
-    "paper": &id042
+    "paper": &id050
       "kind": "table_paper"
-      "texts": *id039
-      "section_ids": *id040
-      "tables": *id041
+      "texts": *id047
+      "section_ids": *id048
+      "tables": *id049
       "drop":
       - "section_id"
     "output": *id002
@@ -1796,7 +2270,7 @@
   "py_drop":
   - "x"
   "py_args":
-    "paper": *id042
+    "paper": *id050
     "output": *id002
     "include_tables": true
     "min_components": 1
@@ -1812,11 +2286,11 @@
   "py_drop":
   - "x"
   "py_args":
-    "paper": &id043
+    "paper": &id051
       "kind": "table_paper"
-      "texts": *id039
-      "section_ids": *id040
-      "tables": *id041
+      "texts": *id047
+      "section_ids": *id048
+      "tables": *id049
       "drop":
       - "table_id"
     "output": *id002
@@ -1833,7 +2307,7 @@
   "py_drop":
   - "x"
   "py_args":
-    "paper": *id043
+    "paper": *id051
     "output": *id002
     "include_tables": true
     "min_components": 1
@@ -1849,11 +2323,11 @@
   "py_drop":
   - "x"
   "py_args":
-    "paper": &id044
+    "paper": &id052
       "kind": "table_paper"
-      "texts": *id039
-      "section_ids": *id040
-      "tables": *id041
+      "texts": *id047
+      "section_ids": *id048
+      "tables": *id049
       "drop":
       - "contents"
     "output": *id002
@@ -1870,7 +2344,7 @@
   "py_drop":
   - "x"
   "py_args":
-    "paper": *id044
+    "paper": *id052
     "output": *id002
     "include_tables": true
     "min_components": 1
@@ -1888,11 +2362,345 @@
   "py_args":
     "paper":
       "kind": "table_paper"
-      "texts": *id039
-      "section_ids": *id040
-      "tables": *id041
+      "texts": *id047
+      "section_ids": *id048
+      "tables": *id049
       "drop":
       - "section_id"
+- "id": "table_caption.no_text_col"
+  "r": "identity"
+  "py": "tests.statout_match._review.table_caption"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({p <- local({p <- metacheck::test_paper(as.character(c(\"Results are in Table 1.\", \"Table 1. Tests\"))); p$text$section_id <- as.numeric(as.character(c(1L, 2L))); p$table <- data.frame(table_id = c(1L), section_id = as.integer(c(2)), html = NA_character_, caption = NA_character_, page_number = NA_integer_); p$table$contents <- list(list(as.character(c(\"\", \"t\", \"df\", \"p\")), as.character(c(\"Score\", \"2.10\", \"20\", \".048\")))); p}); p$text$text <- NULL; lapply(c(2L, 9L, NA), function(s) metacheck:::.table_caption(p, s))})"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "paper":
+      "kind": "table_paper"
+      "texts": *id047
+      "section_ids": *id048
+      "tables": *id049
+      "drop_text":
+      - "text"
+    "section_ids":
+    - 2
+    - 9
+    - "__NA__"
+- "id": "match_reported_output.derived.demo"
+  "r": "identity"
+  "py": "tests.statout_match._review.match"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck::match_reported_output(metacheck::demopaper(), local({eq <- metacheck::extract_eq(metacheck::demopaper()); i <- seq_len(nrow(eq)); v <- eq$rhs; v[i %% 5L == 0L] <- paste0(v[i %% 5L == 0L], '7'); site <- paste0('site_', eq$text_id %/% 3L, '_', ifelse(!is.na(eq$lhs) & eq$lhs == 'df', 'residuals', eq$grp_id)); out <- data.frame(source_file = 'derived.R', test_id = site, analysis = paste0('an', eq$grp_id), row_label = paste0('variable', eq$text_id %% 4L), statistic = eq$lhs, value = v, model_ref = ifelse(i %% 2L == 1L, paste0('m', eq$text_id %/% 7L), NA_character_), stringsAsFactors = FALSE); out[i %% 4L != 0L, , drop = FALSE]}), include_tables = TRUE, min_components = 1L)"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "paper": &id053
+      "kind": "demo"
+    "output": &id054
+      "kind": "derived"
+      "paper": *id053
+    "include_tables": true
+    "min_components": 1
+- "id": "match_reported_output.derived.demo.summary"
+  "r": "identity"
+  "py": "tests.statout_match._review.match"
+  "args":
+    "x":
+      "$expr":
+        "r": "attr(metacheck::match_reported_output(metacheck::demopaper(), local({eq <- metacheck::extract_eq(metacheck::demopaper()); i <- seq_len(nrow(eq)); v <- eq$rhs; v[i %% 5L == 0L] <- paste0(v[i %% 5L == 0L], '7'); site <- paste0('site_', eq$text_id %/% 3L, '_', ifelse(!is.na(eq$lhs) & eq$lhs == 'df', 'residuals', eq$grp_id)); out <- data.frame(source_file = 'derived.R', test_id = site, analysis = paste0('an', eq$grp_id), row_label = paste0('variable', eq$text_id %% 4L), statistic = eq$lhs, value = v, model_ref = ifelse(i %% 2L == 1L, paste0('m', eq$text_id %/% 7L), NA_character_), stringsAsFactors = FALSE); out[i %% 4L != 0L, , drop = FALSE]}), include_tables = TRUE, min_components = 1L), \"summary\")"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "paper": *id053
+    "output": *id054
+    "include_tables": true
+    "min_components": 1
+    "what": "summary"
+- "id": "match_reported_output.derived.psychsci_1"
+  "r": "identity"
+  "py": "tests.statout_match._review.match"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck::match_reported_output(metacheck::read(\"upstream/metacheck/tests/testthat/fixtures/psychsci/0956797613520608.json\"), local({eq <- metacheck::extract_eq(metacheck::read(\"upstream/metacheck/tests/testthat/fixtures/psychsci/0956797613520608.json\")); i <- seq_len(nrow(eq)); v <- eq$rhs; v[i %% 5L == 0L] <- paste0(v[i %% 5L == 0L], '7'); site <- paste0('site_', eq$text_id %/% 3L, '_', ifelse(!is.na(eq$lhs) & eq$lhs == 'df', 'residuals', eq$grp_id)); out <- data.frame(source_file = 'derived.R', test_id = site, analysis = paste0('an', eq$grp_id), row_label = paste0('variable', eq$text_id %% 4L), statistic = eq$lhs, value = v, model_ref = ifelse(i %% 2L == 1L, paste0('m', eq$text_id %/% 7L), NA_character_), stringsAsFactors = FALSE); out[i %% 4L != 0L, , drop = FALSE]}), include_tables = TRUE, min_components = 1L)"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "paper": &id055
+      "kind": "read"
+      "path": "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797613520608.json"
+    "output": &id056
+      "kind": "derived"
+      "paper": *id055
+    "include_tables": true
+    "min_components": 1
+- "id": "match_reported_output.derived.psychsci_1.summary"
+  "r": "identity"
+  "py": "tests.statout_match._review.match"
+  "args":
+    "x":
+      "$expr":
+        "r": "attr(metacheck::match_reported_output(metacheck::read(\"upstream/metacheck/tests/testthat/fixtures/psychsci/0956797613520608.json\"), local({eq <- metacheck::extract_eq(metacheck::read(\"upstream/metacheck/tests/testthat/fixtures/psychsci/0956797613520608.json\")); i <- seq_len(nrow(eq)); v <- eq$rhs; v[i %% 5L == 0L] <- paste0(v[i %% 5L == 0L], '7'); site <- paste0('site_', eq$text_id %/% 3L, '_', ifelse(!is.na(eq$lhs) & eq$lhs == 'df', 'residuals', eq$grp_id)); out <- data.frame(source_file = 'derived.R', test_id = site, analysis = paste0('an', eq$grp_id), row_label = paste0('variable', eq$text_id %% 4L), statistic = eq$lhs, value = v, model_ref = ifelse(i %% 2L == 1L, paste0('m', eq$text_id %/% 7L), NA_character_), stringsAsFactors = FALSE); out[i %% 4L != 0L, , drop = FALSE]}), include_tables = TRUE, min_components = 1L), \"summary\")"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "paper": *id055
+    "output": *id056
+    "include_tables": true
+    "min_components": 1
+    "what": "summary"
+- "id": "match_reported_output.derived.psychsci_2"
+  "r": "identity"
+  "py": "tests.statout_match._review.match"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck::match_reported_output(metacheck::read(\"upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614522816.json\"), local({eq <- metacheck::extract_eq(metacheck::read(\"upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614522816.json\")); i <- seq_len(nrow(eq)); v <- eq$rhs; v[i %% 5L == 0L] <- paste0(v[i %% 5L == 0L], '7'); site <- paste0('site_', eq$text_id %/% 3L, '_', ifelse(!is.na(eq$lhs) & eq$lhs == 'df', 'residuals', eq$grp_id)); out <- data.frame(source_file = 'derived.R', test_id = site, analysis = paste0('an', eq$grp_id), row_label = paste0('variable', eq$text_id %% 4L), statistic = eq$lhs, value = v, model_ref = ifelse(i %% 2L == 1L, paste0('m', eq$text_id %/% 7L), NA_character_), stringsAsFactors = FALSE); out[i %% 4L != 0L, , drop = FALSE]}), include_tables = TRUE, min_components = 1L)"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "paper": &id057
+      "kind": "read"
+      "path": "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614522816.json"
+    "output": &id058
+      "kind": "derived"
+      "paper": *id057
+    "include_tables": true
+    "min_components": 1
+- "id": "match_reported_output.derived.psychsci_2.summary"
+  "r": "identity"
+  "py": "tests.statout_match._review.match"
+  "args":
+    "x":
+      "$expr":
+        "r": "attr(metacheck::match_reported_output(metacheck::read(\"upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614522816.json\"), local({eq <- metacheck::extract_eq(metacheck::read(\"upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614522816.json\")); i <- seq_len(nrow(eq)); v <- eq$rhs; v[i %% 5L == 0L] <- paste0(v[i %% 5L == 0L], '7'); site <- paste0('site_', eq$text_id %/% 3L, '_', ifelse(!is.na(eq$lhs) & eq$lhs == 'df', 'residuals', eq$grp_id)); out <- data.frame(source_file = 'derived.R', test_id = site, analysis = paste0('an', eq$grp_id), row_label = paste0('variable', eq$text_id %% 4L), statistic = eq$lhs, value = v, model_ref = ifelse(i %% 2L == 1L, paste0('m', eq$text_id %/% 7L), NA_character_), stringsAsFactors = FALSE); out[i %% 4L != 0L, , drop = FALSE]}), include_tables = TRUE, min_components = 1L), \"summary\")"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "paper": *id057
+    "output": *id058
+    "include_tables": true
+    "min_components": 1
+    "what": "summary"
+- "id": "match_reported_output.derived.psychsci_3"
+  "r": "identity"
+  "py": "tests.statout_match._review.match"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck::match_reported_output(metacheck::read(\"upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614527830.json\"), local({eq <- metacheck::extract_eq(metacheck::read(\"upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614527830.json\")); i <- seq_len(nrow(eq)); v <- eq$rhs; v[i %% 5L == 0L] <- paste0(v[i %% 5L == 0L], '7'); site <- paste0('site_', eq$text_id %/% 3L, '_', ifelse(!is.na(eq$lhs) & eq$lhs == 'df', 'residuals', eq$grp_id)); out <- data.frame(source_file = 'derived.R', test_id = site, analysis = paste0('an', eq$grp_id), row_label = paste0('variable', eq$text_id %% 4L), statistic = eq$lhs, value = v, model_ref = ifelse(i %% 2L == 1L, paste0('m', eq$text_id %/% 7L), NA_character_), stringsAsFactors = FALSE); out[i %% 4L != 0L, , drop = FALSE]}), include_tables = TRUE, min_components = 1L)"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "paper": &id059
+      "kind": "read"
+      "path": "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614527830.json"
+    "output": &id060
+      "kind": "derived"
+      "paper": *id059
+    "include_tables": true
+    "min_components": 1
+- "id": "match_reported_output.derived.psychsci_3.summary"
+  "r": "identity"
+  "py": "tests.statout_match._review.match"
+  "args":
+    "x":
+      "$expr":
+        "r": "attr(metacheck::match_reported_output(metacheck::read(\"upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614527830.json\"), local({eq <- metacheck::extract_eq(metacheck::read(\"upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614527830.json\")); i <- seq_len(nrow(eq)); v <- eq$rhs; v[i %% 5L == 0L] <- paste0(v[i %% 5L == 0L], '7'); site <- paste0('site_', eq$text_id %/% 3L, '_', ifelse(!is.na(eq$lhs) & eq$lhs == 'df', 'residuals', eq$grp_id)); out <- data.frame(source_file = 'derived.R', test_id = site, analysis = paste0('an', eq$grp_id), row_label = paste0('variable', eq$text_id %% 4L), statistic = eq$lhs, value = v, model_ref = ifelse(i %% 2L == 1L, paste0('m', eq$text_id %/% 7L), NA_character_), stringsAsFactors = FALSE); out[i %% 4L != 0L, , drop = FALSE]}), include_tables = TRUE, min_components = 1L), \"summary\")"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "paper": *id059
+    "output": *id060
+    "include_tables": true
+    "min_components": 1
+    "what": "summary"
+- "id": "match_reported_output.derived.problem_xml"
+  "r": "identity"
+  "py": "tests.statout_match._review.match"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck::match_reported_output(metacheck::read(\"upstream/metacheck/tests/testthat/fixtures/problems/0956797615569889.xml\"), local({eq <- metacheck::extract_eq(metacheck::read(\"upstream/metacheck/tests/testthat/fixtures/problems/0956797615569889.xml\")); i <- seq_len(nrow(eq)); v <- eq$rhs; v[i %% 5L == 0L] <- paste0(v[i %% 5L == 0L], '7'); site <- paste0('site_', eq$text_id %/% 3L, '_', ifelse(!is.na(eq$lhs) & eq$lhs == 'df', 'residuals', eq$grp_id)); out <- data.frame(source_file = 'derived.R', test_id = site, analysis = paste0('an', eq$grp_id), row_label = paste0('variable', eq$text_id %% 4L), statistic = eq$lhs, value = v, model_ref = ifelse(i %% 2L == 1L, paste0('m', eq$text_id %/% 7L), NA_character_), stringsAsFactors = FALSE); out[i %% 4L != 0L, , drop = FALSE]}), include_tables = TRUE, min_components = 1L)"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "paper": &id061
+      "kind": "read"
+      "path": "upstream/metacheck/tests/testthat/fixtures/problems/0956797615569889.xml"
+    "output": &id062
+      "kind": "derived"
+      "paper": *id061
+    "include_tables": true
+    "min_components": 1
+- "id": "match_reported_output.derived.problem_xml.summary"
+  "r": "identity"
+  "py": "tests.statout_match._review.match"
+  "args":
+    "x":
+      "$expr":
+        "r": "attr(metacheck::match_reported_output(metacheck::read(\"upstream/metacheck/tests/testthat/fixtures/problems/0956797615569889.xml\"), local({eq <- metacheck::extract_eq(metacheck::read(\"upstream/metacheck/tests/testthat/fixtures/problems/0956797615569889.xml\")); i <- seq_len(nrow(eq)); v <- eq$rhs; v[i %% 5L == 0L] <- paste0(v[i %% 5L == 0L], '7'); site <- paste0('site_', eq$text_id %/% 3L, '_', ifelse(!is.na(eq$lhs) & eq$lhs == 'df', 'residuals', eq$grp_id)); out <- data.frame(source_file = 'derived.R', test_id = site, analysis = paste0('an', eq$grp_id), row_label = paste0('variable', eq$text_id %% 4L), statistic = eq$lhs, value = v, model_ref = ifelse(i %% 2L == 1L, paste0('m', eq$text_id %/% 7L), NA_character_), stringsAsFactors = FALSE); out[i %% 4L != 0L, , drop = FALSE]}), include_tables = TRUE, min_components = 1L), \"summary\")"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "paper": *id061
+    "output": *id062
+    "include_tables": true
+    "min_components": 1
+    "what": "summary"
+- "id": "match_reported_output.derived.apa_xml"
+  "r": "identity"
+  "py": "tests.statout_match._review.match"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck::match_reported_output(metacheck::read(\"upstream/metacheck/tests/testthat/fixtures/formats/apa.xml\"), local({eq <- metacheck::extract_eq(metacheck::read(\"upstream/metacheck/tests/testthat/fixtures/formats/apa.xml\")); i <- seq_len(nrow(eq)); v <- eq$rhs; v[i %% 5L == 0L] <- paste0(v[i %% 5L == 0L], '7'); site <- paste0('site_', eq$text_id %/% 3L, '_', ifelse(!is.na(eq$lhs) & eq$lhs == 'df', 'residuals', eq$grp_id)); out <- data.frame(source_file = 'derived.R', test_id = site, analysis = paste0('an', eq$grp_id), row_label = paste0('variable', eq$text_id %% 4L), statistic = eq$lhs, value = v, model_ref = ifelse(i %% 2L == 1L, paste0('m', eq$text_id %/% 7L), NA_character_), stringsAsFactors = FALSE); out[i %% 4L != 0L, , drop = FALSE]}), include_tables = TRUE, min_components = 1L)"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "paper": &id063
+      "kind": "read"
+      "path": "upstream/metacheck/tests/testthat/fixtures/formats/apa.xml"
+    "output": &id064
+      "kind": "derived"
+      "paper": *id063
+    "include_tables": true
+    "min_components": 1
+- "id": "match_reported_output.derived.apa_xml.summary"
+  "r": "identity"
+  "py": "tests.statout_match._review.match"
+  "args":
+    "x":
+      "$expr":
+        "r": "attr(metacheck::match_reported_output(metacheck::read(\"upstream/metacheck/tests/testthat/fixtures/formats/apa.xml\"), local({eq <- metacheck::extract_eq(metacheck::read(\"upstream/metacheck/tests/testthat/fixtures/formats/apa.xml\")); i <- seq_len(nrow(eq)); v <- eq$rhs; v[i %% 5L == 0L] <- paste0(v[i %% 5L == 0L], '7'); site <- paste0('site_', eq$text_id %/% 3L, '_', ifelse(!is.na(eq$lhs) & eq$lhs == 'df', 'residuals', eq$grp_id)); out <- data.frame(source_file = 'derived.R', test_id = site, analysis = paste0('an', eq$grp_id), row_label = paste0('variable', eq$text_id %% 4L), statistic = eq$lhs, value = v, model_ref = ifelse(i %% 2L == 1L, paste0('m', eq$text_id %/% 7L), NA_character_), stringsAsFactors = FALSE); out[i %% 4L != 0L, , drop = FALSE]}), include_tables = TRUE, min_components = 1L), \"summary\")"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "paper": *id063
+    "output": *id064
+    "include_tables": true
+    "min_components": 1
+    "what": "summary"
+- "id": "match_reported_output.derived.published_tei"
+  "r": "identity"
+  "py": "tests.statout_match._review.match"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck::match_reported_output(metacheck::read(\"upstream/metacheck/tests/testthat/fixtures/formats/published.pdf.tei.xml\"), local({eq <- metacheck::extract_eq(metacheck::read(\"upstream/metacheck/tests/testthat/fixtures/formats/published.pdf.tei.xml\")); i <- seq_len(nrow(eq)); v <- eq$rhs; v[i %% 5L == 0L] <- paste0(v[i %% 5L == 0L], '7'); site <- paste0('site_', eq$text_id %/% 3L, '_', ifelse(!is.na(eq$lhs) & eq$lhs == 'df', 'residuals', eq$grp_id)); out <- data.frame(source_file = 'derived.R', test_id = site, analysis = paste0('an', eq$grp_id), row_label = paste0('variable', eq$text_id %% 4L), statistic = eq$lhs, value = v, model_ref = ifelse(i %% 2L == 1L, paste0('m', eq$text_id %/% 7L), NA_character_), stringsAsFactors = FALSE); out[i %% 4L != 0L, , drop = FALSE]}), include_tables = TRUE, min_components = 1L)"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "paper": &id065
+      "kind": "read"
+      "path": "upstream/metacheck/tests/testthat/fixtures/formats/published.pdf.tei.xml"
+    "output": &id066
+      "kind": "derived"
+      "paper": *id065
+    "include_tables": true
+    "min_components": 1
+- "id": "match_reported_output.derived.published_tei.summary"
+  "r": "identity"
+  "py": "tests.statout_match._review.match"
+  "args":
+    "x":
+      "$expr":
+        "r": "attr(metacheck::match_reported_output(metacheck::read(\"upstream/metacheck/tests/testthat/fixtures/formats/published.pdf.tei.xml\"), local({eq <- metacheck::extract_eq(metacheck::read(\"upstream/metacheck/tests/testthat/fixtures/formats/published.pdf.tei.xml\")); i <- seq_len(nrow(eq)); v <- eq$rhs; v[i %% 5L == 0L] <- paste0(v[i %% 5L == 0L], '7'); site <- paste0('site_', eq$text_id %/% 3L, '_', ifelse(!is.na(eq$lhs) & eq$lhs == 'df', 'residuals', eq$grp_id)); out <- data.frame(source_file = 'derived.R', test_id = site, analysis = paste0('an', eq$grp_id), row_label = paste0('variable', eq$text_id %% 4L), statistic = eq$lhs, value = v, model_ref = ifelse(i %% 2L == 1L, paste0('m', eq$text_id %/% 7L), NA_character_), stringsAsFactors = FALSE); out[i %% 4L != 0L, , drop = FALSE]}), include_tables = TRUE, min_components = 1L), \"summary\")"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "paper": *id065
+    "output": *id066
+    "include_tables": true
+    "min_components": 1
+    "what": "summary"
+- "id": "match_reported_output.derived.demo.min2"
+  "r": "identity"
+  "py": "tests.statout_match._review.match"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck::match_reported_output(metacheck::demopaper(), local({eq <- metacheck::extract_eq(metacheck::demopaper()); i <- seq_len(nrow(eq)); v <- eq$rhs; v[i %% 5L == 0L] <- paste0(v[i %% 5L == 0L], '7'); site <- paste0('site_', eq$text_id %/% 3L, '_', ifelse(!is.na(eq$lhs) & eq$lhs == 'df', 'residuals', eq$grp_id)); out <- data.frame(source_file = 'derived.R', test_id = site, analysis = paste0('an', eq$grp_id), row_label = paste0('variable', eq$text_id %% 4L), statistic = eq$lhs, value = v, model_ref = ifelse(i %% 2L == 1L, paste0('m', eq$text_id %/% 7L), NA_character_), stringsAsFactors = FALSE); out[i %% 4L != 0L, , drop = FALSE]}), include_tables = FALSE, min_components = 2L)"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "paper": *id053
+    "output": &id067
+      "kind": "derived"
+      "paper": *id053
+    "include_tables": false
+    "min_components": 2
+- "id": "match_reported_output.derived.demo.min2.summary"
+  "r": "identity"
+  "py": "tests.statout_match._review.match"
+  "args":
+    "x":
+      "$expr":
+        "r": "attr(metacheck::match_reported_output(metacheck::demopaper(), local({eq <- metacheck::extract_eq(metacheck::demopaper()); i <- seq_len(nrow(eq)); v <- eq$rhs; v[i %% 5L == 0L] <- paste0(v[i %% 5L == 0L], '7'); site <- paste0('site_', eq$text_id %/% 3L, '_', ifelse(!is.na(eq$lhs) & eq$lhs == 'df', 'residuals', eq$grp_id)); out <- data.frame(source_file = 'derived.R', test_id = site, analysis = paste0('an', eq$grp_id), row_label = paste0('variable', eq$text_id %% 4L), statistic = eq$lhs, value = v, model_ref = ifelse(i %% 2L == 1L, paste0('m', eq$text_id %/% 7L), NA_character_), stringsAsFactors = FALSE); out[i %% 4L != 0L, , drop = FALSE]}), include_tables = FALSE, min_components = 2L), \"summary\")"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "paper": *id053
+    "output": *id067
+    "include_tables": false
+    "min_components": 2
+    "what": "summary"
+- "id": "match_reported_output.derived.psychsci_2.eq"
+  "r": "identity"
+  "py": "tests.statout_match._review.match"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck::match_reported_output(metacheck::extract_eq(metacheck::read(\"upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614522816.json\")), local({eq <- metacheck::extract_eq(metacheck::read(\"upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614522816.json\")); i <- seq_len(nrow(eq)); v <- eq$rhs; v[i %% 5L == 0L] <- paste0(v[i %% 5L == 0L], '7'); site <- paste0('site_', eq$text_id %/% 3L, '_', ifelse(!is.na(eq$lhs) & eq$lhs == 'df', 'residuals', eq$grp_id)); out <- data.frame(source_file = 'derived.R', test_id = site, analysis = paste0('an', eq$grp_id), row_label = paste0('variable', eq$text_id %% 4L), statistic = eq$lhs, value = v, model_ref = ifelse(i %% 2L == 1L, paste0('m', eq$text_id %/% 7L), NA_character_), stringsAsFactors = FALSE); out[i %% 4L != 0L, , drop = FALSE]}), include_tables = FALSE, min_components = 1L)"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "paper": &id068
+      "kind": "eq_of"
+      "paper": *id057
+    "output": &id069
+      "kind": "derived"
+      "paper": *id057
+    "include_tables": false
+    "min_components": 1
+- "id": "match_reported_output.derived.psychsci_2.eq.summary"
+  "r": "identity"
+  "py": "tests.statout_match._review.match"
+  "args":
+    "x":
+      "$expr":
+        "r": "attr(metacheck::match_reported_output(metacheck::extract_eq(metacheck::read(\"upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614522816.json\")), local({eq <- metacheck::extract_eq(metacheck::read(\"upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614522816.json\")); i <- seq_len(nrow(eq)); v <- eq$rhs; v[i %% 5L == 0L] <- paste0(v[i %% 5L == 0L], '7'); site <- paste0('site_', eq$text_id %/% 3L, '_', ifelse(!is.na(eq$lhs) & eq$lhs == 'df', 'residuals', eq$grp_id)); out <- data.frame(source_file = 'derived.R', test_id = site, analysis = paste0('an', eq$grp_id), row_label = paste0('variable', eq$text_id %% 4L), statistic = eq$lhs, value = v, model_ref = ifelse(i %% 2L == 1L, paste0('m', eq$text_id %/% 7L), NA_character_), stringsAsFactors = FALSE); out[i %% 4L != 0L, , drop = FALSE]}), include_tables = FALSE, min_components = 1L), \"summary\")"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "paper": *id068
+    "output": *id069
+    "include_tables": false
+    "min_components": 1
+    "what": "summary"
 - "id": "format_values"
   "r": "identity"
   "py": "tests.statout_match._review.fmt_values"

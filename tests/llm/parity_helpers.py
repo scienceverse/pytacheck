@@ -21,7 +21,20 @@ from pytacheck.llm import types as T
 from pytacheck.llm._rds import RInt
 from pytacheck.llm.providers import LLMError
 
-__all__ = ["LLM_ON", "C", "K", "L", "LLMError", "P", "RInt", "T", "catch", "identity", "resp", "scoped"]
+__all__ = [
+    "LLM_ON",
+    "C",
+    "K",
+    "L",
+    "LLMError",
+    "P",
+    "RInt",
+    "T",
+    "catch",
+    "identity",
+    "resp",
+    "scoped",
+]
 
 #: llm_use(TRUE) with the response cache off.
 LLM_ON = {"metacheck.llm.use": True, "metacheck.llm.cache": False}
@@ -45,7 +58,7 @@ def catch(fn: Callable[[], Any]) -> dict[str, Any]:
         warnings.simplefilter("always")
         try:
             value = fn()
-        except Exception as e:  # noqa: BLE001 - R: error = function(e) conditionMessage(e)
+        except Exception as e:
             value = {"error": str(e.args[0]) if len(e.args) == 1 else str(e)}
     return {
         "value": value,

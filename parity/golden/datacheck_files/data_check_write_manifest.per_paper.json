@@ -30,7 +30,7 @@
           {
             "t": "chr",
             "v": [
-              "2026-09-24T19:40:38+0000"
+              "<volatile>"
             ]
           },
           {
@@ -61,125 +61,9 @@
             ]
           },
           {
-            "t": "list",
-            "names": [
-              "software",
-              "r_version",
-              "platform",
-              "prod_date",
-              "llm",
-              "ddi_mapping"
-            ],
+            "t": "chr",
             "v": [
-              {
-                "t": "list",
-                "names": [
-                  "name",
-                  "version"
-                ],
-                "v": [
-                  {
-                    "t": "chr",
-                    "v": [
-                      "metacheck"
-                    ]
-                  },
-                  {
-                    "t": "chr",
-                    "v": [
-                      "0.3.1"
-                    ]
-                  }
-                ]
-              },
-              {
-                "t": "chr",
-                "v": [
-                  "R version 4.5.3 (2026-03-11)"
-                ]
-              },
-              {
-                "t": "chr",
-                "v": [
-                  "x86_64-conda-linux-gnu"
-                ]
-              },
-              {
-                "t": "chr",
-                "v": [
-                  "2026-09-24T19:40:38+0000"
-                ]
-              },
-              {
-                "t": "list",
-                "names": [
-                  "used"
-                ],
-                "v": [
-                  {
-                    "t": "lgl",
-                    "v": [
-                      false
-                    ]
-                  }
-                ]
-              },
-              {
-                "t": "list",
-                "names": [
-                  "provenance.software",
-                  "provenance.prod_date",
-                  "files[].file_name",
-                  "files[].file_url",
-                  "files[].data_type",
-                  "files[].status",
-                  "files[].skip_reason"
-                ],
-                "v": [
-                  {
-                    "t": "chr",
-                    "v": [
-                      "docDscr/citation/prodStmt/software (@version)"
-                    ]
-                  },
-                  {
-                    "t": "chr",
-                    "v": [
-                      "docDscr/citation/prodStmt/prodDate"
-                    ]
-                  },
-                  {
-                    "t": "chr",
-                    "v": [
-                      "fileDscr/fileTxt/fileName"
-                    ]
-                  },
-                  {
-                    "t": "chr",
-                    "v": [
-                      "fileDscr/@URI"
-                    ]
-                  },
-                  {
-                    "t": "chr",
-                    "v": [
-                      "fileDscr/fileTxt/fileCont"
-                    ]
-                  },
-                  {
-                    "t": "chr",
-                    "v": [
-                      "fileDscr/fileTxt/ProcStat"
-                    ]
-                  },
-                  {
-                    "t": "chr",
-                    "v": [
-                      "fileDscr/notes"
-                    ]
-                  }
-                ]
-              }
+              "<volatile>"
             ]
           },
           {
@@ -329,7 +213,7 @@
           {
             "t": "chr",
             "v": [
-              "2026-09-24T19:40:38+0000"
+              "<volatile>"
             ]
           },
           {
@@ -360,125 +244,9 @@
             ]
           },
           {
-            "t": "list",
-            "names": [
-              "software",
-              "r_version",
-              "platform",
-              "prod_date",
-              "llm",
-              "ddi_mapping"
-            ],
+            "t": "chr",
             "v": [
-              {
-                "t": "list",
-                "names": [
-                  "name",
-                  "version"
-                ],
-                "v": [
-                  {
-                    "t": "chr",
-                    "v": [
-                      "metacheck"
-                    ]
-                  },
-                  {
-                    "t": "chr",
-                    "v": [
-                      "0.3.1"
-                    ]
-                  }
-                ]
-              },
-              {
-                "t": "chr",
-                "v": [
-                  "R version 4.5.3 (2026-03-11)"
-                ]
-              },
-              {
-                "t": "chr",
-                "v": [
-                  "x86_64-conda-linux-gnu"
-                ]
-              },
-              {
-                "t": "chr",
-                "v": [
-                  "2026-09-24T19:40:38+0000"
-                ]
-              },
-              {
-                "t": "list",
-                "names": [
-                  "used"
-                ],
-                "v": [
-                  {
-                    "t": "lgl",
-                    "v": [
-                      false
-                    ]
-                  }
-                ]
-              },
-              {
-                "t": "list",
-                "names": [
-                  "provenance.software",
-                  "provenance.prod_date",
-                  "files[].file_name",
-                  "files[].file_url",
-                  "files[].data_type",
-                  "files[].status",
-                  "files[].skip_reason"
-                ],
-                "v": [
-                  {
-                    "t": "chr",
-                    "v": [
-                      "docDscr/citation/prodStmt/software (@version)"
-                    ]
-                  },
-                  {
-                    "t": "chr",
-                    "v": [
-                      "docDscr/citation/prodStmt/prodDate"
-                    ]
-                  },
-                  {
-                    "t": "chr",
-                    "v": [
-                      "fileDscr/fileTxt/fileName"
-                    ]
-                  },
-                  {
-                    "t": "chr",
-                    "v": [
-                      "fileDscr/@URI"
-                    ]
-                  },
-                  {
-                    "t": "chr",
-                    "v": [
-                      "fileDscr/fileTxt/fileCont"
-                    ]
-                  },
-                  {
-                    "t": "chr",
-                    "v": [
-                      "fileDscr/fileTxt/ProcStat"
-                    ]
-                  },
-                  {
-                    "t": "chr",
-                    "v": [
-                      "fileDscr/notes"
-                    ]
-                  }
-                ]
-              }
+              "<volatile>"
             ]
           },
           {

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<eml:eml xmlns:eml="https://eml.ecoinformatics.org/eml-2.2.0" packageId="doi:10.18739/A2GT5FG86" system="https://arcticdata.io">
+  <dataset>
+    <title>Soil temperature, Utqiagvik, Alaska, 2015-2020</title>
+    <creator>
+      <individualName>
+        <givenName>Jane</givenName>
+        <givenName>Q</givenName>
+        <surName>Doe</surName>
+      </individualName>
+      <organizationName>Arctic Lab</organizationName>
+    </creator>
+    <creator>
+      <individualName><surName>Smith</surName></individualName>
+    </creator>
+    <creator>
+      <organizationName>National Snow and Ice Data Center</organizationName>
+    </creator>
+    <creator>
+      <individualName><givenName> </givenName><surName></surName></individualName>
+      <organizationName>Blank Org</organizationName>
+    </creator>
+    <creator>
+      <individualName><givenName></givenName><surName></surName></individualName>
+    </creator>
+    <pubDate>2021-03-04</pubDate>
+    <intellectualRights>
+      <para>This work is dedicated to the public domain under the Creative Commons Universal 1.0 Public Domain Dedication.</para>
+      <para>Cite the data.</para>
+    </intellectualRights>
+    <dataTable>
+      <entityName>soil_temp.csv</entityName>
+      <physical>
+        <objectName>soil_temp.csv</objectName>
+        <size unit="bytes">20480</size>
+        <distribution>
+          <online><url function="download">https://cn.dataone.org/cn/v2/resolve/urn%3Auuid%3Aabc-123</url></online>
+        </distribution>
+      </physical>
+    </dataTable>
+    <otherEntity>
+      <entityName>readme</entityName>
+      <physical>
+        <objectName>readme.txt</objectName>
+        <size>n/a</size>
+      </physical>
+    </otherEntity>
+    <otherEntity>
+      <entityName>nameless</entityName>
+      <physical>
+        <size> 1e3 </size>
+        <distribution><online><url>https://cn.dataone.org/cn/v2/resolve/</url></online></distribution>
+      </physical>
+    </otherEntity>
+  </dataset>
+</eml:eml>

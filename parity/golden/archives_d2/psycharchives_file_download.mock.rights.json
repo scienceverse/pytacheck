@@ -1,0 +1,17 @@
+{
+  "id": "psycharchives_file_download.mock.rights",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "restrictedAccess"
+    ],
+    "names": [
+      "https://hdl.handle.net/20.500.12034/17526"
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -1,0 +1,123 @@
+{
+  "id": "fsd_info.mock.vector",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 2,
+    "names": [
+      "fsd_url",
+      "FSD_title",
+      "FSD_doi",
+      "FSD_access",
+      "files"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "FSD2653",
+          "https://doi.org/10.60686/t-fsd1111"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Finnish National Election Study 2011",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "10.60686/t-fsd2653",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "The dataset is (B) available for research, teaching and study.",
+          null
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "df",
+            "nrow": 2,
+            "names": [
+              "name",
+              "format",
+              "cases",
+              "variables"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "daF2653_eng.sav",
+                  "daF2653_fin.por"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "SPSS",
+                  null
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  1298,
+                  12
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  312,
+                  null
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [
+              "name",
+              "format",
+              "cases",
+              "variables"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "int",
+                "v": []
+              },
+              {
+                "t": "int",
+                "v": []
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

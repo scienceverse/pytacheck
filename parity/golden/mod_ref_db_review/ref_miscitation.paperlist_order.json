@@ -1,0 +1,195 @@
+{
+  "id": "ref_miscitation.paperlist_order",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "ref_miscitation"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Miscitation"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "reference"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 7,
+        "names": [
+          "paper_id",
+          "bib_id",
+          "doi",
+          "citation",
+          "reftext",
+          "warning"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "b",
+              "C",
+              "C",
+              "a",
+              "a",
+              "b",
+              "_z"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "10.1000/b",
+              "10.1000/b",
+              "10.1000/b",
+              "10.1000/c",
+              "10.1000/a",
+              "10.1000/a",
+              "10.1000/a"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Body sentence 1 cites 1.",
+              "Body sentence 1 cites 0.",
+              "Body sentence 2 cites 0.",
+              "Body sentence 1 cites 0 and 1.",
+              "Body sentence 1 cites 0 and 1.",
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Ref B",
+              "Ref B",
+              "Ref B",
+              "Ref C",
+              "Ref A",
+              "Ref A",
+              "Ref A"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Warn B",
+              "Warn B",
+              "Warn B",
+              "Warn C",
+              "Warn A",
+              "Warn A",
+              "Warn A"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "**10.1000/b**\n\nRef B\n\nWarn B\n\n*3 Instances:*\n\n> Body sentence 1 cites 1.\n\n> Body sentence 1 cites 0.\n\n> Body sentence 2 cites 0.",
+          "**10.1000/c**\n\nRef C\n\nWarn C\n\n*1 Instance:*\n\n> Body sentence 1 cites 0 and 1.",
+          "**10.1000/a**\n\nRef A\n\nWarn A\n\n*3 Instances:*\n\n> Body sentence 1 cites 0 and 1.\n\n> NA\n\n> NA"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "yellow"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "We found 7 citations to papers that are commonly miscited."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 4,
+        "names": [
+          "paper_id",
+          "miscite_10.1000/b",
+          "miscite_10.1000/a",
+          "miscite_10.1000/c"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "b",
+              "C",
+              "a",
+              "_z"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1,
+              0,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              null,
+              1,
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              null,
+              null,
+              0,
+              null
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

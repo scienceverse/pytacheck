@@ -8,6 +8,5 @@
 "module:coi_check_oi" = "pytacheck.modules.coi_check_oi:coi_check_oi"
 # internal helper defined in inst/modules/coi_check.R
 rtransparent_coi = "pytacheck.modules.coi_check:rtransparent_coi"
-# base R agrep()/agrepl() (TRE approximate matching), only used by coi_check
-agrep = "pytacheck.modules.coi_check:agrep"
-agrepl = "pytacheck.modules.coi_check:agrepl"
+# (base R agrep()/agrepl(), used only by coi_check, are emulated by
+#  pytacheck.modules.coi_check:agrep / :agrepl)

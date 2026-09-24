@@ -1,0 +1,30 @@
+{
+ "data": {
+  "id": "blkss",
+  "type": "guids",
+  "attributes": {},
+  "relationships": {
+   "referent": {
+    "links": {
+     "related": {
+      "href": "https://api.osf.io/v2/registrations/blkss/",
+      "meta": {
+       "type": "registrations"
+      }
+     }
+    },
+    "data": {
+     "id": "blkss",
+     "type": "registrations"
+    }
+   }
+  },
+  "links": {
+   "self": "https://api.osf.io/v2/guids/blkss/",
+   "html": "https://osf.io/blkss/"
+  }
+ },
+ "meta": {
+  "version": "2.0"
+ }
+}

@@ -1,0 +1,62 @@
+{
+  "id": "review.read_head_typed.rt_nrows.csv",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "names",
+      "types",
+      "data"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "v"
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "character",
+              "character"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 11,
+        "names": [
+          "v"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "\"x\"y",
+              "r0",
+              "r1",
+              "r2",
+              "r3",
+              "r4",
+              "r5",
+              "r6",
+              "r7",
+              "r8",
+              "r9"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

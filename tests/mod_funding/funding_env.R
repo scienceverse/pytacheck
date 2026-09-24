@@ -50,3 +50,16 @@ fc_funding <- function(articles) {
   e <- fc_env()
   vapply(articles, function(a) e$rtransparent_funding(a), character(1), USE.NAMES = FALSE)
 }
+
+# a test paper whose sentences each have their own section (to set section types)
+fc_sectioned <- function(text, section_type) {
+  p <- test_paper(text)
+  n <- length(text)
+  p$text$section_id <- seq_len(n) - 1
+  sec <- p$section[rep(1, n), ]
+  sec$section_id <- seq_len(n) - 1
+  sec$header <- paste("Section", seq_len(n))
+  sec$section_type <- section_type
+  p$section <- sec
+  p
+}

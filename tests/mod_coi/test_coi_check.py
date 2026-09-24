@@ -169,7 +169,10 @@ def test_coi_does_not_mutate(module: str, demo: pc.Paper) -> None:
     ("sentences", "expected"),
     [
         (["There is a conflict between X and Y."], ""),
-        (["The researchers state no conflict of interest."], "The researchers state no conflict of interest."),
+        (
+            ["The researchers state no conflict of interest."],
+            "The researchers state no conflict of interest.",
+        ),
         # short heading: the next sentence (skipping an empty one) is appended
         (["Conflict of Interest", "", "None."], "Conflict of Interest None."),
         (
@@ -192,13 +195,20 @@ def test_coi_does_not_mutate(module: str, demo: pc.Paper) -> None:
             "The authors declare no competing interests.",
         ),
         (
-            ["No conflicts of interest. Also the note: The authors declare no conflict of interest"],
+            [
+                "No conflicts of interest. Also the note: The authors declare no conflict of interest"
+            ],
             "No conflicts of interest.",
         ),
         # agrep() is approximate: a misspelled "confict" is found, then dropped
         (["A confict of interest arises here"], ""),
         (
-            ["Conflict of interest:", "Author A has received fees.", "Author B holds shares.", "Disclosure: none."],
+            [
+                "Conflict of interest:",
+                "Author A has received fees.",
+                "Author B holds shares.",
+                "Disclosure: none.",
+            ],
             "Conflict of interest: Author A has received fees. Author B holds shares. Disclosure: none.",
         ),
     ],
@@ -228,7 +238,13 @@ def test_agrepl_matches_r() -> None:
     x = ["conflict", "onflict", "CONFLICT", "cOnflict", "Conflicts", "flict"]
     assert agrepl("Conflict", x) == [True, True, False, False, True, False]
     # fixed = TRUE: regex metacharacters are literal
-    x = ["no conflict", "no.{0,20}conflict", "no.{0,2}conflict", "no.{0,20}onflict", "No.{0,20}Conflict"]
+    x = [
+        "no conflict",
+        "no.{0,20}conflict",
+        "no.{0,2}conflict",
+        "no.{0,20}onflict",
+        "No.{0,20}Conflict",
+    ]
     assert agrepl("no.{0,20}conflict", x, ignore_case=True) == [False, True, True, True, True]
     x = ["interest.", "interest.{0,1}[.:;,]", "interest{0,1}[.:;,]", "interest.{0,1}[.:,]"]
     assert agrepl("interest.{0,1}[.:;,]", x, ignore_case=True) == [False, True, True, True]

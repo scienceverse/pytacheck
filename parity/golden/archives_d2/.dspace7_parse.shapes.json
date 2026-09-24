@@ -1,0 +1,67 @@
+{
+  "id": ".dspace7_parse.shapes",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 11,
+    "names": [
+      "host",
+      "uuid",
+      "handle"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "repository.gatech.edu",
+          "repository.gatech.edu",
+          null,
+          "www.research-collection.ethz.ch",
+          "open.uni-marburg.de",
+          "tam-datahub.online.uni-marburg.de",
+          "dl.gi.de",
+          null,
+          null,
+          null,
+          "dspace.ut.ee"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "bac086e5-c606-474b-af1e-4a6122694af5",
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "1853/67239",
+          null,
+          "20.500.11850/12345",
+          "1/2",
+          null,
+          null,
+          null,
+          null,
+          "123/456",
+          "10062/1.2.3"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

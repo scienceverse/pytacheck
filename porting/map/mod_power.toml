@@ -1,0 +1,12 @@
+# R source -> Python location for the power module (see docs/PORTING.md).
+[files]
+"inst/modules/power.R" = ["src/pytacheck/modules/power.py", "src/pytacheck/modules/_power.py"]
+
+[functions]
+"module:power" = "pytacheck.modules.power:power"
+# internal helpers defined in inst/modules/power.R
+".power_type_spec" = "pytacheck.modules._power:_power_type_spec"
+".power_llm_extract" = "pytacheck.modules._power:_power_llm_extract"
+# the (unused) `schema` string at the bottom of power.R; the fallback path
+# downloads the same schema from https://scienceverse.org/schema/power.json
+"schema" = "pytacheck.modules._power:SCHEMA"

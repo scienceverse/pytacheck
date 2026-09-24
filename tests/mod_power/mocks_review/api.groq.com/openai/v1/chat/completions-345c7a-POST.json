@@ -1,0 +1,22 @@
+{
+  "id": "chatcmpl-test",
+  "object": "chat.completion",
+  "created": 1760000000,
+  "model": "test-model",
+  "choices": [
+    {
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "{\"power_analyses\": [{\"text\": \"70 participants give 80% power for d = 0.6\", \"power_type\": \"sensitivity\", \"statistical_test\": \"one-sample t-test\", \"statistical_test_other\": null, \"sample_size\": 70, \"alpha_level\": 0.05, \"power\": 0.8, \"effect_size\": 0.6, \"effect_size_metric\": \"Cohen's d\", \"effect_size_metric_other\": null, \"software\": \"Superpower\", \"notes\": \"clear\"}]}"
+      },
+      "logprobs": null,
+      "finish_reason": "stop"
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 42,
+    "completion_tokens": 7,
+    "total_tokens": 49
+  }
+}

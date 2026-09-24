@@ -1,0 +1,39 @@
+{
+  "id": ".dataone_info.mock.unfound",
+  "ok": true,
+  "error": null,
+  "warnings": [
+    "doi:10.18739/MISSING could not be found on arcticdata.io"
+  ],
+  "value": {
+    "t": "df",
+    "nrow": 1,
+    "names": [
+      "dataone_host",
+      "dataone_pid",
+      "error"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "arcticdata.io"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "doi:10.18739/MISSING"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "unfound"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

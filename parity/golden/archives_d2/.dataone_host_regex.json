@@ -1,0 +1,14 @@
+{
+  "id": ".dataone_host_regex",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "arcticdata\\.io|knb\\.ecoinformatics\\.org|metacat\\.tfri\\.gov\\.tw|smithsonian\\.dataone\\.org|data\\.piscoweb\\.org"
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

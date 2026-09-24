@@ -177,6 +177,19 @@ net_case(
     f"{H}.L.llm([True, False], {NUM}, {GM_PY})",
 )
 
+for _i, _tx in enumerate(
+    (
+        ["unauthorized", "hello"],
+        ["unauthorized", "too long", "hello"],
+        ["too long", "hello", "unauthorized"],
+    )
+):
+    net_case(
+        f"llm.input.mixed_order_{_i + 1}",
+        f"llm(c({', '.join(repr(t) for t in _tx)}), 'Sys', {GM})",
+        f"{H}.L.llm({_tx!r}, 'Sys', {GM_PY})",
+    )
+
 # ---- llm(): structured input shapes -----------------------------------------------------
 net_case(
     "llm.structured.column_clash",
@@ -362,6 +375,99 @@ opt_case(
     f"{{**{H}.LLM_ON, 'metacheck.llm_max_calls': {H}.RInt(2)}}",
 )
 
+# ---- .llm_apply_reasoning(): `$` partial matching, `%||%` only for NULL -----------------
+expr_case(
+    "apply_reasoning.partial_think",
+    "withr::with_options(list(metacheck.llm_reasoning = NULL), "
+    "metacheck:::.llm_apply_reasoning(list(thinking = TRUE), 'ollama/qwen3:8b'))",
+    f"{H}.scoped(lambda: {H}.K._llm_apply_reasoning({{'thinking': True}}, 'ollama/qwen3:8b'), "
+    "{'metacheck.llm_reasoning': None})",
+)
+expr_case(
+    "apply_reasoning.empty_option",
+    "withr::with_options(list(metacheck.llm_reasoning = ''), "
+    "metacheck:::.llm_apply_reasoning(list(), 'groq/openai/gpt-oss-20b'))",
+    f"{H}.scoped(lambda: {H}.K._llm_apply_reasoning({{}}, 'groq/openai/gpt-oss-20b'), "
+    "{'metacheck.llm_reasoning': ''})",
+)
+
+# ---- provider params: the "Ignoring unsupported parameters" warning (cli text) -------------
+PP_R = (
+    "ellmer::params(temperature = 0, top_p = 0.5, top_k = 3, frequency_penalty = 1, "
+    "presence_penalty = 1, seed = 2, max_tokens = 10, log_probs = TRUE, stop_sequences = c('a', 'b'), "
+    "reasoning_effort = 'low', reasoning_tokens = 5)"
+)
+PP_PY = (
+    f"{H}.P.params(temperature=0.0, top_p=0.5, top_k=3, frequency_penalty=1.0, "
+    "presence_penalty=1.0, seed=2, max_tokens=10, log_probs=True, stop_sequences=['a', 'b'], "
+    "reasoning_effort='low', reasoning_tokens=5)"
+)
+for _m in ("groq/x", "anthropic/x", "openai/x", "mistral/x", "deepseek/x", "google_gemini/x"):
+    expr_case(
+        f"chat_params.{_m.split('/')[0]}",
+        f"withr::with_envvar({KEYS_R}, ellmer:::chat_params(ellmer::chat('{_m}')$get_provider(), {PP_R}))",
+        f"{H}.scoped(lambda: {H}.P.chat('{_m}').provider.chat_params({PP_PY}), {{}}, {KEYS_PY})",
+    )
+expr_case(
+    "chat_params.anthropic_three",
+    f"withr::with_envvar({KEYS_R}, ellmer:::chat_params(ellmer::chat('anthropic/x')$get_provider(), "
+    "ellmer::params(frequency_penalty = 1, presence_penalty = 1, log_probs = TRUE)))",
+    f"{H}.scoped(lambda: {H}.P.chat('anthropic/x').provider.chat_params({H}.P.params("
+    f"frequency_penalty=1.0, presence_penalty=1.0, log_probs=True)), {{}}, {KEYS_PY})",
+)
+
+# ---- ollama through ellmer (structured calls use the /v1 endpoint) -----------------------
+OL_R = "c(OLLAMA_BASE_URL = NA, OLLAMA_API_KEY = NA)"
+OL_PY = "{'OLLAMA_BASE_URL': None, 'OLLAMA_API_KEY': None}"
+for _id, _r, _py in (
+    ("missing_model", "ellmer::chat_ollama()", f"{H}.P.chat_ollama()"),
+    (
+        "not_installed",
+        "ellmer::chat_ollama(model = 'nope-model:latest-version-with-a-long-name')",
+        f"{H}.P.chat_ollama(model='nope-model:latest-version-with-a-long-name')",
+    ),
+    ("null_model", "ellmer::chat('ollama')", f"{H}.P.chat('ollama')"),
+):
+    expr_case(
+        f"chat_ollama.{_id}",
+        f"withr::with_envvar({OL_R}, {_r})",
+        f"{H}.scoped(lambda: {_py}, {{}}, {OL_PY})",
+        mock_dir="apis",
+    )
+net_case(
+    "llm.ollama.structured_no_model",
+    "llm('A', 'Sys', type = ellmer::type_object(n = ellmer::type_integer('num', required = FALSE)), model = 'ollama')",
+    f"{H}.L.llm('A', 'Sys', type={H}.T.type_object(n={H}.T.type_integer('num', required=False)), model='ollama')",
+    mock_dir="apis",
+)
+
+# ---- LM Studio and GitHub constructors ---------------------------------------------------
+LM_R = "c(LMSTUDIO_BASE_URL = NA, LMSTUDIO_API_KEY = NA)"
+LM_PY = "{'LMSTUDIO_BASE_URL': None, 'LMSTUDIO_API_KEY': None}"
+for _id, _r, _py in (
+    ("missing_model", "ellmer::chat_lmstudio()", f"{H}.P.chat_lmstudio()"),
+    (
+        "not_available",
+        "ellmer::chat_lmstudio(model = 'nope')",
+        f"{H}.P.chat_lmstudio(model='nope')",
+    ),
+    ("null_model", "ellmer::chat('lmstudio')", f"{H}.P.chat('lmstudio')"),
+):
+    expr_case(
+        f"chat_lmstudio.{_id}",
+        f"withr::with_envvar({LM_R}, {_r})",
+        f"{H}.scoped(lambda: {_py}, {{}}, {LM_PY})",
+        mock_dir=MOCK,
+    )
+expr_case("chat_github.defunct", "ellmer::chat_github()", f"{H}.P.chat_github()")
+opt_case(
+    "llm.github_rows",
+    "llm('hi', 'repeat this', model = 'github/gpt-4o')",
+    f"{H}.L.llm('hi', 'repeat this', model='github/gpt-4o')",
+    ON_R,
+    ON_PY,
+)
+
 # ---- helpers ----------------------------------------------------------------------------
 expr_case(
     "cache_key.null_params",
@@ -486,6 +592,97 @@ net_case(
     f"{H}.L.llm(['single full', 'single nulls', 'single tags'], 'Single', type={ST_PY}, {PM_PY})",
 )
 
+# ---- odd provider replies (tests/llm/mocks, written by make_review_mocks.py) -------------
+REPLIES = ["reply empty choices", "reply null content", "reply parts", "reply no choices"]
+net_case(
+    "reply.groq_plain",
+    f"llm(c({', '.join(repr(t) for t in REPLIES)}), 'Reply', {PM})",
+    f"{H}.L.llm({REPLIES!r}, 'Reply', {PM_PY})",
+)
+net_case(
+    "reply.groq_structured",
+    f"llm(c({', '.join(repr(t) for t in REPLIES)}), 'Reply', type = {ST_R}, {PM})",
+    f"{H}.L.llm({REPLIES!r}, 'Reply', type={ST_PY}, {PM_PY})",
+)
+GEM = ["gemini blocked", "gemini no candidates", "gemini two parts"]
+GMM = "model = 'google_gemini/gemini-2.5-flash'"
+GMM_PY = "model='google_gemini/gemini-2.5-flash'"
+net_case(
+    "reply.gemini_plain",
+    f"llm(c({', '.join(repr(t) for t in GEM)}), 'Reply', {GMM})",
+    f"{H}.L.llm({GEM!r}, 'Reply', {GMM_PY})",
+)
+net_case(
+    "reply.gemini_structured",
+    f"llm(c({', '.join(repr(t) for t in GEM)}), 'Reply', type = {ST_R}, {GMM})",
+    f"{H}.L.llm({GEM!r}, 'Reply', type={ST_PY}, {GMM_PY})",
+)
+
+# ---- model listings (ellmer::models_*()) against tests/llm/mocks ------------------------
+MKEYS_R = (
+    "c(OPENAI_API_KEY = 'test-key', ANTHROPIC_API_KEY = 'test-key', ANTHROPIC_BASE_URL = NA, "
+    "GEMINI_API_KEY = 'test-key', GOOGLE_API_KEY = NA, MISTRAL_API_KEY = 'test-key', "
+    "DEEPSEEK_API_KEY = 'test-key', PORTKEY_API_KEY = 'test-key', VLLM_API_KEY = 'test-key', "
+    "LMSTUDIO_API_KEY = NA)"
+)
+MKEYS_PY = (
+    "{'OPENAI_API_KEY': 'test-key', 'ANTHROPIC_API_KEY': 'test-key', 'ANTHROPIC_BASE_URL': None, "
+    "'GEMINI_API_KEY': 'test-key', 'GOOGLE_API_KEY': None, 'MISTRAL_API_KEY': 'test-key', "
+    "'DEEPSEEK_API_KEY': 'test-key', 'PORTKEY_API_KEY': 'test-key', 'VLLM_API_KEY': 'test-key', "
+    "'LMSTUDIO_API_KEY': None}"
+)
+for _fn, _arg_r, _arg_py in (
+    ("openai", "", ""),
+    ("anthropic", "", ""),
+    ("google_gemini", "", ""),
+    ("mistral", "", ""),
+    ("deepseek", "", ""),
+    ("portkey", "", ""),
+    ("lmstudio", "", ""),
+    ("vllm", "'https://vllm.test'", "'https://vllm.test'"),
+):
+    expr_case(
+        f"models.{_fn}",
+        f"withr::with_envvar({MKEYS_R}, ellmer::models_{_fn}({_arg_r}))",
+        f"{H}.scoped(lambda: {H}.P.models_{_fn}({_arg_py}), {{}}, {MKEYS_PY})",
+        mock_dir=MOCK,
+    )
+
+# ---- .unnest_result() of raw JSON (type_from_schema(): no conversion) -------------------
+RAW_JSON = {
+    "tags": '{"a": 1, "tags": ["x", "y"]}',
+    "tags_one": '{"a": 1, "tags": ["x"]}',
+    "tags_empty": '{"items": [{"a": 1, "tags": ["x", "y"]}, {"a": 2, "tags": []}]}',
+    "mixed_types": '{"items": [{"a": 1}, {"a": "x"}]}',
+    "scalar_items": '{"items": ["x", "y"]}',
+    "nested": '{"a": 1, "b": {"c": 2, "d": [1, 2]}}',
+    "nested_null": '{"a": 1, "b": {"c": null, "d": 2}}',
+    "nested_all_null": '{"a": {"c": null}}',
+    "numbers": '{"b": [1.5, true, "q\\"x", -2, 100000, 0.1]}',
+    "dup_names": '{"b": [1, 1]}',
+    "items_null_field": '{"items": [{"a": null, "b": [1]}, {"a": 2, "b": [2]}]}',
+    "top_two": '{"a": [1, 2], "b": "x"}',
+}
+for _k, _j in RAW_JSON.items():
+    expr_case(
+        f"unnest_raw.{_k}",
+        f"metacheck:::.unnest_result(jsonlite::parse_json({_j!r}))",
+        f"{H}.K._unnest_result({H}.K._as_rlists(__import__('pytacheck.llm._json', fromlist=['_']).parse_json({_j!r})))",
+    )
+FS_R = (
+    'ellmer::type_from_schema(\'{"type":"object","properties":{"a":{"type":"integer"},'
+    '"tags":{"type":"array","items":{"type":"string"}}},"required":["a","tags"]}\')'
+)
+FS_PY = (
+    f'{H}.T.type_from_schema(\'{{"type":"object","properties":{{"a":{{"type":"integer"}},'
+    '"tags":{"type":"array","items":{"type":"string"}}},"required":["a","tags"]}\')'
+)
+net_case(
+    "structured.from_schema",
+    f"llm(c('schema two', 'schema one'), 'Schema', type = {FS_R}, {PM})",
+    f"{H}.L.llm(['schema two', 'schema one'], 'Schema', type={FS_PY}, {PM_PY})",
+)
+
 # ---- llm.yaml cases that raise or warn: compare the texts too ----------------------------
 # (parity only checks that both sides raise, and never compares warnings)
 _MSG_IDS = [
@@ -500,7 +697,8 @@ _MSG_IDS = [
     "llm_timeout.error_negative", "llm_timeout.error_string", "llm_use.error",
     "llm.groq.error400_rows", "llm.groq.params", "llm.ollama.default_model",
 ]  # fmt: skip
-_base = {c["id"]: c for c in yaml.safe_load(open("parity/cases/llm.yaml", encoding="utf-8"))["cases"]}
+with open("parity/cases/llm.yaml", encoding="utf-8") as _fh:
+    _base = {c["id"]: c for c in yaml.safe_load(_fh)["cases"]}
 for _id in _MSG_IDS:
     _c = _base[_id]
     _e = _c["args"]["x"]["$expr"]

@@ -1,0 +1,115 @@
+{
+  "id": "funding_check_oi.single_json",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "funding_check_oi"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Funding Check (Overinclusive)"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "general"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 3,
+        "names": [
+          "paper_id",
+          "text"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "203020",
+              "203020",
+              "203020"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "This work has been funded by the U.K. Biotechnology and Biological Sciences Research Council (BBSRC) grant BB/J018929/1 awarded to N.J.V.R., G.A.R., and P.G.S. K.J. was supported by the BBSRC Doctoral Training Partnership (WestBio) Studentship.",
+              "P.G.S. received support from the Wellcome Trust (Senior Investigator Award, United Kingdom; 107802) and the Multidisciplinary University Research Initiative/Engineering and Physical Sciences Research Council (United States, United Kingdom; 172046-01).",
+              "Additional supporting information may be found online in the Supporting Information section at the end of this article."
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "The following funding statement was detected:",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(c(\"This work has been funded by the U.K. Biotechnology and Biological Sciences Research Council (BBSRC) grant BB/J018929/1 awarded to N.J.V.R., G.A.R., and P.G.S. K.J. was supported by the BBSRC Doctoral Training Partnership (WestBio) Studentship.\", \n\"P.G.S. received support from the Wellcome Trust (Senior Investigator Award, United Kingdom; 107802) and the Multidisciplinary University Research Initiative/Engineering and Physical Sciences Research Council (United States, United Kingdom; 172046-01).\", \n\"Additional supporting information may be found online in the Supporting Information section at the end of this article.\"\n)), names = \"\", class = \"data.frame\", row.names = c(NA, -3L))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 2, FALSE)\n```\n"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "green"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "A funding statement was detected."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "funding_found"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "203020"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true
+            ]
+          }
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

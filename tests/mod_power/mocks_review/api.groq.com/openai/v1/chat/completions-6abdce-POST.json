@@ -1,0 +1,22 @@
+{
+  "id": "chatcmpl-test",
+  "object": "chat.completion",
+  "created": 1760000000,
+  "model": "test-model",
+  "choices": [
+    {
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "```json\n[\n  {\n    \"text\": \"an a priori analysis (n = 60, 80% power, r = 0.6)\",\n    \"power_type\": \"apriori\",\n    \"statistical_test\": \"correlation\",\n    \"statistical_test_other\": null,\n    \"sample_size\": 60,\n    \"alpha_level\": null,\n    \"power\": 0.8,\n    \"effect_size\": 0.6,\n    \"effect_size_metric\": \"other\",\n    \"effect_size_metric_other\": \"Pearson's r\",\n    \"software\": \"null\"\n  },\n  {\n    \"text\": \"a sensitivity analysis (n = 60, alpha = .05, 90% power)\",\n    \"power_type\": \"sensitivity\",\n    \"statistical_test\": \"correlation\",\n    \"statistical_test_other\": null,\n    \"sample_size\": 60,\n    \"alpha_level\": 0.05,\n    \"power\": 0.9,\n    \"effect_size\": null,\n    \"effect_size_metric\": null,\n    \"effect_size_metric_other\": null,\n    \"software\": null\n  }\n]\n```"
+      },
+      "logprobs": null,
+      "finish_reason": "stop"
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 42,
+    "completion_tokens": 7,
+    "total_tokens": 49
+  }
+}

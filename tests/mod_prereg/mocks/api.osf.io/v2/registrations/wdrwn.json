@@ -1,0 +1,40 @@
+{
+ "data": {
+  "id": "wdrwn",
+  "type": "registrations",
+  "attributes": {
+   "title": "A withdrawn study",
+   "description": "",
+   "date_created": "2024-01-02T03:04:05.000001",
+   "date_modified": "2024-01-03T03:04:05.000001",
+   "date_registered": "2024-01-04T03:04:05.000001",
+   "embargo_end_date": null,
+   "withdrawn": true,
+   "registration_supplement": "Synthetic Template",
+   "ia_url": "https://archive.org/details/osf-registrations-wdrwn-v1",
+   "registration_responses": {
+    "300-5": "ignored"
+   }
+  },
+  "relationships": {
+   "registration_schema": {
+    "data": {
+     "id": "aaaaaaaaaaaaaaaaaaaaaaa1",
+     "type": "registration-schemas"
+    },
+    "links": {
+     "related": {
+      "href": "https://api.osf.io/v2/schemas/registrations/aaaaaaaaaaaaaaaaaaaaaaa1/",
+      "meta": {}
+     }
+    }
+   }
+  },
+  "links": {
+   "html": "https://osf.io/wdrwn/"
+  }
+ },
+ "meta": {
+  "version": "2.0"
+ }
+}

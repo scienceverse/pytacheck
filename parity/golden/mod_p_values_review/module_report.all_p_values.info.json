@@ -1,0 +1,14 @@
+{
+  "id": "module_report.all_p_values.info",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "### ℹ️ List All P-Values {#list-all-p-values .info}\n\nWe found 3 p-values\n\n<details><summary>View detailed feedback<\/summary><div>\n\n\n<R-CHUNK>\n\n\nThis will catch most comparators like =<>~≈≠≤≥≪≫ and most versions of scientific notation like 5.0 x 10^-2 or 5.0e-2. If you find any formats that are not correctly handled by this function, please contact debruine@gmail.com.\n\n<\/div><\/details>\n\n::: {.callout-note title=\"How It Works\" collapse=\"true\"}\n\nList all p-values in the text, returning the matched text (e.g., 'p = 0.04') and document location in a table.\n\nNote that this will not catch p-values reported like \"the p-value is 0.03\" because that results in a ton of false positives when papers discuss p-value thresholds. If you need to detect text like that, use `text_search()` function and a custom pattern like \"\\\\bp(-| )?values?\\\\s+.{1,20}\\\\s+[0-9\\\\.]+\"\n\nThis will catch most comparators like =<>~≈≠≤≥≪≫ and most versions of scientific notation like 5.0 x 10^-2 or 5.0e-2. If you find any formats that are not correctly handled by this function, please contact the author.\n\nThis module only checks p-values reported in the running text of the manuscript. It cannot (yet) process p-values reported only in tables.\n\nThis module was developed by Lisa DeBruine\n\n:::\n"
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -1,0 +1,95 @@
+{
+  "id": "power.review.fallback.complete.tables",
+  "ok": true,
+  "error": null,
+  "warnings": [
+    "Note (not fatal): 1 of 1 LLM extraction failed and was left blank; the other 0 succeeded and all checks continued.\nRow 1: reason\n  HTTP 400 Bad Request.\nℹ Failed to validate JSON. Please adjust your prompt. See 'failed_generation'\n  for more details.\n  Provider says: Failed to validate JSON. Please adjust your prompt. See 'failed_generation' for more details."
+  ],
+  "value": {
+    "t": "list",
+    "names": null,
+    "v": [
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "power_type",
+          "statistical_test",
+          "sample_size",
+          "alpha_level",
+          "power",
+          "effect_size",
+          "effect_size_metric",
+          "software"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "apriori"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "unpaired t-test"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              100
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0.05
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0.8
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0.5
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Cohen's d"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "G*Power"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "text"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "An <strong>a priori<\/strong> <strong>power<\/strong> analysis in G*<strong>Power<\/strong> showed that 50 participants per group give 80% <strong>power<\/strong> (alpha = .05) for d = 0.5 in an unpaired t-test."
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -1,0 +1,68 @@
+{
+ "data": {
+  "id": "bbbbbbbbbbbbbbbbbbbbbbb2",
+  "type": "registration-schemas",
+  "attributes": {
+   "name": "Synthetic Pages",
+   "schema_version": 2,
+   "schema": {
+    "name": "Synthetic Pages",
+    "pages": [
+     {
+      "id": "page1",
+      "questions": [
+       {
+        "qid": "q1",
+        "title": "Sample Size",
+        "type": "string"
+       },
+       {
+        "qid": "q2",
+        "title": "A very long title that is clearly a prompt rather than a label",
+        "type": "string"
+       },
+       {
+        "qid": "q3",
+        "title": "What is your main hypothesis?",
+        "type": "string"
+       },
+       {
+        "qid": "q4",
+        "type": "string"
+       },
+       {
+        "qid": "sample",
+        "title": "How many observations will be collected or what will determine sample size?"
+       },
+       {
+        "title": "No qid at all"
+       }
+      ]
+     },
+     {
+      "id": "page2",
+      "questions": [
+       {
+        "qid": "q6",
+        "title": "Analyses",
+        "type": "object"
+       },
+       {
+        "qid": "q7",
+        "title": "",
+        "type": "object"
+       },
+       {
+        "qid": "nested",
+        "title": "Matrix"
+       }
+      ]
+     },
+     {
+      "id": "page3"
+     }
+    ]
+   }
+  }
+ }
+}

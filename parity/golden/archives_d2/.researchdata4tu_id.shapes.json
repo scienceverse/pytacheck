@@ -1,0 +1,39 @@
+{
+  "id": ".researchdata4tu_id.shapes",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "16766929",
+      "16766929",
+      "7F866E02-EB39-4A2A-8F7D-2D053EE6CDE9",
+      "ce413614-1c82-4e81-90c0-323aa7d2fabd",
+      "7",
+      "7f866e02-eb39-4a2a-8f7d-2d053ee6cde9",
+      "16766929",
+      "16766929",
+      null,
+      null,
+      null,
+      "123"
+    ],
+    "names": [
+      "16766929",
+      "https://doi.org/10.4121/16766929.v1",
+      "10.4121/uuid:7F866E02-EB39-4A2A-8F7D-2D053EE6CDE9",
+      "https://doi.org/10.4121/ce413614-1c82-4e81-90c0-323aa7d2fabd",
+      "https://doi.org/10.4121/7f866e02-eb39-4a2a-8f7d-2d053ee6cde9",
+      "https://data.4tu.nl/datasets/7f866e02-eb39-4a2a-8f7d-2d053ee6cde9",
+      "https://data.4tu.nl/articles/dataset/Wind_tunnel/16766929/1",
+      "https://data.4tu.nl/articles/16766929",
+      "https://data.4tu.nl/articles/dataset/x",
+      "",
+      null,
+      " 123 "
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

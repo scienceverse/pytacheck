@@ -1,0 +1,93 @@
+{
+ "data": {
+  "id": "blkss",
+  "type": "registrations",
+  "attributes": {
+   "title": "Synthetic registration blkss",
+   "description": "",
+   "date_created": "2024-01-02T03:04:05.000001",
+   "date_modified": "2024-01-03T03:04:05.000001",
+   "date_registered": "2024-01-04T03:04:05.000001",
+   "embargo_end_date": null,
+   "withdrawn": false,
+   "registration_supplement": "Synthetic Template",
+   "ia_url": "https://archive.org/details/osf-registrations-blkss-v1",
+   "registration_responses": {
+    "300-1": "unlabelled input",
+    "300-3": "a title that must not replace the real one",
+    "300-5": "  H1: people like cake.  ",
+    "300-7": "RQ: why?",
+    "300-9": [
+     "Option A",
+     "Option B"
+    ],
+    "300-11": "We will collect 200 participants.",
+    "300-13": [
+     {
+      "file_id": "ida",
+      "file_name": "a.csv",
+      "file_urls": {
+       "html": "https://osf.io/h/a",
+       "download": "https://osf.io/d/a"
+      },
+      "file_hashes": {
+       "sha256": "shaa"
+      }
+     },
+     {
+      "file_id": "idb",
+      "file_name": "b.csv",
+      "file_urls": {
+       "html": "https://osf.io/h/b",
+       "download": "https://osf.io/d/b"
+      },
+      "file_hashes": {
+       "sha256": "shab"
+      }
+     }
+    ],
+    "300-15": "answer without a label",
+    "300-18": [
+     {
+      "name": "Ann",
+      "orcid": null
+     },
+     {
+      "name": "Bo",
+      "orcid": "0000-1"
+     }
+    ],
+    "300-20": [
+     1,
+     2.5,
+     true
+    ],
+    "21": 3000000000,
+    "300-23": "   ",
+    "300-25": "2020-01-01",
+    "300-99": "no such block",
+    "300-11b": "not a position"
+   }
+  },
+  "relationships": {
+   "registration_schema": {
+    "data": {
+     "id": "aaaaaaaaaaaaaaaaaaaaaaa1",
+     "type": "registration-schemas"
+    },
+    "links": {
+     "related": {
+      "href": "https://api.osf.io/v2/schemas/registrations/aaaaaaaaaaaaaaaaaaaaaaa1/",
+      "meta": {}
+     }
+    }
+   }
+  },
+  "links": {
+   "html": "https://osf.io/blkss/"
+  }
+ },
+ "meta": {
+  "version": "2.0"
+ }
+}

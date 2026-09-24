@@ -7,13 +7,13 @@
 - "id": "ref_accuracy.demo"
   "module": "ref_accuracy"
   "args":
-    "paper": &id001
+    "paper":
       "$paper": "demo"
 - "id": "ref_accuracy.psychsci"
   "module": "ref_accuracy"
   "args":
     "paper":
-      "$read": &id002
+      "$read":
       - "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797613520608.json"
       - "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614522816.json"
       - "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614527830.json"
@@ -22,14 +22,9 @@
   "module": "ref_accuracy"
   "args":
     "paper":
-      "$test_paper":
-        "text":
-        - "No references here."
-  "compare": &id003
-    "ignore":
-    - "paper_id"
-    - "table.paper_id"
-    - "summary_table.paper_id"
+      "$expr":
+        "r": "source(file.path(root, \"tests/mod_ref_accuracy/edits.R\")); ra_test_paper(\"No references here.\")"
+        "py": "__import__(\"tests.mod_ref_accuracy.edits\", fromlist=[\"x\"]).ra_test_paper(\"No references here.\")"
 - "id": "ref_accuracy.no_refs.empty_bib"
   "module": "ref_accuracy"
   "args":
@@ -183,7 +178,8 @@
 - "id": "ref_accuracy.title.similarity_strict"
   "module": "ref_accuracy"
   "args":
-    "paper": *id001
+    "paper":
+      "$paper": "demo"
     "title_similarity": !!float "0.9"
 - "id": "ref_accuracy.title.noise"
   "module": "ref_accuracy"
@@ -347,20 +343,24 @@
 - "id": "ref_consistency.demo"
   "module": "ref_consistency"
   "args":
-    "paper": *id001
+    "paper":
+      "$paper": "demo"
 - "id": "ref_consistency.psychsci"
   "module": "ref_consistency"
   "args":
     "paper":
-      "$read": *id002
+      "$read":
+      - "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797613520608.json"
+      - "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614522816.json"
+      - "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614527830.json"
+      - "upstream/metacheck/inst/demos/to_err_is_human.json"
 - "id": "ref_consistency.test_paper"
   "module": "ref_consistency"
   "args":
     "paper":
-      "$test_paper":
-        "text":
-        - "No references here."
-  "compare": *id003
+      "$expr":
+        "r": "source(file.path(root, \"tests/mod_ref_accuracy/edits.R\")); ra_test_paper(\"No references here.\")"
+        "py": "__import__(\"tests.mod_ref_accuracy.edits\", fromlist=[\"x\"]).ra_test_paper(\"No references here.\")"
 - "id": "ref_consistency.green"
   "module": "ref_consistency"
   "args":
@@ -396,6 +396,20 @@
       "$expr":
         "r": "source(file.path(root, \"tests/mod_ref_accuracy/edits.R\")); paperlist(demopaper(), ra_xrefs(c(0L, 1L, 3L, 4L, NA), c(\"(DeBruine 2025)\", \"(Eagly and Wood 1999)\", \"(Lakens 2018)\", \"(Smith 2021)\", \"(Nobody)\"), paper = ra_demo(paper_id = \"demo2\")), ra_demo(empty = c(\"bib\"), paper_id = \"demo3\"), ra_xrefs(c(0L, 1L, 3L, 4L), c(\"(DeBruine 2025)\", \"(Eagly and Wood 1999)\", \"(Lakens 2018)\", \"(Smith 2021)\"), paper = ra_demo(paper_id = \"demo4\")))"
         "py": "pc.PaperList([pc.demopaper(), __import__(\"tests.mod_ref_accuracy.edits\", fromlist=[\"x\"]).ra_xrefs([0, 1, 3, 4, None], ['(DeBruine 2025)', '(Eagly and Wood 1999)', '(Lakens 2018)', '(Smith 2021)', '(Nobody)'], paper=__import__(\"tests.mod_ref_accuracy.edits\", fromlist=[\"x\"]).ra_demo(paper_id='demo2')), __import__(\"tests.mod_ref_accuracy.edits\", fromlist=[\"x\"]).ra_demo(empty=['bib'], paper_id='demo3'), __import__(\"tests.mod_ref_accuracy.edits\", fromlist=[\"x\"]).ra_xrefs([0, 1, 3, 4], ['(DeBruine 2025)', '(Eagly and Wood 1999)', '(Lakens 2018)', '(Smith 2021)'], paper=__import__(\"tests.mod_ref_accuracy.edits\", fromlist=[\"x\"]).ra_demo(paper_id='demo4'))])"
+- "id": "ref_consistency.chained"
+  "module": "ref_consistency"
+  "args":
+    "paper":
+      "$expr":
+        "r": "module_run(demopaper(), \"ref_accuracy\")"
+        "py": "pc.module_run(pc.demopaper(), \"ref_accuracy\")"
+- "id": "ref_accuracy.chained"
+  "module": "ref_accuracy"
+  "args":
+    "paper":
+      "$expr":
+        "r": "module_run(demopaper(), \"ref_consistency\")"
+        "py": "pc.module_run(pc.demopaper(), \"ref_consistency\")"
 - "id": "ref_consistency.report_tables.demo"
   "r": "identity"
   "py": "copy.copy"

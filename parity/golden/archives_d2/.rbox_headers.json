@@ -1,0 +1,29 @@
+{
+  "id": ".rbox_headers",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "Accept",
+      "User-Agent"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36 scienceverse/metacheck"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -1,0 +1,45 @@
+{
+  "id": "models.portkey",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "value",
+      "warnings"
+    ],
+    "v": [
+      {
+        "t": "df",
+        "nrow": 2,
+        "names": [
+          "id",
+          "slug"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "gpt-4o",
+              "claude"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "openai-gpt-4o",
+              "anthropic-claude"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": []
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -1,0 +1,14 @@
+{
+  "id": "power.review.llm.max_calls",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "Running the module 'power' produced errors: This would make 2 calls to the LLM, but your maximum number of calls is set to 1. Set `llm_max_calls(2)` (or higher) to allow this call."
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

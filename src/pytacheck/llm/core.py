@@ -20,6 +20,7 @@ Providers are reached over :mod:`pytacheck.http` by
 
 from __future__ import annotations
 
+import itertools
 import math
 import os
 import sys
@@ -302,17 +303,17 @@ def _llm_apply_reasoning(
     is_qwen3 = "qwen3" in m
     is_mistral = bool(grepl("^mistral", [m])[0])
     is_ollama = bool(grepl("^ollama", [m])[0])
-    if is_mistral and args_out.get("reasoning_effort") is None:
+    if is_mistral and _r_dollar(args_out, "reasoning_effort") is None:
         args_out["reasoning_effort"] = "high" if effort == "high" else "none"
         return out
     if is_ollama and (is_qwen3 or "deepseek-r1" in m):
-        if effort in ("low", "none") and params_out.get("think") is None:
+        if effort in ("low", "none") and _r_dollar(params_out, "think") is None:
             params_out["think"] = False
         return out
-    if is_qwen3 and args_out.get("reasoning_effort") is None:
+    if is_qwen3 and _r_dollar(args_out, "reasoning_effort") is None:
         args_out["reasoning_effort"] = "none" if effort in ("low", "none") else "default"
         return out
-    if is_gpt_oss and args_out.get("reasoning_effort") is None:
+    if is_gpt_oss and _r_dollar(args_out, "reasoning_effort") is None:
         args_out["reasoning_effort"] = "low" if effort == "none" else effort
         return out
     return out
@@ -499,17 +500,90 @@ def _make_names(names: Sequence[str], unique: bool = True) -> list[str]:
     """R ``make.names(names, unique = TRUE)``."""
     out = []
     for n in names:
+        # "X" is prefixed when the *original* name does not start with a letter
+        # or a dot not followed by a digit; then invalid characters become "."
+        if not n or not (n[0].isalpha() or n[0] == ".") or (n[0] == "." and n[1:2].isdigit()):
+            n = "X" + n
         s = "".join(c if (c.isalnum() or c in "._") else "." for c in n)
-        if (
-            not s
-            or not (s[0].isalpha() or s[0] == ".")
-            or (s[0] == "." and len(s) > 1 and s[1].isdigit())
-        ):
-            s = "X" + s
         if s in _RESERVED:
             s += "."
         out.append(s)
     return _make_unique(out) if unique else out
+
+
+def _deparse_arg(v: Any) -> str:
+    """``deparse()`` of an unnamed ``data.frame()`` argument (its column name)."""
+    from pytacheck.llm._rds import RInt, RVec
+    from pytacheck.llm.types import _deparse
+
+    if isinstance(v, RVec):
+        return _deparse_vec(v)
+    if isinstance(v, list | tuple):
+        return _deparse_vec(RVec(_list_series_type(list(v)), list(v)))
+    if isinstance(v, RInt):
+        return f"{int(v)}L"
+    return _deparse(v)
+
+
+def _list_series_type(vals: list[Any]) -> str:
+    present = [v for v in vals if v is not None]
+    if all(isinstance(v, bool) for v in present):
+        return "lgl"
+    if all(isinstance(v, int) and not isinstance(v, bool) for v in present):
+        return "int"
+    if all(isinstance(v, int | float) and not isinstance(v, bool) for v in present):
+        return "dbl"
+    return "chr"
+
+
+_NA_DEPARSE = {"chr": "NA_character_", "int": "NA_integer_", "dbl": "NA_real_", "lgl": "NA"}
+_EMPTY_DEPARSE = {
+    "chr": "character(0)",
+    "int": "integer(0)",
+    "dbl": "numeric(0)",
+    "lgl": "logical(0)",
+}
+
+
+def _deparse_vec(v: Any) -> str:
+    """``deparse()`` of an atomic vector (factors as ``structure(...)``)."""
+    from pytacheck._r import as_character
+    from pytacheck.llm._rds import RVec
+    from pytacheck.llm.types import _encode_string
+
+    cls = v.attrs.get("class")
+    if isinstance(cls, RVec) and "factor" in cls.values:
+        levels = v.attrs.get("levels")
+        codes = _deparse_vec(RVec("int", list(v.values)))
+        levs = _deparse_vec(RVec("chr", list(levels.values) if isinstance(levels, RVec) else []))
+        return f'structure({codes}, levels = {levs}, class = "factor")'
+    vals = list(v.values)
+    if not vals:
+        return _EMPTY_DEPARSE.get(v.type, "NULL")
+    if len(vals) == 1 and vals[0] is None:
+        return _NA_DEPARSE.get(v.type, "NA")
+
+    def one(x: Any) -> str:
+        if x is None:
+            return "NA"
+        if v.type == "chr":
+            return _encode_string(str(x))
+        if v.type == "lgl":
+            return "TRUE" if x else "FALSE"
+        if v.type == "int":
+            return f"{int(x)}L"
+        return as_character(float(x)) or "NA"
+
+    if (
+        v.type == "int"
+        and len(vals) > 1
+        and None not in vals
+        and all(b - a == 1 for a, b in itertools.pairwise(vals))
+    ):
+        return f"{vals[0]}:{vals[-1]}"
+    if len(vals) == 1:
+        return one(vals[0])
+    return "c(" + ", ".join(one(x) for x in vals) + ")"
 
 
 def _make_unique(names: Sequence[str], sep: str = ".") -> list[str]:
@@ -648,39 +722,41 @@ def _as_data_frame(x: Any, optional: bool = False) -> pd.DataFrame:
     cols: list[pd.Series] = []
     nrows: list[int] = []
     groups: list[tuple[int, int]] = []  # column span of each argument
-    for idx, (name, v) in enumerate(_list_items(x)):
-        if v is None:
-            continue
+    for name, v in _list_items(x):
         start = len(cols)
-        if _is_df(v) or isinstance(v, dict) or (isinstance(v, RList) and not _is_df(v)):
+        if v is None:  # a NULL argument: no columns, but 0 rows
+            nrows.append(0)
+            groups.append((start, start))
+            continue
+        if (
+            _is_df(v)
+            or isinstance(v, dict)
+            or (isinstance(v, RList) and not _is_df(v))
+            or (isinstance(v, list | tuple) and not all(_is_scalar(e) for e in v))
+        ):
+            # a list/data frame argument: its columns (unnamed elements are
+            # named by deparse()), prefixed with the argument's name when it
+            # has more than one
             sub = _df_to_frame(v) if _is_df(v) else _as_data_frame(v, optional=True)
             inner = [str(c) for c in sub.columns]
             if len(inner) > 1:
-                labels = inner if name is None else [f"{name}.{c}" for c in inner]
-            elif len(inner) == 1:
-                labels = inner
+                labels = inner if not name else [f"{name}.{c}" for c in inner]
             else:
-                labels = []
-            for c, lab in zip(sub.columns, labels, strict=True):
-                cols.append(sub[c].reset_index(drop=True))
+                labels = inner
+            for j, lab in enumerate(labels):  # by position: names may repeat
+                cols.append(sub.iloc[:, j].reset_index(drop=True))
                 names.append(lab)
             nrows.append(len(sub))
-        elif isinstance(v, list | tuple) and all(_is_scalar(e) for e in v):
-            # a Python list of scalars is an atomic vector (as jsonlite/yaml simplify)
-            s = _list_series(list(v))
-            cols.append(s)
-            names.append(name if name else f"V{idx + 1}")
-            nrows.append(len(s))
-        elif isinstance(v, list | tuple):
-            sub = _as_data_frame(list(v), optional=True)
-            for j, c in enumerate(sub.columns):
-                cols.append(sub[c].reset_index(drop=True))
-                names.append(f"{name}.{j + 1}" if name else f"V{len(names) + 1}")
-            nrows.append(len(sub))
         else:
-            s = _vec_series(v) if isinstance(v, RVec | pd.Series) else _scalar_series(v)
+            if isinstance(v, list | tuple):
+                # a Python list of scalars is an atomic vector (as jsonlite/yaml simplify)
+                s = _list_series(list(v))
+            elif isinstance(v, RVec | pd.Series):
+                s = _vec_series(v)
+            else:
+                s = _scalar_series(v)
             cols.append(s)
-            names.append(name if name else f"V{idx + 1}")
+            names.append(name if name else _deparse_arg(v))
             nrows.append(len(s))
         groups.append((start, len(cols)))
     if not cols and not nrows:
@@ -862,6 +938,24 @@ def _unnest_result(result: Any) -> pd.DataFrame:
     elif result is None:
         raise ValueError("argument is of length zero")
     return _as_data_frame(result)
+
+
+def _as_rlists(x: Any) -> Any:
+    """A structured result with its Python lists as R lists.
+
+    ellmer's results hold atomic vectors as :class:`RVec`; every Python list
+    in them (a raw JSON array, an array of arrays) is an R ``list()``, which
+    ``as.data.frame()`` spreads over columns rather than rows.
+    """
+    from pytacheck.llm._rds import RList
+
+    if isinstance(x, dict):
+        return {k: _as_rlists(v) for k, v in x.items()}
+    if isinstance(x, list | tuple):
+        return RList([_as_rlists(v) for v in x])
+    if isinstance(x, RList) and not _is_df(x):
+        return RList([_as_rlists(v) for v in x.values], x.attrs)
+    return x
 
 
 def _null_to_na(x: Any) -> Any:
@@ -1064,7 +1158,8 @@ def _llm_model_list_groq() -> pd.DataFrame:
         [
             None
             if v is None or v is pd.NA
-            else dt.datetime.fromtimestamp(float(v), tz=dt.UTC).date()
+            # as.POSIXct(created) |> format("%Y-%m-%d"): the date in the local time zone
+            else dt.datetime.fromtimestamp(float(v)).date()
             for v in created
         ],
         dtype=object,
@@ -1162,8 +1257,8 @@ def _text_frame(text: Any, text_col: str) -> pd.DataFrame:
         if kind in ("chr", "fct"):
             return pd.DataFrame({text_col: s if kind == "fct" else s.astype("string")})
         vals = s.tolist()
-    elif isinstance(text, str | bytes) or not isinstance(text, Iterable) or isinstance(
-        text, Mapping
+    elif (
+        isinstance(text, str | bytes) or not isinstance(text, Iterable) or isinstance(text, Mapping)
     ):
         vals = [text]
     else:
@@ -1288,9 +1383,10 @@ def llm(
         )
     assert unique_text is not None
 
-    if params_list.get("temperature") is None:
+    # `params_list$x` partially matches a longer name, as R's `$` does
+    if _r_dollar(params_list, "temperature") is None:
         params_list["temperature"] = 0.0
-    if params_list.get("max_tokens") is None:
+    if _r_dollar(params_list, "max_tokens") is None:
         mt = llm_max_tokens()
         params_list["max_tokens"] = mt if mt is not None else 4096.0
 
@@ -1310,7 +1406,7 @@ def llm(
     ollama_model: str | None = None
     ollama_options: dict[str, Any] = {}
     if model.startswith("ollama"):
-        use_ollama_native = params_list.get("think") is not True and not structured
+        use_ollama_native = _r_dollar(params_list, "think") is not True and not structured
         if use_ollama_native:
             ollama_options = {k: v for k, v in params_list.items() if k != "think"}
         ollama_base_url = os.environ.get("OLLAMA_BASE_URL", "http://localhost:11434")
@@ -1407,7 +1503,7 @@ def llm(
                         raise
                     with _capture_messages():
                         chat_obj = make_chat()
-            df = _unnest_result(result)
+            df = _unnest_result(_as_rlists(result))
             if len(df) > 0:
                 df[".join_key."] = pd.Series([ut] * len(df), dtype="string")
             thinking = _llm_extract_thinking(chat_obj) if capture_reasoning else None

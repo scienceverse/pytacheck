@@ -1,0 +1,35 @@
+{
+  "models": [
+    {
+      "name": "models/gemini-2.5-flash-lite",
+      "supportedGenerationMethods": [
+        "generateContent",
+        "countTokens"
+      ]
+    },
+    {
+      "name": "models/embedding-001",
+      "supportedGenerationMethods": [
+        "embedContent"
+      ]
+    },
+    {
+      "name": "models/gemini-2.5-flash",
+      "supportedGenerationMethods": [
+        "generateContent"
+      ]
+    },
+    {
+      "name": "models/Gemma-3-1b-it",
+      "supportedGenerationMethods": [
+        "generateContent"
+      ]
+    },
+    {
+      "name": "models/gemini-2.5-flash-image",
+      "supportedGenerationMethods": [
+        "generateContent"
+      ]
+    }
+  ]
+}

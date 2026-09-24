@@ -85,8 +85,22 @@ def _manifest_files(**cols: Any) -> pd.DataFrame:
     return pd.DataFrame(cols)
 
 
+def _stable(doc: Any) -> Any:
+    """Blank the run-specific ``generated`` / ``provenance`` fields (both sides)."""
+    if isinstance(doc, list):
+        return [_stable(d) for d in doc]
+    doc = dict(doc)
+    doc["generated"] = "<volatile>"
+    doc["provenance"] = "<volatile>"
+    return doc
+
+
 def write_manifest_json(scenario: str) -> Any:
     """Run .data_check_write_manifest() for a scenario and read the JSON back."""
+    return _stable(_write_manifest_json(scenario))
+
+
+def _write_manifest_json(scenario: str) -> Any:
     real = str(ROOT / DATA / "rwrite.csv")
     with tempfile.TemporaryDirectory() as tmp:
         if scenario == "split":

@@ -27,7 +27,6 @@ two R behaviours that pytacheck's results depend on:
 
 from __future__ import annotations
 
-import json
 import math
 import unicodedata
 from collections.abc import Mapping, Sequence
@@ -549,7 +548,8 @@ def type_as_json(type: Type, provider: str = "generic") -> Any:
         if t.description is not None:
             out_g["description"] = t.description
         out_g["properties"] = {n: type_as_json(p, provider) for n, p in t.properties.items()}
-        out_g["required"] = required
+        if required:  # compact() drops an empty `required`
+            out_g["required"] = required
         return out_g
     if provider == "ollama":
         if t.additional_properties:
@@ -564,9 +564,8 @@ def type_as_json(type: Type, provider: str = "generic") -> Any:
     return {
         "type": "object",
         "description": t.description or "",
-        "properties": {n: type_as_json(p, provider) for n, p in t.properties.items()}
-        if t.properties
-        else [],
+        # names(properties) <- names: an empty named list is `{}`
+        "properties": {n: type_as_json(p, provider) for n, p in t.properties.items()},
         "required": required,
         "additionalProperties": t.additional_properties,
     }
@@ -684,7 +683,9 @@ def _deparse(v: Any) -> str:
     if isinstance(v, str):
         return _encode_string(v)
     if isinstance(v, dict):
-        return "list(" + ", ".join(f"{_deparse_name(k)} = {_deparse(x)}" for k, x in v.items()) + ")"
+        return (
+            "list(" + ", ".join(f"{_deparse_name(k)} = {_deparse(x)}" for k, x in v.items()) + ")"
+        )
     if isinstance(v, list | tuple):
         return "list(" + ", ".join(_deparse(x) for x in v) + ")"
     return str(v)
@@ -719,7 +720,9 @@ def _subscript(y: Any, name: str) -> Any:
         return None
     if isinstance(y, dict):
         return y.get(name)
-    raise ValueError("subscript out of bounds")
+    if isinstance(y, list | tuple):  # an unnamed list: no such element
+        return None
+    raise ValueError("subscript out of bounds")  # an atomic vector
 
 
 def _factor(labels: list[str | None], levels: list[str | None]) -> RVec:
@@ -761,12 +764,12 @@ def convert_from_type(x: Any, type: Type) -> Any:
             return _factor([_as_character_elem(v) for v in seq], items.values)
         if isinstance(items, TypeObject):
             if items.additional_properties:
+                # y[union(names(properties), names(y))]
                 out_ap = []
                 for y in seq:
-                    if not isinstance(y, dict):
-                        raise ValueError("subscript out of bounds")
-                    keys = list(dict.fromkeys([*items.properties, *y]))
-                    out_ap.append({k: y.get(k) for k in keys})
+                    src = y if isinstance(y, dict) else {}
+                    keys = list(dict.fromkeys([*items.properties, *src]))
+                    out_ap.append({k: src.get(k) for k in keys})
                 return out_ap
             cols = {
                 name: convert_from_type([_subscript(y, name) for y in seq], TypeArray(prop))
@@ -775,12 +778,12 @@ def convert_from_type(x: Any, type: Type) -> Any:
             return _tibble(cols, len(seq) if cols else 0)
         return x
     if isinstance(t, TypeObject):
-        if x is not None and not isinstance(x, dict):
-            raise ValueError("subscript out of bounds")  # x[[name]] on an array or scalar
-        src = x or {}
-        out = {name: convert_from_type(src.get(name), prop) for name, prop in t.properties.items()}
-        if t.additional_properties:
-            out.update({k: v for k, v in src.items() if k not in t.properties})
+        out = {
+            name: convert_from_type(_subscript(x, name), prop)
+            for name, prop in t.properties.items()
+        }
+        if t.additional_properties and isinstance(x, dict):
+            out.update({k: v for k, v in x.items() if k not in t.properties})
         return out
     if isinstance(t, TypeBasic):
         if x is None:

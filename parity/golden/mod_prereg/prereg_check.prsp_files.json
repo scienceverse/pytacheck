@@ -1,0 +1,360 @@
+{
+  "id": "prereg_check.prsp_files",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "prereg_check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Preregistration Check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "method"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "template_name",
+          "title",
+          "id",
+          "link",
+          "date_created",
+          "date_modified",
+          "date_registered",
+          "embargo_end_date",
+          "ia_url",
+          "research_questions",
+          "hypotheses_interactions",
+          "manipulation_checks",
+          "theoretical_rationale",
+          "design_independent_variables",
+          "design_dependent_variables",
+          "design_covariates_moderators",
+          "data_exclusion_criteria",
+          "data_collection_procedures",
+          "sample_size",
+          "stopping_rule",
+          "outliers_and_exclusions",
+          "fail_safe_exclusion_levels",
+          "indices",
+          "statistical_tests",
+          "rationale_covariate",
+          "variables_roles_in_analyses",
+          "inference_criteria",
+          "multiple_testing_correction",
+          "missing_data_handling",
+          "reliability_criteria",
+          "transformations",
+          "assumptions_and_contingencies",
+          "data_collection_started",
+          "data_looked",
+          "project_dates_start_end",
+          "additional_comments",
+          "paper_id"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Pre-Registration in Social Psychology (van 't Veer & Giner-Sorolla, 2016): Pre-Registration"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Time's up? Time spent using digital technology and adolescent well-being"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "wrh4x"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://osf.io/wrh4x"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2018-05-08T21:30:06.047337"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2019-04-30T16:04:52.794657"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2018-05-08T21:30:06.030818"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2020-05-01T00:00:00Z"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://archive.org/details/osf-registrations-wrh4x-v1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "H1: Higher self-reported technology use correlates with lower observed levels of adolescent well-being indicators\n\nH2: For those adolescents reporting technology use in their time use diaries, total time spent using technology per day correlates with lower observed levels of adolescent well-being indicators\n\nH3: Technology use 30 minutes before bedtime on a weekday correlates with lower observed levels of adolescent well-being\n\nH4: Technology use 1 hour before bedtime on a weekday correlates with lower observed levels of adolescent well-being\n\nH5: Models without controls (as put forth below) will have significantly smaller effects than models with controls\n"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "We are not planning to test any interactions. "
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "As this study examines a large-scale epidemiological dataset, we are not manipulating any variables."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "This research aims to investigate the effect of technology use on adolescent well-being. Previous research has relied on Likert scale self-report measures to enumerate adolescents’ technology use. We will complement and extend this research by examining both adolescent self-report technology use using Likert scales and by completing time use diaries. These time use diaries allow for a more detailed investigation of the technology-wellbeing relationship, as we examine not only the total time spent using technology but also the timings of this use.  Not Applicable"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "We want to note that our study is correlational and therefore does not have strict independent/dependent variables. Our explanatory variables, however, concern an adolescent’s technology use. We use 4 different measurements. \n\n1. Self-report technology use: four eight-point Likert scale questions about hours per weekday spent “watching television programmes or films”, spent “playing electronic games on a computer of games system”. “spent using the internet” in a home setting or spent “on social networking or messaging sites or apps on the internet” (1= none, 8 = 7 hours or more). We take the mean of these measures. \n\nWe also use measures that are calculated using data provided by a child using a time use diary. Each child is randomly assigned a weekend day and weekday to complete a time use diary on paper, on the computer or on their phone. They fill out how much time they spend each day doing a variety of activities, in 10 minute slots. We sum the time they report spending with technology:\n - Answering emails, instant messaging and texting\n - Browsing and updating social networking sites (e.g. Twitter, Facebook, BBM, Snapchat)\n - General internet browsing, programming (not time on social networking sites) \n - Playing electronic games and apps\n - Watching TV, DVDs and downloaded videos\n\nDue to an anticipated negative skew of time use distributions we will create two variables that reflect technology use. A dichotomous variable of whether the child reported any technology use that day or not, and a continuous variable which codes all children who did not use any technology at all that day as N/A, while leaving the others as continuous measures of the self-reported time using technology. The dichotomous variable is not applicable to any of our hypotheses, but we will include it in our general specification curve analyses (see later section).\n \nWe also create 2 dichotomous variables: whether or not the adolescent reported using technology 30 minutes or 1 hour before their reported bedtime. The bedtime is inferred as the time the adolescent reports their activity as ‘sleep’ in the evening of their time use diary completion day. Therefore, our three variables for technology use included in our hypotheses are: \n\n2. Time use survey technology use (continuous)\n3. Time use survey technology use 30 minutes before bedtime \n4. Time use survey technology use 1 hour before bedtime"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Two types of well-being measures were included in the MCS dataset for each adolescent. There are indicators completed by cohort members, and others completed by their primary caretakers. We will examine a subset of these measures to allow for comparisons between datasets (we are also analysing the Growing up in Ireland and the Panel Study of Income Dynamics US; we do not pre-register these analyses as the datasets are already openly available). \n\n1. Self-esteem: Adolescents complete 5 items from an abbreviated Rosenberg self-esteem scale: “On the whole, I am satisfied with myself”, “I feel I have a number of good qualities”, “I am able to do things as well as most other people”, “I am a person of value”, “I feel good about myself” (1 = strongly agree to 4 = strongly disagree). Individual scores will be computed for each participant by taking the latent factor of the positively worded items and the reverse-coded negatively worded items. \n\n2. Short mood and feelings questionnaire: Adolescents are also asked twelve questions that consider their affective state and mood (Angold, Costello, Messer, &amp; Pickles, 1995): “For each question please select the answer which reflects how you have been feeling or acting in the past two weeks:”, “I felt miserable or unhappy”, “I didn’t enjoy anything at all”, “I felt so tired I just sat around and did nothing”, “I was very restless”, “I felt I was no good any more”, “I cried a lot”, “I found it hard to think properly or concentrate”, “I hated myself”, “I was a bad person”, “I felt lonely”, “I thought nobody really loved me”, “I thought I could never be as good as other kids”, “I did everything wrong” (1 = not true, 2 = sometimes, 3 = true). Individual scores will be computed for each participant by taking the latent factor of the positively worded items and the reverse-coded negatively worded items.\n\n3. Caretakers fill out the common Strengths and Difficulties Questionnaire (SDQ; Goodman, Ford, Simmons, Gatward, &amp; Meltzer, 2000). The SDQ is popular, and has been used to assess adolescents in schools, clinical settings and schools from diverse backgrounds (Goodman, 2001). It encompasses 25 questions, five each about prosocial behaviour, hyperactivity or inattention, emotional symptoms, conduct problems and peer relationship problems (0 = not true, 1 = somewhat true, 2 = certainly true). Individual scores will be computed for each participant by taking the latent factor of the positively worded items and the reverse-coded negatively worded items. The latent factor will be constructed by loading the four sub-scales of the SDQ (emotional, peer problems, hyperactivity, conduct problems) on four latent factors separately, and then loading them onto a general factor. We do not include pro-sociality in the analyses as this is routinely excluded in previous studies. "
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "We base our control variables on a previous study that has used the MCS dataset to examine the effects of technology use on well-being outcomes: Parkes et al. 2013. We adapt the controls they include to fit the current wave’s data and therefore include sociodemographic factors and maternal characteristics. In our analyses we either run them with all controls or with none of them. The controls are:\n- Mother’s ethnicity (coded as white/majority or non-white/minority)\n- Mother’s education (NVQ equivalent of highest academic level across sweeps, level 1-5)\n- Mother’s employment status (5 category (current job), 5 levels from manager to semi-routine and routine)\n- Mother’s psychological distress (K6 Kessler Scale, aggregate provided by the questionnaire)\n- Equivalised household income (OECD equivalised weekly family income)\n- Whether father is present (dichotomous, “Does your natural father live with you?”)\n- Number of adolescent’s siblings in household \n- Closeness to parents (mean of four items related to closeness to parent, see uploaded code)\n- Amount of time the primary caretaker spends with the adolescent (“Amount of time with child”, 5 point scale)\n- Reports of any long term illness (“Whether adolescent has longstanding illness”, parent report)\n- Physical activity (“Days last week spent doing moderate to vigorous physical activity” Child report) \n- Negative attitudes towards school (educational motivation, mean of 6 item educational motivation grid) \n- Adolescent’s and primary caretakers word activity score (out of 20, measure of current cognitive ability, take aggregate provided in the data)"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "The data under analysis will be derived from the sixth wave of the Millennium Cohort Study. More details of the selection rules can be found online (https://discover.ukdataservice.ac.uk/series/?sn=2000031), where the dataset user guide can be downloaded.\n"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "The Millennium Cohort Study is a prospective study collected in the UK, the children it follows are born between September 2000 and January 2001. Minority groups and disadvantaged areas are oversampled. We include data from primary caregivers and adolescents. Interviewers came to the participant’s home and administered the survey. The time use diaries could be completed using a phone, computer or paper diary, on two randomly selected days after the household interview. Participants were sent SMS reminders both the day before and the morning of the selected day, which included a weekend day and a weekday. For more details, please see the time use diary documentation that can be downloaded from the UK data service https://discover.ukdataservice.ac.uk/series/?sn=2000031).  All details of the study can be found (https://discover.ukdataservice.ac.uk/catalogue/?sn=8156&amp;type=Data%20catalogue), we recommend examining the user guide that can be downloaded there. "
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "In this study we implement a Smallest Effect Size of Interest (SESOI) as proposed by Ferguson (2009). We propose a SESOI of r = 0.1 (95% CI [0.90, 0.011]). Due to the large sample size, we expect well above 5,000 participants (all cohort members in Wales, Scotland and Ireland were invited to complete the time use diary, while 81% of English participants were invited), we will have enough power to be sensitive to such effects. If our effects are significant statistically, but are below this SESOI, we will consider these effects insignificant in practical terms. \n"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "We were not responsible for collecting the data, and therefore do not implement a termination rule. "
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "a) We will not include any participants who report less than three activities in their time diaries on any one day. \nb) The dataset does not include any appropriate check-tests or suspicion probes. \nc) We exclude any participant who noted that the day they filled out their time-use diary was unusual (illness, religious festival/holiday/away from home, birthday/anniversary, other reason). If this only affects one of the diary days, we will only exclude this analysis. \nd) We do not anticipate implementing any of these. \ne) Due to the high quality of the data and missing measures for things like response time, we do not exclude any method-based outliers. The time use diary has soft and hard checks in place to ensure good quality data. "
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Not applicable"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "GENERAL POINTS \nWe analyse the data using lavaan and SEM. We first run a specification curve analysis which runs each possible analysis that is possible using our pre-specified analytical decisions. These analytical decisions are: which technology use measure we use (5 options), which well-being measure we use (3 options), whether we include controls (2 options, yes/no) and whether technology use is on a weekday or weekend (2 options). \n\nWe run each model by extracting the relevant latent factor for well-being and correlating it with the chosen technology use measure. We either filter the data to only include weekend or weekday measures and either include controls or not in our model. After running each possible analysis, we plot these to show the general trend of results. \n\nTo test each hypothesis separately we then run a series of permutation tests. We select all specifications that include the technology use variables addressed in the hypotheses (H1 = self-report Likert scale, H2 = continuous time diary, H3 = 30 minutes before bedtime, H4 = 1 hour before bedtime), and then run a permutation test on these, checking whether the original data results in more significant p values than scrambled datasets where we know the null effect is true. \n\nHYPOTHESIS 1\nSelf-report technology use: mean of 5 likert scale measures as noted above\nWell-being variables: 3 possible options, extract latent factor using SEM\nControls: either include all controls mentioned above or none Continuous technology use: sum of time use diary reported technology use for participants that report having used technology at least once during that day\nWell-being variables: 3 possible options, extract latent factor using SEM\nControls: either include all controls mentioned above or none Technology use 30 minutes before bedtime: dichotomous variable of whether participant reported using technology in their time diary 30 minutes before they first report sleeping in the evening\nWell-being variables: 3 possible options, extract latent factor using SEM\nControls: either include all controls mentioned above or none Technology use 1 hour before bedtime: dichotomous variable of whether participant reported using technology in their time diary 1 hour before they first report sleeping in the evening\nWell-being variables: 3 possible options, extract latent factor using SEM\nControls: either include all controls mentioned above or none We will take all the specification curve analysis explained above and split it into the specifications with and without controls. This includes all possible measures of technology use and well-being, in addition to either weekend/weekday."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Correlation between latent well-being factor and self-report technology use See above See above See above We will run two permutation tests on the control and non-control specifications examining whether the effects are significant. We will then compare whether the effect found in the set of specifications without controls are larger than the effect found in the set of specifications with controls."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Not applicable: correlation, details of variables given above See above See above See above NA, see above."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "All covariates either included or excluded, covariates chosen because of previous literature (see above) See above See above See above See above."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Not applicable See above See above See above Not applicable.\n"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "None, as we only do one permutation test for each hypothesis."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "We will exclude participants from each analysis (listwise deletion) where they do not meet the inclusion criteria (e.g. if their time use diary was completed on an ‘unusual’ day). \n\nThe treatment of missing data in analyses will vary. When analysing self-report measures of dichotomous variables, we can assume that missing data is random and we use ‘Maximum Likelihood’ imputation implemented through the ‘lavaan’ R package. When analysing the continuous technology use variable, we cannot assume that missing data is random and we do not impute missing data, performing listwise deletion instead. "
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "We have checked the reliability of both the SDQ, the self-esteem and the short form well-being scale beforehand and found that there are no issues with item inclusion in the scale. Detailed reliability tests can be found in the script (uploaded as well). Cronbach’s alphas for well-being (0.93), self-esteem (0.9) and SDQ (0.86) were OK. It is important to note that the Cronbach’s alphas do not take into account the two-factor structure of the SDQ. The fit scores in a CFA was also OK for all three measures:\n\nWellbeing: CFI = 0.93, TLI = 0.91, RMSEA = 0.093, SRMR = 0.049\nSelf-Esteem: CFI = 0.97, TLI = 0.94, RMSEA = 0.142, SRMR = 0.029\nSDQ: CFI = 0.84, TLI = 0.82, RMSEA = 0.068, SRMR = 0.054\n\nThe SDQ is the measure that seems to have to worst fit. This could lead to our SEM not converging in our final analyses. If the model does not converge we will take the means of the items of the appropriate well-being scale, and put that into the model. Taking means of items is widely used, especially in our area, and is an appropriate substitute. "
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Not applicable. "
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Not applicable. "
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Yes, data collection is underway or complete"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "No"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "After the data are released from embargo on Wednesday the 9th of May 2018.\n"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "None."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "p_wrh4x"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "We found 1 preregistration.",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(id = \"<a href='https://osf.io/wrh4x' target='_blank'>wrh4x<\/a>\", \n    title = \"Time's up? Time spent using digital technology and adolescent well-being\", \n    template = \"Pre-Registration in Social Psychology (van 't Veer & Giner-Sorolla, 2016): Pre-Registration\"), row.names = c(NA, \n-1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 2, FALSE)\n```\n",
+          "Meta-scientific research has shown that deviations from preregistrations are often not reported or checked, and that the most common deviations concern the sample size. We recommend manually checking the full preregistration at the link above, and have provided the preregistered sample size.",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(id = \"wrh4x\", sample_size = \"In this study we implement a Smallest Effect Size of Interest (SESOI) as proposed by Ferguson (2009). We propose a SESOI of r = 0.1 (95% CI [0.90, 0.011]). Due to the large sample size, we expect well above 5,000 participants (all cohort members in Wales, Scotland and Ireland were invited to complete the time use diary, while 81% of English participants were invited), we will have enough power to be sensitive to such effects. If our effects are significant statistically, but are below this SESOI, we will consider these effects insignificant in practical terms. <br>\"), row.names = c(NA, \n-1L), class = c(\"tbl_df\", \"tbl\", \"data.frame\"))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 2, FALSE)\n```\n",
+          "::: {.callout-tip title=\"Full Preregistration\" collapse=\"true\"}\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Field = c(\"template_name\", \"title\", \"id\", \"link\", \n\"date_created\", \"date_modified\", \"date_registered\", \"embargo_end_date\", \n\"ia_url\", \"research_questions\", \"hypotheses_interactions\", \"manipulation_checks\", \n\"theoretical_rationale\", \"design_independent_variables\", \"design_dependent_variables\", \n\"design_covariates_moderators\", \"data_exclusion_criteria\", \"data_collection_procedures\", \n\"sample_size\", \"stopping_rule\", \"outliers_and_exclusions\", \"fail_safe_exclusion_levels\", \n\"indices\", \"statistical_tests\", \"rationale_covariate\", \"variables_roles_in_analyses\", \n\"inference_criteria\", \"multiple_testing_correction\", \"missing_data_handling\", \n\"reliability_criteria\", \"transformations\", \"assumptions_and_contingencies\", \n\"data_collection_started\", \"data_looked\", \"project_dates_start_end\", \n\"additional_comments\", \"paper_id\"), \"Preregistration 1\" = c(\"Pre-Registration in Social Psychology (van 't Veer & Giner-Sorolla, 2016): Pre-Registration\", \n\"Time's up? Time spent using digital technology and adolescent well-being\", \n\"wrh4x\", \"https://osf.io/wrh4x\", \"2018-05-08T21:30:06.047337\", \n\"2019-04-30T16:04:52.794657\", \"2018-05-08T21:30:06.030818\", \"2020-05-01T00:00:00Z\", \n\"https://archive.org/details/osf-registrations-wrh4x-v1\", \"H1: Higher self-reported technology use correlates with lower observed levels of adolescent well-being indicators<br><br>H2: For those adolescents reporting technology use in their time use diaries, total time spent using technology per day correlates with lower observed levels of adolescent well-being indicators<br><br>H3: Technology use 30 minutes before bedtime on a weekday correlates with lower observed levels of adolescent well-being<br><br>H4: Technology use 1 hour before bedtime on a weekday correlates with lower observed levels of adolescent well-being<br><br>H5: Models without controls (as put forth below) will have significantly smaller effects than models with controls<br>\", \n\"We are not planning to test any interactions. \", \"As this study examines a large-scale epidemiological dataset, we are not manipulating any variables.\", \n\"This research aims to investigate the effect of technology use on adolescent well-being. Previous research has relied on Likert scale self-report measures to enumerate adolescents’ technology use. We will complement and extend this research by examining both adolescent self-report technology use using Likert scales and by completing time use diaries. These time use diaries allow for a more detailed investigation of the technology-wellbeing relationship, as we examine not only the total time spent using technology but also the timings of this use.  Not Applicable\", \n\"We want to note that our study is correlational and therefore does not have strict independent/dependent variables. Our explanatory variables, however, concern an adolescent’s technology use. We use 4 different measurements. <br><br>1. Self-report technology use: four eight-point Likert scale questions about hours per weekday spent “watching television programmes or films”, spent “playing electronic games on a computer of games system”. “spent using the internet” in a home setting or spent “on social networking or messaging sites or apps on the internet” (1= none, 8 = 7 hours or more). We take the mean of these measures. <br><br>We also use measures that are calculated using data provided by a child using a time use diary. Each child is randomly assigned a weekend day and weekday to complete a time use diary on paper, on the computer or on their phone. They fill out how much time they spend each day doing a variety of activities, in 10 minute slots. We sum the time they report spending with technology:<br> - Answering emails, instant messaging and texting<br> - Browsing and updating social networking sites (e.g. Twitter, Facebook, BBM, Snapchat)<br> - General internet browsing, programming (not time on social networking sites) <br> - Playing electronic games and apps<br> - Watching TV, DVDs and downloaded videos<br><br>Due to an anticipated negative skew of time use distributions we will create two variables that reflect technology use. A dichotomous variable of whether the child reported any technology use that day or not, and a continuous variable which codes all children who did not use any technology at all that day as N/A, while leaving the others as continuous measures of the self-reported time using technology. The dichotomous variable is not applicable to any of our hypotheses, but we will include it in our general specification curve analyses (see later section).<br> <br>We also create 2 dichotomous variables: whether or not the adolescent reported using technology 30 minutes or 1 hour before their reported bedtime. The bedtime is inferred as the time the adolescent reports their activity as ‘sleep’ in the evening of their time use diary completion day. Therefore, our three variables for technology use included in our hypotheses are: <br><br>2. Time use survey technology use (continuous)<br>3. Time use survey technology use 30 minutes before bedtime <br>4. Time use survey technology use 1 hour before bedtime\", \n\"Two types of well-being measures were included in the MCS dataset for each adolescent. There are indicators completed by cohort members, and others completed by their primary caretakers. We will examine a subset of these measures to allow for comparisons between datasets (we are also analysing the Growing up in Ireland and the Panel Study of Income Dynamics US; we do not pre-register these analyses as the datasets are already openly available). <br><br>1. Self-esteem: Adolescents complete 5 items from an abbreviated Rosenberg self-esteem scale: “On the whole, I am satisfied with myself”, “I feel I have a number of good qualities”, “I am able to do things as well as most other people”, “I am a person of value”, “I feel good about myself” (1 = strongly agree to 4 = strongly disagree). Individual scores will be computed for each participant by taking the latent factor of the positively worded items and the reverse-coded negatively worded items. <br><br>2. Short mood and feelings questionnaire: Adolescents are also asked twelve questions that consider their affective state and mood (Angold, Costello, Messer, &amp; Pickles, 1995): “For each question please select the answer which reflects how you have been feeling or acting in the past two weeks:”, “I felt miserable or unhappy”, “I didn’t enjoy anything at all”, “I felt so tired I just sat around and did nothing”, “I was very restless”, “I felt I was no good any more”, “I cried a lot”, “I found it hard to think properly or concentrate”, “I hated myself”, “I was a bad person”, “I felt lonely”, “I thought nobody really loved me”, “I thought I could never be as good as other kids”, “I did everything wrong” (1 = not true, 2 = sometimes, 3 = true). Individual scores will be computed for each participant by taking the latent factor of the positively worded items and the reverse-coded negatively worded items.<br><br>3. Caretakers fill out the common Strengths and Difficulties Questionnaire (SDQ; Goodman, Ford, Simmons, Gatward, &amp; Meltzer, 2000). The SDQ is popular, and has been used to assess adolescents in schools, clinical settings and schools from diverse backgrounds (Goodman, 2001). It encompasses 25 questions, five each about prosocial behaviour, hyperactivity or inattention, emotional symptoms, conduct problems and peer relationship problems (0 = not true, 1 = somewhat true, 2 = certainly true). Individual scores will be computed for each participant by taking the latent factor of the positively worded items and the reverse-coded negatively worded items. The latent factor will be constructed by loading the four sub-scales of the SDQ (emotional, peer problems, hyperactivity, conduct problems) on four latent factors separately, and then loading them onto a general factor. We do not include pro-sociality in the analyses as this is routinely excluded in previous studies. \", \n\"We base our control variables on a previous study that has used the MCS dataset to examine the effects of technology use on well-being outcomes: Parkes et al. 2013. We adapt the controls they include to fit the current wave’s data and therefore include sociodemographic factors and maternal characteristics. In our analyses we either run them with all controls or with none of them. The controls are:<br>- Mother’s ethnicity (coded as white/majority or non-white/minority)<br>- Mother’s education (NVQ equivalent of highest academic level across sweeps, level 1-5)<br>- Mother’s employment status (5 category (current job), 5 levels from manager to semi-routine and routine)<br>- Mother’s psychological distress (K6 Kessler Scale, aggregate provided by the questionnaire)<br>- Equivalised household income (OECD equivalised weekly family income)<br>- Whether father is present (dichotomous, “Does your natural father live with you?”)<br>- Number of adolescent’s siblings in household <br>- Closeness to parents (mean of four items related to closeness to parent, see uploaded code)<br>- Amount of time the primary caretaker spends with the adolescent (“Amount of time with child”, 5 point scale)<br>- Reports of any long term illness (“Whether adolescent has longstanding illness”, parent report)<br>- Physical activity (“Days last week spent doing moderate to vigorous physical activity” Child report) <br>- Negative attitudes towards school (educational motivation, mean of 6 item educational motivation grid) <br>- Adolescent’s and primary caretakers word activity score (out of 20, measure of current cognitive ability, take aggregate provided in the data)\", \n\"The data under analysis will be derived from the sixth wave of the Millennium Cohort Study. More details of the selection rules can be found online (https://discover.ukdataservice.ac.uk/series/?sn=2000031), where the dataset user guide can be downloaded.<br>\", \n\"The Millennium Cohort Study is a prospective study collected in the UK, the children it follows are born between September 2000 and January 2001. Minority groups and disadvantaged areas are oversampled. We include data from primary caregivers and adolescents. Interviewers came to the participant’s home and administered the survey. The time use diaries could be completed using a phone, computer or paper diary, on two randomly selected days after the household interview. Participants were sent SMS reminders both the day before and the morning of the selected day, which included a weekend day and a weekday. For more details, please see the time use diary documentation that can be downloaded from the UK data service https://discover.ukdataservice.ac.uk/series/?sn=2000031).  All details of the study can be found (https://discover.ukdataservice.ac.uk/catalogue/?sn=8156&amp;type=Data%20catalogue), we recommend examining the user guide that can be downloaded there. \", \n\"In this study we implement a Smallest Effect Size of Interest (SESOI) as proposed by Ferguson (2009). We propose a SESOI of r = 0.1 (95% CI [0.90, 0.011]). Due to the large sample size, we expect well above 5,000 participants (all cohort members in Wales, Scotland and Ireland were invited to complete the time use diary, while 81% of English participants were invited), we will have enough power to be sensitive to such effects. If our effects are significant statistically, but are below this SESOI, we will consider these effects insignificant in practical terms. <br>\", \n\"We were not responsible for collecting the data, and therefore do not implement a termination rule. \", \n\"a) We will not include any participants who report less than three activities in their time diaries on any one day. <br>b) The dataset does not include any appropriate check-tests or suspicion probes. <br>c) We exclude any participant who noted that the day they filled out their time-use diary was unusual (illness, religious festival/holiday/away from home, birthday/anniversary, other reason). If this only affects one of the diary days, we will only exclude this analysis. <br>d) We do not anticipate implementing any of these. <br>e) Due to the high quality of the data and missing measures for things like response time, we do not exclude any method-based outliers. The time use diary has soft and hard checks in place to ensure good quality data. \", \n\"Not applicable\", \"GENERAL POINTS <br>We analyse the data using lavaan and SEM. We first run a specification curve analysis which runs each possible analysis that is possible using our pre-specified analytical decisions. These analytical decisions are: which technology use measure we use (5 options), which well-being measure we use (3 options), whether we include controls (2 options, yes/no) and whether technology use is on a weekday or weekend (2 options). <br><br>We run each model by extracting the relevant latent factor for well-being and correlating it with the chosen technology use measure. We either filter the data to only include weekend or weekday measures and either include controls or not in our model. After running each possible analysis, we plot these to show the general trend of results. <br><br>To test each hypothesis separately we then run a series of permutation tests. We select all specifications that include the technology use variables addressed in the hypotheses (H1 = self-report Likert scale, H2 = continuous time diary, H3 = 30 minutes before bedtime, H4 = 1 hour before bedtime), and then run a permutation test on these, checking whether the original data results in more significant p values than scrambled datasets where we know the null effect is true. <br><br>HYPOTHESIS 1<br>Self-report technology use: mean of 5 likert scale measures as noted above<br>Well-being variables: 3 possible options, extract latent factor using SEM<br>Controls: either include all controls mentioned above or none Continuous technology use: sum of time use diary reported technology use for participants that report having used technology at least once during that day<br>Well-being variables: 3 possible options, extract latent factor using SEM<br>Controls: either include all controls mentioned above or none Technology use 30 minutes before bedtime: dichotomous variable of whether participant reported using technology in their time diary 30 minutes before they first report sleeping in the evening<br>Well-being variables: 3 possible options, extract latent factor using SEM<br>Controls: either include all controls mentioned above or none Technology use 1 hour before bedtime: dichotomous variable of whether participant reported using technology in their time diary 1 hour before they first report sleeping in the evening<br>Well-being variables: 3 possible options, extract latent factor using SEM<br>Controls: either include all controls mentioned above or none We will take all the specification curve analysis explained above and split it into the specifications with and without controls. This includes all possible measures of technology use and well-being, in addition to either weekend/weekday.\", \n\"Correlation between latent well-being factor and self-report technology use See above See above See above We will run two permutation tests on the control and non-control specifications examining whether the effects are significant. We will then compare whether the effect found in the set of specifications without controls are larger than the effect found in the set of specifications with controls.\", \n\"Not applicable: correlation, details of variables given above See above See above See above NA, see above.\", \n\"All covariates either included or excluded, covariates chosen because of previous literature (see above) See above See above See above See above.\", \n\"Not applicable See above See above See above Not applicable.<br>\", \n\"None, as we only do one permutation test for each hypothesis.\", \n\"We will exclude participants from each analysis (listwise deletion) where they do not meet the inclusion criteria (e.g. if their time use diary was completed on an ‘unusual’ day). <br><br>The treatment of missing data in analyses will vary. When analysing self-report measures of dichotomous variables, we can assume that missing data is random and we use ‘Maximum Likelihood’ imputation implemented through the ‘lavaan’ R package. When analysing the continuous technology use variable, we cannot assume that missing data is random and we do not impute missing data, performing listwise deletion instead. \", \n\"We have checked the reliability of both the SDQ, the self-esteem and the short form well-being scale beforehand and found that there are no issues with item inclusion in the scale. Detailed reliability tests can be found in the script (uploaded as well). Cronbach’s alphas for well-being (0.93), self-esteem (0.9) and SDQ (0.86) were OK. It is important to note that the Cronbach’s alphas do not take into account the two-factor structure of the SDQ. The fit scores in a CFA was also OK for all three measures:<br><br>Wellbeing: CFI = 0.93, TLI = 0.91, RMSEA = 0.093, SRMR = 0.049<br>Self-Esteem: CFI = 0.97, TLI = 0.94, RMSEA = 0.142, SRMR = 0.029<br>SDQ: CFI = 0.84, TLI = 0.82, RMSEA = 0.068, SRMR = 0.054<br><br>The SDQ is the measure that seems to have to worst fit. This could lead to our SEM not converging in our final analyses. If the model does not converge we will take the means of the items of the appropriate well-being scale, and put that into the model. Taking means of items is widely used, especially in our area, and is an appropriate substitute. \", \n\"Not applicable. \", \"Not applicable. \", \"Yes, data collection is underway or complete\", \n\"No\", \"After the data are released from embargo on Wednesday the 9th of May 2018.<br>\", \n\"None.\", \"p_wrh4x\")), row.names = c(\"template_name\", \"title\", \n\"id\", \"link\", \"date_created\", \"date_modified\", \"date_registered\", \n\"embargo_end_date\", \"ia_url\", \"research_questions\", \"hypotheses_interactions\", \n\"manipulation_checks\", \"theoretical_rationale\", \"design_independent_variables\", \n\"design_dependent_variables\", \"design_covariates_moderators\", \n\"data_exclusion_criteria\", \"data_collection_procedures\", \"sample_size\", \n\"stopping_rule\", \"outliers_and_exclusions\", \"fail_safe_exclusion_levels\", \n\"indices\", \"statistical_tests\", \"rationale_covariate\", \"variables_roles_in_analyses\", \n\"inference_criteria\", \"multiple_testing_correction\", \"missing_data_handling\", \n\"reliability_criteria\", \"transformations\", \"assumptions_and_contingencies\", \n\"data_collection_started\", \"data_looked\", \"project_dates_start_end\", \n\"additional_comments\", \"paper_id\"), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 5, FALSE)\n```\n\n\n:::\n",
+          "::: {.callout-tip title=\"Learn More\" collapse=\"true\"}\n\nFor metascientific articles demonstrating the rate of deviations from preregistrations, see:\n\nvan den Akker O, Bakker M, van Assen M, Pennington C, Verweij L, Elsherif M, Claesen A, Gaillard S, Yeung S, Frankenberger J, Krautter K, Cockcroft J, Kreuer K, Evans T, Heppel F, Schoch S, Korbmacher M, Yamada Y, Albayrak-Aydemir N, Wicherts J (2024). &ldquo;The potential of preregistration in psychology: Assessing preregistration producibility and preregistration-study consistency.&rdquo; <em>Psychological Methods<\/em>. <a href=\"https://doi.org/10.1037/met0000687\">doi:10.1037/met0000687<\/a>.\n\nFor educational material on how to report deviations from preregistrations, see:\n\nLakens, Daniël (2024). &ldquo;When and How to Deviate From a Preregistration.&rdquo; <em>Collabra: Psychology<\/em>, <b>10<\/b>(1), 117094. <a href=\"https://doi.org/10.1525/collabra.117094\">doi:10.1525/collabra.117094<\/a>.\n\n:::\n"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "info"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "We found 1 preregistration."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "preregistration"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "p_wrh4x"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          }
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

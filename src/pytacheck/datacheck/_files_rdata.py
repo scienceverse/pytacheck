@@ -760,8 +760,8 @@ def posixct_as_character(ts: Any) -> str | None:
     sec = ts.second + ts.microsecond / 1e6 + ts.nanosecond / 1e9
     if ts.hour == 0 and ts.minute == 0 and sec == 0:
         return day
-    s = r_round(sec, 6)
-    sch = ("0" if s < 10 else "") + as_character(s)
+    s = float(r_round(sec, 6))
+    sch = ("0" if s < 10 else "") + (as_character(s) or "")
     return f"{day} {ts.hour:02d}:{ts.minute:02d}:{sch}"
 
 
@@ -910,6 +910,7 @@ def r_frame_to_pandas(
     keep = n if not math.isfinite(n_rows) else max(0, min(n, int(n_rows)))
     series = []
     col_attrs: dict[str, dict[str, Any]] = {}
+    seen: set[str] = set()
     for name, col in zip(names, cols, strict=True):
         s = _column_to_pandas(col, n)
         series.append(s.iloc[:keep].reset_index(drop=True))
@@ -918,8 +919,10 @@ def r_frame_to_pandas(
             if subset:
                 kept = _attrs_after_subset(kept, col.classes, vctrs)
             kept.pop("levels", None)
-            if kept:
-                col_attrs["" if name is None else name] = kept
+            key = "" if name is None else name
+            if kept and key not in seen:  # duplicated names: the first column's
+                col_attrs[key] = kept
+        seen.add("" if name is None else name)
     out = pd.DataFrame(dict(enumerate(series))) if series else pd.DataFrame(index=range(keep))
     out.columns = pd.Index(["" if nm is None else nm for nm in names], dtype=object)
     if col_attrs:

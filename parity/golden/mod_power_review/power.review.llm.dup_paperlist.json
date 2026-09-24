@@ -1,0 +1,400 @@
+{
+  "id": "power.review.llm.dup_paperlist",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "power"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Power Analysis Check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "method"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 5,
+        "names": [
+          "text_id",
+          "section_id",
+          "paragraph_id",
+          "text",
+          "formatted",
+          "paper_id",
+          "header",
+          "section_type",
+          "power_type",
+          "statistical_test",
+          "statistical_test_other",
+          "sample_size",
+          "alpha_level",
+          "power",
+          "effect_size",
+          "effect_size_metric",
+          "effect_size_metric_other",
+          "software",
+          "complete",
+          "power_id"
+        ],
+        "v": [
+          {
+            "t": "lgl",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "An a priori power analysis for the 2 x 2 design required 200 participants for 80% power and f = 0.2, while a sensitivity power analysis showed 90% power for f = 0.25.",
+              "An a priori power analysis for the 2 x 2 design required 200 participants for 80% power and f = 0.2, while a sensitivity power analysis showed 90% power for f = 0.25.",
+              "An a priori power analysis for the 2 x 2 design required 200 participants for 80% power and f = 0.2, while a sensitivity power analysis showed 90% power for f = 0.25.",
+              "An a priori power analysis for the 2 x 2 design required 200 participants for 80% power and f = 0.2, while a sensitivity power analysis showed 90% power for f = 0.25.",
+              "An a priori power analysis indicated 64 participants per group, d = 0.5, alpha = .05, power = 80%, using an unpaired t-test, run with pwr."
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "p1",
+              "p1",
+              "p2",
+              "p2",
+              "p3"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Test",
+              "Test",
+              "Test",
+              "Test",
+              "Test"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "unknown",
+              "unknown",
+              "unknown",
+              "unknown",
+              "unknown"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "apriori",
+              "sensitivity",
+              "apriori",
+              "sensitivity",
+              "apriori"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2-way ANOVA",
+              "2-way ANOVA",
+              "2-way ANOVA",
+              "2-way ANOVA",
+              "unpaired t-test"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              200,
+              200,
+              200,
+              200,
+              128
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              0.05
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0.8,
+              0.9,
+              0.8,
+              0.9,
+              0.8
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0.2,
+              0.25,
+              0.2,
+              0.25,
+              0.5
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Cohen's f",
+              "Cohen's f",
+              "Cohen's f",
+              "Cohen's f",
+              "Cohen's d"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              "pwr"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false,
+              false,
+              false,
+              false,
+              true
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1,
+              2,
+              3,
+              4,
+              5
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "We used the LLM model 'groq/test-model' to check the contents of 3 paragraphs that contained words suggesting they might contain power analyses.",
+          "Some essential information could not be detected: alpha_level, software",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(power_id = 1:5, power_type = c(\"apriori\", \"sensitivity\", \n\"apriori\", \"sensitivity\", \"apriori\"), statistical_test = c(\"2-way ANOVA\", \n\"2-way ANOVA\", \"2-way ANOVA\", \"2-way ANOVA\", \"unpaired t-test\"\n), sample_size = c(200, 200, 200, 200, 128), alpha_level = c(NA, \nNA, NA, NA, 0.05), power = c(0.8, 0.9, 0.8, 0.9, 0.8), effect_size = c(0.2, \n0.25, 0.2, 0.25, 0.5), effect_size_metric = c(\"Cohen's f\", \"Cohen's f\", \n\"Cohen's f\", \"Cohen's f\", \"Cohen's d\"), software = c(NA, NA, \nNA, NA, \"pwr\")), row.names = c(NA, -5L), class = c(\"tbl_df\", \n\"tbl\", \"data.frame\"))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 5, FALSE)\n```\n",
+          "",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(power_id = c(\"1;2;3;4\", \"5\"), text = c(\"An <strong>a priori<\/strong> <strong>power<\/strong> analysis for the 2 x 2 design required 200 participants for 80% <strong>power<\/strong> and f = 0.2, while a <strong>sensitivity<\/strong> <strong>power<\/strong> analysis showed 90% <strong>power<\/strong> for f = 0.25.\", \n\"An <strong>a priori<\/strong> <strong>power<\/strong> analysis indicated 64 participants per group, d = 0.5, alpha = .05, <strong>power<\/strong> = 80%, using an unpaired t-test, run with pwr.\"\n)), row.names = c(NA, -2L), class = c(\"tbl_df\", \"tbl\", \"data.frame\"\n))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 5, FALSE)\n```\n",
+          "::: {.callout-tip title=\"Learn More\" collapse=\"true\"}\n\nPower analyses need to contain the following information to be interpretable: the type of power analysis, the statistical test, the software used, sample size, critical alpha criterion, power level, effect size, and an effect size metric. In addition, it is recommended to make sure the power analysis is reproducible (by sharing the code, or a screenshot, of the power analysis), and to provide good arguments for why the study was designed to detect an effect of this size.\n\nFor an a-priori power analysis, where the sample size is determined, reporting all information would look like:\n\n> An a priori power analysis for an independent samples t-test, conducted using the pwr.t.test function from pwr (Champely, 2020), indicated that for a Cohen's d = 0.5, an alpha level of 0.05, and a desired power level of 80% required at least 64 participants in each group.\n\nFor a sensitivity power analysis, this sentence would look like:\n\n> A sensitivity power analysis for an independent samples t-test, conducted using the pwr.t.test function from pwr (Champely, 2020), indicated that with 64 participants in each group, and an alpha level of 0.05, a desired power level of 80% was reached for an effect size of d = 0.5.\n\n:::\n"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "red"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "We detected 5 potential power analyses."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 3,
+        "names": [
+          "paper_id",
+          "power_n",
+          "power_complete",
+          "power_statistical_test",
+          "power_sample_size",
+          "power_alpha_level",
+          "power_power",
+          "power_effect_size",
+          "power_effect_size_metric",
+          "power_software"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "p1",
+              "p2",
+              "p3"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2,
+              2,
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2,
+              2,
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2,
+              2,
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2,
+              2,
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2,
+              2,
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2,
+              2,
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              0,
+              1
+            ]
+          }
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0
+        ],
+        "names": [
+          "power_n"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

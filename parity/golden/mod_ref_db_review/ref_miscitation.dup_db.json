@@ -1,0 +1,164 @@
+{
+  "id": "ref_miscitation.dup_db",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "ref_miscitation"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Miscitation"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "reference"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 5,
+        "names": [
+          "paper_id",
+          "bib_id",
+          "doi",
+          "citation",
+          "reftext",
+          "warning"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "synthetic",
+              "synthetic",
+              "synthetic",
+              "synthetic",
+              "synthetic"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "10.1000/a",
+              "10.1000/a",
+              "10.1000/a",
+              "10.1000/a",
+              "10.1000/b"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Body sentence 1 cites 0.",
+              "Body sentence 1 cites 0.",
+              "Body sentence 2 cites 0 and 1.",
+              "Body sentence 2 cites 0 and 1.",
+              "Body sentence 2 cites 0 and 1."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Ref A",
+              "Ref A2",
+              "Ref A",
+              "Ref A2",
+              "Ref B"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Warn A1",
+              "Warn A2",
+              "Warn A1",
+              "Warn A2",
+              "Warn B"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "**10.1000/a**\n\nRef A\n\nWarn A1\n\n*4 Instances:*\n\n> Body sentence 1 cites 0.\n\n> Body sentence 1 cites 0.\n\n> Body sentence 2 cites 0 and 1.\n\n> Body sentence 2 cites 0 and 1.",
+          "**10.1000/a**\n\nRef A2\n\nWarn A2\n\n*4 Instances:*\n\n> Body sentence 1 cites 0.\n\n> Body sentence 1 cites 0.\n\n> Body sentence 2 cites 0 and 1.\n\n> Body sentence 2 cites 0 and 1.",
+          "**10.1000/b**\n\nRef B\n\nWarn B\n\n*1 Instance:*\n\n> Body sentence 2 cites 0 and 1."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "yellow"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "We found 5 citations to papers that are commonly miscited."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "miscite_10.1000/a",
+          "miscite_10.1000/b"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "synthetic"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

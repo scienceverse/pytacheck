@@ -230,29 +230,45 @@ def test_figshare_verify_downloads_hashes_without_type(tmp_path: Path) -> None:
     assert out["downloaded"].tolist() == [True, True]
 
 
-def test_link_prefilter_is_exact(psychsci: object, fixtures_dir: Path) -> None:
-    """Searching only prefiltered sentences gives exactly the full search's matches."""
+@pytest.mark.parametrize(
+    ("module", "fn", "prefilters"),
+    [
+        ("dryad", "dryad_links", ["_dryad_prefilter"]),
+        ("figshare", "figshare_links", ["_figshare_prefilter"]),
+        ("dataverse", "dataverse_links", ["_dataverse_prefilter", "_dataverse_doi_prefilter"]),
+    ],
+)
+def test_link_prefilters_are_exact(
+    module: str,
+    fn: str,
+    prefilters: list[str],
+    psychsci: object,
+    fixtures_dir: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Searching only prefiltered sentences gives exactly the full search's links."""
+    import importlib
+
     from pandas.testing import assert_frame_equal
 
-    from pytacheck.archives.dataverse import _link_matches
-    from pytacheck.archives.figshare import _figshare_host_regex, _figshare_prefilter
+    from tests.archives_d1.make_review_cases import FUZZ_TEXT, FUZZ_URL
 
-    host_regex = _figshare_host_regex()
-    pattern = (
-        f"(?:https?://)?(?:[a-z0-9.-]+\\.)?(?:{host_regex})/(?:articles|ndownloader|projects|s)"
-        "/[A-Za-z0-9/_.-]*|(?:https?://)?(?:doi\\.org/)?10\\.[0-9]+/[A-Za-z0-9._-]+"
-    )
+    mod = importlib.import_module(f"pytacheck.archives.{module}")
     tricky = pc.test_paper(
         [
+            *FUZZ_TEXT,
             "FIGSHARE.COM/articles/x/1 and Sub.Figshare.Le.Ac.UK/projects/p/2",
-            "doi.org/10.26180/19095317.v1. and 10.6084/m9.figshare.1",
-            "nothing here",
-            "tandf.figshare.com/s/abc",
-        ]
+            "doi.org/10.26180/19095317.v1. and 10.6084/m9.figshare.1 and 10.6084/M9.FIGSHARE.2",
+            "DATADRYAD.ORG/stash/dataset/doi:10.5061/DRYAD.X and 10.25338/B8N33J",
+            "DataVerse.Harvard.EDU/dataset.xhtml?persistentId=doi:10.7910/DVN/X and 10.18167/DVN1/Y",
+            "nothing here, e.g. example.org/x and 10.1234/abc",
+        ],
+        FUZZ_URL,
     )
     papers = [psychsci, pc.read(fixtures_dir / "problems" / "203020.json"), tricky]
-    for paper in papers:
-        fast = _link_matches(paper, pattern, _figshare_prefilter())
-        full = _link_matches(paper, pattern)
-        assert_frame_equal(fast.reset_index(drop=True), full.reset_index(drop=True))
-    assert len(_link_matches(tricky, pattern, _figshare_prefilter())) == 5
+    fast = [getattr(mod, fn)(p) for p in papers]
+    for name in prefilters:
+        monkeypatch.setattr(mod, name, lambda: None)
+    for got, paper in zip(fast, papers, strict=True):
+        assert_frame_equal(got, getattr(mod, fn)(paper))
+    assert len(fast[2]) >= 10  # the generated shapes do produce links

@@ -1,0 +1,159 @@
+{
+  "id": "causal_claims.fake.psychsci_list",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "causal_claims"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Randomization and Causal Claims"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "method"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 5,
+        "names": [
+          "sentence",
+          "causal",
+          "cause",
+          "effect"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Because single-cell activity has rarely been recorded in humans (but see Mukamel, Ekstrom, Kaplan, Iacoboni, & Fried, 2010), most research involving human participants has been performed with imaging techniques that measure activity in brain regions rather than in individual cells.",
+              "On the basis of these findings, it has been proposed that this network, sometimes called the mirror-neuron system (MNS), plays a causal role in action understanding (i.e., in identifying the goals, or underlying intentions, of bodily movements) and that action production and action understanding involve",
+              "On the basis of these findings, it has been proposed that this network, sometimes called the mirror-neuron system (MNS), plays a causal role in action understanding (i.e., in identifying the goals, or underlying intentions, of bodily movements) and that action production and action understanding involve",
+              "The paper shows examples of (1) open and closed OSF links; (2a) citation of retracted papers, (2b) citations without a doi, (2c) citations with Pubpeer comments, (2d) citations in the FLoRA replication database, and (2e) missing/mismatched/incorrect citations and references; (3a) R files with code on GitHub that do not load libraries in one location, (3b) load files that are not shared in the repository, (3c) lack comments, and (3d) have absolute file paths; (4) imprecise reporting of non-significant p-values; (5) tests with and without effect sizes; (6) use of \"marginally significant\" to describe non-significant findings; (7) a power analysis reporting some of the essential attributes; and (8) retrieving information from preregistrations.",
+              "The paper shows examples of (1) open and closed OSF links; (2a) citation of retracted papers, (2b) citations without a doi, (2c) citations with Pubpeer comments, (2d) citations in the FLoRA replication database, and (2e) missing/mismatched/incorrect citations and references; (3a) R files with code on GitHub that do not load libraries in one location, (3b) load files that are not shared in the repository, (3c) lack comments, and (3d) have absolute file paths; (4) imprecise reporting of non-significant p-values; (5) tests with and without effect sizes; (6) use of \"marginally significant\" to describe non-significant findings; (7) a power analysis reporting some of the essential attributes; and (8) retrieving information from preregistrations."
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true,
+              true,
+              true,
+              true,
+              true
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Because",
+              "On",
+              "the",
+              "The",
+              "paper"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "cells.",
+              "involve",
+              "understanding",
+              "preregistrations.",
+              "from"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Journal Article Reporting Standards require details about randomization procedures, or how possible bias due to non-randomization is mitigated. This information is often not reported. Furthermore, researchers sometimes make causal claims that are not warranted, for example because there was no random assignment to conditions. This module checks how (non)randomization is reported, and checks for causal claims in the title and abstract. Researchers are asked to double check whether this information is reported completely and correctly.",
+          "#### Randomization",
+          "We identified 1 sentence describing randomization.",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(\"We randomly assigned 50 scientists to a condition where their manuscript was automatically checked for errors, and 50 scientists to a control condition with a checklist.\"), names = \"\", class = \"data.frame\", row.names = c(NA, \n-1L))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 2, FALSE)\n```\n",
+          "If this was a study that contained random assignment to conditions, the journal article reporting standards (JARS) ask that you describe the following:",
+          "1. Random assignment method: Procedure used to generate the random assignment sequence, including details of any restriction (e.g., blocking, stratification)",
+          "2. Random assignment concealment: Whether sequence was concealed until interventions were assigned",
+          "3. Random assignment implementation: Who generated the assignment sequence, who enrolled participants, who assigned participants to groups",
+          "#### Causal Claims",
+          "No causal claims were observed in the title.",
+          "Causal claims were detected in the abstract.",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(sentence = c(\"Because single-cell activity has rarely been recorded in humans (but see Mukamel, Ekstrom, Kaplan, Iacoboni, & Fried, 2010), most research involving human participants has been performed with imaging techniques that measure activity in brain regions rather than in individual cells.\", \n\"On the basis of these findings, it has been proposed that this network, sometimes called the mirror-neuron system (MNS), plays a causal role in action understanding (i.e., in identifying the goals, or underlying intentions, of bodily movements) and that action production and action understanding involve\", \n\"On the basis of these findings, it has been proposed that this network, sometimes called the mirror-neuron system (MNS), plays a causal role in action understanding (i.e., in identifying the goals, or underlying intentions, of bodily movements) and that action production and action understanding involve\", \n\"The paper shows examples of (1) open and closed OSF links; (2a) citation of retracted papers, (2b) citations without a doi, (2c) citations with Pubpeer comments, (2d) citations in the FLoRA replication database, and (2e) missing/mismatched/incorrect citations and references; (3a) R files with code on GitHub that do not load libraries in one location, (3b) load files that are not shared in the repository, (3c) lack comments, and (3d) have absolute file paths; (4) imprecise reporting of non-significant p-values; (5) tests with and without effect sizes; (6) use of \\\"marginally significant\\\" to describe non-significant findings; (7) a power analysis reporting some of the essential attributes; and (8) retrieving information from preregistrations.\", \n\"The paper shows examples of (1) open and closed OSF links; (2a) citation of retracted papers, (2b) citations without a doi, (2c) citations with Pubpeer comments, (2d) citations in the FLoRA replication database, and (2e) missing/mismatched/incorrect citations and references; (3a) R files with code on GitHub that do not load libraries in one location, (3b) load files that are not shared in the repository, (3c) lack comments, and (3d) have absolute file paths; (4) imprecise reporting of non-significant p-values; (5) tests with and without effect sizes; (6) use of \\\"marginally significant\\\" to describe non-significant findings; (7) a power analysis reporting some of the essential attributes; and (8) retrieving information from preregistrations.\"\n), cause = c(\"Because\", \"On\", \"the\", \"The\", \"paper\"), effect = c(\"cells.\", \n\"involve\", \"understanding\", \"preregistrations.\", \"from\")), row.names = c(NA, \n-5L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, 1, 2, FALSE)\n```\n",
+          "Random assignment was detected, so these causal claims might be warranted, but it is always prudent to double-check.",
+          "::: {.callout-tip title=\"Learn More\" collapse=\"true\"}\n\nFor advice on how to make causal claims, and when not to, see:\n\nAntonakis J, Bendahan S, Jacquart P, Lalive R (2010). &ldquo;On making causal claims: A review and recommendations.&rdquo; <em>The Leadership Quarterly<\/em>, <b>21<\/b>(6), 1086&ndash;1120. <a href=\"https://doi.org/10.1016/j.leaqua.2010.10.010\">doi:10.1016/j.leaqua.2010.10.010<\/a>.\n\nGrosz M, Rohrer J, Thoemmes F (2020). &ldquo;The Taboo Against Explicit Causal Inference in Nonexperimental Psychology.&rdquo; <em>Perspectives on Psychological Science<\/em>, <b>15<\/b>(5), 1243&ndash;1255. <a href=\"https://doi.org/10.1177/1745691620921521\">doi:10.1177/1745691620921521<\/a>.\n\nFor the APA journal articles reporting standards, see <https://apastyle.apa.org/jars>\n\n:::\n"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "green"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "\n-  We identified 1 sentence describing randomization.\n-  No causal claims were observed in the title.\n-  Causal claims were detected in the abstract."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 4,
+        "names": [
+          "paper_id",
+          "causal"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "0956797613520608",
+              "0956797614522816",
+              "0956797614527830",
+              "to_err_is_human"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              3,
+              0,
+              0,
+              2
+            ]
+          }
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

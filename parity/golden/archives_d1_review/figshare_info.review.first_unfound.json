@@ -1,0 +1,304 @@
+{
+  "id": "figshare_info.review.first_unfound",
+  "ok": true,
+  "error": null,
+  "warnings": [
+    "1234 could not be found on api.figshare.com"
+  ],
+  "value": {
+    "t": "df",
+    "nrow": 3,
+    "names": [
+      "figshare_url",
+      "figshare_id",
+      "error",
+      "title",
+      "doi",
+      "publication_date",
+      "updated_date",
+      "authors",
+      "license",
+      "files"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "1234",
+          "https://figshare.com/articles/dataset/x/18093368",
+          "19095317"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "1234",
+          "18093368",
+          "19095317"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "unfound",
+          null,
+          "parse_error"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "Example Figshare dataset",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "10.6084/m9.figshare.18093368.v1",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "2022-01-01T10:00:00Z",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "2022-02-01T10:00:00Z",
+          null
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "null"
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Jane Doe",
+              null
+            ]
+          },
+          {
+            "t": "null"
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "CC BY 4.0",
+          null
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "null"
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "list",
+                "names": [
+                  "id",
+                  "name",
+                  "size",
+                  "computed_md5",
+                  "download_url",
+                  "is_link_only"
+                ],
+                "v": [
+                  {
+                    "t": "int",
+                    "v": [
+                      555
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "data.csv"
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      8
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "344fd2323dd33d5c058b7cf27de029e8"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "https://ndownloader.figshare.com/files/555"
+                    ]
+                  },
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "id",
+                  "name",
+                  "size",
+                  "computed_md5",
+                  "download_url"
+                ],
+                "v": [
+                  {
+                    "t": "int",
+                    "v": [
+                      556
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "readme.txt"
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      22
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "380fc7c25eed1ca3428a9952cdbc006c"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "https://ndownloader.figshare.com/files/556"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "id",
+                  "name",
+                  "size",
+                  "computed_md5",
+                  "download_url"
+                ],
+                "v": [
+                  {
+                    "t": "int",
+                    "v": [
+                      557
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "video.mp4"
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      52428800
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "https://ndownloader.figshare.com/files/557"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "id",
+                  "name",
+                  "size",
+                  "computed_md5",
+                  "download_url"
+                ],
+                "v": [
+                  {
+                    "t": "int",
+                    "v": [
+                      558
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "missing.csv"
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      4
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "https://ndownloader.figshare.com/files/558"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "t": "null"
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

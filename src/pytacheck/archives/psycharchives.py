@@ -123,7 +123,8 @@ def dspace_links(paper: Any) -> pd.DataFrame:
     host or of a PsychArchives handle (``20.500.12034/...``). Trailing
     slashes are stripped and duplicate rows dropped.
     """
-    from pytacheck.archives.dataverse import _collect_links, _link_matches, _url_rows
+    from pytacheck.archives.dataone import _scan_links
+    from pytacheck.archives.dataverse import _collect_links, _url_rows
 
     host_regex = _dspace_legacy_host_regex()
     found_href = _url_rows(paper, host_regex)
@@ -131,7 +132,8 @@ def dspace_links(paper: Any) -> pd.DataFrame:
         f"(?:https?://)?(?:www\\.)?(?:{host_regex})/[A-Za-z0-9/._-]+"
         r"|(?:https?://)?(?:hdl\.handle\.net/)?20\.500\.12034/[0-9]+"
     )
-    return _collect_links([found_href, _link_matches(paper, bare)])
+    literals = [*(f"{h}/" for h in DSPACE_LEGACY_HOSTS), "20.500.12034/"]
+    return _collect_links([found_href, _scan_links(paper, bare, literals)])
 
 
 def psycharchives_links(paper: Any) -> pd.DataFrame:
@@ -142,14 +144,16 @@ def psycharchives_links(paper: Any) -> pd.DataFrame:
     item-page URLs and handles in the text. Trailing slashes are stripped and
     duplicate rows dropped.
     """
-    from pytacheck.archives.dataverse import _collect_links, _link_matches, _url_rows
+    from pytacheck.archives.dataone import _scan_links
+    from pytacheck.archives.dataverse import _collect_links, _url_rows
 
     found_href = _url_rows(paper, r"psycharchives\.org|20\.500\.12034/")
     bare = (
         r"(?:https?://)?(?:www\.)?psycharchives\.org/[A-Za-z0-9/._-]+"
         r"|(?:https?://)?(?:hdl\.handle\.net/)?20\.500\.12034/[0-9]+"
     )
-    return _collect_links([found_href, _link_matches(paper, bare)])
+    other = _scan_links(paper, bare, ["psycharchives.org/", "20.500.12034/"])
+    return _collect_links([found_href, other])
 
 
 # ---------------------------------------------------------------------------
@@ -236,9 +240,16 @@ def _obj_cell(value: Any) -> pd.Series:
     return pd.Series(arr, dtype=object)
 
 
+def _url_values(x: Any) -> list[str | None]:
+    """A URL argument as a list: a string or ``None`` (R's ``NA``) is one element."""
+    if x is None or isinstance(x, str):
+        return [x]
+    return _chr_list(x)
+
+
 def _vector(values: list[Any]) -> pd.Series:
-    """An R vector from Python values (``string`` dtype when they are all strings)."""
-    if all(isinstance(v, str) for v in values):
+    """An R vector from Python values (``string`` dtype for strings and ``None``)."""
+    if all(v is None or isinstance(v, str) for v in values):
         return pd.Series(values, dtype="string")
     return pd.Series(values)
 
@@ -309,7 +320,7 @@ def _psycharchives_info(pa_url: Any, pb: Any = None) -> pd.DataFrame:
         _tick(bar, f"* Retrieving info from {_paste(pa_url)}...")
         obj: dict[str, pd.Series] = {"pa_url": _cell(pa_url)}
 
-        parsed = _dspace_legacy_parse(pa_url)
+        parsed = _dspace_legacy_parse([None] if pa_url is None else pa_url)
         if len(parsed) == 0:
             raise IndexError("subscript out of bounds")
         host_v = parsed["host"].iloc[0]
@@ -475,17 +486,18 @@ def psycharchives_file_download(pa_url: Any, pb: Any = None, cache: bool = False
     bitstream's retrieve URL, fetched later by ``download_repo_files()``),
     ``file_location`` (``NA``), ``size``, ``isdir``, ``ext`` and ``type``.
     Each item's rights statement and DOI are carried in the table's
-    ``attrs["rights"]`` / ``attrs["doi"]`` (``{url: value}``; R: attributes),
-    also for an item that lists no public files (a zero-row table). ``None``
-    when the item could not be found. With *cache*, listings are reused from
-    the on-disk cache.
+    ``attrs["rights"]`` / ``attrs["doi"]`` (``{url: value}``; R: named
+    vectors in attributes), also for an item that lists no public files (a
+    zero-row table). ``None`` when the item could not be found (or *pa_url*
+    is ``None``, R's ``NA``). A sequence of URLs gives one table, aligned with
+    the input. With *cache*, listings are reused from the on-disk cache.
     """
     from pytacheck._r import bind_rows
     from pytacheck.archives import _spinner, _tick
     from pytacheck.archives.dataverse import _paste
     from pytacheck.utils import left_join
 
-    urls = _chr_list(pa_url) if not isinstance(pa_url, str) else [pa_url]
+    urls = _url_values(pa_url)
     with _spinner(pb) as bar:
         if len(urls) > 1:
             unique_pa = [u for u in dict.fromkeys(urls) if u is not None]
@@ -494,18 +506,17 @@ def psycharchives_file_download(pa_url: Any, pb: Any = None, cache: bool = False
             orig = pd.DataFrame({"pa_url": pd.Series(urls, dtype="string")})
             if "pa_url" not in info.columns:
                 raise ValueError(
-                    "Join columns in `y` must be present in the data.\n"
-                    "✖ Problem with `pa_url`."
+                    "Join columns in `y` must be present in the data.\n✖ Problem with `pa_url`."
                 )
             df = left_join(orig, info, by="pa_url")
-            rights: dict[str, Any] = {}
-            doi: dict[str, Any] = {}
-            for fl in file_lists:
-                if fl is not None:
-                    rights.update(fl.attrs.get("rights") or {})
-                    doi.update(fl.attrs.get("doi") or {})
-            df.attrs["rights"] = rights
-            df.attrs["doi"] = doi
+            # R: unlist(lapply(file_lists, attr, "rights")) -- NULL (no attribute) if none
+            for name in ("rights", "doi"):
+                merged: dict[str, Any] = {}
+                for fl in file_lists:
+                    if fl is not None:
+                        merged.update(fl.attrs.get(name) or {})
+                if merged:
+                    df.attrs[name] = merged
             return df
 
         if not urls:

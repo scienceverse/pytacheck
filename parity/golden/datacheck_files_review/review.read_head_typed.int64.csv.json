@@ -1,0 +1,88 @@
+{
+  "id": "review.read_head_typed.int64.csv",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "names",
+      "types",
+      "data"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "id",
+          "big",
+          "small"
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "integer",
+              "integer"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "double",
+              "integer64"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "integer",
+              "integer"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 3,
+        "names": [
+          "id",
+          "big",
+          "small"
+        ],
+        "v": [
+          {
+            "t": "int",
+            "v": [
+              1,
+              2,
+              3
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              12345678901,
+              3,
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              5,
+              6,
+              7
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

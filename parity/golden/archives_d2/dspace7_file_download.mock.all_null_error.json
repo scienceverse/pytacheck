@@ -1,0 +1,9 @@
+{
+  "id": "dspace7_file_download.mock.all_null_error",
+  "ok": false,
+  "error": "Join columns in `y` must be present in the data.\n✖ Problem with `dspace7_url`.",
+  "warnings": [],
+  "value": null,
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

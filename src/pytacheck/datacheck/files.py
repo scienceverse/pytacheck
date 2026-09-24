@@ -204,6 +204,24 @@ def _as_list(x: Any) -> list[Any]:
     return [None if _is_na(x) else x]
 
 
+def _tolower(s: str) -> str:
+    """R's ``tolower()``: ``towlower()`` per character.
+
+    Unlike ``str.lower()`` it maps ``İ`` to ``i`` (not ``i`` + a combining dot)
+    and has no final-sigma rule.
+    """
+    if s.isascii():
+        return s.lower()
+    return "".join("i" if c == "\u0130" else c.lower() for c in s)
+
+
+def _toupper(s: str) -> str:
+    """R's ``toupper()``: ``towupper()`` per character (``ß`` stays ``ß``)."""
+    if s.isascii():
+        return s.upper()
+    return "".join(u if len(u := c.upper()) == 1 else c for c in s)
+
+
 def _r_basename(path: str) -> str:
     """R ``basename()`` (trailing slashes are dropped first)."""
     stripped = path.rstrip("/")
@@ -234,6 +252,22 @@ def _file_ext(x: str | None) -> str | None:
         return None
     m = compile_r(_FILE_EXT_RX).search(x)
     return m.group(1) if m else ""
+
+
+def _as_logical(x: Any) -> bool | None:
+    """R ``as.logical()`` of one value (``None`` for NA)."""
+    if _is_na(x):
+        return None
+    if isinstance(x, bool | np.bool_):
+        return bool(x)
+    if isinstance(x, int | float | np.integer | np.floating):
+        return bool(x)
+    if isinstance(x, str):
+        if x in ("TRUE", "true", "T", "True"):
+            return True
+        if x in ("FALSE", "false", "F", "False"):
+            return False
+    return None
 
 
 def _r_as_numeric(s: Any) -> float | None:
@@ -367,7 +401,7 @@ def data_classify_files(
         return []
     cat_raw = _file_category(names)
     cat = ["documentation" if c in ("readme", "codebook") else c for c in cat_raw]
-    ext = [None if f is None else _file_ext(f).lower() for f in names]  # type: ignore[union-attr]
+    ext = [None if f is None else _tolower(_file_ext(f)) for f in names]  # type: ignore[arg-type]
     fixed = [_FIXED_EXT_TYPE.get(e) if e else None for e in ext]
     locked = [f if f is not None else c for f, c in zip(fixed, cat, strict=True)]
 
@@ -380,7 +414,7 @@ def data_classify_files(
         ]
     else:
         path_for_kw = list(names)
-    path_lc = [None if p is None else p.lower() for p in path_for_kw]
+    path_lc = [None if p is None else _tolower(p) for p in path_for_kw]
 
     types = list(locked)
     claimed = [t is not None for t in locked]
@@ -398,7 +432,7 @@ def data_classify_files(
             first = None if ci is None else ci.split(";", 1)[0]
             types[i] = _FILE_TYPE_CROSSWALK.get(first) if first is not None else None
     for i, nm in enumerate(names):
-        if nm is not None and _r_basename(nm).lower() == "ro-crate-metadata.json":
+        if nm is not None and _tolower(_r_basename(nm)) == "ro-crate-metadata.json":
             types[i] = "documentation"
     return [t if t is not None else "unknown" for t in types]
 
@@ -424,7 +458,7 @@ def _is_r_package_file(file_path: Sequence[str | None] | str) -> list[bool]:
     for i, p in enumerate(path):
         if p == _r_basename(p):
             dirs[i] = "."
-    base_uc = [_r_basename(p).upper() for p in path]
+    base_uc = [_toupper(_r_basename(p)) for p in path]
     desc = [d for d, k, b in zip(dirs, known, base_uc, strict=True) if k and b == "DESCRIPTION"]
     nsp = {d for d, k, b in zip(dirs, known, base_uc, strict=True) if k and b == "NAMESPACE"}
     pkg_dirs = list(dict.fromkeys(d for d in desc if d in nsp))
@@ -455,7 +489,7 @@ def _is_r_package_file(file_path: Sequence[str | None] | str) -> list[bool]:
         if pd_ != ".":
             continue
         outside = [i for i in range(n) if not is_member[i] and known[i]]
-        outside = [i for i in outside if not _r_basename(path[i]).lower().endswith(".rproj")]
+        outside = [i for i in outside if not _tolower(_r_basename(path[i])).endswith(".rproj")]
         types = data_classify_files(
             [_r_basename(path[i]) for i in outside], [path[i] for i in outside]
         )
@@ -479,8 +513,8 @@ def _data_doc_role(file_name: Sequence[str | None] | str) -> list[str | None]:
     roles: list[str | None] = []
     for nm, doc, cat in zip(names, is_doc, cat_raw, strict=True):
         base = "" if nm is None else _r_basename(nm)
-        low = base.lower()
-        ext = "" if nm is None else (_file_ext(nm) or "").lower()
+        low = _tolower(base)
+        ext = "" if nm is None else _tolower(_file_ext(nm) or "")
         if cat == "readme":
             role: str | None = "readme"
         elif low == "ro-crate-metadata.json" or grepl(r"^readme($|\.)", low):
@@ -503,7 +537,7 @@ def data_format(ext: Sequence[str | None] | str) -> list[str]:
     Port of ``R/data_check_helpers.R::data_format()``.
     """
     return [
-        "tabular" if (e is not None and e.lower() in _READABLE_EXTENSIONS) else "raw"
+        "tabular" if (e is not None and _tolower(e) in _READABLE_EXTENSIONS) else "raw"
         for e in _as_list(ext)
     ]
 
@@ -525,10 +559,10 @@ def data_is_manifest(
     files = [f for f in _as_list(repo_files) if f is not None and f != ""]
     if not files:
         return False
-    repo_base = {_r_basename(str(f).replace("\\", "/")).lower() for f in files}
+    repo_base = {_tolower(_r_basename(str(f).replace("\\", "/"))) for f in files}
     for j in range(df.shape[1]):
         vals = trimws(_series_as_character(df.iloc[:, j]))
-        vals = [v.lower() for v in vals if v is not None and v != ""]
+        vals = [_tolower(v) for v in vals if v is not None and v != ""]
         if not vals:
             continue
         is_ref = [_r_basename(v.replace("\\", "/")) in repo_base for v in vals]
@@ -803,7 +837,7 @@ def _data_check_write_manifest(
         want_l = [False] * n
     elif len(want_l) != n:
         want_l = [want_l[i % len(want_l)] for i in range(n)]
-    want_b = [bool(w) if w is not None else False for w in want_l]
+    want_b = [_as_logical(w) is True for w in want_l]  # as.logical(); NA -> FALSE
 
     loc = _col(files, "file_location") or [None] * n
     downloaded = [bool(v) and os.path.exists(str(v)) for v in loc]
@@ -815,7 +849,7 @@ def _data_check_write_manifest(
         on_disk = os.path.getsize(str(loc[i])) if downloaded[i] else None
         v = sizes[i]
         file_size.append(
-            float(on_disk) if on_disk is not None else (None if v is None else float(v))
+            float(on_disk) if on_disk is not None else _r_as_numeric(v)  # as.numeric()
         )
     urls = _col(files, "file_url") or [None] * n
     for i in range(n):
@@ -840,6 +874,7 @@ def _data_check_write_manifest(
         for r, f, e in zip(failed["repo_url"], failed["file_name"], failed["error"], strict=True):
             fail_err.setdefault(paste_key(r, f), "NA" if _is_na(e) else str(e).split("\n", 1)[0])
     skip = _as_list(skip_types)
+    has_repo = "repo_url" in files.columns
     repo_urls = _col(files, "repo_url") or [None] * n
     names = _col(files, "file_name") or [None] * n
 
@@ -848,7 +883,8 @@ def _data_check_write_manifest(
     for i in range(n):
         if downloaded[i]:
             continue
-        key = paste_key(repo_urls[i], names[i])
+        # paste(NULL, name) is just the name
+        key = paste_key(repo_urls[i], names[i]) if has_repo else f"{names[i]}"
         url = urls[i]
         if download == "none":
             reason[i], intentional[i] = 'download = "none"', True
@@ -871,6 +907,8 @@ def _data_check_write_manifest(
                 f"exceeds max_file_size ({_cap_num(max_file_size)} MB): skipped by the per-file cap"
             )
             intentional[i] = True
+        elif not has_repo:  # if (NULL %in% gated_urls) -> if (logical(0))
+            raise ValueError("argument is of length zero")
         elif repo_urls[i] in gated_urls:
             reason[i], intentional[i] = "repository refused by the size caps", True
         elif key in fail_err:
@@ -906,7 +944,7 @@ def _data_check_write_manifest(
         if not str(manifest).lower().endswith(".json"):
             Path(manifest).mkdir(parents=True, exist_ok=True)
             label = pid if pid else "manifest"
-            path = os.path.join(str(manifest), f"{label}.manifest.json")
+            path = f"{manifest}/{label}.manifest.json"  # file.path() just pastes
         else:
             path = str(manifest)
             Path(path).parent.mkdir(parents=True, exist_ok=True)
@@ -952,7 +990,11 @@ def _data_check_write_manifest(
             "intentional_n": len(intent),
             "unintentional_n": len(unint),
             "unintentional_files": [
-                {"file_name": names[i], "repo_url": repo_urls[i], "reason": reason[i]}
+                {
+                    "file_name": names[i],
+                    "repo_url": repo_urls[i] if has_repo else R_NULL,
+                    "reason": reason[i],
+                }
                 for i in unint
             ],
             "rerun_recommended": len(unint) > 0,
@@ -1044,7 +1086,10 @@ def _llm_classify_batched(
         type_spec = _llm_schema("results", "The item's number in the list", "value", value_desc)
         for start in range(0, n, batch_size):
             rows = list(range(start, min(start + batch_size, n)))
-            listing = "\n".join(f"{k}. {items[r]}" for k, r in enumerate(rows, 1))
+            listing = "\n".join(  # paste(): NA is "NA"
+                f"{k}. {'NA' if _is_na(items[r]) else _r_as_character(items[r])}"
+                for k, r in enumerate(rows, 1)
+            )
             try:
                 resp = _llm(
                     text=pd.DataFrame({"text": [listing]}),
@@ -1068,7 +1113,7 @@ def _llm_classify_batched(
                 model_used = _llm_response_model(resp)
             idx = [_as_integer(v) for v in resp["index"].tolist()]
             vals = [
-                None if _is_na(v) else str(_r_as_character(v)).strip(" \t\r\n").lower()
+                None if _is_na(v) else _tolower(str(_r_as_character(v)).strip(" \t\r\n"))
                 for v in resp["value"].tolist()
             ]
             for i, v in zip(idx, vals, strict=True):
@@ -1126,7 +1171,9 @@ def data_study_roster(paper: Any) -> list[str]:
         return []
     if hits is None or len(hits) == 0:
         return []
-    m = [None if t is None else gsub("[ ._-]", "", str(t)).lower() for t in _as_list(hits["text"])]
+    m = [
+        None if t is None else _tolower(gsub("[ ._-]", "", str(t))) for t in _as_list(hits["text"])
+    ]
     codes = [c for c in _data_group_normalize(m) if c is not None]
     codes = list(dict.fromkeys(codes))
     if not codes:
@@ -1180,7 +1227,14 @@ def _split_lines(raw: bytes) -> list[bytes]:
 
 
 def _has_invalid_utf8(s: str) -> bool:
-    return any("\udc80" <= c <= "\udcff" for c in s)
+    """Whether a ``surrogateescape``-decoded string held bytes that are not UTF-8."""
+    if s.isascii():
+        return False
+    try:
+        s.encode("utf-8")
+    except UnicodeEncodeError:  # the lone surrogates standing for invalid bytes
+        return True
+    return False
 
 
 def _data_code_refs(path: str | None, max_bytes: float = 2e6) -> list[str]:
@@ -1213,7 +1267,7 @@ def _data_code_refs(path: str | None, max_bytes: float = 2e6) -> list[str]:
         return []
     refs = sub("^.*?[\"']([^\"']+)[\"'].*$", r"\1", matches)
     refs = [r for r, ok in zip(refs, grepl(r"\.[A-Za-z0-9]{1,6}$", refs), strict=True) if ok]
-    return list(dict.fromkeys(_r_basename(r.replace("\\", "/")).lower() for r in refs))
+    return list(dict.fromkeys(_tolower(_r_basename(r.replace("\\", "/"))) for r in refs))
 
 
 _EX_PAT = "(?:experiment|study|(?<![a-z])expt?|(?<![a-z])ex)[ ._-]?([0-9]{1,2})([a-z](?![a-z]))?"
@@ -1226,7 +1280,7 @@ def _data_group_from_path(paths: Sequence[str | None]) -> list[str | None]:
     for path in _as_list(paths):
         code: str | None = None
         if path is not None and path != "":
-            for part in reversed(strsplit(path.lower(), "/", fixed=True)):
+            for part in reversed(strsplit(_tolower(path), "/", fixed=True)):
                 m = regexec(_EX_PAT, part, perl=True)
                 if m:
                     code = "ex" + m[1] + m[2]
@@ -1246,7 +1300,7 @@ def _data_group_normalize(x: Sequence[Any]) -> list[str | None]:
         if v is None:
             out.append(None)
             continue
-        s = str(_r_as_character(v)).strip(" \t\r\n").lower()
+        s = _tolower(str(_r_as_character(v)).strip(" \t\r\n"))
         s = gsub("[ ._-]", "", s)
         s = sub("^(experiment|study|expt|exp)(?=[0-9])", "ex", s, perl=True)
         if s == "pilot":
@@ -1279,7 +1333,7 @@ def _data_group_from_repo(
     distinct = list(dict.fromkeys(r for r in repos if r is not None))
     if len(distinct) < 2:
         return [None] * n
-    base = [None if p is None else _r_basename(str(p).replace("\\", "/")).lower() for p in paths]
+    base = [None if p is None else _tolower(_r_basename(str(p).replace("\\", "/"))) for p in paths]
     files_of = {
         r: list(dict.fromkeys(b for b, rr in zip(base, repos, strict=True) if rr == r))
         for r in distinct
@@ -1355,7 +1409,7 @@ def _data_group_llm_impl(
         repo = [None] * n
 
     if "data_type" in files.columns:
-        dtype = [None if v is None else str(v).lower() for v in (_col(files, "data_type") or [])]
+        dtype = [None if v is None else _tolower(str(v)) for v in (_col(files, "data_type") or [])]
     else:
         dtype = [None] * n
     send = [True] * n if all(d is None for d in dtype) else [d in _PLACEABLE for d in dtype]
@@ -1375,7 +1429,7 @@ def _data_group_llm_impl(
     script_i = [i for i in range(n) if is_code[i] and group[i] is not None and loc[i] is not None]
     referenced_by: list[list[str] | None] = [None] * n
     if script_i:
-        base_of = [None if p is None else _r_basename(p).lower() for p in paths]
+        base_of = [None if p is None else _tolower(_r_basename(p)) for p in paths]
         for si in script_i:
             refs = _data_code_refs(str(loc[si]))
             if not refs:
@@ -1403,7 +1457,9 @@ def _data_group_llm_impl(
 
     def ask_batch(rows: list[int]) -> list[int]:
         nonlocal used_model
-        listing = "\n".join(f"{k}. {paths[r]}" for k, r in enumerate(rows, 1))
+        listing = "\n".join(
+            f"{k}. {'NA' if paths[r] is None else paths[r]}" for k, r in enumerate(rows, 1)
+        )
         try:
             resp = _llm(
                 text=pd.DataFrame({"text": [listing]}),
@@ -1715,7 +1771,7 @@ def _detect_header(path: str | os.PathLike[str], sep: str) -> bool:
     def is_num(x: str) -> bool:
         if x == "":
             return True
-        if x.upper() in _NUMLIKE:
+        if _toupper(x) in _NUMLIKE:
             return True
         v = _r_as_numeric(x)
         return v is not None and not math.isnan(v)
@@ -1937,7 +1993,7 @@ def data_read_head(
     unsupported format (with a warning when reading failed).
     """
     path = str(path)
-    ext = (_file_ext(path) or "").lower()
+    ext = _tolower(_file_ext(path) or "")
     from pytacheck.datacheck import _files_readers as readers
 
     try:
@@ -2047,13 +2103,16 @@ def _detect_likert_scale(
         return None
     if any(v != round(v) for v in vals):
         return None
-    xs = [round(v) for v in vals]
-    u = sorted(set(xs))
+    # as.integer(round(x)): beyond .Machine$integer.max the value becomes NA,
+    # which still counts in n but is no level and never a suspect
+    xs: list[int | None] = [None if abs(v) > 2147483647 else round(v) for v in vals]
+    u = sorted({v for v in xs if v is not None})
     if len(u) < 2 or len(u) > max_levels:
         return None
     counts: dict[int, int] = {}
     for v in xs:
-        counts[v] = counts.get(v, 0) + 1
+        if v is not None:
+            counts[v] = counts.get(v, 0) + 1
     lv = u
     cnt = [counts[v] for v in lv]
     n = len(xs)
@@ -2095,7 +2154,7 @@ def _detect_likert_scale(
     coverage = sum(in_range) / n
     if coverage < min_coverage:
         return None
-    suspects = sorted({v for v, ok in zip(xs, in_range, strict=True) if not ok})
+    suspects = sorted({v for v, ok in zip(xs, in_range, strict=True) if not ok and v is not None})
     levels_present = [v for v in range(lo, hi + 1) if v in counts]
     inf = ""
     if floor_inferred:

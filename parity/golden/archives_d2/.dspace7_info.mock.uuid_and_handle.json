@@ -1,0 +1,127 @@
+{
+  "id": ".dspace7_info.mock.uuid_and_handle",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 1,
+    "names": [
+      "dspace7_host",
+      "dspace7_uuid",
+      "title",
+      "authors",
+      "doi",
+      "license",
+      "publication_date",
+      "updated_date",
+      "files"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "repository.gatech.edu"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "bac086e5-c606-474b-af1e-4a6122694af5"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Dataset for a robot study"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Doe, Jane; Roe, Rich"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "http://creativecommons.org/licenses/by/4.0/"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "2022-06-01"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "2023-01-02T03:04:05.000+00:00"
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "df",
+            "nrow": 4,
+            "names": [
+              "name",
+              "size",
+              "checksum",
+              "retrieve"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "data.CSV",
+                  "analysis.R",
+                  "model.rds",
+                  "noext"
+                ]
+              },
+              {
+                "t": "dbl",
+                "v": [
+                  1234,
+                  99,
+                  5000000000,
+                  null
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "0123456789abcdef0123456789abcdef",
+                  null,
+                  null,
+                  null
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "https://repository.gatech.edu/server/api/core/bitstreams/b1/content",
+                  "https://repository.gatech.edu/server/api/core/bitstreams/b2/content",
+                  "https://repository.gatech.edu/server/api/core/bitstreams/b3/content",
+                  null
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

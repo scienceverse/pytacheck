@@ -1,0 +1,166 @@
+{
+  "id": "ref_miscitation.bib_id_order",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "ref_miscitation"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Miscitation"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "reference"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 5,
+        "names": [
+          "paper_id",
+          "bib_id",
+          "doi",
+          "citation",
+          "reftext",
+          "warning"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "p",
+              "p",
+              "p",
+              "q",
+              "q"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              10,
+              2,
+              10,
+              1,
+              0
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "10.1000/a",
+              "10.1000/c",
+              "10.1000/a",
+              "10.1000/c",
+              "10.1000/a"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Body sentence 1 cites 10.",
+              "Body sentence 2 cites 2.",
+              "Body sentence 3 cites 10.",
+              "Body sentence 1 cites 1.",
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Ref A",
+              "Ref C",
+              "Ref A",
+              "Ref C",
+              "Ref A"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Warn A",
+              "Warn C",
+              "Warn A",
+              "Warn C",
+              "Warn A"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "**10.1000/a**\n\nRef A\n\nWarn A\n\n*3 Instances:*\n\n> Body sentence 1 cites 10.\n\n> Body sentence 3 cites 10.\n\n> NA",
+          "**10.1000/c**\n\nRef C\n\nWarn C\n\n*2 Instances:*\n\n> Body sentence 2 cites 2.\n\n> Body sentence 1 cites 1."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "yellow"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "We found 5 citations to papers that are commonly miscited."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 2,
+        "names": [
+          "paper_id",
+          "miscite_10.1000/c",
+          "miscite_10.1000/a"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "p",
+              "q"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2,
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              10,
+              0
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

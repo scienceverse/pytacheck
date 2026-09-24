@@ -1,0 +1,227 @@
+{
+  "id": "prereg_check.prap",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "prereg_check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Preregistration Check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "method"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "template_name",
+          "title",
+          "id",
+          "link",
+          "date_created",
+          "date_modified",
+          "date_registered",
+          "embargo_end_date",
+          "ia_url",
+          "data_collection_started",
+          "research_questions",
+          "design_dependent_variables",
+          "study_design_overview",
+          "outliers_and_exclusions",
+          "sample_size",
+          "name",
+          "finally",
+          "paper_id"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Preregistration Template from AsPredicted.org"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "SST in Times of Crisis: Testing socioemotional selectivity theory postulates during the 2020 Coronavirus pandemic"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "7v28u"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://osf.io/7v28u"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2020-04-23T23:43:31.133418"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2020-04-23T23:19:50.558129"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2020-04-23T23:43:31.118031"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2022-04-23T00:00:00Z"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://archive.org/details/osf-registrations-7v28u-v1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "No, no data have been collected for this study yet."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Hypothesis 1: Age is associated with relatively more positive emotional experience during the 2020 coronavirus pandemic\n\nHypothesis 2: Age is associated with relatively greater concern for others.  \n\nHypothesis 3: Age is associated with more optimism about the future during the 2020 coronavirus pandemic."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Positive emotional well-being- We measure positive emotional well-being in two ways: the frequency in which people report feeling each of 29 emotions, and the intensity they report experiencing each emotion that was experienced. \nTo report frequency of experienced emotions, participants will report how often they experienced each of 29 positive and negative emotions (see full list of emotions in the measures document under \"files\") in the past week, on a 5-point Likert scale ranging from ‘Never’ to ‘All or nearly all of the time’. We will compute the average frequency of positive and negative emotions.\nTo report the intensity of experienced emotions, participants will rate each of the emotions they experienced at any frequency beyond ‘Never’ on a 5-point Likert scale ranging from “Not at all” to “Extremely”. \n\n\nConcern for others: We measure concern for others in three ways: proportion of a windfall gain shared with another person, willingness to risk exposure to the coronavirus in order to help others and feeling connected to other generations. \nTo measure the proportion of windfall gains shared with another person, participants will be presented with a hypothetical scenario in which they won a gift certificate worth $100 and are given the option to retain all of it or give a portion (or all of it) to another person. Choice is made on a scale of 11 options in increments of $10, ranging from “Keep $100 for myself, Give $0 to [another person]” (coded as -5), to “Keep $0 for myself, Give $100 to [another person]” (coded as 5) with a mid-point of “Keep $50 for myself, Give $50 to [another person]” (coded as 0). The help target will vary between participants (see ‘conditions’).\nTo measure willingness to risk exposure to the coronavirus in order to help others, participants will be asked to report the amount of risk they are willing to take in order to help a range of help-targets (see full list in the measures document under \"files\") on a 5-point Likert scale ranging from “I would risk nothing” to “I would risk anything”. Participants will be given the option of “N/A” to indicate if a help-target does not apply to them.\nWe will measure connectedness to other generations using a single item- “How connected do you feel to other generations, compared to how you felt before first hearing about the pandemic?”. Possible choices are on a 7-point Likert scale ranging from “Much less connected” (coded as -3) to “Much more connected” (coded as +3) with a mid-point of “About the same” (coded as 0).\n\n\nOptimism about the future:  We measure optimism about the future during the pandemic in two ways: optimism about personal ramifications and optimism about group-level ramifications (community, national) of the 2020 coronavirus pandemic. \nOptimism about person ramifications of the pandemic will be measured through four items: “Compared to last year, do you expect your [financial situation/ retirement prospects/ social world/ personal health] next year to be...” with choice-options on a 7-point Likert scale ranging from “Much better” (coded as 3) to “Much worse” (coded as -3), with a mid-point of “About the same” (coded as 0).\nOptimism about group-level ramifications of the pandemic will be measured using three items: “Compared to last year, to what degree you expect [people in your local community to care for each other next year?/ Americans who now hold different political views to get along with each other next year?/ Americans to care more next year about the global community?]. Choice options are as specified above."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "We will be randomly assigned to three between-subjects conditions to test hypothesis 2a. A third of participants will be asked to answer how they will allocate $100 gift certificate between themselves and a family member another third to allocate money between themselves and an acquaintance and the final third will be asked to allocate money between themselves and a charity."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "For the test of our first hypothesis, if participants indicate that they experience an emotion more than “none of the time” in the frequency measure and then subsequently indicated “not at all” in the intensity measure, their answer for the frequency measure will be labeled “N/A”. \nParticipants who complete the survey in under 5 minutes will be excluded from the sample, due to concerns that participants who complete the survey in such a short time were not diligent enough in their answers."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "To allow us to reliably estimate effect sizes that are likely to be small, as are many age effects in the gerontological literature (Brydges, 2019) and given the between-participants design of our measures, we will collect a sample of 970 participants using online platforms. We will report effect sizes for all hypotheses."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "SST in Times of Crisis: Testing socioemotional selectivity theory postulates during the 2020 Coronavirus pandemic"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Survey"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "p_7v28u"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "We found 1 preregistration.",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(id = \"<a href='https://osf.io/7v28u' target='_blank'>7v28u<\/a>\", \n    title = \"SST in Times of Crisis: Testing socioemotional selectivity theory postulates during the 2020 Coronavirus pandemic\", \n    template = \"Preregistration Template from AsPredicted.org\"), row.names = c(NA, \n-1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 2, FALSE)\n```\n",
+          "Meta-scientific research has shown that deviations from preregistrations are often not reported or checked, and that the most common deviations concern the sample size. We recommend manually checking the full preregistration at the link above, and have provided the preregistered sample size.",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(id = \"7v28u\", sample_size = \"To allow us to reliably estimate effect sizes that are likely to be small, as are many age effects in the gerontological literature (Brydges, 2019) and given the between-participants design of our measures, we will collect a sample of 970 participants using online platforms. We will report effect sizes for all hypotheses.\"), row.names = c(NA, \n-1L), class = c(\"tbl_df\", \"tbl\", \"data.frame\"))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 2, FALSE)\n```\n",
+          "::: {.callout-tip title=\"Full Preregistration\" collapse=\"true\"}\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Field = c(\"template_name\", \"title\", \"id\", \"link\", \n\"date_created\", \"date_modified\", \"date_registered\", \"embargo_end_date\", \n\"ia_url\", \"data_collection_started\", \"research_questions\", \"design_dependent_variables\", \n\"study_design_overview\", \"outliers_and_exclusions\", \"sample_size\", \n\"name\", \"finally\", \"paper_id\"), \"Preregistration 1\" = c(\"Preregistration Template from AsPredicted.org\", \n\"SST in Times of Crisis: Testing socioemotional selectivity theory postulates during the 2020 Coronavirus pandemic\", \n\"7v28u\", \"https://osf.io/7v28u\", \"2020-04-23T23:43:31.133418\", \n\"2020-04-23T23:19:50.558129\", \"2020-04-23T23:43:31.118031\", \"2022-04-23T00:00:00Z\", \n\"https://archive.org/details/osf-registrations-7v28u-v1\", \"No, no data have been collected for this study yet.\", \n\"Hypothesis 1: Age is associated with relatively more positive emotional experience during the 2020 coronavirus pandemic<br><br>Hypothesis 2: Age is associated with relatively greater concern for others.  <br><br>Hypothesis 3: Age is associated with more optimism about the future during the 2020 coronavirus pandemic.\", \n\"Positive emotional well-being- We measure positive emotional well-being in two ways: the frequency in which people report feeling each of 29 emotions, and the intensity they report experiencing each emotion that was experienced. <br>To report frequency of experienced emotions, participants will report how often they experienced each of 29 positive and negative emotions (see full list of emotions in the measures document under \\\"files\\\") in the past week, on a 5-point Likert scale ranging from ‘Never’ to ‘All or nearly all of the time’. We will compute the average frequency of positive and negative emotions.<br>To report the intensity of experienced emotions, participants will rate each of the emotions they experienced at any frequency beyond ‘Never’ on a 5-point Likert scale ranging from “Not at all” to “Extremely”. <br><br><br>Concern for others: We measure concern for others in three ways: proportion of a windfall gain shared with another person, willingness to risk exposure to the coronavirus in order to help others and feeling connected to other generations. <br>To measure the proportion of windfall gains shared with another person, participants will be presented with a hypothetical scenario in which they won a gift certificate worth $100 and are given the option to retain all of it or give a portion (or all of it) to another person. Choice is made on a scale of 11 options in increments of $10, ranging from “Keep $100 for myself, Give $0 to [another person]” (coded as -5), to “Keep $0 for myself, Give $100 to [another person]” (coded as 5) with a mid-point of “Keep $50 for myself, Give $50 to [another person]” (coded as 0). The help target will vary between participants (see ‘conditions’).<br>To measure willingness to risk exposure to the coronavirus in order to help others, participants will be asked to report the amount of risk they are willing to take in order to help a range of help-targets (see full list in the measures document under \\\"files\\\") on a 5-point Likert scale ranging from “I would risk nothing” to “I would risk anything”. Participants will be given the option of “N/A” to indicate if a help-target does not apply to them.<br>We will measure connectedness to other generations using a single item- “How connected do you feel to other generations, compared to how you felt before first hearing about the pandemic?”. Possible choices are on a 7-point Likert scale ranging from “Much less connected” (coded as -3) to “Much more connected” (coded as +3) with a mid-point of “About the same” (coded as 0).<br><br><br>Optimism about the future:  We measure optimism about the future during the pandemic in two ways: optimism about personal ramifications and optimism about group-level ramifications (community, national) of the 2020 coronavirus pandemic. <br>Optimism about person ramifications of the pandemic will be measured through four items: “Compared to last year, do you expect your [financial situation/ retirement prospects/ social world/ personal health] next year to be...” with choice-options on a 7-point Likert scale ranging from “Much better” (coded as 3) to “Much worse” (coded as -3), with a mid-point of “About the same” (coded as 0).<br>Optimism about group-level ramifications of the pandemic will be measured using three items: “Compared to last year, to what degree you expect [people in your local community to care for each other next year?/ Americans who now hold different political views to get along with each other next year?/ Americans to care more next year about the global community?]. Choice options are as specified above.\", \n\"We will be randomly assigned to three between-subjects conditions to test hypothesis 2a. A third of participants will be asked to answer how they will allocate $100 gift certificate between themselves and a family member another third to allocate money between themselves and an acquaintance and the final third will be asked to allocate money between themselves and a charity.\", \n\"For the test of our first hypothesis, if participants indicate that they experience an emotion more than “none of the time” in the frequency measure and then subsequently indicated “not at all” in the intensity measure, their answer for the frequency measure will be labeled “N/A”. <br>Participants who complete the survey in under 5 minutes will be excluded from the sample, due to concerns that participants who complete the survey in such a short time were not diligent enough in their answers.\", \n\"To allow us to reliably estimate effect sizes that are likely to be small, as are many age effects in the gerontological literature (Brydges, 2019) and given the between-participants design of our measures, we will collect a sample of 970 participants using online platforms. We will report effect sizes for all hypotheses.\", \n\"SST in Times of Crisis: Testing socioemotional selectivity theory postulates during the 2020 Coronavirus pandemic\", \n\"Survey\", \"p_7v28u\")), row.names = c(\"template_name\", \"title\", \n\"id\", \"link\", \"date_created\", \"date_modified\", \"date_registered\", \n\"embargo_end_date\", \"ia_url\", \"data_collection_started\", \"research_questions\", \n\"design_dependent_variables\", \"study_design_overview\", \"outliers_and_exclusions\", \n\"sample_size\", \"name\", \"finally\", \"paper_id\"), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 5, FALSE)\n```\n\n\n:::\n",
+          "::: {.callout-tip title=\"Learn More\" collapse=\"true\"}\n\nFor metascientific articles demonstrating the rate of deviations from preregistrations, see:\n\nvan den Akker O, Bakker M, van Assen M, Pennington C, Verweij L, Elsherif M, Claesen A, Gaillard S, Yeung S, Frankenberger J, Krautter K, Cockcroft J, Kreuer K, Evans T, Heppel F, Schoch S, Korbmacher M, Yamada Y, Albayrak-Aydemir N, Wicherts J (2024). &ldquo;The potential of preregistration in psychology: Assessing preregistration producibility and preregistration-study consistency.&rdquo; <em>Psychological Methods<\/em>. <a href=\"https://doi.org/10.1037/met0000687\">doi:10.1037/met0000687<\/a>.\n\nFor educational material on how to report deviations from preregistrations, see:\n\nLakens, Daniël (2024). &ldquo;When and How to Deviate From a Preregistration.&rdquo; <em>Collabra: Psychology<\/em>, <b>10<\/b>(1), 117094. <a href=\"https://doi.org/10.1525/collabra.117094\">doi:10.1525/collabra.117094<\/a>.\n\n:::\n"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "info"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "We found 1 preregistration."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "preregistration"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "p_7v28u"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          }
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

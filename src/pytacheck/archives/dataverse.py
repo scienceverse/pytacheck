@@ -501,18 +501,33 @@ def _list_cell(value: Any) -> pd.Series:
     return s
 
 
+class RequestAbort(Exception):
+    """An error while preparing a request that aborts the caller in R.
+
+    ``req_perform_sequential(on_error = "continue")`` (inside
+    ``.batch_query()``) only turns ``httr2_error`` conditions (a failed
+    connection, an HTTP error) into a ``NULL`` response; any other error
+    raised while a request is performed -- e.g. httr2's ``httr2_oauth``
+    errors when a token endpoint rejects the client -- propagates to the
+    caller. :func:`_query` re-raises this class instead of returning ``None``.
+    """
+
+
 def _query(url: str, req_func: Callable[[dict[str, Any]], dict[str, Any]]) -> httpx.Response | None:
     """``.batch_query(url, msg = NULL, req_func = req_func)[[1]]``.
 
     A request that cannot be sent gives ``None`` (R: a ``NULL`` response), as
     ``req_perform_sequential(on_error = "continue")`` does -- including a
     failure inside *req_func*, which in R only surfaces when the request is
-    performed (e.g. an OAuth token that cannot be fetched).
+    performed (e.g. a token endpoint that cannot be reached). A
+    :class:`RequestAbort` (an error R does not catch there) propagates.
     """
     from pytacheck import http
 
     try:
         return http.batch_query([url], msg=None, req_func=req_func)[0]
+    except RequestAbort:
+        raise
     except Exception:
         return None
 
@@ -527,15 +542,45 @@ def _resp_json(resp: httpx.Response) -> Any:
         return None
 
 
-def _check_named_ids(urls: Sequence[Any]) -> None:
+#: ``DataFrame.attrs`` key naming the columns that are R *named* vectors whose
+#: names are never ``NA`` (the ``dryad_doi`` / ``figshare_id`` columns that
+#: ``dryad_links()`` / ``figshare_links()`` build with ``vapply()``, named by
+#: the link URLs). pandas carries ``attrs`` through copies, row filters and
+#: reordering, as R carries the names; a new table (e.g. ``*_info()`` output)
+#: starts without them, as ``data.frame()`` drops them in R.
+R_NAMED_IDS = "pytacheck.r_named_ids"
+
+
+def _mark_named_ids(df: pd.DataFrame, column: str) -> pd.DataFrame:
+    """Record that *column* of *df* is a URL-named vector in R (see :data:`R_NAMED_IDS`)."""
+    df.attrs[R_NAMED_IDS] = (*df.attrs.get(R_NAMED_IDS, ()), column)
+    return df
+
+
+def _id_col_named(x: Any, id_col: Any) -> bool:
+    """Is ``x[[id_col]]`` a URL-named vector in R (see :data:`R_NAMED_IDS`)?"""
+    if not isinstance(x, pd.DataFrame):
+        return False
+    marked = x.attrs.get(R_NAMED_IDS, ())
+    if not marked:
+        return False
+    if isinstance(id_col, int | float) and not isinstance(id_col, bool):
+        pos = int(id_col) - 1
+        return 0 <= pos < x.shape[1] and x.columns[pos] in marked
+    return id_col in marked
+
+
+def _check_named_ids(urls: Sequence[Any], x: Any = None, id_col: Any = 1) -> None:
     """R's error from ``data.frame(url = urls, id = .<archive>_id(urls))``.
 
     ``.dryad_doi()`` / ``.figshare_id()`` return a vector named by the URLs
     (``vapply(USE.NAMES = TRUE)``) when given two or more strings, and
     ``data.frame()`` takes those names as row names unless some are
-    duplicated -- which fails when one is ``NA``.
+    duplicated -- which fails when one is ``NA``. When the input column is
+    itself a named vector (*x*'s *id_col*, see :func:`_id_col_named`),
+    ``vapply()`` keeps those names instead, and they are never ``NA``.
     """
-    if len(urls) < 2:
+    if len(urls) < 2 or _id_col_named(x, id_col):
         return
     if not all(is_na(u) or isinstance(u, str) for u in urls) or all(is_na(u) for u in urls):
         return  # not a character vector: vapply() adds no names
@@ -715,11 +760,13 @@ def _verify_file_table(files: pd.DataFrame | None, download_to: str, typed: bool
         for f, d in zip(full, on_disk, strict=True)
     ]
     ok = [d and not math.isnan(s) for d, s in zip(on_disk, size_on_disk, strict=True)]
-    expected = (
-        [_as_numeric(None if is_na(v) else v) for v in files["size"].tolist()]
-        if "size" in files
-        else [math.nan] * n
-    )
+    with warnings.catch_warnings():  # R: suppressWarnings(as.numeric(files$size))
+        warnings.simplefilter("ignore")
+        expected = (
+            [_as_numeric(None if is_na(v) else v) for v in files["size"].tolist()]
+            if "size" in files
+            else [math.nan] * n
+        )
     ok = [
         o and (math.isnan(e) or (not math.isnan(s) and s == e))
         for o, e, s in zip(ok, expected, size_on_disk, strict=True)
@@ -746,7 +793,10 @@ def _verify_file_table(files: pd.DataFrame | None, download_to: str, typed: bool
             got = _md5sum(full[i])  # type: ignore[arg-type]
             checksum_ok[i] = got is not None and got.lower() == checksums[i].lower()  # type: ignore[union-attr]
     ok = [o and c is not False for o, c in zip(ok, checksum_ok, strict=True)]
-    prev = files["downloaded"].tolist() if "downloaded" in files else [False] * n
+    if "downloaded" not in files:
+        # R: `files$downloaded <- ok & files$downloaded %in% TRUE` is a length-0 value
+        raise ValueError(f"replacement has 0 rows, data has {n}")
+    prev = files["downloaded"].tolist()
     downloaded = [o and _is_true(p) for o, p in zip(ok, prev, strict=True)]
     downloaded = [True if u else d for d, u in zip(downloaded, unzipped, strict=True)]
     files["size_on_disk"] = pd.Series(size_on_disk, dtype="float64", index=files.index)
@@ -760,27 +810,44 @@ def _omit_msg(key: Any, size: float) -> str:
     return f"- omitting {_paste(key)} ({_paste(r_round(size / 1024 / 1024, 1))}MB)"
 
 
-def _fetch_file(url: str, headers: dict[str, str], target: str) -> bool:
+def _fetch_file(
+    url: str,
+    headers: dict[str, str],
+    target: str,
+    reauth: Callable[[httpx.Response], dict[str, str] | None] | None = None,
+) -> bool:
     """``httr2::request(url) |> <headers> |> req_timeout(600) |>
     req_error(is_error = \\(resp) FALSE) |> req_perform()``, body written to *target*.
 
     True when the server answered 200 (the body is streamed to disk rather
     than held in memory); request failures give False, as R's ``tryCatch``.
+    *reauth*, given a non-200 response, may return fresh headers to send the
+    request once more with (httr2 re-authenticates once after an OAuth
+    ``invalid_token`` answer).
     """
     import httpx
 
     from pytacheck import http
 
-    try:
-        with http.client().stream("GET", url, headers=headers, timeout=600) as resp:
-            if resp.status_code != 200:
-                return False
-            with open(target, "wb") as fh:
-                for chunk in resp.iter_bytes():
-                    fh.write(chunk)
-    except (httpx.HTTPError, httpx.StreamError, httpx.InvalidURL):
-        return False
-    return True
+    for attempt in range(2):
+        try:
+            with http.client().stream("GET", url, headers=headers, timeout=600) as resp:
+                if resp.status_code != 200:
+                    try:
+                        fresh = reauth(resp) if reauth is not None and attempt == 0 else None
+                    except Exception:  # R: tryCatch(req_perform(...), error = \(e) NULL)
+                        return False
+                    if fresh is None:
+                        return False
+                    headers = fresh
+                    continue
+                with open(target, "wb") as fh:
+                    for chunk in resp.iter_bytes():
+                        fh.write(chunk)
+                return True
+        except (httpx.HTTPError, httpx.StreamError, httpx.InvalidURL):
+            return False
+    return False  # pragma: no cover - the loop always returns
 
 
 def _inside(root: str, rel: str) -> bool:
@@ -804,6 +871,7 @@ def _download_file_table(
     zip_members: Callable[..., pd.DataFrame | None],
     verify: Callable[[pd.DataFrame, str], pd.DataFrame],
     what: str,
+    reauth: Callable[[httpx.Response], dict[str, str] | None] | None = None,
 ) -> tuple[pd.DataFrame, str] | None:
     """Everything the three ``*_file_download()`` functions do after listing files.
 
@@ -919,7 +987,12 @@ def _download_file_table(
                 except Exception:
                     spec = None
                 if spec is not None:
-                    ok = _fetch_file(selfs[i], dict(spec.get("headers") or {}), target)  # type: ignore[arg-type]
+                    ok = _fetch_file(
+                        selfs[i],  # type: ignore[arg-type]
+                        dict(spec.get("headers") or {}),
+                        target,
+                        reauth,
+                    )
             downloaded[i] = ok
             _tick(pb, f"Downloading file {i + 1} of {n}")
 
@@ -929,10 +1002,13 @@ def _download_file_table(
             if extracted[i] is not None or not downloaded[i]:
                 continue
             src = f"{temppath}/{_paste(ids[i])}"
-            fname = keys[i] if keys[i] is not None and keys[i] != "" else _paste(ids[i])
-            if not _inside(download_to, fname):
+            # R: a file with neither a name nor an id is still copied (file.path()
+            # turns NA into "NA"), but its path is recorded as NA, so the
+            # verification step marks it as not downloaded.
+            fname = keys[i] if keys[i] is not None and keys[i] != "" else ids[i]
+            if not _inside(download_to, _paste(fname)):
                 continue  # divergence: R would write outside the folder (e.g. "../x")
-            to = f"{download_to}/{fname}"
+            to = f"{download_to}/{_paste(fname)}"
             try:
                 os.makedirs(os.path.dirname(to), exist_ok=True)
                 shutil.copyfile(src, to)
@@ -1127,6 +1203,27 @@ def _dataverse_parse(url: Any) -> pd.DataFrame:
     return pd.DataFrame({"host": _string_series(host), "doi": _string_series(doi)})
 
 
+@functools.cache
+def _dataverse_prefilter() -> str:
+    """A cheap pattern every bare host mention contains (see ``_link_matches()``).
+
+    A match holds a known host followed by ``/``, so the host's last label,
+    preceded by a dot: ``.<tld>/``. Starting with a literal, it is much
+    cheaper to scan for than the host alternation itself (which, run on its
+    own, costs more per sentence than the full pattern).
+    """
+    labels = "|".join(sorted({h.rsplit(".", 1)[1] for h in DATAVERSE_HOSTS}))
+    return f"\\.(?:{labels})/"
+
+
+@functools.cache
+def _dataverse_doi_prefilter() -> str:
+    """The core (``10.<digits>/<id char>`` of a verified prefix) every bare DOI mention contains."""
+    prefixes = dict.fromkeys(p for ps in DATAVERSE_DOI_PREFIX_HOSTS.values() for p in ps)
+    digits = "|".join(p.split(".", 1)[1] for p in prefixes)
+    return f"10\\.(?:{digits})/[A-Za-z0-9/._-]"
+
+
 def dataverse_links(paper: Any) -> pd.DataFrame:
     """Port of R/archive-dataverse.R::dataverse_links(): Dataverse links in papers.
 
@@ -1139,11 +1236,11 @@ def dataverse_links(paper: Any) -> pd.DataFrame:
     host_regex = _dataverse_host_regex()
     found_href = _url_rows(paper, host_regex)
     dv_bare_regex = f"(?:https?://)?(?:www\\.)?(?:{host_regex})/[A-Za-z0-9/danddoi:._?=&%-]*"
-    other_dv = _link_matches(paper, dv_bare_regex)
+    other_dv = _link_matches(paper, dv_bare_regex, _dataverse_prefilter())
     dv_doi_regex = (
         f"(?:https?://)?(?:doi\\.org/)?(?:{_dataverse_doi_prefix_regex()})/[A-Za-z0-9/._-]+"
     )
-    other_dv_doi = _link_matches(paper, dv_doi_regex)
+    other_dv_doi = _link_matches(paper, dv_doi_regex, _dataverse_doi_prefilter())
 
     links = _collect_links([found_href, other_dv, other_dv_doi])
     links["dataverse_url"] = links["href"]

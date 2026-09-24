@@ -10,22 +10,38 @@ on:
 permissions:
   contents: read
 
+env:
+  # pytacheck is not on PyPI yet, so CI installs its development branch.
+  # Switch to "pytacheck" once it is released.
+  PYTACHECK_SPEC: "pytacheck @ git+https://github.com/thesanogoeffect/pytacheck@claude/pytacheck-metacheck-fork-0x7q73"
+  PYTACHECK_CONFIG: none # ignore any user config: CI sees only the store
+  # While pytacheck's repository is private, CI needs a token that can read it:
+  # a fine-grained PAT with "Contents: read" on thesanogoeffect/pytacheck, saved
+  # as the repository secret PYTACHECK_READ_TOKEN. Not needed once it is public.
+  PYTACHECK_READ_TOKEN: ${{ secrets.PYTACHECK_READ_TOKEN }}
+
 jobs:
   check:
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v6.0.2
         with:
           fetch-depth: 0 # store build needs each pack's last commit
-      - uses: actions/setup-python@v5
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@bec219d24cd3e171d82865faccec33120bb574f4 # v10.1.0
         with:
           python-version: "3.12"
+      - name: Authenticate to pytacheck's repository
+        if: env.PYTACHECK_READ_TOKEN != ''
+        run: >-
+          git config --global
+          url."https://x-access-token:${PYTACHECK_READ_TOKEN}@github.com/thesanogoeffect/pytacheck".insteadOf
+          "https://github.com/thesanogoeffect/pytacheck"
       - name: Install pytacheck
-        # until pytacheck is on PyPI
-        run: pip install "pytacheck @ git+https://github.com/thesanogoeffect/pytacheck@main" pytest
+        run: uv tool install "$PYTACHECK_SPEC"
       - name: Check the store
-        run: pytacheck store build . --check --repo "${{ github.repository }}"
+        run: pytacheck store build . --check --repo "$GITHUB_REPOSITORY"
       - name: Check changed packs
         env:
           BASE: ${{ github.event.pull_request.base.sha }}
@@ -37,7 +53,7 @@ jobs:
               echo "::group::pytacheck pack check packs/$name"
               pytacheck pack check "packs/$name" || status=1
               if [ -d "packs/$name/tests" ]; then
-                (cd "packs/$name" && python -m pytest -q tests) || status=1
+                (cd "packs/$name" && uvx --with "$PYTACHECK_SPEC" pytest -q tests) || status=1
               fi
               echo "::endgroup::"
             fi
@@ -50,16 +66,22 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v6.0.2
         with:
           fetch-depth: 0
-      - uses: actions/setup-python@v5
+      - uses: astral-sh/setup-uv@bec219d24cd3e171d82865faccec33120bb574f4 # v10.1.0
         with:
           python-version: "3.12"
+      - name: Authenticate to pytacheck's repository
+        if: env.PYTACHECK_READ_TOKEN != ''
+        run: >-
+          git config --global
+          url."https://x-access-token:${PYTACHECK_READ_TOKEN}@github.com/thesanogoeffect/pytacheck".insteadOf
+          "https://github.com/thesanogoeffect/pytacheck"
       - name: Install pytacheck
-        run: pip install "pytacheck @ git+https://github.com/thesanogoeffect/pytacheck@main"
+        run: uv tool install "$PYTACHECK_SPEC"
       - name: Build index.json
-        run: pytacheck store build . --repo "${{ github.repository }}"
+        run: pytacheck store build . --repo "$GITHUB_REPOSITORY"
       - name: Commit index.json
         run: |
           if git diff --quiet -- index.json; then

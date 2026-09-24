@@ -1,0 +1,360 @@
+{
+  "id": "prereg_check.prsp",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "prereg_check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Preregistration Check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "method"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "template_name",
+          "title",
+          "id",
+          "link",
+          "date_created",
+          "date_modified",
+          "date_registered",
+          "embargo_end_date",
+          "ia_url",
+          "research_questions",
+          "hypotheses_interactions",
+          "manipulation_checks",
+          "theoretical_rationale",
+          "design_independent_variables",
+          "design_dependent_variables",
+          "design_covariates_moderators",
+          "data_exclusion_criteria",
+          "data_collection_procedures",
+          "sample_size",
+          "stopping_rule",
+          "outliers_and_exclusions",
+          "fail_safe_exclusion_levels",
+          "indices",
+          "statistical_tests",
+          "rationale_covariate",
+          "variables_roles_in_analyses",
+          "inference_criteria",
+          "multiple_testing_correction",
+          "missing_data_handling",
+          "reliability_criteria",
+          "transformations",
+          "assumptions_and_contingencies",
+          "data_collection_started",
+          "data_looked",
+          "project_dates_start_end",
+          "additional_comments",
+          "paper_id"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Pre-Registration in Social Psychology (van 't Veer & Giner-Sorolla, 2016): Pre-Registration"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Exp1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "r5bme"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://osf.io/r5bme"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2017-01-13T11:10:14.076000"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2017-06-01T00:02:36.167602"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2017-01-31T03:02:44.098000"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2021-01-30T00:00:00Z"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://archive.org/details/osf-registrations-r5bme-v1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Experiential advantage refers to the finding that consumers experience greater happiness from experiential than material purchases. We hypothesize that participants’ social class will moderate the experiential advantage. Thus, we anticipate a Social Class x Purchase Type interaction effect, such that the experiential advantage will be stronger among higher-class participants than among lower-class participants.  "
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Specifically, for higher-class participants, we expect an experiential advantage (greater happiness from experiential than material purchases). For lower-class participants, we expect either a null effect (i.e., similar levels of happiness from experiential and material purchases) or a material advantage (i.e., greater happiness from material than experiential purchases)."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Manipulation check for purchase type\n\nWe will manipulate purchase type between subjects, so that participants are randomly assigned to recall either a recent material purchase or a recent experiential purchase. As a check on this manipulation, we will ask participants, “Was the purchase you recalled a material purchase or an experiential purchase?” We predict that participants’ responses to this question will correspond with the purchase type condition to which they were assigned. \n\nCheck for preselection on higher- and lower- social class\n\nParticipants will be selected to be either high or low in social class based on the criteria of household income and personal educational attainment (explained below), we will also measure subjective social class using the MacArthur Ladder Scale (Adler &amp; Stewart, 2007). Specifically, participants will be shown an image of a ladder with 10 rungs and given the following instructions: “Think of this ladder as representing where people stand in the U.S. At the top of the ladder are the people who are the best off – those who have the most money, the most education and the most respected jobs. At the bottom are the people who are the worst off – who have the least money, least education, and the least respected jobs or no job. The higher up you are on this ladder, the closer you are to the people at the very top; the lower you are, the closer you are to the people at the very bottom.” The measure is scored from 1 (lowest) to 10 (highest). This measure will serve as a check on the preselection process. We predict that participants in the high social class group will report significantly higher levels of subjective SES than participants in the low social class group.\n"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "N/A N/A"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "We have two between-participants (orthogonal) independent variables: (1) purchase type (experiential or material purchase) and (2) social class (higher-class or lower-class)."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "The key dependent measure, degree of happiness from the purchase, will be assessed by asking participants: “When you think about the purchase, how happy does it make you?” [1 = not at all, 7 = very much].\n"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "N/A for the primary analyses, which will test for the predicted Social Class x Purchase Type interaction on happiness.\n"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Pre-selection rules pertaining to social-class (one of the two independent variables).\n\nWe will use a panel company to recruit participants who are either relatively high or low in social class. We will use household income and personal educational attainment as the criteria. Participants categorized as higher-class will have an annual household income that exceeds $80,000 and an education level of at least a bachelor’s degree. Participants categorized as lower-class will have an annual household income of less than $30,000 and an education level of up to a high school degree."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Data will be collected online, in 2017, through a company that assists with panel research (e.g., Precision Sample, Amazon Mechanical Turk). We will collect data from 500 participants. To establish gender representativeness, we will set the gender ratio to be 50-50 for each condition. \n\n Following Van Boven and Gilovich (2003), participants will be randomly assigned to either a material or an experimental purchase condition after reading the following opening instructions: We are interested in how you spend your discretionary money. Discretionary money refers to money spent with the intent of furthering your happiness. This excludes money spent on everyday necessities such as toiletries and utility bills.\n\nMaterial purchase condition:  A material purchase is a purchase that you made with the primary intention of acquiring a material possession—a tangible object that you obtain, use, and keep in your possession, such as electronics. Please take a moment to recall a significant material purchase that you made in order to make yourself happy. The purchase must have cost more than $50. It must be something that you still possess.\n\nExperiential purchase condition: An experiential purchase is a purchase that you made with the primary intention of acquiring a life experience—an event or series of events that you personally encounter or live through, such as visiting a museum. Please take a moment to recall a significant experiential purchase that you made in order to make yourself happy. The purchase must have cost more than $50.\n\n1. Dependent Variable for Confirmatory Analysis \n\nThe key dependent measure, degree of happiness from the purchase, will be assessed by asking participants: “When you think about the purchase, how happy does it make you?” [1 = not at all, 7 = very much].\n\n2. Measures for Exploratory Analyses\n\nWe will include the following questions for exploratory analyses. \n\n1) Miscellaneous questions about the purchase\n(1) About how much money did you spend on this purchase?\n(2) About how many month(s) ago did you make this purchase?\n(3) Which category does your purchase belong to?\no\tBeauty spas and products\no\tBooks and CDs\no\tCell phone and camera\no\tClothing and jewelry\no\tHome appliance\no\tTelevisions, stereo, and computer equipment\no\tSports equipment\no\tDining\no\tFees and admissions (to concerts, etc.)\no\tTravel\no\tOther (if other, then what?) ____________________\n\n2) Materialism (Richins and Dawson, 1992)\nTo what extent do you agree to the following statements? [1 = strongly disagree, 7 = strongly agree]\n(1) My life would be better if I owned certain things I don’t have. \n(2) I’d be happier if I could afford to buy more things. \n(3) It sometimes bothers me quite a bit that I can’t afford to buy all the things I’d like.\n(4) I would not be any happier if I owned nicer things.\n(5) I have all the things I really need to enjoy life.\n\n3) Experiential Buying Tendency Scale (Howell, Pchelin, and Iyer, 2012)\nIn this section, we would like to know more about the purchasing choices you are typically more likely to make. A material item is something tangible, such as jewelry or clothes. An experiential item is something that is intangible, like going out to dinner or going on vacation. Using the scale below as a guide, indicate your preferences. \n(1) In general, when I have extra money I am likely to buy: [1 = a material item, 7 = a life experience]\n(2) When I want to be happy, I am more likely to spend money on: [1 = material goods, 7 = activities and events]\n(3) Some people generally spend their money on a lot of different life experiences— e.g., eating out, going to a concert, traveling, etc. They go about enjoying their life by taking part in daily activities they personally encounter and live through. To what extent does this characterization describe you? [1 = not at all, 7 = a great deal]\n(4) Some people generally spend their money on a lot of material goods and products— e.g., jewelry, clothing. They go about enjoying their life by buying physical objects that they can keep in their possession. To what extent does this characterization describe you? [1 = not at all, 7 = a great deal]\n(5) Which purchase make you happier? [-3 = definitely material purchases, 3 = definitely experiential purchases]\n\n4) Subjective Happiness Scale (Lyubomirsky and Lepper, 1999) \nFor each of the following statements and/or questions, please indicate the point on the scale that you feel is most appropriate in describing you.\n(1) In general, I consider myself: [1 = not a very happy person, 7 = a very happy person]\n(2) Compared with most of my peers, I consider myself: [1 = less happy, 7 = more happy]\n(3) Some people are generally very happy. They enjoy life regardless of what is going on, getting the most out of everything. To what extent does this characterization describe you? [1 = not at all, 7 = a great deal]\n(4) Some people are generally not very happy. Although they are not depressed, they never seem as happy as they might be. To what extent does this characterization describe you? [1 = not at all, 7 = a great deal]\n\n5) Financial concern\nGenerally, how concerned are you about managing your finances? [1 = not at all, 7 = very much]\n\n3. Demographic questions\n\n1) What is your gender?\no\tMale\no\tFemale\n\n2) How old are you?\n\n3) Which ethnic/racial category best describes you?\no\tWhite/European American\no\tBlack/African American\no\tHispanic/Latino\no\tAsian American\no\tNative American\no\tOther\n\n4) About how much is your annual household income? (if more than one person in your household earns an income, please estimate your yearly household income by adding all of the salaries together).  \no\t$0 - 10,000\no\t$10,001 - 20,000\no\t$20,001 - 30,000\no\t$30,001 - 40,000\no\t$40,001 - 50,000\no\t$50,001 - 60,000\no\t$60,001 - 70,000\no\t$70,001 - 80,000\no\t$80,001 - 90,000\no\t$90,001 - 100,000\no\t$100,001 - 110,000\no\t$110,001 - 120,000\no\t$120,001 - 130,000\no\t$130,001 - 140,000\no\t$140,001 or above.\n\n5) What is the highest level of education you have completed?\no\tDid not complete High School\no\tSome High School\no\tHigh School Diploma\no\tSome College\no\tBachelors Degree\no\tSome Graduate work\no\tMasters Degree (Including a professional degree)\no\tPhD"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Results of a meta-analysis of previous research examining the experiential advantage indicated that the average effect size (of the experiential advantage) is around d = 0.34. A power analysis (using G*Power) indicates that with an anticipated effect size of f = 0.17 (equivalent to the d = 0.34 found in the meta-analysis), a minimum sample size of 382 is required to obtain .80 statistical power. \n\n"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Data collection will terminate once the predetermined sample size of 500 is reached."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Participants who fail the purchase type manipulation check or who report an annual household income level or education level that is outside of the prespecified criteria for inclusion in either the high- or low-class group will be automatically terminated from the study by the Qualtrics program. These participants will not count as part of the predetermined sample size. \n"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "N/A"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "To test the key hypothesis, we will conduct a regression analysis in which purchase type (experiential vs. material), social class (high vs. low), and a variable reflecting their interaction are entered as predictors of purchase happiness. Should the predicted interaction emerge, we will use Hayes’ Process Macro to investigate the simple slopes (capturing the relation between purchase type and purchase happiness) for the high versus low social class groups.\n    "
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "regression analysis    "
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "IV: purchase type\nDV: happiness\nmoderator: social class    "
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "N/A    "
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "N/A    "
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "N/A"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "N/A"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "N/A"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "N/A"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "N/A"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "No, data collection has not begun"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "No"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "N/A"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "N/A"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "p_r5bme"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "We found 1 preregistration.",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(id = \"<a href='https://osf.io/r5bme' target='_blank'>r5bme<\/a>\", \n    title = \"Exp1\", template = \"Pre-Registration in Social Psychology (van 't Veer & Giner-Sorolla, 2016): Pre-Registration\"), row.names = c(NA, \n-1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 2, FALSE)\n```\n",
+          "Meta-scientific research has shown that deviations from preregistrations are often not reported or checked, and that the most common deviations concern the sample size. We recommend manually checking the full preregistration at the link above, and have provided the preregistered sample size.",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(id = \"r5bme\", sample_size = \"Results of a meta-analysis of previous research examining the experiential advantage indicated that the average effect size (of the experiential advantage) is around d = 0.34. A power analysis (using G*Power) indicates that with an anticipated effect size of f = 0.17 (equivalent to the d = 0.34 found in the meta-analysis), a minimum sample size of 382 is required to obtain .80 statistical power. <br><br>\"), row.names = c(NA, \n-1L), class = c(\"tbl_df\", \"tbl\", \"data.frame\"))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 2, FALSE)\n```\n",
+          "::: {.callout-tip title=\"Full Preregistration\" collapse=\"true\"}\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Field = c(\"template_name\", \"title\", \"id\", \"link\", \n\"date_created\", \"date_modified\", \"date_registered\", \"embargo_end_date\", \n\"ia_url\", \"research_questions\", \"hypotheses_interactions\", \"manipulation_checks\", \n\"theoretical_rationale\", \"design_independent_variables\", \"design_dependent_variables\", \n\"design_covariates_moderators\", \"data_exclusion_criteria\", \"data_collection_procedures\", \n\"sample_size\", \"stopping_rule\", \"outliers_and_exclusions\", \"fail_safe_exclusion_levels\", \n\"indices\", \"statistical_tests\", \"rationale_covariate\", \"variables_roles_in_analyses\", \n\"inference_criteria\", \"multiple_testing_correction\", \"missing_data_handling\", \n\"reliability_criteria\", \"transformations\", \"assumptions_and_contingencies\", \n\"data_collection_started\", \"data_looked\", \"project_dates_start_end\", \n\"additional_comments\", \"paper_id\"), \"Preregistration 1\" = c(\"Pre-Registration in Social Psychology (van 't Veer & Giner-Sorolla, 2016): Pre-Registration\", \n\"Exp1\", \"r5bme\", \"https://osf.io/r5bme\", \"2017-01-13T11:10:14.076000\", \n\"2017-06-01T00:02:36.167602\", \"2017-01-31T03:02:44.098000\", \"2021-01-30T00:00:00Z\", \n\"https://archive.org/details/osf-registrations-r5bme-v1\", \"Experiential advantage refers to the finding that consumers experience greater happiness from experiential than material purchases. We hypothesize that participants’ social class will moderate the experiential advantage. Thus, we anticipate a Social Class x Purchase Type interaction effect, such that the experiential advantage will be stronger among higher-class participants than among lower-class participants.  \", \n\"Specifically, for higher-class participants, we expect an experiential advantage (greater happiness from experiential than material purchases). For lower-class participants, we expect either a null effect (i.e., similar levels of happiness from experiential and material purchases) or a material advantage (i.e., greater happiness from material than experiential purchases).\", \n\"Manipulation check for purchase type<br><br>We will manipulate purchase type between subjects, so that participants are randomly assigned to recall either a recent material purchase or a recent experiential purchase. As a check on this manipulation, we will ask participants, “Was the purchase you recalled a material purchase or an experiential purchase?” We predict that participants’ responses to this question will correspond with the purchase type condition to which they were assigned. <br><br>Check for preselection on higher- and lower- social class<br><br>Participants will be selected to be either high or low in social class based on the criteria of household income and personal educational attainment (explained below), we will also measure subjective social class using the MacArthur Ladder Scale (Adler &amp; Stewart, 2007). Specifically, participants will be shown an image of a ladder with 10 rungs and given the following instructions: “Think of this ladder as representing where people stand in the U.S. At the top of the ladder are the people who are the best off – those who have the most money, the most education and the most respected jobs. At the bottom are the people who are the worst off – who have the least money, least education, and the least respected jobs or no job. The higher up you are on this ladder, the closer you are to the people at the very top; the lower you are, the closer you are to the people at the very bottom.” The measure is scored from 1 (lowest) to 10 (highest). This measure will serve as a check on the preselection process. We predict that participants in the high social class group will report significantly higher levels of subjective SES than participants in the low social class group.<br>\", \n\"N/A N/A\", \"We have two between-participants (orthogonal) independent variables: (1) purchase type (experiential or material purchase) and (2) social class (higher-class or lower-class).\", \n\"The key dependent measure, degree of happiness from the purchase, will be assessed by asking participants: “When you think about the purchase, how happy does it make you?” [1 = not at all, 7 = very much].<br>\", \n\"N/A for the primary analyses, which will test for the predicted Social Class x Purchase Type interaction on happiness.<br>\", \n\"Pre-selection rules pertaining to social-class (one of the two independent variables).<br><br>We will use a panel company to recruit participants who are either relatively high or low in social class. We will use household income and personal educational attainment as the criteria. Participants categorized as higher-class will have an annual household income that exceeds $80,000 and an education level of at least a bachelor’s degree. Participants categorized as lower-class will have an annual household income of less than $30,000 and an education level of up to a high school degree.\", \n\"Data will be collected online, in 2017, through a company that assists with panel research (e.g., Precision Sample, Amazon Mechanical Turk). We will collect data from 500 participants. To establish gender representativeness, we will set the gender ratio to be 50-50 for each condition. <br><br> Following Van Boven and Gilovich (2003), participants will be randomly assigned to either a material or an experimental purchase condition after reading the following opening instructions: We are interested in how you spend your discretionary money. Discretionary money refers to money spent with the intent of furthering your happiness. This excludes money spent on everyday necessities such as toiletries and utility bills.<br><br>Material purchase condition:  A material purchase is a purchase that you made with the primary intention of acquiring a material possession—a tangible object that you obtain, use, and keep in your possession, such as electronics. Please take a moment to recall a significant material purchase that you made in order to make yourself happy. The purchase must have cost more than $50. It must be something that you still possess.<br><br>Experiential purchase condition: An experiential purchase is a purchase that you made with the primary intention of acquiring a life experience—an event or series of events that you personally encounter or live through, such as visiting a museum. Please take a moment to recall a significant experiential purchase that you made in order to make yourself happy. The purchase must have cost more than $50.<br><br>1. Dependent Variable for Confirmatory Analysis <br><br>The key dependent measure, degree of happiness from the purchase, will be assessed by asking participants: “When you think about the purchase, how happy does it make you?” [1 = not at all, 7 = very much].<br><br>2. Measures for Exploratory Analyses<br><br>We will include the following questions for exploratory analyses. <br><br>1) Miscellaneous questions about the purchase<br>(1) About how much money did you spend on this purchase?<br>(2) About how many month(s) ago did you make this purchase?<br>(3) Which category does your purchase belong to?<br>o\\tBeauty spas and products<br>o\\tBooks and CDs<br>o\\tCell phone and camera<br>o\\tClothing and jewelry<br>o\\tHome appliance<br>o\\tTelevisions, stereo, and computer equipment<br>o\\tSports equipment<br>o\\tDining<br>o\\tFees and admissions (to concerts, etc.)<br>o\\tTravel<br>o\\tOther (if other, then what?) ____________________<br><br>2) Materialism (Richins and Dawson, 1992)<br>To what extent do you agree to the following statements? [1 = strongly disagree, 7 = strongly agree]<br>(1) My life would be better if I owned certain things I don’t have. <br>(2) I’d be happier if I could afford to buy more things. <br>(3) It sometimes bothers me quite a bit that I can’t afford to buy all the things I’d like.<br>(4) I would not be any happier if I owned nicer things.<br>(5) I have all the things I really need to enjoy life.<br><br>3) Experiential Buying Tendency Scale (Howell, Pchelin, and Iyer, 2012)<br>In this section, we would like to know more about the purchasing choices you are typically more likely to make. A material item is something tangible, such as jewelry or clothes. An experiential item is something that is intangible, like going out to dinner or going on vacation. Using the scale below as a guide, indicate your preferences. <br>(1) In general, when I have extra money I am likely to buy: [1 = a material item, 7 = a life experience]<br>(2) When I want to be happy, I am more likely to spend money on: [1 = material goods, 7 = activities and events]<br>(3) Some people generally spend their money on a lot of different life experiences— e.g., eating out, going to a concert, traveling, etc. They go about enjoying their life by taking part in daily activities they personally encounter and live through. To what extent does this characterization describe you? [1 = not at all, 7 = a great deal]<br>(4) Some people generally spend their money on a lot of material goods and products— e.g., jewelry, clothing. They go about enjoying their life by buying physical objects that they can keep in their possession. To what extent does this characterization describe you? [1 = not at all, 7 = a great deal]<br>(5) Which purchase make you happier? [-3 = definitely material purchases, 3 = definitely experiential purchases]<br><br>4) Subjective Happiness Scale (Lyubomirsky and Lepper, 1999) <br>For each of the following statements and/or questions, please indicate the point on the scale that you feel is most appropriate in describing you.<br>(1) In general, I consider myself: [1 = not a very happy person, 7 = a very happy person]<br>(2) Compared with most of my peers, I consider myself: [1 = less happy, 7 = more happy]<br>(3) Some people are generally very happy. They enjoy life regardless of what is going on, getting the most out of everything. To what extent does this characterization describe you? [1 = not at all, 7 = a great deal]<br>(4) Some people are generally not very happy. Although they are not depressed, they never seem as happy as they might be. To what extent does this characterization describe you? [1 = not at all, 7 = a great deal]<br><br>5) Financial concern<br>Generally, how concerned are you about managing your finances? [1 = not at all, 7 = very much]<br><br>3. Demographic questions<br><br>1) What is your gender?<br>o\\tMale<br>o\\tFemale<br><br>2) How old are you?<br><br>3) Which ethnic/racial category best describes you?<br>o\\tWhite/European American<br>o\\tBlack/African American<br>o\\tHispanic/Latino<br>o\\tAsian American<br>o\\tNative American<br>o\\tOther<br><br>4) About how much is your annual household income? (if more than one person in your household earns an income, please estimate your yearly household income by adding all of the salaries together).  <br>o\\t$0 - 10,000<br>o\\t$10,001 - 20,000<br>o\\t$20,001 - 30,000<br>o\\t$30,001 - 40,000<br>o\\t$40,001 - 50,000<br>o\\t$50,001 - 60,000<br>o\\t$60,001 - 70,000<br>o\\t$70,001 - 80,000<br>o\\t$80,001 - 90,000<br>o\\t$90,001 - 100,000<br>o\\t$100,001 - 110,000<br>o\\t$110,001 - 120,000<br>o\\t$120,001 - 130,000<br>o\\t$130,001 - 140,000<br>o\\t$140,001 or above.<br><br>5) What is the highest level of education you have completed?<br>o\\tDid not complete High School<br>o\\tSome High School<br>o\\tHigh School Diploma<br>o\\tSome College<br>o\\tBachelors Degree<br>o\\tSome Graduate work<br>o\\tMasters Degree (Including a professional degree)<br>o\\tPhD\", \n\"Results of a meta-analysis of previous research examining the experiential advantage indicated that the average effect size (of the experiential advantage) is around d = 0.34. A power analysis (using G*Power) indicates that with an anticipated effect size of f = 0.17 (equivalent to the d = 0.34 found in the meta-analysis), a minimum sample size of 382 is required to obtain .80 statistical power. <br><br>\", \n\"Data collection will terminate once the predetermined sample size of 500 is reached.\", \n\"Participants who fail the purchase type manipulation check or who report an annual household income level or education level that is outside of the prespecified criteria for inclusion in either the high- or low-class group will be automatically terminated from the study by the Qualtrics program. These participants will not count as part of the predetermined sample size. <br>\", \n\"N/A\", \"To test the key hypothesis, we will conduct a regression analysis in which purchase type (experiential vs. material), social class (high vs. low), and a variable reflecting their interaction are entered as predictors of purchase happiness. Should the predicted interaction emerge, we will use Hayes’ Process Macro to investigate the simple slopes (capturing the relation between purchase type and purchase happiness) for the high versus low social class groups.<br>    \", \n\"regression analysis    \", \"IV: purchase type<br>DV: happiness<br>moderator: social class    \", \n\"N/A    \", \"N/A    \", \"N/A\", \"N/A\", \"N/A\", \"N/A\", \"N/A\", \"No, data collection has not begun\", \n\"No\", \"N/A\", \"N/A\", \"p_r5bme\")), row.names = c(\"template_name\", \n\"title\", \"id\", \"link\", \"date_created\", \"date_modified\", \"date_registered\", \n\"embargo_end_date\", \"ia_url\", \"research_questions\", \"hypotheses_interactions\", \n\"manipulation_checks\", \"theoretical_rationale\", \"design_independent_variables\", \n\"design_dependent_variables\", \"design_covariates_moderators\", \n\"data_exclusion_criteria\", \"data_collection_procedures\", \"sample_size\", \n\"stopping_rule\", \"outliers_and_exclusions\", \"fail_safe_exclusion_levels\", \n\"indices\", \"statistical_tests\", \"rationale_covariate\", \"variables_roles_in_analyses\", \n\"inference_criteria\", \"multiple_testing_correction\", \"missing_data_handling\", \n\"reliability_criteria\", \"transformations\", \"assumptions_and_contingencies\", \n\"data_collection_started\", \"data_looked\", \"project_dates_start_end\", \n\"additional_comments\", \"paper_id\"), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 5, FALSE)\n```\n\n\n:::\n",
+          "::: {.callout-tip title=\"Learn More\" collapse=\"true\"}\n\nFor metascientific articles demonstrating the rate of deviations from preregistrations, see:\n\nvan den Akker O, Bakker M, van Assen M, Pennington C, Verweij L, Elsherif M, Claesen A, Gaillard S, Yeung S, Frankenberger J, Krautter K, Cockcroft J, Kreuer K, Evans T, Heppel F, Schoch S, Korbmacher M, Yamada Y, Albayrak-Aydemir N, Wicherts J (2024). &ldquo;The potential of preregistration in psychology: Assessing preregistration producibility and preregistration-study consistency.&rdquo; <em>Psychological Methods<\/em>. <a href=\"https://doi.org/10.1037/met0000687\">doi:10.1037/met0000687<\/a>.\n\nFor educational material on how to report deviations from preregistrations, see:\n\nLakens, Daniël (2024). &ldquo;When and How to Deviate From a Preregistration.&rdquo; <em>Collabra: Psychology<\/em>, <b>10<\/b>(1), 117094. <a href=\"https://doi.org/10.1525/collabra.117094\">doi:10.1525/collabra.117094<\/a>.\n\n:::\n"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "info"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "We found 1 preregistration."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "preregistration"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "p_r5bme"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          }
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

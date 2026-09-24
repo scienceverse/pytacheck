@@ -2,8 +2,10 @@
 
 from __future__ import annotations
 
+import numbers
 from typing import Any
 
+import numpy as np
 import pandas as pd
 
 from pytacheck.module import module
@@ -30,8 +32,48 @@ _CAVEAT = (
 )
 
 
+def _key_kind(s: pd.Series) -> str:
+    """The vctrs type class of a join key: ``chr``, ``num``, ``lgl`` or ``unspecified``.
+
+    vctrs checks types even for zero-row or all-NA keys (a character column of
+    NAs still refuses an integer key), but R's logical ``NA`` joins anything, so
+    only untyped missing values (an object column without values, an all-NaN
+    numpy float column, an all-NA logical column) are "unspecified".
+    """
+    dt = s.dtype
+    if pd.api.types.is_object_dtype(dt):
+        kinds = {
+            "lgl"
+            if isinstance(v, bool | np.bool_)
+            else "num"
+            if isinstance(v, numbers.Number)
+            else "chr"
+            for v in s.dropna().tolist()
+        }
+        if not kinds:
+            return "unspecified"
+        return "chr" if "chr" in kinds else "num" if "num" in kinds else "lgl"
+    if (
+        len(s)
+        and not s.notna().any()
+        and (pd.api.types.is_bool_dtype(dt) or (isinstance(dt, np.dtype) and dt.kind == "f"))
+    ):
+        return "unspecified"  # NaN-filled or logical NA; typed string/Int64 keep their type
+    if pd.api.types.is_bool_dtype(dt):
+        return "lgl"
+    return "num" if pd.api.types.is_numeric_dtype(dt) else "chr"
+
+
 def _align_key(x: pd.DataFrame, y: pd.DataFrame, key: str) -> tuple[pd.DataFrame, pd.DataFrame]:
-    """Give *key* one dtype on both sides (R joins integer and double keys)."""
+    """Give *key* one dtype on both sides, as a dplyr join does.
+
+    dplyr joins integer, double and logical keys, but refuses a character key
+    against a numeric or logical one (``Can't join `x$bib_id` with `y$bib_id`
+    due to incompatible types.``), e.g. character ``xref_id``s.
+    """
+    kinds = {_key_kind(x[key]), _key_kind(y[key])}
+    if "chr" in kinds and kinds & {"num", "lgl"}:
+        raise TypeError(f"Can't join `x${key}` with `y${key}` due to incompatible types.")
     dx, dy = x[key].dtype, y[key].dtype
     if dx == dy:
         return x, y

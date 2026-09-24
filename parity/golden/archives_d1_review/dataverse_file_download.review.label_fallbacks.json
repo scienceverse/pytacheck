@@ -1,0 +1,120 @@
+{
+  "id": "dataverse_file_download.review.label_fallbacks",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 2,
+    "names": [
+      "folder",
+      "dataverse_host",
+      "dataverse_doi",
+      "id",
+      "key",
+      "path",
+      "size",
+      "size_on_disk",
+      "checksum",
+      "checksum_ok",
+      "self",
+      "downloaded",
+      "extracted"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "10.7910_DVN_REV2",
+          "10.7910_DVN_REV2"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "dataverse.harvard.edu",
+          "dataverse.harvard.edu"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "10.7910/DVN/REV2",
+          "10.7910/DVN/REV2"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "2001",
+          "2002"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "2001",
+          "2002"
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          8,
+          5
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          8,
+          5
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "344fd2323dd33d5c058b7cf27de029e8",
+          "4358B5009C67D0E31D7FBF1663FCD3BF"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true,
+          true
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://dataverse.harvard.edu/api/access/datafile/2001",
+          "https://dataverse.harvard.edu/api/access/datafile/2002"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true,
+          true
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          null,
+          null
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

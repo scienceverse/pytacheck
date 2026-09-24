@@ -2,7 +2,9 @@
 
 from __future__ import annotations
 
+import heapq
 import warnings
+from itertools import islice
 from typing import Any
 
 import pandas as pd
@@ -65,37 +67,48 @@ def _pivot_wider(counts: pd.DataFrame) -> pd.DataFrame:
     dois = counts["doi"].tolist()
     bib_ids = counts["bib_id"].tolist()
 
-    id_order: dict[Any, Any] = {}
-    doi_order: dict[Any, Any] = {}
-    cells: dict[tuple[Any, Any], list[Any]] = {}
+    # row / column positions in order of first appearance, and the cell values
+    id_pos: dict[Any, int] = {}
+    id_vals: list[Any] = []
+    doi_pos: dict[Any, int] = {}
+    doi_vals: list[Any] = []
+    cells: dict[tuple[int, int], list[Any]] = {}
     for pid, doi, bid in zip(pids, dois, bib_ids, strict=True):
         pk, dk = _key(pid), _key(doi)
-        id_order.setdefault(pk, pid)
-        doi_order.setdefault(dk, doi)
-        cells.setdefault((pk, dk), []).append(None if _is_na(bid) else bid)
+        i = id_pos.get(pk)
+        if i is None:
+            i = id_pos[pk] = len(id_vals)
+            id_vals.append(None if _is_na(pid) else pid)
+        j = doi_pos.get(dk)
+        if j is None:
+            j = doi_pos[dk] = len(doi_vals)
+            doi_vals.append(doi)
+        cells.setdefault((i, j), []).append(None if _is_na(bid) else bid)
 
-    out = pd.DataFrame(
-        {"paper_id": pd.array([None if _is_na(v) else v for v in id_order.values()], "string")}
-    )
     listcols = any(len(v) > 1 for v in cells.values())
     if listcols:
         warnings.warn(
             "Values from `bib_id` are not uniquely identified; output will contain list-cols.",
             stacklevel=3,
         )
+    n = len(id_vals)
+    values: list[list[Any]] = [[None] * n for _ in doi_vals]
+    for (i, j), v in cells.items():
+        values[j][i] = v if listcols else v[0]
+
+    # build all columns at once (one DataFrame construction, not one insert per DOI)
+    columns: dict[str, Any] = {"paper_id": pd.array(id_vals, dtype="string")}
     bid_dtype = counts["bib_id"].dtype
-    for dk, doi in doi_order.items():
+    for doi, col in zip(doi_vals, values, strict=True):
         name = "miscite_" + _chr(doi)
-        vals = [cells.get((pk, dk)) for pk in id_order]
         if listcols:
-            out[name] = pd.Series(vals, dtype=object)
+            columns[name] = pd.Series(col, dtype=object)
         else:
-            col = [None if v is None else v[0] for v in vals]
             try:
-                out[name] = pd.array(col, dtype=bid_dtype)
+                columns[name] = pd.array(col, dtype=bid_dtype)
             except (TypeError, ValueError):
-                out[name] = pd.Series(col, dtype=object)
-    return out
+                columns[name] = pd.Series(col, dtype=object)
+    return pd.DataFrame(columns)
 
 
 def _miscite_db() -> pd.DataFrame:
@@ -133,6 +146,20 @@ def ref_miscitation(paper: Any, db: pd.DataFrame | None = None) -> dict[str, Any
         db = _miscite_db()
     elif not isinstance(db, pd.DataFrame):
         db = pd.DataFrame(db)
+    if "doi" in db.columns:
+        doi = db["doi"]
+        character = (
+            pd.api.types.is_string_dtype(doi)
+            or doi.dtype == object
+            or isinstance(doi.dtype, pd.CategoricalDtype)
+        )
+        if not character:
+            # dplyr joins a character key only to a character (or factor) key, or
+            # to a non-empty all-NA logical column (vctrs "unspecified"), which is
+            # what pandas infers as an all-NaN float64 column
+            if len(doi) == 0 or not bool(doi.isna().all()):
+                raise TypeError("Can't join `x$doi` with `y$doi` due to incompatible types.")
+            db = db.assign(doi=doi.astype("string"))
 
     # consolidate bib tables and filter to relevant DOI
     bibs = paper_table(paper, "bib", ["paper_id", "bib_id", "doi"])
@@ -176,23 +203,32 @@ def ref_miscitation(paper: Any, db: pd.DataFrame | None = None) -> dict[str, Any
         n = len(table)
         summary_text = f"We found {n:d} citation{plural(n)} to papers that are commonly miscited."
 
+        # R: all_instances <- xrefs$citation[xrefs$doi == warn_doi]; a comparison
+        # with NA selects NA, so rows with an NA DOI give an NA instance for every
+        # DOI (and an NA warn_doi selects NA for every row). The rows of each DOI
+        # are indexed once instead of scanning xrefs for every DOI.
         all_dois = xrefs["doi"].tolist()
         citations = xrefs["citation"].tolist()
+        doi_rows: dict[Any, list[int]] = {}
+        na_rows: list[int] = []
+        for i, d in enumerate(all_dois):
+            if _is_na(d):
+                na_rows.append(i)
+            else:
+                doi_rows.setdefault(d, []).append(i)
+
         report = []
         for warn_doi, warning, reftext in to_warn.itertuples(index=False, name=None):
-            # R: xrefs$citation[xrefs$doi == warn_doi] (an NA comparison selects NA)
             if _is_na(warn_doi):
-                all_instances: list[Any] = [None] * len(all_dois)
+                n_all = len(all_dois)
+                instances: list[Any] = [None] * min(5, n_all)
             else:
-                all_instances = [
-                    None if _is_na(d) else c
-                    for d, c in zip(all_dois, citations, strict=True)
-                    if _is_na(d) or d == warn_doi
-                ]
-            instances = all_instances[:5]
+                rows = doi_rows.get(warn_doi, [])
+                n_all = len(rows) + len(na_rows)
+                head = list(islice(heapq.merge(rows, na_rows), 5)) if na_rows else rows[:5]
+                instances = [None if _is_na(all_dois[i]) else citations[i] for i in head]
 
             n_head = len(instances)
-            n_all = len(all_instances)
             instance_n = f"{n_head:d} of {n_all:d}" if n_head < n_all else f"{n_head:d}"
             quotes = "\n\n".join(f"> {_chr(c)}" for c in instances) if instances else "> "
 

@@ -1,0 +1,129 @@
+{
+  "id": "funding_check.xml_fixtures",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "funding_check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Funding Check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "general"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 5,
+        "names": [
+          "paper_id",
+          "text"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "preprint.pdf.tei",
+              "published.pdf.tei",
+              "203020",
+              "0956797615569889",
+              "0956797617737129"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "The research reported in this article was supported by grants from the German Research foundation (DFG) awarded to Jens Lange (LA 4029/1-1, LA 4029/2-1).",
+              "The research reported in this article was supported by grants from the German Research foundation (DFG) awarded to Jens Lange (LA 4029/1-1, LA 4029/2-1).",
+              "This work has been funded by the U.K. Biotechnology and Biological Sciences Research Council (BBSRC) grant BB/J018929/1 awarded to N.J.V.R., G.A.R., and P.G.S. K.J. was supported by the BBSRC Doctoral Training Partnership (WestBio) Studentship. P.G.S. received support from the Wellcome Trust (Senior Investigator Award, United Kingdom; 107802) and the Multidisciplinary University Research Initiative/Engineering and Physical Sciences Research Council (United States, United Kingdom; 172046-01).",
+              "This work was supported by UK Medical Research Council grant MC-A060-5PR00 (to M. C. Anderson).",
+              "This work was supported by a Wellcome Trust Institutional Strategic Support Fund grant (204826/Z/16/Z) awarded to J. Savulescu, M. J. Crockett, N. S. Faber, and G. Kahane and by the Oxford Martin Programme for Collective Responsibility for Infectious Disease. J. Savulescu's work on this article was funded by a Wellcome Trust grant (104848/Z/14/Z)."
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "The following funding statement was detected:",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(c(\"The research reported in this article was supported by grants from the German Research foundation (DFG) awarded to Jens Lange (LA 4029/1-1, LA 4029/2-1).\", \n\"The research reported in this article was supported by grants from the German Research foundation (DFG) awarded to Jens Lange (LA 4029/1-1, LA 4029/2-1).\", \n\"This work has been funded by the U.K. Biotechnology and Biological Sciences Research Council (BBSRC) grant BB/J018929/1 awarded to N.J.V.R., G.A.R., and P.G.S. K.J. was supported by the BBSRC Doctoral Training Partnership (WestBio) Studentship. P.G.S. received support from the Wellcome Trust (Senior Investigator Award, United Kingdom; 107802) and the Multidisciplinary University Research Initiative/Engineering and Physical Sciences Research Council (United States, United Kingdom; 172046-01).\", \n\"This work was supported by UK Medical Research Council grant MC-A060-5PR00 (to M. C. Anderson).\", \n\"This work was supported by a Wellcome Trust Institutional Strategic Support Fund grant (204826/Z/16/Z) awarded to J. Savulescu, M. J. Crockett, N. S. Faber, and G. Kahane and by the Oxford Martin Programme for Collective Responsibility for Infectious Disease. J. Savulescu's work on this article was funded by a Wellcome Trust grant (104848/Z/14/Z).\"\n)), names = \"\", class = \"data.frame\", row.names = c(NA, -5L))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 2, FALSE)\n```\n"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "green"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "A funding statement was detected."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 6,
+        "names": [
+          "paper_id",
+          "funding_found"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "preprint.pdf.tei",
+              "published.pdf.tei",
+              "203020",
+              "0956797615569889",
+              "0956797617737129",
+              "apa"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true,
+              true,
+              true,
+              true,
+              true,
+              false
+            ]
+          }
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

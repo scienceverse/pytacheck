@@ -1,0 +1,14 @@
+{
+  "id": "helpers.bound_start",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "\\b[[:alnum:]]{0,1}a"
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

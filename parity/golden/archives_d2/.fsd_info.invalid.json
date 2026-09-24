@@ -1,0 +1,32 @@
+{
+  "id": ".fsd_info.invalid",
+  "ok": true,
+  "error": null,
+  "warnings": [
+    "https://example.org is not a valid FSD study reference"
+  ],
+  "value": {
+    "t": "df",
+    "nrow": 1,
+    "names": [
+      "fsd_url",
+      "error"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "https://example.org"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "unfound"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

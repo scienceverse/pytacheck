@@ -1,0 +1,80 @@
+{
+  "id": "figshare_links.review.url_only",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 2,
+    "names": [
+      "href",
+      "link_text",
+      "text_id",
+      "paper_id",
+      "figshare_url",
+      "figshare_id",
+      "figshare_unsupported"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "https://figshare.com/s/abc123",
+          "https://figshare.com/articles/x/12"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          2,
+          3
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "a542344f1c3134",
+          "a542344f1c3134"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://figshare.com/s/abc123",
+          "https://figshare.com/articles/x/12"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "12"
+        ],
+        "names": [
+          "https://figshare.com/s/abc123",
+          "https://figshare.com/articles/x/12"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true,
+          false
+        ],
+        "names": [
+          "https://figshare.com/s/abc123",
+          "https://figshare.com/articles/x/12"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

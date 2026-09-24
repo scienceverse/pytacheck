@@ -11,6 +11,7 @@ checks run over plain lists, which keeps the module fast on large corpora.
 
 from __future__ import annotations
 
+import functools
 import math
 from collections.abc import Iterable, Sequence
 from typing import Any, NamedTuple
@@ -36,9 +37,7 @@ _D_PATTERN = (
 )
 
 # parse_f_stats(): perl = TRUE
-_F_PATTERN = (
-    r"\bF\s*\(\s*([0-9]+(?:\.[0-9]+)?)\s*,\s*([0-9]+(?:\.[0-9]+)?)\s*\)\s*=\s*" + _NUM
-)
+_F_PATTERN = r"\bF\s*\(\s*([0-9]+(?:\.[0-9]+)?)\s*,\s*([0-9]+(?:\.[0-9]+)?)\s*\)\s*=\s*" + _NUM
 
 # parse_eta_stats(): perl = TRUE
 _ETA_SPLIT = r"\s*;\s*"
@@ -143,6 +142,7 @@ def _num(x: str) -> float:
     return float(x)
 
 
+@functools.lru_cache(maxsize=65536)
 def _chr(x: float) -> str:
     """R ``as.character()`` of a double (``NaN``/``Inf`` included)."""
     from pytacheck._r.base import as_character
@@ -232,13 +232,23 @@ class _EtaStat(NamedTuple):
 
 
 def _hits(pattern: str, text: str | None) -> list[list[str]]:
-    """``regmatches(gregexpr())`` hits, each re-matched with ``regexec()``."""
-    from pytacheck._r.regex import regexec, regextract_all
+    """``regmatches(gregexpr())`` hits, each re-matched with ``regexec()`` (``perl = TRUE``).
+
+    Each hit is ``[match, group1, ...]`` (unmatched groups ``""``). The
+    patterns cannot match the empty string, so R's ``gregexpr()`` hits are
+    exactly ``finditer()``'s, and a hit always re-matches itself at position 0.
+    """
+    from pytacheck._r.regex import compile_r
 
     if _is_na(text) or text == "":
         return []
-    hits = regextract_all(pattern, text, perl=True)
-    return [regexec(pattern, x, perl=True) for x in hits]
+    rx = compile_r(pattern, perl=True)
+    out = []
+    for m in rx.finditer(text):
+        g = rx.search(m.group(0))
+        if g is not None:
+            out.append([g.group(0), *(x if x is not None else "" for x in g.groups())])
+    return out
 
 
 def _parse_t_stats(test_text: str | None) -> list[_TStat]:
@@ -260,11 +270,10 @@ def _parse_d_stats(es_text: str | None) -> list[_DStat]:
 
 def _parse_f_stats(test_text: str | None) -> list[_FStat]:
     """Port of ``stat_effect_size.R::parse_f_stats()``: every ``F(df1, df2) = value``."""
-    return [
-        _FStat(g[0], _num(g[3]), _num(g[1]), _num(g[2])) for g in _hits(_F_PATTERN, test_text)
-    ]
+    return [_FStat(g[0], _num(g[3]), _num(g[1]), _num(g[2])) for g in _hits(_F_PATTERN, test_text)]
 
 
+@functools.lru_cache(maxsize=4096)
 def _eta_label(raw_label: str) -> str:
     """The effect-size type of a ``parse_eta_stats()`` label."""
     from pytacheck._r.regex import grepl
@@ -378,9 +387,7 @@ def _classify_d_coherence(
 
     n_total_f = df + 2
     use_unequal = (
-        math.isfinite(n_total_f)
-        and abs(n_total_f - _round0(n_total_f)) < 1e-8
-        and n_total_f >= 4
+        math.isfinite(n_total_f) and abs(n_total_f - _round0(n_total_f)) < 1e-8 and n_total_f >= 4
     )
     d_unequal_min = math.nan
     d_unequal_max = math.nan
@@ -406,10 +413,7 @@ def _classify_d_coherence(
     in_range: list[bool | None] = []
     if use_unequal:
         lo, hi = d_unequal_min - tol, d_unequal_max + tol
-        in_range = [
-            None if math.isnan(a) else (a >= lo and a <= hi)  # noqa: SIM300
-            for a in abs_d
-        ]
+        in_range = [None if math.isnan(a) else (lo <= a <= hi) for a in abs_d]
         unequal_match = _any(in_range)
 
     if _cond(paired_match):
@@ -534,7 +538,9 @@ def _classify_f_coherence(
     if len(eta_partial) == 0 and len(omega_partial) == 0:
         out["eta_coherence"] = "indeterminate"
         out["eta_coherence_assumption"] = "none"
-        out["eta_coherence_note"] = "Only eta-squared (not partial) reported; cannot test coherence."
+        out["eta_coherence_note"] = (
+            "Only eta-squared (not partial) reported; cannot test coherence."
+        )
         return out
 
     labels = {e.label for e in eta_stats}
@@ -545,8 +551,9 @@ def _classify_f_coherence(
         )
 
     no_match_note = (
-        "Tolerance = {tol}. A no-match can occur when fewer than 2 decimal places are reported."
-    ).format(tol=_chr(tol))
+        f"Tolerance = {_chr(tol)}. A no-match can occur when fewer than 2 decimal places "
+        "are reported."
+    )
 
     # Check partial eta squared coherence
     if len(eta_partial) > 0:
@@ -587,33 +594,48 @@ def _classify_f_coherence(
 # ---------------------------------------------------------------------------
 
 
-def _label_lhs(lhs: Sequence[str | None], df: Sequence[str | None]) -> list[str | None]:
-    """Port of ``stat_effect_size.R::label_lhs()``, vectorised over ``extract_eq()`` rows.
+def _lhs_kind(lhs: list[str | None]) -> list[str | None]:
+    """``label_lhs()`` for unique ``lhs`` values, before the F-test df check.
 
-    ``"t-test"``, ``"F-test"`` (only with a two-integer ``(df1, df2)``), ``"es"``
-    for an effect size, or ``None`` (``NA``) for anything else.
+    ``"t-test"``, ``"F"`` (an F-test if its df is two integers), ``"es"`` or
+    ``None``.
     """
     from pytacheck._r.regex import grepl, gsub
 
-    lhs = list(lhs)
-    df = [None if _is_na(d) else d for d in df]
     is_t = grepl("^t$", lhs)
     is_f = grepl("^F$", lhs)
-    f_df = grepl(_F_DF_PATTERN, df)
-    raw = gsub("[[:space:]]+", "", [_tolower(None if _is_na(x) else x) for x in lhs])
+    raw = gsub("[[:space:]]+", "", [_tolower(x) for x in lhs])
     raw = gsub("²", "2", raw)  # squared symbol to 2
     is_es = [False] * len(lhs)
     for pattern in _ES_PATTERNS:
         is_es = [a or bool(b) for a, b in zip(is_es, grepl(pattern, raw), strict=True)]
+    return [
+        "t-test" if t else "F" if f else "es" if e else None
+        for t, f, e in zip(is_t, is_f, is_es, strict=True)
+    ]
 
-    kinds: list[str | None] = []
-    for i in range(len(lhs)):
-        if is_t[i]:
-            kinds.append("t-test")
-        elif is_f[i]:
-            kinds.append("F-test" if df[i] is not None and f_df[i] else None)
-        else:
-            kinds.append("es" if is_es[i] else None)
+
+def _label_lhs(lhs: Sequence[str | None], df: Sequence[str | None]) -> list[str | None]:
+    """Port of ``stat_effect_size.R::label_lhs()``, vectorised over ``extract_eq()`` rows.
+
+    ``"t-test"``, ``"F-test"`` (only with a two-integer ``(df1, df2)``), ``"es"``
+    for an effect size (Cohen's d, Hedges' g, Cohen's f, the eta and omega
+    families, xi, beta, b, r), or ``None`` (``NA``) for anything else (p, df,
+    ...). Each distinct ``lhs`` is classified once.
+    """
+    from pytacheck._r.regex import grepl
+
+    lhs = [None if _is_na(x) else str(x) for x in lhs]
+    df = [None if _is_na(d) else str(d) for d in df]
+    uniq = list(dict.fromkeys(lhs))
+    kind_of = dict(zip(uniq, _lhs_kind(uniq), strict=True))
+    kinds = [kind_of[x] for x in lhs]
+    f_rows = [i for i, k in enumerate(kinds) if k == "F"]
+    if f_rows:
+        f_dfs = [df[i] for i in f_rows]
+        ok = grepl(_F_DF_PATTERN, f_dfs)
+        for i, d, good in zip(f_rows, f_dfs, ok, strict=True):
+            kinds[i] = "F-test" if d is not None and good else None
     return kinds
 
 
@@ -708,8 +730,7 @@ def _format_coherence_text(
     if indet > 0:
         parts.append(f"{indet:d} indeterminate case{'' if indet == 1 else 's'}")
     return (
-        f"For {test_label} with a reported {es_label}, coherence checks yielded "
-        f"{', '.join(parts)}."
+        f"For {test_label} with a reported {es_label}, coherence checks yielded {', '.join(parts)}."
     )
 
 
@@ -736,7 +757,7 @@ def _string_frame(rows: list[dict[str, str | None]], columns: Sequence[str]) -> 
         This module only checks statistical results reported in the running text of the manuscript. It cannot (yet) process statistics reported only in tables.
 
         <validation>In a sample of 161 papers with 1469 tests, this module correctly detected 1106 reported effect sizes (true positives) and correctly identified 295 cases where no effect size was present (true negatives). However, it missed 23 that were reported (false negatives), and incorrectly identified 45 effect sizes when none were reported (false positives). Among all instances detected by the module, 96% were true cases (positive predictive value). In a validation against 221 reported Cohen's d effect sizes, it correctly indicated coherence in 218 cases (99%). In a validation against 485 partial eta-squared effect sizes, it correctly indicated coherence in 480 (99%) </validation>
-    """,  # noqa: E501
+    """,
     keywords=["results"],
     author=[
         "Daniel Lakens <D.Lakens@tue.nl>",
