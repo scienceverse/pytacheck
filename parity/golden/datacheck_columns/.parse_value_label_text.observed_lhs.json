@@ -1,0 +1,14 @@
+{
+  "id": ".parse_value_label_text.observed_lhs",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "{\"M\":\"Male\",\"F\":\"Female\"}"
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

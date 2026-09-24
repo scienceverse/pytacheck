@@ -1,0 +1,43 @@
+{
+  "id": ".osd_code_and_provenance.dictionary",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "code",
+      "ref_code",
+      "source",
+      "provenance"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "positive_and_negative_affect_schedule"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "dictionary"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Matched a known instrument in metacheck's scale dictionary (OpenScales-derived or curated)."
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -1,0 +1,121 @@
+{
+  "id": "data_col_stats.all_na",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 1,
+    "names": [
+      "n",
+      "n_missing",
+      "n_unique",
+      "mean",
+      "sd",
+      "se",
+      "median",
+      "min",
+      "max",
+      "range",
+      "p25",
+      "p75",
+      "iqr",
+      "skewness",
+      "kurtosis"
+    ],
+    "v": [
+      {
+        "t": "int",
+        "v": [
+          0
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          2
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          0
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          null
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

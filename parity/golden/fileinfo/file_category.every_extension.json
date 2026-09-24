@@ -1,0 +1,3267 @@
+{
+  "id": "file_category.every_extension",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 404,
+    "names": [
+      "name",
+      "filetype",
+      "file_category"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "file.1.ada",
+          "file.2.ada",
+          "file.3dm",
+          "file.3ds",
+          "file.3ds",
+          "file.3g2",
+          "file.3gp",
+          "file.3mf",
+          "file.7z",
+          "file.a",
+          "file.aac",
+          "file.aaf",
+          "file.aar",
+          "file.abw",
+          "file.ada",
+          "file.adb",
+          "file.ado",
+          "file.ads",
+          "file.ai",
+          "file.aif",
+          "file.aiff",
+          "file.amr",
+          "file.ape",
+          "file.apk",
+          "file.ar",
+          "file.arff",
+          "file.arw",
+          "file.asf",
+          "file.asm",
+          "file.asp",
+          "file.asp",
+          "file.aspx",
+          "file.aspx",
+          "file.au",
+          "file.avchd",
+          "file.avi",
+          "file.avif",
+          "file.azw",
+          "file.azw1",
+          "file.azw3",
+          "file.azw4",
+          "file.azw6",
+          "file.bak",
+          "file.bas",
+          "file.bash",
+          "file.bash",
+          "file.bat",
+          "file.bat",
+          "file.bin",
+          "file.bmp",
+          "file.br",
+          "file.bz2",
+          "file.c",
+          "file.c++",
+          "file.cab",
+          "file.car",
+          "file.cbl",
+          "file.cbr",
+          "file.cbz",
+          "file.cc",
+          "file.cfg",
+          "file.class",
+          "file.clj",
+          "file.cmake",
+          "file.cmd",
+          "file.cob",
+          "file.com",
+          "file.command",
+          "file.config",
+          "file.cpio",
+          "file.cpp",
+          "file.cr2",
+          "file.cr3",
+          "file.crx",
+          "file.cs",
+          "file.csh",
+          "file.csh",
+          "file.css",
+          "file.csv",
+          "file.csv.sav",
+          "file.cxx",
+          "file.d",
+          "file.dart",
+          "file.dat",
+          "file.dav",
+          "file.dds",
+          "file.deb",
+          "file.dft",
+          "file.diff",
+          "file.dll",
+          "file.dmg",
+          "file.do",
+          "file.doc",
+          "file.docx",
+          "file.drc",
+          "file.dss",
+          "file.dta",
+          "file.dwg",
+          "file.dxf",
+          "file.e",
+          "file.ebook",
+          "file.egg",
+          "file.el",
+          "file.env",
+          "file.eot",
+          "file.eps",
+          "file.epub",
+          "file.exe",
+          "file.f",
+          "file.f3d",
+          "file.f77",
+          "file.f90",
+          "file.fa.gz",
+          "file.fasta.gz",
+          "file.fastq.gz",
+          "file.feather",
+          "file.fish",
+          "file.fish",
+          "file.flac",
+          "file.flv",
+          "file.for",
+          "file.fq.gz",
+          "file.fth",
+          "file.ftn",
+          "file.gcode",
+          "file.gdt",
+          "file.gdtb",
+          "file.gen",
+          "file.geojson",
+          "file.gif",
+          "file.git",
+          "file.gitignore",
+          "file.go",
+          "file.gpx",
+          "file.gradle",
+          "file.groovy",
+          "file.gsm",
+          "file.gz",
+          "file.h",
+          "file.heic",
+          "file.heif",
+          "file.hevc",
+          "file.hh",
+          "file.hpp",
+          "file.hs",
+          "file.htm",
+          "file.htm",
+          "file.html",
+          "file.html",
+          "file.hxx",
+          "file.ico",
+          "file.ics",
+          "file.inc",
+          "file.inc",
+          "file.ini",
+          "file.ipynb",
+          "file.iso",
+          "file.it",
+          "file.jar",
+          "file.jasp",
+          "file.jasp",
+          "file.java",
+          "file.jl",
+          "file.jp2",
+          "file.jpeg",
+          "file.jpg",
+          "file.js",
+          "file.js",
+          "file.json",
+          "file.json",
+          "file.jsp",
+          "file.jsp",
+          "file.jsx",
+          "file.jsx",
+          "file.jxl",
+          "file.kml",
+          "file.kmz",
+          "file.ksh",
+          "file.ksh",
+          "file.kt",
+          "file.kts",
+          "file.less",
+          "file.lha",
+          "file.lhs",
+          "file.lisp",
+          "file.lock",
+          "file.log",
+          "file.lua",
+          "file.lz",
+          "file.lz4",
+          "file.lzma",
+          "file.lzo",
+          "file.lzop",
+          "file.m",
+          "file.m2ts",
+          "file.m2v",
+          "file.m3u",
+          "file.m4",
+          "file.m4a",
+          "file.m4p",
+          "file.m4v",
+          "file.make",
+          "file.mar",
+          "file.mat",
+          "file.max",
+          "file.md",
+          "file.mid",
+          "file.mk",
+          "file.mka",
+          "file.mkv",
+          "file.mng",
+          "file.mobi",
+          "file.mod",
+          "file.mov",
+          "file.mp2",
+          "file.mp3",
+          "file.mp4",
+          "file.mpa",
+          "file.mpe",
+          "file.mpeg",
+          "file.mpg",
+          "file.mpv",
+          "file.msg",
+          "file.msi",
+          "file.mts",
+          "file.mxf",
+          "file.ndjson",
+          "file.nef",
+          "file.nim",
+          "file.nsv",
+          "file.obj",
+          "file.odf",
+          "file.odg",
+          "file.odp",
+          "file.ods",
+          "file.odt",
+          "file.ogg",
+          "file.ogm",
+          "file.ogv",
+          "file.ogx",
+          "file.old",
+          "file.omv",
+          "file.opus",
+          "file.orc",
+          "file.org",
+          "file.orig",
+          "file.otf",
+          "file.pages",
+          "file.pak",
+          "file.parquet",
+          "file.patch",
+          "file.pdf",
+          "file.pea",
+          "file.pfb",
+          "file.pfm",
+          "file.php",
+          "file.php",
+          "file.php3",
+          "file.php3",
+          "file.php4",
+          "file.php4",
+          "file.php5",
+          "file.php5",
+          "file.phtml",
+          "file.phtml",
+          "file.pl",
+          "file.pls",
+          "file.png",
+          "file.po",
+          "file.por",
+          "file.por",
+          "file.pp",
+          "file.ppt",
+          "file.pptx",
+          "file.prql",
+          "file.ps",
+          "file.ps1",
+          "file.ps1xml",
+          "file.psb",
+          "file.psc1",
+          "file.psd",
+          "file.psd1",
+          "file.psm1",
+          "file.psrc",
+          "file.pssc",
+          "file.py",
+          "file.qmd",
+          "file.qt",
+          "file.quarto",
+          "file.r",
+          "file.ra",
+          "file.rar",
+          "file.raw",
+          "file.rb",
+          "file.rd",
+          "file.rda",
+          "file.rdata",
+          "file.rds",
+          "file.rds",
+          "file.rm",
+          "file.rmd",
+          "file.rmvb",
+          "file.rnw",
+          "file.roq",
+          "file.rpm",
+          "file.rproj",
+          "file.rs",
+          "file.rst",
+          "file.rtf",
+          "file.rtx",
+          "file.s",
+          "file.s3m",
+          "file.s7z",
+          "file.sas",
+          "file.sas7bdat",
+          "file.sav",
+          "file.sav.gz",
+          "file.scad",
+          "file.scala",
+          "file.scss",
+          "file.sd7",
+          "file.sh",
+          "file.sh",
+          "file.shar",
+          "file.sid",
+          "file.smt",
+          "file.sol",
+          "file.spo",
+          "file.sps",
+          "file.spss",
+          "file.spv",
+          "file.sql",
+          "file.srt",
+          "file.step",
+          "file.stl",
+          "file.stp",
+          "file.svelte",
+          "file.svg",
+          "file.svi",
+          "file.swg",
+          "file.swift",
+          "file.swp",
+          "file.sz",
+          "file.tar",
+          "file.tbz2",
+          "file.tex",
+          "file.tga",
+          "file.tgz",
+          "file.thm",
+          "file.tif",
+          "file.tiff",
+          "file.tlz",
+          "file.tmp",
+          "file.toml",
+          "file.ts",
+          "file.ts",
+          "file.tsv",
+          "file.tsx",
+          "file.ttf",
+          "file.txt",
+          "file.txz",
+          "file.v",
+          "file.vb",
+          "file.vcf",
+          "file.vcxproj",
+          "file.vob",
+          "file.vue",
+          "file.war",
+          "file.wasm",
+          "file.wav",
+          "file.webm",
+          "file.webp",
+          "file.wf1",
+          "file.whl",
+          "file.wll",
+          "file.wma",
+          "file.wmv",
+          "file.woff",
+          "file.woff2",
+          "file.wpd",
+          "file.wps",
+          "file.xba",
+          "file.xcf",
+          "file.xcodeproj",
+          "file.xll",
+          "file.xls",
+          "file.xlsx",
+          "file.xm",
+          "file.xml",
+          "file.xpi",
+          "file.xpt",
+          "file.xz",
+          "file.yaml",
+          "file.yml",
+          "file.yuv",
+          "file.yuv",
+          "file.z",
+          "file.zig",
+          "file.zip",
+          "file.zipx",
+          "file.zsav",
+          "file.zsh",
+          "file.zsh",
+          "file.zst"
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "code"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "image"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "3D;image"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "3D;image"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "video"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "video"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "3D"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "archive"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "archive"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "audio"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "video"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "archive"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "text"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "image"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "audio"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "audio"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "audio"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "audio"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "archive"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "archive"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "image"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "video"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code;web"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code;web"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code;web"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code;web"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "audio"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "video"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "video"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "image"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "book"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "book"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "book"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "book"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "book"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "config"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code;exec"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code;exec"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code;exec"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code;exec"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "exec"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "image"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "archive"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "archive"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "archive"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "video"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "book"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "book"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "config"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "config"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "exec"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "exec"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "exec"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "config"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "archive"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "image"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "image"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "exec"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code;exec"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code;exec"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "web"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "video"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "image"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "archive"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "archive"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "stats"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "text"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "text"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "video"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "image"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "image"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "text"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "archive"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "config"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "font"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "image"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "book"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "exec"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "3D"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data;archive"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data;archive"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data;archive"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code;exec"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code;exec"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "audio"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "video"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data;archive"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "3D"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "image"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "config"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "config"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "image"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "audio"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "archive"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "image"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "image"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "video"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code;web"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code;web"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code;web"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code;web"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "image"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code;web"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code;web"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "config"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "archive"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "audio"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "archive"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data;stats"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data;stats"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "image"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "image"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "image"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code;web"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code;web"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code;data"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code;data"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code;web"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code;web"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code;web"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code;web"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "image"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "image"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "image"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code;exec"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code;exec"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "web"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "archive"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "config"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "text"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "archive"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "archive"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "archive"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "archive"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "archive"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "video"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "video"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "audio"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "audio"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "video"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "video"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "config"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "archive"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "image"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "text"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "audio"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "config"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "audio"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "video"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "video"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "book"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "audio"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "video"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "video"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "audio"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "video"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "audio"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "video"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "video"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "video"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "video"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "text"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "exec"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "video"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "video"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "image"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "video"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "3D"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "text"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "text"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "slide"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "text"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "audio"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "video"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "video"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "video"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "config"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "audio"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "text"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "config"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "font"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "text"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "archive"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "text"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "archive"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "font"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "font"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code;web"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code;web"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code;web"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code;web"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code;web"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code;web"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code;web"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code;web"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code;web"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code;web"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "audio"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "image"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data;stats"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data;stats"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "slide"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "slide"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "image"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "image"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "image"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "video"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "audio"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "archive"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "image"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code;data"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code;data"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "video"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "video"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "video"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "archive"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "config"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "text"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "text"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "text"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "audio"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "archive"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "stats"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "archive;data"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "3D"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "web"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code;exec"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code;exec"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "archive"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "audio"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "3D"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "stats"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "stats"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "stats"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "stats"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "video"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "3D"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "3D"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "3D"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "image"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "video"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "config"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "archive"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "archive"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "archive"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "text"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "image"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "archive"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "image"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "image"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "image"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "archive"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "config"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "config"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "web;code"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "web;code"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "web"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "font"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "text"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "archive"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "video"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "archive"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "web"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "audio"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "video"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "image"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "archive"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "audio"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "video"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "font"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "font"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "text"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "text"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "video"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "image"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "audio"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "archive"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "archive"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "config"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "config"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "image;video"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "image;video"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "archive"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "archive"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "archive"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code;exec"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code;exec"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "archive"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "code",
+          "code",
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          "code",
+          "code",
+          "code",
+          "code",
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          "data",
+          null,
+          null,
+          "code",
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          "code",
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          "code",
+          "code",
+          null,
+          null,
+          "code",
+          null,
+          null,
+          "code",
+          null,
+          "code",
+          "code",
+          null,
+          null,
+          "code",
+          null,
+          null,
+          null,
+          null,
+          "code",
+          null,
+          null,
+          null,
+          "code",
+          null,
+          null,
+          null,
+          "data",
+          "data",
+          "code",
+          "code",
+          "code",
+          "data",
+          null,
+          null,
+          null,
+          "data",
+          "code",
+          "code",
+          null,
+          "code",
+          null,
+          null,
+          null,
+          "code",
+          "data",
+          null,
+          null,
+          "code",
+          null,
+          null,
+          "code",
+          null,
+          null,
+          null,
+          null,
+          null,
+          "code",
+          null,
+          "code",
+          "code",
+          "data",
+          "data",
+          "data",
+          "data",
+          null,
+          null,
+          null,
+          null,
+          "code",
+          "data",
+          "code",
+          "code",
+          null,
+          "data",
+          "data",
+          "data",
+          "data",
+          null,
+          null,
+          null,
+          "code",
+          null,
+          "code",
+          "code",
+          null,
+          null,
+          "code",
+          null,
+          null,
+          null,
+          "code",
+          "code",
+          "code",
+          null,
+          null,
+          null,
+          null,
+          "code",
+          null,
+          "data",
+          null,
+          null,
+          null,
+          "code",
+          null,
+          null,
+          null,
+          "data",
+          "data",
+          "code",
+          "code",
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          "code",
+          "code",
+          null,
+          null,
+          "code",
+          "code",
+          null,
+          null,
+          "code",
+          null,
+          null,
+          null,
+          null,
+          null,
+          "code",
+          null,
+          null,
+          null,
+          "code",
+          null,
+          null,
+          null,
+          null,
+          null,
+          "data",
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          "data",
+          null,
+          "code",
+          null,
+          null,
+          null,
+          null,
+          null,
+          "data",
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          "data",
+          null,
+          "data",
+          null,
+          null,
+          null,
+          null,
+          null,
+          "data",
+          "code",
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          "code",
+          null,
+          null,
+          "code",
+          "data",
+          "data",
+          "code",
+          null,
+          null,
+          "code",
+          null,
+          "code",
+          "code",
+          null,
+          "code",
+          null,
+          "code",
+          "code",
+          "code",
+          "code",
+          "code",
+          "code",
+          null,
+          "code",
+          "code",
+          null,
+          null,
+          null,
+          "code",
+          "code",
+          "data",
+          "data",
+          null,
+          null,
+          null,
+          "code",
+          null,
+          "code",
+          null,
+          null,
+          null,
+          "code",
+          null,
+          null,
+          null,
+          "code",
+          null,
+          null,
+          "code",
+          "data",
+          "data",
+          "data",
+          null,
+          "code",
+          null,
+          "data",
+          null,
+          null,
+          null,
+          null,
+          null,
+          "code",
+          "code",
+          "code",
+          "code",
+          "code",
+          "code",
+          null,
+          null,
+          null,
+          null,
+          "code",
+          null,
+          null,
+          "code",
+          "code",
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          "data",
+          null,
+          null,
+          null,
+          null,
+          "code",
+          "code",
+          "data",
+          "code",
+          null,
+          "code",
+          null,
+          null,
+          null,
+          null,
+          null,
+          "data",
+          null,
+          "code",
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          "code",
+          "code",
+          "data",
+          "data",
+          null,
+          "code",
+          null,
+          "data",
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          "code",
+          null,
+          null,
+          "data",
+          null,
+          null,
+          null
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

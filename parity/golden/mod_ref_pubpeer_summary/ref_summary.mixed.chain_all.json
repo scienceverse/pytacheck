@@ -1,0 +1,195 @@
+{
+  "id": "ref_summary.mixed.chain_all",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "ref_summary"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Summarise References"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "reference"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 7,
+        "names": [
+          "paper_id",
+          "bib_id",
+          "doi",
+          "text",
+          "pubpeer",
+          "replication_type",
+          "retractionwatch"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "mixed",
+              "mixed",
+              "mixed",
+              "mixed",
+              "mixed",
+              "mixed",
+              "mixed"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              0,
+              1,
+              2,
+              3,
+              4,
+              5
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "10.1002/bdm.586",
+              "10.1002/bdm.586",
+              "10.1371/journal.ppat.1000066",
+              "10.9999/pp.one",
+              null,
+              "10.9999/pp.stat",
+              "10.1177/0956797614520714"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Reference 0. https://doi.org/10.1002/bdm.586",
+              "Reference 0. https://doi.org/10.1002/bdm.586",
+              "Reference 1. https://doi.org/10.1371/journal.ppat.1000066",
+              "Reference 2. https://doi.org/10.9999/pp.one",
+              "Reference 3. https://doi.org/NA",
+              "Reference 4. https://doi.org/10.9999/pp.stat",
+              "Reference 5. https://doi.org/10.1177/0956797614520714"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              "<a href='https://pubpeer.com/publications/PP.ONE' target='_blank'>Link<\/a>",
+              null,
+              null,
+              "<a href='https://pubpeer.com/publications/3FA648ECECB88454C91804F09E2E56' target='_blank'>Link<\/a>"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "replication",
+              "replication",
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              "Retraction;Expression of concern",
+              null,
+              null,
+              null,
+              "Retraction"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "See the specific reports above for details.",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(text = c(\"Reference 0. https://doi.org/10.1002/bdm.586\", \n\"Reference 0. https://doi.org/10.1002/bdm.586\", \"Reference 1. https://doi.org/10.1371/journal.ppat.1000066\", \n\"Reference 2. https://doi.org/10.9999/pp.one\", \"Reference 3. https://doi.org/NA\", \n\"Reference 4. https://doi.org/10.9999/pp.stat\", \"Reference 5. https://doi.org/10.1177/0956797614520714\"\n), pubpeer = c(NA, NA, NA, \"<a href='https://pubpeer.com/publications/PP.ONE' target='_blank'>Link<\/a>\", \nNA, NA, \"<a href='https://pubpeer.com/publications/3FA648ECECB88454C91804F09E2E56' target='_blank'>Link<\/a>\"\n), replication_type = c(\"replication\", \"replication\", NA, NA, \nNA, NA, NA), retractionwatch = c(NA, NA, \"Retraction;Expression of concern\", \nNA, NA, NA, \"Retraction\")), row.names = c(NA, -7L), class = c(\"tbl_df\", \n\"tbl\", \"data.frame\"))\n\n# display table -----------------------------------\nmetacheck::report_table(table, c(0.75, NA, NA, NA), 10, FALSE)\n```\n"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "info"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Summary information provided for 7 references"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "pubpeer_comments",
+          "replications",
+          "retractionwatch"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "mixed"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              5
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

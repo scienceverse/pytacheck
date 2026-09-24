@@ -1,0 +1,18 @@
+{
+  "id": "parse_codebook.wide_named.csv",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "variable,age,score",
+      "label,Age in years,Total score",
+      "mean,31.2,4.5",
+      "sd,5.1,1.2",
+      "n,40,40"
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

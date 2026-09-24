@@ -275,7 +275,7 @@ def r_c(values: Sequence[RValue]) -> RValue:
         return None
     if all(isinstance(v, RVec | RMatrix) for v in present):
         # matrices and arrays are atomic: c() drops their dim
-        vecs = [v.vec if isinstance(v, RMatrix) else v for v in present]  # type: ignore[union-attr]
+        vecs: list[RVec] = [v.vec if isinstance(v, RMatrix) else v for v in present]  # type: ignore[misc]
         to = _promote([v.type for v in vecs])
         return RVec(to, tuple(_coerce(e, v.type, to) for v in vecs for e in v.values))
     items: list[RValue] = []
@@ -422,7 +422,8 @@ def _path(x: Any, *names: str) -> Any:
 def _chr1(x: RValue) -> str | None:
     """A length-one character scalar, or ``None``."""
     if isinstance(x, RVec) and len(x.values) == 1 and x.type == "character":
-        return x.values[0]
+        value = x.values[0]
+        return value if isinstance(value, str) else None
     return None
 
 
@@ -447,10 +448,10 @@ def osf_prereg_extract(
     read generically from the schema's field labels (:func:`osf_pr_schema`).
     *info* is the registration resource (parsed JSON).
     """
-    if _path(info, "attributes", "withdrawn") is True:
+    if _withdrawn(info):
         return withdrawn(info)
-    schema_id = _path(info, "relationships", "registration_schema", "data", "id")
-    handler = osf_special_handlers().get(schema_id) if isinstance(schema_id, str) else None
+    schema_id = _schema_id(info)
+    handler = osf_special_handlers().get(schema_id) if schema_id is not None else None
     if handler is not None:
         return handler(info)
     return osf_pr_schema(info, fetch_schema)
@@ -468,18 +469,38 @@ def osf_special_handlers() -> dict[str, Callable[[Mapping[str, Any]], Schema]]:
     }
 
 
+def _withdrawn(info: Mapping[str, Any]) -> bool:
+    """``isTRUE(info$attributes$withdrawn)`` on the jsonlite-simplified value."""
+    w = simplify(_path(info, "attributes", "withdrawn"))
+    return isinstance(w, RVec) and w.type == "logical" and w.values == (True,)
+
+
+def _schema_id(info: Mapping[str, Any]) -> str | None:
+    """``info$relationships$registration_schema$data$id`` as a string (``None``: NA)."""
+    return _chr1(simplify(_path(info, "relationships", "registration_schema", "data", "id")))
+
+
+def _schema_href(info: Mapping[str, Any]) -> str | None:
+    """The registration schema's URL; ``None`` when there is no usable one.
+
+    R requests whatever ``$links$related$href`` holds; anything but one string
+    fails inside its ``tryCatch()`` and reads as "no schema", as ``None`` does.
+    """
+    href = _path(info, "relationships", "registration_schema", "links", "related", "href")
+    return _chr1(simplify(href))
+
+
 def needs_schema(info: Mapping[str, Any]) -> str | None:
     """The schema URL :func:`osf_prereg_extract` will fetch for *info* (``None`` if none)."""
-    if _path(info, "attributes", "withdrawn") is True:
+    if _withdrawn(info):
         return None
-    schema_id = _path(info, "relationships", "registration_schema", "data", "id")
-    if isinstance(schema_id, str) and schema_id in osf_special_handlers():
+    schema_id = _schema_id(info)
+    if schema_id is not None and schema_id in osf_special_handlers():
         return None
     responses = _path(info, "attributes", "registration_responses")
     if not _r_length(responses):
         return None
-    href = _path(info, "relationships", "registration_schema", "links", "related", "href")
-    return href if isinstance(href, str) else None
+    return _schema_href(info)
 
 
 def _r_length(x: Any) -> int:
@@ -518,8 +539,8 @@ def osf_pr_schema(info: Mapping[str, Any], fetch_schema: SchemaFetcher | None = 
         label = key_labels.get(key, _MISSING)
         if label is _MISSING:
             label = key_labels.get(str(sub("^.*-", "", key)), _MISSING)
-        if label is _MISSING or label is None or label == "":
-            continue
+        if not isinstance(label, str) or label == "":
+            continue  # no label, NA or empty
         field = osf_label_to_field(label)
         if field in reserved:
             continue
@@ -543,8 +564,8 @@ def osf_schema_labels(
     human-readable label (``None`` for a label R has as ``NA``); empty when the
     schema cannot be fetched or has neither format.
     """
-    schema_url = _path(info, "relationships", "registration_schema", "links", "related", "href")
-    if not isinstance(schema_url, str):
+    schema_url = _schema_href(info)
+    if schema_url is None:
         return {}
     body = (fetch_schema or fetch_schema_json)(schema_url)
     schema = _path(body, "data", "attributes", "schema")

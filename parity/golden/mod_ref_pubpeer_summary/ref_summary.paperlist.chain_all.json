@@ -1,0 +1,227 @@
+{
+  "id": "ref_summary.paperlist.chain_all",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "ref_summary"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Summarise References"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "reference"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 17,
+        "names": [
+          "paper_id",
+          "bib_id",
+          "doi",
+          "text",
+          "pubpeer"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p2",
+              "p2",
+              "p2",
+              "P0",
+              "P0",
+              "P0",
+              "P0"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              1,
+              2,
+              3,
+              4,
+              4,
+              4,
+              5,
+              5,
+              5,
+              0,
+              1,
+              2,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "10.9999/PP.Upper",
+              "10.9999/pp.zero",
+              null,
+              "",
+              "10.9999/pp.dup",
+              "10.9999/pp.dup",
+              "10.9999/pp.dup",
+              "10.9999/pp.dup",
+              "10.9999/pp.dup",
+              "10.9999/pp.dup",
+              "10.9999/pp.nourl",
+              "10.9999/pp.stat",
+              "10.9999/pp.many",
+              "10.9999/pp.dup",
+              "10.9999/pp.dup",
+              "10.9999/pp.dup",
+              "10.9999/pp.nohit"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Reference 0. https://doi.org/10.9999/PP.Upper",
+              "Reference 1. https://doi.org/10.9999/pp.zero",
+              "Reference 2. https://doi.org/NA",
+              "Reference 3. https://doi.org/",
+              "Reference 4. https://doi.org/10.9999/pp.dup",
+              "Reference 4. https://doi.org/10.9999/pp.dup",
+              "Reference 4. https://doi.org/10.9999/pp.dup",
+              "Reference 5. https://doi.org/10.9999/pp.dup",
+              "Reference 5. https://doi.org/10.9999/pp.dup",
+              "Reference 5. https://doi.org/10.9999/pp.dup",
+              "Reference 0. https://doi.org/10.9999/pp.nourl",
+              "Reference 1. https://doi.org/10.9999/pp.stat",
+              "Reference 2. https://doi.org/10.9999/pp.many",
+              "Reference 0. https://doi.org/10.9999/pp.dup",
+              "Reference 0. https://doi.org/10.9999/pp.dup",
+              "Reference 0. https://doi.org/10.9999/pp.dup",
+              "Reference 1. https://doi.org/10.9999/pp.nohit"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "<a href='https://pubpeer.com/publications/PP.UPPER' target='_blank'>Link<\/a>",
+              null,
+              null,
+              null,
+              "<a href='https://pubpeer.com/publications/PP.DUP' target='_blank'>Link<\/a>",
+              "<a href='https://pubpeer.com/publications/PP.DUP' target='_blank'>Link<\/a>",
+              "<a href='https://pubpeer.com/publications/PP.DUP' target='_blank'>Link<\/a>",
+              "<a href='https://pubpeer.com/publications/PP.DUP' target='_blank'>Link<\/a>",
+              "<a href='https://pubpeer.com/publications/PP.DUP' target='_blank'>Link<\/a>",
+              "<a href='https://pubpeer.com/publications/PP.DUP' target='_blank'>Link<\/a>",
+              null,
+              null,
+              "<a href='https://pubpeer.com/publications/PP.MANY' target='_blank'>Link<\/a>",
+              "<a href='https://pubpeer.com/publications/PP.DUP' target='_blank'>Link<\/a>",
+              "<a href='https://pubpeer.com/publications/PP.DUP' target='_blank'>Link<\/a>",
+              "<a href='https://pubpeer.com/publications/PP.DUP' target='_blank'>Link<\/a>",
+              null
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "See the specific reports above for details.",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(text = c(\"Reference 0. https://doi.org/10.9999/PP.Upper\", \n\"Reference 1. https://doi.org/10.9999/pp.zero\", \"Reference 2. https://doi.org/NA\", \n\"Reference 3. https://doi.org/\", \"Reference 4. https://doi.org/10.9999/pp.dup\", \n\"Reference 4. https://doi.org/10.9999/pp.dup\", \"Reference 4. https://doi.org/10.9999/pp.dup\", \n\"Reference 5. https://doi.org/10.9999/pp.dup\", \"Reference 5. https://doi.org/10.9999/pp.dup\", \n\"Reference 5. https://doi.org/10.9999/pp.dup\", \"Reference 0. https://doi.org/10.9999/pp.nourl\", \n\"Reference 1. https://doi.org/10.9999/pp.stat\", \"Reference 2. https://doi.org/10.9999/pp.many\", \n\"Reference 0. https://doi.org/10.9999/pp.dup\", \"Reference 0. https://doi.org/10.9999/pp.dup\", \n\"Reference 0. https://doi.org/10.9999/pp.dup\", \"Reference 1. https://doi.org/10.9999/pp.nohit\"\n), pubpeer = c(\"<a href='https://pubpeer.com/publications/PP.UPPER' target='_blank'>Link<\/a>\", \nNA, NA, NA, \"<a href='https://pubpeer.com/publications/PP.DUP' target='_blank'>Link<\/a>\", \n\"<a href='https://pubpeer.com/publications/PP.DUP' target='_blank'>Link<\/a>\", \n\"<a href='https://pubpeer.com/publications/PP.DUP' target='_blank'>Link<\/a>\", \n\"<a href='https://pubpeer.com/publications/PP.DUP' target='_blank'>Link<\/a>\", \n\"<a href='https://pubpeer.com/publications/PP.DUP' target='_blank'>Link<\/a>\", \n\"<a href='https://pubpeer.com/publications/PP.DUP' target='_blank'>Link<\/a>\", \nNA, NA, \"<a href='https://pubpeer.com/publications/PP.MANY' target='_blank'>Link<\/a>\", \n\"<a href='https://pubpeer.com/publications/PP.DUP' target='_blank'>Link<\/a>\", \n\"<a href='https://pubpeer.com/publications/PP.DUP' target='_blank'>Link<\/a>\", \n\"<a href='https://pubpeer.com/publications/PP.DUP' target='_blank'>Link<\/a>\", \nNA)), row.names = c(NA, -17L), class = c(\"tbl_df\", \"tbl\", \"data.frame\"\n))\n\n# display table -----------------------------------\nmetacheck::report_table(table, c(0.75, NA), 10, FALSE)\n```\n"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "info"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Summary information provided for 17 references"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 3,
+        "names": [
+          "paper_id",
+          "pubpeer_comments",
+          "replications",
+          "retractionwatch"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "p1",
+              "p2",
+              "P0"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              10,
+              15,
+              3
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0,
+              0,
+              0
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

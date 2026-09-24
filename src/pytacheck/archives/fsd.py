@@ -200,11 +200,10 @@ def _strip_default_ns(root: etree._Element) -> None:
     from lxml import etree
 
     for el in root.iter():
-        if not isinstance(el.tag, str):
-            continue
-        q = etree.QName(el)
-        if q.namespace is not None and el.prefix is None:
-            el.tag = q.localname
+        tag = el.tag
+        # an undeclared prefix leaves a plain "prefix:name" tag (no namespace)
+        if isinstance(tag, str) and tag.startswith("{") and el.prefix is None:
+            el.tag = tag.rsplit("}", 1)[1]
     etree.cleanup_namespaces(root)
 
 
@@ -215,14 +214,14 @@ def _fsd_ddi_xml(study_id: str) -> etree._Element | None:
     parsed.
     """
     from pytacheck import http
-    from pytacheck.archives.dataone import _read_xml
+    from pytacheck.archives.dataone import _read_xml, _resp_body_string
 
     url = f"{_FSD_DDI_BASE}/{study_id}/DDI/{study_id}_eng.xml"
     try:
         resp = http.request("GET", url, max_tries=1)  # httr2 default: no retries
         if resp is None or resp.status_code != 200:
             return None
-        doc = _read_xml(resp.content)
+        doc = _read_xml(_resp_body_string(resp))  # R: read_xml(resp_body_string(resp))
         _strip_default_ns(doc)
         return doc
     except Exception:

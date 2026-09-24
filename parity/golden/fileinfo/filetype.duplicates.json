@@ -1,0 +1,21 @@
+{
+  "id": "filetype.duplicates",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "code",
+      "code",
+      "data"
+    ],
+    "names": [
+      "a.R",
+      "a.R",
+      "b.csv"
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

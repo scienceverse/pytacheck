@@ -13,6 +13,7 @@ from __future__ import annotations
 
 import functools
 import math
+import warnings
 from collections.abc import Iterable, Sequence
 from typing import Any, NamedTuple
 
@@ -56,6 +57,9 @@ _ES_PATTERNS = (
 )
 
 _TOL = 0.01
+
+# R's largest integer (.Machine$integer.max)
+_INT_MAX = 2147483647
 
 _TEST_KINDS = ("t-test", "F-test")
 
@@ -392,12 +396,23 @@ def _classify_d_coherence(
     d_unequal_min = math.nan
     d_unequal_max = math.nan
     n_total = 0
-    n1 = n2 = d_vals = None
+    d_vals = None
     if use_unequal:
         n_total = int(_round0(n_total_f))
-        n1 = np.arange(2, n_total - 1)
-        n2 = n_total - n1
-        d_vals = abs_t * np.sqrt(1 / n1 + 1 / n2)
+        if n_total > _INT_MAX:
+            # as.integer() gives NA (with a warning) and `2:(NA - 2)` errors
+            warnings.warn("NAs introduced by coercion to integer range", stacklevel=2)
+            raise ValueError("NA/NaN argument")
+        # d for every split n1 = 2..(N - 2), n2 = N - n1: abs_t * sqrt(1/n1 + 1/n2),
+        # computed in place (the same IEEE operations as R, less memory)
+        n = np.arange(2, n_total - 1, dtype=np.float64)
+        d_vals = np.divide(1.0, n)
+        np.subtract(n_total, n, out=n)
+        np.divide(1.0, n, out=n)
+        d_vals += n
+        del n
+        np.sqrt(d_vals, out=d_vals)
+        d_vals *= abs_t
         d_unequal_min = float(d_vals.min())
         d_unequal_max = float(d_vals.max())
         out["d_implied_indep_unequal_min"] = _chr(d_unequal_min)
@@ -437,12 +452,14 @@ def _classify_d_coherence(
     elif _cond(unequal_match):
         # Report the single group-size split whose implied d is closest to the
         # reported d, so users can manually check the assumed sample sizes.
-        assert n1 is not None and n2 is not None and d_vals is not None
+        assert d_vals is not None
         out["d_coherence"] = "match_under_assumptions"
         out["d_coherence_assumption"] = "independent_unequal_n_range"
         matched_d = next(a for a, ok in zip(abs_d, in_range, strict=True) if ok)
+        # which.min(): the first split closest to the matched d (n1 = index + 2)
         best = int(np.argmin(np.abs(d_vals - matched_d)))
-        split = f"n1 = {int(n1[best]):d}, n2 = {int(n2[best]):d}, N = {n_total:d}"
+        n1 = best + 2
+        split = f"n1 = {n1:d}, n2 = {n_total - n1:d}, N = {n_total:d}"
         out["d_implied_n"] = split
         out["d_coherence_note"] = (
             f"Match under independent-samples unequal-n range assumption (closest split {split})."
@@ -734,6 +751,22 @@ def _format_coherence_text(
     )
 
 
+def _paper_id_frame(paper: Any, paper_cls: type) -> pd.DataFrame:
+    """R ``data.frame(paper_id = paper$paper_id)``.
+
+    One row for a paper; a paper list has no ``paper_id`` element, so R builds
+    a data frame with no columns. A text table (``module_run()`` also accepts
+    the result of ``text_search()``) gives its whole ``paper_id`` column.
+    """
+    if isinstance(paper, paper_cls):
+        return pd.DataFrame({"paper_id": pd.Series([paper.paper_id], dtype="string")})
+    if isinstance(paper, pd.DataFrame):
+        if "paper_id" not in paper.columns:
+            return pd.DataFrame()
+        return pd.DataFrame({"paper_id": paper["paper_id"].astype("string").reset_index(drop=True)})
+    return pd.DataFrame()
+
+
 def _string_frame(rows: list[dict[str, str | None]], columns: Sequence[str]) -> pd.DataFrame:
     return pd.DataFrame(
         {c: pd.Series([r[c] for r in rows], dtype="string") for c in columns},
@@ -805,13 +838,9 @@ def stat_effect_size(paper: Any) -> dict[str, Any]:
 
     # handle no detected t-tests or F-tests ----
     if len(table) == 0:
-        if isinstance(paper, Paper):
-            summary = pd.DataFrame({"paper_id": pd.Series([paper.paper_id], dtype="string")})
-        else:  # R: `paper$paper_id` is NULL for a paper list
-            summary = pd.DataFrame()
         return {
             "table": pd.DataFrame(),
-            "summary_table": summary,
+            "summary_table": _paper_id_frame(paper, Paper),
             "na_replace": 0,
             "traffic_light": "na",
             "summary_text": _NO_TESTS,

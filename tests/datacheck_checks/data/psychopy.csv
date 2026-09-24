@@ -1,0 +1,13 @@
+trials.thisRepN,trials.thisTrialN,trials.thisN,trials.thisIndex,word,colour,key_resp.keys,key_resp.corr,key_resp.rt,key_resp.started,participant,date,expName,psychopyVersion,frameRate
+0,0,0,0,green,red,right,0,0.450,2.50,7,2020-05-19_16h20.01.792,stroop,2021.2.3,60.01
+0,1,1,1,red,blue,left,1,0.481,4.20,7,2020-05-19_16h20.01.792,stroop,2021.2.3,60.01
+0,2,2,2,green,blue,right,0,0.512,5.90,7,2020-05-19_16h20.01.792,stroop,2021.2.3,60.01
+0,3,3,3,red,red,left,1,0.543,7.60,7,2020-05-19_16h20.01.792,stroop,2021.2.3,60.01
+0,4,4,0,green,blue,right,0,0.574,9.30,7,2020-05-19_16h20.01.792,stroop,2021.2.3,60.01
+0,5,5,1,red,blue,left,1,0.605,11.00,7,2020-05-19_16h20.01.792,stroop,2021.2.3,60.01
+0,6,6,2,green,red,right,0,0.636,12.70,7,2020-05-19_16h20.01.792,stroop,2021.2.3,60.01
+0,7,7,3,red,blue,left,1,0.667,14.40,7,2020-05-19_16h20.01.792,stroop,2021.2.3,60.01
+0,8,8,0,green,blue,right,0,0.698,16.10,7,2020-05-19_16h20.01.792,stroop,2021.2.3,60.01
+0,9,9,1,red,red,left,1,0.729,17.80,7,2020-05-19_16h20.01.792,stroop,2021.2.3,60.01
+0,10,10,2,green,blue,right,0,0.760,19.50,7,2020-05-19_16h20.01.792,stroop,2021.2.3,60.01
+0,11,11,3,red,blue,left,1,0.791,21.20,7,2020-05-19_16h20.01.792,stroop,2021.2.3,60.01

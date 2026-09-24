@@ -1,0 +1,18 @@
+{
+  "id": ".item_text_key.mixed",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "i do not like crowds",
+      "i do not like crowds",
+      "wo not stop",
+      null,
+      ""
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

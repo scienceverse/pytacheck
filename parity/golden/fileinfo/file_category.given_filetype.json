@@ -1,0 +1,80 @@
+{
+  "id": "file_category.given_filetype",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 10,
+    "names": [
+      "name",
+      "filetype",
+      "category",
+      "file_category"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "a.R",
+          "b.csv",
+          "c.txt",
+          "d.x",
+          "e.x",
+          "f.x",
+          "g.x",
+          "h.x",
+          "i.x",
+          "j.x"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "data;stats",
+          "NA",
+          "stats;data",
+          "archive;data",
+          "code;data",
+          "data_x;stats",
+          "data-x;stats",
+          "",
+          "Data"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "codebook",
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          "codebook",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "codebook",
+          "data",
+          null,
+          "data",
+          "data",
+          null,
+          null,
+          "data",
+          "codebook",
+          null
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

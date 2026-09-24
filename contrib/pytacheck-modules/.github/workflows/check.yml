@@ -56,6 +56,11 @@ jobs:
                 (cd "packs/$name" && uvx --with "$PYTACHECK_SPEC" pytest -q tests) || status=1
               fi
               echo "::endgroup::"
+            elif [ -f "packs/$name.json" ]; then
+              # a pack in its author's repository: fetched at its rev, then checked
+              echo "::group::pytacheck pack check packs/$name.json"
+              pytacheck pack check "packs/$name.json" || status=1
+              echo "::endgroup::"
             fi
           done
           exit $status

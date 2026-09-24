@@ -1,0 +1,359 @@
+{
+  "id": "stat_effect_size.review.f_only_green",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "stat_effect_size"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Effect Sizes in t-tests and F-tests"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "results"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 2,
+        "names": [
+          "paper_id",
+          "text_id",
+          "test",
+          "test_text",
+          "es",
+          "section_id",
+          "paragraph_id",
+          "text",
+          "d_reported",
+          "d_reported_text",
+          "t_value",
+          "df",
+          "d_implied_paired_dz",
+          "d_implied_paired_drm_r05",
+          "d_implied_indep_equal_n",
+          "d_implied_indep_unequal_min",
+          "d_implied_indep_unequal_max",
+          "d_implied_n",
+          "d_coherence",
+          "d_coherence_assumption",
+          "d_coherence_note",
+          "f_reported",
+          "f_reported_text",
+          "df1",
+          "df2",
+          "eta_implied_partial",
+          "omega_implied_partial",
+          "eta_coherence",
+          "eta_coherence_assumption",
+          "eta_coherence_note"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "7e01a8ce2f1a4e",
+              "7e01a8ce2f1a4e"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1,
+              2
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "F-test",
+              "F-test"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "F(1, 20) = 4.10",
+              "F(2, 30) = 4.50"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ηp² = .17",
+              "η² = .23"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0,
+              0
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0,
+              0
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "F(1, 20) = 4.10, ηp² = .17.",
+              "F(2, 30) = 4.50, η² = .23."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "4.1",
+              "4.5"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "F(1, 20) = 4.10",
+              "F(2, 30) = 4.50"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "1",
+              "2"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "20",
+              "30"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "0.170124481327801",
+              "0.230769230769231"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "0.123505976095618",
+              "0.175"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "match_under_assumptions",
+              "indeterminate"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "partial_eta_squared",
+              "eta_squared"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Match under partial eta-squared formula from F and dfs.",
+              "Eta-squared reported; cannot be reconstructed from F and dfs in factorial or repeated-measures designs."
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "All detected t-tests and F-tests had an effect size reported in the same sentence.",
+          "For F-tests with a reported eta-squared effect size, coherence checks yielded 1 match under assumptions, 1 indeterminate case.",
+          "::: {.callout-tip title=\"All detected and assessed stats\" collapse=\"true\"}\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Sentence = c(\"F(1, 20) = 4.10, ηp² = .17.\", \n\"F(2, 30) = 4.50, η² = .23.\"), \"Effect Size\" = c(\"ηp² = .17\", \n\"η² = .23\"), \"Reported Test\" = c(\"F(1, 20) = 4.10\", \"F(2, 30) = 4.50\"\n), \"Test Type\" = c(\"F-test\", \"F-test\"), \"d Coherence\" = c(NA_character_, \nNA_character_), \"d Assumption\" = c(NA_character_, NA_character_\n), \"d Coherence Note\" = c(NA_character_, NA_character_), \"eta Coherence\" = c(\"match_under_assumptions\", \n\"indeterminate\"), \"eta Assumption\" = c(\"partial_eta_squared\", \n\"eta_squared\"), \"eta Coherence Note\" = c(\"Match under partial eta-squared formula from F and dfs.\", \n\"Eta-squared reported; cannot be reconstructed from F and dfs in factorial or repeated-measures designs.\"\n)), row.names = c(NA, -2L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 5, FALSE)\n```\n\n\n:::\n"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "green"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "All detected t-tests and F-tests had an effect size reported in the same sentence."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "ttests_with_es",
+          "ttests_without_es",
+          "Ftests_with_es",
+          "Ftests_without_es"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "7e01a8ce2f1a4e"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          }
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

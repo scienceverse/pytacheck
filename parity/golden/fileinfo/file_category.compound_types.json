@@ -1,0 +1,275 @@
+{
+  "id": "file_category.compound_types",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 30,
+    "names": [
+      "name",
+      "filetype",
+      "file_category"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "sample.fasta.gz",
+          "sample.fa.gz",
+          "sample.fq.gz",
+          "sample.fastq.gz",
+          "x.jasp",
+          "x.por",
+          "c.tar.gz",
+          "random.gz",
+          "sample.dat.gz",
+          "x.sav.gz",
+          "x.csv.sav",
+          "script.html",
+          "run.sh",
+          "x.json",
+          "x.rds",
+          "x.ts",
+          "x.1.ada",
+          "B.JaSp",
+          "file.Fasta.GZ",
+          "x.C++",
+          "résumé.csv",
+          ".R",
+          "R",
+          "a.r.",
+          "a..",
+          "archive.zip",
+          "slides.pptx",
+          "fig.png",
+          "paper.pdf",
+          "notes.txt"
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "data;archive"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data;archive"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data;archive"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data;archive"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data;stats"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data;stats"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "archive"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "archive"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "archive"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "archive;data"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code;web"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code;exec"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code;data"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code;data"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "web;code"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data;stats"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data;archive"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "archive"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "slide"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "image"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "text"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "text"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "data",
+          "data",
+          "data",
+          "data",
+          "data",
+          "data",
+          null,
+          null,
+          null,
+          "data",
+          "data",
+          null,
+          null,
+          null,
+          null,
+          null,
+          "code",
+          "data",
+          "data",
+          "code",
+          "data",
+          "code",
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -1,0 +1,66 @@
+{
+  "id": "ref_pubpeer.demo.report_table",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "table",
+      "colwidths",
+      "maxrows",
+      "escape"
+    ],
+    "v": [
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "Reference",
+          "Comments",
+          "PubPeer Link"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Gino, Francesca, and Scott S. Wiltermuth. 2014. \"Evil Genius? How Dishonesty Can Lead to Greater Creativity.\" Psychological Science 25 (4): 973-81. https://doi.org/10.1177/0956797614520714."
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              3
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "<a href='https://pubpeer.com/publications/3FA648ECECB88454C91804F09E2E56' target='_blank'>link<\/a>"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "auto"
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          10
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

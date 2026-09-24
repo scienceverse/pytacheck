@@ -1,0 +1,29 @@
+{
+  "id": ".haven_value_labels.spss",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "value_labels",
+      "missing_values"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "{\"1\":\"Male\",\"2\":\"Female\",\"-99\":\"Refused\"}"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "{\"-99\":\"Refused\"}"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

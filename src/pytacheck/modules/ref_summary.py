@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import warnings
 from collections.abc import Sequence
 from typing import Any
 
@@ -73,6 +72,8 @@ def _join(x: pd.DataFrame, y: pd.DataFrame, by: Sequence[str], how: str) -> pd.D
     ``left`` join keeps unmatched ``x`` rows, with missing ``y`` values).
     ``NA`` keys match each other, integer and double keys compare by value,
     and non-key columns in both tables get dplyr's ``.x`` / ``.y`` suffixes.
+    Many-to-many matches are kept silently: dplyr only warns about them when
+    the join is called from the global environment, never inside a module.
     """
     by = list(by)
     for side, df in (("x", x), ("y", y)):
@@ -80,8 +81,7 @@ def _join(x: pd.DataFrame, y: pd.DataFrame, by: Sequence[str], how: str) -> pd.D
         if missing:
             problem = ", ".join(f"`{k}`" for k in missing)
             raise ValueError(
-                f"Join columns in `{side}` must be present in the data.\n"
-                f"✖ Problem with {problem}."
+                f"Join columns in `{side}` must be present in the data.\n✖ Problem with {problem}."
             )
     y_rows: dict[tuple[Any, ...], list[int]] = {}
     for j, key in enumerate(_key_tuples(y, by)):
@@ -96,13 +96,6 @@ def _join(x: pd.DataFrame, y: pd.DataFrame, by: Sequence[str], how: str) -> pd.D
         elif how == "left":
             xi.append(i)
             yi.append(-1)
-    # dplyr warns when an x row matches several y rows *and* a y row several x rows
-    x_multi = len(xi) != len(set(xi))
-    if x_multi and len([j for j in yi if j >= 0]) != len({j for j in yi if j >= 0}):
-        warnings.warn(
-            "Detected an unexpected many-to-many relationship between `x` and `y`.",
-            stacklevel=3,
-        )
     x_idx = np.asarray(xi, dtype=np.intp)
     y_idx = np.asarray(yi, dtype=np.intp)
     y_cols = [c for c in y.columns if c not in by]
@@ -163,9 +156,8 @@ def _accuracy_mismatches(acc: pd.DataFrame) -> pd.DataFrame:
     value_cols = [c for c in cols if c.lower().endswith("_mismatch")]
     if not value_cols:
         raise ValueError("`cols` must select at least one column.")
-    for c in ("paper_id", "bib_id", "no_match"):
-        if c not in cols or c in value_cols:
-            raise ValueError(f"Can't select columns that don't exist.\n✖ Column `{c}`")
+    if "no_match" not in cols:  # summarise(.by = c(paper_id, bib_id, no_match))
+        raise ValueError("Can't select columns that don't exist.\n\u2716 Column `no_match`")
     names = [str(gsub("_mismatch", "", c)) for c in value_cols]
     values = [acc[c].tolist() for c in value_cols]
     pid = acc["paper_id"].tolist()
@@ -216,7 +208,7 @@ def _has_rows(x: Any) -> bool:
     author=["Lisa DeBruine <debruine@gmail.com>"],
     params={"paper": "a paper object or paperlist object"},
 )
-def ref_summary(paper: Any, **kwargs: Any) -> dict[str, Any]:
+def ref_summary(paper: Any, **kwargs: Any) -> dict[str, Any]:  # noqa: ARG001 - R `...`
     """Port of ``inst/modules/ref_summary.R::ref_summary()``.
 
     Joins the tables of the reference modules run earlier in a

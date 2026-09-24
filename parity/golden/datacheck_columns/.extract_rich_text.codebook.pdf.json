@@ -1,0 +1,14 @@
+{
+  "id": ".extract_rich_text.codebook.pdf",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "Codebook\n\nage:    Age of the participant in years\n\nsex:    Participant sex (1 = male, 2 = female)\n\ncond:    Experimental condition\n\nrt_mean:    Mean reaction time in ms\n\nacc:    Proportion of correct responses\n\nblock:    Block number of the trial\n"
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

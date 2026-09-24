@@ -11,46 +11,66 @@ from pytacheck.module import module
 from pytacheck.report import collapse_section, scroll_table
 from pytacheck.text import text_search
 
-#: (registry, id pattern, lookup URL with {id}); patterns are PCRE and Python compatible
-REGISTRIES: tuple[tuple[str, str, str], ...] = (
-    ("ClinicalTrials.gov", r"NCT\s?\d{8}", "https://clinicaltrials.gov/study/{id}"),
-    ("ISRCTN", r"ISRCTN\s?\d{8}", "https://www.isrctn.com/{id}"),
+_ICTRP = "https://trialsearch.who.int/Trial2.aspx?TrialID={id}"
+#: (registry, id pattern, lookup URL with {id}, words the sentence must also contain);
+#: patterns are PCRE and Python compatible
+REGISTRIES: tuple[tuple[str, str, str, str | None], ...] = (
+    ("ClinicalTrials.gov", r"NCT\s?\d{8}", "https://clinicaltrials.gov/study/{id}", None),
+    ("ISRCTN", r"ISRCTN\s?\d{8}", "https://www.isrctn.com/{id}", None),
     (
+        # a bare YYYY-NNNNNN-CC is also an ethics or grant number: only with the register named
         "EU CTR (EudraCT)",
         r"(?<![\d-])20\d{2}-\d{6}-\d{2}(?!-?\d)",
         "https://www.clinicaltrialsregister.eu/ctr-search/search?query={id}",
+        r"\bEudra\s?CT\b|\bEU[\s-]?CTR\b|EU Clinical Trials? Register|clinicaltrialsregister\.eu",
     ),
     (
         "CTIS (EU CT)",
         r"(?<![\d-])20\d{2}-5\d{5}-\d{2}-\d{2}(?!\d)",
         "https://euclinicaltrials.eu/search-for-clinical-trials/?lang=en&EUCT={id}",
+        None,
     ),
-    ("ANZCTR", r"ACTRN\s?\d{14}", "https://trialsearch.who.int/Trial2.aspx?TrialID={id}"),
-    (
-        "ChiCTR",
-        r"ChiCTR-?(?:[A-Z]{2,4}-)?\d{8,10}",
-        "https://trialsearch.who.int/Trial2.aspx?TrialID={id}",
-    ),
-    ("DRKS", r"DRKS\s?\d{8}", "https://drks.de/search/en/trial/{id}"),
-    ("CTRI", r"CTRI/\d{4}/\d{2,3}/\d{6}", "https://trialsearch.who.int/Trial2.aspx?TrialID={id}"),
+    ("ANZCTR", r"ACTRN\s?\d{14}", _ICTRP, None),
+    ("ChiCTR", r"ChiCTR-?(?:[A-Z]{2,4}-)?\d{8,10}", _ICTRP, None),
+    ("DRKS", r"DRKS\s?\d{8}", "https://drks.de/search/en/trial/{id}", None),
+    ("CTRI", r"CTRI/\d{4}/\d{2,3}/\d{6}", _ICTRP, None),
+    ("PACTR", r"PACTR\s?\d{15}", _ICTRP, None),
+    ("UMIN-CTR", r"UMIN\s?\d{9}", _ICTRP, None),
+    ("jRCT", r"\bjRCT[0-9a-z]\d{9}\b", _ICTRP, None),
+    ("IRCT", r"IRCT\d{10,16}N\d{1,3}", _ICTRP, None),
+    ("ReBEC", r"\bRBR-[0-9a-z]{6,8}\b", _ICTRP, None),
+    ("Netherlands (NTR / OMON)", r"\bNL-OMON\d{5,6}\b|\bNTR\s?\d{3,5}\b", _ICTRP, None),
 )
-#: sentences suggesting the paper reports a (clinical) trial
+#: sentences saying the paper reports a trial: a (singular) randomised or clinical
+#: trial, an RCT, or trial registration. Generic mentions ("clinical trials have
+#: shown...", "120 trials were registered as correct") do not count.
 TRIAL_CONTEXT = (
-    r"\brandomi[sz]ed(?: \w+){0,2} trials?\b|\bclinical trials?\b|\bRCTs?\b"
-    r"|\btrials? (?:was |were |is )?registered\b|\btrial registration\b"
+    r"\brandomi[sz]ed\b[\w\s,-]{0,40}?\btrial\b(?!s)"
+    r"|\b(?:this|the|our|a|an)\s+(?:[\w-]+\s+){0,3}clinical\s+trial\b(?!s)"
+    r"|\bRCT\b|\btrial registration\b"
 )
 
-_PATTERNS = [(name, re.compile(rx, re.IGNORECASE), url) for name, rx, url in REGISTRIES]
-_ANY = "|".join(f"(?:{rx})" for _, rx, _ in REGISTRIES)
+_PATTERNS = [
+    (name, re.compile(rx, re.IGNORECASE), url, re.compile(ctx, re.IGNORECASE) if ctx else None)
+    for name, rx, url, ctx in REGISTRIES
+]
+_ANY = "|".join(f"(?:{rx})" for _, rx, _, _ in REGISTRIES)
 
 
 def _normalise(match: str) -> str:
     text = re.sub(r"\s+", "", match)
-    for prefix in ("NCT", "ISRCTN", "ACTRN", "DRKS", "CTRI"):
-        if text.upper().startswith(prefix):
-            return prefix + text[len(prefix) :]
-    if text.upper().startswith("CHICTR"):
-        return "ChiCTR" + text[6:].upper()
+    upper = text.upper()
+    for prefix in ("NCT", "ISRCTN", "ACTRN", "DRKS", "CTRI", "PACTR", "UMIN", "IRCT", "NTR"):
+        if upper.startswith(prefix):
+            return prefix + upper[len(prefix) :]
+    if upper.startswith("NL-OMON"):
+        return upper
+    if upper.startswith("CHICTR"):
+        return "ChiCTR" + upper[6:]
+    if upper.startswith("JRCT"):
+        return "jRCT" + text[4:].lower()
+    if upper.startswith("RBR-"):
+        return "RBR-" + text[4:].lower()
     return text
 
 
@@ -58,7 +78,9 @@ def _find_ids(sentences: pd.DataFrame) -> pd.DataFrame:
     rows = []
     for rec in sentences.to_dict("records"):
         seen = set()
-        for registry, pattern, url in _PATTERNS:
+        for registry, pattern, url, needs in _PATTERNS:
+            if needs is not None and not needs.search(str(rec["text"])):
+                continue
             for m in pattern.finditer(str(rec["text"])):
                 trial_id = _normalise(m.group(0))
                 if trial_id in seen:
@@ -84,7 +106,8 @@ def _find_ids(sentences: pd.DataFrame) -> pd.DataFrame:
     title="Trial Registration",
     description=(
         "Find clinical trial registration numbers (ClinicalTrials.gov, ISRCTN, EudraCT/CTIS, "
-        "ANZCTR, ChiCTR, DRKS, CTRI) and flag trials that report none."
+        "ANZCTR, ChiCTR, DRKS, CTRI, PACTR, UMIN/jRCT, IRCT, ReBEC, NTR) and flag trials "
+        "that report none."
     ),
     details="""
         Clinical trials should be registered before the first participant is enrolled
@@ -93,12 +116,15 @@ def _find_ids(sentences: pd.DataFrame) -> pd.DataFrame:
 
         The module searches every sentence for the identifier formats of the major
         registries: ClinicalTrials.gov (NCT + 8 digits), ISRCTN (ISRCTN + 8 digits),
-        the EU Clinical Trials Register (EudraCT, YYYY-NNNNNN-CC) and CTIS (EU CT,
-        YYYY-5NNNNN-CC-NN), ANZCTR (ACTRN + 14 digits), ChiCTR, DRKS (DRKS + 8 digits)
-        and CTRI (CTRI/YYYY/MM/NNNNNN). Each number links to the registry (or the WHO
-        ICTRP search portal). If no number is found but the paper mentions a clinical or
-        randomised trial, the module asks you to check that the registration is reported.
-        It does not check that the registry record exists or matches the paper.
+        the EU Clinical Trials Register (EudraCT, YYYY-NNNNNN-CC, only in a sentence that
+        names EudraCT or the register, since ethics and grant numbers look the same) and
+        CTIS (EU CT, YYYY-5NNNNN-CC-NN), ANZCTR (ACTRN + 14 digits), ChiCTR, DRKS (DRKS +
+        8 digits), CTRI (CTRI/YYYY/MM/NNNNNN), PACTR, UMIN-CTR and jRCT, IRCT, ReBEC
+        (RBR-...) and the Netherlands registers (NTR, NL-OMON). Each number links to the
+        registry (or the WHO ICTRP search portal). Numbers from other registries are not
+        recognised. If no number is found but the paper says it reports a randomised or
+        clinical trial (or an RCT), the module asks you to check that the registration is
+        reported. It does not check that the registry record exists or matches the paper.
 
         <validation>This module has not been validated yet. Validation against a sample
         of trial reports (with registry numbers coded by hand) is welcome: see the
@@ -131,7 +157,10 @@ def trial_registration(paper: Any) -> dict[str, Any]:
     shown = ", ".join(unique[:5]) + (f" and {len(unique) - 5} more" if len(unique) > 5 else "")
     summary_text = {
         "green": f"Trial registration number{'s' if len(unique) != 1 else ''} found: {shown}.",
-        "yellow": "The paper describes a trial, but no trial registration number was found.",
+        "yellow": (
+            "The paper describes a trial, but no registration number from the recognised "
+            "registries was found."
+        ),
         "na": "No trial registration numbers were found (no clinical trial detected).",
     }[tl]
 

@@ -1,0 +1,124 @@
+{
+  "id": "parse_codebook.codebook.ods",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 6,
+    "names": [
+      "codebook_variable",
+      "label",
+      "codebook_source",
+      "group",
+      "value_labels",
+      "missing_values",
+      "question",
+      "coding_instructions",
+      "parse_method"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "id",
+          "rt",
+          "rt",
+          "neo1",
+          "neo2",
+          "neo3"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Participant ID",
+          "Reaction time",
+          null,
+          "Worry about things",
+          "Make friends easily",
+          "Trust other people"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "codebook.ods [vars]",
+          "codebook.ods [vars]",
+          "codebook.ods [vars]",
+          "codebook.ods [items]",
+          "codebook.ods [items]",
+          "codebook.ods [items]"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "structured",
+          "structured",
+          "structured",
+          "structured",
+          "structured",
+          "structured"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

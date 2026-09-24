@@ -1,0 +1,88 @@
+{
+  "id": "parse_codebook.testthat_csv",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 2,
+    "names": [
+      "codebook_variable",
+      "label",
+      "codebook_source",
+      "group",
+      "value_labels",
+      "missing_values",
+      "question",
+      "coding_instructions",
+      "parse_method"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "id",
+          "score"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "participant identifier",
+          "outcome measure"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "file51c419ddd268.csv",
+          "file51c419ddd268.csv"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "structured",
+          "structured"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

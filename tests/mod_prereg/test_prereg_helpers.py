@@ -410,3 +410,22 @@ def test_mock_path_hashes_up_to_the_second_question_mark() -> None:
     assert mock_path(httpx.Request("GET", url)) == "api.osf.io/v2/registrations/vwonl-b9104e"
     url = "https://api.osf.io/v2/guids/48ncu/?resolve=false"
     assert mock_path(httpx.Request("GET", url)) == "api.osf.io/v2/guids/48ncu-65f472"
+
+
+def test_dispatch_reads_jsonlite_simplified_scalars() -> None:
+    # isTRUE(info$attributes$withdrawn): a one-element array is TRUE too, a string is not
+    no_fetch = lambda url: pytest.fail("no fetch")  # noqa: E731
+    flat = pr.flatten_schema(pr.osf_prereg_extract(_info(withdrawn=[True]), no_fetch))
+    assert flat["description"] == "WITHDRAWN"
+    flat = pr.flatten_schema(pr.osf_prereg_extract(_info(withdrawn="true"), lambda url: None))
+    assert "description" not in flat
+    # the schema id and href are read the same way
+    info = _info(registration_responses={"84-56": "a"})
+    info["relationships"]["registration_schema"]["data"]["id"] = ["5730e99a9ad5a102c5745a8a"]  # type: ignore[index]
+    assert pr.flatten_schema(pr.osf_prereg_extract(info, no_fetch))["indices"] == "a"
+    info = _info(registration_responses={"9-1": "x"})
+    href = info["relationships"]["registration_schema"]["links"]["related"]  # type: ignore[index]
+    href["href"] = ["https://api.osf.io/v2/schemas/registrations/s1/"]
+    assert pr.needs_schema(info) == "https://api.osf.io/v2/schemas/registrations/s1/"
+    href["href"] = None
+    assert pr.needs_schema(info) is None

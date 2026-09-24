@@ -1,0 +1,9 @@
+variable,label,values,question,missing values,transformations
+sex,Sex,"1 = Male; 2 = Female; -99 = Refused",What is your sex?,,
+age,Age in years,,How old are you?,-9,
+cond,Condition,"control = 0, treatment = 1",, ,
+handed,Handedness,"L = Left; R = Right",,"-9 = not answered",
+score,Total score,,,,mean of items 1-10
+score,,,,,
+,orphan label,,,,
+V1-V3,Rating items,1 (low) to 5 (high),,,

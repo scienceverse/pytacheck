@@ -1,0 +1,18 @@
+{
+  "id": "parse_codebook.lookahead",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "Codebook for Study 1,",
+      ",",
+      "field,definition",
+      "x1,First item",
+      "x2,Second item"
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

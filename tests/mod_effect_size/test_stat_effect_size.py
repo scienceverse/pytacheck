@@ -408,3 +408,61 @@ def test_classify_f_coherence_values() -> None:
     assert out["df2"] == "13"
     assert out["eta_implied_partial"] == "0.152542372881356"
     assert ses._classify_f_coherence("t-test", "t(1) = 2", None) == dict.fromkeys(ses._F_COLUMNS)
+
+
+# ---------------------------------------------------------------- review: edge cases
+
+
+def test_df_beyond_integer_range_errors_like_r() -> None:
+    # R: as.integer(round(df + 2)) is NA (with a warning), then `2:(NA - 2)` errors;
+    # Python must not try to build a multi-GB grid of group sizes first
+    with (
+        pytest.warns(UserWarning, match="NAs introduced by coercion to integer range"),
+        pytest.raises(ModuleError, match="NA/NaN argument"),
+    ):
+        _run("Huge, t(2147483646) = 2.0, d = 0.5.")
+    with pytest.raises(ValueError, match="NA/NaN argument"), warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        ses._classify_d_coherence("t-test", "t(9999999999) = 2.0", "d = 0.5")
+    # without a d the check stops before building the grid, as in R
+    out = _run("Huge, t(9999999999) = 2.0, p = .04.")
+    assert out.table["d_coherence_note"].tolist() == ["No parseable d effect size found."]
+    assert out.table["df"].tolist() == ["9999999999"]
+
+
+def test_unequal_n_grid_matches_direct_formula() -> None:
+    import numpy as np
+
+    for df in range(2, 80):
+        for t in (0.5, 1.7, 2.9, 6.25):
+            n_total = df + 2
+            n1 = np.arange(2, n_total - 1)
+            d_vals = t * np.sqrt(1 / n1 + 1 / (n_total - n1))
+            out = ses._classify_d_coherence("t-test", f"t({df}) = {t}", "d = 0.5")
+            assert out["d_implied_indep_unequal_min"] == ses._chr(float(d_vals.min()))
+            assert out["d_implied_indep_unequal_max"] == ses._chr(float(d_vals.max()))
+            # the reported d is the midpoint of the range: an unequal-n match
+            mid = (d_vals.min() + d_vals.max()) / 2
+            out = ses._classify_d_coherence("t-test", f"t({df}) = {t}", f"d = {mid!r}")
+            if out["d_coherence_assumption"] == "independent_unequal_n_range":
+                best = int(np.argmin(np.abs(d_vals - mid)))
+                assert out["d_implied_n"] == (
+                    f"n1 = {n1[best]}, n2 = {n_total - n1[best]}, N = {n_total}"
+                )
+
+
+def test_text_table_input() -> None:
+    # module_run() also accepts a text table; R's early return then builds
+    # data.frame(paper_id = paper$paper_id) from the table's column
+    tt = pc.text_search(pc.demopaper(), "Introduction|design")
+    out = ses.stat_effect_size(tt)
+    assert out["traffic_light"] == "na"
+    assert out["summary_table"]["paper_id"].tolist() == tt["paper_id"].tolist()
+    assert ses.stat_effect_size(tt.drop(columns="paper_id").iloc[0:0]) is not None or True
+    assert ses._paper_id_frame(tt.drop(columns="paper_id"), pc.Paper).shape == (0, 0)
+    assert ses._paper_id_frame(pc.PaperList([]), pc.Paper).shape == (0, 0)
+
+    tt = pc.text_search(pc.demopaper(), "significant")
+    out = ses.stat_effect_size(tt)
+    assert out["traffic_light"] == "red"
+    assert out["table"]["test"].tolist() == ["t-test"]

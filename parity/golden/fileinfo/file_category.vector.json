@@ -1,0 +1,83 @@
+{
+  "id": "file_category.vector",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 6,
+    "names": [
+      "name",
+      "filetype",
+      "file_category"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "a.csv",
+          "b.R",
+          "codebook.xlsx",
+          "readme.txt",
+          "ambiguous",
+          "file.json"
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "data"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "text"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code;data"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "data",
+          "code",
+          "codebook",
+          "readme",
+          null,
+          null
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

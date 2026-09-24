@@ -1,0 +1,52 @@
+{
+  "id": "file_naming_check_padding.examples",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 6,
+    "names": [
+      "file_name",
+      "rule",
+      "detail"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "pp1.csv",
+          "dir/pp3.csv",
+          "a12b5.csv",
+          "x1y.csv",
+          "x22y.csv",
+          "7"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "zero-padding",
+          "zero-padding",
+          "zero-padding",
+          "zero-padding",
+          "zero-padding",
+          "zero-padding"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "numbered inconsistently with sibling files (pad to 2 digits so names sort in numeric order)",
+          "numbered inconsistently with sibling files (pad to 2 digits so names sort in numeric order)",
+          "numbered inconsistently with sibling files (pad to 2 digits so names sort in numeric order)",
+          "numbered inconsistently with sibling files (pad to 3 digits so names sort in numeric order)",
+          "numbered inconsistently with sibling files (pad to 3 digits so names sort in numeric order)",
+          "numbered inconsistently with sibling files (pad to 3 digits so names sort in numeric order)"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

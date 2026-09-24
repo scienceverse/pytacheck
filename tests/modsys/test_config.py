@@ -17,6 +17,7 @@ from pytacheck.config import (
     data_dir,
     load_config,
     project_config_path,
+    trust_local,
     update_config,
 )
 
@@ -101,7 +102,12 @@ def test_merge_rules(scopes, tmp_path) -> None:
         "mylab": "https://gitlab.example/lab/store",
         "local": str((user.parent / "../stores/here").resolve()),
     }
-    assert set(cfg.packs) == {"labmods", "some_dist", "other"}
+    # a project file's local code (a path pack) waits until the user trusts it
+    assert set(cfg.packs) == {"labmods", "some_dist"}
+    assert cfg.untrusted["packs.other"][2] == (str(project.parent / "vendored"),)
+    trust_local([project.parent / "vendored"])
+    cfg = load_config()
+    assert set(cfg.packs) == {"labmods", "some_dist", "other"} and not cfg.untrusted
     assert cfg.packs["labmods"]["path"] == str((user.parent / "../lab-modules").resolve())
     assert cfg.packs["other"]["path"] == str(project.parent / "vendored")
     assert cfg.packs["some_dist"] is False

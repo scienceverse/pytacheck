@@ -1,0 +1,58 @@
+{
+  "id": "file_naming_check_length.na_rows",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 8,
+    "names": [
+      "file_name",
+      "rule",
+      "detail"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "ddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd/ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+          null,
+          "ddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd/ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+          null,
+          "ddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd/ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+          null,
+          "ddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd/ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "path-length-255",
+          "path-length-255",
+          "path-length-228",
+          "path-length-228",
+          "directory-length-100",
+          "directory-length-100",
+          "filename-length-50",
+          "filename-length-50"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "path-length-255 is 262 characters, over the 255-character budget",
+          "path-length-255 is NA characters, over the 255-character budget",
+          "path-length-228 is 262 characters, over the 228-character budget",
+          "path-length-228 is NA characters, over the 228-character budget",
+          "directory-length-100 is 101 characters, over the 100-character budget",
+          "directory-length-100 is NA characters, over the 100-character budget",
+          "filename-length-50 is 160 characters, over the 50-character budget",
+          "filename-length-50 is NA characters, over the 50-character budget"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

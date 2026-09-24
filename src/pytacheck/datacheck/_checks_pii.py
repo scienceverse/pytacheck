@@ -15,6 +15,7 @@ from pytacheck.datacheck._checks_rvec import (
     as_numeric_str,
     chr,
     fmt_pct0,
+    is_whole,
     median,
     rvec,
     tolower,
@@ -255,7 +256,7 @@ def _pii_split_name(x: str | None) -> list[str | None]:
     a = gsub(r"(?<=[a-z0-9])(?=[A-Z])", " ", x, perl=True)
     s1 = gsub(r"(?<=[A-Z])(?=[A-Z][a-z])", " ", a, perl=True)
     s2 = gsub(r"(?<=[A-Z])(?=[a-z])", " ", a, perl=True)
-    p = [*strsplit(tolower(s1), "[^a-z0-9]+")[0], *strsplit(tolower(s2), "[^a-z0-9]+")[0]]
+    p = [*strsplit([tolower(s1)], "[^a-z0-9]+")[0], *strsplit([tolower(s2)], "[^a-z0-9]+")[0]]
     return unique(t for t in p if t is None or t != "")
 
 
@@ -428,7 +429,7 @@ def _demographic_values_ok(kind: str, x: Any) -> bool:
         is_lowcard_numeric = (
             all(f is not None and f == f for f in nums2)
             and len(unique(nums2)) <= 4
-            and all(f == round(f) for f in nums2)  # type: ignore[arg-type]
+            and all(is_whole(f) for f in nums2)  # type: ignore[arg-type]
             and all(0 <= f <= 9 for f in nums2)  # type: ignore[operator]
         )
         return hit_frac >= 0.6 or is_lowcard_numeric
@@ -439,7 +440,7 @@ def _demographic_values_ok(kind: str, x: Any) -> bool:
             return False
         nums3 = [as_numeric_str(s) for s in x_chr]
         if all(f is not None and f == f for f in nums3):
-            return len(unique(nums3)) <= 25 and all(f == round(f) for f in nums3)  # type: ignore[arg-type]
+            return len(unique(nums3)) <= 25 and all(is_whole(f) for f in nums3)  # type: ignore[arg-type]
         return True
     return False
 

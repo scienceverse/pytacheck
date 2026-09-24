@@ -128,7 +128,9 @@ def test_run_record_and_rerun(lab, ms, capsys, demo_json) -> None:
     assert data["preset"] == "lab" and data["dropped"] == ["lab::online"]
     out = run_json(capsys, ["rerun", str(record), demo_json, "--json"])
     assert [o["summary_text"] for o in out] == ["strict=False", "seed=1"]
-    (lab / "apa.py").write_text(mod_src("apa", "changed"))
+    (lab / "apa.py").write_text(
+        mod_src("apa", args="strict=False", body='return {"summary_text": "changed"}')
+    )
     assert main(["rerun", str(record), demo_json]) == 1
     assert "allow-modified" in capsys.readouterr().err
     assert main(["rerun", str(record), demo_json, "--allow-modified"]) == 0

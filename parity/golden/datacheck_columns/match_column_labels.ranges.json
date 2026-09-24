@@ -1,0 +1,184 @@
+{
+  "id": "match_column_labels.ranges",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 6,
+    "names": [
+      "paper_id",
+      "source_file",
+      "column_name",
+      "group",
+      "label",
+      "codebook_variable",
+      "label_source",
+      "label_status",
+      "label_method",
+      "value_labels",
+      "missing_values",
+      "question",
+      "coding_instructions",
+      "scale_group"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "p",
+          "p",
+          "p",
+          "p",
+          "p",
+          "p"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "d.csv",
+          "d.csv",
+          "d.csv",
+          "d.csv",
+          "d.csv",
+          "d.csv"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "V1",
+          "V3",
+          "V4",
+          "q2",
+          "item_2",
+          "x10"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          "Tens"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          "x10"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          "cb"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "unlabelled",
+          "unlabelled",
+          "unlabelled",
+          "unlabelled",
+          "unlabelled",
+          "labelled"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          "rules"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

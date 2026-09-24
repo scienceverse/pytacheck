@@ -1,0 +1,14 @@
+{
+  "id": ".missing_from_value_labels.prose_na",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "{\"2\":\"ID - N/A\",\"4\":\"n/a.\"}"
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

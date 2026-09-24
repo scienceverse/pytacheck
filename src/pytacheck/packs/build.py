@@ -48,7 +48,7 @@ from pytacheck.packs.manifest import (
 from pytacheck.packs.scan import module_metadata
 from pytacheck.packs.tree import tree_sha256
 
-__all__ = ["store_build"]
+__all__ = ["check_entry_file", "store_build"]
 
 _SHA = re.compile(r"^[0-9a-f]{40}$")
 _ENTRY_KEYS = frozenset({"name", "source", "reviewed", "reviewed_tree_sha256", "yanked", "version"})
@@ -232,6 +232,39 @@ def _external_source(data: Mapping[str, Any], where: str, issues: list[CheckIssu
         issues.append(_err(where, f"source.rev must be a full 40-hex commit SHA, not {rev!r}"))
         return None
     return dict(source)
+
+
+def check_entry_file(path: str | os.PathLike[str]) -> list[CheckIssue]:
+    """``pack check`` for a pack listed from its own repository (``packs/<name>.json``).
+
+    Fetches the entry's source at its ``rev`` into a temporary folder and
+    checks it there, as for a folder pack (so store CI checks both kinds).
+    """
+    from pytacheck.packs.check import pack_check
+
+    file = Path(path)
+    name = file.stem
+    where = f"packs/{file.name}"
+    issues: list[CheckIssue] = []
+    try:
+        data = _read_json(file)
+    except (OSError, ValueError) as exc:
+        return [_err(where, f"not valid JSON: {exc}")]
+    if not isinstance(data, dict):
+        return [_err(where, "must hold a JSON object")]
+    source = _external_source(data, where, issues)
+    if source is None:
+        return issues
+    with tempfile.TemporaryDirectory(prefix="pytacheck-check-") as tmp:
+        dest = Path(tmp) / name
+        try:
+            fetch_source(source, source["rev"], dest)
+        except PackError as exc:
+            return [*issues, _err(where, f"cannot fetch its source: {exc}")]
+        manifest = _manifest_checks(dest, name, where, issues)
+        if manifest is None:
+            return issues
+        return [*issues, *pack_check(dest)]
 
 
 def store_build(

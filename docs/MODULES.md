@@ -94,13 +94,17 @@ first), and saves your choice as the default:
 ```bash
 pytacheck init                                        # interactive
 pytacheck init --preset fields::psychology --yes      # non-interactive
-pytacheck init --preset fields::medicine --preset clinical_trials --project --yes
+pytacheck init --preset fields::medicine --preset clinical_trials::only --project --yes
 ```
 
 With several presets, `init` saves a config preset called `mine` that extends
-them all. `--project` writes `./pytacheck.json` (for a team, commit it) instead of
-your user config. If the store cannot be reached, `init` still offers the
-built-in presets.
+them all. `extends` is a union: a module that one preset excludes comes back if
+another includes it (so the example adds `clinical_trials::only`, not
+`clinical_trials`, whose default extends metacheck's default and would bring back
+the `ref_replication` that `fields::medicine` leaves out). `--project` writes
+`./pytacheck.json` (for a team, commit it) instead of your user config, and pins
+every pack the presets need there, so it works as the team's lock file. If the
+store cannot be reached, `init` still offers the built-in presets.
 
 ### Choosing modules at run time
 
@@ -119,7 +123,10 @@ pytacheck run paper.json --offline                    # skip modules needing net
 The CLI prints which preset it used and where that choice came from. When no
 preset or module is given, the choice is, in order: `pc.use(preset=...)`,
 `PYTACHECK_PRESET`, the project config, the user config, then
-`metacheck::default`.
+`metacheck::default`. `-a MOD.KEY=VALUE` must name a selected module and one of
+its arguments (a typo is an error, not ignored). When a module fails, `run`
+shows why next to it (and in `--json` as `error`), runs the remaining modules,
+then exits with status 1.
 
 In Python, the **library keeps metacheck's defaults**: `report(paper)` runs what
 metacheck's `report()` runs, whatever your config says. Choose explicitly:
@@ -139,7 +146,9 @@ with pc.use(preset="psych", offline=True):  # scoped to this block (and thread)
 
 A module that fails does not stop the run: as in metacheck's `report()`, it
 becomes an output with the traffic light `fail` and the text "This module failed
-to run", and the next module runs.
+to run" (its `report` holds the error), and the next module runs. Some modules
+that metacheck's presets list are not ported to pytacheck yet; they fail this way
+until they are.
 
 ### Installing packs
 
@@ -198,8 +207,17 @@ instead:
 * **Integrity.** Each run compares the installed files with the install record;
   a modified pack warns and is marked `modified` in the run's provenance.
 * **Visibility.** Every output records its module, pack, commit and file hash,
-  and reports show the pack name next to any module that is not built in.
+  and `pytacheck run` shows the pack name next to any module that is not built
+  in. (HTML reports do not show it yet; see below.)
 * **Consent.** You see the consent card before any code is installed.
+* **Project files.** A `pytacheck.json` comes with its folder, which may be a
+  shared folder or a repository you cloned, so it is not trusted like your own
+  config. One owned by another user, or writable by others, is ignored with a
+  warning (as git does; name it with `PYTACHECK_CONFIG` to use it anyway). The
+  search for it stops at your home folder. Local code it names (a path pack
+  `{"path": ...}` or a `.py` module in a preset) stays inactive until you trust
+  it: `pytacheck pack install` in the project shows it and asks. Store packs it
+  pins run only once installed, which also asks.
 
 Each pack has a trust label: `builtin`, `store` (listed and pinned by a store),
 `unlisted` (installed from a URL or at a commit the store does not list), `local`
@@ -210,11 +228,12 @@ built-in modules and installed packs only (`use(allow_local=False)`).
 
 ### Reproducibility: run records
 
-Every module output carries its provenance (`out.provenance`): the module, pack,
-version, commit, file hash, effective arguments and whether the files were
-modified. A **run record** collects these for a whole run, with the preset, the
-modules dropped by `--offline`, the paper IDs and the versions of pytacheck,
-metacheck and bibr:
+Every module output carries its provenance (`out.run_provenance`, also readable
+as `out.provenance` unless the module returned an element of that name): the
+module, pack, version, commit, file hash, effective arguments and whether the
+files were modified. A **run record** collects these for a whole run, with the
+preset, the modules dropped by `--offline`, the paper IDs and the versions of
+pytacheck, metacheck and bibr:
 
 ```bash
 pytacheck run paper.json --preset psych --record run.json
@@ -223,21 +242,27 @@ pytacheck rerun run.json paper.json --install       # fetch recorded pack commit
 ```
 
 ```python
-chain = pc.run_modules(paper, select(preset="psych"))
-chain.run_record.write("run.json")
+chain = pc.run_modules(paper, select(preset="psych"), record="run.json")
+chain.run_record                      # the same record, as an object
 pc.rerun("run.json", paper)
-pc.RunRecord.read("report.html")      # records embedded in HTML reports
 ```
 
 `rerun` refuses to run a module whose file differs from the recorded hash (or an
-installed pack that was modified) unless you pass `--allow-modified`. Packs it
-installs for a rerun are not pinned in your config. Built-in modules come from the
-pytacheck you have; a different version only warns.
+installed pack that was modified) unless you pass `--allow-modified`; files are
+checked before any of their code is imported. A record is data you may have been
+sent, so a recorded module file outside the current folder runs only after you
+agree (`--yes`). Packs it installs for a rerun are not pinned in your config.
+Built-in modules come from the pytacheck you have; a different version only
+warns. A module that failed in the recorded run and still cannot be found (a
+metacheck module not ported yet) fails again rather than stopping the rerun.
 
-HTML reports embed the record as
-`<script type="application/json" id="pytacheck-run">`, so the visible report is
-unchanged. (Report integration: the report renderer calls
-`pytacheck.provenance.run_modules()` and embeds `chain.run_record.to_html()`.)
+**Not available yet:** HTML reports do not embed the record, and do not show pack
+names, until the report renderer runs modules through
+`pytacheck.provenance.run_modules()` (it will embed `chain.run_record.to_html()`,
+a `<script type="application/json" id="pytacheck-run">` that leaves the visible
+report unchanged, and `RunRecord.read("report.html")` will read it back). Until
+then, use `pytacheck report ... --record run.json` to write the record next to
+the report.
 
 ### Configuration files
 
@@ -460,9 +485,14 @@ There are two ways in; both are a pull request:
    and open a pull request changing `rev`.
 
 Maintainers review the code (see the store's `REVIEW.md`) and record the review
-date; they can also mark a pack `yanked`. Everything else in the store's
-`index.json` is computed by `pytacheck store build`; nobody edits it by hand. A
-change to a pack clears its review date until it is reviewed again.
+date together with the tree hash of the files they read
+(`"reviewed": "2026-09-01", "reviewed_tree_sha256": "..."` in `packs/<name>.json`);
+they can also mark a pack `yanked`. Everything else in the store's `index.json` is
+computed by `pytacheck store build`; nobody edits it by hand. A change to a pack
+clears its review date until it is reviewed again (and `store build --check`
+fails until then). CI runs `pack check` on every changed pack; for a pack in its
+own repository it fetches the listed commit first
+(`pytacheck pack check packs/<name>.json`).
 
 You can also run your own store: any git repository with `packs/` and an
 `index.json` built by `pytacheck store build . [--repo OWNER/REPO]`.
@@ -494,9 +524,9 @@ entries list each pack's `languages`.
 | `module_list()` / `module_list(pack="psych")` / `module_list(pack="*")` | list modules |
 | `preset(ref)`, `preset_list()` | a preset's modules and arguments; every preset |
 | `presets.select(modules, preset, args, offline=...)` | what a call would run |
-| `run_modules(paper, selection)` | run in order; returns a `ModuleChain` with `.run_record` |
+| `run_modules(paper, selection, record=None)` | run in order; returns a `ModuleChain` with `.run_record` (written to `record` if given) |
 | `use(preset=..., allow_local=..., offline=...)` | scope settings to a `with` block |
-| `run_session()` | memoise repeated module runs in a `with` block |
+| `run_session()` | memoise repeated module runs in a `with` block (`run_modules`, the CLI and the API use it; do not edit a paper's tables inside one, as edits within a table are not detected) |
 | `pack_install(ref=None, scope="user", yes=False)` | install (or sync all pins) |
 | `pack_remove(name)`, `pack_update(name=None)`, `pack_list()`, `pack_show(name)` | manage packs |
 | `pack_check(path)`, `pack_new(name, path=".")`, `module_template(name)` | author packs |

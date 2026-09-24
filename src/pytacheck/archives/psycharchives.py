@@ -202,6 +202,10 @@ def _info_loop(
             table = x
             id_col_name = _column(table, id_col)
             raw = table[id_col_name].tolist()
+        elif x is None:
+            # R: data.frame(<url_col> = NULL) has no columns, and is returned as is
+            _tick(bar, f"No valid {label} links")
+            return pd.DataFrame(index=pd.RangeIndex(0))
         else:
             id_col_name = url_col
             vals, _ = _as_values(x)
@@ -346,13 +350,13 @@ def _psycharchives_info(pa_url: Any, pb: Any = None) -> pd.DataFrame:
             md = []
 
         def md_val(key: str) -> str | None:
-            from pytacheck.archives.dataverse import _chr_elt, _elements
+            from pytacheck.archives.dataverse import _elements
 
             vals = []
             for m in _elements(md):
                 k = _dollar(m, "key")
                 if isinstance(k, str) and k == key:
-                    vals.append(_chr_elt(_empty_or(_dollar(m, "value"), None)))
+                    vals.append(_chr1(_empty_or(_dollar(m, "value"), None)))
                 else:
                     vals.append(None)
             vals = [v for v in vals if v is not None]
@@ -377,7 +381,6 @@ def _bitstream_table(bitstreams: Any, host: str) -> pd.DataFrame:
     """The ``file_list`` of ``.psycharchives_info()``: ``name``, ``size``, ``retrieve``."""
     from pytacheck.archives.dataverse import (
         _as_numeric,
-        _chr_elt,
         _dollar,
         _elements,
         _empty_or,
@@ -386,7 +389,7 @@ def _bitstream_table(bitstreams: Any, host: str) -> pd.DataFrame:
 
     # R: length(bitstreams) == 0 -> an empty table; a JSON scalar has length 1
     items = [] if _is_empty(bitstreams) else _elements(bitstreams)
-    names = [_chr_elt(_empty_or(_dollar(b, "name"), None)) for b in items]
+    names = [_chr1(_empty_or(_dollar(b, "name"), None)) for b in items]
     sizes = [_as_numeric(_empty_or(_dollar(b, "sizeBytes"), None)) for b in items]
     retrieve = []
     for b in items:
@@ -399,6 +402,20 @@ def _bitstream_table(bitstreams: Any, host: str) -> pd.DataFrame:
             "retrieve": pd.Series(retrieve, dtype="string"),
         }
     )
+
+
+def _chr1(x: Any) -> str | None:
+    """A ``vapply(..., character(1))`` result from parsed JSON: a string or ``NA``.
+
+    Unlike jsonlite's simplified vectors, ``resp_body_json()`` keeps a JSON
+    array as a list, so even a one-string array (``["a"]``) is R's error
+    "values must be type 'character'", as are numbers and booleans.
+    """
+    from pytacheck.archives.dataverse import _chr_elt
+
+    if isinstance(x, list | tuple | dict):
+        raise TypeError("values must be type 'character',\n but FUN(X[[1]]) result is type 'list'")
+    return _chr_elt(x)
 
 
 def _paste_json(x: Any) -> str:

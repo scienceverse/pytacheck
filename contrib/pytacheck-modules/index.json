@@ -2,7 +2,7 @@
   "schema": 1,
   "name": "pytacheck",
   "description": "Community modules and presets for pytacheck (and, in future, metacheck).",
-  "generated": "2026-09-24T20:17:50Z",
+  "generated": "2026-09-24T21:21:39Z",
   "fields": [
     "general",
     "psychology",
@@ -37,7 +37,7 @@
         "pytacheck-modules contributors"
       ],
       "homepage": "https://github.com/thesanogoeffect/pytacheck-modules/tree/main/packs/clinical_trials",
-      "tree_sha256": "9a43a7c05abdfccf1a28b8295171e9fa72e40380feb3f0f3aaeae959d62ed80c",
+      "tree_sha256": "c29b0978a4b1e831e8661dca627703c678b73d81c33f765bf37cf072b544a43a",
       "code": true,
       "languages": [
         "python"
@@ -50,7 +50,7 @@
         {
           "name": "trial_registration",
           "title": "Trial Registration",
-          "description": "Find clinical trial registration numbers (ClinicalTrials.gov, ISRCTN, EudraCT/CTIS, ANZCTR, ChiCTR, DRKS, CTRI) and flag trials that report none.",
+          "description": "Find clinical trial registration numbers (ClinicalTrials.gov, ISRCTN, EudraCT/CTIS, ANZCTR, ChiCTR, DRKS, CTRI, PACTR, UMIN/jRCT, IRCT, ReBEC, NTR) and flag trials that report none.",
           "section": "method",
           "requires": [],
           "validation": null
@@ -86,7 +86,7 @@
         "pytacheck-modules contributors"
       ],
       "homepage": "https://github.com/thesanogoeffect/pytacheck-modules/tree/main/packs/fields",
-      "tree_sha256": "6e9a4ef6fb431766b92aea452be5eeca96e73e04d6cefb56e9a63d9e71a5a675",
+      "tree_sha256": "ff458cb8eed07b116640f8de77a6493dc2369f1d887427e4b6bd7ceae2e27d10",
       "code": false,
       "languages": [],
       "requires": {

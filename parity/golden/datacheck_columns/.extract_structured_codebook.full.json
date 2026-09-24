@@ -1,0 +1,112 @@
+{
+  "id": ".extract_structured_codebook.full",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 6,
+    "names": [
+      "codebook_variable",
+      "label",
+      "codebook_source",
+      "group",
+      "value_labels",
+      "missing_values",
+      "question",
+      "coding_instructions"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "sex",
+          "age",
+          "cond",
+          "handed",
+          null,
+          "score"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Sex",
+          "Age",
+          "Condition",
+          "Handedness",
+          "na var",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "cb.csv",
+          "cb.csv",
+          "cb.csv",
+          "cb.csv",
+          "cb.csv",
+          "cb.csv"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "{\"1\":\"Male\",\"2\":\"Female\",\"-99\":\"Refused\"}",
+          null,
+          null,
+          null,
+          null,
+          "{\"1\":\"x\",\"2\":\"y\"}"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "{\"-99\":\"Refused\"}",
+          "[\"-9\",\"-8\"]",
+          null,
+          "{\"-9\":\"not answered\"}",
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "What is your sex?",
+          "How old are you?",
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          "reverse: 6 - x"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -1,0 +1,22 @@
+{
+  "id": "normalize_varname.mixed",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "sss total",
+      "age",
+      "subj-id",
+      "x y",
+      "a b c",
+      null,
+      "",
+      "ünïcode name",
+      "lead"
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

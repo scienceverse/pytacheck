@@ -31,10 +31,18 @@ pytacheck run paper.json -m clinical_trials::trial_registration
 | pack | kind | what it offers |
 |---|---|---|
 | [`fields`](packs/fields) | presets only | `fields::general`, `fields::psychology`, `fields::medicine`, `fields::open-science`: metacheck's checks chosen per field |
-| [`clinical_trials`](packs/clinical_trials) | code | `trial_registration`: trial registry numbers (ClinicalTrials.gov, ISRCTN, EudraCT/CTIS, ANZCTR, ChiCTR, DRKS, CTRI) |
+| [`clinical_trials`](packs/clinical_trials) | code | `trial_registration`: trial registry numbers (ClinicalTrials.gov, ISRCTN, EudraCT/CTIS, ANZCTR, ChiCTR, DRKS, CTRI, PACTR, UMIN/jRCT, IRCT, ReBEC, NTR) |
 
 The full user guide is pytacheck's
 [docs/MODULES.md](https://github.com/thesanogoeffect/pytacheck/blob/claude/pytacheck-metacheck-fork-0x7q73/docs/MODULES.md).
+
+> **Before the first CI build.** Until this store's CI has rebuilt
+> `index.json` on GitHub, the committed index lists the in-repo packs with
+> local path sources (`{"path": "packs/<name>"}`), and pytacheck installs
+> those only from a local copy of this repository:
+> `git clone https://github.com/thesanogoeffect/pytacheck-modules` then
+> `PYTACHECK_STORE_URL=$PWD/pytacheck-modules pytacheck pack install clinical_trials`.
+> The CI build replaces them with commit sources.
 
 ## What "reviewed" means
 
@@ -56,7 +64,8 @@ list your own repository (`packs/<name>.json`). See
 
 * `packs/<name>/` -- packs submitted as folders;
 * `packs/<name>.json` -- packs in their authors' repositories (name, source,
-  commit), plus maintainer-only `reviewed` / `yanked` fields;
+  commit), plus maintainer-only `reviewed` / `reviewed_tree_sha256` / `yanked`
+  fields;
 * `store.json` -- the store's name and description;
 * `index.json` -- **generated**: CI runs `pytacheck store build` on every push to
   `main` and commits the result. Do not edit it by hand.

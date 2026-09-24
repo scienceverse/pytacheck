@@ -36,8 +36,12 @@ def _commented(pp: pd.DataFrame | None) -> pd.DataFrame:
     if "total_comments" not in pp.columns or "users" not in pp.columns:
         return pp.iloc[0:0]  # R: `NULL > 0` is logical(0), which selects no rows
     tc = pd.to_numeric(pp["total_comments"], errors="coerce")
-    keep = (tc > 0) & (pp["users"].astype("string") != "Statcheck")
-    return pp.loc[keep.fillna(False).to_numpy(dtype=bool)].reset_index(drop=True)
+    keep = ((tc > 0) & (pp["users"].astype("string") != "Statcheck")).fillna(False)
+    out = pp.loc[keep.to_numpy(dtype=bool)].reset_index(drop=True)
+    if pd.api.types.is_numeric_dtype(out["total_comments"]):
+        # R: pubpeer_comments()' `total_comments[is.na(...)] <- 0` makes it a double
+        out["total_comments"] = out["total_comments"].astype("float64")
+    return out
 
 
 def _summarise_comments(table: pd.DataFrame) -> pd.DataFrame:

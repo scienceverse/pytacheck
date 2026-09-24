@@ -1,0 +1,259 @@
+{
+  "id": "file_category.codebook_names",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 28,
+    "names": [
+      "name",
+      "filetype",
+      "file_category"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "code book.pdf",
+          "code_book.xlsx",
+          "Race_IAT.public.2025.codebook.csv",
+          "CODE-BOOK.txt",
+          "data_dictionary.csv",
+          "DataDict.xlsx",
+          "data.dict",
+          "all40_variable key.xlsx",
+          "Variable_Key.pdf",
+          "var_list.txt",
+          "variable-descriptions.docx",
+          "varkey.csv",
+          "WITH.variable.labels.dat",
+          "repetition_texting_tm_data-legend.csv",
+          "coding_manual.pdf",
+          "coding scheme.docx",
+          "CodingSheet.xlsx",
+          "meta_data.csv",
+          "encoding.csv",
+          "codes.csv",
+          "key.csv",
+          "readme.sas",
+          "READ-ME.txt",
+          "Read Me.md",
+          "read__me.md",
+          "readme_codebook.csv",
+          "my_readme",
+          "codebook_readme.R"
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "text"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "text"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "text"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "text"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "text"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "text"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "text"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "stats"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "text"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "text"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "text"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "codebook",
+          "codebook",
+          "codebook",
+          "codebook",
+          "codebook",
+          "codebook",
+          "codebook",
+          "codebook",
+          "codebook",
+          "codebook",
+          "codebook",
+          "codebook",
+          "data",
+          "codebook",
+          "codebook",
+          "codebook",
+          "codebook",
+          "data",
+          "data",
+          "data",
+          "data",
+          "readme",
+          "readme",
+          "readme",
+          null,
+          "readme",
+          "readme",
+          "readme"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

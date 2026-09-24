@@ -63,7 +63,9 @@ pull request changing `rev` (and `version`).
 
 ## What happens next
 
-CI checks every changed pack (`pytacheck pack check`) and the whole store
-(`pytacheck store build . --check`). A maintainer reviews the code with
+CI checks every changed pack with `pytacheck pack check` (a pack listed from
+your own repository is fetched at its `rev` first: `pytacheck pack check
+packs/<name>.json`; its own `tests/` are not run, so run them in your
+repository's CI) and the whole store (`pytacheck store build . --check`). A maintainer reviews the code with
 [REVIEW.md](REVIEW.md), may ask for changes, and records the review date. You
 keep the copyright; the pack keeps your licence.

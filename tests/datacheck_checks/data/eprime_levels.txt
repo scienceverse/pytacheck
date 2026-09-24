@@ -1,0 +1,4 @@
+Experiment: stroop_task
+Subject: 12
+LevelName: Trial
+Stimulus.RT: 532

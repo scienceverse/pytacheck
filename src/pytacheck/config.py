@@ -285,7 +285,7 @@ def config_stamp() -> tuple[Any, ...]:
     except OSError:
         cwd = ""
     trust: tuple[int, int] | None = None
-    if any(scope == "project" for scope, _ in files):
+    if any(f[0] == "project" for f in files):
         with contextlib.suppress(OSError):
             st = _trust_file().stat()
             trust = (st.st_mtime_ns, st.st_size)

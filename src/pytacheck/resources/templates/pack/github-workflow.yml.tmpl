@@ -14,8 +14,8 @@ jobs:
         with:
           python-version: "3.12"
       - name: Install pytacheck
-        # until pytacheck is on PyPI
-        run: pip install "pytacheck @ git+https://github.com/thesanogoeffect/pytacheck@main" pytest
+        # the same pytacheck the store's CI uses (until pytacheck is on PyPI)
+        run: pip install "{{install_spec}}" pytest
       - name: pytacheck pack check
         run: pytacheck pack check .
       - name: Tests

@@ -255,18 +255,52 @@ _LIST_COLUMNS = frozenset({"creators", "keywords", "journal", "owners", "files"}
 _NUM_COLUMNS = frozenset({"downloads", "unique_downloads", "views"})
 
 
+class _ListCell:
+    """A value R stores as a list column (``obj$x <- <a length-1 list>``)."""
+
+    __slots__ = ("value",)
+
+    def __init__(self, value: Any) -> None:
+        self.value = value
+
+
+def _scalar_field(value: Any) -> Any:
+    """``obj$x <- value %empty_or% NA`` on metacheck's one-row data frame.
+
+    ``NULL`` or a zero-length value gives ``NA``. A JSON object or array of
+    length one makes the column a list column holding its element (R's
+    ``$<-.data.frame``); a longer one is R's "replacement has n rows" error.
+    """
+    if value is None or (isinstance(value, list | dict) and len(value) == 0):
+        return None
+    if isinstance(value, list | dict):
+        if len(value) > 1:
+            raise ValueError(f"replacement has {len(value)} rows, data has 1")
+        return _ListCell(next(iter(value.values())) if isinstance(value, dict) else value[0])
+    return value
+
+
 def _info_frame(row: dict[str, Any]) -> pd.DataFrame:
-    """A one-row record table with metacheck's column types."""
+    """A one-row record table with metacheck's column types.
+
+    List columns (``creators``, ``files``...) hold the value as it is; the
+    other fields are typed as R types them (character; integer, double or
+    logical for JSON numbers and booleans; a list column for a
+    :class:`_ListCell`). Missing statistics are double ``NA``, other missing
+    fields character ``NA``.
+    """
+    from pytacheck.archives.github import _TYPE_DTYPE, _r_value_type
+
     cols: dict[str, pd.Series] = {}
     for name, value in row.items():
         if name in _LIST_COLUMNS:
             cols[name] = pd.Series([value], dtype=object)
-        elif name in _NUM_COLUMNS:
-            cols[name] = pd.Series([_as_double(value)], dtype="float64")
-        elif value is None or isinstance(value, str):
-            cols[name] = pd.Series([value], dtype="string")
+        elif isinstance(value, _ListCell):
+            cols[name] = pd.Series([value.value], dtype=object)
+        elif value is None:
+            cols[name] = pd.Series([None], dtype="float64" if name in _NUM_COLUMNS else "string")
         else:
-            cols[name] = pd.Series([value], dtype=object)
+            cols[name] = pd.Series([value], dtype=_TYPE_DTYPE[_r_value_type(value)])
     return pd.DataFrame(cols)
 
 
@@ -311,7 +345,7 @@ def _zenodo_info(zenodo_id: Any, pb: Any = None, resp: Any = _UNSET) -> pd.DataF
     from pytacheck import http
     from pytacheck.archives import _spinner, _tick
     from pytacheck.archives.github import _body_json, _empty_or
-    from pytacheck.db._utils import r_dollar
+    from pytacheck.archives.github import _dollar as r_dollar
 
     with _spinner(pb) as bar:
         zid = _zenodo_id(zenodo_id)
@@ -345,20 +379,22 @@ def _zenodo_info(zenodo_id: Any, pb: Any = None, resp: Any = _UNSET) -> pd.DataF
         stats = r_dollar(rec, "stats")
         row = {
             "zenodo_id": zid,
-            "title": _empty_or(r_dollar(metadata, "title")),
-            "doi": _empty_or(r_dollar(rec, "doi")),
-            "description": _empty_or(r_dollar(metadata, "description")),
-            "publication_date": _empty_or(r_dollar(metadata, "publication_date")),
-            "updated_date": _empty_or(r_dollar(rec, "updated")),
+            "title": _scalar_field(r_dollar(metadata, "title")),
+            "doi": _scalar_field(r_dollar(rec, "doi")),
+            "description": _scalar_field(r_dollar(metadata, "description")),
+            "publication_date": _scalar_field(r_dollar(metadata, "publication_date")),
+            "updated_date": _scalar_field(r_dollar(rec, "updated")),
             "creators": r_dollar(metadata, "creators"),
             "keywords": r_dollar(metadata, "keywords"),
-            "resource_type": _empty_or(r_dollar(r_dollar(metadata, "resource_type"), "type")),
+            "resource_type": _scalar_field(
+                r_dollar(r_dollar(metadata, "resource_type"), "type")
+            ),
             "journal": r_dollar(metadata, "journal"),
             "owners": r_dollar(rec, "owners"),
-            "license": license_value,
-            "downloads": _empty_or(r_dollar(stats, "downloads")),
-            "unique_downloads": _empty_or(r_dollar(stats, "unique_downloads")),
-            "views": _empty_or(r_dollar(stats, "views")),
+            "license": _scalar_field(license_value),
+            "downloads": _scalar_field(r_dollar(stats, "downloads")),
+            "unique_downloads": _scalar_field(r_dollar(stats, "unique_downloads")),
+            "views": _scalar_field(r_dollar(stats, "views")),
             "files": r_dollar(rec, "files"),
         }
         return _info_frame(row)
@@ -391,7 +427,7 @@ def _is_zip(name: list[Any]) -> list[bool]:
 
 def _file_rows(files_list: list[Any]) -> pd.DataFrame:
     """The flat ``id``/``key``/``size``/``checksum``/``self`` table of a record's files."""
-    from pytacheck.db._utils import r_dollar
+    from pytacheck.archives.github import _dollar as r_dollar
 
     ids, keys, sizes, checksums, selfs = [], [], [], [], []
     for x in files_list:

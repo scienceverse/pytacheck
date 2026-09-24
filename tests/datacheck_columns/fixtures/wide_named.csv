@@ -1,0 +1,5 @@
+variable,age,score
+label,Age in years,Total score
+mean,31.2,4.5
+sd,5.1,1.2
+n,40,40

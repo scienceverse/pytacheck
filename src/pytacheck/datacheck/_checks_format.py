@@ -8,7 +8,6 @@ trial-level (Behaverse / Inquisit / jsPsych / PsychoPy / E-Prime) sections of
 from __future__ import annotations
 
 import os
-from pathlib import Path
 from typing import Any
 
 import pandas as pd
@@ -24,7 +23,6 @@ from pytacheck.datacheck._checks_rvec import (
     tolower,
     toupper,
     trim,
-    unique,
 )
 
 __all__ = [
@@ -114,7 +112,7 @@ def _qualtrics_col_stem(nm: str | None) -> str | None:
     if len(m) != 3:
         return None
     stem = m[1]
-    if sum(1 for c in stem if grepl("[A-Za-z]", c)) < 2:
+    if sum(1 for c in stem if "A" <= c <= "Z" or "a" <= c <= "z") < 2:
         return None
     return stem
 
@@ -419,16 +417,8 @@ def _r_rows(df: pd.DataFrame, start: int) -> pd.DataFrame:
     idx = list(range(start, n + 1)) if start <= n else list(range(start, n - 1, -1))
     if all(1 <= i <= n for i in idx):
         return df.iloc[[i - 1 for i in idx]]
-    parts = []
-    for i in idx:
-        if 1 <= i <= n:
-            parts.append(df.iloc[[i - 1]])
-        else:
-            na_row = df.iloc[[0]].copy()
-            for j in range(df.shape[1]):
-                na_row.iloc[0, j] = None
-            parts.append(na_row)
-    return pd.concat(parts)
+    # rows past the end are all-NA rows, as in R
+    return df.reset_index(drop=True).reindex([i - 1 for i in idx])
 
 
 def data_promote_header_row(df: Any, raw_rows: Any = None, max_scan: int = 4) -> dict[str, Any]:
@@ -550,19 +540,12 @@ def _bh_is_trial_level_file(path: Any) -> bool:
 
 
 def _read_csv_header(path: str, sep: str) -> pd.DataFrame | None:
-    """``utils::read.csv(path, check.names = FALSE, nrows = 1, fileEncoding = "UTF-8-BOM", sep)``."""
+    """``utils::read.csv(path, check.names = FALSE, nrows = 1, fileEncoding = "UTF-8-BOM", sep)``.
+
+    The ``read.table()`` port drops a leading UTF-8 byte-order mark itself.
+    """
     from pytacheck.datacheck._files_readtable import read_table
 
-    raw = Path(path).read_bytes()
-    if raw.startswith(b"\xef\xbb\xbf"):
-        import tempfile
-
-        with tempfile.NamedTemporaryFile(suffix=".csv", delete=False) as tmp:
-            tmp.write(raw[3:])
-        try:
-            return read_table(tmp.name, sep=sep, header=True, nrows=1)
-        finally:
-            os.unlink(tmp.name)
     return read_table(path, sep=sep, header=True, nrows=1)
 
 
@@ -634,7 +617,3 @@ def data_check_is_psychopy(df: Any) -> bool:
         or any(grepl("[.](started|stopped)$", nm))
         or any(c in nm for c in ("psychopyVersion", "frameRate", "expName"))
     )
-
-
-def _unused() -> None:  # pragma: no cover
-    unique([])

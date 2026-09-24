@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from collections.abc import Callable, Sequence
+from collections.abc import Callable, Iterable, Sequence
 from concurrent.futures import ThreadPoolExecutor
 from contextvars import copy_context
 from typing import Any
@@ -45,7 +45,7 @@ def _parallel_map(fn: Callable[[Any], Any], items: Sequence[Any]) -> list[Any]:
         return [f.result() for f in futures]
 
 
-def _unique(values: Sequence[Any]) -> list[Any]:
+def _unique(values: Iterable[Any]) -> list[Any]:
     """``unique()``: first appearance order, ``NA`` kept once."""
     return list(dict.fromkeys(values))
 

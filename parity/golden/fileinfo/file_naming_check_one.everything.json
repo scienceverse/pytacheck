@@ -1,0 +1,38 @@
+{
+  "id": "file_naming_check_one.everything",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 5,
+    "names": [
+      "rule",
+      "detail"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "spaces",
+          "special-characters",
+          "diacritics",
+          "unclassifiable",
+          "date-format"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "contains a space",
+          "contains a character other than letters, digits, underscore, or dash",
+          "contains non-ASCII characters (e.g. accented letters)",
+          "could not be classified by name or extension (data_type is 'unknown'); add a recognisable keyword (data, code, materials, ...) or a known extension",
+          "'20231399' is not a valid YYYYMMDD date"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

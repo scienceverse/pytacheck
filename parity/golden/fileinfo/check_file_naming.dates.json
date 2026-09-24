@@ -1,0 +1,104 @@
+{
+  "id": "check_file_naming.dates",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 16,
+    "names": [
+      "file_name",
+      "rule",
+      "severity",
+      "detail"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "x_20230229.csv",
+          "19000229.csv",
+          "20231301.csv",
+          "20230001.csv",
+          "20230100.csv",
+          "20230132.csv",
+          "20230431.csv",
+          "12345678.csv",
+          "01000229.csv",
+          "log_1234567890123456.txt",
+          "log_1234567890123456.txt",
+          "20231301.tar.gz",
+          "a20230230b20230231.R",
+          "a20230230b20230231.R",
+          "id_123456789.csv",
+          "2023010.csv"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "date-format",
+          "date-format",
+          "date-format",
+          "date-format",
+          "date-format",
+          "date-format",
+          "date-format",
+          "date-format",
+          "date-format",
+          "date-format",
+          "date-format",
+          "date-format",
+          "date-format",
+          "date-format",
+          "date-format",
+          "zero-padding"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "bad",
+          "bad",
+          "bad",
+          "bad",
+          "bad",
+          "bad",
+          "bad",
+          "bad",
+          "bad",
+          "bad",
+          "bad",
+          "bad",
+          "bad",
+          "bad",
+          "bad",
+          "suggestion"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "'20230229' is not a valid YYYYMMDD date",
+          "'19000229' is not a valid YYYYMMDD date",
+          "'20231301' is not a valid YYYYMMDD date",
+          "'20230001' is not a valid YYYYMMDD date",
+          "'20230100' is not a valid YYYYMMDD date",
+          "'20230132' is not a valid YYYYMMDD date",
+          "'20230431' is not a valid YYYYMMDD date",
+          "'12345678' is not a valid YYYYMMDD date",
+          "'01000229' is not a valid YYYYMMDD date",
+          "'12345678' is not a valid YYYYMMDD date",
+          "'90123456' is not a valid YYYYMMDD date",
+          "'20231301' is not a valid YYYYMMDD date",
+          "'20230230' is not a valid YYYYMMDD date",
+          "'20230231' is not a valid YYYYMMDD date",
+          "'12345678' is not a valid YYYYMMDD date",
+          "numbered inconsistently with sibling files (pad to 8 digits so names sort in numeric order)"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

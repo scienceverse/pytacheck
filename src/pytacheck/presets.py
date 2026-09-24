@@ -44,6 +44,7 @@ from pytacheck.module import (
     _builtin_names,
     _locate,
     module_find,
+    split_ref,
     use_setting,
 )
 
@@ -150,8 +151,9 @@ def label(ref: Any) -> str:
     if callable(ref) and hasattr(ref, "__pytacheck_module__"):
         return ref.__pytacheck_module__.name  # type: ignore[no-any-return]
     text = str(ref)
-    if "::" in text:
-        return text.partition("::")[2]
+    qualified = split_ref(text)
+    if qualified is not None:
+        return qualified[1]
     return Path(text).stem if _is_path(text) else text
 
 
@@ -279,6 +281,13 @@ def lookup(ref: str) -> Preset:
     builtin = builtin_pack()
     if ref in builtin.presets:
         return _pack_preset(builtin, ref)
+    if f"presets.{ref}" in config.untrusted:
+        where, _entry, code = config.untrusted[f"presets.{ref}"]
+        raise PresetError(
+            f"The preset '{ref}' in the project config {where} runs local module files you "
+            f"have not trusted yet ({', '.join(code)}). Review them, then run "
+            "`pytacheck pack install` in that project to trust them."
+        )
     known = [*config.presets, *(f"{p}::{n}" for p, pk in packs.items() for n in pk.presets)]
     raise PresetError(f"There is no preset '{ref}'. Presets: {', '.join(known)}")
 
@@ -537,7 +546,8 @@ def preset_as_r(ref: str | Iterable[tuple[str, Mapping[str, Any]]]) -> str:
     """The equivalent metacheck call, ``report(paper, modules = c(...), args = list(...))``.
 
     Pack modules run in R only when the pack ships ``<name>.R`` next to the
-    ``.py`` file (then its path is used); others are listed in a comment.
+    ``.py`` file (then its path is used); others are left out of the call (R's
+    ``report()`` would stop at them) and listed in a comment.
     """
     entries = expand(ref) if isinstance(ref, str) else list(ref)
     names: list[str] = []
@@ -558,12 +568,13 @@ def preset_as_r(ref: str | Iterable[tuple[str, Mapping[str, Any]]]) -> str:
                 r_ref = str(r_file)
             else:
                 missing.append(mod)
+                continue
         names.append(r_ref)
         if a:
             args[r_ref] = a
     lines = []
     if missing:
-        lines.append(f"# no metacheck (.R) version of: {', '.join(missing)}")
+        lines.append(f"# left out (no metacheck .R version): {', '.join(missing)}")
     call = f"report(paper,\n       modules = c({', '.join(json.dumps(n) for n in names)})"
     if args:
         call += f",\n       args = {_r_value(args)}"

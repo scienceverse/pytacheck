@@ -33,6 +33,7 @@ __all__ = [
     "chr",
     "df_columns",
     "is_na",
+    "is_whole",
     "median",
     "num",
     "quantile7",
@@ -447,6 +448,11 @@ def unique(values: Iterable[Any]) -> list[Any]:
 
 
 # -- numeric helpers -----------------------------------------------------------
+
+
+def is_whole(f: float) -> bool:
+    """``f == round(f)`` for a non-NA double (``Inf`` counts as whole, as in R)."""
+    return math.isinf(f) or float(f).is_integer()
 
 
 def median(values: Sequence[float]) -> float:

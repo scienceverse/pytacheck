@@ -27,7 +27,7 @@ from typing import Any
 import pandas as pd
 
 from pytacheck._r.base import as_character, is_na, trimws
-from pytacheck._r.regex import compile_r, grepl, gsub, regexec, regextract_all, strsplit
+from pytacheck._r.regex import grepl, gsub, regexec, regextract_all, strsplit
 
 # -----------------------------------------------------------------------------
 # R-vector utilities
@@ -940,6 +940,18 @@ def _extract_structured_codebook(
     )
 
 
+def _attr(attrs: Mapping[str, Any], which: str) -> Any:
+    """R ``attr(x, which)``: exact name first, else a unique partial match.
+
+    So ``attr(x, "label")`` of a column with value ``labels`` but no variable
+    label returns the value labels (metacheck then uses the first code).
+    """
+    if which in attrs:
+        return attrs[which]
+    hits = [k for k in attrs if isinstance(k, str) and k.startswith(which)]
+    return attrs[hits[0]] if len(hits) == 1 else None
+
+
 def _col_attrs(df: pd.DataFrame, j: int) -> Mapping[str, Any]:
     """The R attributes of column *j* (``df.attrs["col_attrs"]`` or ``Series.attrs``)."""
     name = df.columns[j]
@@ -966,8 +978,8 @@ def _extract_haven_labels(df: pd.DataFrame, src: str, group: str | None = None) 
     mvs: list[str | None] = []
     for nm in names:
         a = _col_attrs(df, first_j[nm])
-        lbl = a.get("label")
-        lv = _vec(lbl)
+        lbl = _attr(a, "label")
+        lv = [p[1] for p in _label_pairs(lbl)] if isinstance(lbl, Mapping) else _vec(lbl)
         labels.append(None if lbl is None or not lv else _trim(_chr(lv[0])))
         res = _haven_value_labels(None, a)
         vls.append(res["value_labels"])
@@ -1002,6 +1014,3 @@ def _cb_is_definition_line(x: Any) -> Any:
         perl=True,
     )
 
-
-def _compiled(pattern: str, perl: bool = False) -> Any:  # pragma: no cover - helper
-    return compile_r(pattern, perl=perl)
