@@ -1,0 +1,25 @@
+{
+  "id": "gsub.alt.pcre",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "The effect wXs significXnt, t(28) = 2.20, p = .036, d = 0.80.",
+      "p<0.001 Xnd P = .04; Xlso p ≤ .05 Xnd p=0.5.",
+      "CXfé résumé nXïve — ÉlXn vitXl. ÉCOLE école",
+      "non breXking spXce\tXnd tXb\nnew line",
+      "bXck\\slXsh [brXcket] X.b X-b X_b",
+      "mXrginXlly stXtisticXlly significXnt trend towXrds significXnce",
+      "Xb Xbc Xbcd XXb",
+      "x",
+      "",
+      "multi\nline\ntext\n",
+      "12,345 1.5e-3 −0.25 3·10^-4",
+      "DXtX Xre XvXilXble Xt https://osf.io/Xbc12/ Xnd osf.io/XYZ9"
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

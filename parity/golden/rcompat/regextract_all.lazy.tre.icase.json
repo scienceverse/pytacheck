@@ -1,0 +1,81 @@
+{
+  "id": "regextract_all.lazy.tre.icase",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": null,
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "as signific"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": []
+      },
+      {
+        "t": "chr",
+        "v": [
+          "afé résumé naïve — Élan vital. ÉC"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "aking spac"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "ac",
+          "ash [brac"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "arginally statistic",
+          "ally signific",
+          "ant trend towards signific",
+          "anc"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "ab abc",
+          "abc"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": []
+      },
+      {
+        "t": "chr",
+        "v": []
+      },
+      {
+        "t": "chr",
+        "v": []
+      },
+      {
+        "t": "chr",
+        "v": []
+      },
+      {
+        "t": "chr",
+        "v": [
+          "ata are available at https://osf.io/abc"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

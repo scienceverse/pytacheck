@@ -1,0 +1,79 @@
+{
+  "id": "text_search.psy.norefs",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 1,
+    "names": [
+      "text",
+      "text_id",
+      "paragraph_id",
+      "section_id",
+      "page_number",
+      "formatted",
+      "paper_id",
+      "header",
+      "section_type"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "Further research will be needed to identify the precise psychological mechanisms modulated by serotonin to influence resource management."
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          152
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          1
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          10
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "0956797614527830"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Discussion"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "discussion"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

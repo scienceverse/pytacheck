@@ -1,0 +1,196 @@
+[project]
+name = "pytacheck"
+# Versioning: the first three components track the metacheck release this
+# build is in parity with (see parity/UPSTREAM.toml); a fourth component
+# (e.g. 0.3.1.1) marks pytacheck-only releases on top of the same upstream.
+version = "0.3.1.dev1"
+description = "Check research outputs for best practices: a fast, Python-native, parity-tested port of ScienceVerse metacheck."
+readme = "README.md"
+requires-python = ">=3.11,<3.15"
+license = "AGPL-3.0-or-later"
+license-files = ["LICENSE.md"]
+authors = [
+    { name = "Scienceverse", email = "jakub@jakubwerner.com" },
+]
+maintainers = [
+    { name = "Jakub Werner", email = "jakub@jakubwerner.com" },
+]
+keywords = ["metascience", "research-quality", "open-science", "statcheck", "metacheck", "bibr"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: GNU Affero General Public License v3 or later (AGPLv3+)",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Topic :: Scientific/Engineering",
+    "Typing :: Typed",
+]
+dependencies = [
+    "pandas>=3.0",
+    "numpy>=1.26",
+    "scipy>=1.13",
+    # `regex` (not `re`): POSIX leftmost-longest matching, POSIX bracket
+    # classes and \m/\M word anchors are needed to reproduce R's TRE engine.
+    "regex>=2024.9.11",
+    "orjson>=3.10",
+    "httpx[http2]>=0.28.1",
+    "h2>=4.4.1",
+    "lxml>=5.3",
+    "markdown-it-py>=3.0",
+    "platformdirs>=4.2",
+    "rich>=13.7",
+]
+
+[project.optional-dependencies]
+# Tight integration with bibr: `pytacheck.read("paper.pdf")` and
+# `pytacheck check paper.pdf` run the bibr extraction pipeline in-process.
+bibr = ["bibr>=0.5.1"]
+# Readers for SPSS/Stata/SAS/Excel/ODS data files used by data_check & co.
+data = [
+    "pyreadstat>=1.2.7",
+    "openpyxl>=3.1",
+    "odfpy>=1.4.1",
+    "xlrd>=2.0.1",
+]
+# REST API server (port of metacheck's plumber API).
+api = [
+    "fastapi>=0.115",
+    "uvicorn[standard]>=0.30",
+    "python-multipart>=0.0.31",
+]
+all = ["pytacheck[bibr,data,api]"]
+
+[project.urls]
+Homepage = "https://github.com/thesanogoeffect/pytacheck"
+Documentation = "https://github.com/thesanogoeffect/pytacheck#readme"
+Repository = "https://github.com/thesanogoeffect/pytacheck"
+Issues = "https://github.com/thesanogoeffect/pytacheck/issues"
+Changelog = "https://github.com/thesanogoeffect/pytacheck/blob/main/CHANGELOG.md"
+Upstream = "https://github.com/scienceverse/metacheck"
+
+[project.scripts]
+pytacheck = "pytacheck.cli:main"
+
+[project.entry-points."pytacheck.modules"]
+# Third-party packages can register modules under this entry-point group.
+
+[build-system]
+requires = ["hatchling>=1.26"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.sdist]
+include = ["/src/pytacheck", "/README.md", "/LICENSE.md", "/CHANGELOG.md", "/pyproject.toml"]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/pytacheck"]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.3",
+    "pytest-cov>=6.0",
+    "pytest-xdist>=3.6",
+    "pytest-benchmark>=5.1",
+    "hypothesis>=6.112",
+    "respx>=0.22",
+    "pyyaml>=6.0.2",
+    "ruff>=0.8.0",
+    "mypy>=1.15",
+    "pandas-stubs>=2.2",
+    "types-regex>=2024.9",
+    "lxml-stubs>=0.5",
+    "pre-commit>=4.0",
+    "pip-audit>=2.7",
+]
+
+[tool.uv]
+constraint-dependencies = [
+    "h2>=4.4.1",
+    "idna>=3.15",
+    "urllib3>=2.7.0",
+]
+
+[tool.ruff]
+target-version = "py311"
+line-length = 100
+src = ["src", "tests", "parity"]
+extend-exclude = ["upstream"]
+force-exclude = true
+
+[tool.ruff.lint]
+select = [
+    "E",    # pycodestyle errors
+    "W",    # pycodestyle warnings
+    "F",    # Pyflakes
+    "I",    # isort
+    "B",    # flake8-bugbear
+    "C4",   # flake8-comprehensions
+    "UP",   # pyupgrade
+    "ARG",  # flake8-unused-arguments
+    "SIM",  # flake8-simplify
+    "S",    # flake8-bandit (security)
+    "LOG",  # flake8-logging
+    "PERF", # perflint
+    "RUF",  # ruff-specific
+]
+ignore = [
+    "E501",   # line length is handled by the formatter
+    "S101",   # asserts
+    "SIM105", # try/except/pass reads better than contextlib.suppress here
+    "SIM108", # ternaries hurt readability for multi-branch R ports
+    "RUF001", # ambiguous unicode: regexes legitimately contain ≤ ≥ − etc.
+    "RUF002",
+    "RUF003",
+    "PERF203", # try/except in loops mirrors R tryCatch-per-item semantics
+]
+
+[tool.ruff.lint.per-file-ignores]
+"src/pytacheck/__init__.py" = ["F401"]  # TYPE_CHECKING re-exports; __all__ is built from _EXPORTS
+"tests/**/*.py" = ["S", "ARG", "E402", "SIM117", "PERF"]
+"parity/**/*.py" = ["S", "ARG"]
+"scripts/**/*.py" = ["S", "ARG", "E402"]
+"benchmarks/**/*.py" = ["S", "ARG"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = ["-ra", "--strict-markers", "--import-mode=importlib"]
+filterwarnings = [
+    "ignore::DeprecationWarning",
+]
+markers = [
+    "slow: slow tests (deselect with '-m \"not slow\"')",
+    "network: tests that need live network access (deselected by default in CI)",
+    "parity: comparisons against the R reference goldens",
+    "r: tests that need a working R + metacheck installation",
+]
+
+[tool.coverage.run]
+branch = true
+source = ["pytacheck"]
+
+[tool.coverage.report]
+show_missing = true
+skip_covered = true
+
+[tool.mypy]
+python_version = "3.12"
+mypy_path = "src"
+packages = ["pytacheck"]
+warn_return_any = true
+warn_unused_configs = true
+warn_redundant_casts = true
+check_untyped_defs = true
+no_implicit_optional = true
+strict_equality = true
+disallow_untyped_defs = false
+
+[[tool.mypy.overrides]]
+module = ["scipy.*", "pyreadstat.*", "odf.*", "xlrd.*", "bibr.*", "respx.*", "yaml.*"]
+ignore_missing_imports = true

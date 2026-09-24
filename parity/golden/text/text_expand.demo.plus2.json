@@ -1,0 +1,116 @@
+{
+  "id": "text_expand.demo.plus2",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 4,
+    "names": [
+      "text",
+      "text_id",
+      "paragraph_id",
+      "section_id",
+      "page_number",
+      "formatted",
+      "paper_id",
+      "header",
+      "section_type",
+      "expanded"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "effect",
+          "effect",
+          "effect",
+          "effect"
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          3,
+          17,
+          24,
+          29
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          1,
+          6,
+          11,
+          15
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          0,
+          3,
+          7,
+          9
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "There was no effect of experience on the reduction in errors when using the tool (p &gt; .05), as the correlation was non-significant (Figure <ref type=\"figure\" target=\"#fig_0\">2<\/ref>).",
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "to_err_is_human",
+          "to_err_is_human",
+          "to_err_is_human",
+          "to_err_is_human"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Abstract",
+          "Procedure",
+          "Power Analysis",
+          "Figure 2 :"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "abstract",
+          "method",
+          "annex",
+          "figure"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "The paper shows examples of (1) open and closed OSF links; (2a) citation of retracted papers, (2b) citations without a doi, (2c) citations with Pubpeer comments, (2d) citations in the FLoRA replication database, and (2e) missing/mismatched/incorrect citations and references; (3a) R files with code on GitHub that do not load libraries in one location, (3b) load files that are not shared in the repository, (3c) lack comments, and (3d) have absolute file paths; (4) imprecise reporting of non-significant p-values; (5) tests with and without effect sizes; (6) use of \"marginally significant\" to describe non-significant findings; (7) a power analysis reporting some of the essential attributes; and (8) retrieving information from preregistrations.",
+          "There was no effect of experience on the reduction in errors when using the tool (p > .05), as the correlation was non-significant (Figure 2).",
+          "We conducted a sensitivity power analysis 2 to determine that a Cohen's d of 0.50 is the smallest effect size that we could detect with N = 50 participants in each group and 80% power.",
+          "Figure2: The effect of experience on the reduction in errors."
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

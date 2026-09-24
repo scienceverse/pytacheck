@@ -1,0 +1,7 @@
+# The metacheck commit pytacheck is verified against. Updated by the
+# upstream-sync workflow together with the upstream/metacheck submodule.
+[upstream]
+repository = "https://github.com/scienceverse/metacheck"
+branch = "dev"
+commit = "85c8c872cf71ab5a70c10008bd41bf563352a396"
+version = "0.3.1"

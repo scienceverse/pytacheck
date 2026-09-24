@@ -1,0 +1,423 @@
+{
+  "id": "read.golden_bibr_10_2",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "paper",
+    "names": [
+      "paper_id",
+      "info",
+      "author",
+      "text",
+      "section",
+      "url",
+      "bib",
+      "xref",
+      "figure",
+      "table",
+      "eq"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "golden-demo"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "bibr_version",
+          "title",
+          "doi",
+          "keywords",
+          "description"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "10.2.0"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "To Err Is Human: A Golden Contract Demonstration"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "10.0000/golden.demo"
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "errors",
+                  "statistics",
+                  "contract-test"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Synthetic fixture pinning the bibr JSON contract."
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 2,
+        "names": [
+          "given",
+          "surname",
+          "orcid"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Jane",
+              "Joe"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Doe",
+              "Bloggs"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "0000-0000-0000-0001",
+              null
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 3,
+        "names": [
+          "text",
+          "section",
+          "header",
+          "div",
+          "p",
+          "s"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "We tested whether errors are human.",
+              "The effect was significant, t(48) = 2.10, p = 0.041.",
+              "Data are available at https://osf.io/golden."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "intro",
+              "results",
+              "results"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Introduction",
+              "Results",
+              "Results"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1,
+              2,
+              2
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1,
+              1,
+              2
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1,
+              1,
+              1
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 2,
+        "names": [
+          "section",
+          "header",
+          "div"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "intro",
+              "results"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Introduction",
+              "Results"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1,
+              2
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "href",
+          "link_text",
+          "text_id"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "https://osf.io/golden"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://osf.io/golden"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              3
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "bib_id",
+          "ref",
+          "doi",
+          "title",
+          "year"
+        ],
+        "v": [
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Doe, J. (2020). Prior work. Journal of Demos, 1(1), 1-10."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "10.1000/xyz"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Prior work"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2020
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "bib_id",
+          "text",
+          "div",
+          "p",
+          "s"
+        ],
+        "v": [
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "(Doe, 2020)"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "figure_id",
+          "image"
+        ],
+        "v": [
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "table_id",
+          "section_id",
+          "html",
+          "contents",
+          "caption",
+          "page_number"
+        ],
+        "v": [
+          {
+            "t": "int",
+            "v": []
+          },
+          {
+            "t": "int",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "int",
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "text_id",
+          "grp_id",
+          "lhs",
+          "df",
+          "comp",
+          "rhs"
+        ],
+        "v": [
+          {
+            "t": "int",
+            "v": []
+          },
+          {
+            "t": "int",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}
