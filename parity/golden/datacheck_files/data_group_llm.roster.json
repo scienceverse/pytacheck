@@ -1,0 +1,57 @@
+{
+  "id": "data_group_llm.roster",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 7,
+    "names": [
+      "group",
+      "referenced_by"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "ex1",
+          "ex1",
+          "pilot1",
+          "ex2a",
+          "ex1",
+          "ex2a",
+          "ex2a"
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "null"
+          },
+          {
+            "t": "null"
+          },
+          {
+            "t": "null"
+          },
+          {
+            "t": "null"
+          },
+          {
+            "t": "null"
+          },
+          {
+            "t": "null"
+          },
+          {
+            "t": "null"
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

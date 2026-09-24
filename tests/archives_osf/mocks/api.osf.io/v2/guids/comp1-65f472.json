@@ -1,0 +1,1 @@
+{"data": {"id": "comp1", "type": "guids", "relationships": {"referent": {"links": {"related": {"href": "https://api.osf.io/v2/nodes/comp1/", "meta": {"type": "nodes"}}}}}}}

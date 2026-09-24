@@ -3938,3 +3938,343 @@
     "path":
       "$chr": *id003
     "replacement": "."
+- "id": ".osf_metadata_download.8uqfb.json"
+  "r": "identity"
+  "py": "tests.archives_osf.parity_support.run_mocked"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); httptest2::with_mock_dir(\"upstream/metacheck/tests/testthat/apis\", { { d <- tempfile(); dir.create(d); metacheck:::.osf_metadata_download(\"8uqfb\", d); x <- readLines(file.path(d, \"_osf_metadata\", \"metadata.json\")); x[!grepl(\"\\\"retrieved\\\"\", x)] } }) })()"
+        "py": "lambda: __import__(\"tests.archives_osf.parity_support\", fromlist=[\"_\"]).with_tmpdir(lambda d: (__import__(\"pytacheck.archives.osf_metadata\", fromlist=[\"_\"])._osf_metadata_download(\"8uqfb\", d), [l for l in __import__(\"tests.archives_osf.parity_support\", fromlist=[\"_\"]).read_lines(d + \"/_osf_metadata\", \"metadata.json\") if '\"retrieved\"' not in l])[1])"
+- "id": ".osf_metadata_download.ezcuj.json"
+  "r": "identity"
+  "py": "tests.archives_osf.parity_support.run_mocked"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); httptest2::with_mock_dir(\"upstream/metacheck/tests/testthat/apis\", { { d <- tempfile(); dir.create(d); metacheck:::.osf_metadata_download(\"ezcuj\", d); x <- readLines(file.path(d, \"_osf_metadata\", \"metadata.json\")); x[!grepl(\"\\\"retrieved\\\"\", x)] } }) })()"
+        "py": "lambda: __import__(\"tests.archives_osf.parity_support\", fromlist=[\"_\"]).with_tmpdir(lambda d: (__import__(\"pytacheck.archives.osf_metadata\", fromlist=[\"_\"])._osf_metadata_download(\"ezcuj\", d), [l for l in __import__(\"tests.archives_osf.parity_support\", fromlist=[\"_\"]).read_lines(d + \"/_osf_metadata\", \"metadata.json\") if '\"retrieved\"' not in l])[1])"
+- "id": ".osf_download_addons.mc45x"
+  "r": "identity"
+  "py": "tests.archives_osf.parity_support.run_mocked"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); httptest2::with_mock_dir(\"upstream/metacheck/tests/testthat/apis\", { { d <- tempfile(); dir.create(d); x <- testthat::with_mocked_bindings(metacheck:::.osf_download_addons(\"mc45x\", file.path(d, \"node\")), .download_many_parallel = function(urls, dests, expected_size = NA_real_, ...) { for (d in dests) { dir.create(dirname(d), showWarnings = FALSE, recursive = TRUE); writeLines(basename(d), d) }; rep(NA_character_, length(urls)) }, .package = \"metacheck\"); list(value = x, files = sort(list.files(d, recursive = TRUE))) } }) })()"
+        "py": "lambda: __import__(\"tests.archives_osf.parity_support\", fromlist=[\"_\"]).with_tmpdir(lambda d: __import__(\"tests.archives_osf.parity_support\", fromlist=[\"_\"]).fake_downloads(lambda: {\"value\": __import__(\"pytacheck.archives.osf_all\", fromlist=[\"_\"])._osf_download_addons(\"mc45x\", d + \"/node\"), \"files\": __import__(\"tests.archives_osf.parity_support\", fromlist=[\"_\"]).list_files_recursive(d)}))"
+- "id": ".osf_download_addons.pngda"
+  "r": "identity"
+  "py": "tests.archives_osf.parity_support.run_mocked"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); httptest2::with_mock_dir(\"upstream/metacheck/tests/testthat/apis\", { { d <- tempfile(); dir.create(d); x <- testthat::with_mocked_bindings(metacheck:::.osf_download_addons(\"pngda\", file.path(d, \"node\")), .download_many_parallel = function(urls, dests, expected_size = NA_real_, ...) { for (d in dests) { dir.create(dirname(d), showWarnings = FALSE, recursive = TRUE); writeLines(basename(d), d) }; rep(NA_character_, length(urls)) }, .package = \"metacheck\"); list(value = x, files = sort(list.files(d, recursive = TRUE))) } }) })()"
+        "py": "lambda: __import__(\"tests.archives_osf.parity_support\", fromlist=[\"_\"]).with_tmpdir(lambda d: __import__(\"tests.archives_osf.parity_support\", fromlist=[\"_\"]).fake_downloads(lambda: {\"value\": __import__(\"pytacheck.archives.osf_all\", fromlist=[\"_\"])._osf_download_addons(\"pngda\", d + \"/node\"), \"files\": __import__(\"tests.archives_osf.parity_support\", fromlist=[\"_\"]).list_files_recursive(d)}))"
+- "id": ".osf_download_addons.6nt4v"
+  "r": "identity"
+  "py": "tests.archives_osf.parity_support.run_mocked"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); httptest2::with_mock_dir(\"upstream/metacheck/tests/testthat/apis\", { { d <- tempfile(); dir.create(d); x <- testthat::with_mocked_bindings(metacheck:::.osf_download_addons(\"6nt4v\", file.path(d, \"node\")), .download_many_parallel = function(urls, dests, expected_size = NA_real_, ...) { for (d in dests) { dir.create(dirname(d), showWarnings = FALSE, recursive = TRUE); writeLines(basename(d), d) }; rep(NA_character_, length(urls)) }, .package = \"metacheck\"); list(value = x, files = sort(list.files(d, recursive = TRUE))) } }) })()"
+        "py": "lambda: __import__(\"tests.archives_osf.parity_support\", fromlist=[\"_\"]).with_tmpdir(lambda d: __import__(\"tests.archives_osf.parity_support\", fromlist=[\"_\"]).fake_downloads(lambda: {\"value\": __import__(\"pytacheck.archives.osf_all\", fromlist=[\"_\"])._osf_download_addons(\"6nt4v\", d + \"/node\"), \"files\": __import__(\"tests.archives_osf.parity_support\", fromlist=[\"_\"]).list_files_recursive(d)}))"
+- "id": ".osf_parse_response.synthetic.files_null_materialized_path"
+  "r": "identity"
+  "py": "tests.archives_osf.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck:::.osf_parse_response(jsonlite::fromJSON(r\"--([{\"id\": \"f1\", \"type\": \"files\", \"attributes\": {\"name\": \"a.csv\", \"kind\": \"file\", \"materialized_path\": null, \"path\": \"/abc\", \"provider\": \"osfstorage\", \"size\": 10}, \"relationships\": {\"target\": {\"data\": {\"id\": \"n1\"}}}}, {\"id\": \"f2\", \"type\": \"files\", \"attributes\": {\"name\": \"b.csv\", \"kind\": \"file\", \"materialized_path\": null, \"path\": \"/def\", \"provider\": \"osfstorage\", \"size\": 20}, \"relationships\": {\"target\": {\"data\": {\"id\": \"n1\"}}}}])--\", simplifyVector = TRUE))"
+        "py": "lambda: __import__(\"pytacheck.archives.osf_helpers\", fromlist=[\"_\"])._osf_parse_response(__import__(\"json\").loads('[{\"id\": \"f1\", \"type\": \"files\", \"attributes\": {\"name\": \"a.csv\", \"kind\": \"file\", \"materialized_path\": null, \"path\": \"/abc\", \"provider\": \"osfstorage\", \"size\": 10}, \"relationships\": {\"target\": {\"data\": {\"id\": \"n1\"}}}}, {\"id\": \"f2\", \"type\": \"files\", \"attributes\": {\"name\": \"b.csv\", \"kind\": \"file\", \"materialized_path\": null, \"path\": \"/def\", \"provider\": \"osfstorage\", \"size\": 20}, \"relationships\": {\"target\": {\"data\": {\"id\": \"n1\"}}}}]'))"
+  "compare": *id001
+- "id": ".osf_parse_response.synthetic.files_some_materialized_path"
+  "r": "identity"
+  "py": "tests.archives_osf.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck:::.osf_parse_response(jsonlite::fromJSON(r\"--([{\"id\": \"f1\", \"type\": \"files\", \"attributes\": {\"name\": \"a.csv\", \"kind\": \"file\", \"materialized_path\": \"/m/a.csv\", \"path\": \"/abc\", \"provider\": \"osfstorage\"}}, {\"id\": \"f2\", \"type\": \"files\", \"attributes\": {\"name\": \"b.csv\", \"kind\": \"file\", \"path\": \"/def\", \"provider\": \"osfstorage\"}}])--\", simplifyVector = TRUE))"
+        "py": "lambda: __import__(\"pytacheck.archives.osf_helpers\", fromlist=[\"_\"])._osf_parse_response(__import__(\"json\").loads('[{\"id\": \"f1\", \"type\": \"files\", \"attributes\": {\"name\": \"a.csv\", \"kind\": \"file\", \"materialized_path\": \"/m/a.csv\", \"path\": \"/abc\", \"provider\": \"osfstorage\"}}, {\"id\": \"f2\", \"type\": \"files\", \"attributes\": {\"name\": \"b.csv\", \"kind\": \"file\", \"path\": \"/def\", \"provider\": \"osfstorage\"}}]'))"
+  "compare": *id001
+- "id": ".osf_parse_response.synthetic.nodes_parent_all_null"
+  "r": "identity"
+  "py": "tests.archives_osf.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck:::.osf_parse_response(jsonlite::fromJSON(r\"--([{\"id\": \"n1\", \"type\": \"nodes\", \"attributes\": {\"title\": \"A\"}, \"relationships\": {\"parent\": {\"data\": null}}}, {\"id\": \"n2\", \"type\": \"nodes\", \"attributes\": {\"title\": \"B\"}, \"relationships\": {\"parent\": {\"data\": null}}}])--\", simplifyVector = TRUE))"
+        "py": "lambda: __import__(\"pytacheck.archives.osf_helpers\", fromlist=[\"_\"])._osf_parse_response(__import__(\"json\").loads('[{\"id\": \"n1\", \"type\": \"nodes\", \"attributes\": {\"title\": \"A\"}, \"relationships\": {\"parent\": {\"data\": null}}}, {\"id\": \"n2\", \"type\": \"nodes\", \"attributes\": {\"title\": \"B\"}, \"relationships\": {\"parent\": {\"data\": null}}}]'))"
+  "compare": *id001
+- "id": ".osf_parse_response.synthetic.nodes_parent_mixed"
+  "r": "identity"
+  "py": "tests.archives_osf.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck:::.osf_parse_response(jsonlite::fromJSON(r\"--([{\"id\": \"n1\", \"type\": \"nodes\", \"attributes\": {\"title\": \"A\", \"public\": true}, \"relationships\": {\"parent\": {\"data\": null}, \"root\": {\"data\": {\"id\": \"r\"}}}}, {\"id\": \"n2\", \"type\": \"nodes\", \"attributes\": {\"title\": null}, \"relationships\": {\"parent\": {\"data\": {\"id\": \"n1\"}}}}])--\", simplifyVector = TRUE))"
+        "py": "lambda: __import__(\"pytacheck.archives.osf_helpers\", fromlist=[\"_\"])._osf_parse_response(__import__(\"json\").loads('[{\"id\": \"n1\", \"type\": \"nodes\", \"attributes\": {\"title\": \"A\", \"public\": true}, \"relationships\": {\"parent\": {\"data\": null}, \"root\": {\"data\": {\"id\": \"r\"}}}}, {\"id\": \"n2\", \"type\": \"nodes\", \"attributes\": {\"title\": null}, \"relationships\": {\"parent\": {\"data\": {\"id\": \"n1\"}}}}]'))"
+  "compare": *id001
+- "id": ".osf_parse_response.synthetic.unknown_and_nodes"
+  "r": "identity"
+  "py": "tests.archives_osf.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck:::.osf_parse_response(jsonlite::fromJSON(r\"--([{\"id\": \"w1\", \"type\": \"wikis\", \"attributes\": {\"name\": \"home\"}}, {\"id\": \"n1\", \"type\": \"nodes\", \"attributes\": {\"title\": \"A\"}}, {\"id\": \"u1\", \"type\": \"users\", \"attributes\": {\"full_name\": \"X Y\", \"social\": {\"orcid\": \"0000\"}}}])--\", simplifyVector = TRUE))"
+        "py": "lambda: __import__(\"pytacheck.archives.osf_helpers\", fromlist=[\"_\"])._osf_parse_response(__import__(\"json\").loads('[{\"id\": \"w1\", \"type\": \"wikis\", \"attributes\": {\"name\": \"home\"}}, {\"id\": \"n1\", \"type\": \"nodes\", \"attributes\": {\"title\": \"A\"}}, {\"id\": \"u1\", \"type\": \"users\", \"attributes\": {\"full_name\": \"X Y\", \"social\": {\"orcid\": \"0000\"}}}]'))"
+  "compare": *id001
+- "id": ".osf_parse_response.synthetic.missing_type"
+  "r": "identity"
+  "py": "tests.archives_osf.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck:::.osf_parse_response(jsonlite::fromJSON(r\"--([{\"id\": \"n1\", \"type\": \"nodes\", \"attributes\": {\"title\": \"A\"}}, {\"id\": \"n2\", \"attributes\": {\"title\": \"B\"}}])--\", simplifyVector = TRUE))"
+        "py": "lambda: __import__(\"pytacheck.archives.osf_helpers\", fromlist=[\"_\"])._osf_parse_response(__import__(\"json\").loads('[{\"id\": \"n1\", \"type\": \"nodes\", \"attributes\": {\"title\": \"A\"}}, {\"id\": \"n2\", \"attributes\": {\"title\": \"B\"}}]'))"
+  "compare": *id001
+- "id": ".osf_parse_response.synthetic.no_ids"
+  "r": "identity"
+  "py": "tests.archives_osf.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck:::.osf_parse_response(jsonlite::fromJSON(r\"--([{\"type\": \"nodes\", \"attributes\": {\"title\": \"A\"}}, {\"type\": \"nodes\", \"attributes\": {\"title\": \"B\"}}])--\", simplifyVector = TRUE))"
+        "py": "lambda: __import__(\"pytacheck.archives.osf_helpers\", fromlist=[\"_\"])._osf_parse_response(__import__(\"json\").loads('[{\"type\": \"nodes\", \"attributes\": {\"title\": \"A\"}}, {\"type\": \"nodes\", \"attributes\": {\"title\": \"B\"}}]'))"
+  "compare": *id001
+- "id": ".osf_parse_response.synthetic.folders_root_folder"
+  "r": "identity"
+  "py": "tests.archives_osf.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck:::.osf_parse_response(jsonlite::fromJSON(r\"--([{\"id\": \"p1\", \"type\": \"files\", \"attributes\": {\"kind\": \"folder\", \"provider\": \"osfstorage\", \"path\": \"/\"}, \"relationships\": {\"root_folder\": {\"data\": {\"id\": \"rf1\"}}, \"files\": {\"links\": {\"related\": {\"href\": \"https://api.osf.io/v2/nodes/x/files/osfstorage/\"}}}}}, {\"id\": \"p2\", \"type\": \"files\", \"attributes\": {\"kind\": \"folder\", \"provider\": \"github\", \"path\": \"/\"}, \"relationships\": {\"root_folder\": {\"data\": null}}}, {\"id\": \"f3\", \"type\": \"files\", \"attributes\": {\"kind\": \"file\", \"provider\": \"github\", \"path\": \"/x.R\", \"name\": \"x.R\", \"extra\": {\"downloads\": 3}}, \"links\": {\"download\": \"https://osf.io/download/f3/\"}}])--\", simplifyVector = TRUE))"
+        "py": "lambda: __import__(\"pytacheck.archives.osf_helpers\", fromlist=[\"_\"])._osf_parse_response(__import__(\"json\").loads('[{\"id\": \"p1\", \"type\": \"files\", \"attributes\": {\"kind\": \"folder\", \"provider\": \"osfstorage\", \"path\": \"/\"}, \"relationships\": {\"root_folder\": {\"data\": {\"id\": \"rf1\"}}, \"files\": {\"links\": {\"related\": {\"href\": \"https://api.osf.io/v2/nodes/x/files/osfstorage/\"}}}}}, {\"id\": \"p2\", \"type\": \"files\", \"attributes\": {\"kind\": \"folder\", \"provider\": \"github\", \"path\": \"/\"}, \"relationships\": {\"root_folder\": {\"data\": null}}}, {\"id\": \"f3\", \"type\": \"files\", \"attributes\": {\"kind\": \"file\", \"provider\": \"github\", \"path\": \"/x.R\", \"name\": \"x.R\", \"extra\": {\"downloads\": 3}}, \"links\": {\"download\": \"https://osf.io/download/f3/\"}}]'))"
+  "compare": *id001
+- "id": ".osf_parse_response.synthetic.preprints"
+  "r": "identity"
+  "py": "tests.archives_osf.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck:::.osf_parse_response(jsonlite::fromJSON(r\"--([{\"id\": \"p1\", \"type\": \"preprints\", \"attributes\": {\"title\": \"T\", \"doi\": null, \"version\": 2, \"is_published\": true}, \"relationships\": {\"provider\": {\"data\": {\"id\": \"psyarxiv\"}}}}, {\"id\": \"p2\", \"type\": \"preprints\", \"attributes\": {\"title\": \"U\"}}])--\", simplifyVector = TRUE))"
+        "py": "lambda: __import__(\"pytacheck.archives.osf_helpers\", fromlist=[\"_\"])._osf_parse_response(__import__(\"json\").loads('[{\"id\": \"p1\", \"type\": \"preprints\", \"attributes\": {\"title\": \"T\", \"doi\": null, \"version\": 2, \"is_published\": true}, \"relationships\": {\"provider\": {\"data\": {\"id\": \"psyarxiv\"}}}}, {\"id\": \"p2\", \"type\": \"preprints\", \"attributes\": {\"title\": \"U\"}}]'))"
+  "compare": *id001
+- "id": ".osf_parse_response.synthetic.registrations"
+  "r": "identity"
+  "py": "tests.archives_osf.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck:::.osf_parse_response(jsonlite::fromJSON(r\"--([{\"id\": \"r1\", \"type\": \"registrations\", \"attributes\": {\"title\": \"R\", \"registration\": true}, \"relationships\": {\"registered_from\": {\"data\": {\"id\": \"n1\"}}}}, {\"id\": \"r2\", \"type\": \"registrations\", \"attributes\": {}}])--\", simplifyVector = TRUE))"
+        "py": "lambda: __import__(\"pytacheck.archives.osf_helpers\", fromlist=[\"_\"])._osf_parse_response(__import__(\"json\").loads('[{\"id\": \"r1\", \"type\": \"registrations\", \"attributes\": {\"title\": \"R\", \"registration\": true}, \"relationships\": {\"registered_from\": {\"data\": {\"id\": \"n1\"}}}}, {\"id\": \"r2\", \"type\": \"registrations\", \"attributes\": {}}]'))"
+  "compare": *id001
+- "id": ".osf_parse_response.synthetic.partial_matching"
+  "r": "identity"
+  "py": "tests.archives_osf.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck:::.osf_parse_response(jsonlite::fromJSON(r\"--([{\"id\": \"n1\", \"type\": \"nodes\", \"attributes\": {\"titles\": \"A\", \"publicity\": true, \"registration_a\": 1, \"registration_b\": 2}, \"relationships\": {\"root_folder\": {\"data\": {\"id\": \"rf\"}}, \"parents\": {\"data\": {\"id\": \"pp\"}}}}, {\"id\": \"n2\", \"type\": \"nodes\", \"attributes\": {\"titles\": \"B\"}}])--\", simplifyVector = TRUE))"
+        "py": "lambda: __import__(\"pytacheck.archives.osf_helpers\", fromlist=[\"_\"])._osf_parse_response(__import__(\"json\").loads('[{\"id\": \"n1\", \"type\": \"nodes\", \"attributes\": {\"titles\": \"A\", \"publicity\": true, \"registration_a\": 1, \"registration_b\": 2}, \"relationships\": {\"root_folder\": {\"data\": {\"id\": \"rf\"}}, \"parents\": {\"data\": {\"id\": \"pp\"}}}}, {\"id\": \"n2\", \"type\": \"nodes\", \"attributes\": {\"titles\": \"B\"}}]'))"
+  "compare": *id001
+- "id": ".osf_parse_response.synthetic_single.node_attributes_null"
+  "r": "identity"
+  "py": "tests.archives_osf.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck:::.osf_parse_response(httr2::response(status_code = 200L, headers = list(`Content-Type` = \"application/vnd.api+json\"), body = charToRaw(r\"--({\"data\": {\"id\": \"n1\", \"type\": \"nodes\", \"attributes\": null}})--\")), osf_id = \"zz\")"
+        "py": "lambda: __import__(\"pytacheck.archives.osf_helpers\", fromlist=[\"_\"])._osf_parse_response(__import__(\"httpx\").Response(200, content='{\"data\": {\"id\": \"n1\", \"type\": \"nodes\", \"attributes\": null}}'.encode(), headers={\"content-type\": \"application/vnd.api+json\"}), osf_id=\"zz\")"
+  "compare": *id001
+- "id": ".osf_parse_response.synthetic_single.node_no_type"
+  "r": "identity"
+  "py": "tests.archives_osf.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck:::.osf_parse_response(httr2::response(status_code = 200L, headers = list(`Content-Type` = \"application/vnd.api+json\"), body = charToRaw(r\"--({\"data\": {\"id\": \"n1\", \"attributes\": {\"title\": \"A\"}}})--\")), osf_id = \"zz\")"
+        "py": "lambda: __import__(\"pytacheck.archives.osf_helpers\", fromlist=[\"_\"])._osf_parse_response(__import__(\"httpx\").Response(200, content='{\"data\": {\"id\": \"n1\", \"attributes\": {\"title\": \"A\"}}}'.encode(), headers={\"content-type\": \"application/vnd.api+json\"}), osf_id=\"zz\")"
+  "compare": *id001
+- "id": ".osf_parse_response.synthetic_single.unknown_type"
+  "r": "identity"
+  "py": "tests.archives_osf.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck:::.osf_parse_response(httr2::response(status_code = 200L, headers = list(`Content-Type` = \"application/vnd.api+json\"), body = charToRaw(r\"--({\"data\": {\"id\": \"w1\", \"type\": \"wikis\", \"attributes\": {\"name\": \"home\"}}})--\")), osf_id = \"zz\")"
+        "py": "lambda: __import__(\"pytacheck.archives.osf_helpers\", fromlist=[\"_\"])._osf_parse_response(__import__(\"httpx\").Response(200, content='{\"data\": {\"id\": \"w1\", \"type\": \"wikis\", \"attributes\": {\"name\": \"home\"}}}'.encode(), headers={\"content-type\": \"application/vnd.api+json\"}), osf_id=\"zz\")"
+  "compare": *id001
+- "id": ".osf_parse_response.synthetic_single.node_parent_null"
+  "r": "identity"
+  "py": "tests.archives_osf.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck:::.osf_parse_response(httr2::response(status_code = 200L, headers = list(`Content-Type` = \"application/vnd.api+json\"), body = charToRaw(r\"--({\"data\": {\"id\": \"n1\", \"type\": \"nodes\", \"attributes\": {\"title\": \"A\", \"tags\": [\"x\"]}, \"relationships\": {\"parent\": {\"data\": null}, \"root\": {\"data\": {\"id\": \"n1\"}}}}})--\")), osf_id = \"zz\")"
+        "py": "lambda: __import__(\"pytacheck.archives.osf_helpers\", fromlist=[\"_\"])._osf_parse_response(__import__(\"httpx\").Response(200, content='{\"data\": {\"id\": \"n1\", \"type\": \"nodes\", \"attributes\": {\"title\": \"A\", \"tags\": [\"x\"]}, \"relationships\": {\"parent\": {\"data\": null}, \"root\": {\"data\": {\"id\": \"n1\"}}}}}'.encode(), headers={\"content-type\": \"application/vnd.api+json\"}), osf_id=\"zz\")"
+  "compare": *id001
+- "id": ".osf_parse_response.synthetic_single.file_big"
+  "r": "identity"
+  "py": "tests.archives_osf.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck:::.osf_parse_response(httr2::response(status_code = 200L, headers = list(`Content-Type` = \"application/vnd.api+json\"), body = charToRaw(r\"--({\"data\": {\"id\": \"f1\", \"type\": \"files\", \"attributes\": {\"name\": \"big.bin\", \"kind\": \"file\", \"size\": 123456789012, \"extra\": {\"downloads\": 0}, \"materialized_path\": \"/big.bin\"}, \"relationships\": {\"parent_folder\": {\"data\": {\"id\": \"p\"}}, \"target\": {\"data\": {\"id\": \"t\"}}}}})--\")), osf_id = \"zz\")"
+        "py": "lambda: __import__(\"pytacheck.archives.osf_helpers\", fromlist=[\"_\"])._osf_parse_response(__import__(\"httpx\").Response(200, content='{\"data\": {\"id\": \"f1\", \"type\": \"files\", \"attributes\": {\"name\": \"big.bin\", \"kind\": \"file\", \"size\": 123456789012, \"extra\": {\"downloads\": 0}, \"materialized_path\": \"/big.bin\"}, \"relationships\": {\"parent_folder\": {\"data\": {\"id\": \"p\"}}, \"target\": {\"data\": {\"id\": \"t\"}}}}}'.encode(), headers={\"content-type\": \"application/vnd.api+json\"}), osf_id=\"zz\")"
+  "compare": *id001
+- "id": ".osf_parse_response.synthetic_single.no_id"
+  "r": "identity"
+  "py": "tests.archives_osf.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck:::.osf_parse_response(httr2::response(status_code = 200L, headers = list(`Content-Type` = \"application/vnd.api+json\"), body = charToRaw(r\"--({\"data\": {\"type\": \"nodes\", \"attributes\": {\"title\": \"A\"}}})--\")), osf_id = \"zz\")"
+        "py": "lambda: __import__(\"pytacheck.archives.osf_helpers\", fromlist=[\"_\"])._osf_parse_response(__import__(\"httpx\").Response(200, content='{\"data\": {\"type\": \"nodes\", \"attributes\": {\"title\": \"A\"}}}'.encode(), headers={\"content-type\": \"application/vnd.api+json\"}), osf_id=\"zz\")"
+  "compare": *id001
+- "id": ".osf_parse_response.synthetic_single.no_data"
+  "r": "identity"
+  "py": "tests.archives_osf.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck:::.osf_parse_response(httr2::response(status_code = 200L, headers = list(`Content-Type` = \"application/vnd.api+json\"), body = charToRaw(r\"--({\"meta\": {\"version\": \"2.0\"}})--\")), osf_id = \"zz\")"
+        "py": "lambda: __import__(\"pytacheck.archives.osf_helpers\", fromlist=[\"_\"])._osf_parse_response(__import__(\"httpx\").Response(200, content='{\"meta\": {\"version\": \"2.0\"}}'.encode(), headers={\"content-type\": \"application/vnd.api+json\"}), osf_id=\"zz\")"
+  "compare": *id001
+- "id": ".osf_parse_response.synthetic_single.user"
+  "r": "identity"
+  "py": "tests.archives_osf.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck:::.osf_parse_response(httr2::response(status_code = 200L, headers = list(`Content-Type` = \"application/vnd.api+json\"), body = charToRaw(r\"--({\"data\": {\"id\": \"u1\", \"type\": \"users\", \"attributes\": {\"full_name\": \"A B\", \"social\": {}}}})--\")), osf_id = \"zz\")"
+        "py": "lambda: __import__(\"pytacheck.archives.osf_helpers\", fromlist=[\"_\"])._osf_parse_response(__import__(\"httpx\").Response(200, content='{\"data\": {\"id\": \"u1\", \"type\": \"users\", \"attributes\": {\"full_name\": \"A B\", \"social\": {}}}}'.encode(), headers={\"content-type\": \"application/vnd.api+json\"}), osf_id=\"zz\")"
+  "compare": *id001
+- "id": ".osf_parse_response.synthetic_single.partial_matching"
+  "r": "identity"
+  "py": "tests.archives_osf.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck:::.osf_parse_response(httr2::response(status_code = 200L, headers = list(`Content-Type` = \"application/vnd.api+json\"), body = charToRaw(r\"--({\"data\": {\"id\": \"n1\", \"type\": \"nodes\", \"attributes\": {\"titles\": \"A\", \"publicity\": true, \"registration_a\": 1, \"registration_b\": 2, \"preprint\": null}, \"relationships\": {\"root_folder\": {\"data\": {\"id\": \"rf\"}}}, \"links\": {\"selfish\": \"x\"}}})--\")), osf_id = \"zz\")"
+        "py": "lambda: __import__(\"pytacheck.archives.osf_helpers\", fromlist=[\"_\"])._osf_parse_response(__import__(\"httpx\").Response(200, content='{\"data\": {\"id\": \"n1\", \"type\": \"nodes\", \"attributes\": {\"titles\": \"A\", \"publicity\": true, \"registration_a\": 1, \"registration_b\": 2, \"preprint\": null}, \"relationships\": {\"root_folder\": {\"data\": {\"id\": \"rf\"}}}, \"links\": {\"selfish\": \"x\"}}}'.encode(), headers={\"content-type\": \"application/vnd.api+json\"}), osf_id=\"zz\")"
+  "compare": *id001
+- "id": ".osf_parse_response.synthetic_single.file_partial_root"
+  "r": "identity"
+  "py": "tests.archives_osf.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck:::.osf_parse_response(httr2::response(status_code = 200L, headers = list(`Content-Type` = \"application/vnd.api+json\"), body = charToRaw(r\"--({\"data\": {\"id\": \"f1\", \"type\": \"files\", \"attributes\": {\"kind\": \"folder\", \"provider\": \"osfstorage\", \"path\": \"/\"}, \"relationships\": {\"root_folder\": {\"data\": {\"id\": \"rf1\"}}}}})--\")), osf_id = \"zz\")"
+        "py": "lambda: __import__(\"pytacheck.archives.osf_helpers\", fromlist=[\"_\"])._osf_parse_response(__import__(\"httpx\").Response(200, content='{\"data\": {\"id\": \"f1\", \"type\": \"files\", \"attributes\": {\"kind\": \"folder\", \"provider\": \"osfstorage\", \"path\": \"/\"}, \"relationships\": {\"root_folder\": {\"data\": {\"id\": \"rf1\"}}}}}'.encode(), headers={\"content-type\": \"application/vnd.api+json\"}), osf_id=\"zz\")"
+  "compare": *id001
+- "id": ".osf_parse_response.synthetic_single.atomic_dollar"
+  "r": "identity"
+  "py": "tests.archives_osf.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck:::.osf_parse_response(httr2::response(status_code = 200L, headers = list(`Content-Type` = \"application/vnd.api+json\"), body = charToRaw(r\"--({\"data\": {\"id\": \"n1\", \"type\": \"nodes\", \"attributes\": \"oops\"}})--\")), osf_id = \"zz\")"
+        "py": "lambda: __import__(\"pytacheck.archives.osf_helpers\", fromlist=[\"_\"])._osf_parse_response(__import__(\"httpx\").Response(200, content='{\"data\": {\"id\": \"n1\", \"type\": \"nodes\", \"attributes\": \"oops\"}}'.encode(), headers={\"content-type\": \"application/vnd.api+json\"}), osf_id=\"zz\")"
+  "compare": *id001
+- "id": ".osf_parse_response.status.401"
+  "r": "identity"
+  "py": "tests.archives_osf.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck:::.osf_parse_response(httr2::response(status_code = 401L, headers = list(`Content-Type` = \"application/json\"), body = charToRaw(\"{}\")), osf_id = \"zz\")"
+        "py": "lambda: __import__(\"pytacheck.archives.osf_helpers\", fromlist=[\"_\"])._osf_parse_response(__import__(\"httpx\").Response(401, content=b\"{}\"), osf_id=\"zz\")"
+- "id": ".osf_parse_response.status.403"
+  "r": "identity"
+  "py": "tests.archives_osf.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck:::.osf_parse_response(httr2::response(status_code = 403L, headers = list(`Content-Type` = \"application/json\"), body = charToRaw(\"{}\")), osf_id = \"zz\")"
+        "py": "lambda: __import__(\"pytacheck.archives.osf_helpers\", fromlist=[\"_\"])._osf_parse_response(__import__(\"httpx\").Response(403, content=b\"{}\"), osf_id=\"zz\")"
+- "id": ".osf_parse_response.status.404"
+  "r": "identity"
+  "py": "tests.archives_osf.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck:::.osf_parse_response(httr2::response(status_code = 404L, headers = list(`Content-Type` = \"application/json\"), body = charToRaw(\"{}\")), osf_id = \"zz\")"
+        "py": "lambda: __import__(\"pytacheck.archives.osf_helpers\", fromlist=[\"_\"])._osf_parse_response(__import__(\"httpx\").Response(404, content=b\"{}\"), osf_id=\"zz\")"
+- "id": ".osf_parse_response.status.410"
+  "r": "identity"
+  "py": "tests.archives_osf.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck:::.osf_parse_response(httr2::response(status_code = 410L, headers = list(`Content-Type` = \"application/json\"), body = charToRaw(\"{}\")), osf_id = \"zz\")"
+        "py": "lambda: __import__(\"pytacheck.archives.osf_helpers\", fromlist=[\"_\"])._osf_parse_response(__import__(\"httpx\").Response(410, content=b\"{}\"), osf_id=\"zz\")"
+- "id": ".osf_parse_response.status.429"
+  "r": "identity"
+  "py": "tests.archives_osf.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck:::.osf_parse_response(httr2::response(status_code = 429L, headers = list(`Content-Type` = \"application/json\"), body = charToRaw(\"{}\")), osf_id = \"zz\")"
+        "py": "lambda: __import__(\"pytacheck.archives.osf_helpers\", fromlist=[\"_\"])._osf_parse_response(__import__(\"httpx\").Response(429, content=b\"{}\"), osf_id=\"zz\")"
+- "id": ".osf_parse_response.status.500"
+  "r": "identity"
+  "py": "tests.archives_osf.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck:::.osf_parse_response(httr2::response(status_code = 500L, headers = list(`Content-Type` = \"application/json\"), body = charToRaw(\"{}\")), osf_id = \"zz\")"
+        "py": "lambda: __import__(\"pytacheck.archives.osf_helpers\", fromlist=[\"_\"])._osf_parse_response(__import__(\"httpx\").Response(500, content=b\"{}\"), osf_id=\"zz\")"
+- "id": "osf_user_projects.synthetic"
+  "r": "identity"
+  "py": "tests.archives_osf.parity_support.run_mocked_local"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); .o <- options(httptest2.mock.paths = c(\"tests/archives_osf/mocks\", \"upstream/metacheck/tests/testthat/apis\")); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\"); options(.o) }); httptest2::with_mock_api({ osf_user_projects(\"uuuu1\") }) })()"
+        "py": "lambda: __import__(\"pytacheck.archives.osf_helpers\", fromlist=[\"_\"]).osf_user_projects(\"uuuu1\")"
+- "id": "osf_user_projects.synthetic_url"
+  "r": "identity"
+  "py": "tests.archives_osf.parity_support.run_mocked_local"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); .o <- options(httptest2.mock.paths = c(\"tests/archives_osf/mocks\", \"upstream/metacheck/tests/testthat/apis\")); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\"); options(.o) }); httptest2::with_mock_api({ osf_user_projects(c(NA, \"https://osf.io/uuuu1/\", \"uuuu2\")) }) })()"
+        "py": "lambda: __import__(\"pytacheck.archives.osf_helpers\", fromlist=[\"_\"]).osf_user_projects([None, \"https://osf.io/uuuu1/\", \"uuuu2\"])"
+- "id": "osf_user_projects.synthetic_empty"
+  "r": "identity"
+  "py": "tests.archives_osf.parity_support.run_mocked_local"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); .o <- options(httptest2.mock.paths = c(\"tests/archives_osf/mocks\", \"upstream/metacheck/tests/testthat/apis\")); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\"); options(.o) }); httptest2::with_mock_api({ osf_user_projects(\"uuuu2\") }) })()"
+        "py": "lambda: __import__(\"pytacheck.archives.osf_helpers\", fromlist=[\"_\"]).osf_user_projects(\"uuuu2\")"
+- "id": ".osf_user_nodes.synthetic"
+  "r": "identity"
+  "py": "tests.archives_osf.parity_support.run_mocked_local"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); .o <- options(httptest2.mock.paths = c(\"tests/archives_osf/mocks\", \"upstream/metacheck/tests/testthat/apis\")); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\"); options(.o) }); httptest2::with_mock_api({ metacheck:::.osf_user_nodes(\"uuuu1\") }) })()"
+        "py": "lambda: __import__(\"pytacheck.archives.osf_helpers\", fromlist=[\"_\"])._osf_user_nodes(\"uuuu1\")"
+- "id": ".osf_expand_user_ids.synthetic"
+  "r": "identity"
+  "py": "tests.archives_osf.parity_support.run_mocked_local"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); .o <- options(httptest2.mock.paths = c(\"tests/archives_osf/mocks\", \"upstream/metacheck/tests/testthat/apis\")); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\"); options(.o) }); httptest2::with_mock_api({ metacheck:::.osf_expand_user_ids(c(\"comp1\", \"uuuu1\", \"proj1\", \"6846ed88e49694cd45ab8375\", \"uuuu2\")) }) })()"
+        "py": "lambda: __import__(\"pytacheck.archives.osf_helpers\", fromlist=[\"_\"])._osf_expand_user_ids([\"comp1\", \"uuuu1\", \"proj1\", \"6846ed88e49694cd45ab8375\", \"uuuu2\"])"
+- "id": "osf_type.synthetic_user"
+  "r": "identity"
+  "py": "tests.archives_osf.parity_support.run_mocked_local"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); .o <- options(httptest2.mock.paths = c(\"tests/archives_osf/mocks\", \"upstream/metacheck/tests/testthat/apis\")); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\"); options(.o) }); httptest2::with_mock_api({ unname(osf_type(c(\"uuuu1\", \"proj1\"))) }) })()"
+        "py": "lambda: __import__(\"pytacheck.archives.osf\", fromlist=[\"_\"]).osf_type([\"uuuu1\", \"proj1\"])"
+- "id": "osf_type.empty"
+  "r": "osf_type"
+  "py": "pytacheck.archives.osf.osf_type"
+  "args":
+    "guid":
+      "$chr": []

@@ -286,6 +286,46 @@ def _column_dtype(values: Sequence[Any]) -> Any:
     return object
 
 
+def _r_type(v: Any) -> str | None:
+    """The vctrs type family of a cell value (``None``: missing, combines with anything)."""
+    if v is None or (isinstance(v, float) and v != v):
+        return None
+    if isinstance(v, str):
+        return "character"
+    if isinstance(v, bool | int | float):
+        return "numeric"
+    return "list"
+
+
+_TYPE_NAMES = {"character": "character", "list": "list"}
+
+
+def _type_name(v: Any) -> str:
+    if isinstance(v, bool):
+        return "logical"
+    if isinstance(v, int):
+        return "integer" if abs(v) <= 2147483647 else "double"
+    if isinstance(v, float):
+        return "double"
+    return _TYPE_NAMES.get(_r_type(v) or "", "list")
+
+
+def _check_combinable(column: str, values: Sequence[Any]) -> None:
+    """``bind_rows()`` refuses to combine character, numeric and list values in a column."""
+    first: tuple[int, Any] | None = None
+    for i, v in enumerate(values):
+        t = _r_type(v)
+        if t is None:
+            continue
+        if first is None:
+            first = (i, v)
+        elif t != _r_type(first[1]):
+            raise TypeError(
+                f"Can't combine `..{first[0] + 1}${column}` <{_type_name(first[1])}> and "
+                f"`..{i + 1}${column}` <{_type_name(v)}>."
+            )
+
+
 def records_frame(
     records: Sequence[Mapping[str, Any]], columns: Sequence[str] | None = None
 ) -> pd.DataFrame:
@@ -294,6 +334,8 @@ def records_frame(
     Columns are unioned in order of first appearance and typed like R
     vectors: character -> ``string``, integer -> ``Int64``, double ->
     ``float64``, logical -> ``boolean``; anything else is an ``object`` column.
+    As in ``bind_rows()``, a column mixing character, numeric and list values
+    is an error.
     """
     import pandas as pd
 
@@ -306,6 +348,7 @@ def records_frame(
     data: dict[str, Any] = {}
     for c in columns:
         values = [r.get(c) for r in records]
+        _check_combinable(c, values)
         dtype = _column_dtype(values)
         if dtype == "float64":
             data[c] = pd.array(

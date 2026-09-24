@@ -85,6 +85,8 @@ def pubpeer_comments(doi: Any) -> pd.DataFrame | None:
 
     # data.frame(doi = tolower(doi)) |> left_join(pp_fb, by = "doi")
     fb_frame = records_frame(pp_fb)
+    if "doi" not in fb_frame.columns:
+        raise ValueError("Join columns in `y` must be present in the data.")
     fb_cols = [c for c in fb_frame.columns if c != "doi"]
     by_doi: dict[Any, list[int]] = {}
     for i, d in enumerate(fb_frame["doi"].tolist() if "doi" in fb_frame.columns else []):

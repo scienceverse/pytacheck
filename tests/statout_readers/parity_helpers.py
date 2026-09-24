@@ -90,22 +90,23 @@ def spv_attrs(path: str) -> list[dict[str, Any]]:
 def data_labels(fn: str, path: str) -> dict[str, Any]:
     """Per-column variable and value labels of ``import_jasp()``/``import_omv()``."""
     df = _fn(fn)(str(ROOT / path))["data"]
-    label = df.attrs.get("label", {})
-    labels = df.attrs.get("labels", {})
+    col_attrs = df.attrs.get("col_attrs", {})
 
     def lab(v: Any) -> Any:
         if isinstance(v, dict):
-            return {"codes": list(v.keys()), "labels": list(v.values())}
+            return {"codes": list(v.values()), "labels": list(v.keys())}
         return v
 
-    return {
-        str(c): {
-            "label": lab(label.get(c)),
-            "codes": list(labels.get(c, {}).keys()),
-            "labels": list(labels.get(c, {}).values()),
+    out = {}
+    for c in df.columns:
+        a = col_attrs.get(c, {})
+        labels = a.get("labels", {})
+        out[str(c)] = {
+            "label": lab(a.get("label")),
+            "codes": list(labels.values()),
+            "labels": list(labels.keys()),
         }
-        for c in df.columns
-    }
+    return out
 
 
 def jasp_summary(path: str) -> list[str]:
@@ -114,8 +115,9 @@ def jasp_summary(path: str) -> list[str]:
     return _jasp_analyses_summary(import_jasp(str(ROOT / path)).get("analyses"))
 
 
-def labels_pairs(labs: dict[float, str]) -> dict[str, list[Any]]:
-    return {"codes": list(labs.keys()), "labels": list(labs.values())}
+def labels_pairs(labs: dict[str | None, float]) -> dict[str, list[Any]]:
+    """A ``{label: code}`` value-label dict as R's ``unname()``/``names()`` pair."""
+    return {"codes": list(labs.values()), "labels": list(labs.keys())}
 
 
 def call(fn: str, **kwargs: Any) -> Any:

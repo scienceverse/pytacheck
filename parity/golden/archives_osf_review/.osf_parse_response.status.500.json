@@ -1,0 +1,32 @@
+{
+  "id": ".osf_parse_response.status.500",
+  "ok": true,
+  "error": null,
+  "warnings": [
+    "zz could not be found on the OSF (HTTP 500). Check the ID is spelled correctly and that you can see it at https://osf.io/zz. A private project needs an OSF token; see ?osf_pat"
+  ],
+  "value": {
+    "t": "df",
+    "nrow": 1,
+    "names": [
+      "osf_id",
+      "osf_type"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "zz"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "unfound"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

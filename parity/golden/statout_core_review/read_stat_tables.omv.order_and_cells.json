@@ -1,0 +1,440 @@
+{
+  "id": "read_stat_tables.omv.order_and_cells",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": null,
+    "v": [
+      {
+        "t": "list",
+        "names": [
+          "analysis",
+          "analysis_id",
+          "title",
+          "data",
+          "table_index"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "first"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "1e+05"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "x",
+              "y"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "1.5"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "0"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "analysis",
+          "analysis_id",
+          "title",
+          "data",
+          "table_index"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "seven"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "007 seven"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 5,
+            "names": [
+              "Group",
+              "stat",
+              "p",
+              "p.1"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "a",
+                  "",
+                  "",
+                  "",
+                  ""
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "2.5",
+                  "18446744073709551616",
+                  "100000",
+                  "",
+                  ""
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "0.000632",
+                  "Inf",
+                  "x",
+                  "",
+                  ""
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "< .001",
+                  "",
+                  "",
+                  "",
+                  ""
+                ]
+              }
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "analysis",
+          "analysis_id",
+          "title",
+          "data",
+          "table_index"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "ttest"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "09"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Inner"
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 5,
+            "names": [
+              "Group",
+              "stat",
+              "p",
+              "p.1"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "a",
+                  "",
+                  "",
+                  "",
+                  ""
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "2.5",
+                  "18446744073709551616",
+                  "100000",
+                  "",
+                  ""
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "0.000632",
+                  "Inf",
+                  "x",
+                  "",
+                  ""
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "< .001",
+                  "",
+                  "",
+                  "",
+                  ""
+                ]
+              }
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              3
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "analysis",
+          "analysis_id",
+          "title",
+          "data",
+          "table_index"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "ttest"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "09"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 2,
+            "names": [
+              "name",
+              "n",
+              "mean",
+              "sd"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "v1",
+                  "v2"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "10",
+                  "12"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "1.25",
+                  "2.5"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "0.5",
+                  "0.75"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              4
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "analysis",
+          "analysis_id",
+          "title",
+          "data",
+          "table_index"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "later"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "10"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "x",
+              "y"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "1.5"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "0"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              5
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "analysis",
+          "analysis_id",
+          "title",
+          "data",
+          "table_index"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "abc"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "x",
+              "y"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "1.5"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "0"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              6
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

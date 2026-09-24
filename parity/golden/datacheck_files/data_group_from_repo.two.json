@@ -1,0 +1,18 @@
+{
+  "id": "data_group_from_repo.two",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "ex1",
+      "ex1",
+      "ex2",
+      "ex2",
+      null
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

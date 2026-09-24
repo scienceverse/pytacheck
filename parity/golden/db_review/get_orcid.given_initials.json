@@ -1,0 +1,31 @@
+{
+  "id": "get_orcid.given_initials",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "L*",
+      "L*",
+      "Lisa",
+      "L*%20M*",
+      "L*%20M*",
+      "Lisa%20M*",
+      "Lisa%20M*",
+      "L*%20Marie",
+      "Anne-Marie",
+      "J*%20R*%20R*",
+      "J*%20R*%20R.%20Tolkien",
+      "%C3%9Cnal",
+      "%C3%89*",
+      "*",
+      "Lisa%20Marie",
+      "A.B.",
+      "M.-L.",
+      "Jean%20Paul%20Sartre"
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

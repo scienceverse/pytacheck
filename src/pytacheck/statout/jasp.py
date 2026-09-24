@@ -6,13 +6,17 @@ output (``index.html``). Two on-disk formats exist and both are handled: the
 legacy BINARY format (``metadata.json`` + ``xdata.json`` + a column-major
 ``data.bin``) and the modern SQLITE format (one ``internal.sqlite`` entry).
 
-Haven-style labels: R attaches ``label``/``labels`` attributes to each column.
-Here they live in the returned data frame's ``attrs``:
+Haven-style labels: R attaches ``labels``/``label`` attributes to each column.
+Here they follow the convention of :mod:`pytacheck.datacheck` (which reads a
+``.jasp``/``.omv`` as a data file): ``df.attrs["col_attrs"][column]`` holds
 
-* ``df.attrs["label"]``: ``{column: variable label}``;
-* ``df.attrs["labels"]``: ``{column: {code: value label}}`` (R's named vector
-  ``c(label = code)``, keyed by code as in pyreadstat's
-  ``variable_value_labels``; codes are floats, in R's order).
+* ``"labels"``: R's named vector ``c(label = code)`` as ``{label: code}``
+  (codes are floats, in R's order; for a repeated label the first entry wins);
+* ``"label"``: the variable label. As in R, where ``attr(x, "label")``
+  partially matches ``"labels"``, a value-labelled column without a variable
+  label of its own gets its value labels here too (an upstream quirk).
+
+Columns with neither attribute have no entry.
 
 This module also provides :func:`export_jasp_html`, which re-exports the
 archive's own ``index.html`` with every referenced plot inlined.
@@ -31,7 +35,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
 from pytacheck._r import grepl, regextract_all, sub
-from pytacheck.statout.spv import _as_numeric, _unzip, _write_lines
+from pytacheck.statout.spv import _as_numeric, _raw_to_char, _unzip, _write_lines
 
 if TYPE_CHECKING:
     import pandas as pd
@@ -89,8 +93,11 @@ def _r_chr(x: Any) -> str | None:
     return as_character(x)
 
 
-def _labels_from_list(lst: Any) -> dict[float, str]:
-    """Shared body of ``.jasp_binary_labels()`` / ``.omv_labels()``."""
+def _labels_from_list(lst: Any) -> dict[str | None, float]:
+    """Shared body of ``.jasp_binary_labels()`` / ``.omv_labels()``.
+
+    R's ``setNames(codes[keep], labs[keep])`` as ``{label: code}``.
+    """
     if not lst:
         return {}
     codes = []
@@ -100,21 +107,24 @@ def _labels_from_list(lst: Any) -> dict[float, str]:
             entry = list(entry.values())
         if not isinstance(entry, list) or len(entry) < 2:
             raise IndexError("subscript out of bounds")
+        if entry[0] is None or entry[1] is None:
+            # as.character(NULL) is character(0): vapply(..., character(1)) fails
+            raise ValueError("values must be length 1")
         codes.append(_as_numeric(_r_chr(entry[0])))
         labs.append(_r_chr(entry[1]))
-    out: dict[float, str] = {}
+    out: dict[str | None, float] = {}
     for code, lab in zip(codes, labs, strict=True):
-        if code is None or math.isnan(code) or lab is None or lab == "":
+        if code is None or math.isnan(code) or lab == "":
             continue
-        out.setdefault(code, lab)
+        out.setdefault(lab, code)
     return out
 
 
-def _jasp_binary_labels(field: Any, xdat: Any) -> dict[float, str]:
+def _jasp_binary_labels(field: Any, xdat: Any) -> dict[str | None, float]:
     """Port of R/jasp.R::.jasp_binary_labels().
 
     Value labels of one binary-format field (its own ``labels``, else
-    ``xdata.json[name]$labels``) as ``{code: label}``.
+    ``xdata.json[name]$labels``) as ``{label: code}``.
     """
     lst = _dollar(field, "labels")
     if not lst:
@@ -124,43 +134,58 @@ def _jasp_binary_labels(field: Any, xdat: Any) -> dict[float, str]:
     return _labels_from_list(lst)
 
 
-def _frame_from_columns(cols: list[Any], names: list[str]) -> pd.DataFrame:
-    """``as.data.frame(cols)`` + ``setNames()``: positional columns, R recycling."""
+def _column_attrs(labels: dict[Any, float] | None, label: Any) -> dict[str, Any]:
+    """The ``labels``/``label`` attributes R ends up attaching to one column.
+
+    R re-attaches ``attr(cols[[j]], "label")``, and ``attr()`` partially
+    matches ``"labels"``: a value-labelled column without its own variable
+    label therefore gets ``label`` = its value-label vector (upstream quirk).
+    """
+    out: dict[str, Any] = {}
+    if labels:
+        out["labels"] = labels
+    if label is not None:
+        out["label"] = label
+    elif labels:
+        out["label"] = dict(labels)
+    return out
+
+
+def _frame_from_columns(
+    cols: list[Any], names: list[Any], col_attrs: list[dict[str, Any]] | None = None
+) -> pd.DataFrame:
+    """``setNames(as.data.frame(cols), names)`` and the re-attached attributes.
+
+    Columns of unequal length follow ``data.frame()``: a shorter column is
+    recycled only when its length divides the longest one and it carries no
+    attributes (``is.vector()``); otherwise R stops with "arguments imply
+    differing number of rows". Attributes go to ``df.attrs["col_attrs"]``.
+    """
     import numpy as np
     import pandas as pd
 
+    attrs = col_attrs if col_attrs is not None else [{} for _ in cols]
     lengths = [len(c) for c in cols]
     if lengths and len(set(lengths)) > 1:
         n = max(lengths)
-        if any(k == 0 or n % k for k in lengths):
+        if any(k < n and (k == 0 or n % k or a) for k, a in zip(lengths, attrs, strict=True)):
             raise ValueError(
                 "arguments imply differing number of rows: "
                 + ", ".join(str(k) for k in dict.fromkeys(lengths))
             )
-        cols = [pd.array(np.resize(np.asarray(c, dtype=object), n), dtype=c.dtype) for c in cols]
+        cols = [
+            c if len(c) == n else pd.array(np.resize(np.asarray(c, dtype=object), n), dtype=c.dtype)
+            for c in cols
+        ]
     df = pd.DataFrame(dict(enumerate(cols))) if cols else pd.DataFrame()
     df.columns = list(names)
+    kept: dict[Any, dict[str, Any]] = {}
+    for name, a in zip(names, attrs, strict=True):
+        if a:
+            kept.setdefault(name, a)
+    if kept:
+        df.attrs["col_attrs"] = kept
     return df
-
-
-def _attach_labels(
-    df: pd.DataFrame, labels: dict[str, dict[float, str]], label: dict[str, Any]
-) -> None:
-    """Store haven-style labels in ``df.attrs`` the way R ends up attaching them.
-
-    R re-attaches ``attr(cols[[j]], "label")``, and ``attr()`` partially
-    matches ``"labels"``: a value-labelled column without its own variable
-    label therefore gets ``label`` = its value-label vector. Reproduced here
-    (upstream quirk): such a column's ``label`` is its ``{code: label}`` dict.
-    """
-    full: dict[str, Any] = {}
-    for col in df.columns:
-        if col in label:
-            full[col] = label[col]
-        elif col in labels:
-            full[col] = dict(labels[col])
-    df.attrs["label"] = full
-    df.attrs["labels"] = labels
 
 
 def _read_int32s(fh: Any, n: int) -> list[int | None]:
@@ -250,29 +275,28 @@ def _read_jasp_binary(files: list[str]) -> dict[str, Any]:
     cols: list[Any] = []
     names: list[str] = []
     types: list[Any] = []
-    labels: dict[str, dict[float, str]] = {}
-    label: dict[str, str] = {}
+    col_attrs: list[dict[str, Any]] = []
     with open(files[base.index("data.bin")], "rb") as fh:
         for f in fields:
             mt = _dollar(f, "measureType")
             if mt is None:
                 mt = "Nominal"
             name = _dollar(f, "name")
+            labs = None
             if mt == "Continuous":
                 vals = _read_doubles(fh, int(nrow))
                 cols.append(np.asarray(vals, dtype="float64"))
             else:
                 cols.append(pd.array(_read_int32s(fh, int(nrow)), dtype="Int64"))
                 labs = _jasp_binary_labels(f, xdat)
-                if labs:
-                    labels[name] = labs
             title = _dollar(f, "title")
+            label = None
             if title is not None and title != "" and title != name:
-                label[name] = _r_chr(title)  # type: ignore[assignment]
+                label = _r_chr(title)
+            col_attrs.append(_column_attrs(labs, label))
             names.append(name)
             types.append(mt)
-    df = _frame_from_columns(cols, names)
-    _attach_labels(df, labels, label)
+    df = _frame_from_columns(cols, names, col_attrs)
     columns = (
         pd.DataFrame(
             {
@@ -371,41 +395,42 @@ def _read_jasp_sqlite(sqlite_path: str) -> dict[str, Any]:
         phys = [r[1] for r in info]
         decl = {r[1]: r[2] for r in info}
 
-        def labels_for(cid: Any) -> dict[float, str]:
+        def labels_for(cid: Any) -> dict[str | None, float]:
             rows = con.execute(
                 f"SELECT value, label FROM Labels WHERE columnId = {int(cid)} ORDER BY ordering"  # noqa: S608
             ).fetchall()
-            out: dict[float, str] = {}
+            out: dict[str | None, float] = {}
             for value, lab in rows:
-                # R: keep <- !is.na(value) & nzchar(label); nzchar(NA) is TRUE
+                # R: keep <- !is.na(value) & nzchar(label); nzchar(NA) is TRUE, and
+                # as.numeric() of a non-numeric value is a kept NA code
                 if value is None or lab == "":
                     continue
                 code = _as_numeric(value)
-                if code is None:
-                    continue
-                out.setdefault(code, None if lab is None else str(lab))  # type: ignore[arg-type]
+                out.setdefault(None if lab is None else _r_chr(lab), math.nan if code is None else code)
             return out
 
         cols: list[Any] = []
         names: list[Any] = []
-        labels: dict[str, dict[float, str]] = {}
-        label: dict[str, str] = {}
+        col_attrs: list[dict[str, Any]] = []
         for cid, name, ctype, _ in cmeta:
-            is_scale = str(ctype).lower() == "scale"
+            if ctype is None:
+                # is_scale <- tolower(NA) == "scale" is NA; `if (!is_scale)` stops
+                raise ValueError("missing value where TRUE/FALSE needed")
+            is_scale = _r_chr(ctype).lower() == "scale"  # type: ignore[union-attr]
             dblc = f"Column_{int(cid)}_DBL"
             intc = f"Column_{int(cid)}_INT"
             phys_col = dblc if is_scale and dblc in phys else intc if intc in phys else dblc
             query = f'SELECT "{phys_col}" AS v FROM "{dtab}" ORDER BY rowNumber'  # noqa: S608
             raw = [r[0] for r in con.execute(query)]
             v = _rsqlite_column(raw, decl.get(phys_col))
+            labs = None
             if not is_scale:
                 nums = [None if pd.isna(x) else _as_numeric(x) for x in v]
                 v = pd.array(
                     [None if x is None or x == _JASP_INT_MIN else x for x in nums], dtype="Float64"
                 ).astype("float64")
                 labs = labels_for(cid)
-                if labs:
-                    labels[name] = labs
+            label = None
             if name is not None:
                 try:
                     query = f"SELECT title FROM Columns WHERE id = {int(cid)}"  # noqa: S608
@@ -413,11 +438,11 @@ def _read_jasp_sqlite(sqlite_path: str) -> dict[str, Any]:
                 except sqlite3.Error:
                     ttl = []
                 if ttl and ttl[0] is not None and ttl[0] != "" and ttl[0] != name:
-                    label[name] = str(ttl[0])
+                    label = _r_chr(ttl[0])
             cols.append(v)
             names.append(name)
-        df = _frame_from_columns(cols, names)
-        _attach_labels(df, labels, label)
+            col_attrs.append(_column_attrs(labs, label))
+        df = _frame_from_columns(cols, names, col_attrs)
         try:
             dfp_rows = con.execute("SELECT dataFilePath FROM DataSets LIMIT 1").fetchall()
             dfp = dfp_rows[0][0] if dfp_rows else None
@@ -471,8 +496,12 @@ def _jasp_analyses_summary(analyses: Any) -> list[str]:
 
 
 def _read_html_file(path: str) -> str:
-    """``readChar(path, size, useBytes = TRUE)``."""
-    return Path(path).read_bytes().decode("utf-8", errors="surrogateescape")
+    """``readChar(path, size, useBytes = TRUE)`` (truncated at an embedded NUL)."""
+    raw = Path(path).read_bytes()
+    nul = raw.find(b"\x00")
+    if nul >= 0:
+        raw = raw[:nul]
+    return raw.decode("utf-8", errors="surrogateescape")
 
 
 def _export_archive_html(path: str, out: str | None, ext: str, label: str, prefix: str) -> str:
@@ -519,7 +548,12 @@ def export_jasp_html(
 
 
 def _url_decode(url: str) -> str:
-    """R ``utils::URLdecode()`` (``%XX`` escapes only; ``+`` is kept)."""
+    """R ``utils::URLdecode()`` (``%XX`` escapes only; ``+`` is kept).
+
+    As in R, an escape whose two characters are missing or do not form a byte
+    decodes to a NUL byte (R's ``as.raw()`` of an out-of-range value); trailing
+    NULs are dropped by ``rawToChar()`` and an embedded one is an error.
+    """
     b = url.encode("utf-8", errors="surrogateescape")
     out = bytearray()
     i = 0
@@ -528,15 +562,15 @@ def _url_decode(url: str) -> str:
             out.append(b[i])
             i += 1
             continue
-        y = list(b[i + 1 : i + 3])
-        y = [c - 32 if c > 96 else c for c in y]
-        y = [c - 7 if c > 57 else c for c in y]
-        val = sum((c - 48) * m for c, m in zip(y, (16, 1), strict=False))
-        if not 0 <= val <= 255:
-            raise ValueError("out of range value in URLdecode")
-        out.append(val)
+        y = [b[i + k] if i + k < len(b) else None for k in (1, 2)]
+        val = None
+        if None not in y:
+            y = [c - 32 if c > 96 else c for c in y]  # type: ignore[operator]
+            y = [c - 7 if c > 57 else c for c in y]  # type: ignore[operator]
+            val = (y[0] - 48) * 16 + (y[1] - 48)  # type: ignore[operator]
+        out.append(val if val is not None and 0 <= val <= 255 else 0)
         i += 3
-    return bytes(out).decode("utf-8", errors="surrogateescape")
+    return _raw_to_char(bytes(out), errors="surrogateescape")
 
 
 def _file_ext(x: str) -> str:
@@ -557,10 +591,7 @@ def _html_inline_images(html: str, root: str) -> str:
         rel = str(sub(r'^src="(.*)"$', r"\1", src, ignore_case=True))
         if grepl(r"^(https?:)?//|^data:", rel, ignore_case=True):
             continue
-        try:
-            img_path = os.path.join(root, _url_decode(rel))
-        except ValueError:
-            raise
+        img_path = root + "/" + _url_decode(rel)  # file.path(): no special case for "/..."
         if not os.path.exists(img_path):
             continue
         ext = _file_ext(img_path).lower()

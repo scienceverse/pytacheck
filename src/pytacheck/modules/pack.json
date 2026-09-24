@@ -1,0 +1,57 @@
+{
+  "schema": 1,
+  "name": "metacheck",
+  "title": "metacheck built-in modules",
+  "description": "The modules ported from metacheck. Its three presets mirror module lists hard-coded in metacheck; tests/modsys/test_builtin_presets.py keeps them equal to R's.",
+  "license": "AGPL-3.0-or-later",
+  "homepage": "https://github.com/scienceverse/metacheck",
+  "fields": ["general"],
+  "presets": {
+    "default": {
+      "description": "metacheck's report() defaults",
+      "modules": [
+        "prereg_check",
+        "funding_check",
+        "coi_check",
+        "power",
+        "repo_check",
+        "code_check",
+        "stat_check",
+        "stat_p_exact",
+        "stat_p_nonsig",
+        "stat_effect_size",
+        "marginal",
+        "ref_accuracy",
+        "ref_replication",
+        "ref_retraction",
+        "ref_pubpeer",
+        "ref_summary"
+      ]
+    },
+    "repository": {
+      "description": "metacheck's report_repository() defaults",
+      "modules": ["repo_check", "code_check", "data_check", "codebook_check"]
+    },
+    "validated": {
+      "description": "The validated modules run by metacheck's Shiny app",
+      "modules": [
+        "power",
+        "marginal",
+        "prereg_check",
+        "ethics_check",
+        "ref_pubpeer",
+        "ref_retraction",
+        "ref_replication",
+        "ref_accuracy",
+        "stat_check",
+        "stat_p_exact",
+        "stat_p_nonsig",
+        "stat_effect_size",
+        "repo_check",
+        "code_check",
+        "data_check",
+        "codebook_check"
+      ]
+    }
+  }
+}

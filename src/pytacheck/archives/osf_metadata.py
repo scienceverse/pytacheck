@@ -321,10 +321,16 @@ def _osf_write_readme(
         who = []
         for c in contributors:
             orcid = c.get("orcid")
-            if orcid is not None and orcid != "":
-                who.append(f"- {c.get('name')} (ORCID {orcid})")
+            name = c.get("name")
+            name = "NA" if name is None or (not isinstance(name, str) and is_na(name)) else name
+            if (
+                orcid is not None
+                and not (not isinstance(orcid, str) and is_na(orcid))
+                and orcid != ""
+            ):
+                who.append(f"- {name} (ORCID {orcid})")
             else:
-                who.append(f"- {c.get('name')}")
+                who.append(f"- {name}")
         ln += ["## Contributors", "", *who, ""]
 
     files = [] if wikis is None else [f for f in wikis["file"].tolist() if f]
@@ -353,32 +359,191 @@ def _osf_write_readme(
     return path
 
 
-def _json_ready(x: Any) -> Any:
-    if isinstance(x, pd.DataFrame):
-        return [
-            {k: _json_ready(v) for k, v in rec.items() if not _missing(v)}
-            for rec in x.to_dict(orient="records")
-        ]
+# ---------------------------------------------------------------------------
+# jsonlite::write_json(auto_unbox = TRUE, pretty = TRUE, null = "null")
+# ---------------------------------------------------------------------------
+# metadata.json is written from R values, some built by metacheck and some
+# parsed from the API with jsonlite's simplification. The writer below works
+# on a small tagged tree so both kinds come out as jsonlite writes them:
+#   ("vec", type, values)  atomic vector (inline; a length-1 vector is unboxed)
+#   ("list", items)        unnamed list (one item per line)
+#   ("obj", {key: node})   named list
+#   ("df", rows)           data frame, one object per row, NA fields omitted
+#   ("matrix", rows)       matrix, one inline array per row
+#   ("null",)              NULL
+
+_JNode = tuple[Any, ...]
+_NULL: _JNode = ("null",)
+
+
+def _is_scalar_value(v: Any) -> bool:
+    return v is None or isinstance(v, str | int | float | bool)
+
+
+def _jl_vec(values: list[Any]) -> _JNode:
+    """The atomic vector jsonlite simplifies a JSON array of scalars to."""
+    kinds = {type(v) for v in values if v is not None}
+    if not kinds or kinds == {bool}:
+        return ("vec", "lgl", values)
+    if str in kinds:
+        return ("vec", "chr", [None if v is None else _jl_chr(v) for v in values])
+    if float in kinds:
+        return ("vec", "dbl", [None if v is None else float(v) for v in values])
+    return ("vec", "int", [None if v is None else int(v) for v in values])
+
+
+def _jl_chr(v: Any) -> str:
+    if isinstance(v, bool):
+        return "TRUE" if v else "FALSE"
+    if isinstance(v, float) and v.is_integer():
+        return str(int(v))
+    return str(v)
+
+
+def _jl_simplify(x: Any) -> _JNode:
+    """A parsed JSON value as ``jsonlite::fromJSON(simplifyVector = TRUE)`` holds it."""
+    if x is None:
+        return _NULL
     if isinstance(x, dict):
-        return {k: _json_ready(v) for k, v in x.items()}
+        return ("obj", {k: _jl_simplify(v) for k, v in x.items()})
+    if isinstance(x, list):
+        if not x:
+            return ("list", [])
+        if all(_is_scalar_value(v) for v in x):
+            return _jl_vec(x)
+        if all(v is None or isinstance(v, dict) for v in x):
+            return ("df", [_jl_row(v or {}) for v in x])
+        if all(isinstance(v, list) and v and all(_is_scalar_value(e) for e in v) for v in x) and (
+            len({len(v) for v in x}) == 1
+        ):
+            return ("matrix", [_jl_vec(v) for v in x])
+        return ("list", [_jl_simplify(v) for v in x])
+    return _jl_vec([x])
+
+
+def _jl_row(rec: dict[str, Any]) -> _JNode:
+    """One data-frame row: missing (NA/NULL) fields are left out."""
+    return ("obj", {k: _jl_simplify(v) for k, v in rec.items() if v is not None})
+
+
+def _jl_scalar(v: Any, kind: str) -> str:
+    if v is None or (isinstance(v, float) and math.isnan(v)):
+        return '"NA"' if kind in ("dbl", "int") else "null"
+    if kind == "lgl":
+        return "true" if v else "false"
+    if kind == "chr":
+        return json.dumps(v, ensure_ascii=False)
+    if kind == "int":
+        return str(int(v))
+    x = float(v)
+    if math.isinf(x):
+        return '"Inf"' if x > 0 else '"-Inf"'
+    if x.is_integer() and abs(x) < 1e15:
+        return str(int(x))
+    out = f"{x:.4f}".rstrip("0").rstrip(".")  # jsonlite's default digits = 4
+    return "-0" if out == "-0" else out
+
+
+def _jl_write(node: _JNode, level: int = 0) -> str:
+    pad = "  " * (level + 1)
+    end = "  " * level
+    tag = node[0]
+    if tag == "null":
+        return "null"
+    if tag == "vec":
+        _, kind, values = node
+        if len(values) == 1:
+            return _jl_scalar(values[0], kind)
+        return "[" + ", ".join(_jl_scalar(v, kind) for v in values) + "]"
+    if tag in ("list", "df", "matrix"):
+        items = node[1]
+        if not items:
+            return "[]"
+        if tag == "matrix":
+            body = ["[" + ", ".join(_jl_scalar(v, row[1]) for v in row[2]) + "]" for row in items]
+        else:
+            body = [_jl_write(item, level + 1) for item in items]
+        return "[\n" + ",\n".join(pad + b for b in body) + "\n" + end + "]"
+    if tag == "obj":
+        fields = node[1]
+        if not fields:
+            return "{}"
+        body = [
+            f"{json.dumps(k, ensure_ascii=False)}: {_jl_write(v, level + 1)}"
+            for k, v in fields.items()
+        ]
+        return "{\n" + ",\n".join(pad + b for b in body) + "\n" + end + "}"
+    raise ValueError(f"unknown JSON node {tag!r}")
+
+
+def _jl_value(x: Any, kind: str | None = None) -> _JNode:
+    """A value metacheck itself built (a scalar or character vector)."""
+    if x is None:
+        return _NULL
     if isinstance(x, list | tuple):
-        return [_json_ready(v) for v in x]
-    if _missing(x):
-        return None
-    if hasattr(x, "item"):
-        return x.item()
-    return x
+        return _jl_vec(list(x)) if kind is None else ("vec", kind, list(x))
+    if kind is not None:
+        return ("vec", kind, [x])
+    return _jl_vec([x])
 
 
-def _missing(v: Any) -> bool:
-    if v is None:
-        return True
-    if isinstance(v, list | tuple | dict):
-        return False
-    try:
-        return bool(is_na(v))
-    except (TypeError, ValueError):
-        return False
+def _jl_frame(df: pd.DataFrame | None) -> _JNode:
+    if df is None:
+        return ("list", [])
+    rows = []
+    for rec in df.to_dict(orient="records"):
+        fields: dict[str, _JNode] = {}
+        for k, v in rec.items():
+            if v is None or (not isinstance(v, str) and is_na(v)):
+                continue
+            if hasattr(v, "item"):
+                v = v.item()
+            fields[k] = _jl_vec([v])
+        rows.append(("obj", fields))
+    return ("df", rows)
+
+
+def _metadata_json(meta: dict[str, Any]) -> str:
+    """``jsonlite::write_json(meta, auto_unbox = TRUE, pretty = TRUE, null = "null")``."""
+    fields: dict[str, _JNode] = {}
+    for key, value in meta.items():
+        if key in ("tags", "citation", "node_license"):
+            fields[key] = _jl_simplify(value) if value != [] else ("list", [])
+        elif key in ("registrations", "forks"):
+            fields[key] = _NULL if value is None else ("vec", "chr", list(value))
+        elif key == "public":
+            fields[key] = ("vec", "lgl", [value])
+        elif key == "contributors":
+            fields[key] = (
+                "list",
+                [("obj", {k: ("vec", "chr", [v]) for k, v in c.items()}) for c in value],
+            )
+        elif key == "wikis":
+            fields[key] = _jl_frame(value if isinstance(value, pd.DataFrame) else None)
+        elif key == "files_written":
+            logs = value.get("logs")
+            fields[key] = (
+                "obj",
+                {
+                    "wiki_pages": ("vec", "chr", list(value.get("wiki_pages") or [])),
+                    "logs": _NULL
+                    if logs is None
+                    else (
+                        "obj",
+                        {
+                            "file": ("vec", "chr", [logs["file"]]),
+                            "entries": ("vec", "int", [logs["entries"]]),
+                            "first": _jl_value(logs["first"], "chr"),
+                            "last": _jl_value(logs["last"], "chr"),
+                        },
+                    ),
+                },
+            )
+        else:
+            fields[key] = _jl_value(
+                value, "chr" if isinstance(value, str) or value is None else None
+            )
+    return _jl_write(("obj", fields)) + "\n"
 
 
 def _osf_metadata_download(osf_id: str, download_to: str, pb: Any = None) -> str | None:
@@ -418,7 +583,7 @@ def _osf_metadata_download(osf_id: str, download_to: str, pb: Any = None) -> str
         },
     }
     with open(os.path.join(meta_dir, "metadata.json"), "w", encoding="utf-8") as fh:
-        json.dump(_json_ready(meta), fh, indent=2, ensure_ascii=False)
+        fh.write(_metadata_json(meta))
 
     if logs is None:
         _write_csv(

@@ -1,0 +1,16 @@
+{
+  "id": "deparse.df_names",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "structure(list(... = 1, ..1 = 2, .a = 3, \".2a\" = 4, a_b = 5, ",
+      "    \"NA\" = 6, \"if\" = 7, \"TRUE\" = 8, \"a b\" = 9, a.b = 10), class = \"data.frame\", row.names = c(NA, ",
+      "-1L))"
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -1,0 +1,120 @@
+{
+  "id": "mplus_output_tables.tricky.summary_of_analysis",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "tables",
+      "consumed",
+      "labelvalue"
+    ],
+    "v": [
+      {
+        "t": "list",
+        "names": null,
+        "v": []
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "Number of groups",
+              "Number of observations  2",
+              "Loglikelihood  H0 Value",
+              "Akaike (AIC)",
+              "Estimate",
+              "RMSEA (Root Mean Square Error Of Approximation)",
+              "Value",
+              "Trailing spaces",
+              "Hyphen-ated / slash.x%"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "1"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "45"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "-1234.5"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "2468.9"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "0.100D-05"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "0.05"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "5.887*"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "3.5"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "-2"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

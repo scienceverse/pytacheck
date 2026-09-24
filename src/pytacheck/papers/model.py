@@ -19,6 +19,7 @@ never mutate a paper it was given; the test suite checks this.
 from __future__ import annotations
 
 import hashlib
+import itertools
 import time
 from collections.abc import Iterable, Iterator, Mapping, Sequence
 from typing import Any, overload
@@ -29,7 +30,10 @@ from pytacheck.papers.schema import empty_table, records_to_frame, required_tabl
 
 __all__ = ["Paper", "PaperList", "is_paper", "is_paper_list"]
 
-_RESERVED = frozenset({"paper_id", "extra", "_tables", "_raw", "_columns"})
+_RESERVED = frozenset({"paper_id", "extra", "_tables", "_raw", "_columns", "_generation"})
+# Process-wide mutation counter: ``Paper._generation`` changes whenever a paper is
+# modified through its API, which invalidates ``run_session()`` memo entries.
+_GENERATION = itertools.count(1)
 
 
 def _random_id() -> str:
@@ -50,7 +54,7 @@ class Paper:
         not given starts as an empty, fully-typed table.
     """
 
-    __slots__ = ("_columns", "_raw", "_tables", "extra", "paper_id")
+    __slots__ = ("_columns", "_generation", "_raw", "_tables", "extra", "paper_id")
 
     paper_id: str | None
     extra: dict[str, Any]
@@ -60,6 +64,7 @@ class Paper:
         object.__setattr__(self, "extra", {})
         object.__setattr__(self, "_raw", {})
         object.__setattr__(self, "_columns", {})
+        object.__setattr__(self, "_generation", next(_GENERATION))
         store: dict[str, Any] = {}
         for name in required_tables():
             store[name] = tables.pop(name) if name in tables else None
@@ -70,9 +75,13 @@ class Paper:
 
     def _set_raw(self, name: str, records: list[dict[str, Any]], columns: Sequence[str]) -> None:
         """Store *records* for lazy materialisation of table *name*."""
+        self._touch()
         self._tables[name] = None
         self._raw[name] = records
         self._columns[name] = list(columns)
+
+    def _touch(self) -> None:
+        object.__setattr__(self, "_generation", next(_GENERATION))
 
     def _raw_records(self, name: str) -> tuple[list[dict[str, Any]], list[str]] | None:
         """``(records, columns)`` if *name* is still unmaterialised JSON."""
@@ -109,6 +118,7 @@ class Paper:
         return self._materialise(name)
 
     def __setitem__(self, name: str, value: Any) -> None:
+        self._touch()
         if name == "paper_id":
             object.__setattr__(self, "paper_id", value)
             return
@@ -117,6 +127,7 @@ class Paper:
         self._tables[name] = value
 
     def __delitem__(self, name: str) -> None:
+        self._touch()
         self._tables.pop(name, None)
         self._raw.pop(name, None)
         self._columns.pop(name, None)
@@ -144,6 +155,7 @@ class Paper:
     def __setattr__(self, name: str, value: Any) -> None:
         if name in _RESERVED:
             object.__setattr__(self, name, value)
+            self._touch()
         else:
             self[name] = value
 

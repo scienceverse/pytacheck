@@ -1,0 +1,15 @@
+{
+  "id": "module_report.bad_traffic_light",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "A blue summary.\n\nA blue report.\n\n::: {.callout-note title=\"How It Works\" collapse=\"true\"}\n\nUses a traffic light that is not defined.\n\nDetails here.\n\n:::\n",
+      "A blue summary.\n\nA blue report.\n\n::: {.callout-note title=\"How It Works\" collapse=\"true\"}\n\nUses a traffic light that is not defined.\n\nDetails here.\n\n:::\n"
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

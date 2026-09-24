@@ -34,16 +34,16 @@ from pytacheck.statout.r_output import (
     _chr_frame,
     _make_unique,
     _r_as_numeric,
+    _r_dollar,
+    _RError,
+    _RNamedList,
     _r_output_oneline,
     _r_output_tables,
+    _r_values,
     _trimws,
 )
 
 __all__ = ["read_stat_tables"]
-
-
-class _RError(ValueError):
-    """An error R would raise (caught by the ``tryCatch`` around a reader)."""
 
 
 # ---------------------------------------------------------------------------
@@ -154,29 +154,42 @@ def read_stat_tables(path: str | os.PathLike[str]) -> list[dict[str, Any]]:
 def _unzip(path: str, exdir: str) -> list[str]:
     """``utils::unzip(path, exdir = exdir)``: the extracted file paths (zip order).
 
-    R's ``unzip()`` returns ``NULL`` for a file that is not a zip archive, and
+    R's ``unzip()`` returns ``NULL`` when the archive cannot be opened (not a
+    zip archive, a directory, or a zip without any entry), and
     ``read_stat_tables()`` then fails in ``basename(NULL)``; that error is
-    reproduced.
+    reproduced. Directory entries are created but not returned, and
+    extraction stops at the first unreadable entry, keeping what was
+    extracted before it.
     """
-    if not zipfile.is_zipfile(path):
-        raise TypeError("a character vector argument expected")
+
+    def not_opened() -> TypeError:
+        return TypeError("a character vector argument expected")
+
+    if not os.path.isfile(path) or not zipfile.is_zipfile(path):
+        raise not_opened()
+    out: list[str] = []
     try:
         with zipfile.ZipFile(path) as zf:
-            out = []
+            infos = zf.infolist()
+            if not infos:
+                raise not_opened()
             root = os.path.realpath(exdir)
-            for info in zf.infolist():
-                if info.is_dir():
-                    continue
+            for info in infos:
                 target = os.path.realpath(os.path.join(exdir, info.filename))
                 if not target.startswith(root + os.sep):
                     continue
+                if info.is_dir():
+                    os.makedirs(target, exist_ok=True)
+                    continue
                 os.makedirs(os.path.dirname(target), exist_ok=True)
-                with zf.open(info) as src, open(target, "wb") as dst:
-                    dst.write(src.read())
+                with zf.open(info) as src:
+                    payload = src.read()
+                with open(target, "wb") as dst:
+                    dst.write(payload)
                 out.append(os.path.join(exdir, info.filename))
-            return out
-    except (zipfile.BadZipFile, OSError, ValueError, NotImplementedError, RuntimeError):
-        return []
+    except (zipfile.BadZipFile, OSError, ValueError, NotImplementedError, RuntimeError, EOFError):
+        pass
+    return out
 
 
 # ---------------------------------------------------------------------------
@@ -251,9 +264,12 @@ def _jasp_structured_tables(analyses_json: str | os.PathLike[str]) -> list[dict[
         an_name = _trimws(_chr1(_r_dollar(an, "name"), "")) or ""
         label = an_title if an_title else (an_name if an_name else None)
         an_id: Any = _r_dollar(an, "id")
-        if isinstance(an_id, list | dict) and len(an_id) == 1:
-            an_id = next(iter(an_id.values())) if isinstance(an_id, dict) else an_id[0]
-        an_id = None if an_id is None or isinstance(an_id, list | dict) else as_character(an_id)
+        if isinstance(an_id, list | dict):
+            # as.character(list(x)) of a length-1 list (JSON [x] / {"k": x})
+            ids = _r_values(an_id)
+            an_id = _chr_list_elt(ids[0]) if len(ids) == 1 else None
+        elif an_id is not None:
+            an_id = as_character(an_id)
 
         def collect(node: Any, label: str | None = label, an_id: str | None = an_id) -> None:
             if not isinstance(node, dict | list):
@@ -303,15 +319,10 @@ def _jasp_table_to_df(fields: Any, data_rows: Any) -> pd.DataFrame | None:
         if v is None:
             return ""
         if isinstance(v, list | dict):
-            vals = list(v.values()) if isinstance(v, dict) else v
-            if not vals:
+            vals = _r_values(v)
+            if len(vals) != 1:
                 raise _RError("values must be length 1")
-            if len(vals) != 1 or isinstance(vals[0], list | dict):
-                raise _RError("values must be length 1")
-            v = vals[0]
-            if v is None:
-                return "NULL"
-            return as_character(v)
+            return _chr_list_elt(vals[0])
         if isinstance(v, bool):
             return "TRUE" if v else "FALSE"
         if isinstance(v, int | float):
@@ -322,39 +333,72 @@ def _jasp_table_to_df(fields: Any, data_rows: Any) -> pd.DataFrame | None:
     return _chr_frame(_make_unique(nms), cols)
 
 
+_INT32_MAX = 2147483647
+
+
+def _json_int(s: str) -> int | float:
+    """jsonlite's integer rule: 32-bit integers stay integer, others are doubles."""
+    n = int(s)
+    return n if -_INT32_MAX <= n <= _INT32_MAX else float(n)
+
+
+def _reject_constant(const: str) -> Any:
+    raise ValueError(f"invalid JSON constant {const}")
+
+
+def _parse_json_text(text: str) -> Any:
+    """``jsonlite::fromJSON(<text>, simplifyVector = FALSE)``.
+
+    Objects become :class:`_RNamedList` (duplicate names kept, the first one
+    wins for ``$``/``[[``); a leading UTF-8 byte-order mark is accepted with
+    jsonlite's warning; ``NaN``/``Infinity`` literals are rejected.
+    """
+    if text.startswith("\ufeff"):
+        import warnings
+
+        warnings.warn("JSON string contains (illegal) UTF8 byte-order-mark!", stacklevel=3)
+        text = text[1:]
+    return json.loads(
+        text,
+        object_pairs_hook=_RNamedList,
+        parse_constant=_reject_constant,
+        parse_int=_json_int,
+    )
+
+
 def _read_json(path: str | os.PathLike[str]) -> Any:
-    def reject(const: str) -> Any:
-        raise ValueError(f"invalid JSON constant {const}")
-
+    """``jsonlite::fromJSON(<path>, simplifyVector = FALSE)`` of a UTF-8 file."""
     with open(path, encoding="utf-8") as f:
-        return json.loads(f.read(), parse_constant=reject)
-
-
-def _r_dollar(x: Any, key: str) -> Any:
-    """R ``x$key`` on parsed JSON (errors on atomic values, like R)."""
-    if x is None or isinstance(x, list):
-        return None
-    if isinstance(x, dict):
-        return x.get(key)
-    raise _RError("$ operator is invalid for atomic vectors")
+        return _parse_json_text(f.read())
 
 
 def _r_iter(x: Any) -> list[Any]:
-    if x is None:
-        return []
-    if isinstance(x, dict):
-        return list(x.values())
-    if isinstance(x, list):
-        return x
-    return [x]
+    """The elements of a parsed JSON value, as ``for (e in x)`` sees them."""
+    return _r_values(x)
 
 
 def _r_len(x: Any) -> int:
+    """R ``length()`` of a parsed JSON value."""
     if x is None:
         return 0
+    if isinstance(x, _RNamedList):
+        return len(x.pairs)
     if isinstance(x, dict | list):
         return len(x)
     return 1
+
+
+def _chr_list_elt(v: Any) -> str:
+    """``as.character(list(v))`` for one list element (``NULL`` -> ``"NULL"``)."""
+    if v is None:
+        return "NULL"
+    if isinstance(v, list | dict):
+        vals = _r_values(v)
+        if not vals:
+            return "list()"
+        raise _RError("values must be length 1")
+    s = as_character(v)
+    return "NA" if s is None else s
 
 
 def _chr1(x: Any, default: str) -> str:
@@ -488,9 +532,11 @@ def _pb_str(x: Any) -> str:
         return ""
     if not isinstance(x, bytes | bytearray):
         return ""
-    if len(x) == 0 or b"\x00" in x:
+    # rawToChar() drops trailing nuls and errors on an embedded one.
+    x = bytes(x).rstrip(b"\x00")
+    if b"\x00" in x:
         return ""
-    return bytes(x).decode("utf-8", errors="replace")
+    return x.decode("utf-8", errors="replace")
 
 
 # jamovi field numbers (``.JMV_F``; see inst/schema/jamovi/PROVENANCE.md).
@@ -751,8 +797,12 @@ def _jmv_structured_tables(analysis_files: Sequence[str]) -> list[dict[str, Any]
 def _html_parser() -> Any:
     from lxml import etree
 
-    # xml2::read_html()'s options: RECOVER, NOERROR, NOBLANKS.
-    return etree.HTMLParser(recover=True, remove_blank_text=True)
+    # xml2::read_html()'s options: RECOVER, NOERROR, NOBLANKS. The reference
+    # xml2 links libxml2 2.15, whose HTML parser decodes a file as UTF-8
+    # whatever its <meta charset> says (invalid bytes become U+FFFD); lxml
+    # would guess Latin-1 for a file without a declaration, so the encoding
+    # is fixed here.
+    return etree.HTMLParser(recover=True, remove_blank_text=True, encoding="utf-8")
 
 
 def _read_html_file(path: str) -> Any:
@@ -869,7 +919,15 @@ def _stat_table_parse(tb: Any) -> dict[str, Any] | None:
         uniq = list(dict.fromkeys(vals))
         if len(uniq) == 1:
             v1 = uniq[0]
-            is_note = v1 is not None and (
+            if v1 is None:
+                # Only NA cells (a row shorter than the header grid): the
+                # footnote test is NA (nchar(NA) > 40), and df[NA, ] turns the
+                # whole row into NA -- including its "" cells.
+                for col in cols:
+                    col[ri] = None
+                keep_rows.append(True)
+                continue
+            is_note = (
                 bool(grepl("^Note", v1, ignore_case=True))
                 or bool(grepl("^[*a-z]?\\s*p\\s*[<>=]", v1))
                 or len(v1) > 40
@@ -1034,27 +1092,46 @@ def _split_lines(text: str) -> list[str]:
 
 
 def _ipynb_text(x: Any) -> str:
-    """``paste(unlist(x), collapse = "")`` of a notebook text field."""
+    """``paste(unlist(x), collapse = "")`` of a notebook text field.
+
+    ``unlist()`` coerces every leaf to the highest type present (logical <
+    integer < double < character), so ``[1, true, 2.5]`` pastes as
+    ``"112.5"``; ``NULL`` leaves are dropped.
+    """
     if x is None:
         return ""
     if isinstance(x, str):
         return x
-    parts: list[str] = []
+    leaves: list[Any] = []
 
     def walk(v: Any) -> None:
-        if isinstance(v, list):
-            for e in v:
+        if isinstance(v, list | dict):
+            for e in _r_values(v):
                 walk(e)
-        elif isinstance(v, dict):
-            for e in v.values():
-                walk(e)
-        elif v is None:
-            return
-        else:
-            sv = as_character(v)
-            parts.append("NA" if sv is None else sv)
+        elif v is not None:
+            leaves.append(v)
 
     walk(x)
+
+    def rank(v: Any) -> int:
+        if isinstance(v, bool):
+            return 0
+        if isinstance(v, int):
+            return 1
+        if isinstance(v, float):
+            return 2
+        return 3
+
+    top = max((rank(v) for v in leaves), default=0)
+    parts: list[str] = []
+    for v in leaves:
+        if top == 3 or top == 0:
+            sv = as_character(v)
+        elif top == 2:
+            sv = as_character(float(v))
+        else:
+            sv = str(int(v))
+        parts.append("NA" if sv is None else sv)
     return "".join(parts)
 
 

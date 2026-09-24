@@ -1,0 +1,33 @@
+{
+  "id": "smcl_export_syntax.tricky",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "path",
+      "lines"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "/code/tricky.do"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "display {it:x} and      abc|  ab   |ab|toolongtext|",
+          "summarize x y , detail nothing",
+          "tabulate g",
+          "list",
+          "logit y x"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

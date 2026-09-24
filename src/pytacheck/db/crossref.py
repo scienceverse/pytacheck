@@ -153,17 +153,68 @@ def _paper_dois(papers: Any) -> list[Any]:
     return [None if is_na(v) else v for v in info["doi"].tolist()]
 
 
+_INT_MAX = 2147483647
+_ESCAPES = {
+    "\\": "\\\\",
+    '"': '\\"',
+    "\n": "\\n",
+    "\t": "\\t",
+    "\r": "\\r",
+    "\a": "\\a",
+    "\b": "\\b",
+    "\f": "\\f",
+    "\v": "\\v",
+}
+
+
+def _deparse_str(s: str) -> str:
+    """``deparse()`` of one string: quoted, with R's escapes."""
+    out = []
+    for ch in s:
+        esc = _ESCAPES.get(ch)
+        if esc is not None:
+            out.append(esc)
+        elif ord(ch) < 0x20 or ord(ch) == 0x7F:
+            out.append(f"\\{ord(ch):03o}")
+        else:
+            out.append(ch)
+    return '"' + "".join(out) + '"'
+
+
 def _deparse(v: Any) -> str:
+    """``deparse()`` of a parsed-JSON value (JSON integers are R integers: ``1L``)."""
     if v is None:
         return "NULL"
     if isinstance(v, str):
-        return '"' + v.replace("\\", "\\\\").replace('"', '\\"') + '"'
+        return _deparse_str(v)
     if isinstance(v, bool):
         return "TRUE" if v else "FALSE"
+    if isinstance(v, int):
+        # jsonlite gives an integer when it fits, else a double
+        return f"{v}L" if abs(v) <= _INT_MAX else (as_character(float(v)) or "NA")
     if isinstance(v, list | tuple):
         return "list(" + ", ".join(_deparse(e) for e in v) + ")"
+    if isinstance(v, Mapping):
+        inner = ", ".join(
+            (f"{k} = " if _syntactic(str(k)) else f"`{k}` = ") + _deparse(e) for k, e in v.items()
+        )
+        return f"list({inner})"
     s = as_character(v)
     return "NA" if s is None else s
+
+
+def _syntactic(name: str) -> bool:
+    from pytacheck._r.regex import grepl
+
+    return bool(grepl(r"^((([[:alpha:]]|[.][._[:alpha:]])[._[:alnum:]]*)|[.])$", name))
+
+
+def _deparse_chr_vector(values: Sequence[Any]) -> str:
+    """``deparse()`` of a character vector held in a list cell (``c("a", "b")``)."""
+    if len(values) == 0:
+        return "character(0)"
+    parts = ["NA" if is_na(v) else _deparse_str(str(v)) for v in values]
+    return parts[0] if len(parts) == 1 else "c(" + ", ".join(parts) + ")"
 
 
 def _df_dollar(df: pd.DataFrame, name: str) -> Any:
@@ -271,7 +322,7 @@ def datacite_doi(doi: Any) -> pd.DataFrame | None:
             if resp.status_code >= 400:
                 return None  # `return(NULL)` inside tryCatch() leaves datacite_doi()
             value = resp_body_json(resp) if resp_content_type(resp) == "application/json" else None
-        except (TypeError, ValueError):
+        except Exception:  # noqa: BLE001 - tryCatch(error = ) catches every error
             value = None
         r_list_set(bibdata, i + 1, value)
 
@@ -342,48 +393,120 @@ def _author_records(authors: Any) -> list[dict[str, Any]]:
     return [{k: r.get(k) for k in names} for r in rows]
 
 
-def _flatten_df_value(name: str, value: Any) -> list[tuple[str, Any]]:
-    """The columns ``data.frame(list(name = value))`` makes of one element."""
-    if value is None or (isinstance(value, list | tuple | Mapping) and len(value) == 0):
-        raise ValueError("arguments imply differing number of rows: 1, 0")
-    if isinstance(value, Mapping):
-        out: list[tuple[str, Any]] = []
-        for k, v in value.items():
-            if isinstance(v, Mapping):
-                out.extend(_flatten_df_value(name, v))
-            else:
-                out.extend(
-                    (f"{name}.{k}" if n == k else n, x) for n, x in _flatten_df_value(str(k), v)
-                )
-        return out
-    if isinstance(value, list | tuple):
-        out = []
-        for v in value:
-            if isinstance(v, Mapping):
-                out.extend(_flatten_df_value(name, v))
-            elif len(value) == 1:
-                out.append((_deparse(v), v))
-            else:
-                out.append((f"{name}.{_deparse(v)}", v))
-        return out
-    return [(name, value)]
+# ---------------------------------------------------------------------------
+# data.frame() of parsed JSON (the naming and row-count rules of base R)
+# ---------------------------------------------------------------------------
+
+#: A data frame as ``(columns, nrow)``; columns are ``(name, value)`` pairs and
+#: names may repeat (``data.frame(check.names = FALSE)`` allows it).
+_Frame = tuple[list[tuple[str, Any]], int]
 
 
-def _parse_item_record(item: Mapping[str, Any], select: Sequence[str]) -> dict[str, Any]:
-    """``.crossref_parse_item()`` as one record (column -> value)."""
+def _as_data_frame(x: Any) -> tuple[list[tuple[str | None, Any]], int, bool]:
+    """``as.data.frame(x, optional = TRUE)`` of a parsed-JSON value.
+
+    Returns the columns, the row count and whether the columns are named (a
+    list becomes a named data frame; an atomic value one unnamed column).
+    """
+    if x is None:
+        return [], 0, False
+    if isinstance(x, Mapping):
+        cols, n = _data_frame([(None if k == "" else str(k), v) for k, v in x.items()])
+        return list(cols), n, True
+    if isinstance(x, list | tuple):
+        cols, n = _data_frame([(None, v) for v in x])
+        return list(cols), n, True
+    return [(None, x)], 1, False
+
+
+def _data_frame(args: Sequence[tuple[str | None, Any]]) -> _Frame:
+    """``data.frame(..., check.names = FALSE)`` of parsed-JSON arguments.
+
+    Reproduces how base R names the columns of list arguments (``b.k``,
+    ``b."q"``, an inner name alone for a one-column list, a deparsed value
+    for an unnamed scalar) and its ``arguments imply differing number of
+    rows`` error (a ``NULL`` or empty list next to a value).
+    """
+    cols: list[tuple[str, Any]] = []
+    nrows: list[int] = []
+    for argname, obj in args:
+        sub, nr, named = _as_data_frame(obj)
+        nrows.append(nr)
+        if len(sub) > 1:
+            names = [str(n) for n, _ in sub]
+            if argname is not None:
+                names = [f"{argname}.{n}" for n in names]
+        elif len(sub) == 1:
+            if named:
+                names = [str(sub[0][0])]
+            elif argname is None:
+                names = [_deparse(obj)]
+            else:
+                names = [argname]
+        else:
+            names = []
+        cols.extend(zip(names, (v for _, v in sub), strict=True))
+    nr = max(nrows, default=0)
+    for n in nrows:
+        if n < nr and not (n > 0 and nr % n == 0):
+            unique = list(dict.fromkeys(nrows))
+            raise ValueError(
+                "arguments imply differing number of rows: " + ", ".join(str(u) for u in unique)
+            )
+    return cols, nr
+
+
+def _repair_unique(names: Sequence[str]) -> list[str]:
+    """``vctrs::vec_as_names(repair = "unique")``, as ``dplyr::bind_rows()`` applies it."""
+    from pytacheck._r.regex import grepl, sub
+
+    stripped: list[str] = sub(r"(\.\.\.[0-9]+)+$", "", list(names))
+    dots = grepl(r"^(\.\.\.|\.\.[0-9]+)$", stripped)
+    counts: dict[str, int] = {}
+    for n in stripped:
+        counts[n] = counts.get(n, 0) + 1
+    return [
+        f"{n}...{i}" if (n == "" or dot or counts[n] > 1) else n
+        for i, (n, dot) in enumerate(zip(stripped, dots, strict=True), start=1)
+    ]
+
+
+def _frame_record(frame: _Frame) -> dict[str, Any] | None:
+    """One parsed row as ``bind_rows()`` sees it (names repaired); ``None`` for 0 rows."""
+    cols, nrow = frame
+    if nrow == 0:
+        return None
+    names = [n for n, _ in cols]
+    if len(set(names)) != len(names):
+        names = _repair_unique(names)
+    return dict(zip(names, (v for _, v in cols), strict=True))
+
+
+def _frame_df(frame: _Frame) -> pd.DataFrame:
+    """A parsed frame as a DataFrame (duplicate column names are kept, as in R)."""
+    import pandas as pd
+
+    cols, nrow = frame
+    if nrow == 0:
+        return pd.DataFrame(index=pd.RangeIndex(0))
+    record = {str(i): v for i, (_, v) in enumerate(cols)}
+    df = records_frame([record])
+    df.columns = [n for n, _ in cols]
+    return df
+
+
+def _parse_item(item: Mapping[str, Any], select: Sequence[str]) -> _Frame:
+    """``.crossref_parse_item()`` as a :data:`_Frame` (0 or 1 rows)."""
     item = dict(item)
 
-    title = r_dollar(item, "title")
-    if _r_length(title):
-        item["title"] = _first(title)
-    else:
-        item.pop("title", None)
-
-    container = r_dollar(item, "container-title")
-    if _r_length(container):
-        item["container-title"] = _first(container)
-    else:
-        item.pop("container-title", None)
+    # item$title <- item$title[[1]]  (NULL removes it)
+    for key in ("title", "container-title"):
+        value = r_dollar(item, key)
+        first = _first(value) if _r_length(value) else None
+        if first is None:
+            item.pop(key, None)
+        else:
+            item[key] = first
 
     ok, year = _date_year(
         r_dollar(r_dollar(r_dollar(item, "journal-issue"), "published-print"), "date-parts")
@@ -401,17 +524,12 @@ def _parse_item_record(item: Mapping[str, Any], select: Sequence[str]) -> dict[s
     item.pop("author", None)
 
     to_select = [s for s in dict.fromkeys(select) if s in item]
-    record: dict[str, Any] = {}
-    for name in to_select:
-        for col, value in _flatten_df_value(name, item[name]):
-            if col in record:
-                raise ValueError("Names must be unique.")
-            record[col] = value
+    cols, nrow = _data_frame([(name, item[name]) for name in to_select])
     if "author" in select and authors:
-        if not record:
+        if nrow == 0:
             raise ValueError("replacement has 1 row, data has 0")
-        record["author"] = authors
-    return record
+        cols = [*cols, ("author", authors)]
+    return cols, nrow
 
 
 def _crossref_parse_item(
@@ -422,19 +540,20 @@ def _crossref_parse_item(
     Titles and container titles are reduced to their first element, ``year``
     comes from the print issue date (else the published date), and authors
     become a table (``given``, ``family``, ``ORCID``) in an ``author`` cell.
+    Other list fields are spread over columns as ``data.frame()`` does.
     """
-    return records_frame([_parse_item_record(item, list(select))])
+    return _frame_df(_parse_item(item, list(select)))
 
 
 def _query_parse_records(
     items: Any, min_score: float, select: Sequence[str]
 ) -> list[dict[str, Any]]:
     items = list(items.values()) if isinstance(items, Mapping) else list(items or [])
-    scores = [r_dollar(i, "score") if isinstance(i, Mapping) else None for i in items]
+    scores = [i.get("score") if isinstance(i, Mapping) else None for i in items]
     if len(items) == 0 or all(s is not None and s < min_score for s in scores):
         return [{"DOI": None}]
     kept = [i for i, s in zip(items, scores, strict=True) if s is None or s >= min_score]
-    records = [_parse_item_record(i, list(select)) for i in kept]
+    records = [r for i in kept if (r := _frame_record(_parse_item(i, list(select)))) is not None]
     names: dict[str, None] = {}
     for r in records:
         for k in r:
@@ -449,12 +568,18 @@ def _crossref_query_parse(items: Any, min_score: float, select: Sequence[str]) -
     Items scoring below *min_score* are dropped; with none left the result is
     a single row with ``DOI`` = ``NA``.
     """
-    return records_frame(_query_parse_records(items, min_score, select))
+    import pandas as pd
+
+    records = _query_parse_records(items, min_score, select)
+    if not records:
+        return pd.DataFrame(index=pd.RangeIndex(0))
+    return records_frame(records)
 
 
 def _crossref_doi_one(
     doi: Any, resp: httpx.Response | None, select: Sequence[str]
-) -> dict[str, Any]:
+) -> dict[str, Any] | None:
+    """One DOI's row of ``crossref_doi()`` (``None``: a 0-row result, dropped by ``bind_rows()``)."""
     try:
         if resp is None:
             raise TypeError("`resp` must be an HTTP response object, not `NULL`.")
@@ -467,8 +592,9 @@ def _crossref_doi_one(
         if status != "ok":
             err = r_dollar(r_dollar(item, "body"), "message-type")
             return {"DOI": doi, "error": "unknown" if err is None else err}
-        return _parse_item_record(r_dollar(item, "message"), select)
-    except (TypeError, ValueError, IndexError, AttributeError) as exc:
+        message = r_dollar(item, "message")
+        return _frame_record(_parse_item(message if isinstance(message, Mapping) else {}, select))
+    except Exception as exc:  # noqa: BLE001 - tryCatch(error = ) catches every error
         return {"DOI": doi, "error": str(exc)}
 
 
@@ -506,7 +632,7 @@ def crossref_doi(doi: Any, select: Sequence[str] = CROSSREF_DOI_SELECT) -> pd.Da
     valid = doi_valid_format(cleaned)
     valid_idx = [i for i, ok in enumerate(valid) if ok]
 
-    results: list[dict[str, Any]] = [{"DOI": v, "error": "malformed"} for v in values]
+    results: list[dict[str, Any] | None] = [{"DOI": v, "error": "malformed"} for v in values]
     if valid_idx:
         email = default_email()
         urls = [
@@ -525,30 +651,36 @@ def crossref_doi(doi: Any, select: Sequence[str] = CROSSREF_DOI_SELECT) -> pd.Da
     for i, v in enumerate(values):
         if is_na(v):
             results[i] = {"DOI": None}
-    return records_frame(results)
+    return records_frame([r for r in results if r is not None])
+
+
+def _is_cell_list(v: Any) -> bool:
+    return isinstance(v, list | tuple)
 
 
 def _ref_text(row: Mapping[str, Any]) -> str:
-    """The ``ref`` text crossref_query() records for a data-frame reference."""
-    nonblank = [
-        (k, v)
-        for k, v in row.items()
-        if isinstance(v, list | tuple | Mapping) or not (is_na(v) or v == "")
-    ]
+    """The ``ref`` text crossref_query() records for a data-frame reference.
+
+    ``ref[, nonblank] |> paste(collapse = "; \\n")`` (a literal backslash-n):
+    one non-blank column pastes its value, several paste
+    ``as.character()`` of the 1-row data frame (list cells deparsed).
+    """
+    nonblank = [v for v in row.values() if _is_cell_list(v) or not (is_na(v) or v == "")]
     if not nonblank:
         return ""
     if len(nonblank) == 1:
-        v = nonblank[0][1]
-        vals = unlist(v) if isinstance(v, list | tuple | Mapping) else [v]
-        return "; \\n".join("NA" if (s := as_character(x)) is None else s for x in vals)
-    parts = []
-    for _, v in nonblank:
-        if isinstance(v, list | tuple | Mapping):
-            parts.append(_deparse(list(v.values()) if isinstance(v, Mapping) else list(v)))
-        else:
-            s = as_character(v)
-            parts.append("NA" if s is None else s)
+        v = nonblank[0]
+        if _is_cell_list(v):
+            return _paste_chr(v[0]) if len(v) == 1 else _deparse_chr_vector(v)
+        return _paste_chr(v)
+    parts = [f"list({_deparse_chr_vector(v)})" if _is_cell_list(v) else _paste_chr(v) for v in nonblank]
     return "; \\n".join(parts)
+
+
+def _paste_chr(v: Any) -> str:
+    """``paste()`` of one value: ``as.character()``, with ``NA`` as ``"NA"``."""
+    s = None if is_na(v) else as_character(v)
+    return "NA" if s is None else s
 
 
 def _query_url(ref: Any, rows: int, email: str) -> str:
@@ -608,6 +740,12 @@ def crossref_query(
         if container is None:
             container = _df_dollar(ref, "booktitle")
         cols = {"title": title, "author": author, "container": container}
+        # data.frame(title = , author = , container = ): a missing (NULL) column
+        # next to rows fails
+        nrows = [0 if v is None else len(v) for v in cols.values()]
+        if any(n < max(nrows) for n in nrows):
+            unique = ", ".join(str(n) for n in dict.fromkeys(nrows))
+            raise ValueError(f"arguments imply differing number of rows: {unique}")
         cols = {k: v for k, v in cols.items() if v is not None}
         if "title" not in cols:
             return pd.DataFrame()
@@ -646,8 +784,10 @@ def crossref_query(
             parsed = _query_parse_records(
                 r_dollar(r_dollar(j, "message"), "items"), min_score, list(select)
             )
+            if not parsed:  # `x$ref <- r$ref` on a 0-row table
+                raise ValueError("replacement has 1 row, data has 0")
             records.extend({**p, "ref": base["ref"]} for p in parsed)
-        except (TypeError, ValueError, IndexError, AttributeError) as exc:
+        except Exception as exc:  # noqa: BLE001 - tryCatch(error = ) catches every error
             records.append({**base, "DOI": None, "error": str(exc)})
     return records_frame(records)
 
@@ -830,13 +970,23 @@ def _openalex_add_abstract(info: Any) -> Any:
     aii = r_dollar(info, "abstract_inverted_index")
     if aii is None:
         return info
-    pairs: list[tuple[Any, str]] = []
-    if isinstance(aii, Mapping):
-        for word, positions in aii.items():
-            pairs.extend((pos, str(word)) for pos in unlist(positions))
-    pairs.sort(key=lambda p: p[0])
+    values = list(aii.values()) if isinstance(aii, Mapping) else aii
+    if not isinstance(values, list):
+        values = [values]
+    # words <- rep(names(aii), sapply(aii, length)); order <- unname(unlist(aii))
+    words = (
+        [str(w) for w, pos in aii.items() for _ in range(_r_length(pos))]
+        if isinstance(aii, Mapping)
+        else []
+    )
+    positions = unlist(values)
+    if not positions:
+        raise ValueError("argument 1 is not a vector")  # order(NULL)
+    idx = sorted(range(len(positions)), key=lambda i: positions[i])  # order(): stable
+    # words[order(order)]: NULL words stay NULL, an index past the end is NA
+    picked = [words[i] if i < len(words) else "NA" for i in idx] if words else []
     out = dict(info)
-    out["abstract"] = " ".join(w for _, w in pairs)
+    out["abstract"] = " ".join(picked)
     return out
 
 
@@ -898,7 +1048,7 @@ def openalex_doi(doi: Any, select: Sequence[str] | None = None) -> Any:
                 # `return(...)` inside tryCatch() leaves openalex_doi()
                 return {"DOI": values[i], "error": "not found"}
             value = _openalex_add_abstract(resp_body_json(resp))
-        except (TypeError, ValueError):
+        except Exception:  # noqa: BLE001 - tryCatch(error = ) catches every error
             value = {"DOI": values[i], "error": "not found"}
         r_list_set(oa, i + 1, value)
     return oa
@@ -940,7 +1090,7 @@ def _openalex_request(url: str) -> Any:
         return "offline"
     try:
         return resp_body_json(resp)
-    except (TypeError, ValueError):
+    except Exception:  # noqa: BLE001 - tryCatch(error = ) catches every error
         return "error"
 
 

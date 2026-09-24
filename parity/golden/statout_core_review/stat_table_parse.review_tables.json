@@ -1,0 +1,552 @@
+{
+  "id": "stat_table_parse.review_tables",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": null,
+    "v": [
+      {
+        "t": "list",
+        "names": [
+          "title",
+          "data"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Descriptives"
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 5,
+            "names": [
+              "V1",
+              "N",
+              "Mean",
+              "SD"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "x",
+                  null,
+                  null,
+                  "Note.",
+                  "y"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "10",
+                  null,
+                  null,
+                  null,
+                  "12"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "1.5",
+                  null,
+                  null,
+                  null,
+                  null
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "0.2",
+                  null,
+                  null,
+                  null,
+                  null
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "title",
+          "data"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "a",
+              "b",
+              "c",
+              "d",
+              "e",
+              "f",
+              "g",
+              "h"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "1"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "2"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "3"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "5"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "6"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "7"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "8"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "10"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "title",
+          "data"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Independent\n   Samples   T-Test"
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 2,
+            "names": [
+              " ",
+              "t value",
+              "p"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  " ",
+                  "row 2"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "2.1",
+                  "  "
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  ".04",
+                  "< .001"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "title",
+          "data"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 4,
+            "names": [
+              "Effect",
+              "F",
+              "p"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "A",
+                  "A p-value",
+                  "x",
+                  "n = 12"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "4.5",
+                  "A p-value",
+                  "x",
+                  "n = 12"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  ".03",
+                  "A p-value",
+                  "",
+                  "n = 12"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "title",
+          "data"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "t",
+              "df",
+              "t.1",
+              "V4",
+              "df.1"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "1"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "2"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "3"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "q"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "4"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "null"
+      },
+      {
+        "t": "list",
+        "names": [
+          "title",
+          "data"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "th",
+              "only"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "6"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "7"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "title",
+          "data"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "in",
+              "ner"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "8"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "9"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "title",
+          "data"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "in",
+              "ner"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "8"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "9"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "title",
+          "data"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "x",
+              "y"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "1"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "2"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "title",
+          "data"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "k1",
+              "k2"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "1"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "2"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "null"
+      },
+      {
+        "t": "list",
+        "names": [
+          "title",
+          "data"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "value",
+              "p"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "12"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "<.001a"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "null"
+      },
+      {
+        "t": "null"
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

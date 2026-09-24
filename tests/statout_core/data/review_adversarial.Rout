@@ -1,0 +1,351 @@
+
+> set.seed(1)
+
+> d <- data.frame(y = c(rnorm(10), rnorm(10, 1)), g = rep(c("a", 
++     "b"), each = 10), h = rep(c("u", "v"), 10), id = rep(1:10, 
++     2))
+
+> m1 <- lm(y ~ g, data = d)
+
+> m2 <- lm(y ~ g * h, data = d)
+
+> summary(m2)
+
+Call:
+lm(formula = y ~ g * h, data = d)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-2.1483 -0.5909  0.3003  0.5680  1.3170 
+
+Coefficients:
+            Estimate Std. Error t value Pr(>|t|)  
+(Intercept) -0.01387    0.42678  -0.033   0.9745  
+gb           1.57797    0.60356   2.614   0.0188 *
+hv           0.29215    0.60356   0.484   0.6349  
+gb:hv       -0.92266    0.85356  -1.081   0.2957  
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 0.9543 on 16 degrees of freedom
+Multiple R-squared:  0.3381,	Adjusted R-squared:  0.2139 
+F-statistic: 2.724 on 3 and 16 DF,  p-value: 0.07872
+
+
+> anova(m1, m2)
+Analysis of Variance Table
+
+Model 1: y ~ g
+Model 2: y ~ g * h
+  Res.Df    RSS Df Sum of Sq      F Pr(>F)
+1     18 15.779                           
+2     16 14.571  2    1.2072 0.6628  0.529
+
+> confint(m1)
+                 2.5 %    97.5 %
+(Intercept) -0.4898221 0.7542277
+gb           0.2369662 1.9963182
+
+> fit <- aov(y ~ g + h, data = d)
+
+> TukeyHSD(fit)
+  Tukey multiple comparisons of means
+    95% family-wise confidence level
+
+Fit: aov(formula = y ~ g + h, data = d)
+
+$g
+        diff      lwr      upr     p adj
+b-a 1.116642 0.211763 2.021521 0.0185429
+
+$h
+          diff       lwr       upr     p adj
+v-u -0.1691799 -1.074059 0.7356993 0.6981463
+
+
+> pairwise.t.test(d$y, d$g)
+
+	Pairwise comparisons using t tests with pooled SD 
+
+data:  d$y and d$g 
+
+  a    
+b 0.016
+
+P value adjustment method: holm 
+
+> summary(d)
+       y                 g                  h                   id      
+ Min.   :-1.21470   Length:20          Length:20          Min.   : 1.0  
+ 1st Qu.: 0.06139   Class :character   Class :character   1st Qu.: 3.0  
+ Median : 0.65705   Mode  :character   Mode  :character   Median : 5.5  
+ Mean   : 0.69052                                         Mean   : 5.5  
+ 3rd Qu.: 1.59425                                         3rd Qu.: 8.0  
+ Max.   : 2.51178                                         Max.   :10.0  
+
+> quantile(d$y)
+        0%        25%        50%        75%       100% 
+-1.2146999  0.0613854  0.6570530  1.5942462  2.5117812 
+
+> cor(mtcars[, 1:4])
+            mpg        cyl       disp         hp
+mpg   1.0000000 -0.8521620 -0.8475514 -0.7761684
+cyl  -0.8521620  1.0000000  0.9020329  0.8324475
+disp -0.8475514  0.9020329  1.0000000  0.7909486
+hp   -0.7761684  0.8324475  0.7909486  1.0000000
+
+> table(mtcars$cyl, mtcars$am)
+   
+     0  1
+  4  3  8
+  6  4  3
+  8 12  2
+
+> c(a = 1.5, b = -2, `c d` = 3e-10)
+       a        b      c d 
+ 1.5e+00 -2.0e+00  3.0e-10 
+
+> m1
+
+Call:
+lm(formula = y ~ g, data = d)
+
+Coefficients:
+(Intercept)           gb  
+     0.1322       1.1166  
+
+
+> mcnemar.test(matrix(c(794, 86, 150, 570), nrow = 2))
+
+	McNemar's Chi-squared test with continuity correction
+
+data:  matrix(c(794, 86, 150, 570), nrow = 2)
+McNemar's chi-squared = 16.818, df = 1, p-value = 4.115e-05
+
+
+> friedman.test(matrix(c(1, 2, 3, 2, 3, 1, 3, 1, 2, 
++     1, 3, 2), nrow = 4, byrow = TRUE))
+
+	Friedman rank sum test
+
+data:  matrix(c(1, 2, 3, 2, 3, 1, 3, 1, 2, 1, 3, 2), nrow = 4, byrow = TRUE)
+Friedman chi-squared = 0.5, df = 2, p-value = 0.7788
+
+
+> ks.test(d$y, "pnorm")
+
+	Exact one-sample Kolmogorov-Smirnov test
+
+data:  d$y
+D = 0.32911, p-value = 0.01975
+alternative hypothesis: two-sided
+
+
+> oneway.test(y ~ g, data = d)
+
+	One-way analysis of means (not assuming equal variances)
+
+data:  y and g
+F = 7.1122, num df = 1.000, denom df = 16.469, p-value = 0.01658
+
+
+> fligner.test(y ~ g, data = d)
+
+	Fligner-Killeen test of homogeneity of variances
+
+data:  y by g
+Fligner-Killeen:med chi-squared = 0.09843, df = 1, p-value = 0.7537
+
+
+> ansari.test(y ~ g, data = d, exact = FALSE)
+
+	Ansari-Bradley test
+
+data:  y by g
+AB = 61, p-value = 0.3625
+alternative hypothesis: true ratio of scales is not equal to 1
+
+
+> mood.test(y ~ g, data = d)
+
+	Mood two-sample test of scale
+
+data:  y by g
+Z = -0.97101, p-value = 0.3315
+alternative hypothesis: two.sided
+
+
+> poisson.test(137, 24.19893)
+
+	Exact Poisson test
+
+data:  137 time base: 24.19893
+number of events = 137, time base = 24.199, p-value < 2.2e-16
+alternative hypothesis: true event rate is not equal to 1
+95 percent confidence interval:
+ 4.753125 6.692709
+sample estimates:
+event rate 
+  5.661407 
+
+
+> power.t.test(n = 20, delta = 1)
+
+     Two-sample t test power calculation 
+
+              n = 20
+          delta = 1
+             sd = 1
+      sig.level = 0.05
+          power = 0.8689528
+    alternative = two.sided
+
+NOTE: n is number in *each* group
+
+
+> g2 <- glm(am ~ wt + hp, data = mtcars, family = binomial)
+
+> anova(g2, test = "Chisq")
+Analysis of Deviance Table
+
+Model: binomial, link: logit
+
+Response: am
+
+Terms added sequentially (first to last)
+
+
+     Df Deviance Resid. Df Resid. Dev  Pr(>Chi)    
+NULL                    31     43.230              
+wt    1   24.054        30     19.176 9.369e-07 ***
+hp    1    9.117        29     10.059  0.002532 ** 
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+> tibble::tibble(x = 1:3, y = c(-1.5, 2, 3e-10), z = c("p", 
++     "q", "r"))
+# A tibble: 3 × 3
+      x             y z    
+  <int>         <dbl> <chr>
+1     1 -1.5          p    
+2     2  2            q    
+3     3  0.0000000003 r    
+
+> dplyr::summarise(dplyr::group_by(d, g, h), m = mean(y), 
++     n = dplyr::n(), .groups = "drop")
+# A tibble: 4 × 4
+  g     h           m     n
+  <chr> <chr>   <dbl> <int>
+1 a     u     -0.0139     5
+2 a     v      0.278      5
+3 b     u      1.56       5
+4 b     v      0.934      5
+
+> data.frame(Effect = c("cond", "time"), df = c("2,   560", 
++     "1, 28"), F = c("41.86", "3.2"), ges = c(".130", ".01"), 
++     p.value = c("<.001", ".08"))
+  Effect       df     F  ges p.value
+1   cond 2,   560 41.86 .130   <.001
+2   time    1, 28   3.2  .01     .08
+
+> cat("t = 2.10, df = 10, p-value = 0.03\n")
+t = 2.10, df = 10, p-value = 0.03
+
+> cat("+ 5 extra rows were dropped\n")
++ 5 extra rows were dropped
+
+> cat("\033[36mCohen's d |        95% CI\033[39m\n-------------------------\n0.45      | [ 0.10, 0.80]\n\n\033[36m- Estimated using pooled SD.\033[39m")
+[36mCohen's d |        95% CI[39m
+-------------------------
+0.45      | [ 0.10, 0.80]
+
+[36m- Estimated using pooled SD.[39m
+> x <- 1
+
+> cat("Cohen's d\n\nd estimate: -0.5031 (medium)\n95 percent confidence interval:\n     lower      upper \n-1.4172   0.4110 \n")
+Cohen's d
+
+d estimate: -0.5031 (medium)
+95 percent confidence interval:
+     lower      upper 
+-1.4172   0.4110 
+
+> cat("a\tb\tc\n1\t2.5\t3\nx\t4\t5\n")
+a	b	c
+1	2.5	3
+x	4	5
+
+> matrix(c(1.5, NA, -2, 3), 2, dimnames = list(c("r1", 
++     "r2"), c("F value", "Pr(>F)")))
+   F value Pr(>F)
+r1     1.5     -2
+r2      NA      3
+
+> data.frame(term = c("é", "−x"), estimate = c(0.5, 
++     -1.2), `p value` = c("< 2e-16", "0.0331"), check.names = FALSE)
+  term estimate p value
+1    é      0.5 < 2e-16
+2   −x     -1.2  0.0331
+
+> res <- t.test(y ~ g, data = d)
+
+> res
+
+	Welch Two Sample t-test
+
+data:  y by g
+t = -2.6669, df = 16.469, p-value = 0.01658
+alternative hypothesis: true difference in means between group a and group b is not equal to 0
+95 percent confidence interval:
+ -2.0022169 -0.2310675
+sample estimates:
+mean in group a mean in group b 
+      0.1322028       1.2488450 
+
+
+> for (k in 1:2) print(cor.test(d$y + k, d$id))
+
+	Pearson's product-moment correlation
+
+data:  d$y + k and d$id
+t = 0.60589, df = 18, p-value = 0.5522
+alternative hypothesis: true correlation is not equal to 0
+95 percent confidence interval:
+ -0.3212434  0.5495171
+sample estimates:
+      cor 
+0.1413748 
+
+
+	Pearson's product-moment correlation
+
+data:  d$y + k and d$id
+t = 0.60589, df = 18, p-value = 0.5522
+alternative hypothesis: true correlation is not equal to 0
+95 percent confidence interval:
+ -0.3212434  0.5495171
+sample estimates:
+      cor 
+0.1413748 
+
+
+> chisq.test(table(mtcars$cyl, mtcars$gear))
+
+	Pearson's Chi-squared test
+
+data:  table(mtcars$cyl, mtcars$gear)
+X-squared = 18.036, df = 4, p-value = 0.001214
+
+
+> print(summary(aov(y ~ g + Error(factor(id)), data = d)))
+
+Error: factor(id)
+          Df Sum Sq Mean Sq F value Pr(>F)
+Residuals  9  5.059  0.5621               
+
+Error: Within
+          Df Sum Sq Mean Sq F value Pr(>F)  
+g          1  6.234   6.234   5.234 0.0479 *
+Residuals  9 10.720   1.191                 
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1

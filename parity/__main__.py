@@ -124,7 +124,17 @@ def cmd_list(ns: argparse.Namespace) -> int:
     return 0
 
 
+def _hermetic_env() -> None:
+    """No user/project config and a throwaway data dir, unless the caller set them."""
+    os.environ.setdefault("PYTACHECK_CONFIG", "none")
+    if not os.environ.get("PYTACHECK_DATA_DIR"):
+        import tempfile
+
+        os.environ["PYTACHECK_DATA_DIR"] = tempfile.mkdtemp(prefix="pytacheck-parity-data-")
+
+
 def main(argv: list[str] | None = None) -> int:
+    _hermetic_env()
     parser = argparse.ArgumentParser(
         prog="python -m parity",
         description=__doc__,

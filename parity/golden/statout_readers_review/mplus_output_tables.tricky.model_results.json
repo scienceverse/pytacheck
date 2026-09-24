@@ -1,0 +1,224 @@
+{
+  "id": "mplus_output_tables.tricky.model_results",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "tables",
+      "consumed",
+      "labelvalue"
+    ],
+    "v": [
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "df",
+            "nrow": 7,
+            "names": [
+              "level",
+              "group",
+              "V1",
+              "V2",
+              "V3",
+              "Estimate",
+              "S.E.",
+              "Est./S.E.",
+              "Two-Tailed P-Value"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "",
+                  "",
+                  "",
+                  "",
+                  "",
+                  "",
+                  "Within Level"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "",
+                  "",
+                  "",
+                  "",
+                  "",
+                  "",
+                  "Residual Variances"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Latent",
+                  "F1",
+                  "Y1",
+                  "Y2",
+                  "Group",
+                  "Y3",
+                  "Y1"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Class",
+                  "BY",
+                  "",
+                  "",
+                  "G1",
+                  "",
+                  ""
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "1",
+                  "",
+                  "",
+                  "",
+                  "",
+                  "",
+                  ""
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "",
+                  "",
+                  "1.000",
+                  "0.900",
+                  "",
+                  "0.500",
+                  "0.300"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "",
+                  "",
+                  "0.000",
+                  "0.050",
+                  "",
+                  "0.010",
+                  "0.020"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "",
+                  "",
+                  "999.000",
+                  "18.000",
+                  "",
+                  "50.000",
+                  "15.000"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "",
+                  "",
+                  "999.000",
+                  "0.000",
+                  "",
+                  "0.000",
+                  "0.000"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "V1",
+              "Estimate",
+              "S.E.",
+              "Est./S.E.",
+              "P-Value"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Y4"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "0.100"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "0.010"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "10.000"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "0.000"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          false,
+          false,
+          true,
+          true,
+          false
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": []
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

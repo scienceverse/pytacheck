@@ -14,6 +14,7 @@ R's ``NA``).
 
 from __future__ import annotations
 
+import math
 from collections.abc import Iterable, Mapping, Sequence
 from typing import Any
 
@@ -85,7 +86,7 @@ def _one_row_frame(pairs: Sequence[tuple[str, str]]) -> pd.DataFrame:
 
 _R_NUMBER = (
     "^[ \t\n\x0b\x0c\r]*([+-]?(?:(?:[0-9]+\\.?[0-9]*|\\.[0-9]+)(?:[eE][+-]?[0-9]+)?"
-    "|0[xX][0-9a-fA-F]+(?:\\.[0-9a-fA-F]*)?(?:[pP][+-]?[0-9]+)?"
+    "|0[xX](?:[0-9a-fA-F]+\\.?[0-9a-fA-F]*|\\.[0-9a-fA-F]*|(?=[pP]))(?:[pP][+-]?[0-9]+)?"
     "|(?i:infinity|inf|nan)))[ \t\n\x0b\x0c\r]*$"
 )
 
@@ -109,12 +110,100 @@ def _r_as_numeric(x: Any) -> float | None:
     if m is None:
         return None
     body = m.group(1)
-    low = body.lower().lstrip("+-")
-    if low.startswith("0x"):
-        val = float.fromhex(body)
+    low = body.lower()
+    sign = -1.0 if low.startswith("-") else 1.0
+    low = low.lstrip("+-")
+    if not low.startswith("0x"):
+        return float(body)
+    # R_strtod's hexadecimal branch: the mantissa may be empty ("0x.", "0xp1").
+    mant, _, exp = low[2:].partition("p")
+    whole, _, frac = mant.partition(".")
+    val = float(int(whole or "0", 16))
+    if frac:
+        val += int(frac, 16) / 16.0 ** len(frac)
+    try:
+        return sign * val * 2.0 ** int(exp or "0")
+    except OverflowError:
+        return sign * math.inf
+
+
+class _RError(ValueError):
+    """An error R would raise (e.g. ``$`` on an atomic vector)."""
+
+
+class _RNamedList(dict):  # type: ignore[type-arg]
+    """A named R list parsed from JSON (``jsonlite::fromJSON(simplifyVector = FALSE)``).
+
+    Unlike a Python ``dict``, an R list keeps *duplicate* names: ``pairs``
+    holds every ``(name, value)`` in order, while the mapping itself holds the
+    first value of each name (what ``x$name`` and ``x[["name"]]`` return).
+    """
+
+    __slots__ = ("pairs",)
+
+    def __init__(self, pairs: Sequence[tuple[str, Any]]) -> None:
+        super().__init__()
+        for k, v in pairs:
+            if k not in self:
+                dict.__setitem__(self, k, v)
+        self.pairs = list(pairs)
+
+
+def _r_names(x: Any) -> list[str]:
+    """``names(x)`` of a named list (``[]`` for ``NULL``/unnamed values)."""
+    if isinstance(x, _RNamedList):
+        return [k for k, _ in x.pairs]
+    if isinstance(x, Mapping):
+        return [str(k) for k in x]
+    return []
+
+
+def _r_values(x: Any) -> list[Any]:
+    """The elements of an R list (``for (e in x)``), duplicates included."""
+    if x is None:
+        return []
+    if isinstance(x, _RNamedList):
+        return [v for _, v in x.pairs]
+    if isinstance(x, Mapping):
+        return list(x.values())
+    if isinstance(x, list | tuple):
+        return list(x)
+    return [x]
+
+
+def _r_dollar_found(x: Any, key: str) -> tuple[bool, Any]:
+    """R ``x$key`` on a list: ``(found, value)``.
+
+    The first *exact* name wins; otherwise a *unique* partial (prefix) match
+    is used, as R's ``$`` does for lists (``list(line_seq = 2)$line`` is 2).
+    ``NULL`` and unnamed lists give ``(False, None)``; an atomic value raises
+    R's error.
+    """
+    if x is None or isinstance(x, list | tuple):
+        return False, None
+    if not isinstance(x, Mapping):
+        raise _RError("$ operator is invalid for atomic vectors")
+    if isinstance(x, _RNamedList):
+        items = x.pairs
     else:
-        val = float(body)
-    return val
+        if key in x:
+            return True, x[key]
+        items = list(x.items())
+    partial: list[int] = []
+    for i, (nm, _) in enumerate(items):
+        nm = str(nm)
+        if nm == key:
+            return True, items[i][1]
+        if nm.startswith(key):
+            partial.append(i)
+    if len(partial) == 1:
+        return True, items[partial[0]][1]
+    return False, None
+
+
+def _r_dollar(x: Any, key: str) -> Any:
+    """R ``x$key`` (with partial matching); ``None`` for ``NULL``."""
+    return _r_dollar_found(x, key)[1]
 
 
 def _as_lines(x: Any) -> list[str | None]:

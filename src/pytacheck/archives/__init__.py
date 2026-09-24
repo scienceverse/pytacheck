@@ -8,8 +8,9 @@ paper's URL table (and, for some hosts, bare mentions in the text) and a
 
 Public names are resolved lazily so importing this package stays cheap.
 Shared private helpers used by every archive port live here:
-:func:`_message` (metacheck's ``message()``) and :func:`_tick` (a progress
-bar's ``pb$tick(0, list(what = ...))``).
+:func:`_message` (metacheck's ``message()``), :func:`_tick` (a progress
+bar's ``pb$tick(0, list(what = ...))``) and :func:`_spinner` (the
+``if (is.null(pb)) pb <- pb(NA, "(:spin) :what")`` idiom).
 """
 
 from __future__ import annotations
@@ -17,6 +18,7 @@ from __future__ import annotations
 import contextlib
 import importlib
 import sys
+from collections.abc import Iterator
 from typing import Any
 
 # public name -> defining module
@@ -73,3 +75,29 @@ def _tick(pb: Any, what: str) -> None:
     if pb is not None and hasattr(pb, "tick"):
         with contextlib.suppress(Exception):  # a progress display must never break a run
             pb.tick(0, {"what": what})
+
+
+@contextlib.contextmanager
+def _spinner(pb: Any, what: str | None = None) -> Iterator[Any]:
+    """Use *pb*, or (R: ``if (is.null(pb))``) a new ``(:spin) :what`` spinner.
+
+    A spinner made here shows *what* first and is terminated on exit
+    (R: ``on.exit(pb$terminate())``); a bar passed in is left running.
+    """
+    if pb is not None:
+        yield pb
+        return
+    try:
+        from pytacheck.utils import pb as make_pb
+
+        bar = make_pb(None, "(:spin) :what")
+    except Exception:  # a progress display must never break a run
+        yield None
+        return
+    try:
+        if what is not None:
+            _tick(bar, what)
+        yield bar
+    finally:
+        with contextlib.suppress(Exception):
+            bar.terminate()

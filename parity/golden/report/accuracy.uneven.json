@@ -1,0 +1,78 @@
+{
+  "id": "accuracy.uneven",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "hits",
+      "misses",
+      "false_alarms",
+      "correct_rejections",
+      "accuracy",
+      "sensitivity",
+      "specificity",
+      "d_prime",
+      "beta"
+    ],
+    "v": [
+      {
+        "t": "int",
+        "v": [
+          4
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          2
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          2
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          3
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0.636363636363636
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0.666666666666667
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0.4
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0.684074402431257
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0.941133173674424
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -1,0 +1,115 @@
+{
+  "id": "validate.marginal.frame",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 3,
+    "names": [
+      "paper_id",
+      "text",
+      "header.gt",
+      "coded",
+      "text_id",
+      "section_id",
+      "paragraph_id",
+      "formatted",
+      "header.mod",
+      "section_type",
+      "header.valid"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "a",
+          "b",
+          "c"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "This was marginally significant (p = .06).",
+          "Nothing here.",
+          "A trend towards significance."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Test",
+          "Test",
+          "Other"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true,
+          false,
+          true
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          1,
+          null,
+          1
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0,
+          null,
+          0
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0,
+          null,
+          0
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "This was marginally significant (p = .06).",
+          null,
+          "A trend towards significance."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Test",
+          null,
+          "Test"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "unknown",
+          null,
+          "unknown"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true,
+          null,
+          false
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

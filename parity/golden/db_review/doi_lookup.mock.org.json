@@ -1,0 +1,107 @@
+{
+  "id": "doi_lookup.mock.org",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 1,
+    "names": [
+      "doi",
+      "type",
+      "title",
+      "container",
+      "year",
+      "author",
+      "volume",
+      "issue",
+      "first_page",
+      "last_page",
+      "editor",
+      "publisher",
+      "url"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "10.9999/org"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "article-journal"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Org paper"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "J1; J2"
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          2020
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "character(0); Smith, Ann"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "7"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "2"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "123"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Ed; It; Tor"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Pub"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://doi.org/10.9999/org"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -1,0 +1,32 @@
+{
+  "id": ".osf_parse_response.synthetic_single.unknown_type",
+  "ok": true,
+  "error": null,
+  "warnings": [
+    "zz has unknown type: wikis"
+  ],
+  "value": {
+    "t": "df",
+    "nrow": 1,
+    "names": [
+      "osf_id",
+      "osf_type"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "zz"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "unknown"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -1,0 +1,13 @@
+{
+  "id": "spv_decode_light_table.t3",
+  "ok": true,
+  "error": null,
+  "warnings": [
+    "spv: could not decode light-binary table: embedded nul in string: 'x\\0y'"
+  ],
+  "value": {
+    "t": "null"
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

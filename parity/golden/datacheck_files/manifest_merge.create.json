@@ -1,0 +1,37 @@
+{
+  "id": "manifest_merge.create",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "{",
+      "  \"code\": {",
+      "    \"packages\": [",
+      "      \"dplyr\",",
+      "      \"tidyr\"",
+      "    ]",
+      "  },",
+      "  \"files\": [",
+      "    {",
+      "      \"file_name\": \"a.csv\",",
+      "      \"size\": 12.5,",
+      "      \"n\": 3,",
+      "      \"ok\": true,",
+      "      \"miss\": {},",
+      "      \"nested\": {",
+      "        \"a\": {},",
+      "        \"b\": []",
+      "      }",
+      "    }",
+      "  ],",
+      "  \"extra\": 0,",
+      "  \"big\": 500000000,",
+      "  \"tiny\": 1e-07",
+      "}"
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

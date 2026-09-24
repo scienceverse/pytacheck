@@ -1,0 +1,9 @@
+{
+  "id": "report.error.paper",
+  "ok": false,
+  "error": "The paper argument must be a paper object (e.g., created with `read()`)",
+  "warnings": [],
+  "value": null,
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

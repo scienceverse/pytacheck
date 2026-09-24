@@ -1,0 +1,28 @@
+{
+  "id": "data_group_from_path.mixed",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "ex1",
+      "ex2a",
+      "ex1",
+      "ex3",
+      null,
+      null,
+      "pilot1",
+      "pilot2",
+      "ex4b",
+      "ex12",
+      "ex5",
+      null,
+      null,
+      null,
+      "ex7"
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

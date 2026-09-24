@@ -1,0 +1,1 @@
+{"schema": "s", "schema_version": "1", "paper_id": "p", "source_file": "f", "source_format": "R", "analyses": [{"analysis": "a", "results": [{"result_id": "r1", "values": {"t": {"x": 1}, "t": {"value": 2}, "p": {"value": 1}, "p": {"x": 2}}}]}], "analyses": []}

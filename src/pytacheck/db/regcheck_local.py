@@ -245,11 +245,14 @@ def regcheck_start_local(
     :func:`~pytacheck.db.regcheck.regcheck_compare` needs no configuration.
     Returns the server process; stop it with :func:`regcheck_stop_local`.
     """
+    from pytacheck.utils import match_arg
+
     choices = ("docker", "python")
-    if not isinstance(method, str):
+    if not isinstance(method, str) and list(method) != list(choices) and len(list(method)) != 1:
+        raise ValueError("'arg' must be of length 1")
+    if not isinstance(method, str) and len(list(method)) == 1:
         method = next(iter(method))
-    if method not in choices:
-        raise ValueError("'arg' should be one of “docker”, “python”")
+    method = match_arg(method, choices)  # partial matching, like match.arg()
 
     app_dir = _regcheck_app_dir()
     os.environ["REGCHECK_API_TOKEN"] = _DEFAULT_TOKEN

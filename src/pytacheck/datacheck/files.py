@@ -673,8 +673,9 @@ def manifest_merge(path: str | os.PathLike[str], patch: dict[str, Any]) -> str:
     """Merge top-level keys into a metacheck manifest, preserving the others.
 
     Port of ``R/data_check_helpers.R::manifest_merge()``: reads any existing
-    ``*.manifest.json``, replaces each key in *patch* wholesale (a ``None`` or
-    :data:`R_NULL` value removes the key) and writes it back as jsonlite does.
+    ``*.manifest.json``, replaces each key in *patch* wholesale (an
+    :data:`R_NULL` value -- R's ``NULL`` -- removes the key; ``None`` is R's
+    ``NA`` and is written as ``null``) and writes it back as jsonlite does.
     As in R, JSON ``null`` values read back from the existing file are written
     as ``{}``.
     """
@@ -691,7 +692,7 @@ def manifest_merge(path: str | os.PathLike[str], patch: dict[str, Any]) -> str:
     if isinstance(existing, list):  # a top-level JSON array is not a manifest
         existing = {}
     for name, value in patch.items():
-        if value is None or isinstance(value, RNull):
+        if isinstance(value, RNull):
             existing.pop(name, None)
         else:
             existing[name] = value

@@ -73,6 +73,10 @@ def _get(rec: Any, *path: str) -> Any:
     return cur
 
 
+def _is_scalar(x: Any) -> bool:
+    return isinstance(x, str | int | float | bool)
+
+
 def _scalar(x: Any) -> Any:
     if isinstance(x, list | tuple):
         return x[0] if len(x) == 1 else (x or None)
@@ -87,21 +91,84 @@ def _records(data: Any) -> list[dict[str, Any]]:
     return [r for r in data if isinstance(r, dict)]
 
 
-class _Cols:
-    """Column extraction with ``%||%`` evaluated over a whole listing."""
+def _dollar_key(keys: Sequence[str], name: str) -> str | None:
+    """The element R's ``x$name`` selects: an exact name, else a unique prefix match."""
+    if name in keys:
+        return name
+    hits = [k for k in keys if k.startswith(name)]
+    return hits[0] if len(hits) == 1 else None
 
-    def __init__(self, records: list[dict[str, Any]], context: list[dict[str, Any]] | None = None):
+
+class _Cols:
+    """Column extraction with ``%||%`` evaluated as R sees the data.
+
+    ``$`` partially matches names in R (``x$root`` finds ``root_folder`` when
+    there is no ``root``), for named lists and data frames alike. A single
+    resource is a named list: ``x$a$b`` is ``NULL`` when any step is missing
+    or JSON ``null``. A listing is a jsonlite data frame: a column exists
+    when *any* record has the key (even with a ``null`` value, which becomes
+    ``NA``), and ``$`` into a nested column whose values are all
+    ``null``/scalars (an atomic vector, not a data frame) is an R error.
+    """
+
+    def __init__(
+        self,
+        records: list[dict[str, Any]],
+        context: list[dict[str, Any]] | None = None,
+        listing: bool = True,
+    ):
         self.records = records
         self.context = records if context is None else context
+        self.listing = listing
+
+    def resolve(self, path: Sequence[str]) -> tuple[str, ...] | None:
+        """The concrete keys ``x$p1$p2...`` selects, or ``None`` when it is ``NULL``."""
+        keys: list[str] = []
+        if not self.listing:
+            cur: Any = self.context[0] if self.context else None
+            for name in path:
+                if cur is None or isinstance(cur, list):
+                    return None
+                if not isinstance(cur, dict):
+                    raise TypeError("$ operator is invalid for atomic vectors")
+                key = _dollar_key(list(cur), name)
+                if key is None:
+                    return None
+                keys.append(key)
+                cur = cur[key]
+            return None if cur is None else tuple(keys)
+        level: list[Any] = list(self.context)
+        for depth, name in enumerate(path):
+            if depth > 0 and not any(isinstance(v, dict) for v in level):
+                # `$name` on a column that is not a data frame
+                if all(v is None or _is_scalar(v) for v in level):
+                    raise TypeError("$ operator is invalid for atomic vectors")
+                return None  # a list column: `$` gives NULL
+            parents = [v for v in level if isinstance(v, dict)]
+            union = list(dict.fromkeys(k for v in parents for k in v))
+            key = _dollar_key(union, name)
+            if key is None:
+                return None
+            keys.append(key)
+            level = [v.get(key) for v in parents]
+        return tuple(keys)
 
     def present(self, path: Sequence[str]) -> bool:
-        return any(_get(r, *path) is not None for r in self.context)
+        return self.resolve(path) is not None
+
+    def values(self, path: Sequence[str]) -> list[Any] | None:
+        """``x$path`` for every record (``None`` where missing), or ``None`` if ``NULL``."""
+        keys = self.resolve(path)
+        if keys is None:
+            return None
+        return [_get(r, *keys) for r in self.records]
 
     def first(self, *paths: Sequence[str], default: Any = None, drop: bool = False) -> Any:
         """``x$p1 %||% x$p2 %||% default``; with *drop*, ``None`` when all are absent."""
         for path in paths:
-            if self.present(path):
-                return [_scalar(_get(r, *path)) for r in self.records]
+            vals = self.values(path)
+            if vals is not None:
+                return [_scalar(v) for v in vals]
         if drop:
             return None
         return [default] * len(self.records)
@@ -252,6 +319,14 @@ def _osf_info(osf_id: Any, pb: Any = None, cache: bool = False) -> pd.DataFrame:
     GUIDs first, then file IDs, then invalid inputs (``osf_type = "invalid"``).
     With *cache*, per-ID results are reused from the on-disk listing cache.
     """
+    from pytacheck.archives import _spinner
+
+    with _spinner(pb) as bar:
+        return _osf_info_ids(osf_id, bar, cache)
+
+
+def _osf_info_ids(osf_id: Any, pb: Any, cache: bool) -> pd.DataFrame:
+    """The body of :func:`_osf_info` (R: after ``pb`` is set up)."""
     from pytacheck import http
     from pytacheck.archives.info_cache import (
         _repo_info_cache_get,
@@ -304,7 +379,11 @@ def _osf_info(osf_id: Any, pb: Any = None, cache: bool = False) -> pd.DataFrame:
 
     info_table = bind_rows(results)
     if len(info_table) != len(all_ids):
-        raise ValueError(f"replacement has {len(all_ids)} rows, data has {len(info_table)}")
+        # R: `info_table$osf_id <- all_ids`
+        n = len(all_ids)
+        raise ValueError(
+            f"replacement has {n} row{'' if n == 1 else 's'}, data has {len(info_table)}"
+        )
     info_table = info_table.copy()
     info_table["osf_id"] = pd.Series(all_ids, dtype="string")
 
@@ -381,10 +460,23 @@ def _osf_parse_response(
         "registrations": _osf_reg_data,
         "users": _osf_user_data,
     }
+    # R: lapply(seq_along(all_data$id), ...) -- no `id` at all means no rows
+    if not any(r.get("id") is not None if single else "id" in r for r in records):
+        return pd.DataFrame()
+    type_column = single or any("type" in r for r in records)
+
     frames: list[pd.DataFrame] = []
     i = 0
     while i < len(records):
         otype = records[i].get("type")
+        if otype is None:
+            # R: `if (osf_type == "nodes")` with NULL (no type) or NA (a listing
+            # where other records have one)
+            raise TypeError(
+                "missing value where TRUE/FALSE needed"
+                if type_column and not single
+                else "argument is of length zero"
+            )
         j = i + 1
         while j < len(records) and records[j].get("type") == otype:
             j += 1
@@ -416,7 +508,7 @@ def _osf_node_data(data: Any, _context: list[dict[str, Any]] | None = None) -> p
     recs = _records(data)
     if not recs:
         return pd.DataFrame()
-    c = _Cols(recs, _context)
+    c = _Cols(recs, _context, listing=not isinstance(data, dict))
     return _frame(
         {
             "osf_id": c.first(("id",)),
@@ -452,7 +544,7 @@ def _osf_file_data(
     recs = _records(data)
     if not recs:
         return pd.DataFrame()
-    c = _Cols(recs, _context)
+    c = _Cols(recs, _context, listing=not isinstance(data, dict))
     n = len(recs)
     cols: dict[str, Any] = {
         "osf_id": c.first(("id",)),
@@ -497,8 +589,8 @@ def _osf_file_data(
             if name[i] is None:
                 name[i] = provider[i]
         cols["name"] = name
-        if c.present(("relationships", "root_folder", "data", "id")):
-            root_ids = [_get(r, "relationships", "root_folder", "data", "id") for r in recs]
+        root_ids = c.values(("relationships", "root_folder", "data", "id"))
+        if root_ids is not None:
             osf_ids = list(cols["osf_id"])
             for i in folders:
                 if root_ids[i] is not None:
@@ -512,7 +604,7 @@ def _osf_preprint_data(data: Any, _context: list[dict[str, Any]] | None = None) 
     recs = _records(data)
     if not recs:
         return pd.DataFrame()
-    c = _Cols(recs, _context)
+    c = _Cols(recs, _context, listing=not isinstance(data, dict))
     return _frame(
         {
             "osf_id": c.first(("id",)),
@@ -540,7 +632,7 @@ def _osf_reg_data(data: Any, _context: list[dict[str, Any]] | None = None) -> pd
     recs = _records(data)
     if not recs:
         return pd.DataFrame()
-    c = _Cols(recs, _context)
+    c = _Cols(recs, _context, listing=not isinstance(data, dict))
     return _frame(
         {
             "osf_id": c.first(("id",)),
@@ -564,7 +656,7 @@ def _osf_user_data(data: Any, _context: list[dict[str, Any]] | None = None) -> p
     recs = _records(data)
     if not recs:
         return pd.DataFrame()
-    c = _Cols(recs, _context)
+    c = _Cols(recs, _context, listing=not isinstance(data, dict))
     return _frame(
         {
             "osf_id": c.first(("id",)),
@@ -745,10 +837,8 @@ def _osf_verify_downloads(
 
     paths = ret["path"].tolist()
     has_path = [not is_na(p) for p in paths]
-    full = [
-        os.path.join(download_to, str(p)) if h else None
-        for p, h in zip(paths, has_path, strict=True)
-    ]
+    # R file.path(): a plain "/" join (a path starting with "/" is not absolute here)
+    full = [f"{download_to}/{p}" if h else None for p, h in zip(paths, has_path, strict=True)]
     on_disk = [f is not None and os.path.exists(f) and not os.path.isdir(f) for f in full]
     size_on_disk = [
         float(os.path.getsize(f)) if d and f is not None else float("nan")

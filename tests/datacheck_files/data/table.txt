@@ -1,0 +1,3 @@
+subject	trial	rt
+1	1	500
+1	2	612

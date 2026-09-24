@@ -110,18 +110,32 @@ def _initials(given: str) -> str:
     return str(g)
 
 
-def _read_xml(url: str, accept: str = "application/xml") -> etree._Element:
-    from lxml import etree
-
+def _open_url(url: str, accept: str = "application/xml") -> bytes:
+    """``url(path, "rb")``: the body, or an error when the URL cannot be opened."""
     from pytacheck import http
 
-    resp = http.request("GET", url, headers={"Accept": accept})
+    # base R's url() makes a single attempt (no httr2 retry policy)
+    resp = http.request("GET", url, headers={"Accept": accept}, max_tries=1)
     if resp is None:
-        raise ConnectionError(f"cannot open URL '{url}'")
+        raise ConnectionError(f"cannot open the connection to '{url}'")
     if resp.status_code >= 400:
-        raise ConnectionError(f"cannot open URL '{url}': HTTP status was '{resp.status_code}'")
+        reason = f" {resp.reason_phrase}" if resp.reason_phrase else ""
+        raise ConnectionError(
+            f"cannot open URL '{url}': HTTP status was '{resp.status_code}{reason}'"
+        )
+    return resp.content
+
+
+def _parse_xml(content: bytes) -> etree._Element:
+    """``xml2::read_xml()`` of a downloaded body."""
+    from lxml import etree
+
     parser = etree.XMLParser(resolve_entities=False, no_network=True, huge_tree=False)
-    return etree.fromstring(resp.content, parser=parser)
+    return etree.fromstring(content, parser=parser)
+
+
+def _read_xml(url: str, accept: str = "application/xml") -> etree._Element:
+    return _parse_xml(_open_url(url, accept))
 
 
 def _namespaces(root: etree._Element) -> dict[str, str]:
@@ -167,9 +181,12 @@ def get_orcid(family: str, given: str | None = "*") -> Any:
         given = "*"
     query = "https://pub.orcid.org/v3.0/search/?q=family-name:{}+AND+given-names:{}"
     url = query.format(url_encode(trimws(family)), url_encode(_initials(given)))
+    # url(..., "rb") is opened outside tryCatch(): a failed connection or an
+    # HTTP error status is an error; only unreadable XML gives the warning
+    content = _open_url(url)
     try:
-        root = _read_xml(url)
-    except Exception:
+        root = _parse_xml(content)
+    except Exception:  # noqa: BLE001 - tryCatch(error = ) catches every error
         warnings.warn("ORCID search failed", stacklevel=2)
         return ""
     orcid = _find_text(root, "//common:path")  # "" when there are none
@@ -190,7 +207,8 @@ def orcid_person(orcid: Any) -> pd.DataFrame:
 
     rows = []
     for x in as_vector(orcid):
-        path = f"https://pub.orcid.org/v3.0/{x}/person"
+        # file.path() pastes a missing ORCiD as "NA"
+        path = f"https://pub.orcid.org/v3.0/{'NA' if is_na(x) else as_character(x)}/person"
         try:
             root = _read_xml(path)
         except Exception as exc:

@@ -114,20 +114,21 @@ def regcheck_base_url(client: str = "ollama", base_url: str | None = None) -> st
 
 def _match_client(client: str | Sequence[str]) -> str:
     """``match.arg(client)`` with metacheck's friendly error."""
+    shown = client
     if not isinstance(client, str):
         values = list(client)
         if values == list(_CLIENTS):
             return _CLIENTS[0]
-        if len(values) != 1:
-            raise ValueError("'arg' must be of length 1")
-        client = values[0]
+        # stop() pastes every element of the vector into the message
+        shown = "".join(str(v) for v in values)
+        client = values[0] if len(values) == 1 else ""
     if client in _CLIENTS:
         return client
     hits = [c for c in _CLIENTS if client and c.startswith(client)]
     if len(hits) == 1:
         return hits[0]
     raise ValueError(
-        f"Unknown RegCheck client '{client}'. "
+        f"Unknown RegCheck client '{shown}'. "
         'Use one of: "ollama" (local server), "groq", "openai", or "deepseek".\n'
         f"See {_BOOK} for setup instructions."
     )
@@ -312,18 +313,23 @@ def _regcheck_poll(
         if resp.status_code >= 400:
             raise _http_error(resp)
         status = resp_body_json(resp)
-        state = r_dollar(status, "state") or "unknown"
+        state = _or_default(r_dollar(status, "state"), "unknown")
         if state == "success":
             message("RegCheck comparison complete.")
             return r_dollar(status, "result")
         if state == "failure":
-            msg = r_dollar(status, "status") or "unknown error"
+            msg = _or_default(r_dollar(status, "status"), "unknown error")
             raise RegCheckError(f"RegCheck comparison failed: {msg}")
         if time.monotonic() > deadline:
             raise RegCheckError(f"Timed out waiting for RegCheck task {task_id}")
-        done = r_dollar(status, "processed_dimensions") or 0
-        total = r_dollar(status, "total_dimensions") or 0
+        done = _or_default(r_dollar(status, "processed_dimensions"), 0)
+        total = _or_default(r_dollar(status, "total_dimensions"), 0)
         message(f"RegCheck running ({done}/{total} dimensions)")
+
+
+def _or_default(value: Any, default: Any) -> Any:
+    """R's ``value %||% default`` (only ``NULL`` is replaced)."""
+    return default if value is None else value
 
 
 def regcheck_tidy(result: Any) -> pd.DataFrame:
@@ -394,10 +400,13 @@ def regcheck_compare(
                 '  usethis::edit_r_environ()  # add: REGCHECK_API_TOKEN="your_token"\n'
                 f"See {_BOOK} for details."
             )
-    if not isinstance(paper_text, str) or not paper_text.strip():
+    from pytacheck._r.base import trimws
+
+    # trimws() strips only [ \t\r\n]
+    if not isinstance(paper_text, str) or not trimws(paper_text):
         raise ValueError("paper_text must be a single non-empty string")
-    has_prereg = prereg_text is not None and bool(str(prereg_text).strip())
-    has_reg_id = registration_id is not None and bool(str(registration_id).strip())
+    has_prereg = prereg_text is not None and bool(trimws(str(prereg_text)))
+    has_reg_id = registration_id is not None and bool(trimws(str(registration_id)))
     if has_prereg == has_reg_id:
         raise ValueError("Provide exactly one of prereg_text or registration_id")
 

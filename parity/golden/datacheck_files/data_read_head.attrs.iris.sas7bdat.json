@@ -1,0 +1,113 @@
+{
+  "id": "data_read_head.attrs.iris.sas7bdat",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "names",
+      "attrs",
+      "utf8_repaired"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "Sepal_Length",
+          "Sepal_Width",
+          "Petal_Length",
+          "Petal_Width",
+          "Species"
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "Sepal_Length",
+          "Sepal_Width",
+          "Petal_Length",
+          "Petal_Width",
+          "Species"
+        ],
+        "v": [
+          {
+            "t": "list",
+            "names": [
+              "format.sas"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "BEST"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "format.sas"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "BEST"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "format.sas"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "BEST"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "format.sas"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "BEST"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "format.sas"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "$"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "null"
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

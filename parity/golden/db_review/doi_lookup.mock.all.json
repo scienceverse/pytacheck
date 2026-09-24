@@ -1,0 +1,146 @@
+{
+  "id": "doi_lookup.mock.all",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 4,
+    "names": [
+      "doi",
+      "type",
+      "title",
+      "container",
+      "year",
+      "author",
+      "volume",
+      "issue",
+      "first_page",
+      "last_page",
+      "editor",
+      "publisher",
+      "url"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "10.9999/org",
+          "10.9999/nopub",
+          "10.9999/partialpage",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "article-journal",
+          "book",
+          "article",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Org paper",
+          "A; B",
+          "P",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "J1; J2",
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          2020,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "character(0); Smith, Ann",
+          "Solo, ; , Only",
+          "",
+          ""
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "7",
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "2",
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "123",
+          "12",
+          "44",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "15",
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Ed; It; Tor",
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Pub",
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://doi.org/10.9999/org",
+          null,
+          null,
+          null
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

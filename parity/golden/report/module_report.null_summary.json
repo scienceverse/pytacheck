@@ -1,0 +1,14 @@
+{
+  "id": "module_report.null_summary",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "### ℹ️ Null Summary {#null-summary .info}\n\n...\n\n::: {.callout-note title=\"How It Works\" collapse=\"true\"}\n\nA module without a summary text.\n\nOnly details.\n\nThis module was developed by Daniel Lakens\n\n:::\n"
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

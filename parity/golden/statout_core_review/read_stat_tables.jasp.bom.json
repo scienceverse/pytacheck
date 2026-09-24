@@ -1,0 +1,253 @@
+{
+  "id": "read_stat_tables.jasp.bom",
+  "ok": true,
+  "error": null,
+  "warnings": [
+    "JSON string contains (illegal) UTF8 byte-order-mark!"
+  ],
+  "value": {
+    "t": "list",
+    "names": null,
+    "v": [
+      {
+        "t": "list",
+        "names": [
+          "analysis",
+          "analysis_id",
+          "title",
+          "data",
+          "table_index"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Paired Samples T-Test"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "0"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Descriptives"
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 3,
+            "names": [
+              "v",
+              "N",
+              "mean",
+              "sd",
+              "se"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Illusion_score_sync",
+                  "control_score_sync",
+                  "Illusion_score_async"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "9",
+                  "9",
+                  "9"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "1.925925926",
+                  "-0.148148148111111",
+                  "0.703703703888889"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "0.862454149896004",
+                  "1.19153392169221",
+                  "0.963852865109736"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "0.287484716632001",
+                  "0.397177973897402",
+                  "0.321284288369912"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "analysis",
+          "analysis_id",
+          "title",
+          "data",
+          "table_index"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Paired Samples T-Test"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "0"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Paired Samples T-Test"
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 2,
+            "names": [
+              "v1",
+              "sep",
+              "v2",
+              "t",
+              "df",
+              "p",
+              "md",
+              "sed",
+              "lowerCIlocationParameter",
+              "upperCIlocationParameter",
+              "d",
+              "lowerCIeffectSize",
+              "upperCIeffectSize"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Illusion_score_sync",
+                  "Illusion_score_sync"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "-",
+                  "-"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "control_score_sync",
+                  "Illusion_score_async"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "6.89966035949175",
+                  "5.04714614482635"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "8",
+                  "8"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "0.000124571109365704",
+                  "0.000992766799151074"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "2.07407407411111",
+                  "1.22222222211111"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "0.300605242293969",
+                  "0.242161052412554"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "1.38087714231717",
+                  "0.663797833862369"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "2.76727100590505",
+                  "1.78064661035985"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "2.29988678649725",
+                  "1.68238204827545"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "0.999924647157569",
+                  "0.623127284348277"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "3.56721159430254",
+                  "2.70304591495548"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

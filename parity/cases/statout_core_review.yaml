@@ -1,0 +1,124 @@
+"area": "statout_core_review"
+# Adversarial review cases for statout_core (R/r-output.R, R/r-capture.R,
+# R/stat-tables.R, R/stat-output.R): branches the first-pass cases missed.
+"cases":
+# ---------------------------------------------------------------------------
+# read_r_output() on a broad corpus of real R printouts
+# ---------------------------------------------------------------------------
+- "id": "read_r_output.adversarial.code_lines"
+  "r": "read_r_output"
+  "py": "pytacheck.statout.r_output.read_r_output"
+  "args":
+    "text": &adv_out
+      "$call":
+        "r": "readLines"
+        "py": "tests.statout_core._helpers.read_lines"
+        "args": {"con": {"$file": "tests/statout_core/data/review_adversarial.Rout"}}
+    "source_label": "review_adversarial.R"
+    "code_lines": &adv_code
+      "$call":
+        "r": "readLines"
+        "py": "tests.statout_core._helpers.read_lines"
+        "args": {"con": {"$file": "tests/statout_core/data/review_adversarial.R"}}
+- "id": "read_r_output.adversarial.no_code_lines"
+  "r": "read_r_output"
+  "py": "pytacheck.statout.r_output.read_r_output"
+  "args":
+    "text": *adv_out
+- "id": "read_r_output.adversarial.single_string"
+  "r": "read_r_output"
+  "py": "pytacheck.statout.r_output.read_r_output"
+  "args":
+    "text":
+      "$expr":
+        "r": "paste(readLines('tests/statout_core/data/review_adversarial.Rout'), collapse = '\\n')"
+        "py": "__import__('tests.statout_core._helpers', fromlist=['x']).read_text(__import__('tests.statout_core._helpers', fromlist=['x']).DATA / 'review_adversarial.Rout')"
+    "code_lines": *adv_code
+# ---------------------------------------------------------------------------
+# read_stat_tables(): archives, encodings, JSON quirks
+# ---------------------------------------------------------------------------
+- "id": "read_stat_tables.omv.order_and_cells"
+  "r": "read_stat_tables"
+  "py": "pytacheck.statout.stat_tables.read_stat_tables"
+  "args": {"path": {"$file": "tests/statout_core/data/review_order.omv"}}
+- "id": "read_stat_tables.html.nometa_utf8"
+  "r": "read_stat_tables"
+  "py": "pytacheck.statout.stat_tables.read_stat_tables"
+  "args": {"path": {"$file": "tests/statout_core/data/review_nometa.jasp"}}
+- "id": "read_stat_tables.html.latin_meta"
+  "r": "read_stat_tables"
+  "py": "pytacheck.statout.stat_tables.read_stat_tables"
+  "args": {"path": {"$file": "tests/statout_core/data/review_latin.jasp"}}
+- "id": "read_stat_tables.html.review_tables"
+  "r": "read_stat_tables"
+  "py": "pytacheck.statout.stat_tables.read_stat_tables"
+  "args": {"path": {"$file": "tests/statout_core/data/review_tables.jasp"}}
+- "id": "read_stat_tables.jasp.bom"
+  "r": "read_stat_tables"
+  "py": "pytacheck.statout.stat_tables.read_stat_tables"
+  "args": {"path": {"$file": "tests/statout_core/data/review_bom.jasp"}}
+- "id": "read_stat_tables.jasp.dupkeys"
+  "r": "read_stat_tables"
+  "py": "pytacheck.statout.stat_tables.read_stat_tables"
+  "args": {"path": {"$file": "tests/statout_core/data/review_dupkeys.jasp"}}
+- "id": "read_stat_tables.empty_zip"
+  "r": "read_stat_tables"
+  "py": "pytacheck.statout.stat_tables.read_stat_tables"
+  "args": {"path": {"$file": "tests/statout_core/data/review_empty.jasp"}}
+- "id": "read_stat_tables.dirs_only_zip"
+  "r": "read_stat_tables"
+  "py": "pytacheck.statout.stat_tables.read_stat_tables"
+  "args": {"path": {"$file": "tests/statout_core/data/review_dirs_only.omv"}}
+- "id": "read_stat_tables.directory"
+  "r": "read_stat_tables"
+  "py": "pytacheck.statout.stat_tables.read_stat_tables"
+  "args": {"path": {"$file": "tests/statout_core/data"}}
+- "id": "read_stat_tables.ipynb.bom"
+  "r": "read_stat_tables"
+  "py": "pytacheck.statout.stat_tables.read_stat_tables"
+  "args": {"path": {"$file": "tests/statout_core/data/review_bom.ipynb"}}
+- "id": "read_stat_tables.ipynb.dupkeys"
+  "r": "read_stat_tables"
+  "py": "pytacheck.statout.stat_tables.read_stat_tables"
+  "args": {"path": {"$file": "tests/statout_core/data/review_dupkeys.ipynb"}}
+- "id": "read_stat_tables.ipynb.mixed_types"
+  "r": "read_stat_tables"
+  "py": "pytacheck.statout.stat_tables.read_stat_tables"
+  "args": {"path": {"$file": "tests/statout_core/data/review_mixed_types.ipynb"}}
+- "id": "stat_table_parse.review_tables"
+  "r": "base::identity"
+  "py": "tests.statout_core.review_helpers.parse_html_tables"
+  "args":
+    "x":
+      "$expr":
+        "r": "lapply(xml2::xml_find_all(xml2::read_html('tests/statout_core/data/review_tables.html'), '//table'), metacheck:::.stat_table_parse)"
+        "py": "'tests/statout_core/data/review_tables.html'"
+  "py_args": {"path": {"$file": "tests/statout_core/data/review_tables.html"}}
+  "py_drop": ["x"]
+- "id": "pb_str.nul_bytes"
+  "r": "base::identity"
+  "py": "copy.copy"
+  "args":
+    "x":
+      "$expr":
+        "r": "vapply(list(as.raw(c(97, 0)), as.raw(c(0, 0)), as.raw(c(97, 0, 98)), as.raw(c(97, 98)), raw(0), as.raw(c(0, 97)), as.raw(c(97, 0, 0))), metacheck:::.pb_str, character(1))"
+        "py": "[__import__('pytacheck.statout.stat_tables', fromlist=['_'])._pb_str(b) for b in [b'a\\x00', b'\\x00\\x00', b'a\\x00b', b'ab', b'', b'\\x00a', b'a\\x00\\x00']]"
+# ---------------------------------------------------------------------------
+# stat_output_validate(): JSON quirks and R's partial `$` matching
+# ---------------------------------------------------------------------------
+- "id": "stat_output_validate.json_null"
+  "r": "stat_output_validate"
+  "py": "pytacheck.statout.stat_output.stat_output_validate"
+  "args": {"doc": {"$file": "tests/statout_core/data/review_validate_null.json"}}
+- "id": "stat_output_validate.json_bom"
+  "r": "stat_output_validate"
+  "py": "pytacheck.statout.stat_output.stat_output_validate"
+  "args": {"doc": {"$file": "tests/statout_core/data/review_validate_bom.json"}}
+- "id": "stat_output_validate.partial_names"
+  "r": "stat_output_validate"
+  "py": "pytacheck.statout.stat_output.stat_output_validate"
+  "args": {"doc": {"$file": "tests/statout_core/data/review_validate_partial.json"}}
+- "id": "stat_output_validate.dupkeys"
+  "r": "stat_output_validate"
+  "py": "pytacheck.statout.stat_output.stat_output_validate"
+  "args": {"doc": {"$file": "tests/statout_core/data/review_validate_dupkeys.json"}}

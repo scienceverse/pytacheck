@@ -1,0 +1,26 @@
+{
+  "id": "smcl_render_line.more",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "{it:x} tail",
+      "     abc|  ab   |  ab  |ab|toolongtext|x",
+      "     abc  d e",
+      "          |   |  |--|----------|----------------------------------------------",
+      "abc---------------------------------------------------------------------------",
+      ")\u0004AA",
+      "|abab||",
+      "{",
+      "a{b",
+      "}}",
+      "|+-┬┴├┤┌┐└┘",
+      "clickingbold",
+      "\t           tab"
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

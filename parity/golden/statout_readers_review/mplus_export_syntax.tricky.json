@@ -1,0 +1,30 @@
+{
+  "id": "mplus_export_syntax.tricky",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "path",
+      "lines"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "/code/tricky.inp"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "TITLE: review;",
+          "DATA: FILE = data.dat;"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

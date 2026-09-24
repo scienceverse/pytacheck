@@ -1,0 +1,82 @@
+{
+  "id": "detect_likert_scale.wide_11",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "lo",
+      "hi",
+      "levels_present",
+      "coverage",
+      "suspects",
+      "floor_inferred",
+      "note"
+    ],
+    "v": [
+      {
+        "t": "int",
+        "v": [
+          -11
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          11
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          -11,
+          -10,
+          -9,
+          -8,
+          -7,
+          -6,
+          -5,
+          -4,
+          -3,
+          -2,
+          -1,
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          1
+        ]
+      },
+      {
+        "t": "int",
+        "v": []
+      },
+      {
+        "t": "int",
+        "v": []
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Detected a -11-11 rating scale (levels observed: -11, -10, -9, -8, -7, -6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11)."
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}
