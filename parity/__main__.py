@@ -85,7 +85,7 @@ def check_case(case: Case) -> tuple[str, list[str], float]:
         if err is not None:
             return "pass", [], elapsed
         return (
-            "fail",
+            "xfail" if case.spec.get("known_divergence") else "fail",
             [f"R raised an error ({golden['error']}) but Python returned a value"],
             elapsed,
         )

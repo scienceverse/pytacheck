@@ -59,3 +59,9 @@ def __getattr__(name: str) -> Any:
 
 def __dir__() -> list[str]:
     return sorted(set(globals()) | set(_EXPORTS))
+
+
+from pytacheck._callable import callable_module  # noqa: E402
+
+# ``pc.llm(...)`` must keep working after ``import pytacheck.llm`` shadows it.
+callable_module(__name__, "llm")
