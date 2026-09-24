@@ -1,0 +1,40 @@
+{smcl}
+{txt}{sf}{ul off}{.-}
+      name:  {res}<unnamed>
+{com}. display {res:{it:x}} and {ralign 8:abc}|{center 7:ab}|{rcenter:ab}|{lalign 5:toolongtext}|
+{txt}{dup 3:-}{space 0}{space -2}{col 0}x{hline 0}{hline -3}{char 65}{char 300}{c 0x7b}{abc
+{}{:x}}lone{c -(}brace{c )-} {c TT}{c 0x41}
+
+{com}. summarize x y
+  2. , detail
+> nothing
+
+{txt}    Variable {c |}        Obs        Mean    Std. dev.
+{hline 13}{c +}{hline 44}
+           x {c |}{res}         74    6165.257    2949.496
+{txt}           y {c |}{res}         74     21.2973    5.785503
+{txt}{hline 13}{c BT}{hline 44}
+
+{com}. tabulate g
+{txt}
+            {c |}   Freq.  Freq.
+{hline 12}{c +}{hline 20}
+          a {c |}{res}       1      1
+{txt}          b {c |}{res}       2      2
+{txt}{hline 12}{c +}{hline 20}
+      Total {c |}{res}       3      3
+
+{com}. list
+{txt}   Name   Kind
+{hline 20}
+   alpha  beta
+{hline 20}
+
+{com}. logit y x
+{txt}Iteration 0:{space 3}log likelihood = {res}-45.03321
+{txt}Iteration 1:{space 3}log likelihood = {res}-27.914626
+{txt}Number of obs = {res}74{txt}  LR chi2(1) = {res}34.24{txt}  Prob > chi2 = {res}0.0000
+{txt}t = 1.5, t = 2.5, t = 3.5
+{com}.
+{txt}end of do-file
+{com}.

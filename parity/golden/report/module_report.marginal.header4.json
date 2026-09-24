@@ -1,0 +1,14 @@
+{
+  "id": "module_report.marginal.header4",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "#### ⚠️ Marginal Significance {#marginal-significance .red}\n\nYou described 2 effects with terms related to 'marginally significant'.\n\n<details><summary>View detailed feedback<\/summary><div>\n\nYou described effects with terms related to 'marginally significant'. If *p* values above 0.05 are interpreted as an effect, you inflate the alpha level, and increase the Type 1 error rate. If a *p* value is higher than the prespecified alpha level, it should be interpreted as a non-significant result.\n\n\n<R-CHUNK>\n\n\n::: {.callout-tip title=\"Learn More\" collapse=\"true\"}\n\nFor metascientific articles demonstrating the rate at which non-significant p-values are interpreted as marginally significant, see:\n\nOlsson-Collentine, A., van Assen, M. MAL, Hartgerink &amp;, J. CH (2019). &ldquo;The Prevalence of Marginally Significant Results in Psychology Over Time.&rdquo; <em>Psychological Science<\/em>, <b>30<\/b>, 576&ndash;586. <a href=\"https://doi.org/10.1177/0956797619830326\">doi:10.1177/0956797619830326<\/a>.\n\nFor the list of terms used to identifify marginally significant results, see this [blog post by Matthew Hankins](https://web.archive.org/web/20251001114321/https://mchankins.wordpress.com/2013/04/21/still-not-significant-2/).\n\n:::\n\n\n<\/div><\/details>\n\n::: {.callout-note title=\"How It Works\" collapse=\"true\"}\n\nList all sentences that describe an effect as 'marginally significant'.\n\nThe marginal module searches for regular expressions that match a predefined pattern. The list of terms is a subset of those listed in a [blog post by Matthew Hankins](https://web.archive.org/web/20251001114321/https://mchankins.wordpress.com/2013/04/21/still-not-significant-2/). The module returns all sentences that match terms describing ‘marginally significant’ results.\n\nSome of the terms identified might not be problematic in some contexts, and there are ways to describe ‘marginal significance’ that are not detected by the module.\n\nThis module was developed by Daniel Lakens\n\n:::\n\n\n::: {.validation}\nValidation: In a sample of 51 papers with 87 statements, this module correctly identified 38 statements (true positives) and incorrectly flagged 22 statements (false positives). It failed to detect 27 statements. Thus, among all statements flagged by the module, 63% were genuine cases (positive predictive value). However, the module missed 42% of all true statements (false negative rate).\n:::"
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

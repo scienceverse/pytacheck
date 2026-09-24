@@ -60,9 +60,15 @@ def _response(root: Path, path: str) -> httpx.Response | None:
 
 
 @contextlib.contextmanager
-def replay_osf(*mock_dirs: str, missing: str = "404") -> Iterator[respx.MockRouter]:
-    """Replay metacheck's recorded API responses, as its OSF tests do."""
-    roots = [UPSTREAM_TESTS / d for d in (mock_dirs or ("apis",))]
+def replay_osf(*mock_dirs: str | Path, missing: str = "404") -> Iterator[respx.MockRouter]:
+    """Replay metacheck's recorded API responses, as its OSF tests do.
+
+    Relative *mock_dirs* are metacheck test mock directories; absolute ones
+    are used as given (searched in order, like httptest2's mock paths).
+    """
+    roots = [
+        Path(d) if Path(d).is_absolute() else UPSTREAM_TESTS / d for d in (mock_dirs or ("apis",))
+    ]
 
     def handler(request: httpx.Request) -> httpx.Response:
         path = osf_mock_path(request)

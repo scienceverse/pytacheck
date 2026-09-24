@@ -399,10 +399,35 @@ def _na_real() -> float:
     return struct.unpack("<d", struct.pack("<Q", _NA_REAL_BITS))[0]
 
 
+class Latin1Str(str):
+    """A CHARSXP marked latin1 whose bytes are not valid UTF-8.
+
+    It reads as its Latin-1 text; :func:`_as_bytes_str` gives R's view of the
+    raw bytes (``validUTF8()`` is FALSE), which ``.utf8_repair_df()`` repairs
+    and counts.
+    """
+
+    __slots__ = ("raw",)
+    raw: bytes
+
+
 def _decode_char(raw: bytes, levs: int) -> str:
     if levs & LATIN1_MASK:
+        try:
+            raw.decode("utf-8")
+        except UnicodeDecodeError:
+            out = Latin1Str(raw.decode("latin-1"))
+            out.raw = raw
+            return out
         return raw.decode("latin-1")
     return raw.decode("utf-8", "surrogateescape")
+
+
+def _as_bytes_str(v: Any) -> Any:
+    """R's byte-level view of a string (invalid UTF-8 kept as surrogate escapes)."""
+    if isinstance(v, Latin1Str):
+        return v.raw.decode("utf-8", "surrogateescape")
+    return v
 
 
 def _attrs(pl: Any) -> dict[str, Any]:
@@ -605,7 +630,49 @@ def _is_r_na(v: float) -> bool:
 
 
 _KEPT_ATTRS = ("label", "labels", "na_values", "na_range", "format.spss", "format.stata",
-               "format.sas", "display_width", "class", "levels")  # fmt: skip
+               "format.sas", "display_width", "class", "levels", "tzone")  # fmt: skip
+
+# Classes whose ``[`` method is vctrs::vec_slice(), which keeps every attribute.
+_VCTRS_CLASSES = frozenset({"vctrs_vctr", "vctrs_rcrd", "vctrs_list_of"})
+# Base R ``[`` methods and the attributes each carries over to the subset.
+_BASE_SUBSET_KEEPS: dict[str, tuple[str, ...]] = {
+    "factor": ("class", "levels"),
+    "Date": ("class",),
+    "POSIXct": ("class", "tzone"),
+    "difftime": ("class", "units"),
+    "AsIs": ("class",),
+    "noquote": ("class",),
+    "numeric_version": ("class",),
+    "roman": ("class",),
+    "octmode": ("class",),
+    "hexmode": ("class",),
+}
+
+
+def _attrs_after_subset(attrs: dict[str, Any], classes: list[str], vctrs: bool) -> dict[str, Any]:
+    """The attributes a column keeps through ``[.data.frame`` (``xj[i]``).
+
+    S3 dispatch picks the first class with a ``[`` method; without one the
+    default method keeps no attributes at all (so an unclassed column's
+    ``label``, or bit64's ``integer64`` class when bit64 is not loaded, is
+    lost). *vctrs* says whether the vctrs namespace is loaded in the R session
+    (it is once haven, readxl or readODS have been used).
+    """
+    for cl in classes:
+        if vctrs and cl in _VCTRS_CLASSES:
+            return dict(attrs)
+        keep = _BASE_SUBSET_KEEPS.get(cl)
+        if keep is not None:
+            return {k: v for k, v in attrs.items() if k in keep}
+    return {}
+
+
+def _is_flattened(col: RObject) -> bool:
+    """Columns ``.utf8_repair_df()`` renders as text (data frames, matrices, lists)."""
+    if col.type in (VECSXP, EXPRSXP):
+        return True
+    dim = col.attr("dim")
+    return isinstance(dim, RObject) and len(dim.value) == 2
 
 
 def _column_to_pandas(col: Any, n: int) -> pd.Series:
@@ -620,7 +687,7 @@ def _column_to_pandas(col: Any, n: int) -> pd.Series:
     if isinstance(dim, RObject) and len(dim.value) == 2 and t != VECSXP:
         return pd.Series(_flatten_matrix(col), dtype="string")
     if t == INTSXP and "factor" in classes:
-        levels = _strvec(col.attr("levels"))
+        levels = [_as_bytes_str(x) for x in _strvec(col.attr("levels"))]
         codes = np.where(v == NA_INTEGER, -1, v.astype(np.int64) - 1)
         cats = list(dict.fromkeys(levels))
         mapping = [cats.index(lv) if lv in cats else -1 for lv in levels]
@@ -663,7 +730,7 @@ def _column_to_pandas(col: Any, n: int) -> pd.Series:
     if t == CPLXSXP:
         return pd.Series(v, dtype=complex)
     if t == STRSXP:
-        return pd.Series(v, dtype="string")
+        return pd.Series([_as_bytes_str(x) for x in v], dtype="string")
     if t in (VECSXP, EXPRSXP):
         return pd.Series([_flatten_list_cell(e, 20) for e in v], dtype="string")
     if t == RAWSXP:
@@ -785,11 +852,17 @@ def _flatten_matrix(col: RObject) -> list[str]:
     return out
 
 
-def r_frame_to_pandas(df: RObject, n_rows: float = math.inf) -> pd.DataFrame:
+def r_frame_to_pandas(
+    df: RObject, n_rows: float = math.inf, subset: bool = True, vctrs: bool = True
+) -> pd.DataFrame:
     """Convert a deserialized data frame to pandas (``head(df, n_rows)``).
 
     Column attributes that matter downstream (haven labels, formats, classes)
-    are kept in ``attrs["col_attrs"]``.
+    are kept in ``attrs["col_attrs"]``. With *subset* the columns go through
+    ``head()``'s ``[`` as in R, which drops the attributes of classes without a
+    ``[`` method (see :func:`_attrs_after_subset`); *vctrs* says whether the
+    vctrs methods are available. Data-frame, matrix and list columns are
+    flattened to text (as ``.utf8_repair_df()`` does) and keep no attributes.
     """
     n = _nrow(df)
     names = _strvec(df.attr("names"))
@@ -801,8 +874,10 @@ def r_frame_to_pandas(df: RObject, n_rows: float = math.inf) -> pd.DataFrame:
     for name, col in zip(names, cols, strict=True):
         s = _column_to_pandas(col, n)
         series.append(s.iloc[:keep].reset_index(drop=True))
-        if isinstance(col, RObject):
+        if isinstance(col, RObject) and not _is_flattened(col):
             kept = {a: _attr_value(col.attrs[a]) for a in _KEPT_ATTRS if a in col.attrs}
+            if subset:
+                kept = _attrs_after_subset(kept, col.classes, vctrs)
             kept.pop("levels", None)
             if kept:
                 col_attrs["" if name is None else name] = kept

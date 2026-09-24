@@ -206,6 +206,26 @@ def _or(a: Lgl, b: Lgl) -> Lgl:
     return False
 
 
+def _eq_true(x: Any) -> Lgl:
+    """R ``x == TRUE`` for a logical/numeric flag (``None`` is NA)."""
+    return None if _isna(x) else bool(x == 1)
+
+
+def _eq_false(x: Any) -> Lgl:
+    """R ``x == FALSE`` for a logical/numeric flag (``None`` is NA)."""
+    return None if _isna(x) else bool(x == 0)
+
+
+class _RNull:
+    """R ``NULL`` returned by ``decision_error_test()`` for a flag that is neither TRUE nor FALSE."""
+
+    def __repr__(self) -> str:  # pragma: no cover
+        return "NULL"
+
+
+_NULL = _RNull()
+
+
 def _if(cond: Lgl) -> bool:
     """R ``if (cond)``: an ``NA`` condition is an error."""
     if cond is None:
@@ -660,7 +680,7 @@ def error_test(
         raise RError("object 'low_stat' not found")
     up_p = compute_p(test_type, low_stat, df1, df2, two_tailed)
     low_p = compute_p(test_type, up_stat, df1, df2, two_tailed)
-    if _if(_and(bool(pZeroError), _le(reported_p, 0))):
+    if _if(_and(_eq_true(pZeroError), _le(reported_p, 0))):
         return True
     if test_comparison == "=":
         if p_comparison == "=":
@@ -696,10 +716,28 @@ def decision_error_test(
     alpha: float,
     pEqualAlphaSig: bool,
 ) -> Lgl:
-    """Port of ``statcheck:::decision_error_test()`` (``None`` = NA)."""
+    """Port of ``statcheck:::decision_error_test()`` (``None`` = NA).
+
+    As in R, a *pEqualAlphaSig* that is neither ``TRUE`` nor ``FALSE`` (e.g.
+    ``2``) gives ``NULL`` (``None``) and ``NA`` is an error.
+    """
+    out = _decision_error_test(
+        reported_p, computed_p, test_comparison, p_comparison, alpha, pEqualAlphaSig
+    )
+    return None if out is _NULL else out  # type: ignore[return-value]
+
+
+def _decision_error_test(
+    reported_p: float,
+    computed_p: float,
+    test_comparison: str,
+    p_comparison: str,
+    alpha: float,
+    pEqualAlphaSig: Any,
+) -> Lgl | _RNull:
     rp, pc = _ns(reported_p, p_comparison, alpha)
     cp, a = computed_p, alpha
-    if pEqualAlphaSig:
+    if _if(_eq_true(pEqualAlphaSig)):
         if test_comparison == "=":
             if pc == "=":
                 return _or(_and(_le(rp, a), _gt(cp, a)), _and(_gt(rp, a), _le(cp, a)))
@@ -720,6 +758,8 @@ def decision_error_test(
             if pc == ">":
                 return _and(_ge(rp, a), _le(cp, a))
         return None
+    if not _if(_eq_false(pEqualAlphaSig)):
+        return _NULL
     if test_comparison == "=":
         if pc == "=":
             return _or(_and(_lt(rp, a), _ge(cp, a)), _and(_ge(rp, a), _lt(cp, a)))
@@ -778,13 +818,16 @@ def _process_stats(
         alpha,
         pZeroError,
     )
+    decision_error: Lgl | _RNull
     if _if(None if error is None else not error):
-        decision_error: Lgl = False
+        decision_error = False
     else:
-        decision_error = decision_error_test(
+        decision_error = _decision_error_test(
             reported_p, computed_p, test_comparison, p_comparison, alpha, pEqualAlphaSig
         )
-    if OneTailedTxt and not OneTailedTests and _if(_and(error, OneTailedInTxt)):
+    if _if(_and(_eq_true(OneTailedTxt), _eq_false(OneTailedTests))) and _if(
+        _and(error, OneTailedInTxt)
+    ):
         computed_p_1tail = compute_p(test_type, test_stat, df1, df2, False)
         error_1tail = error_test(
             reported_p,
@@ -800,10 +843,11 @@ def _process_stats(
             alpha,
             pZeroError,
         )
+        decision_error_1tail: Lgl | _RNull
         if _if(None if error_1tail is None else not error_1tail):
-            decision_error_1tail: Lgl = False
+            decision_error_1tail = False
         else:
-            decision_error_1tail = decision_error_test(
+            decision_error_1tail = _decision_error_test(
                 reported_p, computed_p_1tail, test_comparison, p_comparison, alpha, pEqualAlphaSig
             )
         if _if(None if error is None or error_1tail is None else error != error_1tail):
@@ -811,7 +855,10 @@ def _process_stats(
             error = error_1tail
             decision_error = decision_error_1tail
     assert error is not None
-    return computed_p, error, decision_error
+    if decision_error is _NULL:
+        # data.frame(computed_p = ., error = ., decision_error = NULL)
+        raise RError("arguments imply differing number of rows: 1, 0")
+    return computed_p, error, decision_error  # type: ignore[return-value]
 
 
 def process_stats(
@@ -927,7 +974,7 @@ def _check_texts(
             one_tailed = extract_1tail(txt)
             results.extend(_Result(source, r, one_tailed) for r in rows)
     if results:
-        two_tailed = not OneTailedTests
+        two_tailed = not _if(_eq_true(OneTailedTests))
         for res in results:
             r = res.row
             assert r.statistic is not None and r.test_comp is not None and r.p_comp is not None
@@ -991,11 +1038,19 @@ def _source_names(texts: Any) -> tuple[list[str], list[str | None]]:
     elif isinstance(texts, Mapping):
         names = [str(k) for k in texts]
         values = list(texts.values())
+    elif isinstance(texts, pd.Series):
+        # a named character vector; a default RangeIndex means no names
+        values = texts.tolist()
+        names = None if isinstance(texts.index, pd.RangeIndex) else [str(k) for k in texts.index]
     else:
         values = list(texts)
         names = None
     values = [None if _isna(v) else str(v) for v in values]
     if names is None:
+        if not values:
+            # max(integer(0)) and log10(-Inf)
+            _r_warning("no non-missing arguments to max; returning -Inf")
+            _r_warning("NaNs produced")
         width = math.ceil(math.log10(max(len(values), 1)))
         # formatC(width = 0L, flag = "0") pads to two characters ("01")
         width = width or 2
@@ -1004,7 +1059,7 @@ def _source_names(texts: Any) -> tuple[list[str], list[str | None]]:
 
 
 def statcheck(
-    texts: str | Sequence[str | None] | Mapping[str, str],
+    texts: str | Sequence[str | None] | Mapping[str, str] | pd.Series,
     stat: str | Iterable[str] = _ALL_STATS,
     OneTailedTests: bool = False,
     alpha: float = 0.05,
@@ -1012,13 +1067,14 @@ def statcheck(
     pZeroError: bool = True,
     OneTailedTxt: bool = False,
     AllPValues: bool = False,
-    messages: bool = True,  # noqa: ARG001 - progress-bar switch; nothing to show here
+    messages: bool = True,
 ) -> pd.DataFrame | None:
     """Port of ``statcheck::statcheck()`` (statcheck 1.5.0).
 
     Extract APA-reported NHST results (t, F, r, chi-square, Z and Q tests)
-    from *texts* (a string, a sequence of strings, or a mapping of source
-    names to strings), recompute their p-values and flag inconsistencies.
+    from *texts* (a string, a sequence of strings, a mapping of source names
+    to strings, or a pandas Series whose index holds the names -- R's named
+    character vector), recompute their p-values and flag inconsistencies.
 
     Returns a DataFrame with columns ``source``, ``test_type``, ``df1``,
     ``df2``, ``test_comp``, ``test_value``, ``p_comp``, ``reported_p``,
@@ -1029,6 +1085,7 @@ def statcheck(
     nothing is found.
     """
     names, values = _source_names(texts)
+    _if(_eq_true(messages))  # `if (messages == TRUE)`: NA is an error
     stats_ = _stat_arg(stat)
     results, pres = _check_texts(
         zip(names, values, strict=True),
@@ -1039,7 +1096,7 @@ def statcheck(
         pZeroError,
         OneTailedTxt,
     )
-    if not AllPValues:
+    if _if(_eq_false(AllPValues)):
         if results:
             cols = {VAR_SOURCE: pd.Series([r.source for r in results], dtype="string")}
             cols.update(_results_columns(results))

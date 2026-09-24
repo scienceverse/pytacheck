@@ -1,0 +1,59 @@
+{
+  "id": "stat_output_validate.dupkeys",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "valid",
+      "issues",
+      "summary"
+    ],
+    "v": [
+      {
+        "t": "lgl",
+        "v": [
+          false
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Result \"r1\": value \"t\" is missing `value`.",
+          "Result \"r1\": value \"t\" is missing `value`."
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "n_errors",
+          "n_analyses",
+          "n_results"
+        ],
+        "v": [
+          {
+            "t": "int",
+            "v": [
+              2
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

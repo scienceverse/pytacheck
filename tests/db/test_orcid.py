@@ -150,10 +150,19 @@ def test_get_orcid_none_and_failure() -> None:
     with respx.mock() as router:
         router.route(host="pub.orcid.org").mock(return_value=_xml(SEARCH_NONE))
         assert get_orcid("Nobody") == ""
+    # unreadable XML: a warning and ""
     with respx.mock() as router:
-        router.route(host="pub.orcid.org").mock(return_value=httpx.Response(500))
+        router.route(host="pub.orcid.org").mock(
+            return_value=httpx.Response(200, content=b"<not xml", headers={"content-type": "application/xml"})
+        )
         with pytest.warns(UserWarning, match="ORCID search failed"):
             assert get_orcid("Nobody") == ""
+    # url(..., "rb") is opened outside tryCatch() in R: an HTTP error is an error
+    with respx.mock() as router:
+        route = router.route(host="pub.orcid.org").mock(return_value=httpx.Response(500))
+        with pytest.raises(ConnectionError, match="HTTP status was '500"):
+            get_orcid("Nobody")
+        assert route.call_count == 1  # no retries, like url()
 
 
 def test_orcid_person() -> None:

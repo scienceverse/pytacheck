@@ -1,0 +1,40 @@
+{
+  "id": "crossref_doi.replay.wide_select",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 6,
+    "names": [
+      "DOI",
+      "error"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "10.1002/bdm.2172",
+          "10.1002/ejsp.2023",
+          "10.1037/0003-066x.54.6.408",
+          "10.1177/0956797614520714",
+          "10.1007/978-3-540-74997-4_9",
+          "10.1016/j.actpsy.2009.12.006"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "arguments imply differing number of rows: 1, 0",
+          "arguments imply differing number of rows: 1, 0",
+          "arguments imply differing number of rows: 1, 0",
+          "arguments imply differing number of rows: 1, 0",
+          "arguments imply differing number of rows: 1, 0",
+          "arguments imply differing number of rows: 1, 0"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

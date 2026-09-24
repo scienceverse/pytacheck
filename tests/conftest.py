@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import os
 import sys
 from pathlib import Path
 
@@ -10,6 +11,11 @@ import pytest
 ROOT = Path(__file__).resolve().parent.parent
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))  # makes the `parity` harness importable
+
+# Hermetic module system: no user/project config files and no installed
+# packs from the real data dir, unless the caller set these explicitly.
+_CALLER_DATA_DIR = os.environ.get("PYTACHECK_DATA_DIR")
+os.environ.setdefault("PYTACHECK_CONFIG", "none")
 
 UPSTREAM = ROOT / "upstream" / "metacheck"
 FIXTURES = UPSTREAM / "tests" / "testthat" / "fixtures"
@@ -51,6 +57,8 @@ def _isolated_state(
     base = tmp_path_factory.getbasetemp()
     monkeypatch.setenv("PYTACHECK_LOG", str(base / "pytacheck.log.jsonl"))
     monkeypatch.setenv("PYTACHECK_CACHE_DIR", str(base / "cache"))
+    if not _CALLER_DATA_DIR:
+        monkeypatch.setenv("PYTACHECK_DATA_DIR", str(base / "data"))
 
 
 @pytest.fixture(autouse=True)

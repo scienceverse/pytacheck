@@ -1,0 +1,86 @@
+{
+  "id": "spv_read_structure.spv_charts",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 4,
+    "names": [
+      "command_name",
+      "syntax",
+      "subtype",
+      "bin_member",
+      "xml_member",
+      "is_legacy",
+      "is_graph"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "Graph",
+          null,
+          "Legacy",
+          "Legacy"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          "EmptyId",
+          ""
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "c1_chartData.bin",
+          "c2_chartData.bin",
+          "l1_tableData.bin",
+          "l2_tableData.bin"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "c1_chart.xml",
+          "c2_chart.xml",
+          "l1.xml",
+          "l2.xml"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false,
+          false,
+          true,
+          true
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true,
+          true,
+          false,
+          false
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

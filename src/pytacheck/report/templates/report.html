@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="{{lang}}">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="generator" content="{{generator}}">
+<title>{{page_title}}</title>
+<style>
+{{css}}
+</style>
+</head>
+<body>
+<header id="title-block-header" class="title-banner">
+  <div class="title-inner">
+    <h1 class="title">{{title}}</h1>
+    <p class="subtitle">{{subtitle}}</p>
+  </div>
+  <button type="button" id="theme-toggle" class="theme-toggle" aria-label="Toggle dark mode" title="Toggle dark mode">&#9680;</button>
+</header>
+<div class="page-layout">
+  <main id="quarto-document-content" class="content">
+{{intro}}
+{{body}}
+  </main>
+  <nav id="TOC" class="toc" role="doc-toc">
+    <ul class="emoji-key">
+      <li class="red">⚠️ possible problems detected;</li>
+      <li class="yellow">🔍 something to check;</li>
+      <li class="green">✅️ no problems detected;</li>
+      <li class="info">ℹ️ informational only;</li>
+      <li class="na">⬜ not applicable;</li>
+      <li class="fail">☠️ check failed</li>
+    </ul>
+    <hr>
+    <p class="toc-title"><strong>Table of Contents</strong></p>
+{{toc}}
+  </nav>
+</div>
+<script>
+{{js}}
+</script>
+</body>
+</html>

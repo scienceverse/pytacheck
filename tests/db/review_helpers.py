@@ -78,3 +78,13 @@ def query_parse_each(select: Sequence[str], min_score: float = 50) -> list[Any]:
             )
         )
     return out
+
+
+MOCK = Path(__file__).resolve().parent / "data" / "mock_review"
+
+
+def call_mock(fn: str, *args: Any, **kwargs: Any) -> Any:
+    """Call *fn* on the synthetic responses in ``tests/db/data/mock_review``."""
+    from tests.db.parity_replay import call
+
+    return call(fn, *args, mock_dir=str(MOCK), **kwargs)

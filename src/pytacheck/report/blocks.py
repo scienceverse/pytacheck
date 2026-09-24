@@ -26,6 +26,7 @@ __all__ = [
     "format_ref",
     "link",
     "plural",
+    "report_table",
     "scroll_table",
 ]
 
@@ -52,14 +53,9 @@ class ReportTable:
             return []
         if not isinstance(widths, list | tuple):
             widths = [widths]
-        defs = []
-        for i, w in enumerate(widths):
-            if w is None or (isinstance(w, float) and math.isnan(w)):
-                continue
-            if isinstance(w, int | float):
-                w = f"{w}px" if w > 1 else f"{w * 100:g}%"
-            defs.append({"targets": i, "width": w})
-        return defs
+        from pytacheck.report.render import _column_defs
+
+        return _column_defs(widths)
 
     def __bool__(self) -> bool:
         return len(self.data) > 0 and self.data.shape[1] > 0
@@ -99,19 +95,46 @@ _CALLOUTS = ("tip", "note", "warning", "important", "caution")
 
 
 def collapse_section(
-    text: str | Sequence[str],
+    text: str | Sequence[Any] | ReportTable,
     title: str = "Learn More",
     callout: str = "tip",
     collapse: bool = True,
-) -> str:
-    """A collapsible Quarto callout block around *text* (paragraphs joined)."""
+) -> str | list[Any]:
+    """A collapsible Quarto callout block around *text* (paragraphs joined).
+
+    When *text* contains table blocks (``collapse_section(scroll_table(x))``
+    in R), the callout is returned as a list of blocks — its opening fence,
+    the items, and its closing fence — which joined with blank lines is the
+    text R produces.
+    """
     if callout not in _CALLOUTS:
         raise ValueError(f"'arg' should be one of {', '.join(repr(c) for c in _CALLOUTS)}")
-    body = text if isinstance(text, str) else "\n\n".join(str(t) for t in text)
-    return (
-        f'::: {{.callout-{callout} title="{title}" collapse="{"true" if collapse else "false"}"}}'
-        f"\n\n{body}\n\n:::\n"
-    )
+    head = f'::: {{.callout-{callout} title="{title}" collapse="{"true" if collapse else "false"}"}}'
+    items = _flat_blocks(text)
+    if any(isinstance(t, ReportTable) for t in items):
+        return [head, *items, ":::\n"]
+    body = "\n\n".join(_as_text(t) for t in items)
+    return f"{head}\n\n{body}\n\n:::\n"
+
+
+def _flat_blocks(x: Any) -> list[Any]:
+    if isinstance(x, str | ReportTable) or not isinstance(x, Iterable):
+        return [x]
+    out: list[Any] = []
+    for item in x:
+        out.extend(_flat_blocks(item))
+    return out
+
+
+def _as_text(x: Any) -> str:
+    from pytacheck._r.base import as_character
+
+    if x is None:
+        return "NA"
+    if isinstance(x, str):
+        return x
+    value = as_character(x)
+    return "NA" if value is None else str(value)
 
 
 def link(url: Any, text: Any = None, new_window: bool = True, type: str = "") -> Any:
@@ -188,3 +211,12 @@ def cap_gate_count(
         f"the `{param}` cap of {_cap_num(current)}. "
         f"Set `{param} >= {n_needed:d}` to {action} them; {context if context else 'this unit'} was skipped."
     )
+
+
+def report_table(
+    table: Any, colwidths: Any = "auto", maxrows: int = 2, escape: bool = False
+) -> Any:
+    """Port of ``report_table()``: the table widget of a report (a :class:`~pytacheck.report.render.DataTable`)."""
+    from pytacheck.report.render import report_table as _report_table
+
+    return _report_table(table, colwidths=colwidths, maxrows=maxrows, escape=escape)

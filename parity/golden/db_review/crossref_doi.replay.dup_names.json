@@ -1,0 +1,268 @@
+{
+  "id": "crossref_doi.replay.dup_names",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 6,
+    "names": [
+      "DOI",
+      "link.URL...2",
+      "link.content-type...3",
+      "link.content-version...4",
+      "link.intended-application...5",
+      "link.URL...6",
+      "link.content-type...7",
+      "link.content-version...8",
+      "link.intended-application...9",
+      "link.URL...10",
+      "link.content-type...11",
+      "link.content-version...12",
+      "link.intended-application...13",
+      "link.URL",
+      "link.content-type",
+      "link.content-version",
+      "link.intended-application",
+      "isbn-type.type...6",
+      "isbn-type.value...7",
+      "isbn-type.type...8",
+      "isbn-type.value...9"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "10.1002/bdm.2172",
+          "10.1002/ejsp.2023",
+          "10.1037/0003-066x.54.6.408",
+          "10.1177/0956797614520714",
+          "10.1007/978-3-540-74997-4_9",
+          "10.1016/j.actpsy.2009.12.006"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://onlinelibrary.wiley.com/doi/pdf/10.1002/bdm.2172",
+          "https://api.wiley.com/onlinelibrary/tdm/v1/articles/10.1002%2Fejsp.2023",
+          null,
+          "https://journals.sagepub.com/doi/pdf/10.1177/0956797614520714",
+          null,
+          "https://api.elsevier.com/content/article/PII:S0001691809001863?httpAccept=text/xml"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "application/pdf",
+          "unspecified",
+          null,
+          "application/pdf",
+          null,
+          "text/xml"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "vor",
+          "vor",
+          null,
+          "vor",
+          null,
+          "vor"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "text-mining",
+          "text-mining",
+          null,
+          "text-mining",
+          null,
+          "text-mining"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://onlinelibrary.wiley.com/doi/full-xml/10.1002/bdm.2172",
+          "https://onlinelibrary.wiley.com/doi/pdf/10.1002/ejsp.2023",
+          null,
+          "https://journals.sagepub.com/doi/full-xml/10.1177/0956797614520714",
+          null,
+          "https://api.elsevier.com/content/article/PII:S0001691809001863?httpAccept=text/plain"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "application/xml",
+          "unspecified",
+          null,
+          "application/xml",
+          null,
+          "text/plain"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "vor",
+          "vor",
+          null,
+          "vor",
+          null,
+          "vor"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "text-mining",
+          "similarity-checking",
+          null,
+          "text-mining",
+          null,
+          "text-mining"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://onlinelibrary.wiley.com/doi/pdf/10.1002/bdm.2172",
+          null,
+          null,
+          "https://journals.sagepub.com/doi/pdf/10.1177/0956797614520714",
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "unspecified",
+          null,
+          null,
+          "unspecified",
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "vor",
+          null,
+          null,
+          "vor",
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "similarity-checking",
+          null,
+          null,
+          "similarity-checking",
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          "http://psycnet.apa.org/journals/amp/54/6/408.pdf",
+          null,
+          "http://link.springer.com/content/pdf/10.1007/978-3-540-74997-4_9.pdf",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          "unspecified",
+          null,
+          "unspecified",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          "vor",
+          null,
+          "vor",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          "similarity-checking",
+          null,
+          "similarity-checking",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          "print",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          "9783540749967",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          "electronic",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          "9783540749974",
+          null
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

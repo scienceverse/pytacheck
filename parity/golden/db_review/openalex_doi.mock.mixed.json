@@ -1,0 +1,199 @@
+{
+  "id": "openalex_doi.mock.mixed",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": null,
+    "v": [
+      {
+        "t": "list",
+        "names": [
+          "DOI",
+          "error"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "10.9999/oa2"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "not found"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "DOI",
+          "error"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "10.9999/oa3"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "not found"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "DOI"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "DOI",
+          "error"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "bad"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "malformed"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "id",
+          "doi",
+          "title",
+          "abstract_inverted_index",
+          "abstract",
+          "display_name"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "https://openalex.org/W1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://doi.org/10.9999/oa"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "OA"
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "b",
+              "a",
+              "c",
+              ""
+            ],
+            "v": [
+              {
+                "t": "list",
+                "names": null,
+                "v": [
+                  {
+                    "t": "int",
+                    "v": [
+                      1
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      3
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": [
+                  {
+                    "t": "int",
+                    "v": [
+                      0
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": [
+                  {
+                    "t": "int",
+                    "v": [
+                      2
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": [
+                  {
+                    "t": "int",
+                    "v": [
+                      4
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "a b c b "
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "OA"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

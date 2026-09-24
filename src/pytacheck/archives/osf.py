@@ -28,7 +28,17 @@ from urllib.parse import unquote, unquote_plus
 
 import pandas as pd
 
-from pytacheck._r import bind_rows, grepl, gsub, is_na, plural, regextract, regextract_all, sub
+from pytacheck._r import (
+    bind_rows,
+    grepl,
+    gsub,
+    is_na,
+    plural,
+    regextract,
+    regextract_all,
+    strsplit,
+    sub,
+)
 
 __all__ = [
     "OsfResult",
@@ -344,10 +354,8 @@ def osf_info(
     ``options({"metacheck.osf.cache": False})`` disables it); with *cache*,
     per-ID lookups also use the on-disk listing cache.
     """
-    from pytacheck._r import as_character
-    from pytacheck.archives import _tick
-    from pytacheck.archives.osf_helpers import _osf_info, _osf_parse_response
-    from pytacheck.utils import get_option, left_join
+    from pytacheck.archives import _spinner, _tick
+    from pytacheck.utils import get_option
 
     use_cache = get_option("metacheck.osf.cache", True) is True
     cache_key = _osf_cache_key(osf_url, recursive) if use_cache else None
@@ -357,6 +365,24 @@ def osf_info(
         if hit is not None:
             _tick(pb, "OSF listing (cached)")
             return hit.copy()
+
+    with _spinner(pb, "OSF Retrieve") as bar:
+        return _osf_info_listing(osf_url, id_col, recursive, bar, cache, cache_key)
+
+
+def _osf_info_listing(
+    osf_url: Any,
+    id_col: int | str,
+    recursive: bool,
+    pb: Any,
+    cache: bool,
+    cache_key: str | None,
+) -> pd.DataFrame:
+    """The body of :func:`osf_info` after the session-cache check."""
+    from pytacheck._r import as_character
+    from pytacheck.archives import _tick
+    from pytacheck.archives.osf_helpers import _osf_info, _osf_parse_response
+    from pytacheck.utils import left_join
 
     if isinstance(osf_url, pd.DataFrame):
         table = osf_url
@@ -454,9 +480,19 @@ def osf_type(guid: Any) -> Any:
     """
     if not isinstance(guid, str) and guid is not None and isinstance(guid, Sequence | pd.Series):
         values = list(guid)
+        if not values:
+            # R: `if (is.na(osf_check_id(character(0))))`
+            raise ValueError("argument is of length zero")
         if len(values) == 1:
             return [osf_type(values[0])]
-        return [osf_type(g) for g in values]
+        from pytacheck.utils import pb
+
+        bar = pb(len(values), "Checking OSF Types [:bar] :current/:total :elapsedfull")
+        types = []
+        for g in values:
+            bar.tick()
+            types.append(osf_type(g))
+        return types
 
     ident = osf_check_id(guid)
     if ident is None:
@@ -861,10 +897,9 @@ def _osf_prepare_save_paths(
         new_save = []
         for sp in save:
             fp = sp + hacky if sp.endswith("/") else sp
-            dirname, _, base = fp.rpartition("/")
-            parts = dirname.split("/") if dirname else ["."]
+            parts = strsplit(_r_dirname(fp), "/", fixed=True)
             trimmed = "/".join(part[:width] for part in parts)
-            new_save.append(f"{trimmed}/{base}".replace(hacky, ""))
+            new_save.append(f"{trimmed}/{_r_basename(fp)}".replace(hacky, ""))
         if any(a != b for a, b in zip(new_save, save, strict=True)):
             warnings.warn(
                 "Some folder names were truncated to max_folder_length = "
@@ -883,12 +918,33 @@ def _osf_prepare_save_paths(
         for pos, i in enumerate(to_copy):
             value = flat[pos]
             if value in seen:
-                value = f"{ids[i]}-{names[i]}"
+                value = (
+                    f"{'NA' if is_na(ids[i]) else ids[i]}-{'NA' if is_na(names[i]) else names[i]}"
+                )
             else:
                 seen.add(value)
             save[i] = value
     files["save_path"] = pd.Series(save, index=files.index, dtype="string")
     return files
+
+
+def _r_dirname(path: str) -> str:
+    """R ``dirname()`` on Unix: trailing slashes dropped, ``"."`` without a slash."""
+    if path == "":
+        return ""
+    stripped = path.rstrip("/")
+    if stripped == "":
+        return "/"
+    head, sep, _ = stripped.rpartition("/")
+    if not sep:
+        return "."
+    head = head.rstrip("/")
+    return head if head else "/"
+
+
+def _r_basename(path: str) -> str:
+    """R ``basename()`` on Unix: the part after the last slash, trailing slashes dropped."""
+    return path.rstrip("/").rpartition("/")[2]
 
 
 def _r_num(x: float) -> str:
@@ -994,11 +1050,9 @@ def osf_file_download(
     downloads nothing (its alias line maps ``"select"`` to itself); pytacheck
     treats ``"files"`` as ``"select"``, as documented.
     """
-    from pytacheck.archives import _message, _tick
-    from pytacheck.archives.osf_helpers import _osf_expand_user_ids, _osf_verify_downloads
+    from pytacheck.archives import _spinner
     from pytacheck.archives.osf_helpers import osf_pat as _set_pat
-    from pytacheck.log import logger
-    from pytacheck.utils import left_join, match_arg
+    from pytacheck.utils import match_arg
 
     mode = match_arg(mode, ["all", "select", "files", "zip"])
     if mode == "files":
@@ -1024,7 +1078,39 @@ def osf_file_download(
     if not ids:
         return None
 
-    _tick(pb, "OSF File Download")
+    with _spinner(pb, "OSF File Download") as bar:
+        return _osf_file_download_ids(
+            ids,
+            download_to=download_to,
+            max_file_size=max_file_size,
+            max_download_size=max_download_size,
+            max_folder_length=max_folder_length,
+            ignore_folder_structure=ignore_folder_structure,
+            mode=mode,
+            unzip=unzip,
+            metadata=metadata,
+            pb=bar,
+        )
+
+
+def _osf_file_download_ids(
+    ids: list[str],
+    download_to: str,
+    max_file_size: float,
+    max_download_size: float,
+    max_folder_length: float,
+    ignore_folder_structure: bool,
+    mode: str,
+    unzip: bool,
+    metadata: bool,
+    pb: Any,
+) -> pd.DataFrame | None:
+    """The body of :func:`osf_file_download` once the IDs are checked."""
+    from pytacheck.archives import _message, _tick
+    from pytacheck.archives.osf_helpers import _osf_expand_user_ids, _osf_verify_downloads
+    from pytacheck.log import logger
+    from pytacheck.utils import left_join
+
     ids = _osf_expand_user_ids(ids, pb=pb)
     if not ids:
         return None
@@ -1293,6 +1379,10 @@ def osf_file_download(
             ret["path"] = pd.Series([None] * len(ret), dtype="string")
             ret["downloaded"] = pd.Series([False] * len(ret), dtype="boolean")
     else:
+        if len(ret) == 0:
+            # R: `ret$downloaded <- FALSE` on a zero-row table (a listing with
+            # folders but no files) fails
+            raise ValueError("replacement has 1 row, data has 0")
         ret["downloaded"] = pd.Series([False] * len(ret), dtype="boolean")
 
     ret["download_path"] = pd.Series([download_to] * len(ret), dtype="string")
@@ -1351,11 +1441,16 @@ def osf_file_download(
 
 
 def _normalize(path: str) -> str:
-    """R ``normalizePath(path, winslash = "/", mustWork = FALSE)``."""
+    """R ``normalizePath(path, winslash = "/", mustWork = FALSE)``.
+
+    An existing path is made absolute (symlinks resolved); a path that does
+    not exist yet comes back unchanged apart from ``~`` expansion, relative
+    or not, as R returns it.
+    """
     path = os.path.expanduser(str(path))
     if os.path.exists(path):
         return os.path.realpath(path).replace("\\", "/")
-    return os.path.abspath(path).replace("\\", "/") if not os.path.isabs(path) else path
+    return path
 
 
 def _osf_zip_mode(

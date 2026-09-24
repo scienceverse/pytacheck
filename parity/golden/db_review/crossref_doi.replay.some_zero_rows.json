@@ -1,0 +1,24 @@
+{
+  "id": "crossref_doi.replay.some_zero_rows",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 2,
+    "names": [
+      "abstract"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "<jats:title>Abstract<\/jats:title><jats:p>Existing work on the effects of social comparison on envy and generosity typically involves manipulation of social comparison with respect to dimensions that carry personal meaning and reflect upon the self, for example, performance, ability, or achievement. In the current work, we examine the effects of social comparison based on a purely arbitrary, manipulated situation. We measure malicious envy via monetary decisions that have real consequences for the target of comparison, in place of a self‐reported questionnaire. In addition, we test the effects of the preliminary social comparison on generosity in a subsequent and ostensibly unrelated situation. In Experiment 1 we demonstrate the effect of randomly manipulated upward social comparison on a monetary allocation decision, and we establish the link between this allocation decision and malicious envy. In Experiment 2 we show that upward comparison affects not only malicious envy towards the target of the comparison but also decreases generosity towards a third party in a subsequent, ostensibly unrelated situation. Experiment 3 shows the effect of this type of social comparison, beyond a specific direction, on reducing generosity towards a third party.<\/jats:p>",
+          "<jats:title>Abstract<\/jats:title>\n                  <jats:p>Running studies with high statistical power, while effect size estimates in psychology are often inaccurate, leads to a practical challenge when designing an experiment. This challenge can be addressed by performing sequential analyses while the data collection is still in progress. At an interim analysis, data collection can be stopped whenever the results are convincing enough to conclude that an effect is present, more data can be collected, or the study can be terminated whenever it is extremely unlikely that the predicted effect will be observed if data collection would be continued. Such interim analyses can be performed while controlling the Type 1 error rate. Sequential analyses can greatly improve the efficiency with which data are collected. Additional flexibility is provided by adaptive designs where sample sizes are increased on the basis of the observed effect size. The need for pre‐registration, ways to prevent experimenter bias, and a comparison between Bayesian approaches and null‐hypothesis significance testing (NHST) are discussed. Sequential analyses, which are widely used in large‐scale medical trials, provide an efficient way to perform high‐powered informative experiments. I hope this introduction will provide a practical primer that allows researchers to incorporate sequential analyses in their research. Copyright © 2014 John Wiley &amp; Sons, Ltd.<\/jats:p>"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

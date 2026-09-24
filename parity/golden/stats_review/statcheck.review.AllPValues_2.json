@@ -1,0 +1,48 @@
+{
+  "id": "statcheck.review.AllPValues_2",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 2,
+    "names": [
+      "source",
+      "p_comp",
+      "reported_p",
+      "p_decimals"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "01",
+          "01"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "=",
+          "="
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0.03,
+          0.5
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          2,
+          1
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

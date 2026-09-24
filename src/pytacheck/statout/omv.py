@@ -9,8 +9,8 @@ string pool) and one protobuf blob per analysis (``"NN <name>/analysis"``),
 from which the reproducible R call (``jmv::ttestIS(...)``) is recovered as
 text.
 
-Labels live in ``data.attrs["label"]`` (``{column: variable label}``) and
-``data.attrs["labels"]`` (``{column: {code: value label}}``), as for
+Variable and value labels live in ``data.attrs["col_attrs"][column]``
+(``"label"``, and ``"labels"`` as ``{label: code}``), as for
 :func:`pytacheck.statout.jasp.import_jasp`.
 """
 
@@ -23,7 +23,7 @@ from typing import Any
 
 from pytacheck._r import gregexpr_all, grepl, gsub, r_sort_key, trimws
 from pytacheck.statout.jasp import (
-    _attach_labels,
+    _column_attrs,
     _dollar,
     _export_archive_html,
     _frame_from_columns,
@@ -94,8 +94,7 @@ def import_omv(path: str | os.PathLike[str]) -> dict[str, Any]:
         cols: list[Any] = []
         names: list[str] = []
         types: list[Any] = []
-        labels: dict[str, dict[float, str]] = {}
-        label: dict[str, str] = {}
+        col_attrs: list[dict[str, Any]] = []
         with open(files[base.index("data.bin")], "rb") as fh:
             for f in fields:
                 dt = _dollar(f, "dataType")
@@ -105,6 +104,7 @@ def import_omv(path: str | os.PathLike[str]) -> dict[str, Any]:
                 if mt is None:
                     mt = "Nominal"
                 name = _dollar(f, "name")
+                labs = None
                 if dt == "Decimal":
                     cols.append(np.asarray(_read_doubles(fh, int(nrow)), dtype="float64"))
                 else:
@@ -122,19 +122,16 @@ def import_omv(path: str | os.PathLike[str]) -> dict[str, Any]:
                     else:
                         cols.append(pd.array(idx, dtype="Int64"))
                         labs = _omv_labels(f, xdat)
-                        if labs:
-                            labels[name] = labs
                 ttl = _dollar(f, "description")
                 if ttl is None:
                     ttl = _dollar(f, "title")
                 if ttl is None:
                     ttl = ""
-                if ttl != "" and ttl != name:
-                    label[name] = _r_chr(ttl)  # type: ignore[assignment]
+                label = _r_chr(ttl) if ttl != "" and ttl != name else None
+                col_attrs.append(_column_attrs(labs, label))
                 names.append(name)
                 types.append(mt)
-        df = _frame_from_columns(cols, names)
-        _attach_labels(df, labels, label)
+        df = _frame_from_columns(cols, names, col_attrs)
         analyses = _omv_analyses_summary(files)
     columns = (
         pd.DataFrame(
@@ -152,8 +149,8 @@ def import_omv(path: str | os.PathLike[str]) -> dict[str, Any]:
     }
 
 
-def _omv_labels(field: Any, xdat: Any) -> dict[float, str]:
-    """Port of R/omv.R::.omv_labels(): ``{code: label}`` for one field."""
+def _omv_labels(field: Any, xdat: Any) -> dict[str | None, float]:
+    """Port of R/omv.R::.omv_labels(): ``{label: code}`` for one field."""
     lst = _dollar(field, "labels")
     if not lst:
         name = _dollar(field, "name")
@@ -191,7 +188,7 @@ def _omv_extract_syntax(txt: str) -> str:
     Finds the first ``<pkg>::<fn>(`` call, walks left over the package name
     and right to the balancing parenthesis. ``""`` when there is none.
     """
-    m = gregexpr_all(r"::[A-Za-z0-9_.]+[ \t]*\(", txt)
+    m = gregexpr_all("::[A-Za-z0-9_.]+[ \t]*\\(", txt)  # R "[ \t]": a real tab
     if not m:
         return ""
     colons, length = m[0]

@@ -66,15 +66,20 @@ def local_files(path: Any, recursive: bool = False) -> pd.DataFrame:
 
     if not isinstance(path, str | os.PathLike):
         paths = list(path)
+        if not paths:
+            # R: `if (dir.exists(character(0)))`
+            raise ValueError("argument is of length zero")
         if len(paths) != 1:
-            return bind_rows([local_files(p) for p in paths]) if paths else _empty()
+            return bind_rows([local_files(p) for p in paths])
         path = paths[0]
     path = os.fspath(path)
+    # R's file functions expand a leading "~"; `repo_url` keeps the path as given
+    expanded = os.path.expanduser(path)
 
-    if os.path.isdir(path):
-        all_paths = _list_files(path, recursive)
-    elif os.path.exists(path):
-        all_paths = [path]
+    if os.path.isdir(expanded):
+        all_paths = _list_files(expanded, recursive)
+    elif os.path.exists(expanded):
+        all_paths = [expanded]
     else:
         all_paths = []
         warnings.warn(f"This path does not exist: {path}", stacklevel=2)

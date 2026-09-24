@@ -44,6 +44,12 @@ _EXPORTS: dict[str, str] = {
     "module_info": "pytacheck.module",
     "module_list": "pytacheck.module",
     "module_run": "pytacheck.module",
+    "run_session": "pytacheck.module",
+    "use": "pytacheck.module",
+    # packs & presets (module system v2; pytacheck.packs is only imported on use)
+    "refresh": "pytacheck.packs.registry",
+    "preset": "pytacheck.presets",
+    "preset_list": "pytacheck.presets",
     # papers
     "Paper": "pytacheck.papers",
     "PaperList": "pytacheck.papers",
@@ -97,7 +103,10 @@ if TYPE_CHECKING:  # pragma: no cover
         module_info,
         module_list,
         module_run,
+        run_session,
+        use,
     )
+    from pytacheck.packs.registry import refresh
     from pytacheck.papers import (
         Paper,
         PaperList,
@@ -114,4 +123,5 @@ if TYPE_CHECKING:  # pragma: no cover
         ref_table,
         test_paper,
     )
+    from pytacheck.presets import preset, preset_list
     from pytacheck.text import expand_text, search_text, text_expand, text_search

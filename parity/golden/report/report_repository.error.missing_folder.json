@@ -1,0 +1,9 @@
+{
+  "id": "report_repository.error.missing_folder",
+  "ok": false,
+  "error": "No folder found at no/such/folder/here.\nCheck the path, or download the repository first with osf_file_download().",
+  "warnings": [],
+  "value": null,
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

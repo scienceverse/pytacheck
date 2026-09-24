@@ -1,0 +1,685 @@
+# Review cases for the stats area: numeric edge cases (infinite df, overflowing
+# powers of ten, many-digit rounding), R's `== TRUE` flag semantics and stats()'s
+# R-style matching of `...` (partial argument names).
+"area": "stats_review"
+"cases":
+- "id": "statcheck.review.chisq_inf_df.small_stat"
+  "r": "statcheck::statcheck"
+  "py": "pytacheck.stats.statcheck.statcheck"
+  "args":
+    "texts": "χ2(10000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000) = 1.5, p = .05"
+    "messages": !!bool "false"
+- "id": "statcheck.review.chisq_inf_df.large_stat"
+  "r": "statcheck::statcheck"
+  "py": "pytacheck.stats.statcheck.statcheck"
+  "args":
+    "texts": "χ2(10000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000) = 3.5, p = .05"
+    "messages": !!bool "false"
+- "id": "statcheck.review.Q_inf_df"
+  "r": "statcheck::statcheck"
+  "py": "pytacheck.stats.statcheck.statcheck"
+  "args":
+    "texts": "Q(10000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000) = 0.5, p = .05"
+    "messages": !!bool "false"
+- "id": "statcheck.review.F_inf_df2"
+  "r": "statcheck::statcheck"
+  "py": "pytacheck.stats.statcheck.statcheck"
+  "args":
+    "texts": "F(2, 10000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000) = 0.5, p = .61"
+    "messages": !!bool "false"
+- "id": "statcheck.review.F_inf_df1"
+  "r": "statcheck::statcheck"
+  "py": "pytacheck.stats.statcheck.statcheck"
+  "args":
+    "texts": "F(10000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, 20) = 2.5, p = .01"
+    "messages": !!bool "false"
+- "id": "statcheck.review.t_inf_df"
+  "r": "statcheck::statcheck"
+  "py": "pytacheck.stats.statcheck.statcheck"
+  "args":
+    "texts": "t(10000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000) = 2.1, p = .04"
+    "messages": !!bool "false"
+- "id": "stats.review.inf_df"
+  "r": "stats"
+  "py": "pytacheck.stats.stats"
+  "args":
+    "text":
+      "$df":
+        "text":
+        - "A chi2 test, χ2(10000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000) = 1.5, p = .05."
+        - "Another, χ2(10000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000) = 3.5, p = .05."
+        - "A t-test, t(28) = 2.20, p = .03."
+        - "And F(2, 10000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000) = 0.5, p = .61."
+        "id":
+        - !!int "1"
+        - !!int "2"
+        - !!int "3"
+        - !!int "4"
+- "id": "compute_p.review.chisq_inf_df"
+  "r": "statcheck:::compute_p"
+  "py": "pytacheck.stats.statcheck.compute_p"
+  "args":
+    "test_type": "Chi2"
+    "test_stat": !!float "1.5"
+    "df1":
+      "$expr":
+        "r": "Inf"
+        "py": "float('inf')"
+    "df2": &id001
+      "$NA": !!bool "true"
+    "two_tailed": !!bool "true"
+- "id": "compute_p.review.chisq_inf_df.large"
+  "r": "statcheck:::compute_p"
+  "py": "pytacheck.stats.statcheck.compute_p"
+  "args":
+    "test_type": "Chi2"
+    "test_stat": !!float "2.5"
+    "df1":
+      "$expr":
+        "r": "Inf"
+        "py": "float('inf')"
+    "df2": *id001
+    "two_tailed": !!bool "true"
+- "id": "statcheck.review.test_dec_overflow"
+  "r": "statcheck::statcheck"
+  "py": "pytacheck.stats.statcheck.statcheck"
+  "args":
+    "texts": "t(28) = 2.00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001, p = .04"
+    "messages": !!bool "false"
+- "id": "statcheck.review.test_dec_overflow.r"
+  "r": "statcheck::statcheck"
+  "py": "pytacheck.stats.statcheck.statcheck"
+  "args":
+    "texts": "r(28) = 0.3333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333, p = .08"
+    "messages": !!bool "false"
+- "id": "stats.review.test_dec_overflow"
+  "r": "stats"
+  "py": "pytacheck.stats.stats"
+  "args":
+    "text":
+      "$df":
+        "text":
+        - "Huge precision, t(28) = 2.00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001, p = .04."
+        - "Normal, t(28) = 2.20, p = .03."
+        "id":
+        - !!int "1"
+        - !!int "2"
+- "id": "statcheck.review.p_dec_many"
+  "r": "statcheck::statcheck"
+  "py": "pytacheck.stats.statcheck.statcheck"
+  "args":
+    "texts": "t(28) = 2.20, p = .03622548477883780000000"
+    "messages": !!bool "false"
+- "id": "statcheck.review.p_dec_many.lt"
+  "r": "statcheck::statcheck"
+  "py": "pytacheck.stats.statcheck.statcheck"
+  "args":
+    "texts": "t(28) = 2.20, p < .0362254847788378000000001"
+    "messages": !!bool "false"
+- "id": "round.review.0"
+  "r": "round"
+  "py": "pytacheck.stats._rmath.r_round"
+  "args":
+    "x": !!float "9.5e-17"
+    "digits": !!int "23"
+- "id": "round.review.1"
+  "r": "round"
+  "py": "pytacheck.stats._rmath.r_round"
+  "args":
+    "x": !!float "9.5e-11"
+    "digits": !!int "23"
+- "id": "round.review.2"
+  "r": "round"
+  "py": "pytacheck.stats._rmath.r_round"
+  "args":
+    "x": !!float "0.0094999999999999"
+    "digits": !!int "3"
+- "id": "round.review.3"
+  "r": "round"
+  "py": "pytacheck.stats._rmath.r_round"
+  "args":
+    "x": !!float "9.500000000000001e-07"
+    "digits": !!int "7"
+- "id": "round.review.4"
+  "r": "round"
+  "py": "pytacheck.stats._rmath.r_round"
+  "args":
+    "x": !!float "0.15"
+    "digits": !!int "1"
+- "id": "round.review.5"
+  "r": "round"
+  "py": "pytacheck.stats._rmath.r_round"
+  "args":
+    "x": !!float "2.675"
+    "digits": !!int "2"
+- "id": "round.review.6"
+  "r": "round"
+  "py": "pytacheck.stats._rmath.r_round"
+  "args":
+    "x": !!float "1.0005"
+    "digits": !!int "3"
+- "id": "round.review.7"
+  "r": "round"
+  "py": "pytacheck.stats._rmath.r_round"
+  "args":
+    "x": !!float "0.12355"
+    "digits": !!int "4"
+- "id": "round.review.8"
+  "r": "round"
+  "py": "pytacheck.stats._rmath.r_round"
+  "args":
+    "x": !!float "0.715"
+    "digits": !!int "2"
+- "id": "round.review.9"
+  "r": "round"
+  "py": "pytacheck.stats._rmath.r_round"
+  "args":
+    "x": !!float "5.5e-300"
+    "digits": !!int "301"
+- "id": "round.review.10"
+  "r": "round"
+  "py": "pytacheck.stats._rmath.r_round"
+  "args":
+    "x": !!float "1.23456789e-05"
+    "digits": !!int "17"
+- "id": "statcheck.review.pEqualAlphaSig_2.error"
+  "r": "statcheck::statcheck"
+  "py": "pytacheck.stats.statcheck.statcheck"
+  "args":
+    "texts": "t(28) = 2.20, p = .13"
+    "messages": !!bool "false"
+    "pEqualAlphaSig": !!int "2"
+- "id": "statcheck.review.pEqualAlphaSig_2.ok"
+  "r": "statcheck::statcheck"
+  "py": "pytacheck.stats.statcheck.statcheck"
+  "args":
+    "texts": "t(28) = 2.20, p = .03"
+    "messages": !!bool "false"
+    "pEqualAlphaSig": !!int "2"
+- "id": "statcheck.review.pEqualAlphaSig_NA.error"
+  "r": "statcheck::statcheck"
+  "py": "pytacheck.stats.statcheck.statcheck"
+  "args":
+    "texts": "t(28) = 2.20, p = .13"
+    "messages": !!bool "false"
+    "pEqualAlphaSig": *id001
+- "id": "statcheck.review.pEqualAlphaSig_NA.ok"
+  "r": "statcheck::statcheck"
+  "py": "pytacheck.stats.statcheck.statcheck"
+  "args":
+    "texts": "t(28) = 2.20, p = .03"
+    "messages": !!bool "false"
+    "pEqualAlphaSig": *id001
+- "id": "statcheck.review.OneTailedTests_2"
+  "r": "statcheck::statcheck"
+  "py": "pytacheck.stats.statcheck.statcheck"
+  "args":
+    "texts": "t(28) = 2.20, p = .03"
+    "messages": !!bool "false"
+    "OneTailedTests": !!int "2"
+- "id": "statcheck.review.OneTailedTests_NA"
+  "r": "statcheck::statcheck"
+  "py": "pytacheck.stats.statcheck.statcheck"
+  "args":
+    "texts": "t(28) = 2.20, p = .03"
+    "messages": !!bool "false"
+    "OneTailedTests": *id001
+- "id": "statcheck.review.pZeroError_2"
+  "r": "statcheck::statcheck"
+  "py": "pytacheck.stats.statcheck.statcheck"
+  "args":
+    "texts": "t(28) = 2.20, p = 0.000"
+    "messages": !!bool "false"
+    "pZeroError": !!int "2"
+- "id": "statcheck.review.pZeroError_NA"
+  "r": "statcheck::statcheck"
+  "py": "pytacheck.stats.statcheck.statcheck"
+  "args":
+    "texts": "t(28) = 2.20, p = 0.000"
+    "messages": !!bool "false"
+    "pZeroError": *id001
+- "id": "statcheck.review.pZeroError_NA.positive_p"
+  "r": "statcheck::statcheck"
+  "py": "pytacheck.stats.statcheck.statcheck"
+  "args":
+    "texts": "t(28) = 2.20, p = .03"
+    "messages": !!bool "false"
+    "pZeroError": *id001
+- "id": "statcheck.review.AllPValues_NA"
+  "r": "statcheck::statcheck"
+  "py": "pytacheck.stats.statcheck.statcheck"
+  "args":
+    "texts": "t(28) = 2.20, p = .03"
+    "messages": !!bool "false"
+    "AllPValues": *id001
+- "id": "statcheck.review.AllPValues_2"
+  "r": "statcheck::statcheck"
+  "py": "pytacheck.stats.statcheck.statcheck"
+  "args":
+    "texts": "t(28) = 2.20, p = .03 and p = .5"
+    "messages": !!bool "false"
+    "AllPValues": !!int "2"
+- "id": "statcheck.review.messages_NA"
+  "r": "statcheck::statcheck"
+  "py": "pytacheck.stats.statcheck.statcheck"
+  "args":
+    "texts": "t(28) = 2.20, p = .03"
+    "messages": *id001
+- "id": "statcheck.review.OneTailedTxt_2"
+  "r": "statcheck::statcheck"
+  "py": "pytacheck.stats.statcheck.statcheck"
+  "args":
+    "texts": "t(28) = 1.80, p = .04 (one-tailed)"
+    "messages": !!bool "false"
+    "OneTailedTxt": !!int "2"
+- "id": "statcheck.review.OneTailedTxt.OneTailedTests_2"
+  "r": "statcheck::statcheck"
+  "py": "pytacheck.stats.statcheck.statcheck"
+  "args":
+    "texts": "t(28) = 1.80, p = .04 (one-tailed)"
+    "messages": !!bool "false"
+    "OneTailedTxt": !!bool "true"
+    "OneTailedTests": !!int "2"
+- "id": "statcheck.review.OneTailedTxt_NA"
+  "r": "statcheck::statcheck"
+  "py": "pytacheck.stats.statcheck.statcheck"
+  "args":
+    "texts": "t(28) = 1.80, p = .04 (one-tailed)"
+    "messages": !!bool "false"
+    "OneTailedTxt": *id001
+- "id": "statcheck.review.OneTailedTxt_NA.no_error"
+  "r": "statcheck::statcheck"
+  "py": "pytacheck.stats.statcheck.statcheck"
+  "args":
+    "texts": "t(28) = 1.80, p = .08 (one-tailed)"
+    "messages": !!bool "false"
+    "OneTailedTxt": *id001
+- "id": "statcheck.review.alpha_NA.ns"
+  "r": "statcheck::statcheck"
+  "py": "pytacheck.stats.statcheck.statcheck"
+  "args":
+    "texts": "z = 1.96, ns"
+    "messages": !!bool "false"
+    "alpha": *id001
+- "id": "statcheck.review.alpha_NA.exact"
+  "r": "statcheck::statcheck"
+  "py": "pytacheck.stats.statcheck.statcheck"
+  "args":
+    "texts": "t(28) = 2.20, p = .03"
+    "messages": !!bool "false"
+    "alpha": *id001
+- "id": "statcheck.review.alpha_NA.error"
+  "r": "statcheck::statcheck"
+  "py": "pytacheck.stats.statcheck.statcheck"
+  "args":
+    "texts": "t(28) = 2.20, p = .13"
+    "messages": !!bool "false"
+    "alpha": *id001
+- "id": "statcheck.review.empty"
+  "r": "statcheck::statcheck"
+  "py": "pytacheck.stats.statcheck.statcheck"
+  "args":
+    "texts":
+      "$chr": []
+    "messages": !!bool "false"
+- "id": "decision_error_test.review.pEqualAlphaSig_2"
+  "r": "statcheck:::decision_error_test"
+  "py": "pytacheck.stats.statcheck.decision_error_test"
+  "args":
+    "reported_p": !!float "0.13"
+    "computed_p": !!float "0.036"
+    "test_comparison": "="
+    "p_comparison": "="
+    "alpha": !!float "0.05"
+    "pEqualAlphaSig": !!int "2"
+- "id": "decision_error_test.review.pEqualAlphaSig_NA"
+  "r": "statcheck:::decision_error_test"
+  "py": "pytacheck.stats.statcheck.decision_error_test"
+  "args":
+    "reported_p": !!float "0.13"
+    "computed_p": !!float "0.036"
+    "test_comparison": "="
+    "p_comparison": "="
+    "alpha": !!float "0.05"
+    "pEqualAlphaSig": *id001
+- "id": "error_test.review.pZeroError_2"
+  "r": "statcheck:::error_test"
+  "py": "pytacheck.stats.statcheck.error_test"
+  "args":
+    "reported_p": !!float "0.0"
+    "test_type": "t"
+    "test_stat": !!float "2.2"
+    "df1": *id001
+    "df2": !!float "28.0"
+    "p_comparison": "="
+    "test_comparison": "="
+    "p_dec": !!float "3.0"
+    "test_dec": !!float "2.0"
+    "two_tailed": !!bool "true"
+    "alpha": !!float "0.05"
+    "pZeroError": !!int "2"
+- "id": "error_test.review.test_dec_400"
+  "r": "statcheck:::error_test"
+  "py": "pytacheck.stats.statcheck.error_test"
+  "args":
+    "reported_p": !!float "0.04"
+    "test_type": "t"
+    "test_stat": !!float "2.0"
+    "df1": *id001
+    "df2": !!float "28.0"
+    "p_comparison": "="
+    "test_comparison": "="
+    "p_dec": !!float "2.0"
+    "test_dec": !!float "400.0"
+    "two_tailed": !!bool "true"
+    "alpha": !!float "0.05"
+    "pZeroError": !!bool "true"
+- "id": "process_stats.review.pEqualAlphaSig.0"
+  "r": "statcheck:::process_stats"
+  "py": "pytacheck.stats.statcheck.process_stats"
+  "args":
+    "test_type": "t"
+    "test_stat": !!float "2.2"
+    "df1": *id001
+    "df2": !!float "28.0"
+    "reported_p": !!float "0.13"
+    "p_comparison": "="
+    "test_comparison": "="
+    "p_dec": !!float "2.0"
+    "test_dec": !!float "2.0"
+    "OneTailedInTxt": !!bool "false"
+    "two_tailed": !!bool "true"
+    "alpha": !!float "0.05"
+    "pZeroError": !!bool "true"
+    "pEqualAlphaSig": !!int "2"
+    "OneTailedTxt": !!bool "false"
+    "OneTailedTests": !!bool "false"
+- "id": "process_stats.review.pEqualAlphaSig.1"
+  "r": "statcheck:::process_stats"
+  "py": "pytacheck.stats.statcheck.process_stats"
+  "args":
+    "test_type": "t"
+    "test_stat": !!float "2.2"
+    "df1": *id001
+    "df2": !!float "28.0"
+    "reported_p": !!float "0.13"
+    "p_comparison": "="
+    "test_comparison": "="
+    "p_dec": !!float "2.0"
+    "test_dec": !!float "2.0"
+    "OneTailedInTxt": !!bool "false"
+    "two_tailed": !!bool "true"
+    "alpha": !!float "0.05"
+    "pZeroError": !!bool "true"
+    "pEqualAlphaSig": *id001
+    "OneTailedTxt": !!bool "false"
+    "OneTailedTests": !!bool "false"
+- "id": "stats.review.partial.alp"
+  "r": "stats"
+  "py": "pytacheck.stats.stats"
+  "args":
+    "text":
+      "$df":
+        "text": &id002
+        - "A t-test, t(28) = 2.20, p = .03."
+        - "An F-test, F(1, 20) = 5.1, p = .5."
+        - "Also p = .01 here, 2 of them."
+        "id":
+        - !!int "1"
+        - !!int "2"
+        - !!int "3"
+    "alp": !!float "0.6"
+- "id": "stats.review.partial.AllP"
+  "r": "stats"
+  "py": "pytacheck.stats.stats"
+  "args":
+    "text":
+      "$df":
+        "text": *id002
+        "id":
+        - !!int "1"
+        - !!int "2"
+        - !!int "3"
+    "AllP": !!bool "true"
+- "id": "stats.review.partial.ambiguous"
+  "r": "stats"
+  "py": "pytacheck.stats.stats"
+  "args":
+    "text":
+      "$df":
+        "text": *id002
+        "id":
+        - !!int "1"
+        - !!int "2"
+        - !!int "3"
+    "One": !!bool "true"
+- "id": "stats.review.partial.OneTailedTe"
+  "r": "stats"
+  "py": "pytacheck.stats.stats"
+  "args":
+    "text":
+      "$df":
+        "text": *id002
+        "id":
+        - !!int "1"
+        - !!int "2"
+        - !!int "3"
+    "OneTailedTe": !!bool "true"
+- "id": "stats.review.partial.st"
+  "r": "stats"
+  "py": "pytacheck.stats.stats"
+  "args":
+    "text":
+      "$df":
+        "text": *id002
+        "id":
+        - !!int "1"
+        - !!int "2"
+        - !!int "3"
+    "st": "F"
+- "id": "stats.review.partial.s"
+  "r": "stats"
+  "py": "pytacheck.stats.stats"
+  "args":
+    "text":
+      "$df":
+        "text": *id002
+        "id":
+        - !!int "1"
+        - !!int "2"
+        - !!int "3"
+    "s": "t"
+- "id": "stats.review.partial.mess"
+  "r": "stats"
+  "py": "pytacheck.stats.stats"
+  "args":
+    "text":
+      "$df":
+        "text": *id002
+        "id":
+        - !!int "1"
+        - !!int "2"
+        - !!int "3"
+    "mess": !!bool "true"
+- "id": "stats.review.partial.twice"
+  "r": "stats"
+  "py": "pytacheck.stats.stats"
+  "args":
+    "text":
+      "$df":
+        "text": *id002
+        "id":
+        - !!int "1"
+        - !!int "2"
+        - !!int "3"
+    "alpha": !!float "0.1"
+    "alp": !!float "0.2"
+- "id": "stats.review.partial.two_prefixes"
+  "r": "stats"
+  "py": "pytacheck.stats.stats"
+  "args":
+    "text":
+      "$df":
+        "text": *id002
+        "id":
+        - !!int "1"
+        - !!int "2"
+        - !!int "3"
+    "pZ": !!bool "false"
+    "pZero": !!bool "false"
+- "id": "stats.review.texts_rebound"
+  "r": "stats"
+  "py": "pytacheck.stats.stats"
+  "args":
+    "text":
+      "$df":
+        "text": *id002
+        "id":
+        - !!int "1"
+        - !!int "2"
+        - !!int "3"
+    "texts": "p = .01"
+    "AllPValues": !!bool "true"
+- "id": "stats.review.texts_rebound.none"
+  "r": "stats"
+  "py": "pytacheck.stats.stats"
+  "args":
+    "text":
+      "$df":
+        "text": *id002
+        "id":
+        - !!int "1"
+        - !!int "2"
+        - !!int "3"
+    "texts": "t(2) = 5, p = .9"
+- "id": "stats.review.flag_2"
+  "r": "stats"
+  "py": "pytacheck.stats.stats"
+  "args":
+    "text":
+      "$df":
+        "text":
+        - "A t-test, t(28) = 2.20, p = .03."
+        - "An F-test, F(1, 20) = 5.1, p = .5."
+        - "Also p = .01 here, 2 of them."
+        - "t(28) = 2.20, p = .13"
+        "id":
+        - !!int "1"
+        - !!int "2"
+        - !!int "3"
+        - !!int "4"
+    "pEqualAlphaSig": !!int "2"
+- "id": "getHTML.review.a"
+  "r": "statcheck:::getHTML"
+  "py": "pytacheck.stats.statcheck_files.getHTML"
+  "args":
+    "x":
+      "$file": "tests/stats/fixtures/statcheck_html/a.html"
+- "id": "getHTML.review.b"
+  "r": "statcheck:::getHTML"
+  "py": "pytacheck.stats.statcheck_files.getHTML"
+  "args":
+    "x":
+      "$file": "tests/stats/fixtures/statcheck_html/b.htm"
+- "id": "checkHTML.review.a"
+  "r": "statcheck::checkHTML"
+  "py": "pytacheck.stats.statcheck_files.checkHTML"
+  "args":
+    "files":
+      "$file": "tests/stats/fixtures/statcheck_html/a.html"
+    "messages": !!bool "false"
+- "id": "checkHTML.review.a.OneTailedTxt"
+  "r": "statcheck::checkHTML"
+  "py": "pytacheck.stats.statcheck_files.checkHTML"
+  "args":
+    "files":
+      "$file": "tests/stats/fixtures/statcheck_html/a.html"
+    "messages": !!bool "false"
+    "OneTailedTxt": !!bool "true"
+- "id": "checkHTML.review.b.stat_t"
+  "r": "statcheck::checkHTML"
+  "py": "pytacheck.stats.statcheck_files.checkHTML"
+  "args":
+    "files":
+      "$file": "tests/stats/fixtures/statcheck_html/b.htm"
+    "messages": !!bool "false"
+    "stat": "t"
+- "id": "checkHTMLdir.review.subdir"
+  "r": "statcheck::checkHTMLdir"
+  "py": "pytacheck.stats.statcheck_files.checkHTMLdir"
+  "args":
+    "dir":
+      "$file": "tests/stats/fixtures/statcheck_html"
+    "messages": !!bool "false"
+- "id": "checkHTMLdir.review.no_subdir"
+  "r": "statcheck::checkHTMLdir"
+  "py": "pytacheck.stats.statcheck_files.checkHTMLdir"
+  "args":
+    "dir":
+      "$file": "tests/stats/fixtures/statcheck_html"
+    "subdir": !!bool "false"
+    "messages": !!bool "false"
+- "id": "checkHTMLdir.review.no_extension"
+  "r": "statcheck::checkHTMLdir"
+  "py": "pytacheck.stats.statcheck_files.checkHTMLdir"
+  "args":
+    "dir":
+      "$file": "tests/stats/fixtures/statcheck_html"
+    "extension": !!bool "false"
+    "messages": !!bool "false"
+- "id": "checkHTMLdir.review.extension_NA"
+  "r": "statcheck::checkHTMLdir"
+  "py": "pytacheck.stats.statcheck_files.checkHTMLdir"
+  "args":
+    "dir":
+      "$file": "tests/stats/fixtures/statcheck_html"
+    "extension": *id001
+    "messages": !!bool "false"
+- "id": "checkHTMLdir.review.extension_2"
+  "r": "statcheck::checkHTMLdir"
+  "py": "pytacheck.stats.statcheck_files.checkHTMLdir"
+  "args":
+    "dir":
+      "$file": "tests/stats/fixtures/statcheck_html"
+    "extension": !!int "2"
+    "messages": !!bool "false"
+- "id": "checkHTMLdir.review.no_html"
+  "r": "statcheck::checkHTMLdir"
+  "py": "pytacheck.stats.statcheck_files.checkHTMLdir"
+  "args":
+    "dir":
+      "$file": "tests/stats"
+    "subdir": !!bool "false"
+    "messages": !!bool "false"
+- "id": "checkHTMLdir.review.AllPValues"
+  "r": "statcheck::checkHTMLdir"
+  "py": "pytacheck.stats.statcheck_files.checkHTMLdir"
+  "args":
+    "dir":
+      "$file": "tests/stats/fixtures/statcheck_html"
+    "messages": !!bool "false"
+    "AllPValues": !!bool "true"
+- "id": "checkdir.review.html_only"
+  "r": "statcheck::checkdir"
+  "py": "pytacheck.stats.statcheck_files.checkdir"
+  "args":
+    "dir":
+      "$file": "tests/stats/fixtures/statcheck_html"
+    "messages": !!bool "false"
+- "id": "checkdir.review.no_files"
+  "r": "statcheck::checkdir"
+  "py": "pytacheck.stats.statcheck_files.checkdir"
+  "args":
+    "dir":
+      "$file": "tests/stats"
+    "subdir": !!bool "false"
+    "messages": !!bool "false"
+- "id": "statcheck.review.named_vector"
+  "r": "statcheck::statcheck"
+  "py": "pytacheck.stats.statcheck.statcheck"
+  "args":
+    "texts":
+      "$expr":
+        "r": "c(a = \"t(28) = 2.20, p = .03\", a = \"p = .01\", b = \"t(28) = 2.20, p = .13\")"
+        "py": "pd.Series([\"t(28) = 2.20, p = .03\", \"p = .01\", \"t(28) = 2.20, p = .13\"], index=[\"a\", \"a\", \"b\"])"
+    "messages": !!bool "false"

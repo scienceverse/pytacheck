@@ -368,11 +368,12 @@ def _spvbin_read_float(cur: _Cursor) -> tuple[float, _Cursor]:
     return struct.unpack("<f", b)[0], cur2
 
 
-def _raw_to_char(b: bytes) -> str:
-    """R ``rawToChar()`` (errors on an embedded NUL)."""
+def _raw_to_char(b: bytes, errors: str = "replace") -> str:
+    """R ``rawToChar()``: trailing NUL bytes are dropped, an embedded one is an error."""
+    b = b.rstrip(b"\x00")
     if b"\x00" in b:
         raise ValueError("embedded nul in string")
-    return b.decode("utf-8", errors="replace")
+    return b.decode("utf-8", errors=errors)
 
 
 def _spvbin_read_string_(cur: _Cursor, be: bool = False) -> tuple[str, _Cursor]:

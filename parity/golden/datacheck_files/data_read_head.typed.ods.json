@@ -1,0 +1,70 @@
+{
+  "id": "data_read_head.typed.ods",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 3,
+    "names": [
+      "id",
+      "score",
+      "pct",
+      "ok",
+      "day",
+      "note"
+    ],
+    "v": [
+      {
+        "t": "dbl",
+        "v": [
+          1,
+          2,
+          3
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          2.5,
+          null,
+          4
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0.5,
+          0.25,
+          null
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true,
+          false,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "2020-01-01",
+          "2020-02-01",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "hi",
+          "NA",
+          "x"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

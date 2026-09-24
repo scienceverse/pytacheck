@@ -1,0 +1,341 @@
+{
+  "id": "data_check_write_manifest.none",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "paper_id",
+      "generated",
+      "download",
+      "skip_types",
+      "caps",
+      "provenance",
+      "n_files",
+      "n_downloaded",
+      "not_downloaded",
+      "files"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "p1"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "2026-09-24T19:36:37+0000"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "none"
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "materials"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "max_file_size_mb",
+          "max_download_size_mb"
+        ],
+        "v": [
+          {
+            "t": "int",
+            "v": [
+              100
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              500
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "software",
+          "r_version",
+          "platform",
+          "prod_date",
+          "llm",
+          "ddi_mapping"
+        ],
+        "v": [
+          {
+            "t": "list",
+            "names": [
+              "name",
+              "version"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "metacheck"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "0.3.1"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "R version 4.5.3 (2026-03-11)"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "x86_64-conda-linux-gnu"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2026-09-24T19:36:37+0000"
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "used"
+            ],
+            "v": [
+              {
+                "t": "lgl",
+                "v": [
+                  false
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "provenance.software",
+              "provenance.prod_date",
+              "files[].file_name",
+              "files[].file_url",
+              "files[].data_type",
+              "files[].status",
+              "files[].skip_reason"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "docDscr/citation/prodStmt/software (@version)"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "docDscr/citation/prodStmt/prodDate"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "fileDscr/fileTxt/fileName"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "fileDscr/@URI"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "fileDscr/fileTxt/fileCont"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "fileDscr/fileTxt/ProcStat"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "fileDscr/notes"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          1
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          0
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "intentional_n",
+          "unintentional_n",
+          "unintentional_files",
+          "rerun_recommended"
+        ],
+        "v": [
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "list",
+            "names": [
+              "file_name",
+              "file_path",
+              "repo_url",
+              "file_url",
+              "provider",
+              "file_size",
+              "data_type",
+              "data_format",
+              "downloaded",
+              "status",
+              "skip_reason",
+              "skip_intentional"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "a.csv"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "a.csv"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "https://osf.io/xxxxx"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "https://osf.io/download/x/"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "osfstorage"
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  10
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "data"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "tabular"
+                ]
+              },
+              {
+                "t": "lgl",
+                "v": [
+                  false
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "skipped"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "download = \"none\""
+                ]
+              },
+              {
+                "t": "lgl",
+                "v": [
+                  true
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

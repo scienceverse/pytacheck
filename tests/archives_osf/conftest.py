@@ -19,6 +19,7 @@ from tests.archives_osf.osfmock import osf_mock_path, replay_osf
 
 __all__ = ["osf_mock_path", "replay_osf"]
 
+
 @pytest.fixture(autouse=True)
 def _osf_test_options(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> Iterator[None]:
     """metacheck's test setup: no session listing cache, no token, caches in a temp dir."""

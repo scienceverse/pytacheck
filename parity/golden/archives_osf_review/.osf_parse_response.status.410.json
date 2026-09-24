@@ -1,0 +1,32 @@
+{
+  "id": ".osf_parse_response.status.410",
+  "ok": true,
+  "error": null,
+  "warnings": [
+    "zz has been deleted or withdrawn from the OSF (HTTP 410), so its files cannot be downloaded."
+  ],
+  "value": {
+    "t": "df",
+    "nrow": 1,
+    "names": [
+      "osf_id",
+      "osf_type"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "zz"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "unfound"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

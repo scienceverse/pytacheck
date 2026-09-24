@@ -1,0 +1,22 @@
+{
+  "id": ".osf_expand_user_ids.synthetic",
+  "ok": true,
+  "error": null,
+  "warnings": [
+    "OSF user uuuu2 has no projects that could be listed. Private projects need an OSF token; see ?osf_pat"
+  ],
+  "value": {
+    "t": "chr",
+    "v": [
+      "comp1",
+      "proj1",
+      "6846ed88e49694cd45ab8375",
+      "lone1",
+      "proj2",
+      "proj3",
+      "proj4"
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

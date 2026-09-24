@@ -257,8 +257,12 @@ class Comparator:
 
     # -- report prose --------------------------------------------------------------
 
-    @staticmethod
-    def _prose(x: dict[str, Any]) -> list[str]:
+    # an R code chunk (scroll_table()), also when embedded in a longer string,
+    # e.g. collapse_section(scroll_table(x)); its closing fence is on its own line
+    _R_CHUNK = re.compile(r"```\{r\}.*?\n```(?=\n|$)", re.S)
+
+    @classmethod
+    def _prose(cls, x: dict[str, Any]) -> list[str]:
         blocks: list[str] = []
 
         def walk(node: dict[str, Any]) -> None:
@@ -267,7 +271,7 @@ class Comparator:
                 for s in node.get("v", []):
                     if s is None:
                         continue
-                    stripped = s.strip()
+                    stripped = cls._R_CHUNK.sub(" ", s).strip()
                     if not stripped or stripped.startswith("```{r}"):
                         continue
                     blocks.append(re.sub(r"\s+", " ", stripped))
@@ -285,7 +289,9 @@ class Comparator:
             self.value(r, p, path)
             return
         rb, pb = self._prose(r), self._prose(p)
-        if rb != pb:
+        # the same prose split differently into blocks (a pytacheck block list
+        # where R pasted a table chunk into one string) is still the same prose
+        if rb != pb and " ".join(rb) != " ".join(pb):
             for i in range(max(len(rb), len(pb))):
                 a = rb[i] if i < len(rb) else None
                 b = pb[i] if i < len(pb) else None

@@ -1,0 +1,49 @@
+{
+  "id": "data_read_head.attrs.latin1.rds",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "names",
+      "attrs",
+      "utf8_repaired"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "txt"
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "txt"
+        ],
+        "v": [
+          {
+            "t": "null"
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "txt"
+        ],
+        "v": [
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

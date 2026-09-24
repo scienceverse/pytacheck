@@ -1,0 +1,19 @@
+{
+  "id": "text_peek.eprime_utf16.txt",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "*** Header Start ***",
+      "VersionPersist: 1",
+      "LevelName: Session",
+      "Experiment: naming",
+      "Subject: 1",
+      "*** Header End ***"
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

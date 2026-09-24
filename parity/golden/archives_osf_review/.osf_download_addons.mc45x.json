@@ -1,0 +1,72 @@
+{
+  "id": ".osf_download_addons.mc45x",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "value",
+      "files"
+    ],
+    "v": [
+      {
+        "t": "list",
+        "names": [
+          "files",
+          "bytes"
+        ],
+        "v": [
+          {
+            "t": "int",
+            "v": [
+              29
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              171
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "node/github/code/01.R",
+          "node/github/code/02.R",
+          "node/github/code/03.R",
+          "node/github/code/04.R",
+          "node/github/code/05.R",
+          "node/github/code/06.R",
+          "node/github/code/07.R",
+          "node/github/code/08.R",
+          "node/github/code/09.R",
+          "node/github/code/10.R",
+          "node/github/code/11.R",
+          "node/github/code/12.R",
+          "node/github/code/13.R",
+          "node/github/code/14.R",
+          "node/github/code/15.R",
+          "node/github/code/16.R",
+          "node/github/code/17.R",
+          "node/github/code/18.R",
+          "node/github/code/19.R",
+          "node/github/code/20.R",
+          "node/github/code/21.R",
+          "node/github/code/22.R",
+          "node/github/code/23.R",
+          "node/github/code/24.R",
+          "node/github/code/25.R",
+          "node/github/folder/Archive.zip",
+          "node/github/folder/file.txt",
+          "node/github/good-example.R",
+          "node/github/README.md"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -1,0 +1,141 @@
+{
+  "id": "data_read_head.attrs.odd.rds",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "names",
+      "attrs",
+      "utf8_repaired"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "id",
+          "when",
+          "big",
+          "ord",
+          "lst",
+          "nested",
+          "lab"
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "id",
+          "when",
+          "big",
+          "ord",
+          "lst",
+          "nested",
+          "lab"
+        ],
+        "v": [
+          {
+            "t": "null"
+          },
+          {
+            "t": "list",
+            "names": [
+              "class",
+              "tzone"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "POSIXct",
+                  "POSIXt"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "UTC"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "null"
+          },
+          {
+            "t": "list",
+            "names": [
+              "class"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "ordered",
+                  "factor"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "null"
+          },
+          {
+            "t": "null"
+          },
+          {
+            "t": "list",
+            "names": [
+              "class",
+              "label",
+              "labels"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "haven_labelled",
+                  "vctrs_vctr",
+                  "double"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Agreed?"
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "No",
+                  "Yes"
+                ],
+                "v": [
+                  {
+                    "t": "dbl",
+                    "v": [
+                      1
+                    ]
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      2
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "null"
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

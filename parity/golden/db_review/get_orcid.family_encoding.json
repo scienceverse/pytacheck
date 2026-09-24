@@ -1,0 +1,18 @@
+{
+  "id": "get_orcid.family_encoding",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "DeBruine",
+      "van%20der%20Berg",
+      "O%27Brien",
+      "M%C3%BCller",
+      "Smith&Co"
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

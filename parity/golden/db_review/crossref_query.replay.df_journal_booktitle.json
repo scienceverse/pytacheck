@@ -1,0 +1,40 @@
+{
+  "id": "crossref_query.replay.df_journal_booktitle",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 2,
+    "names": [
+      "ref",
+      "DOI",
+      "error"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "T1; \\nA; \\nJ",
+          "T2; \\nB"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "request failed",
+          "request failed"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

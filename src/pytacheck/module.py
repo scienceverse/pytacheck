@@ -19,20 +19,26 @@ Declare one with :func:`module`::
         return {"table": table, "traffic_light": "red", ...}
 
 Modules are found, in order, among the built-ins (``pytacheck.modules``),
-installed plugins (entry-point group ``pytacheck.modules``), ``./<name>.py``
-and ``./modules/<name>.py``, or by an explicit path to a ``.py`` file —
-the same search metacheck's ``module_find()`` does for ``.R`` files.
+``pack::name`` refs to active packs, installed plugins (entry-point group
+``pytacheck.modules``), ``./<name>.py`` and ``./modules/<name>.py``, the
+active packs (bare names), or by an explicit path to a ``.py`` file — the
+same search metacheck's ``module_find()`` does for ``.R`` files, extended
+with packs (see ``docs/design/module-system-v2.md``).
 """
 
 from __future__ import annotations
 
+import contextlib
 import contextvars
+import hashlib
 import importlib
 import importlib.util
 import inspect
 import pkgutil
+import re
 import sys
 import textwrap
+import threading
 from collections.abc import Callable, Iterator, Mapping, Sequence
 from dataclasses import dataclass, field, replace
 from functools import cache
@@ -51,6 +57,7 @@ __all__ = [
     "ModuleError",
     "ModuleOutput",
     "ModuleSpec",
+    "RunSession",
     "get_prev_outputs",
     "module",
     "module_find",
@@ -58,10 +65,15 @@ __all__ = [
     "module_info",
     "module_list",
     "module_run",
+    "run_session",
+    "use",
 ]
 
 SECTION_LEVELS = ("general", "intro", "method", "results", "discussion", "reference")
 TRAFFIC_LIGHTS = ("na", "fail", "info", "green", "yellow", "red")
+#: Capabilities a module can declare with ``requires=`` (``offline`` drops them).
+CAPABILITIES = ("network", "llm")
+_MODULE_NAME_RE = re.compile(r"^[A-Za-z][A-Za-z0-9_]*$")
 
 
 class ModuleError(RuntimeError):
@@ -82,6 +94,12 @@ class ModuleSpec:
     params: Mapping[str, str] = field(default_factory=dict)
     returns: str = "a list"
     path: str | None = None
+    #: the pack the module came from (``"metacheck"`` for built-ins)
+    pack: str | None = None
+    #: capabilities it needs, e.g. ``("network",)`` or ``("llm",)``
+    requires: tuple[str, ...] = ()
+    #: structured validation record (``papers``, ``tp``, ``fp``, ``fn``, ``reference``...)
+    validation: Mapping[str, Any] | None = None
 
     @property
     def section(self) -> str:
@@ -115,8 +133,20 @@ def module(
     author: Sequence[str] = (),
     params: Mapping[str, str] | None = None,
     returns: str = "a list",
+    requires: Sequence[str] = (),
+    validation: Mapping[str, Any] | None = None,
 ) -> Callable[[Callable[..., Any]], Callable[..., Any]]:
-    """Decorator declaring a function as a pytacheck module."""
+    """Decorator declaring a function as a pytacheck module.
+
+    ``keywords`` stay faithful to R (the report section); capabilities go in
+    ``requires`` (``"network"``, ``"llm"``). For backwards compatibility
+    ``"llm"`` / ``"network"`` given as keywords are moved into ``requires``.
+    """
+    if isinstance(keywords, str):
+        keywords = [keywords]
+    if isinstance(requires, str):
+        requires = [requires]
+    caps = [*requires, *(k for k in keywords if k in CAPABILITIES)]
 
     def decorate(func: Callable[..., Any]) -> Callable[..., Any]:
         mod = sys.modules.get(func.__module__)
@@ -127,16 +157,156 @@ def module(
             title=title,
             description=textwrap.dedent(description).strip(),
             details=textwrap.dedent(details).strip(),
-            keywords=tuple(keywords),
+            keywords=tuple(k for k in keywords if k not in CAPABILITIES),
             author=tuple(author),
             params=dict(params or {"paper": "a paper object or paperlist object"}),
             returns=returns,
             path=path,
+            pack=_pack_of(func.__module__),
+            requires=tuple(dict.fromkeys(caps)),
+            validation=dict(validation) if validation is not None else None,
         )
         func.__pytacheck_module__ = spec  # type: ignore[attr-defined]
         return func
 
     return decorate
+
+
+def _pack_of(modname: str) -> str | None:
+    """The pack of a Python module name (``pytacheck.modules.*`` is ``metacheck``)."""
+    if modname.startswith("pytacheck.modules."):
+        return "metacheck"
+    if modname.startswith("pytacheck_packs."):
+        pkg = sys.modules.get(".".join(modname.split(".")[:2]))
+        return getattr(pkg, "__pytacheck_pack__", None)
+    return None
+
+
+# ---------------------------------------------------------------------------
+# Policy: pc.use(...) and run sessions
+# ---------------------------------------------------------------------------
+
+_USE: contextvars.ContextVar[Mapping[str, Any]] = contextvars.ContextVar(
+    "pytacheck_use",
+    default={},  # noqa: B039 - never mutated
+)
+
+
+@contextlib.contextmanager
+def use(
+    preset: str | None = None, *, allow_local: bool | None = None, offline: bool | None = None
+) -> Iterator[None]:
+    """Scope settings to a ``with`` block (a ContextVar, so threads/tasks are isolated).
+
+    * ``preset``: the preset :func:`pytacheck.presets.select` uses when none is given;
+    * ``allow_local=False``: no ``./name.py``, ``./modules/name.py``, file paths
+      or path packs (the API server runs like this);
+    * ``offline=True``: selection drops modules that require ``network`` or ``llm``.
+
+    ``None`` keeps the enclosing setting.
+    """
+    given = {"preset": preset, "allow_local": allow_local, "offline": offline}
+    new = {**_USE.get(), **{k: v for k, v in given.items() if v is not None}}
+    token = _USE.set(new)
+    try:
+        yield
+    finally:
+        _USE.reset(token)
+
+
+def use_setting(key: str, default: Any = None) -> Any:
+    """The value set by the innermost :func:`use` for *key* (or *default*)."""
+    return _USE.get().get(key, default)
+
+
+def _allow_local() -> bool:
+    return bool(_USE.get().get("allow_local", True))
+
+
+class RunSession:
+    """Memo of :func:`module_run` calls on plain papers (see :func:`run_session`)."""
+
+    def __init__(self) -> None:
+        self._memo: dict[tuple[Any, ...], ModuleOutput] = {}
+        self._lock = threading.Lock()
+        self.hits = 0
+        self.misses = 0
+
+    def __len__(self) -> int:
+        return len(self._memo)
+
+    def get(self, key: tuple[Any, ...]) -> ModuleOutput | None:
+        with self._lock:
+            out = self._memo.get(key)
+            if out is None:
+                self.misses += 1
+                return None
+            self.hits += 1
+        return _shallow_copy(out)
+
+    def put(self, key: tuple[Any, ...], out: ModuleOutput) -> None:
+        with self._lock:
+            self._memo[key] = _shallow_copy(out)
+
+    def clear(self) -> None:
+        with self._lock:
+            self._memo.clear()
+
+
+_SESSION: contextvars.ContextVar[RunSession | None] = contextvars.ContextVar(
+    "pytacheck_run_session", default=None
+)
+
+
+@contextlib.contextmanager
+def run_session() -> Iterator[RunSession]:
+    """Memoise :func:`module_run` on plain papers inside a ``with`` block.
+
+    The key is the paper's identity and generation (bumped by any mutation),
+    the module's identity (pack, rev and file hash) and its bound arguments,
+    so implicit re-runs (``data_check`` inside ``codebook_check``...) happen
+    once. Failures are not cached; a hit returns a shallow copy. Nested
+    sessions share the outermost one.
+    """
+    current = _SESSION.get()
+    if current is not None:
+        yield current
+        return
+    session = RunSession()
+    token = _SESSION.set(session)
+    try:
+        yield session
+    finally:
+        _SESSION.reset(token)
+
+
+class _Unfreezable(Exception):
+    pass
+
+
+def _freeze(value: Any) -> Any:
+    """A hashable, type-tagged form of an argument value (for memo keys)."""
+    if value is None or isinstance(value, bool | int | float | str | bytes):
+        return (type(value).__name__, value)
+    if isinstance(value, list | tuple):
+        return ("seq", tuple(_freeze(v) for v in value))
+    if isinstance(value, Mapping):
+        return ("map", tuple(sorted(((repr(k), _freeze(v)) for k, v in value.items()))))
+    if isinstance(value, set | frozenset):
+        return ("set", frozenset(_freeze(v) for v in value))
+    if isinstance(value, Path):
+        return ("path", str(value))
+    raise _Unfreezable
+
+
+def _paper_key(paper: Any) -> tuple[Any, ...] | None:
+    if isinstance(paper, Paper):
+        gen = getattr(paper, "_generation", None)
+        return None if gen is None else ("paper", id(paper), gen)
+    if isinstance(paper, PaperList):
+        gens = tuple(getattr(p, "_generation", None) for p in paper)
+        return None if None in gens else ("paperlist", id(paper), gens)
+    return None
 
 
 # ---------------------------------------------------------------------------
@@ -179,7 +349,8 @@ def _spec_from_pymodule(pymod: Any, name: str) -> ModuleSpec:
 
 
 def _load_file(path: Path) -> ModuleSpec:
-    mod_name = f"pytacheck_user_module_{path.stem}_{abs(hash(str(path.resolve())))}"
+    digest = hashlib.sha256(str(path.resolve()).encode("utf-8", "surrogateescape")).hexdigest()
+    mod_name = f"pytacheck_user_module_{path.stem}_{digest[:16]}"
     spec = importlib.util.spec_from_file_location(mod_name, path)
     if spec is None or spec.loader is None:
         raise ModuleError(f"Cannot load module file {path}")
@@ -203,35 +374,102 @@ def _entry_point_specs() -> dict[str, Any]:
         return {}
 
 
+def _locate(key: str) -> tuple[str, Any]:
+    """Where a module ref resolves, without importing it.
+
+    Returns ``(kind, where)``: ``("builtin", name)``, ``("pack", (pack, name))``,
+    ``("entry_point", ep)`` or ``("file", path)``. Search order:
+
+    1. a built-in name (fast: no config is read);
+    2. ``pack::name`` (``metacheck::x`` is ``x``);
+    3. legacy ``pytacheck.modules`` entry points, ``./<name>.py``, ``./modules/<name>.py``;
+    4. the active packs (an error if several provide the name);
+    5. a path to an existing file.
+
+    ``use(allow_local=False)`` skips the file lookups, paths and path packs.
+    """
+    if key in _builtin_names():
+        return ("builtin", key)
+    if "::" in key:
+        pack_name, _, mod = key.partition("::")
+        if pack_name == "metacheck":
+            if mod in _builtin_names():
+                return ("builtin", mod)
+            raise ModuleError(
+                f"The pack 'metacheck' has no module '{mod}'. "
+                f"Its modules are: {', '.join(_builtin_names())}"
+            )
+        from pytacheck.packs.registry import get_pack
+
+        pack = get_pack(pack_name, allow_local=_allow_local())
+        if not pack.has_module(mod):
+            mods = pack.modules()
+            raise ModuleError(
+                f"The pack '{pack_name}' has no module '{mod}'. "
+                + (f"Its modules are: {', '.join(mods)}" if mods else "It has no modules.")
+            )
+        return ("pack", (pack, mod))
+    eps = _entry_point_specs()
+    if key in eps:
+        return ("entry_point", eps[key])
+    local = _allow_local()
+    if local:
+        for candidate in (Path(f"{key}.py"), Path("modules") / f"{key}.py"):
+            if candidate.is_file():
+                return ("file", candidate)
+    if _MODULE_NAME_RE.match(key):
+        from pytacheck.packs.registry import find_module
+
+        found = find_module(key, allow_local=local)
+        if len(found) > 1:
+            refs = ", ".join(f'"{p.name}::{key}"' for p in found)
+            raise ModuleError(
+                f"More than one pack provides the module '{key}'; use one of {refs} instead."
+            )
+        if found:
+            return ("pack", (found[0], key))
+    if local:
+        path = Path(key)
+        if path.is_file():
+            return ("file", path)
+    from pytacheck.log import logger
+
+    logger("module_find", {"module": key, "error": "Can't find module"})
+    msg = (
+        f"There were no modules that matched {key}\n"
+        "use module_list() to see a list of built-in modules."
+    )
+    if _MODULE_NAME_RE.match(key):
+        from pytacheck.packs.registry import registry
+
+        problems = registry().problems
+        if problems:
+            msg += "\nSome configured packs are unavailable:\n" + "\n".join(
+                f"* {v}" for v in problems.values()
+            )
+    raise ModuleError(msg)
+
+
 def module_find(name: str | Path | ModuleSpec | Callable[..., Any]) -> ModuleSpec:
-    """Resolve a module name, path, spec or decorated function to its spec."""
+    """Resolve a module name, ``pack::name`` ref, path, spec or decorated function to its spec."""
     if isinstance(name, ModuleSpec):
         return name
     if callable(name) and hasattr(name, "__pytacheck_module__"):
         return name.__pytacheck_module__  # type: ignore[no-any-return]
-    key = str(name)
-    if key in _builtin_names():
-        pymod = importlib.import_module(f"pytacheck.modules.{key}")
-        return _spec_from_pymodule(pymod, key)
-    eps = _entry_point_specs()
-    if key in eps:
-        obj = eps[key].load()
+    kind, where = _locate(str(name))
+    if kind == "builtin":
+        pymod = importlib.import_module(f"pytacheck.modules.{where}")
+        return _spec_from_pymodule(pymod, where)
+    if kind == "pack":
+        from pytacheck.packs.registry import load_module
+
+        return load_module(*where)
+    if kind == "entry_point":
+        obj = where.load()
         if hasattr(obj, "__pytacheck_module__"):
             return obj.__pytacheck_module__  # type: ignore[no-any-return]
-        return _spec_from_pymodule(obj, key)
-    for candidate in (Path(f"{key}.py"), Path("modules") / f"{key}.py"):
-        if candidate.is_file():
-            return _load_file(candidate)
-    path = Path(key)
-    if path.is_file():
-        return _load_file(path)
-    from pytacheck.log import logger
-
-    logger("module_find", {"module": key, "error": "Can't find module"})
-    raise ModuleError(
-        f"There were no modules that matched {key}\n"
-        "use module_list() to see a list of built-in modules."
-    )
+        return _spec_from_pymodule(obj, str(name))
+    return _load_file(where)
 
 
 def module_info(name: str | Path | ModuleSpec | Callable[..., Any]) -> ModuleSpec:
@@ -240,6 +478,8 @@ def module_info(name: str | Path | ModuleSpec | Callable[..., Any]) -> ModuleSpe
 
 
 def _iter_specs(module_dir: str | Path | None) -> Iterator[ModuleSpec]:
+    if module_dir is not None and not _allow_local():
+        raise ModuleError("Local module folders are not allowed here (allow_local=False)")
     if module_dir is None:
         for n in _builtin_names():
             try:
@@ -256,8 +496,34 @@ def _iter_specs(module_dir: str | Path | None) -> Iterator[ModuleSpec]:
             continue
 
 
-def module_list(module_dir: str | Path | None = None) -> pd.DataFrame:
-    """A table of available modules, sorted by report section then name."""
+def _iter_pack_specs(pack: str) -> Iterator[ModuleSpec]:
+    from pytacheck.packs.registry import active_packs, get_pack, load_module
+
+    local = _allow_local()
+    packs = (
+        list(active_packs(allow_local=local).values())
+        if pack == "*"
+        else [get_pack(pack, allow_local=local)]
+    )
+    for p in packs:
+        for n in p.modules():
+            try:
+                yield load_module(p, n)
+            except ModuleError:
+                continue
+
+
+def module_list(module_dir: str | Path | None = None, *, pack: str | None = None) -> pd.DataFrame:
+    """A table of available modules, sorted by report section then name.
+
+    With no arguments this lists the built-in modules. ``pack="name"`` lists
+    one active pack and ``pack="*"`` every active pack; both add a ``pack``
+    column.
+    """
+    if pack is not None and module_dir is not None:
+        raise ValueError("module_list(): give module_dir or pack, not both")
+    columns = ["name", "title", "description", "section", "path"]
+    specs = _iter_specs(module_dir) if pack is None else _iter_pack_specs(pack)
     rows = [
         {
             "name": Path(s.path).stem if s.path and module_dir is not None else s.name,
@@ -265,10 +531,13 @@ def module_list(module_dir: str | Path | None = None) -> pd.DataFrame:
             "description": s.description,
             "section": s.keywords[0] if s.keywords else "general",
             "path": s.path,
+            **({"pack": s.pack or "metacheck"} if pack is not None else {}),
         }
-        for s in _iter_specs(module_dir)
+        for s in specs
     ]
-    df = pd.DataFrame(rows, columns=["name", "title", "description", "section", "path"])
+    if pack is not None:
+        columns.append("pack")
+    df = pd.DataFrame(rows, columns=columns)
     df["section"] = pd.Categorical(df["section"], categories=list(SECTION_LEVELS), ordered=True)
     order = sorted(
         range(len(df)),
@@ -354,6 +623,9 @@ class ModuleOutput:
     paper: Any = None
     prev_outputs: dict[str, ModuleOutput] = field(default_factory=dict)
     extras: dict[str, Any] = field(default_factory=dict)
+    #: which module/pack/rev/args produced this output (see :mod:`pytacheck.provenance`);
+    #: not an element: excluded from ``keys()``, ``results()``, equality and parity
+    provenance: dict[str, Any] | None = field(default=None, repr=False, compare=False)
 
     _FIELDS = (
         "module",
@@ -434,9 +706,38 @@ def module_run(
     defaults. Passing a :class:`ModuleOutput` chains modules: the new output
     keeps the combined ``summary_table`` and every previous output in
     ``prev_outputs`` (readable from modules via :func:`get_prev_outputs`).
+
+    A qualified ref (``"pack::name"``) is labelled with the bare module name,
+    so chaining and the ``summary_table`` suffix work the same either way.
+    Inside :func:`run_session`, runs on plain papers are memoised.
     """
+    from pytacheck.provenance import bind_args, module_identity, module_provenance
+
     spec = module_find(module)
-    module_label = module if isinstance(module, str) else spec.name
+    if isinstance(module, str):
+        module_label = module.partition("::")[2] if "::" in module else module
+    else:
+        module_label = spec.name
+    bound = bind_args(spec.func, paper, kwargs)
+    # an unbindable call raises below, exactly as before; record what was asked for
+    effective = (
+        bound if bound is not None else {**dict(list(spec.arg_defaults.items())[1:]), **kwargs}
+    )
+    provenance = module_provenance(spec, effective)
+    session = _SESSION.get()
+    memo_key: tuple[Any, ...] | None = None
+    if session is not None and bound is not None:
+        pkey = _paper_key(paper)
+        if pkey is not None:
+            try:
+                args_key = _freeze(bound)
+            except _Unfreezable:
+                args_key = None
+            if args_key is not None:
+                memo_key = (str(module_label), module_identity(spec, provenance), pkey, args_key)
+                hit = session.get(memo_key)
+                if hit is not None:
+                    return hit
     prev_outputs: dict[str, ModuleOutput] = {}
 
     if isinstance(paper, ModuleOutput):
@@ -497,7 +798,7 @@ def module_run(
             summary_table = _apply_na_replace(summary_table, na_replace)
 
     table = results.pop("table", None)
-    return ModuleOutput(
+    out = ModuleOutput(
         module=str(module_label),
         title=spec.title,
         section=spec.section,
@@ -509,4 +810,24 @@ def module_run(
         paper=paper,
         prev_outputs=prev_outputs,
         extras=results,
+        provenance=provenance,
+    )
+    if memo_key is not None and session is not None:
+        session.put(memo_key, out)
+    return out
+
+
+def _shallow_copy(out: ModuleOutput) -> ModuleOutput:
+    """A new output sharing its values; DataFrames are copy-on-write views."""
+
+    def view(x: Any) -> Any:
+        return x.copy(deep=False) if isinstance(x, pd.DataFrame) else x
+
+    return replace(
+        out,
+        table=view(out.table),
+        summary_table=view(out.summary_table),
+        prev_outputs=dict(out.prev_outputs),
+        extras={k: view(v) for k, v in out.extras.items()},
+        provenance=None if out.provenance is None else dict(out.provenance),
     )

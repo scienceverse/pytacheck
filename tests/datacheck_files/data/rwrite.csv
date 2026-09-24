@@ -1,0 +1,6 @@
+"id","score","group","flag"
+1,1.5,"a",TRUE
+2,2,"b",FALSE
+3,NA,"a",NA
+4,4.25,NA,TRUE
+5,5,"c",TRUE

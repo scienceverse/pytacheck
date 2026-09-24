@@ -1,0 +1,71 @@
+{
+  "id": "osf_user_projects.synthetic",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 5,
+    "names": [
+      "osf_id",
+      "name",
+      "category",
+      "public",
+      "osf_url"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "proj1",
+          "lone1",
+          "proj2",
+          "proj3",
+          "proj4"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Proj 1",
+          "Lone",
+          "Proj 2",
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "project",
+          "other",
+          "project",
+          null,
+          null
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true,
+          true,
+          false,
+          false,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://osf.io/proj1",
+          "https://osf.io/lone1",
+          "https://osf.io/proj2",
+          "https://osf.io/proj3",
+          "https://osf.io/proj4"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

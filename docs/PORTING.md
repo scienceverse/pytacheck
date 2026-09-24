@@ -172,8 +172,9 @@ See `src/pytacheck/modules/marginal.py` for the reference pattern:
     title="Marginal Significance",          # roxygen title
     description="...",                     # @description
     details="""...""",                     # @details (keep <validation> blocks)
-    keywords=["results"],                  # @keywords: first section keyword = report section;
-                                           # add "llm" / "network" if the module needs them
+    keywords=["results"],                  # @keywords, verbatim from R (the report section)
+    requires=[],                           # capabilities: ["network"] and/or ["llm"] if the
+                                           # module needs them (never put these in keywords)
     author=["Daniel Lakens <D.Lakens@tue.nl>"],
     params={"paper": "a paper object or paperlist object", ...},   # @param
 )
@@ -188,6 +189,10 @@ def marginal(paper, ...):                  # same name as the file; R's argument
   `collapse_section([...])`. Prose must match R exactly (it is compared).
 * `format_ref(bibentry)` in R: run R once to get the HTML (`cat(format_ref(x))`) and
   store it as a string constant, as `marginal.py` does.
+* `keywords` must stay exactly R's (one section keyword per upstream module). Declare
+  network or LLM use with `requires=["network"]` / `requires=["llm"]`: offline selection
+  (`--offline`, the app's toggles) and provenance read it. (For old code the decorator
+  still moves `"llm"` / `"network"` out of `keywords` into `requires`.)
 * `get_prev_outputs("data_check", "table")` works the same inside a module run.
 * LLM-backed modules must work without an API key when R does (e.g. fallbacks), and
   parity cases for LLM paths use the LLM cache or are marked `skip_r`.

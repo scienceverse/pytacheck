@@ -1,0 +1,65 @@
+{
+  "id": "detect_likert_scale.adjacent_6",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "lo",
+      "hi",
+      "levels_present",
+      "coverage",
+      "suspects",
+      "floor_inferred",
+      "note"
+    ],
+    "v": [
+      {
+        "t": "int",
+        "v": [
+          1
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          6
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          1
+        ]
+      },
+      {
+        "t": "int",
+        "v": []
+      },
+      {
+        "t": "int",
+        "v": []
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Detected a 1-6 rating scale (levels observed: 1, 2, 3, 4, 5, 6)."
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

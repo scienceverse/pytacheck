@@ -1,0 +1,48 @@
+{
+  "id": "data_read_head.readxl_type-me.xlsx",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 10,
+    "names": [
+      "maybe boolean?",
+      "description"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "0",
+          "1",
+          "40908",
+          "TRUE",
+          "FALSE",
+          "cabbage",
+          "true",
+          "F",
+          "False"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "empty",
+          "0 (numeric)",
+          "1 (numeric)",
+          "datetime",
+          "boolean true",
+          "boolean false",
+          "\"cabbage\"",
+          "the string \"true\"",
+          "the letter \"F\"",
+          "\"False\" preceded by single quote"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

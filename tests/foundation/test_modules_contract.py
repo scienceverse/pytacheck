@@ -12,7 +12,11 @@ from parity.cases import load_cases
 from pytacheck.module import TRAFFIC_LIGHTS, _builtin_names
 
 BUILTINS = list(_builtin_names())
-OFFLINE = [m for m in BUILTINS if not set(pc.module_info(m).keywords) & {"network", "llm"}]
+OFFLINE = [
+    m
+    for m in BUILTINS
+    if not {*pc.module_info(m).keywords, *pc.module_info(m).requires} & {"network", "llm"}
+]
 
 
 def _fingerprint(paper: pc.Paper) -> dict:

@@ -1,0 +1,119 @@
+{
+  "id": "import_omv.review",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "data",
+      "columns",
+      "analyses",
+      "format",
+      "data_file_path"
+    ],
+    "v": [
+      {
+        "t": "df",
+        "nrow": 4,
+        "names": [
+          "a",
+          "t",
+          "d",
+          "n"
+        ],
+        "v": [
+          {
+            "t": "int",
+            "v": [
+              0,
+              1,
+              10,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "x",
+              null,
+              "z"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0.5,
+              "Inf",
+              -0,
+              1e-300
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1,
+              2,
+              3,
+              2
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 4,
+        "names": [
+          "name",
+          "type"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "a",
+              "t",
+              "d",
+              "n"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Nominal",
+              "Nominal",
+              "Continuous",
+              "Nominal"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "1. _u  |  pkg.x::fn (a)",
+          "2. 1 a",
+          "3. 10 b  |  jmv::late(x = 1)",
+          "4. 2 c  |  jmv::nested(vars(a, b), f(g(1)))",
+          "5. a x",
+          "6. B x  |  pkg::fn (a)"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "jamovi"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

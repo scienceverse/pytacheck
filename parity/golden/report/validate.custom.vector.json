@@ -1,0 +1,52 @@
+{
+  "id": "validate.custom.vector",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 3,
+    "names": [
+      "paper_id",
+      "text",
+      "flag",
+      "n"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "1",
+          "2",
+          "zzz"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "A significant effect.",
+          "No effect.",
+          "an extra row"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true,
+          false,
+          null
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          21,
+          10,
+          0
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

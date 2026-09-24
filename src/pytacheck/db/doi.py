@@ -131,20 +131,31 @@ def _resolves(resp: Any) -> bool | None:
         return False
     try:
         body = resp_body_json(resp)
-    except (TypeError, ValueError):
+    except Exception:  # noqa: BLE001 - tryCatch(error = ) catches every error
         body = None
     code = r_dollar(body, "responseCode")
-    if code is None or isinstance(code, list | dict):
+    if code is None or (isinstance(code, list | dict) and len(code) != 1):
         return None
-    if code == 1:
+    if isinstance(code, list | dict):  # a length-1 list compares as its element
+        code = code[0] if isinstance(code, list) else next(iter(code.values()))
+    if _r_equals(code, 1):
         return True
-    if code == 100:
+    if _r_equals(code, 100):
         return False
-    if code == 2:
+    if _r_equals(code, 2):
         return None
-    if code == 200:
+    if _r_equals(code, 200):
         return False
     return None
+
+
+def _r_equals(x: Any, n: int) -> bool:
+    """R's ``x == n`` for a JSON scalar (a string compares with ``as.character(n)``)."""
+    if isinstance(x, str):
+        return x == str(n)
+    if isinstance(x, bool | int | float):
+        return bool(x == n)
+    return False
 
 
 def doi_resolves(doi: Any, timeout: float = 10) -> Any:
@@ -191,21 +202,24 @@ def _info_value(x: Any) -> Any:
 
 
 def _paste_author(a: Any) -> list[str]:
-    """``paste(a$family, a$given, sep = ", ")`` (zero-length arguments dropped)."""
+    """``paste(a$family, a$given, sep = ", ")``.
+
+    A zero-length argument (``NULL``) counts as ``""`` next to a non-empty
+    one (``"Solo, "``); when both are empty the result is ``character(0)``.
+    """
     parts = []
     for key in ("family", "given"):
         v = r_dollar(a, key)
-        if v is None:
-            continue
-        vals = unlist(v) if isinstance(v, list | dict) else [v]
-        if not vals:
-            continue
+        vals = [] if v is None else (unlist(v) if isinstance(v, list | dict) else [v])
         parts.append(vals)
-    if not parts:
-        return []
     n = max(len(p) for p in parts)
+    if n == 0:
+        return []
     return [
-        ", ".join("NA" if (s := as_character(p[k % len(p)])) is None else s for p in parts)
+        ", ".join(
+            "" if not p else ("NA" if (s := as_character(p[k % len(p)])) is None else s)
+            for p in parts
+        )
         for k in range(n)
     ]
 
@@ -321,7 +335,7 @@ def doi_lookup(doi: Any) -> pd.DataFrame | None:
                 # `return(NULL)` inside tryCatch() returns from doi_lookup()
                 return None
             value = resp_body_json(resp)
-        except (TypeError, ValueError):
+        except Exception:  # noqa: BLE001 - tryCatch(error = ) catches every error
             value = None
         r_list_set(bibdata, i + 1, value)
 

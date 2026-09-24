@@ -1,0 +1,14 @@
+{
+  "id": "export_omv_html.review",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "<img src=\"data:image/png;base64,iVBOR3Jldmlldw==\"><img src=\"data:image/png;base64,iVBOR3Jldmlldw==\"><img src=\"01%20a/resources/p.png\"><img src=\"data:image/png;base64,iVBOR3Jldmlldw==\"><img src=\"01%20a/resources/p.png%\"><IMG src=\"data:image/gif;base64,R0lGODlhcmV2aWV3\"><img src=\"//cdn/x.png\"><img src=\"HTTP://x/y.png\">"
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

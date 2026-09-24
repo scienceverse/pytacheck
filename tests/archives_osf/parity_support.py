@@ -138,7 +138,17 @@ def _env(**values: str) -> Iterator[None]:
                 os.environ[k] = v
 
 
-def run_mocked(x: Callable[[], Any]) -> Any:
+#: Synthetic OSF responses for cases metacheck's recordings do not cover
+#: (a user's node listing, projects the token cannot read).
+LOCAL_MOCKS = Path(__file__).resolve().parent / "mocks"
+
+
+def run_mocked_local(x: Callable[[], Any]) -> Any:
+    """:func:`run_mocked` with :data:`LOCAL_MOCKS` searched before metacheck's recordings."""
+    return run_mocked(x, mock_dirs=(LOCAL_MOCKS, "apis"))
+
+
+def run_mocked(x: Callable[[], Any], mock_dirs: tuple[str | Path, ...] = ("apis",)) -> Any:
     """Call *x* against metacheck's recorded API responses (see module docstring)."""
     from pytacheck import utils
     from tests.archives_osf.osfmock import replay_osf
@@ -155,7 +165,7 @@ def run_mocked(x: Callable[[], Any]) -> Any:
             }
         ),
         _filetype_stub(),
-        replay_osf(missing="error"),
+        replay_osf(*mock_dirs, missing="error"),
     ):
         return x()
 
@@ -230,3 +240,27 @@ def online_true(fn: Callable[[], Any]) -> Any:
         return fn()
     finally:
         utils.online = saved  # type: ignore[assignment]
+
+
+def _fake_download_many_parallel(
+    urls: list[str], dests: list[str], expected_size: Any = float("nan")
+) -> list[str | None]:
+    """Write each destination's base name as its content (R: ``writeLines(basename(d), d)``)."""
+    for d in dests:
+        os.makedirs(os.path.dirname(d), exist_ok=True)
+        Path(d).write_text(os.path.basename(d) + "\n", encoding="utf-8")
+    return [None] * len(urls)
+
+
+def fake_downloads(fn: Callable[[], Any]) -> Any:
+    """Call *fn* with file downloads replaced by :func:`_fake_download_many_parallel`."""
+    with _stub_modules(
+        {"pytacheck.archives.download": {"_download_many_parallel": stub_download_many_parallel}}
+    ):
+        mod = __import__("pytacheck.archives.download", fromlist=["_"])
+        saved = mod._download_many_parallel
+        mod._download_many_parallel = _fake_download_many_parallel
+        try:
+            return fn()
+        finally:
+            mod._download_many_parallel = saved

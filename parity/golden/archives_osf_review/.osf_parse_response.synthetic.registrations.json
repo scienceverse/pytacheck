@@ -1,0 +1,104 @@
+{
+  "id": ".osf_parse_response.synthetic.registrations",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 2,
+    "names": [
+      "osf_id",
+      "name",
+      "osf_type",
+      "category",
+      "registration",
+      "preprint",
+      "self",
+      "children",
+      "files",
+      "parent",
+      "project"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "r1",
+          "r2"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "R",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "registrations",
+          "registrations"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "registration",
+          "registration"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true,
+          null
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "n1",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}
