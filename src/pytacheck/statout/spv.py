@@ -45,7 +45,7 @@ if TYPE_CHECKING:
 __all__ = ["export_spv_html", "import_spv", "spv_assemble_table"]
 
 _DBL_MAX = sys.float_info.max
-_SEP = "\u241f"
+_SEP = "␟"
 
 # ===========================================================================
 # Small R-semantics helpers shared by the statout readers
