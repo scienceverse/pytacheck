@@ -123,9 +123,10 @@ def paste(*args: Any, sep: str = " ", collapse: str | None = None) -> Any:
     (or when every argument is a scalar).
     """
     vectors = [_as_vector(a) for a in args]
-    vectors = [v for v in vectors if len(v) > 0]
-    if not vectors:
+    if not any(vectors):
         return "" if collapse is not None else []
+    # zero-length arguments recycle as "" (R: paste("A", character(0)) is "A ")
+    vectors = [v or [""] for v in vectors]
     n = max(len(v) for v in vectors)
     out = [sep.join(_paste_str(v[i % len(v)]) for v in vectors) for i in range(n)]
     if collapse is not None:

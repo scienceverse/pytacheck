@@ -31,9 +31,58 @@ _EXPORTS: dict[str, str] = {
     "lastlog": "pytacheck.log",
     "logger": "pytacheck.log",
     "logpath": "pytacheck.log",
-    # reading
+    # reading and conversion
     "read": "pytacheck.io.read",
     "chew": "pytacheck.io.bibr",
+    "convert_bibr": "pytacheck.io.bibr_convert",
+    "format_bib_authors": "pytacheck.io.bibr_convert",
+    "convert": "pytacheck.io.convert",
+    "papers_available": "pytacheck.io.corpus",
+    "papers_load": "pytacheck.io.corpus",
+    "papers_metadata": "pytacheck.io.corpus",
+    "papers_remove": "pytacheck.io.corpus",
+    "convert_grobid": "pytacheck.io.grobid",
+    "grobid_to_bibr": "pytacheck.io.grobid",
+    # bibliographic databases and registries
+    "add_bib_match": "pytacheck.db.crossref",
+    "crossref_doi": "pytacheck.db.crossref",
+    "crossref_query": "pytacheck.db.crossref",
+    "datacite_doi": "pytacheck.db.crossref",
+    "openalex_doi": "pytacheck.db.crossref",
+    "openalex_query": "pytacheck.db.crossref",
+    "doi_clean": "pytacheck.db.doi",
+    "doi_lookup": "pytacheck.db.doi",
+    "doi_resolves": "pytacheck.db.doi",
+    "doi_valid_format": "pytacheck.db.doi",
+    "check_orcid": "pytacheck.db.orcid",
+    "credit_roles": "pytacheck.db.orcid",
+    "get_orcid": "pytacheck.db.orcid",
+    "orcid_person": "pytacheck.db.orcid",
+    "pubpeer_comments": "pytacheck.db.pubpeer",
+    "regcheck_base_url": "pytacheck.db.regcheck",
+    "regcheck_compare": "pytacheck.db.regcheck",
+    "regcheck_tidy": "pytacheck.db.regcheck",
+    "regcheck_setup_local": "pytacheck.db.regcheck_local",
+    "regcheck_start_local": "pytacheck.db.regcheck_local",
+    "regcheck_stop_local": "pytacheck.db.regcheck_local",
+    "FLoRA": "pytacheck.db.replications",
+    "FLoRA_date": "pytacheck.db.replications",
+    "FLoRA_update": "pytacheck.db.replications",
+    "retractionwatch": "pytacheck.db.retractionwatch",
+    "rw": "pytacheck.db.retractionwatch",
+    "rw_date": "pytacheck.db.retractionwatch",
+    "rw_update": "pytacheck.db.retractionwatch",
+    # LLMs
+    "llm_cache": "pytacheck.llm.cache",
+    "llm_cache_clear": "pytacheck.llm.cache",
+    "llm": "pytacheck.llm.core",
+    "llm_max_calls": "pytacheck.llm.core",
+    "llm_max_tokens": "pytacheck.llm.core",
+    "llm_model": "pytacheck.llm.core",
+    "llm_model_list": "pytacheck.llm.core",
+    "llm_reasoning": "pytacheck.llm.core",
+    "llm_timeout": "pytacheck.llm.core",
+    "llm_use": "pytacheck.llm.core",
     # module system
     "ModuleError": "pytacheck.module",
     "ModuleOutput": "pytacheck.module",
@@ -128,8 +177,47 @@ def __dir__() -> list[str]:
 
 if TYPE_CHECKING:  # pragma: no cover
     from pytacheck.config import cache_dir, email, verbose
+    from pytacheck.db.crossref import (
+        add_bib_match,
+        crossref_doi,
+        crossref_query,
+        datacite_doi,
+        openalex_doi,
+        openalex_query,
+    )
+    from pytacheck.db.doi import doi_clean, doi_lookup, doi_resolves, doi_valid_format
+    from pytacheck.db.orcid import check_orcid, credit_roles, get_orcid, orcid_person
+    from pytacheck.db.pubpeer import pubpeer_comments
+    from pytacheck.db.regcheck import regcheck_base_url, regcheck_compare, regcheck_tidy
+    from pytacheck.db.regcheck_local import (
+        regcheck_setup_local,
+        regcheck_start_local,
+        regcheck_stop_local,
+    )
+    from pytacheck.db.replications import FLoRA, FLoRA_date, FLoRA_update
+    from pytacheck.db.retractionwatch import retractionwatch, rw, rw_date, rw_update
     from pytacheck.io.bibr import chew
+    from pytacheck.io.bibr_convert import convert_bibr, format_bib_authors
+    from pytacheck.io.convert import convert
+    from pytacheck.io.corpus import (
+        papers_available,
+        papers_load,
+        papers_metadata,
+        papers_remove,
+    )
+    from pytacheck.io.grobid import convert_grobid, grobid_to_bibr
     from pytacheck.io.read import read
+    from pytacheck.llm.cache import llm_cache, llm_cache_clear
+    from pytacheck.llm.core import (
+        llm,
+        llm_max_calls,
+        llm_max_tokens,
+        llm_model,
+        llm_model_list,
+        llm_reasoning,
+        llm_timeout,
+        llm_use,
+    )
     from pytacheck.log import lastlog, logger, logpath
     from pytacheck.module import (
         ModuleError,
