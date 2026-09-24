@@ -175,7 +175,7 @@ def _dollar(x: Any, name: str) -> Any:
         return hits[0] if len(hits) == 1 else None
     if isinstance(x, list):
         return None  # an unnamed list
-    raise TypeError("$ operator is invalid for atomic vectors")
+    raise TypeError("$ operator is invalid for atomic vectors")  # scalars and tuples
 
 
 def _r_as_character1(x: Any) -> str | None:
@@ -190,7 +190,7 @@ def _r_as_character1(x: Any) -> str | None:
         return as_character(x)
     if isinstance(x, str):
         return x
-    if isinstance(x, list):
+    if isinstance(x, list | tuple):
         values = [v for _, v in x] if isinstance(x, _RList) else list(x)
         if not values:
             raise IndexError("subscript out of bounds")
@@ -236,7 +236,7 @@ def code_read(file_path: str | os.PathLike[str]) -> list[str]:
     if not isinstance(file_path, str | os.PathLike):
         values = list(file_path)
         if len(values) != 1:
-            raise ValueError("'length = %d' in coercion to 'logical(1)'" % len(values))
+            raise ValueError(f"'length = {len(values)}' in coercion to 'logical(1)'")
         file_path = values[0]
     path = os.fspath(file_path)
     if _URL.search(path):
@@ -293,12 +293,52 @@ def _ipynb_lang(file_name: Any) -> str:
     return "R" if lang_s in ("r", "ir") else "Python"
 
 
+def _yaml_loader() -> Any:
+    """A PyYAML loader resolving scalars the way R's ``yaml`` package does."""
+    import yaml
+
+    class Loader(yaml.SafeLoader):
+        pass
+
+    # R's yaml keeps timestamps as strings and reads y/n as booleans
+    Loader.yaml_implicit_resolvers = {
+        k: [(tag, rx) for tag, rx in v if tag != "tag:yaml.org,2002:timestamp"]
+        for k, v in yaml.SafeLoader.yaml_implicit_resolvers.items()
+    }
+    Loader.add_implicit_resolver(
+        "tag:yaml.org,2002:bool", re.compile(r"^(?:y|Y|n|N)$"), list("yYnN")
+    )
+
+    def construct_bool(loader: Any, node: Any) -> bool:
+        return str(loader.construct_scalar(node)).lower() in ("y", "yes", "true", "on")
+
+    Loader.add_constructor("tag:yaml.org,2002:bool", construct_bool)
+    return Loader
+
+
+def _r_yaml(x: Any) -> Any:
+    """PyYAML output as R's ``yaml.load()`` shapes it.
+
+    Mappings stay dicts (named lists); a sequence of scalars of one type is an
+    atomic vector (a tuple here), any other sequence a list.
+    """
+    if isinstance(x, dict):
+        return {str(k): _r_yaml(v) for k, v in x.items()}
+    if isinstance(x, list):
+        items = [_r_yaml(v) for v in x]
+        kinds = {type(v) for v in items}
+        if items and len(kinds) == 1 and kinds <= {str, int, float, bool}:
+            return tuple(items)
+        return items
+    return x
+
+
 def _yaml_load(text: str) -> Any:
     """``yaml::yaml.load()`` (``None`` on error)."""
     import yaml
 
     try:
-        return yaml.safe_load(text)
+        return _r_yaml(yaml.load(text, Loader=_yaml_loader()))  # noqa: S506 - SafeLoader subclass
     except Exception:
         return None
 
@@ -322,22 +362,16 @@ def _qmd_lang(file_name: Any) -> str:
             # R: txt[2:end] -- a descending 2:1 when the fence closes at once
             front = [txt[1], txt[0]] if end == 1 else txt[1:end]
             doc = _yaml_load("\n".join(front))
-            if isinstance(doc, str | int | float | bool):
-                raise TypeError("$ operator is invalid for atomic vectors")
-            jupyter = doc.get("jupyter") if isinstance(doc, dict) else None
-            if isinstance(doc, dict) and jupyter is None:
-                jupyter = _dollar(doc, "jupyter")
+            jupyter = _dollar(doc, "jupyter")
             value: Any = None
-            if isinstance(jupyter, dict) or (
-                isinstance(jupyter, list) and not all(isinstance(v, str) for v in jupyter)
-            ):
+            if isinstance(jupyter, dict | list):  # is.list()
                 value = _dollar(_dollar(jupyter, "kernelspec"), "language")
                 if value is None:
                     value = _dollar(jupyter, "language")
-            elif isinstance(jupyter, str):
+            elif isinstance(jupyter, str) or (
+                isinstance(jupyter, tuple) and all(isinstance(v, str) for v in jupyter)
+            ):
                 value = jupyter
-            elif isinstance(jupyter, list) and jupyter:
-                value = jupyter  # a sequence of strings is a character vector
             if value is not None:
                 first = _r_as_character1(value)
                 yaml_lang = first.lower() if first is not None else None
@@ -424,9 +458,7 @@ def _repo_file_counts(all_files: pd.DataFrame) -> dict[Any, int]:
     return counts
 
 
-def _download(
-    rows: pd.DataFrame, all_files: pd.DataFrame, **kwargs: Any
-) -> pd.DataFrame | None:
+def _download(rows: pd.DataFrame, all_files: pd.DataFrame, **kwargs: Any) -> pd.DataFrame | None:
     """``tryCatch(download_repo_files(...), error = function(e) NULL)``."""
     try:
         from pytacheck.archives.download import download_repo_files
@@ -560,11 +592,14 @@ def _expand_output(
 def _synthetic_row(files: pd.DataFrame, i: int, path: str) -> pd.DataFrame:
     """One recovered-code row: named after *path*, under ``<dir>/code/``."""
     row = files.iloc[[i]].copy().reset_index(drop=True)
-    fp = _col(files, "file_path")[i]
-    base_path = fp if not _is_na(fp) and "file_path" in files.columns else files["file_name"].iloc[i]
+    if "file_path" in files.columns:
+        fp = files["file_path"].iloc[i]
+        base_dir = "NA" if _is_na(fp) else _r_dirname(str(fp))
+    else:
+        base_dir = _r_dirname(str(files["file_name"].iloc[i]))
     name = os.path.basename(path)
     row["file_name"] = name
-    row["file_path"] = _r_file_path(_r_dirname(str(base_path)), "code", name)
+    row["file_path"] = _r_file_path(base_dir, "code", name)
     row["file_location"] = path
     row["file_url"] = pd.Series([None], dtype=object)
     row["file_size"] = float(os.path.getsize(path))
@@ -756,7 +791,10 @@ def _code_expand_html(
     return _bind(all_files, new_rows)
 
 
-def _code_expand_zip(all_files: pd.DataFrame, skip_on_api_limit: bool = False) -> pd.DataFrame:
+def _code_expand_zip(
+    all_files: pd.DataFrame,
+    skip_on_api_limit: bool = False,  # noqa: ARG001 - unused in R too
+) -> pd.DataFrame:
     """Fetch the code members of every unexpanded remote ``.zip`` row.
 
     Port of ``R/code_check.R::.code_expand_zip()``: the archive is peeked
@@ -788,8 +826,11 @@ def _code_expand_zip(all_files: pd.DataFrame, skip_on_api_limit: bool = False) -
         is_code = [lang is not None for lang in code_lang(members)]
         if not any(is_code):
             continue
-        fp = _col(all_files, "file_path")[i]
-        base = fp if not _is_na(fp) and "file_path" in all_files.columns else names[i]
+        if "file_path" in all_files.columns:
+            fp = all_files["file_path"].iloc[i]
+            base = "NA" if _is_na(fp) else str(fp)
+        else:
+            base = str(names[i])
         try:
             from pytacheck.archives.download import _repo_cache_path
             from pytacheck.archives.zip_peek import _zip_fetch_members
@@ -818,18 +859,18 @@ def _code_expand_zip(all_files: pd.DataFrame, skip_on_api_limit: bool = False) -
 # ---------------------------------------------------------------------------
 
 
-def _write_lines(lines: Sequence[str], path: str | os.PathLike[str]) -> None:
-    """``writeLines(lines, path)``."""
+def _write_lines(lines: Sequence[str | None], path: str | os.PathLike[str]) -> None:
+    """``writeLines(lines, path)`` (``NA`` is written as ``"NA"``)."""
     with open(path, "w", encoding="utf-8", errors="surrogateescape", newline="") as fh:
-        fh.writelines(f"{line}\n" for line in lines)
+        fh.writelines(f"{'NA' if line is None else line}\n" for line in lines)
 
 
-def _text_arg(file_path: Any, text: Any) -> list[str]:
+def _text_arg(file_path: Any, text: Any) -> list[str | None]:
     if file_path is None and text is None:
         raise ValueError("You must specify one of file_path or text")
     if text is None:
-        return code_read(file_path)
-    return [t for t in (_as_chr(text) or []) if t is not None]
+        return list(code_read(file_path))
+    return list(_as_chr(text) or [])
 
 
 def code_extract_r(
@@ -847,7 +888,7 @@ def code_extract_r(
     """
     from pytacheck.codecheck._purl import purl
 
-    lines = _text_arg(file_path, text)
+    lines = ["NA" if t is None else t for t in _text_arg(file_path, text)]
     out = purl(lines, documentation=documentation)
     from pytacheck.codecheck._encoding import code_read_bytes
 
@@ -874,14 +915,12 @@ def code_extract_py(
     (see :func:`code_lang`). Returns the lines, or *save_path* after writing.
     """
     lines = _text_arg(file_path, text)
-    nb = _json_load("\n".join(lines))
+    nb = _json_load("\n".join("NA" if t is None else t for t in lines))
     cells = _dollar(nb, "cells")
     out: list[str] = []
     if cells is not None and _r_length(cells) > 0:
         for cl in _r_elements(cells):
-            if _dollar(cl, "cell_type") != "code" or not isinstance(
-                _dollar(cl, "cell_type"), str
-            ):
+            if _dollar(cl, "cell_type") != "code" or not isinstance(_dollar(cl, "cell_type"), str):
                 continue
             src = _dollar(cl, "source")
             if src is None or _r_length(src) == 0:
@@ -927,16 +966,14 @@ def _r_unlist_chr(x: Any) -> list[str]:
 
     walk(x)
     if any(isinstance(v, str) for v in out):
-        return [
-            v if isinstance(v, str) else (_r_as_character1(v) or "") for v in out
-        ]
+        return [v if isinstance(v, str) else (_r_as_character1(v) or "") for v in out]
     return [_r_as_character1(v) or "" for v in out]
 
 
 def code_extract_qmd_py(
     file_path: str | os.PathLike[str] | None = None,
     save_path: str | os.PathLike[str] | None = None,
-    text: str | Sequence[str] | None = None,
+    text: str | Sequence[str | None] | None = None,
 ) -> Any:
     """Extract the Python chunks of a Quarto document.
 
@@ -957,7 +994,7 @@ def code_extract_qmd_py(
         close = compile_r(f"^{fence[1]}\\s*$")
         j = i + 1
         body: list[str] = []
-        while j < n and close.search(text_lines[j]) is None:
+        while j < n and (text_lines[j] is None or close.search(text_lines[j]) is None):
             body.append(text_lines[j])
             j += 1
         keep = grepl(r"^\s*#\|", body)
@@ -996,7 +1033,7 @@ def code_parse_r(
     paths = [os.fspath(p) for p in paths]
     if all(p == "" for p in paths) and text is None:
         raise ValueError("You must specify one of file_path or text")
-    given = None if text is None else [t for t in (_as_chr(text) or [])]
+    given = None if text is None else list(_as_chr(text) or [])
     rows = []
     for fp in paths:
         lines = code_read(fp) if fp != "" else given
@@ -1034,9 +1071,7 @@ _ABS_PATH = (
 )
 
 
-def _search_matches(
-    lines: list[str | None], pattern: str
-) -> tuple[list[int], list[str]]:
+def _search_matches(lines: list[str | None], pattern: str) -> tuple[list[int], list[str]]:
     """``search_text(<lines>, pattern, perl = TRUE, return = "match")``.
 
     ``search_text()`` ignores case by default. Returns the 1-based line
@@ -1296,8 +1331,7 @@ def _code_comment_flags(code_text: Sequence[str | None], lang: str) -> list[bool
     if lang in ("R", "Python"):
         whole = _flags(r"^\s*#", lines)
         return [
-            w or _code_strip_inline_comment(L, "#") != L
-            for L, w in zip(lines, whole, strict=True)
+            w or _code_strip_inline_comment(L, "#") != L for L, w in zip(lines, whole, strict=True)
         ]
     if lang in ("SAS", "SPSS", "Stata"):
         if lang == "SPSS":
@@ -1307,9 +1341,7 @@ def _code_comment_flags(code_text: Sequence[str | None], lang: str) -> list[bool
         else:
             starts = _flags(r"/\*", lines)
             ends = _flags(r"\*/", lines)
-            line_comment = _flags(
-                r"^\s*\*.*;\s*$" if lang == "SAS" else r"^\s*\*", lines
-            )
+            line_comment = _flags(r"^\s*\*.*;\s*$" if lang == "SAS" else r"^\s*\*", lines)
         for ln, L in enumerate(lines):
             was = in_block
             if not in_block and starts[ln]:
@@ -1543,9 +1575,7 @@ def code_packages(packages: Any) -> list[str]:
 # environment pinning
 # ---------------------------------------------------------------------------
 
-_GROUNDHOG = (
-    r"groundhog(?:::)?\.?library\s*\((?:[^()]|\([^()]*\))*[\"'](\d{4}-\d{2}-\d{2})[\"']"
-)
+_GROUNDHOG = r"groundhog(?:::)?\.?library\s*\((?:[^()]|\([^()]*\))*[\"'](\d{4}-\d{2}-\d{2})[\"']"
 _CHECKPOINT = r"checkpoint(?:::checkpoint)?\s*\(\s*[\"'](\d{4}-\d{2}-\d{2})[\"']"
 _R_VERSION = r"R version ([0-9]+\.[0-9]+\.[0-9]+)"
 
@@ -1652,7 +1682,9 @@ def _code_version_pin_check(
                     }
                     for p in _r_elements(pkgs)
                 ]
-                frames.append(pd.DataFrame(recs, columns=["file_name", "package", "version", "source"]))
+                frames.append(
+                    pd.DataFrame(recs, columns=["file_name", "package", "version", "source"])
+                )
         if frames:
             out["renv_packages"] = pd.concat(
                 [out["renv_packages"], *frames], ignore_index=True
@@ -1817,9 +1849,7 @@ def code_file_refs(
     unquoted = [s for s, q in zip(load_lines, quoted, strict=True) if not q]
     extra: list[str] = []
     for regex, group in _UNQUOTED.get(lang, []):
-        for m in regexec(regex, unquoted, perl=True):
-            if len(m) >= group + 1:
-                extra.append(m[group])
+        extra.extend(m[group] for m in regexec(regex, unquoted, perl=True) if len(m) >= group + 1)
     extra = list(gsub("[\"']$", "", gsub("^[\"']", "", extra)))
     return list(dict.fromkeys([*loaded, *extra]))
 

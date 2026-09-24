@@ -1,0 +1,15 @@
+{
+  "uuid": "q-901",
+  "metadata": [
+    {
+      "key": "dc.title",
+      "value": "Item 901"
+    },
+    {
+      "key": "dc.contributor.author",
+      "value": [
+        "Doe, Jane"
+      ]
+    }
+  ]
+}

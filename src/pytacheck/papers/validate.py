@@ -1,4 +1,10 @@
-"""``paper_validate()``: check a paper against the bibr schema."""
+"""``paper_validate()``: check a paper against the bibr schema.
+
+Validation uses ``paper.json`` merged with the bibr 12.x additions
+(``.paper_schema_bibr12()``, :func:`pytacheck.papers.schema.load_schema_bibr12`),
+so papers read from a bibr 12.x export and papers in the older format both
+validate; properties that are not tables (``extraction``) are skipped.
+"""
 
 from __future__ import annotations
 
@@ -7,7 +13,7 @@ import warnings
 import pandas as pd
 
 from pytacheck.papers.model import Paper
-from pytacheck.papers.schema import load_schema, table_columns
+from pytacheck.papers.schema import load_schema_bibr12, table_columns
 
 __all__ = ["PaperValidationError", "paper_validate"]
 
@@ -38,7 +44,7 @@ def paper_validate(paper: Paper) -> bool:
     """Return ``True`` or raise :class:`PaperValidationError`; warns on extras."""
     if not isinstance(paper, Paper):
         raise PaperValidationError("The following tables are missing:\n info, author, text")
-    schema = load_schema()
+    schema = load_schema_bibr12()
     errors: list[str] = []
     notes: list[str] = []
     required = [t for t in schema["required"] if t != "paper_id"]
@@ -58,7 +64,7 @@ def paper_validate(paper: Paper) -> bool:
         prop = schema["properties"][tbl]
         ref = prop.get("$ref") or (prop.get("items") or {}).get("$ref")
         if not ref:
-            continue
+            continue  # not a table, e.g. extraction
         definition = schema["$defs"][ref.split("/")[2]]
         req_cols = definition.get("required", [])
         cols = list(frame.columns)

@@ -21,7 +21,7 @@ import yaml
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-from make_parity_cases import (  # noqa: E402
+from make_parity_cases import (
     ENV_R,
     IGNORE_IDS,
     LOCATORS,
@@ -251,7 +251,8 @@ def add_limit_cases() -> None:
     long = "No information of funding was " * 20 + ". No information of funding was received"
     expr_case(
         "negate_absence_1.match_limit",
-        ENV_R + f"fc_env()$negate_absence_1(c({q(long)}, 'No information of funding was received'))",
+        ENV_R
+        + f"fc_env()$negate_absence_1(c({q(long)}, 'No information of funding was received'))",
         f"{SUPPORT}.call('negate_absence_1', [{q(long)}, 'No information of funding was received'])",
         known_divergence=(
             "PCRE2 resource limit in R: on this 640-character sentence grepl(perl = TRUE) stops "
@@ -305,9 +306,7 @@ def add_module_cases() -> None:
         module_case(f"{mod}.paperlist_empty", mod, paper_expr("paperlist()", "pc.PaperList([])"))
         module_case(f"{mod}.blanks", mod, test_paper(BLANKS), compare=IGNORE_IDS)
         module_case(f"{mod}.order", mod, test_paper(ORDER), compare=IGNORE_IDS)
-        module_case(
-            f"{mod}.all_blank", mod, test_paper(["", None, " ", ""]), compare=IGNORE_IDS
-        )
+        module_case(f"{mod}.all_blank", mod, test_paper(["", None, " ", ""]), compare=IGNORE_IDS)
     sentences = [
         "This work was supported by grant 1.",
         "Our study was funded by the ERC.",

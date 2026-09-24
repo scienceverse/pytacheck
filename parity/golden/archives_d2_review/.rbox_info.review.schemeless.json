@@ -1,0 +1,117 @@
+{
+  "id": ".rbox_info.review.schemeless",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 1,
+    "names": [
+      "rb_url",
+      "files",
+      "box_id",
+      "reference",
+      "RB_target",
+      "RB_license",
+      "RB_public",
+      "RB_authors",
+      "RB_abstract"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "researchbox.org/801"
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "df",
+            "nrow": 9,
+            "names": [
+              "name",
+              "file_id"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "  READ ME.rtf",
+                  "  Participant Survey_Redacted.pdf",
+                  "  Informant Survey_Redacted.pdf",
+                  "  Emotional_Intelligence_Survey_-_Subject_Pool_-_Participants.qsf",
+                  "  Emotional_Intelligence_Survey_-_Subject_Pool_-_Informants.qsf",
+                  "  Anonymized Data.csv",
+                  "  Code for Analysis.R",
+                  "  AsPredicted (for peer-review only) #50249.pdf",
+                  "  Supplementary Materials 052923.docx"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "7",
+                  "9",
+                  "6",
+                  "5",
+                  "3",
+                  "10",
+                  "18",
+                  "1",
+                  "16"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "801"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "kkqtZcbEDQeScj3Ywc8pcf0hlkrBhcKipatjzfQlJHg"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "He JC, Côté S. (2023) 'Are Empathic People Better Adjusted? A Test of Competing Models of Empathic Accuracy and Intrapersonal and Interpersonal Facets of Adjustment Using Self- and Peer Reports'.Psychological Science. V34(9):955-967.\ndoi: 10.1177/09567976231185127\n\nCITING THIS RESEARCHBOX\nHe, J., & Côté, S. (2025). ResearchBox 801, 'Empathic Accuracy and Self Views on Adju', https://ResearchBox.org/801. Zenodo. https://doi.org/10.5281/zenodo.15038649"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "All content posted to ResearchBox is under aCC By 4.0 License(all use is allowed as long as authorship of the content is attributed). When using content from ResearchBox please cite the original work, and provide a link to the URL for this box (https://researchbox.org/801)."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "June 09, 2023"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Joyce He (joyce.he@anderson.ucla.edu)\nStéphane Côté (Stephane.cote@Rotman.Utoronto.Ca)"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Are individuals adept at perceiving others’ emotions optimally adjusted? We extend past research by conducting a high-powered pre-registered study that comprehensively tests five theoretical models of empathic ability (i.e., emotion recognition ability) and self-views and intra- and interpersonal facets of adjustment in a sample of 1126 undergraduate students from Canada and 2205 informants. We obtained both self- and peer-reports of adjustment and controlled for cognitive abilities as a potential confounding variable. Empathic accuracy ability (but not self-views of that ability) was positively related to relationship satisfaction rated by both participants and informants. Self-views about empathic accuracy (but not actual empathic accuracy) were positively related to life satisfaction rated by both participants and informants. All associations held when controlling for cognitive abilities."
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

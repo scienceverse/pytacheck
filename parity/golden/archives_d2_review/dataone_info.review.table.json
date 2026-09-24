@@ -1,0 +1,303 @@
+{
+  "id": "dataone_info.review.table",
+  "ok": true,
+  "error": null,
+  "warnings": [
+    "Namespace prefix x on b is not defined [201]",
+    "Namespace prefix x on b is not defined [201]"
+  ],
+  "value": {
+    "t": "df",
+    "nrow": 5,
+    "names": [
+      "x",
+      "u",
+      "dataone_url",
+      "dataone_host",
+      "dataone_pid",
+      "title",
+      "doi",
+      "publication_date",
+      "authors",
+      "license",
+      "files"
+    ],
+    "v": [
+      {
+        "t": "int",
+        "v": [
+          1,
+          1,
+          2,
+          3,
+          3
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://arcticdata.io/catalog/view/doi:10.18739/NSERR",
+          "https://arcticdata.io/catalog/view/doi:10.18739/NSERR",
+          "10.18739/LATIN",
+          "10.18739/NSERR",
+          "10.18739/NSERR"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://arcticdata.io/catalog/view/doi:10.18739/NSERR",
+          "https://arcticdata.io/catalog/view/doi:10.18739/NSERR",
+          "10.18739/LATIN",
+          "10.18739/NSERR",
+          "10.18739/NSERR"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "arcticdata.io",
+          "arcticdata.io",
+          "arcticdata.io",
+          "arcticdata.io",
+          "arcticdata.io"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "doi:10.18739/NSERR",
+          "doi:10.18739/NSERR",
+          "doi:10.18739/LATIN",
+          "doi:10.18739/NSERR",
+          "doi:10.18739/NSERR"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Permafrost cores 2019",
+          "Permafrost cores 2019",
+          "Café soils, Åland",
+          "Permafrost cores 2019",
+          "Permafrost cores 2019"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "doi:10.18739/NSERR",
+          "doi:10.18739/NSERR",
+          "doi:10.18739/LATIN",
+          "doi:10.18739/NSERR",
+          "doi:10.18739/NSERR"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "2020-01-02",
+          "2020-01-02",
+          null,
+          "2020-01-02",
+          "2020-01-02"
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Ann Lee"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Ann Lee"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Jörg Müller"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Ann Lee"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Ann Lee"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "CC0",
+          "CC0",
+          null,
+          "CC0",
+          "CC0"
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "list",
+                "names": [
+                  "key",
+                  "size",
+                  "pid"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "cores.csv"
+                    ]
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      120
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "urn:uuid:c1"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "list",
+                "names": [
+                  "key",
+                  "size",
+                  "pid"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "cores.csv"
+                    ]
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      120
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "urn:uuid:c1"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": []
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "list",
+                "names": [
+                  "key",
+                  "size",
+                  "pid"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "cores.csv"
+                    ]
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      120
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "urn:uuid:c1"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "list",
+                "names": [
+                  "key",
+                  "size",
+                  "pid"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "cores.csv"
+                    ]
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      120
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "urn:uuid:c1"
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

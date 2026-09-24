@@ -1,0 +1,9 @@
+{
+  "id": "rbox_info.review.from_bare_links",
+  "ok": false,
+  "error": "An unexpected request was made:\nGET RESEARCHBOX.ORG/801\nExpected mock file: RESEARCHBOX.ORG/801.*",
+  "warnings": [],
+  "value": null,
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

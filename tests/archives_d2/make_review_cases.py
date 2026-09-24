@@ -391,7 +391,7 @@ rbox_info_case("bad_charset_error", "7007")
 rbox_info_case("two_redirects_error", "7008")
 # a bare mention from rbox_links() has no scheme: libcurl requests http://...
 rbox_info_case("schemeless", "researchbox.org/801", APIS)
-BARE = ["Materials: researchbox.org/801 and https://researchbox.org/801/ (see RESEARCHBOX.ORG/801)."]
+BARE = ["Materials: researchbox.org/801 and https://researchbox.org/801/ (see researchbox.org/801)."]
 expr_case(
     "rbox_info.review.from_bare_links",
     online(f"rbox_info(rbox_links({tp_r(text=BARE)}))"),

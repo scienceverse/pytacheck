@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<codeBook xmlns="ddi:codebook:2_5" version="2.5">
+  <docDscr><citation><titlStmt><titl>DDI description: x</titl></titlStmt></citation></docDscr>
+  <stdyDscr>
+    <citation><titlStmt><titl>Barometer <x:i>survey</x:i> 2001</titl>
+      <IDNo agency="DOI">10.60686/t-fsd3333</IDNo></titlStmt></citation>
+    <dataAccs><useStmt><restrctn>The dataset is (A) openly available for all users.</restrctn></useStmt></dataAccs>
+  </stdyDscr>
+  <fileDscr ID="F1"><fileTxt><fileName>daF3333.sav</fileName><dimensns><caseQnty>1e3</caseQnty><varQnty> 42 </varQnty></dimensns><fileType>SPSS</fileType></fileTxt></fileDscr>
+</codeBook>

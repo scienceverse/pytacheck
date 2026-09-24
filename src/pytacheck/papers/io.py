@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import math
+import os
 from collections.abc import Mapping, Sequence
 from importlib import resources
 from os import PathLike
@@ -89,26 +90,33 @@ def _union_columns(records: Sequence[Mapping[str, Any]]) -> list[str]:
     return list(order)
 
 
-def from_bibr(
-    data: Mapping[str, Any] | Any, include_images: bool = False, upgrade: bool = True
-) -> Paper:
+def from_bibr(data: Mapping[str, Any] | Any, include_images: bool = False) -> Paper:
     """Build a :class:`Paper` from parsed bibr JSON (a dict) or a ``bibr.Result``.
 
     This is the in-memory equivalent of ``.read_bibr()`` and is what the
-    bibr integration uses, so no JSON round trip is needed. Output of current
-    bibr (schema v11/v12) is converted to the v10.x layout metacheck's
-    modules expect (see :mod:`pytacheck.io.bibr_schema`) unless
-    ``upgrade=False``; older payloads are read exactly as metacheck does.
+    bibr integration uses. Output of current bibr (bibr export schema 12.x, a
+    root ``schema_version``) is read natively as a 12.x paper
+    (:mod:`pytacheck.io.bibr12`), any other root ``schema_version`` raises
+    metacheck's error, and older payloads are read exactly as metacheck does.
     """
     if not isinstance(data, Mapping):
         data = getattr(data, "data", data)
     if not isinstance(data, Mapping):
         raise TypeError("from_bibr() needs a dict of bibr JSON or a bibr.Result")
-    if upgrade:
-        from pytacheck.io.bibr_schema import to_metacheck_schema
+    if data.get("schema_version") is not None:
+        from pytacheck.io.bibr12 import _bibr12_from_json
 
-        data = to_metacheck_schema(data)
+        # the JSON values metacheck would read, detached from the caller's dict
+        try:
+            data = orjson.loads(orjson.dumps(data, option=orjson.OPT_SERIALIZE_NUMPY))
+        except TypeError:
+            data = dict(data)
+        return _bibr12_from_json(data, include_images, str(data.get("paper_id")))
+    return _from_bibr_legacy(data, include_images)
 
+
+def _from_bibr_legacy(data: Mapping[str, Any], include_images: bool) -> Paper:
+    """``.read_bibr()`` of a file without a root ``schema_version`` (bibr v10.x and older)."""
     p = Paper(data.get("paper_id"))
     # R: paper$paper_id <- data$paper_id (NULL when missing)
     p.paper_id = data.get("paper_id")
@@ -154,9 +162,19 @@ def from_bibr(
 
 
 def read_bibr(file_path: str | PathLike[str], include_images: bool = False) -> Paper:
-    """``.read_bibr()``: read one bibr JSON file into a :class:`Paper`."""
-    raw = Path(file_path).read_bytes()
-    return from_bibr(orjson.loads(raw), include_images=include_images)
+    """``.read_bibr()``: read one bibr JSON file into a :class:`Paper`.
+
+    A file with a root ``schema_version`` (bibr export schema 11 and later)
+    goes to the 12.x reader (:func:`pytacheck.io.bibr12.read_bibr12`), which
+    reads 12.x and raises metacheck's error for any other version; files
+    without one read exactly as before.
+    """
+    data = orjson.loads(Path(file_path).read_bytes())
+    if isinstance(data, Mapping) and data.get("schema_version") is not None:
+        from pytacheck.io.bibr12 import _bibr12_from_json
+
+        return _bibr12_from_json(data, include_images, os.path.basename(file_path))
+    return _from_bibr_legacy(data, include_images)
 
 
 def test_paper(text: Sequence[str] | None = None, url: Sequence[str] = ()) -> Paper:
@@ -265,17 +283,49 @@ def paper_write(
     p: Paper | PaperList,
     file_name: str | Sequence[str] | None = None,
     save_path: str | PathLike[str] = ".",
+    schema_version: str | None = "auto",
 ) -> Path | list[Path]:
-    """``paper_write()``: save paper(s) as pretty-printed JSON; returns the path(s)."""
+    """``paper_write()``: save paper(s) as pretty-printed JSON; returns the path(s).
+
+    ``schema_version`` chooses the format:
+
+    * ``"12.0"``: a bibr export schema 12.0 file, as metacheck's
+      ``paper_write(schema_version = "12.0")`` writes it, for a paper read from
+      a bibr 12.0 export (or converted from Grobid TEI to 12.0). It keeps the
+      paper's extraction block (a bibr export keeps bibr as its producer and
+      the time bibr extracted it) and names pytacheck as the converter. A paper
+      in the older format, or read from a later 12.x, is refused.
+    * ``None``: metacheck's default: the paper object as it is.
+    * ``"auto"`` (the default, a deliberate pytacheck difference: metacheck's
+      default is ``NULL``): ``"12.0"`` for a 12.x paper and ``None`` for a
+      paper in the older format, so a paper read from a bibr export is saved
+      as one. (A paper read from a later 12.x, e.g. 12.1, is refused, as with
+      ``"12.0"``; pass ``None`` to save it as a paper object.)
+
+    A :class:`PaperList` is written paper by paper with the same setting.
+    """
+    if schema_version not in ("auto", None, "12.0"):
+        raise ValueError('schema_version must be "auto", None or "12.0"')
     save_dir = Path(save_path).resolve()
     save_dir.mkdir(parents=True, exist_ok=True)
     if isinstance(p, PaperList):
         names = list(file_name) if file_name is not None else [str(n) for n in p.names]
-        return [Path(paper_write(q, f, save_dir)) for q, f in zip(p, names, strict=True)]  # type: ignore[arg-type]
+        return [
+            Path(paper_write(q, f, save_dir, schema_version))  # type: ignore[arg-type]
+            for q, f in zip(p, names, strict=True)
+        ]
     name = str(file_name) if file_name is not None else str(p.paper_id)
     for suffix in (".json", ".zip"):
         name = name.removesuffix(suffix)
     path = save_dir / f"{name}.json"
+    if schema_version == "auto":
+        from pytacheck.io.bibr12 import is_bibr12
+
+        schema_version = "12.0" if is_bibr12(p) else None
+    if schema_version is not None:
+        from pytacheck.io.bibr12 import write_bibr12
+
+        return write_bibr12(p, path)
     payload = orjson.dumps(
         paper_to_json(p),
         default=_json_default,

@@ -7,6 +7,12 @@ The R module defines its helpers (``parse_t_stats()``, ``parse_d_stats()``,
 ``_functions`` below. The parsers return lists of tuples (one per row of the
 data frame R builds) instead of small data frames, and the per-test coherence
 checks run over plain lists, which keeps the module fast on large corpora.
+
+Numbers are read and printed as R does it, not as Python's correctly rounded
+conversions do: ``as.numeric()`` is ``R_strtod()`` in long double (``_num()``)
+and ``as.character()``/``format()`` find the significant digits in long double
+(``_format_real()``). On near-ties both differ from ``float()``/``repr()`` in
+the last digit of the implied effect sizes.
 """
 
 from __future__ import annotations
