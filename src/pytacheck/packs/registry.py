@@ -463,9 +463,10 @@ def get_pack(name: str, *, allow_local: bool = True) -> Pack:
     if name in reg.problems:
         raise PackError(reg.problems[name])
     hint = " (hidden with false in config)" if name in reg.hidden else ""
+    install = "" if hint else f" If a store lists it: `pytacheck pack install {name}`."
     raise PackError(
         f"There is no active pack named '{name}'{hint}. "
-        f"Active packs: {', '.join(active_packs(allow_local=allow_local))}"
+        f"Active packs: {', '.join(active_packs(allow_local=allow_local))}.{install}"
     )
 
 
