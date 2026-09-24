@@ -1138,27 +1138,13 @@
                           {
                             "t": "list",
                             "names": [
-                              "value",
-                              "stato_label",
-                              "stato_iri"
+                              "value"
                             ],
                             "v": [
                               {
                                 "t": "dbl",
                                 "v": [
                                   0.13
-                                ]
-                              },
-                              {
-                                "t": "chr",
-                                "v": [
-                                  "eta-squared"
-                                ]
-                              },
-                              {
-                                "t": "chr",
-                                "v": [
-                                  "http://purl.obolibrary.org/obo/STATO_0000317"
                                 ]
                               }
                             ]

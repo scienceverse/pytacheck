@@ -1,0 +1,115 @@
+{
+  "id": "github_tree_files.review.untyped",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "gated",
+      "reason",
+      "files",
+      "default_branch",
+      "license"
+    ],
+    "v": [
+      {
+        "t": "lgl",
+        "v": [
+          false
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 3,
+        "names": [
+          "repo",
+          "clean_repo",
+          "name",
+          "path",
+          "download_url",
+          "size",
+          "type"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "rv/tree5",
+              "rv/tree5",
+              "rv/tree5"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "rv/tree5",
+              "rv/tree5",
+              "rv/tree5"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "a.txt",
+              "d",
+              "c.txt"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "a.txt",
+              "d",
+              "c.txt"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://raw.githubusercontent.com/rv/tree5/main/a.txt",
+              "https://raw.githubusercontent.com/rv/tree5/main/d",
+              "https://raw.githubusercontent.com/rv/tree5/main/c.txt"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              1,
+              null,
+              3
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "text",
+              "file",
+              "text"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "main"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

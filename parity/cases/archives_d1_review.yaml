@@ -383,3 +383,184 @@
         "r": "(function(f) { d <- tempfile(); dir.create(d); on.exit(unlink(d, recursive = TRUE)); f(d) })(function(d) { writeLines(\"x,y\", file.path(d, \"a.csv\")); files <- data.frame(id = c(\"1\", \"2\"), key = c(\"a.csv\", \"b\"), path = c(\"a.csv\", NA), size = c(\"4\", \"x\"), checksum = c(NA, NA), checksum_type = c(\"md5\", NA)); metacheck:::.dataverse_verify_downloads(files, d) })"
         "py": "lambda m: m.tmp(lambda d: m.dataverse._dataverse_verify_downloads((m.write_files(d, {\"a.csv\": \"x,y\"}), pd.DataFrame({\"id\": pd.array([\"1\", \"2\"], dtype=\"string\"), \"key\": pd.array([\"a.csv\", \"b\"], dtype=\"string\"), \"path\": pd.array([\"a.csv\", None], dtype=\"string\"), \"size\": pd.array([\"4\", \"x\"], dtype=\"string\"), \"checksum\": pd.array([None, None], dtype=\"string\"), \"checksum_type\": pd.array([\"md5\", None], dtype=\"string\")}))[1], d))"
   "mock_dir": "tests/archives_d1/mocks"
+- "id": ".dryad_doi.review.invalid_utf8"
+  "r": "metacheck:::.dryad_doi"
+  "py": "pytacheck.archives.dryad._dryad_doi"
+  "args":
+    "dryad_url":
+      "$expr":
+        "r": "c(\"10.5061/dryad.abc%E2%80\", \"%FF10.5061/dryad.abc\", \"10.5061/dryad.ok\")"
+        "py": "[\"10.5061/dryad.abc%E2%80\", \"%FF10.5061/dryad.abc\", \"10.5061/dryad.ok\"]"
+- "id": ".dataverse_parse.review.invalid_utf8_error"
+  "r": "metacheck:::.dataverse_parse"
+  "py": "pytacheck.archives.dataverse._dataverse_parse"
+  "args":
+    "url":
+      "$expr":
+        "r": "c(\"https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/Y\", \"https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/X%FF\")"
+        "py": "[\"https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/Y\", \"https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/X%FF\"]"
+- "id": ".dataverse_parse.review.valid_escapes"
+  "r": "metacheck:::.dataverse_parse"
+  "py": "pytacheck.archives.dataverse._dataverse_parse"
+  "args":
+    "url":
+    - "https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/X%E2%80%93."
+    - "https://dataverse.nl/dataset.xhtml?persistentId=doi%3A10.34894%2FA%C3%A9"
+- "id": "dryad_links.review.invalid_utf8"
+  "r": "dryad_links"
+  "py": "pytacheck.archives.dryad.dryad_links"
+  "args":
+    "paper":
+      "$test_paper":
+        "text": &id002
+        - "See datadryad.org/dataset/doi%3A10.5061%2Fdryad.abc%FF here."
+        - "Also datadryad.org/dataset/doi%3A10.5061%2Fdryad.fine and 10.5061/dryad.plain."
+  "compare": *id001
+- "id": "figshare_links.review.invalid_utf8"
+  "r": "figshare_links"
+  "py": "pytacheck.archives.figshare.figshare_links"
+  "args":
+    "paper":
+      "$test_paper":
+        "text": *id002
+  "compare": *id001
+- "id": "dataverse_links.review.invalid_utf8_error"
+  "r": "dataverse_links"
+  "py": "pytacheck.archives.dataverse.dataverse_links"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "See dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/X%FF."
+- "id": "dryad_info.review.invalid_utf8"
+  "r": "identity"
+  "py": "tests.archives_d1.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "testthat::with_mocked_bindings(dryad_info(c(\"10.5061/dryad.abc%FF\", NA)), online = function(...) TRUE, .package = \"metacheck\")"
+        "py": "lambda m: m.dryad.dryad_info([\"10.5061/dryad.abc%FF\", None])"
+  "mock_dir": "tests/archives_d1/mocks"
+- "id": "dryad_links.review.empty_paperlist"
+  "r": "identity"
+  "py": "tests.archives_d1.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "dryad_links(paperlist(test_paper(\"a\"))[0])"
+        "py": "lambda m: m.dryad.dryad_links(__import__(\"pytacheck\").PaperList([]))"
+- "id": "figshare_links.review.empty_paperlist"
+  "r": "identity"
+  "py": "tests.archives_d1.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "figshare_links(paperlist(test_paper(\"a\"))[0])"
+        "py": "lambda m: m.figshare.figshare_links(__import__(\"pytacheck\").PaperList([]))"
+- "id": "dataverse_links.review.empty_paperlist"
+  "r": "identity"
+  "py": "tests.archives_d1.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "dataverse_links(paperlist(test_paper(\"a\"))[0])"
+        "py": "lambda m: m.dataverse.dataverse_links(__import__(\"pytacheck\").PaperList([]))"
+- "id": "figshare_file_download.review.empty_body_error"
+  "r": "identity"
+  "py": "tests.archives_d1.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function(f) { d <- tempfile(); dir.create(d); on.exit(unlink(d, recursive = TRUE)); f(d) })(function(d) { figshare_file_download(\"700006\", download_to = d) })"
+        "py": "lambda m: m.tmp(lambda d: m.figshare.figshare_file_download(\"700006\", download_to=d))"
+  "mock_dir": "tests/archives_d1/mocks"
+- "id": "figshare_file_download.review.empty_body_multi"
+  "r": "identity"
+  "py": "tests.archives_d1.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function(f) { d <- tempfile(); dir.create(d); on.exit(unlink(d, recursive = TRUE)); f(d) })(function(d) { figshare_file_download(c(\"700006\", \"700001\"), download_to = d) })"
+        "py": "lambda m: m.tmp(lambda d: m.figshare.figshare_file_download([\"700006\", \"700001\"], download_to=d))"
+  "mock_dir": "tests/archives_d1/mocks"
+- "id": "dryad_file_download.review.empty_body_error"
+  "r": "identity"
+  "py": "tests.archives_d1.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function(f) { d <- tempfile(); dir.create(d); on.exit(unlink(d, recursive = TRUE)); f(d) })(function(d) { dryad_file_download(\"10.5061/dryad.rev2\", download_to = d) })"
+        "py": "lambda m: m.tmp(lambda d: m.dryad.dryad_file_download(\"10.5061/dryad.rev2\", download_to=d))"
+  "mock_dir": "tests/archives_d1/mocks"
+- "id": "dryad_file_download.review.empty_body_multi"
+  "r": "identity"
+  "py": "tests.archives_d1.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function(f) { d <- tempfile(); dir.create(d); on.exit(unlink(d, recursive = TRUE)); f(d) })(function(d) { dryad_file_download(c(\"10.5061/dryad.rev2\", \"10.5061/dryad.rev1\"), download_to = d) })"
+        "py": "lambda m: m.tmp(lambda d: m.dryad.dryad_file_download([\"10.5061/dryad.rev2\", \"10.5061/dryad.rev1\"], download_to=d))"
+  "mock_dir": "tests/archives_d1/mocks"
+- "id": "dataverse_file_download.review.empty_body_error"
+  "r": "identity"
+  "py": "tests.archives_d1.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function(f) { d <- tempfile(); dir.create(d); on.exit(unlink(d, recursive = TRUE)); f(d) })(function(d) { dataverse_file_download(\"dataverse.harvard.edu\", \"10.7910/DVN/EMPTY\", download_to = d) })"
+        "py": "lambda m: m.tmp(lambda d: m.dataverse.dataverse_file_download(\"dataverse.harvard.edu\", \"10.7910/DVN/EMPTY\", download_to=d))"
+  "mock_dir": "tests/archives_d1/mocks"
+- "id": "dataverse_file_download.review.empty_body_multi"
+  "r": "identity"
+  "py": "tests.archives_d1.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function(f) { d <- tempfile(); dir.create(d); on.exit(unlink(d, recursive = TRUE)); f(d) })(function(d) { dataverse_file_download(\"dataverse.harvard.edu\", c(\"10.7910/DVN/EMPTY\", \"10.7910/DVN/REV2\"), download_to = d) })"
+        "py": "lambda m: m.tmp(lambda d: m.dataverse.dataverse_file_download(\"dataverse.harvard.edu\", [\"10.7910/DVN/EMPTY\", \"10.7910/DVN/REV2\"], download_to=d))"
+  "mock_dir": "tests/archives_d1/mocks"
+- "id": "figshare_info.review.list_fields"
+  "r": "identity"
+  "py": "tests.archives_d1.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "testthat::with_mocked_bindings(figshare_info(\"700007\"), online = function(...) TRUE, .package = \"metacheck\")"
+        "py": "lambda m: m.figshare.figshare_info(\"700007\")"
+  "mock_dir": "tests/archives_d1/mocks"
+- "id": "figshare_info.review.long_field_error"
+  "r": "identity"
+  "py": "tests.archives_d1.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "testthat::with_mocked_bindings(figshare_info(\"700008\"), online = function(...) TRUE, .package = \"metacheck\")"
+        "py": "lambda m: m.figshare.figshare_info(\"700008\")"
+  "mock_dir": "tests/archives_d1/mocks"
+- "id": "dataverse_info.review.list_fields"
+  "r": "identity"
+  "py": "tests.archives_d1.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "testthat::with_mocked_bindings(dataverse_info(\"https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/LISTS\"), online = function(...) TRUE, .package = \"metacheck\")"
+        "py": "lambda m: m.dataverse.dataverse_info(\"https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/LISTS\")"
+  "mock_dir": "tests/archives_d1/mocks"
+- "id": "figshare_info.review.object_files"
+  "r": "identity"
+  "py": "tests.archives_d1.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "testthat::with_mocked_bindings(figshare_info(\"700009\"), online = function(...) TRUE, .package = \"metacheck\")"
+        "py": "lambda m: m.figshare.figshare_info(\"700009\")"
+  "mock_dir": "tests/archives_d1/mocks"
+- "id": "figshare_file_download.review.object_files"
+  "r": "identity"
+  "py": "tests.archives_d1.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function(f) { d <- tempfile(); dir.create(d); on.exit(unlink(d, recursive = TRUE)); f(d) })(function(d) { figshare_file_download(\"700009\", download_to = d) })"
+        "py": "lambda m: m.tmp(lambda d: m.figshare.figshare_file_download(\"700009\", download_to=d))"
+  "mock_dir": "tests/archives_d1/mocks"

@@ -133,6 +133,41 @@ def main() -> None:
         hits = [d for d in (dois[0], dois[3], dois[-1]) if d in own]
         _write_json(own, [_fb(d, 2, "Reviewer One") for d in hits])
 
+    # ---- review scenarios (mod_ref_pubpeer_summary_review) ----
+    # empty users, a null total_comments, Statcheck as a one-element list, an
+    # empty URL, lower-case "statcheck", and a DOI that was not asked for
+    null_tc = _fb("10.9999/pp.nulltc", 0, "Someone")
+    null_tc["total_comments"] = None
+    _write_json(
+        _module_dois(H.pp_odd()),
+        [
+            _fb("10.9999/pp.emptyusers", 2, []),
+            null_tc,
+            _fb("10.9999/pp.statlist", 4, ["Statcheck"]),
+            _fb("10.9999/pp.emptyurl", 1, "Empty Url", url=""),
+            _fb("10.9999/pp.statcase", 1, "statcheck"),
+            _fb("10.9999/pp.unrequested", 9, "Not Asked"),
+        ],
+    )
+    # the only commented reference has no URL (no url column at all) ...
+    _write_json(_module_dois(H.pp_nourl_only()), [_fb("10.9999/pp.nourl", 3, "No Url", url=None)])
+    # ... or an NA URL (another feedback has one)
+    _write_json(
+        _module_dois(H.pp_nourl_some()),
+        [_fb("10.9999/pp.nourl", 3, "No Url", url=None), _fb("10.9999/pp.zero", 0, "Nobody")],
+    )
+    # mixed-case paper ids with a bib_match table (DOIs in ref_table()'s C-locale order)
+    _write_json(
+        _module_dois(H.pp_case_list()),
+        [
+            _fb("10.9999/pp.one", 2, "Jane Doe, John Roe"),
+            _fb("10.9999/pp.many", 12, ["Alpha", " Beta ", "Gamma"]),
+            _fb("10.9999/pp.stat", 1, "Statcheck "),
+            _fb("10.9999/pp.dup", 1, "Dup Checker"),
+            _fb("10.9999/pp.zero", 0, "Nobody"),
+        ],
+    )
+
 
 if __name__ == "__main__":
     main()

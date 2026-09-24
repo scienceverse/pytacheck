@@ -51,16 +51,17 @@ w(
     "wide_named.csv",
     "variable,age,score\nlabel,Age in years,Total score\nmean,31.2,4.5\nsd,5.1,1.2\nn,40,40\n",
 )
-w("latin1.csv", "variable,label\nnaive,Naïve participant\ncafe,Café visits\n",
-  encoding="latin-1")
+w("latin1.csv", "variable,label\nnaive,Naïve participant\ncafe,Café visits\n", encoding="latin-1")
 w("tabbed.tsv", "var\tdesc\nid\tidentifier\nscore\tscore on test\n")
 w("no_header.csv", "a,b\n1,2\n3,4\n")
 w(
     "json_in.csv",
-    json.dumps([
-        {"name": "id", "label": "Participant ID"},
-        {"name": "rt", "description": "Reaction time"},
-    ]),
+    json.dumps(
+        [
+            {"name": "id", "label": "Participant ID"},
+            {"name": "rt", "description": "Reaction time"},
+        ]
+    ),
 )
 w("readme.txt", "This is a prose readme.\nNo variable table here.\n")
 w("empty.csv", "")
@@ -68,26 +69,48 @@ w("empty.csv", "")
 # -- JSON ----------------------------------------------------------------------
 w(
     "codebook.json",
-    json.dumps([
-        {"name": "sex", "label": "Sex",
-         "values": [{"name": "1", "label": "Male"}, {"name": "2", "label": ""},
-                    {"value": 9, "label": "Refused"}]},
-        {"Variable": "age", "Description": "Age in years", "levels": {"1": "young", "2": "old"}},
-        {"name": "cond", "question": "Which condition?", "categories": ["0 = control", "1 = treat"]},
-        {"name": "", "label": "no name"},
-        {"id": 7, "title": "  Numeric id  ", "value_labels": "1=yes;2=no"},
-        "not an object",
-    ]),
+    json.dumps(
+        [
+            {
+                "name": "sex",
+                "label": "Sex",
+                "values": [
+                    {"name": "1", "label": "Male"},
+                    {"name": "2", "label": ""},
+                    {"value": 9, "label": "Refused"},
+                ],
+            },
+            {
+                "Variable": "age",
+                "Description": "Age in years",
+                "levels": {"1": "young", "2": "old"},
+            },
+            {
+                "name": "cond",
+                "question": "Which condition?",
+                "categories": ["0 = control", "1 = treat"],
+            },
+            {"name": "", "label": "no name"},
+            {"id": 7, "title": "  Numeric id  ", "value_labels": "1=yes;2=no"},
+            "not an object",
+        ]
+    ),
 )
 w(
     "schema.json",
-    json.dumps({
-        "name": "dataset",
-        "variableMeasured": [
-            {"name": "q1", "description": "First question", "value_labels": {"1": "Yes", "-9": "Refused"}},
-            {"name": "q2", "description": "Second question"},
-        ],
-    }),
+    json.dumps(
+        {
+            "name": "dataset",
+            "variableMeasured": [
+                {
+                    "name": "q1",
+                    "description": "First question",
+                    "value_labels": {"1": "Yes", "-9": "Refused"},
+                },
+                {"name": "q2", "description": "Second question"},
+            ],
+        }
+    ),
 )
 w("not_codebook.json", json.dumps({"a": 1, "b": [1, 2, 3]}))
 w("bad.json", "{not json")
@@ -136,46 +159,147 @@ qsf = {
     "SurveyEntry": {"SurveyID": "SV_test", "SurveyName": "Test"},
     "SurveyElements": [
         {"SurveyID": "SV_test", "Element": "BL", "Payload": [{"Type": "Default"}]},
-        {"Element": "SQ", "PrimaryAttribute": "QID1", "Payload": {
-            "QuestionText": "<p>How <b>satisfied</b>&nbsp;are you?</p>",
-            "DataExportTag": "SAT", "QuestionType": "MC", "Selector": "SAVR",
-            "Choices": {"1": {"Display": "Very unsatisfied"}, "2": {"Display": "Neutral"},
-                        "3": {"Display": "Very satisfied"}, "4": {"Display": "Refused"}},
-            "QuestionID": "QID1"}},
-        {"Element": "SQ", "PrimaryAttribute": "QID2", "Payload": {
-            "QuestionText": "Rate each statement", "DataExportTag": "POWER.PP1",
-            "QuestionType": "Matrix", "Selector": "Likert",
-            "Choices": {"1": {"Display": "I feel <i>powerful</i>"}, "2": {"Display": "I feel weak"},
-                        "8": {"Display": "Status item"}, "9": {"DisplayLogic": {"x": 1}}},
-            "ChoiceDataExportTags": {"1": "POWER.PP1_1", "2": "2", "8": "STATUS.PP1_8"},
-            "Answers": {"1": {"Display": "Disagree"}, "2": {"Display": "Agree"}},
-            "QuestionID": "QID2"}},
-        {"Element": "SQ", "PrimaryAttribute": "QID3", "Payload": {
-            "QuestionText": "Which apply?", "DataExportTag": "Q3", "QuestionType": "MC",
-            "Selector": "MAVR",
-            "Choices": {"1": {"Display": "Option A"}, "2": {"Display": ["Option", "B"]},
-                        "4": {"Display": "Other", "TextEntry": "true"}},
-            "ChoiceDataExportTags": False, "QuestionID": "QID3"}},
-        {"Element": "SQ", "PrimaryAttribute": "QID4", "Payload": {
-            "QuestionText": "Any comments?", "DataExportTag": "Q1914", "QuestionType": "TE",
-            "Selector": "ML", "QuestionID": "QID4"}},
-        {"Element": "SQ", "PrimaryAttribute": "QID5", "Payload": {
-            "QuestionText_Unsafe": "Unsafe text", "QuestionID": "QID5",
-            "QuestionType": "DB", "Selector": "TB"}},
-        {"Element": "SQ", "PrimaryAttribute": "QID6", "Payload": {
-            "QuestionText": "Empty tag", "DataExportTag": "", "QuestionID": "QID6"}},
+        {
+            "Element": "SQ",
+            "PrimaryAttribute": "QID1",
+            "Payload": {
+                "QuestionText": "<p>How <b>satisfied</b>&nbsp;are you?</p>",
+                "DataExportTag": "SAT",
+                "QuestionType": "MC",
+                "Selector": "SAVR",
+                "Choices": {
+                    "1": {"Display": "Very unsatisfied"},
+                    "2": {"Display": "Neutral"},
+                    "3": {"Display": "Very satisfied"},
+                    "4": {"Display": "Refused"},
+                },
+                "QuestionID": "QID1",
+            },
+        },
+        {
+            "Element": "SQ",
+            "PrimaryAttribute": "QID2",
+            "Payload": {
+                "QuestionText": "Rate each statement",
+                "DataExportTag": "POWER.PP1",
+                "QuestionType": "Matrix",
+                "Selector": "Likert",
+                "Choices": {
+                    "1": {"Display": "I feel <i>powerful</i>"},
+                    "2": {"Display": "I feel weak"},
+                    "8": {"Display": "Status item"},
+                    "9": {"DisplayLogic": {"x": 1}},
+                },
+                "ChoiceDataExportTags": {"1": "POWER.PP1_1", "2": "2", "8": "STATUS.PP1_8"},
+                "Answers": {"1": {"Display": "Disagree"}, "2": {"Display": "Agree"}},
+                "QuestionID": "QID2",
+            },
+        },
+        {
+            "Element": "SQ",
+            "PrimaryAttribute": "QID3",
+            "Payload": {
+                "QuestionText": "Which apply?",
+                "DataExportTag": "Q3",
+                "QuestionType": "MC",
+                "Selector": "MAVR",
+                "Choices": {
+                    "1": {"Display": "Option A"},
+                    "2": {"Display": ["Option", "B"]},
+                    "4": {"Display": "Other", "TextEntry": "true"},
+                },
+                "ChoiceDataExportTags": False,
+                "QuestionID": "QID3",
+            },
+        },
+        {
+            "Element": "SQ",
+            "PrimaryAttribute": "QID4",
+            "Payload": {
+                "QuestionText": "Any comments?",
+                "DataExportTag": "Q1914",
+                "QuestionType": "TE",
+                "Selector": "ML",
+                "QuestionID": "QID4",
+            },
+        },
+        {
+            "Element": "SQ",
+            "PrimaryAttribute": "QID5",
+            "Payload": {
+                "QuestionText_Unsafe": "Unsafe text",
+                "QuestionID": "QID5",
+                "QuestionType": "DB",
+                "Selector": "TB",
+            },
+        },
+        {
+            "Element": "SQ",
+            "PrimaryAttribute": "QID6",
+            "Payload": {"QuestionText": "Empty tag", "DataExportTag": "", "QuestionID": "QID6"},
+        },
         {"Element": "SQ", "PrimaryAttribute": "QID7", "Payload": None},
-        {"Element": "SQ", "PrimaryAttribute": "QID8", "Payload": {
-            "QuestionText": "", "DataExportTag": "SV", "QuestionType": "Matrix", "Selector": "Likert",
-            "Choices": {"1": {"Display": "Item one"}, "2": {"Display": "Item two"}},
-            "ChoiceDataExportTags": {"1": "SV_1", "2": "sv"},
-            "Answers": [{"Display": "a"}]}},
-        {"Element": "SQ", "PrimaryAttribute": "QID9", "Payload": {
-            "QuestionText": "Slider", "DataExportTag": "SL", "QuestionType": "Slider",
-            "Choices": [{"Display": "x"}]}},
+        {
+            "Element": "SQ",
+            "PrimaryAttribute": "QID8",
+            "Payload": {
+                "QuestionText": "",
+                "DataExportTag": "SV",
+                "QuestionType": "Matrix",
+                "Selector": "Likert",
+                "Choices": {"1": {"Display": "Item one"}, "2": {"Display": "Item two"}},
+                "ChoiceDataExportTags": {"1": "SV_1", "2": "sv"},
+                "Answers": [{"Display": "a"}],
+            },
+        },
+        {
+            "Element": "SQ",
+            "PrimaryAttribute": "QID9",
+            "Payload": {
+                "QuestionText": "Slider",
+                "DataExportTag": "SL",
+                "QuestionType": "Slider",
+                "Choices": [{"Display": "x"}],
+            },
+        },
     ],
 }
 w("survey.qsf", json.dumps(qsf, indent=1))
 w("not_qsf.qsf", json.dumps({"SurveyEntry": {}}))
 w("no_sq.qsf", json.dumps({"SurveyElements": [{"Element": "BL", "Payload": []}]}))
 w("wide_transposed.csv", "n,variable,age,score\nmean,label,Age in years,Total score\nsd,x,1,2\n")
+# the structured CSV of test-codebook-helpers.R ("parse_codebook reads a structured CSV codebook")
+w(
+    "testthat_codebook.csv",
+    "varname,description\nid,participant identifier\nscore,outcome measure\n",
+)
+# a .qsf saved with a UTF-8 byte-order mark (jsonlite warns but parses it)
+w(
+    "bom.qsf",
+    json.dumps(
+        {
+            "SurveyElements": [
+                {
+                    "Element": "SQ",
+                    "Payload": {
+                        "DataExportTag": "Q1",
+                        "QuestionText": "<p>Hi?</p>",
+                        "QuestionType": "TE",
+                    },
+                },
+                {"Element": "SQ", "Payload": {"DataExportTag": " ", "QuestionID": "QID2"}},
+                {
+                    "Element": "SQ",
+                    "Payload": {
+                        "QuestionID": "QID3",
+                        "QuestionType": "MC",
+                        "Selector": "SAVR",
+                        "QuestionText": "Pick",
+                        "Choices": {"1": {"Display": "Yes"}, "2": {"Display": "N/A"}},
+                    },
+                },
+            ]
+        }
+    ),
+    bom=True,
+)

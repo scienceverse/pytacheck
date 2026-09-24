@@ -1,0 +1,9 @@
+{
+  "id": "ref_pubpeer.extra_arg",
+  "ok": false,
+  "error": "Running the module 'ref_pubpeer' produced errors: unused argument (foo = \"1\")",
+  "warnings": [],
+  "value": null,
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

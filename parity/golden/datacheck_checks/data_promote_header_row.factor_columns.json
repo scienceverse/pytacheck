@@ -1,0 +1,73 @@
+{
+  "id": "data_promote_header_row.factor_columns",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "df",
+      "promoted",
+      "stripped"
+    ],
+    "v": [
+      {
+        "t": "df",
+        "nrow": 3,
+        "names": [
+          "StartDate",
+          "EndDate",
+          "Progress",
+          "Finished"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Start Date",
+              "2021-01-01",
+              "2021-01-02"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "End Date",
+              "2021-01-01",
+              "2021-01-02"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Progress",
+              "100",
+              "50"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Finished",
+              "1",
+              "1"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          0
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": []
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

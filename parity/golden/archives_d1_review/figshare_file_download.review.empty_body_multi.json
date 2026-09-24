@@ -1,0 +1,175 @@
+{
+  "id": "figshare_file_download.review.empty_body_multi",
+  "ok": true,
+  "error": null,
+  "warnings": [
+    "700006 resulted in an error:\n  Can't retrieve empty body.\n",
+    "3 of 7 files from Figshare article 700001 did not arrive intact (e.g. NA, dup.txt, nolink.bin). The returned table marks them downloaded = FALSE. Run again to retry."
+  ],
+  "value": {
+    "t": "df",
+    "nrow": 7,
+    "names": [
+      "folder",
+      "figshare_id",
+      "id",
+      "key",
+      "path",
+      "size",
+      "size_on_disk",
+      "checksum",
+      "checksum_ok",
+      "self",
+      "downloaded",
+      "extracted"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "figshare_700001",
+          "figshare_700001",
+          "figshare_700001",
+          "figshare_700001",
+          "figshare_700001",
+          "figshare_700001",
+          "figshare_700001"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "700001",
+          "700001",
+          "700001",
+          "700001",
+          "700001",
+          "700001",
+          "700001"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "700102",
+          "700103",
+          "700104",
+          "700105",
+          "700106",
+          "700107"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "",
+          "nosize.txt",
+          "dup.txt",
+          "dup.txt",
+          "UPPER.CSV",
+          "nolink.bin"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "700102",
+          "nosize.txt",
+          "dup.txt",
+          "dup.txt",
+          "UPPER.CSV",
+          null
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          8,
+          5,
+          null,
+          5,
+          11,
+          8,
+          3
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          null,
+          5,
+          11,
+          11,
+          11,
+          8,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          "4358b5009c67d0e31d7fbf1663fcd3bf",
+          "426e712f0524e4dee5de612f6520bf86",
+          "344FD2323DD33D5C058B7CF27DE029E8",
+          null
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          true,
+          true,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://ndownloader.figshare.com/files/700101",
+          "https://ndownloader.figshare.com/files/700102",
+          "https://ndownloader.figshare.com/files/700103",
+          "https://ndownloader.figshare.com/files/700104",
+          "https://ndownloader.figshare.com/files/700105",
+          "https://ndownloader.figshare.com/files/700106",
+          null
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false,
+          true,
+          true,
+          false,
+          true,
+          true,
+          false
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

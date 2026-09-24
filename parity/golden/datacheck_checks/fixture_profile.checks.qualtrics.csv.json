@@ -1,0 +1,6561 @@
+{
+  "id": "fixture_profile.checks.qualtrics.csv",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "names",
+      "columns",
+      "collisions",
+      "qualtrics",
+      "qualtrics_tags",
+      "display_order",
+      "stems",
+      "strip_nrow",
+      "promoted",
+      "promoted_names",
+      "behaverse",
+      "inquisit",
+      "jspsych",
+      "psychopy",
+      "task_columns",
+      "scale_blocks",
+      "accuracy_blocks",
+      "task_data",
+      "tabular_usable",
+      "numeric_col_fraction"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "StartDate",
+          "EndDate",
+          "Status",
+          "IPAddress",
+          "Progress",
+          "Duration (in seconds)",
+          "Finished",
+          "RecordedDate",
+          "ResponseId",
+          "Q1_1",
+          "Q1_2",
+          "Q1_3",
+          "Q1_DO_1"
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "list",
+            "names": [
+              "facets",
+              "scale_values",
+              "outliers",
+              "constant",
+              "empty",
+              "case_issues",
+              "whitespace",
+              "numeric_in_text",
+              "colname",
+              "pii_values",
+              "pii_name",
+              "pii_geo",
+              "pii_freetext",
+              "demographic",
+              "design_name",
+              "spss_filter",
+              "likert",
+              "rt",
+              "accuracy",
+              "accuracy_item"
+            ],
+            "v": [
+              {
+                "t": "list",
+                "names": [
+                  "representation",
+                  "measurement_level",
+                  "concept",
+                  "role",
+                  "unit",
+                  "quality",
+                  "parse_note"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "datetime"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "nominal"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "timestamp"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "timestamp"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      null
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "ok"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      null
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values",
+                  "lower",
+                  "upper",
+                  "classes"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      null
+                    ]
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      null
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": []
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values",
+                  "lower",
+                  "upper"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      null
+                    ]
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      null
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values",
+                  "near"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  },
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  }
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  null
+                ]
+              },
+              {
+                "t": "lgl",
+                "v": [
+                  false
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  }
+                ]
+              },
+              {
+                "t": "lgl",
+                "v": [
+                  false
+                ]
+              },
+              {
+                "t": "lgl",
+                "v": [
+                  false
+                ]
+              },
+              {
+                "t": "lgl",
+                "v": [
+                  false
+                ]
+              },
+              {
+                "t": "lgl",
+                "v": [
+                  false
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "facets",
+              "scale_values",
+              "outliers",
+              "constant",
+              "empty",
+              "case_issues",
+              "whitespace",
+              "numeric_in_text",
+              "colname",
+              "pii_values",
+              "pii_name",
+              "pii_geo",
+              "pii_freetext",
+              "demographic",
+              "design_name",
+              "spss_filter",
+              "likert",
+              "rt",
+              "accuracy",
+              "accuracy_item"
+            ],
+            "v": [
+              {
+                "t": "list",
+                "names": [
+                  "representation",
+                  "measurement_level",
+                  "concept",
+                  "role",
+                  "unit",
+                  "quality",
+                  "parse_note"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "datetime"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "nominal"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "timestamp"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "timestamp"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      null
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "ok"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      null
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values",
+                  "lower",
+                  "upper",
+                  "classes"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      null
+                    ]
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      null
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": []
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values",
+                  "lower",
+                  "upper"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      null
+                    ]
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      null
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values",
+                  "near"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  },
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  }
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  null
+                ]
+              },
+              {
+                "t": "lgl",
+                "v": [
+                  false
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  }
+                ]
+              },
+              {
+                "t": "lgl",
+                "v": [
+                  false
+                ]
+              },
+              {
+                "t": "lgl",
+                "v": [
+                  false
+                ]
+              },
+              {
+                "t": "lgl",
+                "v": [
+                  false
+                ]
+              },
+              {
+                "t": "lgl",
+                "v": [
+                  false
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "facets",
+              "scale_values",
+              "outliers",
+              "constant",
+              "empty",
+              "case_issues",
+              "whitespace",
+              "numeric_in_text",
+              "colname",
+              "pii_values",
+              "pii_name",
+              "pii_geo",
+              "pii_freetext",
+              "demographic",
+              "design_name",
+              "spss_filter",
+              "likert",
+              "rt",
+              "accuracy",
+              "accuracy_item"
+            ],
+            "v": [
+              {
+                "t": "list",
+                "names": [
+                  "representation",
+                  "measurement_level",
+                  "concept",
+                  "role",
+                  "unit",
+                  "quality",
+                  "parse_note"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "numeric"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      null
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      null
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "measure"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      null
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "constant"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      null
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values",
+                  "lower",
+                  "upper",
+                  "classes"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      null
+                    ]
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      null
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": []
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values",
+                  "lower",
+                  "upper"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      null
+                    ]
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      null
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values",
+                  "near"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      true
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Column is constant: every value is \"0\"."
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "0"
+                    ]
+                  },
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  }
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  null
+                ]
+              },
+              {
+                "t": "lgl",
+                "v": [
+                  false
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  }
+                ]
+              },
+              {
+                "t": "lgl",
+                "v": [
+                  false
+                ]
+              },
+              {
+                "t": "lgl",
+                "v": [
+                  false
+                ]
+              },
+              {
+                "t": "lgl",
+                "v": [
+                  false
+                ]
+              },
+              {
+                "t": "lgl",
+                "v": [
+                  false
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "facets",
+              "scale_values",
+              "outliers",
+              "constant",
+              "empty",
+              "case_issues",
+              "whitespace",
+              "numeric_in_text",
+              "colname",
+              "pii_values",
+              "pii_name",
+              "pii_geo",
+              "pii_freetext",
+              "demographic",
+              "design_name",
+              "spss_filter",
+              "likert",
+              "rt",
+              "accuracy",
+              "accuracy_item"
+            ],
+            "v": [
+              {
+                "t": "list",
+                "names": [
+                  "representation",
+                  "measurement_level",
+                  "concept",
+                  "role",
+                  "unit",
+                  "quality",
+                  "parse_note"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "text"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "nominal"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      null
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "measure"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      null
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "ok"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      null
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values",
+                  "lower",
+                  "upper",
+                  "classes"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      null
+                    ]
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      null
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": []
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values",
+                  "lower",
+                  "upper"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      null
+                    ]
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      null
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values",
+                  "near"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  },
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      true
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Values look like personal information: ip_address (8 values, 100%). Review before sharing."
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "ip_address"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      true
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Column name suggests personal information (matched: ip, address, ipaddress). Review before sharing."
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "ip",
+                      "address",
+                      "ipaddress"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  }
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  null
+                ]
+              },
+              {
+                "t": "lgl",
+                "v": [
+                  false
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  }
+                ]
+              },
+              {
+                "t": "lgl",
+                "v": [
+                  false
+                ]
+              },
+              {
+                "t": "lgl",
+                "v": [
+                  false
+                ]
+              },
+              {
+                "t": "lgl",
+                "v": [
+                  false
+                ]
+              },
+              {
+                "t": "lgl",
+                "v": [
+                  false
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "facets",
+              "scale_values",
+              "outliers",
+              "constant",
+              "empty",
+              "case_issues",
+              "whitespace",
+              "numeric_in_text",
+              "colname",
+              "pii_values",
+              "pii_name",
+              "pii_geo",
+              "pii_freetext",
+              "demographic",
+              "design_name",
+              "spss_filter",
+              "likert",
+              "rt",
+              "accuracy",
+              "accuracy_item"
+            ],
+            "v": [
+              {
+                "t": "list",
+                "names": [
+                  "representation",
+                  "measurement_level",
+                  "concept",
+                  "role",
+                  "unit",
+                  "quality",
+                  "parse_note"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "numeric"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      null
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      null
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "measure"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      null
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "constant"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      null
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values",
+                  "lower",
+                  "upper",
+                  "classes"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      null
+                    ]
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      null
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": []
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values",
+                  "lower",
+                  "upper"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      null
+                    ]
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      null
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values",
+                  "near"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      true
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Column is constant: every value is \"100\"."
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "100"
+                    ]
+                  },
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  }
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  null
+                ]
+              },
+              {
+                "t": "lgl",
+                "v": [
+                  false
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  }
+                ]
+              },
+              {
+                "t": "lgl",
+                "v": [
+                  false
+                ]
+              },
+              {
+                "t": "lgl",
+                "v": [
+                  false
+                ]
+              },
+              {
+                "t": "lgl",
+                "v": [
+                  false
+                ]
+              },
+              {
+                "t": "lgl",
+                "v": [
+                  false
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "facets",
+              "scale_values",
+              "outliers",
+              "constant",
+              "empty",
+              "case_issues",
+              "whitespace",
+              "numeric_in_text",
+              "colname",
+              "pii_values",
+              "pii_name",
+              "pii_geo",
+              "pii_freetext",
+              "demographic",
+              "design_name",
+              "spss_filter",
+              "likert",
+              "rt",
+              "accuracy",
+              "accuracy_item"
+            ],
+            "v": [
+              {
+                "t": "list",
+                "names": [
+                  "representation",
+                  "measurement_level",
+                  "concept",
+                  "role",
+                  "unit",
+                  "quality",
+                  "parse_note"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "numeric"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      null
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      null
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "measure"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      null
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "ok"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      null
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values",
+                  "lower",
+                  "upper",
+                  "classes"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      null
+                    ]
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      null
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": []
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values",
+                  "lower",
+                  "upper"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      107.5
+                    ]
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      625.5
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values",
+                  "near"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  },
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  }
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  null
+                ]
+              },
+              {
+                "t": "lgl",
+                "v": [
+                  false
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  }
+                ]
+              },
+              {
+                "t": "lgl",
+                "v": [
+                  false
+                ]
+              },
+              {
+                "t": "lgl",
+                "v": [
+                  false
+                ]
+              },
+              {
+                "t": "lgl",
+                "v": [
+                  false
+                ]
+              },
+              {
+                "t": "lgl",
+                "v": [
+                  false
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "facets",
+              "scale_values",
+              "outliers",
+              "constant",
+              "empty",
+              "case_issues",
+              "whitespace",
+              "numeric_in_text",
+              "colname",
+              "pii_values",
+              "pii_name",
+              "pii_geo",
+              "pii_freetext",
+              "demographic",
+              "design_name",
+              "spss_filter",
+              "likert",
+              "rt",
+              "accuracy",
+              "accuracy_item"
+            ],
+            "v": [
+              {
+                "t": "list",
+                "names": [
+                  "representation",
+                  "measurement_level",
+                  "concept",
+                  "role",
+                  "unit",
+                  "quality",
+                  "parse_note"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "numeric"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      null
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      null
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "measure"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      null
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "constant"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      null
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values",
+                  "lower",
+                  "upper",
+                  "classes"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      null
+                    ]
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      null
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": []
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values",
+                  "lower",
+                  "upper"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      null
+                    ]
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      null
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values",
+                  "near"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      true
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Column is constant: every value is \"1\"."
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "1"
+                    ]
+                  },
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  }
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  null
+                ]
+              },
+              {
+                "t": "lgl",
+                "v": [
+                  false
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  }
+                ]
+              },
+              {
+                "t": "lgl",
+                "v": [
+                  false
+                ]
+              },
+              {
+                "t": "lgl",
+                "v": [
+                  false
+                ]
+              },
+              {
+                "t": "lgl",
+                "v": [
+                  false
+                ]
+              },
+              {
+                "t": "lgl",
+                "v": [
+                  false
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "facets",
+              "scale_values",
+              "outliers",
+              "constant",
+              "empty",
+              "case_issues",
+              "whitespace",
+              "numeric_in_text",
+              "colname",
+              "pii_values",
+              "pii_name",
+              "pii_geo",
+              "pii_freetext",
+              "demographic",
+              "design_name",
+              "spss_filter",
+              "likert",
+              "rt",
+              "accuracy",
+              "accuracy_item"
+            ],
+            "v": [
+              {
+                "t": "list",
+                "names": [
+                  "representation",
+                  "measurement_level",
+                  "concept",
+                  "role",
+                  "unit",
+                  "quality",
+                  "parse_note"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "datetime"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "nominal"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "timestamp"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "timestamp"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      null
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "ok"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      null
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values",
+                  "lower",
+                  "upper",
+                  "classes"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      null
+                    ]
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      null
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": []
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values",
+                  "lower",
+                  "upper"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      null
+                    ]
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      null
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values",
+                  "near"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  },
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  }
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  null
+                ]
+              },
+              {
+                "t": "lgl",
+                "v": [
+                  false
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  }
+                ]
+              },
+              {
+                "t": "lgl",
+                "v": [
+                  false
+                ]
+              },
+              {
+                "t": "lgl",
+                "v": [
+                  false
+                ]
+              },
+              {
+                "t": "lgl",
+                "v": [
+                  false
+                ]
+              },
+              {
+                "t": "lgl",
+                "v": [
+                  false
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "facets",
+              "scale_values",
+              "outliers",
+              "constant",
+              "empty",
+              "case_issues",
+              "whitespace",
+              "numeric_in_text",
+              "colname",
+              "pii_values",
+              "pii_name",
+              "pii_geo",
+              "pii_freetext",
+              "demographic",
+              "design_name",
+              "spss_filter",
+              "likert",
+              "rt",
+              "accuracy",
+              "accuracy_item"
+            ],
+            "v": [
+              {
+                "t": "list",
+                "names": [
+                  "representation",
+                  "measurement_level",
+                  "concept",
+                  "role",
+                  "unit",
+                  "quality",
+                  "parse_note"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "text"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "nominal"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "id"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "identifier"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      null
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "ok"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      null
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values",
+                  "lower",
+                  "upper",
+                  "classes"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      null
+                    ]
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      null
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": []
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values",
+                  "lower",
+                  "upper"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      null
+                    ]
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      null
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values",
+                  "near"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  },
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  }
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  null
+                ]
+              },
+              {
+                "t": "lgl",
+                "v": [
+                  false
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  }
+                ]
+              },
+              {
+                "t": "lgl",
+                "v": [
+                  false
+                ]
+              },
+              {
+                "t": "lgl",
+                "v": [
+                  false
+                ]
+              },
+              {
+                "t": "lgl",
+                "v": [
+                  false
+                ]
+              },
+              {
+                "t": "lgl",
+                "v": [
+                  false
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "facets",
+              "scale_values",
+              "outliers",
+              "constant",
+              "empty",
+              "case_issues",
+              "whitespace",
+              "numeric_in_text",
+              "colname",
+              "pii_values",
+              "pii_name",
+              "pii_geo",
+              "pii_freetext",
+              "demographic",
+              "design_name",
+              "spss_filter",
+              "likert",
+              "rt",
+              "accuracy",
+              "accuracy_item"
+            ],
+            "v": [
+              {
+                "t": "list",
+                "names": [
+                  "representation",
+                  "measurement_level",
+                  "concept",
+                  "role",
+                  "unit",
+                  "quality",
+                  "parse_note"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "numeric"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      null
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      null
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "measure"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      null
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "ok"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      null
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values",
+                  "lower",
+                  "upper",
+                  "classes"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      null
+                    ]
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      null
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": []
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values",
+                  "lower",
+                  "upper"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      -1
+                    ]
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      7
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values",
+                  "near"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  },
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  }
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  null
+                ]
+              },
+              {
+                "t": "lgl",
+                "v": [
+                  false
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  }
+                ]
+              },
+              {
+                "t": "lgl",
+                "v": [
+                  false
+                ]
+              },
+              {
+                "t": "lgl",
+                "v": [
+                  false
+                ]
+              },
+              {
+                "t": "lgl",
+                "v": [
+                  false
+                ]
+              },
+              {
+                "t": "lgl",
+                "v": [
+                  false
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "facets",
+              "scale_values",
+              "outliers",
+              "constant",
+              "empty",
+              "case_issues",
+              "whitespace",
+              "numeric_in_text",
+              "colname",
+              "pii_values",
+              "pii_name",
+              "pii_geo",
+              "pii_freetext",
+              "demographic",
+              "design_name",
+              "spss_filter",
+              "likert",
+              "rt",
+              "accuracy",
+              "accuracy_item"
+            ],
+            "v": [
+              {
+                "t": "list",
+                "names": [
+                  "representation",
+                  "measurement_level",
+                  "concept",
+                  "role",
+                  "unit",
+                  "quality",
+                  "parse_note"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "numeric"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      null
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      null
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "measure"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      null
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "ok"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      null
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values",
+                  "lower",
+                  "upper",
+                  "classes"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      null
+                    ]
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      null
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": []
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values",
+                  "lower",
+                  "upper"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      -1.375
+                    ]
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      7.625
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values",
+                  "near"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  },
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  }
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  null
+                ]
+              },
+              {
+                "t": "lgl",
+                "v": [
+                  false
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  }
+                ]
+              },
+              {
+                "t": "lgl",
+                "v": [
+                  false
+                ]
+              },
+              {
+                "t": "lgl",
+                "v": [
+                  false
+                ]
+              },
+              {
+                "t": "lgl",
+                "v": [
+                  false
+                ]
+              },
+              {
+                "t": "lgl",
+                "v": [
+                  false
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "facets",
+              "scale_values",
+              "outliers",
+              "constant",
+              "empty",
+              "case_issues",
+              "whitespace",
+              "numeric_in_text",
+              "colname",
+              "pii_values",
+              "pii_name",
+              "pii_geo",
+              "pii_freetext",
+              "demographic",
+              "design_name",
+              "spss_filter",
+              "likert",
+              "rt",
+              "accuracy",
+              "accuracy_item"
+            ],
+            "v": [
+              {
+                "t": "list",
+                "names": [
+                  "representation",
+                  "measurement_level",
+                  "concept",
+                  "role",
+                  "unit",
+                  "quality",
+                  "parse_note"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "numeric"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      null
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      null
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "measure"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      null
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "ok"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      null
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values",
+                  "lower",
+                  "upper",
+                  "classes"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      null
+                    ]
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      null
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": []
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values",
+                  "lower",
+                  "upper"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      -1.375
+                    ]
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      7.625
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values",
+                  "near"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  },
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  }
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  null
+                ]
+              },
+              {
+                "t": "lgl",
+                "v": [
+                  false
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  }
+                ]
+              },
+              {
+                "t": "lgl",
+                "v": [
+                  false
+                ]
+              },
+              {
+                "t": "lgl",
+                "v": [
+                  false
+                ]
+              },
+              {
+                "t": "lgl",
+                "v": [
+                  false
+                ]
+              },
+              {
+                "t": "lgl",
+                "v": [
+                  false
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "facets",
+              "scale_values",
+              "outliers",
+              "constant",
+              "empty",
+              "case_issues",
+              "whitespace",
+              "numeric_in_text",
+              "colname",
+              "pii_values",
+              "pii_name",
+              "pii_geo",
+              "pii_freetext",
+              "demographic",
+              "design_name",
+              "spss_filter",
+              "likert",
+              "rt",
+              "accuracy",
+              "accuracy_item"
+            ],
+            "v": [
+              {
+                "t": "list",
+                "names": [
+                  "representation",
+                  "measurement_level",
+                  "concept",
+                  "role",
+                  "unit",
+                  "quality",
+                  "parse_note"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "text"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "nominal"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      null
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "measure"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      null
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "constant"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      null
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values",
+                  "lower",
+                  "upper",
+                  "classes"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      null
+                    ]
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      null
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": []
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values",
+                  "lower",
+                  "upper"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      null
+                    ]
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      null
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values",
+                  "near"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      true
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Column is constant: every value is \"1|2|3\"."
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "1|2|3"
+                    ]
+                  },
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  }
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  null
+                ]
+              },
+              {
+                "t": "lgl",
+                "v": [
+                  false
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "problem",
+                  "message",
+                  "values"
+                ],
+                "v": [
+                  {
+                    "t": "lgl",
+                    "v": [
+                      false
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  }
+                ]
+              },
+              {
+                "t": "lgl",
+                "v": [
+                  false
+                ]
+              },
+              {
+                "t": "lgl",
+                "v": [
+                  false
+                ]
+              },
+              {
+                "t": "lgl",
+                "v": [
+                  false
+                ]
+              },
+              {
+                "t": "lgl",
+                "v": [
+                  false
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": []
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "qualtrics_start",
+          "qualtrics_end",
+          "qualtrics_status",
+          "qualtrics_ip",
+          "qualtrics_progress",
+          "qualtrics_duration",
+          "qualtrics_finished",
+          "qualtrics_recorded",
+          "qualtrics_responseid",
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          true
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          "Q1_DO"
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          8
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          0
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "StartDate",
+          "EndDate",
+          "Status",
+          "IPAddress",
+          "Progress",
+          "Duration (in seconds)",
+          "Finished",
+          "RecordedDate",
+          "ResponseId",
+          "Q1_1",
+          "Q1_2",
+          "Q1_3",
+          "Q1_DO_1"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "column_name",
+          "kind",
+          "by_name",
+          "by_value"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": []
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": []
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "usable",
+          "reason"
+        ],
+        "v": [
+          {
+            "t": "lgl",
+            "v": [
+              true
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          }
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0.538461538461538
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -106,15 +106,20 @@ def scale_values() -> None:
     add(f"{f}.blood_pressure", f,
         {"x": ex("rep(c(118, 121, 125, 130, 112, 140, 99, 135), 25)",
                  "[118.0, 121.0, 125.0, 130.0, 112.0, 140.0, 99.0, 135.0] * 25")})  # fmt: skip
-    add(f"{f}.noninteger", f,
-        {"x": ex("rep(c(1.5, 2.25, 3.75, 4.5), 50)", "[1.5, 2.25, 3.75, 4.5] * 50")})
+    add(
+        f"{f}.noninteger",
+        f,
+        {"x": ex("rep(c(1.5, 2.25, 3.75, 4.5), 50)", "[1.5, 2.25, 3.75, 4.5] * 50")},
+    )
     add(f"{f}.age", f, {"x": ex("rep(18:65, 5)", "[*range(18, 66)] * 5")})
     add(f"{f}.count", f, {"x": ex("rep(0:30, 7)", "[*range(0, 31)] * 7")})
     add(f"{f}.valid_values_flags6", f, {"x": vec(L15, 6), "valid_values": int_(1, 2, 3, 4, 5)})
-    add(f"{f}.valid_values_allows6", f,
-        {"x": vec(L15, 6), "valid_values": int_(1, 2, 3, 4, 5, 6)})
-    add(f"{f}.valid_range", f,
-        {"x": ex("c(rep(1:7, 9), 9)", "[*range(1, 8)] * 9 + [9]"), "valid_range": dbl(1, 7)})
+    add(f"{f}.valid_values_allows6", f, {"x": vec(L15, 6), "valid_values": int_(1, 2, 3, 4, 5, 6)})
+    add(
+        f"{f}.valid_range",
+        f,
+        {"x": ex("c(rep(1:7, 9), 9)", "[*range(1, 8)] * 9 + [9]"), "valid_range": dbl(1, 7)},
+    )
     add(f"{f}.declared77", f, {"x": vec(L15, 77), "declared": dbl(77)})
     add(f"{f}.declared_neg8", f, {"x": vec(L17, -8), "declared": dbl(-8)})
     add(f"{f}.declared_absent", f, {"x": vec(L15), "declared": dbl(77)})
@@ -132,12 +137,21 @@ def scale_values() -> None:
     add(f"{f}.code_set_interior", f,
         {"x": ex("c(rep(c(1, 2, 3, 9), 20), 5)", "[1.0, 2.0, 3.0, 9.0] * 20 + [5.0]"),
          "valid_values": dbl(1, 2, 3, 9)})  # fmt: skip
-    add(f"{f}.valid_values_character", f,
-        {"x": ex("rep(1:5, 10)", "[*range(1, 6)] * 10"), "valid_values": chr_("1", "5")})
-    add(f"{f}.integer_with_na", f,
-        {"x": ex("c(rep(1:5, 40), NA, 99L)", "[*range(1, 6)] * 40 + [None, 99]")})
-    add(f"{f}.infinite", f,
-        {"x": ex("c(rep(1:5, 40), Inf, -99)", "[*range(1, 6)] * 40 + [float('inf'), -99]")})
+    add(
+        f"{f}.valid_values_character",
+        f,
+        {"x": ex("rep(1:5, 10)", "[*range(1, 6)] * 10"), "valid_values": chr_("1", "5")},
+    )
+    add(
+        f"{f}.integer_with_na",
+        f,
+        {"x": ex("c(rep(1:5, 40), NA, 99L)", "[*range(1, 6)] * 40 + [None, 99]")},
+    )
+    add(
+        f"{f}.infinite",
+        f,
+        {"x": ex("c(rep(1:5, 40), Inf, -99)", "[*range(1, 6)] * 40 + [float('inf'), -99]")},
+    )
     add(f"{f}.logical", f, {"x": lgl(True, False, True)})
     add(f"{f}.sentinels_arg", f, {"x": vec(L15, 42), "sentinels": dbl(42)})
 
@@ -177,8 +191,11 @@ def constant() -> None:
                  'pd.Series(pd.Categorical(["x", "x"], categories=["x", "y"]))')})  # fmt: skip
     add(f"{f}.threshold", f, {"x": dbl(*([1] * 9), 2), "threshold": 0.8})
     add(f"{f}.sci_label", f, {"x": dbl(1e5, 1e5, 1e5)})
-    add(f"{f}.collation", f,
-        {"x": chr_("b", "B", "a", "A", "_x", "b", "B", "a", "A", "_x"), "threshold": 0.2})
+    add(
+        f"{f}.collation",
+        f,
+        {"x": chr_("b", "B", "a", "A", "_x", "b", "B", "a", "A", "_x"), "threshold": 0.2},
+    )
     add(f"{f}.integer_near", f, {"x": int_(*([3] * 199), 4)})
 
 
@@ -219,11 +236,17 @@ def text_checks() -> None:
     add(f"{f}.basic", f, {"x": chr_("Male", "male", "Female")})
     add(f"{f}.none", f, {"x": chr_("Male", "Female")})
     add(f"{f}.numeric", f, {"x": dbl(1, 2, 3)})
-    add(f"{f}.groups", f,
-        {"x": chr_("Yes", "YES", "yes", "no", "No", None, "", " ", "maybe", "Yes")})
+    add(
+        f"{f}.groups",
+        f,
+        {"x": chr_("Yes", "YES", "yes", "no", "No", None, "", " ", "maybe", "Yes")},
+    )
     add(f"{f}.unicode", f, {"x": chr_("ÄRGER", "ärger", "Ärger")})
-    add(f"{f}.factor", f,
-        {"x": ex('factor(c("a", "A", "b"))', 'pd.Series(pd.Categorical(["a", "A", "b"]))')})
+    add(
+        f"{f}.factor",
+        f,
+        {"x": ex('factor(c("a", "A", "b"))', 'pd.Series(pd.Categorical(["a", "A", "b"]))')},
+    )
     add(f"{f}.empty", f, {"x": chr_(None, "")})
 
     f = "data_check_whitespace"
@@ -241,8 +264,11 @@ def text_checks() -> None:
     add(f"{f}.comma_decimal", f, {"x": chr_("1,5", "2,5", "3,5", "4,5", "x")})
     add(f"{f}.too_few", f, {"x": chr_("1", "2", "x")})
     add(f"{f}.numeric", f, {"x": dbl(1, 2, 3, 4, 5, 6)})
-    add(f"{f}.args", f,
-        {"x": chr_("1", "2", "3", "a", "b", " c ", "4", "", None), "threshold": 0.5, "n_max": 1})
+    add(
+        f"{f}.args",
+        f,
+        {"x": chr_("1", "2", "3", "a", "b", " c ", "4", "", None), "threshold": 0.5, "n_max": 1},
+    )
     add(f"{f}.nan_inf", f, {"x": chr_("1", "2", "3", "4", "NaN", "Inf", "1e5", "0x1A", "-inf")})
 
 
@@ -299,8 +325,11 @@ def pii() -> None:
     add(f"{f}.words", f, {"x": chr_("yes", "no", "maybe", "yes", "no")})
     add(f"{f}.rare_emails", f,
         {"x": ex('c(rep("n/a", 38), "a@b.com", "c@d.com")', '["n/a"] * 38 + ["a@b.com", "c@d.com"]')})  # fmt: skip
-    add(f"{f}.single_email", f,
-        {"x": ex('c(rep("none", 39), "x@y.com")', '["none"] * 39 + ["x@y.com"]')})
+    add(
+        f"{f}.single_email",
+        f,
+        {"x": ex('c(rep("none", 39), "x@y.com")', '["none"] * 39 + ["x@y.com"]')},
+    )
     add(f"{f}.luhn_fail", f, {"x": chr_(*(["1234567890123456"] * 4))})
     add(f"{f}.embedded_run", f, {"x": chr_(*(["A1234567890123456Z"] * 6))})
     add(f"{f}.dates", f, {"x": chr_(*(["2021-05-03"] * 6))})
@@ -311,10 +340,16 @@ def pii() -> None:
     add(f"{f}.timestamps", f, {"x": chr_(*(["2019-01-15 14:32:07"] * 10))})
     add(f"{f}.phone", f, {"x": chr_(*(["+31612345678"] * 5))})
     add(f"{f}.phone_local", f, {"x": chr_(*(["040-247 1234"] * 8))})
-    add(f"{f}.mixed_patterns", f,
-        {"x": chr_("a@b.com", "192.168.0.1", "123-45-6789", "4111 1111 1111 1111", "x")})
-    add(f"{f}.ssn_exclusions", f,
-        {"x": chr_("000-12-3456", "666-12-3456", "900-12-3456", "123-00-4567", "123-45-0000")})
+    add(
+        f"{f}.mixed_patterns",
+        f,
+        {"x": chr_("a@b.com", "192.168.0.1", "123-45-6789", "4111 1111 1111 1111", "x")},
+    )
+    add(
+        f"{f}.ssn_exclusions",
+        f,
+        {"x": chr_("000-12-3456", "666-12-3456", "900-12-3456", "123-00-4567", "123-45-0000")},
+    )
     add(f"{f}.numeric_input", f, {"x": dbl(1, 2, 3)})
     add(f"{f}.too_few", f, {"x": chr_("a@b.com", "c@d.com", None, "  ")})
     add(f"{f}.ms_timestamps", f, {"x": chr_(*(["1595957929810"] * 5))})
@@ -364,8 +399,11 @@ def pii() -> None:
         {"col_name": "lat", "x": ex("round(seq(0.3, 3.5, length.out = 50), 3)",
                                     "[pc._r.r_round(0.3 + i * 3.2 / 49, 3) for i in range(50)]"),
          "sibling_names": psych})  # fmt: skip
-    add(f"{f}.latin_square", f,
-        {"col_name": "lat", "x": ex("rep(0:1, 50)", "[0, 1] * 50"), "sibling_names": psych})
+    add(
+        f"{f}.latin_square",
+        f,
+        {"col_name": "lat", "x": ex("rep(0:1, 50)", "[0, 1] * 50"), "sibling_names": psych},
+    )
     add(f"{f}.loneliness", f,
         {"col_name": "lon", "x": ex("rep(1:7, 10)", "[*range(1, 8)] * 10"),
          "sibling_names": chr_("id", "lon", "rt")})  # fmt: skip
@@ -375,10 +413,20 @@ def pii() -> None:
     add(f"{f}.gps_no_partner", f,
         {"col_name": "gps", "x": ex("seq(-10, 10, length.out = 20)", "[-10 + i * 20 / 19 for i in range(20)]"),
          "sibling_names": psych})  # fmt: skip
-    add(f"{f}.out_of_range", f,
-        {"col_name": "lat", "x": dbl(650, 700, 800, 910), "sibling_names": chr_("id", "lat", "lon")})
-    add(f"{f}.no_siblings", f,
-        {"col_name": "lat", "x": dbl(52.1, 52.2, 52.3), "sibling_names": chr_()})
+    add(
+        f"{f}.out_of_range",
+        f,
+        {
+            "col_name": "lat",
+            "x": dbl(650, 700, 800, 910),
+            "sibling_names": chr_("id", "lat", "lon"),
+        },
+    )
+    add(
+        f"{f}.no_siblings",
+        f,
+        {"col_name": "lat", "x": dbl(52.1, 52.2, 52.3), "sibling_names": chr_()},
+    )
     add(f"{f}.lat_lon_name", f,
         {"col_name": "lat_lon", "x": dbl(120, 130, 140), "sibling_names": chr_("lat_lon", "longitude")})  # fmt: skip
     add(f"{f}.comma_decimals", f, {"col_name": "latitude", "x": chr_("52,37", "4,89", "51,5")})
@@ -412,8 +460,11 @@ def pii() -> None:
         {"x": ex('paste("12345 67890 12345 67890 12345 67890 12345 ab", 1:6)',
                  '[f"12345 67890 12345 67890 12345 67890 12345 ab {i}" for i in range(1, 7)]')})  # fmt: skip
     add(f"{f}.numeric", f, {"x": dbl(1, 2, 3, 4, 5, 6)})
-    add(f"{f}.short_threshold", f,
-        {"x": chr_("a b c", "d e f", "g h i", "j k l", "m n o"), "min_median_chars": 3})
+    add(
+        f"{f}.short_threshold",
+        f,
+        {"x": chr_("a b c", "d e f", "g h i", "j k l", "m n o"), "min_median_chars": 3},
+    )
     add(f"{f}.even_median", f,
         {"x": chr_("aaaa bbbb cccc", "dddd eeee ffff gggg", "hhhh iiii", "jjjj kkkk llll mmmm"),
          "min_median_chars": 10, "min_unique_frac": 0.5})  # fmt: skip
@@ -440,8 +491,11 @@ def demographics() -> None:
         ("race_words", "race", chr_("White", "Black", "Asian", "Hispanic", "Other")),
         ("ethnicity", "ethnicity", chr_("Hispanic", "Non-Hispanic")),
         ("race_coded", "race_ethnicity", dbl(1, 2, 3, 4, 5)),
-        ("race_prose", "race", ex('rep(paste(rep("word", 30), collapse = " "), 5)',
-                                  '[" ".join(["word"] * 30)] * 5')),
+        (
+            "race_prose",
+            "race",
+            ex('rep(paste(rep("word", 30), collapse = " "), 5)', '[" ".join(["word"] * 30)] * 5'),
+        ),
         ("empty_name", "", dbl(1, 2, 3)),
         ("race_many", "race", ex('paste0("r", 1:40)', '[f"r{i}" for i in range(1, 41)]')),
         ("age_comma", "leeftijd", chr_("23,5", "45", "31", "29")),
@@ -523,21 +577,58 @@ def concepts() -> None:
 
     f = ".parse_frac"
     vals: list[tuple[str, Any, tuple[str, ...]]] = [
-        ("datetimes", chr_("2021-01-01 10:00:00", "2021-01-01T10:00:00", "2021-13-01 10:00:00",
-                           "x", None, ""), DT_FMTS),  # fmt: skip
+        (
+            "datetimes",
+            chr_(
+                "2021-01-01 10:00:00", "2021-01-01T10:00:00", "2021-13-01 10:00:00", "x", None, ""
+            ),
+            DT_FMTS,
+        ),
         ("dates", chr_("2021-02-29", "2020-02-29", "31/12/2020", "12/31/2020", "1/2/3"), D_FMTS),
         ("numeric", dbl(20210101, 20210102), D_FMTS),
         ("empty", chr_(None, ""), D_FMTS),
-        ("long", ex('c(paste0("2021-01-01", strrep(" x", 150)), "2021-01-02")',
-                    '["2021-01-01" + " x" * 150, "2021-01-02"]'), D_FMTS),
-        ("psychopy", chr_("2020-05-19_16h20.01.792", "2022_Feb_08_1523", "2021-01-01 24:00:00",
-                          "2021-01-01 24:30:00", "2021-01-01 23:59:60", "2021-01-01 23:59:61"),
-         DT_FMTS),  # fmt: skip
-        ("months", chr_("5 Mar 2021", "5 March 2021", "5 Sept 2021", "March 5, 2021",
-                        "March 5 2021", "05Mar2021", " 5  mar   2021"), D_FMTS),  # fmt: skip
+        (
+            "long",
+            ex(
+                'c(paste0("2021-01-01", strrep(" x", 150)), "2021-01-02")',
+                '["2021-01-01" + " x" * 150, "2021-01-02"]',
+            ),
+            D_FMTS,
+        ),
+        (
+            "psychopy",
+            chr_(
+                "2020-05-19_16h20.01.792",
+                "2022_Feb_08_1523",
+                "2021-01-01 24:00:00",
+                "2021-01-01 24:30:00",
+                "2021-01-01 23:59:60",
+                "2021-01-01 23:59:61",
+            ),
+            DT_FMTS,
+        ),
+        (
+            "months",
+            chr_(
+                "5 Mar 2021",
+                "5 March 2021",
+                "5 Sept 2021",
+                "March 5, 2021",
+                "March 5 2021",
+                "05Mar2021",
+                " 5  mar   2021",
+            ),
+            D_FMTS,
+        ),
         ("two_digit_years", chr_("01/02/03", "12/31/69", "12/31/68", "13/13/13"), D_FMTS),
-        ("factor", ex('factor(c("2021-01-01", "2021-01-02", "no"))',
-                      'pd.Series(pd.Categorical(["2021-01-01", "2021-01-02", "no"]))'), D_FMTS),
+        (
+            "factor",
+            ex(
+                'factor(c("2021-01-01", "2021-01-02", "no"))',
+                'pd.Series(pd.Categorical(["2021-01-01", "2021-01-02", "no"]))',
+            ),
+            D_FMTS,
+        ),
         ("logical", lgl(True, False), D_FMTS),
         ("spaces", chr_("2021- 1- 1", "  2021-01-01", "2021 -01-01", "2021-1-100"), D_FMTS),
     ]
@@ -576,16 +667,30 @@ def concepts() -> None:
         ("likert_block", "panas_1", ex("rep(1:5, 12)", "[*range(1, 6)] * 12"), True),
         ("likert_unknown", "panas_1", ex("rep(1:5, 12)", "[*range(1, 6)] * 12"), None),
         ("trial_counter", "round", ex("rep(1:5, 12)", "[*range(1, 6)] * 12"), False),
-        ("comma_decimal", "price", chr_("1,50", "2,30", "4,10", "5,00", "3,25", "6,60", "2,10", "1,90"), None),
+        (
+            "comma_decimal",
+            "price",
+            chr_("1,50", "2,30", "4,10", "5,00", "3,25", "6,60", "2,10", "1,90"),
+            None,
+        ),
         ("constant", "k", dbl(*([7] * 10)), None),
         ("empty", "e", dbl(None, None), None),
         ("gender", "gender", chr_("Male", "Female", "Other", "Female", "Male"), None),
         ("race", "race", chr_("White", "Black", "Asian", "Other", "White", "Black"), None),
         ("condition", "condition", chr_("ctrl", "treat", "ctrl", "treat", "other"), None),
         ("date", "date", chr_("2021-01-01", "2021-02-01", "2021-03-01", "2021-04-01"), None),
-        ("timestamp", "StartDate", chr_("2021-05-01 10:00:00", "2021-05-02 10:00:00",
-                                        "2021-05-03 11:00:00"), None),  # fmt: skip
-        ("text_nominal", "object_label", chr_("Wine", "Hammock", "Binoculars", "Apple", "Tree"), None),
+        (
+            "timestamp",
+            "StartDate",
+            chr_("2021-05-01 10:00:00", "2021-05-02 10:00:00", "2021-05-03 11:00:00"),
+            None,
+        ),
+        (
+            "text_nominal",
+            "object_label",
+            chr_("Wine", "Hammock", "Binoculars", "Apple", "Tree"),
+            None,
+        ),
         ("mostly_numeric", "score", chr_("1.5", "2.5", "3.7", "4.1", "a"), None),
         ("binary_numeric", "flag", dbl(0, 1, 0, 1), None),
         ("accuracy", "correct", dbl(0, 1, 1, 0, 1, 1), None),
@@ -617,10 +722,12 @@ def concepts() -> None:
         d=[None, 1, None, None],
         e=[1, 2, 3, 4],
     )
-    add(f"{f}.worksheet", f,
-        {"facets": lst(text_f, text_f, num_f, num_f, num_f), "df": sparse_df})
-    add(f"{f}.id_text", f,
-        {"facets": lst({"representation": "text", "concept": "id"}, text_f, num_f), "df": prose_df})
+    add(f"{f}.worksheet", f, {"facets": lst(text_f, text_f, num_f, num_f, num_f), "df": sparse_df})
+    add(
+        f"{f}.id_text",
+        f,
+        {"facets": lst({"representation": "text", "concept": "id"}, text_f, num_f), "df": prose_df},
+    )
     add(f"{f}.no_rows", f,
         {"facets": lst(num_f), "df": ex("data.frame(a = numeric(0))", "pd.DataFrame({'a': pd.Series([], dtype='float64')})")})  # fmt: skip
     add(f"{f}.no_facets", f, {"facets": lst(), "df": prose_df})
@@ -654,7 +761,7 @@ QUALTRICS_LONG_PY = (
     "(lambda meta, items: pd.DataFrame("
     "[['Start Date', 'End Date', 'Progress', 'Duration (in seconds)', 'Finished', "
     "'Recorded Date', 'Response ID'] + ['Question text for item %d' % i for i in range(1, 61)], "
-    "['{\"ImportId\":\"%s\"}' % n for n in meta + items]] + "
+    '[\'{"ImportId":"%s"}\' % n for n in meta + items]] + '
     "[['x'] * 7 + [str((i + k) % 7 + 1) for i in range(8, 68)] for k in range(3)], "
     "columns=meta + items))("
     "['StartDate', 'EndDate', 'Progress', 'Duration (in seconds)', 'Finished', "
@@ -668,8 +775,11 @@ def qualtrics() -> None:
                "Duration (in seconds)": [300], "Finished": [1], "ResponseId": ["R_abc123de"],
                "Q1": [3]})  # fmt: skip
     add(f"{f}.metadata", f, {"df": q1})
-    add(f"{f}.lone_startdate", f,
-        {"df": df(id=[1, 2, 3], StartDate=["a", "b", "c"], score=[1, 2, 3])})
+    add(
+        f"{f}.lone_startdate",
+        f,
+        {"df": df(id=[1, 2, 3], StartDate=["a", "b", "c"], score=[1, 2, 3])},
+    )
     add(f"{f}.plain", f, {"df": df(a=[1, 2, 3], b=[4, 5, 6])})
     add(f"{f}.thin_responseid", f,
         {"df": df(StartDate=["2021-01-01 10:00:00"] * 3, Progress=[100, 100, 50],
@@ -724,8 +834,11 @@ def qualtrics() -> None:
     ):
         add(f"{f}.{cid}", f, {"row_vals": v})
 
-    add(".qualtrics_key.vector", ".qualtrics_key",
-        {"nm": chr_("Duration (in seconds)", "Duration..in.seconds.", "ÉtéQ1", None)})
+    add(
+        ".qualtrics_key.vector",
+        ".qualtrics_key",
+        {"nm": chr_("Duration (in seconds)", "Duration..in.seconds.", "ÉtéQ1", None)},
+    )
     add(".qualtrics_tag_cols.vector", ".qualtrics_tag_cols",
         {"col_names": chr_("StartDate", "Q1", "Location Latitude", "RecipientEmail",
                            "externalDataReference", "")})  # fmt: skip
@@ -734,8 +847,11 @@ def qualtrics() -> None:
                             "ab_", "_12", "", "Duration_1", "1a_b_2")):  # fmt: skip
         add(f".qualtrics_col_stem.{i}", ".qualtrics_col_stem", {"nm": nm})
     add(".qualtrics_col_stem.na", ".qualtrics_col_stem", {"nm": chr_(None)})
-    add(".qualtrics_is_display_order.vector", ".qualtrics_is_display_order",
-        {"col_names": chr_("Q1_DO_1", "Q1_DO", "Q1_DOG", "doable", "X_do_1", "Q_DO_")})
+    add(
+        ".qualtrics_is_display_order.vector",
+        ".qualtrics_is_display_order",
+        {"col_names": chr_("Q1_DO_1", "Q1_DO", "Q1_DOG", "doable", "X_do_1", "Q_DO_")},
+    )
 
 
 def header_repair() -> None:
@@ -749,20 +865,32 @@ def header_repair() -> None:
         chr_("3", "0", "1", "0.2", "0.3"),
     )
     add(f"{f}.banner", f, {"rows": cda_raw}, py=py)
-    add(f"{f}.correct", f,
-        {"rows": lst(chr_("id", "score", "grp"), chr_("1", "2", "a"), chr_("2", "3", "b"))}, py=py)
+    add(
+        f"{f}.correct",
+        f,
+        {"rows": lst(chr_("id", "score", "grp"), chr_("1", "2", "a"), chr_("2", "3", "b"))},
+        py=py,
+    )
     add(f"{f}.blank_rows", f,
         {"rows": lst(chr_("", "", ""), chr_("Title", "", ""), chr_("id", "x", "y"),
                      chr_("1", "2", "3"), chr_("2", "3", "4"))}, py=py)  # fmt: skip
-    add(f"{f}.headerless_numeric", f,
-        {"rows": lst(chr_("1", "1", "3"), chr_("2", "2", "4"), chr_("3", "5", "6"))}, py=py)
+    add(
+        f"{f}.headerless_numeric",
+        f,
+        {"rows": lst(chr_("1", "1", "3"), chr_("2", "2", "4"), chr_("3", "5", "6"))},
+        py=py,
+    )
     add(f"{f}.placeholder_row", f,
         {"rows": lst(chr_("...1", "...2", "...3"), chr_("id", "a", "b"), chr_("1", "2", "3"),
                      chr_("4", "5", "6"))}, py=py)  # fmt: skip
     add(f"{f}.one_row", f, {"rows": lst(chr_("a", "b"))}, py=py)
     add(f"{f}.one_column", f, {"rows": lst(chr_("a"), chr_("1"), chr_("2"))}, py=py)
-    add(f"{f}.all_text", f,
-        {"rows": lst(chr_("", "", ""), chr_("term", "def", "note"), chr_("a", "b", "c"))}, py=py)
+    add(
+        f"{f}.all_text",
+        f,
+        {"rows": lst(chr_("", "", ""), chr_("term", "def", "note"), chr_("a", "b", "c"))},
+        py=py,
+    )
     add(f"{f}.max_scan1", f,
         {"rows": lst(chr_("", "", ""), chr_("", "", ""), chr_("id", "x", "y"),
                      chr_("1", "2", "3")), "max_scan": 1}, py=py)  # fmt: skip
@@ -786,8 +914,11 @@ def header_repair() -> None:
     add(f"{f}.duplicate_names", f,
         {"df": df(**{"...1": ["id", "1", "2"], "...2": ["id", "3", "4"], "...3": ["", "5", "6"],
                      "...4": ["id.1", "7", "8"]})})  # fmt: skip
-    add(f"{f}.typed_fallback", f,
-        {"df": df(**{"V1": ["id", "1", "2", "3"], "V2": ["score", "5", "6", "7"]})})
+    add(
+        f"{f}.typed_fallback",
+        f,
+        {"df": df(**{"V1": ["id", "1", "2", "3"], "V2": ["score", "5", "6", "7"]})},
+    )
     add(f"{f}.fixture_offset", f, {"df": read_head("offset_header.csv")})
     add(f"{f}.fixture_blank_top", f, {"df": read_head("blank_top_header.csv")})
 
@@ -797,18 +928,25 @@ def header_repair() -> None:
     for cid, v in (("banner", chr_("CDA", "CDA", "CDA", "x")), ("unique", chr_("a", "b", "c")),
                    ("empty", chr_("", None))):  # fmt: skip
         add(f".row_duplication.{cid}", ".row_duplication", {"vals": v})
-    add(".numeric_col_fraction.mixed", ".numeric_col_fraction",
-        {"df": df(a=["1", "2"], b=["x", "2"], c=["", None], d=[" 3 ", "4e2"])})
+    add(
+        ".numeric_col_fraction.mixed",
+        ".numeric_col_fraction",
+        {"df": df(a=["1", "2"], b=["x", "2"], c=["", None], d=[" 3 ", "4e2"])},
+    )
     add(".numeric_col_fraction.empty", ".numeric_col_fraction", {"df": NULL})
     for cid, v, bn in (("near_empty", chr_("T", "", "", ""), 0.9),
                        ("banner", chr_("C", "C", "C", "D"), 0.9),
                        ("placeholders", chr_("...1", "...2", "x", "y"), 0.9),
                        ("header", chr_("a", "b", "c", "d"), 0.9),
                        ("text_body", chr_("T", "", "", ""), 0.2)):  # fmt: skip
-        add(f".is_junk_above_header.{cid}", ".is_junk_above_header",
-            {"vals": v, "body_numeric": bn})
-    add(".as_num_safe.vector", ".as_num_safe",
-        {"x": chr_("1", " 2 ", "NaN", "x", None, "1e3", "Inf", "0x10", "NA")})
+        add(
+            f".is_junk_above_header.{cid}", ".is_junk_above_header", {"vals": v, "body_numeric": bn}
+        )
+    add(
+        ".as_num_safe.vector",
+        ".as_num_safe",
+        {"x": chr_("1", " 2 ", "NaN", "x", None, "1e3", "Inf", "0x10", "NA")},
+    )
 
 
 # -- trial-level formats ------------------------------------------------------------------
@@ -874,11 +1012,23 @@ def blocks() -> None:
         ("continuous", ex("(1:20) / 3", "[i / 3 for i in range(1, 21)]")),
         ("binary", ex("rep(0:1, 10)", "[0, 1] * 10")),
         ("character", ex("as.character(rep(1:5, 4))", "[str(i) for i in range(1, 6)] * 4")),
-        ("character_na", ex('c(as.character(rep(1:5, 2)), rep("x", 4))', '[str(i) for i in range(1, 6)] * 2 + ["x"] * 4')),  # fmt: skip
+        (
+            "character_na",
+            ex(
+                'c(as.character(rep(1:5, 2)), rep("x", 4))',
+                '[str(i) for i in range(1, 6)] * 2 + ["x"] * 4',
+            ),
+        ),
         ("wide_range", ex("rep(c(1, 5, 20), 5)", "[1.0, 5.0, 20.0] * 5")),
         ("negative", ex("rep(-7:-5, 5)", "[-7, -6, -5] * 5")),
         ("twelve_levels", ex("rep(1:12, 2)", "[*range(1, 13)] * 2")),
-        ("factor", ex("factor(rep(1:5, 4))", "pd.Series(pd.Categorical([str(i) for i in range(1, 6)] * 4))")),  # fmt: skip
+        (
+            "factor",
+            ex(
+                "factor(rep(1:5, 4))",
+                "pd.Series(pd.Categorical([str(i) for i in range(1, 6)] * 4))",
+            ),
+        ),
         ("logical", ex("rep(c(TRUE, FALSE), 10)", "[True, False] * 10")),
         ("with_inf", ex("c(rep(1:5, 4), Inf)", "[*range(1, 6)] * 4 + [float('inf')]")),
         ("with_na", ex("c(rep(1:5, 4), NA, NA)", "[*range(1, 6)] * 4 + [None, None]")),
@@ -892,8 +1042,17 @@ def blocks() -> None:
         ("likert", ex("rep(1:5, 8)", "[*range(1, 6)] * 8")),
         ("negative", ex("c(-1, 300 + (1:40) * 23)", "[-1] + [300 + i * 23 for i in range(1, 41)]")),
         ("few_unique", ex("rep(c(300, 500), 20)", "[300.0, 500.0] * 20")),
-        ("character", ex("as.character(300 + (1:40) * 23)", "[str(300 + i * 23) for i in range(1, 41)]")),  # fmt: skip
-        ("character_bad", ex('c(as.character(300 + (1:10) * 23), rep("x", 5))', '[str(300 + i * 23) for i in range(1, 11)] + ["x"] * 5')),  # fmt: skip
+        (
+            "character",
+            ex("as.character(300 + (1:40) * 23)", "[str(300 + i * 23) for i in range(1, 41)]"),
+        ),
+        (
+            "character_bad",
+            ex(
+                'c(as.character(300 + (1:10) * 23), rep("x", 5))',
+                '[str(300 + i * 23) for i in range(1, 11)] + ["x"] * 5',
+            ),
+        ),
         ("big_integers", ex("(1:40) * 1000", "[i * 1000 for i in range(1, 41)]")),
     ):
         add(f"{f}.{cid}", f, {"x": x})
@@ -947,7 +1106,12 @@ def blocks() -> None:
       'score': [r * 2.5 for r in range(1, 13)],
       **{f'iat_{i}': [float((r * i) % 2) for r in range(1, 13)] for i in range(1, 4)}}))()"""
     py_acc = PH + "detect_accuracy_blocks"
-    add(".detect_accuracy_blocks.raven", ".detect_accuracy_blocks", {"df": ex(acc_r, acc_py)}, py=py_acc)
+    add(
+        ".detect_accuracy_blocks.raven",
+        ".detect_accuracy_blocks",
+        {"df": ex(acc_r, acc_py)},
+        py=py_acc,
+    )
     add(".detect_accuracy_blocks.min3", ".detect_accuracy_blocks",
         {"df": ex(acc_r, acc_py), "min_items": 3}, py=py_acc)  # fmt: skip
     add(".detect_accuracy_blocks.null", ".detect_accuracy_blocks", {"df": NULL}, py=py_acc)
@@ -958,8 +1122,11 @@ def blocks() -> None:
                     "Été_1")})  # fmt: skip
     add(".scale_name_prefix.scalar", ".scale_name_prefix", {"nm": "TIPI_10"})
 
-    add(".scale_block_range.frame", ".scale_block_range",
-        {"block": df(a=[1, 2, 5], b=[2, None, 7], c=["3", "x", "1"])})
+    add(
+        ".scale_block_range.frame",
+        ".scale_block_range",
+        {"block": df(a=[1, 2, 5], b=[2, None, 7], c=["3", "x", "1"])},
+    )
     add(".scale_block_range.empty", ".scale_block_range", {"block": df(a=[None, None])})
     add(".scale_block_range.decimals", ".scale_block_range", {"block": df(a=[0.5, 100000.0])})
 
@@ -974,7 +1141,12 @@ def blocks() -> None:
       'age': list(range(20, 32)), 'x_1': [1, 2, 3] * 4, 'x_2': [1, 2, 3] * 4,
       'txt': list('abcdefghijkl'), 'y1': [1, 2, 3] * 4, 'y2': [1, 2, 3] * 4, 'y3': [1, 2, 3] * 4})"""
     py_sc = PH + "detect_scale_blocks"
-    add(".detect_scale_blocks.frame", ".detect_scale_blocks", {"df": ex(scale_r, scale_py)}, py=py_sc)
+    add(
+        ".detect_scale_blocks.frame",
+        ".detect_scale_blocks",
+        {"df": ex(scale_r, scale_py)},
+        py=py_sc,
+    )
     add(".detect_scale_blocks.min2", ".detect_scale_blocks",
         {"df": ex(scale_r, scale_py), "min_items": 2}, py=py_sc)  # fmt: skip
     add(".detect_scale_blocks.none", ".detect_scale_blocks", {"df": df(a=[1, 2])}, py=py_sc)
@@ -986,11 +1158,20 @@ def blocks() -> None:
         max=[100, 7, 5, None, 50, 0.9],
     )
     f = ".scale_block_is_ratinglike"
-    add(f"{f}.slider", f, {"cols": chr_("q1", "q2", "q3"), "source_file": "a.csv", "columns_df": cols_df})
-    add(f"{f}.too_few", f, {"cols": chr_("q1", "q2"), "source_file": "a.csv", "columns_df": cols_df})
+    add(
+        f"{f}.slider",
+        f,
+        {"cols": chr_("q1", "q2", "q3"), "source_file": "a.csv", "columns_df": cols_df},
+    )
+    add(
+        f"{f}.too_few", f, {"cols": chr_("q1", "q2"), "source_file": "a.csv", "columns_df": cols_df}
+    )
     add(f"{f}.other_file", f, {"cols": chr_("q1", "q2", "q3"), "source_file": "b.csv", "columns_df": cols_df})  # fmt: skip
-    add(f"{f}.with_missing", f,
-        {"cols": chr_("q1", "q2", "q3", "q4"), "source_file": "a.csv", "columns_df": cols_df})
+    add(
+        f"{f}.with_missing",
+        f,
+        {"cols": chr_("q1", "q2", "q3", "q4"), "source_file": "a.csv", "columns_df": cols_df},
+    )
     add(f"{f}.probabilities", f,
         {"cols": chr_("p1", "p1", "p1"), "source_file": "a.csv",
          "columns_df": df(source_file=["a.csv"] * 3, column_name=["p1", "p2", "p3"],
@@ -1007,16 +1188,211 @@ def blocks() -> None:
         {"cols": chr_("p1", "p2", "p3"), "source_file": "a.csv",
          "columns_df": df(source_file=["a.csv"] * 3, column_name=["p1", "p2", "p3"],
                           min=["1", "1", "x"], max=["5", "7", "y"])})  # fmt: skip
-    add(f"{f}.missing_columns", f,
-        {"cols": chr_("q1"), "source_file": "a.csv", "columns_df": df(a=[1])})
+    add(
+        f"{f}.missing_columns",
+        f,
+        {"cols": chr_("q1"), "source_file": "a.csv", "columns_df": df(a=[1])},
+    )
     add(f"{f}.null", f, {"cols": chr_("q1"), "source_file": "a.csv", "columns_df": NULL})
 
 
+FIXTURE_PROFILE_R = """local({
+  d <- metacheck::data_read_head(file.path(root, "%s"), n_rows = Inf)
+  if (is.null(d)) return(NULL)
+  ns <- asNamespace("metacheck")
+  f <- function(fn) get(fn, envir = ns)
+  cols <- names(d)
+  per_col <- lapply(seq_along(cols), function(j) {
+    x <- d[[j]]; n <- cols[[j]]
+    list(
+      facets = f("data_col_facets")(n, x)[1:7],
+      scale_values = f("data_check_scale_values")(x),
+      outliers = f("data_check_outliers")(x),
+      constant = f("data_check_constant")(x),
+      empty = f("data_check_empty")(x),
+      case_issues = f("data_check_case_issues")(x),
+      whitespace = f("data_check_whitespace")(x),
+      numeric_in_text = f("data_check_numeric_in_text")(x),
+      colname = f("data_check_colname")(n),
+      pii_values = f("data_check_pii_values")(x),
+      pii_name = f("data_check_pii_name")(n),
+      pii_geo = f("data_check_pii_geo")(n, x, cols),
+      pii_freetext = f("data_check_pii_freetext")(x),
+      demographic = f("data_check_demographic")(n, x),
+      design_name = f("data_check_design_name")(n),
+      spss_filter = f("data_check_spss_filter")(n, x),
+      likert = f(".is_likert_item")(x),
+      rt = f(".looks_like_rt")(x),
+      accuracy = f(".looks_like_accuracy")(x),
+      accuracy_item = f(".is_accuracy_item")(x))
+  })
+  facets <- lapply(seq_along(cols), function(j) f("data_col_facets")(cols[[j]], d[[j]]))
+  promo <- f("data_promote_header_row")(d)
+  list(
+    names = cols,
+    columns = per_col,
+    collisions = f("data_check_colname_collisions")(cols),
+    qualtrics = f("data_check_is_qualtrics")(d),
+    qualtrics_tags = f(".qualtrics_tag_cols")(cols),
+    display_order = f(".qualtrics_is_display_order")(cols),
+    stems = vapply(cols, f(".qualtrics_col_stem"), character(1), USE.NAMES = FALSE),
+    strip_nrow = nrow(f("data_strip_qualtrics_header")(d)),
+    promoted = promo$promoted,
+    promoted_names = names(promo$df),
+    behaverse = f("data_check_is_behaverse")(d),
+    inquisit = f("data_check_is_inquisit")(d),
+    jspsych = f("data_check_is_jspsych")(d),
+    psychopy = f("data_check_is_psychopy")(d),
+    task_columns = f(".detect_task_columns")(d),
+    scale_blocks = f(".detect_scale_blocks")(d),
+    accuracy_blocks = f(".detect_accuracy_blocks")(d),
+    task_data = f(".is_task_data")(d),
+    tabular_usable = f(".tabular_usable")(facets, d),
+    numeric_col_fraction = f(".numeric_col_fraction")(d))
+})"""
+
+FIXTURE_FILES = (
+    "upstream/metacheck/tests/testthat/fixtures/formats/psychsci_info.csv",
+    "upstream/metacheck/tests/testthat/fixtures/repro/data.csv",
+    "upstream/metacheck/tests/testthat/.metacheck_repo_cache/researchbox.org_4377/unzipped/Data/Study 1.csv",
+    f"{DATA}/qualtrics.csv",
+    f"{DATA}/jspsych.csv",
+    f"{DATA}/psychopy.csv",
+    f"{DATA}/behaverse.csv",
+    f"{DATA}/behaverse_wide.csv",
+    f"{DATA}/inquisit.iqdat",
+    f"{DATA}/offset_header.csv",
+    f"{DATA}/blank_top_header.csv",
+    f"{DATA}/plain.csv",
+    "tests/datacheck_files/data/dates.csv",
+    "tests/datacheck_files/data/types.csv",
+    "tests/datacheck_files/data/whitespace.csv",
+    "tests/datacheck_files/data/na_strings.csv",
+    "tests/datacheck_files/data/headerless.csv",
+    "tests/datacheck_files/data/hundred.csv",
+    "tests/datacheck_files/data/semicolon.csv",
+    "tests/datacheck_files/data/big_int.csv",
+    "tests/datacheck_files/data/manifest.csv",
+    "tests/datacheck_files/data/qualtrics.csv",
+    "tests/datacheck_files/data/labelled.sav",
+    "tests/datacheck_files/data/labelled.dta",
+    "tests/datacheck_files/data/typed.ods",
+    "tests/datacheck_files/data/offset.ods",
+    "tests/datacheck_files/data/readxl_datasets.xlsx",
+    "tests/datacheck_files/data/readxl_deaths.xlsx",
+    "tests/datacheck_files/data/study.rds",
+)
+
+
+def fixture_profiles() -> None:
+    """Every helper on every column of real data files (read by data_read_head())."""
+    for path in FIXTURE_FILES:
+        stem = path.rsplit("/", 1)[-1].replace(" ", "_")
+        src = (
+            "checks"
+            if path.startswith(DATA)
+            else "files"
+            if "datacheck_files" in path
+            else "upstream"
+        )
+        add(f"fixture_profile.{src}.{stem}", "identity",
+            {"x": ex(FIXTURE_PROFILE_R % path, "None")},
+            py=PH + "profile_file", py_args={"path": fpath_abs(path)}, py_drop=["x"])  # fmt: skip
+
+
+def fpath_abs(path: str) -> dict[str, Any]:
+    return {"$file": path}
+
+
+def regressions() -> None:
+    """Edge cases found while reviewing the port."""
+    fac_df = """data.frame(StartDate = factor(c("Start Date", "2021-01-01", "2021-01-02")),
+      EndDate = c("End Date", "2021-01-01", "2021-01-02"), Progress = c("Progress", "100", "50"),
+      Finished = factor(c("Finished", "1", "1"), levels = c("1", "Finished")),
+      stringsAsFactors = FALSE)"""
+    fac_py = """pd.DataFrame({'StartDate': pd.Categorical(['Start Date', '2021-01-01', '2021-01-02']),
+      'EndDate': ['End Date', '2021-01-01', '2021-01-02'], 'Progress': ['Progress', '100', '50'],
+      'Finished': pd.Categorical(['Finished', '1', '1'], categories=['1', 'Finished'])})"""
+    add(
+        "data_strip_qualtrics_header.factor_columns",
+        "data_strip_qualtrics_header",
+        {"df": ex(fac_df, fac_py)},
+    )
+    add(
+        "data_promote_header_row.factor_columns",
+        "data_promote_header_row",
+        {"df": ex(fac_df, fac_py)},
+    )
+    fac2_r = """data.frame(V1 = factor(c("id", "1", "2", "3")), V2 = c("score", "5", "6", "7"),
+      stringsAsFactors = FALSE)"""
+    fac2_py = """pd.DataFrame({'V1': pd.Categorical(['id', '1', '2', '3']), 'V2': ['score', '5', '6', '7']})"""
+    add(
+        "data_promote_header_row.factor_header",
+        "data_promote_header_row",
+        {"df": ex(fac2_r, fac2_py)},
+    )
+    add(".detect_header_row.empty_first_row", ".detect_header_row",
+        {"rows": lst(chr_(), chr_("id", "x"), chr_("1", "2"), chr_("3", "4"))},
+        py=PH + "detect_header_row")  # fmt: skip
+    add(
+        ".is_junk_above_header.empty_row",
+        ".is_junk_above_header",
+        {"vals": chr_(), "body_numeric": 0.9},
+    )
+    add(".tabular_usable.named_facets", ".tabular_usable",
+        {"facets": {"note_a": {"representation": "text", "concept": None},
+                    "value": {"representation": "numeric", "concept": None}},
+         "df": df(note_a=["a b c", "d e f", "g h i"], value=[1, 2, 3])})  # fmt: skip
+    add(".qualtrics_col_stem.vector", ".qualtrics_col_stem", {"nm": chr_("TIPI_1", "x")})
+    add(".pii_split_name.vector", ".pii_split_name", {"x": chr_("phoneNumber", "ZIPcode")})
+    add("data_col_facets.in_block_logical_na", "data_col_facets",
+        {"col_name": "panas_1", "values": ex("rep(1:5, 4)", "[*range(1, 6)] * 4"),
+         "in_scale_block": {"$NA": True}})  # fmt: skip
+    add("data_col_facets.factor", "data_col_facets",
+        {"col_name": "group",
+         "values": ex('factor(c("a", "b", "a", "c", NA))', 'pd.Series(pd.Categorical(["a", "b", "a", "c", None]))')})  # fmt: skip
+    add("data_col_facets.date_class", "data_col_facets",
+        {"col_name": "visit",
+         "values": ex('as.Date(c("2021-01-01", "2021-02-01", NA))',
+                      'pd.Series(pd.to_datetime(["2021-01-01", "2021-02-01", None]))')})  # fmt: skip
+    add(
+        "data_check_constant.factor_near",
+        "data_check_constant",
+        {"x": ex('factor(c(rep("b", 99), "a"))', 'pd.Series(pd.Categorical(["b"] * 99 + ["a"]))')},
+    )
+    add(
+        "data_check_scale_values.integer_valid_range",
+        "data_check_scale_values",
+        {
+            "x": ex("c(rep(1:7, 10), 70L, 8L)", "[*range(1, 8)] * 10 + [70, 8]"),
+            "valid_range": int_(1, 7),
+        },
+    )
+    add(
+        "data_check_scale_values.floor_anchor_zero",
+        "data_check_scale_values",
+        {
+            "x": ex("c(rep(0:6, 10), 2)", "[*range(0, 7)] * 10 + [2]"),
+            "valid_values": int_(2, 3, 4, 5, 6),
+        },
+    )
+
+
 def data_sets() -> None:
-    add("scales.data", "identity", {"x": ex("metacheck::scales", "None")},
-        py="pytacheck.datacheck.scales.scales", py_drop=["x"])
-    add("tasks.data", "identity", {"x": ex("metacheck::tasks", "None")},
-        py="pytacheck.datacheck.tasks.tasks", py_drop=["x"])
+    add(
+        "scales.data",
+        "identity",
+        {"x": ex("metacheck::scales", "None")},
+        py="pytacheck.datacheck.scales.scales",
+        py_drop=["x"],
+    )
+    add(
+        "tasks.data",
+        "identity",
+        {"x": ex("metacheck::tasks", "None")},
+        py="pytacheck.datacheck.tasks.tasks",
+        py_drop=["x"],
+    )
 
 
 class _Dumper(yaml.SafeDumper):
@@ -1046,6 +1422,8 @@ def main() -> None:
     header_repair()
     formats()
     blocks()
+    fixture_profiles()
+    regressions()
     data_sets()
     ids = [c["id"] for c in CASES]
     dup = {i for i in ids if ids.count(i) > 1}

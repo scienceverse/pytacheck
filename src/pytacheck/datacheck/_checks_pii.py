@@ -50,9 +50,7 @@ _PII_VALUE_PATTERNS: dict[str, dict[str, str]] = {
     },
     # IPv4 with each octet 0-255.
     "ip_address": {
-        "regex": (
-            r"\b(?:(?:25[0-5]|2[0-4]\d|1?\d?\d)\.){3}(?:25[0-5]|2[0-4]\d|1?\d?\d)\b"
-        ),
+        "regex": (r"\b(?:(?:25[0-5]|2[0-4]\d|1?\d?\d)\.){3}(?:25[0-5]|2[0-4]\d|1?\d?\d)\b"),
         "kind": "specific",
     },
     # US SSN: 3-2-4 with separators, excluding obvious non-SSNs.
@@ -63,9 +61,7 @@ _PII_VALUE_PATTERNS: dict[str, dict[str, str]] = {
     # Credit-card-like: 13-16 digits (grouped by 4 or unbroken), not part of a
     # longer digit/decimal string; must also pass .pii_card_ok().
     "credit_card": {
-        "regex": (
-            r"(?<![\d.])(?:\d{13,16}|\d{4}[ -]\d{4}[ -]\d{4}[ -]\d{1,4})(?![\d.])"
-        ),
+        "regex": (r"(?<![\d.])(?:\d{13,16}|\d{4}[ -]\d{4}[ -]\d{4}[ -]\d{1,4})(?![\d.])"),
         "kind": "specific",
         "validate": "_pii_card_ok",
     },
@@ -339,8 +335,7 @@ def data_check_pii_geo(col_name: Any, x: Any, sibling_names: Any = None) -> dict
     vals = [
         f
         for s in chr(x)
-        if (f := as_numeric_str(None if s is None else s.replace(",", "."))) is not None
-        and f == f
+        if (f := as_numeric_str(None if s is None else s.replace(",", "."))) is not None and f == f
     ]
     if len(vals) >= 3:
         lim = 90 if (is_lat and not is_lon) else 180

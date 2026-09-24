@@ -1,0 +1,9 @@
+{
+  "_links": {
+    "stash:version": {
+      "href": "/api/v2/versions/7002"
+    }
+  },
+  "identifier": "doi:10.5061/dryad.rev2",
+  "title": "Empty file"
+}

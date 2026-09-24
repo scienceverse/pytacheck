@@ -23,30 +23,63 @@ _REPORT_COLS = r"^(pubpeer.*|replication.*|retractionwatch|.*_mismatch)$"
 # -- dplyr joins ----------------------------------------------------------------------
 
 
-class _NA:
-    """Join-key stand-in for a missing value (dplyr's ``na_matches = "na"``)."""
+def _key_array(s: pd.Series) -> np.ndarray:
+    """A join/group key column as a numpy array that compares like R's keys.
 
-    def __repr__(self) -> str:  # pragma: no cover - debugging aid
-        return "NA"
-
-
-_NA_KEY = _NA()
-
-
-def _key_value(v: Any) -> Any:
-    """A hashable join-key value: ``NA`` matches ``NA``; integer and double keys agree."""
-    if is_na(v):
-        return _NA_KEY
-    if isinstance(v, np.generic):
-        v = v.item()
-    if isinstance(v, float) and v.is_integer():
-        return int(v)
-    return v
+    Numbers (and logicals) become ``float64`` with ``NaN`` for ``NA``, so integer
+    and double keys match by value; anything else becomes objects with
+    ``None`` for ``NA`` (factors by their labels).
+    """
+    dt = s.dtype
+    plain = not (pd.api.types.is_object_dtype(dt) or isinstance(dt, pd.CategoricalDtype))
+    if plain and (pd.api.types.is_bool_dtype(dt) or pd.api.types.is_numeric_dtype(dt)):
+        return np.asarray(s.to_numpy(dtype="float64", na_value=np.nan))
+    return np.asarray(s.astype(object).where(s.notna(), None).to_numpy(dtype=object))
 
 
-def _key_tuples(df: pd.DataFrame, by: Sequence[str]) -> list[tuple[Any, ...]]:
-    cols = [[_key_value(v) for v in df[k].tolist()] for k in by]
-    return list(zip(*cols, strict=True)) if cols else [() for _ in range(len(df))]
+def _combine_codes(codes: Sequence[np.ndarray], n: int) -> np.ndarray:
+    """One integer code per row from per-column codes (equal codes = equal key tuples)."""
+    if not codes:
+        return np.zeros(n, dtype=np.intp)
+    out = np.asarray(codes[0], dtype=np.int64)
+    for c in codes[1:]:
+        width = int(c.max()) + 1 if len(c) else 1
+        out, _ = pd.factorize(out * width + c)
+    return np.asarray(out, dtype=np.intp)
+
+
+def _key_codes(frames: Sequence[pd.DataFrame], by: Sequence[str]) -> list[np.ndarray]:
+    """Integer key codes of *frames*' rows, shared across the frames.
+
+    ``NA`` keys match each other (dplyr's ``na_matches = "na"``, and the ``.by``
+    groups of ``summarise()``).
+    """
+    sizes = [len(f) for f in frames]
+    per_col = []
+    for k in by:
+        values = np.concatenate([_key_array(f[k]) for f in frames]) if frames else np.empty(0)
+        codes, _ = pd.factorize(values, use_na_sentinel=False)
+        per_col.append(codes)
+    combined = _combine_codes(per_col, sum(sizes))
+    bounds = np.cumsum([0, *sizes])
+    return [combined[bounds[i] : bounds[i + 1]] for i in range(len(frames))]
+
+
+def _add_suffixes(x: Sequence[str], y: Sequence[str], suffix: str) -> list[str]:
+    """``dplyr:::add_suffixes()``: suffix the names of *x* until none is in *y* or repeated."""
+    names = [*y, *x]
+    while True:
+        seen: set[str] = set()
+        dup = []
+        for i, nm in enumerate(names):
+            if nm in seen:
+                dup.append(i)
+            else:
+                seen.add(nm)
+        if not dup:
+            return names[len(y) :]
+        for i in dup:
+            names[i] += suffix
 
 
 def _take(s: pd.Series, idx: np.ndarray) -> pd.Series:
@@ -70,8 +103,9 @@ def _join(x: pd.DataFrame, y: pd.DataFrame, by: Sequence[str], how: str) -> pd.D
 
     Rows follow ``x``; each ``x`` row gets its matches in ``y`` order (a
     ``left`` join keeps unmatched ``x`` rows, with missing ``y`` values).
-    ``NA`` keys match each other, integer and double keys compare by value,
-    and non-key columns in both tables get dplyr's ``.x`` / ``.y`` suffixes.
+    ``NA`` keys match each other and integer and double keys compare by value.
+    Non-key columns in both tables get dplyr's ``.x`` / ``.y`` suffixes,
+    repeated until the names are unique (``dplyr:::add_suffixes()``).
     Many-to-many matches are kept silently: dplyr only warns about them when
     the join is called from the global environment, never inside a module.
     """
@@ -83,29 +117,36 @@ def _join(x: pd.DataFrame, y: pd.DataFrame, by: Sequence[str], how: str) -> pd.D
             raise ValueError(
                 f"Join columns in `{side}` must be present in the data.\n✖ Problem with {problem}."
             )
-    y_rows: dict[tuple[Any, ...], list[int]] = {}
-    for j, key in enumerate(_key_tuples(y, by)):
-        y_rows.setdefault(key, []).append(j)
-    xi: list[int] = []
-    yi: list[int] = []
-    for i, key in enumerate(_key_tuples(x, by)):
-        hits = y_rows.get(key)
-        if hits:
-            xi.extend([i] * len(hits))
-            yi.extend(hits)
-        elif how == "left":
-            xi.append(i)
-            yi.append(-1)
-    x_idx = np.asarray(xi, dtype=np.intp)
-    y_idx = np.asarray(yi, dtype=np.intp)
-    y_cols = [c for c in y.columns if c not in by]
-    x_names = {c: (f"{c}.x" if c in y_cols else c) for c in x.columns}
-    y_names = {c: (f"{c}.y" if c in x.columns else c) for c in y_cols}
+    nx, ny = len(x), len(y)
+    xc, yc = _key_codes([x, y], by)
+    if ny:
+        ncode = int(max(yc.max(), xc.max() if nx else 0)) + 1
+        order = np.argsort(yc, kind="stable")  # y rows grouped by key, in y order
+        counts = np.bincount(yc, minlength=ncode)
+        hits = counts[xc]
+        first = (np.cumsum(counts) - counts)[xc]
+    else:
+        order = np.empty(0, dtype=np.intp)
+        hits = first = np.zeros(nx, dtype=np.intp)
+    reps = np.maximum(hits, 1) if how == "left" else hits
+    x_idx = np.repeat(np.arange(nx, dtype=np.intp), reps)
+    offset = np.arange(len(x_idx)) - np.repeat(np.cumsum(reps) - reps, reps)
+    matched = np.repeat(hits, reps) > 0
+    y_idx = np.full(len(x_idx), -1, dtype=np.intp)
+    y_idx[matched] = order[(np.repeat(first, reps) + offset)[matched]]
+
+    x_cols = [str(c) for c in x.columns]
+    y_cols = [str(c) for c in y.columns]
+    x_aux = [c for c in x_cols if c not in by]
+    y_aux = [c for c in y_cols if c not in by]
+    x_names = dict(zip(x_aux, _add_suffixes(x_aux, [*by, *y_aux], ".x"), strict=True))
+    y_names = dict(zip(y_cols, _add_suffixes(y_cols, x_cols, ".y"), strict=True))
     cols: dict[str, pd.Series] = {}
-    for c in x.columns:
-        cols[x_names[c]] = x[c].iloc[x_idx].reset_index(drop=True)
-    for c in y_cols:
-        cols[y_names[c]] = _take(y[c], y_idx).reset_index(drop=True)
+    for c, col in zip(x_cols, x.columns, strict=True):
+        cols[x_names.get(c, c)] = x[col].iloc[x_idx].reset_index(drop=True)
+    for c, col in zip(y_cols, y.columns, strict=True):
+        if c not in by:
+            cols[y_names[c]] = _take(y[col], y_idx).reset_index(drop=True)
     return pd.DataFrame(cols)
 
 
@@ -134,6 +175,72 @@ def _is_true(v: Any) -> bool:
     return isinstance(v, str) and v == "TRUE"
 
 
+_NUMERIC = frozenset({"logical", "integer", "double"})
+_TEXT = frozenset({"character", "factor"})
+
+
+def _vec_kind(s: pd.Series) -> str:
+    """The R vector type a column stands for (``"unspecified"``: all-``NA`` logical)."""
+    dt = s.dtype
+    if isinstance(dt, pd.CategoricalDtype):
+        return "factor"
+    if not pd.api.types.is_object_dtype(dt):
+        if pd.api.types.is_bool_dtype(dt):
+            return "unspecified" if bool(s.isna().all()) else "logical"
+        if pd.api.types.is_integer_dtype(dt):
+            return "integer"
+        if pd.api.types.is_float_dtype(dt):
+            return "double"
+        if pd.api.types.is_string_dtype(dt):
+            return "character"
+        return "other"
+    vals = [v for v in s.tolist() if not is_na(v)]
+    if not vals:
+        return "unspecified"
+    if all(isinstance(v, bool | np.bool_) for v in vals):
+        return "logical"
+    if all(isinstance(v, str) for v in vals):
+        return "character"
+    if all(isinstance(v, int | np.integer) and not isinstance(v, bool) for v in vals):
+        return "integer"
+    if all(isinstance(v, int | float | np.number) and not isinstance(v, bool) for v in vals):
+        return "double"
+    if all(isinstance(v, list | dict | pd.DataFrame) for v in vals):
+        return "list"
+    return "other"
+
+
+def _check_combinable(acc: pd.DataFrame, cols: Sequence[str]) -> None:
+    """``tidyr::pivot_longer()`` fails when the value columns have no common type."""
+    first: tuple[str, str] | None = None
+    for c in cols:
+        kind = _vec_kind(acc[c])
+        if kind in ("unspecified", "other"):
+            continue
+        if first is None:
+            first = (c, kind)
+            continue
+        prev = first[1]
+        if prev == kind or {prev, kind} <= _NUMERIC or {prev, kind} <= _TEXT:
+            continue
+        raise ValueError(f"Can't combine `{first[0]}` <{prev}> and `{c}` <{kind}>.")
+
+
+def _in_bool(s: pd.Series, value: bool) -> np.ndarray:
+    """``s %in% TRUE`` / ``s %in% FALSE`` as a bool array (``NA`` is in neither)."""
+    kind = _vec_kind(s)
+    if kind == "unspecified":
+        return np.zeros(len(s), dtype=bool)
+    if kind in _NUMERIC:
+        num = np.asarray(s.to_numpy(dtype="float64", na_value=np.nan))
+        return np.asarray(num == (1.0 if value else 0.0))
+    if kind in _TEXT:
+        text = s.astype("string") == ("TRUE" if value else "FALSE")
+        return text.fillna(False).to_numpy(dtype=bool)
+    test = _is_true if value else _is_false
+    return np.fromiter((test(v) for v in s.tolist()), dtype=bool, count=len(s))
+
+
 def _accuracy_mismatches(acc: pd.DataFrame) -> pd.DataFrame:
     """The ``accuracy_mismatch`` table ref_summary joins from ``ref_accuracy``.
 
@@ -147,6 +254,10 @@ def _accuracy_mismatches(acc: pd.DataFrame) -> pd.DataFrame:
                            .by = c(paper_id, bib_id, no_match))
         tbl$accuracy_mismatch[tbl$no_match %in% TRUE] <- "no match"
         tbl$no_match <- NULL
+
+    The long table is never built: the kept cells of the ``*_mismatch``
+    columns are read row by row (pivot_longer()'s order) and grouped by the
+    key codes of their rows, in order of first appearance.
     """
     cols = ["paper_id", "bib_id", *grep("no_match|_mismatch", list(acc.columns), value=True)]
     missing = [c for c in cols if c not in acc.columns]
@@ -156,35 +267,31 @@ def _accuracy_mismatches(acc: pd.DataFrame) -> pd.DataFrame:
     value_cols = [c for c in cols if c.lower().endswith("_mismatch")]
     if not value_cols:
         raise ValueError("`cols` must select at least one column.")
+    _check_combinable(acc, value_cols)
     if "no_match" not in cols:  # summarise(.by = c(paper_id, bib_id, no_match))
-        raise ValueError("Can't select columns that don't exist.\n\u2716 Column `no_match`")
-    names = [str(gsub("_mismatch", "", c)) for c in value_cols]
-    values = [acc[c].tolist() for c in value_cols]
-    pid = acc["paper_id"].tolist()
-    bid = acc["bib_id"].tolist()
-    nm = acc["no_match"].tolist()
+        raise ValueError("Can't select columns that don't exist.\n✖ Column `no_match`")
+    names = np.array([str(gsub("_mismatch", "", c)) for c in value_cols], dtype=object)
 
-    groups: dict[tuple[Any, ...], list[Any]] = {}
-    for i in range(len(acc)):
-        for name, vals in zip(names, values, strict=True):
-            if _is_false(vals[i]):
-                continue
-            key = (_key_value(pid[i]), _key_value(bid[i]), _key_value(nm[i]))
-            group = groups.get(key)
-            if group is None:
-                groups[key] = [pid[i], bid[i], nm[i], [name]]
-            else:
-                group[3].append(name)
-    rows = list(groups.values())
-    mismatch = [
-        "no match" if _is_true(r[2]) else ", ".join(r[3])  # no_match %in% TRUE
-        for r in rows
-    ]
+    # filter(!value %in% FALSE): the kept (row, column) cells, row-major
+    kept = np.column_stack([~_in_bool(acc[c], False) for c in value_cols])
+    rows, which = np.nonzero(kept)
+    (codes,) = _key_codes([acc], ["paper_id", "bib_id", "no_match"])
+    group = codes[rows]
+    order = np.argsort(group, kind="stable")  # cells grouped by key, row-major within
+    starts = np.flatnonzero(np.r_[True, np.diff(group[order]) != 0]) if len(order) else order
+    parts = np.split(names[which][order], starts[1:])
+    # summarise(.by) orders the groups by their first (kept) cell
+    appearance = np.argsort(order[starts], kind="stable")
+    first = rows[order[starts]][appearance]
+    joined = [", ".join(parts[i]) for i in appearance.tolist()]
+    # tbl$accuracy_mismatch[tbl$no_match %in% TRUE] <- "no match"
+    no_match = _in_bool(acc["no_match"], True)[first]
+    mismatch = np.where(no_match, "no match", np.array(joined, dtype=object))
     return pd.DataFrame(
         {
-            "paper_id": pd.Series([r[0] for r in rows], dtype=acc["paper_id"].dtype),
-            "bib_id": pd.Series([r[1] for r in rows], dtype=acc["bib_id"].dtype),
-            "accuracy_mismatch": pd.array(mismatch, dtype="string"),
+            "paper_id": acc["paper_id"].iloc[first].reset_index(drop=True),
+            "bib_id": acc["bib_id"].iloc[first].reset_index(drop=True),
+            "accuracy_mismatch": pd.array(mismatch.tolist(), dtype="string"),
         }
     )
 

@@ -18,6 +18,7 @@ from __future__ import annotations
 import functools
 import hashlib
 import math
+import numbers
 import os
 import shutil
 import tempfile
@@ -501,7 +502,12 @@ def _string_series(values: Sequence[Any]) -> pd.Series:
 
 
 def _cell(value: Any) -> pd.Series:
-    """A one-row column holding a JSON scalar (character when a string)."""
+    """A one-row column holding a JSON scalar (character when a string).
+
+    Other archive modules import this; an array or object is kept whole in an
+    object column. The Dryad/Figshare/Dataverse metadata fields use
+    :func:`_field_cell`, which follows R's replacement rules instead.
+    """
     if value is None or isinstance(value, str):
         return pd.Series([value], dtype="string")
     if isinstance(value, list | dict):
@@ -509,11 +515,29 @@ def _cell(value: Any) -> pd.Series:
     return pd.Series([value])
 
 
+def _field_cell(value: Any) -> pd.Series:
+    """R's ``obj$x <- value`` on a one-row table, for a parsed JSON value.
+
+    A scalar gives an atomic column (character when a string). An array or
+    object is an R list: one element makes a list column holding that element
+    (an object's names are dropped from the cell), any other length is R's
+    ``replacement has <n> rows, data has 1`` error.
+    """
+    if isinstance(value, list | tuple | dict):
+        items = list(value.values()) if isinstance(value, dict) else list(value)
+        if len(items) != 1:
+            raise ValueError(f"replacement has {len(items)} rows, data has 1")
+        element = items[0]
+        # a list-column cell: a scalar element is a length-1 vector in R
+        cell = element if isinstance(element, list | tuple | dict) else [element]
+        return pd.Series([cell], dtype=object)
+    return _cell(value)
+
+
 def _list_cell(value: Any) -> pd.Series:
     """A one-row list column (R ``obj$x <- list(value)``)."""
-    s = pd.Series([None], dtype=object)
-    s.iloc[0] = value
-    return s
+    # built from a list (not set with .iloc, which would turn a dict into a Series)
+    return pd.Series([value], dtype=object)
 
 
 class RequestAbort(Exception):
@@ -579,7 +603,7 @@ def _id_col_named(x: Any, id_col: Any) -> bool:
     marked = x.attrs.get(R_NAMED_IDS, ())
     if not marked:
         return False
-    if isinstance(id_col, int | float) and not isinstance(id_col, bool):
+    if isinstance(id_col, numbers.Real) and not isinstance(id_col, bool):
         pos = int(id_col) - 1
         return 0 <= pos < x.shape[1] and x.columns[pos] in marked
     return id_col in marked
@@ -613,7 +637,7 @@ def _info_table(x: Any, id_col: int | str, url_col: str, drop: Sequence[str]) ->
     """
     if isinstance(x, pd.DataFrame):
         table = x.copy()
-        if isinstance(id_col, int | float) and not isinstance(id_col, bool):
+        if isinstance(id_col, numbers.Real) and not isinstance(id_col, bool):
             if not 1 <= int(id_col) <= table.shape[1]:
                 raise IndexError("subscript out of bounds")
             source = table.iloc[:, int(id_col) - 1]
@@ -1434,12 +1458,12 @@ def _dataverse_info(host: Any, doi: Any, pb: Any = None) -> pd.DataFrame:
             _empty_or(_dollar(version, "releaseTime"), _dollar(data, "publicationDate")), None
         )
         files = _dollar(version, "files")
-        obj["title"] = _cell(_empty_or(title, None))
-        obj["doi"] = _cell(_empty_or(_dollar(data, "persistentUrl"), None))
-        obj["publication_date"] = _cell(pub)
-        obj["updated_date"] = _cell(_empty_or(_dollar(version, "lastUpdateTime"), None))
+        obj["title"] = _field_cell(_empty_or(title, None))
+        obj["doi"] = _field_cell(_empty_or(_dollar(data, "persistentUrl"), None))
+        obj["publication_date"] = _field_cell(pub)
+        obj["updated_date"] = _field_cell(_empty_or(_dollar(version, "lastUpdateTime"), None))
         obj["authors"] = _list_cell(authors)
-        obj["license"] = _cell(_empty_or(_dollars(version, "license", "name"), None))
+        obj["license"] = _field_cell(_empty_or(_dollars(version, "license", "name"), None))
         obj["files"] = _list_cell(files if files is not None else [])
         return pd.DataFrame(obj)
 

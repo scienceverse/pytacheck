@@ -70,3 +70,26 @@ def verify_case() -> Any:
             }
         )
         return _zenodo_verify_downloads(files, d)
+
+
+def with_option(name: str, fn: Callable[[], Any]) -> Any:
+    """``fn()``, then the option *name* restored (R: ``on.exit(options(...))``)."""
+    from pytacheck.utils import get_option, options
+
+    old = get_option(name)
+    try:
+        return fn()
+    finally:
+        options({name: old})
+
+
+def meta_folder() -> str:
+    """A folder whose saved OSF metadata has odd shapes (kept for the session, as R's tempfile())."""
+    d = Path(tempfile.mkdtemp())
+    (d / "_osf_metadata").mkdir()
+    (d / "_osf_metadata" / "metadata.json").write_text(
+        '{"osf_id": "abcde", "tags": ["a", null, ["b", 1]], '
+        '"contributors": {"x": {"name": "N"}, "y": {"family_name": "F", "given_name": "G"}}}\n',
+        encoding="utf-8",
+    )
+    return str(d)

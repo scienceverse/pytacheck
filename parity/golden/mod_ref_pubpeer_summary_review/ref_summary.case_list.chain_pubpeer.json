@@ -1,0 +1,149 @@
+{
+  "id": "ref_summary.case_list.chain_pubpeer",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "ref_summary"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Summarise References"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "reference"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 5,
+        "names": [
+          "paper_id",
+          "bib_id",
+          "doi",
+          "text",
+          "pubpeer"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "A",
+              "A",
+              "a",
+              "b",
+              "b"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              1,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "10.9999/pp.none",
+              "10.9999/pp.many",
+              "10.9999/pp.zero",
+              "10.9999/pp.one",
+              "10.9999/pp.dup"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Reference 0. https://doi.org/10.9999/pp.none",
+              "Reference 1. https://doi.org/10.9999/pp.stat",
+              "Reference 0. https://doi.org/10.9999/pp.zero",
+              "Reference 0. https://doi.org/10.9999/pp.one",
+              "Reference 1. https://doi.org/10.9999/pp.dup"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "<a href='https://pubpeer.com/publications/PP.MANY' target='_blank'>Link<\/a>",
+              null,
+              "<a href='https://pubpeer.com/publications/PP.ONE' target='_blank'>Link<\/a>",
+              "<a href='https://pubpeer.com/publications/PP.DUP' target='_blank'>Link<\/a>"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "See the specific reports above for details.",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(text = c(\"Reference 0. https://doi.org/10.9999/pp.none\", \n\"Reference 1. https://doi.org/10.9999/pp.stat\", \"Reference 0. https://doi.org/10.9999/pp.zero\", \n\"Reference 0. https://doi.org/10.9999/pp.one\", \"Reference 1. https://doi.org/10.9999/pp.dup\"\n), pubpeer = c(NA, \"<a href='https://pubpeer.com/publications/PP.MANY' target='_blank'>Link<\/a>\", \nNA, \"<a href='https://pubpeer.com/publications/PP.ONE' target='_blank'>Link<\/a>\", \n\"<a href='https://pubpeer.com/publications/PP.DUP' target='_blank'>Link<\/a>\"\n)), row.names = c(NA, -5L), class = c(\"tbl_df\", \"tbl\", \"data.frame\"\n))\n\n# display table -----------------------------------\nmetacheck::report_table(table, c(0.75, NA), 10, FALSE)\n```\n"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "info"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Summary information provided for 5 references"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 3,
+        "names": [
+          "paper_id",
+          "pubpeer_comments"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "b",
+              "A",
+              "a"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              3,
+              12,
+              0
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

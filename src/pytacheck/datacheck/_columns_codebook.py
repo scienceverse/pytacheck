@@ -425,9 +425,11 @@ def _read_ods_sheet(path: str, sheet: str | None, col_names: bool) -> pd.DataFra
     data = grid[1:] if col_names else grid
     names_ = vec_as_names_unique(header)
     cols = [[r[j] for r in data] for j in range(len(header))]
-    series = [_minty_convert(c, 1000) for c in cols] if data else [
-        pd.Series(c, dtype="string") for c in cols
-    ]
+    series = (
+        [_minty_convert(c, 1000) for c in cols]
+        if data
+        else [pd.Series(c, dtype="string") for c in cols]
+    )
     names_ = vec_as_names_unique([s.strip() for s in names_])
     out = pd.DataFrame(dict(enumerate(series)))
     out.columns = pd.Index(names_, dtype=object)
@@ -533,7 +535,9 @@ def _docx_text(path: str | os.PathLike[str]) -> str:
     from lxml import etree
 
     with zipfile.ZipFile(path) as zf:
-        root = etree.fromstring(zf.read("word/document.xml"), parser=etree.XMLParser(huge_tree=True))
+        root = etree.fromstring(
+            zf.read("word/document.xml"), parser=etree.XMLParser(huge_tree=True)
+        )
     p_tag, r_tag, rpr_tag = f"{{{_W}}}p", f"{{{_W}}}r", f"{{{_W}}}rPr"
     doc_index = {p: i + 1 for i, p in enumerate(root.iter(p_tag))}
     in_cell = set(root.xpath("//w:tbl/w:tr/w:tc/w:p", namespaces={"w": _W}))
@@ -587,7 +591,13 @@ def _odt_text(path: str | os.PathLike[str]) -> str:
         except Exception:
             return ""
         txt = gsub("<[^>]+>", " ", raw)
-        for a, b in (("&amp;", "&"), ("&lt;", "<"), ("&gt;", ">"), ("&apos;", "'"), ("&quot;", '"')):
+        for a, b in (
+            ("&amp;", "&"),
+            ("&lt;", "<"),
+            ("&gt;", ">"),
+            ("&apos;", "'"),
+            ("&quot;", '"'),
+        ):
             txt = txt.replace(a, b)
         return trimws(gsub(r"\s+", " ", txt))
 
@@ -670,11 +680,15 @@ def _transpose_wide(raw: pd.DataFrame) -> pd.DataFrame:
         pd.api.types.is_numeric_dtype(rest.iloc[:, j].dtype) for j in range(rest.shape[1])
     )
     if numeric:
-        mat = [[None if _na(v) else v for v in rest.iloc[:, j].tolist()] for j in range(rest.shape[1])]
+        mat = [
+            [None if _na(v) else v for v in rest.iloc[:, j].tolist()] for j in range(rest.shape[1])
+        ]
         mk: Callable[[list[Any]], pd.Series] = lambda v: pd.Series(v, dtype="float64")  # noqa: E731
     else:
         mat = [
-            _chr_vec(rest.iloc[:, j]) if _is_character(rest.iloc[:, j]) else _format_column(rest.iloc[:, j])
+            _chr_vec(rest.iloc[:, j])
+            if _is_character(rest.iloc[:, j])
+            else _format_column(rest.iloc[:, j])
             for j in range(rest.shape[1])
         ]
         mk = lambda v: pd.Series(v, dtype="string")  # noqa: E731
@@ -718,9 +732,7 @@ def _has_invalid_utf8(df: pd.DataFrame) -> bool:
     return False
 
 
-def _parse_delimited(
-    path: str, ext: str, src: str, observed: Any, header_lookahead: int
-) -> Any:
+def _parse_delimited(path: str, ext: str, src: str, observed: Any, header_lookahead: int) -> Any:
     from pytacheck.datacheck.files import _sniff_delimiter
 
     try:
@@ -894,4 +906,3 @@ def parse_codebook(
         return _read_lines(p)
     except OSError:
         return None
-

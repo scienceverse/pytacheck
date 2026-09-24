@@ -1,0 +1,13 @@
+# Symbols the scope audit found ported under a different name or module than
+# porting/symbols.json assumed (see docs/PORTING.md). Symbols that are not
+# ported by design are in porting/skip.toml.
+[files]
+"R/module.R" = ["src/pytacheck/packs/scaffold.py"]
+"inst/templates/_module.R" = [
+    "src/pytacheck/resources/templates/module.py.tmpl",
+    "src/pytacheck/packs/scaffold.py",
+]
+
+[functions]
+module_template = "pytacheck.packs.scaffold:module_template"
+".paper_schema" = "pytacheck.papers.schema:load_schema"

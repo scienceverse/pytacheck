@@ -202,7 +202,8 @@ def _zenodo_check_resp(resp: httpx.Response, what: str) -> Any:
     errors = r_dollar(body, "errors")
     if errors:
         parts = []
-        for e in errors:
+        # vapply() runs over a JSON object's values
+        for e in errors.values() if isinstance(errors, Mapping) else errors:
             if not isinstance(e, Mapping):
                 raise TypeError("$ operator is invalid for atomic vectors")
             field = r_dollar(e, "field")
@@ -470,7 +471,7 @@ def _zenodo_meta_from_folder(folder: str) -> dict[str, Any] | None:
     title, licence and authors without asking the OSF again. ``None`` when
     there is no such file (or it has no ``osf_id``).
     """
-    from pytacheck.archives.github import _as_list
+    from pytacheck.archives.github import _as_list, _r_unlist
 
     path = os.path.join(folder, _OSF_META_DIR, "metadata.json")
     if not os.path.exists(path):
@@ -480,13 +481,21 @@ def _zenodo_meta_from_folder(folder: str) -> dict[str, Any] | None:
             m = json.load(fh)
     except (OSError, ValueError):
         return None
-    if not isinstance(m, Mapping) or m.get("osf_id") is None:
-        return None
-
     from pytacheck.archives.github import _dollar as r_dollar
 
-    creators = []
-    for c in r_dollar(m, "contributors") or []:
+    # R: `m$osf_id` (a scalar JSON file is R's "$ operator is invalid" error)
+    if m is None or r_dollar(m, "osf_id") is None:
+        return None
+
+    contributors = r_dollar(m, "contributors") or []
+    # lapply() keeps a JSON object's names, so its creators stay keyed
+    items = (
+        list(contributors.items())
+        if isinstance(contributors, Mapping)
+        else [(None, c) for c in contributors]
+    )
+    kept: list[tuple[Any, dict[str, Any]]] = []
+    for key, c in items:
         family = r_dollar(c, "family_name")
         given = r_dollar(c, "given_name")
         family = "" if family is None else family
@@ -500,10 +509,17 @@ def _zenodo_meta_from_folder(folder: str) -> dict[str, Any] | None:
         orcid = r_dollar(c, "orcid")
         if orcid is not None and not is_na(orcid) and orcid != "":
             entry["orcid"] = orcid
-        creators.append(entry)
-    creators = [c for c in creators if c["name"] != ""]
+        if entry["name"] != "":
+            kept.append((key, entry))
+    creators: Any = (
+        {str(k): e for k, e in kept} if isinstance(contributors, Mapping) else [e for _, e in kept]
+    )
 
-    tags = [t for t in _as_list(r_dollar(m, "tags")) if t is not None]
+    # unlist(m$tags %||% list(), use.names = FALSE): flattened, NULLs dropped,
+    # coerced to one type
+    tags_raw = r_dollar(m, "tags")
+    tags_raw = list(tags_raw.values()) if isinstance(tags_raw, Mapping) else _as_list(tags_raw)
+    tags = _r_unlist(tags_raw).tolist() if tags_raw else []
     return {
         "osf_id": r_dollar(m, "osf_id"),
         "title": r_dollar(m, "title"),
@@ -547,7 +563,7 @@ def _zenodo_build_metadata(
             description = f"Files archived from {_r_basename(folder)}"
 
     creators = r_dollar(meta, "creators")
-    if creators is None or len(creators) == 0:
+    if creators is None or (isinstance(creators, list | tuple | Mapping) and len(creators) == 0):
         creators = [{"name": "Unknown"}]
 
     osf_license = _zenodo_license_id(r_dollar(meta, "license"))
@@ -558,7 +574,8 @@ def _zenodo_build_metadata(
         creators=creators,
         license=license if osf_license is None else osf_license,
     )
-    tags = [t for t in _as_list(r_dollar(meta, "tags")) if t is not None]
+    # as.list(meta$tags): NA tags are kept (sent as null)
+    tags = _as_list(r_dollar(meta, "tags"))
     if tags:
         md["keywords"] = tags
     if osf_id is not None:
@@ -668,8 +685,47 @@ def _upload_form(url: str, path: str, name: str, token: str) -> httpx.Response:
 
 
 def _json_body(x: Any) -> bytes:
-    """``httr2::req_body_json()``'s body (jsonlite, ``auto_unbox = TRUE``)."""
-    return json.dumps(x, ensure_ascii=False, separators=(",", ":")).encode("utf-8")
+    """``httr2::req_body_json()``'s body (jsonlite, ``auto_unbox = TRUE, digits = 22``)."""
+    return _jsonlite(x).encode("utf-8")
+
+
+def _jsonlite(x: Any) -> str:
+    """``jsonlite::toJSON(x, auto_unbox = TRUE, digits = 22, null = "null")`` of plain data.
+
+    Doubles are written with 17 significant digits (``0.1`` is
+    ``0.10000000000000001``, ``2.0`` is ``2``), non-finite ones as the strings
+    ``"NaN"``/``"Inf"``/``"-Inf"``, ``NA``/``NULL`` as ``null``; an empty
+    list is ``[]`` and an empty dict ``{}``.
+    """
+    import math
+    import numbers
+
+    if x is None or (not isinstance(x, list | tuple | Mapping | str) and is_na(x)):
+        return "null"
+    if isinstance(x, bool):
+        return "true" if x else "false"
+    if isinstance(x, numbers.Integral):
+        return str(int(x))
+    if isinstance(x, numbers.Real):
+        v = float(x)
+        if math.isnan(v):
+            return '"NaN"'
+        if math.isinf(v):
+            return '"Inf"' if v > 0 else '"-Inf"'
+        return format(v, ".17g")
+    if isinstance(x, str):
+        return json.dumps(x, ensure_ascii=False)
+    if isinstance(x, Mapping):
+        return (
+            "{"
+            + ",".join(
+                f"{json.dumps(str(k), ensure_ascii=False)}:{_jsonlite(v)}" for k, v in x.items()
+            )
+            + "}"
+        )
+    if isinstance(x, list | tuple):
+        return "[" + ",".join(_jsonlite(v) for v in x) + "]"
+    return json.dumps(x, ensure_ascii=False)
 
 
 def _zip_name(zip_dir: str, stem: str, suffix: str) -> str:
@@ -1001,9 +1057,12 @@ def zenodo_upload(
                                 f"{os.path.basename(zf)} ({n_ct} {ct} file{plural(n_ct)})"
                             )
                     n_main = sum(1 for m in is_mat if not m)
+                    if not built:
+                        # R: basename(built[[1]]) with no archive built
+                        raise IndexError("subscript out of bounds")
                     _message(
                         f"{_r_basename(folder)}: split into "
-                        f"{os.path.basename(built[0]) if built else 'NA'} ({n_main} "
+                        f"{os.path.basename(built[0])} ({n_main} "
                         f"file{plural(n_main)}) and {', '.join(parts_msg)}. Unzipping all of "
                         "them rebuilds the original folders; unzipping only the first gives "
                         "everything except those categories."

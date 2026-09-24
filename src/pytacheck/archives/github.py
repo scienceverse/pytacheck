@@ -149,9 +149,7 @@ def _r_unlist(values: Sequence[Any]) -> pd.Series:
         return pd.Series([], dtype="object")
     rtype = max((_r_value_type(v) for v in flat), key=_TYPE_ORDER.__getitem__)
     if rtype == "character":
-        out = [
-            ("TRUE" if v else "FALSE") if isinstance(v, bool) else as_character(v) for v in flat
-        ]
+        out = [("TRUE" if v else "FALSE") if isinstance(v, bool) else as_character(v) for v in flat]
         return pd.Series(out, dtype="string")
     if rtype == "double":
         return pd.Series([float(v) for v in flat], dtype="float64")
@@ -360,7 +358,7 @@ def _plusminus(host: str, texts: list[Any]) -> str:
     sentences: wide mode equals the unbounded pattern in every case. So the
     unbounded pattern is used exactly when R would be in wide mode.
     """
-    rep ="*" if _tre_wide(rf"\b{host}(\.com)?\b", texts) else "{0,10}"
+    rep = "*" if _tre_wide(rf"\b{host}(\.com)?\b", texts) else "{0,10}"
     return rf"(?:\b\w+\b\W+){rep}\b{host}(\.com)?\b(?:\W+\b\w+\b){rep}"
 
 
@@ -374,8 +372,7 @@ def _tre_wide(match_pattern: str, texts: list[Any]) -> bool:
 
     hits = grepl(match_pattern, texts, ignore_case=True)
     return any(
-        bool(h) and isinstance(t, str) and not t.isascii()
-        for t, h in zip(texts, hits, strict=True)
+        bool(h) and isinstance(t, str) and not t.isascii() for t, h in zip(texts, hits, strict=True)
     )
 
 
@@ -571,16 +568,20 @@ def _github_languages(clean_repo: str) -> pd.DataFrame:
     # {"message": "Not Found", ...} becomes "languages" named after its fields
     n = 0 if languages is None else len(languages) if isinstance(languages, list | dict) else 1
     if n:
-        cols: dict[str, Any] = {"repo": pd.Series([clean_repo], dtype="string")}
+        # names() of a JSON array or scalar is NULL: data.frame() counts it as
+        # a zero-row column and stops ("differing number of rows: 1, 0, n")
+        names = list(languages) if isinstance(languages, dict) else []
         if isinstance(languages, dict):
-            cols["language"] = pd.Series(list(languages), dtype="string")
             values = list(languages.values())
         else:
-            # names() of a JSON array or scalar is NULL, and data.frame()
-            # drops a NULL column
             values = languages if isinstance(languages, list) else [languages]
-        cols["bytes"] = _r_unlist(values)
-        return _r_data_frame(cols)
+        return _r_data_frame(
+            {
+                "repo": pd.Series([clean_repo], dtype="string"),
+                "language": pd.Series(names, dtype="string"),
+                "bytes": _r_unlist(values),
+            }
+        )
     return pd.DataFrame(
         {
             "repo": pd.Series([clean_repo], dtype="string"),
@@ -811,7 +812,9 @@ def github_tree_files(repo: Any) -> dict[str, Any]:
                 "name": pd.Series(names, dtype="string"),
                 "path": pd.Series(paths, dtype="string"),
                 "download_url": pd.Series([raw_base + p for p in paths], dtype="string"),
-                "size": pd.Series([_vapply_num(_dollar(x, "size")) for x in blobs], dtype="float64"),
+                "size": pd.Series(
+                    [_vapply_num(_dollar(x, "size")) for x in blobs], dtype="float64"
+                ),
                 "ft": pd.Series(["file"] * len(blobs), dtype="string"),
             }
         )

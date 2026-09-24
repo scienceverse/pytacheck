@@ -2,7 +2,17 @@
   "id": "ref_consistency.xml_fixtures",
   "ok": true,
   "error": null,
-  "warnings": [],
+  "warnings": [
+    "Unknown or uninitialised column: `schema_version`.",
+    "Unknown or uninitialised column: `schema_version`.",
+    "Unknown or uninitialised column: `schema_version`.",
+    "Unknown or uninitialised column: `schema_version`.",
+    "Unknown or uninitialised column: `schema_version`.",
+    "Unknown or uninitialised column: `schema_version`.",
+    "Unknown or uninitialised column: `schema_version`.",
+    "Unknown or uninitialised column: `schema_version`.",
+    "Unknown or uninitialised column: `schema_version`."
+  ],
   "value": {
     "t": "module_output",
     "names": [

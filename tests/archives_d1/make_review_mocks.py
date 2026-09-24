@@ -239,6 +239,143 @@ def main() -> None:
     put(f"{harvard}/api/access/datafile/2001", CSV, ".txt")
     put(f"{harvard}/api/access/datafile/2002", NOTES, ".txt")
 
+    round2()
+
+
+def round2() -> None:
+    """Second review round: downloads whose 200 answer has an empty body.
+
+    ``httr2::resp_body_raw()`` refuses an empty body, and the call sits outside
+    the ``tryCatch`` around the request, so R aborts the whole download (a
+    vectorised call turns that into a warning and drops the dataset).
+    """
+    fs = "api.figshare.com/v2"
+    dl = "https://ndownloader.figshare.com/files"
+    put(
+        f"{fs}/articles/700006",
+        {
+            "id": 700006,
+            "title": "Empty file",
+            "files": [
+                {
+                    "id": 700601,
+                    "name": "a.csv",
+                    "size": len(CSV),
+                    "computed_md5": md5(CSV),
+                    "download_url": f"{dl}/700601",
+                },
+                {"id": 700602, "name": "empty.txt", "size": 0, "download_url": f"{dl}/700602"},
+            ],
+        },
+    )
+    put("ndownloader.figshare.com/files/700601", CSV, ".txt")
+    put("ndownloader.figshare.com/files/700602", b"", ".txt")
+
+    dryad = "datadryad.org/api/v2"
+    put(
+        f"{dryad}/datasets/doi%3A10.5061%2Fdryad.rev2",
+        {
+            "_links": {"stash:version": {"href": "/api/v2/versions/7002"}},
+            "identifier": "doi:10.5061/dryad.rev2",
+            "title": "Empty file",
+        },
+    )
+    put(
+        f"{dryad}/versions/7002/files",
+        {
+            "_embedded": {
+                "stash:files": [
+                    {
+                        "_links": {
+                            "self": {"href": "/api/v2/files/70021"},
+                            "stash:download": {"href": "/api/v2/files/70021/download"},
+                        },
+                        "path": "empty.txt",
+                        "size": 0,
+                    }
+                ]
+            }
+        },
+    )
+    put(f"{dryad}/files/70021/download", b"", ".txt")
+
+    harvard = "dataverse.harvard.edu"
+    put(
+        q(f"{harvard}/api/datasets/-persistentId", "persistentId=doi:10.7910/DVN/EMPTY"),
+        {
+            "status": "OK",
+            "data": {
+                "persistentUrl": "https://doi.org/10.7910/DVN/EMPTY",
+                "latestVersion": {
+                    "files": [
+                        {"label": "a.csv", "dataFile": {"id": 2004, "filesize": len(CSV)}},
+                        {"label": "empty.txt", "dataFile": {"id": 2003, "filesize": 0}},
+                    ]
+                },
+            },
+        },
+    )
+    put(f"{harvard}/api/access/datafile/2003", b"", ".txt")
+    put(f"{harvard}/api/access/datafile/2004", CSV, ".txt")
+
+    # Scalar fields given as one-element arrays become list columns in
+    # R (`obj$title <- list("x")`); longer ones are R's "replacement has 2 rows" error.
+    put(
+        f"{fs}/articles/700007",
+        {
+            "id": 700007,
+            "title": ["Only title"],
+            "doi": ["10.6084/m9.figshare.700007"],
+            "published_date": 2021,
+            "modified_date": True,
+            "authors": [],
+            "license": {"name": ["CC BY"]},
+            "files": [],
+        },
+    )
+    put(f"{fs}/articles/700008", {"id": 700008, "title": ["a", "b"], "files": []})
+    # a file listing given as a JSON object (an R named list: lapply() visits its values)
+    put(
+        f"{fs}/articles/700009",
+        {
+            "id": 700009,
+            "title": "Object listing",
+            "files": {
+                "first": {
+                    "id": 700901,
+                    "name": "first.csv",
+                    "size": len(CSV),
+                    "computed_md5": md5(CSV),
+                    "download_url": f"{dl}/700901",
+                },
+                "second": {
+                    "id": 700902,
+                    "name": "second.txt",
+                    "size": len(NOTES),
+                    "download_url": f"{dl}/700902",
+                },
+            },
+        },
+    )
+    put("ndownloader.figshare.com/files/700901", CSV, ".txt")
+    put("ndownloader.figshare.com/files/700902", NOTES, ".txt")
+    put(
+        q(f"{harvard}/api/datasets/-persistentId", "persistentId=doi:10.7910/DVN/LISTS"),
+        {
+            "status": "OK",
+            "data": {
+                "persistentUrl": ["https://doi.org/10.7910/DVN/LISTS"],
+                "latestVersion": {
+                    "releaseTime": [],
+                    "metadataBlocks": {
+                        "citation": {"fields": [{"typeName": "title", "value": ["Listed"]}]}
+                    },
+                },
+                "publicationDate": ["2020-01-01"],
+            },
+        },
+    )
+
 
 if __name__ == "__main__":
     main()

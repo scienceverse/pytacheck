@@ -6019,6 +6019,1297 @@
       - "q1"
     "source_file": "a.csv"
     "columns_df": *id001
+- "id": "fixture_profile.upstream.psychsci_info.csv"
+  "r": "identity"
+  "py": "tests.datacheck_checks.parity_helpers.profile_file"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({\n  d <- metacheck::data_read_head(file.path(root, \"upstream/metacheck/tests/testthat/fixtures/formats/psychsci_info.csv\"\
+          ), n_rows = Inf)\n  if (is.null(d)) return(NULL)\n  ns <- asNamespace(\"metacheck\")\n  f <-\
+          \ function(fn) get(fn, envir = ns)\n  cols <- names(d)\n  per_col <- lapply(seq_along(cols),\
+          \ function(j) {\n    x <- d[[j]]; n <- cols[[j]]\n    list(\n      facets = f(\"data_col_facets\"\
+          )(n, x)[1:7],\n      scale_values = f(\"data_check_scale_values\")(x),\n      outliers = f(\"\
+          data_check_outliers\")(x),\n      constant = f(\"data_check_constant\")(x),\n      empty = f(\"\
+          data_check_empty\")(x),\n      case_issues = f(\"data_check_case_issues\")(x),\n      whitespace\
+          \ = f(\"data_check_whitespace\")(x),\n      numeric_in_text = f(\"data_check_numeric_in_text\"\
+          )(x),\n      colname = f(\"data_check_colname\")(n),\n      pii_values = f(\"data_check_pii_values\"\
+          )(x),\n      pii_name = f(\"data_check_pii_name\")(n),\n      pii_geo = f(\"data_check_pii_geo\"\
+          )(n, x, cols),\n      pii_freetext = f(\"data_check_pii_freetext\")(x),\n      demographic =\
+          \ f(\"data_check_demographic\")(n, x),\n      design_name = f(\"data_check_design_name\")(n),\n\
+          \      spss_filter = f(\"data_check_spss_filter\")(n, x),\n      likert = f(\".is_likert_item\"\
+          )(x),\n      rt = f(\".looks_like_rt\")(x),\n      accuracy = f(\".looks_like_accuracy\")(x),\n\
+          \      accuracy_item = f(\".is_accuracy_item\")(x))\n  })\n  facets <- lapply(seq_along(cols),\
+          \ function(j) f(\"data_col_facets\")(cols[[j]], d[[j]]))\n  promo <- f(\"data_promote_header_row\"\
+          )(d)\n  list(\n    names = cols,\n    columns = per_col,\n    collisions = f(\"data_check_colname_collisions\"\
+          )(cols),\n    qualtrics = f(\"data_check_is_qualtrics\")(d),\n    qualtrics_tags = f(\".qualtrics_tag_cols\"\
+          )(cols),\n    display_order = f(\".qualtrics_is_display_order\")(cols),\n    stems = vapply(cols,\
+          \ f(\".qualtrics_col_stem\"), character(1), USE.NAMES = FALSE),\n    strip_nrow = nrow(f(\"\
+          data_strip_qualtrics_header\")(d)),\n    promoted = promo$promoted,\n    promoted_names = names(promo$df),\n\
+          \    behaverse = f(\"data_check_is_behaverse\")(d),\n    inquisit = f(\"data_check_is_inquisit\"\
+          )(d),\n    jspsych = f(\"data_check_is_jspsych\")(d),\n    psychopy = f(\"data_check_is_psychopy\"\
+          )(d),\n    task_columns = f(\".detect_task_columns\")(d),\n    scale_blocks = f(\".detect_scale_blocks\"\
+          )(d),\n    accuracy_blocks = f(\".detect_accuracy_blocks\")(d),\n    task_data = f(\".is_task_data\"\
+          )(d),\n    tabular_usable = f(\".tabular_usable\")(facets, d),\n    numeric_col_fraction = f(\"\
+          .numeric_col_fraction\")(d))\n})"
+        "py": "None"
+  "py_args":
+    "path":
+      "$file": "upstream/metacheck/tests/testthat/fixtures/formats/psychsci_info.csv"
+  "py_drop":
+  - "x"
+- "id": "fixture_profile.upstream.data.csv"
+  "r": "identity"
+  "py": "tests.datacheck_checks.parity_helpers.profile_file"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({\n  d <- metacheck::data_read_head(file.path(root, \"upstream/metacheck/tests/testthat/fixtures/repro/data.csv\"\
+          ), n_rows = Inf)\n  if (is.null(d)) return(NULL)\n  ns <- asNamespace(\"metacheck\")\n  f <-\
+          \ function(fn) get(fn, envir = ns)\n  cols <- names(d)\n  per_col <- lapply(seq_along(cols),\
+          \ function(j) {\n    x <- d[[j]]; n <- cols[[j]]\n    list(\n      facets = f(\"data_col_facets\"\
+          )(n, x)[1:7],\n      scale_values = f(\"data_check_scale_values\")(x),\n      outliers = f(\"\
+          data_check_outliers\")(x),\n      constant = f(\"data_check_constant\")(x),\n      empty = f(\"\
+          data_check_empty\")(x),\n      case_issues = f(\"data_check_case_issues\")(x),\n      whitespace\
+          \ = f(\"data_check_whitespace\")(x),\n      numeric_in_text = f(\"data_check_numeric_in_text\"\
+          )(x),\n      colname = f(\"data_check_colname\")(n),\n      pii_values = f(\"data_check_pii_values\"\
+          )(x),\n      pii_name = f(\"data_check_pii_name\")(n),\n      pii_geo = f(\"data_check_pii_geo\"\
+          )(n, x, cols),\n      pii_freetext = f(\"data_check_pii_freetext\")(x),\n      demographic =\
+          \ f(\"data_check_demographic\")(n, x),\n      design_name = f(\"data_check_design_name\")(n),\n\
+          \      spss_filter = f(\"data_check_spss_filter\")(n, x),\n      likert = f(\".is_likert_item\"\
+          )(x),\n      rt = f(\".looks_like_rt\")(x),\n      accuracy = f(\".looks_like_accuracy\")(x),\n\
+          \      accuracy_item = f(\".is_accuracy_item\")(x))\n  })\n  facets <- lapply(seq_along(cols),\
+          \ function(j) f(\"data_col_facets\")(cols[[j]], d[[j]]))\n  promo <- f(\"data_promote_header_row\"\
+          )(d)\n  list(\n    names = cols,\n    columns = per_col,\n    collisions = f(\"data_check_colname_collisions\"\
+          )(cols),\n    qualtrics = f(\"data_check_is_qualtrics\")(d),\n    qualtrics_tags = f(\".qualtrics_tag_cols\"\
+          )(cols),\n    display_order = f(\".qualtrics_is_display_order\")(cols),\n    stems = vapply(cols,\
+          \ f(\".qualtrics_col_stem\"), character(1), USE.NAMES = FALSE),\n    strip_nrow = nrow(f(\"\
+          data_strip_qualtrics_header\")(d)),\n    promoted = promo$promoted,\n    promoted_names = names(promo$df),\n\
+          \    behaverse = f(\"data_check_is_behaverse\")(d),\n    inquisit = f(\"data_check_is_inquisit\"\
+          )(d),\n    jspsych = f(\"data_check_is_jspsych\")(d),\n    psychopy = f(\"data_check_is_psychopy\"\
+          )(d),\n    task_columns = f(\".detect_task_columns\")(d),\n    scale_blocks = f(\".detect_scale_blocks\"\
+          )(d),\n    accuracy_blocks = f(\".detect_accuracy_blocks\")(d),\n    task_data = f(\".is_task_data\"\
+          )(d),\n    tabular_usable = f(\".tabular_usable\")(facets, d),\n    numeric_col_fraction = f(\"\
+          .numeric_col_fraction\")(d))\n})"
+        "py": "None"
+  "py_args":
+    "path":
+      "$file": "upstream/metacheck/tests/testthat/fixtures/repro/data.csv"
+  "py_drop":
+  - "x"
+- "id": "fixture_profile.upstream.Study_1.csv"
+  "r": "identity"
+  "py": "tests.datacheck_checks.parity_helpers.profile_file"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({\n  d <- metacheck::data_read_head(file.path(root, \"upstream/metacheck/tests/testthat/.metacheck_repo_cache/researchbox.org_4377/unzipped/Data/Study\
+          \ 1.csv\"), n_rows = Inf)\n  if (is.null(d)) return(NULL)\n  ns <- asNamespace(\"metacheck\"\
+          )\n  f <- function(fn) get(fn, envir = ns)\n  cols <- names(d)\n  per_col <- lapply(seq_along(cols),\
+          \ function(j) {\n    x <- d[[j]]; n <- cols[[j]]\n    list(\n      facets = f(\"data_col_facets\"\
+          )(n, x)[1:7],\n      scale_values = f(\"data_check_scale_values\")(x),\n      outliers = f(\"\
+          data_check_outliers\")(x),\n      constant = f(\"data_check_constant\")(x),\n      empty = f(\"\
+          data_check_empty\")(x),\n      case_issues = f(\"data_check_case_issues\")(x),\n      whitespace\
+          \ = f(\"data_check_whitespace\")(x),\n      numeric_in_text = f(\"data_check_numeric_in_text\"\
+          )(x),\n      colname = f(\"data_check_colname\")(n),\n      pii_values = f(\"data_check_pii_values\"\
+          )(x),\n      pii_name = f(\"data_check_pii_name\")(n),\n      pii_geo = f(\"data_check_pii_geo\"\
+          )(n, x, cols),\n      pii_freetext = f(\"data_check_pii_freetext\")(x),\n      demographic =\
+          \ f(\"data_check_demographic\")(n, x),\n      design_name = f(\"data_check_design_name\")(n),\n\
+          \      spss_filter = f(\"data_check_spss_filter\")(n, x),\n      likert = f(\".is_likert_item\"\
+          )(x),\n      rt = f(\".looks_like_rt\")(x),\n      accuracy = f(\".looks_like_accuracy\")(x),\n\
+          \      accuracy_item = f(\".is_accuracy_item\")(x))\n  })\n  facets <- lapply(seq_along(cols),\
+          \ function(j) f(\"data_col_facets\")(cols[[j]], d[[j]]))\n  promo <- f(\"data_promote_header_row\"\
+          )(d)\n  list(\n    names = cols,\n    columns = per_col,\n    collisions = f(\"data_check_colname_collisions\"\
+          )(cols),\n    qualtrics = f(\"data_check_is_qualtrics\")(d),\n    qualtrics_tags = f(\".qualtrics_tag_cols\"\
+          )(cols),\n    display_order = f(\".qualtrics_is_display_order\")(cols),\n    stems = vapply(cols,\
+          \ f(\".qualtrics_col_stem\"), character(1), USE.NAMES = FALSE),\n    strip_nrow = nrow(f(\"\
+          data_strip_qualtrics_header\")(d)),\n    promoted = promo$promoted,\n    promoted_names = names(promo$df),\n\
+          \    behaverse = f(\"data_check_is_behaverse\")(d),\n    inquisit = f(\"data_check_is_inquisit\"\
+          )(d),\n    jspsych = f(\"data_check_is_jspsych\")(d),\n    psychopy = f(\"data_check_is_psychopy\"\
+          )(d),\n    task_columns = f(\".detect_task_columns\")(d),\n    scale_blocks = f(\".detect_scale_blocks\"\
+          )(d),\n    accuracy_blocks = f(\".detect_accuracy_blocks\")(d),\n    task_data = f(\".is_task_data\"\
+          )(d),\n    tabular_usable = f(\".tabular_usable\")(facets, d),\n    numeric_col_fraction = f(\"\
+          .numeric_col_fraction\")(d))\n})"
+        "py": "None"
+  "py_args":
+    "path":
+      "$file": "upstream/metacheck/tests/testthat/.metacheck_repo_cache/researchbox.org_4377/unzipped/Data/Study\
+        \ 1.csv"
+  "py_drop":
+  - "x"
+- "id": "fixture_profile.checks.qualtrics.csv"
+  "r": "identity"
+  "py": "tests.datacheck_checks.parity_helpers.profile_file"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({\n  d <- metacheck::data_read_head(file.path(root, \"tests/datacheck_checks/data/qualtrics.csv\"\
+          ), n_rows = Inf)\n  if (is.null(d)) return(NULL)\n  ns <- asNamespace(\"metacheck\")\n  f <-\
+          \ function(fn) get(fn, envir = ns)\n  cols <- names(d)\n  per_col <- lapply(seq_along(cols),\
+          \ function(j) {\n    x <- d[[j]]; n <- cols[[j]]\n    list(\n      facets = f(\"data_col_facets\"\
+          )(n, x)[1:7],\n      scale_values = f(\"data_check_scale_values\")(x),\n      outliers = f(\"\
+          data_check_outliers\")(x),\n      constant = f(\"data_check_constant\")(x),\n      empty = f(\"\
+          data_check_empty\")(x),\n      case_issues = f(\"data_check_case_issues\")(x),\n      whitespace\
+          \ = f(\"data_check_whitespace\")(x),\n      numeric_in_text = f(\"data_check_numeric_in_text\"\
+          )(x),\n      colname = f(\"data_check_colname\")(n),\n      pii_values = f(\"data_check_pii_values\"\
+          )(x),\n      pii_name = f(\"data_check_pii_name\")(n),\n      pii_geo = f(\"data_check_pii_geo\"\
+          )(n, x, cols),\n      pii_freetext = f(\"data_check_pii_freetext\")(x),\n      demographic =\
+          \ f(\"data_check_demographic\")(n, x),\n      design_name = f(\"data_check_design_name\")(n),\n\
+          \      spss_filter = f(\"data_check_spss_filter\")(n, x),\n      likert = f(\".is_likert_item\"\
+          )(x),\n      rt = f(\".looks_like_rt\")(x),\n      accuracy = f(\".looks_like_accuracy\")(x),\n\
+          \      accuracy_item = f(\".is_accuracy_item\")(x))\n  })\n  facets <- lapply(seq_along(cols),\
+          \ function(j) f(\"data_col_facets\")(cols[[j]], d[[j]]))\n  promo <- f(\"data_promote_header_row\"\
+          )(d)\n  list(\n    names = cols,\n    columns = per_col,\n    collisions = f(\"data_check_colname_collisions\"\
+          )(cols),\n    qualtrics = f(\"data_check_is_qualtrics\")(d),\n    qualtrics_tags = f(\".qualtrics_tag_cols\"\
+          )(cols),\n    display_order = f(\".qualtrics_is_display_order\")(cols),\n    stems = vapply(cols,\
+          \ f(\".qualtrics_col_stem\"), character(1), USE.NAMES = FALSE),\n    strip_nrow = nrow(f(\"\
+          data_strip_qualtrics_header\")(d)),\n    promoted = promo$promoted,\n    promoted_names = names(promo$df),\n\
+          \    behaverse = f(\"data_check_is_behaverse\")(d),\n    inquisit = f(\"data_check_is_inquisit\"\
+          )(d),\n    jspsych = f(\"data_check_is_jspsych\")(d),\n    psychopy = f(\"data_check_is_psychopy\"\
+          )(d),\n    task_columns = f(\".detect_task_columns\")(d),\n    scale_blocks = f(\".detect_scale_blocks\"\
+          )(d),\n    accuracy_blocks = f(\".detect_accuracy_blocks\")(d),\n    task_data = f(\".is_task_data\"\
+          )(d),\n    tabular_usable = f(\".tabular_usable\")(facets, d),\n    numeric_col_fraction = f(\"\
+          .numeric_col_fraction\")(d))\n})"
+        "py": "None"
+  "py_args":
+    "path":
+      "$file": "tests/datacheck_checks/data/qualtrics.csv"
+  "py_drop":
+  - "x"
+- "id": "fixture_profile.checks.jspsych.csv"
+  "r": "identity"
+  "py": "tests.datacheck_checks.parity_helpers.profile_file"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({\n  d <- metacheck::data_read_head(file.path(root, \"tests/datacheck_checks/data/jspsych.csv\"\
+          ), n_rows = Inf)\n  if (is.null(d)) return(NULL)\n  ns <- asNamespace(\"metacheck\")\n  f <-\
+          \ function(fn) get(fn, envir = ns)\n  cols <- names(d)\n  per_col <- lapply(seq_along(cols),\
+          \ function(j) {\n    x <- d[[j]]; n <- cols[[j]]\n    list(\n      facets = f(\"data_col_facets\"\
+          )(n, x)[1:7],\n      scale_values = f(\"data_check_scale_values\")(x),\n      outliers = f(\"\
+          data_check_outliers\")(x),\n      constant = f(\"data_check_constant\")(x),\n      empty = f(\"\
+          data_check_empty\")(x),\n      case_issues = f(\"data_check_case_issues\")(x),\n      whitespace\
+          \ = f(\"data_check_whitespace\")(x),\n      numeric_in_text = f(\"data_check_numeric_in_text\"\
+          )(x),\n      colname = f(\"data_check_colname\")(n),\n      pii_values = f(\"data_check_pii_values\"\
+          )(x),\n      pii_name = f(\"data_check_pii_name\")(n),\n      pii_geo = f(\"data_check_pii_geo\"\
+          )(n, x, cols),\n      pii_freetext = f(\"data_check_pii_freetext\")(x),\n      demographic =\
+          \ f(\"data_check_demographic\")(n, x),\n      design_name = f(\"data_check_design_name\")(n),\n\
+          \      spss_filter = f(\"data_check_spss_filter\")(n, x),\n      likert = f(\".is_likert_item\"\
+          )(x),\n      rt = f(\".looks_like_rt\")(x),\n      accuracy = f(\".looks_like_accuracy\")(x),\n\
+          \      accuracy_item = f(\".is_accuracy_item\")(x))\n  })\n  facets <- lapply(seq_along(cols),\
+          \ function(j) f(\"data_col_facets\")(cols[[j]], d[[j]]))\n  promo <- f(\"data_promote_header_row\"\
+          )(d)\n  list(\n    names = cols,\n    columns = per_col,\n    collisions = f(\"data_check_colname_collisions\"\
+          )(cols),\n    qualtrics = f(\"data_check_is_qualtrics\")(d),\n    qualtrics_tags = f(\".qualtrics_tag_cols\"\
+          )(cols),\n    display_order = f(\".qualtrics_is_display_order\")(cols),\n    stems = vapply(cols,\
+          \ f(\".qualtrics_col_stem\"), character(1), USE.NAMES = FALSE),\n    strip_nrow = nrow(f(\"\
+          data_strip_qualtrics_header\")(d)),\n    promoted = promo$promoted,\n    promoted_names = names(promo$df),\n\
+          \    behaverse = f(\"data_check_is_behaverse\")(d),\n    inquisit = f(\"data_check_is_inquisit\"\
+          )(d),\n    jspsych = f(\"data_check_is_jspsych\")(d),\n    psychopy = f(\"data_check_is_psychopy\"\
+          )(d),\n    task_columns = f(\".detect_task_columns\")(d),\n    scale_blocks = f(\".detect_scale_blocks\"\
+          )(d),\n    accuracy_blocks = f(\".detect_accuracy_blocks\")(d),\n    task_data = f(\".is_task_data\"\
+          )(d),\n    tabular_usable = f(\".tabular_usable\")(facets, d),\n    numeric_col_fraction = f(\"\
+          .numeric_col_fraction\")(d))\n})"
+        "py": "None"
+  "py_args":
+    "path":
+      "$file": "tests/datacheck_checks/data/jspsych.csv"
+  "py_drop":
+  - "x"
+- "id": "fixture_profile.checks.psychopy.csv"
+  "r": "identity"
+  "py": "tests.datacheck_checks.parity_helpers.profile_file"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({\n  d <- metacheck::data_read_head(file.path(root, \"tests/datacheck_checks/data/psychopy.csv\"\
+          ), n_rows = Inf)\n  if (is.null(d)) return(NULL)\n  ns <- asNamespace(\"metacheck\")\n  f <-\
+          \ function(fn) get(fn, envir = ns)\n  cols <- names(d)\n  per_col <- lapply(seq_along(cols),\
+          \ function(j) {\n    x <- d[[j]]; n <- cols[[j]]\n    list(\n      facets = f(\"data_col_facets\"\
+          )(n, x)[1:7],\n      scale_values = f(\"data_check_scale_values\")(x),\n      outliers = f(\"\
+          data_check_outliers\")(x),\n      constant = f(\"data_check_constant\")(x),\n      empty = f(\"\
+          data_check_empty\")(x),\n      case_issues = f(\"data_check_case_issues\")(x),\n      whitespace\
+          \ = f(\"data_check_whitespace\")(x),\n      numeric_in_text = f(\"data_check_numeric_in_text\"\
+          )(x),\n      colname = f(\"data_check_colname\")(n),\n      pii_values = f(\"data_check_pii_values\"\
+          )(x),\n      pii_name = f(\"data_check_pii_name\")(n),\n      pii_geo = f(\"data_check_pii_geo\"\
+          )(n, x, cols),\n      pii_freetext = f(\"data_check_pii_freetext\")(x),\n      demographic =\
+          \ f(\"data_check_demographic\")(n, x),\n      design_name = f(\"data_check_design_name\")(n),\n\
+          \      spss_filter = f(\"data_check_spss_filter\")(n, x),\n      likert = f(\".is_likert_item\"\
+          )(x),\n      rt = f(\".looks_like_rt\")(x),\n      accuracy = f(\".looks_like_accuracy\")(x),\n\
+          \      accuracy_item = f(\".is_accuracy_item\")(x))\n  })\n  facets <- lapply(seq_along(cols),\
+          \ function(j) f(\"data_col_facets\")(cols[[j]], d[[j]]))\n  promo <- f(\"data_promote_header_row\"\
+          )(d)\n  list(\n    names = cols,\n    columns = per_col,\n    collisions = f(\"data_check_colname_collisions\"\
+          )(cols),\n    qualtrics = f(\"data_check_is_qualtrics\")(d),\n    qualtrics_tags = f(\".qualtrics_tag_cols\"\
+          )(cols),\n    display_order = f(\".qualtrics_is_display_order\")(cols),\n    stems = vapply(cols,\
+          \ f(\".qualtrics_col_stem\"), character(1), USE.NAMES = FALSE),\n    strip_nrow = nrow(f(\"\
+          data_strip_qualtrics_header\")(d)),\n    promoted = promo$promoted,\n    promoted_names = names(promo$df),\n\
+          \    behaverse = f(\"data_check_is_behaverse\")(d),\n    inquisit = f(\"data_check_is_inquisit\"\
+          )(d),\n    jspsych = f(\"data_check_is_jspsych\")(d),\n    psychopy = f(\"data_check_is_psychopy\"\
+          )(d),\n    task_columns = f(\".detect_task_columns\")(d),\n    scale_blocks = f(\".detect_scale_blocks\"\
+          )(d),\n    accuracy_blocks = f(\".detect_accuracy_blocks\")(d),\n    task_data = f(\".is_task_data\"\
+          )(d),\n    tabular_usable = f(\".tabular_usable\")(facets, d),\n    numeric_col_fraction = f(\"\
+          .numeric_col_fraction\")(d))\n})"
+        "py": "None"
+  "py_args":
+    "path":
+      "$file": "tests/datacheck_checks/data/psychopy.csv"
+  "py_drop":
+  - "x"
+- "id": "fixture_profile.checks.behaverse.csv"
+  "r": "identity"
+  "py": "tests.datacheck_checks.parity_helpers.profile_file"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({\n  d <- metacheck::data_read_head(file.path(root, \"tests/datacheck_checks/data/behaverse.csv\"\
+          ), n_rows = Inf)\n  if (is.null(d)) return(NULL)\n  ns <- asNamespace(\"metacheck\")\n  f <-\
+          \ function(fn) get(fn, envir = ns)\n  cols <- names(d)\n  per_col <- lapply(seq_along(cols),\
+          \ function(j) {\n    x <- d[[j]]; n <- cols[[j]]\n    list(\n      facets = f(\"data_col_facets\"\
+          )(n, x)[1:7],\n      scale_values = f(\"data_check_scale_values\")(x),\n      outliers = f(\"\
+          data_check_outliers\")(x),\n      constant = f(\"data_check_constant\")(x),\n      empty = f(\"\
+          data_check_empty\")(x),\n      case_issues = f(\"data_check_case_issues\")(x),\n      whitespace\
+          \ = f(\"data_check_whitespace\")(x),\n      numeric_in_text = f(\"data_check_numeric_in_text\"\
+          )(x),\n      colname = f(\"data_check_colname\")(n),\n      pii_values = f(\"data_check_pii_values\"\
+          )(x),\n      pii_name = f(\"data_check_pii_name\")(n),\n      pii_geo = f(\"data_check_pii_geo\"\
+          )(n, x, cols),\n      pii_freetext = f(\"data_check_pii_freetext\")(x),\n      demographic =\
+          \ f(\"data_check_demographic\")(n, x),\n      design_name = f(\"data_check_design_name\")(n),\n\
+          \      spss_filter = f(\"data_check_spss_filter\")(n, x),\n      likert = f(\".is_likert_item\"\
+          )(x),\n      rt = f(\".looks_like_rt\")(x),\n      accuracy = f(\".looks_like_accuracy\")(x),\n\
+          \      accuracy_item = f(\".is_accuracy_item\")(x))\n  })\n  facets <- lapply(seq_along(cols),\
+          \ function(j) f(\"data_col_facets\")(cols[[j]], d[[j]]))\n  promo <- f(\"data_promote_header_row\"\
+          )(d)\n  list(\n    names = cols,\n    columns = per_col,\n    collisions = f(\"data_check_colname_collisions\"\
+          )(cols),\n    qualtrics = f(\"data_check_is_qualtrics\")(d),\n    qualtrics_tags = f(\".qualtrics_tag_cols\"\
+          )(cols),\n    display_order = f(\".qualtrics_is_display_order\")(cols),\n    stems = vapply(cols,\
+          \ f(\".qualtrics_col_stem\"), character(1), USE.NAMES = FALSE),\n    strip_nrow = nrow(f(\"\
+          data_strip_qualtrics_header\")(d)),\n    promoted = promo$promoted,\n    promoted_names = names(promo$df),\n\
+          \    behaverse = f(\"data_check_is_behaverse\")(d),\n    inquisit = f(\"data_check_is_inquisit\"\
+          )(d),\n    jspsych = f(\"data_check_is_jspsych\")(d),\n    psychopy = f(\"data_check_is_psychopy\"\
+          )(d),\n    task_columns = f(\".detect_task_columns\")(d),\n    scale_blocks = f(\".detect_scale_blocks\"\
+          )(d),\n    accuracy_blocks = f(\".detect_accuracy_blocks\")(d),\n    task_data = f(\".is_task_data\"\
+          )(d),\n    tabular_usable = f(\".tabular_usable\")(facets, d),\n    numeric_col_fraction = f(\"\
+          .numeric_col_fraction\")(d))\n})"
+        "py": "None"
+  "py_args":
+    "path":
+      "$file": "tests/datacheck_checks/data/behaverse.csv"
+  "py_drop":
+  - "x"
+- "id": "fixture_profile.checks.behaverse_wide.csv"
+  "r": "identity"
+  "py": "tests.datacheck_checks.parity_helpers.profile_file"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({\n  d <- metacheck::data_read_head(file.path(root, \"tests/datacheck_checks/data/behaverse_wide.csv\"\
+          ), n_rows = Inf)\n  if (is.null(d)) return(NULL)\n  ns <- asNamespace(\"metacheck\")\n  f <-\
+          \ function(fn) get(fn, envir = ns)\n  cols <- names(d)\n  per_col <- lapply(seq_along(cols),\
+          \ function(j) {\n    x <- d[[j]]; n <- cols[[j]]\n    list(\n      facets = f(\"data_col_facets\"\
+          )(n, x)[1:7],\n      scale_values = f(\"data_check_scale_values\")(x),\n      outliers = f(\"\
+          data_check_outliers\")(x),\n      constant = f(\"data_check_constant\")(x),\n      empty = f(\"\
+          data_check_empty\")(x),\n      case_issues = f(\"data_check_case_issues\")(x),\n      whitespace\
+          \ = f(\"data_check_whitespace\")(x),\n      numeric_in_text = f(\"data_check_numeric_in_text\"\
+          )(x),\n      colname = f(\"data_check_colname\")(n),\n      pii_values = f(\"data_check_pii_values\"\
+          )(x),\n      pii_name = f(\"data_check_pii_name\")(n),\n      pii_geo = f(\"data_check_pii_geo\"\
+          )(n, x, cols),\n      pii_freetext = f(\"data_check_pii_freetext\")(x),\n      demographic =\
+          \ f(\"data_check_demographic\")(n, x),\n      design_name = f(\"data_check_design_name\")(n),\n\
+          \      spss_filter = f(\"data_check_spss_filter\")(n, x),\n      likert = f(\".is_likert_item\"\
+          )(x),\n      rt = f(\".looks_like_rt\")(x),\n      accuracy = f(\".looks_like_accuracy\")(x),\n\
+          \      accuracy_item = f(\".is_accuracy_item\")(x))\n  })\n  facets <- lapply(seq_along(cols),\
+          \ function(j) f(\"data_col_facets\")(cols[[j]], d[[j]]))\n  promo <- f(\"data_promote_header_row\"\
+          )(d)\n  list(\n    names = cols,\n    columns = per_col,\n    collisions = f(\"data_check_colname_collisions\"\
+          )(cols),\n    qualtrics = f(\"data_check_is_qualtrics\")(d),\n    qualtrics_tags = f(\".qualtrics_tag_cols\"\
+          )(cols),\n    display_order = f(\".qualtrics_is_display_order\")(cols),\n    stems = vapply(cols,\
+          \ f(\".qualtrics_col_stem\"), character(1), USE.NAMES = FALSE),\n    strip_nrow = nrow(f(\"\
+          data_strip_qualtrics_header\")(d)),\n    promoted = promo$promoted,\n    promoted_names = names(promo$df),\n\
+          \    behaverse = f(\"data_check_is_behaverse\")(d),\n    inquisit = f(\"data_check_is_inquisit\"\
+          )(d),\n    jspsych = f(\"data_check_is_jspsych\")(d),\n    psychopy = f(\"data_check_is_psychopy\"\
+          )(d),\n    task_columns = f(\".detect_task_columns\")(d),\n    scale_blocks = f(\".detect_scale_blocks\"\
+          )(d),\n    accuracy_blocks = f(\".detect_accuracy_blocks\")(d),\n    task_data = f(\".is_task_data\"\
+          )(d),\n    tabular_usable = f(\".tabular_usable\")(facets, d),\n    numeric_col_fraction = f(\"\
+          .numeric_col_fraction\")(d))\n})"
+        "py": "None"
+  "py_args":
+    "path":
+      "$file": "tests/datacheck_checks/data/behaverse_wide.csv"
+  "py_drop":
+  - "x"
+- "id": "fixture_profile.checks.inquisit.iqdat"
+  "r": "identity"
+  "py": "tests.datacheck_checks.parity_helpers.profile_file"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({\n  d <- metacheck::data_read_head(file.path(root, \"tests/datacheck_checks/data/inquisit.iqdat\"\
+          ), n_rows = Inf)\n  if (is.null(d)) return(NULL)\n  ns <- asNamespace(\"metacheck\")\n  f <-\
+          \ function(fn) get(fn, envir = ns)\n  cols <- names(d)\n  per_col <- lapply(seq_along(cols),\
+          \ function(j) {\n    x <- d[[j]]; n <- cols[[j]]\n    list(\n      facets = f(\"data_col_facets\"\
+          )(n, x)[1:7],\n      scale_values = f(\"data_check_scale_values\")(x),\n      outliers = f(\"\
+          data_check_outliers\")(x),\n      constant = f(\"data_check_constant\")(x),\n      empty = f(\"\
+          data_check_empty\")(x),\n      case_issues = f(\"data_check_case_issues\")(x),\n      whitespace\
+          \ = f(\"data_check_whitespace\")(x),\n      numeric_in_text = f(\"data_check_numeric_in_text\"\
+          )(x),\n      colname = f(\"data_check_colname\")(n),\n      pii_values = f(\"data_check_pii_values\"\
+          )(x),\n      pii_name = f(\"data_check_pii_name\")(n),\n      pii_geo = f(\"data_check_pii_geo\"\
+          )(n, x, cols),\n      pii_freetext = f(\"data_check_pii_freetext\")(x),\n      demographic =\
+          \ f(\"data_check_demographic\")(n, x),\n      design_name = f(\"data_check_design_name\")(n),\n\
+          \      spss_filter = f(\"data_check_spss_filter\")(n, x),\n      likert = f(\".is_likert_item\"\
+          )(x),\n      rt = f(\".looks_like_rt\")(x),\n      accuracy = f(\".looks_like_accuracy\")(x),\n\
+          \      accuracy_item = f(\".is_accuracy_item\")(x))\n  })\n  facets <- lapply(seq_along(cols),\
+          \ function(j) f(\"data_col_facets\")(cols[[j]], d[[j]]))\n  promo <- f(\"data_promote_header_row\"\
+          )(d)\n  list(\n    names = cols,\n    columns = per_col,\n    collisions = f(\"data_check_colname_collisions\"\
+          )(cols),\n    qualtrics = f(\"data_check_is_qualtrics\")(d),\n    qualtrics_tags = f(\".qualtrics_tag_cols\"\
+          )(cols),\n    display_order = f(\".qualtrics_is_display_order\")(cols),\n    stems = vapply(cols,\
+          \ f(\".qualtrics_col_stem\"), character(1), USE.NAMES = FALSE),\n    strip_nrow = nrow(f(\"\
+          data_strip_qualtrics_header\")(d)),\n    promoted = promo$promoted,\n    promoted_names = names(promo$df),\n\
+          \    behaverse = f(\"data_check_is_behaverse\")(d),\n    inquisit = f(\"data_check_is_inquisit\"\
+          )(d),\n    jspsych = f(\"data_check_is_jspsych\")(d),\n    psychopy = f(\"data_check_is_psychopy\"\
+          )(d),\n    task_columns = f(\".detect_task_columns\")(d),\n    scale_blocks = f(\".detect_scale_blocks\"\
+          )(d),\n    accuracy_blocks = f(\".detect_accuracy_blocks\")(d),\n    task_data = f(\".is_task_data\"\
+          )(d),\n    tabular_usable = f(\".tabular_usable\")(facets, d),\n    numeric_col_fraction = f(\"\
+          .numeric_col_fraction\")(d))\n})"
+        "py": "None"
+  "py_args":
+    "path":
+      "$file": "tests/datacheck_checks/data/inquisit.iqdat"
+  "py_drop":
+  - "x"
+- "id": "fixture_profile.checks.offset_header.csv"
+  "r": "identity"
+  "py": "tests.datacheck_checks.parity_helpers.profile_file"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({\n  d <- metacheck::data_read_head(file.path(root, \"tests/datacheck_checks/data/offset_header.csv\"\
+          ), n_rows = Inf)\n  if (is.null(d)) return(NULL)\n  ns <- asNamespace(\"metacheck\")\n  f <-\
+          \ function(fn) get(fn, envir = ns)\n  cols <- names(d)\n  per_col <- lapply(seq_along(cols),\
+          \ function(j) {\n    x <- d[[j]]; n <- cols[[j]]\n    list(\n      facets = f(\"data_col_facets\"\
+          )(n, x)[1:7],\n      scale_values = f(\"data_check_scale_values\")(x),\n      outliers = f(\"\
+          data_check_outliers\")(x),\n      constant = f(\"data_check_constant\")(x),\n      empty = f(\"\
+          data_check_empty\")(x),\n      case_issues = f(\"data_check_case_issues\")(x),\n      whitespace\
+          \ = f(\"data_check_whitespace\")(x),\n      numeric_in_text = f(\"data_check_numeric_in_text\"\
+          )(x),\n      colname = f(\"data_check_colname\")(n),\n      pii_values = f(\"data_check_pii_values\"\
+          )(x),\n      pii_name = f(\"data_check_pii_name\")(n),\n      pii_geo = f(\"data_check_pii_geo\"\
+          )(n, x, cols),\n      pii_freetext = f(\"data_check_pii_freetext\")(x),\n      demographic =\
+          \ f(\"data_check_demographic\")(n, x),\n      design_name = f(\"data_check_design_name\")(n),\n\
+          \      spss_filter = f(\"data_check_spss_filter\")(n, x),\n      likert = f(\".is_likert_item\"\
+          )(x),\n      rt = f(\".looks_like_rt\")(x),\n      accuracy = f(\".looks_like_accuracy\")(x),\n\
+          \      accuracy_item = f(\".is_accuracy_item\")(x))\n  })\n  facets <- lapply(seq_along(cols),\
+          \ function(j) f(\"data_col_facets\")(cols[[j]], d[[j]]))\n  promo <- f(\"data_promote_header_row\"\
+          )(d)\n  list(\n    names = cols,\n    columns = per_col,\n    collisions = f(\"data_check_colname_collisions\"\
+          )(cols),\n    qualtrics = f(\"data_check_is_qualtrics\")(d),\n    qualtrics_tags = f(\".qualtrics_tag_cols\"\
+          )(cols),\n    display_order = f(\".qualtrics_is_display_order\")(cols),\n    stems = vapply(cols,\
+          \ f(\".qualtrics_col_stem\"), character(1), USE.NAMES = FALSE),\n    strip_nrow = nrow(f(\"\
+          data_strip_qualtrics_header\")(d)),\n    promoted = promo$promoted,\n    promoted_names = names(promo$df),\n\
+          \    behaverse = f(\"data_check_is_behaverse\")(d),\n    inquisit = f(\"data_check_is_inquisit\"\
+          )(d),\n    jspsych = f(\"data_check_is_jspsych\")(d),\n    psychopy = f(\"data_check_is_psychopy\"\
+          )(d),\n    task_columns = f(\".detect_task_columns\")(d),\n    scale_blocks = f(\".detect_scale_blocks\"\
+          )(d),\n    accuracy_blocks = f(\".detect_accuracy_blocks\")(d),\n    task_data = f(\".is_task_data\"\
+          )(d),\n    tabular_usable = f(\".tabular_usable\")(facets, d),\n    numeric_col_fraction = f(\"\
+          .numeric_col_fraction\")(d))\n})"
+        "py": "None"
+  "py_args":
+    "path":
+      "$file": "tests/datacheck_checks/data/offset_header.csv"
+  "py_drop":
+  - "x"
+- "id": "fixture_profile.checks.blank_top_header.csv"
+  "r": "identity"
+  "py": "tests.datacheck_checks.parity_helpers.profile_file"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({\n  d <- metacheck::data_read_head(file.path(root, \"tests/datacheck_checks/data/blank_top_header.csv\"\
+          ), n_rows = Inf)\n  if (is.null(d)) return(NULL)\n  ns <- asNamespace(\"metacheck\")\n  f <-\
+          \ function(fn) get(fn, envir = ns)\n  cols <- names(d)\n  per_col <- lapply(seq_along(cols),\
+          \ function(j) {\n    x <- d[[j]]; n <- cols[[j]]\n    list(\n      facets = f(\"data_col_facets\"\
+          )(n, x)[1:7],\n      scale_values = f(\"data_check_scale_values\")(x),\n      outliers = f(\"\
+          data_check_outliers\")(x),\n      constant = f(\"data_check_constant\")(x),\n      empty = f(\"\
+          data_check_empty\")(x),\n      case_issues = f(\"data_check_case_issues\")(x),\n      whitespace\
+          \ = f(\"data_check_whitespace\")(x),\n      numeric_in_text = f(\"data_check_numeric_in_text\"\
+          )(x),\n      colname = f(\"data_check_colname\")(n),\n      pii_values = f(\"data_check_pii_values\"\
+          )(x),\n      pii_name = f(\"data_check_pii_name\")(n),\n      pii_geo = f(\"data_check_pii_geo\"\
+          )(n, x, cols),\n      pii_freetext = f(\"data_check_pii_freetext\")(x),\n      demographic =\
+          \ f(\"data_check_demographic\")(n, x),\n      design_name = f(\"data_check_design_name\")(n),\n\
+          \      spss_filter = f(\"data_check_spss_filter\")(n, x),\n      likert = f(\".is_likert_item\"\
+          )(x),\n      rt = f(\".looks_like_rt\")(x),\n      accuracy = f(\".looks_like_accuracy\")(x),\n\
+          \      accuracy_item = f(\".is_accuracy_item\")(x))\n  })\n  facets <- lapply(seq_along(cols),\
+          \ function(j) f(\"data_col_facets\")(cols[[j]], d[[j]]))\n  promo <- f(\"data_promote_header_row\"\
+          )(d)\n  list(\n    names = cols,\n    columns = per_col,\n    collisions = f(\"data_check_colname_collisions\"\
+          )(cols),\n    qualtrics = f(\"data_check_is_qualtrics\")(d),\n    qualtrics_tags = f(\".qualtrics_tag_cols\"\
+          )(cols),\n    display_order = f(\".qualtrics_is_display_order\")(cols),\n    stems = vapply(cols,\
+          \ f(\".qualtrics_col_stem\"), character(1), USE.NAMES = FALSE),\n    strip_nrow = nrow(f(\"\
+          data_strip_qualtrics_header\")(d)),\n    promoted = promo$promoted,\n    promoted_names = names(promo$df),\n\
+          \    behaverse = f(\"data_check_is_behaverse\")(d),\n    inquisit = f(\"data_check_is_inquisit\"\
+          )(d),\n    jspsych = f(\"data_check_is_jspsych\")(d),\n    psychopy = f(\"data_check_is_psychopy\"\
+          )(d),\n    task_columns = f(\".detect_task_columns\")(d),\n    scale_blocks = f(\".detect_scale_blocks\"\
+          )(d),\n    accuracy_blocks = f(\".detect_accuracy_blocks\")(d),\n    task_data = f(\".is_task_data\"\
+          )(d),\n    tabular_usable = f(\".tabular_usable\")(facets, d),\n    numeric_col_fraction = f(\"\
+          .numeric_col_fraction\")(d))\n})"
+        "py": "None"
+  "py_args":
+    "path":
+      "$file": "tests/datacheck_checks/data/blank_top_header.csv"
+  "py_drop":
+  - "x"
+- "id": "fixture_profile.checks.plain.csv"
+  "r": "identity"
+  "py": "tests.datacheck_checks.parity_helpers.profile_file"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({\n  d <- metacheck::data_read_head(file.path(root, \"tests/datacheck_checks/data/plain.csv\"\
+          ), n_rows = Inf)\n  if (is.null(d)) return(NULL)\n  ns <- asNamespace(\"metacheck\")\n  f <-\
+          \ function(fn) get(fn, envir = ns)\n  cols <- names(d)\n  per_col <- lapply(seq_along(cols),\
+          \ function(j) {\n    x <- d[[j]]; n <- cols[[j]]\n    list(\n      facets = f(\"data_col_facets\"\
+          )(n, x)[1:7],\n      scale_values = f(\"data_check_scale_values\")(x),\n      outliers = f(\"\
+          data_check_outliers\")(x),\n      constant = f(\"data_check_constant\")(x),\n      empty = f(\"\
+          data_check_empty\")(x),\n      case_issues = f(\"data_check_case_issues\")(x),\n      whitespace\
+          \ = f(\"data_check_whitespace\")(x),\n      numeric_in_text = f(\"data_check_numeric_in_text\"\
+          )(x),\n      colname = f(\"data_check_colname\")(n),\n      pii_values = f(\"data_check_pii_values\"\
+          )(x),\n      pii_name = f(\"data_check_pii_name\")(n),\n      pii_geo = f(\"data_check_pii_geo\"\
+          )(n, x, cols),\n      pii_freetext = f(\"data_check_pii_freetext\")(x),\n      demographic =\
+          \ f(\"data_check_demographic\")(n, x),\n      design_name = f(\"data_check_design_name\")(n),\n\
+          \      spss_filter = f(\"data_check_spss_filter\")(n, x),\n      likert = f(\".is_likert_item\"\
+          )(x),\n      rt = f(\".looks_like_rt\")(x),\n      accuracy = f(\".looks_like_accuracy\")(x),\n\
+          \      accuracy_item = f(\".is_accuracy_item\")(x))\n  })\n  facets <- lapply(seq_along(cols),\
+          \ function(j) f(\"data_col_facets\")(cols[[j]], d[[j]]))\n  promo <- f(\"data_promote_header_row\"\
+          )(d)\n  list(\n    names = cols,\n    columns = per_col,\n    collisions = f(\"data_check_colname_collisions\"\
+          )(cols),\n    qualtrics = f(\"data_check_is_qualtrics\")(d),\n    qualtrics_tags = f(\".qualtrics_tag_cols\"\
+          )(cols),\n    display_order = f(\".qualtrics_is_display_order\")(cols),\n    stems = vapply(cols,\
+          \ f(\".qualtrics_col_stem\"), character(1), USE.NAMES = FALSE),\n    strip_nrow = nrow(f(\"\
+          data_strip_qualtrics_header\")(d)),\n    promoted = promo$promoted,\n    promoted_names = names(promo$df),\n\
+          \    behaverse = f(\"data_check_is_behaverse\")(d),\n    inquisit = f(\"data_check_is_inquisit\"\
+          )(d),\n    jspsych = f(\"data_check_is_jspsych\")(d),\n    psychopy = f(\"data_check_is_psychopy\"\
+          )(d),\n    task_columns = f(\".detect_task_columns\")(d),\n    scale_blocks = f(\".detect_scale_blocks\"\
+          )(d),\n    accuracy_blocks = f(\".detect_accuracy_blocks\")(d),\n    task_data = f(\".is_task_data\"\
+          )(d),\n    tabular_usable = f(\".tabular_usable\")(facets, d),\n    numeric_col_fraction = f(\"\
+          .numeric_col_fraction\")(d))\n})"
+        "py": "None"
+  "py_args":
+    "path":
+      "$file": "tests/datacheck_checks/data/plain.csv"
+  "py_drop":
+  - "x"
+- "id": "fixture_profile.files.dates.csv"
+  "r": "identity"
+  "py": "tests.datacheck_checks.parity_helpers.profile_file"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({\n  d <- metacheck::data_read_head(file.path(root, \"tests/datacheck_files/data/dates.csv\"\
+          ), n_rows = Inf)\n  if (is.null(d)) return(NULL)\n  ns <- asNamespace(\"metacheck\")\n  f <-\
+          \ function(fn) get(fn, envir = ns)\n  cols <- names(d)\n  per_col <- lapply(seq_along(cols),\
+          \ function(j) {\n    x <- d[[j]]; n <- cols[[j]]\n    list(\n      facets = f(\"data_col_facets\"\
+          )(n, x)[1:7],\n      scale_values = f(\"data_check_scale_values\")(x),\n      outliers = f(\"\
+          data_check_outliers\")(x),\n      constant = f(\"data_check_constant\")(x),\n      empty = f(\"\
+          data_check_empty\")(x),\n      case_issues = f(\"data_check_case_issues\")(x),\n      whitespace\
+          \ = f(\"data_check_whitespace\")(x),\n      numeric_in_text = f(\"data_check_numeric_in_text\"\
+          )(x),\n      colname = f(\"data_check_colname\")(n),\n      pii_values = f(\"data_check_pii_values\"\
+          )(x),\n      pii_name = f(\"data_check_pii_name\")(n),\n      pii_geo = f(\"data_check_pii_geo\"\
+          )(n, x, cols),\n      pii_freetext = f(\"data_check_pii_freetext\")(x),\n      demographic =\
+          \ f(\"data_check_demographic\")(n, x),\n      design_name = f(\"data_check_design_name\")(n),\n\
+          \      spss_filter = f(\"data_check_spss_filter\")(n, x),\n      likert = f(\".is_likert_item\"\
+          )(x),\n      rt = f(\".looks_like_rt\")(x),\n      accuracy = f(\".looks_like_accuracy\")(x),\n\
+          \      accuracy_item = f(\".is_accuracy_item\")(x))\n  })\n  facets <- lapply(seq_along(cols),\
+          \ function(j) f(\"data_col_facets\")(cols[[j]], d[[j]]))\n  promo <- f(\"data_promote_header_row\"\
+          )(d)\n  list(\n    names = cols,\n    columns = per_col,\n    collisions = f(\"data_check_colname_collisions\"\
+          )(cols),\n    qualtrics = f(\"data_check_is_qualtrics\")(d),\n    qualtrics_tags = f(\".qualtrics_tag_cols\"\
+          )(cols),\n    display_order = f(\".qualtrics_is_display_order\")(cols),\n    stems = vapply(cols,\
+          \ f(\".qualtrics_col_stem\"), character(1), USE.NAMES = FALSE),\n    strip_nrow = nrow(f(\"\
+          data_strip_qualtrics_header\")(d)),\n    promoted = promo$promoted,\n    promoted_names = names(promo$df),\n\
+          \    behaverse = f(\"data_check_is_behaverse\")(d),\n    inquisit = f(\"data_check_is_inquisit\"\
+          )(d),\n    jspsych = f(\"data_check_is_jspsych\")(d),\n    psychopy = f(\"data_check_is_psychopy\"\
+          )(d),\n    task_columns = f(\".detect_task_columns\")(d),\n    scale_blocks = f(\".detect_scale_blocks\"\
+          )(d),\n    accuracy_blocks = f(\".detect_accuracy_blocks\")(d),\n    task_data = f(\".is_task_data\"\
+          )(d),\n    tabular_usable = f(\".tabular_usable\")(facets, d),\n    numeric_col_fraction = f(\"\
+          .numeric_col_fraction\")(d))\n})"
+        "py": "None"
+  "py_args":
+    "path":
+      "$file": "tests/datacheck_files/data/dates.csv"
+  "py_drop":
+  - "x"
+- "id": "fixture_profile.files.types.csv"
+  "r": "identity"
+  "py": "tests.datacheck_checks.parity_helpers.profile_file"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({\n  d <- metacheck::data_read_head(file.path(root, \"tests/datacheck_files/data/types.csv\"\
+          ), n_rows = Inf)\n  if (is.null(d)) return(NULL)\n  ns <- asNamespace(\"metacheck\")\n  f <-\
+          \ function(fn) get(fn, envir = ns)\n  cols <- names(d)\n  per_col <- lapply(seq_along(cols),\
+          \ function(j) {\n    x <- d[[j]]; n <- cols[[j]]\n    list(\n      facets = f(\"data_col_facets\"\
+          )(n, x)[1:7],\n      scale_values = f(\"data_check_scale_values\")(x),\n      outliers = f(\"\
+          data_check_outliers\")(x),\n      constant = f(\"data_check_constant\")(x),\n      empty = f(\"\
+          data_check_empty\")(x),\n      case_issues = f(\"data_check_case_issues\")(x),\n      whitespace\
+          \ = f(\"data_check_whitespace\")(x),\n      numeric_in_text = f(\"data_check_numeric_in_text\"\
+          )(x),\n      colname = f(\"data_check_colname\")(n),\n      pii_values = f(\"data_check_pii_values\"\
+          )(x),\n      pii_name = f(\"data_check_pii_name\")(n),\n      pii_geo = f(\"data_check_pii_geo\"\
+          )(n, x, cols),\n      pii_freetext = f(\"data_check_pii_freetext\")(x),\n      demographic =\
+          \ f(\"data_check_demographic\")(n, x),\n      design_name = f(\"data_check_design_name\")(n),\n\
+          \      spss_filter = f(\"data_check_spss_filter\")(n, x),\n      likert = f(\".is_likert_item\"\
+          )(x),\n      rt = f(\".looks_like_rt\")(x),\n      accuracy = f(\".looks_like_accuracy\")(x),\n\
+          \      accuracy_item = f(\".is_accuracy_item\")(x))\n  })\n  facets <- lapply(seq_along(cols),\
+          \ function(j) f(\"data_col_facets\")(cols[[j]], d[[j]]))\n  promo <- f(\"data_promote_header_row\"\
+          )(d)\n  list(\n    names = cols,\n    columns = per_col,\n    collisions = f(\"data_check_colname_collisions\"\
+          )(cols),\n    qualtrics = f(\"data_check_is_qualtrics\")(d),\n    qualtrics_tags = f(\".qualtrics_tag_cols\"\
+          )(cols),\n    display_order = f(\".qualtrics_is_display_order\")(cols),\n    stems = vapply(cols,\
+          \ f(\".qualtrics_col_stem\"), character(1), USE.NAMES = FALSE),\n    strip_nrow = nrow(f(\"\
+          data_strip_qualtrics_header\")(d)),\n    promoted = promo$promoted,\n    promoted_names = names(promo$df),\n\
+          \    behaverse = f(\"data_check_is_behaverse\")(d),\n    inquisit = f(\"data_check_is_inquisit\"\
+          )(d),\n    jspsych = f(\"data_check_is_jspsych\")(d),\n    psychopy = f(\"data_check_is_psychopy\"\
+          )(d),\n    task_columns = f(\".detect_task_columns\")(d),\n    scale_blocks = f(\".detect_scale_blocks\"\
+          )(d),\n    accuracy_blocks = f(\".detect_accuracy_blocks\")(d),\n    task_data = f(\".is_task_data\"\
+          )(d),\n    tabular_usable = f(\".tabular_usable\")(facets, d),\n    numeric_col_fraction = f(\"\
+          .numeric_col_fraction\")(d))\n})"
+        "py": "None"
+  "py_args":
+    "path":
+      "$file": "tests/datacheck_files/data/types.csv"
+  "py_drop":
+  - "x"
+- "id": "fixture_profile.files.whitespace.csv"
+  "r": "identity"
+  "py": "tests.datacheck_checks.parity_helpers.profile_file"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({\n  d <- metacheck::data_read_head(file.path(root, \"tests/datacheck_files/data/whitespace.csv\"\
+          ), n_rows = Inf)\n  if (is.null(d)) return(NULL)\n  ns <- asNamespace(\"metacheck\")\n  f <-\
+          \ function(fn) get(fn, envir = ns)\n  cols <- names(d)\n  per_col <- lapply(seq_along(cols),\
+          \ function(j) {\n    x <- d[[j]]; n <- cols[[j]]\n    list(\n      facets = f(\"data_col_facets\"\
+          )(n, x)[1:7],\n      scale_values = f(\"data_check_scale_values\")(x),\n      outliers = f(\"\
+          data_check_outliers\")(x),\n      constant = f(\"data_check_constant\")(x),\n      empty = f(\"\
+          data_check_empty\")(x),\n      case_issues = f(\"data_check_case_issues\")(x),\n      whitespace\
+          \ = f(\"data_check_whitespace\")(x),\n      numeric_in_text = f(\"data_check_numeric_in_text\"\
+          )(x),\n      colname = f(\"data_check_colname\")(n),\n      pii_values = f(\"data_check_pii_values\"\
+          )(x),\n      pii_name = f(\"data_check_pii_name\")(n),\n      pii_geo = f(\"data_check_pii_geo\"\
+          )(n, x, cols),\n      pii_freetext = f(\"data_check_pii_freetext\")(x),\n      demographic =\
+          \ f(\"data_check_demographic\")(n, x),\n      design_name = f(\"data_check_design_name\")(n),\n\
+          \      spss_filter = f(\"data_check_spss_filter\")(n, x),\n      likert = f(\".is_likert_item\"\
+          )(x),\n      rt = f(\".looks_like_rt\")(x),\n      accuracy = f(\".looks_like_accuracy\")(x),\n\
+          \      accuracy_item = f(\".is_accuracy_item\")(x))\n  })\n  facets <- lapply(seq_along(cols),\
+          \ function(j) f(\"data_col_facets\")(cols[[j]], d[[j]]))\n  promo <- f(\"data_promote_header_row\"\
+          )(d)\n  list(\n    names = cols,\n    columns = per_col,\n    collisions = f(\"data_check_colname_collisions\"\
+          )(cols),\n    qualtrics = f(\"data_check_is_qualtrics\")(d),\n    qualtrics_tags = f(\".qualtrics_tag_cols\"\
+          )(cols),\n    display_order = f(\".qualtrics_is_display_order\")(cols),\n    stems = vapply(cols,\
+          \ f(\".qualtrics_col_stem\"), character(1), USE.NAMES = FALSE),\n    strip_nrow = nrow(f(\"\
+          data_strip_qualtrics_header\")(d)),\n    promoted = promo$promoted,\n    promoted_names = names(promo$df),\n\
+          \    behaverse = f(\"data_check_is_behaverse\")(d),\n    inquisit = f(\"data_check_is_inquisit\"\
+          )(d),\n    jspsych = f(\"data_check_is_jspsych\")(d),\n    psychopy = f(\"data_check_is_psychopy\"\
+          )(d),\n    task_columns = f(\".detect_task_columns\")(d),\n    scale_blocks = f(\".detect_scale_blocks\"\
+          )(d),\n    accuracy_blocks = f(\".detect_accuracy_blocks\")(d),\n    task_data = f(\".is_task_data\"\
+          )(d),\n    tabular_usable = f(\".tabular_usable\")(facets, d),\n    numeric_col_fraction = f(\"\
+          .numeric_col_fraction\")(d))\n})"
+        "py": "None"
+  "py_args":
+    "path":
+      "$file": "tests/datacheck_files/data/whitespace.csv"
+  "py_drop":
+  - "x"
+- "id": "fixture_profile.files.na_strings.csv"
+  "r": "identity"
+  "py": "tests.datacheck_checks.parity_helpers.profile_file"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({\n  d <- metacheck::data_read_head(file.path(root, \"tests/datacheck_files/data/na_strings.csv\"\
+          ), n_rows = Inf)\n  if (is.null(d)) return(NULL)\n  ns <- asNamespace(\"metacheck\")\n  f <-\
+          \ function(fn) get(fn, envir = ns)\n  cols <- names(d)\n  per_col <- lapply(seq_along(cols),\
+          \ function(j) {\n    x <- d[[j]]; n <- cols[[j]]\n    list(\n      facets = f(\"data_col_facets\"\
+          )(n, x)[1:7],\n      scale_values = f(\"data_check_scale_values\")(x),\n      outliers = f(\"\
+          data_check_outliers\")(x),\n      constant = f(\"data_check_constant\")(x),\n      empty = f(\"\
+          data_check_empty\")(x),\n      case_issues = f(\"data_check_case_issues\")(x),\n      whitespace\
+          \ = f(\"data_check_whitespace\")(x),\n      numeric_in_text = f(\"data_check_numeric_in_text\"\
+          )(x),\n      colname = f(\"data_check_colname\")(n),\n      pii_values = f(\"data_check_pii_values\"\
+          )(x),\n      pii_name = f(\"data_check_pii_name\")(n),\n      pii_geo = f(\"data_check_pii_geo\"\
+          )(n, x, cols),\n      pii_freetext = f(\"data_check_pii_freetext\")(x),\n      demographic =\
+          \ f(\"data_check_demographic\")(n, x),\n      design_name = f(\"data_check_design_name\")(n),\n\
+          \      spss_filter = f(\"data_check_spss_filter\")(n, x),\n      likert = f(\".is_likert_item\"\
+          )(x),\n      rt = f(\".looks_like_rt\")(x),\n      accuracy = f(\".looks_like_accuracy\")(x),\n\
+          \      accuracy_item = f(\".is_accuracy_item\")(x))\n  })\n  facets <- lapply(seq_along(cols),\
+          \ function(j) f(\"data_col_facets\")(cols[[j]], d[[j]]))\n  promo <- f(\"data_promote_header_row\"\
+          )(d)\n  list(\n    names = cols,\n    columns = per_col,\n    collisions = f(\"data_check_colname_collisions\"\
+          )(cols),\n    qualtrics = f(\"data_check_is_qualtrics\")(d),\n    qualtrics_tags = f(\".qualtrics_tag_cols\"\
+          )(cols),\n    display_order = f(\".qualtrics_is_display_order\")(cols),\n    stems = vapply(cols,\
+          \ f(\".qualtrics_col_stem\"), character(1), USE.NAMES = FALSE),\n    strip_nrow = nrow(f(\"\
+          data_strip_qualtrics_header\")(d)),\n    promoted = promo$promoted,\n    promoted_names = names(promo$df),\n\
+          \    behaverse = f(\"data_check_is_behaverse\")(d),\n    inquisit = f(\"data_check_is_inquisit\"\
+          )(d),\n    jspsych = f(\"data_check_is_jspsych\")(d),\n    psychopy = f(\"data_check_is_psychopy\"\
+          )(d),\n    task_columns = f(\".detect_task_columns\")(d),\n    scale_blocks = f(\".detect_scale_blocks\"\
+          )(d),\n    accuracy_blocks = f(\".detect_accuracy_blocks\")(d),\n    task_data = f(\".is_task_data\"\
+          )(d),\n    tabular_usable = f(\".tabular_usable\")(facets, d),\n    numeric_col_fraction = f(\"\
+          .numeric_col_fraction\")(d))\n})"
+        "py": "None"
+  "py_args":
+    "path":
+      "$file": "tests/datacheck_files/data/na_strings.csv"
+  "py_drop":
+  - "x"
+- "id": "fixture_profile.files.headerless.csv"
+  "r": "identity"
+  "py": "tests.datacheck_checks.parity_helpers.profile_file"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({\n  d <- metacheck::data_read_head(file.path(root, \"tests/datacheck_files/data/headerless.csv\"\
+          ), n_rows = Inf)\n  if (is.null(d)) return(NULL)\n  ns <- asNamespace(\"metacheck\")\n  f <-\
+          \ function(fn) get(fn, envir = ns)\n  cols <- names(d)\n  per_col <- lapply(seq_along(cols),\
+          \ function(j) {\n    x <- d[[j]]; n <- cols[[j]]\n    list(\n      facets = f(\"data_col_facets\"\
+          )(n, x)[1:7],\n      scale_values = f(\"data_check_scale_values\")(x),\n      outliers = f(\"\
+          data_check_outliers\")(x),\n      constant = f(\"data_check_constant\")(x),\n      empty = f(\"\
+          data_check_empty\")(x),\n      case_issues = f(\"data_check_case_issues\")(x),\n      whitespace\
+          \ = f(\"data_check_whitespace\")(x),\n      numeric_in_text = f(\"data_check_numeric_in_text\"\
+          )(x),\n      colname = f(\"data_check_colname\")(n),\n      pii_values = f(\"data_check_pii_values\"\
+          )(x),\n      pii_name = f(\"data_check_pii_name\")(n),\n      pii_geo = f(\"data_check_pii_geo\"\
+          )(n, x, cols),\n      pii_freetext = f(\"data_check_pii_freetext\")(x),\n      demographic =\
+          \ f(\"data_check_demographic\")(n, x),\n      design_name = f(\"data_check_design_name\")(n),\n\
+          \      spss_filter = f(\"data_check_spss_filter\")(n, x),\n      likert = f(\".is_likert_item\"\
+          )(x),\n      rt = f(\".looks_like_rt\")(x),\n      accuracy = f(\".looks_like_accuracy\")(x),\n\
+          \      accuracy_item = f(\".is_accuracy_item\")(x))\n  })\n  facets <- lapply(seq_along(cols),\
+          \ function(j) f(\"data_col_facets\")(cols[[j]], d[[j]]))\n  promo <- f(\"data_promote_header_row\"\
+          )(d)\n  list(\n    names = cols,\n    columns = per_col,\n    collisions = f(\"data_check_colname_collisions\"\
+          )(cols),\n    qualtrics = f(\"data_check_is_qualtrics\")(d),\n    qualtrics_tags = f(\".qualtrics_tag_cols\"\
+          )(cols),\n    display_order = f(\".qualtrics_is_display_order\")(cols),\n    stems = vapply(cols,\
+          \ f(\".qualtrics_col_stem\"), character(1), USE.NAMES = FALSE),\n    strip_nrow = nrow(f(\"\
+          data_strip_qualtrics_header\")(d)),\n    promoted = promo$promoted,\n    promoted_names = names(promo$df),\n\
+          \    behaverse = f(\"data_check_is_behaverse\")(d),\n    inquisit = f(\"data_check_is_inquisit\"\
+          )(d),\n    jspsych = f(\"data_check_is_jspsych\")(d),\n    psychopy = f(\"data_check_is_psychopy\"\
+          )(d),\n    task_columns = f(\".detect_task_columns\")(d),\n    scale_blocks = f(\".detect_scale_blocks\"\
+          )(d),\n    accuracy_blocks = f(\".detect_accuracy_blocks\")(d),\n    task_data = f(\".is_task_data\"\
+          )(d),\n    tabular_usable = f(\".tabular_usable\")(facets, d),\n    numeric_col_fraction = f(\"\
+          .numeric_col_fraction\")(d))\n})"
+        "py": "None"
+  "py_args":
+    "path":
+      "$file": "tests/datacheck_files/data/headerless.csv"
+  "py_drop":
+  - "x"
+- "id": "fixture_profile.files.hundred.csv"
+  "r": "identity"
+  "py": "tests.datacheck_checks.parity_helpers.profile_file"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({\n  d <- metacheck::data_read_head(file.path(root, \"tests/datacheck_files/data/hundred.csv\"\
+          ), n_rows = Inf)\n  if (is.null(d)) return(NULL)\n  ns <- asNamespace(\"metacheck\")\n  f <-\
+          \ function(fn) get(fn, envir = ns)\n  cols <- names(d)\n  per_col <- lapply(seq_along(cols),\
+          \ function(j) {\n    x <- d[[j]]; n <- cols[[j]]\n    list(\n      facets = f(\"data_col_facets\"\
+          )(n, x)[1:7],\n      scale_values = f(\"data_check_scale_values\")(x),\n      outliers = f(\"\
+          data_check_outliers\")(x),\n      constant = f(\"data_check_constant\")(x),\n      empty = f(\"\
+          data_check_empty\")(x),\n      case_issues = f(\"data_check_case_issues\")(x),\n      whitespace\
+          \ = f(\"data_check_whitespace\")(x),\n      numeric_in_text = f(\"data_check_numeric_in_text\"\
+          )(x),\n      colname = f(\"data_check_colname\")(n),\n      pii_values = f(\"data_check_pii_values\"\
+          )(x),\n      pii_name = f(\"data_check_pii_name\")(n),\n      pii_geo = f(\"data_check_pii_geo\"\
+          )(n, x, cols),\n      pii_freetext = f(\"data_check_pii_freetext\")(x),\n      demographic =\
+          \ f(\"data_check_demographic\")(n, x),\n      design_name = f(\"data_check_design_name\")(n),\n\
+          \      spss_filter = f(\"data_check_spss_filter\")(n, x),\n      likert = f(\".is_likert_item\"\
+          )(x),\n      rt = f(\".looks_like_rt\")(x),\n      accuracy = f(\".looks_like_accuracy\")(x),\n\
+          \      accuracy_item = f(\".is_accuracy_item\")(x))\n  })\n  facets <- lapply(seq_along(cols),\
+          \ function(j) f(\"data_col_facets\")(cols[[j]], d[[j]]))\n  promo <- f(\"data_promote_header_row\"\
+          )(d)\n  list(\n    names = cols,\n    columns = per_col,\n    collisions = f(\"data_check_colname_collisions\"\
+          )(cols),\n    qualtrics = f(\"data_check_is_qualtrics\")(d),\n    qualtrics_tags = f(\".qualtrics_tag_cols\"\
+          )(cols),\n    display_order = f(\".qualtrics_is_display_order\")(cols),\n    stems = vapply(cols,\
+          \ f(\".qualtrics_col_stem\"), character(1), USE.NAMES = FALSE),\n    strip_nrow = nrow(f(\"\
+          data_strip_qualtrics_header\")(d)),\n    promoted = promo$promoted,\n    promoted_names = names(promo$df),\n\
+          \    behaverse = f(\"data_check_is_behaverse\")(d),\n    inquisit = f(\"data_check_is_inquisit\"\
+          )(d),\n    jspsych = f(\"data_check_is_jspsych\")(d),\n    psychopy = f(\"data_check_is_psychopy\"\
+          )(d),\n    task_columns = f(\".detect_task_columns\")(d),\n    scale_blocks = f(\".detect_scale_blocks\"\
+          )(d),\n    accuracy_blocks = f(\".detect_accuracy_blocks\")(d),\n    task_data = f(\".is_task_data\"\
+          )(d),\n    tabular_usable = f(\".tabular_usable\")(facets, d),\n    numeric_col_fraction = f(\"\
+          .numeric_col_fraction\")(d))\n})"
+        "py": "None"
+  "py_args":
+    "path":
+      "$file": "tests/datacheck_files/data/hundred.csv"
+  "py_drop":
+  - "x"
+- "id": "fixture_profile.files.semicolon.csv"
+  "r": "identity"
+  "py": "tests.datacheck_checks.parity_helpers.profile_file"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({\n  d <- metacheck::data_read_head(file.path(root, \"tests/datacheck_files/data/semicolon.csv\"\
+          ), n_rows = Inf)\n  if (is.null(d)) return(NULL)\n  ns <- asNamespace(\"metacheck\")\n  f <-\
+          \ function(fn) get(fn, envir = ns)\n  cols <- names(d)\n  per_col <- lapply(seq_along(cols),\
+          \ function(j) {\n    x <- d[[j]]; n <- cols[[j]]\n    list(\n      facets = f(\"data_col_facets\"\
+          )(n, x)[1:7],\n      scale_values = f(\"data_check_scale_values\")(x),\n      outliers = f(\"\
+          data_check_outliers\")(x),\n      constant = f(\"data_check_constant\")(x),\n      empty = f(\"\
+          data_check_empty\")(x),\n      case_issues = f(\"data_check_case_issues\")(x),\n      whitespace\
+          \ = f(\"data_check_whitespace\")(x),\n      numeric_in_text = f(\"data_check_numeric_in_text\"\
+          )(x),\n      colname = f(\"data_check_colname\")(n),\n      pii_values = f(\"data_check_pii_values\"\
+          )(x),\n      pii_name = f(\"data_check_pii_name\")(n),\n      pii_geo = f(\"data_check_pii_geo\"\
+          )(n, x, cols),\n      pii_freetext = f(\"data_check_pii_freetext\")(x),\n      demographic =\
+          \ f(\"data_check_demographic\")(n, x),\n      design_name = f(\"data_check_design_name\")(n),\n\
+          \      spss_filter = f(\"data_check_spss_filter\")(n, x),\n      likert = f(\".is_likert_item\"\
+          )(x),\n      rt = f(\".looks_like_rt\")(x),\n      accuracy = f(\".looks_like_accuracy\")(x),\n\
+          \      accuracy_item = f(\".is_accuracy_item\")(x))\n  })\n  facets <- lapply(seq_along(cols),\
+          \ function(j) f(\"data_col_facets\")(cols[[j]], d[[j]]))\n  promo <- f(\"data_promote_header_row\"\
+          )(d)\n  list(\n    names = cols,\n    columns = per_col,\n    collisions = f(\"data_check_colname_collisions\"\
+          )(cols),\n    qualtrics = f(\"data_check_is_qualtrics\")(d),\n    qualtrics_tags = f(\".qualtrics_tag_cols\"\
+          )(cols),\n    display_order = f(\".qualtrics_is_display_order\")(cols),\n    stems = vapply(cols,\
+          \ f(\".qualtrics_col_stem\"), character(1), USE.NAMES = FALSE),\n    strip_nrow = nrow(f(\"\
+          data_strip_qualtrics_header\")(d)),\n    promoted = promo$promoted,\n    promoted_names = names(promo$df),\n\
+          \    behaverse = f(\"data_check_is_behaverse\")(d),\n    inquisit = f(\"data_check_is_inquisit\"\
+          )(d),\n    jspsych = f(\"data_check_is_jspsych\")(d),\n    psychopy = f(\"data_check_is_psychopy\"\
+          )(d),\n    task_columns = f(\".detect_task_columns\")(d),\n    scale_blocks = f(\".detect_scale_blocks\"\
+          )(d),\n    accuracy_blocks = f(\".detect_accuracy_blocks\")(d),\n    task_data = f(\".is_task_data\"\
+          )(d),\n    tabular_usable = f(\".tabular_usable\")(facets, d),\n    numeric_col_fraction = f(\"\
+          .numeric_col_fraction\")(d))\n})"
+        "py": "None"
+  "py_args":
+    "path":
+      "$file": "tests/datacheck_files/data/semicolon.csv"
+  "py_drop":
+  - "x"
+- "id": "fixture_profile.files.big_int.csv"
+  "r": "identity"
+  "py": "tests.datacheck_checks.parity_helpers.profile_file"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({\n  d <- metacheck::data_read_head(file.path(root, \"tests/datacheck_files/data/big_int.csv\"\
+          ), n_rows = Inf)\n  if (is.null(d)) return(NULL)\n  ns <- asNamespace(\"metacheck\")\n  f <-\
+          \ function(fn) get(fn, envir = ns)\n  cols <- names(d)\n  per_col <- lapply(seq_along(cols),\
+          \ function(j) {\n    x <- d[[j]]; n <- cols[[j]]\n    list(\n      facets = f(\"data_col_facets\"\
+          )(n, x)[1:7],\n      scale_values = f(\"data_check_scale_values\")(x),\n      outliers = f(\"\
+          data_check_outliers\")(x),\n      constant = f(\"data_check_constant\")(x),\n      empty = f(\"\
+          data_check_empty\")(x),\n      case_issues = f(\"data_check_case_issues\")(x),\n      whitespace\
+          \ = f(\"data_check_whitespace\")(x),\n      numeric_in_text = f(\"data_check_numeric_in_text\"\
+          )(x),\n      colname = f(\"data_check_colname\")(n),\n      pii_values = f(\"data_check_pii_values\"\
+          )(x),\n      pii_name = f(\"data_check_pii_name\")(n),\n      pii_geo = f(\"data_check_pii_geo\"\
+          )(n, x, cols),\n      pii_freetext = f(\"data_check_pii_freetext\")(x),\n      demographic =\
+          \ f(\"data_check_demographic\")(n, x),\n      design_name = f(\"data_check_design_name\")(n),\n\
+          \      spss_filter = f(\"data_check_spss_filter\")(n, x),\n      likert = f(\".is_likert_item\"\
+          )(x),\n      rt = f(\".looks_like_rt\")(x),\n      accuracy = f(\".looks_like_accuracy\")(x),\n\
+          \      accuracy_item = f(\".is_accuracy_item\")(x))\n  })\n  facets <- lapply(seq_along(cols),\
+          \ function(j) f(\"data_col_facets\")(cols[[j]], d[[j]]))\n  promo <- f(\"data_promote_header_row\"\
+          )(d)\n  list(\n    names = cols,\n    columns = per_col,\n    collisions = f(\"data_check_colname_collisions\"\
+          )(cols),\n    qualtrics = f(\"data_check_is_qualtrics\")(d),\n    qualtrics_tags = f(\".qualtrics_tag_cols\"\
+          )(cols),\n    display_order = f(\".qualtrics_is_display_order\")(cols),\n    stems = vapply(cols,\
+          \ f(\".qualtrics_col_stem\"), character(1), USE.NAMES = FALSE),\n    strip_nrow = nrow(f(\"\
+          data_strip_qualtrics_header\")(d)),\n    promoted = promo$promoted,\n    promoted_names = names(promo$df),\n\
+          \    behaverse = f(\"data_check_is_behaverse\")(d),\n    inquisit = f(\"data_check_is_inquisit\"\
+          )(d),\n    jspsych = f(\"data_check_is_jspsych\")(d),\n    psychopy = f(\"data_check_is_psychopy\"\
+          )(d),\n    task_columns = f(\".detect_task_columns\")(d),\n    scale_blocks = f(\".detect_scale_blocks\"\
+          )(d),\n    accuracy_blocks = f(\".detect_accuracy_blocks\")(d),\n    task_data = f(\".is_task_data\"\
+          )(d),\n    tabular_usable = f(\".tabular_usable\")(facets, d),\n    numeric_col_fraction = f(\"\
+          .numeric_col_fraction\")(d))\n})"
+        "py": "None"
+  "py_args":
+    "path":
+      "$file": "tests/datacheck_files/data/big_int.csv"
+  "py_drop":
+  - "x"
+- "id": "fixture_profile.files.manifest.csv"
+  "r": "identity"
+  "py": "tests.datacheck_checks.parity_helpers.profile_file"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({\n  d <- metacheck::data_read_head(file.path(root, \"tests/datacheck_files/data/manifest.csv\"\
+          ), n_rows = Inf)\n  if (is.null(d)) return(NULL)\n  ns <- asNamespace(\"metacheck\")\n  f <-\
+          \ function(fn) get(fn, envir = ns)\n  cols <- names(d)\n  per_col <- lapply(seq_along(cols),\
+          \ function(j) {\n    x <- d[[j]]; n <- cols[[j]]\n    list(\n      facets = f(\"data_col_facets\"\
+          )(n, x)[1:7],\n      scale_values = f(\"data_check_scale_values\")(x),\n      outliers = f(\"\
+          data_check_outliers\")(x),\n      constant = f(\"data_check_constant\")(x),\n      empty = f(\"\
+          data_check_empty\")(x),\n      case_issues = f(\"data_check_case_issues\")(x),\n      whitespace\
+          \ = f(\"data_check_whitespace\")(x),\n      numeric_in_text = f(\"data_check_numeric_in_text\"\
+          )(x),\n      colname = f(\"data_check_colname\")(n),\n      pii_values = f(\"data_check_pii_values\"\
+          )(x),\n      pii_name = f(\"data_check_pii_name\")(n),\n      pii_geo = f(\"data_check_pii_geo\"\
+          )(n, x, cols),\n      pii_freetext = f(\"data_check_pii_freetext\")(x),\n      demographic =\
+          \ f(\"data_check_demographic\")(n, x),\n      design_name = f(\"data_check_design_name\")(n),\n\
+          \      spss_filter = f(\"data_check_spss_filter\")(n, x),\n      likert = f(\".is_likert_item\"\
+          )(x),\n      rt = f(\".looks_like_rt\")(x),\n      accuracy = f(\".looks_like_accuracy\")(x),\n\
+          \      accuracy_item = f(\".is_accuracy_item\")(x))\n  })\n  facets <- lapply(seq_along(cols),\
+          \ function(j) f(\"data_col_facets\")(cols[[j]], d[[j]]))\n  promo <- f(\"data_promote_header_row\"\
+          )(d)\n  list(\n    names = cols,\n    columns = per_col,\n    collisions = f(\"data_check_colname_collisions\"\
+          )(cols),\n    qualtrics = f(\"data_check_is_qualtrics\")(d),\n    qualtrics_tags = f(\".qualtrics_tag_cols\"\
+          )(cols),\n    display_order = f(\".qualtrics_is_display_order\")(cols),\n    stems = vapply(cols,\
+          \ f(\".qualtrics_col_stem\"), character(1), USE.NAMES = FALSE),\n    strip_nrow = nrow(f(\"\
+          data_strip_qualtrics_header\")(d)),\n    promoted = promo$promoted,\n    promoted_names = names(promo$df),\n\
+          \    behaverse = f(\"data_check_is_behaverse\")(d),\n    inquisit = f(\"data_check_is_inquisit\"\
+          )(d),\n    jspsych = f(\"data_check_is_jspsych\")(d),\n    psychopy = f(\"data_check_is_psychopy\"\
+          )(d),\n    task_columns = f(\".detect_task_columns\")(d),\n    scale_blocks = f(\".detect_scale_blocks\"\
+          )(d),\n    accuracy_blocks = f(\".detect_accuracy_blocks\")(d),\n    task_data = f(\".is_task_data\"\
+          )(d),\n    tabular_usable = f(\".tabular_usable\")(facets, d),\n    numeric_col_fraction = f(\"\
+          .numeric_col_fraction\")(d))\n})"
+        "py": "None"
+  "py_args":
+    "path":
+      "$file": "tests/datacheck_files/data/manifest.csv"
+  "py_drop":
+  - "x"
+- "id": "fixture_profile.files.qualtrics.csv"
+  "r": "identity"
+  "py": "tests.datacheck_checks.parity_helpers.profile_file"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({\n  d <- metacheck::data_read_head(file.path(root, \"tests/datacheck_files/data/qualtrics.csv\"\
+          ), n_rows = Inf)\n  if (is.null(d)) return(NULL)\n  ns <- asNamespace(\"metacheck\")\n  f <-\
+          \ function(fn) get(fn, envir = ns)\n  cols <- names(d)\n  per_col <- lapply(seq_along(cols),\
+          \ function(j) {\n    x <- d[[j]]; n <- cols[[j]]\n    list(\n      facets = f(\"data_col_facets\"\
+          )(n, x)[1:7],\n      scale_values = f(\"data_check_scale_values\")(x),\n      outliers = f(\"\
+          data_check_outliers\")(x),\n      constant = f(\"data_check_constant\")(x),\n      empty = f(\"\
+          data_check_empty\")(x),\n      case_issues = f(\"data_check_case_issues\")(x),\n      whitespace\
+          \ = f(\"data_check_whitespace\")(x),\n      numeric_in_text = f(\"data_check_numeric_in_text\"\
+          )(x),\n      colname = f(\"data_check_colname\")(n),\n      pii_values = f(\"data_check_pii_values\"\
+          )(x),\n      pii_name = f(\"data_check_pii_name\")(n),\n      pii_geo = f(\"data_check_pii_geo\"\
+          )(n, x, cols),\n      pii_freetext = f(\"data_check_pii_freetext\")(x),\n      demographic =\
+          \ f(\"data_check_demographic\")(n, x),\n      design_name = f(\"data_check_design_name\")(n),\n\
+          \      spss_filter = f(\"data_check_spss_filter\")(n, x),\n      likert = f(\".is_likert_item\"\
+          )(x),\n      rt = f(\".looks_like_rt\")(x),\n      accuracy = f(\".looks_like_accuracy\")(x),\n\
+          \      accuracy_item = f(\".is_accuracy_item\")(x))\n  })\n  facets <- lapply(seq_along(cols),\
+          \ function(j) f(\"data_col_facets\")(cols[[j]], d[[j]]))\n  promo <- f(\"data_promote_header_row\"\
+          )(d)\n  list(\n    names = cols,\n    columns = per_col,\n    collisions = f(\"data_check_colname_collisions\"\
+          )(cols),\n    qualtrics = f(\"data_check_is_qualtrics\")(d),\n    qualtrics_tags = f(\".qualtrics_tag_cols\"\
+          )(cols),\n    display_order = f(\".qualtrics_is_display_order\")(cols),\n    stems = vapply(cols,\
+          \ f(\".qualtrics_col_stem\"), character(1), USE.NAMES = FALSE),\n    strip_nrow = nrow(f(\"\
+          data_strip_qualtrics_header\")(d)),\n    promoted = promo$promoted,\n    promoted_names = names(promo$df),\n\
+          \    behaverse = f(\"data_check_is_behaverse\")(d),\n    inquisit = f(\"data_check_is_inquisit\"\
+          )(d),\n    jspsych = f(\"data_check_is_jspsych\")(d),\n    psychopy = f(\"data_check_is_psychopy\"\
+          )(d),\n    task_columns = f(\".detect_task_columns\")(d),\n    scale_blocks = f(\".detect_scale_blocks\"\
+          )(d),\n    accuracy_blocks = f(\".detect_accuracy_blocks\")(d),\n    task_data = f(\".is_task_data\"\
+          )(d),\n    tabular_usable = f(\".tabular_usable\")(facets, d),\n    numeric_col_fraction = f(\"\
+          .numeric_col_fraction\")(d))\n})"
+        "py": "None"
+  "py_args":
+    "path":
+      "$file": "tests/datacheck_files/data/qualtrics.csv"
+  "py_drop":
+  - "x"
+- "id": "fixture_profile.files.labelled.sav"
+  "r": "identity"
+  "py": "tests.datacheck_checks.parity_helpers.profile_file"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({\n  d <- metacheck::data_read_head(file.path(root, \"tests/datacheck_files/data/labelled.sav\"\
+          ), n_rows = Inf)\n  if (is.null(d)) return(NULL)\n  ns <- asNamespace(\"metacheck\")\n  f <-\
+          \ function(fn) get(fn, envir = ns)\n  cols <- names(d)\n  per_col <- lapply(seq_along(cols),\
+          \ function(j) {\n    x <- d[[j]]; n <- cols[[j]]\n    list(\n      facets = f(\"data_col_facets\"\
+          )(n, x)[1:7],\n      scale_values = f(\"data_check_scale_values\")(x),\n      outliers = f(\"\
+          data_check_outliers\")(x),\n      constant = f(\"data_check_constant\")(x),\n      empty = f(\"\
+          data_check_empty\")(x),\n      case_issues = f(\"data_check_case_issues\")(x),\n      whitespace\
+          \ = f(\"data_check_whitespace\")(x),\n      numeric_in_text = f(\"data_check_numeric_in_text\"\
+          )(x),\n      colname = f(\"data_check_colname\")(n),\n      pii_values = f(\"data_check_pii_values\"\
+          )(x),\n      pii_name = f(\"data_check_pii_name\")(n),\n      pii_geo = f(\"data_check_pii_geo\"\
+          )(n, x, cols),\n      pii_freetext = f(\"data_check_pii_freetext\")(x),\n      demographic =\
+          \ f(\"data_check_demographic\")(n, x),\n      design_name = f(\"data_check_design_name\")(n),\n\
+          \      spss_filter = f(\"data_check_spss_filter\")(n, x),\n      likert = f(\".is_likert_item\"\
+          )(x),\n      rt = f(\".looks_like_rt\")(x),\n      accuracy = f(\".looks_like_accuracy\")(x),\n\
+          \      accuracy_item = f(\".is_accuracy_item\")(x))\n  })\n  facets <- lapply(seq_along(cols),\
+          \ function(j) f(\"data_col_facets\")(cols[[j]], d[[j]]))\n  promo <- f(\"data_promote_header_row\"\
+          )(d)\n  list(\n    names = cols,\n    columns = per_col,\n    collisions = f(\"data_check_colname_collisions\"\
+          )(cols),\n    qualtrics = f(\"data_check_is_qualtrics\")(d),\n    qualtrics_tags = f(\".qualtrics_tag_cols\"\
+          )(cols),\n    display_order = f(\".qualtrics_is_display_order\")(cols),\n    stems = vapply(cols,\
+          \ f(\".qualtrics_col_stem\"), character(1), USE.NAMES = FALSE),\n    strip_nrow = nrow(f(\"\
+          data_strip_qualtrics_header\")(d)),\n    promoted = promo$promoted,\n    promoted_names = names(promo$df),\n\
+          \    behaverse = f(\"data_check_is_behaverse\")(d),\n    inquisit = f(\"data_check_is_inquisit\"\
+          )(d),\n    jspsych = f(\"data_check_is_jspsych\")(d),\n    psychopy = f(\"data_check_is_psychopy\"\
+          )(d),\n    task_columns = f(\".detect_task_columns\")(d),\n    scale_blocks = f(\".detect_scale_blocks\"\
+          )(d),\n    accuracy_blocks = f(\".detect_accuracy_blocks\")(d),\n    task_data = f(\".is_task_data\"\
+          )(d),\n    tabular_usable = f(\".tabular_usable\")(facets, d),\n    numeric_col_fraction = f(\"\
+          .numeric_col_fraction\")(d))\n})"
+        "py": "None"
+  "py_args":
+    "path":
+      "$file": "tests/datacheck_files/data/labelled.sav"
+  "py_drop":
+  - "x"
+- "id": "fixture_profile.files.labelled.dta"
+  "r": "identity"
+  "py": "tests.datacheck_checks.parity_helpers.profile_file"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({\n  d <- metacheck::data_read_head(file.path(root, \"tests/datacheck_files/data/labelled.dta\"\
+          ), n_rows = Inf)\n  if (is.null(d)) return(NULL)\n  ns <- asNamespace(\"metacheck\")\n  f <-\
+          \ function(fn) get(fn, envir = ns)\n  cols <- names(d)\n  per_col <- lapply(seq_along(cols),\
+          \ function(j) {\n    x <- d[[j]]; n <- cols[[j]]\n    list(\n      facets = f(\"data_col_facets\"\
+          )(n, x)[1:7],\n      scale_values = f(\"data_check_scale_values\")(x),\n      outliers = f(\"\
+          data_check_outliers\")(x),\n      constant = f(\"data_check_constant\")(x),\n      empty = f(\"\
+          data_check_empty\")(x),\n      case_issues = f(\"data_check_case_issues\")(x),\n      whitespace\
+          \ = f(\"data_check_whitespace\")(x),\n      numeric_in_text = f(\"data_check_numeric_in_text\"\
+          )(x),\n      colname = f(\"data_check_colname\")(n),\n      pii_values = f(\"data_check_pii_values\"\
+          )(x),\n      pii_name = f(\"data_check_pii_name\")(n),\n      pii_geo = f(\"data_check_pii_geo\"\
+          )(n, x, cols),\n      pii_freetext = f(\"data_check_pii_freetext\")(x),\n      demographic =\
+          \ f(\"data_check_demographic\")(n, x),\n      design_name = f(\"data_check_design_name\")(n),\n\
+          \      spss_filter = f(\"data_check_spss_filter\")(n, x),\n      likert = f(\".is_likert_item\"\
+          )(x),\n      rt = f(\".looks_like_rt\")(x),\n      accuracy = f(\".looks_like_accuracy\")(x),\n\
+          \      accuracy_item = f(\".is_accuracy_item\")(x))\n  })\n  facets <- lapply(seq_along(cols),\
+          \ function(j) f(\"data_col_facets\")(cols[[j]], d[[j]]))\n  promo <- f(\"data_promote_header_row\"\
+          )(d)\n  list(\n    names = cols,\n    columns = per_col,\n    collisions = f(\"data_check_colname_collisions\"\
+          )(cols),\n    qualtrics = f(\"data_check_is_qualtrics\")(d),\n    qualtrics_tags = f(\".qualtrics_tag_cols\"\
+          )(cols),\n    display_order = f(\".qualtrics_is_display_order\")(cols),\n    stems = vapply(cols,\
+          \ f(\".qualtrics_col_stem\"), character(1), USE.NAMES = FALSE),\n    strip_nrow = nrow(f(\"\
+          data_strip_qualtrics_header\")(d)),\n    promoted = promo$promoted,\n    promoted_names = names(promo$df),\n\
+          \    behaverse = f(\"data_check_is_behaverse\")(d),\n    inquisit = f(\"data_check_is_inquisit\"\
+          )(d),\n    jspsych = f(\"data_check_is_jspsych\")(d),\n    psychopy = f(\"data_check_is_psychopy\"\
+          )(d),\n    task_columns = f(\".detect_task_columns\")(d),\n    scale_blocks = f(\".detect_scale_blocks\"\
+          )(d),\n    accuracy_blocks = f(\".detect_accuracy_blocks\")(d),\n    task_data = f(\".is_task_data\"\
+          )(d),\n    tabular_usable = f(\".tabular_usable\")(facets, d),\n    numeric_col_fraction = f(\"\
+          .numeric_col_fraction\")(d))\n})"
+        "py": "None"
+  "py_args":
+    "path":
+      "$file": "tests/datacheck_files/data/labelled.dta"
+  "py_drop":
+  - "x"
+- "id": "fixture_profile.files.typed.ods"
+  "r": "identity"
+  "py": "tests.datacheck_checks.parity_helpers.profile_file"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({\n  d <- metacheck::data_read_head(file.path(root, \"tests/datacheck_files/data/typed.ods\"\
+          ), n_rows = Inf)\n  if (is.null(d)) return(NULL)\n  ns <- asNamespace(\"metacheck\")\n  f <-\
+          \ function(fn) get(fn, envir = ns)\n  cols <- names(d)\n  per_col <- lapply(seq_along(cols),\
+          \ function(j) {\n    x <- d[[j]]; n <- cols[[j]]\n    list(\n      facets = f(\"data_col_facets\"\
+          )(n, x)[1:7],\n      scale_values = f(\"data_check_scale_values\")(x),\n      outliers = f(\"\
+          data_check_outliers\")(x),\n      constant = f(\"data_check_constant\")(x),\n      empty = f(\"\
+          data_check_empty\")(x),\n      case_issues = f(\"data_check_case_issues\")(x),\n      whitespace\
+          \ = f(\"data_check_whitespace\")(x),\n      numeric_in_text = f(\"data_check_numeric_in_text\"\
+          )(x),\n      colname = f(\"data_check_colname\")(n),\n      pii_values = f(\"data_check_pii_values\"\
+          )(x),\n      pii_name = f(\"data_check_pii_name\")(n),\n      pii_geo = f(\"data_check_pii_geo\"\
+          )(n, x, cols),\n      pii_freetext = f(\"data_check_pii_freetext\")(x),\n      demographic =\
+          \ f(\"data_check_demographic\")(n, x),\n      design_name = f(\"data_check_design_name\")(n),\n\
+          \      spss_filter = f(\"data_check_spss_filter\")(n, x),\n      likert = f(\".is_likert_item\"\
+          )(x),\n      rt = f(\".looks_like_rt\")(x),\n      accuracy = f(\".looks_like_accuracy\")(x),\n\
+          \      accuracy_item = f(\".is_accuracy_item\")(x))\n  })\n  facets <- lapply(seq_along(cols),\
+          \ function(j) f(\"data_col_facets\")(cols[[j]], d[[j]]))\n  promo <- f(\"data_promote_header_row\"\
+          )(d)\n  list(\n    names = cols,\n    columns = per_col,\n    collisions = f(\"data_check_colname_collisions\"\
+          )(cols),\n    qualtrics = f(\"data_check_is_qualtrics\")(d),\n    qualtrics_tags = f(\".qualtrics_tag_cols\"\
+          )(cols),\n    display_order = f(\".qualtrics_is_display_order\")(cols),\n    stems = vapply(cols,\
+          \ f(\".qualtrics_col_stem\"), character(1), USE.NAMES = FALSE),\n    strip_nrow = nrow(f(\"\
+          data_strip_qualtrics_header\")(d)),\n    promoted = promo$promoted,\n    promoted_names = names(promo$df),\n\
+          \    behaverse = f(\"data_check_is_behaverse\")(d),\n    inquisit = f(\"data_check_is_inquisit\"\
+          )(d),\n    jspsych = f(\"data_check_is_jspsych\")(d),\n    psychopy = f(\"data_check_is_psychopy\"\
+          )(d),\n    task_columns = f(\".detect_task_columns\")(d),\n    scale_blocks = f(\".detect_scale_blocks\"\
+          )(d),\n    accuracy_blocks = f(\".detect_accuracy_blocks\")(d),\n    task_data = f(\".is_task_data\"\
+          )(d),\n    tabular_usable = f(\".tabular_usable\")(facets, d),\n    numeric_col_fraction = f(\"\
+          .numeric_col_fraction\")(d))\n})"
+        "py": "None"
+  "py_args":
+    "path":
+      "$file": "tests/datacheck_files/data/typed.ods"
+  "py_drop":
+  - "x"
+- "id": "fixture_profile.files.offset.ods"
+  "r": "identity"
+  "py": "tests.datacheck_checks.parity_helpers.profile_file"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({\n  d <- metacheck::data_read_head(file.path(root, \"tests/datacheck_files/data/offset.ods\"\
+          ), n_rows = Inf)\n  if (is.null(d)) return(NULL)\n  ns <- asNamespace(\"metacheck\")\n  f <-\
+          \ function(fn) get(fn, envir = ns)\n  cols <- names(d)\n  per_col <- lapply(seq_along(cols),\
+          \ function(j) {\n    x <- d[[j]]; n <- cols[[j]]\n    list(\n      facets = f(\"data_col_facets\"\
+          )(n, x)[1:7],\n      scale_values = f(\"data_check_scale_values\")(x),\n      outliers = f(\"\
+          data_check_outliers\")(x),\n      constant = f(\"data_check_constant\")(x),\n      empty = f(\"\
+          data_check_empty\")(x),\n      case_issues = f(\"data_check_case_issues\")(x),\n      whitespace\
+          \ = f(\"data_check_whitespace\")(x),\n      numeric_in_text = f(\"data_check_numeric_in_text\"\
+          )(x),\n      colname = f(\"data_check_colname\")(n),\n      pii_values = f(\"data_check_pii_values\"\
+          )(x),\n      pii_name = f(\"data_check_pii_name\")(n),\n      pii_geo = f(\"data_check_pii_geo\"\
+          )(n, x, cols),\n      pii_freetext = f(\"data_check_pii_freetext\")(x),\n      demographic =\
+          \ f(\"data_check_demographic\")(n, x),\n      design_name = f(\"data_check_design_name\")(n),\n\
+          \      spss_filter = f(\"data_check_spss_filter\")(n, x),\n      likert = f(\".is_likert_item\"\
+          )(x),\n      rt = f(\".looks_like_rt\")(x),\n      accuracy = f(\".looks_like_accuracy\")(x),\n\
+          \      accuracy_item = f(\".is_accuracy_item\")(x))\n  })\n  facets <- lapply(seq_along(cols),\
+          \ function(j) f(\"data_col_facets\")(cols[[j]], d[[j]]))\n  promo <- f(\"data_promote_header_row\"\
+          )(d)\n  list(\n    names = cols,\n    columns = per_col,\n    collisions = f(\"data_check_colname_collisions\"\
+          )(cols),\n    qualtrics = f(\"data_check_is_qualtrics\")(d),\n    qualtrics_tags = f(\".qualtrics_tag_cols\"\
+          )(cols),\n    display_order = f(\".qualtrics_is_display_order\")(cols),\n    stems = vapply(cols,\
+          \ f(\".qualtrics_col_stem\"), character(1), USE.NAMES = FALSE),\n    strip_nrow = nrow(f(\"\
+          data_strip_qualtrics_header\")(d)),\n    promoted = promo$promoted,\n    promoted_names = names(promo$df),\n\
+          \    behaverse = f(\"data_check_is_behaverse\")(d),\n    inquisit = f(\"data_check_is_inquisit\"\
+          )(d),\n    jspsych = f(\"data_check_is_jspsych\")(d),\n    psychopy = f(\"data_check_is_psychopy\"\
+          )(d),\n    task_columns = f(\".detect_task_columns\")(d),\n    scale_blocks = f(\".detect_scale_blocks\"\
+          )(d),\n    accuracy_blocks = f(\".detect_accuracy_blocks\")(d),\n    task_data = f(\".is_task_data\"\
+          )(d),\n    tabular_usable = f(\".tabular_usable\")(facets, d),\n    numeric_col_fraction = f(\"\
+          .numeric_col_fraction\")(d))\n})"
+        "py": "None"
+  "py_args":
+    "path":
+      "$file": "tests/datacheck_files/data/offset.ods"
+  "py_drop":
+  - "x"
+- "id": "fixture_profile.files.readxl_datasets.xlsx"
+  "r": "identity"
+  "py": "tests.datacheck_checks.parity_helpers.profile_file"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({\n  d <- metacheck::data_read_head(file.path(root, \"tests/datacheck_files/data/readxl_datasets.xlsx\"\
+          ), n_rows = Inf)\n  if (is.null(d)) return(NULL)\n  ns <- asNamespace(\"metacheck\")\n  f <-\
+          \ function(fn) get(fn, envir = ns)\n  cols <- names(d)\n  per_col <- lapply(seq_along(cols),\
+          \ function(j) {\n    x <- d[[j]]; n <- cols[[j]]\n    list(\n      facets = f(\"data_col_facets\"\
+          )(n, x)[1:7],\n      scale_values = f(\"data_check_scale_values\")(x),\n      outliers = f(\"\
+          data_check_outliers\")(x),\n      constant = f(\"data_check_constant\")(x),\n      empty = f(\"\
+          data_check_empty\")(x),\n      case_issues = f(\"data_check_case_issues\")(x),\n      whitespace\
+          \ = f(\"data_check_whitespace\")(x),\n      numeric_in_text = f(\"data_check_numeric_in_text\"\
+          )(x),\n      colname = f(\"data_check_colname\")(n),\n      pii_values = f(\"data_check_pii_values\"\
+          )(x),\n      pii_name = f(\"data_check_pii_name\")(n),\n      pii_geo = f(\"data_check_pii_geo\"\
+          )(n, x, cols),\n      pii_freetext = f(\"data_check_pii_freetext\")(x),\n      demographic =\
+          \ f(\"data_check_demographic\")(n, x),\n      design_name = f(\"data_check_design_name\")(n),\n\
+          \      spss_filter = f(\"data_check_spss_filter\")(n, x),\n      likert = f(\".is_likert_item\"\
+          )(x),\n      rt = f(\".looks_like_rt\")(x),\n      accuracy = f(\".looks_like_accuracy\")(x),\n\
+          \      accuracy_item = f(\".is_accuracy_item\")(x))\n  })\n  facets <- lapply(seq_along(cols),\
+          \ function(j) f(\"data_col_facets\")(cols[[j]], d[[j]]))\n  promo <- f(\"data_promote_header_row\"\
+          )(d)\n  list(\n    names = cols,\n    columns = per_col,\n    collisions = f(\"data_check_colname_collisions\"\
+          )(cols),\n    qualtrics = f(\"data_check_is_qualtrics\")(d),\n    qualtrics_tags = f(\".qualtrics_tag_cols\"\
+          )(cols),\n    display_order = f(\".qualtrics_is_display_order\")(cols),\n    stems = vapply(cols,\
+          \ f(\".qualtrics_col_stem\"), character(1), USE.NAMES = FALSE),\n    strip_nrow = nrow(f(\"\
+          data_strip_qualtrics_header\")(d)),\n    promoted = promo$promoted,\n    promoted_names = names(promo$df),\n\
+          \    behaverse = f(\"data_check_is_behaverse\")(d),\n    inquisit = f(\"data_check_is_inquisit\"\
+          )(d),\n    jspsych = f(\"data_check_is_jspsych\")(d),\n    psychopy = f(\"data_check_is_psychopy\"\
+          )(d),\n    task_columns = f(\".detect_task_columns\")(d),\n    scale_blocks = f(\".detect_scale_blocks\"\
+          )(d),\n    accuracy_blocks = f(\".detect_accuracy_blocks\")(d),\n    task_data = f(\".is_task_data\"\
+          )(d),\n    tabular_usable = f(\".tabular_usable\")(facets, d),\n    numeric_col_fraction = f(\"\
+          .numeric_col_fraction\")(d))\n})"
+        "py": "None"
+  "py_args":
+    "path":
+      "$file": "tests/datacheck_files/data/readxl_datasets.xlsx"
+  "py_drop":
+  - "x"
+- "id": "fixture_profile.files.readxl_deaths.xlsx"
+  "r": "identity"
+  "py": "tests.datacheck_checks.parity_helpers.profile_file"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({\n  d <- metacheck::data_read_head(file.path(root, \"tests/datacheck_files/data/readxl_deaths.xlsx\"\
+          ), n_rows = Inf)\n  if (is.null(d)) return(NULL)\n  ns <- asNamespace(\"metacheck\")\n  f <-\
+          \ function(fn) get(fn, envir = ns)\n  cols <- names(d)\n  per_col <- lapply(seq_along(cols),\
+          \ function(j) {\n    x <- d[[j]]; n <- cols[[j]]\n    list(\n      facets = f(\"data_col_facets\"\
+          )(n, x)[1:7],\n      scale_values = f(\"data_check_scale_values\")(x),\n      outliers = f(\"\
+          data_check_outliers\")(x),\n      constant = f(\"data_check_constant\")(x),\n      empty = f(\"\
+          data_check_empty\")(x),\n      case_issues = f(\"data_check_case_issues\")(x),\n      whitespace\
+          \ = f(\"data_check_whitespace\")(x),\n      numeric_in_text = f(\"data_check_numeric_in_text\"\
+          )(x),\n      colname = f(\"data_check_colname\")(n),\n      pii_values = f(\"data_check_pii_values\"\
+          )(x),\n      pii_name = f(\"data_check_pii_name\")(n),\n      pii_geo = f(\"data_check_pii_geo\"\
+          )(n, x, cols),\n      pii_freetext = f(\"data_check_pii_freetext\")(x),\n      demographic =\
+          \ f(\"data_check_demographic\")(n, x),\n      design_name = f(\"data_check_design_name\")(n),\n\
+          \      spss_filter = f(\"data_check_spss_filter\")(n, x),\n      likert = f(\".is_likert_item\"\
+          )(x),\n      rt = f(\".looks_like_rt\")(x),\n      accuracy = f(\".looks_like_accuracy\")(x),\n\
+          \      accuracy_item = f(\".is_accuracy_item\")(x))\n  })\n  facets <- lapply(seq_along(cols),\
+          \ function(j) f(\"data_col_facets\")(cols[[j]], d[[j]]))\n  promo <- f(\"data_promote_header_row\"\
+          )(d)\n  list(\n    names = cols,\n    columns = per_col,\n    collisions = f(\"data_check_colname_collisions\"\
+          )(cols),\n    qualtrics = f(\"data_check_is_qualtrics\")(d),\n    qualtrics_tags = f(\".qualtrics_tag_cols\"\
+          )(cols),\n    display_order = f(\".qualtrics_is_display_order\")(cols),\n    stems = vapply(cols,\
+          \ f(\".qualtrics_col_stem\"), character(1), USE.NAMES = FALSE),\n    strip_nrow = nrow(f(\"\
+          data_strip_qualtrics_header\")(d)),\n    promoted = promo$promoted,\n    promoted_names = names(promo$df),\n\
+          \    behaverse = f(\"data_check_is_behaverse\")(d),\n    inquisit = f(\"data_check_is_inquisit\"\
+          )(d),\n    jspsych = f(\"data_check_is_jspsych\")(d),\n    psychopy = f(\"data_check_is_psychopy\"\
+          )(d),\n    task_columns = f(\".detect_task_columns\")(d),\n    scale_blocks = f(\".detect_scale_blocks\"\
+          )(d),\n    accuracy_blocks = f(\".detect_accuracy_blocks\")(d),\n    task_data = f(\".is_task_data\"\
+          )(d),\n    tabular_usable = f(\".tabular_usable\")(facets, d),\n    numeric_col_fraction = f(\"\
+          .numeric_col_fraction\")(d))\n})"
+        "py": "None"
+  "py_args":
+    "path":
+      "$file": "tests/datacheck_files/data/readxl_deaths.xlsx"
+  "py_drop":
+  - "x"
+- "id": "fixture_profile.files.study.rds"
+  "r": "identity"
+  "py": "tests.datacheck_checks.parity_helpers.profile_file"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({\n  d <- metacheck::data_read_head(file.path(root, \"tests/datacheck_files/data/study.rds\"\
+          ), n_rows = Inf)\n  if (is.null(d)) return(NULL)\n  ns <- asNamespace(\"metacheck\")\n  f <-\
+          \ function(fn) get(fn, envir = ns)\n  cols <- names(d)\n  per_col <- lapply(seq_along(cols),\
+          \ function(j) {\n    x <- d[[j]]; n <- cols[[j]]\n    list(\n      facets = f(\"data_col_facets\"\
+          )(n, x)[1:7],\n      scale_values = f(\"data_check_scale_values\")(x),\n      outliers = f(\"\
+          data_check_outliers\")(x),\n      constant = f(\"data_check_constant\")(x),\n      empty = f(\"\
+          data_check_empty\")(x),\n      case_issues = f(\"data_check_case_issues\")(x),\n      whitespace\
+          \ = f(\"data_check_whitespace\")(x),\n      numeric_in_text = f(\"data_check_numeric_in_text\"\
+          )(x),\n      colname = f(\"data_check_colname\")(n),\n      pii_values = f(\"data_check_pii_values\"\
+          )(x),\n      pii_name = f(\"data_check_pii_name\")(n),\n      pii_geo = f(\"data_check_pii_geo\"\
+          )(n, x, cols),\n      pii_freetext = f(\"data_check_pii_freetext\")(x),\n      demographic =\
+          \ f(\"data_check_demographic\")(n, x),\n      design_name = f(\"data_check_design_name\")(n),\n\
+          \      spss_filter = f(\"data_check_spss_filter\")(n, x),\n      likert = f(\".is_likert_item\"\
+          )(x),\n      rt = f(\".looks_like_rt\")(x),\n      accuracy = f(\".looks_like_accuracy\")(x),\n\
+          \      accuracy_item = f(\".is_accuracy_item\")(x))\n  })\n  facets <- lapply(seq_along(cols),\
+          \ function(j) f(\"data_col_facets\")(cols[[j]], d[[j]]))\n  promo <- f(\"data_promote_header_row\"\
+          )(d)\n  list(\n    names = cols,\n    columns = per_col,\n    collisions = f(\"data_check_colname_collisions\"\
+          )(cols),\n    qualtrics = f(\"data_check_is_qualtrics\")(d),\n    qualtrics_tags = f(\".qualtrics_tag_cols\"\
+          )(cols),\n    display_order = f(\".qualtrics_is_display_order\")(cols),\n    stems = vapply(cols,\
+          \ f(\".qualtrics_col_stem\"), character(1), USE.NAMES = FALSE),\n    strip_nrow = nrow(f(\"\
+          data_strip_qualtrics_header\")(d)),\n    promoted = promo$promoted,\n    promoted_names = names(promo$df),\n\
+          \    behaverse = f(\"data_check_is_behaverse\")(d),\n    inquisit = f(\"data_check_is_inquisit\"\
+          )(d),\n    jspsych = f(\"data_check_is_jspsych\")(d),\n    psychopy = f(\"data_check_is_psychopy\"\
+          )(d),\n    task_columns = f(\".detect_task_columns\")(d),\n    scale_blocks = f(\".detect_scale_blocks\"\
+          )(d),\n    accuracy_blocks = f(\".detect_accuracy_blocks\")(d),\n    task_data = f(\".is_task_data\"\
+          )(d),\n    tabular_usable = f(\".tabular_usable\")(facets, d),\n    numeric_col_fraction = f(\"\
+          .numeric_col_fraction\")(d))\n})"
+        "py": "None"
+  "py_args":
+    "path":
+      "$file": "tests/datacheck_files/data/study.rds"
+  "py_drop":
+  - "x"
+- "id": "data_strip_qualtrics_header.factor_columns"
+  "r": "data_strip_qualtrics_header"
+  "py": "pytacheck.datacheck.checks.data_strip_qualtrics_header"
+  "args":
+    "df":
+      "$expr":
+        "r": "data.frame(StartDate = factor(c(\"Start Date\", \"2021-01-01\", \"2021-01-02\")),\n    \
+          \  EndDate = c(\"End Date\", \"2021-01-01\", \"2021-01-02\"), Progress = c(\"Progress\", \"\
+          100\", \"50\"),\n      Finished = factor(c(\"Finished\", \"1\", \"1\"), levels = c(\"1\", \"\
+          Finished\")),\n      stringsAsFactors = FALSE)"
+        "py": "pd.DataFrame({'StartDate': pd.Categorical(['Start Date', '2021-01-01', '2021-01-02']),\n\
+          \      'EndDate': ['End Date', '2021-01-01', '2021-01-02'], 'Progress': ['Progress', '100',\
+          \ '50'],\n      'Finished': pd.Categorical(['Finished', '1', '1'], categories=['1', 'Finished'])})"
+- "id": "data_promote_header_row.factor_columns"
+  "r": "data_promote_header_row"
+  "py": "pytacheck.datacheck.checks.data_promote_header_row"
+  "args":
+    "df":
+      "$expr":
+        "r": "data.frame(StartDate = factor(c(\"Start Date\", \"2021-01-01\", \"2021-01-02\")),\n    \
+          \  EndDate = c(\"End Date\", \"2021-01-01\", \"2021-01-02\"), Progress = c(\"Progress\", \"\
+          100\", \"50\"),\n      Finished = factor(c(\"Finished\", \"1\", \"1\"), levels = c(\"1\", \"\
+          Finished\")),\n      stringsAsFactors = FALSE)"
+        "py": "pd.DataFrame({'StartDate': pd.Categorical(['Start Date', '2021-01-01', '2021-01-02']),\n\
+          \      'EndDate': ['End Date', '2021-01-01', '2021-01-02'], 'Progress': ['Progress', '100',\
+          \ '50'],\n      'Finished': pd.Categorical(['Finished', '1', '1'], categories=['1', 'Finished'])})"
+- "id": "data_promote_header_row.factor_header"
+  "r": "data_promote_header_row"
+  "py": "pytacheck.datacheck.checks.data_promote_header_row"
+  "args":
+    "df":
+      "$expr":
+        "r": "data.frame(V1 = factor(c(\"id\", \"1\", \"2\", \"3\")), V2 = c(\"score\", \"5\", \"6\",\
+          \ \"7\"),\n      stringsAsFactors = FALSE)"
+        "py": "pd.DataFrame({'V1': pd.Categorical(['id', '1', '2', '3']), 'V2': ['score', '5', '6', '7']})"
+- "id": ".detect_header_row.empty_first_row"
+  "r": ".detect_header_row"
+  "py": "tests.datacheck_checks.parity_helpers.detect_header_row"
+  "args":
+    "rows":
+      "$list":
+      - "$chr": []
+      - "$chr":
+        - "id"
+        - "x"
+      - "$chr":
+        - "1"
+        - "2"
+      - "$chr":
+        - "3"
+        - "4"
+- "id": ".is_junk_above_header.empty_row"
+  "r": ".is_junk_above_header"
+  "py": "pytacheck.datacheck.checks._is_junk_above_header"
+  "args":
+    "vals":
+      "$chr": []
+    "body_numeric": 0.9
+- "id": ".tabular_usable.named_facets"
+  "r": ".tabular_usable"
+  "py": "pytacheck.datacheck.checks._tabular_usable"
+  "args":
+    "facets":
+      "note_a":
+        "representation": "text"
+        "concept": null
+      "value":
+        "representation": "numeric"
+        "concept": null
+    "df":
+      "$df":
+        "note_a":
+        - "a b c"
+        - "d e f"
+        - "g h i"
+        "value":
+        - 1
+        - 2
+        - 3
+- "id": ".qualtrics_col_stem.vector"
+  "r": ".qualtrics_col_stem"
+  "py": "pytacheck.datacheck.checks._qualtrics_col_stem"
+  "args":
+    "nm":
+      "$chr":
+      - "TIPI_1"
+      - "x"
+- "id": ".pii_split_name.vector"
+  "r": ".pii_split_name"
+  "py": "pytacheck.datacheck.checks._pii_split_name"
+  "args":
+    "x":
+      "$chr":
+      - "phoneNumber"
+      - "ZIPcode"
+- "id": "data_col_facets.in_block_logical_na"
+  "r": "data_col_facets"
+  "py": "pytacheck.datacheck.checks.data_col_facets"
+  "args":
+    "col_name": "panas_1"
+    "values":
+      "$expr":
+        "r": "rep(1:5, 4)"
+        "py": "[*range(1, 6)] * 4"
+    "in_scale_block":
+      "$NA": true
+- "id": "data_col_facets.factor"
+  "r": "data_col_facets"
+  "py": "pytacheck.datacheck.checks.data_col_facets"
+  "args":
+    "col_name": "group"
+    "values":
+      "$expr":
+        "r": "factor(c(\"a\", \"b\", \"a\", \"c\", NA))"
+        "py": "pd.Series(pd.Categorical([\"a\", \"b\", \"a\", \"c\", None]))"
+- "id": "data_col_facets.date_class"
+  "r": "data_col_facets"
+  "py": "pytacheck.datacheck.checks.data_col_facets"
+  "args":
+    "col_name": "visit"
+    "values":
+      "$expr":
+        "r": "as.Date(c(\"2021-01-01\", \"2021-02-01\", NA))"
+        "py": "pd.Series(pd.to_datetime([\"2021-01-01\", \"2021-02-01\", None]))"
+- "id": "data_check_constant.factor_near"
+  "r": "data_check_constant"
+  "py": "pytacheck.datacheck.checks.data_check_constant"
+  "args":
+    "x":
+      "$expr":
+        "r": "factor(c(rep(\"b\", 99), \"a\"))"
+        "py": "pd.Series(pd.Categorical([\"b\"] * 99 + [\"a\"]))"
+- "id": "data_check_scale_values.integer_valid_range"
+  "r": "data_check_scale_values"
+  "py": "pytacheck.datacheck.checks.data_check_scale_values"
+  "args":
+    "x":
+      "$expr":
+        "r": "c(rep(1:7, 10), 70L, 8L)"
+        "py": "[*range(1, 8)] * 10 + [70, 8]"
+    "valid_range":
+      "$int":
+      - 1
+      - 7
+- "id": "data_check_scale_values.floor_anchor_zero"
+  "r": "data_check_scale_values"
+  "py": "pytacheck.datacheck.checks.data_check_scale_values"
+  "args":
+    "x":
+      "$expr":
+        "r": "c(rep(0:6, 10), 2)"
+        "py": "[*range(0, 7)] * 10 + [2]"
+    "valid_values":
+      "$int":
+      - 2
+      - 3
+      - 4
+      - 5
+      - 6
 - "id": "scales.data"
   "r": "identity"
   "py": "pytacheck.datacheck.scales.scales"

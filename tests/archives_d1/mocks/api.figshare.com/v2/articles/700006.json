@@ -1,0 +1,19 @@
+{
+  "id": 700006,
+  "title": "Empty file",
+  "files": [
+    {
+      "id": 700601,
+      "name": "a.csv",
+      "size": 8,
+      "computed_md5": "344fd2323dd33d5c058b7cf27de029e8",
+      "download_url": "https://ndownloader.figshare.com/files/700601"
+    },
+    {
+      "id": 700602,
+      "name": "empty.txt",
+      "size": 0,
+      "download_url": "https://ndownloader.figshare.com/files/700602"
+    }
+  ]
+}

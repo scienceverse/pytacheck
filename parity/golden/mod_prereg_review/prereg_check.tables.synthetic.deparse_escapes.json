@@ -1,0 +1,159 @@
+{
+  "id": "prereg_check.tables.synthetic.deparse_escapes",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": null,
+    "v": [
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "id",
+          "title",
+          "template"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "<a href='https://osf.io/escps' target='_blank'>escps<\/a>"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Synthetic registration escps"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Pre-Registration in Social Psychology (van 't Veer & Giner-Sorolla, 2016): Pre-Registration"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "id",
+          "sample_size"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "escps"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 37,
+        "names": [
+          "Field",
+          "Preregistration 1"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "template_name",
+              "title",
+              "id",
+              "link",
+              "date_created",
+              "date_modified",
+              "date_registered",
+              "embargo_end_date",
+              "ia_url",
+              "research_questions",
+              "hypotheses_interactions",
+              "manipulation_checks",
+              "theoretical_rationale",
+              "design_independent_variables",
+              "design_dependent_variables",
+              "design_covariates_moderators",
+              "data_exclusion_criteria",
+              "data_collection_procedures",
+              "sample_size",
+              "stopping_rule",
+              "outliers_and_exclusions",
+              "fail_safe_exclusion_levels",
+              "indices",
+              "statistical_tests",
+              "rationale_covariate",
+              "variables_roles_in_analyses",
+              "inference_criteria",
+              "multiple_testing_correction",
+              "missing_data_handling",
+              "reliability_criteria",
+              "transformations",
+              "assumptions_and_contingencies",
+              "data_collection_started",
+              "data_looked",
+              "project_dates_start_end",
+              "additional_comments",
+              "paper_id"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Pre-Registration in Social Psychology (van 't Veer & Giner-Sorolla, 2016): Pre-Registration",
+              "Synthetic registration escps",
+              "escps",
+              "https://osf.io/escps",
+              "2024-01-02T03:04:05.000001",
+              "2024-01-03T03:04:05.000001",
+              "2024-01-04T03:04:05.000001",
+              "",
+              "https://archive.org/details/osf-registrations-escps-v1",
+              "",
+              "c(\"​­\", \"😀⿼𮯰\") line<br>break plain",
+              "",
+              "",
+              "",
+              "",
+              "c(\"a\\ab\\bc\\fd\\ve\\001f\\177g\", \"h\\u0085i\\u2028j\\u2029k\")<br><br>c(\"\\u0378\\ufffe\\U{0e01f0}\", \"tab\\there \\\"quoted\\\" back\\\\slash\")<br><br>x",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "p_escps"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

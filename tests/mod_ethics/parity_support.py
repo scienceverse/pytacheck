@@ -43,3 +43,37 @@ def ec_papers(ids: Sequence[str], texts: Sequence[Sequence[str | None]]) -> Any:
     import pytacheck as pc
 
     return pc.PaperList([ec_paper(t, i) for i, t in zip(ids, texts, strict=True)])
+
+
+def identity(x: Any) -> Any:
+    """The value itself (the Python side of ``r: identity`` cases)."""
+    return x
+
+
+def ec_direct(paper: Any) -> Any:
+    """``ec_direct()``: the module function's own return value (no ``module_run()``)."""
+    from pytacheck.modules.ethics_check import ethics_check
+
+    return ethics_check(paper)
+
+
+def ec_select(p: Any, table: str, cols: Sequence[str]) -> Any:
+    """``ec_select()``: keep only *cols* (in that order) of one of the paper's tables."""
+    setattr(p, table, getattr(p, table).loc[:, list(cols)])
+    return p
+
+
+def ec_rows(p: Any, table: str, rows: Sequence[int]) -> Any:
+    """``ec_rows()``: keep the rows *rows* (1-based, may repeat) of one of the paper's tables."""
+    setattr(p, table, getattr(p, table).iloc[[r - 1 for r in rows]].reset_index(drop=True))
+    return p
+
+
+def ec_set(p: Any, table: str, col: str, value: Sequence[Any]) -> Any:
+    """``ec_set()``: set one column of one of the paper's tables."""
+    import pandas as pd
+
+    frame = getattr(p, table).copy()
+    frame[col] = pd.Series(list(value), index=frame.index, dtype=frame[col].dtype)
+    setattr(p, table, frame)
+    return p

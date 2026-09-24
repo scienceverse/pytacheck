@@ -78,3 +78,68 @@ def test_report_tables() -> None:
     assert tables[0]["id"].str.startswith("<a href='https://").all()
     # line breaks in cells are shown as <br>
     assert not tables[2].iloc[:, 1:].apply(lambda s: s.str.contains("\n").any()).any()
+
+
+# --- second review pass ---------------------------------------------------------------
+
+
+def test_report_keeps_the_empty_block_of_a_missing_sample_size_table() -> None:
+    # c(..., scroll_table(NULL), ...) keeps scroll_table()'s "" (NULLs vanish)
+    mo = run_prereg(papers=[{"url": ["https://osf.io/5xysn"], "id": "p_oer"}])
+    assert "sample_size" not in mo.table.columns
+    assert mo.report[2].startswith("Meta-scientific research")
+    assert mo.report[3] == ""  # where the sample size table would be
+
+
+def test_no_paper_ids_errors_as_r_data_frame() -> None:
+    import pytacheck as pc
+    from pytacheck.modules.prereg_check import _no_prereg_summary
+
+    with pytest.raises(ValueError, match="differing number of rows: 0, 1"):
+        _no_prereg_summary(pc.PaperList([]))
+    with pytest.raises(Exception):  # noqa: B017 (R errors too; the message differs)
+        run_prereg(paperlist=True)
+
+
+def test_deparse_str_uses_r_escapes() -> None:
+    from pytacheck.modules._prereg import _deparse_str
+
+    # expected values from R 4.5 deparse() in a UTF-8 locale
+    assert _deparse_str("a\ab\bc\fd\ve\x01f\x7fg") == r'"a\ab\bc\fd\ve\001f\177g"'
+    assert _deparse_str("h\x85i\u2028j\u2029k") == r'"h\u0085i\u2028j\u2029k"'
+    assert _deparse_str("\u0378\ufffe\U000e01f0") == r'"\u0378\ufffe\U{0e01f0}"'
+    # format, private-use, emoji and Unicode 15.1 characters are written as is
+    kept = "\u200b\u00ad\ue000\U0001f600\u2ffc\U0002ebf0\u00a0"
+    assert _deparse_str(kept) == f'"{kept}"'
+    assert _deparse_str('q"b\\s\n\t\r') == r'"q\"b\\s\n\t\r"'
+
+
+def test_non_string_schema_labels_are_coerced_like_r() -> None:
+    from pytacheck.modules._prereg import osf_blocks_labels, osf_pages_labels
+
+    blocks = []
+    for text in (2024, True, 1.5, 100000.0, 3000000000, None, False):
+        blocks += [
+            {"block_type": "question-label", "display_text": text},
+            {"block_type": "short-text-input"},
+        ]
+    assert osf_blocks_labels(blocks) == {
+        "1": "2024",
+        "3": "TRUE",
+        "5": "1.5",
+        "7": "1e+05",
+        "9": "3e+09",
+        "11": None,
+        "13": "FALSE",
+    }
+    pages = [{"questions": [{"qid": "a", "title": 5}, {"qid": "b", "title": 1e49}]}]
+    labels = osf_pages_labels(pages)
+    assert labels["a"] == labels["a.uploader"] == "5"
+    assert labels["b"] == "1e+49"
+
+
+def test_scalar_labels_end_up_as_slugged_fields() -> None:
+    mo = run_prereg(papers=[{"url": ["https://osf.io/lblsc"], "id": "p"}], mock="local")
+    assert {"2024", "true", "1_5", "1e_05", "3e_09", "false", "sample_size"} <= set(
+        mo.table.columns
+    )

@@ -1,0 +1,146 @@
+{
+  "id": "ref_pubpeer.nourl_some",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "ref_pubpeer"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "PubPeer Comments"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "reference"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "bib_id",
+          "doi",
+          "text",
+          "total_comments",
+          "users",
+          "url"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "nourl_some"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "10.9999/pp.nourl"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Reference 0. https://doi.org/10.9999/pp.nourl"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              3
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "No Url"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "We checked 2 references with DOIs. You cited 1 reference with comments in PubPeer.\n\nPubpeer is a platform for post-publication peer review. We have filtered out Pubpeer comments by 'Statcheck'. You can check out the comments by visiting the URLs below:",
+          ""
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "info"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "You cited 1 reference with comments in PubPeer."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "pubpeer_comments"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "nourl_some"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              3
+            ]
+          }
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

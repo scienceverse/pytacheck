@@ -40,9 +40,10 @@ def _columns_of(p: Paper, table: str) -> list[str] | None:
 
 
 def _schema_cols(table: str) -> list[tuple[str, str]]:
-    from pytacheck.papers.schema import table_columns
+    """The columns of the empty table ``paper()`` creates for *table*."""
+    from pytacheck.papers.schema import base_table_columns
 
-    return list(table_columns(table))
+    return list(base_table_columns(table))
 
 
 def paper_table(paper: Any, table: str, cols: Sequence[str] | None = None) -> pd.DataFrame:

@@ -150,7 +150,14 @@ def _parse_brace_hex(pattern: str, i: int) -> tuple[str, int]:
     return chr(int(pattern[i + 1 : end], 16)), end + 1
 
 
-def _translate_tre(pattern: str) -> str:
+def _ascii_icase(c: str) -> str:
+    """An ASCII letter as the class of its two cases (TRE ``REG_ICASE``)."""
+    return f"[{c.lower()}{c.upper()}]" if c.isascii() and c.isalpha() else regex.escape(c)
+
+
+def _translate_tre(pattern: str, icase: bool = False) -> str:
+    """Translate a TRE pattern; ``icase`` spells ASCII letters in both cases
+    (only for the patterns :func:`_tre_icase_exact` accepts)."""
     out: list[str] = []
     i, n = 0, len(pattern)
     depth = 0  # open groups; TRE reads an unmatched ")" as a literal
@@ -170,10 +177,13 @@ def _translate_tre(pattern: str) -> str:
                 continue
             else:
                 # TRE treats any other escaped character as itself.
-                out.append(regex.escape(e))
+                out.append(_ascii_icase(e) if icase else regex.escape(e))
             i += 2
         elif c == "[":
-            i = _copy_posix_bracket(pattern, i, out)
+            i = _copy_bracket_icase(pattern, i, out) if icase else _copy_posix_bracket(pattern, i, out)
+        elif icase and c.isascii() and c.isalpha():
+            out.append(_ascii_icase(c))
+            i += 1
         elif c == "$":
             out.append(r"\Z")
             i += 1
@@ -229,6 +239,72 @@ def _copy_posix_bracket(pattern: str, i: int, out: list[str]) -> int:
             buf.append(c)
         j += 1
     raise RegexError(f"unterminated bracket expression in {pattern!r}")
+
+
+def _copy_bracket_icase(pattern: str, i: int, out: list[str]) -> int:
+    """:func:`_copy_posix_bracket` under TRE's ``REG_ICASE``.
+
+    TRE adds the other case of every letter a bracket expression lists (singly
+    or in a range) to its items, then negates; ``[:class:]`` items are left
+    alone. The added letters are matched as a second class.
+    """
+    n = len(pattern)
+    j = i + 1
+    negated = j < n and pattern[j] == "^"
+    if negated:
+        j += 1
+    extra: set[str] = set()
+    first = True
+    while j < n and (first or pattern[j] != "]"):
+        if pattern.startswith("[:", j):
+            end = pattern.find(":]", j + 2)
+            if end == -1:
+                break  # _copy_posix_bracket raises
+            j = end + 2
+        else:
+            # TRE (tre_parse_bracket_items): "x-y" is a range unless "-" is last
+            lo = hi = pattern[j]
+            if j + 2 < n and pattern[j + 1] == "-" and pattern[j + 2] != "]":
+                hi = pattern[j + 2]
+                j += 3
+            else:
+                j += 1
+            for code in range(ord(lo), ord(hi) + 1):
+                ch = chr(code)
+                if ch.isascii() and ch.isalpha():
+                    extra.add(ch.swapcase())
+        first = False
+    buf: list[str] = []
+    end = _copy_posix_bracket(pattern, i, buf)
+    body = "".join(buf)
+    if extra:
+        others = "[" + "".join(regex.escape(c) for c in sorted(extra)) + "]"
+        body = f"(?:(?!{others}){body})" if negated else f"(?:{body}|{others})"
+    out.append(body)
+    return end
+
+
+# Patterns whose TRE ``REG_ICASE`` matching :func:`_translate_tre` can spell out:
+# ASCII-only, without backreferences, ``\x{...}``, ``(?...)`` or the collating /
+# equivalence / case classes (``[.x.]``, ``[=x=]``, ``[:upper:]``, ``[:lower:]``).
+_TRE_ICASE_UNSAFE = regex.compile(r"\\[1-9x]|\(\?|\[[.=]|\[:(?:upper|lower):\]")
+
+
+def _tre_icase_exact(pattern: str) -> bool:
+    """Can TRE's case-insensitive matching of *pattern* be spelled out exactly?
+
+    TRE decides case-insensitivity on the pattern side: a letter matches its
+    ``towupper()`` / ``towlower()`` forms only, which for an ASCII letter is its
+    ASCII other case. The `regex` module's ``IGNORECASE`` also matches U+0130 /
+    U+0131 with ``i`` / ``I``, U+212A (Kelvin sign) with ``k`` and U+017F (long
+    s) with ``s``, which R does not.
+    """
+    return pattern.isascii() and _TRE_ICASE_UNSAFE.search(pattern) is None
+
+
+@functools.lru_cache(maxsize=4096)
+def _translate_tre_icase(pattern: str) -> str:
+    return _translate_tre(pattern, icase=True)
 
 
 def _translate_pcre(pattern: str) -> str:
@@ -353,12 +429,18 @@ def compile_r(
     if fixed:
         return regex.compile(regex.escape(pattern))
     flags = regex.VERSION0
-    if ignore_case:
-        flags |= regex.IGNORECASE
     if perl:
         body = translate(pattern, True)
+        if ignore_case:
+            flags |= regex.IGNORECASE
     else:
-        body = translate(pattern, False)
+        if ignore_case and _tre_icase_exact(pattern):
+            # TRE's REG_ICASE, spelled out (see _tre_icase_exact)
+            body = _translate_tre_icase(pattern)
+        else:
+            body = translate(pattern, False)
+            if ignore_case:
+                flags |= regex.IGNORECASE
         flags |= regex.DOTALL
         # TRE is leftmost-longest, but honours lazy quantifiers (`.*?`)
         # as minimal; backtracking gives that result, POSIX mode does not.

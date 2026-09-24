@@ -1,0 +1,230 @@
+{
+  "id": "zenodo_info.review.two_na",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 3,
+    "names": [
+      "u",
+      "zenodo_url",
+      "zenodo_id",
+      "title",
+      "doi",
+      "description",
+      "publication_date",
+      "updated_date",
+      "creators",
+      "keywords",
+      "resource_type",
+      "journal",
+      "owners",
+      "license",
+      "downloads",
+      "unique_downloads",
+      "views",
+      "files"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "5559007",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "5559007",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "5559007",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "T7",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "10.5281/zenodo.X",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "2026-01-02T00:00:00+00:00",
+          null
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "null"
+          },
+          {
+            "t": "null"
+          },
+          {
+            "t": "null"
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "null"
+          },
+          {
+            "t": "null"
+          },
+          {
+            "t": "null"
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "null"
+          },
+          {
+            "t": "null"
+          },
+          {
+            "t": "null"
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "null"
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "list",
+                "names": [
+                  "id"
+                ],
+                "v": [
+                  {
+                    "t": "int",
+                    "v": [
+                      7
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "t": "null"
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "Plain title",
+          null
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "null"
+          },
+          {
+            "t": "null"
+          },
+          {
+            "t": "null"
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

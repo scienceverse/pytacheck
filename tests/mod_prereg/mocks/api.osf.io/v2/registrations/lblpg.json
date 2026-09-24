@@ -1,0 +1,44 @@
+{
+ "data": {
+  "id": "lblpg",
+  "type": "registrations",
+  "attributes": {
+   "title": "Synthetic registration lblpg",
+   "description": "",
+   "date_created": "2024-01-02T03:04:05.000001",
+   "date_modified": "2024-01-03T03:04:05.000001",
+   "date_registered": "2024-01-04T03:04:05.000001",
+   "embargo_end_date": null,
+   "withdrawn": false,
+   "registration_supplement": "Synthetic Template",
+   "ia_url": "https://archive.org/details/osf-registrations-lblpg-v1",
+   "registration_responses": {
+    "qa": "five",
+    "qb.question": "false",
+    "qc": "1e5",
+    "qd": "big",
+    "qe": "no title"
+   }
+  },
+  "relationships": {
+   "registration_schema": {
+    "data": {
+     "id": "fffffffffffffffffffffff7",
+     "type": "registration-schemas"
+    },
+    "links": {
+     "related": {
+      "href": "https://api.osf.io/v2/schemas/registrations/fffffffffffffffffffffff7/",
+      "meta": {}
+     }
+    }
+   }
+  },
+  "links": {
+   "html": "https://osf.io/lblpg/"
+  }
+ },
+ "meta": {
+  "version": "2.0"
+ }
+}

@@ -17,6 +17,7 @@ of the base-R operations the module applies to them (``unlist()``, ``c()``,
 
 from __future__ import annotations
 
+import unicodedata
 from collections.abc import Callable, Mapping, Sequence
 from dataclasses import dataclass
 from itertools import pairwise
@@ -322,25 +323,62 @@ def paste_collapse(x: RValue, collapse: str) -> str:
 _EMPTY = {"logical": "logical(0)", "integer": "integer(0)", "double": "numeric(0)"}
 
 
+#: R's EncodeString() escapes of ASCII control characters (others: octal)
+_ASCII_ESCAPES = {
+    "\\": "\\\\",
+    '"': '\\"',
+    "\a": "\\a",
+    "\b": "\\b",
+    "\f": "\\f",
+    "\n": "\\n",
+    "\r": "\\r",
+    "\t": "\\t",
+    "\v": "\\v",
+}
+#: Unicode categories R does not print as is (controls, line/paragraph
+#: separators, unassigned code points, surrogates)
+_UNPRINTABLE = frozenset({"Cc", "Zl", "Zp", "Cn", "Cs"})
+#: code points assigned after Python's Unicode 15.0 that R's tables print
+_NEWER_ASSIGNED = ((0x2FFC, 0x2FFF), (0x31EF, 0x31EF), (0x2EBF0, 0x2EE5D))
+
+
+def _r_printable(ch: str) -> bool:
+    """R's ``iswprint()`` for a non-ASCII character (UTF-8 locale)."""
+    if unicodedata.category(ch) not in _UNPRINTABLE:
+        return True
+    cp = ord(ch)
+    return any(lo <= cp <= hi for lo, hi in _NEWER_ASSIGNED)
+
+
 def _deparse_str(s: str) -> str:
+    """A string as R's ``deparse()`` writes it (``EncodeString()`` in a UTF-8 locale).
+
+    ``\\a \\b \\f \\n \\r \\t \\v`` are named escapes, other ASCII controls
+    octal (``\\001``, ``\\177``); non-printable non-ASCII characters (C1
+    controls, U+2028/U+2029, unassigned code points) are ``\\uxxxx`` or
+    ``\\U{xxxxxx}``; everything else is written as is.
+    """
     out = ['"']
     for ch in s:
-        if ch == "\\":
-            out.append("\\\\")
-        elif ch == '"':
-            out.append('\\"')
-        elif ch == "\n":
-            out.append("\\n")
-        elif ch == "\t":
-            out.append("\\t")
-        elif ch == "\r":
-            out.append("\\r")
-        elif ord(ch) < 32 or ord(ch) == 127:
-            out.append(f"\\{ord(ch):03o}")
+        cp = ord(ch)
+        if cp < 0x80:
+            esc = _ascii_escape(ch, cp)
+        elif _r_printable(ch):
+            esc = ch
         else:
-            out.append(ch)
+            esc = f"\\u{cp:04x}" if cp <= 0xFFFF else f"\\U{{{cp:06x}}}"
+        out.append(esc)
     out.append('"')
     return "".join(out)
+
+
+def _ascii_escape(ch: str, cp: int) -> str:
+    esc = _ASCII_ESCAPES.get(ch)
+    if esc is not None:
+        return esc
+    if cp < 32 or cp == 127:
+        return f"\\{cp:03o}"
+    return ch
 
 
 def _deparse_elem(value: Any, type_: str) -> str:
@@ -611,6 +649,20 @@ _INPUT_TYPES = frozenset(
 )
 
 
+def _label_chr(x: Any) -> str | None:
+    """A schema label as R stores it in its character vector of labels.
+
+    Strings are kept; a number or logical is coerced by ``as.character()``
+    (``2024`` -> ``"2024"``, ``true`` -> ``"TRUE"``, ``1e5`` -> ``"1e+05"``);
+    ``null`` (and anything else) is ``NA``.
+    """
+    if isinstance(x, str):
+        return x
+    if isinstance(x, bool | int | float):
+        return _elem_chr(x, _scalar_type(x) or "logical")
+    return None
+
+
 def osf_blocks_labels(blocks: Any) -> dict[str, str | None]:
     """Port of inst/modules/prereg_check.R::osf_blocks_labels().
 
@@ -624,8 +676,7 @@ def osf_blocks_labels(blocks: Any) -> dict[str, str | None]:
         bt = dollar(block, "block_type")
         bt = bt if isinstance(bt, str) else None
         if bt == "question-label":
-            text = dollar(block, "display_text")
-            last_label = text if isinstance(text, str) else None
+            last_label = _label_chr(dollar(block, "display_text"))
         if bt in _INPUT_TYPES:
             labels[str(i)] = last_label
     return labels
@@ -651,8 +702,7 @@ def osf_pages_labels(pages: Any) -> dict[str, str | None]:
             qid = dollar(q, "qid")
             if not isinstance(qid, str):
                 continue
-            title = dollar(q, "title")
-            title = title if isinstance(title, str) else None
+            title = _label_chr(dollar(q, "title"))
             title_is_label = (
                 title is not None and title != "" and len(title) <= 40 and not grepl("[?]", title)
             )

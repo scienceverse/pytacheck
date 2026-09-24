@@ -32,6 +32,7 @@ from pytacheck.archives.dataverse import (
     _download_many,
     _elements,
     _empty_or,
+    _field_cell,
     _file_frame,
     _finish_file_table,
     _info_table,
@@ -449,12 +450,12 @@ def _figshare_info(
             else []
         )
         files = _dollar(rec, "files")
-        obj["title"] = _cell(_empty_or(_dollar(rec, "title"), None))
-        obj["doi"] = _cell(_empty_or(_dollar(rec, "doi"), None))
-        obj["publication_date"] = _cell(_empty_or(_dollar(rec, "published_date"), None))
-        obj["updated_date"] = _cell(_empty_or(_dollar(rec, "modified_date"), None))
+        obj["title"] = _field_cell(_empty_or(_dollar(rec, "title"), None))
+        obj["doi"] = _field_cell(_empty_or(_dollar(rec, "doi"), None))
+        obj["publication_date"] = _field_cell(_empty_or(_dollar(rec, "published_date"), None))
+        obj["updated_date"] = _field_cell(_empty_or(_dollar(rec, "modified_date"), None))
         obj["authors"] = _list_cell(authors)
-        obj["license"] = _cell(_empty_or(_dollars(rec, "license", "name"), None))
+        obj["license"] = _field_cell(_empty_or(_dollars(rec, "license", "name"), None))
         obj["files"] = _list_cell(files if files is not None else [])
         return pd.DataFrame(obj)
 

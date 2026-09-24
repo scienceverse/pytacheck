@@ -914,19 +914,19 @@
           {
             "t": "chr",
             "v": [
-              "Chi-Squared statistic"
+              "χ²"
             ]
           },
           {
             "t": "chr",
             "v": [
-              "STATO"
+              ""
             ]
           },
           {
             "t": "chr",
             "v": [
-              "http://purl.obolibrary.org/obo/STATO_0000030"
+              ""
             ]
           }
         ]
@@ -942,19 +942,19 @@
           {
             "t": "chr",
             "v": [
-              "Chi-Squared statistic"
+              "Χ²"
             ]
           },
           {
             "t": "chr",
             "v": [
-              "STATO"
+              ""
             ]
           },
           {
             "t": "chr",
             "v": [
-              "http://purl.obolibrary.org/obo/STATO_0000030"
+              ""
             ]
           }
         ]
@@ -970,19 +970,19 @@
           {
             "t": "chr",
             "v": [
-              "eta-squared"
+              "η²"
             ]
           },
           {
             "t": "chr",
             "v": [
-              "STATO"
+              ""
             ]
           },
           {
             "t": "chr",
             "v": [
-              "http://purl.obolibrary.org/obo/STATO_0000317"
+              ""
             ]
           }
         ]
@@ -998,19 +998,19 @@
           {
             "t": "chr",
             "v": [
-              "omega-squared"
+              "ω²"
             ]
           },
           {
             "t": "chr",
             "v": [
-              "STATO"
+              ""
             ]
           },
           {
             "t": "chr",
             "v": [
-              "http://purl.obolibrary.org/obo/STATO_0000318"
+              ""
             ]
           }
         ]
@@ -1026,19 +1026,19 @@
           {
             "t": "chr",
             "v": [
-              "Bayes factor"
+              "BF₁₀"
             ]
           },
           {
             "t": "chr",
             "v": [
-              "STATO"
+              ""
             ]
           },
           {
             "t": "chr",
             "v": [
-              "http://purl.obolibrary.org/obo/STATO_0000266"
+              ""
             ]
           }
         ]
@@ -1054,19 +1054,19 @@
           {
             "t": "chr",
             "v": [
-              "Bayes factor"
+              "BF₀₁"
             ]
           },
           {
             "t": "chr",
             "v": [
-              "STATO"
+              ""
             ]
           },
           {
             "t": "chr",
             "v": [
-              "http://purl.obolibrary.org/obo/STATO_0000266"
+              ""
             ]
           }
         ]
@@ -1138,19 +1138,19 @@
           {
             "t": "chr",
             "v": [
-              "adjusted coefficient of determination"
+              "Adj. R²"
             ]
           },
           {
             "t": "chr",
             "v": [
-              "metacheck"
+              ""
             ]
           },
           {
             "t": "chr",
             "v": [
-              "https://scienceverse.org/schema/metacheck/statistics/adjustedRSquared"
+              ""
             ]
           }
         ]

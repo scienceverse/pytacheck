@@ -2,7 +2,9 @@
   "id": "match_reported_output.problem_xml.tables.summary",
   "ok": true,
   "error": null,
-  "warnings": [],
+  "warnings": [
+    "Unknown or uninitialised column: `schema_version`."
+  ],
   "value": {
     "t": "list",
     "names": [

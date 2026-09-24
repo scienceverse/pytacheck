@@ -1,0 +1,163 @@
+{
+  "id": "ref_summary.list_empty.chain_all",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "ref_summary"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Summarise References"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "reference"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 5,
+        "names": [
+          "paper_id",
+          "bib_id",
+          "doi",
+          "text",
+          "pubpeer"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "odd",
+              "odd",
+              "odd",
+              "odd",
+              "odd"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              1,
+              2,
+              3,
+              4
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "10.9999/pp.emptyusers",
+              "10.9999/pp.nulltc",
+              "10.9999/pp.statlist",
+              "10.9999/pp.emptyurl",
+              "10.9999/pp.statcase"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Reference 0. https://doi.org/10.9999/pp.emptyusers",
+              "Reference 1. https://doi.org/10.9999/pp.nulltc",
+              "Reference 2. https://doi.org/10.9999/pp.statlist",
+              "Reference 3. https://doi.org/10.9999/pp.emptyurl",
+              "Reference 4. https://doi.org/10.9999/pp.statcase"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "<a href='https://pubpeer.com/publications/PP.EMPTYUSERS' target='_blank'>Link<\/a>",
+              null,
+              null,
+              "<a href='' target='_blank'>Link<\/a>",
+              "<a href='https://pubpeer.com/publications/PP.STATCASE' target='_blank'>Link<\/a>"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "See the specific reports above for details.",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(text = c(\"Reference 0. https://doi.org/10.9999/pp.emptyusers\", \n\"Reference 1. https://doi.org/10.9999/pp.nulltc\", \"Reference 2. https://doi.org/10.9999/pp.statlist\", \n\"Reference 3. https://doi.org/10.9999/pp.emptyurl\", \"Reference 4. https://doi.org/10.9999/pp.statcase\"\n), pubpeer = c(\"<a href='https://pubpeer.com/publications/PP.EMPTYUSERS' target='_blank'>Link<\/a>\", \nNA, NA, \"<a href='' target='_blank'>Link<\/a>\", \"<a href='https://pubpeer.com/publications/PP.STATCASE' target='_blank'>Link<\/a>\"\n)), row.names = c(NA, -5L), class = c(\"tbl_df\", \"tbl\", \"data.frame\"\n))\n\n# display table -----------------------------------\nmetacheck::report_table(table, c(0.75, NA), 10, FALSE)\n```\n"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "info"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Summary information provided for 5 references"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 2,
+        "names": [
+          "paper_id",
+          "pubpeer_comments",
+          "replications",
+          "retractionwatch"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "odd",
+              "empty"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              4,
+              0
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0,
+              0
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0,
+              0
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

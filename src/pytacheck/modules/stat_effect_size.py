@@ -209,6 +209,122 @@ def _ld_pow10(n: int, op: Any, fac: tuple[int, int]) -> tuple[int, int]:
     return fac
 
 
+def _ld_pow10_exact(k: int) -> tuple[int, int]:
+    """``10^k`` rounded to long double (glibc ``powl(10, k)``, assumed correctly rounded)."""
+    if k >= 0:
+        return _ld_round(10**k, 0)
+    den = 10**-k
+    s = den.bit_length() + _LD_BITS + 2
+    q, r = divmod(1 << s, den)
+    return _ld_round(q, -s, sticky=r != 0)
+
+
+# format.c's tbl[] of powers of ten: long doubles initialised from *double*
+# literals, so 1e23..1e27 are not exact
+_TBL = [
+    (lambda n, d: (n, -(d.bit_length() - 1)))(*float(10**k).as_integer_ratio())
+    for k in range(28)
+]
+
+
+def _drop_trailing0(s: str) -> str:
+    """The trailing-zero removal of R's ``EncodeRealDrop0()``."""
+    dot = s.find(".")
+    if dot < 0:
+        return s
+    end = dot + 1
+    while end < len(s) and s[end].isdigit():
+        end += 1
+    keep = end
+    while keep > dot + 1 and s[keep - 1] == "0":
+        keep -= 1
+    if keep == dot + 1:
+        keep = dot
+    return s[:keep] + s[end:]
+
+
+def _format_real(x: float, digits: int, drop0: bool) -> str:
+    """R ``formatReal()`` + ``EncodeReal0()`` of one double (``as.character()``/``format()``).
+
+    R finds the significant digits (``scientific()`` in src/main/format.c) by
+    scaling ``|x|`` by a power of ten in long double and rounding to an integer,
+    which on near-ties is not what correctly rounded decimal conversion gives
+    (``as.character(0x1.9714938037f2cp-1)`` is ``"0.79507885875862"``, not
+    ``"0.795078858758619"``). Fixed notation is used when it is not wider than
+    scientific (``scipen = 0``). ``as.character()`` then drops trailing zeros.
+    """
+    if math.isnan(x):
+        return "NaN"
+    if math.isinf(x):
+        return "Inf" if x > 0 else "-Inf"
+    if x == 0:
+        return "0"
+    neg = int(x < 0)
+    r = -x if neg else x
+    num, den = r.as_integer_ratio()
+    r_ld = (num, -(den.bit_length() - 1))  # den is a power of two
+    kp = math.floor(math.log10(r)) - digits + 1
+    if 0 < kp <= 27:
+        r_prec = _ld_div(r_ld, _TBL[kp])
+    elif -27 <= kp < 0:
+        r_prec = _ld_mul(r_ld, _TBL[-kp])
+    elif kp == 0:
+        r_prec = r_ld
+    else:
+        r_prec = _ld_div(r_ld, _ld_pow10_exact(kp))
+    m, e = r_prec
+    if (m << e if e >= 0 else m) < (10 ** (digits - 1) if e >= 0 else 10 ** (digits - 1) << -e):
+        r_prec = _ld_mul(r_prec, _LD_TEN)
+        kp -= 1
+    # alpha = nearbyintl(r_prec): round half to even
+    m, e = r_prec
+    if e >= 0:
+        alpha = m << e
+    else:
+        alpha, rem = divmod(m, 1 << -e)
+        half = 1 << (-e - 1)
+        if rem > half or (rem == half and alpha & 1):
+            alpha += 1
+    nsig = digits
+    for _ in range(digits):
+        if alpha % 10 == 0:
+            alpha //= 10
+            nsig -= 1
+        else:
+            break
+    if nsig == 0 and digits > 0:
+        nsig = 1
+        kp += 1
+    kpower = kp + digits - 1
+    # rounding may widen the number: 9996 with 3 digits is 1e+04 in scientific
+    rgt = min(max(digits - kpower, 0), 27)
+    fuzz = 0.5 / float(10**rgt)
+    widens = False
+    if 0 < kpower <= 27:
+        fm, fe = fuzz.as_integer_ratio()
+        fe = -(fe.bit_length() - 1)
+        tm, te = _TBL[kpower]
+        # tbl[kpower] - fuzz in long double
+        lm, le = _ld_round((tm << (te - fe)) - fm, fe)
+        # r < lm * 2^le, exactly (r = num / 2^-r_ld[1])
+        shift = r_ld[1] - le
+        widens = (num << shift) < lm if shift >= 0 else num < (lm << -shift)
+    left = kpower + 1 - int(widens)
+    sleft = neg + (1 if left <= 0 else left)
+    rgt = max(nsig - left, 0)
+    if left < 0:
+        sleft = 1 + neg
+    w_fixed = sleft + rgt + (rgt != 0)
+    e_digits = 2 if (left > 100 or left <= -99) else 1
+    d = nsig - 1
+    w = neg + (d > 0) + d + 4 + e_digits
+    if w_fixed <= w:
+        s = f"{x:.{rgt}f}".rjust(w_fixed)
+    else:
+        s = (f"{x:#.{d}e}" if d else f"{x:.0e}").rjust(w)
+    return _drop_trailing0(s) if drop0 else s
+
+
 @functools.lru_cache(maxsize=65536)
 def _num(x: str) -> float:
     """R ``as.numeric()`` of a string matched by the number patterns (``R_strtod()``).
@@ -249,12 +365,8 @@ def _num(x: str) -> float:
 
 @functools.lru_cache(maxsize=65536)
 def _chr(x: float) -> str:
-    """R ``as.character()`` of a double (``NaN``/``Inf`` included)."""
-    from pytacheck._r.base import as_character
-
-    if math.isnan(x):
-        return "NaN"
-    return str(as_character(x))
+    """R ``as.character()`` of a double (``NaN``/``Inf`` included): 15 significant digits."""
+    return _format_real(x, 15, drop0=True)
 
 
 def _fdiv(a: float, b: float) -> float:
@@ -299,11 +411,7 @@ def _round0(x: float) -> float:
 
 def _format(x: float) -> str:
     """R ``format(x)`` of a double (7 significant digits)."""
-    from pytacheck._r.base import format_num
-
-    if math.isnan(x):
-        return "NaN"
-    return format_num(x)
+    return _format_real(x, 7, drop0=False)
 
 
 # ---------------------------------------------------------------------------
@@ -824,13 +932,12 @@ def _build_rows(eq: pd.DataFrame, kinds: list[str | None]) -> pd.DataFrame | Non
 
 def _count_coh(col: Iterable[Any], value: str) -> int:
     """Port of ``stat_effect_size.R::count_coh()``: ``;``-separated occurrences of *value*."""
-    from pytacheck._r.base import trimws
-
     n = 0
     for x in col:
         if _is_na(x):
             continue
-        n += sum(1 for part in str(x).split(";") if trimws(part) == value)
+        # trimws(): R's default whitespace "[ \t\r\n]" at both ends
+        n += sum(1 for part in str(x).split(";") if part.strip(" \t\r\n") == value)
     return n
 
 
