@@ -1,0 +1,121 @@
+{
+  "id": "spv_read_structure.modern",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 9,
+    "names": [
+      "command_name",
+      "syntax",
+      "subtype",
+      "bin_member",
+      "xml_member",
+      "is_legacy",
+      "is_graph"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "Descriptives",
+          "Descriptives",
+          "Descriptives",
+          "Descriptives",
+          "Descriptives",
+          "T-Test",
+          null,
+          "T-Test",
+          "T-Test"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "DESCRIPTIVES VARIABLES=age score\n  /STATISTICS=MEAN STDDEV MIN MAX.",
+          "DESCRIPTIVES VARIABLES=age score\n  /STATISTICS=MEAN STDDEV MIN MAX.",
+          "DESCRIPTIVES VARIABLES=age score\n  /STATISTICS=MEAN STDDEV MIN MAX.",
+          "DESCRIPTIVES VARIABLES=age score\n  /STATISTICS=MEAN STDDEV MIN MAX.",
+          "DESCRIPTIVES VARIABLES=age score\n  /STATISTICS=MEAN STDDEV MIN MAX.",
+          "T-TEST\n  /TESTVAL=0\n  /VARIABLES=score.",
+          "T-TEST\n  /TESTVAL=0\n  /VARIABLES=score.",
+          "T-TEST\n  /TESTVAL=0\n  /VARIABLES=score.",
+          "T-TEST\n  /TESTVAL=0\n  /VARIABLES=score."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Notes",
+          "",
+          "Broken",
+          "Gone",
+          "Nothing",
+          "One-Sample Test",
+          null,
+          "Empty",
+          "Version 2"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "0000000004_lightTableData.bin",
+          "0000000005_lightTableData.bin",
+          "0000000006_lightTableData.bin",
+          "0000000099_lightTableData.bin",
+          "",
+          "0000000012_lightTableData.bin",
+          "0000000013_lightTableData.bin",
+          "0000000014_lightTableData.bin",
+          "0000000015_lightTableData.bin"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

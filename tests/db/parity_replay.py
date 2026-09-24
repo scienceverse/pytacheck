@@ -56,9 +56,7 @@ def call(fn: str, *args: Any, mock_dir: str = "apis", **kwargs: Any) -> Any:
         return func(*args, **kwargs)
 
 
-def paper_with_bib(
-    bib: dict[str, Any], text: str = "x", paper_id: str | None = None
-) -> Any:
+def paper_with_bib(bib: dict[str, Any], text: str = "x", paper_id: str | None = None) -> Any:
     """``p <- test_paper(text); p$bib <- data.frame(bib)`` (optionally with an ID)."""
     import pandas as pd
 

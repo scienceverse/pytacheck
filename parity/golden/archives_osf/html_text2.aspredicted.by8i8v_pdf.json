@@ -1,0 +1,14 @@
+{
+  "id": "html_text2.aspredicted.by8i8v_pdf",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "AsPredicted Pre-registrations \nAsCollected Results Provenance\nResearchBox Data | Code | Materials\n#260,964 | AsPredictedset_java_cookie('visit:260964','1','30');\n'To err is human'\n\nDownload PDF\nAsPredicted #: 260,964\nAuthor(s)\nDaniel Lakens (Eindhoven University of Technology) - d.lakens@tue.nl\n\nPre-registered on\n2025/11/27 23:20 (PT)\n1) Have any data been collected for this study already?\nNo, no data have been collected for this study yet.\n\n2) What's the main question being asked or hypothesis being tested in this study?\nAutomation can be used to check for errors in scientific manuscripts, and inform authors about possible corrections. In this study we examine the usefulness of metacheck to improve best practices.\n\n3) Describe the key dependent variable(s) specifying how they will be measured.\nWe will code all manuscripts for mistakes, and count the total number of mistakes per manuscript.\n\n4) How many and which conditions will participants be assigned to?\nTwo conditions. In one, researchers receive automated feedback. In the control condition, they do not receive feedback.\n\n5) Specify exactly which analyses you will conduct to examine the main question/hypothesis.\nWe will perform an independent t-test on the number of mistakes in each group.\n\n6) Describe exactly how outliers will be defined and handled, and your precise rule(s) for excluding observations.\nnone are expected.\n\n7) How many observations will be collected or what will determine sample size?\nNo need to justify decision, but be precise about exactly how the number will be determined.\nWe randomly assigned 50 scientists to a condition where their manuscript was automatically checked for errors, and 50 scientists to a control condition with a checklist.\n\n8) Anything else you would like to pre-register?\n(e.g., secondary analyses, variables collected for exploratory purposes, unusual analyses planned?)\nWe also measured the expertise of researchers (in years) to explore whether the automated tool would be more useful, the less research experience researchers had. We also asked researchers to rate how useful they found the checklist or app on a scale from 1 (not at all) to 7 (extremely useful).\n\n\nVersion of AsPredicted Questions: 2.00\n\n\nReport a bug | Make a suggestion | Terms of use | Help | About\n\n\nset_java_cookie('last_page','/by8i8v.pdf','0.041666666666667');reset_footer();"
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

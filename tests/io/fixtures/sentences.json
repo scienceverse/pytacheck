@@ -1,0 +1,5413 @@
+{
+"source": "tokenizers::tokenize_sentences() under R 4.5.3 / stringi ICU 78.3",
+"cases": [
+{
+"x": "Hello.  World",
+"sentences": [
+"Hello.",
+"World"
+]
+},
+{
+"x": "e.g. The",
+"sentences": [
+"e.g.",
+"The"
+]
+},
+{
+"x": "U.S.A. is",
+"sentences": [
+"U.S.A. is"
+]
+},
+{
+"x": "p. 3 and",
+"sentences": [
+"p. 3 and"
+]
+},
+{
+"x": "a.b",
+"sentences": [
+"a.b"
+]
+},
+{
+"x": "He said \"Stop.\" Then",
+"sentences": [
+"He said \"Stop.\"",
+"Then"
+]
+},
+{
+"x": "Why?! No.",
+"sentences": [
+"Why?!",
+"No."
+]
+},
+{
+"x": "x.) Y",
+"sentences": [
+"x.)",
+"Y"
+]
+},
+{
+"x": "x. ) Y",
+"sentences": [
+"x.",
+") Y"
+]
+},
+{
+"x": "(Smith et al., 2020). The",
+"sentences": [
+"(Smith et al., 2020).",
+"The"
+]
+},
+{
+"x": "3.5 x. 4",
+"sentences": [
+"3.5 x.",
+"4"
+]
+},
+{
+"x": "Fig. 1a. Test",
+"sentences": [
+"Fig. 1a.",
+"Test"
+]
+},
+{
+"x": "etc.) and so",
+"sentences": [
+"etc.) and so"
+]
+},
+{
+"x": "A.  b",
+"sentences": [
+"A.  b"
+]
+},
+{
+"x": "1.A",
+"sentences": [
+"1.",
+"A"
+]
+},
+{
+"x": "done... Next",
+"sentences": [
+"done...",
+"Next"
+]
+},
+{
+"x": "done… Next",
+"sentences": [
+"done… Next"
+]
+},
+{
+"x": "“Quote.” Next",
+"sentences": [
+"“Quote.”",
+"Next"
+]
+},
+{
+"x": "a; b. c",
+"sentences": [
+"a; b. c"
+]
+},
+{
+"x": "Wait! Then",
+"sentences": [
+"Wait!",
+"Then"
+]
+},
+{
+"x": "Wait. Then",
+"sentences": [
+"Wait.",
+"Then"
+]
+},
+{
+"x": "end.\tStart",
+"sentences": [
+"end.",
+"Start"
+]
+},
+{
+"x": "x.́ Y",
+"sentences": [
+"x.́",
+"Y"
+]
+},
+{
+"x": "Mr. Smith",
+"sentences": [
+"Mr.",
+"Smith"
+]
+},
+{
+"x": "No.5 is",
+"sentences": [
+"No.5 is"
+]
+},
+{
+"x": "a. b",
+"sentences": [
+"a. b"
+]
+},
+{
+"x": "<p>T\nexperimental design (i.e., within and between), the kind of stimuli\nused (i.e., assembled stimuli and actual scenes), and the sample\n(i.e., Dutch and U.S. American), collectively speaking to the\ngenerality of the findings. Thus, a minimal set of expressive displays\ncombined with contextual information fosters inferences of envy\nin observers.</p>",
+"sentences": [
+"<p>T experimental design (i.e., within and between), the kind of stimuli used (i.e., assembled stimuli and actual scenes), and the sample (i.e., Dutch and U.S.",
+"American), collectively speaking to the generality of the findings.",
+"Thus, a minimal set of expressive displays combined with contextual information fosters inferences of envy in observers.</p>"
+]
+},
+{
+"x": "Platek, S. M., Burch, R. L., Panyavin, I. S., Wasserman, B. H. & Gallup, G. G., Jr 2002 Reactions to children's faces: resemblance affects males more than females. Evol. Hum. Behav. 23, 159-166.",
+"sentences": [
+"Platek, S.",
+"M., Burch, R.",
+"L., Panyavin, I.",
+"S., Wasserman, B.",
+"H.",
+"& Gallup, G.",
+"G., Jr 2002 Reactions to children's faces: resemblance affects males more than females.",
+"Evol.",
+"Hum.",
+"Behav.",
+"23, 159-166."
+]
+},
+{
+"x": "<note type=\"raw_reference\">Garrett, N., &amp; Sharot, T. (2017). Optimistic update bias holds firm: Three tests of robustness following Shah et al. Consciousness and Cognition, 50, 12-22.</note>",
+"sentences": [
+"<note type=\"raw_reference\">Garrett, N., &amp; Sharot, T.",
+"(2017).",
+"Optimistic update bias holds firm: Three tests of robustness following Shah et al.",
+"Consciousness and Cognition, 50, 12-22.</note>"
+]
+},
+{
+"x": "\n\t\n\t\tFrontal top-down signals increase coupling of auditory low-frequency oscillations to continuous speech in human listeners\n\t\t\n\t\t\tHPark\n\t\t\n\t\t\n\t\t\tRA AInce\n\t\t\n\t\t\n\t\t\tPGSchyns\n\t\t\n\t\t\n\t\t\tGThut\n\t\t\n\t\t\n\t\t\tJGross\n\t\t\n\t\t10.1016/j.cub.2015.04.049\n\t\t\n\t\n\t\n\t\tCurrent Biology\n\t\t\n\t\t\t25\n\t\t\t\n\t\t\t2015\n\t\t\n\t\n\tPark, H., Ince, R. A. A., Schyns, P. G., Thut, G., & Gross, J. (2015). Frontal top-down signals increase coupling of auditory low-frequency oscilla- tions to continuous speech in human listeners. Current Biology, 25, 1649-1653. https://doi.org/10.1016/j.cub.2015.04.049\n",
+"sentences": [
+"Frontal top-down signals increase coupling of auditory low-frequency oscillations to continuous speech in human listeners       HPark          RA AInce          PGSchyns          GThut          JGross      10.1016/j.cub.2015.04.049          Current Biology       25        2015       Park, H., Ince, R.",
+"A.",
+"A., Schyns, P.",
+"G., Thut, G., & Gross, J.",
+"(2015).",
+"Frontal top-down signals increase coupling of auditory low-frequency oscilla- tions to continuous speech in human listeners.",
+"Current Biology, 25, 1649-1653. https://doi.org/10.1016/j.cub.2015.04.049"
+]
+},
+{
+"x": "<head>(iv) Statistical methods</head>",
+"sentences": [
+"<head>(iv) Statistical methods</head>"
+]
+},
+{
+"x": "<note type=\"raw_reference\">Penton-Voak, I. S., Perrett, D. I., &amp; Peirce, J. W. (1999). Computer graphic studies of the role of facial similarity in judgments of attractiveness. Current Psychology, 18, 104 -117.</note>",
+"sentences": [
+"<note type=\"raw_reference\">Penton-Voak, I.",
+"S., Perrett, D.",
+"I., &amp; Peirce, J.",
+"W.",
+"(1999).",
+"Computer graphic studies of the role of facial similarity in judgments of attractiveness.",
+"Current Psychology, 18, 104 -117.</note>"
+]
+},
+{
+"x": "\n\t\n\t\tRepresentational dynamics of facial viewpoint encoding\n\t\t\n\t\t\tTCKietzmann\n\t\t\n\t\t\n\t\t\tALGert\n\t\t\n\t\t\n\t\t\tFTong\n\t\t\n\t\t\n\t\t\tPKönig\n\t\t\n\t\t10.1162/jocn_a_01070\n\t\t\n\t\n\t\n\t\tJournal of Cognitive Neuroscience\n\t\t\n\t\t\t29\n\t\t\t4\n\t\t\t\n\t\t\t2017\n\t\t\n\t\n\tKietzmann, T. C., Gert, A. L., Tong, F., & König, P. (2017). Representational dynamics of facial viewpoint encoding. Journal of Cognitive Neurosci- ence, 29(4), 637-651. https://doi.org/10.1162/jocn_a_01070\n",
+"sentences": [
+"Representational dynamics of facial viewpoint encoding       TCKietzmann          ALGert          FTong          PKönig      10.1162/jocn_a_01070          Journal of Cognitive Neuroscience       29    4        2017       Kietzmann, T.",
+"C., Gert, A.",
+"L., Tong, F., & König, P.",
+"(2017).",
+"Representational dynamics of facial viewpoint encoding.",
+"Journal of Cognitive Neurosci- ence, 29(4), 637-651. https://doi.org/10.1162/jocn_a_01070"
+]
+},
+{
+"x": "<note type=\"raw_reference\">Aviezer, H., Trope, Y., &amp; Todorov, A. (2012). Body cues, not facial expressions, discriminate between intense positive and negative emo- tions. Science, 338(6111), 1225-1229. https://doi.org/10.1126/science .1224313</note>",
+"sentences": [
+"<note type=\"raw_reference\">Aviezer, H., Trope, Y., &amp; Todorov, A.",
+"(2012).",
+"Body cues, not facial expressions, discriminate between intense positive and negative emo- tions.",
+"Science, 338(6111), 1225-1229. https://doi.org/10.1126/science .1224313</note>"
+]
+},
+{
+"x": "<p>1 We also pretested low-status objects for different purposes. The entire\nstimulus and data sets are available on OSF.</p>",
+"sentences": [
+"<p>1 We also pretested low-status objects for different purposes.",
+"The entire stimulus and data sets are available on OSF.</p>"
+]
+},
+{
+"x": "The results of these selected items are depicted in Figure 5. The analysis resulted in main effects of Scale, F(1, 97) = 50.06, p < .001, ηG 2 = .06, and Emotion, F(2, 194) = 284.08, p < .001, ηG 2 = .38, a marginally significant effect of Turning, F(1, 97) = 3.24, p = .07, ηG 2 < .001, but no interaction of Emotion X Turning, F(2, 194) = 0.77, p = .46, ηG 2 < .001.",
+"sentences": [
+"The results of these selected items are depicted in Figure 5.",
+"The analysis resulted in main effects of Scale, F(1, 97) = 50.06, p < .001, ηG 2 = .06, and Emotion, F(2, 194) = 284.08, p < .001, ηG 2 = .38, a marginally significant effect of Turning, F(1, 97) = 3.24, p = .07, ηG 2 < .001, but no interaction of Emotion X Turning, F(2, 194) = 0.77, p = .46, ηG 2 < .001."
+]
+},
+{
+"x": "Kolev, V., Falkenstein, M., & Yordanova, J. (2006). Motor-response genera- tion as a source of aging-related behavioural slowing in choice- reaction tasks. Neurobiology of Aging, 27(11), 1719-1730. https://doi. org/10.1016/j.neurobiolaging.2005.09.027",
+"sentences": [
+"Kolev, V., Falkenstein, M., & Yordanova, J.",
+"(2006).",
+"Motor-response genera- tion as a source of aging-related behavioural slowing in choice- reaction tasks.",
+"Neurobiology of Aging, 27(11), 1719-1730. https://doi. org/10.1016/j.neurobiolaging.2005.09.027"
+]
+},
+{
+"x": "\n\t\n\t\tDoes filtering preclude us from studying ERP time-courses?\n\t\t\n\t\t\tGARousselet\n\t\t\n\t\t10.3389/fpsyg.2012.00131\n\t\t\n\t\n\t\n\t\tFrontiers in Psychology\n\t\t\n\t\t\t3\n\t\t\t131\n\t\t\t2012\n\t\t\n\t\n\tRousselet, G. A. (2012). Does filtering preclude us from studying ERP time-courses? Frontiers in Psychology, 3, 131. https://doi.org/10.3389/ fpsyg.2012.00131\n",
+"sentences": [
+"Does filtering preclude us from studying ERP time-courses?",
+"GARousselet      10.3389/fpsyg.2012.00131          Frontiers in Psychology       3    131    2012       Rousselet, G.",
+"A.",
+"(2012).",
+"Does filtering preclude us from studying ERP time-courses?",
+"Frontiers in Psychology, 3, 131. https://doi.org/10.3389/ fpsyg.2012.00131"
+]
+},
+{
+"x": "\n\t\n\t\tForming beliefs: Why valence matters\n\t\t\n\t\t\tTSharot\n\t\t\n\t\t\n\t\t\tNGarrett\n\t\t\n\t\t10.1016/j.tics.2015.11.002\n\t\n\t\n\t\tTrends in Cognitive Sciences\n\t\t\n\t\t\t20\n\t\t\t\n\t\t\t2016\n\t\t\n\t\n\tSharot, T., & Garrett, N. (2016). Forming beliefs: Why valence matters. Trends in Cognitive Sciences, 20, 25-33. doi:10.1016/j.tics.2015.11.002\n",
+"sentences": [
+"Forming beliefs: Why valence matters       TSharot          NGarrett      10.1016/j.tics.2015.11.002       Trends in Cognitive Sciences       20        2016       Sharot, T., & Garrett, N.",
+"(2016).",
+"Forming beliefs: Why valence matters.",
+"Trends in Cognitive Sciences, 20, 25-33. doi:10.1016/j.tics.2015.11.002"
+]
+},
+{
+"x": "Figure 6. Exemplary stimuli from Study 3. Left picture: the female picture in which\nthe target turns with a sad expression toward the bike. Right picture: the male picture in which\nthe target turns with an angry expression toward the person.",
+"sentences": [
+"Figure 6.",
+"Exemplary stimuli from Study 3.",
+"Left picture: the female picture in which the target turns with a sad expression toward the bike.",
+"Right picture: the male picture in which the target turns with an angry expression toward the person."
+]
+},
+{
+"x": "<p>y\n. ld\nrs a\neh rbo\nlisb ed\nu t</p>",
+"sentences": [
+"<p>y . ld rs a eh rbo lisb ed u t</p>"
+]
+},
+{
+"x": "<p>Malicious envy is constituted by feelings, cognitions, and motivations directed at harming the envied person's position <ref type=\"bibr\" target=\"#b35\">(Lange et al., 2018;</ref><ref type=\"bibr\" target=\"#b64\">Van de Ven et al., 2009)</ref>. It manifests in aggressive behaviors such as withholding money from the envied person <ref type=\"bibr\" target=\"#b40\">(Moyal et al., 2020)</ref> or feeling schadenfreude when the envied person fails <ref type=\"bibr\" target=\"#b35\">(Lange et al., 2018)</ref>.</p>",
+"sentences": [
+"<p>Malicious envy is constituted by feelings, cognitions, and motivations directed at harming the envied person's position <ref type=\"bibr\" target=\"#b35\">(Lange et al., 2018;</ref><ref type=\"bibr\" target=\"#b64\">Van de Ven et al., 2009)</ref>.",
+"It manifests in aggressive behaviors such as withholding money from the envied person <ref type=\"bibr\" target=\"#b40\">(Moyal et al., 2020)</ref> or feeling schadenfreude when the envied person fails <ref type=\"bibr\" target=\"#b35\">(Lange et al., 2018)</ref>.</p>"
+]
+},
+{
+"x": "<p>Proc. R. Soc.Lond. B (2004)   </p>",
+"sentences": [
+"<p>Proc.",
+"R.",
+"Soc.Lond.",
+"B (2004)   </p>"
+]
+},
+{
+"x": "Kogut, T., & Ritov, I. (2005). The \"identified victim\" effect: An identified group, or just a single individual? Journal of Behavioral Decision Making, 18, 157-167.",
+"sentences": [
+"Kogut, T., & Ritov, I.",
+"(2005).",
+"The \"identified victim\" effect: An identified group, or just a single individual?",
+"Journal of Behavioral Decision Making, 18, 157-167."
+]
+},
+{
+"x": "Methodological critique",
+"sentences": [
+"Methodological critique"
+]
+},
+{
+"x": "<p>Although one might intuitively expect such a procedure to make male faces more feminine and female faces more masculine, this transformation only masculinizes or feminizes the resulting transform to the extent that the participant's face is more masculine or feminine than his or her same-sex composite face. In other words, only the differences between a participant's face and the same-sex composite face are used to transform the male and female composites.</p>",
+"sentences": [
+"<p>Although one might intuitively expect such a procedure to make male faces more feminine and female faces more masculine, this transformation only masculinizes or feminizes the resulting transform to the extent that the participant's face is more masculine or feminine than his or her same-sex composite face.",
+"In other words, only the differences between a participant's face and the same-sex composite face are used to transform the male and female composites.</p>"
+]
+},
+{
+"x": "<p>Therefore, we concluded that the entire set of pictures allowed a fair test of our hypotheses.</p>",
+"sentences": [
+"<p>Therefore, we concluded that the entire set of pictures allowed a fair test of our hypotheses.</p>"
+]
+},
+{
+"x": "<note type=\"raw_reference\">Hauber, M. E. &amp; Sherman, P. W. 2001 Self-referent pheno- type matching: theoretical considerations and empirical evi- dence. Trends Neurosci. 24, 609-616.</note>",
+"sentences": [
+"<note type=\"raw_reference\">Hauber, M.",
+"E. &amp; Sherman, P.",
+"W.",
+"2001 Self-referent pheno- type matching: theoretical considerations and empirical evi- dence.",
+"Trends Neurosci.",
+"24, 609-616.</note>"
+]
+},
+{
+"x": "\n\t\n\t\tEnvy and Its Consequences: Why It Is Useful to Distinguish between Benign and Malicious Envy\n\t\t\n\t\t\tNielsVan De Ven\n\t\t\n\t\t10.1111/spc3.12253\n\t\t\n\t\n\t\n\t\tSocial and Personality Psychology Compass\n\t\tSocial & Personality Psych\n\t\t1751-9004\n\t\t\n\t\t\t10\n\t\t\t6\n\t\t\t\n\t\t\t2016\n\t\t\tWiley\n\t\t\n\t\n\tVan de Ven, N. (2016). Envy and its consequences: Why it is useful to dis- tinguish between benign and malicious envy. Social and Personality Psychology Compass, 10(6), 337-349. https://doi.org/10.1111/spc3 .12253\n",
+"sentences": [
+"Envy and Its Consequences: Why It Is Useful to Distinguish between Benign and Malicious Envy       NielsVan De Ven      10.1111/spc3.12253          Social and Personality Psychology Compass   Social & Personality Psych   1751-9004       10    6        2016    Wiley       Van de Ven, N.",
+"(2016).",
+"Envy and its consequences: Why it is useful to dis- tinguish between benign and malicious envy.",
+"Social and Personality Psychology Compass, 10(6), 337-349. https://doi.org/10.1111/spc3 .12253"
+]
+},
+{
+"x": "\n\t\n\t\tReactions to children's faces: resemblance affects males more than females\n\t\t\n\t\t\tSMPlatek\n\t\t\n\t\t\n\t\t\tRLBurch\n\t\t\n\t\t\n\t\t\tISPanyavin\n\t\t\n\t\t\n\t\t\tBHWasserman\n\t\t\n\t\t\n\t\t\tGGGallupJr\n\t\t\n\t\n\t\n\t\tEvolution and Human Behavior\n\t\t\n\t\t\t23\n\t\t\t\n\t\t\t2002\n\t\t\n\t\n\tPlatek, S. M., Burch, R. L., Panyavin, I. S., Wasserman, B. H., & Gallup Jr., G. G. (2002). Reactions to children's faces: resemblance affects males more than females. Evolution and Human Behavior, 23, 159 -166.\n",
+"sentences": [
+"Reactions to children's faces: resemblance affects males more than females       SMPlatek          RLBurch          ISPanyavin          BHWasserman          GGGallupJr          Evolution and Human Behavior       23        2002       Platek, S.",
+"M., Burch, R.",
+"L., Panyavin, I.",
+"S., Wasserman, B.",
+"H., & Gallup Jr., G.",
+"G.",
+"(2002).",
+"Reactions to children's faces: resemblance affects males more than females.",
+"Evolution and Human Behavior, 23, 159 -166."
+]
+},
+{
+"x": "<note type=\"raw_reference\">Shaver, P., Schwartz, J., Kirson, D., &amp; O'Connor, C. (1987). Emotion knowledge: Further exploration of a prototype approach. Journal of Per- sonality and Social Psychology, 52(6), 1061-1086. https://doi.org/10 .1037/0022-3514.52.6.1061</note>",
+"sentences": [
+"<note type=\"raw_reference\">Shaver, P., Schwartz, J., Kirson, D., &amp; O'Connor, C.",
+"(1987).",
+"Emotion knowledge: Further exploration of a prototype approach.",
+"Journal of Per- sonality and Social Psychology, 52(6), 1061-1086. https://doi.org/10 .1037/0022-3514.52.6.1061</note>"
+]
+},
+{
+"x": "Nakamura, A., Yamada, T., Abe, Y., Nakamura, K., Sato, N., Horibe, K., … Ito, K. (2001). Age-related changes in brain neuromagnetic responses to face perception in humans. Neuroscience Letters, 312, 13-16. https://doi.org/10.1016/S0304-3940(01)02168-1",
+"sentences": [
+"Nakamura, A., Yamada, T., Abe, Y., Nakamura, K., Sato, N., Horibe, K., … Ito, K.",
+"(2001).",
+"Age-related changes in brain neuromagnetic responses to face perception in humans.",
+"Neuroscience Letters, 312, 13-16. https://doi.org/10.1016/S0304-3940(01)02168-1"
+]
+},
+{
+"x": "Garrett, N., & Sharot, T. (2017). Optimistic update bias holds firm: Three tests of robustness following Shah et al. Consciousness and Cognition, 50, 12-22.",
+"sentences": [
+"Garrett, N., & Sharot, T.",
+"(2017).",
+"Optimistic update bias holds firm: Three tests of robustness following Shah et al.",
+"Consciousness and Cognition, 50, 12-22."
+]
+},
+{
+"x": "<note type=\"raw_reference\">Ince, R. A. A., Petersen, R. S., Swan, D. C., &amp; Panzeri, S. (2009). Python for information theoretic analysis of neural data. Frontiers in Neu- roinformatics, 3(4), 1-15. https://doi.org/10.3389/neuro.11.004.2009</note>",
+"sentences": [
+"<note type=\"raw_reference\">Ince, R.",
+"A.",
+"A., Petersen, R.",
+"S., Swan, D.",
+"C., &amp; Panzeri, S.",
+"(2009).",
+"Python for information theoretic analysis of neural data.",
+"Frontiers in Neu- roinformatics, 3(4), 1-15. https://doi.org/10.3389/neuro.11.004.2009</note>"
+]
+},
+{
+"x": "Nassar, M. R., Rumsey, K. M., Wilson, R. C., Parikh, K., Heasly, B., & Gold, J. I. (2012). Rational regulation of learning dynamics by pupil-linked arousal systems. Nature Neuroscience, 15, 1040-1046. doi:10.1038/nn.3130",
+"sentences": [
+"Nassar, M.",
+"R., Rumsey, K.",
+"M., Wilson, R.",
+"C., Parikh, K., Heasly, B., & Gold, J.",
+"I.",
+"(2012).",
+"Rational regulation of learning dynamics by pupil-linked arousal systems.",
+"Nature Neuroscience, 15, 1040-1046. doi:10.1038/nn.3130"
+]
+},
+{
+"x": "Eighteen young (nine females, median age = 23, min 20, max 36) and 19 older adults (seven females, median age = 66, min 60, max 86) participated in the study (data of 15 of the young participants were used in Rousselet et al. (2014)). Only one participant was >80 years, the age range of all other older adults was 60-77, comparable to that of the young adults. In a face discrimination task, we have shown a qualitative shift in the time course of brain activity around 47 years of age (Rousselet et al., 2010), which we investigated here with age ranges appropriate for the research question.",
+"sentences": [
+"Eighteen young (nine females, median age = 23, min 20, max 36) and 19 older adults (seven females, median age = 66, min 60, max 86) participated in the study (data of 15 of the young participants were used in Rousselet et al.",
+"(2014)).",
+"Only one participant was >80 years, the age range of all other older adults was 60-77, comparable to that of the young adults.",
+"In a face discrimination task, we have shown a qualitative shift in the time course of brain activity around 47 years of age (Rousselet et al., 2010), which we investigated here with age ranges appropriate for the research question."
+]
+},
+{
+"x": "<p align=\"left\">The design was identical to Study 1 except for one change: We excluded the pain items because they were not central to our hypothesis tests. Instead, we included two other items that should measure benign and malicious envy. The items were originally in Dutch. They translate to “The person feels benign envy toward Marc/Anna” and “The person feels malicious envy,” respectively.</p>",
+"sentences": [
+"<p align=\"left\">The design was identical to Study 1 except for one change: We excluded the pain items because they were not central to our hypothesis tests.",
+"Instead, we included two other items that should measure benign and malicious envy.",
+"The items were originally in Dutch.",
+"They translate to “The person feels benign envy toward Marc/Anna” and “The person feels malicious envy,” respectively.</p>"
+]
+},
+{
+"x": "<head>Study 4: Vicarious Optimism in Learning About Strangers Predicts Altruistic Behavior</head>",
+"sentences": [
+"<head>Study 4: Vicarious Optimism in Learning About Strangers Predicts Altruistic Behavior</head>"
+]
+},
+{
+"x": "Little, A. C., Burt, D. M., Penton-Voak, I. S. & Perrett, D. I. 2001 Self-perceived attractiveness influences human female preferences for sexual dimorphism and symmetry in male faces. Proc. R. Soc. Lond. B 268, 39-44. (doi:10.1098/ rspb.2000.1327)",
+"sentences": [
+"Little, A.",
+"C., Burt, D.",
+"M., Penton-Voak, I.",
+"S.",
+"& Perrett, D.",
+"I.",
+"2001 Self-perceived attractiveness influences human female preferences for sexual dimorphism and symmetry in male faces.",
+"Proc.",
+"R.",
+"Soc.",
+"Lond.",
+"B 268, 39-44. (doi:10.1098/ rspb.2000.1327)"
+]
+},
+{
+"x": "<head>(c) Control conditions</head>",
+"sentences": [
+"<head>(c) Control conditions</head>"
+]
+},
+{
+"x": "<p align=\"left\">Notably, even though the analyses supported the preregistered hypotheses, the pattern of results for malicious envy were not fully in line with expectations. In particular, turning toward the person as compared with the bike led to higher inferences of malicious envy only when the target expressed anger but not sadness (i.e., disappointment). This, in fact, is in line with our initial predictions for Study 1. However, as we did not observe this pattern in Studies 1 and 2, it appears to be less robust.</p>",
+"sentences": [
+"<p align=\"left\">Notably, even though the analyses supported the preregistered hypotheses, the pattern of results for malicious envy were not fully in line with expectations.",
+"In particular, turning toward the person as compared with the bike led to higher inferences of malicious envy only when the target expressed anger but not sadness (i.e., disappointment).",
+"This, in fact, is in line with our initial predictions for Study 1.",
+"However, as we did not observe this pattern in Studies 1 and 2, it appears to be less robust.</p>"
+]
+},
+{
+"x": "<note type=\"raw_reference\">Smith, F. 2021. \"Human Error Is a Symptom of a Poor Design.\" Journal of Journals. https://doi.org/10.0000/0123456789.</note>",
+"sentences": [
+"<note type=\"raw_reference\">Smith, F.",
+"2021.",
+"\"Human Error Is a Symptom of a Poor Design.\"",
+"Journal of Journals. https://doi.org/10.0000/0123456789.</note>"
+]
+},
+{
+"x": "Parrott, W. G. (2017). The benefits and threats from being envied in organizations. In R. H. Smith, U. Merlone, & M. K. Duffy (Eds.), Envy at work and in organizations (pp. 455-474). Oxford University Press.",
+"sentences": [
+"Parrott, W.",
+"G.",
+"(2017).",
+"The benefits and threats from being envied in organizations.",
+"In R.",
+"H.",
+"Smith, U.",
+"Merlone, & M.",
+"K.",
+"Duffy (Eds.), Envy at work and in organizations (pp.",
+"455-474).",
+"Oxford University Press."
+]
+},
+{
+"x": "<note place=\"foot\" xml:id=\"foot_5\">\n  <p>Received January 8, 2021 Revision received June 30, 2021 Accepted September 8, 2021 n</p>\n</note>",
+"sentences": [
+"<note place=\"foot\" xml:id=\"foot_5\">   <p>Received January 8, 2021 Revision received June 30, 2021 Accepted September 8, 2021 n</p> </note>"
+]
+},
+{
+"x": "<note type=\"raw_reference\">Tang, H., Buia, C., Madhavan, R., Crone, N. E., Madsen, J. R., Anderson, W. S., &amp; Kreiman, G. (2014). Spatiotemporal dynamics underlying object completion in human ventral visual cortex. Neuron, 83(3), 736-748. https://doi.org/10.1016/j.neuron.2014.06.017</note>",
+"sentences": [
+"<note type=\"raw_reference\">Tang, H., Buia, C., Madhavan, R., Crone, N.",
+"E., Madsen, J.",
+"R., Anderson, W.",
+"S., &amp; Kreiman, G.",
+"(2014).",
+"Spatiotemporal dynamics underlying object completion in human ventral visual cortex.",
+"Neuron, 83(3), 736-748. https://doi.org/10.1016/j.neuron.2014.06.017</note>"
+]
+},
+{
+"x": "<note type=\"raw_reference\">Brainard, D. H. (1997). The psychophysics toolbox. Spatial Vision, 10(4), 433-436.</note>",
+"sentences": [
+"<note type=\"raw_reference\">Brainard, D.",
+"H.",
+"(1997).",
+"The psychophysics toolbox.",
+"Spatial Vision, 10(4), 433-436.</note>"
+]
+},
+{
+"x": "\n\t\n\t\tGame theory and reciprocity in some extensive form experimental games\n\t\t\n\t\t\tKAMccabe\n\t\t\n\t\t\n\t\t\tSJRassenti\n\t\t\n\t\t\n\t\t\tVLSmith\n\t\t\n\t\n\t\n\t\tProc. Natl Acad. Sci. USA\n\t\t\n\t\t\t93\n\t\t\t428\n\t\t\t1996\n\t\t\n\t\n\tMcCabe, K. A., Rassenti, S. J. & Smith, V. L. 1996 Game theory and reciprocity in some extensive form experimental games. Proc. Natl Acad. Sci. USA 93, 13 421-13 428.\n",
+"sentences": [
+"Game theory and reciprocity in some extensive form experimental games       KAMccabe          SJRassenti          VLSmith          Proc.",
+"Natl Acad.",
+"Sci.",
+"USA       93    428    1996       McCabe, K.",
+"A., Rassenti, S.",
+"J.",
+"& Smith, V.",
+"L.",
+"1996 Game theory and reciprocity in some extensive form experimental games.",
+"Proc.",
+"Natl Acad.",
+"Sci.",
+"USA 93, 13 421-13 428."
+]
+},
+{
+"x": "\n\t\n\t\tThe nature of human altruism\n\t\t\n\t\t\tEFehr\n\t\t\n\t\t\n\t\t\tUFischbacher\n\t\t\n\t\t10.1038/nature02043\n\t\n\t\n\t\tNature\n\t\t\n\t\t\t425\n\t\t\t\n\t\t\t2003\n\t\t\n\t\n\tFehr, E., & Fischbacher, U. (2003). The nature of human altruism. Nature, 425, 785-791. doi:10.1038/nature02043\n",
+"sentences": [
+"The nature of human altruism       EFehr          UFischbacher      10.1038/nature02043       Nature       425        2003       Fehr, E., & Fischbacher, U.",
+"(2003).",
+"The nature of human altruism.",
+"Nature, 425, 785-791. doi:10.1038/nature02043"
+]
+},
+{
+"x": "\n\t\n\t\tCognitive behavioral therapy for the treatment of post-traumatic stress disorder: A review\n\t\t\n\t\t\tNKar\n\t\t\n\t\t10.2147/NDT.S10389\n\t\n\t\n\t\tNeuropsychiatric Disease and Treatment\n\t\t\n\t\t\t7\n\t\t\t\n\t\t\t2011\n\t\t\n\t\n\tKar, N. (2011). Cognitive behavioral therapy for the treatment of post-traumatic stress disorder: A review. Neuropsychiatric Disease and Treatment, 7, 167-181. doi:10.2147/NDT.S10389\n",
+"sentences": [
+"Cognitive behavioral therapy for the treatment of post-traumatic stress disorder: A review       NKar      10.2147/NDT.S10389       Neuropsychiatric Disease and Treatment       7        2011       Kar, N.",
+"(2011).",
+"Cognitive behavioral therapy for the treatment of post-traumatic stress disorder: A review.",
+"Neuropsychiatric Disease and Treatment, 7, 167-181. doi:10.2147/NDT.S10389"
+]
+},
+{
+"x": "<p>Furthermore, we believe that bottom-up optical factors were unlikely contributors to the observed differences at the neural level, because any bottom-up factors should affect all neural responses irrespectively of their category, whereas we observed much larger N170 to noise textures in older than in young participants.</p>",
+"sentences": [
+"<p>Furthermore, we believe that bottom-up optical factors were unlikely contributors to the observed differences at the neural level, because any bottom-up factors should affect all neural responses irrespectively of their category, whereas we observed much larger N170 to noise textures in older than in young participants.</p>"
+]
+},
+{
+"x": "<p>n\ne i\num is\nco l\ne\nc\nd i</p>",
+"sentences": [
+"<p>n e i um is co l e c d i</p>"
+]
+},
+{
+"x": "This work was supported by UK Medical Research Council grant MC-A060-5PR00 (to M. C. Anderson).",
+"sentences": [
+"This work was supported by UK Medical Research Council grant MC-A060-5PR00 (to M.",
+"C.",
+"Anderson)."
+]
+},
+{
+"x": "\n\t\n\t\tDecision making and recognition mechanisms\n\t\t\n\t\t\tBDNeff\n\t\t\n\t\t\n\t\t\tPWSherman\n\t\t\n\t\n\t\n\t\tProceedings of the Royal Society of London B\n\t\t\n\t\t\t269\n\t\t\t\n\t\t\t2002\n\t\t\n\t\n\tNeff, B. D., & Sherman, P. W. (2002). Decision making and recognition mechanisms. Proceedings of the Royal Society of London B, 269, 1435 -1441.\n",
+"sentences": [
+"Decision making and recognition mechanisms       BDNeff          PWSherman          Proceedings of the Royal Society of London B       269        2002       Neff, B.",
+"D., & Sherman, P.",
+"W.",
+"(2002).",
+"Decision making and recognition mechanisms.",
+"Proceedings of the Royal Society of London B, 269, 1435 -1441."
+]
+},
+{
+"x": "Received January 8, 2021 Revision received June 30, 2021 Accepted September 8, 2021 n",
+"sentences": [
+"Received January 8, 2021 Revision received June 30, 2021 Accepted September 8, 2021 n"
+]
+},
+{
+"x": "<figDesc>Figure 4. The effects of Emotion (anger vs. neutral vs. sadness) and Turning</figDesc>",
+"sentences": [
+"<figDesc>Figure 4.",
+"The effects of Emotion (anger vs. neutral vs. sadness) and Turning</figDesc>"
+]
+},
+{
+"x": "<note type=\"raw_reference\">McNally, R. J. (1998). Experimental approaches to cogni- tive abnormality in posttraumatic stress disorder. Clinical Psychology Review, 18, 971-982.</note>",
+"sentences": [
+"<note type=\"raw_reference\">McNally, R.",
+"J.",
+"(1998).",
+"Experimental approaches to cogni- tive abnormality in posttraumatic stress disorder.",
+"Clinical Psychology Review, 18, 971-982.</note>"
+]
+},
+{
+"x": "Wolf, A. P. 1995 Sexual attraction and childhood association: a Chinese brief for Edward Westermarck. Stanford, CA: Stan- ford University Press.",
+"sentences": [
+"Wolf, A.",
+"P.",
+"1995 Sexual attraction and childhood association: a Chinese brief for Edward Westermarck.",
+"Stanford, CA: Stan- ford University Press."
+]
+},
+{
+"x": "\n\t\n\t\tPerforming high‐powered studies efficiently with sequential analyses\n\t\t\n\t\t\tDaniëlLakens\n\t\t\n\t\t10.1002/ejsp.2023\n\t\t\n\t\n\t\n\t\tEuropean Journal of Social Psychology\n\t\tEuro J Social Psych\n\t\t0046-2772\n\t\t1099-0992\n\t\t\n\t\t\t44\n\t\t\t7\n\t\t\t\n\t\t\t2014\n\t\t\tWiley\n\t\t\n\t\n\tLakens, D. (2014). Performing high-powered studies efficiently with sequential analyses. European Journal of Social Psychology, 44(7), 701-710. https://doi.org/10.1002/ejsp.2023\n",
+"sentences": [
+"Performing high‐powered studies efficiently with sequential analyses       DaniëlLakens      10.1002/ejsp.2023          European Journal of Social Psychology   Euro J Social Psych   0046-2772   1099-0992       44    7        2014    Wiley       Lakens, D.",
+"(2014).",
+"Performing high-powered studies efficiently with sequential analyses.",
+"European Journal of Social Psychology, 44(7), 701-710. https://doi.org/10.1002/ejsp.2023"
+]
+},
+{
+"x": "<note>Social Sciences Information</note>",
+"sentences": [
+"<note>Social Sciences Information</note>"
+]
+},
+{
+"x": "\n\t\n\t\tOn the universality and cultural specificity of emotion recognition: A meta-analysis.\n\t\t\n\t\t\tHillaryAngerElfenbein\n\t\t\n\t\t\n\t\t\tNaliniAmbady\n\t\t\n\t\t10.1037/0033-2909.128.2.203\n\t\t\n\t\n\t\n\t\tPsychological Bulletin\n\t\tPsychological Bulletin\n\t\t0033-2909\n\t\t1939-1455\n\t\t\n\t\t\t128\n\t\t\t2\n\t\t\t\n\t\t\t2002\n\t\t\tAmerican Psychological Association (APA)\n\t\t\n\t\n\tElfenbein, H. A., & Ambady, N. (2002). On the universality and cultural specificity of emotion recognition: A meta-analysis. Psychological Bul- letin, 128(2), 203-235. https://doi.org/10.1037/0033-2909.128.2.203\n",
+"sentences": [
+"On the universality and cultural specificity of emotion recognition: A meta-analysis.",
+"HillaryAngerElfenbein          NaliniAmbady      10.1037/0033-2909.128.2.203          Psychological Bulletin   Psychological Bulletin   0033-2909   1939-1455       128    2        2002    American Psychological Association (APA)       Elfenbein, H.",
+"A., & Ambady, N.",
+"(2002).",
+"On the universality and cultural specificity of emotion recognition: A meta-analysis.",
+"Psychological Bul- letin, 128(2), 203-235. https://doi.org/10.1037/0033-2909.128.2.203"
+]
+},
+{
+"x": "DeBruine, L. M. 2004b Resemblance to self increases the appeal of child faces to both men and women. Evol. Hum. Behav. 25, 142-154.",
+"sentences": [
+"DeBruine, L.",
+"M. 2004b Resemblance to self increases the appeal of child faces to both men and women.",
+"Evol.",
+"Hum.",
+"Behav.",
+"25, 142-154."
+]
+},
+{
+"x": "<p>Participants were 53 male and 55 female undergraduate students enrolled in an introductory psychology course (mean age ¼ 19:2 years, s:d: ¼ 1:6). They were of various ethnic backgrounds, but were divided into the broad phenotypic categories of East Asian (14 male, 16 female), European (25 male, 32 female) and West Asian (14 male, 7 female) for the purposes of transforming faces.</p>",
+"sentences": [
+"<p>Participants were 53 male and 55 female undergraduate students enrolled in an introductory psychology course (mean age ¼ 19:2 years, s:d: ¼ 1:6).",
+"They were of various ethnic backgrounds, but were divided into the broad phenotypic categories of East Asian (14 male, 16 female), European (25 male, 32 female) and West Asian (14 male, 7 female) for the purposes of transforming faces.</p>"
+]
+},
+{
+"x": "Smith, S. M., & Nichols, T. E. (2009). Threshold-free cluster enhancement: Addressing problems of smoothing, threshold dependence and localisation in cluster inference. NeuroImage, 44(1), 83-98. https://doi. org/10.1016/j.neuroimage.2008.03.061",
+"sentences": [
+"Smith, S.",
+"M., & Nichols, T.",
+"E.",
+"(2009).",
+"Threshold-free cluster enhancement: Addressing problems of smoothing, threshold dependence and localisation in cluster inference.",
+"NeuroImage, 44(1), 83-98. https://doi. org/10.1016/j.neuroimage.2008.03.061"
+]
+},
+{
+"x": "Tenke, C. E., & Kayser, J. (2012). Generator localization by current source density (CSD): Implications of volume conduction and field closure at intracranial and scalp resolutions. Clinical Neurophysiology, 123(12), 2328-2345. https://doi.org/10.1016/j.clinph.2012.06.005",
+"sentences": [
+"Tenke, C.",
+"E., & Kayser, J.",
+"(2012).",
+"Generator localization by current source density (CSD): Implications of volume conduction and field closure at intracranial and scalp resolutions.",
+"Clinical Neurophysiology, 123(12), 2328-2345. https://doi.org/10.1016/j.clinph.2012.06.005"
+]
+},
+{
+"x": "\n\t\n\t\tHomogamy, genetic similarity, and imprinting; parental influence on mate choice preferences\n\t\t\n\t\t\tTBereczkei\n\t\t\n\t\t\n\t\t\tPGyuris\n\t\t\n\t\t\n\t\t\tPKoves\n\t\t\n\t\t\n\t\t\tLBernath\n\t\t\n\t\n\t\n\t\tPerson. Indiv. Diff\n\t\t\n\t\t\t33\n\t\t\t\n\t\t\t2002\n\t\t\n\t\n\tBereczkei, T., Gyuris, P., Koves, P. & Bernath, L. 2002 Hom- ogamy, genetic similarity, and imprinting; parental influ- ence on mate choice preferences. Person. Indiv. Diff. 33, 677-690.\n",
+"sentences": [
+"Homogamy, genetic similarity, and imprinting; parental influence on mate choice preferences       TBereczkei          PGyuris          PKoves          LBernath          Person.",
+"Indiv.",
+"Diff       33        2002       Bereczkei, T., Gyuris, P., Koves, P.",
+"& Bernath, L.",
+"2002 Hom- ogamy, genetic similarity, and imprinting; parental influ- ence on mate choice preferences.",
+"Person.",
+"Indiv.",
+"Diff.",
+"33, 677-690."
+]
+},
+{
+"x": "Brewin, C. R. (2011). The nature and significance of memory disturbance in posttraumatic stress disorder. Annual Review of Clinical Psychology, 7, 203-227. doi:10.1146/annurev clinpsy-032210-104544",
+"sentences": [
+"Brewin, C.",
+"R.",
+"(2011).",
+"The nature and significance of memory disturbance in posttraumatic stress disorder.",
+"Annual Review of Clinical Psychology, 7, 203-227. doi:10.1146/annurev clinpsy-032210-104544"
+]
+},
+{
+"x": "<head>(i) Participants</head>",
+"sentences": [
+"<head>(i) Participants</head>"
+]
+},
+{
+"x": "<head n=\"4.4\">| EEG recording and preprocessing</head>",
+"sentences": [
+"<head n=\"4.4\">| EEG recording and preprocessing</head>"
+]
+},
+{
+"x": "INFERRING ENVY\nStudy 3. Figure 7. The effects of Emotion (anger vs. sadness) and Turning (towards person\nvs. towards bike) on the benign and malicious envy scales in the within-subjects design in",
+"sentences": [
+"INFERRING ENVY Study 3.",
+"Figure 7.",
+"The effects of Emotion (anger vs. sadness) and Turning (towards person vs. towards bike) on the benign and malicious envy scales in the within-subjects design in"
+]
+},
+{
+"x": "Resemblance assessment",
+"sentences": [
+"Resemblance assessment"
+]
+},
+{
+"x": "\n\t\n\t\tThe Benefits and Threats from Being Envied in Organizations\n\t\t\n\t\t\tWGParrott\n\t\t\n\t\t10.1093/acprof:oso/9780190228057.003.0019\n\t\n\t\n\t\tEnvy at Work and in Organizations\n\t\t\n\t\t\tRHSmith\n\t\t\n\t\t\n\t\t\tUMerlone\n\t\t\n\t\t\n\t\t\tMKDuffy\n\t\t\n\t\t\n\t\t\tOxford University Press\n\t\t\t2017\n\t\t\t\n\t\t\n\t\n\tParrott, W. G. (2017). The benefits and threats from being envied in organ- izations. In R. H. Smith, U. Merlone, & M. K. Duffy (Eds.), Envy at work and in organizations (pp. 455-474). Oxford University Press.\n",
+"sentences": [
+"The Benefits and Threats from Being Envied in Organizations       WGParrott      10.1093/acprof:oso/9780190228057.003.0019       Envy at Work and in Organizations       RHSmith          UMerlone          MKDuffy          Oxford University Press    2017           Parrott, W.",
+"G.",
+"(2017).",
+"The benefits and threats from being envied in organ- izations.",
+"In R.",
+"H.",
+"Smith, U.",
+"Merlone, & M.",
+"K.",
+"Duffy (Eds.), Envy at work and in organizations (pp.",
+"455-474).",
+"Oxford University Press."
+]
+},
+{
+"x": "<note type=\"raw_reference\">Ince, R. A. A., van Rijsbergen, N. J., Thut, G., Rousselet, G. A., Gross, J., Panzeri, S., &amp; Schyns, P. G. (2015). Tracing the flow of perceptual fea- tures in an algorithmic brain network. Scientific Reports, 5(1), 17681. https://doi.org/10.1038/srep17681</note>",
+"sentences": [
+"<note type=\"raw_reference\">Ince, R.",
+"A.",
+"A., van Rijsbergen, N.",
+"J., Thut, G., Rousselet, G.",
+"A., Gross, J., Panzeri, S., &amp; Schyns, P.",
+"G.",
+"(2015).",
+"Tracing the flow of perceptual fea- tures in an algorithmic brain network.",
+"Scientific Reports, 5(1), 17681. https://doi.org/10.1038/srep17681</note>"
+]
+},
+{
+"x": "<p>We quantified ERP onsets using the causal-filtered datasets. To control for multiple comparisons, we used a bootstrap temporal clustering technique as implemented in LIMO EEG <ref type=\"bibr\" target=\"#b47\">(Pernet et al., 2011;</ref><ref type=\"bibr\" target=\"#b46\">Pernet, Latinus, Nichols, &amp; Rousselet, 2015)</ref>.</p>",
+"sentences": [
+"<p>We quantified ERP onsets using the causal-filtered datasets.",
+"To control for multiple comparisons, we used a bootstrap temporal clustering technique as implemented in LIMO EEG <ref type=\"bibr\" target=\"#b47\">(Pernet et al., 2011;</ref><ref type=\"bibr\" target=\"#b46\">Pernet, Latinus, Nichols, &amp; Rousselet, 2015)</ref>.</p>"
+]
+},
+{
+"x": "The context-dependent effects observed in the current study would not be expected if 'mere exposure' to one's own face solely accounts for behaviour and attributions toward similar faces. Instead, these results provide evidence that similar faces are not generally preferred because they look familiar, but are evaluated differently in contexts where the historically adaptive response to kin would have been different. This strengthens the argument that humans use facial resemblance as a cue of kinship to which they respond in a specialized, potentially adaptive manner.",
+"sentences": [
+"The context-dependent effects observed in the current study would not be expected if 'mere exposure' to one's own face solely accounts for behaviour and attributions toward similar faces.",
+"Instead, these results provide evidence that similar faces are not generally preferred because they look familiar, but are evaluated differently in contexts where the historically adaptive response to kin would have been different.",
+"This strengthens the argument that humans use facial resemblance as a cue of kinship to which they respond in a specialized, potentially adaptive manner."
+]
+},
+{
+"x": "<note type=\"raw_reference\">Meikle, D. B. &amp; Vessey, S. H. 1981 Nepotism among rhesus monkey brothers. Nature 294, 160-161.</note>",
+"sentences": [
+"<note type=\"raw_reference\">Meikle, D.",
+"B. &amp; Vessey, S.",
+"H.",
+"1981 Nepotism among rhesus monkey brothers.",
+"Nature 294, 160-161.</note>"
+]
+},
+{
+"x": "<note type=\"raw_reference\">Pfennig, D. W. &amp; Sherman, P. W. 1995 Kin recognition. Sci. Am. 272, 98-103.</note>",
+"sentences": [
+"<note type=\"raw_reference\">Pfennig, D.",
+"W. &amp; Sherman, P.",
+"W.",
+"1995 Kin recognition.",
+"Sci.",
+"Am.",
+"272, 98-103.</note>"
+]
+},
+{
+"x": "In addition to caring about themselves, people also care about the welfare of others: family, friends, and sometimes even strangers (Engel, 2011;Fehr & Fischbacher, 2003;Hein, Silani, Preuschoff, Batson, & Singer, 2010). Correspondingly, there is evidence that people experience vicarious emotions in response to others' successes and misfortunes, as reflected in both self-reports of emotions (",
+"sentences": [
+"In addition to caring about themselves, people also care about the welfare of others: family, friends, and sometimes even strangers (Engel, 2011;Fehr & Fischbacher, 2003;Hein, Silani, Preuschoff, Batson, & Singer, 2010).",
+"Correspondingly, there is evidence that people experience vicarious emotions in response to others' successes and misfortunes, as reflected in both self-reports of emotions ("
+]
+},
+{
+"x": "Avoidance strategies are commonly employed by people with PTSD to evade reminders of trauma and mitigate the distress that consequent intrusions cause. However, although avoidance of the reminders themselves is one means to reduce memory intrusions, previous research has shown that people are often able to voluntarily 569889P SSXXX10.1177/0956797615569889Catarino et al.Inhibitory Control and Posttraumatic Stress Disorder research-article2015",
+"sentences": [
+"Avoidance strategies are commonly employed by people with PTSD to evade reminders of trauma and mitigate the distress that consequent intrusions cause.",
+"However, although avoidance of the reminders themselves is one means to reduce memory intrusions, previous research has shown that people are often able to voluntarily 569889P SSXXX10.1177/0956797615569889Catarino et al.Inhibitory Control and Posttraumatic Stress Disorder research-article2015"
+]
+},
+{
+"x": "Turning interaction as Emotion 3 Turning. Note, however, that the specific contrasts we describe for the interaction are indeed the predicted contrasts.",
+"sentences": [
+"Turning interaction as Emotion 3 Turning.",
+"Note, however, that the specific contrasts we describe for the interaction are indeed the predicted contrasts."
+]
+},
+{
+"x": "P1 P2 P1 = $X P2 = $X P1 = $X + 1 not trusting trusting selfish unselfish X = 2, 3, 4 or 5",
+"sentences": [
+"P1 P2 P1 = $X P2 = $X P1 = $X + 1 not trusting trusting selfish unselfish X = 2, 3, 4 or 5"
+]
+},
+{
+"x": "<p>Notably, Study 2 also replicated that inferences of benign and\nmalicious envy were generally higher when the target was\nemotional as compared with neutral. As in Study 1, corresponding\neffect sizes were large. Therefore, simply being in the context of\nan advantaged other person may not suffice to lead observers to\ninfer envy. Instead, the target must be affected emotionally.</p>",
+"sentences": [
+"<p>Notably, Study 2 also replicated that inferences of benign and malicious envy were generally higher when the target was emotional as compared with neutral.",
+"As in Study 1, corresponding effect sizes were large.",
+"Therefore, simply being in the context of an advantaged other person may not suffice to lead observers to infer envy.",
+"Instead, the target must be affected emotionally.</p>"
+]
+},
+{
+"x": "<p>Three control conditions were included in this study.</p>",
+"sentences": [
+"<p>Three control conditions were included in this study.</p>"
+]
+},
+{
+"x": "<p>Demographic and clinical information about the participants is presented in Table <ref type=\"table\" target=\"#tab_0\">1</ref>. As expected, the two groups differed significantly in their scores for clinical measures tapping into PTSD symptomatology and symptoms that commonly co-occur with PTSD, such as depression and anxiety.</p>",
+"sentences": [
+"<p>Demographic and clinical information about the participants is presented in Table <ref type=\"table\" target=\"#tab_0\">1</ref>.",
+"As expected, the two groups differed significantly in their scores for clinical measures tapping into PTSD symptomatology and symptoms that commonly co-occur with PTSD, such as depression and anxiety.</p>"
+]
+},
+{
+"x": "<head n=\"4.\">Discussion</head>",
+"sentences": [
+"<head n=\"4.\"",
+">Discussion</head>"
+]
+},
+{
+"x": "<note type=\"raw_reference\">Rhodes, G., Sumich, A. &amp; Byatt, G. 1999 Are average facial configurations attractive only because of their symmetry? Psychol. Sci. 10, 52-58.</note>",
+"sentences": [
+"<note type=\"raw_reference\">Rhodes, G., Sumich, A. &amp; Byatt, G.",
+"1999 Are average facial configurations attractive only because of their symmetry?",
+"Psychol.",
+"Sci.",
+"10, 52-58.</note>"
+]
+},
+{
+"x": "<head n=\"3.\">DISCUSSION</head>",
+"sentences": [
+"<head n=\"3.\"",
+">DISCUSSION</head>"
+]
+},
+{
+"x": "Platek, S. M., Burch, R. L., Panyavin, I. S., Wasserman, B. H., & Gallup Jr., G. G. (2002). Reactions to children's faces: resemblance affects males more than females. Evolution and Human Behavior, 23, 159 -166.",
+"sentences": [
+"Platek, S.",
+"M., Burch, R.",
+"L., Panyavin, I.",
+"S., Wasserman, B.",
+"H., & Gallup Jr., G.",
+"G.",
+"(2002).",
+"Reactions to children's faces: resemblance affects males more than females.",
+"Evolution and Human Behavior, 23, 159 -166."
+]
+},
+{
+"x": "The research reported in this article was supported by grants from the German Research foundation (DFG) awarded to Jens Lange (LA 4029/1-1, LA 4029/2-1). We thank the members of the Department of Social Psychology at the University of Amsterdam for valuable feedback. We also thank Sami Paul Chakkour, Niklas Koch, Franziska Thomiczny, and Johanna Woitzel for serving as actors in Study 3.",
+"sentences": [
+"The research reported in this article was supported by grants from the German Research foundation (DFG) awarded to Jens Lange (LA 4029/1-1, LA 4029/2-1).",
+"We thank the members of the Department of Social Psychology at the University of Amsterdam for valuable feedback.",
+"We also thank Sami Paul Chakkour, Niklas Koch, Franziska Thomiczny, and Johanna Woitzel for serving as actors in Study 3."
+]
+},
+{
+"x": "<p>Whether other stimulus characteristics (e.g., external features, color pigmentation) affect processing speed and use of diagnostic information with age remains to be explored. Here, we used relatively sparse images of grayscale faces, presented in an oval mask, without any external features such as hair. Additional information such as color might increase the diagnostic information across the whole face, whereas external features might become more relevant at longer viewing distances. Furthermore, we only used images of young faces.</p>",
+"sentences": [
+"<p>Whether other stimulus characteristics (e.g., external features, color pigmentation) affect processing speed and use of diagnostic information with age remains to be explored.",
+"Here, we used relatively sparse images of grayscale faces, presented in an oval mask, without any external features such as hair.",
+"Additional information such as color might increase the diagnostic information across the whole face, whereas external features might become more relevant at longer viewing distances.",
+"Furthermore, we only used images of young faces.</p>"
+]
+},
+{
+"x": "\n\t\n\t\temmeans: Estimated Marginal Means, aka Least-Squares Means\n\t\t\n\t\t\tRussellVLenth\n\t\t\n\t\t10.32614/cran.package.emmeans\n\t\t\n\t\t\n\t\t\t2019\n\t\t\tThe R Foundation\n\t\t\n\t\n\tComputer software\n\tLenth, R. (2019). Emmeans: Estimated marginal means, aka least-squares means (R package version 1.3.5.1) [Computer software]. https://CRAN.R -project.org/package=emmeans\n",
+"sentences": [
+"emmeans: Estimated Marginal Means, aka Least-Squares Means       RussellVLenth      10.32614/cran.package.emmeans          2019    The R Foundation       Computer software  Lenth, R.",
+"(2019).",
+"Emmeans: Estimated marginal means, aka least-squares means (R package version 1.3.5.1) [Computer software]. https://CRAN.R -project.org/package=emmeans"
+]
+},
+{
+"x": "<note type=\"raw_reference\">Keltner, D., Sauter, D., Tracy, J., &amp; Cowen, A. (2019). Emotional expres- sion: Advances in basic emotion theory. Journal of Nonverbal Behavior, 43(2), 133-160. https://doi.org/10.1007/s10919-019-00293-3</note>",
+"sentences": [
+"<note type=\"raw_reference\">Keltner, D., Sauter, D., Tracy, J., &amp; Cowen, A.",
+"(2019).",
+"Emotional expres- sion: Advances in basic emotion theory.",
+"Journal of Nonverbal Behavior, 43(2), 133-160. https://doi.org/10.1007/s10919-019-00293-3</note>"
+]
+},
+{
+"x": "<p>Ninety-eight students from different majors of a Dutch university and volunteers participated in Study 2. Their mean age was 24.53 years (SD = 10, range: 17 -69; 23 male).</p>",
+"sentences": [
+"<p>Ninety-eight students from different majors of a Dutch university and volunteers participated in Study 2.",
+"Their mean age was 24.53 years (SD = 10, range: 17 -69; 23 male).</p>"
+]
+},
+{
+"x": "<note type=\"raw_reference\">Daly, M. &amp; Wilson, M. 1982 Whom are newborn babies said to resemble? Ethol. Sociobiol. 3, 69-78.</note>",
+"sentences": [
+"<note type=\"raw_reference\">Daly, M. &amp; Wilson, M.",
+"1982 Whom are newborn babies said to resemble?",
+"Ethol.",
+"Sociobiol.",
+"3, 69-78.</note>"
+]
+},
+{
+"x": "\n\t\n\t\tNeural mechanisms of motivated forgetting\n\t\t\n\t\t\tMCAnderson\n\t\t\n\t\t\n\t\t\tSHanslmayr\n\t\t\n\t\t10.1016/j.tics.2014.03.002\n\t\n\t\n\t\tTrends in Cognitive Sciences\n\t\t\n\t\t\t18\n\t\t\t\n\t\t\t2014\n\t\t\n\t\n\tAnderson, M. C., & Hanslmayr, S. (2014). Neural mechanisms of motivated forgetting. Trends in Cognitive Sciences, 18, 279-292. doi:10.1016/j.tics.2014.03.002\n",
+"sentences": [
+"Neural mechanisms of motivated forgetting       MCAnderson          SHanslmayr      10.1016/j.tics.2014.03.002       Trends in Cognitive Sciences       18        2014       Anderson, M.",
+"C., & Hanslmayr, S.",
+"(2014).",
+"Neural mechanisms of motivated forgetting.",
+"Trends in Cognitive Sciences, 18, 279-292. doi:10.1016/j.tics.2014.03.002"
+]
+},
+{
+"x": "<figDesc>Comparison of the Demographic and Clinical Characteristics of the Posttraumatic Stress Disorder (PTSD) and Control Groups</figDesc>",
+"sentences": [
+"<figDesc>Comparison of the Demographic and Clinical Characteristics of the Posttraumatic Stress Disorder (PTSD) and Control Groups</figDesc>"
+]
+},
+{
+"x": "Spielberger, C. D., Gorsuch, R. L., Lushene, R., Vagg, P. R., & Jacobs, G. A. (1983). Manual for the State-Trait Anxiety Inventory. Palo Alto, CA: Consulting Psychologists Press.",
+"sentences": [
+"Spielberger, C.",
+"D., Gorsuch, R.",
+"L., Lushene, R., Vagg, P.",
+"R., & Jacobs, G.",
+"A.",
+"(1983).",
+"Manual for the State-Trait Anxiety Inventory.",
+"Palo Alto, CA: Consulting Psychologists Press."
+]
+},
+{
+"x": "Interestingly, inferences of pain were higher for both angry and sad (i.e., disappointed) as compared with neutral expressions independent of Turning. The same contrasts were significant for benign and malicious envy. In all these tests, effect sizes were large. This finding indicates that participants were more likely to infer envy when the target reacted emotionally to another person’s advantage, but not when the target remained neutral.",
+"sentences": [
+"Interestingly, inferences of pain were higher for both angry and sad (i.e., disappointed) as compared with neutral expressions independent of Turning.",
+"The same contrasts were significant for benign and malicious envy.",
+"In all these tests, effect sizes were large.",
+"This finding indicates that participants were more likely to infer envy when the target reacted emotionally to another person’s advantage, but not when the target remained neutral."
+]
+},
+{
+"x": "<note type=\"raw_reference\">Verhaert, G. A., &amp; Van den Poel, D. (2011). Empathy as added value in predicting donation behavior. Journal of Business Research, 64, 1288-1295. doi:10.1016/j.jbusres .2010.12.024</note>",
+"sentences": [
+"<note type=\"raw_reference\">Verhaert, G.",
+"A., &amp; Van den Poel, D.",
+"(2011).",
+"Empathy as added value in predicting donation behavior.",
+"Journal of Business Research, 64, 1288-1295. doi:10.1016/j.jbusres .2010.12.024</note>"
+]
+},
+{
+"x": "Éthier-Majcher, C., Joubert, S., & Gosselin, F. (2013). Reverse correlating trustworthy faces in young and older adults. Frontiers in Psychology, 4, 592. https://doi.org/10.3389/fpsyg.2013.00592",
+"sentences": [
+"Éthier-Majcher, C., Joubert, S., & Gosselin, F.",
+"(2013).",
+"Reverse correlating trustworthy faces in young and older adults.",
+"Frontiers in Psychology, 4, 592. https://doi.org/10.3389/fpsyg.2013.00592"
+]
+},
+{
+"x": "<p>(b) Experiment 2: averageness judgements (i) Participants Participants were 33 male and 45 female undergraduates taking an introductory psychology course (mean age ¼ 19:7 years, s:d: ¼ 1:2). They were also grouped by phenotype (East Asian: 7 male, 10 female, European: 23 male, 32 female, West Asian: 3 male, 3 female).</p>",
+"sentences": [
+"<p>(b) Experiment 2: averageness judgements (i) Participants Participants were 33 male and 45 female undergraduates taking an introductory psychology course (mean age ¼ 19:7 years, s:d: ¼ 1:2).",
+"They were also grouped by phenotype (East Asian: 7 male, 10 female, European: 23 male, 32 female, West Asian: 3 male, 3 female).</p>"
+]
+},
+{
+"x": "Fehr, E., & Fischbacher, U. (2003). The nature of human altruism. Nature, 425, 785-791. doi:10.1038/nature02043",
+"sentences": [
+"Fehr, E., & Fischbacher, U.",
+"(2003).",
+"The nature of human altruism.",
+"Nature, 425, 785-791. doi:10.1038/nature02043"
+]
+},
+{
+"x": "Solnick, S. & Schweitzer, M. 1999 The influence of physical attractiveness and gender on ultimatum game decisions. Org. Behav. Hum. Decision Process. 793, 199-215.",
+"sentences": [
+"Solnick, S.",
+"& Schweitzer, M.",
+"1999 The influence of physical attractiveness and gender on ultimatum game decisions.",
+"Org.",
+"Behav.",
+"Hum.",
+"Decision Process.",
+"793, 199-215."
+]
+},
+{
+"x": "\n\t\n\t\tThe genetical evolution of social behaviour. Part I\n\t\t\n\t\t\tWDHamilton\n\t\t\n\t\n\t\n\t\tJ. Theor. Biol\n\t\t\n\t\t\t7\n\t\t\t\n\t\t\t1964\n\t\t\n\t\n\tHamilton, W. D. 1964 The genetical evolution of social behav- iour. Part I. J. Theor. Biol. 7, 1-16.\n",
+"sentences": [
+"The genetical evolution of social behaviour.",
+"Part I       WDHamilton          J.",
+"Theor.",
+"Biol       7        1964       Hamilton, W.",
+"D.",
+"1964 The genetical evolution of social behav- iour.",
+"Part I.",
+"J.",
+"Theor.",
+"Biol.",
+"7, 1-16."
+]
+},
+{
+"x": "<note type=\"raw_reference\">Van de Ven, N., Zeelenberg, M., &amp; Pieters, R. (2012). Appraisal patterns of envy and related emotions. Motivation and Emotion, 36(2), 195-204. https://doi.org/10.1007/s11031-011-9235-8</note>",
+"sentences": [
+"<note type=\"raw_reference\">Van de Ven, N., Zeelenberg, M., &amp; Pieters, R.",
+"(2012).",
+"Appraisal patterns of envy and related emotions.",
+"Motivation and Emotion, 36(2), 195-204. https://doi.org/10.1007/s11031-011-9235-8</note>"
+]
+},
+{
+"x": "<note type=\"raw_reference\">Park, H., Ince, R. A. A., Schyns, P. G., Thut, G., &amp; Gross, J. (2015). Frontal top-down signals increase coupling of auditory low-frequency oscilla- tions to continuous speech in human listeners. Current Biology, 25, 1649-1653. https://doi.org/10.1016/j.cub.2015.04.049</note>",
+"sentences": [
+"<note type=\"raw_reference\">Park, H., Ince, R.",
+"A.",
+"A., Schyns, P.",
+"G., Thut, G., &amp; Gross, J.",
+"(2015).",
+"Frontal top-down signals increase coupling of auditory low-frequency oscilla- tions to continuous speech in human listeners.",
+"Current Biology, 25, 1649-1653. https://doi.org/10.1016/j.cub.2015.04.049</note>"
+]
+},
+{
+"x": "<p>n\nllie sem\na s\ntis id\nf e\no b\ne to\non to\nr n\nno is\ntio nd\na a\ni\nc r\nso seu\nsA lau\nliag idv\nc i\nloo ind\nh e\nscyP tfoh\nn e\na s\nc u\ni\nr l\ne a\neAm rseon\nh p\ntdby treoh\ne f\nth y\niryg lleo\np s\no d\nc e\nis end\ntn t</p>",
+"sentences": [
+"<p>n llie sem a s tis id f e o b e to on to r n no is tio nd a a i c r so seu sA lau liag idv c i loo ind h e scyP tfoh n e a s c u i r l e a eAm rseon h p tdby treoh e f th y iryg lleo p s o d c e is end tn t</p>"
+]
+},
+{
+"x": "<note type=\"raw_reference\">Widmann, A., &amp; Schröger, E. (2012). Filter effects and filter artifacts in the analysis of electrophysiological data. Frontiers in Psychology, 3, 233. https://doi.org/10.3389/fpsyg.2012.00233</note>",
+"sentences": [
+"<note type=\"raw_reference\">Widmann, A., &amp; Schröger, E.",
+"(2012).",
+"Filter effects and filter artifacts in the analysis of electrophysiological data.",
+"Frontiers in Psychology, 3, 233. https://doi.org/10.3389/fpsyg.2012.00233</note>"
+]
+},
+{
+"x": "<p>Received January 8, 2021 Revision received June 30, 2021 Accepted September 8, 2021 n</p>",
+"sentences": [
+"<p>Received January 8, 2021 Revision received June 30, 2021 Accepted September 8, 2021 n</p>"
+]
+},
+{
+"x": "<p>Contrary to the results expected if people form male and female mental face prototypes and if resemblance to self affects only the perceived averageness or typicality of samesex faces, there was no interaction among participant sex, face sex and resemblance (F 1, 76 ¼ 1:97, p ¼ 0:165, figure <ref type=\"figure\" target=\"#fig_1\">2b</ref>). Inasmuch as perceived averageness or typicality is influenced by familiarity, these results show that resemblance to self affects the familiarity of same-sex faces no more than it affects other-sex faces.</p>",
+"sentences": [
+"<p>Contrary to the results expected if people form male and female mental face prototypes and if resemblance to self affects only the perceived averageness or typicality of samesex faces, there was no interaction among participant sex, face sex and resemblance (F 1, 76 ¼ 1:97, p ¼ 0:165, figure <ref type=\"figure\" target=\"#fig_1\">2b</ref>).",
+"Inasmuch as perceived averageness or typicality is influenced by familiarity, these results show that resemblance to self affects the familiarity of same-sex faces no more than it affects other-sex faces.</p>"
+]
+},
+{
+"x": "Van Doorn, E. A., Van Kleef, G. A., & Van der Pligt, J. (2015). How emo- tional expressions shape prosocial behavior: Interpersonal effects of an- ger and disappointment on compliance with requests. Motivation and Emotion, 39(1), 128-141. https://doi.org/10.1007/s11031-014-9421-6",
+"sentences": [
+"Van Doorn, E.",
+"A., Van Kleef, G.",
+"A., & Van der Pligt, J.",
+"(2015).",
+"How emo- tional expressions shape prosocial behavior: Interpersonal effects of an- ger and disappointment on compliance with requests.",
+"Motivation and Emotion, 39(1), 128-141. https://doi.org/10.1007/s11031-014-9421-6"
+]
+},
+{
+"x": "Amir, N., Badour, C. L., & Freese, B. (2009). The effect of retrieval on recall of information in individuals with post- traumatic stress disorder. Journal of Anxiety Disorders, 23, 535-540. doi:10.1016/j.janxdis.2008.10.012",
+"sentences": [
+"Amir, N., Badour, C.",
+"L., & Freese, B.",
+"(2009).",
+"The effect of retrieval on recall of information in individuals with post- traumatic stress disorder.",
+"Journal of Anxiety Disorders, 23, 535-540. doi:10.1016/j.janxdis.2008.10.012"
+]
+},
+{
+"x": "<note type=\"raw_reference\">Euler, H. A., &amp; Weitzel, B. (1999). Grandparental caregiving and intergenerational relations reflect reproductive strategies. In J. M. van der Dennen, D. Smillie, &amp; D. R. Wilson (Eds.), The Darwinian heritage and socio- biology. Human evolution, behavior, and intelligence ( pp. 243 -252). Westport, CT: Praeger Publishers.</note>",
+"sentences": [
+"<note type=\"raw_reference\">Euler, H.",
+"A., &amp; Weitzel, B.",
+"(1999).",
+"Grandparental caregiving and intergenerational relations reflect reproductive strategies.",
+"In J.",
+"M. van der Dennen, D.",
+"Smillie, &amp; D.",
+"R.",
+"Wilson (Eds.), The Darwinian heritage and socio- biology.",
+"Human evolution, behavior, and intelligence ( pp.",
+"243 -252).",
+"Westport, CT: Praeger Publishers.</note>"
+]
+},
+{
+"x": "<p>All authors approved the final version of the manuscript for submission. A. Catarino had full access to all data in the study and takes responsibility for the integrity and accuracy of the analyses.</p>",
+"sentences": [
+"<p>All authors approved the final version of the manuscript for submission.",
+"A.",
+"Catarino had full access to all data in the study and takes responsibility for the integrity and accuracy of the analyses.</p>"
+]
+},
+{
+"x": "<note type=\"raw_reference\">Taylor, S. E., &amp; Brown, J. D. (1988). Illusion and well-being: A social psychological perspective on mental health. Psychological Bulletin, 103, 193-210. doi:10.1037/0033-2909 .103.2.193</note>",
+"sentences": [
+"<note type=\"raw_reference\">Taylor, S.",
+"E., &amp; Brown, J.",
+"D.",
+"(1988).",
+"Illusion and well-being: A social psychological perspective on mental health.",
+"Psychological Bulletin, 103, 193-210. doi:10.1037/0033-2909 .103.2.193</note>"
+]
+},
+{
+"x": "\n\t\n\t\tAttitudinal effects of mere exposure\n\t\t\n\t\t\tRBZajonc\n\t\t\n\t\n\t\n\t\tJ. Pers. Soc. Psychol\n\t\t\n\t\t\t9\n\t\t\t\n\t\t\t1968\n\t\t\n\t\n\tZajonc, R. B. 1968 Attitudinal effects of mere exposure. J. Pers. Soc. Psychol. 9, 1S-27S.\n",
+"sentences": [
+"Attitudinal effects of mere exposure       RBZajonc          J.",
+"Pers.",
+"Soc.",
+"Psychol       9        1968       Zajonc, R.",
+"B.",
+"1968 Attitudinal effects of mere exposure.",
+"J.",
+"Pers.",
+"Soc.",
+"Psychol.",
+"9, 1S-27S."
+]
+},
+{
+"x": "\n\t\n\t\tKin recognition\n\t\t\n\t\t\tDWPfennig\n\t\t\n\t\t\n\t\t\tPWSherman\n\t\t\n\t\n\t\n\t\tSci. Am\n\t\t\n\t\t\t272\n\t\t\t\n\t\t\t1995\n\t\t\n\t\n\tPfennig, D. W. & Sherman, P. W. 1995 Kin recognition. Sci. Am. 272, 98-103.\n",
+"sentences": [
+"Kin recognition       DWPfennig          PWSherman          Sci.",
+"Am       272        1995       Pfennig, D.",
+"W.",
+"& Sherman, P.",
+"W.",
+"1995 Kin recognition.",
+"Sci.",
+"Am.",
+"272, 98-103."
+]
+},
+{
+"x": "Participants' memory for all critical scenes was tested after the TNT phase. All cue objects (from the recall, suppress, and baseline conditions) were presented, one at a time and without a colored frame. On each trial, participants were given 15 s to verbally describe the associated scene in as much detail as possible, so that it could be uniquely identified. The descriptions were recorded for later transcription.",
+"sentences": [
+"Participants' memory for all critical scenes was tested after the TNT phase.",
+"All cue objects (from the recall, suppress, and baseline conditions) were presented, one at a time and without a colored frame.",
+"On each trial, participants were given 15 s to verbally describe the associated scene in as much detail as possible, so that it could be uniquely identified.",
+"The descriptions were recorded for later transcription."
+]
+},
+{
+"x": "\n\t\n\t\tPython for information theoretic analysis of neural data\n\t\t\n\t\t\tRA AInce\n\t\t\n\t\t\n\t\t\tRSPetersen\n\t\t\n\t\t\n\t\t\tDCSwan\n\t\t\n\t\t\n\t\t\tSPanzeri\n\t\t\n\t\t10.3389/neuro.11.004.2009\n\t\t\n\t\n\t\n\t\tFrontiers in Neuroinformatics\n\t\t\n\t\t\t3\n\t\t\t4\n\t\t\t\n\t\t\t2009\n\t\t\n\t\n\tInce, R. A. A., Petersen, R. S., Swan, D. C., & Panzeri, S. (2009). Python for information theoretic analysis of neural data. Frontiers in Neu- roinformatics, 3(4), 1-15. https://doi.org/10.3389/neuro.11.004.2009\n",
+"sentences": [
+"Python for information theoretic analysis of neural data       RA AInce          RSPetersen          DCSwan          SPanzeri      10.3389/neuro.11.004.2009          Frontiers in Neuroinformatics       3    4        2009       Ince, R.",
+"A.",
+"A., Petersen, R.",
+"S., Swan, D.",
+"C., & Panzeri, S.",
+"(2009).",
+"Python for information theoretic analysis of neural data.",
+"Frontiers in Neu- roinformatics, 3(4), 1-15. https://doi.org/10.3389/neuro.11.004.2009"
+]
+},
+{
+"x": "\n\t\n\t\tPurging of memories from conscious awareness tracked in the human brain\n\t\t\n\t\t\tBJLevy\n\t\t\n\t\t\n\t\t\tMCAnderson\n\t\t\n\t\t10.1523/JNEUROSCI.2640-12.2012\n\t\n\t\n\t\tJournal of Neuroscience\n\t\t\n\t\t\t32\n\t\t\t\n\t\t\t2012\n\t\t\n\t\n\tLevy, B. J., & Anderson, M. C. (2012). Purging of memories from conscious awareness tracked in the human brain. Journal of Neuroscience, 32, 16785-16794. doi:10.1523/ JNEUROSCI.2640-12.2012\n",
+"sentences": [
+"Purging of memories from conscious awareness tracked in the human brain       BJLevy          MCAnderson      10.1523/JNEUROSCI.2640-12.2012       Journal of Neuroscience       32        2012       Levy, B.",
+"J., & Anderson, M.",
+"C.",
+"(2012).",
+"Purging of memories from conscious awareness tracked in the human brain.",
+"Journal of Neuroscience, 32, 16785-16794. doi:10.1523/ JNEUROSCI.2640-12.2012"
+]
+},
+{
+"x": "Levy, B. J., & Anderson, M. C. (2008). Individual differences in the suppression of unwanted memories: The execu- tive deficit hypothesis. Acta Psychologica, 127, 623-635. doi:10.1016/j.actpsy.2007.12.004",
+"sentences": [
+"Levy, B.",
+"J., & Anderson, M.",
+"C.",
+"(2008).",
+"Individual differences in the suppression of unwanted memories: The execu- tive deficit hypothesis.",
+"Acta Psychologica, 127, 623-635. doi:10.1016/j.actpsy.2007.12.004"
+]
+},
+{
+"x": "In the preregistration, we erroneously refer to the predicted Scale",
+"sentences": [
+"In the preregistration, we erroneously refer to the predicted Scale"
+]
+},
+{
+"x": "<figDesc>Figure2: The effect of experience on the reduction in errors.</figDesc>",
+"sentences": [
+"<figDesc>Figure2: The effect of experience on the reduction in errors.</figDesc>"
+]
+},
+{
+"x": "Acknowledgments I thank M. Wilson, M. Daly, S. Balshine, B. C. Jones, S. Gaulin, G. G. Gallup, Jr., and one anonymous reviewer for helpful comments; D. Maurer and P. Cooper for providing the infant photographs; and D. Perrett and B. Tiddeman for providing the morphing software. I also thank S. M. Platek for his very helpful correspondence and for providing the child",
+"sentences": [
+"Acknowledgments I thank M.",
+"Wilson, M.",
+"Daly, S.",
+"Balshine, B.",
+"C.",
+"Jones, S.",
+"Gaulin, G.",
+"G.",
+"Gallup, Jr., and one anonymous reviewer for helpful comments; D.",
+"Maurer and P.",
+"Cooper for providing the infant photographs; and D.",
+"Perrett and B.",
+"Tiddeman for providing the morphing software.",
+"I also thank S.",
+"M.",
+"Platek for his very helpful correspondence and for providing the child"
+]
+},
+{
+"x": "\n\t\n\t\tKin recognition: functions and mediating mechanisms\n\t\t\n\t\t\tRHPorter\n\t\t\n\t\n\t\n\t\tSociobiology and psychology: ideas, issues and applications\n\t\t\n\t\t\tCCrawford\n\t\t\n\t\t\n\t\t\tMSmith\n\t\t\n\t\t\n\t\t\tDKrebs\n\t\t\n\t\tHillsdale, NJ\n\t\t\n\t\t\tErlbaum Associates\n\t\t\t1987\n\t\t\t\n\t\t\n\t\n\tPorter, R. H. 1987 Kin recognition: functions and mediating mechanisms. In Sociobiology and psychology: ideas, issues and applications (ed. C. Crawford, M. Smith & D. Krebs), pp. 175-203. Hillsdale, NJ: Erlbaum Associates.\n",
+"sentences": [
+"Kin recognition: functions and mediating mechanisms       RHPorter          Sociobiology and psychology: ideas, issues and applications       CCrawford          MSmith          DKrebs      Hillsdale, NJ       Erlbaum Associates    1987           Porter, R.",
+"H.",
+"1987 Kin recognition: functions and mediating mechanisms.",
+"In Sociobiology and psychology: ideas, issues and applications (ed.",
+"C.",
+"Crawford, M.",
+"Smith & D.",
+"Krebs), pp.",
+"175-203.",
+"Hillsdale, NJ: Erlbaum Associates."
+]
+},
+{
+"x": "Fig.1. Comparison of the method used inPlatek et al. (2002Platek et al. ( , 2003) ) to that used in this study.Platek et al. resized   an experimental participant's face (a, b) to the same aspect ratio as a child's face (c) and blended the two faces together in a 50/50 ratio to produce a child morph (d). In this study, I transformed a participant's face (a) to have neotenous proportions (e) and blended it in a 50/50 ratio with a child's face (f ) to produce a more childlike morph (g). See http://www.debruine.info/childfaces.html for this image in color.",
+"sentences": [
+"Fig.1.",
+"Comparison of the method used inPlatek et al.",
+"(2002Platek et al. ( , 2003) ) to that used in this study.Platek et al. resized   an experimental participant's face (a, b) to the same aspect ratio as a child's face (c) and blended the two faces together in a 50/50 ratio to produce a child morph (d).",
+"In this study, I transformed a participant's face (a) to have neotenous proportions (e) and blended it in a 50/50 ratio with a child's face (f ) to produce a more childlike morph (g).",
+"See http://www.debruine.info/childfaces.html for this image in color."
+]
+},
+{
+"x": "<note type=\"raw_reference\">Fehr, E., &amp; Fischbacher, U. (2003). The nature of human altruism. Nature, 425, 785-791. doi:10.1038/nature02043</note>",
+"sentences": [
+"<note type=\"raw_reference\">Fehr, E., &amp; Fischbacher, U.",
+"(2003).",
+"The nature of human altruism.",
+"Nature, 425, 785-791. doi:10.1038/nature02043</note>"
+]
+},
+{
+"x": "<p>Interestingly, the pattern of findings is not fully in line with our original hypotheses. We predicted that inferences of benign and malicious envy particularly result from the combined effect of the target's emotional display and attention allocation. However, the three studies indicate that the emotional display and attention allocation have independent main effects. Observers may not need to interactively combine both cues to infer the targets' motivational orientation as either benign or malicious.</p>",
+"sentences": [
+"<p>Interestingly, the pattern of findings is not fully in line with our original hypotheses.",
+"We predicted that inferences of benign and malicious envy particularly result from the combined effect of the target's emotional display and attention allocation.",
+"However, the three studies indicate that the emotional display and attention allocation have independent main effects.",
+"Observers may not need to interactively combine both cues to infer the targets' motivational orientation as either benign or malicious.</p>"
+]
+},
+{
+"x": "\n\t\n\t\tThe psychophysics toolbox\n\t\t\n\t\t\tDHBrainard\n\t\t\n\t\n\t\n\t\tSpatial Vision\n\t\t\n\t\t\t10\n\t\t\t4\n\t\t\t\n\t\t\t1997\n\t\t\n\t\n\tBrainard, D. H. (1997). The psychophysics toolbox. Spatial Vision, 10(4), 433-436.\n",
+"sentences": [
+"The psychophysics toolbox       DHBrainard          Spatial Vision       10    4        1997       Brainard, D.",
+"H.",
+"(1997).",
+"The psychophysics toolbox.",
+"Spatial Vision, 10(4), 433-436."
+]
+},
+{
+"x": "\n\t\n\t\tafex: Analysis of Factorial Experiments\n\t\t\n\t\t\tHenrikSingmann\n\t\t\t0000-0002-4842-3657\n\t\t\n\t\t\n\t\t\tBenBolker\n\t\t\n\t\t\n\t\t\tJakeWestfall\n\t\t\n\t\t\n\t\t\tFrederikAust\n\t\t\t0000-0003-4900-788X\n\t\t\n\t\t\n\t\t\tMattanSBen-Shachar\n\t\t\n\t\t10.32614/cran.package.afex\n\t\t\n\t\n\t\n\t\tafex: Analysis of factorial experiments\n\t\t\n\t\t\tThe R Foundation\n\t\t\t2020\n\t\t\n\t\n\tSingmann, H., Bolker, B., Westfall, J., Aust, F., & Ben-Shachar, M. S. (2020). afex: Analysis of factorial experiments. https://CRAN.R-project .org/package=afex\n",
+"sentences": [
+"afex: Analysis of Factorial Experiments       HenrikSingmann    0000-0002-4842-3657          BenBolker          JakeWestfall          FrederikAust    0000-0003-4900-788X          MattanSBen-Shachar      10.32614/cran.package.afex          afex: Analysis of factorial experiments       The R Foundation    2020       Singmann, H., Bolker, B., Westfall, J., Aust, F., & Ben-Shachar, M.",
+"S.",
+"(2020). afex: Analysis of factorial experiments. https://CRAN.R-project .org/package=afex"
+]
+},
+{
+"x": "<note type=\"raw_reference\">Brewin, C. R. (2011). The nature and significance of memory disturbance in posttraumatic stress disorder. Annual Review of Clinical Psychology, 7, 203-227. doi:10.1146/annurev clinpsy-032210-104544</note>",
+"sentences": [
+"<note type=\"raw_reference\">Brewin, C.",
+"R.",
+"(2011).",
+"The nature and significance of memory disturbance in posttraumatic stress disorder.",
+"Annual Review of Clinical Psychology, 7, 203-227. doi:10.1146/annurev clinpsy-032210-104544</note>"
+]
+},
+{
+"x": "<note type=\"raw_reference\">R Core Team. (2019). R: A language and environment for statistical computing. R Foundation for Statistical Computing. https://www.R-project.org/</note>",
+"sentences": [
+"<note type=\"raw_reference\">R Core Team.",
+"(2019).",
+"R: A language and environment for statistical computing.",
+"R Foundation for Statistical Computing. https://www.R-project.org/</note>"
+]
+},
+{
+"x": "<p>In the self condition, participants were asked to estimate the likelihood of negative life events happening to themselves. In the friend condition, participants were asked to estimate the likelihood of negative life events happening to a friend with the same gender, age, and ethnicity as themselves (participants were asked to enter the name of the friend into a text box prior to starting the trials). The order of conditions did not affect the results.</p>",
+"sentences": [
+"<p>In the self condition, participants were asked to estimate the likelihood of negative life events happening to themselves.",
+"In the friend condition, participants were asked to estimate the likelihood of negative life events happening to a friend with the same gender, age, and ethnicity as themselves (participants were asked to enter the name of the friend into a text box prior to starting the trials).",
+"The order of conditions did not affect the results.</p>"
+]
+},
+{
+"x": "<note type=\"raw_reference\">Witkower, Z., &amp; Tracy, J. L. (2019). Bodily communication of emotion: Evidence for extrafacial behavioral expressions and available coding systems. Emotion Review, 11(2), 184-193. https://doi.org/10.1177/1754073917749880</note>",
+"sentences": [
+"<note type=\"raw_reference\">Witkower, Z., &amp; Tracy, J.",
+"L.",
+"(2019).",
+"Bodily communication of emotion: Evidence for extrafacial behavioral expressions and available coding systems.",
+"Emotion Review, 11(2), 184-193. https://doi.org/10.1177/1754073917749880</note>"
+]
+},
+{
+"x": "<head>Fig. 2 .</head>",
+"sentences": [
+"<head>Fig.",
+"2 .</head>"
+]
+},
+{
+"x": "<note type=\"raw_reference\">Lakens, D. (2014). Performing high-powered studies efficiently with se- quential analyses. European Journal of Social Psychology, 44(7), 701-710. https://doi.org/10.1002/ejsp.2023</note>",
+"sentences": [
+"<note type=\"raw_reference\">Lakens, D.",
+"(2014).",
+"Performing high-powered studies efficiently with se- quential analyses.",
+"European Journal of Social Psychology, 44(7), 701-710. https://doi.org/10.1002/ejsp.2023</note>"
+]
+},
+{
+"x": "Tai, K., Narayanan, J., & McAllister, D. J. (2012). Envy as pain: Rethink- ing the nature of envy and its implications for employees and organiza- tions. Academy of Management Review, 37(1), 107-129. https://doi.org/ 10.5465/amr.2009.0484",
+"sentences": [
+"Tai, K., Narayanan, J., & McAllister, D.",
+"J.",
+"(2012).",
+"Envy as pain: Rethink- ing the nature of envy and its implications for employees and organiza- tions.",
+"Academy of Management Review, 37(1), 107-129. https://doi.org/ 10.5465/amr.2009.0484"
+]
+},
+{
+"x": "<note type=\"raw_reference\">Weinstein, N. D. (1980). Unrealistic optimism about future life events. Journal of Personality and Social Psychology, 39, 806-820. doi:10.1037/0022-3514.39.5.806</note>",
+"sentences": [
+"<note type=\"raw_reference\">Weinstein, N.",
+"D.",
+"(1980).",
+"Unrealistic optimism about future life events.",
+"Journal of Personality and Social Psychology, 39, 806-820. doi:10.1037/0022-3514.39.5.806</note>"
+]
+},
+{
+"x": "\n\t\n\t\tAttitudinal effects of mere exposure\n\t\t\n\t\t\tRBZajonc\n\t\t\n\t\n\t\n\t\tJ. Person. Social Psychol\n\t\t\n\t\t\t9\n\t\t\t\n\t\t\t1968\n\t\t\n\t\n\tZajonc, R. B. 1968 Attitudinal effects of mere exposure. J. Person. Social Psychol. 9, 1S-27S.\n",
+"sentences": [
+"Attitudinal effects of mere exposure       RBZajonc          J.",
+"Person.",
+"Social Psychol       9        1968       Zajonc, R.",
+"B.",
+"1968 Attitudinal effects of mere exposure.",
+"J.",
+"Person.",
+"Social Psychol.",
+"9, 1S-27S."
+]
+},
+{
+"x": "Euler, H. A., & Weitzel, B. (1999). Grandparental caregiving and intergenerational relations reflect reproductive strategies. In J. M. van der Dennen, D. Smillie, & D. R. Wilson (Eds.), The Darwinian heritage and socio- biology. Human evolution, behavior, and intelligence ( pp. 243 -252). Westport, CT: Praeger Publishers.",
+"sentences": [
+"Euler, H.",
+"A., & Weitzel, B.",
+"(1999).",
+"Grandparental caregiving and intergenerational relations reflect reproductive strategies.",
+"In J.",
+"M. van der Dennen, D.",
+"Smillie, & D.",
+"R.",
+"Wilson (Eds.), The Darwinian heritage and socio- biology.",
+"Human evolution, behavior, and intelligence ( pp.",
+"243 -252).",
+"Westport, CT: Praeger Publishers."
+]
+},
+{
+"x": "Rhodes, G., Halberstadt, J. & Brajkovich, G. 2001 General- ization of mere exposure effects to averaged composite faces. Soc. Cogn. 19, 57-70.",
+"sentences": [
+"Rhodes, G., Halberstadt, J.",
+"& Brajkovich, G.",
+"2001 General- ization of mere exposure effects to averaged composite faces.",
+"Soc.",
+"Cogn.",
+"19, 57-70."
+]
+},
+{
+"x": "<head>TNT-task performance</head>",
+"sentences": [
+"<head>TNT-task performance</head>"
+]
+},
+{
+"x": "\n\t\n\t\tEvil Genius? How Dishonesty Can Lead to Greater Creativity\n\t\t\n\t\t\tFrancescaGino\n\t\t\n\t\t\n\t\t\tScottSWiltermuth\n\t\t\n\t\t10.1177/0956797614520714\n\t\t\n\t\n\t\n\t\tPsychological Science\n\t\t\n\t\t\t25\n\t\t\t4\n\t\t\t\n\t\t\t2014\n\t\t\n\t\n\tGino, Francesca, and Scott S. Wiltermuth. 2014. \"Evil Genius? How Dishonesty Can Lead to Greater Creativity.\" Psychological Science 25 (4): 973-81. https://doi.org/10.1177/0956797614520714.\n",
+"sentences": [
+"Evil Genius?",
+"How Dishonesty Can Lead to Greater Creativity       FrancescaGino          ScottSWiltermuth      10.1177/0956797614520714          Psychological Science       25    4        2014       Gino, Francesca, and Scott S.",
+"Wiltermuth.",
+"2014.",
+"\"Evil Genius?",
+"How Dishonesty Can Lead to Greater Creativity.\"",
+"Psychological Science 25 (4): 973-81. https://doi.org/10.1177/0956797614520714."
+]
+},
+{
+"x": "\n\t\n\t\tThe Perception of Envy\n\t\t\n\t\t\tMaurySilver\n\t\t\n\t\t\n\t\t\tJohnSabini\n\t\t\n\t\t10.2307/3033570\n\t\t\n\t\n\t\n\t\tSocial Psychology\n\t\tSocial Psychology\n\t\t0147-829X\n\t\t\n\t\t\t41\n\t\t\t2\n\t\t\t105\n\t\t\t1978\n\t\t\tJSTOR\n\t\t\n\t\n\tSilver, M., & Sabini, J. (1978). The perception of envy. Social Psychology, 41(2), 105-117. https://doi.org/10.2307/3033570\n",
+"sentences": [
+"The Perception of Envy       MaurySilver          JohnSabini      10.2307/3033570          Social Psychology   Social Psychology   0147-829X       41    2    105    1978    JSTOR       Silver, M., & Sabini, J.",
+"(1978).",
+"The perception of envy.",
+"Social Psychology, 41(2), 105-117. https://doi.org/10.2307/3033570"
+]
+},
+{
+"x": "<p>The current findings provide further insight in the social\nperception of envy. Observers use multiple cues when inferring the\nintensity of benign and malicious envy of targets who encounter\nadvantaged others. Facial displays and bodily changes\nindependently contribute to these inferences. Together with previous\nevidence, the studies therefore imply that inferences of envy hinge on\nthe integration of multiple expressive and contextual cues.\n.</p>",
+"sentences": [
+"<p>The current findings provide further insight in the social perception of envy.",
+"Observers use multiple cues when inferring the intensity of benign and malicious envy of targets who encounter advantaged others.",
+"Facial displays and bodily changes independently contribute to these inferences.",
+"Together with previous evidence, the studies therefore imply that inferences of envy hinge on the integration of multiple expressive and contextual cues. .</p>"
+]
+},
+{
+"x": "<note type=\"raw_reference\">Nelson, H. E. (1982). National Adult Reading Test. Windsor, England: NFER-Nelson.</note>",
+"sentences": [
+"<note type=\"raw_reference\">Nelson, H.",
+"E.",
+"(1982).",
+"National Adult Reading Test.",
+"Windsor, England: NFER-Nelson.</note>"
+]
+},
+{
+"x": "Ninety students from different majors at a Dutch university and volunteers participated in Study 1. Their mean age was 23.89 years (SD = 8.77, range: 18 -68; 25 male).",
+"sentences": [
+"Ninety students from different majors at a Dutch university and volunteers participated in Study 1.",
+"Their mean age was 23.89 years (SD = 8.77, range: 18 -68; 25 male)."
+]
+},
+{
+"x": "<note type=\"raw_reference\">Sergent, J., Ohta, S., &amp; MacDonald, B. (1992). Functional neuroanatomy of face and object processing. A Positron Emission Tomography Study. Brain, 115(Pt. 1), 15-36.</note>",
+"sentences": [
+"<note type=\"raw_reference\">Sergent, J., Ohta, S., &amp; MacDonald, B.",
+"(1992).",
+"Functional neuroanatomy of face and object processing.",
+"A Positron Emission Tomography Study.",
+"Brain, 115(Pt.",
+"1), 15-36.</note>"
+]
+},
+{
+"x": "Langlois, J. H., Kalakanis, L., Rubenstein, A. J., Larson, A., Hallam, M. & Smoot, M. 2000 Maxims or myths of beauty? A meta-analytic and theoretical review. Psychol. Bull. 126, 390-423.",
+"sentences": [
+"Langlois, J.",
+"H., Kalakanis, L., Rubenstein, A.",
+"J., Larson, A., Hallam, M.",
+"& Smoot, M.",
+"2000 Maxims or myths of beauty?",
+"A meta-analytic and theoretical review.",
+"Psychol.",
+"Bull.",
+"126, 390-423."
+]
+},
+{
+"x": "\n\t\n\t\tManipulating facial appearance through shape and colour\n\t\t\n\t\t\tDRowland\n\t\t\n\t\t\n\t\t\tDIPerrett\n\t\t\n\t\n\t\n\t\tIEEE Comput. Graphics Appl\n\t\t\n\t\t\t15\n\t\t\t\n\t\t\t1995\n\t\t\n\t\n\tRowland, D. & Perrett, D. I. 1995 Manipulating facial appear- ance through shape and colour. IEEE Comput. Graphics Appl. 15, 70-76.\n",
+"sentences": [
+"Manipulating facial appearance through shape and colour       DRowland          DIPerrett          IEEE Comput.",
+"Graphics Appl       15        1995       Rowland, D.",
+"& Perrett, D.",
+"I.",
+"1995 Manipulating facial appear- ance through shape and colour.",
+"IEEE Comput.",
+"Graphics Appl.",
+"15, 70-76."
+]
+},
+{
+"x": "<note type=\"raw_reference\">Fawcett, J., Benoit, R. G., Gagnepain, P., Salman, A., Bartholdy, S., Bradley, C., . . . Anderson, M. C. (2015). The origins of repetitive thought in rumination: Separating cognitive style from deficits in inhibitory control over memory. Journal of Behavior Therapy and Experimental Psychiatry, 47, 1-8.</note>",
+"sentences": [
+"<note type=\"raw_reference\">Fawcett, J., Benoit, R.",
+"G., Gagnepain, P., Salman, A., Bartholdy, S., Bradley, C., . . .",
+"Anderson, M.",
+"C.",
+"(2015).",
+"The origins of repetitive thought in rumination: Separating cognitive style from deficits in inhibitory control over memory.",
+"Journal of Behavior Therapy and Experimental Psychiatry, 47, 1-8.</note>"
+]
+},
+{
+"x": "Thought Control Ability Questionnaire",
+"sentences": [
+"Thought Control Ability Questionnaire"
+]
+},
+{
+"x": "\n\t\n\t\tEnvy As Pain: Rethinking the Nature of Envy and Its Implications for Employees and Organizations\n\t\t\n\t\t\tKennethTai\n\t\t\n\t\t\n\t\t\tJayanthNarayanan\n\t\t\n\t\t\n\t\t\tDanielJMcallister\n\t\t\n\t\t10.5465/amr.2009.0484\n\t\t\n\t\n\t\n\t\tAcademy of Management Review\n\t\tAMR\n\t\t0363-7425\n\t\t1930-3807\n\t\t\n\t\t\t37\n\t\t\t1\n\t\t\t\n\t\t\t2012\n\t\t\tAcademy of Management\n\t\t\n\t\n\tTai, K., Narayanan, J., & McAllister, D. J. (2012). Envy as pain: Rethinking the nature of envy and its implications for employees and organizations. Academy of Management Review, 37(1), 107-129. https://doi.org/10.5465/amr.2009.0484\n",
+"sentences": [
+"Envy As Pain: Rethinking the Nature of Envy and Its Implications for Employees and Organizations       KennethTai          JayanthNarayanan          DanielJMcallister      10.5465/amr.2009.0484          Academy of Management Review   AMR   0363-7425   1930-3807       37    1        2012    Academy of Management       Tai, K., Narayanan, J., & McAllister, D.",
+"J.",
+"(2012).",
+"Envy as pain: Rethinking the nature of envy and its implications for employees and organizations.",
+"Academy of Management Review, 37(1), 107-129. https://doi.org/10.5465/amr.2009.0484"
+]
+},
+{
+"x": "<note type=\"raw_reference\">Zanto, T. P., Toy, B., &amp; Gazzaley, A. (2010). Delays in neural processing dur- ing working memory encoding in normal aging. Neuropsychologia, 48(1), 13-25. https://doi.org/10.1016/j.neuropsychologia.2009.08.003</note>",
+"sentences": [
+"<note type=\"raw_reference\">Zanto, T.",
+"P., Toy, B., &amp; Gazzaley, A.",
+"(2010).",
+"Delays in neural processing dur- ing working memory encoding in normal aging.",
+"Neuropsychologia, 48(1), 13-25. https://doi.org/10.1016/j.neuropsychologia.2009.08.003</note>"
+]
+},
+{
+"x": "<note type=\"raw_reference\">Crusius, J., &amp; Lange, J. (2017). How do people respond to threatened social status? Moderators of benign versus malicious envy. In R. H. Smith, U. Merlone, &amp; M. K. Duffy (Eds.), Envy at work and in organizations: Research, theory, and applications (pp. 85-110). Oxford University Press.</note>",
+"sentences": [
+"<note type=\"raw_reference\">Crusius, J., &amp; Lange, J.",
+"(2017).",
+"How do people respond to threatened social status?",
+"Moderators of benign versus malicious envy.",
+"In R.",
+"H.",
+"Smith, U.",
+"Merlone, &amp; M.",
+"K.",
+"Duffy (Eds.), Envy at work and in organizations: Research, theory, and applications (pp.",
+"85-110).",
+"Oxford University Press.</note>"
+]
+},
+{
+"x": "\n\t\t\t\t\t\n\t\t\t\t\t\t\n\t\t\t\t\t\t\tLisaMDebruine\n\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\tDepartment of Psychology\n\t\t\t\t\t\t\t\tMcMaster University\n\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t\tL8S 4K1\n\t\t\t\t\t\t\t\t\tHamilton\n\t\t\t\t\t\t\t\t\tOntario\n\t\t\t\t\t\t\t\t\tCanada\n\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\n\t\t\t\t\t\t\n\t\t\t\t\t\tFacial resemblance increases the attractiveness of same-sex faces more than other-sex faces\n\t\t\t\t\t\n\t\t\t\t\t\n\t\t\t\t\t\t\n\t\t\t\t\t\t\t7 September 2004\n\t\t\t\t\t\t\n\t\t\t\t\t\n\t\t\t\t\tC2716C15E16E2AD815A6D2BF4AE99AE1\n\t\t\t\t\t10.1098/rspb.2004.2824\n\t\t\t\t\tReceived 26 February 2004 Accepted 24 May 2004\n\t\t\t\t",
+"sentences": [
+"LisaMDebruine                 Department of Psychology         McMaster University                   L8S 4K1          Hamilton          Ontario          Canada                               Facial resemblance increases the attractiveness of same-sex faces more than other-sex faces                           7 September 2004                   C2716C15E16E2AD815A6D2BF4AE99AE1      10.1098/rspb.2004.2824      Received 26 February 2004 Accepted 24 May 2004"
+]
+},
+{
+"x": "Puranik, H., Koopman, J., Vough, H. C., & Gamache, D. L. (2019). They want what I've got (I think): The causes and consequences of attributing coworker behavior to envy. Academy of Management Review, 44(2), 424-449. https://doi.org/10.5465/amr.2016.0191",
+"sentences": [
+"Puranik, H., Koopman, J., Vough, H.",
+"C., & Gamache, D.",
+"L.",
+"(2019).",
+"They want what I've got (I think): The causes and consequences of attributing coworker behavior to envy.",
+"Academy of Management Review, 44(2), 424-449. https://doi.org/10.5465/amr.2016.0191"
+]
+},
+{
+"x": ")),:(A,1",
+"sentences": [
+")),:(A,1"
+]
+},
+{
+"x": "",
+"sentences": []
+},
+{
+"x": ")!5א””().2AB",
+"sentences": [
+")!",
+"5א””().2AB"
+]
+},
+{
+"x": " ­",
+"sentences": [
+"­"
+]
+},
+{
+"x": ":­1A;)­A",
+"sentences": [
+":­1A;)­A"
+]
+},
+{
+"x": "“\"-\tǅb;ǅ:) !  ",
+"sentences": [
+"“\"- ǅb;ǅ:) !"
+]
+},
+{
+"x": ":…-.",
+"sentences": [
+":…-."
+]
+},
+{
+"x": "a.“!5?2。a?A\n’",
+"sentences": [
+"a.“!",
+"5?",
+"2。",
+"a?",
+"A ’"
+]
+},
+{
+"x": ") ­…:",
+"sentences": [
+") ­…:"
+]
+},
+{
+"x": "…:́:; 1:",
+"sentences": [
+"…:́:; 1:"
+]
+},
+{
+"x": "(́\t),.א(",
+"sentences": [
+"(́ ),.",
+"א("
+]
+},
+{
+"x": ";\"",
+"sentences": [
+";\""
+]
+},
+{
+"x": "א’!.\n\"?",
+"sentences": [
+"א’!.",
+"\"?"
+]
+},
+{
+"x": "“B”,2\t。\".… ,",
+"sentences": [
+"“B”,2 。\".",
+"… ,"
+]
+},
+{
+"x": "?.AB\t",
+"sentences": [
+"?.",
+"AB"
+]
+},
+{
+"x": "1.\t,,a’!-,\tǅ:",
+"sentences": [
+"1. ,,a’!-, ǅ:"
+]
+},
+{
+"x": "!…:ǅA",
+"sentences": [
+"!",
+"…:ǅA"
+]
+},
+{
+"x": "",
+"sentences": []
+},
+{
+"x": ".;’’ǅ:,2",
+"sentences": [
+".;’’ǅ:,2"
+]
+},
+{
+"x": "b -?,!.",
+"sentences": [
+"b -?,!."
+]
+},
+{
+"x": "“5;?\t;!.)ǅ",
+"sentences": [
+"“5;? ;!.)",
+"ǅ"
+]
+},
+{
+"x": "­“א2-!)”.Aא",
+"sentences": [
+"­“א2-!)”.",
+"Aא"
+]
+},
+{
+"x": "a”!\n)(!B.1:b。",
+"sentences": [
+"a”!",
+")(!",
+"B.1:b。"
+]
+},
+{
+"x": "\"! \n’“?­:……",
+"sentences": [
+"\"!",
+"’“?­:……"
+]
+},
+{
+"x": "- ǅB!­。,-",
+"sentences": [
+"- ǅB!­。,-"
+]
+},
+{
+"x": ".2,",
+"sentences": [
+".2,"
+]
+},
+{
+"x": ":B。",
+"sentences": [
+":B。"
+]
+},
+{
+"x": "B-1א.。。A.,",
+"sentences": [
+"B-1א.。。",
+"A.,"
+]
+},
+{
+"x": "\"…á…1\n.5",
+"sentences": [
+"\"…á…1 .5"
+]
+},
+{
+"x": ".;\tB”。 א…א",
+"sentences": [
+".; B”。",
+"א…א"
+]
+},
+{
+"x": "\t\n5)… “b55",
+"sentences": [
+"5)… “b55"
+]
+},
+{
+"x": "́’A;\"ǅ",
+"sentences": [
+"́’A;\"ǅ"
+]
+},
+{
+"x": "(\n,",
+"sentences": [
+"( ,"
+]
+},
+{
+"x": "? אǅ -B!B",
+"sentences": [
+"?",
+"אǅ -B!",
+"B"
+]
+},
+{
+"x": "­.",
+"sentences": [
+"­."
+]
+},
+{
+"x": " ­\n\n-",
+"sentences": [
+"­  -"
+]
+},
+{
+"x": "!Á ǅ… ,“אA2?5",
+"sentences": [
+"!",
+"Á ǅ… ,“אA2?",
+"5"
+]
+},
+{
+"x": " 1 \" “.5\"­",
+"sentences": [
+"1 \" “.5\"­"
+]
+},
+{
+"x": "-”,…“\"­-,́…",
+"sentences": [
+"-”,…“\"­-,́…"
+]
+},
+{
+"x": "",
+"sentences": []
+},
+{
+"x": "A-A-:!a”B́\"א\n",
+"sentences": [
+"A-A-:!",
+"a”B́\"א"
+]
+},
+{
+"x": "A ́a’\"א\nbאǅ.B",
+"sentences": [
+"A ́a’\"א bאǅ.B"
+]
+},
+{
+"x": ":: ǅ?”!!!A”́。.",
+"sentences": [
+":: ǅ?”!!!",
+"A”́。."
+]
+},
+{
+"x": "!b­́ ",
+"sentences": [
+"!",
+"b­́"
+]
+},
+{
+"x": "ǅB(,!’­",
+"sentences": [
+"ǅB(,!’­"
+]
+},
+{
+"x": "ǅ)b’b,́­b\"’\":1",
+"sentences": [
+"ǅ)b’b,́­b\"’\":1"
+]
+},
+{
+"x": "1bbA“(א(A:.;!",
+"sentences": [
+"1bbA“(א(A:.;!"
+]
+},
+{
+"x": " 。, ",
+"sentences": [
+"。,"
+]
+},
+{
+"x": "。1…A\tA:-א5;a",
+"sentences": [
+"。",
+"1…A A:-א5;a"
+]
+},
+{
+"x": ";-",
+"sentences": [
+";-"
+]
+},
+{
+"x": "- 2.: \t ",
+"sentences": [
+"- 2.:"
+]
+},
+{
+"x": "2א\n א.­1",
+"sentences": [
+"2א  א.­1"
+]
+},
+{
+"x": "\n!’ 1“a ",
+"sentences": [
+"!’",
+"1“a"
+]
+},
+{
+"x": "1א。)。\"",
+"sentences": [
+"1א。)。\""
+]
+},
+{
+"x": "2B 。 “21”­א",
+"sentences": [
+"2B 。",
+"“21”­א"
+]
+},
+{
+"x": "\tא !A” -2:­,2",
+"sentences": [
+"א !",
+"A” -2:­,2"
+]
+},
+{
+"x": "5.א!bb́5  5.",
+"sentences": [
+"5.",
+"א!",
+"bb́5  5."
+]
+},
+{
+"x": "\n\n。5)\n ;.2 ­。",
+"sentences": [
+"。",
+"5)  ;.2 ­。"
+]
+},
+{
+"x": "”’,\t5\"\tאa:…!",
+"sentences": [
+"”’, 5\" אa:…!"
+]
+},
+{
+"x": " \n­ ",
+"sentences": [
+"­"
+]
+},
+{
+"x": "。”。!…",
+"sentences": [
+"。”。!",
+"…"
+]
+},
+{
+"x": " \"1.­אA’ǅ ",
+"sentences": [
+"\"1.­",
+"אA’ǅ"
+]
+},
+{
+"x": "(a?”5\t1(”!.B\n5",
+"sentences": [
+"(a?”",
+"5 1(”!.",
+"B 5"
+]
+},
+{
+"x": "?(",
+"sentences": [
+"?("
+]
+},
+{
+"x": "  !52: ;,א:“A\"",
+"sentences": [
+"!",
+"52: ;,א:“A\""
+]
+},
+{
+"x": "!“́\" ",
+"sentences": [
+"!“́\""
+]
+},
+{
+"x": "\n,ǅ;1",
+"sentences": [
+",ǅ;1"
+]
+},
+{
+"x": " b1",
+"sentences": [
+"b1"
+]
+},
+{
+"x": ";\"",
+"sentences": [
+";\""
+]
+},
+{
+"x": " ǅ!…).5:“a\tא",
+"sentences": [
+"ǅ!",
+"…).5:“a א"
+]
+},
+{
+"x": "“B1b;aא!:“’A",
+"sentences": [
+"“B1b;aא!:“’A"
+]
+},
+{
+"x": ".:?́\t",
+"sentences": [
+".:?́"
+]
+},
+{
+"x": "Ba.(ǅ,,?­­a",
+"sentences": [
+"Ba.(",
+"ǅ,,?­­",
+"a"
+]
+},
+{
+"x": "",
+"sentences": []
+},
+{
+"x": "B!2́a5ǅA(?b\n.",
+"sentences": [
+"B!",
+"2́a5ǅA(?",
+"b ."
+]
+},
+{
+"x": "a’.?12“)A…- ",
+"sentences": [
+"a’.?",
+"12“)A…-"
+]
+},
+{
+"x": ",!",
+"sentences": [
+",!"
+]
+},
+{
+"x": " ",
+"sentences": [
+""
+]
+},
+{
+"x": "-́”,­-2(5-。’",
+"sentences": [
+"-́”,­-2(5-。’"
+]
+},
+{
+"x": "…B)\t­?",
+"sentences": [
+"…B) ­?"
+]
+},
+{
+"x": "ǅ?\na­a’。A…”אb́",
+"sentences": [
+"ǅ?",
+"a­a’。",
+"A…”אb́"
+]
+},
+{
+"x": " :\t\n.。-51 ",
+"sentences": [
+":  .。-51"
+]
+},
+{
+"x": "́!  א!- \"a:",
+"sentences": [
+"́!",
+"א!- \"a:"
+]
+},
+{
+"x": ",\nאǅ",
+"sentences": [
+", אǅ"
+]
+},
+{
+"x": " :.?A)\nA\n:",
+"sentences": [
+":.?",
+"A) A :"
+]
+},
+{
+"x": ".’\t?BAǅ))",
+"sentences": [
+".’ ?",
+"BAǅ))"
+]
+},
+{
+"x": " “。B\";a).",
+"sentences": [
+"“。",
+"B\";a)."
+]
+},
+{
+"x": "“’5B",
+"sentences": [
+"“’5B"
+]
+},
+{
+"x": "",
+"sentences": []
+},
+{
+"x": "\t, ́",
+"sentences": [
+", ́"
+]
+},
+{
+"x": "ǅ…“b",
+"sentences": [
+"ǅ…“b"
+]
+},
+{
+"x": "“B1:",
+"sentences": [
+"“B1:"
+]
+},
+{
+"x": "…­\t\"“!“,",
+"sentences": [
+"…­ \"“!“,"
+]
+},
+{
+"x": "2.“(: ’)́.",
+"sentences": [
+"2.“(: ’)́."
+]
+},
+{
+"x": "A ",
+"sentences": [
+"A"
+]
+},
+{
+"x": "",
+"sentences": []
+},
+{
+"x": "”5…:ǅ?。?(?b5",
+"sentences": [
+"”5…:ǅ?。?(?",
+"b5"
+]
+},
+{
+"x": "?…):B;",
+"sentences": [
+"?",
+"…):B;"
+]
+},
+{
+"x": "’.;­\"(א.́.ǅA",
+"sentences": [
+"’.;­\"(א.́.",
+"ǅA"
+]
+},
+{
+"x": ";\n5(\n",
+"sentences": [
+"; 5("
+]
+},
+{
+"x": "",
+"sentences": []
+},
+{
+"x": "5’.: \"́).",
+"sentences": [
+"5’.: \"́)."
+]
+},
+{
+"x": ".“( \"2b",
+"sentences": [
+".“( \"2b"
+]
+},
+{
+"x": "B”.)!",
+"sentences": [
+"B”.)!"
+]
+},
+{
+"x": ".\"",
+"sentences": [
+".\""
+]
+},
+{
+"x": ";,B.\";b́bǅ )",
+"sentences": [
+";,B.\";b́bǅ )"
+]
+},
+{
+"x": "。 ;2ǅ ",
+"sentences": [
+"。 ;2ǅ"
+]
+},
+{
+"x": ",ǅ",
+"sentences": [
+",ǅ"
+]
+},
+{
+"x": "ǅ1́",
+"sentences": [
+"ǅ1́"
+]
+},
+{
+"x": "-́…b  !\"?)’(",
+"sentences": [
+"-́…b  !\"?)’("
+]
+},
+{
+"x": "?Aǅ5“5­­。,,BB",
+"sentences": [
+"?",
+"Aǅ5“5­­。,,BB"
+]
+},
+{
+"x": "”",
+"sentences": [
+"”"
+]
+},
+{
+"x": "5“́。(’ \t :א-",
+"sentences": [
+"5“́。(’   :א-"
+]
+},
+{
+"x": "א…\n5ǅǅ152”1",
+"sentences": [
+"א… 5ǅǅ152”1"
+]
+},
+{
+"x": "“..\nb2。­",
+"sentences": [
+"“.. b2。­"
+]
+},
+{
+"x": "”b ­b.",
+"sentences": [
+"”b ­b."
+]
+},
+{
+"x": "\ń“\"",
+"sentences": [
+"́“\""
+]
+},
+{
+"x": "”",
+"sentences": [
+"”"
+]
+},
+{
+"x": "A。",
+"sentences": [
+"A。"
+]
+},
+{
+"x": "”",
+"sentences": [
+"”"
+]
+},
+{
+"x": ")\n5\n)B’",
+"sentences": [
+") 5 )B’"
+]
+},
+{
+"x": "’A!(.\" א;’́",
+"sentences": [
+"’A!(.\"",
+"א;’́"
+]
+},
+{
+"x": " \t\"­.(“;א1b",
+"sentences": [
+"\"­.(“;א1b"
+]
+},
+{
+"x": "A)。-ba”,?",
+"sentences": [
+"A)。-ba”,?"
+]
+},
+{
+"x": "\t:­\t́a;2”.­a",
+"sentences": [
+":­ ́a;2”.­a"
+]
+},
+{
+"x": "ǅ“1(:.),。…ǅǅ ",
+"sentences": [
+"ǅ“1(:.),。",
+"…ǅǅ"
+]
+},
+{
+"x": "A’­5א́5́A(Bǅ’\t",
+"sentences": [
+"A’­5א́5́A(Bǅ’"
+]
+},
+{
+"x": "",
+"sentences": []
+},
+{
+"x": "” 。,A’?",
+"sentences": [
+"” 。,A’?"
+]
+},
+{
+"x": "aB\t(…。;“2(\"B",
+"sentences": [
+"aB (…。;“2(\"B"
+]
+},
+{
+"x": "­ b!”\"?",
+"sentences": [
+"­ b!”\"?"
+]
+},
+{
+"x": "-!\t\"”。“א: \t5’",
+"sentences": [
+"-!",
+"\"”。“",
+"א:  5’"
+]
+},
+{
+"x": "!\nÁ.5 ; ’.́",
+"sentences": [
+"!",
+"Á.5 ; ’.́"
+]
+},
+{
+"x": "B’bאA ?,b?,",
+"sentences": [
+"B’bאA ?,b?,"
+]
+},
+{
+"x": "bA;…A(.",
+"sentences": [
+"bA;…A(."
+]
+},
+{
+"x": "A\n()",
+"sentences": [
+"A ()"
+]
+},
+{
+"x": ").”",
+"sentences": [
+").”"
+]
+},
+{
+"x": "-\n\t’ 2,…",
+"sentences": [
+"-  ’ 2,…"
+]
+},
+{
+"x": "(א.’  。.’́   ",
+"sentences": [
+"(א.’  。.’́"
+]
+},
+{
+"x": "”;5!’a5.(́…?1",
+"sentences": [
+"”;5!’",
+"a5.(́",
+"…?",
+"1"
+]
+},
+{
+"x": ".!.ǅ“א”\"",
+"sentences": [
+".!.",
+"ǅ“א”\""
+]
+},
+{
+"x": ",",
+"sentences": [
+","
+]
+},
+{
+"x": ";,\"5ǅ-。!: )“ǅb",
+"sentences": [
+";,\"5ǅ-。!: )“ǅb"
+]
+},
+{
+"x": "!’”1!\", 2-",
+"sentences": [
+"!’”",
+"1!\", 2-"
+]
+},
+{
+"x": "",
+"sentences": []
+},
+{
+"x": " ;\n(a",
+"sentences": [
+"; (a"
+]
+},
+{
+"x": " .2B 1אBa。5",
+"sentences": [
+".2B 1אBa。",
+"5"
+]
+},
+{
+"x": ":\t.:ǅÁ’",
+"sentences": [
+": .:ǅÁ’"
+]
+},
+{
+"x": "!)́“?­\n",
+"sentences": [
+"!)́“?­"
+]
+},
+{
+"x": " 2אא\"a ",
+"sentences": [
+"2אא\"a"
+]
+},
+{
+"x": ";a.…א!)’:).b",
+"sentences": [
+";a.",
+"…א!)’:).b"
+]
+},
+{
+"x": "́b.“!\n2\t ’a",
+"sentences": [
+"́b.“!",
+"2  ’a"
+]
+},
+{
+"x": "”““\tǅ\" \ta",
+"sentences": [
+"”““ ǅ\"  a"
+]
+},
+{
+"x": "。",
+"sentences": [
+"。"
+]
+},
+{
+"x": "",
+"sentences": []
+},
+{
+"x": "\"2;a。!“\n:\n!\t\t ",
+"sentences": [
+"\"2;a。!“ : !"
+]
+},
+{
+"x": "\n2א:!A”;\n1",
+"sentences": [
+"2א:!",
+"A”; 1"
+]
+},
+{
+"x": ":\t’…",
+"sentences": [
+": ’…"
+]
+},
+{
+"x": "?­Bǅ…A5。́ǅ",
+"sentences": [
+"?­",
+"Bǅ…A5。́",
+"ǅ"
+]
+},
+{
+"x": "­“",
+"sentences": [
+"­“"
+]
+},
+{
+"x": "’.“ \t\t A",
+"sentences": [
+"’.“",
+"A"
+]
+},
+{
+"x": "-1ǅ",
+"sentences": [
+"-1ǅ"
+]
+},
+{
+"x": "a­",
+"sentences": [
+"a­"
+]
+},
+{
+"x": "5“5 ;(",
+"sentences": [
+"5“5 ;("
+]
+},
+{
+"x": "",
+"sentences": []
+},
+{
+"x": "­­:1 b",
+"sentences": [
+"­­:1 b"
+]
+},
+{
+"x": ")Á5\nǅ 5,!“!!1",
+"sentences": [
+")Á5 ǅ 5,!“!!",
+"1"
+]
+},
+{
+"x": "a, BB",
+"sentences": [
+"a, BB"
+]
+},
+{
+"x": "’a",
+"sentences": [
+"’a"
+]
+},
+{
+"x": "5́’ a);́ ’,",
+"sentences": [
+"5́’ a);́ ’,"
+]
+},
+{
+"x": "2-:。’15",
+"sentences": [
+"2-:。’",
+"15"
+]
+},
+{
+"x": "(",
+"sentences": [
+"("
+]
+},
+{
+"x": " …a",
+"sentences": [
+"…a"
+]
+},
+{
+"x": ",2 ,",
+"sentences": [
+",2 ,"
+]
+},
+{
+"x": "א?!",
+"sentences": [
+"א?!"
+]
+},
+{
+"x": "B  ?́(́5ǅ",
+"sentences": [
+"B  ?́(́",
+"5ǅ"
+]
+},
+{
+"x": "B\n\t…",
+"sentences": [
+"B  …"
+]
+},
+{
+"x": "b",
+"sentences": [
+"b"
+]
+},
+{
+"x": ",A\n  ",
+"sentences": [
+",A"
+]
+},
+{
+"x": "  …́b ”",
+"sentences": [
+"…́b ”"
+]
+},
+{
+"x": "(.\n! :a1\".。bא",
+"sentences": [
+"(. ! :a1\".。",
+"bא"
+]
+},
+{
+"x": " ;-。1“Ba”1,。",
+"sentences": [
+";-。",
+"1“Ba”1,。"
+]
+},
+{
+"x": "(;’.(",
+"sentences": [
+"(;’.("
+]
+},
+{
+"x": "!a!",
+"sentences": [
+"!",
+"a!"
+]
+},
+{
+"x": ".\ta2,.“-1…A\t",
+"sentences": [
+". a2,.“-1…A"
+]
+},
+{
+"x": " ! ǅ",
+"sentences": [
+"!",
+"ǅ"
+]
+},
+{
+"x": ".aA  \t",
+"sentences": [
+".aA"
+]
+},
+{
+"x": "…-b“á’.,.́",
+"sentences": [
+"…-b“á’.,.́"
+]
+},
+{
+"x": " ",
+"sentences": [
+""
+]
+},
+{
+"x": "“",
+"sentences": [
+"“"
+]
+},
+{
+"x": "!א",
+"sentences": [
+"!",
+"א"
+]
+},
+{
+"x": ".ǅ!”.2­?\"",
+"sentences": [
+".",
+"ǅ!”.2­?\""
+]
+},
+{
+"x": "A a,B,",
+"sentences": [
+"A a,B,"
+]
+},
+{
+"x": "אA ;א“.15)",
+"sentences": [
+"אA ;א“.15)"
+]
+},
+{
+"x": ")?a’)--bb ",
+"sentences": [
+")?",
+"a’)--bb"
+]
+},
+{
+"x": "\nB’b",
+"sentences": [
+"B’b"
+]
+},
+{
+"x": "(1",
+"sentences": [
+"(1"
+]
+},
+{
+"x": ":2)א- ",
+"sentences": [
+":2)א-"
+]
+},
+{
+"x": "­B:5”\n",
+"sentences": [
+"­B:5”"
+]
+},
+{
+"x": "B !,Bא(5…bb?- ",
+"sentences": [
+"B !,Bא(5…bb?-"
+]
+},
+{
+"x": ". ",
+"sentences": [
+"."
+]
+},
+{
+"x": "“1 :””\t",
+"sentences": [
+"“1 :””"
+]
+},
+{
+"x": "21?-א.a(",
+"sentences": [
+"21?-א.a("
+]
+},
+{
+"x": "",
+"sentences": []
+},
+{
+"x": "。ǅ,.\t)。55,\"א",
+"sentences": [
+"。",
+"ǅ,.",
+")。",
+"55,\"א"
+]
+},
+{
+"x": "- ́)5(",
+"sentences": [
+"- ́)5("
+]
+},
+{
+"x": "a( ” .…a)\"  ",
+"sentences": [
+"a( ” .…a)\""
+]
+},
+{
+"x": "1aǅǅ’\n.",
+"sentences": [
+"1aǅǅ’ ."
+]
+},
+{
+"x": "?2,bǅ2a",
+"sentences": [
+"?",
+"2,bǅ2a"
+]
+},
+{
+"x": ",.",
+"sentences": [
+",."
+]
+},
+{
+"x": "”2-’Ab;,.; .ǅ",
+"sentences": [
+"”2-’Ab;,.; .",
+"ǅ"
+]
+},
+{
+"x": ". 2 \" !\n­\"。",
+"sentences": [
+".",
+"2 \" ! ­",
+"\"。"
+]
+},
+{
+"x": "AA",
+"sentences": [
+"AA"
+]
+},
+{
+"x": "”a\n",
+"sentences": [
+"”a"
+]
+},
+{
+"x": "",
+"sentences": []
+},
+{
+"x": "ǅ-5 A­́’。, “ ",
+"sentences": [
+"ǅ-5 A­́’。, “"
+]
+},
+{
+"x": "’a,’",
+"sentences": [
+"’a,’"
+]
+},
+{
+"x": "\"….b",
+"sentences": [
+"\"….b"
+]
+},
+{
+"x": ".’ǅ2́\t’,",
+"sentences": [
+".’",
+"ǅ2́ ’,"
+]
+},
+{
+"x": "B \n21",
+"sentences": [
+"B  21"
+]
+},
+{
+"x": "。­",
+"sentences": [
+"。­"
+]
+},
+{
+"x": ":́B.א.",
+"sentences": [
+":́B.",
+"א."
+]
+},
+{
+"x": "1:)。́",
+"sentences": [
+"1:)。́"
+]
+},
+{
+"x": "“\":1­­\n1A.",
+"sentences": [
+"“\":1­­ 1A."
+]
+},
+{
+"x": "\t",
+"sentences": [
+""
+]
+},
+{
+"x": "?““,2” ;A\"",
+"sentences": [
+"?““,2” ;A\""
+]
+},
+{
+"x": "1?B ",
+"sentences": [
+"1?",
+"B"
+]
+},
+{
+"x": "\n.b́ \"",
+"sentences": [
+".b́ \""
+]
+},
+{
+"x": ",\"A5.",
+"sentences": [
+",\"A5."
+]
+},
+{
+"x": "",
+"sentences": []
+},
+{
+"x": "\tA;.1 .5”!ǅ(",
+"sentences": [
+"A;.1 .5”!",
+"ǅ("
+]
+},
+{
+"x": "5….;a?aǅ2\"",
+"sentences": [
+"5….;a?",
+"aǅ2\""
+]
+},
+{
+"x": "2\".-A",
+"sentences": [
+"2\".-A"
+]
+},
+{
+"x": "“ B?­ “’a",
+"sentences": [
+"“ B?­",
+"“’a"
+]
+},
+{
+"x": ".”5… :’-) ",
+"sentences": [
+".”",
+"5… :’-)"
+]
+},
+{
+"x": "",
+"sentences": []
+},
+{
+"x": ")-):\n”",
+"sentences": [
+")-): ”"
+]
+},
+{
+"x": "́(…A:",
+"sentences": [
+"́(…A:"
+]
+},
+{
+"x": "\"\t。。“,.\n?  ",
+"sentences": [
+"\" 。。“,. ?"
+]
+},
+{
+"x": "2ba(1:1-\n)\"; 1",
+"sentences": [
+"2ba(1:1- )\"; 1"
+]
+},
+{
+"x": "?B,5́,55:",
+"sentences": [
+"?",
+"B,5́,55:"
+]
+},
+{
+"x": "(!“\":2“5",
+"sentences": [
+"(!“\":2“5"
+]
+},
+{
+"x": "\t!…ǅ。 -“”\"­-,\n",
+"sentences": [
+"!",
+"…ǅ。 -“”\"­-,"
+]
+},
+{
+"x": "(.2(1b.\n!!́\n,5",
+"sentences": [
+"(.2(1b. !!́ ,5"
+]
+},
+{
+"x": ".\n­1;……",
+"sentences": [
+". ­",
+"1;……"
+]
+},
+{
+"x": "a\"…a.",
+"sentences": [
+"a\"…a."
+]
+},
+{
+"x": ".­;.\t..)­.”’",
+"sentences": [
+".­;. ..)­.”’"
+]
+},
+{
+"x": "(\"”אא́ \"ǅ1)ǅ",
+"sentences": [
+"(\"”אא́ \"ǅ1)ǅ"
+]
+},
+{
+"x": ")…”A\nǅA,.1;1",
+"sentences": [
+")…”A ǅA,.1;1"
+]
+},
+{
+"x": "’5。a!”。5א\"א.\"ǅ",
+"sentences": [
+"’5。",
+"a!”。",
+"5א\"א.\"",
+"ǅ"
+]
+},
+{
+"x": "́5。 \t..2?B5",
+"sentences": [
+"́5。  ..2?",
+"B5"
+]
+},
+{
+"x": ")­ǅ.",
+"sentences": [
+")­ǅ."
+]
+},
+{
+"x": "!\t-5?a!?\t (2",
+"sentences": [
+"! -5?",
+"a!?",
+"(2"
+]
+},
+{
+"x": "\" ;,2",
+"sentences": [
+"\" ;,2"
+]
+},
+{
+"x": ":…\t5“!\n?2\nǅ",
+"sentences": [
+":… 5“! ?",
+"2 ǅ"
+]
+},
+{
+"x": "!“ .",
+"sentences": [
+"!“ ."
+]
+},
+{
+"x": "“b. ǅ:",
+"sentences": [
+"“b.",
+"ǅ:"
+]
+},
+{
+"x": " .?.2.B”́­",
+"sentences": [
+".?.2.",
+"B”́­"
+]
+},
+{
+"x": " א1א!2.“!“’ǅ",
+"sentences": [
+"א1א!",
+"2.“!“’",
+"ǅ"
+]
+},
+{
+"x": "?。a\tA”́\t2。­­",
+"sentences": [
+"?。",
+"a A”́ 2。­­"
+]
+},
+{
+"x": "?);2 \"  \t",
+"sentences": [
+"?);2 \""
+]
+},
+{
+"x": "\t)bא;(ba…",
+"sentences": [
+")bא;(ba…"
+]
+},
+{
+"x": "’.a.。אא́ 。;",
+"sentences": [
+"’.a.。",
+"אא́ 。;"
+]
+},
+{
+"x": " \n“,א);“.A­- ",
+"sentences": [
+"“,א);“.",
+"A­-"
+]
+},
+{
+"x": ").? א)\n(.A:?\n",
+"sentences": [
+").?",
+"א) (.",
+"A:?"
+]
+},
+{
+"x": "́ ,; (A­。\t",
+"sentences": [
+"́ ,; (A­。"
+]
+},
+{
+"x": ".a-\"­ǅ:!( ",
+"sentences": [
+".a-\"­ǅ:!("
+]
+},
+{
+"x": "ǅ…’. A:א́\t",
+"sentences": [
+"ǅ…’.",
+"A:א́"
+]
+},
+{
+"x": "2-5B- 5",
+"sentences": [
+"2-5B- 5"
+]
+},
+{
+"x": "。ǅ\n",
+"sentences": [
+"。",
+"ǅ"
+]
+},
+{
+"x": ",.­\";,?\n。\t",
+"sentences": [
+",.­\";,? 。"
+]
+},
+{
+"x": ".: ",
+"sentences": [
+".:"
+]
+},
+{
+"x": "",
+"sentences": []
+},
+{
+"x": "   ):",
+"sentences": [
+"):"
+]
+},
+{
+"x": "\t1",
+"sentences": [
+"1"
+]
+},
+{
+"x": "Ab’。b ́’…(,!a,",
+"sentences": [
+"Ab’。",
+"b ́’…(,!",
+"a,"
+]
+},
+{
+"x": "…\t“B !?!”:.B",
+"sentences": [
+"… “B !?!”:.",
+"B"
+]
+},
+{
+"x": ".́: .,(5\"a",
+"sentences": [
+".́: .,(5\"a"
+]
+},
+{
+"x": "́“אa… 5 5?)",
+"sentences": [
+"́“אa… 5 5?)"
+]
+},
+{
+"x": "b”­…:ǅ5\t5;”BB",
+"sentences": [
+"b”­…:ǅ5 5;”BB"
+]
+},
+{
+"x": "?\"Ab-。…",
+"sentences": [
+"?\"",
+"Ab-。",
+"…"
+]
+},
+{
+"x": "א",
+"sentences": [
+"א"
+]
+},
+{
+"x": "…1.;.”\" 。.:",
+"sentences": [
+"…1.;.”\" 。.:"
+]
+},
+{
+"x": "\t ) (..",
+"sentences": [
+") (.."
+]
+},
+{
+"x": "!",
+"sentences": [
+"!"
+]
+},
+{
+"x": "!?: ­“Bb",
+"sentences": [
+"!?: ­“Bb"
+]
+},
+{
+"x": ".́“(’’!­B",
+"sentences": [
+".́“(’’!­",
+"B"
+]
+},
+{
+"x": "   ,。“b",
+"sentences": [
+",。“",
+"b"
+]
+},
+{
+"x": "!אא ;5 ǅ",
+"sentences": [
+"!",
+"אא ;5 ǅ"
+]
+},
+{
+"x": ",’;  \t?(。”b’",
+"sentences": [
+",’;   ?(。”",
+"b’"
+]
+},
+{
+"x": "1(\",́",
+"sentences": [
+"1(\",́"
+]
+},
+{
+"x": "\t\nA.:",
+"sentences": [
+"A.:"
+]
+},
+{
+"x": "!,:;\t",
+"sentences": [
+"!,:;"
+]
+},
+{
+"x": "….。 A“ ”…“’A",
+"sentences": [
+"….。",
+"A“ ”…“’A"
+]
+},
+{
+"x": "\t\n”\nǅ:……­”!B2-",
+"sentences": [
+"” ǅ:……­”!",
+"B2-"
+]
+},
+{
+"x": ".\t:\n“B’",
+"sentences": [
+". : “B’"
+]
+},
+{
+"x": "א́b\n\n \t-A",
+"sentences": [
+"א́b    -A"
+]
+},
+{
+"x": "(.:”aB1-!",
+"sentences": [
+"(.:”aB1-!"
+]
+},
+{
+"x": "  ’ \".B ",
+"sentences": [
+"’ \".",
+"B"
+]
+},
+{
+"x": "b(ǅ́1­",
+"sentences": [
+"b(ǅ́1­"
+]
+},
+{
+"x": "!;A;;-ǅ",
+"sentences": [
+"!;A;;-ǅ"
+]
+},
+{
+"x": "。-:;",
+"sentences": [
+"。-:;"
+]
+},
+{
+"x": "­ “’A",
+"sentences": [
+"­ “’A"
+]
+},
+{
+"x": "。)­­)",
+"sentences": [
+"。)­­)"
+]
+},
+{
+"x": "。,;b\t\n 5",
+"sentences": [
+"。,;b   5"
+]
+},
+{
+"x": "ǅ)-­\t!1­א 。א",
+"sentences": [
+"ǅ)-­ !",
+"1­א 。",
+"א"
+]
+},
+{
+"x": ";.\t222",
+"sentences": [
+";.",
+"222"
+]
+},
+{
+"x": "。 .225 )2­:",
+"sentences": [
+"。 .225 )2­:"
+]
+},
+{
+"x": "­",
+"sentences": [
+"­"
+]
+},
+{
+"x": "2.)\t A",
+"sentences": [
+"2.)",
+"A"
+]
+},
+{
+"x": "a.2",
+"sentences": [
+"a.2"
+]
+},
+{
+"x": " .B\".Bǅ。 \"5B\t’",
+"sentences": [
+".",
+"B\".",
+"Bǅ。",
+"\"5B ’"
+]
+},
+{
+"x": "“b ’A2\na)א(́-",
+"sentences": [
+"“b ’A2 a)א(́-"
+]
+},
+{
+"x": "א́’B­。\n",
+"sentences": [
+"א́’B­。"
+]
+},
+{
+"x": "",
+"sentences": []
+},
+{
+"x": "\n",
+"sentences": [
+""
+]
+},
+{
+"x": "。\"B. ?",
+"sentences": [
+"。\"",
+"B. ?"
+]
+},
+{
+"x": "B:́\nb ,",
+"sentences": [
+"B:́ b ,"
+]
+},
+{
+"x": "אאa-B . (”א\"“",
+"sentences": [
+"אאa-B .",
+"(”א\"“"
+]
+},
+{
+"x": "\";\t,\n2:aאb!)\n",
+"sentences": [
+"\"; , 2:aאb!)"
+]
+},
+{
+"x": "\t",
+"sentences": [
+""
+]
+},
+{
+"x": "­­\t­“B.,a5א",
+"sentences": [
+"­­ ­“B.,a5א"
+]
+},
+{
+"x": ",",
+"sentences": [
+","
+]
+},
+{
+"x": "\n1\t)…;. ’“??-!",
+"sentences": [
+"1 )…;.",
+"’“??-!"
+]
+},
+{
+"x": "))… !א",
+"sentences": [
+"))… !",
+"א"
+]
+},
+{
+"x": " ́b。:。.",
+"sentences": [
+"́b。:。."
+]
+},
+{
+"x": "?",
+"sentences": [
+"?"
+]
+},
+{
+"x": "1 a­!",
+"sentences": [
+"1 a­!"
+]
+},
+{
+"x": "25  (-。1。5",
+"sentences": [
+"25  (-。",
+"1。",
+"5"
+]
+},
+{
+"x": "́”?\t!",
+"sentences": [
+"́”? !"
+]
+},
+{
+"x": "!5“",
+"sentences": [
+"!",
+"5“"
+]
+},
+{
+"x": "1. bA!.b ",
+"sentences": [
+"1. bA!.b"
+]
+},
+{
+"x": "-ǅ(",
+"sentences": [
+"-ǅ("
+]
+},
+{
+"x": "b:’)́",
+"sentences": [
+"b:’)́"
+]
+},
+{
+"x": "א: ­-“\n。-5(.",
+"sentences": [
+"א: ­-“ 。-5(."
+]
+},
+{
+"x": ";)\t…",
+"sentences": [
+";) …"
+]
+},
+{
+"x": ")? ",
+"sentences": [
+")?"
+]
+},
+{
+"x": "b。,;\"21\t:",
+"sentences": [
+"b。,;\"21 :"
+]
+},
+{
+"x": " …b",
+"sentences": [
+"…b"
+]
+},
+{
+"x": "",
+"sentences": []
+},
+{
+"x": "b\n1א。5ǅ",
+"sentences": [
+"b 1א。",
+"5ǅ"
+]
+},
+{
+"x": ";: \n’",
+"sentences": [
+";:  ’"
+]
+},
+{
+"x": "a  )\n.-?:\"\"1“",
+"sentences": [
+"a  ) .-?:\"\"1“"
+]
+},
+{
+"x": "“B­:-“21",
+"sentences": [
+"“B­:-“21"
+]
+},
+{
+"x": "b)b;́b .א1(",
+"sentences": [
+"b)b;́b .",
+"א1("
+]
+},
+{
+"x": "\t。-“!?́\"",
+"sentences": [
+"。-“!?́\""
+]
+},
+{
+"x": "\" ",
+"sentences": [
+"\""
+]
+},
+{
+"x": "\t(”)’1ǅ?…",
+"sentences": [
+"(”)’1ǅ?",
+"…"
+]
+},
+{
+"x": "\t“",
+"sentences": [
+"“"
+]
+},
+{
+"x": "",
+"sentences": []
+},
+{
+"x": "!",
+"sentences": [
+"!"
+]
+},
+{
+"x": "。אA?",
+"sentences": [
+"。",
+"אA?"
+]
+},
+{
+"x": "b..",
+"sentences": [
+"b.."
+]
+},
+{
+"x": " 2)!abB\n",
+"sentences": [
+"2)!",
+"abB"
+]
+},
+{
+"x": "b-.­\t B",
+"sentences": [
+"b-.­",
+"B"
+]
+},
+{
+"x": "BB“!\n(!…­”",
+"sentences": [
+"BB“!",
+"(!",
+"…­”"
+]
+},
+{
+"x": ":,A  .5",
+"sentences": [
+":,A  .5"
+]
+},
+{
+"x": "B(:1(a 2。2?;’",
+"sentences": [
+"B(:1(a 2。",
+"2?;’"
+]
+},
+{
+"x": ";אb­\t。”",
+"sentences": [
+";אb­ 。”"
+]
+},
+{
+"x": " .\n““\"b ",
+"sentences": [
+". ““\"b"
+]
+},
+{
+"x": "A-…)’Aǅǅ-",
+"sentences": [
+"A-…)’Aǅǅ-"
+]
+},
+{
+"x": "’B1?” ́B…­(A",
+"sentences": [
+"’B1?” ́",
+"B…­(A"
+]
+},
+{
+"x": ";א",
+"sentences": [
+";א"
+]
+},
+{
+"x": "\n.,).”\t́,A",
+"sentences": [
+".,).” ́,A"
+]
+},
+{
+"x": "",
+"sentences": []
+},
+{
+"x": "“2",
+"sentences": [
+"“2"
+]
+},
+{
+"x": "\nb",
+"sentences": [
+"b"
+]
+},
+{
+"x": "(?b",
+"sentences": [
+"(?",
+"b"
+]
+},
+{
+"x": "252",
+"sentences": [
+"252"
+]
+},
+{
+"x": "5’\t’;2.。;5́b.",
+"sentences": [
+"5’ ’;2.。;5́b."
+]
+},
+{
+"x": "",
+"sentences": []
+},
+{
+"x": "2)-A.­",
+"sentences": [
+"2)-A.­"
+]
+},
+{
+"x": "́1?A’.1א”“",
+"sentences": [
+"́1?",
+"A’.1א”“"
+]
+},
+{
+"x": "­bA。。2” ",
+"sentences": [
+"­bA。。",
+"2”"
+]
+},
+{
+"x": "bB 2́(,“a(",
+"sentences": [
+"bB 2́(,“a("
+]
+},
+{
+"x": " 。5",
+"sentences": [
+"。",
+"5"
+]
+},
+{
+"x": " !!",
+"sentences": [
+"!!"
+]
+},
+{
+"x": "1a.́א !.;(a",
+"sentences": [
+"1a.́",
+"א !.;(a"
+]
+},
+{
+"x": ".\tB",
+"sentences": [
+".",
+"B"
+]
+},
+{
+"x": "“ǅ;א,.5!5?",
+"sentences": [
+"“ǅ;א,.5!",
+"5?"
+]
+},
+{
+"x": ":-a。­’ǅ)b",
+"sentences": [
+":-a。­’",
+"ǅ)b"
+]
+},
+{
+"x": ",",
+"sentences": [
+","
+]
+},
+{
+"x": ",(5’。 ’ǅ2",
+"sentences": [
+",(5’。",
+"’ǅ2"
+]
+},
+{
+"x": "”́",
+"sentences": [
+"”́"
+]
+},
+{
+"x": "?\". ;:",
+"sentences": [
+"?\". ;:"
+]
+},
+{
+"x": "Aא, 2“…\n ;1 ǅ",
+"sentences": [
+"Aא, 2“…  ;1 ǅ"
+]
+},
+{
+"x": "",
+"sentences": []
+},
+{
+"x": " a\t5ǅ",
+"sentences": [
+"a 5ǅ"
+]
+},
+{
+"x": " Aǅ!?\n,:…",
+"sentences": [
+"Aǅ!? ,:…"
+]
+},
+{
+"x": "…aǅ;?(­­”Bb1“",
+"sentences": [
+"…aǅ;?(­­”",
+"Bb1“"
+]
+},
+{
+"x": "“  .)?(B!…A’… ",
+"sentences": [
+"“  .)?(",
+"B!",
+"…A’…"
+]
+},
+{
+"x": ".2.ǅ““:“1",
+"sentences": [
+".2.",
+"ǅ““:“1"
+]
+},
+{
+"x": " 1--:­… 。“a”;5",
+"sentences": [
+"1--:­… 。“",
+"a”;5"
+]
+},
+{
+"x": " !b-’a”)\n)\n。",
+"sentences": [
+"!",
+"b-’a”) ) 。"
+]
+},
+{
+"x": ". .",
+"sentences": [
+". ."
+]
+},
+{
+"x": "­א;\n !1",
+"sentences": [
+"­א;  !",
+"1"
+]
+},
+{
+"x": "“!",
+"sentences": [
+"“!"
+]
+},
+{
+"x": "…\t;B“’。A\t",
+"sentences": [
+"… ;B“’。",
+"A"
+]
+},
+{
+"x": "́” ́?ba\n.",
+"sentences": [
+"́” ́?",
+"ba ."
+]
+},
+{
+"x": "。\";A2­-’",
+"sentences": [
+"。\";A2­-’"
+]
+},
+{
+"x": "(B",
+"sentences": [
+"(B"
+]
+},
+{
+"x": ":5\n A,5",
+"sentences": [
+":5  A,5"
+]
+},
+{
+"x": ",bA,?",
+"sentences": [
+",bA,?"
+]
+},
+{
+"x": "b \t",
+"sentences": [
+"b"
+]
+},
+{
+"x": "’1",
+"sentences": [
+"’1"
+]
+},
+{
+"x": "ǅ\tA ),1 .’\n",
+"sentences": [
+"ǅ A ),1 .’"
+]
+},
+{
+"x": "”-B\nA。\n­\"א ",
+"sentences": [
+"”-B A。 ­",
+"\"א"
+]
+},
+{
+"x": "",
+"sentences": []
+},
+{
+"x": "aא( \n5Bǅ“5\t­",
+"sentences": [
+"aא(  5Bǅ“5 ­"
+]
+},
+{
+"x": "\n5?2(א. -",
+"sentences": [
+"5?",
+"2(א. -"
+]
+},
+{
+"x": "- .5 -,”’……5ǅ",
+"sentences": [
+"- .5 -,”’……5ǅ"
+]
+},
+{
+"x": ")",
+"sentences": [
+")"
+]
+},
+{
+"x": "  \n’́a’。א。。",
+"sentences": [
+"’́a’。",
+"א。。"
+]
+},
+{
+"x": "\"(。。 \n",
+"sentences": [
+"\"(。。"
+]
+},
+{
+"x": ";!\"。…?",
+"sentences": [
+";!\"。",
+"…?"
+]
+},
+{
+"x": " ;",
+"sentences": [
+";"
+]
+},
+{
+"x": "a.ǅ\t。א­’-b",
+"sentences": [
+"a.ǅ 。",
+"א­’-b"
+]
+},
+{
+"x": " ",
+"sentences": [
+""
+]
+},
+{
+"x": "!(;(-a。)。\n.b",
+"sentences": [
+"!(;(-a。)。 .b"
+]
+},
+{
+"x": "\")?́!2",
+"sentences": [
+"\")?́!",
+"2"
+]
+},
+{
+"x": "; ",
+"sentences": [
+";"
+]
+},
+{
+"x": ",:,Á!",
+"sentences": [
+",:,Á!"
+]
+},
+{
+"x": "(.Aא\"Aǅ “(",
+"sentences": [
+"(.",
+"Aא\"Aǅ “("
+]
+},
+{
+"x": "2…5”.5 \t  \n’?",
+"sentences": [
+"2…5”.5     ’?"
+]
+},
+{
+"x": " ’22 b’",
+"sentences": [
+"’22 b’"
+]
+},
+{
+"x": "a! 5́ B。(",
+"sentences": [
+"a!",
+"5́ B。("
+]
+},
+{
+"x": ":..b",
+"sentences": [
+":..b"
+]
+},
+{
+"x": "”) 5",
+"sentences": [
+"”) 5"
+]
+},
+{
+"x": "“\"? 。.́\"",
+"sentences": [
+"“\"? 。.́\""
+]
+},
+{
+"x": "ǅb.“b­.“a )”\"́",
+"sentences": [
+"ǅb.“b­.“a )”\"́"
+]
+},
+{
+"x": "a!1­?--אA.",
+"sentences": [
+"a!",
+"1­?--אA."
+]
+},
+{
+"x": "(;",
+"sentences": [
+"(;"
+]
+},
+{
+"x": "(bǅ)“ ;\n\t",
+"sentences": [
+"(bǅ)“ ;"
+]
+},
+{
+"x": "A”1b(.1。”-",
+"sentences": [
+"A”1b(.1。”-"
+]
+},
+{
+"x": "  ­5.",
+"sentences": [
+"­5."
+]
+},
+{
+"x": "B..!­ ­.; ;  ",
+"sentences": [
+"B..!­ ­.; ;"
+]
+},
+{
+"x": "1aא",
+"sentences": [
+"1aא"
+]
+},
+{
+"x": "B-1.­",
+"sentences": [
+"B-1.­"
+]
+},
+{
+"x": " )5B?­",
+"sentences": [
+")5B?­"
+]
+},
+{
+"x": ":(!",
+"sentences": [
+":(!"
+]
+},
+{
+"x": "\t5’。\"?",
+"sentences": [
+"5’。\"?"
+]
+},
+{
+"x": "..” \n”ǅ.\n5…",
+"sentences": [
+"..”",
+"”ǅ.",
+"5…"
+]
+},
+{
+"x": "­“(!;11“",
+"sentences": [
+"­“(!;11“"
+]
+},
+{
+"x": ".A(”;.\"…),́5\".",
+"sentences": [
+".",
+"A(”;.\"",
+"…),́5\"."
+]
+},
+{
+"x": "’:B。1­”\"….",
+"sentences": [
+"’:B。",
+"1­”\"…."
+]
+},
+{
+"x": ":",
+"sentences": [
+":"
+]
+},
+{
+"x": "-",
+"sentences": [
+"-"
+]
+},
+{
+"x": "?ǅA. ?! !B,́a",
+"sentences": [
+"?",
+"ǅA. ?! !",
+"B,́a"
+]
+},
+{
+"x": " ”?  “1\n",
+"sentences": [
+"”?",
+"“1"
+]
+},
+{
+"x": ".)”;: .ǅ",
+"sentences": [
+".)”;: .",
+"ǅ"
+]
+},
+{
+"x": "…B,?",
+"sentences": [
+"…B,?"
+]
+},
+{
+"x": "́’a’bBa!-)",
+"sentences": [
+"́’a’bBa!-)"
+]
+},
+{
+"x": ";\t-,“A ;。…\"א5",
+"sentences": [
+"; -,“A ;。",
+"…\"א5"
+]
+},
+{
+"x": "(!“",
+"sentences": [
+"(!“"
+]
+},
+{
+"x": ":",
+"sentences": [
+":"
+]
+},
+{
+"x": "“( -ǅbǅ(",
+"sentences": [
+"“( -ǅbǅ("
+]
+},
+{
+"x": ".b))א .(“",
+"sentences": [
+".b))א .(“"
+]
+},
+{
+"x": "\"א?",
+"sentences": [
+"\"א?"
+]
+},
+{
+"x": "Bǅ“a ",
+"sentences": [
+"Bǅ“a"
+]
+},
+{
+"x": ":B́\"!­”:。 …­",
+"sentences": [
+":B́\"!­”:。",
+"…­"
+]
+},
+{
+"x": ").1:\n",
+"sentences": [
+").1:"
+]
+},
+{
+"x": "",
+"sentences": []
+},
+{
+"x": ".A…”“\t.",
+"sentences": [
+".",
+"A…”“ ."
+]
+},
+{
+"x": "”B́ ”",
+"sentences": [
+"”B́ ”"
+]
+},
+{
+"x": "́",
+"sentences": [
+"́"
+]
+},
+{
+"x": "1.Ba;……, .",
+"sentences": [
+"1.",
+"Ba;……, ."
+]
+},
+{
+"x": ");(;\n”  ́a。 .A",
+"sentences": [
+");(; ”  ́a。 .",
+"A"
+]
+},
+{
+"x": "a1, a。; a",
+"sentences": [
+"a1, a。; a"
+]
+},
+{
+"x": "”\"\" B  \ń.)",
+"sentences": [
+"”\"\" B   ́.)"
+]
+},
+{
+"x": "aǅB!,",
+"sentences": [
+"aǅB!,"
+]
+},
+{
+"x": ";A’。-。(",
+"sentences": [
+";A’。-。("
+]
+},
+{
+"x": "-.­­ ",
+"sentences": [
+"-.­­"
+]
+},
+{
+"x": "2.(”\"…-ǅ(:́:”א",
+"sentences": [
+"2.(”\"",
+"…-ǅ(:́:”א"
+]
+},
+{
+"x": "",
+"sentences": []
+},
+{
+"x": "­:a!“.\",。\" :",
+"sentences": [
+"­:a!“.\",。\" :"
+]
+},
+{
+"x": "5”.",
+"sentences": [
+"5”."
+]
+},
+{
+"x": "1?2 -)A!(",
+"sentences": [
+"1?",
+"2 -)A!("
+]
+},
+{
+"x": "\" .B) ­“b\".",
+"sentences": [
+"\" .",
+"B) ­“b\"."
+]
+},
+{
+"x": "; B2?’\"א5,! ",
+"sentences": [
+"; B2?’\"",
+"א5,!"
+]
+},
+{
+"x": "?",
+"sentences": [
+"?"
+]
+},
+{
+"x": ": B.",
+"sentences": [
+": B."
+]
+},
+{
+"x": "́",
+"sentences": [
+"́"
+]
+},
+{
+"x": "\"1 ",
+"sentences": [
+"\"1"
+]
+},
+{
+"x": ".­,。?!",
+"sentences": [
+".­,。?!"
+]
+},
+{
+"x": "’。1!\n;",
+"sentences": [
+"’。",
+"1! ;"
+]
+},
+{
+"x": "\".…B。!.",
+"sentences": [
+"\".",
+"…B。!."
+]
+},
+{
+"x": "’;\"A?”",
+"sentences": [
+"’;\"A?”"
+]
+},
+{
+"x": "",
+"sentences": []
+},
+{
+"x": "’)’。? ?b\"。א(a.",
+"sentences": [
+"’)’。? ?",
+"b\"。",
+"א(a."
+]
+},
+{
+"x": "\t,b­.B”21?",
+"sentences": [
+",b­.B”21?"
+]
+},
+{
+"x": "25 B’。 “!́",
+"sentences": [
+"25 B’。",
+"“!́"
+]
+},
+{
+"x": "b\n.。):א",
+"sentences": [
+"b .。):א"
+]
+},
+{
+"x": " ’\n)­,?",
+"sentences": [
+"’ )­,?"
+]
+},
+{
+"x": "",
+"sentences": []
+},
+{
+"x": ";。­́51",
+"sentences": [
+";。­́",
+"51"
+]
+},
+{
+"x": ".”1ǅ a12;.”ǅ“",
+"sentences": [
+".”",
+"1ǅ a12;.”",
+"ǅ“"
+]
+},
+{
+"x": "“b”­\n­;:(\"  ",
+"sentences": [
+"“b”­ ­;:(\""
+]
+},
+{
+"x": "“אÁ’­\n ;.\"”“",
+"sentences": [
+"“אÁ’­  ;.\"”“"
+]
+},
+{
+"x": ",):。…5?",
+"sentences": [
+",):。",
+"…5?"
+]
+},
+{
+"x": "B ́;A bǅ",
+"sentences": [
+"B ́;A bǅ"
+]
+},
+{
+"x": " B\n 1\t“(­…",
+"sentences": [
+"B  1 “(­…"
+]
+},
+{
+"x": "B",
+"sentences": [
+"B"
+]
+},
+{
+"x": " 。。́ a",
+"sentences": [
+"。。́",
+"a"
+]
+},
+{
+"x": ":1ǅa-",
+"sentences": [
+":1ǅa-"
+]
+},
+{
+"x": "",
+"sentences": []
+},
+{
+"x": "“ ,,。.。\n\n:ǅ",
+"sentences": [
+"“ ,,。.。  :ǅ"
+]
+},
+{
+"x": "?“́.\n1\".“א. !B",
+"sentences": [
+"?“́.",
+"1\".“",
+"א. !",
+"B"
+]
+},
+{
+"x": "ǅ\", 2’…1,“(  א",
+"sentences": [
+"ǅ\", 2’…1,“(  א"
+]
+},
+{
+"x": "2­?)",
+"sentences": [
+"2­?)"
+]
+},
+{
+"x": "2B",
+"sentences": [
+"2B"
+]
+},
+{
+"x": ".-B2́b\n…)",
+"sentences": [
+".-B2́b …)"
+]
+},
+{
+"x": ":…-2\",“2;",
+"sentences": [
+":…-2\",“2;"
+]
+},
+{
+"x": "B。;\n;\n",
+"sentences": [
+"B。; ;"
+]
+},
+{
+"x": "。.\tB­…,\"!א’55",
+"sentences": [
+"。.",
+"B­…,\"!",
+"א’55"
+]
+},
+{
+"x": " \n",
+"sentences": [
+""
+]
+},
+{
+"x": "?!5\t\".\n ́­…1a",
+"sentences": [
+"?!",
+"5 \".  ́­…1a"
+]
+},
+{
+"x": ".b …",
+"sentences": [
+".b …"
+]
+},
+{
+"x": "",
+"sentences": []
+},
+{
+"x": "A\"1Aא”,.(\"\t",
+"sentences": [
+"A\"1Aא”,.(\""
+]
+},
+{
+"x": "\"Á(",
+"sentences": [
+"\"Á("
+]
+},
+{
+"x": ")­-“́",
+"sentences": [
+")­-“́"
+]
+},
+{
+"x": "-2bb­",
+"sentences": [
+"-2bb­"
+]
+},
+{
+"x": " :!”’ ??:。",
+"sentences": [
+":!”’ ??:。"
+]
+},
+{
+"x": "\"  B”א”\t",
+"sentences": [
+"\"  B”א”"
+]
+},
+{
+"x": "??\": ’",
+"sentences": [
+"??\": ’"
+]
+},
+{
+"x": "21́Aǅ\t”",
+"sentences": [
+"21́Aǅ ”"
+]
+},
+{
+"x": " ",
+"sentences": [
+""
+]
+},
+{
+"x": "\n A",
+"sentences": [
+"A"
+]
+},
+{
+"x": "(1ǅ。Bbא,…”)\"",
+"sentences": [
+"(1ǅ。",
+"Bbא,…”)\""
+]
+},
+{
+"x": "1́!?.\n5,2",
+"sentences": [
+"1́!?.",
+"5,2"
+]
+},
+{
+"x": "­ a",
+"sentences": [
+"­ a"
+]
+},
+{
+"x": "a2A5’",
+"sentences": [
+"a2A5’"
+]
+},
+{
+"x": "….,…A2א1 ǅǅ  A",
+"sentences": [
+"….,…A2א1 ǅǅ  A"
+]
+},
+{
+"x": "A.\t\tb””Aא \t\"’",
+"sentences": [
+"A.  b””Aא  \"’"
+]
+},
+{
+"x": "\t\"。 ” ’",
+"sentences": [
+"\"。",
+"” ’"
+]
+},
+{
+"x": " )’。",
+"sentences": [
+")’。"
+]
+},
+{
+"x": ") ,\t2…",
+"sentences": [
+") , 2…"
+]
+},
+{
+"x": "…- \"א,:B\t’.",
+"sentences": [
+"…- \"א,:B ’."
+]
+},
+{
+"x": "BǅǅB",
+"sentences": [
+"BǅǅB"
+]
+},
+{
+"x": "",
+"sentences": []
+},
+{
+"x": "b?bǅ",
+"sentences": [
+"b?",
+"bǅ"
+]
+},
+{
+"x": "́2”。אb:A.",
+"sentences": [
+"́2”。",
+"אb:A."
+]
+},
+{
+"x": "1 ",
+"sentences": [
+"1"
+]
+},
+{
+"x": "5 ",
+"sentences": [
+"5"
+]
+},
+{
+"x": "ǅ“",
+"sentences": [
+"ǅ“"
+]
+},
+{
+"x": "́.",
+"sentences": [
+"́."
+]
+},
+{
+"x": "́!́\n “Bא “\n\n",
+"sentences": [
+"́!́",
+"“Bא “"
+]
+},
+{
+"x": "…;2A\t!’ ",
+"sentences": [
+"…;2A !’"
+]
+},
+{
+"x": "!ǅ\t́’",
+"sentences": [
+"!",
+"ǅ ́’"
+]
+},
+{
+"x": " A\"-。a.?B…",
+"sentences": [
+"A\"-。",
+"a.?",
+"B…"
+]
+},
+{
+"x": ";ǅ2 .”。",
+"sentences": [
+";ǅ2 .”。"
+]
+},
+{
+"x": "A1́?",
+"sentences": [
+"A1́?"
+]
+},
+{
+"x": "A,א(­5?;;b。5b",
+"sentences": [
+"A,א(­5?;;b。",
+"5b"
+]
+},
+{
+"x": "?(2.::1b",
+"sentences": [
+"?(",
+"2.::1b"
+]
+},
+{
+"x": ") .! \n1 。)A)",
+"sentences": [
+") .!",
+"1 。)",
+"A)"
+]
+},
+{
+"x": "\"(-5!\"?A",
+"sentences": [
+"\"(-5!\"?",
+"A"
+]
+},
+{
+"x": " …)“\n\n?",
+"sentences": [
+"…)“  ?"
+]
+},
+{
+"x": "אB5",
+"sentences": [
+"אB5"
+]
+},
+{
+"x": "(?\n?A\"\n",
+"sentences": [
+"(? ?",
+"A\""
+]
+},
+{
+"x": "。",
+"sentences": [
+"。"
+]
+},
+{
+"x": "́",
+"sentences": [
+"́"
+]
+},
+{
+"x": ":­ǅ1?.?ǅ)ǅ\"-́",
+"sentences": [
+":­ǅ1?.?",
+"ǅ)ǅ\"-́"
+]
+},
+{
+"x": "!:,。",
+"sentences": [
+"!:,。"
+]
+},
+{
+"x": "’ \t1\t--\t?א ;",
+"sentences": [
+"’  1 -- ?",
+"א ;"
+]
+},
+{
+"x": "2\t  ­2 ",
+"sentences": [
+"2   ­2"
+]
+},
+{
+"x": " ",
+"sentences": [
+""
+]
+},
+{
+"x": "?。?\":“ ““(́\n)",
+"sentences": [
+"?。?\":“ ““(́ )"
+]
+},
+{
+"x": ":B\n; ǅ…5“)-?́)",
+"sentences": [
+":B ; ǅ…5“)-?́)"
+]
+},
+{
+"x": "“́“ǅ…5?“ǅ:.\n“",
+"sentences": [
+"“́“ǅ…5?“",
+"ǅ:.",
+"“"
+]
+},
+{
+"x": "-a",
+"sentences": [
+"-a"
+]
+},
+{
+"x": "2“。 ’­ ’B) -",
+"sentences": [
+"2“。",
+"’­ ’B) -"
+]
+},
+{
+"x": "ǅ\"",
+"sentences": [
+"ǅ\""
+]
+},
+{
+"x": "“",
+"sentences": [
+"“"
+]
+},
+{
+"x": "b”’א;”b́b..",
+"sentences": [
+"b”’א;”b́b.."
+]
+},
+{
+"x": "B 。\t:” …(2 -“",
+"sentences": [
+"B 。 :” …(2 -“"
+]
+},
+{
+"x": "“(",
+"sentences": [
+"“("
+]
+},
+{
+"x": "…2a-B:́A1",
+"sentences": [
+"…2a-B:́A1"
+]
+},
+{
+"x": "”b!….!-)2:",
+"sentences": [
+"”b!",
+"….!-)2:"
+]
+},
+{
+"x": "",
+"sentences": []
+},
+{
+"x": "ǅ;,.”   \n-  ",
+"sentences": [
+"ǅ;,.”    -"
+]
+},
+{
+"x": "B)“1­,…\t:,。­",
+"sentences": [
+"B)“1­,… :,。­"
+]
+},
+{
+"x": ")!:\t\t B",
+"sentences": [
+")!:   B"
+]
+},
+{
+"x": "א“2。’1?­ǅ\";!",
+"sentences": [
+"א“2。’",
+"1?­",
+"ǅ\";!"
+]
+},
+{
+"x": "1ǅ2  15́אB",
+"sentences": [
+"1ǅ2  15́אB"
+]
+},
+{
+"x": " 1א",
+"sentences": [
+"1א"
+]
+},
+{
+"x": "。a”b.52",
+"sentences": [
+"。",
+"a”b.52"
+]
+},
+{
+"x": "",
+"sentences": []
+},
+{
+"x": " 2ǅ”́!15\n …,?",
+"sentences": [
+"2ǅ”́!",
+"15  …,?"
+]
+},
+{
+"x": "\nAא’a)-a.",
+"sentences": [
+"Aא’a)-a."
+]
+},
+{
+"x": "א\" ǅ",
+"sentences": [
+"א\" ǅ"
+]
+},
+{
+"x": "\"”\t’;??A?!",
+"sentences": [
+"\"” ’;??",
+"A?!"
+]
+},
+{
+"x": "a :א;(\t’a,",
+"sentences": [
+"a :א;( ’a,"
+]
+},
+{
+"x": "52\t\")ǅ.א2",
+"sentences": [
+"52 \")ǅ.",
+"א2"
+]
+},
+{
+"x": " ” \"א2,́:.。。אא",
+"sentences": [
+"” \"א2,́:.。。",
+"אא"
+]
+},
+{
+"x": " :2a",
+"sentences": [
+":2a"
+]
+},
+{
+"x": "! …",
+"sentences": [
+"!",
+"…"
+]
+},
+{
+"x": "ǅא?。אא(1 ­:!",
+"sentences": [
+"ǅא?。",
+"אא(1 ­:!"
+]
+},
+{
+"x": "א’2B­\n?.,B2!B",
+"sentences": [
+"א’2B­ ?.,B2!",
+"B"
+]
+},
+{
+"x": "A’。(ǅ:1\t;\t“”\"",
+"sentences": [
+"A’。(",
+"ǅ:1 ; “”\""
+]
+},
+{
+"x": "B,:’́“…”",
+"sentences": [
+"B,:’́“…”"
+]
+}
+]
+}

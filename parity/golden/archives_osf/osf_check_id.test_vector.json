@@ -1,0 +1,29 @@
+{
+  "id": "osf_check_id.test_vector",
+  "ok": true,
+  "error": null,
+  "warnings": [
+    "xx is not a valid OSF ID",
+    "6846ed88e49694cd45a is not a valid OSF ID"
+  ],
+  "value": {
+    "t": "chr",
+    "v": [
+      "6846ed88e49694cd45ab8375",
+      "6846ed88e49694cd45ab8375",
+      "pngda",
+      "pngda",
+      "pngda",
+      "pngda",
+      "pngda",
+      "pngda",
+      "pngda",
+      "pngda?view_only=5acf039f24ac4ea28afec473548dd7f4",
+      "pngda?view_only=5acf039f24ac4ea28afec473548dd7f4",
+      null,
+      null
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

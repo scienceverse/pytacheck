@@ -1,0 +1,17 @@
+{
+  "id": "jasp_analyses_summary.flat",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "1. partial",
+      "2. plain",
+      "3. 2.5",
+      "4. TRUE"
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

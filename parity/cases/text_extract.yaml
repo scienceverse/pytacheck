@@ -59,6 +59,11 @@
   "py": "pytacheck.text.extract.extract_urls"
   "args":
     "paper": 1
+- "id": "extract_urls.chr"
+  "r": "extract_urls"
+  "py": "pytacheck.text.extract.extract_urls"
+  "args":
+    "paper": {"$chr": ["see https://osf.io/x and a.bc", "nothing", "doi:10.1/x"]}
 # ------------------------------------------------------------ extract_p_values
 - "id": "extract_p_values.demo"
   "r": "extract_p_values"
@@ -159,6 +164,11 @@
   "py": "pytacheck.text.extract.extract_p_values"
   "args":
     "paper": 1
+- "id": "extract_p_values.chr"
+  "r": "extract_p_values"
+  "py": "pytacheck.text.extract.extract_p_values"
+  "args":
+    "paper": {"$chr": ["t = 2, p = .05"]}
 # ------------------------------------------------------------------ extract_eq
 - "id": "extract_eq.demo"
   "r": "extract_eq"
@@ -262,6 +272,11 @@
   "py": "pytacheck.text.extract.extract_eq"
   "args":
     "paper": 1
+- "id": "extract_eq.chr"
+  "r": "extract_eq"
+  "py": "pytacheck.text.extract.extract_eq"
+  "args":
+    "paper": {"$chr": ["t = 2, p = .05"]}
 # ----------------------------------------------------------- .detect_live_data
 - "id": "detect_live_data.demo"
   "r": "metacheck:::.detect_live_data"
@@ -327,6 +342,15 @@
         - "No statistics here."
         - "Only a height = 4 and SD = 2."
   "compare": {"ignore": ["paper_id"]}
+- "id": "extract_tests.df"
+  "r": "extract_tests"
+  "py": "pytacheck.text.extract_tests.extract_tests"
+  "args":
+    "paper":
+      "$df":
+        "text": ["t(23) = 3.77, p = .001", "No stats", "F(1, 2) = 3, p = .5, r = .2"]
+        "paper_id": ["a", "a", "a"]
+        "text_id": [1, 2, 3]
 - "id": "norm_stat_name.eta"
   "r": "metacheck:::.norm_stat_name"
   "py": "pytacheck.text.extract_tests._norm_stat_name"
@@ -596,6 +620,24 @@
         - '[{"a":[{"x":1}]},{"a":[{"x":2}]}]'
         - '[{"a":[]},{"a":[1]}]'
         - '[{"a":1},{"a":2,"_row":"x"},null]'
+- "id": "json_expand.row_names"
+  "r": "json_expand"
+  "py": "pytacheck.text.json_expand.json_expand"
+  "args":
+    "table":
+      "$df":
+        "id": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+        "answer":
+        - '[{"_row": {}, "a": 1}]'
+        - '[{"_row": {"x": 1, "y": 2}, "a": 1}, {"_row": {"x": 3, "y": 4}, "a": 2}, {"a": 3}]'
+        - '[{"_row": "r1", "a": 1}, {"_row": "r1", "a": 2}]'
+        - '[{"_row": {"x": {}}, "a": 1}, {"a": 2}]'
+        - '[{"_row": [], "a": 1}, {"a": 2}]'
+        - '[{"x1": 0, "_row": {"letter": {}, "if": "e"}}, {}, {"x1": 1}]'
+        - '[{"_row": 1, "b": 2}, {"_row": 1, "b": 3}]'
+        - '[{"_row": [1,2], "a": 1}, {"_row": [1,2], "a": 2}]'
+        - '[{"_row": [1], "a": 1}, {"_row": "1", "a": 2}]'
+        - '[{"_row": {"x": 1}, "a": 1}, {"a": 2}, {"a": 3}]'
 - "id": "json_expand.records.mismatch"
   "r": "json_expand"
   "py": "pytacheck.text.json_expand.json_expand"

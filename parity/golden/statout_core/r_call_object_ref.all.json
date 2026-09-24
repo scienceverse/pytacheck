@@ -1,0 +1,43 @@
+{
+  "id": "r_call_object_ref.all",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "m_vid",
+      null,
+      "m_vid",
+      "m_vid",
+      "m_vid",
+      "mc_model",
+      "mc_model",
+      null,
+      ".95",
+      null,
+      "m",
+      "m",
+      "m",
+      null,
+      null,
+      null,
+      null,
+      "a",
+      "a",
+      "fit",
+      null,
+      "m",
+      "mod2",
+      null,
+      null,
+      null,
+      "d",
+      "y",
+      "y",
+      "m"
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

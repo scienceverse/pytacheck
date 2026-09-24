@@ -1,0 +1,18 @@
+{
+  "id": "ipynb_strip_numpy_scalars.all",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "a=5.98, b=149",
+      "3 2.5 -1",
+      "np.float64((1))",
+      "xnp.float64(1)",
+      "np.complex128(1)"
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

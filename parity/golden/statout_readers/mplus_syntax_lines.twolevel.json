@@ -1,0 +1,14 @@
+{
+  "id": "mplus_syntax_lines.twolevel",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "TITLE: Two-level regression;\nDATA: FILE = data.dat;\nVARIABLE: NAMES = clus y x w;\nCLUSTER = clus;\nWITHIN = x;\nBETWEEN = w;\nANALYSIS: TYPE = TWOLEVEL;\nMODEL:\n%WITHIN%\ny ON x;\n%BETWEEN%\ny ON w;"
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

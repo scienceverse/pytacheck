@@ -1,0 +1,290 @@
+{
+  "id": "ipynb_stat_line.classes",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": null,
+    "v": [
+      {
+        "t": "list",
+        "names": [
+          "analysis",
+          "title",
+          "data",
+          "call_fn"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "slope",
+              "rvalue",
+              "pvalue",
+              "stderr"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "11.474329080951929"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "0.4052714777933583"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "0.004269632365840751"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "3.8162"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "LinregressResult"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "analysis",
+          "title",
+          "data",
+          "call_fn"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "statistic",
+              "pvalue"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "5.324149292705737"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "3.6340850924488865e-07"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Ttest_indResult"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "analysis",
+          "title",
+          "data",
+          "call_fn"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "statistic",
+              "pvalue"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "1949.0"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "0.0013180093601592962"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "MannwhitneyuResult"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "analysis",
+          "title",
+          "data",
+          "call_fn"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "statistic",
+              "pvalue",
+              "statistic_location",
+              "statistic_sign"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "1.0"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "0.0"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "1683.95"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "-1"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "KstestResult"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "analysis",
+          "title",
+          "data",
+          "call_fn"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "t"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "2.1"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

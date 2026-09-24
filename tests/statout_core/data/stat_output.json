@@ -1,0 +1,206 @@
+{
+  "schema": "metacheck-statistical-output",
+  "schema_version": "1.0",
+  "paper_id": "p",
+  "source_file": "sample.jasp",
+  "source_format": "JASP",
+  "analyses": [
+    {
+      "analysis": "Paired Samples T-Test",
+      "results": [
+        {
+          "result_id": "sample_jasp_t1_r1",
+          "test_id": "sample_jasp_a0_illusion_score_sync",
+          "row_label": "Illusion_score_sync",
+          "values": {
+            "n": {
+              "value": 9,
+              "stato_label": "study group population size",
+              "stato_iri": "http://purl.obolibrary.org/obo/STATO_0000088"
+            },
+            "mean": {
+              "value": 1.925925926,
+              "stato_label": "sample mean",
+              "stato_iri": "http://purl.obolibrary.org/obo/STATO_0000401"
+            },
+            "sd": {
+              "value": 0.862454149896004,
+              "stato_label": "standard deviation for sample",
+              "stato_iri": "http://purl.obolibrary.org/obo/STATO_0000684"
+            },
+            "se": {
+              "value": 0.287484716632001,
+              "stato_label": "standard error of the mean",
+              "stato_iri": "http://purl.obolibrary.org/obo/STATO_0000037"
+            }
+          }
+        },
+        {
+          "result_id": "sample_jasp_t1_r2",
+          "test_id": "sample_jasp_a0_control_score_sync",
+          "row_label": "control_score_sync",
+          "values": {
+            "n": {
+              "value": 9,
+              "stato_label": "study group population size",
+              "stato_iri": "http://purl.obolibrary.org/obo/STATO_0000088"
+            },
+            "mean": {
+              "value": -0.148148148111111,
+              "stato_label": "sample mean",
+              "stato_iri": "http://purl.obolibrary.org/obo/STATO_0000401"
+            },
+            "sd": {
+              "value": 1.19153392169221,
+              "stato_label": "standard deviation for sample",
+              "stato_iri": "http://purl.obolibrary.org/obo/STATO_0000684"
+            },
+            "se": {
+              "value": 0.397177973897402,
+              "stato_label": "standard error of the mean",
+              "stato_iri": "http://purl.obolibrary.org/obo/STATO_0000037"
+            }
+          }
+        },
+        {
+          "result_id": "sample_jasp_t1_r3",
+          "test_id": "sample_jasp_a0_illusion_score_async",
+          "row_label": "Illusion_score_async",
+          "values": {
+            "n": {
+              "value": 9,
+              "stato_label": "study group population size",
+              "stato_iri": "http://purl.obolibrary.org/obo/STATO_0000088"
+            },
+            "mean": {
+              "value": 0.703703703888889,
+              "stato_label": "sample mean",
+              "stato_iri": "http://purl.obolibrary.org/obo/STATO_0000401"
+            },
+            "sd": {
+              "value": 0.963852865109736,
+              "stato_label": "standard deviation for sample",
+              "stato_iri": "http://purl.obolibrary.org/obo/STATO_0000684"
+            },
+            "se": {
+              "value": 0.321284288369912,
+              "stato_label": "standard error of the mean",
+              "stato_iri": "http://purl.obolibrary.org/obo/STATO_0000037"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "analysis": "Paired Samples T-Test",
+      "results": [
+        {
+          "result_id": "sample_jasp_t2_r1",
+          "test_id": "sample_jasp_a0_illusion_score_sync_control_score_sync",
+          "row_label": "Illusion_score_sync - control_score_sync",
+          "values": {
+            "t": {
+              "value": 6.89966035949175,
+              "stato_label": "t-statistic",
+              "stato_iri": "http://purl.obolibrary.org/obo/STATO_0000176"
+            },
+            "df": {
+              "value": 8,
+              "stato_label": "number of degrees of freedom",
+              "stato_iri": "http://purl.obolibrary.org/obo/STATO_0000069"
+            },
+            "p": {
+              "value": 0.000124571109365704,
+              "stato_label": "p-value",
+              "stato_iri": "http://purl.obolibrary.org/obo/STATO_0000700"
+            },
+            "md": {
+              "value": 2.07407407411111,
+              "stato_label": "mean difference",
+              "stato_iri": "https://scienceverse.org/schema/metacheck/statistics/meanDifference"
+            },
+            "sed": {
+              "value": 0.300605242293969,
+              "stato_label": "standard error of the difference between independent means",
+              "stato_iri": "http://purl.obolibrary.org/obo/STATO_0000648"
+            },
+            "lowercilocationparameter": {
+              "value": 1.38087714231717,
+              "stato_label": "confidence interval",
+              "stato_iri": "http://purl.obolibrary.org/obo/STATO_0000196"
+            },
+            "uppercilocationparameter": {
+              "value": 2.76727100590505,
+              "stato_label": "confidence interval",
+              "stato_iri": "http://purl.obolibrary.org/obo/STATO_0000196"
+            },
+            "d": {
+              "value": 2.29988678649725,
+              "stato_label": "Cohen's d",
+              "stato_iri": "http://purl.obolibrary.org/obo/STATO_0000618"
+            },
+            "lowercieffectsize": {
+              "value": 0.999924647157569
+            },
+            "uppercieffectsize": {
+              "value": 3.56721159430254
+            }
+          }
+        },
+        {
+          "result_id": "sample_jasp_t2_r2",
+          "test_id": "sample_jasp_a0_illusion_score_sync_illusion_score_async",
+          "row_label": "Illusion_score_sync - Illusion_score_async",
+          "values": {
+            "t": {
+              "value": 5.04714614482635,
+              "stato_label": "t-statistic",
+              "stato_iri": "http://purl.obolibrary.org/obo/STATO_0000176"
+            },
+            "df": {
+              "value": 8,
+              "stato_label": "number of degrees of freedom",
+              "stato_iri": "http://purl.obolibrary.org/obo/STATO_0000069"
+            },
+            "p": {
+              "value": 0.000992766799151074,
+              "stato_label": "p-value",
+              "stato_iri": "http://purl.obolibrary.org/obo/STATO_0000700"
+            },
+            "md": {
+              "value": 1.22222222211111,
+              "stato_label": "mean difference",
+              "stato_iri": "https://scienceverse.org/schema/metacheck/statistics/meanDifference"
+            },
+            "sed": {
+              "value": 0.242161052412554,
+              "stato_label": "standard error of the difference between independent means",
+              "stato_iri": "http://purl.obolibrary.org/obo/STATO_0000648"
+            },
+            "lowercilocationparameter": {
+              "value": 0.663797833862369,
+              "stato_label": "confidence interval",
+              "stato_iri": "http://purl.obolibrary.org/obo/STATO_0000196"
+            },
+            "uppercilocationparameter": {
+              "value": 1.78064661035985,
+              "stato_label": "confidence interval",
+              "stato_iri": "http://purl.obolibrary.org/obo/STATO_0000196"
+            },
+            "d": {
+              "value": 1.68238204827545,
+              "stato_label": "Cohen's d",
+              "stato_iri": "http://purl.obolibrary.org/obo/STATO_0000618"
+            },
+            "lowercieffectsize": {
+              "value": 0.623127284348277
+            },
+            "uppercieffectsize": {
+              "value": 2.70304591495548
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -53,10 +53,25 @@ def _dollar(x: Any, name: str) -> Any:
     raise TypeError("$ operator is invalid for atomic vectors")
 
 
+def _reject_constant(name: str) -> Any:
+    raise ValueError(f"lexical error: invalid char in json text ({name})")
+
+
+def _first_key_wins(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
+    out: dict[str, Any] = {}
+    for k, v in pairs:
+        out.setdefault(k, v)
+    return out
+
+
 def _read_json(path: str) -> Any:
-    """``jsonlite::fromJSON(path, simplifyVector = FALSE)``."""
-    with open(path, encoding="utf-8") as fh:
-        return json.load(fh)
+    """``jsonlite::fromJSON(path, simplifyVector = FALSE)``.
+
+    Like jsonlite: a UTF-8 byte-order mark is accepted, ``NaN``/``Infinity``
+    tokens are errors, and with duplicate keys ``x$key`` sees the first one.
+    """
+    with open(path, encoding="utf-8-sig") as fh:
+        return json.load(fh, parse_constant=_reject_constant, object_pairs_hook=_first_key_wins)
 
 
 def _r_chr(x: Any) -> str | None:
@@ -123,13 +138,28 @@ def _frame_from_columns(cols: list[Any], names: list[str]) -> pd.DataFrame:
                 + ", ".join(str(k) for k in dict.fromkeys(lengths))
             )
         cols = [pd.array(np.resize(np.asarray(c, dtype=object), n), dtype=c.dtype) for c in cols]
-    df = pd.DataFrame({i: c for i, c in enumerate(cols)}) if cols else pd.DataFrame()
+    df = pd.DataFrame(dict(enumerate(cols))) if cols else pd.DataFrame()
     df.columns = list(names)
     return df
 
 
-def _attach_labels(df: pd.DataFrame, labels: dict[str, dict[float, str]], label: dict[str, str]) -> None:
-    df.attrs["label"] = label
+def _attach_labels(
+    df: pd.DataFrame, labels: dict[str, dict[float, str]], label: dict[str, Any]
+) -> None:
+    """Store haven-style labels in ``df.attrs`` the way R ends up attaching them.
+
+    R re-attaches ``attr(cols[[j]], "label")``, and ``attr()`` partially
+    matches ``"labels"``: a value-labelled column without its own variable
+    label therefore gets ``label`` = its value-label vector. Reproduced here
+    (upstream quirk): such a column's ``label`` is its ``{code: label}`` dict.
+    """
+    full: dict[str, Any] = {}
+    for col in df.columns:
+        if col in label:
+            full[col] = label[col]
+        elif col in labels:
+            full[col] = dict(labels[col])
+    df.attrs["label"] = full
     df.attrs["labels"] = labels
 
 
@@ -297,12 +327,18 @@ def _rsqlite_column(values: list[Any], decl: str | None) -> Any:
         if all(v is None or (isinstance(v, int) and abs(v) <= 2147483647) for v in values):
             return pd.array(values, dtype="Int64")
         return pd.array(
-            [None if v is None else float(v) if not isinstance(v, str) else _as_numeric(v) for v in values],
+            [
+                None if v is None else float(v) if not isinstance(v, str) else _as_numeric(v)
+                for v in values
+            ],
             dtype="Float64",
         ).astype("float64")
     if aff == "real":
         return pd.array(
-            [None if v is None else _as_numeric(v) if isinstance(v, str) else float(v) for v in values],
+            [
+                None if v is None else _as_numeric(v) if isinstance(v, str) else float(v)
+                for v in values
+            ],
             dtype="Float64",
         ).astype("float64")
     if aff == "text":
@@ -337,7 +373,7 @@ def _read_jasp_sqlite(sqlite_path: str) -> dict[str, Any]:
 
         def labels_for(cid: Any) -> dict[float, str]:
             rows = con.execute(
-                f"SELECT value, label FROM Labels WHERE columnId = {int(cid)} ORDER BY ordering"
+                f"SELECT value, label FROM Labels WHERE columnId = {int(cid)} ORDER BY ordering"  # noqa: S608
             ).fetchall()
             out: dict[float, str] = {}
             for value, lab in rows:
@@ -359,7 +395,8 @@ def _read_jasp_sqlite(sqlite_path: str) -> dict[str, Any]:
             dblc = f"Column_{int(cid)}_DBL"
             intc = f"Column_{int(cid)}_INT"
             phys_col = dblc if is_scale and dblc in phys else intc if intc in phys else dblc
-            raw = [r[0] for r in con.execute(f'SELECT "{phys_col}" AS v FROM "{dtab}" ORDER BY rowNumber')]
+            query = f'SELECT "{phys_col}" AS v FROM "{dtab}" ORDER BY rowNumber'  # noqa: S608
+            raw = [r[0] for r in con.execute(query)]
             v = _rsqlite_column(raw, decl.get(phys_col))
             if not is_scale:
                 nums = [None if pd.isna(x) else _as_numeric(x) for x in v]
@@ -371,7 +408,8 @@ def _read_jasp_sqlite(sqlite_path: str) -> dict[str, Any]:
                     labels[name] = labs
             if name is not None:
                 try:
-                    ttl = [r[0] for r in con.execute(f"SELECT title FROM Columns WHERE id = {int(cid)}")]
+                    query = f"SELECT title FROM Columns WHERE id = {int(cid)}"  # noqa: S608
+                    ttl = [r[0] for r in con.execute(query)]
                 except sqlite3.Error:
                     ttl = []
                 if ttl and ttl[0] is not None and ttl[0] != "" and ttl[0] != name:
@@ -447,7 +485,9 @@ def _export_archive_html(path: str, out: str | None, ext: str, label: str, prefi
     with tempfile.TemporaryDirectory(prefix=prefix) as tmp:
         files = _unzip(path, tmp)
         if not files:
-            raise ValueError(f"Could not open '{os.path.basename(path)}' as a .{label} (zip) archive.")
+            raise ValueError(
+                f"Could not open '{os.path.basename(path)}' as a .{label} (zip) archive."
+            )
         base = [os.path.basename(f) for f in files]
         if "index.html" not in base:
             raise ValueError(f"No 'index.html' in {os.path.basename(path)}; nothing to export.")
@@ -488,7 +528,7 @@ def _url_decode(url: str) -> str:
             out.append(b[i])
             i += 1
             continue
-        y = [c for c in b[i + 1 : i + 3]]
+        y = list(b[i + 1 : i + 3])
         y = [c - 32 if c > 96 else c for c in y]
         y = [c - 7 if c > 57 else c for c in y]
         val = sum((c - 48) * m for c, m in zip(y, (16, 1), strict=False))
@@ -525,6 +565,8 @@ def _html_inline_images(html: str, root: str) -> str:
             continue
         ext = _file_ext(img_path).lower()
         mime = "image/png" if ext == "png" else "image/gif" if ext == "gif" else "image/jpeg"
-        data_uri = f"data:{mime};base64," + base64.b64encode(Path(img_path).read_bytes()).decode("ascii")
+        data_uri = f"data:{mime};base64," + base64.b64encode(Path(img_path).read_bytes()).decode(
+            "ascii"
+        )
         html = html.replace(src, f'src="{data_uri}"', 1)
     return html

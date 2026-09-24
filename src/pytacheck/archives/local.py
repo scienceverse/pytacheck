@@ -37,9 +37,11 @@ def _list_files(path: str, recursive: bool) -> list[str]:
         for dirpath, dirs, files in os.walk(path):
             dirs[:] = [d for d in dirs if not d.startswith(".")]
             rel = os.path.relpath(dirpath, path)
-            for f in files:
-                if not f.startswith("."):
-                    found.append(f if rel == "." else os.path.join(rel, f).replace("\\", "/"))
+            found.extend(
+                f if rel == "." else os.path.join(rel, f).replace("\\", "/")
+                for f in files
+                if not f.startswith(".")
+            )
         names = r_sorted(found)
     else:
         names = r_sorted([n for n in os.listdir(path) if not n.startswith(".")])

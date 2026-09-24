@@ -1,0 +1,188 @@
+{
+  "id": "crossref_doi.replay.mixed",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 5,
+    "names": [
+      "DOI",
+      "type",
+      "title",
+      "container-title",
+      "volume",
+      "issue",
+      "page",
+      "URL",
+      "year",
+      "author",
+      "error"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "10.1177/0956797614520714",
+          "10.1177/fake",
+          "bad",
+          null,
+          "10.1098/rspb.2002.2034"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "journal-article",
+          null,
+          null,
+          null,
+          "journal-article"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Retracted: Evil Genius? How Dishonesty Can Lead to Greater Creativity",
+          null,
+          null,
+          null,
+          "Facial resemblance enhances trust"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Psychological Science",
+          null,
+          null,
+          null,
+          "Proceedings of the Royal Society of London. Series B: Biological Sciences"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "25",
+          null,
+          null,
+          null,
+          "269"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "4",
+          null,
+          null,
+          null,
+          "1498"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "973-981",
+          null,
+          null,
+          null,
+          "1307-1312"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://doi.org/10.1177/0956797614520714",
+          null,
+          null,
+          null,
+          "https://doi.org/10.1098/rspb.2002.2034"
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          2014,
+          null,
+          null,
+          null,
+          2002
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "df",
+            "nrow": 2,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Francesca",
+                  "Scott S."
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Gino",
+                  "Wiltermuth"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "null"
+          },
+          {
+            "t": "null"
+          },
+          {
+            "t": "null"
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Lisa M."
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "DeBruine"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "Not Found",
+          "malformed",
+          null,
+          null
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

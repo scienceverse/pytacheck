@@ -1,0 +1,116 @@
+{
+  "id": "statcheck.warning.p_range",
+  "ok": true,
+  "error": null,
+  "warnings": [
+    "NAs introduced by coercion"
+  ],
+  "value": {
+    "t": "df",
+    "nrow": 1,
+    "names": [
+      "source",
+      "test_type",
+      "df1",
+      "df2",
+      "test_comp",
+      "test_value",
+      "p_comp",
+      "reported_p",
+      "computed_p",
+      "raw",
+      "error",
+      "decision_error",
+      "one_tailed_in_txt",
+      "apa_factor"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "01"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "t"
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          28
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "="
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          2.2
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "="
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0.036
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0.0362254847788378
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "t(28) = 2.20, p = .036"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0.5
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

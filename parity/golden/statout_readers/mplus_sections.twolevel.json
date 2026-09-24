@@ -1,0 +1,424 @@
+{
+  "id": "mplus_sections.twolevel",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": null,
+    "v": [
+      {
+        "t": "list",
+        "names": [
+          "title",
+          "lines"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "INPUT INSTRUCTIONS"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "",
+              "  TITLE: Two-level regression;",
+              "  DATA: FILE = data.dat;",
+              "  VARIABLE: NAMES = clus y x w;",
+              "            CLUSTER = clus;",
+              "            WITHIN = x;",
+              "            BETWEEN = w;",
+              "  ANALYSIS: TYPE = TWOLEVEL;",
+              "  MODEL:",
+              "    %WITHIN%",
+              "    y ON x;",
+              "    %BETWEEN%",
+              "    y ON w;",
+              "",
+              "*** WARNING in MODEL command",
+              "  Variable is uncorrelated with all other variables: W",
+              "",
+              "   1 WARNING(S) FOUND IN THE INPUT INSTRUCTIONS",
+              "",
+              "",
+              "",
+              "Two-level regression;",
+              ""
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "title",
+          "lines"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "SUMMARY OF ANALYSIS"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "",
+              "Number of groups                                                 1",
+              "Number of observations                                         500",
+              "",
+              "Number of dependent variables                                    1",
+              "Number of independent variables                                  2",
+              "Number of continuous latent variables                            0",
+              "",
+              "Estimator                                                      MLR",
+              "Information matrix                                        OBSERVED",
+              "Maximum number of iterations                                   100",
+              "Convergence criterion                                    0.100D-05",
+              "",
+              ""
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "title",
+          "lines"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "UNIVARIATE SAMPLE STATISTICS"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "",
+              ""
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "title",
+          "lines"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "UNIVARIATE HIGHER-ORDER MOMENT DESCRIPTIVE STATISTICS"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "",
+              "         Variable/         Mean/     Skewness/   Minimum/ % with                Percentiles",
+              "        Sample Size      Variance    Kurtosis    Maximum  Min/Max      20%/60%    40%/80%    Median",
+              "",
+              "     Y                     0.012      -0.041      -3.101    0.20%      -0.851     -0.259      0.010",
+              "             500.000       1.021      -0.112       3.214    0.20%       0.282      0.862",
+              "     X                    -0.023       0.066      -2.852    0.20%      -0.840     -0.271     -0.011",
+              "             500.000       0.976       0.031       3.120    0.20%       0.228      0.815",
+              "",
+              ""
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "title",
+          "lines"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "THE MODEL ESTIMATION TERMINATED NORMALLY"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "",
+              "",
+              ""
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "title",
+          "lines"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "MODEL FIT INFORMATION"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "",
+              "Number of Free Parameters                        5",
+              "",
+              "Loglikelihood",
+              "",
+              "          H0 Value                       -1423.568",
+              "          H0 Scaling Correction Factor      1.0123",
+              "            for MLR",
+              "          H1 Value                       -1423.568",
+              "",
+              "Information Criteria",
+              "",
+              "          Akaike (AIC)                    2857.136",
+              "          Bayesian (BIC)                  2878.209",
+              "          Sample-Size Adjusted BIC        2862.338",
+              "            (n* = (n + 2) / 24)",
+              "",
+              "Chi-Square Test of Model Fit",
+              "",
+              "          Value                              0.000*",
+              "          Degrees of Freedom                     0",
+              "          P-Value                           1.0000",
+              "",
+              "",
+              ""
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "title",
+          "lines"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "MODEL RESULTS"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "",
+              "                                                    Two-Tailed",
+              "                    Estimate       S.E.  Est./S.E.    P-Value",
+              "",
+              "Within Level",
+              "",
+              " Y          ON",
+              "    X                  0.498      0.044     11.318      0.000",
+              "",
+              " Residual Variances",
+              "    Y                  0.742      0.049     15.143      0.000",
+              "",
+              "Between Level",
+              "",
+              " Y          ON",
+              "    W                  0.203      0.071      2.859      0.004",
+              "",
+              " Intercepts",
+              "    Y                  0.011      0.052      0.212      0.832",
+              "",
+              " Residual Variances",
+              "    Y                  0.231      0.041      5.634      0.000",
+              "",
+              ""
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "title",
+          "lines"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "STANDARDIZED MODEL RESULTS"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "",
+              "",
+              "STDYX Standardization",
+              "",
+              "                                                    Two-Tailed",
+              "                    Estimate       S.E.  Est./S.E.    P-Value",
+              "",
+              "Within Level",
+              "",
+              " Y          ON",
+              "    X                  0.483      0.038     12.711      0.000",
+              "",
+              ""
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "title",
+          "lines"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "R-SQUARE"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "",
+              "Within Level",
+              "",
+              "    Observed                                        Two-Tailed",
+              "    Variable        Estimate       S.E.  Est./S.E.    P-Value",
+              "",
+              "    Y                  0.233      0.037      6.356      0.000",
+              "",
+              ""
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "title",
+          "lines"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "SAMPLE STATISTICS"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "",
+              "",
+              "     ESTIMATED SAMPLE STATISTICS FOR WITHIN",
+              "",
+              "",
+              "           Means",
+              "              Y             X",
+              "              ________      ________",
+              "                0.000         0.000",
+              "",
+              "",
+              "           Covariances",
+              "              Y             X",
+              "              ________      ________",
+              " Y              0.966",
+              " X              0.487         0.978",
+              "",
+              ""
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "title",
+          "lines"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "TECHNICAL 1 OUTPUT"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "",
+              "",
+              "     PARAMETER SPECIFICATION FOR WITHIN",
+              "",
+              "",
+              "           NU",
+              "              Y             X",
+              "              ________      ________",
+              "                  0             0",
+              "",
+              "",
+              "     Beginning Time:  10:15:32",
+              "        Ending Time:  10:15:33",
+              "       Elapsed Time:  00:00:01",
+              "",
+              "",
+              "",
+              "MUTHEN & MUTHEN",
+              "3463 Stoner Ave.",
+              "Los Angeles, CA  90066",
+              "",
+              "Tel: (310) 391-9971",
+              "Fax: (310) 391-8971",
+              "Web: www.StatModel.com",
+              "Support: Support@StatModel.com",
+              "",
+              "Copyright (c) 1998-2019 Muthen & Muthen"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "title",
+          "lines"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "MODEL MODIFICATION INDICES"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "MODEL MODIFICATION INDICES"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

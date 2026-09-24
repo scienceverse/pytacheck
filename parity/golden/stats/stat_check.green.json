@@ -1,0 +1,278 @@
+{
+  "id": "stat_check.green",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "stat_check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "StatCheck"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "results"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 2,
+        "names": [
+          "test_type",
+          "df1",
+          "df2",
+          "test_comp",
+          "test_value",
+          "p_comp",
+          "reported_p",
+          "computed_p",
+          "raw",
+          "error",
+          "decision_error",
+          "one_tailed_in_txt",
+          "apa_factor",
+          "text_id",
+          "section_id",
+          "paragraph_id",
+          "text",
+          "formatted",
+          "paper_id",
+          "header",
+          "section_type"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "t",
+              "F"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              1
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              28,
+              20
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "=",
+              "="
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              2.2,
+              4.35
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "=",
+              "="
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0.036,
+              0.05
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0.0362254847788378,
+              0.050029738175427
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "t(28) = 2.20, p = .036",
+              "F(1, 20) = 4.35, p = .05"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false,
+              false
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false,
+              false
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false,
+              false
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              1,
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1,
+              2
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0,
+              0
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0,
+              0
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Fine: t(28) = 2.20, p = .036.",
+              "Also fine: F(1, 20) = 4.35, p = .05."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Fine: t(28) = 2.20, p = .036.",
+              "Also fine: F(1, 20) = 4.35, p = .05."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "914b953963b902",
+              "914b953963b902"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Test",
+              "Test"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "unknown",
+              "unknown"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "We detected no errors in t-tests or F-tests."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "green"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "We detected no errors in t-tests or F-tests."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "statcheck_found",
+          "statcheck_errors",
+          "statcheck_decision_errors"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "914b953963b902"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          }
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

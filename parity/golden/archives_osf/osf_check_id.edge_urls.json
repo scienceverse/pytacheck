@@ -1,0 +1,39 @@
+{
+  "id": "osf_check_id.edge_urls",
+  "ok": true,
+  "error": null,
+  "warnings": [
+    "https:// is not a valid OSF ID",
+    "https://osf.io:99999/abcde is not a valid OSF ID",
+    "osf.io/abcde/osf.io/fghij/ is not a valid OSF ID"
+  ],
+  "value": {
+    "t": "chr",
+    "v": [
+      "files",
+      "pngda",
+      "fghij",
+      "abcde_v1",
+      "abcde_v12",
+      "pngda",
+      "abcde?view_only=",
+      null,
+      "abcde",
+      "1234567890abcdef12345678",
+      "abcde?view_only=a",
+      "pngda?view_only=a b",
+      "abcde",
+      "abcde",
+      "abcde",
+      "abcde",
+      null,
+      "abcde",
+      "abcde_v1234",
+      null,
+      "685a46eb8c103f8ab307047f",
+      "averyveryverylongsegment"
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

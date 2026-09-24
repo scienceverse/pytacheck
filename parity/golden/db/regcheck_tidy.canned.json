@@ -1,0 +1,79 @@
+{
+  "id": "regcheck_tidy.canned",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 3,
+    "names": [
+      "dimension",
+      "deviation_judgement",
+      "paper_summary",
+      "prereg_summary",
+      "deviation_information",
+      "paper_quotes",
+      "prereg_quotes"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "Sample size",
+          "Hypotheses",
+          "Exclusion criteria"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "yes",
+          "no",
+          "missing"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "The paper reports 120 participants [PAPER_0001].",
+          "H1: condition A > B.",
+          "Not described."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "The registration plans 100 participants [REG_0001].",
+          "H1: condition A > B.",
+          "Exclude RTs under 200 ms."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "The paper sample (120) exceeds the preregistered sample (100).",
+          "The hypotheses are consistent.",
+          "The paper does not report exclusions, so this cannot be assessed."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "[PAPER_0001] We recruited 120 participants.",
+          "[PAPER_0002] We predicted A > B.",
+          ""
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "[REG_0001] We will collect 100 participants.",
+          "[REG_0002] We predict A > B.",
+          "[REG_0003] We will exclude RTs under 200 ms."
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -1,0 +1,54 @@
+{
+  "id": "import_spv.attrs.legacy",
+  "ok": true,
+  "error": null,
+  "warnings": [
+    "spv: could not decode legacy table: spv legacy: expected exactly 2 nests (rows, columns), found 3",
+    "spv: could not decode legacy data: spv binary: expected marker byte(s) 0 (LegacyBinary marker) at offset 1"
+  ],
+  "value": {
+    "t": "list",
+    "names": null,
+    "v": [
+      {
+        "t": "list",
+        "names": [
+          "title",
+          "rows",
+          "cols",
+          "layers",
+          "footnotes"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "One-Sample Statistics"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "dim2"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Statistics"
+            ]
+          },
+          {
+            "t": "null"
+          },
+          {
+            "t": "chr",
+            "v": []
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -1,0 +1,196 @@
+{
+  "id": "stat_results_long.notebook_python",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 9,
+    "names": [
+      "paper_id",
+      "source_file",
+      "test_id",
+      "result_id",
+      "analysis",
+      "table_title",
+      "row_label",
+      "statistic",
+      "stato_label",
+      "stato_iri",
+      "value",
+      "model_ref"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "notebook_python.ipynb",
+          "notebook_python.ipynb",
+          "notebook_python.ipynb",
+          "notebook_python.ipynb",
+          "notebook_python.ipynb",
+          "notebook_python.ipynb",
+          "notebook_python.ipynb",
+          "notebook_python.ipynb",
+          "notebook_python.ipynb"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "notebook_python_ipynb_notebook_python_ipynb_t1_massed",
+          "notebook_python_ipynb_notebook_python_ipynb_t1_massed",
+          "notebook_python_ipynb_notebook_python_ipynb_t1_massed",
+          "notebook_python_ipynb_notebook_python_ipynb_t1_spaced",
+          "notebook_python_ipynb_notebook_python_ipynb_t1_spaced",
+          "notebook_python_ipynb_notebook_python_ipynb_t1_spaced",
+          "notebook_python_ipynb_notebook_python_ipynb_t2",
+          "notebook_python_ipynb_notebook_python_ipynb_t2",
+          "notebook_python_ipynb_notebook_python_ipynb_t2"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "notebook_python_ipynb_t1_r1_t",
+          "notebook_python_ipynb_t1_r1_df",
+          "notebook_python_ipynb_t1_r1_p",
+          "notebook_python_ipynb_t1_r2_t",
+          "notebook_python_ipynb_t1_r2_df",
+          "notebook_python_ipynb_t1_r2_p",
+          "notebook_python_ipynb_t2_r1_statistic",
+          "notebook_python_ipynb_t2_r1_pvalue",
+          "notebook_python_ipynb_t2_r1_df"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Cell 3 [2]",
+          "Cell 3 [2]",
+          "Cell 3 [2]",
+          "Cell 3 [2]",
+          "Cell 3 [2]",
+          "Cell 3 [2]",
+          "Cell 4 [3]",
+          "Cell 4 [3]",
+          "Cell 4 [3]"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          "stdout (cell 4)",
+          "stdout (cell 4)",
+          "stdout (cell 4)"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "massed",
+          "massed",
+          "massed",
+          "spaced",
+          "spaced",
+          "spaced",
+          "",
+          "",
+          ""
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "t",
+          "df",
+          "p",
+          "t",
+          "df",
+          "p",
+          "statistic",
+          "pvalue",
+          "df"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "t-statistic",
+          "number of degrees of freedom",
+          "p-value",
+          "t-statistic",
+          "number of degrees of freedom",
+          "p-value",
+          "t-statistic",
+          "p-value",
+          "number of degrees of freedom"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "http://purl.obolibrary.org/obo/STATO_0000176",
+          "http://purl.obolibrary.org/obo/STATO_0000069",
+          "http://purl.obolibrary.org/obo/STATO_0000700",
+          "http://purl.obolibrary.org/obo/STATO_0000176",
+          "http://purl.obolibrary.org/obo/STATO_0000069",
+          "http://purl.obolibrary.org/obo/STATO_0000700",
+          "http://purl.obolibrary.org/obo/STATO_0000176",
+          "http://purl.obolibrary.org/obo/STATO_0000700",
+          "http://purl.obolibrary.org/obo/STATO_0000069"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "3.41",
+          "48",
+          "0.001",
+          "2.07",
+          "48",
+          "0.044",
+          "4.8977",
+          "0.00007",
+          "22"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

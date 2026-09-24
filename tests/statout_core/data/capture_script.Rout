@@ -1,0 +1,189 @@
+> x <- c(2.1, 3.4, 1.9, 4.2, 3.3, 2.8)
+> y <- c(1.1, 2.4, 2.9, 3.2, 1.3, 2.2)
+> t.test(x, y)
+
+	Welch Two Sample t-test
+
+data:  x and y
+t = 1.556, df = 9.9934, p-value = 0.1508
+alternative hypothesis: true difference in means is not equal to 0
+95 percent confidence interval:
+ -0.3312905  1.8646238
+sample estimates:
+mean of x mean of y 
+ 2.950000  2.183333 
+
+> tt <- t.test(x, y, var.equal = TRUE)
+> tt
+
+	Two Sample t-test
+
+data:  x and y
+t = 1.556, df = 10, p-value = 0.1508
+alternative hypothesis: true difference in means is not equal to 0
+95 percent confidence interval:
+ -0.3311927  1.8645260
+sample estimates:
+mean of x mean of y 
+ 2.950000  2.183333 
+
+> shapiro.test(x)
+
+	Shapiro-Wilk normality test
+
+data:  x
+W = 0.95425, p-value = 0.7745
+
+> wilcox.test(x, y, exact = FALSE)
+
+	Wilcoxon rank sum test with continuity correction
+
+data:  x and y
+W = 26, p-value = 0.2298
+alternative hypothesis: true location shift is not equal to 0
+
+> cor.test(x, y, method = "spearman", exact = FALSE)
+
+	Spearman's rank correlation rho
+
+data:  x and y
+S = 22, p-value = 0.4685
+alternative hypothesis: true rho is not equal to 0
+sample estimates:
+      rho 
+0.3714286 
+
+> chisq.test(matrix(c(12, 5, 7, 9), nrow = 2))
+
+	Pearson's Chi-squared test with Yates' continuity correction
+
+data:  matrix(c(12, 5, 7, 9), nrow = 2)
+X-squared = 1.456, df = 1, p-value = 0.2276
+
+> d <- data.frame(y = c(x, y), g = rep(c("a", "b"), each = 6), z = c(y, x))
+> m <- lm(y ~ g, data = d)
+> summary(m)
+
+Call:
+lm(formula = y ~ g, data = d)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-1.0833 -0.8583  0.1167  0.5167  1.2500 
+
+Coefficients:
+            Estimate Std. Error t value Pr(>|t|)    
+(Intercept)   2.9500     0.3484   8.467 7.14e-06 ***
+gb           -0.7667     0.4927  -1.556    0.151    
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 0.8534 on 10 degrees of freedom
+Multiple R-squared:  0.1949,	Adjusted R-squared:  0.1144 
+F-statistic: 2.421 on 1 and 10 DF,  p-value: 0.1508
+
+> anova(m)
+Analysis of Variance Table
+
+Response: y
+          Df Sum Sq Mean Sq F value Pr(>F)
+g          1 1.7633 1.76333  2.4211 0.1508
+Residuals 10 7.2833 0.72833               
+> summary(aov(y ~ g, data = d))
+            Df Sum Sq Mean Sq F value Pr(>F)
+g            1  1.763  1.7633   2.421  0.151
+Residuals   10  7.283  0.7283               
+> summary(glm(I(y > 2.5) ~ g, data = d, family = binomial))
+
+Call:
+glm(formula = I(y > 2.5) ~ g, family = binomial, data = d)
+
+Coefficients:
+            Estimate Std. Error z value Pr(>|z|)
+(Intercept)   0.6931     0.8660   0.800    0.423
+gb           -1.3863     1.2247  -1.132    0.258
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 16.636  on 11  degrees of freedom
+Residual deviance: 15.276  on 10  degrees of freedom
+AIC: 19.276
+
+Number of Fisher Scoring iterations: 4
+
+> aggregate(y ~ g, data = d, FUN = mean)
+  g        y
+1 a 2.950000
+2 b 2.183333
+> aggregate(cbind(y, z) ~ g, data = d, FUN = sd)
+  g         y         z
+1 a 0.8642916 0.8424172
+2 b 0.8424172 0.8642916
+> tapply(d$y, d$g, median)
+   a    b 
+3.05 2.30 
+> sapply(d[, c("y", "z")], mean)
+       y        z 
+2.566667 2.566667 
+> sapply(d$y, mean)
+ [1] 2.1 3.4 1.9 4.2 3.3 2.8 1.1 2.4 2.9 3.2 1.3 2.2
+> aggregate(y ~ g, data = d, FUN = function(v) mean(v))
+  g        y
+1 a 2.950000
+2 b 2.183333
+> for (k in 1:2) print(t.test(x + k, y))
+
+	Welch Two Sample t-test
+
+data:  x + k and y
+t = 3.5855, df = 9.9934, p-value = 0.004971
+alternative hypothesis: true difference in means is not equal to 0
+95 percent confidence interval:
+ 0.6687095 2.8646238
+sample estimates:
+mean of x mean of y 
+ 3.950000  2.183333 
+
+
+	Welch Two Sample t-test
+
+data:  x + k and y
+t = 5.615, df = 9.9934, p-value = 0.0002235
+alternative hypothesis: true difference in means is not equal to 0
+95 percent confidence interval:
+ 1.668710 3.864624
+sample estimates:
+mean of x mean of y 
+ 4.950000  2.183333 
+
+> s <- summary(m)
+> s$coefficients
+              Estimate Std. Error   t value     Pr(>|t|)
+(Intercept)  2.9500000  0.3484091  8.467058 7.139221e-06
+gb          -0.7666667  0.4927248 -1.555973 1.507688e-01
+> binom.test(7, 20)
+
+	Exact binomial test
+
+data:  7 and 20
+number of successes = 7, number of trials = 20, p-value = 0.2632
+alternative hypothesis: true probability of success is not equal to 0.5
+95 percent confidence interval:
+ 0.1539092 0.5921885
+sample estimates:
+probability of success 
+                  0.35 
+
+> prop.test(c(15, 25), c(50, 50))
+
+	2-sample test for equality of proportions with continuity correction
+
+data:  c(15, 25) out of c(50, 50)
+X-squared = 3.375, df = 1, p-value = 0.06619
+alternative hypothesis: two.sided
+95 percent confidence interval:
+ -0.407993141  0.007993141
+sample estimates:
+prop 1 prop 2 
+   0.3    0.5 
+

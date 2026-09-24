@@ -1,0 +1,140 @@
+{
+  "id": "crossref_query_parse.other",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 1,
+    "names": [
+      "DOI",
+      "score",
+      "type",
+      "title",
+      "author",
+      "publisher",
+      "container-title",
+      "year",
+      "volume",
+      "issue",
+      "page",
+      "URL"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "10.1046/j.1460-9568.2001.01385.x"
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          136.47302
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "journal-article"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Action observation activates premotor and parietal areas in a somatotopic manner: an fMRI study"
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "df",
+            "nrow": 10,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "G.",
+                  "F.",
+                  "G. R.",
+                  "L.",
+                  "L.",
+                  "V.",
+                  "R. J.",
+                  "K.",
+                  "G.",
+                  "H.-J."
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Buccino",
+                  "Binkofski",
+                  "Fink",
+                  "Fadiga",
+                  "Fogassi",
+                  "Gallese",
+                  "Seitz",
+                  "Zilles",
+                  "Rizzolatti",
+                  "Freund"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Wiley"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "European Journal of Neuroscience"
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          2001
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "13"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "2"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "400-404"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://doi.org/10.1046/j.1460-9568.2001.01385.x"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

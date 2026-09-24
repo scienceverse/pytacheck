@@ -16,6 +16,7 @@ from __future__ import annotations
 
 import json
 import math
+import sys
 import time
 from collections.abc import Sequence
 from typing import Any
@@ -29,6 +30,11 @@ _PREFIX = "gradio_api/call"
 _API = "/predict"
 _USER_AGENT = "causal_relations/0.1 (R curl/jsonlite)"
 _COLUMNS = ("sentence", "causal", "cause", "effect")
+
+
+def _message(msg: str) -> None:
+    """R ``message()``: diagnostics go to stderr."""
+    print(msg, file=sys.stderr)
 
 
 def _empty() -> pd.DataFrame:
@@ -158,7 +164,7 @@ def _post_enqueue(
         + "]}"
     )
     if verbose:
-        print(f"[POST] {url}")
+        _message(f"[POST] {url}")
     resp = http.request(
         "POST",
         url,
@@ -169,7 +175,7 @@ def _post_enqueue(
     if resp is None:
         raise ConnectionError(f"Could not connect to {url}")
     if verbose:
-        print(f"[POST] HTTP {resp.status_code}, {len(resp.content)} bytes")
+        _message(f"[POST] HTTP {resp.status_code}, {len(resp.content)} bytes")
     if resp.status_code < 200 or resp.status_code >= 300:
         raise RuntimeError(
             f"POST failed (HTTP {resp.status_code}). Check base URL or parameters.\n"
@@ -204,7 +210,7 @@ def _get_until_complete(event_id: str, timeout: float, verbose: bool) -> str:
 
     url = f"{_BASE}/{_PREFIX}{_API}/{event_id}"
     if verbose:
-        print(f"[GET/SSE] {url}")
+        _message(f"[GET/SSE] {url}")
     last_event: str | None = None
     payload: str | None = None
     deadline = time.monotonic() + timeout
@@ -220,12 +226,12 @@ def _get_until_complete(event_id: str, timeout: float, verbose: bool) -> str:
                 if line.startswith("event:"):
                     last_event = line[len("event:") :].lstrip()
                     if verbose:
-                        print(f"[SSE] event: {last_event}")
+                        _message(f"[SSE] event: {last_event}")
                 elif line.startswith("data:"):
                     if last_event == "complete":
                         payload = line[len("data:") :].lstrip()
                         if verbose:
-                            print("[SSE] received complete payload")
+                            _message("[SSE] received complete payload")
                         break
     except httpx.TimeoutException:
         payload = None
@@ -306,7 +312,7 @@ def causal_relations(
     rows: list[dict[str, Any]] = []
     for k, one in enumerate(sentences, start=1):
         if verbose:
-            print(f"=== Processing sentence {k}/{len(sentences)} ===")
+            _message(f"=== Processing sentence {k}/{len(sentences)} ===")
         event_id = _post_enqueue(one, rel_mode, rel_threshold, cause_decision, verbose)
         payload = _get_until_complete(event_id, timeout, verbose)
         final_json = _unwrap_final_json(payload)

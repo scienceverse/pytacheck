@@ -1,0 +1,37 @@
+{
+  "id": "smcl_export_syntax.analysis",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "path",
+      "lines"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "/code/analysis.do"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "summarize price mpg weight",
+          "regress price mpg weight",
+          "foreach v of varlist price mpg { quietly summarize `v' }",
+          "logit foreign mpg, nolog",
+          "tabulate rep78",
+          "display \"ababab A)       xy|  ab   |z    |-1.5x\"",
+          "display \"only text, no table\"",
+          "graph export \"figure1.png\", replace",
+          "log close"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

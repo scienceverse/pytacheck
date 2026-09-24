@@ -1,0 +1,14 @@
+{
+  "id": "spv_table_html.flat",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "<table>\n<thead><tr><th>G<\/th><th>S<\/th><th>L<\/th><th>value<\/th><\/tr><\/thead>\n<tbody>\n<tr><td>g1<\/td><td>N<\/td><td>x<\/td><td>12<\/td><\/tr>\n<tr><td>g1<\/td><td>Mean<\/td><td>x<\/td><td>3.142<\/td><\/tr>\n<tr><td>g2<\/td><td>N<\/td><td>y<\/td><td>4.7e-108<\/td><\/tr>\n<tr><td><\/td><td>N<\/td><td>y<\/td><td><\/td><\/tr>\n<tr><td>g2<\/td><td>N<\/td><td>z<\/td><td>5<\/td><\/tr>\n<\/tbody>\n<\/table>"
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

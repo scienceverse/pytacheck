@@ -301,6 +301,13 @@ def _r_length(x: Any) -> int:
     return len(x.names)
 
 
+def _double_str(v: float) -> str:
+    """``as.character()`` of a non-missing double (``NaN`` is not ``NA``)."""
+    if math.isnan(v):
+        return "NaN"
+    return as_character(v) or "NA"
+
+
 def _coerce(v: Any, src: str, dest: str) -> Any:
     if v is None or src == dest:
         return v
@@ -309,7 +316,7 @@ def _coerce(v: Any, src: str, dest: str) -> Any:
             return "TRUE" if v else "FALSE"
         if src == "integer":
             return str(v)
-        return as_character(v)
+        return _double_str(v)
     if dest == "double":
         return float(v)
     if dest == "integer":
@@ -563,10 +570,155 @@ def _simplify_data_frame(records: list[Any], sub_matrix: bool) -> _Frame:
             except ValueError:
                 cells.append(None)
         cols.append(_simplify(_List(cells, None), False, sub_matrix))
+    lengths = {c.nrow if isinstance(c, _Frame) else _r_length(c) for c in cols}
+    if len(lengths) > 1:
+        raise _JSONError("Elements not of equal length")
+    n = lengths.pop()
     if "_row" in columns:
         k = columns.index("_row")
+        rn = cols[k]
         del columns[k], cols[k]
+        n = _row_names_nrow(rn, n)
     return _Frame(columns, cols, n)
+
+
+def _identity_key(x: Any) -> Any:
+    """A hashable key with ``identical()`` semantics for duplicated()."""
+    if x is None:
+        return ("NULL",)
+    if isinstance(x, _Vec):
+        vals = tuple("NaN" if isinstance(v, float) and math.isnan(v) else v for v in x.values)
+        return ("vec", x.type, vals, x.dim)
+    if isinstance(x, _List):
+        names = None if x.names is None else tuple(x.names)
+        return ("list", names, tuple(_identity_key(el) for el in x.items))
+    return ("df", tuple(x.names), tuple(_identity_key(c) for c in x.columns), x.nrow)
+
+
+def _is_na_elt(x: Any) -> bool:
+    """``is.na()`` of one list element: a length-one atomic ``NA``/``NaN``."""
+    if not isinstance(x, _Vec) or len(x.values) != 1:
+        return False
+    v = x.values[0]
+    return v is None or (isinstance(v, float) and math.isnan(v))
+
+
+def _has_na(x: Any) -> bool:
+    """Does ``is.na()`` of a (list or data frame) column have any ``TRUE``?"""
+    if isinstance(x, _Vec):
+        return any(v is None or (isinstance(v, float) and math.isnan(v)) for v in x.values)
+    if isinstance(x, _List):
+        return any(_is_na_elt(el) for el in x.items)
+    if isinstance(x, _Frame):
+        return any(_has_na(c) for c in x.columns)
+    return False
+
+
+def _na_width(col: Any) -> int:
+    """Columns ``col`` contributes to ``is.na(<data frame>)`` (a matrix)."""
+    if isinstance(col, _Frame):
+        return sum(_na_width(c) for c in col.columns)
+    return 1
+
+
+def _replace_frame_na(rn: _Frame) -> list[Any]:
+    """``rn[is.na(rn)] <- paste0("NA_", ...)`` on a ``_row`` data frame."""
+    if not _has_na(rn):
+        return list(rn.columns)
+    if sum(_na_width(c) for c in rn.columns) != len(rn.columns) or any(
+        isinstance(c, _Frame) for c in rn.columns
+    ):
+        raise _JSONError("unsupported matrix index in replacement")
+    k = 0
+    out: list[Any] = []
+    for col in rn.columns:
+        if isinstance(col, _Vec) and _has_na(col):
+            vals = []
+            for v in col.values:
+                if v is None or (isinstance(v, float) and math.isnan(v)):
+                    k += 1
+                    vals.append(f"NA_{k}")
+                else:
+                    vals.append(_coerce(v, col.type, "character"))
+            col = _Vec("character", vals)
+        elif isinstance(col, _List) and _has_na(col):
+            items = []
+            for el in col.items:
+                if _is_na_elt(el):
+                    k += 1
+                    el = _Vec("character", [f"NA_{k}"])
+                items.append(el)
+            col = _List(items, col.names)
+        out.append(col)
+    return out
+
+
+def _elements(x: Any) -> list[Any]:
+    """The elements ``mapply()`` iterates over (a data frame gives its columns)."""
+    if isinstance(x, _Vec):
+        return [
+            ("vec", x.type, "NaN" if isinstance(v, float) and math.isnan(v) else v)
+            for v in x.values
+        ]
+    if isinstance(x, _List):
+        return [_identity_key(el) for el in x.items]
+    if isinstance(x, _Frame):
+        return [_identity_key(c) for c in x.columns]
+    return []
+
+
+def _any_duplicated(x: Any) -> bool:
+    """``any(duplicated(x))`` for a vector, list or data frame (R 4.5 rules)."""
+    if isinstance(x, _Frame):
+        if not x.columns:
+            return x.nrow > 1  # duplicated(logical(nrow(x)))
+        if len(x.columns) == 1:
+            return _any_duplicated(x.columns[0])
+        if any(isinstance(c, _Frame) for c in x.columns):
+            # split into one-row data frames whose row names all differ
+            return False
+        cols = [_elements(c) for c in x.columns]
+        if any(len(c) == 0 for c in cols):
+            return False  # Map() over a zero-length input gives list()
+        length = max(len(c) for c in cols)
+        keys = [tuple(c[i % len(c)] for c in cols) for i in range(length)]
+    else:
+        keys = _elements(x)
+    return len(set(keys)) < len(keys)
+
+
+def _row_names_nrow(rn: Any, n: int) -> int:
+    """Rows of a data frame after jsonlite sets its ``_row`` names.
+
+    ``row.names<-`` on the freshly classed list accepts a value of any
+    length, so a ``_row`` column that is itself a data frame (JSON objects)
+    turns the frame into one with ``ncol(_row)`` rows. Invalid row names
+    raise, which ``json_expand()`` reports as a parsing error.
+    """
+    if isinstance(rn, _Vec):
+        return n  # NAs become "NA_<k>" and duplicates fall back to 1:n
+    if isinstance(rn, _List):
+        items = list(rn.items)
+        k = 0
+        for i, el in enumerate(items):
+            if _is_na_elt(el):
+                k += 1
+                items[i] = _Vec("character", [f"NA_{k}"])
+        if _any_duplicated(_List(items, None)):
+            return n
+        values = [_elt_to_str(el) for el in items]
+    elif isinstance(rn, _Frame):
+        new_cols = _replace_frame_na(rn)
+        if _any_duplicated(_Frame(rn.names, new_cols, rn.nrow)):
+            return n
+        values = [_elt_to_str(col) for col in new_cols]
+    else:
+        return n
+    if len(set(values)) < len(values):
+        raise _JSONError("duplicate 'row.names' are not allowed")
+    if any(v is None for v in values):
+        raise _JSONError("missing values in 'row.names' are not allowed")
+    return len(values)
 
 
 # ---------------------------------------------------------------------------
@@ -676,7 +828,7 @@ class _Deparser:
         if type_ == "integer":
             return str(v)
         if type_ == "double":
-            return as_character(v) or "NA"
+            return _double_str(v)
         return _encode_string(v)
 
     def vector(self, x: _Vec) -> None:
@@ -782,6 +934,20 @@ class _Piece:
         self.nrow = nrow
 
 
+def _fit_rows(vals: list[Any], n: int) -> list[Any] | None:
+    """``j[] <- value`` for one column: recycle, truncate or fill with NA."""
+    k = len(vals)
+    if k == n:
+        return vals
+    if k == 0:
+        return [None] * n
+    if k > n:
+        return vals[:n]
+    if n % k:
+        return None
+    return vals * (n // k)
+
+
 def _error_piece(i: int, msg: str) -> _Piece:
     return _Piece({_TEMP: [i], _ERROR: [msg]}, 1)
 
@@ -805,13 +971,14 @@ def _expand_one(value: Any, i: int) -> _Piece:
         j = _Frame([_ERROR], [_Vec("character", ["not a list"])], 1)
 
     if isinstance(j, _Frame):
+        if j.nrow == 0:  # `j$.temp_id. <- i`: "replacement has 1 row, data has 0"
+            return _error_piece(i, "parsing error")
         cols: dict[str, list[Any]] = {}
         for name, col in zip(j.names, j.columns, strict=True):
             vals = _as_character(col)
-            if len(vals) != j.nrow:
-                if not vals or len(vals) > j.nrow or j.nrow % len(vals):
-                    return _error_piece(i, "parsing error")
-                vals = vals * (j.nrow // len(vals))
+            vals = _fit_rows(vals, j.nrow)
+            if vals is None:  # "replacement element has k rows, need n"
+                return _error_piece(i, "parsing error")
             cols.setdefault(name, vals)
         cols[_TEMP] = [i] * j.nrow
         return _Piece(cols, j.nrow)

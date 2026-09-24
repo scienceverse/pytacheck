@@ -374,9 +374,10 @@ def extract_tests(paper: Any) -> pd.DataFrame:
     and ``components`` (a list of ``name``/``comp``/``value``/``df``/
     ``sentence_pos`` dicts).
 
-    Like R, this is designed for a single paper: for a paper list, the
-    sentence metadata is ``NA`` and every test row is repeated once per
-    paper id (see ``docs/UPSTREAM_ISSUES.md``).
+    Like R, this is designed for a single paper. For a paper list (an
+    upstream bug, reproduced) sentences are grouped by ``text_id`` across
+    papers, the sentence metadata is ``NA`` and every test row is repeated
+    once per paper id.
     """
     from pytacheck.papers.tables import paper_id as get_paper_id
     from pytacheck.text.extract import extract_eq
@@ -388,7 +389,7 @@ def extract_tests(paper: Any) -> pd.DataFrame:
             eq = extract_eq(paper)
         except Exception:  # R: tryCatch(..., error = function(e) NULL)
             eq = None
-    if eq is None or len(eq) == 0:
+    if eq is None or len(eq) == 0 or "text_id" not in eq.columns:
         return _empty_tests()
 
     txt = paper.get("text") if is_paper else None

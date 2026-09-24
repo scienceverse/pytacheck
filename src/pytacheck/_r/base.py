@@ -293,6 +293,9 @@ def signif(x: Any, digits: float = 6) -> Any:
 # ---------------------------------------------------------------------------
 
 _CATEGORY_RANK = {"Z": 0, "C": 0, "P": 1, "S": 2, "N": 3, "L": 4, "M": 5}
+# ICU root collation order of ASCII punctuation and symbols (R's sort() in a UTF-8
+# locale), which is not code-point order: e.g. "_" < "-" < "." < "/".
+_ICU_PUNCT = {c: i for i, c in enumerate("_-,;:!?.'\"()[]{}@*/\\&#%`^+<=>|~$")}
 
 
 def r_sort_key(s: Any) -> tuple[Any, ...]:
@@ -317,7 +320,10 @@ def r_sort_key(s: Any) -> tuple[Any, ...]:
         base = decomposed[0]
         rank = _CATEGORY_RANK.get(unicodedata.category(base)[0], 6)
         folded = base.casefold()
-        primary.append((rank, folded if rank >= 3 else base))
+        if rank >= 3:
+            primary.append((rank, folded))
+        else:
+            primary.append((rank, f"{_ICU_PUNCT.get(base, 99):02d}{base}"))
         secondary.append(decomposed[1:])
         tertiary.append(0 if base == folded else 1)
     return (0, tuple(primary), tuple(secondary), tuple(tertiary))

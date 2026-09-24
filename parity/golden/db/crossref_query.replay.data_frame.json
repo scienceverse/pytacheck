@@ -1,0 +1,37 @@
+{
+  "id": "crossref_query.replay.data_frame",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 1,
+    "names": [
+      "score",
+      "title",
+      "ref"
+    ],
+    "v": [
+      {
+        "t": "dbl",
+        "v": [
+          118.05617
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "The benefits of preregistration and Registered Reports"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "The benefits of preregistration and Registered Reports; \\nLakens, D., Mesquida, C., Rasti, S., & Ditroilo, M.; \\nEvidence-Based Toxicology"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

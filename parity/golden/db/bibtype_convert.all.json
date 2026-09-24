@@ -1,0 +1,37 @@
+{
+  "id": "bibtype_convert.all",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "article",
+      "book",
+      "incollection",
+      "inbook",
+      "inbook",
+      "book",
+      "book",
+      "book",
+      "book",
+      "techreport",
+      "inproceedings",
+      "proceedings",
+      "inproceedings",
+      "proceedings",
+      "misc",
+      "phdthesis",
+      "phdthesis",
+      "misc",
+      "misc",
+      "incollection",
+      "book",
+      "techreport",
+      "misc",
+      "unmatched-type"
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

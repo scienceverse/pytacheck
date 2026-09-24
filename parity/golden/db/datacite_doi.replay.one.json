@@ -1,0 +1,129 @@
+{
+  "id": "datacite_doi.replay.one",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 1,
+    "names": [
+      "service",
+      "service_id",
+      "score",
+      "doi",
+      "bib_type",
+      "title",
+      "authors",
+      "container",
+      "publisher",
+      "year",
+      "date",
+      "url",
+      "version"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "datacite"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "10.5281/zenodo.2669586"
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "10.5281/zenodo.2669586"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "misc"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "faux: Simulation for Factorial Designs"
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Lisa"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "DeBruine"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Zenodo"
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          2023
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "2023-02-03"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://zenodo.org/record/2669586"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "1.2.0"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

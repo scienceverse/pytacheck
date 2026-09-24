@@ -75,7 +75,7 @@ def _get(rec: Any, *path: str) -> Any:
 
 def _scalar(x: Any) -> Any:
     if isinstance(x, list | tuple):
-        return x[0] if len(x) == 1 else (None if not x else x)
+        return x[0] if len(x) == 1 else (x or None)
     return x
 
 
@@ -116,7 +116,10 @@ def _frame(columns: dict[str, Any], n: int) -> pd.DataFrame:
         if not isinstance(values, list):
             values = [values] * n
         dtype = _DTYPES.get(name, object)
-        vals = [None if (v is not None and not isinstance(v, list | dict) and is_na(v)) else v for v in values]
+        vals = [
+            None if (v is not None and not isinstance(v, list | dict) and is_na(v)) else v
+            for v in values
+        ]
         if dtype == "string":
             vals = [None if v is None else (v if isinstance(v, str) else _as_chr(v)) for v in vals]
         elif dtype in ("float64", "Int64"):
@@ -191,7 +194,7 @@ def osf_pat(pat: str | None = None) -> str:
     return pat
 
 
-def _osf_pat_validate(osf_pat: str | None = None) -> bool:  # noqa: A002 - R name
+def _osf_pat_validate(osf_pat: str | None = None) -> bool:
     """Port of R/archive-osf-helpers.R::.osf_pat_validate(): is ``OSF_PAT`` usable?
 
     Fetches a public preprint anonymously and with the token; a token that is
@@ -212,7 +215,7 @@ def _osf_pat_validate(osf_pat: str | None = None) -> bool:  # noqa: A002 - R nam
     def status(extra: dict[str, str]) -> int | None:
         try:
             resp = http.request("GET", probe, headers={**headers, **extra}, max_tries=1)
-        except Exception:  # noqa: BLE001 - R: tryCatch(..., error = \(e) NA)
+        except Exception:
             return None
         return None if resp is None else resp.status_code
 
@@ -269,7 +272,9 @@ def _osf_info(osf_id: Any, pb: Any = None, cache: bool = False) -> pd.DataFrame:
     is_vo = [v is not None and bool(grepl(r"/?\?\s*view_only=", v)) for v in valid]
     guid_ids = [v for v, g, o in zip(valid, is_guid, is_vo, strict=True) if g or o]
     wb_ids = [
-        v for v, g, o in zip(valid, is_guid, is_vo, strict=True) if not g and not o and v is not None
+        v
+        for v, g, o in zip(valid, is_guid, is_vo, strict=True)
+        if not g and not o and v is not None
     ]
     all_urls = [f"{osf_api}/guids/{g}" for g in guid_ids] + [f"{osf_api}/files/{w}" for w in wb_ids]
     all_ids = guid_ids + wb_ids
@@ -292,16 +297,14 @@ def _osf_info(osf_id: Any, pb: Any = None, cache: bool = False) -> pd.DataFrame:
             ident = all_ids[i]
             try:
                 results[i] = _osf_parse_response(resp, pb=pb, osf_id=ident)
-            except Exception:  # noqa: BLE001 - R: tryCatch(..., error = osf_type "error")
-                results[i] = _frame({"osf_id": ident, "osf_type": "error"}, 1)
+            except Exception:
+                results[i] = _frame({"osf_id": [ident], "osf_type": "error"}, 1)
             if cache is True and _repo_info_ok(results[i]):
                 _repo_info_cache_put("osf", ident, results[i])
 
     info_table = bind_rows(results)
     if len(info_table) != len(all_ids):
-        raise ValueError(
-            f"replacement has {len(all_ids)} rows, data has {len(info_table)}"
-        )
+        raise ValueError(f"replacement has {len(all_ids)} rows, data has {len(info_table)}")
     info_table = info_table.copy()
     info_table["osf_id"] = pd.Series(all_ids, dtype="string")
 
@@ -315,7 +318,7 @@ def _osf_info(osf_id: Any, pb: Any = None, cache: bool = False) -> pd.DataFrame:
 
 def _osf_parse_response(
     resp: httpx.Response | list[Any] | dict[str, Any] | None,
-    pb: Any = None,
+    pb: Any = None,  # noqa: ARG001 - R signature (progress bar)
     osf_id: str | None = None,
 ) -> pd.DataFrame | None:
     """Port of R/archive-osf-helpers.R::.osf_parse_response(): API data -> a table.
@@ -343,10 +346,10 @@ def _osf_parse_response(
             all_data = content.get("data") if isinstance(content, dict) else None
             single = isinstance(all_data, dict)
         elif sc in (401, 403):
-            return _frame({"osf_id": ident, "osf_type": "private", "public": False}, 1)
+            return _frame({"osf_id": [ident], "osf_type": "private", "public": False}, 1)
         elif sc == 429:
             warnings.warn("Too many requests", stacklevel=2)
-            return _frame({"osf_id": ident, "osf_type": "too many requests"}, 1)
+            return _frame({"osf_id": [ident], "osf_type": "too many requests"}, 1)
         else:
             who = "An OSF resource" if ident is None else ident
             if sc == 410:
@@ -361,7 +364,7 @@ def _osf_parse_response(
                     f"correctly{see}. A private project needs an OSF token; see ?osf_pat"
                 )
             warnings.warn(msg, stacklevel=2)
-            return _frame({"osf_id": ident, "osf_type": "unfound"}, 1)
+            return _frame({"osf_id": [ident], "osf_type": "unfound"}, 1)
 
     records = [all_data] if single else _records(all_data)
     if not records:
@@ -388,7 +391,7 @@ def _osf_parse_response(
                 warnings.warn(
                     f"{'NA' if ident is None else ident} has unknown type: {otype}", stacklevel=2
                 )
-                frames.append(_frame({"osf_id": ident, "osf_type": "unknown"}, 1))
+                frames.append(_frame({"osf_id": [ident], "osf_type": "unknown"}, 1))
         else:
             data: Any = run[0] if single else run
             if build is _osf_file_data:
@@ -522,9 +525,7 @@ def _osf_preprint_data(data: Any, _context: list[dict[str, Any]] | None = None) 
             "self": c.first(("links", "self")),
             "parent": c.first(("relationships", "node", "data", "id")),
             "project": c.first(("relationships", "root", "data", "id")),
-            "primary_file": c.first(
-                ("relationships", "primary_file", "links", "related", "href")
-            ),
+            "primary_file": c.first(("relationships", "primary_file", "links", "related", "href")),
         },
         len(recs),
     )
@@ -579,9 +580,7 @@ def _osf_user_data(data: Any, _context: list[dict[str, Any]] | None = None) -> p
 
 
 def _empty_projects() -> pd.DataFrame:
-    return _frame(
-        {"osf_id": [], "name": [], "category": [], "public": [], "osf_url": []}, 0
-    )
+    return _frame({"osf_id": [], "name": [], "category": [], "public": [], "osf_url": []}, 0)
 
 
 def osf_user_projects(user_id: Any, pb: Any = None) -> pd.DataFrame:
@@ -716,9 +715,7 @@ def _osf_expand_user_ids(osf_id: Sequence[str], pb: Any = None) -> list[str]:
                 stacklevel=2,
             )
             continue
-        _message(
-            f"OSF user {uid} has {len(projects)} project{plural(len(projects))} to download"
-        )
+        _message(f"OSF user {uid} has {len(projects)} project{plural(len(projects))} to download")
         expanded.extend(projects)
     combined = [x for x in ids if x not in user_ids] + expanded
     return list(dict.fromkeys(combined))
@@ -744,7 +741,10 @@ def _osf_verify_downloads(
 
     paths = ret["path"].tolist()
     has_path = [not is_na(p) for p in paths]
-    full = [os.path.join(download_to, str(p)) if h else None for p, h in zip(paths, has_path, strict=True)]
+    full = [
+        os.path.join(download_to, str(p)) if h else None
+        for p, h in zip(paths, has_path, strict=True)
+    ]
     on_disk = [f is not None and os.path.exists(f) and not os.path.isdir(f) for f in full]
     size_on_disk = [
         float(os.path.getsize(f)) if d and f is not None else float("nan")
@@ -761,14 +761,15 @@ def _osf_verify_downloads(
             expected = pd.to_numeric(ret["size"], errors="coerce").astype("float64").tolist()
         else:
             expected = [float("nan")] * n
-        matches = [
-            e != e or s == e for e, s in zip(expected, size_on_disk, strict=True)
-        ]
+        matches = [e != e or s == e for e, s in zip(expected, size_on_disk, strict=True)]
         ok = [o and (not c or m) for o, c, m in zip(ok, check, matches, strict=True)]
 
     prev = ret["downloaded"].tolist() if "downloaded" in ret.columns else [False] * n
     ret["downloaded"] = pd.Series(
-        [o and (p is True or (not is_na(p) and bool(p) is True and isinstance(p, bool | int))) for o, p in zip(ok, prev, strict=True)],
+        [
+            o and (p is True or (not is_na(p) and bool(p) is True and isinstance(p, bool | int)))
+            for o, p in zip(ok, prev, strict=True)
+        ],
         dtype="boolean",
         index=ret.index,
     )

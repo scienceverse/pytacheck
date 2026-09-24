@@ -1,81 +1,23 @@
 """Fixtures for the OSF / AsPredicted / local-archive tests.
 
-metacheck's OSF fixtures were recorded before listing requests carried
-``page[size]=100``; its test helper installs an httptest2 *redactor* that
-strips that parameter before computing the mock file name. :func:`replay_osf`
-does the same on top of :mod:`tests.httpmock`, and also serves recorded file
-downloads whose body httptest2 stored in a separate ``.R-FILE``.
+Recorded OSF responses are replayed with :func:`tests.archives_osf.osfmock.replay_osf`
+(metacheck's ``page[size]`` redactor plus ``.R-FILE`` bodies).
 """
 
 from __future__ import annotations
 
-import contextlib
 import importlib
-import re
 import sys
 import types
 from collections.abc import Iterator
 from pathlib import Path
-from urllib.parse import urlsplit
 
-import httpx
 import pytest
 import respx
 
-from tests.httpmock import UPSTREAM_TESTS, fixture_response, r_digest
+from tests.archives_osf.osfmock import osf_mock_path, replay_osf
 
-_REDACT = re.compile(r"[?&]page(%5[Bb]size%5[Dd]|\[size\])=100")
-_FILE_REF = re.compile(r'find_mock_file\("([^"]+)"\)')
-
-
-def osf_mock_path(request: httpx.Request) -> str:
-    """``httptest2::build_mock_url()`` after metacheck's ``page[size]`` redactor."""
-    url = _REDACT.sub("", str(request.url))
-    url = re.sub(r"^.*?://", "", url, count=1)
-    base, _, query = url.partition("?")
-    path = re.sub(r"/$", "", base).replace(":", "-")
-    if query:
-        path += "-" + r_digest(query)[:6]
-    body = request.content
-    if body:
-        path += "-" + r_digest(body.decode("utf-8", "replace"))[:6]
-    if request.method != "GET":
-        path += "-" + request.method
-    return path
-
-
-def _response(root: Path, path: str) -> httpx.Response | None:
-    resp = fixture_response(root, path)
-    if resp is None:
-        return None
-    r_file = root / f"{path}.R"
-    if r_file.exists():
-        ref = _FILE_REF.search(r_file.read_text(encoding="utf-8"))
-        if ref and (root / ref.group(1)).exists():
-            return httpx.Response(
-                resp.status_code, headers=resp.headers, content=(root / ref.group(1)).read_bytes()
-            )
-    return resp
-
-
-@contextlib.contextmanager
-def replay_osf(*mock_dirs: str) -> Iterator[respx.MockRouter]:
-    """Replay metacheck's recorded API responses, as its OSF tests do."""
-    roots = [UPSTREAM_TESTS / d for d in (mock_dirs or ("apis",))]
-
-    def handler(request: httpx.Request) -> httpx.Response:
-        path = osf_mock_path(request)
-        for root in roots:
-            resp = _response(root, path)
-            if resp is not None:
-                return resp
-        host = urlsplit(str(request.url)).hostname
-        return httpx.Response(404, json={"error": f"no recorded fixture for {path} ({host})"})
-
-    with respx.mock(assert_all_called=False) as router:
-        router.route().mock(side_effect=handler)
-        yield router
-
+__all__ = ["osf_mock_path", "replay_osf"]
 
 @pytest.fixture(autouse=True)
 def _osf_test_options(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> Iterator[None]:
@@ -134,4 +76,53 @@ def filetype_available(monkeypatch: pytest.MonkeyPatch) -> bool:
     mod.filetype = filetype  # type: ignore[attr-defined]
     monkeypatch.setitem(sys.modules, "pytacheck.fileinfo", pkg)
     monkeypatch.setitem(sys.modules, "pytacheck.fileinfo.category", mod)
+    return False
+
+
+def _stub_download_many_parallel(urls, dests, expected_size=float("nan")):  # type: ignore[no-untyped-def]
+    """Minimal stand-in for ``pytacheck.archives.download._download_many_parallel``."""
+    import math
+    import os
+
+    from pytacheck import http
+
+    sizes = expected_size if isinstance(expected_size, list) else [expected_size] * len(urls)
+    errs: list[str | None] = []
+    for url, dest, exp in zip(urls, dests, sizes, strict=True):
+        os.makedirs(os.path.dirname(dest), exist_ok=True)
+        resp = http.request("GET", url, max_tries=1)
+        if resp is None:
+            errs.append("download failed")
+            continue
+        if resp.status_code != 200:
+            errs.append(f"HTTP {resp.status_code}")
+            continue
+        with open(dest, "wb") as fh:
+            fh.write(resp.content)
+        if exp is not None and not (isinstance(exp, float) and math.isnan(exp)) and exp > 0:
+            got = os.path.getsize(dest)
+            if got != exp:
+                os.remove(dest)
+                errs.append(f"truncated ({got:.0f} of {exp:.0f} bytes)")
+                continue
+        errs.append(None)
+    return errs
+
+
+@pytest.fixture
+def download_available(monkeypatch: pytest.MonkeyPatch) -> bool:
+    """Make ``pytacheck.archives.download._download_many_parallel`` importable.
+
+    Uses the real port when it exists; otherwise a small sequential stand-in
+    (returns ``False``).
+    """
+    try:
+        mod = importlib.import_module("pytacheck.archives.download")
+        if hasattr(mod, "_download_many_parallel"):
+            return True
+    except ImportError:
+        pass
+    stub = types.ModuleType("pytacheck.archives.download")
+    stub._download_many_parallel = _stub_download_many_parallel  # type: ignore[attr-defined]
+    monkeypatch.setitem(sys.modules, "pytacheck.archives.download", stub)
     return False

@@ -1,0 +1,14 @@
+{
+  "id": "spv_table_html.rowsonly",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "<table>\n<thead>\n<tr><th>S<\/th><th>value<\/th><\/tr>\n<\/thead>\n<tbody>\n<tr><td>N<\/td><td>5<\/td><\/tr>\n<tr><td>Mean<\/td><td>3.142<\/td><\/tr>\n<\/tbody>\n<\/table>"
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

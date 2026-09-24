@@ -1,0 +1,143 @@
+{
+  "id": "mplus_output_tables.model_results",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "tables",
+      "consumed",
+      "labelvalue"
+    ],
+    "v": [
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "df",
+            "nrow": 5,
+            "names": [
+              "level",
+              "group",
+              "V1",
+              "Estimate",
+              "S.E.",
+              "Est./S.E.",
+              "Two-Tailed P-Value"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Within Level",
+                  "Within Level",
+                  "Between Level",
+                  "Between Level",
+                  "Between Level"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Y          ON",
+                  "Residual Variances",
+                  "Y          ON",
+                  "Intercepts",
+                  "Residual Variances"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "X",
+                  "Y",
+                  "W",
+                  "Y",
+                  "Y"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "0.498",
+                  "0.742",
+                  "0.203",
+                  "0.011",
+                  "0.231"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "0.044",
+                  "0.049",
+                  "0.071",
+                  "0.052",
+                  "0.041"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "11.318",
+                  "15.143",
+                  "2.859",
+                  "0.212",
+                  "5.634"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "0.000",
+                  "0.000",
+                  "0.004",
+                  "0.832",
+                  "0.000"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          false,
+          false
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": []
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

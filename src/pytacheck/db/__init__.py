@@ -7,7 +7,7 @@
   :func:`crossref_query`, :func:`add_bib_match`, :func:`datacite_doi`,
   :func:`openalex_doi`, :func:`openalex_query`
 * PubPeer: :func:`pubpeer_comments`
-* bundled databases: :func:`retractionwatch` (:func:`rw`), :func:`rw_date`,
+* bundled databases: ``retractionwatch.retractionwatch`` (:func:`rw`), :func:`rw_date`,
   :func:`rw_update`, :func:`FLoRA`, :func:`FLoRA_date`, :func:`FLoRA_update`,
   :func:`miscite`
 * ORCiD / CRediT: :func:`check_orcid`, :func:`get_orcid`,
@@ -16,7 +16,10 @@
   :func:`regcheck_base_url`, :func:`regcheck_setup_local`,
   :func:`regcheck_start_local`, :func:`regcheck_stop_local`
 
-Names are imported lazily, so ``import pytacheck.db`` is cheap.
+Names are imported lazily, so ``import pytacheck.db`` is cheap. The
+``retractionwatch()`` function is reached as ``pytacheck.retractionwatch`` or
+``pytacheck.db.retractionwatch.retractionwatch`` (``pytacheck.db.retractionwatch``
+is its module).
 """
 
 from __future__ import annotations
@@ -36,14 +39,13 @@ _EXPORTS: dict[str, str] = {
     "openalex_doi": "pytacheck.db.crossref",
     "openalex_query": "pytacheck.db.crossref",
     "pubpeer_comments": "pytacheck.db.pubpeer",
-    "retractionwatch": "pytacheck.db.retractionwatch",
     "rw": "pytacheck.db.retractionwatch",
     "rw_date": "pytacheck.db.retractionwatch",
     "rw_update": "pytacheck.db.retractionwatch",
     "FLoRA": "pytacheck.db.replications",
     "FLoRA_date": "pytacheck.db.replications",
     "FLoRA_update": "pytacheck.db.replications",
-    "miscite": "pytacheck.db.miscite",
+    "miscite": "pytacheck.db.databases",
     "check_orcid": "pytacheck.db.orcid",
     "credit_roles": "pytacheck.db.orcid",
     "get_orcid": "pytacheck.db.orcid",

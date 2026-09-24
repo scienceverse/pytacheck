@@ -1,0 +1,9 @@
+{
+  "id": "export_spv_html.notzip",
+  "ok": false,
+  "error": "Could not open 'notzip.spv' as a .spv (zip) archive.",
+  "warnings": [],
+  "value": null,
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

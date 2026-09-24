@@ -90,6 +90,7 @@ def read_stat_tables(path: str | os.PathLike[str]) -> list[dict[str, Any]]:
 
         af = [f for f, b in zip(files, base, strict=True) if b == "analysis"]
         if af:
+
             def order_key(f: str) -> int:
                 folder = os.path.basename(os.path.dirname(f))
                 num = sub("^\\s*(\\d+).*$", "\\1", folder)
@@ -108,7 +109,11 @@ def read_stat_tables(path: str | os.PathLike[str]) -> list[dict[str, Any]]:
             if structured:
                 return structured
 
-        sv = [f for f, b in zip(files, base, strict=True) if grepl("^outputViewer[0-9]+(_heading)?\\.xml$", b)]
+        sv = [
+            f
+            for f, b in zip(files, base, strict=True)
+            if grepl("^outputViewer[0-9]+(_heading)?\\.xml$", b)
+        ]
         if sv:
             from pytacheck.statout.spv import _spv_read  # type: ignore[import-not-found]
 
@@ -136,7 +141,12 @@ def read_stat_tables(path: str | os.PathLike[str]) -> list[dict[str, Any]]:
             if parsed is None:
                 continue
             out.append(
-                {"analysis": analysis, "title": parsed["title"], "data": parsed["data"], "table_index": i}
+                {
+                    "analysis": analysis,
+                    "title": parsed["title"],
+                    "data": parsed["data"],
+                    "table_index": i,
+                }
             )
         return out
 
@@ -207,7 +217,10 @@ def _jasp_clean_colname(x: Any) -> str:
 
     Port of ``R/stat-tables.R::.jasp_clean_colname()``.
     """
-    x = "" if x is None else as_character(x) or "NA"
+    if x is None:
+        x = ""
+    s = as_character(x)
+    x = "NA" if s is None else s
     out = sub("^JaspColumn_.*?_Encoded_", "", x)
     return x if not _trimws(out) else out
 
@@ -252,7 +265,12 @@ def _jasp_structured_tables(analyses_json: str | os.PathLike[str]) -> list[dict[
                 if df is not None and len(df) and df.shape[1]:
                     ttl = _trimws(_chr1(_r_dollar(node, "title"), "")) or ""
                     out.append(
-                        {"analysis": label, "analysis_id": an_id, "title": ttl if ttl else None, "data": df}
+                        {
+                            "analysis": label,
+                            "analysis_id": an_id,
+                            "title": ttl if ttl else None,
+                            "data": df,
+                        }
                     )
                 return
             for child in _r_iter(node):
@@ -586,11 +604,7 @@ def _jmv_pivot_wide_descriptives(df: pd.DataFrame) -> pd.DataFrame:
     for s in stats:
         col = []
         for r, v in grid:
-            hit = [
-                i
-                for i in range(len(nms))
-                if keep[i] and prefix[i] == v and suffix[i] == s
-            ]
+            hit = [i for i in range(len(nms)) if keep[i] and prefix[i] == v and suffix[i] == s]
             col.append("" if not hit else _cell_chr(values[hit[0]][r]))
         cols[s] = col
     return _chr_frame(list(cols), list(cols.values()))
@@ -711,7 +725,8 @@ def _jmv_structured_tables(analysis_files: Sequence[str]) -> list[dict[str, Any]
         if isinstance(aid_raw, bytes | bytearray):
             aid = f"{aid_raw[0]:02x}" if len(aid_raw) == 1 else os.path.basename(os.path.dirname(p))
         elif aid_raw is not None:
-            aid = as_character(aid_raw) or "NA"
+            aid_s = as_character(aid_raw)
+            aid = "NA" if aid_s is None else aid_s
         else:
             aid = os.path.basename(os.path.dirname(p))
         out = _jmv_collect(results, label if label else None, out, aid)
@@ -750,9 +765,10 @@ def _read_html_string(x: str) -> Any:
     if "<" not in x and ">" not in x:
         return None
     try:
-        root = etree.fromstring(x.encode("utf-8"), etree.HTMLParser(
-            recover=True, remove_blank_text=True, encoding="utf-8"
-        ))
+        root = etree.fromstring(
+            x.encode("utf-8"),
+            etree.HTMLParser(recover=True, remove_blank_text=True, encoding="utf-8"),
+        )
     except (etree.LxmlError, ValueError):
         return None
     return None if root is None else root.getroottree()
@@ -918,9 +934,7 @@ def _ipynb_strip_numpy_scalars(line: str) -> str:
 
     Port of ``R/stat-tables.R::.ipynb_strip_numpy_scalars()``.
     """
-    return gsub(
-        "\\bnp\\.(?:float|int|uint)(?:8|16|32|64)?\\(([^()]*)\\)", "\\1", line, perl=True
-    )
+    return gsub("\\bnp\\.(?:float|int|uint)(?:8|16|32|64)?\\(([^()]*)\\)", "\\1", line, perl=True)
 
 
 def _ipynb_stat_line(lines: Sequence[str] | str) -> list[dict[str, Any]] | None:
@@ -962,9 +976,7 @@ def _ipynb_stat_table(lines: Sequence[str]) -> list[dict[str, Any]] | None:
     return tabs or None
 
 
-_KV_PAT = (
-    "([A-Za-z][A-Za-z0-9 .()/_-]*:)\\s*(.*?)(?=\\s{2,}[A-Za-z][A-Za-z0-9 .()/_-]*:|$)"
-)
+_KV_PAT = "([A-Za-z][A-Za-z0-9 .()/_-]*:)\\s*(.*?)(?=\\s{2,}[A-Za-z][A-Za-z0-9 .()/_-]*:|$)"
 _KV_METADATA = (
     "Dep. Variable",
     "Model",
@@ -1029,7 +1041,8 @@ def _ipynb_text(x: Any) -> str:
         elif v is None:
             return
         else:
-            parts.append(as_character(v) or "NA")
+            sv = as_character(v)
+            parts.append("NA" if sv is None else sv)
 
     walk(x)
     return "".join(parts)
@@ -1084,7 +1097,12 @@ def _ipynb_read_tables(path: str | os.PathLike[str]) -> list[dict[str, Any]]:
                 for tb in tabs:
                     ti += 1
                     out.append(
-                        {"analysis": analysis, "title": title, "data": tb["data"], "table_index": ti}
+                        {
+                            "analysis": analysis,
+                            "title": title,
+                            "data": tb["data"],
+                            "table_index": ti,
+                        }
                     )
                 return
             ti += 1

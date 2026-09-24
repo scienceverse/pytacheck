@@ -1,0 +1,130 @@
+{
+  "id": "crossref_doi.replay.unrecorded",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 2,
+    "names": [
+      "DOI",
+      "error",
+      "type",
+      "title",
+      "container-title",
+      "volume",
+      "issue",
+      "page",
+      "URL",
+      "year",
+      "author"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "10.9999/not.recorded",
+          "10.1177/0956797614520714"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "HTTP 404",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "journal-article"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "Retracted: Evil Genius? How Dishonesty Can Lead to Greater Creativity"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "Psychological Science"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "25"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "4"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "973-981"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "https://doi.org/10.1177/0956797614520714"
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          null,
+          2014
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "null"
+          },
+          {
+            "t": "df",
+            "nrow": 2,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Francesca",
+                  "Scott S."
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Gino",
+                  "Wiltermuth"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

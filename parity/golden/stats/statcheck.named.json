@@ -1,0 +1,128 @@
+{
+  "id": "statcheck.named",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 2,
+    "names": [
+      "source",
+      "test_type",
+      "df1",
+      "df2",
+      "test_comp",
+      "test_value",
+      "p_comp",
+      "reported_p",
+      "computed_p",
+      "raw",
+      "error",
+      "decision_error",
+      "one_tailed_in_txt",
+      "apa_factor"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "first",
+          "second"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "t",
+          "F"
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          null,
+          1
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          28,
+          20
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "=",
+          "="
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          2.2,
+          4.35
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "=",
+          "="
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0.03,
+          0.05
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0.0362254847788378,
+          0.050029738175427
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "t(28) = 2.20, p = .03",
+          "F(1, 20) = 4.35, p = .05"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true,
+          false
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false,
+          false
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false,
+          false
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          1,
+          0.5
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

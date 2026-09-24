@@ -1,0 +1,167 @@
+{
+  "id": "ipynb_stat_table.summary",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": null,
+    "v": [
+      {
+        "t": "list",
+        "names": [
+          "analysis",
+          "title",
+          "data"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 2,
+            "names": [
+              "V1",
+              "V2",
+              "V3",
+              "coef",
+              "std err",
+              "t",
+              "P>|t|",
+              "[0.025",
+              "0.975]"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "const",
+                  "Number"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "",
+                  "of"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "",
+                  "Occupants"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "-4.62e+04",
+                  "-188.2184"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "4449.507",
+                  "20.093"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "-10.384",
+                  "-9.367"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "0.000",
+                  "0.000"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "-5.5e+04",
+                  "-228.118"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "-3.74e+04",
+                  "-148.318"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "analysis",
+          "title",
+          "data"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Model fit statistics"
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "R-squared",
+              "Adj. R-squared",
+              "F-statistic"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "0.844"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "0.834"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "84.18"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -1,0 +1,72 @@
+{
+  "id": "osf_links.test_paper.bare_text",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 8,
+    "names": [
+      "href",
+      "link_text",
+      "text_id",
+      "paper_id"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "https://osf.io/abcde",
+          "osf.io/abcde",
+          "https://osf.io/abcde",
+          "osf.io/abcde",
+          "OSF.IO/XYZ12",
+          "osf.io/xyz12",
+          "https://osf.io/qwert",
+          "osf.io/ab"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          1,
+          2,
+          3,
+          1,
+          3,
+          3,
+          4,
+          6
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "9e8e301cb68565",
+          "9e8e301cb68565",
+          "9e8e301cb68565",
+          "9e8e301cb68565",
+          "9e8e301cb68565",
+          "9e8e301cb68565",
+          "9e8e301cb68565",
+          "9e8e301cb68565"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

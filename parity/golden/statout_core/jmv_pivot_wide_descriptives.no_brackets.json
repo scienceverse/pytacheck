@@ -1,0 +1,30 @@
+{
+  "id": "jmv_pivot_wide_descriptives.no_brackets",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 1,
+    "names": [
+      "a",
+      "stat[x]"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "1"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "2"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

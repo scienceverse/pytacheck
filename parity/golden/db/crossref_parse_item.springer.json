@@ -1,0 +1,89 @@
+{
+  "id": "crossref_parse_item.springer",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 1,
+    "names": [
+      "DOI",
+      "type",
+      "title",
+      "container-title",
+      "page",
+      "URL",
+      "author"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "10.1007/978-3-540-74997-4_9"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "book-chapter"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Fuzzy Similarity of Facial Expressions of Embodied Agents"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Lecture Notes in Computer Science"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "86-98"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://doi.org/10.1007/978-3-540-74997-4_9"
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "df",
+            "nrow": 2,
+            "names": [
+              "given",
+              "family"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Radosław",
+                  "Catherine"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Niewiadomski",
+                  "Pelachaud"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

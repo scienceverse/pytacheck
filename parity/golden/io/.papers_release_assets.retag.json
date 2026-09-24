@@ -1,0 +1,48 @@
+{
+  "id": ".papers_release_assets.retag",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 2,
+    "names": [
+      "name",
+      "tag",
+      "size",
+      "download_url"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "demo.rds",
+          "other.rds"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "demo-2026-06-20",
+          "other-2026-06-01"
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          2000,
+          500
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://github.com/scienceverse/retagtest/releases/download/demo-2026-06-20/demo.rds",
+          "https://github.com/scienceverse/retagtest/releases/download/other-2026-06-01/other.rds"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

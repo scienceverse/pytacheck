@@ -1,0 +1,48 @@
+{
+  "id": "retractionwatch.join.demo",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 2,
+    "names": [
+      "bib_id",
+      "doi",
+      "paper_id",
+      "retractionwatch"
+    ],
+    "v": [
+      {
+        "t": "int",
+        "v": [
+          2,
+          3
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "10.1177/0956797614520714",
+          ""
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "to_err_is_human",
+          "to_err_is_human"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Retraction",
+          "Retraction;Expression of concern;Correction"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

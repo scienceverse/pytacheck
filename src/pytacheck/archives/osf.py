@@ -58,6 +58,11 @@ class OsfResult(list):  # type: ignore[type-arg]
     osf_incomplete: dict[str, float] | None = None
 
 
+def _eq(value: Any, target: Any) -> bool:
+    """``value %in% target`` for one value: ``False`` (not ``NA``) when missing."""
+    return not is_na(value) and value == target
+
+
 def _osf_err(x: Any) -> str | None:
     """``attr(x, "osf_error")``."""
     return getattr(x, "osf_error", None)
@@ -104,7 +109,7 @@ def osf_api_check(osf_api: str | None = None, on_error: str = "stop") -> str:
         resp = http.client().request("GET", osf_api, headers=_osf_headers()["headers"])
         status_code = resp.status_code
         status = resp.reason_phrase
-    except Exception as exc:  # noqa: BLE001 - R: tryCatch(..., error = \(e) e$message)
+    except Exception as exc:
         status = str(exc) or type(exc).__name__
 
     if status_code != 200:
@@ -350,9 +355,7 @@ def osf_info(
         table = pd.DataFrame({"osf_url": pd.Series(raw_osf_urls, dtype="string")})
 
     checked = osf_check_id(raw_osf_urls) if raw_osf_urls else []
-    pairs = [
-        (u, i) for u, i in zip(raw_osf_urls, checked, strict=True) if i is not None
-    ]
+    pairs = [(u, i) for u, i in zip(raw_osf_urls, checked, strict=True) if i is not None]
     pairs = list(dict.fromkeys((None if is_na(u) else u, i) for u, i in pairs))
     ids = pd.DataFrame(
         {
@@ -398,7 +401,9 @@ def osf_info(
         file_parts: list[pd.DataFrame] = []
         urls = _non_na(all_nodes, "files")
         while urls:
-            n_files = sum(int((p["kind"] == "file").fillna(False).sum()) for p in file_parts if "kind" in p)
+            n_files = sum(
+                int((p["kind"] == "file").fillna(False).sum()) for p in file_parts if "kind" in p
+            )
             _tick(
                 pb,
                 f"Listing files: {len(urls)} folder{plural(len(urls))} to check "
@@ -480,6 +485,11 @@ def _osf_error_result(kind: str) -> OsfResult:
     return out
 
 
+def _strip_query(url: str) -> str:
+    """R ``sub("\\?.*$", "", url)``."""
+    return str(sub(r"\?.*$", "", url))
+
+
 def _get_path(content: Any, *path: str) -> Any:
     from pytacheck.archives.osf_helpers import _get
 
@@ -536,7 +546,7 @@ def osf_get_all_pages(url: str, page_end: float = math.inf) -> Any:
                 logger("osf_get_all_pages", {"url": url, "expected": total1, "got": len(out)})
                 warnings.warn(
                     f"The OSF listed only {len(out)} of the {int(total1)} items it reports for "
-                    f"{sub(r'\?.*$', '', url)}. Anything not listed is not retrieved, so this "
+                    f"{_strip_query(url)}. Anything not listed is not retrieved, so this "
                     "listing is incomplete. Run again (see ?osf_pat, which raises the request "
                     "limit).",
                     stacklevel=2,
@@ -594,7 +604,7 @@ def osf_get_all_pages(url: str, page_end: float = math.inf) -> Any:
         logger("osf_get_all_pages", {"url": url, "expected": expected, "got": got})
         warnings.warn(
             f"The OSF listed only {got} of the {int(expected)} items it reports for "
-            f"{sub(r'\?.*$', '', url)}. Anything not listed is not retrieved, so this listing "
+            f"{_strip_query(url)}. Anything not listed is not retrieved, so this listing "
             "is incomplete. This usually means the OSF refused a request under load: run "
             "again (see ?osf_pat, which raises the request limit).",
             stacklevel=2,
@@ -627,7 +637,7 @@ def _osf_get_one_page(url: str) -> Any:
             logger("osf_get_all_pages", {"url": url, "status": resp.status_code})
             return _osf_error_result(err)
         return resp.json()
-    except Exception:  # noqa: BLE001 - R: error = .osf_error_result("request_failed")
+    except Exception:
         return _osf_error_result("request_failed")
 
 
@@ -849,7 +859,7 @@ def _osf_prepare_save_paths(
         save = new_save
 
     kind = files["kind"].tolist()
-    to_copy = [i for i, k in enumerate(kind) if k == "file"]
+    to_copy = [i for i, k in enumerate(kind) if _eq(k, "file")]
     if ignore_folder_structure and to_copy:
         names = files["name"].tolist()
         ids = files["osf_id"].tolist()
@@ -883,7 +893,7 @@ def _osf_zip_content_length(url: str) -> float:
 
     try:
         resp = http.request("HEAD", url, headers=_osf_headers()["headers"], max_tries=1)
-    except Exception:  # noqa: BLE001
+    except Exception:
         return math.nan
     if resp is None or resp.status_code >= 400:
         return math.nan
@@ -973,7 +983,7 @@ def osf_file_download(
     from pytacheck.archives.osf_helpers import _osf_expand_user_ids, _osf_verify_downloads
     from pytacheck.archives.osf_helpers import osf_pat as _set_pat
     from pytacheck.log import logger
-    from pytacheck.utils import left_join, match_arg, path_sanitize
+    from pytacheck.utils import left_join, match_arg
 
     mode = match_arg(mode, ["all", "select", "files", "zip"])
     if mode == "files":
@@ -1022,7 +1032,7 @@ def osf_file_download(
                         metadata=metadata,
                     )
                 )
-            except Exception as exc:  # noqa: BLE001 - one project must not stop the rest
+            except Exception as exc:
                 warnings.warn(f"{x} resulted in an error:\n  {exc}\n", stacklevel=2)
         _tick(pb, f"...Completed downloads for {len(ids)} OSF projects")
         return bind_rows(results)
@@ -1040,14 +1050,28 @@ def osf_file_download(
     contents = osf_info(osf_id, recursive=True, pb=pb)
     cols = [
         c
-        for c in ("osf_id", "name", "provider", "path", "kind", "size", "download_url", "parent", "project")
+        for c in (
+            "osf_id",
+            "name",
+            "provider",
+            "path",
+            "kind",
+            "size",
+            "download_url",
+            "parent",
+            "project",
+        )
         if c in contents.columns
     ]
-    is_files = (contents["osf_type"] == "files").fillna(False).astype(bool) if "osf_type" in contents else pd.Series(False, index=contents.index)
+    is_files = (
+        (contents["osf_type"] == "files").fillna(False).astype(bool)
+        if "osf_type" in contents
+        else pd.Series(False, index=contents.index)
+    )
     files = contents.loc[is_files, cols].reset_index(drop=True)
 
     def kind_is_file(df: pd.DataFrame) -> list[bool]:
-        return [k == "file" for k in df["kind"].tolist()] if "kind" in df else [False] * len(df)
+        return [_eq(k, "file") for k in df["kind"].tolist()] if "kind" in df else [False] * len(df)
 
     file_mask = kind_is_file(files)
     n_f = sum(file_mask)
@@ -1071,7 +1095,11 @@ def osf_file_download(
             _tick(pb, f"- {osf_id} contained no files")
         return None
 
-    size_num = pd.to_numeric(files["size"], errors="coerce") if "size" in files else pd.Series(math.nan, index=files.index)
+    size_num = (
+        pd.to_numeric(files["size"], errors="coerce")
+        if "size" in files
+        else pd.Series(math.nan, index=files.index)
+    )
 
     # restrict file size
     if mode == "select" and math.isfinite(max_file_size) and max_file_size > 0:
@@ -1146,8 +1174,12 @@ def osf_file_download(
                         f"{'is' if n_have == 1 else 'are'} already on disk and "
                         f"{'was' if n_have == 1 else 'were'} not downloaded again."
                     )
-                    files_to_copy.extend(i for i, a in zip(files_to_download, already, strict=True) if a)
-                    files_to_download = [i for i, a in zip(files_to_download, already, strict=True) if not a]
+                    files_to_copy.extend(
+                        i for i, a in zip(files_to_download, already, strict=True) if a
+                    )
+                    files_to_download = [
+                        i for i, a in zip(files_to_download, already, strict=True) if not a
+                    ]
 
             _tick(pb, "Downloading files")
             dl_urls = [files["download_url"].iloc[i] for i in files_to_download]
@@ -1194,8 +1226,18 @@ def osf_file_download(
                 files_to_copy.append(i)
         elif file_rows and mode == "zip":
             files_to_copy, files = _osf_zip_mode(
-                files, contents, osf_id, download_to, max_download_size, max_folder_length,
-                ignore_folder_structure, unzip, pb, tmp_dirs, cap_report, cap_num,
+                files,
+                contents,
+                osf_id,
+                download_to,
+                max_download_size,
+                max_folder_length,
+                ignore_folder_structure,
+                unzip,
+                pb,
+                tmp_dirs,
+                cap_report,
+                cap_num,
             )
     finally:
         for d in tmp_dirs:
@@ -1203,9 +1245,15 @@ def osf_file_download(
 
     # return table
     folder = os.path.basename(download_to)
-    kind_all = [k == "file" for k in contents["kind"].tolist()] if "kind" in contents else [False] * len(contents)
+    kind_all = (
+        [_eq(k, "file") for k in contents["kind"].tolist()]
+        if "kind" in contents
+        else [False] * len(contents)
+    )
     ret_cols = ["osf_id", "name", "filetype", "size", "downloads", "provider"]
-    ret = contents.loc[kind_all, [c for c in ret_cols if c in contents.columns]].reset_index(drop=True)
+    ret = contents.loc[kind_all, [c for c in ret_cols if c in contents.columns]].reset_index(
+        drop=True
+    )
     ret.insert(0, "folder", pd.Series([folder] * len(ret), dtype="string"))
     n_file_rows = sum(kind_is_file(files))
 
@@ -1241,9 +1289,11 @@ def osf_file_download(
 
         try:
             _osf_metadata_download(osf_id, download_to, pb=pb)
-        except Exception as exc:  # noqa: BLE001 - metadata must not lose the files
+        except Exception as exc:
             logger(".osf_metadata_download", {"osf_id": osf_id, "error": str(exc)})
-            _message(f"Could not retrieve metadata for {osf_id} ({exc}); its files were downloaded.")
+            _message(
+                f"Could not retrieve metadata for {osf_id} ({exc}); its files were downloaded."
+            )
 
     check_size = [True] * len(ret)
     if mode == "zip" and unzip is not True and "path" in ret.columns:
@@ -1263,8 +1313,14 @@ def osf_file_download(
     n_ok = sum(downloaded)
     failed = [i for i, (d, a) in enumerate(zip(downloaded, attempted, strict=True)) if not d and a]
     if failed:
-        sizes_ret = pd.to_numeric(ret["size"], errors="coerce").tolist() if "size" in ret else [0] * len(ret)
-        worst = sorted(failed, key=lambda i: -(sizes_ret[i] if sizes_ret[i] == sizes_ret[i] else -math.inf))
+        sizes_ret = (
+            pd.to_numeric(ret["size"], errors="coerce").tolist()
+            if "size" in ret
+            else [0] * len(ret)
+        )
+        worst = sorted(
+            failed, key=lambda i: -(sizes_ret[i] if sizes_ret[i] == sizes_ret[i] else -math.inf)
+        )
         names = ret["name"].tolist()
         n_att = sum(attempted)
         warnings.warn(
@@ -1311,16 +1367,22 @@ def _osf_zip_mode(
     kinds = files["kind"].tolist()
     provs = [None if is_na(p) else str(p).lower() for p in files["provider"].tolist()]
     projects = files["project"].tolist() if "project" in files else [None] * len(files)
-    is_file = [k == "file" for k in kinds]
+    is_file = [_eq(k, "file") for k in kinds]
     zip_nodes = list(
         dict.fromkeys(
-            p for p, f, pv in zip(projects, is_file, provs, strict=True) if f and pv == "osfstorage" and not is_na(p)
+            p
+            for p, f, pv in zip(projects, is_file, provs, strict=True)
+            if f and pv == "osfstorage" and not is_na(p)
         )
     )
-    other_idx = [i for i, (f, pv) in enumerate(zip(is_file, provs, strict=True)) if f and pv != "osfstorage"]
+    other_idx = [
+        i for i, (f, pv) in enumerate(zip(is_file, provs, strict=True)) if f and pv != "osfstorage"
+    ]
     if other_idx:
         raw_provs = files["provider"].tolist()
-        others = list(dict.fromkeys("NA" if is_na(raw_provs[i]) else str(raw_provs[i]) for i in other_idx))
+        others = list(
+            dict.fromkeys("NA" if is_na(raw_provs[i]) else str(raw_provs[i]) for i in other_idx)
+        )
         n = len(other_idx)
         _message(
             f"[zip] {n} file{plural(n)} on {', '.join(others)} cannot be in an OSF archive (the "
@@ -1332,21 +1394,32 @@ def _osf_zip_mode(
             f"[zip] osfstorage files belong to {len(zip_nodes)} nodes; requesting one archive per node."
         )
 
-    files = _osf_prepare_save_paths(files, contents, osf_id, max_folder_length, ignore_folder_structure)
+    files = _osf_prepare_save_paths(
+        files, contents, osf_id, max_folder_length, ignore_folder_structure
+    )
     save = files["save_path"].tolist()
     copied_rows: list[int] = []
     for node in zip_nodes:
         node_idx = [
-            i for i, (f, p, pv) in enumerate(zip(is_file, projects, provs, strict=True))
-            if f and p == node and pv == "osfstorage"
+            i
+            for i, (f, p, pv) in enumerate(zip(is_file, projects, provs, strict=True))
+            if f and _eq(p, node) and pv == "osfstorage"
         ]
         if not node_idx:
             continue
         zip_url = _osf_zip_url(node)
         zip_size = _osf_zip_content_length(zip_url)
-        shown = f"{zip_size / _MB:.1f} MB" if math.isfinite(zip_size) else "not reported by server (will stream blind)"
+        shown = (
+            f"{zip_size / _MB:.1f} MB"
+            if math.isfinite(zip_size)
+            else "not reported by server (will stream blind)"
+        )
         _message(f"[zip] {node}: {len(node_idx)} file(s), archive size {shown}")
-        if math.isfinite(max_download_size) and math.isfinite(zip_size) and zip_size > max_download_size * _MB:
+        if (
+            math.isfinite(max_download_size)
+            and math.isfinite(zip_size)
+            and zip_size > max_download_size * _MB
+        ):
             need = math.ceil(zip_size / _MB)
             cap_report(
                 f"Node {node} was not downloaded: its zip archive totals {cap_num(need)} MB, over "
@@ -1359,7 +1432,7 @@ def _osf_zip_mode(
         _tick(pb, f"Downloading zip archive for {node}")
         try:
             _osf_download_zip(zip_url, zip_path, zip_size=zip_size)
-        except Exception as exc:  # noqa: BLE001
+        except Exception as exc:
             _message(
                 f"[zip] {node}: archive download failed ({exc}); its files are downloaded "
                 "individually below."
@@ -1406,9 +1479,15 @@ def _osf_zip_mode(
             expected2 = [sizes[i] if provs[i] in ("osfstorage", None) else math.nan for i in wanted]
             errs = list(_download_many_parallel([urls[i] for i in wanted], dests, expected2))
             fetched = [i for i, e in zip(wanted, errs, strict=True) if is_na(e)]
-            for i in fetched:
-                if _copy_file(os.path.join(temppath2, str(ids[i])), os.path.join(download_to, save[i]), overwrite=True):
-                    copied_rows.append(i)
+            copied_rows.extend(
+                i
+                for i in fetched
+                if _copy_file(
+                    os.path.join(temppath2, str(ids[i])),
+                    os.path.join(download_to, save[i]),
+                    overwrite=True,
+                )
+            )
             nfail = len(wanted) - len(fetched)
             if nfail > 0:
                 _message(

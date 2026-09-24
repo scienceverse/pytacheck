@@ -1,0 +1,158 @@
+{
+  "id": "import_spv.attrs.charts",
+  "ok": true,
+  "error": null,
+  "warnings": [
+    "spv: could not decode chart: non-numeric argument to mathematical function",
+    "spv: could not decode chart: spv chart: no <point>, <interval>, or <schema> mark (out of this port's scope)"
+  ],
+  "value": {
+    "t": "list",
+    "names": null,
+    "v": [
+      {
+        "t": "list",
+        "names": [
+          "type",
+          "title",
+          "xlab",
+          "ylab",
+          "fit_names",
+          "fit_exprs"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "point"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Weight by Height"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Height (cm)"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Weight (kg)"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Linear",
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "0.5 * x + 3",
+              "0.01 * x^2 + 1"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "type",
+          "title",
+          "xlab",
+          "ylab",
+          "fit_names",
+          "fit_exprs"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "interval"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Score"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "count"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "type",
+          "title",
+          "xlab",
+          "ylab",
+          "fit_names",
+          "fit_exprs"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "boxplot"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Box plot"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Category"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Reaction time"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

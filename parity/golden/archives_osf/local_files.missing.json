@@ -1,0 +1,48 @@
+{
+  "id": "local_files.missing",
+  "ok": true,
+  "error": null,
+  "warnings": [
+    "This path does not exist: /no/such/path/exists/anywhere"
+  ],
+  "value": {
+    "t": "df",
+    "nrow": 0,
+    "names": [
+      "repo_url",
+      "file_name",
+      "file_url",
+      "file_location",
+      "file_size",
+      "file_type"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": []
+      },
+      {
+        "t": "chr",
+        "v": []
+      },
+      {
+        "t": "chr",
+        "v": []
+      },
+      {
+        "t": "chr",
+        "v": []
+      },
+      {
+        "t": "dbl",
+        "v": []
+      },
+      {
+        "t": "chr",
+        "v": []
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

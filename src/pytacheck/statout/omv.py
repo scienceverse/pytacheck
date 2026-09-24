@@ -23,6 +23,7 @@ from typing import Any
 
 from pytacheck._r import gregexpr_all, grepl, gsub, r_sort_key, trimws
 from pytacheck.statout.jasp import (
+    _attach_labels,
     _dollar,
     _export_archive_html,
     _frame_from_columns,
@@ -133,8 +134,7 @@ def import_omv(path: str | os.PathLike[str]) -> dict[str, Any]:
                 names.append(name)
                 types.append(mt)
         df = _frame_from_columns(cols, names)
-        df.attrs["label"] = label
-        df.attrs["labels"] = labels
+        _attach_labels(df, labels, label)
         analyses = _omv_analyses_summary(files)
     columns = (
         pd.DataFrame(
@@ -216,9 +216,7 @@ def _omv_extract_syntax(txt: str) -> str:
     return str(gsub("[[:space:]]+", " ", trimws(txt[start - 1 : end])))
 
 
-def export_omv_html(
-    path: str | os.PathLike[str], out: str | os.PathLike[str] | None = None
-) -> str:
+def export_omv_html(path: str | os.PathLike[str], out: str | os.PathLike[str] | None = None) -> str:
     """Export a jamovi (.omv) file's own rendered output as standalone HTML.
 
     Port of R/omv.R::export_omv_html(). Extracts the archive's ``index.html``
@@ -235,4 +233,3 @@ def export_omv_html(
     return _export_archive_html(
         os.fspath(path), None if out is None else os.fspath(out), "omv", "omv", "omvexport_"
     )
-

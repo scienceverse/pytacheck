@@ -1,9 +1,94 @@
 {
   "id": ".process_full_text.headers_and_merge",
-  "ok": false,
-  "error": "values must be type 'character',\n but FUN(X[[2]]) result is type 'logical'",
+  "ok": true,
+  "error": null,
   "warnings": [],
-  "value": null,
+  "value": {
+    "t": "df",
+    "nrow": 7,
+    "names": [
+      "text",
+      "section",
+      "header",
+      "div",
+      "p",
+      "formatted"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "We did things. and more",
+          "Some methods e.g. this the results were fine.",
+          "A. B. Author said so.",
+          "Discussion here \"quoted.\"",
+          "Ref list",
+          "More stuff?",
+          "Caption text ends"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "abstract",
+          "method",
+          "results",
+          "discussion",
+          "references",
+          "references",
+          "figure"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Abstract",
+          "<head>Material and Methods<\/head>",
+          "<head>Results<\/head>",
+          "<head>General Discussion<\/head>",
+          "<head>Bibliography<\/head>",
+          "<head>Other<\/head>",
+          null
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0,
+          3,
+          4,
+          5,
+          6,
+          7,
+          9
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          1,
+          4,
+          5,
+          6,
+          7,
+          8,
+          10
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      }
+    ]
+  },
   "metacheck_version": "0.3.1",
-  "r_version": "R version 4.3.3 (2024-02-29)"
+  "r_version": "R version 4.5.3 (2026-03-11)"
 }

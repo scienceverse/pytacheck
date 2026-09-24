@@ -1,0 +1,13 @@
+{
+  "id": "spv_decode_legacy_data.legacy.0000000005",
+  "ok": true,
+  "error": null,
+  "warnings": [
+    "spv: could not decode legacy data: spv binary: expected marker byte(s) 0 (LegacyBinary marker) at offset 1"
+  ],
+  "value": {
+    "t": "null"
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -1,0 +1,17 @@
+{
+  "id": "remove_1000_sep.0",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "2000.20",
+      "1234567",
+      "a, b",
+      "123"
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

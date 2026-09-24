@@ -1,0 +1,17 @@
+{
+  "id": "jasp_analyses_summary.nested",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "1. T-Test  [module: jasp]",
+      "2. anova",
+      "3. analysis",
+      "4. 3"
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}
