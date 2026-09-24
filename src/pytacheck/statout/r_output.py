@@ -531,7 +531,8 @@ _STAT_NAME_RE = "(?i)^(t|z|f|r|w|u|h|d|p|p-value|df|chi|x-squared|bf|rho|tau|s|v
 
 
 def _r_output_oneline(
-    lines: Sequence[str | None], source_label: str | None = None
+    lines: Sequence[str | None],
+    source_label: str | None = None,  # noqa: ARG001 - R signature; R never reaches it
 ) -> list[dict[str, Any]]:
     """Parse ``<stat> <op> <value>`` fragments grouped under test titles.
 

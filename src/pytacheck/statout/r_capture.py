@@ -447,7 +447,7 @@ def _run_rscript(
         out = _open_sink(stdout)
         err = _open_sink(stderr)
         try:
-            proc = subprocess.run(
+            proc = subprocess.run(  # noqa: S603 - runs the configured Rscript
                 [exe, "--no-save", "--no-restore", str(driver)],
                 stdout=out,
                 stderr=err,
@@ -731,7 +731,7 @@ def _as_int(x: Any) -> int | None:
 
 def _r_captures_to_tables(
     caps: Sequence[Mapping[str, Any]] | None,
-    source_label: str | None = None,
+    source_label: str | None = None,  # noqa: ARG001 - R signature; unused in R too
     code_lines: Sequence[str] | None = None,
 ) -> list[dict[str, Any]]:
     """Turn capture records into :func:`read_r_output`-shaped tables.

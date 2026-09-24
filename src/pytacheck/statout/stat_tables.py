@@ -537,7 +537,7 @@ def _jmv_cell(cell_raw: Any) -> str | None:
 _BRACKET = "\\[[^]]+\\]$"
 
 
-def _jmv_is_wide_descriptives(nms: Sequence[str], nrow_df: int) -> bool:
+def _jmv_is_wide_descriptives(nms: Sequence[str], nrow_df: int) -> bool:  # noqa: ARG001
     """Is this jamovi's wide ``<variable>[<statistic>]`` layout?
 
     Port of ``R/stat-tables.R::.jmv_is_wide_descriptives()``.
