@@ -363,3 +363,11 @@
       "$expr":
         "r": "local({p <- test_paper(c('first sentence')); p$paper_id <- 'eqp'; p$eq <- data.frame(text_id = c(1L, 1L), lhs = c('t', 'p'), df = c('', NA), comp = c(NA, '<'), rhs = c('1.5', NA)); p})"
         "py": "(lambda p: (p.__setitem__('paper_id', 'eqp'), p.__setitem__('eq', pd.DataFrame({'text_id': pd.Series([1, 1], dtype='Int64'), 'lhs': ['t', 'p'], 'df': pd.Series(['', None], dtype='string'), 'comp': pd.Series([None, '<'], dtype='string'), 'rhs': pd.Series(['1.5', None], dtype='string')})), p)[2])(pc.test_paper(['first sentence']))"
+- "id": "extract_tests.review.render_null_name"
+  "r": "metacheck:::.render_test"
+  "py": "pytacheck.text.extract_tests._render_test"
+  "args":
+    "g":
+      "$list":
+      - {"name": "t", "comp": "=", "value": "3.77", "sentence_pos": 1}
+      - {"comp": "=", "value": "2", "sentence_pos": 2}

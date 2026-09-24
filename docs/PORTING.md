@@ -175,7 +175,8 @@ See `src/pytacheck/modules/marginal.py` for the reference pattern:
     keywords=["results"],                  # @keywords, verbatim from R (the report section)
     requires=[],                           # capabilities: ["network"] and/or ["llm"] if the
                                            # module needs them (never put these in keywords)
-    author=["Daniel Lakens <D.Lakens@tue.nl>"],
+    author=["Daniel Lakens <D.Lakens@tue.nl>"],   # one entry per R @author line, verbatim;
+                                           # "Name <email>" is stored as R's "Name (\email{email})"
     params={"paper": "a paper object or paperlist object", ...},   # @param
 )
 def marginal(paper, ...):                  # same name as the file; R's arguments + defaults
@@ -184,6 +185,9 @@ def marginal(paper, ...):                  # same name as the file; R's argument
             "traffic_light": tl, "summary_text": ..., "report": [...]}
 ```
 
+* `tests/foundation/test_module_metadata.py` checks `title`, `keywords` and `author`
+  against the R module's roxygen header: module_list(), module_help() and
+  module_report() print them.
 * Return the same list elements, in the same order, as the R module.
 * `report` is a string or a list of blocks: markdown strings, `scroll_table(df, ...)`,
   `collapse_section([...])`. Prose must match R exactly (it is compared).

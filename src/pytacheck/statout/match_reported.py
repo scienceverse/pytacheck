@@ -708,11 +708,10 @@ def _regroup_by_evidence(
 
     def best_site_for(comp: Mapping[str, Any], exclude_used: bool = False) -> int | None:
         hits = by_site.match(comp)
-        for s in np.flatnonzero(hits):
-            s = int(s)
+        for s in np.flatnonzero(hits).tolist():
             if exclude_used and s in used_sites:
                 continue
-            return s
+            return int(s)
         by_site.check_na_site([comp])  # the NA site is the last one tried
         return None
 
@@ -1044,7 +1043,8 @@ def match_reported_output(
     if tests is None:
         tests = _recompose_eq(paper.get("eq") if isinstance(paper, Paper) else paper)
 
-    if include_tables is True and isinstance(paper, Paper):
+    # isTRUE(include_tables): a single logical TRUE only
+    if isinstance(include_tables, bool | np.bool_) and include_tables and isinstance(paper, Paper):
         from pytacheck.statout.match_table import _table_tests
 
         try:

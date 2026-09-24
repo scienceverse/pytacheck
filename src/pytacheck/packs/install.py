@@ -488,9 +488,9 @@ def _install(
     if cand.name and cand.rev:
         existing = install_dir(cand.name, {"rev": cand.rev})
         if _record_matches(existing, cand.rev, cand.tree_sha256):
-            record = _read_record(existing)
+            done = _read_record(existing)
             manifest = read_manifest(existing)
-            pin = _pin_for(cand, record["tree_sha256"], manifest.get("version"))
+            pin = _pin_for(cand, done["tree_sha256"], manifest.get("version"))
             if scope is not None:
                 _write_pin(cand.name, pin, scope)
                 ui.console().print(
@@ -825,7 +825,7 @@ def pack_list() -> pd.DataFrame:
     import pandas as pd
 
     reg = registry()
-    rows = []
+    rows: list[tuple[Any, ...]] = []
     for pack in reg.packs.values():
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")

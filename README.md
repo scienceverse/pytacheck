@@ -45,6 +45,24 @@ pytacheck run paper.pdf -m marginal -m all_p_values
 pytacheck report paper.json -o report.html
 ```
 
+## Presets, packs and community modules
+
+Choose the checks that matter for your field with **presets**, and add community
+checks from **packs** (folders of modules, shared through the
+[pytacheck-modules](https://github.com/thesanogoeffect/pytacheck-modules) store):
+
+```bash
+pytacheck init                                   # pick field presets; installs their packs
+pytacheck run paper.json --preset fields::psychology --record run.json
+pytacheck pack search trial                      # browse the store
+pytacheck pack install clinical_trials           # shows what it installs and asks first
+pytacheck pack new my-checks                     # write your own
+```
+
+Installed packs are pinned to a commit and a file hash, every result records
+which code produced it, and `pytacheck rerun run.json paper.json` replays a run.
+See [docs/MODULES.md](docs/MODULES.md) for the user and author guides.
+
 ## How it relates to metacheck
 
 * **Same results.** Module tables, summary tables, traffic lights and report texts

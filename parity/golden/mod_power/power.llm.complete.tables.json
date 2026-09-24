@@ -1,0 +1,93 @@
+{
+  "id": "power.llm.complete.tables",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": null,
+    "v": [
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "power_type",
+          "statistical_test",
+          "sample_size",
+          "alpha_level",
+          "power",
+          "effect_size",
+          "effect_size_metric",
+          "software"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "apriori"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "unpaired t-test"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              128
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0.05
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0.8
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0.5
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Cohen's d"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "pwr"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "text"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "An <strong>a priori<\/strong> <strong>power<\/strong> analysis indicated 64 participants per group, d = 0.5, alpha = .05, <strong>power<\/strong> = 80%, using an unpaired t-test, run with pwr."
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -232,3 +232,28 @@ def test_datatable_cells_show_numbers_like_the_browser():
     assert _cell_text(float("inf")) == ""
     assert _cell_text(2.0) == "2"
     assert _cell_text(True) == "true"
+
+
+def test_report_with_ported_modules(tmp_path, quiet, test_module):
+    # upstream test-report.R: "report return list" and "report pass args"
+    from pytacheck.module import ModuleError, module_find
+    from pytacheck.report.report import report
+
+    try:
+        module_find("stat_p_exact")
+    except ModuleError:
+        pytest.skip("stat_p_exact is not ported yet")
+    out_file = tmp_path / "r.qmd"
+    chained = test_module("rp_chained")
+    rep = report(
+        pc.demopaper(),
+        ["stat_p_exact", "marginal", chained],
+        str(out_file),
+        "qmd",
+        args={chained: {"extra": " Look for me in the text!"}},
+    )
+    assert list(rep) == ["stat_p_exact", "marginal", chained]
+    assert rep["stat_p_exact"].module == "stat_p_exact"
+    qmd = out_file.read_text(encoding="utf-8")
+    assert "(#exact-p-values){.red}" in qmd
+    assert "Look for me in the text!" in qmd

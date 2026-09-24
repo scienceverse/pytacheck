@@ -1,0 +1,305 @@
+{
+  "id": "open_practices.problem_203020",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "open_practices"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Open Practices Check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "general"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 2,
+        "names": [
+          "text",
+          "text_id",
+          "paragraph_id",
+          "section_id",
+          "page_number",
+          "formatted",
+          "paper_id",
+          "header",
+          "section_type",
+          "data",
+          "code",
+          "materials",
+          "prereg",
+          "on_request"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "A reproducibility package with data and code is available on figshare: https://doi.org/10.6084/m9.figshare.10744937.",
+              "Single-trial data from the young participants are available on Dryad: https://datadryad.org/stash/dataset/doi:10.5061/dryad.8m2g3"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              269,
+              270
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              71,
+              71
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              29,
+              29
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "A reproducibility package with data and code is available on figshare: <ref type=\"url\" target=\"https://doi.org/10.6084/m9.figshare.10744937\">https://doi.org/10.6084/m9.figshare.10744937<\/ref>.",
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "203020",
+              "203020"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "DATA AVAILABILITY STATEMENT",
+              "DATA AVAILABILITY STATEMENT"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "availability",
+              "availability"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true,
+              true
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true,
+              false
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false,
+              false
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false,
+              false
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false,
+              false
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Data was openly shared for this article, based on the following text:\n\n> A reproducibility package with data and code is available on figshare: https://doi.org/10.6084/m9.figshare.10744937.\n\n> Single-trial data from the young participants are available on Dryad: https://datadryad.org/stash/dataset/doi:10.5061/dryad.8m2g3",
+          "Code was openly shared for this article, based on the following text:\n\n> A reproducibility package with data and code is available on figshare: https://doi.org/10.6084/m9.figshare.10744937."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "green"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Shared data and code detected."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "data_open",
+          "code_open",
+          "materials_open",
+          "prereg_open",
+          "on_request",
+          "data_statements",
+          "code_statements",
+          "materials_statements",
+          "prereg_statements"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "203020"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "A reproducibility package with data and code is available on figshare: https://doi.org/10.6084/m9.figshare.10744937.",
+                  "Single-trial data from the young participants are available on Dryad: https://datadryad.org/stash/dataset/doi:10.5061/dryad.8m2g3"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "A reproducibility package with data and code is available on figshare: https://doi.org/10.6084/m9.figshare.10744937."
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  null
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  null
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "data_open",
+          "code_open"
+        ],
+        "v": [
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -1,0 +1,160 @@
+"area": "mod_urls_open"
+"cases":
+# all_urls ------------------------------------------------------------------
+- "id": "all_urls.demo"
+  "module": "all_urls"
+  "args": {"paper": {"$paper": "demo"}}
+- "id": "all_urls.psychsci"
+  "module": "all_urls"
+  "args":
+    "paper": {"$read": ["upstream/metacheck/tests/testthat/fixtures/psychsci/0956797613520608.json", "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614522816.json", "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614527830.json", "upstream/metacheck/inst/demos/to_err_is_human.json"]}
+- "id": "all_urls.problem_203020"
+  "module": "all_urls"
+  "args": {"paper": {"$paper": "upstream/metacheck/tests/testthat/fixtures/problems/203020.json"}}
+- "id": "all_urls.synthetic"
+  "module": "all_urls"
+  "args":
+    "paper": {"$test_paper": {"text": ["See https://osf.io/abcde/ and http://github.com/a/b for details.", "No link here.", "Data at doi:10.1234/abc.def and www.example.org/page.", "Server 192.168.0.1 was used."]}}
+  "compare": {"ignore": ["table.paper_id", "summary_table.paper_id"]}
+- "id": "all_urls.none"
+  "module": "all_urls"
+  "args":
+    "paper": {"$test_paper": {"text": ["Nothing here.", "Or here."]}}
+  "compare": {"ignore": ["table.paper_id", "summary_table.paper_id"]}
+- "id": "all_urls.empty_paper"
+  "module": "all_urls"
+  "args":
+    "paper": {"$expr": {"r": "paper()", "py": "pc.paper()"}}
+  "compare": {"ignore": ["table.paper_id", "summary_table.paper_id"]}
+- "id": "all_urls.paperlist"
+  "module": "all_urls"
+  "args":
+    "paper": {"$expr": {"r": 'paperlist(test_paper(c("See https://osf.io/abcde/.", "And https://github.com/x/y.")), test_paper("No links."), test_paper("Visit www.example.com today."))', "py": 'pc.PaperList([pc.test_paper(["See https://osf.io/abcde/.", "And https://github.com/x/y."]), pc.test_paper(["No links."]), pc.test_paper(["Visit www.example.com today."])])'}}
+  "compare": {"ignore": ["table.paper_id", "summary_table.paper_id"]}
+# open_practices ------------------------------------------------------------
+- "id": "open_practices.demo"
+  "module": "open_practices"
+  "args": {"paper": {"$paper": "demo"}}
+- "id": "open_practices.psychsci"
+  "module": "open_practices"
+  "args":
+    "paper": {"$read": ["upstream/metacheck/tests/testthat/fixtures/psychsci/0956797613520608.json", "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614522816.json", "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614527830.json", "upstream/metacheck/inst/demos/to_err_is_human.json"]}
+- "id": "open_practices.psychsci_single"
+  "module": "open_practices"
+  "args": {"paper": {"$paper": "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614527830.json"}}
+- "id": "open_practices.psychsci_single_2"
+  "module": "open_practices"
+  "args": {"paper": {"$paper": "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797613520608.json"}}
+- "id": "open_practices.psychsci_single_3"
+  "module": "open_practices"
+  "args": {"paper": {"$paper": "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614522816.json"}}
+- "id": "open_practices.problem_203020"
+  "module": "open_practices"
+  "args": {"paper": {"$paper": "upstream/metacheck/tests/testthat/fixtures/problems/203020.json"}}
+- "id": "open_practices.data_only"
+  "module": "open_practices"
+  "args":
+    "paper": {"$test_paper": {"text": ["Data for all experiments have been made publicly available on OSF at https://osf.io/hk4yq/.", "We tested 40 people."]}}
+  "compare": {"ignore": ["table.paper_id", "summary_table.paper_id"]}
+- "id": "open_practices.code_only"
+  "module": "open_practices"
+  "args":
+    "paper": {"$test_paper": {"text": ["The computer code for the analyses reported here can be accessed at the Open Science Framework (https://osf.io/geq9x/).", "All analysis code for this study has been made publicly available via the Open Science Framework and can be accessed at https://osf.io/geq9x/."]}}
+  "compare": {"ignore": ["table.paper_id", "summary_table.paper_id"]}
+- "id": "open_practices.data_and_code"
+  "module": "open_practices"
+  "args":
+    "paper": {"$test_paper": {"text": ["The data and code to reproduce the findings of this study are available at the Open Science Framework at https://osf.io/abcde."]}}
+  "compare": {"ignore": ["table.paper_id", "summary_table.paper_id"]}
+- "id": "open_practices.data_and_code_separate"
+  "module": "open_practices"
+  "args":
+    "paper": {"$test_paper": {"text": ["Our R scripts can be found on GitHub (https://github.com/me/proj).", "Raw data are archived in a Zenodo repository.", "Questionnaires are available as supplementary materials online.", "The study was preregistered on AsPredicted (https://aspredicted.org/abc.pdf).", "Figures are shared at https://figshare.com/x."]}}
+  "compare": {"ignore": ["table.paper_id", "summary_table.paper_id"]}
+- "id": "open_practices.on_request"
+  "module": "open_practices"
+  "args":
+    "paper": {"$test_paper": {"text": ["Data available upon request."]}}
+  "compare": {"ignore": ["table.paper_id", "summary_table.paper_id"]}
+- "id": "open_practices.on_request_with_repo"
+  "module": "open_practices"
+  "args":
+    "paper": {"$test_paper": {"text": ["Data are available at https://osf.io/hk4yq/; raw data on request."]}}
+  "compare": {"ignore": ["table.paper_id", "summary_table.paper_id"]}
+- "id": "open_practices.on_request_multiple"
+  "module": "open_practices"
+  "args":
+    "paper": {"$test_paper": {"text": ["The analysis code is available on GitHub at https://github.com/me/code.", "The data are available from the corresponding author on reasonable request.", "Materials can be shared by request.", "Analysis scripts are available ON REQUEST."]}}
+  "compare": {"ignore": ["table.paper_id", "summary_table.paper_id"]}
+- "id": "open_practices.code_on_request"
+  "module": "open_practices"
+  "args":
+    "paper": {"$test_paper": {"text": ["The analysis code can be found on GitHub (https://github.com/me/code).", "Code for the simulations is available by request."]}}
+  "compare": {"ignore": ["table.paper_id", "summary_table.paper_id"]}
+- "id": "open_practices.materials_prereg_only"
+  "module": "open_practices"
+  "args":
+    "paper": {"$test_paper": {"text": ["All materials are available at https://osf.io/xyz12/.", "The study was pre-registered at https://osf.io/xyz12/.", "This analysis was not preregistered at osf.", "Exploratory, non-preregistered analyses are on OSF, see https://osf.io/abc."]}}
+  "compare": {"ignore": ["table.paper_id", "summary_table.paper_id"]}
+- "id": "open_practices.no_repo"
+  "module": "open_practices"
+  "args":
+    "paper": {"$test_paper": {"text": ["The data were analysed with custom code.", "Materials are described in the supplement."]}}
+  "compare": {"ignore": ["table.paper_id", "summary_table.paper_id"]}
+- "id": "open_practices.none"
+  "module": "open_practices"
+  "args":
+    "paper": {"$test_paper": {"text": ["Nothing here.", "Or here."]}}
+  "compare": {"ignore": ["table.paper_id", "summary_table.paper_id"]}
+- "id": "open_practices.empty_paper"
+  "module": "open_practices"
+  "args":
+    "paper": {"$expr": {"r": "paper()", "py": "pc.paper()"}}
+  "compare": {"ignore": ["table.paper_id", "summary_table.paper_id"]}
+- "id": "open_practices.whitespace"
+  "module": "open_practices"
+  "args":
+    "paper": {"$test_paper": {"text": ["Data   are available on the Open\nScience\tFramework.", "Code is available on<~p~>request.", "Data , see  the repository , are available.", "Our R\ncode is available at\tgithub."]}}
+  "compare": {"ignore": ["table.paper_id", "summary_table.paper_id"]}
+- "id": "open_practices.case_words"
+  "module": "open_practices"
+  "args":
+    "paper": {"$test_paper": {"text": ["All r code is on GITHUB, see the online archive.", "Python software is archived at Zenodo; find it there.", "Our dataset is in the UK Data Service (ukdataservice) and detailed on Dataverse.", "Plots are available at http://kaggle.com.", "Analyses are accessible via Mendeley.", "Code: https://researchbox.org/1; data: https://datadryad.org/2; see both."]}}
+  "compare": {"ignore": ["table.paper_id", "summary_table.paper_id"]}
+- "id": "open_practices.paperlist"
+  "module": "open_practices"
+  "args":
+    "paper": {"$expr": {"r": 'paperlist(test_paper("Open code is available at https://github.com/repo/mine."), test_paper("Data available upon request."))', "py": 'pc.PaperList([pc.test_paper(["Open code is available at https://github.com/repo/mine."]), pc.test_paper(["Data available upon request."])])'}}
+  "compare": {"ignore": ["table.paper_id", "summary_table.paper_id"]}
+- "id": "open_practices.paperlist_mixed"
+  "module": "open_practices"
+  "args":
+    "paper": {"$expr": {"r": 'paperlist(test_paper("The data and code are available at https://osf.io/abcde."), test_paper("Nothing to see."), test_paper(c("Data are on OSF: https://osf.io/q.", "Materials are available on request.")), test_paper("Our analysis code is on GitHub (https://github.com/a/b)."))', "py": 'pc.PaperList([pc.test_paper(["The data and code are available at https://osf.io/abcde."]), pc.test_paper(["Nothing to see."]), pc.test_paper(["Data are on OSF: https://osf.io/q.", "Materials are available on request."]), pc.test_paper(["Our analysis code is on GitHub (https://github.com/a/b)."])])'}}
+  "compare": {"ignore": ["table.paper_id", "summary_table.paper_id"]}
+- "id": "open_practices.paperlist_one_hit"
+  "module": "open_practices"
+  "args":
+    "paper": {"$expr": {"r": 'paperlist(test_paper("Nothing to see."), test_paper(c("Data are available at https://osf.io/abc.", "Data are also available on request.")))', "py": 'pc.PaperList([pc.test_paper(["Nothing to see."]), pc.test_paper(["Data are available at https://osf.io/abc.", "Data are also available on request."])])'}}
+  "compare": {"ignore": ["table.paper_id", "summary_table.paper_id"]}
+- "id": "open_practices.paperlist_none"
+  "module": "open_practices"
+  "args":
+    "paper": {"$expr": {"r": 'paperlist(test_paper("Nothing to see."), test_paper("Or here."))', "py": 'pc.PaperList([pc.test_paper(["Nothing to see."]), pc.test_paper(["Or here."])])'}}
+  "compare": {"ignore": ["table.paper_id", "summary_table.paper_id"]}
+- "id": "open_practices.cleaning"
+  "module": "open_practices"
+  "args":
+    "paper": {"$test_paper": {"text": ["Data , , are available , , at https://osf.io/x.", "The code<~p~>is available at https://github.com/x/y.", "Data can be found on the open\n\nscience framework.", "Materials were shared by\n  reasonable\trequest."]}}
+  "compare": {"ignore": ["table.paper_id", "summary_table.paper_id"]}
+- "id": "open_practices.duplicate_ids"
+  "module": "open_practices"
+  "args":
+    "paper": {"$expr": {"r": "paperlist(demopaper(), demopaper())", "py": "pc.PaperList([pc.demopaper(), pc.demopaper()])"}}
+- "id": "open_practices.debruine"
+  "module": "open_practices"
+  "args":
+    "paper": {"$read": ["upstream/metacheck/tests/testthat/fixtures/debruine/debruine-child.xml", "upstream/metacheck/tests/testthat/fixtures/debruine/debruine-fret.xml", "upstream/metacheck/tests/testthat/fixtures/debruine/debruine-sex.xml", "upstream/metacheck/tests/testthat/fixtures/debruine/debruine-tnl.xml"]}
+- "id": "all_urls.debruine"
+  "module": "all_urls"
+  "args":
+    "paper": {"$read": ["upstream/metacheck/tests/testthat/fixtures/debruine/debruine-child.xml", "upstream/metacheck/tests/testthat/fixtures/debruine/debruine-fret.xml", "upstream/metacheck/tests/testthat/fixtures/debruine/debruine-sex.xml", "upstream/metacheck/tests/testthat/fixtures/debruine/debruine-tnl.xml"]}

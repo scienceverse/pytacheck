@@ -1,0 +1,9 @@
+{
+  "id": "coi_check.heading_last_sentence",
+  "ok": false,
+  "error": "Running the module 'coi_check' produced errors: In argument: `text = rtransparent_coi(text)`.",
+  "warnings": [],
+  "value": null,
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

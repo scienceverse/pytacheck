@@ -40,6 +40,19 @@ def _rscript(explicit: str | None) -> str:
     candidate = explicit or os.environ.get("PYTACHECK_RSCRIPT") or shutil.which("Rscript")
     if not candidate:
         sys.exit("Rscript not found: install R + metacheck or set PYTACHECK_RSCRIPT")
+    # metacheck needs R >= 4.5; an older R on PATH silently produces different goldens.
+    version = subprocess.run(
+        [candidate, "--vanilla", "-e", "cat(as.character(getRversion()))"],
+        capture_output=True,
+        text=True,
+        check=False,
+    ).stdout.strip()
+    parts = tuple(int(p) for p in version.split(".")[:2] if p.isdigit())
+    if parts < (4, 5):
+        sys.exit(
+            f"{candidate} is R {version or '?'}; goldens need R >= 4.5 with metacheck "
+            "installed (set PYTACHECK_RSCRIPT or pass --rscript)"
+        )
     return candidate
 
 

@@ -298,10 +298,9 @@ def _r_as_character(x: Any) -> str | None:
     if _is_na(x):
         return None
     if isinstance(x, pd.Timestamp | dt.datetime):
-        ts = pd.Timestamp(x)
-        if ts.hour == ts.minute == ts.second == 0 and ts.microsecond == 0:
-            return ts.strftime("%Y-%m-%d")
-        return ts.strftime("%Y-%m-%d %H:%M:%S")
+        from pytacheck.datacheck._files_rdata import posixct_as_character
+
+        return posixct_as_character(x)
     if isinstance(x, dt.date):
         return x.isoformat()
     return as_character(x)

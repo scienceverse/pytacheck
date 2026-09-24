@@ -1,0 +1,73 @@
+# Store CI: check pull requests; on main, rebuild index.json and commit it.
+name: store
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # store build needs each pack's last commit
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install pytacheck
+        # until pytacheck is on PyPI
+        run: pip install "pytacheck @ git+https://github.com/thesanogoeffect/pytacheck@main" pytest
+      - name: Check the store
+        run: pytacheck store build . --check --repo "${{ github.repository }}"
+      - name: Check changed packs
+        env:
+          BASE: ${{ github.event.pull_request.base.sha }}
+        run: |
+          status=0
+          changed=$(git diff --name-only "$BASE"...HEAD -- packs/ | cut -d/ -f2 | sed 's/\.json$//' | sort -u)
+          for name in $changed; do
+            if [ -d "packs/$name" ]; then
+              echo "::group::pytacheck pack check packs/$name"
+              pytacheck pack check "packs/$name" || status=1
+              if [ -d "packs/$name/tests" ]; then
+                (cd "packs/$name" && python -m pytest -q tests) || status=1
+              fi
+              echo "::endgroup::"
+            fi
+          done
+          exit $status
+
+  index:
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install pytacheck
+        run: pip install "pytacheck @ git+https://github.com/thesanogoeffect/pytacheck@main"
+      - name: Build index.json
+        run: pytacheck store build . --repo "${{ github.repository }}"
+      - name: Commit index.json
+        run: |
+          if git diff --quiet -- index.json; then
+            echo "index.json is up to date"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.json
+          git commit -m "Rebuild index.json"
+          git push

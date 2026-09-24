@@ -1,0 +1,5277 @@
+{
+  "id": "ref_accuracy.psychsci",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "ref_accuracy"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Reference Accuracy"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "reference"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 110,
+        "names": [
+          "paper_id",
+          "bib_id",
+          "doi.orig",
+          "title.orig",
+          "year.orig",
+          "authors.orig",
+          "container.orig",
+          "doi.match",
+          "title.match",
+          "year.match",
+          "authors.match",
+          "container.match",
+          "text",
+          "score",
+          "doi_mismatch",
+          "year_mismatch",
+          "container_mismatch",
+          "title_mismatch",
+          "author_mismatch",
+          "tier",
+          "no_match",
+          "incoherent",
+          "no_doi"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "0956797613520608",
+              "0956797613520608",
+              "0956797613520608",
+              "0956797613520608",
+              "0956797613520608",
+              "0956797613520608",
+              "0956797613520608",
+              "0956797613520608",
+              "0956797613520608",
+              "0956797613520608",
+              "0956797613520608",
+              "0956797613520608",
+              "0956797613520608",
+              "0956797613520608",
+              "0956797613520608",
+              "0956797613520608",
+              "0956797613520608",
+              "0956797613520608",
+              "0956797613520608",
+              "0956797613520608",
+              "0956797613520608",
+              "0956797613520608",
+              "0956797613520608",
+              "0956797613520608",
+              "0956797613520608",
+              "0956797613520608",
+              "0956797613520608",
+              "0956797613520608",
+              "0956797613520608",
+              "0956797613520608",
+              "0956797613520608",
+              "0956797613520608",
+              "0956797613520608",
+              "0956797613520608",
+              "0956797613520608",
+              "0956797613520608",
+              "0956797613520608",
+              "0956797613520608",
+              "0956797613520608",
+              "0956797613520608",
+              "0956797613520608",
+              "0956797614522816",
+              "0956797614522816",
+              "0956797614522816",
+              "0956797614522816",
+              "0956797614522816",
+              "0956797614522816",
+              "0956797614522816",
+              "0956797614522816",
+              "0956797614522816",
+              "0956797614522816",
+              "0956797614522816",
+              "0956797614522816",
+              "0956797614522816",
+              "0956797614522816",
+              "0956797614522816",
+              "0956797614522816",
+              "0956797614522816",
+              "0956797614522816",
+              "0956797614522816",
+              "0956797614522816",
+              "0956797614522816",
+              "0956797614522816",
+              "0956797614522816",
+              "0956797614522816",
+              "0956797614522816",
+              "0956797614522816",
+              "0956797614527830",
+              "0956797614527830",
+              "0956797614527830",
+              "0956797614527830",
+              "0956797614527830",
+              "0956797614527830",
+              "0956797614527830",
+              "0956797614527830",
+              "0956797614527830",
+              "0956797614527830",
+              "0956797614527830",
+              "0956797614527830",
+              "0956797614527830",
+              "0956797614527830",
+              "0956797614527830",
+              "0956797614527830",
+              "0956797614527830",
+              "0956797614527830",
+              "0956797614527830",
+              "0956797614527830",
+              "0956797614527830",
+              "0956797614527830",
+              "0956797614527830",
+              "0956797614527830",
+              "0956797614527830",
+              "0956797614527830",
+              "0956797614527830",
+              "0956797614527830",
+              "0956797614527830",
+              "0956797614527830",
+              "0956797614527830",
+              "0956797614527830",
+              "0956797614527830",
+              "0956797614527830",
+              "0956797614527830",
+              "0956797614527830",
+              "0956797614527830",
+              "0956797614527830",
+              "to_err_is_human",
+              "to_err_is_human",
+              "to_err_is_human",
+              "to_err_is_human",
+              "to_err_is_human"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20,
+              21,
+              22,
+              23,
+              24,
+              25,
+              26,
+              27,
+              28,
+              29,
+              30,
+              31,
+              32,
+              33,
+              34,
+              35,
+              36,
+              37,
+              38,
+              39,
+              40,
+              0,
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20,
+              21,
+              22,
+              23,
+              24,
+              25,
+              0,
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20,
+              21,
+              22,
+              23,
+              24,
+              25,
+              26,
+              27,
+              28,
+              29,
+              30,
+              31,
+              32,
+              33,
+              34,
+              35,
+              36,
+              37,
+              0,
+              1,
+              2,
+              3,
+              4
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "10.32614/10.5281/zenodo.2669586",
+              "10.1037/0003-066x.54.6.408",
+              "10.1177/0956797614520714",
+              "",
+              "10.0000/0123456789"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Recovery from ideomotor apraxia: A study on acute stroke patients",
+              "Action observation activates premotor and parietal areas in a somatotopic manner: An fMRI study",
+              "On beyond mirror neurons: Internal representations subserving imitation and recognition of skilled object-related actions in humans",
+              "Statedependent TMS reveals a hierarchical representation of observed acts in the temporal, parietal, and premotor cortices",
+              "Intracortical inhibition and facilitation in different representations of the human motor cortex",
+              "",
+              "Action mirroring and action understanding: An alternative account",
+              "Understanding motor events: A neurophysiological study",
+              "The role of social cognition in decision making",
+              "Action recognition in the premotor cortex",
+              "A unifying view of the basis of social cognition",
+              "The observation and execution of actions share motor and somatosensory voxels in all tested subjects: Single-subject analyses of unsmoothed fMRI data",
+              "Functional organization of inferior area 6 in the macaque monkey: I. Somatotopy and the control of proximal movements",
+              "Depression of human corticospinal excitability induced by magnetic theta-burst stimulation: Evidence of rapid polarity-reversing metaplasticity",
+              "Somatotopy of monkey premotor cortex examined with microstimulation",
+              "The motor hierarchy: From kinematics to goals and intentions",
+              "Somatotopic representation of action words in the motor and premotor cortex",
+              "Eight problems for the mirror neuron theory of action understanding in monkeys and humans",
+              "Theta burst stimulation of the human motor cortex",
+              "The effect of continuous theta burst stimulation over premotor cortex on circuits in primary motor cortex and spinal cord",
+              "Grasping the intentions of others with one's own mirror neuron system",
+              "Coding observed motor acts: Different organizational principles in parietal and premotor cortex of humans",
+              "Predictive coding: An account of the mirror neuron system",
+              "Evidence of mirror neurons in human inferior frontal gyrus",
+              "Charting the excitability of premotor to motor connections while withholding or initiating a selected movement",
+              "The elusive lesion-apraxia of speech link in Broca's aphasia",
+              "The neural basis of body form and body action agnosia",
+              "Single-neuron responses in humans during execution and observation of actions",
+              "Functional connectivity of human premotor and motor cortex explored with repetitive transcranial magnetic stimulation",
+              "Neural underpinnings of gesture discrimination in patients with limb apraxia",
+              "Action understanding requires the left inferior frontal cortex",
+              "Progressive ideomotor apraxia: Evidence for a selective impairment of the action production system",
+              "Functional organization of inferior area 6 in the macaque monkey: II. Area F5 and the control of distal movements",
+              "The mirror-neuron system",
+              "Premotor cortex and the recognition of motor actions",
+              "Action comprehension in aphasia: Linguistic and nonlinguistic deficits and their lesion correlates",
+              "",
+              "Functional-anatomical concepts of human premotor cortex: Evidence from fMRI and PET studies",
+              "Action simulation plays a critical role in deceptive action recognition",
+              "Representation of body identity and body actions in extrastriate body area and ventral premotor cortex",
+              "Prefrontal involvement in imitation learning of hand actions: Effects of practice and expertise",
+              "Recognition-by-components: A theory of human image understanding",
+              "Visual object recognition",
+              "Ultrarapid categorisation of natural scenes does not rely on colour cues: A study in monkeys and humans",
+              "What do we perceive in a glance of a real-world scene",
+              "Why do we SLIP to the basic level? Computational constraints and their implementation",
+              "The briefest of glances: The time course of natural scene understanding",
+              "Recognition of natural scenes from global properties: Seeing the forest without representing the trees",
+              "Processing scene context: Fast categorization and object interference",
+              "The natural/man-made distinction is made prior to basic-level distinctions in scene gist processing",
+              "The span of the effective stimulus during a fixation in reading",
+              "Coarse blobs or fine edges? Evidence that information diagnosticity changes the perception of complex visual stimuli",
+              "Modeling the shape of the scene: A holistic representation of the spatial envelope",
+              "Building the gist of a scene: The role of global image features in recognition",
+              "Meaning in visual scenes",
+              "Short-term conceptual memory for pictures",
+              "Principles of categorization",
+              "Basic objects in natural categories",
+              "Effects of spatial frequency bands on perceptual decision: It is not the stimuli but the comparison",
+              "How long to get to the \"gist\" of real-world natural scenes?",
+              "Diagnostic recognition: Task constraints, object information, and their interactions",
+              "From blobs to boundary edges: Evidence for time-and spatial-scale-dependent scene recognition",
+              "A feedforward architecture accounts for rapid categorization",
+              "Speed of processing in the human visual system",
+              "Statistics of natural image categories",
+              "Categories of environmental scenes",
+              "Surfing a spike wave down the ventral stream",
+              "Trustworthiness and competitive altruism can also solve the \"tragedy of the commons",
+              "Activation of social norms in social dilemmas: A review of the evidence and reflections on the implications for environmental behaviour",
+              "Van der Kloot",
+              "Money and happiness: Rank of income, not income, affects life satisfaction",
+              "Hardin revisited: A critical look at perception and the logic of the commons",
+              "Understanding the social costs of narcissism: The case of the tragedy of the commons",
+              "Committee on the Human Dimensions of Global Change",
+              "Serotonin modulates striatal responses to fairness and retaliation in humans",
+              "Serotonin modulates behavioral reactions to unfairness",
+              "Influence of trait hostility on tryptophan depletioninduced laboratory aggression",
+              "The tragedy of the commons: Twenty-two years later",
+              "Altruistic punishment in humans",
+              "",
+              "Social preferences, beliefs, and the dynamics of free riding in public good experiments",
+              "Are people conditionally cooperative? Evidence from a public goods experiment",
+              "The real tragedy of the commons",
+              "The tragedy of the commons",
+              "How uncertainty stimulates over-harvesting in a resource dilemma: Three possible explanations",
+              "Selective alteration of personality and social behavior by serotonergic intervention",
+              "Irrational economic decisionmaking after ventromedial prefrontal damage: Evidence from the ultimatum game",
+              "Social dilemmas: The anatomy of cooperation",
+              "Am I abnormal? Relative rank and social norm effects in judgments of anxiety and depression symptom severity",
+              "Clinical and physiological consequences of rapid tryptophan depletion",
+              "Normative social influence is underdetected",
+              "Reformulating the commons",
+              "A general framework for analyzing sustainability of social-ecological systems",
+              "Factor structure of the Barratt Impulsiveness Scale",
+              "Serotonergic mechanisms promote dominance acquisition in adult male vervet monkeys",
+              "The tragedy of the commons in evolutionary biology",
+              "",
+              "Mood is indirectly related to serotonin, norepinephrine and dopamine levels in humans: A meta-analysis of monoamine depletion studies",
+              "Low-serotonin levels increase delayed reward discounting in humans",
+              "Serotonin differentially regulates short-and long-term prediction of rewards in the ventral and dorsal striatum",
+              "Social norms and cooperation in reallife social dilemmas",
+              "Development and validation of brief measures of positive and negative affect: The PANAS scales",
+              "An evolutionary based social rank explanation of why low income predicts mental distress: A 17 year cohort study of 30,000 people",
+              "Effects of tryptophan depletion on the performance of an iterated prisoner's dilemma game in healthy adults",
+              "Psychological traces of China's socio-economic reforms in the ultimatum and dictator games",
+              "Faux: Simulation for Factorial Designs",
+              "The Origins of Sex Differences in Human Behavior: Evolved Dispositions Versus Social Roles",
+              "Evil Genius? How Dishonesty Can Lead to Greater Creativity",
+              "Equivalence Testing for Psychological Research",
+              "Human Error Is a Symptom of a Poor Design"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1987,
+              2001,
+              2005,
+              2010,
+              1998,
+              null,
+              2008,
+              1992,
+              2008,
+              1996,
+              2004,
+              2009,
+              1988,
+              2008,
+              1995,
+              2007,
+              2004,
+              2009,
+              2005,
+              2009,
+              2005,
+              2010,
+              2007,
+              2009,
+              2010,
+              1984,
+              2008,
+              2010,
+              2002,
+              2008,
+              2006,
+              1995,
+              1988,
+              2004,
+              1996,
+              2004,
+              2001,
+              2003,
+              2013,
+              2006,
+              2007,
+              1987,
+              1995,
+              2000,
+              2007,
+              2001,
+              2009,
+              2009,
+              2007,
+              2010,
+              1975,
+              1997,
+              2001,
+              2006,
+              1975,
+              1976,
+              1978,
+              1976,
+              2010,
+              2005,
+              1998,
+              1994,
+              2007,
+              1996,
+              2003,
+              1983,
+              2002,
+              2004,
+              2007,
+              2002,
+              2010,
+              2001,
+              2005,
+              2002,
+              2013,
+              2008,
+              1999,
+              1990,
+              2002,
+              2002,
+              2010,
+              2001,
+              2001,
+              1968,
+              2002,
+              1998,
+              2007,
+              1998,
+              2012,
+              2000,
+              2008,
+              2000,
+              2009,
+              1995,
+              1991,
+              2007,
+              1996,
+              2007,
+              2008,
+              2007,
+              2008,
+              1988,
+              2012,
+              2006,
+              2013,
+              2025,
+              1999,
+              2014,
+              2018,
+              2021
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Basso, A; Capitani, E; Della Sala, S; Laiacona, M; Spinnler, H",
+              "Buccino, G; Binkofski, F; Fink, G R; Fadiga, L; Fogassi, L; Gallese, V; Freund, . .; , H J",
+              "Buxbaum, L J; Kyle, K M; Menon, R",
+              "Cattaneo, L; Sandrini, M; Schwarzbach, J",
+              "Chen, R; Tam, A; Butefisch, C; Corwell, B; Ziemann, U; Rothwell, J C; Cohen, L G",
+              "Cook, R; Bird, G; Catmur, C; Press, C; Heyes, C M",
+              "Csibra, G",
+              "Di Pellegrino, G; Fadiga, L; Fogassi, L; Gallese, V; Rizzolatti, G",
+              "Frith, C D; Singer, T",
+              "Gallese, V; Fadiga, L; Fogassi, L; Rizzolatti, G",
+              "Gallese, V; Keysers, C; Rizzolatti, G",
+              "Gazzola, V; Keysers, C",
+              "Gentilucci, M; Fogassi, L; Luppino, G; Matelli, M; Camarda, R; Rizzolatti, G",
+              "Gentner, R; Wankerl, K; Reinsberger, C; Zeller, D; Classen, J",
+              "Godschalk, M; Mitz, A R; Van Duin, B; Van Der Burg, H",
+              "Hamilton, A; Grafton, S",
+              "Hauk, O; Johnsrude, I; Pulvermüller, F",
+              "Hickok, G",
+              "Huang, Y Z; Edwards, M J; Rounis, E; Bhatia, K P; Rothwell, J C",
+              "Huang, Y Z; Rothwell, J C; Lu, C S; Wang, J; Weng, Y H; Lai, S C; Chen, R S",
+              "Iacoboni, M; Molnar-Szakacs, I; Gallese, V; Buccino, G; Mazziotta, J C; Rizzolatti, G",
+              "Jastorff, J; Begliomini, C; Fabbri-Destro, M; Rizzolatti, G; Orban, G",
+              "Kilner, J; Friston, K; Frith, C",
+              "Kilner, J; Neal, A; Weiskopf, N; Friston, K; Frith, C",
+              "Kroeger, J; Bäumer, T; Jonas, M; Rothwell, J; Siebner, H; Münchau, A",
+              "Marquardt, T; Sussman, H",
+              "Moro, V; Urgesi, C; Pernigo, S; Lanteri, P; Pazzaglia, M; Aglioti, S M",
+              "Mukamel, R; Ekstrom, A D; Kaplan, J; Iacoboni, M; Fried, I",
+              "Münchau, A; Bloem, B R; Irlbacher, K; Trimble, M R; Rothwell, J C",
+              "Pazzaglia, M; Smania, N; Corato, E; Aglioti, S M",
+              "Pobric, G; Hamilton, A",
+              "Rapcsak, S Z; Ochipa, C; Anderson, K C; Poizner, H",
+              "Rizzolatti, G; Camarda, R; Fogassi, L; Gentilucci, M; Luppino, G; Matelli, M",
+              "Rizzolatti, G; Craighero, L",
+              "Rizzolatti, G; Fadiga, L; Gallese, V; Fogassi, L",
+              "Saygin, A P; Wilson, S M; Dronkers, N F; Bates, E",
+              "Schneider, W; Eschman, A; Zuccolotto, A",
+              "Schubotz, R; Von Cramon, Y",
+              "Tidoni, E; Borgomaneri, S; Di Pellegrino, G; Avenanti, A",
+              "Urgesi, C; Candidi, M; Ionta, S; Aglioti, S",
+              "Vogt, S; Buccino, G; Wohlschlager, A M; Canessa, N; Shah, N J; Zilles, K; Fink, . .; , G R",
+              "Biederman, I",
+              "Biederman, I",
+              "Delorme, A; Richard, G; Fabre-Thorpe, M",
+              "Fei-Fei, L; Iyer, A; Koch, C; Perona, P",
+              "Gosselin, F; Schyns, P G",
+              "Greene, M R; Oliva, A",
+              "Greene, M R; Oliva, A",
+              "Joubert, O; Rousselet, G; Fize, D; Fabre-Thorpe, M",
+              "Loschky, L C; Larson, A M",
+              "Mcconkie, G W; Rayner, K",
+              "Oliva, A; Schyns, P",
+              "Oliva, A; Torralba, A",
+              "Oliva, A; Torralba, A",
+              "Potter, M C",
+              "Potter, M C",
+              "Rosch, E",
+              "Rosch, E; Mervis, C B; Gray, W D; Johnson, D M; Boyes-Braem, P",
+              "Rotshtein, P; Schofield, A; Funes, M J; Humphreys, G W",
+              "Rousselet, G A; Joubert, O R; Fabre-Thorpe, M",
+              "Schyns, P G",
+              "Schyns, P G; Oliva, A",
+              "Serre, T; Oliva, A; Poggio, T",
+              "Thorpe, S J; Fize, D; Marlot, C",
+              "Torralba, A; Oliva, A",
+              "Tversky, B; Hemenway, K",
+              "Vanrullen, R; Thorpe, S J",
+              "Barclay, P",
+              "Biel, A; Thøgersen, J",
+              "Booij, L; Van Der Does, W; Benkelfat, C; Bremner, J D; Cowen, P J; Fava, M",
+              "Boyce, C J; Brown, G D A; Moore, S C",
+              "Burke, B E",
+              "Campbell, W K; Bush, C P; Brunell, A B; Shelton, J",
+              "",
+              "Crockett, M J; Apergis-Schoute, A; Herrmann, B; Lieberman, M; Müller, U; Robbins, T W; Clark, L",
+              "Crockett, M J; Clark, L; Tabibnia, G; Lieberman, M D; Robbins, T W",
+              "Dougherty, D M; Bjork, J M; Marsh, D M; Moeller, F G",
+              "Feeny, D; Berkes, F; Mccay, B J; Acheson, J M",
+              "Fehr, E; Gächter, S",
+              "First, M B; Spitzer, R L; Gibbon, M; Williams, J B W",
+              "Fischbacher, U; Gächter, S",
+              "Fischbacher, U; Gächter, S; Fehr, E",
+              "Gardiner, S M",
+              "Hardin, G",
+              "Jager, W; Janssen, M A; Vlek, C A J",
+              "Knutson, B; Wolkowitz, O M; Cole, S W; Chan, T; Moore, E A; Johnson, R C; Reus, . .; , V I",
+              "Koenigs, M; Tranel, D",
+              "Kollock, P",
+              "Melrose, K L; Brown, G D A; Wood, A M",
+              "Moore, P; Landolt, H P; Seifritz, E; Clark, C; Bhatti, T; Kelsoe, J; Gillin, . .; , J C",
+              "Nolan, J M; Schultz, P W; Cialdini, R B; Goldstein, N J; Griskevicius, V",
+              "Ostrom, E",
+              "Ostrom, E",
+              "Patton, J H; Stanford, M S; Barratt, E S",
+              "Raleigh, M J; Mcguire, M T; Brammer, G L; Pollack, D B; Yuwiler, A",
+              "Rankin, D J; Bargum, K; Kokko, H",
+              "Raven, J; , B; , C; , D; Oxford, E; England, ",
+              "Ruhe, H G; Mason, N S; Schene, A H",
+              "Schweighofer, N; Bertin, M; Shishida, K; Okamoto, Y; Tanaka, S C; Yamawaki, S; Doya, K",
+              "Tanaka, S C; Schweighofer, N; Asahi, S; Shishida, K; Okamoto, Y; Yamawaki, S; Doya, K",
+              "Thøgersen, J",
+              "Watson, D; Clark, L A; Tellegen, A",
+              "Wood, A M; Boyce, C J; Moore, S C; Brown, G D A",
+              "Wood, R M; Rilling, J K; Sanfey, A G; Bhagwagar, Z; Rogers, R D",
+              "Zhu, L; Gigerenzer, G; Huangfu, G",
+              "Debruine, Lisa",
+              "Eagly, Alice H; Wood, Wendy",
+              "Gino, Francesca; Wiltermuth, Scott S",
+              "Lakens, Daniël",
+              "Smith, F"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Brain",
+              "European Journal of Neuroscience",
+              "Cognitive Brain Research",
+              "Cerebral Cortex",
+              "Journal of Neurophysiology",
+              "",
+              "",
+              "Experimental Brain Research",
+              "Philosophical Transactions of the Royal Society B: Biological Sciences",
+              "Brain",
+              "Trends in Cognitive Sciences",
+              "Cerebral Cortex",
+              "Experimental Brain Research",
+              "Cerebral Cortex",
+              "Neuroscience Research",
+              "",
+              "Neuron",
+              "Journal of Cognitive Neuroscience",
+              "Neuron",
+              "Clinical Neurophysiology",
+              "PLoS Biology",
+              "Journal of Neurophysiology",
+              "Cognitive Processing",
+              "The Journal of Neuroscience",
+              "European Journal of Neuroscience",
+              "",
+              "Neuron",
+              "Current Biology",
+              "The Journal of Neuroscience",
+              "The Journal of Neuroscience",
+              "Current Biology",
+              "Brain and Cognition",
+              "Experimental Brain Research",
+              "Annual Review of Neuroscience",
+              "Cognitive Brain Research",
+              "Neuropsychologia",
+              "",
+              "NeuroImage",
+              "The Journal of Neuroscience",
+              "Nature Neuroscience",
+              "NeuroImage",
+              "Psychological Review",
+              "",
+              "Vision Research",
+              "Journal of Vision",
+              "Psychological Review",
+              "Psychological Science",
+              "Cognitive Psychology",
+              "Vision Research",
+              "Visual Cognition",
+              "Perception & Psychophysics",
+              "Cognitive Psychology",
+              "International Journal of Computer Vision",
+              "Progress in Brain Research: Visual Perception",
+              "Science",
+              "Journal of Experimental Psychology: Human Learning and Memory",
+              "",
+              "Cognitive Psychology",
+              "Journal of Vision",
+              "Visual Cognition",
+              "Cognition",
+              "Psychological Science",
+              "Proceedings of the National Academy of Sciences",
+              "Nature",
+              "Network: Computation in Neural Systems",
+              "Cognitive Psychology",
+              "Vision Research",
+              "Evolution and Human Behavior",
+              "Journal of Economic Psychology",
+              "",
+              "Psychological Science",
+              "Human Ecology",
+              "Personality and Social Psychology Bulletin",
+              "",
+              "Journal of Neuroscience",
+              "Science",
+              "Psychiatry Research",
+              "Human Ecology",
+              "Nature",
+              "",
+              "American Economic Review",
+              "Economics Letters",
+              "Philosophy & Public Affairs",
+              "Science",
+              "Journal of Environmental Psychology",
+              "American Journal of Psychiatry",
+              "Journal of Neuroscience",
+              "Annual Review of Sociology",
+              "Journal of Behavioral Decision Making",
+              "Neuropsychopharmacology",
+              "Personality and Social Psychology Bulletin",
+              "Swiss Political Science Review",
+              "Science",
+              "Journal of Clinical Psychology",
+              "Brain Research",
+              "Trends in Ecology & Evolution",
+              "",
+              "Molecular Psychiatry",
+              "Journal of Neuroscience",
+              "PLoS ONE",
+              "Journal of Economic Psychology",
+              "Journal of Personality and Social Psychology",
+              "Journal of Affective Disorders",
+              "Neuropsychopharmacology",
+              "PLoS ONE",
+              null,
+              "American Psychologist",
+              "Psychological Science",
+              "Psychological Science",
+              "Journal of Journals"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "10.1093/brain/110.3.747",
+              "10.1111/j.1460-9568.2001.01385.x",
+              "10.1016/j.cogbrainres.2005.05.014",
+              "10.1093/cercor/bhp291",
+              "10.1152/jn.1998.80.6.2870",
+              null,
+              "10.1093/acprof:oso/9780199231447.003.0020",
+              "10.1007/bf00230027",
+              "10.1098/rstb.2008.0156",
+              "10.1093/brain/119.2.593",
+              "10.1016/j.tics.2004.07.002",
+              "10.1093/cercor/bhn181",
+              "10.1007/bf00248741",
+              "10.1093/cercor/bhm239",
+              "10.1016/0168-0102(95)00950-7",
+              "10.1093/acprof:oso/9780199231447.003.0018",
+              "10.1016/s0896-6273(03)00838-9",
+              "10.1162/jocn.2009.21189",
+              "10.1016/j.neuron.2004.12.033",
+              "10.1016/j.clinph.2009.01.003",
+              null,
+              "10.1152/jn.00254.2010",
+              "10.1007/s10339-007-0170-2",
+              "10.1523/jneurosci.2668-09.2009",
+              "10.1111/j.1460-9568.2010.07442.x",
+              null,
+              "10.1016/j.neuron.2008.09.022",
+              "10.1016/j.cub.2010.02.045",
+              "10.1523/jneurosci.22-02-00554.2002",
+              "10.1523/jneurosci.5748-07.2008",
+              "10.1016/j.cub.2006.01.033",
+              "10.1006/brcg.1995.1018",
+              "10.1007/bf00248742",
+              "10.1146/annurev.neuro.27.070203.144230",
+              "10.1016/0926-6410(95)00038-0",
+              "10.1016/j.neuropsychologia.2004.04.016",
+              null,
+              "10.1016/j.neuroimage.2003.09.014",
+              "10.1523/jneurosci.2228-11.2013",
+              "10.1038/nn1815",
+              "10.1016/j.neuroimage.2007.07.005",
+              "10.1037/0033-295x.94.2.115",
+              null,
+              "10.1016/s0042-6989(00)00083-3",
+              "10.1167/7.1.10",
+              "10.1037//0033-295x.108.4.735",
+              "10.1111/j.1467-9280.2009.02316.x",
+              "10.1016/j.cogpsych.2008.06.001",
+              "10.1016/j.visres.2007.09.013",
+              "10.1080/13506280902937606",
+              "10.3758/bf03203972",
+              "10.1006/cogp.1997.0667",
+              "10.1023/a:1011139631724",
+              "10.1016/s0079-6123(06)55002-2",
+              null,
+              "10.1037/0278-7393.2.5.509",
+              null,
+              "10.1016/0010-0285(76)90013-x",
+              "10.1167/10.10.25",
+              "10.1080/13506280444000553",
+              "10.1016/s0010-0277(98)00016-x",
+              "10.1111/j.1467-9280.1994.tb00500.x",
+              "10.1073/pnas.0700622104",
+              "10.1038/381520a0",
+              "10.1088/0954-898x_14_3_302",
+              "10.1016/0010-0285(83)90006-3",
+              "10.1016/s0042-6989(02)00298-5",
+              "10.1016/j.evolhumbehav.2004.04.002",
+              "10.1016/j.joep.2006.03.003",
+              null,
+              "10.1177/0956797610362671",
+              "10.1023/a:1013145905257",
+              "10.1177/0146167205274855",
+              null,
+              "10.1523/jneurosci.2761-12.2013",
+              "10.1126/science.1155577",
+              "10.1016/s0165-1781(99)00088-8",
+              "10.1007/bf00889070",
+              "10.1038/415137a",
+              null,
+              "10.1257/aer.100.1.541",
+              "10.1016/s0165-1765(01)00394-9",
+              "10.1111/j.1088-4963.2001.00387.x",
+              null,
+              "10.1006/jevp.2002.0257",
+              "10.7551/mitpress/3077.003.0074",
+              "10.1523/jneurosci.4606-06.2007",
+              "10.1146/annurev.soc.24.1.183",
+              "10.1002/bdm.1754",
+              "10.1001/archpsyc.55.6.534",
+              "10.1177/0146167208316691",
+              "10.1002/j.1662-6370.2000.tb00285.x",
+              "10.1126/science.1172133",
+              "10.1002/1097-4679(199511)51:6<768::aid-jclp2270510607>3.0.co;2-1",
+              "10.1016/0006-8993(91)90001-c",
+              "10.1016/j.tree.2007.07.009",
+              null,
+              "10.1038/sj.mp.4001949",
+              "10.1523/jneurosci.4982-07.2008",
+              null,
+              "10.1016/j.joep.2007.12.004",
+              "10.1037/0022-3514.54.6.1063",
+              "10.1016/j.jad.2011.09.014",
+              "10.1038/sj.npp.1300932",
+              null,
+              null,
+              "10.1037/0003-066x.54.6.408",
+              "10.1177/0956797614520714",
+              "10.1177/2515245918770963",
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "RECOVERY FROM IDEOMOTOR APRAXIA",
+              "Action observation activates premotor and parietal areas in a somatotopic manner: an fMRI study",
+              "On beyond mirror neurons: Internal representations subserving imitation and recognition of skilled object-related actions in humans",
+              "State-Dependent TMS Reveals a Hierarchical Representation of Observed Acts in the Temporal, Parietal, and Premotor Cortices",
+              "Intracortical Inhibition and Facilitation in Different Representations of the Human Motor Cortex",
+              null,
+              "Action mirroring and action understanding: an alternative account",
+              "Understanding motor events: a neurophysiological study",
+              "The role of social cognition in decision making",
+              "Action recognition in the premotor cortex",
+              "A unifying view of the basis of social cognition",
+              "The Observation and Execution of Actions Share Motor and Somatosensory Voxels in all Tested Subjects: Single-Subject Analyses of Unsmoothed fMRI Data",
+              "Functional organization of inferior area 6 in the macaque monkey",
+              "Depression of Human Corticospinal Excitability Induced by Magnetic Theta-burst Stimulation: Evidence of Rapid Polarity-Reversing Metaplasticity",
+              "Somatotopy of monkey premotor cortex examined with microstimulation",
+              "The motor hierarchy: from kinematics to goals and intentions",
+              "Somatotopic Representation of Action Words in Human Motor and Premotor Cortex",
+              "Eight Problems for the Mirror Neuron Theory of Action Understanding in Monkeys and Humans",
+              "Theta Burst Stimulation of the Human Motor Cortex",
+              "The effect of continuous theta burst stimulation over premotor cortex on circuits in primary motor cortex and spinal cord",
+              null,
+              "Coding Observed Motor Acts: Different Organizational Principles in the Parietal and Premotor Cortex of Humans",
+              "Predictive coding: an account of the mirror neuron system",
+              "Evidence of Mirror Neurons in Human Inferior Frontal Gyrus",
+              "Charting the excitability of premotor to motor connections while withholding or initiating a selected movement",
+              null,
+              "The Neural Basis of Body Form and Body Action Agnosia",
+              "Single-Neuron Responses in Humans during Execution and Observation of Actions",
+              "Functional Connectivity of Human Premotor and Motor Cortex Explored with Repetitive Transcranial Magnetic Stimulation",
+              "Neural Underpinnings of Gesture Discrimination in Patients with Limb Apraxia",
+              "Action Understanding Requires the Left Inferior Frontal Cortex",
+              "Progressive Ideomotor Apraxia - Evidence for a Selective Impairment of the Action Production System",
+              "Functional organization of inferior area 6 in the macaque monkey",
+              "THE MIRROR-NEURON SYSTEM",
+              "Premotor cortex and the recognition of motor actions",
+              "Action comprehension in aphasia: linguistic and non-linguistic deficits and their lesion correlates",
+              null,
+              "Functional–anatomical concepts of human premotor cortex: evidence from fMRI and PET studies",
+              "Action Simulation Plays a Critical Role in Deceptive Action Recognition",
+              "Representation of body identity and body actions in extrastriate body area and ventral premotor cortex",
+              "Prefrontal involvement in imitation learning of hand actions: Effects of practice and expertise",
+              "Recognition-by-components: A theory of human image understanding.",
+              null,
+              "Ultra-rapid categorisation of natural scenes does not rely on colour cues: a study in monkeys and humans",
+              "What do we perceive in a glance of a real-world scene?",
+              "Why do we SLIP to the basic level? Computational constraints and their implementation.",
+              "The Briefest of Glances",
+              "Recognition of natural scenes from global properties: Seeing the forest without representing the trees",
+              "Processing scene context: Fast categorization and object interference",
+              "The natural/man-made distinction is made before basic-level distinctions in scene gist processing",
+              "The span of the effective stimulus during a fixation in reading",
+              "Coarse Blobs or Fine Edges? Evidence That Information Diagnosticity Changes the Perception of Complex Visual Stimuli",
+              "Modeling the Shape of the Scene: A Holistic Representation of the Spatial Envelope",
+              "Chapter 2 Building the gist of a scene: the role of global image features in recognition",
+              null,
+              "Short-term conceptual memory for pictures.",
+              null,
+              "Basic objects in natural categories",
+              "Effects of spatial frequency bands on perceptual decision: It is not the stimuli but the comparison",
+              "How long to get to the “gist” of real-world natural scenes?",
+              "Diagnostic recognition: task constraints, object information, and their interactions",
+              "From Blobs to Boundary Edges: Evidence for Time- and Spatial-Scale-Dependent Scene Recognition",
+              "A feedforward architecture accounts for rapid categorization",
+              "Speed of processing in the human visual system",
+              "Statistics of natural image categories",
+              "Categories of environmental scenes",
+              "Surfing a spike wave down the ventral stream",
+              "Trustworthiness and competitive altruism can also solve the “tragedy of the commons”",
+              "Activation of social norms in social dilemmas: A review of the evidence and reflections on the implications for environmental behaviour",
+              null,
+              "Money and Happiness",
+              "Hardin Revisited: A Critical Look at Perception and the Logic of the Commons",
+              "Understanding the Social Costs of Narcissism: The Case of the Tragedy of the Commons",
+              null,
+              "Serotonin Modulates Striatal Responses to Fairness and Retaliation in Humans",
+              "Serotonin Modulates Behavioral Reactions to Unfairness",
+              "Influence of trait hostility on tryptophan depletion-induced laboratory aggression",
+              "The Tragedy of the Commons: Twenty-two years later",
+              "Altruistic punishment in humans",
+              null,
+              "Social Preferences, Beliefs, and the Dynamics of Free Riding in Public Goods Experiments",
+              "Are people conditionally cooperative? Evidence from a public goods experiment",
+              "The Real Tragedy of the Commons",
+              null,
+              "HOW UNCERTAINTY STIMULATES OVER-HARVESTING IN A RESOURCE DILEMMA: THREE PROCESS EXPLANATIONS",
+              "Selective Alteration of Personality and Social Behavior by Serotonergic Intervention",
+              "Irrational Economic Decision-Making after Ventromedial Prefrontal Damage: Evidence from the Ultimatum Game",
+              "Social Dilemmas: The Anatomy of Cooperation",
+              "Am I Abnormal? Relative Rank and Social Norm Effects in Judgments of Anxiety and Depression Symptom Severity",
+              "Rapid Tryptophan Depletion, Sleep Electroencephalogram, and Mood in Men With Remitted Depression on Serotonin Reuptake Inhibitors",
+              "Normative Social Influence is Underdetected",
+              "Reformulating the Commons",
+              "A General Framework for Analyzing Sustainability of Social-Ecological Systems",
+              "Factor structure of the barratt impulsiveness scale",
+              "Serotonergic mechanisms promote dominance acquisition in adult male vervet monkeys",
+              "The tragedy of the commons in evolutionary biology",
+              null,
+              "Mood is indirectly related to serotonin, norepinephrine and dopamine levels in humans: a meta-analysis of monoamine depletion studies",
+              "Low-Serotonin Levels Increase Delayed Reward Discounting in Humans",
+              null,
+              "Social norms and cooperation in real-life social dilemmas",
+              "Development and validation of brief measures of positive and negative affect: The PANAS scales.",
+              "An evolutionary based social rank explanation of why low income predicts mental distress: A 17 year cohort study of 30,000 people",
+              "Effects of Tryptophan Depletion on the Performance of an Iterated Prisoner's Dilemma Game in Healthy Adults",
+              null,
+              null,
+              "The origins of sex differences in human behavior: Evolved dispositions versus social roles.",
+              "Retracted: Evil Genius? How Dishonesty Can Lead to Greater Creativity",
+              "Equivalence Testing for Psychological Research: A Tutorial",
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1987,
+              2001,
+              2005,
+              2010,
+              1998,
+              null,
+              1993,
+              1992,
+              2008,
+              1996,
+              2004,
+              2008,
+              1988,
+              2007,
+              1995,
+              1993,
+              2004,
+              2009,
+              2005,
+              2009,
+              null,
+              2010,
+              2007,
+              2009,
+              2010,
+              null,
+              2008,
+              2010,
+              2002,
+              2008,
+              2006,
+              1995,
+              1988,
+              2004,
+              1996,
+              2004,
+              null,
+              2003,
+              2013,
+              2006,
+              2007,
+              1987,
+              null,
+              2000,
+              2007,
+              2001,
+              2009,
+              2009,
+              2007,
+              2010,
+              1975,
+              1997,
+              2001,
+              2006,
+              null,
+              1976,
+              null,
+              1976,
+              2010,
+              2005,
+              1998,
+              1994,
+              2007,
+              1996,
+              2003,
+              1983,
+              2002,
+              2004,
+              2007,
+              null,
+              2010,
+              2001,
+              2005,
+              null,
+              2013,
+              2008,
+              1999,
+              1990,
+              2002,
+              null,
+              2010,
+              2001,
+              2001,
+              null,
+              2002,
+              2002,
+              2007,
+              1998,
+              2012,
+              1998,
+              2008,
+              2000,
+              2009,
+              1995,
+              1991,
+              2007,
+              null,
+              2007,
+              2008,
+              null,
+              2008,
+              1988,
+              2012,
+              2006,
+              null,
+              null,
+              1999,
+              2014,
+              2018,
+              null
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "df",
+                "nrow": 5,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "ANNA",
+                      "ERMINIO",
+                      "SERGIO DELLA",
+                      "MARCELLA",
+                      "HANS"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "BASSO",
+                      "CAPITANI",
+                      "SALA",
+                      "LAIACONA",
+                      "SPINNLER"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "df",
+                "nrow": 10,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "G.",
+                      "F.",
+                      "G. R.",
+                      "L.",
+                      "L.",
+                      "V.",
+                      "R. J.",
+                      "K.",
+                      "G.",
+                      "H.‐J."
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Buccino",
+                      "Binkofski",
+                      "Fink",
+                      "Fadiga",
+                      "Fogassi",
+                      "Gallese",
+                      "Seitz",
+                      "Zilles",
+                      "Rizzolatti",
+                      "Freund"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "df",
+                "nrow": 3,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Laurel J.",
+                      "Kathleen M.",
+                      "Rukmini"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Buxbaum",
+                      "Kyle",
+                      "Menon"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "df",
+                "nrow": 3,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "L.",
+                      "M.",
+                      "J."
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Cattaneo",
+                      "Sandrini",
+                      "Schwarzbach"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "df",
+                "nrow": 7,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Robert",
+                      "Alda",
+                      "Cathrin",
+                      "Brian",
+                      "Ulf",
+                      "JOHN C.",
+                      "Leonardo G."
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Chen",
+                      "Tam",
+                      "Bütefisch",
+                      "Corwell",
+                      "Ziemann",
+                      "Rothwell",
+                      "Cohen"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "null"
+              },
+              {
+                "t": "df",
+                "nrow": 1,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Gergely"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Csibra"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "df",
+                "nrow": 5,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "G.",
+                      "L.",
+                      "L.",
+                      "V.",
+                      "G."
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "di Pellegrino",
+                      "Fadiga",
+                      "Fogassi",
+                      "Gallese",
+                      "Rizzolatti"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "df",
+                "nrow": 2,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Chris D",
+                      "Tania"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Frith",
+                      "Singer"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "df",
+                "nrow": 4,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Vittorio",
+                      "Luciano",
+                      "Leonardo",
+                      "Giacomo"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Gallese",
+                      "Fadiga",
+                      "Fogassi",
+                      "Rizzolatti"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "df",
+                "nrow": 3,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "V",
+                      "C",
+                      "G"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "GALLESE",
+                      "KEYSERS",
+                      "RIZZOLATTI"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "df",
+                "nrow": 2,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "V.",
+                      "C."
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Gazzola",
+                      "Keysers"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "df",
+                "nrow": 6,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "M.",
+                      "L.",
+                      "G.",
+                      "M.",
+                      "R.",
+                      "G."
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Gentilucci",
+                      "Fogassi",
+                      "Luppino",
+                      "Matelli",
+                      "Camarda",
+                      "Rizzolatti"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "df",
+                "nrow": 5,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "R.",
+                      "K.",
+                      "C.",
+                      "D.",
+                      "J."
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Gentner",
+                      "Wankerl",
+                      "Reinsberger",
+                      "Zeller",
+                      "Classen"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "df",
+                "nrow": 4,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Moshe",
+                      "Andrew R",
+                      "Berber van",
+                      "Hans van der"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Godschalk",
+                      "Mitz",
+                      "Duin",
+                      "Burga"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "df",
+                "nrow": 2,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Antonia F de C.",
+                      "Scott T."
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Hamilton",
+                      "Grafton"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "df",
+                "nrow": 3,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Olaf",
+                      "Ingrid",
+                      "Friedemann"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Hauk",
+                      "Johnsrude",
+                      "Pulvermüller"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "df",
+                "nrow": 1,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Gregory"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Hickok"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "df",
+                "nrow": 5,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Ying-Zu",
+                      "Mark J.",
+                      "Elisabeth",
+                      "Kailash P.",
+                      "John C."
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Huang",
+                      "Edwards",
+                      "Rounis",
+                      "Bhatia",
+                      "Rothwell"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "df",
+                "nrow": 9,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Ying-Zu",
+                      "John C.",
+                      "Chin-Song",
+                      "JiunJie",
+                      "Yi-Hsin",
+                      "Szu-Chia",
+                      "Wen-Li",
+                      "June",
+                      "Rou-Shayn"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Huang",
+                      "Rothwell",
+                      "Lu",
+                      "Wang",
+                      "Weng",
+                      "Lai",
+                      "Chuang",
+                      "Hung",
+                      "Chen"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "null"
+              },
+              {
+                "t": "df",
+                "nrow": 5,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Jan",
+                      "Chiara",
+                      "Maddalena",
+                      "Giacomo",
+                      "Guy A."
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Jastorff",
+                      "Begliomini",
+                      "Fabbri-Destro",
+                      "Rizzolatti",
+                      "Orban"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "df",
+                "nrow": 3,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "James M.",
+                      "Karl J.",
+                      "Chris D."
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Kilner",
+                      "Friston",
+                      "Frith"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "df",
+                "nrow": 5,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "James M.",
+                      "Alice",
+                      "Nikolaus",
+                      "Karl J.",
+                      "Chris D."
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Kilner",
+                      "Neal",
+                      "Weiskopf",
+                      "Friston",
+                      "Frith"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "df",
+                "nrow": 6,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Johan",
+                      "Tobias",
+                      "Melanie",
+                      "John C.",
+                      "Hartwig R.",
+                      "Alexander"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Kroeger",
+                      "Bäumer",
+                      "Jonas",
+                      "Rothwell",
+                      "Siebner",
+                      "Münchau"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "null"
+              },
+              {
+                "t": "df",
+                "nrow": 6,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Valentina",
+                      "Cosimo",
+                      "Simone",
+                      "Paola",
+                      "Mariella",
+                      "Salvatore Maria"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Moro",
+                      "Urgesi",
+                      "Pernigo",
+                      "Lanteri",
+                      "Pazzaglia",
+                      "Aglioti"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "df",
+                "nrow": 5,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Roy",
+                      "Arne D.",
+                      "Jonas",
+                      "Marco",
+                      "Itzhak"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Mukamel",
+                      "Ekstrom",
+                      "Kaplan",
+                      "Iacoboni",
+                      "Fried"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "df",
+                "nrow": 5,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "A.",
+                      "B. R.",
+                      "K.",
+                      "M. R.",
+                      "J. C."
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Münchau",
+                      "Bloem",
+                      "Irlbacher",
+                      "Trimble",
+                      "Rothwell"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "df",
+                "nrow": 4,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Mariella",
+                      "Nicola",
+                      "Elisabetta",
+                      "Salvatore Maria"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Pazzaglia",
+                      "Smania",
+                      "Corato",
+                      "Aglioti"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "df",
+                "nrow": 2,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Gorana",
+                      "Antonia F."
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Pobric",
+                      "de C. Hamilton"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "df",
+                "nrow": 4,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "S.Z.",
+                      "C.",
+                      "K.C.",
+                      "H."
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Rapcsak",
+                      "Ochipa",
+                      "Anderson",
+                      "Poizner"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "df",
+                "nrow": 6,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "G.",
+                      "R.",
+                      "L.",
+                      "M.",
+                      "G.",
+                      "M."
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Rizzolatti",
+                      "Camarda",
+                      "Fogassi",
+                      "Gentilucci",
+                      "Luppino",
+                      "Matelli"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "df",
+                "nrow": 2,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Giacomo",
+                      "Laila"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Rizzolatti",
+                      "Craighero"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "df",
+                "nrow": 4,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Giacomo",
+                      "Luciano",
+                      "Vittorio",
+                      "Leonardo"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Rizzolatti",
+                      "Fadiga",
+                      "Gallese",
+                      "Fogassi"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "df",
+                "nrow": 4,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Ayşe Pınar",
+                      "Stephen M.",
+                      "Nina F.",
+                      "Elizabeth"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Saygın",
+                      "Wilson",
+                      "Dronkers",
+                      "Bates"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "null"
+              },
+              {
+                "t": "df",
+                "nrow": 2,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Ricarda I",
+                      "D.Yves"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Schubotz",
+                      "von Cramon"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "df",
+                "nrow": 4,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Emmanuele",
+                      "Sara",
+                      "Giuseppe",
+                      "Alessio"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Tidoni",
+                      "Borgomaneri",
+                      "di Pellegrino",
+                      "Avenanti"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "df",
+                "nrow": 4,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Cosimo",
+                      "Matteo",
+                      "Silvio",
+                      "Salvatore M"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Urgesi",
+                      "Candidi",
+                      "Ionta",
+                      "Aglioti"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "df",
+                "nrow": 10,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Stefan",
+                      "Giovanni",
+                      "Afra M.",
+                      "Nicola",
+                      "N. Jon",
+                      "Karl",
+                      "Simon B.",
+                      "Hans-Joachim",
+                      "Giacomo",
+                      "Gereon R."
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Vogt",
+                      "Buccino",
+                      "Wohlschläger",
+                      "Canessa",
+                      "Shah",
+                      "Zilles",
+                      "Eickhoff",
+                      "Freund",
+                      "Rizzolatti",
+                      "Fink"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "df",
+                "nrow": 1,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Irving"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Biederman"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "null"
+              },
+              {
+                "t": "df",
+                "nrow": 3,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "A",
+                      "G",
+                      "M"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Delorme",
+                      "Richard",
+                      "Fabre-Thorpe"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "df",
+                "nrow": 4,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Li",
+                      "Asha",
+                      "Christof",
+                      "Pietro"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Fei-Fei",
+                      "Iyer",
+                      "Koch",
+                      "Perona"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "df",
+                "nrow": 2,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Frédéric",
+                      "Philippe G."
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Gosselin",
+                      "Schyns"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "df",
+                "nrow": 2,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Michelle R.",
+                      "Aude"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Greene",
+                      "Oliva"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "df",
+                "nrow": 2,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "M",
+                      "A"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "GREENE",
+                      "OLIVA"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "df",
+                "nrow": 4,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Olivier R.",
+                      "Guillaume A.",
+                      "Denis",
+                      "Michèle"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Joubert",
+                      "Rousselet",
+                      "Fize",
+                      "Fabre-Thorpe"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "df",
+                "nrow": 2,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Lester C.",
+                      "Adam M."
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Loschky",
+                      "Larson"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "df",
+                "nrow": 2,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "George W.",
+                      "Keith"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "McConkie",
+                      "Rayner"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "df",
+                "nrow": 2,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Aude",
+                      "Philippe G."
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Oliva",
+                      "Schyns"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "df",
+                "nrow": 2,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Aude",
+                      "Antonio"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Oliva",
+                      "Torralba"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "df",
+                "nrow": 2,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Aude",
+                      "Antonio"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Oliva",
+                      "Torralba"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "null"
+              },
+              {
+                "t": "df",
+                "nrow": 1,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Mary C."
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Potter"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "null"
+              },
+              {
+                "t": "df",
+                "nrow": 5,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Eleanor",
+                      "Carolyn B",
+                      "Wayne D",
+                      "David M",
+                      "Penny"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Rosch",
+                      "Mervis",
+                      "Gray",
+                      "Johnson",
+                      "Boyes-Braem"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "df",
+                "nrow": 4,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "P.",
+                      "A.",
+                      "M. J.",
+                      "G. W."
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Rotshtein",
+                      "Schofield",
+                      "Funes",
+                      "Humphreys"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "df",
+                "nrow": 3,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Guillaume",
+                      "Olivier",
+                      "Michèle"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Rousselet",
+                      "Joubert",
+                      "Fabre-Thorpe"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "df",
+                "nrow": 1,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Philippe G"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Schyns"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "df",
+                "nrow": 2,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Philippe G.",
+                      "Aude"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Schyns",
+                      "Oliva"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "df",
+                "nrow": 3,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Thomas",
+                      "Aude",
+                      "Tomaso"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Serre",
+                      "Oliva",
+                      "Poggio"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "df",
+                "nrow": 3,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Simon",
+                      "Denis",
+                      "Catherine"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Thorpe",
+                      "Fize",
+                      "Marlot"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "df",
+                "nrow": 2,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Antonio",
+                      "Aude"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Torralba",
+                      "Oliva"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "df",
+                "nrow": 2,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Barbara",
+                      "Kathleen"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Tversky",
+                      "Hemenway"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "df",
+                "nrow": 2,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Rufin",
+                      "Simon J"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "VanRullen",
+                      "Thorpe"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "df",
+                "nrow": 1,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Pat"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Barclay"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "df",
+                "nrow": 2,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Anders",
+                      "John"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Biel",
+                      "Thøgersen"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "null"
+              },
+              {
+                "t": "df",
+                "nrow": 3,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Christopher J.",
+                      "Gordon D.A.",
+                      "Simon C."
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Boyce",
+                      "Brown",
+                      "Moore"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "df",
+                "nrow": 1,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Bryan E."
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Burke"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "df",
+                "nrow": 4,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "W. Keith",
+                      "Carrie Pierce",
+                      "Amy B.",
+                      "Jeremy"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Campbell",
+                      "Bush",
+                      "Brunell",
+                      "Shelton"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "null"
+              },
+              {
+                "t": "df",
+                "nrow": 7,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Molly J.",
+                      "Annemieke",
+                      "Benedikt",
+                      "Matthew D.",
+                      "Ulrich",
+                      "Trevor W.",
+                      "Luke"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Crockett",
+                      "Apergis-Schoute",
+                      "Herrmann",
+                      "Lieberman",
+                      "Müller",
+                      "Robbins",
+                      "Clark"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "df",
+                "nrow": 5,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Molly J.",
+                      "Luke",
+                      "Golnaz",
+                      "Matthew D.",
+                      "Trevor W."
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Crockett",
+                      "Clark",
+                      "Tabibnia",
+                      "Lieberman",
+                      "Robbins"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "df",
+                "nrow": 4,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Donald M",
+                      "James M",
+                      "Dawn M",
+                      "F.Gerard"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Dougherty",
+                      "Bjork",
+                      "Marsh",
+                      "Moeller"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "df",
+                "nrow": 4,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "David",
+                      "Fikret",
+                      "Bonnie J.",
+                      "James M."
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Feeny",
+                      "Berkes",
+                      "McCay",
+                      "Acheson"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "df",
+                "nrow": 2,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Ernst",
+                      "Simon"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Fehr",
+                      "Gächter"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "null"
+              },
+              {
+                "t": "df",
+                "nrow": 2,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Urs",
+                      "Simon"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Fischbacher",
+                      "Gächter"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "df",
+                "nrow": 3,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Urs",
+                      "Simon",
+                      "Ernst"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Fischbacher",
+                      "Gächter",
+                      "Fehr"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "df",
+                "nrow": 1,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "STEPHEN M."
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "GARDINER"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "null"
+              },
+              {
+                "t": "df",
+                "nrow": 3,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "WANDER",
+                      "MARCO A.",
+                      "CHARLES A.J."
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "JAGER",
+                      "JANSSEN",
+                      "VLEK"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "df",
+                "nrow": 9,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Brian",
+                      "Owen M.",
+                      "Steve W.",
+                      "Theresa",
+                      "Elizabeth A.",
+                      "Ronald C.",
+                      "Jan",
+                      "Rebecca A.",
+                      "Victor I."
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Knutson",
+                      "Wolkowitz",
+                      "Cole",
+                      "Chan",
+                      "Moore",
+                      "Johnson",
+                      "Terpstra",
+                      "Turner",
+                      "Reus"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "df",
+                "nrow": 2,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Michael",
+                      "Daniel"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Koenigs",
+                      "Tranel"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "df",
+                "nrow": 1,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Peter"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Kollock"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "df",
+                "nrow": 3,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Karen L.",
+                      "Gordon D. A.",
+                      "Alex M."
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Melrose",
+                      "Brown",
+                      "Wood"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "df",
+                "nrow": 9,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Polly",
+                      "J. Christian",
+                      "Tahir",
+                      "Anna",
+                      "Erich",
+                      "Camellia",
+                      "Stephen",
+                      "Mark",
+                      "John"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Moore",
+                      "Gillin",
+                      "Bhatti",
+                      "DeModena",
+                      "Seifritz",
+                      "Clark",
+                      "Stahl",
+                      "Rapaport",
+                      "Kelsoe"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "df",
+                "nrow": 5,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Jessica M.",
+                      "P. Wesley",
+                      "Robert B.",
+                      "Noah J.",
+                      "Vladas"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Nolan",
+                      "Schultz",
+                      "Cialdini",
+                      "Goldstein",
+                      "Griskevicius"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "df",
+                "nrow": 1,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Elinor"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Ostrom"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "df",
+                "nrow": 1,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Elinor"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Ostrom"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "df",
+                "nrow": 3,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Jim H.",
+                      "Matthew S.",
+                      "Ernest S."
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Patton",
+                      "Stanford",
+                      "Barratt"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "df",
+                "nrow": 5,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Michael J.",
+                      "Michael T.",
+                      "Gary L.",
+                      "Deborah B.",
+                      "Arthur"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Raleigh",
+                      "McGuire",
+                      "Brammer",
+                      "Pollack",
+                      "Yuwiler"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "df",
+                "nrow": 3,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Daniel J.",
+                      "Katja",
+                      "Hanna"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Rankin",
+                      "Bargum",
+                      "Kokko"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "null"
+              },
+              {
+                "t": "df",
+                "nrow": 3,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "H G",
+                      "N S",
+                      "A H"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Ruhé",
+                      "Mason",
+                      "Schene"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "df",
+                "nrow": 7,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Nicolas",
+                      "Mathieu",
+                      "Kazuhiro",
+                      "Yasumasa",
+                      "Saori C.",
+                      "Shigeto",
+                      "Kenji"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Schweighofer",
+                      "Bertin",
+                      "Shishida",
+                      "Okamoto",
+                      "Tanaka",
+                      "Yamawaki",
+                      "Doya"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "null"
+              },
+              {
+                "t": "df",
+                "nrow": 1,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "John"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Thøgersen"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "df",
+                "nrow": 3,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "David",
+                      "Lee Anna",
+                      "Auke"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Watson",
+                      "Clark",
+                      "Tellegen"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "df",
+                "nrow": 4,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Alex M.",
+                      "Christopher J.",
+                      "Simon C.",
+                      "Gordon D.A."
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Wood",
+                      "Boyce",
+                      "Moore",
+                      "Brown"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "df",
+                "nrow": 5,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Richard M",
+                      "James K",
+                      "Alan G",
+                      "Zubin",
+                      "Robert D"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Wood",
+                      "Rilling",
+                      "Sanfey",
+                      "Bhagwagar",
+                      "Rogers"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "null"
+              },
+              {
+                "t": "null"
+              },
+              {
+                "t": "df",
+                "nrow": 2,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Alice H.",
+                      "Wendy"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Eagly",
+                      "Wood"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "df",
+                "nrow": 2,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Francesca",
+                      "Scott S."
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Gino",
+                      "Wiltermuth"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "df",
+                "nrow": 3,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Daniël",
+                      "Anne M.",
+                      "Peder M."
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Lakens",
+                      "Scheel",
+                      "Isager"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "null"
+              }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Brain",
+              "European Journal of Neuroscience",
+              "Cognitive Brain Research",
+              "Cerebral Cortex",
+              "Journal of Neurophysiology",
+              null,
+              "Sensorimotor Foundations of Higher Cognition",
+              "Experimental Brain Research",
+              "Philosophical Transactions of the Royal Society B: Biological Sciences",
+              "Brain",
+              "Trends in Cognitive Sciences",
+              "Cerebral Cortex",
+              "Experimental Brain Research",
+              "Cerebral Cortex",
+              "Neuroscience Research",
+              "Sensorimotor Foundations of Higher Cognition",
+              "Neuron",
+              "Journal of Cognitive Neuroscience",
+              "Neuron",
+              "Clinical Neurophysiology",
+              null,
+              "Journal of Neurophysiology",
+              "Cognitive Processing",
+              "The Journal of Neuroscience",
+              "European Journal of Neuroscience",
+              null,
+              "Neuron",
+              "Current Biology",
+              "The Journal of Neuroscience",
+              "The Journal of Neuroscience",
+              "Current Biology",
+              "Brain and Cognition",
+              "Experimental Brain Research",
+              "Annual Review of Neuroscience",
+              "Cognitive Brain Research",
+              "Neuropsychologia",
+              null,
+              "NeuroImage",
+              "The Journal of Neuroscience",
+              "Nature Neuroscience",
+              "NeuroImage",
+              "Psychological Review",
+              null,
+              "Vision Research",
+              "Journal of Vision",
+              "Psychological Review",
+              "Psychological Science",
+              "Cognitive Psychology",
+              "Vision Research",
+              "Visual Cognition",
+              "Perception &amp; Psychophysics",
+              "Cognitive Psychology",
+              "International Journal of Computer Vision",
+              "Progress in Brain Research",
+              null,
+              "Journal of Experimental Psychology: Human Learning and Memory",
+              null,
+              "Cognitive Psychology",
+              "Journal of Vision",
+              "Visual Cognition",
+              "Cognition",
+              "Psychological Science",
+              "Proceedings of the National Academy of Sciences",
+              "Nature",
+              "Network: Computation in Neural Systems",
+              "Cognitive Psychology",
+              "Vision Research",
+              "Evolution and Human Behavior",
+              "Journal of Economic Psychology",
+              null,
+              "Psychological Science",
+              "Human Ecology",
+              "Personality and Social Psychology Bulletin",
+              null,
+              "The Journal of Neuroscience",
+              "Science",
+              "Psychiatry Research",
+              "Human Ecology",
+              "Nature",
+              null,
+              "American Economic Review",
+              "Economics Letters",
+              "Philosophy &amp; Public Affairs",
+              null,
+              "Journal of Environmental Psychology",
+              "Foundations in Social Neuroscience",
+              "The Journal of Neuroscience",
+              "Annual Review of Sociology",
+              "Journal of Behavioral Decision Making",
+              "Archives of General Psychiatry",
+              "Personality and Social Psychology Bulletin",
+              "Swiss Political Science Review",
+              "Science",
+              "Journal of Clinical Psychology",
+              "Brain Research",
+              "Trends in Ecology &amp; Evolution",
+              null,
+              "Molecular Psychiatry",
+              "The Journal of Neuroscience",
+              null,
+              "Journal of Economic Psychology",
+              "Journal of Personality and Social Psychology",
+              "Journal of Affective Disorders",
+              "Neuropsychopharmacology",
+              null,
+              null,
+              "American Psychologist",
+              "Psychological Science",
+              "Advances in Methods and Practices in Psychological Science",
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Basso, A., Capitani, E., Della Sala, S., Laiacona, M., & Spinnler, H. (1987). Recovery from ideomotor apraxia: A study on acute stroke patients. Brain, 110, 747-760.",
+              "Buccino, G., Binkofski, F., Fink, G. R., Fadiga, L., Fogassi, L., Gallese, V., . . . Freund, H. J. (2001). Action observation activates premotor and parietal areas in a somatotopic man- ner: An fMRI study. European Journal of Neuroscience, 13, 400-404.",
+              "Buxbaum, L. J., Kyle, K. M., & Menon, R. (2005). On beyond mirror neurons: Internal representations subserving imi- tation and recognition of skilled object-related actions in humans. Cognitive Brain Research, 25, 226-239.",
+              "Cattaneo, L., Sandrini, M., & Schwarzbach, J. (2010). State- dependent TMS reveals a hierarchical representation of observed acts in the temporal, parietal, and premotor corti- ces. Cerebral Cortex, 20, 2252-2258.",
+              "Chen, R., Tam, A., Butefisch, C., Corwell, B., Ziemann, U., Rothwell, J. C., & Cohen, L. G. (1998). Intracortical inhi- bition and facilitation in different representations of the human motor cortex. Journal of Neurophysiology, 80, 2870- 2881.",
+              "Cook, R., Bird, G., Catmur, C., Press, C., & Heyes, C. M. (in press). Mirror neurons: From origin to function. Behavioral & Brain Sciences.",
+              "Csibra, G. (2008). Action mirroring and action understanding: An alternative account. In P. Haggard, Y. Rossetti, & M. Kawato (Eds.), Sensorimotor foundation of higher cogni- tion: Attention and performance (pp. 435-458). Oxford, England: Oxford University Press.",
+              "di Pellegrino, G., Fadiga, L., Fogassi, L., Gallese, V., & Rizzolatti, G. (1992). Understanding motor events: A neurophysiologi- cal study. Experimental Brain Research, 91, 176-180.",
+              "Frith, C. D., & Singer, T. (2008). The role of social cognition in decision making. Philosophical Transactions of the Royal Society B: Biological Sciences, 363, 3875-3886.",
+              "Gallese, V., Fadiga, L., Fogassi, L., & Rizzolatti, G. (1996). Action recognition in the premotor cortex. Brain, 119, 593-609.",
+              "Gallese, V., Keysers, C., & Rizzolatti, G. (2004). A unifying view of the basis of social cognition. Trends in Cognitive Sciences, 8, 396-403.",
+              "Gazzola, V., & Keysers, C. (2009). The observation and execu- tion of actions share motor and somatosensory voxels in all tested subjects: Single-subject analyses of unsmoothed fMRI data. Cerebral Cortex, 19, 1239-1255.",
+              "Gentilucci, M., Fogassi, L., Luppino, G., Matelli, M., Camarda, R., & Rizzolatti, G. (1988). Functional organization of infe- rior area 6 in the macaque monkey: I. Somatotopy and the control of proximal movements. Experimental Brain Research, 71, 475-490.",
+              "Gentner, R., Wankerl, K., Reinsberger, C., Zeller, D., & Classen, J. (2008). Depression of human corticospinal excitability induced by magnetic theta-burst stimulation: Evidence of rapid polarity-reversing metaplasticity. Cerebral Cortex, 18, 2046-2053.",
+              "Godschalk, M., Mitz, A. R., van Duin, B., & van der Burg, H. (1995). Somatotopy of monkey premotor cortex examined with microstimulation. Neuroscience Research, 23, 269-279.",
+              "Hamilton, A., & Grafton, S. (2007). The motor hierarchy: From kinematics to goals and intentions. In P. Haggard, Y. Rossetti, & M. Kawato (Eds.), Sensorimotor foundations of higher cognition: Attention and performance (pp. 381- 408). Oxford, England: Oxford University Press.",
+              "Hauk, O., Johnsrude, I., & Pulvermüller, F. (2004). Somatotopic representation of action words in the motor and premotor cortex. Neuron, 41, 301-307.",
+              "Hickok, G. (2009). Eight problems for the mirror neuron theory of action understanding in monkeys and humans. Journal of Cognitive Neuroscience, 21, 1229-1243.",
+              "Huang, Y. Z., Edwards, M. J., Rounis, E., Bhatia, K. P., & Rothwell, J. C. (2005). Theta burst stimulation of the human motor cortex. Neuron, 45, 201-206.",
+              "Huang, Y. Z., Rothwell, J. C., Lu, C. S., Wang, J., Weng, Y. H., Lai, S. C., & Chen, R. S. (2009). The effect of con- tinuous theta burst stimulation over premotor cortex on circuits in primary motor cortex and spinal cord. Clinical Neurophysiology, 120, 796-801.",
+              "Iacoboni, M., Molnar-Szakacs, I., Gallese, V., Buccino, G., Mazziotta, J. C., & Rizzolatti, G. (2005). Grasping the intentions of others with one's own mirror neuron sys- tem. PLoS Biology, 3, 529-535. Retrieved from http://www .plosbiology.org/article/info%3Adoi%2F10.1371%2Fjournal .pbio.0030079",
+              "Jastorff, J., Begliomini, C., Fabbri-Destro, M., Rizzolatti, G., & Orban, G. (2010). Coding observed motor acts: Different organizational principles in parietal and premotor cortex of humans. Journal of Neurophysiology, 104, 128-140.",
+              "Kilner, J., Friston, K., & Frith, C. (2007). Predictive coding: An account of the mirror neuron system. Cognitive Processing, 8, 159-166.",
+              "Kilner, J., Neal, A., Weiskopf, N., Friston, K., & Frith, C. (2009). Evidence of mirror neurons in human inferior frontal gyrus. The Journal of Neuroscience, 29, 10153-10159.",
+              "Kroeger, J., Bäumer, T., Jonas, M., Rothwell, J., Siebner, H., & Münchau, A. (2010). Charting the excitability of premo- tor to motor connections while withholding or initiating a selected movement. European Journal of Neuroscience, 32, 1771-1779.",
+              "Marquardt, T., & Sussman, H. (1984). The elusive lesion-apraxia of speech link in Broca's aphasia. In J. C. Rosenbek, M. R. McNeil, & A. E. Aronson (Eds.), Apraxia of speech: Physiology, acoustics, linguistics, management (pp. 91- 112). San Diego, CA: College-Hill Press.",
+              "Moro, V., Urgesi, C., Pernigo, S., Lanteri, P., Pazzaglia, M., & Aglioti, S. M. (2008). The neural basis of body form and body action agnosia. Neuron, 60, 235-246.",
+              "Mukamel, R., Ekstrom, A. D., Kaplan, J., Iacoboni, M., & Fried, I. (2010). Single-neuron responses in humans during exe- cution and observation of actions. Current Biology, 20, 750-756.",
+              "Münchau, A., Bloem, B. R., Irlbacher, K., Trimble, M. R., & Rothwell, J. C. (2002). Functional connectivity of human premotor and motor cortex explored with repetitive trans- cranial magnetic stimulation. The Journal of Neuroscience, 22, 554-561.",
+              "Pazzaglia, M., Smania, N., Corato, E., & Aglioti, S. M. (2008). Neural underpinnings of gesture discrimination in patients with limb apraxia. The Journal of Neuroscience, 28, 3030- 3041.",
+              "Pobric, G., & Hamilton, A. (2006). Action understanding requires the left inferior frontal cortex. Current Biology, 16, 524-529.",
+              "Rapcsak, S. Z., Ochipa, C., Anderson, K. C., & Poizner, H. (1995). Progressive ideomotor apraxia: Evidence for a selec- tive impairment of the action production system. Brain and Cognition, 27, 213-236.",
+              "Rizzolatti, G., Camarda, R., Fogassi, L., Gentilucci, M., Luppino, G., & Matelli, M. (1988). Functional organization of inferior area 6 in the macaque monkey: II. Area F5 and the control of distal movements. Experimental Brain Research, 71, 491-507.",
+              "Rizzolatti, G., & Craighero, L. (2004). The mirror-neuron sys- tem. Annual Review of Neuroscience, 27, 169-192.",
+              "Rizzolatti, G., Fadiga, L., Gallese, V., & Fogassi, L. (1996). Premotor cortex and the recognition of motor actions. Cognitive Brain Research, 3, 131-141.",
+              "Saygin, A. P., Wilson, S. M., Dronkers, N. F., & Bates, E. (2004). Action comprehension in aphasia: Linguistic and nonlin- guistic deficits and their lesion correlates. Neuropsychologia, 42, 1788-1804.",
+              "Schneider, W., Eschman, A., & Zuccolotto, A. (2001). E-Prime user's guide. Pittsburgh, PA: Psychology Software Tools.",
+              "Schubotz, R., & von Cramon, Y. (2003). Functional-anatomical concepts of human premotor cortex: Evidence from fMRI and PET studies. NeuroImage, 20, S120-S131.",
+              "Tidoni, E., Borgomaneri, S., di Pellegrino, G., & Avenanti, A. (2013). Action simulation plays a critical role in decep- tive action recognition. The Journal of Neuroscience, 33, 611-623.",
+              "Urgesi, C., Candidi, M., Ionta, S., & Aglioti, S. (2006). Representation of body identity and body actions in extrastriate body area and ventral premotor cortex. Nature Neuroscience, 10, 30-31.",
+              "Vogt, S., Buccino, G., Wohlschlager, A. M., Canessa, N., Shah, N. J., Zilles, K., . . . Fink, G. R. (2007). Prefrontal involve- ment in imitation learning of hand actions: Effects of prac- tice and expertise. NeuroImage, 37, 1371-1383.",
+              "Biederman, I. (1987). Recognition-by-components: A theory of human image understanding. Psychological Review, 94, 115-147.",
+              "Biederman, I. (1995). Visual object recognition. In S. F. Kosslyn & D. N. Osherson (Eds.), An invitation to cognitive science (2nd ed., Vol. 2, pp. 121-165). Cambridge, MA: MIT Press.",
+              "Delorme, A., Richard, G., & Fabre-Thorpe, M. (2000). Ultra- rapid categorisation of natural scenes does not rely on colour cues: A study in monkeys and humans. Vision Research, 40, 2187-2200.",
+              "Fei-Fei, L., Iyer, A., Koch, C., & Perona, P. (2007). What do we perceive in a glance of a real-world scene? Journal of Vision, 7(1), Article 10. Retrieved from http://www .journalofvision.org/content/7/1/10",
+              "Gosselin, F., & Schyns, P. G. (2001). Why do we SLIP to the basic level? Computational constraints and their implemen- tation. Psychological Review, 108, 735-758.",
+              "Greene, M. R., & Oliva, A. (2009a). The briefest of glances: The time course of natural scene understanding. Psychological Science, 20, 464-472.",
+              "Greene, M. R., & Oliva, A. (2009b). Recognition of natural scenes from global properties: Seeing the forest without representing the trees. Cognitive Psychology, 58, 137-179.",
+              "Joubert, O., Rousselet, G., Fize, D., & Fabre-Thorpe, M. (2007). Processing scene context: Fast categoriza- tion and object interference. Vision Research, 47, 3286- 3297.",
+              "Loschky, L. C., & Larson, A. M. (2010). The natural/man-made distinction is made prior to basic-level distinctions in scene gist processing. Visual Cognition, 18, 513-536.",
+              "McConkie, G. W., & Rayner, K. (1975). The span of the effec- tive stimulus during a fixation in reading. Perception & Psychophysics, 17, 578-586.",
+              "Oliva, A., & Schyns, P. (1997). Coarse blobs or fine edges? Evidence that information diagnosticity changes the per- ception of complex visual stimuli. Cognitive Psychology, 34, 72-107.",
+              "Oliva, A., & Torralba, A. (2001). Modeling the shape of the scene: A holistic representation of the spatial enve- lope. International Journal of Computer Vision, 42, 145- 175.",
+              "Oliva, A., & Torralba, A. (2006). Building the gist of a scene: The role of global image features in recognition. Progress in Brain Research: Visual Perception, 155, 23-36.",
+              "Potter, M. C. (1975). Meaning in visual scenes. Science, 187, 965-966.",
+              "Potter, M. C. (1976). Short-term conceptual memory for pictures. Journal of Experimental Psychology: Human Learning and Memory, 2, 509-522.",
+              "Rosch, E. (1978). Principles of categorization. In E. Rosch & B. B. Lloyd (Eds.), Cognition and categorization (pp. 28- 48). Hillsdale, NJ: Erlbaum.",
+              "Rosch, E., Mervis, C. B., Gray, W. D., Johnson, D. M., & Boyes- Braem, P. (1976). Basic objects in natural categories. Cognitive Psychology, 8, 382-439.",
+              "Rotshtein, P., Schofield, A., Funes, M. J., & Humphreys, G. W. (2010). Effects of spatial frequency bands on perceptual decision: It is not the stimuli but the comparison. Journal of Vision, 10(10), Article 25. Retrieved from http://www .journalofvision.org/content/10/10/25.full",
+              "Rousselet, G. A., Joubert, O. R., & Fabre-Thorpe, M. (2005). How long to get to the \"gist\" of real-world natural scenes? Visual Cognition, 12, 852-877.",
+              "Schyns, P. G. (1998). Diagnostic recognition: Task constraints, object information, and their interactions. Cognition, 67, 147-179.",
+              "Schyns, P. G., & Oliva, A. (1994). From blobs to boundary edges: Evidence for time-and spatial-scale-dependent scene recognition. Psychological Science, 5, 195-200.",
+              "Serre, T., Oliva, A., & Poggio, T. (2007). A feedforward archi- tecture accounts for rapid categorization. Proceedings of the National Academy of Sciences, USA, 104, 6424-6429.",
+              "Thorpe, S. J., Fize, D., & Marlot, C. (1996). Speed of processing in the human visual system. Nature, 381, 520-522.",
+              "Torralba, A., & Oliva, A. (2003). Statistics of natural image categories. Network: Computation in Neural Systems, 14, 391-412.",
+              "Tversky, B., & Hemenway, K. (1983). Categories of environ- mental scenes. Cognitive Psychology, 15, 121-149.",
+              "VanRullen, R., & Thorpe, S. J. (2002). Surfing a spike wave down the ventral stream. Vision Research, 42, 2593-2615.",
+              "Barclay, P. (2004). Trustworthiness and competitive altruism can also solve the \"tragedy of the commons.\" Evolution and Human Behavior, 25, 209-220.",
+              "Biel, A., & Thøgersen, J. (2007). Activation of social norms in social dilemmas: A review of the evidence and reflections on the implications for environmental behaviour. Journal of Economic Psychology, 28, 93-112.",
+              "Booij, L., Van der Does, W., Benkelfat, C., Bremner, J. D., Cowen, P. J., Fava, M., . . . Van der Kloot, W. A. (2002). Predictors of mood response to acute tryptophan deple- tion: A reanalysis. Neuropsychopharmacology, 27, 852-861.",
+              "Boyce, C. J., Brown, G. D. A., & Moore, S. C. (2010). Money and happiness: Rank of income, not income, affects life satisfac- tion. Psychological Science, 21, 471-475.",
+              "Burke, B. E. (2001). Hardin revisited: A critical look at percep- tion and the logic of the commons. Human Ecology, 29, 449-476.",
+              "Campbell, W. K., Bush, C. P., Brunell, A. B., & Shelton, J. (2005). Understanding the social costs of narcissism: The case of the tragedy of the commons. Personality and Social Psychology Bulletin, 31, 1358-1368.",
+              "Committee on the Human Dimensions of Global Change. (2002). The drama of the commons (E. Ostrom, T. Dietz, N. Dolsak, & P. C. Stern, Eds.). Washington, DC: National Academies Press.",
+              "Crockett, M. J., Apergis-Schoute, A., Herrmann, B., Lieberman, M., Müller, U., Robbins, T. W., & Clark, L. (2013). Serotonin modulates striatal responses to fairness and retaliation in humans. Journal of Neuroscience, 33, 3505-3513.",
+              "Crockett, M. J., Clark, L., Tabibnia, G., Lieberman, M. D., & Robbins, T. W. (2008). Serotonin modulates behavioral reactions to unfairness. Science, 320, 1739.",
+              "Dougherty, D. M., Bjork, J. M., Marsh, D. M., & Moeller, F. G. (1999). Influence of trait hostility on tryptophan depletion- induced laboratory aggression. Psychiatry Research, 88, 227-232.",
+              "Feeny, D., Berkes, F., McCay, B. J., & Acheson, J. M. (1990). The tragedy of the commons: Twenty-two years later. Human Ecology, 18, 1-19.",
+              "Fehr, E., & Gächter, S. (2002). Altruistic punishment in humans. Nature, 415, 137-140.",
+              "First, M. B., Spitzer, R. L., Gibbon, M., & Williams, J. B. W. (2002). Structured Clinical Interview for DSM-IV-TR Axis I Disorders-Patient edition (research version). New York, NY: Biometrics Research.",
+              "Fischbacher, U., & Gächter, S. (2010). Social preferences, beliefs, and the dynamics of free riding in public good experiments. American Economic Review, 100, 541-556.",
+              "Fischbacher, U., Gächter, S., & Fehr, E. (2001). Are people conditionally cooperative? Evidence from a public goods experiment. Economics Letters, 71, 397-404.",
+              "Gardiner, S. M. (2001). The real tragedy of the commons. Philosophy & Public Affairs, 30, 387-416.",
+              "Hardin, G. (1968). The tragedy of the commons. Science, 162, 1243-1248.",
+              "Jager, W., Janssen, M. A., & Vlek, C. A. J. (2002). How uncer- tainty stimulates over-harvesting in a resource dilemma: Three possible explanations. Journal of Environmental Psychology, 22, 247-263.",
+              "Knutson, B., Wolkowitz, O. M., Cole, S. W., Chan, T., Moore, E. A., Johnson, R. C., . . . Reus, V. I. (1998). Selective alteration of personality and social behavior by serotonergic interven- tion. American Journal of Psychiatry, 155, 373-379.",
+              "Koenigs, M., & Tranel, D. (2007). Irrational economic decision- making after ventromedial prefrontal damage: Evidence from the ultimatum game. Journal of Neuroscience, 27, 951-956.",
+              "Kollock, P. (1998). Social dilemmas: The anatomy of coopera- tion. Annual Review of Sociology, 24, 183-214.",
+              "Melrose, K. L., Brown, G. D. A., & Wood, A. M. (2012). Am I abnormal? Relative rank and social norm effects in judg- ments of anxiety and depression symptom severity. Journal of Behavioral Decision Making, 26, 174-184.",
+              "Moore, P., Landolt, H. P., Seifritz, E., Clark, C., Bhatti, T., Kelsoe, J., . . . Gillin, J. C. (2000). Clinical and physi- ological consequences of rapid tryptophan depletion. Neuropsychopharmacology, 23, 601-622.",
+              "Nolan, J. M., Schultz, P. W., Cialdini, R. B., Goldstein, N. J., & Griskevicius, V. (2008). Normative social influence is underdetected. Personality and Social Psychology Bulletin, 34, 913-923.",
+              "Ostrom, E. (2000). Reformulating the commons. Swiss Political Science Review, 6(1), 29-52.",
+              "Ostrom, E. (2009). A general framework for analyzing sustain- ability of social-ecological systems. Science, 325, 419-422.",
+              "Patton, J. H., Stanford, M. S., & Barratt, E. S. (1995). Factor struc- ture of the Barratt Impulsiveness Scale. Journal of Clinical Psychology, 51, 768-774.",
+              "Raleigh, M. J., McGuire, M. T., Brammer, G. L., Pollack, D. B., & Yuwiler, A. (1991). Serotonergic mechanisms promote dominance acquisition in adult male vervet monkeys. Brain Research, 559, 181-190.",
+              "Rankin, D. J., Bargum, K., & Kokko, H. (2007). The tragedy of the commons in evolutionary biology. Trends in Ecology & Evolution, 22, 643-651.",
+              "Raven, J. (1996). Standard progressive matrices sets A, B, C, D & E. Oxford, England: Oxford Psychologists Press.",
+              "Ruhe, H. G., Mason, N. S., & Schene, A. H. (2007). Mood is indi- rectly related to serotonin, norepinephrine and dopamine levels in humans: A meta-analysis of monoamine depletion studies. Molecular Psychiatry, 12, 331-359.",
+              "Schweighofer, N., Bertin, M., Shishida, K., Okamoto, Y., Tanaka, S. C., Yamawaki, S., & Doya, K. (2008). Low-serotonin lev- els increase delayed reward discounting in humans. Journal of Neuroscience, 28, 4528-4532.",
+              "Tanaka, S. C., Schweighofer, N., Asahi, S., Shishida, K., Okamoto, Y., Yamawaki, S., & Doya, K. (2007). Serotonin differentially regulates short-and long-term prediction of rewards in the ventral and dorsal striatum. PLoS ONE, 2(12), Article e1333. Retrieved from http://www.plosone.org/ article/info%3Adoi%2F10.1371%2Fjournal.pone.0001333",
+              "Thøgersen, J. (2008). Social norms and cooperation in real- life social dilemmas. Journal of Economic Psychology, 29, 458-472.",
+              "Watson, D., Clark, L. A., & Tellegen, A. (1988). Development and validation of brief measures of positive and negative affect: The PANAS scales. Journal of Personality and Social Psychology, 54, 1063-1070.",
+              "Wood, A. M., Boyce, C. J., Moore, S. C., & Brown, G. D. A. (2012). An evolutionary based social rank explanation of why low income predicts mental distress: A 17 year cohort study of 30,000 people. Journal of Affective Disorders, 136, 882-888.",
+              "Wood, R. M., Rilling, J. K., Sanfey, A. G., Bhagwagar, Z., & Rogers, R. D. (2006). Effects of tryptophan depletion on the performance of an iterated prisoner's dilemma game in healthy adults. Neuropsychopharmacology, 31, 1075-1084.",
+              "Zhu, L., Gigerenzer, G., & Huangfu, G. (2013). Psychological traces of China's socio-economic reforms in the ulti- matum and dictator games. PLoS ONE, 8(8), Article e70769. Retrieved from http://www.plosone.org/article/ info%3Adoi%2F10.1371%2Fjournal.pone.0070769",
+              "DeBruine, Lisa. 2025. Faux: Simulation for Factorial Designs. Zenodo. https: //doi.org/10.5281/10.5281/zenodo.2669586.",
+              "Eagly, Alice H., and Wendy Wood. 1999. \"The Origins of Sex Differences in Human Behavior: Evolved Dispositions Versus Social Roles.\" American Psychologist 54 (6): 408-23. https://doi.org/10.1037/0003-066x.54.6.408.",
+              "Gino, Francesca, and Scott S. Wiltermuth. 2014. \"Evil Genius? How Dishonesty Can Lead to Greater Creativity.\" Psychological Science 25 (4): 973-81. https://doi.org/10.1177/0956797614520714.",
+              "Lakens, Daniël. 2018. \"Equivalence Testing for Psychological Research.\" Ad- vances in Methods and Practices in Psychological Science 1: 259-70.",
+              "Smith, F. 2021. \"Human Error Is a Symptom of a Poor Design.\" Journal of Journals. https://doi.org/10.0000/0123456789."
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              113.4862,
+              137.9479,
+              135.9113,
+              128.4956,
+              105.9063,
+              null,
+              71.5521,
+              109.4353,
+              71.2862,
+              95.4623,
+              93.7098,
+              156.4548,
+              143.3787,
+              170.6551,
+              111.5558,
+              65.7278,
+              111.2172,
+              87.6868,
+              97.4579,
+              126.0163,
+              null,
+              146.4965,
+              87.5252,
+              102.478,
+              139.7181,
+              null,
+              134.8235,
+              116.1105,
+              127.8022,
+              106.3464,
+              90.8253,
+              126.2789,
+              155.1086,
+              65.7315,
+              110.5692,
+              96.1343,
+              null,
+              117.8539,
+              115.6123,
+              146.4356,
+              110.629,
+              61.4976,
+              null,
+              119.5787,
+              110.4607,
+              92.691,
+              86.1934,
+              103.8198,
+              116.1242,
+              121.547,
+              86.4733,
+              126.2848,
+              82.1558,
+              88.5883,
+              null,
+              79.0582,
+              null,
+              102.5625,
+              93.2348,
+              109.5305,
+              71.8585,
+              100.2221,
+              80.2872,
+              74.4147,
+              75.4891,
+              70.1763,
+              91.0725,
+              100.6926,
+              93.7175,
+              null,
+              91.1007,
+              75.5991,
+              97.3808,
+              null,
+              122.1221,
+              94.7756,
+              96.3144,
+              99.2603,
+              65.7716,
+              null,
+              93.3636,
+              105.1553,
+              59.5225,
+              null,
+              101.1233,
+              97.6094,
+              100.5785,
+              62.0494,
+              113.366,
+              68.5754,
+              98.0693,
+              64.1746,
+              59.3279,
+              81.9321,
+              130.6289,
+              85.5717,
+              null,
+              112.2112,
+              126.4501,
+              null,
+              64.5541,
+              98.6624,
+              119.0793,
+              110.3087,
+              null,
+              null,
+              null,
+              null,
+              61.7559,
+              null
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              null,
+              false,
+              false,
+              false,
+              null
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              true,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              true,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              true,
+              false,
+              false,
+              false,
+              true,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              true,
+              false,
+              false,
+              false,
+              true,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              true,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              true,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              true,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              true,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              true,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              true,
+              false
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "crossref",
+              "crossref",
+              "crossref",
+              "crossref",
+              "crossref",
+              "none",
+              "crossref",
+              "crossref",
+              "crossref",
+              "crossref",
+              "crossref",
+              "crossref",
+              "crossref",
+              "crossref",
+              "crossref",
+              "crossref",
+              "crossref",
+              "crossref",
+              "crossref",
+              "crossref",
+              "none",
+              "crossref",
+              "crossref",
+              "crossref",
+              "crossref",
+              "none",
+              "crossref",
+              "crossref",
+              "crossref",
+              "crossref",
+              "crossref",
+              "crossref",
+              "crossref",
+              "crossref",
+              "crossref",
+              "crossref",
+              "none",
+              "crossref",
+              "crossref",
+              "crossref",
+              "crossref",
+              "crossref",
+              "none",
+              "crossref",
+              "crossref",
+              "crossref",
+              "crossref",
+              "crossref",
+              "crossref",
+              "crossref",
+              "crossref",
+              "crossref",
+              "crossref",
+              "crossref",
+              "none",
+              "crossref",
+              "none",
+              "crossref",
+              "crossref",
+              "crossref",
+              "crossref",
+              "crossref",
+              "crossref",
+              "crossref",
+              "crossref",
+              "crossref",
+              "crossref",
+              "crossref",
+              "crossref",
+              "none",
+              "crossref",
+              "crossref",
+              "crossref",
+              "none",
+              "crossref",
+              "crossref",
+              "crossref",
+              "crossref",
+              "crossref",
+              "none",
+              "crossref",
+              "crossref",
+              "crossref",
+              "none",
+              "crossref",
+              "crossref",
+              "crossref",
+              "crossref",
+              "crossref",
+              "crossref",
+              "crossref",
+              "crossref",
+              "crossref",
+              "crossref",
+              "crossref",
+              "crossref",
+              "none",
+              "crossref",
+              "crossref",
+              "none",
+              "crossref",
+              "crossref",
+              "crossref",
+              "crossref",
+              "none",
+              "unresolved",
+              "provided",
+              "provided",
+              "crossref",
+              "unresolved"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false,
+              false,
+              false,
+              false,
+              false,
+              true,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              true,
+              false,
+              false,
+              false,
+              false,
+              true,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              true,
+              false,
+              false,
+              false,
+              false,
+              false,
+              true,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              true,
+              false,
+              true,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              true,
+              false,
+              false,
+              false,
+              true,
+              false,
+              false,
+              false,
+              false,
+              false,
+              true,
+              false,
+              false,
+              false,
+              true,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              true,
+              false,
+              false,
+              true,
+              false,
+              false,
+              false,
+              false,
+              true,
+              true,
+              false,
+              false,
+              false,
+              true
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              true,
+              false,
+              false,
+              false,
+              true
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false,
+              false,
+              false,
+              false,
+              false,
+              true,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              true,
+              false,
+              false,
+              false,
+              false,
+              true,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              true,
+              false,
+              false,
+              false,
+              false,
+              false,
+              true,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              true,
+              false,
+              true,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              true,
+              false,
+              false,
+              false,
+              true,
+              false,
+              false,
+              false,
+              false,
+              false,
+              true,
+              false,
+              false,
+              false,
+              true,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              true,
+              false,
+              false,
+              true,
+              false,
+              false,
+              false,
+              false,
+              true,
+              false,
+              false,
+              false,
+              false,
+              false
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "The references below supplied a DOI, but one or more of the cited details (title, authors, journal, or year) does not match the record that DOI points to. Such an incoherent is most often an error in reading the reference from the PDF, but it could be a mistake, ar an AI generated reference. Check each against the original source. Incoherent references are mostly PDF parsing errors (we are working on improving reference parsing).",
+          "### Incoherent references\n",
+          "The cited details of these references do not match the record their DOI points to.\n",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Reference = c(\"DeBruine, Lisa. 2025. Faux: Simulation for Factorial Designs. Zenodo. https: //doi.org/10.5281/10.5281/zenodo.2669586.\", \n\"Smith, F. 2021. \\\"Human Error Is a Symptom of a Poor Design.\\\" Journal of Journals. https://doi.org/10.0000/0123456789.\"\n), \"What is wrong (cited → record)\" = c(\"<b>DOI:<\/b> the cited DOI <span style=\\\"color:#c00;text-decoration:line-through\\\">10.32614/10.5281/zenodo.2669586<\/span> could not be found in CrossRef\", \n\"<b>DOI:<\/b> the cited DOI <span style=\\\"color:#c00;text-decoration:line-through\\\">10.0000/0123456789<\/span> could not be found in CrossRef\"\n), Record = c(\"<a href='https://doi.org/10.32614/10.5281/zenodo.2669586' target='_blank'>10.32614/10.5281/zenodo.2669586<\/a>\", \n\"<a href='https://doi.org/10.0000/0123456789' target='_blank'>10.0000/0123456789<\/a>\"\n)), row.names = c(NA, -2L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, c(0.45, 0.4, 0.15), 5, FALSE)\n```\n",
+          "### References without a DOI\n",
+          "These references have no DOI, so they could not be checked here, and they also cannot be checked by the other reference modules (retraction, PubPeer, and replication checks all rely on the DOI). We searched CrossRef for a matching DOI; where a confident match was found it is suggested below. We recommend adding a DOI to every reference that has one: it lets these checks run and makes each cited work easier to find and verify.\n",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Reference = c(\"Cook, R., Bird, G., Catmur, C., Press, C., & Heyes, C. M. (in press). Mirror neurons: From origin to function. Behavioral & Brain Sciences.\", \n\"Iacoboni, M., Molnar-Szakacs, I., Gallese, V., Buccino, G., Mazziotta, J. C., & Rizzolatti, G. (2005). Grasping the intentions of others with one's own mirror neuron sys- tem. PLoS Biology, 3, 529-535. Retrieved from http://www .plosbiology.org/article/info%3Adoi%2F10.1371%2Fjournal .pbio.0030079\", \n\"Marquardt, T., & Sussman, H. (1984). The elusive lesion-apraxia of speech link in Broca's aphasia. In J. C. Rosenbek, M. R. McNeil, & A. E. Aronson (Eds.), Apraxia of speech: Physiology, acoustics, linguistics, management (pp. 91- 112). San Diego, CA: College-Hill Press.\", \n\"Schneider, W., Eschman, A., & Zuccolotto, A. (2001). E-Prime user's guide. Pittsburgh, PA: Psychology Software Tools.\", \n\"Biederman, I. (1995). Visual object recognition. In S. F. Kosslyn & D. N. Osherson (Eds.), An invitation to cognitive science (2nd ed., Vol. 2, pp. 121-165). Cambridge, MA: MIT Press.\", \n\"Potter, M. C. (1975). Meaning in visual scenes. Science, 187, 965-966.\", \n\"Rosch, E. (1978). Principles of categorization. In E. Rosch & B. B. Lloyd (Eds.), Cognition and categorization (pp. 28- 48). Hillsdale, NJ: Erlbaum.\", \n\"Booij, L., Van der Does, W., Benkelfat, C., Bremner, J. D., Cowen, P. J., Fava, M., . . . Van der Kloot, W. A. (2002). Predictors of mood response to acute tryptophan deple- tion: A reanalysis. Neuropsychopharmacology, 27, 852-861.\", \n\"Committee on the Human Dimensions of Global Change. (2002). The drama of the commons (E. Ostrom, T. Dietz, N. Dolsak, & P. C. Stern, Eds.). Washington, DC: National Academies Press.\", \n\"First, M. B., Spitzer, R. L., Gibbon, M., & Williams, J. B. W. (2002). Structured Clinical Interview for DSM-IV-TR Axis I Disorders-Patient edition (research version). New York, NY: Biometrics Research.\", \n\"Hardin, G. (1968). The tragedy of the commons. Science, 162, 1243-1248.\", \n\"Raven, J. (1996). Standard progressive matrices sets A, B, C, D & E. Oxford, England: Oxford Psychologists Press.\", \n\"Tanaka, S. C., Schweighofer, N., Asahi, S., Shishida, K., Okamoto, Y., Yamawaki, S., & Doya, K. (2007). Serotonin differentially regulates short-and long-term prediction of rewards in the ventral and dorsal striatum. PLoS ONE, 2(12), Article e1333. Retrieved from http://www.plosone.org/ article/info%3Adoi%2F10.1371%2Fjournal.pone.0001333\", \n\"Zhu, L., Gigerenzer, G., & Huangfu, G. (2013). Psychological traces of China's socio-economic reforms in the ulti- matum and dictator games. PLoS ONE, 8(8), Article e70769. Retrieved from http://www.plosone.org/article/ info%3Adoi%2F10.1371%2Fjournal.pone.0070769\"\n), \"Suggested DOI\" = c(\"\", \"\", \"\", \"\", \"\", \"\", \"\", \"\", \"\", \"\", \n\"\", \"\", \"\", \"\")), row.names = c(NA, -14L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, c(0.7, 0.3), 5, FALSE)\n```\n"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "yellow"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "We checked the 4 references that supplied a DOI against the record that DOI points to, and found 2 incoherent references to check for parsing errors or mistakes. 14 references had no DOI and could not be checked. Incoherent references are mostly PDF parsing errors (we are working on improving reference parsing). Adding a DOI to every reference that has one lets the other reference checks (retraction, PubPeer, and replication) run on them too."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 4,
+        "names": [
+          "paper_id",
+          "refs_checked",
+          "incoherent",
+          "no_doi"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "0956797613520608",
+              "0956797614522816",
+              "0956797614527830",
+              "to_err_is_human"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              0,
+              0,
+              4
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              0,
+              0,
+              2
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              4,
+              3,
+              7,
+              0
+            ]
+          }
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

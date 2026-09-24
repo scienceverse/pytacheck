@@ -1,0 +1,118 @@
+{
+  "id": "power.llm.demo.tables",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": null,
+    "v": [
+      {
+        "t": "df",
+        "nrow": 2,
+        "names": [
+          "power_id",
+          "power_type",
+          "statistical_test",
+          "sample_size",
+          "alpha_level",
+          "power",
+          "effect_size",
+          "effect_size_metric",
+          "software"
+        ],
+        "v": [
+          {
+            "t": "int",
+            "v": [
+              1,
+              2
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "sensitivity",
+              "unknown"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              100,
+              50
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              null
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0.8,
+              0.8
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0.5,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Cohen's d",
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "pwr"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 2,
+        "names": [
+          "power_id",
+          "text"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "1",
+              "2"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "We conducted a <strong>sensitivity<\/strong> <strong>power<\/strong> analysis 2 to determine that a Cohen's d of 0.50 is the smallest effect size that we could detect with N = 50 participants in each group and 80% <strong>power<\/strong>.",
+              "pwr::pwr.t.test(n = 50, <strong>power<\/strong> = 0.8, alternative = \"greater\") is useful. We conclude the use of automated checks has potential to reduce the number of mistakes in scientific manuscripts."
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

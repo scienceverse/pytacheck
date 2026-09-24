@@ -1,0 +1,36 @@
+{
+  "id": 700002,
+  "title": "Sizes",
+  "files": [
+    {
+      "id": 700201,
+      "name": "a.bin",
+      "size": 41943040,
+      "download_url": "https://ndownloader.figshare.com/files/700201"
+    },
+    {
+      "id": 700202,
+      "name": "b.bin",
+      "size": null,
+      "download_url": "https://ndownloader.figshare.com/files/700202"
+    },
+    {
+      "id": 700203,
+      "name": "c.bin",
+      "size": 62914560,
+      "download_url": "https://ndownloader.figshare.com/files/700203"
+    },
+    {
+      "id": 700204,
+      "name": "d.bin",
+      "size": 62914560,
+      "download_url": "https://ndownloader.figshare.com/files/700204"
+    },
+    {
+      "id": 700205,
+      "name": "e.csv",
+      "size": 8,
+      "download_url": "https://ndownloader.figshare.com/files/700205"
+    }
+  ]
+}

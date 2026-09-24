@@ -249,7 +249,10 @@ def table_paper(texts: Sequence[str], section_ids: Sequence[Any], tables: Sequen
             "caption": pd.Series([None] * len(tables), dtype="string"),
             "page_number": pd.Series([None] * len(tables), dtype="Int64"),
             "contents": pd.Series(
-                [None if t.get("contents") is None else _none_na(na(t["contents"])) for t in tables],
+                [
+                    None if t.get("contents") is None else _none_na(na(t["contents"]))
+                    for t in tables
+                ],
                 dtype=object,
             ),
         }

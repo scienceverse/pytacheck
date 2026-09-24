@@ -1,0 +1,448 @@
+{
+  "id": "ref_accuracy.authors.diacritics",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "ref_accuracy"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Reference Accuracy"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "reference"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 5,
+        "names": [
+          "paper_id",
+          "bib_id",
+          "doi.orig",
+          "title.orig",
+          "year.orig",
+          "authors.orig",
+          "container.orig",
+          "doi.match",
+          "title.match",
+          "year.match",
+          "authors.match",
+          "container.match",
+          "text",
+          "score",
+          "doi_mismatch",
+          "year_mismatch",
+          "container_mismatch",
+          "title_mismatch",
+          "author_mismatch",
+          "tier",
+          "no_match",
+          "incoherent",
+          "no_doi"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "to_err_is_human",
+              "to_err_is_human",
+              "to_err_is_human",
+              "to_err_is_human",
+              "to_err_is_human"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              1,
+              2,
+              3,
+              4
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "10.32614/10.5281/zenodo.2669586",
+              "10.1037/0003-066x.54.6.408",
+              "10.1177/0956797614520714",
+              "10.1177/2515245918770963",
+              "10.0000/0123456789"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Faux: Simulation for Factorial Designs",
+              "The Origins of Sex Differences in Human Behavior: Evolved Dispositions Versus Social Roles",
+              "Evil Genius? How Dishonesty Can Lead to Greater Creativity",
+              "Equivalence Testing for Psychological Research",
+              "Human Error Is a Symptom of a Poor Design"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2025,
+              1999,
+              2014,
+              2018,
+              2021
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Debruine, Lisa",
+              "Eagly, Alice H; Wood, Wendy",
+              "Gînø, F; Wiltermuth, S",
+              "Lakens, D; Strasse, A; Overland, P; Lodz, Q; Ince, R; σοφια, S",
+              "Smith, F"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "American Psychologist",
+              "Psychological Science",
+              "Psychological Science",
+              "Journal of Journals"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "10.1037/0003-066x.54.6.408",
+              "10.1177/0956797614520714",
+              "10.1177/2515245918770963",
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "The origins of sex differences in human behavior: Evolved dispositions versus social roles.",
+              "Retracted: Evil Genius? How Dishonesty Can Lead to Greater Creativity",
+              "Equivalence Testing for Psychological Research: A Tutorial",
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              null,
+              1999,
+              2014,
+              2018,
+              null
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "null"
+              },
+              {
+                "t": "df",
+                "nrow": 2,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Alice H.",
+                      "Wendy"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Éagly",
+                      "Wöod"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "df",
+                "nrow": 2,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Francesca",
+                      "Scott S."
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Gino",
+                      "Wiltermuth"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "df",
+                "nrow": 6,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "D",
+                      "A",
+                      "P",
+                      "Q",
+                      "R",
+                      "S"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Lakens",
+                      "Straße",
+                      "Øverland",
+                      "Łódź",
+                      "İnce",
+                      "ΣΟΦΙΑ"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "null"
+              }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "American Psychologist",
+              "Psychological Science",
+              "Advances in Methods and Practices in Psychological Science",
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "DeBruine, Lisa. 2025. Faux: Simulation for Factorial Designs. Zenodo. https: //doi.org/10.5281/10.5281/zenodo.2669586.",
+              "Eagly, Alice H., and Wendy Wood. 1999. \"The Origins of Sex Differences in Human Behavior: Evolved Dispositions Versus Social Roles.\" American Psychologist 54 (6): 408-23. https://doi.org/10.1037/0003-066x.54.6.408.",
+              "Gino, Francesca, and Scott S. Wiltermuth. 2014. \"Evil Genius? How Dishonesty Can Lead to Greater Creativity.\" Psychological Science 25 (4): 973-81. https://doi.org/10.1177/0956797614520714.",
+              "Lakens, Daniël. 2018. \"Equivalence Testing for Psychological Research.\" Ad- vances in Methods and Practices in Psychological Science 1: 259-70.",
+              "Smith, F. 2021. \"Human Error Is a Symptom of a Poor Design.\" Journal of Journals. https://doi.org/10.0000/0123456789."
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              null,
+              null,
+              61.7559,
+              null
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              null,
+              false,
+              false,
+              false,
+              null
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false,
+              false,
+              false,
+              false,
+              false
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false,
+              false,
+              false,
+              false,
+              false
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false,
+              false,
+              false,
+              false,
+              false
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false,
+              false,
+              false,
+              false,
+              false
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "unresolved",
+              "provided",
+              "provided",
+              "provided",
+              "unresolved"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true,
+              false,
+              false,
+              false,
+              true
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true,
+              false,
+              false,
+              false,
+              true
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false,
+              false,
+              false,
+              false,
+              false
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "The references below supplied a DOI, but one or more of the cited details (title, authors, journal, or year) does not match the record that DOI points to. Such an incoherent is most often an error in reading the reference from the PDF, but it could be a mistake, ar an AI generated reference. Check each against the original source. Incoherent references are mostly PDF parsing errors (we are working on improving reference parsing).",
+          "### Incoherent references\n",
+          "The cited details of these references do not match the record their DOI points to.\n",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Reference = c(\"DeBruine, Lisa. 2025. Faux: Simulation for Factorial Designs. Zenodo. https: //doi.org/10.5281/10.5281/zenodo.2669586.\", \n\"Smith, F. 2021. \\\"Human Error Is a Symptom of a Poor Design.\\\" Journal of Journals. https://doi.org/10.0000/0123456789.\"\n), \"What is wrong (cited → record)\" = c(\"<b>DOI:<\/b> the cited DOI <span style=\\\"color:#c00;text-decoration:line-through\\\">10.32614/10.5281/zenodo.2669586<\/span> could not be found in CrossRef\", \n\"<b>DOI:<\/b> the cited DOI <span style=\\\"color:#c00;text-decoration:line-through\\\">10.0000/0123456789<\/span> could not be found in CrossRef\"\n), Record = c(\"<a href='https://doi.org/10.32614/10.5281/zenodo.2669586' target='_blank'>10.32614/10.5281/zenodo.2669586<\/a>\", \n\"<a href='https://doi.org/10.0000/0123456789' target='_blank'>10.0000/0123456789<\/a>\"\n)), row.names = c(NA, -2L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, c(0.45, 0.4, 0.15), 5, FALSE)\n```\n"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "yellow"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "We checked the 5 references that supplied a DOI against the record that DOI points to, and found 2 incoherent references to check for parsing errors or mistakes. 0 references had no DOI and could not be checked. Incoherent references are mostly PDF parsing errors (we are working on improving reference parsing)."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "refs_checked",
+          "incoherent",
+          "no_doi"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "to_err_is_human"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              5
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          }
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

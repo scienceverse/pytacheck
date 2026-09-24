@@ -364,3 +364,8 @@ def validate(gt: Any, module: Any, compare: str = "table") -> pd.DataFrame:
     for col in comp_cols:
         comp[f"{col}.valid"] = _r_equal(comp[f"{col}.gt"], comp[f"{col}.mod"])
     return comp
+
+
+from pytacheck._callable import callable_module  # noqa: E402
+
+callable_module(__name__, "validate")  # pc.validate(...) even once this module is imported

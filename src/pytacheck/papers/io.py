@@ -12,7 +12,8 @@ from typing import Any
 import orjson
 import pandas as pd
 
-from pytacheck._r.regex import gsub
+from pytacheck._r.base import as_character
+from pytacheck._r.regex import gsub, is_na
 from pytacheck.papers.model import Paper, PaperList
 from pytacheck.papers.schema import coerce_table, records_to_frame
 
@@ -168,13 +169,15 @@ def test_paper(text: Sequence[str] | None = None, url: Sequence[str] = ()) -> Pa
         url = [url]
     p = Paper()
     n = len(text)
+    # as.character(): NA stays NA, numbers use R's formatting
+    chars = [None if is_na(t) else t if isinstance(t, str) else as_character(t) for t in text]
     p.text = pd.DataFrame(
         {
             "text_id": pd.Series(range(1, n + 1), dtype="Int64"),
             "section_id": pd.Series([0.0] * n, dtype="float64"),
             "paragraph_id": pd.Series([0.0] * n, dtype="float64"),
-            "text": pd.Series([str(t) for t in text], dtype="string"),
-            "formatted": pd.Series([str(t) for t in text], dtype="string"),
+            "text": pd.Series(chars, dtype="string"),
+            "formatted": pd.Series(chars, dtype="string"),
         }
     )
     p.section = pd.DataFrame(

@@ -167,7 +167,7 @@ def _zenodo_info_table(zenodo_url: Any, id_col: int | str, pb: Any, cache: bool)
 
     if isinstance(zenodo_url, pd.DataFrame):
         table = zenodo_url.copy()
-        table["zenodo_url"] = table[_column_name(zenodo_url, id_col)].to_numpy()
+        table["zenodo_url"] = table[_column_name(zenodo_url, id_col)]
         # a zenodo_links() table already has a zenodo_id: the recomputed one
         # below is joined on instead of producing zenodo_id.x/.y columns
         if "zenodo_id" in table.columns:

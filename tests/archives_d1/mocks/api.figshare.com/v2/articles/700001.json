@@ -1,0 +1,59 @@
+{
+  "id": 700001,
+  "title": "Awkward files",
+  "doi": "10.6084/m9.figshare.700001",
+  "authors": [
+    {
+      "full_name": "A. Person"
+    }
+  ],
+  "license": {
+    "name": "CC0"
+  },
+  "files": [
+    {
+      "id": null,
+      "name": null,
+      "size": 8,
+      "download_url": "https://ndownloader.figshare.com/files/700101"
+    },
+    {
+      "id": 700102,
+      "name": "",
+      "size": 5,
+      "download_url": "https://ndownloader.figshare.com/files/700102"
+    },
+    {
+      "id": 700103,
+      "name": "nosize.txt",
+      "size": null,
+      "download_url": "https://ndownloader.figshare.com/files/700103"
+    },
+    {
+      "id": 700104,
+      "name": "dup.txt",
+      "size": 5,
+      "computed_md5": "4358b5009c67d0e31d7fbf1663fcd3bf",
+      "download_url": "https://ndownloader.figshare.com/files/700104"
+    },
+    {
+      "id": 700105,
+      "name": "dup.txt",
+      "size": 11,
+      "computed_md5": "426e712f0524e4dee5de612f6520bf86",
+      "download_url": "https://ndownloader.figshare.com/files/700105"
+    },
+    {
+      "id": 700106,
+      "name": "UPPER.CSV",
+      "size": 8,
+      "computed_md5": "344FD2323DD33D5C058B7CF27DE029E8",
+      "download_url": "https://ndownloader.figshare.com/files/700106"
+    },
+    {
+      "id": 700107,
+      "name": "nolink.bin",
+      "size": 3
+    }
+  ]
+}

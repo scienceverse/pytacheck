@@ -1,0 +1,427 @@
+{
+  "id": "stat_p_nonsig.psychsci",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "stat_p_nonsig"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Non-Significant P Value Check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "results"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 19,
+        "names": [
+          "text",
+          "text_id",
+          "paragraph_id",
+          "section_id",
+          "page_number",
+          "formatted",
+          "paper_id",
+          "header",
+          "section_type",
+          "p_comp",
+          "p_value",
+          "significance",
+          "expanded"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "p = .153",
+              "p = .315",
+              "p = .09",
+              "p = .122",
+              "p = .237",
+              "p = .156",
+              "p = .121",
+              "p = .072",
+              "p = .151",
+              "p = .070",
+              "p = .058",
+              "p = .055",
+              "p = .068",
+              "p = .203",
+              "p = .288",
+              "p = .299",
+              "p = .094",
+              "p =0.152",
+              "p > .05"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              58,
+              63,
+              74,
+              75,
+              77,
+              86,
+              87,
+              100,
+              100,
+              104,
+              105,
+              108,
+              108,
+              112,
+              114,
+              115,
+              115,
+              16,
+              17
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              5,
+              6
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              8,
+              8,
+              9,
+              9,
+              9,
+              10,
+              10,
+              12,
+              12,
+              13,
+              13,
+              13,
+              13,
+              13,
+              13,
+              13,
+              13,
+              3,
+              3
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "There was also a main effect of stimuli type, F(3, 78) = 12.910, p &lt; .001, ηp² = .332 (Ms = 2,832, 2,709, 3,419, and 2,157 ms for classrooms, pools, restaurants, and roads, respectively), but no interaction between the two factors, F(3, 78) = 1.805, p = .153, ηp² = .065 (Table <ref type=\"table\" target=\"#tab_0\">1<\/ref>).",
+              "There was also a main effect of stimuli type, F(3, 78) = 9.558, p &lt; .001, ηp² = .269 (Ms = 7.76, 7.23, 9.36, and 5.89 for classrooms, pools, restaurants, and roads, respectively), but no interaction, F(3, 78) = 1.201, p = .315, ηp² = .044 (Table <ref type=\"table\" target=\"#tab_0\">1<\/ref>).",
+              null,
+              "This interaction occurred because participants in the basic condition had numerically longer fixations when categorizing pool scenes (M = 383 ms) compared with participants in the subordinate condition (M = 325 ms), t(26) = 1.598, p = .122; fixation durations for all other scenes were significant, ts &gt; 2.370, ps &lt; .025 (Table <ref type=\"table\" target=\"#tab_0\">1<\/ref>).",
+              null,
+              "For the sake of completeness, there was no main effect of judgment, F(1, 22) = 2.163, p = .156, ηp² = .090, though there was an effect of stimuli type, F(3, 66) = 4.342, p = .007, ηp² = .165 (Ms = 3.88°, 3.47°, 3.87°, and 3.52° for classrooms, pools, restaurants, and roads, respectively) as well as of ordinal fixation, F(2.286, 50.288) = 42.240, p &lt; .001, ηp² = .658 (Ms = 2.55°, 3.28°, 3.86°, 4.26°, and 4.48° from the center for Fixations 1 through 5, respectively).",
+              "There was no interaction between stimuli type and ordinal count (F &lt; 1), no interaction between judgment and stimuli type, F(3, 66) = 2.012, p = .121, ηp² = .084, and no three-way interaction (F &lt; 1).",
+              "There was also a trend for an interaction, F(1, 34) = 3.456, p = .072, ηp² = .092 (Fig. <ref type=\"figure\" target=\"#fig_5\">6<\/ref>), which was due to a significant change in subordinate categorization accuracy when basic or subordinate diagnostic objects were visible (Ms = .65 and .76, respectively), t(17) = 4.134, p = .001, but no significant difference during basic categorization (basic diagnostic objects: M = .77 and subordinate diagnostic objects: M = .81), t(17) = 1.506, p = .151.",
+              "There was also a trend for an interaction, F(1, 34) = 3.456, p = .072, ηp² = .092 (Fig. <ref type=\"figure\" target=\"#fig_5\">6<\/ref>), which was due to a significant change in subordinate categorization accuracy when basic or subordinate diagnostic objects were visible (Ms = .65 and .76, respectively), t(17) = 4.134, p = .001, but no significant difference during basic categorization (basic diagnostic objects: M = .77 and subordinate diagnostic objects: M = .81), t(17) = 1.506, p = .151.",
+              null,
+              null,
+              null,
+              null,
+              "For initial saccade latency, there was no main effect of judgment, F(1, 26) = 1.708, p = .203, ηp² = .062, or stimuli type, nor was there an interaction between the two for initial saccade latency (Fs &lt; 1).",
+              null,
+              "No main effect of saccade amplitude on judgment appeared, F(1, 26) = 1.122, p = .299, ηp² = .041, but there was an effect of stimuli type, F(3, 78) = 20.836, p &lt; .001, ηp² = .445 (Ms = 4.06°, 3.33°, 4.31°, and 3.44° for classrooms, pools, restaurants, and roads, respectively), and an interaction, F(3, 78) = 4.869, p = .004, ηp² = .158, with restaurants having a trend for longer saccades during subordinate categorizations (M = 4.62°) than during basic categorizations (M = 3.99°), t(26) = 1.735, p = .094.",
+              "No main effect of saccade amplitude on judgment appeared, F(1, 26) = 1.122, p = .299, ηp² = .041, but there was an effect of stimuli type, F(3, 78) = 20.836, p &lt; .001, ηp² = .445 (Ms = 4.06°, 3.33°, 4.31°, and 3.44° for classrooms, pools, restaurants, and roads, respectively), and an interaction, F(3, 78) = 4.869, p = .004, ηp² = .158, with restaurants having a trend for longer saccades during subordinate categorizations (M = 4.62°) than during basic categorizations (M = 3.99°), t(26) = 1.735, p = .094.",
+              null,
+              "There was no effect of experience on the reduction in errors when using the tool (p &gt; .05), as the correlation was non-significant (Figure <ref type=\"figure\" target=\"#fig_0\">2<\/ref>)."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "0956797614522816",
+              "0956797614522816",
+              "0956797614522816",
+              "0956797614522816",
+              "0956797614522816",
+              "0956797614522816",
+              "0956797614522816",
+              "0956797614522816",
+              "0956797614522816",
+              "0956797614522816",
+              "0956797614522816",
+              "0956797614522816",
+              "0956797614522816",
+              "0956797614522816",
+              "0956797614522816",
+              "0956797614522816",
+              "0956797614522816",
+              "to_err_is_human",
+              "to_err_is_human"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Results",
+              "Results",
+              "Eye movement strategies",
+              "Eye movement strategies",
+              "Eye movement strategies",
+              "Gaze patterns",
+              "Gaze patterns",
+              "Validation of diagnostic objects",
+              "Validation of diagnostic objects",
+              "Behavior verification",
+              "Behavior verification",
+              "Behavior verification",
+              "Behavior verification",
+              "Behavior verification",
+              "Behavior verification",
+              "Behavior verification",
+              "Behavior verification",
+              "Procedure",
+              "Procedure"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "results",
+              "results",
+              "results",
+              "results",
+              "results",
+              "results",
+              "results",
+              "results",
+              "results",
+              "results",
+              "results",
+              "results",
+              "results",
+              "results",
+              "results",
+              "results",
+              "results",
+              "method",
+              "method"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "=",
+              "=",
+              "=",
+              "=",
+              "=",
+              "=",
+              "=",
+              "=",
+              "=",
+              "=",
+              "=",
+              "=",
+              "=",
+              "=",
+              "=",
+              "=",
+              "=",
+              "=",
+              ">"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0.153,
+              0.315,
+              0.09,
+              0.122,
+              0.237,
+              0.156,
+              0.121,
+              0.072,
+              0.151,
+              0.07,
+              0.058,
+              0.055,
+              0.068,
+              0.203,
+              0.288,
+              0.299,
+              0.094,
+              0.152,
+              0.05
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "nonsignificant",
+              "nonsignificant",
+              "nonsignificant",
+              "nonsignificant",
+              "nonsignificant",
+              "nonsignificant",
+              "nonsignificant",
+              "nonsignificant",
+              "nonsignificant",
+              "nonsignificant",
+              "nonsignificant",
+              "nonsignificant",
+              "nonsignificant",
+              "nonsignificant",
+              "nonsignificant",
+              "nonsignificant",
+              "nonsignificant",
+              "nonsignificant",
+              "nonsignificant"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "There was also a main effect of stimuli type, F(3, 78) = 12.910, p < .001, ηp² = .332 (Ms = 2,832, 2,709, 3,419, and 2,157 ms for classrooms, pools, restaurants, and roads, respectively), but no interaction between the two factors, F(3, 78) = 1.805, p = .153, ηp² = .065 (Table 1).",
+              "There was also a main effect of stimuli type, F(3, 78) = 9.558, p < .001, ηp² = .269 (Ms = 7.76, 7.23, 9.36, and 5.89 for classrooms, pools, restaurants, and roads, respectively), but no interaction, F(3, 78) = 1.201, p = .315, ηp² = .044 (Table 1).",
+              "There was a main effect of judgment on fixation duration, F(1, 26) = 8.246, p = .008, ηp² = .241 (basic: M = 381 ms; subordinate: M = 300 ms), a trend for stimuli type, F(3, 78) = 2.242, p = .09, ηp² = .079 (Ms = 329, 354, 341, and 335 ms for classrooms, pools, restaurants, and roads, respectively), as well as a significant interaction, F(3, 78) = 3.207, p = .028, ηp² = .110.",
+              "This interaction occurred because participants in the basic condition had numerically longer fixations when categorizing pool scenes (M = 383 ms) compared with participants in the subordinate condition (M = 325 ms), t(26) = 1.598, p = .122; fixation durations for all other scenes were significant, ts > 2.370, ps < .025 (Table 1).",
+              "There was no interaction, F(3, 78) = 1.444, p = .237, ηp² = .053.",
+              "For the sake of completeness, there was no main effect of judgment, F(1, 22) = 2.163, p = .156, ηp² = .090, though there was an effect of stimuli type, F(3, 66) = 4.342, p = .007, ηp² = .165 (Ms = 3.88°, 3.47°, 3.87°, and 3.52° for classrooms, pools, restaurants, and roads, respectively) as well as of ordinal fixation, F(2.286, 50.288) = 42.240, p < .001, ηp² = .658 (Ms = 2.55°, 3.28°, 3.86°, 4.26°, and 4.48° from the center for Fixations 1 through 5, respectively).",
+              "There was no interaction between stimuli type and ordinal count (F < 1), no interaction between judgment and stimuli type, F(3, 66) = 2.012, p = .121, ηp² = .084, and no three-way interaction (F < 1).",
+              "There was also a trend for an interaction, F(1, 34) = 3.456, p = .072, ηp² = .092 (Fig. 6), which was due to a significant change in subordinate categorization accuracy when basic or subordinate diagnostic objects were visible (Ms = .65 and .76, respectively), t(17) = 4.134, p = .001, but no significant difference during basic categorization (basic diagnostic objects: M = .77 and subordinate diagnostic objects: M = .81), t(17) = 1.506, p = .151.",
+              "There was also a trend for an interaction, F(1, 34) = 3.456, p = .072, ηp² = .092 (Fig. 6), which was due to a significant change in subordinate categorization accuracy when basic or subordinate diagnostic objects were visible (Ms = .65 and .76, respectively), t(17) = 4.134, p = .001, but no significant difference during basic categorization (basic diagnostic objects: M = .77 and subordinate diagnostic objects: M = .81), t(17) = 1.506, p = .151.",
+              "During these normal viewing conditions, there was a strong trend of judgment on RT, F(1, 26) = 3.568, p = .070, ηp² = .121, with basic categorization needing less time (1,062 ms) than subordinate categorization (1,272 ms).",
+              "There was a main effect of stimuli type, F(2.084, 54.188) = 7.080, p = .002, ηp² = .214 (Ms = 1,269, 1,128, 1,273, and 998 ms for classrooms, pools, restaurants, and roads, respectively) as well as a trend for an interaction, F(3, 78) = 2.596, p = .058, ηp² = .091, which was due to restaurants taking significantly longer to categorize at the subordinate level (M = 1,471 ms) than at the basic level (M = 1,075 ms), t(26) = 3.00, p = .006.",
+              "There was also a main effect of stimuli type, F(1.909, 49.641) = 8.239, p = .001, ηp² = .241 (Ms = 3.96, 3.21, 3.85, and 2.89 for classrooms, pools, restaurants, and roads, respectively), and a trend for an interaction, F(3, 78) = 2.637, p = .055, ηp² = .092, which was due to significantly more fixations during subordinate than during basic decisions for pools (basic: M = 2.52; subordinate: M = 3.91), t(26) = 1.901, p = .068, and for restaurants (basic: M = 3.01; subordinate: M = 4.69), t(26) = 3.363, p = .002.",
+              "There was also a main effect of stimuli type, F(1.909, 49.641) = 8.239, p = .001, ηp² = .241 (Ms = 3.96, 3.21, 3.85, and 2.89 for classrooms, pools, restaurants, and roads, respectively), and a trend for an interaction, F(3, 78) = 2.637, p = .055, ηp² = .092, which was due to significantly more fixations during subordinate than during basic decisions for pools (basic: M = 2.52; subordinate: M = 3.91), t(26) = 1.901, p = .068, and for restaurants (basic: M = 3.01; subordinate: M = 4.69), t(26) = 3.363, p = .002.",
+              "For initial saccade latency, there was no main effect of judgment, F(1, 26) = 1.708, p = .203, ηp² = .062, or stimuli type, nor was there an interaction between the two for initial saccade latency (Fs < 1).",
+              "There was no interaction, F(3, 78) = 1.276, p = .288, ηp² = .047.",
+              "No main effect of saccade amplitude on judgment appeared, F(1, 26) = 1.122, p = .299, ηp² = .041, but there was an effect of stimuli type, F(3, 78) = 20.836, p < .001, ηp² = .445 (Ms = 4.06°, 3.33°, 4.31°, and 3.44° for classrooms, pools, restaurants, and roads, respectively), and an interaction, F(3, 78) = 4.869, p = .004, ηp² = .158, with restaurants having a trend for longer saccades during subordinate categorizations (M = 4.62°) than during basic categorizations (M = 3.99°), t(26) = 1.735, p = .094.",
+              "No main effect of saccade amplitude on judgment appeared, F(1, 26) = 1.122, p = .299, ηp² = .041, but there was an effect of stimuli type, F(3, 78) = 20.836, p < .001, ηp² = .445 (Ms = 4.06°, 3.33°, 4.31°, and 3.44° for classrooms, pools, restaurants, and roads, respectively), and an interaction, F(3, 78) = 4.869, p = .004, ηp² = .158, with restaurants having a trend for longer saccades during subordinate categorizations (M = 4.62°) than during basic categorizations (M = 3.99°), t(26) = 1.735, p = .094.",
+              "On average researchers in the experimental condition found the app marginally significantly more useful (M = 5.06) than researchers in the control condition found the checklist (M = 4.5), t(97.2) = -1.96, p =0.152.",
+              "There was no effect of experience on the reduction in errors when using the tool (p > .05), as the correlation was non-significant (Figure 2)."
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Meta-scientific research has shown nonsignificant p values are commonly misinterpreted. It is incorrect to infer that there is 'no effect', 'no difference', or that groups are 'the same' after p > 0.05.\n\nIt is possible that there is a true non-zero effect, but that the study did not detect it. Make sure your inference acknowledges that it is possible that there is a non-zero effect. It is correct to include the effect is 'not significantly' different, although this just restates that p > 0.05.\n\nMetacheck does not yet analyze automatically whether sentences which include non-significant p-values are correct, but we recommend manually checking the sentences below for possible misinterpreted non-significant p values.\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Text = c(\"p = .153\", \"p = .315\", \"p = .09\", \"p = .122\", \n\"p = .237\", \"p = .156\", \"p = .121\", \"p = .072\", \"p = .151\", \"p = .070\", \n\"p = .058\", \"p = .055\", \"p = .068\", \"p = .203\", \"p = .288\", \"p = .299\", \n\"p = .094\", \"p =0.152\", \"p > .05\"), Sentence = c(\"There was also a main effect of stimuli type, F(3, 78) = 12.910, p < .001, ηp² = .332 (Ms = 2,832, 2,709, 3,419, and 2,157 ms for classrooms, pools, restaurants, and roads, respectively), but no interaction between the two factors, F(3, 78) = 1.805, p = .153, ηp² = .065 (Table 1).\", \n\"There was also a main effect of stimuli type, F(3, 78) = 9.558, p < .001, ηp² = .269 (Ms = 7.76, 7.23, 9.36, and 5.89 for classrooms, pools, restaurants, and roads, respectively), but no interaction, F(3, 78) = 1.201, p = .315, ηp² = .044 (Table 1).\", \n\"There was a main effect of judgment on fixation duration, F(1, 26) = 8.246, p = .008, ηp² = .241 (basic: M = 381 ms; subordinate: M = 300 ms), a trend for stimuli type, F(3, 78) = 2.242, p = .09, ηp² = .079 (Ms = 329, 354, 341, and 335 ms for classrooms, pools, restaurants, and roads, respectively), as well as a significant interaction, F(3, 78) = 3.207, p = .028, ηp² = .110.\", \n\"This interaction occurred because participants in the basic condition had numerically longer fixations when categorizing pool scenes (M = 383 ms) compared with participants in the subordinate condition (M = 325 ms), t(26) = 1.598, p = .122; fixation durations for all other scenes were significant, ts > 2.370, ps < .025 (Table 1).\", \n\"There was no interaction, F(3, 78) = 1.444, p = .237, ηp² = .053.\", \n\"For the sake of completeness, there was no main effect of judgment, F(1, 22) = 2.163, p = .156, ηp² = .090, though there was an effect of stimuli type, F(3, 66) = 4.342, p = .007, ηp² = .165 (Ms = 3.88°, 3.47°, 3.87°, and 3.52° for classrooms, pools, restaurants, and roads, respectively) as well as of ordinal fixation, F(2.286, 50.288) = 42.240, p < .001, ηp² = .658 (Ms = 2.55°, 3.28°, 3.86°, 4.26°, and 4.48° from the center for Fixations 1 through 5, respectively).\", \n\"There was no interaction between stimuli type and ordinal count (F < 1), no interaction between judgment and stimuli type, F(3, 66) = 2.012, p = .121, ηp² = .084, and no three-way interaction (F < 1).\", \n\"There was also a trend for an interaction, F(1, 34) = 3.456, p = .072, ηp² = .092 (Fig. 6), which was due to a significant change in subordinate categorization accuracy when basic or subordinate diagnostic objects were visible (Ms = .65 and .76, respectively), t(17) = 4.134, p = .001, but no significant difference during basic categorization (basic diagnostic objects: M = .77 and subordinate diagnostic objects: M = .81), t(17) = 1.506, p = .151.\", \n\"There was also a trend for an interaction, F(1, 34) = 3.456, p = .072, ηp² = .092 (Fig. 6), which was due to a significant change in subordinate categorization accuracy when basic or subordinate diagnostic objects were visible (Ms = .65 and .76, respectively), t(17) = 4.134, p = .001, but no significant difference during basic categorization (basic diagnostic objects: M = .77 and subordinate diagnostic objects: M = .81), t(17) = 1.506, p = .151.\", \n\"During these normal viewing conditions, there was a strong trend of judgment on RT, F(1, 26) = 3.568, p = .070, ηp² = .121, with basic categorization needing less time (1,062 ms) than subordinate categorization (1,272 ms).\", \n\"There was a main effect of stimuli type, F(2.084, 54.188) = 7.080, p = .002, ηp² = .214 (Ms = 1,269, 1,128, 1,273, and 998 ms for classrooms, pools, restaurants, and roads, respectively) as well as a trend for an interaction, F(3, 78) = 2.596, p = .058, ηp² = .091, which was due to restaurants taking significantly longer to categorize at the subordinate level (M = 1,471 ms) than at the basic level (M = 1,075 ms), t(26) = 3.00, p = .006.\", \n\"There was also a main effect of stimuli type, F(1.909, 49.641) = 8.239, p = .001, ηp² = .241 (Ms = 3.96, 3.21, 3.85, and 2.89 for classrooms, pools, restaurants, and roads, respectively), and a trend for an interaction, F(3, 78) = 2.637, p = .055, ηp² = .092, which was due to significantly more fixations during subordinate than during basic decisions for pools (basic: M = 2.52; subordinate: M = 3.91), t(26) = 1.901, p = .068, and for restaurants (basic: M = 3.01; subordinate: M = 4.69), t(26) = 3.363, p = .002.\", \n\"There was also a main effect of stimuli type, F(1.909, 49.641) = 8.239, p = .001, ηp² = .241 (Ms = 3.96, 3.21, 3.85, and 2.89 for classrooms, pools, restaurants, and roads, respectively), and a trend for an interaction, F(3, 78) = 2.637, p = .055, ηp² = .092, which was due to significantly more fixations during subordinate than during basic decisions for pools (basic: M = 2.52; subordinate: M = 3.91), t(26) = 1.901, p = .068, and for restaurants (basic: M = 3.01; subordinate: M = 4.69), t(26) = 3.363, p = .002.\", \n\"For initial saccade latency, there was no main effect of judgment, F(1, 26) = 1.708, p = .203, ηp² = .062, or stimuli type, nor was there an interaction between the two for initial saccade latency (Fs < 1).\", \n\"There was no interaction, F(3, 78) = 1.276, p = .288, ηp² = .047.\", \n\"No main effect of saccade amplitude on judgment appeared, F(1, 26) = 1.122, p = .299, ηp² = .041, but there was an effect of stimuli type, F(3, 78) = 20.836, p < .001, ηp² = .445 (Ms = 4.06°, 3.33°, 4.31°, and 3.44° for classrooms, pools, restaurants, and roads, respectively), and an interaction, F(3, 78) = 4.869, p = .004, ηp² = .158, with restaurants having a trend for longer saccades during subordinate categorizations (M = 4.62°) than during basic categorizations (M = 3.99°), t(26) = 1.735, p = .094.\", \n\"No main effect of saccade amplitude on judgment appeared, F(1, 26) = 1.122, p = .299, ηp² = .041, but there was an effect of stimuli type, F(3, 78) = 20.836, p < .001, ηp² = .445 (Ms = 4.06°, 3.33°, 4.31°, and 3.44° for classrooms, pools, restaurants, and roads, respectively), and an interaction, F(3, 78) = 4.869, p = .004, ηp² = .158, with restaurants having a trend for longer saccades during subordinate categorizations (M = 4.62°) than during basic categorizations (M = 3.99°), t(26) = 1.735, p = .094.\", \n\"On average researchers in the experimental condition found the app marginally significantly more useful (M = 5.06) than researchers in the control condition found the checklist (M = 4.5), t(97.2) = -1.96, p =0.152.\", \n\"There was no effect of experience on the reduction in errors when using the tool (p > .05), as the correlation was non-significant (Figure 2).\"\n)), row.names = c(NA, -19L), class = c(\"tbl_df\", \"tbl\", \"data.frame\"\n))\n\n# display table -----------------------------------\nmetacheck::report_table(table, c(0.1, 0.9), 10, FALSE)\n```\n\n\n::: {.callout-tip title=\"Learn More\" collapse=\"true\"}\n\nFor metascientific articles demonstrating the rate of misinterpretations of non-significant results is high, see:\n\nAczel B, Palfi B, Szollosi A, Kovacs M, Szaszi B, Szecsi P, Zrubka M, Gronau Q, van den Bergh D, Wagenmakers E (2018). &ldquo;Quantifying Support for the Null Hypothesis in Psychology: An Empirical Investigation.&rdquo; <em>Advances in Methods and Practices in Psychological Science<\/em>, <b>1<\/b>(3), 357&ndash;366. <a href=\"https://doi.org/10.1177/2515245918773742\">doi:10.1177/2515245918773742<\/a>.\n\nMurphy S, Merz R, Reimann L, Fernández A (2025). &ldquo;Nonsignificance misinterpreted as an effect’s absence in psychology: Prevalence and temporal analyses.&rdquo; <em>Royal Society Open Science<\/em>, <b>12<\/b>(3), 242167. <a href=\"https://doi.org/10.1098/rsos.242167\">doi:10.1098/rsos.242167<\/a>.\n\nFor educational material on preventing the misinterpretation of p values, see [Improving Your Statistical Inferences](https://lakens.github.io/statistical_inferences/01-pvalue.html#sec-misconception1).\n\n:::\n"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "yellow"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "We found 19 non-significant p values that should be checked for appropriate interpretation."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 4,
+        "names": [
+          "paper_id",
+          "n_nonsignificant"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "0956797613520608",
+              "0956797614522816",
+              "0956797614527830",
+              "to_err_is_human"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0,
+              17,
+              0,
+              2
+            ]
+          }
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

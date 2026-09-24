@@ -1,0 +1,112 @@
+{
+  "id": "match_reported_output.tt.format_values",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 2,
+    "names": [
+      "text_id",
+      "grp_id",
+      "reported",
+      "n_components",
+      "n_matched",
+      "found",
+      "match_values",
+      "not_matched",
+      "source_file",
+      "analysis",
+      "confidence",
+      "plausible_split"
+    ],
+    "v": [
+      {
+        "t": "int",
+        "v": [
+          1,
+          1
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          1,
+          1
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "b=1.23e-05",
+          "b=1234567 b=1e+05 b=123456.7 b=0.1234568 b=0 b=1e-300 b=12345678901 b=0.00012 b=1e+05 b=2.5 b=-0.5 b=1234568 b=0.1 b=99999.99"
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          1,
+          14
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          1,
+          5
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true,
+          true
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "b=1.23e-05",
+          "b=1234567, b=1e+05, b=0, b=1e-300, b=1e+05"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "",
+          "b=123456.7, b=0.1234568, b=12345678901, b=0.00012, b=2.5, b=-0.5, b=1234568, b=0.1, b=99999.99"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "f.R",
+          "f.R"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "lm",
+          "lm"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "full",
+          "partial"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false,
+          false
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

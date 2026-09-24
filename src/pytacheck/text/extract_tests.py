@@ -289,7 +289,9 @@ def _fmt(x: Any) -> str:
 def _render_test(g: Sequence[Mapping[str, Any]]) -> str:
     """Render one test as reported: ``"t(23) = 3.77, p = .001"`` (``.render_test()``)."""
     parts = []
-    for c in g:
+    for k, c in enumerate(g, start=1):
+        if "name" not in c or "value" not in c:  # sprintf() with a NULL gives character(0)
+            raise ValueError(f"values must be length 1,\n but FUN(X[[{k}]]) result is length 0")
         df = c.get("df")
         dfp = "" if _is_na(df) or _fmt(df) == "" else _fmt(df)
         comp = c.get("comp", "=")  # an absent key is R's NULL

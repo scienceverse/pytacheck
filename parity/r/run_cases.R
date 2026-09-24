@@ -53,6 +53,13 @@ rpath <- function(p) {
 }
 
 # Decode a YAML argument spec into an R value -------------------------------
+# A YAML list as an atomic vector, with YAML nulls as NA (unlist() drops them).
+na_vec <- function(val) {
+  if (!is.list(val)) return(val)
+  if (length(val) == 0) return(NULL)
+  unlist(lapply(val, function(e) if (is.null(e)) NA else e))
+}
+
 decode <- function(x) {
   if (is.list(x) && length(x) == 1 && !is.null(names(x)) &&
       startsWith(names(x)[[1]], "$")) {
@@ -67,17 +74,13 @@ decode <- function(x) {
         test_paper(as.character(txt), as.character(url))
       },
       "$df" = {
-        cols <- lapply(val, function(col) {
-          if (is.list(col)) {
-            vapply(col, function(e) if (is.null(e)) NA else e, FUN.VALUE = col[[1]] %||% NA)
-          } else col
-        })
+        cols <- lapply(val, function(col) if (is.list(col)) na_vec(col) else col)
         as.data.frame(cols, stringsAsFactors = FALSE, check.names = FALSE)
       },
-      "$chr" = as.character(unlist(val) %||% character(0)),
-      "$int" = as.integer(unlist(val) %||% integer(0)),
-      "$dbl" = as.double(unlist(val) %||% double(0)),
-      "$lgl" = as.logical(unlist(val) %||% logical(0)),
+      "$chr" = as.character(na_vec(val) %||% character(0)),
+      "$int" = as.integer(na_vec(val) %||% integer(0)),
+      "$dbl" = as.double(na_vec(val) %||% double(0)),
+      "$lgl" = as.logical(na_vec(val) %||% logical(0)),
       "$list" = lapply(val, decode),
       "$null" = NULL,
       "$NA" = NA,

@@ -103,8 +103,16 @@ def test_build_uses_the_last_commit_touching_each_pack(ms) -> None:
     index, issues = store_build(root)
     assert not [i for i in issues if i.level == "error"], issues
     sources = {p["name"]: p["source"] for p in index["packs"]}
-    assert sources["alpha"] == {"github": "lab/pytacheck-store", "rev": first, "subdir": "packs/alpha"}
-    assert sources["beta"] == {"github": "lab/pytacheck-store", "rev": second, "subdir": "packs/beta"}
+    assert sources["alpha"] == {
+        "github": "lab/pytacheck-store",
+        "rev": first,
+        "subdir": "packs/alpha",
+    }
+    assert sources["beta"] == {
+        "github": "lab/pytacheck-store",
+        "rev": second,
+        "subdir": "packs/beta",
+    }
     index, _ = store_build(root, repo="other/repo", check=True)
     assert index["packs"][0]["source"]["github"] == "other/repo"
 
@@ -198,3 +206,21 @@ def test_install_from_the_contrib_seed(ms, monkeypatch, tmp_path) -> None:
     psych = [m for m, _ in expand("fields::psychology")]
     assert psych[-4:] == ["ethics_check", "open_practices", "all_p_values", "causal_claims"]
     assert "ref_replication" not in [m for m, _ in expand("fields::medicine")]
+
+
+def test_contrib_pack_tests_pass(tmp_path) -> None:
+    if not SEED.is_dir():
+        pytest.skip("no contrib seed")
+    import sys
+
+    res = subprocess.run(
+        [sys.executable, "-m", "pytest", "-q", "-p", "no:cacheprovider",
+         str(SEED / "packs" / "clinical_trials" / "tests")],
+        cwd=tmp_path,
+        env={**os.environ, "PYTACHECK_CONFIG": "none", "PYTHONDONTWRITEBYTECODE": "1"},
+        capture_output=True,
+        text=True,
+        timeout=300,
+        check=False,
+    )  # fmt: skip
+    assert res.returncode == 0, res.stdout + res.stderr

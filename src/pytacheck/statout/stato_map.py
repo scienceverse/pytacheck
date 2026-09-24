@@ -965,7 +965,7 @@ def stato_type_column(header: Any, call_fn: str | None = None) -> dict[str, Any]
         return _stato_type_column(header, call_fn)
 
 
-@functools.lru_cache(maxsize=8192)
+@functools.lru_cache(maxsize=8192, typed=True)
 def _stato_type_column_cached(header: Any, call_fn: Any) -> dict[str, Any]:
     return _stato_type_column(header, call_fn)
 

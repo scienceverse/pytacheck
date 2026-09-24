@@ -1,0 +1,247 @@
+{
+  "id": "coi_check.fuzz_paperlist",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "coi_check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "COI Check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "general"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 30,
+        "names": [
+          "paper_id",
+          "text"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "5eacf81d70e18b",
+              "dc5ab6359dd017",
+              "edc197bfa7f000",
+              "9eb008faa94c4c",
+              "4f0621875e3ac3",
+              "3311f96237c601",
+              "3e80c6efd91b30",
+              "d0f06e27269001",
+              "08b81ec9b2f507",
+              "737e11af985db6",
+              "6d2c807cb92668",
+              "437507d08a8126",
+              "6cda3eeaa26be5",
+              "d141b8c7abfd60",
+              "dd26ff80624723",
+              "ebb10f620572b2",
+              "b5a951c3ae20f5",
+              "f3d3c1bd74e3ff",
+              "aaf978ce360536",
+              "100d083379a50a",
+              "c060aa2db57db6",
+              "4e3e654b48860c",
+              "73197a0942edec",
+              "00e9729607715d",
+              "78ba7b2ae919be",
+              "697cfb2be4385d",
+              "6fe904366d0f9c",
+              "59fcfcb93329bf",
+              "d6caf905202d14",
+              "110a5546faff93"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Disclosure statement: None.",
+              "CONFLICT OF INTEREST Authors disclose no conflicts. The effect was significant, p = .03. None declared.",
+              "Disclosure: nil:",
+              "Disclosure statement: None.",
+              "Disclosure; COMPETING: interest, data. conflict;. COMPETING, nil, data financial data interests. No; Financial Disclosure None:. thank; to declare declared. none No; Declaration of Interest Disclosure Y. conflicting. Funding. duality;",
+              "Disclosure declare nil COI,.",
+              "Conflicts: DISCLOSURE:.",
+              "Disclosures conflict: conflicting COMPETING. potential; conflict, Funding. conflicting:",
+              "Declaration of Interest. Interest, Author, financial.",
+              "Disclosure. competing no: and; DISCLOSURE: disclosed interest,. data Potential, Conflicts Conflicts. Interest The author; the The authors: or: COI: interest;.",
+              "Declaration of Interest. disclosed NONE; Declaration of Interest Nothing to declare: X: Author: data study: thank; disclosure. We:",
+              "Disclosures. Interest: Nothing to declare Conflicts p = .03: conflicting; disclosed: None of the authors. potential: COMPETING: conflicting; Disclosures The authors, study: NO: None of the authors; of Disclosures,.",
+              "Disclosures; The authors: conflicts financial disclosure: the declared: of: declared Disclosure;. Nil: No. Y p = .03. financial disclosure Funding duality, conflicting DISCLOSURE: Interest. Disclosures Author, NO NO: conflicting: study. interest. We statement financial disclosure; exist, conflicting, no study reported interest financial Disclosure, conflict; competing: p = .03. Declaration of Conflict:. interest: The authors. Nothing to declare. Nothing to declare. conflicts; with respect to the research: disclosed. a the; financial disclosure, duality COI. Conflicts None.",
+              "Disclosures Disclosure None of the authors have any conflict of interest to declare.  Competing interests",
+              "Potential conflicts of interest: none declared.",
+              "Disclosure, thank: interest. The authors; Funding: interest Potential,.",
+              "Disclosure; exist X, conflicting. competing; financial,.",
+              "Disclosure. have. Both authors. conflict. Competing Nothing to declare: Declaration of Interest. disclosed: Author:",
+              "Competing: study disclosed: DISCLOSURE;.",
+              "Competing financial interests: The authors declare none.",
+              "Conflict of Interest None declared.",
+              "Declaration of Interest financial disclosure: study, financial; Y, a: declared Duality of; Funding",
+              "Conflict of interest none",
+              "Disclosures: data: None of the authors NONE.",
+              "Disclosure: author: Conflict; a. Y; conflicting. or: Both authors, NONE reported, reported",
+              "Declaration of Interest,. None of the authors. the: to declare X. Declaration:.",
+              "Declaration of Conflicting Interests The author(s) declared no potential conflicts of interest.",
+              "Declaration of Conflict: None declare: The author potential: Competing: Interest NONE. Y: financial disclosure; Competing: conflicts: COI reported Nothing to declare; The authors; the;. None of the authors. conflict of; duality Declaration of Interest: NONE.",
+              "Disclosure: with respect to the research. COMPETING. conflict; COI: disclosure.",
+              "Disclosure: The authors have nothing to disclose. N/A Acknowledgements We thank our participants. Declaration of interest: The authors report no conflicts of interest. The authors alone are responsible. The authors declare no conflict of interest. conflict of interest: none reported. The authors thank Y. The authors declare no conflict of interest. Disclosure statement: None."
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "The following conflict of interest statement was detected.",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(c(\"Disclosure statement: None.\", \"CONFLICT OF INTEREST Authors disclose no conflicts. The effect was significant, p = .03. None declared.\", \n\"Disclosure: nil:\", \"Disclosure statement: None.\", \"Disclosure; COMPETING: interest, data. conflict;. COMPETING, nil, data financial data interests. No; Financial Disclosure None:. thank; to declare declared. none No; Declaration of Interest Disclosure Y. conflicting. Funding. duality;\", \n\"Disclosure declare nil COI,.\", \"Conflicts: DISCLOSURE:.\", \"Disclosures conflict: conflicting COMPETING. potential; conflict, Funding. conflicting:\", \n\"Declaration of Interest. Interest, Author, financial.\", \"Disclosure. competing no: and; DISCLOSURE: disclosed interest,. data Potential, Conflicts Conflicts. Interest The author; the The authors: or: COI: interest;.\", \n\"Declaration of Interest. disclosed NONE; Declaration of Interest Nothing to declare: X: Author: data study: thank; disclosure. We:\", \n\"Disclosures. Interest: Nothing to declare Conflicts p = .03: conflicting; disclosed: None of the authors. potential: COMPETING: conflicting; Disclosures The authors, study: NO: None of the authors; of Disclosures,.\", \n\"Disclosures; The authors: conflicts financial disclosure: the declared: of: declared Disclosure;. Nil: No. Y p = .03. financial disclosure Funding duality, conflicting DISCLOSURE: Interest. Disclosures Author, NO NO: conflicting: study. interest. We statement financial disclosure; exist, conflicting, no study reported interest financial Disclosure, conflict; competing: p = .03. Declaration of Conflict:. interest: The authors. Nothing to declare. Nothing to declare. conflicts; with respect to the research: disclosed. a the; financial disclosure, duality COI. Conflicts None.\", \n\"Disclosures Disclosure None of the authors have any conflict of interest to declare.  Competing interests\", \n\"Potential conflicts of interest: none declared.\", \"Disclosure, thank: interest. The authors; Funding: interest Potential,.\", \n\"Disclosure; exist X, conflicting. competing; financial,.\", \"Disclosure. have. Both authors. conflict. Competing Nothing to declare: Declaration of Interest. disclosed: Author:\", \n\"Competing: study disclosed: DISCLOSURE;.\", \"Competing financial interests: The authors declare none.\", \n\"Conflict of Interest None declared.\", \"Declaration of Interest financial disclosure: study, financial; Y, a: declared Duality of; Funding\", \n\"Conflict of interest none\", \"Disclosures: data: None of the authors NONE.\", \n\"Disclosure: author: Conflict; a. Y; conflicting. or: Both authors, NONE reported, reported\", \n\"Declaration of Interest,. None of the authors. the: to declare X. Declaration:.\", \n\"Declaration of Conflicting Interests The author(s) declared no potential conflicts of interest.\", \n\"Declaration of Conflict: None declare: The author potential: Competing: Interest NONE. Y: financial disclosure; Competing: conflicts: COI reported Nothing to declare; The authors; the;. None of the authors. conflict of; duality Declaration of Interest: NONE.\", \n\"Disclosure: with respect to the research. COMPETING. conflict; COI: disclosure.\", \n\"Disclosure: The authors have nothing to disclose. N/A Acknowledgements We thank our participants. Declaration of interest: The authors report no conflicts of interest. The authors alone are responsible. The authors declare no conflict of interest. conflict of interest: none reported. The authors thank Y. The authors declare no conflict of interest. Disclosure statement: None.\"\n)), names = \"\", class = \"data.frame\", row.names = c(NA, -30L))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 2, FALSE)\n```\n"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "green"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "A conflict of interest statement was detected."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 40,
+        "names": [
+          "paper_id",
+          "coi_found"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "5eacf81d70e18b",
+              "dc5ab6359dd017",
+              "edc197bfa7f000",
+              "9eb008faa94c4c",
+              "4f0621875e3ac3",
+              "3311f96237c601",
+              "1eb7fc0dc2cc30",
+              "3e80c6efd91b30",
+              "00e9bd7d136c20",
+              "d0f06e27269001",
+              "08b81ec9b2f507",
+              "737e11af985db6",
+              "6d2c807cb92668",
+              "437507d08a8126",
+              "6cda3eeaa26be5",
+              "d141b8c7abfd60",
+              "dd26ff80624723",
+              "add1147e159b52",
+              "ebb10f620572b2",
+              "a3dbdafc986a75",
+              "be42921361dbf8",
+              "030bb677d53209",
+              "b5a951c3ae20f5",
+              "f3d3c1bd74e3ff",
+              "aaf978ce360536",
+              "100d083379a50a",
+              "c060aa2db57db6",
+              "4e3e654b48860c",
+              "c3caeda56599f7",
+              "48661d9bc7b092",
+              "73197a0942edec",
+              "00e9729607715d",
+              "78ba7b2ae919be",
+              "191dfcfcaa53b6",
+              "697cfb2be4385d",
+              "6fe904366d0f9c",
+              "62c98e80db24a0",
+              "59fcfcb93329bf",
+              "d6caf905202d14",
+              "110a5546faff93"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              false,
+              true,
+              false,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              false,
+              true,
+              false,
+              false,
+              false,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              false,
+              false,
+              true,
+              true,
+              true,
+              false,
+              true,
+              true,
+              false,
+              true,
+              true,
+              true
+            ]
+          }
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

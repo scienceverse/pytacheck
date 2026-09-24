@@ -1,0 +1,232 @@
+{
+  "id": "ref_replication.multi",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "ref_replication"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Replication Check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "reference"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 9,
+        "names": [
+          "paper_id",
+          "bib_id",
+          "doi",
+          "text",
+          "replication_ref",
+          "replication_doi",
+          "replication_url",
+          "replication_outcome",
+          "replication_type"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "synthetic",
+              "synthetic",
+              "synthetic",
+              "synthetic",
+              "synthetic",
+              "synthetic",
+              "synthetic",
+              "synthetic",
+              "synthetic"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              2,
+              4,
+              4
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "10.1126/science.1239918",
+              "10.1126/science.1239918",
+              "10.1126/science.1239918",
+              "10.1126/science.1239918",
+              "10.1126/science.1239918",
+              "10.1126/science.1239918",
+              "10.1016/j.biopsycho.2018.08.007",
+              "10.1037/0022-3514.71.2.230",
+              "10.1037/0022-3514.71.2.230"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Reference 0. https://doi.org/10.1126/science.1239918",
+              "Reference 0. https://doi.org/10.1126/science.1239918",
+              "Reference 0. https://doi.org/10.1126/science.1239918",
+              "Reference 0. https://doi.org/10.1126/science.1239918",
+              "Reference 0. https://doi.org/10.1126/science.1239918",
+              "Reference 0. https://doi.org/10.1126/science.1239918",
+              "Reference 2. https://doi.org/10.1016/j.biopsycho.2018.08.007",
+              "Reference 4. https://doi.org/10.1037/0022-3514.71.2.230",
+              "Reference 4. https://doi.org/10.1037/0022-3514.71.2.230"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Panero, M. E., Weisberg, D. S., Black, J., Goldstein, T. R., Barnes, J. L., Brownell, H., & Winner, E. (2016). Does reading a single passage of literary fiction really improve theory of mind? An attempt at replication. Journal of Personality and Social Psychology, 111(5), e46–e54.",
+              "Camerer, C. F., Dreber, A., Holzmeister, F., Ho, T.-H., Huber, J., Johannesson, M., Kirchler, M., Nave, G., Nosek, B. A., Pfeiffer, T., Altmejd, A., Buttrick, N., Chan, T., Chen, Y., Forsell, E., Gampa, A., Heikensten, E., Hummer, L., Imai, T., … Wu, H. (2018). Evaluating the replicability of social science experiments in Nature and Science between 2010 and 2015. Nature Human Behaviour, 2(9), 637–644. https://doi.org/10.1038/s41562-018-0399-z Individual report available at",
+              "Dijkstra, K., Verkoeijen, P., van Kuijk, I., Yee Chow, S., Bakker, A., & Zwaan, R. (2015). Leidt het lezen van literaire fictie tot meer empathie? : een replicatiestudie van Kidd en Castano (2013). De Psycholoog, 50(10), 10–21. Retrieved from",
+              "Samur, D., Tops, M., & Koole, S. L. (2017). Does a single session of reading literary fiction prime enhanced mentalising performance? Four replication experiments of Kidd and Castano (2013). Cognition and Emotion, 32(1), 130–144.",
+              "Kidd, D., & Castano, E. (2018). Reading Literary Fiction and Theory of Mind: Three Preregistered Replications and Extensions of Kidd and Castano (2013). Social Psychological and Personality Science, 10(4), 522–531.",
+              "van Kuijk, I., Verkoeijen, P., Dijkstra, K., & Zwaan, R. A. (2018). The Effect of Reading a Short Passage of Literary Fiction on Theory of Mind: A Replication of Kidd and Castano (2013). Collabra: Psychology, 4(1).",
+              "Bischoff, M. (2024). Evaluating the reliability of relative frontal alpha asymmetry as a state-dependent correlate of the stress response in a mixed-sex sample: A replication study (Master's thesis, University of Twente). Retrieved from",
+              "Doyen, S., Klein, O., Pichon, C.-L., & Cleeremans, A. (2012). Behavioral Priming: It’s All in the Mind, but Whose Mind? PLoS ONE, 7(1), e29081.",
+              "Pashler, H., Harris, C., & Coburn, N.. Elderly-Related Words Prime Slow Walking. (2011, September 15). Retrieved September 23, 2017 from"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "10.1037/pspa0000064",
+              "10.1038/s41562-018-0399-z",
+              null,
+              "10.1080/02699931.2017.1279591",
+              "10.1177/1948550618775410",
+              "10.1525/collabra.117",
+              null,
+              "10.1371/journal.pone.0029081",
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "https://osf.io/s73x6",
+              "https://www.tijdschriftdepsycholoog.nl/wp-content/uploads/2015/10/Dijkstra-K.-Verkoeijen-P.-Van-Kuijk-I.-Soke-Yee-Chow-Bakker-A.-Zwaan-R.-2015.-Leidt-het-lezen-van-literaire-fictie-tot-meer-emphatie.-De-Psycholoog-10-10-21..pdf",
+              "https://doi.org/10.1080/02699931.2017.1279591",
+              "https://doi.org/10.1177/1948550618775410",
+              "https://doi.org/10.1525/collabra.117",
+              "https://purl.utwente.nl/essays/100571",
+              null,
+              "http://www.PsychFileDrawer.org/replication.php?attempt=MTU%3D"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "mixed",
+              "failed",
+              "failed",
+              "failed",
+              "mixed",
+              "successful",
+              "mixed",
+              "failed",
+              "failed"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "replication",
+              "replication",
+              "replication",
+              "replication",
+              "replication",
+              "replication",
+              "replication",
+              "replication",
+              "replication"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "We checked 4 references with DOIs. We found 9 replications for 3 originals you cited.\n\nCheck if you are aware of the replication studies, and cite them where appropriate.",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Reference = c(\"Reference 0. https://doi.org/10.1126/science.1239918\", \n\"Reference 0. https://doi.org/10.1126/science.1239918\", \"Reference 0. https://doi.org/10.1126/science.1239918\", \n\"Reference 0. https://doi.org/10.1126/science.1239918\", \"Reference 0. https://doi.org/10.1126/science.1239918\", \n\"Reference 0. https://doi.org/10.1126/science.1239918\", \"Reference 2. https://doi.org/10.1016/j.biopsycho.2018.08.007\", \n\"Reference 4. https://doi.org/10.1037/0022-3514.71.2.230\", \"Reference 4. https://doi.org/10.1037/0022-3514.71.2.230\"\n), Replication = c(\"Panero, M. E., Weisberg, D. S., Black, J., Goldstein, T. R., Barnes, J. L., Brownell, H., & Winner, E. (2016). Does reading a single passage of literary fiction really improve theory of mind? An attempt at replication. Journal of Personality and Social Psychology, 111(5), e46–e54. <a href='https://doi.org/10.1037/pspa0000064' target='_blank'>doi:10.1037/pspa0000064<\/a>\", \n\"Camerer, C. F., Dreber, A., Holzmeister, F., Ho, T.-H., Huber, J., Johannesson, M., Kirchler, M., Nave, G., Nosek, B. A., Pfeiffer, T., Altmejd, A., Buttrick, N., Chan, T., Chen, Y., Forsell, E., Gampa, A., Heikensten, E., Hummer, L., Imai, T., … Wu, H. (2018). Evaluating the replicability of social science experiments in Nature and Science between 2010 and 2015. Nature Human Behaviour, 2(9), 637–644. https://doi.org/10.1038/s41562-018-0399-z Individual report available at <a href='https://doi.org/10.1038/s41562-018-0399-z' target='_blank'>doi:10.1038/s41562-018-0399-z<\/a>\", \n\"Dijkstra, K., Verkoeijen, P., van Kuijk, I., Yee Chow, S., Bakker, A., & Zwaan, R. (2015). Leidt het lezen van literaire fictie tot meer empathie? : een replicatiestudie van Kidd en Castano (2013). De Psycholoog, 50(10), 10–21. Retrieved from <a href='https://www.tijdschriftdepsycholoog.nl/wp-content/uploads/2015/10/Dijkstra-K.-Verkoeijen-P.-Van-Kuijk-I.-Soke-Yee-Chow-Bakker-A.-Zwaan-R.-2015.-Leidt-het-lezen-van-literaire-fictie-tot-meer-emphatie.-De-Psycholoog-10-10-21..pdf' target='_blank'>www.tijdschriftdepsycholoog.nl/wp-content/uploads/2015/10/Dijkstra-K.-Verkoeijen-P.-Van-Kuijk-I.-Soke-Yee-Chow-Bakker-A.-Zwaan-R.-2015.-Leidt-het-lezen-van-literaire-fictie-tot-meer-emphatie.-De-Psycholoog-10-10-21..pdf<\/a>\", \n\"Samur, D., Tops, M., & Koole, S. L. (2017). Does a single session of reading literary fiction prime enhanced mentalising performance? Four replication experiments of Kidd and Castano (2013). Cognition and Emotion, 32(1), 130–144. <a href='https://doi.org/10.1080/02699931.2017.1279591' target='_blank'>doi:10.1080/02699931.2017.1279591<\/a>\", \n\"Kidd, D., & Castano, E. (2018). Reading Literary Fiction and Theory of Mind: Three Preregistered Replications and Extensions of Kidd and Castano (2013). Social Psychological and Personality Science, 10(4), 522–531. <a href='https://doi.org/10.1177/1948550618775410' target='_blank'>doi:10.1177/1948550618775410<\/a>\", \n\"van Kuijk, I., Verkoeijen, P., Dijkstra, K., & Zwaan, R. A. (2018). The Effect of Reading a Short Passage of Literary Fiction on Theory of Mind: A Replication of Kidd and Castano (2013). Collabra: Psychology, 4(1). <a href='https://doi.org/10.1525/collabra.117' target='_blank'>doi:10.1525/collabra.117<\/a>\", \n\"Bischoff, M. (2024). Evaluating the reliability of relative frontal alpha asymmetry as a state-dependent correlate of the stress response in a mixed-sex sample: A replication study (Master's thesis, University of Twente). Retrieved from <a href='https://purl.utwente.nl/essays/100571' target='_blank'>purl.utwente.nl/essays/100571<\/a>\", \n\"Doyen, S., Klein, O., Pichon, C.-L., & Cleeremans, A. (2012). Behavioral Priming: It’s All in the Mind, but Whose Mind? PLoS ONE, 7(1), e29081. <a href='https://doi.org/10.1371/journal.pone.0029081' target='_blank'>doi:10.1371/journal.pone.0029081<\/a>\", \n\"Pashler, H., Harris, C., & Coburn, N.. Elderly-Related Words Prime Slow Walking. (2011, September 15). Retrieved September 23, 2017 from <a href='http://www.PsychFileDrawer.org/replication.php?attempt=MTU%3D' target='_blank'>www.PsychFileDrawer.org/replication.php?attempt=MTU%3D<\/a>\"\n)), row.names = c(NA, -9L), class = c(\"tbl_df\", \"tbl\", \"data.frame\"\n))\n\n# display table -----------------------------------\nmetacheck::report_table(table, c(0.5, 0.5), 2, FALSE)\n```\n"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "info"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "We found 9 replications for 3 originals you cited."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "replications"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "synthetic"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              9
+            ]
+          }
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

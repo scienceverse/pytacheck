@@ -12,6 +12,7 @@
   "value": {
     "t": "paperlist",
     "names": [
+      "bom_paragraphs.tei",
       "crlf_nonamespace.tei",
       "edge_body.tei",
       "empty_body.tei",
@@ -24,6 +25,429 @@
       "xlink_ns.tei"
     ],
     "v": [
+      {
+        "t": "paper",
+        "names": [
+          "paper_id",
+          "info",
+          "author",
+          "text",
+          "section",
+          "url",
+          "bib",
+          "xref",
+          "figure",
+          "table",
+          "eq"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "bom_paragraphs.tei"
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "title",
+              "keywords",
+              "doi",
+              "file_hash",
+              "input_format",
+              "file_name",
+              "bibr_version",
+              "paper_type",
+              "paper_type_confidence",
+              "oecd_l1",
+              "oecd_l2",
+              "oecd_confidence"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Byte order marks"
+                ]
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": [
+                  {
+                    "t": "null"
+                  }
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  ""
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "e3db527159d986f9"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Unknown TEI XML"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "/home/user/pytacheck/tests/io/fixtures/bom_paragraphs.tei.xml"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "10.5"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "unknown"
+                ]
+              },
+              {
+                "t": "dbl",
+                "v": [
+                  0
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  null
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  null
+                ]
+              },
+              {
+                "t": "dbl",
+                "v": [
+                  null
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 7,
+            "names": [
+              "text",
+              "text_id",
+              "paragraph_id",
+              "section_id",
+              "page_number",
+              "formatted"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "First sentence.",
+                  "Second one.",
+                  "Triple mark.",
+                  "Then more.",
+                  "Mid﻿dle mark. ﻿",
+                  "Next sentence.",
+                  "Mark then space."
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  1,
+                  2,
+                  3,
+                  4,
+                  5,
+                  6,
+                  7
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  1,
+                  1,
+                  2,
+                  2,
+                  3,
+                  3,
+                  4
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  0,
+                  0,
+                  1,
+                  1,
+                  1,
+                  1,
+                  1
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 2,
+            "names": [
+              "section_id",
+              "header",
+              "parent_section_id",
+              "section_type",
+              "classification_score"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": [
+                  0,
+                  1
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Abstract",
+                  "Intro"
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  null,
+                  null
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "abstract",
+                  "intro"
+                ]
+              },
+              {
+                "t": "dbl",
+                "v": [
+                  null,
+                  null
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [
+              "href",
+              "link_text",
+              "text_id"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "int",
+                "v": []
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [
+              "bib_id"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": []
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [
+              "xref_id",
+              "xref_type",
+              "contents",
+              "text_id"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "int",
+                "v": []
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [
+              "figure_id",
+              "section_id",
+              "image",
+              "page_number"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": []
+              },
+              {
+                "t": "int",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "int",
+                "v": []
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [
+              "table_id",
+              "section_id",
+              "html",
+              "contents",
+              "page_number"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": []
+              },
+              {
+                "t": "int",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": []
+              },
+              {
+                "t": "int",
+                "v": []
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [
+              "text_id",
+              "grp_id",
+              "lhs",
+              "df",
+              "comp",
+              "rhs"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": []
+              },
+              {
+                "t": "int",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              }
+            ]
+          }
+        ]
+      },
       {
         "t": "paper",
         "names": [

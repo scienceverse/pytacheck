@@ -123,6 +123,19 @@ class ModuleSpec:
         return getattr(self, key)
 
 
+_AUTHOR_EMAIL = re.compile(r"^(.*?)\s*<([^<>@\s]+@[^<>\s]+)>$")
+
+
+def _roxygen_author(author: str) -> str:
+    """``Name <email>`` as metacheck's roxygen ``Name (\\email{email})``.
+
+    module_report() strips the email with R's own pattern, so the stored
+    form must be R's for the acknowledgement line to match.
+    """
+    m = _AUTHOR_EMAIL.match(author.strip())
+    return f"{m.group(1)} (\\email{{{m.group(2)}}})" if m else author
+
+
 def module(
     name: str | None = None,
     *,
@@ -158,7 +171,7 @@ def module(
             description=textwrap.dedent(description).strip(),
             details=textwrap.dedent(details).strip(),
             keywords=tuple(k for k in keywords if k not in CAPABILITIES),
-            author=tuple(author),
+            author=tuple(_roxygen_author(a) for a in author),
             params=dict(params or {"paper": "a paper object or paperlist object"}),
             returns=returns,
             path=path,
@@ -701,6 +714,35 @@ def _apply_na_replace(summary: pd.DataFrame, na_replace: Any) -> pd.DataFrame:
     return summary
 
 
+class _UnusedArgumentError(TypeError):
+    pass
+
+
+def _check_unused_args(spec: ModuleSpec, kwargs: Mapping[str, Any]) -> None:
+    """Raise R's ``unused argument (x = 1)`` error for arguments the module lacks."""
+    params = inspect.signature(spec.func).parameters
+    if any(p.kind is inspect.Parameter.VAR_KEYWORD for p in params.values()):
+        return
+    unused = [k for k in kwargs if k not in params]
+    if not unused:
+        return
+    from pytacheck.report.render import deparse
+
+    def as_typed(v: Any) -> Any:
+        # R deparses the call as written: `foo = 1` is a double, not 1L
+        if isinstance(v, int) and not isinstance(v, bool):
+            return float(v)
+        if isinstance(v, list | tuple):
+            return [as_typed(e) for e in v]
+        return v
+
+    args = ", ".join(
+        f"{k} = {' '.join(line.strip() for line in deparse(as_typed(kwargs[k])))}" for k in unused
+    )
+    plural = "s" if len(unused) > 1 else ""
+    raise _UnusedArgumentError(f"unused argument{plural} ({args})")
+
+
 def module_run(
     paper: Any, module: str | Path | ModuleSpec | Callable[..., Any], **kwargs: Any
 ) -> ModuleOutput:
@@ -772,6 +814,7 @@ def module_run(
 
     token = _PREV_OUTPUTS.set(prev_outputs)
     try:
+        _check_unused_args(spec, kwargs)
         results = spec.func(paper, **kwargs)
     except Exception as exc:
         from pytacheck.log import logger
@@ -841,3 +884,8 @@ def _shallow_copy(out: ModuleOutput) -> ModuleOutput:
         extras={k: view(v) for k, v in out.extras.items()},
         provenance=None if out.provenance is None else dict(out.provenance),
     )
+
+
+from pytacheck._callable import callable_module  # noqa: E402
+
+callable_module(__name__, "module")  # `from pytacheck import module` is the decorator either way

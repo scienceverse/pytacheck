@@ -1,0 +1,323 @@
+"area": "mod_ref_db"
+"cases":
+- "id": "ref_retraction.demo"
+  "module": "ref_retraction"
+  "args": {"paper": {"$paper": "demo"}}
+- "id": "ref_retraction.psychsci"
+  "module": "ref_retraction"
+  "args":
+    "paper":
+      "$read": ["upstream/metacheck/tests/testthat/fixtures/psychsci/0956797613520608.json", "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614522816.json", "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614527830.json", "upstream/metacheck/inst/demos/to_err_is_human.json"]
+- "id": "ref_retraction.psychsci_nohits"
+  "module": "ref_retraction"
+  "args":
+    "paper":
+      "$read": ["upstream/metacheck/tests/testthat/fixtures/psychsci/0956797613520608.json", "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614522816.json", "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614527830.json"]
+- "id": "ref_retraction.test_paper"
+  "module": "ref_retraction"
+  "args": {"paper": {"$test_paper": {"text": ["No references here."]}}}
+  "compare": {"ignore": ["summary_table.paper_id"]}
+- "id": "ref_retraction.demo_no_refs"
+  "module": "ref_retraction"
+  "args":
+    "paper":
+      "$expr":
+        "r": "source(file.path(root, \"tests/mod_ref_db/helpers.R\")); demo_no_refs()"
+        "py": "__import__(\"tests.mod_ref_db.helpers\", fromlist=[\"x\"]).demo_no_refs()"
+- "id": "ref_retraction.demo_no_dois"
+  "module": "ref_retraction"
+  "args":
+    "paper":
+      "$expr":
+        "r": "source(file.path(root, \"tests/mod_ref_db/helpers.R\")); demo_no_dois()"
+        "py": "__import__(\"tests.mod_ref_db.helpers\", fromlist=[\"x\"]).demo_no_dois()"
+- "id": "ref_retraction.na_empty_dois"
+  "module": "ref_retraction"
+  "args":
+    "paper":
+      "$expr":
+        "r": "source(file.path(root, \"tests/mod_ref_db/helpers.R\")); ref_paper(c(NA, \"\"))"
+        "py": "__import__(\"tests.mod_ref_db.helpers\", fromlist=[\"x\"]).ref_paper([None, \"\"])"
+- "id": "ref_retraction.multi"
+  "module": "ref_retraction"
+  "args":
+    "paper":
+      "$expr":
+        "r": "source(file.path(root, \"tests/mod_ref_db/helpers.R\")); ref_paper(c(\"10.1371/journal.ppat.1000066\", \"10.1016/j.ejogrb.2018.03.041\", \"10.3390/nano14090769\", \"10.1000/not.in.rw\", NA, \"\", \"10.1177/0956797614520714\"))"
+        "py": "__import__(\"tests.mod_ref_db.helpers\", fromlist=[\"x\"]).ref_paper([\"10.1371/journal.ppat.1000066\", \"10.1016/j.ejogrb.2018.03.041\", \"10.3390/nano14090769\", \"10.1000/not.in.rw\", None, \"\", \"10.1177/0956797614520714\"])"
+- "id": "ref_retraction.multi.report_table"
+  "r": "identity"
+  "py": "copy.copy"
+  "args":
+    "x":
+      "$expr":
+        "r": "source(file.path(root, \"tests/mod_ref_db/helpers.R\")); report_tbl(module_run(ref_paper(c(\"10.1371/journal.ppat.1000066\", \"10.1016/j.ejogrb.2018.03.041\", \"10.3390/nano14090769\", \"10.1000/not.in.rw\", NA, \"\", \"10.1177/0956797614520714\")), \"ref_retraction\"))"
+        "py": "(lambda H: H.report_tbl(pc.module_run(H.ref_paper([\"10.1371/journal.ppat.1000066\", \"10.1016/j.ejogrb.2018.03.041\", \"10.3390/nano14090769\", \"10.1000/not.in.rw\", None, \"\", \"10.1177/0956797614520714\"]), \"ref_retraction\")))(__import__(\"tests.mod_ref_db.helpers\", fromlist=[\"x\"]))"
+- "id": "ref_retraction.nohit"
+  "module": "ref_retraction"
+  "args":
+    "paper":
+      "$expr":
+        "r": "source(file.path(root, \"tests/mod_ref_db/helpers.R\")); ref_paper(\"10.1000/not.in.rw\")"
+        "py": "__import__(\"tests.mod_ref_db.helpers\", fromlist=[\"x\"]).ref_paper([\"10.1000/not.in.rw\"])"
+- "id": "ref_retraction.paperlist"
+  "module": "ref_retraction"
+  "args":
+    "paper":
+      "$expr":
+        "r": "source(file.path(root, \"tests/mod_ref_db/helpers.R\")); paperlist(ref_paper(\"10.3390/nano14090769\", id = \"b\"), ref_paper(\"10.1000/x\", id = \"c\"), ref_paper(c(\"10.1371/journal.ppat.1000066\", \"10.1016/j.ejogrb.2018.03.041\"), id = \"a\"))"
+        "py": "pc.PaperList([__import__(\"tests.mod_ref_db.helpers\", fromlist=[\"x\"]).ref_paper([\"10.3390/nano14090769\"], id=\"b\"), __import__(\"tests.mod_ref_db.helpers\", fromlist=[\"x\"]).ref_paper([\"10.1000/x\"], id=\"c\"), __import__(\"tests.mod_ref_db.helpers\", fromlist=[\"x\"]).ref_paper([\"10.1371/journal.ppat.1000066\", \"10.1016/j.ejogrb.2018.03.041\"], id=\"a\")])"
+- "id": "ref_retraction.chained"
+  "module": "ref_retraction"
+  "args":
+    "paper":
+      "$call":
+        "r": "module_run"
+        "py": "pytacheck.module.module_run"
+        "args": {"paper": {"$paper": "demo"}, "module": "ref_replication"}
+- "id": "ref_replication.demo"
+  "module": "ref_replication"
+  "args": {"paper": {"$paper": "demo"}}
+- "id": "ref_replication.demo.show_outcomes"
+  "module": "ref_replication"
+  "args": {"paper": {"$paper": "demo"}, "show_outcomes": true}
+- "id": "ref_replication.demo.report_table"
+  "r": "identity"
+  "py": "copy.copy"
+  "args":
+    "x":
+      "$expr":
+        "r": "source(file.path(root, \"tests/mod_ref_db/helpers.R\")); report_tbl(module_run(demopaper(), \"ref_replication\"))"
+        "py": "(lambda H: H.report_tbl(pc.module_run(pc.demopaper(), \"ref_replication\")))(__import__(\"tests.mod_ref_db.helpers\", fromlist=[\"x\"]))"
+- "id": "ref_replication.demo.show_outcomes.report_table"
+  "r": "identity"
+  "py": "copy.copy"
+  "args":
+    "x":
+      "$expr":
+        "r": "source(file.path(root, \"tests/mod_ref_db/helpers.R\")); report_tbl(module_run(demopaper(), \"ref_replication\", show_outcomes = TRUE))"
+        "py": "(lambda H: H.report_tbl(pc.module_run(pc.demopaper(), \"ref_replication\", show_outcomes=True)))(__import__(\"tests.mod_ref_db.helpers\", fromlist=[\"x\"]))"
+- "id": "ref_replication.psychsci"
+  "module": "ref_replication"
+  "args":
+    "paper":
+      "$read": ["upstream/metacheck/tests/testthat/fixtures/psychsci/0956797613520608.json", "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614522816.json", "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614527830.json", "upstream/metacheck/inst/demos/to_err_is_human.json", "upstream/metacheck/tests/testthat/fixtures/formats/preprint.pdf.tei.xml"]
+- "id": "ref_replication.psychsci_nohits"
+  "module": "ref_replication"
+  "args":
+    "paper":
+      "$read": ["upstream/metacheck/tests/testthat/fixtures/psychsci/0956797613520608.json", "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614522816.json", "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614527830.json"]
+- "id": "ref_replication.test_paper"
+  "module": "ref_replication"
+  "args": {"paper": {"$test_paper": {"text": ["No references here."]}}}
+  "compare": {"ignore": ["summary_table.paper_id"]}
+- "id": "ref_replication.demo_no_refs"
+  "module": "ref_replication"
+  "args":
+    "paper":
+      "$expr":
+        "r": "source(file.path(root, \"tests/mod_ref_db/helpers.R\")); demo_no_refs()"
+        "py": "__import__(\"tests.mod_ref_db.helpers\", fromlist=[\"x\"]).demo_no_refs()"
+- "id": "ref_replication.demo_no_dois"
+  "module": "ref_replication"
+  "args":
+    "paper":
+      "$expr":
+        "r": "source(file.path(root, \"tests/mod_ref_db/helpers.R\")); demo_no_dois()"
+        "py": "__import__(\"tests.mod_ref_db.helpers\", fromlist=[\"x\"]).demo_no_dois()"
+- "id": "ref_replication.na_empty_dois"
+  "module": "ref_replication"
+  "args":
+    "paper":
+      "$expr":
+        "r": "source(file.path(root, \"tests/mod_ref_db/helpers.R\")); ref_paper(c(NA, \"\"))"
+        "py": "__import__(\"tests.mod_ref_db.helpers\", fromlist=[\"x\"]).ref_paper([None, \"\"])"
+- "id": "ref_replication.multi"
+  "module": "ref_replication"
+  "args":
+    "paper":
+      "$expr":
+        "r": "source(file.path(root, \"tests/mod_ref_db/helpers.R\")); ref_paper(c(\"10.1126/science.1239918\", \"10.1000/not.in.flora\", \"10.1016/j.biopsycho.2018.08.007\", NA, \"10.1037/0022-3514.71.2.230\"))"
+        "py": "__import__(\"tests.mod_ref_db.helpers\", fromlist=[\"x\"]).ref_paper([\"10.1126/science.1239918\", \"10.1000/not.in.flora\", \"10.1016/j.biopsycho.2018.08.007\", None, \"10.1037/0022-3514.71.2.230\"])"
+- "id": "ref_replication.multi.report_table"
+  "r": "identity"
+  "py": "copy.copy"
+  "args":
+    "x":
+      "$expr":
+        "r": "source(file.path(root, \"tests/mod_ref_db/helpers.R\")); report_tbl(module_run(ref_paper(c(\"10.1126/science.1239918\", \"10.1000/not.in.flora\", \"10.1016/j.biopsycho.2018.08.007\", NA, \"10.1037/0022-3514.71.2.230\")), \"ref_replication\"))"
+        "py": "(lambda H: H.report_tbl(pc.module_run(H.ref_paper([\"10.1126/science.1239918\", \"10.1000/not.in.flora\", \"10.1016/j.biopsycho.2018.08.007\", None, \"10.1037/0022-3514.71.2.230\"]), \"ref_replication\")))(__import__(\"tests.mod_ref_db.helpers\", fromlist=[\"x\"]))"
+- "id": "ref_replication.reproduction"
+  "module": "ref_replication"
+  "args":
+    "paper":
+      "$expr":
+        "r": "source(file.path(root, \"tests/mod_ref_db/helpers.R\")); ref_paper(c(\"10.1038/s41562-023-01655-0\", \"10.1093/qje/qjac034\"))"
+        "py": "__import__(\"tests.mod_ref_db.helpers\", fromlist=[\"x\"]).ref_paper([\"10.1038/s41562-023-01655-0\", \"10.1093/qje/qjac034\"])"
+- "id": "ref_replication.reproduction.report_table"
+  "r": "identity"
+  "py": "copy.copy"
+  "args":
+    "x":
+      "$expr":
+        "r": "source(file.path(root, \"tests/mod_ref_db/helpers.R\")); report_tbl(module_run(ref_paper(c(\"10.1038/s41562-023-01655-0\", \"10.1093/qje/qjac034\")), \"ref_replication\"))"
+        "py": "(lambda H: H.report_tbl(pc.module_run(H.ref_paper([\"10.1038/s41562-023-01655-0\", \"10.1093/qje/qjac034\"]), \"ref_replication\")))(__import__(\"tests.mod_ref_db.helpers\", fromlist=[\"x\"]))"
+- "id": "ref_replication.both_types"
+  "module": "ref_replication"
+  "args":
+    "paper":
+      "$expr":
+        "r": "source(file.path(root, \"tests/mod_ref_db/helpers.R\")); ref_paper(c(\"10.1126/science.1239918\", \"10.1093/qje/qjac034\", \"10.1037/0022-3514.50.3.502\"))"
+        "py": "__import__(\"tests.mod_ref_db.helpers\", fromlist=[\"x\"]).ref_paper([\"10.1126/science.1239918\", \"10.1093/qje/qjac034\", \"10.1037/0022-3514.50.3.502\"])"
+- "id": "ref_replication.both_types.report_table"
+  "r": "identity"
+  "py": "copy.copy"
+  "args":
+    "x":
+      "$expr":
+        "r": "source(file.path(root, \"tests/mod_ref_db/helpers.R\")); report_tbl(module_run(ref_paper(c(\"10.1126/science.1239918\", \"10.1093/qje/qjac034\", \"10.1037/0022-3514.50.3.502\")), \"ref_replication\"))"
+        "py": "(lambda H: H.report_tbl(pc.module_run(H.ref_paper([\"10.1126/science.1239918\", \"10.1093/qje/qjac034\", \"10.1037/0022-3514.50.3.502\"]), \"ref_replication\")))(__import__(\"tests.mod_ref_db.helpers\", fromlist=[\"x\"]))"
+- "id": "ref_replication.already_cited"
+  "module": "ref_replication"
+  "args":
+    "paper":
+      "$expr":
+        "r": "source(file.path(root, \"tests/mod_ref_db/helpers.R\")); ref_paper(c(\"10.1038/nature11467\", \"10.1038/s41562-018-0399-z\"))"
+        "py": "__import__(\"tests.mod_ref_db.helpers\", fromlist=[\"x\"]).ref_paper([\"10.1038/nature11467\", \"10.1038/s41562-018-0399-z\"])"
+- "id": "ref_replication.already_cited.report_table"
+  "r": "identity"
+  "py": "copy.copy"
+  "args":
+    "x":
+      "$expr":
+        "r": "source(file.path(root, \"tests/mod_ref_db/helpers.R\")); report_tbl(module_run(ref_paper(c(\"10.1038/nature11467\", \"10.1038/s41562-018-0399-z\")), \"ref_replication\"))"
+        "py": "(lambda H: H.report_tbl(pc.module_run(H.ref_paper([\"10.1038/nature11467\", \"10.1038/s41562-018-0399-z\"]), \"ref_replication\")))(__import__(\"tests.mod_ref_db.helpers\", fromlist=[\"x\"]))"
+- "id": "ref_replication.all_cited"
+  "module": "ref_replication"
+  "args":
+    "paper":
+      "$expr":
+        "r": "source(file.path(root, \"tests/mod_ref_db/helpers.R\")); ref_paper(c(\"10.1037/0003-066x.54.6.408\", \"10.1177/1474704919852921\"))"
+        "py": "__import__(\"tests.mod_ref_db.helpers\", fromlist=[\"x\"]).ref_paper([\"10.1037/0003-066x.54.6.408\", \"10.1177/1474704919852921\"])"
+- "id": "ref_replication.both_types.show_outcomes"
+  "module": "ref_replication"
+  "args":
+    "paper":
+      "$expr":
+        "r": "source(file.path(root, \"tests/mod_ref_db/helpers.R\")); ref_paper(c(\"10.1126/science.1239918\", \"10.1093/qje/qjac034\", \"10.1037/0022-3514.50.3.502\"))"
+        "py": "__import__(\"tests.mod_ref_db.helpers\", fromlist=[\"x\"]).ref_paper([\"10.1126/science.1239918\", \"10.1093/qje/qjac034\", \"10.1037/0022-3514.50.3.502\"])"
+    "show_outcomes": true
+- "id": "ref_replication.both_types.show_outcomes.report_table"
+  "r": "identity"
+  "py": "copy.copy"
+  "args":
+    "x":
+      "$expr":
+        "r": "source(file.path(root, \"tests/mod_ref_db/helpers.R\")); report_tbl(module_run(ref_paper(c(\"10.1126/science.1239918\", \"10.1093/qje/qjac034\", \"10.1037/0022-3514.50.3.502\")), \"ref_replication\", show_outcomes = TRUE))"
+        "py": "(lambda H: H.report_tbl(pc.module_run(H.ref_paper([\"10.1126/science.1239918\", \"10.1093/qje/qjac034\", \"10.1037/0022-3514.50.3.502\"]), \"ref_replication\", show_outcomes=True)))(__import__(\"tests.mod_ref_db.helpers\", fromlist=[\"x\"]))"
+- "id": "ref_replication.nohit"
+  "module": "ref_replication"
+  "args":
+    "paper":
+      "$expr":
+        "r": "source(file.path(root, \"tests/mod_ref_db/helpers.R\")); ref_paper(\"10.1000/not.in.flora\")"
+        "py": "__import__(\"tests.mod_ref_db.helpers\", fromlist=[\"x\"]).ref_paper([\"10.1000/not.in.flora\"])"
+- "id": "ref_replication.paperlist"
+  "module": "ref_replication"
+  "args":
+    "paper":
+      "$expr":
+        "r": "source(file.path(root, \"tests/mod_ref_db/helpers.R\")); paperlist(ref_paper(\"10.1037/0003-066x.54.6.408\", id = \"orig\"), ref_paper(\"10.1177/1474704919852921\", id = \"rep\"), ref_paper(c(\"10.1093/qje/qjac034\", \"10.1126/science.1239918\"), id = \"both\"))"
+        "py": "pc.PaperList([__import__(\"tests.mod_ref_db.helpers\", fromlist=[\"x\"]).ref_paper([\"10.1037/0003-066x.54.6.408\"], id=\"orig\"), __import__(\"tests.mod_ref_db.helpers\", fromlist=[\"x\"]).ref_paper([\"10.1177/1474704919852921\"], id=\"rep\"), __import__(\"tests.mod_ref_db.helpers\", fromlist=[\"x\"]).ref_paper([\"10.1093/qje/qjac034\", \"10.1126/science.1239918\"], id=\"both\")])"
+- "id": "ref_replication.chained"
+  "module": "ref_replication"
+  "args":
+    "paper":
+      "$call":
+        "r": "module_run"
+        "py": "pytacheck.module.module_run"
+        "args": {"paper": {"$paper": "demo"}, "module": "ref_retraction"}
+- "id": "ref_miscitation.demo"
+  "module": "ref_miscitation"
+  "args": {"paper": {"$paper": "demo"}}
+- "id": "ref_miscitation.demo.custom_db"
+  "module": "ref_miscitation"
+  "args":
+    "paper": {"$paper": "demo"}
+    "db":
+      "$df":
+        "doi": ["10.1037/0003-066x.54.6.408"]
+        "reftext": ["The full reference (this is a test)"]
+        "warning": ["Lorem ipsum this is a test..."]
+- "id": "ref_miscitation.demo.two_db"
+  "module": "ref_miscitation"
+  "args":
+    "paper": {"$paper": "demo"}
+    "db":
+      "$df":
+        "doi": ["10.32614/10.5281/zenodo.2669586", "10.1037/0003-066x.54.6.408"]
+        "reftext": ["Reference A", "Reference B"]
+        "warning": ["Warning A", "Warning B"]
+- "id": "ref_miscitation.psychsci"
+  "module": "ref_miscitation"
+  "args":
+    "paper":
+      "$read": ["upstream/metacheck/tests/testthat/fixtures/psychsci/0956797613520608.json", "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614522816.json", "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614527830.json", "upstream/metacheck/inst/demos/to_err_is_human.json"]
+- "id": "ref_miscitation.test_paper"
+  "module": "ref_miscitation"
+  "args": {"paper": {"$test_paper": {"text": ["No references here."]}}}
+  "compare": {"ignore": ["summary_table.paper_id"]}
+- "id": "ref_miscitation.demo_no_refs"
+  "module": "ref_miscitation"
+  "args":
+    "paper":
+      "$expr":
+        "r": "source(file.path(root, \"tests/mod_ref_db/helpers.R\")); demo_no_refs()"
+        "py": "__import__(\"tests.mod_ref_db.helpers\", fromlist=[\"x\"]).demo_no_refs()"
+- "id": "ref_miscitation.instances"
+  "module": "ref_miscitation"
+  "args":
+    "paper":
+      "$expr":
+        "r": "source(file.path(root, \"tests/mod_ref_db/helpers.R\")); ref_paper(c(\"10.1525/collabra.33267\", \"10.1016/j.jml.2012.11.001\", \"10.1371/journal.pone.0090779\", \"10.1000/other\"), cites = list(0L, 0L, c(0L, 1L), 0L, 3L, 0L, 0L))"
+        "py": "__import__(\"tests.mod_ref_db.helpers\", fromlist=[\"x\"]).ref_paper([\"10.1525/collabra.33267\", \"10.1016/j.jml.2012.11.001\", \"10.1371/journal.pone.0090779\", \"10.1000/other\"], cites=[0, 0, [0, 1], 0, 3, 0, 0])"
+- "id": "ref_miscitation.five_instances"
+  "module": "ref_miscitation"
+  "args":
+    "paper":
+      "$expr":
+        "r": "source(file.path(root, \"tests/mod_ref_db/helpers.R\")); ref_paper(\"10.1525/collabra.33267\", cites = list(0L, 0L, 0L, 0L, 0L))"
+        "py": "__import__(\"tests.mod_ref_db.helpers\", fromlist=[\"x\"]).ref_paper([\"10.1525/collabra.33267\"], cites=[0, 0, 0, 0, 0])"
+- "id": "ref_miscitation.paperlist"
+  "module": "ref_miscitation"
+  "args":
+    "paper":
+      "$expr":
+        "r": "source(file.path(root, \"tests/mod_ref_db/helpers.R\")); paperlist(ref_paper(\"10.1525/collabra.33267\", id = \"p2\", cites = list(0L)), ref_paper(\"10.1000/x\", id = \"p3\"), ref_paper(c(\"10.1016/j.jml.2012.11.001\", \"10.1525/collabra.33267\"), id = \"p1\", cites = list(c(0L, 1L))))"
+        "py": "pc.PaperList([__import__(\"tests.mod_ref_db.helpers\", fromlist=[\"x\"]).ref_paper([\"10.1525/collabra.33267\"], id=\"p2\", cites=[0]), __import__(\"tests.mod_ref_db.helpers\", fromlist=[\"x\"]).ref_paper([\"10.1000/x\"], id=\"p3\"), __import__(\"tests.mod_ref_db.helpers\", fromlist=[\"x\"]).ref_paper([\"10.1016/j.jml.2012.11.001\", \"10.1525/collabra.33267\"], id=\"p1\", cites=[[0, 1]])])"
+- "id": "ref_miscitation.duplicate_doi"
+  "module": "ref_miscitation"
+  "args":
+    "paper":
+      "$expr":
+        "r": "source(file.path(root, \"tests/mod_ref_db/helpers.R\")); ref_paper(c(\"10.1525/collabra.33267\", \"10.1525/collabra.33267\"), cites = list(0L, 1L))"
+        "py": "__import__(\"tests.mod_ref_db.helpers\", fromlist=[\"x\"]).ref_paper([\"10.1525/collabra.33267\", \"10.1525/collabra.33267\"], cites=[0, 1])"
+- "id": "ref_miscitation.na_doi_db"
+  "module": "ref_miscitation"
+  "args":
+    "paper":
+      "$expr":
+        "r": "source(file.path(root, \"tests/mod_ref_db/helpers.R\")); ref_paper(c(NA, \"10.1000/x\"), cites = list(0L, 1L))"
+        "py": "__import__(\"tests.mod_ref_db.helpers\", fromlist=[\"x\"]).ref_paper([None, \"10.1000/x\"], cites=[0, 1])"
+    "db":
+      "$expr":
+        "r": "data.frame(doi = c(\"10.1000/x\", NA), reftext = c(\"Ref X\", NA), warning = c(\"Warn X\", \"Warn NA\"))"
+        "py": "pd.DataFrame({\"doi\": [\"10.1000/x\", None], \"reftext\": [\"Ref X\", None], \"warning\": [\"Warn X\", \"Warn NA\"]})"
+- "id": "ref_miscitation.chained"
+  "module": "ref_miscitation"
+  "args":
+    "paper":
+      "$call":
+        "r": "module_run"
+        "py": "pytacheck.module.module_run"
+        "args": {"paper": {"$paper": "demo"}, "module": "ref_retraction"}

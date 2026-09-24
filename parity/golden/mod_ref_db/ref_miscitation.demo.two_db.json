@@ -1,0 +1,151 @@
+{
+  "id": "ref_miscitation.demo.two_db",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "ref_miscitation"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Miscitation"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "reference"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 3,
+        "names": [
+          "paper_id",
+          "bib_id",
+          "doi",
+          "citation",
+          "reftext",
+          "warning"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "to_err_is_human",
+              "to_err_is_human",
+              "to_err_is_human"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "10.32614/10.5281/zenodo.2669586",
+              "10.32614/10.5281/zenodo.2669586",
+              "10.1037/0003-066x.54.6.408"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "In this studyfoot_0 we examine whether automated checks reduce the amount of errors that researchers make in scientific manuscripts.",
+              "There was no effect of experience on the reduction in errors when using the tool (p > .05), as the correlation was non-significant (Figure 2).",
+              "We simulated the data using Faux (DeBruine 2025) (Table 1, Figure 1).2"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Reference A",
+              "Reference A",
+              "Reference B"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Warning A",
+              "Warning A",
+              "Warning B"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "**10.32614/10.5281/zenodo.2669586**\n\nReference A\n\nWarning A\n\n*2 Instances:*\n\n> In this studyfoot_0 we examine whether automated checks reduce the amount of errors that researchers make in scientific manuscripts.\n\n> There was no effect of experience on the reduction in errors when using the tool (p > .05), as the correlation was non-significant (Figure 2).",
+          "**10.1037/0003-066x.54.6.408**\n\nReference B\n\nWarning B\n\n*1 Instance:*\n\n> We simulated the data using Faux (DeBruine 2025) (Table 1, Figure 1).2"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "yellow"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "We found 3 citations to papers that are commonly miscited."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "miscite_10.32614/10.5281/zenodo.2669586",
+          "miscite_10.1037/0003-066x.54.6.408"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "to_err_is_human"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -568,8 +568,12 @@ def _list_rel(path: str) -> list[str]:
 
 
 def _interactive() -> bool:
-    """R ``interactive()``: a Python REPL or notebook."""
-    return bool(hasattr(sys, "ps1") or sys.flags.interactive)
+    """R ``interactive()``: a Python REPL, ``python -i``, or an IPython/Jupyter session."""
+    if hasattr(sys, "ps1") or sys.flags.interactive:
+        return True
+    ipython = sys.modules.get("IPython")
+    get_ipython = getattr(ipython, "get_ipython", None)
+    return bool(get_ipython is not None and get_ipython() is not None)
 
 
 def _menu(choices: list[str], title: str) -> int:
