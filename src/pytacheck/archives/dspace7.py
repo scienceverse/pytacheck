@@ -257,7 +257,8 @@ def _dspace7_info(
         bundle_list = _bracket(_bracket(bundles, "_embedded"), "bundles")
         original = None
         for b in _elements(bundle_list):
-            if _dollar(b, "name") == "ORIGINAL" and isinstance(_dollar(b, "name"), str):
+            bundle_name = _dollar(b, "name")
+            if isinstance(bundle_name, str) and bundle_name == "ORIGINAL":  # R: identical()
                 original = b
         if original is not None:
             bs = _dspace7_rest(
