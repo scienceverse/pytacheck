@@ -165,8 +165,8 @@ def _clean(values: Sequence[str | None]) -> list[str | None]:
     x = [_deaccent(v) for v in x]
     x = gsub(r"\p{Pd}", "", x, perl=True)  # remove dashes
     x = gsub(r"\s+", " ", x)
-    x = gsub("[‘’‚‛`]", "'", x)
-    x = gsub('["“”„‟]', "'", x)
+    x = gsub("[\u2018\u2019\u201a\u201b\u0060]", "'", x)  # single quotes
+    x = gsub('["\u201c\u201d\u201e\u201f]', "'", x)  # double quotes become single
     return list(gsub(r"\.\s*$", "", x))  # remove . at end
 
 
