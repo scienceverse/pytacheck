@@ -53,7 +53,9 @@ _SEP = "␟"
 # ===========================================================================
 
 _NUM_RE = re.compile(r"[-+]?(?:[0-9]+\.?[0-9]*|\.[0-9]+)(?:[eE][-+]?[0-9]+)?")
-_HEX_RE = re.compile(r"([-+]?)0[xX]([0-9a-fA-F]+)")
+_HEX_RE = re.compile(
+    r"([-+]?)0[xX]((?=\.?[0-9a-fA-F])[0-9a-fA-F]*(?:\.[0-9a-fA-F]*)?)(?:[pP]([-+]?[0-9]+))?"
+)
 _INF_RE = re.compile(r"([-+]?)(?:inf|infinity)", re.IGNORECASE)
 
 
@@ -72,7 +74,7 @@ def _as_numeric(x: Any) -> float | None:
         return float(s)
     m = _HEX_RE.fullmatch(s)
     if m:
-        v = float(int(m.group(2), 16))
+        v = float.fromhex("0x" + m.group(2) + ("p" + m.group(3) if m.group(3) else ""))
         return -v if m.group(1) == "-" else v
     m = _INF_RE.fullmatch(s)
     if m:
@@ -118,12 +120,18 @@ _LINE_SPLIT = re.compile(r"\r\n|\r|\n")
 
 
 def _read_lines(path: str | os.PathLike[str], n: int = -1) -> list[str]:
-    """R ``readLines(path, warn = FALSE, encoding = "UTF-8")`` (``n`` lines)."""
+    """R ``readLines(path, warn = FALSE, encoding = "UTF-8")`` (``n`` lines).
+
+    LF, CRLF and CR all end a line, and a line is cut at an embedded NUL, as
+    in R. Invalid UTF-8 is decoded with replacement characters (R keeps the
+    bytes, and its regex functions then refuse the strings).
+    """
     data = Path(path).read_bytes()
     text = data.decode("utf-8", errors="replace")
     lines = _LINE_SPLIT.split(text)
     if lines and lines[-1] == "":
         lines.pop()
+    lines = [ln.split("\x00", 1)[0] for ln in lines] if "\x00" in text else lines
     return lines if n < 0 else lines[:n]
 
 
@@ -143,8 +151,14 @@ def _file_path_sans_ext(x: str) -> str:
 
 def _r_dirname(path: str) -> str:
     """R ``dirname()`` (``"."`` for a bare file name)."""
+    path = os.path.expanduser(path)  # R_ExpandFileName()
     d = os.path.dirname(path.rstrip("/")) if path not in ("/", "") else path
     return d or "."
+
+
+def _file_path(*parts: str) -> str:
+    """R ``file.path()``: the parts pasted with ``"/"`` (an absolute part stays inside)."""
+    return "/".join(parts)
 
 
 def _unzip(path: str, exdir: str) -> list[str]:
@@ -758,6 +772,13 @@ def _spvdx_read_all_series(root: Any, data: list[dict[str, Any]]) -> dict[Any, d
     return series
 
 
+def _series_get(series: dict[Any, dict[str, Any]], key: str | None) -> dict[str, Any] | None:
+    """R ``series[[key]]`` on a named list: ``NULL`` for ``NA`` or ``""``."""
+    if key is None or key == "":
+        return None
+    return series.get(key)
+
+
 def _spvdx_nest_series_ids(nest_node: Any) -> list[str | None]:
     """Port of R/spv.R::.spvdx_nest_series_ids()."""
     return [
@@ -808,12 +829,12 @@ def _spv_decode_legacy_table(
 
         labeling = _find_first(graph, ".//*[local-name()='interval']/*[local-name()='labeling']")
         cell_id = _xml_attr(labeling, "variable")
-        cell_series = series.get(cell_id) if cell_id is not None else None
+        cell_series = _series_get(series, cell_id)
         if cell_series is None:
             raise ValueError(f"spv legacy: no cell series '{_na_str(cell_id)}'")
 
         dim_ids = col_ids + row_ids
-        dims = [series.get(i) if i is not None else None for i in dim_ids]
+        dims = [_series_get(series, i) for i in dim_ids]
         if any(d is None for d in dims):
             raise ValueError("spv legacy: missing dimension series")
         n_cells = len(cell_series["values"])
@@ -904,8 +925,27 @@ class _REvalError(ValueError):
 
 
 _R_RESERVED = frozenset(
-    "if else repeat while function for next break in TRUE FALSE NULL Inf NaN NA "
-    "NA_integer_ NA_real_ NA_character_ NA_complex_".split()
+    [
+        "if",
+        "else",
+        "repeat",
+        "while",
+        "function",
+        "for",
+        "next",
+        "break",
+        "in",
+        "TRUE",
+        "FALSE",
+        "NULL",
+        "Inf",
+        "NaN",
+        "NA",
+        "NA_integer_",
+        "NA_real_",
+        "NA_character_",
+        "NA_complex_",
+    ]
 )
 _R_NUMBER = re.compile(
     r"(0[xX][0-9a-fA-F]+(?:\.[0-9a-fA-F]*)?(?:[pP][+-]?[0-9]+)?"
@@ -1370,8 +1410,10 @@ def _r_arith(op: str, a: Any, b: Any) -> Any:
             return a * b
         if op == "/":
             if b == 0 and not isinstance(a, complex) and not isinstance(b, complex):
-                return _NA if a == 0 or _r_isna(a) else math.copysign(math.inf, a) * (
-                    -1.0 if math.copysign(1.0, b) < 0 else 1.0
+                return (
+                    _NA
+                    if a == 0 or _r_isna(a)
+                    else math.copysign(math.inf, a) * (-1.0 if math.copysign(1.0, b) < 0 else 1.0)
                 )
             return a / b
         if op == "^":
@@ -1387,7 +1429,7 @@ def _r_arith(op: str, a: Any, b: Any) -> Any:
         if op == "%%":
             return _NA if b == 0 else a - math.floor(a / b) * b
         if op == "%/%":
-            return math.floor(a / b) if b != 0 else _r_arith("/", a, b)
+            return float(math.floor(a / b)) if b != 0 else _r_arith("/", a, b)
     except OverflowError:
         return math.inf
     except (ValueError, ZeroDivisionError):
@@ -1515,6 +1557,60 @@ def _r_bad() -> Any:
     raise _REvalError("unused or missing argument")
 
 
+def _r_count(args: list[Any]) -> int:
+    if len(args) > 1:
+        _r_bad()
+    vals = _r_nums(args[0], "invalid 'length' argument") if args else [0.0]
+    if len(vals) != 1 or _r_isna(vals[0]) or vals[0] < 0:
+        raise _REvalError("invalid 'length' argument")
+    return int(vals[0])
+
+
+def _r_rep(args: list[Any]) -> Any:
+    if not 1 <= len(args) <= 2 or args[0][0] not in ("num", "chr"):
+        _r_bad()
+    times = _r_count(args[1:]) if len(args) == 2 else 1
+    return (args[0][0], list(args[0][1]) * times)
+
+
+def _r_round(args: list[Any]) -> Any:
+    from pytacheck._r import r_round
+
+    digits = int(_r_nums(args[1])[0]) if len(args) == 2 else 0
+    if not 1 <= len(args) <= 2:
+        _r_bad()
+    vals = _r_nums(args[0], "non-numeric argument to mathematical function")
+    return ("num", [a if _r_isna(a) else float(r_round(a, digits)) for a in vals])
+
+
+_R_BUILTINS.update(
+    {
+        "numeric": lambda args: ("num", [0.0] * _r_count(args)),
+        "double": lambda args: ("num", [0.0] * _r_count(args)),
+        "integer": lambda args: ("num", [0.0] * _r_count(args)),
+        "logical": lambda args: ("num", [0.0] * _r_count(args)),
+        "character": lambda args: ("chr", [""] * _r_count(args)),
+        "seq_len": lambda args: ("num", [float(k) for k in range(1, _r_count(args) + 1)]),
+        "seq_along": lambda args: (
+            ("num", [float(k) for k in range(1, _r_len(args[0]) + 1)])
+            if len(args) == 1
+            else _r_bad()
+        ),
+        "rep": _r_rep,
+        "round": _r_round,
+        "as.numeric": lambda args: (
+            ("num", _r_nums(args[0], "cannot coerce")) if len(args) == 1 else _r_bad()
+        ),
+        "as.double": lambda args: (
+            ("num", _r_nums(args[0], "cannot coerce")) if len(args) == 1 else _r_bad()
+        ),
+        "as.character": lambda args: (
+            ("chr", [None] * _r_len(args[0])) if len(args) == 1 else _r_bad()
+        ),
+    }
+)
+
+
 class _REval:
     """Evaluates a parsed expression with R's vector semantics."""
 
@@ -1597,7 +1693,13 @@ class _REval:
                 "<=": lambda p, q: p <= q,
                 ">=": lambda p, q: p >= q,
             }[op]
-            return ("num", [_NA if _r_isna(p) or _r_isna(q) else float(cmp(p, q)) for p, q in zip(x, y, strict=True)])
+            return (
+                "num",
+                [
+                    _NA if _r_isna(p) or _r_isna(q) else float(cmp(p, q))
+                    for p, q in zip(x, y, strict=True)
+                ],
+            )
         x, y = _r_recycle(_r_nums(a), _r_nums(b))
         if op in ("&", "|"):
             out = []
@@ -1605,7 +1707,11 @@ class _REval:
                 pv = None if _r_isna(p) else bool(p)
                 qv = None if _r_isna(q) else bool(q)
                 if op == "&":
-                    r = False if pv is False or qv is False else (None if pv is None or qv is None else True)
+                    r = (
+                        False
+                        if pv is False or qv is False
+                        else (None if pv is None or qv is None else True)
+                    )
                 else:
                     r = True if pv or qv else (None if pv is None or qv is None else False)
                 out.append(_NA if r is None else float(r))
@@ -1635,15 +1741,15 @@ class _REval:
             return self.ev(node[2])
         return self.ev(node[3]) if node[3] is not None else ("null",)
 
-    def e_for(self, node: Any) -> Any:
+    def e_for(self, _node: Any) -> Any:
         raise _REvalError("loops are not evaluated")
 
     e_while = e_repeat = e_break = e_next = e_for
 
-    def e_ns(self, node: Any) -> Any:
+    def e_ns(self, _node: Any) -> Any:
         raise _REvalError("namespace objects are not evaluated")
 
-    def e_dollar(self, node: Any) -> Any:
+    def e_dollar(self, _node: Any) -> Any:
         raise _REvalError("$ operator is invalid for atomic vectors")
 
     def e_index(self, node: Any) -> Any:
@@ -1790,7 +1896,7 @@ def _relabel_map(relabels: list[Any]) -> dict[str, str | None]:
     out: dict[str, str | None] = {}
     for r in relabels:
         frm = _xml_attr(r, "from")
-        if frm is not None and frm not in out:
+        if frm is not None and frm != "" and frm not in out:  # R: x[""] never matches
             out[frm] = _xml_attr(r, "to")
     return out
 
@@ -2504,7 +2610,7 @@ def spv_assemble_table(
         footnotes = []
     if not dims or not cells:
         return None
-    n_leaves = [max(1, int(d["n_leaves"])) for d in dims]
+    n_leaves = [max(1, int(d.get("n_leaves") or 0)) for d in dims]
 
     def decode_index(flat: float) -> list[float]:
         out = [0.0] * len(dims)
@@ -2525,7 +2631,7 @@ def spv_assemble_table(
         idx = decode_index(cell["index"])
         for j, d in enumerate(dims):
             key = None if math.isnan(idx[j]) else as_character(idx[j])
-            leaf = d["leaves"].get(key) if key is not None else None
+            leaf = (d.get("leaves") or {}).get(key) if key is not None else None
             columns[j].append(" / ".join(_na_str(p) for p in leaf) if leaf is not None else None)
         v = cell["value"]
         if v.get("type") == "numeric":
@@ -2538,7 +2644,8 @@ def spv_assemble_table(
     df = _string_frame(columns, [*dim_names, "value"])
 
     def pick(ix: list[int]) -> list[str | None]:
-        return [dim_names[i] if 0 <= i < len(dim_names) else None for i in ix]
+        # dim_names[ix + 1L]: index 0 (ix = -1) selects nothing, past the end is NA
+        return [dim_names[i] if 0 <= i < len(dim_names) else None for i in ix if i != -1]
 
     df.attrs["spv_title"] = title
     df.attrs["spv_footnotes"] = footnotes
@@ -2576,7 +2683,7 @@ def _spv_read_structure(dir_path: str | os.PathLike[str]) -> list[dict[str, Any]
     syntax: str | None = None
     for rel in docs:
         try:
-            root = _xml_parse_file(os.path.join(dir_path, rel))
+            root = _xml_parse_file(_file_path(dir_path, rel))
         except Exception:  # noqa: S112 - R skips an unparsable document
             continue
         walked = _spvsx_walk_heading(root, command_name, syntax)
@@ -2741,10 +2848,10 @@ def _spv_read(dir_path: str | os.PathLike[str]) -> list[dict[str, Any]]:
         bin_member = r["bin_member"]
         if bin_member is None or bin_member == "":
             continue
-        bin_path = os.path.join(dir_path, bin_member)
+        bin_path = _file_path(dir_path, bin_member)
         if not os.path.exists(bin_path):
             continue
-        xml_path = os.path.join(dir_path, _na_str(r["xml_member"]))
+        xml_path = _file_path(dir_path, _na_str(r["xml_member"]))
 
         if r["is_graph"]:
             df = None
@@ -2753,13 +2860,8 @@ def _spv_read(dir_path: str | os.PathLike[str]) -> list[dict[str, Any]]:
                     data = _spv_decode_legacy_data(_read_raw(bin_path))
                 except Exception:
                     data = None
-                if data is not None:
-                    try:
-                        xml_raw = _read_raw(xml_path)
-                    except Exception as e:
-                        warnings.warn(f"spv: could not decode chart: {e}", stacklevel=2)
-                    else:
-                        df = _spv_decode_chart(xml_raw, data)
+                if data is not None:  # R: readBin() errors here are not caught
+                    df = _spv_decode_chart(_read_raw(xml_path), data)
             if df is None or len(df) == 0:
                 continue
             out.append(
@@ -2780,13 +2882,8 @@ def _spv_read(dir_path: str | os.PathLike[str]) -> list[dict[str, Any]]:
                     data = _spv_decode_legacy_data(_read_raw(bin_path))
                 except Exception:
                     data = None
-                if data is not None:
-                    try:
-                        xml_raw = _read_raw(xml_path)
-                    except Exception as e:
-                        warnings.warn(f"spv: could not decode legacy table: {e}", stacklevel=2)
-                    else:
-                        df = _spv_decode_legacy_table(xml_raw, data, title=r["subtype"])
+                if data is not None:  # R: readBin() errors here are not caught
+                    df = _spv_decode_legacy_table(_read_raw(xml_path), data, title=r["subtype"])
         else:
             try:
                 df = _spv_decode_light_table(_read_raw(bin_path))
@@ -2841,9 +2938,9 @@ def _spv_export_syntax(spv_path: str | os.PathLike[str], code_dir_name: str = "c
     kept = [s for s, k in zip(syntaxes, keep, strict=True) if k and s is not None and s != ""]
     if not kept:
         return None
-    code_dir = os.path.join(_r_dirname(spv_path), code_dir_name)
+    code_dir = _file_path(_r_dirname(spv_path), code_dir_name)
     os.makedirs(code_dir, exist_ok=True)
-    out_path = os.path.join(code_dir, _file_path_sans_ext(os.path.basename(spv_path)) + ".sps")
+    out_path = _file_path(code_dir, _file_path_sans_ext(os.path.basename(spv_path)) + ".sps")
     _write_lines("\n\n".join(kept), out_path)
     return out_path
 
@@ -3008,6 +3105,8 @@ def _svg_chart(df: pd.DataFrame) -> str:
             if c is None or v is None or (isinstance(v, float) and math.isnan(v)):
                 continue
             groups.setdefault(str(c), []).append(float(v))
+        if not groups:  # boxplot(value ~ category): no complete row left
+            raise ValueError("invalid first argument")
         levels = sorted(groups, key=r_sort_key)
         allv = [v for g in groups.values() for v in g]
         lo, hi = (min(allv), max(allv)) if allv else (0.0, 1.0)
@@ -3187,6 +3286,15 @@ def _column_by_name(df: pd.DataFrame, name: str) -> list[Any]:
     return _column_values(df, [str(c) for c in df.columns].index(name))
 
 
+def _paste_str(v: Any) -> str:
+    """One value as ``paste()`` renders it (``NA`` as ``"NA"``, numbers as ``as.character()``)."""
+    if isinstance(v, str):
+        return v
+    if _is_missing(v):
+        return "NA"
+    return _na_str(as_character(v))
+
+
 def _rle_lengths(x: list[str]) -> list[int]:
     out: list[int] = []
     prev: object = object()
@@ -3207,7 +3315,7 @@ def _spv_table_html_pivot(df: pd.DataFrame, row_dims: list[str], col_dims: list[
         if not dims:
             return [default] * n
         cols = [_column_by_name(df, d) for d in dims]
-        return [_SEP.join(_na_str(c[i]) for c in cols) for i in range(n)]
+        return [_SEP.join(_paste_str(c[i]) for c in cols) for i in range(n)]
 
     row_key = keys(row_dims, "")
     col_key = keys(col_dims, "value")

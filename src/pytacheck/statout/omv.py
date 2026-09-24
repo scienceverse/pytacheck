@@ -23,9 +23,11 @@ from typing import Any
 
 from pytacheck._r import gregexpr_all, grepl, gsub, r_sort_key, trimws
 from pytacheck.statout.jasp import (
+    _check_field_names,
     _column_attrs,
     _dollar,
     _export_archive_html,
+    _field_list,
     _frame_from_columns,
     _labels_from_list,
     _r_chr,
@@ -38,6 +40,8 @@ from pytacheck.statout.spv import _unzip
 __all__ = ["export_omv_html", "import_omv"]
 
 _OMV_INT_MIN = -2147483648  # jamovi/JASP integer missing-value sentinel
+# raw[!(raw >= 32 & raw <= 126)] <- as.raw(32): every non-printable byte becomes a space
+_PRINTABLE = bytes(b if 32 <= b <= 126 else 32 for b in range(256))
 
 
 def import_omv(path: str | os.PathLike[str]) -> dict[str, Any]:
@@ -81,7 +85,7 @@ def import_omv(path: str | os.PathLike[str]) -> dict[str, Any]:
         meta = _read_json(files[base.index("metadata.json")])
         xdat = _read_json(files[base.index("xdata.json")]) if "xdata.json" in base else {}
         ds = _dollar(meta, "dataSet")
-        fields = _dollar(ds, "fields") or []
+        fields = _field_list(_dollar(ds, "fields"))
         nrow = _dollar(ds, "rowCount")
         if nrow is None:
             nrow = 0
@@ -131,6 +135,7 @@ def import_omv(path: str | os.PathLike[str]) -> dict[str, Any]:
                 col_attrs.append(_column_attrs(labs, label))
                 names.append(name)
                 types.append(mt)
+        _check_field_names(names)
         df = _frame_from_columns(cols, names, col_attrs)
         analyses = _omv_analyses_summary(files)
     columns = (
@@ -172,7 +177,7 @@ def _omv_analyses_summary(files: list[str]) -> list[str]:
             raw = Path(entry).read_bytes()
         except OSError:
             raw = b""
-        txt = bytes(b if 32 <= b <= 126 else 32 for b in raw).decode("ascii")
+        txt = raw.translate(_PRINTABLE).decode("ascii")
         syntax = _omv_extract_syntax(txt)
         out.append(f"{i}. {name}  |  {syntax}" if syntax != "" else f"{i}. {name}")
     return out

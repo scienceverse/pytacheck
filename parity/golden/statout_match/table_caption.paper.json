@@ -1,0 +1,44 @@
+{
+  "id": "table_caption.paper",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": null,
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "Table 1. Correlations among the study variables."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Table 2. Regression coefficients predicting wellbeing."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Results are shown in the tables. The effect of age was b = 0.05, SE = 0.02, t = 2.50, p = .013."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

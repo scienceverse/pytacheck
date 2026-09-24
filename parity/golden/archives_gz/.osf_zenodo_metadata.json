@@ -1,0 +1,121 @@
+{
+  "id": ".osf_zenodo_metadata",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "gzosf"
+    ],
+    "v": [
+      {
+        "t": "list",
+        "names": [
+          "osf_id",
+          "title",
+          "description",
+          "tags",
+          "license",
+          "creators",
+          "date_created"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "gzosf"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "An OSF project"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Described on the OSF"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "x"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "MIT License"
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "list",
+                "names": [
+                  "name",
+                  "orcid"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Doe, Jane"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "0000-0001-2345-6789"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "name"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "NA, Prince"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "name"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Anon Ymous"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2020-01-01T00:00:00"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

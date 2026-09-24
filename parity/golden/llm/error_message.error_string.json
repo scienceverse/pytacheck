@@ -1,0 +1,14 @@
+{
+  "id": "error_message.error_string",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "HTTP 429 Too Many Requests.\n  Provider says: Rate limit reached"
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

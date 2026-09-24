@@ -1,0 +1,59 @@
+{
+  "id": "import_spv.attrs.spv_box_na",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": null,
+    "v": [
+      {
+        "t": "list",
+        "names": [
+          "type",
+          "title",
+          "xlab",
+          "ylab",
+          "fit_names",
+          "fit_exprs"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "boxplot"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Category"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Value"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

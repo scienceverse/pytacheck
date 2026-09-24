@@ -35,11 +35,11 @@ from pytacheck.statout.r_output import (
     _make_unique,
     _r_as_numeric,
     _r_dollar,
-    _RError,
-    _RNamedList,
     _r_output_oneline,
     _r_output_tables,
     _r_values,
+    _RError,
+    _RNamedList,
     _trimws,
 )
 
@@ -419,13 +419,23 @@ def _chr1(x: Any, default: str) -> str:
 # ---------------------------------------------------------------------------
 
 
-def _pb_bytes(raw: Any) -> list[int]:
+def _pb_bytes(raw: Any) -> bytes | list[int]:
+    """The byte values ``as.integer(raw[pos])`` reads (``bytes`` index to ints).
+
+    A number (a varint/fixed value handed back to ``.pb_fields()``) is a
+    length-1 vector whose ``as.integer()`` truncates; outside the 32-bit
+    range it is ``NA`` and R's ``bitwAnd()`` test then errors.
+    """
     if raw is None:
-        return []
-    if isinstance(raw, bytes | bytearray | memoryview):
-        return list(bytes(raw))
+        return b""
+    if isinstance(raw, bytes):
+        return raw
+    if isinstance(raw, bytearray | memoryview):
+        return bytes(raw)
     if isinstance(raw, float | int) and not isinstance(raw, bool):
         if isinstance(raw, float) and (math.isnan(raw) or math.isinf(raw)):
+            raise _RError("missing value where TRUE/FALSE needed")
+        if not -_INT32_MAX <= int(raw) <= _INT32_MAX:
             raise _RError("missing value where TRUE/FALSE needed")
         return [int(raw)]
     raise _RError("invalid raw input")
@@ -436,7 +446,7 @@ def _pb_varint(raw: Any, pos: int) -> dict[str, Any]:
 
     Port of ``R/stat-tables.R::.pb_varint()`` (value accumulated as a double).
     """
-    b_all = raw if isinstance(raw, list) else _pb_bytes(raw)
+    b_all = raw if isinstance(raw, list | bytes) else _pb_bytes(raw)
     res = 0.0
     shift = 0
     while True:

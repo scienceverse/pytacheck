@@ -1,0 +1,16 @@
+{
+  "id": ".zenodo_flat_names.deep",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "a__x__f.txt",
+      "b__x__f.txt",
+      "f.txt"
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

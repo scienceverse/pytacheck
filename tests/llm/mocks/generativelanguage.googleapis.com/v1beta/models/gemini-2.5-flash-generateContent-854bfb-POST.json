@@ -1,0 +1,27 @@
+{
+  "candidates": [
+    {
+      "content": {
+        "parts": [
+          {
+            "text": "B is a consonant.",
+            "thought": true
+          },
+          {
+            "text": "FALSE\n"
+          }
+        ],
+        "role": "model"
+      },
+      "finishReason": "STOP",
+      "index": 0
+    }
+  ],
+  "usageMetadata": {
+    "promptTokenCount": 12,
+    "candidatesTokenCount": 1,
+    "totalTokenCount": 13
+  },
+  "modelVersion": "gemini-2.5-flash",
+  "responseId": "resp-test"
+}

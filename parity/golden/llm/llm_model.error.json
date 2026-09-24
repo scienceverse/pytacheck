@@ -1,0 +1,9 @@
+{
+  "id": "llm_model.error",
+  "ok": false,
+  "error": "set llm_model with the name of a model, use `llm_model_list()` to get available models",
+  "warnings": [],
+  "value": null,
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

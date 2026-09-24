@@ -18,11 +18,15 @@ Data frames read from files follow these conventions (R -> pandas):
 character -> ``string``; integer -> ``Int64``; double -> ``float64``;
 logical -> ``boolean``; factor -> ``category``; ``Date``/``IDate`` ->
 ``object`` column of :class:`datetime.date`; ``POSIXct`` -> UTC
-``datetime64``. Per-column R attributes that matter downstream (haven's
-``label``, ``labels``, ``na_values``, ``na_range``, ``format.*``,
-``class``) are kept in ``df.attrs["col_attrs"][column]``; ``labels`` is a
-dict mapping each label text to its code (R's named vector ``c(label =
-code)``). The per-column Latin-1 repair counts of ``.utf8_repair_df()`` are in
+``datetime64`` (converted to the column's ``tzone`` when R had one);
+bit64 ``integer64`` -> ``Int64``. Per-column R attributes that matter
+downstream (haven's ``label``, ``labels``, ``na_values``, ``na_range``,
+``format.*``, ``display_width``, plus ``class``, ``tzone`` and ``units``) are
+kept in ``df.attrs["col_attrs"][column]`` exactly as R's ``attributes()``
+would show them after reading -- so e.g. ``head()`` on an ``.rds`` frame
+drops the ``label`` of an unclassed column, as in R. ``labels`` is a dict
+mapping each label text to its code (R's named vector ``c(label = code)``).
+The per-column Latin-1 repair counts of ``.utf8_repair_df()`` are in
 ``df.attrs["utf8_repaired"]``.
 """
 
@@ -391,7 +395,8 @@ def data_classify_files(
     coarse = _filetype(names)
     for i, t in enumerate(types):
         if t is None:
-            first = None if coarse[i] is None else coarse[i].split(";", 1)[0]
+            ci = coarse[i]
+            first = None if ci is None else ci.split(";", 1)[0]
             types[i] = _FILE_TYPE_CROSSWALK.get(first) if first is not None else None
     for i, nm in enumerate(names):
         if nm is not None and _r_basename(nm).lower() == "ro-crate-metadata.json":
@@ -1071,8 +1076,8 @@ def _llm_classify_batched(
                 good = i is not None and 1 <= i <= len(rows) and (v is None or v != "")
                 if valid is not None:
                     good = good and v in list(valid)
-                if good:
-                    out[rows[i - 1]] = v  # type: ignore[index]
+                if good and i is not None:
+                    out[rows[i - 1]] = v
     s = pd.Series(out, dtype="string")
     s.attrs["llm_model"] = model_used
     return s
@@ -1508,17 +1513,24 @@ def _latin1_fix(s: str) -> str:
 
 
 def _iconv_utf16(raw: bytes, enc: str) -> str | None:
-    """glibc ``iconv(from = enc)``: ``None`` on any conversion error."""
+    """glibc ``iconv(list(raw), from = enc, to = "UTF-8")``: ``None`` for R's ``NA``.
+
+    A conversion error is ``NA``, and so is a result holding a NUL character
+    (R cannot make a string with an embedded nul).
+    """
     try:
         if enc == "UTF-16":
             if raw[:2] == b"\xff\xfe":
-                return raw[2:].decode("utf-16-le")
-            if raw[:2] == b"\xfe\xff":
-                return raw[2:].decode("utf-16-be")
-            return raw.decode("utf-16-be")
-        return raw.decode("utf-16-le" if enc == "UTF-16LE" else "utf-16-be")
+                out = raw[2:].decode("utf-16-le")
+            elif raw[:2] == b"\xfe\xff":
+                out = raw[2:].decode("utf-16-be")
+            else:
+                out = raw.decode("utf-16-be")
+        else:
+            out = raw.decode("utf-16-le" if enc == "UTF-16LE" else "utf-16-be")
     except UnicodeDecodeError:
         return None
+    return None if "\0" in out else out
 
 
 def text_peek(path: str | os.PathLike[str] | None, n: float = 20) -> list[str]:
@@ -1553,8 +1565,10 @@ def text_peek(path: str | os.PathLike[str] | None, n: float = 20) -> list[str]:
                 txt = t
                 break
     if txt is None:
+        # rawToChar() drops trailing nuls and fails (NA) on an embedded one
+        raw = raw.rstrip(b"\0")
         if b"\0" in raw:
-            return []  # rawToChar(): embedded nul
+            return []
         txt = raw.decode("utf-8", "surrogateescape")
         if _has_invalid_utf8(txt):
             raise ValueError("input string 1 is invalid")
@@ -1629,7 +1643,13 @@ class _LineReader:
             self.eof = True
             self.close()
 
-    def next(self) -> str | None:
+    def next(self, strip_bom: bool = True) -> str | None:
+        """The next line (``None`` at the end).
+
+        R's ``readLines()`` drops a UTF-8 byte-order mark from the start of the
+        first line each call returns (in a UTF-8 locale): *strip_bom* is that
+        first-line-of-the-call rule.
+        """
         while True:
             k_n = self.buf.find(b"\n")
             k_r = self.buf.find(b"\r", 0, k_n if k_n != -1 else len(self.buf))
@@ -1645,6 +1665,8 @@ class _LineReader:
                 line, self.buf = self.buf, b""
                 break
             self._fill()
+        if strip_bom and line[:3] == b"\xef\xbb\xbf":
+            line = line[3:]
         return _latin1_fix(line.split(b"\0", 1)[0].decode("utf-8", "surrogateescape"))
 
 
@@ -1689,7 +1711,7 @@ def _detect_header(path: str | os.PathLike[str], sep: str) -> bool:
         return True
 
     def split_row(line: str) -> list[str]:
-        return trimws(gsub('^"|"$', "", strsplit(line, sep, fixed=True)))
+        return list(trimws(gsub('^"|"$', "", strsplit(line, sep, fixed=True))))
 
     def is_num(x: str) -> bool:
         if x == "":
@@ -1723,7 +1745,7 @@ def _is_single_field_blob(path: str | os.PathLike[str], sep: str) -> bool:
     """A single huge value under a single header -- not a table (``.is_single_field_blob()``)."""
     try:
         reader = _LineReader(path)
-        first2 = [ln for ln in (reader.next(), reader.next()) if ln is not None]
+        first2 = [ln for ln in (reader.next(), reader.next(strip_bom=False)) if ln is not None]
     except OSError:
         return False
     if len(first2) < 2:
@@ -1755,14 +1777,16 @@ def _read_delim_fast(
     try:
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
-            return fread(path, sep=sep, header=header, nrows=n_rows)
-    except (FreadError, ValueError, OSError):
+            return fread(Path(path), sep=sep, header=header, nrows=n_rows)
+    except (FreadError, ValueError, OSError):  # tryCatch(fread(...), error = NULL)
         pass
     df = read_delim(path, sep=sep, header=header, nrows=n_rows)
+    # is.na(iconv(col, "UTF-8", "UTF-8")) is TRUE for invalid UTF-8 *and* for NA:
+    # any character column holding an NA also triggers the latin1 re-read
     has_invalid = any(
-        isinstance(df[c].dtype, pd.StringDtype)
-        and any(v is not None and not _is_na(v) and _has_invalid_utf8(v) for v in df[c].tolist())
-        for c in df.columns
+        isinstance(df.iloc[:, j].dtype, pd.StringDtype)
+        and any(_is_na(v) or _has_invalid_utf8(v) for v in df.iloc[:, j].tolist())
+        for j in range(df.shape[1])
     )
     if has_invalid:
         df = read_delim(path, sep=sep, header=header, nrows=n_rows, encoding="latin1")
@@ -1790,6 +1814,17 @@ def _unlist(v: Any) -> list[str | None]:
     return [_r_as_character(v)]
 
 
+def _set_names(df: pd.DataFrame, names: list[str]) -> None:
+    """``names(df) <- names``, carrying ``attrs["col_attrs"]`` over by position."""
+    old = [str(c) for c in df.columns]
+    df.columns = pd.Index(names, dtype=object)
+    col_attrs = df.attrs.get("col_attrs")
+    if col_attrs:
+        df.attrs["col_attrs"] = {
+            new: col_attrs[o] for o, new in zip(old, names, strict=True) if o in col_attrs
+        }
+
+
 def _utf8_repair_df(df: pd.DataFrame | None) -> pd.DataFrame | None:
     """Coerce a just-read data frame to valid UTF-8, names first, then values.
 
@@ -1808,7 +1843,7 @@ def _utf8_repair_df(df: pd.DataFrame | None) -> pd.DataFrame | None:
                 continue
             flat = [_flatten_cell(v, 20) for v in col.tolist()]
             df = df.copy(deep=False) if df is not None else df
-            df.isetitem(j, pd.Series(flat, index=df.index, dtype="string"))
+            df.isetitem(j, pd.array(flat, dtype="string"))
     names = [str(c) for c in df.columns]
     if any(_has_invalid_utf8(nm) for nm in names):
         fixed = []
@@ -1817,7 +1852,7 @@ def _utf8_repair_df(df: pd.DataFrame | None) -> pd.DataFrame | None:
                 nm = _latin1_fix(nm) or f"col_{j}"
             fixed.append(nm)
         df = df.copy(deep=False)
-        df.columns = pd.Index(fixed, dtype=object)
+        _set_names(df, fixed)
     if df.shape[1] > 0:
         repaired: dict[str, int] = {}
         for j in range(df.shape[1]):
@@ -1828,7 +1863,7 @@ def _utf8_repair_df(df: pd.DataFrame | None) -> pd.DataFrame | None:
                 bad = [_has_invalid_utf8(c) for c in cats]
                 if any(bad):
                     df = df.copy(deep=False)
-                    df.isetitem(j, col.cat.rename_categories([_latin1_fix(c) for c in cats]))
+                    df.isetitem(j, col.cat.rename_categories([_latin1_fix(c) for c in cats]).array)
                     repaired[name] = sum(bad)
             elif isinstance(col.dtype, pd.StringDtype) or col.dtype == object:
                 vals = col.tolist()
@@ -1836,7 +1871,7 @@ def _utf8_repair_df(df: pd.DataFrame | None) -> pd.DataFrame | None:
                 if any(bad):
                     new = [_latin1_fix(v) if b else v for v, b in zip(vals, bad, strict=True)]
                     df = df.copy(deep=False)
-                    df.isetitem(j, pd.Series(new, index=df.index, dtype=col.dtype))
+                    df.isetitem(j, pd.Series(new, index=df.index, dtype=col.dtype).array)
                     repaired[name] = sum(bad)
         if repaired:
             df.attrs["utf8_repaired"] = repaired
@@ -1915,7 +1950,7 @@ def data_read_head(
                 return None
             df = _read_delim_fast(path, sep=sep, header=hdr, n_rows=n_rows)
             if not hdr and df is not None and df.shape[1] > 0:
-                df.columns = pd.Index([f"col_{j}" for j in range(1, df.shape[1] + 1)], dtype=object)
+                _set_names(df, [f"col_{j}" for j in range(1, df.shape[1] + 1)])
             df = _utf8_repair_df(df)
             if df is not None and _is_qualtrics(df):
                 df = _strip_qualtrics(df)

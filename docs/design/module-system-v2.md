@@ -593,3 +593,61 @@ Exit code 1 means errors; warnings are printed.
 5. Moving heavy built-ins out of core into packs. That would split parity
    testing and upstream-sync.
 6. Running R modules from Python, or the reverse.
+
+## Implementation notes (phase 1: core)
+
+Decisions taken while implementing the core (config, packs, resolution,
+presets, sessions, provenance), where the text above left room or where the
+code deliberately differs:
+
+* **Unported built-ins in presets.** `presets.select()` / `expand()` check
+  every ref before anything runs, but names that metacheck's own presets list
+  and that are not ported yet are accepted by default and fail when run, like
+  a failing module in `report_module_run()`. `validate=True` imports every
+  module and makes those errors too (R's up-front `module_find()`); the
+  library `report()` can switch to it once every built-in is ported.
+  Checking without `validate` never imports module code.
+* **Built-in preset entries stay bare** (`"power"`, not `"metacheck::power"`),
+  so `select()` output and `--as-r` read like R's `modules = c(...)`.
+* **Preset refs inside a pack** (`extends: ["minimal"]`) mean the pack's own
+  preset when it has one, as bare module names do. `replace` of a label the
+  preset does not include warns. Path refs (`*.py`) in config presets'
+  `modules`/`replace` are resolved against the config file.
+* **Integrity.** At run time every file in the install record (plus any
+  unrecorded root `.py` file) is compared, not only the module file: a
+  modified helper changes behaviour just as much. Hashes are cached against
+  `(mtime_ns, size, inode)`, so this costs one `stat` per file. A pack whose
+  install record is missing, or whose record's `rev`/`tree_sha256` differ
+  from the pin, is unavailable (with a reinstall hint).
+* **Install folder** is `<rev12>` of the pin's `rev`; a pin without a commit
+  (a local-folder store source) uses its `tree_sha256[:12]`
+  (`packs.registry.pin_rev12()`, `install_dir()`).
+* **Kinds and trust.** `Pack.kind` is how a pack loads (`builtin`,
+  `installed`, `path`, `dist`); `Pack.trust` is the label from the table
+  above. Modules outside any pack get trust `local`, or `dist` when their file
+  lives in `site-packages` (legacy `pytacheck.modules` entry points).
+  `allow_local=False` does not disable legacy entry points (they are
+  installed packages, not local files).
+* **Path packs** may omit `pack.json` (the config key is the name). Their key
+  is `local_<sha8 of the resolved path>`. Pack code (installed and path) is
+  compiled from source by a `pytacheck_packs.*` meta-path finder and never
+  reads or writes bytecode; a pack folder's own `__init__.py` is ignored.
+* **Dist packs**: the `pytacheck.packs` entry point names a Python package
+  containing `pack.json`; its modules import normally as `<package>.<module>`.
+  A config pin with the same name wins over a dist pack.
+* **Config.** `PYTACHECK_STORE_URL` sets the `pytacheck` store's URL even if
+  config removed the store (environment beats config). `update_config()`
+  writes the `PYTACHECK_CONFIG` file for every scope when one is named, and
+  raises `ConfigError` under `PYTACHECK_CONFIG=none`. A `null` scalar removes
+  a lower scope's value, like `null` in the merged sections.
+* **Run sessions.** Nested `run_session()` blocks share the outermost memo.
+  The key also includes the run's label. The paper generation is a
+  process-wide counter (so `(id, generation)` never collides after garbage
+  collection); it tracks mutation through the `Paper` API only, not in-place
+  edits of a table or of `paper.extra` (papers must not be mutated in place).
+  Arguments that cannot be frozen into a key (a DataFrame, a paper) skip the
+  memo. Hits return a new `ModuleOutput` whose DataFrames are copy-on-write
+  views, so editing a hit never changes the cache.
+* **Provenance** is computed before the run and never breaks one; if it
+  cannot be built, `provenance` is `None` and the run is not memoised.
+  `module_list(pack=...)` appends the `pack` column after `path`.

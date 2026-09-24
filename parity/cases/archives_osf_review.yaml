@@ -4278,3 +4278,35 @@
   "args":
     "guid":
       "$chr": []
+- "id": ".osf_parse_response.synthetic_single.ct_html"
+  "r": "identity"
+  "py": "tests.archives_osf.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck:::.osf_parse_response(httr2::response(status_code = 200L, headers = list(`Content-Type` = \"text/html\"), body = charToRaw(r\"--({\"data\": {\"id\": \"n1\", \"type\": \"nodes\", \"attributes\": {\"title\": \"A\"}}})--\")), osf_id = \"zz\")"
+        "py": "lambda: __import__(\"pytacheck.archives.osf_helpers\", fromlist=[\"_\"])._osf_parse_response(__import__(\"httpx\").Response(200, content='{\"data\": {\"id\": \"n1\", \"type\": \"nodes\", \"attributes\": {\"title\": \"A\"}}}'.encode(), headers={\"content-type\": \"text/html\"}), osf_id=\"zz\")"
+- "id": ".osf_parse_response.synthetic_single.ct_json"
+  "r": "identity"
+  "py": "tests.archives_osf.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck:::.osf_parse_response(httr2::response(status_code = 200L, headers = list(`Content-Type` = \"application/json; charset=utf-8\"), body = charToRaw(r\"--({\"data\": {\"id\": \"n1\", \"type\": \"nodes\", \"attributes\": {\"title\": \"A\"}}})--\")), osf_id = \"zz\")"
+        "py": "lambda: __import__(\"pytacheck.archives.osf_helpers\", fromlist=[\"_\"])._osf_parse_response(__import__(\"httpx\").Response(200, content='{\"data\": {\"id\": \"n1\", \"type\": \"nodes\", \"attributes\": {\"title\": \"A\"}}}'.encode(), headers={\"content-type\": \"application/json; charset=utf-8\"}), osf_id=\"zz\")"
+- "id": ".osf_parse_response.synthetic_single.ct_upper"
+  "r": "identity"
+  "py": "tests.archives_osf.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck:::.osf_parse_response(httr2::response(status_code = 200L, headers = list(`Content-Type` = \"Application/JSON\"), body = charToRaw(r\"--({\"data\": {\"id\": \"n1\", \"type\": \"nodes\", \"attributes\": {\"title\": \"A\"}}})--\")), osf_id = \"zz\")"
+        "py": "lambda: __import__(\"pytacheck.archives.osf_helpers\", fromlist=[\"_\"])._osf_parse_response(__import__(\"httpx\").Response(200, content='{\"data\": {\"id\": \"n1\", \"type\": \"nodes\", \"attributes\": {\"title\": \"A\"}}}'.encode(), headers={\"content-type\": \"Application/JSON\"}), osf_id=\"zz\")"
+- "id": ".osf_parse_response.synthetic_single.ct_problem"
+  "r": "identity"
+  "py": "tests.archives_osf.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "metacheck:::.osf_parse_response(httr2::response(status_code = 200L, headers = list(`Content-Type` = \"application/problem+json\"), body = charToRaw(r\"--({\"data\": {\"id\": \"n1\", \"type\": \"nodes\", \"attributes\": {\"title\": \"A\"}}})--\")), osf_id = \"zz\")"
+        "py": "lambda: __import__(\"pytacheck.archives.osf_helpers\", fromlist=[\"_\"])._osf_parse_response(__import__(\"httpx\").Response(200, content='{\"data\": {\"id\": \"n1\", \"type\": \"nodes\", \"attributes\": {\"title\": \"A\"}}}'.encode(), headers={\"content-type\": \"application/problem+json\"}), osf_id=\"zz\")"

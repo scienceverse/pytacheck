@@ -1,0 +1,48 @@
+{
+  "id": "statcheck.review.icase.dotted_I_ns.AllPValues",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 2,
+    "names": [
+      "source",
+      "p_comp",
+      "reported_p",
+      "p_decimals"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "01",
+          "01"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "=",
+          "ns"
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0.04,
+          null
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          2,
+          null
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

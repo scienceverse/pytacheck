@@ -37,7 +37,7 @@ def try_(fn: Callable[[], Any]) -> Any:
     """``review_try()``: the value, or ``"ERROR: <message>"``."""
     try:
         return fn()
-    except Exception as exc:  # noqa: BLE001 - mirrors R's tryCatch(error = )
+    except Exception as exc:  # mirrors R's tryCatch(error = )
         return f"ERROR: {exc}"
 
 
@@ -71,11 +71,7 @@ def query_parse_each(select: Sequence[str], min_score: float = 50) -> list[Any]:
     for f in query_files():
         j = orjson.loads(f.read_bytes())
         out.append(
-            try_(
-                lambda j=j: _crossref_query_parse(
-                    j["message"]["items"], min_score, list(select)
-                )
-            )
+            try_(lambda j=j: _crossref_query_parse(j["message"]["items"], min_score, list(select)))
         )
     return out
 

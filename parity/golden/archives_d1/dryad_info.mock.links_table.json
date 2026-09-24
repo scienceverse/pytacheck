@@ -1,0 +1,1040 @@
+{
+  "id": "dryad_info.mock.links_table",
+  "ok": true,
+  "error": null,
+  "warnings": [
+    "10.5061/dryad.missing could not be found on Dryad"
+  ],
+  "value": {
+    "t": "df",
+    "nrow": 4,
+    "names": [
+      "href",
+      "link_text",
+      "text_id",
+      "paper_id",
+      "dryad_url",
+      "dryad_doi",
+      "title",
+      "doi",
+      "publication_date",
+      "updated_date",
+      "authors",
+      "license",
+      "files",
+      "error"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "https://doi.org/10.5061/dryad.j1fd7",
+          "https://doi.org/10.25338/B8N33J",
+          "10.5061/dryad.j1fd7",
+          "10.5061/dryad.missing"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          1,
+          2,
+          1,
+          1
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "f5f6dcf59fb22c",
+          "f5f6dcf59fb22c",
+          "f5f6dcf59fb22c",
+          "f5f6dcf59fb22c"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://doi.org/10.5061/dryad.j1fd7",
+          "https://doi.org/10.25338/B8N33J",
+          "10.5061/dryad.j1fd7",
+          "10.5061/dryad.missing"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "10.5061/dryad.j1fd7",
+          "10.25338/b8n33j",
+          "10.5061/dryad.j1fd7",
+          "10.5061/dryad.missing"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Data from: An example study",
+          "Zipped",
+          "Data from: An example study",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "doi:10.5061/dryad.j1fd7",
+          "doi:10.25338/B8N33J",
+          "doi:10.5061/dryad.j1fd7",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "2014-01-02",
+          null,
+          "2014-01-02",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "2020-05-06",
+          null,
+          "2020-05-06",
+          null
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Jane Doe",
+              "Smith",
+              null,
+              "Solo"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Ann Lee"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Jane Doe",
+              "Smith",
+              null,
+              "Solo"
+            ]
+          },
+          {
+            "t": "null"
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://spdx.org/licenses/CC0-1.0.html",
+          null,
+          "https://spdx.org/licenses/CC0-1.0.html",
+          null
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "list",
+                "names": [
+                  "_links",
+                  "path",
+                  "size",
+                  "mimeType",
+                  "digest",
+                  "digestType"
+                ],
+                "v": [
+                  {
+                    "t": "list",
+                    "names": [
+                      "self",
+                      "stash:download"
+                    ],
+                    "v": [
+                      {
+                        "t": "list",
+                        "names": [
+                          "href"
+                        ],
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "/api/v2/files/111"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "t": "list",
+                        "names": [
+                          "href"
+                        ],
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "/api/v2/files/111/download"
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "data.csv"
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      8
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "text/csv"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "344fd2323dd33d5c058b7cf27de029e8"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "md5"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "_links",
+                  "path",
+                  "size",
+                  "mimeType",
+                  "digest",
+                  "digestType"
+                ],
+                "v": [
+                  {
+                    "t": "list",
+                    "names": [
+                      "self",
+                      "stash:download"
+                    ],
+                    "v": [
+                      {
+                        "t": "list",
+                        "names": [
+                          "href"
+                        ],
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "/api/v2/files/112"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "t": "list",
+                        "names": [
+                          "href"
+                        ],
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "/api/v2/files/112/download"
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "README.md"
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      21
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "text/markdown"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "0123456789abcdef0123456789abcdef"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "MD5"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "_links",
+                  "path",
+                  "size",
+                  "digest",
+                  "digestType"
+                ],
+                "v": [
+                  {
+                    "t": "list",
+                    "names": [
+                      "self",
+                      "stash:download"
+                    ],
+                    "v": [
+                      {
+                        "t": "list",
+                        "names": [
+                          "href"
+                        ],
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "/api/v2/files/113"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "t": "list",
+                        "names": [
+                          "href"
+                        ],
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "/api/v2/files/113/download"
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "big.bin"
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      20971520
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "md5"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "_links",
+                  "path",
+                  "size",
+                  "digest",
+                  "digestType"
+                ],
+                "v": [
+                  {
+                    "t": "list",
+                    "names": [
+                      "self",
+                      "stash:download"
+                    ],
+                    "v": [
+                      {
+                        "t": "list",
+                        "names": [
+                          "href"
+                        ],
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "/api/v2/files/114"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "t": "list",
+                        "names": [
+                          "href"
+                        ],
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "/api/v2/files/114/download"
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "sub/notes.txt"
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      5
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "abc"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "sha-256"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "_links",
+                  "path",
+                  "size"
+                ],
+                "v": [
+                  {
+                    "t": "list",
+                    "names": [
+                      "self"
+                    ],
+                    "v": [
+                      {
+                        "t": "list",
+                        "names": [
+                          "href"
+                        ],
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "/api/v2/files/115"
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "nolink.txt"
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      3
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "list",
+                "names": [
+                  "_links",
+                  "path",
+                  "size",
+                  "digest",
+                  "digestType"
+                ],
+                "v": [
+                  {
+                    "t": "list",
+                    "names": [
+                      "self",
+                      "stash:download"
+                    ],
+                    "v": [
+                      {
+                        "t": "list",
+                        "names": [
+                          "href"
+                        ],
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "/api/v2/files/901"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "t": "list",
+                        "names": [
+                          "href"
+                        ],
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "/api/v2/files/901/download"
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "bundle.zip"
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      136314880
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "zzz"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "md5"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "_links",
+                  "path",
+                  "size",
+                  "digest",
+                  "digestType"
+                ],
+                "v": [
+                  {
+                    "t": "list",
+                    "names": [
+                      "self",
+                      "stash:download"
+                    ],
+                    "v": [
+                      {
+                        "t": "list",
+                        "names": [
+                          "href"
+                        ],
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "/api/v2/files/902"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "t": "list",
+                        "names": [
+                          "href"
+                        ],
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "/api/v2/files/902/download"
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "small.csv"
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      8
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "344fd2323dd33d5c058b7cf27de029e8"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "md5"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "list",
+                "names": [
+                  "_links",
+                  "path",
+                  "size",
+                  "mimeType",
+                  "digest",
+                  "digestType"
+                ],
+                "v": [
+                  {
+                    "t": "list",
+                    "names": [
+                      "self",
+                      "stash:download"
+                    ],
+                    "v": [
+                      {
+                        "t": "list",
+                        "names": [
+                          "href"
+                        ],
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "/api/v2/files/111"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "t": "list",
+                        "names": [
+                          "href"
+                        ],
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "/api/v2/files/111/download"
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "data.csv"
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      8
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "text/csv"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "344fd2323dd33d5c058b7cf27de029e8"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "md5"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "_links",
+                  "path",
+                  "size",
+                  "mimeType",
+                  "digest",
+                  "digestType"
+                ],
+                "v": [
+                  {
+                    "t": "list",
+                    "names": [
+                      "self",
+                      "stash:download"
+                    ],
+                    "v": [
+                      {
+                        "t": "list",
+                        "names": [
+                          "href"
+                        ],
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "/api/v2/files/112"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "t": "list",
+                        "names": [
+                          "href"
+                        ],
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "/api/v2/files/112/download"
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "README.md"
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      21
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "text/markdown"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "0123456789abcdef0123456789abcdef"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "MD5"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "_links",
+                  "path",
+                  "size",
+                  "digest",
+                  "digestType"
+                ],
+                "v": [
+                  {
+                    "t": "list",
+                    "names": [
+                      "self",
+                      "stash:download"
+                    ],
+                    "v": [
+                      {
+                        "t": "list",
+                        "names": [
+                          "href"
+                        ],
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "/api/v2/files/113"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "t": "list",
+                        "names": [
+                          "href"
+                        ],
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "/api/v2/files/113/download"
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "big.bin"
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      20971520
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "md5"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "_links",
+                  "path",
+                  "size",
+                  "digest",
+                  "digestType"
+                ],
+                "v": [
+                  {
+                    "t": "list",
+                    "names": [
+                      "self",
+                      "stash:download"
+                    ],
+                    "v": [
+                      {
+                        "t": "list",
+                        "names": [
+                          "href"
+                        ],
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "/api/v2/files/114"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "t": "list",
+                        "names": [
+                          "href"
+                        ],
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "/api/v2/files/114/download"
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "sub/notes.txt"
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      5
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "abc"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "sha-256"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "_links",
+                  "path",
+                  "size"
+                ],
+                "v": [
+                  {
+                    "t": "list",
+                    "names": [
+                      "self"
+                    ],
+                    "v": [
+                      {
+                        "t": "list",
+                        "names": [
+                          "href"
+                        ],
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "/api/v2/files/115"
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "nolink.txt"
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      3
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "t": "null"
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          "unfound"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

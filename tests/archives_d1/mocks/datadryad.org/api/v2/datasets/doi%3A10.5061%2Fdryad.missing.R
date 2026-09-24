@@ -1,0 +1,1 @@
+structure(list(method = "GET", url = "https://datadryad.org/api/v2/datasets/doi%3A10.5061%2Fdryad.missing", status_code = 404L, headers = structure(list(`content-type` = "application/json"), class = "httr2_headers"), body = charToRaw("{\"message\": \"Not Found\"}"), cache = new.env(parent = emptyenv())), class = "httr2_response")

@@ -1,0 +1,114 @@
+{
+  "id": "zenodo_file_download.unzip_fallback",
+  "ok": true,
+  "error": null,
+  "warnings": [
+    "1 of 2 files from Zenodo record 5550005 did not arrive intact (e.g. bundle.zip). The returned table marks it downloaded = FALSE. Run again to retry."
+  ],
+  "value": {
+    "t": "df",
+    "nrow": 2,
+    "names": [
+      "folder",
+      "zenodo_id",
+      "id",
+      "key",
+      "path",
+      "size",
+      "size_on_disk",
+      "checksum",
+      "checksum_ok",
+      "self",
+      "downloaded",
+      "extracted"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "5550005",
+          "5550005"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "5550005",
+          "5550005"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "5550005-bundle.zip",
+          "5550005-readme.txt"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "bundle.zip",
+          "readme.txt"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "bundle.zip",
+          "readme.txt"
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          136314880,
+          8
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          17,
+          8
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "md5:zzz",
+          "md5:2eb6f3d85c8037648139f3ae51ee5274"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          null,
+          true
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://zenodo.org/api/records/5550005/files/bundle.zip/content",
+          "https://zenodo.org/api/records/5550005/files/readme.txt/content"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false,
+          true
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          null,
+          null
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

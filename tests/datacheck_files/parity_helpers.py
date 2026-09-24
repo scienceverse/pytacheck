@@ -15,7 +15,7 @@ from typing import Any
 
 import pandas as pd
 
-from pytacheck.datacheck import files as F  # noqa: N812
+from pytacheck.datacheck import files as F
 
 ROOT = Path(__file__).resolve().parents[2]
 DATA = "tests/datacheck_files/data"
@@ -92,8 +92,22 @@ def write_manifest_json(scenario: str) -> Any:
         if scenario == "split":
             files = _manifest_files(
                 repo_url="https://osf.io/xxxxx",
-                file_name=["gotit.csv", "big.rdata", "stim.mp4", "lost.csv", "nourl.csv", "notes.pdf"],
-                file_path=["gotit.csv", "big.rdata", "stim.mp4", "lost.csv", "nourl.csv", "notes.pdf"],
+                file_name=[
+                    "gotit.csv",
+                    "big.rdata",
+                    "stim.mp4",
+                    "lost.csv",
+                    "nourl.csv",
+                    "notes.pdf",
+                ],
+                file_path=[
+                    "gotit.csv",
+                    "big.rdata",
+                    "stim.mp4",
+                    "lost.csv",
+                    "nourl.csv",
+                    "notes.pdf",
+                ],
                 file_url=["https://osf.io/download/x/"] * 4 + [None, "https://osf.io/download/y/"],
                 file_size=[100.0, 5e8, 1e6, 100.0, 100.0, 100.0],
                 data_type=["data", "data", "materials", "data", "data", "documentation"],
@@ -136,7 +150,14 @@ def write_manifest_json(scenario: str) -> Any:
                                    "file_name": ["dataB.csv"],
                                    "error": ["download failed (nothing was written)"]})  # fmt: skip
             paths = F._data_check_write_manifest(
-                tmp, files, [True, True], None, ["paperA", "paperB"], "data", 100, 500,
+                tmp,
+                files,
+                [True, True],
+                None,
+                ["paperA", "paperB"],
+                "data",
+                100,
+                500,
                 failed=failed,
             )
             return [json.loads(Path(p).read_text(encoding="utf-8"))

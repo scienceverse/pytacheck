@@ -1,0 +1,18 @@
+{
+  "id": "deparse.df_factor",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "structure(list(f = structure(c(2L, 1L, NA, 2L), levels = c(\"a\", ",
+      "\"b\"), class = \"factor\"), o = structure(c(1L, 2L, 1L, 1L), levels = c(\"lo\", ",
+      "\"hi\"), class = c(\"ordered\", \"factor\")), one = structure(c(1L, ",
+      "1L, 1L, 1L), levels = \"z\", class = \"factor\")), class = \"data.frame\", row.names = c(NA, ",
+      "-4L))"
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

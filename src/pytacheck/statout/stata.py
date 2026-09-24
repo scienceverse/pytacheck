@@ -18,6 +18,7 @@ from typing import TYPE_CHECKING, Any
 from pytacheck._r import grepl, regexec, regextract_all, sub, trimws
 from pytacheck.statout.spv import (
     _as_integer,
+    _file_path,
     _file_path_sans_ext,
     _html_page,
     _make_unique,
@@ -226,7 +227,7 @@ def _split_block(block: Sequence[str | None]) -> list[list[str]] | None:
         return None
     w = max(len(b) for b in lines)
     padded = [b.ljust(w) for b in lines]
-    nb = [any(p[c] != " " for p in padded) for c in range(w)]
+    nb = [set(col) != _BLANK for col in zip(*padded, strict=True)]
     if not any(nb):
         return None
     runs: list[tuple[int, int]] = []
@@ -239,7 +240,7 @@ def _split_block(block: Sequence[str | None]) -> list[list[str]] | None:
             runs.append((s, c))
         else:
             c += 1
-    return [[str(trimws(p[s:e])) for p in padded] for s, e in runs]
+    return [[p[s:e].strip(_WS) for p in padded] for s, e in runs]
 
 
 def _stata_split_block(block: Sequence[str]) -> list[list[str]] | None:
@@ -248,36 +249,53 @@ def _stata_split_block(block: Sequence[str]) -> list[list[str]] | None:
 
 
 _RULE_RE = "^[-┬┴├┤┌┐└┘+]+$"
+_WS = " \t\r\n"  # trimws()'s default whitespace
+_BLANK = {" "}
+
+
+def _trim(x: str | None) -> str | None:
+    """R ``trimws()`` of one value (``NA`` stays ``NA``)."""
+    return None if x is None else x.strip(_WS)
 
 
 def _stata_is_rule_line(line: str | None) -> bool:
     """Port of R/stata.R::.stata_is_rule_line(): an ``{hline}``-drawn rule."""
-    tl = trimws(line)
+    tl = _trim(line)
     if tl is None:  # nzchar(NA) is TRUE; grepl(NA) is FALSE
         return False
-    return tl != "" and bool(grepl(_RULE_RE, tl))
+    return tl != "" and _rule_re().search(tl) is not None
+
+
+@cache
+def _rule_re() -> Any:
+    from pytacheck._r import compile_r
+
+    return compile_r(_RULE_RE)
+
+
+def _cols_names(cols: list[list[str]], n_header: int) -> list[str]:
+    """Column names from the header rows: joined, trimmed, ``V<i>`` if blank, made unique."""
+    nm = [" ".join(cl[:n_header]).strip(_WS) for cl in cols]
+    return _make_unique([v if v != "" else f"V{i}" for i, v in enumerate(nm, 1)])
+
+
+def _string_columns_frame(columns: list[list[str | None]], names: list[str]) -> pd.DataFrame:
+    """``as.data.frame(body)`` + ``names<-``: character columns built positionally."""
+    import pandas as pd
+
+    df = pd.DataFrame({i: pd.array(c, dtype="string") for i, c in enumerate(columns)})
+    df.columns = list(names)
+    return df
 
 
 def _cols_to_frame(cols: list[list[str]], n_header: int) -> pd.DataFrame:
     """The header/body split shared by the fixed-width table readers."""
-    import pandas as pd
-
-    header = [" ".join(trimws(cl[:n_header])) for cl in cols]
-    nm = [str(trimws(h)) for h in header]
-    nm = [v if v != "" else f"V{i}" for i, v in enumerate(nm, 1)]
-    df = pd.DataFrame({i: pd.array(cl[n_header:], dtype="string") for i, cl in enumerate(cols)})
-    df.columns = _make_unique(nm)
-    return df
+    return _string_columns_frame([cl[n_header:] for cl in cols], _cols_names(cols, n_header))
 
 
-def _any_numlike(df: pd.DataFrame, fn: Any) -> bool:
-    for j in range(df.shape[1]):
-        vals = [
-            None if v is None or type(v).__name__ == "NAType" else v for v in df.iloc[:, j].tolist()
-        ]
-        if any(fn(vals)):
-            return True
-    return False
+def _any_numlike(columns: list[list[str | None]], fn: Any) -> bool:
+    """``any(vapply(df, function(c_) any(fn(c_)), logical(1)))`` on the raw columns."""
+    return any(any(fn(col)) for col in columns if col)
 
 
 def _stata_output_tables(lines: Sequence[str]) -> list[dict[str, Any]]:
@@ -291,7 +309,7 @@ def _stata_output_tables(lines: Sequence[str]) -> list[dict[str, Any]]:
             header_start = i - 1
             while (
                 header_start >= 1
-                and trimws(lines[header_start - 1]) != ""
+                and _trim(lines[header_start - 1]) != ""
                 and not _stata_is_rule_line(lines[header_start - 1])
             ):
                 header_start -= 1
@@ -302,7 +320,7 @@ def _stata_output_tables(lines: Sequence[str]) -> list[dict[str, Any]]:
             header_lines = lines[header_start - 1 : i - 1]
             j = i + 1
             data_lines: list[str] = []
-            while j <= n and not _stata_is_rule_line(lines[j - 1]) and trimws(lines[j - 1]) != "":
+            while j <= n and not _stata_is_rule_line(lines[j - 1]) and _trim(lines[j - 1]) != "":
                 data_lines.append(lines[j - 1])
                 j += 1
             if j <= n and _stata_is_rule_line(lines[j - 1]):
@@ -310,9 +328,9 @@ def _stata_output_tables(lines: Sequence[str]) -> list[dict[str, Any]]:
             if data_lines:
                 cols = _stata_split_block(header_lines + data_lines)
                 if cols is not None and len(cols) >= 2:
-                    df = _cols_to_frame(cols, len(header_lines))
-                    if _any_numlike(df, _stata_is_numlike):
-                        tables.append({"title": None, "data": df})
+                    n_header = len(header_lines)
+                    if _any_numlike([cl[n_header:] for cl in cols], _stata_is_numlike):
+                        tables.append({"title": None, "data": _cols_to_frame(cols, n_header)})
             i = j
             continue
         i += 1
@@ -480,8 +498,8 @@ def _smcl_export_syntax(
     commands = [c["command"] for c in chunks if trimws(c["command"]) != ""]
     if not commands:
         return None
-    code_dir = os.path.join(_r_dirname(smcl_path), code_dir_name)
+    code_dir = _file_path(_r_dirname(smcl_path), code_dir_name)
     os.makedirs(code_dir, exist_ok=True)
-    out_path = os.path.join(code_dir, _file_path_sans_ext(os.path.basename(smcl_path)) + ".do")
+    out_path = _file_path(code_dir, _file_path_sans_ext(os.path.basename(smcl_path)) + ".do")
     _write_lines(commands, out_path)
     return out_path

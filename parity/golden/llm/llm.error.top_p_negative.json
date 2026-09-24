@@ -1,0 +1,9 @@
+{
+  "id": "llm.error.top_p_negative",
+  "ok": false,
+  "error": "Misspecified params argument:\n`top_p` must be a number larger than or equal to 0 or `NULL`, not the number -3.",
+  "warnings": [],
+  "value": null,
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

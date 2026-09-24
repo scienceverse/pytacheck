@@ -1,0 +1,1288 @@
+{
+  "id": "recompose_eq.texts",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": null,
+    "v": [
+      {
+        "t": "list",
+        "names": [
+          "text_id",
+          "grp_id",
+          "components"
+        ],
+        "v": [
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "list",
+                "names": [
+                  "family",
+                  "name",
+                  "value",
+                  "dec",
+                  "censored"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "t"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "t"
+                    ]
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      6.9
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      2
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "family",
+                  "name",
+                  "value",
+                  "dec",
+                  "censored"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "df"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "df"
+                    ]
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      8
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      0
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "family",
+                  "name",
+                  "value",
+                  "dec",
+                  "censored"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "p"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "p"
+                    ]
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      0.001
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      3
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "<"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "family",
+                  "name",
+                  "value",
+                  "dec",
+                  "censored"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "d"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "d"
+                    ]
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      2.3
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      2
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "family",
+                  "name",
+                  "value",
+                  "dec",
+                  "censored"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "ci_lower"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "ci_lower"
+                    ]
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      1.38
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      2
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "family",
+                  "name",
+                  "value",
+                  "dec",
+                  "censored"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "ci_upper"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "ci_upper"
+                    ]
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      2.77
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      2
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "text_id",
+          "grp_id",
+          "components"
+        ],
+        "v": [
+          {
+            "t": "int",
+            "v": [
+              2
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              2
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "list",
+                "names": [
+                  "family",
+                  "name",
+                  "value",
+                  "dec",
+                  "censored"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "mean"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "M"
+                    ]
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      1.93
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      2
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "family",
+                  "name",
+                  "value",
+                  "dec",
+                  "censored"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "sd"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "SD"
+                    ]
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      0.86
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      2
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "family",
+                  "name",
+                  "value",
+                  "dec",
+                  "censored"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "n"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "N"
+                    ]
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      9
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      0
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "text_id",
+          "grp_id",
+          "components"
+        ],
+        "v": [
+          {
+            "t": "int",
+            "v": [
+              3
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              3
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "list",
+                "names": [
+                  "family",
+                  "name",
+                  "value",
+                  "dec",
+                  "censored"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "t"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "t"
+                    ]
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      5.05
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      2
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "family",
+                  "name",
+                  "value",
+                  "dec",
+                  "censored"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "df"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "df"
+                    ]
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      8
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      0
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "family",
+                  "name",
+                  "value",
+                  "dec",
+                  "censored"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "p"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "p"
+                    ]
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      0.001
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      3
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "family",
+                  "name",
+                  "value",
+                  "dec",
+                  "censored"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "d"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "d"
+                    ]
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      1.68
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      2
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "family",
+                  "name",
+                  "value",
+                  "dec",
+                  "censored"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "t"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "t"
+                    ]
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      9.99
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      2
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "family",
+                  "name",
+                  "value",
+                  "dec",
+                  "censored"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "df"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "df"
+                    ]
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      8
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      0
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "family",
+                  "name",
+                  "value",
+                  "dec",
+                  "censored"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "p"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "p"
+                    ]
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      0.5
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      1
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "text_id",
+          "grp_id",
+          "components"
+        ],
+        "v": [
+          {
+            "t": "int",
+            "v": [
+              4
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              4
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "list",
+                "names": [
+                  "family",
+                  "name",
+                  "value",
+                  "dec",
+                  "censored"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "mean"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "M"
+                    ]
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      1.93
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      2
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "family",
+                  "name",
+                  "value",
+                  "dec",
+                  "censored"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "sd"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "SD"
+                    ]
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      0.76
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      2
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "family",
+                  "name",
+                  "value",
+                  "dec",
+                  "censored"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "W"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "W"
+                    ]
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      183.5
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      1
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "family",
+                  "name",
+                  "value",
+                  "dec",
+                  "censored"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "p"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "p"
+                    ]
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      0.791
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      3
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "family",
+                  "name",
+                  "value",
+                  "dec",
+                  "censored"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "rb"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "rb"
+                    ]
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      -0.16
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      2
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "text_id",
+          "grp_id",
+          "components"
+        ],
+        "v": [
+          {
+            "t": "int",
+            "v": [
+              5
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              5
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "list",
+                "names": [
+                  "family",
+                  "name",
+                  "value",
+                  "dec",
+                  "censored"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "F"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "F"
+                    ]
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      4.21
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      2
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "family",
+                  "name",
+                  "value",
+                  "dec",
+                  "censored"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "df1"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "df1"
+                    ]
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      2
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      0
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "family",
+                  "name",
+                  "value",
+                  "dec",
+                  "censored"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "df2"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "df2"
+                    ]
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      57
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      0
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "family",
+                  "name",
+                  "value",
+                  "dec",
+                  "censored"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "p"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "p"
+                    ]
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      0.02
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      3
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "family",
+                  "name",
+                  "value",
+                  "dec",
+                  "censored"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "eta2"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "ηp²"
+                    ]
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      0.13
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      2
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "family",
+                  "name",
+                  "value",
+                  "dec",
+                  "censored"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "r"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "r"
+                    ]
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      -0.27
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      2
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

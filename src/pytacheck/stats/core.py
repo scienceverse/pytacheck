@@ -66,7 +66,7 @@ def _match_statcheck_args(
         raise _ArgError("unused argument")
     # 3. positional
     free = [f for f in _STATCHECK_FORMALS if f not in bound]
-    for j, (tag, value) in enumerate(supplied):
+    for tag, value in supplied:
         if tag is None:
             if not free:
                 raise _ArgError("unused argument")

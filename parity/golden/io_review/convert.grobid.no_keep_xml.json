@@ -1,0 +1,16 @@
+{
+  "id": "convert.grobid.no_keep_xml",
+  "ok": true,
+  "error": null,
+  "warnings": [
+    "path[1]=\"/tmp/RtmptqeAdt/pc_io_review_convert2\": No such file or directory"
+  ],
+  "value": {
+    "t": "chr",
+    "v": [
+      "TMP.json"
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

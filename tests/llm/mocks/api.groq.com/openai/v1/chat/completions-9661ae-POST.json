@@ -1,1 +1,23 @@
-{"id":"chatcmpl-2","object":"chat.completion","created":1760000000,"model":"test-model","choices":[{"index":0,"message":{"role":"assistant","content":"TRUE","reasoning":"12 is digits"},"finish_reason":"stop"}],"usage":{"prompt_tokens":20,"completion_tokens":2,"total_tokens":22}}
+{
+  "id": "chatcmpl-test",
+  "object": "chat.completion",
+  "created": 1760000000,
+  "model": "test-model",
+  "choices": [
+    {
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "TRUE",
+        "reasoning": "12 is digits"
+      },
+      "logprobs": null,
+      "finish_reason": "stop"
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 42,
+    "completion_tokens": 7,
+    "total_tokens": 49
+  }
+}

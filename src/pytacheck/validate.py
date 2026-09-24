@@ -26,14 +26,36 @@ class AccuracyMeasures(dict[str, Any]):
             raise AttributeError(name) from None
 
 
-def _logical(x: Any) -> pd.Series:
-    if isinstance(x, pd.Series):
-        s = x.reset_index(drop=True)
-    elif isinstance(x, bool) or x is None:
-        s = pd.Series([x])
+def _logical(x: Any) -> list[bool | None]:
+    """``x`` as R's ``&`` sees it: logical, numbers non-zero, ``NA`` kept."""
+    import numpy as np
+
+    if isinstance(x, pd.Series | pd.Index | np.ndarray):
+        values = x.tolist()
+    elif isinstance(x, str) or not isinstance(x, Sequence | set | frozenset):
+        values = [x]
     else:
-        s = pd.Series(list(x), dtype=object)
-    return s.astype("boolean")
+        values = list(x)
+    out: list[bool | None] = []
+    for v in values:
+        if _missing(v):
+            out.append(None)
+        elif isinstance(v, bool | np.bool_):
+            out.append(bool(v))
+        elif isinstance(v, int | float | np.integer | np.floating):
+            out.append(bool(v != 0))
+        else:
+            raise TypeError("operations are possible only for numeric, logical or complex types")
+    return out
+
+
+def _recycled(e: list[bool | None], o: list[bool | None]) -> tuple[pd.Series, pd.Series]:
+    """R's recycling of the two vectors (a zero-length one gives zero length)."""
+    n = 0 if not e or not o else max(len(e), len(o))
+    return (
+        pd.Series([e[i % len(e)] for i in range(n)], dtype="boolean"),
+        pd.Series([o[i % len(o)] for i in range(n)], dtype="boolean"),
+    )
 
 
 def _sum(x: pd.Series) -> int | None:
@@ -77,12 +99,7 @@ def accuracy(expected: Any, observed: Any) -> AccuracyMeasures:
     module's classification). Rates of exactly 0 or 1 are adjusted by half
     an observation so ``d_prime`` and ``beta`` stay finite.
     """
-    e, o = _logical(expected), _logical(observed)
-    n = max(len(e), len(o))
-    if len(e) != len(o) and n:
-        # R recycles the shorter vector
-        e = pd.Series([e.iloc[i % len(e)] for i in range(n)], dtype="boolean") if len(e) else e
-        o = pd.Series([o.iloc[i % len(o)] for i in range(n)], dtype="boolean") if len(o) else o
+    e, o = _recycled(_logical(expected), _logical(observed))
     hit = _sum(e & o)
     miss = _sum(e & ~o)
     fa = _sum(~e & o)
@@ -131,13 +148,13 @@ def _full_join(
     if missing:
         raise ValueError(
             "Join columns in `y` must be present in the data.\n"
-            f"Problem with {', '.join(f'`{k}`' for k in missing)}."
+            f"\u2716 Problem with {', '.join(f'`{k}`' for k in missing)}."
         )
     missing = [k for k in by if k not in x.columns]
     if missing:
         raise ValueError(
             "Join columns in `x` must be present in the data.\n"
-            f"Problem with {', '.join(f'`{k}`' for k in missing)}."
+            f"\u2716 Problem with {', '.join(f'`{k}`' for k in missing)}."
         )
     common = [c for c in x.columns if c in y.columns and c not in by]
     x = _nullable(x).rename(columns={c: f"{c}{suffix[0]}" for c in common})
@@ -145,13 +162,14 @@ def _full_join(
     y_cols = [c for c in y.columns if c not in by]
     left = x.reset_index(drop=True).assign(__x_row=range(len(x)))
     right = y.reset_index(drop=True).assign(__y_row=range(len(y)))
-    # join on string forms of the keys, as R compares character keys
+    # join on comparable forms of the keys (dplyr: common type; NA matches NA)
     keys = [f"__key{i}" for i in range(len(by))]
     for k, col in zip(keys, by, strict=True):
-        left[k] = [None if _missing(v) else str(v) for v in left[col].tolist()]
-        right[k] = [None if _missing(v) else str(v) for v in right[col].tolist()]
+        group = _key_group(left[col], right[col], col)
+        left[k] = _key_values(left[col], group)
+        right[k] = _key_values(right[col], group)
     merged = left.merge(right.drop(columns=list(by)), on=keys, how="left", sort=False)
-    matched = set(int(v) for v in merged["__y_row"].dropna().tolist())
+    matched = {int(v) for v in merged["__y_row"].dropna().tolist()}
     extra = right[~right["__y_row"].isin(matched)]
     columns = [*x.columns, *y_cols]
     out = pd.concat([merged[columns], extra.reindex(columns=columns)], ignore_index=True)
@@ -164,6 +182,67 @@ def _full_join(
         except (TypeError, ValueError):
             pass
     return out
+
+
+def _r_type(s: pd.Series) -> str:
+    """The R type of a column, as vctrs names it (``unspecified`` for all-NA)."""
+    import numpy as np
+
+    dtype = s.dtype
+    if isinstance(dtype, pd.CategoricalDtype):
+        return "factor"
+    if pd.api.types.is_bool_dtype(dtype):
+        return "logical"
+    if pd.api.types.is_integer_dtype(dtype):
+        return "integer"
+    if pd.api.types.is_float_dtype(dtype):
+        return "double"
+    if pd.api.types.is_string_dtype(dtype) and not pd.api.types.is_object_dtype(dtype):
+        return "character"
+    kinds = set()
+    for v in s.tolist():
+        if _missing(v):
+            continue
+        if isinstance(v, str):
+            kinds.add("character")
+        elif isinstance(v, bool | np.bool_):
+            kinds.add("logical")
+        elif isinstance(v, int | np.integer):
+            kinds.add("integer")
+        elif isinstance(v, float | np.floating):
+            kinds.add("double")
+        else:
+            kinds.add("list")
+    if not kinds:
+        return "unspecified"
+    if len(kinds) == 1:
+        return kinds.pop()
+    if kinds <= {"logical", "integer", "double"}:
+        return "double" if "double" in kinds else "integer"
+    return "list"
+
+
+_TYPE_GROUP = {"character": "chr", "factor": "chr", "logical": "num", "integer": "num"}
+
+
+def _key_group(x: pd.Series, y: pd.Series, col: str) -> str:
+    """The common type of two join keys (``vctrs::vec_ptype2()``), or dplyr's error."""
+    tx, ty = _r_type(x), _r_type(y)
+    gx = _TYPE_GROUP.get(tx, "num" if tx == "double" else tx)
+    gy = _TYPE_GROUP.get(ty, "num" if ty == "double" else ty)
+    if "unspecified" in (gx, gy) or gx == gy:
+        return gy if gx == "unspecified" else gx
+    raise TypeError(
+        f"Can't join `x${col}` with `y${col}` due to incompatible types.\n"
+        f"\u2139 `x${col}` is a <{tx}>.\n\u2139 `y${col}` is a <{ty}>."
+    )
+
+
+def _key_values(s: pd.Series, group: str) -> list[Any]:
+    """Key values in their common type, so equal R values compare equal."""
+    if group == "num":
+        return [None if _missing(v) else float(v) for v in s.tolist()]
+    return [None if _missing(v) else str(v) for v in s.tolist()]
 
 
 def _missing(v: Any) -> bool:
@@ -190,8 +269,16 @@ def _r_equal(a: pd.Series, b: pd.Series) -> pd.Series:
         if _missing(u) or _missing(v):
             out.append(None)
         elif chr_mode:
-            su = u if isinstance(u, str) else ("TRUE" if u is True else "FALSE" if u is False else as_character(u))
-            sv = v if isinstance(v, str) else ("TRUE" if v is True else "FALSE" if v is False else as_character(v))
+            su = (
+                u
+                if isinstance(u, str)
+                else ("TRUE" if u is True else "FALSE" if u is False else as_character(u))
+            )
+            sv = (
+                v
+                if isinstance(v, str)
+                else ("TRUE" if v is True else "FALSE" if v is False else as_character(v))
+            )
             out.append(su == sv)
         else:
             try:
@@ -199,6 +286,17 @@ def _r_equal(a: pd.Series, b: pd.Series) -> pd.Series:
             except (TypeError, ValueError):
                 out.append(u == v)
     return pd.Series(out, dtype="boolean")
+
+
+def _as_text(v: Any) -> str:
+    """R ``as.character()`` of a scalar."""
+    if isinstance(v, str):
+        return v
+    from pytacheck._r.base import as_character
+
+    if isinstance(v, bool):
+        return "TRUE" if v else "FALSE"
+    return str(as_character(v))
 
 
 def validate(gt: Any, module: Any, compare: str = "table") -> pd.DataFrame:
@@ -224,18 +322,43 @@ def validate(gt: Any, module: Any, compare: str = "table") -> pd.DataFrame:
                 else pd.Series(texts),
             }
         )
-    papers = []
     ids = gt["paper_id"].tolist()
     texts_col = gt["text"].tolist()
+    # gt[gt$paper_id == paper_id, "text"] for each row (an NA id selects NA rows)
+    by_id: dict[Any, list[Any]] = {}
+    for pid, txt in zip(ids, texts_col, strict=True):
+        if not _missing(pid):
+            by_id.setdefault(pid, []).append(txt)
+    papers = []
     for pid in ids:
-        t = [txt for i, txt in zip(ids, texts_col, strict=True) if i == pid]
-        p = test_paper([str(v) for v in t])
+        t = [None] * len(ids) if _missing(pid) else by_id[pid]
+        p = test_paper(["" if _missing(v) else _as_text(v) for v in t])
+        if any(_missing(v) for v in t):
+            # test_paper(): as.character(NA) stays NA
+            text = p.text.copy()
+            values = pd.Series([None if _missing(v) else _as_text(v) for v in t], dtype="string")
+            text["text"] = values
+            text["formatted"] = values
+            p.text = text
         p.paper_id = pid
         papers.append(p)
     mo = module_run(PaperList(papers), module)
     table = mo.get(compare)
     if not isinstance(table, pd.DataFrame):
-        raise ValueError(f"`y` must be a data frame, not the module's `{compare}`.")
+        # dplyr::full_join(gt, <not a data frame>)
+        if table is None:
+            what = "`NULL`"
+        elif isinstance(table, str):
+            what = f'the string "{table}"'
+        else:
+            what = f"a <{type(table).__name__}> object"
+        raise ValueError(
+            "`x` and `y` must share the same src.\n"
+            "\u2139 `x` is a <data.frame> object.\n"
+            f"\u2139 `y` is {what}.\n"
+            "\u2139 Set `copy = TRUE` if `y` can be copied to the same source as `x` (may be\n"
+            "  slow)."
+        )
     comp = _full_join(gt, table, by=["paper_id", "text"], suffix=(".gt", ".mod"))
     comp_cols = [c[: -len(".mod")] for c in comp.columns if str(c).endswith(".mod")]
     for col in comp_cols:

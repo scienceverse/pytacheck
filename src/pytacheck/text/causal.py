@@ -96,12 +96,12 @@ def _recycle(cols: dict[str, list[Any]]) -> list[dict[str, Any]]:
     """``data.frame(...)`` of vector arguments, with R's recycling rules."""
     n = max(len(v) for v in cols.values())
     if any(len(v) == 0 or n % len(v) for v in cols.values()):
-        detail = ", ".join(str(len(v)) for v in cols.values())
+        detail = ", ".join(str(k) for k in dict.fromkeys(len(v) for v in cols.values()))
         raise ValueError(f"arguments imply differing number of rows: {detail}")
     return [{k: v[i % len(v)] for k, v in cols.items()} for i in range(n)]
 
 
-def _parse_relations(final_json: str, sentence: str) -> list[dict[str, Any]]:
+def _parse_relations(final_json: str, sentence: str | None) -> list[dict[str, Any]]:
     """One row per relation (or one row with missing cause/effect) for *sentence*."""
     from pytacheck.text.json_expand import _as_character, _JSONError, _List, _parse_json, _Vec
 
@@ -139,14 +139,47 @@ def _parse_relations(final_json: str, sentence: str) -> list[dict[str, Any]]:
     return rows
 
 
+def _modp_dtoa2(value: float, prec: int) -> str:
+    """jsonlite's vendored ``modp_dtoa2()``: fixed decimals, trailing zeros dropped."""
+    neg = value < 0
+    if neg:
+        value = -value
+    whole = int(value)
+    scale = 10**prec
+    tmp = (value - whole) * float(scale)
+    frac = int(tmp)
+    diff = tmp - frac
+    if diff > 0.5 or (diff == 0.5 and prec > 0 and frac & 1):
+        frac += 1
+        if frac >= scale:
+            frac = 0
+            whole += 1
+    count = prec
+    while count > 0 and frac % 10 == 0:
+        count -= 1
+        frac //= 10
+    digits = str(frac).rjust(count, "0") if count else ""
+    text = f"{whole}.{digits}" if digits else str(whole)
+    return f"-{text}" if neg else text
+
+
 def _json_number(x: float) -> str:
-    """A number as ``jsonlite::toJSON()`` writes it (at most 4 decimal digits)."""
-    v = round(float(x), 4)
-    return str(int(v)) if v == int(v) else repr(v)
+    """A number as ``jsonlite::toJSON()`` writes it (``num_to_char(digits = 4)``)."""
+    if isinstance(x, int) and not isinstance(x, bool):
+        return str(x)
+    v = float(x)
+    if 1e-5 < abs(v) < 2147483647:
+        return _modp_dtoa2(v, 4)
+    decimals = math.ceil(min(17, max(1, math.log10(abs(v)) if v else -math.inf) + 4))
+    return f"{v:.{decimals}g}"
 
 
 def _post_enqueue(
-    sentence: str, rel_mode: str, rel_threshold: float, cause_decision: str, verbose: bool
+    sentence: str | None,
+    rel_mode: str,
+    rel_threshold: float,
+    cause_decision: str,
+    verbose: bool,
 ) -> str:
     from pytacheck import http
 
@@ -275,13 +308,17 @@ def causal_relations(
     cause/effect for a sentence without relations. Rows are ordered by input
     sentence, then cause and effect.
     """
-    sentences = [sentence] if isinstance(sentence, str) else list(sentence)
-    if len(sentences) == 0 or all(
-        isinstance(s, str) and s.strip(" \t\r\n") == "" for s in sentences
-    ):
+    sentences = [sentence] if isinstance(sentence, str) or sentence is None else list(sentence)
+    # R: length(sentence) == 0 || all(trimws(sentence) == "") (NA makes all() NA)
+    blank = [
+        None if s is None else isinstance(s, str) and s.strip(" \t\r\n") == "" for s in sentences
+    ]
+    if len(sentences) == 0 or all(b is True for b in blank):
         return _empty()
+    if False not in blank:
+        raise ValueError("missing value where TRUE/FALSE needed")
 
-    if not all(isinstance(s, str) for s in sentences):
+    if not all(s is None or isinstance(s, str) for s in sentences):
         raise TypeError("`sentence` must be a non-empty character vector.")
     if not isinstance(rel_mode, str) or rel_mode not in ("auto", "neural_only"):
         raise ValueError("`rel_mode` must be one of: 'auto', 'neural_only'.")

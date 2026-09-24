@@ -1,0 +1,62 @@
+{
+  "id": "extract_p_values.review.zero_rows",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 0,
+    "names": [
+      "text",
+      "text_id",
+      "section_id",
+      "paragraph_id",
+      "paper_id",
+      "header",
+      "section_type",
+      "p_comp",
+      "p_value"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": []
+      },
+      {
+        "t": "lgl",
+        "v": []
+      },
+      {
+        "t": "lgl",
+        "v": []
+      },
+      {
+        "t": "lgl",
+        "v": []
+      },
+      {
+        "t": "lgl",
+        "v": []
+      },
+      {
+        "t": "lgl",
+        "v": []
+      },
+      {
+        "t": "lgl",
+        "v": []
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": []
+      },
+      {
+        "t": "dbl",
+        "v": []
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

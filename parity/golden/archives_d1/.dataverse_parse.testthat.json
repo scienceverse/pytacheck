@@ -1,0 +1,38 @@
+{
+  "id": ".dataverse_parse.testthat",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 5,
+    "names": [
+      "host",
+      "doi"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "dataverse.harvard.edu",
+          "dataverse.nl",
+          "dataverse.harvard.edu",
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "10.7910/DVN/ABC123",
+          "10.34894/XYZ999",
+          null,
+          null,
+          null
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

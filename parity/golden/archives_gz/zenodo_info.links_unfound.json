@@ -1,0 +1,332 @@
+{
+  "id": "zenodo_info.links_unfound",
+  "ok": true,
+  "error": null,
+  "warnings": [
+    "00000000 could not be found"
+  ],
+  "value": {
+    "t": "df",
+    "nrow": 2,
+    "names": [
+      "href",
+      "link_text",
+      "text_id",
+      "paper_id",
+      "zenodo_url",
+      "zenodo_link",
+      "zenodo_id",
+      "title",
+      "doi",
+      "description",
+      "publication_date",
+      "updated_date",
+      "creators",
+      "keywords",
+      "resource_type",
+      "journal",
+      "owners",
+      "license",
+      "downloads",
+      "unique_downloads",
+      "views",
+      "files",
+      "error"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "https://doi.org/10.5281/zenodo.00000000",
+          "https://zenodo.org/records/2669586"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          1,
+          2
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "25403098fcf75e",
+          "25403098fcf75e"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://doi.org/10.5281/zenodo.00000000",
+          "https://zenodo.org/records/2669586"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://doi.org/10.5281/zenodo.00000000",
+          "https://doi.org/10.5281/zenodo.2669586"
+        ],
+        "names": [
+          "https://doi.org/10.5281/zenodo.00000000",
+          "https://zenodo.org/records/2669586"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "00000000",
+          "2669586"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "faux: Simulation for Factorial Designs"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "10.5281/zenodo.7852893"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "Create datasets with factorial structure through simulation by specifying variable parameters."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "2023-02-03"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "2023-04-21T14:26:41.592117+00:00"
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "null"
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "list",
+                "names": [
+                  "name",
+                  "affiliation",
+                  "orcid"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Lisa DeBruine"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "University of Glasgow"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "0000-0002-7523-5539"
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "null"
+          },
+          {
+            "t": "null"
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "software"
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "null"
+          },
+          {
+            "t": "null"
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "null"
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "list",
+                "names": [
+                  "id"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "39314"
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "mit-license"
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          null,
+          286
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          null,
+          271
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          null,
+          3116
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "null"
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "list",
+                "names": [
+                  "id",
+                  "key",
+                  "size",
+                  "checksum",
+                  "links"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "afdd0ef1-f366-4458-b5c8-36414d4b5490"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "debruine/faux-v1.2.1.zip"
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      53373506
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "md5:93da3f38cbc381bc5078e877a3fde0b4"
+                    ]
+                  },
+                  {
+                    "t": "list",
+                    "names": [
+                      "self"
+                    ],
+                    "v": [
+                      {
+                        "t": "chr",
+                        "v": [
+                          "https://zenodo.org/api/records/7852893/files/debruine/faux-v1.2.1.zip/content"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "unfound",
+          null
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -1,0 +1,136 @@
+{
+  "id": ".tei_text.xlink_ns",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 9,
+    "names": [
+      "text",
+      "text_id",
+      "paragraph_id",
+      "section_id",
+      "page_number",
+      "header",
+      "section_type",
+      "formatted"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "Abstract with a  pointer.",
+          "And x maths.",
+          "We used https://osf.io/48ncu and  here.",
+          "Own prefix kept and  inherited.",
+          "Unused own prefix.",
+          "Foreign default q namespace.",
+          "A caption  with a pointer.",
+          "Table caption.",
+          "A footnote  pointer."
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          1,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0,
+          0,
+          1,
+          1,
+          1,
+          1,
+          2,
+          3,
+          4
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Abstract",
+          "Abstract",
+          "<head>Method <ptr xlink:href=\"#h\"/><\/head>",
+          "<head>Method <ptr xlink:href=\"#h\"/><\/head>",
+          "<head>Method <ptr xlink:href=\"#h\"/><\/head>",
+          "<head>Method <ptr xlink:href=\"#h\"/><\/head>",
+          "<head>Figure 1 :<\/head>",
+          "<head>Table 1 :<\/head>",
+          ""
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "abstract",
+          "abstract",
+          "method",
+          "method",
+          "method",
+          "method",
+          "figure",
+          "table",
+          "foot"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Abstract with a <ptr xlink:href=\"https://osf.io/abc\"/> pointer.",
+          "And <mml:math><mml:mi>x<\/mml:mi><\/mml:math> maths.",
+          "We used <ref type=\"url\" target=\"https://osf.io/48ncu\">https://osf.io/48ncu<\/ref> and <ptr xlink:href=\"https://github.com/x\"/> here.",
+          "<p xmlns:b=\"urn:b\">Own prefix <b:q>kept<\/b:q> and <ptr xlink:href=\"h\"/> inherited.",
+          "<p xmlns:c=\"urn:c\">Unused own prefix.",
+          "Foreign default <m><i>q<\/i><\/m> namespace.",
+          "A caption <ptr xlink:href=\"https://img.org\"/> with a pointer.",
+          null,
+          "<note place=\"foot\" n=\"1\" xml:id=\"foot_0\">   <p>A footnote <ptr xlink:href=\"https://f.org\"/> pointer.<\/p> <\/note>"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

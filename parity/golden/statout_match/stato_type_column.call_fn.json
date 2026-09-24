@@ -1,0 +1,994 @@
+{
+  "id": "stato_type_column.call_fn",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": null,
+    "v": [
+      {
+        "t": "list",
+        "names": [
+          "annotationValue",
+          "termSource",
+          "termAccession"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Shapiro-Wilk W statistic"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "metacheck"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://scienceverse.org/schema/metacheck/statistics/shapiroWilkW"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "annotationValue",
+          "termSource",
+          "termAccession"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Wilcoxon rank sum statistic"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "metacheck"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://scienceverse.org/schema/metacheck/statistics/wilcoxonW"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "annotationValue",
+          "termSource",
+          "termAccession"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Wilcoxon signed rank statistic"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "metacheck"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://scienceverse.org/schema/metacheck/statistics/wilcoxonV"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "annotationValue",
+          "termSource",
+          "termAccession"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "statistic"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "annotationValue",
+          "termSource",
+          "termAccession"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Spearman's S statistic"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "metacheck"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://scienceverse.org/schema/metacheck/statistics/spearmanS"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "annotationValue",
+          "termSource",
+          "termAccession"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "t-statistic"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "STATO"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "http://purl.obolibrary.org/obo/STATO_0000176"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "annotationValue",
+          "termSource",
+          "termAccession"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Z-statistic"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "STATO"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "http://purl.obolibrary.org/obo/STATO_0000376"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "annotationValue",
+          "termSource",
+          "termAccession"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Shapiro-Wilk W statistic"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "metacheck"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://scienceverse.org/schema/metacheck/statistics/shapiroWilkW"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "annotationValue",
+          "termSource",
+          "termAccession"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "t-statistic"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "STATO"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "http://purl.obolibrary.org/obo/STATO_0000176"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "annotationValue",
+          "termSource",
+          "termAccession"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "t-statistic"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "STATO"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "http://purl.obolibrary.org/obo/STATO_0000176"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "annotationValue",
+          "termSource",
+          "termAccession"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Mann-Whitney U statistic"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "metacheck"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://scienceverse.org/schema/metacheck/statistics/mannWhitneyU"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "annotationValue",
+          "termSource",
+          "termAccession"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Kruskal-Wallis H statistic"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "metacheck"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://scienceverse.org/schema/metacheck/statistics/kruskalWallisH"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "annotationValue",
+          "termSource",
+          "termAccession"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Wilcoxon signed rank statistic"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "metacheck"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://scienceverse.org/schema/metacheck/statistics/wilcoxonV"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "annotationValue",
+          "termSource",
+          "termAccession"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Kolmogorov-Smirnov D statistic"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "metacheck"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://scienceverse.org/schema/metacheck/statistics/kolmogorovSmirnovD"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "annotationValue",
+          "termSource",
+          "termAccession"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Kolmogorov-Smirnov D statistic"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "metacheck"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://scienceverse.org/schema/metacheck/statistics/kolmogorovSmirnovD"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "annotationValue",
+          "termSource",
+          "termAccession"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Cohen's d"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "STATO"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "http://purl.obolibrary.org/obo/STATO_0000618"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "annotationValue",
+          "termSource",
+          "termAccession"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Cohen's d"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "STATO"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "http://purl.obolibrary.org/obo/STATO_0000618"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "annotationValue",
+          "termSource",
+          "termAccession"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Cohen's d"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "STATO"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "http://purl.obolibrary.org/obo/STATO_0000618"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "annotationValue",
+          "termSource",
+          "termAccession"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "W"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "annotationValue",
+          "termSource",
+          "termAccession"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "W"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "annotationValue",
+          "termSource",
+          "termAccession"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "W"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "annotationValue",
+          "termSource",
+          "termAccession"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "t-statistic"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "STATO"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "http://purl.obolibrary.org/obo/STATO_0000176"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "annotationValue",
+          "termSource",
+          "termAccession"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Chi-Squared statistic"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "STATO"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "http://purl.obolibrary.org/obo/STATO_0000030"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "annotationValue",
+          "termSource",
+          "termAccession"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Chi-Squared statistic"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "STATO"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "http://purl.obolibrary.org/obo/STATO_0000030"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "annotationValue",
+          "termSource",
+          "termAccession"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "statistic"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "annotationValue",
+          "termSource",
+          "termAccession"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "statistic"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "annotationValue",
+          "termSource",
+          "termAccession"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "F-statistic"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "STATO"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "http://purl.obolibrary.org/obo/STATO_0000282"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "annotationValue",
+          "termSource",
+          "termAccession"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "sample mean"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "STATO"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "http://purl.obolibrary.org/obo/STATO_0000401"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "annotationValue",
+          "termSource",
+          "termAccession"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "W[gg]"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "annotationValue",
+          "termSource",
+          "termAccession"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Chi-Squared statistic"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "STATO"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "http://purl.obolibrary.org/obo/STATO_0000030"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "annotationValue",
+          "termSource",
+          "termAccession"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Chi-Squared statistic"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "STATO"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "http://purl.obolibrary.org/obo/STATO_0000030"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "annotationValue",
+          "termSource",
+          "termAccession"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Chi-Squared statistic"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "STATO"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "http://purl.obolibrary.org/obo/STATO_0000030"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "annotationValue",
+          "termSource",
+          "termAccession"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Chi-Squared statistic"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "STATO"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "http://purl.obolibrary.org/obo/STATO_0000030"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "annotationValue",
+          "termSource",
+          "termAccession"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "t-statistic"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "STATO"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "http://purl.obolibrary.org/obo/STATO_0000176"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "annotationValue",
+          "termSource",
+          "termAccession"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

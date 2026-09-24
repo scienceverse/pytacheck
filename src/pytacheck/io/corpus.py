@@ -126,14 +126,10 @@ def papers_available(repo: str = DEFAULT_REPO) -> pd.DataFrame:
     """
     assets = _papers_release_assets(repo)
     cache_dir = _papers_cache_dir()
-    if assets is None:
-        return pd.DataFrame(
-            {
-                "name": pd.Series([], dtype="string"),
-                "size_mb": pd.Series([], dtype="float64"),
-                "cached": pd.Series([], dtype="boolean"),
-            }
-        )
+    if assets is None or len(assets) == 0:
+        # R: `cached = file.exists(file.path(cache_dir, paste0(character(0),
+        # ".rds")))` has length 1, so data.frame() fails without any asset
+        raise ValueError("arguments imply differing number of rows: 0, 1")
     names = [_file_path_sans_ext(n) for n in assets["name"]]
     return pd.DataFrame(
         {
@@ -170,7 +166,9 @@ def papers_load(
         return _read_rds(cache_path)
 
     assets = _papers_release_assets(repo)
-    names = [] if assets is None else [_file_path_sans_ext(n) for n in assets["name"]]
+    if assets is None:  # R: nrow(NULL[...]) == 0 is logical(0)
+        raise ValueError("argument is of length zero")
+    names = [_file_path_sans_ext(n) for n in assets["name"]]
     hits = [i for i, n in enumerate(names) if n == name]
     if not hits:
         raise ValueError(f"'{name}' not found in releases of {repo}. Available: {', '.join(names)}")

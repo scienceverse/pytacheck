@@ -1,0 +1,79 @@
+{
+  "id": "llm.structured.factor_dups",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "value",
+      "warnings"
+    ],
+    "v": [
+      {
+        "t": "df",
+        "nrow": 4,
+        "names": [
+          "id",
+          "txt",
+          "variables.variable_name",
+          "variables.label",
+          "variables.kind"
+        ],
+        "v": [
+          {
+            "t": "int",
+            "v": [
+              1,
+              2,
+              2,
+              3
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "none",
+              "two vars",
+              "two vars",
+              "none"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "dv",
+              "iv",
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "outcome",
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "a",
+              null,
+              null
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": []
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

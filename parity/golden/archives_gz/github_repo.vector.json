@@ -1,0 +1,21 @@
+{
+  "id": "github_repo.vector",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "scienceverse/metacheck",
+      "scienceverse/faux",
+      "scienceverse/metacheck"
+    ],
+    "names": [
+      "scienceverse/metacheck",
+      "scienceverse/faux",
+      "scienceverse/metacheck.git"
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

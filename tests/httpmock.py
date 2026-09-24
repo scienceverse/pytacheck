@@ -45,10 +45,15 @@ _EXTENSIONS = {
 }
 
 
-def r_digest(text: str) -> str:
-    """``digest::digest(text)`` for a single string (MD5 of R's serialisation)."""
+def r_digest(text: str, native: bool = False) -> str:
+    """``digest::digest(text)`` for a single string (MD5 of R's serialisation).
+
+    A non-ASCII string is serialised as UTF-8-marked, or -- with *native*, for
+    strings made by ``rawToChar()`` such as httptest2's request bodies -- in
+    the native (unmarked) encoding.
+    """
     raw = text.encode("utf-8")
-    flags = 9 | ((64 if raw.isascii() else 8) << 12)
+    flags = 9 | ((64 if raw.isascii() else (0 if native else 8)) << 12)
     return hashlib.md5(
         struct.pack(">iiii", 16, 1, flags, len(raw)) + raw, usedforsecurity=False
     ).hexdigest()
@@ -95,7 +100,7 @@ def mock_path(request: httpx.Request) -> str:
     if multipart is not None:
         path += "-" + r_digest(multipart)[:6]
     elif body:
-        path += "-" + r_digest(body.decode("utf-8", "replace"))[:6]
+        path += "-" + r_digest(body.decode("utf-8", "replace"), native=True)[:6]
     if request.method != "GET":
         path += "-" + request.method
     return path
@@ -116,9 +121,26 @@ def _parse_r_response(text: str) -> httpx.Response:
     raw = re.search(r"body = as\.raw\(c\((.*?)\)\)", text, re.S)
     if raw:
         body = bytes(int(h, 16) for h in re.findall(r"0x([0-9a-fA-F]{2})", raw.group(1)))
+    else:
+        chars = re.search(r'body = charToRaw\("((?:[^"\\]|\\.)*)"\)', text, re.S)
+        if chars:
+            body = _r_unescape(chars.group(1)).encode("utf-8")
     headers.pop("content-encoding", None)
     headers.pop("content-length", None)
     return httpx.Response(int(status.group(1)) if status else 200, headers=headers, content=body)
+
+
+def _r_unescape(s: str) -> str:
+    """Undo the escapes of a deparsed R string literal."""
+    simple = {"n": "\n", "t": "\t", "r": "\r", '"': '"', "\\": "\\", "'": "'", "0": "\0"}
+
+    def repl(m: re.Match[str]) -> str:
+        e = m.group(1)
+        if e[0] in ("u", "U"):
+            return chr(int(e[1:].strip("{}"), 16))
+        return simple.get(e, e)
+
+    return re.sub(r"\\(u\{?[0-9a-fA-F]{4}\}?|U\{?[0-9a-fA-F]{8}\}?|.)", repl, s)
 
 
 def fixture_response(root: Path, path: str) -> httpx.Response | None:

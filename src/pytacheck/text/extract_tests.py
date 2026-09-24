@@ -9,7 +9,8 @@ anchors (``t``, ``F``, ``r``, ...), and the reporting sentence is kept so a
 matched result can be traced back to its claim.
 
 Each row's ``components`` cell is a list of dicts with the keys ``name``,
-``comp``, ``value``, ``df`` and ``sentence_pos`` (R: a list of named lists).
+``comp``, ``value``, ``df`` and ``sentence_pos`` (R: a list of named lists;
+``None`` is ``NA``, or ``NULL`` when the ``eq`` table lacks that column).
 """
 
 from __future__ import annotations
@@ -409,7 +410,8 @@ def extract_tests(paper: Any) -> pd.DataFrame:
         groups.setdefault(tid, []).append(i)
 
     # R: list(name = sub$lhs[i], comp = sub$comp[i], value = sub$rhs[i], df = sub$df[i]);
-    # a missing eq column gives a NULL element, kept here as an absent key.
+    # a missing eq column gives a NULL element: an absent key while splitting and
+    # rendering (NULL and NA render differently), None in the returned components.
     fields = [(key, col) for key, col in _COMPONENT_COLS if col in eq.columns]
     values = {col: [_scalar(v) for v in eq[col].tolist()] for _, col in fields}
     lhs = values.get("lhs", [None] * len(eq))
@@ -442,7 +444,16 @@ def extract_tests(paper: Any) -> pd.DataFrame:
             }
             if not pid:
                 raise ValueError("arguments imply differing number of rows: 0, 1")
-            rows.extend({"paper_id": p, **base, "components": g} for p in pid)
+            # R keeps every element of list(name = , comp = , value = , df = ,
+            # sentence_pos = ); an eq column that is missing gives NULL (None here)
+            comps_out = [
+                {
+                    **{key: c.get(key) for key, _ in _COMPONENT_COLS},
+                    "sentence_pos": c["sentence_pos"],
+                }
+                for c in g
+            ]
+            rows.extend({"paper_id": p, **base, "components": comps_out} for p in pid)
 
     if not rows:
         return _empty_tests()

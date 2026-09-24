@@ -1,0 +1,129 @@
+{
+  "id": "gitlab_tree_files.subgroup_paged",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "gated",
+      "reason",
+      "files",
+      "default_branch",
+      "license"
+    ],
+    "v": [
+      {
+        "t": "lgl",
+        "v": [
+          false
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 5,
+        "names": [
+          "repo",
+          "clean_repo",
+          "name",
+          "path",
+          "download_url",
+          "size",
+          "type"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "https://gitlab.com/gzorg/sub/glproj",
+              "https://gitlab.com/gzorg/sub/glproj",
+              "https://gitlab.com/gzorg/sub/glproj",
+              "https://gitlab.com/gzorg/sub/glproj",
+              "https://gitlab.com/gzorg/sub/glproj"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "gzorg/sub/glproj",
+              "gzorg/sub/glproj",
+              "gzorg/sub/glproj",
+              "gzorg/sub/glproj",
+              "gzorg/sub/glproj"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "README.md",
+              "d1.csv",
+              "run.py",
+              "x.json",
+              "x.json"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "README.md",
+              "data/d1.csv",
+              "src/run.py",
+              "x.json",
+              "x.json"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://gitlab.com/gzorg/sub/glproj/-/raw/develop/README.md",
+              "https://gitlab.com/gzorg/sub/glproj/-/raw/develop/data/d1.csv",
+              "https://gitlab.com/gzorg/sub/glproj/-/raw/develop/src/run.py",
+              "https://gitlab.com/gzorg/sub/glproj/-/raw/develop/x.json",
+              "https://gitlab.com/gzorg/sub/glproj/-/raw/develop/x.json"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              1234,
+              56,
+              789,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "text",
+              "data",
+              "code",
+              "code",
+              "data"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "develop"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "mit"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

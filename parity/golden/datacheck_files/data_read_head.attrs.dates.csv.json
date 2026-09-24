@@ -1,0 +1,79 @@
+{
+  "id": "data_read_head.attrs.dates.csv",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "names",
+      "attrs",
+      "utf8_repaired"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "id",
+          "day",
+          "stamp"
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "id",
+          "day",
+          "stamp"
+        ],
+        "v": [
+          {
+            "t": "null"
+          },
+          {
+            "t": "list",
+            "names": [
+              "class"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "IDate",
+                  "Date"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "class",
+              "tzone"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "POSIXct",
+                  "POSIXt"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "UTC"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "null"
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

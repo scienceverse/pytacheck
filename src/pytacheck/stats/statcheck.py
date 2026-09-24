@@ -132,8 +132,45 @@ _TRE_Z = compile_r(RGX_Z, posix=False)
 _TRE_CHI2 = compile_r(RGX_CHI2, posix=False)
 _TRE_DF1_I_L = compile_r(RGX_DF1_I_L, posix=False)
 _TRE_DEC = compile_r(RGX_DEC)
-_TRE_NS_ICASE = compile_r(RGX_NS, ignore_case=True, posix=False)
-_TRE_1TAIL = compile_r("one.?sided|one.?tailed|directional", ignore_case=True, posix=False)
+
+# R's `ignore.case = TRUE`, spelled out. For the ASCII letters these patterns
+# contain, PCRE2 (perl = TRUE) also folds k/K with U+212A (Kelvin sign) and s/S
+# with U+017F (long s), but never i/I with U+0130/U+0131; TRE folds an ASCII
+# letter only with its ASCII other case. The `regex` module's IGNORECASE differs
+# from both for these four characters, so the case-insensitive patterns are
+# written out and compiled case-sensitively.
+_LONG_S = "\u017f"
+_KELVIN = "\u212a"
+_PCRE_ICASE = {
+    RGX_TEST_TYPE: rf"([^a-zA-Z{_LONG_S}{_KELVIN}](z|Z))|{RGX_OPEN_BRACKET}",
+    RGX_DF: (
+        rf"({RGX_DF_T_R_Q})"
+        r"|(\(\s?\d*\.?([Ii]|[lL]|\d+)\s?,\s?\d*\.?\d+\s?\))"
+        r"|(\(\s?\d*\.?\d+\s?(,\s?([Nn]|[Nn])\s?\=\s?\d*\,?\d*\,?\d+\s?)?\))"
+    ),
+    RGX_TEST_VALUE: rf"[<>=]\s?[^a-zA-Z{_LONG_S}{_KELVIN}\d\.]{{0,3}}\s?\d*,?\d*\.?\d+\s?,",
+    RGX_P_NS: (
+        rf"(([^a-zA-Z{_LONG_S}{_KELVIN}][nN]\.?[sS{_LONG_S}]\.?)"
+        r"|([pP]\s?[<>=]\s?\d?\.\d+[eE]?-?\d*))"
+    ),
+    RGX_COMP: RGX_COMP,
+}
+_TRE_NS_ICASE = compile_r(r"([^a-zA-Z][nN]\.?[sS]\.?)", posix=False)
+_TRE_1TAIL = compile_r(
+    "[oO][nN][eE].?[sS][iI][dD][eE][dD]|[oO][nN][eE].?[tT][aA][iI][lL][eE][dD]"
+    "|[dD][iI][rR][eE][cC][tT][iI][oO][nN][aA][lL]",
+    posix=False,
+)
+
+
+def _pcre(pattern: str, ignore_case: bool) -> Any:
+    """``gregexpr(pattern, perl = TRUE, ignore.case)``'s compiled pattern.
+
+    statcheck's own patterns use their spelled-out case-insensitive form.
+    """
+    if ignore_case and pattern in _PCRE_ICASE:
+        return compile_r(_PCRE_ICASE[pattern], False, True)
+    return compile_r(pattern, ignore_case, True)
 
 
 class RError(RuntimeError):
@@ -266,6 +303,9 @@ def extract_pattern(
 
     Like R, the match positions come from the *first* element of *txt* and
     are then applied (recycled) to every element with ``substring()``.
+    statcheck's own patterns are matched case-insensitively exactly as PCRE2
+    does; for other patterns ``ignore_case`` uses the ``regex`` module's
+    folding, which differs from PCRE2 only for U+0130/U+0131 (dotted/dotless i).
     """
     texts: list[str | None] = [txt] if isinstance(txt, str) or txt is None else list(txt)
     if not texts:
@@ -274,7 +314,7 @@ def extract_pattern(
     first = texts[0]
     if first is None:
         return None
-    rx = compile_r(pattern, ignore_case, True)
+    rx = _pcre(pattern, ignore_case)
     spans = [(m.start(), m.end()) for m in _finditer(rx, first)]
     if not spans:
         return None
@@ -291,7 +331,7 @@ def _extract(txt: str | None, pattern: str, ignore_case: bool = True) -> list[st
     """``extract_pattern()`` for a single string (``None`` is R's ``NULL``)."""
     if txt is None:
         return None
-    rx = compile_r(pattern, ignore_case, True)
+    rx = _pcre(pattern, ignore_case)
     found = [m.group(0) for m in _finditer(rx, txt)]
     return found or None
 
@@ -1039,9 +1079,10 @@ def _source_names(texts: Any) -> tuple[list[str], list[str | None]]:
         names = [str(k) for k in texts]
         values = list(texts.values())
     elif isinstance(texts, pd.Series):
-        # a named character vector; a default RangeIndex means no names
+        # a named character vector: string labels are names, a numeric index is not
         values = texts.tolist()
-        names = None if isinstance(texts.index, pd.RangeIndex) else [str(k) for k in texts.index]
+        named = texts.index.inferred_type in ("string", "unicode")
+        names = [str(k) for k in texts.index] if named else None
     else:
         values = list(texts)
         names = None
@@ -1134,7 +1175,12 @@ def _statcheck_quiet(
     regex search (statcheck would return ``NULL`` for them).
     """
     stats_ = _stat_arg(stat)
-    probe = compile_r(RGX_P_NS, True, True) if AllPValues else _NHST
+    all_p_false = _eq_false(AllPValues)
+    if all_p_false is None:
+        # `if (AllPValues == FALSE)` fails at the end of every statcheck() call
+        return [], _results_columns([])
+    AllPValues = not all_p_false
+    probe = _pcre(RGX_P_NS, True) if AllPValues else _NHST
     sources: list[int] = []
     results: list[_Result] = []
     pvals: list[tuple[Any, _P]] = []

@@ -27,8 +27,19 @@ from pytacheck.archives.osf_helpers import _osf_parse_response
 from pytacheck.archives.osf_metadata import _metadata_json, _osf_metadata_download
 
 
-def _single(data: dict) -> httpx.Response:
-    return httpx.Response(200, content=json.dumps({"data": data}).encode())
+def _single(data: dict, content_type: str | None = "application/vnd.api+json") -> httpx.Response:
+    headers = {} if content_type is None else {"content-type": content_type}
+    return httpx.Response(200, content=json.dumps({"data": data}).encode(), headers=headers)
+
+
+def test_parse_checks_content_type_like_httr2() -> None:
+    # httr2::resp_body_json() wants application/json or a +json suffix
+    data = {"id": "n1", "type": "nodes"}
+    for ok in ("application/json", "application/vnd.api+json; charset=utf-8"):
+        assert len(_osf_parse_response(_single(data, ok))) == 1
+    for bad in (None, "text/html", "Application/JSON"):
+        with pytest.raises(ValueError, match="Unexpected content type"):
+            _osf_parse_response(_single(data, bad))
 
 
 # osf_check_id(): httr2::url_parse() query handling ---------------------------------

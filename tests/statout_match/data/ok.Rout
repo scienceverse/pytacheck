@@ -1,0 +1,16 @@
+
+> dat <- read.csv("data.csv")
+
+> t.test(dat$x ~ dat$g)
+
+	Welch Two Sample t-test
+
+data:  dat$x by dat$g
+t = -4.0415, df = 4.9592, p-value = 0.01008
+alternative hypothesis: true difference in means between group a and group b is not equal to 0
+95 percent confidence interval:
+ -5.731711 -1.268289
+sample estimates:
+mean in group a mean in group b 
+            2.0             5.5 
+

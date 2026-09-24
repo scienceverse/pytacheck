@@ -125,7 +125,7 @@ class _Stream:
         self.pos += 4
         fmt = ">i" if self.kind == "xdr" else "<i"
         try:
-            return struct.unpack_from(fmt, self.data, p)[0]
+            return int(struct.unpack_from(fmt, self.data, p)[0])
         except struct.error as exc:
             raise RSerializationError("read error") from exc
 
@@ -136,7 +136,7 @@ class _Stream:
             return special[w] if w in special else float(w)
         p = self.pos
         self.pos += 8
-        return struct.unpack_from(">d" if self.kind == "xdr" else "<d", self.data, p)[0]
+        return float(struct.unpack_from(">d" if self.kind == "xdr" else "<d", self.data, p)[0])
 
     def ints(self, n: int) -> np.ndarray:
         if self.kind == "ascii":
@@ -228,9 +228,9 @@ class _Stream:
             return self.refs[i - 1]
         if t == PERSISTSXP:
             names = self._string_vec()
-            obj = RObject(PERSISTSXP, value=names)
-            self.refs.append(obj)
-            return obj
+            persist = RObject(PERSISTSXP, value=names)
+            self.refs.append(persist)
+            return persist
         if t == ALTREP_SXP:
             info = self.item()
             state = self.item()
@@ -238,13 +238,13 @@ class _Stream:
             return _altrep(info, state, attr)
         if t == SYMSXP:
             pname = self.item()
-            obj = RObject(SYMSXP, name=pname if isinstance(pname, str) else "")
-            self.refs.append(obj)
-            return obj
+            sym = RObject(SYMSXP, name=pname if isinstance(pname, str) else "")
+            self.refs.append(sym)
+            return sym
         if t in (PACKAGESXP, NAMESPACESXP):
-            obj = RObject(ENVSXP, value=None, name=":".join(v or "" for v in self._string_vec()))
-            self.refs.append(obj)
-            return obj
+            ns = RObject(ENVSXP, value=None, name=":".join(v or "" for v in self._string_vec()))
+            self.refs.append(ns)
+            return ns
         if t == ENVSXP:
             self.integer()  # locked
             env = RObject(ENVSXP)
@@ -396,7 +396,7 @@ class _Stream:
 
 
 def _na_real() -> float:
-    return struct.unpack("<d", struct.pack("<Q", _NA_REAL_BITS))[0]
+    return float(struct.unpack("<d", struct.pack("<Q", _NA_REAL_BITS))[0])
 
 
 class Latin1Str(str):
@@ -579,8 +579,9 @@ def workspace_first_data_frame(path: str | Path) -> RObject | None:
     for name in env_binding_order([n for n, _ in objects]):
         if name.startswith("."):
             continue
-        if is_data_frame(values[name]):
-            return values[name]
+        obj = values[name]
+        if isinstance(obj, RObject) and is_data_frame(obj):
+            return obj
     return None
 
 
@@ -630,7 +631,7 @@ def _is_r_na(v: float) -> bool:
 
 
 _KEPT_ATTRS = ("label", "labels", "na_values", "na_range", "format.spss", "format.stata",
-               "format.sas", "display_width", "class", "levels", "tzone")  # fmt: skip
+               "format.sas", "display_width", "class", "levels", "tzone", "units")  # fmt: skip
 
 # Classes whose ``[`` method is vctrs::vec_slice(), which keeps every attribute.
 _VCTRS_CLASSES = frozenset({"vctrs_vctr", "vctrs_rcrd", "vctrs_list_of"})
@@ -693,7 +694,11 @@ def _column_to_pandas(col: Any, n: int) -> pd.Series:
         mapping = [cats.index(lv) if lv in cats else -1 for lv in levels]
         codes = np.array([mapping[c] if c >= 0 else -1 for c in codes], dtype=np.int64)
         return pd.Series(
-            pd.Categorical.from_codes(codes, categories=cats, ordered="ordered" in classes)
+            pd.Categorical.from_codes(
+                codes.tolist(),  # type: ignore[call-overload]
+                categories=cats,
+                ordered="ordered" in classes,
+            )
         )
     if t in (INTSXP, REALSXP) and "Date" in classes:
         days = v.astype(np.float64)

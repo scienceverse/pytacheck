@@ -1,0 +1,1274 @@
+{
+  "id": "spv_stato_type_label.labels",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": null,
+    "v": [
+      {
+        "t": "list",
+        "names": [
+          "annotationValue",
+          "termSource",
+          "termAccession"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "p-value"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "STATO"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "http://purl.obolibrary.org/obo/STATO_0000700"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "annotationValue",
+          "termSource",
+          "termAccession"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "sum of squares"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "metacheck"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://scienceverse.org/schema/metacheck/statistics/sumOfSquares"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "annotationValue",
+          "termSource",
+          "termAccession"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "sum of squares"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "metacheck"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://scienceverse.org/schema/metacheck/statistics/sumOfSquares"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "annotationValue",
+          "termSource",
+          "termAccession"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "sum of squares"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "metacheck"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://scienceverse.org/schema/metacheck/statistics/sumOfSquares"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "annotationValue",
+          "termSource",
+          "termAccession"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "sum of squares"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "metacheck"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://scienceverse.org/schema/metacheck/statistics/sumOfSquares"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "annotationValue",
+          "termSource",
+          "termAccession"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "mean square"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "metacheck"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://scienceverse.org/schema/metacheck/statistics/meanSquare"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "annotationValue",
+          "termSource",
+          "termAccession"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "F-statistic"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "STATO"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "http://purl.obolibrary.org/obo/STATO_0000282"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "annotationValue",
+          "termSource",
+          "termAccession"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "p-value"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "STATO"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "http://purl.obolibrary.org/obo/STATO_0000700"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "annotationValue",
+          "termSource",
+          "termAccession"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "log likelihood"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "STATO"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "http://purl.obolibrary.org/obo/STATO_0000550"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "annotationValue",
+          "termSource",
+          "termAccession"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "standard error of the mean"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "STATO"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "http://purl.obolibrary.org/obo/STATO_0000037"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "annotationValue",
+          "termSource",
+          "termAccession"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "confidence interval"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "STATO"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "http://purl.obolibrary.org/obo/STATO_0000196"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "annotationValue",
+          "termSource",
+          "termAccession"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "confidence interval"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "STATO"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "http://purl.obolibrary.org/obo/STATO_0000196"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "annotationValue",
+          "termSource",
+          "termAccession"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "bootstrap bias"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "metacheck"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://scienceverse.org/schema/metacheck/statistics/bootstrapBias"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "annotationValue",
+          "termSource",
+          "termAccession"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "standard error of the difference between independent means"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "STATO"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "http://purl.obolibrary.org/obo/STATO_0000648"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "annotationValue",
+          "termSource",
+          "termAccession"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "p-value"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "STATO"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "http://purl.obolibrary.org/obo/STATO_0000700"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "annotationValue",
+          "termSource",
+          "termAccession"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "F-statistic"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "STATO"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "http://purl.obolibrary.org/obo/STATO_0000282"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "annotationValue",
+          "termSource",
+          "termAccession"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "confidence interval"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "STATO"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "http://purl.obolibrary.org/obo/STATO_0000196"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "annotationValue",
+          "termSource",
+          "termAccession"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "variance inflation factor"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "metacheck"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://scienceverse.org/schema/metacheck/statistics/vif"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "annotationValue",
+          "termSource",
+          "termAccession"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Error([%1:*NRHand, posture:]1)"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "annotationValue",
+          "termSource",
+          "termAccession"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Error"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "annotationValue",
+          "termSource",
+          "termAccession"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Error(within)"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "annotationValue",
+          "termSource",
+          "termAccession"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "errors"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "annotationValue",
+          "termSource",
+          "termAccession"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "study group population size"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "STATO"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "http://purl.obolibrary.org/obo/STATO_0000088"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "annotationValue",
+          "termSource",
+          "termAccession"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "count"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "STATO"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "http://purl.obolibrary.org/obo/STATO_0000047"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "annotationValue",
+          "termSource",
+          "termAccession"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "regression coefficient"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "STATO"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "http://purl.obolibrary.org/obo/STATO_0000565"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "annotationValue",
+          "termSource",
+          "termAccession"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "regression coefficient"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "STATO"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "http://purl.obolibrary.org/obo/STATO_0000565"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "annotationValue",
+          "termSource",
+          "termAccession"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "sample mean"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "STATO"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "http://purl.obolibrary.org/obo/STATO_0000401"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "annotationValue",
+          "termSource",
+          "termAccession"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Something Unknown"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "annotationValue",
+          "termSource",
+          "termAccession"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "annotationValue",
+          "termSource",
+          "termAccession"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "annotationValue",
+          "termSource",
+          "termAccession"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "annotationValue",
+          "termSource",
+          "termAccession"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Wald statistic"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "STATO"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "http://purl.obolibrary.org/obo/STATO_0000584"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "annotationValue",
+          "termSource",
+          "termAccession"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "partial eta-squared"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "metacheck"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://scienceverse.org/schema/metacheck/statistics/partialEtaSquared"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "annotationValue",
+          "termSource",
+          "termAccession"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "noncentrality parameter"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "metacheck"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://scienceverse.org/schema/metacheck/statistics/noncentralityParameter"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "annotationValue",
+          "termSource",
+          "termAccession"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "statistical test power"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "STATO"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "http://purl.obolibrary.org/obo/STATO_0000200"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "annotationValue",
+          "termSource",
+          "termAccession"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Cronbach's alpha"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "metacheck"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://scienceverse.org/schema/metacheck/statistics/cronbachsAlpha"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "annotationValue",
+          "termSource",
+          "termAccession"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "standard error of the mean"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "STATO"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "http://purl.obolibrary.org/obo/STATO_0000037"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "annotationValue",
+          "termSource",
+          "termAccession"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "count"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "STATO"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "http://purl.obolibrary.org/obo/STATO_0000047"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "annotationValue",
+          "termSource",
+          "termAccession"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "percentage"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "STATO"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "http://purl.obolibrary.org/obo/STATO_0000639"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "annotationValue",
+          "termSource",
+          "termAccession"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Wald statistic"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "STATO"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "http://purl.obolibrary.org/obo/STATO_0000584"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "annotationValue",
+          "termSource",
+          "termAccession"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Rao's score"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "STATO"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "http://purl.obolibrary.org/obo/STATO_0000560"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "annotationValue",
+          "termSource",
+          "termAccession"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "a / b / c"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "annotationValue",
+          "termSource",
+          "termAccession"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "x /y"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "annotationValue",
+          "termSource",
+          "termAccession"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "F[gg]"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "annotationValue",
+          "termSource",
+          "termAccession"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Mean in group a"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -1,0 +1,35 @@
+{
+  "id": "llm.error.stop_numeric",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "value",
+      "warnings"
+    ],
+    "v": [
+      {
+        "t": "list",
+        "names": [
+          "error"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Misspecified params argument:\n`stop_sequences` must be a character vector or `NULL`, not the number 1."
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": []
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

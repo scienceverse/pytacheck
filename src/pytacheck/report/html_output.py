@@ -16,25 +16,41 @@ import re
 from pathlib import Path
 from typing import Any
 
-from pytacheck._r.regex import grepl
+from pytacheck._r.regex import grepl, sub
 
 __all__ = ["_html_export_r_source", "_html_sniff_kind"]
 
-_LINE_END = re.compile(r"\r\n|\r|\n")
+_LINE_END = re.compile(rb"\r\n|\r|\n")
 
 
-def _read_lines(path: str, n: int) -> list[str]:
-    """R ``readLines(path, n = n, warn = FALSE, encoding = "UTF-8")``."""
+def _read_lines(path: str, n: int) -> list[str | None]:
+    """R ``readLines(path, n = n, warn = FALSE, encoding = "UTF-8")``.
+
+    A line that is not valid UTF-8 is ``None``: R keeps it, but ``grepl()``
+    (fixed, TRE or PCRE) never matches an invalid string.
+    """
     try:
         with open(path, "rb") as fh:
             raw = fh.read()
     except OSError:
         return []
-    text = raw.decode("utf-8", errors="replace")
-    lines = _LINE_END.split(text)
-    if lines and lines[-1] == "":
+    lines = _LINE_END.split(raw)
+    if lines and lines[-1] == b"":
         lines.pop()
-    return lines[:n]
+    out: list[str | None] = []
+    for line in lines[:n]:
+        try:
+            out.append(line.decode("utf-8"))
+        except UnicodeDecodeError:
+            out.append(None)
+    return out
+
+
+def _paste(lines: list[str | None]) -> str | None:
+    """``paste(lines, collapse = "\\n")``; ``None`` when any line is invalid UTF-8."""
+    if any(line is None for line in lines):
+        return None
+    return "\n".join(lines)  # type: ignore[arg-type]
 
 
 def _is_na(x: Any) -> bool:
@@ -46,18 +62,20 @@ def _html_sniff_kind(path: str | os.PathLike[str] | None) -> str | None:
 
     Returns ``"rmd"`` (R Markdown/Quarto via pandoc), ``"stata"`` (a Stata
     log rendered to HTML; provisional) or ``None`` when neither fingerprint
-    is found or the file cannot be read.
+    is found or the file cannot be read. As in R, text that is not valid
+    UTF-8 never matches a fingerprint.
     """
     if _is_na(path):
         return None
     path = os.fspath(path)  # type: ignore[arg-type]
     if not path or not os.path.exists(path):
         return None
-    head_lines = _read_lines(path, 500)
+    body_lines = _read_lines(path, 20000)
+    head_lines = body_lines[:500]
     if not head_lines:
         return None
-    head_txt = "\n".join(head_lines)
-    is_pandoc_head = bool(
+    head_txt = _paste(head_lines)
+    is_pandoc_head = head_txt is not None and bool(
         grepl(
             r"""generator["']?\s*content\s*=\s*["'](pandoc|quarto)""",
             head_txt,
@@ -65,23 +83,28 @@ def _html_sniff_kind(path: str | os.PathLike[str] | None) -> str | None:
             perl=True,
         )
     )
-    body_lines = _read_lines(path, 20000)
-    body_txt = "\n".join(body_lines)
-    if "metacheck@scienceverse.org" in body_txt:
+    body_txt = _paste(body_lines)
+    if body_txt is not None and "metacheck@scienceverse.org" in body_txt:
         return None
-    if is_pandoc_head or grepl(r'<pre class="r"><code>|<pre class="sourceCode r">', body_txt, perl=True):
+    if is_pandoc_head or (
+        body_txt is not None
+        and grepl(r'<pre class="r"><code>|<pre class="sourceCode r">', body_txt, perl=True)
+    ):
         return "rmd"
-    if any(grepl(r"^\.\s+[a-z][a-z0-9_]*\b", body_lines, perl=True)):
+    valid = [line for line in body_lines if line is not None]
+    if valid and any(grepl(r"^\.\s+[a-z][a-z0-9_]*\b", valid, perl=True)):
         return "stata"
     return None
 
 
 def _file_path_sans_ext(name: str) -> str:
     """R ``tools::file_path_sans_ext()``."""
-    return re.sub(r"([^.]+)\.[A-Za-z0-9]+$", r"\1", name)
+    return str(sub(r"([^.]+)\.[[:alnum:]]+$", r"\1", name))
 
 
-def _html_export_r_source(html_path: str | os.PathLike[str], code_dir_name: str = "code") -> str | None:
+def _html_export_r_source(
+    html_path: str | os.PathLike[str], code_dir_name: str = "code"
+) -> str | None:
     """Port of ``.html_export_r_source()``: recover the R code of a knitted HTML file.
 
     Every input chunk (``<pre class="r"><code>`` and the syntax-highlighted

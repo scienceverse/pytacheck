@@ -586,7 +586,8 @@ class _Scanner:
             if ok:
                 return ncol, e + 1
             if ch != eof:
-                return -1, ch
+                # an invalid line leaves the caller's position where it was
+                return -1, i
             break
         return ncol, ch
 
@@ -847,6 +848,13 @@ def fread(
     ncol = top_fields
     if top_sep != 127:  # single-column input keeps the first non-blank line
         pos = top_start
+    tt, _ = sc.countfields(pos)
+    if tt != ncol:
+        # e.g. a \r-only file whose first non-blank line holds only whitespace
+        raise FreadError(
+            f"Internal error in freadMain: first line has field count {tt} but expecting "
+            f"{ncol}. Please report to the data.table issues tracker"
+        )
 
     if ncol == 1 and last_eol_replaced and eof > 0 and buf[eof - 1] in (_LF, _CR):
         # multiple newlines at the end are significant for single-column files
@@ -873,7 +881,10 @@ def fread(
         for _j in range(ncol):
             ch += 1
             off, n, ch = sc.field(ch)
-            names.append("" if n <= 0 else _decode(sc.buf[off : off + n]))
+            raw_name = b"" if n <= 0 else sc.buf[off : off + n]
+            if b"\0" in raw_name:  # mkCharLenCE() refuses it
+                raise FreadError(f"embedded nul in string: '{_decode(raw_name)}'")
+            names.append(_decode(raw_name))
             if sc.buf[ch] != sc.sep:
                 break
         ok, e = sc.eol(ch)
@@ -916,6 +927,16 @@ def fread(
     cols = [_column(types[j], rows2 if bumped[j] else rows, j, gram) for j in range(ncol)]
     out = pd.DataFrame(dict(enumerate(cols)))
     out.columns = pd.Index(names, dtype=object)
+    col_attrs: dict[str, dict[str, Any]] = {}
+    for j, t in enumerate(types):
+        if t == CT_ISO8601_DATE:
+            col_attrs[names[j]] = {"class": ["IDate", "Date"]}
+        elif t == CT_ISO8601_TIME:
+            col_attrs[names[j]] = {"class": ["POSIXct", "POSIXt"], "tzone": "UTC"}
+        elif t == CT_INT64:  # bit64::integer64 (values kept exactly as Int64)
+            col_attrs[names[j]] = {"class": "integer64"}
+    if col_attrs:
+        out.attrs["col_attrs"] = col_attrs
     return out
 
 
@@ -1218,7 +1239,8 @@ def _warn_stopped(sc: _Scanner, ch: int, ncol: int, nrow: int) -> None:
 def _column(t: int, rows: _Rows, j: int, gram: _Grammar) -> pd.Series:
     if t == CT_STRING:
         raw = rows.vals[j]
-        text = {b: _decode(b) for b in dict.fromkeys(raw) if b is not None}
+        # freadR drops NUL bytes inside a string value
+        text = {b: _decode(b.replace(b"\0", b"")) for b in dict.fromkeys(raw) if b is not None}
         return pd.Series([None if b is None else text[b] for b in raw], dtype="string")
     spans = rows.spans[j]
     t2, lookup = _climb_values(gram, spans, t)

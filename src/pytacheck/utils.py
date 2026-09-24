@@ -461,20 +461,33 @@ def _nullable_dtype(dtype: Any) -> Any:
 # ---------------------------------------------------------------------------
 
 
-def message(*args: Any, domain: Any = None, appendLF: bool = True) -> None:  # noqa: N803
+def message(*args: Any, domain: Any = None, appendLF: bool = True) -> None:  # noqa: ARG001
     """Port of metacheck's ``message()``: print a message unless ``verbose()`` is off.
 
     Like R's ``message()`` the parts are pasted together without separators
     and written to stderr; on a terminal the text is green, so it reads as
-    information rather than a warning.
+    information rather than a warning. ``domain`` is accepted for R
+    compatibility (no translation).
     """
     import sys
 
     from pytacheck.config import verbose
 
     if not verbose():
-        return None
-    text = "".join("NULL" if a is None else (a if isinstance(a, str) else str(as_character(a))) for a in args)
+        return
+
+    def part(a: Any) -> str:
+        # R pastes each argument's elements with no separator (NULL gives nothing)
+        if a is None:
+            return ""
+        if isinstance(a, str):
+            return a
+        if isinstance(a, list | tuple):
+            return "".join(part(x) if x is not None else "NA" for x in a)
+        value = as_character(a)
+        return "NA" if value is None else str(value)
+
+    text = "".join(part(a) for a in args)
     stream = sys.stderr
     try:
         interactive = stream.isatty()
@@ -484,7 +497,6 @@ def message(*args: Any, domain: Any = None, appendLF: bool = True) -> None:  # n
         text = f"\033[32m{text}\033[39m"
     stream.write(text + ("\n" if appendLF else ""))
     stream.flush()
-    return None
 
 
 class ProgressBar:
@@ -500,19 +512,26 @@ class ProgressBar:
 
     _SPIN = "-\\|/"
 
-    def __init__(self, total: float | None, format: str = "[:bar] :current/:total", width: int | None = None, stream: Any = None) -> None:  # noqa: A002
+    def __init__(
+        self,
+        total: float | None,
+        format: str = "[:bar] :current/:total",
+        width: int | None = None,
+        stream: Any = None,
+    ) -> None:
         import math
         import shutil
         import sys
         import time
 
-        if total is not None and not (isinstance(total, int | float) and (math.isnan(total) or total >= 0)):
+        is_nan = isinstance(total, float) and math.isnan(total)
+        if total is not None and not is_nan and not (isinstance(total, int | float) and total >= 0):
             raise ValueError("`total` must be a non-negative number or NA")
-        self.total = None if total is None or (isinstance(total, float) and math.isnan(total)) else total
+        self.total = None if total is None or is_nan else total
         self.format = format
         self.stream = stream if stream is not None else sys.stderr
         self.width = width or min(shutil.get_terminal_size((80, 20)).columns, 80)
-        self.current = 0
+        self.current: float = 0
         self.finished = False
         self._start = time.monotonic()
         self._tokens: dict[str, Any] = {}
@@ -523,9 +542,9 @@ class ProgressBar:
         except (AttributeError, ValueError):
             self._draw_ok = False
 
-    # -- R methods -------------------------------------------------------------
+    # -- R methods -----------------------------------------------------------
 
-    def tick(self, len: float = 1, tokens: Mapping[str, Any] | None = None) -> None:  # noqa: A002
+    def tick(self, len: float = 1, tokens: Mapping[str, Any] | None = None) -> None:
         """Advance the bar by *len* ticks (0 just redraws, e.g. with new *tokens*)."""
         if self.finished:
             raise RuntimeError("!self$finished is not TRUE")
@@ -546,14 +565,15 @@ class ProgressBar:
             raise RuntimeError("Cannot update a progress bar with an unknown total")
         self.tick(ratio * self.total - self.current, tokens)
 
-    def message(self, msg: str, set_width: bool = True) -> None:
-        """Print a message above the bar."""
-        if self._draw_ok and not self.finished:
-            self.stream.write("\r\033[2K" + str(msg) + "\n")
-            self.stream.write(self._last)
-            self.stream.flush()
-        elif self._draw_ok:
+    def message(self, msg: str, set_width: bool = True) -> None:  # noqa: ARG002
+        """Print a message above the bar (``set_width`` is accepted for R compatibility)."""
+        if not self._draw_ok:
+            return
+        if self.finished:
             self.stream.write(str(msg) + "\n")
+        else:
+            self.stream.write("\r\033[2K" + str(msg) + "\n" + self._last)
+        self.stream.flush()
 
     def terminate(self) -> None:
         """Finish the bar (a newline ends the drawn line)."""
@@ -564,7 +584,7 @@ class ProgressBar:
             self.stream.write("\n")
             self.stream.flush()
 
-    # -- rendering ---------------------------------------------------------------
+    # -- rendering -------------------------------------------------------------
 
     def render(self) -> str:
         """The bar's current text."""
@@ -578,17 +598,17 @@ class ProgressBar:
         rate = self.current / elapsed if elapsed > 0 else 0.0
         eta = (total - self.current) / rate if total is not None and rate > 0 else float("nan")
 
-        def fmt_secs(s: float) -> str:
-            if s != s:  # NaN
+        def fmt_secs(secs: float) -> str:
+            if secs != secs:  # NaN
                 return "?"
-            if s < 60:
-                return f"{s:.0f}s"
-            if s < 3600:
-                return f"{s / 60:.0f}m"
-            return f"{s / 3600:.1f}h"
+            if secs < 60:
+                return f"{secs:.0f}s"
+            if secs < 3600:
+                return f"{secs / 60:.0f}m"
+            return f"{secs / 3600:.1f}h"
 
-        def full(s: float) -> str:
-            s = int(s)
+        def full(secs: float) -> str:
+            s = int(secs)
             return f"{s // 3600:02d}:{(s % 3600) // 60:02d}:{s % 60:02d}"
 
         def as_bytes(n: float) -> str:
@@ -618,7 +638,7 @@ class ProgressBar:
         text = pattern.sub(lambda m: values[m.group(1)], self.format.replace(":bar", "\x00"))
         if "\x00" in text:
             space = max(self.width - (len(text) - 1), 0)
-            done = int(round(space * ratio)) if total is not None else 0
+            done = round(space * ratio) if total is not None else 0
             text = text.replace("\x00", "=" * done + "-" * (space - done))
         return text
 
@@ -636,20 +656,22 @@ class _NullProgressBar:
 
     finished = False
 
-    def tick(self, *args: Any, **kwargs: Any) -> None:
+    def tick(self, *_: Any, **__: Any) -> None:
         return None
 
-    def update(self, *args: Any, **kwargs: Any) -> None:
+    def update(self, *_: Any, **__: Any) -> None:
         return None
 
-    def message(self, *args: Any, **kwargs: Any) -> None:
+    def message(self, *_: Any, **__: Any) -> None:
         return None
 
-    def terminate(self, *args: Any, **kwargs: Any) -> None:
+    def terminate(self, *_: Any, **__: Any) -> None:
         return None
 
 
-def pb(total: float | None, format: str = "[:bar] :current/:total") -> ProgressBar | _NullProgressBar:  # noqa: A002
+def pb(
+    total: float | None, format: str = "[:bar] :current/:total"
+) -> ProgressBar | _NullProgressBar:
     """Port of metacheck's ``pb()``: a progress bar that respects ``verbose()``.
 
     With verbosity off it returns a dummy whose ``tick()``, ``message()`` and

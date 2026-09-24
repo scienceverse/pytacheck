@@ -1,0 +1,591 @@
+{
+  "id": ".grobid_to_bibr.tables_empty_second",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "paper",
+    "names": [
+      "paper_id",
+      "info",
+      "author",
+      "text",
+      "section",
+      "url",
+      "bib",
+      "xref",
+      "figure",
+      "table",
+      "eq"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "tables_empty_second.tei"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "title",
+          "keywords",
+          "doi",
+          "file_hash",
+          "input_format",
+          "file_name",
+          "bibr_version",
+          "paper_type",
+          "paper_type_confidence",
+          "oecd_l1",
+          "oecd_l2",
+          "oecd_confidence"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Review fixture"
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "null"
+              }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "72e480a1f2b6addb"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "grobid 0.8.1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "/home/user/pytacheck/tests/io/fixtures/tables_empty_second.tei.xml"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "10.5"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "unknown"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [],
+        "v": []
+      },
+      {
+        "t": "df",
+        "nrow": 6,
+        "names": [
+          "text",
+          "text_id",
+          "paragraph_id",
+          "section_id",
+          "page_number",
+          "formatted"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "An abstract sentence.",
+              "Another one.",
+              "See Table 1 and Table 2.",
+              "First table.",
+              "Second table.",
+              "Ref one.2020."
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1,
+              1,
+              2,
+              3,
+              4,
+              5
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              0,
+              1,
+              2,
+              3,
+              4
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              "See Table <ref type=\"table\" target=\"#tab_0\">1<\/ref> and Table <ref type=\"table\" target=\"#tab_1\">2<\/ref>.",
+              null,
+              null,
+              null
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 5,
+        "names": [
+          "section_id",
+          "header",
+          "parent_section_id",
+          "section_type",
+          "classification_score"
+        ],
+        "v": [
+          {
+            "t": "int",
+            "v": [
+              0,
+              1,
+              2,
+              3,
+              4
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Abstract",
+              "Results",
+              "Table 1 :",
+              "Table 2 :",
+              "References"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "abstract",
+              "results",
+              "table",
+              "table",
+              "references"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "href",
+          "link_text",
+          "text_id"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "int",
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "bib_type",
+          "doi",
+          "title",
+          "authors",
+          "editors",
+          "publisher",
+          "year",
+          "volume",
+          "issue",
+          "container",
+          "bib_id",
+          "year_suffix",
+          "text_id"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "article"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2020
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "J"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              6
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 2,
+        "names": [
+          "xref_id",
+          "xref_type",
+          "contents",
+          "text_id"
+        ],
+        "v": [
+          {
+            "t": "int",
+            "v": [
+              0,
+              1
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "table",
+              "table"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "1",
+              "2"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              3,
+              3
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "figure_id",
+          "section_id",
+          "image",
+          "page_number"
+        ],
+        "v": [
+          {
+            "t": "int",
+            "v": []
+          },
+          {
+            "t": "int",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "int",
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 2,
+        "names": [
+          "table_id",
+          "section_id",
+          "html",
+          "contents",
+          "page_number"
+        ],
+        "v": [
+          {
+            "t": "int",
+            "v": [
+              1,
+              2
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2,
+              3
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "<table>\n  <row>\n    <cell>Condition<\/cell>\n    <cell>M<\/cell>\n  <\/row>\n  <row>\n    <cell>control<\/cell>\n    <cell>10.90<\/cell>\n  <\/row>\n<\/table>",
+              "<table>\n  <row/>\n<\/table>"
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "list",
+                "names": null,
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Condition",
+                      "M"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "control",
+                      "10.90"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Condition",
+                      "M"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "control",
+                      "10.90"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              null,
+              null
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "text_id",
+          "grp_id",
+          "lhs",
+          "df",
+          "comp",
+          "rhs"
+        ],
+        "v": [
+          {
+            "t": "int",
+            "v": []
+          },
+          {
+            "t": "int",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

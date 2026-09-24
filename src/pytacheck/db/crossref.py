@@ -9,6 +9,8 @@ from pytacheck._r.base import as_character
 from pytacheck._r.regex import is_na
 from pytacheck.db import _utils
 from pytacheck.db._utils import (
+    NA_character,
+    NA_real,
     as_vector,
     default_email,
     paste_unlist,
@@ -273,7 +275,11 @@ def _datacite_row(bd: Any) -> dict[str, Any]:
         "url": att.get("url") if isinstance(att, Mapping) else None,
         "version": att.get("version") if isinstance(att, Mapping) else None,
     }
-    row = {k: _info_value(v) for k, v in info.items()}
+    # `%||% NA_character_` / `NA_real_`: typed missing values for bind_rows()
+    row = {
+        k: (NA_real if k == "year" else NA_character) if v is None else _info_value(v)
+        for k, v in info.items()
+    }
     row["score"] = float("nan")
     row["authors"] = authors
     return row
@@ -322,7 +328,7 @@ def datacite_doi(doi: Any) -> pd.DataFrame | None:
             if resp.status_code >= 400:
                 return None  # `return(NULL)` inside tryCatch() leaves datacite_doi()
             value = resp_body_json(resp) if resp_content_type(resp) == "application/json" else None
-        except Exception:  # noqa: BLE001 - tryCatch(error = ) catches every error
+        except Exception:  # tryCatch(error = ) catches every error
             value = None
         r_list_set(bibdata, i + 1, value)
 
@@ -466,7 +472,7 @@ def _repair_unique(names: Sequence[str]) -> list[str]:
     for n in stripped:
         counts[n] = counts.get(n, 0) + 1
     return [
-        f"{n}...{i}" if (n == "" or dot or counts[n] > 1) else n
+        f"...{i}" if dot else (f"{n}...{i}" if (n == "" or counts[n] > 1) else n)
         for i, (n, dot) in enumerate(zip(stripped, dots, strict=True), start=1)
     ]
 
@@ -551,7 +557,7 @@ def _query_parse_records(
     items = list(items.values()) if isinstance(items, Mapping) else list(items or [])
     scores = [i.get("score") if isinstance(i, Mapping) else None for i in items]
     if len(items) == 0 or all(s is not None and s < min_score for s in scores):
-        return [{"DOI": None}]
+        return [{"DOI": NA_character}]
     kept = [i for i, s in zip(items, scores, strict=True) if s is None or s >= min_score]
     records = [r for i in kept if (r := _frame_record(_parse_item(i, list(select)))) is not None]
     names: dict[str, None] = {}
@@ -594,7 +600,7 @@ def _crossref_doi_one(
             return {"DOI": doi, "error": "unknown" if err is None else err}
         message = r_dollar(item, "message")
         return _frame_record(_parse_item(message if isinstance(message, Mapping) else {}, select))
-    except Exception as exc:  # noqa: BLE001 - tryCatch(error = ) catches every error
+    except Exception as exc:  # tryCatch(error = ) catches every error
         return {"DOI": doi, "error": str(exc)}
 
 
@@ -650,7 +656,7 @@ def crossref_doi(doi: Any, select: Sequence[str] = CROSSREF_DOI_SELECT) -> pd.Da
             results[i] = _crossref_doi_one(values[i], resps[j], select)
     for i, v in enumerate(values):
         if is_na(v):
-            results[i] = {"DOI": None}
+            results[i] = {"DOI": NA_character}
     return records_frame([r for r in results if r is not None])
 
 
@@ -673,7 +679,9 @@ def _ref_text(row: Mapping[str, Any]) -> str:
         if _is_cell_list(v):
             return _paste_chr(v[0]) if len(v) == 1 else _deparse_chr_vector(v)
         return _paste_chr(v)
-    parts = [f"list({_deparse_chr_vector(v)})" if _is_cell_list(v) else _paste_chr(v) for v in nonblank]
+    parts = [
+        f"list({_deparse_chr_vector(v)})" if _is_cell_list(v) else _paste_chr(v) for v in nonblank
+    ]
     return "; \\n".join(parts)
 
 
@@ -768,10 +776,10 @@ def crossref_query(
 
     records: list[dict[str, Any]] = []
     for text, resp in zip(texts, resps, strict=True):
-        base = {"ref": None if is_na(text) else as_character(text)}
+        base = {"ref": NA_character if is_na(text) else as_character(text)}
         try:
             if resp is None or resp.status_code >= 400:
-                records.append({**base, "DOI": None, "error": "request failed"})
+                records.append({**base, "DOI": NA_character, "error": "request failed"})
                 continue
             j = resp_body_json(resp)
             status = r_dollar(j, "status")
@@ -779,7 +787,9 @@ def crossref_query(
                 raise ValueError("argument is of length zero")
             if status != "ok":
                 msg = r_dollar(r_dollar(j, "body"), "message")
-                records.append({**base, "DOI": None, "error": "unknown" if msg is None else msg})
+                records.append(
+                    {**base, "DOI": NA_character, "error": "unknown" if msg is None else msg}
+                )
                 continue
             parsed = _query_parse_records(
                 r_dollar(r_dollar(j, "message"), "items"), min_score, list(select)
@@ -787,8 +797,8 @@ def crossref_query(
             if not parsed:  # `x$ref <- r$ref` on a 0-row table
                 raise ValueError("replacement has 1 row, data has 0")
             records.extend({**p, "ref": base["ref"]} for p in parsed)
-        except Exception as exc:  # noqa: BLE001 - tryCatch(error = ) catches every error
-            records.append({**base, "DOI": None, "error": str(exc)})
+        except Exception as exc:  # tryCatch(error = ) catches every error
+            records.append({**base, "DOI": NA_character, "error": str(exc)})
     return records_frame(records)
 
 
@@ -1048,7 +1058,7 @@ def openalex_doi(doi: Any, select: Sequence[str] | None = None) -> Any:
                 # `return(...)` inside tryCatch() leaves openalex_doi()
                 return {"DOI": values[i], "error": "not found"}
             value = _openalex_add_abstract(resp_body_json(resp))
-        except Exception:  # noqa: BLE001 - tryCatch(error = ) catches every error
+        except Exception:  # tryCatch(error = ) catches every error
             value = {"DOI": values[i], "error": "not found"}
         r_list_set(oa, i + 1, value)
     return oa
@@ -1085,12 +1095,13 @@ def _unlist_named(x: Mapping[str, Any]) -> dict[str, str | None]:
 def _openalex_request(url: str) -> Any:
     from pytacheck import http
 
-    resp = http.request("GET", url, headers={"Accept": "application/json"})
+    # a plain req_perform(): no retry policy
+    resp = http.request("GET", url, headers={"Accept": "application/json"}, max_tries=1)
     if resp is None:
         return "offline"
     try:
         return resp_body_json(resp)
-    except Exception:  # noqa: BLE001 - tryCatch(error = ) catches every error
+    except Exception:  # tryCatch(error = ) catches every error
         return "error"
 
 

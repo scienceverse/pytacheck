@@ -1,0 +1,300 @@
+"area": "report_review"
+# Adversarial review of the report port: branches the first pass did not cover.
+# R helpers: tests/report/review_helpers.R; Python twins: tests/report/review_helpers.py.
+"cases":
+# --- module_report(): R's recycled summary_text == report comparison ------------------
+- "id": "module_report.summary_recycled_equal"
+  "r": "identity"
+  "py": "tests.report.parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "{source('tests/report/review_helpers.R'); rp_module_report(test_paper('x'), 'rv_flex', summary_text = c('S.', 'S.'), report = 'S.')}", "py": "__import__('tests.report.parity_helpers', fromlist=['x']).rp_module_report(pc.test_paper(['x']), 'rv_flex', summary_text=['S.', 'S.'], report='S.')"}}
+- "id": "module_report.summary_vector_equal"
+  "r": "identity"
+  "py": "tests.report.parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "{source('tests/report/review_helpers.R'); rp_module_report(test_paper('x'), 'rv_flex', summary_text = c('S.', 'T.'), report = c('S.', 'T.'))}", "py": "__import__('tests.report.parity_helpers', fromlist=['x']).rp_module_report(pc.test_paper(['x']), 'rv_flex', summary_text=['S.', 'T.'], report=['S.', 'T.'])"}}
+- "id": "module_report.summary_vector_differs"
+  "r": "identity"
+  "py": "tests.report.parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "{source('tests/report/review_helpers.R'); rp_module_report(test_paper('x'), 'rv_flex', summary_text = c('S.', 'T.'), report = 'S.')}", "py": "__import__('tests.report.parity_helpers', fromlist=['x']).rp_module_report(pc.test_paper(['x']), 'rv_flex', summary_text=['S.', 'T.'], report='S.')"}}
+- "id": "module_report.report_blank_vector"
+  "r": "identity"
+  "py": "tests.report.parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "{source('tests/report/review_helpers.R'); c(rp_module_report(test_paper('x'), 'rv_flex', summary_text = 'S.', report = c('', '')), rp_module_report(test_paper('x'), 'rv_flex', summary_text = 'S.', report = c('S.', '')), rp_module_report(test_paper('x'), 'rv_flex', summary_text = NULL, report = ''))}", "py": "(lambda h, p: [h.rp_module_report(p, 'rv_flex', summary_text='S.', report=['', '']), h.rp_module_report(p, 'rv_flex', summary_text='S.', report=['S.', '']), h.rp_module_report(p, 'rv_flex', summary_text=None, report='')])(__import__('tests.report.parity_helpers', fromlist=['x']), pc.test_paper(['x']))"}}
+- "id": "module_report.header_values"
+  "r": "identity"
+  "py": "tests.report.parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "{source('tests/report/review_helpers.R'); p <- test_paper('x'); vapply(list(2.5, '2', TRUE, FALSE, 1e5, 7, 0L, '03', 'text'), function(h) rp_module_report(p, 'rv_flex', summary_text = 'S.', header = h), character(1))}", "py": "(lambda h, p: [h.rp_module_report(p, 'rv_flex', summary_text='S.', header=v) for v in [2.5, '2', True, False, 1e5, 7.0, 0, '03', 'text']])(__import__('tests.report.parity_helpers', fromlist=['x']), pc.test_paper(['x']))"}}
+- "id": "module_report.length_threshold"
+  "r": "identity"
+  "py": "tests.report.parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "{source('tests/report/review_helpers.R'); p <- test_paper('x'); c(rp_module_report(p, 'rv_flex', summary_text = 'S.', report = strrep('\\u00e9', 299)), rp_module_report(p, 'rv_flex', summary_text = 'S.', report = strrep('\\u00e9', 300)), rp_module_report(p, 'rv_flex', summary_text = 'S.', report = c(strrep('a', 148), strrep('b', 149))), rp_module_report(p, 'rv_flex', summary_text = 'S.', report = c(strrep('a', 148), strrep('b', 150))), rp_module_report(p, 'rv_flex', summary_text = 'S.', report = strrep('\\U0001F600', 299)))}", "py": "(lambda h, p: [h.rp_module_report(p, 'rv_flex', summary_text='S.', report='\\u00e9' * 299), h.rp_module_report(p, 'rv_flex', summary_text='S.', report='\\u00e9' * 300), h.rp_module_report(p, 'rv_flex', summary_text='S.', report=['a' * 148, 'b' * 149]), h.rp_module_report(p, 'rv_flex', summary_text='S.', report=['a' * 148, 'b' * 150]), h.rp_module_report(p, 'rv_flex', summary_text='S.', report='\\U0001F600' * 299)])(__import__('tests.report.parity_helpers', fromlist=['x']), pc.test_paper(['x']))"}}
+- "id": "module_report.two_validations_four_authors"
+  "r": "identity"
+  "py": "tests.report.parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "{source('tests/report/review_helpers.R'); p <- test_paper('x'); c(rp_module_report(p, 'rv_flex', summary_text = 'S.', traffic_light = 'fail'), rp_module_report(p, 'rv_flex', summary_text = 'S.', traffic_light = 'na', header = 0))}", "py": "(lambda h, p: [h.rp_module_report(p, 'rv_flex', summary_text='S.', traffic_light='fail'), h.rp_module_report(p, 'rv_flex', summary_text='S.', traffic_light='na', header=0)])(__import__('tests.report.parity_helpers', fromlist=['x']), pc.test_paper(['x']))"}}
+- "id": "module_report.table_in_report"
+  "r": "identity"
+  "py": "tests.report.parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "{source('tests/report/review_helpers.R'); p <- test_paper('x'); vapply(c(1, 8, 40), function(n) module_report(module_run(p, rp_mod('rv_flex'), summary_text = 'S.', report = scroll_table(data.frame(a = seq_len(n))))), character(1))}", "py": "(lambda p, rs, st: [rs.module_report(__import__('pytacheck.module', fromlist=['x']).module_run(p, __import__('tests.report.parity_helpers', fromlist=['x']).rp_mod('rv_flex'), summary_text='S.', report=st(pd.DataFrame({'a': pd.Series(range(1, n + 1), dtype='Int64')})))) for n in [1, 8, 40]])(pc.test_paper(['x']), __import__('pytacheck.report.report', fromlist=['x']), __import__('pytacheck.report.blocks', fromlist=['x']).scroll_table)"}}
+
+# --- report_qmd() -------------------------------------------------------------------------
+- "id": "report_qmd.title_doi_fail_summary"
+  "r": "identity"
+  "py": "tests.report.parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "{source('tests/report/review_helpers.R'); tp <- test_paper('It was marginally significant.'); tp$info$title <- 'A \"quoted\" 100% title\\\\ with %s'; tp$info$doi <- '10.1234/abc'; rp_report_qmd(tp, c('rv_flex', 'marginal'), list(rv_flex = list(summary_text = '\\nline one\\n\\nline two', traffic_light = 'fail')))}", "py": "(lambda tp: (setattr(tp, 'info', tp.info.assign(title=pd.Series(['A \"quoted\" 100% title\\\\ with %s'], dtype='string'), doi=pd.Series(['10.1234/abc'], dtype='string'))), __import__('tests.report.parity_helpers', fromlist=['x']).rp_report_qmd(tp, ['rv_flex', 'marginal'], {'rv_flex': {'summary_text': '\\nline one\\n\\nline two', 'traffic_light': 'fail'}}))[-1])(pc.test_paper(['It was marginally significant.']))"}}
+- "id": "report_qmd.na_title_blank_doi"
+  "r": "identity"
+  "py": "tests.report.parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "{source('tests/report/review_helpers.R'); tp <- test_paper('x'); tp$info$title <- NA; tp$info$doi <- ''; rp_report_qmd(tp, c('rv_flex', 'rp_no_details'), list(rv_flex = list(summary_text = 'Plain', report = c('R1', 'R2'), traffic_light = 'yellow')))}", "py": "(lambda tp: (setattr(tp, 'info', tp.info.assign(title=pd.Series([None], dtype='string'), doi=pd.Series([''], dtype='string'))), __import__('tests.report.parity_helpers', fromlist=['x']).rp_report_qmd(tp, ['rv_flex', 'rp_no_details'], {'rv_flex': {'summary_text': 'Plain', 'report': ['R1', 'R2'], 'traffic_light': 'yellow'}}))[-1])(pc.test_paper(['x']))"}}
+- "id": "report_qmd.zero_row_info"
+  "r": "identity"
+  "py": "tests.report.parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "{source('tests/report/review_helpers.R'); tp <- test_paper('x'); tp2 <- tp; tp2$info <- tp2$info[0, ]; rp_report_qmd(tp, 'rv_flex', list(), qmd_paper = tp2)}", "py": "(lambda tp, cp: (setattr(cp, 'info', cp.info.iloc[0:0]), __import__('tests.report.parity_helpers', fromlist=['x']).rp_report_qmd(tp, ['rv_flex'], {}, qmd_paper=cp))[-1])(pc.test_paper(['x']), pc.test_paper(['x']))"}}
+- "id": "report_qmd.no_doi_column"
+  "r": "identity"
+  "py": "tests.report.parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "{source('tests/report/review_helpers.R'); tp <- test_paper('x'); tp2 <- tp; tp2$info$doi <- NULL; rp_report_qmd(tp, 'rv_flex', list(), qmd_paper = tp2)}", "py": "(lambda tp, cp: (setattr(cp, 'info', cp.info.drop(columns=['doi'])), __import__('tests.report.parity_helpers', fromlist=['x']).rp_report_qmd(tp, ['rv_flex'], {}, qmd_paper=cp))[-1])(pc.test_paper(['x']), pc.test_paper(['x']))"}}
+- "id": "report_qmd.vector_summary"
+  "known_divergence": "R 4.3+ errors in report_qmd() ('length = 2' in coercion to 'logical(1)' from `nzchar(summary_text) && ...`) when a module's summary_text has several elements, failing the whole report; pytacheck writes the summary line with the parts joined by a space."
+  "r": "identity"
+  "py": "tests.report.parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "{source('tests/report/review_helpers.R'); rv_error(rp_report_qmd(test_paper('x'), 'rv_flex', list(rv_flex = list(summary_text = c('S.', 'T.')))))}", "py": "__import__('tests.report.review_helpers', fromlist=['x']).rv_error(lambda: __import__('tests.report.parity_helpers', fromlist=['x']).rp_report_qmd(pc.test_paper(['x']), ['rv_flex'], {'rv_flex': {'summary_text': ['S.', 'T.']}}))"}}
+
+# --- report_module_run() ----------------------------------------------------------------
+- "id": "report_module_run.unknown_module_in_chain"
+  "r": "identity"
+  "py": "tests.report.parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "{source('tests/report/review_helpers.R'); rv_module_run_list(demopaper(), c('marginal', 'notamodule', 'rp_chained'))}", "py": "__import__('tests.report.review_helpers', fromlist=['x']).rv_module_run_list(pc.demopaper(), ['marginal', 'notamodule', 'rp_chained'])"}}
+- "id": "report_module_run.same_module_twice"
+  "r": "identity"
+  "py": "tests.report.parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "{source('tests/report/review_helpers.R'); rv_module_run_list(demopaper(), c('marginal', 'marginal', 'rp_chained'))}", "py": "__import__('tests.report.review_helpers', fromlist=['x']).rv_module_run_list(pc.demopaper(), ['marginal', 'marginal', 'rp_chained'])"}}
+- "id": "report_module_run.paperlist_error_first"
+  "r": "identity"
+  "py": "tests.report.parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "{source('tests/report/review_helpers.R'); rv_module_run_list(read(c('upstream/metacheck/tests/testthat/fixtures/psychsci/0956797613520608.json', 'upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614522816.json')), c('rp_error', 'marginal', 'rp_error'))}", "py": "__import__('tests.report.review_helpers', fromlist=['x']).rv_module_run_list(pc.read(['upstream/metacheck/tests/testthat/fixtures/psychsci/0956797613520608.json', 'upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614522816.json']), ['rp_error', 'marginal', 'rp_error'])"}}
+- "id": "report_module_run.no_modules"
+  "r": "identity"
+  "py": "tests.report.parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "{source('tests/report/review_helpers.R'); verbose(FALSE); on.exit(verbose(TRUE)); !is.null(rv_module_run_list(demopaper(), character(0))$error)}", "py": "(lambda r: isinstance(r, dict) and 'error' in r)(__import__('tests.report.review_helpers', fromlist=['x']).rv_module_run_list(pc.demopaper(), []))"}}
+- "id": "report_module_run.fail_summary_tables"
+  "r": "identity"
+  "py": "tests.report.parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "{source('tests/report/review_helpers.R'); r <- rp_report_module_run(demopaper(), c('marginal', 'rp_validation', 'rp_error', 'rp_chained')); lapply(r, function(m) m$summary_table)}", "py": "(lambda r: {k: v.summary_table for k, v in r.items()})(__import__('tests.report.parity_helpers', fromlist=['x']).rp_report_module_run(pc.demopaper(), ['marginal', 'rp_validation', 'rp_error', 'rp_chained']))"}}
+
+# --- report() -------------------------------------------------------------------------------
+- "id": "report.paperlist.one_file"
+  "r": "identity"
+  "py": "tests.report.parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "{source('tests/report/review_helpers.R'); rv_report_list(read(c('upstream/metacheck/tests/testthat/fixtures/psychsci/0956797613520608.json', 'upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614522816.json')), c('marginal', 'rp_error'), 'r.qmd')}", "py": "__import__('tests.report.review_helpers', fromlist=['x']).rv_report_list(pc.read(['upstream/metacheck/tests/testthat/fixtures/psychsci/0956797613520608.json', 'upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614522816.json']), ['marginal', 'rp_error'], 'r.qmd')"}}
+- "id": "report.paperlist.bad_file"
+  "r": "identity"
+  "py": "tests.report.parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "{source('tests/report/review_helpers.R'); rv_report_list(read(c('upstream/metacheck/tests/testthat/fixtures/psychsci/0956797613520608.json', 'upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614522816.json')), 'marginal', c('a.qmd', 'no/such/dir/b.qmd'))}", "py": "__import__('tests.report.review_helpers', fromlist=['x']).rv_report_list(pc.read(['upstream/metacheck/tests/testthat/fixtures/psychsci/0956797613520608.json', 'upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614522816.json']), ['marginal'], ['a.qmd', 'no/such/dir/b.qmd'])"}}
+- "id": "report.paperlist.length_one"
+  "r": "identity"
+  "py": "tests.report.parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "{source('tests/report/review_helpers.R'); rp_report(read('upstream/metacheck/tests/testthat/fixtures/psychsci/0956797613520608.json') |> paperlist(), 'marginal')}", "py": "__import__('tests.report.parity_helpers', fromlist=['x']).rp_report(__import__('pytacheck.papers.model', fromlist=['x']).PaperList([pc.read('upstream/metacheck/tests/testthat/fixtures/psychsci/0956797613520608.json')]), ['marginal'])"}}
+
+# --- validate() / accuracy() -------------------------------------------------------------
+- "id": "validate.na_text"
+  "r": "identity"
+  "py": "tests.report.parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "{source('tests/report/review_helpers.R'); rp_validate(data.frame(paper_id = c('1', '2'), text = c('It was significant.', NA)), 'rp_validate_mod')}", "py": "__import__('tests.report.parity_helpers', fromlist=['x']).rp_validate(pd.DataFrame({'paper_id': ['1', '2'], 'text': pd.Series(['It was significant.', None], dtype='string')}), 'rp_validate_mod')"}}
+- "id": "validate.duplicate_ids"
+  "r": "identity"
+  "py": "tests.report.parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "{source('tests/report/review_helpers.R'); rp_validate(data.frame(paper_id = c('1', '1', '2'), text = c('It was significant.', 'Another significant one.', 'No.'), n = c(19, 24, 4)), 'rp_validate_mod')}", "py": "__import__('tests.report.parity_helpers', fromlist=['x']).rp_validate(pd.DataFrame({'paper_id': ['1', '1', '2'], 'text': ['It was significant.', 'Another significant one.', 'No.'], 'n': [19.0, 24.0, 4.0]}), 'rp_validate_mod')"}}
+- "id": "validate.two_sentences"
+  "r": "identity"
+  "py": "tests.report.parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "{source('tests/report/review_helpers.R'); rp_validate(data.frame(paper_id = c('1', '2', '3'), text = c('It was significant. Twice significant.', 'No.', 'It was significant.'), flag = c('TRUE', 'FALSE', 'yes')), 'rp_validate_mod')}", "py": "__import__('tests.report.parity_helpers', fromlist=['x']).rp_validate(pd.DataFrame({'paper_id': ['1', '2', '3'], 'text': ['It was significant. Twice significant.', 'No.', 'It was significant.'], 'flag': ['TRUE', 'FALSE', 'yes']}), 'rp_validate_mod')"}}
+- "id": "validate.integer_ids"
+  "r": "identity"
+  "py": "tests.report.parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "{source('tests/report/review_helpers.R'); rv_error(rp_validate(data.frame(paper_id = 1:2, text = c('It was significant.', 'No.')), 'rp_validate_mod'))}", "py": "(lambda h, r: h.rv_error(lambda: r.rp_validate(pd.DataFrame({'paper_id': pd.Series([1, 2], dtype='Int64'), 'text': ['It was significant.', 'No.']}), 'rp_validate_mod')))(__import__('tests.report.review_helpers', fromlist=['x']), __import__('tests.report.parity_helpers', fromlist=['x']))"}}
+- "id": "validate.summary_table_error"
+  "r": "validate"
+  "py": "pytacheck.validate.validate"
+  "args":
+    "gt": {"$chr": ["p = .06 was marginally significant", "no"]}
+    "module": "marginal"
+    "compare": "summary_table"
+- "id": "accuracy.empty"
+  "r": "accuracy"
+  "py": "pytacheck.validate.accuracy"
+  "args":
+    "expected": {"$lgl": []}
+    "observed": {"$lgl": []}
+- "id": "accuracy.numeric"
+  "r": "accuracy"
+  "py": "pytacheck.validate.accuracy"
+  "args":
+    "expected": {"$dbl": [1, 0, 2, 0, 1]}
+    "observed": {"$dbl": [1, 1, 0, 0, 0.5]}
+- "id": "accuracy.all_true"
+  "r": "accuracy"
+  "py": "pytacheck.validate.accuracy"
+  "args":
+    "expected": {"$lgl": [true, true]}
+    "observed": {"$lgl": [true, true]}
+- "id": "accuracy.zero_length_recycling"
+  "r": "accuracy"
+  "py": "pytacheck.validate.accuracy"
+  "args":
+    "expected": {"$lgl": []}
+    "observed": {"$lgl": [true, false]}
+- "id": "accuracy.recycling"
+  "r": "accuracy"
+  "py": "pytacheck.validate.accuracy"
+  "args":
+    "expected": {"$lgl": [true, false, true]}
+    "observed": {"$lgl": [true, false]}
+- "id": "accuracy.na_both"
+  "r": "accuracy"
+  "py": "pytacheck.validate.accuracy"
+  "args":
+    "expected": {"$expr": {"r": "c(NA, FALSE, TRUE, NA)", "py": "[None, False, True, None]"}}
+    "observed": {"$expr": {"r": "c(FALSE, NA, NA, TRUE)", "py": "[False, None, None, True]"}}
+
+# --- deparse() / scroll_table() chunk ------------------------------------------------------
+- "id": "deparse.unicode_escapes"
+  "r": "identity"
+  "py": "tests.report.parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "lapply(list(0xad, 0x200b, 0xfeff, 0xe000, 0x1F600, c(0x65, 0x301), 0x2066, 0x61c, 0x378, 0xE0001, 0xE0080, c(0x2705, 0xfe0f), 0xa0, 0x3000, 0x85, 0x9f, 0x10FFFF, 0xfffd, 0xfffe, 0x202e, 0x2028, 0x2029, 0x2EBF0, 0x2FFC, 0x31EF, 0x1FAE9, 0x0897, 0xF0000, 0xD7FF), function(cp) deparse(intToUtf8(cp)))", "py": "[__import__('pytacheck.report.render', fromlist=['x']).deparse(''.join(chr(c) for c in cps)) for cps in [[0xad], [0x200b], [0xfeff], [0xe000], [0x1F600], [0x65, 0x301], [0x2066], [0x61c], [0x378], [0xE0001], [0xE0080], [0x2705, 0xfe0f], [0xa0], [0x3000], [0x85], [0x9f], [0x10FFFF], [0xfffd], [0xfffe], [0x202e], [0x2028], [0x2029], [0x2EBF0], [0x2FFC], [0x31EF], [0x1FAE9], [0x0897], [0xF0000], [0xD7FF]]]"}}
+- "id": "deparse.doubles"
+  "r": "deparse"
+  "py": "pytacheck.report.render.deparse"
+  "args":
+    "expr": {"$expr": {"r": "c(1, 1e5, 1e-5, 0.0001, 123456.7, 1234567, 1/3, 1e15, 1e16, -0, 2^53, 5e-324, 1.5e300, 0.1+0.2, 100, 1e5+0.1, 123456789012345678, -2.5)", "py": "[1.0, 1e5, 1e-5, 0.0001, 123456.7, 1234567.0, 1/3, 1e15, 1e16, -0.0, 2.0**53, 5e-324, 1.5e300, 0.1+0.2, 100.0, 1e5+0.1, 123456789012345678.0, -2.5]"}}
+- "id": "deparse.df_factor"
+  "r": "deparse"
+  "py": "pytacheck.report.render.deparse"
+  "args":
+    "expr": {"$expr": {"r": "data.frame(f = factor(c('b', 'a', NA, 'b')), o = factor(c('lo', 'hi', 'lo', 'lo'), levels = c('lo', 'hi'), ordered = TRUE), one = factor(rep('z', 4)))", "py": "pd.DataFrame({'f': pd.Categorical(['b', 'a', None, 'b']), 'o': pd.Categorical(['lo', 'hi', 'lo', 'lo'], categories=['lo', 'hi'], ordered=True), 'one': pd.Categorical(['z'] * 4)})"}}
+- "id": "scroll_table.factor_only"
+  "r": "scroll_table"
+  "py": "pytacheck.report.render.scroll_table_qmd"
+  "args":
+    "table": {"$expr": {"r": "data.frame(f = factor(c('b', 'a')), n = 1:2)", "py": "pd.DataFrame({'f': pd.Categorical(['b', 'a']), 'n': pd.Series([1, 2], dtype='Int64')})"}}
+- "id": "scroll_table.factor_and_chr"
+  "r": "scroll_table"
+  "py": "pytacheck.report.render.scroll_table_qmd"
+  "args":
+    "table": {"$expr": {"r": "data.frame(f = factor(c('b', 'a')), s = c('x\\ny', 'z'))", "py": "pd.DataFrame({'f': pd.Categorical(['b', 'a']), 's': ['x\\ny', 'z']})"}}
+- "id": "scroll_table.vector_newlines"
+  "r": "scroll_table"
+  "py": "pytacheck.report.render.scroll_table_qmd"
+  "args":
+    "table": {"$chr": ["line one\nline two", "single"]}
+- "id": "scroll_table.logical_vector"
+  "r": "scroll_table"
+  "py": "pytacheck.report.render.scroll_table_qmd"
+  "args":
+    "table": {"$expr": {"r": "c(TRUE, NA, FALSE)", "py": "[True, None, False]"}}
+- "id": "scroll_table.single_value"
+  "r": "scroll_table"
+  "py": "pytacheck.report.render.scroll_table_qmd"
+  "args":
+    "table": "just one"
+    "colwidths": {"$dbl": [200]}
+    "maxrows": 1
+    "column": "margin"
+
+# --- report_table() ------------------------------------------------------------------------
+- "id": "report_table.no_numeric"
+  "r": "identity"
+  "py": "tests.report.parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "report_table(data.frame(a = c('x', 'y', 'z'), b = c(TRUE, FALSE, NA), my_col = c('p', 'q', 'r')))$x$options[c('dom', 'pageLength', 'columnDefs')]", "py": "{k: __import__('pytacheck.report.blocks', fromlist=['x']).report_table(pd.DataFrame({'a': ['x', 'y', 'z'], 'b': pd.Series([True, False, None], dtype='boolean'), 'my_col': ['p', 'q', 'r']})).options[k] for k in ['dom', 'pageLength', 'columnDefs']}"}}
+- "id": "report_table.names"
+  "r": "identity"
+  "py": "tests.report.parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "{t <- report_table(data.frame(my_col = c('a\\nb', 'c'), n_x = 1:2)); list(names = names(t$x$data), data = t$x$data[[1]])}", "py": "(lambda t: {'names': list(t.data.columns), 'data': t.data.iloc[:, 0].tolist()})(__import__('pytacheck.report.blocks', fromlist=['x']).report_table(pd.DataFrame({'my_col': ['a\\nb', 'c'], 'n_x': [1, 2]})))"}}
+
+# --- .html_sniff_kind() with bytes that are not UTF-8 --------------------------------------
+- "id": "html_sniff_kind.invalid_utf8"
+  "r": "identity"
+  "py": "tests.report.parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "suppressWarnings(vapply(c('latin1_pandoc.html', 'latin1_stata.html', 'latin1_own_report.html'), function(f) metacheck:::.html_sniff_kind(file.path('tests/report/fixtures/html', f)), character(1), USE.NAMES = FALSE))", "py": "[__import__('pytacheck.report.html_output', fromlist=['x'])._html_sniff_kind(__import__('tests.report.parity_helpers', fromlist=['x']).fixture(f)) for f in ['latin1_pandoc.html', 'latin1_stata.html', 'latin1_own_report.html']]"}}
+- "id": "html_export_r_source.invalid_utf8"
+  "r": "identity"
+  "py": "tests.report.parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "{source('tests/report/review_helpers.R'); rp_html_export('latin1_pandoc.html')}", "py": "__import__('tests.report.parity_helpers', fromlist=['x']).rp_html_export('latin1_pandoc.html')"}}
+
+# --- report-helpers: link(), .cap_num(), cap_gate_count() ------------------------------------
+- "id": "link.doi_default_text"
+  "r": "link"
+  "py": "pytacheck.report.blocks.link"
+  "args":
+    "url": "10.1234/abc"
+    "type": "doi"
+- "id": "link.doi_vector_na"
+  "r": "link"
+  "py": "pytacheck.report.blocks.link"
+  "args":
+    "url": {"$expr": {"r": "c('https://doi.org/10.1/x', NA, 'http://doi.org/10.2/y')", "py": "['https://doi.org/10.1/x', None, 'http://doi.org/10.2/y']"}}
+    "type": "doi"
+- "id": "link.na_url_and_text"
+  "r": "link"
+  "py": "pytacheck.report.blocks.link"
+  "args":
+    "url": {"$expr": {"r": "c('http://a.com', NA, 'https://b.org/x')", "py": "['http://a.com', None, 'https://b.org/x']"}}
+    "text": {"$expr": {"r": "c('x', 'y', NA)", "py": "['x', 'y', None]"}}
+    "new_window": false
+- "id": "cap_num.values"
+  "r": "identity"
+  "py": "tests.report.parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "vapply(c(3.0000000001, 1e-9, 34.44, 34.45, 2.5, -Inf, NaN, NA, 1e15, 31908, 0.05, 99.95, 1234567.25, -0, 2e-8, 1e22, -7.00000004), metacheck:::.cap_num, character(1))", "py": "[__import__('pytacheck.report.blocks', fromlist=['x'])._cap_num(v) for v in [3.0000000001, 1e-9, 34.44, 34.45, 2.5, float('-inf'), float('nan'), None, 1e15, 31908.0, 0.05, 99.95, 1234567.25, -0.0, 2e-8, 1e22, -7.00000004]]"}}
+- "id": "cap_gate_count.cases"
+  "r": "identity"
+  "py": "tests.report.parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "list(cap_gate_count(5, 'max_calls', 3.00000001, 'file', 'repo X', 'analyse'), cap_gate_count(1, 'max_calls', 0, context = ''), cap_gate_count(2L, 'p', 1e-9), cap_gate_count(3, 'p', 3), cap_gate_count(NA, 'p', 1), cap_gate_count(4, 'max_mb', 2.25, 'MB'))", "py": "(lambda f: [f(5, 'max_calls', 3.00000001, 'file', 'repo X', 'analyse'), f(1, 'max_calls', 0, context=''), f(2, 'p', 1e-9), f(3, 'p', 3), f(None, 'p', 1), f(4, 'max_mb', 2.25, 'MB')])(__import__('pytacheck.report.blocks', fromlist=['x']).cap_gate_count)"}}
+
+# --- error messages (a golden with ok: false only checks that Python raises too) ------------
+- "id": "errors.validate_messages"
+  "r": "identity"
+  "py": "tests.report.parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "{source('tests/report/review_helpers.R'); verbose(FALSE); on.exit(verbose(TRUE)); list(rv_error(metacheck::validate('x', rp_mod('rp_no_details'))), rv_error(metacheck::validate('x', rp_mod('rp_no_details'), compare = 'summary_text')), rv_error(metacheck::validate('x', 'marginal', compare = 'summary_table')))}", "py": "(lambda h, v, m: [h.rv_error(lambda: v('x', m('rp_no_details'))), h.rv_error(lambda: v('x', m('rp_no_details'), compare='summary_text')), h.rv_error(lambda: v('x', 'marginal', compare='summary_table'))])(__import__('tests.report.review_helpers', fromlist=['x']), __import__('pytacheck.validate', fromlist=['x']).validate, __import__('tests.report.parity_helpers', fromlist=['x']).rp_mod)"}}
+- "id": "errors.report_messages"
+  "r": "identity"
+  "py": "tests.report.parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "{source('tests/report/review_helpers.R'); f <- tempfile(fileext = '.qmd'); on.exit(unlink(f)); list(rv_error(report(demopaper(), 'notamodule', f, 'qmd')), rv_error(report(1, 'marginal', f, 'qmd')), rv_error(report(demopaper(), 'marginal', 'not/a/path/file.html', 'qmd')), rv_error(report_repository(c('a', 'b'))), rv_error(report_repository('no/such/folder/here')))}", "py": "(lambda h, r, rr, f: [h.rv_error(lambda: r(pc.demopaper(), 'notamodule', f, 'qmd')), h.rv_error(lambda: r(1, 'marginal', f, 'qmd')), h.rv_error(lambda: r(pc.demopaper(), 'marginal', 'not/a/path/file.html', 'qmd')), h.rv_error(lambda: rr(['a', 'b'])), h.rv_error(lambda: rr('no/such/folder/here'))])(__import__('tests.report.review_helpers', fromlist=['x']), __import__('pytacheck.report.report', fromlist=['x']).report, __import__('pytacheck.report.report', fromlist=['x']).report_repository, __import__('tempfile').mktemp(suffix='.qmd'))"}}
+- "id": "errors.report_format_message"
+  "known_divergence": "pytacheck's report() also writes Markdown ('md'), so its message lists three formats: \"The output_format must be either 'html', 'qmd' or 'md'.\""
+  "r": "identity"
+  "py": "tests.report.parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "{source('tests/report/review_helpers.R'); f <- tempfile(fileext = '.pdf'); rv_error(report(demopaper(), 'marginal', f, 'pdf'))}", "py": "__import__('tests.report.review_helpers', fromlist=['x']).rv_error(lambda: __import__('pytacheck.report.report', fromlist=['x']).report(pc.demopaper(), 'marginal', __import__('tempfile').mktemp(suffix='.pdf'), 'pdf'))"}}

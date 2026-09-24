@@ -1,0 +1,14 @@
+{
+  "id": "spv_table_html.numeric_dims",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "<table>\n<thead>\n<tr><th>G<\/th><th>a<\/th><th>b<\/th><\/tr>\n<\/thead>\n<tbody>\n<tr><td>1<\/td><td>1<\/td><td><\/td><\/tr>\n<tr><td>2.5<\/td><td>2<\/td><td><\/td><\/tr>\n<tr><td>NA<\/td><td><\/td><td>3<\/td><\/tr>\n<tr><td>1e+05<\/td><td><\/td><td>4<\/td><\/tr>\n<\/tbody>\n<\/table>"
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

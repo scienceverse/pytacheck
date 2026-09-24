@@ -88,8 +88,12 @@ def table(cols: list[bytes]) -> bytes:
     return b"".join(ld(1, c) for c in cols)
 
 
-def element(title: str = "", tbl: bytes | None = None, group: list[bytes] | None = None,
-            array: list[bytes] | None = None) -> bytes:
+def element(
+    title: str = "",
+    tbl: bytes | None = None,
+    group: list[bytes] | None = None,
+    array: list[bytes] | None = None,
+) -> bytes:
     out = ld(1, "el")
     if title:
         out += ld(2, title)
@@ -121,47 +125,61 @@ def write_zip(path: Path, members: list[tuple[str, bytes | str]]) -> None:
 
 def main() -> None:
     # 1. jamovi archive: odd folder numbering, every cell kind, nested elements.
-    t_basic = table([
-        column("", [cell_s("a")], title="Group"),
-        column("stat", [cell_d(2.5), cell_i(-3), cell_i(100000), cell_o(), b""], typ="number"),
-        column("p", [cell_d(0.000632), cell_d(float("inf")), cell_s(b"x\x00"),
-                     cell_s(b"\x00\x00")], fmt="pvalue"),
-        column("p", [cell_s("< .001")], typ="text"),
-        column("", [cell_s("dropped")]),
-    ])
-    t_wide = table([
-        column("stat[n]", [cell_s("N")]),
-        column("v1[n]", [cell_i(10)]), column("v1[mean]", [cell_d(1.25)]),
-        column("v1[sd]", [cell_d(0.5)]),
-        column("v2[n]", [cell_i(12)]), column("v2[mean]", [cell_d(2.5)]),
-        column("v2[sd]", [cell_d(0.75)]),
-    ])
+    t_basic = table(
+        [
+            column("", [cell_s("a")], title="Group"),
+            column("stat", [cell_d(2.5), cell_i(-3), cell_i(100000), cell_o(), b""], typ="number"),
+            column(
+                "p",
+                [cell_d(0.000632), cell_d(float("inf")), cell_s(b"x\x00"), cell_s(b"\x00\x00")],
+                fmt="pvalue",
+            ),
+            column("p", [cell_s("< .001")], typ="text"),
+            column("", [cell_s("dropped")]),
+        ]
+    )
+    t_wide = table(
+        [
+            column("stat[n]", [cell_s("N")]),
+            column("v1[n]", [cell_i(10)]),
+            column("v1[mean]", [cell_d(1.25)]),
+            column("v1[sd]", [cell_d(0.5)]),
+            column("v2[n]", [cell_i(12)]),
+            column("v2[mean]", [cell_d(2.5)]),
+            column("v2[sd]", [cell_d(0.75)]),
+        ]
+    )
     t_f32 = table([column("x", [f32(2, 1.5)]), column("y", [cell_d(-0.0)])])
-    r1 = element(title="Outer", group=[element(title="Inner", tbl=t_basic),
-                                       element(array=[element(tbl=t_wide)])])
+    r1 = element(
+        title="Outer",
+        group=[element(title="Inner", tbl=t_basic), element(array=[element(tbl=t_wide)])],
+    )
     r2 = element(title="", tbl=t_f32)
-    write_zip(DATA / "review_order.omv", [
-        ("META-INF/MANIFEST.MF", "Manifest-Version: 1.0\n"),
-        ("10 later/analysis", response("later", r2, aid=10)),
-        ("9 ttest/analysis", response("ttest", r1, aid=b"\x09")),
-        ("abc/analysis", response("", r2)),
-        (" 2 first/analysis", response("first", r2, aid=100000)),
-        ("007 seven/analysis", response("seven", element(tbl=t_basic), aid=b"ab")),
-        ("08 broken/analysis", b"\x0a\x05ab"),
-        ("empty/analysis", b""),
-    ])
+    write_zip(
+        DATA / "review_order.omv",
+        [
+            ("META-INF/MANIFEST.MF", "Manifest-Version: 1.0\n"),
+            ("10 later/analysis", response("later", r2, aid=10)),
+            ("9 ttest/analysis", response("ttest", r1, aid=b"\x09")),
+            ("abc/analysis", response("", r2)),
+            (" 2 first/analysis", response("first", r2, aid=100000)),
+            ("007 seven/analysis", response("seven", element(tbl=t_basic), aid=b"ab")),
+            ("08 broken/analysis", b"\x0a\x05ab"),
+            ("empty/analysis", b""),
+        ],
+    )
 
     # 2. rendered HTML without a charset declaration (UTF-8 bytes).
     html = (
         "<html><body><h2>Tést α</h2><table>"
-        "<tr><th colspan=\"3\">Café table</th></tr>"
+        '<tr><th colspan="3">Café table</th></tr>'
         "<tr><th></th><th>éffect</th><th>p</th></tr>"
         "<tr><td>−x</td><td>−0.5</td><td>.03</td></tr>"
         "</table></body></html>"
     )
     write_zip(DATA / "review_nometa.jasp", [("index.html", html.encode("utf-8"))])
     latin = (
-        b"<html><head><meta charset=\"iso-8859-1\"></head><body><h2>T\xe9st</h2><table>"
+        b'<html><head><meta charset="iso-8859-1"></head><body><h2>T\xe9st</h2><table>'
         b"<tr><th>a</th><th>b\xe9</th></tr><tr><td>1</td><td>2</td></tr></table></body></html>"
     )
     write_zip(DATA / "review_latin.jasp", [("index.html", latin)])
@@ -170,8 +188,9 @@ def main() -> None:
     with zipfile.ZipFile(SAMPLE / "sample.jasp") as z:
         aj = z.read("analyses.json")
         idx = z.read("index.html")
-    write_zip(DATA / "review_bom.jasp", [("analyses.json", b"\xef\xbb\xbf" + aj),
-                                         ("index.html", idx)])
+    write_zip(
+        DATA / "review_bom.jasp", [("analyses.json", b"\xef\xbb\xbf" + aj), ("index.html", idx)]
+    )
 
     # 4. duplicate JSON keys: R keeps both, `$`/`[[` return the FIRST.
     dup = (
@@ -182,8 +201,9 @@ def main() -> None:
     )
     write_zip(DATA / "review_dupkeys.jasp", [("analyses.json", dup), ("index.html", idx)])
 
-    write_zip(DATA / "review_tables.jasp",
-              [("index.html", (DATA / "review_tables.html").read_bytes())])
+    write_zip(
+        DATA / "review_tables.jasp", [("index.html", (DATA / "review_tables.html").read_bytes())]
+    )
 
     # 5. zips without any extractable file: R's unzip() returns NULL.
     write_zip(DATA / "review_empty.jasp", [])
@@ -193,11 +213,21 @@ def main() -> None:
     # 6. notebooks: BOM, duplicate keys, non-character text arrays.
     nb = {
         "cells": [
-            {"cell_type": "code", "execution_count": 1, "outputs": [
-                {"output_type": "stream", "name": "stdout",
-                 "text": ["TtestResult(statistic=np.float64(2.5), pvalue=0.03, df=10)\n"]}]},
+            {
+                "cell_type": "code",
+                "execution_count": 1,
+                "outputs": [
+                    {
+                        "output_type": "stream",
+                        "name": "stdout",
+                        "text": ["TtestResult(statistic=np.float64(2.5), pvalue=0.03, df=10)\n"],
+                    }
+                ],
+            },
         ],
-        "metadata": {}, "nbformat": 4, "nbformat_minor": 5,
+        "metadata": {},
+        "nbformat": 4,
+        "nbformat_minor": 5,
     }
     (DATA / "review_bom.ipynb").write_bytes(b"\xef\xbb\xbf" + json.dumps(nb).encode("utf-8"))
     dup_nb = (
@@ -209,29 +239,55 @@ def main() -> None:
     (DATA / "review_dupkeys.ipynb").write_text(dup_nb, encoding="utf-8")
     mixed = {
         "cells": [
-            {"cell_type": "code", "execution_count": [7], "outputs": [
-                {"output_type": "stream", "text": ["t = ", 2.5, ", p = ", 0.04, "\n"]},
-                {"output_type": "stream", "name": "stdout", "text": [1, True, 2.5]},
-                {"output_type": "execute_result", "data": {"text/plain": [100000, "\n", 1e-20]}},
-                {"output_type": "display_data", "data": {"text/html": ["x > y"],
-                                                         "text/plain": ["F = 3.2, p = .01"]}},
-            ]},
+            {
+                "cell_type": "code",
+                "execution_count": [7],
+                "outputs": [
+                    {"output_type": "stream", "text": ["t = ", 2.5, ", p = ", 0.04, "\n"]},
+                    {"output_type": "stream", "name": "stdout", "text": [1, True, 2.5]},
+                    {
+                        "output_type": "execute_result",
+                        "data": {"text/plain": [100000, "\n", 1e-20]},
+                    },
+                    {
+                        "output_type": "display_data",
+                        "data": {"text/html": ["x > y"], "text/plain": ["F = 3.2, p = .01"]},
+                    },
+                ],
+            },
             {"cell_type": "markdown", "source": "t = 1"},
-            {"cell_type": "code", "execution_count": None, "outputs": [
-                {"output_type": "execute_result", "data": {
-                    "text/html": "<table><tr><th>a</th><th>b</th></tr><tr><td>1</td><td></td></tr>"
-                                 "<tr><td></td></tr></table>"}}]},
+            {
+                "cell_type": "code",
+                "execution_count": None,
+                "outputs": [
+                    {
+                        "output_type": "execute_result",
+                        "data": {
+                            "text/html": "<table><tr><th>a</th><th>b</th></tr><tr><td>1</td><td></td></tr>"
+                            "<tr><td></td></tr></table>"
+                        },
+                    }
+                ],
+            },
         ],
     }
     (DATA / "review_mixed_types.ipynb").write_text(json.dumps(mixed), encoding="utf-8")
 
     # 7. stat_output_validate() inputs.
     (DATA / "review_validate_null.json").write_text("null", encoding="utf-8")
-    doc = {"schema": "s", "schema_version": "1", "paper_id": "p", "source_file": "f",
-           "source_format": "R", "analyses": [{"analysis": "a", "results": [
-               {"result_id": "r1", "values": {"t": {"value": 1}}}]}]}
+    doc = {
+        "schema": "s",
+        "schema_version": "1",
+        "paper_id": "p",
+        "source_file": "f",
+        "source_format": "R",
+        "analyses": [
+            {"analysis": "a", "results": [{"result_id": "r1", "values": {"t": {"value": 1}}}]}
+        ],
+    }
     (DATA / "review_validate_bom.json").write_bytes(
-        b"\xef\xbb\xbf" + json.dumps(doc).encode("utf-8"))
+        b"\xef\xbb\xbf" + json.dumps(doc).encode("utf-8")
+    )
     partial = (
         '{"schema": "s", "schema_version": "1", "paper_id": "p", "source_file": "f",'
         ' "source_format": "R", "analysesX": [{"analysis_id": 1, "resultsZ": [{"result_idx": "r1",'

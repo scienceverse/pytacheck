@@ -1,0 +1,36 @@
+{
+  "id": "data_read_head.xl_title.xlsx",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 4,
+    "names": [
+      "Survey export",
+      "...2"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "id",
+          "1",
+          "2"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "score",
+          "5",
+          "7"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -787,7 +787,9 @@ def osf_user_projects(user_id: Any, pb: Any = None) -> pd.DataFrame:
                 continue
             try:
                 body = _resp_body_json(resp)
-            except Exception:
+            except Exception:  # R: tryCatch(..., error = \(e) NULL) -> next
+                body = None
+            if body is None:
                 continue
             att = _get(_data_of(body), "attributes") or {}
             names[i] = att.get("title")

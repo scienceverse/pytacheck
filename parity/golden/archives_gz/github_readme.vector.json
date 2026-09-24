@@ -1,0 +1,21 @@
+{
+  "id": "github_readme.vector",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "# metacheck\n\n<!-- badges: start -->\n![Made in Europe](https://img.shields.io/badge/Made_in_Europe-003399?logo=european-union&logoColor=FFCC00)\n\n[![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)\n\n[![Codecov test coverage](https://codecov.io/gh/scienceverse/metacheck/graph/badge.svg)](https://app.codecov.io/gh/scienceverse/metacheck)\n<!-- badges: end -->\n\nThe goal of metacheck is to automatically check research outputs for best practices. You can find out more at <https://scienceverse.github.io/metacheck/>.\n\n## Installation\n\nYou can install the development version of metacheck from [GitHub](https://github.com/) with:\n\n``` r\n# install.packages(\"devtools\")\ndevtools::install_github(\"scienceverse/metacheck\")\n```\n\n## API (optional)\nTo run metacheck as a REST API either using plumber or Docker, see [`inst/plumber/README.md`](inst/plumber/README.md) for instructions and documentation.\n",
+      "",
+      "\n# faux <a href=\"https://www.scienceverse.org/faux/\"><img src=\"man/figures/logo.png\" align=\"right\" height=\"120\" /><\/a>\n\n<!-- rmarkdown v1 -->\n\n<!-- README.md is generated from README.Rmd. Please edit that file -->\n\n<!-- badges: start -->\n\n[![DOI](https://zenodo.org/badge/163506566.svg)](https://zenodo.org/badge/latestdoi/163506566)\n[![CRAN\nstatus](https://www.r-pkg.org/badges/version-last-release/faux)](https://CRAN.R-project.org/package=faux)\n![Downloads](https://cranlogs.r-pkg.org/badges/grand-total/faux)\n[![Lifecycle:\nstable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable)\n[![Coverage\nstatus](https://codecov.io/gh/scienceverse/faux/branch/master/graph/badge.svg)](https://app.codecov.io/github/scienceverse/faux?branch=master)\n[![R-CMD-check](https://github.com/scienceverse/faux/workflows/R-CMD-check/badge.svg)](https://github.com/scienceverse/faux/actions)\n[![R-CMD-check](https://github.com/scienceverse/faux/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/scienceverse/faux/actions/workflows/R-CMD-check.yaml)\n<!-- badges: end -->\n\nIt is useful to be able to simulate data with a specified structure. The\n`faux` package provides some functions to make this process easier. See\nthe [package website](https://www.scienceverse.org/faux/) for more\ndetails.\n\n## Installation\n\nYou can install the released version of faux from\n[CRAN](https://CRAN.R-project.org) with:\n\n``` r\ninstall.packages(\"faux\")\n```\n\nAnd the development version from\n[GitHub](https://github.com/scienceverse/faux) with:\n\n``` r\n# install.packages(\"devtools\")\ndevtools::install_github(\"scienceverse/faux\")\n```\n\nPlease note that the ‘faux’ project is released with a [Contributor Code\nof\nConduct](https://github.com/scienceverse/faux/blob/master/CODE_OF_CONDUCT.md).\nBy contributing to this project, you agree to abide by its terms.\n"
+    ],
+    "names": [
+      "scienceverse/metacheck",
+      "scienceverse/typo",
+      "scienceverse/faux"
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

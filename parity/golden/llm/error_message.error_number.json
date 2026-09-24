@@ -1,0 +1,14 @@
+{
+  "id": "error_message.error_number",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "HTTP 500 Internal Server Error.\n  Provider says: {\"error\":5}"
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

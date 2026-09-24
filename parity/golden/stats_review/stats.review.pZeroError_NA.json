@@ -1,0 +1,226 @@
+{
+  "id": "stats.review.pZeroError_NA",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 4,
+    "names": [
+      "test_type",
+      "df1",
+      "df2",
+      "test_comp",
+      "test_value",
+      "p_comp",
+      "reported_p",
+      "computed_p",
+      "raw",
+      "error",
+      "decision_error",
+      "one_tailed_in_txt",
+      "apa_factor",
+      "text",
+      "id",
+      "text_id",
+      "section_id",
+      "paragraph_id",
+      "paper_id",
+      "header",
+      "section_type"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "t",
+          "F",
+          "t",
+          "Z"
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          null,
+          1,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          28,
+          20,
+          28,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "=",
+          "=",
+          "=",
+          "="
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          2.2,
+          5.1,
+          2.2,
+          1.2
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "=",
+          "=",
+          "=",
+          "ns"
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0.03,
+          0.5,
+          0.13,
+          null
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0.0362254847788378,
+          0.0352558192201312,
+          0.0362254847788378,
+          0.230139340443417
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "t(28) = 2.20, p = .03",
+          "F(1, 20) = 5.1, p = .5",
+          "t(28) = 2.20, p = .13",
+          "z = 1.20, n.s."
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true,
+          true,
+          true,
+          false
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false,
+          true,
+          true,
+          false
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false,
+          false,
+          false,
+          false
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          1,
+          1,
+          1,
+          1
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "A t-test, t(28) = 2.20, p = .03.",
+          "An F-test, F(1, 20) = 5.1, p = .5.",
+          "Wrong, t(28) = 2.20, p = .13.",
+          "ns: z = 1.20, n.s."
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          1,
+          2,
+          4,
+          6
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          null,
+          null,
+          null,
+          null
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

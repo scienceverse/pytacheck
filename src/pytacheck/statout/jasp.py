@@ -28,6 +28,7 @@ import base64
 import json
 import math
 import os
+import re
 import sqlite3
 import struct
 import tempfile
@@ -134,6 +135,24 @@ def _jasp_binary_labels(field: Any, xdat: Any) -> dict[str | None, float]:
     return _labels_from_list(lst)
 
 
+def _field_list(fields: Any) -> list[Any]:
+    """``for (j in seq_along(fields)) fields[[j]]`` over parsed JSON (an object by value)."""
+    if fields is None:
+        return []
+    if isinstance(fields, dict):
+        return list(fields.values())
+    return fields if isinstance(fields, list) else [fields]
+
+
+def _check_field_names(names: list[Any]) -> None:
+    """``vapply(fields, function(f) f$name, character(1))`` stops on a missing name."""
+    for nm in names:
+        if nm is None or (isinstance(nm, list | dict) and len(nm) != 1):
+            raise ValueError("values must be length 1")
+        if not isinstance(nm, str):
+            raise ValueError("values must be type 'character'")
+
+
 def _column_attrs(labels: dict[Any, float] | None, label: Any) -> dict[str, Any]:
     """The ``labels``/``label`` attributes R ends up attaching to one column.
 
@@ -213,7 +232,8 @@ def import_jasp(path: str | os.PathLike[str]) -> dict[str, Any]:
 
     Returns:
         A dict with ``data`` (a data frame; variable and value labels in
-        ``data.attrs["label"]``/``["labels"]``), ``columns`` (a data frame of
+        ``data.attrs["col_attrs"][column]``, see the module docstring),
+        ``columns`` (a data frame of
         ``name`` and ``type``), ``format`` (``"binary"`` or ``"sqlite"``),
         ``data_file_path`` (the original source path recorded in the archive,
         or ``None``) and, when the archive has an ``analyses.json``,
@@ -267,7 +287,7 @@ def _read_jasp_binary(files: list[str]) -> dict[str, Any]:
     meta = _read_json(files[base.index("metadata.json")])
     xdat = _read_json(files[base.index("xdata.json")]) if "xdata.json" in base else {}
     ds = _dollar(meta, "dataSet")
-    fields = _dollar(ds, "fields") or []
+    fields = _field_list(_dollar(ds, "fields"))
     nrow = _dollar(ds, "rowCount")
     if nrow is None:
         raise ValueError("invalid 'n' argument")
@@ -296,6 +316,7 @@ def _read_jasp_binary(files: list[str]) -> dict[str, Any]:
             col_attrs.append(_column_attrs(labs, label))
             names.append(name)
             types.append(mt)
+    _check_field_names(names)
     df = _frame_from_columns(cols, names, col_attrs)
     columns = (
         pd.DataFrame(
@@ -322,52 +343,120 @@ def _sqlite_affinity(decl: str | None) -> str:
         return "integer"
     if any(k in d for k in ("CHAR", "CLOB", "TEXT")):
         return "text"
-    if d == "" or "BLOB" in d:
+    if d == "":
+        return "none"
+    if "BLOB" in d:
         return "blob"
     if any(k in d for k in ("REAL", "FLOA", "DOUB")):
         return "real"
     return "numeric"
 
 
+_SQL_INT_PREFIX = re.compile(r"[ \t\n\r\f\v]*([+-]?)0*([0-9]*)")
+_SQL_REAL_PREFIX = re.compile(
+    r"[ \t\n\r\f\v]*([+-]?(?:[0-9]+\.?[0-9]*|\.[0-9]+)(?:[eE][+-]?[0-9]+)?)"
+)
+
+
+def _sqlite_as_int(v: Any) -> int:
+    """``sqlite3_column_int64()`` of a stored value (text: its leading integer)."""
+    if isinstance(v, int):
+        return v
+    if isinstance(v, float):
+        return int(v)
+    text = v.decode("utf-8", "replace") if isinstance(v, bytes) else str(v)
+    m = _SQL_INT_PREFIX.match(text)
+    value = int(m.group(2)) if m and m.group(2) else 0
+    value = -value if m and m.group(1) == "-" else value
+    return max(-(2**63), min(2**63 - 1, value))
+
+
+def _sqlite_as_real(v: Any) -> float:
+    """``sqlite3_column_double()`` of a stored value (text: its leading number)."""
+    if isinstance(v, int | float):
+        return float(v)
+    text = v.decode("utf-8", "replace") if isinstance(v, bytes) else str(v)
+    m = _SQL_REAL_PREFIX.match(text)
+    try:
+        return float(m.group(1)) if m else 0.0
+    except OverflowError:  # pragma: no cover - float() saturates to inf
+        return math.inf
+
+
+def _sqlite_as_text(v: Any) -> str:
+    """``sqlite3_column_text()`` of a stored value (reals as SQLite's ``%!.15g``)."""
+    if isinstance(v, str):
+        return v
+    if isinstance(v, bytes):
+        return v.decode("utf-8", "replace")
+    if isinstance(v, int):
+        return str(v)
+    if math.isinf(v):
+        return "Inf" if v > 0 else "-Inf"
+    txt = f"{v:.15g}"
+    mant, sep, exp = txt.partition("e")
+    if "." not in mant:
+        mant += ".0"
+    return mant + sep + exp
+
+
 def _rsqlite_column(values: list[Any], decl: str | None) -> Any:
-    """How RSQLite types a query result column (declared type, else first value)."""
+    """How RSQLite types one query result column.
+
+    The column takes the storage class of its first non-NULL value (the
+    declared type only matters when every value is NULL); an integer column is
+    upgraded to double when a real value follows, and any other mismatched
+    value is coerced the way SQLite's ``sqlite3_column_*()`` accessors coerce
+    it (text to its leading number, numbers to text). An integer outside R's
+    integer range makes the column a double (RSQLite's ``integer64``), and
+    ``-2^31`` is R's ``NA_integer_``.
+    """
     import pandas as pd
 
-    aff = _sqlite_affinity(decl)
-    first = next((v for v in values if v is not None), None)
-    if aff == "numeric" or aff == "blob":
-        aff = (
-            "integer"
-            if isinstance(first, int)
-            else "real"
-            if isinstance(first, float)
-            else "text"
-            if isinstance(first, str)
-            else "integer"
-            if first is None and aff == "numeric"
-            else "blob"
-        )
-    if aff == "integer":
-        if all(v is None or (isinstance(v, int) and abs(v) <= 2147483647) for v in values):
-            return pd.array(values, dtype="Int64")
-        return pd.array(
-            [
-                None if v is None else float(v) if not isinstance(v, str) else _as_numeric(v)
-                for v in values
-            ],
-            dtype="Float64",
-        ).astype("float64")
-    if aff == "real":
-        return pd.array(
-            [
-                None if v is None else _as_numeric(v) if isinstance(v, str) else float(v)
-                for v in values
-            ],
-            dtype="Float64",
-        ).astype("float64")
-    if aff == "text":
-        return pd.array([None if v is None else str(v) for v in values], dtype="string")
-    return pd.array(values, dtype=object)
+    kind = None
+    out: list[Any] = []
+    for v in values:
+        if v is None:
+            out.append(None)
+            continue
+        if kind is None:
+            kind = {int: "int", float: "real", str: "text"}.get(type(v), "blob")
+            if kind == "int" and not -(2**31) <= v <= 2**31 - 1:
+                kind = "real"
+        elif kind == "int" and isinstance(v, float):
+            kind = "real"
+            out = [None if o is None else float(o) for o in out]
+        if kind == "int":
+            iv = _sqlite_as_int(v)
+            if not -(2**31) <= iv <= 2**31 - 1:
+                kind = "real"
+                out = [None if o is None else float(o) for o in out]
+                out.append(float(iv))
+            else:
+                out.append(iv)
+        elif kind == "real":
+            out.append(_sqlite_as_real(v))
+        elif kind == "text":
+            out.append(_sqlite_as_text(v))
+        else:
+            out.append(v if isinstance(v, bytes) else _sqlite_as_text(v).encode("utf-8"))
+    if kind is None:
+        kind = {
+            "integer": "int",
+            "real": "real",
+            "numeric": "real",
+            "text": "text",
+            "blob": "blob",
+        }.get(_sqlite_affinity(decl), "lgl")
+    if kind == "int":
+        return pd.array([None if o == -(2**31) else o for o in out], dtype="Int64")
+    if kind == "real":
+        return pd.array(out, dtype="Float64").astype("float64")
+    if kind == "text":
+        return pd.array(out, dtype="string")
+    if kind == "lgl":
+        return pd.array(out, dtype="boolean")
+    return pd.array(out, dtype=object)
 
 
 def _read_jasp_sqlite(sqlite_path: str) -> dict[str, Any]:
@@ -406,7 +495,9 @@ def _read_jasp_sqlite(sqlite_path: str) -> dict[str, Any]:
                 if value is None or lab == "":
                     continue
                 code = _as_numeric(value)
-                out.setdefault(None if lab is None else _r_chr(lab), math.nan if code is None else code)
+                out.setdefault(
+                    None if lab is None else _r_chr(lab), math.nan if code is None else code
+                )
             return out
 
         cols: list[Any] = []
@@ -425,6 +516,8 @@ def _read_jasp_sqlite(sqlite_path: str) -> dict[str, Any]:
             v = _rsqlite_column(raw, decl.get(phys_col))
             labs = None
             if not is_scale:
+                if v.dtype == object:  # an RSQLite blob column is a list
+                    raise TypeError("(list) object cannot be coerced to type 'double'")
                 nums = [None if pd.isna(x) else _as_numeric(x) for x in v]
                 v = pd.array(
                     [None if x is None or x == _JASP_INT_MIN else x for x in nums], dtype="Float64"

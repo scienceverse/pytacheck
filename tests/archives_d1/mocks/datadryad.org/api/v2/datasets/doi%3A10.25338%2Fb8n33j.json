@@ -1,0 +1,15 @@
+{
+  "_links": {
+    "stash:version": {
+      "href": "/api/v2/versions/777"
+    }
+  },
+  "identifier": "doi:10.25338/B8N33J",
+  "title": "Zipped",
+  "authors": [
+    {
+      "firstName": "Ann",
+      "lastName": "Lee"
+    }
+  ]
+}

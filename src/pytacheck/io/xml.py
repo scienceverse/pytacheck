@@ -22,11 +22,13 @@ from __future__ import annotations
 
 import copy
 import functools
+import re
+import warnings
 from os import PathLike
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
-from pytacheck._r.regex import gsub, sub
+from pytacheck._r.regex import compile_r, gsub
 
 if TYPE_CHECKING:
     from lxml import etree
@@ -39,6 +41,7 @@ __all__ = [
     "xml_attr",
     "xml_find_all",
     "xml_find_first",
+    "xml_ns",
     "xml_text",
 ]
 
@@ -53,7 +56,7 @@ _XML_NS = "{http://www.w3.org/XML/1998/namespace}"
 
 
 @functools.cache
-def _xml_parser() -> etree.XMLParser:
+def _xml_parser(recover: bool = False) -> etree.XMLParser:
     """``read_xml(options = "NOBLANKS")`` with an explicit UTF-8 encoding."""
     from lxml import etree
 
@@ -63,6 +66,7 @@ def _xml_parser() -> etree.XMLParser:
         resolve_entities=False,
         strip_cdata=False,
         no_network=True,
+        recover=recover,
     )
 
 
@@ -87,19 +91,38 @@ class XmlParseError(ValueError):
 def read_xml(text: str) -> etree._ElementTree:
     """``xml2::read_xml()`` of a string (parsed as UTF-8, blank nodes dropped).
 
-    Parse failures raise :class:`XmlParseError` with xml2's message, e.g.
-    ``"Extra content at the end of the document [5]"``.
+    As in xml2, only a fatal libxml2 error fails: it raises
+    :class:`XmlParseError` with xml2's message for the first fatal error,
+    e.g. ``"Extra content at the end of the document [5]"``. Non-fatal
+    errors (a duplicated ``xml:id``, an undeclared namespace prefix, ...)
+    are warnings, and the document is kept.
     """
     from lxml import etree
 
+    data = text.encode("utf-8", "surrogateescape")
+    parser = _xml_parser()
     try:
-        root = etree.fromstring(text.encode("utf-8", "surrogateescape"), _xml_parser())
+        root = etree.fromstring(data, parser)
     except etree.XMLSyntaxError as exc:
-        entries = list(exc.error_log)
-        last = entries[-1] if entries else None
-        msg = f"{last.message} [{last.type}]" if last is not None else str(exc)
-        raise XmlParseError(msg) from exc
+        entries = list(parser.error_log)
+        fatal = [e for e in entries if e.level >= 3]
+        if fatal or not entries:
+            msg = f"{fatal[0].message} [{fatal[0].type}]" if fatal else str(exc)
+            raise XmlParseError(msg) from exc
+        # lxml rejects any ERROR-level message; libxml2 (and xml2) keep the
+        # document, which a recovering parse rebuilds unchanged
+        _warn_parse_errors(entries)
+        root = etree.fromstring(data, _xml_parser(recover=True))
+    else:
+        _warn_parse_errors(list(parser.error_log))
+    if root is None:
+        raise XmlParseError("Document is empty [4]")
     return root.getroottree()
+
+
+def _warn_parse_errors(entries: list[Any]) -> None:
+    for e in entries:
+        warnings.warn(f"{e.message} [{e.type}]", stacklevel=4)
 
 
 def read_html(text: str, noblanks: bool = True) -> etree._Element:
@@ -117,8 +140,85 @@ def read_html(text: str, noblanks: bool = True) -> etree._Element:
 # ---------------------------------------------------------------------------
 
 
+# a QName prefix in an XPath (``ns:name``, ``ns:*``); axes (``::``) excluded
+_PREFIX_RX = re.compile(r"(?<![\w.:-])[A-Za-z_][\w.-]*:(?=[A-Za-z_*])")
+_STRING_LITERAL_RX = re.compile(r"'[^']*'|\"[^\"]*\"")
+
+
+def _make_unique(names: list[str], sep: str = "") -> list[str]:
+    """R's ``make.unique(names, sep)``."""
+    taken = set(names)
+    firsts: set[str] = set()
+    counts: dict[str, int] = {}
+    out: list[str] = []
+    for name in names:
+        if name not in firsts:
+            firsts.add(name)
+            out.append(name)
+            continue
+        cnt = counts.get(name, 1)
+        while f"{name}{sep}{cnt}" in taken:
+            cnt += 1
+        new = f"{name}{sep}{cnt}"
+        taken.add(new)
+        counts[name] = cnt + 1
+        out.append(new)
+    return out
+
+
+def xml_ns(x: XmlLike) -> dict[str, str]:
+    """``xml2::xml_ns()``: every namespace declared in the document of *x*.
+
+    Declarations are listed stably sorted by prefix; default namespaces are
+    named ``d1``, ``d2``, ... and repeated prefixes made unique as R's
+    ``make.unique(sep = "")`` does (``a``, ``a1``, ...).
+    """
+    from lxml import etree
+
+    if isinstance(x, list | tuple):
+        return xml_ns(x[0]) if x else {}
+    if x is None:
+        return {}
+    import io
+
+    root = x.getroot() if isinstance(x, etree._ElementTree) else x.getroottree().getroot()
+    # every element's own declarations, in document order: the root's
+    # serialisation writes each element's declarations as they are
+    entries: list[tuple[str, str]] = [
+        (prefix or "", uri)
+        for _, (prefix, uri) in etree.iterparse(
+            io.BytesIO(etree.tostring(root)), events=("start-ns",), huge_tree=True
+        )
+    ]
+    entries.sort(key=lambda e: e[0].encode("utf-8"))
+    names = [p for p, _ in entries]
+    k = 0
+    for i, p in enumerate(names):
+        if p == "":
+            k += 1
+            names[i] = f"d{k}"
+    return dict(zip(_make_unique(names), (u for _, u in entries), strict=True))
+
+
 def _xpath(node: Any, xpath: str) -> list[Any]:
-    res = node.xpath(xpath)
+    """Evaluate *xpath* as xml2's ``xpath_search()`` does.
+
+    The document's namespaces are registered (``ns = xml_ns(x)``), and an
+    invalid expression gives a warning and no nodes instead of an error.
+    """
+    from lxml import etree
+
+    ns = None
+    if _PREFIX_RX.search(_STRING_LITERAL_RX.sub("''", xpath)):
+        ns = {k: v for k, v in xml_ns(node).items() if k != "xml"} or None
+    try:
+        res = node.xpath(xpath, namespaces=ns)
+    except etree.XPathError as exc:
+        entries = list(getattr(exc, "error_log", []) or [])
+        msg = entries[-1].message if entries else str(exc)
+        code = entries[-1].type if entries else 0
+        warnings.warn(f"{msg} [{code}]", stacklevel=3)
+        return []
     return res if isinstance(res, list) else [res]
 
 
@@ -141,9 +241,14 @@ def xml_find_all(x: XmlLike, xpath: str) -> list[Any]:
 
 
 def xml_find_first(x: XmlLike, xpath: str) -> Any:
-    """``xml2::xml_find_first()`` for one node: the first match or ``None`` (missing)."""
+    """``xml2::xml_find_first()``: the first match or ``None`` (missing).
+
+    For a node set (list), a list of the first match of every node.
+    """
     if x is None:
         return None
+    if isinstance(x, list | tuple):
+        return [xml_find_first(n, xpath) for n in x]
     hits = _xpath(x, xpath)
     return hits[0] if hits else None
 
@@ -158,10 +263,16 @@ def _node_text(node: Any) -> str:
     return etree.tostring(node, method="text", encoding="unicode", with_tail=False)
 
 
+@functools.cache
+def _rx(pattern: str) -> Any:
+    """A compiled TRE pattern (greedy matching equals leftmost-longest for these)."""
+    return compile_r(pattern, posix=False)
+
+
 def _trim_text(s: str) -> str:
     """xml2's ``trim_text()``: strip ``[[:space:]\\u00a0]`` from both ends."""
-    s = sub("^[[:space:]\u00a0]+", "", s)
-    return sub("[[:space:]\u00a0]+$", "", s)
+    s = _rx("^[[:space:]\u00a0]+").sub("", s, count=1)
+    return _rx("[[:space:]\u00a0]+$").sub("", s, count=1)
 
 
 def xml_text(x: XmlLike, trim: bool = False) -> Any:
@@ -204,12 +315,45 @@ def as_character(x: XmlLike) -> Any:
     if isinstance(x, etree._ElementTree):
         body = etree.tostring(x, encoding="unicode", pretty_print=True)
         return '<?xml version="1.0" encoding="UTF-8"?>\n' + body
+    parent = x.getparent()
+    if parent is None:
+        out = etree.tostring(x, encoding="unicode", pretty_print=True, with_tail=False)
+        return out[:-1] if out.endswith("\n") else out
     # lxml copies every ancestor namespace declaration onto a serialised
-    # sub-element; libxml2's xmlSaveTree (xml2) does not. Serialising a copy
-    # carries only the namespaces the subtree itself uses.
-    node = x if x.getparent() is None else copy.deepcopy(x)
+    # sub-element; libxml2's xmlNodeDump (xml2) writes only the node's own
+    # declarations. A copy carries the node's own declarations plus the
+    # ancestor ones its subtree uses (appended after them); the latter are
+    # removed from the start tag again.
+    node = copy.deepcopy(x)
     out = etree.tostring(node, encoding="unicode", pretty_print=True, with_tail=False)
-    return out[:-1] if out.endswith("\n") else out
+    if out.endswith("\n"):
+        out = out[:-1]
+    parent_ns = parent.nsmap
+    added = [
+        (prefix, uri)
+        for prefix, uri in node.nsmap.items()
+        if parent_ns.get(prefix) == uri and x.nsmap.get(prefix) == uri
+    ]
+    if added:
+        out = _drop_ns_decls(out, added)
+    return out
+
+
+def _drop_ns_decls(out: str, decls: list[tuple[str | None, str]]) -> str:
+    """Remove namespace declarations from the first start tag of serialised XML."""
+    end = out.find(">")
+    if end < 0:
+        return out
+    tag = out[:end]
+    for prefix, uri in decls:
+        name = "xmlns" if prefix is None else f"xmlns:{prefix}"
+        esc = uri.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+        for quoted in (f'"{esc}"', f"'{esc}'"):
+            decl = f" {name}={quoted}"
+            if decl in tag:
+                tag = tag.replace(decl, "", 1)
+                break
+    return tag + out[end:]
 
 
 def html_text(text: str, noblanks: bool = False) -> str:
@@ -230,7 +374,8 @@ def _xml_find_text(xml: XmlLike, xpath: str, join: str | None = None) -> Any:
     (``[""]`` when nothing matches).
     """
     nodes = xml_find_all(xml, xpath)
-    text: list[str] = [gsub(" +", " ", xml_text(n, trim=True)) for n in nodes]
+    spaces = _rx(" +")
+    text: list[str] = [spaces.sub(" ", xml_text(n, trim=True)) for n in nodes]
     if join is not None:
         return join.join(text)
     if not text:

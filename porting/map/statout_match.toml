@@ -1,0 +1,39 @@
+# R source -> Python location for statout_match (see docs/PORTING.md).
+[files]
+"R/match-reported.R" = ["src/pytacheck/statout/match_reported.py"]
+"R/match-table.R" = ["src/pytacheck/statout/match_table.py"]
+"R/stato-map.R" = ["src/pytacheck/statout/stato_map.py"]
+
+[functions]
+# R/match-reported.R
+match_reported_output = "pytacheck.statout.match_reported:match_reported_output"
+".norm_value" = "pytacheck.statout.match_reported:_norm_value"
+".norm_interval" = "pytacheck.statout.match_reported:_norm_interval"
+".norm_df" = "pytacheck.statout.match_reported:_norm_df"
+".stat_family" = "pytacheck.statout.match_reported:_stat_family"
+".recompose_eq" = "pytacheck.statout.match_reported:_recompose_eq"
+".tests_from_extract" = "pytacheck.statout.match_reported:_tests_from_extract"
+".sites_share_variable" = "pytacheck.statout.match_reported:_sites_share_variable"
+".regroup_by_evidence" = "pytacheck.statout.match_reported:_regroup_by_evidence"
+# match_reported_output()'s local closures: the site index (by_site) and val_in()
+"match_reported_output/by_site" = "pytacheck.statout.match_reported:_build_sites"
+"match_reported_output/val_in" = "pytacheck.statout.match_reported:_val_in"
+# R/match-table.R
+".table_caption_family" = "pytacheck.statout.match_table:_table_caption_family"
+".table_caption" = "pytacheck.statout.match_table:_table_caption"
+".table_header_ambiguous" = "pytacheck.statout.match_table:_table_header_ambiguous"
+".table_typed_cells" = "pytacheck.statout.match_table:_table_typed_cells"
+".table_matrix_cols" = "pytacheck.statout.match_table:_table_matrix_cols"
+".table_tests_one" = "pytacheck.statout.match_table:_table_tests_one"
+".table_tests" = "pytacheck.statout.match_table:_table_tests"
+# R/stato-map.R
+stato_type_column = "pytacheck.statout.stato_map:stato_type_column"
+".spv_stato_type_label" = "pytacheck.statout.stato_map:_spv_stato_type_label"
+".stato_by_call" = "pytacheck.statout.stato_map:_stato_by_call"
+".stato_strip_variant" = "pytacheck.statout.stato_map:_stato_strip_variant"
+".STATO_LABELS" = "pytacheck.statout.stato_map:_STATO_LABELS"
+".MC_STAT_NS" = "pytacheck.statout.stato_map:_MC_STAT_NS"
+".MC_STAT_LABELS" = "pytacheck.statout.stato_map:_MC_STAT_LABELS"
+".MC_STAT_MAP" = "pytacheck.statout.stato_map:_MC_STAT_MAP"
+".STATO_MAP" = "pytacheck.statout.stato_map:_STATO_MAP"
+".STATO_BY_CALL" = "pytacheck.statout.stato_map:_STATO_BY_CALL"

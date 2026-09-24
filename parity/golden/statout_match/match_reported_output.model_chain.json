@@ -1,0 +1,160 @@
+{
+  "id": "match_reported_output.model_chain",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 6,
+    "names": [
+      "text_id",
+      "grp_id",
+      "reported",
+      "n_components",
+      "n_matched",
+      "found",
+      "match_values",
+      "not_matched",
+      "source_file",
+      "analysis",
+      "confidence",
+      "plausible_split"
+    ],
+    "v": [
+      {
+        "t": "int",
+        "v": [
+          1,
+          2,
+          3,
+          3,
+          4,
+          4
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          1,
+          2,
+          4,
+          4,
+          6,
+          6
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "F=16.86 df1=1 df2=30 p=<0.001",
+          "b=7.24 SE=1.76 t=4.11 p=<0.001",
+          "b=17.15 t=15.25",
+          "SE=1.13",
+          "t=-9.56 df=30 p=<0.001",
+          "r=-0.87"
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          4,
+          4,
+          2,
+          1,
+          3,
+          1
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          4,
+          4,
+          2,
+          0,
+          3,
+          0
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true,
+          true,
+          true,
+          false,
+          true,
+          false
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "F=16.86, df1=1, df2=30, p=<0.001",
+          "b=7.24, SE=1.76, t=4.11, p=<0.001",
+          "b=17.15, t=15.25",
+          null,
+          "t=-9.56, df=30, p=<0.001",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "",
+          "",
+          "",
+          null,
+          "",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "model_chain.R",
+          "model_chain.R",
+          "model_chain.R",
+          null,
+          "model_chain.R",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          "Coefficients",
+          null,
+          "Pearson's product-moment correlation",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "full",
+          "full",
+          "full",
+          "none",
+          "full",
+          "none"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true,
+          true,
+          false,
+          false,
+          true,
+          true
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -1,0 +1,188 @@
+{
+  "id": "figshare_links.test_paper",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 14,
+    "names": [
+      "href",
+      "link_text",
+      "text_id",
+      "paper_id",
+      "figshare_url",
+      "figshare_id",
+      "figshare_unsupported"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "https://figshare.com/articles/dataset/some_title/18093368",
+          "https://figshare.com/projects/PERICLES_-_Heritage_values/133332",
+          "https://figshare.com/s/5e01cc0cae4cf3e2e14f",
+          "https://doi.org/10.6084/m9.figshare.18093368.v1",
+          "https://doi.org/10.60847/unrelated",
+          "https://ndownloader.figshare.com/files/12345",
+          "https://doi.org/10.26180/19095317.v1.",
+          "figshare.com/articles/dataset/Title_here/18093368",
+          "10.6084/m9.figshare.6934484.v2",
+          "figshare.com/projects/P/133332.",
+          "https://figshare.le.ac.uk/articles/dataset/x/21234567/1",
+          "tandf.figshare.com/ndownloader/files/1.",
+          "10.25375/uct.14618526.v1",
+          "10.17633/rd.brunel.1234567"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          1,
+          2,
+          3,
+          5,
+          6,
+          7,
+          1,
+          2,
+          2,
+          3,
+          4,
+          4,
+          5,
+          5
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "19b628cb36b4ac",
+          "19b628cb36b4ac",
+          "19b628cb36b4ac",
+          "19b628cb36b4ac",
+          "19b628cb36b4ac",
+          "19b628cb36b4ac",
+          "19b628cb36b4ac",
+          "19b628cb36b4ac",
+          "19b628cb36b4ac",
+          "19b628cb36b4ac",
+          "19b628cb36b4ac",
+          "19b628cb36b4ac",
+          "19b628cb36b4ac",
+          "19b628cb36b4ac"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://figshare.com/articles/dataset/some_title/18093368",
+          "https://figshare.com/projects/PERICLES_-_Heritage_values/133332",
+          "https://figshare.com/s/5e01cc0cae4cf3e2e14f",
+          "https://doi.org/10.6084/m9.figshare.18093368.v1",
+          "https://doi.org/10.60847/unrelated",
+          "https://ndownloader.figshare.com/files/12345",
+          "https://doi.org/10.26180/19095317.v1.",
+          "figshare.com/articles/dataset/Title_here/18093368",
+          "10.6084/m9.figshare.6934484.v2",
+          "figshare.com/projects/P/133332.",
+          "https://figshare.le.ac.uk/articles/dataset/x/21234567/1",
+          "tandf.figshare.com/ndownloader/files/1.",
+          "10.25375/uct.14618526.v1",
+          "10.17633/rd.brunel.1234567"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "18093368",
+          null,
+          null,
+          "18093368",
+          null,
+          "12345",
+          "19095317",
+          "18093368",
+          "6934484",
+          null,
+          "21234567",
+          null,
+          "14618526",
+          null
+        ],
+        "names": [
+          "https://figshare.com/articles/dataset/some_title/18093368",
+          "https://figshare.com/projects/PERICLES_-_Heritage_values/133332",
+          "https://figshare.com/s/5e01cc0cae4cf3e2e14f",
+          "https://doi.org/10.6084/m9.figshare.18093368.v1",
+          "https://doi.org/10.60847/unrelated",
+          "https://ndownloader.figshare.com/files/12345",
+          "https://doi.org/10.26180/19095317.v1.",
+          "figshare.com/articles/dataset/Title_here/18093368",
+          "10.6084/m9.figshare.6934484.v2",
+          "figshare.com/projects/P/133332.",
+          "https://figshare.le.ac.uk/articles/dataset/x/21234567/1",
+          "tandf.figshare.com/ndownloader/files/1.",
+          "10.25375/uct.14618526.v1",
+          "10.17633/rd.brunel.1234567"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false,
+          false,
+          true,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        "names": [
+          "https://figshare.com/articles/dataset/some_title/18093368",
+          "https://figshare.com/projects/PERICLES_-_Heritage_values/133332",
+          "https://figshare.com/s/5e01cc0cae4cf3e2e14f",
+          "https://doi.org/10.6084/m9.figshare.18093368.v1",
+          "https://doi.org/10.60847/unrelated",
+          "https://ndownloader.figshare.com/files/12345",
+          "https://doi.org/10.26180/19095317.v1.",
+          "figshare.com/articles/dataset/Title_here/18093368",
+          "10.6084/m9.figshare.6934484.v2",
+          "figshare.com/projects/P/133332.",
+          "https://figshare.le.ac.uk/articles/dataset/x/21234567/1",
+          "tandf.figshare.com/ndownloader/files/1.",
+          "10.25375/uct.14618526.v1",
+          "10.17633/rd.brunel.1234567"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

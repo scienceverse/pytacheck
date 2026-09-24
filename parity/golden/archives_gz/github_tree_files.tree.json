@@ -1,0 +1,150 @@
+{
+  "id": "github_tree_files.tree",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "gated",
+      "reason",
+      "files",
+      "default_branch",
+      "license"
+    ],
+    "v": [
+      {
+        "t": "lgl",
+        "v": [
+          false
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 8,
+        "names": [
+          "repo",
+          "clean_repo",
+          "name",
+          "path",
+          "download_url",
+          "size",
+          "type"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "gzorg/treerepo",
+              "gzorg/treerepo",
+              "gzorg/treerepo",
+              "gzorg/treerepo",
+              "gzorg/treerepo",
+              "gzorg/treerepo",
+              "gzorg/treerepo",
+              "gzorg/treerepo"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "gzorg/treerepo",
+              "gzorg/treerepo",
+              "gzorg/treerepo",
+              "gzorg/treerepo",
+              "gzorg/treerepo",
+              "gzorg/treerepo",
+              "gzorg/treerepo",
+              "gzorg/treerepo"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "README.md",
+              "study 1.csv",
+              "analysis.R",
+              "config.json",
+              "config.json",
+              "LICENSE",
+              "archive.tar.gz",
+              "weird.file-name"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "README.md",
+              "data/study 1.csv",
+              "code/analysis.R",
+              "code/config.json",
+              "code/config.json",
+              "LICENSE",
+              "archive.tar.gz",
+              "weird.file-name"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://raw.githubusercontent.com/gzorg/treerepo/dev/README.md",
+              "https://raw.githubusercontent.com/gzorg/treerepo/dev/data/study 1.csv",
+              "https://raw.githubusercontent.com/gzorg/treerepo/dev/code/analysis.R",
+              "https://raw.githubusercontent.com/gzorg/treerepo/dev/code/config.json",
+              "https://raw.githubusercontent.com/gzorg/treerepo/dev/code/config.json",
+              "https://raw.githubusercontent.com/gzorg/treerepo/dev/LICENSE",
+              "https://raw.githubusercontent.com/gzorg/treerepo/dev/archive.tar.gz",
+              "https://raw.githubusercontent.com/gzorg/treerepo/dev/weird.file-name"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              120,
+              2048,
+              512,
+              64,
+              64,
+              1070,
+              99999,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "text",
+              "data",
+              "code",
+              "code",
+              "data",
+              "file",
+              "archive",
+              "file"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "dev"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "MIT"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

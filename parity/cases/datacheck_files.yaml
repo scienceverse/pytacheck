@@ -1135,6 +1135,9 @@
       "$expr":
         "r": "Inf"
         "py": "float('inf')"
+  "known_divergence": "bit64 is not loaded, so head()'s `[` drops the integer64 class and R returns the\
+    \ raw int64 bit patterns reinterpreted as doubles (6.1e-314, -0, NaN); pytacheck returns the actual\
+    \ 64-bit integers (Int64)"
 - "id": "data_read_head.badname.rds"
   "r": "data_read_head"
   "py": "pytacheck.datacheck.files.data_read_head"
@@ -1221,6 +1224,26 @@
   "args":
     "path":
       "$file": "tests/datacheck_files/data/script_refs.R"
+    "n_rows":
+      "$expr":
+        "r": "Inf"
+        "py": "float('inf')"
+- "id": "data_read_head.labs.rds"
+  "r": "data_read_head"
+  "py": "pytacheck.datacheck.files.data_read_head"
+  "args":
+    "path":
+      "$file": "tests/datacheck_files/data/labs.rds"
+    "n_rows":
+      "$expr":
+        "r": "Inf"
+        "py": "float('inf')"
+- "id": "data_read_head.labs_ws.RData"
+  "r": "data_read_head"
+  "py": "pytacheck.datacheck.files.data_read_head"
+  "args":
+    "path":
+      "$file": "tests/datacheck_files/data/labs_ws.RData"
     "n_rows":
       "$expr":
         "r": "Inf"
@@ -1364,6 +1387,7 @@
   - "x"
   "py_args":
     "path": "tests/datacheck_files/data/labelled.sav"
+    "n_rows": null
 - "id": "data_read_head.attrs.labelled.dta"
   "r": "identity"
   "py": "tests.datacheck_files.parity_helpers.read_head_attrs"
@@ -1381,6 +1405,7 @@
   - "x"
   "py_args":
     "path": "tests/datacheck_files/data/labelled.dta"
+    "n_rows": null
 - "id": "data_read_head.attrs.portable.por"
   "r": "identity"
   "py": "tests.datacheck_files.parity_helpers.read_head_attrs"
@@ -1398,6 +1423,7 @@
   - "x"
   "py_args":
     "path": "tests/datacheck_files/data/portable.por"
+    "n_rows": null
 - "id": "data_read_head.attrs.iris.sas7bdat"
   "r": "identity"
   "py": "tests.datacheck_files.parity_helpers.read_head_attrs"
@@ -1415,6 +1441,7 @@
   - "x"
   "py_args":
     "path": "tests/datacheck_files/data/iris.sas7bdat"
+    "n_rows": null
 - "id": "data_read_head.attrs.odd.rds"
   "r": "identity"
   "py": "tests.datacheck_files.parity_helpers.read_head_attrs"
@@ -1432,6 +1459,7 @@
   - "x"
   "py_args":
     "path": "tests/datacheck_files/data/odd.rds"
+    "n_rows": null
 - "id": "data_read_head.attrs.latin1_row3.csv"
   "r": "identity"
   "py": "tests.datacheck_files.parity_helpers.read_head_attrs"
@@ -1449,6 +1477,7 @@
   - "x"
   "py_args":
     "path": "tests/datacheck_files/data/latin1_row3.csv"
+    "n_rows": null
 - "id": "data_read_head.attrs.latin1_header.csv"
   "r": "identity"
   "py": "tests.datacheck_files.parity_helpers.read_head_attrs"
@@ -1466,6 +1495,7 @@
   - "x"
   "py_args":
     "path": "tests/datacheck_files/data/latin1_header.csv"
+    "n_rows": null
 - "id": "data_read_head.attrs.badname.rds"
   "r": "identity"
   "py": "tests.datacheck_files.parity_helpers.read_head_attrs"
@@ -1483,6 +1513,7 @@
   - "x"
   "py_args":
     "path": "tests/datacheck_files/data/badname.rds"
+    "n_rows": null
 - "id": "data_read_head.attrs.latin1.rds"
   "r": "identity"
   "py": "tests.datacheck_files.parity_helpers.read_head_attrs"
@@ -1500,6 +1531,151 @@
   - "x"
   "py_args":
     "path": "tests/datacheck_files/data/latin1.rds"
+    "n_rows": null
+- "id": "data_read_head.attrs.labs.rds"
+  "r": "identity"
+  "py": "tests.datacheck_files.parity_helpers.read_head_attrs"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({d <- data_read_head(rpath(\"tests/datacheck_files/data/labs.rds\"), n_rows = Inf);\
+          \ if (is.null(d)) return(list(names = NULL, attrs = NULL, utf8_repaired = NULL)); list(names\
+          \ = names(d), attrs = lapply(d, function(x) {a <- attributes(x); a$levels <- NULL; a$names <-\
+          \ NULL; if (!is.null(a$labels)) a$labels <- as.list(a$labels); if (length(a)) a[order(names(a))]\
+          \ else NULL}), utf8_repaired = if (is.null(attr(d, \"utf8_repaired\"))) NULL else as.list(attr(d,\
+          \ \"utf8_repaired\")))})"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "path": "tests/datacheck_files/data/labs.rds"
+    "n_rows": null
+- "id": "data_read_head.attrs.labs.rds.n2"
+  "r": "identity"
+  "py": "tests.datacheck_files.parity_helpers.read_head_attrs"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({d <- data_read_head(rpath(\"tests/datacheck_files/data/labs.rds\"), n_rows = 2);\
+          \ if (is.null(d)) return(list(names = NULL, attrs = NULL, utf8_repaired = NULL)); list(names\
+          \ = names(d), attrs = lapply(d, function(x) {a <- attributes(x); a$levels <- NULL; a$names <-\
+          \ NULL; if (!is.null(a$labels)) a$labels <- as.list(a$labels); if (length(a)) a[order(names(a))]\
+          \ else NULL}), utf8_repaired = if (is.null(attr(d, \"utf8_repaired\"))) NULL else as.list(attr(d,\
+          \ \"utf8_repaired\")))})"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "path": "tests/datacheck_files/data/labs.rds"
+    "n_rows": 2.0
+- "id": "data_read_head.attrs.labs_ws.RData"
+  "r": "identity"
+  "py": "tests.datacheck_files.parity_helpers.read_head_attrs"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({d <- data_read_head(rpath(\"tests/datacheck_files/data/labs_ws.RData\"), n_rows =\
+          \ Inf); if (is.null(d)) return(list(names = NULL, attrs = NULL, utf8_repaired = NULL)); list(names\
+          \ = names(d), attrs = lapply(d, function(x) {a <- attributes(x); a$levels <- NULL; a$names <-\
+          \ NULL; if (!is.null(a$labels)) a$labels <- as.list(a$labels); if (length(a)) a[order(names(a))]\
+          \ else NULL}), utf8_repaired = if (is.null(attr(d, \"utf8_repaired\"))) NULL else as.list(attr(d,\
+          \ \"utf8_repaired\")))})"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "path": "tests/datacheck_files/data/labs_ws.RData"
+    "n_rows": null
+- "id": "data_read_head.attrs.labs_ws.RData.n2"
+  "r": "identity"
+  "py": "tests.datacheck_files.parity_helpers.read_head_attrs"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({d <- data_read_head(rpath(\"tests/datacheck_files/data/labs_ws.RData\"), n_rows =\
+          \ 2); if (is.null(d)) return(list(names = NULL, attrs = NULL, utf8_repaired = NULL)); list(names\
+          \ = names(d), attrs = lapply(d, function(x) {a <- attributes(x); a$levels <- NULL; a$names <-\
+          \ NULL; if (!is.null(a$labels)) a$labels <- as.list(a$labels); if (length(a)) a[order(names(a))]\
+          \ else NULL}), utf8_repaired = if (is.null(attr(d, \"utf8_repaired\"))) NULL else as.list(attr(d,\
+          \ \"utf8_repaired\")))})"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "path": "tests/datacheck_files/data/labs_ws.RData"
+    "n_rows": 2.0
+- "id": "data_read_head.attrs.labelled.sav.n2"
+  "r": "identity"
+  "py": "tests.datacheck_files.parity_helpers.read_head_attrs"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({d <- data_read_head(rpath(\"tests/datacheck_files/data/labelled.sav\"), n_rows =\
+          \ 2); if (is.null(d)) return(list(names = NULL, attrs = NULL, utf8_repaired = NULL)); list(names\
+          \ = names(d), attrs = lapply(d, function(x) {a <- attributes(x); a$levels <- NULL; a$names <-\
+          \ NULL; if (!is.null(a$labels)) a$labels <- as.list(a$labels); if (length(a)) a[order(names(a))]\
+          \ else NULL}), utf8_repaired = if (is.null(attr(d, \"utf8_repaired\"))) NULL else as.list(attr(d,\
+          \ \"utf8_repaired\")))})"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "path": "tests/datacheck_files/data/labelled.sav"
+    "n_rows": 2.0
+- "id": "data_read_head.attrs.dates.csv"
+  "r": "identity"
+  "py": "tests.datacheck_files.parity_helpers.read_head_attrs"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({d <- data_read_head(rpath(\"tests/datacheck_files/data/dates.csv\"), n_rows = Inf);\
+          \ if (is.null(d)) return(list(names = NULL, attrs = NULL, utf8_repaired = NULL)); list(names\
+          \ = names(d), attrs = lapply(d, function(x) {a <- attributes(x); a$levels <- NULL; a$names <-\
+          \ NULL; if (!is.null(a$labels)) a$labels <- as.list(a$labels); if (length(a)) a[order(names(a))]\
+          \ else NULL}), utf8_repaired = if (is.null(attr(d, \"utf8_repaired\"))) NULL else as.list(attr(d,\
+          \ \"utf8_repaired\")))})"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "path": "tests/datacheck_files/data/dates.csv"
+    "n_rows": null
+- "id": "data_read_head.attrs.xl_dates.xlsx"
+  "r": "identity"
+  "py": "tests.datacheck_files.parity_helpers.read_head_attrs"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({d <- data_read_head(rpath(\"tests/datacheck_files/data/xl_dates.xlsx\"), n_rows =\
+          \ Inf); if (is.null(d)) return(list(names = NULL, attrs = NULL, utf8_repaired = NULL)); list(names\
+          \ = names(d), attrs = lapply(d, function(x) {a <- attributes(x); a$levels <- NULL; a$names <-\
+          \ NULL; if (!is.null(a$labels)) a$labels <- as.list(a$labels); if (length(a)) a[order(names(a))]\
+          \ else NULL}), utf8_repaired = if (is.null(attr(d, \"utf8_repaired\"))) NULL else as.list(attr(d,\
+          \ \"utf8_repaired\")))})"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "path": "tests/datacheck_files/data/xl_dates.xlsx"
+    "n_rows": null
+- "id": "data_read_head.attrs.typed.ods"
+  "r": "identity"
+  "py": "tests.datacheck_files.parity_helpers.read_head_attrs"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({d <- data_read_head(rpath(\"tests/datacheck_files/data/typed.ods\"), n_rows = Inf);\
+          \ if (is.null(d)) return(list(names = NULL, attrs = NULL, utf8_repaired = NULL)); list(names\
+          \ = names(d), attrs = lapply(d, function(x) {a <- attributes(x); a$levels <- NULL; a$names <-\
+          \ NULL; if (!is.null(a$labels)) a$labels <- as.list(a$labels); if (length(a)) a[order(names(a))]\
+          \ else NULL}), utf8_repaired = if (is.null(attr(d, \"utf8_repaired\"))) NULL else as.list(attr(d,\
+          \ \"utf8_repaired\")))})"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "path": "tests/datacheck_files/data/typed.ods"
+    "n_rows": null
 - "id": "read_rdata_isolated.workspace"
   "r": ".read_rdata_isolated"
   "py": "pytacheck.datacheck.files._read_rdata_isolated"

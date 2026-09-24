@@ -85,7 +85,9 @@ def rp_report_qmd(paper: Any, modules: Any, args: Any = None, qmd_paper: Any = "
     return rp_mask(_unpath(txt))
 
 
-def rp_report(paper: Any, modules: Any, output_format: str = "qmd", args: Any = None) -> dict[str, Any]:
+def rp_report(
+    paper: Any, modules: Any, output_format: str = "qmd", args: Any = None
+) -> dict[str, Any]:
     from pytacheck.report.report import report
 
     fd, f = tempfile.mkstemp(suffix=f".{output_format}")
@@ -137,8 +139,11 @@ def rp_report_repository(folder: str, modules: Any, args: Any = None) -> dict[st
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
             res = report_repository(
-                os.path.join(d, folder), output_file=f, output_format="qmd",
-                modules=_mods(modules), args=_args(args),
+                os.path.join(d, folder),
+                output_file=f,
+                output_format="qmd",
+                modules=_mods(modules),
+                args=_args(args),
             )
         txt = Path(f).read_text(encoding="utf-8")
         txt = txt[:-1] if txt.endswith("\n") else txt
@@ -146,7 +151,7 @@ def rp_report_repository(folder: str, modules: Any, args: Any = None) -> dict[st
         shutil.rmtree(d, ignore_errors=True)
         os.unlink(f)
     out = rp_norm_output(res)
-    for name, op in out.items():
+    for op in out.values():
         if op.summary_table is not None and "paper_id" in op.summary_table.columns:
             st = op.summary_table.copy()
             st["paper_id"] = "test_paper"

@@ -127,7 +127,7 @@ def _r_as_numeric(x: Any) -> float | None:
         return sign * math.inf
 
 
-class _RError(ValueError):
+class _RError(ValueError, TypeError):
     """An error R would raise (e.g. ``$`` on an atomic vector)."""
 
 
@@ -360,7 +360,12 @@ def _r_echo_chunks(
     ends = [s - 1 for s in starts[1:]] + [len(lines) - 1]
 
     code_list = _as_lines(code_lines)
-    code_stripped = [None if c is None else gsub("[[:space:]]+", "", _trimws(c)) for c in code_list]
+    code_stripped = gsub("[[:space:]]+", "", [_trimws(c) for c in code_list])
+    # which(code_stripped == x)[1], as one lookup table
+    first_line: dict[str, int] = {}
+    for i, c in enumerate(code_stripped):
+        if c is not None and c not in first_line:
+            first_line[c] = i + 1
     chunks: list[dict[str, Any]] = []
     for start, end in zip(starts, ends, strict=True):
         seg = lines[start : end + 1]
@@ -371,11 +376,7 @@ def _r_echo_chunks(
         first_stmt_line = nonempty[0] if nonempty else None
         line: int | None = None
         if first_stmt_line is not None:
-            target = gsub("[[:space:]]+", "", first_stmt_line)
-            for i, c in enumerate(code_stripped):
-                if c is not None and c == target:
-                    line = i + 1
-                    break
+            line = first_line.get(str(gsub("[[:space:]]+", "", first_stmt_line)))
         call = " ".join("NA" if s is None else s for s in stmt)
         if output:
             chunks.append({"line": line, "call": call, "output": output})

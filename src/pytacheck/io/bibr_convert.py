@@ -13,6 +13,7 @@ from __future__ import annotations
 
 import math
 import os
+import warnings
 from collections.abc import Sequence
 from os import PathLike
 from pathlib import Path
@@ -37,19 +38,88 @@ def _na(x: Any) -> bool:
     return isinstance(x, float) and math.isnan(x)
 
 
-def _match_arg(value: str, choices: Sequence[str]) -> str:
-    if value not in choices:
-        opts = ", ".join(f"“{c}”" for c in choices)
-        raise ValueError(f"'arg' should be one of {opts}")
-    return value
+def _match_arg(value: Any, choices: Sequence[str]) -> str:
+    """R's ``match.arg()`` (exact or unique partial match)."""
+    from pytacheck.utils import match_arg
+
+    return match_arg(value, choices)
+
+
+# httr2's status descriptions (``httr2:::http_statuses``), for resp_status_desc()
+_HTTR2_STATUSES: dict[int, str] = {
+    100: 'Continue',
+    101: 'Switching Protocols',
+    102: 'Processing',
+    103: 'Early Hints',
+    200: 'OK',
+    201: 'Created',
+    202: 'Accepted',
+    203: 'Non-Authoritative Information',
+    204: 'No Content',
+    205: 'Reset Content',
+    206: 'Partial Content',
+    207: 'Multi-Status',
+    208: 'Already Reported',
+    226: 'IM Used',
+    300: 'Multiple Choice',
+    301: 'Moved Permanently',
+    302: 'Found',
+    303: 'See Other',
+    304: 'Not Modified',
+    305: 'Use Proxy',
+    307: 'Temporary Redirect',
+    308: 'Permanent Redirect',
+    400: 'Bad Request',
+    401: 'Unauthorized',
+    402: 'Payment Required',
+    403: 'Forbidden',
+    404: 'Not Found',
+    405: 'Method Not Allowed',
+    406: 'Not Acceptable',
+    407: 'Proxy Authentication Required',
+    408: 'Request Timeout',
+    409: 'Conflict',
+    410: 'Gone',
+    411: 'Length Required',
+    412: 'Precondition Failed',
+    413: 'Payload Too Large',
+    414: 'URI Too Long',
+    415: 'Unsupported Media Type',
+    416: 'Range Not Satisfiable',
+    417: 'Expectation Failed',
+    418: "I'm a teapot",
+    421: 'Misdirected Request',
+    422: 'Unprocessable Entity',
+    423: 'Locked',
+    424: 'Failed Dependency',
+    425: 'Too Early',
+    426: 'Upgrade Required',
+    428: 'Precondition Required',
+    429: 'Too Many Requests',
+    451: 'Unavailable For Legal Reasons',
+    500: 'Internal Server Error',
+    501: 'Not Implemented',
+    502: 'Bad Gateway',
+    503: 'Service Unavailable',
+    504: 'Gateway Timeout',
+    505: 'HTTP Version Not Supported',
+    506: 'Variant Also Negotiates',
+    507: 'Insufficient Storage',
+    508: 'Loop Detected',
+    510: 'Not Extended',
+    511: 'Network Authentication Required',
+}
+
+
+def _status_desc(status: int) -> str | None:
+    """``httr2::resp_status_desc()``: the reason phrase, ``None`` (``NA``) if unknown."""
+    return _HTTR2_STATUSES.get(int(status))
 
 
 def _http_error(resp: Any) -> RuntimeError:
     """httr2's error for an HTTP error status (``req_perform()`` default)."""
-    import httpx
-
-    reason = httpx.codes.get_reason_phrase(resp.status_code)
-    return RuntimeError(f"HTTP {resp.status_code} {reason}.")
+    desc = _status_desc(resp.status_code)
+    return RuntimeError(f"HTTP {resp.status_code} {desc}." if desc else f"HTTP {resp.status_code}.")
 
 
 def _url_append(api_url: str, *parts: str) -> str:
@@ -114,7 +184,7 @@ def convert_bibr(
 
         paths = [
             p
-            for p in _list_files(Path(paths[0]), r"\.(docx?|pdf)$")
+            for p in _list_files(paths[0], r"\.(docx?|pdf)$")
             if grepl(r"\.(docx?|pdf)$", Path(p).name)
         ]
 
@@ -221,7 +291,9 @@ def _bibr_request_scivrs(
         if state == "complete":
             break
         if state == "failed":
-            err = status.get("stage") or "unknown error"
+            err = status.get("stage")
+            if err is None:  # status$stage %||% "unknown error"
+                err = "unknown error"
             logger("convert_bibr", {"job_id": job_id, "error": err})
             raise RuntimeError(f"Job {job_id} failed: {err}")
         if elapsed >= timeout:
@@ -256,8 +328,6 @@ def _bibr_request_selfhosted(
     end_page: float | None,
 ) -> bytes:
     """Port of ``R/import-bibr.R::.bibr_request_selfhosted()``: one direct extraction."""
-    import httpx
-
     from pytacheck import http
 
     resp = http.request(
@@ -272,7 +342,7 @@ def _bibr_request_selfhosted(
     if resp.status_code >= 400:
         raise _http_error(resp)
     if resp.status_code != 200:
-        msg = httpx.codes.get_reason_phrase(resp.status_code)
+        msg = _status_desc(resp.status_code) or "NA"
         raise RuntimeError(f"Bibr request failed with status code: {resp.status_code}\n{msg}")
     return resp.content
 
@@ -367,7 +437,22 @@ def _is_character(x: Any) -> bool:
 
 
 def _paste_na(v: Any) -> str:
-    return "NA" if _na(v) else str(v)
+    """``as.character()`` of one value as ``paste()`` writes it (``NA`` -> ``"NA"``)."""
+    if _na(v):
+        return "NA"
+    out = as_character(v)
+    return "NA" if out is None else str(out)
+
+
+def _df_column(df: pd.DataFrame, name: str) -> list[Any]:
+    """``df$name``: exact column, else a unique partial match (with R's warning)."""
+    if name in df.columns:
+        return list(df[name])
+    hits = [c for c in df.columns if isinstance(c, str) and c.startswith(name)]
+    if len(hits) == 1:
+        warnings.warn(f"Partial match of '{name}' to '{hits[0]}' in data frame", stacklevel=3)
+        return list(df[hits[0]])
+    return []
 
 
 def format_bib_authors(authors: Any) -> Any:
@@ -386,14 +471,18 @@ def format_bib_authors(authors: Any) -> Any:
         return "; ".join(_paste_na(v) for v in values)
     if isinstance(authors, dict):
         authors = pd.DataFrame(authors)
-    family = list(authors["family"]) if "family" in authors else []
-    given = list(authors["given"]) if "given" in authors else []
-    n = max(len(family), len(given)) if family and given else 0
+    if not isinstance(authors, pd.DataFrame):
+        raise TypeError("$ operator is invalid for atomic vectors")
+    # paste(family, given, sep = ", ", collapse = "; "): a missing column is
+    # a zero-length vector, which paste() recycles as ""
+    family = _df_column(authors, "family")
+    given = _df_column(authors, "given")
+    n = max(len(family), len(given))
     if n == 0:
         return ""
-    fam = [family[i % len(family)] for i in range(n)]
-    giv = [given[i % len(given)] for i in range(n)]
-    return "; ".join(f"{_paste_na(f)}, {_paste_na(g)}" for f, g in zip(fam, giv, strict=True))
+    fam = [_paste_na(v) for v in family] or [""]
+    giv = [_paste_na(v) for v in given] or [""]
+    return "; ".join(f"{fam[i % len(fam)]}, {giv[i % len(giv)]}" for i in range(n))
 
 
 def _authors_frame(given: list[str], family: list[str]) -> pd.DataFrame:

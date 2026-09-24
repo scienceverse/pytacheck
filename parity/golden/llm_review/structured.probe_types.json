@@ -1,0 +1,95 @@
+{
+  "id": "structured.probe_types",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "value",
+      "warnings"
+    ],
+    "v": [
+      {
+        "t": "df",
+        "nrow": 2,
+        "names": [
+          "text",
+          "items.name",
+          "items.count",
+          "items.score",
+          "items.flag",
+          "items.kind",
+          "items.tags"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "probe types",
+              "probe types"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "a",
+              "b"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2,
+              7
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              3,
+              1.5
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true,
+              false
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "x",
+              null
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "t1",
+                  "t2"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": []
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": []
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

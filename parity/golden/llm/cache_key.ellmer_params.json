@@ -1,0 +1,14 @@
+{
+  "id": "cache_key.ellmer_params",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "499d44f762773c7bfdf5aa8235f71043"
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -1,0 +1,14 @@
+{
+  "id": "scroll_table.single_value",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "\n```{r}\n#| echo: false\n#| column: margin\n\n# table data --------------------------------------\ntable <- structure(list(\"just one\"), names = \"\", class = \"data.frame\", row.names = c(NA, \n-1L))\n\n# display table -----------------------------------\nmetacheck::report_table(table, 200, 1, FALSE)\n```\n"
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

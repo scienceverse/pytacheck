@@ -1,0 +1,144 @@
+{
+  "id": "github_files.vector_na",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 10,
+    "names": [
+      "repo",
+      "clean_repo",
+      "name",
+      "path",
+      "download_url",
+      "size",
+      "ext",
+      "type"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "scienceverse/demo",
+          "scienceverse/demo",
+          "scienceverse/demo",
+          "scienceverse/demo",
+          null,
+          "scienceverse/norepo",
+          "scienceverse/demo",
+          "scienceverse/demo",
+          "scienceverse/demo",
+          "scienceverse/demo"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "scienceverse/demo",
+          "scienceverse/demo",
+          "scienceverse/demo",
+          "scienceverse/demo",
+          null,
+          null,
+          "scienceverse/demo",
+          "scienceverse/demo",
+          "scienceverse/demo",
+          "scienceverse/demo"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "code",
+          "folder",
+          "good-example.R",
+          "README.md",
+          null,
+          null,
+          "code",
+          "folder",
+          "good-example.R",
+          "README.md"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "code",
+          "folder",
+          "good-example.R",
+          "README.md",
+          null,
+          null,
+          "code",
+          "folder",
+          "good-example.R",
+          "README.md"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          "https://raw.githubusercontent.com/scienceverse/demo/main/good-example.R",
+          "https://raw.githubusercontent.com/scienceverse/demo/main/README.md",
+          null,
+          null,
+          null,
+          null,
+          "https://raw.githubusercontent.com/scienceverse/demo/main/good-example.R",
+          "https://raw.githubusercontent.com/scienceverse/demo/main/README.md"
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          0,
+          0,
+          227,
+          36,
+          null,
+          null,
+          0,
+          0,
+          227,
+          36
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "",
+          "",
+          "r",
+          "md",
+          null,
+          null,
+          "",
+          "",
+          "r",
+          "md"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "dir",
+          "dir",
+          "code",
+          "text",
+          null,
+          null,
+          "dir",
+          "dir",
+          "code",
+          "text"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -125,7 +125,11 @@ class TypeArray(Type):
         self.required = bool(required)
 
     def props(self) -> list[tuple[str, Any]]:
-        return [("description", self.description), ("required", self.required), ("items", self.items)]
+        return [
+            ("description", self.description),
+            ("required", self.required),
+            ("items", self.items),
+        ]
 
 
 class TypeObject(Type):
@@ -387,10 +391,10 @@ class _Printer:
         names = _format_names([n for n, _ in props])
         for (_, value), name in zip(props, names, strict=True):
             self.cat(ind, "@", " ", name, ":")
-            self.str(value, nest_lev + 1, None, vec_len)
+            self.show(value, nest_lev + 1, None, vec_len)
 
     # str() dispatch -------------------------------------------------------
-    def str(self, x: Any, nest_lev: int, indent: str | None, vec_len: int | None) -> None:
+    def show(self, x: Any, nest_lev: int, indent: str | None, vec_len: int | None) -> None:
         if isinstance(x, Type):
             self.s7(x, nest_lev, indent, vec_len)
         elif x is None:
@@ -411,7 +415,7 @@ class _Printer:
         for (_, v), name in zip(items[:99], names, strict=False):
             self.cat(ind, "$ ", name, ":")
             # strSub(): every str() formal is passed on explicitly, vec.len included
-            self.str(v, nest_lev + 1, ind + " ..", _VEC_LEN)
+            self.show(v, nest_lev + 1, ind + " ..", _VEC_LEN)
         if len(items) > 99:
             self.cat(ind, " [list output truncated]\n")
 
@@ -427,6 +431,7 @@ class _Printer:
                 None if s is None else _maybe_truncate(_encode_string(_strtrim(s, _NCHAR_MAX)))
                 for s in v.values
             ]
+            v_len: float
             if vec_len is None:
                 limit = _WIDTH - (4 + 5 * nest_lev + _nchar_w(str1))
                 total = 0
@@ -479,7 +484,7 @@ def _format_names(names: list[str]) -> list[str]:
 def type_print_lines(type: Type) -> list[str]:
     """``capture.output(print(type))`` for an ellmer type object."""
     p = _Printer()
-    p.str(as_type(type), 0, None, None)
+    p.show(as_type(type), 0, None, None)
     text = "".join(p.text)
     lines = text.split("\n")
     if lines and lines[-1] == "":

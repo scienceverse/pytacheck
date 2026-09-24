@@ -284,6 +284,10 @@ class _Unfreezable(Exception):
     pass
 
 
+def _first(item: tuple[Any, ...]) -> Any:
+    return item[0]
+
+
 def _freeze(value: Any) -> Any:
     """A hashable, type-tagged form of an argument value (for memo keys)."""
     if value is None or isinstance(value, bool | int | float | str | bytes):
@@ -291,7 +295,7 @@ def _freeze(value: Any) -> Any:
     if isinstance(value, list | tuple):
         return ("seq", tuple(_freeze(v) for v in value))
     if isinstance(value, Mapping):
-        return ("map", tuple(sorted(((repr(k), _freeze(v)) for k, v in value.items()))))
+        return ("map", tuple(sorted(((repr(k), _freeze(v)) for k, v in value.items()), key=_first)))
     if isinstance(value, set | frozenset):
         return ("set", frozenset(_freeze(v) for v in value))
     if isinstance(value, Path):
@@ -719,14 +723,17 @@ def module_run(
     else:
         module_label = spec.name
     bound = bind_args(spec.func, paper, kwargs)
-    # an unbindable call raises below, exactly as before; record what was asked for
-    effective = (
-        bound if bound is not None else {**dict(list(spec.arg_defaults.items())[1:]), **kwargs}
-    )
-    provenance = module_provenance(spec, effective)
+    try:
+        # an unbindable call raises below, exactly as before; record what was asked for
+        effective = bound
+        if effective is None:
+            effective = {**dict(list(spec.arg_defaults.items())[1:]), **kwargs}
+        provenance: dict[str, Any] | None = module_provenance(spec, effective)
+    except Exception:  # pragma: no cover - provenance must never break a run
+        provenance = None
     session = _SESSION.get()
     memo_key: tuple[Any, ...] | None = None
-    if session is not None and bound is not None:
+    if session is not None and bound is not None and provenance is not None:
         pkey = _paper_key(paper)
         if pkey is not None:
             try:
@@ -788,6 +795,9 @@ def module_run(
     mod_summary = results.pop("summary_table", None)
     na_replace = results.get("na_replace")
     if isinstance(mod_summary, pd.DataFrame) and "paper_id" in mod_summary.columns:
+        if "paper_id" not in summary_table.columns:
+            # dplyr::left_join() (e.g. after a failed module in a paper-list report)
+            raise ValueError("Join columns in `x` must be present in the data.")
         suffix = "." + (Path(spec.path).stem if spec.path else spec.name)
         mod_summary = mod_summary.copy()
         mod_summary["paper_id"] = mod_summary["paper_id"].astype("string")

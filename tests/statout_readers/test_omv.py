@@ -74,8 +74,9 @@ def test_import_omv_decodes_integer_decimal_and_text_columns(tmp_path: Path) -> 
 
 def test_import_omv_attaches_haven_style_labels_and_variable_label(tmp_path: Path) -> None:
     r = import_omv(make_omv(tmp_path))
-    assert r["data"].attrs["labels"]["grp"] == {1.0: "Control", 2.0: "Treatment"}
-    assert r["data"].attrs["label"]["score"] == "Total score"
+    col_attrs = r["data"].attrs["col_attrs"]
+    assert col_attrs["grp"]["labels"] == {"Control": 1.0, "Treatment": 2.0}
+    assert col_attrs["score"]["label"] == "Total score"
 
 
 def test_import_omv_recovers_the_analysis_r_syntax(tmp_path: Path) -> None:
@@ -113,8 +114,10 @@ def test_fixture_omv_analyses_order_and_labels() -> None:
     df = r["data"]
     assert df["note"].tolist()[:2] == ["yes", "no"]
     assert df["note"].isna().tolist() == [False, False, True]
-    assert df.attrs["labels"]["code"] == {1.0: "low", 2.0: "high"}
-    assert df.attrs["label"]["code"] == "Response code"
+    assert df.attrs["col_attrs"]["code"] == {
+        "labels": {"low": 1.0, "high": 2.0},
+        "label": "Response code",
+    }
     assert r["data_file_path"] is None
 
 

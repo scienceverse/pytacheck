@@ -1,0 +1,160 @@
+{
+  "id": "github_files.dir_rec",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 12,
+    "names": [
+      "repo",
+      "clean_repo",
+      "name",
+      "path",
+      "download_url",
+      "size",
+      "ext",
+      "type"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "scienceverse/metacheck",
+          "scienceverse/metacheck",
+          "scienceverse/metacheck",
+          "scienceverse/metacheck",
+          "scienceverse/metacheck",
+          "scienceverse/metacheck",
+          "scienceverse/metacheck",
+          "scienceverse/metacheck",
+          "scienceverse/metacheck",
+          "scienceverse/metacheck",
+          "scienceverse/metacheck",
+          "scienceverse/metacheck"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "scienceverse/metacheck",
+          "scienceverse/metacheck",
+          "scienceverse/metacheck",
+          "scienceverse/metacheck",
+          "scienceverse/metacheck",
+          "scienceverse/metacheck",
+          "scienceverse/metacheck",
+          "scienceverse/metacheck",
+          "scienceverse/metacheck",
+          "scienceverse/metacheck",
+          "scienceverse/metacheck",
+          "scienceverse/metacheck"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          ".gitignore",
+          "CODEOWNERS",
+          "ISSUE_TEMPLATE",
+          "workflows",
+          "bug_report.md",
+          "config.yml",
+          "feature_request.md",
+          "wrong_check_result.md",
+          "pkgdown.yaml",
+          "teams-notify.yml",
+          "test-coverage.yaml",
+          "upload_packages.yml"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          ".github/.gitignore",
+          ".github/CODEOWNERS",
+          ".github/ISSUE_TEMPLATE",
+          ".github/workflows",
+          ".github/ISSUE_TEMPLATE/bug_report.md",
+          ".github/ISSUE_TEMPLATE/config.yml",
+          ".github/ISSUE_TEMPLATE/feature_request.md",
+          ".github/ISSUE_TEMPLATE/wrong_check_result.md",
+          ".github/workflows/pkgdown.yaml",
+          ".github/workflows/teams-notify.yml",
+          ".github/workflows/test-coverage.yaml",
+          ".github/workflows/upload_packages.yml"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://raw.githubusercontent.com/scienceverse/metacheck/main/.github/.gitignore",
+          "https://raw.githubusercontent.com/scienceverse/metacheck/main/.github/CODEOWNERS",
+          null,
+          null,
+          "https://raw.githubusercontent.com/scienceverse/metacheck/main/.github/ISSUE_TEMPLATE/bug_report.md",
+          "https://raw.githubusercontent.com/scienceverse/metacheck/main/.github/ISSUE_TEMPLATE/config.yml",
+          "https://raw.githubusercontent.com/scienceverse/metacheck/main/.github/ISSUE_TEMPLATE/feature_request.md",
+          "https://raw.githubusercontent.com/scienceverse/metacheck/main/.github/ISSUE_TEMPLATE/wrong_check_result.md",
+          "https://raw.githubusercontent.com/scienceverse/metacheck/main/.github/workflows/pkgdown.yaml",
+          "https://raw.githubusercontent.com/scienceverse/metacheck/main/.github/workflows/teams-notify.yml",
+          "https://raw.githubusercontent.com/scienceverse/metacheck/main/.github/workflows/test-coverage.yaml",
+          "https://raw.githubusercontent.com/scienceverse/metacheck/main/.github/workflows/upload_packages.yml"
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          7,
+          41,
+          0,
+          0,
+          469,
+          46,
+          417,
+          732,
+          1380,
+          521,
+          1877,
+          3362
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "gitignore",
+          "",
+          "",
+          "",
+          "md",
+          "yml",
+          "md",
+          "md",
+          "yaml",
+          "yml",
+          "yaml",
+          "yml"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "config",
+          "file",
+          "dir",
+          "dir",
+          "text",
+          "config",
+          "text",
+          "text",
+          "config",
+          "config",
+          "config",
+          "config"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

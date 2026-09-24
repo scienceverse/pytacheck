@@ -1,0 +1,160 @@
+{
+  "id": "stat_results_long.unicode_ids",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 6,
+    "names": [
+      "paper_id",
+      "source_file",
+      "test_id",
+      "result_id",
+      "analysis",
+      "table_title",
+      "row_label",
+      "statistic",
+      "stato_label",
+      "stato_iri",
+      "value",
+      "model_ref"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "İstanbul Data.R",
+          "İstanbul Data.R",
+          "İstanbul Data.R",
+          "İstanbul Data.R",
+          "İstanbul Data.R",
+          "İstanbul Data.R"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "istanbul_data_r_istanbul_data_r_ix_test_1",
+          "istanbul_data_r_istanbul_data_r_ix_test_1",
+          "istanbul_data_r_istanbul_data_r_ix_test_2",
+          "istanbul_data_r_istanbul_data_r_ix_test_2",
+          "istanbul_data_r_istanbul_data_r_ix_test_2",
+          "istanbul_data_r_istanbul_data_r_ix_test_2"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "istanbul_data_r_ix_test_1_r1_i",
+          "istanbul_data_r_ix_test_1_r1_p",
+          "istanbul_data_r_ix_test_2_r1_t_st",
+          "istanbul_data_r_ix_test_2_r1_p_1",
+          "istanbul_data_r_ix_test_2_r1_p_2",
+          "istanbul_data_r_ix_test_2_r1"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "İx Test",
+          "İx Test",
+          "İx Test",
+          "İx Test",
+          "İx Test",
+          "İx Test"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "",
+          "",
+          "",
+          "",
+          "",
+          ""
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "İ",
+          "p",
+          "tést",
+          "P",
+          "p ",
+          "***"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "İ",
+          "p-value",
+          "tést",
+          "p-value",
+          "p-value",
+          "***"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "",
+          "http://purl.obolibrary.org/obo/STATO_0000700",
+          "",
+          "http://purl.obolibrary.org/obo/STATO_0000700",
+          "http://purl.obolibrary.org/obo/STATO_0000700",
+          ""
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "1",
+          "2",
+          "1",
+          "2",
+          "3",
+          "4"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -89,7 +89,7 @@ def rw_update() -> Path:
     from pytacheck.db._utils import default_email
 
     url = _URL + default_email()
-    resp = http.request("GET", url, timeout=300)
+    resp = http.request("GET", url, timeout=300, max_tries=1)  # plain req_perform()
     if resp is None:
         raise RuntimeError(f"Could not download the RetractionWatch data from {url}")
     with tempfile.TemporaryDirectory() as tmp:

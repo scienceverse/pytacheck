@@ -1,0 +1,95 @@
+{
+  "id": "r_merge_captures.partial_line",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": null,
+    "v": [
+      {
+        "t": "list",
+        "names": [
+          "analysis",
+          "data",
+          "line",
+          "line_seq"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "cap"
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "t"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "1"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              3
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "analysis",
+          "data",
+          "line_seq"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "txt4"
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "t"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "3"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

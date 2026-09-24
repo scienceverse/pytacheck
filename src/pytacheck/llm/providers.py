@@ -29,7 +29,7 @@ import math
 import os
 import warnings
 from collections.abc import Callable, Mapping, Sequence
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, ClassVar
 from urllib.parse import urlsplit
 
 from pytacheck.llm._json import JSONParseError, Vec, parse_json, to_json
@@ -124,7 +124,7 @@ def _friendly(x: Any) -> str:
             return "`Inf`" if x > 0 else "`-Inf`"
         return f"the number {x if isinstance(x, int) else format_num(x, 7)}"
     if isinstance(x, str):
-        return f'the string "{x}"'
+        return f'the string "{x}"' if x else 'the empty string ""'
     if isinstance(x, Mapping):
         return "a list"
     if isinstance(x, list | tuple):
@@ -339,9 +339,12 @@ def _transport_error(exc: BaseException | None, url: str) -> LLMError:
     elif isinstance(exc, httpx.TimeoutException):
         reason = f"Timeout was reached [{host}]: Operation timed out with 0 bytes received"
         timeout = True
-    elif "Name or service not known" in text or "nodename nor servname" in text or (
-        "getaddrinfo" in text
-    ) or "Temporary failure in name resolution" in text:
+    elif (
+        "Name or service not known" in text
+        or "nodename nor servname" in text
+        or ("getaddrinfo" in text)
+        or "Temporary failure in name resolution" in text
+    ):
         reason = f"Could not resolve host: {host}"
     elif "Connection refused" in text or "ConnectionRefused" in text:
         reason = f"Failed to connect to {host} port {port}: Connection refused"
@@ -365,9 +368,27 @@ def _status_error(resp: httpx.Response, info: str | None) -> LLMError:
     except ValueError:
         phrase = "Unknown"
     msg = f"HTTP {resp.status_code} {phrase}."
-    if info:
-        msg += "\n• " + info
+    if info is not None:
+        msg += "\n" + _cli_bullet(info)
     return LLMError(msg, resp=resp)
+
+
+def _cli_bullet(text: str, width: int = 80) -> str:
+    """An ``i`` bullet as rlang/cli format it: whitespace collapsed, wrapped at *width*."""
+    from pytacheck.llm.types import _nchar_w
+
+    lead = " " if text[:1].isspace() else ""
+    words = text.split()
+    cur = "ℹ " + lead + (words[0] if words else "")
+    lines = []
+    for w in words[1:]:
+        if _nchar_w(cur) + 1 + _nchar_w(w) <= width:
+            cur += " " + w
+        else:
+            lines.append(cur)
+            cur = "  " + w
+    lines.append(cur)
+    return "\n".join(lines)
 
 
 def perform(
@@ -391,7 +412,12 @@ def perform(
         hdrs.setdefault("Content-Type", "application/json")
     rec = _Recorder(http.client())
     resp = http.request(
-        method, url, max_tries=max_tries, retry_statuses=tuple(transient), http=rec, **kwargs
+        method,
+        url,
+        max_tries=max_tries,
+        retry_statuses=tuple(transient),
+        http=rec,  # type: ignore[arg-type] # duck-typed client recording transport errors
+        **kwargs,
     )
     if resp is None:
         raise _transport_error(rec.exc, url)
@@ -478,7 +504,7 @@ class Provider:
     def chat_path(self) -> str:
         return "/chat/completions"
 
-    def chat_url(self, model: Model) -> str:
+    def chat_url(self, model: Model) -> str:  # noqa: ARG002
         return _url(self.base_url, self.chat_path())
 
     def chat_body(self, model: Model, turns: list[Turn], type: Type | None) -> dict[str, Any]:
@@ -495,16 +521,16 @@ class Provider:
         headers = {**self.auth_headers(), **self.extra_headers}
         return self.chat_url(model), headers, body
 
-    def error_body(self, resp: httpx.Response) -> str | None:
+    def error_body(self, resp: httpx.Response) -> str | None:  # noqa: ARG002
         return None
 
     def value_turn(self, model: Model, result: Any, has_type: bool) -> Turn:
         raise NotImplementedError
 
-    def uses_tool_structured_output(self, model: Model, type: Type | None) -> bool:
+    def uses_tool_structured_output(self, model: Model, type: Type | None) -> bool:  # noqa: ARG002
         return False
 
-    def needs_wrapper(self, type: Type) -> bool:
+    def needs_wrapper(self, type: Type) -> bool:  # noqa: ARG002
         return False
 
     def perform(self, url: str, headers: dict[str, str], body: Any) -> httpx.Response:
@@ -536,7 +562,7 @@ def _modify_list(x: dict[str, Any], y: Mapping[str, Any]) -> dict[str, Any]:
 class ProviderOpenAICompatible(Provider):
     name = "OpenAI-compatible"
     schema_kind = "openai"
-    param_map: Mapping[str, str] = {
+    param_map: ClassVar[Mapping[str, str]] = {
         "frequency_penalty": "frequency_penalty",
         "logprobs": "log_probs",
         "max_completion_tokens": "max_tokens",
@@ -594,7 +620,7 @@ class ProviderOpenAICompatible(Provider):
     def needs_wrapper(self, type: Type) -> bool:
         return not isinstance(type, TypeObject | TypeJsonSchema)
 
-    def value_turn(self, model: Model, result: Any, has_type: bool) -> Turn:
+    def value_turn(self, model: Model, result: Any, has_type: bool) -> Turn:  # noqa: ARG002
         choice = (result.get("choices") or [{}])[0] if isinstance(result, dict) else {}
         message = choice.get("delta") if "delta" in choice else choice.get("message")
         message = message or {}
@@ -635,7 +661,7 @@ class ProviderGroq(ProviderOpenAICompatible):
 
 class ProviderDeepSeek(ProviderOpenAICompatible):
     name = "DeepSeek"
-    param_map = {
+    param_map: ClassVar[Mapping[str, str]] = {
         "frequency_penalty": "frequency_penalty",
         "max_tokens": "max_tokens",
         "presence_penalty": "presence_penalty",
@@ -663,7 +689,7 @@ class ProviderDeepSeek(ProviderOpenAICompatible):
 
 class ProviderMistral(ProviderOpenAICompatible):
     name = "Mistral"
-    param_map = {
+    param_map: ClassVar[Mapping[str, str]] = {
         "temperature": "temperature",
         "top_p": "top_p",
         "frequency_penalty": "frequency_penalty",
@@ -688,7 +714,7 @@ class ProviderMistral(ProviderOpenAICompatible):
 class ProviderOllama(ProviderOpenAICompatible):
     name = "Ollama"
     schema_kind = "ollama"
-    param_map = {
+    param_map: ClassVar[Mapping[str, str]] = {
         "frequency_penalty": "frequency_penalty",
         "presence_penalty": "presence_penalty",
         "seed": "seed",
@@ -703,7 +729,7 @@ class ProviderOllama(ProviderOpenAICompatible):
 
 class ProviderOpenRouter(ProviderOpenAICompatible):
     name = "OpenRouter"
-    param_map = {
+    param_map: ClassVar[Mapping[str, str]] = {
         "temperature": "temperature",
         "top_p": "top_p",
         "top_k": "top_k",
@@ -738,7 +764,7 @@ class ProviderVllm(ProviderOpenAICompatible):
 
 class ProviderLMStudio(ProviderOpenAICompatible):
     name = "LM Studio"
-    param_map = {
+    param_map: ClassVar[Mapping[str, str]] = {
         "frequency_penalty": "frequency_penalty",
         "max_tokens": "max_tokens",
         "presence_penalty": "presence_penalty",
@@ -756,7 +782,7 @@ class ProviderHuggingFace(ProviderOpenAICompatible):
 
 class ProviderPerplexity(ProviderOpenAICompatible):
     name = "Perplexity"
-    param_map = {
+    param_map: ClassVar[Mapping[str, str]] = {
         "max_tokens": "max_tokens",
         "temperature": "temperature",
         "top_p": "top_p",
@@ -791,7 +817,7 @@ class ProviderAzureOpenAI(ProviderOpenAICompatible):
             return {str(k): str(v) for k, v in cred.items()}
         return {"api-key": str(cred)} if cred else {}
 
-    def chat_url(self, model: Model) -> str:
+    def chat_url(self, model: Model) -> str:  # noqa: ARG002
         return _url(self.base_url, self.chat_path()) + f"?api-version={self.api_version}"
 
 
@@ -799,7 +825,7 @@ class ProviderOpenAI(ProviderOpenAICompatible):
     """OpenAI's Responses API (``/responses``)."""
 
     name = "OpenAI"
-    param_map = {
+    param_map: ClassVar[Mapping[str, str]] = {
         "temperature": "temperature",
         "top_p": "top_p",
         "frequency_penalty": "frequency_penalty",
@@ -854,7 +880,7 @@ class ProviderOpenAI(ProviderOpenAICompatible):
         body["service_tier"] = self.service_tier
         return body
 
-    def value_turn(self, model: Model, result: Any, has_type: bool) -> Turn:
+    def value_turn(self, model: Model, result: Any, has_type: bool) -> Turn:  # noqa: ARG002
         contents: list[Any] = []
         for output in (result or {}).get("output") or []:
             kind = output.get("type")
@@ -891,7 +917,7 @@ def has_claude_structured_output(model: str) -> bool:
 class ProviderAnthropic(Provider):
     name = "Anthropic"
     transient = (429, 503, 529)
-    param_map = {
+    param_map: ClassVar[Mapping[str, str]] = {
         "temperature": "temperature",
         "top_p": "top_p",
         "top_k": "top_k",
@@ -943,7 +969,7 @@ class ProviderAnthropic(Provider):
         for i, t in enumerate(turns):
             if t.role == "system":
                 continue
-            content = []
+            content: list[dict[str, Any]] = []
             for c in t.contents:
                 if isinstance(c, ContentText):
                     text = c.text or ""
@@ -971,7 +997,9 @@ class ProviderAnthropic(Provider):
         tool_choice = None
         output_config: dict[str, Any] | None = None
         if type is not None:
-            if has_claude_structured_output(model.name) and not type_has_additional_properties(type):
+            if has_claude_structured_output(model.name) and not type_has_additional_properties(
+                type
+            ):
                 output_config = {
                     "format": {"type": "json_schema", "schema": type_as_json(type, "generic")}
                 }
@@ -989,7 +1017,9 @@ class ProviderAnthropic(Provider):
         thinking = None
         if "reasoning_effort" in prm:
             thinking = {"type": "adaptive"}
-            output_config = _modify_list(output_config or {}, {"effort": prm.pop("reasoning_effort")})
+            output_config = _modify_list(
+                output_config or {}, {"effort": prm.pop("reasoning_effort")}
+            )
         elif "budget_tokens" in prm:
             thinking = {"type": "enabled", "budget_tokens": prm.pop("budget_tokens")}
         body: dict[str, Any] = {"model": model.name}
@@ -1039,10 +1069,16 @@ class ProviderAnthropic(Provider):
                     contents.append(ContentToolRequest(content.get("id"), content.get("name"), inp))
             elif kind == "thinking":
                 contents.append(
-                    ContentThinking(content.get("thinking", ""), {"signature": content.get("signature")})
+                    ContentThinking(
+                        content.get("thinking", ""), {"signature": content.get("signature")}
+                    )
                 )
-            elif kind in ("fallback", "server_tool_use", "web_search_tool_result",
-                          "web_fetch_tool_result"):
+            elif kind in (
+                "fallback",
+                "server_tool_use",
+                "web_search_tool_result",
+                "web_fetch_tool_result",
+            ):
                 continue
             else:
                 raise LLMError(f'Unknown content type "{kind}".')
@@ -1052,7 +1088,7 @@ class ProviderAnthropic(Provider):
 class ProviderGoogleGemini(Provider):
     name = "Google/Gemini"
     schema_kind = "gemini"
-    param_map = {
+    param_map: ClassVar[Mapping[str, str]] = {
         "temperature": "temperature",
         "topP": "top_p",
         "topK": "top_k",
@@ -1099,7 +1135,7 @@ class ProviderGoogleGemini(Provider):
         for t in turns:
             if t.role == "system":
                 continue
-            parts = []
+            parts: list[dict[str, Any]] = []
             for c in t.contents:
                 if isinstance(c, ContentText):
                     if c.text != "":
@@ -1124,7 +1160,7 @@ class ProviderGoogleGemini(Provider):
         err = body.get("error") if isinstance(body, dict) else None
         return err.get("message") if isinstance(err, dict) else None
 
-    def value_turn(self, model: Model, result: Any, has_type: bool) -> Turn:
+    def value_turn(self, model: Model, result: Any, has_type: bool) -> Turn:  # noqa: ARG002
         cands = (result or {}).get("candidates") or [{}]
         message = cands[0].get("content") or {}
         contents: list[Any] = []
@@ -1138,7 +1174,9 @@ class ProviderGoogleGemini(Provider):
                     contents.append(ContentText(part["text"]))
             elif "functionCall" in part:
                 fc = part["functionCall"]
-                contents.append(ContentToolRequest(fc.get("name"), fc.get("name", ""), fc.get("args")))
+                contents.append(
+                    ContentToolRequest(fc.get("name"), fc.get("name", ""), fc.get("args"))
+                )
         return Turn("assistant", contents, result)
 
 
@@ -1191,7 +1229,8 @@ class Chat:
         return None
 
     def _submit(self, text: str | None, type: Type | None) -> Turn:
-        user = Turn("user", [ContentText(text)])
+        # as_content(): a missing string is pasted, becoming "NA"
+        user = Turn("user", [ContentText("NA" if text is None else text)])
         turns = [*self._turns, user]
         url, headers, body = self.provider.build_request(self.model, turns, type)
         resp = self.provider.perform(url, headers, body)
@@ -1300,72 +1339,144 @@ def chat_openai_compatible_like(
     return _mk(cls(base_url, cred), model, prm, api_args, system_prompt)
 
 
-def chat_groq(model: str | None = None, system_prompt: str | None = None, params: Any = None,
-              api_args: Any = None, base_url: str = "https://api.groq.com/openai/v1") -> Chat:
+def chat_groq(
+    model: str | None = None,
+    system_prompt: str | None = None,
+    params: Any = None,
+    api_args: Any = None,
+    base_url: str = "https://api.groq.com/openai/v1",
+) -> Chat:
     """Port of ``ellmer::chat_groq()``."""
     return chat_openai_compatible_like(
-        ProviderGroq, base_url, "GROQ_API_KEY", "openai/gpt-oss-20b", model, system_prompt,
-        params, api_args,
+        ProviderGroq,
+        base_url,
+        "GROQ_API_KEY",
+        "openai/gpt-oss-20b",
+        model,
+        system_prompt,
+        params,
+        api_args,
     )
 
 
-def chat_openai(model: str | None = None, system_prompt: str | None = None, params: Any = None,
-                api_args: Any = None, base_url: str = "https://api.openai.com/v1",
-                service_tier: str = "auto") -> Chat:
+def chat_openai(
+    model: str | None = None,
+    system_prompt: str | None = None,
+    params: Any = None,
+    api_args: Any = None,
+    base_url: str = "https://api.openai.com/v1",
+    service_tier: str = "auto",
+) -> Chat:
     """Port of ``ellmer::chat_openai()`` (Responses API)."""
     model = _set_default(model, "gpt-5.6-terra")
     prov = ProviderOpenAI(base_url, lambda: _key_get("OPENAI_API_KEY"), service_tier=service_tier)
     return _mk(prov, model, params, api_args, system_prompt)
 
 
-def chat_deepseek(model: str | None = None, system_prompt: str | None = None, params: Any = None,
-                  api_args: Any = None, base_url: str = "https://api.deepseek.com") -> Chat:
+def chat_deepseek(
+    model: str | None = None,
+    system_prompt: str | None = None,
+    params: Any = None,
+    api_args: Any = None,
+    base_url: str = "https://api.deepseek.com",
+) -> Chat:
     """Port of ``ellmer::chat_deepseek()``."""
     return chat_openai_compatible_like(
-        ProviderDeepSeek, base_url, "DEEPSEEK_API_KEY", "deepseek-v4-flash", model,
-        system_prompt, params, api_args,
+        ProviderDeepSeek,
+        base_url,
+        "DEEPSEEK_API_KEY",
+        "deepseek-v4-flash",
+        model,
+        system_prompt,
+        params,
+        api_args,
     )
 
 
-def chat_mistral(model: str | None = None, system_prompt: str | None = None, params: Any = None,
-                 api_args: Any = None) -> Chat:
+def chat_mistral(
+    model: str | None = None,
+    system_prompt: str | None = None,
+    params: Any = None,
+    api_args: Any = None,
+) -> Chat:
     """Port of ``ellmer::chat_mistral()``."""
     return chat_openai_compatible_like(
-        ProviderMistral, "https://api.mistral.ai/v1/", "MISTRAL_API_KEY", "mistral-large-latest",
-        model, system_prompt, params, api_args,
+        ProviderMistral,
+        "https://api.mistral.ai/v1/",
+        "MISTRAL_API_KEY",
+        "mistral-large-latest",
+        model,
+        system_prompt,
+        params,
+        api_args,
     )
 
 
-def chat_openrouter(model: str | None = None, system_prompt: str | None = None,
-                    params: Any = None, api_args: Any = None) -> Chat:
+def chat_openrouter(
+    model: str | None = None,
+    system_prompt: str | None = None,
+    params: Any = None,
+    api_args: Any = None,
+) -> Chat:
     """Port of ``ellmer::chat_openrouter()``."""
     return chat_openai_compatible_like(
-        ProviderOpenRouter, "https://openrouter.ai/api/v1", "OPENROUTER_API_KEY",
-        "gpt-5.6-terra", model, system_prompt, params, api_args,
+        ProviderOpenRouter,
+        "https://openrouter.ai/api/v1",
+        "OPENROUTER_API_KEY",
+        "gpt-5.6-terra",
+        model,
+        system_prompt,
+        params,
+        api_args,
     )
 
 
-def chat_huggingface(model: str | None = None, system_prompt: str | None = None,
-                     params: Any = None, api_args: Any = None) -> Chat:
+def chat_huggingface(
+    model: str | None = None,
+    system_prompt: str | None = None,
+    params: Any = None,
+    api_args: Any = None,
+) -> Chat:
     """Port of ``ellmer::chat_huggingface()``."""
     return chat_openai_compatible_like(
-        ProviderHuggingFace, "https://router.huggingface.co/v1/", "HUGGINGFACE_API_KEY",
-        "Qwen/Qwen3-235B-A22B-Instruct-2507", model, system_prompt, params, api_args,
+        ProviderHuggingFace,
+        "https://router.huggingface.co/v1/",
+        "HUGGINGFACE_API_KEY",
+        "Qwen/Qwen3-235B-A22B-Instruct-2507",
+        model,
+        system_prompt,
+        params,
+        api_args,
     )
 
 
-def chat_perplexity(model: str | None = None, system_prompt: str | None = None,
-                    params: Any = None, api_args: Any = None,
-                    base_url: str = "https://api.perplexity.ai/") -> Chat:
+def chat_perplexity(
+    model: str | None = None,
+    system_prompt: str | None = None,
+    params: Any = None,
+    api_args: Any = None,
+    base_url: str = "https://api.perplexity.ai/",
+) -> Chat:
     """Port of ``ellmer::chat_perplexity()``."""
     return chat_openai_compatible_like(
-        ProviderPerplexity, base_url, "PERPLEXITY_API_KEY", "sonar", model, system_prompt,
-        params, api_args,
+        ProviderPerplexity,
+        base_url,
+        "PERPLEXITY_API_KEY",
+        "sonar",
+        model,
+        system_prompt,
+        params,
+        api_args,
     )
 
 
-def chat_portkey(model: str | None = None, system_prompt: str | None = None, params: Any = None,
-                 api_args: Any = None, base_url: str = "https://api.portkey.ai/v1") -> Chat:
+def chat_portkey(
+    model: str | None = None,
+    system_prompt: str | None = None,
+    params: Any = None,
+    api_args: Any = None,
+    base_url: str = "https://api.portkey.ai/v1",
+) -> Chat:
     """Port of ``ellmer::chat_portkey()``."""
     if not isinstance(model, str):
         raise LLMError(f"`model` must be a single string, not {_friendly(model)}.")
@@ -1376,9 +1487,14 @@ def chat_portkey(model: str | None = None, system_prompt: str | None = None, par
     return _mk(prov, model, params, api_args, system_prompt)
 
 
-def chat_vllm(base_url: str | None = None, model: str | None = None,
-              system_prompt: str | None = None, params: Any = None, api_args: Any = None,
-              credentials: Callable[[], str] | None = None) -> Chat:
+def chat_vllm(
+    base_url: str | None = None,
+    model: str | None = None,
+    system_prompt: str | None = None,
+    params: Any = None,
+    api_args: Any = None,
+    credentials: Callable[[], str] | None = None,
+) -> Chat:
     """Port of ``ellmer::chat_vllm()``."""
     if not isinstance(base_url, str):
         raise LLMError(f"`base_url` must be a single string, not {_friendly(base_url)}.")
@@ -1391,9 +1507,13 @@ def chat_vllm(base_url: str | None = None, model: str | None = None,
     return _mk(ProviderVllm(base_url, cred), model, params, api_args, system_prompt)
 
 
-def chat_lmstudio(model: str | None = None, system_prompt: str | None = None,
-                  params: Any = None, api_args: Any = None,
-                  base_url: str | None = None) -> Chat:
+def chat_lmstudio(
+    model: str | None = None,
+    system_prompt: str | None = None,
+    params: Any = None,
+    api_args: Any = None,
+    base_url: str | None = None,
+) -> Chat:
     """Port of ``ellmer::chat_lmstudio()``."""
     base = base_url or os.environ.get("LMSTUDIO_BASE_URL", "http://localhost:1234")
     key = os.environ.get("LMSTUDIO_API_KEY", "")
@@ -1407,12 +1527,18 @@ def chat_lmstudio(model: str | None = None, system_prompt: str | None = None,
         )
     if model not in ids:
         raise LLMError(f'Model "{model}" is not available in LM Studio.')
-    return _mk(ProviderLMStudio(_url(base, "v1"), lambda: key), model, params, api_args,
-               system_prompt)
+    return _mk(
+        ProviderLMStudio(_url(base, "v1"), lambda: key), model, params, api_args, system_prompt
+    )
 
 
-def chat_ollama(model: str | None = None, system_prompt: str | None = None, params: Any = None,
-                api_args: Any = None, base_url: str | None = None) -> Chat:
+def chat_ollama(
+    model: str | None = None,
+    system_prompt: str | None = None,
+    params: Any = None,
+    api_args: Any = None,
+    base_url: str | None = None,
+) -> Chat:
     """Port of ``ellmer::chat_ollama()`` (OpenAI-compatible ``/v1`` endpoint)."""
     base = base_url or _ollama_base()
     key = os.environ.get("OLLAMA_API_KEY", "")
@@ -1434,19 +1560,27 @@ def chat_ollama(model: str | None = None, system_prompt: str | None = None, para
     return _mk(prov, model, params, api_args, system_prompt)
 
 
-def chat_google_gemini(model: str | None = None, system_prompt: str | None = None,
-                       params: Any = None, api_args: Any = None,
-                       base_url: str = "https://generativelanguage.googleapis.com/v1beta/") -> Chat:
+def chat_google_gemini(
+    model: str | None = None,
+    system_prompt: str | None = None,
+    params: Any = None,
+    api_args: Any = None,
+    base_url: str = "https://generativelanguage.googleapis.com/v1beta/",
+) -> Chat:
     """Port of ``ellmer::chat_google_gemini()``."""
     model = _set_default(model, "gemini-3.7-flash")
     key = _google_key()
-    return _mk(ProviderGoogleGemini(base_url, lambda: key), model, params, api_args,
-               system_prompt)
+    return _mk(ProviderGoogleGemini(base_url, lambda: key), model, params, api_args, system_prompt)
 
 
-def chat_anthropic(model: str | None = None, system_prompt: str | None = None,
-                   params: Any = None, api_args: Any = None, base_url: str | None = None,
-                   cache: str = "5m") -> Chat:
+def chat_anthropic(
+    model: str | None = None,
+    system_prompt: str | None = None,
+    params: Any = None,
+    api_args: Any = None,
+    base_url: str | None = None,
+    cache: str = "5m",
+) -> Chat:
     """Port of ``ellmer::chat_anthropic()`` / ``chat_claude()``."""
     model = _set_default(model, "claude-sonnet-5")
     prov = ProviderAnthropic(
@@ -1455,8 +1589,12 @@ def chat_anthropic(model: str | None = None, system_prompt: str | None = None,
     return _mk(prov, model, params, api_args, system_prompt)
 
 
-def chat_cloudflare(model: str | None = None, system_prompt: str | None = None,
-                    params: Any = None, api_args: Any = None) -> Chat:
+def chat_cloudflare(
+    model: str | None = None,
+    system_prompt: str | None = None,
+    params: Any = None,
+    api_args: Any = None,
+) -> Chat:
     """Port of ``ellmer::chat_cloudflare()``."""
     model = _set_default(model, "@cf/meta/llama-3.3-70b-instruct-fp8-fast")
     account = _key_get("CLOUDFLARE_ACCOUNT_ID")
@@ -1465,9 +1603,14 @@ def chat_cloudflare(model: str | None = None, system_prompt: str | None = None,
     return _mk(prov, model, params, api_args, system_prompt)
 
 
-def chat_azure_openai(model: str | None = None, system_prompt: str | None = None,
-                      params: Any = None, api_args: Any = None, endpoint: str | None = None,
-                      api_version: str | None = None) -> Chat:
+def chat_azure_openai(
+    model: str | None = None,
+    system_prompt: str | None = None,
+    params: Any = None,
+    api_args: Any = None,
+    endpoint: str | None = None,
+    api_version: str | None = None,
+) -> Chat:
     """Port of ``ellmer::chat_azure_openai()`` (API-key authentication)."""
     endpoint = endpoint or os.environ.get("AZURE_OPENAI_ENDPOINT") or None
     if not isinstance(endpoint, str):
@@ -1482,7 +1625,7 @@ def chat_azure_openai(model: str | None = None, system_prompt: str | None = None
     return _mk(prov, model, params, api_args, system_prompt)
 
 
-def chat_github(*args: Any, **kwargs: Any) -> Chat:
+def chat_github(*args: Any, **kwargs: Any) -> Chat:  # noqa: ARG001
     """``ellmer::chat_github()`` is defunct (GitHub Models was retired)."""
     raise LLMError(
         "`chat_github()` was deprecated in ellmer 0.5.0 and is now defunct.\n"
@@ -1512,6 +1655,69 @@ _CHAT_FUNS: dict[str, Callable[..., Chat]] = {
 #: ellmer providers pytacheck does not implement (they need cloud SDK auth).
 _UNSUPPORTED = ("aws_bedrock", "databricks", "google_vertex", "posit", "snowflake")
 
+#: ``chat_*`` functions in ellmer's namespace that are not provider
+#: constructors (no ``model``/``system_prompt``/``params`` arguments):
+#: ``ellmer::chat()`` finds them but refuses them.
+_NOT_CONSTRUCTORS = frozenset(
+    {
+        "anthropic_test", "aws_bedrock_test", "azure_openai_test", "body", "body_tools",
+        "cloudflare_test", "google_gemini_test", "huggingface_test", "lmstudio_test",
+        "ollama_test", "openrouter_test", "params", "path", "perform", "perform_async_stream",
+        "perform_stream", "portkey_test", "request", "resp_stream", "vllm_test",
+    }
+)  # fmt: skip
+
+
+def _cli_wrap(text: str, width: int = 72) -> str:
+    """A cli error header wrapped as ``conditionMessage()`` shows it (72 columns)."""
+    from pytacheck.llm.types import _nchar_w
+
+    words = text.split(" ")
+    lines: list[str] = []
+    cur = ""
+    for w in words:
+        if cur and _nchar_w(cur) + 1 + _nchar_w(w) > width:
+            lines.append(cur)
+            cur = w
+        else:
+            cur = f"{cur} {w}" if cur else w
+    lines.append(cur)
+    return "\n".join(lines)
+
+
+def _r_strsplit_fixed(x: str, sep: str) -> list[str]:
+    """``strsplit(x, sep, fixed = TRUE)[[1]]``: no trailing empty piece."""
+    if x == "":
+        return []
+    pieces = x.split(sep)
+    if len(pieces) > 1 and pieces[-1] == "":
+        pieces.pop()
+    return pieces
+
+
+def _unsupported_provider(provider: str) -> LLMError:
+    """What ``chat("<provider>/...")`` fails with for a provider pytacheck lacks.
+
+    The argument checks ellmer runs before any authentication are reproduced
+    (so a missing setting reports what R reports); past them, pytacheck
+    cannot authenticate (cloud SDK/OAuth credentials).
+    """
+    if provider == "google_vertex":
+        for arg, env in (("location", "GOOGLE_CLOUD_LOCATION"), ("project_id", "GOOGLE_CLOUD_PROJECT")):
+            if not os.environ.get(env, ""):
+                return LLMError(f'`{arg}` must be a single string, not the empty string "".')
+    elif provider == "snowflake":
+        if not os.environ.get("SNOWFLAKE_ACCOUNT", ""):
+            return LLMError("Can't find env var `SNOWFLAKE_ACCOUNT`.")
+    elif provider == "databricks":
+        cfg = os.path.join(os.path.expanduser("~"), ".databrickscfg")
+        if not os.environ.get("DATABRICKS_HOST", "") and not os.path.exists(cfg):
+            return LLMError("No env var `DATABRICKS_HOST` set or valid '~/.databrickscfg' found.")
+    return LLMError(
+        f"pytacheck does not implement the `{provider}` provider; use an "
+        "OpenAI-compatible, Gemini or Anthropic model."
+    )
+
 
 def chat(
     name: str,
@@ -1522,13 +1728,24 @@ def chat(
     """Port of ``ellmer::chat("provider/model", ...)``."""
     if not isinstance(name, str) or not name:
         raise LLMError(f"`name` must be a single string, not {_friendly(name)}.")
-    pieces = name.split("/")
+    pieces = _r_strsplit_fixed(name, "/")
     provider = pieces[0]
     model = "/".join(pieces[1:]) if len(pieces) > 1 else None
     if provider in _UNSUPPORTED:
+        raise _unsupported_provider(provider)
+    if provider in _NOT_CONSTRUCTORS:
         raise LLMError(
-            f"pytacheck does not implement the `{provider}` provider; use an "
-            "OpenAI-compatible, Gemini or Anthropic model."
+            _cli_wrap(
+                f"`ellmer::chat()` does not support `ellmer::chat_{provider}()`, "
+                "please call it directly."
+            )
+        )
+    if provider == "vllm":
+        raise LLMError("`base_url` must be a single string, not absent.")
+    if provider == "openai_compatible":
+        raise LLMError(
+            "`base_url` is required for OpenAI-compatible APIs.\n"
+            "ℹ Use `chat_openai()` if you want to use OpenAI's official API."
         )
     fun = _CHAT_FUNS.get(provider)
     if fun is None:
@@ -1602,7 +1819,9 @@ def models_ollama(base_url: str = "http://localhost:11434") -> Any:
     df = pd.DataFrame(
         {
             "id": pd.Series([t[0] for t in tags], dtype="string"),
-            "created_at": pd.Series([_parse_r_datetime(t[1]) for t in tags], dtype="datetime64[ns, UTC]")
+            "created_at": pd.Series(
+                [_parse_r_datetime(t[1]) for t in tags], dtype="datetime64[ns, UTC]"
+            )
             if tags
             else pd.Series([], dtype="datetime64[ns, UTC]"),
             "size": pd.Series([t[2] for t in tags], dtype="float64"),
@@ -1619,8 +1838,7 @@ def models_ollama(base_url: str = "http://localhost:11434") -> Any:
 
 def _openai_models(base_url: str, key: str) -> list[dict[str, Any]]:
     headers = {"Authorization": f"Bearer {key}"} if key else {}
-    resp = perform("GET", _url(base_url, "/models"), headers=headers,
-                   error_body=_openai_error_body)
+    resp = perform("GET", _url(base_url, "/models"), headers=headers, error_body=_openai_error_body)
     data = resp_body_json(resp).get("data") or []
     return [d for d in data if isinstance(d, dict)]
 
@@ -1666,7 +1884,9 @@ def models_mistral() -> Any:
         {
             "id": pd.Series([str(d.get("id")) for d in data], dtype="string"),
             "name": pd.Series([d.get("name") for d in data], dtype="string"),
-            "created_at": pd.to_datetime([d.get("created") for d in data], unit="s", utc=True),
+            "created_at": pd.to_datetime(
+                pd.Series([d.get("created") for d in data], dtype="float64"), unit="s", utc=True
+            ),
         }
     )
 

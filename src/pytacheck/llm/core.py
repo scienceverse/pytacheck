@@ -24,10 +24,11 @@ import math
 import os
 import sys
 import threading
+import time
 import warnings
-from collections.abc import Mapping, Sequence
+from collections.abc import Iterable, Mapping, Sequence
 from contextlib import contextmanager
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, cast
 
 if TYPE_CHECKING:
     from collections.abc import Iterator
@@ -85,7 +86,6 @@ def _capture_messages() -> Iterator[list[str]]:
 # ---------------------------------------------------------------------------
 
 _init_lock = threading.Lock()
-_initialised = False
 
 #: Environment variables .onLoad() checks to pick the default model provider.
 _API_KEY_ENV = (
@@ -116,39 +116,35 @@ def _default_model_from_env() -> str | None:
 
 
 def _init_options() -> None:
-    """metacheck's ``.onLoad()`` LLM defaults, set once unless already set."""
-    global _initialised
-    if _initialised:
-        return
-    with _init_lock:
-        if _initialised:
-            return
-        from pytacheck.llm._rds import RInt
-        from pytacheck.utils import _options, _options_lock
+    """metacheck's ``.onLoad()`` LLM defaults (R/zzz.R), applied when this module loads.
 
-        defaults = {
-            "metacheck.llm_max_calls": RInt(30),
-            "metacheck.llm.model": _default_model_from_env(),
-            "metacheck.llm.use": False,
-        }
-        with _options_lock:
-            for k, v in defaults.items():
-                if k not in _options and v is not None:
-                    _options[k] = v
-        _initialised = True
+    ``metacheck.llm_max_calls = 30L`` and ``metacheck.llm.use = FALSE`` become
+    option-store defaults (:data:`pytacheck.utils._DEFAULTS`), so a
+    ``local_options()`` block entered before this module was imported cannot
+    delete them on exit. The default model (the first provider whose API key
+    is set) is set as an option unless one is already set, as ``.onLoad()``
+    does, so ``llm_model(None)`` can still unset it.
+    """
+    from pytacheck import utils
+    from pytacheck.llm._rds import RInt
+
+    with _init_lock:
+        utils._DEFAULTS.setdefault("metacheck.llm_max_calls", RInt(30))
+        utils._DEFAULTS.setdefault("metacheck.llm.use", False)
+        model = _default_model_from_env()
+        if model is not None and utils.get_option("metacheck.llm.model", _MISSING) is _MISSING:
+            utils.options({"metacheck.llm.model": model})
 
 
 def _get(name: str, default: Any = None) -> Any:
     from pytacheck.utils import get_option
 
-    _init_options()
     return get_option(name, default)
 
 
 def _set(name: str, value: Any) -> None:
     from pytacheck.utils import options
 
-    _init_options()
     options({name: value})
 
 
@@ -184,15 +180,15 @@ def llm_use(llm_use: Any = None) -> bool:
 def llm_model(model: Any = _MISSING) -> str | None:
     """Port of ``llm_model()``: get (no argument), set, or unset (``None``) the default model."""
     if model is _MISSING:
-        return _get("metacheck.llm.model")
+        return _get("metacheck.llm.model")  # type: ignore[no-any-return]
     if model is None:
         _set("metacheck.llm.model", None)
-        return _get("metacheck.llm.model")
+        return _get("metacheck.llm.model")  # type: ignore[no-any-return]
     if isinstance(model, str) or (
         isinstance(model, list | tuple) and all(isinstance(m, str) for m in model)
     ):
         _set("metacheck.llm.model", model)
-        return _get("metacheck.llm.model")
+        return _get("metacheck.llm.model")  # type: ignore[no-any-return]
     raise ValueError(
         "set llm_model with the name of a model, use `llm_model_list()` to get available models"
     )
@@ -208,6 +204,10 @@ def _set_count(option: str, n: Any) -> Any:
     if not _is_numeric(n):
         raise ValueError("n must be a number")
     if isinstance(n, float) and math.isnan(n):
+        raise ValueError("missing value where TRUE/FALSE needed")
+    if n >= 2147483648 or n <= -2147483648:
+        # as.integer() gives NA outside R's integer range; `if (NA < 1)` fails
+        warnings.warn("NAs introduced by coercion to integer range", stacklevel=3)
         raise ValueError("missing value where TRUE/FALSE needed")
     value = int(n)  # as.integer() truncates toward zero
     if value < 1:
@@ -253,11 +253,32 @@ def llm_reasoning(effort: str | None = None) -> str | None:
     """Port of ``llm_reasoning()``: default reasoning effort (low/medium/high/none)."""
     if effort is None:
         return _get("metacheck.llm_reasoning")  # type: ignore[no-any-return]
-    from pytacheck.utils import match_arg
-
-    effort = match_arg(effort, ["low", "medium", "high", "none"])
+    effort = _r_match_arg(effort, ["low", "medium", "high", "none"])
     _set("metacheck.llm_reasoning", effort)
     return _get("metacheck.llm_reasoning")  # type: ignore[no-any-return]
+
+
+def _r_match_arg(arg: Any, choices: Sequence[str]) -> str:
+    """R ``match.arg(arg, choices)`` (a non-``NULL`` *arg*)."""
+    if isinstance(arg, str):
+        vals: list[Any] = [arg]
+    elif isinstance(arg, list | tuple) and all(isinstance(a, str | None) for a in arg):
+        vals = list(arg)
+    else:
+        raise ValueError("'arg' must be NULL or a character vector")
+    if vals == list(choices):
+        return choices[0]
+    if len(vals) > 1:
+        raise ValueError("'arg' must be of length 1")
+    if vals and isinstance(vals[0], str) and vals[0]:
+        a = vals[0]
+        if a in choices:
+            return a
+        hits = [c for c in choices if c.startswith(a)]
+        if len(hits) == 1:
+            return hits[0]
+    quoted = ", ".join(f"“{c}”" for c in choices)
+    raise ValueError(f"'arg' should be one of {quoted}")
 
 
 def _llm_apply_reasoning(
@@ -273,7 +294,9 @@ def _llm_apply_reasoning(
     params_out = dict(params_list)
     args_out = dict(api_args or {})
     out = {"params_list": params_out, "api_args": args_out}
-    effort = _get("metacheck.llm_reasoning") or "low"
+    effort = _get("metacheck.llm_reasoning")
+    if effort is None:
+        effort = "low"
     m = model.lower()
     is_gpt_oss = "gpt-oss" in m
     is_qwen3 = "qwen3" in m
@@ -343,6 +366,18 @@ def _cond_resp(e: BaseException) -> Any:
     return resp
 
 
+def _r_dollar(x: Any, name: str) -> Any:
+    """R ``x$name`` on parsed JSON: exact, else unique partial match; ``NULL`` if none."""
+    if x is None or isinstance(x, list):  # NULL$x, unnamed list$x: NULL
+        return None
+    if not isinstance(x, dict):
+        raise TypeError("$ operator is invalid for atomic vectors")
+    if name in x:
+        return x[name]
+    hits = [k for k in x if k.startswith(name)]
+    return x[hits[0]] if len(hits) == 1 else None
+
+
 def _llm_error_message(e: BaseException) -> str:
     """Port of ``.llm_error_message()``: the error text plus the provider's own reason."""
     from pytacheck.llm._json import parse_json
@@ -354,20 +389,13 @@ def _llm_error_message(e: BaseException) -> str:
     detail: Any = None
     try:
         body = parse_json(resp.content.decode("utf-8", "replace"))
-        if isinstance(body, dict):
-            err = body.get("error")
-            if isinstance(err, str):
-                detail = err
-            elif isinstance(err, dict):
-                detail = err.get("message")
-                if detail is None:
-                    detail = body.get("message")
-            elif err is None:
-                detail = body.get("message")
-            else:
-                raise TypeError("$ operator is invalid for atomic vectors")
+        err = _r_dollar(body, "error")
+        if isinstance(err, str):
+            detail = err
         else:
-            raise TypeError("$ operator is invalid for atomic vectors")
+            detail = _r_dollar(err, "message")
+            if detail is None:
+                detail = _r_dollar(body, "message")
     except Exception:
         detail = None
     if detail is None:
@@ -375,9 +403,7 @@ def _llm_error_message(e: BaseException) -> str:
             detail = resp.content.decode("utf-8", "replace")
         except Exception:
             detail = None
-    if isinstance(detail, list):
-        detail = detail[0] if detail and isinstance(detail[0], str) else None
-    if not isinstance(detail, str) or not detail:
+    if not isinstance(detail, str) or not detail:  # e.g. a number, object or array
         return msg
     if len(detail) > 500:
         detail = detail[:500] + " [truncated]"
@@ -474,8 +500,10 @@ def _make_names(names: Sequence[str], unique: bool = True) -> list[str]:
     out = []
     for n in names:
         s = "".join(c if (c.isalnum() or c in "._") else "." for c in n)
-        if not s or not (s[0].isalpha() or s[0] == ".") or (
-            s[0] == "." and len(s) > 1 and s[1].isdigit()
+        if (
+            not s
+            or not (s[0].isalpha() or s[0] == ".")
+            or (s[0] == "." and len(s) > 1 and s[1].isdigit())
         ):
             s = "X" + s
         if s in _RESERVED:
@@ -560,6 +588,29 @@ def _scalar_series(v: Any, n: int = 1) -> pd.Series:
     return pd.Series([str(v)] * n, dtype="string")
 
 
+def _is_scalar(v: Any) -> bool:
+    import pandas as pd
+
+    return v is None or v is pd.NA or isinstance(v, str | bool | int | float)
+
+
+def _list_series(vals: list[Any]) -> pd.Series:
+    """An R atomic vector from Python scalars (``c(...)`` coercion rules)."""
+    import pandas as pd
+
+    from pytacheck._r import as_character
+
+    present = [v for v in vals if v is not None and v is not pd.NA]
+    na = [None if (v is None or v is pd.NA) else v for v in vals]
+    if all(isinstance(v, bool) for v in present):
+        return pd.Series(na, dtype="boolean")
+    if all(isinstance(v, int) and not isinstance(v, bool) for v in present):
+        return pd.Series(na, dtype="Int64")
+    if all(isinstance(v, int | float) and not isinstance(v, bool) for v in present):
+        return pd.Series([float("nan") if v is None else float(v) for v in na], dtype="float64")
+    return pd.Series([None if v is None else as_character(v) for v in na], dtype="string")
+
+
 def _vec_series(v: Any) -> pd.Series:
     import pandas as pd
 
@@ -614,6 +665,12 @@ def _as_data_frame(x: Any, optional: bool = False) -> pd.DataFrame:
                 cols.append(sub[c].reset_index(drop=True))
                 names.append(lab)
             nrows.append(len(sub))
+        elif isinstance(v, list | tuple) and all(_is_scalar(e) for e in v):
+            # a Python list of scalars is an atomic vector (as jsonlite/yaml simplify)
+            s = _list_series(list(v))
+            cols.append(s)
+            names.append(name if name else f"V{idx + 1}")
+            nrows.append(len(s))
         elif isinstance(v, list | tuple):
             sub = _as_data_frame(list(v), optional=True)
             for j, c in enumerate(sub.columns):
@@ -646,7 +703,7 @@ def _as_data_frame(x: Any, optional: bool = False) -> pd.DataFrame:
             )
     if not optional:
         names = _make_names(names)
-    out = pd.DataFrame({i: c for i, c in enumerate(cols)})
+    out = pd.DataFrame(dict(enumerate(cols)))
     out.columns = names
     return out
 
@@ -665,7 +722,22 @@ def _col_kind(s: pd.Series) -> str:
         return "dbl"
     if pd.api.types.is_string_dtype(dt) and not pd.api.types.is_object_dtype(dt):
         return "chr"
+    if pd.api.types.is_object_dtype(dt):
+        # an object column of scalars is the R atomic vector it holds (pandas
+        # code often builds text columns with dtype=object)
+        inferred = pd.api.types.infer_dtype(s, skipna=True)
+        return _INFERRED_KIND.get(inferred, "list")
     return "list"
+
+
+_INFERRED_KIND = {
+    "string": "chr",
+    "boolean": "lgl",
+    "integer": "int",
+    "floating": "dbl",
+    "mixed-integer-float": "dbl",
+    "empty": "lgl",
+}
 
 
 def _bind_rows_r(frames: Sequence[Any]) -> pd.DataFrame:
@@ -732,7 +804,13 @@ def _combine_kinds(kinds: list[str], col: str) -> str:
     if "list" in ks:
         return "list"
     first, other = kinds[0], next(k for k in kinds if k != kinds[0])
-    names = {"lgl": "logical", "int": "integer", "dbl": "double", "chr": "character", "fct": "factor<>"}
+    names = {
+        "lgl": "logical",
+        "int": "integer",
+        "dbl": "double",
+        "chr": "character",
+        "fct": "factor<>",
+    }
     raise ValueError(
         f"Can't combine `..1${col}` <{names.get(first, first)}> and `..2${col}` "
         f"<{names.get(other, other)}>."
@@ -754,10 +832,9 @@ def _convert_kind(s: pd.Series, target: str) -> pd.Series:
     if dtype is None:
         return s
     if _col_kind(s) == "lgl" and s.isna().all():
-        return pd.Series([pd.NA] * len(s), dtype=dtype if dtype != "float64" else "Float64").astype(
-            dtype
-        )
-    return s.astype(dtype)
+        na = pd.Series([pd.NA] * len(s), dtype="Float64" if dtype == "float64" else dtype)
+        return na.astype(cast(Any, dtype))
+    return s.astype(cast(Any, dtype))
 
 
 def _unnest_result(result: Any) -> pd.DataFrame:
@@ -806,24 +883,34 @@ def _left_join(
     import numpy as np
     import pandas as pd
 
-    def keys(s: pd.Series, side: str) -> list[Any]:
+    def keys(s: pd.Series) -> list[Any]:
         kind = _col_kind(s)
-        return [None if pd.isna(v) else (str(v) if kind in ("chr", "fct", "list") else v)
-                for v in s.astype(object).tolist()]
+        return [
+            None if pd.isna(v) else (str(v) if kind in ("chr", "fct", "list") else v)
+            for v in s.astype(object).tolist()
+        ]
 
     kx, ky = _col_kind(x[by]), _col_kind(y[by]) if by in y.columns else "chr"
     textual = {"chr", "fct"}
-    if (kx in textual) != (ky in textual) and not (
-        _col_kind(y[by]) == "lgl" and y[by].isna().all()
-    ) and not (kx == "lgl" and x[by].isna().all()):
-        rnames = {"int": "integer", "dbl": "double", "lgl": "logical", "chr": "character",
-                  "fct": "factor<>", "list": "list"}
+    if (
+        (kx in textual) != (ky in textual)
+        and not (_col_kind(y[by]) == "lgl" and y[by].isna().all())
+        and not (kx == "lgl" and x[by].isna().all())
+    ):
+        rnames = {
+            "int": "integer",
+            "dbl": "double",
+            "lgl": "logical",
+            "chr": "character",
+            "fct": "factor<>",
+            "list": "list",
+        }
         raise TypeError(
             f"Can't join `x${by}` with `y${by}` due to incompatible types.\n"
             f"ℹ `x${by}` is a <{rnames[kx]}>.\nℹ `y${by}` is a <{rnames[ky]}>."
         )
-    xk = keys(x[by], "x")
-    yk = keys(y[by], "y")
+    xk = keys(x[by])
+    yk = keys(y[by])
     index: dict[Any, list[int]] = {}
     for j, k in enumerate(yk):
         index.setdefault(k, []).append(j)
@@ -903,7 +990,7 @@ def _platform_funcs() -> dict[str, Any]:
         "ollama": lambda: p.models_ollama(),
         "openai": p.models_openai,
         "portkey": p.models_portkey,
-        "vllm": lambda: p.models_vllm(),  # needs base_url: always errors, as in R
+        "vllm": lambda: p.models_vllm(),  # type: ignore[call-arg] # no base_url: errors, as in R
     }
     return {k: funcs[k] for k in _PLATFORM_ORDER if k in _LLM_ALLOWED_PLATFORMS}
 
@@ -919,10 +1006,12 @@ def llm_model_list(platform: str | Sequence[str] | None = None) -> pd.DataFrame:
     from pytacheck.utils import online
 
     funcs = _platform_funcs()
-    plats = list(funcs) if platform is None else (
-        [platform] if isinstance(platform, str) else list(platform)
+    plats = (
+        list(funcs)
+        if platform is None
+        else ([platform] if isinstance(platform, str) else list(platform))
     )
-    invalid = [p for p in plats if p not in funcs]
+    invalid = list(dict.fromkeys(p for p in plats if p not in funcs))  # setdiff(): unique
     if invalid:
         raise ValueError("Invalid platforms: " + ", ".join(invalid))
     frames = []
@@ -930,7 +1019,10 @@ def llm_model_list(platform: str | Sequence[str] | None = None) -> pd.DataFrame:
         if p != "ollama" and not online():
             continue
         try:
-            if p in ("google_gemini", "google_vertex") and os.environ.get("GOOGLE_API_KEY", "") == "":
+            if (
+                p in ("google_gemini", "google_vertex")
+                and os.environ.get("GOOGLE_API_KEY", "") == ""
+            ):
                 continue
             m = funcs[p]()
             if not isinstance(m, pd.DataFrame):
@@ -938,7 +1030,7 @@ def llm_model_list(platform: str | Sequence[str] | None = None) -> pd.DataFrame:
             m = m.copy()
             m["platform"] = pd.Series([p] * len(m), index=m.index, dtype="string")
             frames.append(m.reset_index(drop=True))
-        except Exception:
+        except Exception:  # noqa: S112 - R: tryCatch(..., error = \(e) {})
             continue
     all_models = _bind_rows_r(frames) if frames else pd.DataFrame()
     if len(all_models):
@@ -1044,25 +1136,57 @@ def _ollama_up(base_url: str) -> bool:
 
 
 def _text_frame(text: Any, text_col: str) -> pd.DataFrame:
+    """``data.frame(text = text)`` named *text_col* (a data frame passes through).
+
+    Python scalars and sequences become the R vector they denote: ints an
+    integer column, numbers a double one, booleans a logical one, anything
+    else character. ``None`` is R's ``NULL``, which ``data.frame()`` cannot
+    name.
+    """
+    import numpy as np
     import pandas as pd
 
     from pytacheck._r import as_character
 
     if isinstance(text, pd.DataFrame):
         return text
-    if isinstance(text, pd.Series):
-        s = text.reset_index(drop=True)
+    if text is None:
+        raise ValueError("'names' attribute [1] must be the same length as the vector [0]")
+    if isinstance(text, pd.Series | pd.Index | np.ndarray):
+        s = pd.Series(np.asarray(text) if isinstance(text, pd.Index) else text).reset_index(
+            drop=True
+        )
+        kind = _col_kind(s)
+        if kind in ("int", "dbl", "lgl"):
+            return pd.DataFrame({text_col: s.astype(_KIND_DTYPE[kind])})  # type: ignore[call-overload]
+        if kind in ("chr", "fct"):
+            return pd.DataFrame({text_col: s if kind == "fct" else s.astype("string")})
+        vals = s.tolist()
+    elif isinstance(text, str | bytes) or not isinstance(text, Iterable) or isinstance(
+        text, Mapping
+    ):
+        vals = [text]
     else:
-        vals = [text] if isinstance(text, str) or not isinstance(text, Sequence) else list(text)
-        kinds = {type(v) for v in vals if v is not None and not (isinstance(v, float) and math.isnan(v))}
-        if kinds and kinds <= {int}:
-            s = pd.Series(vals, dtype="Int64")
-        elif kinds and kinds <= {int, float}:
-            s = pd.Series(vals, dtype="float64")
-        elif kinds and kinds <= {bool}:
-            s = pd.Series(vals, dtype="boolean")
-        else:
-            s = pd.Series([as_character(v) for v in vals], dtype="string")
+        vals = list(text)
+    kinds = {
+        type(v) for v in vals if v is not None and not (isinstance(v, float) and math.isnan(v))
+    }
+    if kinds and kinds <= {int}:
+        s = pd.Series(vals, dtype="Int64")
+    elif kinds and kinds <= {int, float}:
+        s = pd.Series([math.nan if v is None else v for v in vals], dtype="float64")
+    elif kinds and kinds <= {bool}:
+        s = pd.Series(vals, dtype="boolean")
+    else:
+        # bytes are text in an unknown encoding (R: a string that may not be
+        # valid UTF-8); .llm_sanitise_text() reinterprets them as R does
+        s = pd.Series(
+            [
+                v.decode("utf-8", "surrogateescape") if isinstance(v, bytes) else as_character(v)
+                for v in vals
+            ],
+            dtype="string",
+        )
     return pd.DataFrame({text_col: s})
 
 
@@ -1132,6 +1256,7 @@ def llm(
 
     from pytacheck._r import plural, trimws
     from pytacheck.llm import providers as prov
+    from pytacheck.llm._rds import EllmerOutput
     from pytacheck.llm.cache import _llm_cache_get, _llm_cache_key, _llm_cache_put, llm_cache
     from pytacheck.llm.types import as_type
 
@@ -1236,65 +1361,62 @@ def llm(
             api_args=reasoning_api_args or None,
         )
 
-    if phase:
-        label = phase
-    else:
-        label = "Extracting data" if structured else "Querying LLM"
-    _message(f"{label} ({model}): {ncalls} call{plural(ncalls)}")
-
+    # R shows a progress bar labelled with the phase (or a generic label) and model
+    label = phase if phase else ("Extracting data" if structured else "Querying LLM")
+    label = f"{label} ({model})"
+    started = time.monotonic()
     use_cache = llm_cache()
-    responses: list[Any] = []
-    for i, ut in enumerate(unique_text):
+
+    def one(i: int, ut: str | None) -> Any:
         key = (
             _llm_cache_key(ut, system_prompt, type_obj, model, ellmer_params) if use_cache else None
         )
         if key is not None:
             hit = _llm_cache_get(key)
             if hit is not None:
-                responses.append(hit.get("df"))
-                continue
+                return hit.get("df")
         try:
             if use_ollama_native:
-                answer = _llm_ollama_native(
-                    ut, system_prompt, ollama_model, think=False, options=ollama_options
-                )
-                out = {"answer": answer}
+                out: Any = {
+                    "answer": _llm_ollama_native(
+                        ut, system_prompt, ollama_model, think=False, options=ollama_options
+                    )
+                }
                 if key is not None:
                     _llm_cache_put(key, out)
-                responses.append(out)
-            else:
-                with _capture_messages() as msgs:
-                    chat_obj = make_chat()
-                if msgs and i == 0:
-                    for m in msgs:
-                        _message(m)
-                if structured:
-                    for attempt in range(1, 6):
-                        try:
-                            result = chat_obj.chat_structured(ut, type=type_obj)
-                            break
-                        except Exception as e:  # noqa: BLE001 - R's tryCatch(error = )
-                            if attempt == 5 or not _llm_json_retryable(e):
-                                raise
-                            with _capture_messages():
-                                chat_obj = make_chat()
-                    df = _unnest_result(result)
-                    if len(df) > 0:
-                        df[".join_key."] = pd.Series([ut] * len(df), dtype="string")
-                    thinking = _llm_extract_thinking(chat_obj) if capture_reasoning else None
-                    if capture_reasoning and len(df) > 0:
-                        df[".reasoning"] = pd.Series([thinking] * len(df), dtype="string")
-                    if key is not None:
-                        _llm_cache_put(key, df, raw=result, thinking=_na_chr(thinking))
-                    responses.append(df)
-                else:
-                    answer = chat_obj.chat(ut)
-                    out = {"answer": trimws(answer)}
-                    if key is not None:
-                        # chat$chat() returns an "ellmer_output"; trimws() keeps the class
-                        _llm_cache_put(key, {"answer": _ellmer_output(out["answer"])})
-                    responses.append(out)
-        except Exception as e:  # noqa: BLE001 - R's tryCatch(error = )
+                return out
+            with _capture_messages() as msgs:
+                chat_obj = make_chat()
+            if msgs and i == 0:
+                for m in msgs:
+                    _message(m)
+            if not structured:
+                # chat$chat() returns an "ellmer_output"; trimws() keeps the class
+                out = {"answer": EllmerOutput(trimws(chat_obj.chat(ut)))}
+                if key is not None:
+                    _llm_cache_put(key, out)
+                return out
+            # Structured output: a reply that fails JSON generation/validation is
+            # retried with a fresh chat, up to five attempts in all.
+            for attempt in range(1, 6):
+                try:
+                    result = chat_obj.chat_structured(ut, type=type_obj)
+                    break
+                except Exception as e:
+                    if attempt == 5 or not _llm_json_retryable(e):
+                        raise
+                    with _capture_messages():
+                        chat_obj = make_chat()
+            df = _unnest_result(result)
+            if len(df) > 0:
+                df[".join_key."] = pd.Series([ut] * len(df), dtype="string")
+            thinking = _llm_extract_thinking(chat_obj) if capture_reasoning else None
+            if capture_reasoning and len(df) > 0:
+                df[".reasoning"] = pd.Series([thinking] * len(df), dtype="string")
+            if key is not None:
+                _llm_cache_put(key, df, raw=result, thinking=_na_chr(thinking))
+            return df
+        except Exception as e:
             msg = _llm_error_message(e)
             if _llm_is_systemic_error(e):
                 _llm_systemic_notice.trip(
@@ -1303,17 +1425,32 @@ def llm(
                     '(vllm reads Sys.getenv("VLLM_API_KEY")).\n  First error: ' + msg
                 )
             if structured:
-                responses.append(
-                    pd.DataFrame(
-                        {
-                            ".error": pd.Series([True], dtype="boolean"),
-                            ".error_msg": pd.Series([msg], dtype="string"),
-                            ".join_key.": pd.Series([ut], dtype="string"),
-                        }
-                    )
+                return pd.DataFrame(
+                    {
+                        ".error": pd.Series([True], dtype="boolean"),
+                        ".error_msg": pd.Series([msg], dtype="string"),
+                        ".join_key.": pd.Series([ut], dtype="string"),
+                    }
                 )
-            else:
-                responses.append({"answer": None, "error": True, "error_msg": msg})
+            return {"answer": pd.NA, "error": True, "error_msg": msg}
+
+    workers = _llm_workers()
+    if workers > 1 and ncalls > 1:
+        from concurrent.futures import ThreadPoolExecutor
+        from contextvars import copy_context
+
+        with ThreadPoolExecutor(max_workers=min(workers, ncalls)) as pool:
+            futures = [
+                pool.submit(copy_context().run, one, i, ut) for i, ut in enumerate(unique_text)
+            ]
+            responses = [f.result() for f in futures]
+    else:
+        responses = [one(i, ut) for i, ut in enumerate(unique_text)]
+    elapsed = int(time.monotonic() - started)
+    _message(
+        f"{label} {ncalls}/{ncalls} "
+        f"{elapsed // 3600:02d}:{elapsed % 3600 // 60:02d}:{elapsed % 60:02d}"
+    )
 
     if structured:
         response_df = _bind_rows_r([_as_frame_response(r) for r in responses])
@@ -1324,6 +1461,7 @@ def llm(
         answer_df = _left_join(x, response_df, ".join_key.", suffix=("", ".extracted"))
         answer_df = answer_df.drop(columns=[".join_key."])
     else:
+        _check_answer_classes(responses)
         response_df = _bind_rows_r([_as_data_frame(r) for r in responses])
         response_df[text_col] = pd.Series(unique_text, dtype="string")
         answer_df = _left_join(text_df, response_df, text_col)
@@ -1351,16 +1489,56 @@ def llm(
         # isTRUE(answer_df$error): only a single-row result can ever warn
         if answer_df["error"].iloc[0] is True or bool(answer_df["error"].fillna(False).iloc[0]):
             m = answer_df["error_msg"].iloc[0]
-            warnings.warn(
-                f"There were errors in the following rows: 1 \n  *  {m}", stacklevel=2
-            )
+            warnings.warn(f"There were errors in the following rows: 1 \n  *  {m}", stacklevel=2)
     return answer_df
 
 
-def _ellmer_output(x: str) -> Any:
-    from pytacheck.llm._rds import RVec
+def _llm_workers() -> int:
+    """Concurrent LLM requests per ``llm()`` call (pytacheck extension; default 1).
 
-    return RVec("chr", [x], {"class": RVec("chr", ["ellmer_output"])})
+    Set the ``pytacheck.llm.workers`` option or ``PYTACHECK_LLM_WORKERS`` to
+    send several texts at once; results, caching and errors are unchanged.
+    """
+    from pytacheck.utils import get_option
+
+    value = get_option("pytacheck.llm.workers") or os.environ.get("PYTACHECK_LLM_WORKERS") or 1
+    try:
+        return max(1, int(value))
+    except (TypeError, ValueError):
+        return 1
+
+
+def _check_answer_classes(responses: Sequence[Any]) -> None:
+    """``dplyr::bind_rows()`` of the answers: an ``ellmer_output`` answer cannot be
+    combined with a failed row's ``NA`` or with a plain string (vctrs errors)."""
+    import pandas as pd
+
+    from pytacheck.llm._rds import EllmerOutput
+
+    kinds = []
+    for r in responses:
+        a = r.get("answer") if isinstance(r, dict) else None
+        if isinstance(a, EllmerOutput):
+            kinds.append("eo")
+        elif a is None or a is pd.NA:
+            kinds.append("na")
+        else:
+            kinds.append("chr")
+    if not kinds:
+        return
+    labels = {"eo": "ellmer_output", "chr": "character", "na": "vctrs:::common_class_fallback"}
+    acc = kinds[0]
+    for k in range(1, len(kinds)):
+        cur = kinds[k]
+        if (acc == "eo") != (cur == "eo"):
+            if "chr" in (acc, cur):
+                raise TypeError(
+                    f"Can't combine `..1$answer` <{labels[acc]}> and "
+                    f"`..{k + 1}$answer` <{labels[cur]}>."
+                )
+            raise TypeError(f"Can't combine `..1` <{labels[acc]}> and `..{k + 1}` <{labels[cur]}>.")
+        if acc == "na" and cur == "chr":
+            acc = "chr"
 
 
 def _na_chr(x: str | None) -> Any:
@@ -1375,3 +1553,6 @@ def _as_frame_response(r: Any) -> pd.DataFrame:
     if isinstance(r, pd.DataFrame):
         return r
     return _as_data_frame(r)
+
+
+_init_options()

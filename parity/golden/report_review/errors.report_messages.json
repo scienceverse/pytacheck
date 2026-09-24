@@ -1,0 +1,84 @@
+{
+  "id": "errors.report_messages",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": null,
+    "v": [
+      {
+        "t": "list",
+        "names": [
+          "error"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "There were no modules that matched notamodule\nuse module_list() to see a list of built-in modules."
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "error"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "The paper argument must be a paper object (e.g., created with `read()`)"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "error"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "The output_file is not a valid path."
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "error"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "`path` must be a single path to a repository folder"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "error"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "No folder found at no/such/folder/here.\nCheck the path, or download the repository first with osf_file_download()."
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

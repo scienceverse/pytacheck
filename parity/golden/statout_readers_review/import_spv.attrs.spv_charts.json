@@ -3,13 +3,127 @@
   "ok": true,
   "error": null,
   "warnings": [
-    "spv: could not decode chart: Unescaped '<' not allowed in attributes values [38]",
     "spv: could not decode legacy table: spv legacy: missing dimension series"
   ],
   "value": {
     "t": "list",
     "names": null,
     "v": [
+      {
+        "t": "list",
+        "names": [
+          "type",
+          "title",
+          "xlab",
+          "ylab",
+          "fit_names",
+          "fit_exprs"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "point"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "height"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "weight"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Linear",
+              "logical",
+              "unknown symbol",
+              "two exprs",
+              "newline",
+              "if",
+              "modulo",
+              "neg square",
+              "exp",
+              "string",
+              "backtick",
+              "hex",
+              "int",
+              "function",
+              "assign",
+              "dollar",
+              "brackets",
+              "braces",
+              "unary not",
+              "sci",
+              "gt",
+              "tab",
+              "keyword",
+              "inf",
+              "na",
+              "complex",
+              "dots",
+              "formula",
+              "pipe",
+              "lambda",
+              "raw string",
+              "utf8 name",
+              "double star",
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "0.5 * x + 3",
+              "TRUE",
+              "a * x",
+              "1; 2",
+              "x\n+1",
+              "if (x > 0) 1 else 2",
+              "x %% 2",
+              "-x^2",
+              "exp(x) / 10",
+              "'abc'",
+              "`x` + 1",
+              "0x1F * x",
+              "2L * x",
+              "function(x) x",
+              "y <- x",
+              "x$y",
+              "x[1]",
+              "{x; 1}",
+              "!x",
+              "1.5e-3 * x + .5",
+              "x > 1",
+              "x\t* 2",
+              "NULL",
+              "Inf * x",
+              "NA_real_",
+              "1i",
+              "...",
+              "~ x",
+              "x |> exp()",
+              "\\(z) z",
+              "r\"(abc)\"",
+              "é + x",
+              "x ** 2",
+              "x / 2"
+            ]
+          }
+        ]
+      },
       {
         "t": "list",
         "names": [

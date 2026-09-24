@@ -1,0 +1,112 @@
+{
+  "id": "match_reported_output.repro_model_object",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 2,
+    "names": [
+      "text_id",
+      "grp_id",
+      "reported",
+      "n_components",
+      "n_matched",
+      "found",
+      "match_values",
+      "not_matched",
+      "source_file",
+      "analysis",
+      "confidence",
+      "plausible_split"
+    ],
+    "v": [
+      {
+        "t": "int",
+        "v": [
+          1,
+          1
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          1,
+          1
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "F=15 df1=1 df2=5 p=0.012",
+          "b=3.5 SE=0.9 t=3.87"
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          4,
+          3
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          4,
+          3
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true,
+          true
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "F=15, df1=1, df2=5, p=0.012",
+          "b=3.5, SE=0.9, t=3.87"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "",
+          ""
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "model_object.R",
+          "model_object.R"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "full",
+          "full"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true,
+          true
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

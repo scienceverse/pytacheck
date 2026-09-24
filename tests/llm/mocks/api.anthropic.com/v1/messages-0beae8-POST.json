@@ -1,0 +1,32 @@
+{
+  "id": "msg_test",
+  "type": "message",
+  "role": "assistant",
+  "model": "claude-3-5-haiku-latest",
+  "content": [
+    {
+      "type": "tool_use",
+      "id": "toolu_test",
+      "name": "_structured_tool_call",
+      "input": {
+        "data": {
+          "variables": [
+            {
+              "variable_name": "x1",
+              "label": "first",
+              "kind": "b",
+              "n": 5,
+              "ok": false
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "stop_reason": "end_turn",
+  "stop_sequence": null,
+  "usage": {
+    "input_tokens": 20,
+    "output_tokens": 10
+  }
+}

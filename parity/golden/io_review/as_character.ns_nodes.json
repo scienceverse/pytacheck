@@ -1,0 +1,17 @@
+{
+  "id": "as_character.ns_nodes",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "<p xmlns:b=\"urn:b\">x <ptr xlink:href=\"h\"/> <b:q>y<\/b:q> <a:z a:k=\"1\">w<\/a:z><\/p>",
+      "<p xmlns:c=\"urn:c\">none<\/p>",
+      "<p>plain <m xmlns=\"urn:m\"><i>q<\/i><\/m><\/p>",
+      "<p>\n  <a:z xmlns:a=\"urn:other\">shadow<\/a:z>\n<\/p>"
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

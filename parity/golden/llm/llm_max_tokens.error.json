@@ -1,0 +1,9 @@
+{
+  "id": "llm_max_tokens.error",
+  "ok": false,
+  "error": "n must be a number",
+  "warnings": [],
+  "value": null,
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

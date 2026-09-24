@@ -724,3 +724,91 @@
       "$expr":
         "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(doi_resolves(c(\"10.9999/code1\", \"10.9999/code100\", \"10.9999/code2\", \"10.9999/code200\", \"10.9999/code3\", \"10.9999/nocode\", \"10.9999/listcode\", \"10.9999/strcode\", \"10.9999/boolcode\", \"10.9999/floatcode\", \"10.9999/nullcode\", \"10.9999/partialcode\", \"10.9999/twocode\", \"10.9999/html\", \"10.9999/forbidden\", \"10.9999/unrecorded\")), dir = file.path(root, \"tests/db/data/mock_review\")); x"
         "py": "__import__('tests.db.review_helpers', fromlist=['x']).call_mock('pytacheck.db.doi.doi_resolves', ['10.9999/code1', '10.9999/code100', '10.9999/code2', '10.9999/code200', '10.9999/code3', '10.9999/nocode', '10.9999/listcode', '10.9999/strcode', '10.9999/boolcode', '10.9999/floatcode', '10.9999/nullcode', '10.9999/partialcode', '10.9999/twocode', '10.9999/html', '10.9999/forbidden', '10.9999/unrecorded'])"
+- "id": "doi_clean.fuzz"
+  "r": "identity"
+  "py": "copy.copy"
+  "args":
+    "x":
+      "$expr":
+        "r": "doi_clean(unlist(jsonlite::read_json(file.path(root, \"tests/db/data/doi_fuzz.json\"))))"
+        "py": "__import__('pytacheck.db.doi', fromlist=['x']).doi_clean(__import__('json').load(open('tests/db/data/doi_fuzz.json', encoding='utf-8')))"
+- "id": "doi_valid_format.fuzz"
+  "r": "identity"
+  "py": "copy.copy"
+  "args":
+    "x":
+      "$expr":
+        "r": "doi_valid_format(unlist(jsonlite::read_json(file.path(root, \"tests/db/data/doi_fuzz.json\"))))"
+        "py": "__import__('pytacheck.db.doi', fromlist=['x']).doi_valid_format(__import__('json').load(open('tests/db/data/doi_fuzz.json', encoding='utf-8')))"
+- "id": "doi_valid_format.fuzz_cleaned"
+  "r": "identity"
+  "py": "copy.copy"
+  "args":
+    "x":
+      "$expr":
+        "r": "doi_valid_format(doi_clean(unlist(jsonlite::read_json(file.path(root, \"tests/db/data/doi_fuzz.json\")))))"
+        "py": "(lambda m: m.doi_valid_format(m.doi_clean(__import__('json').load(open('tests/db/data/doi_fuzz.json', encoding='utf-8')))))(__import__('pytacheck.db.doi', fromlist=['x']))"
+- "id": "url_encode.fuzz"
+  "r": "identity"
+  "py": "copy.copy"
+  "args":
+    "x":
+      "$expr":
+        "r": "utils::URLencode(unlist(jsonlite::read_json(file.path(root, \"tests/db/data/doi_fuzz.json\"))), reserved = TRUE)"
+        "py": "[__import__('pytacheck.db._utils', fromlist=['x']).url_encode(s, reserved=True) for s in __import__('json').load(open('tests/db/data/doi_fuzz.json', encoding='utf-8'))]"
+- "id": "url_encode.fuzz_unreserved"
+  "r": "identity"
+  "py": "copy.copy"
+  "args":
+    "x":
+      "$expr":
+        "r": "utils::URLencode(unlist(jsonlite::read_json(file.path(root, \"tests/db/data/doi_fuzz.json\"))))"
+        "py": "[__import__('pytacheck.db._utils', fromlist=['x']).url_encode(s) for s in __import__('json').load(open('tests/db/data/doi_fuzz.json', encoding='utf-8'))]"
+- "id": "check_orcid.fuzz"
+  "r": "identity"
+  "py": "copy.copy"
+  "args":
+    "x":
+      "$expr":
+        "r": "source(file.path(root, \"tests/db/review.R\")); vapply(unlist(jsonlite::read_json(file.path(root, \"tests/db/data/orcid_fuzz.json\"))), \\(o) { r <- review_try(check_orcid(o)); if (isFALSE(r)) \"<FALSE>\" else r }, character(1), USE.NAMES = FALSE)"
+        "py": "(lambda h, o: [(lambda r: '<FALSE>' if r is False else r)(h.try_(lambda s=s: o.check_orcid(s))) for s in __import__('json').load(open('tests/db/data/orcid_fuzz.json'))])(__import__('tests.db.review_helpers', fromlist=['x']), __import__('pytacheck.db.orcid', fromlist=['x']))"
+- "id": "doi_lookup.mock.na_numvol"
+  "r": "identity"
+  "py": "copy.copy"
+  "args":
+    "x":
+      "$expr":
+        "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(doi_lookup(c(NA, \"10.9999/numvol\")), dir = file.path(root, \"tests/db/data/mock_review\")); x"
+        "py": "__import__('tests.db.review_helpers', fromlist=['x']).call_mock('pytacheck.db.doi.doi_lookup', [None, '10.9999/numvol'])"
+- "id": "doi_lookup.mock.na_only"
+  "r": "identity"
+  "py": "copy.copy"
+  "args":
+    "x":
+      "$expr":
+        "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(doi_lookup(c(NA, NA)), dir = file.path(root, \"tests/db/data/mock_review\")); x"
+        "py": "__import__('tests.db.review_helpers', fromlist=['x']).call_mock('pytacheck.db.doi.doi_lookup', [None, None])"
+- "id": "datacite_doi.mock.na_dc2"
+  "r": "identity"
+  "py": "copy.copy"
+  "args":
+    "x":
+      "$expr":
+        "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(datacite_doi(c(NA, \"10.9999/dc2\")), dir = file.path(root, \"tests/db/data/mock_review\")); x$authors <- lapply(x$authors, \\(a) if (NROW(a) == 0) character(0) else a); x"
+        "py": "__import__('tests.db.review_helpers', fromlist=['x']).call_mock('pytacheck.db.crossref.datacite_doi', [None, '10.9999/dc2'])"
+- "id": "datacite_doi.mock.na_only"
+  "r": "identity"
+  "py": "copy.copy"
+  "args":
+    "x":
+      "$expr":
+        "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(datacite_doi(c(NA)), dir = file.path(root, \"tests/db/data/mock_review\")); x$authors <- lapply(x$authors, \\(a) if (NROW(a) == 0) character(0) else a); x"
+        "py": "__import__('tests.db.review_helpers', fromlist=['x']).call_mock('pytacheck.db.crossref.datacite_doi', [None])"
+- "id": "datacite_doi.mock.na_dc1"
+  "r": "identity"
+  "py": "copy.copy"
+  "args":
+    "x":
+      "$expr":
+        "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(datacite_doi(c(\"10.9999/dc1\", NA)), dir = file.path(root, \"tests/db/data/mock_review\")); x$authors <- lapply(x$authors, \\(a) if (NROW(a) == 0) character(0) else a); x"
+        "py": "__import__('tests.db.review_helpers', fromlist=['x']).call_mock('pytacheck.db.crossref.datacite_doi', ['10.9999/dc1', None])"

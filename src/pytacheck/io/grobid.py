@@ -261,15 +261,35 @@ def _pull_and_split(cols: dict[str, list[Any]]) -> dict[str, list[Any]]:
 
     # return refs
     if tokens:
+        out["formatted"] = [
+            f if f is None or "{{ref" not in f else _restore_refs(f, tokens)
+            for f in out["formatted"]
+        ]
+    return out
+
+
+def _restore_refs(s: str, tokens: dict[tuple[str, str], str]) -> str:
+    """R's ``for (i) for (j) fmt <- sub(token_ij, ref_ij, fmt, fixed = TRUE)`` for one sentence.
+
+    Each token's *first* occurrence is replaced, token by token in (i, j)
+    order. When every token occurs once and no restored ref contains a
+    token, that is one pass of a regex substitution.
+    """
+    found = [(m.group(1), m.group(2)) for m in _TOKEN_RX.finditer(s)]
+    present = [k for k in found if k in tokens]
+    if not present:
+        return s
+    if len(set(present)) == len(present) and not any("{{ref" in tokens[k] for k in present):
 
         def restore(m: regex.Match[str]) -> str:
             return tokens.get((m.group(1), m.group(2)), m.group(0))
 
-        out["formatted"] = [
-            f if f is None or "{{ref" not in f else _TOKEN_RX.sub(restore, f)
-            for f in out["formatted"]
-        ]
-    return out
+        return _TOKEN_RX.sub(restore, s)
+    for key, url in tokens.items():  # insertion order is R's (i, j) loop order
+        tok = f"{{{{ref{key[0]}-{key[1]}}}}}"
+        if tok in s:
+            s = s.replace(tok, url, 1)
+    return s
 
 
 def _html_to_text(x: str | None) -> str:
@@ -1053,14 +1073,23 @@ def _grobid_to_bibr(xml_path: PathLikeStr, pb: Any = None) -> Paper:
     contents: list[Any] = [None] * len(tab_sec)
     tabs = xml_find_all(xml, "//figure[@type='table']")
     if len(tabs) == len(tab_sec):
+        n_tab = len(tab_sec)
         for i, tab in enumerate(tabs):
             tab_node = xml_find_first(tab, ".//table")
             html[i] = "NA" if tab_node is None else as_character(tab_node)
-            contents[i] = _tei_table_contents(tab_node)
-            if contents[i] is None:
-                # R: `contents[[i]] <- NULL` drops the element, and the
-                # shortened column no longer fits the table
-                raise ValueError("Assigned data `contents` must be compatible with existing data.")
+            value = _tei_table_contents(tab_node)
+            if value is not None:
+                contents[i] = value
+                continue
+            # R: `paper$table$contents[[i]] <- NULL` drops element i; the
+            # tibble then recycles a length-1 list and rejects other lengths
+            shortened = contents[:i] + contents[i + 1 :]
+            if len(shortened) != 1:
+                raise ValueError(
+                    "Assigned data `*vtmp*` must be compatible with existing data. "
+                    f"Existing data has {n_tab} rows. Assigned data has {len(shortened)} rows."
+                )
+            contents = shortened * n_tab
     p.table = pd.DataFrame(
         {
             "table_id": _column(range(1, len(tab_sec) + 1), "Int64"),
@@ -1075,6 +1104,12 @@ def _grobid_to_bibr(xml_path: PathLikeStr, pb: Any = None) -> Paper:
     bib = _tei_bib_columns(xml)
     n_bib = len(bib["bib_text"])
     if n_bib > 0:
+        if not sec:
+            # R: sapply() over zero headers returns list(), and bind_rows()
+            # cannot combine that list column with the "References" row
+            raise ValueError(
+                "Can't combine `..1$header` <list> and `..2$header` <character>."
+            )
         section_id = _r_max(section["section_id"]) + 1
         section["section_id"].append(section_id)
         section["header"].append("References")
@@ -1155,11 +1190,29 @@ def _grobid_to_bibr(xml_path: PathLikeStr, pb: Any = None) -> Paper:
 # ---------------------------------------------------------------------------
 
 
-def _list_files(path: Path, pattern: str, recursive: bool = False) -> list[str]:
-    """``list.files(path, pattern, full.names = TRUE, ignore.case = TRUE)`` (sorted)."""
-    it = path.rglob("*") if recursive else path.iterdir()
-    names = [p for p in it if p.is_file() and grepl(pattern, p.name, ignore_case=True)]
-    return [str(p) for p in sorted(names, key=lambda p: str(p.relative_to(path)))]
+def _list_files(path: PathLikeStr, pattern: str, recursive: bool = False) -> list[str]:
+    """``list.files(path, pattern, full.names = TRUE, ignore.case = TRUE)`` (sorted).
+
+    As with ``all.files = FALSE``, names starting with a dot are skipped (and
+    hidden directories are not searched). Without *recursive*, directories
+    whose name matches are listed too, as in R.
+    """
+
+    def walk(d: Path) -> list[Path]:
+        out: list[Path] = []
+        for p in d.iterdir():
+            if p.name.startswith("."):
+                continue
+            if recursive and p.is_dir():
+                out.extend(walk(p))
+            elif grepl(pattern, p.name, ignore_case=True):
+                out.append(p)
+        return out
+
+    root = os.fspath(path)  # full.names pastes the directory as given
+    base = Path(root)
+    rel = sorted(p.relative_to(base).as_posix() for p in walk(base))
+    return [f"{root}/{r}" for r in rel]
 
 
 def grobid_to_bibr(
@@ -1192,7 +1245,7 @@ def grobid_to_bibr(
     else:
         raise TypeError("invalid filename argument")
     if len(paths) == 1 and Path(paths[0]).is_dir():
-        paths = list(_list_files(Path(paths[0]), r"\.xml$"))
+        paths = list(_list_files(paths[0], r"\.xml$"))
 
     errors = 0
     results: list[Any] = []
@@ -1206,7 +1259,9 @@ def grobid_to_bibr(
         if not is_paper(p):
             results.append(None)
             continue
-        if crossref_lookup:
+        if crossref_lookup is True or (  # isTRUE(crossref_lookup)
+            type(crossref_lookup).__name__ == "bool_" and bool(crossref_lookup)
+        ):
             from pytacheck.db.crossref import add_bib_match
 
             p = add_bib_match(p)
@@ -1277,9 +1332,10 @@ def _grobid_isalive(api_url: str, error: bool = True) -> bool:
 
 
 def _reason(status: int) -> str:
-    import httpx
+    """``stop(httr2::resp_status_desc(resp))``: the message (``"NA"`` if unknown)."""
+    from pytacheck.io.bibr_convert import _status_desc
 
-    return httpx.codes.get_reason_phrase(status) or f"HTTP {status}"
+    return _status_desc(status) or "NA"
 
 
 def convert_grobid(
@@ -1353,7 +1409,7 @@ def convert_grobid(
         return xmls
 
     if Path(paths[0]).is_dir():
-        pdfs = _list_files(Path(paths[0]), r"\.pdf", recursive=True)
+        pdfs = _list_files(paths[0], r"\.pdf", recursive=True)
         if not pdfs:
             warnings.warn(f"There are no PDF files in the directory {paths[0]}", stacklevel=2)
         return convert_grobid(pdfs, save_path, api_url)

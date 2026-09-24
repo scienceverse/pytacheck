@@ -1,0 +1,1 @@
+structure(list(method = "GET", url = "https://zenodo.org/api/deposit/depositions?size=1", status_code = 403L, headers = structure(list(`content-type` = "application/json; charset=utf-8"), class = "httr2_headers"), body = charToRaw("{\"message\":\"Permission denied.\",\"status\":403}"), cache = new.env(parent = emptyenv())), class = "httr2_response")

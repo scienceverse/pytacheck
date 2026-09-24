@@ -1,0 +1,323 @@
+{
+  "id": "dataverse_info.mock.id_col_na",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 2,
+    "names": [
+      "u",
+      "dataverse_url",
+      "dataverse_host",
+      "dataverse_doi",
+      "title",
+      "doi",
+      "publication_date",
+      "updated_date",
+      "authors",
+      "license",
+      "files"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/ABC123",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/ABC123",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "dataverse.harvard.edu",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "10.7910/DVN/ABC123",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Example Dataset",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://doi.org/10.7910/DVN/ABC123",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "2020-01-01T00:00:00Z",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "2020-01-02T00:00:00Z",
+          null
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Doe, Jane",
+              null
+            ]
+          },
+          {
+            "t": "null"
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "CC0 1.0",
+          null
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "list",
+                "names": [
+                  "label",
+                  "dataFile"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "data.csv"
+                    ]
+                  },
+                  {
+                    "t": "list",
+                    "names": [
+                      "id",
+                      "filename",
+                      "filesize",
+                      "checksum"
+                    ],
+                    "v": [
+                      {
+                        "t": "int",
+                        "v": [
+                          999
+                        ]
+                      },
+                      {
+                        "t": "chr",
+                        "v": [
+                          "data.csv"
+                        ]
+                      },
+                      {
+                        "t": "int",
+                        "v": [
+                          8
+                        ]
+                      },
+                      {
+                        "t": "list",
+                        "names": [
+                          "type",
+                          "value"
+                        ],
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "MD5"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "344fd2323dd33d5c058b7cf27de029e8"
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "label",
+                  "dataFile"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "codebook.pdf"
+                    ]
+                  },
+                  {
+                    "t": "list",
+                    "names": [
+                      "id",
+                      "filename",
+                      "filesize",
+                      "checksum"
+                    ],
+                    "v": [
+                      {
+                        "t": "int",
+                        "v": [
+                          1000
+                        ]
+                      },
+                      {
+                        "t": "chr",
+                        "v": [
+                          "codebook.pdf"
+                        ]
+                      },
+                      {
+                        "t": "int",
+                        "v": [
+                          11
+                        ]
+                      },
+                      {
+                        "t": "list",
+                        "names": [
+                          "type",
+                          "value"
+                        ],
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "SHA-1"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "abc"
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "dataFile"
+                ],
+                "v": [
+                  {
+                    "t": "list",
+                    "names": [
+                      "id",
+                      "filename",
+                      "filesize"
+                    ],
+                    "v": [
+                      {
+                        "t": "int",
+                        "v": [
+                          1001
+                        ]
+                      },
+                      {
+                        "t": "chr",
+                        "v": [
+                          "fallback_name.txt"
+                        ]
+                      },
+                      {
+                        "t": "int",
+                        "v": [
+                          5
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "label",
+                  "dataFile"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "huge.dat"
+                    ]
+                  },
+                  {
+                    "t": "list",
+                    "names": [
+                      "id",
+                      "filesize"
+                    ],
+                    "v": [
+                      {
+                        "t": "int",
+                        "v": [
+                          1002
+                        ]
+                      },
+                      {
+                        "t": "int",
+                        "v": [
+                          11534336
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "t": "null"
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

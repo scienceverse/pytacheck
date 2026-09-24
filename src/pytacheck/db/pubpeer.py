@@ -5,7 +5,7 @@ from __future__ import annotations
 import json
 from typing import TYPE_CHECKING, Any
 
-from pytacheck._r.base import trimws
+from pytacheck._r.base import as_character, trimws
 from pytacheck._r.regex import is_na
 from pytacheck.db._utils import as_vector, r_dollar, records_frame, resp_body_json, unlist
 
@@ -50,7 +50,7 @@ def pubpeer_comments(doi: Any) -> pd.DataFrame | None:
     from pytacheck import http
 
     values = as_vector(doi)
-    lower = [None if is_na(v) else str(v).lower() for v in values]
+    lower = [None if is_na(v) else str(as_character(v)).lower() for v in values]
     body = _request_body([d for d in lower if d is not None])
 
     resp = http.request(
@@ -58,6 +58,7 @@ def pubpeer_comments(doi: Any) -> pd.DataFrame | None:
         _URL,
         content=body.encode("utf-8"),
         headers={"Content-Type": "application/json;charset=UTF-8"},
+        max_tries=1,  # a plain req_perform(): no retry policy
     )
     if resp is None:
         raise ConnectionError(f"Failed to perform HTTP request to {_URL}")
@@ -88,6 +89,7 @@ def pubpeer_comments(doi: Any) -> pd.DataFrame | None:
     if "doi" not in fb_frame.columns:
         raise ValueError("Join columns in `y` must be present in the data.")
     fb_cols = [c for c in fb_frame.columns if c != "doi"]
+    fb_values = {c: fb_frame[c].tolist() for c in fb_cols}
     by_doi: dict[Any, list[int]] = {}
     for i, d in enumerate(fb_frame["doi"].tolist() if "doi" in fb_frame.columns else []):
         by_doi.setdefault(None if is_na(d) else d, []).append(i)
@@ -96,7 +98,7 @@ def pubpeer_comments(doi: Any) -> pd.DataFrame | None:
         hits = by_doi.get(d, [])
         if not hits:
             rows.append({"doi": d})
-        rows.extend({"doi": d, **{c: fb_frame[c].iat[i] for c in fb_cols}} for i in hits)
+        rows.extend({"doi": d, **{c: fb_values[c][i] for c in fb_cols}} for i in hits)
     if len(rows) != len(values):
         raise ValueError(f"replacement has {len(values)} rows, data has {len(rows)}")
     for row, original in zip(rows, values, strict=True):

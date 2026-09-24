@@ -1,0 +1,150 @@
+{
+  "id": "dryad_file_download.mock.no_caps",
+  "ok": true,
+  "error": null,
+  "warnings": [
+    "3 of 5 files from Dryad dataset 10.5061/dryad.j1fd7 did not arrive intact (e.g. README.md, big.bin, nolink.txt). The returned table marks them downloaded = FALSE. Run again to retry."
+  ],
+  "value": {
+    "t": "df",
+    "nrow": 5,
+    "names": [
+      "folder",
+      "dryad_doi",
+      "id",
+      "key",
+      "path",
+      "size",
+      "size_on_disk",
+      "checksum",
+      "checksum_ok",
+      "self",
+      "downloaded",
+      "extracted"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "10.5061_dryad.j1fd7",
+          "10.5061_dryad.j1fd7",
+          "10.5061_dryad.j1fd7",
+          "10.5061_dryad.j1fd7",
+          "10.5061_dryad.j1fd7"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "10.5061/dryad.j1fd7",
+          "10.5061/dryad.j1fd7",
+          "10.5061/dryad.j1fd7",
+          "10.5061/dryad.j1fd7",
+          "10.5061/dryad.j1fd7"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "111",
+          "112",
+          "113",
+          "114",
+          "115"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "data.csv",
+          "README.md",
+          "big.bin",
+          "sub/notes.txt",
+          "nolink.txt"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "data.csv",
+          "README.md",
+          null,
+          "sub/notes.txt",
+          null
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          8,
+          21,
+          20971520,
+          5,
+          3
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          8,
+          21,
+          null,
+          5,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "344fd2323dd33d5c058b7cf27de029e8",
+          "0123456789abcdef0123456789abcdef",
+          null,
+          "abc",
+          null
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true,
+          false,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://datadryad.org/api/v2/files/111/download",
+          "https://datadryad.org/api/v2/files/112/download",
+          "https://datadryad.org/api/v2/files/113/download",
+          "https://datadryad.org/api/v2/files/114/download",
+          null
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true,
+          false,
+          false,
+          true,
+          false
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

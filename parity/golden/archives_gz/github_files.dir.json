@@ -1,0 +1,80 @@
+{
+  "id": "github_files.dir",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 2,
+    "names": [
+      "repo",
+      "clean_repo",
+      "name",
+      "path",
+      "download_url",
+      "size",
+      "ext",
+      "type"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "scienceverse/metacheck",
+          "scienceverse/metacheck"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "scienceverse/metacheck",
+          "scienceverse/metacheck"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "testthat",
+          "testthat.R"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "tests/testthat",
+          "tests/testthat.R"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "https://raw.githubusercontent.com/scienceverse/metacheck/main/tests/testthat.R"
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          0,
+          430
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "",
+          "r"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "dir",
+          "code"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

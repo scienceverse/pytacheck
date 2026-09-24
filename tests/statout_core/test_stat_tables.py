@@ -334,10 +334,18 @@ def test_read_stat_tables_not_a_zip(data_dir: Path) -> None:
 
 
 def test_read_stat_tables_empty_zip(tmp_path: Path) -> None:
+    # utils::unzip() returns NULL for an archive without entries, and
+    # read_stat_tables() then fails in basename(NULL), as for a non-zip file.
     empty = tmp_path / "empty.jasp"
     with zipfile.ZipFile(empty, "w"):
         pass
-    assert read_stat_tables(empty) == []
+    with pytest.raises(TypeError, match="character vector argument expected"):
+        read_stat_tables(empty)
+    # A zip holding only directory entries opens fine and yields nothing.
+    dirs = tmp_path / "dirs.omv"
+    with zipfile.ZipFile(dirs, "w") as z:
+        z.writestr("05 ttestOneS/", "")
+    assert read_stat_tables(dirs) == []
 
 
 def test_protobuf_reader() -> None:

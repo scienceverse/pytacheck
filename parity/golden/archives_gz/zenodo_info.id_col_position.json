@@ -1,0 +1,424 @@
+{
+  "id": "zenodo_info.id_col_position",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 3,
+    "names": [
+      "x",
+      "url",
+      "zenodo_url",
+      "zenodo_id",
+      "title",
+      "doi",
+      "description",
+      "publication_date",
+      "updated_date",
+      "creators",
+      "keywords",
+      "resource_type",
+      "journal",
+      "owners",
+      "license",
+      "downloads",
+      "unique_downloads",
+      "views",
+      "files"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "a",
+          "b",
+          "c"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "10.5281/zenodo.2669586",
+          "nope",
+          "10.5281/zenodo.2669586"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "10.5281/zenodo.2669586",
+          "nope",
+          "10.5281/zenodo.2669586"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "2669586",
+          null,
+          "2669586"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "faux: Simulation for Factorial Designs",
+          null,
+          "faux: Simulation for Factorial Designs"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "10.5281/zenodo.7852893",
+          null,
+          "10.5281/zenodo.7852893"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Create datasets with factorial structure through simulation by specifying variable parameters.",
+          null,
+          "Create datasets with factorial structure through simulation by specifying variable parameters."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "2023-02-03",
+          null,
+          "2023-02-03"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "2023-04-21T14:26:41.592117+00:00",
+          null,
+          "2023-04-21T14:26:41.592117+00:00"
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "list",
+                "names": [
+                  "name",
+                  "affiliation",
+                  "orcid"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Lisa DeBruine"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "University of Glasgow"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "0000-0002-7523-5539"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "t": "null"
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "list",
+                "names": [
+                  "name",
+                  "affiliation",
+                  "orcid"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Lisa DeBruine"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "University of Glasgow"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "0000-0002-7523-5539"
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "null"
+          },
+          {
+            "t": "null"
+          },
+          {
+            "t": "null"
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "software",
+          null,
+          "software"
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "null"
+          },
+          {
+            "t": "null"
+          },
+          {
+            "t": "null"
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "list",
+                "names": [
+                  "id"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "39314"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "t": "null"
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "list",
+                "names": [
+                  "id"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "39314"
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "mit-license",
+          null,
+          "mit-license"
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          286,
+          null,
+          286
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          271,
+          null,
+          271
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          3116,
+          null,
+          3116
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "list",
+                "names": [
+                  "id",
+                  "key",
+                  "size",
+                  "checksum",
+                  "links"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "afdd0ef1-f366-4458-b5c8-36414d4b5490"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "debruine/faux-v1.2.1.zip"
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      53373506
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "md5:93da3f38cbc381bc5078e877a3fde0b4"
+                    ]
+                  },
+                  {
+                    "t": "list",
+                    "names": [
+                      "self"
+                    ],
+                    "v": [
+                      {
+                        "t": "chr",
+                        "v": [
+                          "https://zenodo.org/api/records/7852893/files/debruine/faux-v1.2.1.zip/content"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "t": "null"
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "list",
+                "names": [
+                  "id",
+                  "key",
+                  "size",
+                  "checksum",
+                  "links"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "afdd0ef1-f366-4458-b5c8-36414d4b5490"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "debruine/faux-v1.2.1.zip"
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      53373506
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "md5:93da3f38cbc381bc5078e877a3fde0b4"
+                    ]
+                  },
+                  {
+                    "t": "list",
+                    "names": [
+                      "self"
+                    ],
+                    "v": [
+                      {
+                        "t": "chr",
+                        "v": [
+                          "https://zenodo.org/api/records/7852893/files/debruine/faux-v1.2.1.zip/content"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

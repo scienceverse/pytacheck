@@ -1,0 +1,99 @@
+{
+  "id": ".zenodo_build_metadata.no_license",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "title",
+      "upload_type",
+      "description",
+      "creators",
+      "license",
+      "related_identifiers"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "T"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "software"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "D"
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "list",
+            "names": [
+              "name"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "A, B"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "cc0-1.0"
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "list",
+            "names": [
+              "identifier",
+              "relation",
+              "scheme"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "https://osf.io/6nt4v/"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "isIdenticalTo"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "url"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

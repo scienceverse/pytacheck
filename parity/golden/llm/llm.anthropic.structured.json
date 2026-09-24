@@ -1,0 +1,44 @@
+{
+  "id": "llm.anthropic.structured",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 1,
+    "names": [
+      "text",
+      "variables.variable_name",
+      "variables.label",
+      "variables.kind"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "two vars"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "dv"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "outcome"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "a"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

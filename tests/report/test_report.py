@@ -24,13 +24,20 @@ from pytacheck.report.report import (
     report_repository,
 )
 
-PSYCHSCI = Path(__file__).resolve().parents[2] / "upstream/metacheck/tests/testthat/fixtures/psychsci"
+PSYCHSCI = (
+    Path(__file__).resolve().parents[2] / "upstream/metacheck/tests/testthat/fixtures/psychsci"
+)
 
 
 def test_exports(tmp_path, demo):
     import pytacheck.report
 
-    assert report_pkg is report
+    # pytacheck.report.report is the submodule (the CLI reads report_mod.report)
+    # and calling it calls report()
+    assert report_pkg.report is report
+    assert callable(report_pkg)
+    rep = report_pkg(demo, "marginal", tmp_path / "s.md", "md")
+    assert rep.save_path == str(tmp_path / "s.md")
     assert pytacheck.report.report_module_run is report_module_run
     # the subpackage is callable, so pc.report(...) works whichever it resolves to
     rep = pytacheck.report(demo, "marginal", tmp_path / "r.md", "md")
@@ -342,14 +349,19 @@ def test_report_qmd_fail_and_na(test_module):
     assert "Modules\n" not in txt
     assert "☠️" in txt and "⬜" in txt
     # a summary starting with a newline is indented under its bullet
-    assert ":     \n    * first item" in txt.replace("\n    *", "     \n    *", 1) or "\n    * first item" in txt
+    assert (
+        ":     \n    * first item" in txt.replace("\n    *", "     \n    *", 1)
+        or "\n    * first item" in txt
+    )
 
 
 def test_report_repository(tmp_path, test_module):
     folder = tmp_path / "my_study"
     folder.mkdir()
     out = tmp_path / "out.md"
-    rep = report_repository(folder, output_file=out, output_format="md", modules=[test_module("rp_repo")])
+    rep = report_repository(
+        folder, output_file=out, output_format="md", modules=[test_module("rp_repo")]
+    )
     op = rep[test_module("rp_repo")]
     assert op.summary_text == "Folder my_study; local only: TRUE"
     assert rep.paper.title == "my_study"
@@ -365,7 +377,9 @@ def test_report_repository_default_output(tmp_path, monkeypatch, test_module):
     folder = tmp_path / "data" / "study_a"
     folder.mkdir(parents=True)
     monkeypatch.chdir(tmp_path)
-    rep = report_repository(str(folder) + "/", modules=[test_module("rp_repo")], output_format="qmd")
+    rep = report_repository(
+        str(folder) + "/", modules=[test_module("rp_repo")], output_format="qmd"
+    )
     assert rep.save_path == "study_a_report.qmd"
     assert (tmp_path / "study_a_report.qmd").exists()
 

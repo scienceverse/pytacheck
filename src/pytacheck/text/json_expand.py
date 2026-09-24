@@ -49,17 +49,19 @@ def _is_blank(s: str) -> bool:
     return all(c in _W_SPACE for c in s)
 
 
-def _r_strtod(s: str, start: int = 0) -> tuple[float | None, int]:
-    """R's ``R_strtod()``: ``(value, end)``; ``None`` is ``NA``.
+def _r_strtod(s: str, start: int = 0, na: bool = False) -> tuple[float | None, int]:
+    """R's ``R_strtod5()``: ``(value, end)``; ``None`` is ``NA``.
 
-    When no number can be read, ``end`` is *start* (R backs out).
+    When no number can be read, ``end`` is *start* (R backs out). With
+    ``na=True`` a leading ``"NA"`` (after blanks) is read as ``NA``, as
+    ``type.convert()`` does when it rules out column types.
     """
     n = len(s)
-    if s.startswith("NA", start):
-        return None, start + 2
     p = start
     while p < n and s[p] in _C_SPACE:
         p += 1
+    if na and s.startswith("NA", p):
+        return None, p + 2
     sign = 1.0
     if p < n and s[p] in "+-":
         sign = -1.0 if s[p] == "-" else 1.0
@@ -82,7 +84,7 @@ def _r_strtod(s: str, start: int = 0) -> tuple[float | None, int]:
                 ans = 16 * ans + int(c, 16)
                 if exph >= 0:
                     exph += 4
-            elif c == "." and exph < 0:
+            elif c == ".":  # R restarts the binary exponent at every "."
                 exph = 0
             else:
                 break
@@ -94,10 +96,13 @@ def _r_strtod(s: str, start: int = 0) -> tuple[float | None, int]:
             if p < n and s[p] in "+-":
                 expsign = -1 if s[p] == "-" else 1
                 p += 1
+            e0 = p
             e = 0
             while p < n and s[p] in _DIGITS:
                 e = min(e * 10 + int(s[p]), 99999)
                 p += 1
+            if p == e0:  # an exponent needs digits: R backs out
+                return None, start
             if ans != 0.0:
                 expn = expsign * e
         if exph > 0:
@@ -173,76 +178,123 @@ def _strtoi(s: str) -> int | None:
     return v
 
 
-def _strtoc(s: str) -> tuple[complex | None, bool]:
-    """R ``strtoc()``: ``(value, ok)`` where ok means the rest is blank."""
-    x, end = _r_strtod(s)
+def _strtoc(s: str, na: bool = False) -> tuple[complex | None, int]:
+    """R's ``strtoc()`` (utils ``io.c``): ``(value, end)``; ``None`` is ``NA``.
+
+    A failed read returns ``end = 0`` (R backs out to the start).
+    """
+    x, end = _r_strtod(s, 0, na)
     if _is_blank(s[end:]):
-        return (None if x is None else complex(x, 0.0)), True
+        return (None if x is None else complex(x, 0.0)), end
     if s[end] == "i":
-        if x is None:
-            return None, _is_blank(s[end + 1 :])
-        return complex(0.0, x), _is_blank(s[end + 1 :])
-    y, end2 = _r_strtod(s, end)
-    if end2 > end and end2 < len(s) and s[end2] == "i":
+        if end == 0:
+            return None, 0
+        return (None if x is None else complex(0.0, x)), end + 1
+    y, end2 = _r_strtod(s, end, na)
+    if end2 < len(s) and s[end2] == "i":
         if x is None or y is None:
-            return None, _is_blank(s[end2 + 1 :])
-        return complex(x, y), _is_blank(s[end2 + 1 :])
-    return None, False
+            return None, end2 + 1
+        return complex(x, y), end2 + 1
+    return None, 0
+
+
+_LOGICAL = {"F": False, "FALSE": False, "T": True, "TRUE": True}
+
+
+class _TypeInfo:
+    """``Typecvt_Info``: the column types not yet ruled out."""
+
+    __slots__ = ("cplx", "int", "lgl", "real")
+
+    def __init__(self) -> None:
+        self.lgl = self.int = self.real = self.cplx = True
+
+    def ruleout(self, s: str) -> None:
+        """``ruleout_types()``: rule out types by one field (reads ``"NA"`` as NA)."""
+        if self.lgl:
+            if s in _LOGICAL:
+                self.int = self.real = self.cplx = False
+                return
+            self.lgl = False
+        if self.int and _strtoi(s) is None:
+            self.int = False
+        if self.real and not _is_blank(s[_r_strtod(s, 0, True)[1] :]):
+            self.real = False
+        if self.cplx and not _is_blank(s[_strtoc(s, True)[1] :]):
+            self.cplx = False
 
 
 def type_convert(values: Sequence[Any]) -> pd.Series:
     """``utils::type.convert(x, as.is = TRUE)`` of a character vector.
 
-    Tries logical (``T``, ``F``, ``TRUE``, ``FALSE``), then integer, double
-    and complex; otherwise the values stay character. ``"NA"`` is missing,
-    and blank fields are missing in non-character results.
+    Follows R's ``typeconvert()``: the first non-missing field rules out
+    column types, then logical (``T``, ``F``, ``TRUE``, ``FALSE``),
+    integer, double and complex are tried in turn over all fields (a field
+    that fails one type rules out others too); otherwise the values stay
+    character. ``"NA"`` is missing, and blank fields are missing in
+    non-character results.
     """
     vals = [None if (v is None or v is pd.NA or v == "NA") else str(v) for v in values]
-    is_lgl = is_int = is_real = is_cplx = True
-    for s in vals:
-        if s is None or _is_blank(s):
-            continue
-        if is_lgl:
-            if s in ("F", "T", "FALSE", "TRUE"):
-                is_int = is_real = is_cplx = False
-            else:
-                is_lgl = False
-        if is_int and _strtoi(s) is None:
-            is_int = False
-        if is_real and not _is_blank(s[_r_strtod(s)[1] :]):
-            is_real = False
-        if is_cplx and not _strtoc(s)[1]:
-            is_cplx = False
-        if not (is_lgl or is_int or is_real or is_cplx):
-            break
 
     def missing(s: str | None) -> bool:
         return s is None or _is_blank(s)
 
-    if is_lgl:
-        return pd.Series(
-            [pd.NA if missing(s) else s in ("T", "TRUE") for s in vals], dtype="boolean"
-        )
-    if is_int:
-        return pd.Series(
-            [pd.NA if missing(s) else _strtoi(s) for s in vals],  # type: ignore[arg-type]
-            dtype="Int64",
-        )
-    if is_real:
-        out: list[float] = []
+    info = _TypeInfo()
+    first = next((s for s in vals if not missing(s)), None)
+    if first is not None:
+        info.ruleout(first)
+
+    if info.lgl:
+        lgl: list[Any] = []
         for s in vals:
             if missing(s):
-                out.append(math.nan)
+                lgl.append(pd.NA)
+            elif s in _LOGICAL:
+                lgl.append(_LOGICAL[s])  # type: ignore[index]
+            else:
+                info.lgl = False
+                info.ruleout(s)  # type: ignore[arg-type]
+                break
+        if info.lgl:
+            return pd.Series(lgl, dtype="boolean")
+    if info.int:
+        ints: list[Any] = []
+        for s in vals:
+            v = None if missing(s) else _strtoi(s)  # type: ignore[arg-type]
+            if v is None and not missing(s):
+                info.int = False
+                info.ruleout(s)  # type: ignore[arg-type]
+                break
+            ints.append(pd.NA if v is None else v)
+        if info.int:
+            return pd.Series(ints, dtype="Int64")
+    if info.real:
+        dbl: list[float] = []
+        for s in vals:
+            if missing(s):
+                dbl.append(math.nan)
                 continue
-            v, _ = _r_strtod(s)  # type: ignore[arg-type]
-            out.append(math.nan if v is None else v)
-        return pd.Series(out, dtype="float64")
-    if is_cplx:
+            v, end = _r_strtod(s)  # type: ignore[arg-type]
+            if not _is_blank(s[end:]):  # type: ignore[index]
+                info.real = False
+                info.ruleout(s)  # type: ignore[arg-type]
+                break
+            dbl.append(math.nan if v is None else v)
+        if info.real:
+            return pd.Series(dbl, dtype="float64")
+    if info.cplx:
         cx: list[complex] = []
         for s in vals:
-            z = None if missing(s) else _strtoc(s)[0]  # type: ignore[arg-type]
+            if missing(s):
+                cx.append(complex(math.nan, math.nan))
+                continue
+            z, end = _strtoc(s)  # type: ignore[arg-type]
+            if not _is_blank(s[end:]):  # type: ignore[index]
+                info.cplx = False
+                break
             cx.append(complex(math.nan, math.nan) if z is None else z)
-        return pd.Series(cx, dtype="complex128")
+        if info.cplx:
+            return pd.Series(cx, dtype="complex128")
     return pd.Series(vals, dtype="string")
 
 
@@ -260,14 +312,25 @@ _EMPTY = {
 
 
 class _Vec:
-    """An atomic R vector (``values`` hold ``None`` for ``NA``)."""
+    """An atomic R vector (``values`` hold ``None`` for ``NA``).
 
-    __slots__ = ("dim", "type", "values")
+    ``posix`` marks a ``POSIXct`` vector (double seconds since the epoch):
+    ``""`` for the local time zone, ``"UTC"`` for UTC; ``None`` otherwise.
+    """
 
-    def __init__(self, type_: str, values: list[Any], dim: tuple[int, ...] | None = None):
+    __slots__ = ("dim", "posix", "type", "values")
+
+    def __init__(
+        self,
+        type_: str,
+        values: list[Any],
+        dim: tuple[int, ...] | None = None,
+        posix: str | None = None,
+    ):
         self.type = type_
         self.values = values
         self.dim = dim
+        self.posix = posix
 
 
 class _List:
@@ -424,6 +487,12 @@ def _to_r(x: Any) -> Any:
 
 
 def _parse_json(txt: str) -> Any:
+    """``jsonlite::parseJSON()`` of a string: the R value, or ``_JSONError``."""
+    if txt.startswith("\ufeff"):  # jsonlite's R_parse() skips a leading byte-order mark
+        import warnings
+
+        warnings.warn("JSON string contains (illegal) UTF8 byte-order-mark!", stacklevel=3)
+        txt = txt[1:]
     try:
         raw = json.loads(
             _preprocess(txt),
@@ -516,10 +585,18 @@ def _simplify(x: Any, simplify_matrix: bool = True, sub_matrix: bool = True) -> 
     if not isinstance(x, _List) or not x.items:
         return x
     if _is_recordlist(x):
-        return _simplify_data_frame(x.items, sub_matrix)
+        frame = _simplify_data_frame(x.items, sub_matrix)
+        if _is_datelist(frame):
+            return _parse_date(frame.columns[0])
+        return frame
     if x.names is None and _is_scalarlist(x):
         return _list_to_vec(x)
     out = _List([_simplify(el, sub_matrix, sub_matrix) for el in x.items], x.names)
+    if _is_scalarlist(out) and all(
+        isinstance(el, _Vec) and el.posix is not None for el in out.items
+    ):
+        # POSIXct scalars (Mongo dates) combine into one POSIXct vector (tzone dropped)
+        return _Vec("double", [el.values[0] if el.values else None for el in out.items], None, "")
     if simplify_matrix and _is_matrixlist(out) and all(_is_scalarlist(el) for el in x.items):
         return _rbind(out.items)
     if simplify_matrix and _is_arraylist(out):
@@ -535,12 +612,159 @@ def _simplify(x: Any, simplify_matrix: bool = True, sub_matrix: bool = True) -> 
                     _Frame([], [], 0) if e else el for el, e in zip(out.items, empty, strict=True)
                 ]
                 return out
-            if all(isinstance(el, _Vec) and el.dim is None for el in rest):
+            if all(isinstance(el, _Vec) and el.dim is None and el.posix is None for el in rest):
                 mode = rest[0].type
                 out.items = [
                     _Vec(mode, []) if e else el for el, e in zip(out.items, empty, strict=True)
                 ]
                 return out
+    if _is_datelist(out):
+        return _parse_date(out.items[0])
+    return out
+
+
+# ---------------------------------------------------------------------------
+# Mongo-style dates ({"$date": ...}): jsonlite's parse_date() and POSIXct
+# ---------------------------------------------------------------------------
+
+
+def _is_datelist(x: Any) -> bool:
+    """``jsonlite:::is.datelist()``: a list or data frame holding only ``$date``."""
+    if isinstance(x, _List):
+        names, items = x.names, x.items
+    elif isinstance(x, _Frame):
+        names, items = x.names, x.columns
+    else:
+        return False
+    if names != ["$date"]:
+        return False
+    el = items[0]
+    return (
+        isinstance(el, _Vec) and el.posix is None and el.type in ("integer", "double", "character")
+    )
+
+
+def _parse_date(x: _Vec) -> _Vec:
+    """``jsonlite:::parse_date()``: milliseconds or ISO strings to ``POSIXct``."""
+    if x.type != "character":
+        return _Vec("double", [None if v is None else v / 1000 for v in x.values], x.dim, "")
+    utc = all(v is not None and v.endswith("Z") for v in x.values)
+    tz = "UTC" if utc else ""
+    return _Vec("double", [_strptime_iso(v, tz) for v in x.values], x.dim, tz)
+
+
+def _get_number(s: str, p: int, lo: int, hi: int, n: int) -> tuple[int | None, int]:
+    """``get_number()`` of R's ``strptime()``: up to *n* digits within [lo, hi]."""
+    while p < len(s) and s[p] == " ":
+        p += 1
+    if p >= len(s) or s[p] not in _DIGITS:
+        return None, p
+    val = 0
+    while True:
+        val = val * 10 + int(s[p])
+        p += 1
+        n -= 1
+        if not (n > 0 and p < len(s) and s[p] in _DIGITS):
+            break
+    return (val if lo <= val <= hi else None), p
+
+
+def _month_days(year: int, month: int) -> int:
+    if month == 2:
+        return 29 if year % 4 == 0 and (year % 100 != 0 or year % 400 == 0) else 28
+    return 30 if month in (4, 6, 9, 11) else 31
+
+
+def _strptime_iso(v: str | None, tz: str) -> float | None:
+    """``as.POSIXct(strptime(v, "%Y-%m-%dT%H:%M:%OS", tz))``: seconds, or ``None``."""
+    if v is None:
+        return None
+    fields: list[int] = []
+    p = 0
+    for sep, (lo, hi, n) in zip(
+        ("", "-", "-", "T", ":"),
+        ((0, 9999, 4), (1, 12, 2), (1, 31, 2), (0, 24, 2), (0, 59, 2)),
+        strict=True,
+    ):
+        if sep:
+            if not v.startswith(sep, p):
+                return None
+            p += len(sep)
+        val, p = _get_number(v, p, lo, hi, n)
+        if val is None:
+            return None
+        fields.append(val)
+    if not v.startswith(":", p):
+        return None
+    # %OS: seconds with a fraction; a value outside [0, 61] leaves them at 0
+    sval, _ = _r_strtod(v, p + 1)
+    secs = sval if sval is not None and 0.0 <= sval <= 61.0 else 0.0
+    year, mon, mday, hour, minute = fields
+    if mday > _month_days(year, mon) or int(secs) > 60:
+        return None
+    if hour == 24 and (minute or int(secs)):
+        return None
+    days = _days_from_civil(year, mon, mday)
+    local = days * 86400.0 + hour * 3600 + minute * 60 + secs
+    if tz == "UTC":
+        return local
+    return local - _utc_offset(local)
+
+
+def _days_from_civil(y: int, m: int, d: int) -> int:
+    """Days since 1970-01-01 of a proleptic Gregorian date."""
+    y -= m <= 2
+    era = (y if y >= 0 else y - 399) // 400
+    yoe = y - era * 400
+    doy = (153 * (m + (-3 if m > 2 else 9)) + 2) // 5 + d - 1
+    doe = yoe * 365 + yoe // 4 - yoe // 100 + doy
+    return era * 146097 + doe - 719468
+
+
+def _civil_from_days(z: int) -> tuple[int, int, int]:
+    """Proleptic Gregorian ``(year, month, day)`` of days since 1970-01-01."""
+    z += 719468
+    era = (z if z >= 0 else z - 146096) // 146097
+    doe = z - era * 146097
+    yoe = (doe - doe // 1460 + doe // 36524 - doe // 146096) // 365
+    y = yoe + era * 400
+    doy = doe - (365 * yoe + yoe // 4 - yoe // 100)
+    mp = (5 * doy + 2) // 153
+    d = doy - (153 * mp + 2) // 5 + 1
+    m = mp + (3 if mp < 10 else -9)
+    return y + (m <= 2), m, d
+
+
+def _utc_offset(secs: float) -> float:
+    """The local time zone's UTC offset (seconds) at *secs*; 0 when unknown."""
+    import time
+
+    try:
+        return float(time.localtime(math.floor(secs)).tm_gmtoff)
+    except (OverflowError, OSError, ValueError):
+        return 0.0
+
+
+def _posix_str(v: float | None, tz: str) -> str | None:
+    """``as.character()`` of one ``POSIXct`` value (R >= 4.3 rules)."""
+    if v is None:
+        return None
+    if not math.isfinite(v):
+        return "NaN" if math.isnan(v) else ("Inf" if v > 0 else "-Inf")
+    from pytacheck._r import r_round
+
+    if tz != "UTC":
+        v += _utc_offset(v)
+    whole = math.floor(v)
+    days, rem = divmod(int(whole), 86400)
+    y, m, d = _civil_from_days(days)
+    out = f"{y}-{m:02d}-{d:02d}"
+    hour, rem = divmod(rem, 3600)
+    minute, sec = divmod(rem, 60)
+    secs = sec + (v - whole)
+    if hour + minute + secs != 0:
+        s = float(r_round(secs, 6))
+        out += f" {hour:02d}:{minute:02d}:{'0' if s < 10 else ''}{as_character(s)}"
     return out
 
 
@@ -905,6 +1129,8 @@ def _as_character(x: Any) -> list[str | None]:
     if x is None:
         return []
     if isinstance(x, _Vec):
+        if x.posix is not None:
+            return [_posix_str(v, x.posix) for v in x.values]
         return [_coerce(v, x.type, "character") for v in x.values]
     if isinstance(x, _List):
         return [_elt_to_str(el) for el in x.items]

@@ -1,0 +1,76 @@
+{
+  "id": "validate.duplicate_ids",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 4,
+    "names": [
+      "paper_id",
+      "text",
+      "n.gt",
+      "flag",
+      "n.mod",
+      "n.valid"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "1",
+          "1",
+          "2",
+          "zzz"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "It was significant.",
+          "Another significant one.",
+          "No.",
+          "an extra row"
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          19,
+          24,
+          4,
+          null
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true,
+          true,
+          false,
+          null
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          19,
+          24,
+          3,
+          0
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true,
+          true,
+          false,
+          null
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}
