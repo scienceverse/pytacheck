@@ -213,7 +213,9 @@ def test_github_readme(upstream_dir):
 ```
 
 Unrecorded requests get a 404, never the network. Parity cases must not use the
-network either; test network code through its parsing helpers with fixture inputs.
+network either: give them `mock_dir: apis` (or another metacheck mock directory) and
+both R (via httptest2) and Python replay the same recorded responses — this is how
+API clients and network-backed modules are parity-tested.
 
 ## 5. Performance
 
