@@ -152,3 +152,23 @@ scenario("rv_onlycb", function(d) {
          file.path(d, "codebook.csv"))
   wlines(c("# Study", "", "No data yet."), file.path(d, "README.md"))
 })
+
+# ── A Likert block no prefix group can hold (one-letter stem): the rules
+#    matcher still counts it as a scale block (scale_unnamed_n) ─────────────
+scenario("rv_qblock", function(d) {
+  set.seed(63)
+  x <- as.data.frame(matrix(sample(1:5, 30 * 6, TRUE), nrow = 30))
+  names(x) <- paste0("q", 1:6)
+  wcsv(cbind(id = 1:30, x), file.path(d, "data", "s.csv"))
+  wlines(c("varname,description", "id,Participant id"), file.path(d, "codebook.csv"))
+})
+
+# ── Task-like data no task name fits, tasks named only in the manuscript ─────
+scenario("rv_task_none", function(d) {
+  set.seed(64)
+  wcsv(data.frame(id = rep(1:10, each = 4), trial = rep(1:4, 10),
+                  foo_rt = round(runif(40, 400, 900)),
+                  foo_correct = sample(0:1, 40, TRUE)),
+       file.path(d, "data", "trials.csv"))
+}, text = c("Participants completed the Stroop task and the Flanker task.",
+            "They also completed the Iowa Gambling Task."))

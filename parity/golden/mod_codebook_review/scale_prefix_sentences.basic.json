@@ -1,0 +1,16 @@
+{
+  "id": "scale_prefix_sentences.basic",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "We used the BFI-2 questionnaire to measure personality.",
+      "The q.x variable was coded by two raters.",
+      "The Perceived Stress Scale (PSS) contains 10 items."
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

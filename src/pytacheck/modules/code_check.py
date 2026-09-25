@@ -249,7 +249,7 @@ def code_check(
     if len(code_files) == 0:
         from pytacheck.papers.tables import paper_id
 
-        pids = paper_id(paper) if paper is not None else []
+        pids = paper_id(paper)
         return {
             "table": code_files,
             "traffic_light": "na",

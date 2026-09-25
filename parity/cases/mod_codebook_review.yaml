@@ -107,6 +107,36 @@
       "$expr":
         "r": "local({source('tests/mod_codebook/review_helpers.R', local = TRUE); cbc_run_tables('rv_onlycb')})"
         "py": "__import__('tests.mod_codebook.helpers', fromlist=['_']).cbc_run_tables('rv_onlycb')"
+- "id": "codebook_check.rv_qblock"
+  "module": "codebook_check"
+  "args":
+    "paper":
+      "$expr":
+        "r": "local({source('tests/mod_codebook/review_helpers.R', local = TRUE); cbc_prev('rv_qblock')})"
+        "py": "__import__('tests.mod_codebook.helpers', fromlist=['_']).cbc_prev('rv_qblock')"
+- "id": "codebook_check.tables.rv_qblock"
+  "r": "base::identity"
+  "py": "tests.mod_codebook.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_codebook/review_helpers.R', local = TRUE); cbc_run_tables('rv_qblock')})"
+        "py": "__import__('tests.mod_codebook.helpers', fromlist=['_']).cbc_run_tables('rv_qblock')"
+- "id": "codebook_check.rv_task_none"
+  "module": "codebook_check"
+  "args":
+    "paper":
+      "$expr":
+        "r": "local({source('tests/mod_codebook/review_helpers.R', local = TRUE); cbc_prev('rv_task_none')})"
+        "py": "__import__('tests.mod_codebook.helpers', fromlist=['_']).cbc_prev('rv_task_none')"
+- "id": "codebook_check.tables.rv_task_none"
+  "r": "base::identity"
+  "py": "tests.mod_codebook.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_codebook/review_helpers.R', local = TRUE); cbc_run_tables('rv_task_none')})"
+        "py": "__import__('tests.mod_codebook.helpers', fromlist=['_']).cbc_run_tables('rv_task_none')"
 - "id": "codebook_check.pl_empty"
   "r": "base::identity"
   "py": "tests.mod_codebook.helpers.identity"
@@ -427,6 +457,38 @@
       "$expr":
         "r": "local({source('tests/mod_codebook/review_helpers.R', local = TRUE); rv_scales_to_osd()})"
         "py": "__import__('tests.mod_codebook.review_helpers', fromlist=['_']).rv_scales_to_osd()"
+- "id": "scale_paper_context.basic"
+  "r": "base::identity"
+  "py": "tests.mod_codebook.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_codebook/review_helpers.R', local = TRUE); rv_env()$.scale_paper_context(rv_text_paper(), c('bfi', 'q.x', 'ab', 'item', NA, ''), c('I feel enthusiastic', 'Determined and enthusiastic', NA, '', 'strongly agree'), max_sent = 4L)})"
+        "py": "__import__('pytacheck.modules._codebook', fromlist=['_'])._scale_paper_context(__import__('tests.mod_codebook.review_helpers', fromlist=['_']).rv_text_paper(), ['bfi', 'q.x', 'ab', 'item', None, ''], ['I feel enthusiastic', 'Determined and enthusiastic', None, '', 'strongly agree'], max_sent=4)"
+- "id": "scale_prefix_sentences.basic"
+  "r": "base::identity"
+  "py": "tests.mod_codebook.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_codebook/review_helpers.R', local = TRUE); rv_env()$.scale_prefix_sentences(rv_text_paper(), c('BFI', 'q.x', '', 'C++', 'pss', 'BFI'), max_sent = 3L)})"
+        "py": "__import__('pytacheck.modules._codebook', fromlist=['_'])._scale_prefix_sentences(__import__('tests.mod_codebook.review_helpers', fromlist=['_']).rv_text_paper(), ['BFI', 'q.x', '', 'C++', 'pss', 'BFI'], max_sent=3)"
+- "id": "scale_description_sentences.basic"
+  "r": "base::identity"
+  "py": "tests.mod_codebook.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_codebook/review_helpers.R', local = TRUE); rv_env()$.scale_description_sentences(rv_text_paper(), max_sent = 2L)})"
+        "py": "__import__('pytacheck.modules._codebook', fromlist=['_'])._scale_description_sentences(__import__('tests.mod_codebook.review_helpers', fromlist=['_']).rv_text_paper(), max_sent=2)"
+- "id": "scan_paper_for_tasks.review"
+  "r": "base::identity"
+  "py": "tests.mod_codebook.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_codebook/review_helpers.R', local = TRUE); rv_env()$.scan_paper_for_tasks(rv_text_paper())})"
+        "py": "__import__('pytacheck.modules._codebook', fromlist=['_'])._scan_paper_for_tasks(__import__('tests.mod_codebook.review_helpers', fromlist=['_']).rv_text_paper())"
 - "id": "haven_labels.0"
   "r": "base::identity"
   "py": "tests.mod_codebook.helpers.identity"

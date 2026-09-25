@@ -1,0 +1,5 @@
+warning("w1")
+message("m1")
+cat("out\n")
+f <- function(a) stop("inner boom: ", a)
+f("a very long argument string that makes the error line long enough to wrap around")

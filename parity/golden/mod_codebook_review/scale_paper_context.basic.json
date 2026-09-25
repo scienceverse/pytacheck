@@ -1,0 +1,17 @@
+{
+  "id": "scale_paper_context.basic",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "We used the BFI-2 questionnaire to measure personality.",
+      "The q.x variable was coded by two raters.",
+      "Participants felt enthusiastic and determined during the task.",
+      "Enthusiastic participants were more determined."
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

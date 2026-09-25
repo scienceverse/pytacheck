@@ -1,0 +1,4 @@
+# Fixtures here are input data for code_check: analysis scripts and notebooks
+# that are deliberately unidiomatic (unused imports, absolute paths, no comments).
+extend = "../../../pyproject.toml"
+extend-exclude = ["*.ipynb", "*.py"]

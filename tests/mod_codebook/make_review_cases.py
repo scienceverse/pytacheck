@@ -34,6 +34,8 @@ SCENARIOS = [
     "rv_dupscale",
     "rv_maxitem",
     "rv_onlycb",
+    "rv_qblock",
+    "rv_task_none",
 ]
 # labelled data files whose embedded labels the module harvests
 HAVEN_FILES = [
@@ -70,18 +72,20 @@ def module_cases() -> list[dict[str, Any]]:
     out = []
     for s in SCENARIOS:
         # module_run(<stored data_check output>, "codebook_check")
-        out.append({
-            "id": f"codebook_check.{s}",
-            "module": "codebook_check",
-            "args": {
-                "paper": {
-                    "$expr": {
-                        "r": f"local({{{R_PRE}; cbc_prev('{s}')}})",
-                        "py": f"{PY_H}.cbc_prev('{s}')",
+        out.append(
+            {
+                "id": f"codebook_check.{s}",
+                "module": "codebook_check",
+                "args": {
+                    "paper": {
+                        "$expr": {
+                            "r": f"local({{{R_PRE}; cbc_prev('{s}')}})",
+                            "py": f"{PY_H}.cbc_prev('{s}')",
+                        }
                     }
-                }
-            },
-        })
+                },
+            }
+        )
         out.append(
             case(f"codebook_check.tables.{s}", f"cbc_run_tables('{s}')", f"H.cbc_run_tables('{s}')")
         )
@@ -258,10 +262,42 @@ def helper_cases() -> list[dict[str, Any]]:
         )
     )
     h.append(case("scales_to_osd.mixed", "rv_scales_to_osd()", "RH.rv_scales_to_osd()"))
-    for i, f in enumerate(HAVEN_FILES):
-        h.append(
-            case(f"haven_labels.{i}", f"rv_haven_labels('{f}')", f"RH.rv_haven_labels('{f}')")
+    h.append(
+        case(
+            "scale_paper_context.basic",
+            "rv_env()$.scale_paper_context(rv_text_paper(), c('bfi', 'q.x', 'ab', 'item', NA, ''), "
+            "c('I feel enthusiastic', 'Determined and enthusiastic', NA, '', 'strongly agree'), "
+            "max_sent = 4L)",
+            "CB._scale_paper_context(RH.rv_text_paper(), ['bfi', 'q.x', 'ab', 'item', None, ''], "
+            "['I feel enthusiastic', 'Determined and enthusiastic', None, '', 'strongly agree'], "
+            "max_sent=4)",
         )
+    )
+    h.append(
+        case(
+            "scale_prefix_sentences.basic",
+            "rv_env()$.scale_prefix_sentences(rv_text_paper(), c('BFI', 'q.x', '', 'C++', 'pss', "
+            "'BFI'), max_sent = 3L)",
+            "CB._scale_prefix_sentences(RH.rv_text_paper(), ['BFI', 'q.x', '', 'C++', 'pss', "
+            "'BFI'], max_sent=3)",
+        )
+    )
+    h.append(
+        case(
+            "scale_description_sentences.basic",
+            "rv_env()$.scale_description_sentences(rv_text_paper(), max_sent = 2L)",
+            "CB._scale_description_sentences(RH.rv_text_paper(), max_sent=2)",
+        )
+    )
+    h.append(
+        case(
+            "scan_paper_for_tasks.review",
+            "rv_env()$.scan_paper_for_tasks(rv_text_paper())",
+            "CB._scan_paper_for_tasks(RH.rv_text_paper())",
+        )
+    )
+    for i, f in enumerate(HAVEN_FILES):
+        h.append(case(f"haven_labels.{i}", f"rv_haven_labels('{f}')", f"RH.rv_haven_labels('{f}')"))
     names = [
         "Q8timing_First.Click",
         "demo1time_First.Click",
