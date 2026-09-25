@@ -9,7 +9,7 @@ few places where pytacheck deliberately differs.
 
 | # | metacheck behaviour | pytacheck | why |
 |---|---|---|---|
-| D1 | `.read_bibr()` only understands bibr schema ≤ v10.x; a bibr ≥ 0.4 file (schema v11/v12: `metadata`, `source`, `target_id`, 0–1 scores) is read with no title, DOI, keywords or file info, xrefs pointing at the wrong rows and match scores on the wrong scale. | v11/v12 payloads are converted to the v10.x layout first (`pytacheck.io.bibr_schema`); v10.x and older files are read exactly like metacheck. | Tight bibr integration needs current bibr output to work. |
+| D1 | `paper_write()` saves the paper object unless `schema_version = "12.0"`, and its 12.0 files name metacheck (and its version) as `extraction.converter`. | `paper_write()`'s default `schema_version="auto"` saves a bibr 12.x paper as a bibr 12.0 file (and an older paper as before; `None` is metacheck's default, `"12.0"` its 12.0 writer, byte for byte); 12.0 files name pytacheck and its version as the converter. | bibr export schema 12.0 is the schema pytacheck targets: a paper read from bibr's export is saved as one, and the converter records the software that wrote the file. |
 | D2 | `convert(method = "bibr")` calls `do.call(convert_bibr, valid_args)` with the argument *names*, so it always fails ("second argument must be a list"). | Passes the argument values, so conversion through a bibr server works. | A documented method that can never succeed; not parity-testable without a server. |
 | D3 | `doi_resolves()` crashes ("argument is of length zero") on a connection failure, because `.batch_query()` returns `NULL` rather than an error object; its `timeout` argument is never used. | Returns `NA` (the documented result) and honours `timeout`. | Documented intent. |
 

@@ -1,0 +1,156 @@
+{
+  "id": "parse_qsf.edge.qsf",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 8,
+    "names": [
+      "codebook_variable",
+      "label",
+      "codebook_source",
+      "group",
+      "value_labels",
+      "missing_values",
+      "question",
+      "coding_instructions",
+      "scale_group",
+      "parse_method"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "M1_a",
+          "M1_5",
+          "M1_",
+          "M1_x",
+          "42_1",
+          "42_4",
+          "Q7",
+          "TE"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Item one",
+          "1",
+          null,
+          "1",
+          "A",
+          "lower-case display",
+          "Object text",
+          "12.5"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "edge.qsf",
+          "edge.qsf",
+          "edge.qsf",
+          "edge.qsf",
+          "edge.qsf",
+          "edge.qsf",
+          "edge.qsf",
+          "edge.qsf"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "{\"1\":\"Disagree\",\"2\":\"Agree <3\"}",
+          "{\"1\":\"Disagree\",\"2\":\"Agree <3\"}",
+          "{\"1\":\"Disagree\",\"2\":\"Agree <3\"}",
+          "{\"1\":\"Disagree\",\"2\":\"Agree <3\"}",
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "NULL",
+          "NULL",
+          "NULL",
+          "NULL",
+          "list(\"nested\", 1)",
+          "list(\"nested\", 1)",
+          "Object text",
+          "12.5"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "M1",
+          "M1",
+          "M1",
+          "M1",
+          "42",
+          "42",
+          "Q7",
+          "TE"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "qsf",
+          "qsf",
+          "qsf",
+          "qsf",
+          "qsf",
+          "qsf",
+          "qsf",
+          "qsf"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

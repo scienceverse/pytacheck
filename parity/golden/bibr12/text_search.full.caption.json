@@ -1,0 +1,97 @@
+{
+  "id": "text_search.full.caption",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 3,
+    "names": [
+      "text",
+      "text_id",
+      "paragraph_id",
+      "section_id",
+      "page_number",
+      "formatted",
+      "paper_id",
+      "header",
+      "section_type"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "It replicated prior work [1], t(28) = 3.42, see Table 1 and data.",
+          "Figure 1. Plot",
+          "Table 1. Values"
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          2,
+          3,
+          4
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          2,
+          3,
+          4
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          2,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          2,
+          2,
+          2
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "demo",
+          "demo",
+          "demo"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Results",
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "results",
+          null,
+          null
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

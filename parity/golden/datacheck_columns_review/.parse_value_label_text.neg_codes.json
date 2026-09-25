@@ -1,0 +1,14 @@
+{
+  "id": ".parse_value_label_text.neg_codes",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "{\"-1\":\"disagree\",\"0\":\"neutral\",\"1\":\"agree\"}"
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -366,7 +366,7 @@
           "number of degrees of freedom",
           "Bayesian information criterion",
           "Df Model",
-          "η²",
+          "eta-squared",
           "F-statistic",
           "t-statistic",
           "p-value"
@@ -405,7 +405,7 @@
           "http://purl.obolibrary.org/obo/STATO_0000069",
           "http://purl.obolibrary.org/obo/STATO_0000327",
           "",
-          "",
+          "http://purl.obolibrary.org/obo/STATO_0000317",
           "http://purl.obolibrary.org/obo/STATO_0000282",
           "http://purl.obolibrary.org/obo/STATO_0000176",
           "http://purl.obolibrary.org/obo/STATO_0000700"

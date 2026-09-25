@@ -1,0 +1,378 @@
+{
+  "id": "module.open_practices.preprint",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "open_practices"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Open Practices Check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "general"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 7,
+        "names": [
+          "text",
+          "text_id",
+          "paragraph_id",
+          "section_id",
+          "page_number",
+          "formatted",
+          "paper_id",
+          "header",
+          "section_type",
+          "data",
+          "code",
+          "materials",
+          "prereg",
+          "on_request"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "The anonymized data, analysis scripts, and materials are available on the Open Science Framework (https://osf.io/n9uvj/).",
+              "All studies were preregistered (see https://aspredicted.org/3tq2y.pdf, https://aspredicted.org/i9vw6.pdf, https://aspredicted.org/ej26f.pdf).",
+              "The anonymized data, analysis scripts, and materials are available on the Open Science Framework (https://osf.io/n9uvj/).",
+              "We preregistered our hypotheses, design, and analysis plan on AsPredicted.org (https://aspredicted.org/3tq2y.pdf).",
+              "We preregistered our hypotheses, design, and analysis plan on AsPredicted.org (https://aspredicted.org/i9vw6.pdf) 2 .",
+              "We preregistered our hypotheses, design, and analysis plan on AsPredicted.org (https://aspredicted.org/ej26f.pdf).",
+              "1 We also pretested low-status objects for different purposes. The entire stimulus and data sets are available on OSF."
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              8,
+              9,
+              135,
+              146,
+              248,
+              353,
+              626
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2,
+              2,
+              25,
+              26,
+              45,
+              61,
+              116
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              6,
+              6,
+              10,
+              11,
+              17,
+              25,
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1,
+              1,
+              11,
+              12,
+              19,
+              26,
+              12
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "preprint",
+              "preprint",
+              "preprint",
+              "preprint",
+              "preprint",
+              "preprint",
+              "preprint"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Abstract",
+              "Abstract",
+              "The Current Research",
+              "Study 1",
+              "Discussion",
+              "Study 3",
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "abstract",
+              "abstract",
+              "intro",
+              "method",
+              "discussion",
+              "method",
+              null
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true,
+              false,
+              true,
+              false,
+              false,
+              false,
+              true
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true,
+              false,
+              true,
+              false,
+              false,
+              false,
+              false
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true,
+              false,
+              true,
+              false,
+              false,
+              false,
+              false
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false,
+              true,
+              false,
+              true,
+              true,
+              true,
+              false
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Data was openly shared for this article, based on the following text:\n\n> The anonymized data, analysis scripts, and materials are available on the Open Science Framework (https://osf.io/n9uvj/).\n\n> The anonymized data, analysis scripts, and materials are available on the Open Science Framework (https://osf.io/n9uvj/).\n\n> 1 We also pretested low-status objects for different purposes. The entire stimulus and data sets are available on OSF.",
+          "Code was openly shared for this article, based on the following text:\n\n> The anonymized data, analysis scripts, and materials are available on the Open Science Framework (https://osf.io/n9uvj/).\n\n> The anonymized data, analysis scripts, and materials are available on the Open Science Framework (https://osf.io/n9uvj/)."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "green"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Shared data and code detected."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "data_open",
+          "code_open",
+          "materials_open",
+          "prereg_open",
+          "on_request",
+          "data_statements",
+          "code_statements",
+          "materials_statements",
+          "prereg_statements"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "preprint"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "The anonymized data, analysis scripts, and materials are available on the Open Science Framework (https://osf.io/n9uvj/).",
+                  "1 We also pretested low-status objects for different purposes. The entire stimulus and data sets are available on OSF."
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "The anonymized data, analysis scripts, and materials are available on the Open Science Framework (https://osf.io/n9uvj/)."
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "The anonymized data, analysis scripts, and materials are available on the Open Science Framework (https://osf.io/n9uvj/)."
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "All studies were preregistered (see https://aspredicted.org/3tq2y.pdf, https://aspredicted.org/i9vw6.pdf, https://aspredicted.org/ej26f.pdf).",
+                  "We preregistered our hypotheses, design, and analysis plan on AsPredicted.org (https://aspredicted.org/3tq2y.pdf).",
+                  "We preregistered our hypotheses, design, and analysis plan on AsPredicted.org (https://aspredicted.org/i9vw6.pdf) 2 .",
+                  "We preregistered our hypotheses, design, and analysis plan on AsPredicted.org (https://aspredicted.org/ej26f.pdf)."
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "data_open",
+          "code_open"
+        ],
+        "v": [
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

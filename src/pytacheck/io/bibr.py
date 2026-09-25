@@ -1,9 +1,11 @@
 """Tight integration with bibr, the ScienceVerse extraction pipeline.
 
-bibr turns PDF/DOCX/HTML/ePub papers into the JSON schema pytacheck works
-on. With ``pip install "pytacheck[bibr]"`` it runs in-process: extraction
-results are converted straight into :class:`~pytacheck.papers.Paper` objects
-without a JSON round trip (see :func:`pytacheck.papers.from_bibr`).
+bibr turns PDF/DOCX/HTML/ePub papers into bibr export schema 12.x, the
+schema pytacheck targets. With ``pip install "pytacheck[bibr]"`` it runs
+in-process: extraction results are read straight into native 12.x
+:class:`~pytacheck.papers.Paper` objects (see :func:`pytacheck.papers.from_bibr`
+and :mod:`pytacheck.io.bibr12`), exactly as the same export read from JSON,
+without writing a file. ``paper_write()`` saves such a paper as a 12.0 file.
 
 Without the extra, :func:`chew` raises an error explaining how to install
 it; a remote bibr server can still be used through ``convert_bibr()``.
@@ -65,7 +67,10 @@ def chew(
 ) -> Paper | PaperList:
     """Extract paper(s) with bibr and return pytacheck paper objects.
 
-    ``options`` are passed to ``bibr.chew()`` (e.g. ``refs="llm"``,
+    The papers are native bibr 12.x papers (their ``info`` table says
+    ``schema_version`` 12.x), as :func:`pytacheck.read` returns for bibr's
+    JSON export. An export in any other schema version raises metacheck's
+    error. ``options`` are passed to ``bibr.chew()`` (e.g. ``refs="llm"``,
     ``pages="1-10"``, ``ocr=...``). Figure images are requested from bibr
     only when *include_images* is true. Failed files in a batch are skipped
     and logged.

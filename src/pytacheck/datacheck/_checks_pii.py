@@ -247,8 +247,11 @@ def _pii_split_name(x: Any) -> list[str | None]:
     Port of ``R/data_check_helpers.R::.pii_split_name()``: both readings of a
     capital run (``IPAddress`` -> ip/address, ``ZIPcode`` -> zip/code) are
     produced. A vector argument uses its first element (as R's
-    ``strsplit(x)[[1]]`` does); ``NA`` gives ``[None]``.
+    ``strsplit(x)[[1]]`` does); ``NA`` gives ``[None]`` and a zero-length
+    vector is an error (``[[1]]`` of an empty list).
     """
+    if x is not None and not isinstance(x, str) and not chr(x):
+        raise IndexError("subscript out of bounds")
     x = scalar_chr(x)
     if x is None:
         return [None]
@@ -257,16 +260,6 @@ def _pii_split_name(x: Any) -> list[str | None]:
     s2 = gsub(r"(?<=[A-Z])(?=[a-z])", " ", a, perl=True)
     p = [*strsplit([tolower(s1)], "[^a-z0-9]+")[0], *strsplit([tolower(s2)], "[^a-z0-9]+")[0]]
     return unique(t for t in p if t is None or t != "")
-
-
-def _scalar_name(col_name: Any) -> tuple[bool, str | None]:
-    """A column-name argument as one string: ``(ok, name)``."""
-    if col_name is None:
-        return False, None
-    names = chr(col_name)
-    if len(names) != 1:
-        return False, None
-    return True, names[0]
 
 
 def data_check_pii_name(col_name: Any) -> dict[str, Any]:
@@ -280,8 +273,10 @@ def data_check_pii_name(col_name: Any) -> dict[str, Any]:
     if col_name is None:
         return none
     names = chr(col_name)
-    if not names:
-        raise ValueError("argument is of length zero")
+    if not names:  # `FALSE || logical(0)` is NA inside `if`
+        raise ValueError("missing value where TRUE/FALSE needed")
+    if len(names) > 1:
+        raise ValueError(f"'length = {len(names)}' in coercion to 'logical(1)'")
     nm = names[0]
     if nm is None or nm == "":
         return none
@@ -323,9 +318,8 @@ def data_check_pii_geo(col_name: Any, x: Any, sibling_names: Any = None) -> dict
     lat/lon, when *sibling_names* is given -- a partner column in the file.
     """
     none: dict[str, Any] = {"problem": False, "message": "", "values": None}
-    nm = "" if col_name is None else (chr(col_name) or [""])[0]
-    words = _pii_split_name(nm)
-    if not words:
+    words = _pii_split_name("" if col_name is None else col_name)  # col_name %||% ""
+    if not words or words == [None]:
         return none
     is_lat = any(w in _LAT_WORDS for w in words)
     is_lon = any(w in _LON_WORDS for w in words)

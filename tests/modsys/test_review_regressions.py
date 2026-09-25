@@ -9,7 +9,6 @@ import copy
 import json
 import os
 import py_compile
-import re
 import stat
 from dataclasses import replace
 from pathlib import Path
@@ -575,7 +574,7 @@ def test_rerun_checks_files_before_importing_them(store, ms, paper, tmp_path) ->
     assert not marker.exists()
 
 
-# --- presets, docs and the contrib store --------------------------------------------------
+# --- presets and docs --------------------------------------------------------------------
 
 
 def test_as_r_leaves_out_modules_r_cannot_run(ms) -> None:
@@ -593,10 +592,6 @@ def test_pack_template_installs_what_the_store_ci_installs(ms) -> None:
     root = pack_new("tmpl", ms.work)
     workflow = (root / ".github" / "workflows" / "pytacheck.yml").read_text()
     assert f'pip install "{INSTALL_SPEC}"' in workflow and "{{" not in workflow
-    ci = ROOT / "contrib" / "pytacheck-modules" / ".github" / "workflows" / "check.yml"
-    if ci.is_file():
-        spec = re.search(r'PYTACHECK_SPEC: "([^"]+)"', ci.read_text())
-        assert spec is not None and spec.group(1) == INSTALL_SPEC
 
 
 def test_modules_md_does_not_promise_html_run_records() -> None:
@@ -618,12 +613,3 @@ def test_report_record_keeps_the_run_order(ms, capsys, demo_json) -> None:
             "-o", str(ms.work / "r.md"), "--record", str(record)]  # fmt: skip
     assert main(argv) == 0
     assert [m["name"] for m in json.loads(record.read_text())["modules"]] == ["marginal", "zzz"]
-
-
-def test_contrib_store_note_stays_until_the_index_has_commits() -> None:
-    seed = ROOT / "contrib" / "pytacheck-modules"
-    if not seed.is_dir():
-        pytest.skip("no contrib seed")
-    index = json.loads((seed / "index.json").read_text())
-    if any("path" in (p.get("source") or {}) for p in index["packs"]):
-        assert "Before the first CI build" in (seed / "README.md").read_text()

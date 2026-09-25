@@ -1,0 +1,418 @@
+{
+  "id": "paper_table.list.info",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 5,
+    "names": [
+      "title",
+      "abstract",
+      "keywords",
+      "doi",
+      "pmid",
+      "pmcid",
+      "arxiv",
+      "language",
+      "paper_type",
+      "oecd_l1",
+      "oecd_l2",
+      "journal",
+      "volume",
+      "issue",
+      "first_page",
+      "last_page",
+      "issn",
+      "publisher",
+      "published",
+      "published_date",
+      "license",
+      "license_url",
+      "license_spdx",
+      "funding_statement",
+      "coi_statement",
+      "ethics_statement",
+      "data_availability",
+      "file_name",
+      "sha256",
+      "input_format",
+      "schema_version",
+      "file_hash",
+      "bibr_version",
+      "paper_id"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "Europe PMC: a full-text literature database for the life sciences and platform for innovation",
+          "A Demonstration Paper",
+          "\"You're Just Envious\": Inferring Benign and Malicious Envy from Facial Expressions and Contextual Information",
+          "Probe Paper on Xrefs",
+          "Deep Learning for Something Great"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "This article describes recent developments of Europe PMC (http://europepmc.org), the leading database for life science literature. Formerly known as UKPMC, the service was rebranded in November 2012 as Europe PMC to reflect the scope of the funding agencies that support it. Several new developments have enriched Europe PMC considerably since then. Europe PMC now offers RESTful web services to access both articles and grants, powerful search tools such as citation-count sort order and data citation features, a service to add publications to your ORCID, a variety of export formats, and an External Links service that enables any related resource to be linked from Europe PMC content.",
+          "We demonstrate the export schema.",
+          "Envy shapes social hierarchies. To protect their rank, envied persons react to the threat posed by enviers. Doing so requires that envied persons initially perceive who envies them. However, a common perspective is that envy lacks a unique expression and that enviers disguise their experience, preventing the social perception of envy. In contrast to this perspective, recent evidence indicates that observers perceive benign and malicious forms of envy accurately when they can integrate information about targets. These findings suggest that observers infer envy based on multiple, contextual cues. We hypothesized that observers infer envy from facial and bodily expressions in comparison situations. Specifically, observers should infer benign envy when a target, who encounters an advantaged person, turns with disappointment toward the advantage. Conversely, observers should infer malicious envy when the target turns with anger toward the advantaged person. Three preregistered studies tested these hypotheses (total N = 693). In Studies 1 and 2, targets turned with an emotional or neutral expression either toward a person silhouette or a valuable object, and participants rated targets' envy. In Study 3, participants performed the same task with more realistic stimuli. Across studies, emotional display and head turning had independent effects on inferences of benign and malicious envy. Furthermore, observers inferred envy more when the target expressed an emotion instead of remaining neutral. We discuss how the results inform research on the social perception of envy.",
+          null,
+          "This is an abstract."
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": [
+              "schema",
+              "export"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "benign and malicious envy",
+              "social perception",
+              "facial expression",
+              "bodily expression",
+              "social context"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": [
+              "deep learning",
+              "nlp"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "10.1093/nar/gku1061",
+          "10.1234/demo",
+          null,
+          "10.1234/probe.abc",
+          "10.1234/example.5678"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "25378340",
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "PMC4383902",
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "en",
+          null,
+          null,
+          "en",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "empirical",
+          "empirical",
+          null,
+          "empirical"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "Social Sciences",
+          "Social Sciences",
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "Psychology and Cognitive Sciences",
+          "Psychology and Cognitive Sciences",
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Nucleic Acids Research",
+          "Journal of Demonstrations",
+          null,
+          null,
+          "Journal of Examples"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "43",
+          "12",
+          null,
+          null,
+          "12"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Database issue",
+          "3",
+          null,
+          null,
+          "3"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "D1042",
+          "100",
+          null,
+          null,
+          "100"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "115",
+          null,
+          null,
+          "110"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "1234-5678",
+          null,
+          null,
+          "1234-5678"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Oxford University Press",
+          "Example Press",
+          null,
+          null,
+          "Example Press"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "2014-11-06",
+          "2026-01-15",
+          null,
+          "2024-03-05",
+          "2026"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "2014-11-06",
+          "2026-01-15",
+          null,
+          "2024-03-05",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "This is an Open Access article distributed under the terms of the Creative Commons Attribution License (http://creativecommons.org/licenses/by/4.0/), which permits unrestricted reuse, distribution, and reproduction in any medium, provided the original work is properly cited.",
+          "CC-BY-4.0",
+          null,
+          null,
+          "CC-BY"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "http://creativecommons.org/licenses/by/4.0/",
+          "https://creativecommons.org/licenses/by/4.0/",
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "CC-BY-4.0",
+          "CC-BY-4.0",
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Twenty-six European-based funders of life science research: http://europepmc.org/Funders/ under a Wellcome Trust grant [098231] awarded to EMBL-EBI. Funding for open access charge: Wellcome Trust [098231]. Conflict of interest statement. None declared.",
+          "Funded by the NSF under award 12345.",
+          "The research reported in this article was supported by \r\ngrants from the German Research foundation (DFG) awarded to Jens Lange (LA 4029/1-1, LA 4029/2-1). We thank the members of the Department of Social Psychology at the \r\nUniversity of Amsterdam for valuable feedback.",
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Conflict of interest statement. None declared.",
+          "The authors declare no conflict of interest.",
+          "We have no known conflicts of interest. We report all studies we ever conducted in \r\nthis line of research. We report how we determined our sample size, all data exclusions (if \r\nany), all manipulations, and all measures in the study.",
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "Approved by the IRB.",
+          "The studies were conducted in accordance with the \r\nDeclaration of Helsinki and received ethics approval from the Institutional Review Board of \r\nthe University of Amsterdam (2018-SP-8824, 2018-SP-9418).",
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "Data are available on OSF.",
+          "The anonymized data, analysis scripts, \r\nand materials are available on the Open Science Framework (https://osf.io/n9uvj/). All studies \r\nwere preregistered (see https://aspredicted.org/3tq2y.pdf, https://aspredicted.org/i9vw6.pdf, \r\nhttps://aspredicted.org/ej26f.pdf).",
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "PMC4383902.xml",
+          "demo.pdf",
+          "preprint.pdf",
+          "probe.html",
+          "example.pdf"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "5fe402bfa6f69b3f3d310dfa1ebf8d65430106f9d58a5560a64bb5b57ae90bf2",
+          "3a6eb0790f39ac87c94f3856b2dd2c5d110e6811602261a9a923d3bb23adc8b7",
+          "77a0e6a09ee1aec5e05ecd61143bed608ad2c967782d4fc3a646028a754ec296",
+          "3c6c3f6d06fe8716a432e5aa9f597186ca94bb9761e7ba93d97908fce30068ec",
+          "6ca13d52ca70c883e0f0bb101e425a89e8624de51db2d2392593af6a84118090"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "jats",
+          "pdf",
+          "pdf",
+          "html",
+          "pdf"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "12.0",
+          "12.0",
+          "12.0",
+          "12.0",
+          "12.0"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "5fe402bfa6f69b3f",
+          "3a6eb0790f39ac87",
+          "77a0e6a09ee1aec5",
+          "3c6c3f6d06fe8716",
+          "6ca13d52ca70c883"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "0.5.1",
+          "0.0.0-test",
+          "0.5.1",
+          "0.5.1",
+          "0.3.0"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "PMC4383902",
+          "demo",
+          "preprint",
+          "probe",
+          "10.1234/example.5678"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

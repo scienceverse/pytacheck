@@ -1,0 +1,88 @@
+{
+  "id": "paper_table.probe_docx.xref",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 3,
+    "names": [
+      "xref_id",
+      "target_id",
+      "xref_type",
+      "contents",
+      "text_id",
+      "start",
+      "end",
+      "paper_id"
+    ],
+    "v": [
+      {
+        "t": "int",
+        "v": [
+          1,
+          2,
+          3
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          1,
+          1,
+          1
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "table",
+          "figure",
+          "figure"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Table 1",
+          "Figure 1",
+          "Figure 1"
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          1,
+          1,
+          2
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          56,
+          43,
+          0
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          63,
+          51,
+          8
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "probe",
+          "probe",
+          "probe"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

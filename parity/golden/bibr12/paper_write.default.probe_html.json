@@ -1,0 +1,53 @@
+{
+  "id": "paper_write.default.probe_html",
+  "ok": true,
+  "error": null,
+  "warnings": [
+    "path[1]=\"/tmp/Rtmpmffufb/pc_bibr12_32d92776f9a\": No such file or directory"
+  ],
+  "value": {
+    "t": "list",
+    "names": [
+      "names",
+      "title",
+      "schema_version"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "paper_id",
+          "info",
+          "author",
+          "text",
+          "section",
+          "url",
+          "bib",
+          "xref",
+          "figure",
+          "table",
+          "eq",
+          "affiliation",
+          "funding",
+          "footnote",
+          "info_match",
+          "affiliation_match",
+          "funding_match",
+          "bib_match",
+          "extraction"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Probe Paper on Xrefs"
+        ]
+      },
+      {
+        "t": "null"
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

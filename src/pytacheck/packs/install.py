@@ -199,11 +199,31 @@ def _split_url_ref(url: str) -> tuple[str, str | None]:
     return url, None
 
 
+def _refuse_credentials(url: str) -> None:
+    """Pins and install records are shared: a URL may not carry a password or token."""
+    from urllib.parse import urlsplit
+
+    from pytacheck.packs.auth import redact
+
+    try:
+        parts = urlsplit(url)
+        password = parts.password
+    except ValueError:
+        return
+    if password or (parts.scheme in ("http", "https") and "@" in parts.netloc):
+        raise PackError(
+            f"The URL {redact(url)} contains credentials, which would be written to your "
+            "config and install record; use the plain URL and set PYTACHECK_GITHUB_TOKEN "
+            "(or configure git credentials) instead"
+        )
+
+
 def _url_source(url: str) -> tuple[dict[str, Any], str | None]:
     """A source dict and ref for a URL install."""
     force_git = url.startswith("git+")
     if force_git:
         url = url[4:]
+    _refuse_credentials(url)
     url, ref = _split_url_ref(url)
     if not force_git:
         for host, domain in HOSTS.items():

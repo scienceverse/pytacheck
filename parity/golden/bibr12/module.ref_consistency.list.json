@@ -1,0 +1,167 @@
+{
+  "id": "module.ref_consistency.list",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "ref_consistency"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Reference Consistency"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "reference"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 2,
+        "names": [
+          "paper_id",
+          "bib_id",
+          "reference",
+          "contents",
+          "text"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "10.1234/example.5678",
+              "PMC4383902"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2,
+              13
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "This is sentence four.",
+              "13. Corpas M., Jimenez R., Carbon S.J., García A., Garcia L., Goldberg T., Gomez J., Kalderimis A., Lewis S.E., Mulvany I. BioJS: an open source standard for biological visualisation—its status in 2014. F1000Res. 2014;3:55. doi: 10.12688/f1000research.3-55.v1."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "This module relies on Grobid correctly parsing the references. There are likley to be some false positives.",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(bib_id = c(2L, 13L), type = c(\"extra\", \"extra\"\n), contents = c(NA_character_, NA_character_), reference = c(\"This is sentence four.\", \n\"13. Corpas M., Jimenez R., Carbon S.J., García A., Garcia L., Goldberg T., Gomez J., Kalderimis A., Lewis S.E., Mulvany I. BioJS: an open source standard for biological visualisation—its status in 2014. F1000Res. 2014;3:55. doi: 10.12688/f1000research.3-55.v1.\"\n)), row.names = c(NA, -2L), class = c(\"tbl_df\", \"tbl\", \"data.frame\"\n))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 2, FALSE)\n```\n"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "red"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "There are cross-references that are not in the bibliography and/or bibliography entries not cross-referenced in the text"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 5,
+        "names": [
+          "paper_id",
+          "n_bib",
+          "n_xrefs",
+          "n_extra"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "PMC4383902",
+              "demo",
+              "preprint",
+              "probe",
+              "10.1234/example.5678"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              17,
+              0,
+              78,
+              0,
+              2
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              18,
+              1,
+              138,
+              0,
+              2
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          }
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

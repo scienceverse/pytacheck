@@ -1,0 +1,128 @@
+{
+  "id": "match_column_labels.paper_numeric",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 2,
+    "names": [
+      "paper_id",
+      "source_file",
+      "column_name",
+      "group",
+      "label",
+      "codebook_variable",
+      "label_source",
+      "label_status",
+      "label_method",
+      "value_labels",
+      "missing_values",
+      "question",
+      "coding_instructions",
+      "scale_group"
+    ],
+    "v": [
+      {
+        "t": "int",
+        "v": [
+          1,
+          2
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "d.csv",
+          "d.csv"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "age",
+          "age"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Age",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "age",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "a",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "labelled",
+          "unlabelled"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "rules",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -41,6 +41,7 @@ from pytacheck._r.base import as_character
 from pytacheck._r.regex import grepl, is_na, sub
 from pytacheck.papers.model import Paper
 from pytacheck.papers.schema import (
+    SCHEMA_DTYPES,
     coerce_column,
     infer_column,
     load_schema_bibr12,
@@ -471,26 +472,31 @@ def _column_values(v: Any) -> list[Any]:
     return [None if _scalar_na(e) else e for e in v]
 
 
-def _bibr12_columns(columns: Mapping[str, Any], cols: Mapping[str, str], n: int) -> dict[str, Any]:
-    """The typed columns of ``.bibr12_df()`` (Series for scalar, lists for other types)."""
-    out: dict[str, Any] = {}
+def _bibr12_columns(columns: Mapping[str, Any], cols: Mapping[str, str], n: int) -> dict[str, list[Any]]:
+    """The typed columns of ``.bibr12_df()``, as lists (``None`` for NA).
+
+    Scalar columns hold values of the column's type (converted as ``unlist()``
+    and ``as.character()`` etc. do); array columns hold lists; ``json``
+    columns the values as they are.
+    """
+    out: dict[str, list[Any]] = {}
     for col, typ in cols.items():
         v = columns.get(col) if col in columns else None
         if typ in _SCALAR_SCHEMA:
             schema_type = _SCALAR_SCHEMA[typ]
-            if v is None:
-                vals: list[Any] = [None] * n
-            elif _is_list_column(v):
-                vals = [_first(e) if isinstance(e, list | dict) else _first_any(e) for e in v]
+            if isinstance(v, pd.Series) and str(v.dtype) == str(SCHEMA_DTYPES[schema_type]):
+                vals: list[Any] = v.tolist()  # already the column's type
             else:
-                vals = _column_values(v)
-            series = coerce_column(infer_column(vals), schema_type)
-            out[col] = series.reset_index(drop=True)
+                if v is None:
+                    vals = [None] * n
+                elif _is_list_column(v):
+                    vals = [_first(e) if isinstance(e, list | dict) else _first_any(e) for e in v]
+                else:
+                    vals = _column_values(v)
+                vals = coerce_column(infer_column(vals), schema_type).tolist()
+            out[col] = [None if e is None or e is pd.NA or e != e else e for e in vals]
             continue
-        if v is None:
-            cells: list[Any] = [None] * n
-        else:
-            cells = _column_values(v)
+        cells: list[Any] = [None] * n if v is None else _column_values(v)
         if typ in ("chr[]", "int[]", "chr[][]"):
             out[col] = [_cell(_to_json_value(e), typ) for e in cells]
         else:
@@ -539,9 +545,9 @@ def _bibr12_df(
         n = max([0, *(_length(v) for v in columns.values())])
     data = _bibr12_columns(columns, cols, n)
     frame: dict[str, Any] = {}
-    for col in cols:
-        v = data[col]
-        frame[col] = v if isinstance(v, pd.Series) else pd.Series(v, dtype=object)
+    for col, typ in cols.items():
+        dtype = SCHEMA_DTYPES[_SCALAR_SCHEMA[typ]] if typ in _SCALAR_SCHEMA else object
+        frame[col] = pd.Series(data[col], dtype=dtype)
     if not frame:
         return pd.DataFrame(index=range(n))
     return pd.DataFrame(frame)
@@ -555,26 +561,36 @@ def _bibr12_records(
     ``records_to_frame()`` builds from these records exactly the data frame
     ``.bibr12_df(.bibr12_rows(rows, cols), cols)`` makes, coerced by
     ``.paper_coerce()``: every 12.0 column is in the merged paper schema with
-    the same type. Columns in *drop* are all NA.
+    the same type. Columns in *drop* are all NA. A row whose values need no
+    normalisation is kept as parsed (keys 12.0 does not define are never read).
     """
-    records = (
-        rows if isinstance(rows, list) else list(rows.values()) if isinstance(rows, dict) else []
-    )
-    items = [(col, typ, col in drop) for col, typ in cols.items()]
+    records = _as_rows(rows)
+    scalar = [col for col, typ in cols.items() if typ in _SCALAR_SCHEMA and col not in drop]
+    special = [(col, typ) for col, typ in cols.items() if typ in ("chr[]", "int[]", "chr[][]")]
     out = []
     for r in records:
-        if not isinstance(r, Mapping):
+        if not isinstance(r, dict):
             r = {}
-        rec: dict[str, Any] = {}
-        for col, typ, dropped in items:
-            e = None if dropped else r.get(col)
-            if typ in _SCALAR_SCHEMA:
-                rec[col] = _first(e)
-            elif typ == "json":
-                rec[col] = e
-            else:
-                rec[col] = _cell(e, typ)
-        out.append(rec)
+        rec: dict[str, Any] | None = None
+        for col in scalar:
+            v = r.get(col)
+            t = type(v)
+            if v is None or t is str or t is float or t is bool:
+                continue
+            if t is int and -_INT_MAX <= v <= _INT_MAX:
+                continue
+            if rec is None:
+                rec = dict(r)
+            rec[col] = _first(v)
+        for col, typ in special:
+            if rec is None:
+                rec = dict(r)
+            rec[col] = _cell(r.get(col), typ)
+        for col in drop:
+            if rec is None:
+                rec = dict(r)
+            rec[col] = None
+        out.append(r if rec is None else rec)
     return out
 
 
@@ -621,7 +637,7 @@ def _names_records(persons: Any) -> Any:
     """
     people = persons if isinstance(persons, list) else [] if persons is None else [persons]
     if not people:
-        return _EMPTY_NAMES.copy()
+        return _EMPTY_NAMES.copy(deep=False)  # zero rows: nothing to share
     out = []
     for p in people:
         if not isinstance(p, Mapping):
@@ -706,9 +722,10 @@ def _bibr12_from_json(x: Mapping[str, Any], include_images: bool, file_name: str
         tables[tbl] = _bibr12_records(x.get(tbl), BIBR12_COLS[tbl], drop)
 
     # metacheck keeps degrees of freedom in parentheses, as printed: "(28)"
-    for rec, raw in zip(tables["eq"], _as_rows(x.get("eq")), strict=True):
-        df = raw.get("df") if isinstance(raw, Mapping) else None
-        rec["df"] = _first(_paren_df(df))
+    tables["eq"] = [
+        {**rec, "df": _first(_paren_df(raw.get("df") if isinstance(raw, Mapping) else None))}
+        for rec, raw in zip(tables["eq"], _as_rows(x.get("eq")), strict=True)
+    ]
 
     extraction = x.get("extraction")
     producer = extraction.get("producer") if isinstance(extraction, Mapping) else None
@@ -909,17 +926,24 @@ def paper_to_bibr12(paper: Paper) -> dict[str, Any]:
         columns: dict[str, Any] = {}
         n = 0
         if isinstance(df, pd.DataFrame):
-            columns = {str(c): df[c] for c in df.columns}
+            columns = {c: df[c] for c in BIBR12_COLS[tbl] if c in df.columns}
             n = len(df)
         tables[tbl] = _bibr12_columns(columns, BIBR12_COLS[tbl], n)
 
     # 12.x writes degrees of freedom bare: "28"
-    eq_df = tables["eq"]["df"]
-    tables["eq"]["df"] = pd.Series(
-        sub(r"^\((.*)\)$", r"\1", eq_df.tolist()), index=eq_df.index, dtype="string"
-    )
+    tables["eq"]["df"] = list(sub(r"^\((.*)\)$", r"\1", tables["eq"]["df"]))
 
     # match rows made by metacheck's add_bib_match() have the older columns
+    services = (
+        "crossref",
+        "openalex",
+        "datacite",
+        "doi.org",
+        "openlibrary",
+        "ror",
+        "manual",
+        "other",
+    )
     for tbl in ("bib_match", "metadata_match"):
         df = paper.get(BIBR12_TABLES[tbl])
         rows = tables[tbl]
@@ -933,16 +957,12 @@ def paper_to_bibr12(paper: Paper) -> dict[str, Any]:
         if "published_date" not in df.columns and "date" in df.columns:
             dates = [as_character(v) for v in df["date"].tolist()]
             iso = grepl(r"^[0-9]{4}(-[0-9]{2}(-[0-9]{2})?)?$", dates)
-            rows["published_date"] = pd.Series(
-                [d if ok else None for d, ok in zip(dates, iso, strict=True)], dtype="string"
-            )
+            rows["published_date"] = [d if ok else None for d, ok in zip(dates, iso, strict=True)]
 
-        scores = rows["score"].tolist()
-        off = [not is_na(s) and (s < 0 or s > 1) for s in scores]
+        scores = rows["score"]
+        off = [s is not None and (s < 0 or s > 1) for s in scores]
         if any(off):
-            rows["score"] = pd.Series(
-                [None if o else s for s, o in zip(scores, off, strict=True)], dtype="float64"
-            )
+            rows["score"] = [None if o else s for s, o in zip(scores, off, strict=True)]
             warnings_out.append(
                 {
                     "code": "METACHECK_MATCH_SCORE_NOT_0_1",
@@ -953,33 +973,25 @@ def paper_to_bibr12(paper: Paper) -> dict[str, Any]:
                 }
             )
 
-        services = (
-            "crossref",
-            "openalex",
-            "datacite",
-            "doi.org",
-            "openlibrary",
-            "ror",
-            "manual",
-            "other",
-        )
-        rows["service"] = pd.Series(
-            [s if s in services else "other" for s in _values(rows["service"])], dtype="string"
-        )
-        rows["bib_type"] = pd.Series(_bibr12_bib_type(_values(rows["bib_type"])), dtype="string")
-        rows["doi"] = pd.Series(_bibr12_doi(_values(rows["doi"])), dtype="string")
+        rows["service"] = [s if s in services else "other" for s in rows["service"]]
+        rows["bib_type"] = _bibr12_bib_type(rows["bib_type"])
+        rows["doi"] = _bibr12_doi(rows["doi"])
 
     out_tables: dict[str, list[dict[str, Any]]] = {}
     for tbl in _WRITE_ORDER:
         out_tables[tbl] = _rows_out(tables[tbl], BIBR12_COLS[tbl])
 
     info = paper.info
-    meta_cols = _bibr12_columns({c: info[c] for c in info.columns}, BIBR12_COLS["metadata"], 1)
+    meta_cols = _bibr12_columns(
+        {c: info[c] for c in BIBR12_COLS["metadata"] if c in info.columns},
+        BIBR12_COLS["metadata"],
+        1,
+    )
     metadata: dict[str, Any] = {}
-    for col in BIBR12_COLS["metadata"]:
+    for col, typ in BIBR12_COLS["metadata"].items():
         v = meta_cols[col]
-        if isinstance(v, pd.Series):
-            metadata[col] = _json_scalar(v.iloc[0]) if len(v) else None
+        if typ in _SCALAR_SCHEMA:
+            metadata[col] = _json_scalar(v[0]) if v else None
         else:
             metadata[col] = _Array(v[0]) if v else _Array()
 
@@ -1040,24 +1052,21 @@ def _json_scalar(v: Any) -> Any:
     return v
 
 
-def _rows_out(columns: Mapping[str, Any], cols: Mapping[str, str]) -> list[dict[str, Any]]:
+def _rows_out(columns: Mapping[str, list[Any]], cols: Mapping[str, str]) -> list[dict[str, Any]]:
     """A table's typed columns as the row objects jsonlite writes (arrays wrapped in ``I()``)."""
-    lists: dict[str, list[Any]] = {}
-    n = 0
+    lists: list[list[Any]] = []
     for col, typ in cols.items():
         v = columns[col]
-        if isinstance(v, pd.Series):
-            vals = [_json_scalar(e) for e in v.tolist()]
+        if typ in _SCALAR_SCHEMA:
+            lists.append([_json_scalar(e) for e in v])
         elif typ in ("chr[]", "int[]"):
-            vals = [_Array(e) for e in v]
+            lists.append([_Array(e) for e in v])
         elif typ == "chr[][]":
-            vals = [[_Array(r) for r in e] for e in v]
+            lists.append([[_Array(r) for r in e] for e in v])
         else:
-            vals = list(v)
-        lists[col] = vals
-        n = len(vals)
+            lists.append(list(v))
     names = list(cols)
-    return [{c: lists[c][i] for c in names} for i in range(n)]
+    return [dict(zip(names, row, strict=True)) for row in zip(*lists, strict=True)]
 
 
 # jsonlite's string escapes: quote, backslash, the control characters (and "</")

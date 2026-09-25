@@ -136,32 +136,81 @@ _ID_PAT = (
 )
 
 
+_NUMBER_TYPES = (int, float, np.integer, np.floating)
+
+
 def _is_numeric_vector(values: Any) -> bool:
     """R ``is.numeric()`` of a column (integer / double, not logical / factor)."""
     if isinstance(values, pd.Series | pd.Index | np.ndarray):
         dtype = values.dtype
-        if isinstance(dtype, pd.CategoricalDtype) or pd.api.types.is_bool_dtype(dtype):
+        if (
+            isinstance(dtype, pd.CategoricalDtype)
+            or pd.api.types.is_bool_dtype(dtype)
+            or pd.api.types.is_complex_dtype(dtype)
+        ):
             return False
         if pd.api.types.is_numeric_dtype(dtype):
             return True
-        vals = [v for v in values.tolist() if not _na(v)]
+        if dtype != object:
+            return False  # string, datetime, ... columns
+        vals = values.tolist()
     else:
-        vals = [v for v in _vec(values) if not _na(v)]
-        if not vals:
-            # an all-NA list: R's NA is logical
-            return any(isinstance(v, float) for v in _vec(values))
-    return bool(vals) and all(
-        isinstance(v, int | float | np.integer | np.floating) and not isinstance(v, bool | np.bool_)
-        for v in vals
-    )
+        vals = _vec(values)
+    seen = False
+    for v in vals:
+        if _na(v):
+            continue
+        if not isinstance(v, _NUMBER_TYPES) or isinstance(v, bool | np.bool_):
+            return False
+        seen = True
+    # an all-NA vector is logical in R unless it holds a double NaN
+    return seen or any(isinstance(v, float) for v in vals)
 
 
 def _values_list(values: Any) -> list[Any]:
+    """An R vector as a list with ``None`` for NA (a factor gives its labels)."""
     if isinstance(values, pd.Series) and isinstance(values.dtype, pd.CategoricalDtype):
         return [None if _na(v) else str(v) for v in values.astype(object).tolist()]
     if isinstance(values, np.ndarray):
         return [None if _na(v) else v for v in values.tolist()]
     return _vec(values)
+
+
+def _double_array(values: Any) -> np.ndarray | None:
+    """``as.double(values)`` (``NaN`` = NA) when *values* is an R numeric vector.
+
+    ``None`` for anything ``is.numeric()`` rejects (character, logical, factor,
+    dates, lists), which then takes the generic element-wise path.
+    """
+    if isinstance(values, pd.Series | pd.Index | np.ndarray):
+        if values.ndim != 1:
+            return None
+        dtype = values.dtype
+        if (
+            isinstance(dtype, pd.CategoricalDtype)
+            or pd.api.types.is_bool_dtype(dtype)
+            or pd.api.types.is_complex_dtype(dtype)
+        ):
+            return None
+        if pd.api.types.is_numeric_dtype(dtype):
+            if isinstance(values, np.ndarray):
+                return values.astype("float64")
+            return values.to_numpy(dtype="float64", na_value=np.nan)
+    if isinstance(values, list):
+        kinds = set(map(type, values))
+        if kinds <= _PLAIN_NUMBER_TYPES and kinds & {int, float}:
+            return pd.Series(values, dtype="float64").to_numpy()
+    if not _is_numeric_vector(values):
+        return None
+    return np.array([np.nan if _na(v) else float(v) for v in _values_list(values)], dtype="float64")
+
+
+_PLAIN_NUMBER_TYPES = frozenset({int, float, type(None)})
+
+
+def _unique_doubles(x: np.ndarray) -> np.ndarray:
+    """R ``unique()`` of doubles without NA, in order of appearance (``-0`` is ``0``)."""
+    return pd.unique(x + 0.0)
 
 
 def _unique_key(v: Any) -> Any:
@@ -173,10 +222,14 @@ def _unique_key(v: Any) -> Any:
 
 
 def _n_unique(vals: Sequence[Any]) -> int:
+    if set(map(type, vals)) <= {str}:
+        return len(set(vals))
     return len({_unique_key(v) for v in vals})
 
 
 def _unique(vals: Sequence[Any]) -> list[Any]:
+    if set(map(type, vals)) <= {str}:
+        return list(dict.fromkeys(vals))
     seen: dict[Any, Any] = {}
     for v in vals:
         seen.setdefault(_unique_key(v), v)
@@ -290,20 +343,32 @@ def data_col_type(col_name: Any, values: Any) -> dict[str, Any]:
     ``None``), ``n_coerced`` and ``is_numeric``.
     """
     col_name = _fix_name(col_name)
-    is_num = _is_numeric_vector(values)
-    vals = _values_list(values)
-    x_nona = [v for v in vals if not _na(v)]
-    n_nona = len(x_nona)
 
     def out(col_type: str | None, ambiguous: bool = False, numeric_values: Any = None,
             n_coerced: int | None = None, is_numeric: bool = False) -> dict[str, Any]:  # fmt: skip
         return {"col_type": col_type, "ambiguous": ambiguous, "numeric_values": numeric_values,
                 "n_coerced": n_coerced, "is_numeric": is_numeric}  # fmt: skip
 
-    if n_nona == 0:
-        return out("empty")
-    uniq = _unique(x_nona)
-    n_unique = len(uniq)
+    arr = _double_array(values)  # None unless is.numeric(values)
+    vals: list[Any] = []
+    x_nona: list[Any] = []
+    if arr is not None:
+        x = arr[~np.isnan(arr)]
+        n_nona = int(x.size)
+        if n_nona == 0:
+            return out("empty")
+        uniq_d = _unique_doubles(x)
+        n_unique = len(uniq_d)
+        char_sample = [_chr(float(v)) for v in uniq_d[:20]]
+    else:
+        vals = [None if _na(v) else v for v in _values_list(values)]
+        x_nona = [v for v in vals if v is not None]
+        n_nona = len(x_nona)
+        if n_nona == 0:
+            return out("empty")
+        uniq = _unique(x_nona)
+        n_unique = len(uniq)
+        char_sample = [_chr(v) for v in uniq[:20]]
     name = _chr(col_name) if not isinstance(col_name, list | tuple) else _chr(col_name[0])
     if grepl(_ID_PAT, name, perl=True):
         return out("id")
@@ -311,33 +376,47 @@ def data_col_type(col_name: Any, values: Any) -> dict[str, Any]:
         return out("constant")
     if n_unique == 2:
         return out("binary")
-    char_sample = [_chr(v) for v in uniq[: min(20, n_unique)]]
     n_date_ok = sum(_r_is_date(v) for v in char_sample)
     if n_date_ok / len(char_sample) >= 0.70:
         return out("date")
-    nch = [len(_chr(v) or "") for v in x_nona]
-    from pytacheck.datacheck._columns_labels import _median
-
-    if _median(nch) > 40:
-        return out("text")
-    if is_num:
-        nums = [float(v) for v in x_nona]
-        if any(v != math.floor(v) for v in nums if not math.isinf(v)) or n_unique > 20:
+    if arr is not None:
+        # as.character() of a double has at most 22 characters, so the
+        # median-nchar > 40 "text" rule can never fire for a numeric column.
+        if bool(np.any(x != np.floor(x))) or n_unique > 20:
             return out("continuous", numeric_values=values)
         return out(None, ambiguous=True, numeric_values=values, is_numeric=True)
-    x_sub = [_as_numeric_str(_chr(v).replace(",", ".")) for v in x_nona]  # type: ignore[union-attr]
-    n_ok = sum(v is not None and not math.isnan(v) for v in x_sub)
-    pct_ok = n_ok / n_nona
+    strs: list[str] = [_chr(v) for v in x_nona]  # type: ignore[misc]
+    if float(np.median([len(s) for s in strs])) > 40:
+        return out("text")
+    comma_num = _comma_numeric()
+    x_sub = [comma_num(s) for s in strs]
+    n_na_sub = sum(v is None or math.isnan(v) for v in x_sub)
+    pct_ok = (n_nona - n_na_sub) / n_nona
     if pct_ok >= 0.80:
-        num_vec = [
-            None if _na(v) else _as_numeric_str(_chr(v).replace(",", "."))  # type: ignore[union-attr]
-            for v in vals
-        ]
-        num_vec_f = [math.nan if v is None else v for v in num_vec]
+        num_vec = [math.nan if v is None else comma_num(_chr(v)) for v in vals]
         col_type = "continuous_comma_decimal" if pct_ok >= 0.95 else "continuous_outliers_excluded"
-        n_coerced = sum(v is None or math.isnan(v) for v in x_sub)
-        return out(col_type, numeric_values=num_vec_f, n_coerced=n_coerced)
+        return out(
+            col_type,
+            numeric_values=[math.nan if v is None else v for v in num_vec],
+            n_coerced=n_na_sub,
+        )
     return out(None, ambiguous=True)
+
+
+def _comma_numeric() -> Any:
+    """``as.numeric(gsub(",", ".", s, fixed = TRUE))`` of one string, memoised per call site."""
+    cache: dict[str, float | None] = {}
+
+    def conv(s: str | None) -> float | None:
+        if s is None:
+            return None
+        try:
+            return cache[s]
+        except KeyError:
+            v = cache[s] = _as_numeric_str(s.replace(",", "."))
+            return v
+
+    return conv
 
 
 # -----------------------------------------------------------------------------
@@ -359,30 +438,104 @@ def _stats_frame(n: Any, n_missing: Any, n_unique: Any, **stats: float) -> pd.Da
     return pd.DataFrame(data)
 
 
-def _r_mean(x: Sequence[float]) -> float:
-    """R's ``mean()`` of doubles (accurate sum, then a correction pass)."""
-    n = len(x)
-    if any(math.isnan(v) for v in x):
-        return math.nan
-    if any(math.isinf(v) for v in x):
-        return sum(x) / n
-    s = math.fsum(x) / n
-    if math.isfinite(s):
-        s += math.fsum(v - s for v in x) / n
-    return s
+_LD = np.longdouble  # R's LDOUBLE accumulator (80-bit extended on x86-64)
 
 
-def _r_quantile7(x: Sequence[float], prob: float) -> float:
-    """``stats::quantile(x, prob, type = 7)`` of a sorted vector without NA."""
-    n = len(x)
+def _ld_sum(x: np.ndarray) -> Any:
+    """A sequential (left-to-right) sum in long double, as R's C loops accumulate."""
+    if x.size == 0:
+        return _LD(0)
+    return np.cumsum(x, dtype=_LD)[-1]
+
+
+def _r_mean(x: np.ndarray) -> float:
+    """R's ``mean()`` of a double vector without NA (``summary.c``).
+
+    A long-double sum divided by n, then (when finite) a long-double
+    correction pass ``s += sum(x - s) / n``.
+    """
+    n = x.size
+    with np.errstate(all="ignore"):
+        s = _ld_sum(x) / n
+        if np.isfinite(np.float64(s)):
+            s = s + _ld_sum(x.astype(_LD) - s) / n
+        return float(np.float64(s))
+
+
+def _r_var(x: np.ndarray) -> float:
+    """``stats::var(x)`` of a double vector without NA (``cov.c``, n > 1).
+
+    The mean as ``mean()`` computes it, then the long-double sum of the
+    long-double squared deviations, divided by ``n - 1``.
+    """
+    xm = _LD(_r_mean(x))
+    with np.errstate(all="ignore"):
+        d = x.astype(_LD) - xm
+        return float(np.float64(_ld_sum(d * d) / (x.size - 1)))
+
+
+def _r_pow(x: Any, y: int) -> Any:
+    """R's ``x^y`` for doubles (``R_pow()``: ``powl`` rounded to double)."""
+    with np.errstate(all="ignore"):
+        return np.power(np.asarray(x, dtype="float64").astype(_LD), y).astype("float64")
+
+
+def _r_quantile7(x: np.ndarray, prob: float) -> float:
+    """``stats::quantile(x, prob, type = 7)`` of a *sorted* vector without NA."""
+    n = x.size
     index = 1 + max(n - 1, 0) * prob
     lo = math.floor(index)
     hi = math.ceil(index)
-    qs = x[lo - 1]
-    if index > lo and x[hi - 1] != qs:
+    qs = float(x[lo - 1])
+    xhi = float(x[hi - 1])
+    if index > lo and xhi != qs:
         h = index - lo
-        qs = (1 - h) * qs + h * x[hi - 1]
+        qs = (1 - h) * qs + h * xhi
     return qs
+
+
+def _r_median(xs: np.ndarray) -> float:
+    """``stats::median()`` of a *sorted* vector without NA (even n: ``mean()`` of the middle two)."""
+    n = xs.size
+    half = (n + 1) // 2
+    if n % 2 == 1:
+        return float(xs[half - 1])
+    return _r_mean(xs[half - 1 : half + 1])
+
+
+def _numeric_summary(x: np.ndarray) -> dict[str, float]:
+    """The statistics of ``data_col_stats()`` for a non-empty double vector without NA."""
+    n = x.size
+    xs = np.sort(x)
+    mn = _r_mean(x)
+    s = math.sqrt(_r_var(x)) if n > 1 else math.nan
+    p25 = _r_quantile7(xs, 0.25)
+    p75 = _r_quantile7(xs, 0.75)
+    with np.errstate(all="ignore"):
+        d = x - mn
+        stats: dict[str, float] = {
+            "mean": mn,
+            "sd": s,
+            "se": s / math.sqrt(n) if not math.isnan(s) else math.nan,
+            "median": _r_median(xs),
+            "min": float(xs[0]),
+            "max": float(xs[-1]),
+            "range": float(np.float64(xs[-1]) - np.float64(xs[0])),
+            "p25": p25,
+            "p75": p75,
+            "iqr": float(np.float64(p75) - np.float64(p25)),
+            "skewness": math.nan,
+            "kurtosis": math.nan,
+        }
+        if n > 2 and not math.isnan(s) and s > 0:
+            stats["skewness"] = float(
+                np.float64(_r_mean(_r_pow(d, 3))) / np.float64(_r_pow(s, 3))
+            )
+        if n > 3 and not math.isnan(s) and s > 0:
+            stats["kurtosis"] = float(
+                np.float64(_r_mean(_r_pow(d, 4))) / np.float64(_r_pow(s, 4)) - 3
+            )
+    return stats
 
 
 def _is_non_atomic(x: Any) -> bool:
@@ -414,49 +567,38 @@ def data_col_stats(x_for_stats: Any, x_raw: Any) -> pd.DataFrame:
     Port of ``R/data_check_helpers.R::data_col_stats()``: a one-row data frame
     of ``n``, ``n_missing``, ``n_unique``, mean, sd (n - 1), se, median,
     min / max / range, the type-7 quartiles, IQR, skewness and excess kurtosis.
-    A nested (data-frame / matrix / list) column gets counts only.
+    A nested (data-frame / matrix / list) column gets counts only. The
+    arithmetic follows R's (long-double accumulation, ``powl``), so the
+    statistics agree with R to the last bit on the same platform.
     """
     if _is_non_atomic(x_raw):
         n_val = x_raw.shape[0] if isinstance(x_raw, np.ndarray) else len(x_raw)
         return _stats_frame(n_val, 0, None)
-    raw = _values_list(x_raw)
-    n_unique_val = _n_unique([v for v in raw if not _na(v)])
+    raw_arr = _double_array(x_raw)
+    if raw_arr is not None:
+        raw_na = np.isnan(raw_arr)
+        n_raw, n_raw_na = int(raw_arr.size), int(raw_na.sum())
+        n_unique_val = len(_unique_doubles(raw_arr[~raw_na]))
+    else:
+        raw = _values_list(x_raw)
+        nas = [_na(v) for v in raw]
+        n_raw, n_raw_na = len(raw), sum(nas)
+        n_unique_val = _n_unique([v for v, m in zip(raw, nas, strict=True) if not m])
     if x_for_stats is None:
-        n_miss = sum(_na(v) for v in raw)
-        return _stats_frame(len(raw) - n_miss, n_miss, n_unique_val)
-    nums = _numeric_values(x_for_stats)
-    x = sorted(v for v in nums if v is not None and not math.isnan(v))
-    n = len(x)
-    n_miss = sum(_na(v) for v in _values_list(x_for_stats))
+        return _stats_frame(n_raw - n_raw_na, n_raw_na, n_unique_val)
+    xs_arr = _double_array(x_for_stats)
+    if xs_arr is not None:
+        miss = np.isnan(xs_arr)
+        n_miss = int(miss.sum())
+        x = xs_arr[~miss]
+    else:
+        nums = _numeric_values(x_for_stats)
+        x = np.array([v for v in nums if v is not None and not math.isnan(v)], dtype="float64")
+        n_miss = sum(_na(v) for v in _values_list(x_for_stats))
+    n = int(x.size)
     if n == 0:
         return _stats_frame(0, n_miss, n_unique_val)
-    mn = _r_mean(x)
-    s = math.nan
-    if n > 1 and math.isfinite(mn):
-        s = math.sqrt(math.fsum((v - mn) ** 2 for v in x) / (n - 1))
-    p25 = _r_quantile7(x, 0.25)
-    p75 = _r_quantile7(x, 0.75)
-    half = (n + 1) // 2
-    median = x[half - 1] if n % 2 == 1 else (x[half - 1] + x[half]) / 2
-    stats: dict[str, float] = {
-        "mean": mn,
-        "sd": s,
-        "se": s / math.sqrt(n) if not math.isnan(s) else math.nan,
-        "median": median,
-        "min": x[0],
-        "max": x[-1],
-        "range": x[-1] - x[0],
-        "p25": p25,
-        "p75": p75,
-        "iqr": p75 - p25,
-        "skewness": math.nan,
-        "kurtosis": math.nan,
-    }
-    if n > 2 and not math.isnan(s) and s > 0:
-        stats["skewness"] = _r_mean([(v - mn) ** 3 for v in x]) / s**3
-    if n > 3 and not math.isnan(s) and s > 0:
-        stats["kurtosis"] = _r_mean([(v - mn) ** 4 for v in x]) / s**4 - 3
-    return _stats_frame(n, n_miss, n_unique_val, **stats)
+    return _stats_frame(n, n_miss, n_unique_val, **_numeric_summary(x))
 
 
 # -----------------------------------------------------------------------------
@@ -471,8 +613,8 @@ def _osd_slug(name: Any = None, prefix: Any = None, max_chars: int = 60) -> str 
     else:
         x = "" if prefix is None else prefix
     s = _chr(x)
-    if s is None:
-        return None
+    if s is None:  # R: nchar(NA) > max_chars inside if()
+        raise ValueError("missing value where TRUE/FALSE needed")
     s = _tolower(gsub("[^A-Za-z0-9]+", "_", s))
     s = gsub("^_+|_+$", "", s)
     if s == "":
@@ -497,8 +639,8 @@ def _first_pos(pattern: str, s: str) -> int:
 def _osd_safe_code(x: Any, max_chars: int = 40) -> str | None:
     """Port of ``.osd_safe_code()``: an OSD-valid code (A-Z, 0-9 and hyphens)."""
     s = _chr("" if x is None else x)
-    if s is None:
-        return None
+    if s is None:  # R: nchar(NA) > max_chars inside if()
+        raise ValueError("missing value where TRUE/FALSE needed")
     s = _toupper(gsub("[^A-Za-z0-9]+", "-", s))
     s = gsub("^-+|-+$", "", s)
     if s == "":
@@ -537,6 +679,8 @@ def _osd_code_and_provenance(scale: Any, prefix: Any, scale_source: Any, dict: A
     """
     src = "" if scale_source is None else scale_source
     in_dict = False
+    if scale is None:  # R: !is.na(NULL) && ... is NA inside if()
+        raise ValueError("missing value where TRUE/FALSE needed")
     if not _na(scale) and _chr(scale) != "":
         in_dict = bool(_dict_rows(dict, scale))
     code = _osd_slug(name=scale, prefix=prefix)
@@ -865,7 +1009,7 @@ def match_column_labels(
         return _column(cb, name)
 
     cb_group = cbcol("group")
-    cb_label = cbcol("label") or [None] * ncb
+    cb_label = cbcol("label")  # None when absent: R's df$label is NULL
     cb_var = cbcol("codebook_variable") or [None] * ncb
     cb_src = cbcol("codebook_source")
     cb_method = cbcol("parse_method")
@@ -935,12 +1079,16 @@ def match_column_labels(
         if not applicable:
             if other_scoped:
                 status_out[i] = "ambiguous_experiment"
-                label_out[i] = _paste_unique(get(cb_label, other_scoped))
+                label_out[i] = _paste_unique(
+                    get(cb_label, other_scoped) if cb_label is not None else None
+                )
                 cbk_out[i] = _paste_unique(get(cb_var, other_scoped))
                 src_out[i] = _paste_unique(
                     get(cb_src, other_scoped) if cb_src is not None else None
                 )
             continue
+        if cb_label is None:  # R: label_out[i] <- NULL[1]
+            raise ValueError("replacement has length zero")
         labels = get(cb_label, applicable)
         distinct = _unique(labels)
         srcs = get(cb_src, applicable) if cb_src is not None else None

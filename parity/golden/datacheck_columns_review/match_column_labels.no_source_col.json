@@ -1,0 +1,142 @@
+{
+  "id": "match_column_labels.no_source_col",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 3,
+    "names": [
+      "paper_id",
+      "source_file",
+      "column_name",
+      "group",
+      "label",
+      "codebook_variable",
+      "label_source",
+      "label_status",
+      "label_method",
+      "value_labels",
+      "missing_values",
+      "question",
+      "coding_instructions",
+      "scale_group"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "p",
+          "p",
+          "p"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "d.csv",
+          "d.csv",
+          "d.csv"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "age",
+          "sex",
+          "x"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Age | AGE (years)",
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "age",
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "",
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "conflicting_definition",
+          "unlabelled",
+          "unlabelled"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

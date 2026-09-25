@@ -1,0 +1,277 @@
+{
+  "id": "paper_table.list.author",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 11,
+    "names": [
+      "author_id",
+      "given",
+      "family",
+      "suffix",
+      "literal",
+      "email",
+      "corresponding",
+      "orcid",
+      "role",
+      "credit_roles",
+      "paper_id"
+    ],
+    "v": [
+      {
+        "t": "int",
+        "v": [
+          1,
+          1,
+          1,
+          2,
+          3,
+          1,
+          2,
+          1,
+          2,
+          3,
+          4
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "Jane",
+          "Jens",
+          "Agneta H.",
+          "Gerben A.",
+          "Jane",
+          "Bo",
+          "Jane",
+          "John",
+          "Alice",
+          "Bob"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "Smith",
+          "Lange",
+          "Fischer",
+          "van Kleef",
+          "Smith",
+          "Lee",
+          "Doe",
+          "Smith",
+          "Wong",
+          "Lee"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "The Europe PMC Consortium",
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "jane@example.org",
+          "lange.jens@outlook.com",
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false,
+          true,
+          true,
+          false,
+          false,
+          false,
+          false,
+          true,
+          false,
+          false,
+          false
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "https://orcid.org/0000-0002-1825-0097",
+          null,
+          null,
+          null,
+          null,
+          null,
+          "https://orcid.org/0000-0001-2345-6789",
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": [
+              "conceptualization"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": [
+              "conceptualization"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://credit.niso.org/contributor-roles/conceptualization/"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "PMC4383902",
+          "demo",
+          "preprint",
+          "preprint",
+          "preprint",
+          "probe",
+          "probe",
+          "10.1234/example.5678",
+          "10.1234/example.5678",
+          "10.1234/example.5678",
+          "10.1234/example.5678"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

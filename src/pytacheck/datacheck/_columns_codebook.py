@@ -171,7 +171,7 @@ def _json_field(entry: Any, names_want: list[str]) -> str | None:
     """Port of ``.json_field()``: first non-empty scalar among candidate field names."""
     if not isinstance(entry, _JsonObject):
         return None
-    lowered = [k.lower() for k in entry.names()]
+    lowered = [_tolower(k) for k in entry.names()]
     for w in names_want:
         if w not in lowered:
             continue
@@ -239,10 +239,10 @@ def _extract_json_codebook(path: str | os.PathLike[str], src: str) -> pd.DataFra
     if j is None:
         return None
     if isinstance(j, _JsonObject) and j:
-        names = [k.lower() for k in j.names()]
+        names = [_tolower(k) for k in j.names()]
         for k in _JSON_CONTAINERS:
-            if k.lower() in names:
-                val = j[names.index(k.lower())][1]
+            if _tolower(k) in names:
+                val = j[names.index(_tolower(k))][1]
                 if isinstance(val, list):
                     j = val
                     break
@@ -266,7 +266,7 @@ def _extract_json_codebook(path: str | os.PathLike[str], src: str) -> pd.DataFra
     vl_keys = ("value_label", "value_labels", "values", "levels", "categories")
     vl: list[str | None] = []
     for e in entries:
-        f = [k for k in e.names() if k.lower() in vl_keys]
+        f = [k for k in e.names() if _tolower(k) in vl_keys]
         if not f:
             vl.append(None)
             continue
@@ -795,9 +795,34 @@ def _parse_delimited(path: str, ext: str, src: str, observed: Any, header_lookah
 
 
 def _haven_frame(path: str, ext: str) -> pd.DataFrame:
-    from pytacheck.datacheck._files_readers import read_stat_file
+    """``as.data.frame(haven::read_sav/read_dta/read_sas(path))`` with its column attributes.
 
-    return read_stat_file(path, ext, math.inf)
+    Value labels are re-read as ``(label, code)`` pairs in file order: the
+    ``{label: code}`` mapping of ``read_stat_file()`` keeps one code per label
+    text, while haven keeps every code (several codes are often all labelled
+    "Missing").
+    """
+    import pyreadstat
+
+    from pytacheck.datacheck._files_readers import read_stat_file, vec_as_names_unique
+
+    df = read_stat_file(path, ext, math.inf)
+    reader = {"sav": pyreadstat.read_sav, "dta": pyreadstat.read_dta,
+              "sas7bdat": pyreadstat.read_sas7bdat}[ext]  # fmt: skip
+    _, meta = reader(path, metadataonly=True)
+    raw_names = list(meta.column_names)
+    names = vec_as_names_unique(raw_names)
+    col_attrs = df.attrs.get("col_attrs") or {}
+    value_labels = meta.variable_value_labels or {}
+    for raw, name in zip(raw_names, names, strict=True):
+        labels = value_labels.get(raw)
+        attrs = col_attrs.get(name)
+        if labels and attrs and "labels" in attrs:
+            is_string = any(isinstance(c, str) for c in labels)
+            attrs["labels"] = [
+                (str(lab), str(code) if is_string else float(code)) for code, lab in labels.items()
+            ]
+    return df
 
 
 def _import_data(path: str, ext: str) -> pd.DataFrame | None:

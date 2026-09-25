@@ -524,13 +524,13 @@
                       {
                         "t": "chr",
                         "v": [
-                          "custom_html_jasp_custom_html_jasp_t2_cond_13"
+                          "custom_html_jasp_custom_html_jasp_t2_cond"
                         ]
                       },
                       {
                         "t": "chr",
                         "v": [
-                          "cond .13"
+                          "cond"
                         ]
                       },
                       {
@@ -539,7 +539,8 @@
                           "sum_of_squares",
                           "df",
                           "f",
-                          "p"
+                          "p",
+                          "v6"
                         ],
                         "v": [
                           {
@@ -650,6 +651,34 @@
                                 "t": "chr",
                                 "v": [
                                   "http://purl.obolibrary.org/obo/STATO_0000700"
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "t": "list",
+                            "names": [
+                              "value",
+                              "stato_label",
+                              "stato_iri"
+                            ],
+                            "v": [
+                              {
+                                "t": "dbl",
+                                "v": [
+                                  0.13
+                                ]
+                              },
+                              {
+                                "t": "chr",
+                                "v": [
+                                  "eta-squared"
+                                ]
+                              },
+                              {
+                                "t": "chr",
+                                "v": [
+                                  "http://purl.obolibrary.org/obo/STATO_0000317"
                                 ]
                               }
                             ]
@@ -770,13 +799,13 @@
                       {
                         "t": "chr",
                         "v": [
-                          "custom_html_jasp_custom_html_jasp_t2_na_na"
+                          "custom_html_jasp_custom_html_jasp_t2_na"
                         ]
                       },
                       {
                         "t": "chr",
                         "v": [
-                          "NA NA"
+                          "NA"
                         ]
                       },
                       {
@@ -785,7 +814,8 @@
                           "sum_of_squares",
                           "df",
                           "f",
-                          "p"
+                          "p",
+                          "v6"
                         ],
                         "v": [
                           {
@@ -899,6 +929,34 @@
                                 ]
                               }
                             ]
+                          },
+                          {
+                            "t": "list",
+                            "names": [
+                              "value",
+                              "stato_label",
+                              "stato_iri"
+                            ],
+                            "v": [
+                              {
+                                "t": "chr",
+                                "v": [
+                                  null
+                                ]
+                              },
+                              {
+                                "t": "chr",
+                                "v": [
+                                  "eta-squared"
+                                ]
+                              },
+                              {
+                                "t": "chr",
+                                "v": [
+                                  "http://purl.obolibrary.org/obo/STATO_0000317"
+                                ]
+                              }
+                            ]
                           }
                         ]
                       }
@@ -922,13 +980,13 @@
                       {
                         "t": "chr",
                         "v": [
-                          "custom_html_jasp_custom_html_jasp_t2_extra_na"
+                          "custom_html_jasp_custom_html_jasp_t2_extra"
                         ]
                       },
                       {
                         "t": "chr",
                         "v": [
-                          "extra NA"
+                          "extra"
                         ]
                       },
                       {
@@ -937,7 +995,8 @@
                           "sum_of_squares",
                           "df",
                           "f",
-                          "p"
+                          "p",
+                          "v6"
                         ],
                         "v": [
                           {
@@ -1051,6 +1110,34 @@
                                 ]
                               }
                             ]
+                          },
+                          {
+                            "t": "list",
+                            "names": [
+                              "value",
+                              "stato_label",
+                              "stato_iri"
+                            ],
+                            "v": [
+                              {
+                                "t": "chr",
+                                "v": [
+                                  null
+                                ]
+                              },
+                              {
+                                "t": "chr",
+                                "v": [
+                                  "eta-squared"
+                                ]
+                              },
+                              {
+                                "t": "chr",
+                                "v": [
+                                  "http://purl.obolibrary.org/obo/STATO_0000317"
+                                ]
+                              }
+                            ]
                           }
                         ]
                       }
@@ -1074,13 +1161,13 @@
                       {
                         "t": "chr",
                         "v": [
-                          "custom_html_jasp_custom_html_jasp_t2_a_g"
+                          "custom_html_jasp_custom_html_jasp_t2_a"
                         ]
                       },
                       {
                         "t": "chr",
                         "v": [
-                          "a g"
+                          "a"
                         ]
                       },
                       {
@@ -1089,7 +1176,8 @@
                           "sum_of_squares",
                           "df",
                           "f",
-                          "p"
+                          "p",
+                          "v6"
                         ],
                         "v": [
                           {
@@ -1200,6 +1288,34 @@
                                 "t": "chr",
                                 "v": [
                                   "http://purl.obolibrary.org/obo/STATO_0000700"
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "t": "list",
+                            "names": [
+                              "value",
+                              "stato_label",
+                              "stato_iri"
+                            ],
+                            "v": [
+                              {
+                                "t": "chr",
+                                "v": [
+                                  "g"
+                                ]
+                              },
+                              {
+                                "t": "chr",
+                                "v": [
+                                  "eta-squared"
+                                ]
+                              },
+                              {
+                                "t": "chr",
+                                "v": [
+                                  "http://purl.obolibrary.org/obo/STATO_0000317"
                                 ]
                               }
                             ]

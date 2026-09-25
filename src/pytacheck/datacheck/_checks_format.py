@@ -186,8 +186,13 @@ class _Rows:
 
     __slots__ = ("cols", "kinds", "levels")
 
-    def __init__(self, df: pd.DataFrame) -> None:
-        self.cols = [rvec(c) for c in df_columns(df)]
+    def __init__(self, df: pd.DataFrame, nrows: int | None = None) -> None:
+        # Only the first *nrows* rows are read. A typed column is sliced before
+        # conversion (a categorical keeps its levels); an object column's R type
+        # comes from all of its elements, so it is converted whole.
+        self.cols = [
+            rvec(c) if nrows is None else _head_rvec(c, max(nrows, 0)) for c in df_columns(df)
+        ]
         self.kinds = [c.kind for c in self.cols]
         self.levels = [c.levels for c in self.cols]
 
@@ -196,6 +201,24 @@ class _Rows:
             c = self.cols[0]
             return chr(RVec(c.kind, [c.values[i]], c.levels))
         return row_as_character([c.values[i] for c in self.cols], self.kinds, self.levels)
+
+
+def _head_rvec(col: pd.Series, k: int) -> RVec:
+    """The first *k* values of ``rvec(col)``, converting only those where the type allows.
+
+    An object column's R type depends on all of its elements, and an integer
+    column holding a value beyond R's integer range is a double column, so
+    those are typed from the whole column.
+    """
+    dtype = col.dtype
+    whole = pd.api.types.is_object_dtype(dtype)
+    if not whole and pd.api.types.is_integer_dtype(dtype):
+        s = col.dropna()
+        whole = bool(len(s)) and max(abs(int(s.max())), abs(int(s.min()))) > 2147483647
+    if whole:
+        v = rvec(col)
+        return RVec(v.kind, v.values[:k], v.levels)
+    return rvec(col.iloc[:k])
 
 
 def _is_character_column(col: pd.Series) -> bool:
@@ -219,9 +242,10 @@ def data_strip_qualtrics_header(df: Any, max_strip: int = 2) -> Any:
     """
     if df is None or len(df) == 0:
         return df
-    row = _Rows(df)
+    n_scan = min(int(max_strip), len(df))
+    row = _Rows(df, n_scan)
     drop = 0
-    for i in range(min(int(max_strip), len(df))):
+    for i in range(n_scan):
         if _qualtrics_is_header_row(row(i)):
             drop = i + 1
         else:
@@ -383,7 +407,8 @@ def _detect_header_row(rows: Any, max_scan: int = 4) -> dict[str, Any]:
     above it) and ``improved`` (the body type-consistency gained).
     """
     none: dict[str, Any] = {"header_row": 0, "stripped": [], "improved": 0}
-    rows = [chr(r) for r in rows]
+    orig = list(rows)
+    rows = [chr(r) for r in orig]
     n = len(rows)
     if n < 2:
         return none
@@ -419,7 +444,7 @@ def _detect_header_row(rows: Any, max_scan: int = 4) -> dict[str, Any]:
         return none
     return {
         "header_row": strip,
-        "stripped": rows[:strip],
+        "stripped": orig[:strip],  # R returns the rows as given
         "improved": new_numeric - base_numeric,
     }
 
@@ -470,9 +495,10 @@ def data_promote_header_row(df: Any, raw_rows: Any = None, max_scan: int = 4) ->
     if use_raw:
         rows = [chr(r) for r in raw_rows]
     else:
-        row = _Rows(df)
+        n_scan = min(int(max_scan), len(df))
+        row = _Rows(df, n_scan)
         header_as_row = [str(c) for c in df.columns]
-        body_rows = [row(i) for i in range(min(int(max_scan), len(df)))]
+        body_rows = [row(i) for i in range(n_scan)]
         rows = [header_as_row, *body_rows]
     det = _detect_header_row(rows, max_scan=max_scan)
     if det["header_row"] < 1:
@@ -551,7 +577,11 @@ def _bh_is_trial_level_file(path: Any) -> bool:
     Port of ``R/data_check_helpers.R::.bh_is_trial_level_file()``: E-Prime by
     content, delimited text by a one-row header read.
     """
-    if path is None or isinstance(path, list | tuple):
+    if isinstance(path, list | tuple):  # a character vector: only a single path
+        if len(path) != 1:
+            return False
+        path = path[0]
+    if path is None:
         return False
     p = os.fspath(path)
     if not os.path.exists(p):

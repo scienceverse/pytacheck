@@ -1,0 +1,296 @@
+{
+  "id": "module.ref_accuracy.nodoi",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "ref_accuracy"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Reference Accuracy"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "reference"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "bib_id",
+          "doi.orig",
+          "title.orig",
+          "year.orig",
+          "authors.orig",
+          "container.orig",
+          "doi.match",
+          "title.match",
+          "year.match",
+          "authors.match",
+          "container.match",
+          "text",
+          "score",
+          "doi_mismatch",
+          "year_mismatch",
+          "container_mismatch",
+          "title_mismatch",
+          "author_mismatch",
+          "tier",
+          "no_match",
+          "incoherent",
+          "no_doi"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "demo"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "A Prior Study"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2020
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Smith, J., & Doe, A."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Journal of Things"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "10.1234/prior"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2020
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "df",
+                "nrow": 1,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Jane"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Smith"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Journal of Things"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "It replicated prior work [1], t(28) = 3.42, see Table 1 and data."
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0.98
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "none"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "",
+          "### References without a DOI\n",
+          "These references have no DOI, so they could not be checked here, and they also cannot be checked by the other reference modules (retraction, PubPeer, and replication checks all rely on the DOI). We searched CrossRef for a matching DOI; where a confident match was found it is suggested below. We recommend adding a DOI to every reference that has one: it lets these checks run and makes each cited work easier to find and verify.\n",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Reference = \"It replicated prior work [1], t(28) = 3.42, see Table 1 and data.\", \n    \"Suggested DOI\" = \"<a href='https://doi.org/10.1234/prior' target='_blank'>10.1234/prior<\/a>\"), row.names = c(NA, \n-1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, c(0.7, 0.3), 5, FALSE)\n```\n"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "green"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "We checked the 0 references that supplied a DOI against the record that DOI points to, and found 0 incoherent references to check for parsing errors or mistakes. 1 reference had no DOI and could not be checked. Incoherent references are mostly PDF parsing errors (we are working on improving reference parsing). Adding a DOI to every reference that has one lets the other reference checks (retraction, PubPeer, and replication) run on them too."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "refs_checked",
+          "incoherent",
+          "no_doi"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "demo"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          }
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -420,7 +420,7 @@ def _download_zip(file_ids: list[Any], box_id: str, reference: str, path: str) -
             "POST",
             "https://researchbox.org/download_files.php",
             headers=headers,
-            content=json.dumps(body, separators=(",", ":")).encode("utf-8"),
+            content=json.dumps(body, separators=(",", ":"), ensure_ascii=False).encode("utf-8"),
         ) as resp:
             with open(path, "wb") as fh:
                 for chunk in resp.iter_bytes():

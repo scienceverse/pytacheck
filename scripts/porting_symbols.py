@@ -67,6 +67,8 @@ FILE_MODULES: dict[str, str | list[tuple[int, str]]] = {
     "R/file_types.R": "pytacheck.fileinfo.types",
     "R/html-output.R": "pytacheck.report.html_output",
     "R/import-bibr.R": "pytacheck.io.bibr_convert",
+    "R/import-bibr12.R": "pytacheck.io.bibr12",
+    "R/import-grobid-bibr12.R": "pytacheck.io.grobid_bibr12",
     "R/import-convert.R": "pytacheck.io.convert",
     "R/import-grobid.R": "pytacheck.io.grobid",
     "R/import-papers.R": "pytacheck.io.corpus",

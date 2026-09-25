@@ -1,0 +1,151 @@
+{
+  "id": "paper_table.probe_docx.bib",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 0,
+    "names": [
+      "bib_id",
+      "text_id",
+      "bib_type",
+      "doi",
+      "title",
+      "authors",
+      "editors",
+      "publisher",
+      "year",
+      "year_suffix",
+      "date",
+      "published_date",
+      "container",
+      "volume",
+      "issue",
+      "first_page",
+      "last_page",
+      "edition",
+      "version",
+      "url",
+      "is_in_press",
+      "arxiv",
+      "pmid",
+      "series",
+      "access_date",
+      "note",
+      "paper_id"
+    ],
+    "v": [
+      {
+        "t": "int",
+        "v": []
+      },
+      {
+        "t": "int",
+        "v": []
+      },
+      {
+        "t": "chr",
+        "v": []
+      },
+      {
+        "t": "chr",
+        "v": []
+      },
+      {
+        "t": "chr",
+        "v": []
+      },
+      {
+        "t": "chr",
+        "v": []
+      },
+      {
+        "t": "chr",
+        "v": []
+      },
+      {
+        "t": "chr",
+        "v": []
+      },
+      {
+        "t": "int",
+        "v": []
+      },
+      {
+        "t": "chr",
+        "v": []
+      },
+      {
+        "t": "chr",
+        "v": []
+      },
+      {
+        "t": "chr",
+        "v": []
+      },
+      {
+        "t": "chr",
+        "v": []
+      },
+      {
+        "t": "chr",
+        "v": []
+      },
+      {
+        "t": "chr",
+        "v": []
+      },
+      {
+        "t": "chr",
+        "v": []
+      },
+      {
+        "t": "chr",
+        "v": []
+      },
+      {
+        "t": "chr",
+        "v": []
+      },
+      {
+        "t": "chr",
+        "v": []
+      },
+      {
+        "t": "chr",
+        "v": []
+      },
+      {
+        "t": "lgl",
+        "v": []
+      },
+      {
+        "t": "chr",
+        "v": []
+      },
+      {
+        "t": "chr",
+        "v": []
+      },
+      {
+        "t": "chr",
+        "v": []
+      },
+      {
+        "t": "chr",
+        "v": []
+      },
+      {
+        "t": "chr",
+        "v": []
+      },
+      {
+        "t": "chr",
+        "v": []
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

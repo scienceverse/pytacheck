@@ -172,7 +172,8 @@ Add `--project` to pin in `./pytacheck.json` rather than your user config, and
 
 Installing:
 
-1. downloads the pinned commit (a tarball over HTTPS; git is only a fallback),
+1. downloads the pinned commit (a tarball over HTTPS; git is only a fallback;
+   see "Private stores and packs" below for repositories that need a login),
 2. extracts it safely (no links, device files, absolute or `..` paths; at most
    50 MB and 5000 files),
 3. checks the files' hash against the store's index,
@@ -292,8 +293,9 @@ committed `pytacheck.json` with pins works as a team lock file: teammates run
 
 Environment variables: `PYTACHECK_CONFIG` (use only this file; `none` for no
 config at all), `PYTACHECK_DATA_DIR` (installed packs and store caches),
-`PYTACHECK_PRESET`, `PYTACHECK_STORE_URL` (a mirror for the `pytacheck` store)
-and, for the API, `PYTACHECK_API_MAX_CHECKS` (how many uploads are checked at
+`PYTACHECK_PRESET`, `PYTACHECK_STORE_URL` (a mirror for the `pytacheck` store),
+`PYTACHECK_GITHUB_TOKEN` (read access to private GitHub stores and packs; see
+below) and, for the API, `PYTACHECK_API_MAX_CHECKS` (how many uploads are checked at
 once; default: the number of CPUs).
 
 **Stores.** The store `pytacheck` is built in. Add your lab's or institute's:
@@ -307,6 +309,26 @@ pytacheck store remove mylab
 
 A store URL can be a GitHub or GitLab repository, a URL of an `index.json`, or a
 local folder. Offline, cached indexes are used (with a warning).
+
+**Private stores and packs.** A private GitHub store (the official one, while
+it is private) or pack repository needs read access, in either of two ways:
+
+* a GitHub token in `PYTACHECK_GITHUB_TOKEN` (or `GH_TOKEN` / `GITHUB_TOKEN`; the
+  first one set wins), for example `export PYTACHECK_GITHUB_TOKEN=$(gh auth token)`
+  or a fine-grained token with "Contents: read" on the repository. pytacheck then
+  reads the index and pack tarballs through GitHub's API;
+* git credentials for github.com (for example `gh auth setup-git` or a credential
+  helper): when GitHub answers 401/403/404, pytacheck falls back to a shallow
+  `git fetch`, which never prompts.
+
+The token is sent only over HTTPS to `api.github.com`, `github.com`,
+`raw.githubusercontent.com` and `codeload.github.com`, never on a redirect to
+another host, and is never written anywhere: pins, install records, run records
+and index caches keep the plain source (`{"github": "owner/repo", "rev": ...}`),
+so they work on a machine that authenticates differently. An expired token does
+not break public stores (a 401 is retried without it). Put credentials in the
+environment, not in a store or pack URL: URLs with a password or token are
+refused.
 
 ---
 
@@ -495,7 +517,8 @@ own repository it fetches the listed commit first
 (`pytacheck pack check packs/<name>.json`).
 
 You can also run your own store: any git repository with `packs/` and an
-`index.json` built by `pytacheck store build . [--repo OWNER/REPO]`.
+`index.json` built by `pytacheck store build . [--repo OWNER/REPO]` (a private
+repository works too, see "Private stores and packs" above).
 
 ### Licensing
 

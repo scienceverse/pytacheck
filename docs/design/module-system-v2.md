@@ -440,8 +440,10 @@ session, `module_run()` behaves exactly as before.
 **Browsing.**
 
 * `store update` fetches `index.json`. For a GitHub store the URL is
-  `https://raw.githubusercontent.com/<owner>/<repo>/HEAD/index.json`; a store
-  URL can also point straight at an `index.json`, or at a local folder.
+  `https://raw.githubusercontent.com/<owner>/<repo>/HEAD/index.json` (with a
+  GitHub token, the contents API first; see "Implementation notes (private
+  stores)"); a store URL can also point straight at an `index.json`, or at a
+  local folder.
 * The index is cached in `<data>/stores/<name>/index.json` with a one-hour
   TTL. When offline, the cached copy is used with a warning. If there is no
   cached copy, the error says the store is unreachable and how to add
@@ -671,8 +673,9 @@ code deliberately differs:
   other URLs get `/index.json`; local folders (and `file://`) are read
   directly, without a cache. A pack name missing from a cached index is
   looked up once more in a freshly fetched index; `pack update` always fetches.
-* **Path sources.** A store without git history (a local store, or the
-  committed contrib seed) lists in-repo packs as `{"path": "packs/<name>"}`.
+* **Path sources.** A store without git history (a local store, or a copy
+  of a store repository without its history, like the test fixture
+  `tests/modsys/fixtures/store`) lists in-repo packs as `{"path": "packs/<name>"}`.
   Installing one from a local store pins the absolute folder and the tree
   hash (the install folder is `tree_sha256[:12]`); from a remote store it is
   refused (the store's CI replaces path sources with commits).
@@ -797,7 +800,48 @@ from the text above:
   `pack update` says so and exits 1.
 * **Still open.** The report renderer does not run modules through
   `run_modules()` yet, so HTML reports neither embed the run record nor show
-  pack names (MODULES.md says so). The default store must be published from
-  `contrib/pytacheck-modules` before `pack search` / `init` work for users;
-  until its CI rebuilds `index.json`, the seed's path sources install only
-  from a local copy.
+  pack names (MODULES.md says so). The default store is published at
+  <https://github.com/thesanogoeffect/pytacheck-modules>, which is the single
+  source of truth for its packs (this repository no longer carries a
+  `contrib/` copy; the tests use `tests/modsys/fixtures/store`). While it is
+  private, users need read access (see below).
+
+## Implementation notes (private stores)
+
+The default store (and pytacheck itself) started out private, so stores and
+packs on private GitHub repositories work (`pytacheck/packs/auth.py`):
+
+* **Credentials.** A token comes from `PYTACHECK_GITHUB_TOKEN`, `GH_TOKEN` or
+  `GITHUB_TOKEN` (the first non-empty one). It is sent as `Authorization:
+  Bearer` only over https to `api.github.com`, `github.com`,
+  `raw.githubusercontent.com` and `codeload.github.com` (exact host, default
+  port, no user info; both `urllib` and httpx must parse the URL the same way),
+  and in practice only to `api.github.com`. These requests use their own
+  HTTP/1.1 client with redirects followed by hand: the token goes only to the
+  origin it was sent to, so the tarball endpoint's redirect to a short-lived
+  `codeload.github.com/...?token=` URL is followed without it. A 401 to a
+  request with a token is retried once without it, so an expired token never
+  breaks a public store.
+* **Paths.** With a token, the index is read through the contents API
+  (`/repos/<o>/<r>/contents/<path>?ref=<ref>`, `Accept:
+  application/vnd.github.raw`), since raw.githubusercontent.com does not serve
+  private files to a token; then the raw URL without it. Tarballs come from
+  `/repos/<o>/<r>/tarball/<sha>`, then the public codeload URL. Branch and tag
+  names resolve through `/commits/<ref>` (422: not a ref; 401/403/404: private
+  or no access, so `git ls-remote` is tried). Without a token, requests are
+  exactly as before.
+* **Git fallback.** When the index or a tarball gets 401/403/404 and git is
+  installed, the hardened git machinery (`GIT_TERMINAL_PROMPT=0`, no askpass)
+  fetches the pinned commit (or the ref's commit) shallowly, so the user's own
+  git credential helpers work; the token is never handed to git. If everything
+  fails, the error says how to authenticate (`PYTACHECK_GITHUB_TOKEN`, `gh auth
+  token`, `gh auth setup-git`).
+* **No leaks.** Pins, install records, run records and index caches keep the
+  canonical source (`{"github": "owner/repo", "rev": ...}`) and the cache key
+  stays the raw URL. Errors name the URL that was asked for, never a redirect
+  target; git's messages, httpx's request log and httpcore's header log pass
+  through `redact()` (token values, `token=` query values, URL passwords).
+  Store and pack URLs with a password or token are refused. The tests
+  (`tests/modsys/test_private_store.py`) install, update and run a pack with a
+  sentinel token and grep every written file, the logs and the output for it;
+  a live test (`-m network`, with a token) does the same against the real store.

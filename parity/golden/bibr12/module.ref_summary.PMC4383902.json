@@ -1,0 +1,175 @@
+{
+  "id": "module.ref_summary.PMC4383902",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "ref_summary"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Summarise References"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "reference"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 17,
+        "names": [
+          "paper_id",
+          "bib_id",
+          "doi",
+          "text"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "PMC4383902",
+              "PMC4383902",
+              "PMC4383902",
+              "PMC4383902",
+              "PMC4383902",
+              "PMC4383902",
+              "PMC4383902",
+              "PMC4383902",
+              "PMC4383902",
+              "PMC4383902",
+              "PMC4383902",
+              "PMC4383902",
+              "PMC4383902",
+              "PMC4383902",
+              "PMC4383902",
+              "PMC4383902",
+              "PMC4383902"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "10.1093/nar/gkq1063",
+              "10.1093/nar/gkt1146",
+              "10.1371/journal.pcbi.0010034",
+              "10.1093/nar/gki033",
+              "10.1093/nar/gks1174",
+              "10.1093/nar/gkt1140",
+              "10.1093/nar/gks1170",
+              "10.1093/nar/gkt1082",
+              "10.1371/journal.pone.0063184",
+              "10.1093/bioinformatics/btm557",
+              "10.1093/nar/gks1050",
+              "10.1093/bioinformatics/btq099",
+              "10.12688/f1000research.3-55.v1",
+              "10.1093/bioinformatics/btt580",
+              "10.1093/database/bau070",
+              "10.1093/database/bau064",
+              "10.1186/1471-2105-13-108"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "1. McEntyre J.R., Ananiadou S., Andrews S., Black W.J., Boulderstone R., Buttery P., Chaplin D., Chevuru S., Cobley N., Coleman L.A. UKPMC: a full text article resource for the life sciences. Nucleic Acids Res. 2011;39:D58–D65. doi: 10.1093/nar/gkq1063.",
+              "2. NCBI Resource Coordinators. Database resources of the National Center for Biotechnology Information. Nucleic Acids Res. 2014;42:D7–D17. doi: 10.1093/nar/gkt1146.",
+              "3. Bourne P. Will a biological database be different from a biological journal? PLoS Comput. Biol. 2005;1:179–181. doi: 10.1371/journal.pcbi.0010034.",
+              "4. Hamosh A., Scott A.F., Amberger J.S., Bocchini C.A., McKusick V.A. Online Mendelian Inheritance in Man (OMIM), a knowledgebase of human genes and genetic disorders. Nucleic Acids Res. 2005;33:D514–D517. doi: 10.1093/nar/gki033.",
+              "5. Rustici G., Kolesnikov N., Brandizi M., Burdett T., Dylag M., Emam I., Farne A., Hastings E., Ison J., Keays M. ArrayExpress update—trends in database growth and links to data analysis tools. Nucleic Acids Res. 2013;41:D987–D990. doi: 10.1093/nar/gks1174.",
+              "6. UniProt Consortium. Activities at the Universal Protein Resource (UniProt) Nucleic Acids Res. 2014;42:D191–D198. doi: 10.1093/nar/gkt1140.",
+              "7. Schmidt E.E., Pelz O., Buhlmann S., Kerr G., Horn T., Boutros M. GenomeRNAi: a database for cell-based and in vivo RNAi phenotypes, 2013 update. Nucleic Acids Res. 2013;41:D1021–D1026. doi: 10.1093/nar/gks1170.",
+              "8. Pakseresht N., Alako B., Amid C., Cerdeño-Tárraga A., Cleland I., Gibson R., Goodgame N., Gur T., Jang M., Kay S. Assembly information services in the European Nucleotide Archive. Nucleic Acids Res. 2014;42:D38–D43. doi: 10.1093/nar/gkt1082.",
+              "9. Kafkas Ş., Kim J.H., McEntyre J.R. Database citation in full text biomedical articles. PLoS One. 2013;8:e63184. doi: 10.1371/journal.pone.0063184.",
+              "10. Rebholz-Schuhmann D., Arregui M., Gaudan S., Kirsch H., Jimeno A. Text processing through web services: calling Whatizit. Bioinformatics. 2008;24:296–298. doi: 10.1093/bioinformatics/btm557.",
+              "11. Gene Ontology Consortium. Gene Ontology annotations and resources. 2013;41:D530–D535. doi: 10.1093/nar/gks1050.",
+              "12. Malone J., Holloway E., Adamusiak T., Kapushesky M., Zheng J., Kolesnikov N., Zhukova A., Brazma A., Parkinson H. Modelling sample variables with an Experimental Factor Ontology. Bioinformatics. 2010;26:1112–1118. doi: 10.1093/bioinformatics/btq099.",
+              "13. Corpas M., Jimenez R., Carbon S.J., García A., Garcia L., Goldberg T., Gomez J., Kalderimis A., Lewis S.E., Mulvany I. BioJS: an open source standard for biological visualisation—its status in 2014. F1000Res. 2014;3:55. doi: 10.12688/f1000research.3-55.v1.",
+              "14. Pyysalo S., Ananiadou S. Anatomical entity mention recognition at literature scale. Bioinformatics. 2014;30:868–875. doi: 10.1093/bioinformatics/btt580.",
+              "15. Rak R., Batista-Navarro R., Rowley A., Carter J., Ananiadou S. Text mining-assisted biocuration workflows in Argo. Database (Oxford) 2014;2014:doi: 10.1093/database/bau070. doi: 10.1093/database/bau070.",
+              "16. Rak R., Batista-Navarro R., Carter J., Rowley A., Ananiadou S. Processing biological literature with customizable web services supporting interoperable formats. Database (Oxford) 2014;2014:doi: 10.1093/database/bau064. doi: 10.1093/database/bau064.",
+              "17. Miwa M., Thompson P., McNaught J., Kell D.B., Ananiadou S. Extracting semantically enriched events from biomedical literature. BMC Bioinformatics. 2012;13:108. doi: 10.1186/1471-2105-13-108."
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "See the specific reports above for details.",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(text = c(\"1. McEntyre J.R., Ananiadou S., Andrews S., Black W.J., Boulderstone R., Buttery P., Chaplin D., Chevuru S., Cobley N., Coleman L.A. UKPMC: a full text article resource for the life sciences. Nucleic Acids Res. 2011;39:D58–D65. doi: 10.1093/nar/gkq1063.\", \n\"2. NCBI Resource Coordinators. Database resources of the National Center for Biotechnology Information. Nucleic Acids Res. 2014;42:D7–D17. doi: 10.1093/nar/gkt1146.\", \n\"3. Bourne P. Will a biological database be different from a biological journal? PLoS Comput. Biol. 2005;1:179–181. doi: 10.1371/journal.pcbi.0010034.\", \n\"4. Hamosh A., Scott A.F., Amberger J.S., Bocchini C.A., McKusick V.A. Online Mendelian Inheritance in Man (OMIM), a knowledgebase of human genes and genetic disorders. Nucleic Acids Res. 2005;33:D514–D517. doi: 10.1093/nar/gki033.\", \n\"5. Rustici G., Kolesnikov N., Brandizi M., Burdett T., Dylag M., Emam I., Farne A., Hastings E., Ison J., Keays M. ArrayExpress update—trends in database growth and links to data analysis tools. Nucleic Acids Res. 2013;41:D987–D990. doi: 10.1093/nar/gks1174.\", \n\"6. UniProt Consortium. Activities at the Universal Protein Resource (UniProt) Nucleic Acids Res. 2014;42:D191–D198. doi: 10.1093/nar/gkt1140.\", \n\"7. Schmidt E.E., Pelz O., Buhlmann S., Kerr G., Horn T., Boutros M. GenomeRNAi: a database for cell-based and in vivo RNAi phenotypes, 2013 update. Nucleic Acids Res. 2013;41:D1021–D1026. doi: 10.1093/nar/gks1170.\", \n\"8. Pakseresht N., Alako B., Amid C., Cerdeño-Tárraga A., Cleland I., Gibson R., Goodgame N., Gur T., Jang M., Kay S. Assembly information services in the European Nucleotide Archive. Nucleic Acids Res. 2014;42:D38–D43. doi: 10.1093/nar/gkt1082.\", \n\"9. Kafkas Ş., Kim J.H., McEntyre J.R. Database citation in full text biomedical articles. PLoS One. 2013;8:e63184. doi: 10.1371/journal.pone.0063184.\", \n\"10. Rebholz-Schuhmann D., Arregui M., Gaudan S., Kirsch H., Jimeno A. Text processing through web services: calling Whatizit. Bioinformatics. 2008;24:296–298. doi: 10.1093/bioinformatics/btm557.\", \n\"11. Gene Ontology Consortium. Gene Ontology annotations and resources. 2013;41:D530–D535. doi: 10.1093/nar/gks1050.\", \n\"12. Malone J., Holloway E., Adamusiak T., Kapushesky M., Zheng J., Kolesnikov N., Zhukova A., Brazma A., Parkinson H. Modelling sample variables with an Experimental Factor Ontology. Bioinformatics. 2010;26:1112–1118. doi: 10.1093/bioinformatics/btq099.\", \n\"13. Corpas M., Jimenez R., Carbon S.J., García A., Garcia L., Goldberg T., Gomez J., Kalderimis A., Lewis S.E., Mulvany I. BioJS: an open source standard for biological visualisation—its status in 2014. F1000Res. 2014;3:55. doi: 10.12688/f1000research.3-55.v1.\", \n\"14. Pyysalo S., Ananiadou S. Anatomical entity mention recognition at literature scale. Bioinformatics. 2014;30:868–875. doi: 10.1093/bioinformatics/btt580.\", \n\"15. Rak R., Batista-Navarro R., Rowley A., Carter J., Ananiadou S. Text mining-assisted biocuration workflows in Argo. Database (Oxford) 2014;2014:doi: 10.1093/database/bau070. doi: 10.1093/database/bau070.\", \n\"16. Rak R., Batista-Navarro R., Carter J., Rowley A., Ananiadou S. Processing biological literature with customizable web services supporting interoperable formats. Database (Oxford) 2014;2014:doi: 10.1093/database/bau064. doi: 10.1093/database/bau064.\", \n\"17. Miwa M., Thompson P., McNaught J., Kell D.B., Ananiadou S. Extracting semantically enriched events from biomedical literature. BMC Bioinformatics. 2012;13:108. doi: 10.1186/1471-2105-13-108.\"\n)), row.names = c(NA, -17L), class = c(\"tbl_df\", \"tbl\", \"data.frame\"\n))\n\n# display table -----------------------------------\nmetacheck::report_table(table, 0.75, 10, FALSE)\n```\n"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "info"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Summary information provided for 17 references"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "PMC4383902"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

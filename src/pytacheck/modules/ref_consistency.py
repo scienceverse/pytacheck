@@ -137,7 +137,9 @@ def ref_consistency(paper: Any) -> dict[str, Any]:
     xref_all = paper_table(paper, "xref")
     if len(xref_all.columns) == 0:
         # a paper list with no xref tables at all: dplyr::select() would fail on it
-        raise ValueError("Can't select columns that don't exist.\n✖ Column `paper_id` doesn't exist.")
+        raise ValueError(
+            "Can't select columns that don't exist.\n✖ Column `paper_id` doesn't exist."
+        )
     # bibr 12.x papers cite a reference with a "bib" xref whose target_id is
     # the bib_id (their xref_id is the row's own key)
     v12 = xref_all["paper_id"].isin(_bibr12_paper_ids(paper)).to_numpy(dtype=bool)

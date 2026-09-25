@@ -1,0 +1,17 @@
+{
+  "id": "paper_write.paperlist",
+  "ok": true,
+  "error": null,
+  "warnings": [
+    "path[1]=\"/tmp/Rtmpmffufb/pc_bibr12_32d9317154db\": No such file or directory"
+  ],
+  "value": {
+    "t": "chr",
+    "v": [
+      "demo.json",
+      "preprint.json"
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

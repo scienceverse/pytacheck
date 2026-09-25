@@ -1,0 +1,113 @@
+{
+  "id": ".psycharchives_info.review.arrays_910",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 1,
+    "names": [
+      "pa_url",
+      "PA_title",
+      "PA_authors",
+      "PA_doi",
+      "PA_license",
+      "PA_date",
+      "PA_abstract",
+      "files"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "https://qsardb.org/repository/handle/10967/910"
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Item 910"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "df",
+            "nrow": 3,
+            "names": [
+              "name",
+              "size",
+              "retrieve"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "a.csv",
+                  "b.csv",
+                  "c.csv"
+                ]
+              },
+              {
+                "t": "dbl",
+                "v": [
+                  null,
+                  null,
+                  null
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "https://qsardb.org",
+                  "https://qsardb.org/rest/bitstreams/9/retrieve",
+                  "https://qsardb.orgNULL"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

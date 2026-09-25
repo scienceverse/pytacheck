@@ -17,6 +17,24 @@
   "ported": true,
   "python": "(inline: `x if x is not None else y`)"
  },
+ ".ACC_NAME_RE": {
+  "file": "",
+  "line": 0,
+  "ported": true,
+  "python": "pytacheck.datacheck.checks:_ACC_NAME_RE"
+ },
+ ".DATETIME_FMTS": {
+  "file": "",
+  "line": 0,
+  "ported": true,
+  "python": "pytacheck.datacheck.checks:_DATETIME_FMTS"
+ },
+ ".DATE_FMTS": {
+  "file": "",
+  "line": 0,
+  "ported": true,
+  "python": "pytacheck.datacheck.checks:_DATE_FMTS"
+ },
  ".JASP_INT_MIN": {
   "file": "",
   "line": 0,
@@ -88,6 +106,12 @@
   "line": 0,
   "ported": true,
   "python": "pytacheck.statout.omv:_OMV_INT_MIN"
+ },
+ ".RT_NAME_RE": {
+  "file": "",
+  "line": 0,
+  "ported": true,
+  "python": "pytacheck.datacheck.checks:_RT_NAME_RE"
  },
  ".R_CAPTURE_CLASSES": {
   "file": "",
@@ -162,6 +186,7 @@
  ".as_num_safe": {
   "file": "R/data_check_helpers.R",
   "line": 6328,
+  "ported": true,
   "python": "pytacheck.datacheck.checks:_as_num_safe"
  },
  ".aspredicted_info": {
@@ -184,7 +209,61 @@
  ".bh_is_trial_level_file": {
   "file": "R/data_check_helpers.R",
   "line": 6611,
+  "ported": true,
   "python": "pytacheck.datacheck.checks:_bh_is_trial_level_file"
+ },
+ ".bibr12_bib_type": {
+  "file": "R/import-bibr12.R",
+  "line": 468,
+  "ported": true,
+  "python": "pytacheck.io.bibr12:_bibr12_bib_type"
+ },
+ ".bibr12_df": {
+  "file": "R/import-bibr12.R",
+  "line": 177,
+  "ported": true,
+  "python": "pytacheck.io.bibr12:_bibr12_df"
+ },
+ ".bibr12_doi": {
+  "file": "R/import-bibr12.R",
+  "line": 456,
+  "ported": true,
+  "python": "pytacheck.io.bibr12:_bibr12_doi"
+ },
+ ".bibr12_info": {
+  "file": "R/import-bibr12.R",
+  "line": 226,
+  "ported": true,
+  "python": "pytacheck.io.bibr12:_bibr12_info"
+ },
+ ".bibr12_paper": {
+  "file": "R/import-bibr12.R",
+  "line": 251,
+  "ported": true,
+  "python": "pytacheck.io.bibr12:_bibr12_paper"
+ },
+ ".bibr12_paper_ids": {
+  "file": "R/import-bibr12.R",
+  "line": 161,
+  "ported": true,
+  "python": "pytacheck.io.bibr12:_bibr12_paper_ids"
+ },
+ ".bibr12_rows": {
+  "file": "R/import-bibr12.R",
+  "line": 212,
+  "ported": true,
+  "python": "pytacheck.io.bibr12:_bibr12_rows"
+ },
+ ".bibr12_sha256": {
+  "file": "R/import-bibr12.R",
+  "line": 493,
+  "ported": true,
+  "python": "pytacheck.io.bibr12:_bibr12_sha256"
+ },
+ ".bibr12_utc": {
+  "file": "R/import-grobid-bibr12.R",
+  "line": 434,
+  "python": "pytacheck.io.grobid_bibr12:_bibr12_utc"
  },
  ".bibr_isalive": {
   "file": "R/import-bibr.R",
@@ -237,7 +316,20 @@
  ".cb_is_definition_line": {
   "file": "R/data_check_helpers.R",
   "line": 3674,
+  "ported": true,
   "python": "pytacheck.datacheck.columns:_cb_is_definition_line"
+ },
+ ".cb_lab_header_re": {
+  "file": "",
+  "line": 0,
+  "ported": true,
+  "python": "pytacheck.datacheck._columns_labels:_CB_LAB_HEADER_RE"
+ },
+ ".cb_var_header_re": {
+  "file": "",
+  "line": 0,
+  "ported": true,
+  "python": "pytacheck.datacheck._columns_labels:_CB_VAR_HEADER_RE"
  },
  ".code_comment_flags": {
   "file": "R/code_check.R",
@@ -309,31 +401,37 @@
  ".coltype_to_facets": {
   "file": "R/data_check_helpers.R",
   "line": 5848,
+  "ported": true,
   "python": "pytacheck.datacheck.checks:_coltype_to_facets"
  },
  ".concept_is_accuracy": {
   "file": "R/data_check_helpers.R",
   "line": 5697,
+  "ported": true,
   "python": "pytacheck.datacheck.checks:_concept_is_accuracy"
  },
  ".concept_is_condition": {
   "file": "R/data_check_helpers.R",
   "line": 5713,
+  "ported": true,
   "python": "pytacheck.datacheck.checks:_concept_is_condition"
  },
  ".concept_is_date": {
   "file": "R/data_check_helpers.R",
   "line": 5790,
+  "ported": true,
   "python": "pytacheck.datacheck.checks:_concept_is_date"
  },
  ".concept_is_rt": {
   "file": "R/data_check_helpers.R",
   "line": 5686,
+  "ported": true,
   "python": "pytacheck.datacheck.checks:_concept_is_rt"
  },
  ".concept_is_timestamp": {
   "file": "R/data_check_helpers.R",
   "line": 5780,
+  "ported": true,
   "python": "pytacheck.datacheck.checks:_concept_is_timestamp"
  },
  ".count_fields": {
@@ -418,6 +516,12 @@
   "line": 1241,
   "ported": true,
   "python": "pytacheck.datacheck.files:_data_group_sort"
+ },
+ ".data_missing_sentinels": {
+  "file": "",
+  "line": 0,
+  "ported": true,
+  "python": "pytacheck.datacheck.columns:_DATA_MISSING_SENTINELS"
  },
  ".dataone_host": {
   "file": "R/archive-dataone.R",
@@ -518,16 +622,31 @@
  ".decode_value_labels": {
   "file": "R/data_check_helpers.R",
   "line": 2962,
+  "ported": true,
   "python": "pytacheck.datacheck.columns:_decode_value_labels"
+ },
+ ".demographic_name_regex": {
+  "file": "",
+  "line": 0,
+  "ported": true,
+  "python": "pytacheck.datacheck.checks:_DEMOGRAPHIC_NAME_REGEX"
+ },
+ ".demographic_name_tokens": {
+  "file": "",
+  "line": 0,
+  "ported": true,
+  "python": "pytacheck.datacheck.checks:_DEMOGRAPHIC_NAME_TOKENS"
  },
  ".demographic_values_ok": {
   "file": "R/data_check_helpers.R",
   "line": 5541,
+  "ported": true,
   "python": "pytacheck.datacheck.checks:_demographic_values_ok"
  },
  ".detect_accuracy_blocks": {
   "file": "R/data_check_helpers.R",
   "line": 6887,
+  "ported": true,
   "python": "pytacheck.datacheck.checks:_detect_accuracy_blocks"
  },
  ".detect_header": {
@@ -539,6 +658,7 @@
  ".detect_header_row": {
   "file": "R/data_check_helpers.R",
   "line": 6430,
+  "ported": true,
   "python": "pytacheck.datacheck.checks:_detect_header_row"
  },
  ".detect_likert_scale": {
@@ -556,11 +676,13 @@
  ".detect_scale_blocks": {
   "file": "R/data_check_helpers.R",
   "line": 6940,
+  "ported": true,
   "python": "pytacheck.datacheck.checks:_detect_scale_blocks"
  },
  ".detect_task_columns": {
   "file": "R/data_check_helpers.R",
   "line": 6819,
+  "ported": true,
   "python": "pytacheck.datacheck.checks:_detect_task_columns"
  },
  ".download_many_parallel": {
@@ -683,6 +805,7 @@
  ".empty_codebook_vars": {
   "file": "R/data_check_helpers.R",
   "line": 2741,
+  "ported": true,
   "python": "pytacheck.datacheck.columns:_empty_codebook_vars"
  },
  ".empty_tests": {
@@ -700,16 +823,19 @@
  ".encode_missing_values": {
   "file": "R/data_check_helpers.R",
   "line": 2972,
+  "ported": true,
   "python": "pytacheck.datacheck.columns:_encode_missing_values"
  },
  ".encode_value_labels": {
   "file": "R/data_check_helpers.R",
   "line": 2951,
+  "ported": true,
   "python": "pytacheck.datacheck.columns:_encode_value_labels"
  },
  ".eprime_is_export": {
   "file": "R/data_check_helpers.R",
   "line": 6597,
+  "ported": true,
   "python": "pytacheck.datacheck.checks:_eprime_is_export"
  },
  ".expand_compressed": {
@@ -730,36 +856,43 @@
  ".extract_codebook_positional": {
   "file": "R/data_check_helpers.R",
   "line": 3313,
+  "ported": true,
   "python": "pytacheck.datacheck.columns:_extract_codebook_positional"
  },
  ".extract_haven_labels": {
   "file": "R/data_check_helpers.R",
   "line": 3645,
+  "ported": true,
   "python": "pytacheck.datacheck.columns:_extract_haven_labels"
  },
  ".extract_json_codebook": {
   "file": "R/data_check_helpers.R",
   "line": 3463,
+  "ported": true,
   "python": "pytacheck.datacheck.columns:_extract_json_codebook"
  },
  ".extract_markdown_codebook": {
   "file": "R/data_check_helpers.R",
   "line": 3373,
+  "ported": true,
   "python": "pytacheck.datacheck.columns:_extract_markdown_codebook"
  },
  ".extract_rich_text": {
   "file": "R/data_check_helpers.R",
   "line": 3738,
+  "ported": true,
   "python": "pytacheck.datacheck.columns:_extract_rich_text"
  },
  ".extract_spreadsheet_codebook": {
   "file": "R/data_check_helpers.R",
   "line": 3524,
+  "ported": true,
   "python": "pytacheck.datacheck.columns:_extract_spreadsheet_codebook"
  },
  ".extract_structured_codebook": {
   "file": "R/data_check_helpers.R",
   "line": 3554,
+  "ported": true,
   "python": "pytacheck.datacheck.columns:_extract_structured_codebook"
  },
  ".figshare_doi_prefix_hosts": {
@@ -846,26 +979,31 @@
  ".find_codebook_cols": {
   "file": "R/data_check_helpers.R",
   "line": 2726,
+  "ported": true,
   "python": "pytacheck.datacheck.columns:_find_codebook_cols"
  },
  ".find_coding_instruction_col": {
   "file": "R/data_check_helpers.R",
   "line": 3280,
+  "ported": true,
   "python": "pytacheck.datacheck.columns:_find_coding_instruction_col"
  },
  ".find_missing_value_col": {
   "file": "R/data_check_helpers.R",
   "line": 3214,
+  "ported": true,
   "python": "pytacheck.datacheck.columns:_find_missing_value_col"
  },
  ".find_question_col": {
   "file": "R/data_check_helpers.R",
   "line": 3254,
+  "ported": true,
   "python": "pytacheck.datacheck.columns:_find_question_col"
  },
  ".find_value_label_col": {
   "file": "R/data_check_helpers.R",
   "line": 3225,
+  "ported": true,
   "python": "pytacheck.datacheck.columns:_find_value_label_col"
  },
  ".first_capital": {
@@ -929,19 +1067,25 @@
  },
  ".grobid_isalive": {
   "file": "R/import-grobid.R",
-  "line": 246,
+  "line": 256,
   "ported": true,
   "python": "pytacheck.io.grobid:_grobid_isalive"
  },
  ".grobid_to_bibr": {
   "file": "R/import-grobid.R",
-  "line": 297,
+  "line": 309,
   "ported": true,
   "python": "pytacheck.io.grobid:_grobid_to_bibr"
+ },
+ ".grobid_to_bibr12": {
+  "file": "R/import-grobid-bibr12.R",
+  "line": 19,
+  "python": "pytacheck.io.grobid_bibr12:_grobid_to_bibr12"
  },
  ".haven_value_labels": {
   "file": "R/data_check_helpers.R",
   "line": 3055,
+  "ported": true,
   "python": "pytacheck.datacheck.columns:_haven_value_labels"
  },
  ".host_rate_limit_record": {
@@ -985,6 +1129,7 @@
  ".infer_group": {
   "file": "R/data_check_helpers.R",
   "line": 4228,
+  "ported": true,
   "python": "pytacheck.datacheck.columns:_infer_group"
  },
  ".ipynb_is_noise": {
@@ -1037,6 +1182,7 @@
  ".is_accuracy_item": {
   "file": "R/data_check_helpers.R",
   "line": 6863,
+  "ported": true,
   "python": "pytacheck.datacheck.checks:_is_accuracy_item"
  },
  ".is_anchor": {
@@ -1045,14 +1191,22 @@
   "ported": true,
   "python": "pytacheck.text.extract_tests:_is_anchor"
  },
+ ".is_bibr12": {
+  "file": "R/import-bibr12.R",
+  "line": 152,
+  "ported": true,
+  "python": "pytacheck.io.bibr12:is_bibr12"
+ },
  ".is_junk_above_header": {
   "file": "R/data_check_helpers.R",
   "line": 6390,
+  "ported": true,
   "python": "pytacheck.datacheck.checks:_is_junk_above_header"
  },
  ".is_likert_item": {
   "file": "R/data_check_helpers.R",
   "line": 6739,
+  "ported": true,
   "python": "pytacheck.datacheck.checks:_is_likert_item"
  },
  ".is_login_page": {
@@ -1062,19 +1216,20 @@
  },
  ".is_paper": {
   "file": "R/paper.R",
-  "line": 389,
+  "line": 391,
   "ported": true,
   "python": "pytacheck.papers.model:is_paper"
  },
  ".is_paper_list": {
   "file": "R/paper.R",
-  "line": 405,
+  "line": 407,
   "ported": true,
   "python": "pytacheck.papers.model:is_paper_list"
  },
  ".is_placeholder_name": {
   "file": "R/data_check_helpers.R",
   "line": 6336,
+  "ported": true,
   "python": "pytacheck.datacheck.checks:_is_placeholder_name"
  },
  ".is_primary_anchor": {
@@ -1119,6 +1274,7 @@
  ".is_task_data": {
   "file": "R/data_check_helpers.R",
   "line": 6910,
+  "ported": true,
   "python": "pytacheck.datacheck.checks:_is_task_data"
  },
  ".is_zip": {
@@ -1129,6 +1285,7 @@
  ".item_text_key": {
   "file": "R/data_check_helpers.R",
   "line": 2901,
+  "ported": true,
   "python": "pytacheck.datacheck.columns:_item_text_key"
  },
  ".jasp_analyses_summary": {
@@ -1200,11 +1357,13 @@
  ".json_field": {
   "file": "R/data_check_helpers.R",
   "line": 3415,
+  "ported": true,
   "python": "pytacheck.datacheck.columns:_json_field"
  },
  ".json_value_labels": {
   "file": "R/data_check_helpers.R",
   "line": 3436,
+  "ported": true,
   "python": "pytacheck.datacheck.columns:_json_value_labels"
  },
  ".le_int": {
@@ -1310,26 +1469,31 @@
  ".looks_like_accuracy": {
   "file": "R/data_check_helpers.R",
   "line": 6798,
+  "ported": true,
   "python": "pytacheck.datacheck.checks:_looks_like_accuracy"
  },
  ".looks_like_freetext_labels": {
   "file": "R/data_check_helpers.R",
   "line": 3043,
+  "ported": true,
   "python": "pytacheck.datacheck.columns:_looks_like_freetext_labels"
  },
  ".looks_like_rt": {
   "file": "R/data_check_helpers.R",
   "line": 6777,
+  "ported": true,
   "python": "pytacheck.datacheck.checks:_looks_like_rt"
  },
  ".looks_like_varnames": {
   "file": "R/data_check_helpers.R",
   "line": 3292,
+  "ported": true,
   "python": "pytacheck.datacheck.columns:_looks_like_varnames"
  },
  ".looks_like_wording": {
   "file": "R/data_check_helpers.R",
   "line": 3301,
+  "ported": true,
   "python": "pytacheck.datacheck.columns:_looks_like_wording"
  },
  ".max_words": {
@@ -1371,7 +1535,20 @@
  ".missing_from_value_labels": {
   "file": "R/data_check_helpers.R",
   "line": 3201,
+  "ported": true,
   "python": "pytacheck.datacheck.columns:_missing_from_value_labels"
+ },
+ ".missing_label_re": {
+  "file": "",
+  "line": 0,
+  "ported": true,
+  "python": "pytacheck.datacheck._columns_labels:_MISSING_LABEL_RE"
+ },
+ ".missing_na_re": {
+  "file": "",
+  "line": 0,
+  "ported": true,
+  "python": "pytacheck.datacheck._columns_labels:_MISSING_NA_RE"
  },
  ".mplus_export_syntax": {
   "file": "R/mplus.R",
@@ -1508,11 +1685,13 @@
  ".normalize_header": {
   "file": "R/data_check_helpers.R",
   "line": 2691,
+  "ported": true,
   "python": "pytacheck.datacheck.columns:_normalize_header"
  },
  ".numeric_col_fraction": {
   "file": "R/data_check_helpers.R",
   "line": 6358,
+  "ported": true,
   "python": "pytacheck.datacheck.checks:_numeric_col_fraction"
  },
  ".obliterate_apostrophe_1": {
@@ -1594,16 +1773,19 @@
  ".osd_code_and_provenance": {
   "file": "R/data_check_helpers.R",
   "line": 2806,
+  "ported": true,
   "python": "pytacheck.datacheck.columns:_osd_code_and_provenance"
  },
  ".osd_safe_code": {
   "file": "R/data_check_helpers.R",
   "line": 2778,
+  "ported": true,
   "python": "pytacheck.datacheck.columns:_osd_safe_code"
  },
  ".osd_slug": {
   "file": "R/data_check_helpers.R",
   "line": 2760,
+  "ported": true,
   "python": "pytacheck.datacheck.columns:_osd_slug"
  },
  ".osf_cache_key": {
@@ -1794,14 +1976,27 @@
  },
  ".paper_coerce": {
   "file": "R/paper.R",
-  "line": 292,
+  "line": 293,
   "ported": true,
   "python": "pytacheck.papers.io:coerce_paper"
  },
  ".paper_schema": {
   "file": "R/paper.R",
   "line": 12,
-  "python": "pytacheck.papers:_paper_schema"
+  "ported": true,
+  "python": "pytacheck.papers.schema:load_schema"
+ },
+ ".paper_schema_bibr12": {
+  "file": "R/import-bibr12.R",
+  "line": 125,
+  "ported": true,
+  "python": "pytacheck.papers.schema:load_schema_bibr12"
+ },
+ ".paper_to_bibr12": {
+  "file": "R/import-bibr12.R",
+  "line": 321,
+  "ported": true,
+  "python": "pytacheck.io.bibr12:paper_to_bibr12"
  },
  ".papers_cache_dir": {
   "file": "R/import-papers.R",
@@ -1824,11 +2019,13 @@
  ".parse_frac": {
   "file": "R/data_check_helpers.R",
   "line": 5740,
+  "ported": true,
   "python": "pytacheck.datacheck.checks:_parse_frac"
  },
  ".parse_value_label_text": {
   "file": "R/data_check_helpers.R",
   "line": 3173,
+  "ported": true,
   "python": "pytacheck.datacheck.columns:_parse_value_label_text"
  },
  ".parse_zip_central_dir": {
@@ -1875,22 +2072,38 @@
  ".pdf_codebook_lines": {
   "file": "R/data_check_helpers.R",
   "line": 3698,
+  "ported": true,
   "python": "pytacheck.datacheck.columns:_pdf_codebook_lines"
  },
  ".pii_card_ok": {
   "file": "R/data_check_helpers.R",
   "line": 5139,
+  "ported": true,
   "python": "pytacheck.datacheck.checks:_pii_card_ok"
  },
  ".pii_luhn_ok": {
   "file": "R/data_check_helpers.R",
   "line": 5121,
+  "ported": true,
   "python": "pytacheck.datacheck.checks:_pii_luhn_ok"
+ },
+ ".pii_name_tokens": {
+  "file": "",
+  "line": 0,
+  "ported": true,
+  "python": "pytacheck.datacheck.checks:_PII_NAME_TOKENS"
  },
  ".pii_split_name": {
   "file": "R/data_check_helpers.R",
   "line": 5298,
+  "ported": true,
   "python": "pytacheck.datacheck.checks:_pii_split_name"
+ },
+ ".pii_value_patterns": {
+  "file": "",
+  "line": 0,
+  "ported": true,
+  "python": "pytacheck.datacheck.checks:_PII_VALUE_PATTERNS"
  },
  ".power_llm_extract": {
   "file": "",
@@ -1906,7 +2119,7 @@
  },
  ".process_full_text": {
   "file": "R/import-grobid.R",
-  "line": 486,
+  "line": 502,
   "ported": true,
   "python": "pytacheck.io.grobid:_process_full_text"
  },
@@ -1936,46 +2149,61 @@
  ".qsf_export_col": {
   "file": "R/data_check_helpers.R",
   "line": 4085,
+  "ported": true,
   "python": "pytacheck.datacheck.columns:_qsf_export_col"
  },
  ".qsf_option_display": {
   "file": "R/data_check_helpers.R",
   "line": 4051,
+  "ported": true,
   "python": "pytacheck.datacheck.columns:_qsf_option_display"
  },
  ".qsf_strip_html": {
   "file": "R/data_check_helpers.R",
   "line": 4035,
+  "ported": true,
   "python": "pytacheck.datacheck.columns:_qsf_strip_html"
  },
  ".qsf_value_labels": {
   "file": "R/data_check_helpers.R",
   "line": 4060,
+  "ported": true,
   "python": "pytacheck.datacheck.columns:_qsf_value_labels"
  },
  ".qualtrics_col_stem": {
   "file": "R/data_check_helpers.R",
   "line": 6166,
+  "ported": true,
   "python": "pytacheck.datacheck.checks:_qualtrics_col_stem"
  },
  ".qualtrics_is_display_order": {
   "file": "R/data_check_helpers.R",
   "line": 6183,
+  "ported": true,
   "python": "pytacheck.datacheck.checks:_qualtrics_is_display_order"
  },
  ".qualtrics_is_header_row": {
   "file": "R/data_check_helpers.R",
   "line": 6236,
+  "ported": true,
   "python": "pytacheck.datacheck.checks:_qualtrics_is_header_row"
  },
  ".qualtrics_key": {
   "file": "R/data_check_helpers.R",
   "line": 6153,
+  "ported": true,
   "python": "pytacheck.datacheck.checks:_qualtrics_key"
+ },
+ ".qualtrics_meta_cols": {
+  "file": "",
+  "line": 0,
+  "ported": true,
+  "python": "pytacheck.datacheck.checks:_QUALTRICS_META_COLS"
  },
  ".qualtrics_tag_cols": {
   "file": "R/data_check_helpers.R",
   "line": 6156,
+  "ported": true,
   "python": "pytacheck.datacheck.checks:_qualtrics_tag_cols"
  },
  ".r_call_fn": {
@@ -2126,6 +2354,12 @@
   "line": 58,
   "ported": true,
   "python": "pytacheck.papers.io:read_bibr"
+ },
+ ".read_bibr12": {
+  "file": "R/import-bibr12.R",
+  "line": 284,
+  "ported": true,
+  "python": "pytacheck.io.bibr12:read_bibr12"
  },
  ".read_delim_fast": {
   "file": "R/data_check_helpers.R",
@@ -2423,6 +2657,7 @@
  ".row_duplication": {
   "file": "R/data_check_helpers.R",
   "line": 6373,
+  "ported": true,
   "python": "pytacheck.datacheck.checks:_row_duplication"
  },
  ".safe_write_path": {
@@ -2434,36 +2669,55 @@
  ".scale_block_is_ratinglike": {
   "file": "R/data_check_helpers.R",
   "line": 6982,
+  "ported": true,
   "python": "pytacheck.datacheck.checks:_scale_block_is_ratinglike"
  },
  ".scale_block_range": {
   "file": "R/data_check_helpers.R",
   "line": 6927,
+  "ported": true,
   "python": "pytacheck.datacheck.checks:_scale_block_range"
  },
  ".scale_match_items": {
   "file": "R/data_check_helpers.R",
   "line": 2920,
+  "ported": true,
   "python": "pytacheck.datacheck.columns:_scale_match_items"
+ },
+ ".scale_min_items": {
+  "file": "",
+  "line": 0,
+  "ported": true,
+  "python": "pytacheck.datacheck.checks:_SCALE_MIN_ITEMS"
  },
  ".scale_name_prefix": {
   "file": "R/data_check_helpers.R",
   "line": 6919,
+  "ported": true,
   "python": "pytacheck.datacheck.checks:_scale_name_prefix"
  },
  ".scale_ref_code": {
   "file": "R/data_check_helpers.R",
   "line": 2869,
+  "ported": true,
   "python": "pytacheck.datacheck.columns:_scale_ref_code"
+ },
+ ".scale_ref_data": {
+  "file": "",
+  "line": 0,
+  "ported": true,
+  "python": "pytacheck.datacheck.columns:_scale_ref_data"
  },
  ".scale_reference": {
   "file": "R/data_check_helpers.R",
   "line": 2883,
+  "ported": true,
   "python": "pytacheck.datacheck.columns:_scale_reference"
  },
  ".scale_typo_of": {
   "file": "R/data_check_helpers.R",
   "line": 4544,
+  "ported": true,
   "python": "pytacheck.datacheck.columns:_scale_typo_of"
  },
  ".sites_share_variable": {
@@ -3072,6 +3326,12 @@
   "ported": true,
   "python": "pytacheck.stats.helpers:_stato_strip_variant"
  },
+ ".stem_words": {
+  "file": "",
+  "line": 0,
+  "ported": true,
+  "python": "pytacheck.datacheck.columns:_stem_words"
+ },
  ".storage_backoff": {
   "file": "R/repo-download.R",
   "line": 363,
@@ -3101,6 +3361,7 @@
  ".strip_rtf": {
   "file": "R/data_check_helpers.R",
   "line": 3728,
+  "ported": true,
   "python": "pytacheck.datacheck.columns:_strip_rtf"
  },
  ".table_caption": {
@@ -3145,44 +3406,69 @@
   "ported": true,
   "python": "pytacheck.statout.match_table:_table_typed_cells"
  },
+ ".tabular_miss_mid": {
+  "file": "",
+  "line": 0,
+  "ported": true,
+  "python": "pytacheck.datacheck.checks:_TABULAR_MISS_MID"
+ },
+ ".tabular_prose_high": {
+  "file": "",
+  "line": 0,
+  "ported": true,
+  "python": "pytacheck.datacheck.checks:_TABULAR_PROSE_HIGH"
+ },
+ ".tabular_prose_mid": {
+  "file": "",
+  "line": 0,
+  "ported": true,
+  "python": "pytacheck.datacheck.checks:_TABULAR_PROSE_MID"
+ },
  ".tabular_usable": {
   "file": "R/data_check_helpers.R",
   "line": 6074,
+  "ported": true,
   "python": "pytacheck.datacheck.checks:_tabular_usable"
+ },
+ ".task_acc_min_items": {
+  "file": "",
+  "line": 0,
+  "ported": true,
+  "python": "pytacheck.datacheck.checks:_TASK_ACC_MIN_ITEMS"
  },
  ".tei_authors": {
   "file": "R/import-grobid.R",
-  "line": 796,
+  "line": 812,
   "ported": true,
   "python": "pytacheck.io.grobid:_tei_authors"
  },
  ".tei_bib": {
   "file": "R/import-grobid.R",
-  "line": 903,
+  "line": 919,
   "ported": true,
   "python": "pytacheck.io.grobid:_tei_bib"
  },
  ".tei_table_contents": {
   "file": "R/import-grobid.R",
-  "line": 979,
+  "line": 995,
   "ported": true,
   "python": "pytacheck.io.grobid:_tei_table_contents"
  },
  ".tei_text": {
   "file": "R/import-grobid.R",
-  "line": 648,
+  "line": 664,
   "ported": true,
   "python": "pytacheck.io.grobid:_tei_text"
  },
  ".tei_url": {
   "file": "R/import-grobid.R",
-  "line": 869,
+  "line": 885,
   "ported": true,
   "python": "pytacheck.io.grobid:_tei_url"
  },
  ".tei_xrefs": {
   "file": "R/import-grobid.R",
-  "line": 828,
+  "line": 844,
   "ported": true,
   "python": "pytacheck.io.grobid:_tei_xrefs"
  },
@@ -3225,11 +3511,13 @@
  ".vl_is_numeric": {
   "file": "R/data_check_helpers.R",
   "line": 3102,
+  "ported": true,
   "python": "pytacheck.datacheck.columns:_vl_is_numeric"
  },
  ".vl_split_pairs": {
   "file": "R/data_check_helpers.R",
   "line": 3106,
+  "ported": true,
   "python": "pytacheck.datacheck.columns:_vl_split_pairs"
  },
  ".wait_out_known_rate_limit": {
@@ -3257,7 +3545,7 @@
  },
  ".xml2bib": {
   "file": "R/import-grobid.R",
-  "line": 1077,
+  "line": 1093,
   "ported": true,
   "python": "pytacheck.io.grobid:_xml2bib"
  },
@@ -3416,7 +3704,7 @@
   "file": "",
   "line": 0,
   "ported": true,
-  "python": "pytacheck.modules.prereg_check:_LAKENS_2024"
+  "python": "pytacheck.modules.reg_check:_LAKENS_2024"
  },
  "accuracy": {
   "file": "R/validate.R",
@@ -3619,106 +3907,127 @@
  "data_check_case_issues": {
   "file": "R/data_check_helpers.R",
   "line": 4866,
+  "ported": true,
   "python": "pytacheck.datacheck.checks:data_check_case_issues"
  },
  "data_check_colname": {
   "file": "R/data_check_helpers.R",
   "line": 4983,
+  "ported": true,
   "python": "pytacheck.datacheck.checks:data_check_colname"
  },
  "data_check_colname_collisions": {
   "file": "R/data_check_helpers.R",
   "line": 5039,
+  "ported": true,
   "python": "pytacheck.datacheck.checks:data_check_colname_collisions"
  },
  "data_check_constant": {
   "file": "R/data_check_helpers.R",
   "line": 4768,
+  "ported": true,
   "python": "pytacheck.datacheck.checks:data_check_constant"
  },
  "data_check_demographic": {
   "file": "R/data_check_helpers.R",
   "line": 5619,
+  "ported": true,
   "python": "pytacheck.datacheck.checks:data_check_demographic"
  },
  "data_check_design_name": {
   "file": "R/data_check_helpers.R",
   "line": 4822,
+  "ported": true,
   "python": "pytacheck.datacheck.checks:data_check_design_name"
  },
  "data_check_empty": {
   "file": "R/data_check_helpers.R",
   "line": 4797,
+  "ported": true,
   "python": "pytacheck.datacheck.checks:data_check_empty"
  },
  "data_check_is_behaverse": {
   "file": "R/data_check_helpers.R",
   "line": 6665,
+  "ported": true,
   "python": "pytacheck.datacheck.checks:data_check_is_behaverse"
  },
  "data_check_is_inquisit": {
   "file": "R/data_check_helpers.R",
   "line": 6682,
+  "ported": true,
   "python": "pytacheck.datacheck.checks:data_check_is_inquisit"
  },
  "data_check_is_jspsych": {
   "file": "R/data_check_helpers.R",
   "line": 6692,
+  "ported": true,
   "python": "pytacheck.datacheck.checks:data_check_is_jspsych"
  },
  "data_check_is_psychopy": {
   "file": "R/data_check_helpers.R",
   "line": 6702,
+  "ported": true,
   "python": "pytacheck.datacheck.checks:data_check_is_psychopy"
  },
  "data_check_is_qualtrics": {
   "file": "R/data_check_helpers.R",
   "line": 6202,
+  "ported": true,
   "python": "pytacheck.datacheck.checks:data_check_is_qualtrics"
  },
  "data_check_numeric_in_text": {
   "file": "R/data_check_helpers.R",
   "line": 4923,
+  "ported": true,
   "python": "pytacheck.datacheck.checks:data_check_numeric_in_text"
  },
  "data_check_outliers": {
   "file": "R/data_check_helpers.R",
   "line": 4736,
+  "ported": true,
   "python": "pytacheck.datacheck.checks:data_check_outliers"
  },
  "data_check_pii_freetext": {
   "file": "R/data_check_helpers.R",
   "line": 5473,
+  "ported": true,
   "python": "pytacheck.datacheck.checks:data_check_pii_freetext"
  },
  "data_check_pii_geo": {
   "file": "R/data_check_helpers.R",
   "line": 5407,
+  "ported": true,
   "python": "pytacheck.datacheck.checks:data_check_pii_geo"
  },
  "data_check_pii_name": {
   "file": "R/data_check_helpers.R",
   "line": 5345,
+  "ported": true,
   "python": "pytacheck.datacheck.checks:data_check_pii_name"
  },
  "data_check_pii_values": {
   "file": "R/data_check_helpers.R",
   "line": 5252,
+  "ported": true,
   "python": "pytacheck.datacheck.checks:data_check_pii_values"
  },
  "data_check_scale_values": {
   "file": "R/data_check_helpers.R",
   "line": 4623,
+  "ported": true,
   "python": "pytacheck.datacheck.checks:data_check_scale_values"
  },
  "data_check_spss_filter": {
   "file": "R/data_check_helpers.R",
   "line": 4841,
+  "ported": true,
   "python": "pytacheck.datacheck.checks:data_check_spss_filter"
  },
  "data_check_whitespace": {
   "file": "R/data_check_helpers.R",
   "line": 4892,
+  "ported": true,
   "python": "pytacheck.datacheck.checks:data_check_whitespace"
  },
  "data_classify_files": {
@@ -3730,21 +4039,25 @@
  "data_col_concept": {
   "file": "R/data_check_helpers.R",
   "line": 5818,
+  "ported": true,
   "python": "pytacheck.datacheck.checks:data_col_concept"
  },
  "data_col_facets": {
   "file": "R/data_check_helpers.R",
   "line": 5898,
+  "ported": true,
   "python": "pytacheck.datacheck.checks:data_col_facets"
  },
  "data_col_stats": {
   "file": "R/data_check_helpers.R",
   "line": 2567,
+  "ported": true,
   "python": "pytacheck.datacheck.columns:data_col_stats"
  },
  "data_col_type": {
   "file": "R/data_check_helpers.R",
   "line": 2473,
+  "ported": true,
   "python": "pytacheck.datacheck.columns:data_col_type"
  },
  "data_format": {
@@ -3768,6 +4081,7 @@
  "data_promote_header_row": {
   "file": "R/data_check_helpers.R",
   "line": 6519,
+  "ported": true,
   "python": "pytacheck.datacheck.checks:data_promote_header_row"
  },
  "data_read_head": {
@@ -3779,6 +4093,7 @@
  "data_strip_qualtrics_header": {
   "file": "R/data_check_helpers.R",
   "line": 6289,
+  "ported": true,
   "python": "pytacheck.datacheck.checks:data_strip_qualtrics_header"
  },
  "data_study_roster": {
@@ -3831,13 +4146,13 @@
  },
  "demofile": {
   "file": "R/paper.R",
-  "line": 494,
+  "line": 496,
   "ported": true,
   "python": "pytacheck.papers.io:demofile"
  },
  "demopaper": {
   "file": "R/paper.R",
-  "line": 475,
+  "line": 477,
   "ported": true,
   "python": "pytacheck.papers.io:demopaper"
  },
@@ -3992,7 +4307,7 @@
  },
  "fig_image_view": {
   "file": "R/paper.R",
-  "line": 661,
+  "line": 684,
   "python": "pytacheck.papers:fig_image_view"
  },
  "figshare_file_download": {
@@ -4373,7 +4688,7 @@
  },
  "grobid_to_bibr": {
   "file": "R/import-grobid.R",
-  "line": 173,
+  "line": 178,
   "ported": true,
   "python": "pytacheck.io.grobid:grobid_to_bibr"
  },
@@ -4512,6 +4827,7 @@
  "match_column_labels": {
   "file": "R/data_check_helpers.R",
   "line": 4265,
+  "ported": true,
   "python": "pytacheck.datacheck.columns:match_column_labels"
  },
  "match_reported_output": {
@@ -4698,6 +5014,7 @@
  "module:reg_check": {
   "file": "inst/modules/reg_check.R",
   "line": 1,
+  "ported": true,
   "python": "pytacheck.modules.reg_check:reg_check"
  },
  "module:repo_check": {
@@ -4773,7 +5090,8 @@
  "module_template": {
   "file": "R/module.R",
   "line": 420,
-  "python": "pytacheck.module:module_template"
+  "ported": true,
+  "python": "pytacheck.packs.scaffold:module_template"
  },
  "murphy2025": {
   "file": "",
@@ -4808,11 +5126,13 @@
  "normalize_label": {
   "file": "R/data_check_helpers.R",
   "line": 2674,
+  "ported": true,
   "python": "pytacheck.datacheck.columns:normalize_label"
  },
  "normalize_varname": {
   "file": "R/data_check_helpers.R",
   "line": 2642,
+  "ported": true,
   "python": "pytacheck.datacheck.columns:normalize_varname"
  },
  "obliterate_conflict_1": {
@@ -4990,13 +5310,13 @@
  },
  "paper_id": {
   "file": "R/paper.R",
-  "line": 558,
+  "line": 560,
   "ported": true,
   "python": "pytacheck.papers.tables:paper_id"
  },
  "paper_table": {
   "file": "R/paper.R",
-  "line": 520,
+  "line": 522,
   "ported": true,
   "python": "pytacheck.papers.tables:paper_table"
  },
@@ -5008,7 +5328,7 @@
  },
  "paper_write": {
   "file": "R/paper.R",
-  "line": 618,
+  "line": 626,
   "ported": true,
   "python": "pytacheck.papers.io:paper_write"
  },
@@ -5045,11 +5365,13 @@
  "parse_codebook": {
   "file": "R/data_check_helpers.R",
   "line": 3804,
+  "ported": true,
   "python": "pytacheck.datacheck.columns:parse_codebook"
  },
  "parse_qsf": {
   "file": "R/data_check_helpers.R",
   "line": 4126,
+  "ported": true,
   "python": "pytacheck.datacheck.columns:parse_qsf"
  },
  "path_sanitize": {
@@ -5069,6 +5391,12 @@
   "line": 187,
   "ported": true,
   "python": "pytacheck._r.base:plural"
+ },
+ "prereg_row_text": {
+  "file": "",
+  "line": 0,
+  "ported": true,
+  "python": "pytacheck.modules.reg_check:prereg_row_text"
  },
  "prereg_schema": {
   "file": "",
@@ -5093,12 +5421,12 @@
  },
  "print.scivrs_paper": {
   "file": "R/paper.R",
-  "line": 427,
+  "line": 429,
   "python": "pytacheck.papers:print_scivrs_paper"
  },
  "print.scivrs_paperlist": {
   "file": "R/paper.R",
-  "line": 449,
+  "line": 451,
   "python": "pytacheck.papers:print_scivrs_paperlist"
  },
  "prsp": {
@@ -5175,7 +5503,7 @@
  },
  "ref_table": {
   "file": "R/paper.R",
-  "line": 576,
+  "line": 578,
   "ported": true,
   "python": "pytacheck.papers.tables:ref_table"
  },
@@ -5431,6 +5759,12 @@
   "line": 59,
   "ported": true,
   "python": "pytacheck.db.retractionwatch:rw_update"
+ },
+ "scales": {
+  "file": "",
+  "line": 0,
+  "ported": true,
+  "python": "pytacheck.datacheck.scales:scales"
  },
  "schema": {
   "file": "",
@@ -5696,6 +6030,12 @@
   "ported": true,
   "python": "pytacheck.stats.core:stats"
  },
+ "tasks": {
+  "file": "",
+  "line": 0,
+  "ported": true,
+  "python": "pytacheck.datacheck.tasks:tasks"
+ },
  "test_paper": {
   "file": "R/paper.R",
   "line": 134,
@@ -5742,7 +6082,7 @@
   "file": "",
   "line": 0,
   "ported": true,
-  "python": "pytacheck.modules.prereg_check:_VAN_DEN_AKKER_2024"
+  "python": "pytacheck.modules.reg_check:_VAN_DEN_AKKER_2024"
  },
  "verbose": {
   "file": "R/svutils-utils.R",

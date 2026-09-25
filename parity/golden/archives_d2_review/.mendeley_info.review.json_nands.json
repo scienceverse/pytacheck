@@ -1,0 +1,30 @@
+{
+  "id": ".mendeley_info.review.json_nands",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 1,
+    "names": [
+      "mendeley_id",
+      "error"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "nands"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "parse_error"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

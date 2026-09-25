@@ -1,0 +1,33 @@
+{
+  "id": ".vl_split_pairs.neg_codes",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "lhs",
+      "rhs"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "-1",
+          "0",
+          "1"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "disagree",
+          "neutral",
+          "agree"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

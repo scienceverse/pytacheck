@@ -48,7 +48,10 @@ def read(
     Like ``metacheck::read()``: a directory is scanned for ``.json``/``.xml``
     files (a ``.xml`` is skipped when a ``.json`` of the same name exists),
     unreadable files are logged and skipped, and a single paper is returned
-    unwrapped. Source documents (PDF, DOCX, HTML, ...) are extracted with
+    unwrapped. A JSON file with a root ``schema_version`` is a bibr export:
+    schema 12.x is read natively (:mod:`pytacheck.io.bibr12`), any other
+    version (bibr 11.x included) is refused; files without one (bibr v10.x and
+    older) are read exactly as metacheck reads them. Source documents (PDF, DOCX, HTML, ...) are extracted with
     bibr when the ``pytacheck[bibr]`` extra is installed; ``bibr_options``
     are passed to :func:`pytacheck.io.bibr.chew`.
     """

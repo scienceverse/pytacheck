@@ -134,6 +134,17 @@ DDI_NS_ERROR = """<?xml version="1.0" encoding="UTF-8"?>
 </codeBook>
 """
 
+DDI_FILES = """<?xml version="1.0" encoding="UTF-8"?>
+<codeBook xmlns="ddi:codebook:2_5" version="2.5">
+  <stdyDscr><citation><titlStmt><titl>Files study</titl>
+    <IDNo agency="FSD">FSD3335</IDNo></titlStmt></citation></stdyDscr>
+  <fileDscr ID="F1"><fileTxt><fileName>a.sav</fileName><dimensns><caseQnty>3.7</caseQnty><varQnty>0x1A</varQnty></dimensns></fileTxt></fileDscr>
+  <fileDscr ID="F2"><fileTxt><fileName>b.csv</fileName><dimensns><caseQnty>2147483648</caseQnty><varQnty>-2147483647.5</varQnty></dimensns><fileType>CSV</fileType></fileTxt></fileDscr>
+  <fileDscr ID="F3"><fileTxt><dimensns><caseQnty>Inf</caseQnty><varQnty>1,000</varQnty></dimensns></fileTxt></fileDscr>
+  <fileDscr ID="F4"><fileTxt><fileName></fileName><dimensns><caseQnty/><varQnty>1e-2</varQnty></dimensns></fileTxt></fileDscr>
+</codeBook>
+"""
+
 DDI_LATIN1_DECL = """<?xml version="1.0" encoding="ISO-8859-1"?>
 <codeBook xmlns="ddi:codebook:2_5" version="2.5">
   <stdyDscr><citation><titlStmt><titl>Työ ja perää 2002</titl></titlStmt></citation></stdyDscr>
@@ -151,14 +162,12 @@ def write_mocks() -> None:
     # 200 with a body that has no markup: xml2::read_html() takes it for a file path
     r_response("researchbox.org/7003", "https://researchbox.org/7003", b"OK", "text/html")
     # 200 with bytes that are not UTF-8: resp_body_string() is NA
-    r_response(
-        "researchbox.org/7004", "https://researchbox.org/7004", b"<p>\xff</p>", "text/html"
-    )
+    r_response("researchbox.org/7004", "https://researchbox.org/7004", b"<p>\xff</p>", "text/html")
     # a Latin-1 page that says so: converted to UTF-8 first
     r_response(
         "researchbox.org/7005",
         "https://researchbox.org/7005",
-        "<html><body><p class=\"file_name\">café.csv</p>"
+        '<html><body><p class="file_name">café.csv</p>'
         "<p>SUPPLEMENTARY FILES FOR Café LICENSE FOR USE x</p></body></html>".encode("latin-1"),
         "text/html; charset=ISO-8859-1",
     )
@@ -334,6 +343,197 @@ def write_mocks() -> None:
         ".json",
     )
 
+    # --- JSON bodies as httr2::resp_body_json() reads them: always as UTF-8, up to a
+    # NUL byte, parsed by jsonlite (a BOM is dropped, NaN refused, the first of two
+    # repeated keys is what `$` finds, an escaped NUL ends a string)
+    bom = b"\xef\xbb\xbf"
+    js = "application/json"
+    legacy = "qsardb.org/rest"
+    # 904: handle with a BOM, metadata with a NUL and trailing junk, bitstreams
+    # declared Latin-1 but sent as UTF-8
+    r_response(
+        f"{legacy}/handle/10967/904",
+        "https://qsardb.org/rest/handle/10967/904",
+        bom + b'{"uuid": "q-904", "name": "Item 904"}',
+        js,
+    )
+    r_response(
+        q(f"{legacy}/items/q-904", "expand=metadata"),
+        "https://qsardb.org/rest/items/q-904?expand=metadata",
+        b'{"metadata": [{"key": "dc.rights", "value": "CC0"}]}\x00{"junk": true}',
+        js,
+    )
+    r_response(
+        q(f"{legacy}/items/q-904/bitstreams", "limit=1000"),
+        "https://qsardb.org/rest/items/q-904/bitstreams?limit=1000",
+        '[{"name": "café.csv", "sizeBytes": 7, "retrieveLink": "/rest/bitstreams/4/retrieve"}]'.encode(),
+        "application/json; charset=ISO-8859-1",
+    )
+    # 905: a repeated key; the item name holds an escaped NUL
+    r_response(
+        f"{legacy}/handle/10967/905",
+        "https://qsardb.org/rest/handle/10967/905",
+        b'{"uuid": "q-905", "name": "Item\\u0000 905", "uuid": "q-zzz"}',
+        js,
+    )
+    put(
+        q(f"{legacy}/items/q-905", "expand=metadata"),
+        {"metadata": [{"key": "dc.contributor.author", "value": "Doe, Jane"}]},
+        ".json",
+    )
+    put(q(f"{legacy}/items/q-905/bitstreams", "limit=1000"), [], ".json")
+    # 906: Latin-1 bytes (declared as such): not UTF-8, so no item
+    r_response(
+        f"{legacy}/handle/10967/906",
+        "https://qsardb.org/rest/handle/10967/906",
+        '{"uuid": "q-906", "name": "Café"}'.encode("latin-1"),
+        "application/json; charset=ISO-8859-1",
+    )
+    # 907: NaN is not JSON to jsonlite
+    r_response(
+        f"{legacy}/handle/10967/907",
+        "https://qsardb.org/rest/handle/10967/907",
+        b'{"uuid": "q-907", "size": NaN}',
+        js,
+    )
+    # 909: a +json media type is JSON too; text/plain is not
+    r_response(
+        f"{legacy}/handle/10967/909",
+        "https://qsardb.org/rest/handle/10967/909",
+        b'{"uuid": "q-909"}',
+        "application/hal+json;charset=UTF-8",
+    )
+    put(q(f"{legacy}/items/q-909", "expand=metadata"), {"metadata": []}, ".json")
+    r_response(
+        q(f"{legacy}/items/q-909/bitstreams", "limit=1000"),
+        "https://qsardb.org/rest/items/q-909/bitstreams?limit=1000",
+        b'[{"name": "x.csv"}]',
+        "text/plain",
+    )
+
+    api = "data.mendeley.com/public-api/datasets"
+    rec = '{"name": "Café data", "doi": {"id": "10.17632/bomds.1"}, "files": []}'
+    r_response(
+        f"{api}/bomds",
+        "https://data.mendeley.com/public-api/datasets/bomds",
+        bom + rec.encode(),
+        js,
+    )
+    r_response(
+        f"{api}/nands",
+        "https://data.mendeley.com/public-api/datasets/nands",
+        b'{"name": "x", "version": Infinity}',
+        js,
+    )
+    r_response(
+        f"{api}/latinds",
+        "https://data.mendeley.com/public-api/datasets/latinds",
+        rec.encode("latin-1"),
+        "application/json; charset=latin1",
+    )
+    r_response(
+        f"{api}/dupds",
+        "https://data.mendeley.com/public-api/datasets/dupds",
+        b'{"name": "first", "name": "second", "contributors": [{"first_name": "A",'
+        b' "last_name": "B", "last_name": "C"}]}',
+        js,
+    )
+
+    eprint = "reshare.ukdataservice.ac.uk/id/eprint"
+    r_response(
+        f"{eprint}/854910",
+        "https://reshare.ukdataservice.ac.uk/id/eprint/854910",
+        bom + b'{"title": "T\\u0000rest", "datestamp": "2020", "documents": [{"content": "data",'
+        b' "files": [{"fileid": 3000000000, "filename": "a.csv"}]}]}\x00x',
+        js,
+    )
+    r_response(
+        f"{eprint}/854911",
+        "https://reshare.ukdataservice.ac.uk/id/eprint/854911",
+        b'{"title": "x", "lastmod": -Infinity}',
+        js,
+    )
+
+    items7 = "scholarworks.umass.edu/server/api/core/items/"
+    u4 = "44444444-5555-6666-7777-888888888888"
+    r_response(
+        items7 + u4,
+        f"https://scholarworks.umass.edu/server/api/core/items/{u4}",
+        bom
+        + (
+            f'{{"uuid": "{u4}", "name": "N4", "uuid": "other", "metadata": '
+            '{"dc.title": [{"value": "T"}], "dc.title": [{"value": "U"}]}}'
+        ).encode(),
+        "application/json;charset=UTF-8",
+    )
+    r_response(
+        items7 + u4 + "/bundles",
+        f"https://scholarworks.umass.edu/server/api/core/items/{u4}/bundles",
+        b'{"_embedded": {"bundles": [{"name": "ORIGINAL", "uuid": "bb-4"}]}}',
+        "application/json; charset=ISO-8859-1",
+    )
+    r_response(
+        "scholarworks.umass.edu/server/api/core/bundles/bb-4/bitstreams",
+        "https://scholarworks.umass.edu/server/api/core/bundles/bb-4/bitstreams",
+        b'{"_embedded": {"bitstreams": [{"name": "caf\xc3\xa9.csv", "sizeBytes": 5}]}}',
+        "application/json; charset=ISO-8859-1",
+    )
+
+    # --- arrays where strings are expected: `obj$x <- <list>` makes a list column (or
+    # fails), paste0() drops an empty list and deparses a nested one, and an array of
+    # two ids builds two URLs, which httr2::request() refuses
+    put(
+        f"{legacy}/handle/10967/910",
+        {"uuid": ["q-910"], "name": ["Item 910"]},
+        ".json",
+    )
+    put(q(f"{legacy}/items/q-910", "expand=metadata"), {"metadata": []}, ".json")
+    put(
+        q(f"{legacy}/items/q-910/bitstreams", "limit=1000"),
+        [
+            {"name": "a.csv", "retrieveLink": []},
+            {"name": "b.csv", "retrieveLink": ["/rest/bitstreams/9/retrieve"]},
+            {"name": "c.csv", "retrieveLink": [None]},
+        ],
+        ".json",
+    )
+    put(f"{legacy}/handle/10967/911", {"uuid": ["q-a", "q-b"], "name": []}, ".json")
+    put(
+        f"{api}/shapeds",
+        {
+            "name": ["N"],
+            "contributors": [
+                {"first_name": [None], "last_name": ["B"]},
+                {"first_name": {"x": "C"}},
+                {"first_name": [[1, "two"]], "last_name": {"k": {"a b": True}}},
+            ],
+            "data_licence": {"short_name": [], "full_name": "CC BY 4.0"},
+            "publish_date": 20200101,
+            "modified_on": 3000000000,
+        },
+        ".json",
+    )
+    put(f"{api}/twonames", {"name": ["a", "b"]}, ".json")
+    put(
+        f"{eprint}/854912",
+        {
+            "title": ["T"],
+            "doi": "10.5255/UKDA-SN-854912",
+            "creators": [{"name": {"given": ["Ann"], "family": []}}, None],
+            "documents": [],
+        },
+        ".json",
+    )
+    u5 = "55555555-6666-7777-8888-999999999999"
+    put(items7 + u5, {"uuid": ["u5x"], "name": "N5", "lastModified": [None]}, ".json")
+
+    # FSD: several files, integers in R's as.integer() forms, no DOI
+    put(
+        "services.fsd.tuni.fi/catalogue/FSD3335/DDI/FSD3335_eng.xml",
+        DDI_FILES,
+        ".xml",
+    )
+
     # ReShare: file entries that are not records
     put(
         "reshare.ukdataservice.ac.uk/id/eprint/854900",
@@ -391,7 +591,9 @@ rbox_info_case("bad_charset_error", "7007")
 rbox_info_case("two_redirects_error", "7008")
 # a bare mention from rbox_links() has no scheme: libcurl requests http://...
 rbox_info_case("schemeless", "researchbox.org/801", APIS)
-BARE = ["Materials: researchbox.org/801 and https://researchbox.org/801/ (see researchbox.org/801)."]
+BARE = [
+    "Materials: researchbox.org/801 and https://researchbox.org/801/ (see researchbox.org/801)."
+]
 expr_case(
     "rbox_info.review.from_bare_links",
     online(f"rbox_info(rbox_links({tp_r(text=BARE)}))"),
@@ -549,6 +751,114 @@ for name, mod in (
         None,
         IGNORE_PID,
     )
+
+
+# --- second review round -----------------------------------------------------
+
+# an empty paper list: paper_table(, "url") has no columns and text_search() no text
+for name, mod in (
+    ("dataone_links", "dataone"),
+    ("reshare_links", "reshare"),
+    ("rbox_links", "researchbox"),
+    ("researchdata4tu_links", "fourtu"),
+    ("fsd_links", "fsd"),
+    ("mendeley_links", "mendeley"),
+    ("psycharchives_links", "psycharchives"),
+    ("dspace_links", "psycharchives"),
+    ("dspace7_links", "dspace7"),
+):
+    expr_case(
+        f"{name}.review.empty_paperlist",
+        f'{name}(paperlist(test_paper("a"))[0])',
+        f"lambda m: m.{mod}.{name}(m.pc.PaperList([]))",
+        None,
+    )
+
+# NULL input: data.frame(<url> = NULL) has no columns, so the join fails
+expr_case(
+    "dataone_info.review.null_error",
+    "dataone_info(NULL)",
+    "lambda m: m.dataone.dataone_info(None)",
+    None,
+)
+for fn, mod in (("mendeley_info", "mendeley"), ("reshare_info", "reshare")):
+    expr_case(
+        f"{fn}.review.null_error", online(f"{fn}(NULL)"), f"lambda m: m.{mod}.{fn}(None)", None
+    )
+
+# JSON read as httr2 + jsonlite read it (see the mocks)
+for handle in ("904", "905", "906", "907", "909"):
+    expr_case(
+        f".psycharchives_info.review.json_{handle}",
+        f'metacheck:::.psycharchives_info("https://qsardb.org/repository/handle/10967/{handle}")',
+        f"lambda m: m.psycharchives._psycharchives_info("
+        f'"https://qsardb.org/repository/handle/10967/{handle}")',
+    )
+expr_case(
+    "psycharchives_file_download.review.json_904",
+    'psycharchives_file_download("https://qsardb.org/repository/handle/10967/904")',
+    "lambda m: m.psycharchives.psycharchives_file_download("
+    '"https://qsardb.org/repository/handle/10967/904")',
+)
+for ds in ("bomds", "nands", "latinds", "dupds"):
+    expr_case(
+        f".mendeley_info.review.json_{ds}",
+        f'metacheck:::.mendeley_info("{ds}")',
+        f'lambda m: m.mendeley._mendeley_info("{ds}")',
+    )
+expr_case(
+    "mendeley_info.review.json_vector",
+    online('mendeley_info(c("bomds", "https://data.mendeley.com/datasets/nands/2", "dupds"))'),
+    'lambda m: m.mendeley.mendeley_info(["bomds", "https://data.mendeley.com/datasets/nands/2",'
+    ' "dupds"])',
+)
+for eid in ("854910", "854911"):
+    expr_case(
+        f".reshare_info.review.json_{eid}",
+        f'metacheck:::.reshare_info("{eid}")',
+        f'lambda m: m.reshare._reshare_info("{eid}")',
+    )
+expr_case(
+    ".dspace7_info.review.json",
+    'metacheck:::.dspace7_info("scholarworks.umass.edu", '
+    'uuid = "44444444-5555-6666-7777-888888888888")',
+    'lambda m: m.dspace7._dspace7_info("scholarworks.umass.edu", '
+    'uuid="44444444-5555-6666-7777-888888888888")',
+)
+
+# arrays where strings are expected (see the mocks)
+for handle in ("910", "911"):
+    expr_case(
+        f".psycharchives_info.review.arrays_{handle}",
+        f'metacheck:::.psycharchives_info("https://qsardb.org/repository/handle/10967/{handle}")',
+        f"lambda m: m.psycharchives._psycharchives_info("
+        f'"https://qsardb.org/repository/handle/10967/{handle}")',
+    )
+for ds in ("shapeds", "twonames"):
+    expr_case(
+        f".mendeley_info.review.arrays_{ds}",
+        f'metacheck:::.mendeley_info("{ds}")',
+        f'lambda m: m.mendeley._mendeley_info("{ds}")',
+    )
+expr_case(
+    ".reshare_info.review.arrays",
+    'metacheck:::.reshare_info("854912")',
+    'lambda m: m.reshare._reshare_info("854912")',
+)
+expr_case(
+    ".dspace7_info.review.arrays",
+    'metacheck:::.dspace7_info("scholarworks.umass.edu", '
+    'uuid = "55555555-6666-7777-8888-999999999999")',
+    'lambda m: m.dspace7._dspace7_info("scholarworks.umass.edu", '
+    'uuid="55555555-6666-7777-8888-999999999999")',
+)
+
+# FSD: as.integer() of the DDI counts, a file without a name, no DOI
+expr_case(
+    ".fsd_info.review.files",
+    'metacheck:::.fsd_info("https://urn.fi/urn:nbn:fi:fsd:T-FSD3335")',
+    'lambda m: m.fsd._fsd_info("https://urn.fi/urn:nbn:fi:fsd:T-FSD3335")',
+)
 
 
 def main() -> None:

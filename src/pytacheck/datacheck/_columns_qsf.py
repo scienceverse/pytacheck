@@ -52,22 +52,91 @@ def _dollar(x: Any, name: str) -> Any:
 
 
 def _dbl_bracket(x: Any, name: str) -> Any:
-    """R's ``x[[name]]`` on a named list (exact matching; ``NULL`` when absent)."""
-    if isinstance(x, _JsonObject):
+    """R's ``x[[name]]`` on a named list (exact matching; ``NULL`` when absent or ``""``)."""
+    if isinstance(x, _JsonObject) and name != "":
         for k, v in x:
             if k == name:
                 return v
     return None
 
 
+_RESERVED = frozenset({
+    "if", "else", "repeat", "while", "function", "for", "next", "break", "TRUE", "FALSE",
+    "NULL", "Inf", "NaN", "NA", "NA_integer_", "NA_real_", "NA_character_", "NA_complex_",
+    "in", "...",
+})  # fmt: skip
+
+
+def _is_syntactic(name: str) -> bool:
+    """R's ``isValidName()``: may *name* appear unquoted in deparsed code?"""
+    if name in _RESERVED or name == "":
+        return False
+    if name.startswith("..") and name[2:].isdigit():
+        return False
+    first = name[0]
+    if not (first.isalpha() or first == "."):
+        return False
+    if first == "." and len(name) > 1 and name[1].isdigit():
+        return False
+    return all(c.isalnum() or c in "._" for c in name)
+
+
+_DEPARSE_ESCAPES = {'"': '\\"', "\\": "\\\\", "\n": "\\n", "\t": "\\t", "\r": "\\r",
+                    "\a": "\\a", "\b": "\\b", "\f": "\\f", "\v": "\\v"}  # fmt: skip
+
+
+def _deparse(x: Any) -> str:
+    """``deparse1line(x)`` (R's SIMPLEDEPARSE) of a jsonlite ``simplifyVector = FALSE`` value."""
+    if x is None:
+        return "NULL"
+    if isinstance(x, _JsonObject):
+        parts = [_deparse(v) if k == "" else
+                 f"{k if _is_syntactic(k) else '`' + k + '`'} = {_deparse(v)}" for k, v in x]  # fmt: skip
+        return "list(" + ", ".join(parts) + ")"
+    if isinstance(x, list):
+        return "list(" + ", ".join(_deparse(v) for v in x) + ")"
+    if isinstance(x, str):
+        out = []
+        for ch in x:
+            esc = _DEPARSE_ESCAPES.get(ch)
+            if esc is not None:
+                out.append(esc)
+            elif ord(ch) < 0x20 or ord(ch) == 0x7F:
+                out.append(f"\\{ord(ch):03o}")
+            else:
+                out.append(ch)
+        return '"' + "".join(out) + '"'
+    return _json_scalar_chr(x) or "NA"
+
+
+def _as_character(x: Any) -> list[str | None]:
+    """R ``as.character(x)`` of a jsonlite value (a list deparses non-string elements)."""
+    if x is None:
+        return []
+    if isinstance(x, list):
+        vals = x.values_() if isinstance(x, _JsonObject) else x
+        return [v if isinstance(v, str) else _deparse(v) for v in vals]
+    return [_json_scalar_chr(x)]
+
+
 def _as_chr1(x: Any) -> str | None:
     """``as.character(x)[1]`` of a jsonlite value."""
-    if isinstance(x, _JsonObject):
-        vals = x.values_()
-        return _as_chr1(vals[0]) if vals else None
-    if isinstance(x, list):
-        return _as_chr1(x[0]) if x else None
-    return _json_scalar_chr(x)
+    chars = _as_character(x)
+    return chars[0] if chars else None
+
+
+def _scalar(v: list[bool | None], what: str = "logical(1)") -> bool | None:
+    """A logical vector used by ``&&`` / ``||``: length 1, else NA (0) or an error (> 1)."""
+    if len(v) > 1:
+        raise ValueError(f"'length = {len(v)}' in coercion to '{what}'")
+    return v[0] if v else None
+
+
+def _if(cond: bool | None) -> bool:
+    """R ``if (cond)``: an NA condition is an error."""
+    if cond is None:
+        raise ValueError("missing value where TRUE/FALSE needed")
+    return cond
 
 
 def _qsf_strip_html(x: Any) -> str | None:
@@ -85,17 +154,26 @@ def _qsf_strip_html(x: Any) -> str | None:
 
 
 def _unlist_first(d: Any) -> Any:
-    """``unlist(d, use.names = FALSE)[1]``."""
+    """``unlist(d, use.names = FALSE)[1]``: leaves coerced to their common type."""
+    leaves: list[Any] = []
     stack = [d]
     while stack:
-        v = stack.pop(0)
-        if isinstance(v, _JsonObject):
-            stack = list(v.values_()) + stack
-        elif isinstance(v, list):
-            stack = list(v) + stack
+        v = stack.pop()
+        if isinstance(v, list):
+            stack.extend(reversed(v.values_() if isinstance(v, _JsonObject) else v))
         elif v is not None:
-            return v
-    return None
+            leaves.append(v)
+    if not leaves:
+        return None
+    first = leaves[0]
+    if any(isinstance(v, str) for v in leaves):
+        return first if isinstance(first, str) else _json_scalar_chr(first)
+    if any(isinstance(v, float) or (isinstance(v, int) and not isinstance(v, bool)
+           and not -2147483647 <= v <= 2147483647) for v in leaves):  # fmt: skip
+        return float(first)
+    if any(not isinstance(v, bool) for v in leaves):
+        return int(first)
+    return first
 
 
 def _qsf_option_display(opt: Any) -> str | None:
@@ -141,8 +219,12 @@ def _qsf_export_col(tag: Any, choice_tag: Any, code: Any) -> str:
     return f"{tp}_{_chr(code)}"
 
 
-def _is_json_list(x: Any) -> bool:
-    return isinstance(x, list)
+def _and(lhs: list[bool], rest: bool) -> bool:
+    """``if (lhs && rest)`` with a logical vector *lhs* and a scalar *rest*."""
+    first = _scalar(lhs)  # type: ignore[arg-type]
+    if first is False or not rest:
+        return False
+    return _if(first)
 
 
 def _r_length(x: Any) -> int:
@@ -214,41 +296,46 @@ def parse_qsf(path: str | os.PathLike[str]) -> pd.DataFrame | None:
         tag = _dollar(p, "DataExportTag")
         if tag is None:
             tag = _dollar(p, "QuestionID")
-        tag_s = _as_chr1(tag) if tag is not None else None
-        if tag is None or (tag_s is not None and trimws(tag_s) == ""):
+        if tag is None:
             continue
-        tag_s = trimws(tag_s) if tag_s is not None else "NA"
+        # R: if (is.null(tag) || !nzchar(trimws(as.character(tag)))) next
+        tag_chr = _as_character(tag)
+        if _if(_scalar([trimws("NA" if c is None else c) == "" for c in tag_chr])):
+            continue
+        tag_s = trimws("NA" if tag_chr[0] is None else tag_chr[0])
         qtext = _qsf_strip_html(_dollar(p, "QuestionText"))
-        qtype = _as_chr1(_dollar(p, "QuestionType")) or ""
-        selector = _as_chr1(_dollar(p, "Selector")) or ""
+        qt = _dollar(p, "QuestionType")
+        sel = _dollar(p, "Selector")
+        qtype = _as_character(qt) if qt is not None else [""]
+        selector = _as_character(sel) if sel is not None else [""]
         choices = _dollar(p, "Choices")
         answers = _dollar(p, "Answers")
         ctags = _dollar(p, "ChoiceDataExportTags")
 
         def export_col(code: str, _ctags: Any = ctags, _tag: str = tag_s) -> str:
             ct = None
-            if _is_json_list(_ctags):
+            if isinstance(_ctags, list):
                 v = _dbl_bracket(_ctags, code)
                 if v is not None:
-                    vs = _as_chr1(v)
-                    if vs is not None and trimws(vs) != "":
-                        ct = trimws(vs)
+                    vchr = _as_character(v)
+                    if _if(_scalar([trimws("NA" if c is None else c) != "" for c in vchr])):
+                        ct = trimws("NA" if vchr[0] is None else vchr[0])
             return _qsf_export_col(_tag, ct, code)
 
         is_matrix = grepl("matrix", qtype, ignore_case=True)
         is_multi = grepl("MAVR|MACOL|MSB", selector, ignore_case=True)
-        n_choices = _r_length(choices)
+        has_choices = choices is not None and _r_length(choices) > 0
         choice_names = choices.names() if isinstance(choices, _JsonObject) else []
-        if is_matrix and n_choices:
+        if _and(is_matrix, has_choices):
             vl = _qsf_value_labels(answers)
             for code in choice_names:
                 stmt = _qsf_option_display(_dbl_bracket(choices, code))
                 add(export_col(code), stmt, tag_s, vl, question=qtext)
-        elif is_multi and n_choices:
+        elif _and(is_multi, has_choices):
             for code in choice_names:
                 opt = _qsf_option_display(_dbl_bracket(choices, code))
                 add(export_col(code), opt, tag_s, question=qtext)
-        elif n_choices:
+        elif has_choices:
             add(tag_s, qtext, tag_s, _qsf_value_labels(choices))
         else:
             add(tag_s, qtext, tag_s)

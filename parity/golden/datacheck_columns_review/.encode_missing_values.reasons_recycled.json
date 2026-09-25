@@ -1,0 +1,16 @@
+{
+  "id": ".encode_missing_values.reasons_recycled",
+  "ok": true,
+  "error": null,
+  "warnings": [
+    "longer object length is not a multiple of shorter object length"
+  ],
+  "value": {
+    "t": "chr",
+    "v": [
+      "{\"-99\":\"refused\",\"-98\":\"dk\",\"3\":\"na\"}"
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}
