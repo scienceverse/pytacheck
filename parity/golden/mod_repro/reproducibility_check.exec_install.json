@@ -1,5 +1,5 @@
 {
-  "id": "reproducibility_check.exec_undefined",
+  "id": "reproducibility_check.exec_install",
   "ok": true,
   "error": null,
   "warnings": [],
@@ -43,7 +43,7 @@
       },
       {
         "t": "df",
-        "nrow": 2,
+        "nrow": 1,
         "names": [
           "paper_id",
           "file_name",
@@ -67,105 +67,90 @@
           {
             "t": "chr",
             "v": [
-              "p1",
               "p1"
             ]
           },
           {
             "t": "chr",
             "v": [
-              "undef_user.R",
-              "undef_definer.R"
+              "needs_missing_pkg.R"
             ]
           },
           {
             "t": "lgl",
             "v": [
-              true,
               true
             ]
           },
           {
             "t": "int",
             "v": [
-              2,
               1
             ]
           },
           {
             "t": "chr",
             "v": [
-              "dependency",
               "none"
             ]
           },
           {
             "t": "chr",
             "v": [
-              "undef_definer.R",
               ""
             ]
           },
           {
             "t": "int",
             "v": [
-              0,
               0
             ]
           },
           {
             "t": "int",
             "v": [
-              0,
               0
             ]
           },
           {
             "t": "int",
             "v": [
-              0,
               0
             ]
           },
           {
             "t": "lgl",
             "v": [
-              true,
               true
             ]
           },
           {
             "t": "chr",
             "v": [
-              null,
               null
             ]
           },
           {
             "t": "chr",
             "v": [
-              null,
               null
             ]
           },
           {
             "t": "chr",
             "v": [
-              "errored",
-              "ran_ok"
+              "errored"
             ]
           },
           {
             "t": "chr",
             "v": [
-              "undefined_variable",
-              null
+              "runtime"
             ]
           },
           {
             "t": "chr",
             "v": [
-              "helper_value",
               null
             ]
           },
@@ -173,10 +158,6 @@
             "t": "list",
             "names": null,
             "v": [
-              {
-                "t": "chr",
-                "v": []
-              },
               {
                 "t": "chr",
                 "v": []
@@ -187,10 +168,6 @@
             "t": "list",
             "names": null,
             "v": [
-              {
-                "t": "chr",
-                "v": []
-              },
               {
                 "t": "chr",
                 "v": []
@@ -202,23 +179,22 @@
       {
         "t": "chr",
         "v": [
-          "This module assesses whether the paper's code could be run on its data, and — because `execute = TRUE` — **actually ran it**. We examined 2 R code files.",
+          "This module assesses whether the paper's code could be run on its data, and — because `execute = TRUE` — **actually ran it**. We examined 1 R code file.",
           "#### Run order",
-          "No ordering signal (no data dependency, `source()` call, or numeric filename prefix) distinguishes the run order of these files. They may need to run in a specific order that could not be determined automatically — check this before running.",
-          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Order = 1:2, File = c(\"undef_definer.R\", \"undef_user.R\"\n), \"Runs after\" = c(\"—\", \"undef_definer.R\"), Basis = c(\"none\", \n\"dependency\")), row.names = c(NA, -2L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
+          "The scripts were ordered by their data dependencies (a script writing a file another reads runs first), `source()` calls, and numeric filename prefixes.",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Order = 1L, File = \"needs_missing_pkg.R\", \"Runs after\" = \"—\", \n    Basis = \"none\"), row.names = c(NA, -1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
           "#### File paths",
           "To run against the Psych-DS layout, 0 referenced data paths would be rewritten to their new locations.",
           "#### Missing inputs",
           "Every data file the code reads is either produced by an earlier script or present in the repository.",
           "#### Execution",
-          "**The code was run.** Each script ran in an isolated subprocess against a throwaway copy of the Psych-DS layout, in the run order above, with a 60-second per-script timeout. Of 2 scripts: 1 ran without error, 1 errored, 0 timed out, 0 were skipped (inputs unavailable), 0 could not run because one of its own dependencies is unavailable, and 0 did not parse. Running against current package versions: a break can reflect version drift, which argues for pinning versions. \n\n*a script hit an `object '...' not found` error, indicating it expected a variable another script defines. We inferred which script supplies it and re-ordered so that script runs first, and re-ran once. The outcomes above are from that corrected run.*",
-          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"undef_definer.R\", \"undef_user.R\"), Outcome = c(\"ran_ok\", \n\"errored\"), Detail = c(\"\", \"undefined_variable\"), \"Time (s)\" = c(0.3, \n0.4)), row.names = c(NA, -2L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 15, FALSE)\n```\n",
-          "**Undefined-variable errors**",
-          "**1 script failed on an undefined variable or function** (`object '...' not found` / `could not find function \"...\"`). This typically means the script expects a variable or function that another script defines — i.e. it is meant to be sourced into a larger session, not run on its own — or the symbol is simply never created. When another of the paper's own script files defines the same name, this is called out below as a likely sourcing/copy-paste gap. Each is counted as an error (red).",
-          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = \"undef_user.R\", \"Missing variable\" = \"helper_value\", \n    \"Defined in\" = \"undef_definer.R\"), row.names = c(NA, -1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
+          "**The code was run.** Each script ran in an isolated subprocess against a throwaway copy of the Psych-DS layout, in the run order above, with a 60-second per-script timeout. Of 1 script: 0 ran without error, 1 errored, 0 timed out, 0 were skipped (inputs unavailable), 0 could not run because one of its own dependencies is unavailable, and 0 did not parse. Running against current package versions: a break can reflect version drift, which argues for pinning versions.",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = \"needs_missing_pkg.R\", Outcome = \"errored\", \n    Detail = \"runtime\", \"Time (s)\" = 0.4), row.names = c(NA, \n-1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 15, FALSE)\n```\n",
           "*Expand a row below to see the output each script produced.*",
-          "::: {.callout-tip title=\"Output — undef_definer.R (ran_ok)\" collapse=\"true\"}\n\n**Output (stdout):**\n````\n> helper_value <- 42\n> print(helper_value)\n[1] 42\n````\n\n:::\n",
-          "::: {.callout-tip title=\"Output — undef_user.R (errored)\" collapse=\"true\"}\n\n**Output (stdout):**\n````\n> print(helper_value)\n````\n**Messages / errors (stderr):**\n````\nError in eval(e, envir = env) : object 'helper_value' not found\n````\n\n:::\n"
+          "::: {.callout-tip title=\"Output — needs_missing_pkg.R (errored)\" collapse=\"true\"}\n\n**Output (stdout):**\n````\n> library(notapkg123)\n````\n**Messages / errors (stderr):**\n````\nError in library(notapkg123) : there is no package called ‘notapkg123’\n````\n\n:::\n",
+          "Dependencies were installed into a throwaway library before running: 2 succeeded, 2 failed. notapkg123, oldpkg, oddpkg, fine were installed.",
+          "**1 of these were no longer on live CRAN** and were instead installed from the **CRAN Archive**'s most recent published version — a real version the package once had, but not necessarily the one the paper's authors used: oldpkg.",
+          "**Failed:** notapkg123 [not available on CRAN for this R version] (package is not available for this version of R); oddpkg [NA] (NA)"
         ]
       },
       {
@@ -230,7 +206,7 @@
       {
         "t": "chr",
         "v": [
-          "\n-  We assessed AND ran 2 R code files for reproducibility (each in an isolated subprocess).\n-  2 files appear runnable so far (parses, inputs resolve, placeable in the run order).\n-  1 of 2 scripts ran without error when executed.\n-  0 installable dependencies detected."
+          "\n-  We assessed AND ran 1 R code file for reproducibility (each in an isolated subprocess).\n-  1 file appears runnable so far (parses, inputs resolve, placeable in the run order).\n-  0 of 1 script ran without error when executed.\n-  1 installable dependency detected."
         ]
       },
       {
@@ -256,19 +232,13 @@
           {
             "t": "int",
             "v": [
-              2
+              1
             ]
           },
           {
             "t": "int",
             "v": [
-              2
-            ]
-          },
-          {
-            "t": "int",
-            "v": [
-              0
+              1
             ]
           },
           {
@@ -281,6 +251,12 @@
             "t": "int",
             "v": [
               1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
             ]
           },
           {
@@ -316,7 +292,7 @@
       },
       {
         "t": "df",
-        "nrow": 2,
+        "nrow": 1,
         "names": [
           "file_name",
           "outcome",
@@ -333,57 +309,49 @@
           {
             "t": "chr",
             "v": [
-              "undef_definer.R",
-              "undef_user.R"
+              "needs_missing_pkg.R"
             ]
           },
           {
             "t": "chr",
             "v": [
-              "ran_ok",
               "errored"
             ]
           },
           {
             "t": "chr",
             "v": [
-              "",
-              "! in callr subprocess.\nCaused by error in `eval(e, envir = env)`:\n! object 'helper_value' not found"
+              "! in callr subprocess.\nCaused by error in `library(notapkg123)`:\n! there is no package called ‘notapkg123’"
             ]
           },
           {
             "t": "chr",
             "v": [
-              null,
-              "undefined_variable"
+              "runtime"
             ]
           },
           {
             "t": "chr",
             "v": [
-              null,
-              "helper_value"
+              null
             ]
           },
           {
             "t": "chr",
             "v": [
-              "> helper_value <- 42\n> print(helper_value)\n[1] 42",
-              "> print(helper_value)"
+              "> library(notapkg123)"
             ]
           },
           {
             "t": "chr",
             "v": [
-              "",
-              "Error in eval(e, envir = env) : object 'helper_value' not found"
+              "Error in library(notapkg123) : there is no package called ‘notapkg123’"
             ]
           },
           {
             "t": "dbl",
             "v": [
-              0.341334342956543,
-              0.365233898162842
+              0.362026691436768
             ]
           },
           {
@@ -393,14 +361,8 @@
               {
                 "t": "chr",
                 "v": [
-                  "helper_value <- 42",
-                  "print(helper_value)"
-                ]
-              },
-              {
-                "t": "chr",
-                "v": [
-                  "print(helper_value)"
+                  "library(notapkg123)",
+                  "print(\"never reached\")"
                 ]
               }
             ]
@@ -409,11 +371,6 @@
             "t": "list",
             "names": null,
             "v": [
-              {
-                "t": "list",
-                "names": null,
-                "v": []
-              },
               {
                 "t": "list",
                 "names": null,
@@ -424,7 +381,72 @@
         ]
       },
       {
-        "t": "null"
+        "t": "df",
+        "nrow": 4,
+        "names": [
+          "package",
+          "source",
+          "installed",
+          "message",
+          "via_archive",
+          "category"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "notapkg123",
+              "oldpkg",
+              "oddpkg",
+              "fine"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "cran",
+              "cran",
+              "cran",
+              "cran"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false,
+              true,
+              false,
+              true
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "package is not available for this version of R",
+              "",
+              null,
+              ""
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false,
+              true,
+              false,
+              false
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "cran_unavailable",
+              null,
+              "mystery",
+              null
+            ]
+          }
+        ]
       },
       {
         "t": "null"

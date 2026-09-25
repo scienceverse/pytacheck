@@ -295,7 +295,7 @@
           "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = \"json_dump.R\", Detected = \"not_r_content\", \n    Detail = \"file content does not appear to be R (detected: JSON)\"), row.names = c(NA, \n-1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
           "#### Execution",
           "**The code was run.** Each script ran in an isolated subprocess against a throwaway copy of the Psych-DS layout, in the run order above, with a 60-second per-script timeout. Of 5 scripts: 1 ran without error, 1 errored, 0 timed out, 1 was skipped (inputs unavailable), 0 could not run because one of its own dependencies is unavailable, and 2 did not parse. Running against current package versions: a break can reflect version drift, which argues for pinning versions.",
-          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"json_dump.R\", \"missing_input.R\", \"parse_error.R\", \n\"writes_then_reads.R\", \"reads_written.R\"), Outcome = c(\"not_parsed\", \n\"skipped_missing_inputs\", \"not_parsed\", \"ran_ok\", \"errored\"), \n    Detail = c(\"\", \"\", \"\", \"\", \"runtime\"), \"Time (s)\" = c(0, \n    0, 0, 0.3, 0.4)), row.names = c(NA, -5L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 15, FALSE)\n```\n",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"json_dump.R\", \"missing_input.R\", \"parse_error.R\", \n\"writes_then_reads.R\", \"reads_written.R\"), Outcome = c(\"not_parsed\", \n\"skipped_missing_inputs\", \"not_parsed\", \"ran_ok\", \"errored\"), \n    Detail = c(\"\", \"\", \"\", \"\", \"runtime\"), \"Time (s)\" = c(0, \n    0, 0, 0.3, 0.3)), row.names = c(NA, -5L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 15, FALSE)\n```\n",
           "*Expand a row below to see the output each script produced.*",
           "::: {.callout-tip title=\"Output — writes_then_reads.R (ran_ok)\" collapse=\"true\"}\n\n**Output (stdout):**\n````\n> dat <- read.csv(\"data.csv\")\n> summ <- data.frame(mean_x = mean(dat$x))\n> write.csv(summ,\"<root>/output/intermediate.csv\", row.names = FALSE)\n````\n\n:::\n",
           "::: {.callout-tip title=\"Output — reads_written.R (errored)\" collapse=\"true\"}\n\n**Output (stdout):**\n````\n> summ <- read.csv(\"intermediate.csv\")\n````\n**Messages / errors (stderr):**\n````\nError in file(file, \"rt\") : cannot open the connection\nIn addition: Warning message:\nIn file(file, \"rt\") :\n  cannot open file 'intermediate.csv': No such file or directory\n````\n\n:::\n"
@@ -486,8 +486,8 @@
               0,
               0,
               0,
-              0.30731725692749,
-              0.35165810585022
+              0.312588691711426,
+              0.328683853149414
             ]
           },
           {
