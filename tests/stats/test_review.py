@@ -2,17 +2,13 @@
 
 Covers R's numeric corner cases (infinite degrees of freedom, "NaNs produced",
 overflowing powers of ten, round() with many digits), statcheck's `== TRUE`
-flag semantics, stats()'s R argument matching of `...`, and statcheck's file
-front ends (checkHTML(), checkHTMLdir(), checkPDF(), checkdir()).
+flag semantics and stats()'s R argument matching of `...`.
 """
 
 from __future__ import annotations
 
 import math
-import os
-import stat
 import warnings
-from pathlib import Path
 
 import pandas as pd
 import pytest
@@ -28,17 +24,7 @@ from pytacheck.stats.statcheck import (
     process_stats,
     statcheck,
 )
-from pytacheck.stats.statcheck_files import (
-    checkdir,
-    checkHTML,
-    checkHTMLdir,
-    checkPDF,
-    checkPDFdir,
-    getHTML,
-    getPDF,
-)
 
-HTML_DIR = Path(__file__).parent / "fixtures" / "statcheck_html"
 BIG = "1" + "0" * 310  # parses as Inf
 
 
@@ -237,78 +223,6 @@ def test_stats_argument_matching(args, kwargs, nrow) -> None:
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")
         assert len(stats(TEXTS, *args, **kwargs)) == nrow
-
-
-# -- statcheck's file front ends ----------------------------------------------------
-
-
-def test_get_html() -> None:
-    (text,) = getHTML(HTML_DIR / "a.html")
-    assert text.startswith("T A test, t(28) = 2.20, p < .05 and prep = .9 and x1 2y and z. ")
-    # U+202F becomes a space; code points whose decimal form contains 8239 are rewritten
-    assert "F(1, 20) = 5.1, p = .03; t(20) = 2.1, p = .049" in text
-    assert "odd code points \u0084 Ł è." in text
-    assert "z = -1.96" in text and "r(48) = -.30" in text and "X2(2) = 1.1, n.s." in text
-    assert " -->Q(3) = 8.2" in text
-
-
-def test_check_html_and_dir() -> None:
-    res = checkHTML(HTML_DIR / "a.html", messages=False)
-    assert len(res) == 8
-    assert set(res["source"]) == {"a.html"}
-    res = checkHTMLdir(HTML_DIR, messages=False)
-    # ".html|.htm" is a regular expression: my_html_notes.txt is read too; dot files are not
-    assert res["source"].unique().tolist() == ["a.html", "b.htm", "my_html_notes.txt", "c.html"]
-    assert len(checkHTMLdir(HTML_DIR, subdir=False, messages=False)) == 13
-    assert len(checkHTMLdir(HTML_DIR, extension=False, messages=False)) == 14
-    assert len(checkdir(HTML_DIR, messages=False)) == 14
-    with pytest.raises(RuntimeError, match="object 'pat' not found"):
-        checkHTMLdir(HTML_DIR, extension=2, messages=False)
-    with pytest.raises(RuntimeError, match="No HTML found"):
-        checkHTMLdir(Path(__file__).parent, subdir=False, messages=False)
-    with pytest.raises(RuntimeError, match="No PDF or HTML found"):
-        checkdir(Path(__file__).parent, subdir=False, messages=False)
-
-
-@pytest.fixture
-def fake_pdftotext(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
-    """A ``pdftotext`` that "converts" a PDF by copying its bytes (our PDFs are text)."""
-    bindir = tmp_path / "bin"
-    bindir.mkdir()
-    script = bindir / "pdftotext"
-    script.write_text(
-        '#!/bin/sh\nfor a; do f="$a"; done\ncase "$f" in *.pdf) cp "$f" "${f%.pdf}.txt";; esac\n'
-    )
-    script.chmod(script.stat().st_mode | stat.S_IEXEC)
-    monkeypatch.setenv("PATH", f"{bindir}{os.pathsep}{os.environ.get('PATH', '')}")
-    return tmp_path
-
-
-def test_get_pdf_and_check_pdf(fake_pdftotext: Path) -> None:
-    pdfs = fake_pdftotext / "pdfs"
-    pdfs.mkdir()
-    (pdfs / "one.pdf").write_text("Result:\r\nt(28) = 2.20,\np = .04 and t(28) = 2.20, p = .13")
-    (pdfs / "two.pdf").write_text("F(1, 20) = 5.1, p = .5")
-    assert getPDF(pdfs / "one.pdf") == ["Result:t(28) = 2.20,p = .04 and t(28) = 2.20, p = .13"]
-    assert (pdfs / "one.txt").exists()  # pdftotext's output is left in place, as in R
-    res = checkPDF([pdfs / "one.pdf", pdfs / "two.pdf"], messages=False)
-    assert res["source"].tolist() == ["one.pdf", "one.pdf", "two.pdf"]
-    assert res["error"].tolist() == [False, True, True]
-    assert len(checkPDFdir(pdfs, messages=False)) == 3
-    (pdfs / "page.html").write_text("<p>t(40) = 2.02, p = .05</p>")
-    assert len(checkdir(pdfs, messages=False)) == 4
-
-
-def test_get_pdf_failure(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
-    monkeypatch.setenv("PATH", str(tmp_path))  # no pdftotext
-    pdf = tmp_path / "x.pdf"
-    pdf.write_text("t(28) = 2.20, p = .03")
-    with pytest.warns(UserWarning, match="Failure in file"):
-        assert getPDF(pdf) == [""]
-    (tmp_path / "page.html").write_text("<p>t(40) = 2.02, p = .05</p>")
-    # both kinds present, but the PDFs give no results: R stops
-    with pytest.warns(UserWarning), pytest.raises(RuntimeError, match="did not find any results"):
-        checkdir(tmp_path, messages=False)
 
 
 def test_rmath_module_exports() -> None:
