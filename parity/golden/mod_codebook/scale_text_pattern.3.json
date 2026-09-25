@@ -1,0 +1,26 @@
+{
+  "id": "scale_text_pattern.3",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": null,
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "Big[\\s._/'’-]*Five[\\s._/'’-]*Inventory[\\s._/'’-]*BFI[\\s._/'’-]*2|\\bBFI\\-2\\b"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

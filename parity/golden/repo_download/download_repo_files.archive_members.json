@@ -1,0 +1,114 @@
+{
+  "id": "download_repo_files.archive_members",
+  "ok": true,
+  "error": null,
+  "warnings": [
+    "An archive in repository https://example.org/repo-z exceeds the 0.0 MB per-repository budget: fetched the smallest members up to the cap, 1 member omitted. Raise `max_download_size` to include more."
+  ],
+  "value": {
+    "t": "list",
+    "names": [
+      "file_location",
+      "gated",
+      "oversize_skipped",
+      "failed"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          "<SESSION>/example.org_repo-z/.archive_members/mock.example.org_zips_stored.zip.contents/empty.txt",
+          null
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "repo_url",
+          "message"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "https://example.org/repo-z"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "An archive in repository https://example.org/repo-z exceeds the 0.0 MB per-repository budget: fetched the smallest members up to the cap, 1 member omitted. Raise `max_download_size` to include more."
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "repo_url",
+          "file_name",
+          "file_size"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "https://example.org/repo-z"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "big.csv"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              500000000
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "repo_url",
+          "file_name",
+          "file_url",
+          "paper_id",
+          "error"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

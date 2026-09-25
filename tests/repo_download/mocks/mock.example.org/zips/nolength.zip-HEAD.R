@@ -1,0 +1,1 @@
+structure(list(method = "HEAD", url = "https://mock.example.org/zips/nolength.zip", status_code = 200L, headers = structure(list(`Content-Type` = "application/zip"), class = "httr2_headers"), body = raw(0), timing = NULL, cache = new.env(parent = emptyenv())), class = "httr2_response")

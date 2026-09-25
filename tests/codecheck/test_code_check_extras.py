@@ -18,7 +18,7 @@ from pytacheck.codecheck._reval import NA, EvalError, RVersion, r_eval
 from pytacheck.codecheck._rparse import parse_exprs
 
 ROOT = Path(__file__).resolve().parents[2]
-STATOUT = ROOT / "tests" / "statout_readers" / "fixtures"
+EXPAND = Path(__file__).parent / "fixtures" / "expand"  # copies of statout fixtures
 FIX = Path(__file__).parent / "fixtures"
 
 
@@ -37,11 +37,11 @@ def _copy(names: dict[str, Path], dest: Path) -> None:
 def test_code_expand_output_formats(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     _copy(
         {
-            "modern.spv": STATOUT / "spv" / "modern.spv",
-            "notzip.spv": STATOUT / "spv" / "notzip.spv",
-            "analysis.smcl": STATOUT / "text" / "analysis.smcl",
-            "twolevel.out": STATOUT / "text" / "twolevel.out",
-            "nosections.out": STATOUT / "text" / "nosections.out",
+            "modern.spv": EXPAND / "modern.spv",
+            "notzip.spv": EXPAND / "notzip.spv",
+            "analysis.smcl": EXPAND / "analysis.smcl",
+            "twolevel.out": EXPAND / "twolevel.out",
+            "nosections.out": EXPAND / "nosections.out",
         },
         tmp_path,
     )

@@ -1,0 +1,76 @@
+{
+  "id": "codebook_label_machinery.basic",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 4,
+    "names": [
+      "source_file",
+      "column_name",
+      "label",
+      "codebook_variable",
+      "label_status",
+      "label_method"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "s.csv",
+          "s.csv",
+          "s.csv",
+          "s.csv"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "StartDate",
+          "Q1_DO_order",
+          "Q2_TEXT",
+          "bfi_1"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Export machinery / paradata column (not a measured variable).",
+          "Export machinery / paradata column (not a measured variable).",
+          "Export machinery / paradata column (not a measured variable).",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "StartDate",
+          "Q1_DO_order",
+          "Q2_TEXT",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "labelled",
+          "labelled",
+          "labelled",
+          "unlabelled"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "paradata_rule",
+          "paradata_rule",
+          "paradata_rule",
+          null
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

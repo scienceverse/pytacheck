@@ -1,0 +1,14 @@
+{
+  "id": "malformed.read.order_names_editor",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "ERROR: values must be length 1,\n but FUN(X[[1]]) result is length 0"
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

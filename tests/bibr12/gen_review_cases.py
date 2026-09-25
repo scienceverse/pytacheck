@@ -33,9 +33,7 @@ R_TMP = "local({d <- tempfile('pc_bibr12_'); dir.create(d); d})"
 
 
 def r_written(paper: str, blank_time: bool = False) -> str:
-    blank = (
-        " x[grepl('^    \"completed_at\": ', x)] <- '<completed_at>';" if blank_time else ""
-    )
+    blank = " x[grepl('^    \"completed_at\": ', x)] <- '<completed_at>';" if blank_time else ""
     return (
         f"local({{f <- paper_write({paper}, NULL, save_path = {R_TMP}, schema_version = '12.0'); "
         "x <- readLines(f, encoding = 'UTF-8'); i <- which(trimws(x) == '\"converter\": {'); "
@@ -43,8 +41,12 @@ def r_written(paper: str, blank_time: bool = False) -> str:
     )
 
 
-def r_roundtrip(paper: str) -> str:
-    return f"read(paper_write({paper}, NULL, save_path = {R_TMP}, schema_version = '12.0'))"
+def r_roundtrip(paper: str, blank_time: bool = False) -> str:
+    out = f"read(paper_write({paper}, NULL, save_path = {R_TMP}, schema_version = '12.0'))"
+    if blank_time:
+        # the time of writing: a constant, so that goldens do not change
+        out = f"local({{p <- {out}; p$extraction$completed_at <- '<completed_at>'; p}})"
+    return out
 
 
 def r_error(expr: str) -> str:
@@ -104,33 +106,67 @@ def cases() -> list[dict[str, Any]]:
     out: list[dict[str, Any]] = []
 
     # reading: the whole paper object ------------------------------------------
-    for name in EDGES:
+    for name in (*EDGES, "legacy_arrays", "legacy_arrays_null", "legacy_no_bib"):
         path = f"{FX}/{name}.json"
         out.append(
-            {"id": f"read.{name}", "r": "read", "py": "pytacheck.read",
-             "args": {"file_path": {"$file": path}}}
+            {
+                "id": f"read.{name}",
+                "r": "read",
+                "py": "pytacheck.read",
+                "args": {"file_path": {"$file": path}},
+            }
         )
     out.append(
-        {"id": "read.edge_types.images", "r": "read", "py": "pytacheck.read",
-         "args": {"file_path": {"$file": f"{FX}/edge_types.json"}, "include_images": True}}
+        {
+            "id": "read.edge_types.images",
+            "r": "read",
+            "py": "pytacheck.read",
+            "args": {"file_path": {"$file": f"{FX}/edge_types.json"}, "include_images": True},
+        }
     )
-    for tbl in ("info", "author", "affiliation", "funding", "text", "section", "url", "bib",
-                "xref", "figure", "table", "footnote", "eq", "info_match",
-                "affiliation_match", "funding_match", "bib_match"):
+    for tbl in (
+        "info",
+        "author",
+        "affiliation",
+        "funding",
+        "text",
+        "section",
+        "url",
+        "bib",
+        "xref",
+        "figure",
+        "table",
+        "footnote",
+        "eq",
+        "info_match",
+        "affiliation_match",
+        "funding_match",
+        "bib_match",
+    ):
         out.append(
-            {"id": f"paper_table.edge_types.{tbl}", "r": "paper_table",
-             "py": "pytacheck.paper_table",
-             "args": {"paper": {"$paper": f"{FX}/edge_types.json"}, "table": tbl}}
+            {
+                "id": f"paper_table.edge_types.{tbl}",
+                "r": "paper_table",
+                "py": "pytacheck.paper_table",
+                "args": {"paper": {"$paper": f"{FX}/edge_types.json"}, "table": tbl},
+            }
         )
     for name in ("edge_types", "edge_minimal", "edge_numeric_id"):
         out.append(
-            {"id": f"paper_validate.{name}", "r": "paper_validate",
-             "py": "pytacheck.paper_validate",
-             "args": {"paper": {"$paper": f"{FX}/{name}.json"}}}
+            {
+                "id": f"paper_validate.{name}",
+                "r": "paper_validate",
+                "py": "pytacheck.paper_validate",
+                "args": {"paper": {"$paper": f"{FX}/{name}.json"}},
+            }
         )
         out.append(
-            {"id": f"ref_table.{name}", "r": "ref_table", "py": "pytacheck.ref_table",
-             "args": {"paper": {"$paper": f"{FX}/{name}.json"}}}
+            {
+                "id": f"ref_table.{name}",
+                "r": "ref_table",
+                "py": "pytacheck.ref_table",
+                "args": {"paper": {"$paper": f"{FX}/{name}.json"}},
+            }
         )
 
     # writing -------------------------------------------------------------------
@@ -139,13 +175,19 @@ def cases() -> list[dict[str, Any]]:
         py_read = f"pc.read({H}.FX / '{name}.json')"
         blank = name in NO_TIME
         out.append(
-            value_case(f"paper_write.text.{name}", r_written(read, blank),
-                       f"{H}.written({py_read}, blank_time={blank})")
+            value_case(
+                f"paper_write.text.{name}",
+                r_written(read, blank),
+                f"{H}.written({py_read}, blank_time={blank})",
+            )
         )
-        ignore = ["extraction.converter"] + (["extraction.completed_at"] if blank else [])
         out.append(
-            value_case(f"paper_write.roundtrip.{name}", r_roundtrip(read),
-                       f"{H}.roundtrip({py_read})", compare={"ignore": ignore})
+            value_case(
+                f"paper_write.roundtrip.{name}",
+                r_roundtrip(read, blank),
+                f"{H}.roundtrip({py_read}, blank_time={blank})",
+                compare={"ignore": ["extraction.converter"]},
+            )
         )
     out.append(
         value_case(
@@ -158,19 +200,25 @@ def cases() -> list[dict[str, Any]]:
         )
     )
     out.append(
-        value_case("paper_write.text.modified", r_written(R_MODIFIED),
-                   f"{H}.written({H}.modified_edge())")
+        value_case(
+            "paper_write.text.modified", r_written(R_MODIFIED), f"{H}.written({H}.modified_edge())"
+        )
     )
     out.append(
-        value_case("paper_write.roundtrip.modified", r_roundtrip(R_MODIFIED),
-                   f"{H}.roundtrip({H}.modified_edge())",
-                   compare={"ignore": ["extraction.converter"]})
+        value_case(
+            "paper_write.roundtrip.modified",
+            r_roundtrip(R_MODIFIED),
+            f"{H}.roundtrip({H}.modified_edge())",
+            compare={"ignore": ["extraction.converter"]},
+        )
     )
     out.append(
-        value_case("paper_write.roundtrip.images",
-                   r_roundtrip(f"read('{FX}/edge_types.json', include_images = TRUE)"),
-                   f"{H}.roundtrip(pc.read({H}.FX / 'edge_types.json', include_images=True))",
-                   compare={"ignore": ["extraction.converter"]})
+        value_case(
+            "paper_write.roundtrip.images",
+            r_roundtrip(f"read('{FX}/edge_types.json', include_images = TRUE)"),
+            f"{H}.roundtrip(pc.read({H}.FX / 'edge_types.json', include_images=True))",
+            compare={"ignore": ["extraction.converter"]},
+        )
     )
 
     # schema_version dispatch -----------------------------------------------------
@@ -179,8 +227,12 @@ def cases() -> list[dict[str, Any]]:
         r_path = r_variant(f"{FX}/edge_types.json", "v.json", value)
         py_path = py_variant(f"{FX}/edge_types.json", "v.json", value)
         out.append(
-            {"id": f"read.version.{vid}", "r": "read", "py": "pytacheck.read",
-             "args": {"file_path": expr(r_path, py_path)}}
+            {
+                "id": f"read.version.{vid}",
+                "r": "read",
+                "py": "pytacheck.read",
+                "args": {"file_path": expr(r_path, py_path)},
+            }
         )
     errors = {
         "v12": '"12"',
@@ -196,9 +248,12 @@ def cases() -> list[dict[str, Any]]:
         r_path = r_variant(f"{FX}/edge_types.json", "v.json", value)
         py_path = py_variant(f"{FX}/edge_types.json", "v.json", value)
         out.append(
-            value_case(f"read.error_message.{vid}", r_error(f"metacheck:::.read_bibr({r_path})"),
-                       f"{H}.error_message(lambda: __import__('pytacheck.papers.io', "
-                       f"fromlist=['x']).read_bibr({py_path}))")
+            value_case(
+                f"read.error_message.{vid}",
+                r_error(f"metacheck:::.read_bibr({r_path})"),
+                f"{H}.error_message(lambda: __import__('pytacheck.papers.io', "
+                f"fromlist=['x']).read_bibr({py_path}))",
+            )
         )
     # an array df with other than one element stops (is.null(df) || grepl(...))
     for name in ("edge_df_long", "edge_df_empty"):
@@ -214,15 +269,21 @@ def cases() -> list[dict[str, Any]]:
     r_path = r_variant(f"{F12}/probe_html.json", "v.json", "null")
     py_path = py_variant(f"{F12}/probe_html.json", "v.json", "null")
     out.append(
-        {"id": "read.version.null", "r": "read", "py": "pytacheck.read",
-         "args": {"file_path": expr(r_path, py_path)}}
+        {
+            "id": "read.version.null",
+            "r": "read",
+            "py": "pytacheck.read",
+            "args": {"file_path": expr(r_path, py_path)},
+        }
     )
 
     # writer error messages -------------------------------------------------------
     out.append(
         value_case(
             "paper_write.error_message.older_format",
-            r_error(f"paper_write(demopaper(), NULL, save_path = {R_TMP}, schema_version = '12.0')"),
+            r_error(
+                f"paper_write(demopaper(), NULL, save_path = {R_TMP}, schema_version = '12.0')"
+            ),
             f"{H}.error_message(lambda: pc.paper_write(pc.demopaper(), None, "
             f"{H}._tempdir(), schema_version='12.0'))",
         )
@@ -232,8 +293,9 @@ def cases() -> list[dict[str, Any]]:
     out.append(
         value_case(
             "paper_write.error_message.later_12x",
-            r_error(f"paper_write(read({r_path}), NULL, save_path = {R_TMP}, "
-                    "schema_version = '12.0')"),
+            r_error(
+                f"paper_write(read({r_path}), NULL, save_path = {R_TMP}, schema_version = '12.0')"
+            ),
             f"{H}.error_message(lambda: pc.paper_write(pc.read({py_path}), None, "
             f"{H}._tempdir(), schema_version='12.0'))",
         )
@@ -248,10 +310,14 @@ def cases() -> list[dict[str, Any]]:
         "list(value = v, warnings = w)}})"
     )
     validate_papers = {
-        **{name: (f"read('{FX}/{name}.json')", f"pc.read({H}.FX / '{name}.json')")
-           for name in EDGES},
-        **{name: (f"read('{F12}/{name}.json')", f"pc.read({H}.F12 / '{name}.json')")
-           for name in ("PMC4383902", "probe_docx")},
+        **{
+            name: (f"read('{FX}/{name}.json')", f"pc.read({H}.FX / '{name}.json')")
+            for name in EDGES
+        },
+        **{
+            name: (f"read('{F12}/{name}.json')", f"pc.read({H}.F12 / '{name}.json')")
+            for name in ("PMC4383902", "probe_docx")
+        },
         "modified": (R_MODIFIED, f"{H}.modified_edge()"),
         # older-format papers: demo, psychsci, Grobid, test_paper
         "demo": ("demopaper()", "pc.demopaper()"),
@@ -269,9 +335,11 @@ def cases() -> list[dict[str, Any]]:
     }
     for name, (r_paper, py_paper) in validate_papers.items():
         out.append(
-            value_case(f"paper_validate.warnings.{name}",
-                       r_validate.format(paper=r_paper),
-                       f"{H}.validate_warnings({py_paper})")
+            value_case(
+                f"paper_validate.warnings.{name}",
+                r_validate.format(paper=r_paper),
+                f"{H}.validate_warnings({py_paper})",
+            )
         )
 
     # the older writer (schema_version = NULL) on 12.x papers, read back --------------
@@ -300,12 +368,57 @@ def cases() -> list[dict[str, Any]]:
         )
     )
 
-    # modules on the adversarial 12.x paper ---------------------------------------
-    for mod in ("ref_consistency", "ref_miscitation", "all_urls", "stat_check",
-                "all_p_values", "ref_summary"):
+    # add_bib_match() on a 12.x paper (recorded CrossRef answers), then written as 12.0
+    r_matched = (
+        "local({source(file.path(root, 'tests/db/replay.R')); "
+        f"p <- read('{F12}/full.json'); "
+        "p$bib <- data.frame(bib_id = 1:2, doi = NA, title = c('Facial resemblance enhances trust', "
+        "'Trustworthy but not Lustworthy'), container = c('Proceedings of the Royal Society of London B'), "
+        "authors = I(list('Lisa DeBruine', 'Lisa DeBruine'))); db_replay(add_bib_match(p, 0))})"
+    )
+    out.append(
+        value_case(
+            "paper_write.text.add_bib_match.replay",
+            r_written(r_matched),
+            f"{H}.written({H}.full_with_crossref_matches())",
+        )
+    )
+
+    # malformed 12.x files: where and how metacheck stops (tests/bibr12/fixtures/malformed)
+    for f in sorted((ROOT / FX / "malformed").glob("*.json")):
+        path = f"{FX}/malformed/{f.name}"
         out.append(
-            {"id": f"module.{mod}.edge_types", "module": mod,
-             "args": {"paper": {"$paper": f"{FX}/edge_types.json"}}}
+            value_case(
+                f"malformed.read.{f.stem}",
+                f"tryCatch(metacheck:::.read_bibr('{path}'), "
+                "error = function(e) paste('ERROR:', conditionMessage(e)))",
+                f"{H}.read_or_error('{path}')",
+            )
+        )
+        out.append(
+            value_case(
+                f"malformed.write.{f.stem}",
+                f"tryCatch({r_written(f'metacheck:::.read_bibr({path!r})')}, "
+                "error = function(e) paste('ERROR:', conditionMessage(e)))",
+                f"{H}.written_or_error('{path}')",
+            )
+        )
+
+    # modules on the adversarial 12.x paper ---------------------------------------
+    for mod in (
+        "ref_consistency",
+        "ref_miscitation",
+        "all_urls",
+        "stat_check",
+        "all_p_values",
+        "ref_summary",
+    ):
+        out.append(
+            {
+                "id": f"module.{mod}.edge_types",
+                "module": mod,
+                "args": {"paper": {"$paper": f"{FX}/edge_types.json"}},
+            }
         )
     return out
 

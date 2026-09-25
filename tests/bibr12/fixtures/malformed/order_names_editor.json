@@ -1,0 +1,37 @@
+{
+ "paper_id": "order_names_editor",
+ "schema_version": "12.0",
+ "source": {
+  "file_name": "m.pdf",
+  "sha256": null,
+  "input_format": "pdf"
+ },
+ "metadata": {
+  "title": "Malformed"
+ },
+ "extraction": {
+  "producer": {
+   "name": "bibr",
+   "version": "0.3.0"
+  },
+  "completed_at": "2026-01-02T03:04:05Z"
+ },
+ "bib_match": [
+  {
+   "bib_id": 1,
+   "service": "crossref",
+   "editor": [
+    "Smith"
+   ]
+  },
+  {
+   "bib_id": 2,
+   "service": "crossref",
+   "author": [
+    {
+     "given": []
+    }
+   ]
+  }
+ ]
+}

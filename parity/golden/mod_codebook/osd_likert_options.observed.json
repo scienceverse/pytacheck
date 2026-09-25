@@ -1,0 +1,50 @@
+{
+  "id": "osd_likert_options.observed",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "points",
+      "min",
+      "max",
+      "order",
+      "source"
+    ],
+    "v": [
+      {
+        "t": "int",
+        "v": [
+          5
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          1
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          5
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "ascending"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "observed"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

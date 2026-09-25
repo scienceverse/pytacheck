@@ -1,0 +1,277 @@
+{
+  "id": "psychds_check.yellow_six.llm_use_true",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "psychds_check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Psych-DS Check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "results"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 7,
+        "names": [
+          "file_name",
+          "data_type",
+          "group",
+          "current_path",
+          "target_path",
+          "status",
+          "convert",
+          "original_target",
+          "referenced_by"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "a.csv",
+              "b.R",
+              "c.R",
+              "d.pdf",
+              "e.png",
+              "f.txt",
+              "g.R"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data",
+              "code",
+              "code",
+              "output",
+              "materials",
+              "documentation",
+              "code"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "a.csv",
+              "b.R",
+              "c.R",
+              "d.pdf",
+              "e.png",
+              "f.txt",
+              "analysis/g.R"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data/study-a_data.csv",
+              "analysis/b.R",
+              "analysis/c.R",
+              "outputs/d.pdf",
+              "materials/e.png",
+              "documentation/f.txt",
+              "analysis/g.R"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "move",
+              "move",
+              "move",
+              "move",
+              "move",
+              "move",
+              "present"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "null"
+              },
+              {
+                "t": "null"
+              },
+              {
+                "t": "null"
+              },
+              {
+                "t": "null"
+              },
+              {
+                "t": "null"
+              },
+              {
+                "t": "null"
+              },
+              {
+                "t": "null"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "This module checks the repository against the Psych-DS dataset standard. We examined 7 files across 1 study group.",
+          "#### Compliance Checklist",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Requirement = c(\"dataset_description.json\", \"data/ directory with data files\", \n\"describable variables (variableMeasured)\", \"README\", \"CHANGES\", \n\"variable descriptions\"), Level = c(\"required\", \"required\", \"required\", \n\"recommended\", \"recommended\", \"recommended\"), Status = c(\"missing\", \n\"present\", \"present\", \"missing\", \"missing\", \"missing\"), Detail = c(\"Root metadata file describing the dataset (required).\", \n\"At least one machine-readable data file under data/ (required).\", \n\"Data files must have extractable, typed columns to populate variableMeasured (required).\", \n\"A README at the repository root (recommended).\", \"A CHANGES file logging dataset versions (recommended).\", \n\"Codebook descriptions for variables improve reuse (recommended; see codebook_check).\"\n)), row.names = c(NA, -6L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
+          "#### Target Psych-DS Structure",
+          "The tree below shows the Psych-DS layout this repository should have. Files in <span style=\"color:#c0392b\">red<\/span> are required but missing; files annotated *(move from ...)* exist but need relocating.",
+          "<pre style=\"line-height:1.4\">\n├── analysis/\n│   ├── b.R <span style=\"color:#b9770e\">(move from b.R)<\/span>\n│   ├── c.R <span style=\"color:#b9770e\">(move from c.R)<\/span>\n│   └── g.R\n├── data/\n│   └── study-a_data.csv <span style=\"color:#b9770e\">(move from a.csv)<\/span>\n├── documentation/\n│   └── f.txt <span style=\"color:#b9770e\">(move from f.txt)<\/span>\n├── materials/\n│   └── e.png <span style=\"color:#b9770e\">(move from e.png)<\/span>\n├── outputs/\n│   └── d.pdf <span style=\"color:#b9770e\">(move from d.pdf)<\/span>\n├── <span style=\"color:#c0392b\">CHANGES  ← missing<\/span>\n├── <span style=\"color:#c0392b\">dataset_description.json  ← missing<\/span>\n└── <span style=\"color:#c0392b\">README  ← missing<\/span>\n<\/pre>",
+          "*Study subgrouping could not be detected: no file path or repository split names a study. Every file was placed in a single default study (`ex1`) rather than from real evidence. If this repository contains multiple studies, name the study in the file or folder names (`study1/`, `experiment2_data.csv`) so a multi-study Psych-DS layout can be modelled.*",
+          "#### Suggestions",
+          "- **Add** dataset_description.json — Root metadata file describing the dataset (required).\n- **Move** `a.csv` → `data/study-a_data.csv`.\n- **Move** `b.R` → `analysis/b.R`.\n- **Move** `c.R` → `analysis/c.R`.\n- **Move** `d.pdf` → `outputs/d.pdf`.\n- **Move** `e.png` → `materials/e.png`.\n- ...and 1 more file to relocate.\n- **Document** the 3 of 3 data columns without a codebook description (see codebook_check).\n- **Add** README — A README at the repository root (recommended).\n- **Add** CHANGES — A CHANGES file logging dataset versions (recommended).\n- **Add** variable descriptions — Codebook descriptions for variables improve reuse (recommended; see codebook_check).",
+          "You can generate a Psych-DS-compliant copy of this repository — with the moves above applied and a `dataset_description.json` built from the extracted variables — using `metacheck::convert_psychds(paper, output_dir)`.",
+          "To also produce a human-readable codebook of the extracted variables (a labelled data frame plus a ready-to-run R Markdown document for the `codebook` package), use `metacheck::convert_codebook(paper, output_dir)`."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "yellow"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "\n-  2 of 3 required Psych-DS items present; 1 missing.\n-  6 files would need to move to a Psych-DS location.\n-  3 recommended items missing."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "required_met",
+          "required_missing",
+          "recommended_met",
+          "recommended_missing",
+          "misplaced_n"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "to_err_is_human"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              3
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              6
+            ]
+          }
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "names": [
+          "required_met",
+          "required_missing",
+          "recommended_met",
+          "recommended_missing",
+          "misplaced_n"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

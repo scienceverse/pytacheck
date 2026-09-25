@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xml:space="preserve" xmlns="http://www.tei-c.org/ns/1.0">
+	<teiHeader>
+		<fileDesc><titleStmt><title>URLs everywhere</title></titleStmt></fileDesc>
+		<encodingDesc><appInfo>
+			<application version="1.0" ident="Other" when="2024-01-01T00:00+0000"/>
+			<application version=" 0.8.2 " ident="GROBID" when="2025-07-10T14:15:30.9+02:00"><label>GROBID</label></application>
+		</appInfo></encodingDesc>
+	</teiHeader>
+	<text>
+		<body>
+<div><head>Methods</head><p>Code is at <ref type="url" target="https://github.com/a b/c.">github.com/ab/c</ref> and data at <ref type="url" target="http://osf.io/q">https://osf.io/q</ref>. Mirror: <ref type="url" target="https://osf.io/q2">osf</ref> and osf again.</p><p>See 𝛼 = .05 and Ångström <ref type="bibr" target="#b0">(Smith, 2020)</ref> then <ref type="url" target="https://x.org/y">x.org/y</ref> in 𝛼 text <ref type="bibr" target="#b0">(Smith, 2020)</ref>.</p></div>
+<div><p>A div without a head citing <ref type="figure" target="#tab_0">Table 1</ref> and <ref type="table" target="#fig_0">Figure 1</ref> and <ref type="bibr" target="b1">[2]</ref> and <ref type="bibr" target=" #b0">[1]</ref> and <ref type="bibr" target="#B0">[x]</ref> and <ref type="foot" target="#foot_9">9</ref> and <ref type="bibr">[?]</ref>.</p></div>
+<div><head>Empty</head></div>
+<div><head>Same</head><p>Same</p><p>Different text here with p &lt; .001 and d ≈ 0.5 and r ≠ 0 and t(3) ~ 1 and x != 2.</p></div>
+			<figure xml:id="fig_0">
+				<head>figure 1.</head>
+				<figDesc>Figure 1. Links to <ref type="url" target="https://osf.io/q2">osf</ref> page.</figDesc>
+			</figure>
+			<figure xml:id="fig_0">
+				<head>Abbildung 2 :</head>
+				<figDesc>Ein Bild mit <ref type="bibr" target="#b1">Jones</ref>.</figDesc>
+				<graphic coords=" 3,1,1,1,1;4,1,1,1,1"/>
+			</figure>
+			<figure xml:id="fig_2" coords="2.9,1,1,1">
+				<head>   </head>
+				<figDesc>FIG. II roman label.</figDesc>
+			</figure>
+			<figure coords="0,1,1,1">
+				<head>Figure 4</head>
+			</figure>
+			<figure type="table" xml:id="tab_0" coords="1e1,2">
+				<head>TAB. 1 .</head>
+				<label> </label>
+				<figDesc>tab 1 lower label.</figDesc>
+				<table><row><cell cols="2">Head</cell></row><row><cell>1.5</cell><cell>2.5</cell></row><row/></table>
+			</figure>
+			<figure type="table" xml:id="tab_1" coords="-1,2">
+				<head>Table 2</head>
+				<figDesc>Table2 Glued label with url <ref type="url" target="https://t.org">t.org</ref>.</figDesc>
+				<table/>
+			</figure>
+			<note place="foot" xml:id="foot_0" n="*">A starred note with <ref type="url" target="https://n.org/z">n.org/z</ref> and <ref type="figure" target="#fig_2">Fig 3</ref>.</note>
+		</body>
+		<back>
+			<div type="foot"><div><head>Foot back</head><p>Back foot text.</p></div></div>
+			<div type="annex"><div><p>Annex text without head.</p></div><div><head>Annex B</head><p>More annex.</p><note place="foot" n="3" xml:id="foot_1">Back note.</note></div></div>
+			<div type="references">
+				<listBibl>
+<biblStruct xml:id="b0">
+	<analytic><title level="a" type="main">First</title></analytic>
+	<monogr><title level="j">J</title><imprint><date type="published" when="2020">2020</date></imprint></monogr>
+	<note type="raw_reference">Smith (2020). First. osf https://osf.io/q2 x.org/y</note>
+</biblStruct>
+<biblStruct xml:id="b1">
+	<monogr><title level="m">B</title><imprint><date type="published">n.d.</date></imprint></monogr>
+	<note type="raw_reference">Jones (n.d.). B.</note>
+</biblStruct>
+<biblStruct xml:id="b1">
+	<monogr><title level="m">Dup</title></monogr>
+	<note type="raw_reference">Duplicate id.</note>
+</biblStruct>
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

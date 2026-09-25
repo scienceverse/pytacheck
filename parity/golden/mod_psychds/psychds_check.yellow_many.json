@@ -1,0 +1,299 @@
+{
+  "id": "psychds_check.yellow_many",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "psychds_check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Psych-DS Check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "results"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 9,
+        "names": [
+          "file_name",
+          "data_type",
+          "group",
+          "current_path",
+          "target_path",
+          "status",
+          "convert",
+          "original_target",
+          "referenced_by"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Data Raw.xlsx",
+              "survey.sav",
+              "eeg.npy",
+              "rawdata",
+              "___.csv",
+              "scores.CSV",
+              "café_ü.tsv",
+              "model.R",
+              "README.md"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data",
+              "data",
+              "data",
+              "data",
+              "data",
+              "data",
+              "data",
+              "code",
+              "documentation"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "raw/Data Raw.xlsx",
+              "raw/survey.sav",
+              "data/eeg.npy",
+              "rawdata",
+              "data/___.csv",
+              "data/scores.CSV",
+              "data/café_ü.tsv",
+              "model.R",
+              "README.md"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data/study-DataRaw_data.csv",
+              "data/study-survey_data.csv",
+              "data/eeg.npy",
+              "data/study-rawdata_data.csv",
+              "data/study-file5_data.csv",
+              "data/study-scores_data.csv",
+              "data/study-caf_data.csv",
+              "analysis/model.R",
+              "README.md"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "move",
+              "move",
+              "move",
+              "move",
+              "move",
+              "move",
+              "move",
+              "move",
+              "present"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true,
+              true,
+              false,
+              false,
+              false,
+              false,
+              true,
+              false,
+              false
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data/Data Raw.xlsx",
+              "data/survey.sav",
+              null,
+              null,
+              null,
+              null,
+              "data/café_ü.tsv",
+              null,
+              null
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "null"
+              },
+              {
+                "t": "null"
+              },
+              {
+                "t": "null"
+              },
+              {
+                "t": "null"
+              },
+              {
+                "t": "null"
+              },
+              {
+                "t": "null"
+              },
+              {
+                "t": "null"
+              },
+              {
+                "t": "null"
+              },
+              {
+                "t": "null"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "This module checks the repository against the Psych-DS dataset standard. We examined 9 files across 1 study group.",
+          "#### Compliance Checklist",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Requirement = c(\"dataset_description.json\", \"data/ directory with data files\", \n\"describable variables (variableMeasured)\", \"README\", \"CHANGES\", \n\"variable descriptions\"), Level = c(\"required\", \"required\", \"required\", \n\"recommended\", \"recommended\", \"recommended\"), Status = c(\"missing\", \n\"present\", \"present\", \"present\", \"missing\", \"present\"), Detail = c(\"Root metadata file describing the dataset (required).\", \n\"At least one machine-readable data file under data/ (required).\", \n\"Data files must have extractable, typed columns to populate variableMeasured (required).\", \n\"A README at the repository root (recommended).\", \"A CHANGES file logging dataset versions (recommended).\", \n\"Codebook descriptions for variables improve reuse (recommended; see codebook_check).\"\n)), row.names = c(NA, -6L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
+          "#### Target Psych-DS Structure",
+          "The tree below shows the Psych-DS layout this repository should have. Files in <span style=\"color:#c0392b\">red<\/span> are required but missing; files annotated *(move from ...)* exist but need relocating.",
+          "<pre style=\"line-height:1.4\">\n├── analysis/\n│   └── model.R <span style=\"color:#b9770e\">(move from model.R)<\/span>\n├── data/\n│   ├── eeg.npy <span style=\"color:#b9770e\">(move from data/eeg.npy)<\/span>\n│   ├── study-caf_data.csv <span style=\"color:#b9770e\">(move from data/café_ü.tsv)<\/span>\n│   ├── study-DataRaw_data.csv <span style=\"color:#b9770e\">(move from raw/Data Raw.xlsx)<\/span>\n│   ├── study-file5_data.csv <span style=\"color:#b9770e\">(move from data/___.csv)<\/span>\n│   ├── study-rawdata_data.csv <span style=\"color:#b9770e\">(move from rawdata)<\/span>\n│   ├── study-scores_data.csv <span style=\"color:#b9770e\">(move from data/scores.CSV)<\/span>\n│   └── study-survey_data.csv <span style=\"color:#b9770e\">(move from raw/survey.sav)<\/span>\n├── <span style=\"color:#c0392b\">CHANGES  ← missing<\/span>\n├── <span style=\"color:#c0392b\">dataset_description.json  ← missing<\/span>\n└── README.md\n<\/pre>",
+          "*Study subgrouping could not be detected: no file path or repository split names a study, and no LLM was used. Every file was placed in a single default study (`ex1`) rather than from real evidence. If this repository contains multiple studies, name the study in the file or folder names (`study1/`, `experiment2_data.csv`) or run with `llm_use(TRUE)` so a multi-study Psych-DS layout can be modelled.*",
+          "#### Suggestions",
+          "- **Add** dataset_description.json — Root metadata file describing the dataset (required).\n- **Move** `raw/Data Raw.xlsx` → `data/study-DataRaw_data.csv`.\n- **Move** `raw/survey.sav` → `data/study-survey_data.csv`.\n- **Move** `data/eeg.npy` → `data/eeg.npy`.\n- **Move** `rawdata` → `data/study-rawdata_data.csv`.\n- **Move** `data/___.csv` → `data/study-file5_data.csv`.\n- ...and 3 more files to relocate.\n- **Document** the 4 of 5 data columns without a codebook description (see codebook_check).\n- **Add** CHANGES — A CHANGES file logging dataset versions (recommended).",
+          "You can generate a Psych-DS-compliant copy of this repository — with the moves above applied and a `dataset_description.json` built from the extracted variables — using `metacheck::convert_psychds(paper, output_dir)`.",
+          "To also produce a human-readable codebook of the extracted variables (a labelled data frame plus a ready-to-run R Markdown document for the `codebook` package), use `metacheck::convert_codebook(paper, output_dir)`."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "yellow"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "\n-  2 of 3 required Psych-DS items present; 1 missing.\n-  8 files would need to move to a Psych-DS location.\n-  1 recommended item missing."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "required_met",
+          "required_missing",
+          "recommended_met",
+          "recommended_missing",
+          "misplaced_n"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "to_err_is_human"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              8
+            ]
+          }
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "names": [
+          "required_met",
+          "required_missing",
+          "recommended_met",
+          "recommended_missing",
+          "misplaced_n"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

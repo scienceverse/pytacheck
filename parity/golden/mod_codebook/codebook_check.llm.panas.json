@@ -1,0 +1,1299 @@
+{
+  "id": "codebook_check.llm.panas",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "codebook_vars",
+      "scale_violations",
+      "scales_osd",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "codebook_check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Codebook Check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "results"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 12,
+        "names": [
+          "paper_id",
+          "source_file",
+          "column_name",
+          "group",
+          "label",
+          "codebook_variable",
+          "label_source",
+          "label_status",
+          "label_method",
+          "value_labels",
+          "missing_values",
+          "question",
+          "coding_instructions",
+          "scale_group",
+          "scale",
+          "scale_confidence",
+          "scale_source"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "affect.csv",
+              "affect.csv",
+              "affect.csv",
+              "affect.csv",
+              "affect.csv",
+              "affect.csv",
+              "affect.csv",
+              "affect.csv",
+              "affect.csv",
+              "affect.csv",
+              "affect.csv",
+              "affect.csv"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "id",
+              "PANAS1",
+              "PANAS2",
+              "PANAS3",
+              "PANAS4",
+              "PANAS5",
+              "PANAS6",
+              "PANAS7",
+              "PANAS8",
+              "PANAS9",
+              "PANAS10",
+              "PANAS_total"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "Affect item 1",
+              "Affect item 2",
+              "Affect item 3",
+              "Affect item 4",
+              "Affect item 5",
+              "Affect item 6",
+              "Affect item 7",
+              "Affect item 8",
+              "Affect item 9",
+              "Affect item 10",
+              "Total affect score"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "PANAS1",
+              "PANAS2",
+              "PANAS3",
+              "PANAS4",
+              "PANAS5",
+              "PANAS6",
+              "PANAS7",
+              "PANAS8",
+              "PANAS9",
+              "PANAS10",
+              "PANAS_total"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "codebook.csv",
+              "codebook.csv",
+              "codebook.csv",
+              "codebook.csv",
+              "codebook.csv",
+              "codebook.csv",
+              "codebook.csv",
+              "codebook.csv",
+              "codebook.csv",
+              "codebook.csv",
+              "codebook.csv"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "unlabelled",
+              "labelled",
+              "labelled",
+              "labelled",
+              "labelled",
+              "labelled",
+              "labelled",
+              "labelled",
+              "labelled",
+              "labelled",
+              "labelled",
+              "labelled"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "rules",
+              "rules",
+              "rules",
+              "rules",
+              "rules",
+              "rules",
+              "rules",
+              "rules",
+              "rules",
+              "rules",
+              "rules"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "{\"1\":\"Very slightly\",\"2\":\"A little\",\"3\":\"Moderately\",\"4\":\"Quite a bit\",\"5\":\"Extremely\"}",
+              "{\"1\":\"Very slightly\",\"2\":\"A little\",\"3\":\"Moderately\",\"4\":\"Quite a bit\",\"5\":\"Extremely\"}",
+              "{\"1\":\"Very slightly\",\"2\":\"A little\",\"3\":\"Moderately\",\"4\":\"Quite a bit\",\"5\":\"Extremely\"}",
+              "{\"1\":\"Very slightly\",\"2\":\"A little\",\"3\":\"Moderately\",\"4\":\"Quite a bit\",\"5\":\"Extremely\"}",
+              "{\"1\":\"Very slightly\",\"2\":\"A little\",\"3\":\"Moderately\",\"4\":\"Quite a bit\",\"5\":\"Extremely\"}",
+              "{\"1\":\"Very slightly\",\"2\":\"A little\",\"3\":\"Moderately\",\"4\":\"Quite a bit\",\"5\":\"Extremely\"}",
+              "{\"1\":\"Very slightly\",\"2\":\"A little\",\"3\":\"Moderately\",\"4\":\"Quite a bit\",\"5\":\"Extremely\"}",
+              "{\"1\":\"Very slightly\",\"2\":\"A little\",\"3\":\"Moderately\",\"4\":\"Quite a bit\",\"5\":\"Extremely\"}",
+              "{\"1\":\"Very slightly\",\"2\":\"A little\",\"3\":\"Moderately\",\"4\":\"Quite a bit\",\"5\":\"Extremely\"}",
+              "{\"1\":\"Very slightly\",\"2\":\"A little\",\"3\":\"Moderately\",\"4\":\"Quite a bit\",\"5\":\"Extremely\"}",
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "Positive and Negative Affect Schedule",
+              "Positive and Negative Affect Schedule",
+              "Positive and Negative Affect Schedule",
+              "Positive and Negative Affect Schedule",
+              "Positive and Negative Affect Schedule",
+              "Positive and Negative Affect Schedule",
+              "Positive and Negative Affect Schedule",
+              "Positive and Negative Affect Schedule",
+              "Positive and Negative Affect Schedule",
+              "Positive and Negative Affect Schedule",
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "medium",
+              "medium",
+              "medium",
+              "medium",
+              "medium",
+              "medium",
+              "medium",
+              "medium",
+              "medium",
+              "medium",
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "manuscript",
+              "manuscript",
+              "manuscript",
+              "manuscript",
+              "manuscript",
+              "manuscript",
+              "manuscript",
+              "manuscript",
+              "manuscript",
+              "manuscript",
+              null
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "This module checks whether each extracted data column is documented in a codebook or README, and flags documented variables that never appear in the data.",
+          "We examined 1 codebook/README/label source and 12 data columns across 1 file.",
+          "#### Column Documentation",
+          "::: {.panel-tabset}\n\n## affect.csv\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Column = c(\"id\", \"PANAS1\", \"PANAS10\", \"PANAS2\", \n\"PANAS3\", \"PANAS4\", \"PANAS5\", \"PANAS6\", \"PANAS7\", \"PANAS8\", \"PANAS9\", \n\"PANAS_total\"), Documented = c(\"no\", \"yes\", \"yes\", \"yes\", \"yes\", \n\"yes\", \"yes\", \"yes\", \"yes\", \"yes\", \"yes\", \"yes\"), Label = c(NA, \n\"Affect item 1\", \"Affect item 10\", \"Affect item 2\", \"Affect item 3\", \n\"Affect item 4\", \"Affect item 5\", \"Affect item 6\", \"Affect item 7\", \n\"Affect item 8\", \"Affect item 9\", \"Total affect score\"), \"Codebook Variable\" = c(NA, \n\"PANAS1\", \"PANAS10\", \"PANAS2\", \"PANAS3\", \"PANAS4\", \"PANAS5\", \n\"PANAS6\", \"PANAS7\", \"PANAS8\", \"PANAS9\", \"PANAS_total\"), Source = c(NA, \n\"codebook.csv\", \"codebook.csv\", \"codebook.csv\", \"codebook.csv\", \n\"codebook.csv\", \"codebook.csv\", \"codebook.csv\", \"codebook.csv\", \n\"codebook.csv\", \"codebook.csv\", \"codebook.csv\"), Status = c(\"unlabelled\", \n\"labelled\", \"labelled\", \"labelled\", \"labelled\", \"labelled\", \"labelled\", \n\"labelled\", \"labelled\", \"labelled\", \"labelled\", \"labelled\")), row.names = c(NA, \n12L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 25, FALSE)\n```\n\n\n:::",
+          "#### Scales",
+          "We detected 1 column group (by shared abbreviation) that look like scales; 1 was matched to a named instrument from the paper text or dictionary. Groups we could not name are listed too — they are real scale-like column families whose instrument the manuscript did not identify. Identified scales are exported in the OpenScales OSD structure.",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = \"affect.csv\", Abbrev = \"PANAS\", Columns = 10L, \n    \"Max item\" = \"10\", Scale = \"Positive and Negative Affect Schedule\", \n    Confidence = \"medium\", Source = \"manuscript\"), row.names = c(NA, \n-1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 40, FALSE)\n```\n",
+          "To let this tool (and anyone reusing the data) identify these scales with **high confidence**:\n- **Name the instrument in the manuscript with its abbreviation** — e.g. \"the Breakup Distress Scale (BDS)\" — matching the column prefix.\n- **Add a codebook** giving the item wording, or state the number of items (\"a 15-item scale\").",
+          "#### Scales in the manuscript",
+          "The manuscript describes 1 instrument whose item-level data we could not find. De-identified item-level responses are far more valuable to share than total scores: they let others check the scoring, the reverse-coding, and the reliability, and let the items be reused. Consider sharing the raw item responses for:",
+          "- **Beck Depression Inventory** (BDI; 21 items; possibly not administered here)",
+          "(Detected from the manuscript text; an instrument mentioned only in passing may be listed here in error.)",
+          "#### Tasks",
+          "**1 task named in the manuscript has no matching data.** The trial-level data may not be shared, may live in a file we could not read, or may use column names we did not recognise. Sharing trial-level data (one row per trial, with condition, response time and accuracy) would let the task be verified:",
+          "- Positive and Negative Affect Scale",
+          "LLM model 'mock/cbc' reviewed ambiguous cases (parsed 0 files, matched 0 columns, merged 0 labels)."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "yellow"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "\n-  We parsed 11 variable definitions from codebook/README files.\n-  11 of 12 data columns (92%) are documented in a codebook; 1 is not."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "column_n",
+          "matched_n",
+          "unmatched_n",
+          "clean_n",
+          "conflicted_n",
+          "codebook_var_n",
+          "unused_var_n",
+          "scale_blocks_n",
+          "scale_named_n",
+          "scale_unnamed_n",
+          "task_files_n",
+          "task_named_n",
+          "task_paper_only_n"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "p1"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              12
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              11
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              11
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              11
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 11,
+        "names": [
+          "codebook_variable",
+          "label",
+          "codebook_source",
+          "group",
+          "value_labels",
+          "missing_values",
+          "question",
+          "coding_instructions",
+          "parse_method",
+          "paper_id"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "PANAS1",
+              "PANAS2",
+              "PANAS3",
+              "PANAS4",
+              "PANAS5",
+              "PANAS6",
+              "PANAS7",
+              "PANAS8",
+              "PANAS9",
+              "PANAS10",
+              "PANAS_total"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Affect item 1",
+              "Affect item 2",
+              "Affect item 3",
+              "Affect item 4",
+              "Affect item 5",
+              "Affect item 6",
+              "Affect item 7",
+              "Affect item 8",
+              "Affect item 9",
+              "Affect item 10",
+              "Total affect score"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "codebook.csv",
+              "codebook.csv",
+              "codebook.csv",
+              "codebook.csv",
+              "codebook.csv",
+              "codebook.csv",
+              "codebook.csv",
+              "codebook.csv",
+              "codebook.csv",
+              "codebook.csv",
+              "codebook.csv"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "{\"1\":\"Very slightly\",\"2\":\"A little\",\"3\":\"Moderately\",\"4\":\"Quite a bit\",\"5\":\"Extremely\"}",
+              "{\"1\":\"Very slightly\",\"2\":\"A little\",\"3\":\"Moderately\",\"4\":\"Quite a bit\",\"5\":\"Extremely\"}",
+              "{\"1\":\"Very slightly\",\"2\":\"A little\",\"3\":\"Moderately\",\"4\":\"Quite a bit\",\"5\":\"Extremely\"}",
+              "{\"1\":\"Very slightly\",\"2\":\"A little\",\"3\":\"Moderately\",\"4\":\"Quite a bit\",\"5\":\"Extremely\"}",
+              "{\"1\":\"Very slightly\",\"2\":\"A little\",\"3\":\"Moderately\",\"4\":\"Quite a bit\",\"5\":\"Extremely\"}",
+              "{\"1\":\"Very slightly\",\"2\":\"A little\",\"3\":\"Moderately\",\"4\":\"Quite a bit\",\"5\":\"Extremely\"}",
+              "{\"1\":\"Very slightly\",\"2\":\"A little\",\"3\":\"Moderately\",\"4\":\"Quite a bit\",\"5\":\"Extremely\"}",
+              "{\"1\":\"Very slightly\",\"2\":\"A little\",\"3\":\"Moderately\",\"4\":\"Quite a bit\",\"5\":\"Extremely\"}",
+              "{\"1\":\"Very slightly\",\"2\":\"A little\",\"3\":\"Moderately\",\"4\":\"Quite a bit\",\"5\":\"Extremely\"}",
+              "{\"1\":\"Very slightly\",\"2\":\"A little\",\"3\":\"Moderately\",\"4\":\"Quite a bit\",\"5\":\"Extremely\"}",
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "structured",
+              "structured",
+              "structured",
+              "structured",
+              "structured",
+              "structured",
+              "structured",
+              "structured",
+              "structured",
+              "structured",
+              "structured"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "source_file",
+          "column",
+          "documented",
+          "n_values",
+          "values",
+          "kinds"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "int",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "list",
+            "names": [
+              "osd_version",
+              "definition",
+              "translations"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "1.0"
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "scale_info",
+                  "likert_options",
+                  "items",
+                  "dimensions",
+                  "scoring",
+                  "metacheck"
+                ],
+                "v": [
+                  {
+                    "t": "list",
+                    "names": [
+                      "name",
+                      "code",
+                      "abbreviation"
+                    ],
+                    "v": [
+                      {
+                        "t": "chr",
+                        "v": [
+                          "Positive and Negative Affect Schedule"
+                        ]
+                      },
+                      {
+                        "t": "chr",
+                        "v": [
+                          "positive_and_negative_affect_schedule"
+                        ]
+                      },
+                      {
+                        "t": "chr",
+                        "v": [
+                          "PANAS"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "t": "list",
+                    "names": [
+                      "points",
+                      "min",
+                      "max",
+                      "labels",
+                      "order",
+                      "source"
+                    ],
+                    "v": [
+                      {
+                        "t": "int",
+                        "v": [
+                          5
+                        ]
+                      },
+                      {
+                        "t": "int",
+                        "v": [
+                          1
+                        ]
+                      },
+                      {
+                        "t": "int",
+                        "v": [
+                          5
+                        ]
+                      },
+                      {
+                        "t": "chr",
+                        "v": [
+                          "Very slightly",
+                          "A little",
+                          "Moderately",
+                          "Quite a bit",
+                          "Extremely"
+                        ]
+                      },
+                      {
+                        "t": "chr",
+                        "v": [
+                          "ascending"
+                        ]
+                      },
+                      {
+                        "t": "chr",
+                        "v": [
+                          "codebook"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "t": "list",
+                    "names": null,
+                    "v": [
+                      {
+                        "t": "list",
+                        "names": [
+                          "id",
+                          "text_key",
+                          "type"
+                        ],
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "PANAS1"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "PANAS1"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "likert"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "t": "list",
+                        "names": [
+                          "id",
+                          "text_key",
+                          "type"
+                        ],
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "PANAS2"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "PANAS2"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "likert"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "t": "list",
+                        "names": [
+                          "id",
+                          "text_key",
+                          "type"
+                        ],
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "PANAS3"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "PANAS3"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "likert"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "t": "list",
+                        "names": [
+                          "id",
+                          "text_key",
+                          "type"
+                        ],
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "PANAS4"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "PANAS4"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "likert"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "t": "list",
+                        "names": [
+                          "id",
+                          "text_key",
+                          "type"
+                        ],
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "PANAS5"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "PANAS5"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "likert"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "t": "list",
+                        "names": [
+                          "id",
+                          "text_key",
+                          "type"
+                        ],
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "PANAS6"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "PANAS6"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "likert"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "t": "list",
+                        "names": [
+                          "id",
+                          "text_key",
+                          "type"
+                        ],
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "PANAS7"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "PANAS7"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "likert"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "t": "list",
+                        "names": [
+                          "id",
+                          "text_key",
+                          "type"
+                        ],
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "PANAS8"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "PANAS8"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "likert"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "t": "list",
+                        "names": [
+                          "id",
+                          "text_key",
+                          "type"
+                        ],
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "PANAS9"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "PANAS9"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "likert"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "t": "list",
+                        "names": [
+                          "id",
+                          "text_key",
+                          "type"
+                        ],
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "PANAS10"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "PANAS10"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "likert"
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "t": "list",
+                    "names": null,
+                    "v": []
+                  },
+                  {
+                    "t": "list",
+                    "names": [],
+                    "v": []
+                  },
+                  {
+                    "t": "list",
+                    "names": [
+                      "scale_source",
+                      "provenance",
+                      "confidence",
+                      "source_files",
+                      "n_columns",
+                      "declared_length"
+                    ],
+                    "v": [
+                      {
+                        "t": "chr",
+                        "v": [
+                          "dictionary"
+                        ]
+                      },
+                      {
+                        "t": "chr",
+                        "v": [
+                          "Matched a known instrument in metacheck's scale dictionary (OpenScales-derived or curated)."
+                        ]
+                      },
+                      {
+                        "t": "chr",
+                        "v": [
+                          "medium"
+                        ]
+                      },
+                      {
+                        "t": "list",
+                        "names": null,
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "affect.csv"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "t": "int",
+                        "v": [
+                          10
+                        ]
+                      },
+                      {
+                        "t": "int",
+                        "v": [
+                          10
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "en"
+                ],
+                "v": [
+                  {
+                    "t": "list",
+                    "names": [
+                      "PANAS1",
+                      "PANAS2",
+                      "PANAS3",
+                      "PANAS4",
+                      "PANAS5",
+                      "PANAS6",
+                      "PANAS7",
+                      "PANAS8",
+                      "PANAS9",
+                      "PANAS10"
+                    ],
+                    "v": [
+                      {
+                        "t": "chr",
+                        "v": [
+                          "Affect item 1"
+                        ]
+                      },
+                      {
+                        "t": "chr",
+                        "v": [
+                          "Affect item 2"
+                        ]
+                      },
+                      {
+                        "t": "chr",
+                        "v": [
+                          "Affect item 3"
+                        ]
+                      },
+                      {
+                        "t": "chr",
+                        "v": [
+                          "Affect item 4"
+                        ]
+                      },
+                      {
+                        "t": "chr",
+                        "v": [
+                          "Affect item 5"
+                        ]
+                      },
+                      {
+                        "t": "chr",
+                        "v": [
+                          "Affect item 6"
+                        ]
+                      },
+                      {
+                        "t": "chr",
+                        "v": [
+                          "Affect item 7"
+                        ]
+                      },
+                      {
+                        "t": "chr",
+                        "v": [
+                          "Affect item 8"
+                        ]
+                      },
+                      {
+                        "t": "chr",
+                        "v": [
+                          "Affect item 9"
+                        ]
+                      },
+                      {
+                        "t": "chr",
+                        "v": [
+                          "Affect item 10"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "names": [
+          "column_n",
+          "matched_n",
+          "unmatched_n",
+          "clean_n",
+          "conflicted_n",
+          "codebook_var_n",
+          "unused_var_n",
+          "scale_blocks_n",
+          "scale_named_n",
+          "scale_unnamed_n",
+          "task_files_n",
+          "task_named_n",
+          "task_paper_only_n"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

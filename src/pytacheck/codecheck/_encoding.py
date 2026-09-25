@@ -579,7 +579,16 @@ def vroom_lines(data: bytes, encoding: str | None, name: str = "", url: bool = F
         raise ReadFailed(f'Unknown encoding "{encoding}".')
     decode: Callable[[bytes], str] | None = None
     if encoding in _WIDE_CODECS:
-        # reencode_file(): the whole file through iconv into a temporary file
+        # reencode_file(): the whole file through iconv into a temporary file,
+        # read from base R's file() connection (which decompresses gzip/bzip2/
+        # xz by their magic bytes), or for a compressed URL from the
+        # gzfile()/bzfile()/xzfile() standardise_path() wrapped around it
+        if url:
+            ext = _file_ext(name).lower()
+            if ext in ("gz", "bz2", "xz", "zip"):
+                data = decompress(data, ext)
+        else:
+            data = _r_text_connection(data)
         data = _reencode_wide(data, encoding)
         encoding, name, url = "UTF-8", "vroom-reencode-file", False
     elif encoding != "UTF-8":

@@ -1,0 +1,70 @@
+{
+  "id": "code_expand_smcl.review.na_file_path",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 3,
+    "names": [
+      "repo_url",
+      "file_name",
+      "file_path",
+      "file_url",
+      "file_location",
+      "file_size"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "https://osf.io/abcde",
+          "https://osf.io/abcde",
+          "https://osf.io/abcde"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "analysis.smcl",
+          "twolevel.out",
+          "analysis.do"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "x/twolevel.out",
+          "NA/code/analysis.do"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "tests/codecheck/fixtures/expand/analysis.smcl",
+          "tests/codecheck/fixtures/expand/twolevel.out",
+          "tests/codecheck/fixtures/expand/code/analysis.do"
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          1,
+          1,
+          274
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

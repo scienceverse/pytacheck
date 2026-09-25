@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0">
+	<teiHeader>
+		<fileDesc><titleStmt><title>No body</title></titleStmt></fileDesc>
+		<encodingDesc><appInfo><application ident="GROBID" when="2025-07-24T14:36:59.999-0130"/></appInfo></encodingDesc>
+	</teiHeader>
+	<text>
+		<back>
+			<note place="foot" n="1" xml:id="foot_0">A back note citing <ref type="bibr" target="#b0">[1]</ref> and <ref type="foot" target="#foot_0">itself</ref>.</note>
+			<div type="references"><listBibl>
+<biblStruct xml:id="b0"><monogr><title level="m">Only</title><imprint><date when="1999">1999</date></imprint></monogr><note type="raw_reference">Only (1999).</note></biblStruct>
+			</listBibl></div>
+		</back>
+	</text>
+</TEI>

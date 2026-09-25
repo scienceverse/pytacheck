@@ -1,0 +1,258 @@
+{
+  "id": "module.ref_consistency.published",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "ref_consistency"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Reference Consistency"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "reference"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 22,
+        "names": [
+          "paper_id",
+          "bib_id",
+          "reference",
+          "contents",
+          "text"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "published",
+              "published",
+              "published",
+              "published",
+              "published",
+              "published",
+              "published",
+              "published",
+              "published",
+              "published",
+              "published",
+              "published",
+              "published",
+              "published",
+              "published",
+              "published",
+              "published",
+              "published",
+              "published",
+              "published",
+              "published",
+              "published"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              48,
+              51,
+              72,
+              73,
+              76,
+              77,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "R Core Team. (2019). R: A language and environment for statistical computing. R Foundation for Statistical Computing. https://www.R -project.org/",
+              "Revelle, W. (2018). psych: Procedures for personality and psychological research. Northwestern University. https://CRAN.R-project.org/package= psych",
+              "Van Doorn, E. A., Van Kleef, G. A., & Van der Pligt, J. (2015). How emo- tional expressions shape prosocial behavior: Interpersonal effects of an- ger and disappointment on compliance with requests. Motivation and Emotion, 39(1), 128-141. https://doi.org/10.1007/s11031-014-9421-6",
+              "Van Kleef, G. A., & Côté, S. (in press). The social effects of emotions. An- nual Review of Psychology.",
+              "Wickham, H., Francois, R., Henry, L., & Müller, K. (2019). dplyr: A gram- mar of data manipulation. https://CRAN.R-project.org/package=dplyr",
+              "Wickham, H., & Henry, L. (2019). tidyr: Easily tidy data with \"spread()\" and \"gather()\" functions. https://CRAN.R-project.org/package=tidyr Witkower, Z., & Tracy, J. L. (2019). Bodily communication of emotion: Evidence for extrafacial behavioral expressions and available coding systems. Emotion Review, 11(2), 184-193. https://doi.org/10.1177/1754073917749880",
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              "Witkower & Tracy, 2019)",
+              ", 2012)",
+              "Van Kleef & Côté, in press",
+              "",
+              "(2018-SP-8824;",
+              "2018-SP-9418)",
+              "",
+              "Version 4.4-0)",
+              "Version .27-2)",
+              "Version 1.4.5)",
+              "Version 3.1-1)",
+              "Version.5.16",
+              "Version 1.8.6)",
+              "(Wickham et al., 2019;",
+              "Version .8.5)",
+              "(Wickham & Henry,2019"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              "In general, many emotions involve facial, bodily, verbal, or vocal expressions that, in turn, play a pivotal role in communicating a person's experience (Aviezer et al., 2012; Elfenbein & Ambady, 2002; Sauter et al., 2010; Witkower & Tracy, 2019).",
+              "Malicious envy results from enviers' evaluation that the successful person's advantage is undeserved and that they blame others for the unfavorable rank difference (Van de Ven et al.,2009 , 2012).",
+              "Observers have affective reactions to facial expressions or infer a target's personal and situational characteristics from them (Lange et al., 2021; Van Kleef & Côté, in press).",
+              "Given that disappointment is associated with a missed positive outcome (Van Dijk et al., 1999;  here the envied person's advantage), observers may infer that the (benign) envier desires the advantage. Conversely, given that anger is associated with blaming others (Ellsworth & Scherer,2003; here the envied person) for an unfair situation, observers may infer that the (malicious) envier wants to harm the envied person.",
+              "The studies were conducted in accordance with the Declaration of Helsinki and received ethics approval from the Institutional Review Board of the University of Amsterdam (2018-SP-8824; 2018-SP-9418).",
+              "The studies were conducted in accordance with the Declaration of Helsinki and received ethics approval from the Institutional Review Board of the University of Amsterdam (2018-SP-8824; 2018-SP-9418).",
+              "The sad expression operationalized disappointment, as the two share a facial display (Ekman, 1993;  for the same approach, see Van Doorn et al.,2012 , 2015).",
+              "We conducted the analyses in R (R Core Team, 2019; Version 3.6.3) using the packages psych (Revelle, 2018; Version 1.9.12.31), ez (Lawrence, 2016; Version 4.4-0), afex (Singmann et al., 2020; Version .27-2), emmeans (Lenth, 2019; Version 1.4.5) and lmerTest (Kuznetsova et al., 2017; Version 3.1-1).",
+              "We conducted the analyses in R (R Core Team, 2019; Version 3.6.3) using the packages psych (Revelle, 2018; Version 1.9.12.31), ez (Lawrence, 2016; Version 4.4-0), afex (Singmann et al., 2020; Version .27-2), emmeans (Lenth, 2019; Version 1.4.5) and lmerTest (Kuznetsova et al., 2017; Version 3.1-1).",
+              "We conducted the analyses in R (R Core Team, 2019; Version 3.6.3) using the packages psych (Revelle, 2018; Version 1.9.12.31), ez (Lawrence, 2016; Version 4.4-0), afex (Singmann et al., 2020; Version .27-2), emmeans (Lenth, 2019; Version 1.4.5) and lmerTest (Kuznetsova et al., 2017; Version 3.1-1).",
+              "We conducted the analyses in R (R Core Team, 2019; Version 3.6.3) using the packages psych (Revelle, 2018; Version 1.9.12.31), ez (Lawrence, 2016; Version 4.4-0), afex (Singmann et al., 2020; Version .27-2), emmeans (Lenth, 2019; Version 1.4.5) and lmerTest (Kuznetsova et al., 2017; Version 3.1-1).",
+              "We also used the packages rio (Chan et al., 2018; Version.5.16), plyr (Wickham, 2011; Version 1.8.6), dyplr (Wickham et al., 2019; Version .8.5), and tidyr (Wickham & Henry,2019; Version 1.2).",
+              "We also used the packages rio (Chan et al., 2018; Version.5.16), plyr (Wickham, 2011; Version 1.8.6), dyplr (Wickham et al., 2019; Version .8.5), and tidyr (Wickham & Henry,2019; Version 1.2).",
+              "We also used the packages rio (Chan et al., 2018; Version.5.16), plyr (Wickham, 2011; Version 1.8.6), dyplr (Wickham et al., 2019; Version .8.5), and tidyr (Wickham & Henry,2019; Version 1.2).",
+              "We also used the packages rio (Chan et al., 2018; Version.5.16), plyr (Wickham, 2011; Version 1.8.6), dyplr (Wickham et al., 2019; Version .8.5), and tidyr (Wickham & Henry,2019; Version 1.2).",
+              "We also used the packages rio (Chan et al., 2018; Version.5.16), plyr (Wickham, 2011; Version 1.8.6), dyplr (Wickham et al., 2019; Version .8.5), and tidyr (Wickham & Henry,2019; Version 1.2)."
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "This module relies on Grobid correctly parsing the references. There are likley to be some false positives.",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(bib_id = c(48L, 51L, 72L, 73L, 76L, 77L, NA, NA, \nNA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA), type = c(\"extra\", \n\"extra\", \"extra\", \"extra\", \"extra\", \"extra\", \"missing\", \"missing\", \n\"missing\", \"missing\", \"missing\", \"missing\", \"missing\", \"missing\", \n\"missing\", \"missing\", \"missing\", \"missing\", \"missing\", \"missing\", \n\"missing\", \"missing\"), contents = c(NA, NA, NA, NA, NA, NA, \"Witkower & Tracy, 2019)\", \n\", 2012)\", \"Van Kleef & Côté, in press\", \"\", \"(2018-SP-8824;\", \n\"2018-SP-9418)\", \"\", \"Version 4.4-0)\", \"Version .27-2)\", \"Version 1.4.5)\", \n\"Version 3.1-1)\", \"Version.5.16\", \"Version 1.8.6)\", \"(Wickham et al., 2019;\", \n\"Version .8.5)\", \"(Wickham & Henry,2019\"), reference = c(\"R Core Team. (2019). R: A language and environment for statistical computing. R Foundation for Statistical Computing. https://www.R -project.org/\", \n\"Revelle, W. (2018). psych: Procedures for personality and psychological research. Northwestern University. https://CRAN.R-project.org/package= psych\", \n\"Van Doorn, E. A., Van Kleef, G. A., & Van der Pligt, J. (2015). How emo- tional expressions shape prosocial behavior: Interpersonal effects of an- ger and disappointment on compliance with requests. Motivation and Emotion, 39(1), 128-141. https://doi.org/10.1007/s11031-014-9421-6\", \n\"Van Kleef, G. A., & Côté, S. (in press). The social effects of emotions. An- nual Review of Psychology.\", \n\"Wickham, H., Francois, R., Henry, L., & Müller, K. (2019). dplyr: A gram- mar of data manipulation. https://CRAN.R-project.org/package=dplyr\", \n\"Wickham, H., & Henry, L. (2019). tidyr: Easily tidy data with \\\"spread()\\\" and \\\"gather()\\\" functions. https://CRAN.R-project.org/package=tidyr Witkower, Z., & Tracy, J. L. (2019). Bodily communication of emotion: Evidence for extrafacial behavioral expressions and available coding systems. Emotion Review, 11(2), 184-193. https://doi.org/10.1177/1754073917749880\", \n\"In general, many emotions involve facial, bodily, verbal, or vocal expressions that, in turn, play a pivotal role in communicating a person's experience (Aviezer et al., 2012; Elfenbein & Ambady, 2002; Sauter et al., 2010; Witkower & Tracy, 2019).\", \n\"Malicious envy results from enviers' evaluation that the successful person's advantage is undeserved and that they blame others for the unfavorable rank difference (Van de Ven et al.,2009 , 2012).\", \n\"Observers have affective reactions to facial expressions or infer a target's personal and situational characteristics from them (Lange et al., 2021; Van Kleef & Côté, in press).\", \n\"Given that disappointment is associated with a missed positive outcome (Van Dijk et al., 1999;  here the envied person's advantage), observers may infer that the (benign) envier desires the advantage. Conversely, given that anger is associated with blaming others (Ellsworth & Scherer,2003; here the envied person) for an unfair situation, observers may infer that the (malicious) envier wants to harm the envied person.\", \n\"The studies were conducted in accordance with the Declaration of Helsinki and received ethics approval from the Institutional Review Board of the University of Amsterdam (2018-SP-8824; 2018-SP-9418).\", \n\"The studies were conducted in accordance with the Declaration of Helsinki and received ethics approval from the Institutional Review Board of the University of Amsterdam (2018-SP-8824; 2018-SP-9418).\", \n\"The sad expression operationalized disappointment, as the two share a facial display (Ekman, 1993;  for the same approach, see Van Doorn et al.,2012 , 2015).\", \n\"We conducted the analyses in R (R Core Team, 2019; Version 3.6.3) using the packages psych (Revelle, 2018; Version 1.9.12.31), ez (Lawrence, 2016; Version 4.4-0), afex (Singmann et al., 2020; Version .27-2), emmeans (Lenth, 2019; Version 1.4.5) and lmerTest (Kuznetsova et al., 2017; Version 3.1-1).\", \n\"We conducted the analyses in R (R Core Team, 2019; Version 3.6.3) using the packages psych (Revelle, 2018; Version 1.9.12.31), ez (Lawrence, 2016; Version 4.4-0), afex (Singmann et al., 2020; Version .27-2), emmeans (Lenth, 2019; Version 1.4.5) and lmerTest (Kuznetsova et al., 2017; Version 3.1-1).\", \n\"We conducted the analyses in R (R Core Team, 2019; Version 3.6.3) using the packages psych (Revelle, 2018; Version 1.9.12.31), ez (Lawrence, 2016; Version 4.4-0), afex (Singmann et al., 2020; Version .27-2), emmeans (Lenth, 2019; Version 1.4.5) and lmerTest (Kuznetsova et al., 2017; Version 3.1-1).\", \n\"We conducted the analyses in R (R Core Team, 2019; Version 3.6.3) using the packages psych (Revelle, 2018; Version 1.9.12.31), ez (Lawrence, 2016; Version 4.4-0), afex (Singmann et al., 2020; Version .27-2), emmeans (Lenth, 2019; Version 1.4.5) and lmerTest (Kuznetsova et al., 2017; Version 3.1-1).\", \n\"We also used the packages rio (Chan et al., 2018; Version.5.16), plyr (Wickham, 2011; Version 1.8.6), dyplr (Wickham et al., 2019; Version .8.5), and tidyr (Wickham & Henry,2019; Version 1.2).\", \n\"We also used the packages rio (Chan et al., 2018; Version.5.16), plyr (Wickham, 2011; Version 1.8.6), dyplr (Wickham et al., 2019; Version .8.5), and tidyr (Wickham & Henry,2019; Version 1.2).\", \n\"We also used the packages rio (Chan et al., 2018; Version.5.16), plyr (Wickham, 2011; Version 1.8.6), dyplr (Wickham et al., 2019; Version .8.5), and tidyr (Wickham & Henry,2019; Version 1.2).\", \n\"We also used the packages rio (Chan et al., 2018; Version.5.16), plyr (Wickham, 2011; Version 1.8.6), dyplr (Wickham et al., 2019; Version .8.5), and tidyr (Wickham & Henry,2019; Version 1.2).\", \n\"We also used the packages rio (Chan et al., 2018; Version.5.16), plyr (Wickham, 2011; Version 1.8.6), dyplr (Wickham et al., 2019; Version .8.5), and tidyr (Wickham & Henry,2019; Version 1.2).\"\n)), row.names = c(NA, -22L), class = c(\"tbl_df\", \"tbl\", \"data.frame\"\n))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 2, FALSE)\n```\n"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "red"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "There are cross-references that are not in the bibliography and/or bibliography entries not cross-referenced in the text"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "n_bib",
+          "n_xrefs",
+          "n_missing",
+          "n_extra"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "published"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              77
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              149
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              16
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              6
+            ]
+          }
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

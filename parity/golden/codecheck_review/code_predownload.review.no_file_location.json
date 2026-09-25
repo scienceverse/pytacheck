@@ -1,0 +1,64 @@
+{
+  "id": "code_predownload.review.no_file_location",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 2,
+    "names": [
+      "repo_url",
+      "file_name",
+      "file_path",
+      "file_url",
+      "file_size",
+      "language"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "https://osf.io/abcde",
+          "https://osf.io/abcde"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "a.smcl",
+          "b.R"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "sub/a.smcl",
+          "sub/b.R"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://example.invalid/a.smcl",
+          "https://example.invalid/b.R"
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          1,
+          1
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "R"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

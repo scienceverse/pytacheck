@@ -1,0 +1,26 @@
+{
+ "paper_id": "row_scalar",
+ "schema_version": "12.0",
+ "source": {
+  "file_name": "m.pdf",
+  "sha256": null,
+  "input_format": "pdf"
+ },
+ "metadata": {
+  "title": "Malformed"
+ },
+ "extraction": {
+  "producer": {
+   "name": "bibr",
+   "version": "0.3.0"
+  },
+  "completed_at": "2026-01-02T03:04:05Z"
+ },
+ "author": [
+  {
+   "author_id": 1,
+   "family": "A"
+  },
+  "(3)"
+ ]
+}

@@ -1,0 +1,305 @@
+{
+  "id": "psychds_check.multi",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "psychds_check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Psych-DS Check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "results"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 9,
+        "names": [
+          "file_name",
+          "data_type",
+          "group",
+          "current_path",
+          "target_path",
+          "status",
+          "convert",
+          "original_target",
+          "referenced_by"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "README.md",
+              "README.txt",
+              "s1.csv",
+              "s2.xlsx",
+              "an1.R",
+              "shared.pdf",
+              "LICENSE",
+              "ro-crate-metadata.json",
+              "p.sps"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "documentation",
+              "documentation",
+              "data",
+              "data",
+              "code",
+              "materials",
+              "documentation",
+              "code",
+              "code"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "ex1",
+              "ex1",
+              "ex2",
+              "ex1",
+              "ex1",
+              null,
+              null,
+              "pilot1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "README.md",
+              "study1/README.txt",
+              "study1/data/s1.csv",
+              "study2/s2.xlsx",
+              "study1/an1.R",
+              "materials/shared.pdf",
+              "LICENSE",
+              "ro-crate-metadata.json",
+              "pilot/p.sps"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "README.md",
+              "study-ex1/README.txt",
+              "study-ex1/data/study-s1_data.csv",
+              "study-ex2/data/study-s2_data.csv",
+              "study-ex1/analysis/an1.R",
+              "study-ex1/materials/shared.pdf",
+              "LICENSE",
+              "analysis/ro-crate-metadata.json",
+              "study-pilot1/analysis/p.sps"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "present",
+              "move",
+              "move",
+              "move",
+              "move",
+              "move",
+              "present",
+              "move",
+              "move"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false,
+              false,
+              false,
+              true,
+              false,
+              false,
+              false,
+              false,
+              false
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              "study-ex2/data/s2.xlsx",
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "null"
+              },
+              {
+                "t": "null"
+              },
+              {
+                "t": "null"
+              },
+              {
+                "t": "null"
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "ex2"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "ex2",
+                  "pilot1"
+                ]
+              },
+              {
+                "t": "null"
+              },
+              {
+                "t": "null"
+              },
+              {
+                "t": "null"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "This module checks the repository against the Psych-DS dataset standard. We examined 9 files across 3 study groups.",
+          "#### Compliance Checklist",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Requirement = c(\"dataset_description.json\", \"data/ directory with data files\", \n\"describable variables (variableMeasured)\", \"README\", \"CHANGES\", \n\"variable descriptions\"), Level = c(\"required\", \"required\", \"required\", \n\"recommended\", \"recommended\", \"recommended\"), Status = c(\"missing\", \n\"present\", \"present\", \"present\", \"missing\", \"present\"), Detail = c(\"Root metadata file describing the dataset (required).\", \n\"At least one machine-readable data file under data/ (required).\", \n\"Data files must have extractable, typed columns to populate variableMeasured (required).\", \n\"A README at the repository root (recommended).\", \"A CHANGES file logging dataset versions (recommended).\", \n\"Codebook descriptions for variables improve reuse (recommended; see codebook_check).\"\n)), row.names = c(NA, -6L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
+          "#### Target Psych-DS Structure",
+          "The tree below shows the Psych-DS layout this repository should have. Files in <span style=\"color:#c0392b\">red<\/span> are required but missing; files annotated *(move from ...)* exist but need relocating.",
+          "<pre style=\"line-height:1.4\">\n├── analysis/\n│   └── ro-crate-metadata.json <span style=\"color:#b9770e\">(move from ro-crate-metadata.json)<\/span>\n├── study-ex1/\n│   ├── analysis/\n│   │   └── an1.R <span style=\"color:#b9770e\">(move from study1/an1.R)<\/span>\n│   ├── data/\n│   │   └── study-s1_data.csv <span style=\"color:#b9770e\">(move from study1/data/s1.csv)<\/span>\n│   ├── materials/\n│   │   └── shared.pdf <span style=\"color:#b9770e\">(move from materials/shared.pdf)<\/span>\n│   ├── <span style=\"color:#c0392b\">CHANGES  ← missing<\/span>\n│   ├── <span style=\"color:#c0392b\">dataset_description.json  ← missing<\/span>\n│   └── README.txt <span style=\"color:#b9770e\">(move from study1/README.txt)<\/span>\n├── study-ex2/\n│   ├── data/\n│   │   └── study-s2_data.csv <span style=\"color:#b9770e\">(move from study2/s2.xlsx)<\/span>\n│   ├── <span style=\"color:#c0392b\">CHANGES  ← missing<\/span>\n│   └── <span style=\"color:#c0392b\">dataset_description.json  ← missing<\/span>\n├── study-pilot1/\n│   ├── analysis/\n│   │   └── p.sps <span style=\"color:#b9770e\">(move from pilot/p.sps)<\/span>\n│   ├── <span style=\"color:#c0392b\">CHANGES  ← missing<\/span>\n│   └── <span style=\"color:#c0392b\">dataset_description.json  ← missing<\/span>\n├── <span style=\"color:#c0392b\">CHANGES  ← missing<\/span>\n├── LICENSE\n└── README.md\n<\/pre>",
+          "#### Suggestions",
+          "- **Add** dataset_description.json — Root metadata file describing the dataset (required).\n- **Move** `study1/README.txt` → `study-ex1/README.txt`.\n- **Move** `study1/data/s1.csv` → `study-ex1/data/study-s1_data.csv`.\n- **Move** `study2/s2.xlsx` → `study-ex2/data/study-s2_data.csv`.\n- **Move** `study1/an1.R` → `study-ex1/analysis/an1.R`.\n- **Move** `materials/shared.pdf` → `study-ex1/materials/shared.pdf`.\n- ...and 2 more files to relocate.\n- **Add** CHANGES — A CHANGES file logging dataset versions (recommended).",
+          "You can generate a Psych-DS-compliant copy of this repository — with the moves above applied and a `dataset_description.json` built from the extracted variables — using `metacheck::convert_psychds(paper, output_dir)`.",
+          "To also produce a human-readable codebook of the extracted variables (a labelled data frame plus a ready-to-run R Markdown document for the `codebook` package), use `metacheck::convert_codebook(paper, output_dir)`."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "yellow"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "\n-  2 of 3 required Psych-DS items present; 1 missing.\n-  7 files would need to move to a Psych-DS location.\n-  1 recommended item missing."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "required_met",
+          "required_missing",
+          "recommended_met",
+          "recommended_missing",
+          "misplaced_n"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "to_err_is_human"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              7
+            ]
+          }
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "names": [
+          "required_met",
+          "required_missing",
+          "recommended_met",
+          "recommended_missing",
+          "misplaced_n"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

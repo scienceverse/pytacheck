@@ -1,0 +1,19 @@
+{
+  "id": "repo_cache_rel.url4",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "osf.io_ab_c_x_1/data/a.csv",
+      "osf.io_ab_c_x_1/win//b.R",
+      "osf.io_ab_c_x_1/abs/c.txt",
+      "osf.io_ab_c_x_1/",
+      "osf.io_ab_c_x_1/NA",
+      "osf.io_ab_c_x_1/déjà/vu.txt"
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

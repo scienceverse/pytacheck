@@ -39,6 +39,7 @@ import pandas as pd
 
 from pytacheck._r.base import as_character, trimws
 from pytacheck._r.regex import grepl, is_na, sub
+from pytacheck.papers.io import _dollar
 from pytacheck.papers.model import Paper
 from pytacheck.papers.schema import (
     SCHEMA_DTYPES,
@@ -423,9 +424,10 @@ def _cell(e: Any, typ: str) -> Any:
     if typ == "chr[][]":
         if e is None:
             return []
-        rows = (
-            list(e.values()) if isinstance(e, dict) else e if isinstance(e, list | tuple) else [e]
-        )
+        if isinstance(e, dict):
+            # lapply() over a named list keeps its names: written back as an object
+            return {k: _unlist_as(r, "string") for k, r in e.items()}
+        rows = e if isinstance(e, list | tuple) else [e]
         return [_unlist_as(r, "string") for r in rows]
     return e  # json
 
@@ -441,10 +443,91 @@ def _bibr12_rows(rows: Any, cols: Mapping[str, str]) -> dict[str, list[Any]]:
     The columns of a JSON array of objects: one list per column, ``None`` for
     a missing value.
     """
-    records = (
-        rows if isinstance(rows, list) else list(rows.values()) if isinstance(rows, dict) else []
-    )
-    return {col: [r.get(col) if isinstance(r, Mapping) else None for r in records] for col in cols}
+    records = _as_rows(rows)
+    return {col: [_r_index(r, col) for r in records] for col in cols}
+
+
+def _as_rows(rows: Any) -> list[Any]:
+    """The elements ``lapply(rows, ...)`` runs over: an array's, an object's values, a scalar."""
+    if rows is None:
+        return []
+    if isinstance(rows, list):
+        return rows
+    if isinstance(rows, dict):
+        return list(rows.values())
+    return [rows]
+
+
+def _r_index(r: Any, col: str) -> Any:
+    """``r[[col]]`` on one parsed JSON row: NULL for null, an array or a missing key.
+
+    A scalar row (a string, number or boolean) stops, as in R.
+    """
+    if isinstance(r, Mapping):
+        return r.get(col)
+    if r is None or isinstance(r, list):
+        return None
+    raise ValueError("subscript out of bounds")
+
+
+def _flat_first(e: Any) -> list[Any]:
+    """What ``unlist(lapply(v, \\(e) if (length(e) == 0) NA else e[[1]]))`` keeps of one value.
+
+    One value for a scalar, ``null``, ``[]`` or ``{}`` (NA), or an array whose
+    first element is a scalar; none when that element is null; every scalar
+    of it when it is an array or object (``unlist()`` flattens it).
+    """
+    if isinstance(e, list):
+        if not e:
+            return [None]
+        f = e[0]
+    elif isinstance(e, dict):
+        if not e:
+            return [None]
+        f = next(iter(e.values()))
+    else:
+        return [_jnum(e)]
+    if f is None:
+        return []
+    if isinstance(f, list | dict):
+        out: list[Any] = []
+        _flatten(f, out)
+        return out
+    return [_jnum(f)]
+
+
+def _replacement(flat: list[Any], n: int) -> list[Any] | str:
+    """``df[[col]] <- flat`` on an *n*-row data frame: the column, or R's error message."""
+    size = len(flat)
+    if size == n:
+        return flat
+    if 0 < size < n and n % size == 0:
+        return flat * (n // size)
+    return f"replacement has {size} rows, data has {n}"
+
+
+def _as_character_list(v: Any) -> list[str | None]:
+    """``as.character(v)`` of a parsed JSON value (``character(0)`` for NULL)."""
+    if v is None:
+        return []
+    if isinstance(v, list | dict):
+        out: list[str | None] = []
+        for e in v.values() if isinstance(v, dict) else v:
+            if e is None:
+                out.append("NULL")
+            elif isinstance(e, list | dict):
+                out.append(orjson.dumps(e).decode())  # R deparses it; not a value bibr writes
+            else:
+                out.append(as_character(_jnum(e)))
+        return out
+    return [as_character(_jnum(v))]
+
+
+def _dollar_atomic(x: Any, name: str) -> Any:
+    """``x$name``, which stops for a scalar (an atomic vector in R)."""
+    if x is not None and not isinstance(x, list | Mapping):
+        raise ValueError("$ operator is invalid for atomic vectors")
+    return _dollar(x, name)
 
 
 def _is_list_column(v: Any) -> bool:
@@ -534,8 +617,49 @@ def _array_cells(v: Any, n: int, typ: str) -> list[Any]:
         ):
             out.append([[None]] if typ == "chr[][]" else [None])
         else:
-            out.append(_cell(_to_json_value(e), typ))
+            out.append(_cell_na(_to_json_value(e), typ))
     return out
+
+
+def _flatten_na(e: Any, out: list[Any]) -> None:
+    """``unlist()`` of a paper's array cell: its scalars, missing values kept as NA.
+
+    A cell read from JSON is already normalised (its nulls dropped), so a
+    ``None`` left in it is an NA, e.g. ``as.integer("x")``.
+    """
+    if isinstance(e, list | tuple):
+        for v in e:
+            _flatten_na(v, out)
+    elif isinstance(e, dict):
+        for v in e.values():
+            _flatten_na(v, out)
+    else:
+        out.append(None if _scalar_na(e) else _jnum(e))
+
+
+def _unlist_na(e: Any, schema_type: str) -> list[Any]:
+    vals: list[Any] = []
+    _flatten_na(e, vals)
+    if schema_type == "string" and all(type(v) is str for v in vals):
+        return vals
+    if schema_type == "integer" and all(type(v) is int for v in vals):
+        return vals
+    series = coerce_column(infer_column(vals), schema_type)
+    return [None if is_na(v) else v for v in series.tolist()]
+
+
+def _cell_na(e: Any, typ: str) -> Any:
+    """An array cell of a paper's table as ``.bibr12_df()`` makes it (see :func:`_flatten_na`)."""
+    if e is None:
+        return [] if typ != "json" else None
+    if typ == "chr[]":
+        return _unlist_na(e, "string")
+    if typ == "int[]":
+        return _unlist_na(e, "integer")
+    if isinstance(e, dict):
+        return {k: _unlist_na(r, "string") for k, r in e.items()}
+    rows = e if isinstance(e, list | tuple) else [e]
+    return [_unlist_na(r, "string") for r in rows]
 
 
 def _scalar_na(e: Any) -> bool:
@@ -589,7 +713,7 @@ def _bibr12_df(
 
 def _bibr12_records(
     rows: Any, cols: Mapping[str, str], drop: Sequence[str] = ()
-) -> list[dict[str, Any]]:
+) -> tuple[list[dict[str, Any]], list[str]]:
     """The rows of one 12.0 table as normalised records (for lazy materialisation).
 
     ``records_to_frame()`` builds from these records exactly the data frame
@@ -597,10 +721,19 @@ def _bibr12_records(
     ``.paper_coerce()``: every 12.0 column is in the merged paper schema with
     the same type. Columns in *drop* are all NA. A row whose values need no
     normalisation is kept as parsed (keys 12.0 does not define are never read).
+
+    Also returns the errors ``.paper_coerce()`` stops with for this table, in
+    column order: a scalar column whose values ``unlist()`` to another length
+    than the table's rows (an array of arrays, ``[null]``) cannot be assigned
+    back to the data frame (a shorter one is recycled when it divides it).
     """
     records = _as_rows(rows)
+    for row in records:
+        _r_index(row, "")  # a scalar row stops, as .bibr12_rows() does
+    n = len(records)
     scalar = [col for col, typ in cols.items() if typ in _SCALAR_SCHEMA and col not in drop]
     special = [(col, typ) for col, typ in cols.items() if typ in ("chr[]", "int[]", "chr[][]")]
+    irregular: set[str] = set()
     out = []
     for row in records:
         r: dict[str, Any] = row if isinstance(row, dict) else {}
@@ -612,9 +745,13 @@ def _bibr12_records(
                 continue
             if t is int and -_INT_MAX <= v <= _INT_MAX:
                 continue
+            flat = _flat_first(v)
+            if len(flat) != 1:
+                irregular.add(col)
+                continue
             if rec is None:
                 rec = dict(r)
-            rec[col] = _first(v)
+            rec[col] = flat[0]
         for col, typ in special:
             if rec is None:
                 rec = dict(r)
@@ -624,35 +761,65 @@ def _bibr12_records(
                 rec = dict(r)
             rec[col] = None
         out.append(r if rec is None else rec)
-    return out
+    issues: list[str] = []
+    for col in (c for c in scalar if c in irregular):
+        flat_col: list[Any] = []
+        for row in records:
+            flat_col.extend(_flat_first(row.get(col) if isinstance(row, dict) else None))
+        values = _replacement(flat_col, n)
+        if isinstance(values, str):
+            issues.append(values)
+            continue
+        for i, value in enumerate(values):
+            if out[i] is records[i]:
+                out[i] = dict(out[i])
+            out[i][col] = value
+    return out, issues
 
 
-def _bibr12_info(metadata: Any, source: Any, schema_version: str, producer: Any) -> pd.DataFrame:
-    """Port of ``R/import-bibr12.R::.bibr12_info()``: the one-row ``info`` table of a 12.x paper."""
+def _bibr12_info(
+    metadata: Any, source: Any, schema_version: str, extraction: Any
+) -> tuple[pd.DataFrame, list[str]]:
+    """Port of ``R/import-bibr12.R::.bibr12_info()``: the one-row ``info`` table of a 12.x paper.
+
+    *extraction* is the export's extraction block (R reads ``$producer`` of
+    it lazily, after the source). Also returns the errors ``.paper_coerce()``
+    stops with for the metadata columns (see :func:`_bibr12_records`).
+    """
     meta = metadata if isinstance(metadata, Mapping) else {}
-    src = source if isinstance(source, Mapping) else {}
     row: dict[str, Any] = {}
+    issues: list[str] = []
     for col, typ in BIBR12_COLS["metadata"].items():
-        row[col] = _cell(meta.get(col), typ)
+        if typ in _SCALAR_SCHEMA:
+            values = _replacement(_flat_first(meta.get(col)), 1)
+            if isinstance(values, str):
+                issues.append(values)
+                row[col] = None
+            else:
+                row[col] = values[0]
+        else:
+            row[col] = _cell(meta.get(col), typ)
     for col in ("file_name", "sha256", "input_format"):
-        row[col] = _chr1(_first(src.get(col)))
+        # info$file_name <- as.character(source$file_name %||% NA)
+        v = _dollar_atomic(source, col)
+        values = [None] if v is None else _as_character_list(v)
+        if len(values) != 1:
+            raise ValueError(f"replacement has {len(values)} rows, data has 1")
+        row[col] = values[0]
     row["schema_version"] = schema_version
     # the older info columns paper.json requires
     sha = row["sha256"]
     row["file_hash"] = None if sha is None else str(sha)[:16]
     row["bibr_version"] = None
-    if isinstance(producer, Mapping) and producer.get("name") == "bibr":
-        version = producer.get("version")
-        if isinstance(version, list):
-            if len(version) != 1:
-                raise ValueError(f"replacement has {len(version)} rows, data has 1")
-            version = version[0]
-        if version is None:
-            raise ValueError("replacement has 0 rows, data has 1")
-        row["bibr_version"] = _chr1(_jnum(version))
+    producer = _dollar_atomic(extraction, "producer")
+    if _dollar_atomic(producer, "name") == "bibr":
+        version = _as_character_list(_dollar(producer, "version"))
+        if len(version) != 1:
+            raise ValueError(f"replacement has {len(version)} rows, data has 1")
+        row["bibr_version"] = version[0]
     frame = records_to_frame("info", [row], list(row))
     frame["keywords"] = pd.Series([row["keywords"]], dtype=object)
-    return frame
+    return frame, issues
 
 
 def _chr1(v: Any) -> str | None:
@@ -687,7 +854,10 @@ def _names_records(persons: Any) -> Any:
         # NULL$given and an unnamed list's $given are NULL: NA
         person = p if isinstance(p, Mapping) else {}
         out.append(
-            {"given": _person_name(person.get("given"), i), "family": _person_name(person.get("family"), i)}
+            {
+                "given": _person_name(person.get("given"), i),
+                "family": _person_name(person.get("family"), i),
+            }
         )
     return out
 
@@ -726,20 +896,31 @@ def _bibr12_paper(
     :func:`_bibr12_records`); they are materialised as data frames on first
     use, like every table read from JSON.
     """
-    p = Paper(None if paper_id is None else _chr1(_jnum(paper_id)))
+    # paper(id) then as.character(paper_id): an array id [null] is "NULL"
+    pid: Any = paper_id
+    if isinstance(pid, list | dict):
+        ids = _as_character_list(pid)
+        pid = ids[0] if ids else None  # R keeps a character(0) or longer vector
+    p = Paper(None if pid is None else _chr1(_jnum(pid)))
     p.info = info
+    # the older given/family columns metacheck's modules read (ref_accuracy),
+    # made in R's order: bib_match, then info_match; authors, then editors
+    names: dict[str, dict[str, list[Any]]] = {}
+    for tbl in ("bib_match", "metadata_match"):
+        records = list(tables.get(tbl) or [])
+        names[tbl] = {
+            "authors": [_names_records(r.get("author")) for r in records],
+            "editors": [_names_records(r.get("editor")) for r in records],
+        }
     for tbl, name in BIBR12_TABLES.items():
         records = list(tables.get(tbl) or [])
         columns = list(BIBR12_COLS[tbl])
-        if tbl in ("bib_match", "metadata_match"):
-            # the older given/family columns metacheck's modules read (ref_accuracy)
+        if tbl in names:
             records = [
-                {
-                    **r,
-                    "authors": _names_records(r.get("author")),
-                    "editors": _names_records(r.get("editor")),
-                }
-                for r in records
+                {**r, "authors": a, "editors": e}
+                for r, a, e in zip(
+                    records, names[tbl]["authors"], names[tbl]["editors"], strict=True
+                )
             ]
             columns += ["authors", "editors"]
         p._set_raw(name, records, columns)
@@ -755,7 +936,7 @@ def _bibr12_paper(
 
 def _schema_version(x: Mapping[str, Any]) -> str:
     """``as.character(x$schema_version[[1]])``."""
-    v = x.get("schema_version")
+    v = _dollar(x, "schema_version")
     if isinstance(v, list):
         if not v:
             raise ValueError("subscript out of bounds")
@@ -771,7 +952,14 @@ def _schema_version(x: Mapping[str, Any]) -> str:
 
 
 def _bibr12_from_json(x: Mapping[str, Any], include_images: bool, file_name: str) -> Paper:
-    """``.read_bibr12()`` on already parsed JSON (``file_name`` names it in errors)."""
+    """``.read_bibr12()`` on already parsed JSON (``file_name`` names it in errors).
+
+    Malformed input stops where and as metacheck stops: a scalar table row
+    (``.bibr12_rows()``), a ``df`` array of other than one element, a scalar
+    ``source``/``extraction``/``producer`` (``$``), a scalar person
+    (``names_df()``), then a scalar column that cannot be assigned back
+    (``.paper_coerce()``, in the order it coerces the paper's tables).
+    """
     version = _schema_version(x)
     if not grepl(r"^12\.", version):
         raise ValueError(
@@ -779,29 +967,58 @@ def _bibr12_from_json(x: Mapping[str, Any], include_images: bool, file_name: str
             f"and the older files without a root schema_version ({file_name})"
         )
 
-    tables: dict[str, list[dict[str, Any]]] = {}
-    for tbl in BIBR12_TABLES:
-        drop = ("image",) if tbl == "figure" and not include_images else ()
-        tables[tbl] = _bibr12_records(x.get(tbl), BIBR12_COLS[tbl], drop)
+    raw = {tbl: _as_rows(x.get(tbl)) for tbl in BIBR12_TABLES}
+    for rows in raw.values():
+        for row in rows:
+            _r_index(row, "")  # .bibr12_rows(): a scalar row stops
 
     # metacheck keeps degrees of freedom in parentheses, as printed: "(28)"
-    tables["eq"] = [
-        {**rec, "df": _first(_paren_df(raw.get("df") if isinstance(raw, Mapping) else None))}
-        for rec, raw in zip(tables["eq"], _as_rows(x.get("eq")), strict=True)
+    raw["eq"] = [
+        {**r, "df": _paren_df(r.get("df"))} if isinstance(r, dict) else r for r in raw["eq"]
     ]
 
-    extraction = x.get("extraction")
-    producer = extraction.get("producer") if isinstance(extraction, Mapping) else None
-    info = _bibr12_info(x.get("metadata"), x.get("source"), version, producer)
-    return _bibr12_paper(x.get("paper_id"), info, tables, extraction)
+    # R reads these with `$`, which matches a unique prefix (metadata_match
+    # stands in for a missing metadata object)
+    extraction = _dollar(x, "extraction")
+    info, info_issues = _bibr12_info(
+        _dollar(x, "metadata"), _dollar(x, "source"), version, extraction
+    )
+
+    tables: dict[str, list[dict[str, Any]]] = {}
+    issues: dict[str, list[str]] = {"metadata": info_issues}
+    for tbl in BIBR12_TABLES:
+        drop = ("image",) if tbl == "figure" and not include_images else ()
+        tables[tbl], issues[tbl] = _bibr12_records(raw[tbl], BIBR12_COLS[tbl], drop)
+
+    p = _bibr12_paper(_dollar(x, "paper_id"), info, tables, extraction)
+    # .paper_coerce() stops at the first column it cannot assign back
+    for tbl in _COERCE_ORDER:
+        if issues[tbl]:
+            raise ValueError(issues[tbl][0])
+    return p
 
 
-def _as_rows(rows: Any) -> list[Any]:
-    if isinstance(rows, list):
-        return rows
-    if isinstance(rows, dict):
-        return list(rows.values())
-    return []
+# the order .paper_coerce() coerces a 12.x paper's tables in (12.0 names):
+# paper()'s tables, then those .bibr12_paper() adds
+_COERCE_ORDER = (
+    "metadata",
+    "author",
+    "text",
+    "section",
+    "url",
+    "bib",
+    "xref",
+    "figure",
+    "table",
+    "eq",
+    "affiliation",
+    "funding",
+    "footnote",
+    "metadata_match",
+    "affiliation_match",
+    "funding_match",
+    "bib_match",
+)
 
 
 def _paren_df(df: Any) -> Any:
@@ -821,7 +1038,13 @@ def _paren_df(df: Any) -> Any:
         if len(values) > 1:
             raise ValueError(f"'length = {len(values)}' in coercion to 'logical(1)'")
         e = values[0]
-        s = "NULL" if e is None else as_character(_jnum(e)) if not isinstance(e, list | dict) else None
+        s = (
+            "NULL"
+            if e is None
+            else as_character(_jnum(e))
+            if not isinstance(e, list | dict)
+            else None
+        )
         if s is None:
             s = "NA" if not isinstance(e, list | dict) else orjson.dumps(e).decode()
     else:
@@ -1134,7 +1357,14 @@ def _rows_out(columns: Mapping[str, list[Any]], cols: Mapping[str, str]) -> list
         elif typ in ("chr[]", "int[]"):
             lists.append([_Array(e) for e in v])
         elif typ == "chr[][]":
-            lists.append([[_Array(r) for r in e] for e in v])
+            lists.append(
+                [
+                    {k: _Array(r) for k, r in e.items()}
+                    if isinstance(e, dict)
+                    else [_Array(r) for r in e]
+                    for e in v
+                ]
+            )
         else:
             lists.append(list(v))
     names = list(cols)

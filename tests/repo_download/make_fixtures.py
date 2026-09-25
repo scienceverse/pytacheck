@@ -9,7 +9,9 @@ Writes ``tests/repo_download/data/`` (archives, compressed files, sample
 downloads) and ``tests/repo_download/mocks/`` (httptest2-format responses
 for ``zip_peek()`` parity cases: a ``HEAD`` with ``Content-Length`` and a
 ``206``/``200`` range answer holding the archive's bytes). The outputs are
-committed; this script documents how they were made.
+committed; this script documents how they were made. Re-running it may change
+the bytes of the archives made by the ``zip`` tool, so regenerate the parity
+goldens afterwards (``python -m parity generate --area repo_download``).
 """
 
 from __future__ import annotations
@@ -97,19 +99,14 @@ def _mock(
     path.write_text(text, encoding="utf-8")
 
 
-def _zip_mocks(name: str, data: bytes, *, range_status: int = 206, head: bool = True) -> None:
+def _zip_mocks(name: str, data: bytes, *, range_status: int = 206, length: bool = True) -> None:
     """Recorded answers for ``https://mock.example.org/zips/<name>``."""
     url = f"https://mock.example.org/zips/{name}"
     base = MOCKS / "mock.example.org" / "zips" / name
-    if head:
-        _mock(
-            base.with_name(f"{name}-HEAD.R"),
-            url,
-            "HEAD",
-            200,
-            {"Content-Type": "application/zip", "Content-Length": str(len(data))},
-            b"",
-        )
+    head = {"Content-Type": "application/zip"}
+    if length:
+        head["Content-Length"] = str(len(data))
+    _mock(base.with_name(f"{name}-HEAD.R"), url, "HEAD", 200, head, b"")
     _mock(
         base.with_name(f"{name}.R"),
         url,
@@ -203,7 +200,8 @@ def main() -> None:
     _zip_mocks("notzip.zip", (DATA / "notzip.bin").read_bytes())
     _zip_mocks("ignored-range.zip", (DATA / "mixed.zip").read_bytes(), range_status=200)
     _zip_mocks("refused.zip", b"Forbidden", range_status=403)
-    _zip_mocks("nohead.zip", (DATA / "mixed.zip").read_bytes(), head=False)
+    _zip_mocks("tail-retry.zip", (DATA / "mixed.zip").read_bytes())
+    _zip_mocks("nolength.zip", (DATA / "mixed.zip").read_bytes(), length=False)
 
 
 if __name__ == "__main__":

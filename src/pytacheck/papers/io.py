@@ -33,6 +33,20 @@ __all__ = [
 _BIBR_TABLES = ("author", "bib", "eq", "figure", "url", "section", "table", "text", "xref")
 
 
+def _dollar(x: Any, name: str) -> Any:
+    """R's ``x$name`` on a parsed JSON object: an exact key, else the one key it prefixes.
+
+    metacheck's readers use ``$``, so a file without ``bib`` but with
+    ``bib_match`` reads its ``bib_match`` rows as ``bib`` too.
+    """
+    if not isinstance(x, Mapping):
+        return None
+    if name in x:
+        return x[name]
+    hits = [k for k in x if isinstance(k, str) and k.startswith(name)]
+    return x[hits[0]] if len(hits) == 1 else None
+
+
 def paper(paper_id: str | None = None) -> Paper:
     """``metacheck::paper()``: an empty paper with every required table."""
     return Paper(paper_id)
@@ -48,9 +62,11 @@ def _info_frame(info: Any) -> pd.DataFrame:
     if isinstance(info, list):
         record = info[0] if info else {}
         # R: info$keywords of the data frame jsonlite makes is the column, so
-        # an array value is wrapped in one more list (list(c("a", "b")))
+        # a flat array is wrapped in one more list (list(c("a", "b"))); an
+        # array of one array (what paper_write() writes) is a 1-row matrix,
+        # which the nested list already is
         keywords: Any = record.get("keywords")
-        if isinstance(keywords, list):
+        if isinstance(keywords, list) and not any(isinstance(e, list | dict) for e in keywords):
             keywords = [keywords]
         row = dict(record)
     elif isinstance(info, Mapping):
@@ -133,7 +149,7 @@ def from_bibr(data: Mapping[str, Any] | Any, include_images: bool = False) -> Pa
         data = getattr(data, "data", data)
     if not isinstance(data, Mapping):
         raise TypeError("from_bibr() needs a dict of bibr JSON or a bibr.Result")
-    if data.get("schema_version") is not None:
+    if _dollar(data, "schema_version") is not None:
         from pytacheck.io.bibr12 import _bibr12_from_json
 
         # the JSON values metacheck would read, detached from the caller's dict
@@ -147,14 +163,14 @@ def from_bibr(data: Mapping[str, Any] | Any, include_images: bool = False) -> Pa
 
 def _from_bibr_legacy(data: Mapping[str, Any], include_images: bool) -> Paper:
     """``.read_bibr()`` of a file without a root ``schema_version`` (bibr v10.x and older)."""
-    p = Paper(data.get("paper_id"))
+    p = Paper(_dollar(data, "paper_id"))
     # R: paper$paper_id <- data$paper_id (NULL when missing)
-    p.paper_id = data.get("paper_id")
+    p.paper_id = _dollar(data, "paper_id")
     # R: info <- data$info (NULL when absent) still yields a one-row table
-    p.info = _info_frame(data.get("info"))
+    p.info = _info_frame(_dollar(data, "info"))
 
     for name in _BIBR_TABLES:
-        records = data.get(name)
+        records = _dollar(data, name)  # data$bib is data$bib_match without a bib key
         if not records:
             continue
         records = [dict(r) for r in records]
@@ -181,7 +197,7 @@ def _from_bibr_legacy(data: Mapping[str, Any], include_images: bool) -> Paper:
         _empty_record_frames(records, columns)
         p._set_raw(name, records, columns)
 
-    bib_match = data.get("bib_match")
+    bib_match = _dollar(data, "bib_match")
     if bib_match:
         records = [dict(r) for r in bib_match]
         columns = _union_columns(records)
@@ -203,7 +219,7 @@ def read_bibr(file_path: str | PathLike[str], include_images: bool = False) -> P
     without one read exactly as before.
     """
     data = orjson.loads(Path(file_path).read_bytes())
-    if isinstance(data, Mapping) and data.get("schema_version") is not None:
+    if isinstance(data, Mapping) and _dollar(data, "schema_version") is not None:
         from pytacheck.io.bibr12 import _bibr12_from_json
 
         return _bibr12_from_json(data, include_images, os.path.basename(file_path))
@@ -335,17 +351,28 @@ def paper_write(
       as one. (A paper read from a later 12.x, e.g. 12.1, is refused, as with
       ``"12.0"``; pass ``None`` to save it as a paper object.)
 
-    A :class:`PaperList` is written paper by paper with the same setting.
+    A :class:`PaperList` is written paper by paper with the same setting; its
+    file names default to the paper IDs and are recycled as ``mapply()`` does
+    (one name writes every paper to the same file, as in metacheck). One
+    ``.json`` or ``.zip`` suffix is dropped from a file name.
     """
     if schema_version not in ("auto", None, "12.0"):
         raise ValueError('schema_version must be "auto", None or "12.0"')
     save_dir = Path(save_path).resolve()
     save_dir.mkdir(parents=True, exist_ok=True)
     if isinstance(paper, PaperList):
-        names = list(file_name) if file_name is not None else [str(n) for n in paper.names]
+        if file_name is None:
+            names = [str(n) for n in paper.names]
+        elif isinstance(file_name, str | PathLike):
+            names = [str(file_name)]
+        else:
+            names = [str(f) for f in file_name]
+        if not names and len(paper):
+            raise ValueError("zero-length inputs cannot be mixed with those of non-zero length")
+        # R: mapply() recycles the file names over the papers
         return [
-            Path(paper_write(q, f, save_dir, schema_version))  # type: ignore[arg-type]
-            for q, f in zip(paper, names, strict=True)
+            Path(paper_write(q, names[i % len(names)], save_dir, schema_version))  # type: ignore[arg-type]
+            for i, q in enumerate(paper)
         ]
     p = paper
     name = str(file_name) if file_name is not None else str(p.paper_id)

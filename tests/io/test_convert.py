@@ -57,8 +57,10 @@ def test_xml(tmp_path: Path, online: None, method: str) -> None:
     assert Path(obs).exists()
     paper = pc.read(obs)
     assert paper_validate(paper)
-    # no bib_match unless crossref_lookup = TRUE
-    assert "bib_match" not in paper
+    # pytacheck converts TEI to bibr export schema 12.0 by default (metacheck:
+    # its older format), whose bib_match is empty unless crossref_lookup = TRUE
+    assert paper.info["schema_version"].iloc[0] == "12.0"
+    assert "bib_match" not in paper or paper.bib_match.empty
 
 
 def test_xml_null_save_path_with_api_url() -> None:

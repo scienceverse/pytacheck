@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xml:space="preserve" xmlns="http://www.tei-c.org/ns/1.0">
+	<teiHeader>
+		<fileDesc><titleStmt><title>Inline "floats" \ notes	and
+  more &lt;/b&gt;</title></titleStmt></fileDesc>
+		<encodingDesc><appInfo><application version="0.8.1" ident="GROBID" when="2025-07-24T14:36+0000"/></appInfo></encodingDesc>
+		<profileDesc><textClass><keywords><term>tab	bed</term><term>new
+line</term></keywords></textClass><abstract><div><p>Abstract with <ref type="bibr" target="#b0">(Doe, 2019)</ref> and a tab	here.</p></div></abstract></profileDesc>
+	</teiHeader>
+	<text>
+		<body>
+<div><head>Intro <ref type="bibr" target="#b0">(Doe)</ref></head><p>Before<note place="foot" n="1" xml:id="foot_0">Inline note text.</note> after the note, with "quotes", a back\slash, a tab	x and DEL  and NEL  and LS   and 😀 emoji (Doe, 2019).</p><p>Inline figure <figure xml:id="fig_0"><head>Figure 1</head><figDesc>Nested outer.</figDesc><figure xml:id="fig_1"><head>Figure 1a</head><figDesc>Nested inner.</figDesc></figure></figure>then text continues with a &lt;/tag&gt; and x&lt;/y.</p></div>
+<div><head>Only a float</head><figure type="table" xml:id="tab_0"><head>Table 1</head><figDesc>Table 1. Lonely.</figDesc><table><row><cell>a "q"</cell><cell>b\c</cell></row></table></figure></div>
+<div><figure xml:id="fig_2"><figDesc>No head no label.</figDesc></figure></div>
+<div/>
+		</body>
+		<back><div type="references"><listBibl>
+<biblStruct xml:id="b0"><analytic><title level="a" type="main">Doe</title><idno type="DOI">10.1234/ABC(1)X</idno></analytic><monogr><title level="j">J</title><imprint><date when="2019">2019</date></imprint></monogr><note type="raw_reference">Doe (2019). "Doe". J.</note></biblStruct>
+		</listBibl></div></back>
+	</text>
+</TEI>

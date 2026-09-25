@@ -1,0 +1,481 @@
+{
+  "id": "codebook_check.tables.jasp_omv",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": null,
+    "v": [
+      {
+        "t": "df",
+        "nrow": 40,
+        "names": [
+          "Column",
+          "Documented",
+          "Label",
+          "Codebook Variable",
+          "Source",
+          "Status"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "C1_time",
+              "C2_time",
+              "C3_time",
+              "C4_time",
+              "C5_time",
+              "C6_time",
+              "Expect_question_time_mean",
+              "Illusion_score_async",
+              "Illusion_score_sync",
+              "Information_page_time",
+              "S1_time",
+              "S2_time",
+              "S3_time",
+              "control_score_async",
+              "control_score_sync",
+              "id",
+              "Age",
+              "C1_async",
+              "C1_sync",
+              "C2_async",
+              "C2_sync",
+              "C3_async",
+              "C3_sync",
+              "C4_async",
+              "C4_sync",
+              "C5_async",
+              "C5_sync",
+              "C6_async",
+              "C6_sync",
+              "Exclude_for_timing",
+              "Free_response",
+              "Gender",
+              "Heard_of_procedure",
+              "Previously_participated_in_RHI",
+              "S1_async",
+              "S1_sync",
+              "S2_async",
+              "S2_sync",
+              "S3_async",
+              "S3_sync"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "no",
+              "no",
+              "no",
+              "no",
+              "no",
+              "no",
+              "no",
+              "no",
+              "no",
+              "no",
+              "no",
+              "no",
+              "no",
+              "no",
+              "no",
+              "no",
+              "yes",
+              "yes",
+              "yes",
+              "yes",
+              "yes",
+              "yes",
+              "yes",
+              "yes",
+              "yes",
+              "yes",
+              "yes",
+              "yes",
+              "yes",
+              "yes",
+              "yes",
+              "yes",
+              "yes",
+              "yes",
+              "yes",
+              "yes",
+              "yes",
+              "yes",
+              "yes",
+              "yes"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              "18",
+              "-3",
+              "-3",
+              "-3",
+              "-3",
+              "-3",
+              "-3",
+              "-3",
+              "-3",
+              "-3",
+              "-3",
+              "-3",
+              "-3",
+              "0",
+              "1",
+              "1",
+              "0",
+              "0",
+              "-3",
+              "-2",
+              "-3",
+              "-2",
+              "-3",
+              "-2"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              "Age",
+              "C1_async",
+              "C1_sync",
+              "C2_async",
+              "C2_sync",
+              "C3_async",
+              "C3_sync",
+              "C4_async",
+              "C4_sync",
+              "C5_async",
+              "C5_sync",
+              "C6_async",
+              "C6_sync",
+              "Exclude_for_timing",
+              "Free_response",
+              "Gender",
+              "Heard_of_procedure",
+              "Previously_participated_in_RHI",
+              "S1_async",
+              "S1_sync",
+              "S2_async",
+              "S2_sync",
+              "S3_async",
+              "S3_sync"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              "sample.jasp",
+              "sample.jasp",
+              "sample.jasp",
+              "sample.jasp",
+              "sample.jasp",
+              "sample.jasp",
+              "sample.jasp",
+              "sample.jasp",
+              "sample.jasp",
+              "sample.jasp",
+              "sample.jasp",
+              "sample.jasp",
+              "sample.jasp",
+              "sample.jasp",
+              "sample.jasp",
+              "sample.jasp",
+              "sample.jasp",
+              "sample.jasp",
+              "sample.jasp",
+              "sample.jasp",
+              "sample.jasp",
+              "sample.jasp",
+              "sample.jasp",
+              "sample.jasp"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "unlabelled",
+              "unlabelled",
+              "unlabelled",
+              "unlabelled",
+              "unlabelled",
+              "unlabelled",
+              "unlabelled",
+              "unlabelled",
+              "unlabelled",
+              "unlabelled",
+              "unlabelled",
+              "unlabelled",
+              "unlabelled",
+              "unlabelled",
+              "unlabelled",
+              "unlabelled",
+              "labelled",
+              "labelled",
+              "labelled",
+              "labelled",
+              "labelled",
+              "labelled",
+              "labelled",
+              "labelled",
+              "labelled",
+              "labelled",
+              "labelled",
+              "labelled",
+              "labelled",
+              "labelled",
+              "labelled",
+              "labelled",
+              "labelled",
+              "labelled",
+              "labelled",
+              "labelled",
+              "labelled",
+              "labelled",
+              "labelled",
+              "labelled"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 9,
+        "names": [
+          "Column",
+          "Documented",
+          "Label",
+          "Codebook Variable",
+          "Source",
+          "Status"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Participant",
+              "Experiment",
+              "Guess hypothesis",
+              "H1 test",
+              "H2 test",
+              "H3 confirmatory confidence",
+              "H3 dissent confidence",
+              "H4 test",
+              "Manipulation check"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "no",
+              "yes",
+              "yes",
+              "yes",
+              "yes",
+              "yes",
+              "yes",
+              "yes",
+              "yes"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "1",
+              "I feltet under skriver du inn hva du tror hypotesen i vårt eksperiment/ formålet med denne studien er. Skriv kort, 1-2 setninger eller stikkord.",
+              "Diagnoses after hearing second half of symptoms should match the first half of the symptoms",
+              "Instances of seeking confirming info",
+              "Average confidence stated on diagnosis preceding confirmatory info request",
+              "Average confidence stated on diagnosis preceding dissenting information request",
+              "Average change in certainty for consistent diagnosis and confirmatory information request",
+              "Diagnoses after hearing first half of symptoms should match those symptoms heard so far"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "Experiment",
+              "Guess hypothesis",
+              "H1 test",
+              "H2 test",
+              "H3 confirmatory confidence",
+              "H3 dissent confidence",
+              "H4 test",
+              "Manipulation check"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "sample.omv",
+              "sample.omv",
+              "sample.omv",
+              "sample.omv",
+              "sample.omv",
+              "sample.omv",
+              "sample.omv",
+              "sample.omv"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "unlabelled",
+              "labelled",
+              "labelled",
+              "labelled",
+              "labelled",
+              "labelled",
+              "labelled",
+              "labelled",
+              "labelled"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 5,
+        "names": [
+          "File",
+          "Abbrev",
+          "Columns",
+          "Max item",
+          "Scale",
+          "Confidence",
+          "Source"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "sample.jasp",
+              "sample.jasp",
+              "sample.jasp",
+              "sample.jasp",
+              "sample.omv"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "S1_sync",
+              "C1_sync",
+              "S1_time",
+              "C1_time",
+              "H1 test"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              6,
+              12,
+              3,
+              5,
+              3
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "?",
+              "?",
+              "?",
+              "?",
+              "?"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "— not matched to a named scale —",
+              "— not matched to a named scale —",
+              "— not matched to a named scale —",
+              "— not matched to a named scale —",
+              "— not matched to a named scale —"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "",
+              "",
+              "",
+              "",
+              ""
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "",
+              "",
+              "",
+              "",
+              ""
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

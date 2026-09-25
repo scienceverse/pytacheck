@@ -1,0 +1,346 @@
+{
+  "id": "paper_table.io.table",
+  "ok": true,
+  "error": null,
+  "warnings": [
+    "ID x already defined [513]",
+    "Namespace prefix xlink for href on ptr is not defined [201]",
+    "Namespace prefix p on q is not defined [201]",
+    "ID x already defined [513]",
+    "Namespace prefix xlink for href on ptr is not defined [201]",
+    "Namespace prefix p on q is not defined [201]",
+    "Namespace prefix xlink for href on ptr is not defined [201]",
+    "There were 2 errors; use lastlog(1:2)"
+  ],
+  "value": {
+    "t": "df",
+    "nrow": 12,
+    "names": [
+      "table_id",
+      "label",
+      "section_id",
+      "text_id",
+      "html",
+      "contents",
+      "caption",
+      "page_number",
+      "paper_id"
+    ],
+    "v": [
+      {
+        "t": "int",
+        "v": [
+          1,
+          1,
+          1,
+          2,
+          1,
+          2,
+          1,
+          2,
+          3,
+          1,
+          1,
+          2
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "1",
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          "1a",
+          null
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          31,
+          2,
+          5,
+          6,
+          5,
+          6,
+          5,
+          6,
+          7,
+          8,
+          21,
+          22
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Group / A / 1.",
+                  "Group / B / 2.",
+                  "Measure / M (SD) / 3.",
+                  ""
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "x",
+                  "0.5",
+                  "[0.1, 0.9]",
+                  "extra"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "y",
+                  "-",
+                  "",
+                  ""
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": []
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": []
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Group",
+                  "SD"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "a",
+                  "1.5"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Condition",
+                  "M"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "control",
+                  "10.90"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": []
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Condition",
+                  "M"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "control",
+                  "10.90"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": []
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "x"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Name",
+                  "M"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "a",
+                  "1.2"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Group",
+                  "M"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "A",
+                  "1.5"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Table1 Descriptives.",
+          "Table1 Empty table.",
+          "Table 1: First table.",
+          "Table 2: Second table.",
+          "Table 1: First table.",
+          "Table 2: Second table.",
+          "Table 1: First table.",
+          "Table 2: Second table.",
+          "Table 3: Third table.",
+          "Table 1: Table caption.",
+          "Table 1a Means by group.",
+          "Table 2: A table without cells."
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          3,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "edge_body.tei",
+          "table_norows.tei",
+          "tables_empty_first.tei",
+          "tables_empty_first.tei",
+          "tables_empty_second.tei",
+          "tables_empty_second.tei",
+          "tables_three_one_empty.tei",
+          "tables_three_one_empty.tei",
+          "tables_three_one_empty.tei",
+          "xlink_ns.tei",
+          "v12_edges.tei",
+          "v12_edges.tei"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

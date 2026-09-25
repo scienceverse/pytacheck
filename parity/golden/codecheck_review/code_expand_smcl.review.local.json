@@ -1,0 +1,76 @@
+{
+  "id": "code_expand_smcl.review.local",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 4,
+    "names": [
+      "repo_url",
+      "file_name",
+      "file_path",
+      "file_url",
+      "file_location",
+      "file_size"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "https://osf.io/abcde",
+          "https://osf.io/abcde",
+          "https://osf.io/abcde",
+          "https://osf.io/abcde"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "analysis.smcl",
+          "nocommands.smcl",
+          "x.R",
+          "analysis.do"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "sub/analysis.smcl",
+          "sub/nocommands.smcl",
+          "sub/x.R",
+          "sub/code/analysis.do"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "tests/codecheck/fixtures/expand/analysis.smcl",
+          "tests/codecheck/fixtures/expand/nocommands.smcl",
+          "tests/codecheck/fixtures/expand/x.R",
+          "tests/codecheck/fixtures/expand/code/analysis.do"
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          1,
+          1,
+          1,
+          274
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

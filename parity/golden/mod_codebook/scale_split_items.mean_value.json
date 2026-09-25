@@ -1,0 +1,43 @@
+{
+  "id": "scale_split_items.mean_value",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "items",
+      "derived",
+      "totals_only"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "bfi_1",
+          "bfi_2",
+          "bfi_3",
+          "bfi_4",
+          "bfi_5",
+          "bfi_6",
+          "bfi_7",
+          "bfi_8"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "bfi_9"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

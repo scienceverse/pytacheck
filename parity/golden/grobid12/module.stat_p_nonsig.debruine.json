@@ -1,0 +1,336 @@
+{
+  "id": "module.stat_p_nonsig.debruine",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "stat_p_nonsig"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Non-Significant P Value Check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "results"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 12,
+        "names": [
+          "text",
+          "text_id",
+          "paragraph_id",
+          "section_id",
+          "page_number",
+          "formatted",
+          "paper_id",
+          "header",
+          "section_type",
+          "p_comp",
+          "p_value",
+          "significance",
+          "expanded"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "P > .19",
+              "P > .28",
+              "P = .48",
+              "P < .06",
+              "P = .13",
+              "P < .10",
+              "P > .10",
+              "P = .54",
+              "p = 0.73",
+              "p = 0.38",
+              "p = 0.73",
+              "p = 0.5 "
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              95,
+              96,
+              109,
+              114,
+              114,
+              115,
+              116,
+              117,
+              90,
+              90,
+              90,
+              111
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              27,
+              28,
+              32,
+              34,
+              34,
+              34,
+              34,
+              35,
+              20,
+              20,
+              20,
+              27
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              10,
+              10,
+              12,
+              13,
+              13,
+              13,
+              13,
+              13,
+              7,
+              7,
+              7,
+              8
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "debruine-child",
+              "debruine-child",
+              "debruine-child",
+              "debruine-child",
+              "debruine-child",
+              "debruine-child",
+              "debruine-child",
+              "debruine-child",
+              "debruine-fret",
+              "debruine-fret",
+              "debruine-fret",
+              "debruine-fret"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2.5. Statistical analyses",
+              "2.5. Statistical analyses",
+              "3.1. Hypothetical investment decisions",
+              "3.2. Resemblance assessment",
+              "3.2. Resemblance assessment",
+              "3.2. Resemblance assessment",
+              "3.2. Resemblance assessment",
+              "3.2. Resemblance assessment",
+              "3. RESULTS",
+              "3. RESULTS",
+              "3. RESULTS",
+              "4. DISCUSSION"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "method",
+              "method",
+              "results",
+              "results",
+              "results",
+              "results",
+              "results",
+              "results",
+              "results",
+              "results",
+              "results",
+              "discussion"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ">",
+              ">",
+              "=",
+              "<",
+              "=",
+              "<",
+              ">",
+              "=",
+              "=",
+              "=",
+              "=",
+              "="
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0.19,
+              0.28,
+              0.48,
+              0.06,
+              0.13,
+              0.1,
+              0.1,
+              0.54,
+              0.73,
+              0.38,
+              0.73,
+              0.5
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "nonsignificant",
+              "nonsignificant",
+              "nonsignificant",
+              "nonsignificant",
+              "nonsignificant",
+              "nonsignificant",
+              "nonsignificant",
+              "nonsignificant",
+              "nonsignificant",
+              "nonsignificant",
+              "nonsignificant",
+              "nonsignificant"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Composite scores were normally distributed (all Kolmogorov-Smirnov Z < 1.1, P > .19), so a factorial repeated measures ANOVA was used to determine the within-subjects effect of ''resemblance'' (self vs. control composite scores) and the between-subjects effect of participant sex.",
+              "Resemblance assessments by independent judges were also normally distributed (all Z < 1.0, P > .28), so these data were analyzed using a factorial repeated measures ANOVA with ''morphing technique'' (using Platek et al.'s method or the new method) and ''judge sex'' (the sex of the participant in the matching task) as within-subjects variables and ''morph sex'' (the sex of the adult image used to make the morph) as a between-subjects variable.",
+              "Analysis of the composite scores revealed that participants chose their own self-morphs more often than other participants did [ F(1,51) = 7.24, P = .01] and there was no statistically significant interaction with sex [ F(1,51) = 0.52, P = .48], although men chose slightly fewer self-morphs (M = 1.26, S.D. = 1.25) than women did (M = 1.37, S.D. = 1.25).",
+              "Judges matched images of female participants to their self-morphs somewhat more accurately than they matched male participants to their self-morphs [ F(1,16) = 4.16, P < .06], and female judges were no better than male judges at matching participants with their self-morphs [ F(1,16) = 2.60, P = .13].",
+              "Judges matched images of female participants to their self-morphs somewhat more accurately than they matched male participants to their self-morphs [ F(1,16) = 4.16, P < .06], and female judges were no better than male judges at matching participants with their self-morphs [ F(1,16) = 2.60, P = .13].",
+              "Judges were slightly, but not significantly, better at matching participants to self-morphs made using my morphing method than those made using Platek et al.'s method [ F(1,16) = 3.12, P < .10].",
+              "No interactions were significant (all F(1,16) < 2.9, all P > .10).",
+              "The correlation between independent judges' accuracy of matching and the composite difference score (self minus control composite score) was significant (r = .27, n = 53, P = .023) and this correlation was not significantly different between men and women (Z = 0.62, P = .54, men: r = .35, women: r = .18).",
+              "Combining the data for all 24 subjects and using a difference score for number of prosocial plays to self-morphs minus non-self morphs, there were no signif icant effects of sex (F 1,23 = 0.13, p = 0.73), 'race' (white versus nonwhite; F 1,23 = 0.83, p = 0.38) or morph type (shape-colour morphs versus shape-only morphs; F 1,23 = 0.13, p = 0.73), nor were there any statistically signif icant interactions (all p Ͼ 0.50).",
+              "Combining the data for all 24 subjects and using a difference score for number of prosocial plays to self-morphs minus non-self morphs, there were no signif icant effects of sex (F 1,23 = 0.13, p = 0.73), 'race' (white versus nonwhite; F 1,23 = 0.83, p = 0.38) or morph type (shape-colour morphs versus shape-only morphs; F 1,23 = 0.13, p = 0.73), nor were there any statistically signif icant interactions (all p Ͼ 0.50).",
+              "Combining the data for all 24 subjects and using a difference score for number of prosocial plays to self-morphs minus non-self morphs, there were no signif icant effects of sex (F 1,23 = 0.13, p = 0.73), 'race' (white versus nonwhite; F 1,23 = 0.83, p = 0.38) or morph type (shape-colour morphs versus shape-only morphs; F 1,23 = 0.13, p = 0.73), nor were there any statistically signif icant interactions (all p Ͼ 0.50).",
+              "Following the logic of inclusive fitness theory (Hamilton 1964), P1 is expected to be indifferent between trusting and not trusting if the coeff icient of relatedness between the players is zero (r = 0) and P2's probability of a self ish betrayal of trust is equal to the probability of reciprocating trust (that is, if p = 0.5 for both moves), because the expected pay-off is the same in each case."
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Meta-scientific research has shown nonsignificant p values are commonly misinterpreted. It is incorrect to infer that there is 'no effect', 'no difference', or that groups are 'the same' after p > 0.05.\n\nIt is possible that there is a true non-zero effect, but that the study did not detect it. Make sure your inference acknowledges that it is possible that there is a non-zero effect. It is correct to include the effect is 'not significantly' different, although this just restates that p > 0.05.\n\nMetacheck does not yet analyze automatically whether sentences which include non-significant p-values are correct, but we recommend manually checking the sentences below for possible misinterpreted non-significant p values.\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Text = c(\"P > .19\", \"P > .28\", \"P = .48\", \"P < .06\", \n\"P = .13\", \"P < .10\", \"P > .10\", \"P = .54\", \"p = 0.73\", \"p = 0.38\", \n\"p = 0.73\", \"p = 0.5 \"), Sentence = c(\"Composite scores were normally distributed (all Kolmogorov-Smirnov Z < 1.1, P > .19), so a factorial repeated measures ANOVA was used to determine the within-subjects effect of ''resemblance'' (self vs. control composite scores) and the between-subjects effect of participant sex.\", \n\"Resemblance assessments by independent judges were also normally distributed (all Z < 1.0, P > .28), so these data were analyzed using a factorial repeated measures ANOVA with ''morphing technique'' (using Platek et al.'s method or the new method) and ''judge sex'' (the sex of the participant in the matching task) as within-subjects variables and ''morph sex'' (the sex of the adult image used to make the morph) as a between-subjects variable.\", \n\"Analysis of the composite scores revealed that participants chose their own self-morphs more often than other participants did [ F(1,51) = 7.24, P = .01] and there was no statistically significant interaction with sex [ F(1,51) = 0.52, P = .48], although men chose slightly fewer self-morphs (M = 1.26, S.D. = 1.25) than women did (M = 1.37, S.D. = 1.25).\", \n\"Judges matched images of female participants to their self-morphs somewhat more accurately than they matched male participants to their self-morphs [ F(1,16) = 4.16, P < .06], and female judges were no better than male judges at matching participants with their self-morphs [ F(1,16) = 2.60, P = .13].\", \n\"Judges matched images of female participants to their self-morphs somewhat more accurately than they matched male participants to their self-morphs [ F(1,16) = 4.16, P < .06], and female judges were no better than male judges at matching participants with their self-morphs [ F(1,16) = 2.60, P = .13].\", \n\"Judges were slightly, but not significantly, better at matching participants to self-morphs made using my morphing method than those made using Platek et al.'s method [ F(1,16) = 3.12, P < .10].\", \n\"No interactions were significant (all F(1,16) < 2.9, all P > .10).\", \n\"The correlation between independent judges' accuracy of matching and the composite difference score (self minus control composite score) was significant (r = .27, n = 53, P = .023) and this correlation was not significantly different between men and women (Z = 0.62, P = .54, men: r = .35, women: r = .18).\", \n\"Combining the data for all 24 subjects and using a difference score for number of prosocial plays to self-morphs minus non-self morphs, there were no signif icant effects of sex (F 1,23 = 0.13, p = 0.73), 'race' (white versus nonwhite; F 1,23 = 0.83, p = 0.38) or morph type (shape-colour morphs versus shape-only morphs; F 1,23 = 0.13, p = 0.73), nor were there any statistically signif icant interactions (all p Ͼ 0.50).\", \n\"Combining the data for all 24 subjects and using a difference score for number of prosocial plays to self-morphs minus non-self morphs, there were no signif icant effects of sex (F 1,23 = 0.13, p = 0.73), 'race' (white versus nonwhite; F 1,23 = 0.83, p = 0.38) or morph type (shape-colour morphs versus shape-only morphs; F 1,23 = 0.13, p = 0.73), nor were there any statistically signif icant interactions (all p Ͼ 0.50).\", \n\"Combining the data for all 24 subjects and using a difference score for number of prosocial plays to self-morphs minus non-self morphs, there were no signif icant effects of sex (F 1,23 = 0.13, p = 0.73), 'race' (white versus nonwhite; F 1,23 = 0.83, p = 0.38) or morph type (shape-colour morphs versus shape-only morphs; F 1,23 = 0.13, p = 0.73), nor were there any statistically signif icant interactions (all p Ͼ 0.50).\", \n\"Following the logic of inclusive fitness theory (Hamilton 1964), P1 is expected to be indifferent between trusting and not trusting if the coeff icient of relatedness between the players is zero (r = 0) and P2's probability of a self ish betrayal of trust is equal to the probability of reciprocating trust (that is, if p = 0.5 for both moves), because the expected pay-off is the same in each case.\"\n)), row.names = c(NA, -12L), class = c(\"tbl_df\", \"tbl\", \"data.frame\"\n))\n\n# display table -----------------------------------\nmetacheck::report_table(table, c(0.1, 0.9), 10, FALSE)\n```\n\n\n::: {.callout-tip title=\"Learn More\" collapse=\"true\"}\n\nFor metascientific articles demonstrating the rate of misinterpretations of non-significant results is high, see:\n\nAczel B, Palfi B, Szollosi A, Kovacs M, Szaszi B, Szecsi P, Zrubka M, Gronau Q, van den Bergh D, Wagenmakers E (2018). &ldquo;Quantifying Support for the Null Hypothesis in Psychology: An Empirical Investigation.&rdquo; <em>Advances in Methods and Practices in Psychological Science<\/em>, <b>1<\/b>(3), 357&ndash;366. <a href=\"https://doi.org/10.1177/2515245918773742\">doi:10.1177/2515245918773742<\/a>.\n\nMurphy S, Merz R, Reimann L, Fernández A (2025). &ldquo;Nonsignificance misinterpreted as an effect’s absence in psychology: Prevalence and temporal analyses.&rdquo; <em>Royal Society Open Science<\/em>, <b>12<\/b>(3), 242167. <a href=\"https://doi.org/10.1098/rsos.242167\">doi:10.1098/rsos.242167<\/a>.\n\nFor educational material on preventing the misinterpretation of p values, see [Improving Your Statistical Inferences](https://lakens.github.io/statistical_inferences/01-pvalue.html#sec-misconception1).\n\n:::\n"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "yellow"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "We found 12 non-significant p values that should be checked for appropriate interpretation."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 4,
+        "names": [
+          "paper_id",
+          "n_nonsignificant"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "debruine-child",
+              "debruine-fret",
+              "debruine-sex",
+              "debruine-tnl"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              8,
+              4,
+              0,
+              0
+            ]
+          }
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

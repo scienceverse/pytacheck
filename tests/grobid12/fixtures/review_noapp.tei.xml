@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0">
+	<teiHeader>
+		<fileDesc><titleStmt><title>   </title></titleStmt></fileDesc>
+		<profileDesc><textClass><keywords><term>a</term><term></term><term>b</term></keywords></textClass>
+			<abstract><p>Plain abstract p.</p><div><p>  </p><p>Second.</p></div></abstract>
+		</profileDesc>
+	</teiHeader>
+	<text><body>
+		<div><head>Intro</head><p>Text with <ref type="bibr" target="#b0">(A, 2001)</ref> and p = .03.</p></div>
+	</body>
+	<back><div type="references"><listBibl>
+<biblStruct xml:id="b0"><monogr><title level="m">A</title><idno type="DOI">10.1234/ok</idno><imprint><date when="2001">2001a</date></imprint></monogr><note type="raw_reference">A (2001a).</note></biblStruct>
+<biblStruct xml:id="b1"><monogr><title level="m">B</title><idno type="DOI">bad1</idno></monogr><note type="raw_reference">B.</note></biblStruct>
+<biblStruct xml:id="b2"><monogr><title level="m">C</title><idno type="DOI">bad2</idno></monogr><note type="raw_reference">C.</note></biblStruct>
+<biblStruct xml:id="b3"><monogr><title level="m">D</title><idno type="DOI">bad3</idno></monogr><note type="raw_reference">D.</note></biblStruct>
+<biblStruct xml:id="b4"><monogr><title level="m">E</title><idno type="DOI">bad4</idno></monogr><note type="raw_reference">E.</note></biblStruct>
+	</listBibl></div></back>
+	</text>
+</TEI>

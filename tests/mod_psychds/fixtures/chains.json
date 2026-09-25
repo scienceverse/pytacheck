@@ -1,0 +1,1121 @@
+{
+ "chains": {
+  "compliant": {
+   "structure": {
+    "file_name": [
+     "analysis.R",
+     "study-a_data.csv",
+     "dataset_description.json",
+     "README.md",
+     "CHANGES"
+    ],
+    "file_path": [
+     "analysis/analysis.R",
+     "data/study-a_data.csv",
+     "dataset_description.json",
+     "README.md",
+     "CHANGES"
+    ],
+    "data_type": [
+     "code",
+     "data",
+     "code",
+     "documentation",
+     "documentation"
+    ],
+    "doc_role": [
+     null,
+     null,
+     null,
+     "readme",
+     "supplemental"
+    ],
+    "group": [
+     "ex1",
+     "ex1",
+     "ex1",
+     null,
+     "ex1"
+    ],
+    "referenced_by": [
+     [],
+     [],
+     [],
+     [],
+     []
+    ]
+   },
+   "columns": 2,
+   "labels": [
+    "labelled",
+    "llm"
+   ],
+   "group_no_evidence": false
+  },
+  "green_partial": {
+   "structure": {
+    "file_name": [
+     "raw.csv",
+     "dataset_description.json",
+     "run.py"
+    ],
+    "file_path": [
+     "data/raw.csv",
+     "dataset_description.json",
+     "code/run.py"
+    ],
+    "data_type": [
+     "data",
+     "documentation",
+     "code"
+    ],
+    "doc_role": [
+     null,
+     null,
+     null
+    ],
+    "group": [
+     "ex1",
+     "ex1",
+     "ex1"
+    ],
+    "referenced_by": [
+     [],
+     [],
+     []
+    ]
+   },
+   "columns": 1
+  },
+  "yellow_many": {
+   "structure": {
+    "file_name": [
+     "Data Raw.xlsx",
+     "survey.sav",
+     "eeg.npy",
+     "rawdata",
+     "___.csv",
+     "scores.CSV",
+     "café_ü.tsv",
+     "model.R",
+     "README.md"
+    ],
+    "file_path": [
+     "raw/Data Raw.xlsx",
+     "raw/survey.sav",
+     "data/eeg.npy",
+     "rawdata",
+     "data/___.csv",
+     "data/scores.CSV",
+     "data/café_ü.tsv",
+     "model.R",
+     "README.md"
+    ],
+    "data_type": [
+     "data",
+     "data",
+     "data",
+     "data",
+     "data",
+     "data",
+     "data",
+     "code",
+     "documentation"
+    ],
+    "doc_role": [
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     "readme"
+    ],
+    "group": [
+     "ex1",
+     "ex1",
+     "ex1",
+     "ex1",
+     "ex1",
+     "ex1",
+     "ex1",
+     "ex1",
+     null
+    ],
+    "referenced_by": [
+     [],
+     [],
+     [],
+     [],
+     [],
+     [],
+     [],
+     [],
+     []
+    ]
+   },
+   "columns": 5,
+   "labels": [
+    "labelled",
+    null,
+    "unlabelled"
+   ],
+   "group_no_evidence": true
+  },
+  "yellow_six": {
+   "structure": {
+    "file_name": [
+     "a.csv",
+     "b.R",
+     "c.R",
+     "d.pdf",
+     "e.png",
+     "f.txt",
+     "g.R"
+    ],
+    "file_path": [
+     "a.csv",
+     "b.R",
+     "c.R",
+     "d.pdf",
+     "e.png",
+     "f.txt",
+     "analysis/g.R"
+    ],
+    "data_type": [
+     "data",
+     "code",
+     "code",
+     "output",
+     "materials",
+     "documentation",
+     "code"
+    ],
+    "doc_role": [
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null
+    ],
+    "group": [
+     "ex1",
+     "ex1",
+     "ex1",
+     "ex1",
+     "ex1",
+     "ex1",
+     "ex1"
+    ],
+    "referenced_by": [
+     [],
+     [],
+     [],
+     [],
+     [],
+     [],
+     []
+    ]
+   },
+   "columns": 3,
+   "group_no_evidence": true
+  },
+  "red_nodata": {
+   "structure": {
+    "file_name": [
+     "README",
+     "LICENSE.txt",
+     "LICENSE",
+     "codebook.xlsx",
+     "stim.png",
+     "fig1.pdf",
+     "notes.xyz",
+     "bundle.zip",
+     "CHANGES.md",
+     "x.R"
+    ],
+    "file_path": [
+     "README",
+     "LICENSE.txt",
+     "docs/LICENSE",
+     "codebook.xlsx",
+     "stimuli/stim.png",
+     "outputs/fig1.pdf",
+     "notes.xyz",
+     "bundle.zip",
+     "CHANGES.md",
+     "analysis/x.R"
+    ],
+    "data_type": [
+     "documentation",
+     "documentation",
+     "documentation",
+     "documentation",
+     "materials",
+     "output",
+     "unknown",
+     "archive",
+     "documentation",
+     "code"
+    ],
+    "doc_role": [
+     "readme",
+     "license",
+     "license",
+     "codebook",
+     null,
+     null,
+     null,
+     null,
+     "supplemental",
+     null
+    ],
+    "group": [
+     null,
+     null,
+     null,
+     "ex1",
+     "ex1",
+     "ex1",
+     "ex1",
+     "ex1",
+     "ex1",
+     "ex1"
+    ],
+    "referenced_by": [
+     [],
+     [],
+     [],
+     [],
+     [],
+     [],
+     [],
+     [],
+     [],
+     []
+    ]
+   },
+   "columns": 0,
+   "group_no_evidence": false
+  },
+  "red_nocols": {
+   "structure": {
+    "file_name": [
+     "d.csv",
+     "dataset_description.json"
+    ],
+    "file_path": [
+     "d.csv",
+     "dataset_description.json"
+    ],
+    "data_type": [
+     "data",
+     "documentation"
+    ],
+    "doc_role": [
+     null,
+     null
+    ],
+    "group": [
+     "ex1",
+     "ex1"
+    ],
+    "referenced_by": [
+     [],
+     []
+    ]
+   }
+  },
+  "multi": {
+   "structure": {
+    "file_name": [
+     "README.md",
+     "README.txt",
+     "s1.csv",
+     "s2.xlsx",
+     "an1.R",
+     "shared.pdf",
+     "LICENSE",
+     "ro-crate-metadata.json",
+     "p.sps"
+    ],
+    "file_path": [
+     "README.md",
+     "study1/README.txt",
+     "study1/data/s1.csv",
+     "study2/s2.xlsx",
+     "study1/an1.R",
+     "materials/shared.pdf",
+     "LICENSE",
+     "ro-crate-metadata.json",
+     "pilot/p.sps"
+    ],
+    "data_type": [
+     "documentation",
+     "documentation",
+     "data",
+     "data",
+     "code",
+     "materials",
+     "documentation",
+     "code",
+     "code"
+    ],
+    "doc_role": [
+     "readme",
+     "readme",
+     null,
+     null,
+     null,
+     null,
+     "license",
+     null,
+     null
+    ],
+    "group": [
+     null,
+     "ex1",
+     "ex1",
+     "ex2",
+     "ex1",
+     "ex1",
+     null,
+     null,
+     "pilot1"
+    ],
+    "referenced_by": [
+     [],
+     [],
+     [],
+     [],
+     [
+      "ex2"
+     ],
+     [
+      "ex2",
+      "pilot1"
+     ],
+     [],
+     [],
+     []
+    ]
+   },
+   "columns": 4,
+   "labels": [
+    "labelled",
+    "labelled",
+    "llm",
+    "labelled"
+   ],
+   "group_no_evidence": false
+  },
+  "single_named": {
+   "structure": {
+    "file_name": [
+     "p1.csv",
+     "dataset_description.json"
+    ],
+    "file_path": [
+     "pilot1/p1.csv",
+     "dataset_description.json"
+    ],
+    "data_type": [
+     "data",
+     "documentation"
+    ],
+    "doc_role": [
+     null,
+     null
+    ],
+    "group": [
+     "pilot1",
+     "pilot1"
+    ],
+    "referenced_by": [
+     [],
+     []
+    ]
+   },
+   "columns": 2,
+   "labels": [
+    "labelled",
+    "llm"
+   ]
+  },
+  "minimal_cols": {
+   "structure": {
+    "file_name": [
+     "sub\\dir\\script.R",
+     "data\\x.csv",
+     "dataset_description.json",
+     "CHANGES.txt",
+     "changes_v2.txt",
+     "changesLOG"
+    ],
+    "data_type": [
+     "code",
+     "data",
+     "documentation",
+     "documentation",
+     "documentation",
+     "documentation"
+    ]
+   },
+   "columns": 1,
+   "labels": [
+    "labelled"
+   ],
+   "labels_no_status": true,
+   "group_no_evidence": "NA"
+  },
+  "path_na": {
+   "structure": {
+    "file_name": [
+     "a\\b.R",
+     "x.csv",
+     "dataset_description.json"
+    ],
+    "file_path": [
+     null,
+     "data/x.csv",
+     null
+    ],
+    "data_type": [
+     "code",
+     "data",
+     "documentation"
+    ],
+    "doc_role": [
+     null,
+     null,
+     null
+    ],
+    "group": [
+     "ex1",
+     "ex1",
+     "ex1"
+    ]
+   },
+   "columns": 3,
+   "labels": [
+    "codebook",
+    "conflicting_definition"
+   ]
+  },
+  "tree": {
+   "structure": {
+    "file_name": [
+     "R&D <final>.docx",
+     "Beta.R",
+     "alpha.R",
+     "_setup.R",
+     "Zeta.py",
+     "10_fit.R",
+     "2_fit.R",
+     "README.md",
+     "README.md",
+     "étude.csv",
+     "Émile.txt",
+     "emile.txt",
+     "Data",
+     "data.bin"
+    ],
+    "file_path": [
+     "docs/R&D <final>.docx",
+     "Beta.R",
+     "alpha.R",
+     "_setup.R",
+     "analysis/Zeta.py",
+     "analysis/10_fit.R",
+     "analysis/2_fit.R",
+     "README.md",
+     "old/README.md",
+     "étude.csv",
+     "Émile.txt",
+     "emile.txt",
+     "materials/Data",
+     "materials/data.bin"
+    ],
+    "data_type": [
+     "documentation",
+     "code",
+     "code",
+     "code",
+     "code",
+     "code",
+     "code",
+     "documentation",
+     "documentation",
+     "data",
+     "documentation",
+     "documentation",
+     "materials",
+     "materials"
+    ],
+    "doc_role": [
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     "readme",
+     "readme",
+     null,
+     null,
+     null,
+     null,
+     null
+    ],
+    "group": [
+     "ex1",
+     "ex1",
+     "ex1",
+     "ex1",
+     "ex1",
+     "ex1",
+     "ex1",
+     null,
+     null,
+     "ex1",
+     "ex1",
+     "ex1",
+     "ex1",
+     "ex1"
+    ],
+    "referenced_by": [
+     [],
+     [],
+     [],
+     [],
+     [],
+     [],
+     [],
+     [],
+     [],
+     [],
+     [],
+     [],
+     [],
+     []
+    ]
+   },
+   "columns": 1,
+   "labels": [
+    "labelled"
+   ],
+   "group_no_evidence": false
+  },
+  "classified": {
+   "structure": {
+    "file_name": [
+     "raw.sav",
+     "model.R",
+     "README.md",
+     "LICENSE",
+     "codebook.xlsx",
+     "img1.png",
+     "fig1.pdf",
+     "notes.xyz",
+     "CHANGES.md",
+     "dataset_description.json",
+     "scores.xlsx",
+     "eeg.npy",
+     "survey.qsf",
+     "table.html",
+     "codebook.csv"
+    ],
+    "file_path": [
+     "data/raw.sav",
+     "analysis/model.R",
+     "README.md",
+     "LICENSE",
+     "docs/codebook.xlsx",
+     "stimuli/img1.png",
+     "results/fig1.pdf",
+     "notes.xyz",
+     "CHANGES.md",
+     "dataset_description.json",
+     "data/scores.xlsx",
+     "data/eeg.npy",
+     "materials/survey.qsf",
+     "output/table.html",
+     "data/codebook.csv"
+    ],
+    "group": [
+     "ex1",
+     "ex1",
+     null,
+     null,
+     "ex1",
+     "ex1",
+     "ex1",
+     "ex1",
+     "ex1",
+     "ex1",
+     "ex1",
+     "ex1",
+     "ex1",
+     "ex1",
+     "ex1"
+    ]
+   },
+   "classify": true,
+   "columns": 6,
+   "labels": [
+    "labelled",
+    "labelled",
+    "labelled"
+   ]
+  },
+  "empty": {
+   "structure": {
+    "file_name": [],
+    "data_type": []
+   },
+   "columns": 0
+  },
+  "psychsci": {
+   "paper": "psychsci",
+   "structure": {
+    "file_name": [
+     "raw.csv",
+     "dataset_description.json",
+     "run.py"
+    ],
+    "file_path": [
+     "data/raw.csv",
+     "dataset_description.json",
+     "code/run.py"
+    ],
+    "data_type": [
+     "data",
+     "documentation",
+     "code"
+    ],
+    "doc_role": [
+     null,
+     null,
+     null
+    ],
+    "group": [
+     "ex1",
+     "ex1",
+     "ex1"
+    ],
+    "referenced_by": [
+     [],
+     [],
+     []
+    ]
+   },
+   "columns": 1
+  },
+  "psychsci_empty": {
+   "paper": "psychsci",
+   "structure": {
+    "file_name": [],
+    "data_type": []
+   }
+  },
+  "bibr12": {
+   "paper": [
+    "tests/fixtures/bibr_v12_full.json"
+   ],
+   "structure": {
+    "file_name": [
+     "analysis.R",
+     "study-a_data.csv",
+     "dataset_description.json",
+     "README.md",
+     "CHANGES"
+    ],
+    "file_path": [
+     "analysis/analysis.R",
+     "data/study-a_data.csv",
+     "dataset_description.json",
+     "README.md",
+     "CHANGES"
+    ],
+    "data_type": [
+     "code",
+     "data",
+     "code",
+     "documentation",
+     "documentation"
+    ],
+    "doc_role": [
+     null,
+     null,
+     null,
+     "readme",
+     "supplemental"
+    ],
+    "group": [
+     "ex1",
+     "ex1",
+     "ex1",
+     null,
+     "ex1"
+    ],
+    "referenced_by": [
+     [],
+     [],
+     [],
+     [],
+     []
+    ]
+   },
+   "columns": 2,
+   "labels": [
+    "labelled",
+    "llm"
+   ],
+   "group_no_evidence": false
+  },
+  "bibr12_mixed": {
+   "paper": [
+    "tests/bibr12/fixtures/edge_minimal.json",
+    "tests/fixtures/bibr_v12_full.json",
+    "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797613520608.json"
+   ],
+   "structure": {
+    "file_name": [
+     "a.csv",
+     "b.R",
+     "c.R",
+     "d.pdf",
+     "e.png",
+     "f.txt",
+     "g.R"
+    ],
+    "file_path": [
+     "a.csv",
+     "b.R",
+     "c.R",
+     "d.pdf",
+     "e.png",
+     "f.txt",
+     "analysis/g.R"
+    ],
+    "data_type": [
+     "data",
+     "code",
+     "code",
+     "output",
+     "materials",
+     "documentation",
+     "code"
+    ],
+    "doc_role": [
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null
+    ],
+    "group": [
+     "ex1",
+     "ex1",
+     "ex1",
+     "ex1",
+     "ex1",
+     "ex1",
+     "ex1"
+    ],
+    "referenced_by": [
+     [],
+     [],
+     [],
+     [],
+     [],
+     [],
+     []
+    ]
+   },
+   "columns": 3,
+   "group_no_evidence": true
+  },
+  "bibr12_empty": {
+   "paper": [
+    "tests/fixtures/bibr_v12_full.json"
+   ],
+   "structure": {
+    "file_name": [],
+    "data_type": []
+   }
+  },
+  "test_paper": {
+   "paper": "test",
+   "structure": {
+    "file_name": [
+     "README.md",
+     "README.txt",
+     "s1.csv",
+     "s2.xlsx",
+     "an1.R",
+     "shared.pdf",
+     "LICENSE",
+     "ro-crate-metadata.json",
+     "p.sps"
+    ],
+    "file_path": [
+     "README.md",
+     "study1/README.txt",
+     "study1/data/s1.csv",
+     "study2/s2.xlsx",
+     "study1/an1.R",
+     "materials/shared.pdf",
+     "LICENSE",
+     "ro-crate-metadata.json",
+     "pilot/p.sps"
+    ],
+    "data_type": [
+     "documentation",
+     "documentation",
+     "data",
+     "data",
+     "code",
+     "materials",
+     "documentation",
+     "code",
+     "code"
+    ],
+    "doc_role": [
+     "readme",
+     "readme",
+     null,
+     null,
+     null,
+     null,
+     "license",
+     null,
+     null
+    ],
+    "group": [
+     null,
+     "ex1",
+     "ex1",
+     "ex2",
+     "ex1",
+     "ex1",
+     null,
+     null,
+     "pilot1"
+    ],
+    "referenced_by": [
+     [],
+     [],
+     [],
+     [],
+     [
+      "ex2"
+     ],
+     [
+      "ex2",
+      "pilot1"
+     ],
+     [],
+     [],
+     []
+    ]
+   },
+   "columns": 2,
+   "labels": [
+    "llm"
+   ]
+  },
+  "test_paper_empty": {
+   "paper": "test",
+   "structure": {
+    "file_name": [],
+    "data_type": []
+   },
+   "columns": 3
+  },
+  "na_type": {
+   "structure": {
+    "file_name": [
+     "a.R",
+     "b.R"
+    ],
+    "data_type": [
+     null,
+     "code"
+    ]
+   },
+   "columns": 1
+  },
+  "no_type_col": {
+   "structure": {
+    "file_name": [
+     "a.R",
+     "b.csv"
+    ]
+   },
+   "columns": 1
+  },
+  "no_name_col": {
+   "structure": {
+    "file_path": [
+     "a/x.R",
+     "b.txt"
+    ],
+    "data_type": [
+     "code",
+     "documentation"
+    ]
+   },
+   "columns": 1
+  },
+  "no_name_col_data": {
+   "structure": {
+    "file_path": [
+     "a/x.csv"
+    ],
+    "data_type": [
+     "data"
+    ]
+   },
+   "columns": 1
+  },
+  "paper_none": {
+   "paper": "none",
+   "structure": {
+    "file_name": [
+     "raw.csv",
+     "dataset_description.json",
+     "run.py"
+    ],
+    "file_path": [
+     "data/raw.csv",
+     "dataset_description.json",
+     "code/run.py"
+    ],
+    "data_type": [
+     "data",
+     "documentation",
+     "code"
+    ],
+    "doc_role": [
+     null,
+     null,
+     null
+    ],
+    "group": [
+     "ex1",
+     "ex1",
+     "ex1"
+    ],
+    "referenced_by": [
+     [],
+     [],
+     []
+    ]
+   },
+   "columns": 1
+  },
+  "paper_none_empty": {
+   "paper": "none",
+   "structure": {
+    "file_name": [],
+    "data_type": []
+   }
+  }
+ },
+ "trees": {
+  "null": {
+   "nodes": null
+  },
+  "empty": {
+   "nodes": {
+    "path": [],
+    "status": [],
+    "note": []
+   }
+  },
+  "statuses": {
+   "nodes": {
+    "path": [
+     "docs/x.md",
+     "docs",
+     "a/b/c.txt",
+     "a/b/missing.txt",
+     "a/moved.R",
+     "a/moved_no_note.R",
+     "scaffold/README",
+     "/abs//double.txt",
+     "win\\path\\f.txt",
+     "docs/x.md",
+     "Top.txt",
+     "top2.txt"
+    ],
+    "status": [
+     "present",
+     "missing",
+     "present",
+     "missing",
+     "move",
+     "move",
+     "present-scaffold",
+     "present",
+     "move",
+     "missing",
+     "present",
+     null
+    ],
+    "note": [
+     "",
+     "",
+     "",
+     "",
+     "move from x/moved.R",
+     "",
+     "",
+     "",
+     "move from <old> & new",
+     "",
+     "",
+     ""
+    ]
+   }
+  },
+  "no_note": {
+   "nodes": {
+    "path": [
+     "b/x.csv",
+     "a.txt",
+     "b/y.csv"
+    ],
+    "status": [
+     "missing",
+     "move",
+     "present"
+    ]
+   }
+  },
+  "empty_path": {
+   "nodes": {
+    "path": [
+     "a.txt",
+     ""
+    ],
+    "status": [
+     "present",
+     "present"
+    ],
+    "note": [
+     "",
+     ""
+    ]
+   }
+  }
+ }
+}

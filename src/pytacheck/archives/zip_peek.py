@@ -23,6 +23,7 @@ from __future__ import annotations
 
 import os
 import threading
+import warnings
 import zlib
 from collections.abc import Iterable, Sequence
 from typing import TYPE_CHECKING, Any
@@ -80,6 +81,14 @@ def _chr_list(x: Any) -> list[str | None]:
     return [None if _is_missing(x) else str(x)]
 
 
+def _grepl(pattern: str, x: list[str | None], ignore_case: bool = False) -> list[bool]:
+    """``grepl()``: ``FALSE`` for ``NA`` and for a string that is not valid UTF-8."""
+    from pytacheck.fileinfo._strings import invalid_utf8
+
+    hits = grepl(pattern, x, ignore_case=ignore_case)
+    return [bool(h) and not invalid_utf8(v) for h, v in zip(hits, x, strict=True)]
+
+
 def _entry_frame(rows: dict[str, list[Any]]) -> pd.DataFrame:
     import pandas as pd
 
@@ -123,9 +132,17 @@ def _raw_slice(data: bytes, first: int, last: int) -> bytes:
 
 
 def _raw_to_char(b: bytes) -> str:
-    """``rawToChar()`` + ``Encoding(x) <- "UTF-8"`` (an embedded nul is an error)."""
+    """``rawToChar()`` + ``Encoding(x) <- "UTF-8"``.
+
+    Trailing nuls are dropped and an embedded nul is an error, as in R; bytes
+    that are not valid UTF-8 are kept (as lone surrogates, see
+    :mod:`pytacheck.fileinfo._strings`).
+    """
+    b = b.rstrip(b"\x00")
     if b"\x00" in b:
-        shown = "".join(f"\\{c:03o}" if c < 32 or c > 126 else chr(c) for c in b)
+        shown = "".join(
+            "\\0" if c == 0 else (f"\\{c:03o}" if c < 32 or c == 127 else chr(c)) for c in b
+        )
         raise ValueError(f"embedded nul in string: '{shown}'")
     return b.decode("utf-8", errors="surrogateescape")
 
@@ -302,6 +319,10 @@ def zip_peek(url: str, tail_bytes: float = 131072) -> pd.DataFrame | None:
         total: Any = _head_total(url)
     except Exception:
         total = float("nan")
+    if total is None:
+        # R: no Content-Length is numeric(0), which .http_range_tail() cannot use
+        # (its `||` test errors, so it returns NULL without another request)
+        total = float("nan")
 
     def done(value: pd.DataFrame | None) -> pd.DataFrame | None:
         with _CACHE_LOCK:
@@ -314,7 +335,7 @@ def zip_peek(url: str, tail_bytes: float = 131072) -> pd.DataFrame | None:
             return done(None)
         cd = _parse_zip_central_dir(raw)
         if cd is not None:
-            keep = [not d for d in grepl("/$", cd["name"].tolist())]  # drop directories
+            keep = [not d for d in _grepl("/$", cd["name"].tolist())]  # drop directories
             return done(cd.loc[keep].reset_index(drop=True))
         if total is not None and not is_na(total) and nb >= total:
             break  # whole file seen
@@ -358,17 +379,17 @@ def _zip_inflate_member(comp: Any, method: Any, size: Any = None) -> bytes | Non
     return bytes(out[:limit])
 
 
-def _crc32(bytes_: Any) -> float:
+def _crc32(bytes: Any) -> float:
     """Port of ``R/zip-peek.R::.crc32()``: CRC32 of raw bytes, as an unsigned double."""
-    return float(zlib.crc32(_as_bytes(bytes_)))
+    return float(zlib.crc32(_as_bytes(bytes)))
 
 
 def _zip_crc_ok(
-    bytes_: Any,
+    bytes: Any,
     crc: Any,
     max_slow_bytes: float = 1048576,  # noqa: ARG001
 ) -> bool | None:
-    """Port of ``R/zip-peek.R::.zip_crc_ok()``: do *bytes_* match a stored CRC32?
+    """Port of ``R/zip-peek.R::.zip_crc_ok()``: do *bytes* match a stored CRC32?
 
     ``True``/``False``, or ``None`` (R ``NA``, "not checked") when *crc* is
     missing. metacheck hashes with ``digest`` when it is installed (it is a
@@ -379,7 +400,7 @@ def _zip_crc_ok(
     """
     if _is_missing(crc):
         return None
-    got = _crc32(bytes_)
+    got = _crc32(bytes)
     want = float(crc)
     tol = 1.5e-8
     diff = abs(got - want)
@@ -470,6 +491,8 @@ def _zip_fetch_members(
     """
     import pandas as pd
 
+    from pytacheck.fileinfo._strings import raise_if_invalid
+
     try:
         cd = zip_peek(url)
     except Exception:
@@ -493,11 +516,16 @@ def _zip_fetch_members(
         data = _zip_member_fetch(url, want.iloc[[i]], verify=verify)
         if data is None:
             continue
+        # R: gsub() refuses a name that is not valid UTF-8 (a CP437 name)
+        raise_if_invalid([member_names[i]])
         rel = _safe_member_path(member_names[i])
         if rel is None:
             continue
         target = f"{dest}/{rel}"
-        os.makedirs(os.path.dirname(target) or ".", exist_ok=True)
+        try:  # R: dir.create(showWarnings = FALSE) fails silently (a file is in the way)
+            os.makedirs(os.path.dirname(target) or ".", exist_ok=True)
+        except OSError:
+            pass
         try:
             with open(target, "wb") as fh:
                 fh.write(data)
@@ -522,18 +550,18 @@ _TAR_RX = "[.](tar|tar[.]gz|tgz|tar[.]bz2|tbz2?|tar[.]xz|txz)$"
 
 def _is_zip(name: Any) -> list[bool]:
     """Port of ``R/zip-peek.R::.is_zip()``: names ending in ``.zip``."""
-    return [bool(v) for v in grepl("[.]zip$", _chr_list(name), ignore_case=True)]
+    return _grepl("[.]zip$", _chr_list(name), ignore_case=True)
 
 
 def _is_tar_archive(name: Any) -> list[bool]:
     """Port of ``R/zip-peek.R::.is_tar_archive()``: ``.tar``, ``.tar.gz``, ``.tgz``, ..."""
-    return [bool(v) for v in grepl(_TAR_RX, _chr_list(name), ignore_case=True)]
+    return _grepl(_TAR_RX, _chr_list(name), ignore_case=True)
 
 
 def _is_single_compress(name: Any) -> list[bool]:
     """Port of ``R/zip-peek.R::.is_single_compress()``: a bare ``.gz``/``.bz2``/``.xz``."""
     names = _chr_list(name)
-    comp = grepl("[.](gz|bz2|xz)$", names, ignore_case=True)
+    comp = _grepl("[.](gz|bz2|xz)$", names, ignore_case=True)
     return [bool(c) and not t for c, t in zip(comp, _is_tar_archive(names), strict=True)]
 
 
@@ -564,10 +592,20 @@ def _list_files_all(root: str) -> list[str]:
 
 
 def _file_ext(x: list[str]) -> list[str]:
-    """``tools::file_ext()``."""
-    from pytacheck._r import regextract
+    """``tools::file_ext()``.
 
-    found = regextract(r"\.([[:alnum:]]+)$", x)
+    A string that is not valid UTF-8 has no extension (``regexpr()`` is -1),
+    but once any other element has one, ``substring()`` meets the invalid
+    string and fails, as in R.
+    """
+    from pytacheck._r import regextract
+    from pytacheck.fileinfo._strings import as_bytes_text, invalid_utf8
+
+    bad = [invalid_utf8(v) for v in x]
+    found = regextract(r"\.([[:alnum:]]+)$", [None if b else v for v, b in zip(x, bad, strict=True)])
+    if any(bad) and any(m is not None for m in found):
+        first = next(v for v, b in zip(x, bad, strict=True) if b)
+        raise ValueError(f"invalid multibyte string at '{as_bytes_text(first)}'")
     return ["" if m is None else m[1:] for m in found]
 
 
@@ -578,7 +616,11 @@ def _tolower(s: str) -> str:
 
 
 def _archive_rows(
-    dest: str, archive_row: pd.DataFrame, label: str, skip_types: Any
+    dest: str,
+    archive_row: pd.DataFrame,
+    label: str,
+    skip_types: Any,
+    _sizes: dict[str, float] | None = None,
 ) -> pd.DataFrame:
     """Port of ``R/zip-peek.R::.archive_rows()``: rows for the files of an extracted archive.
 
@@ -599,7 +641,7 @@ def _archive_rows(
     if not os.path.isdir(dest):
         return empty
     rel = _list_files_all(dest)
-    macosx = grepl("(^|/)__MACOSX/", rel)
+    macosx = _grepl("(^|/)__MACOSX/", rel)
     rel = [r for r, m in zip(rel, macosx, strict=True) if not m]
     if not rel:
         return empty
@@ -626,6 +668,9 @@ def _archive_rows(
     rows = archive_row.iloc[[0] * len(loc)].reset_index(drop=True)
     sizes = []
     for p in loc:
+        if _sizes is not None and p in _sizes:
+            sizes.append(_sizes[p])
+            continue
         try:
             sizes.append(float(os.path.getsize(p)))
         except OSError:
@@ -649,40 +694,87 @@ def _missing_path(path: Any) -> bool:
     return path is None or is_na(path) or not os.path.exists(str(path))
 
 
+def _zip_raw_name(info: Any) -> bytes:
+    """A member's name as the bytes stored in the archive, up to the first NUL (a C string)."""
+    name = info.orig_filename
+    raw = name.encode("utf-8" if info.flag_bits & 0x800 else "cp437")
+    return raw.split(b"\x00", 1)[0]
+
+
 def _zip_names(zf: Any) -> list[str]:
-    """Member names as R's ``unzip(list = TRUE)`` reads them (bytes taken as UTF-8)."""
-    names = []
-    for info in zf.infolist():
-        name = info.filename
-        if not info.flag_bits & 0x800:
-            try:
-                name = name.encode("cp437").decode("utf-8")
-            except (UnicodeEncodeError, UnicodeDecodeError):
-                pass
-        names.append(name)
-    return names
+    """Member names as R's ``unzip(list = TRUE)`` reads them.
+
+    The stored bytes taken as UTF-8 (R's native encoding), whether or not the
+    archive flags them as UTF-8; bytes that are not valid UTF-8 (a CP437 name
+    from an old Windows tool) are kept as lone surrogates, as R keeps an
+    invalid string.
+    """
+    return [_zip_raw_name(info).decode("utf-8", "surrogateescape") for info in zf.infolist()]
+
+
+#: Compression methods R's internal unzip (minizip) can extract: stored,
+#: deflate and bzip2. Anything else stops the extraction ("zip file is corrupt").
+_R_UNZIP_METHODS = (0, 8, 12)
+
+
+def _r_member_path(raw: bytes) -> bytes:
+    """R's internal unzip drops ``../`` path components (with a warning)."""
+    if raw.startswith(b"../") or b"/../" in raw:
+        shown = raw.decode("utf-8", "replace")
+        warnings.warn(f'skipped "../" path component(s) in \'{shown}\'', stacklevel=4)
+        while raw.startswith(b"../"):
+            raw = raw[3:]
+        while b"/../" in raw:
+            raw = raw.replace(b"/../", b"/", 1)
+    return raw
 
 
 def _unzip_all(zip_path: str, exdir: str) -> None:
-    """``utils::unzip(zip_path, exdir = exdir)``: extract every member."""
+    """``utils::unzip(zip_path, exdir = exdir)``: extract as R's internal unzip does.
+
+    Member names are used byte for byte (a backslash is part of the file name,
+    ``C:/x`` makes a folder ``C:``, a leading ``/`` is harmless), except that
+    ``../`` components are dropped. Parent folders are made as needed; a
+    member that cannot be written (a file is in the way) is an error that
+    ends the extraction, and so is -- as a warning -- a compression method
+    R cannot read. CRC mismatches are not checked.
+    """
     import shutil
     import zipfile
 
+    ex = os.fsencode(exdir)
+    os.makedirs(ex, exist_ok=True)
     with zipfile.ZipFile(zip_path) as zf:
-        for info, name in zip(zf.infolist(), _zip_names(zf), strict=True):
-            rel = _safe_member_path(name)
-            if rel is None or rel == "":
+        for info in zf.infolist():
+            out = ex + b"/" + _r_member_path(_zip_raw_name(info))
+            if out.endswith(b"/"):  # a directory entry
+                if not os.path.exists(out):
+                    try:
+                        os.makedirs(out, exist_ok=True)
+                    except OSError:
+                        pass
                 continue
-            target = os.path.join(exdir, rel)
-            if name.endswith("/"):
-                os.makedirs(target, exist_ok=True)
-                continue
-            os.makedirs(os.path.dirname(target) or exdir, exist_ok=True)
+            pp = len(ex) + 1
+            while (k := out.find(b"/", pp)) >= 0:
+                parent = out[:k]
+                if not os.path.exists(parent):
+                    try:
+                        os.mkdir(parent)
+                    except OSError:
+                        pass
+                pp = k + 1
+            if info.compress_type not in _R_UNZIP_METHODS:
+                warnings.warn("zip file is corrupt", stacklevel=3)
+                return
             try:
-                with zf.open(info) as src, open(target, "wb") as dst:
-                    shutil.copyfileobj(src, dst)
-            except Exception:  # noqa: S112 - R's unzip warns and moves on
-                continue
+                fout = open(out, "wb")  # noqa: SIM115
+            except OSError as e:
+                raise RuntimeError(
+                    f"cannot open file '{os.fsdecode(out)}': {e.strerror}"
+                ) from e
+            with fout, zf.open(info) as src:
+                src._expected_crc = None  # type: ignore[attr-defined]  # R ignores CRCs
+                shutil.copyfileobj(src, fout)
 
 
 def _expand_zip(
@@ -717,6 +809,29 @@ def _expand_zip(
     return _archive_rows(dest, zip_row, os.path.basename(zip_path), skip_types)
 
 
+def _untar_all(tar_path: str, exdir: str) -> None:
+    """``utils::untar(tar_path, exdir = exdir)`` as metacheck runs it (GNU ``tar -xf``).
+
+    Member by member, as GNU tar does: a member whose name has a ``..``
+    component is skipped ("Member name contains '..'"), a leading ``/`` is
+    removed, and a member that cannot be extracted does not stop the others.
+    Unlike GNU tar, links that point outside *exdir* are not extracted
+    (:mod:`tarfile`'s ``data`` filter): an archive from a repository must not
+    write outside the cache.
+    """
+    import tarfile
+
+    os.makedirs(exdir, exist_ok=True)
+    with tarfile.open(tar_path, "r:*") as tf:
+        for member in tf:
+            if ".." in member.name.split("/"):
+                continue
+            try:
+                tf.extract(member, exdir, filter="data")
+            except Exception:  # noqa: S112 - GNU tar reports the member and goes on
+                continue
+
+
 def _expand_tar(
     tar_path: Any, tar_row: pd.DataFrame, skip_types: Any = "materials"
 ) -> pd.DataFrame:
@@ -742,8 +857,7 @@ def _expand_tar(
         return empty
     if not os.path.isdir(dest):
         try:
-            with tarfile.open(tar_path, "r:*") as tf:
-                tf.extractall(dest, filter="data")
+            _untar_all(tar_path, dest)
         except Exception:  # noqa: S110 - R: tryCatch(untar(...), error = NULL)
             pass
     return _archive_rows(dest, tar_row, os.path.basename(tar_path), skip_types)
@@ -792,18 +906,30 @@ def _expand_compressed(
     dest = f"{gz_path}.contents"
     inner_name = sub("[.](gz|bz2|xz)$", "", os.path.basename(gz_path), ignore_case=True)
     out = f"{dest}/{inner_name}"
+    sizes: dict[str, float] | None = None
     if not os.path.exists(out):
         try:
             os.makedirs(dest, exist_ok=True)
+            total = 0
             with _open_compressed(gz_path, ext) as con, open(out, "wb") as oc:
                 while True:
                     chunk = con.read(1048576)
                     if not chunk:
                         break
                     oc.write(chunk)
+                    total += len(chunk)
         except Exception:
             return empty
-    return _archive_rows(dest, gz_row, os.path.basename(gz_path), skip_types)
+        # R closes the output connection only when .expand_compressed() returns
+        # (on.exit), so .archive_rows() sees the file before its last, partly
+        # filled stdio buffer is flushed: file.size() is the size rounded down
+        # to the file system block size (0 for a small file).
+        try:
+            blk = int(getattr(os.stat(out), "st_blksize", 4096)) or 4096
+        except OSError:
+            blk = 4096
+        sizes = {out: float(total - total % blk)}
+    return _archive_rows(dest, gz_row, os.path.basename(gz_path), skip_types, _sizes=sizes)
 
 
 # -- zip_decision() ------------------------------------------------------------
@@ -847,6 +973,9 @@ def zip_decision(url: str, skip_types: Any = "materials") -> dict[str, Any]:
         os.path.basename(str(n).rstrip("/")) if n is not None else None
         for n in _chr_list(peek["name"])
     ]
+    # R: data_classify_files() -> tools::file_ext() fails on a name that is not
+    # valid UTF-8 (a CP437 member name) as soon as another name has an extension
+    _file_ext([n for n in names if n is not None])
     types = data_classify_files(names)
     roles = _data_doc_role(names)
     skip = set(_chr_list(skip_types))

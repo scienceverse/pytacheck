@@ -14,6 +14,7 @@ from typing import Any
 import pandas as pd
 
 from pytacheck._r import grepl
+from pytacheck.fileinfo._strings import invalid_utf8
 
 __all__ = ["file_category", "filetype"]
 
@@ -94,6 +95,12 @@ def _tolower(s: str) -> str:
     return "".join(lc if len(lc := c.lower()) == 1 else lc[0] for c in s)
 
 
+def _grepl(pattern: str, x: list[str | None], ignore_case: bool = False) -> list[bool]:
+    """``grepl()``, which is ``FALSE`` for ``NA`` and for a string that is not valid UTF-8."""
+    hits = grepl(pattern, x, ignore_case=ignore_case)
+    return [bool(h) and not invalid_utf8(v) for h, v in zip(hits, x, strict=True)]
+
+
 def _last_ext(name: str) -> str:
     """``strsplit(name, "\\\\.")[[1]]``'s last element, as ``filetype()`` takes it.
 
@@ -121,6 +128,8 @@ def _name_filetype(name: str | None) -> str:
     """
     if name is None:
         return ""
+    if invalid_utf8(name):
+        return ""  # R: grepl() is FALSE for a string that is not valid UTF-8
     from pytacheck.fileinfo.types import ext_rows
 
     rows = ext_rows()
@@ -180,6 +189,7 @@ def file_category(contents: Any) -> pd.DataFrame | dict[str, list[Any]]:
     nm = [] if name_col is None else _chr_list(name_col)
 
     ft_col = _dollar(df, "filetype")
+    ft: list[str | None]
     if ft_col is None:
         ft = [_name_filetype(x) for x in nm]
         if len(ft) != nrow:
@@ -198,9 +208,9 @@ def file_category(contents: Any) -> pd.DataFrame | dict[str, list[Any]]:
         raise ValueError(f"replacement has {n} rows, data has {nrow}")
 
     # hard rules (R: sure_class). `ft_has(t)` is grepl("\\bt\\b", ft).
-    has_data = grepl(r"\bdata\b", ft)
-    has_stats = grepl(r"\bstats\b", ft)
-    has_archive = grepl(r"\barchive\b", ft)
+    has_data = _grepl(r"\bdata\b", ft)
+    has_stats = _grepl(r"\bstats\b", ft)
+    has_archive = _grepl(r"\barchive\b", ft)
     sure_class: list[str | None] = []
     for f, d, s, a in zip(ft, has_data, has_stats, has_archive, strict=True):
         if f == "stats" or f == "code":
@@ -210,8 +220,8 @@ def file_category(contents: Any) -> pd.DataFrame | dict[str, list[Any]]:
         else:
             sure_class.append(None)
 
-    is_readme = grepl(_README_RX, nm, ignore_case=True)
-    is_codebook = grepl(_CODEBOOK_RX, nm, ignore_case=True)
+    is_readme = _grepl(_README_RX, nm, ignore_case=True)
+    is_codebook = _grepl(_CODEBOOK_RX, nm, ignore_case=True)
     if cat_col is not None:
         is_codebook = [b or c == "codebook" for b, c in zip(is_codebook, cat, strict=True)]
     # (R also computes `is_data` / `is_code`, but no longer uses them.)
@@ -249,7 +259,8 @@ def filetype(filename: Any) -> pd.Series:
     table = ext_types()
     types: list[str] = []
     for name in names:
-        if name is None:
+        if name is None or invalid_utf8(name):
+            # R: strsplit() gives NA for a string that is not valid UTF-8
             types.append("NA")
             continue
         types.append(table.get(_tolower(_last_ext(name)), "NA"))

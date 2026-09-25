@@ -20,6 +20,7 @@ from typing import Any
 import pandas as pd
 
 from pytacheck._r import grepl, regexec, regextract_all, sub
+from pytacheck.fileinfo._strings import raise_if_invalid
 
 __all__ = ["check_file_naming"]
 
@@ -114,7 +115,8 @@ def _r_dirname(path: str | None) -> str | None:
 
 def _file_path_sans_ext(x: list[str | None]) -> list[str | None]:
     """``tools::file_path_sans_ext()``."""
-    return sub(r"([^.]+)\.[[:alnum:]]+$", r"\1", x)
+    out: list[str | None] = sub(r"([^.]+)\.[[:alnum:]]+$", r"\1", x)
+    return out
 
 
 def _is_leap(year: int) -> bool:
@@ -147,8 +149,13 @@ def _frame(rows: Sequence[tuple[Any, ...]], columns: Sequence[str]) -> pd.DataFr
 
 
 def _check_rows(file_names: list[str | None], data_types: list[str | None]) -> list[Row]:
-    """``.file_naming_check_one()`` for every file at once, rows in file order."""
+    """``.file_naming_check_one()`` for every file at once, rows in file order.
+
+    As in R, a name that is not valid UTF-8 is an error (``sub()`` in
+    ``tools::file_path_sans_ext()`` refuses it).
+    """
     bases = [_r_basename(f) for f in file_names]
+    raise_if_invalid(bases, "input string 1 is invalid")
     stems = _file_path_sans_ext(bases)
     special = grepl(_SPECIAL_RX, bases)
     non_ascii = grepl(_NON_ASCII_RX, bases)
@@ -202,6 +209,7 @@ def _file_naming_check_one(file_name: Any, data_type: Any = None) -> pd.DataFram
 
 def _padding_rows(file_names: list[str | None]) -> list[Row]:
     bases = [_r_basename(f) for f in file_names]
+    raise_if_invalid(bases, "input string {i} is invalid in this locale")  # R: regexec()
     parts = regexec(_PADDING_RX, bases)
     # families: prefix and suffix around the LAST run of digits, first-seen order
     families: dict[str, list[tuple[int, int]]] = {}
@@ -237,6 +245,7 @@ def _file_naming_check_padding(file_names: Any) -> pd.DataFrame:
 
 
 def _length_rows(file_path: list[str | None]) -> list[Row]:
+    raise_if_invalid(file_path)  # R: gsub()
     paths = [None if p is None else p.replace("\\", "/") for p in file_path]
     dir_part = [_r_dirname(p) for p in paths]
     dir_part = ["" if d == "." else d for d in dir_part]

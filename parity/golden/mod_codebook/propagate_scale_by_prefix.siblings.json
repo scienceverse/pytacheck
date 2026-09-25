@@ -1,0 +1,66 @@
+{
+  "id": "propagate_scale_by_prefix.siblings",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 4,
+    "names": [
+      "source_file",
+      "column_name",
+      "scale",
+      "scale_confidence",
+      "scale_source"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "s.csv",
+          "s.csv",
+          "s.csv",
+          "s.csv"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "bfi_1",
+          "bfi_2",
+          "bfi_3",
+          "other_1"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Big Five Inventory",
+          "Big Five Inventory",
+          "Big Five Inventory",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "high",
+          "high",
+          "high",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "manuscript",
+          "manuscript",
+          "manuscript",
+          null
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

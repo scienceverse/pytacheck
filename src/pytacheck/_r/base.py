@@ -9,6 +9,7 @@ numbers whenever the R code relied on ``paste()``, ``as.character()`` or
 
 from __future__ import annotations
 
+import functools
 import math
 import unicodedata
 from collections.abc import Iterable, Sequence
@@ -306,28 +307,111 @@ def r_sort_key(s: Any) -> tuple[Any, ...]:
     collation: punctuation < digits < letters, letters compared
     case-insensitively and accent-insensitively first, then by accents, then
     lowercase before uppercase. Example: ``["_x", "1", "a", "A", "b", "B"]``.
+    Accents are ranked in ICU's order (acute < grave < ... < diaeresis), not
+    by code point; compatibility characters (fullwidth, superscripts,
+    ligatures) sort as their NFKD form; ø ł đ ħ ð are variants of their base
+    letter, æ œ ß expand to ae oe ss, and ı ŋ ŧ þ ... are separate letters.
 
     ``dplyr::arrange()``/``count()`` sort in the C locale instead: use a
     plain ``sorted()`` (code point order) for those.
     """
     if is_na(s):
         return (1,)
-    text = str(s)
     primary: list[tuple[int, str]] = []
     secondary: list[str] = []
     tertiary: list[int] = []
-    for ch in text:
-        decomposed = unicodedata.normalize("NFD", ch)
-        base = decomposed[0]
-        rank = _CATEGORY_RANK.get(unicodedata.category(base)[0], 6)
-        folded = base.casefold()
-        if rank >= 3:
-            primary.append((rank, folded))
-        else:
-            primary.append((rank, f"{_ICU_PUNCT.get(base, 99):02d}{base}"))
-        secondary.append(decomposed[1:])
-        tertiary.append(0 if base == folded else 1)
+    for ch in str(s):
+        for rank, prim, sec, ter in _collation_units(ch):
+            primary.append((rank, prim))
+            secondary.append(sec)
+            tertiary.append(ter)
     return (0, tuple(primary), tuple(secondary), tuple(tertiary))
+
+
+# Latin letters without a canonical decomposition that ICU root collation does
+# not sort by code point (checked against R's order()):
+# - variants of a base letter, ranked as that letter plus an overlay mark (ø is
+#   o + U+0338, ł is l + U+0335), or after all of its accented forms ("\uffff")
+# - expansions after their plain spelling: æ = ae, œ = oe, ß = ss
+_ICU_VARIANT = {
+    "ø": ("o", "\u0338"),
+    "đ": ("d", "\u0335"),
+    "ł": ("l", "\u0335"),
+    "ħ": ("h", "\u0335"),
+    "ð": ("d", "\uffff"),
+    "æ": ("ae", "\uffff"),
+    "œ": ("oe", "\uffff"),
+    "ß": ("ss", "\uffff"),
+    "ſ": ("s", "\uffff"),
+}
+# - separate letters sorted after every word of their base letter: (base, rank)
+_ICU_AFTER = {
+    "ı": ("i", 1),
+    "ĸ": ("q", 1),
+    "ŋ": ("n", 1),
+    "ŧ": ("t", 1),
+    "ǝ": ("e", 1),
+    "ə": ("e", 2),
+    "ɛ": ("e", 3),
+    "ƒ": ("f", 1),
+    "ɔ": ("o", 1),
+    "ƶ": ("z", 1),
+    "ʒ": ("z", 2),
+    "þ": ("z", 3),
+}
+
+
+# ICU root order of the combining diacritics U+0300-U+036F (R's order() of "a" + mark),
+# which is not code-point order: acute < grave < breve < circumflex < caron < ring <
+# diaeresis ... Secondary keys remap each mark to U+0300 + its rank.
+_ICU_MARK_ORDER = (
+    "034F 0332 0313 0343 0314 0301 0341 0300 0340 0306 0302 030C 030A 0342 0308 0344 "
+    "030B 0303 0307 0338 0327 0328 0304 030D 030E 0312 0315 031A 033D 033E 033F 0346 "
+    "034A 034B 034C 0350 0351 0352 0357 035B 035D 035E 0316 0317 0318 0319 031C 031D "
+    "031E 031F 0320 0329 032A 032B 032C 032F 0333 033A 033B 033C 0347 0348 0349 034D "
+    "034E 0353 0354 0355 0356 0359 035A 035C 035F 0362 0336 0337 0335 0305 0309 030F "
+    "0310 0311 031B 0321 0322 0323 0324 0325 0326 032D 032E 0330 0331 0334 0339 0345 "
+    "0358 0360 0361 0363 0368 0369 0364 036A 0365 036B 0366 036C 036D 0367 036E 036F"
+)
+_ICU_MARK = str.maketrans(
+    {chr(int(h, 16)): chr(0x300 + i) for i, h in enumerate(_ICU_MARK_ORDER.split())}
+)
+
+
+@functools.lru_cache(maxsize=4096)
+def _collation_units(ch: str) -> tuple[tuple[int, str, str, int], ...]:
+    """``(rank, primary, secondary, tertiary)`` collation units of one character."""
+    decomposed = unicodedata.normalize("NFD", ch)
+    compat = unicodedata.normalize("NFKD", ch)
+    if compat != decomposed and ch not in _ICU_VARIANT:
+        # compatibility characters (fullwidth, superscripts, ligatures, fractions)
+        # sort as their NFKD expansion, after it at the tertiary level
+        units: list[tuple[int, str, str, int]] = []
+        for c in compat:
+            if units and unicodedata.category(c)[0] == "M":
+                rank, prim, sec, _ = units[-1]
+                units[-1] = (rank, prim, sec + c.translate(_ICU_MARK), 2)
+            else:
+                units += [(rank, prim, sec, 2) for rank, prim, sec, _ in _collation_units(c)]
+        return tuple(units)
+    base = decomposed[0]
+    marks = decomposed[1:].translate(_ICU_MARK)
+    lower = base.lower()
+    tertiary = 0 if base == lower else 1
+    if lower in _ICU_VARIANT:
+        letters, mark = _ICU_VARIANT[lower]
+        mark = mark.translate(_ICU_MARK)
+        return tuple(
+            (4, c, (mark + marks) if i == 0 else "", tertiary) for i, c in enumerate(letters)
+        )
+    if lower in _ICU_AFTER:
+        letter, n = _ICU_AFTER[lower]
+        return ((4, f"{letter}\U0010ffff{n:d}", marks, tertiary),)
+    rank = _CATEGORY_RANK.get(unicodedata.category(base)[0], 6)
+    folded = base.casefold()
+    if rank >= 3:
+        return ((rank, folded, marks, 0 if base == folded else 1),)
+    return ((rank, f"{_ICU_PUNCT.get(base, 99):02d}{base}", marks, 0 if base == folded else 1),)
 
 
 def r_sorted(x: Sequence[Any], decreasing: bool = False) -> list[Any]:

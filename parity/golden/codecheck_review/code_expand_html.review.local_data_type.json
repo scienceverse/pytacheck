@@ -1,0 +1,107 @@
+{
+  "id": "code_expand_html.review.local_data_type",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 7,
+    "names": [
+      "repo_url",
+      "file_name",
+      "file_path",
+      "file_url",
+      "file_location",
+      "file_size",
+      "data_type"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "https://osf.io/abcde",
+          "https://osf.io/abcde",
+          "https://osf.io/abcde",
+          "https://osf.io/abcde",
+          "https://osf.io/abcde",
+          "https://osf.io/abcde",
+          "https://osf.io/abcde"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "knit_classic.html",
+          "knit_quarto.html",
+          "stata_log.html",
+          "plain.html",
+          "empty.html",
+          "knit_classic.R",
+          "knit_quarto.R"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "sub/knit_classic.html",
+          "sub/knit_quarto.html",
+          "sub/stata_log.html",
+          "sub/plain.html",
+          "sub/empty.html",
+          "sub/code/knit_classic.R",
+          "sub/code/knit_quarto.R"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "tests/codecheck/fixtures/expand/knit_classic.html",
+          "tests/codecheck/fixtures/expand/knit_quarto.html",
+          "tests/codecheck/fixtures/expand/stata_log.html",
+          "tests/codecheck/fixtures/expand/plain.html",
+          "tests/codecheck/fixtures/expand/empty.html",
+          "tests/codecheck/fixtures/expand/code/knit_classic.R",
+          "tests/codecheck/fixtures/expand/code/knit_quarto.R"
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          63,
+          52
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "output",
+          "output",
+          "output",
+          "other",
+          "other",
+          "other",
+          "other"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

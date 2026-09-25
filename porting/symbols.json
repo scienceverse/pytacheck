@@ -176,11 +176,13 @@
  ".announce_rate_limit_wait": {
   "file": "R/repo-download.R",
   "line": 507,
+  "ported": true,
   "python": "pytacheck.archives.download:_announce_rate_limit_wait"
  },
  ".archive_rows": {
   "file": "R/zip-peek.R",
   "line": 497,
+  "ported": true,
   "python": "pytacheck.archives.zip_peek:_archive_rows"
  },
  ".as_num_safe": {
@@ -198,6 +200,7 @@
  ".auth_for_url": {
   "file": "R/repo-download.R",
   "line": 232,
+  "ported": true,
   "python": "pytacheck.archives.download:_auth_for_url"
  },
  ".batch_query": {
@@ -263,6 +266,7 @@
  ".bibr12_utc": {
   "file": "R/import-grobid-bibr12.R",
   "line": 434,
+  "ported": true,
   "python": "pytacheck.io.grobid_bibr12:_bibr12_utc"
  },
  ".bibr_isalive": {
@@ -454,6 +458,7 @@
  ".crc32": {
   "file": "R/zip-peek.R",
   "line": 386,
+  "ported": true,
   "python": "pytacheck.archives.zip_peek:_crc32"
  },
  ".create_synonyms": {
@@ -699,16 +704,19 @@
  ".download_many_parallel": {
   "file": "R/repo-download.R",
   "line": 731,
+  "ported": true,
   "python": "pytacheck.archives.download:_download_many_parallel"
  },
  ".download_one": {
   "file": "R/repo-download.R",
   "line": 636,
+  "ported": true,
   "python": "pytacheck.archives.download:_download_one"
  },
  ".download_zip_to_cache": {
   "file": "R/repo-download.R",
   "line": 910,
+  "ported": true,
   "python": "pytacheck.archives.download:_download_zip_to_cache"
  },
  ".dryad_auth": {
@@ -852,16 +860,19 @@
  ".expand_compressed": {
   "file": "R/zip-peek.R",
   "line": 590,
+  "ported": true,
   "python": "pytacheck.archives.zip_peek:_expand_compressed"
  },
  ".expand_tar": {
   "file": "R/zip-peek.R",
   "line": 571,
+  "ported": true,
   "python": "pytacheck.archives.zip_peek:_expand_tar"
  },
  ".expand_zip": {
   "file": "R/zip-peek.R",
   "line": 550,
+  "ported": true,
   "python": "pytacheck.archives.zip_peek:_expand_zip"
  },
  ".extract_codebook_positional": {
@@ -975,17 +986,26 @@
  ".file_naming_check_length": {
   "file": "R/file-naming.R",
   "line": 155,
+  "ported": true,
   "python": "pytacheck.fileinfo.naming:_file_naming_check_length"
  },
  ".file_naming_check_one": {
   "file": "R/file-naming.R",
   "line": 46,
+  "ported": true,
   "python": "pytacheck.fileinfo.naming:_file_naming_check_one"
  },
  ".file_naming_check_padding": {
   "file": "R/file-naming.R",
   "line": 108,
+  "ported": true,
   "python": "pytacheck.fileinfo.naming:_file_naming_check_padding"
+ },
+ ".file_naming_severity": {
+  "file": "",
+  "line": 0,
+  "ported": true,
+  "python": "pytacheck.fileinfo.naming:FILE_NAMING_SEVERITY"
  },
  ".find_codebook_cols": {
   "file": "R/data_check_helpers.R",
@@ -1026,6 +1046,7 @@
  ".format_wait_duration": {
   "file": "R/repo-download.R",
   "line": 474,
+  "ported": true,
   "python": "pytacheck.archives.download:_format_wait_duration"
  },
  ".fsd_ddi_xml": {
@@ -1091,6 +1112,7 @@
  ".grobid_to_bibr12": {
   "file": "R/import-grobid-bibr12.R",
   "line": 19,
+  "ported": true,
   "python": "pytacheck.io.grobid_bibr12:_grobid_to_bibr12"
  },
  ".haven_value_labels": {
@@ -1102,11 +1124,13 @@
  ".host_rate_limit_record": {
   "file": "R/repo-download.R",
   "line": 445,
+  "ported": true,
   "python": "pytacheck.archives.download:_host_rate_limit_record"
  },
  ".host_rate_limit_remaining": {
   "file": "R/repo-download.R",
   "line": 460,
+  "ported": true,
   "python": "pytacheck.archives.download:_host_rate_limit_remaining"
  },
  ".html_export_r_source": {
@@ -1130,11 +1154,13 @@
  ".http_range_bytes": {
   "file": "R/zip-peek.R",
   "line": 110,
+  "ported": true,
   "python": "pytacheck.archives.zip_peek:_http_range_bytes"
  },
  ".http_range_tail": {
   "file": "R/zip-peek.R",
   "line": 53,
+  "ported": true,
   "python": "pytacheck.archives.zip_peek:_http_range_tail"
  },
  ".infer_group": {
@@ -1224,6 +1250,7 @@
  ".is_login_page": {
   "file": "R/repo-download.R",
   "line": 314,
+  "ported": true,
   "python": "pytacheck.archives.download:_is_login_page"
  },
  ".is_paper": {
@@ -1259,11 +1286,13 @@
  ".is_readable_archive": {
   "file": "R/zip-peek.R",
   "line": 484,
+  "ported": true,
   "python": "pytacheck.archives.zip_peek:_is_readable_archive"
  },
  ".is_single_compress": {
   "file": "R/zip-peek.R",
   "line": 481,
+  "ported": true,
   "python": "pytacheck.archives.zip_peek:_is_single_compress"
  },
  ".is_single_field_blob": {
@@ -1281,6 +1310,7 @@
  ".is_tar_archive": {
   "file": "R/zip-peek.R",
   "line": 476,
+  "ported": true,
   "python": "pytacheck.archives.zip_peek:_is_tar_archive"
  },
  ".is_task_data": {
@@ -1292,6 +1322,7 @@
  ".is_zip": {
   "file": "R/zip-peek.R",
   "line": 474,
+  "ported": true,
   "python": "pytacheck.archives.zip_peek:_is_zip"
  },
  ".item_text_key": {
@@ -1381,6 +1412,7 @@
  ".le_int": {
   "file": "R/zip-peek.R",
   "line": 27,
+  "ported": true,
   "python": "pytacheck.archives.zip_peek:_le_int"
  },
  ".llm_apply_reasoning": {
@@ -2043,6 +2075,7 @@
  ".parse_zip_central_dir": {
   "file": "R/zip-peek.R",
   "line": 143,
+  "ported": true,
   "python": "pytacheck.archives.zip_peek:_parse_zip_central_dir"
  },
  ".pb_all": {
@@ -2348,6 +2381,7 @@
  ".rate_limit_wait": {
   "file": "R/repo-download.R",
   "line": 392,
+  "ported": true,
   "python": "pytacheck.archives.download:_rate_limit_wait"
  },
  ".rbox_headers": {
@@ -2449,11 +2483,13 @@
  ".remote_content_length": {
   "file": "R/repo-download.R",
   "line": 205,
+  "ported": true,
   "python": "pytacheck.archives.download:_remote_content_length"
  },
  ".remote_size": {
   "file": "R/repo-download.R",
   "line": 180,
+  "ported": true,
   "python": "pytacheck.archives.download:_remote_size"
  },
  ".render_test": {
@@ -2465,21 +2501,25 @@
  ".repo_cache_dir": {
   "file": "R/repo-download.R",
   "line": 11,
+  "ported": true,
   "python": "pytacheck.archives.download:_repo_cache_dir"
  },
  ".repo_cache_path": {
   "file": "R/repo-download.R",
   "line": 43,
+  "ported": true,
   "python": "pytacheck.archives.download:_repo_cache_path"
  },
  ".repo_cache_rel": {
   "file": "R/repo-download.R",
   "line": 30,
+  "ported": true,
   "python": "pytacheck.archives.download:_repo_cache_rel"
  },
  ".repo_cache_subdir": {
   "file": "R/repo-download.R",
   "line": 19,
+  "ported": true,
   "python": "pytacheck.archives.download:_repo_cache_subdir"
  },
  ".repo_info_cache_dir": {
@@ -2527,6 +2567,7 @@
  ".repo_session_dir": {
   "file": "R/repo-download.R",
   "line": 50,
+  "ported": true,
   "python": "pytacheck.archives.download:_repo_session_dir"
  },
  ".repro_base_packages": {
@@ -3348,21 +3389,25 @@
  ".storage_backoff": {
   "file": "R/repo-download.R",
   "line": 363,
+  "ported": true,
   "python": "pytacheck.archives.download:_storage_backoff"
  },
  ".storage_is_transient": {
   "file": "R/repo-download.R",
   "line": 354,
+  "ported": true,
   "python": "pytacheck.archives.download:_storage_is_transient"
  },
  ".storage_is_transient_factory": {
   "file": "R/repo-download.R",
   "line": 576,
+  "ported": true,
   "python": "pytacheck.archives.download:_storage_is_transient_factory"
  },
  ".storage_retry_after_factory": {
   "file": "R/repo-download.R",
   "line": 540,
+  "ported": true,
   "python": "pytacheck.archives.download:_storage_retry_after_factory"
  },
  ".strip_llm_wrapper": {
@@ -3536,6 +3581,7 @@
  ".wait_out_known_rate_limit": {
   "file": "R/repo-download.R",
   "line": 605,
+  "ported": true,
   "python": "pytacheck.archives.download:_wait_out_known_rate_limit"
  },
  ".where_acknows_txt": {
@@ -3673,26 +3719,31 @@
  ".zip_crc_ok": {
   "file": "R/zip-peek.R",
   "line": 408,
+  "ported": true,
   "python": "pytacheck.archives.zip_peek:_zip_crc_ok"
  },
  ".zip_fetch_members": {
   "file": "R/zip-peek.R",
   "line": 433,
+  "ported": true,
   "python": "pytacheck.archives.zip_peek:_zip_fetch_members"
  },
  ".zip_inflate_member": {
   "file": "R/zip-peek.R",
   "line": 329,
+  "ported": true,
   "python": "pytacheck.archives.zip_peek:_zip_inflate_member"
  },
  ".zip_member_fetch": {
   "file": "R/zip-peek.R",
   "line": 350,
+  "ported": true,
   "python": "pytacheck.archives.zip_peek:_zip_member_fetch"
  },
  ".zip_timeout_for_size": {
   "file": "R/repo-download.R",
   "line": 904,
+  "ported": true,
   "python": "pytacheck.archives.download:_zip_timeout_for_size"
  },
  "FLoRA": {
@@ -3781,6 +3832,7 @@
  "check_file_naming": {
   "file": "R/file-naming.R",
   "line": 216,
+  "ported": true,
   "python": "pytacheck.fileinfo.naming:check_file_naming"
  },
  "check_orcid": {
@@ -4211,6 +4263,7 @@
  "download_repo_files": {
   "file": "R/repo-download.R",
   "line": 1171,
+  "ported": true,
   "python": "pytacheck.archives.download:download_repo_files"
  },
  "dryad_auth": {
@@ -4365,11 +4418,19 @@
  "file_category": {
   "file": "R/file_category.R",
   "line": 10,
+  "ported": true,
   "python": "pytacheck.fileinfo.category:file_category"
+ },
+ "file_types": {
+  "file": "",
+  "line": 0,
+  "ported": true,
+  "python": "pytacheck.fileinfo.types:file_types"
  },
  "filetype": {
   "file": "R/file_category.R",
   "line": 137,
+  "ported": true,
   "python": "pytacheck.fileinfo.category:filetype"
  },
  "format_bib_authors": {
@@ -4995,6 +5056,7 @@
  "module:psychds_check": {
   "file": "inst/modules/psychds_check.R",
   "line": 1,
+  "ported": true,
   "python": "pytacheck.modules.psychds_check:psychds_check"
  },
  "module:ref_accuracy": {
@@ -5481,6 +5543,12 @@
   "ported": true,
   "python": "pytacheck.archives.psycharchives:psycharchives_links"
  },
+ "psychds_tree_html": {
+  "file": "",
+  "line": 0,
+  "ported": true,
+  "python": "pytacheck.modules.psychds_check:psychds_tree_html"
+ },
  "pubpeer_comments": {
   "file": "R/db-pubpeer.R",
   "line": 16,
@@ -5580,16 +5648,19 @@
  "repo_cache_clear": {
   "file": "R/repo-download.R",
   "line": 126,
+  "ported": true,
   "python": "pytacheck.archives.download:repo_cache_clear"
  },
  "repo_cache_dir": {
   "file": "R/repo-download.R",
   "line": 80,
+  "ported": true,
   "python": "pytacheck.archives.download:repo_cache_dir"
  },
  "repo_cache_size": {
   "file": "R/repo-download.R",
   "line": 95,
+  "ported": true,
   "python": "pytacheck.archives.download:repo_cache_size"
  },
  "repo_info_cache": {
@@ -6163,11 +6234,13 @@
  "zip_decision": {
   "file": "R/zip-peek.R",
   "line": 635,
+  "ported": true,
   "python": "pytacheck.archives.zip_peek:zip_decision"
  },
  "zip_peek": {
   "file": "R/zip-peek.R",
   "line": 227,
+  "ported": true,
   "python": "pytacheck.archives.zip_peek:zip_peek"
  }
 }

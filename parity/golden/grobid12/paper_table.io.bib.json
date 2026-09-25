@@ -1,0 +1,565 @@
+{
+  "id": "paper_table.io.bib",
+  "ok": true,
+  "error": null,
+  "warnings": [
+    "ID x already defined [513]",
+    "Namespace prefix xlink for href on ptr is not defined [201]",
+    "Namespace prefix p on q is not defined [201]",
+    "ID x already defined [513]",
+    "Namespace prefix xlink for href on ptr is not defined [201]",
+    "Namespace prefix p on q is not defined [201]",
+    "Namespace prefix xlink for href on ptr is not defined [201]",
+    "There were 2 errors; use lastlog(1:2)"
+  ],
+  "value": {
+    "t": "df",
+    "nrow": 14,
+    "names": [
+      "bib_id",
+      "text_id",
+      "bib_type",
+      "doi",
+      "title",
+      "authors",
+      "editors",
+      "publisher",
+      "year",
+      "year_suffix",
+      "date",
+      "published_date",
+      "container",
+      "volume",
+      "issue",
+      "first_page",
+      "last_page",
+      "edition",
+      "version",
+      "url",
+      "is_in_press",
+      "arxiv",
+      "pmid",
+      "series",
+      "access_date",
+      "note",
+      "paper_id"
+    ],
+    "v": [
+      {
+        "t": "int",
+        "v": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          1,
+          1,
+          1,
+          1,
+          1,
+          2,
+          3,
+          4,
+          5
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          25,
+          26,
+          27,
+          28,
+          29,
+          1,
+          4,
+          4,
+          4,
+          13,
+          14,
+          15,
+          16,
+          17
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "journal_article",
+          "journal_article",
+          "book",
+          "book_chapter",
+          "journal_article",
+          "journal_article",
+          "journal_article",
+          "journal_article",
+          "journal_article",
+          "journal_article",
+          "journal_article",
+          "book",
+          "book",
+          "journal_article"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "10.1000/abc",
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          "10.5555/abc",
+          null,
+          null,
+          "10.1234/fine",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "An article title",
+          "No year article",
+          "A Whole Book",
+          "A Chapter",
+          "Journal no year no note",
+          null,
+          null,
+          null,
+          null,
+          "First",
+          "Second",
+          "A Book",
+          "Another Book",
+          "Fourth"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Smith, J K; van der Berg, A",
+          null,
+          null,
+          "Chapman, ",
+          null,
+          null,
+          null,
+          null,
+          null,
+          "Smith, J",
+          "Jones, K",
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          "Ditor, E",
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          "Big Press",
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          2020,
+          2019,
+          null,
+          1999,
+          null,
+          1999,
+          2020,
+          2020,
+          2020,
+          2020,
+          2021,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "a",
+          "b",
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          "b",
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "2020",
+          "2019",
+          null,
+          "1999",
+          null,
+          "1999",
+          "2020",
+          "2020",
+          "2020",
+          "2020",
+          "2021",
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Journal of Tests",
+          "Some Journal",
+          null,
+          "The Collection",
+          "Another Journal",
+          "Journal",
+          "J",
+          "J",
+          "J",
+          "Journal",
+          "Journal",
+          null,
+          null,
+          "Journal"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "12",
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "3",
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "45",
+          "e123",
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "67",
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "edge_body.tei",
+          "edge_body.tei",
+          "edge_body.tei",
+          "edge_body.tei",
+          "edge_body.tei",
+          "refs_no_text.tei",
+          "tables_empty_first.tei",
+          "tables_empty_second.tei",
+          "tables_three_one_empty.tei",
+          "v12_edges.tei",
+          "v12_edges.tei",
+          "v12_edges.tei",
+          "v12_edges.tei",
+          "v12_edges.tei"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

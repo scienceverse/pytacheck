@@ -94,7 +94,8 @@ def expand(fn: str, fixture: str, skip_types: Any = "materials", minimal: bool =
     d = tempfile.mkdtemp(prefix="pc_rd_")
     try:
         f = os.path.join(d, fixture)
-        shutil.copyfile(DATA / fixture, f)
+        if (DATA / fixture).exists():  # R: file.copy() of a missing file just fails
+            shutil.copyfile(DATA / fixture, f)
         row = _row(fixture)
         if minimal:
             row = row[["repo_url", "file_name"]]

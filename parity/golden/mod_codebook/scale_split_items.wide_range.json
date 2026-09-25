@@ -1,0 +1,40 @@
+{
+  "id": "scale_split_items.wide_range",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "items",
+      "derived",
+      "totals_only"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "it1",
+          "it2",
+          "it3",
+          "it4",
+          "it5"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "it6"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -1,0 +1,12 @@
+varname,description,values
+PANAS1,Affect item 1,1=Very slightly; 2=A little; 3=Moderately; 4=Quite a bit; 5=Extremely
+PANAS2,Affect item 2,1=Very slightly; 2=A little; 3=Moderately; 4=Quite a bit; 5=Extremely
+PANAS3,Affect item 3,1=Very slightly; 2=A little; 3=Moderately; 4=Quite a bit; 5=Extremely
+PANAS4,Affect item 4,1=Very slightly; 2=A little; 3=Moderately; 4=Quite a bit; 5=Extremely
+PANAS5,Affect item 5,1=Very slightly; 2=A little; 3=Moderately; 4=Quite a bit; 5=Extremely
+PANAS6,Affect item 6,1=Very slightly; 2=A little; 3=Moderately; 4=Quite a bit; 5=Extremely
+PANAS7,Affect item 7,1=Very slightly; 2=A little; 3=Moderately; 4=Quite a bit; 5=Extremely
+PANAS8,Affect item 8,1=Very slightly; 2=A little; 3=Moderately; 4=Quite a bit; 5=Extremely
+PANAS9,Affect item 9,1=Very slightly; 2=A little; 3=Moderately; 4=Quite a bit; 5=Extremely
+PANAS10,Affect item 10,1=Very slightly; 2=A little; 3=Moderately; 4=Quite a bit; 5=Extremely
+PANAS_total,Total affect score,

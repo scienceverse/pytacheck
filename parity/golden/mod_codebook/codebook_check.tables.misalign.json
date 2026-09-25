@@ -1,0 +1,132 @@
+{
+  "id": "codebook_check.tables.misalign",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": null,
+    "v": [
+      {
+        "t": "df",
+        "nrow": 4,
+        "names": [
+          "Column",
+          "Documented",
+          "Label",
+          "Codebook Variable",
+          "Source",
+          "Status"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "id",
+              "neoAnxiety",
+              "neoImagination",
+              "neoWarmth"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "no",
+              "no",
+              "no",
+              "no"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "unlabelled",
+              "unlabelled",
+              "unlabelled",
+              "unlabelled"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 8,
+        "names": [
+          "Variable",
+          "Label",
+          "Source"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "neo1",
+              "neo2",
+              "neo3",
+              "neo4",
+              "neo5",
+              "neo6",
+              "neo7",
+              "neo8"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "NEO item 1",
+              "NEO item 2",
+              "NEO item 3",
+              "NEO item 4",
+              "NEO item 5",
+              "NEO item 6",
+              "NEO item 7",
+              "NEO item 8"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "codebook.csv",
+              "codebook.csv",
+              "codebook.csv",
+              "codebook.csv",
+              "codebook.csv",
+              "codebook.csv",
+              "codebook.csv",
+              "codebook.csv"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

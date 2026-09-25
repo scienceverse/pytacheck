@@ -1,0 +1,869 @@
+{
+  "id": "module.stat_effect_size.0956797615569889",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "stat_effect_size"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Effect Sizes in t-tests and F-tests"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "results"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 19,
+        "names": [
+          "paper_id",
+          "text_id",
+          "test",
+          "test_text",
+          "es",
+          "section_id",
+          "paragraph_id",
+          "text",
+          "d_reported",
+          "d_reported_text",
+          "t_value",
+          "df",
+          "d_implied_paired_dz",
+          "d_implied_paired_drm_r05",
+          "d_implied_indep_equal_n",
+          "d_implied_indep_unequal_min",
+          "d_implied_indep_unequal_max",
+          "d_implied_n",
+          "d_coherence",
+          "d_coherence_assumption",
+          "d_coherence_note",
+          "f_reported",
+          "f_reported_text",
+          "df1",
+          "df2",
+          "eta_implied_partial",
+          "omega_implied_partial",
+          "eta_coherence",
+          "eta_coherence_assumption",
+          "eta_coherence_note"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "0956797615569889",
+              "0956797615569889",
+              "0956797615569889",
+              "0956797615569889",
+              "0956797615569889",
+              "0956797615569889",
+              "0956797615569889",
+              "0956797615569889",
+              "0956797615569889",
+              "0956797615569889",
+              "0956797615569889",
+              "0956797615569889",
+              "0956797615569889",
+              "0956797615569889",
+              "0956797615569889",
+              "0956797615569889",
+              "0956797615569889",
+              "0956797615569889",
+              "0956797615569889"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              115,
+              116,
+              117,
+              117,
+              119,
+              120,
+              120,
+              123,
+              124,
+              124,
+              126,
+              126,
+              126,
+              145,
+              145,
+              146,
+              146,
+              148,
+              152
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "F-test",
+              "F-test",
+              "F-test",
+              "F-test",
+              "F-test",
+              "F-test",
+              "F-test",
+              "F-test",
+              "F-test",
+              "F-test",
+              "F-test",
+              "F-test",
+              "F-test",
+              "F-test",
+              "F-test",
+              "F-test",
+              "F-test",
+              "F-test",
+              "F-test"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "F(1, 30) = 7.556",
+              "F(1, 15) = 5.288",
+              "F(1, 15) = 7.525",
+              "F(1, 30) = 1.215",
+              "F(1, 30) = 4.573",
+              "F(1, 15) = 22.123",
+              "F(1, 15) = 0.297",
+              "F(1, 30) = 14.231",
+              "F(1, 15) = 33.548",
+              "F(1, 15) = 0.224",
+              "F(1, 15) = 5.575",
+              "F(1, 15) = 4.368",
+              "F(1, 30) = 0.100",
+              "F(1, 6) = 30.388",
+              "F(1, 6) = 8.641",
+              "F(1, 6) = 11.631",
+              "F(1, 6) = 27.222",
+              "F(1, 16) = 4.032",
+              "F(1, 30) = 3.869"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ηp² = .201",
+              "ηp² = .261",
+              "ηp² = .334",
+              "ηp² = .039",
+              "ηp² = .132",
+              "ηp² = .596",
+              "ηp² = .019",
+              "ηp² = .322",
+              "ηp² = .691",
+              "ηp² = .015",
+              "ηp² = .271",
+              "ηp² = .226",
+              "ηp² = .003",
+              "ηp² = .835",
+              "ηp² = .590",
+              "ηp² = .660",
+              "ηp² = .819",
+              "ηp² = .201",
+              "ηp² = .114"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              14,
+              14,
+              14,
+              14,
+              15,
+              15,
+              15,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              20,
+              20,
+              20,
+              20,
+              20,
+              21
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              27,
+              27,
+              27,
+              27,
+              28,
+              28,
+              28,
+              29,
+              29,
+              29,
+              29,
+              29,
+              29,
+              34,
+              34,
+              34,
+              34,
+              35,
+              36
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "A significant group difference was found in suppression-induced forgetting, as revealed by a significant condition-by-group interaction, F(1, 30) = 7.556, p = .010, ηp² = .201.",
+              "This interaction was driven by a significant inversion of suppression-induced forgetting in the PTSD group (i.e., better memory performance for suppress items compared with baseline items; M = -5.2%), F(1, 15) = 5.288, p = .036, ηp² = .261 (Bayes factor favoring the alternative hypothesis = 2.09), in the absence of significant suppression in the control group (M = 3.5%, n.s.).",
+              "Although the PTSD group showed a significant facilitation effect (M = 5.9%), F(1, 15) = 7.525, p = .015, ηp² = .334, and the control group did not (M = 2.8%, n.s.), there was no significant group difference in facilitation, F(1, 30) = 1.215, p = .279, ηp² = .039 (Fig. 3a).",
+              "Although the PTSD group showed a significant facilitation effect (M = 5.9%), F(1, 15) = 7.525, p = .015, ηp² = .334, and the control group did not (M = 2.8%, n.s.), there was no significant group difference in facilitation, F(1, 30) = 1.215, p = .279, ηp² = .039 (Fig. 3a).",
+              "A significant group difference in suppressioninduced forgetting was observed, as indicated by a significant condition-by-group interaction, F(1, 30) = 4.573, p = .041, ηp² = .132.",
+              "This interaction was driven by significant suppression-induced forgetting in the control group (M = 10.8%), F(1, 15) = 22.123, p < .001, ηp² = .596, in the absence of significant suppression-induced forgetting in the PTSD group (M = 1.7%), F(1, 15) = 0.297, p = .594, ηp² = .019.",
+              "This interaction was driven by significant suppression-induced forgetting in the control group (M = 10.8%), F(1, 15) = 22.123, p < .001, ηp² = .596, in the absence of significant suppression-induced forgetting in the PTSD group (M = 1.7%), F(1, 15) = 0.297, p = .594, ηp² = .019.",
+              "As for the two previous measures, a significant group difference in suppression-induced forgetting was observed, established by a significant condition-by-group interaction, F(1, 30) = 14.231, p = .001, ηp² = .322.",
+              "This interaction was driven once again by a significant suppression effect in the control group (M = 1.19), F(1, 15) = 33.548, p < .001, ηp² = .691, in the absence of significant suppression in the PTSD group (M = -0.14), F(1, 15) = 0.224, p = .643, ηp² = .015.",
+              "This interaction was driven once again by a significant suppression effect in the control group (M = 1.19), F(1, 15) = 33.548, p < .001, ηp² = .691, in the absence of significant suppression in the PTSD group (M = -0.14), F(1, 15) = 0.224, p = .643, ηp² = .015.",
+              "Although the PTSD group showed a significant facilitation effect (M = 0.68), F(1, 15) = 5.575, p = .032, ηp² = .271, and the control group showed only a marginally significant effect (M = 0.56), F(1, 15) = 4.368, p = .054, ηp² = .226, the difference between the groups was not significant, F(1, 30) = 0.100, p = .754, ηp² = .003 (Fig. 3c).",
+              "Although the PTSD group showed a significant facilitation effect (M = 0.68), F(1, 15) = 5.575, p = .032, ηp² = .271, and the control group showed only a marginally significant effect (M = 0.56), F(1, 15) = 4.368, p = .054, ηp² = .226, the difference between the groups was not significant, F(1, 30) = 0.100, p = .754, ηp² = .003 (Fig. 3c).",
+              "Although the PTSD group showed a significant facilitation effect (M = 0.68), F(1, 15) = 5.575, p = .032, ηp² = .271, and the control group showed only a marginally significant effect (M = 0.56), F(1, 15) = 4.368, p = .054, ηp² = .226, the difference between the groups was not significant, F(1, 30) = 0.100, p = .754, ηp² = .003 (Fig. 3c).",
+              "Specifically, both groups showed significant suppression-induced forgetting on the gist measure-low group: M = 13%, F(1, 6) = 30.388, p = .001, ηp² = .835; high group: M = 8%, F(1, 6) = 8.641, p = .026, ηp² = .590.",
+              "Specifically, both groups showed significant suppression-induced forgetting on the gist measure-low group: M = 13%, F(1, 6) = 30.388, p = .001, ηp² = .835; high group: M = 8%, F(1, 6) = 8.641, p = .026, ηp² = .590.",
+              "They also showed highly significant suppression-induced forgetting on the details measure-low group: M = 1.35, F(1, 6) = 11.631, p = .014, ηp² = .660; high group: M = 1.03, F(1, 6) = 27.222, p = .002, ηp² = .819.",
+              "They also showed highly significant suppression-induced forgetting on the details measure-low group: M = 1.35, F(1, 6) = 11.631, p = .014, ηp² = .660; high group: M = 1.03, F(1, 6) = 27.222, p = .002, ηp² = .819.",
+              "When we more closely matched depression symptoms by comparing the low-BDI-II PTSD group with the high-BDI-II control group, we observed a marginally significant group-by-condition interaction for the details measure, F(1, 16) = 4.032, p = .062, ηp² = .201.",
+              "In that analysis, the group difference in suppression-induced forgetting only approached significance, F(1, 30) = 3.869, p = .058, ηp² =.114. Foa, 1995)."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "7.556",
+              "5.288",
+              "7.525",
+              "1.215",
+              "4.573",
+              "22.123",
+              "0.297",
+              "14.231",
+              "33.548",
+              "0.224",
+              "5.575",
+              "4.368",
+              "0.1",
+              "30.388",
+              "8.641",
+              "11.631",
+              "27.222",
+              "4.032",
+              "3.869"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "F(1, 30) = 7.556",
+              "F(1, 15) = 5.288",
+              "F(1, 15) = 7.525",
+              "F(1, 30) = 1.215",
+              "F(1, 30) = 4.573",
+              "F(1, 15) = 22.123",
+              "F(1, 15) = 0.297",
+              "F(1, 30) = 14.231",
+              "F(1, 15) = 33.548",
+              "F(1, 15) = 0.224",
+              "F(1, 15) = 5.575",
+              "F(1, 15) = 4.368",
+              "F(1, 30) = 0.100",
+              "F(1, 6) = 30.388",
+              "F(1, 6) = 8.641",
+              "F(1, 6) = 11.631",
+              "F(1, 6) = 27.222",
+              "F(1, 16) = 4.032",
+              "F(1, 30) = 3.869"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1",
+              "1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "30",
+              "15",
+              "15",
+              "30",
+              "30",
+              "15",
+              "15",
+              "30",
+              "15",
+              "15",
+              "15",
+              "15",
+              "30",
+              "6",
+              "6",
+              "6",
+              "6",
+              "16",
+              "30"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "0.201192885291298",
+              "0.260646687697161",
+              "0.334073251942286",
+              "0.0389235944257569",
+              "0.132270847192896",
+              "0.595937828300514",
+              "0.0194155716807217",
+              "0.321742669168683",
+              "0.691027436763615",
+              "0.0147136100893326",
+              "0.270959902794654",
+              "0.225526641883519",
+              "0.00332225913621262",
+              "0.835110475981093",
+              "0.590191926780958",
+              "0.659690318189552",
+              "0.819396785262778",
+              "0.201277955271566",
+              "0.114234255513892"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "0.17003838572466",
+              "0.201428034573469",
+              "0.277364505844846",
+              "0.00667390966940866",
+              "0.100441345964636",
+              "0.554074967867167",
+              "-0.0431367736393201",
+              "0.292520616391413",
+              "0.656898361185113",
+              "-0.0478303747534517",
+              "0.212050984936269",
+              "0.165357423409269",
+              "-0.0289389067524116",
+              "0.786027602439285",
+              "0.488523751678281",
+              "0.570608126241211",
+              "0.766232248261352",
+              "0.144161278052491",
+              "0.0822793885686426"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "match_under_assumptions",
+              "match_under_assumptions",
+              "match_under_assumptions",
+              "match_under_assumptions",
+              "match_under_assumptions",
+              "match_under_assumptions",
+              "match_under_assumptions",
+              "match_under_assumptions",
+              "match_under_assumptions",
+              "match_under_assumptions",
+              "match_under_assumptions",
+              "match_under_assumptions",
+              "match_under_assumptions",
+              "match_under_assumptions",
+              "match_under_assumptions",
+              "match_under_assumptions",
+              "match_under_assumptions",
+              "match_under_assumptions",
+              "match_under_assumptions"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "partial_eta_squared",
+              "partial_eta_squared",
+              "partial_eta_squared",
+              "partial_eta_squared",
+              "partial_eta_squared",
+              "partial_eta_squared",
+              "partial_eta_squared",
+              "partial_eta_squared",
+              "partial_eta_squared",
+              "partial_eta_squared",
+              "partial_eta_squared",
+              "partial_eta_squared",
+              "partial_eta_squared",
+              "partial_eta_squared",
+              "partial_eta_squared",
+              "partial_eta_squared",
+              "partial_eta_squared",
+              "partial_eta_squared",
+              "partial_eta_squared"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Match under partial eta-squared formula from F and dfs.",
+              "Match under partial eta-squared formula from F and dfs.",
+              "Match under partial eta-squared formula from F and dfs.",
+              "Match under partial eta-squared formula from F and dfs.",
+              "Match under partial eta-squared formula from F and dfs.",
+              "Match under partial eta-squared formula from F and dfs.",
+              "Match under partial eta-squared formula from F and dfs.",
+              "Match under partial eta-squared formula from F and dfs.",
+              "Match under partial eta-squared formula from F and dfs.",
+              "Match under partial eta-squared formula from F and dfs.",
+              "Match under partial eta-squared formula from F and dfs.",
+              "Match under partial eta-squared formula from F and dfs.",
+              "Match under partial eta-squared formula from F and dfs.",
+              "Match under partial eta-squared formula from F and dfs.",
+              "Match under partial eta-squared formula from F and dfs.",
+              "Match under partial eta-squared formula from F and dfs.",
+              "Match under partial eta-squared formula from F and dfs.",
+              "Match under partial eta-squared formula from F and dfs.",
+              "Match under partial eta-squared formula from F and dfs."
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "All detected t-tests and F-tests had an effect size reported in the same sentence.",
+          "For F-tests with a reported eta-squared effect size, coherence checks yielded 19 matches under assumptions.",
+          "::: {.callout-tip title=\"All detected and assessed stats\" collapse=\"true\"}\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Sentence = c(\"A significant group difference was found in suppression-induced forgetting, as revealed by a significant condition-by-group interaction, F(1, 30) = 7.556, p = .010, ηp² = .201.\", \n\"This interaction was driven by a significant inversion of suppression-induced forgetting in the PTSD group (i.e., better memory performance for suppress items compared with baseline items; M = -5.2%), F(1, 15) = 5.288, p = .036, ηp² = .261 (Bayes factor favoring the alternative hypothesis = 2.09), in the absence of significant suppression in the control group (M = 3.5%, n.s.).\", \n\"Although the PTSD group showed a significant facilitation effect (M = 5.9%), F(1, 15) = 7.525, p = .015, ηp² = .334, and the control group did not (M = 2.8%, n.s.), there was no significant group difference in facilitation, F(1, 30) = 1.215, p = .279, ηp² = .039 (Fig. 3a).\", \n\"Although the PTSD group showed a significant facilitation effect (M = 5.9%), F(1, 15) = 7.525, p = .015, ηp² = .334, and the control group did not (M = 2.8%, n.s.), there was no significant group difference in facilitation, F(1, 30) = 1.215, p = .279, ηp² = .039 (Fig. 3a).\", \n\"A significant group difference in suppressioninduced forgetting was observed, as indicated by a significant condition-by-group interaction, F(1, 30) = 4.573, p = .041, ηp² = .132.\", \n\"This interaction was driven by significant suppression-induced forgetting in the control group (M = 10.8%), F(1, 15) = 22.123, p < .001, ηp² = .596, in the absence of significant suppression-induced forgetting in the PTSD group (M = 1.7%), F(1, 15) = 0.297, p = .594, ηp² = .019.\", \n\"This interaction was driven by significant suppression-induced forgetting in the control group (M = 10.8%), F(1, 15) = 22.123, p < .001, ηp² = .596, in the absence of significant suppression-induced forgetting in the PTSD group (M = 1.7%), F(1, 15) = 0.297, p = .594, ηp² = .019.\", \n\"As for the two previous measures, a significant group difference in suppression-induced forgetting was observed, established by a significant condition-by-group interaction, F(1, 30) = 14.231, p = .001, ηp² = .322.\", \n\"This interaction was driven once again by a significant suppression effect in the control group (M = 1.19), F(1, 15) = 33.548, p < .001, ηp² = .691, in the absence of significant suppression in the PTSD group (M = -0.14), F(1, 15) = 0.224, p = .643, ηp² = .015.\", \n\"This interaction was driven once again by a significant suppression effect in the control group (M = 1.19), F(1, 15) = 33.548, p < .001, ηp² = .691, in the absence of significant suppression in the PTSD group (M = -0.14), F(1, 15) = 0.224, p = .643, ηp² = .015.\", \n\"Although the PTSD group showed a significant facilitation effect (M = 0.68), F(1, 15) = 5.575, p = .032, ηp² = .271, and the control group showed only a marginally significant effect (M = 0.56), F(1, 15) = 4.368, p = .054, ηp² = .226, the difference between the groups was not significant, F(1, 30) = 0.100, p = .754, ηp² = .003 (Fig. 3c).\", \n\"Although the PTSD group showed a significant facilitation effect (M = 0.68), F(1, 15) = 5.575, p = .032, ηp² = .271, and the control group showed only a marginally significant effect (M = 0.56), F(1, 15) = 4.368, p = .054, ηp² = .226, the difference between the groups was not significant, F(1, 30) = 0.100, p = .754, ηp² = .003 (Fig. 3c).\", \n\"Although the PTSD group showed a significant facilitation effect (M = 0.68), F(1, 15) = 5.575, p = .032, ηp² = .271, and the control group showed only a marginally significant effect (M = 0.56), F(1, 15) = 4.368, p = .054, ηp² = .226, the difference between the groups was not significant, F(1, 30) = 0.100, p = .754, ηp² = .003 (Fig. 3c).\", \n\"Specifically, both groups showed significant suppression-induced forgetting on the gist measure-low group: M = 13%, F(1, 6) = 30.388, p = .001, ηp² = .835; high group: M = 8%, F(1, 6) = 8.641, p = .026, ηp² = .590.\", \n\"Specifically, both groups showed significant suppression-induced forgetting on the gist measure-low group: M = 13%, F(1, 6) = 30.388, p = .001, ηp² = .835; high group: M = 8%, F(1, 6) = 8.641, p = .026, ηp² = .590.\", \n\"They also showed highly significant suppression-induced forgetting on the details measure-low group: M = 1.35, F(1, 6) = 11.631, p = .014, ηp² = .660; high group: M = 1.03, F(1, 6) = 27.222, p = .002, ηp² = .819.\", \n\"They also showed highly significant suppression-induced forgetting on the details measure-low group: M = 1.35, F(1, 6) = 11.631, p = .014, ηp² = .660; high group: M = 1.03, F(1, 6) = 27.222, p = .002, ηp² = .819.\", \n\"When we more closely matched depression symptoms by comparing the low-BDI-II PTSD group with the high-BDI-II control group, we observed a marginally significant group-by-condition interaction for the details measure, F(1, 16) = 4.032, p = .062, ηp² = .201.\", \n\"In that analysis, the group difference in suppression-induced forgetting only approached significance, F(1, 30) = 3.869, p = .058, ηp² =.114. Foa, 1995).\"\n), \"Effect Size\" = c(\"ηp² = .201\", \"ηp² = .261\", \"ηp² = .334\", \n\"ηp² = .039\", \"ηp² = .132\", \"ηp² = .596\", \"ηp² = .019\", \n\"ηp² = .322\", \"ηp² = .691\", \"ηp² = .015\", \"ηp² = .271\", \n\"ηp² = .226\", \"ηp² = .003\", \"ηp² = .835\", \"ηp² = .590\", \n\"ηp² = .660\", \"ηp² = .819\", \"ηp² = .201\", \"ηp² = .114\"\n), \"Reported Test\" = c(\"F(1, 30) = 7.556\", \"F(1, 15) = 5.288\", \n\"F(1, 15) = 7.525\", \"F(1, 30) = 1.215\", \"F(1, 30) = 4.573\", \"F(1, 15) = 22.123\", \n\"F(1, 15) = 0.297\", \"F(1, 30) = 14.231\", \"F(1, 15) = 33.548\", \n\"F(1, 15) = 0.224\", \"F(1, 15) = 5.575\", \"F(1, 15) = 4.368\", \"F(1, 30) = 0.100\", \n\"F(1, 6) = 30.388\", \"F(1, 6) = 8.641\", \"F(1, 6) = 11.631\", \"F(1, 6) = 27.222\", \n\"F(1, 16) = 4.032\", \"F(1, 30) = 3.869\"), \"Test Type\" = c(\"F-test\", \n\"F-test\", \"F-test\", \"F-test\", \"F-test\", \"F-test\", \"F-test\", \"F-test\", \n\"F-test\", \"F-test\", \"F-test\", \"F-test\", \"F-test\", \"F-test\", \"F-test\", \n\"F-test\", \"F-test\", \"F-test\", \"F-test\"), \"d Coherence\" = c(NA_character_, \nNA_character_, NA_character_, NA_character_, NA_character_, NA_character_, \nNA_character_, NA_character_, NA_character_, NA_character_, NA_character_, \nNA_character_, NA_character_, NA_character_, NA_character_, NA_character_, \nNA_character_, NA_character_, NA_character_), \"d Assumption\" = c(NA_character_, \nNA_character_, NA_character_, NA_character_, NA_character_, NA_character_, \nNA_character_, NA_character_, NA_character_, NA_character_, NA_character_, \nNA_character_, NA_character_, NA_character_, NA_character_, NA_character_, \nNA_character_, NA_character_, NA_character_), \"d Coherence Note\" = c(NA_character_, \nNA_character_, NA_character_, NA_character_, NA_character_, NA_character_, \nNA_character_, NA_character_, NA_character_, NA_character_, NA_character_, \nNA_character_, NA_character_, NA_character_, NA_character_, NA_character_, \nNA_character_, NA_character_, NA_character_), \"eta Coherence\" = c(\"match_under_assumptions\", \n\"match_under_assumptions\", \"match_under_assumptions\", \"match_under_assumptions\", \n\"match_under_assumptions\", \"match_under_assumptions\", \"match_under_assumptions\", \n\"match_under_assumptions\", \"match_under_assumptions\", \"match_under_assumptions\", \n\"match_under_assumptions\", \"match_under_assumptions\", \"match_under_assumptions\", \n\"match_under_assumptions\", \"match_under_assumptions\", \"match_under_assumptions\", \n\"match_under_assumptions\", \"match_under_assumptions\", \"match_under_assumptions\"\n), \"eta Assumption\" = c(\"partial_eta_squared\", \"partial_eta_squared\", \n\"partial_eta_squared\", \"partial_eta_squared\", \"partial_eta_squared\", \n\"partial_eta_squared\", \"partial_eta_squared\", \"partial_eta_squared\", \n\"partial_eta_squared\", \"partial_eta_squared\", \"partial_eta_squared\", \n\"partial_eta_squared\", \"partial_eta_squared\", \"partial_eta_squared\", \n\"partial_eta_squared\", \"partial_eta_squared\", \"partial_eta_squared\", \n\"partial_eta_squared\", \"partial_eta_squared\"), \"eta Coherence Note\" = c(\"Match under partial eta-squared formula from F and dfs.\", \n\"Match under partial eta-squared formula from F and dfs.\", \"Match under partial eta-squared formula from F and dfs.\", \n\"Match under partial eta-squared formula from F and dfs.\", \"Match under partial eta-squared formula from F and dfs.\", \n\"Match under partial eta-squared formula from F and dfs.\", \"Match under partial eta-squared formula from F and dfs.\", \n\"Match under partial eta-squared formula from F and dfs.\", \"Match under partial eta-squared formula from F and dfs.\", \n\"Match under partial eta-squared formula from F and dfs.\", \"Match under partial eta-squared formula from F and dfs.\", \n\"Match under partial eta-squared formula from F and dfs.\", \"Match under partial eta-squared formula from F and dfs.\", \n\"Match under partial eta-squared formula from F and dfs.\", \"Match under partial eta-squared formula from F and dfs.\", \n\"Match under partial eta-squared formula from F and dfs.\", \"Match under partial eta-squared formula from F and dfs.\", \n\"Match under partial eta-squared formula from F and dfs.\", \"Match under partial eta-squared formula from F and dfs.\"\n)), row.names = c(NA, -19L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 5, FALSE)\n```\n\n\n:::\n"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "green"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "All detected t-tests and F-tests had an effect size reported in the same sentence."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "ttests_with_es",
+          "ttests_without_es",
+          "Ftests_with_es",
+          "Ftests_without_es"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "0956797615569889"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              19
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          }
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

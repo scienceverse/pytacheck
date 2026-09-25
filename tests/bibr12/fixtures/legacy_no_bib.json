@@ -1,0 +1,9 @@
+{
+  "paper_id": "legacy_no_bib",
+  "info": {"title": "No bib key", "keywords": ["x"]},
+  "text": [{"text": "One (A, 2020).", "text_id": 1, "paragraph_id": 1, "section_id": 1}],
+  "bib_match": [
+    {"bib_id": 1, "service": "crossref", "doi": "10.1234/a", "title": "A", "year": 2020},
+    {"bib_id": 2, "service": "crossref", "doi": "10.1234/b", "title": "B", "year": 2021}
+  ]
+}

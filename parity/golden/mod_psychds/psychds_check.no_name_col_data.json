@@ -1,0 +1,9 @@
+{
+  "id": "psychds_check.no_name_col_data",
+  "ok": false,
+  "error": "Running the module 'psychds_check' produced errors: argument is of length zero",
+  "warnings": [],
+  "value": null,
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

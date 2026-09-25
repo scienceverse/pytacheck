@@ -1,0 +1,21 @@
+{
+ "paper_id": "producer_version_array",
+ "schema_version": "12.0",
+ "source": {
+  "file_name": "m.pdf",
+  "sha256": null,
+  "input_format": "pdf"
+ },
+ "metadata": {
+  "title": "Malformed"
+ },
+ "extraction": {
+  "producer": {
+   "name": "bibr",
+   "version": [
+    "1",
+    "2"
+   ]
+  }
+ }
+}

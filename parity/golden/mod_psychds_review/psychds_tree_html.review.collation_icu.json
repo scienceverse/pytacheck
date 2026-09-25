@@ -1,0 +1,14 @@
+{
+  "id": "psychds_tree_html.review.collation_icu",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "<pre style=\"line-height:1.4\">\n├── études/\n│   └── x.R\n├── ovelse/\n│   └── z.R\n├── Øvelse/\n│   └── y.R\n├── aeble.csv\n├── æble.csv\n├── afble.csv\n├── AR.txt\n├── ÅR.txt\n├── ÄR.txt\n├── dak.txt\n├── đak.txt\n├── ðak.txt\n├── ｄata.csv\n├── data2.csv\n├── data².csv\n├── étude.R\n├── ètude.R\n├── êtude.R\n├── file.R\n├── ﬁle.R\n├── hal.R\n├── ħal.R\n├── iy.R\n├── ıx.R\n├── jx.R\n├── lodz.txt\n├── łódź.txt\n├── mz.txt\n├── nb.R\n├── ŋa.R\n├── oa.R\n├── oeuvre.R\n├── œuvre.R\n├── ore.csv\n├── öre.csv\n├── øre.csv\n├── ōre.csv\n├── pre.csv\n├── strasse.R\n├── straße.R\n├── strast.R\n├── zz.R\n└── þa.R\n<\/pre>"
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

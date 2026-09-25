@@ -1,0 +1,255 @@
+{
+  "id": "module.all_urls.preprint",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "all_urls"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "List All URLs"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "general"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 12,
+        "names": [
+          "text",
+          "text_id",
+          "paragraph_id",
+          "section_id",
+          "page_number",
+          "formatted",
+          "paper_id",
+          "header",
+          "section_type"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "https://osf.io/n9uvj",
+              "AsPredicted.org",
+              "https://aspredicted.org/3tq2y.pdf",
+              "1.9.12.31",
+              "AsPredicted.org",
+              "https://aspredicted.org/i9vw6.pdf",
+              "AsPredicted.org",
+              "https://aspredicted.org/ej26f.pdf",
+              "https://osf.io/n9uvj",
+              "https://aspredicted.org/3tq2y.pdf",
+              "https://aspredicted.org/i9vw6.pdf",
+              "https://aspredicted.org/ej26f.pdf"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              103,
+              114,
+              114,
+              143,
+              214,
+              214,
+              321,
+              321,
+              490,
+              491,
+              491,
+              491
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              19,
+              20,
+              20,
+              28,
+              45,
+              45,
+              68,
+              68,
+              103,
+              103,
+              103,
+              103
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              5,
+              6,
+              6,
+              10,
+              14,
+              14,
+              22,
+              22,
+              33,
+              33,
+              33,
+              33
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "preprint",
+              "preprint",
+              "preprint",
+              "preprint",
+              "preprint",
+              "preprint",
+              "preprint",
+              "preprint",
+              "preprint",
+              "preprint",
+              "preprint",
+              "preprint"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "The Current Research",
+              "Study1",
+              "Study1",
+              "Results",
+              "Study2",
+              "Study2",
+              "Study3",
+              "Study3",
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "intro",
+              "intro",
+              "intro",
+              "results",
+              "discussion",
+              "discussion",
+              "discussion",
+              "discussion",
+              "data_availability",
+              "data_availability",
+              "data_availability",
+              "data_availability"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          ""
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "info"
+        ]
+      },
+      {
+        "t": "null"
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "urls"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "preprint"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              12
+            ]
+          }
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

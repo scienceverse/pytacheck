@@ -1,0 +1,9 @@
+{
+  "id": "psychds_check.review.no_name_no_path_no_type",
+  "ok": false,
+  "error": "Running the module 'psychds_check' produced errors: a character vector argument expected",
+  "warnings": [],
+  "value": null,
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

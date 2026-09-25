@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0">
+	<teiHeader>
+		<fileDesc>
+			<sourceDesc><biblStruct><analytic>
+				<author><persName><forename type="first">Ann</forename><forename type="middle">B</forename><surname>Cee</surname></persName>
+					<idno type="ORCID">https://orcid.org/0000-0001-2345-678x</idno></author>
+				<author><persName><forename type="first">Dan</forename><surname>Eff</surname></persName>
+					<idno type="ORCID">see 0000-0001-2345-6789 and 0000-0002-2345-6789</idno>
+					<affiliation><orgName>  Same   Place </orgName></affiliation></author>
+				<author><persName><surname>Gee</surname></persName>
+					<affiliation><orgName>Same Place</orgName></affiliation>
+					<affiliation><orgName>Second Place</orgName></affiliation></author>
+				<author><name>Not a persName</name></author>
+			</analytic>
+			<idno type="DOI">HTTPS://DX.DOI.ORG/10.1234/ABC.Def</idno>
+			</biblStruct></sourceDesc>
+		</fileDesc>
+		<encodingDesc><appInfo><application version="2.0" ident="Bibr" when="2025-13-01T00:00+0000"/></appInfo></encodingDesc>
+		<profileDesc><textClass><keywords><term> </term></keywords></textClass>
+			<abstract><div><head>Summary</head></div></abstract>
+		</profileDesc>
+	</teiHeader>
+	<text><body>
+		<div><head n="2">Two</head><p>Just one sentence here.</p></div>
+	</body></text>
+</TEI>

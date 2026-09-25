@@ -1,0 +1,342 @@
+{
+  "id": "psychds_check.review.icu_names",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "psychds_check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Psych-DS Check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "results"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 13,
+        "names": [
+          "file_name",
+          "data_type",
+          "group",
+          "current_path",
+          "target_path",
+          "status",
+          "convert",
+          "original_target",
+          "referenced_by"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "øre.R",
+              "ore.R",
+              "ōre.R",
+              "æble.R",
+              "afble.R",
+              "łódź.R",
+              "Straße.pdf",
+              "strasse.pdf",
+              "strast.pdf",
+              "Ødegaard.csv",
+              "ｆile.R",
+              "file².R",
+              "file2.R"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code",
+              "code",
+              "code",
+              "code",
+              "code",
+              "code",
+              "materials",
+              "materials",
+              "materials",
+              "data",
+              "code",
+              "code",
+              "code"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "øre.R",
+              "ore.R",
+              "ōre.R",
+              "æble.R",
+              "afble.R",
+              "łódź.R",
+              "Straße.pdf",
+              "strasse.pdf",
+              "strast.pdf",
+              "data/Ødegaard.csv",
+              "ｆile.R",
+              "file².R",
+              "file2.R"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "analysis/øre.R",
+              "analysis/ore.R",
+              "analysis/ōre.R",
+              "analysis/æble.R",
+              "analysis/afble.R",
+              "analysis/łódź.R",
+              "materials/Straße.pdf",
+              "materials/strasse.pdf",
+              "materials/strast.pdf",
+              "data/study-degaard_data.csv",
+              "analysis/ｆile.R",
+              "analysis/file².R",
+              "analysis/file2.R"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "move",
+              "move",
+              "move",
+              "move",
+              "move",
+              "move",
+              "move",
+              "move",
+              "move",
+              "move",
+              "move",
+              "move",
+              "move"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "null"
+              },
+              {
+                "t": "null"
+              },
+              {
+                "t": "null"
+              },
+              {
+                "t": "null"
+              },
+              {
+                "t": "null"
+              },
+              {
+                "t": "null"
+              },
+              {
+                "t": "null"
+              },
+              {
+                "t": "null"
+              },
+              {
+                "t": "null"
+              },
+              {
+                "t": "null"
+              },
+              {
+                "t": "null"
+              },
+              {
+                "t": "null"
+              },
+              {
+                "t": "null"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "This module checks the repository against the Psych-DS dataset standard. We examined 13 files across 1 study group.",
+          "#### Compliance Checklist",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Requirement = c(\"dataset_description.json\", \"data/ directory with data files\", \n\"describable variables (variableMeasured)\", \"README\", \"CHANGES\", \n\"variable descriptions\"), Level = c(\"required\", \"required\", \"required\", \n\"recommended\", \"recommended\", \"recommended\"), Status = c(\"missing\", \n\"present\", \"present\", \"missing\", \"missing\", \"missing\"), Detail = c(\"Root metadata file describing the dataset (required).\", \n\"At least one machine-readable data file under data/ (required).\", \n\"Data files must have extractable, typed columns to populate variableMeasured (required).\", \n\"A README at the repository root (recommended).\", \"A CHANGES file logging dataset versions (recommended).\", \n\"Codebook descriptions for variables improve reuse (recommended; see codebook_check).\"\n)), row.names = c(NA, -6L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
+          "#### Target Psych-DS Structure",
+          "The tree below shows the Psych-DS layout this repository should have. Files in <span style=\"color:#c0392b\">red<\/span> are required but missing; files annotated *(move from ...)* exist but need relocating.",
+          "<pre style=\"line-height:1.4\">\n├── analysis/\n│   ├── æble.R <span style=\"color:#b9770e\">(move from æble.R)<\/span>\n│   ├── afble.R <span style=\"color:#b9770e\">(move from afble.R)<\/span>\n│   ├── ｆile.R <span style=\"color:#b9770e\">(move from ｆile.R)<\/span>\n│   ├── file2.R <span style=\"color:#b9770e\">(move from file2.R)<\/span>\n│   ├── file².R <span style=\"color:#b9770e\">(move from file².R)<\/span>\n│   ├── łódź.R <span style=\"color:#b9770e\">(move from łódź.R)<\/span>\n│   ├── ore.R <span style=\"color:#b9770e\">(move from ore.R)<\/span>\n│   ├── øre.R <span style=\"color:#b9770e\">(move from øre.R)<\/span>\n│   └── ōre.R <span style=\"color:#b9770e\">(move from ōre.R)<\/span>\n├── data/\n│   └── study-degaard_data.csv <span style=\"color:#b9770e\">(move from data/Ødegaard.csv)<\/span>\n├── materials/\n│   ├── strasse.pdf <span style=\"color:#b9770e\">(move from strasse.pdf)<\/span>\n│   ├── Straße.pdf <span style=\"color:#b9770e\">(move from Straße.pdf)<\/span>\n│   └── strast.pdf <span style=\"color:#b9770e\">(move from strast.pdf)<\/span>\n├── <span style=\"color:#c0392b\">CHANGES  ← missing<\/span>\n├── <span style=\"color:#c0392b\">dataset_description.json  ← missing<\/span>\n└── <span style=\"color:#c0392b\">README  ← missing<\/span>\n<\/pre>",
+          "#### Suggestions",
+          "- **Add** dataset_description.json — Root metadata file describing the dataset (required).\n- **Move** `øre.R` → `analysis/øre.R`.\n- **Move** `ore.R` → `analysis/ore.R`.\n- **Move** `ōre.R` → `analysis/ōre.R`.\n- **Move** `æble.R` → `analysis/æble.R`.\n- **Move** `afble.R` → `analysis/afble.R`.\n- ...and 8 more files to relocate.\n- **Document** the 2 of 2 data columns without a codebook description (see codebook_check).\n- **Add** README — A README at the repository root (recommended).\n- **Add** CHANGES — A CHANGES file logging dataset versions (recommended).\n- **Add** variable descriptions — Codebook descriptions for variables improve reuse (recommended; see codebook_check).",
+          "You can generate a Psych-DS-compliant copy of this repository — with the moves above applied and a `dataset_description.json` built from the extracted variables — using `metacheck::convert_psychds(paper, output_dir)`.",
+          "To also produce a human-readable codebook of the extracted variables (a labelled data frame plus a ready-to-run R Markdown document for the `codebook` package), use `metacheck::convert_codebook(paper, output_dir)`."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "yellow"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "\n-  2 of 3 required Psych-DS items present; 1 missing.\n-  13 files would need to move to a Psych-DS location.\n-  3 recommended items missing."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "required_met",
+          "required_missing",
+          "recommended_met",
+          "recommended_missing",
+          "misplaced_n"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "to_err_is_human"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              3
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              13
+            ]
+          }
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "names": [
+          "required_met",
+          "required_missing",
+          "recommended_met",
+          "recommended_missing",
+          "misplaced_n"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

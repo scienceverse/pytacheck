@@ -1,0 +1,45 @@
+{
+  "id": "filetype.unicode_case",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "config",
+      "NA",
+      "NA",
+      "NA",
+      "NA",
+      "code;data",
+      "NA",
+      "data",
+      "data",
+      "code",
+      "code",
+      "code",
+      "stats",
+      "stats",
+      "data"
+    ],
+    "names": [
+      "a.İNİ",
+      "b.ĶML",
+      "c.ẞ",
+      "d.ﬀ",
+      "e.CSVİ",
+      "f.JSON",
+      "g.Ｒ",
+      "h.Sav",
+      "i.DTA",
+      "j.Rmd",
+      "k.ipynb",
+      "l.qmd",
+      "m.do",
+      "n.sps",
+      "o.omv"
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

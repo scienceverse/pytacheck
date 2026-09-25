@@ -9,11 +9,13 @@ parsed with :mod:`._rparse` (R's own grammar) the way ``csv_options()`` does
 (``alist(...)``).
 
 knitr *evaluates* the ``purl``, ``eval`` and ``child`` options (an error
-drops the chunk). Here they are evaluated by a small R evaluator covering
-constants, ``T``/``F``, ``!``, ``&&``, ``||``, comparisons, ``c()``,
-``isTRUE()``/``isFALSE()``/``is.null()``/``identical()`` and ``interactive()``;
-anything else (an undefined variable such as ``params``) is an error, as it
-is in a fresh R session. YAML ``params`` are written with a port of
+drops the chunk). Here they are evaluated by a small R evaluator
+(:mod:`._reval`); anything it does not know (an undefined variable such as
+``params``) is an error, as it is in a fresh R session. ``engine`` and
+``comment`` are *not* evaluated (knitr compares/pastes them as written).
+Chunk options are an R named list (:class:`_Params`): duplicates are kept,
+``opts_chunk$merge()`` lets a later one win while ``x$params$error`` reads the
+first. YAML ``params`` are written with a port of
 ``dput()`` for literal values; ``!r`` expressions are evaluated with the same
 small evaluator.
 """
@@ -27,7 +29,7 @@ from typing import Any
 
 from pytacheck._r.base import trimws
 from pytacheck._r.regex import compile_r, grepl, gsub, regextract, sub
-from pytacheck.codecheck._reval import NA, EvalError, is_false, r_eval
+from pytacheck.codecheck._reval import OUT_FORMAT, EvalError, is_false, r_eval
 from pytacheck.codecheck._rparse import (
     MISSING,
     NULL,
@@ -122,6 +124,19 @@ class PurlError(ValueError):
     """An error knitr raises while tangling (the R call fails)."""
 
 
+class RNAString(str):
+    """An ``NA`` element of the input text; it is written out as ``"NA"``.
+
+    knitr mostly treats ``NA`` like the text ``"NA"``, but a chunk whose code
+    starts with it fails (``xfun::divide_chunk()`` tests ``if (!NA)``).
+    """
+
+    __slots__ = ()
+
+
+NA_LINE = RNAString("NA")
+
+
 # ---------------------------------------------------------------------------
 # small helpers
 # ---------------------------------------------------------------------------
@@ -133,6 +148,9 @@ def split_lines(x: Sequence[str]) -> list[str]:
         return list(x)
     out: list[str] = []
     for s in x:
+        if isinstance(s, RNAString):  # strsplit(NA, "\n") is NA
+            out.append(s)
+            continue
         s = s[:-1] + "\n\n" if s.endswith("\n") else s
         if s == "":
             s = "\n"
@@ -238,8 +256,76 @@ def _deparse_scalar(x: Const) -> str:
     return str(as_character(x.value))
 
 
-def csv_options(x: str) -> dict[str, Any]:
-    """``xfun::csv_options()``: chunk options as a dict of R syntax trees."""
+class _Params:
+    """An R named list of chunk options (duplicate names kept, as in ``alist()``).
+
+    ``params$x`` (:meth:`get`) finds the first element called ``x``,
+    ``params$x = v`` (``[]=``) replaces that element or appends one, and
+    ``params$x = NULL`` (``del``) removes it; :meth:`merged` is
+    ``opts_chunk$merge(params)``, where a later duplicate wins.
+    """
+
+    def __init__(self, pairs: Sequence[Sequence[Any]] = ()) -> None:
+        self.pairs: list[list[Any]] = [[k, v] for k, v in pairs]
+
+    def _find(self, name: str) -> int:
+        for i, (k, _) in enumerate(self.pairs):
+            if k == name:
+                return i
+        return -1
+
+    def get(self, name: str, default: Any = None) -> Any:
+        i = self._find(name)
+        return self.pairs[i][1] if i >= 0 else default
+
+    def __contains__(self, name: object) -> bool:
+        return isinstance(name, str) and self._find(name) >= 0
+
+    def __getitem__(self, name: str) -> Any:
+        i = self._find(name)
+        if i < 0:
+            raise KeyError(name)
+        return self.pairs[i][1]
+
+    def __setitem__(self, name: str, value: Any) -> None:
+        i = self._find(name)
+        if i >= 0:
+            self.pairs[i][1] = value
+        else:
+            self.pairs.append([name, value])
+
+    def __delitem__(self, name: str) -> None:
+        i = self._find(name)
+        if i >= 0:
+            del self.pairs[i]
+
+    def pop(self, name: str, default: Any = None) -> Any:
+        i = self._find(name)
+        if i < 0:
+            return default
+        return self.pairs.pop(i)[1]
+
+    def items(self) -> list[tuple[str, Any]]:
+        return [(k, v) for k, v in self.pairs]
+
+    def update(self, other: Any) -> None:
+        """knitr ``merge_list(x, y)``: ``x[names(y)] = y``."""
+        for k, v in other.items():
+            self[k] = v
+
+    def merged(self) -> dict[str, Any]:
+        return dict(self.pairs)  # a later duplicate wins
+
+    def __bool__(self) -> bool:
+        return bool(self.pairs)
+
+
+def _is_null(v: Any) -> bool:
+    return v is None or v is NULL or (isinstance(v, Const) and v.kind == "NULL")
+
+
+def csv_options(x: str) -> _Params:
+    """``xfun::csv_options()``: chunk options as an R named list of syntax trees."""
     src = f"alist({_quote_label(x)})"
     try:
         exprs = parse_exprs([src])
@@ -250,23 +336,19 @@ def csv_options(x: str) -> dict[str, Any]:
     items = [[a[0].name if a[0] is not None else "", a[1]] for a in exprs[0].args]
     # remove empty (missing) unnamed options
     items = [it for it in items if not (it[0] == "" and it[1] is MISSING)]
-    unnamed = [i for i, it in enumerate(items) if it[0] == ""]
-    if len(unnamed) > 1:
+    res = _Params(items)
+    unnamed = [i for i, it in enumerate(res.pairs) if it[0] == ""]
+    if len(unnamed) > 1 or (len(res.pairs) > 1 and len(unnamed) == len(res.pairs)):
         raise PurlError(
             f"Invalid chunk options: {x}\n\n"
             "All options must be of the form 'tag=value' except for the chunk label."
         )
-    res: dict[str, Any] = {}
-    names = [it[0] for it in items]
-    if "label" not in names and unnamed:
-        items[unnamed[0]][0] = "label"
-    for name, value in items:
-        if name not in res:
-            res[name] = value
+    if _is_null(res.get("label")):
+        if not unnamed:
+            res["label"] = ""
+        else:
+            res.pairs[unnamed[0]][0] = "label"
     label = res.get("label")
-    if label is None:
-        res["label"] = ""
-        label = ""
     if isinstance(label, Const) and label.kind == "character" and not label.na:
         label = label.value
     elif not isinstance(label, str):
@@ -376,6 +458,8 @@ def divide_chunk(
     """``xfun::divide_chunk(engine, code, strict = FALSE)``: (options, src, code)."""
     if not code:
         return None, [], code
+    if isinstance(code[0], RNAString):  # startsWith(NA, s1) is NA: if (!NA) fails
+        raise PurlError("missing value where TRUE/FALSE needed")
     chars = _COMMENT_CHARS.get(engine, ["#"])
     s1 = f"{chars[0]}| "
     s2 = chars[1] if len(chars) > 1 else ""
@@ -406,16 +490,15 @@ def divide_chunk(
         c2 = len(line) - (len(s2) * i2[k] if s2 else 0)
         meta.append(line[c1:c2] if c2 > c1 else "")
     if grepl(r"^[^ :]+:($|\s)", meta[0]):
-        opts = _yaml_chunk_options(meta) or {}
+        opts = _Params(list((_yaml_chunk_options(meta) or {}).items()))
     else:
         opts = csv_options("\n".join(meta))
-    label = opts.get("label", opts.get("id"))
+    # meta$label = unlist(meta[c("label", "id")])[[1]]; meta$id = NULL
+    found = [*_unlist_values(opts.get("label")), *_unlist_values(opts.get("id"))]
     opts.pop("id", None)
-    if label is not None:
-        if isinstance(label, Const) and label.kind == "character":
-            label = label.value
-        opts["label"] = label
-    elif "label" in opts:
+    if found:
+        opts["label"] = found[0]
+    else:
         del opts["label"]
     if rest and _is_blank([rest[0]]):
         rest = rest[1:]
@@ -430,7 +513,7 @@ def divide_chunk(
 
 @dataclass
 class _Block:
-    params: dict[str, Any]
+    params: _Params
     params_src: str
     params_chunk: list[str]
 
@@ -580,22 +663,75 @@ def _parse_block(state: _State, code: list[str], header: str, params_src: str) -
     spaces = str(gsub("^([\t >]*).*", "\\1", header))
     if spaces:
         opts["indent"] = Const(spaces, "character")
-        code = list(gsub(f"^{spaces}", "", code))
         trimmed = sub(r"\s+$", "", spaces)
-        code = list(gsub(f"^{trimmed}", "", code))
+        stripped = gsub(f"^{trimmed}", "", gsub(f"^{spaces}", "", code))
+        # gsub() keeps NA
+        code = [c if isinstance(c, RNAString) else t for c, t in zip(code, stripped, strict=True)]
     part_opts, part_src, code = divide_chunk(engine, code)
     if part_opts:
         opts.update(part_opts)
     label = opts.get("label")
-    if label is None:
+    if _is_null(label):
         label = state.unnamed_chunk()
         opts["label"] = label
-    if code or opts.get("file") is not None or opts.get("code") is not None:
-        if label in state.knit_code:
-            label = state.unnamed_chunk(label)
+    if code or not _is_null(opts.get("file")) or not _is_null(opts.get("code")):
+        key = _label_name(label)
+        if key in state.knit_code:
+            label = key = state.unnamed_chunk(key)
             opts["label"] = label
-        state.knit_code[label] = list(code)
+        state.knit_code[key] = list(code)
     return _Block(opts, params_src, part_src)
+
+
+def _unlist_values(v: Any) -> list[Any]:
+    """The elements ``unlist()`` makes of an option value (``NULL`` gives none)."""
+    if _is_null(v):
+        return []
+    if isinstance(v, list | tuple):
+        out: list[Any] = []
+        for e in v:
+            out.extend(_unlist_values(e if isinstance(e, Sym | Lang | Const) else _yaml_to_r(e)))
+        return out
+    if isinstance(v, Const) and v.kind == "character" and not v.na:
+        return [v.value]
+    return [v]
+
+
+def _label_name(label: Any) -> str:
+    """``as.character(label)``: a chunk label as a ``knit_code`` name."""
+    if isinstance(label, str):
+        return label
+    if isinstance(label, Const):
+        if label.na:
+            return "NA"
+        if label.kind == "logical":
+            return "TRUE" if label.value else "FALSE"
+        if label.kind == "character":
+            return str(label.value)
+        return _deparse_scalar(label).removesuffix("L")
+    return _deparse_expr(label)
+
+
+def _knit_code_get(state: _State, label: Any) -> list[str] | None:
+    """``knit_code$get(label)``: by name, or by position for a logical/number."""
+    if isinstance(label, str):
+        return state.knit_code.get(label)
+    if isinstance(label, Const) and label.kind in ("logical", "integer", "double"):
+        if label.na:
+            return None
+        values = list(state.knit_code.values())
+        if label.kind == "logical":
+            k = 1 if label.value else 0
+        else:
+            k = int(label.value)
+        if k < 0:
+            raise PurlError("invalid negative subscript in get1index <real>")
+        if k == 0:
+            raise PurlError("attempt to select less than one element in get1index <real>")
+        if k > len(values):
+            raise PurlError("subscript out of bounds")
+        return values[k - 1]
+    return state.knit_code.get(_label_name(label))
 
 
 def _parse_inline(lines: list[str], pats: dict[str, str]) -> _Inline:
@@ -650,7 +786,7 @@ def _tangle_block(state: _State, x: _Block) -> str:
         "engine": "R",
         "purl": True,
     }
-    params.update(x.params)
+    params.update(x.params.merged())
     for o in ("purl", "eval", "child"):
         try:
             params[o] = _eval_lang(params[o])
@@ -660,25 +796,15 @@ def _tangle_block(state: _State, x: _Block) -> str:
         return ""
     label = params["label"]
     ev = params["eval"]
-    engine = params["engine"]
-    if isinstance(engine, Const | Sym | Lang):
-        try:
-            engine = r_eval(engine)
-        except EvalError as exc:
-            raise PurlError(str(exc)) from exc
-    if engine != "R":
-        comment = params["comment"]
-        if isinstance(comment, Const | Sym | Lang):
-            try:
-                comment = r_eval(comment)
-            except EvalError as exc:
-                raise PurlError(str(exc)) from exc
-            comment = math.nan if comment is NA else comment
-        return _one_string(_comment_out(state.knit_code.get(label), comment, newline=False))
+    # `params$engine != "R"`: the option is compared as written, never
+    # evaluated (a symbol by its name, a call by its deparsed text)
+    if _engine_is_r(params["engine"]) is False:
+        comment = _prefix_value(params["comment"])
+        return _one_string(_comment_out(_knit_code_get(state, label), comment, newline=False))
     if not is_false(ev) and params["child"] is not None:
         code: list[str] | None = _knit_children(state, params["child"])
     else:
-        code = state.knit_code.get(label)
+        code = _knit_code_get(state, label)
     code = _parse_chunk(state, code) if code else code
     if is_false(ev):
         code = _comment_out(code, "#", newline=False)
@@ -688,6 +814,46 @@ def _tangle_block(state: _State, x: _Block) -> str:
     if state.documentation == 0:
         return _one_string(code or [])
     return _label_code(code or [], x)
+
+
+def _engine_is_r(engine: Any) -> bool:
+    """``!(params$engine != "R")``, with R's errors for ``NA``/``NULL``."""
+    if isinstance(engine, Const):
+        if engine.kind == "NULL":
+            raise PurlError("argument is of length zero")
+        if engine.na:
+            raise PurlError("missing value where TRUE/FALSE needed")
+        return _label_name(engine) == "R"
+    if isinstance(engine, Sym):
+        return engine.name == "R"
+    if isinstance(engine, Lang):
+        return False
+    if engine is None:
+        raise PurlError("argument is of length zero")
+    return str(engine) == "R"
+
+
+def _prefix_value(v: Any) -> Any:
+    """The ``prefix`` knitr's ``comment_out()`` makes of a ``comment`` option.
+
+    ``NULL`` and ``NA`` mean no prefix; a symbol is used by its name (R
+    coerces it, it is not evaluated); a call with arguments is an error
+    (``nzchar()`` of it has several elements).
+    """
+    if isinstance(v, Const):
+        if v.kind == "NULL":
+            return None
+        if v.na:
+            return math.nan
+        return _label_name(v)
+    if isinstance(v, Sym):
+        return v.name
+    if isinstance(v, Lang):
+        if v.args:
+            n = len(v.args) + 1
+            raise PurlError(f"'length = {n}' in coercion to 'logical(1)'")
+        return _deparse_expr(v.fun)
+    return v
 
 
 def _knit_children(state: _State, child: Any) -> list[str]:
@@ -1020,10 +1186,14 @@ def purl_text(lines: Sequence[str], documentation: int = 1, child: bool = False)
         else:
             params = _front_matter_params(text)
     groups = _split_file(state, text)
-    res = [
-        _tangle_block(state, g) if isinstance(g, _Block) else _tangle_inline(state, g)
-        for g in groups
-    ]
+    token = OUT_FORMAT.set(_OUT_FORMAT[name])
+    try:
+        res = [
+            _tangle_block(state, g) if isinstance(g, _Block) else _tangle_inline(state, g)
+            for g in groups
+        ]
+    finally:
+        OUT_FORMAT.reset(token)
     res = _strip_white(res)
     out = _one_string(res)
     if child:
