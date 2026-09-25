@@ -322,7 +322,7 @@ class _Article:
         Returns the distinct words joined by NULs, where each word starts in
         that string, and the rows each word occurs in.
         """
-        vocab = self._cache.get("vocabulary")
+        vocab: Any = self._cache.get("vocabulary")
         if vocab is None:
             index: dict[str, list[int]] = {}
             for row, text in enumerate(self._texts):
@@ -340,8 +340,8 @@ class _Article:
                 starts.append(pos)
                 pos += len(word) + 1
             vocab = ("\0".join(index), starts, list(index.values()))
-            self._cache["vocabulary"] = vocab  # type: ignore[assignment]
-        return vocab  # type: ignore[return-value]
+            self._cache["vocabulary"] = vocab
+        return vocab  # type: ignore[no-any-return]
 
     def _literal_mask(self, piece: str) -> np.ndarray:
         """Which texts contain *piece* (casefolded, no whitespace) once casefolded.
@@ -970,7 +970,7 @@ def get_support_4(article: Any) -> list[int]:
 def _pattern_support_5() -> str:
     funded_by_award = _joined(["funded", "by", "foundation"])
     start_of_sentence = "(^\\s*|(:|\\.)\\s*|[A-Z][a-zA-Z]+\\s*)"
-    return _max_words(start_of_sentence, n_max=4, space_first=False) + funded_by_award
+    return str(_max_words(start_of_sentence, n_max=4, space_first=False)) + funded_by_award
 
 
 def get_support_5(article: Any) -> list[int]:
@@ -1335,7 +1335,7 @@ def get_common_5(article: Any) -> list[int]:
 
 def _grepl_list(pattern: str, article: Any, ignore_case: bool = False) -> list[bool]:
     art = _as_article(article)
-    return art.mask(pattern, ignore_case).tolist()
+    return [bool(v) for v in art.mask(pattern, ignore_case)]
 
 
 @cache

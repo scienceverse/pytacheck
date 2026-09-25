@@ -402,7 +402,7 @@ def rtransparent_coi(splitted: Sequence[Any]) -> str:
         if _str_count(coi_text, "author") < 2:
             coi_text = _cut_after_authors(coi_text)
 
-    return trimws(coi_text)
+    return str(trimws(coi_text))
 
 
 # ---------------------------------------------------------------------------
