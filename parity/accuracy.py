@@ -35,10 +35,11 @@ must be explained by an entry of ``parity/accuracy/expected.yaml``::
       reason: ...
 
 ``--gate`` fails on any unexplained difference, an entry that explains none (a
-stale entry; checked on full runs only), a missing golden, or an output that used
-the network or started R. A module whose traffic lights agree on fewer than 90%
-of its inputs is a warning (``needs_review`` in the JSON report), which the
-upstream sync turns into the ``needs-human-review`` label.
+stale entry; checked on full runs only), a missing golden or one of an output the
+matrix no longer has, or an output that used the network or started R. A module
+whose traffic lights agree on fewer than 90% of its inputs is a warning
+(``needs_review`` in the JSON report), which the upstream sync turns into the
+``needs-human-review`` label.
 
 R's outputs are committed, gzip-compressed, in ``parity/accuracy/golden/<module>
 .json.gz``, so the report needs no R. ``--generate`` rewrites them by running the
@@ -806,7 +807,7 @@ class Report:
     modules: dict[str, Scores]
     differences: list[Difference]
     expected: Expected
-    #: goldens that are missing, outputs that used the network or R
+    #: goldens missing or left over, outputs that used the network or R
     problems: list[str]
     partial: bool
     seconds: dict[str, float]
@@ -886,6 +887,9 @@ def score(
             )
             continue
         version = version or golden.get("metacheck_version")
+        extra = sorted(set(golden["outputs"]) - {o.input for o in outs})
+        if extra:
+            problems.append(f"{module}: R's golden has inputs not in the matrix: {extra}")
         for o in outs:
             r = golden["outputs"].get(o.input)
             if r is None:
@@ -895,6 +899,13 @@ def score(
             if p.get("problem"):
                 problems.append(f"{o.id}: {p['problem']}")
             diffs += score_output(o, r, p, scores)
+    if not partial:
+        modules_run = {golden_path(m).name for m in modules}
+        problems += [
+            f"golden {path.name}: no module of the matrix has it: delete it"
+            for path in sorted(GOLDEN_DIR.glob("*.json.gz"))
+            if path.name not in modules_run
+        ]
     explain(diffs, expected.entries)
     return Report(len(outputs), modules, diffs, expected, problems, partial, seconds or {}, version)
 

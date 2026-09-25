@@ -7,6 +7,7 @@ so status/prepare run on real git history without the network.
 
 from __future__ import annotations
 
+import functools
 import importlib.util
 import json
 import shutil
@@ -463,12 +464,43 @@ def test_review_needs_a_human_for_tier1_marks_and_accuracy_warnings(monkeypatch)
     assert us.review_reasons(same, None) == ["the accuracy report did not run"]
 
     def git(*args: str, **kw: Any) -> str:
-        if args[0] == "status":
-            return " M parity/accuracy/expected.yaml\n"
+        if args[:2] == ("diff", "--name-only"):
+            return f"{args[-1]}\n"
         return "+| D30 | new deliberate difference |\n"
 
     monkeypatch.setattr(us, "git", git)
     assert us.review_reasons(same, _accuracy()) == [
+        "parity/accuracy/expected.yaml changed",
+        "parity/accuracy/matrix.toml changed",
+        "D-entries of docs/UPSTREAM_ISSUES.md changed (1 lines)",
+    ]
+
+
+def test_review_compares_files_with_the_base_commit(tmp_path, monkeypatch) -> None:
+    """A change the porting agent committed still needs review: files are compared
+    with the commit the sync branched from, not with HEAD."""
+    us = _load_script()
+    run = functools.partial(subprocess.run, cwd=tmp_path, check=True, capture_output=True)
+    run(["git", "init", "-q"])
+    run(["git", "config", "user.email", "t@example.org"])
+    run(["git", "config", "user.name", "t"])
+    expected = tmp_path / "parity" / "accuracy" / "expected.yaml"
+    issues = tmp_path / "docs" / "UPSTREAM_ISSUES.md"
+    expected.parent.mkdir(parents=True)
+    issues.parent.mkdir()
+    expected.write_text("differences: []\n")
+    (expected.parent / "matrix.toml").write_text("")
+    issues.write_text("| D1 | a | b | c |\n")
+    run(["git", "add", "-A"])
+    run(["git", "commit", "-q", "-m", "base"])
+    base = run(["git", "rev-parse", "HEAD"], text=True).stdout.strip()
+    expected.write_text("differences: [{module: m}]\n")
+    issues.write_text("| D1 | a | b | c |\n| D2 | d | e | f |\n")
+    run(["git", "commit", "-q", "-am", "the agent commits"])
+    monkeypatch.setattr(us, "ROOT", tmp_path)
+    monkeypatch.setattr(us, "tier1_marks", dict)
+    assert us.review_reasons({}, _accuracy()) == []  # against HEAD: nothing
+    assert us.review_reasons({}, _accuracy(), base) == [
         "parity/accuracy/expected.yaml changed",
         "D-entries of docs/UPSTREAM_ISSUES.md changed (1 lines)",
     ]

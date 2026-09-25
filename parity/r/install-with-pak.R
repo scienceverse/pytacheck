@@ -13,6 +13,10 @@ if (!requireNamespace("pak", quietly = TRUE)) {
 }
 pak::pkg_install(sub("==", "@", lock, fixed = TRUE), upgrade = FALSE, ask = FALSE)
 pak::local_install("upstream/metacheck", upgrade = FALSE, ask = FALSE)
+# careless's one dependency, psych, is pinned in packages.lock and installed
+# above, into the main library: pak would otherwise put the latest psych here
 suggests <- file.path(R.home(), "suggests")
 dir.create(suggests, showWarnings = FALSE, recursive = TRUE)
-pak::pkg_install("careless@1.2.2", lib = suggests, upgrade = FALSE, ask = FALSE)
+pak::pkg_install(
+  "careless@1.2.2", lib = suggests, upgrade = FALSE, ask = FALSE, dependencies = FALSE
+)

@@ -105,6 +105,18 @@ def test_gregexpr_and_gsub_empty_matches_follow_r() -> None:
     # gsub("x*", "-", "abxd") is "-a-b-d-" (Python's re.sub gives "-a-b--d-")
     assert rx.gsub("x*", "-", ["abxd", ""]) == ["-a-b-d-", "-"]
     assert rx.gsub("x*", "-", "abxd", perl=True) == "-a-b-d-"
+    # a match at the very end is found when the search starts before it
+    assert rx.gregexpr_all("$", ["abc", ""]) == [[(4, 0)], []]
+    assert rx.gregexpr_all("$", "", perl=True) == [(1, 0)]
+    assert rx.regextract_all("[0-9]*$", "abc") == [""]
+    assert rx.gsub("[0-9]*$", "-", "abc") == "abc-"
+    # after an empty match R steps over one character, also where the pattern
+    # could match non-empty there
+    assert rx.regextract_all("a*?", "aaa") == ["", "", ""]
+    assert rx.regextract_all("a|", "caac", perl=True) == ["", "a", "a", ""]
+    assert rx.gsub("a*?", "-", "aaa") == "-a-a-a-"
+    assert rx.gsub("(|a)", "-", "caac", perl=True) == "-c-a-a-c-"
+    assert rx.gsub("a|", "-", "caac", perl=True) == "-c--c-"
 
 
 def test_pcre_inline_flags_and_ascii_sets() -> None:

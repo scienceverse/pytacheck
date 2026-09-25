@@ -433,18 +433,25 @@ def _substitute(
         )
 
     def rsub(s: str) -> str:
-        # R's gsub does not replace an empty match right at the end of the
-        # previous match (Python's sub does)
-        last = -1
-
-        def one(m: Any) -> str:
-            nonlocal last
-            if m.end() <= last:
-                return ""
-            last = m.end()
-            return r if isinstance(r, str) else str(r(m))
-
-        return rx.sub(one, s)
+        # R's gsub loop: it stops at the end of the string, steps over one
+        # character after an empty match, and does not replace an empty match
+        # right at the end of the previous one (Python's sub does all three
+        # differently)
+        out: list[str] = []
+        pos, last = 0, -1
+        while (m := rx.search(s, pos)) is not None:
+            out.append(s[pos : m.start()])
+            if m.end() > last:
+                out.append(r if isinstance(r, str) else r(m))
+                last = m.end()
+            pos = m.end()
+            if pos >= len(s):
+                break
+            if m.start() == m.end():
+                out.append(s[pos])
+                pos += 1
+        out.append(s[pos:])
+        return "".join(out)
 
     return _vectorize(x, lambda v: None if (s := _as_str(v)) is None else rsub(s))
 
@@ -480,20 +487,27 @@ def _first(pattern: str, x: Any, flags: tuple[bool, bool, bool], fn: Callable[[A
 
 
 def _all(pattern: str, x: Any, flags: tuple[bool, bool, bool], fn: Callable[[Any], T]) -> Any:
-    """*fn* of each of the matches R's ``gregexpr()`` finds in each element: R
-    does not search again at the very end after a match, and TRE finds nothing
-    in ``""``."""
-    rx = _compile(pattern, *flags, True)
+    """*fn* of each of the matches R's ``gregexpr()`` finds in each element.
+
+    R's loop: the next search starts after a match, one character further
+    after an empty match, and only before the end of the string (TRE finds
+    nothing in ``""``).
+    """
+    search = _compile(pattern, *flags, True).search
     tre = not (flags[1] or flags[2])
 
     def each(v: Any) -> list[T]:
         s = _as_str(v)
-        if s is None:
+        if s is None or (tre and not s):
             return []
-        out = list(rx.finditer(s))
-        if out and out[-1].start() == len(s) and (s or tre):
-            out.pop()
-        return [fn(m) for m in out]
+        out: list[T] = []
+        pos = 0
+        while (m := search(s, pos)) is not None:
+            out.append(fn(m))
+            pos = m.end() if m.end() > m.start() else m.start() + 1
+            if pos >= len(s):
+                break
+        return out
 
     return _vectorize(x, each)
 

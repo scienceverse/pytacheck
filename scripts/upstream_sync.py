@@ -32,7 +32,7 @@ Around the porting agent, the workflow also calls:
     uv run python scripts/upstream_sync.py brief-parity --check C.json --accuracy A.json
     uv run python scripts/upstream_sync.py tier1-marks --out .upstream-sync/tier1-marks.json
     uv run python scripts/upstream_sync.py review --marks .upstream-sync/tier1-marks.json \
-        --accuracy A.json
+        --accuracy A.json --base BASE
 
 ``brief-parity`` appends to the brief the parity check and the accuracy report
 run after the goldens were regenerated, before porting: the marked cases whose R
@@ -40,9 +40,9 @@ golden changed (``r_changed``) or that now match R (``xpass``: upstream may have
 fixed the bug), the failing cases and the accuracy differences no entry of
 parity/accuracy/expected.yaml explains. ``tier1-marks`` records the marks of the
 tier-1 (realistic) cases before porting; ``review`` says, after porting, whether
-the pull request needs human review: tier-1 marks, parity/accuracy/expected.yaml
-or D-entries of docs/UPSTREAM_ISSUES.md changed, or the accuracy report warns
-or fails.
+the pull request needs human review: tier-1 marks, parity/accuracy/expected.yaml,
+its matrix.toml or D-entries of docs/UPSTREAM_ISSUES.md changed since BASE (the
+commit the sync branched from), or the accuracy report warns or fails.
 """
 
 from __future__ import annotations
@@ -631,8 +631,12 @@ def cmd_tier1_marks(ns: argparse.Namespace) -> int:
 _D_ROW = re.compile(r"^[+-]\| D\d+ ")
 
 
-def review_reasons(before: dict[str, Any], accuracy: dict[str, Any] | None) -> list[str]:
-    """Why the pull request needs human review (empty: it does not)."""
+def review_reasons(
+    before: dict[str, Any], accuracy: dict[str, Any] | None, base: str = "HEAD"
+) -> list[str]:
+    """Why the pull request needs human review (empty: it does not). Files are
+    compared with *base*, the commit the sync branched from, so a change counts
+    whether or not it was committed since."""
     reasons = []
     after = tier1_marks()
     changed = sorted(k for k in set(before) | set(after) if before.get(k) != after.get(k))
@@ -641,9 +645,13 @@ def review_reasons(before: dict[str, Any], accuracy: dict[str, Any] | None) -> l
         reasons.append(
             f"{len(changed)} tier-1 (realistic) marks added, removed or changed: {shown}"
         )
-    if git("status", "--porcelain", "--", "parity/accuracy/expected.yaml", cwd=ROOT).strip():
-        reasons.append("parity/accuracy/expected.yaml changed")
-    diff = git("diff", "HEAD", "--", "docs/UPSTREAM_ISSUES.md", cwd=ROOT)
+    # the matrix too: dropping an input would hide its differences from the gate
+    reasons += [
+        f"{path} changed"
+        for path in ("parity/accuracy/expected.yaml", "parity/accuracy/matrix.toml")
+        if git("diff", "--name-only", base, "--", path, cwd=ROOT).strip()
+    ]
+    diff = git("diff", base, "--", "docs/UPSTREAM_ISSUES.md", cwd=ROOT)
     d_rows = [line for line in diff.splitlines() if _D_ROW.match(line)]
     if d_rows:
         reasons.append(f"D-entries of docs/UPSTREAM_ISSUES.md changed ({len(d_rows)} lines)")
@@ -658,7 +666,7 @@ def review_reasons(before: dict[str, Any], accuracy: dict[str, Any] | None) -> l
 
 def cmd_review(ns: argparse.Namespace) -> int:
     accuracy = _json(ns.accuracy) if Path(ns.accuracy).exists() else None
-    reasons = review_reasons(_json(ns.marks), accuracy)
+    reasons = review_reasons(_json(ns.marks), accuracy, ns.base)
     print(json.dumps({"needs_review": bool(reasons), "reasons": reasons}, indent=1))
     return 0
 
@@ -692,6 +700,9 @@ def main(argv: list[str] | None = None) -> int:
     r = sub.add_parser("review", help="whether the pull request needs human review (JSON)")
     r.add_argument("--marks", required=True, help="the tier-1 marks recorded before porting")
     r.add_argument("--accuracy", required=True, help="the accuracy report after porting")
+    r.add_argument(
+        "--base", default="HEAD", help="the commit the sync branched from (default: HEAD)"
+    )
     r.set_defaults(func=cmd_review)
     ns = parser.parse_args(argv)
     return int(ns.func(ns))

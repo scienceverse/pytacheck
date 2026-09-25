@@ -16,8 +16,8 @@ name: Upstream sync
 #      docs/PORTING.md, prompt: .github/prompts/upstream-sync.md);
 #   4. verify (parity, the accuracy gate, tests, lint) and open a pull request. It
 #      is a draft labelled needs-human-review when tier-1 marks,
-#      parity/accuracy/expected.yaml or D-entries changed, or the accuracy report
-#      warns (scripts/upstream_sync.py review). The PR can only be merged once the
+#      parity/accuracy/expected.yaml or matrix.toml, or D-entries changed, or the
+#      accuracy report warns (scripts/upstream_sync.py review). The PR can only be merged once the
 #      CI and Parity workflows are green (branch protection).
 #
 # Requires the repository secret ANTHROPIC_API_KEY (or CLAUDE_CODE_OAUTH_TOKEN).
@@ -109,6 +109,7 @@ jobs:
         run: |
           short=$(echo "$HEAD_SHA" | cut -c1-10)
           echo "name=upstream-sync/$short" >> "$GITHUB_OUTPUT"
+          echo "base=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
           git switch -c "upstream-sync/$short"
 
       - uses: astral-sh/setup-uv@bec219d24cd3e171d82865faccec33120bb574f4 # v10.1.0
@@ -199,8 +200,10 @@ jobs:
           uv run ruff check . > .upstream-sync/ruff.txt 2>&1; lint=$?
           ok=$([ $parity -eq 0 ] && [ $accuracy -eq 0 ] && [ $tests -eq 0 ] && [ $lint -eq 0 ] && echo true || echo false)
           echo "ok=$ok" >> "$GITHUB_OUTPUT"
+          # against the commit the sync branched from, whatever the agent committed
           uv run python scripts/upstream_sync.py review --marks .upstream-sync/tier1-marks.json \
-            --accuracy .upstream-sync/accuracy.json > .upstream-sync/review.json
+            --accuracy .upstream-sync/accuracy.json --base "${{ steps.branch.outputs.base }}" \
+            > .upstream-sync/review.json
           # a review that could not be computed asks for one
           review=$(python3 -c "import json; print(str(json.load(open('.upstream-sync/review.json'))['needs_review']).lower())" 2>/dev/null || echo true)
           echo "needs_review=$review" >> "$GITHUB_OUTPUT"

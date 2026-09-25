@@ -42,10 +42,10 @@ against metacheck's (the goldens under `parity/accuracy/golden/` were regenerate
 new metacheck). Port the changes until its differences are those that
 `parity/accuracy/expected.yaml` explains. A new difference that is a metacheck bug pytacheck
 fixes, or a deliberate difference, gets an entry there citing its U- or D-entry, like a mark;
-an entry that no longer explains anything (`stale`) is removed. Changes to that file, to the
-marks of tier-1 (realistic) cases or to D-entries make the pull request a draft that needs
-human review, so keep them to what the upstream changes require and explain each in
-`.upstream-sync/notes.md`.
+an entry that no longer explains anything (`stale`) is removed. Changes to that file, to
+`matrix.toml`, to the marks of tier-1 (realistic) cases or to D-entries make the pull request
+a draft that needs human review, so keep them to what the upstream changes require and
+explain each in `.upstream-sync/notes.md`.
 
 Every difference from R's goldens is marked, never hidden:
 - If the new R code is clearly wrong (a crash on valid input, a mis-parse, a wrong count,
