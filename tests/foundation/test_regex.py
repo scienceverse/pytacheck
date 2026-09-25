@@ -135,6 +135,31 @@ def test_lazy_tre_patterns_stay_lazy() -> None:
         rx.sub("^JaspColumn_.*?_Encoded_", "", "JaspColumn_1_Encoded_x_Encoded_y") == "x_Encoded_y"
     )
     assert rx.regextract_all("<v>.*?</v>", "<v>a</v> x <v>b</v>") == ["<v>a</v>", "<v>b</v>"]
+    # an escaped or bracketed "*?" is no lazy quantifier: leftmost-longest (R: "ab*")
+    assert rx.regextract(r"(a|ab)\*?", "ab*") == "ab*"
+    assert rx.regextract(r"(a|ab)x*?", "ab") == "a"
+
+
+def test_empty_matches_of_empty_groups_and_anchors() -> None:
+    # R 4.5: an empty group or a PCRE anchor matches empty, so R's gsub loop applies
+    assert rx.gsub("b|()", "-", "abc") == "-a-c-"
+    assert rx.gsub("b|()", "-", "abc", perl=True) == "-a-c-"
+    assert rx.gsub(r"a\Z|\Z", "-", "ba", perl=True) == "b-"
+    assert rx.gsub(r"a\z|\z", "-", "ba", perl=True) == "b-"
+    assert rx.gsub(r"\Aa|\A", "-", "ab", perl=True) == "-b"
+
+
+def test_hex_quoted_and_vertical_space_escapes() -> None:
+    # R 4.5: \x{hhhh} in both engines, \Q...\E and \v with perl = TRUE
+    assert rx.grepl(r"a\x{2212}b", ["a\u2212b", "a-b"]) == [True, False]
+    assert rx.grepl(r"[\x{41}-\x{43}]", ["B", "D"], perl=True) == [True, False]
+    assert rx.gsub(r"\x{2212}", "-", "\u22125", perl=True) == "-5"
+    assert rx.grepl(r"\\x{41}", ["\\x{41}", "A"], perl=True) == [False, False]
+    assert rx.grepl(r"x\Q(y)*\Ez", ["x(y)*z", "xyz"], perl=True) == [True, False]
+    assert rx.grepl(r"\QA.B", ["A.B", "AxB"], perl=True) == [True, False]
+    assert rx.grepl(r"\v", ["\v", "\n", "v", "\u2028"], perl=True) == [True, True, False, True]
+    assert rx.grepl(r"^\V+$", ["ab", "a\nb"], perl=True) == [True, False]
+    assert rx.grepl(r"[\v]", ["\n", "v"], perl=True) == [True, False]
 
 
 def test_tre_classes_and_invalid_patterns() -> None:
@@ -142,3 +167,5 @@ def test_tre_classes_and_invalid_patterns() -> None:
     assert rx.grepl(r"\d", "5") and not rx.grepl(r"\d", "٥")  # [0-9] only
     with pytest.raises(rx.RegexError):
         rx.grepl("(a", "a")
+    with pytest.raises(rx.RegexError):  # R: "Unknown collating element"
+        rx.grepl("[[.hyphen.]]", "-")

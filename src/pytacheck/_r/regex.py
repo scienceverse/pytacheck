@@ -76,6 +76,12 @@ _TRE_ESCAPES = {
     **{"s": f"[{_SPACE}]", "S": f"[^{_SPACE}]"},
 }
 _TRE_CLASSES = {"space": _SPACE, "blank": _BLANK}
+# \x{hhhh} and \Q...\E (literal text) in both engines
+_SPECIAL = regex.compile(r"\\x\{([0-9A-Fa-f]+)\}|\\Q(.*?)(?:\\E|\Z)", regex.DOTALL)
+
+
+def _special(m: Any) -> str:
+    return f"\\U{int(m[1], 16):08x}" if m[1] else regex.escape(m[2])
 
 
 def _tre_bracket(p: str, i: int) -> tuple[str, int]:
@@ -99,8 +105,10 @@ def _tre_bracket(p: str, i: int) -> tuple[str, int]:
             name = p[i + 2 : end]
             if p[i + 1] == ":":
                 out.append(_TRE_CLASSES.get(name, f"[:{name}:]"))
-            else:  # an equivalence class or collating element: the character
+            elif len(name) == 1:  # an equivalence class or collating element: the character
                 out.append(regex.escape(name))
+            else:
+                raise RegexError(f"invalid regular expression '{p}': unknown collating element")
             i = end + 2
             continue
         out.append("\\" + c if c in "\\[]^" else c)  # a backslash is literal
@@ -119,11 +127,9 @@ def translate_tre(p: str) -> str:
             if i + 1 == n:
                 raise RegexError(f"invalid regular expression '{p}': trailing backslash")
             e = p[i + 1]
-            if e == "Q":  # literal text up to \E
-                end = p.find("\\E", i + 2)
-                end = n if end < 0 else end
-                out.append(regex.escape(p[i + 2 : end]))
-                i = end + 2
+            if m := _SPECIAL.match(p, i):
+                out.append(_special(m))
+                i = m.end()
                 continue
             if e in _TRE_ESCAPES:
                 out.append(_TRE_ESCAPES[e])
@@ -141,30 +147,33 @@ def translate_tre(p: str) -> str:
     return "".join(out)
 
 
+_VSPACE = r"\n\x0b\f\r\x85\u2028\u2029"  # PCRE's \v
+_PCRE_ESCAPES = {"v": f"[{_VSPACE}]", "V": f"[^{_VSPACE}]", "Z": r"(?=\n?\Z)", "z": r"\Z"}
 # fmt: off
 _ASCII_ITEMS = {  # PCRE2's classes in a set are ASCII (\W \D \S [:^x:], unused, stay Unicode)
     r"\w": "0-9A-Za-z_", "[:word:]": "0-9A-Za-z_", r"\d": "0-9", "[:digit:]": "0-9",
     r"\s": r"\t\n\v\f\r ", "[:space:]": r"\t\n\v\f\r ", "[:blank:]": r"\t ",
     "[:alpha:]": "A-Za-z", "[:alnum:]": "0-9A-Za-z", "[:upper:]": "A-Z", "[:lower:]": "a-z",
     "[:punct:]": r"!-/:-@\[-`{-~", "[:xdigit:]": "0-9A-Fa-f", "[:cntrl:]": r"\x00-\x1f\x7f",
-    "[:print:]": r" -~", "[:graph:]": "!-~", "[:ascii:]": r"\x00-\x7f",
+    "[:print:]": r" -~", "[:graph:]": "!-~", "[:ascii:]": r"\x00-\x7f", r"\v": _VSPACE,
 }
 # fmt: on
-_SET_ITEM = regex.compile(r"\\.|\[:[a-z]+:\]", regex.DOTALL)  # escapes are pairs: [\\w]
-# an escape, or a bracket expression (its POSIX classes and escapes as groups)
-_PCRE_TOKEN = regex.compile(r"\\(.)|\[(\^?)(\]?(?:\[:\^?[a-z]+:\]|\\.|[^\]])*)\]", regex.DOTALL)
+_SET_ITEM = regex.compile(_SPECIAL.pattern + r"|\\.|\[:[a-z]+:\]", regex.DOTALL)  # [\\w]: \\ w
+_PCRE_TOKEN = regex.compile(  # \x{hhhh}, \Q...\E, an escape, or a set (its classes, escapes)
+    _SPECIAL.pattern + r"|\\(.)|\[(\^?)(\]?(?:\[:\^?[a-z]+:\]|\\.|[^\]])*)\]", regex.DOTALL
+)
 
 
 def _pcre_token(m: Any) -> str:
-    e = m.group(1)
-    if e is None:  # inside sets, explicit ASCII ranges: a scoped (?a:[...]) still
-        # folds non-ASCII letters under IGNORECASE
-        body = _SET_ITEM.sub(lambda k: _ASCII_ITEMS.get(k.group(0), k.group(0)), m.group(3))
-        return f"[{m.group(2)}{body}]"
-    if e in "wWdDsSbB":
-        return f"(?a:\\{e})"
-    # PCRE's \Z is the end or before a final newline, its \z the end
-    return r"(?=\n?\Z)" if e == "Z" else r"\Z" if e == "z" else m.group(0)
+    if m.lastindex <= 2:
+        return _special(m)
+    if m[3] is None:  # in sets, ASCII ranges: (?a:[...]) still folds non-ASCII letters (?i)
+        items = _SET_ITEM.sub(
+            lambda k: _special(k) if k.lastindex else _ASCII_ITEMS.get(k[0], k[0]), m[5]
+        )
+        return f"[{m[4]}{items}]"
+    # ASCII classes; PCRE's \v; its \Z is the end or before a final newline, its \z the end
+    return f"(?a:\\{m[3]})" if m[3] in "wWdDsSbB" else _PCRE_ESCAPES.get(m[3], m[0])
 
 
 @functools.lru_cache(maxsize=8192)
@@ -174,6 +183,7 @@ def translate_pcre(p: str) -> str:
 
 
 _LAZY = regex.compile(r"[*+?}]\?")
+_NOT_QUANTIFIER = regex.compile(r"\\.|\[\^?\]?(?:\[:[a-z]+:\]|[^\]])*\]", regex.DOTALL)  # \*? [*?]
 
 
 @functools.lru_cache(maxsize=8192)
@@ -186,7 +196,7 @@ def _compile(pattern: str, icase: bool, perl: bool, fixed: bool, posix: bool) ->
             return regex.compile(translate_pcre(pattern), flags)
         flags |= regex.DOTALL
         # TRE is leftmost-longest; POSIX mode would override lazy quantifiers
-        if posix and not _LAZY.search(pattern):
+        if posix and not _LAZY.search(_NOT_QUANTIFIER.sub("x", pattern)):
             flags |= regex.POSIX
         return regex.compile(translate_tre(pattern), flags)
     except regex.error as exc:
@@ -413,7 +423,7 @@ def _replacement(repl: str, perl: bool) -> str | Callable[[Any], str]:
 
 
 # a pattern that can match the empty string somewhere (true when unsure)
-_NULLABLE = regex.compile(r"[*?]|\{0?,|\{0\}|\\[bB<>]|[\^$]|\(\?[=!<]|\|\||\(\||\|\)|^\||\|$")
+_NULLABLE = regex.compile(r"[*?^$]|\{0?[,}]|\\[bBAZzGK<>]|\(\)|(?:^|[|(])\||\|(?:$|\))")
 
 
 def _substitute(
