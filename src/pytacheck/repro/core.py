@@ -915,13 +915,15 @@ def repro_rewrite_paths(
                 keep.append(grp_cand[0])
                 continue
             grp_of = _data_group_from_path([plan_target[c] for c in grp_cand])
+            # the group most mirrors agree on; a tie keeps the first
+            # occurrence, as metacheck's comment says (its which.max(table())
+            # picks the alphabetically first group; UPSTREAM_ISSUES U135)
             counts: dict[str, int] = {}
             for g in grp_of:
                 if g is not None:
                     counts[g] = counts.get(g, 0) + 1
             if counts:
-                levels = sorted(counts, key=r_sort_key)
-                best = max(levels, key=lambda g: (counts[g], -levels.index(g)))
+                best = max(counts, key=lambda g: counts[g])  # first of the maxima
                 rep_i = next(c for c, g in zip(grp_cand, grp_of, strict=True) if g == best)
             else:
                 rep_i = grp_cand[0]
