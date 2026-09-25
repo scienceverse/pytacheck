@@ -34,7 +34,9 @@ FIXED = (2024, 1, 2, 3, 4, 6)
 EPOCH = 1704164646  # 2024-01-02T03:04:06Z
 
 
-def _zipfile(path: Path, members: list[tuple[str, bytes]], method: int, comment: bytes = b"") -> None:
+def _zipfile(
+    path: Path, members: list[tuple[str, bytes]], method: int, comment: bytes = b""
+) -> None:
     with zipfile.ZipFile(path, "w") as zf:
         for name, data in members:
             info = zipfile.ZipInfo(name, date_time=FIXED)
@@ -55,9 +57,7 @@ def _cli_zip(path: Path, members: dict[str, bytes]) -> None:
             os.utime(f, (EPOCH, EPOCH))
         for d in sorted({p for p in root.rglob("*") if p.is_dir()}, reverse=True):
             os.utime(d, (EPOCH, EPOCH))
-        subprocess.run(
-            ["zip", "-q", "-r", "out.zip", *sorted(members)], cwd=root, check=True
-        )
+        subprocess.run(["zip", "-q", "-r", "out.zip", *sorted(members)], cwd=root, check=True)
         shutil.copyfile(root / "out.zip", path)
 
 
@@ -65,7 +65,7 @@ def _patch_zip64(src: Path, dest: Path) -> None:
     """Copy *src* with every central-directory size/offset set to the Zip64 sentinel."""
     raw = bytearray(src.read_bytes())
     eocd = raw.rfind(b"PK\x05\x06")
-    n_entries, cd_size, cd_offset = struct.unpack_from("<HII", raw, eocd + 10)
+    n_entries, _cd_size, cd_offset = struct.unpack_from("<HII", raw, eocd + 10)
     p = cd_offset
     for k in range(n_entries):
         name_len, extra_len, comm_len = struct.unpack_from("<HHH", raw, p + 28)
@@ -84,12 +84,14 @@ def _r_raw(data: bytes) -> str:
     return f"as.raw(c({body}))"
 
 
-def _mock(path: Path, url: str, method: str, status: int, headers: dict[str, str], body: bytes) -> None:
+def _mock(
+    path: Path, url: str, method: str, status: int, headers: dict[str, str], body: bytes
+) -> None:
     hdr = ", ".join(f'`{k}` = "{v}"' for k, v in headers.items())
     text = (
         f'structure(list(method = "{method}", url = "{url}", status_code = {status}L, '
         f'headers = structure(list({hdr}), class = "httr2_headers"), body = {_r_raw(body)}, '
-        "timing = NULL, cache = new.env(parent = emptyenv())), class = \"httr2_response\")\n"
+        'timing = NULL, cache = new.env(parent = emptyenv())), class = "httr2_response")\n'
     )
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(text, encoding="utf-8")
@@ -163,7 +165,11 @@ def main() -> None:
 
     buf = io.BytesIO()
     with tarfile.open(fileobj=buf, mode="w") as tf:
-        for name, data in (("proj/data.csv", csv), ("proj/code.R", b"1 + 1\n"), ("proj/img.png", png)):
+        for name, data in (
+            ("proj/data.csv", csv),
+            ("proj/code.R", b"1 + 1\n"),
+            ("proj/img.png", png),
+        ):
             info = tarfile.TarInfo(name)
             info.size = len(data)
             info.mtime = EPOCH
@@ -184,7 +190,15 @@ def main() -> None:
     (DATA / "binary.dat").write_bytes(b"<html>sign in\x00\x01\x02")
 
     shutil.rmtree(MOCKS, ignore_errors=True)
-    for name in ("mixed.zip", "big.zip", "stored.zip", "comment.zip", "stimuli.zip", "unicode.zip", "zip64.zip"):
+    for name in (
+        "mixed.zip",
+        "big.zip",
+        "stored.zip",
+        "comment.zip",
+        "stimuli.zip",
+        "unicode.zip",
+        "zip64.zip",
+    ):
         _zip_mocks(name, (DATA / name).read_bytes())
     _zip_mocks("notzip.zip", (DATA / "notzip.bin").read_bytes())
     _zip_mocks("ignored-range.zip", (DATA / "mixed.zip").read_bytes(), range_status=200)
