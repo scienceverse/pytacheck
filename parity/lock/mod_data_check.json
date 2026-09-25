@@ -1,0 +1,21 @@
+{
+"data_check.archives": {"r": "df9f9c34b1816110", "py": "788680f42d144157", "diff": ["structure.file_size[]"]},
+"data_check.archives_nopeek": {"r": "e05e936fc2facf46", "py": "338e0dc6deaefe64", "diff": ["structure.file_size[]"]},
+"data_check.archives_skip_none": {"r": "df9f9c34b1816110", "py": "788680f42d144157", "diff": ["structure.file_size[]"]},
+"data_check.download_archives": {"r": "91ed5832439c5ec1", "py": "113484f8951ac471", "diff": ["structure.file_size[]"]},
+"data_check.download_gated": {"r": "cc77db37984a6019", "py": "9b5cc1da1919ab74", "diff": ["careless", "demographics", "dv_summary_text", "findings", "na_replace", "report[]", "summary_table", "summary_text", "table", "traffic_light[]"]},
+"data_check.download_none": {"r": "20886ede56bb1a50", "py": "d27e7f10c60b52e6", "diff": ["careless", "demographics", "dv_summary_text", "findings", "na_replace", "report[]", "summary_table", "summary_text", "table", "traffic_light[]"]},
+"data_check.download_oversize": {"r": "cc77db37984a6019", "py": "fccbb73ce7a59154", "diff": ["careless", "demographics", "dv_summary_text", "findings", "na_replace", "report[]", "summary_table", "summary_text", "table", "traffic_light[]"]},
+"data_check.download_skip_data": {"r": "117314bce359b3e1", "py": "a20180499a1722b6", "diff": ["careless", "demographics", "dv_summary_text", "findings", "na_replace", "report[]", "summary_table", "summary_text", "table", "traffic_light[]"]},
+"data_check.local.basic": {"r": "41008fbae8312b41", "py": "1679ab8dc1db62b6", "diff": ["structure.file_type[]"]},
+"data_check.local.spreadsheets": {"r": "bad82fa906fd1d0e", "py": "53f01a376786eb68", "diff": ["summary_text[]"]},
+"data_check.nodata": {"r": "84c250281e39cb6c", "py": "651d291c08eb9aee", "diff": ["careless", "demographics", "dv_summary_text", "findings", "na_replace", "report[]", "summary_table", "summary_text", "table"]},
+"data_check.nolocal_download_false": {"r": "bcc288568d7bcee2", "py": "3b86c8fd8ff63513", "diff": ["careless", "demographics", "dv_summary_text", "findings", "na_replace", "report[]", "summary_table", "summary_text", "table", "traffic_light[]"]},
+"data_check.nolocal_download_none": {"r": "bcc288568d7bcee2", "py": "3b86c8fd8ff63513", "diff": ["careless", "demographics", "dv_summary_text", "findings", "na_replace", "report[]", "summary_table", "summary_text", "table", "traffic_light[]"]},
+"data_check.nolocal_only": {"r": "14b0627f39fb7889", "py": "e3948a4d23b6f0a6", "diff": ["careless", "demographics", "dv_summary_text", "findings", "na_replace", "report[]", "summary_table", "summary_text", "table", "traffic_light[]"]},
+"data_check.nontabular": {"r": "c6c07b58dd663fbb", "py": "5cd27dcaede9ac25", "diff": ["summary_text[]"]},
+"data_check.nourl": {"r": "ac5146cf65ca52a8", "py": "8f3a4f35cc1f51fd", "diff": ["<R error, Python value>"]},
+"data_check.rdata": {"r": "76b241ec7a186870", "py": "1f6351591a96064c", "diff": ["summary_text[]"]},
+"data_check.spreadsheets": {"r": "73c4397db2c1b377", "py": "6c2962cfb19ee759", "diff": ["summary_text[]"]},
+"data_check.txt_download_none": {"r": "d702decfffd6f36b", "py": "60e954b46f20eed5", "diff": ["careless", "demographics", "dv_summary_text", "findings", "na_replace", "report[]", "summary_table", "summary_text", "table"]}
+}

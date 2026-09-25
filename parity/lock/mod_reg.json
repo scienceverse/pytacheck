@@ -1,0 +1,8 @@
+{
+"reg_check.module.empty_paperlist": {"r": "ac5146cf65ca52a8", "py": "7b9c42e479ce1d5f", "diff": ["<R error, Python value>"]},
+"reg_check.odd_judgements": {"r": "734158029666efaa", "py": "69ad3c9826de993a", "diff": ["report[]", "summary_table.regcheck_deviations[]", "summary_table.regcheck_unclear[]", "summary_text[]"]},
+"reg_check.paperlist.aspredicted": {"r": "5d3dd3679596e7be", "py": "d9f0c076a6d79a15", "diff": ["report[]", "summary_table.regcheck_deviations[]", "summary_table.regcheck_unclear[]", "summary_text[]", "table"]},
+"reg_check.paperlist.shared_prereg": {"r": "adf0f293d2035ef6", "py": "26ffc20669ddb32f", "diff": ["report[]"]},
+"reg_check.report.all_fail": {"r": "e7cdf514f66a4d2e", "py": "d5fc05b80b004eba", "diff": ["[]"]},
+"reg_check.tables.shared_prereg": {"r": "5ab7c3ad25e4302f", "py": "b7c4d12a15868cd8", "diff": ["<root>"]}
+}

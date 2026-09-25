@@ -1,0 +1,19 @@
+{
+"all_p_values.real_papers": {"r": "927a4435de0e7665", "py": "afbe824f75ee607f", "diff": ["summary_table.p_values[]", "summary_text[]", "table"]},
+"module_report.stat_p_exact.both": {"r": "500e6690f1688c2c", "py": "f4edff2d4efe7907", "diff": ["[]"]},
+"module_report.stat_p_exact.green": {"r": "0fc8f1bcfb350362", "py": "75d64b9c8fec4e5d", "diff": ["[]"]},
+"module_report.stat_p_exact.imprecise": {"r": "4ed58ba1ec7be09c", "py": "5ce8ca99a57e6b30", "diff": ["[]"]},
+"module_report.stat_p_exact.na": {"r": "7e22596f9f2367f6", "py": "b730d013b3a7e50e", "diff": ["[]"]},
+"module_report.stat_p_exact.zero": {"r": "e7bdeefe7976c5bc", "py": "2ed3278f03dcc95a", "diff": ["[]"]},
+"report_tables.all_p_values.real": {"r": "2b500799f3f91bfe", "py": "51f30fe742285ade", "diff": ["[].table"]},
+"report_tables.stat_p_exact.synthetic": {"r": "f09eca4caa55b406", "py": "84be9319083e3c33", "diff": ["[].table"]},
+"report_tables.stat_p_nonsig.real": {"r": "2aed0a598905b859", "py": "79c34473fe510eea", "diff": ["[].table.Sentence[]", "[].table.Text[]"]},
+"stat_p_exact.comparators": {"r": "7cbc987e8d981344", "py": "9b981533c8ed015c", "diff": ["summary_table.n_imprecise[]", "summary_table.n_zero[]", "summary_text[]", "table.imprecise[]", "table.zero[]"]},
+"stat_p_exact.real_papers": {"r": "5bdbb5c4ac077d3b", "py": "d2145833afc067d0", "diff": ["summary_text[]", "table"]},
+"stat_p_exact.real_single": {"r": "faf9046538978166", "py": "2b60cfd1e60ce8b1", "diff": ["table.expanded[]", "table.formatted[]"]},
+"stat_p_exact.star_variants": {"r": "df3af616e750b3bc", "py": "905e301b26187b39", "diff": ["summary_table.n_imprecise[]", "summary_text[]", "table.imprecise[]"]},
+"stat_p_exact.unicode_star": {"r": "04ec29942b32527e", "py": "ddd0d9c94024e675", "diff": ["summary_table.n_imprecise[]", "summary_text[]", "table.imprecise[]"]},
+"stat_p_nonsig.comparators": {"r": "ca8d5a9233a4da0e", "py": "021f7fdb75bb8f81", "diff": ["summary_table.n_nonsignificant[]", "summary_text[]", "table"]},
+"stat_p_nonsig.real_papers": {"r": "727c82feebec3f24", "py": "4109e2db46c9a014", "diff": ["table.expanded[]", "table.formatted[]", "table.text[]"]},
+"stat_p_nonsig.real_single": {"r": "6080c58f70ad7ef9", "py": "cd6f41d4258ee9aa", "diff": ["table.expanded[]", "table.text[]"]}
+}

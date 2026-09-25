@@ -1,0 +1,12 @@
+{
+"extract_eq.chr": {"r": "ac5146cf65ca52a8", "py": "6138a108160390bc", "diff": ["<R error, Python value>"]},
+"extract_eq.df.no_paper_id_error": {"r": "ac5146cf65ca52a8", "py": "4a63f7dfb95362da", "diff": ["<R error, Python value>"]},
+"extract_eq.psychsci": {"r": "d631bf6dcc6c74dd", "py": "bcb6adcf3745a34a", "diff": ["grp_id[]"]},
+"extract_p_values.chr": {"r": "ac5146cf65ca52a8", "py": "5a540f76ad5e8b47", "diff": ["<R error, Python value>"]},
+"extract_tests.psychsci": {"r": "5e21de178b7c35c8", "py": "8d7c6a7a80ccbd99", "diff": ["<root>"]},
+"extract_urls.psychsci": {"r": "f591b17ed5171906", "py": "ececf958026cba9a", "diff": ["<root>"]},
+"json_expand.error.zero_rows": {"r": "ac5146cf65ca52a8", "py": "c9b7f015836ddb5f", "diff": ["<R error, Python value>"]},
+"json_expand.records": {"r": "fff95e5f49a1bc90", "py": "4a777f8f68d6c024", "diff": ["<root>"]},
+"json_expand.row_names": {"r": "73f8e1ddec305946", "py": "0af056de09b8cc1c", "diff": ["<root>"]},
+"json_expand.temp_id_key": {"r": "bd8646c59058bc94", "py": "8306280307d7aa3c", "diff": ["<root>"]}
+}

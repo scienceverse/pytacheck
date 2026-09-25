@@ -1,0 +1,11 @@
+{
+"ethics_check.approved_no_need_repeated": {"r": "7100cbe2617fc626", "py": "d0ad1d0da043ae02", "diff": ["report[]"]},
+"ethics_check.direct_duplicated_sections": {"r": "ee6f3866a581d64b", "py": "22dceb77d7fac0e8", "diff": ["report[]"]},
+"ethics_check.direct_empty_list": {"r": "ac5146cf65ca52a8", "py": "e4bd9662d3239857", "diff": ["<R error, Python value>"]},
+"ethics_check.direct_no_info_member_with_text": {"r": "bf482174083491d3", "py": "5a7ca3e7742b1128", "diff": ["report", "summary_table", "summary_text[]", "table.paper_id[]", "traffic_light[]"]},
+"ethics_check.duplicated_sections": {"r": "bccb8d76f06be1b6", "py": "e52f5fb7f318fd1a", "diff": ["report[]"]},
+"ethics_check.no_info_member_with_text": {"r": "2149b7be9563b5ed", "py": "e4424c1869375faa", "diff": ["report[]", "summary_table.ethics_approved[]", "summary_table.ethics_statements[]", "summary_table.live_data_statements[]", "summary_table.needs_ethics[]", "summary_text[]", "table.formatted[]", "table.paper_id[]", "table.text[]", "table.text_id[]"]},
+"ethics_check.no_info_single_with_text": {"r": "ac5146cf65ca52a8", "py": "9977a8f04967ac2a", "diff": ["<R error, Python value>"]},
+"ethics_check.no_text_column_ethics_match": {"r": "ac5146cf65ca52a8", "py": "1357b83a8672fbb0", "diff": ["<R error, Python value>"]},
+"ethics_check.no_text_column_live_match": {"r": "ac5146cf65ca52a8", "py": "1357b83a8672fbb0", "diff": ["<R error, Python value>"]}
+}

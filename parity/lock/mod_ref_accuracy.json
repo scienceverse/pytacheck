@@ -1,0 +1,14 @@
+{
+"ref_accuracy.chained": {"r": "5d1476a542f7e48a", "py": "1822fd0ae7e9b659", "diff": ["report[]", "summary_table"]},
+"ref_accuracy.duplicate_match": {"r": "42108048ed324870", "py": "b8a4971991bfbc36", "diff": ["report[]", "summary_table.incoherent[]", "summary_table.refs_checked[]", "summary_text[]", "table"]},
+"ref_accuracy.no_bib_match.dropped": {"r": "84c53fd22400c077", "py": "46b0c88e5494da43", "diff": ["traffic_light[]"]},
+"ref_accuracy.no_bib_match.empty": {"r": "84c53fd22400c077", "py": "46b0c88e5494da43", "diff": ["traffic_light[]"]},
+"ref_accuracy.report_tables.duplicate_match": {"r": "c7fe7065202c065d", "py": "85408835e07cef86", "diff": ["[]"]},
+"ref_consistency.chained": {"r": "54a2fe2262b4ffc9", "py": "0be8a3800c040755", "diff": ["report[]", "summary_table"]},
+"ref_consistency.demo": {"r": "5f2e55aa01212d3b", "py": "b6272b0ee4a4ee37", "diff": ["report[]", "summary_table"]},
+"ref_consistency.green": {"r": "3e8f5af35047fa83", "py": "44273908ac433aa8", "diff": ["report[]", "summary_table"]},
+"ref_consistency.no_xref": {"r": "15eb7606289ccecb", "py": "3f513c6490743ab1", "diff": ["report[]", "summary_table"]},
+"ref_consistency.paperlist": {"r": "024ab1da7a38c15f", "py": "5edee6e5c67b8349", "diff": ["report[]", "summary_table.n_missing[]", "table"]},
+"ref_consistency.test_paper": {"r": "e77a9d2655d27d39", "py": "0866a799a03b1e92", "diff": ["report[]", "summary_table"]},
+"ref_consistency.unknown_id": {"r": "92de029a37f781e2", "py": "90e80b006542d165", "diff": ["report[]", "summary_table", "table"]}
+}

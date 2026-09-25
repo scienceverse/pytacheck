@@ -1,0 +1,8 @@
+{
+"reproducibility_check.bibr12": {"r": "480e311ee722bf30", "py": "3a087461eea987a2", "diff": ["stat_output[].json.analyses[].results[].test_id[]", "stat_output[].long.test_id[]"]},
+"reproducibility_check.exec_docker": {"r": "8dee34b7b2c1b593", "py": "cc29e84dc2967261", "diff": ["report[]", "run_results.error_type[]", "run_results.outcome[]", "summary_text[]", "table.error_type[]", "table.outcome[]", "traffic_light[]"]},
+"reproducibility_check.jasp_with_r": {"r": "1981dca546657910", "py": "fd737a9eab48b0c8", "diff": ["stat_output[].json.analyses[].results[].test_id[]", "stat_output[].long.test_id[]"]},
+"reproducibility_check.jasp_with_r_keep_sandbox": {"r": "16190e6066e6136d", "py": "74f5bdb21c03c9fd", "diff": ["stat_output[].json.analyses[].results[].test_id[]", "stat_output[].long.test_id[]"]},
+"reproducibility_check.smcl_mplus": {"r": "fa6795c90b6ba82e", "py": "b01d0515295b5aa6", "diff": ["stat_output[].json.analyses[].results[].test_id[]", "stat_output[].json.analyses[].results[].values.95_conf", "stat_output[].json.analyses[].results[].values.95_conf_", "stat_output[].long.test_id[]"]},
+"reproducibility_check.spv_notebook_py": {"r": "2f3bc90690131bf1", "py": "4fa357ca655bac91", "diff": ["report[]", "stat_output[].json.analyses", "stat_output[].json.analyses[].results[].test_id[]", "stat_output[].long", "stat_output[].long.test_id[]", "summary_text[]"]}
+}

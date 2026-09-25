@@ -1,0 +1,21 @@
+{
+"check_orcid.na": {"r": "ac5146cf65ca52a8", "py": "e6e5bcc9388d34ec", "diff": ["<R error, Python value>"]},
+"check_orcid.x_inside": {"r": "ac5146cf65ca52a8", "py": "e6e5bcc9388d34ec", "diff": ["<R error, Python value>"]},
+"crossref_parse_item.synthetic.editor": {"r": "1b568c81b00c0250", "py": "17689ee5302d5e20", "diff": ["<root>"]},
+"crossref_parse_item.synthetic.null_field": {"r": "ac5146cf65ca52a8", "py": "00d60df5d28ed485", "diff": ["<R error, Python value>"]},
+"crossref_query.replay.data_frame": {"r": "e9d20de1b007604f", "py": "da1211a99af74a78", "diff": ["ref[]"]},
+"crossref_query.replay.paper": {"r": "7a88e135ff14f0a1", "py": "91ce8f36312f047c", "diff": ["ref[]"]},
+"crossref_query.replay.psychsci_bib": {"r": "294159e144bdb4b4", "py": "8654e8aacd561f41", "diff": ["ref[]"]},
+"crossref_query.replay.unrecorded": {"r": "65427e018dcf1ddb", "py": "80e73187c296c4b4", "diff": ["error[]"]},
+"datacite_doi.replay.not_found": {"r": "f86aa4d8b3f7fd3e", "py": "cdb9d4056cfbac2f", "diff": ["<root>"]},
+"doi_lookup.replay.not_found": {"r": "f86aa4d8b3f7fd3e", "py": "9046b52cc1b004fb", "diff": ["<root>"]},
+"openalex_doi.replay.fake": {"r": "d29678cd5cf0be9f", "py": "93e6ed27057e6f11", "diff": ["<root>"]},
+"openalex_doi.replay.unrecorded": {"r": "8e8b1bee1b972cf4", "py": "83e8c5e1e09e0666", "diff": ["DOI", "error"]},
+"openalex_query.replay.no_source_loose": {"r": "8f08cd870d9a3299", "py": "9d6fe64ae7a1b4f7", "diff": ["authors[]", "biblio.issue[]", "biblio.volume[]", "doi[]", "id[]", "publication_year[]", "relevance_score[]", "source[]"]},
+"pubpeer_comments.replay.empty": {"r": "f86aa4d8b3f7fd3e", "py": "ea191268b162e046", "diff": ["<root>"]},
+"retractionwatch.join.demo": {"r": "0f68546f7dc4c43b", "py": "0e9f044bd7676d37", "diff": ["<root>"]},
+"retractionwatch.join.psychsci": {"r": "2015494efa9c11a7", "py": "296219a89b07c96f", "diff": ["<root>"]},
+"retractionwatch.summary": {"r": "f1efeba75f137e3a", "py": "ba90819fbb0b551b", "diff": ["middle.doi[]", "middle.retractionwatch[]", "nchar[]", "nrow[]"]},
+"rw.summary": {"r": "f1efeba75f137e3a", "py": "ba90819fbb0b551b", "diff": ["middle.doi[]", "middle.retractionwatch[]", "nchar[]", "nrow[]"]},
+"rw_update.data_step": {"r": "547bf421ba45df7d", "py": "b87dad91086aff72", "diff": ["<root>"]}
+}

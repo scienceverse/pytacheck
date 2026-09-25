@@ -6,7 +6,6 @@ from __future__ import annotations
 import json
 import math
 import os
-import random
 import shutil
 import struct
 import subprocess
@@ -18,7 +17,7 @@ import pytest
 
 from parity import cases as pcases
 from parity.__main__ import check_case
-from parity.canonical import canonical, complex_as_character, portable
+from parity.canonical import canonical, portable
 from parity.cases import Case, load_cases, parity_id
 from parity.compare import Options, compare, error_matches, normalize_error, summarize
 
@@ -155,78 +154,38 @@ def test_mixed_types_no_longer_hide_divergences() -> None:
 
 # F61: complex and raw vectors --------------------------------------------------
 
-# (Re, Im, R's as.character()) from R 4.5.3
-_R_COMPLEX = [
-    ("0x1p+0", "0x1p+1", "1+2i"),
-    ("0x1.5555555555555p-2", "0x1.5555555555555p-1", "0.333333333333333+0.666666666666667i"),
-    ("0x1.2a05f2p+33", "-0x1.b7cdfd9d7bdbbp-34", "1e+10-1e-10i"),
-    ("nan", "0x1p+0", "NaN+1i"),
-    ("inf", "-inf", "Inf-Infi"),
-    ("0x0p+0", "0x0p+0", "0+0i"),
-    ("0x1.b69b4ba630f35p+56", "0x1.999999999999ap-4", "123456789012345680+0.1i"),
-    ("-0x0p+0", "-0x0p+0", "0+0i"),
-    ("0x1.c6bf52634p+49", "0x1.203af9ee75616p-50", "1e+15+1e-15i"),
-    ("0x1.86ap+16", "0x1.86ap+16", "1e+05+1e+05i"),
-    ("0x1.4f8b588e368f1p-17", "0x1.a36e2eb1c432dp-14", "1e-05+1e-04i"),
-    ("0x1.930795fdc43d6p-38", "-0x1.9374bc6a7ef9ep-3", "5.72739555245840e-12-0.197i"),
-    ("-0x1.8p+0", "-0x1.2p+1", "-1.5-2.25i"),
-    ("0x1.7e43c8800759cp+996", "-0x1.56e1fc2f8f359p-997", "1e+300-1e-300i"),
-    ("0x1.3333333333334p-2", "0x1.9p+6", "0.3+100i"),
-]
-
-
-def _hex(s: str) -> float:
-    return float(s) if s.lstrip("-") in ("nan", "inf") else float.fromhex(s)
-
-
-@pytest.mark.parametrize(("re_", "im", "expected"), _R_COMPLEX)
-def test_complex_as_character(re_: str, im: str, expected: str) -> None:
-    assert complex_as_character(complex(_hex(re_), _hex(im))) == expected
-
 
 def test_canonical_complex_and_raw() -> None:
     na = complex(math.nan, math.nan)  # pytacheck's missing complex
-    assert canonical(pd.Series([1 + 2j, na])) == {"t": "cplx", "v": ["1+2i", None]}
-    assert canonical([0.5 - 1j]) == {"t": "cplx", "v": ["0.5-1i"]}
+    assert canonical(pd.Series([1 + 2j, na])) == {"t": "cplx", "v": [[1.0, 2.0], None]}
+    assert canonical([0.5 - 1j]) == {"t": "cplx", "v": [[0.5, -1.0]]}
+    assert canonical([complex(math.inf, math.nan)]) == {"t": "cplx", "v": [["Inf", "NaN"]]}
     assert canonical(b"\x00\x0f\xff") == {"t": "raw", "v": ["00", "0f", "ff"]}
     r_na = struct.unpack("<d", struct.pack("<Q", 0x7FF00000000007A2))[0]  # NA_real_
     assert canonical([complex(r_na, 1.0)]) == {"t": "lgl", "v": [None]}
 
 
+def test_complex_pairs_compare_numerically() -> None:
+    # parity/r/canonical.R writes 15 significant digits
+    r = {"t": "cplx", "v": [[0.333333333333333, 1e20], None, ["NaN", 1], [1, 2]]}
+    p = canonical([complex(1 / 3, 1e20), complex(math.nan, math.nan), complex(math.nan, 1), 1 + 2j])
+    assert compare(r, p, Options()) == []
+    assert compare(r, canonical([1 / 3 + 1e20j, None, complex(math.nan, 1), 1 - 2j]), Options())
+    # R's NaN in both parts is missing, as NaN is NA for doubles
+    assert compare({"t": "cplx", "v": [["NaN", "NaN"]]}, canonical([None]), Options()) == []
+
+
 @pytest.mark.r
-def test_complex_as_character_fuzz_against_r(tmp_path: Path) -> None:
-    """R's as.character() of 20,000 complex numbers, random bit patterns included."""
-    rng = random.Random(20260925)
-
-    def value() -> float:
-        k = rng.random()
-        if k < 0.3:
-            while True:
-                x = struct.unpack("<d", struct.pack("<Q", rng.getrandbits(64)))[0]
-                if math.isfinite(x):
-                    return x
-        if k < 0.7:
-            digits = rng.randint(1, 17)
-            m = f"{rng.uniform(1, 10):.{digits - 1}f}e{rng.randint(-30, 30)}"
-            return float(m) * rng.choice([1, -1])
-        if k < 0.85:
-            return rng.choice([0.0, -0.0, 0.1, 1e5, 1e15, 1e16, 99999.5, 1e22, 1e23, 1e27, 5e-324])
-        return round(rng.uniform(-1e6, 1e6), rng.randint(0, 10))
-
-    values = [(value(), value()) for _ in range(20000)]
-    values += [(math.nan, 1.0), (math.inf, -math.inf), (1.0, -0.0)]
-    inp = tmp_path / "in.tsv"
-    inp.write_text("".join(f"{a.hex()}\t{b.hex()}\n" for a, b in values))
-    out = tmp_path / "out.txt"
-    _run_r(
-        f'x <- read.delim("{inp}", header = FALSE, colClasses = "character"); '
-        f"z <- complex(real = as.numeric(x[[1]]), imaginary = as.numeric(x[[2]])); "
-        f'writeLines(as.character(z), "{out}")'
+def test_r_encodes_complex_as_pairs() -> None:
+    out = _run_r(
+        f'source("{ROOT / "parity" / "r" / "canonical.R"}"); '
+        "cat(pc_to_json(pc_canonical(c(1+2i, NA, complex(real = NaN, imaginary = 1), "
+        "complex(real = Inf, imaginary = -Inf), NA_complex_))))"
     )
-    expected = out.read_text().split("\n")[:-1]
-    got = [complex_as_character(complex(a, b)) for a, b in values]
-    bad = [(a, b, e, g) for (a, b), e, g in zip(values, expected, got, strict=True) if e != g]
-    assert bad == []
+    assert json.loads(out) == {
+        "t": "cplx",
+        "v": [[1, 2], None, ["NaN", 1], ["Inf", "-Inf"], None],
+    }
 
 
 # F62: repeated names -------------------------------------------------------------

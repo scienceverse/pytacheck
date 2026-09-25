@@ -1,0 +1,7 @@
+{
+"module_report.bad_traffic_light": {"r": "fba3026a83471abb", "py": "81b05185cc157aa5", "diff": ["[]"]},
+"module_report.null_summary": {"r": "83e6cf687bf8b922", "py": "a7520b6fab235708", "diff": ["[]"]},
+"report_qmd.demo.all_sections": {"r": "913b3ff3c88ef184", "py": "4f0c4d7c7d87b33f", "diff": ["[]"]},
+"report_qmd.no_paper": {"r": "ac5146cf65ca52a8", "py": "dfc83911c1ba065c", "diff": ["<R error, Python value>"]},
+"report_repository.stand_in": {"r": "c5cf0212b72a2dbc", "py": "10f699f3df6f27a7", "diff": ["file[]"]}
+}

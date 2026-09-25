@@ -4,29 +4,49 @@ Commands
 --------
 generate  Run the R reference (metacheck) and write golden JSON files.
 check     Run the Python port and compare it with the goldens.
-list      List cases and whether they have goldens.
+lock      Pin the marked cases' differences in parity/lock/<area>.json.
+list      List cases, their tiers and whether they have goldens.
 
 Examples::
 
     python -m parity generate --area text          # needs R + metacheck
     python -m parity check --area text -v
     python -m parity check --only text_search.demo.significant
-    python -m parity check --tier 1                # the realistic corpus only
+    python -m parity check --tier 1 --jobs 4       # the realistic corpus, 4 processes
+    python -m parity check --md summary.md         # also a Markdown summary
+    python -m parity lock --area text              # after changing a marked case
+    python -m parity lock -k json_expand --suggest # also propose marks for R crashes
 
 ``generate`` uses the ``Rscript`` on PATH unless ``PYTACHECK_RSCRIPT`` or
 ``--rscript`` points elsewhere, and always runs R under ``C.UTF-8`` / UTC
 so goldens do not depend on the machine's locale.
+
+Statuses of ``check`` (see docs/PARITY.md and ``parity.lockfile``): ``pass``;
+``xfail`` (marked ``known_divergence``, and R's golden, Python's result and the
+paths where they differ are as locked); ``xpass`` (marked, but it matches R: remove
+the mark); ``r_changed`` / ``py_changed`` (a marked case whose golden / Python
+result changed since it was locked: a failure for a tier-1 case, a warning for a
+tier-2 one unless a value became an exception); ``unlocked`` (marked, no lock
+entry); ``fail`` / ``error`` (unmarked, differs from R / Python raised where R
+returned); ``skip`` (needs the reference R); ``missing`` (no golden).
 """
 
 from __future__ import annotations
 
 import argparse
+import contextlib
+import multiprocessing
 import os
+import re
 import shutil
 import subprocess
 import sys
+import tempfile
 import time
 import traceback
+from collections import Counter, defaultdict
+from collections.abc import Callable, Iterator, Mapping
+from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
@@ -38,7 +58,6 @@ from parity.cases import (
     ROOT,
     Case,
     RWithoutReference,
-    divergence_kind,
     expected_to_fail,
     iter_case_files,
     load_cases,
@@ -46,7 +65,29 @@ from parity.cases import (
     run_python,
     skip_reason,
 )
-from parity.compare import Options, compare, error_matches, rewrite_r_text, summarize
+from parity.compare import (
+    Options,
+    comparable,
+    compare_paths,
+    error_matches,
+    rewrite_r_text,
+    summarize,
+)
+from parity.lockfile import (
+    ERROR_MESSAGE,
+    R_ERROR_PY_VALUE,
+    R_VALUE_PY_ERROR,
+    Fingerprint,
+    digest,
+    lock_path,
+    locked_areas,
+    r_digest,
+    raised,
+    read_lock,
+    write_lock,
+)
+
+OUT_DIR = ROOT / "parity" / "_out"
 
 
 def _rscript(explicit: str | None) -> str:
@@ -88,88 +129,80 @@ def cmd_generate(ns: argparse.Namespace) -> int:
     return status
 
 
-def check_case(case: Case) -> tuple[str, list[str], float]:
-    """Return ``(status, problems, seconds)``; status is pass/fail/missing/xfail/error/skip.
+# -- one case ---------------------------------------------------------------------------
 
-    ``skip`` is a case whose Python side runs R when no reference R is
-    configured (see ``parity.cases.run_python``). A ``known_divergence`` with
-    ``r_text`` compares Python with R's golden as rewritten by its
-    substitutions; a difference left over is a failure unless the mark also
-    says ``xfail: true``.
-    """
-    if not case.golden_path.exists():
-        return "missing", ["no golden file; run `python -m parity generate`"], 0.0
-    reason = skip_reason(case)
-    if reason:
-        return "skip", [reason], 0.0
-    golden = orjson.loads(case.golden_path.read_bytes())
-    subs = r_text(case.spec)
-    if not subs:
-        return _check(case, golden)
-    used = [False] * len(subs)
-    key = "value" if golden["ok"] else "error"
-    rewritten = {**golden, key: rewrite_r_text(golden[key], subs, used)}
-    stale = [
-        f"r_text {sub} changes nothing in R's golden: remove it from the mark"
-        for sub, u in zip(subs, used, strict=True)
-        if not u
-    ]
-    status, problems, elapsed = _check(case, rewritten, raw=golden)
-    if stale and status != "skip":
-        return "fail", stale + problems, elapsed
-    return status, problems, elapsed
+PASS, XFAIL, XPASS = "pass", "xfail", "xpass"
+PY_CHANGED, R_CHANGED, UNLOCKED = "py_changed", "r_changed", "unlocked"
+FAIL, ERROR, SKIP, MISSING = "fail", "error", "skip", "missing"
+#: the order statuses are listed in
+STATUSES = (PASS, XFAIL, SKIP, XPASS, R_CHANGED, PY_CHANGED, UNLOCKED, FAIL, ERROR, MISSING)
 
 
-def _check(
-    case: Case, golden: dict[str, Any], raw: dict[str, Any] | None = None
-) -> tuple[str, list[str], float]:
-    """Run the Python side and compare it with *golden*.
+@dataclass
+class CaseResult:
+    """What ``check`` found for one case."""
 
-    *raw* is R's golden before its ``r_text`` substitutions: a case that
-    matches it too does not differ from R where it compares, so its mark is
-    stale (a mark never goes on a case that passes).
-    """
-    options = Options.from_case(case.spec.get("compare"))
-    start = time.perf_counter()
-    try:
-        result = run_python(case)
-        err = None
-    except RWithoutReference:
-        return "skip", [NEEDS_R_REASON], time.perf_counter() - start
-    except Exception as exc:
-        result = None
-        err = exc
-    elapsed = time.perf_counter() - start
-    expected = expected_to_fail(case.spec)
-    failed = "xfail" if expected else "fail"
-    if not golden["ok"]:
-        if err is None:
-            return (
-                failed,
-                [f"R raised an error ({golden['error']}) but Python returned a value"],
-                elapsed,
-            )
-        message = portable(str(err))
-        if error_matches(golden["error"], message, options.error):
-            if raw is not None and error_matches(raw["error"], message, options.error):
-                return "fail", [_UNNEEDED_R_TEXT], elapsed
-            return "pass", [], elapsed
-        return (
-            failed,
-            [f"error: R={golden['error']!r} py={type(err).__name__}: {message!r}"],
-            elapsed,
+    key: str
+    area: str
+    id: str
+    tier: int
+    status: str = PASS
+    #: whether the status fails the run (``r_changed``/``py_changed`` of a tier-2
+    #: case only warn)
+    failing: bool = False
+    problems: list[str] = field(default_factory=list)
+    seconds: float = 0.0
+    kind: str | None = None
+    ref: str | None = None
+    #: the case's mark has ``r_text`` substitutions
+    r_text: bool = False
+    #: an expected failure's fingerprints, as ``lock`` would record them
+    fingerprint: Fingerprint | None = None
+    #: R's error message when R raised and Python returned a value
+    r_error: str | None = None
+
+    @classmethod
+    def of(cls, case: Case) -> CaseResult:
+        div = case.spec.get("known_divergence")
+        div = div if isinstance(div, dict) else {}
+        return cls(
+            key=case.key,
+            area=case.area,
+            id=case.id,
+            tier=case.tier,
+            kind=div.get("kind"),
+            ref=div.get("ref"),
+            r_text=bool(r_text(case.spec)),
         )
-    if err is not None:
-        tb = "".join(traceback.format_exception_only(type(err), err)).strip()
-        status = "xfail" if expected else "error"
-        return status, [f"Python raised {tb}"], elapsed
-    py = canonical(result)
-    problems = compare(golden["value"], py, options)
-    if problems:
-        return failed, problems, elapsed
-    if raw is not None and not compare(raw["value"], py, options):
-        return "fail", [_UNNEEDED_R_TEXT], elapsed
-    return "pass", [], elapsed
+
+    def done(
+        self, status: str, problems: list[str] | None = None, failing: bool | None = None
+    ) -> CaseResult:
+        self.status = status
+        self.problems = problems or []
+        self.failing = (
+            status in (XPASS, UNLOCKED, FAIL, ERROR, MISSING) if failing is None else failing
+        )
+        return self
+
+    @property
+    def warning(self) -> bool:
+        """A changed marked case that only warns (tier 2)."""
+        return self.status in (R_CHANGED, PY_CHANGED) and not self.failing
+
+    def as_json(self) -> dict[str, Any]:
+        return {
+            "case": self.key,
+            "tier": self.tier,
+            "status": self.status,
+            "failing": self.failing,
+            "kind": self.kind,
+            "ref": self.ref,
+            "r_text": self.r_text,
+            "lock": self.fingerprint.as_json() if self.fingerprint else None,
+            "problems": self.problems,
+            "seconds": round(self.seconds, 4),
+        }
 
 
 _UNNEEDED_R_TEXT = (
@@ -178,64 +211,531 @@ _UNNEEDED_R_TEXT = (
 )
 
 
-def _root_entries() -> set[str]:
-    return {p.name for p in ROOT.iterdir()}
+def check_case(case: Case) -> tuple[str, list[str], float]:
+    """``(status, problems, seconds)`` of *case* (see :func:`run_case`)."""
+    res = run_case(case)
+    return res.status, res.problems, res.seconds
 
 
-def cmd_check(ns: argparse.Namespace) -> int:
-    root_before = _root_entries()
+def run_case(case: Case, lock: Mapping[str, Fingerprint] | None = None) -> CaseResult:
+    """Run *case*'s Python side and compare it with R's golden.
+
+    *lock* is its area's lock (default: ``parity/lock/<area>.json``). A
+    ``known_divergence`` with ``r_text`` compares Python with R's golden as
+    rewritten by its substitutions: such a case passes when that is all that
+    differs (and fails when a substitution changes nothing, or when the case
+    matches R's golden as it is), and is an expected failure only with ``xfail:
+    true``. An expected failure is ``xfail`` only while it differs from R as its
+    lock entry says.
+    """
+    res = CaseResult.of(case)
+    if not case.golden_path.exists():
+        return res.done(MISSING, ["no golden file; run `python -m parity generate`"])
+    reason = skip_reason(case)
+    if reason:
+        return res.done(SKIP, [reason])
+    golden = orjson.loads(case.golden_path.read_bytes())
+    subs = r_text(case.spec)
+    used = [False] * len(subs)
+    compared = golden
+    if subs:
+        key = "value" if golden["ok"] else "error"
+        compared = {**golden, key: rewrite_r_text(golden[key], subs, used)}
+    options = Options.from_case(case.spec.get("compare"))
+    from tests.httpmock import no_network
+
+    attempts: list[str] = []
+    err: Exception | None = None
+    start, wall = time.perf_counter(), time.time()
+    try:
+        with no_network(attempts), _case_cache_dir():
+            result = run_python(case)
+    except RWithoutReference:
+        res.seconds = time.perf_counter() - start
+        return res.done(SKIP, [NEEDS_R_REASON])
+    except Exception as exc:
+        result, err = None, exc
+    res.seconds = time.perf_counter() - start
+    ran = (wall, time.time())
+    if attempts:
+        return res.done(
+            ERROR,
+            [
+                f"the case used the network ({attempts[0]}): parity cases run offline, "
+                "against recorded responses (mock_dir) or a fake"
+            ],
+        )
+
+    py = None if err is not None else canonical(result)
+    problems, paths = _differences(compared, py, err, options)
+    if subs:
+        stale = [
+            f"r_text {sub} changes nothing in R's golden: remove it from the mark"
+            for sub, u in zip(subs, used, strict=True)
+            if not u
+        ]
+        # a case that matches R's golden as it is does not differ from R where it compares
+        unneeded = not problems and not _differences(golden, py, err, options)[0]
+        if stale or unneeded:
+            return res.done(FAIL, stale + ([_UNNEEDED_R_TEXT] if unneeded else []) + problems)
+    expected = expected_to_fail(case.spec)
+    if not problems:
+        if not expected:
+            return res.done(PASS)
+        stale_mark = (
+            "matches R's golden as its r_text rewrites it: drop `xfail: true` from the mark"
+            if subs
+            else "matches R: the known_divergence is stale, remove the mark"
+        )
+        return res.done(XPASS, [stale_mark])
+    if not golden["ok"] and err is None:
+        res.r_error = str(golden.get("error") or "")
+    if not expected:
+        return res.done(ERROR if golden["ok"] and err is not None else FAIL, problems)
+
+    fp = Fingerprint(
+        r=r_digest(golden),
+        py=raised(err) if err is not None else digest(comparable(py, options), ran),
+        diff=tuple(paths),
+    )
+    res.fingerprint = fp
+    entry = (read_lock(case.area) if lock is None else lock).get(case.id)
+    if entry is None:
+        return res.done(
+            UNLOCKED,
+            [
+                f"no lock entry: review the difference, then `python -m parity lock -k {case.id}`",
+                *problems,
+            ],
+        )
+    if entry == fp:
+        return res.done(XFAIL, problems)
+    # a tier-2 change only warns, unless Python now raises where it returned a value
+    failing = case.tier == 1 or (fp.raises and not entry.raises)
+    if entry.r != fp.r:
+        what = ["R's golden changed since the case was locked: check that the mark still holds"]
+        return res.done(R_CHANGED, what + _changes(entry, fp) + problems, failing)
+    return res.done(PY_CHANGED, _changes(entry, fp) + problems, failing)
+
+
+def _changes(entry: Fingerprint, fp: Fingerprint) -> list[str]:
+    out = []
+    if entry.py != fp.py:
+        out.append(f"Python's result changed since the case was locked ({entry.py} -> {fp.py})")
+    if entry.diff != fp.diff:
+        out.append(f"the differing paths changed: {list(entry.diff)} -> {list(fp.diff)}")
+    return [*out, "re-lock it once reviewed: `python -m parity lock -k <id>`"]
+
+
+def _differences(
+    golden: dict[str, Any], py: Any, err: Exception | None, options: Options
+) -> tuple[list[str], list[str]]:
+    """The problems of Python's canonical result *py* (or exception *err*) against
+    *golden*, and the paths where they differ (see ``parity.lockfile``)."""
+    if not golden["ok"]:
+        if err is None:
+            return (
+                [f"R raised an error ({golden['error']}) but Python returned a value"],
+                [R_ERROR_PY_VALUE],
+            )
+        message = portable(str(err))
+        if error_matches(golden["error"], message, options.error):
+            return [], []
+        return (
+            [f"error: R={golden['error']!r} py={type(err).__name__}: {message!r}"],
+            [ERROR_MESSAGE],
+        )
+    if err is not None:
+        tb = "".join(traceback.format_exception_only(type(err), err)).strip()
+        return [f"Python raised {tb}"], [R_VALUE_PY_ERROR]
+    return compare_paths(golden["value"], py, options)
+
+
+@contextlib.contextmanager
+def _case_cache_dir() -> Iterator[None]:
+    """A fresh ``PYTACHECK_CACHE_DIR`` for one case, inside the run's.
+
+    No case sees what another cached (a repository listing, an LLM answer), so a
+    result does not depend on which cases ran before it in the same process.
+    """
+    base = os.environ.get("PYTACHECK_CACHE_DIR")
+    if base:
+        os.makedirs(base, exist_ok=True)
+    with tempfile.TemporaryDirectory(
+        prefix="case-", dir=base or None, ignore_cleanup_errors=True
+    ) as folder:
+        os.environ["PYTACHECK_CACHE_DIR"] = folder
+        try:
+            yield
+        finally:
+            if base is None:
+                os.environ.pop("PYTACHECK_CACHE_DIR", None)
+            else:
+                os.environ["PYTACHECK_CACHE_DIR"] = base
+
+
+# -- many cases -------------------------------------------------------------------------
+
+_POOL_CASES: list[Case] = []
+_POOL_USE_LOCK = True
+
+
+def _pool_init(keys: list[str], use_lock: bool) -> None:
+    global _POOL_CASES, _POOL_USE_LOCK
+    _POOL_USE_LOCK = use_lock
+    if not _POOL_CASES:  # a spawned (not forked) worker loads the cases itself
+        _hermetic_env()
+        by_key = {c.key: c for c in load_cases()}
+        _POOL_CASES = [by_key[k] for k in keys]
+
+
+def _pool_task(i: int) -> tuple[int, CaseResult]:
+    return i, run_case(_POOL_CASES[i], None if _POOL_USE_LOCK else {})
+
+
+def run_cases(
+    cases: list[Case],
+    jobs: int = 1,
+    use_lock: bool = True,
+    progress: Callable[[CaseResult], None] | None = None,
+) -> list[CaseResult]:
+    """:func:`run_case` for every case, in *jobs* processes; results in case order.
+
+    Without *use_lock*, expected failures come out ``unlocked`` with their
+    fingerprints (what ``lock`` records).
+    """
+    global _POOL_CASES
+    jobs = jobs if jobs > 0 else os.cpu_count() or 1
+    if jobs == 1 or len(cases) < 2:
+        out = []
+        for case in cases:
+            res = run_case(case, None if use_lock else {})
+            if progress:
+                progress(res)
+            out.append(res)
+        return out
+    results: list[CaseResult | None] = [None] * len(cases)
+    methods = multiprocessing.get_all_start_methods()
+    # forked workers inherit the loaded cases and the imported modules
+    ctx = multiprocessing.get_context("fork" if "fork" in methods else "spawn")
+    _POOL_CASES = cases if ctx.get_start_method() == "fork" else []
+    try:
+        with ctx.Pool(
+            min(jobs, len(cases)),
+            initializer=_pool_init,
+            initargs=([c.key for c in cases], use_lock),
+        ) as pool:
+            for i, res in pool.imap_unordered(_pool_task, range(len(cases)), chunksize=1):
+                results[i] = res
+                if progress:
+                    progress(res)
+    finally:
+        _POOL_CASES = []
+    return [r for r in results if r is not None]
+
+
+def _select(ns: argparse.Namespace) -> list[Case]:
     cases = load_cases(ns.area, tier=ns.tier)
     if ns.only:
         cases = [c for c in cases if c.id in ns.only or c.key in ns.only]
     if ns.k:
         cases = [c for c in cases if ns.k in c.key]
-    counts: dict[str, int] = {}
-    kinds: dict[str, int] = {}
-    rewritten = 0  # passes compared with R's text as pytacheck corrects it (r_text)
-    report: list[dict[str, Any]] = []
+    return cases
+
+
+def _partial(ns: argparse.Namespace) -> bool:
+    """Whether the selection may leave out some cases of an area."""
+    return bool(ns.only or ns.k or ns.tier)
+
+
+def stale_lock_entries(cases: list[Case], areas: list[str] | None = None) -> list[str]:
+    """Lock entries (``area/id``) that name no expected failure among *cases*, which
+    must be every case of their areas; *areas* also checks lock files of areas
+    without cases (``None``: every lock file)."""
+    expected: dict[str, set[str]] = defaultdict(set)
     for case in cases:
-        status, problems, secs = check_case(case)
-        counts[status] = counts.get(status, 0) + 1
-        kind = divergence_kind(case.spec) if status == "xfail" else None
-        if kind:
-            kinds[kind] = kinds.get(kind, 0) + 1
-        with_r_text = bool(r_text(case.spec))
-        rewritten += status == "pass" and with_r_text
-        report.append(
-            {
-                "case": case.key,
-                "status": status,
-                "kind": kind,
-                "r_text": with_r_text,
-                "problems": problems,
-                "seconds": secs,
-            }
-        )
-        if status not in ("pass",) or ns.verbose:
-            print(f"[{status.upper():7}] {case.key} ({secs * 1000:.0f} ms)")
-            if problems and (ns.verbose or status in ("fail", "error")):
-                print(summarize(problems))
-    out = ROOT / "parity" / "_out"
-    out.mkdir(exist_ok=True)
-    (out / "report.json").write_bytes(orjson.dumps(report, option=orjson.OPT_INDENT_2))
-    total = sum(counts.values())
-    print(f"\n{total} cases: " + ", ".join(f"{v} {k}" for k, v in sorted(counts.items())))
-    if rewritten:
-        print(f"{rewritten} of the passes compare with R's text as pytacheck corrects it (r_text)")
-    if kinds:
-        print("xfail by kind: " + ", ".join(f"{v} {k}" for k, v in sorted(kinds.items())))
+        expected.setdefault(case.area, set())
+        if expected_to_fail(case.spec):
+            expected[case.area].add(case.id)
+    checked = set(expected) | set(locked_areas() if areas is None else areas)
+    return [
+        f"{area}/{case_id}"
+        for area in sorted(checked)
+        for case_id in sorted(read_lock(area))
+        if case_id not in expected.get(area, ())
+    ]
+
+
+def _root_entries() -> set[str]:
+    return {p.name for p in ROOT.iterdir()}
+
+
+def _print_result(res: CaseResult, verbose: bool) -> None:
+    if res.status in (PASS, XFAIL) and not verbose:
+        return
+    note = " (warning)" if res.warning else ""
+    print(f"[{res.status.upper():10}] {res.key} ({res.seconds * 1000:.0f} ms){note}", flush=True)
+    if res.problems and (verbose or res.failing or res.warning):
+        print(summarize(res.problems), flush=True)
+
+
+def _default_report() -> Path:
+    return OUT_DIR / f"report-{time.strftime('%Y%m%dT%H%M%S')}-{os.getpid()}.json"
+
+
+def cmd_check(ns: argparse.Namespace) -> int:
+    root_before = _root_entries()
+    started = time.perf_counter()
+    cases = _select(ns)
+    results = run_cases(cases, ns.jobs, progress=lambda r: _print_result(r, ns.verbose))
+    elapsed = time.perf_counter() - started
+    stale = (
+        [] if _partial(ns) else stale_lock_entries(cases, None if ns.area is None else [ns.area])
+    )
+
+    report = Path(ns.report) if ns.report else _default_report()
+    report.parent.mkdir(parents=True, exist_ok=True)
+    report.write_bytes(orjson.dumps([r.as_json() for r in results], option=orjson.OPT_INDENT_2))
+    print()
+    for line in _summary_lines(results, stale, elapsed):
+        print(line)
+    print(f"report: {report}")
+    if ns.md:
+        text = markdown_summary(results, stale, elapsed)
+        if ns.md == "-":
+            print(text)
+        else:
+            Path(ns.md).write_text(text, encoding="utf-8")
+            print(f"summary: {ns.md}")
     # a case whose Python side saves a file without a save_path writes to the
     # working directory, the checkout
     left = sorted(_root_entries() - root_before)
     if left:
         print(f"cases left {', '.join(left)} in the repository root {ROOT}: give them a save_path")
-    return (
-        0
-        if counts.get("fail", 0) == counts.get("error", 0) == 0
-        and (ns.allow_missing or counts.get("missing", 0) == 0)
-        and not left
-        else 1
+    failing = [r for r in results if r.failing and not (r.status == MISSING and ns.allow_missing)]
+    return 0 if not failing and not stale and not left else 1
+
+
+def _count(results: list[CaseResult]) -> Counter[str]:
+    return Counter(r.status for r in results)
+
+
+def _counts_text(counts: Mapping[str, int]) -> str:
+    return ", ".join(f"{counts[s]} {s}" for s in STATUSES if counts.get(s))
+
+
+def _summary_lines(results: list[CaseResult], stale: list[str], elapsed: float) -> list[str]:
+    lines = [f"{len(results)} cases in {elapsed:.0f} s: {_counts_text(_count(results))}"]
+    for tier in (1, 2):
+        of_tier = [r for r in results if r.tier == tier]
+        if of_tier:
+            lines.append(f"  tier {tier}: {len(of_tier)} cases, {_counts_text(_count(of_tier))}")
+    rewritten = sum(r.status == PASS and r.r_text for r in results)
+    if rewritten:
+        lines.append(
+            f"{rewritten} of the passes compare with R's text as pytacheck corrects it (r_text)"
+        )
+    marks: dict[int, Counter[str]] = defaultdict(Counter)
+    for r in results:
+        if r.kind:
+            marks[r.tier][r.kind] += 1
+    for tier in sorted(marks):
+        kinds = ", ".join(f"{n} {k}" for k, n in sorted(marks[tier].items()))
+        lines.append(f"marks, tier {tier}: {kinds}")
+    warnings = [r for r in results if r.warning]
+    if warnings:
+        lines.append(
+            f"{len(warnings)} tier-2 marked cases changed since they were locked (warnings): "
+            "review them and re-lock"
+        )
+    failing = [r for r in results if r.failing]
+    if failing:
+        lines.append(f"{len(failing)} failing:")
+        lines += [f"  {r.status:10} {r.key}" for r in failing[:60]]
+        if len(failing) > 60:
+            lines.append(f"  ... and {len(failing) - 60} more (see the report)")
+    if stale:
+        lines.append(
+            f"{len(stale)} lock entries name no marked case (run `python -m parity lock`): "
+            + ", ".join(stale[:10])
+            + (" ..." if len(stale) > 10 else "")
+        )
+    return lines
+
+
+def markdown_summary(results: list[CaseResult], stale: list[str], elapsed: float) -> str:
+    """A Markdown summary of a check: statuses by tier, marks by tier, kind and ref,
+    and the cases that fail or warn."""
+    counts = _count(results)
+    shown = [s for s in STATUSES if counts.get(s)]
+    out = [
+        "# Parity check",
+        "",
+        f"{len(results)} cases in {elapsed:.0f} s: {_counts_text(counts)}.",
+        "",
+        "| tier | cases | " + " | ".join(shown) + " |",
+        "|---|--:|" + "--:|" * len(shown),
+    ]
+    for tier in (1, 2):
+        of_tier = [r for r in results if r.tier == tier]
+        c = _count(of_tier)
+        out.append(
+            f"| {tier} | {len(of_tier)} | " + " | ".join(str(c.get(s, 0)) for s in shown) + " |"
+        )
+    groups: dict[tuple[int, str, str], Counter[str]] = defaultdict(Counter)
+    for r in results:
+        if r.kind:
+            groups[(r.tier, r.kind, r.ref or "")][r.status] += 1
+    if groups:
+        marked_shown = [s for s in STATUSES if any(g.get(s) for g in groups.values())]
+        out += [
+            "",
+            "## Marked cases by tier, kind and ref",
+            "",
+            "| tier | kind | ref | cases | " + " | ".join(marked_shown) + " |",
+            "|---|---|---|--:|" + "--:|" * len(marked_shown),
+        ]
+        for (tier, kind, ref), c in sorted(
+            groups.items(), key=lambda kv: (kv[0][0], kv[0][1], _ref_key(kv[0][2]))
+        ):
+            out.append(
+                f"| {tier} | {kind} | {ref or '-'} | {sum(c.values())} | "
+                + " | ".join(str(c.get(s, 0)) for s in marked_shown)
+                + " |"
+            )
+    for title, picked in (
+        ("Failing", [r for r in results if r.failing]),
+        ("Warnings (tier-2 marked cases that changed)", [r for r in results if r.warning]),
+    ):
+        if picked:
+            out += [
+                "",
+                f"## {title}",
+                "",
+                "| case | tier | status | first problem |",
+                "|---|---|---|---|",
+            ]
+            for r in picked[:200]:
+                first = (r.problems[0] if r.problems else "").replace("|", "\\|").replace("\n", " ")
+                out.append(f"| `{r.key}` | {r.tier} | {r.status} | {first[:200]} |")
+            if len(picked) > 200:
+                out.append(f"| ... and {len(picked) - 200} more | | | |")
+    if stale:
+        out += ["", "## Stale lock entries", ""] + [f"- `{k}`" for k in stale]
+    return "\n".join(out) + "\n"
+
+
+def _ref_key(ref: str) -> tuple[str, int]:
+    m = re.fullmatch(r"([A-Z]+)(\d+)", ref)
+    return (m.group(1), int(m.group(2))) if m else (ref, 0)
+
+
+# -- lock -----------------------------------------------------------------------------
+
+#: R and dplyr/vctrs errors that say R's code broke, not that the input is invalid
+R_CRASH = re.compile(
+    "|".join(
+        [
+            r"subscript out of bounds",
+            r"argument is of length zero",
+            r"missing value where TRUE/FALSE needed",
+            r"argument is not interpretable as logical",
+            r"the condition has length > 1",
+            r"object of type '\w+' is not subsettable",
+            r"\$ operator is invalid for atomic vectors",
+            r"non-numeric argument to (?:binary operator|mathematical function)",
+            r"arguments imply differing number of rows",
+            r"replacement has \d+ rows?, data has \d+",
+            r"number of items to replace is not a multiple",
+            r"undefined columns selected",
+            r"incorrect number of dimensions",
+            r"invalid 'type' \(\w+\) of argument",
+            r"invalid subscript type",
+            r"no applicable method for",
+            r"attempt to (?:select less than one element|apply non-function)",
+            r"object '[^']+' not found",
+            r"could not find function",
+            r"Can't (?:combine|subset|recycle|convert|compute|join|find)",
+            r"must be (?:size|a vector|compatible)",
+            r"Join columns in `[xy]` must be present",
+            r"In argument: ",
+            r"Problem while computing",
+        ]
     )
+)
+
+
+def cmd_lock(ns: argparse.Namespace) -> int:
+    started = time.perf_counter()
+    cases = _select(ns)
+    targets = cases if ns.suggest else [c for c in cases if c.spec.get("known_divergence")]
+    results = run_cases(targets, ns.jobs, use_lock=False)
+    by_area: dict[str, list[CaseResult]] = defaultdict(list)
+    for res in results:
+        by_area[res.area].append(res)
+    everything = load_cases(ns.area)  # to tell stale entries from unselected ones
+    expected: dict[str, set[str]] = defaultdict(set)
+    for case in everything:
+        if expected_to_fail(case.spec):
+            expected[case.area].add(case.id)
+    selected = {c.key for c in cases}
+    areas = set(by_area) | {c.area for c in cases}
+    if not _partial(ns):  # lock files of areas without cases
+        areas |= set(locked_areas()) if ns.area is None else {ns.area}
+    tally: Counter[str] = Counter()
+    for area in sorted(areas):
+        old = read_lock(area)
+        new = {
+            case_id: fp
+            for case_id, fp in old.items()
+            if case_id in expected[area] and f"{area}/{case_id}" not in selected
+        }
+        for res in by_area.get(area, []):
+            if res.status == UNLOCKED and res.fingerprint is not None:
+                new[res.id] = res.fingerprint
+            elif res.id in old and res.id in expected[area] and res.status != XPASS:
+                new[res.id] = old[res.id]  # not run (skip), or broken (fail): keep the entry
+        tally["new"] += sum(k not in old for k in new)
+        tally["changed"] += sum(k in old and old[k] != new[k] for k in new)
+        tally["unchanged"] += sum(k in old and old[k] == new[k] for k in new)
+        tally["removed"] += sum(k not in new for k in old)
+        write_lock(area, new)
+    total = sum(len(read_lock(a)) for a in sorted(areas))
+    print(
+        f"locked {total} cases in {sum(lock_path(a).exists() for a in areas)} areas "
+        f"({tally['new']} new, {tally['changed']} changed, {tally['unchanged']} unchanged, "
+        f"{tally['removed']} removed) in {time.perf_counter() - started:.0f} s"
+    )
+    problems = [
+        r for r in results if r.status in (XPASS, FAIL, ERROR) and (r.kind or r.status == XPASS)
+    ]
+    for res in problems:
+        print(f"[{res.status.upper():10}] {res.key}")
+        print(summarize(res.problems[:5]))
+    if ns.suggest:
+        _suggest([r for r in results if not r.kind])
+    return 1 if problems else 0
+
+
+def _suggest(unmarked: list[CaseResult]) -> None:
+    """Propose ``r_bug_fixed`` marks for cases where R crashed and Python returns a value."""
+    crashes = [r for r in unmarked if r.r_error is not None and R_CRASH.search(r.r_error)]
+    others = [r for r in unmarked if r.failing]
+    if not others:
+        print("--suggest: no unmarked case differs from R")
+        return
+    print(
+        f"\n--suggest: {len(crashes)} of {len(others)} unmarked failing cases are R crashes where "
+        "Python returns a value. Check each value, record the bug as a U-entry in "
+        "docs/UPSTREAM_ISSUES.md and add the mark to your lane's parity/divergences file:"
+    )
+    for r in crashes:
+        first = r.r_error.strip().splitlines()[0] if r.r_error and r.r_error.strip() else ""
+        reason = f"metacheck fails ({first[:120]}); pytacheck returns <what it returns>"
+        print(f'"{r.key}": {{kind: r_bug_fixed, ref: U?, reason: {orjson.dumps(reason).decode()}}}')
+    rest = [r for r in others if r not in crashes]
+    if rest:
+        print(f"not R crashes (fix Python, or mark by hand): {', '.join(r.key for r in rest[:20])}")
 
 
 def cmd_list(ns: argparse.Namespace) -> int:
@@ -255,11 +755,11 @@ def _hermetic_env() -> None:
     As under pytest (``tests/conftest.py``): without ``PYTACHECK_CACHE_DIR``
     the caches (``.metacheck_repo_cache``, the LLM cache, ...) would go to the
     working directory, the checkout, as metacheck's do (the R runner points
-    them at a temporary directory too).
+    them at a temporary directory too). Each case gets a fresh directory inside
+    the cache dir (``_case_cache_dir``).
     """
     global _DATA_DIR, _CACHE_DIR
     import atexit
-    import tempfile
 
     os.environ.setdefault("PYTACHECK_CONFIG", "none")
     if not os.environ.get("PYTACHECK_DATA_DIR"):
@@ -273,6 +773,15 @@ def _hermetic_env() -> None:
 
 
 _TIER_HELP = "only tier-1 (realistic corpus, parity/corpus.toml) or tier-2 (synthetic) cases"
+_JOBS_HELP = "run the cases in N processes (0: one per CPU; default 1)"
+
+
+def _add_selection(p: argparse.ArgumentParser) -> None:
+    p.add_argument("--area")
+    p.add_argument("--only", nargs="*", help="case ids or area/id keys")
+    p.add_argument("-k", help="substring filter on area/id")
+    p.add_argument("--tier", type=int, choices=(1, 2), help=_TIER_HELP)
+    p.add_argument("-j", "--jobs", type=int, default=1, metavar="N", help=_JOBS_HELP)
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -289,13 +798,30 @@ def main(argv: list[str] | None = None) -> int:
     g.add_argument("--rscript")
     g.set_defaults(func=cmd_generate)
     c = sub.add_parser("check", help="compare Python with goldens")
-    c.add_argument("--area")
-    c.add_argument("--only", nargs="*")
-    c.add_argument("-k", help="substring filter on area/id")
+    _add_selection(c)
     c.add_argument("-v", "--verbose", action="store_true")
     c.add_argument("--allow-missing", action="store_true")
-    c.add_argument("--tier", type=int, choices=(1, 2), help=_TIER_HELP)
+    c.add_argument(
+        "--report",
+        metavar="PATH",
+        help="the per-case JSON report (default: a new parity/_out/report-<time>-<pid>.json)",
+    )
+    c.add_argument(
+        "--md",
+        nargs="?",
+        const="-",
+        metavar="PATH",
+        help="also write a Markdown summary (to stdout without PATH)",
+    )
     c.set_defaults(func=cmd_check)
+    lk = sub.add_parser("lock", help="pin the marked cases' differences (parity/lock/)")
+    _add_selection(lk)
+    lk.add_argument(
+        "--suggest",
+        action="store_true",
+        help="also run unmarked cases and propose r_bug_fixed marks where R crashed",
+    )
+    lk.set_defaults(func=cmd_lock)
     ls = sub.add_parser("list", help="list cases")
     ls.add_argument("--area")
     ls.add_argument("--tier", type=int, choices=(1, 2), help=_TIER_HELP)

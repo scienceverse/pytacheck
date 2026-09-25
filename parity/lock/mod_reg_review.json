@@ -1,0 +1,5 @@
+{
+"reg_check.review.na_id.all.tables": {"r": "7d69737a4377600f", "py": "8578dcc6242b9697", "diff": ["[].dimension[]", "[].explanation[]", "[].judgement[]", "[].paper_quotes[]", "[].paper_summary[]", "[].prereg_quotes[]", "[].prereg_summary[]"]},
+"reg_check.review.na_id.first.tables": {"r": "4c4dee37f84e7208", "py": "af13085b68d684fc", "diff": ["[]"]},
+"reg_check.review.refused.report": {"r": "5de00e7f54484ec3", "py": "7359062104b3a534", "diff": ["[]"]}
+}

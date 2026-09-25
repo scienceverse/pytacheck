@@ -1,0 +1,16 @@
+{
+"prereg_check.ap.same_link_twice": {"r": "55d337263e00e6e3", "py": "3a3f2a2ed159d866", "diff": ["report[]", "summary_table.preregistration[]", "summary_text[]", "table"]},
+"prereg_check.ap.with_fetch_fails": {"r": "627679851112327b", "py": "9b0e2f651fcb2d37", "diff": ["report[]", "table.additional_comments[]", "table.outliers_and_exclusions[]"]},
+"prereg_check.empty_paperlist": {"r": "ac5146cf65ca52a8", "py": "ad9ee96718bac43d", "diff": ["<R error, Python value>"]},
+"prereg_check.inaccessible.all_kinds": {"r": "4c1849df5cf9b36d", "py": "e59ac7293e099574", "diff": ["report[]"]},
+"prereg_check.inaccessible.paperlist": {"r": "499ce856385e7d89", "py": "258266b3773c3774", "diff": ["report[]"]},
+"prereg_check.synthetic.label_nonchar": {"r": "ac5146cf65ca52a8", "py": "5d07994e9e48b413", "diff": ["<R error, Python value>"]},
+"prereg_check.synthetic.paper_id_field": {"r": "ac5146cf65ca52a8", "py": "2bd439d3d7203643", "diff": ["<R error, Python value>"]},
+"prereg_check.synthetic.prsp_deparse": {"r": "0cd41318b3fc70d8", "py": "6b4e0bf60c127e76", "diff": ["table.theoretical_rationale[]"]},
+"prereg_check.synthetic.view_only": {"r": "7834fe6847815bc4", "py": "6ced7f464a46cae4", "diff": ["summary_table.preregistration[]", "table.paper_id[]"]},
+"prereg_check.synthetic.view_only.paperlist": {"r": "e966d3271ac496fb", "py": "7a4d8b8f2fa2bf21", "diff": ["summary_table.preregistration[]", "table.paper_id[]"]},
+"prereg_check.tables.aspredicted": {"r": "25a0fbd8d1b3aab5", "py": "a4b5aac3c6f3f9fd", "diff": ["[]", "[].Preregistration 2[]"]},
+"prereg_check.tables.synthetic": {"r": "60608bdbb0e423e9", "py": "56b08ba3a1a547d4", "diff": ["[].Preregistration 4[]"]},
+"prereg_check.tables.synthetic.prsp_deparse": {"r": "3e2952abe4d9aca1", "py": "c01699710a1c65c6", "diff": ["[].Preregistration 1[]"]},
+"prereg_check.unjoined.paperlist": {"r": "2a5a7e932de334b9", "py": "b608b66310837246", "diff": ["summary_table.preregistration[]", "table.paper_id[]"]}
+}

@@ -1,0 +1,12 @@
+{
+"prereg_check.aspredicted.blind": {"r": "38713e0a8fa149d5", "py": "f5781928544b8262", "diff": ["report[]", "summary_table.preregistration[]", "summary_text[]", "table"]},
+"prereg_check.aspredicted.multiple": {"r": "6f686223d53b801e", "py": "7bdc963e77af9a25", "diff": ["report[]", "summary_table.preregistration[]", "summary_text[]", "table"]},
+"prereg_check.aspredicted.paperlist": {"r": "924ddf2cfd018c7a", "py": "0da47d534c5006f9", "diff": ["report[]", "summary_table.preregistration[]", "summary_text[]", "table"]},
+"prereg_check.aspredicted_only": {"r": "ac5146cf65ca52a8", "py": "963b49ca2ad9c497", "diff": ["<R error, Python value>"]},
+"prereg_check.duplicate_links": {"r": "48b3298b1f8fa5c4", "py": "21dc129a7d1c2ac8", "diff": ["report[]", "summary_table.preregistration[]", "summary_text[]", "table"]},
+"prereg_check.fetch_fails": {"r": "17f6e8f760705804", "py": "707a781c10a444ff", "diff": ["report[]"]},
+"prereg_check.inaccessible.mixed": {"r": "7de24996aa5600f0", "py": "9c1dd1b5ff0b7a18", "diff": ["report[]"]},
+"prereg_check.report.mixed": {"r": "652fcdac72f88b97", "py": "56b5fdaf25040d12", "diff": ["[]"]},
+"prereg_check.synthetic.prsp": {"r": "d4dbfbde6437d909", "py": "539f9f6b28e20ea6", "diff": ["table.data_collection_started[]", "table.design_dependent_variables[]", "table.fail_safe_exclusion_levels[]", "table.research_questions[]", "table.theoretical_rationale[]"]},
+"prereg_check.unjoined_links": {"r": "d96d819c81def713", "py": "e706c5422d650747", "diff": ["summary_table.preregistration[]", "table.paper_id[]"]}
+}

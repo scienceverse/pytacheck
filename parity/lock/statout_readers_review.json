@@ -1,0 +1,22 @@
+{
+"export_omv_html.badurl": {"r": "ac5146cf65ca52a8", "py": "5abc0a8fde6788a3", "diff": ["<R error, Python value>"]},
+"export_omv_html.review": {"r": "d3d986d60ede382c", "py": "80e23857d94bc10e", "diff": ["[]"]},
+"export_spv_html.spv_box_na": {"r": "ac5146cf65ca52a8", "py": "4388806c7a9c5370", "diff": ["<R error, Python value>"]},
+"export_spv_html.spv_charts": {"r": "ac5146cf65ca52a8", "py": "0085f165f07b58a5", "diff": ["<R error, Python value>"]},
+"export_spv_html.spv_strings": {"r": "79b9ec57822f085f", "py": "6d37cfe32721c243", "diff": ["[]"]},
+"import_jasp.labels.review": {"r": "e41f42b94ac6347e", "py": "396d280c19bb3df2", "diff": ["g.label"]},
+"import_jasp.labels.sqlite_types": {"r": "08ec9e9533875807", "py": "d0422cebdfe4afed", "diff": ["nom_text.label"]},
+"import_jasp.short": {"r": "ac5146cf65ca52a8", "py": "ee907e3d5a0d0758", "diff": ["<R error, Python value>"]},
+"import_jasp.sqlite_nulltype": {"r": "ac5146cf65ca52a8", "py": "695a243a99c5cf8c", "diff": ["<R error, Python value>"]},
+"import_mplus_output.latin1": {"r": "7dfc0f2fd70dd9c6", "py": "1dda6c192c8788c8", "diff": ["<root>"]},
+"import_omv.labels.fields_object": {"r": "e7914f5c3804e2ad", "py": "223ce10e48530497", "diff": ["a.label"]},
+"import_spv.spv_strings": {"r": "6839660fa6a03ebe", "py": "e23f890420a6363b", "diff": ["[].data.value[]"]},
+"import_stata_smcl.latin1": {"r": "7dfc0f2fd70dd9c6", "py": "0bb02e125a1a751a", "diff": ["<root>"]},
+"smcl_command_chunks.tricky": {"r": "c46451d485fc30b7", "py": "7db30015b368b84d", "diff": ["[].output[]"]},
+"smcl_command_chunks.vector": {"r": "1313f03571a021b9", "py": "9d812655411418e4", "diff": ["[].command[]", "[].output"]},
+"smcl_render.tricky": {"r": "c766d2b915cc08cb", "py": "7ae2dc0fb80f5871", "diff": ["[]"]},
+"smcl_render_line.more": {"r": "8184a8f97833efc8", "py": "9bb3c53d7843ae30", "diff": ["[]"]},
+"spv_decode_light_table.t2": {"r": "00e9d5a82a1df099", "py": "009c24fe705501eb", "diff": ["value[]"]},
+"spv_table_html.empty_row_key": {"r": "39db83b0affe7b7b", "py": "8882f71f81f0af4b", "diff": ["[]"]},
+"url_decode.vector": {"r": "d3c81992a8e7c7d9", "py": "bcaa53eed4725e01", "diff": ["[]"]}
+}

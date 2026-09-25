@@ -1,0 +1,18 @@
+{
+".table_tests.correlation_caption.older": {"r": "e4dd57db71390eed", "py": "19fd15f38fdb1f54", "diff": ["<root>"]},
+"match_reported_output.descriptive_caption.older": {"r": "f29bdedd6760321a", "py": "3ac48a160d230a4f", "diff": ["<root>"]},
+"match_reported_output.descriptive_caption.older.summary": {"r": "5356e45f51744398", "py": "abb05c3c3a1638a7", "diff": ["n_found[]", "n_full[]", "n_tests[]", "pct_found[]"]},
+"module.coi_check_oi.PMC4383902": {"r": "6f97028d1ba5d81e", "py": "fecec4eed0563d03", "diff": ["table.header[]"]},
+"module.coi_check_oi.mixed": {"r": "3765440024bb3510", "py": "df56b3061a511371", "diff": ["table.header[]"]},
+"module.coi_check_oi.preprint": {"r": "9c70a4074fded40e", "py": "06048d2374be406b", "diff": ["table.header[]"]},
+"module.open_practices.mixed": {"r": "01d7821c5f7ec21d", "py": "fb69679536c77096", "diff": ["report[]", "summary_text[]"]},
+"module.ref_accuracy.PMC4383902": {"r": "740c52004774dd33", "py": "b5018b496d50b879", "diff": ["traffic_light[]"]},
+"module.ref_consistency.PMC4383902": {"r": "1bd347afdc7b284c", "py": "beb19c0bf4c81ae4", "diff": ["report[]", "summary_table"]},
+"module.ref_consistency.full": {"r": "ab0fe602f1696fe5", "py": "5e7ef2c5180a302e", "diff": ["report[]", "summary_table", "table"]},
+"module.ref_consistency.list": {"r": "8accb419a6132e02", "py": "d8eb48e9bd14a6a2", "diff": ["report[]", "summary_table", "table"]},
+"module.ref_consistency.mixed": {"r": "9b8dffd235e54801", "py": "fec9e687e65e08a9", "diff": ["report[]", "summary_table", "table"]},
+"module.ref_consistency.preprint": {"r": "32773cb56c208b5e", "py": "50870bbe4b38d597", "diff": ["report[]", "summary_table"]},
+"paper_write.text.PMC4383902": {"r": "e13382101019cf08", "py": "51b789562e7104ec", "diff": ["[]"]},
+"paper_write.text.preprint": {"r": "17faeb7418af61b4", "py": "af8d801925d21309", "diff": ["[]"]},
+"read.dir.v11_and_v12": {"r": "ac5146cf65ca52a8", "py": "35e45a022be29dfa", "diff": ["<R error, Python value>"]}
+}

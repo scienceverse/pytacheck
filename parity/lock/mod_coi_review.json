@@ -1,0 +1,14 @@
+{
+"coi_check.disclosure_heading_blank": {"r": "8c88edfb7814c890", "py": "33375ca2196d4236", "diff": ["table.text[]"]},
+"coi_check.heading_blank_last": {"r": "9f680ad6a6e9a987", "py": "4872a5ef965570ca", "diff": ["table.text[]"]},
+"coi_check.lower_nil_stop": {"r": "cd59f0384ffee159", "py": "ba1d51df70da7b90", "diff": ["report[]", "summary_table.coi_found[]", "summary_text[]", "table", "traffic_light[]"]},
+"coi_check.none_mentioned_dropped": {"r": "cd59f0384ffee159", "py": "1f51c2ca22b46656", "diff": ["report[]", "summary_table.coi_found[]", "summary_text[]", "table", "traffic_light[]"]},
+"coi_check.paperlist_one_errors": {"r": "ac5146cf65ca52a8", "py": "436cd3cf73ad1fc1", "diff": ["<R error, Python value>"]},
+"coi_check_oi.coi_lowercase_word": {"r": "f11761617a64c107", "py": "f38dd3ac47301f5e", "diff": ["table.header[]"]},
+"coi_check_oi.emoji": {"r": "d6ffa7f4d5ac52f9", "py": "5a13cdefd896a0a2", "diff": ["table.header[]"]},
+"coi_check_oi.fixture_header_only": {"r": "37a6a81fbc7f81e8", "py": "84c4581b4c678bae", "diff": ["table.header[]"]},
+"coi_check_oi.fixture_sections": {"r": "74ffd7b5545235a6", "py": "fb491070918f3b7e", "diff": ["table.header[]"]},
+"coi_check_oi.newline_in_sentence": {"r": "531b6196f20546b7", "py": "e176b5ceb5c61277", "diff": ["table.header[]"]},
+"coi_check_oi.paperlist_empty_middle": {"r": "d54047df519a8723", "py": "c4b92d37d06fb9c7", "diff": ["table.header[]"]},
+"coi_check_oi.paperlist_one_errors": {"r": "c94b61d600e405ec", "py": "596d4628f70a100e", "diff": ["table.header[]"]}
+}
