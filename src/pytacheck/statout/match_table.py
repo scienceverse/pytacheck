@@ -352,20 +352,22 @@ def _table_tests(paper: Any) -> list[dict[str, Any]]:
     # a table without a table_id is numbered by its position (R's -(NULL *
     # 1000000L + ri) is integer(0), which fails match_reported_output(); U142)
     table_ids = tab["table_id"].tolist() if has_tid else list(range(1, len(tab) + 1))
-    # bibr 12.x: the table's own caption; older papers: the text rows sharing
-    # its section_id (Grobid's figDesc; their tables have no caption column).
-    # Without a section_id column the caption is unknown (R fails, dropping
-    # every table test; U142)
+    # The table's own caption. Older papers from Grobid have no caption
+    # column: their caption is the text rows sharing the table's section_id
+    # (Grobid's figDesc); R reads only those text rows for any paper that is
+    # not bibr 12.x, ignoring a caption column the table has (U143). In a
+    # 12.x paper section_id is the section the table is printed in, so the
+    # caption column is the only source. Without a section_id column the
+    # caption is unknown (R fails, dropping every table test; U142).
     v12 = is_bibr12(paper)
-    captions = tab["caption"].tolist() if v12 and "caption" in tab.columns else None
+    captions = tab["caption"].tolist() if "caption" in tab.columns else [None] * len(tab)
     out: list[dict[str, Any]] = []
     for i in range(len(tab)):
         content = contents[i]
         if content is None:
             continue
-        if v12:
-            caption = _scalar(captions[i]) if captions is not None else None
-        else:
-            caption = _table_caption(paper, _scalar(section_ids[i])) if has_sid else None
+        caption = _scalar(captions[i])
+        if not v12 and (caption is None or caption == "") and has_sid:
+            caption = _table_caption(paper, _scalar(section_ids[i]))
         out.extend(_table_tests_one(table_ids[i], content, caption))
     return out
