@@ -920,6 +920,14 @@ def _throttle() -> Any:
     return _THROTTLE
 
 
+def _dir_create(path: str) -> None:
+    """``dir.create(path, showWarnings = FALSE, recursive = TRUE)``: never an error."""
+    try:
+        os.makedirs(path or ".", exist_ok=True)
+    except OSError:
+        pass
+
+
 def _unlink(path: str) -> None:
     try:
         if os.path.isdir(path) and not os.path.islink(path):
@@ -943,7 +951,7 @@ def _download_one(
     error description; a failure given up on because of ``skip_on_api_limit``
     starts with ``"API rate limit exhausted: "``.
     """
-    os.makedirs(os.path.dirname(dest) or ".", exist_ok=True)
+    _dir_create(os.path.dirname(dest))
     try:
         if not _wait_out_known_rate_limit(url, skip_on_api_limit):
             return "API rate limit exhausted: known rate-limited host, skip_on_api_limit"
@@ -1019,7 +1027,7 @@ def _download_many_parallel(
     exp_in = _nums(expected_size)
     expected = [exp_in[i % len(exp_in)] for i in range(n)] if exp_in else [math.nan] * n
     for d in dests:
-        os.makedirs(os.path.dirname(d) or ".", exist_ok=True)
+        _dir_create(os.path.dirname(d))
 
     with ThreadPoolExecutor(max_workers=min(8, n)) as pool:
         futures = [
@@ -1102,6 +1110,7 @@ def _download_zip_to_cache(
     max_bytes: float = math.inf,
     skip_on_api_limit: bool = False,
     expected_bytes: float = math.nan,
+    _inplace: bool = False,
 ) -> pd.DataFrame:
     """Port of ``R/repo-download.R::.download_zip_to_cache()``.
 
@@ -1122,10 +1131,11 @@ def _download_zip_to_cache(
 
     from pytacheck import http
     from pytacheck._r import r_round
+    from pytacheck.fileinfo._strings import invalid_utf8, raise_if_invalid
     from pytacheck.report.blocks import _cap_num
 
     timeout_s = _zip_timeout_for_size(timeout_s, expected_bytes)
-    skip = _skip(skip_on_api_limit)
+    skip = skip_on_api_limit is True  # R: isTRUE(skip_on_api_limit), the argument only
 
     fd, zip_tmp = tempfile.mkstemp(suffix=".zip")
     os.close(fd)
@@ -1208,10 +1218,15 @@ def _download_zip_to_cache(
             names = _zip_names(zf)
             if not infos:
                 return files
+            # R: grepl("/$") is FALSE for a name that is not valid UTF-8, and the
+            # sub()/gsub() below then refuse it
             entries = [
-                (nm, info) for nm, info in zip(names, infos, strict=True) if not nm.endswith("/")
+                (nm, info)
+                for nm, info in zip(names, infos, strict=True)
+                if invalid_utf8(nm) or not nm.endswith("/")
             ]
             zip_entries = [nm for nm, _ in entries]
+            raise_if_invalid(zip_entries)
             lookup = (
                 [sub("^[^/]*/", "", nm) for nm in zip_entries] if strip_dir else list(zip_entries)
             )
@@ -1234,13 +1249,15 @@ def _download_zip_to_cache(
                 if _is_missing(rel) or rel == "":
                     rel = fnames[i]
                 if _is_missing(rel):
-                    rel = "NA"
+                    matched.append(None)  # R: match(NA, lookup_paths) is NA
+                    continue
                 rel = gsub("^/+", "", gsub(r"\\", "/", str(rel)))
                 matched.append(first.get(rel))
             if all(m is None for m in matched):
                 return files
 
-            files = files.copy()
+            if not _inplace:  # download_repo_files() passes its own copy
+                files = files.copy()
             for i, m in zip(row_idx, matched, strict=True):
                 if m is None:
                     continue
@@ -1430,8 +1447,11 @@ def download_repo_files(
             not already[i] and arcs[i] is not None and str(arcs[i]) != "" and members[i] is not None
             for i in range(n)
         ]
-        for arc in dict.fromkeys(arcs[i] for i in range(n) if is_member[i]):
-            idx = [i for i in range(n) if is_member[i] and arcs[i] == arc]
+        by_arc: dict[Any, list[int]] = {}
+        for i in range(n):
+            if is_member[i]:
+                by_arc.setdefault(arcs[i], []).append(i)
+        for arc, idx in by_arc.items():
             if sizes_col is None:
                 continue  # R: as.numeric(NULL) leaves no candidates
             member_sizes = [_num(sizes_col[i]) for i in idx]
@@ -1471,7 +1491,7 @@ def download_repo_files(
             arc_key = gsub("[^A-Za-z0-9._-]+", "_", gsub("^https?://", "", str(arc)))
             member_dest = cache_path(repo_urls[idx[0]], f".archive_members/{arc_key}") + ".contents"
             member_dest = _safe_write_path(member_dest) or member_dest
-            os.makedirs(member_dest, exist_ok=True)
+            _dir_create(member_dest)
             try:
                 fetched = _zip_fetch_members(
                     str(arc), names=[str(members[i]) for i in idx], dest=member_dest
@@ -1485,13 +1505,16 @@ def download_repo_files(
             f_path = (
                 fetched["path"].tolist() if "path" in fetched.columns else [None] * len(fetched)
             )
+            # fetched[fetched$name == member & fetched$ok %in% TRUE, ]$path[[1]]
+            first_ok: dict[Any, Any] = {}
+            for name, ok, path in zip(f_names, f_ok, f_path, strict=True):
+                if ok is True:
+                    first_ok.setdefault(name, path)
             for k in idx:
-                hits = [
-                    j for j in range(len(fetched)) if f_names[j] == members[k] and f_ok[j] is True
-                ]
-                if not hits or _is_missing(f_path[hits[0]]):
+                path = first_ok.get(members[k])
+                if _is_missing(path):
                     continue
-                df.iat[k, loc_col] = f_path[hits[0]]
+                df.iat[k, loc_col] = path
 
     file_urls = _col(df, "file_url") or [None] * n
     has_url = [u is not None and str(u) != "" for u in file_urls]
@@ -1602,15 +1625,19 @@ def download_repo_files(
         return df.iat[i, _loc(df)]
 
     if to_get:
-        remaining = list(to_get)
+        # `remaining` keeps to_get's order; rows leave it as zips fill them
+        remaining_set = set(to_get)
+        pos = {i: k for k, i in enumerate(to_get)}
         repo_list = list(repo_urls)
         providers = _col(df, "provider")
 
+        def remaining_rows() -> list[int]:
+            return [i for i in to_get if i in remaining_set]
+
         def in_remaining(pattern: str) -> list[Any]:
-            hits = grepl(pattern, [_chr(repo_list[i]) for i in remaining], ignore_case=True)
-            return list(
-                dict.fromkeys(repo_list[i] for i, h in zip(remaining, hits, strict=True) if h)
-            )
+            rows = remaining_rows()
+            hits = grepl(pattern, [_chr(repo_list[i]) for i in rows], ignore_case=True)
+            return list(dict.fromkeys(repo_list[i] for i, h in zip(rows, hits, strict=True) if h))
 
         def is_osfstorage(i: int) -> bool:
             if providers is not None and providers[i] is not None:
@@ -1631,8 +1658,7 @@ def download_repo_files(
 
         def in_repo(repo: Any) -> list[int]:
             """``intersect(remaining, which(files$repo_url == repo))``."""
-            own = set(rows_for(repo))
-            return [i for i in remaining if i in own]
+            return sorted((i for i in rows_for(repo) if i in remaining_set), key=pos.__getitem__)
 
         def expected_of(rows: list[int]) -> float:
             if sizes_col is None:
@@ -1671,10 +1697,9 @@ def download_repo_files(
                 )
 
         def run_zip(rows: list[int], zip_url: str, **kw: Any) -> None:
-            nonlocal df, remaining
-            df = _download_zip_to_cache(df, rows, zip_url, **kw)
-            done = filled(rows)
-            remaining = [i for i in remaining if i not in done]
+            nonlocal df
+            df = _download_zip_to_cache(df, rows, zip_url, _inplace=True, **kw)
+            remaining_set.difference_update(filled(rows))
 
         # OSF: Waterbutler zip (osfstorage only)
         from pytacheck.archives.osf_helpers import _osf_headers
@@ -1927,6 +1952,7 @@ def download_repo_files(
                 )
 
         # File by file: ResearchBox and every zip fallback
+        remaining = remaining_rows()
         if remaining:
             own_pb = pb is None
             if own_pb:

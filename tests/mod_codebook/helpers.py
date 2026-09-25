@@ -79,7 +79,9 @@ def _plain(v: Any) -> Any:
 
 @functools.cache
 def _load(scenario: str) -> dict[str, Any]:
-    return json.loads((FIXTURES / "dc" / f"{scenario}.json").read_text(encoding="utf-8"))
+    # rv_* scenarios come from fixtures/make_review_fixtures.R
+    sub_dir = "dc_review" if scenario.startswith("rv_") else "dc"
+    return json.loads((FIXTURES / sub_dir / f"{scenario}.json").read_text(encoding="utf-8"))
 
 
 def scenario_text(scenario: str) -> list[str]:
@@ -529,17 +531,15 @@ def mock_llm(spec: dict[str, Any]) -> Any:
             vars_ = [d[: d.index(" - ")] for d in defs]
             labs = [d[d.index(" - ") + 3 :] for d in defs]
             keep = grepl("^[A-Za-z_][A-Za-z0-9_.]*$", vars_) if vars_ else []
-            return _with_model(
-                _str_frame(
-                    {
-                        "variables.variable_name": [
-                            v for v, k in zip(vars_, keep, strict=True) if k
-                        ],
-                        "variables.label": [v for v, k in zip(labs, keep, strict=True) if k],
-                        "variables.experiment_context": ["" for k in keep if k],
-                    }
-                )
-            )
+            ctx = spec.get("parse_context") or ""
+            cols = {
+                "variables.variable_name": [v for v, k in zip(vars_, keep, strict=True) if k],
+                "variables.label": [v for v, k in zip(labs, keep, strict=True) if k],
+                "variables.experiment_context": [ctx for k in keep if k],
+            }
+            if spec.get("parse_no_context") is True:
+                del cols["variables.experiment_context"]
+            return _with_model(_str_frame(cols))
         if phase == "Matching codebook columns":
             if txt.startswith("Column: "):
                 cand = [ln[2:] for ln in lines if ln.startswith("- ")]

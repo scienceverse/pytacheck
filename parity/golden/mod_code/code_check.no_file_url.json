@@ -1,0 +1,9 @@
+{
+  "id": "code_check.no_file_url",
+  "ok": false,
+  "error": "Running the module 'code_check' produced errors: replacement has 0 rows, data has 1",
+  "warnings": [],
+  "value": null,
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

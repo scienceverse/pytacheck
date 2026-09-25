@@ -4,9 +4,10 @@
 
 pytacheck is a fast, Python-native port of ScienceVerse's
 [metacheck](https://github.com/scienceverse/metacheck) R package, designed to work
-hand in hand with [bibr](https://bibr.org). It follows metacheck's `dev` branch, and
-every function and module is **verified against the original R implementation** by a
-parity test suite that runs the real R package.
+hand in hand with [bibr](https://bibr.org). It follows metacheck's `dev` branch (for now
+`dev` plus pull request [#423](https://github.com/scienceverse/metacheck/pull/423), which
+adds bibr export schema 12.0), and every function and module is **verified against the
+original R implementation** by a parity test suite that runs the real R package.
 
 > **Status: alpha.** The port is in progress; see [the porting status](docs/STATUS.md).
 > Results should match metacheck exactly. Where they don't, that is a bug: please
@@ -28,6 +29,7 @@ Or with Docker: `docker run --rm -v "$PWD:/work" ghcr.io/thesanogoeffect/pytache
 import pytacheck as pc
 
 paper = pc.read("paper.json")          # bibr JSON, Grobid XML — or a PDF with pytacheck[bibr]
+pc.paper_write(paper, "checked")        # a bibr 12.x paper is saved as a bibr 12.0 file
 pc.module_list()                        # available checks
 out = pc.module_run(paper, "marginal")
 out.traffic_light, out.summary_text
@@ -44,6 +46,40 @@ pytacheck modules
 pytacheck run paper.pdf -m marginal -m all_p_values
 pytacheck report paper.json -o report.html
 ```
+
+## The paper schema: bibr export schema 12.0
+
+**bibr export schema 12.0 is pytacheck's paper schema.** metacheck reads it natively
+once pull request #423 is merged, and pytacheck already does:
+
+* `pc.read()` reads a bibr 12.x export (a JSON file with a root `schema_version`).
+  Files without one (bibr v10.x and older, metacheck's demo and fixture papers) read
+  exactly as metacheck reads them. Other versions, bibr 11.x included, are refused
+  with metacheck's error.
+* Grobid TEI is converted to 12.x: `pc.read("paper.tei.xml")`,
+  `pc.grobid_to_bibr(...)`, `convert()` and the CLI all do this. Pass
+  `schema_version=None` for metacheck's older conversion.
+* `pc.paper_write(paper)` saves a 12.x paper as a bibr 12.0 file. The bytes are the ones
+  metacheck writes, except that pytacheck is named as the converter. An older paper is
+  saved as before, and `schema_version=None` always saves the paper object.
+
+A 12.x paper has these tables and fields:
+
+| table | in a 12.x paper |
+|---|---|
+| `info` | the export's `metadata` and `source`: title, abstract, DOI, journal, licence, statements, `file_name`, `sha256`, `input_format`, `schema_version` |
+| `text` | body sentences, then the reference list, then one row for each caption and footnote. Caption and footnote rows have no `section_id` |
+| `section` | only the paper's real sections. There are no figure, table or footnote pseudo-sections |
+| `figure`, `table`, `footnote` | point at their caption or footnote row with `text_id`, and carry `label`, `caption` and `page_number` (tables also have `html` and `contents`) |
+| `xref` | `xref_id` is the row's own key and `target_id` is the row it cites. A citation of reference 3 has `xref_type` `"bib"` and `target_id` 3 |
+| `bib_match`, `info_match`, `affiliation_match`, `funding_match` | match scores are on a 0-1 scale (older papers store Crossref relevance scores such as 61.8). `info_match` is 12.x's `metadata_match` |
+| `author`, `affiliation`, `funding`, `url`, `bib`, `eq` | 12.x columns. `eq` keeps degrees of freedom in parentheses (`"(28)"`), as metacheck's statistics code expects |
+| `paper.extraction` | the export's extraction block: `producer` (bibr or Grobid, with its version), `converter`, `completed_at`, diagnostics and warnings |
+
+The built-in modules handle both 12.x and older papers, and so does a mixed paper list.
+[docs/MODULES.md](docs/MODULES.md#papers-bibr-12x-and-the-older-format) shows how to
+write modules that do the same. [docs/BIBR.md](docs/BIBR.md) covers reading bibr's
+output.
 
 ## Presets, packs and community modules
 
@@ -69,11 +105,13 @@ See [docs/MODULES.md](docs/MODULES.md) for the user and author guides.
   match metacheck's. The parity harness ([docs/PARITY.md](docs/PARITY.md)) runs
   metacheck in R on the same inputs and compares every value; the committed goldens
   are regenerated from R in CI, so they cannot drift.
-* **Same paper model.** Papers use bibr's JSON schema, as in metacheck, so bibr output
-  is read directly (and in memory, without a JSON round trip, when bibr is installed).
-* **Auto-updated.** A scheduled workflow watches metacheck's `dev` branch; when it
-  changes, the goldens are regenerated in R and an AI agent ports the change, which
-  is only merged once parity is green again ([docs/PORTING.md](docs/PORTING.md)).
+* **Same paper model.** Papers use bibr export schema 12.0, which metacheck reads
+  natively from pull request #423 on, so bibr output is read directly (and in process,
+  when bibr is installed). Older papers read exactly as metacheck reads them.
+* **Auto-updated.** A scheduled workflow watches metacheck's `dev` branch (and, until
+  it is merged, pull request #423). When the tracked head moves, the goldens are
+  regenerated in R and an AI agent ports the change. The change is only merged once
+  parity is green again ([docs/PORTING.md](docs/PORTING.md)).
 * **Faster.** R-compatible regex semantics are reproduced with the `regex` engine,
   paper tables are built lazily, and corpus-wide tables are assembled without
   per-paper overhead.

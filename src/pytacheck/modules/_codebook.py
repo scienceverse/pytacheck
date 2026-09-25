@@ -695,10 +695,13 @@ def _propagate_scale_by_prefix(labels_df: pd.DataFrame | None) -> pd.DataFrame |
                     map_src[pref[i]] = src[i]
         for i, (a, n) in enumerate(zip(in_f, named, strict=True)):
             if a and not n and pref[i] in map_scale:
-                new_scale[i] = map_scale[pref[i]]
-                new_conf[i] = map_conf[pref[i]]
+                # R looks the prefix up by name (map_scale[pref]): an empty or NA
+                # prefix never matches a name, so those rows are set to NA.
+                hit = pref[i] is not None and pref[i] != ""
+                new_scale[i] = map_scale[pref[i]] if hit else None
+                new_conf[i] = map_conf[pref[i]] if hit else None
                 if new_src is not None:
-                    new_src[i] = map_src[pref[i]]
+                    new_src[i] = map_src[pref[i]] if hit else None
                 changed = True
     if not changed:
         return labels_df

@@ -410,12 +410,13 @@ def _data_check_outputs(
     requires=["network", "llm"],
     author=["Daniel Lakens <D.Lakens@tue.nl>"],
     params={
-        "paper": "a paper object or paperlist object, or NULL to check local files only "
-        "(see [test_paper()])",
-        "local_path": "optional path to a local directory, passed through to `data_check` / "
-        "`repo_check` when their output is not already available",
+        # line breaks as in the roxygen block, which module_help() prints
+        "paper": "a paper object or paperlist object, or NULL to check local\n"
+        "files only (see [test_paper()])",
+        "local_path": "optional path to a local directory, passed through to\n"
+        "`data_check` / `repo_check` when their output is not already available",
         "local_only": "if TRUE, skip online repository lookups (see `repo_check`)",
-        "model": "the LLM model name (see `llm_model_list()`) used only when `llm_use(TRUE)`",
+        "model": "the LLM model name (see `llm_model_list()`) used only when\n`llm_use(TRUE)`",
         "params": "a named list passed to `llm()`, used only when `llm_use(TRUE)`",
     },
 )

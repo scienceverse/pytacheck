@@ -1,0 +1,82 @@
+{
+  "id": "peek.range_ignored_small_tail",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 5,
+    "names": [
+      "name",
+      "size",
+      "method",
+      "csize",
+      "offset",
+      "crc"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "good.csv",
+          "badcrc.csv",
+          "badsize.csv",
+          "stored.txt",
+          "empty.csv"
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          817,
+          817,
+          818,
+          12,
+          0
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          8,
+          8,
+          8,
+          0,
+          8
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          407,
+          407,
+          407,
+          12,
+          2
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0,
+          445,
+          892,
+          1340,
+          1392
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          3490621840,
+          12345,
+          3490621840,
+          2312367761,
+          0
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

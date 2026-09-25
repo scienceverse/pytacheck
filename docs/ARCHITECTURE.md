@@ -6,7 +6,7 @@ explains the pieces that are *not* one-to-one translations and why they exist.
 ```
 src/pytacheck/
   _r/            R semantics: regex engines, number formatting, collation, dplyr idioms
-  papers/        Paper / PaperList (bibr JSON schema), reading/writing, cross-paper tables
+  papers/        Paper / PaperList (bibr export schema 12.0), reading/writing, cross-paper tables
   module.py      module decorator, discovery, module_run chaining
   modules/       built-in checks, one file per metacheck module (+ pack.json: built-in presets)
   packs/         packs, stores, install, pack check, store build (module system v2)
@@ -50,7 +50,11 @@ All of this is verified against R (`parity/cases/rcompat.yaml`).
 
 ## Papers
 
-A `Paper` holds bibr JSON tables as DataFrames. Tables read from JSON are kept as
+A `Paper` holds bibr JSON tables as DataFrames. bibr export schema 12.0 is the schema
+pytacheck targets: 12.x exports are read natively (`io/bibr12.py`, the port of
+metacheck pull request #423), Grobid TEI is converted to 12.x (`io/grobid_bibr12.py`),
+and older files without a root `schema_version` read exactly as metacheck reads them.
+Tables read from JSON are kept as
 records and **materialised lazily**; `paper_table()` over a `PaperList` concatenates
 raw records directly into one DataFrame instead of building one per paper. Tables are
 returned by reference and must not be mutated by library code (tested for every
@@ -88,7 +92,8 @@ development and CI test runs do not need R.
 ## Upstream sync
 
 `.github/workflows/upstream-sync.yml` runs daily. When metacheck `dev` has new commits
-it moves the pin, writes a brief (`scripts/upstream_sync.py`: commits, changed files and
+(or, while the pin names a pull request such as #423, that pull request's head moves;
+once it is merged, dev again) it moves the pin, writes a brief (`scripts/upstream_sync.py`: commits, changed files and
 functions mapped to their Python homes via `porting/`), regenerates the goldens with
 the new metacheck (so behaviour changes show up as golden diffs), lets Claude Code port
 the changes under `docs/PORTING.md`, verifies parity/tests/lint and opens a pull

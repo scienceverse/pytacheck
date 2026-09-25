@@ -1,0 +1,103 @@
+{
+  "id": "report_tables.code_files",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": null,
+    "v": [
+      {
+        "t": "df",
+        "nrow": 5,
+        "names": [
+          "File Name",
+          "% Comments",
+          "Missing Files",
+          "Absolute Paths",
+          "Code Between Libraries"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "43%",
+              "0%",
+              "40%",
+              "50%",
+              "25%"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              1,
+              1,
+              1,
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1,
+              null,
+              null,
+              null,
+              null
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 3,
+        "names": [
+          "File name",
+          "Missing Files"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "analysis_no_comments.R",
+              "stata_latin1.do",
+              "stata_utf16.do"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "missing_file.csv",
+              "data.dta",
+              "data.dta"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

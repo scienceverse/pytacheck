@@ -1,0 +1,7 @@
+varname,description,values,missing
+q1,Agreement,1=Strongly disagree; 2=Disagree; 3=Neutral; 4=Agree; 5=Strongly agree,-99=Refused
+q2,Rating,1=Low; 2=2; 3=3; 4=4; 5=High,
+q3,Score,1=a; 2=b; 3=c; 4=d; 5=e,
+q4,Fruit,a=Apple; b=Banana,
+q5,Consent,0=No; 1=Yes,
+q6,Other rating,1=Low; 2=2; 3=3; 4=4; 5=High,

@@ -39,6 +39,4 @@ def as_bytes_text(x: str) -> str:
     """*x* with every undecodable byte shown as ``<xx>`` (R's ``iconv(sub = "byte")``)."""
     if not invalid_utf8(x):
         return x
-    return "".join(
-        f"<{ord(c) - 0xDC00:02x}>" if 0xDC80 <= ord(c) <= 0xDCFF else c for c in x
-    )
+    return "".join(f"<{ord(c) - 0xDC00:02x}>" if 0xDC80 <= ord(c) <= 0xDCFF else c for c in x)

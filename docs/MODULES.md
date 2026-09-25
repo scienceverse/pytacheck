@@ -17,6 +17,7 @@ packs (part 2). The design, with the reasons behind it, is in
   * [Configuration files](#configuration-files)
 * [Part 2: Writing modules and packs](#part-2-writing-modules-and-packs)
   * [Write a module](#write-a-module)
+  * [Papers: bibr 12.x and the older format](#papers-bibr-12x-and-the-older-format)
   * [Make a pack](#make-a-pack)
   * [Preset-only packs](#preset-only-packs)
   * [Test with `pack check`](#test-with-pack-check)
@@ -411,7 +412,8 @@ The contract (the same one the built-in modules follow):
 * it never modifies the paper it receives (copy tables before changing them);
 * `traffic_light` is one of `na`, `fail`, `info`, `green`, `yellow`, `red`;
 * `summary_table` has a `paper_id` column and at most one row per paper;
-* it works on a single paper and on a paper list;
+* it works on a single paper and on a paper list, and on bibr 12.x papers as well
+  as older ones (see the next section);
 * modules that call online services declare `requires=["network"]`, and those
   that use an LLM declare `requires=["llm"]`, so `--offline` can skip them;
 * validation: describe it in a `<validation>` block in `details`, and give the
@@ -422,6 +424,61 @@ Use `get_prev_outputs("other_module", "table")` to read an earlier module's
 output in the same run. Use the helpers pytacheck exports (`text_search`,
 `pytacheck.report.scroll_table`, `collapse_section`, ...); see the built-in
 modules in `src/pytacheck/modules/` for complete examples.
+
+### Papers: bibr 12.x and the older format
+
+bibr export schema 12.0 is pytacheck's paper schema: bibr's exports and Grobid
+conversions are read as 12.x papers. Modules also get papers in the older format that
+metacheck used before, such as bibr v10.x files, `demopaper()` and metacheck's fixture
+papers, and one paper list can hold both. The [README](../README.md#the-paper-schema-bibr-export-schema-120)
+lists a 12.x paper's tables. These are the differences a module usually has to handle:
+
+| | bibr 12.x paper | older paper |
+|---|---|---|
+| how to tell | `is_bibr12(paper)`: `info.schema_version` starts with `12.` | no `schema_version` |
+| citation of a reference | `xref_type` `"bib"`; the `bib_id` is in `target_id`, and `xref_id` is the xref's own key | `xref_type` `"bibr"`; the `bib_id` is in `xref_id` |
+| figure and table captions | `figure.caption` and `table.caption`, plus a `text` row with no `section_id`, which `text_id` points at | `text` rows in a section whose `section_type` is `"figure"` or `"table"` |
+| footnotes | the `footnote` table, plus `text` rows with no section | `text` rows in a `"foot"` section |
+| match scores (`bib_match`, `info_match`) | 0-1 | Crossref relevance scores (for example 61.8) |
+| how it was extracted | `paper.get("extraction")`: `producer`, `converter`, `completed_at`, diagnostics | `None` |
+
+`text_search()` finds caption and footnote text in both formats. To search only the
+body, drop the rows without a `section_id` in a 12.x paper, and the `figure`, `table`
+and `foot` sections in an older one.
+
+Work on whole tables, as the built-in modules do: take `paper_table()` over the paper
+or paper list, then choose each row's rule from its `paper_id`. This is the pattern of
+metacheck's `.bibr12_paper_ids()` (`ref_consistency`, `ref_miscitation` and
+`ref_accuracy` use it):
+
+```python
+import pytacheck as pc
+from pytacheck.io.bibr12 import is_bibr12
+
+
+def bibr12_paper_ids(paper) -> set[str]:
+    """IDs of the bibr 12.x papers in a paper or a paper list."""
+    papers = [paper] if isinstance(paper, pc.Paper) else list(paper)
+    return {p.paper_id for p in papers if is_bibr12(p)}
+
+
+def citations(paper):
+    """paper_id, bib_id and text_id of every citation of a reference."""
+    xref = pc.paper_table(paper, "xref").copy()  # never change the paper's own table
+    v12 = xref["paper_id"].isin(bibr12_paper_ids(paper))
+    if v12.any():  # only 12.x papers have target_id
+        xref.loc[v12, "xref_id"] = xref.loc[v12, "target_id"]
+    typ = xref["xref_type"]
+    cites = xref[((v12 & (typ == "bib")) | (~v12 & (typ == "bibr"))).fillna(False)]
+    return cites.rename(columns={"xref_id": "bib_id"})[["paper_id", "bib_id", "text_id"]]
+```
+
+Thresholds on match scores work the same way. `ref_accuracy` compares a 12.x paper's
+score with `suggest_score / 100`.
+
+`pack check` runs modules on older papers only (`demopaper()` and test papers), so
+also try yours on a 12.x paper: `pc.read(pc.demofile("xml"))` converts the demo
+paper's Grobid TEI to 12.x, and any bibr export is one.
 
 ### Make a pack
 

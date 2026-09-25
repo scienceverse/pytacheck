@@ -1,0 +1,34 @@
+{
+  "id": "invalid.filetype",
+  "ok": true,
+  "error": null,
+  "warnings": [
+    "unable to translate 'caf<82>.csv' to a wide string",
+    "input string 1 is invalid",
+    "unable to translate 'READ<82>ME.txt' to a wide string",
+    "input string 3 is invalid",
+    "unable to translate 'code<82>book.csv' to a wide string",
+    "input string 4 is invalid",
+    "unable to translate 'x<82>.R' to a wide string",
+    "input string 5 is invalid"
+  ],
+  "value": {
+    "t": "chr",
+    "v": [
+      "NA",
+      "code",
+      "NA",
+      "NA",
+      "NA"
+    ],
+    "names": [
+      "caf<82>.csv",
+      "ok.R",
+      "READ<82>ME.txt",
+      "code<82>book.csv",
+      "x<82>.R"
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

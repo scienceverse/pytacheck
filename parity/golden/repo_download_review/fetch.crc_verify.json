@@ -1,0 +1,86 @@
+{
+  "id": "fetch.crc_verify",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "result",
+      "files",
+      "sizes"
+    ],
+    "v": [
+      {
+        "t": "df",
+        "nrow": 5,
+        "names": [
+          "name",
+          "path",
+          "size",
+          "ok"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "good.csv",
+              "badcrc.csv",
+              "badsize.csv",
+              "stored.txt",
+              "empty.csv"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "<TMP>/good.csv",
+              null,
+              null,
+              "<TMP>/stored.txt",
+              "<TMP>/empty.csv"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              817,
+              817,
+              818,
+              12,
+              0
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true,
+              false,
+              false,
+              true,
+              true
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "empty.csv",
+          "good.csv",
+          "stored.txt"
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0,
+          817,
+          12
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

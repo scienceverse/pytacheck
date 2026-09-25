@@ -1,17 +1,31 @@
-"""Track metacheck's dev branch: detect new commits and prepare a porting brief.
+"""Track metacheck upstream: detect new commits and prepare a porting brief.
 
 Used by .github/workflows/upstream-sync.yml, and runnable by hand:
 
     uv run python scripts/upstream_sync.py status
-    uv run python scripts/upstream_sync.py prepare            # to origin/dev
+    uv run python scripts/upstream_sync.py prepare            # to the tracked head
     uv run python scripts/upstream_sync.py prepare --to <sha>
+    uv run python scripts/upstream_sync.py prepare --drop-pr  # stop tracking the pull request
+
+pytacheck follows metacheck's ``dev`` branch. The pin (parity/UPSTREAM.toml and
+pytacheck._version.UPSTREAM) can also name an open pull request that pytacheck
+targets before it is merged (``pull_request``, with ``base_commit``, the dev
+commit it is built on). Then the tracked head is:
+
+* dev's head, once the pull request is merged into dev: its head is in dev, or
+  dev has its squashed commit ("... (#N)") or all of its rebased commits. The
+  pin goes back to plain dev (``pull_request`` and ``base_commit`` are dropped);
+* otherwise the pull request's head (``refs/pull/<N>/head``), so a new push to
+  the pull request is synced. The status and the brief list the dev commits the
+  pull request does not contain: the pinned reference (and every golden) lacks
+  them until the pull request is merged or rebased, so the sync warns about them.
 
 ``prepare`` moves the upstream/metacheck submodule to the target commit,
-updates the pin (parity/UPSTREAM.toml and pytacheck._version.UPSTREAM), and
-writes .upstream-sync/brief.md: the commit log, the changed files, the R diff,
-the Python files mapped to each changed R file (porting/map/*.toml and
-porting/symbols.json), and added/removed/changed R functions. The workflow
-then regenerates the goldens in R and appends which ones changed.
+updates the pin, and writes .upstream-sync/brief.md: what is tracked, the commit
+log, the changed files, the R diff, the Python files mapped to each changed R
+file (porting/map/*.toml and porting/symbols.json), and added/removed/changed R
+functions; .upstream-sync/meta.json has the pull request's title and summary.
+The workflow then regenerates the goldens in R and appends which ones changed.
 """
 
 from __future__ import annotations
@@ -22,7 +36,9 @@ import re
 import subprocess
 import sys
 import tomllib
+from collections.abc import Callable
 from pathlib import Path
+from typing import Any
 
 ROOT = Path(__file__).resolve().parent.parent
 SUB = ROOT / "upstream" / "metacheck"
@@ -31,21 +47,244 @@ VERSION_PY = ROOT / "src" / "pytacheck" / "_version.py"
 BRIEF_DIR = ROOT / ".upstream-sync"
 DEF = re.compile(r"^`?([A-Za-z0-9._]+)`?\s*(?:<-|=)\s*function\b")
 MAX_DIFF_CHARS = 400_000
+MAX_LISTED_COMMITS = 200
 
 
-def git(*args: str, cwd: Path = SUB) -> str:
+def git(*args: str, cwd: Path | None = None) -> str:
     return subprocess.run(
-        ["git", *args], cwd=cwd, check=True, capture_output=True, text=True
+        ["git", *args], cwd=cwd or SUB, check=True, capture_output=True, text=True
     ).stdout
 
 
-def pinned() -> dict[str, str]:
+def git_ok(*args: str) -> bool:
+    """Whether a git command succeeds (for yes/no questions such as ``--is-ancestor``)."""
+    return subprocess.run(["git", *args], cwd=SUB, capture_output=True).returncode == 0
+
+
+def pinned() -> dict[str, Any]:
     return tomllib.loads(UPSTREAM_TOML.read_text(encoding="utf-8"))["upstream"]
 
 
+# --- git history -----------------------------------------------------------------
+
+
+def ensure_history() -> None:
+    """Unshallow the submodule: ancestry and merge-base need the history."""
+    if git("rev-parse", "--is-shallow-repository").strip() == "true":
+        git("fetch", "--quiet", "--unshallow", "--filter=blob:none", "origin")
+
+
+def fetch(ref: str) -> str:
+    """Fetch a branch (``refs/heads/dev``), a pull request ref or a commit; its sha."""
+    git("fetch", "--quiet", "--filter=blob:none", "origin", ref)
+    return git("rev-parse", "FETCH_HEAD^{commit}").strip()
+
+
+def resolve(rev: str) -> str:
+    """The full sha of a commit, fetched first unless it is already here."""
+    if not git_ok("cat-file", "-e", f"{rev}^{{commit}}"):
+        git("fetch", "--quiet", "--filter=blob:none", "origin", rev)
+    return git("rev-parse", f"{rev}^{{commit}}").strip()
+
+
 def remote_head(branch: str) -> str:
-    git("fetch", "--quiet", "--filter=blob:none", "origin", branch)
-    return git("rev-parse", f"origin/{branch}").strip()
+    return fetch(f"refs/heads/{branch}")
+
+
+def pr_head(number: int) -> str:
+    return fetch(f"refs/pull/{number}/head")
+
+
+def merge_base(a: str, b: str) -> str:
+    return git("merge-base", a, b).strip()
+
+
+def commits(rev_range: str) -> list[str]:
+    """``git log --oneline`` of a range, newest first."""
+    return [line for line in git("log", "--format=%h %s", rev_range).splitlines() if line.strip()]
+
+
+def pr_merged(number: int, head: str, branch_head: str, base: str | None = None) -> str | None:
+    """How pull request *number* (at *head*) is in *branch_head*, or None if it is not.
+
+    A merge commit (or a fast-forward) contains the head itself; a squash merge
+    adds one commit whose subject ends in ``(#N)`` (GitHub's default); a rebase
+    merge adds commits with the same patches (``git cherry``).
+    """
+    if git_ok("merge-base", "--is-ancestor", head, branch_head):
+        return "merge"
+    base = base or merge_base(head, branch_head)
+    squash = re.compile(rf"\(#{number}\)\s*$")
+    for line in git("log", "--format=%H %s", f"{base}..{branch_head}").splitlines():
+        sha, _, subject = line.partition(" ")
+        if squash.search(subject):
+            return f"squash {sha[:10]}"
+    cherry = [line for line in git("cherry", branch_head, head, base).splitlines() if line]
+    if cherry and all(line.startswith("-") for line in cherry):
+        return "rebase"
+    return None
+
+
+def plan(pin: dict[str, Any], to: str | None = None, drop_pr: bool = False) -> dict[str, Any]:
+    """What to sync to, and the pin that results.
+
+    ``mode`` is ``"branch"`` (no pull request tracked), ``"merged"`` (the
+    tracked pull request is in the branch: back to the branch head) or
+    ``"pull_request"`` (still open: its head). ``not_in_pr`` lists the branch
+    commits the target lacks (only in ``"pull_request"`` mode).
+    """
+    ensure_history()
+    branch = pin["branch"]
+    head = remote_head(branch)
+    number = pin.get("pull_request")
+    out: dict[str, Any] = {
+        "branch": branch,
+        "branch_head": head,
+        "pull_request": None,
+        "base_commit": None,
+        "pr_head": None,
+        "pr_merged": None,
+        "not_in_pr": [],
+    }
+    if to:
+        to = resolve(to)
+    if number is None or drop_pr:
+        out.update(mode="branch", target=to or head)
+        return out
+    number = int(number)
+    prh = pr_head(number)
+    merged = pr_merged(number, prh, head, pin.get("base_commit"))
+    out.update(pr_head=prh, pr_merged=merged)
+    if merged:
+        out.update(mode="merged", target=to or head)
+        return out
+    target = to or prh
+    out.update(
+        mode="pull_request",
+        target=target,
+        pull_request=number,
+        base_commit=merge_base(target, head),
+        not_in_pr=commits(f"{target}..{head}"),
+    )
+    return out
+
+
+def needs_sync(pin: dict[str, Any], p: dict[str, Any]) -> bool:
+    """Whether the commit or the pull request part of the pin changes."""
+    return (
+        p["target"] != pin["commit"]
+        or p["pull_request"] != pin.get("pull_request")
+        or p["base_commit"] != pin.get("base_commit")
+    )
+
+
+# --- the pin -----------------------------------------------------------------------
+
+
+def _edit_pin(
+    text: str,
+    values: dict[str, Any],
+    line_re: Callable[[str], re.Pattern[str]],
+    render: Callable[[str, Any], str],
+    comment: Callable[[int], list[str]],
+) -> str:
+    """Set ``branch``/``commit``/``version`` and add, update or drop the pull request.
+
+    Lines are edited in place, so other lines and comments stay. A new pull
+    request is inserted after ``commit`` with *comment* above it; dropping it
+    also drops the comment lines directly above ``pull_request``.
+    """
+    lines = text.splitlines()
+
+    def find(key: str) -> int | None:
+        pat = line_re(key)
+        return next((i for i, line in enumerate(lines) if pat.match(line)), None)
+
+    for key in ("branch", "commit", "version"):
+        i = find(key)
+        if i is None:
+            raise ValueError(f"the pin has no {key!r} entry")
+        lines[i] = render(key, values[key])
+
+    number, base = values.get("pull_request"), values.get("base_commit")
+    old = find("pull_request")
+    if old is not None and (number is None or not re.search(rf"\b{number}\b", lines[old])):
+        # dropped, or another pull request: remove it with its comment
+        start = old
+        while start > 0 and lines[start - 1].lstrip().startswith("#"):
+            start -= 1
+        del lines[start : old + 1]
+        old = None
+    i = find("base_commit")
+    if i is not None:
+        del lines[i]
+    if number is None:
+        return "\n".join(lines) + "\n"
+    if old is None:
+        at = find("commit")
+        assert at is not None
+        new = [*comment(int(number)), render("pull_request", int(number))]
+        lines[at + 1 : at + 1] = new
+        old = at + len(new)
+    lines.insert(old + 1, render("base_commit", base))
+    return "\n".join(lines) + "\n"
+
+
+def _toml_line(key: str, value: Any) -> str:
+    return f"{key} = {value}" if isinstance(value, int) else f'{key} = "{value}"'
+
+
+def _py_line(key: str, value: Any) -> str:
+    return f'    "{key}": {value},' if isinstance(value, int) else f'    "{key}": "{value}",'
+
+
+def write_pin(
+    commit: str,
+    version: str,
+    branch: str,
+    pull_request: int | None = None,
+    base_commit: str | None = None,
+) -> None:
+    """Write the pin to parity/UPSTREAM.toml and pytacheck._version.UPSTREAM.
+
+    Both always get the same entries: ``pull_request`` and ``base_commit``
+    together (a tracked pull request), or neither.
+    """
+    if (pull_request is None) != (base_commit is None):
+        raise ValueError("pull_request and base_commit go together")
+    values = {
+        "branch": branch,
+        "commit": commit,
+        "version": version,
+        "pull_request": pull_request,
+        "base_commit": base_commit,
+    }
+    UPSTREAM_TOML.write_text(
+        _edit_pin(
+            UPSTREAM_TOML.read_text(encoding="utf-8"),
+            values,
+            lambda key: re.compile(rf"^{key}\s*="),
+            _toml_line,
+            lambda n: [
+                f"# {branch} plus pull request #{n}, which pytacheck targets ahead of its",
+                f"# merge; the upstream-sync workflow moves back to {branch} once it is merged.",
+            ],
+        ),
+        encoding="utf-8",
+    )
+    VERSION_PY.write_text(
+        _edit_pin(
+            VERSION_PY.read_text(encoding="utf-8"),
+            values,
+            lambda key: re.compile(rf'^\s*"{key}"\s*:'),
+            _py_line,
+            lambda n: [f"    # {branch} plus scienceverse/metacheck#{n}, not yet merged"],
+        ),
+        encoding="utf-8",
+    )
+
+
+# --- metacheck sources ------------------------------------------------------------
 
 
 def description_version(commit: str) -> str:
@@ -75,40 +314,124 @@ def python_targets() -> dict[str, list[str]]:
         data = tomllib.loads(toml.read_text(encoding="utf-8"))
         for r_file, py_files in data.get("files", {}).items():
             targets.setdefault(r_file, []).extend(py_files)
-    return targets
+    return {r_file: list(dict.fromkeys(py)) for r_file, py in targets.items()}
 
 
-def write_pin(commit: str, version: str, branch: str) -> None:
-    text = UPSTREAM_TOML.read_text(encoding="utf-8")
-    text = re.sub(r'^commit = ".*"$', f'commit = "{commit}"', text, flags=re.M)
-    text = re.sub(r'^version = ".*"$', f'version = "{version}"', text, flags=re.M)
-    text = re.sub(r'^branch = ".*"$', f'branch = "{branch}"', text, flags=re.M)
-    UPSTREAM_TOML.write_text(text, encoding="utf-8")
-    code = VERSION_PY.read_text(encoding="utf-8")
-    code = re.sub(r'"commit": "[0-9a-f]+"', f'"commit": "{commit}"', code)
-    code = re.sub(r'"version": "[^"]+"', f'"version": "{version}"', code)
-    VERSION_PY.write_text(code, encoding="utf-8")
+# --- commands ------------------------------------------------------------------------
 
 
 def cmd_status(ns: argparse.Namespace) -> int:
     pin = pinned()
-    head = remote_head(pin["branch"])
-    behind = git("rev-list", "--count", f"{pin['commit']}..{head}").strip()
-    print(json.dumps({"pinned": pin["commit"], "head": head, "behind": int(behind)}))
+    p = plan(pin, ns.to, ns.drop_pr)
+    behind = git("rev-list", "--count", f"{pin['commit']}..{p['target']}").strip()
+    print(
+        json.dumps(
+            {
+                "pinned": pin["commit"],
+                "head": p["target"],
+                "behind": int(behind),
+                "sync": needs_sync(pin, p),
+                "mode": p["mode"],
+                "branch_head": p["branch_head"],
+                "pull_request": pin.get("pull_request"),
+                "pr_head": p["pr_head"],
+                "pr_merged": p["pr_merged"],
+                "not_in_pr": len(p["not_in_pr"]),
+            }
+        )
+    )
     return 0
+
+
+def _tracking(pin: dict[str, Any], p: dict[str, Any], old: str, new: str) -> list[str]:
+    """The brief's section on what is tracked (and what the pinned tree lacks)."""
+    branch, number = p["branch"], pin.get("pull_request")
+    if p["mode"] == "branch":
+        return [f"pytacheck tracks metacheck `{branch}` ({new[:10]})."]
+    if p["mode"] == "merged":
+        return [
+            f"Pull request #{number} was merged into `{branch}` ({p['pr_merged']}), so "
+            f"pytacheck tracks `{branch}` again: the pin moves to `{branch}` ({new[:10]}) and "
+            "drops `pull_request` and `base_commit`. The diff below is the tree diff from the "
+            f"pull request's head ({old[:10]}), so it holds the `{branch}` commits the pull "
+            "request lacked (and any change made while merging), not the pull request's own "
+            "changes, which are already ported.",
+        ]
+    out = [
+        f"pytacheck tracks metacheck `{branch}` plus pull request #{number}, which is not "
+        f"merged yet: the pin moves to the pull request's head ({new[:10]}), built on "
+        f"`{branch}` at {p['base_commit'][:10]}.",
+    ]
+    if p["not_in_pr"]:
+        shown = p["not_in_pr"][:MAX_LISTED_COMMITS]
+        more = len(p["not_in_pr"]) - len(shown)
+        out += [
+            "",
+            f"### `{branch}` commits not in pull request #{number}",
+            "",
+            f"`{branch}` has {len(p['not_in_pr'])} commit(s) that the pull request does not "
+            "contain. They are not in the pinned reference, so the goldens do not show them: "
+            "**do not port them in this sync**. List them under a warning in "
+            f"`.upstream-sync/notes.md`; they arrive once #{number} is merged or rebased.",
+            "",
+            *(f"- {line}" for line in shown),
+            *([f"- ... and {more} more"] if more > 0 else []),
+        ]
+    return out
+
+
+def _meta(pin: dict[str, Any], p: dict[str, Any], old: str, new: str, version: str) -> dict:
+    branch, number = p["branch"], pin.get("pull_request")
+    if p["mode"] == "pull_request":
+        title = f"Sync with metacheck {branch} + #{number} {new[:10]} ({version})"
+        summary = (
+            f"Automated port of metacheck `{branch}` + pull request #{number} "
+            f"→ `{new[:10]}` (metacheck {version}; not merged yet)."
+        )
+    elif p["mode"] == "merged":
+        title = f"Sync with metacheck {branch} {new[:10]} ({version}; #{number} merged)"
+        summary = (
+            f"Automated port of metacheck `{branch}` → `{new[:10]}` (metacheck {version}). "
+            f"Pull request #{number} was merged ({p['pr_merged']}): the pin tracks "
+            f"`{branch}` again."
+        )
+    else:
+        title = f"Sync with metacheck {branch} {new[:10]} ({version})"
+        summary = f"Automated port of metacheck `{branch}` → `{new[:10]}` (metacheck {version})."
+    warning = ""
+    if p["not_in_pr"]:
+        warning = (
+            f"> [!WARNING]\n> `{branch}` has {len(p['not_in_pr'])} commit(s) that pull request "
+            f"#{number} does not contain; they are not ported yet:\n"
+            + "".join(f">\n> - {line}" for line in p["not_in_pr"][:50])
+        )
+    return {
+        "from": old,
+        "to": new,
+        "version": version,
+        "mode": p["mode"],
+        "branch": branch,
+        "pull_request": p["pull_request"],
+        "base_commit": p["base_commit"],
+        "pr_merged": p["pr_merged"],
+        "not_in_pr": p["not_in_pr"],
+        "title": title,
+        "summary": summary,
+        "warning": warning,
+    }
 
 
 def cmd_prepare(ns: argparse.Namespace) -> int:
     pin = pinned()
     old = pin["commit"]
-    new = ns.to or remote_head(pin["branch"])
-    if new == old:
+    p = plan(pin, ns.to, ns.drop_pr)
+    new = p["target"]
+    if not needs_sync(pin, p):
         print("already at", old)
         return 0
-    git("fetch", "--quiet", "--filter=blob:none", "origin", new)
     git("checkout", "--quiet", new)
     version = description_version(new)
-    write_pin(new, version, pin["branch"])
+    write_pin(new, version, p["branch"], p["pull_request"], p["base_commit"])
 
     log = git("log", "--format=- %h %s (%an, %ad)", "--date=short", f"{old}..{new}")
     changed = [
@@ -123,6 +446,10 @@ def cmd_prepare(ns: argparse.Namespace) -> int:
         f"# Upstream sync: metacheck {pin['version']} ({old[:10]}) -> {version} ({new[:10]})",
         "",
         "Port these upstream changes to pytacheck following docs/PORTING.md.",
+        "",
+        "## Tracked upstream",
+        "",
+        *_tracking(pin, p, old, new),
         "",
         "## Commits",
         "",
@@ -177,10 +504,20 @@ def cmd_prepare(ns: argparse.Namespace) -> int:
 
     BRIEF_DIR.mkdir(exist_ok=True)
     (BRIEF_DIR / "brief.md").write_text("\n".join(out), encoding="utf-8")
-    (BRIEF_DIR / "meta.json").write_text(
-        json.dumps({"from": old, "to": new, "version": version}, indent=1), encoding="utf-8"
+    meta = _meta(pin, p, old, new, version)
+    (BRIEF_DIR / "meta.json").write_text(json.dumps(meta, indent=1), encoding="utf-8")
+    print(
+        json.dumps(
+            {
+                "from": old,
+                "to": new,
+                "version": version,
+                "mode": p["mode"],
+                "files": len(changed),
+                "not_in_pr": len(p["not_in_pr"]),
+            }
+        )
     )
-    print(json.dumps({"from": old, "to": new, "version": version, "files": len(changed)}))
     return 0
 
 
@@ -189,10 +526,20 @@ def main(argv: list[str] | None = None) -> int:
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
     )
     sub = parser.add_subparsers(dest="cmd", required=True)
-    sub.add_parser("status").set_defaults(func=cmd_status)
-    p = sub.add_parser("prepare")
-    p.add_argument("--to", help="target commit (default: head of the tracked branch)")
-    p.set_defaults(func=cmd_prepare)
+    for name, func in (("status", cmd_status), ("prepare", cmd_prepare)):
+        p = sub.add_parser(name)
+        p.add_argument(
+            "--to",
+            help="target commit (default: the pull request's head while it is open, "
+            "else the head of the tracked branch)",
+        )
+        p.add_argument(
+            "--drop-pr",
+            action="store_true",
+            help="stop tracking the pinned pull request (e.g. closed without merging): "
+            "sync to the branch and drop pull_request/base_commit from the pin",
+        )
+        p.set_defaults(func=func)
     ns = parser.parse_args(argv)
     return int(ns.func(ns))
 

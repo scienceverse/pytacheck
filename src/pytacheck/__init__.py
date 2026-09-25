@@ -314,6 +314,17 @@ _EXPORTS: dict[str, str] = {
     "export_stata_smcl_html": "pytacheck.statout.stata",
     "import_stata_smcl": "pytacheck.statout.stata",
     "stato_type_column": "pytacheck.statout.stato_map",
+    # computational reproducibility
+    "repro_defined_vars": "pytacheck.repro.core",
+    "repro_dependencies": "pytacheck.repro.core",
+    "repro_file_io": "pytacheck.repro.core",
+    "repro_install_deps": "pytacheck.repro.core",
+    "repro_materialize_layout": "pytacheck.repro.core",
+    "repro_missing_inputs": "pytacheck.repro.core",
+    "repro_rewrite_paths": "pytacheck.repro.core",
+    "repro_run_order": "pytacheck.repro.core",
+    "repro_run_scripts": "pytacheck.repro.core",
+    "repro_write_scripts": "pytacheck.repro.core",
     # report building blocks
     "cap_gate_count": "pytacheck.report.blocks",
     "collapse_section": "pytacheck.report.blocks",
@@ -612,6 +623,18 @@ if TYPE_CHECKING:  # pragma: no cover
         format_ref,
         link,
         scroll_table,
+    )
+    from pytacheck.repro.core import (
+        repro_defined_vars,
+        repro_dependencies,
+        repro_file_io,
+        repro_install_deps,
+        repro_materialize_layout,
+        repro_missing_inputs,
+        repro_rewrite_paths,
+        repro_run_order,
+        repro_run_scripts,
+        repro_write_scripts,
     )
     from pytacheck.statout.jasp import export_jasp_html, import_jasp
     from pytacheck.statout.match_reported import match_reported_output

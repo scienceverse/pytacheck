@@ -17,4 +17,5 @@ UPSTREAM = {
     "version": "0.3.1",
     # dev plus scienceverse/metacheck#423 (bibr export schema 12.0), not yet merged
     "pull_request": 423,
+    "base_commit": "85c8c872cf71ab5a70c10008bd41bf563352a396",
 }

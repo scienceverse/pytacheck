@@ -1,0 +1,199 @@
+{
+  "id": "codebook_check.tables.rv_sort",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": null,
+    "v": [
+      {
+        "t": "df",
+        "nrow": 3,
+        "names": [
+          "Column",
+          "Documented",
+          "Label",
+          "Codebook Variable",
+          "Source",
+          "Status"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "gamma",
+              "Alpha",
+              "beta"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "conflict",
+              "yes",
+              "yes"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "A different third letter | Third letter",
+              "First letter",
+              "Second letter"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "gamma",
+              "alpha",
+              "Beta"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "codebook_b.csv | codebook.csv",
+              "codebook.csv",
+              "codebook.csv"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "conflicting_definition",
+              "labelled",
+              "labelled"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 6,
+        "names": [
+          "Column",
+          "Documented",
+          "Label",
+          "Codebook Variable",
+          "Source",
+          "Status"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Zeta",
+              "_id",
+              "delta",
+              "Beta",
+              "alpha",
+              "émotion"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "no",
+              "no",
+              "no",
+              "yes",
+              "yes",
+              "yes"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              "Second letter",
+              "First letter",
+              "Emotion rating"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              "Beta",
+              "alpha",
+              "émotion"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              "codebook.csv",
+              "codebook.csv",
+              "codebook.csv"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "unlabelled",
+              "unlabelled",
+              "unlabelled",
+              "labelled",
+              "labelled",
+              "labelled"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "File",
+          "Column",
+          "Conflicting Labels",
+          "Sources",
+          "Issue"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "b.csv"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "gamma"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "A different third letter | Third letter"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "codebook_b.csv | codebook.csv"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "conflicting_definition"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

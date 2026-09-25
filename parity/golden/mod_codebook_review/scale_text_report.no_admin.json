@@ -1,0 +1,20 @@
+{
+  "id": "scale_text_report.no_admin",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "#### Scales in the manuscript",
+      "The manuscript describes 4 instruments whose item-level data we could not find. De-identified item-level responses are far more valuable to share than total scores: they let others check the scoring, the reverse-coding, and the reliability, and let the items be reused. Consider sharing the raw item responses for:",
+      "- **NA** (X; NA items)",
+      "- **Big Five Inventory** (BFI; 5 items)",
+      "- **Life Orientation Test**",
+      "- **Short Scale** (LOT; NA items)",
+      "(Detected from the manuscript text; an instrument mentioned only in passing may be listed here in error.)"
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

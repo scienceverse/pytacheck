@@ -1,0 +1,5 @@
+TITLE: a model
+DATA: FILE IS mplus.dat;
+! comment line
+VARIABLE: NAMES ARE y x;
+MODEL: y ON x;

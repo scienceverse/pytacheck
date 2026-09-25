@@ -1,0 +1,218 @@
+{
+  "code_files": {
+    "repos": [
+      {"repo_url": "https://osf.io/abcde", "dir": "upstream/metacheck/tests/testthat/fixtures/code_files",
+       "files": ["analysis.R", "analysis_no_comments.R", "data.csv", "README.md", "stata_latin1.do", "stata_utf16.do", "subdir/helper.R"]}
+    ]
+  },
+  "parse_errors": {
+    "repos": [
+      {"repo_url": "upstream/metacheck/tests/testthat/fixtures/parse-errors", "dir": "upstream/metacheck/tests/testthat/fixtures/parse-errors",
+       "files": ["error-ok.qmd", "error.R", "error.Rmd", "error.qmd", "knit-error.Rmd", "ok.R", "ok.Rmd", "ok.qmd"]}
+    ]
+  },
+  "demo_code": {
+    "demo": true,
+    "papers": ["to_err_is_human"],
+    "repos": [
+      {"repo_url": "https://osf.io/demo1", "dir": "upstream/metacheck/tests/testthat/fixtures/demo/code",
+       "files": ["01.R", "02.R", "03.R", "04.R", "05.R", "06.R", "07.R", "08.R", "09.R", "10.R", "11.R", "12.R", "13.R",
+                 "14.R", "15.R", "16.R", "17.R", "18.R", "19.R", "20.R", "21.R", "22.R", "23.R", "24.R", "25.R"]}
+    ]
+  },
+  "psychsci": {
+    "read": ["upstream/metacheck/tests/testthat/fixtures/psychsci/0956797613520608.json",
+             "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614522816.json",
+             "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614527830.json"],
+    "papers": ["0956797613520608", "0956797614522816", "0956797614527830"],
+    "repos": [
+      {"paper_id": "0956797613520608", "repo_url": "https://osf.io/mixed", "dir": "tests/mod_code/fixtures/mixed",
+       "files": ["analysis.R", "report.Rmd", "data.csv"]},
+      {"paper_id": "0956797614527830", "repo_url": "https://osf.io/green", "dir": "tests/mod_code/fixtures/green",
+       "files": ["analysis.R", "data.csv", "renv.lock"]}
+    ]
+  },
+  "psychsci_nocode": {
+    "read": ["upstream/metacheck/tests/testthat/fixtures/psychsci/0956797613520608.json",
+             "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614522816.json",
+             "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614527830.json"],
+    "papers": ["0956797613520608", "0956797614522816", "0956797614527830"],
+    "repos": [
+      {"paper_id": "0956797614522816", "repo_url": "https://osf.io/nocode", "dir": "tests/mod_code/fixtures/nocode",
+       "files": ["data.csv", "README.md"]}
+    ]
+  },
+  "mixed": {
+    "repos": [
+      {"repo_url": "https://osf.io/mixed", "dir": "tests/mod_code/fixtures/mixed",
+       "files": ["README.md", "analysis.R", "analysis.do", "data.csv", "fit.m", "model.inp", "model.sas",
+                 "notebook.ipynb", "notes.qmd", "report.Rmd", "results.jasp", "script.py", "syntax.sps"]}
+    ]
+  },
+  "green": {
+    "repos": [
+      {"repo_url": "https://osf.io/green", "dir": "tests/mod_code/fixtures/green",
+       "files": ["analysis.R", "data.csv", "renv.lock"]}
+    ]
+  },
+  "session": {
+    "repos": [
+      {"repo_url": "https://osf.io/session", "dir": "tests/mod_code/fixtures/session",
+       "files": ["analysis.R", "sessionInfo.txt"]}
+    ]
+  },
+  "groundhog": {
+    "repos": [
+      {"repo_url": "https://osf.io/groundhog", "dir": "tests/mod_code/fixtures/groundhog",
+       "files": ["analysis.R", "helpers.R"]}
+    ]
+  },
+  "library_only": {
+    "repos": [
+      {"repo_url": "https://osf.io/groundhog", "dir": "tests/mod_code/fixtures/groundhog",
+       "files": ["helpers.R"]}
+    ]
+  },
+  "docstring": {
+    "repos": [
+      {"repo_url": "https://github.com/lisa/py", "dir": "tests/mod_code/fixtures/docstring",
+       "files": ["clean.py", "commented.py", "model.py", "plot.py"]}
+    ]
+  },
+  "docstring1": {
+    "repos": [
+      {"repo_url": "https://github.com/lisa/py1", "dir": "tests/mod_code/fixtures/docstring1",
+       "files": ["clean.py", "run.py"]}
+    ]
+  },
+  "jasp_only": {
+    "repos": [
+      {"repo_url": "https://osf.io/jasp", "dir": "tests/mod_code/fixtures/jasp", "files": ["analysis.jasp"]}
+    ]
+  },
+  "nocode": {
+    "repos": [
+      {"repo_url": "https://osf.io/nocode", "dir": "tests/mod_code/fixtures/nocode", "files": ["data.csv", "README.md"]}
+    ]
+  },
+  "empty_table": {},
+  "empty_files": {
+    "repos": [
+      {"repo_url": "https://osf.io/empty", "dir": "tests/mod_code/fixtures/empty", "files": ["empty.R", "empty.do", "ok.R"]}
+    ]
+  },
+  "all_failed": {
+    "rows": [
+      {"paper_id": "p1", "repo_name": "dryad", "repo_url": "https://doi.org/10.5061/dryad.x", "file_name": "analysis.R",
+       "file_path": "analysis.R", "file_url": "/does/not/exist/analysis.R", "file_location": null, "file_size": 100},
+      {"paper_id": "p1", "repo_name": "dryad", "repo_url": "https://doi.org/10.5061/dryad.x", "file_name": "helpers.R",
+       "file_path": "helpers.R", "file_url": "/does/not/exist/helpers.R", "file_location": null, "file_size": 50}
+    ]
+  },
+  "some_failed": {
+    "repos": [
+      {"repo_url": "https://doi.org/10.5061/dryad.x", "dir": "tests/mod_code/fixtures/green", "files": ["analysis.R"]}
+    ],
+    "rows": [
+      {"paper_id": "p1", "repo_name": "green", "repo_url": "https://doi.org/10.5061/dryad.x", "file_name": "helpers.R",
+       "file_path": "helpers.R", "file_url": "/does/not/exist/helpers.R", "file_location": null, "file_size": 50}
+    ]
+  },
+  "no_location": {
+    "repos": [
+      {"repo_url": "https://osf.io/abcde", "dir": "upstream/metacheck/tests/testthat/fixtures/code_files",
+       "files": ["analysis.R", "analysis_no_comments.R", "data.csv", "stata_latin1.do"]}
+    ],
+    "drop": ["file_location"]
+  },
+  "no_paper_id": {
+    "repos": [
+      {"repo_url": "https://osf.io/green", "dir": "tests/mod_code/fixtures/green", "files": ["analysis.R"]}
+    ],
+    "drop": ["paper_id"]
+  },
+  "no_file_url": {
+    "repos": [
+      {"repo_url": "https://osf.io/green", "dir": "tests/mod_code/fixtures/green", "files": ["analysis.R"]}
+    ],
+    "drop": ["file_url"]
+  },
+  "paperlist": {
+    "papers": ["p1", "p2"],
+    "repos": [
+      {"paper_id": "p1", "repo_url": "https://osf.io/green", "dir": "tests/mod_code/fixtures/green",
+       "files": ["analysis.R", "data.csv", "renv.lock"]},
+      {"paper_id": "p2", "repo_url": "https://osf.io/mixed", "dir": "tests/mod_code/fixtures/mixed",
+       "files": ["analysis.R", "data.csv", "script.py"]}
+    ]
+  },
+  "paperlist_pins": {
+    "papers": ["p1", "p2", "p3"],
+    "repos": [
+      {"paper_id": "p1", "repo_url": "https://osf.io/gh", "dir": "tests/mod_code/fixtures/groundhog", "files": ["analysis.R"]},
+      {"paper_id": "p2", "repo_url": "https://osf.io/code", "dir": "upstream/metacheck/tests/testthat/fixtures/code_files",
+       "files": ["analysis.R"]},
+      {"paper_id": "p3", "repo_url": "https://osf.io/session", "dir": "tests/mod_code/fixtures/session",
+       "files": ["analysis.R", "sessionInfo.txt"]}
+    ]
+  },
+  "paperlist_nocode": {
+    "papers": ["p1", "p2"],
+    "repos": [
+      {"paper_id": "p1", "repo_url": "https://osf.io/nocode", "dir": "tests/mod_code/fixtures/nocode", "files": ["data.csv"]}
+    ]
+  },
+  "structure": {
+    "repos": [
+      {"repo_url": "https://osf.io/abcde", "dir": "upstream/metacheck/tests/testthat/fixtures/code_files",
+       "files": ["analysis.R", "data.csv"]}
+    ],
+    "structure": [
+      {"paper_id": "p1", "repo_name": "code_files", "repo_url": "https://osf.io/abcde", "file_name": "helper.R",
+       "file_path": "archive.zip/helper.R", "file_url": null,
+       "file_location": "upstream/metacheck/tests/testthat/fixtures/code_files/subdir/helper.R", "file_size": 55,
+       "archive_url": "https://osf.io/abcde/archive.zip", "archive_member": "helper.R"}
+    ]
+  },
+  "expand": {
+    "repos": [
+      {"repo_url": "https://osf.io/expand", "dir": "tests/mod_code/fixtures/expand",
+       "files": ["analysis.smcl", "knit_classic.html", "modern.spv", "plain.html", "twolevel.out"]}
+    ]
+  },
+  "qmd": {
+    "repos": [
+      {"repo_url": "https://osf.io/qmd", "dir": "tests/mod_code/fixtures/qmd", "files": ["py_engine.qmd", "r_engine.qmd"]}
+    ],
+    "rows": [
+      {"paper_id": "p1", "repo_name": "qmd", "repo_url": "https://osf.io/qmd", "file_name": "tests/mod_code/fixtures/qmd/py_engine.qmd",
+       "file_path": "py_engine.qmd", "file_url": null, "file_location": "tests/mod_code/fixtures/qmd/py_engine.qmd", "file_size": 70}
+    ]
+  },
+  "duplicates": {
+    "repos": [
+      {"repo_url": "https://osf.io/abcde", "dir": "upstream/metacheck/tests/testthat/fixtures/code_files",
+       "files": ["analysis_no_comments.R", "analysis_no_comments.R", "data.csv"]}
+    ]
+  },
+  "windows": {
+    "repos": [
+      {"repo_url": "https://osf.io/win", "dir": "tests/mod_code/fixtures/windows",
+       "files": ["analysis.R", "trials.csv", "sub/extra.csv"]}
+    ]
+  },
+  "na_repo": {
+    "rows": [
+      {"paper_id": "p1", "repo_name": "code_files", "repo_url": null, "file_name": "analysis.R", "file_path": "analysis.R",
+       "file_url": null, "file_location": "upstream/metacheck/tests/testthat/fixtures/code_files/analysis.R", "file_size": 166},
+      {"paper_id": "p1", "repo_name": "code_files", "repo_url": null, "file_name": "data.csv", "file_path": "data.csv",
+       "file_url": null, "file_location": "upstream/metacheck/tests/testthat/fixtures/code_files/data.csv", "file_size": 12}
+    ]
+  },
+  "urls": {
+    "repos": [
+      {"repo_url": "https://github.com/lisa/green", "dir": "tests/mod_code/fixtures/green",
+       "files": ["analysis.R", "data.csv", "renv.lock"], "file_url": "https://raw.githubusercontent.com/lisa/green/main/"}
+    ]
+  }
+}

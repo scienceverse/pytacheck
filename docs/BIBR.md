@@ -47,7 +47,15 @@ metacheck's demo and fixture papers) read exactly as before; any other root
 metacheck's `paper_write(schema_version = "12.0")` writes it, keeping bibr as the
 producer and naming pytacheck as the converter (`schema_version="auto"`, the
 default; `None` saves the paper object as metacheck's default does; see
-[UPSTREAM_ISSUES.md](UPSTREAM_ISSUES.md) D1).
+[UPSTREAM_ISSUES.md](UPSTREAM_ISSUES.md) D1 and D4).
+
+Grobid TEI is converted to 12.x as well (`pc.read("paper.tei.xml")`,
+`pc.grobid_to_bibr(...)`, `convert()`), with Grobid as the producer; pass
+`schema_version=None` for metacheck's older conversion. The source is the PDF next to
+the TEI (`paper.pdf` for `paper.pdf.tei.xml`), so its `sha256` matches a bibr export
+of the same PDF. `convert_grobid(pdf, save_path=None)` reads a temporary TEI file, so
+its paper's `paper_id`, `source.file_name` and `sha256` come from that file, not from
+the PDF.
 
 ## 3. A bibr server
 

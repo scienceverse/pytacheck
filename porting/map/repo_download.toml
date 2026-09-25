@@ -8,13 +8,19 @@
 # download.py's _storage_request(); the per-host rate-limit record
 # (.host_rate_limit_cache) is pytacheck.http's host reset memory; R's
 # format(<object_size>, units = "auto") in repo_cache_clear() is
-# download.py's _format_object_size().
+# download.py's _format_object_size(). Base R / package internals metacheck
+# relies on are emulated where their behaviour shows in the results: R's
+# internal unzip (zip_peek.py's _unzip_all(): "../" components dropped, names
+# used byte for byte, minizip's header checks), GNU tar as utils::untar() runs
+# it (_untar_all()), httr2's HTTP error messages (download.py's _HttpError:
+# resp_status_desc() wording, resp_auth_message() bullets), and R's handling
+# of strings that are not valid UTF-8 (fileinfo/_strings.py; CP437 zip names).
 [files]
-"R/repo-download.R" = ["src/pytacheck/archives/download.py"]
-"R/zip-peek.R" = ["src/pytacheck/archives/zip_peek.py"]
-"R/file_category.R" = ["src/pytacheck/fileinfo/category.py"]
+"R/repo-download.R" = ["src/pytacheck/archives/download.py", "src/pytacheck/fileinfo/_strings.py"]
+"R/zip-peek.R" = ["src/pytacheck/archives/zip_peek.py", "src/pytacheck/fileinfo/_strings.py"]
+"R/file_category.R" = ["src/pytacheck/fileinfo/category.py", "src/pytacheck/fileinfo/_strings.py"]
 "R/file_types.R" = ["src/pytacheck/fileinfo/types.py"]
-"R/file-naming.R" = ["src/pytacheck/fileinfo/naming.py"]
+"R/file-naming.R" = ["src/pytacheck/fileinfo/naming.py", "src/pytacheck/fileinfo/_strings.py"]
 "data/file_types.rda" = ["src/pytacheck/resources/data/file_types.json.gz", "src/pytacheck/fileinfo/types.py", "scripts/convert_data.R"]
 "data-raw/file_types.R" = ["scripts/convert_data.R"]
 
