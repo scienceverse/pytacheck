@@ -42,7 +42,7 @@ from typing import Any
 
 import numpy as np
 
-from pytacheck._r.regex import _casefold, grepl
+from pytacheck._r.regex import casefold, grepl
 
 __all__ = [
     "get_acknow_1",
@@ -328,7 +328,7 @@ class _Article:
             for row, text in enumerate(self._texts):
                 if text is None:
                     continue
-                for word in set(_casefold(text).split()):
+                for word in set(casefold(text).split()):
                     rows = index.get(word)
                     if rows is None:
                         index[word] = [row]

@@ -11,6 +11,7 @@
 from __future__ import annotations
 
 from collections.abc import Iterable, Sequence
+from typing import Any
 
 import pandas as pd
 
@@ -35,7 +36,7 @@ def bind_rows(frames: Iterable[pd.DataFrame | None]) -> pd.DataFrame:
     parts = [f for f in frames if f is not None]
     if not parts:
         return pd.DataFrame()
-    first: dict[object, object] = {}  # each column's first dtype, in first-seen order
+    first: dict[Any, Any] = {}  # each column's first dtype, in first-seen order
     for f in parts:
         for c, dtype in f.dtypes.items():
             first.setdefault(c, dtype)
@@ -60,7 +61,7 @@ def bind_rows(frames: Iterable[pd.DataFrame | None]) -> pd.DataFrame:
     return pd.concat(aligned, ignore_index=True, sort=False).loc[:, columns]
 
 
-def _common_types(frames: list[pd.DataFrame], columns: list[object]) -> None:
+def _common_types(frames: list[pd.DataFrame], columns: list[Any]) -> None:
     """Cast logical parts to vctrs' common type, in place: numeric (``TRUE`` is 1)
     next to integer or double parts, and all-``NA`` ones to the other parts' type."""
     is_lgl, is_num = pd.api.types.is_bool_dtype, pd.api.types.is_numeric_dtype
@@ -70,7 +71,7 @@ def _common_types(frames: list[pd.DataFrame], columns: list[object]) -> None:
             continue
         numeric = all(map(is_num, others))
         if numeric:
-            target = next((d for d in others if pd.api.types.is_float_dtype(d)), "Int64")
+            target: Any = next((d for d in others if pd.api.types.is_float_dtype(d)), "Int64")
         else:
             target = next(d for d in others if not is_num(d))
         for i, f in enumerate(frames):
@@ -80,7 +81,7 @@ def _common_types(frames: list[pd.DataFrame], columns: list[object]) -> None:
                 f[c] = pd.Series(values, index=f.index).astype(target)
 
 
-def _nullable(dtype: object) -> object:
+def _nullable(dtype: Any) -> Any:
     """A dtype like *dtype* that can hold ``NA``."""
     if pd.api.types.is_bool_dtype(dtype):
         return "boolean"
