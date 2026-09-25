@@ -435,11 +435,14 @@ for name in SCENARIOS:
         )
         continue
     if name == "exec_timeout":
+        # sleep.R sleeps a minute; the 10-second timeout leaves the child R
+        # time to start and echo its first line (the report quotes it) even
+        # on a loaded machine, which a 2-second timeout did not
         add(
-            f"reproducibility_check.{name}",
+            f"reproducibility_check.{name}_10s",
             name,
-            "execute = TRUE, timeout = 2, keep_sandbox = TRUE",
-            "execute=True, timeout=2, keep_sandbox=True",
+            "execute = TRUE, timeout = 10, keep_sandbox = TRUE",
+            "execute=True, timeout=10, keep_sandbox=True",
             compare={"ignore": [*EXEC_IGNORE, "run_results.stdout", "run_results.stderr"]},
         )
         continue
@@ -461,7 +464,7 @@ MODULE_CASES = ["ok_plan", "pipeline", "missing_input", "spss_no_syntax", "jasp_
 
 def main() -> None:
     fixtures = HERE / "fixtures"
-    (fixtures / "scripts" / "sleep.R").write_text('Sys.sleep(20)\ncat("done\\n")\n')
+    (fixtures / "scripts" / "sleep.R").write_text('Sys.sleep(60)\ncat("done\\n")\n')
     (fixtures / "scripts" / "chatty.R").write_text('for (i in 1:5010) cat("line", i, "\\n")\n')
     (fixtures / "scenarios.json").write_text(
         json.dumps({"scenarios": SCENARIOS}, indent=1, ensure_ascii=False) + "\n", encoding="utf-8"
