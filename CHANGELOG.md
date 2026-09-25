@@ -21,3 +21,16 @@ bibr export schema 12.0), which pytacheck targets ahead of its merge.
   metacheck's recorded API fixtures in tests.
 - CLI (`pytacheck`), Docker images (with and without bibr), and a scheduled
   upstream-sync workflow that ports new metacheck commits automatically.
+
+### Fixed: metacheck bugs pytacheck no longer reproduces
+
+See `docs/UPSTREAM_ISSUES.md`; every affected parity case is a documented
+`known_divergence`.
+
+- Archives (U31-U54, U69-U76, U152, U155, U156): Dataverse hosts are matched
+  per URL and Figshare DOIs are no longer Dataverse links; files left out by
+  the size caps stay in the `*_file_download()` tables; zero-byte files,
+  string licences, NA URLs and CP437 zip names no longer abort a call; Dryad
+  file listings follow their pages; DataONE, 4TU, OSF and GitHub id and host
+  detection fixed (`osf.io/prereg` is not an OSF id); exact CRCs, whole-member
+  inflation and real decompressed sizes in the repository download code.

@@ -90,3 +90,21 @@ def test_rbox_empty_page_is_unfound(serve: Serve) -> None:
     serve({"https://researchbox.org/78": httpx.Response(404, content=b"")})
     with pytest.warns(UserWarning, match="could not be found"):
         assert _rbox_info("https://researchbox.org/78")["error"].tolist() == ["unfound"]
+
+
+@pytest.mark.parametrize(
+    ("url", "expected"),
+    [
+        ("https://data.4tu.nl/articles/_/12345678/1", "12345678"),
+        ("https://data.4tu.nl/articles/software/My_tool/12345678/1", "12345678"),
+        ("https://data.4tu.nl/articles/dataset/Some_title/16766929", "16766929"),
+        ("https://data.4tu.nl/articles/dataset/2020/16766929/2", "16766929"),
+        ("https://data.4tu.nl/articles/16766929", "16766929"),
+    ],
+)
+def test_4tu_article_url_forms_have_an_id(url: str, expected: str) -> None:
+    # metacheck knows only articles/dataset/<title>/<id>: the short articles/_/<id>
+    # form and the other item types (software, ...) got no id
+    from pytacheck.archives.fourtu import _researchdata4tu_id
+
+    assert _researchdata4tu_id(url) == expected

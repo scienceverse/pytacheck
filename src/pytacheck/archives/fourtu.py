@@ -32,7 +32,9 @@ _ID_PATTERNS = (
     r"10\.4121/([0-9a-f-]{36})",
     r"10\.4121/([0-9]+)",
     r"data\.4tu\.nl/datasets/([0-9a-f-]{36})",
-    r"data\.4tu\.nl/articles/(?:dataset/[^/]+/)?([0-9]+)",
+    # figshare-style article URLs: articles/<id>, articles/_/<id>/<version> and
+    # articles/<type>/<title>/<id>/<version> (metacheck knows only the dataset type)
+    r"data\.4tu\.nl/articles/(?:_/|[a-z_]+/[^/?#\s]+/)?([0-9]+)(?![^/?#\s])",
 )
 
 
