@@ -37,6 +37,7 @@ from parity.cases import (
     ROOT,
     Case,
     RWithoutReference,
+    divergence_kind,
     iter_case_files,
     load_cases,
     run_python,
@@ -140,11 +141,23 @@ def cmd_check(ns: argparse.Namespace) -> int:
     if ns.k:
         cases = [c for c in cases if ns.k in c.key]
     counts: dict[str, int] = {}
+    kinds: dict[str, int] = {}
     report: list[dict[str, Any]] = []
     for case in cases:
         status, problems, secs = check_case(case)
         counts[status] = counts.get(status, 0) + 1
-        report.append({"case": case.key, "status": status, "problems": problems, "seconds": secs})
+        kind = divergence_kind(case.spec) if status == "xfail" else None
+        if kind:
+            kinds[kind] = kinds.get(kind, 0) + 1
+        report.append(
+            {
+                "case": case.key,
+                "status": status,
+                "kind": kind,
+                "problems": problems,
+                "seconds": secs,
+            }
+        )
         if status not in ("pass",) or ns.verbose:
             print(f"[{status.upper():7}] {case.key} ({secs * 1000:.0f} ms)")
             if problems and (ns.verbose or status in ("fail", "error")):
@@ -154,6 +167,8 @@ def cmd_check(ns: argparse.Namespace) -> int:
     (out / "report.json").write_bytes(orjson.dumps(report, option=orjson.OPT_INDENT_2))
     total = sum(counts.values())
     print(f"\n{total} cases: " + ", ".join(f"{v} {k}" for k, v in sorted(counts.items())))
+    if kinds:
+        print("xfail by kind: " + ", ".join(f"{v} {k}" for k, v in sorted(kinds.items())))
     return (
         0
         if counts.get("fail", 0) == counts.get("error", 0) == 0

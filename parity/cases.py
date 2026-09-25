@@ -33,12 +33,16 @@ Argument constructors (a one-key mapping whose key starts with ``$``):
 ``$expr: {r: <code>, py: <code>}``  escape hatch; py code sees ``pc`` (pytacheck), ``pd``, ``np``
 ``$call: {r: fn, py: dotted, args: {...}}``  the result of another call
 
-A case may set ``known_divergence: <reason>`` to record an intentional,
-documented difference from R (the test is then an expected failure);
-``HARNESS_DIVERGENCES`` below does the same for cases in other areas' files.
+When R raises an error, Python must raise too; the messages are not compared
+(pytacheck writes its own), unless a case asks for it with ``compare: {error:
+contains|exact}`` (see ``parity.compare.error_matches``).
 
-When R raises an error, Python must raise one whose message matches R's
-(``compare: {error: contains|exact|any}``, see ``parity.compare.error_matches``).
+A case that differs from R on purpose sets ``known_divergence`` (an expected
+failure, ``xfail``). The reason is a string or a mapping ``{kind, ref,
+reason}``; ``kind`` is one of ``DIVERGENCE_KINDS`` and ``ref`` names the
+docs/UPSTREAM_ISSUES.md entry (``U13``, ``D6``). Cases in generated case files
+are marked from ``parity/divergences/*.yaml`` (``{"<area>/<id>": {kind, ref,
+reason}}``, one file per topic), which ``load_cases`` applies.
 
 ``needs_r: true`` marks a case whose Python side runs R. Such cases, and any
 case whose Python side starts ``Rscript``/``R`` (the harness watches for it),
@@ -113,122 +117,47 @@ def iter_case_files(area: str | None = None) -> Iterator[Path]:
             yield f
 
 
-# Divergences from R that the harness only sees since it compares error
-# messages, repeated names and the element types of lists, in cases whose
-# files belong to other areas: each is an expected failure (as if the case set
-# ``known_divergence``) until the port matches R or the case file records it.
-HARNESS_DIVERGENCES: dict[str, str] = {
-    **dict.fromkeys(
-        [
-            "mod_codebook_review/codebook_check.rv_dupscale",
-            "mod_codebook_review/codebook_check.llm.rv_dupscale",
-            "mod_codebook_review/codebook_check.llm_odd.rv_dupscale",
-            "mod_codebook_review/codebook_check.llm_odd_na.rv_dupscale",
-        ],
-        "D14: the OSD translations$en list repeats bfi_2 in R; pytacheck keeps one "
-        "entry per name (a dict)",
-    ),
-    # a different error than R's
-    "archives_d1_review/dryad_info.review.missing_id_col_error": (
-        "wrong error: R's join fails on the missing id column ('Join columns in `x` must "
-        "be present'), pytacheck raises its own column error"
-    ),
-    "archives_d2_review/.rbox_info.review.no_markup_error": (
-        "error message lacks R's working directory ('(<repo>)')"
-    ),
-    "archives_d2_review/.rbox_info.review.two_redirects_error": (
-        "error names the argument `base_url` where R names `url`"
-    ),
-    "archives_d2_review/.psycharchives_info.review.list_value_error": (
-        "vapply() error names FUN(X[[1]]) where R names FUN(X[[2]])"
-    ),
-    "archives_gz_review/zenodo_info.review.factor_na": (
-        "wrong error: R's bind_rows() cannot combine license <character> and <list>, "
-        "pytacheck fails on missing row names"
-    ),
-    "archives_gz_review/zenodo_info.review.id_col_zero": (
-        "wrong error: R 'attempt to select less than one element in get1index <real>', "
-        "pytacheck 'subscript out of bounds'"
-    ),
-    "bibr12/paper_write.error.version": (
-        "D1: pytacheck's paper_write() also takes schema_version 'auto', and says so"
-    ),
-    "codecheck/code_read.null": (
-        "wrong error for file = NULL: R \"invalid 'file' argument\", pytacheck "
-        "'argument is of length zero'"
-    ),
-    **dict.fromkeys(
-        [
-            "codecheck/code_extract_r.text.bad_options.doc0",
-            "codecheck/code_extract_r.text.bad_options.doc1",
-            "codecheck/code_extract_r.text.bad_options.doc2",
-        ],
-        "knitr's chunk-option parse error: R parses 'alist( bad syntax' (1:12), "
-        "pytacheck 'alist(bad syntax' (1:11) with an extra 'Invalid syntax' line",
-    ),
-    "db_review/crossref_query.replay.df_list_author_two": (
-        "wrong error: R \"'length = 2' in coercion to 'logical(1)'\", pytacheck "
-        "'values must be length 1'"
-    ),
-    **dict.fromkeys(
-        [
-            "grobid12/grobid_to_bibr.error.schema_version_11",
-            "grobid12/grobid_to_bibr.error.schema_version_number",
-            "grobid12/grobid_to_bibr.error.schema_version_vector",
-            "grobid12/.grobid_to_bibr.error.schema_version_11",
-        ],
-        "error message says None where R says NULL ('schema_version must be NULL or \"12.0\"')",
-    ),
-    "io/.grobid_to_bibr.synthetic.table_norows": (
-        "tibble's error says 'Existing data has 1 row' (pytacheck '1 rows') and goes on "
-        "with details pytacheck leaves out"
-    ),
-    "io/.tei_bib.raw_reference_mismatch": (
-        "tibble's error names the deparsed assigned expression; pytacheck names `value`"
-    ),
-    "io_review/papers_load.download_missing": (
-        "error message: R 'Download failed: GET <url>', pytacheck 'Download failed "
-        "(status 404): <url>'"
-    ),
-    **dict.fromkeys(
-        [
-            "mod_coi/coi_check.heading_last_sentence",
-            "mod_coi_review/coi_check.paperlist_one_errors",
-            "mod_funding/funding_check.error",
-            "mod_effect_size_review/stat_effect_size.review.empty_paperlist",
-        ],
-        "module error: R reports dplyr's context ('In argument: ...'), pytacheck the "
-        "underlying error",
-    ),
-    "mod_prereg/prereg_check.aspredicted.unreachable": (
-        "module error: R 'GET <url>', pytacheck 'Failed to perform HTTP request: <url>'"
-    ),
-    "mod_prereg_review/prereg_check.synthetic.label_nonchar": (
-        "R's message holds the character U+FFFF, pytacheck's the text '\\uffff'"
-    ),
-    "mod_ref_accuracy_review/ref_accuracy.error.character_key": (
-        "module error: R's join type error, pytacheck pandas' merge error"
-    ),
-    "repo_download_review/decision.cp437.zip": (
-        "invalid multibyte string: R shows the text from the bad byte ('<82>es'), "
-        "pytacheck the whole name ('donn<82>es')"
-    ),
-    "report/report.error.format": (
-        "pytacheck's report() also writes 'md', and its message says so"
-    ),
-    **dict.fromkeys(
-        [
-            "text_extract_review/extract_p_values.review.df_no_text_col",
-            "text_extract_review/extract_eq.review.df_no_text_col",
-        ],
-        "wrong error without a text column: R's tibble assignment error, pytacheck KeyError 'text'",
-    ),
+#: why a case may differ from R (docs/PORTING.md, "Fidelity")
+DIVERGENCE_KINDS = {
+    "r_bug_fixed": "metacheck (or R) gets it wrong; pytacheck fixes it",
+    "better_logic": "pytacheck does it differently on purpose, and better",
+    "c_quirk": "a quirk of one of R's C libraries on malformed or synthetic input",
+    "type_detail": "an R type or attribute detail that does not reach users",
+    "deliberate": "a documented deliberate difference (a D-entry)",
+    "r_nondeterministic": "R's own result is undefined or changes from run to run",
 }
+
+DIVERGENCES_DIR = ROOT / "parity" / "divergences"
+
+
+def divergence_kind(spec: dict[str, Any]) -> str | None:
+    """The ``kind`` of a case's ``known_divergence`` (``unclassified`` for a bare reason)."""
+    div = spec.get("known_divergence")
+    if not div:
+        return None
+    return str(div.get("kind", "unclassified")) if isinstance(div, dict) else "unclassified"
+
+
+def load_divergences() -> dict[str, dict[str, Any]]:
+    """``parity/divergences/*.yaml`` merged: case key -> ``{kind, ref, reason}``."""
+    out: dict[str, dict[str, Any]] = {}
+    for f in sorted(DIVERGENCES_DIR.glob("*.yaml")):
+        data = yaml.safe_load(f.read_text(encoding="utf-8")) or {}
+        for key, div in data.items():
+            if not isinstance(div, dict) or div.get("kind") not in DIVERGENCE_KINDS:
+                raise ValueError(f"{f.name}: {key}: kind must be one of {sorted(DIVERGENCE_KINDS)}")
+            if not div.get("reason"):
+                raise ValueError(f"{f.name}: {key}: a divergence needs a reason")
+            if key in out:
+                raise ValueError(f"{f.name}: {key} is already marked in another file")
+            out[key] = div
+    return out
 
 
 def load_cases(area: str | None = None) -> list[Case]:
     cases: list[Case] = []
     seen: set[str] = set()
+    divergences = load_divergences()
     for f in iter_case_files(area):
         data = yaml.safe_load(f.read_text(encoding="utf-8")) or {}
         a = data.get("area", f.stem)
@@ -237,8 +166,8 @@ def load_cases(area: str | None = None) -> list[Case]:
             if case.key in seen:
                 raise ValueError(f"duplicate parity case id {case.key}")
             seen.add(case.key)
-            if case.key in HARNESS_DIVERGENCES:
-                spec.setdefault("known_divergence", HARNESS_DIVERGENCES[case.key])
+            if case.key in divergences:
+                spec.setdefault("known_divergence", divergences[case.key])
             cases.append(case)
     return cases
 

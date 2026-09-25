@@ -1,0 +1,10 @@
+# Cases in generated case files that differ from R on purpose. Format (see
+# parity/cases.py): "<area>/<id>": {kind, ref, reason}; kind is one of
+# parity.cases.DIVERGENCE_KINDS, ref the docs/UPSTREAM_ISSUES.md entry.
+"mod_codebook_review/codebook_check.rv_dupscale": &d14
+  kind: deliberate
+  ref: D14
+  reason: the OSD translations$en list repeats bfi_2 in R; pytacheck keeps one entry per name (a dict)
+"mod_codebook_review/codebook_check.llm.rv_dupscale": *d14
+"mod_codebook_review/codebook_check.llm_odd.rv_dupscale": *d14
+"mod_codebook_review/codebook_check.llm_odd_na.rv_dupscale": *d14

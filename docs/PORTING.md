@@ -1,10 +1,13 @@
 # Porting metacheck to pytacheck
 
-pytacheck is a Python port of [metacheck](https://github.com/scienceverse/metacheck)
-(`dev` branch). **Correctness is defined as agreement with metacheck**: every ported
-function and module is checked against golden outputs produced by running the real R
-package (see [PARITY.md](PARITY.md)). This document is the rulebook for humans and AI
-agents porting code, including the automated upstream-sync workflow.
+pytacheck is a Python rewrite of [metacheck](https://github.com/scienceverse/metacheck)
+(`dev` branch) that aims to improve on it: **outputs at least as accurate as
+metacheck's, nothing invented, and a leaner, faster code base.** Accuracy is validated
+against the real R package: every ported function and module is checked against
+golden outputs produced by running metacheck (see [PARITY.md](PARITY.md)), and every
+difference is either an agreement within tolerance or a documented divergence. This
+document is the rulebook for humans and AI agents porting code, including the
+automated upstream-sync workflow.
 
 The pinned upstream lives in the `upstream/metacheck` git submodule; its commit is
 recorded in `parity/UPSTREAM.toml` and `src/pytacheck/_version.py`.
@@ -23,12 +26,32 @@ goes back to `dev` and drops `pull_request` and `base_commit` from the pin
 
 ## 1. Golden rules
 
-1. **Reproduce R's behaviour exactly**, including quirks. Same rows, same row order,
-   same columns in the same order, same strings (summary texts, report prose), same
-   traffic lights. If R has an obvious bug, reproduce it and record it in
-   `docs/UPSTREAM_ISSUES.md` (so it can be reported upstream); only diverge when the R
-   behaviour is clearly unintended *and* harmful, and then mark the parity case with
-   `known_divergence: "<reason>"`.
+1. **Match metacheck on real inputs; improve on it where that is clearly better.**
+   What must agree with metacheck (within numeric tolerance) is what users read and
+   rely on, for real papers, repositories, data and code: module traffic lights,
+   summary tables, report text and numbers, extracted statistics, references and
+   links, and the public API (function names, arguments, column names). Beyond that:
+   * **Fix metacheck's bugs, don't reproduce them.** When metacheck is clearly wrong
+     (a crash on valid input, a mis-parse, a wrong count, a false positive or
+     negative), do the right thing, mark the affected parity cases
+     `known_divergence: {kind: r_bug_fixed, ref: U<n>, reason: ...}` and record the bug
+     in `docs/UPSTREAM_ISSUES.md` so it can be reported upstream.
+   * **Be slightly opinionated.** A different design is welcome when it is clearly
+     better for users (`kind: better_logic`, recorded as a D-entry). When it is not
+     clearly better, keep metacheck's behaviour.
+   * **Don't emulate R internals.** R's error and warning texts, quirks of R's C
+     libraries on malformed or synthetic input (data.table's `fread()`, yajl/jsonlite,
+     TRE regex corner cases, readr/vroom) and R type details that do not reach users
+     (integer vs double, factor vs character, tibble vs data.frame) are not
+     reproduced. Prefer mature libraries and idiomatic Python.
+   * **Accuracy first.** No change may make results less accurate, and nothing may be
+     invented: no references, statistics, links or LLM-derived claims that are not
+     grounded in the paper or its materials. When in doubt, compare with R on real
+     papers and data.
+
+   Divergence kinds and how cases record them are listed in `parity/cases.py`
+   (`DIVERGENCE_KINDS`); generated case files are marked from
+   `parity/divergences/*.yaml`.
 2. **Every ported function/module gets parity cases** (`parity/cases/<area>.yaml`) and
    its goldens are generated from R (`python -m parity generate --area <area>`) — never
    written by hand. Every module needs ≥ 3 cases: the demo paper, the psychsci fixtures
@@ -189,12 +212,14 @@ indexing changes.
 
 Keep R argument names with `.` → `_` (`ignore.case` → `ignore_case`) and a trailing
 `_` for Python keywords (`return` → `return_`). Keep R's defaults. Where R uses
-`match.arg()`, validate the value and raise `ValueError` with R's message.
+`match.arg()`, validate the value and raise `ValueError` naming the allowed values.
 
 ### Errors, warnings and messages
 
-`stop(msg)` → raise an appropriate exception with the same message (`ValueError`,
-`TypeError`, `RuntimeError`, `FileNotFoundError`...). `warning()` → `warnings.warn()`.
+`stop(msg)` → raise an appropriate exception (`ValueError`, `TypeError`,
+`RuntimeError`, `FileNotFoundError`...) with a clear message of its own; R's wording
+is not reproduced and parity only checks that both sides fail. Where R fails on
+valid input because of a bug, return the right result instead (see rule 1). `warning()` → `warnings.warn()`.
 `message()` progress chatter → nothing, or `rich` output gated on
 `pytacheck.config.verbose()`. `logger()` → `pytacheck.log.logger()`.
 
