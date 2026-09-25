@@ -254,3 +254,36 @@ def run_dir(path: str | os.PathLike[str], **kwargs: Any) -> Any:
     from pytacheck.module import module_run
 
     return module_run(fake_repo_check(dir_listing(path)), "code_check", **kwargs)
+
+
+def cc_norm(mo: Any) -> Any:
+    """Machine-independent paths in a code_check output (R's ``cc_norm()``).
+
+    The repository root becomes ``<ROOT>`` and the per-session download
+    directory ``<DL>`` in the table's ``file_url``/``file_location``/``error``
+    and ``version_pin$file_location``.
+    """
+    from dataclasses import replace
+
+    from pytacheck._r.regex import sub
+
+    root = str(ROOT)
+
+    def norm(x: Any) -> Any:
+        if x is None or (isinstance(x, float) and x != x) or x is pd.NA:
+            return None
+        return sub("^.*/metacheck-repo-files/", "<DL>/", str(x).replace(root, "<ROOT>"))
+
+    table = mo.table.copy()
+    for c in ("file_url", "file_location", "error"):
+        if c in table.columns:
+            table[c] = pd.Series([norm(v) for v in table[c].tolist()], dtype="string")
+    extras = dict(mo.extras)
+    vp = dict(extras.get("version_pin") or {})
+    fl = vp.get("file_location")
+    if fl is not None and len(fl) > 0:
+        vp["file_location"] = pd.Series(
+            [norm(v) for v in fl.tolist()], index=fl.index, dtype=object
+        )
+        extras["version_pin"] = vp
+    return replace(mo, table=table, extras=extras)

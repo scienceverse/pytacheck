@@ -841,3 +841,91 @@ def test_repo_check_osf_without_code() -> None:
             mo = module_run(paper, "code_check")
         assert mo.traffic_light == "na"
         assert mo.summary_table["code_n"].tolist() == [0]
+
+
+def test_zip_members_without_file_url_are_downloaded(monkeypatch: pytest.MonkeyPatch) -> None:
+    # a member of a zip repo_check already expanded has archive_url + archive_member
+    # instead of a file_url; it is fetched like any remote code file
+    import pytacheck.archives.download as dl
+
+    src = str(CODE_FILES / "analysis.R")
+    seen: list[list[str]] = []
+
+    def download_repo_files(files: pd.DataFrame, **kwargs: Any) -> pd.DataFrame:
+        seen.append(files["file_name"].tolist())
+        out = files.copy()
+        out["file_location"] = [src] * len(out)
+        return out
+
+    monkeypatch.setattr(dl, "download_repo_files", download_repo_files)
+    table = _remote_listing(
+        [
+            {
+                "paper_id": "p1",
+                "file_name": "analysis.R",
+                "repo_url": "https://osf.io/x",
+                "file_url": None,
+                "file_location": None,
+                "archive_url": "https://osf.io/x/code.zip",
+                "archive_member": "code/analysis.R",
+            },
+            {
+                "paper_id": "p1",
+                "file_name": "orphan.R",
+                "repo_url": "https://osf.io/x",
+                "file_url": None,
+                "file_location": None,
+                "archive_url": "https://osf.io/x/code.zip",
+                "archive_member": None,
+            },
+        ]
+    )
+    mo = module_run(fake_repo_check(table), "code_check")
+    assert seen == [["analysis.R"]]
+    assert row(mo, "analysis.R")["packages"] == "dplyr, ggplot2"
+    assert pd.isna(row(mo, "orphan.R")["packages"])
+
+
+def test_unexpanded_zip_code_members_are_checked(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    # R: .code_expand_zip() -- a remote .zip row repo_check did not expand: its
+    # code members are fetched (range requests) and checked like any other file
+    import pytacheck.archives.download as dl
+    import pytacheck.archives.zip_peek as zp
+
+    member = write(tmp_path / "members" / "analysis.R", ["# code in a zip", "library(dplyr)"])
+    monkeypatch.setattr(
+        zp,
+        "zip_peek",
+        lambda url: pd.DataFrame({"name": ["README.txt", "analysis.R"], "size": [6.0, 38.0]}),
+    )
+    requested: list[list[str]] = []
+
+    def fetch(url: str, names: Any = None, dest: str = ".", verify: bool = True) -> pd.DataFrame:
+        requested.append(list(names))
+        return pd.DataFrame(
+            {"name": ["analysis.R"], "path": [str(member)], "size": [38.0], "ok": [True]}
+        )
+
+    monkeypatch.setattr(zp, "_zip_fetch_members", fetch)
+    monkeypatch.setattr(dl, "_repo_cache_path", lambda repo_url, file_path: str(tmp_path / "c"))
+    table = _remote_listing(
+        [
+            {
+                "paper_id": "p1",
+                "file_name": "code.zip",
+                "file_path": "code.zip",
+                "repo_url": "https://osf.io/x",
+                "file_url": "https://osf.io/x/code.zip",
+                "file_location": None,
+            }
+        ]
+    )
+    mo = module_run(fake_repo_check(table), "code_check", download=False)
+    assert requested == [["analysis.R"]]
+    r = row(mo, "analysis.R")
+    assert r["file_path"] == "code.zip/analysis.R"
+    assert r["file_location"] == str(member)
+    assert r["packages"] == "dplyr"
+    assert st(mo)["code_n"] == 1

@@ -1,0 +1,100 @@
+{
+  "id": "repro_write_scripts.no_plan_target",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "table",
+      "written",
+      "files"
+    ],
+    "v": [
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "file_name",
+          "script_path",
+          "run_dir",
+          "setwd_removed",
+          "setwd_paths",
+          "family_replaced",
+          "family_detail",
+          "library_injected"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "sub/orphan.R"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "<root>/orphan.R"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "<root>"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "x <- 1"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "orphan.R"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -1,0 +1,379 @@
+{
+  "id": "repro_run_scripts.model_object",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 1,
+    "names": [
+      "file_name",
+      "outcome",
+      "error",
+      "error_type",
+      "undefined_var",
+      "stdout",
+      "stderr",
+      "script_lines",
+      "captures"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "model_object.R"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "ran_ok"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          ""
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "> dat <- read.csv(\"data.csv\")\n> m <- lm(x ~ g, data = dat)\n> anova(m)\nAnalysis of Variance Table\n\nResponse: x\n          Df Sum Sq Mean Sq F value  Pr(>F)  \ng          1     21    21.0      15 0.01172 *\nResiduals  5      7     1.4                  \n---\nSignif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1\n> s <- summary(m)\n> s$coefficients[2, , drop = FALSE]\n   Estimate Std. Error  t value   Pr(>|t|)\ngb      3.5  0.9036961 3.872983 0.01172481"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Warning message:\nIn sub(paste0(\"^\", fname, \"\\\\.\"), \"\", mn) :\n  TRE pattern compilation error 'Missing ']''"
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "dat <- read.csv(\"data.csv\")",
+              "m <- lm(x ~ g, data = dat)",
+              "anova(m)",
+              "s <- summary(m)",
+              "s$coefficients[2, , drop = FALSE]"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "list",
+                "names": [
+                  "analysis",
+                  "method",
+                  "rows",
+                  "line",
+                  "call_text"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "anova"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "anova"
+                    ]
+                  },
+                  {
+                    "t": "list",
+                    "names": null,
+                    "v": [
+                      {
+                        "t": "list",
+                        "names": [
+                          "label",
+                          "stats"
+                        ],
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "g"
+                            ]
+                          },
+                          {
+                            "t": "list",
+                            "names": [
+                              "Df",
+                              "Sum Sq",
+                              "Mean Sq",
+                              "F value",
+                              "Pr(>F)"
+                            ],
+                            "v": [
+                              {
+                                "t": "dbl",
+                                "v": [
+                                  1
+                                ]
+                              },
+                              {
+                                "t": "dbl",
+                                "v": [
+                                  21
+                                ]
+                              },
+                              {
+                                "t": "dbl",
+                                "v": [
+                                  21
+                                ]
+                              },
+                              {
+                                "t": "dbl",
+                                "v": [
+                                  15
+                                ]
+                              },
+                              {
+                                "t": "dbl",
+                                "v": [
+                                  0.0117248110039546
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "t": "list",
+                        "names": [
+                          "label",
+                          "stats"
+                        ],
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "Residuals"
+                            ]
+                          },
+                          {
+                            "t": "list",
+                            "names": [
+                              "Df",
+                              "Sum Sq",
+                              "Mean Sq"
+                            ],
+                            "v": [
+                              {
+                                "t": "dbl",
+                                "v": [
+                                  5
+                                ]
+                              },
+                              {
+                                "t": "dbl",
+                                "v": [
+                                  7
+                                ]
+                              },
+                              {
+                                "t": "dbl",
+                                "v": [
+                                  1.4
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      3
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "anova(m)"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "analysis",
+                  "method",
+                  "rows",
+                  "line",
+                  "call_text"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "lm"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "lm"
+                    ]
+                  },
+                  {
+                    "t": "list",
+                    "names": null,
+                    "v": [
+                      {
+                        "t": "list",
+                        "names": [
+                          "label",
+                          "stats"
+                        ],
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "(Intercept)"
+                            ]
+                          },
+                          {
+                            "t": "list",
+                            "names": [
+                              "Estimate",
+                              "Std. Error",
+                              "t value",
+                              "Pr(>|t|)"
+                            ],
+                            "v": [
+                              {
+                                "t": "dbl",
+                                "v": [
+                                  2
+                                ]
+                              },
+                              {
+                                "t": "dbl",
+                                "v": [
+                                  0.683130051063973
+                                ]
+                              },
+                              {
+                                "t": "dbl",
+                                "v": [
+                                  2.9277002188456
+                                ]
+                              },
+                              {
+                                "t": "dbl",
+                                "v": [
+                                  0.0327199355509337
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "t": "list",
+                        "names": [
+                          "label",
+                          "stats"
+                        ],
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "gb"
+                            ]
+                          },
+                          {
+                            "t": "list",
+                            "names": [
+                              "Estimate",
+                              "Std. Error",
+                              "t value",
+                              "Pr(>|t|)"
+                            ],
+                            "v": [
+                              {
+                                "t": "dbl",
+                                "v": [
+                                  3.5
+                                ]
+                              },
+                              {
+                                "t": "dbl",
+                                "v": [
+                                  0.903696114115064
+                                ]
+                              },
+                              {
+                                "t": "dbl",
+                                "v": [
+                                  3.87298334620742
+                                ]
+                              },
+                              {
+                                "t": "dbl",
+                                "v": [
+                                  0.0117248110039546
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      4
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "s <- summary(m)"
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -197,7 +197,24 @@ def _namespace() -> types.SimpleNamespace:
         write_scripts=write_scripts,
         run_scripts=run_scripts,
         tmp=tmp,
+        with_options=with_options,
+        r_sorted=r_sorted,
     )
+
+
+def with_options(values: dict[str, Any], fn: Callable[[], Any]) -> Any:
+    """``withr::with_options(values, fn())``."""
+    from pytacheck.utils import local_options
+
+    with local_options(values):
+        return fn()
+
+
+def r_sorted(x: Sequence[Any]) -> list[Any]:
+    """R ``sort()`` of a character vector."""
+    from pytacheck._r.base import r_sort_key
+
+    return sorted(x, key=r_sort_key)
 
 
 def tmp(fn: Callable[[str], Any]) -> Any:

@@ -40,9 +40,9 @@ from pytacheck._r.base import as_character, trimws
 from pytacheck._r.frames import bind_rows
 from pytacheck._r.regex import grepl, gsub
 from pytacheck.repro.core import (
-    _classify_error,
     _chr,
     _chr_list,
+    _classify_error,
     _col,
     _frame,
     _message,
@@ -272,8 +272,7 @@ _INSTALL_SCRIPT = [
     '      stop("installed but package is not loadable")',
     '    list(ok = TRUE, msg = "")',
     "  }, error = function(e) list(ok = FALSE, msg = conditionMessage(e)))",
-    "  out[[i]] <- data.frame(package = pkg, source = src, installed = res$ok, "
-    "message = res$msg)",
+    "  out[[i]] <- data.frame(package = pkg, source = src, installed = res$ok, message = res$msg)",
     '  saveRDS(do.call(rbind, out), "/sandbox/.install_results.rds")',
     "}",
 ]
@@ -536,13 +535,17 @@ def repro_run_scripts_docker(
                 rows.append(pre)
                 continue
             exec_lines = _script_lines(paths[i])
-            _message("[repro/docker]   -> running '", fn, "' (timeout ", as_character(timeout), "s) ...")
+            _message(
+                "[repro/docker]   -> running '", fn, "' (timeout ", as_character(timeout), "s) ..."
+            )
             container_script = _repro_docker_container_path(paths[i] or "", root)
             wrapper_path = os.path.join(root, f".runner_{_make_names(fn)}.R")
             Path(wrapper_path).write_bytes(
                 (
                     "\n".join(
-                        _wrapper_lines(preamble, container_script, lib_norm is not None, cap_file_container)
+                        _wrapper_lines(
+                            preamble, container_script, lib_norm is not None, cap_file_container
+                        )
                     )
                     + "\n"
                 ).encode("utf-8")
@@ -552,7 +555,7 @@ def repro_run_scripts_docker(
             args = [
                 "run", "--rm", "--name", container_name,
                 "--network", "none", "--read-only",
-                "--tmpfs", "/tmp",
+                "--tmpfs", "/tmp",  # noqa: S108 - inside the container
                 "--user", _REPRO_DOCKER_UID,
                 "--cap-drop", "ALL",
                 "--security-opt", "no-new-privileges",
@@ -577,15 +580,15 @@ def repro_run_scripts_docker(
                 ) or (isinstance(res, dict) and bool(res.get("timeout")))
                 if is_timeout:
                     _repro_docker_stop(container_name)
-                captures = (
-                    _read_captures(cap_file_host) if os.path.exists(cap_file_host) else None
-                )
+                captures = _read_captures(cap_file_host) if os.path.exists(cap_file_host) else None
                 with contextlib.suppress(OSError):
                     os.unlink(cap_file_host)
                 so, se = _read_cap(out_file), _read_cap(err_file)
             with contextlib.suppress(OSError):
                 os.unlink(wrapper_path)
-            _message("[repro/docker]   <- '", fn, "' done in ", as_character(round(elapsed, 1)), "s")
+            _message(
+                "[repro/docker]   <- '", fn, "' done in ", as_character(round(elapsed, 1)), "s"
+            )
 
             if isinstance(res, Exception):
                 msg = str(res)
@@ -621,7 +624,7 @@ def repro_run_scripts_docker(
                 )
                 continue
             if res.get("status") != 0:
-                undef_var, dep_unavailable = _classify_error(se, se, failed_deps, [se])
+                undef_var, dep_unavailable = _classify_error(failed_deps, [se])
                 etype = (
                     "dependency_unavailable"
                     if dep_unavailable
@@ -630,10 +633,13 @@ def repro_run_scripts_docker(
                     else "runtime"
                 )
                 outc = "dependency_unavailable" if dep_unavailable else "errored"
-                rows.append(_run_row(fn, outc, se, etype, undef_var, so, se, elapsed, exec_lines, captures))
+                rows.append(
+                    _run_row(fn, outc, se, etype, undef_var, so, se, elapsed, exec_lines, captures)
+                )
                 continue
-            rows.append(_run_row(fn, "ran_ok", "", None, None, so, se, elapsed, exec_lines, captures))
+            rows.append(
+                _run_row(fn, "ran_ok", "", None, None, so, se, elapsed, exec_lines, captures)
+            )
     finally:
         bar.terminate()
     return _run_frame(rows)
-

@@ -28,12 +28,13 @@ from __future__ import annotations
 import functools
 import hashlib
 import json
+import math
 import os
 import shutil
 import subprocess
 import tempfile
 import time
-from collections.abc import Callable, Iterable, Mapping, Sequence
+from collections.abc import Iterable, Mapping, Sequence
 from pathlib import Path
 from typing import Any
 
@@ -81,6 +82,16 @@ def _is_na(x: Any) -> bool:
     if x is None or x is pd.NA:
         return True
     return isinstance(x, float) and x != x
+
+
+def _is_true(x: Any) -> bool:
+    """R ``isTRUE()`` of one logical value."""
+    return not _is_na(x) and x is not None and bool(x) is True
+
+
+def _is_false(x: Any) -> bool:
+    """R ``isFALSE()`` of one logical value."""
+    return not _is_na(x) and x is not None and bool(x) is False
 
 
 def _chr(x: Any) -> str | None:
@@ -235,9 +246,10 @@ def _run_r(
     *,
     timeout: float | None = None,
     env: Mapping[str, str] | None = None,
+    rscript: str | None = None,
 ) -> subprocess.CompletedProcess[str] | None:
     """Run R *code* with ``Rscript`` (``None`` when there is no ``Rscript``)."""
-    exe = _rscript()
+    exe = rscript or _rscript()
     if exe is None:
         return None
     with tempfile.TemporaryDirectory(prefix="pytacheck_repro_") as tmp:
@@ -449,7 +461,7 @@ def _installed_base_packages(rscript: str) -> tuple[str, ...] | None:
         'if (is.null(ip)) cat("<<fallback>>\\n") else cat(rownames(ip), sep = "\\n")\n'
     )
     try:
-        res = _run_r(code, timeout=120)
+        res = _run_r(code, timeout=120, rscript=rscript)
     except (OSError, subprocess.SubprocessError):
         return None
     if res is None or res.returncode != 0:
@@ -598,17 +610,13 @@ def _repro_format_call_refs(code_text: Any) -> pd.DataFrame:
         if not grepl(r"^\s*,", after_fmt, perl=True):
             continue
         line = _line_of(joined, start)
-        extra_args = [
-            trimws(a) for a in strsplit(sub(r"^\s*,\s*", "", after_fmt, perl=True), ",")
-        ]
+        extra_args = [trimws(a) for a in strsplit(sub(r"^\s*,\s*", "", after_fmt, perl=True), ",")]
         resolved: str | None = None
         if grepl("%[sd]", fmt) and len(extra_args) > 0:
             if vars_cache is None:
                 vars_cache = _repro_simple_string_vars(nc)
             vals = [vars_cache.get(a) if a is not None else None for a in extra_args]
-            if all(v is not None for v in vals) and len(vals) == len(
-                regextract_all("%[sd]", fmt)
-            ):
+            if all(v is not None for v in vals) and len(vals) == len(regextract_all("%[sd]", fmt)):
                 r = fmt
                 for v in vals:
                     r = sub("%[sd]", v, r, perl=True)
@@ -617,9 +625,7 @@ def _repro_format_call_refs(code_text: Any) -> pd.DataFrame:
     return result()
 
 
-_SIMPLE_VAR_PAT = (
-    r"""^([.a-zA-Z][.a-zA-Z0-9_]*)\s*(?:<<-|<-|=)\s*(['"])((?:[^'"\\]|\\.)*)\2\s*$"""
-)
+_SIMPLE_VAR_PAT = r"""^([.a-zA-Z][.a-zA-Z0-9_]*)\s*(?:<<-|<-|=)\s*(['"])((?:[^'"\\]|\\.)*)\2\s*$"""
 
 
 def _repro_simple_string_vars(code_text: Any) -> dict[str, str]:
@@ -638,9 +644,7 @@ def _repro_simple_string_vars(code_text: Any) -> dict[str, str]:
     return out
 
 
-_WRITE_FN_PAT = (
-    r"\b(write[\._][A-Za-z\._0-9]*|saveRDS|save\.image|save|ggsave|export|fwrite)\s*\("
-)
+_WRITE_FN_PAT = r"\b(write[\._][A-Za-z\._0-9]*|saveRDS|save\.image|save|ggsave|export|fwrite)\s*\("
 _ASSIGN_ANY_PAT = r"^([.a-zA-Z][.a-zA-Z0-9_]*)\s*(?:<<-|<-|=)\s*(.+)$"
 
 
@@ -712,9 +716,7 @@ def _repro_redirect_writes(code_text: Any) -> pd.DataFrame:
 
         hit: tuple[int, int, str] | None = None
         for arg in _split_args(args_text):
-            val = sub(
-                r"^[.a-zA-Z][.a-zA-Z0-9_]*\s*=\s*(?!=)", "", trimws(arg["text"]), perl=True
-            )
+            val = sub(r"^[.a-zA-Z][.a-zA-Z0-9_]*\s*=\s*(?!=)", "", trimws(arg["text"]), perl=True)
             val = trimws(val)
             if regextract(r"""^(['"])((?:[^'"\\]|\\.)*)\1$""", val, perl=True) is not None:
                 target = val[1:-1]
@@ -924,7 +926,9 @@ def repro_rewrite_paths(
         rows.append(resolve(r, ref_base[i], ref_ext[i], r, cand, False))
 
     for call_text, fmt, resolved in zip(
-        _col(call_refs, "call_text"), _col(call_refs, "fmt"), _col(call_refs, "resolved"),
+        _col(call_refs, "call_text"),
+        _col(call_refs, "fmt"),
+        _col(call_refs, "resolved"),
         strict=True,
     ):
         key = resolved if resolved is not None else fmt
@@ -1160,7 +1164,9 @@ def repro_file_io(code_text_list: Any) -> pd.DataFrame:
             is_read.append(any(not x for x in w))
         reads = [b for b, r in zip(ref_base, is_read, strict=True) if r]
         writes = [b for b, w in zip(ref_base, is_write, strict=True) if w]
-        srcs_raw = list(sub(_SRC_PAT, r"\1", regextract_all(_SRC_PAT, joined, perl=True), perl=True))
+        srcs_raw = list(
+            sub(_SRC_PAT, r"\1", regextract_all(_SRC_PAT, joined, perl=True), perl=True)
+        )
         srcs = [_norm_base(s) for s in srcs_raw]
         reads = _setdiff(reads, srcs)
         out_reads.append(_unique(reads))
@@ -1279,8 +1285,11 @@ def _as_numeric(x: Any) -> float | None:
         return float(x)
     if isinstance(x, int | float):
         return float(x)
+    s = str(x).strip()
     try:
-        return float(str(x).strip())
+        if len(s) > 2 and s.lstrip("+-")[:2].lower() == "0x":
+            return float(int(s, 16))
+        return float(s)
     except ValueError:
         return None
 
@@ -1301,6 +1310,7 @@ def repro_missing_inputs(
     that are present and downloaded are dropped. Columns ``basename``,
     ``status``, ``detail`` and ``similar_to``.
     """
+    del plan  # unused, as in metacheck
     ref_list = _unique(_norm_base(r) for r in _chr_list(refs))
     rows: list[tuple[str | None, str, str, str | None]] = []
 
@@ -1327,7 +1337,7 @@ def repro_missing_inputs(
         if skipped is not None and "file_name" in skipped.columns
         else []
     )
-    all_candidates = [c for c in _unique(struct_base)]
+    all_candidates = _unique(struct_base)
 
     def find_similar(b: str | None) -> str | None:
         if len(all_candidates) == 0 or b is None:
@@ -1354,11 +1364,7 @@ def repro_missing_inputs(
             if skipped is None or "file_size" not in skipped.columns:
                 raise ValueError("argument is of length zero")
             sz = _as_numeric(skipped["file_size"].iloc[i])
-            mb = (
-                f" ({sz / (1024 * 1024):.0f} MB)"
-                if sz is not None and sz not in (float("inf"), float("-inf"))
-                else ""
-            )
+            mb = f" ({sz / (1024 * 1024):.0f} MB)" if sz is not None and math.isfinite(sz) else ""
             rows.append(
                 (
                     b,
@@ -1451,7 +1457,7 @@ def _repro_content_sniff(code_text: Any) -> str | None:
             i += 1
         if end is not None:
             tail_len = n - end
-            if tail_len <= max(5, -(-n // 100)):
+            if tail_len <= max(5, math.ceil(n * 0.01)):
                 return "JSON"
     return None
 
@@ -1623,7 +1629,11 @@ def repro_write_scripts(
     fnames = [str(k) for k in code_text_list]
     has_plan = plan is not None and "file_name" in plan.columns
     plan_base = [_tolower(_basename(f)) for f in _chr_list(plan["file_name"])] if has_plan else []
-    plan_target = _chr_list(plan["target_path"]) if has_plan else []  # type: ignore[index]
+    plan_target: list[str | None] = (
+        _chr_list(plan["target_path"])  # type: ignore[index]
+        if has_plan and "target_path" in plan.columns  # type: ignore[union-attr]
+        else [None] * len(plan_base)
+    )
 
     def script_target(fn: str) -> str:
         if plan_base:
@@ -1645,17 +1655,16 @@ def repro_write_scripts(
             refs = _col(rw, "ref")
             is_call = _col(rw, "is_call") if "is_call" in rw.columns else [False] * len(rw)
             for k in range(len(rw)):
+                # which(matched & !ambiguous & !is.na(target) & nzchar(target))
                 good = (
-                    bool(matched[k])
-                    and not bool(ambiguous[k])
+                    _is_true(matched[k])
+                    and _is_false(ambiguous[k])
                     and target[k] is not None
                     and target[k] != ""
                 )
-                if matched[k] is None or ambiguous[k] is None:
-                    good = False if target[k] is None else good
                 if not good:
                     continue
-                repl = f'"{target[k]}"' if is_call[k] is True else target[k]
+                repl = f'"{target[k]}"' if _is_true(is_call[k]) else target[k]
                 txt = list(gsub(refs[k], repl, txt, fixed=True))
 
         wr = _repro_redirect_writes(txt)
@@ -1674,7 +1683,9 @@ def repro_write_scripts(
         if setwd_n > 0:
             hit_lines = [s for s, h in zip(txt, is_setwd, strict=True) if h]
             m = [x for x in regextract(_SETWD_ARG, hit_lines, perl=True) if x is not None]
-            setwd_paths = list(sub(".*" + _SETWD_ARG + ".*", r"\1", [x for x in m if x != ""], perl=True))
+            setwd_paths = list(
+                sub(".*" + _SETWD_ARG + ".*", r"\1", [x for x in m if x != ""], perl=True)
+            )
             commented = sub(
                 _SETWD_LINE, r"\1# [reproducibility_check removed setwd] \2", hit_lines, perl=True
             )
@@ -1884,9 +1895,7 @@ def repro_install_deps(
     os.makedirs(lib, exist_ok=True)
     pkgs = _chr_list(install_deps["package"])
     srcs = _chr_list(install_deps["source"])
-    refs = (
-        _chr_list(install_deps["ref"]) if "ref" in install_deps.columns else [None] * len(pkgs)
-    )
+    refs = _chr_list(install_deps["ref"]) if "ref" in install_deps.columns else [None] * len(pkgs)
     rows: list[dict[str, Any]] = []
     for pkg, src, ref in zip(pkgs, srcs, refs, strict=True):
         cran_main = src == "cran" and cran_to_main_lib is True
@@ -1896,7 +1905,13 @@ def repro_install_deps(
         if res.get("skipped"):
             _message("[repro]     '", pkg, "' already installed (main library); skipping.")
             rows.append(
-                {"package": pkg, "source": src, "installed": True, "message": "", "via_archive": False}
+                {
+                    "package": pkg,
+                    "source": src,
+                    "installed": True,
+                    "message": "",
+                    "via_archive": False,
+                }
             )
             continue
         _message(
@@ -1924,12 +1939,18 @@ def repro_install_deps(
             res2 = _repro_cran_archive_install(pkg, str(install_lib), lib)
             if res2["ok"]:
                 _message(
-                    "[repro]     '", pkg, "' installed from the CRAN Archive (", res2["version"], ")."
+                    "[repro]     '",
+                    pkg,
+                    "' installed from the CRAN Archive (",
+                    res2["version"],
+                    ").",
                 )
                 ok, msg, via_archive = True, "", True
             else:
                 _message(
-                    "[repro]     '", pkg, "' could not be installed from the CRAN Archive either: ",
+                    "[repro]     '",
+                    pkg,
+                    "' could not be installed from the CRAN Archive either: ",
                     res2["msg"],
                 )
                 msg = f"{msg} (CRAN Archive retry also failed: {res2['msg']})"
@@ -2042,9 +2063,7 @@ def _repro_cran_archive_install(pkg: str | None, install_lib: str, lib_dir: str)
     latest_file = files[order[0]]
     version = sub(f"^{pkg}_(.*)\\.tar\\.gz$", r"\1", latest_file)
     tarball_url = archive_url + latest_file
-    res = _install_r(
-        "archive", lib_dir, pkg=pkg, install_lib=install_lib, tarball_url=tarball_url
-    )
+    res = _install_r("archive", lib_dir, pkg=pkg, install_lib=install_lib, tarball_url=tarball_url)
     if res.get("ok"):
         return {"ok": True, "msg": "", "version": version}
     return fail(str(res.get("msg") or ""))
@@ -2196,9 +2215,7 @@ def _first_capture(pattern: str, src: str) -> str:
     return out
 
 
-def _classify_error(
-    msg: str, se: str, failed_deps: Sequence[str], sources: Sequence[str]
-) -> tuple[str | None, bool]:
+def _classify_error(failed_deps: Sequence[str], sources: Sequence[str]) -> tuple[str | None, bool]:
     """``(undefined_var, dependency_unavailable)`` of a failed run.
 
     *sources* are the texts searched, in order, for each pattern (the error
@@ -2358,14 +2375,22 @@ def repro_run_scripts(
                 captures = _read_captures(cap_file) if os.path.exists(cap_file) else None
                 so, se = _read_cap(out_file), _read_cap(err_file)
             _message(
-                "[repro]   <- '", fn, "' done in ", as_character(round(elapsed, 1)), "s (",
+                "[repro]   <- '",
+                fn,
+                "' done in ",
+                as_character(round(elapsed, 1)),
+                "s (",
                 "condition/error" if error is not None else "ok",
-                "; stdout ", str(len(so)), " chars, stderr ", str(len(se)), " chars)",
+                "; stdout ",
+                str(len(so)),
+                " chars, stderr ",
+                str(len(se)),
+                " chars)",
             )
             if error is not None:
                 msg = error.message
                 is_timeout = error.timeout or bool(grepl("timed? ?out", msg, ignore_case=True))
-                undef_var, dep_unavailable = _classify_error(msg, se, failed_deps, [msg, se])
+                undef_var, dep_unavailable = _classify_error(failed_deps, [msg, se])
                 etype = (
                     "timeout"
                     if is_timeout
@@ -2392,7 +2417,3 @@ def repro_run_scripts(
     finally:
         bar.terminate()
     return _run_frame(rows)
-
-
-def _callable_name(f: Callable[..., Any]) -> str:  # pragma: no cover - debugging aid
-    return getattr(f, "__name__", repr(f))

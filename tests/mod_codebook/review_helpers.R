@@ -175,3 +175,51 @@ rv_text_paper <- function() {
   p$paper_id <- "tp"
   p
 }
+
+# ── LLM tiers under fixed, adversarial answers (fixtures/llm_review.json) ─────
+# Each phase answers with the same data frame whatever it is asked (JSON null
+# is NA; a column of JSON booleans is logical). "Matching codebook columns"
+# is split into its merge ("Column: ...") and match requests.
+rv_llm_spec <- function(name) {
+  jsonlite::fromJSON("tests/mod_codebook/fixtures/llm_review.json",
+                     simplifyVector = FALSE)[[name]]
+}
+
+.rv_col <- function(x) {
+  vals <- Filter(Negate(is.null), x)
+  if (length(vals) && all(vapply(vals, is.logical, logical(1))))
+    return(vapply(x, function(e) if (is.null(e)) NA else e, logical(1)))
+  vapply(x, function(e) if (is.null(e)) NA_character_ else as.character(e), character(1))
+}
+
+rv_fixed_llm <- function(spec) {
+  function(text, system_prompt = NULL, type = NULL, text_col = "text", model = NULL,
+           params = list(), phase = NULL, ...) {
+    key <- phase
+    if (identical(phase, "Matching codebook columns")) {
+      txt <- as.character(text[[text_col]][1])
+      key <- paste0(phase, if (startsWith(txt, "Column: ")) "/merge" else "/match")
+    }
+    cols <- spec[[key]]
+    res <- if (is.null(cols)) data.frame() else {
+      df <- as.data.frame(lapply(cols, .rv_col), stringsAsFactors = FALSE,
+                          check.names = FALSE)
+      names(df) <- names(cols)
+      df
+    }
+    attr(res, "llm") <- list(model = "mock/rv")
+    res
+  }
+}
+
+# module_run(<data_check output>, "codebook_check") with llm() answering from `spec`.
+rv_llm_run <- function(scenario, spec, ..., prev = NULL) {
+  prev <- prev %||% cbc_prev(scenario)
+  testthat::with_mocked_bindings(
+    withr::with_options(list(metacheck.llm.use = TRUE),
+                        module_run(prev, "codebook_check", ...)),
+    llm = rv_fixed_llm(rv_llm_spec(spec)), .package = "metacheck")
+}
+
+# data_check's output for `scenario` with no paper (paper = NULL: local files only).
+rv_prev_null <- function(scenario) .cbc_output(NULL, cbc_pieces(scenario), "p1")

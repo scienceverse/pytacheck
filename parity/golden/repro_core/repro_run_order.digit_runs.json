@@ -1,0 +1,90 @@
+{
+  "id": "repro_run_order.digit_runs",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": null,
+    "v": [
+      {
+        "t": "df",
+        "nrow": 4,
+        "names": [
+          "file_name",
+          "order",
+          "depends_on",
+          "order_basis"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Exp2_1_import.R",
+              "Exp1_02_preprocessing.R",
+              "Exp1_2_models.R",
+              "readme.R"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              3,
+              1,
+              2,
+              4
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "",
+              "",
+              "",
+              ""
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "numeric",
+              "numeric",
+              "numeric",
+              "none"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": []
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "from",
+          "to"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

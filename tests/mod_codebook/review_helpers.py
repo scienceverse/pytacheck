@@ -253,3 +253,74 @@ def rv_text_paper() -> Any:
     )
     p.paper_id = "tp"
     return p
+
+
+# -- LLM tiers under fixed, adversarial answers (fixtures/llm_review.json) ----
+
+
+def rv_llm_spec(name: str) -> dict[str, Any]:
+    import json
+    from pathlib import Path
+
+    path = Path(__file__).resolve().parent / "fixtures" / "llm_review.json"
+    return json.loads(path.read_text(encoding="utf-8"))[name]
+
+
+def _rv_col(x: list[Any]) -> pd.Series:
+    vals = [v for v in x if v is not None]
+    if vals and all(isinstance(v, bool) for v in vals):
+        return pd.Series(x, dtype="boolean")
+    return pd.Series([None if v is None else str(v) for v in x], dtype="string")
+
+
+def rv_fixed_llm(spec: dict[str, Any]) -> Any:
+    def llm(
+        text: Any,
+        system_prompt: Any = None,
+        type: Any = None,
+        text_col: str = "text",
+        model: Any = None,
+        params: Any = None,
+        phase: str | None = None,
+        **_: Any,
+    ) -> Any:
+        key = phase
+        if phase == "Matching codebook columns":
+            txt = str(text[text_col].iloc[0])
+            key = f"{phase}/{'merge' if txt.startswith('Column: ') else 'match'}"
+        cols = spec.get(key or "")
+        res = (
+            pd.DataFrame()
+            if cols is None
+            else pd.DataFrame({k: _rv_col(v) for k, v in cols.items()})
+        )
+        res.attrs["llm"] = {"model": "mock/rv"}
+        return res
+
+    return llm
+
+
+def rv_llm_run(scenario: str | None, spec: str, prev: Any = None, **kwargs: Any) -> Any:
+    """``module_run(<data_check output>, "codebook_check")`` with the LLM answering from *spec*."""
+    from pytacheck.module import module_run
+    from pytacheck.modules import _codebook
+    from pytacheck.utils import local_options
+    from tests.mod_codebook.helpers import cbc_prev
+
+    if prev is None:
+        assert scenario is not None
+        prev = cbc_prev(scenario)
+    orig = _codebook._llm
+    _codebook._llm = rv_fixed_llm(rv_llm_spec(spec))
+    try:
+        with local_options({"metacheck.llm.use": True}):
+            return module_run(prev, "codebook_check", **kwargs)
+    finally:
+        _codebook._llm = orig
+
+
+def rv_prev_null(scenario: str) -> Any:
+    """data_check's output for *scenario* with no paper (``paper = NULL``: local files only)."""
+    from tests.mod_codebook.helpers import _output, cbc_pieces
+
+    return _output(None, cbc_pieces(scenario), ["p1"])

@@ -1,0 +1,44 @@
+{
+  "id": "repro_missing_inputs.absent",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 1,
+    "names": [
+      "basename",
+      "status",
+      "detail",
+      "similar_to"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "missing.csv"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "absent"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "referenced file is not present in the repository"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

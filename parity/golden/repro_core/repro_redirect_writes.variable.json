@@ -1,0 +1,48 @@
+{
+  "id": "repro_redirect_writes.variable",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 2,
+    "names": [
+      "call_text",
+      "replacement",
+      "redirected_name",
+      "line"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "write.csv(cleaned_file_name, x = df)",
+          "saveRDS(model, file = out_rds)"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "write.csv(\"{{REPRO_OUTPUT}}cleaned_file_name.csv\", x = df)",
+          "saveRDS(model,\"{{REPRO_OUTPUT}}out_rds.rds\")"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "cleaned_file_name.csv",
+          "out_rds.rds"
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          2,
+          3
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

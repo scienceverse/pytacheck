@@ -1,0 +1,116 @@
+{
+  "id": "repro_write_scripts.inject_libs",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "table",
+      "written",
+      "files"
+    ],
+    "v": [
+      {
+        "t": "df",
+        "nrow": 2,
+        "names": [
+          "file_name",
+          "script_path",
+          "run_dir",
+          "setwd_removed",
+          "setwd_paths",
+          "family_replaced",
+          "family_detail",
+          "library_injected"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "uses_testthat.R",
+              "plain.R"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "<root>/uses_testthat.R",
+              "<root>/plain.R"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "<root>",
+              "<root>"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              0
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "",
+              ""
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              0
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "",
+              ""
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "testthat",
+              null
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "library(testthat)  # [reproducibility_check injected]",
+              "test_that(\"x\", { expect_true(TRUE) })"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "x <- 1"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "plain.R",
+          "uses_testthat.R"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

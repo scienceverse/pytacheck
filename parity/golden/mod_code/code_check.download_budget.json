@@ -128,18 +128,18 @@
           {
             "t": "chr",
             "v": [
-              "file:///home/user/pytacheck/tests/mod_code/fixtures/mixed/analysis.R",
-              "file:///home/user/pytacheck/tests/mod_code/fixtures/mixed/analysis.do",
-              "file:///home/user/pytacheck/tests/mod_code/fixtures/mixed/report.Rmd",
-              "file:///home/user/pytacheck/tests/mod_code/fixtures/mixed/script.py",
-              "file:///home/user/pytacheck/tests/mod_code/fixtures/mixed/results.jasp"
+              "file://<ROOT>/tests/mod_code/fixtures/mixed/analysis.R",
+              "file://<ROOT>/tests/mod_code/fixtures/mixed/analysis.do",
+              "file://<ROOT>/tests/mod_code/fixtures/mixed/report.Rmd",
+              "file://<ROOT>/tests/mod_code/fixtures/mixed/script.py",
+              "file://<ROOT>/tests/mod_code/fixtures/mixed/results.jasp"
             ]
           },
           {
             "t": "chr",
             "v": [
               null,
-              "/tmp/RtmpDHsXCz/metacheck-repo-files/osf.io_dlmixed/analysis.do",
+              "<DL>/osf.io_dlmixed/analysis.do",
               null,
               null,
               null
@@ -178,10 +178,10 @@
           {
             "t": "chr",
             "v": [
-              "'file:///home/user/pytacheck/tests/mod_code/fixtures/mixed/analysis.R' does not exist in current working directory ('/home/user/pytacheck').",
+              "'file://<ROOT>/tests/mod_code/fixtures/mixed/analysis.R' does not exist in current working directory ('<ROOT>').",
               null,
-              "'file:///home/user/pytacheck/tests/mod_code/fixtures/mixed/report.Rmd' does not exist in current working directory ('/home/user/pytacheck').",
-              "'file:///home/user/pytacheck/tests/mod_code/fixtures/mixed/script.py' does not exist in current working directory ('/home/user/pytacheck').",
+              "'file://<ROOT>/tests/mod_code/fixtures/mixed/report.Rmd' does not exist in current working directory ('<ROOT>').",
+              "'file://<ROOT>/tests/mod_code/fixtures/mixed/script.py' does not exist in current working directory ('<ROOT>').",
               null
             ]
           },
@@ -371,7 +371,7 @@
         "t": "chr",
         "v": [
           "Below, we describe some best coding practices and give the results of automatic evaluation of these practices in the code files below. This check may miss things or produce false positives if your scripts are less typical.",
-          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(\"File Name\" = c(\"<a href='file:///home/user/pytacheck/tests/mod_code/fixtures/mixed/analysis.R' target='_blank'>analysis.R<\/a>\", \n\"<a href='file:///home/user/pytacheck/tests/mod_code/fixtures/mixed/analysis.do' target='_blank'>analysis.do<\/a>\", \n\"<a href='file:///home/user/pytacheck/tests/mod_code/fixtures/mixed/report.Rmd' target='_blank'>report.Rmd<\/a>\", \n\"<a href='file:///home/user/pytacheck/tests/mod_code/fixtures/mixed/script.py' target='_blank'>script.py<\/a>\", \n\"<a href='file:///home/user/pytacheck/tests/mod_code/fixtures/mixed/results.jasp' target='_blank'>results.jasp<\/a>\"\n), \"% Comments\" = c(\"\", \"50%\", \"\", \"\", \"\"), \"Missing Files\" = c(NA, \n1L, NA, NA, NA), \"Absolute Paths\" = c(NA, 0L, NA, NA, NA), \"Code Between Libraries\" = c(NA_integer_, \nNA_integer_, NA_integer_, NA_integer_, NA_integer_)), row.names = c(NA, \n5L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 5, FALSE)\n```\n",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(\"File Name\" = c(\"<a href='file://<ROOT>/tests/mod_code/fixtures/mixed/analysis.R' target='_blank'>analysis.R<\/a>\", \n\"<a href='file://<ROOT>/tests/mod_code/fixtures/mixed/analysis.do' target='_blank'>analysis.do<\/a>\", \n\"<a href='file://<ROOT>/tests/mod_code/fixtures/mixed/report.Rmd' target='_blank'>report.Rmd<\/a>\", \n\"<a href='file://<ROOT>/tests/mod_code/fixtures/mixed/script.py' target='_blank'>script.py<\/a>\", \n\"<a href='file://<ROOT>/tests/mod_code/fixtures/mixed/results.jasp' target='_blank'>results.jasp<\/a>\"\n), \"% Comments\" = c(\"\", \"50%\", \"\", \"\", \"\"), \"Missing Files\" = c(NA, \n1L, NA, NA, NA), \"Absolute Paths\" = c(NA, 0L, NA, NA, NA), \"Code Between Libraries\" = c(NA_integer_, \nNA_integer_, NA_integer_, NA_integer_, NA_integer_)), row.names = c(NA, \n5L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 5, FALSE)\n```\n",
           "#### Code Comments",
           "Best programming practice is to add comments to code, to explain what the code does (to yourself in the future, or peers who want to re-use your code). All your code files had comments.",
           "#### Missing Files",

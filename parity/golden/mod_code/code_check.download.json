@@ -103,13 +103,13 @@
           {
             "t": "chr",
             "v": [
-              "file:///home/user/pytacheck/tests/mod_code/fixtures/green/analysis.R"
+              "file://<ROOT>/tests/mod_code/fixtures/green/analysis.R"
             ]
           },
           {
             "t": "chr",
             "v": [
-              "/tmp/RtmpDHsXCz/metacheck-repo-files/osf.io_dl/analysis.R"
+              "<DL>/osf.io_dl/analysis.R"
             ]
           },
           {
@@ -244,7 +244,7 @@
         "t": "chr",
         "v": [
           "Below, we describe some best coding practices and give the results of automatic evaluation of these practices in the code files below. This check may miss things or produce false positives if your scripts are less typical.",
-          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(\"File Name\" = \"<a href='file:///home/user/pytacheck/tests/mod_code/fixtures/green/analysis.R' target='_blank'>analysis.R<\/a>\", \n    \"% Comments\" = \"40%\", \"Missing Files\" = 0L, \"Absolute Paths\" = 0L, \n    \"Code Between Libraries\" = 1L), row.names = 1L, class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 5, FALSE)\n```\n",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(\"File Name\" = \"<a href='file://<ROOT>/tests/mod_code/fixtures/green/analysis.R' target='_blank'>analysis.R<\/a>\", \n    \"% Comments\" = \"40%\", \"Missing Files\" = 0L, \"Absolute Paths\" = 0L, \n    \"Code Between Libraries\" = 1L), row.names = 1L, class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 5, FALSE)\n```\n",
           "#### Code Comments",
           "Best programming practice is to add comments to code, to explain what the code does (to yourself in the future, or peers who want to re-use your code). All your code files had comments.",
           "#### Missing Files",
@@ -460,7 +460,7 @@
           {
             "t": "chr",
             "v": [
-              "/tmp/RtmpDHsXCz/metacheck-repo-files/osf.io_dl/renv.lock"
+              "<DL>/osf.io_dl/renv.lock"
             ],
             "names": [
               "renv.lock"

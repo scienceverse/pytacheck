@@ -1,0 +1,131 @@
+{
+  "id": "repro_run_scripts.chain_order",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 3,
+    "names": [
+      "file_name",
+      "outcome",
+      "error",
+      "error_type",
+      "undefined_var",
+      "stdout",
+      "stderr",
+      "script_lines",
+      "captures"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "writes_then_reads.R",
+          "reads_written.R",
+          "bad_setwd.R"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "ran_ok",
+          "ran_ok",
+          "errored"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "",
+          "",
+          "! in callr subprocess.\nCaused by error in `setwd(\"/Users/original_author/project\")`:\n! cannot change working directory"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          "runtime"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "> dat <- read.csv(\"data.csv\")\n> summ <- data.frame(mean_x = mean(dat$x))\n> write.csv(summ, \"intermediate.csv\", row.names = FALSE)",
+          "> summ <- read.csv(\"intermediate.csv\")\n> print(summ$mean_x)\n[1] 4",
+          "> setwd(\"/Users/original_author/project\")"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "",
+          "",
+          "Error in setwd(\"/Users/original_author/project\") : \n  cannot change working directory"
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "dat <- read.csv(\"data.csv\")",
+              "summ <- data.frame(mean_x = mean(dat$x))",
+              "write.csv(summ, \"intermediate.csv\", row.names = FALSE)"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "summ <- read.csv(\"intermediate.csv\")",
+              "print(summ$mean_x)"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "setwd(\"/Users/original_author/project\")",
+              "dat <- read.csv(\"data.csv\")",
+              "mean(dat$x)"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "list",
+            "names": null,
+            "v": []
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": []
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": []
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

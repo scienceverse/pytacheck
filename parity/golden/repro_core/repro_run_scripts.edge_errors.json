@@ -1,0 +1,183 @@
+{
+  "id": "repro_run_scripts.edge_errors",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 6,
+    "names": [
+      "file_name",
+      "outcome",
+      "error",
+      "error_type",
+      "undefined_var",
+      "stdout",
+      "stderr",
+      "script_lines",
+      "captures"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "parse_err.R",
+          "quit0.R",
+          "quit3.R",
+          "nocall.R",
+          "multi.R",
+          "comment_only.R"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "errored",
+          "ran_ok",
+          "errored",
+          "errored",
+          "errored",
+          "ran_ok"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "! in callr subprocess.\nCaused by error in `parse(script, keep.source = TRUE)`:\n! <root>/parse_err.R:3:0: unexpected end of input\n1: x <- 1\n2: y <- (\n  ^",
+          "",
+          "! callr subprocess failed: could not start R, exited with non-zero status, has crashed or was killed",
+          "! in callr subprocess.\nCaused by error: \n! no call here",
+          "! in callr subprocess.\nCaused by error in `g()`:\n! multi\nline\n  indented",
+          ""
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "runtime",
+          null,
+          "runtime",
+          "runtime",
+          "runtime",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "",
+          "> cat(\"hi\\n\")\nhi\n> quit(status = 0)",
+          "> cat(\"hi\\n\")\nhi\n> quit(status = 3)",
+          "> stop(\"no call here\", call. = FALSE)",
+          "> g <- function() {\n>   x <- 1\n>   stop(\"multi\\nline\\n  indented\")\n> }\n> local({ g() })",
+          ""
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Error in parse(script, keep.source = TRUE) : \n  <root>/parse_err.R:3:0: unexpected end of input\n1: x <- 1\n2: y <- (\n  ^",
+          "",
+          "",
+          "Error : no call here",
+          "Error in g() : multi\nline\n  indented",
+          ""
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "x <- 1",
+              "y <- ("
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "cat(\"hi\\n\")",
+              "quit(status = 0)"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "cat(\"hi\\n\")",
+              "quit(status = 3)"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "stop(\"no call here\", call. = FALSE)"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "g <- function() {",
+              "  x <- 1",
+              "  stop(\"multi\\nline\\n  indented\")",
+              "}",
+              "local({ g() })"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "# only a comment"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "list",
+            "names": null,
+            "v": []
+          },
+          {
+            "t": "null"
+          },
+          {
+            "t": "null"
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": []
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": []
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": []
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

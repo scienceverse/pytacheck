@@ -1,0 +1,46 @@
+{
+  "id": "repro_defined_vars.variety",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 2,
+    "names": [
+      "file_name",
+      "defines"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "a.R",
+          "b.R"
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "x_1",
+              ".hidden",
+              "f",
+              "a.b",
+              "dq",
+              "indented"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": []
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

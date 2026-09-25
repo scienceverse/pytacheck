@@ -14,7 +14,7 @@ import math
 import os
 from collections.abc import Mapping, Sequence
 from itertools import pairwise
-from typing import Any
+from typing import Any, cast
 
 import pandas as pd
 
@@ -114,7 +114,8 @@ def location_series(values: list[Any], index: Any, like: pd.Series | None) -> pd
     dtype: Any = object
     if like is not None and isinstance(like.dtype, pd.StringDtype):
         dtype = like.dtype
-    return pd.Series(values, index=index, dtype=dtype)
+    out: pd.Series = pd.Series(values, index=index, dtype=dtype)
+    return out
 
 
 def _paste_collapse(values: Sequence[Any], sep: str) -> str:
@@ -172,7 +173,7 @@ def _parse_text(lines: list[str | None]) -> list[str]:
     if not lines:
         raise IndexError("subscript out of bounds")
     if lines[0] is not None and grepl(r"^---\s*$", lines[0]):
-        lines = list(code_extract_r(text=lines) or [])
+        lines = list(code_extract_r(text=cast(Any, lines)) or [])
     return ["NA" if v is None else v for v in lines]
 
 
@@ -274,13 +275,15 @@ def analyse_files(
 
     # 3. the text checks
     for i in range(n):
-        lines = lines_of[i]
-        if lines is None:
+        read = lines_of[i]
+        if read is None:
             continue
+        # code lines, NA (None) included, as the scanners take R character vectors
+        code: Any = read
         row = rows[i]
         lang = langs[i]
         try:
-            file_nc = code_remove_comments(lines, lang)
+            file_nc: Any = code_remove_comments(code, lang)
 
             absolute_paths = code_abs_path(file_nc)
             row["code_abs_path"] = len(absolute_paths)
@@ -314,7 +317,7 @@ def analyse_files(
             row["packages_n"] = len(pkgs)
             row["packages"] = ", ".join(pkgs)
 
-            stats = code_line_stats(lines, lang)
+            stats = code_line_stats(code, lang)
             row["comment_lines"] = stats["comment_lines"]
             row["code_lines"] = stats["code_lines"]
             row["percentage_comment"] = stats["percent_comments"]

@@ -1,0 +1,1828 @@
+{
+  "id": "codebook_check.llm_odd_selfgen.psychsci",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "codebook_vars",
+      "scale_violations",
+      "scales_osd",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "codebook_check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Codebook Check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "results"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 34,
+        "names": [
+          "paper_id",
+          "source_file",
+          "column_name",
+          "group",
+          "label",
+          "codebook_variable",
+          "label_source",
+          "label_status",
+          "label_method",
+          "value_labels",
+          "missing_values",
+          "question",
+          "coding_instructions",
+          "scale_group",
+          "scale",
+          "scale_confidence",
+          "scale_source"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "0956797613520608",
+              "0956797613520608",
+              "0956797613520608",
+              "0956797613520608",
+              "0956797613520608",
+              "0956797613520608",
+              "0956797613520608",
+              "0956797613520608",
+              "0956797613520608",
+              "0956797613520608",
+              "0956797613520608",
+              "0956797613520608",
+              "0956797613520608",
+              "0956797613520608",
+              "0956797613520608",
+              "0956797613520608",
+              "0956797613520608",
+              "0956797613520608",
+              "0956797613520608",
+              "0956797613520608",
+              "0956797613520608",
+              "0956797614522816",
+              "0956797614522816",
+              "0956797614522816",
+              "0956797614522816",
+              "0956797614522816",
+              "0956797614522816",
+              "0956797614527830",
+              "0956797614527830",
+              "0956797614527830",
+              "0956797614527830",
+              "0956797614527830",
+              "0956797614527830",
+              "0956797614527830"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "loop.csv",
+              "loop.csv",
+              "loop.csv",
+              "loop.csv",
+              "loop.csv",
+              "loop.csv",
+              "loop.csv",
+              "loop.csv",
+              "loop.csv",
+              "loop.csv",
+              "loop.csv",
+              "loop.csv",
+              "loop.csv",
+              "loop.csv",
+              "loop.csv",
+              "loop.csv",
+              "loop.csv",
+              "loop.csv",
+              "loop.csv",
+              "loop.csv",
+              "loop.csv",
+              "s.csv",
+              "s.csv",
+              "s.csv",
+              "s.csv",
+              "s.csv",
+              "s.csv",
+              "s.csv",
+              "s.csv",
+              "s.csv",
+              "s.csv",
+              "s.csv",
+              "s.csv",
+              "s.csv"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "id",
+              "POWER.PP1_1",
+              "POWER.PP1_2",
+              "POWER.PP1_3",
+              "POWER.PP1_4",
+              "POWER.PP2_1",
+              "POWER.PP2_2",
+              "POWER.PP2_3",
+              "POWER.PP2_4",
+              "POWER.PP3_1",
+              "POWER.PP3_2",
+              "POWER.PP3_3",
+              "POWER.PP3_4",
+              "slider_1",
+              "slider_2",
+              "slider_3",
+              "slider_4",
+              "slider_5",
+              "prob_a",
+              "prob_b",
+              "prob_c",
+              "id",
+              "bfi_1",
+              "bfi_2",
+              "bfi_2",
+              "bfi_3",
+              "bfi_4",
+              "id",
+              "q1",
+              "q2",
+              "q3",
+              "q4",
+              "q5",
+              "q6"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              "Personality item 1",
+              "Personality item 2",
+              "Personality item 2",
+              "Personality item 3",
+              "Personality item 4",
+              "Participant id",
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              "bfi_1",
+              "bfi_2",
+              "bfi_2",
+              "bfi_3",
+              "bfi_4",
+              "id",
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              "codebook.csv",
+              "codebook.csv",
+              "codebook.csv",
+              "codebook.csv",
+              "codebook.csv",
+              "codebook.csv",
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "unlabelled",
+              "unlabelled",
+              "unlabelled",
+              "unlabelled",
+              "unlabelled",
+              "unlabelled",
+              "unlabelled",
+              "unlabelled",
+              "unlabelled",
+              "unlabelled",
+              "unlabelled",
+              "unlabelled",
+              "unlabelled",
+              "unlabelled",
+              "unlabelled",
+              "unlabelled",
+              "unlabelled",
+              "unlabelled",
+              "unlabelled",
+              "unlabelled",
+              "unlabelled",
+              "unlabelled",
+              "labelled",
+              "labelled",
+              "labelled",
+              "labelled",
+              "labelled",
+              "labelled",
+              "unlabelled",
+              "unlabelled",
+              "unlabelled",
+              "unlabelled",
+              "unlabelled",
+              "unlabelled"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              "rules",
+              "rules",
+              "rules",
+              "rules",
+              "rules",
+              "rules",
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              "{\"1\":\"Disagree strongly\",\"2\":\"Disagree\",\"3\":\"Neutral\",\"4\":\"Agree\",\"5\":\"Agree strongly\"}",
+              "{\"1\":\"Disagree strongly\",\"2\":\"Disagree\",\"3\":\"Neutral\",\"4\":\"Agree\",\"5\":\"Agree strongly\"}",
+              "{\"1\":\"Disagree strongly\",\"2\":\"Disagree\",\"3\":\"Neutral\",\"4\":\"Agree\",\"5\":\"Agree strongly\"}",
+              "{\"1\":\"Disagree strongly\",\"2\":\"Disagree\",\"3\":\"Neutral\",\"4\":\"Agree\",\"5\":\"Agree strongly\"}",
+              "{\"1\":\"Disagree strongly\",\"2\":\"Disagree\",\"3\":\"Neutral\",\"4\":\"Agree\",\"5\":\"Agree strongly\"}",
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "Power ratings",
+              "Power ratings",
+              "Power ratings",
+              "Power ratings",
+              "Power ratings",
+              "Power ratings",
+              "Power ratings",
+              "Power ratings",
+              "Power ratings",
+              "Power ratings",
+              "Power ratings",
+              "Power ratings",
+              "Power ratings",
+              "Power ratings",
+              "Power ratings",
+              "Power ratings",
+              "Power ratings",
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "low",
+              "low",
+              "low",
+              "low",
+              "low",
+              "low",
+              "low",
+              "low",
+              "low",
+              "low",
+              "low",
+              "low",
+              "low",
+              "low",
+              "low",
+              "low",
+              "low",
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "self_generated",
+              "self_generated",
+              "self_generated",
+              "self_generated",
+              "self_generated",
+              "self_generated",
+              "self_generated",
+              "self_generated",
+              "self_generated",
+              "self_generated",
+              "self_generated",
+              "self_generated",
+              "self_generated",
+              "self_generated",
+              "self_generated",
+              "self_generated",
+              "self_generated",
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "This module checks whether each extracted data column is documented in a codebook or README, and flags documented variables that never appear in the data.",
+          "We examined 2 codebook/README/label sources and 34 data columns across 2 files.",
+          "#### Column Documentation",
+          "::: {.panel-tabset}\n\n## loop.csv\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Column = c(\"POWER.PP1_1\", \"POWER.PP1_2\", \"POWER.PP1_3\", \n\"POWER.PP1_4\", \"POWER.PP2_1\", \"POWER.PP2_2\", \"POWER.PP2_3\", \"POWER.PP2_4\", \n\"POWER.PP3_1\", \"POWER.PP3_2\", \"POWER.PP3_3\", \"POWER.PP3_4\", \"id\", \n\"prob_a\", \"prob_b\", \"prob_c\", \"slider_1\", \"slider_2\", \"slider_3\", \n\"slider_4\", \"slider_5\"), Documented = c(\"no\", \"no\", \"no\", \"no\", \n\"no\", \"no\", \"no\", \"no\", \"no\", \"no\", \"no\", \"no\", \"no\", \"no\", \"no\", \n\"no\", \"no\", \"no\", \"no\", \"no\", \"no\"), Label = c(NA_character_, \nNA_character_, NA_character_, NA_character_, NA_character_, NA_character_, \nNA_character_, NA_character_, NA_character_, NA_character_, NA_character_, \nNA_character_, NA_character_, NA_character_, NA_character_, NA_character_, \nNA_character_, NA_character_, NA_character_, NA_character_, NA_character_\n), \"Codebook Variable\" = c(NA_character_, NA_character_, NA_character_, \nNA_character_, NA_character_, NA_character_, NA_character_, NA_character_, \nNA_character_, NA_character_, NA_character_, NA_character_, NA_character_, \nNA_character_, NA_character_, NA_character_, NA_character_, NA_character_, \nNA_character_, NA_character_, NA_character_), Source = c(NA_character_, \nNA_character_, NA_character_, NA_character_, NA_character_, NA_character_, \nNA_character_, NA_character_, NA_character_, NA_character_, NA_character_, \nNA_character_, NA_character_, NA_character_, NA_character_, NA_character_, \nNA_character_, NA_character_, NA_character_, NA_character_, NA_character_\n), Status = c(\"unlabelled\", \"unlabelled\", \"unlabelled\", \"unlabelled\", \n\"unlabelled\", \"unlabelled\", \"unlabelled\", \"unlabelled\", \"unlabelled\", \n\"unlabelled\", \"unlabelled\", \"unlabelled\", \"unlabelled\", \"unlabelled\", \n\"unlabelled\", \"unlabelled\", \"unlabelled\", \"unlabelled\", \"unlabelled\", \n\"unlabelled\", \"unlabelled\")), row.names = c(1L, 2L, 3L, 4L, 5L, \n6L, 7L, 8L, 9L, 10L, 11L, 12L, 13L, 15L, 16L, 17L, 24L, 25L, \n26L, 27L, 28L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 25, FALSE)\n```\n\n\n## s.csv\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Column = c(\"id\", \"q1\", \"q2\", \"q3\", \"q4\", \"q5\", \n\"q6\", \"bfi_1\", \"bfi_2\", \"bfi_2\", \"bfi_3\", \"bfi_4\", \"id\"), Documented = c(\"no\", \n\"no\", \"no\", \"no\", \"no\", \"no\", \"no\", \"yes\", \"yes\", \"yes\", \"yes\", \n\"yes\", \"yes\"), Label = c(NA, NA, NA, NA, NA, NA, NA, \"Personality item 1\", \n\"Personality item 2\", \"Personality item 2\", \"Personality item 3\", \n\"Personality item 4\", \"Participant id\"), \"Codebook Variable\" = c(NA, \nNA, NA, NA, NA, NA, NA, \"bfi_1\", \"bfi_2\", \"bfi_2\", \"bfi_3\", \"bfi_4\", \n\"id\"), Source = c(NA, NA, NA, NA, NA, NA, NA, \"codebook.csv\", \n\"codebook.csv\", \"codebook.csv\", \"codebook.csv\", \"codebook.csv\", \n\"codebook.csv\"), Status = c(\"unlabelled\", \"unlabelled\", \"unlabelled\", \n\"unlabelled\", \"unlabelled\", \"unlabelled\", \"unlabelled\", \"labelled\", \n\"labelled\", \"labelled\", \"labelled\", \"labelled\", \"labelled\")), row.names = c(14L, \n18L, 19L, 20L, 21L, 22L, 23L, 29L, 30L, 31L, 32L, 33L, 34L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 25, FALSE)\n```\n\n\n:::",
+          "#### Scales",
+          "We detected 2 column groups (by shared abbreviation) that look like scales; 2 were matched to a named instrument from the paper text or dictionary. Groups we could not name are listed too — they are real scale-like column families whose instrument the manuscript did not identify. Identified scales are exported in the OpenScales OSD structure.",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"loop.csv\", \"loop.csv\"), Abbrev = c(\"POWER.PP1\", \n\"SLIDER\"), Columns = c(12L, 5L), \"Max item\" = c(\"4\", \"5\"), Scale = c(\"Power ratings\", \n\"Power ratings\"), Confidence = c(\"low\", \"low\"), Source = c(\"self_generated\", \n\"self_generated\")), row.names = c(NA, -2L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 40, FALSE)\n```\n",
+          "To let this tool (and anyone reusing the data) identify these scales with **high confidence**:\n- **Name the instrument in the manuscript with its abbreviation** — e.g. \"the Breakup Distress Scale (BDS)\" — matching the column prefix.\n- **Add a codebook** giving the item wording, or state the number of items (\"a 15-item scale\").",
+          "LLM model 'mock/rv' reviewed ambiguous cases (parsed 0 files, matched 0 columns, merged 0 labels)."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "red"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "\n-  We parsed 5 variable definitions from codebook/README files.\n-  6 of 34 data columns (18%) are documented in a codebook; 28 are not."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 3,
+        "names": [
+          "paper_id",
+          "column_n",
+          "matched_n",
+          "unmatched_n",
+          "clean_n",
+          "conflicted_n",
+          "codebook_var_n",
+          "unused_var_n",
+          "scale_blocks_n",
+          "scale_named_n",
+          "scale_unnamed_n",
+          "task_files_n",
+          "task_named_n",
+          "task_paper_only_n"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "0956797613520608",
+              "0956797614522816",
+              "0956797614527830"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              21,
+              6,
+              7
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              5,
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              21,
+              1,
+              6
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              5,
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              4,
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2,
+              2,
+              2
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1,
+              1,
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1,
+              1,
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              0,
+              0
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 5,
+        "names": [
+          "codebook_variable",
+          "label",
+          "codebook_source",
+          "group",
+          "value_labels",
+          "missing_values",
+          "question",
+          "coding_instructions",
+          "parse_method",
+          "paper_id"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "bfi_1",
+              "bfi_2",
+              "bfi_3",
+              "bfi_4",
+              "id"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Personality item 1",
+              "Personality item 2",
+              "Personality item 3",
+              "Personality item 4",
+              "Participant id"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "codebook.csv",
+              "codebook.csv",
+              "codebook.csv",
+              "codebook.csv",
+              "codebook.csv"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "{\"1\":\"Disagree strongly\",\"2\":\"Disagree\",\"3\":\"Neutral\",\"4\":\"Agree\",\"5\":\"Agree strongly\"}",
+              "{\"1\":\"Disagree strongly\",\"2\":\"Disagree\",\"3\":\"Neutral\",\"4\":\"Agree\",\"5\":\"Agree strongly\"}",
+              "{\"1\":\"Disagree strongly\",\"2\":\"Disagree\",\"3\":\"Neutral\",\"4\":\"Agree\",\"5\":\"Agree strongly\"}",
+              "{\"1\":\"Disagree strongly\",\"2\":\"Disagree\",\"3\":\"Neutral\",\"4\":\"Agree\",\"5\":\"Agree strongly\"}",
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "structured",
+              "structured",
+              "structured",
+              "structured",
+              "structured"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "0956797614522816",
+              "0956797614522816",
+              "0956797614522816",
+              "0956797614522816",
+              "0956797614527830"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "source_file",
+          "column",
+          "documented",
+          "n_values",
+          "values",
+          "kinds"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "int",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "list",
+            "names": [
+              "osd_version",
+              "definition"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "1.0"
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "scale_info",
+                  "likert_options",
+                  "items",
+                  "dimensions",
+                  "scoring",
+                  "metacheck"
+                ],
+                "v": [
+                  {
+                    "t": "list",
+                    "names": [
+                      "name",
+                      "code",
+                      "abbreviation"
+                    ],
+                    "v": [
+                      {
+                        "t": "chr",
+                        "v": [
+                          "Power ratings"
+                        ]
+                      },
+                      {
+                        "t": "chr",
+                        "v": [
+                          "power_ratings"
+                        ]
+                      },
+                      {
+                        "t": "chr",
+                        "v": [
+                          "POWER.PP1"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "t": "list",
+                    "names": [
+                      "points",
+                      "min",
+                      "max",
+                      "order",
+                      "source"
+                    ],
+                    "v": [
+                      {
+                        "t": "int",
+                        "v": [
+                          7
+                        ]
+                      },
+                      {
+                        "t": "dbl",
+                        "v": [
+                          1
+                        ]
+                      },
+                      {
+                        "t": "dbl",
+                        "v": [
+                          7
+                        ]
+                      },
+                      {
+                        "t": "chr",
+                        "v": [
+                          "ascending"
+                        ]
+                      },
+                      {
+                        "t": "chr",
+                        "v": [
+                          "observed"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "t": "list",
+                    "names": null,
+                    "v": [
+                      {
+                        "t": "list",
+                        "names": [
+                          "id",
+                          "text_key",
+                          "type"
+                        ],
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "POWER.PP1_1"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "POWER.PP1_1"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "likert"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "t": "list",
+                        "names": [
+                          "id",
+                          "text_key",
+                          "type"
+                        ],
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "POWER.PP1_2"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "POWER.PP1_2"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "likert"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "t": "list",
+                        "names": [
+                          "id",
+                          "text_key",
+                          "type"
+                        ],
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "POWER.PP1_3"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "POWER.PP1_3"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "likert"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "t": "list",
+                        "names": [
+                          "id",
+                          "text_key",
+                          "type"
+                        ],
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "POWER.PP1_4"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "POWER.PP1_4"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "likert"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "t": "list",
+                        "names": [
+                          "id",
+                          "text_key",
+                          "type"
+                        ],
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "POWER.PP2_1"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "POWER.PP2_1"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "likert"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "t": "list",
+                        "names": [
+                          "id",
+                          "text_key",
+                          "type"
+                        ],
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "POWER.PP2_2"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "POWER.PP2_2"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "likert"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "t": "list",
+                        "names": [
+                          "id",
+                          "text_key",
+                          "type"
+                        ],
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "POWER.PP2_3"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "POWER.PP2_3"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "likert"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "t": "list",
+                        "names": [
+                          "id",
+                          "text_key",
+                          "type"
+                        ],
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "POWER.PP2_4"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "POWER.PP2_4"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "likert"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "t": "list",
+                        "names": [
+                          "id",
+                          "text_key",
+                          "type"
+                        ],
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "POWER.PP3_1"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "POWER.PP3_1"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "likert"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "t": "list",
+                        "names": [
+                          "id",
+                          "text_key",
+                          "type"
+                        ],
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "POWER.PP3_2"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "POWER.PP3_2"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "likert"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "t": "list",
+                        "names": [
+                          "id",
+                          "text_key",
+                          "type"
+                        ],
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "POWER.PP3_3"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "POWER.PP3_3"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "likert"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "t": "list",
+                        "names": [
+                          "id",
+                          "text_key",
+                          "type"
+                        ],
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "POWER.PP3_4"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "POWER.PP3_4"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "likert"
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "t": "list",
+                    "names": null,
+                    "v": []
+                  },
+                  {
+                    "t": "list",
+                    "names": [],
+                    "v": []
+                  },
+                  {
+                    "t": "list",
+                    "names": [
+                      "scale_source",
+                      "provenance",
+                      "confidence",
+                      "source_files",
+                      "n_columns",
+                      "declared_length"
+                    ],
+                    "v": [
+                      {
+                        "t": "chr",
+                        "v": [
+                          "self_generated"
+                        ]
+                      },
+                      {
+                        "t": "chr",
+                        "v": [
+                          "This label was GENERATED BY metacheck from the item wording. It is NOT a recognised named instrument, only metacheck's inference of what the items measure."
+                        ]
+                      },
+                      {
+                        "t": "chr",
+                        "v": [
+                          "low"
+                        ]
+                      },
+                      {
+                        "t": "list",
+                        "names": null,
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "loop.csv"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "t": "int",
+                        "v": [
+                          12
+                        ]
+                      },
+                      {
+                        "t": "int",
+                        "v": [
+                          4
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "osd_version",
+              "definition"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "1.0"
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "scale_info",
+                  "likert_options",
+                  "items",
+                  "dimensions",
+                  "scoring",
+                  "metacheck"
+                ],
+                "v": [
+                  {
+                    "t": "list",
+                    "names": [
+                      "name",
+                      "code",
+                      "abbreviation"
+                    ],
+                    "v": [
+                      {
+                        "t": "chr",
+                        "v": [
+                          "Power ratings"
+                        ]
+                      },
+                      {
+                        "t": "chr",
+                        "v": [
+                          "power_ratings"
+                        ]
+                      },
+                      {
+                        "t": "chr",
+                        "v": [
+                          "SLIDER"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  },
+                  {
+                    "t": "list",
+                    "names": null,
+                    "v": [
+                      {
+                        "t": "list",
+                        "names": [
+                          "id",
+                          "text_key"
+                        ],
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "slider_1"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "slider_1"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "t": "list",
+                        "names": [
+                          "id",
+                          "text_key"
+                        ],
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "slider_2"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "slider_2"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "t": "list",
+                        "names": [
+                          "id",
+                          "text_key"
+                        ],
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "slider_3"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "slider_3"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "t": "list",
+                        "names": [
+                          "id",
+                          "text_key"
+                        ],
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "slider_4"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "slider_4"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "t": "list",
+                        "names": [
+                          "id",
+                          "text_key"
+                        ],
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "slider_5"
+                            ]
+                          },
+                          {
+                            "t": "chr",
+                            "v": [
+                              "slider_5"
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "t": "list",
+                    "names": null,
+                    "v": []
+                  },
+                  {
+                    "t": "list",
+                    "names": [],
+                    "v": []
+                  },
+                  {
+                    "t": "list",
+                    "names": [
+                      "scale_source",
+                      "provenance",
+                      "confidence",
+                      "source_files",
+                      "n_columns",
+                      "declared_length"
+                    ],
+                    "v": [
+                      {
+                        "t": "chr",
+                        "v": [
+                          "self_generated"
+                        ]
+                      },
+                      {
+                        "t": "chr",
+                        "v": [
+                          "This label was GENERATED BY metacheck from the item wording. It is NOT a recognised named instrument, only metacheck's inference of what the items measure."
+                        ]
+                      },
+                      {
+                        "t": "chr",
+                        "v": [
+                          "low"
+                        ]
+                      },
+                      {
+                        "t": "list",
+                        "names": null,
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "loop.csv"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "t": "int",
+                        "v": [
+                          5
+                        ]
+                      },
+                      {
+                        "t": "int",
+                        "v": [
+                          5
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "names": [
+          "column_n",
+          "matched_n",
+          "unmatched_n",
+          "clean_n",
+          "conflicted_n",
+          "codebook_var_n",
+          "unused_var_n",
+          "scale_blocks_n",
+          "scale_named_n",
+          "scale_unnamed_n",
+          "task_files_n",
+          "task_named_n",
+          "task_paper_only_n"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}
