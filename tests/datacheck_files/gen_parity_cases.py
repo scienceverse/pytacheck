@@ -328,17 +328,11 @@ promote_sensitive = {
     "readxl_deaths.xlsx",
     "readxl_deaths.xls",
 }
-divergent_reads = {
-    "odd.rds": "bit64 is not loaded, so head()'s `[` drops the integer64 class and R returns "
-    "the raw int64 bit patterns reinterpreted as doubles (6.1e-314, -0, NaN); "
-    "pytacheck returns the actual 64-bit integers (Int64)",
-}
+# data_read_head.odd.rds (integer64) is marked in parity/divergences/data.yaml (D10)
 for name in read_files:
-    extra = {"known_divergence": divergent_reads[name]} if name in divergent_reads else {}
     add(
         f"data_read_head.{name}",
         fn("data_read_head", f"{PY}.data_read_head", path=f(name), n_rows=inf),
-        **extra,
     )
 for name in [
     "hundred.csv",

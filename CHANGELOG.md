@@ -34,3 +34,13 @@ See `docs/UPSTREAM_ISSUES.md`; every affected parity case is a documented
   file listings follow their pages; DataONE, 4TU, OSF and GitHub id and host
   detection fixed (`osf.io/prereg` is not an OSF id); exact CRCs, whole-member
   inflation and real decompressed sizes in the repository download code.
+- data_check, codebook_check, psychds_check and the data-file helpers (U55-U64,
+  U78, U91-U93, U98-U100, U112, U113, U154): blank column-name collisions are
+  reported; outliers with infinite quartiles and fractional scale ranges no
+  longer fail; 1e5 is no longer a "typo of 5"; `V1-V10` codebook ranges are
+  expanded; `.rds`/`.RData` keep column labels; manifests keep nulls and full
+  precision; Latin-1 files are read; data_check returns a full result when
+  nothing is readable and counts extracted files correctly; codebook_check
+  de-duplicates definitions per paper and matches acronyms literally;
+  psychds_check keeps valid Psych-DS names and root files in place, gives each
+  paper of a list its own summary row and accepts `paper = NULL`.

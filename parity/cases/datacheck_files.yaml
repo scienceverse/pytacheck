@@ -1135,9 +1135,6 @@
       "$expr":
         "r": "Inf"
         "py": "float('inf')"
-  "known_divergence": "bit64 is not loaded, so head()'s `[` drops the integer64 class and R returns the\
-    \ raw int64 bit patterns reinterpreted as doubles (6.1e-314, -0, NaN); pytacheck returns the actual\
-    \ 64-bit integers (Int64)"
 - "id": "data_read_head.badname.rds"
   "r": "data_read_head"
   "py": "pytacheck.datacheck.files.data_read_head"

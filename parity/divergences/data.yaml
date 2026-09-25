@@ -75,6 +75,12 @@
 "datacheck_files/data_read_head.attrs.labs_ws.RData.n2": *u61
 "datacheck_files/data_read_head.attrs.odd.rds": *u61
 
+# D10: data_read_head() of an .rds with integer64 columns
+"datacheck_files/data_read_head.odd.rds":
+  kind: r_bug_fixed
+  ref: D10
+  reason: the 64-bit integers are returned as values (Int64); without bit64 loaded R's head() drops the integer64 class and returns the raw bit patterns read as doubles (6.1e-314, -0, NaN)
+
 # U154: readxl's isDateFormat() "General" shortcut
 "datacheck_files_review/review.read_head_typed.era_date.xlsx":
   kind: r_bug_fixed
@@ -129,7 +135,6 @@
 "mod_data_check/data_check.download_gated": *u98
 "mod_data_check_review/review.nodata_list": *u98
 "mod_data_check_review/review.broken_list": *u98
-"mod_data_check_review/review.broken_list.dv_report": *u98
 "mod_data_check_review/review.download_count_cap": *u98
 "mod_data_check_review/review.archives_download_none": *u98
 
@@ -247,3 +252,9 @@
   ref: U78
   reason: paper = NULL (documented as "check local files only") takes the paper id from the data_check tables; R's .pid() calls paper_id(NULL) and stops
 "mod_psychds/psychds_check.paper_none_empty": *u78
+
+# U78: codebook_check with paper = NULL and a zero-row data_check structure (D13)
+"mod_codebook_review/codebook_check.null_paper.empty":
+  kind: r_bug_fixed
+  ref: U78
+  reason: paper = NULL (documented as allowed) returns the "na" result with paper_id NA; R's empty_summary() calls .pid(), whose paper_id(NULL) stops

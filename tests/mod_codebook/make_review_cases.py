@@ -92,19 +92,13 @@ def module_cases() -> list[dict[str, Any]]:
         )
     # paper = NULL (local files only)
     for s in ["empty", "rv_onlycb", "green"]:
+        # null_paper.empty is marked in parity/divergences/data.yaml (U78)
         c = case(
             f"codebook_check.null_paper.{s}",
             f"module_run(rv_prev_null('{s}'), 'codebook_check')",
             f"__import__('pytacheck.module', fromlist=['_']).module_run("
             f"RH.rv_prev_null('{s}'), 'codebook_check')",
         )
-        if s == "empty":
-            c["known_divergence"] = (
-                "R bug: with paper = NULL (documented as allowed) and a zero-row data_check "
-                "structure, empty_summary() calls .pid(), whose paper_id(NULL) stops with "
-                "'paper must be a paper or paperlist object.'; pytacheck returns the intended "
-                "'na' result (paper_id NA) instead of failing the module."
-            )
         out.append(c)
     for name, scen in PAPER_LISTS.items():
         vec_r = ", ".join(f"'{x}'" for x in scen)
