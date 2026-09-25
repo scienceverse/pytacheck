@@ -62,7 +62,7 @@
 "mod_reg/reg_check.odd_judgements":
   kind: r_bug_fixed
   ref: U120
-  reason: a missing judgement is left out of the counts and reported; R prints "flagged NA potential deviationNA" and na_replace turns the counts into 0
+  reason: a missing judgement is left out of the counts; R prints "flagged NA potential deviationNA" and na_replace turns the counts into 0
 "mod_reg/reg_check.paperlist.shared_prereg": &u120_shared
   kind: r_bug_fixed
   ref: U120
@@ -119,3 +119,27 @@
 "mod_repo_check_review/repo_check.local.edat_many": *u123
 "mod_repo_check_review/repo_check.local.unicode": *u123
 "mod_repo_check_review/repo_check.local.unicode.tables": *u123
+
+# --- reproducibility check (R/reproducibility_check*.R, its module) ----------
+"repro_core/repro_run_scripts.nopkg_failed_dep": &u132
+  kind: r_bug_fixed
+  ref: U132
+  reason: R's "there is no package called ‘pkg’" (typographic quotes in UTF-8) is recognised, so a script failing on an unavailable dependency is dependency_unavailable, not errored
+"mod_repro/reproducibility_check.exec_docker": *u132
+"mod_repro_review/tables.exec_docker_exec": *u132
+"repro_core/repro_redirect_writes.named_arg": &u134
+  kind: r_bug_fixed
+  ref: U134
+  reason: a redirected write keeps its argument name; R makes file = positional, so save(a, b, file = ...) saved the path as another object
+"repro_core/repro_redirect_writes.variable": *u134
+"repro_core/repro_redirect_writes.inline_pipe": *u134
+"repro_core/repro_redirect_writes.several": *u134
+"repro_core_review/repro_redirect_writes.variety": *u134
+"repro_core/repro_missing_inputs.withheld_missing_size_col": &u135
+  kind: r_bug_fixed
+  ref: U135
+  reason: without a file_size column the withheld file is reported without its size; R stops ("argument is of length zero")
+"repro_core/repro_install_deps.main_lib_skip":
+  kind: r_bug_fixed
+  ref: U135
+  reason: the already-installed row has a category (NA) like every other row; R's early row has no category column

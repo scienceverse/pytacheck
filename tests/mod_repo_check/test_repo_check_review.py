@@ -129,14 +129,28 @@ def test_listing_without_its_url_column_fails_like_r() -> None:
     assert meta["doi"].tolist() == ["x"]
 
 
-def test_listing_metadata_without_its_url_column_fails_like_r() -> None:
-    # the other blocks use as.character(): NULL is character(0) beside n rows
-    repos = rc.Repos(rc.repo_rows("p", ["https://doi.org/10.5061/dryad.x"], "dryad", rc.NA_SCALAR))
-    info = pd.DataFrame({"files": [[{"path": "a.csv"}]], "doi": ["x"], "license": ["cc0"]})
-    rc._api_listing(
-        repos, ["https://doi.org/10.5061/dryad.x"], lambda: info, "dryad_url", rc.dryad_row
-    )
-    assert repos.df["repo_error"].tolist() == ["arguments imply differing number of rows: 0, 1"]
+def test_listing_metadata_without_doi_or_license_is_na() -> None:
+    # U122: a listing without doi/license columns (a Figshare private share
+    # link's) has NA metadata; R's data.frame() refuses the zero-length
+    # as.character(NULL) and flags every URL of the platform, overwriting an
+    # error already recorded
+    url = "https://doi.org/10.5061/dryad.x"
+    repos = rc.Repos(rc.repo_rows("p", [url, "https://doi.org/10.5061/dryad.y"], "dryad", "known"))
+    repos.df = repos.df.assign(repo_error=pd.Series(["known", None], dtype="string"))
+    info = pd.DataFrame({"dryad_url": [url], "files": [[{"path": "a.csv"}]]})
+    files, meta = rc._api_listing(repos, [url], lambda: info, "dryad_url", rc.dryad_row)
+    assert meta["repo_url"].tolist() == [url]
+    assert meta["doi"].isna().all() and meta["license"].isna().all()
+    assert files["file_name"].tolist() == ["a.csv"]
+    assert repos.df["repo_error"].tolist()[0] == "known"
+
+    # a failing block keeps an error already recorded and flags the others
+    def fail() -> pd.DataFrame:
+        raise RuntimeError("boom")
+
+    urls = [url, "https://doi.org/10.5061/dryad.y"]
+    rc._api_listing(repos, urls, fail, "dryad_url", rc.dryad_row)
+    assert repos.df["repo_error"].tolist() == ["known", "boom"]
 
 
 def test_dataone_rows_need_the_host_column() -> None:
@@ -168,19 +182,53 @@ def test_registration_sources_belong_to_the_first_osf_paper() -> None:
     assert st.loc["p_reg_b", "repo_n"] == 3
 
 
-def test_two_local_folders_drop_repeated_relative_paths() -> None:
-    # R de-duplicates on duplicated(file_url) & duplicated(file_path): local
-    # files have no URL, so dup_b's README.md and data.csv repeat dup_a's and
-    # are dropped -- and dup_b, left without files, is dropped from the repos
+def test_two_local_folders_keep_their_same_named_files() -> None:
+    # same-named files in two folders are distinct files: both folders are
+    # listed in full (R de-duplicates on duplicated(file_url) &
+    # duplicated(file_path), each on its own, and drops dup_b's README.md and
+    # data.csv, and with them dup_b, U121)
     with in_root():
         mo = pc.module_run(
             tp([], "p_dup"),
             "repo_check",
             local_path=[str(REVIEW / "dup_a"), str(REVIEW / "dup_b")],
         )
-    assert sorted(mo.table["file_path"]) == ["README.md", "data.csv", "only_a.R"]
-    assert set(mo.table["repo_url"]) == {str(REVIEW / "dup_a")}
-    assert mo.summary_table["repo_n"].tolist() == [1]
+    by_repo = mo.table.groupby("repo_url")["file_path"].apply(sorted).to_dict()
+    assert by_repo[str(REVIEW / "dup_b")] == ["README.md", "data.csv"]
+    assert {"README.md", "data.csv", "only_a.R"} <= set(by_repo[str(REVIEW / "dup_a")])
+    assert mo.summary_table["repo_n"].tolist() == [2]
+    # the same folder given twice is listed once
+    with in_root():
+        mo = pc.module_run(
+            tp([], "p_dup"),
+            "repo_check",
+            local_path=[str(REVIEW / "dup_b"), str(REVIEW / "dup_b")],
+        )
+    assert sorted(mo.table["file_path"]) == ["README.md", "data.csv"]
+
+
+def test_dedup_is_per_file() -> None:
+    # U121: a file is dropped only when the same file (URL and path) was
+    # listed before -- not when its URL and its path each occurred in other rows
+    from pytacheck.modules.repo_check import _prepare_files
+
+    files = pd.DataFrame(
+        {
+            "repo_url": ["r1", "r1", "r2", "r2"],
+            "file_name": ["a.csv", "b.csv", "b.csv", "a.csv"],
+            "file_path": ["a.csv", "b.csv", "b.csv", "a.csv"],
+            "file_url": ["u1", "u2", "u2", "u2"],
+            "file_location": [None, None, None, None],
+        }
+    ).astype({"file_location": object})
+    repos = rc.Repos(rc.repo_rows("p", ["r1", "r2"], "osf", rc.NA_SCALAR))
+    out, _ = _prepare_files(files, repos)
+    # row 3 (u2, b.csv) repeats row 2; row 4 (u2, a.csv) is a different file
+    assert list(zip(out["repo_url"], out["file_name"], strict=True)) == [
+        ("r1", "a.csv"),
+        ("r1", "b.csv"),
+        ("r2", "a.csv"),
+    ]
 
 
 def test_peeked_zip_members_are_listed_but_not_readmes() -> None:

@@ -149,6 +149,7 @@
   "compare": {"ignore": ["paper_id", "table.paper_id", "summary_table.paper_id"]}
 # ---------------------------------------------------------------- F / eta coherence branches
 - "id": "stat_effect_size.f_branches"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U126", "reason": "'partial η2' is a partial eta-squared (match), d/r/beta next to an F-test are 'not verifiable' rather than 'Eta-squared reported', and the 'Both eta-squared and partial eta-squared' note is kept (U125)."}
   "module": "stat_effect_size"
   "args":
     "paper":
@@ -185,6 +186,7 @@
   "compare": {"ignore": ["paper_id", "table.paper_id", "summary_table.paper_id"]}
 # eta_implied is NaN (0/0): R's any(NA) inside if() errors
 - "id": "stat_effect_size.f_zero_df"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U126", "reason": "F(0, 0) gives an undefined implied effect size (indeterminate); metacheck stops on if (NA)."}
   "module": "stat_effect_size"
   "args":
     "paper": {"$test_paper": {"text": ["Zero, F(0, 0) = 1.00, ηp² = 0.50."]}}
@@ -195,6 +197,7 @@
   "compare": {"ignore": ["paper_id", "table.paper_id", "summary_table.paper_id"]}
 # ---------------------------------------------------------------- tricky text
 - "id": "stat_effect_size.tricky"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U126", "reason": "'d > 0.4' is checked as a bound (implied dz .45 > .4: match), not as d = 0.4 (no match)."}
   "module": "stat_effect_size"
   "args":
     "paper":

@@ -76,8 +76,7 @@ def test_several_urls_that_all_fail_give_none(serve: Serve) -> None:
         )
     with pytest.warns(UserWarning):
         assert (
-            rbox_file_download(["https://researchbox.org/1", "https://researchbox.org/2"])
-            is None
+            rbox_file_download(["https://researchbox.org/1", "https://researchbox.org/2"]) is None
         )
 
 

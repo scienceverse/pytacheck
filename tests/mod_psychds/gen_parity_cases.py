@@ -278,6 +278,53 @@ CHAINS: dict[str, dict[str, Any]] = {
     },
     "paper_none": {"paper": "none", "structure": GREEN_PARTIAL, "columns": 1},
     "paper_none_empty": {"paper": "none", "structure": EMPTY},
+    # U113: a paper list whose files belong to two of its papers; each paper
+    # gets its own summary row (R: one row, the first paper's, pooled counts)
+    "psychsci_two_papers": {
+        "paper": "psychsci",
+        "structure": {
+            **{
+                k: v + v2
+                for (k, v), v2 in zip(COMPLIANT.items(), GREEN_PARTIAL.values(), strict=True)
+            },
+            "paper_id": ["0956797613520608"] * 5 + ["to_err_is_human"] * 3,
+        },
+        "columns": 2,
+    },
+    # U112: a Psych-DS layout with a raw (non-tabular) file in data/, a
+    # LICENSE/CHANGES classed "unknown", a ro-crate file and a .tsv data file
+    # that already follows the naming rule
+    "compliant_raw": {
+        "paper": "test",
+        "structure": files(
+            [
+                (
+                    "study-1_task-stroop_data.tsv",
+                    "data/study-1_task-stroop_data.tsv",
+                    "data",
+                    None,
+                    "ex1",
+                    [],
+                ),
+                ("eeg.npy", "data/eeg.npy", "data", None, "ex1", []),
+                ("dataset_description.json", "dataset_description.json", "code", None, "ex1", []),
+                ("README.md", "README.md", "documentation", "readme", None, []),
+                ("LICENSE", "LICENSE", "unknown", "license", None, []),
+                ("CHANGES", "CHANGES", "unknown", None, "ex1", []),
+                (
+                    "ro-crate-metadata.json",
+                    "ro-crate-metadata.json",
+                    "documentation",
+                    "readme",
+                    None,
+                    [],
+                ),
+                ("analysis.R", "analysis/analysis.R", "code", None, "ex1", []),
+            ]
+        ),
+        "columns": 3,
+        "labels": ["labelled", "labelled", "labelled"],
+    },
 }
 
 TREES: dict[str, dict[str, Any]] = {

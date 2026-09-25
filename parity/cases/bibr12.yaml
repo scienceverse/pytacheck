@@ -96,7 +96,7 @@ cases:
   "py": "pytacheck.read"
   "args":
     "file_path": {"$expr": {"r": "local({d <- tempfile('pc_bibr12_'); dir.create(d); json <- jsonlite::read_json('upstream/metacheck/tests/testthat/fixtures/bibr12/probe_html.json'); jsonlite::write_json(json, file.path(d, 'a_v12.json'), auto_unbox = TRUE, null = 'null', digits = NA); json$schema_version <- '11.0'; jsonlite::write_json(json, file.path(d, 'b_v11.json'), auto_unbox = TRUE, null = 'null', digits = NA); d})", "py": "__import__('tests.bibr12._parity_helpers', fromlist=['x']).mixed_dir()"}}
-  "known_divergence": "U18: metacheck's read() of several files fails as soon as one cannot be read (read() returns NULL for it and paperlist() rejects the NULL: 'The arguments must be paper objects or lists of paper objects'), so a directory holding one bibr 11.x file cannot be read at all; pytacheck logs and skips the file and returns the 12.0 paper"
+  "known_divergence": {"kind": "deliberate", "ref": "D6", "reason": "metacheck's read() of several files fails as soon as one cannot be read (U18, U21: read() returns NULL for it and paperlist() rejects the NULL), so a directory holding one bibr 11.x file cannot be read at all; pytacheck logs and skips the file and returns the 12.0 paper"}
 # paper_table() of every table, over a list of 12.x papers
 - "id": "paper_table.list.info"
   "r": "paper_table"

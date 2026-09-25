@@ -641,9 +641,8 @@ def _haven_value_labels(col: Any, attrs: Mapping[str, Any] | None = None) -> dic
     vl: str | None = None
     miss_codes: list[Any] = []
     miss_reasons: list[str | None] = []
-    if pairs:
-        if _looks_like_freetext_labels([p[0] for p in pairs]):
-            pairs = []
+    if pairs and _looks_like_freetext_labels([p[0] for p in pairs]):
+        pairs = []
     if pairs:
         codes = [p[1] for p in pairs]
         reasons = [p[0] for p in pairs]

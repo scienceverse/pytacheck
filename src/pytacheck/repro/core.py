@@ -603,16 +603,22 @@ def _repro_format_call_refs(code_text: Any) -> pd.DataFrame:
             continue
         call_text = joined[start - 1 : end]
         args_text = joined[open_paren : end - 1]
-        quoted = regextract(_QUOTED, args_text, perl=True)
-        if quoted is None:
+        found = gregexpr_all(_QUOTED, args_text, perl=True)
+        if not found:
             continue
-        quoted_len = len(quoted)
+        q_start, quoted_len = found[0]
+        quoted = args_text[q_start - 1 : q_start - 1 + quoted_len]
         fmt = quoted[1:-1]
         if not grepl(_EXT_END, fmt):
             continue
         if grepl(_FORMAT_SPEC_PAT, _basename(_bs2fs(fmt)), perl=True):
             continue
-        after_fmt = args_text[quoted_len:]
+        # the arguments after the quoted string, wherever it stands: R skips
+        # quoted_len characters from the start of the arguments, so a call
+        # whose file string is not its first argument (paste(dir, "data.csv",
+        # sep = "/")) was never a format call and had only its literal
+        # rewritten (UPSTREAM_ISSUES U133)
+        after_fmt = args_text[q_start - 1 + quoted_len :]
         if not grepl(r"^\s*,", after_fmt, perl=True):
             continue
         line = _line_of(joined, start)
@@ -720,28 +726,37 @@ def _repro_redirect_writes(code_text: Any) -> pd.DataFrame:
         args_text = joined[open_paren : end - 1]
         line = _line_of(joined, start)
 
-        hit: tuple[int, int, str] | None = None
+        hit: tuple[int, int, str, str] | None = None
         for arg in _split_args(args_text):
-            val = sub(r"^[.a-zA-Z][.a-zA-Z0-9_]*\s*=\s*(?!=)", "", trimws(arg["text"]), perl=True)
-            val = trimws(val)
+            # a named argument keeps its name (R drops it, so save(a, b, file
+            # = "ab.RData") became save(a, b, "<out>/ab.RData"), which saves
+            # the string as another object; UPSTREAM_ISSUES U134)
+            name = regextract(
+                r"^[.a-zA-Z][.a-zA-Z0-9_]*\s*=\s*(?!=)", trimws(arg["text"]), perl=True
+            )
+            val = trimws(
+                sub(r"^[.a-zA-Z][.a-zA-Z0-9_]*\s*=\s*(?!=)", "", trimws(arg["text"]), perl=True)
+            )
+            lead = arg["text"][: len(arg["text"]) - len(arg["text"].lstrip())]
+            prefix = "" if name is None else lead + str(name)
             if regextract(r"""^(['"])((?:[^'"\\]|\\.)*)\1$""", val, perl=True) is not None:
                 target = val[1:-1]
                 if grepl(_EXT_END, target):
-                    hit = (arg["start"], arg["end"], _basename(_bs2fs(target)) or "")
+                    hit = (arg["start"], arg["end"], _basename(_bs2fs(target)) or "", prefix)
                     break
                 continue
             if grepl(r"^[.a-zA-Z][.a-zA-Z0-9_]*$", val) and val in path_like_vars:
-                hit = (arg["start"], arg["end"], val + var_ext[val])
+                hit = (arg["start"], arg["end"], val + var_ext[val], prefix)
                 break
             if grepl(r"^(paste0|paste|sprintf|file\.path)\s*\(", val, perl=True):
                 ext = _path_like_ext(val)
                 if ext is not None:
-                    hit = (arg["start"], arg["end"], f"write_{k}{ext}")
+                    hit = (arg["start"], arg["end"], f"write_{k}{ext}", prefix)
                     break
         if hit is None:
             continue
-        a_start, a_end, redirected = hit
-        replacement_arg = f'"{{{{REPRO_OUTPUT}}}}{redirected}"'
+        a_start, a_end, redirected, prefix = hit
+        replacement_arg = f'{prefix}"{{{{REPRO_OUTPUT}}}}{redirected}"'
         new_args = args_text[: a_start - 1] + replacement_arg + args_text[a_end:]
         rows.append((call_text, f"{fn_name}({new_args})", redirected, line))
     return result()
@@ -1000,7 +1015,9 @@ def repro_run_order(
 
     Port of ``R/reproducibility_check.R::repro_run_order()``. *files* has a
     ``file_name`` column and ``reads``/``writes``/``sources`` list columns of
-    basenames (as :func:`repro_file_io` returns); *extra_edges* are
+    basenames (as :func:`repro_file_io` returns); a missing one is derived
+    from a ``code_text`` column when there is one, as metacheck documents
+    (its code treats it as empty, UPSTREAM_ISSUES U135). *extra_edges* are
     ``(from_file, to_file)`` pairs. Returns ``file_name``, ``order``,
     ``depends_on`` and ``order_basis``; ``attrs["cycle"]`` (files in a
     dependency cycle), ``attrs["ambiguous"]`` and ``attrs["fuzzy_sources"]``
@@ -1020,9 +1037,22 @@ def repro_run_order(
     fname = _chr_list(files["file_name"])
     base_name = [_norm_base(f) for f in fname]
 
+    derived: pd.DataFrame | None = None
+    if "code_text" in files.columns and not {"reads", "writes", "sources"} <= set(files.columns):
+        texts = files["code_text"].tolist()
+        parts = [repro_file_io({f"row{i}": texts[i]}) for i in range(n)]
+        derived = pd.DataFrame(
+            {
+                col: [p[col].iloc[0] if col in p.columns and len(p) else [] for p in parts]
+                for col in ("reads", "writes", "sources")
+            }
+        )
+
     def io_col(col: str) -> list[list[str | None]]:
         if col in files.columns:
             return [_as_names(v) for v in files[col].tolist()]
+        if derived is not None:
+            return [_as_names(v) for v in derived[col].tolist()]
         return [[] for _ in range(n)]
 
     reads, writes, sources = io_col("reads"), io_col("writes"), io_col("sources")
@@ -1400,10 +1430,15 @@ def repro_missing_inputs(
 
     for b in ref_list:
         if b in skip_base:
-            if skipped is None or "file_size" not in skipped.columns:
-                raise ValueError("argument is of length zero")
+            # without a file_size column the size is left out (R stops:
+            # "argument is of length zero", UPSTREAM_ISSUES U135)
+            has_size = skipped is not None and "file_size" in skipped.columns
             # which(skip_base == b)[1] is NA for an NA basename
-            sz = None if b is None else _as_numeric(skipped["file_size"].iloc[skip_base.index(b)])
+            sz = (
+                None
+                if b is None or not has_size
+                else _as_numeric(skipped["file_size"].iloc[skip_base.index(b)])  # type: ignore[index]
+            )
             mb = f" ({sz / (1024 * 1024):.0f} MB)" if sz is not None and math.isfinite(sz) else ""
             rows.append(
                 (
@@ -1794,7 +1829,7 @@ def repro_write_scripts(
 
 
 def _install_frame(rows: Sequence[Mapping[str, Any]]) -> pd.DataFrame:
-    """``dplyr::bind_rows()`` of per-package result rows (a row may lack ``category``)."""
+    """``dplyr::bind_rows()`` of per-package result rows."""
     if not rows:
         return _frame(
             {
@@ -1965,6 +2000,9 @@ def repro_install_deps(
             main_lib = chk.get("install_lib")
             if chk.get("skipped"):
                 _message("[repro]     '", pkg, "' already installed (main library); skipping.")
+                # with a category (NA) like every other row, so the column is
+                # there even when every package is already installed (R's
+                # early row has none; UPSTREAM_ISSUES U135)
                 rows.append(
                     {
                         "package": pkg,
@@ -1972,6 +2010,7 @@ def repro_install_deps(
                         "installed": True,
                         "message": "",
                         "via_archive": False,
+                        "category": None,
                     }
                 )
                 continue
@@ -2085,7 +2124,12 @@ def _read_url_lines(url: str) -> list[str] | None:
 
 
 def _parse_archive_date(s: str) -> float:
-    """``as.POSIXct(s, tz = "UTC")`` of an Archive listing date, as a timestamp."""
+    """``as.POSIXct(s, tz = "UTC")`` of an Archive listing date, as a timestamp.
+
+    ``-inf`` when *s* holds no date: such a line sorts last instead of
+    failing the whole install, as R's ``as.POSIXct()`` outside its
+    ``tryCatch()`` does (UPSTREAM_ISSUES U135).
+    """
     import datetime as dt
 
     for fmt in ("%Y-%m-%d %H:%M:%S", "%Y/%m/%d %H:%M:%S", "%Y-%m-%d %H:%M", "%Y/%m/%d %H:%M"):
@@ -2093,7 +2137,7 @@ def _parse_archive_date(s: str) -> float:
             return dt.datetime.strptime(s, fmt).replace(tzinfo=dt.UTC).timestamp()
         except ValueError:
             continue
-    raise ValueError("character string is not in a standard unambiguous format")
+    return -math.inf
 
 
 def _repro_cran_archive_install(pkg: str | None, install_lib: str, lib_dir: str) -> dict[str, Any]:
@@ -2119,7 +2163,10 @@ def _repro_cran_archive_install(pkg: str | None, install_lib: str, lib_dir: str)
     date_pat = r"(\d{4}-\d{2}-\d{2} \d{2}:\d{2})"
     dates = [_parse_archive_date(d) for d in sub(".*" + date_pat + ".*", r"\1", hit_lines)]
     files = [m for m in regextract(tarball_pat, hit_lines) if m is not None]
-    order = sorted(range(len(files)), key=lambda i: -dates[i])
+    # the newest dated tarball (the last listed one when none has a date)
+    order = sorted(
+        range(len(files)), key=lambda i: (-dates[i], i if math.isfinite(dates[i]) else -i)
+    )
     latest_file = files[order[0]]
     version = sub(f"^{pkg}_(.*)\\.tar\\.gz$", r"\1", latest_file)
     tarball_url = archive_url + latest_file
@@ -2261,9 +2308,14 @@ def _callr_run(
             raise _RunError(_CALLR_CRASH)
 
 
-_UNDEF_PAT = r"""object ['"]([^'"]+)['"] not found"""
-_FN_PAT = r"""could not find function ['"]([^'"]+)['"]"""
-_NOPKG_PAT = r"""there is no package called ['"]([^'"]+)['"]"""
+# R quotes names with sQuote()/dQuote(), which are typographic quotes in a
+# UTF-8 locale ("there is no package called ‘pkg’"); metacheck's patterns
+# match only ASCII quotes, so a failed dependency was never recognised
+# (UPSTREAM_ISSUES U132)
+_Q = "'\"\u2018\u2019\u201c\u201d"
+_UNDEF_PAT = f"object [{_Q}]([^{_Q}]+)[{_Q}] not found"
+_FN_PAT = f"could not find function [{_Q}]([^{_Q}]+)[{_Q}]"
+_NOPKG_PAT = f"there is no package called [{_Q}]([^{_Q}]+)[{_Q}]"
 
 
 def _first_capture(pattern: str, src: str) -> str:

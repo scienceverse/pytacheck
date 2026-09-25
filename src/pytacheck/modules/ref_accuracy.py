@@ -57,8 +57,8 @@ _NO_MATCH = "We found no bib_match entries. You may need to add them with `add_b
 _GUIDANCE = (
     "The references below supplied a DOI, but one or more of the cited details (title, "
     "authors, journal, or year) does not match the record that DOI points to. Such an "
-    "incoherence is most often an error in reading the reference from the PDF, but it could be "
-    "a mistake, or an AI generated reference. Check each against the original source. "
+    "incoherent is most often an error in reading the reference from the PDF, but it could be "
+    "a mistake, ar an AI generated reference. Check each against the original source. "
     "Incoherent references are mostly PDF parsing errors (we are working on improving "
     "reference parsing)."
 )

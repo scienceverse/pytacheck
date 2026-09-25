@@ -154,25 +154,22 @@ def read_stat_tables(path: str | os.PathLike[str]) -> list[dict[str, Any]]:
 def _unzip(path: str, exdir: str) -> list[str]:
     """``utils::unzip(path, exdir = exdir)``: the extracted file paths (zip order).
 
-    R's ``unzip()`` returns ``NULL`` when the archive cannot be opened (not a
-    zip archive, a directory, or a zip without any entry), and
-    ``read_stat_tables()`` then fails in ``basename(NULL)``; that error is
-    reproduced. Directory entries are created but not returned, and
-    extraction stops at the first unreadable entry, keeping what was
-    extracted before it.
+    A path that is not a zip archive (a directory, another file, or a zip
+    without any entry) has nothing to extract: ``[]``, so
+    ``read_stat_tables()`` finds no tables. R's ``unzip()`` returns ``NULL``
+    there and ``basename(NULL)`` fails ("a character vector argument
+    expected", UPSTREAM_ISSUES U137). Directory entries are created but not
+    returned, and extraction stops at the first unreadable entry, keeping what
+    was extracted before it.
     """
-
-    def not_opened() -> TypeError:
-        return TypeError("a character vector argument expected")
-
     if not os.path.isfile(path) or not zipfile.is_zipfile(path):
-        raise not_opened()
+        return []
     out: list[str] = []
     try:
         with zipfile.ZipFile(path) as zf:
             infos = zf.infolist()
             if not infos:
-                raise not_opened()
+                return []
             root = os.path.realpath(exdir)
             for info in infos:
                 target = os.path.realpath(os.path.join(exdir, info.filename))
@@ -930,12 +927,11 @@ def _stat_table_parse(tb: Any) -> dict[str, Any] | None:
         if len(uniq) == 1:
             v1 = uniq[0]
             if v1 is None:
-                # Only NA cells (a row shorter than the header grid): the
-                # footnote test is NA (nchar(NA) > 40), and df[NA, ] turns the
-                # whole row into NA -- including its "" cells.
-                for col in cols:
-                    col[ri] = None
-                keep_rows.append(True)
+                # no content (a row shorter than the header grid, its cells
+                # missing or empty) is dropped like an empty row; in R the
+                # footnote test is NA and df[NA, ] adds a row of NAs
+                # (UPSTREAM_ISSUES U141)
+                keep_rows.append(False)
                 continue
             is_note = (
                 bool(grepl("^Note", v1, ignore_case=True))
@@ -1019,14 +1015,16 @@ def _ipynb_stat_line(lines: Sequence[str] | str) -> list[dict[str, Any]] | None:
     """Parse ``name [(df)] op value`` fragments line by line.
 
     Port of ``R/stat-tables.R::.ipynb_stat_line()``; each result carries
-    the printed Python result class as ``call_fn`` (``None`` when absent,
-    as R's ``NA``). ``None`` when no line parses.
+    the printed Python result class as ``call_fn`` (``""`` when absent, as
+    metacheck intends; its ``%||% ""`` never replaces the ``NA`` that
+    ``.ipynb_result_class()`` returns, UPSTREAM_ISSUES U139). ``None`` when
+    no line parses.
     """
     if isinstance(lines, str):
         lines = [lines]
     out: list[dict[str, Any]] = []
     for ln in lines:
-        cls = _ipynb_result_class(ln)
+        cls = _ipynb_result_class(ln) or ""
         stripped = _ipynb_strip_numpy_scalars(ln)
         parsed = _r_output_oneline([stripped], source_label=None)
         for p in parsed:

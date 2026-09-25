@@ -641,10 +641,10 @@ def _synonyms() -> dict[str, tuple[str, ...]]:
         "[Pp]ublication", "[Rr]eport", "[Pp]rogram", "[Pp]aper",
         "[Mm]anuscript", "[Aa]nalysis", "[Ii]nvestigation",
     )  # fmt: skip
-    # R's typo "[Pp]papers" is kept
+    # metacheck's typo "[Pp]papers" is fixed (U104)
     s["researches"] = (
         "[Ww]orks", "[Ss]tudies", "[Pp]rojects", "[Tt]rials", "[Pp]ublications",
-        "[Rr]eports", "[Pp]rograms", "[Pp]papers", "[Mm]anuscripts",
+        "[Rr]eports", "[Pp]rograms", "[Pp]apers", "[Mm]anuscripts",
         "[Aa]nalyses", "[Ii]nvestigations",
     )  # fmt: skip
 
@@ -752,9 +752,9 @@ def _synonyms() -> dict[str, tuple[str, ...]]:
         "acknowledged", "recognized", "disclosed", "declared", "reported", "appreciated",
     )  # fmt: skip
 
-    # R's typo "Ffoundation(|s)" is kept
+    # metacheck's typo "Ffoundation(|s)", which never matches, is fixed (U104)
     s["foundation"] = (
-        "Ffoundation(|s)", "Institut(e|es|ution)", "Universit", "Universit(y|ies)",
+        "Foundation(|s)", "Institut(e|es|ution)", "Universit", "Universit(y|ies)",
         "Academ(y|ies)", "Ministr(y|ies)", "[Gg]overnment(|s)", "Council(|s)",
         "National", "NIH", "NSF", "HHMI", "Trust(|s)", "Association(|s)",
         "Societ(y|ies)", "College(|s)", "Commission(|s)", "Center(|s)",
@@ -762,10 +762,11 @@ def _synonyms() -> dict[str, tuple[str, ...]]:
     )  # fmt: skip
     s["foundation_award"] = (*s["foundation"], *s["award"])
 
+    # metacheck's typos "L(?i)terature" and "B(?i)ibliograpy" are fixed (U104)
     s["References"] = (
-        "R(?i)eferences(?-i)", "L(?i)terature(?-i)", "L(?i)iterature Cited(?-i)",
+        "R(?i)eferences(?-i)", "L(?i)iterature(?-i)", "L(?i)iterature Cited(?-i)",
         "N(?i)otes and References(?-i)", "W(?i)orks Cited(?-i)", "^C(?i)itations(?-i)",
-        "B(?i)ibliograpy(?-i)", "B(?i)ibliographic references(?-i)",
+        "B(?i)ibliography(?-i)", "B(?i)ibliographic references(?-i)",
         "R(?i)eferences and recommended reading(?-i)",
     )  # fmt: skip
 
@@ -796,7 +797,8 @@ def _synonyms() -> dict[str, tuple[str, ...]]:
         "C(?i)onflict(|s) of interest(|s) declaration(?-i)",
         "C(?i)onflicting interest(|s)(?-i)",
         "C(?i)onflicting interest(|s) declaration(?-i)",
-        "C(?i)onflicting financial intere",
+        # metacheck leaves out the (?-i), so later alternatives ignore case (U104)
+        "C(?i)onflicting financial intere(?-i)",
         "C(?i)onflicting of interest(|s)(?-i)",
         "C(?i)onflits d'int(?-i)",
         "C(?i)onflictos de Inter(?-i)",
@@ -1100,8 +1102,10 @@ def obliterate_disclosure_1(article: Any) -> Any:
 
 @cache
 def _pattern_where_refs() -> str:
+    # anchored at the start of the sentence: metacheck takes any sentence that
+    # contains "References" followed by the end or a capitalised word (U104)
     next_sentence = "((|:|\\.)|(|:|\\.) [A-Z0-9]+.*)$"
-    return _encase([x + next_sentence for x in _syn("References")])
+    return "^" + _encase([x + next_sentence for x in _syn("References")])
 
 
 def _where_refs_txt(article: Any) -> list[int]:
@@ -1159,15 +1163,22 @@ def _where_methods_txt(article: Any) -> list[int]:
 
 
 def _title_with_next(art: _Article, a: list[int]) -> list[int]:
-    """R's ``if (!is.na(article[a + 1])) { if (nchar(article[a + 1]) == 0) ... }``."""
-    if len(a) > 1:
-        raise ValueError("the condition has length > 1")
-    nxt = art.get(a[0] + 1)
-    if nxt is None:
-        return list(a)
-    if len(nxt) == 0:
-        return [a[0], a[0] + 2]
-    return [a[0], a[0] + 1]
+    """Each title line and the line after it (skipping one empty line).
+
+    metacheck's ``if (!is.na(article[a + 1]))`` stops when two or more lines
+    match ("the condition has length > 1"), failing the module, and returns
+    ``a + 2`` past the end of the article ("Funding NA", U103).
+    """
+    out: list[int] = []
+    for i in a:
+        out.append(i)
+        nxt = art.get(i + 1)
+        if nxt is None:
+            continue
+        j = i + 2 if len(nxt) == 0 else i + 1
+        if art.get(j) is not None:
+            out.append(j)
+    return _unique(out)
 
 
 @cache
@@ -1817,4 +1828,5 @@ def rtransparent_funding(text: Any) -> str:
                 index = [i + start for i in found]
 
     index = sorted(set(index))
-    return " ".join("NA" if (v := art.get(i)) is None else v for i in index)
+    # nothing past the end or missing is pasted (metacheck pastes "NA", U103)
+    return " ".join(v for i in index if (v := art.get(i)) is not None)

@@ -15,7 +15,6 @@ from pytacheck.db._utils import (
     default_email,
     paste_unlist,
     r_dollar,
-    r_list_set,
     records_frame,
     resp_body_json,
     resp_content_type,
@@ -240,9 +239,18 @@ def _df_dollar(df: pd.DataFrame, name: str) -> Any:
 
 
 def _encode_query(value: Any) -> str:
-    """``utils::URLencode(x, reserved = TRUE) |> gsub("%28", "(") |> gsub("%29", ")")``."""
+    """``utils::URLencode(x, reserved = TRUE) |> gsub("%28", "(") |> gsub("%29", ")")``.
+
+    A list cell (several authors) is searched as its values joined with
+    ``", "`` and a missing value not at all (metacheck searched the deparsed
+    list, ``c("A", "B")``, and ``"NA"``; U13).
+    """
     if isinstance(value, list | tuple):
-        value = unlist(value)[0] if len(unlist(value)) == 1 else value
+        vals = [_paste_chr(e) for e in unlist(value) if not is_na(e) and e != ""]
+        value = ", ".join(vals) if vals else None
+    if value is None or is_na(value):
+        # a missing field is left out of the query (metacheck searched "NA")
+        return ""
     return url_encode(value, reserved=True).replace("%28", "(").replace("%29", ")")
 
 
@@ -279,9 +287,13 @@ def _datacite_row(bd: Any) -> dict[str, Any]:
         "url": att.get("url") if isinstance(att, Mapping) else None,
         "version": att.get("version") if isinstance(att, Mapping) else None,
     }
-    # `%||% NA_character_` / `NA_real_`: typed missing values for bind_rows()
+    # `%||% NA_character_` / `NA_real_`: typed missing values for bind_rows();
+    # values are text and the year a number (a numeric field next to a text
+    # one failed metacheck's bind_rows(); U12)
+    from pytacheck.db.doi import _typed_value
+
     row = {
-        k: (NA_real if k == "year" else NA_character) if v is None else _info_value(v)
+        k: (NA_real if k == "year" else NA_character) if v is None else _typed_value(k, v)
         for k, v in info.items()
     }
     row["score"] = float("nan")
@@ -293,9 +305,9 @@ def datacite_doi(doi: Any) -> pd.DataFrame | None:
     """DOI info from DataCite (port of ``datacite_doi()``).
 
     Returns a ``bib_match``-style table (``service`` = ``"datacite"``) with
-    one row per DOI. As in metacheck, an HTTP error status makes the whole
-    call return ``None``, and a response that is not ``application/json``
-    removes that DOI's slot from the result list.
+    one row per DOI; a DOI whose lookup fails gets a row of ``NA``.
+    metacheck returns ``NULL`` for the whole call on any HTTP error and drops
+    the row of a response that is not JSON, shifting later rows (U12).
     """
     import pandas as pd
 
@@ -326,19 +338,25 @@ def datacite_doi(doi: Any) -> pd.DataFrame | None:
             bibdata[i] = {"doi": None}
     for j, i in enumerate(valid_idx):
         resp = resps[j]
-        try:
-            if resp is None:
-                raise TypeError("`resp` must be an HTTP response object, not `NULL`.")
-            if resp.status_code >= 400:
-                return None  # `return(NULL)` inside tryCatch() leaves datacite_doi()
-            value = resp_body_json(resp) if resp_content_type(resp) == "application/json" else None
-        except Exception:  # tryCatch(error = ) catches every error
-            value = None
-        r_list_set(bibdata, i + 1, value)
+        value = None
+        if (
+            resp is not None
+            and resp.status_code < 400
+            and resp_content_type(resp) == "application/json"
+        ):
+            try:
+                value = resp_body_json(resp)
+            except Exception:  # not JSON: no information for this DOI
+                value = None
+        bibdata[i] = value if isinstance(value, Mapping) else None
 
-    if not bibdata:
-        return pd.DataFrame()
-    return records_frame([_datacite_row(bd) for bd in bibdata])
+    rows = []
+    for bd in bibdata:
+        try:
+            rows.append(_datacite_row(bd))
+        except (IndexError, TypeError, ValueError):  # a malformed record
+            rows.append(_datacite_row(None))
+    return records_frame(rows)
 
 
 # ---------------------------------------------------------------------------
@@ -533,8 +551,31 @@ def _parse_item(item: Mapping[str, Any], select: Sequence[str]) -> _Frame:
     authors = _author_records(r_dollar(item, "author"))
     item.pop("author", None)
 
-    to_select = [s for s in dict.fromkeys(select) if s in item]
+    # a JSON null is a missing value, not a field (metacheck's data.frame()
+    # failed: "differing number of rows: 1, 0"), a list of values (ISSN) is
+    # one "; "-separated value and a list of people (editor) a table like
+    # author (metacheck spread them over columns named by the deparsed
+    # values; U13); other lists of records keep metacheck's columns
+    to_select = []
+    people: dict[str, list[dict[str, Any]]] = {}
+    for name in dict.fromkeys(select):
+        if name not in item or item[name] is None:
+            continue
+        v = item[name]
+        if isinstance(v, list | tuple):
+            if not v:
+                continue
+            if all(isinstance(e, Mapping) and ("family" in e or "given" in e) for e in v):
+                recs = _author_records(v)
+                if not recs:
+                    continue
+                people[name] = recs
+                item[name] = name  # a placeholder cell, replaced below
+            elif all(not isinstance(e, list | tuple | Mapping) for e in v):
+                item[name] = "; ".join(_paste_chr(e) for e in v)
+        to_select.append(name)
     cols, nrow = _data_frame([(name, item[name]) for name in to_select])
+    cols = [(n, people[n]) if n in people else (n, v) for n, v in cols]
     if "author" in select and authors:
         if nrow == 0:
             raise ValueError("replacement has 1 row, data has 0")
@@ -592,7 +633,10 @@ def _crossref_doi_one(
     """One DOI's row of ``crossref_doi()`` (``None``: a 0-row result, dropped by ``bind_rows()``)."""
     try:
         if resp is None:
-            raise TypeError("`resp` must be an HTTP response object, not `NULL`.")
+            # metacheck's dead inherits(resp, "error") branch gave "`resp` must
+            # be an HTTP response object", which add_bib_match() never counted
+            # as a network error (U13)
+            return {"DOI": doi, "error": "connection failed"}
         if resp.status_code >= 400:
             return {"DOI": doi, "error": f"HTTP {resp.status_code}"}
         item = resp_body_json(resp)
@@ -671,22 +715,19 @@ def _is_cell_list(v: Any) -> bool:
 def _ref_text(row: Mapping[str, Any]) -> str:
     """The ``ref`` text crossref_query() records for a data-frame reference.
 
-    ``ref[, nonblank] |> paste(collapse = "; \\n")`` (a literal backslash-n):
-    one non-blank column pastes its value, several paste
-    ``as.character()`` of the 1-row data frame (list cells deparsed).
+    Its non-blank fields joined with ``"; "`` (a list cell's values with
+    ``", "``). metacheck joined them with a literal backslash-n and deparsed
+    list cells (``list(c("A", "B"))``; U13).
     """
-    nonblank = [v for v in row.values() if _is_cell_list(v) or not (is_na(v) or v == "")]
-    if not nonblank:
-        return ""
-    if len(nonblank) == 1:
-        v = nonblank[0]
+    parts = []
+    for v in row.values():
         if _is_cell_list(v):
-            return _paste_chr(v[0]) if len(v) == 1 else _deparse_chr_vector(v)
-        return _paste_chr(v)
-    parts = [
-        f"list({_deparse_chr_vector(v)})" if _is_cell_list(v) else _paste_chr(v) for v in nonblank
-    ]
-    return "; \\n".join(parts)
+            vals = [_paste_chr(e) for e in v if not is_na(e) and e != ""]
+            if vals:
+                parts.append(", ".join(vals))
+        elif not (is_na(v) or v == ""):
+            parts.append(_paste_chr(v))
+    return "; ".join(parts)
 
 
 def _paste_chr(v: Any) -> str:
@@ -710,29 +751,6 @@ def _query_url(ref: Any, rows: int, email: str) -> str:
             url = f"{url}&query.container-title={container}"
         return url
     return f"{base}&query.bibliographic={_encode_query(ref)}"
-
-
-def _offline_df_refs(src: dict[str, pd.Series], n: int) -> pd.DataFrame:
-    """R: ``data.frame(bib_text = <list of 1-row data frames>, DOI = NA, error = "offline")``.
-
-    The 1-row data frames a data-frame *ref* is split into become the columns
-    of a single row, ``bib_text.title``, ``bib_text.author``,
-    ``bib_text.container``, then ``bib_text.title.1``... (``make.unique()``)
-    for the next reference, followed by ``DOI`` and ``error``.
-    """
-    import pandas as pd
-
-    if n == 0:
-        raise ValueError("arguments imply differing number of rows: 0, 1")
-    out: dict[str, pd.Series] = {}
-    for i in range(n):
-        for k, col in src.items():
-            out[f"bib_text.{k}" if i == 0 else f"bib_text.{k}.{i}"] = col.iloc[[i]].reset_index(
-                drop=True
-            )
-    out["DOI"] = pd.Series([pd.NA], dtype="boolean")
-    out["error"] = pd.Series(["offline"], dtype="string")
-    return pd.DataFrame(out)
 
 
 def crossref_query(
@@ -762,7 +780,6 @@ def crossref_query(
         return pd.DataFrame()
 
     refs: list[Any]
-    src: dict[str, pd.Series] | None = None
     if isinstance(ref, pd.DataFrame):
         if ref.shape[1] == 0:
             return pd.DataFrame()
@@ -775,26 +792,13 @@ def crossref_query(
             container = _df_dollar(ref, "journal")
         if container is None:
             container = _df_dollar(ref, "booktitle")
+        # a table without author or container columns is searched by what it
+        # has (metacheck's data.frame(title =, author = NULL) failed; U13)
         cols = {"title": title, "author": author, "container": container}
-        # data.frame(title = , author = , container = ): a missing (NULL) column
-        # next to rows fails
-        nrows = [0 if v is None else len(v) for v in cols.values()]
-        if any(n < max(nrows) for n in nrows):
-            unique = ", ".join(str(n) for n in dict.fromkeys(nrows))
-            raise ValueError(f"arguments imply differing number of rows: {unique}")
         cols = {k: v for k, v in cols.items() if v is not None}
-        if "title" not in cols:
+        if "title" not in cols or len(ref) == 0:
             return pd.DataFrame()
         refs = [{k: v[i] for k, v in cols.items()} for i in range(len(ref))]
-        names = {
-            "title": ["title"],
-            "author": ["authors", "author"],
-            "container": ["container", "journal", "booktitle"],
-        }
-        src = {}
-        for k in cols:
-            found = next(c for c in (_df_dollar_name(ref, n) for n in names[k]) if c is not None)
-            src[k] = ref[found].reset_index(drop=True)
     else:
         refs = as_vector(ref)
         if len(refs) == 0:
@@ -802,20 +806,31 @@ def crossref_query(
 
     texts = [_ref_text(r) if isinstance(r, Mapping) else r for r in refs]
     if not _utils.online("api.crossref.org"):
-        if src is not None:
-            return _offline_df_refs(src, len(refs))
+        # one row per reference (metacheck spread a table's references over
+        # the columns of a single row; U13)
         return records_frame([{"bib_text": t, "DOI": None, "error": "offline"} for t in texts])
 
     email = default_email()
-    urls = [_query_url(r, rows, email) for r in refs]
+    # a reference without text is not searched (metacheck searched "NA")
+    asked = [i for i, t in enumerate(texts) if not (is_na(t) or t == "")]
+    urls = [_query_url(refs[i], rows, email) for i in asked]
     # api.crossref.org list/search (query.*) endpoint: polite pool allows only 3 req/s
-    resps = http.batch_query(
-        urls, msg="Querying CrossRef", throttle_capacity=3, throttle_fill_time_s=1
+    got = (
+        http.batch_query(urls, msg="Querying CrossRef", throttle_capacity=3, throttle_fill_time_s=1)
+        if urls
+        else []
     )
+    resps: list[Any] = [None] * len(texts)
+    for i, r in zip(asked, got, strict=True):
+        resps[i] = r
+    skipped = set(range(len(texts))) - set(asked)
 
     records: list[dict[str, Any]] = []
-    for text, resp in zip(texts, resps, strict=True):
+    for k, (text, resp) in enumerate(zip(texts, resps, strict=True)):
         base = {"ref": NA_character if is_na(text) else as_character(text)}
+        if k in skipped:
+            records.append({**base, "DOI": NA_character})
+            continue
         try:
             if resp is None or resp.status_code >= 400:
                 records.append({**base, "DOI": NA_character, "error": "request failed"})
@@ -1030,7 +1045,11 @@ def _openalex_add_abstract(info: Any) -> Any:
     )
     positions = unlist(values)
     if not positions:
-        raise ValueError("argument 1 is not a vector")  # order(NULL)
+        # an empty index is an empty abstract (metacheck's order(NULL) failed,
+        # so the work was reported "not found"; U14)
+        out = dict(info)
+        out["abstract"] = ""
+        return out
     idx = sorted(range(len(positions)), key=lambda i: positions[i])  # order(): stable
     # words[order(order)]: NULL words stay NULL, an index past the end is NA
     picked = [words[i] if i < len(words) else "NA" for i in idx] if words else []
@@ -1044,14 +1063,15 @@ def openalex_doi(doi: Any, select: Sequence[str] | None = None) -> Any:
 
     Returns a list with one entry (the OpenAlex work record, with an
     ``abstract`` rebuilt from the inverted index) per DOI; missing DOIs give
-    ``{"DOI": NA}`` and malformed ones ``{"DOI": doi, "error": "malformed"}``.
-    As in metacheck, *select* is accepted but not used, and a DOI that
-    OpenAlex does not know (HTTP error) makes the call return just
-    ``{"DOI": doi, "error": "not found"}`` for that DOI.
+    ``{"DOI": NA}``, malformed ones ``{"DOI": doi, "error": "malformed"}`` and
+    DOIs OpenAlex does not know ``{"DOI": doi, "error": "not found"}``. With
+    *select*, a work record keeps only those fields.
+
+    Differs from metacheck (U12, U13): there one unknown DOI (an HTTP error)
+    made the call return only that DOI's error, and *select* was ignored.
     """
     from pytacheck import http
 
-    del select  # documented by metacheck but never applied
     if _is_paperish(doi):
         values = _paper_dois(doi)
         if not values:
@@ -1088,18 +1108,18 @@ def openalex_doi(doi: Any, select: Sequence[str] | None = None) -> Any:
             oa[i] = {"DOI": None}
         elif not valid[i]:
             oa[i] = {"DOI": v, "error": "malformed"}
+    keep = None if select is None else list(as_vector(select))
     for j, i in enumerate(valid_idx):
         resp = resps[j]
-        try:
-            if resp is None:
-                raise TypeError("`resp` must be an HTTP response object, not `NULL`.")
-            if resp.status_code >= 400:
-                # `return(...)` inside tryCatch() leaves openalex_doi()
-                return {"DOI": values[i], "error": "not found"}
-            value = _openalex_add_abstract(resp_body_json(resp))
-        except Exception:  # tryCatch(error = ) catches every error
-            value = {"DOI": values[i], "error": "not found"}
-        r_list_set(oa, i + 1, value)
+        value: Any = {"DOI": values[i], "error": "not found"}
+        if resp is not None and resp.status_code < 400:
+            try:
+                work = _openalex_add_abstract(resp_body_json(resp))
+            except Exception:  # not JSON
+                work = None
+            if isinstance(work, Mapping):
+                value = work if keep is None else {k: work[k] for k in keep if k in work}
+        oa[i] = value
     return oa
 
 
@@ -1210,12 +1230,14 @@ def openalex_query(
 
     info = records_frame(rows)
     if "relevance_score" in info.columns:
-        # arrange(desc(relevance_score)) on the character column unlist() made:
-        # string order, NA last, ties stable
-        scores = info["relevance_score"].tolist()
+        # highest relevance first, as numbers (metacheck sorted the character
+        # column unlist() made, so "9.5" came before "10.2"; U13); NA last
+        from pytacheck.text.json_expand import as_numeric
+
+        scores = [as_numeric(v) if isinstance(v, str) else v for v in info["relevance_score"]]
         present = [i for i in range(len(info)) if not is_na(scores[i])]
         missing = [i for i in range(len(info)) if is_na(scores[i])]
-        present = sorted(present, key=lambda i: scores[i], reverse=True)
+        present = sorted(present, key=lambda i: -float(scores[i]))
         info = info.iloc[present + missing].reset_index(drop=True)
 
     for rq in ("display_name", "source"):

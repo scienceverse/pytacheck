@@ -46,13 +46,15 @@ _LABELS = {
 
 
 def _paper_ids(paper: Any) -> pd.DataFrame:
-    """``data.frame(paper_id = paper$paper_id)``.
+    """``data.frame(paper_id = paper$paper_id)``: the paper IDs, one row each.
 
-    A paper list has no ``paper_id`` element, so R builds a data frame with
-    no columns (and no rows).
+    A paper list has no ``paper_id`` element, so metacheck builds a data frame
+    with no columns (U124; ``module_run()`` adds the IDs back); here it has the
+    IDs of the list's papers.
     """
     if isinstance(paper, PaperList):
-        return pd.DataFrame()
+        ids = list(dict.fromkeys(p.paper_id for p in paper))
+        return pd.DataFrame({"paper_id": pd.Series(ids, dtype="string")})
     pid = getattr(paper, "paper_id", None)
     if pid is None:
         return pd.DataFrame()

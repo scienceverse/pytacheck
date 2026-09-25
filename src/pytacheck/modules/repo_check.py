@@ -252,7 +252,8 @@ def _repo_check(
     local_files_df = rc.placeholder()
     if local_path is not None:
         local_files_df = rc.list_local(local_path)
-        paths = [local_path] if isinstance(local_path, str) else list(local_path)
+        # a folder given twice is one repository
+        paths = [local_path] if isinstance(local_path, str) else list(dict.fromkeys(local_path))
         pid = pids()[0]
         repos.add(rc.repo_rows(rc.NA_SCALAR if pid is None else pid, paths, "local", rc.NA_SCALAR))
 
@@ -481,7 +482,9 @@ def _prepare_files(all_files: pd.DataFrame, repos: rc.Repos) -> tuple[pd.DataFra
             if "file_location" in all_files.columns
             else [None] * n
         )
-        repo_urls = rc.vals(all_files["repo_url"]) if "repo_url" in all_files.columns else [None] * n
+        repo_urls = (
+            rc.vals(all_files["repo_url"]) if "repo_url" in all_files.columns else [None] * n
+        )
         paths = rc.vals(all_files[key])
 
         def ident(i: int) -> tuple[Any, ...]:

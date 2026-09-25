@@ -93,6 +93,7 @@
         "py": "lambda: __import__(\"pytacheck.archives.osf_helpers\", fromlist=[\"_\"])._osf_parse_response(__import__(\"tests.archives_osf.parity_support\", fromlist=[\"_\"]).fixture(\"api.osf.io/v2/guids/3cz2e\"))"
   "compare": *id001
 - "id": ".osf_parse_response.fx.v2.guids.48ncu-65f472"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U52", "reason": "a record of an unknown type keeps its own id (metacheck labels it with the osf_id argument, NA for a listing)"}
   "r": "identity"
   "py": "tests.archives_osf.parity_support.run"
   "args":
@@ -102,6 +103,7 @@
         "py": "lambda: __import__(\"pytacheck.archives.osf_helpers\", fromlist=[\"_\"])._osf_parse_response(__import__(\"tests.archives_osf.parity_support\", fromlist=[\"_\"]).fixture(\"api.osf.io/v2/guids/48ncu-65f472\"))"
   "compare": *id001
 - "id": ".osf_parse_response.fx.v2.guids.4i578-65f472"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U52", "reason": "a record of an unknown type keeps its own id (metacheck labels it with the osf_id argument, NA for a listing)"}
   "r": "identity"
   "py": "tests.archives_osf.parity_support.run"
   "args":
@@ -120,6 +122,7 @@
         "py": "lambda: __import__(\"pytacheck.archives.osf_helpers\", fromlist=[\"_\"])._osf_parse_response(__import__(\"tests.archives_osf.parity_support\", fromlist=[\"_\"]).fixture(\"api.osf.io/v2/guids/4i578\"))"
   "compare": *id001
 - "id": ".osf_parse_response.fx.v2.guids.4v3sg-65f472"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U52", "reason": "a record of an unknown type keeps its own id (metacheck labels it with the osf_id argument, NA for a listing)"}
   "r": "identity"
   "py": "tests.archives_osf.parity_support.run"
   "args":
@@ -129,6 +132,7 @@
         "py": "lambda: __import__(\"pytacheck.archives.osf_helpers\", fromlist=[\"_\"])._osf_parse_response(__import__(\"tests.archives_osf.parity_support\", fromlist=[\"_\"]).fixture(\"api.osf.io/v2/guids/4v3sg-65f472\"))"
   "compare": *id001
 - "id": ".osf_parse_response.fx.v2.guids.5tbm9-65f472"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U52", "reason": "a record of an unknown type keeps its own id (metacheck labels it with the osf_id argument, NA for a listing)"}
   "r": "identity"
   "py": "tests.archives_osf.parity_support.run"
   "args":
@@ -138,6 +142,7 @@
         "py": "lambda: __import__(\"pytacheck.archives.osf_helpers\", fromlist=[\"_\"])._osf_parse_response(__import__(\"tests.archives_osf.parity_support\", fromlist=[\"_\"]).fixture(\"api.osf.io/v2/guids/5tbm9-65f472\"))"
   "compare": *id001
 - "id": ".osf_parse_response.fx.v2.guids.5xysn-65f472"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U52", "reason": "a record of an unknown type keeps its own id (metacheck labels it with the osf_id argument, NA for a listing)"}
   "r": "identity"
   "py": "tests.archives_osf.parity_support.run"
   "args":
@@ -147,6 +152,7 @@
         "py": "lambda: __import__(\"pytacheck.archives.osf_helpers\", fromlist=[\"_\"])._osf_parse_response(__import__(\"tests.archives_osf.parity_support\", fromlist=[\"_\"]).fixture(\"api.osf.io/v2/guids/5xysn-65f472\"))"
   "compare": *id001
 - "id": ".osf_parse_response.fx.v2.guids.629bx-65f472"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U52", "reason": "a record of an unknown type keeps its own id (metacheck labels it with the osf_id argument, NA for a listing)"}
   "r": "identity"
   "py": "tests.archives_osf.parity_support.run"
   "args":
@@ -165,6 +171,7 @@
         "py": "lambda: __import__(\"pytacheck.archives.osf_helpers\", fromlist=[\"_\"])._osf_parse_response(__import__(\"tests.archives_osf.parity_support\", fromlist=[\"_\"]).fixture(\"api.osf.io/v2/guids/629bx\"))"
   "compare": *id001
 - "id": ".osf_parse_response.fx.v2.guids.6nt4v-65f472"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U52", "reason": "a record of an unknown type keeps its own id (metacheck labels it with the osf_id argument, NA for a listing)"}
   "r": "identity"
   "py": "tests.archives_osf.parity_support.run"
   "args":
@@ -183,6 +190,7 @@
         "py": "lambda: __import__(\"pytacheck.archives.osf_helpers\", fromlist=[\"_\"])._osf_parse_response(__import__(\"tests.archives_osf.parity_support\", fromlist=[\"_\"]).fixture(\"api.osf.io/v2/guids/6nt4v\"))"
   "compare": *id001
 - "id": ".osf_parse_response.fx.v2.guids.75qgk-65f472"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U52", "reason": "a record of an unknown type keeps its own id (metacheck labels it with the osf_id argument, NA for a listing)"}
   "r": "identity"
   "py": "tests.archives_osf.parity_support.run"
   "args":
@@ -201,6 +209,7 @@
         "py": "lambda: __import__(\"pytacheck.archives.osf_helpers\", fromlist=[\"_\"])._osf_parse_response(__import__(\"tests.archives_osf.parity_support\", fromlist=[\"_\"]).fixture(\"api.osf.io/v2/guids/75qgk\"))"
   "compare": *id001
 - "id": ".osf_parse_response.fx.v2.guids.7qcxa-65f472"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U52", "reason": "a record of an unknown type keeps its own id (metacheck labels it with the osf_id argument, NA for a listing)"}
   "r": "identity"
   "py": "tests.archives_osf.parity_support.run"
   "args":
@@ -210,6 +219,7 @@
         "py": "lambda: __import__(\"pytacheck.archives.osf_helpers\", fromlist=[\"_\"])._osf_parse_response(__import__(\"tests.archives_osf.parity_support\", fromlist=[\"_\"]).fixture(\"api.osf.io/v2/guids/7qcxa-65f472\"))"
   "compare": *id001
 - "id": ".osf_parse_response.fx.v2.guids.7v28u-65f472"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U52", "reason": "a record of an unknown type keeps its own id (metacheck labels it with the osf_id argument, NA for a listing)"}
   "r": "identity"
   "py": "tests.archives_osf.parity_support.run"
   "args":
@@ -219,6 +229,7 @@
         "py": "lambda: __import__(\"pytacheck.archives.osf_helpers\", fromlist=[\"_\"])._osf_parse_response(__import__(\"tests.archives_osf.parity_support\", fromlist=[\"_\"]).fixture(\"api.osf.io/v2/guids/7v28u-65f472\"))"
   "compare": *id001
 - "id": ".osf_parse_response.fx.v2.guids.8c3kb-65f472"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U52", "reason": "a record of an unknown type keeps its own id (metacheck labels it with the osf_id argument, NA for a listing)"}
   "r": "identity"
   "py": "tests.archives_osf.parity_support.run"
   "args":
@@ -237,6 +248,7 @@
         "py": "lambda: __import__(\"pytacheck.archives.osf_helpers\", fromlist=[\"_\"])._osf_parse_response(__import__(\"tests.archives_osf.parity_support\", fromlist=[\"_\"]).fixture(\"api.osf.io/v2/guids/8c3kb\"))"
   "compare": *id001
 - "id": ".osf_parse_response.fx.v2.guids.9bg3z-65f472"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U52", "reason": "a record of an unknown type keeps its own id (metacheck labels it with the osf_id argument, NA for a listing)"}
   "r": "identity"
   "py": "tests.archives_osf.parity_support.run"
   "args":
@@ -246,6 +258,7 @@
         "py": "lambda: __import__(\"pytacheck.archives.osf_helpers\", fromlist=[\"_\"])._osf_parse_response(__import__(\"tests.archives_osf.parity_support\", fromlist=[\"_\"]).fixture(\"api.osf.io/v2/guids/9bg3z-65f472\"))"
   "compare": *id001
 - "id": ".osf_parse_response.fx.v2.guids.9h2pj-65f472"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U52", "reason": "a record of an unknown type keeps its own id (metacheck labels it with the osf_id argument, NA for a listing)"}
   "r": "identity"
   "py": "tests.archives_osf.parity_support.run"
   "args":
@@ -264,6 +277,7 @@
         "py": "lambda: __import__(\"pytacheck.archives.osf_helpers\", fromlist=[\"_\"])._osf_parse_response(__import__(\"tests.archives_osf.parity_support\", fromlist=[\"_\"]).fixture(\"api.osf.io/v2/guids/NA-65f472\"))"
   "compare": *id001
 - "id": ".osf_parse_response.fx.v2.guids.a6y7r-65f472"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U52", "reason": "a record of an unknown type keeps its own id (metacheck labels it with the osf_id argument, NA for a listing)"}
   "r": "identity"
   "py": "tests.archives_osf.parity_support.run"
   "args":
@@ -273,6 +287,7 @@
         "py": "lambda: __import__(\"pytacheck.archives.osf_helpers\", fromlist=[\"_\"])._osf_parse_response(__import__(\"tests.archives_osf.parity_support\", fromlist=[\"_\"]).fixture(\"api.osf.io/v2/guids/a6y7r-65f472\"))"
   "compare": *id001
 - "id": ".osf_parse_response.fx.v2.guids.bdvxs-65f472"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U52", "reason": "a record of an unknown type keeps its own id (metacheck labels it with the osf_id argument, NA for a listing)"}
   "r": "identity"
   "py": "tests.archives_osf.parity_support.run"
   "args":
@@ -282,6 +297,7 @@
         "py": "lambda: __import__(\"pytacheck.archives.osf_helpers\", fromlist=[\"_\"])._osf_parse_response(__import__(\"tests.archives_osf.parity_support\", fromlist=[\"_\"]).fixture(\"api.osf.io/v2/guids/bdvxs-65f472\"))"
   "compare": *id001
 - "id": ".osf_parse_response.fx.v2.guids.dr42m-65f472"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U52", "reason": "a record of an unknown type keeps its own id (metacheck labels it with the osf_id argument, NA for a listing)"}
   "r": "identity"
   "py": "tests.archives_osf.parity_support.run"
   "args":
@@ -291,6 +307,7 @@
         "py": "lambda: __import__(\"pytacheck.archives.osf_helpers\", fromlist=[\"_\"])._osf_parse_response(__import__(\"tests.archives_osf.parity_support\", fromlist=[\"_\"]).fixture(\"api.osf.io/v2/guids/dr42m-65f472\"))"
   "compare": *id001
 - "id": ".osf_parse_response.fx.v2.guids.g59u6-65f472"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U52", "reason": "a record of an unknown type keeps its own id (metacheck labels it with the osf_id argument, NA for a listing)"}
   "r": "identity"
   "py": "tests.archives_osf.parity_support.run"
   "args":
@@ -300,6 +317,7 @@
         "py": "lambda: __import__(\"pytacheck.archives.osf_helpers\", fromlist=[\"_\"])._osf_parse_response(__import__(\"tests.archives_osf.parity_support\", fromlist=[\"_\"]).fixture(\"api.osf.io/v2/guids/g59u6-65f472\"))"
   "compare": *id001
 - "id": ".osf_parse_response.fx.v2.guids.hwu9x-65f472"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U52", "reason": "a record of an unknown type keeps its own id (metacheck labels it with the osf_id argument, NA for a listing)"}
   "r": "identity"
   "py": "tests.archives_osf.parity_support.run"
   "args":
@@ -318,6 +336,7 @@
         "py": "lambda: __import__(\"pytacheck.archives.osf_helpers\", fromlist=[\"_\"])._osf_parse_response(__import__(\"tests.archives_osf.parity_support\", fromlist=[\"_\"]).fixture(\"api.osf.io/v2/guids/j3gcx\"))"
   "compare": *id001
 - "id": ".osf_parse_response.fx.v2.guids.jez3g-65f472"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U52", "reason": "a record of an unknown type keeps its own id (metacheck labels it with the osf_id argument, NA for a listing)"}
   "r": "identity"
   "py": "tests.archives_osf.parity_support.run"
   "args":
@@ -327,6 +346,7 @@
         "py": "lambda: __import__(\"pytacheck.archives.osf_helpers\", fromlist=[\"_\"])._osf_parse_response(__import__(\"tests.archives_osf.parity_support\", fromlist=[\"_\"]).fixture(\"api.osf.io/v2/guids/jez3g-65f472\"))"
   "compare": *id001
 - "id": ".osf_parse_response.fx.v2.guids.jqkg7-65f472"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U52", "reason": "a record of an unknown type keeps its own id (metacheck labels it with the osf_id argument, NA for a listing)"}
   "r": "identity"
   "py": "tests.archives_osf.parity_support.run"
   "args":
@@ -390,6 +410,7 @@
         "py": "lambda: __import__(\"pytacheck.archives.osf_helpers\", fromlist=[\"_\"])._osf_parse_response(__import__(\"tests.archives_osf.parity_support\", fromlist=[\"_\"]).fixture(\"api.osf.io/v2/guids/msfcn\"))"
   "compare": *id001
 - "id": ".osf_parse_response.fx.v2.guids.pngda-65f472"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U52", "reason": "a record of an unknown type keeps its own id (metacheck labels it with the osf_id argument, NA for a listing)"}
   "r": "identity"
   "py": "tests.archives_osf.parity_support.run"
   "args":
@@ -408,6 +429,7 @@
         "py": "lambda: __import__(\"pytacheck.archives.osf_helpers\", fromlist=[\"_\"])._osf_parse_response(__import__(\"tests.archives_osf.parity_support\", fromlist=[\"_\"]).fixture(\"api.osf.io/v2/guids/pngda\"))"
   "compare": *id001
 - "id": ".osf_parse_response.fx.v2.guids.r5bme-65f472"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U52", "reason": "a record of an unknown type keeps its own id (metacheck labels it with the osf_id argument, NA for a listing)"}
   "r": "identity"
   "py": "tests.archives_osf.parity_support.run"
   "args":
@@ -417,6 +439,7 @@
         "py": "lambda: __import__(\"pytacheck.archives.osf_helpers\", fromlist=[\"_\"])._osf_parse_response(__import__(\"tests.archives_osf.parity_support\", fromlist=[\"_\"]).fixture(\"api.osf.io/v2/guids/r5bme-65f472\"))"
   "compare": *id001
 - "id": ".osf_parse_response.fx.v2.guids.trwb4-65f472"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U52", "reason": "a record of an unknown type keeps its own id (metacheck labels it with the osf_id argument, NA for a listing)"}
   "r": "identity"
   "py": "tests.archives_osf.parity_support.run"
   "args":
@@ -426,6 +449,7 @@
         "py": "lambda: __import__(\"pytacheck.archives.osf_helpers\", fromlist=[\"_\"])._osf_parse_response(__import__(\"tests.archives_osf.parity_support\", fromlist=[\"_\"]).fixture(\"api.osf.io/v2/guids/trwb4-65f472\"))"
   "compare": *id001
 - "id": ".osf_parse_response.fx.v2.guids.vzb48-65f472"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U52", "reason": "a record of an unknown type keeps its own id (metacheck labels it with the osf_id argument, NA for a listing)"}
   "r": "identity"
   "py": "tests.archives_osf.parity_support.run"
   "args":
@@ -435,6 +459,7 @@
         "py": "lambda: __import__(\"pytacheck.archives.osf_helpers\", fromlist=[\"_\"])._osf_parse_response(__import__(\"tests.archives_osf.parity_support\", fromlist=[\"_\"]).fixture(\"api.osf.io/v2/guids/vzb48-65f472\"))"
   "compare": *id001
 - "id": ".osf_parse_response.fx.v2.guids.wrh4x-65f472"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U52", "reason": "a record of an unknown type keeps its own id (metacheck labels it with the osf_id argument, NA for a listing)"}
   "r": "identity"
   "py": "tests.archives_osf.parity_support.run"
   "args":
@@ -444,6 +469,7 @@
         "py": "lambda: __import__(\"pytacheck.archives.osf_helpers\", fromlist=[\"_\"])._osf_parse_response(__import__(\"tests.archives_osf.parity_support\", fromlist=[\"_\"]).fixture(\"api.osf.io/v2/guids/wrh4x-65f472\"))"
   "compare": *id001
 - "id": ".osf_parse_response.fx.v2.guids.xp5cy-65f472"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U52", "reason": "a record of an unknown type keeps its own id (metacheck labels it with the osf_id argument, NA for a listing)"}
   "r": "identity"
   "py": "tests.archives_osf.parity_support.run"
   "args":
@@ -471,6 +497,7 @@
         "py": "lambda: __import__(\"pytacheck.archives.osf_helpers\", fromlist=[\"_\"])._osf_parse_response(__import__(\"tests.archives_osf.parity_support\", fromlist=[\"_\"]).fixture(\"api.osf.io/v2/guids/xxxxx\"))"
   "compare": *id001
 - "id": ".osf_parse_response.fx.v2.guids.y6a34-65f472"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U52", "reason": "a record of an unknown type keeps its own id (metacheck labels it with the osf_id argument, NA for a listing)"}
   "r": "identity"
   "py": "tests.archives_osf.parity_support.run"
   "args":
@@ -489,6 +516,7 @@
         "py": "lambda: __import__(\"pytacheck.archives.osf_helpers\", fromlist=[\"_\"])._osf_parse_response(__import__(\"tests.archives_osf.parity_support\", fromlist=[\"_\"]).fixture(\"api.osf.io/v2/guids/y6a34\"))"
   "compare": *id001
 - "id": ".osf_parse_response.fx.v2.guids.yab8q-65f472"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U52", "reason": "a record of an unknown type keeps its own id (metacheck labels it with the osf_id argument, NA for a listing)"}
   "r": "identity"
   "py": "tests.archives_osf.parity_support.run"
   "args":
@@ -498,6 +526,7 @@
         "py": "lambda: __import__(\"pytacheck.archives.osf_helpers\", fromlist=[\"_\"])._osf_parse_response(__import__(\"tests.archives_osf.parity_support\", fromlist=[\"_\"]).fixture(\"api.osf.io/v2/guids/yab8q-65f472\"))"
   "compare": *id001
 - "id": ".osf_parse_response.fx.v2.guids.ybm3c-65f472"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U52", "reason": "a record of an unknown type keeps its own id (metacheck labels it with the osf_id argument, NA for a listing)"}
   "r": "identity"
   "py": "tests.archives_osf.parity_support.run"
   "args":
@@ -516,6 +545,7 @@
         "py": "lambda: __import__(\"pytacheck.archives.osf_helpers\", fromlist=[\"_\"])._osf_parse_response(__import__(\"tests.archives_osf.parity_support\", fromlist=[\"_\"]).fixture(\"api.osf.io/v2/guids/ybm3c\"))"
   "compare": *id001
 - "id": ".osf_parse_response.fx.v2.guids.yt32c-65f472"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U52", "reason": "a record of an unknown type keeps its own id (metacheck labels it with the osf_id argument, NA for a listing)"}
   "r": "identity"
   "py": "tests.archives_osf.parity_support.run"
   "args":
@@ -534,6 +564,7 @@
         "py": "lambda: __import__(\"pytacheck.archives.osf_helpers\", fromlist=[\"_\"])._osf_parse_response(__import__(\"tests.archives_osf.parity_support\", fromlist=[\"_\"]).fixture(\"api.osf.io/v2/guids/yt32c\"))"
   "compare": *id001
 - "id": ".osf_parse_response.fx.v2.guids.z2bsa-65f472"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U52", "reason": "a record of an unknown type keeps its own id (metacheck labels it with the osf_id argument, NA for a listing)"}
   "r": "identity"
   "py": "tests.archives_osf.parity_support.run"
   "args":
@@ -597,6 +628,7 @@
         "py": "lambda: __import__(\"pytacheck.archives.osf_helpers\", fromlist=[\"_\"])._osf_parse_response(__import__(\"tests.archives_osf.parity_support\", fromlist=[\"_\"]).fixture(\"api.osf.io/v2/nodes/6nt4v\"))"
   "compare": *id001
 - "id": ".osf_parse_response.fx.v2.nodes.8uqfb.citation"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U52", "reason": "a record of an unknown type keeps its own id (metacheck labels it with the osf_id argument, NA for a listing)"}
   "r": "identity"
   "py": "tests.archives_osf.parity_support.run"
   "args":
@@ -615,6 +647,7 @@
         "py": "lambda: __import__(\"pytacheck.archives.osf_helpers\", fromlist=[\"_\"])._osf_parse_response(__import__(\"tests.archives_osf.parity_support\", fromlist=[\"_\"]).fixture(\"api.osf.io/v2/nodes/8uqfb/forks\"))"
   "compare": *id001
 - "id": ".osf_parse_response.fx.v2.nodes.8uqfb.logs"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U52", "reason": "a record of an unknown type keeps its own id (metacheck labels it with the osf_id argument, NA for a listing)"}
   "r": "identity"
   "py": "tests.archives_osf.parity_support.run"
   "args":
@@ -759,6 +792,7 @@
         "py": "lambda: __import__(\"pytacheck.archives.osf_helpers\", fromlist=[\"_\"])._osf_parse_response(__import__(\"tests.archives_osf.parity_support\", fromlist=[\"_\"]).fixture(\"api.osf.io/v2/nodes/ckjef/children\"))"
   "compare": *id001
 - "id": ".osf_parse_response.fx.v2.nodes.ezcuj.citation"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U52", "reason": "a record of an unknown type keeps its own id (metacheck labels it with the osf_id argument, NA for a listing)"}
   "r": "identity"
   "py": "tests.archives_osf.parity_support.run"
   "args":
@@ -777,6 +811,7 @@
         "py": "lambda: __import__(\"pytacheck.archives.osf_helpers\", fromlist=[\"_\"])._osf_parse_response(__import__(\"tests.archives_osf.parity_support\", fromlist=[\"_\"]).fixture(\"api.osf.io/v2/nodes/ezcuj/forks\"))"
   "compare": *id001
 - "id": ".osf_parse_response.fx.v2.nodes.ezcuj.logs"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U52", "reason": "a record of an unknown type keeps its own id (metacheck labels it with the osf_id argument, NA for a listing)"}
   "r": "identity"
   "py": "tests.archives_osf.parity_support.run"
   "args":
@@ -795,6 +830,7 @@
         "py": "lambda: __import__(\"pytacheck.archives.osf_helpers\", fromlist=[\"_\"])._osf_parse_response(__import__(\"tests.archives_osf.parity_support\", fromlist=[\"_\"]).fixture(\"api.osf.io/v2/nodes/ezcuj/registrations\"))"
   "compare": *id001
 - "id": ".osf_parse_response.fx.v2.nodes.ezcuj.wikis"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U52", "reason": "a record of an unknown type keeps its own id (metacheck labels it with the osf_id argument, NA for a listing)"}
   "r": "identity"
   "py": "tests.archives_osf.parity_support.run"
   "args":
@@ -1965,6 +2001,7 @@
         "py": "lambda: __import__(\"pytacheck.archives.osf_helpers\", fromlist=[\"_\"])._osf_parse_response(__import__(\"tests.archives_osf.parity_support\", fromlist=[\"_\"]).fixture(\"api.osf.io/v2/registrations-f3b815\"))"
   "compare": *id001
 - "id": ".osf_parse_response.fx.v2.schemas.registrations.564d31db8c5e4a7c9694b2be"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U52", "reason": "a record of an unknown type keeps its own id (metacheck labels it with the osf_id argument, NA for a listing)"}
   "r": "identity"
   "py": "tests.archives_osf.parity_support.run"
   "args":
@@ -1974,6 +2011,7 @@
         "py": "lambda: __import__(\"pytacheck.archives.osf_helpers\", fromlist=[\"_\"])._osf_parse_response(__import__(\"tests.archives_osf.parity_support\", fromlist=[\"_\"]).fixture(\"api.osf.io/v2/schemas/registrations/564d31db8c5e4a7c9694b2be\"))"
   "compare": *id001
 - "id": ".osf_parse_response.fx.v2.schemas.registrations.564d31db8c5e4a7c9694b2c0"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U52", "reason": "a record of an unknown type keeps its own id (metacheck labels it with the osf_id argument, NA for a listing)"}
   "r": "identity"
   "py": "tests.archives_osf.parity_support.run"
   "args":
@@ -1983,6 +2021,7 @@
         "py": "lambda: __import__(\"pytacheck.archives.osf_helpers\", fromlist=[\"_\"])._osf_parse_response(__import__(\"tests.archives_osf.parity_support\", fromlist=[\"_\"]).fixture(\"api.osf.io/v2/schemas/registrations/564d31db8c5e4a7c9694b2c0\"))"
   "compare": *id001
 - "id": ".osf_parse_response.fx.v2.schemas.registrations.564d31db8c5e4a7c9694b2c2"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U52", "reason": "a record of an unknown type keeps its own id (metacheck labels it with the osf_id argument, NA for a listing)"}
   "r": "identity"
   "py": "tests.archives_osf.parity_support.run"
   "args":
@@ -1992,6 +2031,7 @@
         "py": "lambda: __import__(\"pytacheck.archives.osf_helpers\", fromlist=[\"_\"])._osf_parse_response(__import__(\"tests.archives_osf.parity_support\", fromlist=[\"_\"]).fixture(\"api.osf.io/v2/schemas/registrations/564d31db8c5e4a7c9694b2c2\"))"
   "compare": *id001
 - "id": ".osf_parse_response.fx.v2.schemas.registrations.565fb3678c5e4a66b5582f67"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U52", "reason": "a record of an unknown type keeps its own id (metacheck labels it with the osf_id argument, NA for a listing)"}
   "r": "identity"
   "py": "tests.archives_osf.parity_support.run"
   "args":
@@ -2001,6 +2041,7 @@
         "py": "lambda: __import__(\"pytacheck.archives.osf_helpers\", fromlist=[\"_\"])._osf_parse_response(__import__(\"tests.archives_osf.parity_support\", fromlist=[\"_\"]).fixture(\"api.osf.io/v2/schemas/registrations/565fb3678c5e4a66b5582f67\"))"
   "compare": *id001
 - "id": ".osf_parse_response.fx.v2.schemas.registrations.5c08457ed283380029cf73bf"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U52", "reason": "a record of an unknown type keeps its own id (metacheck labels it with the osf_id argument, NA for a listing)"}
   "r": "identity"
   "py": "tests.archives_osf.parity_support.run"
   "args":
@@ -2010,6 +2051,7 @@
         "py": "lambda: __import__(\"pytacheck.archives.osf_helpers\", fromlist=[\"_\"])._osf_parse_response(__import__(\"tests.archives_osf.parity_support\", fromlist=[\"_\"]).fixture(\"api.osf.io/v2/schemas/registrations/5c08457ed283380029cf73bf\"))"
   "compare": *id001
 - "id": ".osf_parse_response.fx.v2.schemas.registrations.5d2d2268d28338002c2432d2"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U52", "reason": "a record of an unknown type keeps its own id (metacheck labels it with the osf_id argument, NA for a listing)"}
   "r": "identity"
   "py": "tests.archives_osf.parity_support.run"
   "args":
@@ -2019,6 +2061,7 @@
         "py": "lambda: __import__(\"pytacheck.archives.osf_helpers\", fromlist=[\"_\"])._osf_parse_response(__import__(\"tests.archives_osf.parity_support\", fromlist=[\"_\"]).fixture(\"api.osf.io/v2/schemas/registrations/5d2d2268d28338002c2432d2\"))"
   "compare": *id001
 - "id": ".osf_parse_response.fx.v2.schemas.registrations.5e795fc0d2833800195735d0"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U52", "reason": "a record of an unknown type keeps its own id (metacheck labels it with the osf_id argument, NA for a listing)"}
   "r": "identity"
   "py": "tests.archives_osf.parity_support.run"
   "args":
@@ -2028,6 +2071,7 @@
         "py": "lambda: __import__(\"pytacheck.archives.osf_helpers\", fromlist=[\"_\"])._osf_parse_response(__import__(\"tests.archives_osf.parity_support\", fromlist=[\"_\"]).fixture(\"api.osf.io/v2/schemas/registrations/5e795fc0d2833800195735d0\"))"
   "compare": *id001
 - "id": ".osf_parse_response.fx.v2.schemas.registrations.697b72f611a8e98484c6139b"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U52", "reason": "a record of an unknown type keeps its own id (metacheck labels it with the osf_id argument, NA for a listing)"}
   "r": "identity"
   "py": "tests.archives_osf.parity_support.run"
   "args":
@@ -2127,6 +2171,7 @@
         "py": "lambda: __import__(\"pytacheck.archives.osf_helpers\", fromlist=[\"_\"])._osf_parse_response(__import__(\"pytacheck.archives.osf\", fromlist=[\"_\"]).osf_get_all_pages(\"https://api.osf.io/v2/nodes/8uqfb/forks/\"))"
   "compare": *id001
 - "id": "listing.parse.nodes.8uqfb.logs"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U52", "reason": "a record of an unknown type keeps its own id (metacheck labels it with the osf_id argument, NA for a listing)"}
   "r": "identity"
   "py": "tests.archives_osf.parity_support.run_mocked"
   "args":
@@ -2235,6 +2280,7 @@
         "py": "lambda: __import__(\"pytacheck.archives.osf_helpers\", fromlist=[\"_\"])._osf_parse_response(__import__(\"pytacheck.archives.osf\", fromlist=[\"_\"]).osf_get_all_pages(\"https://api.osf.io/v2/nodes/ezcuj/forks/\"))"
   "compare": *id001
 - "id": "listing.parse.nodes.ezcuj.logs"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U52", "reason": "a record of an unknown type keeps its own id (metacheck labels it with the osf_id argument, NA for a listing)"}
   "r": "identity"
   "py": "tests.archives_osf.parity_support.run_mocked"
   "args":
@@ -2253,6 +2299,7 @@
         "py": "lambda: __import__(\"pytacheck.archives.osf_helpers\", fromlist=[\"_\"])._osf_parse_response(__import__(\"pytacheck.archives.osf\", fromlist=[\"_\"]).osf_get_all_pages(\"https://api.osf.io/v2/nodes/ezcuj/registrations/\"))"
   "compare": *id001
 - "id": "listing.parse.nodes.ezcuj.wikis"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U52", "reason": "a record of an unknown type keeps its own id (metacheck labels it with the osf_id argument, NA for a listing)"}
   "r": "identity"
   "py": "tests.archives_osf.parity_support.run_mocked"
   "args":
@@ -3667,6 +3714,7 @@
         "py": "lambda: __import__(\"tests.archives_osf.parity_support\", fromlist=[\"_\"]).with_tmpdir(lambda d: __import__(\"tests.archives_osf.parity_support\", fromlist=[\"_\"]).download_summary(__import__(\"pytacheck.archives.osf\", fromlist=[\"_\"]).osf_file_download(\"ybm3c\", d, metadata=False, mode=\"select\"), d))"
   "compare": *id002
 - "id": "osf_file_download.select.empty"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U53", "reason": "a project with folders but no files gives a zero-row table (metacheck: 'replacement has 1 row, data has 0')"}
   "r": "identity"
   "py": "tests.archives_osf.parity_support.run_mocked"
   "args":
@@ -3808,6 +3856,7 @@
     "ignore":
     - "file_type"
 - "id": "osf_check_id.fuzz"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U51", "reason": "a route name after the project ID (osf.io/j3gcx/files/) is not an ID, and a URL naming two osf.io IDs gives the first"}
   "r": "osf_check_id"
   "py": "pytacheck.archives.osf.osf_check_id"
   "args":
@@ -4015,6 +4064,7 @@
         "py": "lambda: __import__(\"pytacheck.archives.osf_helpers\", fromlist=[\"_\"])._osf_parse_response(__import__(\"json\").loads('[{\"id\": \"n1\", \"type\": \"nodes\", \"attributes\": {\"title\": \"A\", \"public\": true}, \"relationships\": {\"parent\": {\"data\": null}, \"root\": {\"data\": {\"id\": \"r\"}}}}, {\"id\": \"n2\", \"type\": \"nodes\", \"attributes\": {\"title\": null}, \"relationships\": {\"parent\": {\"data\": {\"id\": \"n1\"}}}}]'))"
   "compare": *id001
 - "id": ".osf_parse_response.synthetic.unknown_and_nodes"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U52", "reason": "a record of an unknown type keeps its own id (metacheck labels it with the osf_id argument, NA for a listing)"}
   "r": "identity"
   "py": "tests.archives_osf.parity_support.run"
   "args":
@@ -4042,6 +4092,7 @@
         "py": "lambda: __import__(\"pytacheck.archives.osf_helpers\", fromlist=[\"_\"])._osf_parse_response(__import__(\"json\").loads('[{\"type\": \"nodes\", \"attributes\": {\"title\": \"A\"}}, {\"type\": \"nodes\", \"attributes\": {\"title\": \"B\"}}]'))"
   "compare": *id001
 - "id": ".osf_parse_response.synthetic.folders_root_folder"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U52", "reason": "fields are matched by exact name (R's $ takes a unique prefix: relationships$root reads root_folder)"}
   "r": "identity"
   "py": "tests.archives_osf.parity_support.run"
   "args":
@@ -4069,6 +4120,7 @@
         "py": "lambda: __import__(\"pytacheck.archives.osf_helpers\", fromlist=[\"_\"])._osf_parse_response(__import__(\"json\").loads('[{\"id\": \"r1\", \"type\": \"registrations\", \"attributes\": {\"title\": \"R\", \"registration\": true}, \"relationships\": {\"registered_from\": {\"data\": {\"id\": \"n1\"}}}}, {\"id\": \"r2\", \"type\": \"registrations\", \"attributes\": {}}]'))"
   "compare": *id001
 - "id": ".osf_parse_response.synthetic.partial_matching"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U52", "reason": "fields are matched by exact name (R's $ takes a unique prefix: relationships$root reads root_folder)"}
   "r": "identity"
   "py": "tests.archives_osf.parity_support.run"
   "args":
@@ -4096,6 +4148,7 @@
         "py": "lambda: __import__(\"pytacheck.archives.osf_helpers\", fromlist=[\"_\"])._osf_parse_response(__import__(\"httpx\").Response(200, content='{\"data\": {\"id\": \"n1\", \"attributes\": {\"title\": \"A\"}}}'.encode(), headers={\"content-type\": \"application/vnd.api+json\"}), osf_id=\"zz\")"
   "compare": *id001
 - "id": ".osf_parse_response.synthetic_single.unknown_type"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U52", "reason": "a record of an unknown type keeps its own id (metacheck labels it with the osf_id argument, NA for a listing)"}
   "r": "identity"
   "py": "tests.archives_osf.parity_support.run"
   "args":
@@ -4150,6 +4203,7 @@
         "py": "lambda: __import__(\"pytacheck.archives.osf_helpers\", fromlist=[\"_\"])._osf_parse_response(__import__(\"httpx\").Response(200, content='{\"data\": {\"id\": \"u1\", \"type\": \"users\", \"attributes\": {\"full_name\": \"A B\", \"social\": {}}}}'.encode(), headers={\"content-type\": \"application/vnd.api+json\"}), osf_id=\"zz\")"
   "compare": *id001
 - "id": ".osf_parse_response.synthetic_single.partial_matching"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U52", "reason": "fields are matched by exact name (R's $ takes a unique prefix: relationships$root reads root_folder)"}
   "r": "identity"
   "py": "tests.archives_osf.parity_support.run"
   "args":
@@ -4159,6 +4213,7 @@
         "py": "lambda: __import__(\"pytacheck.archives.osf_helpers\", fromlist=[\"_\"])._osf_parse_response(__import__(\"httpx\").Response(200, content='{\"data\": {\"id\": \"n1\", \"type\": \"nodes\", \"attributes\": {\"titles\": \"A\", \"publicity\": true, \"registration_a\": 1, \"registration_b\": 2, \"preprint\": null}, \"relationships\": {\"root_folder\": {\"data\": {\"id\": \"rf\"}}}, \"links\": {\"selfish\": \"x\"}}}'.encode(), headers={\"content-type\": \"application/vnd.api+json\"}), osf_id=\"zz\")"
   "compare": *id001
 - "id": ".osf_parse_response.synthetic_single.file_partial_root"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U52", "reason": "fields are matched by exact name (R's $ takes a unique prefix: relationships$root reads root_folder)"}
   "r": "identity"
   "py": "tests.archives_osf.parity_support.run"
   "args":
@@ -4295,6 +4350,7 @@
         "r": "metacheck:::.osf_parse_response(httr2::response(status_code = 200L, headers = list(`Content-Type` = \"application/json; charset=utf-8\"), body = charToRaw(r\"--({\"data\": {\"id\": \"n1\", \"type\": \"nodes\", \"attributes\": {\"title\": \"A\"}}})--\")), osf_id = \"zz\")"
         "py": "lambda: __import__(\"pytacheck.archives.osf_helpers\", fromlist=[\"_\"])._osf_parse_response(__import__(\"httpx\").Response(200, content='{\"data\": {\"id\": \"n1\", \"type\": \"nodes\", \"attributes\": {\"title\": \"A\"}}}'.encode(), headers={\"content-type\": \"application/json; charset=utf-8\"}), osf_id=\"zz\")"
 - "id": ".osf_parse_response.synthetic_single.ct_upper"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U152", "reason": "the JSON content type is matched case-insensitively (Application/JSON is JSON)"}
   "r": "identity"
   "py": "tests.archives_osf.parity_support.run"
   "args":

@@ -37,7 +37,8 @@ _MURPHY_2025 = (
     '<a href="https://doi.org/10.1098/rsos.242167">doi:10.1098/rsos.242167</a>.'
 )
 
-_SIG_COMPS = ["<", "=", "≤", "<=", "=<"]
+# "==" is a typo of "=" (metacheck counts "p == .03" as non-significant, U127)
+_SIG_COMPS = ["<", "=", "==", "≤", "<=", "=<"]
 
 _EXPLANATION = [
     "Meta-scientific research has shown nonsignificant p values are commonly misinterpreted. "

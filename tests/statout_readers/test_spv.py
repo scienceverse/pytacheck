@@ -297,13 +297,20 @@ def test_import_spv_charts() -> None:
     assert box["value"].tolist() == [1.75, 2.5, 3.0, 4.25]
 
 
-def test_boxplot_from_case_data_reproduces_upstream_error() -> None:
+def test_boxplot_from_case_data_decodes() -> None:
+    # U144: a box plot backed by case data (a databin, no embeddedSource)
+    # decodes to its relabelled categories and values; R's is_na_like() calls
+    # abs() on the character categories and the chart is always dropped
     with warnings.catch_warnings(record=True) as rec:
         warnings.simplefilter("always")
         tabs = import_spv(FIX / "charts.spv")
     messages = [str(w.message) for w in rec]
-    assert "spv: could not decode chart: non-numeric argument to mathematical function" in messages
-    assert len(tabs) == 3
+    assert not any("non-numeric argument" in m for m in messages)
+    assert len(tabs) == 4
+    box = tabs[3]["data"]
+    assert box.attrs["spv_chart_type"] == "boxplot"
+    assert box["category"].tolist() == ["Low", "Low", "High", "High", "3"]
+    assert box["value"].tolist() == [0.5, 0.75, 1.25, 1.5, 2.0]
 
 
 def test_import_spv_empty_and_errors(tmp_path: Path) -> None:

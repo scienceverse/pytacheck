@@ -85,3 +85,41 @@
   reason: the report quotes each ethics statement once (metacheck repeats a sentence found at several rows)
 "mod_ethics_review/ethics_check.direct_duplicated_sections": *u102_quote
 "mod_ethics_review/ethics_check.approved_no_need_repeated": *u102_quote
+
+# funding_check -------------------------------------------------------------------
+"mod_funding/helpers.patterns": &u104_patterns
+  kind: r_bug_fixed
+  ref: U104
+  reason: pattern typos fixed ("Foundation", "[Pp]apers", "Literature", "Bibliography", the missing (?-i) in conflict_title) and the reference locator is anchored at the sentence start
+"mod_funding/helpers.create_synonyms": *u104_patterns
+"mod_funding/locate.titles.refs_next":
+  kind: r_bug_fixed
+  ref: U104
+  reason: '"Literature:" is a reference heading (metacheck''s "L(?i)terature" never matches), and the last heading is taken'
+"mod_funding/locate.titles.funding_blank_last": &u103_past_end
+  kind: r_bug_fixed
+  ref: U103
+  reason: a title's follow-up line past the end of the article is not returned (metacheck returns it, pasted as "NA")
+"mod_funding/rtransparent_funding.articles": *u103_past_end
+"mod_funding/rtransparent_funding.na_index": *u103_past_end
+"mod_funding/funding_check.na_index": *u103_past_end
+"mod_funding_review/rtransparent_funding.boundaries": *u103_past_end
+"mod_funding_review/locate.boundary.acknow_1_blank_na": *u103_past_end
+"mod_funding/locate.error.fund_2": &u103_several
+  kind: r_bug_fixed
+  ref: U103
+  reason: several title lines each give the title and its next line; metacheck stops ("the condition has length > 1")
+"mod_funding/locate.error.financial_1": *u103_several
+"mod_funding/locate.error.grant_1": *u103_several
+"mod_funding/locate.error.acknow_1": *u103_several
+"mod_funding/locate.error.where_acknows": *u103_several
+"mod_funding/rtransparent_funding.error": *u103_several
+"mod_funding/funding_check.error": *u103_several
+"mod_funding/funding_check_oi.sectioned_none":
+  kind: r_bug_fixed
+  ref: U105
+  reason: the sentence in the "acknowledgment" section is favoured (metacheck lists only "acknowledgement", which is not its section type), so the intro and discussion sentences are left out
+"mod_funding_review/funding_check_oi.sectioned_acknowledgement":
+  kind: r_bug_fixed
+  ref: U105
+  reason: sentences in "acknowledgment" sections are favoured as well as "acknowledgement" ones, so "The authors declare no funding." is kept

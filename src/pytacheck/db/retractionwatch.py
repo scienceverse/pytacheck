@@ -29,8 +29,15 @@ def retractionwatch() -> pd.DataFrame:
     was downloaded and :func:`rw_update` to update it; an updated copy in the
     user data directory is used when it is newer than the bundled one.
     Source: https://api.labs.crossref.org/data/retractionwatch
+
+    Rows without a DOI (``""``) are left out: joined on ``doi`` they would
+    match every reference without one (metacheck keeps them; U15).
     """
-    return load_database(_NAME)
+    table = load_database(_NAME)
+    blank = (table["doi"].isna() | (table["doi"].str.strip() == "")).to_numpy(dtype=bool)
+    if blank.any():
+        table = table.loc[~blank].reset_index(drop=True)
+    return table
 
 
 #: Alias of :func:`retractionwatch` (R ``rw``).
@@ -47,7 +54,7 @@ def summarise_retractionwatch(csv_path: str | Path) -> pd.DataFrame:
 
     The data step of ``rw_update()`` (and ``data-raw/retractionwatch.R``):
     ``read.csv()``, keep ``OriginalPaperDOI`` and ``RetractionNature``, drop
-    ``"unavailable"`` DOIs and empty natures, and join each DOI's distinct
+    ``"unavailable"`` and blank DOIs and empty natures, and join each DOI's distinct
     natures with ``;`` (DOIs in order of first appearance).
     """
     import pandas as pd
@@ -61,9 +68,12 @@ def summarise_retractionwatch(csv_path: str | Path) -> pd.DataFrame:
         encoding="utf-8",
         encoding_errors="replace",
     )
-    doi = raw["OriginalPaperDOI"].astype("string")
+    # surrounding spaces would stop a DOI from matching
+    doi = raw["OriginalPaperDOI"].astype("string").str.strip()
     nature = raw["RetractionNature"].astype("string")
-    keep = ((doi != "unavailable") & (nature != "")).fillna(False).astype(bool)
+    # a blank DOI would match every reference without one (U15)
+    keep = ((doi != "unavailable") & (doi.str.strip() != "") & (nature != "")).fillna(False)
+    keep = keep.astype(bool)
     pairs = pd.DataFrame({"doi": doi[keep], "retractionwatch": nature[keep]})
     pairs = pairs.drop_duplicates()
     out = (

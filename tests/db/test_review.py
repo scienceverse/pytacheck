@@ -106,7 +106,10 @@ def test_query_parse_repairs_names_before_selecting() -> None:
         {"DOI": "d", "score": 80, "editor": [{"given": "A"}, {"given": "B"}], "title": ["T"]},
     ]
     out = _crossref_query_parse(items, 50, ["DOI", "score", "title", "editor"])
-    assert list(out.columns) == ["DOI", "score", "title"]
+    # U13: the editors are a table like the authors (R spreads them over
+    # repeated editor.given columns, which the selection then drops)
+    assert list(out.columns) == ["DOI", "score", "title", "editor"]
+    assert out["editor"].iat[0] == [{"given": "A"}, {"given": "B"}]
     assert _crossref_query_parse(items, 50, ["nothing"]).shape == (0, 0)
 
 
@@ -142,24 +145,36 @@ def test_crossref_doi_drops_zero_row_results(online: None) -> None:
     assert out["abstract"].tolist() == ["Abs"]
 
 
-def test_crossref_query_data_frame_needs_all_columns(online: None) -> None:
-    with pytest.raises(ValueError, match="differing number of rows: 1, 0"):
-        crossref_query(pd.DataFrame({"title": ["X"], "container": ["Y"]}))
-    with pytest.raises(ValueError, match="differing number of rows: 0, 1"):
-        crossref_query(pd.DataFrame({"authors": ["A"], "container": ["Y"]}))
+def test_crossref_query_data_frame_uses_the_columns_it_has(online: None) -> None:
+    # U13: R fails without author or container columns (differing number of rows)
+    with respx.mock() as router:
+        route = router.get(url__startswith="https://api.crossref.org/works").mock(
+            return_value=httpx.Response(404)
+        )
+        out = crossref_query(pd.DataFrame({"title": ["X"], "container": ["Y"]}))
+    assert out["ref"].tolist() == ["X; Y"]
+    url = str(route.calls[0].request.url)
+    assert "query.title=X" in url and "query.container-title=Y" in url
+    assert "query.author" not in url
+    # no title column: nothing to search
+    assert crossref_query(pd.DataFrame({"authors": ["A"], "container": ["Y"]})).shape == (0, 0)
 
 
 def test_crossref_query_ref_text_and_zero_rows(online: None) -> None:
+    # U13: fields joined with "; ", list cells with ", " (R: a literal
+    # backslash-n and deparsed list()); a missing field is not searched as "NA"
     ref = pd.DataFrame(
-        {"title": ["T", None], "authors": [["Lisa"], ["Lisa"]], "container": ["C", None]}
+        {"title": ["T", None], "authors": [["Lisa", "Ann"], ["Lisa"]], "container": ["C", None]}
     )
     with respx.mock() as router:
-        router.get(url__startswith="https://api.crossref.org/works").mock(
+        route = router.get(url__startswith="https://api.crossref.org/works").mock(
             return_value=httpx.Response(404)
         )
         out = crossref_query(ref)
-    assert out["ref"].tolist() == ['T; \\nlist("Lisa"); \\nC', "Lisa"]
+    assert out["ref"].tolist() == ["T; Lisa, Ann; C", "Lisa"]
     assert out["error"].tolist() == ["request failed"] * 2
+    second = str(route.calls[1].request.url)
+    assert "query.author=Lisa" in second and "query.title" not in second
 
     body = {"status": "ok", "message": {"items": [{"DOI": "d", "score": 90}]}}
     with respx.mock() as router:
@@ -178,8 +193,8 @@ def test_doi_lookup_pastes_missing_names_as_empty() -> None:
     with respx.mock() as router:
         router.get("https://doi.org/10.1%2Fx").mock(return_value=httpx.Response(200, json=csl))
         out = doi_lookup("10.1/x")
-    # paste(NULL, NULL) is character(0), so sapply() gives a list
-    assert out["author"].tolist() == ["Solo, ; , Only; character(0)"]
+    # U12: an organisation is named by its literal (R pastes "character(0)")
+    assert out["author"].tolist() == ["Solo, ; , Only; Org"]
 
 
 def test_doi_resolves_compares_codes_like_r() -> None:
@@ -203,25 +218,26 @@ def test_openalex_abstract() -> None:
     assert _openalex_add_abstract(info)["abstract"] == "a b c b "
     # positions without words (an unnamed list) give ""
     assert _openalex_add_abstract({"abstract_inverted_index": [[0], [1]]})["abstract"] == ""
-    # no positions at all: order(NULL) fails
+    # U14: no positions at all is an empty abstract (R's order(NULL) fails)
     for aii in ({}, [], {"a": []}):
-        with pytest.raises(ValueError, match="not a vector"):
-            _openalex_add_abstract({"abstract_inverted_index": aii})
+        assert _openalex_add_abstract({"abstract_inverted_index": aii})["abstract"] == ""
 
 
 # --- PubPeer -----------------------------------------------------------------
 
 
-def test_pubpeer_needs_a_doi_column() -> None:
+def test_pubpeer_feedback_without_ids() -> None:
+    # U14: R fails when no feedback has an id ("Join columns ...")
     with respx.mock() as router:
         router.post(url__startswith="https://pubpeer.com/").mock(
             return_value=httpx.Response(200, json={"feedbacks": [{"total_comments": 4}]})
         )
-        with pytest.raises(ValueError, match="Join columns"):
-            pubpeer_comments("10.1/f")
+        out = pubpeer_comments("10.1/f")
+    assert out["total_comments"].tolist() == [0]
 
 
-def test_pubpeer_matches_missing_ids_to_missing_dois() -> None:
+def test_pubpeer_does_not_match_missing_ids_to_missing_dois() -> None:
+    # U14: R's join gave a missing DOI the comments of a feedback without an id
     fb = [{"total_comments": 4, "url": "u"}, {"id": "10.1/e", "total_comments": 1}]
     with respx.mock() as router:
         route = router.post(url__startswith="https://pubpeer.com/").mock(
@@ -230,7 +246,8 @@ def test_pubpeer_matches_missing_ids_to_missing_dois() -> None:
         out = pubpeer_comments([None, "10.1/E"])
     assert json.loads(route.calls[0].request.content) == {"dois": "10.1/e"}
     assert out["doi"].tolist()[1] == "10.1/E"
-    assert out["total_comments"].tolist() == [4, 1]
+    assert out["total_comments"].tolist() == [0, 1]
+    assert list(out.columns) == ["doi", "total_comments", "url", "users"]
 
 
 # --- RegCheck ----------------------------------------------------------------

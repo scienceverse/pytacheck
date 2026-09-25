@@ -586,6 +586,14 @@
       "$expr":
         "r": "local({source('tests/mod_codebook/review_helpers.R', local = TRUE); rv_env()$.scale_text_report(rv_text_scales(c('scale_name', 'acronym', 'n_items')), matched = c('grit scale'))})"
         "py": "__import__('pytacheck.modules._codebook', fromlist=['_'])._scale_text_report(__import__('tests.mod_codebook.review_helpers', fromlist=['_']).rv_text_scales(['scale_name', 'acronym', 'n_items']), matched=['grit scale'])"
+- "id": "scale_text_report.special_acronyms"
+  "r": "base::identity"
+  "py": "tests.mod_codebook.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_codebook/review_helpers.R', local = TRUE); rv_env()$.scale_text_report(data.frame(scale_name = c('Cognitive Anxiety Scale', 'Mixed Test'), acronym = c('C++', '(X'), n_items = c('9', ''), stringsAsFactors = FALSE), matched = c('c++ items'))})"
+        "py": "__import__('pytacheck.modules._codebook', fromlist=['_'])._scale_text_report(__import__('pandas').DataFrame({'scale_name': ['Cognitive Anxiety Scale', 'Mixed Test'], 'acronym': ['C++', '(X'], 'n_items': ['9', '']}), matched=['c++ items'])"
 - "id": "scale_split_items.values"
   "r": "base::identity"
   "py": "tests.mod_codebook.helpers.identity"

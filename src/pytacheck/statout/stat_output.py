@@ -123,15 +123,16 @@ def _ave_unique(ids: Sequence[str]) -> list[str]:
 def _stat_sanitize_id(x: Any) -> str | None:
     """Reduce text to one safe token (lower case, runs of ``[^a-z0-9]`` -> ``_``).
 
-    Port of ``R/stat-output.R::.stat_sanitize_id()``; only one leading *or*
-    trailing underscore is removed (R's ``sub("^_|_$", "", x)``).
+    Port of ``R/stat-output.R::.stat_sanitize_id()``. Both a leading and a
+    trailing underscore are removed (R's ``sub("^_|_$", "", x)`` removes only
+    the first of them: ``_abc_`` -> ``abc_``; UPSTREAM_ISSUES U138).
     """
     s = _cell(x)
     if s is None:
         return None
     s = _r_tolower(_trimws(s) or "")
     s = gsub("[^a-z0-9]+", "_", s)
-    return str(sub("^_|_$", "", s))
+    return str(gsub("^_|_$", "", s))
 
 
 def _r_tolower(s: str) -> str:
@@ -149,9 +150,21 @@ def _num_or_na(x: Any) -> bool:
 
 
 def _tb_field(tb: Any, key: str) -> tuple[bool, Any]:
-    """``tb$key`` of one table (partial name matching; a ``NULL`` table is empty)."""
+    """``tb[["key"]]`` of one table: ``(found, value)`` (a ``NULL`` table is empty).
+
+    Names are matched exactly. R's ``tb$key`` also matches a unique prefix,
+    so a table with ``line_seq`` but no ``line`` took ``line_seq`` as its
+    source line (UPSTREAM_ISSUES U141).
+    """
     if tb is None:
         return False, None
+    if isinstance(tb, _RNamedList):
+        for nm, v in tb.pairs:
+            if str(nm) == key:
+                return True, v
+        return False, None
+    if isinstance(tb, Mapping):
+        return (True, tb[key]) if key in tb else (False, None)
     return _r_dollar_found(tb, key)
 
 
@@ -170,11 +183,12 @@ def _tables_list(tables: Any) -> list[Any]:
 def _source_prefix(source_file: Any) -> str:
     """``.stat_sanitize_id(source_file %||% "result")`` as ``paste()`` shows it.
 
-    ``None`` is R's ``NULL`` (the ``"result"`` fallback); ``pd.NA`` -- R's
-    default ``NA_character_`` -- is not replaced by ``%||%``, so ids start
-    ``"NA_"`` (UPSTREAM_ISSUES U138).
+    A missing source file (``None`` or ``NA``, the default) gives the
+    ``"result"`` prefix. R's ``%||%`` replaces only ``NULL``, so with its
+    default ``NA_character_`` every id started ``na_`` (UPSTREAM_ISSUES U138).
     """
-    return _paste_chr(_stat_sanitize_id("result" if source_file is None else source_file))
+    missing = source_file is None or _is_na(source_file)
+    return _paste_chr(_stat_sanitize_id("result" if missing else source_file))
 
 
 def _stat_result_ids(tables: Sequence[Mapping[str, Any]], source_file: Any = pd.NA) -> list[str]:
@@ -223,7 +237,12 @@ def _stat_test_id(
         has_seq, seq = _tb_field(tb, "line_seq")
         anchor = f"l{_paste_chr(line)}_{_paste_chr(seq if has_seq else 1)}"
     else:
-        anchor = sub("_r[0-9]+$", "", base_id)
+        # the table's base id without its source prefix, which is added below
+        # (R keeps it: "odd_name_spv_odd_name_spv_t3_a", UPSTREAM_ISSUES U138)
+        anchor = str(sub("_r[0-9]+$", "", base_id))
+        src = _source_prefix(source_file)
+        if anchor.startswith(src + "_"):
+            anchor = anchor[len(src) + 1 :]
     return _stat_sanitize_id(f"{_source_prefix(source_file)}_{anchor}_{_paste_chr(row_label)}")
 
 
@@ -663,17 +682,20 @@ def _sprintf_s(x: Any) -> str:
 
 
 def _parse_json_doc(doc: str | os.PathLike[str]) -> Any:
-    """``jsonlite::fromJSON(if (file.exists(doc)) doc else textConnection(doc))``.
+    """``jsonlite::fromJSON(if (file.exists(doc)) doc else <the JSON text doc>)``.
 
-    jsonlite only reads *binary* connections, so metacheck's text-connection
-    branch always fails: a JSON string that is not a file path is reported as
-    invalid JSON. That upstream behaviour is reproduced.
+    A string that is not an existing file is parsed as JSON text, as
+    metacheck intends; its ``textConnection()`` cannot be read by jsonlite
+    ("can only read from a binary connection"), so every JSON string was
+    reported as invalid JSON (UPSTREAM_ISSUES U136).
     """
-    from pytacheck.statout.stat_tables import _read_json
+    from pytacheck.statout.stat_tables import _parse_json_text, _read_json
 
-    if not os.path.exists(doc):
-        raise ValueError("can only read from a binary connection")
-    return _read_json(doc)
+    if os.path.exists(doc):
+        return _read_json(doc)
+    if not isinstance(doc, str):
+        raise ValueError(f"no such file: {os.fspath(doc)}")
+    return _parse_json_text(doc)
 
 
 def _invalid_json() -> dict[str, Any]:
@@ -688,9 +710,8 @@ def stat_output_validate(doc: Any) -> dict[str, Any]:
     """Validate a statistical-output document's native shape.
 
     Port of ``R/stat-output.R::stat_output_validate()``. *doc* is a document
-    (as from :func:`stat_output_json`) or a path to a JSON file. (A JSON
-    *string* is reported as invalid JSON, as in metacheck, whose text-connection
-    branch cannot be read by jsonlite; so is a file holding JSON ``null``.)
+    (as from :func:`stat_output_json`), a JSON string or a path to a JSON
+    file (a file holding JSON ``null`` is reported as invalid JSON).
     Element access follows R's ``$`` (partial name matching, first of
     duplicated names). Returns
     ``{"valid", "issues", "summary": {"n_errors", "n_analyses", "n_results"}}``.

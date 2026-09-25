@@ -40,13 +40,18 @@ def test_bad_method() -> None:
         convert(pc.demofile("pdf"), method="pandoc")
 
 
-def test_xml_needs_server_list_like_r(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
-    """R looks up the online server list even for XML input (no api_url given)."""
-    import pytacheck.utils
+def test_xml_needs_no_server(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """XML is converted locally, offline (metacheck looks up the server list; U18)."""
+    import pytacheck.io.convert as conv
 
-    monkeypatch.setattr(pytacheck.utils, "online", lambda *a, **k: False)
-    with pytest.raises(ConnectionError, match="online versions not available"):
-        convert(pc.demofile("xml"), tmp_path)
+    def fail(*_a: object, **_k: object) -> None:
+        raise AssertionError("no server is needed for XML")
+
+    monkeypatch.setattr(conv, "_online", fail)
+    monkeypatch.setattr(conv, "_server_list", fail)
+    obs = convert(pc.demofile("xml"), tmp_path)
+    assert Path(obs).exists()
+    assert isinstance(convert(pc.demofile("xml"), None), pc.Paper)
 
 
 @pytest.mark.parametrize("method", ["auto", "grobid"])

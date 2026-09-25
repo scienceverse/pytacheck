@@ -271,6 +271,15 @@ def regcheck_start_local(
         )
         message("(First run will build the image -- this takes a few minutes.)")
         cmd = [docker, "compose", "up", "--build", "--force-recreate"]
+        if int(port) != 8000:
+            # the bundled compose file publishes port 8000; metacheck ignored
+            # `port` with Docker (U14), here an override file publishes it
+            override = app_dir / "docker-compose.port.yml"
+            override.write_text(
+                f'services:\n  regcheck:\n    ports: !override\n      - "{int(port)}:8000"\n',
+                encoding="utf-8",
+            )
+            cmd[2:2] = ["-f", "docker-compose.yml", "-f", override.name]
     else:
         venv_dir = _regcheck_venv_dir()
         if not venv_dir.exists():

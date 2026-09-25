@@ -647,6 +647,7 @@
         - '{"a": {"b": "x\"y", "c": "é", "b c": [1, "a"], "if": [3, 2], "_z": [null, null]}}'
         - '{"a": [[[1,2],[3,4]],[[5,6],[7,8]]], "b": [1, "NA"], "c": ["Inf", null], "d": [true, 2]}'
 - "id": "json_expand.records"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U151", "reason": "a \"_row\" key is an ordinary column (jsonlite makes it the row names, dropping the column and changing row counts or failing)"}
   "r": "json_expand"
   "py": "pytacheck.text.json_expand.json_expand"
   "args":
@@ -663,6 +664,7 @@
         - '[{"a":[]},{"a":[1]}]'
         - '[{"a":1},{"a":2,"_row":"x"},null]'
 - "id": "json_expand.row_names"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U151", "reason": "a \"_row\" key is an ordinary column (jsonlite makes it the row names, dropping the column and changing row counts or failing)"}
   "r": "json_expand"
   "py": "pytacheck.text.json_expand.json_expand"
   "args":
@@ -790,6 +792,7 @@
         "id": [1]
         "answer": ['{"":1}']
 - "id": "json_expand.error.zero_rows"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U151", "reason": "a table without rows is returned unchanged (R: 'Join columns in `y` must be present in the data')"}
   "r": "json_expand"
   "py": "pytacheck.text.json_expand.json_expand"
   "args":
@@ -798,6 +801,7 @@
         "r": "data.frame(id = integer(0), answer = character(0))"
         "py": "pd.DataFrame({'id': pd.Series([], dtype='Int64'), 'answer': pd.Series([], dtype='string')})"
 - "id": "json_expand.temp_id_key"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U151", "reason": "a \".temp_id.\" key is kept as a column (R overwrites it with its internal join key)"}
   "r": "json_expand"
   "py": "pytacheck.text.json_expand.json_expand"
   "args":

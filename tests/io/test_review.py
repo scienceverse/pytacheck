@@ -262,7 +262,10 @@ def test_release_assets_without_rds_is_none() -> None:
 
 def test_papers_available_without_assets_is_empty() -> None:
     # metacheck: "arguments imply differing number of rows: 0, 1" (U18)
-    for mock, repo in ((NORDS, "scienceverse/nords"), ("apis_papers_empty", "scienceverse/norealeases")):
+    for mock, repo in (
+        (NORDS, "scienceverse/nords"),
+        ("apis_papers_empty", "scienceverse/norealeases"),
+    ):
         with api(mock):
             out = papers_available(repo)
         assert len(out) == 0

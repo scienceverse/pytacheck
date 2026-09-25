@@ -341,16 +341,27 @@ def test_datacite_doi(apis) -> None:
     ]
 
 
-def test_datacite_doi_not_found_returns_none(apis) -> None:
-    assert cr.datacite_doi(["10.5281/zenodo.2669586", "10.9999/none"]) is None
+def test_datacite_doi_not_found_gets_an_na_row(apis) -> None:
+    # U12: R returns NULL for the whole call when one DOI is unknown
+    out = cr.datacite_doi(["10.5281/zenodo.2669586", "10.9999/none"])
+    assert len(out) == 2
+    assert out["doi"].iloc[0] == "10.5281/zenodo.2669586"
+    assert out.iloc[1][["doi", "title"]].isna().all()
 
 
 # OpenAlex ----------------------------------------------------------------------
 
 
 def test_openalex_doi(apis, psychsci_papers) -> None:
+    # U12: one entry per DOI (R returns just the unknown DOI's error)
     oa = cr.openalex_doi("10.1177/fake")
-    assert oa == {"DOI": "10.1177/fake", "error": "not found"}
+    assert oa == [{"DOI": "10.1177/fake", "error": "not found"}]
+    oa = cr.openalex_doi(["10.1177/fake", "10.1177/0956797614520714"])
+    assert oa[0] == {"DOI": "10.1177/fake", "error": "not found"}
+    assert oa[1]["is_retracted"] is True
+    # U13: select is applied
+    oa = cr.openalex_doi("10.1177/0956797614520714", select=["title", "abstract"])
+    assert list(oa[0]) == ["title", "abstract"]
 
     oa = cr.openalex_doi("bad.form")
     assert oa[0] == {"DOI": "bad.form", "error": "malformed"}
@@ -463,12 +474,19 @@ def test_crossref_parse_item_authors_and_year() -> None:
         {"family": "Solo", "given": None, "ORCID": None},
         {"family": "B", "given": "A.", "ORCID": "o"},
     ]
-    with pytest.raises(ValueError, match="differing number of rows"):
-        cr._crossref_parse_item({"DOI": "x", "volume": None})
+    # U13: a JSON null is NA (R: "differing number of rows: 1, 0"); a list of
+    # values is one value; a list of people is a table like author
+    row = cr._crossref_parse_item(
+        {"DOI": "x", "volume": None, "ISSN": ["1", "2"], "editor": [{"given": "E", "family": "F"}]},
+        select=["DOI", "volume", "ISSN", "editor"],
+    )
+    assert list(row.columns) == ["DOI", "ISSN", "editor"]
+    assert row["ISSN"].iat[0] == "1; 2"
+    assert row["editor"].iat[0] == [{"given": "E", "family": "F"}]
 
 
 def test_crossref_query_offline_data_frame_shape(monkeypatch: pytest.MonkeyPatch) -> None:
-    """R: data.frame(bib_text = <list of 1-row data frames>, DOI = NA, error = "offline")."""
+    """U13: one row per reference (R spreads a table's references over one row)."""
     from pytacheck.db import _utils
 
     monkeypatch.setattr(_utils, "online", lambda *a, **k: False)
@@ -476,23 +494,10 @@ def test_crossref_query_offline_data_frame_shape(monkeypatch: pytest.MonkeyPatch
         {"title": ["T1", "T2"], "author": ["A", None], "journal": ["J", "K"], "booktitle": "B"}
     )
     out = cr.crossref_query(refs)
-    assert list(out.columns) == [
-        "bib_text.title",
-        "bib_text.author",
-        "bib_text.container",
-        "bib_text.title.1",
-        "bib_text.author.1",
-        "bib_text.container.1",
-        "DOI",
-        "error",
-    ]
-    assert len(out) == 1
-    assert out.iloc[0, :4].tolist() == ["T1", "A", "J", "T2"]
-    assert pd.isna(out["bib_text.author.1"].iloc[0])
-    assert out["bib_text.container.1"].iloc[0] == "K"
-    assert pd.isna(out["DOI"].iloc[0]) and out["error"].iloc[0] == "offline"
-    with pytest.raises(ValueError, match="differing number of rows: 0, 1"):
-        cr.crossref_query(refs.iloc[0:0])
+    assert list(out.columns) == ["bib_text", "DOI", "error"]
+    assert out["bib_text"].tolist() == ["T1; A; J", "T2; K"]
+    assert out["DOI"].isna().all() and out["error"].tolist() == ["offline", "offline"]
+    assert cr.crossref_query(refs.iloc[0:0]).shape == (0, 0)
     # text references keep one row each
     text = cr.crossref_query(["ref one", "ref two"])
     assert text["bib_text"].tolist() == ["ref one", "ref two"]

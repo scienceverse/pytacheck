@@ -7,7 +7,8 @@ Branches of R/import-grobid-bibr12.R the grobid12 cases do not reach, on the
 TEI fixtures tests/grobid12/fixtures/review_*.tei.xml:
 
 * review_urls: URL link text replaced in every row (bib and caption rows too,
-  and inside earlier replacements), hrefs with spaces and a final ".", a URL
+  and inside earlier replacements; pytacheck replaces it in its own row only,
+  U28), hrefs with spaces and a final ".", a URL
   in a caption and a footnote, a <ref> without a type, targets without "#",
   with a leading space, of the wrong float type, duplicated xml:ids (the
   first wins), a head-less and a p-less div, a p equal to its header,
@@ -16,8 +17,8 @@ TEI fixtures tests/grobid12/fixtures/review_*.tei.xml:
   "+02:00" offset and fractional seconds, page coords " 3,..", "2.9,..",
   "0,..", "1e1,..", "-1,..", caption labels (lower-case head, non-English
   head, roman numerals, "Table2", "tab 1"), a <row/> without cells;
-* review_url_na: a <ref type="url"> without a target (every row that prints
-  its link text becomes NA);
+* review_url_na: a <ref type="url"> without a target (in metacheck every row
+  that prints its link text becomes NA; pytacheck leaves them alone, U28);
 * review_header: header edge cases (ORCIDs, repeated/missing affiliations,
   an author without persName, an upper-case DOI URL, an invalid <application
   when>, ident "Bibr" -- bibr_version is then set, a blank keyword, an
@@ -35,7 +36,8 @@ TEI fixtures tests/grobid12/fixtures/review_*.tei.xml:
   (tolower() of É and İ), "Figures 9", "Fig.S11", "Table ABC1";
 * review_sentences: Grobid's sentence segmentation (<s> in <p>, <figDesc>
   <div><p><s>, footnote <p><s>) under xml:space="preserve": the formatted
-  re-parse of the document (read_xml(as.character(xml))) adds indentation.
+  re-parse of the document (read_xml(as.character(xml))) adds indentation
+  (pytacheck unwraps the <s> tags, U28).
 
 For each: the whole paper, the written 12.0 file line by line, and read() of
 it. The converter (metacheck vs pytacheck) is masked, and completed_at when

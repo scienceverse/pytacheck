@@ -100,16 +100,33 @@ def test_funding_check_psychsci(psychsci: pc.PaperList) -> None:
     )
 
 
-def test_funding_check_title_lines_error() -> None:
-    # R: `if (!is.na(article[a + 1]))` fails for two "Funding" title lines
-    with pytest.raises(ModuleError, match="the condition has length > 1"):
-        pc.module_run(pc.test_paper(["Funding", "Funding:"]), "funding_check")
+def test_funding_check_several_title_lines() -> None:
+    # U103: metacheck's `if (!is.na(article[a + 1]))` stops for two "Funding" title
+    # lines ("the condition has length > 1"); each title and its next line are kept
+    paper = pc.test_paper(["Funding", "Funding:", "The study was supported by grant 123."])
+    mo = pc.module_run(paper, "funding_check")
+    assert mo.table["text"].tolist() == ["Funding Funding: The study was supported by grant 123."]
 
 
 def test_funding_check_out_of_range_index() -> None:
-    # "Funding" followed by an empty line selects the line after that (NA in R)
+    # U103: "Funding" followed by an empty last line: metacheck pastes the line
+    # after that, past the end, as "Funding NA"
     mo = pc.module_run(pc.test_paper(["Funding", ""]), "funding_check")
-    assert mo.table["text"].tolist() == ["Funding NA"]
+    assert mo.table["text"].tolist() == ["Funding"]
+
+
+@pytest.mark.parametrize(
+    "sentence",
+    [
+        "We thank the Wellcome Foundation for funding this research.",
+        "The Gates Foundation provided funding for this research.",
+        "We received support from the Templeton Foundation.",
+    ],
+)
+def test_funding_check_foundation(sentence: str) -> None:
+    # U104: metacheck's "Ffoundation(|s)" never matches, so these were missed
+    mo = pc.module_run(pc.test_paper(["Introduction text.", sentence]), "funding_check")
+    assert mo.table["text"].tolist() == [sentence]
 
 
 def test_funding_check_acknowledgement_fallback() -> None:
@@ -138,11 +155,11 @@ def test_funding_check_oi_prefers_funding_sections() -> None:
     ]
     mo = pc.module_run(sectioned(sentences, ["intro", "funding", "discussion"]), "funding_check_oi")
     assert mo.table["text"].tolist() == ["Our study was funded by the ERC."]
-    # "acknowledgement" is not a metacheck section type ("acknowledgment")
-    mo = pc.module_run(
-        sectioned(sentences, ["intro", "acknowledgment", "discussion"]), "funding_check_oi"
-    )
-    assert len(mo.table) == 3
+    # U105: acknowledgment sections are favoured too (metacheck lists only
+    # "acknowledgement", which is not its section type, and keeps all three)
+    for ack in ("acknowledgment", "acknowledgement"):
+        mo = pc.module_run(sectioned(sentences, ["intro", ack, "discussion"]), "funding_check_oi")
+        assert mo.table["text"].tolist() == ["Our study was funded by the ERC."]
 
 
 def test_modules_do_not_mutate(psychsci: pc.PaperList) -> None:

@@ -41,7 +41,6 @@
   "args":
     "paper": {"$read": ["upstream/metacheck/tests/testthat/fixtures/psychsci/0956797613520608.json", "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614522816.json", "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614527830.json", "upstream/metacheck/inst/demos/to_err_is_human.json"]}
 - "id": "open_practices.psychsci_single"
-  "known_divergence": {"kind": "r_bug_fixed", "ref": "U83", "reason": "The code report says 'recognized' (metacheck: 'reconized')."}
   "module": "open_practices"
   "args": {"paper": {"$paper": "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614527830.json"}}
 - "id": "open_practices.psychsci_single_2"
@@ -54,7 +53,6 @@
   "module": "open_practices"
   "args": {"paper": {"$paper": "upstream/metacheck/tests/testthat/fixtures/problems/203020.json"}}
 - "id": "open_practices.data_only"
-  "known_divergence": {"kind": "r_bug_fixed", "ref": "U83", "reason": "The code report says 'recognized' (metacheck: 'reconized')."}
   "module": "open_practices"
   "args":
     "paper": {"$test_paper": {"text": ["Data for all experiments have been made publicly available on OSF at https://osf.io/hk4yq/.", "We tested 40 people."]}}
@@ -75,13 +73,11 @@
     "paper": {"$test_paper": {"text": ["Our R scripts can be found on GitHub (https://github.com/me/proj).", "Raw data are archived in a Zenodo repository.", "Questionnaires are available as supplementary materials online.", "The study was preregistered on AsPredicted (https://aspredicted.org/abc.pdf).", "Figures are shared at https://figshare.com/x."]}}
   "compare": {"ignore": ["table.paper_id", "summary_table.paper_id"]}
 - "id": "open_practices.on_request"
-  "known_divergence": {"kind": "r_bug_fixed", "ref": "U83", "reason": "The code report says 'recognized' (metacheck: 'reconized')."}
   "module": "open_practices"
   "args":
     "paper": {"$test_paper": {"text": ["Data available upon request."]}}
   "compare": {"ignore": ["table.paper_id", "summary_table.paper_id"]}
 - "id": "open_practices.on_request_with_repo"
-  "known_divergence": {"kind": "r_bug_fixed", "ref": "U83", "reason": "The code report says 'recognized' (metacheck: 'reconized')."}
   "module": "open_practices"
   "args":
     "paper": {"$test_paper": {"text": ["Data are available at https://osf.io/hk4yq/; raw data on request."]}}

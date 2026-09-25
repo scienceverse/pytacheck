@@ -149,18 +149,21 @@ def test_function_guides_follow_r_parse_and_lines() -> None:
 
     df = pd.DataFrame({"x": [1.0, 2.0, 3.0], "y": [2.0, 4.0, 5.0]})
     df.attrs["spv_chart_type"] = "point"
-    df.attrs["spv_chart_fits"] = [{"name": None, "expr": "TRUE", "fn": _r_function("TRUE")}]
-    with pytest.raises(ValueError, match="lengths differ"):
-        _spv_chart_html(df)
+    # a scalar, function or formula guide no longer fails the chart (R's
+    # lines() stops: "'x' and 'y' lengths differ", U148); a constant is a
+    # flat line
+    for expr in ("TRUE", "3", "function(x) x", "y ~ x"):
+        df.attrs["spv_chart_fits"] = [{"name": None, "expr": expr, "fn": _r_function(expr)}]
+        assert _spv_chart_html(df).startswith("<img"), expr
     df.attrs["spv_chart_fits"] = [{"name": "a", "expr": "a * x", "fn": _r_function("a * x")}]
     assert _spv_chart_html(df).startswith("<img")
 
 
-def test_boxplot_without_complete_rows_fails_like_r() -> None:
+def test_boxplot_without_complete_rows_is_left_out() -> None:
+    # U148: nothing to draw leaves the chart out (R's boxplot() stops the export)
     df = pd.DataFrame({"category": ["a", "b"], "value": [math.nan, math.nan]})
     df.attrs["spv_chart_type"] = "boxplot"
-    with pytest.raises(ValueError, match="invalid first argument"):
-        _spv_chart_html(df)
+    assert _spv_chart_html(df) == ""
 
 
 def test_assemble_table_tolerates_missing_n_leaves() -> None:

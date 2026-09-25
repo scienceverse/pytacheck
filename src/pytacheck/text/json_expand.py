@@ -797,184 +797,9 @@ def _simplify_data_frame(records: list[Any], sub_matrix: bool) -> _Frame:
     lengths = {c.nrow if isinstance(c, _Frame) else _r_length(c) for c in cols}
     if len(lengths) > 1:
         raise _JSONError("Elements not of equal length")
-    n = lengths.pop()
-    if "_row" in columns:
-        k = columns.index("_row")
-        rn = cols[k]
-        del columns[k], cols[k]
-        n = _row_names_nrow(rn, n)
-    return _Frame(columns, cols, n)
-
-
-def _identity_key(x: Any) -> Any:
-    """A hashable key with ``identical()`` semantics for duplicated()."""
-    if x is None:
-        return ("NULL",)
-    if isinstance(x, _Vec):
-        vals = tuple("NaN" if isinstance(v, float) and math.isnan(v) else v for v in x.values)
-        return ("vec", x.type, vals, x.dim)
-    if isinstance(x, _List):
-        names = None if x.names is None else tuple(x.names)
-        return ("list", names, tuple(_identity_key(el) for el in x.items))
-    return ("df", tuple(x.names), tuple(_identity_key(c) for c in x.columns), x.nrow)
-
-
-def _is_na_elt(x: Any) -> bool:
-    """``is.na()`` of one list element: a length-one atomic ``NA``/``NaN``."""
-    if not isinstance(x, _Vec) or len(x.values) != 1:
-        return False
-    v = x.values[0]
-    return v is None or (isinstance(v, float) and math.isnan(v))
-
-
-def _has_na(x: Any) -> bool:
-    """Does ``is.na()`` of a (list or data frame) column have any ``TRUE``?"""
-    if isinstance(x, _Vec):
-        return any(v is None or (isinstance(v, float) and math.isnan(v)) for v in x.values)
-    if isinstance(x, _List):
-        return any(_is_na_elt(el) for el in x.items)
-    if isinstance(x, _Frame):
-        return any(_has_na(c) for c in x.columns)
-    return False
-
-
-def _na_leaves(col: Any, nrow: int) -> list[list[bool]]:
-    """The columns ``col`` contributes to ``is.na(<data frame>)`` (a logical matrix).
-
-    ``is.na.data.frame()`` ``cbind()``s ``is.na()`` of every column, so a
-    nested data frame contributes one column per (nested) leaf column.
-    """
-    if isinstance(col, _Frame):
-        return [m for c in col.columns for m in _na_leaves(c, col.nrow)]
-    if isinstance(col, _Vec):
-        return [[v is None or (isinstance(v, float) and math.isnan(v)) for v in col.values]]
-    if isinstance(col, _List):
-        return [[_is_na_elt(el) for el in col.items]]
-    return [[False] * nrow]
-
-
-def _assign_na_labels(col: Any, mask: list[bool], labels: list[str]) -> Any:
-    """``x[[v]][thisvar] <- labels`` inside ``[<-.data.frame``'s logical-matrix branch."""
-    if isinstance(col, _Frame):
-        # a data frame indexed by one logical vector selects its *columns*:
-        # seq_along(x)[thisvar] is NA for a TRUE beyond the last column, and
-        # the one selected column becomes the label, recycled to every row
-        if len(col.columns) != 1:
-            raise _JSONError("unsupported matrix index in replacement")
-        if not mask[0] or any(mask[1:]):
-            raise _JSONError("attempt to select less than one element in integerOneIndex")
-        return _Frame(col.names, [_Vec("character", labels * col.nrow)], col.nrow)
-    it = iter(labels)
-    if isinstance(col, _List):
-        return _List(
-            [
-                _Vec("character", [next(it)]) if m else el
-                for el, m in zip(col.items, mask, strict=True)
-            ],
-            col.names,
-        )
-    if isinstance(col, _Vec):
-        return _Vec(
-            "character",
-            [
-                next(it) if m else _coerce(v, col.type, "character")
-                for v, m in zip(col.values, mask, strict=True)
-            ],
-        )
-    return col
-
-
-def _replace_frame_na(rn: _Frame) -> list[Any]:
-    """``rn[is.na(rn)] <- paste0("NA_", ...)`` on a ``_row`` data frame.
-
-    ``[<-.data.frame`` takes a logical matrix index only when it has the
-    frame's dimensions, i.e. when every nested data frame column is one
-    (leaf) column wide; column ``v`` then gets the labels of the matrix's
-    column ``v`` (U9: a nested data frame is indexed by columns, see
-    :func:`_assign_na_labels`).
-    """
-    if not _has_na(rn):
-        return list(rn.columns)
-    leaves = [m for c in rn.columns for m in _na_leaves(c, rn.nrow)]
-    if len(leaves) != len(rn.columns):
-        raise _JSONError("unsupported matrix index in replacement")
-    k = 0
-    out: list[Any] = []
-    for col, mask in zip(rn.columns, leaves, strict=True):
-        nv = sum(mask)
-        if nv:
-            col = _assign_na_labels(col, mask, [f"NA_{k + i + 1}" for i in range(nv)])
-        k += nv
-        out.append(col)
-    return out
-
-
-def _elements(x: Any) -> list[Any]:
-    """The elements ``mapply()`` iterates over (a data frame gives its columns)."""
-    if isinstance(x, _Vec):
-        return [
-            ("vec", x.type, "NaN" if isinstance(v, float) and math.isnan(v) else v)
-            for v in x.values
-        ]
-    if isinstance(x, _List):
-        return [_identity_key(el) for el in x.items]
-    if isinstance(x, _Frame):
-        return [_identity_key(c) for c in x.columns]
-    return []
-
-
-def _any_duplicated(x: Any) -> bool:
-    """``any(duplicated(x))`` for a vector, list or data frame (R 4.5 rules)."""
-    if isinstance(x, _Frame):
-        if not x.columns:
-            return x.nrow > 1  # duplicated(logical(nrow(x)))
-        if len(x.columns) == 1:
-            return _any_duplicated(x.columns[0])
-        if any(isinstance(c, _Frame) for c in x.columns):
-            # split into one-row data frames whose row names all differ
-            return False
-        cols = [_elements(c) for c in x.columns]
-        if any(len(c) == 0 for c in cols):
-            return False  # Map() over a zero-length input gives list()
-        length = max(len(c) for c in cols)
-        keys = [tuple(c[i % len(c)] for c in cols) for i in range(length)]
-    else:
-        keys = _elements(x)
-    return len(set(keys)) < len(keys)
-
-
-def _row_names_nrow(rn: Any, n: int) -> int:
-    """Rows of a data frame after jsonlite sets its ``_row`` names.
-
-    ``row.names<-`` on the freshly classed list accepts a value of any
-    length, so a ``_row`` column that is itself a data frame (JSON objects)
-    turns the frame into one with ``ncol(_row)`` rows. Invalid row names
-    raise, which ``json_expand()`` reports as a parsing error.
-    """
-    if isinstance(rn, _Vec):
-        return n  # NAs become "NA_<k>" and duplicates fall back to 1:n
-    if isinstance(rn, _List):
-        items = list(rn.items)
-        k = 0
-        for i, el in enumerate(items):
-            if _is_na_elt(el):
-                k += 1
-                items[i] = _Vec("character", [f"NA_{k}"])
-        if _any_duplicated(_List(items, None)):
-            return n
-        values = [_elt_to_str(el) for el in items]
-    elif isinstance(rn, _Frame):
-        new_cols = _replace_frame_na(rn)
-        if _any_duplicated(_Frame(rn.names, new_cols, rn.nrow)):
-            return n
-        values = [_elt_to_str(col) for col in new_cols]
-    else:
-        return n
-    if len(set(values)) < len(values):
-        raise _JSONError("duplicate 'row.names' are not allowed")
-    if any(v is None for v in values):
-        raise _JSONError("missing values in 'row.names' are not allowed")
-    return len(values)
+    # a "_row" key is an ordinary column: jsonlite makes it the row names,
+    # which dropped the column and changed the row count (U9, U151)
+    return _Frame(columns, cols, lengths.pop())
 
 
 # ---------------------------------------------------------------------------
@@ -1179,7 +1004,9 @@ def _paste_collapse(x: Any) -> str:
 # ---------------------------------------------------------------------------
 
 _ERROR = "error"
-_TEMP = ".temp_id."
+# the join key between the table and its expanded rows; metacheck uses
+# ".temp_id.", so a JSON key or table column of that name was overwritten (U151)
+_TEMP = "\x00pytacheck_row"
 
 
 class _Piece:
@@ -1310,7 +1137,11 @@ def json_expand(
 
     Differences from R: text that is not JSON but looks like a URL or an
     existing file path is *not* downloaded/read (``fromJSON()`` would do
-    so); it gives ``"parsing error"``.
+    so); it gives ``"parsing error"``. A ``"_row"`` key in an array of
+    objects is an ordinary column (jsonlite makes it the row names, which
+    dropped the column and could change the number of rows); a
+    ``".temp_id."`` key or column is kept; and a table without rows is
+    returned as it is (U9, U151).
     """
     if isinstance(table, str):
         table = [table]
@@ -1331,11 +1162,11 @@ def json_expand(
         to_expand = table[col].tolist()
 
     n = len(table)
-    table[_TEMP] = pd.Series(range(1, n + 1), index=table.index, dtype="Int64")
     if n == 0:
-        raise ValueError(
-            "Join columns in `y` must be present in the data.\n✖ Problem with `.temp_id.`."
-        )
+        # nothing to expand (metacheck fails: "Join columns in `y` must be
+        # present in the data"; U151)
+        return table.reset_index(drop=True)
+    table[_TEMP] = pd.Series(range(1, n + 1), index=table.index, dtype="Int64")
 
     pieces = [_expand_one(v, i) for i, v in enumerate(to_expand, start=1)]
 

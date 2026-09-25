@@ -369,7 +369,15 @@ def _r_echo_chunks(
     chunks: list[dict[str, Any]] = []
     for start, end in zip(starts, ends, strict=True):
         seg = lines[start : end + 1]
-        prompt_n = sum(1 for v in grepl("^(>|\\+) ?", seg) if v)
+        # the statement is the "> " line and the "+ " continuation lines right
+        # after it; R counts every prompt-like line of the chunk, so output
+        # lines starting with "+" were taken as statement text and dropped
+        # (UPSTREAM_ISSUES U140)
+        prompt_n = 0
+        for v in grepl("^(>|\\+) ?", seg):
+            if not v:
+                break
+            prompt_n += 1
         stmt = [_trimws(s) for s in sub("^(>|\\+) ?", "", seg[:prompt_n])]
         output = seg[prompt_n:]
         nonempty = [s for s in stmt if _nzchar(s)]
@@ -624,11 +632,15 @@ _STAT_NAME_RE = "(?i)^(t|z|f|r|w|u|h|d|p|p-value|df|chi|x-squared|bf|rho|tau|s|v
 
 def _r_output_oneline(
     lines: Sequence[str | None],
-    source_label: str | None = None,  # noqa: ARG001 - R signature; R never reaches it
+    source_label: str | None = None,
 ) -> list[dict[str, Any]]:
     """Parse ``<stat> <op> <value>`` fragments grouped under test titles.
 
-    Port of ``R/r-output.R::.r_output_oneline()``.
+    Port of ``R/r-output.R::.r_output_oneline()``. Results without a test
+    title take *source_label* (e.g. the script name) as their analysis, as
+    :func:`read_r_output` documents; metacheck's ``cur_title %||%
+    source_label`` never falls back from ``cur_title``'s ``NA``
+    (UPSTREAM_ISSUES U139).
     """
     pattern = _stat_pattern()
     rx = compile_r(pattern, perl=True)
@@ -643,7 +655,8 @@ def _r_output_oneline(
             return
         names = _make_unique([s for s, _ in cur])
         df = _one_row_frame(list(zip(names, [v for _, v in cur], strict=True)))
-        results.append({"analysis": cur_title, "title": cur_title, "data": df})
+        analysis = cur_title if cur_title is not None else _label(source_label)
+        results.append({"analysis": analysis, "title": cur_title, "data": df})
 
     for ln in lines:
         if ln is None:
@@ -667,6 +680,13 @@ def _r_output_oneline(
                     cur.append(("df", gsub("[()]", "", dfp)))
     flush()
     return results
+
+
+def _label(x: Any) -> str | None:
+    """A label given as a string (``None`` for ``NULL``, ``NA`` or ``""``)."""
+    if x is None or not isinstance(x, str) or x == "":
+        return None
+    return x
 
 
 # ---------------------------------------------------------------------------
@@ -833,7 +853,15 @@ _SIGCODE_RE = "(?<=\\s)(\\*{1,3}|\\.)(?=\\s)"
 
 
 def _protect_combined_df(x: str) -> str:
-    return compile_r("(?<=[0-9]),\\s+(?=[0-9])", perl=True).sub("," + _NBSP, x)
+    """Join a combined df cell (``2,  560``) with no-break spaces of the same width.
+
+    Keeping the width keeps the line's columns aligned with the other lines;
+    R collapses the whitespace to one no-break space, which shifts every
+    column to its right (UPSTREAM_ISSUES U140).
+    """
+    return compile_r("(?<=[0-9]),(\\s+)(?=[0-9])", perl=True).sub(
+        lambda m: "," + _NBSP * len(m.group(1)), x
+    )
 
 
 def _blank_sigcode(x: str) -> str:
@@ -859,7 +887,10 @@ def _split_block(block: Sequence[str]) -> list[list[str]] | None:
             j = k
         else:
             j += 1
-    return [[(_trimws(line[a:b]) or "").replace(_NBSP, " ") for line in padded] for a, b in runs]
+    nbsp_run = compile_r(_NBSP + "+")
+    return [
+        [nbsp_run.sub(" ", _trimws(line[a:b]) or "") for line in padded] for a, b in runs
+    ]
 
 
 _SECTION_RE = "^[A-Za-z][A-Za-z0-9 .()|>-]*:$"

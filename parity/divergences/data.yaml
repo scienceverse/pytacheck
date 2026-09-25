@@ -145,3 +145,97 @@
   kind: r_bug_fixed
   ref: U100
   reason: a repo_check table without repo_url (local files) gives NA repo_url columns; R fails building the column table (differing number of rows)
+
+# U91: codebook_check on paper lists
+"mod_codebook/codebook_check.paperlist": &u91
+  kind: r_bug_fixed
+  ref: U91
+  reason: definitions are de-duplicated within a paper, so a definition identical to another paper's still documents that paper's column; R's key has no paper_id and reports the column as undocumented
+"mod_codebook/codebook_check.llm.paperlist": *u91
+"mod_codebook_review/codebook_check.pl_onlycb_green": *u91
+"mod_codebook_review/codebook_check.pl_samefile": *u91
+
+# U92: codebook_check scale inventory
+"mod_codebook/codebook_check.max_calls_zero": &u92_cap
+  kind: r_bug_fixed
+  ref: U92
+  reason: every file's scale-like column groups are listed whatever codebook_max_calls is (the cap limits LLM calls only); R stops the inventory after the first file with groups once the cap is reached, even with the LLM off
+"mod_codebook_review/codebook_check.llm.pl_scales.max_calls_1": *u92_cap
+"mod_codebook/codebook_check.llm.selfgen": &u92_syn
+  kind: r_bug_fixed
+  ref: U92
+  reason: self-generated construct labels are lower-cased before punctuation is stripped, so "Slider ratings" and "slider ratings of power" merge; R strips capitals first ("lider ratings")
+"mod_codebook_review/codebook_check.llm.osd_attrs.loop": *u92_syn
+
+# U93: .scale_text_report()
+"mod_codebook/scale_text_report.basic": &u93
+  kind: r_bug_fixed
+  ref: U93
+  reason: an NA scale name, acronym or item count is left out (R lists "**NA**", "(NA; NA items)" and matches the acronym "NA"), and acronyms are matched literally
+"mod_codebook_review/scale_text_report.na_fields": *u93
+"mod_codebook_review/scale_text_report.no_match": *u93
+"mod_codebook_review/scale_text_report.name_only": *u93
+"mod_codebook_review/scale_text_report.no_admin": *u93
+"mod_codebook_review/codebook_check.llm_odd.panas_high": *u93
+"mod_codebook_review/codebook_check.llm_odd.scales_mixed": *u93
+"mod_codebook_review/codebook_check.llm_odd.bibr12": *u93
+"mod_codebook_review/codebook_check.llm_odd.demo": *u93
+"mod_codebook_review/scale_text_report.special_acronyms":
+  kind: r_bug_fixed
+  ref: U93
+  reason: acronyms such as "C++" or "(X" are matched as literal whole words; R pastes them into a regex and stops (invalid regular expression)
+
+# U112: psychds_check target paths
+"mod_psychds/psychds_check.compliant": &u112
+  kind: r_bug_fixed
+  ref: U112
+  reason: files already where Psych-DS wants them are not moved - a valid data file name (study-a_data.csv) is kept, dataset_description.json/CHANGES/LICENSE/ro-crate-metadata.json belong at the root, raw data already in data/ is in place; R renames study-a_data.csv to study-studyadata_data.csv and moves dataset_description.json to analysis/
+"mod_psychds/psychds_check.compliant_raw": *u112
+"mod_psychds/psychds_check.multi": *u112
+"mod_psychds/psychds_check.test_paper": *u112
+"mod_psychds/psychds_check.bibr12": *u112
+"mod_psychds/psychds_check.green_partial": *u112
+"mod_psychds/psychds_check.yellow_many": *u112
+"mod_psychds/psychds_check.yellow_many.llm_use_false": *u112
+"mod_psychds/psychds_check.red_nodata": *u112
+"mod_psychds/psychds_check.red_nocols": *u112
+"mod_psychds/psychds_check.single_named": *u112
+"mod_psychds/psychds_check.minimal_cols": *u112
+"mod_psychds/psychds_check.classified": *u112
+"mod_psychds/psychds_check.psychsci": *u112
+"mod_psychds_review/psychds_check.review.ext_edge": *u112
+"mod_psychds_review/psychds_check.review.ext_edge.llm_use_true": *u112
+"mod_psychds_review/psychds_check.review.ext_edge.llm_use_false": *u112
+"mod_psychds_review/psychds_check.review.exactly_five": *u112
+"mod_psychds_review/psychds_check.review.exactly_five.via_marginal": *u112
+"mod_psychds_review/psychds_check.review.slug_edge": *u112
+
+# U113: psychds_check inputs
+"mod_psychds/psychds_check.psychsci_two_papers":
+  kind: r_bug_fixed
+  ref: U113
+  reason: each paper of a paper list gets a summary row from its own files; R gives one row, the first paper's, with the pooled counts (the valid names/root files are U112)
+"mod_psychds/psychds_check.na_type": &u113
+  kind: r_bug_fixed
+  ref: U113
+  reason: a missing file name falls back to the file path's basename, a missing data type is "unknown", and a file with neither name nor path is listed as excluded; R stops the module (missing value where TRUE/FALSE needed, differing number of rows, subscript out of bounds, ...)
+"mod_psychds/psychds_check.no_type_col": *u113
+"mod_psychds/psychds_check.no_name_col": *u113
+"mod_psychds/psychds_check.no_name_col_data": *u113
+"mod_psychds/psychds_check.path_na": *u113
+"mod_psychds_review/psychds_check.review.na_name_code_path": *u113
+"mod_psychds_review/psychds_check.review.na_name_code_nopath": *u113
+"mod_psychds_review/psychds_check.review.na_name_readme_na_path": *u113
+"mod_psychds_review/psychds_check.review.na_name_data_path": *u113
+"mod_psychds_review/psychds_check.review.no_name_readme": *u113
+"mod_psychds_review/psychds_check.review.no_name_license_second": *u113
+"mod_psychds_review/psychds_check.review.no_name_na_type_first": *u113
+"mod_psychds_review/psychds_check.review.no_name_no_path": *u113
+"mod_psychds_review/psychds_check.review.no_name_no_path_no_type": *u113
+
+# U78: psychds_check with paper = NULL
+"mod_psychds/psychds_check.paper_none": &u78
+  kind: r_bug_fixed
+  ref: U78
+  reason: paper = NULL (documented as "check local files only") takes the paper id from the data_check tables; R's .pid() calls paper_id(NULL) and stops
+"mod_psychds/psychds_check.paper_none_empty": *u78

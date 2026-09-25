@@ -46,7 +46,6 @@ if TYPE_CHECKING:
 __all__ = ["export_spv_html", "import_spv", "spv_assemble_table"]
 
 _DBL_MAX = sys.float_info.max
-_SEP = "␟"
 
 # ===========================================================================
 # Small R-semantics helpers shared by the statout readers
@@ -1911,19 +1910,48 @@ def _spvviz_decode_boxplot_databin(
 ) -> pd.DataFrame | None:
     """Port of R/spv.R::.spvviz_decode_boxplot_databin().
 
-    Reproduces an upstream bug: R's ``is_na_like()`` evaluates
-    ``is.numeric(v) & abs(v) >= ...`` with the vectorised ``&``, so ``abs()`` of
-    the (character) category column always raises "non-numeric argument to
-    mathematical function" -- a box plot backed by case data never decodes.
+    The box plot's category (relabelled code) and value per case; cases with
+    a missing category or value (SPSS's system-missing ``-DBL_MAX``) are
+    dropped. R's ``is_na_like()`` uses the vectorised ``&``, so ``abs()`` of
+    the character category column always errors and a box plot backed by
+    case data never decodes (UPSTREAM_ISSUES U144).
     """
+    import pandas as pd
+
     x_var = _spvviz_resolve_variable(root, x_ref, data)
     y_var = _spvviz_resolve_variable(root, y_ref, data)
     if x_var is None or y_var is None:
         return None
     if len(x_var["values"]) != len(y_var["values"]):
         return None
-    _relabel_map(_find_all(x_node, ".//*[local-name()='relabel']"))
-    raise TypeError("non-numeric argument to mathematical function")
+    code_to_label = _relabel_map(_find_all(x_node, ".//*[local-name()='relabel']"))
+
+    def code(v: dict[str, Any]) -> str | None:
+        d = v.get("d")
+        if d is None or (isinstance(d, float) and math.isnan(d)):
+            return None
+        d = float(d)
+        return str(int(d)) if d.is_integer() and abs(d) < 1e15 else format(d, ".15g")
+
+    cats = [code(v) for v in x_var["values"]]
+    category = [code_to_label.get(c, c) if c is not None else None for c in cats]
+    category = [lbl if lbl is not None else c for lbl, c in zip(category, cats, strict=True)]
+    value = [math.nan if v.get("d") is None else float(v["d"]) for v in y_var["values"]]
+    big = sys.float_info.max
+    keep = [
+        c is not None and not math.isnan(v) and abs(v) < big
+        for c, v in zip(category, value, strict=True)
+    ]
+    if not any(keep):
+        return None
+    return pd.DataFrame(
+        {
+            "category": pd.array(
+                [c for c, k in zip(category, keep, strict=True) if k], dtype="string"
+            ),
+            "value": pd.array([v for v, k in zip(value, keep, strict=True) if k], dtype="float64"),
+        }
+    )
 
 
 def _spvviz_decode_boxplot_source(root: Any, source_id: str | None) -> pd.DataFrame | None:
@@ -2630,13 +2658,19 @@ def spv_assemble_table(
     for cell in cells:
         idx = decode_index(cell["index"])
         for j, d in enumerate(dims):
-            key = None if math.isnan(idx[j]) else as_character(idx[j])
+            # the leaf index as the leaves are keyed ("100000"; R's
+            # as.character(1e5) is "1e+05", which finds no leaf; U148)
+            key = _leaf_key(int(idx[j]) if math.isfinite(idx[j]) else idx[j])
             leaf = (d.get("leaves") or {}).get(key) if key is not None else None
             columns[j].append(" / ".join(_na_str(p) for p in leaf) if leaf is not None else None)
         v = cell["value"]
         if v.get("type") == "numeric":
             x = v["x"]
             val = None if (math.isnan(x) or abs(x) >= _DBL_MAX) else _stat_num_to_chr(x)
+        elif v.get("type") == "template":
+            # the rendered text ("3 of 5"), not the raw template ("^1 of ^2")
+            # R puts in the cell (UPSTREAM_ISSUES U148)
+            val = _spvlb_value_text(v)
         else:
             val = v.get("s")
         columns[-1].append(val)
@@ -2696,15 +2730,22 @@ def _spv_read_structure(dir_path: str | os.PathLike[str]) -> list[dict[str, Any]
 def _spvsx_walk_heading(node: Any, command_name: str | None, syntax: str | None) -> dict[str, Any]:
     """Port of R/spv.R::.spvsx_walk_heading().
 
-    As in R, a missing ``commandName`` attribute is ``NA`` (``xml_attr()``), so a
-    sub-heading or table without one resets the command name to ``None``.
+    A sub-heading, table or chart without a ``commandName`` attribute keeps
+    the enclosing command name, and a log item without readable text keeps
+    the syntax seen before it, as metacheck intends: its ``%||%`` fallbacks
+    never apply to ``xml_attr()``'s ``NA``, so the command name was reset to
+    ``NA``, and ``nzchar(trimws(NA))`` being ``TRUE`` reset the syntax
+    (UPSTREAM_ISSUES U139).
     """
     out: list[dict[str, Any]] = []
     children = _find_all(node, "./*[local-name()='container' or local-name()='heading']")
     for child in children:
         tag = _localname(child)
         if tag == "heading":
-            sub_ = _spvsx_walk_heading(child, _xml_attr(child, "commandName"), syntax)
+            sub_cmd = _xml_attr(child, "commandName")
+            sub_ = _spvsx_walk_heading(
+                child, sub_cmd if sub_cmd is not None else command_name, syntax
+            )
             out.extend(sub_["rows"])
             command_name = sub_["command_name"]
             syntax = sub_["syntax"]
@@ -2716,8 +2757,7 @@ def _spvsx_walk_heading(node: Any, command_name: str | None, syntax: str | None)
         if ctag == "text":
             if _xml_attr(content, "type") == "log":
                 txt = _spvsx_html_text(content)
-                # R: nzchar(trimws(NA)) is TRUE, so an unreadable log sets NA.
-                if txt is None or trimws(txt) != "":
+                if txt is not None and trimws(txt) != "":
                     syntax = txt
             continue
         if ctag == "table":
@@ -2728,7 +2768,7 @@ def _spvsx_walk_heading(node: Any, command_name: str | None, syntax: str | None)
             xml_member = _xml_text(p)
             out.append(
                 {
-                    "command_name": _xml_attr(content, "commandName"),
+                    "command_name": _xml_attr(content, "commandName") or command_name,
                     "syntax": syntax,
                     "subtype": _xml_attr(content, "subType"),
                     "bin_member": bin_member,
@@ -2743,7 +2783,7 @@ def _spvsx_walk_heading(node: Any, command_name: str | None, syntax: str | None)
             p = _find_first(content, "./*[local-name()='path']")
             out.append(
                 {
-                    "command_name": _xml_attr(content, "commandName"),
+                    "command_name": _xml_attr(content, "commandName") or command_name,
                     "syntax": syntax,
                     "subtype": None,
                     "bin_member": _xml_text(dp),
@@ -3186,14 +3226,21 @@ def _svg_chart(df: pd.DataFrame) -> str:
                     continue
                 if val is None:
                     continue
+                # a constant fit is a flat line; any other value that is not
+                # one y per x is skipped (R's lines() stops, failing the whole
+                # export; UPSTREAM_ISSUES U148)
+                if len(val) == 1:
+                    val = list(val) * len(xr)
                 if len(val) != len(xr):
-                    raise ValueError("'x' and 'y' lengths differ")  # graphics::lines()
+                    continue
                 yr = [_fit_y(v) for v in val]
                 pts = " ".join(
                     f"{xmap(x):.1f},{ymap(y):.1f}"
                     for x, y in zip(xr, yr, strict=True)
                     if math.isfinite(y)
                 )
+                if not pts:
+                    continue
                 parts.append(
                     f'<polyline points="{pts}" fill="none" stroke="{_FIT_COLORS[i % len(_FIT_COLORS)]}" '
                     'stroke-width="2"/>'
@@ -3226,7 +3273,13 @@ def _spv_chart_html(df: pd.DataFrame | None) -> str:
     """
     if df is None or len(df) == 0:
         return ""
-    svg = _svg_chart(df)
+    try:
+        svg = _svg_chart(df)
+    except ValueError:
+        # nothing to draw (a box plot without a complete category/value
+        # row): the chart is left out; R's boxplot() stops the whole export
+        # (UPSTREAM_ISSUES U148)
+        return ""
     data_uri = "data:image/svg+xml;base64," + base64.b64encode(svg.encode("utf-8")).decode("ascii")
     return f'<img src="{data_uri}" alt="chart" style="max-width: 100%;">'
 
@@ -3308,14 +3361,20 @@ def _rle_lengths(x: list[str]) -> list[int]:
 
 
 def _spv_table_html_pivot(df: pd.DataFrame, row_dims: list[str], col_dims: list[str]) -> str:
-    """Port of R/spv.R::.spv_table_html_pivot(): nested row stub and column headers."""
+    """Port of R/spv.R::.spv_table_html_pivot(): nested row stub and column headers.
+
+    Each row and column level keeps its labels as a tuple, one per dimension;
+    R pastes them together and splits them again with ``strsplit()``, which
+    drops a trailing empty label, so the export failed ("subscript out of
+    bounds", UPSTREAM_ISSUES U148).
+    """
     n = len(df)
 
-    def keys(dims: list[str], default: str) -> list[str]:
+    def keys(dims: list[str], default: str) -> list[tuple[str, ...]]:
         if not dims:
-            return [default] * n
+            return [(default,)] * n
         cols = [_column_by_name(df, d) for d in dims]
-        return [_SEP.join(_paste_str(c[i]) for c in cols) for i in range(n)]
+        return [tuple(_paste_str(c[i]) for c in cols) for i in range(n)]
 
     row_key = keys(row_dims, "")
     col_key = keys(col_dims, "value")
@@ -3323,14 +3382,9 @@ def _spv_table_html_pivot(df: pd.DataFrame, row_dims: list[str], col_dims: list[
     col_levels = list(dict.fromkeys(col_key))
 
     if col_dims:
-        col_parts = [strsplit(c, _SEP, fixed=True) for c in col_levels]
         header_row_cells = []
         for d in range(len(col_dims)):
-            labels = []
-            for part in col_parts:
-                if d >= len(part):
-                    raise IndexError("subscript out of bounds")
-                labels.append(part[d])
+            labels = [part[d] for part in col_levels]
             cells = []
             pos = 0
             for k in _rle_lengths(labels):
@@ -3362,10 +3416,11 @@ def _spv_table_html_pivot(df: pd.DataFrame, row_dims: list[str], col_dims: list[
     for i in range(n):
         grid[ri[row_key[i]]][ci[col_key[i]]] = values[i]
 
-    row_parts = [strsplit(r, _SEP, fixed=True) for r in row_levels] if row_dims else []
     body_rows = []
     for i in range(len(row_levels)):
-        stub = "".join(f"<td>{_spv_html_escape(p)}</td>" for p in row_parts[i]) if row_dims else ""
+        stub = (
+            "".join(f"<td>{_spv_html_escape(p)}</td>" for p in row_levels[i]) if row_dims else ""
+        )
         cells = "".join(f"<td>{_spv_html_escape(_spv_display_value(v))}</td>" for v in grid[i])
         body_rows.append(f"<tr>{stub}{cells}</tr>")
     return (

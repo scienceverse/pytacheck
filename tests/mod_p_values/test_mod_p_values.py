@@ -326,11 +326,29 @@ def test_stat_p_exact_star_note_information_separators() -> None:
     # TRE's \s is glibc iswspace(): U+001C-U+001F are *not* space in R (they
     # are in Python's str.isspace()), so "*\x1cp < .05" is no star note and
     # text_search() keeps the character instead of collapsing it to " ".
+    # U127: only the starred p-value is a table note; metacheck's whole-sentence
+    # test also hid "Thin p < .05"
     paper = pc.test_paper(["Separator p < .05 (*\x1cp < .05).", "Thin p < .05 (* p < .05)."])
     out = module_run(paper, "stat_p_exact")
-    assert out.table["imprecise"].tolist() == [True, True, False, False]
+    assert out.table["imprecise"].tolist() == [True, True, True, False]
     assert ["\x1c" in s for s in out.table["expanded"]] == [True, True, False, False]
+    # the separator sentence's two "p < .05" are listed once
     assert out.summary_text == "We found 2 imprecise *p* values out of 4 detected *p* values."
+
+
+def test_stat_p_exact_star_note_hides_only_its_p_value() -> None:
+    # U127: metacheck drops every imprecise p-value of a sentence with a star note
+    paper = pc.test_paper(["Note. * p < .05, ** p < .01. The effect was p < .05 and p = .03."])
+    out = module_run(paper, "stat_p_exact")
+    assert out.table["imprecise"].tolist() == [False, False, True, False]
+    assert out.summary_text == "We found 1 imprecise *p* value out of 4 detected *p* values."
+
+
+def test_stat_p_exact_same_p_value_twice_listed_once() -> None:
+    # U127: the match text keeps trailing whitespace, so metacheck lists "p < .05 "
+    # and "p < .05" of one sentence as two rows
+    out = module_run(pc.test_paper(["It was p < .05 and later p < .05"]), "stat_p_exact")
+    assert out.summary_text == "We found 1 imprecise *p* value out of 2 detected *p* values."
 
 
 def test_stat_p_exact_comparator_quirks() -> None:
@@ -347,23 +365,27 @@ def test_stat_p_exact_comparator_quirks() -> None:
     out = module_run(pc.test_paper(texts), "stat_p_exact")
     t = out.table
     assert t["p_comp"].tolist() == ["==", "~", "<", "=", "=", "<", "<", "<", "<"]
-    assert t["imprecise"].tolist() == [True, True, False, False, False, False, True, True, False]
-    assert t["zero"].tolist() == [False, False, False, True, True, False, False, False, False]
+    # U127: "p == .000" and "p < 0.0" are reported as zero ("==" is exact), and
+    # "p = 1.0e-400", which only underflows to 0, is not (metacheck: imprecise,
+    # neither, zero)
+    assert t["imprecise"].tolist() == [False, True, False, False, False, False, True, True, False]
+    assert t["zero"].tolist() == [True, False, True, False, True, False, False, False, False]
     assert out.summary_text == (
-        "We found 4 imprecise *p* values and 2 *p* values reported as exactly zero "
+        "We found 3 imprecise *p* values and 3 *p* values reported as exactly zero "
         "out of 9 detected *p* values."
     )
 
 
 def test_stat_p_nonsig_comparator_quirks() -> None:
-    # "==" and the "much less than" sign are not in the significant comparators
+    # the "much less than" sign is not in the significant comparators; "==" is
+    # (U127: metacheck counts "p == .03" as non-significant)
     paper = pc.test_paper(
         ["Double p == .03 here.", "Much less p ≪ .01 here.", "Fine p =< .05 and p ≤ .05."]
     )
     out = module_run(paper, "stat_p_nonsig")
     assert out.traffic_light == "yellow"
-    assert out.table["p_comp"].tolist() == ["==", "≪"]
-    assert out.summary_table["n_nonsignificant"].tolist() == [2]
+    assert out.table["p_comp"].tolist() == ["≪"]
+    assert out.summary_table["n_nonsignificant"].tolist() == [1]
 
 
 def test_report_tables_match_r() -> None:
@@ -380,10 +402,12 @@ def test_report_tables_match_r() -> None:
     )
     imprecise, zero = mp_report_tables(paper, "stat_p_exact")
     assert list(imprecise["table"].columns) == ["P-Value", "Text"]
-    assert imprecise["table"]["P-Value"].tolist() == ["p < .05 ", "p > .1"]
+    # U127: "p < .01" after the "* p < .05" note is listed (metacheck hides it)
+    assert imprecise["table"]["P-Value"].tolist() == ["p < .05 ", "p > .1", "p < .01"]
     assert imprecise["table"]["Text"].tolist() == [
         "Bad p < .05 and p < .05 again.",
         "Zero p = .000 line two p > .1.",
+        "Note * p < .05, p < .01.",
     ]
     assert zero["table"]["P-Value"].tolist() == ["p = .000<br>"]
     assert imprecise["colwidths"] == zero["colwidths"] == [0.1, 0.9]

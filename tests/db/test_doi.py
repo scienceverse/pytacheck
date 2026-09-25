@@ -61,9 +61,12 @@ def test_doi_lookup_multiple(apis) -> None:
     ]
 
 
-def test_doi_lookup_http_error_returns_none(apis) -> None:
-    # metacheck's `return(NULL)` inside tryCatch() leaves doi_lookup() entirely
-    assert doi_lookup(["10.7717/peerj.4375", "10.9999/not.recorded"]) is None
+def test_doi_lookup_http_error_gives_an_na_row(apis) -> None:
+    # U12: metacheck's `return(NULL)` inside tryCatch() leaves doi_lookup() entirely
+    info = doi_lookup(["10.7717/peerj.4375", "10.9999/not.recorded"])
+    assert len(info) == 2
+    assert info["doi"].iat[0] == "10.7717/peerj.4375"
+    assert info.iloc[1][["doi", "title"]].isna().all()
 
 
 def test_doi_lookup_non_json_drops_slot() -> None:
@@ -77,13 +80,13 @@ def test_doi_lookup_non_json_drops_slot() -> None:
     with respx.mock() as router:
         router.route(host="doi.org").mock(side_effect=handler)
         info = doi_lookup(["10.1/html", "10.1/json", None])
-    # assigning NULL to slot 1 deletes it; slot 2 (now the NA row) is then
-    # overwritten by the second lookup, as in R
-    assert len(info) == 2
+    # U12: one row per DOI (R deletes the HTML slot and shifts the rows)
+    assert len(info) == 3
     assert pd.isna(info["doi"].iat[0])
     assert info["doi"].iat[1] == "10.1/json"
     assert info["first_page"].iat[1] == "5" and info["last_page"].iat[1] == "9"
     assert info["author"].iat[1] == ""
+    assert pd.isna(info["doi"].iat[2])
 
 
 # doi_clean -------------------------------------------------------------------
@@ -202,7 +205,7 @@ def test_doi_lookup_year_and_authors() -> None:
         router.get("https://doi.org/10.1%2Fx").mock(return_value=httpx.Response(200, json=body))
         info = doi_lookup("10.1/x")
     assert info["year"].iat[0] == 2020
-    # sapply() returns a list when an author has no name parts; paste() deparses it
-    assert info["author"].iat[0] == "Smith, A; character(0)"
+    # U12: an organisation is named (R pastes "character(0)")
+    assert info["author"].iat[0] == "Smith, A; Org"
     assert info["editor"].iat[0] == "E; F"
     assert not math.isnan(float(info["year"].iat[0]))

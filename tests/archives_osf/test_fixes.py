@@ -24,7 +24,9 @@ def test_osf_check_id_route_names_are_not_ids() -> None:
     assert osf_check_id("https://osf.io/j3gcx/files/osfstorage") == "j3gcx"
     assert osf_check_id("https://osf.io/preprints/psyarxiv/abcde/") == "abcde"
     # a 24-character segment must be alphanumeric to be a file id
-    assert osf_check_id("https://osf.io/abcde/5f0c1ab2c3d4e5f60718293a") == "5f0c1ab2c3d4e5f60718293a"
+    assert (
+        osf_check_id("https://osf.io/abcde/5f0c1ab2c3d4e5f60718293a") == "5f0c1ab2c3d4e5f60718293a"
+    )
     assert osf_check_id("https://osf.io/abcde/a-24-character-segment-") == "abcde"
     # a URL naming two ids gives the first (metacheck: not an ID)
     assert osf_check_id("osf.io/abcde/ osf.io/fghij/") == "abcde"

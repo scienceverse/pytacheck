@@ -349,27 +349,22 @@ def _table_tests(paper: Any) -> list[dict[str, Any]]:
     has_sid = "section_id" in tab.columns
     has_tid = "table_id" in tab.columns
     section_ids = tab["section_id"].tolist() if has_sid else [None] * len(tab)
-    table_ids = tab["table_id"].tolist() if has_tid else [None] * len(tab)
-    # bibr 12.x: section_id is the section the table is printed in, and the
-    # caption is the table's own
+    # a table without a table_id is numbered by its position (R's -(NULL *
+    # 1000000L + ri) is integer(0), which fails match_reported_output(); U142)
+    table_ids = tab["table_id"].tolist() if has_tid else list(range(1, len(tab) + 1))
+    # the table's own caption when it has one (bibr 12.x always does);
+    # otherwise the text rows sharing its section_id (Grobid's figDesc). R
+    # reads only the latter for older papers (U143), and without a section_id
+    # column fails, dropping every table test (U142)
     v12 = is_bibr12(paper)
-    captions = tab["caption"].tolist() if v12 and "caption" in tab.columns else [None] * len(tab)
+    captions = tab["caption"].tolist() if "caption" in tab.columns else [None] * len(tab)
     out: list[dict[str, Any]] = []
     for i in range(len(tab)):
         content = contents[i]
         if content is None:
             continue
-        if v12:
-            caption = _scalar(captions[i])
-        elif not has_sid:
-            # .table_caption(paper, NULL): is.na(NULL) || ... errors
-            raise ValueError("missing value where TRUE/FALSE needed")
-        else:
+        caption = _scalar(captions[i])
+        if not v12 and (caption is None or _is_na(caption)) and has_sid:
             caption = _table_caption(paper, _scalar(section_ids[i]))
-        tests = _table_tests_one(table_ids[i], content, caption)
-        if not has_tid:
-            # -(NULL * 1000000L + ri) is integer(0): a zero-length text_id
-            for t in tests:
-                t["text_id"] = []
-        out.extend(tests)
+        out.extend(_table_tests_one(table_ids[i], content, caption))
     return out

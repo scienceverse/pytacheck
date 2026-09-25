@@ -674,11 +674,14 @@ def test_paper_list_gets_one_summary_row_per_paper() -> None:
     cc = module_run(cbc_prev_list(["pl_a", "pl_b"]), "codebook_check")
     s = cc.summary_table
     assert s["paper_id"].tolist() == ["p1", "p2"]
-    # R de-duplicates definitions across the whole run: p2's "id,Participant id"
-    # repeats p1's and is dropped, so p2's `id` stays undocumented (as in R)
-    assert s["codebook_var_n"].tolist() == [3, 1]
+    # U91: definitions are de-duplicated per paper: p2's "id,Participant id"
+    # repeats p1's but documents p2's own `id` (R dropped it, leaving p2's
+    # column undocumented)
+    assert s["codebook_var_n"].tolist() == [3, 2]
     assert s["unused_var_n"].tolist() == [1, 0]
-    assert s["unmatched_n"].tolist() == [0, 2]
+    assert s["unmatched_n"].tolist() == [0, 1]
+    ids = cc.table[cc.table["column_name"] == "id"]
+    assert set(ids["label_status"]) == {"labelled"}
 
 
 def test_paper_list_corroborates_each_file_against_its_own_paper() -> None:
@@ -855,3 +858,83 @@ def test_osd_attributes_mark_redundant_and_orphan_totals() -> None:
         ("made_up", False, False, ["s.csv"]),  # self-generated, 2 items: too small
         ("orphan_total", True, True, ["s.csv"]),  # totals with no items anywhere: flagged
     ]
+
+
+# ── U92: scale inventory ─────────────────────────────────────────────────────
+
+
+def test_codebook_max_calls_does_not_cut_the_scale_inventory() -> None:
+    # R stops listing prefix groups after the first file with groups once the
+    # call cap is reached, even with the LLM off (codebook_max_calls = 0)
+    prev = cbc_prev_list(["scales_mixed", "loop"])
+    full = module_run(prev, "codebook_check")
+    zero = module_run(cbc_prev_list(["scales_mixed", "loop"]), "codebook_check",
+                      codebook_max_calls=0)  # fmt: skip
+    assert len(zero.scales_osd) == len(full.scales_osd)
+    groups = cbc._identify_scales_prefix_llm(
+        {"a.csv": pd.DataFrame({f"AQ{i}": [1, 2, 3] for i in range(1, 6)}),
+         "b.csv": pd.DataFrame({f"PSS{i}": [1, 2, 3] for i in range(1, 6)})},
+        None, None, max_calls=0,
+    )  # fmt: skip
+    assert groups is not None
+    assert sorted(groups["source_file"].unique()) == ["a.csv", "b.csv"]
+
+
+def test_synonym_tokens_lower_case_first() -> None:
+    # R strips [^a-z ] before lower-casing: "Emotion Recognition" -> "motion ecognition"
+    assert cbc._synonym_tokens("Emotion Recognition") == ["emotion", "recognition"]
+    res = pd.DataFrame(
+        {
+            "source_file": ["f.csv"] * 2,
+            "column_name": ["a", "b"],
+            "scale": ["Emotion Recognition", "emotion recognition accuracy"],
+        }
+    )
+    merged = cbc._selfgen_merge_synonyms(res)
+    assert merged is not None
+    assert merged["scale"].nunique() == 1
+
+
+# ── U93: "Scales in the manuscript" ──────────────────────────────────────────
+
+
+def test_scale_text_report_skips_missing_fields_and_escapes_acronyms() -> None:
+    ts = pd.DataFrame(
+        {
+            "scale_name": ["Grit Scale", None, "Cognitive Anxiety Scale", "Mixed Test"],
+            "acronym": [None, "X", "C++", "(X"],
+            "n_items": ["12", None, "9", None],
+        }
+    )
+    out = cbc._scale_text_report(ts, matched=["c++ items", "na"])
+    assert out[2:4] == ["- **Grit Scale** (12 items)", "- **Mixed Test** ((X)"]
+    assert not any("NA" in line for line in out)
+
+
+def test_prefix_llm_gets_the_sentences_of_the_files_own_paper(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    # U91: on a paper list R required `paper` itself to be one paper and sent no
+    # manuscript sentences; each file now gets its own paper's sentences
+    seen: list[Any] = []
+
+    def fake_text(file: Any, groups: Any, paper: Any, wording_of: Any) -> str:
+        seen.append((file, paper))
+        return "x"
+
+    monkeypatch.setattr(cbc, "_prefix_llm_text", fake_text)
+    monkeypatch.setattr(cbc, "_llm_use", lambda: True)
+    monkeypatch.setattr(cbc, "_llm_try", lambda **_: None)
+    p1, p2 = pc.test_paper(["The AQ was used."]), pc.test_paper(["We used the PSS."])
+    p1.paper_id, p2.paper_id = "p1", "p2"
+    papers = pc.PaperList([p1, p2])
+    labels = pd.DataFrame(
+        {"paper_id": ["p1", "p2"], "source_file": ["a.csv", "b.csv"], "column_name": ["x", "y"]}
+    )
+    previews = {
+        "a.csv": pd.DataFrame({f"AQ{i}": [1, 2, 3] for i in range(1, 6)}),
+        "b.csv": pd.DataFrame({f"PSS{i}": [1, 2, 3] for i in range(1, 6)}),
+    }
+    cbc._identify_scales_prefix_llm(previews, labels, papers, max_calls=5)
+    owners = {f: p.paper_id for f, p in seen}
+    assert owners == {"a.csv": "p1", "b.csv": "p2"}

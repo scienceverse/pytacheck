@@ -671,7 +671,6 @@ def data_check(
 
     # == DATA VALIDATION ===========================================================
     dv = _validate(
-        paper=paper,
         previews=file_previews,
         structure_df=all_files,
         columns_df=columns_df,
@@ -1554,16 +1553,14 @@ def _summary_table(
 
 
 def _validate(
-    paper: Any,
     previews: dict[str, pd.DataFrame],
     structure_df: pd.DataFrame,
     columns_df: pd.DataFrame | None,
     plot_distributions: bool,
     max_facets: int,
 ) -> dict[str, Any]:
-    from pytacheck.module import get_prev_outputs
-
     from pytacheck._r import bind_rows
+    from pytacheck.module import get_prev_outputs
 
     labels_df = get_prev_outputs("codebook_check", "table")
     sp = h.dv_spreadsheet_findings(structure_df)
@@ -1575,9 +1572,7 @@ def _validate(
         text = "We found no readable tabular data files to validate."
         has = len(sp_df) > 0
         sp_files_by_paper, sp_flagged_by_paper = _spreadsheet_counts(structure_df, sp_df)
-        ids = h._unique(
-            [None if h._na(v) else v for v in sp_files_by_paper["paper_id"].tolist()]
-        )
+        ids = h._unique([None if h._na(v) else v for v in sp_files_by_paper["paper_id"].tolist()])
         dv_summary = pd.DataFrame({"paper_id": _str_series(ids)})
         for y in (sp_files_by_paper, sp_flagged_by_paper):
             dv_summary = _left_join(dv_summary, y)

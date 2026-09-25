@@ -9,7 +9,6 @@ from __future__ import annotations
 import math
 
 import pandas as pd
-import pytest
 
 from pytacheck.datacheck.checks import (
     data_check_case_issues,
@@ -136,7 +135,6 @@ def test_scale_values_guards() -> None:
     assert not data_check_scale_values([])["problem"]
     assert not data_check_scale_values([None, None])["problem"]
     assert not data_check_scale_values(pd.Series([True, False, True]))["problem"]
-
 
 
 def test_scale_values_fractional_range_is_an_interval() -> None:

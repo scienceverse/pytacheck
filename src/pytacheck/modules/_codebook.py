@@ -1766,8 +1766,7 @@ def _scale_text_report(text_scales: pd.DataFrame | None, matched: Sequence[Any] 
             name_hit = tolower(_pstr(_cell(ts, "scale_name", i))) in m_set
             a = present(_cell(ts, "acronym", i))
             acr_hit = a is not None and any(
-                re.search(r"(?<!\w)" + re.escape(tolower(a)) + r"(?!\w)", x)
-                for x in m
+                re.search(r"(?<!\w)" + re.escape(tolower(a)) + r"(?!\w)", x) for x in m
             )
             hit_rows.append(name_hit or acr_hit)
         ts = ts.iloc[[i for i, h in enumerate(hit_rows) if not h]].reset_index(drop=True)

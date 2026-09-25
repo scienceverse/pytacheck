@@ -34,6 +34,7 @@
     "pattern": "\\bp\\s*[<=>]\\s*\\.?\\d"
     "return": "paragraph"
 - "id": "text_search.demo.return.section"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U80", "reason": "return = \"section\" keeps the section's header (R groups without it and returns NA)"}
   "r": "text_search"
   "py": "pytacheck.text_search"
   "args":
@@ -174,6 +175,7 @@
     "pattern": "\\bp\\s*[<=>]\\s*\\.?\\d"
     "return": "paragraph"
 - "id": "text_search.psy.return.section"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U80", "reason": "return = \"section\" keeps the section's header (R groups without it and returns NA)"}
   "r": "text_search"
   "py": "pytacheck.text_search"
   "args":
@@ -408,6 +410,7 @@
     "ignore":
     - "paper_id"
 - "id": "text_search.test_paper.section"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U80", "reason": "return = \"section\" keeps the section's header (R groups without it and returns NA)"}
   "r": "text_search"
   "py": "pytacheck.text_search"
   "args":

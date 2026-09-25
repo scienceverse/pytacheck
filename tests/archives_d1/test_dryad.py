@@ -559,7 +559,8 @@ def test_dryad_doi_escapes_decoding_to_invalid_utf8_find_nothing() -> None:
 
 def test_dryad_links_on_an_empty_paper_list() -> None:
     out = dryad.dryad_links(pc.PaperList([]))
-    assert out.columns.tolist() == ["text_id", "paper_id", "href", "dryad_url", "dryad_doi"]
+    # href first, as in a non-empty table (text_search() of an empty paper list: U79)
+    assert out.columns.tolist() == ["href", "text_id", "paper_id", "dryad_url", "dryad_doi"]
     assert len(out) == 0
 
 

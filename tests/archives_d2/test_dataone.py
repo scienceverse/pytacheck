@@ -99,7 +99,10 @@ def test_pid_forms() -> None:
         _dataone_pid("https://search.dataone.org/view/doi:10.6085/AA/marine_ltm.20.1")
         == "doi:10.6085/AA/marine_ltm.20.1"
     )
-    assert _dataone_pid("https://doi.org/10.6085/AA/marine_ltm.20.1") == "doi:10.6085/AA/marine_ltm.20.1"
+    assert (
+        _dataone_pid("https://doi.org/10.6085/AA/marine_ltm.20.1")
+        == "doi:10.6085/AA/marine_ltm.20.1"
+    )
     assert _dataone_pid("doi:10.5063/PG1Q4B.") == "doi:10.5063/PG1Q4B"
     assert _dataone_pid("10.5063/PG1Q4B") == "doi:10.5063/PG1Q4B"
     none = dataone_links(pc.test_paper(["nothing"], ["https://osf.io/x"]))

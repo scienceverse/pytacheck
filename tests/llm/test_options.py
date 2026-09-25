@@ -125,3 +125,34 @@ def test_verbose_complex_and_arrays(restore_verbose: None) -> None:
         verbose(np.array([True, False]))
     with pytest.raises(ValueError, match=r"^argument is of length zero$"):
         verbose(np.array([]))
+
+
+def test_github_pat_is_not_a_default_model(monkeypatch: pytest.MonkeyPatch) -> None:
+    # U20: metacheck's .onLoad() picks the defunct "github" provider when only
+    # GITHUB_PAT is set, so every LLM call fails
+    from pytacheck.llm import core
+
+    for _, env in core._API_KEY_ENV:
+        monkeypatch.delenv(env, raising=False)
+    monkeypatch.setenv("GITHUB_PAT", "ghp_x")
+    assert core._default_model_from_env() is None
+    monkeypatch.setenv("GROQ_API_KEY", "k")
+    assert core._default_model_from_env() == "groq"
+
+
+def test_llm_timeout_bounds_hosted_providers() -> None:
+    # U20: ellmer's providers waited 300 s whatever llm_timeout() said
+    from pytacheck import utils
+    from pytacheck.llm import core, providers
+
+    old_timeout = core.llm_timeout()
+    old_opt = utils.get_option("ellmer_timeout_s")
+    try:
+        core.llm_timeout(42)
+        utils.options({"ellmer_timeout_s": None})
+        assert providers._timeout_default() == 42.0
+        utils.options({"ellmer_timeout_s": 7})
+        assert providers._timeout_default() == 7.0
+    finally:
+        core.llm_timeout(old_timeout)
+        utils.options({"ellmer_timeout_s": old_opt})

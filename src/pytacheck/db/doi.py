@@ -13,7 +13,6 @@ from pytacheck.db._utils import (
     as_vector,
     paste_unlist,
     r_dollar,
-    r_list_set,
     records_frame,
     resp_body_json,
     unlist,
@@ -235,11 +234,11 @@ def _lookup_row(bd: Any) -> dict[str, Any]:
 
         pages = strsplit(as_character(unlist(page)[0]) if isinstance(page, list) else page, "-")
         pages = pages[0] if pages and isinstance(pages[0], list) else pages
-        if not pages:
-            raise IndexError("subscript out of bounds")
-        first_page = pages[0]
-        if len(pages) > 1:
-            last_page = pages[1]
+        # an empty page is no page (metacheck: "subscript out of bounds")
+        if pages:
+            first_page = pages[0]
+            if len(pages) > 1:
+                last_page = pages[1]
 
     author_list = r_dollar(bd, "author")
     if author_list is None:
@@ -247,13 +246,17 @@ def _lookup_row(bd: Any) -> dict[str, Any]:
     else:
         items = list(author_list.values()) if isinstance(author_list, Mapping) else author_list
         pasted = [_paste_author(a) for a in (items if isinstance(items, list) else [items])]
-        if all(len(p) == 1 for p in pasted):
-            authors = "; ".join(p[0] for p in pasted)
-        else:  # sapply() returns a list; paste() deparses its elements
-            authors = "; ".join(
-                p[0] if len(p) == 1 else ("character(0)" if not p else _deparse_chr(p))
-                for p in pasted
-            )
+        # an author without family/given (an organisation) is written by its
+        # CSL name/literal; metacheck pasted "character(0)" into the string (U12)
+        names = []
+        for a, p in zip(items if isinstance(items, list) else [items], pasted, strict=True):
+            if not p:
+                org = a.get("name") or a.get("literal") if isinstance(a, Mapping) else None
+                if isinstance(org, str) and org:
+                    names.append(org)
+            else:
+                names.append(p[0] if len(p) == 1 else _deparse_chr(p))
+        authors = "; ".join(names)
 
     def get(key: str) -> Any:
         return bd.get(key) if isinstance(bd, Mapping) else None
@@ -263,12 +266,8 @@ def _lookup_row(bd: Any) -> dict[str, Any]:
     date_parts = r_dollar(published, "date-parts")
     if date_parts is not None:
         first = date_parts[0] if isinstance(date_parts, list) and date_parts else None
-        if isinstance(date_parts, list) and not date_parts:
-            raise IndexError("subscript out of bounds")
         if isinstance(first, list):
-            if not first:
-                raise IndexError("subscript out of bounds")
-            year = first[0]
+            year = first[0] if first else None
         else:
             year = first
 
@@ -287,11 +286,26 @@ def _lookup_row(bd: Any) -> dict[str, Any]:
         "publisher": get("publisher"),
         "url": get("URL"),
     }
-    # `%||% NA_character_` / `NA_real_`: typed missing values for bind_rows()
+    # `%||% NA_character_` / `NA_real_`: typed missing values for bind_rows();
+    # values are text (a volume can be 12 in one record and "12a" in another,
+    # which failed metacheck's bind_rows(); U12), the year a number
     return {
-        k: (NA_real if k == "year" else NA_character) if v is None else _info_value(v)
+        k: (NA_real if k == "year" else NA_character) if v is None else _typed_value(k, v)
         for k, v in info.items()
     }
+
+
+def _typed_value(key: str, v: Any) -> Any:
+    """A field of a lookup row: the year as a number, anything else as text."""
+    v = _info_value(v)
+    if key == "year":
+        if isinstance(v, bool) or not isinstance(v, int | float | str):
+            return NA_real
+        try:
+            return float(v)
+        except ValueError:
+            return NA_real
+    return v if isinstance(v, str) else as_character(v)
 
 
 def _deparse_chr(values: list[str]) -> str:
@@ -307,12 +321,13 @@ def doi_lookup(doi: Any) -> pd.DataFrame | None:
     https://doi.org) and returns one row per DOI with columns ``doi``,
     ``type``, ``title``, ``container``, ``year``, ``author``, ``volume``,
     ``issue``, ``first_page``, ``last_page``, ``editor``, ``publisher`` and
-    ``url``. Missing DOIs give an all-``NA`` row.
+    ``url``. Missing DOIs, and DOIs whose lookup fails, give an all-``NA``
+    row.
 
-    As in metacheck, an HTTP error status for any DOI makes the whole lookup
-    return ``None`` (a ``return()`` inside ``tryCatch()``), and a response
-    that is not JSON removes that DOI's slot from the result list (assigning
-    ``NULL`` to a list element), shifting later rows.
+    Differs from metacheck (U12): there an HTTP error for any DOI made the
+    whole lookup return ``NULL`` (a ``return()`` inside ``tryCatch()``), a
+    response that is not JSON removed that DOI's row (shifting later rows),
+    and a numeric field next to a text one failed ``bind_rows()``.
     """
     import pandas as pd
 
@@ -335,17 +350,18 @@ def doi_lookup(doi: Any) -> pd.DataFrame | None:
             bibdata[i] = {"doi": None}
     for j, i in enumerate(valid_idx):
         resp = resps[j]
-        try:
-            if resp is None:
-                raise TypeError("`resp` must be an HTTP response object, not `NULL`.")
-            if resp.status_code >= 400:
-                # `return(NULL)` inside tryCatch() returns from doi_lookup()
-                return None
-            value = resp_body_json(resp)
-        except Exception:  # tryCatch(error = ) catches every error
-            value = None
-        r_list_set(bibdata, i + 1, value)
+        value = None
+        if resp is not None and resp.status_code < 400:
+            try:
+                value = resp_body_json(resp)
+            except Exception:  # not JSON: no information for this DOI
+                value = None
+        bibdata[i] = value if isinstance(value, Mapping) else None
 
-    if not bibdata:
-        return pd.DataFrame()
-    return records_frame([_lookup_row(bd) for bd in bibdata])
+    rows = []
+    for bd in bibdata:
+        try:
+            rows.append(_lookup_row(bd))
+        except (IndexError, TypeError, ValueError):  # a malformed record
+            rows.append(_lookup_row(None))
+    return records_frame(rows)

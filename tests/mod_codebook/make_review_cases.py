@@ -300,6 +300,19 @@ def helper_cases() -> list[dict[str, Any]]:
                 f"CB._scale_text_report(RH.rv_text_scales({cols_py}), matched={matched_py})",
             )
         )
+    # U93: acronyms are matched literally ("C++", "(X"); R pastes them into a
+    # regex and stops the module
+    h.append(
+        case(
+            "scale_text_report.special_acronyms",
+            "rv_env()$.scale_text_report(data.frame(scale_name = c('Cognitive Anxiety Scale', "
+            "'Mixed Test'), acronym = c('C++', '(X'), n_items = c('9', ''), "
+            "stringsAsFactors = FALSE), matched = c('c++ items'))",
+            "CB._scale_text_report(__import__('pandas').DataFrame({'scale_name': "
+            "['Cognitive Anxiety Scale', 'Mixed Test'], 'acronym': ['C++', '(X'], "
+            "'n_items': ['9', '']}), matched=['c++ items'])",
+        )
+    )
     h.append(
         case(
             "scale_split_items.values",

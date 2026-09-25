@@ -159,7 +159,11 @@ def test_acknowledgement_gap(g: int, expected: str) -> None:
 
 
 def test_funding_check_oi_section_spelling() -> None:
-    """R's likely_section spells "acknowledgement"; metacheck's type is "acknowledgment"."""
+    """U105: both spellings of the acknowledgment section type are favoured.
+
+    metacheck's likely_section spells "acknowledgement", but its section type is
+    "acknowledgment", so acknowledgment sections were never favoured.
+    """
     from tests.mod_funding.parity_support import sectioned
 
     sentences = [
@@ -168,11 +172,11 @@ def test_funding_check_oi_section_spelling() -> None:
         "Unrelated support for the theory in this paper.",
         "The authors declare no funding.",
     ]
+    expected = ["Our study was funded by the ERC.", "The authors declare no funding."]
     p = sectioned(sentences, ["intro", "acknowledgement", "discussion", "acknowledgment"])
-    mo = pc.module_run(p, "funding_check_oi")
-    assert mo.table["text"].tolist() == ["Our study was funded by the ERC."]
+    assert pc.module_run(p, "funding_check_oi").table["text"].tolist() == expected
     p = sectioned(sentences, ["intro", "acknowledgment", "discussion", "acknowledgment"])
-    assert len(pc.module_run(p, "funding_check_oi").table) == 4
+    assert pc.module_run(p, "funding_check_oi").table["text"].tolist() == expected
 
 
 def test_duplicate_paper_ids_are_one_group() -> None:
@@ -192,7 +196,9 @@ def test_duplicate_paper_ids_are_one_group() -> None:
 
 
 @pytest.mark.parametrize("module", ["funding_check", "funding_check_oi"])
-def test_empty_paperlist_errors(module: str) -> None:
-    # metacheck fails too (text_search() of an empty list has no paper_id column)
-    with pytest.raises(ModuleError):
-        pc.module_run(pc.PaperList([]), module)
+def test_empty_paperlist(module: str) -> None:
+    # U79: metacheck fails (text_search() of an empty list has no paper_id column);
+    # pytacheck's text_search() returns a typed empty table, so nothing is found
+    mo = pc.module_run(pc.PaperList([]), module)
+    assert mo.traffic_light == "red"
+    assert len(mo.table) == 0

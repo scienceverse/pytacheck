@@ -400,6 +400,9 @@ _OPERATORS = "=>~\u2248\u2260\u2264\u2265\u226a\u226b"
 # replacement). Patterns are the R regexes after string-literal unescaping.
 _GROBID_FIXES: tuple[tuple[str, str], ...] = (
     ("\\s+([\u00b20-9.]+\\s*[" + _OPERATORS + "])", "\\1"),
+    # a stray space before the full stop that ends an element ("Fig. 1 .",
+    # "... 2 ."), which metacheck's "<" operator happened to remove
+    ("\\s+\\.(\\s*</)", ".\\1"),
     ("r\\s*p\\s*2", "rp\u00b2"),
     # omega (metacheck writes "\u03C" for U+03C9, which R reads as "<" and so
     # never fixes omega; U16)

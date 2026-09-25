@@ -794,10 +794,26 @@ def _na_replace_list_column(series: pd.Series, value: Any) -> pd.Series:
     return pd.Series([value if is_na(v) else v for v in cells], index=series.index, dtype=object)
 
 
-def _apply_na_replace(summary: pd.DataFrame, na_replace: Any) -> pd.DataFrame:
-    cols = list(summary.columns)
+def _apply_na_replace(
+    summary: pd.DataFrame, na_replace: Any, own: Sequence[str], suffix: str
+) -> pd.DataFrame:
+    """Fill the ``NA`` cells of the columns the module added (*own*) with *na_replace*.
+
+    An unnamed *na_replace* is recycled over the module's own columns; a named
+    one names them (a name that clashed with an earlier column is found under
+    its *suffix*). metacheck recycled an unnamed value over every column of
+    the chained summary table, so ``na_replace = 0`` also filled earlier
+    modules' ``NA`` cells (list columns got ``0``, logical ones turned
+    numeric), and a name could reach an earlier module's column (U77).
+    """
+    cols = [c for c in summary.columns if c in own]
     if isinstance(na_replace, Mapping):
-        mapping = {k: v for k, v in na_replace.items() if k in cols}
+        mapping = {}
+        for k, v in na_replace.items():
+            if k in cols:
+                mapping[k] = v
+            elif f"{k}{suffix}" in cols:
+                mapping[f"{k}{suffix}"] = v
     else:
         values = list(na_replace) if isinstance(na_replace, list | tuple) else [na_replace]
         mapping = {c: values[i % len(values)] for i, c in enumerate(cols)} if values else {}
@@ -966,11 +982,13 @@ def module_run(
         suffix = "." + (Path(spec.path).stem if spec.path else spec.name)
         mod_summary = mod_summary.copy()
         mod_summary["paper_id"] = mod_summary["paper_id"].astype("string")
+        before = set(summary_table.columns)
         summary_table = summary_table.merge(
             mod_summary, on="paper_id", how="left", suffixes=("", suffix)
         )
         if na_replace is not None:
-            summary_table = _apply_na_replace(summary_table, na_replace)
+            own = [c for c in summary_table.columns if c not in before]
+            summary_table = _apply_na_replace(summary_table, na_replace, own, suffix)
 
     table = results.pop("table", None)
     out = ModuleOutput(

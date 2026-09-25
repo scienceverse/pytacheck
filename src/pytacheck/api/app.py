@@ -331,12 +331,21 @@ def create_app() -> FastAPI:
             ):
                 if mp.get(r_name) is not None:
                     params[py_name] = parse_bool(mp[r_name], default=False)
-            # metacheck's API forwards `section` to text_search(), which has no such
-            # argument, so R fails with "unused argument"; reproduce that as a 500.
-            if mp.get("section") is not None:
-                raise ApiError(500, "unused argument (section = section)")
+            # `section`: the section type(s) to search, comma-separated (e.g.
+            # "method,results"). metacheck forwards it to text_search(), which
+            # has no such argument, so every request using it failed (U2).
+            target: Any = paper
+            if mp.get("section"):
+                from pytacheck.text.search import _text_frame
+
+                wanted = [x.strip() for x in str(mp["section"]).split(",") if x.strip()]
+                table, _ = _text_frame(paper)
+                table = table.loc[table["section_type"].isin(wanted).fillna(False).astype(bool)]
+                target = table.reset_index(drop=True)
+                # searching the references is what asking for them means
+                params["include_refs"] = "references" in wanted
             try:
-                return text_search(paper, **params)
+                return text_search(target, **params)
             except (ValueError, TypeError) as exc:
                 raise ApiError(500, str(exc)) from exc
 

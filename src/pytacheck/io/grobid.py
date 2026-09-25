@@ -501,7 +501,7 @@ def _tei_text_columns(xml: Any) -> dict[str, list[Any]]:
     ## abstract
     add("Abstract", as_character(xml_find_all(xml, ".//abstract //p")), 0.0, "abstract")
 
-    ## body: the divs of the body text (a div in a figure or note is part of it)
+    ## body: the divs of the body text (a div in a figure or a note is read with it)
     divs = [
         d
         for d in xml_find_all(xml, "//text //body //div")

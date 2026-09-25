@@ -105,7 +105,9 @@ _API_KEY_ENV = (
     ("portkey", "PORTKEY_API_KEY"),
     ("azure_openai", "AZURE_OPENAI_ENDPOINT"),
     ("databricks", "DATABRICKS_HOST"),
-    ("github", "GITHUB_PAT"),
+    # not ("github", "GITHUB_PAT"): ellmer's chat_github() is defunct, and
+    # GITHUB_PAT is set for many other reasons; metacheck still picks it as the
+    # default model, so every LLM call then fails (U20)
 )
 
 
@@ -233,7 +235,13 @@ def llm_max_tokens(n: Any = None) -> int | None:
 
 
 def llm_timeout(seconds: Any = None) -> float:
-    """Port of ``llm_timeout()``: per-request timeout in seconds (default 180)."""
+    """Port of ``llm_timeout()``: per-request timeout in seconds (default 180).
+
+    It bounds every request ``llm()`` makes, as documented; metacheck applies
+    it to native Ollama requests only, while ellmer's hosted providers wait
+    300 s (U20). The ``ellmer_timeout_s`` option, when set, still overrides it
+    for the hosted providers.
+    """
     if seconds is None:
         return _get("metacheck.llm_timeout", 180)  # type: ignore[no-any-return]
     if (
@@ -1187,12 +1195,12 @@ def _llm_ollama_native(
 ) -> Any:
     """Port of ``.llm_ollama_native()``: Ollama's ``/api/chat`` (honours ``think = FALSE``).
 
-    Returns the trimmed reply, or ``character(0)`` (an empty chr ``RVec``) when
-    the reply has no ``message.content``, as R's ``trimws(NULL)`` does; ``llm()``
-    then fails joining the answers of several texts, as metacheck does.
+    Returns the trimmed reply. A reply without ``message.content`` is an error
+    (metacheck returned ``trimws(NULL)``, ``character(0)``, so ``llm()`` failed
+    joining the answers of several texts; U19), which ``llm()`` records for
+    that text.
     """
     from pytacheck._r import as_character, trimws
-    from pytacheck.llm._rds import RVec
     from pytacheck.llm.providers import _r_vec, perform, resp_body_json
 
     if base_url is None:
@@ -1215,7 +1223,7 @@ def _llm_ollama_native(
     resp = perform("POST", base_url + "/api/chat", body=body, timeout=timeout, max_tries=1)
     content = (resp_body_json(resp).get("message") or {}).get("content")
     if content is None:
-        return RVec("chr", [])  # trimws(NULL)
+        raise RuntimeError("The Ollama reply has no message content.")
     return trimws(content if isinstance(content, str) else as_character(content))
 
 
@@ -1374,10 +1382,13 @@ def llm(
     params_list: dict[str, Any] = dict(params)
 
     text_df = _text_frame(text, text_col)
-    raw_unique = _column_values(text_df, text_col)
-    unique_text = _llm_sanitise_text(_unique(raw_unique) if raw_unique is not None else None)
+    raw_values = _column_values(text_df, text_col)
+    # the texts to send: each distinct one once, never a missing one (metacheck
+    # sent NA as the text "NA"; U19)
+    send_raw = [v for v in _unique(raw_values) if v is not None] if raw_values else []
+    unique_text = _llm_sanitise_text(send_raw)
     ncalls = len(unique_text or [])
-    if ncalls == 0:
+    if ncalls == 0 and not raw_values:
         raise ValueError("No calls to the LLM")
     max_calls = llm_max_calls()
     if ncalls > max_calls:
@@ -1474,7 +1485,7 @@ def llm(
         if key is not None:
             hit = _llm_cache_get(key)
             if hit is not None:
-                return hit.get("df")
+                return _keyed(hit.get("df"), i)
         try:
             if use_ollama_native:
                 out: Any = {
@@ -1515,7 +1526,7 @@ def llm(
                 df[".reasoning"] = pd.Series([thinking] * len(df), dtype="string")
             if key is not None:
                 _llm_cache_put(key, df, raw=result, thinking=_na_chr(thinking))
-            return df
+            return _keyed(df, i)
         except Exception as e:
             msg = _llm_error_message(e)
             if _llm_is_systemic_error(e):
@@ -1529,7 +1540,7 @@ def llm(
                     {
                         ".error": pd.Series([True], dtype="boolean"),
                         ".error_msg": pd.Series([msg], dtype="string"),
-                        ".join_key.": pd.Series([ut], dtype="string"),
+                        _ROW_KEY: pd.Series([i], dtype="Int64"),
                     }
                 )
             return {"answer": pd.NA, "error": True, "error_msg": msg}
@@ -1552,27 +1563,33 @@ def llm(
         f"{elapsed // 3600:02d}:{elapsed % 3600 // 60:02d}:{elapsed % 60:02d}"
     )
 
+    # join the answers back by the position of each row's text among the texts
+    # sent: metacheck joined on the sanitised text, so a text that
+    # .llm_sanitise_text() changed (control characters, invalid UTF-8) or a
+    # numeric one got NA or failed the join (U19)
+    where = {_unique_key(v): k for k, v in enumerate(send_raw)}
+    row_keys = [None if v is None else where[_unique_key(v)] for v in raw_values or []]
+    x = text_df.copy()
+    x[_ROW_KEY] = pd.Series(row_keys, dtype="Int64", index=text_df.index)
     if structured:
         response_df = _bind_rows_r([_as_frame_response(r) for r in responses])
-        x = text_df.copy()
-        x[".join_key."] = text_df[text_col].values
-        if ".join_key." not in response_df.columns:
-            response_df[".join_key."] = pd.Series([], dtype="string")
-        answer_df = _left_join(x, response_df, ".join_key.", suffix=("", ".extracted"))
-        answer_df = answer_df.drop(columns=[".join_key."])
+        response_df = response_df.drop(columns=[".join_key."], errors="ignore")
+        if _ROW_KEY not in response_df.columns:
+            response_df[_ROW_KEY] = pd.Series([], dtype="Int64")
+        answer_df = _left_join(x, response_df, _ROW_KEY, suffix=("", ".extracted"))
     else:
-        _check_answer_classes(responses)
-        response_df = _bind_rows_r([_as_data_frame(r) for r in responses])
-        # response_df[text_col] <- unique_text (a tibble: only size 1 recycles)
-        n_rows, n_text = len(response_df), len(unique_text)
-        if n_rows != n_text and n_text != 1:
-            raise ValueError(_tibble_assign_size_error("unique_text", n_rows, n_text))
-        response_df[text_col] = pd.Series(
-            list(unique_text) if n_rows == n_text else list(unique_text[:1]) * n_rows,
-            dtype="string",
-            index=response_df.index,
-        )
-        answer_df = _left_join(text_df, response_df, text_col)
+        frames = []
+        for k, r in enumerate(_plain_answers(responses)):
+            f = _as_data_frame(r)
+            f[_ROW_KEY] = pd.Series([k] * len(f), dtype="Int64", index=f.index)
+            frames.append(f)
+        response_df = _bind_rows_r(frames)
+        if "answer" not in response_df.columns:
+            response_df["answer"] = pd.Series([pd.NA] * len(response_df), dtype="string")
+        if _ROW_KEY not in response_df.columns:
+            response_df[_ROW_KEY] = pd.Series([], dtype="Int64")
+        answer_df = _left_join(x, response_df, _ROW_KEY)
+    answer_df = answer_df.drop(columns=[_ROW_KEY])
 
     answer_df.attrs["class"] = ["metacheck_llm", "data.frame"]
     answer_df.attrs["llm"] = {"system_prompt": system_prompt, "model": model, "type": type_obj}
@@ -1593,29 +1610,68 @@ def llm(
                 + "\n  ".join("NA" if m is None else str(m) for m in msgs),
                 stacklevel=2,
             )
-    elif not structured and "error" in answer_df.columns and len(answer_df) == 1:
-        # isTRUE(answer_df$error): only a single-row result can ever warn
-        if answer_df["error"].iloc[0] is True or bool(answer_df["error"].fillna(False).iloc[0]):
-            m = answer_df["error_msg"].iloc[0]
-            warnings.warn(f"There were errors in the following rows: 1 \n  *  {m}", stacklevel=2)
+    elif not structured:
+        # every row whose text failed (metacheck's isTRUE(answer_df$error) only
+        # ever warned for a single-row result; U19)
+        failed = {
+            k: r.get("error_msg")
+            for k, r in enumerate(responses)
+            if isinstance(r, dict) and r.get("error") is True
+        }
+        rows = [i + 1 for i, k in enumerate(row_keys) if k in failed]
+        if rows:
+            msgs = _unique([failed[k] for k in row_keys if k in failed])
+            warnings.warn(
+                f"There were errors in the following rows: {', '.join(str(r) for r in rows)} "
+                + "".join(f"\n  *  {'NA' if m is None else m}" for m in msgs),
+                stacklevel=2,
+            )
     return answer_df
 
 
-def _tibble_assign_size_error(value: str, nrow: int, size: int) -> str:
-    """tibble's ``[<-`` error for a column of the wrong size (``x[col] <- value``)."""
-    hint = (
-        "Row updates require a list value. Do you need `list()` or `as.list()`?"
-        if nrow == 1
-        else "Only vectors of size 1 are recycled."
-    )
-    return (
-        f"Assigned data `{value}` must be compatible with existing data.\n"
-        f"\u2716 Existing data has {nrow} row{'' if nrow == 1 else 's'}.\n"
-        f"\u2716 Assigned data has {size} row{'' if size == 1 else 's'}.\n"
-        f"\u2139 {hint}\n"
-        "Caused by error in `vectbl_recycle_rhs_rows()`:\n"
-        f"! Can't recycle input of size {size} to size {nrow}."
-    )
+_ROW_KEY = ".pytacheck_text_row."
+
+
+def _unique_key(v: Any) -> Any:
+    """The key :func:`_unique` tells texts apart by."""
+    return ("na",) if v is None else (type(v).__name__, v)
+
+
+def _keyed(df: Any, i: int) -> Any:
+    """A structured reply keyed by the position *i* of its text (not by the text)."""
+    import pandas as pd
+
+    if not isinstance(df, pd.DataFrame):
+        return df
+    df = df.drop(columns=[".join_key."], errors="ignore")
+    if len(df) > 0:
+        df[_ROW_KEY] = pd.Series([i] * len(df), dtype="Int64", index=df.index)
+    return df
+
+
+def _plain_answers(responses: Sequence[Any]) -> list[Any]:
+    """Answers that ``bind_rows()`` can combine.
+
+    metacheck's ``bind_rows()`` failed when some texts were answered (an
+    ``ellmer_output``) and others failed (``NA``) or came from Ollama (a plain
+    string), losing every answer (U19); mixed answers become plain strings.
+    """
+    import pandas as pd
+
+    from pytacheck.llm._rds import EllmerOutput
+
+    answers = [r.get("answer") if isinstance(r, dict) else None for r in responses]
+    if all(isinstance(a, EllmerOutput) for a in answers):
+        return list(responses)
+    out = []
+    for r in responses:
+        a = r.get("answer") if isinstance(r, dict) else None
+        if isinstance(a, EllmerOutput):
+            r = {**r, "answer": str(a)}
+        elif a is None:
+            r = {**r, "answer": pd.NA}
+        out.append(r)
+    return out
 
 
 def _llm_workers() -> int:
@@ -1631,39 +1687,6 @@ def _llm_workers() -> int:
         return max(1, int(value))
     except (TypeError, ValueError):
         return 1
-
-
-def _check_answer_classes(responses: Sequence[Any]) -> None:
-    """``dplyr::bind_rows()`` of the answers: an ``ellmer_output`` answer cannot be
-    combined with a failed row's ``NA`` or with a plain string (vctrs errors)."""
-    import pandas as pd
-
-    from pytacheck.llm._rds import EllmerOutput
-
-    kinds = []
-    for r in responses:
-        a = r.get("answer") if isinstance(r, dict) else None
-        if isinstance(a, EllmerOutput):
-            kinds.append("eo")
-        elif a is None or a is pd.NA:
-            kinds.append("na")
-        else:
-            kinds.append("chr")
-    if not kinds:
-        return
-    labels = {"eo": "ellmer_output", "chr": "character", "na": "vctrs:::common_class_fallback"}
-    acc = kinds[0]
-    for k in range(1, len(kinds)):
-        cur = kinds[k]
-        if (acc == "eo") != (cur == "eo"):
-            if "chr" in (acc, cur):
-                raise TypeError(
-                    f"Can't combine `..1$answer` <{labels[acc]}> and "
-                    f"`..{k + 1}$answer` <{labels[cur]}>."
-                )
-            raise TypeError(f"Can't combine `..1` <{labels[acc]}> and `..{k + 1}` <{labels[cur]}>.")
-        if acc == "na" and cur == "chr":
-            acc = "chr"
 
 
 def _na_chr(x: str | None) -> Any:

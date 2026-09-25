@@ -537,9 +537,10 @@ def figshare_file_download(
     are skipped, then the largest files until the total is under
     *max_download_size* MB (``None``/``inf``: no limit). Zips are downloaded
     whole unless *unzip_types* names file categories to extract from them.
-    Returns the file table (``None`` when there is nothing to download);
-    files that did not arrive intact have ``downloaded = False`` and are
-    warned about.
+    Returns the file table (``None`` when the article lists no files);
+    files left out by the size limits have ``downloaded = False`` (when all
+    are, no folder is made and ``folder`` is missing), and files that did
+    not arrive intact have ``downloaded = False`` and are warned about.
     """
     from pytacheck.archives import _spinner, _tick
 

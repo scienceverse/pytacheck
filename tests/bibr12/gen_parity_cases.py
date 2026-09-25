@@ -221,12 +221,16 @@ add(
                 f"{H}.mixed_dir()",
             )
         },
-        "known_divergence": (
-            "U18: metacheck's read() of several files fails as soon as one cannot be read "
-            "(read() returns NULL for it and paperlist() rejects the NULL: 'The arguments must be "
-            "paper objects or lists of paper objects'), so a directory holding one bibr 11.x file "
-            "cannot be read at all; pytacheck logs and skips the file and returns the 12.0 paper"
-        ),
+        "known_divergence": {
+            "kind": "deliberate",
+            "ref": "D6",
+            "reason": (
+                "metacheck's read() of several files fails as soon as one cannot be read "
+                "(U18, U21: read() returns NULL for it and paperlist() rejects the NULL), so a "
+                "directory holding one bibr 11.x file cannot be read at all; pytacheck logs and "
+                "skips the file and returns the 12.0 paper"
+            ),
+        },
     },
     "read() of a directory with a bibr 11.0 file and a 12.0 file",
 )
