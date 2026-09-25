@@ -420,8 +420,11 @@ their goldens do not depend on it.
 
 Every difference has a level: `whitespace` (equal once all whitespace is removed:
 `p =0.152` vs `p = 0.152`), `wording` (other text, the same numbers) or `values`
-(numbers, rows, columns, traffic lights, a failed run). The report prints, per
-module, the share of outputs that agree on each field, and lists the differences.
+(numbers, including a minus sign; rows, columns, traffic lights, a failed run; a
+table cell that is NA, logical or numeric on either side, so a value lost or added
+is never `wording`; and the same cells paired up into other rows). The report
+prints, per module, the share of outputs that agree on each field, and lists the
+differences.
 
 **Expected differences.** Every difference must be explained by an entry of
 `parity/accuracy/expected.yaml`:
@@ -447,7 +450,7 @@ floors:
 `table` (their columns or row counts), or `summary_table.<column>` / `table.<column>`.
 An entry is validated like a mark on a tier-1 case: `r_bug_fixed` cites a fixed or
 partly fixed U-entry, `better_logic` and `deliberate` a D-entry, and `c_quirk` and
-`type_detail` are not allowed. Today 19 entries explain the 188 differences, all of
+`type_detail` are not allowed. Today 20 entries explain the 188 differences, all of
 them metacheck bugs pytacheck fixes (Grobid clean-up and URL handling U16/U28, U3,
 U30, U80, U82, U83, U86, U98, U99, U115, U123, U125, U158).
 
@@ -491,10 +494,11 @@ U- or D-entry). Changing the matrix means `--generate` with the reference R.
   now match R (`xpass`), the failing cases, and the accuracy report before porting.
   An AI agent then ports the changes until `parity check`, the accuracy gate, the
   tests and the linters pass. The pull request is a draft labelled
-  `needs-human-review` when tier-1 marks, `parity/accuracy/expected.yaml` or
-  `matrix.toml` (dropping an input would hide its differences), or D-entries changed
-  since the commit the sync branched from (committed by the agent or not), or the
-  accuracy report warns or fails (`scripts/upstream_sync.py review`);
+  `needs-human-review` when tier-1 marks changed or a case left tier 1 (a case in
+  tier 2 may carry any mark), `parity/accuracy/expected.yaml`, `matrix.toml` or
+  `parity/corpus.toml` (dropping an input would hide its differences), or D-entries
+  changed since the commit the sync branched from (committed by the agent or not), or
+  the accuracy report warns or fails (`scripts/upstream_sync.py review`);
   `.github/CODEOWNERS` names the code owners of the marks, the lock, `expected.yaml`,
-  `matrix.toml` and `docs/UPSTREAM_ISSUES.md`, whose review a change to them needs
-  once branch protection requires code-owner review.
+  `matrix.toml`, `corpus.toml` and `docs/UPSTREAM_ISSUES.md`, whose review a change to
+  them needs once branch protection requires code-owner review.

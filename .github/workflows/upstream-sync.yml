@@ -15,9 +15,10 @@ name: Upstream sync
 #   3. let Claude Code port the changes (brief: .upstream-sync/brief.md, rules:
 #      docs/PORTING.md, prompt: .github/prompts/upstream-sync.md);
 #   4. verify (parity, the accuracy gate, tests, lint) and open a pull request. It
-#      is a draft labelled needs-human-review when tier-1 marks,
-#      parity/accuracy/expected.yaml or matrix.toml, or D-entries changed, or the
-#      accuracy report warns (scripts/upstream_sync.py review). The PR can only be merged once the
+#      is a draft labelled needs-human-review when tier-1 marks (or which cases
+#      are tier 1), parity/accuracy/expected.yaml or matrix.toml, parity/corpus.toml,
+#      or D-entries changed, or the accuracy report warns
+#      (scripts/upstream_sync.py review). The PR can only be merged once the
 #      CI and Parity workflows are green (branch protection).
 #
 # Requires the repository secret ANTHROPIC_API_KEY (or CLAUDE_CODE_OAUTH_TOKEN).

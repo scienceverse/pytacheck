@@ -126,6 +126,8 @@ def test_pcre_inline_flags_and_ascii_sets() -> None:
     # POSIX classes and \w in a PCRE set are ASCII, also ignoring case
     assert not rx.grepl(r"^[[:alpha:]\w]+$", "naïve", ignore_case=True, perl=True)
     assert rx.grepl(r"^[[:alpha:]]+$", "naïve", ignore_case=True)
+    # an escaped backslash in a set is a backslash (R: "aXX")
+    assert rx.gsub(r"[\\w]", "X", "a\\w", perl=True) == "aXX"
 
 
 def test_lazy_tre_patterns_stay_lazy() -> None:

@@ -472,8 +472,19 @@ def test_review_needs_a_human_for_tier1_marks_and_accuracy_warnings(monkeypatch)
     assert us.review_reasons(same, _accuracy()) == [
         "parity/accuracy/expected.yaml changed",
         "parity/accuracy/matrix.toml changed",
+        "parity/corpus.toml changed",
         "D-entries of docs/UPSTREAM_ISSUES.md changed (1 lines)",
     ]
+
+
+def test_review_needs_a_human_when_a_case_leaves_tier1(monkeypatch) -> None:
+    """A case moved to tier 2 (or deleted) may then carry any mark: a human looks.
+    A new unmarked tier-1 case needs no review."""
+    us = _load_script()
+    monkeypatch.setattr(us, "git", lambda *args, **kw: "")
+    monkeypatch.setattr(us, "tier1_marks", lambda: {"a/y": None, "a/new": None})
+    (reason,) = us.review_reasons({"a/x": None, "a/y": None}, _accuracy())
+    assert "no longer tier 1" in reason and reason.endswith(": a/x")
 
 
 def test_review_compares_files_with_the_base_commit(tmp_path, monkeypatch) -> None:

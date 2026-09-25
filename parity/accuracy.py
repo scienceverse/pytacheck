@@ -22,8 +22,9 @@ with its default arguments, in Python, and scores each output against R's:
 
 Each difference has a level: ``whitespace`` (equal once all whitespace is
 removed: ``p =0.152`` vs ``p = 0.152``), ``wording`` (other text, same numbers)
-or ``values`` (numbers, rows, traffic lights, a failed run). Every difference
-must be explained by an entry of ``parity/accuracy/expected.yaml``::
+or ``values`` (numbers, rows, traffic lights, a failed run, a table cell that is
+NA, logical or numeric on either side, the same cells in other rows). Every
+difference must be explained by an entry of ``parity/accuracy/expected.yaml``::
 
     - module: ref_accuracy          # globs (* matches anything, / included)
       input: "*"                    # the input path, or its short name
@@ -228,7 +229,9 @@ def suggests_library(rscript: str) -> str:
 
 def _r_env(library: str) -> dict[str, str]:
     env = {k: v for k, v in os.environ.items() if k.lower() != "no_proxy"}
-    env.update(LANG="C.UTF-8", LC_ALL="C.UTF-8", TZ="UTC", R_LIBS=library)
+    # in front of the libraries R already uses (metacheck may live in one of them)
+    libs = os.pathsep.join(x for x in (library, env.get("R_LIBS")) if x)
+    env.update(LANG="C.UTF-8", LC_ALL="C.UTF-8", TZ="UTC", R_LIBS=libs)
     for name in ("http_proxy", "https_proxy", "HTTP_PROXY", "HTTPS_PROXY", "ALL_PROXY"):
         env[name] = _NO_PROXY
     return env
@@ -348,8 +351,9 @@ def run_python(outputs: list[Output]) -> dict[Output, dict[str, Any]]:
 # -- scoring ----------------------------------------------------------------------------
 
 _WS = re.compile(r"\s+")
-# a number, with its minus sign (not a hyphen after a word or number: 'COVID-19', '1-2')
-_NUM = re.compile(r"(?:(?<![\w)])[-−])?\d+(?:\.\d+)?")
+# a number, with its minus sign (not a hyphen after a word or number: 'COVID-19', '1-2'),
+# also without a leading zero ('r = -.58', as APA style writes correlations)
+_NUM = re.compile(r"(?:(?<![\w)])[-−])?(?:\d+(?:\.\d+)?|(?<![\w.])\.\d+)")
 
 
 def squash(s: str) -> str:
@@ -465,6 +469,19 @@ def _cell_text(x: Any) -> str:
     return orjson.dumps(x, option=orjson.OPT_SORT_KEYS, default=str).decode()
 
 
+#: doubles JSON cannot hold, as the canonical form writes them
+_SPECIAL_DOUBLES = frozenset({"NaN", "Inf", "-Inf"})
+
+
+def _is_text(x: Any) -> bool:
+    """Whether a cell is text (a string, or a list or record of them); NA, logicals
+    and numbers (NaN and infinities too) are values, so any change to one of them
+    is a ``values`` difference."""
+    if isinstance(x, str):
+        return x not in _SPECIAL_DOUBLES
+    return isinstance(x, list | dict)
+
+
 def cell_level(r: Any, p: Any) -> str | None:
     """How two summary-table cells differ (numbers to a relative 1e-9)."""
     if r == p:
@@ -472,8 +489,8 @@ def cell_level(r: Any, p: Any) -> str | None:
     if _is_number(r) and _is_number(p):
         close = math.isclose(float(r), float(p), rel_tol=TOL, abs_tol=0.0)
         return None if close else "values"
-    if r is None or p is None or r in ("NaN",) or p in ("NaN",):
-        return "values"
+    if not (_is_text(r) and _is_text(p)):
+        return "values"  # NA, a logical or a number on either side, and not equal
     return text_level(_cell_text(r), _cell_text(p))
 
 
@@ -481,7 +498,11 @@ def _column_level(r: list[Any], p: list[Any]) -> str | None:
     """How two table columns differ as multisets of cells."""
     if Counter(map(_norm, r)) == Counter(map(_norm, p)):
         return None
-    rt, pt = [_cell_text(c) for c in r], [_cell_text(c) for c in p]
+    # NA, logicals and numbers: a value lost, added or changed ('R has None, py False')
+    atoms = [Counter(_norm(c) for c in col if not _is_text(c)) for col in (r, p)]
+    if atoms[0] != atoms[1]:
+        return "values"
+    rt, pt = ([_cell_text(c) for c in col if _is_text(c)] for col in (r, p))
     if Counter(_WS.sub("", c) for c in rt) == Counter(_WS.sub("", c) for c in pt):
         return "whitespace"
     rn = sum((numbers(c) for c in rt), Counter())
@@ -639,10 +660,12 @@ def _score_table(o: Output, r: Any, p: Any, scores: Scores) -> list[Difference]:
         scores.f1.append(0.0 if found else 1.0)
         return found
     diffs = _structure(o, "table", rf, pf)
+    f1 = row_f1(rf, pf)
     scores.add("table_nrow", rf.nrow == pf.nrow)
-    scores.f1.append(row_f1(rf, pf))
+    scores.f1.append(f1)
     if rf.nrow != pf.nrow:  # the columns cannot be lined up: the row count says it
         return diffs
+    columns = []
     for name in rf.names:
         if name in pf.names:
             a, b = rf.cols[rf.names.index(name)], pf.cols[pf.names.index(name)]
@@ -653,8 +676,11 @@ def _score_table(o: Output, r: Any, p: Any, scores: Scores) -> list[Difference]:
                 first_r = next(iter(ra), None)
                 first_p = next(iter(pb), None)
                 detail = f"R has {_short_repr(first_r)}, py {_short_repr(first_p)}"
-                diffs.append(Difference(o.module, o.input, f"table.{name}", level, detail))
-    return diffs
+                columns.append(Difference(o.module, o.input, f"table.{name}", level, detail))
+    if not columns and f1 < 1:  # every column has the same cells, in other rows
+        detail = f"the same cells pair up into other rows (row F1 {f1:.3f})"
+        columns.append(Difference(o.module, o.input, "table", "values", detail))
+    return diffs + columns
 
 
 def _short_repr(x: Any, limit: int = 90) -> str:
@@ -775,6 +801,8 @@ def load_expected(path: Path = EXPECTED_FILE) -> Expected:
         unknown = sorted(set(f) - FLOOR_KEYS)
         if unknown:
             problems.append(f"{where}: unknown keys {unknown} (one of {sorted(FLOOR_KEYS)})")
+        if f["module"] in floors:
+            problems.append(f"{where}: {f['module']} already has a floor")
         share = f.get("traffic_light")
         if not isinstance(share, int | float) or not 0 <= share < TL_FLOOR:
             problems.append(f"{where}: traffic_light is a share below {TL_FLOOR}")
