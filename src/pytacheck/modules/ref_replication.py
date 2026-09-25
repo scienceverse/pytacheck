@@ -181,11 +181,17 @@ def ref_replication(paper: Any, show_outcomes: bool = False) -> dict[str, Any]:
     flora = flora.rename(columns=_FLORA_COLS)
     table = bib.merge(flora, on="doi", how="inner", sort=False)
 
-    ## remove rows that are already cited (by DOI); R compares with the DOIs of
-    ## every paper's references (bib$doi), also for a paper list
+    ## remove rows that are already cited (by DOI) by the same paper: metacheck
+    ## compares with the DOIs of every paper of a list (bib$doi), so one paper
+    ## citing a replication hid it for the others (U116)
     rep_doi = table["replication_doi"]
     has_rep_doi = (rep_doi.notna() & (rep_doi != "")).fillna(False)
-    already_cited = has_rep_doi & rep_doi.isin(bib["doi"]).fillna(False)
+    cited = set(zip(bib["paper_id"].tolist(), bib["doi"].tolist(), strict=True))
+    in_paper = [
+        (pid, d) in cited
+        for pid, d in zip(table["paper_id"].tolist(), rep_doi.tolist(), strict=True)
+    ]
+    already_cited = has_rep_doi & pd.Series(in_paper, index=table.index, dtype=bool)
     table = table.loc[~already_cited.to_numpy(dtype=bool)].reset_index(drop=True)
 
     # Remove trailing URLs from reference text to avoid duplication with link
@@ -203,7 +209,8 @@ def ref_replication(paper: Any, show_outcomes: bool = False) -> dict[str, Any]:
     report: Any
     if len(table) == 0:
         summary_text = "No citations to articles in the FLoRA database were found."
-        report = f"We checked {n_doi:d} references with DOIs. {summary_text}"
+        # plural() as in the other branch (metacheck: "1 references", U82)
+        report = f"We checked {n_doi:d} reference{plural(n_doi)} with DOIs. {summary_text}"
     else:
         ## summary_text ----
         types = table["replication_type"]

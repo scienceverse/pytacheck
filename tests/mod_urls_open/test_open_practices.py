@@ -188,7 +188,9 @@ def test_on_request_ignores_case() -> None:
     mo = run(pc.test_paper(["Analysis scripts are available ON REQUEST."]))
     assert mo.table["on_request"].tolist() == [True]
     assert mo.traffic_light == "red"
-    assert mo.summary_text == "Neither shared data nor code detected; some sharing is only on request."
+    assert (
+        mo.summary_text == "Neither shared data nor code detected; some sharing is only on request."
+    )
 
 
 def test_lowercase_r_is_not_a_code_word() -> None:

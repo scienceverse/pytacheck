@@ -4,6 +4,7 @@
 # read_r_output()
 # ---------------------------------------------------------------------------
 - "id": "read_r_output.analysis.code_lines"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U139", "reason": "an untitled one-line result takes the source label as its analysis, as documented (R: NA)"}
   "r": "read_r_output"
   "py": "pytacheck.statout.r_output.read_r_output"
   "args":
@@ -164,10 +165,12 @@
   "py": "pytacheck.statout.stat_tables.read_stat_tables"
   "args": {"path": {"$file": "tests/statout_core/data/html_only.omv"}}
 - "id": "read_stat_tables.html.custom"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U141", "reason": "a table row without any content is dropped (R's df[NA, ] adds a row of NAs)"}
   "r": "read_stat_tables"
   "py": "pytacheck.statout.stat_tables.read_stat_tables"
   "args": {"path": {"$file": "tests/statout_core/data/custom_html.jasp"}}
 - "id": "read_stat_tables.not_zip"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U137", "reason": "a file that is not a zip archive has no tables (R: basename(NULL) error)"}
   "r": "read_stat_tables"
   "py": "pytacheck.statout.stat_tables.read_stat_tables"
   "args": {"path": {"$file": "tests/statout_core/data/not_zip.jasp"}}
@@ -180,10 +183,12 @@
   "py": "pytacheck.statout.stat_tables.read_stat_tables"
   "args": {"path": {"$file": "upstream/metacheck/tests/testthat/fixtures/notebooks/notebook_python.ipynb"}}
 - "id": "read_stat_tables.ipynb.r"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U139", "reason": "call_fn is \"\" without a printed result class, as metacheck intends (R: NA)"}
   "r": "read_stat_tables"
   "py": "pytacheck.statout.stat_tables.read_stat_tables"
   "args": {"path": {"$file": "upstream/metacheck/tests/testthat/fixtures/notebooks/notebook_r.ipynb"}}
 - "id": "read_stat_tables.ipynb.mixed"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U139", "reason": "call_fn is \"\" without a printed result class, as metacheck intends (R: NA)"}
   "r": "read_stat_tables"
   "py": "pytacheck.statout.stat_tables.read_stat_tables"
   "args": {"path": {"$file": "tests/statout_core/data/notebook_mixed.ipynb"}}
@@ -222,6 +227,7 @@
   "args":
     "caps": *caps
 - "id": "r_captures_to_tables.synthetic"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U140", "reason": "a capture without a source line has line_seq 1, as in .r_merge_captures() (R: NA)"}
   "r": "metacheck:::.r_captures_to_tables"
   "py": "pytacheck.statout.r_capture._r_captures_to_tables"
   "args":
@@ -255,6 +261,7 @@
           "source_label": "capture_script.R"
           "code_lines": *capture_code
 - "id": "r_merge_captures.no_captures"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U139", "reason": "an untitled one-line result takes the script name as its analysis, as documented (R: NA)"}
   "r": "metacheck:::.r_merge_captures"
   "py": "pytacheck.statout.r_capture._r_merge_captures"
   "args": {"cap_tabs": {"$null": true}, "txt_tabs": *txt_tabs}
@@ -351,6 +358,7 @@
   "py": "pytacheck.statout.r_output._r_root_ref_map"
   "args": {"code_lines": {"$chr": ["x <- 5", "print(x)"]}}
 - "id": "r_echo_chunks.continuations"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U140", "reason": "only the '+' lines right after the '>' line are the statement; an output line starting with '+' stays output"}
   "r": "metacheck:::.r_echo_chunks"
   "py": "pytacheck.statout.r_output._r_echo_chunks"
   "args":
@@ -389,6 +397,7 @@
       - "const                      -4.62e+04   4449.507    -10.384      0.000    -5.5e+04   -3.74e+04"
       - "Number of Occupants        -188.2184     20.093     -9.367      0.000    -228.118    -148.318"
 - "id": "r_output_oneline.direct"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U139", "reason": "an untitled one-line result takes source_label as its analysis, as documented (R: NA)"}
   "r": "metacheck:::.r_output_oneline"
   "py": "pytacheck.statout.r_output._r_output_oneline"
   "args":
@@ -524,6 +533,7 @@
         "r": "vapply(c('a=np.float64(5.98), b=np.int64(149)', 'np.uint8(3) np.float(2.5) np.int32(-1)', 'np.float64((1))', 'xnp.float64(1)', 'np.complex128(1)'), metacheck:::.ipynb_strip_numpy_scalars, character(1), USE.NAMES = FALSE)"
         "py": "[__import__('pytacheck.statout.stat_tables', fromlist=['_'])._ipynb_strip_numpy_scalars(v) for v in ['a=np.float64(5.98), b=np.int64(149)', 'np.uint8(3) np.float(2.5) np.int32(-1)', 'np.float64((1))', 'xnp.float64(1)', 'np.complex128(1)']]"
 - "id": "ipynb_stat_line.classes"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U139", "reason": "call_fn is \"\" without a printed result class, as metacheck intends (R: NA)"}
   "r": "metacheck:::.ipynb_stat_line"
   "py": "pytacheck.statout.stat_tables._ipynb_stat_line"
   "args":
@@ -623,6 +633,7 @@
         "args": {"path": {"$file": "upstream/metacheck/tests/testthat/fixtures/formats/sample.omv"}}
     "source_file": "sample.omv"
 - "id": "stat_results_long.html"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U138", "reason": "stat_results_long / stat_output_json ids: a missing source file gives the 'result' prefix and a test id repeats no prefix (R: 'na_', 'x_x_t1')"}
   "r": "stat_results_long"
   "py": "pytacheck.statout.stat_output.stat_results_long"
   "args":
@@ -632,6 +643,7 @@
         "py": "pytacheck.statout.stat_tables.read_stat_tables"
         "args": {"path": {"$file": "tests/statout_core/data/custom_html.jasp"}}
 - "id": "stat_results_long.html_only_omv"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U138", "reason": "stat_results_long / stat_output_json ids: a missing source file gives the 'result' prefix and a test id repeats no prefix (R: 'na_', 'x_x_t1')"}
   "r": "stat_results_long"
   "py": "pytacheck.statout.stat_output.stat_results_long"
   "args":
@@ -642,6 +654,7 @@
         "args": {"path": {"$file": "tests/statout_core/data/html_only.omv"}}
     "source_file": "html_only.omv"
 - "id": "stat_results_long.notebook_python"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U138", "reason": "stat_results_long / stat_output_json ids: a missing source file gives the 'result' prefix and a test id repeats no prefix (R: 'na_', 'x_x_t1')"}
   "r": "stat_results_long"
   "py": "pytacheck.statout.stat_output.stat_results_long"
   "args":
@@ -652,6 +665,7 @@
         "args": {"path": {"$file": "upstream/metacheck/tests/testthat/fixtures/notebooks/notebook_python.ipynb"}}
     "source_file": "notebook_python.ipynb"
 - "id": "stat_results_long.notebook_mixed"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U138", "reason": "stat_results_long / stat_output_json ids: a missing source file gives the 'result' prefix and a test id repeats no prefix (R: 'na_', 'x_x_t1')"}
   "r": "stat_results_long"
   "py": "pytacheck.statout.stat_output.stat_results_long"
   "args":
@@ -662,6 +676,7 @@
         "args": {"path": {"$file": "tests/statout_core/data/notebook_mixed.ipynb"}}
     "source_file": "notebook_mixed.ipynb"
 - "id": "stat_results_long.r_analysis"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U138", "reason": "stat_results_long / stat_output_json ids: a missing source file gives the 'result' prefix and a test id repeats no prefix (R: 'na_', 'x_x_t1')"}
   "r": "stat_results_long"
   "py": "pytacheck.statout.stat_output.stat_results_long"
   "args":
@@ -673,6 +688,7 @@
     "paper_id": "p1"
     "source_file": "analysis.R"
 - "id": "stat_results_long.r_no_lines"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U138", "reason": "stat_results_long / stat_output_json ids: a missing source file gives the 'result' prefix and a test id repeats no prefix (R: 'na_', 'x_x_t1')"}
   "r": "stat_results_long"
   "py": "pytacheck.statout.stat_output.stat_results_long"
   "args":
@@ -702,6 +718,7 @@
         "args": {"cap_tabs": *cap_tabs, "txt_tabs": *txt_tabs}
     "source_file": "capture_script.R"
 - "id": "stat_results_long.special"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U138", "reason": "stat_results_long / stat_output_json ids: a missing source file gives the 'result' prefix and a test id repeats no prefix (R: 'na_', 'x_x_t1')"}
   "r": "stat_results_long"
   "py": "pytacheck.statout.stat_output.stat_results_long"
   "args":
@@ -728,14 +745,17 @@
   "py": "pytacheck.statout.stat_output.stat_output_json"
   "args": {"tables": *omv_tabs, "source_file": "sample.omv"}
 - "id": "stat_output_json.html"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U138", "reason": "stat_results_long / stat_output_json ids: a missing source file gives the 'result' prefix and a test id repeats no prefix (R: 'na_', 'x_x_t1')"}
   "r": "stat_output_json"
   "py": "pytacheck.statout.stat_output.stat_output_json"
   "args": {"tables": *html_tabs, "source_file": "custom_html.JASP"}
 - "id": "stat_output_json.notebook"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U138", "reason": "stat_results_long / stat_output_json ids: a missing source file gives the 'result' prefix and a test id repeats no prefix (R: 'na_', 'x_x_t1')"}
   "r": "stat_output_json"
   "py": "pytacheck.statout.stat_output.stat_output_json"
   "args": {"tables": *nbmixed_tabs, "source_file": "notebook_mixed.ipynb"}
 - "id": "stat_output_json.r_analysis"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U138", "reason": "stat_results_long / stat_output_json ids: a missing source file gives the 'result' prefix and a test id repeats no prefix (R: 'na_', 'x_x_t1')"}
   "r": "stat_output_json"
   "py": "pytacheck.statout.stat_output.stat_output_json"
   "args": {"tables": *r_tabs, "paper_id": "p1", "source_file": "analysis.R"}
@@ -748,6 +768,7 @@
   "py": "pytacheck.statout.stat_output.stat_output_json"
   "args": {"tables": *cap_merged, "source_file": "capture_script.R"}
 - "id": "stat_output_json.special"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U138", "reason": "stat_results_long / stat_output_json ids: a missing source file gives the 'result' prefix and a test id repeats no prefix (R: 'na_', 'x_x_t1')"}
   "r": "stat_output_json"
   "py": "pytacheck.statout.stat_output.stat_output_json"
   "args": {"tables": *special_tabs}
@@ -781,6 +802,7 @@
         "py": "pytacheck.statout.stat_output.stat_output_json"
         "args": {"tables": *jasp_tabs, "paper_id": "10.1234/abc", "source_file": "sample.jasp"}
 - "id": "stat_output_validate.json_string"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U136", "reason": "a JSON string is validated (R's textConnection() cannot be read by jsonlite: always 'not valid JSON')"}
   "r": "stat_output_validate"
   "py": "pytacheck.statout.stat_output.stat_output_validate"
   "args":
@@ -818,6 +840,7 @@
   "py": "pytacheck.statout.stat_output.stat_output_validate"
   "args": {"doc": {"$file": "tests/statout_core/data/validate_value_atomic.json"}}
 - "id": "stat_output_validate.string_bug"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U136", "reason": "a JSON string is validated (R's textConnection() cannot be read by jsonlite: always 'not valid JSON')"}
   "r": "stat_output_validate"
   "py": "pytacheck.statout.stat_output.stat_output_validate"
   "args": {"doc": "{\"schema\": \"x\"}"}
@@ -855,6 +878,7 @@
   "py": "pytacheck.statout.stat_output.stat_output_write"
   "args": {"stat_output": {"$null": true}, "root": "/nonexistent/should/not/be/created"}
 - "id": "read_stat_tables.spv.modern"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U148", "reason": "a template value is rendered ('3', 'a of 2.5, b'), not left as '^1'"}
   "r": "read_stat_tables"
   "py": "pytacheck.statout.stat_tables.read_stat_tables"
   "args": {"path": {"$file": "tests/statout_core/data/modern.spv"}}
@@ -863,10 +887,12 @@
   "py": "pytacheck.statout.stat_tables.read_stat_tables"
   "args": {"path": {"$file": "tests/statout_core/data/legacy.spv"}}
 - "id": "read_stat_tables.spv.charts"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U144", "reason": "a box plot backed by case data decodes (R's is_na_like() always errors)"}
   "r": "read_stat_tables"
   "py": "pytacheck.statout.stat_tables.read_stat_tables"
   "args": {"path": {"$file": "tests/statout_core/data/charts.spv"}}
 - "id": "stat_results_long.spv"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U144", "reason": "the case-data box plot decodes and template values are rendered (U148)"}
   "r": "stat_results_long"
   "py": "pytacheck.statout.stat_output.stat_results_long"
   "args":
@@ -877,6 +903,7 @@
     "paper_id": "p"
     "source_file": "output.spv"
 - "id": "stat_output_json.spv"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U144", "reason": "the case-data box plot decodes and template values are rendered (U148)"}
   "r": "stat_output_json"
   "py": "pytacheck.statout.stat_output.stat_output_json"
   "args":

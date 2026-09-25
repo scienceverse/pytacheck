@@ -120,8 +120,6 @@ def pubpeer_comments(doi: Any) -> pd.DataFrame | None:
             out[col] = pd.array(
                 [None] * len(out), dtype="float64" if col == "total_comments" else "string"
             )
-    std = ["doi", "total_comments", "url", "users"]
-    out = out.loc[:, std + [c for c in out.columns if c not in std]]
     if "total_comments" in out.columns:
         tc = out["total_comments"]
         if tc.isna().any():

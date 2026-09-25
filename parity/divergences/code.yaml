@@ -73,6 +73,12 @@
   ref: U120
   reason: each report section holds its own rows; R's regcheck_table[prereg_id == rid, ] adds a row of NAs per NA prereg_id
 "mod_reg_review/reg_check.review.na_id.all.tables": *u120_na
+# caused by the report lane's module_report() fix (U128), not by this lane
+"mod_reg/reg_check.report.all_fail": &u128_err
+  kind: r_bug_fixed
+  ref: U128
+  reason: module_report() keeps the heading of a module with an "error" traffic light (report lane fix); R's sprintf() with a NULL emoji drops it
+"mod_reg_review/reg_check.review.refused.report": *u128_err
 
 # --- repo_check module (inst/modules/repo_check.R) --------------------------
 "mod_repo_check/repo_check.all_platforms": &u121
@@ -143,3 +149,139 @@
   kind: r_bug_fixed
   ref: U135
   reason: the already-installed row has a category (NA) like every other row; R's early row has no category column
+"mod_repro/reproducibility_check.bibr12": &u138_rep
+  kind: r_bug_fixed
+  ref: U138
+  reason: a test_id carries its source prefix once (notebook_r_ipynb_t1); R's .stat_test_id() fallback repeats it, and a value key loses its trailing underscore too (95_conf, R 95_conf_)
+"mod_repro/reproducibility_check.jasp_with_r": *u138_rep
+"mod_repro/reproducibility_check.jasp_with_r_keep_sandbox": *u138_rep
+"mod_repro/reproducibility_check.smcl_mplus": *u138_rep
+"mod_repro/reproducibility_check.spv_notebook_py":
+  kind: r_bug_fixed
+  ref: U148
+  reason: the SPSS Notes table's template cell renders as 3, so it adds 2 statistics (38, R 36); test_ids carry the source prefix once (U138)
+
+# --- statout readers (R/spv.R, R/jasp.R, R/omv.R, R/stata.R, R/mplus.R) ------
+"statout_readers/import_spv.modern": &u148_tpl
+  kind: r_bug_fixed
+  ref: U148
+  reason: a template value is rendered ('3', 'a of 2.5, b'); R puts the raw template ('^1 of ^2') in the cell
+"statout_readers/export_spv_html.modern": *u148_tpl
+"statout_readers/spv_decode_light_table.0000000004": *u148_tpl
+"statout_readers/spv_decode_light_table.0000000005": *u148_tpl
+"statout_readers_review/import_spv.spv_strings": *u148_tpl
+"statout_readers_review/export_spv_html.spv_strings": *u148_tpl
+"statout_readers_review/spv_decode_light_table.t2": *u148_tpl
+"statout_readers/spv_table_html.trailing_empty": &u148_html
+  kind: r_bug_fixed
+  ref: U148
+  reason: a trailing empty dimension label keeps its header/stub cell; R's strsplit() drops it and the export fails or shifts the row
+"statout_readers_review/spv_table_html.empty_row_key": *u148_html
+"statout_readers_review/export_spv_html.spv_charts": &u148_chart
+  kind: r_bug_fixed
+  ref: U148
+  reason: a chart whose fitted line cannot be drawn (scalar, function, formula) or a box plot without data is drawn without it / left out; R's lines()/boxplot() fail the whole export
+"statout_readers_review/export_spv_html.spv_box_na": *u148_chart
+"statout_readers/export_omv_html.fixture": &u148_img
+  kind: r_bug_fixed
+  ref: U148
+  reason: every occurrence of a plot is inlined (R's sub() inlines only the first) and a malformed %-escape is kept (R's URLdecode() makes a NUL and fails)
+"statout_readers_review/export_omv_html.review": *u148_img
+"statout_readers_review/export_omv_html.badurl": *u148_img
+"statout_readers_review/url_decode.vector": *u148_img
+"statout_readers/import_spv.charts": &u144
+  kind: r_bug_fixed
+  ref: U144
+  reason: a box plot backed by case data decodes; R's is_na_like() calls abs() on the character categories and drops the chart
+"statout_readers/import_spv.attrs.charts": *u144
+"statout_readers/export_spv_html.charts": *u144
+"statout_readers/import_jasp.labels.sample": &u145_lab
+  kind: r_bug_fixed
+  ref: U145
+  reason: a value-labelled column without a variable label has no variable label; R's attr(x, "label") partially matches "labels" and copies the value labels there
+"statout_readers/import_jasp.labels.sqlite": *u145_lab
+"statout_readers/import_jasp.labels.binary": *u145_lab
+"statout_readers/import_omv.labels.sample": *u145_lab
+"statout_readers/import_omv.labels.fixture": *u145_lab
+"statout_readers_review/import_omv.labels.fields_object": *u145_lab
+"statout_readers_review/import_jasp.labels.review": *u145_lab
+"statout_readers_review/import_jasp.labels.sqlite_types": *u145_lab
+"statout_readers_review/import_jasp.short":
+  kind: r_bug_fixed
+  ref: U145
+  reason: a column shorter than rowCount (truncated data.bin) is padded with missing values; R stops ("arguments imply differing number of rows")
+"statout_readers_review/import_jasp.sqlite_nulltype":
+  kind: r_bug_fixed
+  ref: U145
+  reason: a column without a columnType is read as nominal; R stops ("missing value where TRUE/FALSE needed")
+"statout_readers/smcl_export_syntax.analysis": &u146
+  kind: r_bug_fixed
+  ref: U146
+  reason: SMCL {c 0xNN} is hexadecimal ({c 0x41} is A; R reads decimal, ")"), {c -(}/{c )-} render braces, and an unusable {dup} count is left out instead of NA
+"statout_readers/smcl_render.analysis": *u146
+"statout_readers/smcl_command_chunks.analysis": *u146
+"statout_readers/smcl_render_line.vector": *u146
+"statout_readers/smcl_render_line.na_col": *u146
+"statout_readers/smcl_render_line.na_hline": *u146
+"statout_readers_review/smcl_render.tricky": *u146
+"statout_readers_review/smcl_command_chunks.tricky": *u146
+"statout_readers_review/smcl_render_line.more": *u146
+"statout_readers_review/smcl_command_chunks.vector":
+  kind: r_bug_fixed
+  ref: U140
+  reason: a Stata command is its '. ' line and the echo lines right after it; R counts echo-looking lines anywhere in the chunk (as .r_echo_chunks(), U140)
+"statout_readers/mplus_sections.twolevel": &u147
+  kind: r_bug_fixed
+  ref: U147
+  reason: a section header that is the last line or followed by another header has no lines; R's (h + 1):end counts down to NA and the header
+"statout_readers/mplus_sections.adjacent": *u147
+"statout_readers/mplus_output_tables.model_modification_indices": *u147
+
+# --- match_reported_output() (R/match-reported.R, R/match-table.R) -----------
+"statout_match/norm_value.batch": &u143_dec
+  kind: r_bug_fixed
+  ref: U143
+  reason: the decimals of a number in scientific notation count its exponent (1.5e-05 has 6); R counts the mantissa only
+"statout_match/norm_interval.batch": *u143_dec
+"statout_match_review/match_reported_output.tt.format_values":
+  kind: r_bug_fixed
+  ref: U143
+  reason: a reported 1e-300 no longer matches an output of 1.23e-05 (R's tolerance of 0.5 from the mantissa's 0 decimals)
+"statout_match_review/match_reported_output.tt.na_sentence_pos":
+  kind: r_bug_fixed
+  ref: U143
+  reason: identical components of two tests stay distinct in the regrouping (R's match(list, list) maps the second onto the first and reports an implausible split)
+"statout_match/match_reported_output.synthetic.na_test_id": &u142
+  kind: r_bug_fixed
+  ref: U142
+  reason: output rows without a test_id form no site; R adds an NA site and val_in(NULL) fails the call
+"statout_match_review/match_reported_output.tt.na_text_id_some": &u142_tid
+  kind: r_bug_fixed
+  ref: U142
+  reason: a reported test without a text_id is matched too (text_id NA); R drops it, and fails when every test lacks one or the column is missing
+"statout_match_review/match_reported_output.tt.na_text_id_some.summary": *u142_tid
+"statout_match_review/match_reported_output.tt.na_text_id_all": *u142_tid
+"statout_match_review/match_reported_output.tt.na_text_id_all.summary": *u142_tid
+"statout_match_review/match_reported_output.tt.no_text_id": *u142_tid
+"statout_match_review/match_reported_output.tt.no_text_id.summary": *u142_tid
+"statout_match_review/match_reported_output.tt.no_text_id.no_sites": *u142_tid
+"statout_match_review/match_reported_output.tt.no_text_id.no_sites.summary": *u142_tid
+"statout_match_review/match_reported_output.tt.empty_test_id": &u142_empty
+  kind: r_bug_fixed
+  ref: U142
+  reason: an output site named "" is a site like any other; R's used_sites[[""]] fails or the site never matches
+"statout_match_review/match_reported_output.tt.empty_test_id.censored_only": *u142_empty
+"statout_match_review/match_reported_output.eq.empty_test_id.censored_only": *u142_empty
+"statout_match_review/match_reported_output.tt.inf_value": &u142_inf
+  kind: r_bug_fixed
+  ref: U142
+  reason: an Inf value simply does not match; R's val_in() fails the call on if (NA)
+"statout_match_review/match_reported_output.tt.inf_value_hit_first": *u142_inf
+"statout_match_review/match_reported_output.table_paper.no_section_id": &u142_tab
+  kind: r_bug_fixed
+  ref: U142
+  reason: table tests are built without a section_id (no caption) or table_id (numbered by position); R drops them all or fails the call
+"statout_match_review/match_reported_output.table_paper.no_section_id.summary": *u142_tab
+"statout_match_review/match_reported_output.table_paper.no_table_id": *u142_tab
+"statout_match_review/match_reported_output.table_paper.no_table_id.summary": *u142_tab
+"statout_match_review/table_tests.no_section_id": *u142_tab

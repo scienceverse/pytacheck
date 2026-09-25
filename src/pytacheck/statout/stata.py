@@ -11,6 +11,7 @@ extracted from each chunk's output.
 from __future__ import annotations
 
 import os
+import re
 from collections.abc import Sequence
 from functools import cache
 from typing import TYPE_CHECKING, Any
@@ -41,7 +42,7 @@ _SMCL_ZERO_WIDTH = (
     "ul off", "ul on", "hilite", "hi", "reset",
 )  # fmt: skip
 
-# {c NAME} box-drawing / literal-brace codes, substituted in this order.
+# {c NAME} box-drawing / literal-brace codes.
 _SMCL_C_CODES: dict[str, str] = {
     "|": "|",
     "+": "+",
@@ -58,42 +59,42 @@ _SMCL_C_CODES: dict[str, str] = {
     ")-": "}",
 }
 
+# placeholders for the literal braces of {c -(} / {c )-} during the walk
+_BRACE_HOLD = {"{": "\ue000", "}": "\ue001"}
+
 _ECHO_RE = r"^(\. |> |\s*[0-9]+\. )"
 _ALIGN_RE = r"^(lalign|ralign|center|rcenter) ?([0-9]*):(.*)$"
-
-
-_NA_TRUE_FALSE = "missing value where TRUE/FALSE needed"
-
-
-def _add(pos: int | None, k: int) -> int | None:
-    return None if pos is None else pos + k
 
 
 def _smcl_render_line(line: str) -> str:
     """Port of R/stata.R::.smcl_render_line(): one SMCL line as plain text.
 
-    Mirrors R's ``NA`` propagation: a ``{dup N:...}`` whose count overflows R's
-    integer range renders ``"NA"`` and makes the running column ``NA``, so a
-    later column-dependent directive raises R's "missing value" error.
+    Three differences from metacheck (UPSTREAM_ISSUES U146): ``{c 0xNN}`` is
+    read as hexadecimal (R reads it as decimal: ``{c 0x41}`` rendered ``)``);
+    ``{c -(}`` and ``{c )-}`` give literal braces (the ``{c NAME}`` codes are
+    substituted before the walk, as in R, but the two braces as placeholders:
+    R's walk re-parses and drops them); and a ``{dup N:...}`` whose count is
+    not a usable integer is left out (R renders ``NA``, after which any column
+    directive fails the whole read).
     """
     out = line
     for code, rep in _SMCL_C_CODES.items():
-        out = out.replace("{c " + code + "}", rep)
+        out = out.replace("{c " + code + "}", _BRACE_HOLD.get(rep, rep))
     result: list[str] = []
-    pos: int | None = 0
+    pos = 0
     i = 1
     n = len(out)
     while i <= n:
         ch = out[i - 1]
         if ch != "{":
             result.append(ch)
-            pos = _add(pos, 1)
+            pos += 1
             i += 1
             continue
         close = out.find("}", i - 1) - (i - 1) + 1
         if close <= 0:
             result.append(ch)
-            pos = _add(pos, 1)
+            pos += 1
             i += 1
             continue
         directive = out[i : i + close - 2]
@@ -101,57 +102,53 @@ def _smcl_render_line(line: str) -> str:
 
         if directive.startswith("col "):
             target = _as_integer(directive[4:])
-            if target is not None:
-                if pos is None:
-                    raise ValueError(_NA_TRUE_FALSE)
-                if target > pos:
-                    result.append(" " * (target - pos))
-                    pos = target
+            if target is not None and target > pos:
+                result.append(" " * (target - pos))
+                pos = target
             continue
         if directive.startswith("space "):
             k = _as_integer(directive[6:])
             if k is not None and k > 0:
                 result.append(" " * k)
-                pos = _add(pos, k)
+                pos += k
             continue
         if directive == "hline" or directive.startswith("hline "):
             k = _as_integer(str(sub("^hline ?", "", directive)))
             if k is None:
-                if pos is None:
-                    raise ValueError(_NA_TRUE_FALSE)
                 k = 78 - pos
             if k > 0:
                 result.append("-" * k)
-                pos = _add(pos, k)
+                pos += k
             continue
         if directive == ".-":
-            result.append("NA" if pos is None else "-" * max(1, 78 - pos))
+            result.append("-" * max(1, 78 - pos))
             pos = 78
             continue
         if directive.startswith("dup "):
             m = regexec("^dup ([0-9]+):(.*)$", directive)
             if len(m) == 3:
                 k = _as_integer(m[1])
-                if k is None:  # strrep(x, NA) is NA; nchar(NA_character_) is NA
-                    result.append("NA")
-                    pos = None
-                else:
+                if k is not None:
                     txt = m[2] * k
                     result.append(txt)
-                    pos = _add(pos, len(txt))
+                    pos += len(txt)
             continue
         if directive.startswith("char ") or directive.startswith("c 0x"):
-            code = _as_integer(str(sub("^char |^c 0x", "", directive)))
+            if directive.startswith("c 0x"):
+                hexa = directive[4:]
+                code = int(hexa, 16) if re.fullmatch("[0-9A-Fa-f]{1,2}", hexa) else None
+            else:
+                code = _as_integer(directive[5:])
             if code is not None and 0 <= code <= 255:
                 result.append(chr(code) if code else "")
-                pos = _add(pos, 1)
+                pos += 1
             continue
         al = regexec(_ALIGN_RE, directive)
         if len(al) == 4 and al[0] != "":
             kind, width, txt = al[1], _as_integer(al[2]), al[3]
             if width is None or width <= len(txt):
                 result.append(txt)
-                pos = _add(pos, len(txt))
+                pos += len(txt)
             else:
                 pad = width - len(txt)
                 if kind == "lalign":
@@ -161,16 +158,16 @@ def _smcl_render_line(line: str) -> str:
                 else:
                     padded = " " * (pad // 2) + txt + " " * (pad - pad // 2)
                 result.append(padded)
-                pos = _add(pos, width)
+                pos += width
             continue
         colon = directive.find(":")
         if colon >= 0:
             txt = directive[colon + 1 :]
             result.append(txt)
-            pos = _add(pos, len(txt))
+            pos += len(txt)
             continue
         # a bare directive (style marker, comment, unknown): zero-width
-    return "".join(result)
+    return "".join(result).replace(_BRACE_HOLD["{"], "{").replace(_BRACE_HOLD["}"], "}")
 
 
 def _smcl_render(lines: Sequence[str]) -> list[str]:
@@ -181,8 +178,11 @@ def _smcl_render(lines: Sequence[str]) -> list[str]:
 def _smcl_command_chunks(rendered: Sequence[str]) -> list[dict[str, Any]]:
     """Port of R/stata.R::.smcl_command_chunks(): ``{"command", "output"}`` per command.
 
-    As in R, a chunk's command is its first *k* lines, where *k* is the number
-    of echo-looking lines anywhere in the chunk.
+    A chunk's command is its ``". "`` line and the echo lines right after it
+    (``"> "`` continuations, numbered loop lines). R counts the echo-looking
+    lines anywhere in the chunk, so output rows such as ``list``'s
+    ``"  1. | ... |"`` were taken as command text and dropped from the output
+    (as ``.r_echo_chunks()`` does for R output, UPSTREAM_ISSUES U140).
     """
     rendered = list(rendered)
     is_echo = grepl(_ECHO_RE, rendered)
@@ -196,7 +196,11 @@ def _smcl_command_chunks(rendered: Sequence[str]) -> list[dict[str, Any]]:
     out = []
     for s, e in zip(starts, ends, strict=True):
         seg = rendered[s : e + 1]
-        echo_n = sum(grepl(_ECHO_RE, seg))
+        echo_n = 0
+        for v in grepl(_ECHO_RE, seg):
+            if not v:
+                break
+            echo_n += 1
         cmd = trimws(sub(_ECHO_RE, "", seg[:echo_n]))
         output = seg[echo_n:] if echo_n < len(seg) else []
         out.append({"command": " ".join(cmd), "output": output})

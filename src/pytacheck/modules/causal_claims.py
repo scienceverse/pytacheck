@@ -76,6 +76,7 @@ def _describes_randomization(texts: pd.Series) -> pd.Series:
     masked = gsub(_EXCLUDE_RE, " ", texts, perl=True)
     return pd.Series(grepl(_INCLUDE_RE, masked, perl=True), index=texts.index, dtype=bool)
 
+
 # R: format_ref(Antonakis2010) and format_ref(Grosz2020), rendered by R's
 # bibentry html style.
 _ANTONAKIS2010 = (
@@ -160,9 +161,7 @@ def _titles(paper: Any) -> list[str]:
         info = p.info
         if not isinstance(info, pd.DataFrame) or "title" not in info.columns:
             continue
-        for v in info["title"].tolist():
-            if isinstance(v, str) and v.strip(" \t\r\n"):
-                out.append(v)
+        out.extend(v for v in info["title"].tolist() if isinstance(v, str) and v.strip(" \t\r\n"))
     return out
 
 
@@ -298,7 +297,9 @@ def causal_claims(paper: Any) -> dict[str, Any]:
         causal_rows = causal_title["causal"].astype("boolean").fillna(False).astype(bool)
         report_causal_title = [
             summary_text_title,
-            scroll_table(causal_title.loc[causal_rows.to_numpy(), ["sentence", "cause", "effect"]], 1),
+            scroll_table(
+                causal_title.loc[causal_rows.to_numpy(), ["sentence", "cause", "effect"]], 1
+            ),
         ]
 
     ## causal abstract ----

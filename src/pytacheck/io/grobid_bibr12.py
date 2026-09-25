@@ -62,7 +62,8 @@ from pytacheck.io.grobid import (
     _header_text,
     _html_refs,
     _na,
-    _print_hrefs,
+    _print_hrefs_at,
+    _printed_before,
     _r_max,
     _series_list,
     _tei_authors,
@@ -665,10 +666,14 @@ def _grobid_to_bibr12(xml_path: str | PathLike[str], schema_version: Any = "12.0
     }
 
     # the printed contents squished, as the text they are found in (U27)
-    refs: list[tuple[Any, Any, Any, int]] = [
-        (xml_attr(node, "type"), xml_attr(node, "target"), _squish(xml_text(node)), text_id[k])
-        for k, node in _html_refs(markup, "//ref")
-    ]
+    refs: list[tuple[Any, Any, Any, int]] = []
+    url_nodes: list[Any] = []
+    for k, node in _html_refs(markup, "//ref"):
+        refs.append(
+            (xml_attr(node, "type"), xml_attr(node, "target"), _squish(xml_text(node)), text_id[k])
+        )
+        if refs[-1][0] == "url":
+            url_nodes.append(node)
     urls = [r for r in refs if r[0] == "url"]
     refs = [r for r in refs if r[0] != "url"]
 
@@ -700,8 +705,11 @@ def _grobid_to_bibr12(xml_path: str | PathLike[str], schema_version: Any = "12.0
     link_text: list[Any] = [u[2] for u in urls]
     strip_scheme = gsub("^https?://", "", href)
     link_nospace = gsub("^https?://", "", gsub(r"\s", "", link_text))
-    # each link text is replaced once, in its own row (U28)
-    text = _print_hrefs(text, text_id, link_text, href, [u[3] for u in urls])
+    # each link is printed at its own place, in its own row (U28)
+    occurrence = [
+        _printed_before(node, u[2], squish=True) for node, u in zip(url_nodes, urls, strict=True)
+    ]
+    text, shown = _print_hrefs_at(text, text_id, link_text, href, [u[3] for u in urls], occurrence)
     link_text = [
         None if (a is not None and b is not None and a == b) else lt
         for a, b, lt in zip(strip_scheme, link_nospace, link_text, strict=True)
@@ -723,7 +731,10 @@ def _grobid_to_bibr12(xml_path: str | PathLike[str], schema_version: Any = "12.0
         return starts, ends
 
     xref_start, xref_end = span([x[3] for x in xrefs], [x[2] for x in xrefs])
-    url_start, url_end = span([u[3] for u in urls], href)  # the text now prints each href
+    # the text now prints each href (a relative link: as the paper prints it)
+    url_start, url_end = span(
+        [u[3] for u in urls], [h if p is None else p for p, h in zip(shown, href, strict=True)]
+    )
 
     # authors and their affiliations ----
     au = _tei_authors(xml)

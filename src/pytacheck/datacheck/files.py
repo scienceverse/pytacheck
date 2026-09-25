@@ -625,6 +625,7 @@ def _json_num(x: float) -> str:
     """A double as JSON: whole numbers without a fraction, others at full
     precision (shortest round-trip form). metacheck writes with jsonlite's
     ``digits = 4``, which turns ``0.000012345`` into ``0``."""
+    x = float(x)  # a numpy float's repr() is "np.float64(...)"
     if not math.isfinite(x):
         return "null"
     if x == int(x) and abs(x) < 1e17:
@@ -639,11 +640,11 @@ def _json_str(s: str) -> str:
 def _json_scalar(x: Any) -> str:
     if x is None or x is pd.NA:
         return "null"
-    if isinstance(x, bool):
+    if isinstance(x, bool | np.bool_):
         return "true" if x else "false"
-    if isinstance(x, int):
-        return str(x)
-    if isinstance(x, float):
+    if isinstance(x, int | np.integer):
+        return str(int(x))
+    if isinstance(x, float | np.floating):
         return _json_num(x)
     return _json_str(str(x))
 

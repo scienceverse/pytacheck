@@ -9,6 +9,7 @@ from __future__ import annotations
 from pathlib import Path
 
 import pandas as pd
+import pytest
 
 from pytacheck.datacheck.columns import (
     _decode_value_labels,
@@ -234,6 +235,27 @@ def test_match_column_labels_expands_ranges_without_mutating_inputs() -> None:
     assert res["codebook_variable"].tolist() == ["V2", "V5", "V10", "T1-T2"]
     pd.testing.assert_frame_equal(cols, before_cols)
     pd.testing.assert_frame_equal(cbk, before_cbk)
+
+
+@pytest.mark.parametrize("rng", ["Q1-Q3", "Q1-3"])
+def test_match_column_labels_items_defined_on_their_own_rows_keep_their_labels(rng: str) -> None:
+    # U58: a range row does not add a second definition for an item the
+    # codebook defines on its own row (R makes each such item a conflict of
+    # its own label and the range's group label)
+    cols = pd.DataFrame(
+        {"paper_id": "p", "source_file": "d.csv", "column_name": ["Q1", "Q2", "Q3"]}
+    )
+    cbk = pd.DataFrame(
+        {
+            "codebook_variable": [rng, "Q1", "Q2"],
+            "label": ["Big Five items", "I am talkative", "I am reserved"],
+            "codebook_source": ["cb"] * 3,
+            "group": [None] * 3,
+        }
+    )
+    res = match_column_labels(cols, cbk)
+    assert res["label_status"].tolist() == ["labelled"] * 3
+    assert res["label"].tolist() == ["I am talkative", "I am reserved", "Big Five items"]
 
 
 def test_match_column_labels_na_group() -> None:

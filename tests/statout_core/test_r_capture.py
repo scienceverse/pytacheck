@@ -89,7 +89,8 @@ def test_captures_to_tables_edge_cases() -> None:
             {"analysis": "empty", "rows": []},
         ]
     )
-    assert [t["line_seq"] for t in tabs] == [1, 2, None]
+    # a capture without a source line is line_seq 1 (R: NA, U140)
+    assert [t["line_seq"] for t in tabs] == [1, 2, 1]
     row = tabs[2]["data"].iloc[0].tolist()
     assert row[:2] == ["", "Inf"] and pd.isna(row[2])
 

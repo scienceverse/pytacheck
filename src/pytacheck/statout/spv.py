@@ -2731,11 +2731,11 @@ def _spvsx_walk_heading(node: Any, command_name: str | None, syntax: str | None)
     """Port of R/spv.R::.spvsx_walk_heading().
 
     A sub-heading, table or chart without a ``commandName`` attribute keeps
-    the enclosing command name, and a log item without readable text keeps
-    the syntax seen before it, as metacheck intends: its ``%||%`` fallbacks
-    never apply to ``xml_attr()``'s ``NA``, so the command name was reset to
-    ``NA``, and ``nzchar(trimws(NA))`` being ``TRUE`` reset the syntax
-    (UPSTREAM_ISSUES U139).
+    the enclosing command name, as metacheck intends: its ``%||%`` fallback
+    never applies to ``xml_attr()``'s ``NA``, so the command name was reset to
+    ``NA`` (UPSTREAM_ISSUES U139). A log item whose text cannot be read makes
+    the syntax unknown (``None``), as in R: the tables after it belong to that
+    command, not to the one before.
     """
     out: list[dict[str, Any]] = []
     children = _find_all(node, "./*[local-name()='container' or local-name()='heading']")
@@ -2757,7 +2757,7 @@ def _spvsx_walk_heading(node: Any, command_name: str | None, syntax: str | None)
         if ctag == "text":
             if _xml_attr(content, "type") == "log":
                 txt = _spvsx_html_text(content)
-                if txt is not None and trimws(txt) != "":
+                if txt is None or trimws(txt) != "":
                     syntax = txt
             continue
         if ctag == "table":
@@ -3418,9 +3418,7 @@ def _spv_table_html_pivot(df: pd.DataFrame, row_dims: list[str], col_dims: list[
 
     body_rows = []
     for i in range(len(row_levels)):
-        stub = (
-            "".join(f"<td>{_spv_html_escape(p)}</td>" for p in row_levels[i]) if row_dims else ""
-        )
+        stub = "".join(f"<td>{_spv_html_escape(p)}</td>" for p in row_levels[i]) if row_dims else ""
         cells = "".join(f"<td>{_spv_html_escape(_spv_display_value(v))}</td>" for v in grid[i])
         body_rows.append(f"<tr>{stub}{cells}</tr>")
     return (

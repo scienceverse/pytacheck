@@ -501,11 +501,12 @@ def _tei_text_columns(xml: Any) -> dict[str, list[Any]]:
     ## abstract
     add("Abstract", as_character(xml_find_all(xml, ".//abstract //p")), 0.0, "abstract")
 
-    ## body: the divs of the body text (a div in a figure or a note is read with it)
+    ## body: the divs of the body text (a div in a caption or a note, as Grobid's
+    ## sentence segmentation writes them, is read with it)
     divs = [
         d
         for d in xml_find_all(xml, "//text //body //div")
-        if not any(a.tag in ("figure", "note") for a in d.iterancestors())
+        if not any(a.tag in ("figDesc", "note") for a in d.iterancestors())
     ]
     for i, d in enumerate(divs, 1):
         # a div's own head and paragraphs, not those of a div nested in it
@@ -727,21 +728,87 @@ def _tei_xrefs(text_table: pd.DataFrame) -> pd.DataFrame:
 
 def _tei_url_columns(formatted: Sequence[Any], text_ids: Sequence[Any]) -> dict[str, list[Any]]:
     rows = [
-        (xml_attr(node, "target"), xml_text(node), text_ids[k])
+        (xml_attr(node, "target"), xml_text(node), text_ids[k], node)
         for k, node in _html_refs(formatted, "//ref[@type='url']")
     ]
     return {
         "href": [r[0] for r in rows],
         "link_text": [r[1] for r in rows],
         "text_id": [r[2] for r in rows],
+        # how often the row prints the link text before the link (not a column)
+        "occurrence": [_printed_before(r[3], r[1]) for r in rows],
     }
 
 
+def _printed_before(node: Any, contents: Any, squish: bool = False) -> int | None:
+    """How often the row of *node* prints *contents* before *node* (``None`` for no contents).
+
+    With *squish*, the text is compared with its whitespace squished (as the
+    12.0 conversion prints it).
+    """
+    if contents is None or contents == "":
+        return None
+    before = "".join(node.xpath("preceding::text()"))
+    if squish:
+        before = regex.sub(r"\s+", " ", before)
+    return before.lstrip().count(contents)
+
+
+# the punctuation a link text can print around a URL: "(osf.io/abc)", "osf.io/abc;"
+_URL_LEAD = "([<"
+_URL_TRAIL = ".,;:)]>"
+
+
+def _printed_url(link_text: str, href: str) -> tuple[str, int, int] | None:
+    """What to print for a link: the text and where the URL is in it (``None``: leave it).
+
+    * A link text that prints the URL or part of it (``https:// osf.io/abc``,
+      ``osf  .io/abc;``, ``osf.io``) is the href, with the punctuation around
+      the link text kept (``https://osf.io/abc;``).
+    * A link in words (``the GitHub repo``, ``code``, ``OSF``: no ``.`` or
+      ``/``) keeps its words, with the href printed after them.
+    * A relative link that Grobid resolved against its own files
+      (``file://localhost/opt/grobid/grobid-home/tmp/osf.io/abc``) is printed
+      as the paper prints it, without the stray spaces (``osf.io/abc``), and
+      a relative link in words is left alone.
+    """
+    s = regex.sub(r"\s", "", link_text)
+    core = s.lstrip(_URL_LEAD)
+    lead = s[: len(s) - len(core)]
+    stripped = core.rstrip(_URL_TRAIL)
+    trail = core[len(stripped) :]
+    printed = regex.sub(r"(?i)^https?://", "", stripped).lower()
+    url_like = printed != "" and ("." in printed or "/" in printed)
+    if regex.match(r"(?i)file:", href):
+        if not url_like or not href.lower().endswith(printed):
+            return None
+        return f"{lead}{stripped}{trail}", len(lead), len(lead) + len(stripped)
+    target = regex.sub(r"(?i)^https?://", "", href).lower()
+    at = target.find(printed) if url_like else -1
+    if at < 0:
+        return f"{link_text} {href}", len(link_text) + 1, len(link_text) + 1 + len(href)
+    # punctuation the href prints itself right after that part stays with it
+    after = target[at + len(printed) :]
+    k = 0
+    while k < len(trail) and k < len(after) and trail[k].lower() == after[k]:
+        k += 1
+    return f"{lead}{href}{trail[k:]}", len(lead), len(lead) + len(href)
+
+
 def _prints_url(link_text: str, href: str) -> bool:
-    """Whether *link_text* prints (part of) the URL *href* (``osf  .io/abc``, ``OSF``)."""
-    printed = regex.sub(r"\s", "", link_text).lower()
-    printed = regex.sub(r"^https?://", "", printed).strip("([<.,;:)]>")
-    return printed != "" and printed in regex.sub(r"^https?://", "", href.lower())
+    """Whether *link_text* prints (part of) the URL *href* (``osf  .io/abc``, not ``OSF``)."""
+    out = _printed_url(link_text, href)
+    return out is not None and out[0] != f"{link_text} {href}"
+
+
+def _nth(text: str, sub_: str, n: int) -> int:
+    """Where the *n*-th (0-based, non-overlapping) printing of *sub_* in *text* starts (-1: none)."""
+    at = text.find(sub_)
+    for _ in range(n):
+        if at < 0:
+            break
+        at = text.find(sub_, at + len(sub_))
+    return at
 
 
 def _print_hrefs(
@@ -750,15 +817,31 @@ def _print_hrefs(
     link_text: Sequence[Any],
     href: Sequence[Any],
     url_text_ids: Sequence[Any],
+    occurrence: Sequence[Any] | None = None,
 ) -> list[Any]:
     """The text rows with each URL's (cleaned) href printed where its link is.
 
-    In the row the ``<ref type="url">`` is in, after the URLs of that row
-    handled before it, a link text that prints the URL (with the stray spaces
-    of PDF extraction, or part of it: ``https:// osf.io/abc``, ``OSF``) is
-    replaced by the href, and a link text in words (``the GitHub repo``) is
-    kept with the href printed after it, so text searches find every URL and
-    no words are lost.
+    See :func:`_print_hrefs_at`, which also says where each URL is printed.
+    """
+    return _print_hrefs_at(text, text_ids, link_text, href, url_text_ids, occurrence)[0]
+
+
+def _print_hrefs_at(
+    text: Sequence[Any],
+    text_ids: Sequence[Any],
+    link_text: Sequence[Any],
+    href: Sequence[Any],
+    url_text_ids: Sequence[Any],
+    occurrence: Sequence[Any] | None = None,
+) -> tuple[list[Any], list[str | None]]:
+    """The text rows with each URL printed where its link is, and the URL each prints.
+
+    Each link is handled in the row its ``<ref type="url">`` is in, at its own
+    printing of the link text (*occurrence* counts the printings before it;
+    without it, the first one after the links handled before it): see
+    :func:`_printed_url` for what is printed. The second list has the URL
+    printed for each link (``None`` when the text was left alone), to find it
+    in the row.
 
     metacheck replaces every occurrence of each link text in every row by the
     href, one URL after another: a short link text (``Fig``, ``osf``) is also
@@ -770,20 +853,38 @@ def _print_hrefs(
     target or link text are left alone.
     """
     out = list(text)
+    shown: list[str | None] = [None] * len(href)
     row_of = {tid: k for k, tid in enumerate(text_ids) if not _na(tid)}
-    cursor: dict[int, int] = {}
-    for lt, h, tid in zip(link_text, href, url_text_ids, strict=True):
+    links: dict[int, list[int]] = {}
+    for i, tid in enumerate(url_text_ids):
         k = None if _na(tid) else row_of.get(tid)
-        if k is None or not lt or not h or out[k] is None:
-            continue
+        if k is not None and out[k] is not None:
+            links.setdefault(k, []).append(i)
+    for k, idx in links.items():
         t = out[k]
-        at = t.find(lt, cursor.get(k, 0))
-        if at < 0:
-            continue
-        printed = h if _prints_url(lt, h) else f"{lt} {h}"
-        out[k] = t[:at] + printed + t[at + len(lt) :]
-        cursor[k] = at + len(printed)
-    return out
+        pieces: list[str] = []
+        pos = 0
+        for i in idx:
+            lt, h = link_text[i], href[i]
+            if _na(lt) or not lt or _na(h) or not h:
+                continue
+            n = None if occurrence is None else occurrence[i]
+            at = -1 if n is None else _nth(t, lt, n)
+            if at < pos:  # not where it was counted: the next printing
+                at = t.find(lt, pos)
+            if at < 0:
+                continue
+            printed = _printed_url(lt, h)
+            if printed is None:
+                continue
+            new, start, end = printed
+            pieces.append(t[pos:at])
+            pieces.append(new)
+            shown[i] = new[start:end]
+            pos = at + len(lt)
+        pieces.append(t[pos:])
+        out[k] = "".join(pieces)
+    return out, shown
 
 
 def _url_frame(cols: dict[str, list[Any]]) -> pd.DataFrame:
@@ -1248,7 +1349,9 @@ def _grobid_to_bibr(xml_path: PathLikeStr, pb: Any = None, schema_version: Any =
     link_text = url["link_text"]
     strip_scheme = gsub("^https?://", "", href)
     link_nospace = gsub("^https?://", "", gsub(r"\s", "", link_text))
-    text["text"] = _print_hrefs(text["text"], text["text_id"], link_text, href, url["text_id"])
+    text["text"] = _print_hrefs(
+        text["text"], text["text_id"], link_text, href, url["text_id"], url["occurrence"]
+    )
     link_text = [
         None if (a is not None and b is not None and a == b) else lt
         for a, b, lt in zip(strip_scheme, link_nospace, link_text, strict=True)

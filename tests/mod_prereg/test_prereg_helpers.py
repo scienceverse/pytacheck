@@ -249,11 +249,29 @@ def test_prsp_dispatch() -> None:
     info["relationships"]["registration_schema"]["data"]["id"] = "5730e99a9ad5a102c5745a8a"  # type: ignore[index]
     assert pr.needs_schema(info) is None
     flat = pr.flatten_schema(pr.osf_prereg_extract(info, lambda url: pytest.fail("no fetch")))
-    assert flat["research_questions"] == "a"  # `$84-5` partially matches `84-56`
+    # U111: "84-5" is missing; metacheck's `$84-5` partially matches `84-56`
+    assert flat["research_questions"] == ""
     assert flat["indices"] == "a"
     assert flat["design_independent_variables"] == "b c"
     assert flat["design_covariates_moderators"] == ""
     assert flat["additional_comments"] == ""
+
+
+def test_prsp_file_answers() -> None:
+    # U111: file uploads are named (metacheck deparses them: 'list(html = ...)')
+    upload = [
+        {
+            "file_id": "ide",
+            "file_name": "e.csv",
+            "file_urls": {"html": "https://osf.io/h/e", "download": "https://osf.io/d/e"},
+            "file_hashes": {"sha256": "shae"},
+        }
+    ]
+    info = _info(registration_responses={"84-25": upload})
+    info["relationships"]["registration_schema"]["data"]["id"] = "5730e99a9ad5a102c5745a8a"  # type: ignore[index]
+    flat = pr.flatten_schema(pr.osf_prereg_extract(info, lambda url: pytest.fail("no fetch")))
+    assert "e.csv (https://osf.io/h/e)" in flat["design_dependent_variables"]
+    assert "list(" not in flat["design_dependent_variables"]
 
 
 def test_ap_schema() -> None:

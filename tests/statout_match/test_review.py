@@ -56,37 +56,39 @@ LONG = _long(
 )  # fmt: skip
 
 
-def test_na_text_id_is_dropped_by_the_regrouping() -> None:
+def test_na_text_id_is_matched_without_regrouping() -> None:
+    # a test without a text_id has no sentence to pool with: it is matched as
+    # extracted (R's split() drops it, U142)
     res = match_reported_output(_tt([1, None], [T1, T2]), LONG)
-    assert res["text_id"].tolist() == [1]
-    assert res.attrs["summary"]["n_tests"] == 1
+    assert res["text_id"].isna().tolist() == [False, True]
+    assert res.attrs["summary"]["n_tests"] == 2
 
 
-def test_all_tests_dropped_errors_like_r() -> None:
-    # bind_rows(list()) is a 0x0 tibble and sum(!out$found) is !NULL in R
-    with pytest.raises(TypeError, match="invalid argument type"):
-        match_reported_output(_tt([None, None], [T1, T2]), LONG)
-    with pytest.raises(TypeError, match="invalid argument type"):
-        match_reported_output(_tt(None, [T1, T2]), LONG)
+def test_tests_without_text_ids_are_matched() -> None:
+    # R: every test dropped by the regrouping, then "invalid argument type"
+    for text_id in ([None, None], None):
+        res = match_reported_output(_tt(text_id, [T1, T2]), LONG)
+        assert res["text_id"].isna().all()
+        assert res.attrs["summary"]["n_tests"] == 2
 
 
-def test_absent_text_id_without_sites_errors_like_r() -> None:
-    # data.frame(text_id = NULL, ...) errors in R
+def test_absent_text_id_without_sites() -> None:
+    # R: data.frame(text_id = NULL, ...) errors
     novalue = _long([("a", "t", "n/a")])
-    with pytest.raises(ValueError, match="differing number of rows"):
-        match_reported_output(_tt(None, [T1]), novalue)
+    res = match_reported_output(_tt(None, [T1]), novalue)
+    assert res["text_id"].isna().tolist() == [True]
+    assert not res["found"].iloc[0]
     assert _tests_from_extract(_tt(None, [T1]))[0]["text_id"] == []
 
 
-def test_empty_test_id_site_is_null() -> None:
+def test_empty_test_id_site_is_a_site() -> None:
+    # an output site named "" matches like any other (R: used_sites[[""]]
+    # fails the call, or the site never matches, U142)
     long = _long([("", "t", "2.103"), ("", "p", "0.0481"), ("e", "t", "2.103")])
-    # the regrouping's site search hits used_sites[[""]] first
-    with pytest.raises(RuntimeError, match="zero-length variable name"):
-        match_reported_output(_tt([1], [T1]), long)
+    res = match_reported_output(_tt([1], [T1]), long)
+    assert res["found"].tolist()[0]
     sites = _build_sites(long)
-    assert sites.names[0] == "" and sites.null_sites == [0]
-    # a raw eq table (no regrouping) with censored components only: the ""
-    # site is never matched, so only e's t counts
+    assert sites.names[0] == ""
     eq = pd.DataFrame(
         {
             "text_id": [1, 1],
@@ -98,22 +100,22 @@ def test_empty_test_id_site_is_null() -> None:
         }
     )
     res = match_reported_output(eq, long)
-    assert res["n_matched"].tolist() == [1]
-    assert not res["found"].iloc[0]
+    assert res["n_matched"].tolist() == [2]
+    assert res["found"].iloc[0]
 
 
-def test_infinite_values_error_like_r() -> None:
+def test_infinite_values_do_not_match() -> None:
+    # U142: an Inf value simply does not match (R: if (NA) fails the call)
     long = _long([("i", "t", "1e400"), ("i", "p", "0.01")])
     tt = _tt([1], [[_c("t", "1e400", 1), _c("p", ".01", 2)]])
-    with pytest.raises(RuntimeError, match="missing value"):
-        match_reported_output(tt, long)
-    # another family never compares Inf with Inf
+    res = match_reported_output(tt, long)
+    assert res["n_matched"].tolist() == [1]
     other = _tt([1], [[_c("F", "1e400", 1), _c("p", ".01", 2)]])
     res = match_reported_output(other, long)
     assert res["n_matched"].tolist() == [1]
 
 
-def test_na_sentence_pos_releases_nothing() -> None:
+def test_na_sentence_pos_is_never_near() -> None:
     rows = [
         [_c("t", "2.10", None), _c("p", ".048", None)],
         [_c("d", "0.45", None), _c("p", ".048", None)],
@@ -123,8 +125,12 @@ def test_na_sentence_pos_releases_nothing() -> None:
     long = _long([("p", "t", "2.103"), ("p", "p", "0.0481"), ("p", "d", "0.45")])
     out = _regroup_by_evidence(tests, _build_sites(long))
     assert [c["name"] for c in out[0]["components"]] == ["t", "p", "d", "p"]
-    with pytest.raises(RuntimeError, match="missing value"):
-        _regroup_by_evidence(tests, _build_sites(long), text_proximity=3)
+    # the two identical p components stay distinct: nothing was split off
+    # (R's match(list, list) maps the second onto the first, U143)
+    assert out[0]["plausible_split"] is True
+    # an unknown position is not within text_proximity (R: if (NA > x) fails)
+    near = _regroup_by_evidence(tests, _build_sites(long), text_proximity=3)
+    assert [c["name"] for c in near[0]["components"]] == ["t"]
 
 
 def test_character_text_id_stays_character() -> None:
@@ -150,21 +156,55 @@ def test_table_tests_missing_columns() -> None:
         }
     )
     assert _table_tests(p)[0]["text_id"] == -1000001
-    # no section_id: .table_caption(paper, NULL) errors, so R gets no table tests
+    # no section_id: no caption, the tests are still built (R's
+    # .table_caption(paper, NULL) fails and every table test is lost, U142)
     q = pc.test_paper(["x"])
     q.table = p.table.drop(columns=["section_id"])
-    with pytest.raises(ValueError, match="missing value"):
-        _table_tests(q)
+    assert _table_tests(q)[0]["text_id"] == -1000001
     res = match_reported_output(q, LONG, include_tables=True)
-    assert len(res) == 0
-    # no table_id: a zero-length text_id, and the result row errors
+    assert len(res) == 1
+    # no table_id: numbered by position (R: a zero-length text_id fails the call)
     r = pc.test_paper(["x"])
     r.text = r.text.assign(section_id=[2.0])
     r.table = p.table.drop(columns=["table_id"])
-    assert _table_tests(r)[0]["text_id"] == []
-    with pytest.raises(ValueError, match="differing number of rows"):
-        match_reported_output(r, LONG, include_tables=True)
+    assert _table_tests(r)[0]["text_id"] == -1000001
+    res = match_reported_output(r, LONG, include_tables=True)
+    assert res["text_id"].tolist() == [-1000001]
+    # the table's own caption comes first (R reads only the text rows, U143)
+    c = pc.test_paper(["x"])
+    c.table = p.table.assign(caption=["Correlations between the scales"])
+    assert _table_tests(c)
+
+
+def test_paper_list_is_refused_clearly() -> None:
+    import pytacheck as pc
+
+    papers = pc.PaperList([pc.test_paper(["t(20) = 2.10, p = .048"])])
+    with pytest.raises(TypeError, match="for each paper"):
+        match_reported_output(papers, LONG)
     # a caption lookup on a text table without its text column is ""
     s = pc.test_paper(["x"])
     s.text = s.text.assign(section_id=[2.0]).drop(columns=["text"])
     assert _table_caption(s, 2) == ""
+
+
+def test_scientific_notation_is_matched_at_its_own_precision() -> None:
+    # U143: "1.5e-05" is written to 6 decimals; R counts the mantissa's one
+    # and matched any output value that rounds to 0.0
+    tiny = _tt([1], [[_c("b", "1.5e-05", 1), _c("p", ".048", 2)]])
+    near = match_reported_output(tiny, _long([("s", "b", "0.0000151"), ("s", "p", "0.048")]))
+    assert near["n_matched"].tolist() == [2]
+    other = match_reported_output(tiny, _long([("s", "b", "0.00003"), ("s", "p", "0.048")]))
+    assert other["n_matched"].tolist() == [1]
+    assert not other["found"].iloc[0]
+
+
+def test_duplicated_components_keep_their_own_tests() -> None:
+    # U143: a component repeated in two tests of a sentence is not merged
+    # into the first (R's match(list, list) compares the deparsed elements)
+    tests = _tests_from_extract(
+        _tt([4, 4], [[_c("t", "2.10", 1), _c("p", ".048", 2)], [_c("t", "2.10", 1)]])
+    )
+    long = _long([("x", "t", "2.103"), ("x", "p", "0.048"), ("y", "t", "2.1")])
+    out = _regroup_by_evidence(tests, _build_sites(long))
+    assert sum(len(t["components"]) for t in out) == 3

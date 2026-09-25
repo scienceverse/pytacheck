@@ -172,7 +172,9 @@ def _clean(values: Sequence[str | None]) -> list[str | None]:
     x = [_tolower(v) for v in uniq]
     x = gsub("</?[a-z]+>", "", x)
     x = [_deaccent(v) for v in x]
-    x = gsub(r"\p{Pd}", "", x, perl=True)  # remove dashes
+    # dashes fold to spaces, as metacheck's comments intend ("Retracted—Evil" is
+    # "retracted evil"); metacheck removes them ("retractedevil", U114)
+    x = gsub(r"\p{Pd}", " ", x, perl=True)
     x = gsub(r"\s+", " ", x)
     x = gsub("[\u2018\u2019\u201a\u201b\u0060]", "'", x)  # single quotes
     x = gsub('["\u201c\u201d\u201e\u201f]', "'", x)  # double quotes become single
@@ -218,13 +220,23 @@ def _journal_coherent(ta: list[str], tb: list[str]) -> bool:
     return True
 
 
+def _drop_sup(values: Sequence[str | None]) -> list[str | None]:
+    """Titles without their footnote superscripts (``<sup>...</sup>``).
+
+    metacheck's ``norm_title()`` removes them after ``clean()`` has already
+    removed the tags but kept their text, so the markers stayed (U114).
+    """
+    from pytacheck._r.regex import gsub
+
+    return [None if v is None else gsub("(?i)<sup>.*?</sup>", "", v, perl=True) for v in values]
+
+
 def _norm_title(cleaned: Sequence[str | None]) -> list[str | None]:
     """``norm_title()`` of values already passed through :func:`_clean`."""
     from pytacheck._r.regex import gsub
 
     uniq = list(dict.fromkeys(v for v in cleaned if v is not None))  # each value once
-    x = gsub("<sup>.*?</sup>", "", uniq)  # footnote superscripts
-    x = gsub("</?[a-z]+>", "", x)  # any other tags
+    x = gsub("</?[a-z]+>", "", uniq)  # any tags (superscripts: _drop_sup())
     x = gsub("[^a-z0-9]", "", x)  # keep only alphanumerics
     normed = dict(zip(uniq, x, strict=True))
     return [None if v is None else normed[v] for v in cleaned]
@@ -484,9 +496,14 @@ def ref_accuracy(
     if len(bib) == 0:
         return {"traffic_light": "na", "summary_text": _NO_REFS}
     if len(bib_match) == 0:
-        return {"traffic_light": "error", "summary_text": _NO_MATCH}
+        # the check could not run: metacheck returns "error", which is not a
+        # traffic light (U30)
+        return {"traffic_light": "fail", "summary_text": _NO_MATCH}
 
     refs = ref_table(paper).drop(columns="doi")
+    # one record per reference: metacheck's three left joins give k * k * k rows
+    # for a reference with k bib_match rows (U114)
+    bib_match = bib_match.loc[~bib_match.duplicated(subset=_KEYS).to_numpy(dtype=bool)]
     # left join so every reference is kept, including those with no CrossRef record
     table = _left_join(bib.loc[:, _COLS], bib_match.loc[:, _COLS], (".orig", ".match"))
     table = _left_join(table, refs)
@@ -543,8 +560,8 @@ def ref_accuracy(
     table["container_mismatch"] = _lgl(container_mismatch, idx)  # type: ignore[arg-type]
 
     # title: character similarity, or the record title verbatim in the reference text
-    match_clean = _clean(title_m)
-    a_t, b_t = _norm_title(_clean(title_o)), _norm_title(match_clean)
+    match_clean = _clean(_drop_sup(title_m))
+    a_t, b_t = _norm_title(_clean(_drop_sup(title_o))), _norm_title(match_clean)
     clean_text = _clean(texts)
     title_mismatch: list[bool] = []
     for x, y, pattern, txt in zip(a_t, b_t, match_clean, clean_text, strict=True):

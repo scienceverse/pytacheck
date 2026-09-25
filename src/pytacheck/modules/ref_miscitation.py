@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import heapq
-import warnings
 from itertools import islice
 from typing import Any
 
@@ -59,12 +58,9 @@ def _pivot_wider(counts: pd.DataFrame) -> pd.DataFrame:
     """``tidyr::pivot_wider(names_from = doi, values_from = bib_id, names_prefix = "miscite_")``.
 
     One row per ``paper_id`` and one column per DOI, both in order of first
-    appearance. When a paper has several references with the same DOI the
-    values are not uniquely identified: like tidyr, every value column then
-    becomes a list column and a warning is given. Its missing cells are
-    tidyr's ``NULL`` cells, stored as ``NaN`` (the module system's ``NULL``
-    list cell, which a later ``na_replace`` leaves alone, as R's ``is.na()``
-    does) rather than ``None`` (``NA``).
+    appearance. When a paper has several references with the same DOI, the
+    cell holds the first one's ``bib_id`` (metacheck's ``pivot_wider()`` turns
+    every value column into a list column, with a warning, U117).
     """
     pids = counts["paper_id"].tolist()
     dois = counts["doi"].tolist()
@@ -75,7 +71,7 @@ def _pivot_wider(counts: pd.DataFrame) -> pd.DataFrame:
     id_vals: list[Any] = []
     doi_pos: dict[Any, int] = {}
     doi_vals: list[Any] = []
-    cells: dict[tuple[int, int], list[Any]] = {}
+    cells: dict[tuple[int, int], Any] = {}
     for pid, doi, bid in zip(pids, dois, bib_ids, strict=True):
         pk, dk = _key(pid), _key(doi)
         i = id_pos.get(pk)
@@ -86,32 +82,22 @@ def _pivot_wider(counts: pd.DataFrame) -> pd.DataFrame:
         if j is None:
             j = doi_pos[dk] = len(doi_vals)
             doi_vals.append(doi)
-        cells.setdefault((i, j), []).append(None if _is_na(bid) else bid)
+        cells.setdefault((i, j), None if _is_na(bid) else bid)
 
-    listcols = any(len(v) > 1 for v in cells.values())
-    if listcols:
-        warnings.warn(
-            "Values from `bib_id` are not uniquely identified; output will contain list-cols.",
-            stacklevel=3,
-        )
     n = len(id_vals)
-    missing: Any = float("nan") if listcols else None
-    values: list[list[Any]] = [[missing] * n for _ in doi_vals]
+    values: list[list[Any]] = [[None] * n for _ in doi_vals]
     for (i, j), v in cells.items():
-        values[j][i] = v if listcols else v[0]
+        values[j][i] = v
 
     # build all columns at once (one DataFrame construction, not one insert per DOI)
     columns: dict[str, Any] = {"paper_id": pd.array(id_vals, dtype="string")}
     bid_dtype = counts["bib_id"].dtype
     for doi, col in zip(doi_vals, values, strict=True):
         name = "miscite_" + _chr(doi)
-        if listcols:
+        try:
+            columns[name] = pd.array(col, dtype=bid_dtype)
+        except (TypeError, ValueError):
             columns[name] = pd.Series(col, dtype=object)
-        else:
-            try:
-                columns[name] = pd.array(col, dtype=bid_dtype)
-            except (TypeError, ValueError):
-                columns[name] = pd.Series(col, dtype=object)
     return pd.DataFrame(columns)
 
 
@@ -172,8 +158,12 @@ def ref_miscitation(paper: Any, db: pd.DataFrame | None = None) -> dict[str, Any
         if len(doi) == 0 or not bool(doi.isna().all()):
             raise TypeError("Can't join `x$doi` with `y$doi` due to incompatible types.")
         db = db.assign(doi=doi.astype("string"))
+    # a missing or empty DOI is no DOI: metacheck's inner_join() matches an NA
+    # DOI in the database to every reference without a DOI (U117)
+    has_doi = (bibs["doi"].notna() & (bibs["doi"].astype("string") != "")).fillna(False)
     bibs = (
-        bibs.merge(db, on="doi", how="inner", sort=False, suffixes=(".x", ".y"))
+        bibs.loc[has_doi.to_numpy(dtype=bool)]
+        .merge(db, on="doi", how="inner", sort=False, suffixes=(".x", ".y"))
         .drop_duplicates()
         .reset_index(drop=True)
     )
@@ -183,10 +173,12 @@ def ref_miscitation(paper: Any, db: pd.DataFrame | None = None) -> dict[str, Any
     xref = paper_table(paper, "xref")
     # bibr 12.x papers cite a reference with a "bib" xref whose target_id is
     # the bib_id (their xref_id is the row's own key)
+    _bibr12_ids: list[Any] = []
     if "paper_id" in xref.columns:
         from pytacheck.io.bibr12 import _bibr12_paper_ids
 
-        v12 = xref["paper_id"].isin(_bibr12_paper_ids(paper)).to_numpy(dtype=bool)
+        _bibr12_ids = list(_bibr12_paper_ids(paper))
+        v12 = xref["paper_id"].isin(_bibr12_ids).to_numpy(dtype=bool)
         if v12.any():
             is_bib = xref["xref_type"].isin(["bib"]).to_numpy(dtype=bool)
             xref = xref.copy()
@@ -194,7 +186,15 @@ def ref_miscitation(paper: Any, db: pd.DataFrame | None = None) -> dict[str, Any
     if "xref_id" not in xref.columns:
         # R: dplyr::filter(!is.na(xref_id)) on an xref table without xref_id
         raise ValueError("In argument: `!is.na(xref_id)`.")
-    xref = xref.loc[xref["xref_id"].notna().to_numpy(dtype=bool)]
+    keep = xref["xref_id"].notna().to_numpy(dtype=bool)
+    if "xref_type" in xref.columns and "paper_id" in xref.columns:
+        # only citations of references: metacheck also counts footnote, figure and
+        # table xrefs whose xref_id equals a bib_id (U117); bibr 12.x papers
+        # already have NA for their non-"bib" xrefs
+        is_v12 = xref["paper_id"].isin(_bibr12_ids).to_numpy(dtype=bool)
+        is_bibr = xref["xref_type"].isin(["bibr"]).to_numpy(dtype=bool)
+        keep = keep & (is_v12 | is_bibr)
+    xref = xref.loc[keep]
     joined = xref.merge(
         text, on=["paper_id", "text_id"], how="left", sort=False, suffixes=(".x", ".y")
     )

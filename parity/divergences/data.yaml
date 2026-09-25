@@ -28,6 +28,10 @@
   kind: r_bug_fixed
   ref: U58
   reason: range notation with a repeated prefix ("V1-V3", "q1 - q2") is expanded, as R's own comment intends; R's pattern only expands "V1-3"
+"datacheck_columns/match_column_labels.range_and_items":
+  kind: r_bug_fixed
+  ref: U58
+  reason: items the codebook defines on rows of their own keep those labels; R also expands the range over them, so each item's label conflicts with the range's group label
 "datacheck_columns/match_column_labels.na_group": &u58_na
   kind: r_bug_fixed
   ref: U58
@@ -215,6 +219,10 @@
   kind: r_bug_fixed
   ref: U113
   reason: each paper of a paper list gets a summary row from its own files; R gives one row, the first paper's, with the pooled counts (the valid names/root files are U112)
+"mod_psychds/psychds_check.psychsci_last_paper":
+  kind: r_bug_fixed
+  ref: U113
+  reason: the summary row goes to the paper that owns the files (the paper list's last paper); R credits the first paper, which has no files (the valid names/root files are U112)
 "mod_psychds/psychds_check.na_type": &u113
   kind: r_bug_fixed
   ref: U113

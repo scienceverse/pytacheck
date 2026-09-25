@@ -98,11 +98,20 @@ def test_ref_miscitation_instances() -> None:
     ]
 
 
-def test_ref_miscitation_duplicate_doi_list_columns() -> None:
+def test_ref_miscitation_duplicate_doi_first_bib_id() -> None:
+    # U117: metacheck's pivot_wider() makes a list column [0, 1], with a warning
     paper = ref_paper(["10.1525/collabra.33267"] * 2, cites=[0, 1])
-    with pytest.warns(UserWarning, match="not uniquely identified"):
+    with warnings.catch_warnings():
+        warnings.simplefilter("error")
         out = module_run(paper, "ref_miscitation")
-    assert out.summary_table["miscite_10.1525/collabra.33267"].tolist() == [[0, 1]]
+    assert out.summary_table["miscite_10.1525/collabra.33267"].tolist() == [0]
+
+
+def test_ref_miscitation_counts_only_citation_xrefs(demo: pc.Paper) -> None:
+    # U117: the demo's "Figure 1" xref (xref_id 1) is not a citation of bib 1
+    db = pd.DataFrame({"doi": ["10.1037/0003-066x.54.6.408"], "reftext": ["R"], "warning": ["W"]})
+    out = module_run(demo, "ref_miscitation", db=db)
+    assert out.table["citation"].isna().tolist() == [True]
 
 
 def test_ref_miscitation_paperlist() -> None:
@@ -204,7 +213,8 @@ def test_ref_replication_already_cited() -> None:
         "We checked 2 references with DOIs. "
         "No citations to articles in the FLoRA database were found."
     )
-    # R compares with every paper's references, also across a paper list
+    # U116: only the paper's own references count (metacheck compares with every
+    # paper of a list, so "rep" citing the replication hid it from "orig")
     papers = pc.PaperList(
         [
             ref_paper(["10.1037/0003-066x.54.6.408"], id="orig"),
@@ -212,8 +222,9 @@ def test_ref_replication_already_cited() -> None:
         ]
     )
     out = module_run(papers, "ref_replication")
-    assert out.traffic_light == "na"
-    assert out.summary_table["replications"].tolist() == [0, 0]
+    assert out.traffic_light == "info"
+    assert out.summary_table["replications"].tolist() == [1, 0]
+    assert out.table["replication_doi"].str.lower().tolist() == ["10.1177/1474704919852921"]
 
 
 # -- ref_retraction (test-module-ref.R: "ref_retraction") ---------------------------
@@ -268,8 +279,9 @@ def test_ref_retraction_paperlist_order() -> None:
 def test_ref_retraction_no_hits() -> None:
     out = module_run(ref_paper(["10.1000/not.in.rw", None, ""]), "ref_retraction")
     assert out.traffic_light == "na"
+    # U82: metacheck says "1 references"
     assert out.report == (
-        "We checked 1 references with DOIs. "
+        "We checked 1 reference with DOIs. "
         "No citations to articles in the RetractionWatch database were found."
     )
 
@@ -352,14 +364,14 @@ def test_to_title_case_matches_r() -> None:
 # -- review: db key types, NA-DOI instances, R errors, scaling ------------------------
 
 
-def test_ref_miscitation_nan_db_is_r_logical_na() -> None:
-    # an all-NaN (float64) doi column is R's logical NA column: it joins NA DOIs
+def test_ref_miscitation_nan_db_matches_nothing() -> None:
+    # an all-NaN (float64) doi column is R's logical NA column; U117: a missing
+    # DOI matches no reference (metacheck joins it to the references without a DOI)
     paper = ref_paper([None, "10.1000/x"], cites=[0, 1, 0])
     db = pd.DataFrame({"doi": [float("nan")], "reftext": ["r"], "warning": ["w"]})
     out = module_run(paper, "ref_miscitation", db=db)
-    assert out.traffic_light == "yellow"
-    assert out.report == ["**NA**\n\nr\n\nw\n\n*2 Instances:*\n\n> NA\n\n> NA"]
-    assert out.summary_table.columns.tolist() == ["paper_id", "miscite_NA"]
+    assert out.traffic_light == "green"
+    assert out.summary_table.columns.tolist() == ["paper_id"]
     assert db["doi"].dtype == "float64"  # the input is not modified
 
 
@@ -387,9 +399,9 @@ def test_ref_miscitation_factor_db() -> None:
     assert out.table["doi"].tolist() == ["10.1000/y", "10.1000/x", "10.1000/x"]
 
 
-def test_ref_miscitation_na_doi_rows_interleave_instances() -> None:
-    # xrefs rows with an NA DOI are NA instances of every DOI (R's NA subsetting),
-    # interleaved in row order and counted in "5 of N"
+def test_ref_miscitation_na_doi_rows_are_not_instances() -> None:
+    # U117: metacheck matches the database's NA DOI to the reference without a
+    # DOI, whose citations then show up as NA instances of every DOI
     paper = ref_paper([None, "10.1000/x", "10.1000/a"], cites=[1, 0, 1, 0, 2, 1, 1, 0, 1])
     db = pd.DataFrame(
         {
@@ -398,13 +410,12 @@ def test_ref_miscitation_na_doi_rows_interleave_instances() -> None:
             "warning": ["WX", "WN", "WA"],
         }
     )
-    x, na, a = module_run(paper, "ref_miscitation", db=db).report
+    x, a = module_run(paper, "ref_miscitation", db=db).report
     assert x.endswith(
-        "*5 of 8 Instances:*\n\n> Body sentence 1 cites 1.\n\n> NA\n\n"
-        "> Body sentence 3 cites 1.\n\n> NA\n\n> Body sentence 6 cites 1."
+        "*5 Instances:*\n\n> Body sentence 1 cites 1.\n\n> Body sentence 3 cites 1.\n\n"
+        "> Body sentence 6 cites 1.\n\n> Body sentence 7 cites 1.\n\n> Body sentence 9 cites 1."
     )
-    assert na.endswith("*5 of 9 Instances:*\n\n" + "\n\n".join(["> NA"] * 5))
-    assert a.endswith("*4 Instances:*\n\n> NA\n\n> NA\n\n> Body sentence 5 cites 2.\n\n> NA")
+    assert a.endswith("*1 Instance:*\n\n> Body sentence 5 cites 2.")
 
 
 def _naive_instances(xrefs: pd.DataFrame, warn_doi: str) -> list[object]:

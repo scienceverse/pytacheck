@@ -23,13 +23,39 @@ def test_osf_check_id_route_names_are_not_ids() -> None:
     assert osf_check_id("https://osf.io/j3gcx/forks") == "j3gcx"
     assert osf_check_id("https://osf.io/j3gcx/files/osfstorage") == "j3gcx"
     assert osf_check_id("https://osf.io/preprints/psyarxiv/abcde/") == "abcde"
-    # a 24-character segment must be alphanumeric to be a file id
+    # a 24-character segment is a file id only when it is hexadecimal (an OSF
+    # object id) and not the registration schema of a draft-registration page
     assert (
         osf_check_id("https://osf.io/abcde/5f0c1ab2c3d4e5f60718293a") == "5f0c1ab2c3d4e5f60718293a"
     )
     assert osf_check_id("https://osf.io/abcde/a-24-character-segment-") == "abcde"
+    assert osf_check_id("https://osf.io/abcde/averyveryverylongsegment") == "abcde"
+    # (problems/0956797617737129.xml cites a Study 2b preregistration this way;
+    # metacheck returns the schema id)
+    assert osf_check_id("http://www.osf.io/a5bmw/register/565fb3678c5e4a66b5582f67") == "a5bmw"
     # a URL naming two ids gives the first (metacheck: not an ID)
     assert osf_check_id("osf.io/abcde/ osf.io/fghij/") == "abcde"
+
+
+def test_osf_check_id_does_not_cut_words_to_ids() -> None:
+    # U51: metacheck takes the first five characters after osf.io/ of any word
+    # ("prere" for the OSF Preregistration page, "regis" for OSF Registries)
+    for url in [
+        "https://osf.io/prereg/",
+        "osf.io/registries",
+        "https://osf.io/registries/osf/discover",
+        "https://osf.io/preprints/psyarxiv/abcde/download",
+        "https://osf.io/averyveryverylongsegment",
+    ]:
+        with pytest.warns(UserWarning, match="not a valid OSF ID"):
+            assert osf_check_id(url) is None, url
+    # an ID followed by punctuation, a slash or a version is still found
+    with warnings.catch_warnings():
+        warnings.simplefilter("error")
+        assert osf_check_id("osf.io/abcde.") == "abcde"
+        assert osf_check_id("osf.io/abcde/files/") == "abcde"
+        assert osf_check_id("osf.io/abcde_v2)") == "abcde_v2"
+        assert osf_check_id("https://osf.io/abcde/download") == "abcde"
 
 
 def test_versioned_guids_are_looked_up_as_guids() -> None:

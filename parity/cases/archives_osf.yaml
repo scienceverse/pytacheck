@@ -93,6 +93,20 @@
       - "osf.io/abcde/ osf.io/fghij/"
       - "https://files.de-1.osf.io/v1/resources/j3gcx/providers/osfstorage/685a46eb8c103f8ab307047f/?zip="
       - "https://osf.io/averyveryverylongsegment"
+- "id": "osf_check_id.realistic_non_ids"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U51", "reason": "a word after osf.io/ is not cut to a 5-character ID (osf.io/prereg is not \"prere\"), and a draft-registration page's schema id (osf.io/a5bmw/register/565fb...) is not a file ID"}
+  "r": "osf_check_id"
+  "py": "pytacheck.archives.osf.osf_check_id"
+  "args":
+    "osf_id":
+      "$chr":
+      - "http://www.osf.io/a5bmw/register/565fb3678c5e4a66b5582f67"
+      - "http://www.osf.io/zmf4c/register/564d31db8c5e4a7c9694b2be"
+      - "https://osf.io/prereg/"
+      - "https://osf.io/registries"
+      - "https://osf.io/preprints/psyarxiv/abcde/download"
+      - "https://osf.io/j3gcx/files/osfstorage/6846ed88e49694cd45ab8375"
+      - "osf.io/n7sfm."
 - "id": "osf_check_id.empty"
   "r": "osf_check_id"
   "py": "pytacheck.archives.osf.osf_check_id"

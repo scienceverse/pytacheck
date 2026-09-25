@@ -54,6 +54,7 @@
         "r": "source(file.path(root, \"tests/mod_ref_db/helpers.R\")); report_tbl(module_run(ref_paper(c(\"10.1371/journal.ppat.1000066\", \"10.1016/j.ejogrb.2018.03.041\", \"10.3390/nano14090769\", \"10.1000/not.in.rw\", NA, \"\", \"10.1177/0956797614520714\")), \"ref_retraction\"))"
         "py": "(lambda H: H.report_tbl(pc.module_run(H.ref_paper([\"10.1371/journal.ppat.1000066\", \"10.1016/j.ejogrb.2018.03.041\", \"10.3390/nano14090769\", \"10.1000/not.in.rw\", None, \"\", \"10.1177/0956797614520714\"]), \"ref_retraction\")))(__import__(\"tests.mod_ref_db.helpers\", fromlist=[\"x\"]))"
 - "id": "ref_retraction.nohit"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U82", "reason": "'We checked 1 reference with DOIs.' (metacheck: '1 references')."}
   "module": "ref_retraction"
   "args":
     "paper":
@@ -216,6 +217,7 @@
         "r": "source(file.path(root, \"tests/mod_ref_db/helpers.R\")); report_tbl(module_run(ref_paper(c(\"10.1126/science.1239918\", \"10.1093/qje/qjac034\", \"10.1037/0022-3514.50.3.502\")), \"ref_replication\", show_outcomes = TRUE))"
         "py": "(lambda H: H.report_tbl(pc.module_run(H.ref_paper([\"10.1126/science.1239918\", \"10.1093/qje/qjac034\", \"10.1037/0022-3514.50.3.502\"]), \"ref_replication\", show_outcomes=True)))(__import__(\"tests.mod_ref_db.helpers\", fromlist=[\"x\"]))"
 - "id": "ref_replication.nohit"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U82", "reason": "'We checked 1 reference with DOIs.' (metacheck: '1 references')."}
   "module": "ref_replication"
   "args":
     "paper":
@@ -223,6 +225,7 @@
         "r": "source(file.path(root, \"tests/mod_ref_db/helpers.R\")); ref_paper(\"10.1000/not.in.flora\")"
         "py": "__import__(\"tests.mod_ref_db.helpers\", fromlist=[\"x\"]).ref_paper([\"10.1000/not.in.flora\"])"
 - "id": "ref_replication.paperlist"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U116", "reason": "A replication is dropped as already cited only when the same paper cites it; metacheck checks every paper of the list, hiding it from the others."}
   "module": "ref_replication"
   "args":
     "paper":
@@ -260,6 +263,7 @@
   "module": "ref_miscitation"
   "args": {"paper": {"$paper": "demo"}}
 - "id": "ref_miscitation.demo.custom_db"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U117", "reason": "Only citation xrefs (bibr) count: a figure/table/footnote xref whose xref_id equals a bib_id is not a citation. (The demo's 'Figure 1' xref was taken as a citation of bib 1.)"}
   "module": "ref_miscitation"
   "args":
     "paper": {"$paper": "demo"}
@@ -269,6 +273,7 @@
         "reftext": ["The full reference (this is a test)"]
         "warning": ["Lorem ipsum this is a test..."]
 - "id": "ref_miscitation.demo.two_db"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U117", "reason": "Only citation xrefs (bibr) count: a figure/table/footnote xref whose xref_id equals a bib_id is not a citation."}
   "module": "ref_miscitation"
   "args":
     "paper": {"$paper": "demo"}
@@ -315,6 +320,7 @@
         "r": "source(file.path(root, \"tests/mod_ref_db/helpers.R\")); paperlist(ref_paper(\"10.1525/collabra.33267\", id = \"p2\", cites = list(0L)), ref_paper(\"10.1000/x\", id = \"p3\"), ref_paper(c(\"10.1016/j.jml.2012.11.001\", \"10.1525/collabra.33267\"), id = \"p1\", cites = list(c(0L, 1L))))"
         "py": "pc.PaperList([__import__(\"tests.mod_ref_db.helpers\", fromlist=[\"x\"]).ref_paper([\"10.1525/collabra.33267\"], id=\"p2\", cites=[0]), __import__(\"tests.mod_ref_db.helpers\", fromlist=[\"x\"]).ref_paper([\"10.1000/x\"], id=\"p3\"), __import__(\"tests.mod_ref_db.helpers\", fromlist=[\"x\"]).ref_paper([\"10.1016/j.jml.2012.11.001\", \"10.1525/collabra.33267\"], id=\"p1\", cites=[[0, 1]])])"
 - "id": "ref_miscitation.duplicate_doi"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U117", "reason": "Two references with the same DOI in a paper give the first bib_id, not a list column (and no warning)."}
   "module": "ref_miscitation"
   "args":
     "paper":
@@ -322,6 +328,7 @@
         "r": "source(file.path(root, \"tests/mod_ref_db/helpers.R\")); ref_paper(c(\"10.1525/collabra.33267\", \"10.1525/collabra.33267\"), cites = list(0L, 1L))"
         "py": "__import__(\"tests.mod_ref_db.helpers\", fromlist=[\"x\"]).ref_paper([\"10.1525/collabra.33267\", \"10.1525/collabra.33267\"], cites=[0, 1])"
 - "id": "ref_miscitation.na_doi_db"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U117", "reason": "A missing DOI in the database no longer matches every reference without a DOI."}
   "module": "ref_miscitation"
   "args":
     "paper":

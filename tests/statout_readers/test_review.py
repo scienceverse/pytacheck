@@ -51,24 +51,27 @@ def test_light_table_strings_with_trailing_nuls_decode() -> None:
     assert "Nul Strings" in titles
     nul = next(t for t in tabs if t["title"] == "Nul Strings")["data"]
     assert list(nul.columns) == ["Statistic", "Variable", "value"]
-    assert nul["value"].tolist() == ["1.5", "n/a", "^1", "0.25"]
+    # a template value is rendered (R keeps the raw "^1", U148)
+    assert nul["value"].tolist() == ["1.5", "n/a", "t", "0.25"]
     assert nul.attrs["spv_title"] == "Trailing NULs"
 
 
-def test_url_decode_follows_r() -> None:
+def test_url_decode_keeps_malformed_escapes() -> None:
+    # U148: a malformed escape stays as written (R makes a NUL byte, and an
+    # embedded one fails export_*_html())
     assert _url_decode("a%20b.png") == "a b.png"
-    assert _url_decode("a%") == "a"  # NA byte -> NUL, trailing NULs dropped
-    assert _url_decode("a%2") == "a"
+    assert _url_decode("a%") == "a%"
+    assert _url_decode("a%2") == "a%2"
     assert _url_decode("%C3%A9") == "é"
-    with pytest.raises(ValueError, match="embedded nul"):
-        _url_decode("a%zz.png")
+    assert _url_decode("a%zz.png") == "a%zz.png"
+    assert _url_decode("a%2%41") == "a%2A"
 
 
 def test_inline_images_keep_absolute_src_inside_root(tmp_path: Path) -> None:
     (tmp_path / "r").mkdir()
     (tmp_path / "r" / "p.png").write_bytes(b"PNG")
     html = _html_inline_images('<img src="/r/p.png"><img src="/r/p.png">', str(tmp_path))
-    assert html.count("data:image/png;base64,UE5H") == 1  # first occurrence only
+    assert html.count("data:image/png;base64,UE5H") == 2  # every occurrence (U148)
 
 
 def test_omv_extract_syntax_tab_class_is_a_real_tab() -> None:
@@ -88,22 +91,27 @@ def test_jasp_omv_labels_use_the_datacheck_col_attrs_convention() -> None:
     assert "d" not in col_attrs  # title equal to the name
 
 
-def test_data_frame_recycles_only_attribute_free_columns() -> None:
+def test_data_frame_pads_short_columns() -> None:
+    # U145: a shorter column is padded with missing values; R recycles it
+    # (repeating values the file does not hold) or stops
     a = pd.array([1, 2, 3, 4], dtype="Int64")
     b = pd.array([1.0, 2.0], dtype="Float64")
     df = _frame_from_columns([a, b], ["a", "b"])
-    assert df["b"].tolist() == [1.0, 2.0, 1.0, 2.0]
-    with pytest.raises(ValueError, match="arguments imply differing number of rows: 4, 2"):
-        _frame_from_columns([a, b], ["a", "b"], [{}, {"label": "B"}])
-    with pytest.raises(ValueError, match="4, 3"):
-        _frame_from_columns([a, pd.array([1, 2, 3], dtype="Int64")], ["a", "c"])
+    assert df["b"].tolist()[:2] == [1.0, 2.0] and df["b"].isna().tolist()[2:] == [True, True]
+    df = _frame_from_columns([a, b], ["a", "b"], [{}, {"label": "B"}])
+    assert len(df) == 4
+    df = _frame_from_columns([a, pd.array([1, 2, 3], dtype="Int64")], ["a", "c"])
+    assert df["c"].isna().tolist() == [False, False, False, True]
 
 
-def test_import_jasp_errors_like_r() -> None:
-    with pytest.raises(ValueError, match="differing number of rows"):
-        import_jasp(REVIEW / "short.jasp")
-    with pytest.raises(ValueError, match="missing value where TRUE/FALSE needed"):
-        import_jasp(REVIEW / "sqlite_nulltype.jasp")
+def test_import_jasp_truncated_and_untyped_columns() -> None:
+    # U145: a column shorter than rowCount is padded with NA (R stops), and a
+    # column without a columnType is read as nominal (R stops)
+    short = import_jasp(REVIEW / "short.jasp")["data"]
+    assert short["g"].tolist() == [1, 2, 3, 1]
+    assert short["s"].tolist()[:2] == [1.0, 2.0] and short["s"].isna().tolist()[2:] == [True] * 2
+    untyped = import_jasp(REVIEW / "sqlite_nulltype.jasp")
+    assert untyped["columns"]["type"].isna().any()
 
 
 def test_rsqlite_column_typing(tmp_path: Path) -> None:

@@ -1152,6 +1152,18 @@ mcl(
         group=[None] * 5,
     ),
 )
+# a range row next to rows of its own items: the items keep their own labels
+# (R's expanded rows make "V1-3" a conflict with them)
+mcl(
+    "range_and_items",
+    cols(paper_id=["p"] * 3, source_file=["d.csv"] * 3, column_name=["V1", "V2", "V3"]),
+    cols(
+        codebook_variable=["V1-3", "V1", "V2"],
+        label=["Big Five items", "I am talkative", "I am reserved"],
+        codebook_source=["cb"] * 3,
+        group=[None] * 3,
+    ),
+)
 mcl(
     "ranges_none_valid",
     cols(paper_id=["p"], source_file=["d.csv"], column_name=["item5"]),

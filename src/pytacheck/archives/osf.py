@@ -230,8 +230,12 @@ def _dollar(params: list[tuple[str, str]], name: str) -> str | None:
 
 
 #: 5-letter OSF page names that follow a project ID in a URL (osf.io/<id>/files/).
-#: Neither can be a GUID: OSF draws GUIDs from an alphabet without i, l and o.
 _OSF_ROUTES = frozenset({"files", "forks"})
+
+#: Path segments followed by a 24-character id that is not a file's: the old
+#: draft-registration page osf.io/<id>/register/<schema id> and the API's
+#: schemas/registrations/<schema id>.
+_SCHEMA_PARENTS = frozenset({"register", "registrations"})
 
 
 def _osf_check_one(osf_id: Any) -> str | None:
@@ -256,18 +260,23 @@ def _osf_check_one(osf_id: Any) -> str | None:
             last.pop()  # R's strsplit() drops the trailing empty piece
         tail = last[-1]
         # a project page such as osf.io/j3gcx/files/ ends in a route name, not
-        # an ID, and a 24-character ID is alphanumeric (metacheck returns
-        # "files", or any 24-character segment: U51)
+        # an ID; a 24-character file ID is hexadecimal (an OSF object id), and
+        # the one after register/ is a registration schema, not a file
+        # (metacheck returns "files", or any 24-character segment: U51)
         if grepl(r"^[a-z0-9]{5}(_v\d+)?$", tail) and tail not in _OSF_ROUTES:
             view_only = _dollar(query, "view_only")
             if view_only is not None:
                 tail = f"{tail}?view_only={view_only}"
             return tail
-        if grepl("^[a-z0-9]{24}$", tail):
+        if grepl("^[0-9a-f]{24}$", tail) and not (len(last) > 1 and last[-2] in _SCHEMA_PARENTS):
             return tail
         raise _UrlParseError("not an OSF ID")
     except _UrlParseError:
-        matches = regextract_all(r"(?<=osf\.io/)[a-z0-9]{5}(_v\d+)?[?/]?", ident, perl=True)
+        # an ID is 5 characters, not the start of a longer word: osf.io/prereg
+        # is not "prere" (metacheck takes the first five characters: U51)
+        matches = regextract_all(
+            r"(?<=osf\.io/)[a-z0-9]{5}(_v\d+)?(?![a-z0-9])[?/]?", ident, perl=True
+        )
         # the first osf.io ID (metacheck coerces the list of matches with
         # as.character(), so a URL with two is rejected: U51)
         for m in matches:

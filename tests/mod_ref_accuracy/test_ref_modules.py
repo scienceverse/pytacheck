@@ -67,13 +67,15 @@ def test_ref_consistency_green_and_na() -> None:
 
 
 def test_ref_consistency_missing_xrefs() -> None:
-    # a citation with no bibliography id is "missing"; one with an unknown id is not listed
+    # a citation with no bibliography id is "missing"; U115: so is one with an
+    # unknown id (99), which metacheck never lists
     paper = ra_xrefs([None, 99], ["(Nobody 2020)", "(Ghost 2021)"])
     out = pc.module_run(paper, "ref_consistency")
     assert out.traffic_light == "red"
-    assert out.summary_table.loc[0, ["n_missing", "n_extra"]].tolist() == [1, 4]
+    assert out.summary_table.loc[0, ["n_missing", "n_extra"]].tolist() == [2, 4]
     (tbl,) = ra_report_tables(out)
-    assert tbl["type"].tolist() == ["extra"] * 4 + ["missing"]
+    assert tbl["type"].tolist() == ["extra"] * 4 + ["missing"] * 2
+    assert tbl["bib_id"].tolist()[-1] == 99
     assert tbl["reference"].tolist()[-1] == out.table["text"].tolist()[-1]
 
 
@@ -114,7 +116,8 @@ def test_ref_accuracy_no_references() -> None:
 def test_ref_accuracy_no_bib_match() -> None:
     paper = ra_demo(drop=["bib_match"])
     out = pc.module_run(paper, "ref_accuracy")
-    assert out.traffic_light == "error"
+    # U30: metacheck returns "error", which is not one of its traffic lights
+    assert out.traffic_light == "fail"
     assert out.table is None
     assert "add_bib_match" in out.summary_text
 

@@ -95,6 +95,25 @@ def test_nested_divs_do_not_repeat_paragraphs() -> None:
     assert "Nested Method" in p.section["header"].tolist()
 
 
+def test_caption_and_note_divs_are_not_body_divs(tmp_path: Path) -> None:
+    # Grobid's sentence segmentation writes <figDesc><div><p><s>: the caption is read
+    # once, as the figure's row (metacheck also reads it as a body section)
+    body = (
+        "<div><head>Intro</head><p>Text.</p></div>"
+        '<figure xml:id="fig_0"><head>Figure 1</head><figDesc><div><p><s>A caption.</s>'
+        "</p></div></figDesc></figure>"
+        '<note place="foot" xml:id="foot_0"><div><p>A note.</p></div></note>'
+    )
+    assert texts(convert(tei(tmp_path, body))) == ["Text.", "A caption.", "A note."]
+    # a div in a figure but outside its caption is still read
+    body = (
+        "<div><head>Intro</head><p>Text.</p>"
+        '<figure xml:id="fig_0"><figDesc>A caption.</figDesc><div><p>Inside.</p></div>'
+        "</figure></div>"
+    )
+    assert texts(convert(tei(tmp_path, body))) == ["Text.", "Inside.", "A caption."]
+
+
 def test_figure_rows_only_for_figure_sections() -> None:
     p = convert(IO_FIXTURES / "edge_body.tei.xml")
     # metacheck adds a figure and a table row (section_id NA) per untyped section
@@ -171,7 +190,8 @@ URL_BACK = (
 def test_urls_are_printed_where_their_link_is(tmp_path: Path, schema_version: str | None) -> None:
     p = convert(tei(tmp_path, URL_BODY, URL_BACK), schema_version)
     assert texts(p)[:5] == [
-        "Data are on https://osf.io/abc.",
+        # a link in a word keeps the word (metacheck: "Data are on https://osf.io/abc.")
+        "Data are on osf https://osf.io/abc.",
         # metacheck replaces "osf" in every row: "The https://osf.io/abc team made ..."
         "The osf team made osfx.",
         # the words of a link are kept (metacheck: "See https://github.com/a/b and ...")
@@ -191,10 +211,42 @@ def test_print_hrefs_does_not_replace_inside_replacements() -> None:
         ["https://osf.io/q2", "https://osf.io"],
         [1, 1],
     )
-    assert out == ["see https://osf.io/q2 and https://osf.io"]
+    assert out == ["see https://osf.io/q2 and osf https://osf.io"]
     assert _prints_url("osf  .io/abc", "https://osf.io/abc")
-    assert _prints_url("OSF", "https://osf.io/abc")
+    assert _prints_url("https:// osf.io", "https://osf.io/abc")
+    # words, also when the URL contains them: they are kept, with the href after them
+    assert not _prints_url("OSF", "https://osf.io/abc")
+    assert not _prints_url("code", "https://github.com/lab/code")
     assert not _prints_url("the GitHub repo", "https://github.com/a/b")
+
+
+def test_print_hrefs_prints_each_url_at_its_own_link() -> None:
+    # the link is the second "OSF" (the first is inside "OSFX", which stays a word)
+    out = _print_hrefs(
+        ["The OSFX project is on OSF."], [1], ["OSF"], ["https://osf.io/abc"], [1], [1]
+    )
+    assert out == ["The OSFX project is on OSF https://osf.io/abc."]
+    # the punctuation printed with a URL stays, the href's own is not doubled
+    out = _print_hrefs(
+        ["See osf.io/xyz/; and (en.wikipedia.org/wiki/X_(Y))."],
+        [1],
+        ["osf.io/xyz/;", "(en.wikipedia.org/wiki/X_(Y))."],
+        ["https://osf.io/xyz/", "https://en.wikipedia.org/wiki/X_(Y)"],
+        [1, 1],
+    )
+    assert out == ["See https://osf.io/xyz/; and (https://en.wikipedia.org/wiki/X_(Y))."]
+
+
+@pytest.mark.parametrize("schema_version", [None, "12.0"])
+def test_relative_links_are_printed_as_in_the_paper(schema_version: str | None) -> None:
+    # Grobid resolves "osf  .io/6b4ag" against its own temp folder; metacheck prints
+    # "file://localhost/opt/grobid/grobid-home/tmp/osf.io/6b4ag" in the text
+    p = convert(FIXTURES / "problems" / "0956797617737129.xml", schema_version)
+    body = " ".join(texts(p))
+    assert "can be accessed at osf.io/6b4ag." in body
+    assert "file://" not in body
+    # the preregistration links keep the ";" between them
+    assert "565fb3678c5e4a66b5582f67; Study 3: http://www.osf.io/zmf4c" in body
 
 
 @pytest.mark.parametrize("schema_version", [None, "12.0"])

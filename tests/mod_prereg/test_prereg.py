@@ -179,30 +179,44 @@ def test_mixed_accessible_and_inaccessible() -> None:
         "We found 1 preregistration. 2 registration links could not be accessed "
         "(private, embargoed, or withdrawn)."
     )
+    # U110: the paper's link, not the API URL metacheck names for a failed fetch
     assert (
         "The following registration links could not be accessed and may be private, "
-        "embargoed, or withdrawn: https://osf.io/3cz2e, "
-        "https://api.osf.io/v2/registrations/8c3kb."
+        "embargoed, or withdrawn: https://osf.io/3cz2e, https://osf.io/8c3kb."
     ) in mo.report
 
 
-def test_aspredicted_only_errors_as_in_r() -> None:
-    # R: osf_type(character(0)) -> "argument is of length zero"
-    with pytest.raises(pc.module.ModuleError, match="argument is of length zero"):
-        run(tp(["https://aspredicted.org/by8i8v.pdf"], "p_ap"))
+def test_aspredicted_only() -> None:
+    # U109: metacheck stops on osf_type(character(0)) ("argument is of length zero")
+    mo = run(tp(["https://aspredicted.org/by8i8v.pdf"], "p_ap"))
+    assert mo.traffic_light == "info"
+    assert mo.table["id"].tolist() == ["by8i8v"]
+    assert mo.summary_table["preregistration"].tolist() == [1]
 
 
-def test_several_aspredicted_links_collapse_into_one_row() -> None:
+def test_osf_only_paper_needs_no_aspredicted() -> None:
+    # U109: metacheck always calls aspredicted_info(), which fails when
+    # aspredicted.org is not reachable, even for a paper without AsPredicted links
+    from unittest import mock
+
+    with mock.patch("pytacheck.utils.online", return_value=False):
+        mo = run(tp(["https://osf.io/48ncu"], "p_osf"))
+    assert mo.traffic_light == "info"
+    assert mo.summary_table["preregistration"].tolist() == [1]
+
+
+def test_several_aspredicted_links_one_row_each() -> None:
+    # U109: metacheck pastes every AsPredicted prereg into one row ("by8i8v\n\nve2qn")
+    # whose joined link matches no paper (count 0)
     urls = [
         "https://aspredicted.org/by8i8v.pdf",
         "https://aspredicted.org/ve2qn.pdf",
         "https://osf.io/pngda",
     ]
     mo = run(tp(urls, "p_ap2"))
-    assert len(mo.table) == 1
-    assert mo.table["id"].tolist() == ["by8i8v\n\nve2qn"]
-    assert mo.table["paper_id"].isna().all()
-    assert mo.summary_table["preregistration"].tolist() == [0]
+    assert mo.table["id"].tolist() == ["by8i8v", "ve2qn"]
+    assert mo.table["paper_id"].tolist() == ["p_ap2", "p_ap2"]
+    assert mo.summary_table["preregistration"].tolist() == [2]
 
 
 def test_withdrawn_registration() -> None:

@@ -737,13 +737,9 @@ def _tolower(s: str) -> str:
     """
     if s.isascii():
         return s.lower()
-    if _NONCHARACTERS.intersection(s):
-        # R's utf8towcs() rejects U+FFFE and U+FFFF (other noncharacters pass)
-        raise ValueError(f"invalid input '{_deparse_str(s)[1:-1]}' in 'utf8towcs'")
+    # R's utf8towcs() rejects U+FFFE and U+FFFF, which stopped the module for a
+    # schema label containing them (U111); they are kept as they are
     return "".join(ch.lower()[:1] or ch for ch in s)
-
-
-_NONCHARACTERS = frozenset({chr(0xFFFE), chr(0xFFFF)})
 
 
 #: Research-core field labels (lowercased) -> canonical prereg_schema fields
@@ -876,6 +872,14 @@ def ap_schema(table_ap: pd.DataFrame) -> pd.DataFrame:
             continue
         out[name] = pd.Series(values, dtype="string")
     return pd.DataFrame(out)
+
+
+def schema_rows(df: pd.DataFrame) -> list[dict[str, str | None]]:
+    """Each row of *df* as its own record (missing values stay missing)."""
+    return [
+        {str(col): (None if pd.isna(v) else str(v)) for col, v in zip(df.columns, row, strict=True)}
+        for row in df.itertuples(index=False, name=None)
+    ]
 
 
 def frame_schema(df: pd.DataFrame) -> dict[str, str]:
@@ -1051,14 +1055,43 @@ def prsp(info: Mapping[str, Any]) -> Schema:
     (``$`` partial matching included) and pasted together per field.
     """
     answers = _path(info, "attributes", "registration_responses")
+
+    def answer(key: str) -> RValue:
+        # the exact key: metacheck's `$` also matches a longer key when the key
+        # is missing ("84-5" gives "84-56"), filling a field with another
+        # question's answer (U111)
+        value = answers.get(key) if isinstance(answers, Mapping) else None
+        return simplify(_file_answers(value))
+
     extra: Schema = {}
     for field, keys in _PRSP_FIELDS:
         if isinstance(keys, str):
-            extra[field] = simplify(dollar(answers, keys))
+            extra[field] = answer(keys)
         else:
-            combined = r_c([simplify(dollar(answers, k)) for k in keys])
+            combined = r_c([answer(k) for k in keys])
             extra[field] = RVec("character", (paste_collapse(combined, " "),))
     return {**common_osf(info), **extra}
+
+
+def _file_answers(value: Any) -> Any:
+    """File-upload answers as their file names (and links).
+
+    OSF gives a list of ``{file_id, file_name, file_urls, file_hashes}``
+    records; metacheck pastes them as deparsed ``list(html = ...)`` text (U111).
+    """
+    if (
+        isinstance(value, list)
+        and value
+        and all(isinstance(v, Mapping) and "file_name" in v for v in value)
+    ):
+        out = []
+        for v in value:
+            name = str(v.get("file_name"))
+            urls = v.get("file_urls")
+            html = urls.get("html") if isinstance(urls, Mapping) else None
+            out.append(f"{name} ({html})" if isinstance(html, str) and html else name)
+        return out
+    return value
 
 
 #: The columns of R's ``prereg_schema`` template (all character, one ``NA`` row).

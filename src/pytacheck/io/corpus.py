@@ -172,7 +172,8 @@ def papers_load(
     names = [_file_path_sans_ext(n) for n in assets["name"]]
     hits = [i for i, n in enumerate(names) if n == name]
     if not hits:
-        raise ValueError(f"'{name}' not found in releases of {repo}. Available: {', '.join(names)}")
+        available = ", ".join(names) or "none"
+        raise ValueError(f"'{name}' not found in releases of {repo}. Available: {available}")
     entry = assets.iloc[hits[0]]  # type: ignore[union-attr]
     size_mb = r_round(float(entry["size"]) / 1e6, 1)
     _message(f"Downloading {name} ({_format_mb(size_mb)} MB) ...")

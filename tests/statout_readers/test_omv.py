@@ -145,9 +145,9 @@ def test_import_omv_errors(tmp_path: Path) -> None:
 def test_export_omv_html(tmp_path: Path) -> None:
     out = Path(export_omv_html(FIX / "fixture.omv", tmp_path / "o.html"))
     html = out.read_text()
-    # the first occurrence of each distinct src only (the second stays a path)
-    assert html.count("data:image/png;base64,iVBORw0KGgpmYWtlcG5n") == 1
-    assert 'src="01%20ttestIS/resources/plot.png"' in html
+    # every occurrence of a plot is inlined (R: only the first, U148)
+    assert html.count("data:image/png;base64,iVBORw0KGgpmYWtlcG5n") == 2
+    assert 'src="01%20ttestIS/resources/plot.png"' not in html
     assert "data:image/jpeg;base64," in html
     assert 'src="missing.png"' in html
     with pytest.raises(ValueError, match=re.escape("No 'index.html'")):

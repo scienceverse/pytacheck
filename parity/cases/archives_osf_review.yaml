@@ -3732,7 +3732,7 @@
         "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); httptest2::with_mock_dir(\"upstream/metacheck/tests/testthat/apis\", { { d <- tempfile(); dir.create(d); x <- osf_file_download(\"6nt4v\", d, metadata = FALSE, mode = \"files\"); if (!is.null(x)) x$download_path <- basename(x$download_path); list(value = x, files = sort(list.files(d, recursive = TRUE))) } }) })()"
         "py": "lambda: __import__(\"tests.archives_osf.parity_support\", fromlist=[\"_\"]).with_tmpdir(lambda d: __import__(\"tests.archives_osf.parity_support\", fromlist=[\"_\"]).download_summary(__import__(\"pytacheck.archives.osf\", fromlist=[\"_\"]).osf_file_download(\"6nt4v\", d, metadata=False, mode=\"files\"), d))"
   "compare": *id002
-  "known_divergence": "metacheck's alias line `if (identical(mode, \"select\")) mode <- \"select\"` is a no-op, so mode = \"files\" (documented as the old name for \"select\") downloads nothing; pytacheck treats it as \"select\"."
+  "known_divergence": {"kind": "deliberate", "ref": "D8", "reason": "metacheck's alias line `if (identical(mode, \"select\")) mode <- \"select\"` is a no-op, so mode = \"files\" (documented as the old name for \"select\") downloads nothing; pytacheck treats it as \"select\"."}
 - "id": ".aspredicted_info.blind"
   "r": "identity"
   "py": "tests.archives_osf.parity_support.run_mocked"

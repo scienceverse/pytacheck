@@ -172,7 +172,6 @@
     "paper": {"$chr": ["t = 2, p = .05"]}
 # ------------------------------------------------------------------ extract_eq
 - "id": "extract_eq.demo"
-  "known_divergence": {"kind": "r_bug_fixed", "ref": "U10", "reason": "grp_id numbers sentences in text order (R numbers them in the order its per-operator searches found them); the groups are the same"}
   "r": "extract_eq"
   "py": "pytacheck.text.extract.extract_eq"
   "args":
@@ -218,7 +217,6 @@
         - "Stats are t = 2.4."
   "compare": {"ignore": ["paper_id"]}
 - "id": "extract_eq.test_paper.possessive"
-  "known_divergence": {"kind": "r_bug_fixed", "ref": "U10", "reason": "grp_id numbers sentences in text order (R numbers them in the order its per-operator searches found them); the groups are the same"}
   "r": "extract_eq"
   "py": "pytacheck.text.extract.extract_eq"
   "args":
@@ -229,7 +227,6 @@
         - "(..., Hedges's g = 0.32, ...)"
   "compare": {"ignore": ["paper_id"]}
 - "id": "extract_eq.test_paper.tricky"
-  "known_divergence": {"kind": "r_bug_fixed", "ref": "U10", "reason": "grp_id numbers sentences in text order (R numbers them in the order its per-operator searches found them); the groups are the same"}
   "r": "extract_eq"
   "py": "pytacheck.text.extract.extract_eq"
   "args":
@@ -253,7 +250,6 @@
         - "t(1,2,3) = 5 and F(1, 2) (3) = 4"
   "compare": {"ignore": ["paper_id"]}
 - "id": "extract_eq.psychsci"
-  "known_divergence": {"kind": "r_bug_fixed", "ref": "U10", "reason": "grp_id numbers sentences in text order (R numbers them in the order its per-operator searches found them); the groups are the same"}
   "r": "extract_eq"
   "py": "pytacheck.text.extract.extract_eq"
   "args":

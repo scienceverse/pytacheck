@@ -888,9 +888,7 @@ def _split_block(block: Sequence[str]) -> list[list[str]] | None:
         else:
             j += 1
     nbsp_run = compile_r(_NBSP + "+")
-    return [
-        [nbsp_run.sub(" ", _trimws(line[a:b]) or "") for line in padded] for a, b in runs
-    ]
+    return [[nbsp_run.sub(" ", _trimws(line[a:b]) or "") for line in padded] for a, b in runs]
 
 
 _SECTION_RE = "^[A-Za-z][A-Za-z0-9 .()|>-]*:$"

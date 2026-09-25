@@ -3213,6 +3213,42 @@
         - !!null "null"
         - !!null "null"
         - !!null "null"
+- "id": "match_column_labels.range_and_items"
+  "r": "match_column_labels"
+  "py": "pytacheck.datacheck.columns.match_column_labels"
+  "args":
+    "columns_df":
+      "$df":
+        "paper_id":
+        - "p"
+        - "p"
+        - "p"
+        "source_file":
+        - "d.csv"
+        - "d.csv"
+        - "d.csv"
+        "column_name":
+        - "V1"
+        - "V2"
+        - "V3"
+    "codebook_vars_df":
+      "$df":
+        "codebook_variable":
+        - "V1-3"
+        - "V1"
+        - "V2"
+        "label":
+        - "Big Five items"
+        - "I am talkative"
+        - "I am reserved"
+        "codebook_source":
+        - "cb"
+        - "cb"
+        - "cb"
+        "group":
+        - !!null "null"
+        - !!null "null"
+        - !!null "null"
 - "id": "match_column_labels.ranges_none_valid"
   "r": "match_column_labels"
   "py": "pytacheck.datacheck.columns.match_column_labels"

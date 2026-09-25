@@ -52,9 +52,11 @@ def written(paper: Any, tmp_path: Path) -> dict[str, Any]:
         (["4"], "(4)"),
         (["(5)"], "(5)"),
         ({"k": 6}, "(6)"),
-        # an array keeps its first value (metacheck stops: "'length = 2' in
+        # an array holds the degrees of freedom (metacheck stops: "'length = 2' in
         # coercion to 'logical(1)'", "missing value where TRUE/FALSE needed"; U24)
-        (["(3)", "4"], "(3)"),
+        (["(3)", "4"], "(3, 4)"),
+        ([1, 27], "(1, 27)"),
+        ([[1, 27]], "(1, 27)"),
         ([], None),
     ],
 )

@@ -143,6 +143,7 @@
           "r": "data.frame(doi = c(\"10.1000/a\", \"10.1000/b\", \"10.1000/c\"), reftext = c(\"Ref A\", \"Ref B\", \"Ref C\"), warning = c(\"Warn A\", \"Warn B\", \"Warn C\"))"
           "py": "pd.DataFrame({\"doi\": [\"10.1000/a\", \"10.1000/b\", \"10.1000/c\"], \"reftext\": [\"Ref A\", \"Ref B\", \"Ref C\"], \"warning\": [\"Warn A\", \"Warn B\", \"Warn C\"]})"
   - "id": "ref_miscitation.xref_quirks"
+    "known_divergence": {"kind": "r_bug_fixed", "ref": "U117", "reason": "Only citation xrefs (bibr) count: a figure/table/footnote xref whose xref_id equals a bib_id is not a citation."}
     "module": "ref_miscitation"
     "args":
       "paper":
@@ -176,6 +177,7 @@
           "r": "data.frame(doi = c(\"10.1000/a\", \"10.1000/b\", \"10.1000/c\"), reftext = c(\"Ref A\", \"Ref B\", \"Ref C\"), warning = c(\"Warn A\", \"Warn B\", \"Warn C\"))"
           "py": "pd.DataFrame({\"doi\": [\"10.1000/a\", \"10.1000/b\", \"10.1000/c\"], \"reftext\": [\"Ref A\", \"Ref B\", \"Ref C\"], \"warning\": [\"Warn A\", \"Warn B\", \"Warn C\"]})"
   - "id": "ref_miscitation.dup_bib_multi"
+    "known_divergence": {"kind": "r_bug_fixed", "ref": "U117", "reason": "Two references with the same DOI in a paper give the first bib_id, not a list column (and no warning)."}
     "module": "ref_miscitation"
     "args":
       "paper":
@@ -194,6 +196,7 @@
           "r": "source(file.path(root, \"tests/mod_ref_db/helpers.R\")); paperlist(demopaper(), ref_paper(c(\"10.1371/journal.pone.0090779\", \"10.1016/j.jml.2012.11.001\"), id = \"b\", cites = list(1L, 1L, 1L, 1L, 1L, 1L, 0L)))"
           "py": "(lambda H: pc.PaperList([pc.demopaper(), H.ref_paper([\"10.1371/journal.pone.0090779\", \"10.1016/j.jml.2012.11.001\"], id=\"b\", cites=[1, 1, 1, 1, 1, 1, 0])]))(__import__(\"tests.mod_ref_db.helpers\", fromlist=[\"x\"]))"
   - "id": "ref_miscitation.na_doi_many"
+    "known_divergence": {"kind": "r_bug_fixed", "ref": "U117", "reason": "A missing DOI in the database no longer matches every reference without a DOI."}
     "module": "ref_miscitation"
     "args":
       "paper":
@@ -205,6 +208,7 @@
           "r": "data.frame(doi = c(\"10.1000/x\", NA, \"10.1000/a\"), reftext = c(\"Ref X\", \"Ref NA\", \"Ref A\"), warning = c(\"Warn X\", \"Warn NA\", \"Warn A\"))"
           "py": "pd.DataFrame({\"doi\": [\"10.1000/x\", None, \"10.1000/a\"], \"reftext\": [\"Ref X\", \"Ref NA\", \"Ref A\"], \"warning\": [\"Warn X\", \"Warn NA\", \"Warn A\"]})"
   - "id": "ref_miscitation.logical_na_db"
+    "known_divergence": {"kind": "r_bug_fixed", "ref": "U117", "reason": "A missing DOI in the database no longer matches every reference without a DOI."}
     "module": "ref_miscitation"
     "args":
       "paper":
@@ -258,6 +262,7 @@
       "paper":
         "$paper": "upstream/metacheck/tests/testthat/fixtures/formats/preprint.cermine.xml"
   - "id": "ref_miscitation.nan_db"
+    "known_divergence": {"kind": "r_bug_fixed", "ref": "U117", "reason": "A missing DOI in the database no longer matches every reference without a DOI."}
     "module": "ref_miscitation"
     "args":
       "paper":
@@ -304,6 +309,7 @@
   # F50: tidyr's NULL cells of the list columns (a DOI cited twice in one paper)
   # stay NULL when a chained module's unnamed na_replace fills NA cells (U77)
   - "id": "ref_miscitation.listcol_null_chain_marginal"
+    "known_divergence": {"kind": "r_bug_fixed", "ref": "U117", "reason": "Two references with the same DOI in a paper give the first bib_id, not a list column (and no warning)."}
     "r": "identity"
     "py": "copy.copy"
     "args":

@@ -38,9 +38,12 @@ def test_section_headers() -> None:
 def test_sections_use_r_sequences() -> None:
     assert _r_seq(3, 1) == [3, 2, 1]
     secs = _mplus_sections(["x", "MODEL RESULTS", "R-SQUARE"])
-    # adjacent headers: (h+1):(h) counts down, and a last-line header reads past the end
-    assert secs[0]["lines"] == ["R-SQUARE", "MODEL RESULTS"]
-    assert secs[1]["lines"] == [None, "R-SQUARE"]
+    # adjacent headers and a last-line header: sections without lines (R's
+    # (h+1):end counts down to the header and past the end, U147)
+    assert secs[0]["lines"] == []
+    assert secs[1]["lines"] == []
+    secs = _mplus_sections(["MODEL RESULTS", "a", "b", "R-SQUARE", "c"])
+    assert [s["lines"] for s in secs] == [["a", "b"], ["c"]]
 
 
 def test_line_predicates() -> None:

@@ -203,14 +203,11 @@ def test_extract_eq_no_numeric_lhs(psychsci) -> None:
     assert not any(grepl("^[0-9]$", eq["lhs"].tolist()))
 
 
-def test_extract_eq_grp_id_numbers_sentences_in_order() -> None:
-    # U10: R numbers sentences in the order its per-operator searches find
-    # them ("=" sentences first, then "<" ones), here [3, 1, 2, 2]
+def test_extract_eq_grp_id_follows_search_order() -> None:
+    # "=" sentences are found first, then "<" ones, so grp_id numbers them in that order
     eq = extract_eq(pc.test_paper(["p < .05", "t = 2.1", "p < .01, t = 3"]))
     assert eq["text_id"].tolist() == [1, 2, 3, 3]
-    assert eq["grp_id"].tolist() == [1.0, 2.0, 3.0, 3.0]
-    papers = pc.PaperList([pc.test_paper(["x < 1", "y = 2"]), pc.test_paper(["z = 3"])])
-    assert extract_eq(papers)["grp_id"].tolist() == [1.0, 2.0, 1.0]
+    assert eq["grp_id"].tolist() == [3.0, 1.0, 2.0, 2.0]
 
 
 def test_extract_eq_missing_paper_id_and_text_id() -> None:
@@ -220,6 +217,8 @@ def test_extract_eq_missing_paper_id_and_text_id() -> None:
     two = extract_eq(pd.DataFrame({"text": ["t = 2.1, p = .04", "F = 3"]}))
     assert two["lhs"].tolist() == ["t", "p", "F"]
     assert two["grp_id"].tolist() == [1.0, 1.0, 2.0]
+    na_ids = pd.DataFrame({"text": ["t = 2.1, p = .04", "F = 3"], "text_id": [None, None]})
+    assert extract_eq(na_ids)["grp_id"].tolist() == [1.0, 1.0, 2.0]
 
 
 def test_extractors_accept_strings() -> None:

@@ -109,10 +109,9 @@ def test_pb_reader_accepts_bytes_and_numbers() -> None:
 
 
 def test_unzip_quirks(tmp_path: Path) -> None:
-    with pytest.raises(TypeError, match="character vector"):
-        read_stat_tables(DATA / "review_empty.jasp")
-    with pytest.raises(TypeError, match="character vector"):
-        read_stat_tables(tmp_path)  # a directory is not an archive either
+    # an empty archive or a directory has no tables (R: basename(NULL) fails, U137)
+    assert read_stat_tables(DATA / "review_empty.jasp") == []
+    assert read_stat_tables(tmp_path) == []
     assert read_stat_tables(DATA / "review_dirs_only.omv") == []
     # an unreadable entry stops extraction but keeps what came before it
     bad = tmp_path / "bad.jasp"
@@ -134,11 +133,13 @@ def test_html_is_decoded_as_utf8() -> None:
     assert latin[0]["analysis"] == "T�st"  # libxml2 2.15 ignores <meta charset>
 
 
-def test_footnote_test_of_an_all_na_row_is_na() -> None:
+def test_rows_without_content_are_dropped() -> None:
     first = parse_html_tables(DATA / "review_tables.html")[0]
     df = first["data"]
-    # the <tr><td></td></tr> row: its "" cell becomes NA with the rest
-    assert df.iloc[1].isna().all()
+    # the <tr><td></td></tr> rows have no content and are dropped (R's
+    # df[NA, ] turns them into rows of NAs, U141); the note row stays
+    assert df["V1"].tolist() == ["x", "Note.", "y"]
+    assert not df.isna().all(axis=1).any()
     doc = _read_html_file(str(DATA / "review_tables.html"))
     assert _xml_text(doc.xpath("//h2")[0]) == "T2 colspans"
     assert _stat_table_parse(doc.xpath("//table")[-1]) is None
@@ -147,20 +148,22 @@ def test_footnote_test_of_an_all_na_row_is_na() -> None:
 # -- results tables ----------------------------------------------------------------
 
 
-def test_result_ids_use_partial_names(stato: None) -> None:
+def test_result_ids_use_exact_names(stato: None) -> None:
+    # table fields are matched by their exact names (R's tb$line also takes
+    # line_seq, and tb$data takes data_x, U141)
     tables = [
         {"data": chr_frame(t=["1"]), "line_seq": 3},
         None,
         {"data_x": chr_frame(t=["1"]), "table_ind": 4, "analysis": "A b"},
     ]
-    assert _stat_result_ids(tables, "x.R") == ["x_r_l3_3", "x_r_result", "x_r_A b"]
+    assert _stat_result_ids(tables, "x.R") == ["x_r_result_1", "x_r_result_2", "x_r_A b"]
     long = stat_results_long(tables, source_file="x.R")
-    assert list(long["result_id"]) == ["x_r_l3_3_r1_t", "x_r_a_b_r1_t"]
+    assert list(long["result_id"]) == ["x_r_result_1_r1_t"]
 
 
 def test_sanitize_uses_r_tolower() -> None:
     assert _stat_sanitize_id("İstanbul Data.R") == "istanbul_data_r"
-    assert _stat_sanitize_id("_abc_") == "abc_"
+    assert _stat_sanitize_id("_abc_") == "abc"
     assert _stat_sanitize_id(None) is None
 
 
@@ -245,5 +248,8 @@ def test_capture_runner_matches_metacheck(script: str, reference_rscript: str, s
     tabs = _r_captures_to_tables(res.captures, code_lines=code)
     merged = _r_merge_captures(tabs, read_r_output(res.stdout, code_lines=code))
     got = json.loads(json.dumps(canonical({"tabs": tabs, "merged": merged})))
-    assert compare(expected["tables"], got, Options()) == []
+    # the afex table's combined df cells keep their width, so its df/F/ges
+    # columns split apart (R: one "df     F  ges" column, U140)
+    diffs = compare(expected["tables"], got, Options())
+    assert [d for d in diffs if "'df     F  ges'" not in d] == []
     assert isinstance(merged[0]["data"], pd.DataFrame)

@@ -110,11 +110,9 @@ def test_binary_fixture_without_analyses() -> None:
     assert df["id"].tolist() == [7, 8]
     assert pd.isna(df["rt"].iloc[1])
     assert df.attrs["col_attrs"]["rt"] == {"label": "Reaction time"}
-    # R quirk: attr(x, "label") partially matches "labels"
-    assert df.attrs["col_attrs"]["cond"] == {
-        "labels": [("A", 1.0), ("B", 2.0)],
-        "label": [("A", 1.0), ("B", 2.0)],
-    }
+    # value labels only: no variable label is invented from them (R's
+    # attr(x, "label") partially matches "labels", U145)
+    assert df.attrs["col_attrs"]["cond"] == {"labels": [("A", 1.0), ("B", 2.0)]}
     assert "id" not in df.attrs["col_attrs"]
     assert r["data_file_path"] == "C:/data/study.csv"
 
@@ -184,13 +182,15 @@ def test_export_jasp_html_inlines_images(tmp_path: Path) -> None:
     assert export_jasp_html(default) == str(tmp_path / "copy.html")
 
 
-def test_html_inline_images_first_occurrence_only(tmp_path: Path) -> None:
+def test_html_inline_images_every_occurrence(tmp_path: Path) -> None:
+    # U148: a plot shown twice is inlined twice (R's sub() only the first)
     (tmp_path / "a b").mkdir()
     (tmp_path / "a b" / "p.png").write_bytes(b"png")
     html = '<img src="a%20b/p.png"><img src="a%20b/p.png"><img src="//x.org/p.png">'
     out = _html_inline_images(html, str(tmp_path))
-    assert out.count("data:image/png;base64,cG5n") == 1
-    assert out.count('src="a%20b/p.png"') == 1
+    assert out.count("data:image/png;base64,cG5n") == 2
+    assert 'src="a%20b/p.png"' not in out
+    assert 'src="//x.org/p.png"' in out
     assert _url_decode("a%20b+c%2F") == "a b+c/"
 
 

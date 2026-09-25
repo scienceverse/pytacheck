@@ -194,6 +194,13 @@
       "$expr":
         "r": "local({source(rpath('tests/mod_psychds/fake_chain.R'), local = TRUE); psychds_fake_chain('psychsci_two_papers')})"
         "py": "__import__('tests.mod_psychds.parity_support', fromlist=['_']).fake_chain('psychsci_two_papers')"
+- "id": "psychds_check.psychsci_last_paper"
+  "module": "psychds_check"
+  "args":
+    "paper":
+      "$expr":
+        "r": "local({source(rpath('tests/mod_psychds/fake_chain.R'), local = TRUE); psychds_fake_chain('psychsci_last_paper')})"
+        "py": "__import__('tests.mod_psychds.parity_support', fromlist=['_']).fake_chain('psychsci_last_paper')"
 - "id": "psychds_check.compliant_raw"
   "module": "psychds_check"
   "args":

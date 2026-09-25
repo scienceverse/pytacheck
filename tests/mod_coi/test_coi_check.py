@@ -226,7 +226,10 @@ def test_coi_does_not_mutate(module: str, demo: pc.Paper) -> None:
         # keeps only groups 1-4, so "Nil.", "No.", "None mentioned." emptied the text)
         (["Conflict of interest: Nil. Other text follows."], "Conflict of interest: Nil."),
         (["conflict of interest: nil. More text here."], "conflict of interest: nil."),
-        (["Competing interests: None mentioned. More text."], "Competing interests: None mentioned."),
+        (
+            ["Competing interests: None mentioned. More text."],
+            "Competing interests: None mentioned.",
+        ),
         (["Competing interests: No. More text."], "Competing interests: No."),
         (
             ["Acknowledgements We thank X. The authors declare no competing interests."],
