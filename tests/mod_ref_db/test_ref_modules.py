@@ -88,8 +88,10 @@ def test_ref_miscitation_instances() -> None:
     assert "*5 of 6 Instances:*" in first
     assert first.count("\n> ") == 5
     assert "*1 Instance:*\n\n> Body sentence 3 cites 0 and 1." in second
-    # a miscited paper that is never cited in the text: right_join keeps it
-    assert third.endswith("*1 Instance:*\n\n> NA")
+    # a miscited paper that is never cited in the text: right_join keeps it, and
+    # metacheck quotes its missing sentence as "> NA" (U117)
+    assert third.endswith("*No in-text citations were detected.*")
+    assert "> NA" not in third
     assert out.summary_table.columns.tolist() == [
         "paper_id",
         "miscite_10.1525/collabra.33267",
@@ -112,6 +114,27 @@ def test_ref_miscitation_counts_only_citation_xrefs(demo: pc.Paper) -> None:
     db = pd.DataFrame({"doi": ["10.1037/0003-066x.54.6.408"], "reftext": ["R"], "warning": ["W"]})
     out = module_run(demo, "ref_miscitation", db=db)
     assert out.table["citation"].isna().tolist() == [True]
+    # the uncited reference is still reported, without an "NA" quote
+    assert out.report == [
+        "**10.1037/0003-066x.54.6.408**\n\nR\n\nW\n\n*No in-text citations were detected.*"
+    ]
+
+
+def test_ref_miscitation_paperlist_instances_skip_uncited_papers() -> None:
+    # U117: in a paper list, the papers that list the reference without citing it
+    # added "> NA" instances (metacheck: "*3 Instances:* ... > NA > NA")
+    papers = pc.PaperList(
+        [
+            ref_paper(["10.1525/collabra.33267"], id="a", cites=[0]),
+            ref_paper(["10.1525/collabra.33267"], id="b"),
+            ref_paper(["10.1525/collabra.33267"], id="c"),
+        ]
+    )
+    out = module_run(papers, "ref_miscitation")
+    (rep,) = out.report
+    assert rep.endswith("*1 Instance:*\n\n> Body sentence 1 cites 0.")
+    assert "> NA" not in rep
+    assert out.summary_text == "We found 3 citations to papers that are commonly miscited."
 
 
 def test_ref_miscitation_paperlist() -> None:
@@ -286,6 +309,16 @@ def test_ref_retraction_no_hits() -> None:
     )
 
 
+def test_ref_replication_no_hits_singular() -> None:
+    out = module_run(ref_paper(["10.1000/not.in.flora"]), "ref_replication")
+    assert out.traffic_light == "na"
+    # U82: metacheck says "1 references"
+    assert out.report == (
+        "We checked 1 reference with DOIs. "
+        "No citations to articles in the FLoRA database were found."
+    )
+
+
 # -- all three -----------------------------------------------------------------------
 
 
@@ -419,14 +452,12 @@ def test_ref_miscitation_na_doi_rows_are_not_instances() -> None:
 
 
 def _naive_instances(xrefs: pd.DataFrame, warn_doi: str) -> list[object]:
-    """``xrefs$citation[xrefs$doi == warn_doi]``, element by element."""
-    out: list[object] = []
-    for d, c in zip(xrefs["doi"], xrefs["citation"], strict=True):
-        if pd.isna(d):
-            out.append(None)
-        elif d == warn_doi:
-            out.append(c)
-    return out
+    """The in-text citations of *warn_doi*, element by element (no missing ones)."""
+    return [
+        c
+        for d, c in zip(xrefs["doi"], xrefs["citation"], strict=True)
+        if not pd.isna(d) and d == warn_doi and not pd.isna(c)
+    ]
 
 
 def test_ref_miscitation_many_citations_is_fast_and_exact() -> None:
@@ -447,6 +478,9 @@ def test_ref_miscitation_many_citations_is_fast_and_exact() -> None:
     table = out.table
     for doi, rep in zip(dict.fromkeys(table["doi"]), out.report, strict=True):
         n = len(_naive_instances(table, doi))
+        if n == 0:
+            assert rep.endswith("*No in-text citations were detected.*")
+            continue
         head = min(n, 5)
         label = f"{head} of {n}" if head < n else f"{head}"
         assert f"*{label} Instance" in rep

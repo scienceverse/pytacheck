@@ -309,6 +309,17 @@ def test_nan_eta_is_indeterminate() -> None:
             "indeterminate",
             "Effect size reported but not verifiable from F and degrees of freedom alone.",
         ),
+        # "beta" (and "theta", "zeta") contain "eta" but are not an eta-squared
+        (
+            "F(1, 20) = 5.00, p = .04, beta = .30.",
+            "indeterminate",
+            "Effect size reported but not verifiable from F and degrees of freedom alone.",
+        ),
+        (
+            "F(1, 20) = 5.00, p = .04, partial eta-squared = .20.",
+            "match_under_assumptions",
+            "Match under partial eta-squared formula from F and dfs.",
+        ),
         # U126: a bound is checked as a bound (implied .0002 < .001)
         (
             "F(1, 491) = 0.10, ηp² < .001.",
@@ -328,6 +339,20 @@ def test_eta_classification(text: str, coherence: str, note: str) -> None:
     out = _run(text)
     assert out.table["eta_coherence"].tolist() == [coherence]
     assert out.table["eta_coherence_note"].tolist() == [note]
+
+
+def test_partial_applies_only_to_its_own_value() -> None:
+    # U126: a plain "η2 = .05" of another test in a sentence that also has a
+    # "partial η2 = .20" stays an eta-squared (not checked, not a no-match)
+    out = _run(
+        "The main effect was significant, F(1, 20) = 5.00, p = .036, partial η2 = .20, "
+        "and so was the interaction, F(2, 40) = 3.00, p = .061, η2 = .05."
+    )
+    assert out.table["eta_coherence"].tolist() == ["match_under_assumptions", "indeterminate"]
+    assert out.table["eta_coherence_assumption"].tolist() == [
+        "partial_eta_squared",
+        "eta_squared",
+    ]
 
 
 @pytest.mark.parametrize(
@@ -402,6 +427,16 @@ def test_parsers() -> None:
     assert ses._parse_eta_stats("η2 = .2", "F(1, 20) = 5, partial η2 = .2.") == [
         ("partial_eta_squared", 0.2, "η2 = .2", "=")
     ]
+    # ... only for the value that follows "partial"
+    assert ses._parse_eta_stats("η2 = .05", "partial η2 = .20, and η2 = .05.") == [
+        ("eta_squared", 0.05, "η2 = .05", "=")
+    ]
+    assert ses._parse_eta_stats("η2 = .2", "partial η2 = .25.") == [
+        ("eta_squared", 0.2, "η2 = .2", "=")
+    ]
+    assert [e.label for e in ses._parse_eta_stats("beta = .3; theta = .1; zeta = .2")] == [
+        "non_checkable"
+    ] * 3
 
 
 def test_count_coh_and_coherence_text() -> None:
@@ -623,3 +658,10 @@ def test_unequal_n_blocks(monkeypatch: pytest.MonkeyPatch) -> None:
     assert want[0]["d_implied_n"] == "n1 = 5, n2 = 55, N = 60"
     assert want[1]["d_implied_n"] == "n1 = 2, n2 = 10, N = 12"
     assert want[2]["d_implied_n"] == "n1 = 4, n2 = 8, N = 12"
+
+
+def test_help_text_without_metacheck_typos() -> None:
+    # U83: metacheck's details say "..., you the module provides a warning"
+    details = pc.module_info(MODULE).details
+    assert "might be incorrect, the module provides a warning." in details
+    assert "you the module" not in details

@@ -61,6 +61,16 @@ See `docs/UPSTREAM_ISSUES.md`; every affected parity case is a documented
   archives count as archives; `code_check(paper = NULL)` runs on a local
   folder; SPSS template cells, SMCL hex characters and HTML `<meta charset>`
   are honoured; `match_reported_output()` keeps scientific-notation precision.
+- Text modules (U23, U30, U82-U85, U95, U97, U101-U111, U114-U119,
+  U124-U127): paper lists are summarised per paper (open_practices,
+  causal_claims, ethics_check, the ref_* modules); failed lookups and odd
+  inputs no longer stop modules (ref_pubpeer, coi_check, funding_check,
+  prereg_check, stat_effect_size); false positives and negatives removed
+  (lowercase r as R code, acknowledgment sections, randomisation spelling and
+  negation, star notes in p-value checks, beta as eta-squared, "partial"
+  applied to every value of a sentence); ref_miscitation no longer quotes
+  "NA" for references without an in-text citation; typos and plurals in
+  module text are fixed.
 - Core (U2, U4-U10, U12-U15, U19, U20, U77, U79, U80, U128-U131, U149-U151):
   the API's `/paper/search` `section` filter works; `stats()` keeps checkable
   results next to unparseable ones, rejects invalid arguments and reads the Q

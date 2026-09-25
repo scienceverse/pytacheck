@@ -284,6 +284,10 @@
 "bibr12/module.ref_accuracy.preprint": *u83_incoherent
 "bibr12/module.ref_accuracy.list": *u83_incoherent
 "bibr12/module.ref_accuracy.mixed": *u83_incoherent
+"mod_ref_accuracy_review/ref_accuracy.module_help":
+  kind: r_bug_fixed
+  ref: U83
+  reason: "the help text says 'or mistakes in citations. You will need to check the original source.' (metacheck: 'of mistakes ... You will need check ...')"
 "mod_ref_accuracy_review/ref_consistency.double_key": &u83_likley
   kind: r_bug_fixed
   ref: U83
@@ -296,7 +300,10 @@
 "mod_ref_accuracy_review/ref_consistency.problems_203020": *u83_likley
 "bibr12/module.ref_consistency.preprint": *u83_likley
 "bibr12/module.ref_consistency.PMC4383902": *u83_likley
-"bibr12/module.ref_consistency.full": *u83_likley
+"bibr12/module.ref_consistency.full":
+  kind: r_bug_fixed
+  ref: U115
+  reason: "the paper has no references, so its citation [1] is reported as missing from the bibliography (metacheck reports only citations without an xref_id); summary_table always has n_missing and n_extra, and the caveat says 'likely' (U83)"
 "bibr12/module.ref_consistency.list": *u83_likley
 "bibr12/module.ref_consistency.mixed": *u83_likley
 "bibr12_review/module.ref_consistency.edge_types": *u83_likley

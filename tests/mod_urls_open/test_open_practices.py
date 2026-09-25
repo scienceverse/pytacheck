@@ -247,7 +247,7 @@ def test_paperlist_summary_text(psychsci: pc.PaperList, demo: pc.Paper) -> None:
     assert mo.traffic_light == "info"
     # U106: the two papers without a flagged sentence count as "neither" (metacheck: 0)
     assert mo.summary_text == (
-        "1 papers shared both data and code, 1 only data, 0 only code, and 2 neither."
+        "1 paper shared both data and code, 1 only data, 0 only code, and 2 neither."
     )
     assert mo.report == mo.summary_text
     # table rows follow the paper order, then text_id
@@ -374,7 +374,7 @@ def test_rows_follow_paper_list_order_not_sorted_ids() -> None:
     assert mo.table["paper_id"].tolist() == ["zeta", "beta", "Beta"]
     assert mo.summary_table["paper_id"].tolist() == ["zeta", "Alpha", "beta", "Beta"]
     assert mo.summary_text == (
-        "1 papers shared both data and code, 1 only data, 1 only code, and 1 neither."
+        "1 paper shared both data and code, 1 only data, 1 only code, and 1 neither."
     )
 
 

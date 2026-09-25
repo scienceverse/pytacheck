@@ -15,11 +15,12 @@ Conventions of the port:
   run through :mod:`pytacheck._r` with R's engine (PCRE unless R uses TRE);
 * ``article`` is a character vector (a string or a sequence of strings);
   the ``get_*`` locators return **0-based** positions (R's ``grep()`` values
-  minus one), including positions one or two past the end, which R's
-  ``c(a, a + 1)`` / ``c(a, a + 2)`` can produce; an out-of-range position is
-  ``NA`` when indexed, as in R;
+  minus one); an out-of-range position is ``NA`` when indexed, as in R, and
+  :func:`rtransparent_funding` leaves it out of the statement;
 * R's ``if (!is.na(article[a + 1]))`` fails when several lines match a title
-  pattern (``the condition has length > 1``); the port raises the same error;
+  pattern (``the condition has length > 1``) and its ``c(a, a + 2)`` can point
+  past the end; here each title line gets its next line and nothing past the
+  end is returned (U103);
 * for speed on paper lists, the module wraps the whole text column in an
   :class:`_Article` whose regex matches are computed once for all papers and
   shared by the per-paper views (every locator matches sentence by sentence,
@@ -1799,7 +1800,7 @@ def rtransparent_funding(text: Any) -> str:
 
     *text* is the character vector of a paper's sentences. Returns the
     matching sentences pasted together with ``" "`` (``""`` if none); a
-    position past the end (see the module docstring) pastes as ``"NA"``.
+    position past the end is left out (metacheck pastes ``"NA"``, U103).
     """
     art = _as_article(text)
     n = len(art)
