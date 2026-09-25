@@ -250,11 +250,12 @@
   ref: U111
   reason: a schema label containing U+FFFF is lower-cased like any other; R's tolower() stops the module ("invalid input ... in 'utf8towcs'")
 
-# prose typos, output columns and TEI text (U83, U115, U125, U16) ------------
-# U83: metacheck's typos in report prose are fixed ("likley", "reconized",
-# "Such an incoherent ... ar an AI"); U125: a missing full stop. Cases of the
-# io lane's generated files (bibr12, grobid12) that run these modules are listed
-# here because the module change, not the conversion, makes them differ.
+# prose typos, output columns and TEI text (U83, U115, U16) ------------------
+# U83: metacheck's typos in report prose are fixed ("likley"); the U83 cases
+# here also differ for another reason (a case whose only difference is prose is
+# in prose.yaml). Cases of the io lane's generated files (bibr12, grobid12) that
+# run these modules are listed here because the module change, not the
+# conversion, makes them differ.
 "mod_ref_accuracy_review/ref_consistency.double_key": &u83_likley
   kind: r_bug_fixed
   ref: U83

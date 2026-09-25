@@ -22,6 +22,18 @@ bibr export schema 12.0), which pytacheck targets ahead of its merge.
 - CLI (`pytacheck`), Docker images (with and without bibr), and a scheduled
   upstream-sync workflow that ports new metacheck commits automatically.
 
+### Parity harness
+
+- A `known_divergence` can carry `r_text` substitutions applied to R's golden
+  before the comparison, so a case whose only difference is text pytacheck
+  corrects (typos, plurals, a full stop) is still compared with R for
+  everything else; 160 cases use it (`parity/divergences/prose.yaml` and
+  inline marks). A substitution that no longer matters fails as stale.
+- Parity keeps the Python side's caches in a throwaway `PYTACHECK_CACHE_DIR`;
+  parity and pytest fail when a run leaves a new file in the repository root.
+- Network-dependent causal_claims cases are replaced by offline variants; the
+  2-second `reproducibility_check.exec_timeout` case by `exec_timeout_10s`.
+
 ### Fixed: metacheck bugs pytacheck no longer reproduces
 
 See `docs/UPSTREAM_ISSUES.md`; every affected parity case is a documented
@@ -71,6 +83,21 @@ See `docs/UPSTREAM_ISSUES.md`; every affected parity case is a documented
   applied to every value of a sentence); ref_miscitation no longer quotes
   "NA" for references without an in-text citation; typos and plurals in
   module text are fixed.
+- Empty inputs (U79): every module now runs on an empty paper list and on
+  `paper()`, giving its empty or "na" result instead of metacheck's errors
+  (ethics_check, power, prereg_check, reg_check, repo_check and the modules
+  that run it, the ref_* modules); `ref_table()` and the `*_links()` functions
+  return typed empty tables.
+- ref_retraction matches RetractionWatch DOIs whatever their case (U157):
+  13,123 of 61,376 RetractionWatch DOIs have capitals, e.g. the retracted
+  Wakefield et al. (1998) Lancet paper, which a lower-case citation now flags.
+  ref_replication (FLoRA) and ref_miscitation ignore DOI case too.
+- marginal cites "Olsson-Collentine A, van Assen MALM, Hartgerink CHJ (2019)"
+  instead of metacheck's mangled author string (U3); reg_check's light is
+  "fail" instead of "error" when every RegCheck comparison fails (U30).
+- repo_check reports an unfound DSpace or PsychArchives item as a failed
+  repository (U43); code_check and data_check use the singular for a count of
+  one ("In 1 code file", "1 distinct respondent was flagged") (U82).
 - Core (U2, U4-U10, U12-U15, U19, U20, U77, U79, U80, U128-U131, U149-U151):
   the API's `/paper/search` `section` filter works; `stats()` keeps checkable
   results next to unparseable ones, rejects invalid arguments and reads the Q

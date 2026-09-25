@@ -58,7 +58,9 @@ before the comparison::
 ``[old, new]`` replaces literal text, ``[old, new, regex]`` is Python's
 ``re.sub(old, new, s)``. Such a case is no expected failure: it passes when R's
 rewritten result equals Python's and fails on any other difference, and a
-substitution that changes nothing in R's golden fails it (a stale mark). A case
+substitution that changes nothing in R's golden fails it (a stale mark), as
+does a match with R's golden as it is (the substitutions changed only text the
+comparison skips). A case
 that also differs for other reasons adds ``xfail: true``; it stays an expected
 failure and ``r_text`` only removes the text corrections from its reported
 differences.

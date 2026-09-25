@@ -86,8 +86,8 @@
 # caused by the report lane's module_report() fix (U128), not by this lane
 "mod_reg/reg_check.report.all_fail": &u128_err
   kind: r_bug_fixed
-  ref: U128
-  reason: module_report() keeps the heading of a module with an "error" traffic light (report lane fix); R's sprintf() with a NULL emoji drops it
+  ref: U30
+  reason: reg_check's light is "fail" where metacheck returns "error" (U30), so module_report() prints the module heading; R's sprintf() with the NULL emoji of "error" drops it (U128)
 "mod_reg_review/reg_check.review.refused.report": *u128_err
 
 # --- repo_check module (inst/modules/repo_check.R) --------------------------
