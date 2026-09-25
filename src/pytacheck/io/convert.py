@@ -143,7 +143,9 @@ def convert(
             method = "bibr"
             args["api_url"] = bibr_local_url
 
-    if method == "auto" or args.get("api_url") is None:
+    # XML is converted locally: no server is needed (metacheck still looks one
+    # up, so converting XML fails offline; U18)
+    if method != "xml" and (method == "auto" or args.get("api_url") is None):
         if not _online(SERVERS_URL):
             raise ConnectionError("No local grobid or bibr detected, online versions not available")
         for s in _server_list():

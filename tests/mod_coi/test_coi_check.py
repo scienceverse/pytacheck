@@ -211,17 +211,23 @@ def test_coi_does_not_mutate(module: str, demo: pc.Paper) -> None:
             ["Competing interests", "The authors declare", "no competing interests exist"],
             "Competing interests The authors declare no competing interests exist",
         ),
-        # R pastes NA when the heading's follow-up runs past the last sentence
+        # U97: nothing past the last sentence is pasted (metacheck appends "NA")
         (
             ["Results were clear.", "Conflicts of interest", "The authors declare none"],
-            "Conflicts of interest The authors declare none NA",
+            "Conflicts of interest The authors declare none",
         ),
+        (["Methods were standard.", "Conflict of Interest", ""], "Conflict of Interest"),
+        (["Disclosure", "Nothing"], "Disclosure Nothing"),
         (["Patient information disclosure was handled by the hospital."], ""),
         (["Financial disclosure: The study was funded by X."], ""),
         (["Conflicts of interest. Conflicts of interest."], "Conflicts of interest."),
         (["Conflict of interest: None. Other text follows here."], "Conflict of interest: None."),
-        # R keeps only groups 1-4 of the "None/No/Nil" pattern: a "Nil." empties the text
-        (["Conflict of interest: Nil. Other text follows."], ""),
+        # U95: every "None/No/Nil" alternative stops after the full stop (metacheck
+        # keeps only groups 1-4, so "Nil.", "No.", "None mentioned." emptied the text)
+        (["Conflict of interest: Nil. Other text follows."], "Conflict of interest: Nil."),
+        (["conflict of interest: nil. More text here."], "conflict of interest: nil."),
+        (["Competing interests: None mentioned. More text."], "Competing interests: None mentioned."),
+        (["Competing interests: No. More text."], "Competing interests: No."),
         (
             ["Acknowledgements We thank X. The authors declare no competing interests."],
             "The authors declare no competing interests.",
@@ -249,12 +255,22 @@ def test_rtransparent_coi(sentences: list[str], expected: str) -> None:
     assert rtransparent_coi(sentences) == expected
 
 
-def test_rtransparent_coi_errors_like_r() -> None:
-    # R: if (nchar(splitted[index + 1]) == 0) with NA -> "missing value where TRUE/FALSE needed"
-    with pytest.raises(ValueError, match="missing value"):
+def test_rtransparent_coi_heading_last_sentence() -> None:
+    # U97: metacheck stops on if (nchar(NA) == 0); the heading is the statement found
+    assert (
         rtransparent_coi(["Participants were recruited online.", "Conflict of interest"])
-    with pytest.raises(pc.ModuleError):
-        pc.module_run(pc.test_paper(["Conflict of interest"]), "coi_check")
+        == "Conflict of interest"
+    )
+    res = pc.module_run(pc.test_paper(["Conflict of interest"]), "coi_check")
+    assert res.traffic_light == "green"
+    assert res.table["text"].tolist() == ["Conflict of interest"]
+
+
+def test_coi_check_nil_statement_found() -> None:
+    # U95: metacheck drops "Conflict of interest: Nil." and reports no statement (red)
+    res = pc.module_run(pc.test_paper(["Conflict of interest: Nil. Other text."]), "coi_check")
+    assert res.traffic_light == "green"
+    assert res.table["text"].tolist() == ["Conflict of interest: Nil."]
 
 
 def test_rtransparent_coi_empty() -> None:

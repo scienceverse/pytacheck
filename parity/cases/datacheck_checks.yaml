@@ -1407,8 +1407,6 @@
       - ""
       - "a b"
       - "a.b"
-  "known_divergence": "R's out[[\"\"]] <- msg appends unnamed elements that out[[\"\"]] cannot retrieve;\
-    \ the Python dict omits \"\" names (lookups agree, the unreachable entries are dropped)"
 - "id": "data_check_pii_values.email"
   "r": "data_check_pii_values"
   "py": "pytacheck.datacheck.checks.data_check_pii_values"

@@ -6,18 +6,22 @@ from typing import Any
 
 import pandas as pd
 
-from pytacheck._r import grepl, plural
+from pytacheck._r import grepl, gsub, plural
 from pytacheck.module import module
 from pytacheck.report import collapse_section, format_ref, scroll_table
 from pytacheck.text import text_search
 
 # R: `include_re` / `exclude_re`, PCRE with inline (?ix) flags (extended mode:
-# layout whitespace and `#` comments are ignored). Kept verbatim.
+# layout whitespace and `#` comments are ignored). Changed from metacheck (U85):
+# British spellings (randomis...) are found, negated statements ("not
+# randomized", "non-randomized", "without random assignment") are excluded, and
+# an exclusion only removes its own words, so "randomly assigned ... random
+# intercepts" still counts (see `_describes_randomization()`).
 _INCLUDE_RE = r"""(?ix)(
     \brandom(?:ly)?\s+assign(?:ed|ment)\b
   | \bassign(?:ed)?\s+at\s+random\b
   | \bassign(?:ed)?\s+random(?:ly)?\b
-  | \brandomiz(?:e|ed|ation)\b
+  | \brandomi[sz](?:e|ed|ation)\b
   | \brandom(?:ly)?\s+allocat(?:ed|ion)\b
   | \brandom(?:ly)?\s+divid(?:e|ed)\b
   | \brandom(?:ly)?\s+split\b
@@ -35,9 +39,9 @@ _EXCLUDE_RE = r"""(?ix)(
   | \brandom\s+generator\b
 
   # order / trial / block randomized (either side of the word)
-  | (?:\border\b[^\n]{0,60}\brandom(?:ly|ized)?\b)|(?:\brandom(?:ly|ized)?\b[^\n]{0,60}\border\b)
-  | (?:\btrial\b[^\n]{0,60}\brandom(?:ly|ized)?\b)|(?:\brandom(?:ly|ized)?\b[^\n]{0,60}\btrial\b)
-  | (?:\bblock\b[^\n]{0,60}\brandom(?:ly|ized)?\b)|(?:\brandom(?:ly|ized)?\b[^\n]{0,60}\bblock\b)
+  | (?:\border\b[^\n]{0,60}\brandom(?:ly|i[sz]ed)?\b)|(?:\brandom(?:ly|i[sz]ed)?\b[^\n]{0,60}\border\b)
+  | (?:\btrial\b[^\n]{0,60}\brandom(?:ly|i[sz]ed)?\b)|(?:\brandom(?:ly|i[sz]ed)?\b[^\n]{0,60}\btrial\b)
+  | (?:\bblock\b[^\n]{0,60}\brandom(?:ly|i[sz]ed)?\b)|(?:\brandom(?:ly|i[sz]ed)?\b[^\n]{0,60}\bblock\b)
   | \brandom\s+jitter(?:ed|ing)?\b
   | \brandom\s+noise\b
   | \brandom\s+pixels?\b|\brandom\-pixel\b
@@ -53,7 +57,24 @@ _EXCLUDE_RE = r"""(?ix)(
 
   # diagnostic mentions rather than the assignment sentence itself
   | \bsuccessful\s+random\s+assignment\b
+
+  # negated or absent random assignment (pytacheck, U85)
+  | \bnon\-?randomi[sz](?:e|ed|ation)\b
+  | \bnot\s+(?:been\s+|be\s+)?(?:randomi[sz]ed|random(?:ly)?\s+(?:assign|allocat|divid)\w*|assigned\s+(?:at\s+)?random(?:ly)?)\b
+  | \b(?:without|no|lack\s+of|absence\s+of)\s+(?:randomi[sz]ation|random\s+(?:assignment|allocation))\b
 )"""
+
+
+def _describes_randomization(texts: pd.Series) -> pd.Series:
+    """Which sentences describe random assignment.
+
+    metacheck keeps a sentence when it matches `include_re` and not
+    `exclude_re`, so "Participants were randomly assigned ... random
+    intercepts" was dropped (U85). Here the words an exclusion matches are
+    removed first and the rest of the sentence is checked with `include_re`.
+    """
+    masked = gsub(_EXCLUDE_RE, " ", texts, perl=True)
+    return pd.Series(grepl(_INCLUDE_RE, masked, perl=True), index=texts.index, dtype=bool)
 
 # R: format_ref(Antonakis2010) and format_ref(Grosz2020), rendered by R's
 # bibentry html style.
@@ -119,20 +140,30 @@ _DETAILS = """
 """
 
 
-def _title(paper: Any) -> list[Any]:
-    """R ``paper$info$title``: the title column of a paper's info (``NULL`` -> ``[]``).
+def _titles(paper: Any) -> list[str]:
+    """The titles to classify: ``info$title`` of the paper, or of every paper in a list.
 
-    On a paper list ``paper$info`` partially matches a paper ID (usually
-    ``NULL``), and ``$title`` of a paper is always ``NULL``: no title is checked.
+    metacheck reads ``paper$info$title``, which is ``NULL`` for a paper list (so
+    no title of a list was ever checked), and a missing (``NA``) title stopped
+    the module (U84). Missing and blank titles are skipped.
     """
-    from pytacheck.papers.model import Paper
+    from pytacheck.papers.model import Paper, PaperList
 
-    if not isinstance(paper, Paper):
-        return []
-    info = paper.info
-    if not isinstance(info, pd.DataFrame) or "title" not in info.columns:
-        return []
-    return [None if pd.isna(v) else str(v) for v in info["title"].tolist()]
+    if isinstance(paper, Paper):
+        papers = [paper]
+    elif isinstance(paper, PaperList):
+        papers = list(paper)
+    else:
+        papers = []
+    out: list[str] = []
+    for p in papers:
+        info = p.info
+        if not isinstance(info, pd.DataFrame) or "title" not in info.columns:
+            continue
+        for v in info["title"].tolist():
+            if isinstance(v, str) and v.strip(" \t\r\n"):
+                out.append(v)
+    return out
 
 
 def _any(causal: pd.Series) -> bool:
@@ -147,36 +178,44 @@ def _any(causal: pd.Series) -> bool:
 
 
 def _summarise_causal(causal_abstract: pd.DataFrame, table: pd.DataFrame) -> pd.DataFrame:
-    """``left_join(causal_abstract, table, by = c(sentence = "text")) |>
-    summarise(causal = sum(causal), .by = "paper_id")``."""
+    """The number of causal relations in each paper's abstract.
+
+    metacheck joins the classifier's rows back to the papers by sentence text
+    (``left_join(causal_abstract, table, by = c(sentence = "text"))``), so a
+    sentence occurring k times (in one paper or across a paper list) was
+    counted k * k times, and for every paper that has it (U84). Here each
+    occurrence of a sentence counts its own relations once.
+    """
     if "text" not in table.columns:
         # text_search() drops the text column when the text table has none
         # (e.g. an empty paper list)
         raise ValueError("Join columns in `y` must be present in the data.")
-    # A sentence occurring several times (e.g. in two papers) matches each row
-    # (many-to-many). dplyr only warns about that when called from the global
-    # environment, never from module code, so no warning here.
-    joined = causal_abstract.merge(
-        table.rename(columns={"text": "sentence"}), on="sentence", how="left", sort=False
-    )
-    if len(joined) == 0:
-        return pd.DataFrame(
-            {
-                "paper_id": pd.Series([], dtype="string"),
-                "causal": pd.Series([], dtype="Int64"),
-            }
-        )
-    # R `sum()` propagates NA (module_run() later replaces it with na_replace)
-    counts = (
-        joined["causal"]
-        .astype("Int64")
-        .groupby(joined["paper_id"], sort=False, dropna=False)
-        .sum(skipna=False)
-    )
+    sentences = table["text"].tolist()
+    occurrences: dict[Any, int] = {}
+    for sent in sentences:
+        occurrences[sent] = occurrences.get(sent, 0) + 1
+    # relations per occurrence: causal_relations() returns the rows of each
+    # input sentence, so a repeated sentence's rows are repeated
+    per_sentence: dict[Any, Any] = {}
+    causal = causal_abstract["causal"].astype("boolean")
+    for sent, flag in zip(causal_abstract["sentence"].tolist(), causal.tolist(), strict=True):
+        if sent not in occurrences:
+            continue
+        prev = per_sentence.get(sent, 0)
+        per_sentence[sent] = pd.NA if prev is pd.NA or flag is pd.NA else prev + int(bool(flag))
+    counts: dict[Any, Any] = {}
+    for pid, sent in zip(table["paper_id"].tolist(), sentences, strict=True):
+        if sent not in per_sentence:
+            continue
+        n = per_sentence[sent]
+        n = pd.NA if n is pd.NA else round(n / occurrences[sent])
+        prev = counts.get(pid, 0)
+        # R `sum()` propagates NA (module_run() later replaces it with na_replace)
+        counts[pid] = pd.NA if prev is pd.NA or n is pd.NA else prev + n
     return pd.DataFrame(
         {
-            "paper_id": pd.Series(counts.index, dtype="string"),
-            "causal": pd.Series(counts.to_numpy(), dtype="Int64"),
+            "paper_id": pd.Series(list(counts), dtype="string"),
+            "causal": pd.Series(list(counts.values()), dtype="Int64"),
         }
     )
 
@@ -217,9 +256,7 @@ def causal_claims(paper: Any) -> dict[str, Any]:
     all_text = sentences["text"] if "text" in sentences.columns else pd.Series([], dtype="string")
     has_random = grepl("random", all_text, ignore_case=True)
     texts = all_text[pd.Series(has_random, index=all_text.index, dtype=bool)]
-    inc = pd.Series(grepl(_INCLUDE_RE, texts, perl=True), index=texts.index, dtype=bool)
-    exc = pd.Series(grepl(_EXCLUDE_RE, texts, perl=True), index=texts.index, dtype=bool)
-    random_assignment_subset = texts[inc & ~exc]
+    random_assignment_subset = texts[_describes_randomization(texts)]
     n_random = len(random_assignment_subset)
 
     if n_random == 0:
@@ -238,7 +275,7 @@ def causal_claims(paper: Any) -> dict[str, Any]:
     # causal claims ----
     table = sentences[sentences["section_type"].eq("abstract").fillna(False).astype(bool)]
     table = table.reset_index(drop=True)
-    causal_title = causal.causal_relations(_title(paper))
+    causal_title = causal.causal_relations(_titles(paper))
     causal_abstract = causal.causal_relations(
         table["text"].tolist() if "text" in table.columns else []
     )
@@ -257,9 +294,11 @@ def causal_claims(paper: Any) -> dict[str, Any]:
         report_causal_title: list[Any] = [summary_text_title]
     else:
         summary_text_title = "Causal claims were detected in the title."
+        # only the causal titles (a paper list has several)
+        causal_rows = causal_title["causal"].astype("boolean").fillna(False).astype(bool)
         report_causal_title = [
             summary_text_title,
-            scroll_table(causal_title.loc[:, ["sentence", "cause", "effect"]], 1),
+            scroll_table(causal_title.loc[causal_rows.to_numpy(), ["sentence", "cause", "effect"]], 1),
         ]
 
     ## causal abstract ----

@@ -243,87 +243,30 @@ def _url_encode(url: str, reserved: bool = False) -> str:
     return url_encode(url, reserved=reserved)
 
 
-# metacheck::file_types (data/file_types.rda): 404 rows of ext:type, in order.
-# Several extensions appear twice (e.g. json is "code" and "data"), so a
-# left_join() onto it repeats those files, as in metacheck.
-_FILE_TYPES_TABLE = """
-1.ada:code 2.ada:code 3dm:image 3ds:3D 3ds:image 3g2:video 3gp:video 3mf:3D 7z:archive
-a:archive aac:audio aaf:video aar:archive abw:text ada:code adb:code ado:code ads:code
-ai:image aif:audio aiff:audio amr:audio ape:audio apk:archive ar:archive arff:data arw:image
-asf:video asm:code asp:code asp:web aspx:code aspx:web au:audio avchd:video avi:video
-avif:image azw:book azw1:book azw3:book azw4:book azw6:book bak:config bas:code bash:code
-bash:exec bat:code bat:exec bin:exec bmp:image br:archive bz2:archive c:code c++:code
-cab:archive car:video cbl:code cbr:book cbz:book cc:code cfg:config class:code clj:code
-cmake:config cmd:exec cob:code com:exec command:exec config:config cpio:archive cpp:code
-cr2:image cr3:image crx:exec cs:code csh:code csh:exec css:web csv:data csv.sav:data
-cxx:code d:code dart:code dat:data dav:video dds:image deb:archive dft:data diff:code
-dll:code dmg:archive do:stats doc:text docx:text drc:video dss:code dta:data dwg:image
-dxf:image e:code ebook:text egg:archive el:code env:config eot:font eps:image epub:book
-exe:exec f:code f3d:3D f77:code f90:code fa.gz:data fasta.gz:data fastq.gz:data feather:data
-fish:code fish:exec flac:audio flv:video for:code fq.gz:data fth:code ftn:code gcode:3D
-gdt:data gdtb:data gen:data geojson:data gif:image git:config gitignore:config go:code
-gpx:image gradle:code groovy:code gsm:audio gz:archive h:code heic:image heif:image
-hevc:video hh:code hpp:code hs:code htm:code htm:web html:code html:web hxx:code ico:image
-ics:data inc:code inc:web ini:config ipynb:code iso:archive it:audio jar:archive jasp:data
-jasp:stats java:code jl:code jp2:image jpeg:image jpg:image js:code js:web json:code
-json:data jsp:code jsp:web jsx:code jsx:web jxl:image kml:image kmz:image ksh:code ksh:exec
-kt:code kts:code less:web lha:archive lhs:code lisp:code lock:config log:text lua:code
-lz:archive lz4:archive lzma:archive lzo:archive lzop:archive m:code m2ts:video m2v:video
-m3u:audio m4:code m4a:audio m4p:video m4v:video make:config mar:archive mat:data max:image
-md:text mid:audio mk:config mka:audio mkv:video mng:video mobi:book mod:audio mov:video
-mp2:video mp3:audio mp4:video mpa:audio mpe:video mpeg:video mpg:video mpv:video msg:text
-msi:exec mts:video mxf:video ndjson:data nef:image nim:code nsv:video obj:3D odf:text
-odg:text odp:slide ods:data odt:text ogg:audio ogm:video ogv:video ogx:video old:config
-omv:data opus:audio orc:data org:text orig:config otf:font pages:text pak:archive
-parquet:data patch:code pdf:text pea:archive pfb:font pfm:font php:code php:web php3:code
-php3:web php4:code php4:web php5:code php5:web phtml:code phtml:web pl:code pls:audio
-png:image po:code por:data por:stats pp:code ppt:slide pptx:slide prql:code ps:image
-ps1:code ps1xml:code psb:image psc1:code psd:image psd1:code psm1:code psrc:code pssc:code
-py:code qmd:code qt:video quarto:code r:code ra:audio rar:archive raw:image rb:code rd:code
-rda:data rdata:data rds:code rds:data rm:video rmd:code rmvb:video rnw:code roq:video
-rpm:archive rproj:config rs:code rst:text rtf:text rtx:text s:code s3m:audio s7z:archive
-sas:stats sas7bdat:data sav:data sav.gz:data scad:3D scala:code scss:web sd7:data sh:code
-sh:exec shar:archive sid:audio smt:3D sol:code spo:stats sps:stats spss:stats spv:stats
-sql:code srt:video step:3D stl:3D stp:3D svelte:code svg:image svi:video swg:code swift:code
-swp:config sz:archive tar:archive tbz2:archive tex:text tga:image tgz:archive thm:image
-tif:image tiff:image tlz:archive tmp:config toml:config ts:web ts:code tsv:data tsx:web
-ttf:font txt:text txz:archive v:code vb:code vcf:data vcxproj:code vob:video vue:code
-war:archive wasm:web wav:audio webm:video webp:image wf1:data whl:archive wll:code wma:audio
-wmv:video woff:font woff2:font wpd:text wps:text xba:video xcf:image xcodeproj:code xll:code
-xls:data xlsx:data xm:audio xml:code xpi:archive xpt:data xz:archive yaml:config yml:config
-yuv:image yuv:video z:archive zig:code zip:archive zipx:archive zsav:data zsh:code zsh:exec
-zst:archive
-"""
-
-
 @functools.cache
-def _file_types_fallback() -> pd.DataFrame:
-    pairs = [item.split(":", 1) for item in _FILE_TYPES_TABLE.split()]
+def _file_types_table() -> pd.DataFrame:
+    """One row per extension of ``metacheck::file_types``: ``ext`` and ``type``.
+
+    An extension listed under several types (``json`` is ``code`` and
+    ``data``) takes the first, in table order: what metacheck's
+    ``repo_check`` ends up reporting once its de-duplication drops the
+    repeats. metacheck joins the raw table, which repeats such a file once
+    per type (U46).
+    """
+    from pytacheck.fileinfo.types import ext_rows
+
+    table = {ext: rows[0][1] for ext, rows in ext_rows().items()}
     return pd.DataFrame(
         {
-            "ext": pd.Series([p[0] for p in pairs], dtype="string"),
-            "type": pd.Series([p[1] for p in pairs], dtype="string"),
+            "ext": pd.Series(list(table), dtype="string"),
+            "type": pd.Series(list(table.values()), dtype="string"),
         }
     )
 
 
 def _file_types() -> pd.DataFrame:
-    """``metacheck::file_types``: the coarse type (``code``, ``data``...) of an extension.
-
-    Taken from :mod:`pytacheck.fileinfo.types` when that port is present,
-    else from the copy of the table embedded here.
-    """
-    try:
-        from pytacheck.fileinfo import types as ft_module  # type: ignore[attr-defined]
-    except ImportError:
-        ft_module = None
-    if ft_module is not None:
-        obj = getattr(ft_module, "file_types", None)
-        if callable(obj):
-            obj = obj()
-        if isinstance(obj, pd.DataFrame) and {"ext", "type"} <= set(obj.columns):
-            return obj[["ext", "type"]]
-    return _file_types_fallback()
+    """The extension -> type table the file listings are joined with (a copy)."""
+    return _file_types_table().copy()
 
 
 def _add_file_types(files: pd.DataFrame, drop_ext: bool) -> pd.DataFrame:
@@ -542,7 +485,8 @@ def github_languages(repo: Any) -> pd.DataFrame | None:
 
     A table of ``repo``, ``language`` and ``bytes`` (one row of missing
     values when GitHub lists none); ``None`` for a repository that does not
-    exist. Several repositories are row-bound (missing ones contribute nothing).
+    exist or whose languages cannot be retrieved. Several repositories are
+    row-bound (missing ones contribute nothing).
     """
     from pytacheck._r import bind_rows
 
@@ -556,16 +500,19 @@ def github_languages(repo: Any) -> pd.DataFrame | None:
     return _github_languages(clean)
 
 
-def _github_languages(clean_repo: str) -> pd.DataFrame:
+def _github_languages(clean_repo: str) -> pd.DataFrame | None:
     resp = _perform(
         "GET", f"https://api.github.com/repos/{clean_repo}/languages", headers=_github_config()
     )
+    if resp.status_code != 200:
+        # metacheck does not check the status: an error body such as
+        # {"message": "API rate limit exceeded", ...} becomes "languages" named
+        # after its fields (U48)
+        return None
     try:
         languages = _body_json(resp)
     except Exception:
         languages = []
-    # metacheck does not check the status: an error body such as
-    # {"message": "Not Found", ...} becomes "languages" named after its fields
     n = 0 if languages is None else len(languages) if isinstance(languages, list | dict) else 1
     if n:
         # names() of a JSON array or scalar is NULL: data.frame() counts it as
@@ -612,7 +559,8 @@ def github_files(repo: Any, dir: str = "", recursive: bool = False) -> pd.DataFr
     ``size``, ``ext`` and ``type`` (from the extension, else ``file``/``dir``),
     sorted by path. With *recursive*, sub-directories' contents follow.
     ``None`` when the repository or directory cannot be listed. Several
-    repositories are listed from their roots and joined onto the input.
+    repositories are each listed from *dir* (metacheck lists them from their
+    roots: U48) and joined onto the input; ``None`` when none can be listed.
     """
     if _is_vector(repo) and len(_as_list(repo)) > 1:
         from pytacheck._r import bind_rows
@@ -620,11 +568,9 @@ def github_files(repo: Any, dir: str = "", recursive: bool = False) -> pd.DataFr
 
         repos = _as_list(repo)
         unique_repos = [r for r in dict.fromkeys(repos) if r is not None]
-        info = bind_rows([github_files(r, recursive=recursive) for r in unique_repos])
+        info = bind_rows([github_files(r, dir=dir, recursive=recursive) for r in unique_repos])
         if "repo" not in info.columns:
-            raise ValueError(
-                "Join columns in `y` must be present in the data.\nx Problem with `repo`."
-            )
+            return None
         orig = pd.DataFrame({"repo": pd.Series(repos, dtype="string")})
         return left_join(orig, info, by="repo")
 
@@ -665,12 +611,13 @@ def _github_files(repo: Any, clean_repo: str, dir: str, recursive: bool) -> pd.D
         # list still returns the files up to that point
         return None
 
+    # a file path is listed as one object, an empty directory as []: both are
+    # listings (metacheck fails on them: U48)
     if isinstance(contents, dict):
-        # R: lapply() over the fields of a single file, then `$` on a string
-        raise TypeError("$ operator is invalid for atomic vectors")
-    if not contents:
-        # R: sort_by() on the NULL that rbind() of no rows gives
-        raise TypeError("argument 1 is not a vector")
+        contents = [contents]
+    if not isinstance(contents, list):
+        contents = []
+    contents = [f for f in contents if isinstance(f, dict)]
 
     repo_str = as_character(repo) if not isinstance(repo, str) else repo
     names = [f.get("name") for f in contents]

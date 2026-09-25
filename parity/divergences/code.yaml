@@ -1,0 +1,75 @@
+# Cases in the code lane's generated case files (codecheck, mod_code, repo_check,
+# reg_check, reproducibility_check, repro_core, statout) where pytacheck fixes a
+# metacheck bug on purpose. Format (see parity/cases.py): "<area>/<id>": {kind,
+# ref, reason}; kind is one of parity.cases.DIVERGENCE_KINDS, ref the
+# docs/UPSTREAM_ISSUES.md entry.
+
+# --- codecheck (R/code_check.R) ---------------------------------------------
+"codecheck/code_abs_path.character0": &u67_abs
+  kind: r_bug_fixed
+  ref: U67
+  reason: no code gives the usual (abs_path, line) columns; R returns them in the other order
+"codecheck/code_abs_path.my_encodings_newline_only_R": *u67_abs
+"codecheck/code_line_stats.character0": &u67_stats
+  kind: r_bug_fixed
+  ref: U67
+  reason: no code gives zero counts like ""; R errors (non-character argument)
+"codecheck/code_line_stats.my_encodings_newline_only_R": *u67_stats
+"codecheck/code_lang.my_qmd_scalar_yaml_qmd":
+  kind: r_bug_fixed
+  ref: U68
+  reason: a scalar YAML front matter falls back to the chunk engine; R's `$` error escapes code_lang()
+"codecheck/code_parse_r.empty_text":
+  kind: r_bug_fixed
+  ref: U87
+  reason: empty code parses (no error); R fails with "subscript out of bounds"
+"codecheck_review/code_extract_r.review.yaml_label_number.doc0": &u153
+  kind: r_bug_fixed
+  ref: U153
+  reason: a numeric YAML chunk label is a name, not a position; knitr fails with "subscript out of bounds"
+"codecheck_review/code_extract_r.review.yaml_label_number.doc1": *u153
+
+# --- code_check module (inst/modules/code_check.R) --------------------------
+"mod_code/code_check.qmd":
+  kind: r_bug_fixed
+  ref: U86
+  reason: the language of a .qmd/.ipynb is read from its local copy (Python-engine .qmd, R notebook); R reads the file name relative to the working directory
+"mod_code/code_check.empty_files": &u87_empty
+  kind: r_bug_fixed
+  ref: U87
+  reason: empty code files are analysed (zero counts); R records "subscript out of bounds" / "non-character argument" as the file's error
+"mod_code/report_tables.empty_files": *u87_empty
+"mod_code_review/code_check.edge": *u87_empty
+"mod_code_review/errors.edge": *u87_empty
+"mod_code_review/report_tables.edge": *u87_empty
+"mod_code_review/code_check.nochunk_only": *u87_empty
+"mod_code_review/report_tables.nochunk_only": *u87_empty
+"mod_code/code_check.no_file_url":
+  kind: r_bug_fixed
+  ref: U87
+  reason: a listing without file_url shows plain file names; R's link(NULL, ...) fails the module
+"mod_code/code_check.download_file_cap":
+  kind: r_bug_fixed
+  ref: U88
+  reason: a refused repository is reported once with its full file count; R repeats it with the code-file count
+"mod_code_review/code_check.dupname": &u89
+  kind: r_bug_fixed
+  ref: U89
+  reason: every R file is scanned for groundhog/checkpoint pins; R keeps one text per file name (and per NA paper id)
+"mod_code_review/code_check.na_pid_pin": *u89
+
+# --- reg_check module (inst/modules/reg_check.R) ----------------------------
+"mod_reg/reg_check.odd_judgements":
+  kind: r_bug_fixed
+  ref: U120
+  reason: a missing judgement is left out of the counts and reported; R prints "flagged NA potential deviationNA" and na_replace turns the counts into 0
+"mod_reg/reg_check.paperlist.shared_prereg": &u120_shared
+  kind: r_bug_fixed
+  ref: U120
+  reason: a preregistration linked by two papers gets a section per paper, named after it; R mixes both papers' rows in one unlabelled section
+"mod_reg/reg_check.tables.shared_prereg": *u120_shared
+"mod_reg_review/reg_check.review.na_id.first.tables": &u120_na
+  kind: r_bug_fixed
+  ref: U120
+  reason: each report section holds its own rows; R's regcheck_table[prereg_id == rid, ] adds a row of NAs per NA prereg_id
+"mod_reg_review/reg_check.review.na_id.all.tables": *u120_na

@@ -4,6 +4,7 @@
 "area": "stats_review"
 "cases":
 - "id": "statcheck.review.chisq_inf_df.small_stat"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U5", "reason": "a result with infinite degrees of freedom cannot be checked and is dropped (R fails the whole call on if (NA))"}
   "r": "statcheck::statcheck"
   "py": "pytacheck.stats.statcheck.statcheck"
   "args":
@@ -16,6 +17,7 @@
     "texts": "χ2(10000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000) = 3.5, p = .05"
     "messages": !!bool "false"
 - "id": "statcheck.review.Q_inf_df"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U5", "reason": "a result with infinite degrees of freedom cannot be checked and is dropped (R fails the whole call on if (NA))"}
   "r": "statcheck::statcheck"
   "py": "pytacheck.stats.statcheck.statcheck"
   "args":
@@ -190,6 +192,7 @@
     "messages": !!bool "false"
     "pEqualAlphaSig": !!int "2"
 - "id": "statcheck.review.pEqualAlphaSig_2.ok"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U149", "reason": "invalid statcheck() arguments (an NA flag or alpha, pEqualAlphaSig = 2) raise ValueError up front; R fails only on some texts or returns rows with NA decision errors"}
   "r": "statcheck::statcheck"
   "py": "pytacheck.stats.statcheck.statcheck"
   "args":
@@ -204,6 +207,7 @@
     "messages": !!bool "false"
     "pEqualAlphaSig": *id001
 - "id": "statcheck.review.pEqualAlphaSig_NA.ok"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U149", "reason": "invalid statcheck() arguments (an NA flag or alpha, pEqualAlphaSig = 2) raise ValueError up front; R fails only on some texts or returns rows with NA decision errors"}
   "r": "statcheck::statcheck"
   "py": "pytacheck.stats.statcheck.statcheck"
   "args":
@@ -239,6 +243,7 @@
     "messages": !!bool "false"
     "pZeroError": *id001
 - "id": "statcheck.review.pZeroError_NA.positive_p"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U149", "reason": "invalid statcheck() arguments (an NA flag or alpha, pEqualAlphaSig = 2) raise ValueError up front; R fails only on some texts or returns rows with NA decision errors"}
   "r": "statcheck::statcheck"
   "py": "pytacheck.stats.statcheck.statcheck"
   "args":
@@ -295,6 +300,7 @@
     "messages": !!bool "false"
     "OneTailedTxt": *id001
 - "id": "statcheck.review.alpha_NA.ns"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U149", "reason": "invalid statcheck() arguments (an NA flag or alpha, pEqualAlphaSig = 2) raise ValueError up front; R fails only on some texts or returns rows with NA decision errors"}
   "r": "statcheck::statcheck"
   "py": "pytacheck.stats.statcheck.statcheck"
   "args":
@@ -302,6 +308,7 @@
     "messages": !!bool "false"
     "alpha": *id001
 - "id": "statcheck.review.alpha_NA.exact"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U149", "reason": "invalid statcheck() arguments (an NA flag or alpha, pEqualAlphaSig = 2) raise ValueError up front; R fails only on some texts or returns rows with NA decision errors"}
   "r": "statcheck::statcheck"
   "py": "pytacheck.stats.statcheck.statcheck"
   "args":
@@ -309,6 +316,7 @@
     "messages": !!bool "false"
     "alpha": *id001
 - "id": "statcheck.review.alpha_NA.error"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U149", "reason": "invalid statcheck() arguments (an NA flag or alpha, pEqualAlphaSig = 2) raise ValueError up front; R fails only on some texts or returns rows with NA decision errors"}
   "r": "statcheck::statcheck"
   "py": "pytacheck.stats.statcheck.statcheck"
   "args":
@@ -442,6 +450,7 @@
         - !!int "3"
     "AllP": !!bool "true"
 - "id": "stats.review.partial.ambiguous"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U4", "reason": "invalid arguments to stats() raise (TypeError/ValueError); R swallows every statcheck() error and returns an empty table"}
   "r": "stats"
   "py": "pytacheck.stats.stats"
   "args":
@@ -490,6 +499,7 @@
         - !!int "3"
     "s": "t"
 - "id": "stats.review.partial.mess"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U4", "reason": "invalid arguments to stats() raise (TypeError/ValueError); R swallows every statcheck() error and returns an empty table"}
   "r": "stats"
   "py": "pytacheck.stats.stats"
   "args":
@@ -502,6 +512,7 @@
         - !!int "3"
     "mess": !!bool "true"
 - "id": "stats.review.partial.twice"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U4", "reason": "invalid arguments to stats() raise (TypeError/ValueError); R swallows every statcheck() error and returns an empty table"}
   "r": "stats"
   "py": "pytacheck.stats.stats"
   "args":
@@ -515,6 +526,7 @@
     "alpha": !!float "0.1"
     "alp": !!float "0.2"
 - "id": "stats.review.partial.two_prefixes"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U4", "reason": "invalid arguments to stats() raise (TypeError/ValueError); R swallows every statcheck() error and returns an empty table"}
   "r": "stats"
   "py": "pytacheck.stats.stats"
   "args":
@@ -553,6 +565,7 @@
         - !!int "3"
     "texts": "t(2) = 5, p = .9"
 - "id": "stats.review.flag_2"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U4", "reason": "invalid arguments to stats() raise (TypeError/ValueError); R swallows every statcheck() error and returns an empty table"}
   "r": "stats"
   "py": "pytacheck.stats.stats"
   "args":
@@ -570,6 +583,7 @@
         - !!int "4"
     "pEqualAlphaSig": !!int "2"
 - "id": "stats.review.AllPValues_NA"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U4", "reason": "invalid arguments to stats() raise (TypeError/ValueError); R swallows every statcheck() error and returns an empty table"}
   "r": "stats"
   "py": "pytacheck.stats.stats"
   "args":
@@ -606,6 +620,7 @@
         - !!int "6"
     "AllPValues": !!int "2"
 - "id": "stats.review.OneTailedTests_NA"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U4", "reason": "invalid arguments to stats() raise (TypeError/ValueError); R swallows every statcheck() error and returns an empty table"}
   "r": "stats"
   "py": "pytacheck.stats.stats"
   "args":
@@ -621,6 +636,7 @@
         - !!int "6"
     "OneTailedTests": *id001
 - "id": "stats.review.pEqualAlphaSig_NA"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U4", "reason": "invalid arguments to stats() raise (TypeError/ValueError); R swallows every statcheck() error and returns an empty table"}
   "r": "stats"
   "py": "pytacheck.stats.stats"
   "args":
@@ -636,6 +652,7 @@
         - !!int "6"
     "pEqualAlphaSig": *id001
 - "id": "stats.review.pZeroError_NA"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U4", "reason": "invalid arguments to stats() raise (TypeError/ValueError); R swallows every statcheck() error and returns an empty table"}
   "r": "stats"
   "py": "pytacheck.stats.stats"
   "args":
@@ -651,6 +668,7 @@
         - !!int "6"
     "pZeroError": *id001
 - "id": "stats.review.alpha_NA"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U4", "reason": "invalid arguments to stats() raise (TypeError/ValueError); R swallows every statcheck() error and returns an empty table"}
   "r": "stats"
   "py": "pytacheck.stats.stats"
   "args":
@@ -680,12 +698,14 @@
         - !!int "5"
         - !!int "6"
 - "id": "statcheck.review.icase.long_s_ns"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U149", "reason": "ns written with a long s is recognised by the engine that found it (R: TRE disagrees with PCRE and fails with 'replacement has length zero')"}
   "r": "statcheck::statcheck"
   "py": "pytacheck.stats.statcheck.statcheck"
   "args":
     "texts": "t(28) = 2.20, p = .04 and ßnſ."
     "messages": !!bool "false"
 - "id": "statcheck.review.icase.long_s_ns.AllPValues"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U149", "reason": "ns written with a long s is recognised by the engine that found it (R: TRE disagrees with PCRE and fails with 'replacement has length zero')"}
   "r": "statcheck::statcheck"
   "py": "pytacheck.stats.statcheck.statcheck"
   "args":
@@ -712,6 +732,7 @@
     "texts": "Test İz = 1.96, p = .05."
     "messages": !!bool "false"
 - "id": "statcheck.review.icase.kelvin_z"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U5", "reason": "a result statcheck cannot parse (no test name, a Kelvin-sign test value) is skipped instead of failing the whole text"}
   "r": "statcheck::statcheck"
   "py": "pytacheck.stats.statcheck.statcheck"
   "args":
@@ -731,12 +752,14 @@
     "texts": "F(İ, 20) = 5.1, p = .04 and F(i, 20) = 5.1, p = .04"
     "messages": !!bool "false"
 - "id": "statcheck.review.icase.test_value_kelvin"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U5", "reason": "a result statcheck cannot parse (no test name, a Kelvin-sign test value) is skipped instead of failing the whole text"}
   "r": "statcheck::statcheck"
   "py": "pytacheck.stats.statcheck.statcheck"
   "args":
     "texts": "t(28) =K2.20, p = .04 and t(28) =ſ2.20, p = .04 and t(28) =İ2.20, p = .04"
     "messages": !!bool "false"
 - "id": "stats.review.icase"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U4", "reason": "stats() keeps the t-test of a sentence R drops because of an unrelated case-folding error in its p-values (ßnſ)"}
   "r": "stats"
   "py": "pytacheck.stats.stats"
   "args":

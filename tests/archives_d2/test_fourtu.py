@@ -23,8 +23,12 @@ def test_ids() -> None:
     uuid = "ce413614-1c82-4e81-90c0-323aa7d2fabd"
     assert _researchdata4tu_id(f"10.4121/{uuid}") == uuid
     assert _researchdata4tu_id(f"10.4121/uuid:{uuid.upper()}") == uuid.upper()
-    # R quirk: the numeric pattern is tried before the uuid one
-    assert _researchdata4tu_id("10.4121/7f866e02-eb39-4a2a-8f7d-2d053ee6cde9") == "7"
+    # U41: a uuid that starts with digits is the uuid (metacheck tries the
+    # numeric pattern first and gives "7")
+    assert (
+        _researchdata4tu_id("10.4121/7f866e02-eb39-4a2a-8f7d-2d053ee6cde9")
+        == "7f866e02-eb39-4a2a-8f7d-2d053ee6cde9"
+    )
     assert _researchdata4tu_id("https://data.4tu.nl/articles/dataset/x/16766929/1") == "16766929"
     assert _researchdata4tu_id(["", None, "x"]) == [None, None, None]
     assert _researchdata4tu_id([]) == []
@@ -42,11 +46,13 @@ def test_links() -> None:
     assert links["researchdata4tu_id"].tolist() == ["16766929", "16766929"]
 
 
-def test_info_keeps_only_the_url_column(mock_api: object) -> None:
+def test_info_keeps_the_table(mock_api: object) -> None:
+    # U33: the table's columns are kept, as by the other *_info() functions
+    # (metacheck keeps only the id column)
     table = pd.DataFrame({"a": [1, 2], "b": ["16766929", "x"]})
     info = researchdata4tu_info(table, id_col="b")
-    assert list(info.columns[:2]) == ["researchdata4tu_url", "researchdata4tu_id"]
-    assert "a" not in info.columns
+    assert list(info.columns[:4]) == ["a", "b", "researchdata4tu_url", "researchdata4tu_id"]
+    assert info["a"].tolist() == [1, 2]
     assert info["title"].tolist()[0] == "Wind tunnel measurements"
     assert pd.isna(info["researchdata4tu_id"].iloc[1])
 
@@ -57,8 +63,10 @@ def test_info_vector(mock_api: object) -> None:
         info = researchdata4tu_info([*urls, "99999999"])
     assert info["title"].tolist()[:2] == ["Wind tunnel measurements", "A uuid-only dataset"]
     assert info["error"].tolist()[2] == "unfound"
-    with pytest.raises(ValueError, match="row names contain missing values"):
-        researchdata4tu_info(["16766929", None])
+    # U33: a vector is de-duplicated without NA (metacheck fails on the NA)
+    info = researchdata4tu_info(["16766929", None, "16766929"])
+    assert info["researchdata4tu_url"].tolist() == ["16766929"]
+    assert info["title"].tolist() == ["Wind tunnel measurements"]
 
 
 def test_info_offline(monkeypatch: pytest.MonkeyPatch) -> None:

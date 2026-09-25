@@ -100,14 +100,15 @@ def test_test_value_with_hundreds_of_decimals() -> None:
 
 
 def test_chi2_with_infinite_df() -> None:
-    with pytest.raises(RError, match="missing value"):
-        with warnings.catch_warnings():
-            warnings.simplefilter("ignore")
-            sc(f"χ2({BIG}) = 1.5, p = .05")
+    # U5: R fails the whole call on if (NA); the unverifiable result is dropped
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        assert sc(f"χ2({BIG}) = 1.5, p = .05") is None
+        both = sc(f"χ2({BIG}) = 1.5, p = .05 and t(28) = 2.20, p = .03")
+    assert both["raw"].tolist() == ["t(28) = 2.20, p = .03"]
     res = sc(f"χ2({BIG}) = 3.5, p = .05")
     assert res["computed_p"].tolist() == [1.0]
     assert res["error"].tolist() == [True]
-    # stats() drops the sentence whose check warns
     d = pd.DataFrame({"text": [f"A, χ2({BIG}) = 1.5, p = .05.", "B, t(28) = 2.20, p = .03."]})
     assert stats(d)["raw"].tolist() == ["t(28) = 2.20, p = .03"]
 
@@ -116,11 +117,14 @@ def test_chi2_with_infinite_df() -> None:
 
 
 def test_flags_that_are_neither_true_nor_false() -> None:
-    # decision_error_test() falls through both branches and returns NULL
+    # decision_error_test() itself still falls through both branches (NULL)
     assert decision_error_test(0.13, 0.036, "=", "=", 0.05, 2) is None
-    with pytest.raises(RError, match="differing number of rows: 1, 0"):
-        sc("t(28) = 2.20, p = .13", pEqualAlphaSig=2)
-    assert sc("t(28) = 2.20, p = .04", pEqualAlphaSig=2)["error"].tolist() == [False]
+    # U149: statcheck() rejects such a pEqualAlphaSig up front (R failed only
+    # for inconsistent results: "arguments imply differing number of rows")
+    for texts in ("t(28) = 2.20, p = .13", "t(28) = 2.20, p = .04"):
+        with pytest.raises(ValueError, match="pEqualAlphaSig"):
+            sc(texts, pEqualAlphaSig=2)
+    assert sc("t(28) = 2.20, p = .13", pEqualAlphaSig=1)["error"].tolist() == [True]
     # OneTailedTests = 2 is not TRUE: two-tailed p-values
     two = sc("t(28) = 2.20, p = .03", OneTailedTests=2)["computed_p"].iloc[0]
     assert two == pytest.approx(0.03622548, rel=1e-6)
@@ -129,20 +133,16 @@ def test_flags_that_are_neither_true_nor_false() -> None:
     assert sc("t(28) = 5.20, p = 0.000", pZeroError=2)["error"].tolist() == [False]
 
 
-def test_na_flags_are_errors_where_r_tests_them() -> None:
-    with pytest.raises(RError):
-        sc("t(28) = 2.20, p = .03", OneTailedTests=None)
-    with pytest.raises(RError):
-        sc("t(28) = 2.20, p = .03", AllPValues=None)
-    with pytest.raises(RError):
+def test_na_flags_are_rejected_up_front() -> None:
+    # U149: R fails on if (NA) only where a flag is tested (some texts only)
+    for flag in ("OneTailedTests", "AllPValues", "pEqualAlphaSig", "pZeroError", "OneTailedTxt"):
+        for texts in ("t(28) = 2.20, p = .03", "t(28) = 2.20, p = .04", "no stats"):
+            with pytest.raises(ValueError, match=flag):
+                sc(texts, **{flag: None})
+    with pytest.raises(ValueError, match="messages"):
         statcheck("t(28) = 2.20, p = .03", messages=None)
-    with pytest.raises(RError):
-        sc("t(28) = 2.20, p = .13", pEqualAlphaSig=None)
-    # only reached for inconsistent results / non-positive p-values
-    assert sc("t(28) = 2.20, p = .04", pEqualAlphaSig=None)["error"].tolist() == [False]
-    assert sc("t(28) = 2.20, p = .04", pZeroError=None)["error"].tolist() == [False]
-    with pytest.raises(RError):
-        sc("t(28) = 2.20, p = 0.000", pZeroError=None)
+    with pytest.raises(ValueError, match="alpha"):
+        sc("t(28) = 2.20, p = .03", alpha=math.nan)
     with pytest.raises(RError):
         process_stats("t", 2.2, math.nan, 28.0, 0.13, "=", "=", 2.0, 2.0, False, True,
                       0.05, True, 2, False, False)  # fmt: skip
@@ -171,15 +171,18 @@ def test_named_series_keeps_duplicate_names() -> None:
 
 def test_case_insensitive_patterns_fold_like_r() -> None:
     # PCRE2 matches "ßnſ" as "ns" (s ~ U+017F) but TRE's grepl() does not, so R
-    # treats it as a p-value without a comparison sign and fails
-    with pytest.raises(RError, match="replacement has length zero"):
-        sc("t(28) = 2.20, p = .04 and ßnſ.")
+    # treats it as a p-value without a comparison sign and fails (U149);
+    # pytacheck tests for "ns" with the engine that found it
+    res = sc("t(28) = 2.20, p = .04 and ßnſ.")
+    assert res["raw"].tolist() == ["t(28) = 2.20, p = .04"]
+    assert res["apa_factor"].tolist() == [0.5]
+    assert sc("p = .01 and ßnſ", AllPValues=True)["p_comp"].tolist() == ["=", "ns"]
     # U+0130 is not a case variant of i for PCRE2 or TRE: "İns" is an "ns"
     assert sc("t(28) = 2.20, p = .04 İnsan.")["apa_factor"].tolist() == [0.5]
     assert sc("Test İz = 1.96, p = .05.")["test_type"].tolist() == ["Z"]
-    # the Kelvin sign is a case variant of k for PCRE2: not a [^a-z] character
-    with pytest.raises(RError, match="argument is of length zero"):
-        sc("Test \u212az = 1.96, p = .05.")
+    # the Kelvin sign is a case variant of k for PCRE2: not a [^a-z] character,
+    # so the result has no test name (R: "argument is of length zero"; U5)
+    assert sc("Test \u212az = 1.96, p = .05.") is None
     # TRE (extract_1tail) does not fold s with U+017F
     res = sc("t(28) = 1.80, p = .04 (one-ſided)", OneTailedTxt=True)
     assert res["one_tailed_in_txt"].tolist() == [False]
@@ -204,18 +207,12 @@ TEXTS = pd.DataFrame(
     [
         ((), {"alp": 0.6}, 2),  # partial name -> alpha
         ((), {"AllP": True}, 3),
-        ((), {"One": True}, 0),  # ambiguous prefix: every call errors
         ((), {"OneTailedTe": True}, 2),
         ((), {"s": "t"}, 1),
         (("F",), {}, 1),  # positional -> stat
         (("F", True, 0.6), {}, 1),
-        ((), {"mess": True}, 0),  # matches `messages`, which stats() already sets
-        ((), {"alpha": 0.1, "alp": 0.2}, 0),
-        ((), {"pZ": False, "pZero": False}, 0),
-        ((), {"typo": 1}, 0),
         ((), {"texts": "t(2) = 5, p = .9"}, 0),  # the sentence becomes `stat`
         ((), {"texts": "p = .01", "AllPValues": True}, 3),
-        ((), {"AllPValues": None}, 0),
         ((), {"AllPValues": 2}, 3),
     ],
 )
@@ -223,6 +220,24 @@ def test_stats_argument_matching(args, kwargs, nrow) -> None:
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")
         assert len(stats(TEXTS, *args, **kwargs)) == nrow
+
+
+@pytest.mark.parametrize(
+    ("kwargs", "error"),
+    [
+        ({"One": True}, TypeError),  # ambiguous prefix
+        ({"mess": True}, TypeError),  # matches `messages`, which stats() already sets
+        ({"alpha": 0.1, "alp": 0.2}, TypeError),
+        ({"pZ": False, "pZero": False}, TypeError),
+        ({"typo": 1}, TypeError),
+        ({"AllPValues": None}, ValueError),
+        ({"pEqualAlphaSig": 2}, ValueError),
+    ],
+)
+def test_stats_rejects_invalid_arguments(kwargs, error) -> None:
+    # U4: R's every statcheck() call errors and stats() silently returns an empty table
+    with pytest.raises(error):
+        stats(TEXTS, **kwargs)
 
 
 def test_rmath_module_exports() -> None:

@@ -49,13 +49,14 @@ def _quiet_grobid(path: Path):  # type: ignore[no-untyped-def]
 # ---------------------------------------------------------------------------
 
 
-def test_second_table_without_rows_recycles_first_contents() -> None:
-    # R: `contents[[2]] <- NULL` leaves list(<table 1>), which the tibble recycles
+def test_second_table_without_rows_has_no_contents() -> None:
+    # metacheck: `contents[[2]] <- NULL` leaves list(<table 1>), which the tibble
+    # recycles, so both tables get the first one's contents (U17)
     p = _quiet_grobid(IO_FIXTURES / "tables_empty_second.tei.xml")
     assert len(p.table) == 2
     first, second = p.table["contents"]
-    assert first == second
     assert first[0] == ["Condition", "M"]
+    assert second is None
 
 
 def test_first_table_without_rows_keeps_second_contents() -> None:
@@ -65,14 +66,21 @@ def test_first_table_without_rows_keeps_second_contents() -> None:
     assert second[0] == ["Group", "SD"]
 
 
-def test_one_of_three_tables_without_rows_fails() -> None:
-    with pytest.raises(ValueError, match="must be compatible with existing data"):
-        _grobid_to_bibr(IO_FIXTURES / "tables_three_one_empty.tei.xml")
+def test_one_of_three_tables_without_rows() -> None:
+    # metacheck fails the paper ("must be compatible with existing data"; U17)
+    p = _quiet_grobid(IO_FIXTURES / "tables_three_one_empty.tei.xml")
+    contents = p.table["contents"].tolist()
+    assert contents[0][0] == ["Condition", "M"]
+    assert contents[1] is None
+    assert contents[2] == [["x"]]
 
 
-def test_references_without_any_text_fail() -> None:
-    with pytest.raises(ValueError, match=r"Can't combine `\.\.1\$header` <list>"):
-        _grobid_to_bibr(IO_FIXTURES / "refs_no_text.tei.xml")
+def test_references_without_any_text() -> None:
+    # metacheck: "Can't combine `..1$header` <list> and `..2$header` <character>." (U17)
+    p = _quiet_grobid(IO_FIXTURES / "refs_no_text.tei.xml")
+    assert p.section["header"].tolist() == ["References"]
+    assert p.text["text"].tolist() == ["A reference. 1999."]
+    assert p.bib["text_id"].tolist() == [1]
 
 
 # ---------------------------------------------------------------------------
@@ -215,7 +223,7 @@ def test_grobid_to_bibr_directory_keeps_successes() -> None:
     assert isinstance(papers, PaperList)
     ids = papers.names
     assert "xlink_ns.tei" in ids
-    assert "refs_no_text.tei" not in ids
+    assert "refs_no_text.tei" in ids  # metacheck cannot convert it (U17)
 
 
 # ---------------------------------------------------------------------------
@@ -252,18 +260,18 @@ def test_release_assets_without_rds_is_none() -> None:
         assert _papers_release_assets("scienceverse/nords") is None
 
 
-def test_papers_available_fails_without_assets() -> None:
-    with api(NORDS), pytest.raises(ValueError, match="differing number of rows: 0, 1"):
-        papers_available("scienceverse/nords")
-    with (
-        api("apis_papers_empty"),
-        pytest.raises(ValueError, match="differing number of rows: 0, 1"),
-    ):
-        papers_available("scienceverse/norealeases")
+def test_papers_available_without_assets_is_empty() -> None:
+    # metacheck: "arguments imply differing number of rows: 0, 1" (U18)
+    for mock, repo in ((NORDS, "scienceverse/nords"), ("apis_papers_empty", "scienceverse/norealeases")):
+        with api(mock):
+            out = papers_available(repo)
+        assert len(out) == 0
+        assert list(out.columns) == ["name", "tag", "size_mb", "cached"]
 
 
 def test_papers_load_without_assets() -> None:
-    with api(NORDS), pytest.raises(ValueError, match="argument is of length zero"):
+    # metacheck: "argument is of length zero" (U18)
+    with api(NORDS), pytest.raises(ValueError, match="'misc' not found in releases"):
         papers_load("misc", "scienceverse/nords")
     with api("apis_papers_empty"), pytest.raises(ValueError, match="not found in releases"):
         papers_load("demo", "scienceverse/norealeases")

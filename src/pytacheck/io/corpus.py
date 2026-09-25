@@ -126,10 +126,10 @@ def papers_available(repo: str = DEFAULT_REPO) -> pd.DataFrame:
     """
     assets = _papers_release_assets(repo)
     cache_dir = _papers_cache_dir()
-    if assets is None or len(assets) == 0:
-        # R: `cached = file.exists(file.path(cache_dir, paste0(character(0),
-        # ".rds")))` has length 1, so data.frame() fails without any asset
-        raise ValueError("arguments imply differing number of rows: 0, 1")
+    # a repository without corpora gives an empty table (metacheck fails with
+    # "arguments imply differing number of rows: 0, 1"; U18)
+    if assets is None:
+        assets = _release_assets_frame([])
     names = [_file_path_sans_ext(n) for n in assets["name"]]
     return pd.DataFrame(
         {
@@ -166,8 +166,9 @@ def papers_load(
         return _read_rds(cache_path)
 
     assets = _papers_release_assets(repo)
-    if assets is None:  # R: nrow(NULL[...]) == 0 is logical(0)
-        raise ValueError("argument is of length zero")
+    if assets is None:
+        # no .rds asset: "not found" (metacheck: "argument is of length zero"; U18)
+        assets = _release_assets_frame([])
     names = [_file_path_sans_ext(n) for n in assets["name"]]
     hits = [i for i, n in enumerate(names) if n == name]
     if not hits:

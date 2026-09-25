@@ -377,13 +377,21 @@ def extract_tests(paper: Any) -> pd.DataFrame:
     and ``components`` (a list of ``name``/``comp``/``value``/``df``/
     ``sentence_pos`` dicts).
 
-    Like R, this is designed for a single paper. For a paper list (an
-    upstream bug, reproduced) sentences are grouped by ``text_id`` across
-    papers, the sentence metadata is ``NA`` and every test row is repeated
-    once per paper id.
+    A paper list gives each paper's tests in turn (``test_no`` restarts per
+    paper). metacheck grouped a list's sentences by ``text_id`` across papers,
+    left the sentence metadata ``NA`` and repeated every test once per paper
+    id (U10).
     """
+    from pytacheck.papers.model import is_paper_list
     from pytacheck.papers.tables import paper_id as get_paper_id
     from pytacheck.text.extract import extract_eq
+
+    if is_paper_list(paper) and not isinstance(paper, str | pd.DataFrame):
+        from pytacheck._r.frames import bind_rows
+
+        parts = [extract_tests(p) for p in paper]
+        parts = [t for t in parts if len(t) > 0]
+        return bind_rows(parts).reset_index(drop=True) if parts else _empty_tests()
 
     is_paper = isinstance(paper, Paper)
     eq = paper.get("eq") if is_paper else None

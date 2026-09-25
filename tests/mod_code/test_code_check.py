@@ -136,8 +136,9 @@ def test_multiple_papers_without_code() -> None:
     assert mo.summary_table["code_n"].tolist() == [0, 0]
 
 
-def test_null_paper_is_an_error() -> None:
-    # R: paper_id(NULL) -- "paper must be a paper or paperlist object."
+def test_null_paper_without_code_files() -> None:
+    # paper = None is documented ("local files only"): one paper of unknown id
+    # (R: paper_id(NULL) stops, "paper must be a paper or paperlist object.", U78)
     prev = ModuleOutput(
         module="repo_check",
         title="Repository Check",
@@ -145,8 +146,35 @@ def test_null_paper_is_an_error() -> None:
         table=dir_listing(ROOT / "tests" / "mod_code" / "fixtures" / "nocode"),
         paper=None,
     )
-    with pytest.raises(Exception, match="paper must be a paper or paperlist object"):
-        module_run(prev, "code_check")
+    out = module_run(prev, "code_check")
+    assert out.traffic_light == "na"
+
+
+def test_null_paper_checks_local_files(tmp_path: Path) -> None:
+    # U78: code_check(paper = None, local_path = ...) runs repo_check on the
+    # folder alone and checks its files (R stops in paper_id(NULL))
+    (tmp_path / "a.R").write_text(
+        'library(dplyr)\nlibrary(groundhog)\ngroundhog.library("dplyr", "2024-01-01")\n'
+        'x <- read.csv("C:/data/a.csv")\n',
+        encoding="utf-8",
+    )
+    (tmp_path / "b.R").write_text("# helper\ny <- 2\n", encoding="utf-8")
+    out = module_run(None, "code_check", local_path=tmp_path)
+    assert out.table["file_name"].tolist() == ["a.R", "b.R"]
+    assert out.table["paper_id"].isna().all()
+    assert out.table["code_abs_path"].tolist() == [1, 0]
+    st = out.summary_table
+    assert st["paper_id"].isna().tolist() == [True]
+    assert st["code_n"].tolist() == [2]
+    # the files of the unknown paper count as that paper's (R's split() drops NA ids)
+    assert st["code_packages_n"].tolist() == [2]
+    assert st["code_version_pinned"].tolist() == [True]
+    empty = tmp_path / "empty"
+    empty.mkdir()
+    (empty / "notes.txt").write_text("hi\n", encoding="utf-8")
+    out = module_run(None, "code_check", local_path=empty)
+    assert out.traffic_light == "na"
+    assert out.summary_table["code_n"].tolist() == [0]
 
 
 # ── local directory listings (R: local_path) ─────────────────────────────────
@@ -714,10 +742,14 @@ def test_local_path_forces_a_fresh_repo_check(stub_repo_check: list[dict[str, An
     assert mo.table["file_name"].tolist() == ["helper.R"]
 
 
-def test_missing_file_url_column_is_an_error() -> None:
-    # R: link(NULL, file_name) cannot fill the report table
-    with pytest.raises(Exception, match="replacement has 0 rows, data has 1"):
-        cc_run("no_file_url")
+def test_missing_file_url_column_shows_plain_names() -> None:
+    # a listing without file_url (local files) lists plain file names in the
+    # report table (R: link(NULL, file_name) fails the module, U87)
+    mo = cc_run("no_file_url")
+    assert mo.traffic_light in ("green", "yellow")
+    table = report_tables(mo)[0]
+    assert table["File Name"].tolist() == mo.table["file_name"].tolist()
+    assert "<a" not in table["File Name"].iloc[0]
 
 
 def test_missing_paper_id_column_is_an_error() -> None:
@@ -938,18 +970,16 @@ def test_unexpanded_zip_code_members_are_checked(
 # ── review: NA paper ids and NA locations ────────────────────────────────────
 
 
-@pytest.mark.parametrize(
-    ("scenario", "pinned"), [("review_na_pid_pin", False), ("review_na_pid_pin_rev", True)]
-)
-def test_na_paper_id_keeps_only_the_last_r_text(scenario: str, pinned: bool) -> None:
-    # R keys the R code text by paper_id, but r_text_by_paper[[NA]] never finds
-    # the entry it assigned: each NA-paper file replaces the ones before it, so
-    # only the last one's groundhog/checkpoint call counts
+@pytest.mark.parametrize("scenario", ["review_na_pid_pin", "review_na_pid_pin_rev"])
+def test_na_paper_id_scans_every_r_text(scenario: str) -> None:
+    # every R file of an NA paper id is scanned for groundhog/checkpoint pins,
+    # whichever comes last (R: r_text_by_paper[[NA]] never finds the entry it
+    # assigned, so only the last file's call counted, U89)
     mo = cc_run(scenario)
     vp = mo.extras["version_pin"]
-    assert vp["pinned"] is pinned
-    assert vp["mechanisms"] == (["groundhog"] if pinned else [])
-    assert mo.traffic_light == ("green" if pinned else "yellow")
+    assert vp["pinned"] is True
+    assert vp["mechanisms"] == ["groundhog"]
+    assert mo.traffic_light == "green"
     # the NA-paper files have no per-paper pin; p1's own clean.R has none either
     assert mo.summary_table["paper_id"].tolist() == ["p1"]
     assert mo.summary_table["code_version_pinned"].tolist() == [False]
@@ -977,3 +1007,214 @@ def test_case_insensitive_match_uses_r_tolower() -> None:
     assert _r_tolower("DATÉ.CSV ΣΑΣ Ǆ") == "daté.csv σασ ǆ"
     mo = cc_run("review_i18n")
     assert row(mo, "analysis.R")["loaded_files_missing_names"] == "Ümlaut.csv"
+
+
+# ── metacheck bugs fixed in pytacheck (docs/UPSTREAM_ISSUES.md) ──────────────
+
+
+def test_notebook_and_quarto_language_is_read_from_the_local_copy(tmp_path: Path) -> None:
+    # U86: the language of a .qmd/.ipynb comes from its local copy (the
+    # file_location the checks read), not from the file name as a path
+    # relative to the working directory
+    qmd = write(
+        tmp_path / "copy" / "py_engine.qmd",
+        ["---", "jupyter: python3", "---", "", "```{python}", "import pandas as pd", "```"],
+    )
+    nb = FIXTURES / "notebooks" / "notebook_r.ipynb"
+    table = _remote_listing(
+        [
+            {
+                "paper_id": "p1",
+                "file_name": name,
+                "file_path": name,
+                "repo_url": "https://osf.io/x",
+                "file_url": None,
+                "file_location": str(loc),
+            }
+            for name, loc in (("py_engine.qmd", qmd), ("notebook_r.ipynb", nb))
+        ]
+    )
+    mo = module_run(fake_repo_check(table), "code_check")
+    assert row(mo, "py_engine.qmd")["language"] == "Python"
+    assert row(mo, "py_engine.qmd")["packages"] == "pandas"
+    assert row(mo, "notebook_r.ipynb")["language"] == "R"
+    assert row(mo, "notebook_r.ipynb")["packages"] == "dplyr, ggplot2"
+    # without a local copy the defaults apply, and nothing is read from the
+    # working directory
+    table["file_location"] = None
+    mo = module_run(fake_repo_check(table), "code_check", download=False)
+    assert mo.table["language"].tolist() == ["R", "Python"]
+
+
+def test_empty_code_files_are_analysed(tmp_path: Path) -> None:
+    # U87: an empty file has nothing to flag; R records "subscript out of
+    # bounds" (R) / "non-character argument" (other languages) as its error
+    for name in ("empty.R", "empty.py", "empty.do"):
+        (tmp_path / name).write_text("", encoding="utf-8")
+    mo = run_dir(tmp_path)
+    assert "error" not in mo.table.columns
+    assert mo.table["checked"].tolist() == [True] * 3
+    assert mo.table["code_abs_path"].tolist() == [0, 0, 0]
+    assert mo.table["code_lines"].tolist() == [0, 0, 0]
+    assert mo.table["percentage_comment"].isna().all()
+    assert row(mo, "empty.R")["parse_error"] == False  # noqa: E712 - pandas boolean
+    # nothing could be checked for comments, so the traffic light is "na"
+    assert mo.traffic_light == "na"
+
+
+def test_refused_repository_is_reported_once(monkeypatch: pytest.MonkeyPatch) -> None:
+    # U88: the catch-up download counts the repository's whole listing, as the
+    # pre-pass does, so a refusal is one message (R counts code files only
+    # and reports the repository twice, "holds 6 files" and "holds 4 files")
+    import pytacheck.archives.download as dl
+
+    counts: list[dict[Any, int]] = []
+
+    def fake(files: pd.DataFrame, repo_file_counts: Any = None, **kwargs: Any) -> pd.DataFrame:
+        counts.append(dict(repo_file_counts))
+        n = repo_file_counts["https://osf.io/x"]
+        out = files.copy()
+        out["file_location"] = None
+        out.attrs["gated"] = pd.DataFrame(
+            {"repo_url": ["https://osf.io/x"], "message": [f"Repository holds {n} files."]}
+        )
+        return out
+
+    monkeypatch.setattr(dl, "download_repo_files", fake)
+    names = ["a.R", "b.R", "c.py", "data.csv", "notes.txt"]
+    table = _remote_listing(
+        [
+            {
+                "paper_id": "p1",
+                "file_name": n,
+                "repo_url": "https://osf.io/x",
+                "file_url": f"https://osf.io/x/{n}",
+                "file_location": None,
+            }
+            for n in names
+        ]
+    )
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        mo = module_run(fake_repo_check(table), "code_check")
+    assert counts and all(c == {"https://osf.io/x": 5} for c in counts)
+    assert mo.summary_text.count("Repository holds") == 1
+
+
+def test_per_paper_pin_check_uses_the_module_download_options(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    # U88: the per-paper version-pin check downloads with the module's caps
+    # and cache (R falls back to the defaults, 100 MB / 500 MB / no cache)
+    import pytacheck.codecheck.core as core
+
+    calls: list[dict[str, Any]] = []
+
+    def fake(rows: pd.DataFrame, all_files: pd.DataFrame, **kwargs: Any) -> None:
+        calls.append(kwargs)
+
+    monkeypatch.setattr(core, "_download", fake)
+    table = _remote_listing(
+        [
+            {
+                "paper_id": "p1",
+                "file_name": n,
+                "repo_url": "https://osf.io/x",
+                "file_url": f"https://osf.io/x/{n}",
+                "file_location": None,
+            }
+            for n in ("analysis.R", "renv.lock")
+        ]
+    )
+    module_run(
+        fake_repo_check(table),
+        "code_check",
+        download=False,
+        max_file_size=7,
+        max_download_size=9,
+        cache=True,
+    )
+    pin_calls = [c for c in calls if "max_file_size" in c]
+    assert len(pin_calls) == 2  # the whole-run check and the per-paper check
+    for c in pin_calls:
+        assert (c["max_file_size"], c["max_download_size"], c["cache"]) == (7, 9, True)
+
+
+def test_same_named_r_files_are_all_scanned_for_pins() -> None:
+    # U89: two R files of one name (different folders) are both scanned for
+    # groundhog/checkpoint calls (R keeps the last text per file name)
+    mo = cc_run("review_dupname")
+    assert mo.extras["version_pin"]["mechanisms"] == ["groundhog"]
+    assert mo.summary_table["code_version_pinned"].tolist() == [True]
+
+
+def test_pin_files_of_one_name_keep_their_own_location(tmp_path: Path) -> None:
+    # U89: the located pinning files are copied back by row, not by name. R
+    # matches by name, so p2's README location lands in p1's README row and
+    # p1 is credited with p2's sessionInfo()
+    from pytacheck.modules.code_check import _splice_locations
+
+    readme1 = write(tmp_path / "p1" / "README.md", ["# Study 1", "No session info here."])
+    readme2 = write(
+        tmp_path / "p2" / "README.md", ["R version 4.3.1 (2023-06-16)", "Platform: x86_64"]
+    )
+    table = _remote_listing(
+        [
+            {
+                "paper_id": pid,
+                "file_name": n,
+                "repo_url": f"https://osf.io/{pid}",
+                "file_url": None,
+                "file_location": loc,
+            }
+            for pid, n, loc in (
+                ("p1", "analysis.R", str(write(tmp_path / "p1" / "analysis.R", ["x <- 1"]))),
+                ("p1", "README.md", str(readme1)),
+                ("p2", "analysis.R", str(write(tmp_path / "p2" / "analysis.R", ["y <- 2"]))),
+                ("p2", "README.md", str(readme2)),
+            )
+        ]
+    )
+    papers = pc.PaperList([pc.test_paper(["a"]), pc.test_paper(["b"])])
+    papers[0].paper_id, papers[1].paper_id = "p1", "p2"
+    mo = module_run(fake_repo_check(table, paper=papers, pids=["p1", "p2"]), "code_check")
+    pinned = dict(
+        zip(mo.summary_table["paper_id"], mo.summary_table["code_version_pinned"], strict=True)
+    )
+    assert pinned == {"p1": False, "p2": True}
+    spliced = _splice_locations(table, {1: "one", 3: "three", 0: ""})
+    assert spliced["file_location"].tolist() == [
+        str(tmp_path / "p1" / "analysis.R"),
+        "one",
+        str(tmp_path / "p2" / "analysis.R"),
+        "three",
+    ]
+
+
+def test_zip_expansion_honours_skip_on_api_limit(monkeypatch: pytest.MonkeyPatch) -> None:
+    # U66: under skip_on_api_limit the zip peek and member fetch skip a
+    # rate-limited host instead of waiting (R never passes the argument on)
+    import pytacheck.archives.zip_peek as zp
+    from pytacheck import http
+    from pytacheck.codecheck.core import _code_expand_zip
+
+    seen: list[bool] = []
+
+    def peek(url: str) -> None:
+        seen.append(http.skipping_api_limits())
+
+    monkeypatch.setattr(zp, "zip_peek", peek)
+    table = _remote_listing(
+        [
+            {
+                "paper_id": "p1",
+                "file_name": "code.zip",
+                "repo_url": "https://osf.io/x",
+                "file_url": "https://osf.io/x/code.zip",
+                "file_location": None,
+            }
+        ]
+    )
+    _code_expand_zip(table, skip_on_api_limit=True)
+    _code_expand_zip(table)
+    assert seen == [True, False]

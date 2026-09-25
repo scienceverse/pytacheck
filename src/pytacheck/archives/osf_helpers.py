@@ -93,18 +93,19 @@ def _records(data: Any) -> list[dict[str, Any]]:
 
 
 def _dollar_key(keys: Sequence[str], name: str) -> str | None:
-    """The element R's ``x$name`` selects: an exact name, else a unique prefix match."""
-    if name in keys:
-        return name
-    hits = [k for k in keys if k.startswith(name)]
-    return hits[0] if len(hits) == 1 else None
+    """The field ``x$name`` reads: the exact name only.
+
+    R's ``$`` also takes a unique prefix, so metacheck reads
+    ``relationships$root`` from ``root_folder`` when there is no ``root`` (U52).
+    """
+    return name if name in keys else None
 
 
 class _Cols:
     """Column extraction with ``%||%`` evaluated as R sees the data.
 
-    ``$`` partially matches names in R (``x$root`` finds ``root_folder`` when
-    there is no ``root``), for named lists and data frames alike. A single
+    Names are matched exactly (R's ``$`` would also take a unique prefix,
+    see :func:`_dollar_key`). A single
     resource is a named list: ``x$a$b`` is ``NULL`` when any step is missing
     or JSON ``null``. A listing is a jsonlite data frame: a column exists
     when *any* record has the key (even with a ``null`` value, which becomes
@@ -228,8 +229,8 @@ _CONTENT_TYPE = (
 def _resp_body_json(resp: httpx.Response) -> Any:
     """``httr2::resp_body_json(resp)``: the body parsed as jsonlite parses it; raises on failure.
 
-    The media type must be ``application/json`` or carry a ``+json`` suffix
-    (``application/vnd.api+json``); anything else raises. The body is read as
+    The media type (in any case) must be ``application/json`` or carry a
+    ``+json`` suffix (``application/vnd.api+json``); anything else raises. The body is read as
     ``resp_body_string(resp, "UTF-8")`` does, whatever charset the response
     names: up to the first NUL byte, and bytes that are not valid UTF-8 give
     ``NA``, which jsonlite refuses. The text is then parsed by
@@ -239,7 +240,9 @@ def _resp_body_json(resp: httpx.Response) -> Any:
 
     header = resp.headers.get("content-type")
     media = None if header is None else header.split(";", 1)[0].strip()
-    m = regexec(_CONTENT_TYPE, media, perl=True) if media is not None else []
+    # media types are case-insensitive (RFC 9110): httr2's check is not, so a
+    # server answering "Application/JSON" makes it raise (U152)
+    m = regexec(_CONTENT_TYPE, media.lower(), perl=True) if media is not None else []
     base = f"{m[1]}/{m[2]}" if m else ""
     suffix = (m[3] or "") if m else ""
     if base != "application/json" and suffix != "json":
@@ -454,7 +457,7 @@ def _osf_pat_validate(osf_pat: str | None = None) -> bool:
 
     if status({}) != 200:
         warnings.warn(
-            "The OSF_PAT could not be validated because the test file is not avilable; "
+            "The OSF_PAT could not be validated because the test file is not available; "
             "the OSF may be down.",
             stacklevel=2,
         )
@@ -509,7 +512,8 @@ def _osf_info_ids(osf_id: Any, pb: Any, cache: bool) -> pd.DataFrame:
         return _frame({"osf_id": ids, "osf_type": "invalid"}, len(ids))
 
     osf_api = get_option("metacheck.osf.api")
-    is_guid = [v is not None and len(v) == 5 for v in valid]
+    # a versioned GUID (abcde_v1) is a GUID too (metacheck sends it to /files/: U52)
+    is_guid = [v is not None and bool(grepl(r"^[a-z0-9]{5}(_v\d+)?$", v)) for v in valid]
     is_vo = [v is not None and bool(grepl(r"/?\?\s*view_only=", v)) for v in valid]
     guid_ids = [v for v, g, o in zip(valid, is_guid, is_vo, strict=True) if g or o]
     wb_ids = [
@@ -649,15 +653,19 @@ def _osf_parse_response(
         run = records[i:j]
         build = builders.get(otype) if isinstance(otype, str) else None
         if build is None:
-            for _ in run:
+            for rec in run:
+                # the record's own id (metacheck uses the osf_id argument, NA for
+                # a listing: U52)
+                rid = rec.get("id")
+                rid = ident if not isinstance(rid, str) else rid
                 warnings.warn(
-                    f"{'NA' if ident is None else ident} has unknown type: {otype}", stacklevel=2
+                    f"{'NA' if rid is None else rid} has unknown type: {otype}", stacklevel=2
                 )
-                frames.append(_frame({"osf_id": [ident], "osf_type": "unknown"}, 1))
+                frames.append(_frame({"osf_id": [rid], "osf_type": "unknown"}, 1))
         else:
             data: Any = run[0] if single else run
             if build is _osf_file_data:
-                frames.append(_osf_file_data(data, _context=records, _per_row=True))
+                frames.append(_osf_file_data(data, _context=records))
             else:
                 frames.append(build(data, _context=records))
         i = j
@@ -698,14 +706,13 @@ def _osf_node_data(data: Any, _context: list[dict[str, Any]] | None = None) -> p
 def _osf_file_data(
     data: Any,
     _context: list[dict[str, Any]] | None = None,
-    _per_row: bool = False,
 ) -> pd.DataFrame:
     """Port of R/archive-osf-helpers.R::.osf_file_data(): file/folder records -> a table.
 
     Guesses ``filetype`` from each file's extension, names unnamed folders
     after their provider, and gives provider root folders their root-folder
-    ID. (Called on several records at once, R names *every* unnamed row after
-    its provider once any folder is present; that is reproduced.)
+    ID. (Called on several records at once, metacheck names *every* unnamed
+    row after its provider once any folder is present: U52.)
     """
     recs = _records(data)
     if not recs:
@@ -750,8 +757,7 @@ def _osf_file_data(
     if folders:
         name = list(cols["name"])
         provider = cols["provider"]
-        rows = folders if _per_row else range(n)
-        for i in rows:
+        for i in folders:
             if name[i] is None:
                 name[i] = provider[i]
         cols["name"] = name

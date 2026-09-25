@@ -115,10 +115,12 @@ def test_zip_crc_ok_above_integer_max() -> None:
     assert _zip_crc_ok(big, _crc32(big)) is True
 
 
-def test_zip_crc_ok_uses_all_equal_tolerance() -> None:
-    # R compares with isTRUE(all.equal(got, crc)): relative tolerance 1.5e-8
-    assert _zip_crc_ok(b"123456789", 3421780262 + 40) is True
+def test_zip_crc_ok_is_exact() -> None:
+    # U70: metacheck's all.equal() tolerance accepts a CRC 40 off
+    assert _zip_crc_ok(b"123456789", 3421780262) is True
+    assert _zip_crc_ok(b"123456789", 3421780262 + 40) is False
     assert _zip_crc_ok(b"123456789", 3421780262 + 10000) is False
+    assert _zip_crc_ok(b"123456789", None) is None
 
 
 def test_zip_inflate_member_stored_and_unsupported() -> None:
@@ -137,8 +139,9 @@ def test_zip_inflate_member_larger_than_32768(tmp_path: Path) -> None:
     assert entry["size"] > 32768
     comp = _local_member(raw, entry)
 
-    truncated = _zip_inflate_member(comp, entry["method"])
-    assert truncated is not None and len(truncated) == 32768  # documents the zip-package bug
+    # U71: without a size the whole member is inflated (metacheck: 32768 bytes)
+    whole = _zip_inflate_member(comp, entry["method"])
+    assert whole is not None and len(whole) == entry["size"]
 
     fixed = _zip_inflate_member(comp, entry["method"], size=entry["size"])
     assert fixed is not None and len(fixed) == entry["size"]
@@ -286,8 +289,8 @@ def test_expand_tar_and_compressed(tmp_path: Path) -> None:
         assert out["file_name"].tolist() == ["results.csv" if "results" in name else "plain.csv"]
         extracted = Path(out["file_location"].iloc[0])
         assert extracted.read_bytes().startswith(b"id,x\n")
-        # R reports the size before its output connection is flushed (0 here)
-        assert out["file_size"].iloc[0] == 0
+        # the real size (U69: metacheck reads it before the last buffer is flushed: 0)
+        assert out["file_size"].iloc[0] == 1440
         # a second call finds the file and reports its real size
         assert _expand_compressed(f, _zip_row(f))["file_size"].iloc[0] == 1440
     f = tmp_path / "x.zip"

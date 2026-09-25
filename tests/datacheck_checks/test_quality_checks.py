@@ -56,6 +56,18 @@ def test_outliers_bounds_and_message() -> None:
     assert math.isnan(none["lower"]) and math.isnan(none["upper"])
 
 
+def test_outliers_infinite_quartiles() -> None:
+    # U55: both quartiles Inf (IQR = Inf - Inf = NaN) means no spread, like
+    # IQR 0 (R fails with "missing value where TRUE/FALSE needed")
+    inf = float("inf")
+    r = data_check_outliers([1.0, inf, inf, inf])
+    assert not r["problem"]
+    assert r["values"] is None
+    # a lone Inf beyond finite quartiles is still an outlier
+    r = data_check_outliers([1.0, 2.0, 3.0, 4.0, 5.0, inf])
+    assert r["values"] == [inf]
+
+
 # -- data_check_scale_values -------------------------------------------------------------
 
 
@@ -124,9 +136,27 @@ def test_scale_values_guards() -> None:
     assert not data_check_scale_values([])["problem"]
     assert not data_check_scale_values([None, None])["problem"]
     assert not data_check_scale_values(pd.Series([True, False, True]))["problem"]
-    # a non-integer ground-truth range cannot be printed with %d (R errors too)
-    with pytest.raises(ValueError, match="invalid format '%d'"):
-        data_check_scale_values([*rep([1.5, 2.5, 3.5], 20), 99], valid_range=[1.5, 3.5])
+
+
+
+def test_scale_values_fractional_range_is_an_interval() -> None:
+    # U55: a ground-truth range with fractional bounds is a continuous interval
+    # (R builds 1.5:3.5 = {1.5, 2.5, 3.5} and then fails on sprintf("%d"))
+    r = data_check_scale_values([*rep([1.5, 2.5, 3.5], 20), 99], valid_range=[1.5, 3.5])
+    assert r["values"] == [99]
+    assert r["message"] == (
+        "1 value outside the 1.5-3.5 scale: 99 (looks like a missing-data code -> recode to NA)"
+    )
+    # 2.0 and 3.0 lie inside the interval: not flagged
+    r = data_check_scale_values([*rep([1.5, 2.0, 3.0, 3.5], 20), 4.0], valid_range=[1.5, 3.5])
+    assert r["values"] == [4.0]
+    assert (r["lower"], r["upper"]) == (1.5, 3.5)
+    # fractional value lists print their bounds as decimals too
+    r = data_check_scale_values([*rep([0.5, 1.5, 2.5], 20), 99], valid_values=[0.5, 1.5, 2.5])
+    assert r["message"].startswith("1 value outside the 0.5-2.5 scale: 99")
+    # whole-number ranges keep their rating-scale levels (3.5 is off-scale)
+    r = data_check_scale_values([*rep(range(1, 6), 20), 3.5], valid_range=[1, 5])
+    assert r["values"] == [3.5]
 
 
 # -- constant / empty / design / spss ---------------------------------------------------
@@ -234,5 +264,8 @@ def test_colname_collisions() -> None:
     assert "identically named column" in d["id"]
     assert data_check_colname_collisions(["a", "b", "a_1"]) == {}
     assert data_check_colname_collisions(["k", "k\u02b7"]) == {}
-    # blank names: R's out[[""]] entries cannot be looked up, so none are kept
-    assert data_check_colname_collisions(["", "", "x"]) == {}
+    # U56: blank names collide like any other name (R's out[[""]] entries were
+    # unreachable by name, so a blank column's collision was never reported)
+    b = data_check_colname_collisions(["", "", "x"])
+    assert list(b) == [""]
+    assert "1 other identically named column" in b[""]

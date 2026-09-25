@@ -484,20 +484,28 @@ in Organizational Behavior, 41, Article 100150. https://doi.org/10.1016/j .riob.
     assert list(bib["year"]) == [2021]
 
 
-# errors reproduced from R ---------------------------------------------------------------
+# TEI metacheck cannot convert (U17) ---------------------------------------------------
 
 
-@pytest.mark.parametrize(
-    ("name", "error"),
-    [
-        ("table_norows.tei.xml", "compatible with existing data"),
-        ("url_empty.tei.xml", "zero-length pattern"),
-        ("bib_page_from.tei.xml", "subscript out of bounds"),
-    ],
-)
-def test_errors_like_r(io_fixtures: Path, name: str, error: str) -> None:
-    with pytest.raises((ValueError, IndexError), match=error):
-        _grobid_to_bibr(io_fixtures / name)
+def test_table_without_rows_has_no_contents(io_fixtures: Path) -> None:
+    # metacheck: "Assigned data `*vtmp*` must be compatible with existing data"
+    p = _grobid_to_bibr(io_fixtures / "table_norows.tei.xml")
+    assert p.table["contents"].tolist() == [None]
+    assert p.table["html"].tolist() == ["<table/>"]
+
+
+def test_url_without_link_text_is_kept(io_fixtures: Path) -> None:
+    # metacheck: gsub("", ...) fails with "zero-length pattern"
+    p = _grobid_to_bibr(io_fixtures / "url_empty.tei.xml")
+    assert p.url["href"].tolist() == ["https://osf.io/xyz"]
+    assert p.text["text"].tolist() == ["Materials are at  online."]
+
+
+def test_page_range_with_one_end(io_fixtures: Path) -> None:
+    # metacheck: pages[["to"]] fails with "subscript out of bounds"
+    p = _grobid_to_bibr(io_fixtures / "bib_page_from.tei.xml")
+    assert p.bib["first_page"].tolist() == ["5"]
+    assert "last_page" not in p.bib.columns or p.bib["last_page"].isna().all()
 
 
 def test_read_skips_unreadable_xml(fixtures_dir: Path) -> None:

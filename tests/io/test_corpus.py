@@ -164,8 +164,10 @@ def test_read_rds_paperlist_equals_json(fixtures_dir: Path) -> None:
         [fx / "0956797613520608.json", fx / "0956797614522816.json", pc.demofile("xml")],
         schema_version=None,  # the RDS holds metacheck's read() of the TEI
     )
-    # the RDS was written from a checkout with a different demo path
-    ignore = {"to_err_is_human.info.file_name"}
+    # pytacheck's conversion of the TEI fixes metacheck bugs (U16, U17, U28), so
+    # only the JSON papers are compared in full
+    assert direct.names == papers.names
+    ignore = {"to_err_is_human"}
     problems = compare(canonical(direct), canonical(papers), Options(ignore=ignore))
     assert problems == []
 

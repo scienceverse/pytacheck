@@ -290,9 +290,17 @@ def test_each_prereg_is_compared_with_its_own_paper() -> None:
 
 def test_odd_judgements() -> None:
     mo = run_reg(papers=[{"url": ["https://osf.io/5xysn"], "id": "p_odd"}], fake="odd")
-    # an NA judgement makes every count NA, which na_replace turns into 0
-    assert mo.summary_table["regcheck_deviations"].tolist() == [0]
-    assert "flagged NA potential deviationNA (NA dimensionNA" in mo.summary_text
+    # an NA judgement is left out of the counts and reported as such (R: every
+    # count is NA -- "flagged NA potential deviationNA" -- and na_replace
+    # turns it into 0, U120)
+    assert mo.summary_table["regcheck_deviations"].tolist() == [1]
+    assert mo.summary_table["regcheck_consistent"].tolist() == [0]
+    assert mo.summary_table["regcheck_unclear"].tolist() == [1]
+    assert mo.summary_text == (
+        "RegCheck compared the paper with 1 preregistration on 4 dimensions, and flagged "
+        "1 potential deviation (1 dimension not specified in the preregistration). "
+        "RegCheck gave no judgement for 1 dimension."
+    )
     judgement = next(b for b in mo.report if isinstance(b, ReportTable)).data
     assert judgement["judgement"].tolist()[:1] == ["deviation"]
     assert judgement["judgement"].tolist()[2:] == ["Partially", "unclear"]
@@ -400,16 +408,38 @@ _TWO: dict[str, Any] = {
 }
 
 
-def test_na_prereg_id_selects_na_rows_like_base_r() -> None:
-    # R: regcheck_table[regcheck_table$prereg_id == rid, ] on a data.frame gives
-    # a row of NAs wherever prereg_id is NA
+def test_na_prereg_id_has_its_own_section() -> None:
+    # each section holds its own rows: an NA prereg_id is a section of its own
+    # (R's regcheck_table[prereg_id == rid, ] adds a row of NAs to every
+    # section for each NA prereg_id, U120)
     tables = run_reg(**_TWO, pre=["prereg_check"], na_id=[0], tables=True)
     na_section, other_section = tables[0], tables[2]
-    assert len(na_section) == 6
-    assert na_section.isna().all().all()
-    assert len(other_section) == 6
-    assert other_section["dimension"].isna().tolist() == [True] * 3 + [False] * 3
-    assert other_section["dimension"].tolist()[3:] == MOCK_TABLE["dimension"]
+    assert na_section["dimension"].tolist() == MOCK_TABLE["dimension"]
+    assert other_section["dimension"].tolist() == MOCK_TABLE["dimension"]
+    assert not other_section.isna().any().any()
+
+
+def test_shared_prereg_sections_name_the_paper() -> None:
+    # U120: two papers linking one preregistration get a section each, named
+    # after the paper (R: one section mixing both papers' rows, unlabelled)
+    mo = run_reg(
+        papers=[
+            {"url": ["https://osf.io/5xysn"], "id": "pa", "text": ["Paper A."]},
+            {
+                "url": ["https://osf.io/5xysn", "https://osf.io/48ncu"],
+                "id": "pb",
+                "text": ["Paper B."],
+            },
+        ]
+    )
+    headings = [b for b in mo.report if isinstance(b, str) and b.startswith("Comparison")]
+    assert headings == [
+        "Comparison of paper pa with preregistration 5xysn:",
+        "Comparison of paper pb with preregistration 5xysn:",
+        "Comparison with preregistration 48ncu:",
+    ]
+    tables = [b.data for b in mo.report if isinstance(b, ReportTable)]
+    assert [len(t) for t in tables] == [len(MOCK_TABLE["dimension"])] * 6
 
 
 def test_all_na_prereg_ids_are_duplicates() -> None:

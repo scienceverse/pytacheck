@@ -70,9 +70,13 @@ def test_host_regex_and_vectorisation() -> None:
         None,
         None,
     ]
-    # hosts are tried in order, host name before prefix: a knb page citing an
-    # Arctic Data Center DOI resolves to the Arctic Data Center (as in R)
-    assert _dataone_host("https://knb.ecoinformatics.org/view/doi:10.18739/X1") == "arcticdata.io"
+    # U40: a host name in the URL wins over a DOI prefix, so a KNB page citing
+    # an Arctic Data Center DOI is KNB's (metacheck: arcticdata.io)
+    assert (
+        _dataone_host("https://knb.ecoinformatics.org/view/doi:10.18739/X1")
+        == "knb.ecoinformatics.org"
+    )
+    assert _dataone_host("https://doi.org/10.18739/X1") == "arcticdata.io"
     # the host name is matched case-sensitively
     assert _dataone_host("ARCTICDATA.IO/view/x") is None
 
@@ -85,8 +89,19 @@ def test_links_add_host_and_pid_columns() -> None:
     links = dataone_links(paper)
     assert list(links.columns[-3:]) == ["dataone_url", "dataone_host", "dataone_pid"]
     # the hyperlink (trailing slash stripped) and the bare mention are one row;
-    # a sentence-final "." is part of a bare DOI's suffix, as in R
-    assert links["dataone_pid"].tolist() == ["doi:10.18739/A2GT5FG86", "doi:10.5063/PG1Q4B."]
+    # a sentence-final "." is not part of the DOI (U40: metacheck keeps it)
+    assert links["dataone_pid"].tolist() == ["doi:10.18739/A2GT5FG86", "doi:10.5063/PG1Q4B"]
+
+
+def test_pid_forms() -> None:
+    # U40: the marked form allows a slash in the suffix, as the bare form does
+    assert (
+        _dataone_pid("https://search.dataone.org/view/doi:10.6085/AA/marine_ltm.20.1")
+        == "doi:10.6085/AA/marine_ltm.20.1"
+    )
+    assert _dataone_pid("https://doi.org/10.6085/AA/marine_ltm.20.1") == "doi:10.6085/AA/marine_ltm.20.1"
+    assert _dataone_pid("doi:10.5063/PG1Q4B.") == "doi:10.5063/PG1Q4B"
+    assert _dataone_pid("10.5063/PG1Q4B") == "doi:10.5063/PG1Q4B"
     none = dataone_links(pc.test_paper(["nothing"], ["https://osf.io/x"]))
     assert len(none) == 0
     assert "dataone_pid" in none.columns
@@ -99,8 +114,15 @@ def test_private_info_parses_eml(mock_api: object) -> None:
         "license", "files",
     ]  # fmt: skip
     assert info["title"].iloc[0] == "Soil temperature, Utqiagvik, Alaska, 2015-2020"
-    # a missing name part reads "NA", as R's paste() of NA does
-    assert info["authors"].iloc[0] == ["Jane Doe", "NA Smith", "NA NA", "Blank Org", None]
+    # U40: a missing name part is left out (metacheck: "NA Smith"), and an
+    # organisation-only creator is named by its organisation (metacheck: "NA NA")
+    assert info["authors"].iloc[0] == [
+        "Jane Doe",
+        "Smith",
+        "National Snow and Ice Data Center",
+        "Blank Org",
+        None,
+    ]
     assert info["license"].iloc[0].startswith("This work is dedicated")
     files = info["files"].iloc[0]
     assert files[0] == {"key": "soil_temp.csv", "size": 20480.0, "pid": "urn%3Auuid%3Aabc-123"}
@@ -130,9 +152,19 @@ def test_info_joins_results_back(mock_api: object) -> None:
     assert pd.isna(info["dataone_host"].iloc[2])
 
 
-def test_info_row_names_error_like_r(mock_api: object) -> None:
-    with pytest.raises(ValueError, match="row names contain missing values"):
-        dataone_info(pd.DataFrame({"u": ["10.18739/A2GT5FG86", None]}))
+def test_info_table_with_a_missing_url(mock_api: object) -> None:
+    # U33: metacheck fails ("row names contain missing values")
+    out = dataone_info(pd.DataFrame({"u": ["10.18739/A2GT5FG86", None]}))
+    assert out["dataone_pid"].tolist()[0] == "doi:10.18739/A2GT5FG86"
+    assert pd.isna(out["dataone_pid"].iloc[1])
+
+
+def test_info_fetches_a_dataset_once(mock_api: object) -> None:
+    # U35: two URLs for one dataset are one request and one row each
+    urls = ["10.18739/A2GT5FG86", "https://doi.org/10.18739/A2GT5FG86."]
+    out = dataone_info(urls)
+    assert out["dataone_url"].tolist() == urls
+    assert out["dataone_pid"].tolist() == ["doi:10.18739/A2GT5FG86"] * 2
 
 
 def test_info_uses_the_listing_cache(mock_api: object) -> None:

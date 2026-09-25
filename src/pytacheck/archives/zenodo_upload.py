@@ -83,7 +83,9 @@ def _pb_say(pb: Any, text: str) -> None:
 
     width = max(int(get_option("width", 80)) - 12, 40)
     if len(text) > width:
-        text = text[: width - 1] + "..."
+        # the "..." fits inside the width (metacheck cuts at width - 1 and
+        # then appends it, 2 characters over: U50)
+        text = text[: width - 3] + "..."
     _tick(pb, text.ljust(width))
 
 
@@ -1028,7 +1030,11 @@ def zenodo_upload(
                 stem = path_sanitize(_r_basename(folder), keep_sep=False)
                 root = _r_basename(folder)
                 parent = _r_dirname(folder)
-                rels = [f"{root}/{r}" for r in _list_rel(folder)]
+                # the files kept above (metacheck re-lists the folder, so the zip
+                # holds the OSF metadata and oversized files it reports as
+                # skipped: U47)
+                prefix = f"{folder}/"
+                rels = [f"{root}/{fp[len(prefix) :]}" for fp in file_lists[i]]
                 abs_paths = [f"{parent}/{r}" for r in rels]
                 cats = _zenodo_classify(abs_paths) if split_list else [None] * len(rels)
                 is_mat = [c is not None and c in split_list for c in cats]

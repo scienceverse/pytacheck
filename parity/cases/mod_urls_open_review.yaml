@@ -1,6 +1,7 @@
 "area": "mod_urls_open_review"
 "cases":
 - "id": "open_practices.review.read_reversed"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U106", "reason": "Papers without a flagged sentence count as 'neither' (2; metacheck 0)."}
   "module": "open_practices"
   "args":
     "paper":
@@ -10,6 +11,7 @@
       - "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797613520608.json"
       - "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614522816.json"
 - "id": "open_practices.review.list_order"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U106", "reason": "Papers without a flagged sentence count as 'neither' (2; metacheck 1)."}
   "module": "open_practices"
   "args":
     "paper":
@@ -38,6 +40,7 @@
         "r": "local({p <- test_paper(c(NA, \"Data are available at https://osf.io/x.\", NA, \"Code: https://github.com/a/b is available.\")); p$paper_id <- \"napaper\"; p})"
         "py": "(lambda p: (p.__setitem__(\"paper_id\", \"napaper\"), p)[1])(pc.test_paper([None, \"Data are available at https://osf.io/x.\", None, \"Code: https://github.com/a/b is available.\"]))"
 - "id": "open_practices.review.unicode_space"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U107", "reason": "One on-request paragraph quotes both on-request sentences (metacheck: a paragraph per sentence)."}
   "module": "open_practices"
   "args":
     "paper":
@@ -57,6 +60,7 @@
     - "table.paper_id"
     - "summary_table.paper_id"
 - "id": "open_practices.review.word_boundaries"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U107", "reason": "Only a capital R is a code word: 'osf.io/r' no longer makes 'The R2 values ...' and 'Our reanalysis ...' code statements."}
   "module": "open_practices"
   "args":
     "paper":
@@ -90,6 +94,7 @@
     - "table.paper_id"
     - "summary_table.paper_id"
 - "id": "open_practices.review.on_request_variants"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U107", "reason": "'On request', 'on Request', 'upon Reasonable request' are flagged on_request (case-insensitive), quoted in one paragraph."}
   "module": "open_practices"
   "args":
     "paper":
@@ -158,6 +163,7 @@
     - "table.paper_id"
     - "summary_table.paper_id"
 - "id": "open_practices.review.materials_only"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U83", "reason": "The code report says 'recognized' (metacheck: 'reconized')."}
   "module": "open_practices"
   "args":
     "paper":
@@ -170,6 +176,7 @@
     - "table.paper_id"
     - "summary_table.paper_id"
 - "id": "open_practices.review.duplicate_sentences"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U107", "reason": "The on-request sentence is quoted once in one paragraph (metacheck: one paragraph per matching row)."}
   "module": "open_practices"
   "args":
     "paper":
@@ -243,6 +250,7 @@
         "r": "local({p <- test_paper(c(\"Data are available at https://osf.io/abc.\", \"Code is available at https://github.com/x/y.\", \"The study was preregistered at https://osf.io/p.\")); p$paper_id <- \"secpaper\"; p$text$section_id <- c(0.0, 0.0, 1.0); p$section <- dplyr::tibble(section_id = c(0.0, 0.0, 1.0, 1.0), header = c(\"Test A\", \"Test B\", \"Refs\", \"Method\"), parent_section_id = NA_integer_, section_type = c(\"unknown\", \"intro\", \"references\", \"method\"), classification_score = 0); p})"
         "py": "(lambda p: (p.__setitem__(\"paper_id\", \"secpaper\"), p.__setitem__(\"text\", p.text.assign(section_id=pd.Series([0.0, 0.0, 1.0], dtype=\"float64\"))), p.__setitem__(\"section\", pd.DataFrame({\"section_id\": pd.Series([0.0, 0.0, 1.0, 1.0], dtype=\"float64\"), \"header\": pd.Series([\"Test A\", \"Test B\", \"Refs\", \"Method\"], dtype=\"string\"), \"parent_section_id\": pd.Series([None] * 4, dtype=\"Int64\"), \"section_type\": pd.Series([\"unknown\", \"intro\", \"references\", \"method\"], dtype=\"string\"), \"classification_score\": pd.Series([0.0] * 4, dtype=\"float64\")})), p)[-1])(pc.test_paper([\"Data are available at https://osf.io/abc.\", \"Code is available at https://github.com/x/y.\", \"The study was preregistered at https://osf.io/p.\"]))"
 - "id": "open_practices.review.formats"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U106", "reason": "Papers without a flagged sentence count as 'neither' (3; metacheck 0), and 'r(76) = .10 ... (see Fig https://...)' sentences are no longer code statements (U107)."}
   "module": "open_practices"
   "args":
     "paper":
@@ -292,16 +300,19 @@
     "paper":
       "$paper": "upstream/metacheck/tests/testthat/fixtures/formats/published.cermine.xml"
 - "id": "open_practices.review.single_0956797615569889"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U83", "reason": "The code report says 'recognized' (metacheck: 'reconized')."}
   "module": "open_practices"
   "args":
     "paper":
       "$paper": "upstream/metacheck/tests/testthat/fixtures/problems/0956797615569889.xml"
 - "id": "open_practices.review.single_0956797617737129"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U107", "reason": "Three 'r(76) = ... (see Fig https://...)' sentences are no longer code statements: only a capital R is a code word."}
   "module": "open_practices"
   "args":
     "paper":
       "$paper": "upstream/metacheck/tests/testthat/fixtures/problems/0956797617737129.xml"
 - "id": "open_practices.review.chain_twice"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U106", "reason": "Papers without a flagged sentence count as 'neither' (2; metacheck 1)."}
   "module": "open_practices"
   "args":
     "paper":
@@ -328,6 +339,7 @@
               "py": "pc.PaperList([(lambda p: (p.__setitem__(\"paper_id\", \"p1\"), p)[1])(pc.test_paper([\"The data and code are available at https://osf.io/abcde.\"])), (lambda p: (p.__setitem__(\"paper_id\", \"p2\"), p)[1])(pc.test_paper([\"Nothing to see here.\"])), (lambda p: (p.__setitem__(\"paper_id\", \"p3\"), p)[1])(pc.test_paper([\"Materials are available on request.\", \"See www.example.com.\"]))])"
           "module": "open_practices"
 - "id": "open_practices.review.chain_after_all_urls"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U106", "reason": "Papers without a flagged sentence count as 'neither' (2; metacheck 1)."}
   "module": "open_practices"
   "args":
     "paper":
@@ -367,6 +379,7 @@
               "py": "pc.PaperList([(lambda p: (p.__setitem__(\"paper_id\", \"n1\"), p)[1])(pc.test_paper([\"Nothing to see here.\"])), (lambda p: (p.__setitem__(\"paper_id\", \"n2\"), p)[1])(pc.test_paper([\"Or here, see www.example.com.\"]))])"
           "module": "open_practices"
 - "id": "open_practices.review.chain_after_marginal"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U106", "reason": "Papers without a flagged sentence count as 'neither' (2; metacheck 1)."}
   "module": "open_practices"
   "args":
     "paper":
@@ -419,6 +432,7 @@
         "r": "paperlist(local({p <- test_paper(c(\"Data and code are available at https://osf.io/a.\")); p$paper_id <- \"a\"; p}), local({p <- test_paper(c(\"Data are available at https://osf.io/b.\")); p$paper_id <- \"b\"; p}), local({p <- test_paper(c(\"Code is available at https://github.com/c.\")); p$paper_id <- \"c\"; p}), local({p <- test_paper(c(\"Data are available on request.\")); p$paper_id <- \"d\"; p}), local({p <- test_paper(c(\"Materials are available at https://osf.io/e.\")); p$paper_id <- \"e\"; p}), local({p <- test_paper(c(\"Data and code are available at https://osf.io/f; more on request.\")); p$paper_id <- \"f\"; p}))"
         "py": "pc.PaperList([(lambda p: (p.__setitem__(\"paper_id\", \"a\"), p)[1])(pc.test_paper([\"Data and code are available at https://osf.io/a.\"])), (lambda p: (p.__setitem__(\"paper_id\", \"b\"), p)[1])(pc.test_paper([\"Data are available at https://osf.io/b.\"])), (lambda p: (p.__setitem__(\"paper_id\", \"c\"), p)[1])(pc.test_paper([\"Code is available at https://github.com/c.\"])), (lambda p: (p.__setitem__(\"paper_id\", \"d\"), p)[1])(pc.test_paper([\"Data are available on request.\"])), (lambda p: (p.__setitem__(\"paper_id\", \"e\"), p)[1])(pc.test_paper([\"Materials are available at https://osf.io/e.\"])), (lambda p: (p.__setitem__(\"paper_id\", \"f\"), p)[1])(pc.test_paper([\"Data and code are available at https://osf.io/f; more on request.\"]))])"
 - "id": "open_practices.review.list_single_on_request"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U106", "reason": "A list of three papers gets the paper-list summary (info), not the single-paper light of the one paper with a flagged sentence."}
   "module": "open_practices"
   "args":
     "paper":
@@ -426,6 +440,7 @@
         "r": "paperlist(local({p <- test_paper(c(\"Nothing.\")); p$paper_id <- \"a\"; p}), local({p <- test_paper(c(\"Data are available on request.\")); p$paper_id <- \"b\"; p}), local({p <- test_paper(c(\"Nope.\")); p$paper_id <- \"c\"; p}))"
         "py": "pc.PaperList([(lambda p: (p.__setitem__(\"paper_id\", \"a\"), p)[1])(pc.test_paper([\"Nothing.\"])), (lambda p: (p.__setitem__(\"paper_id\", \"b\"), p)[1])(pc.test_paper([\"Data are available on request.\"])), (lambda p: (p.__setitem__(\"paper_id\", \"c\"), p)[1])(pc.test_paper([\"Nope.\"]))])"
 - "id": "open_practices.review.list_with_empty"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U106", "reason": "A list of two papers gets the paper-list summary (info), not the single-paper light of the one paper with a flagged sentence."}
   "module": "open_practices"
   "args":
     "paper":

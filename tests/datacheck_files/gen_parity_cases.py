@@ -571,6 +571,11 @@ add(
 )
 add("data_code_refs.data", fn(".data_code_refs", f"{PY}._data_code_refs", path=f("rwrite.csv")))
 add("data_code_refs.missing", fn(".data_code_refs", f"{PY}._data_code_refs", path=f("nope.R")))
+# U63: a Latin-1 script (R fails "input string 1 is invalid UTF-8")
+add(
+    "data_code_refs.latin1",
+    fn(".data_code_refs", f"{PY}._data_code_refs", path=f("script_latin1.R")),
+)
 add(
     "strip_llm_wrapper.prefixed",
     fn(

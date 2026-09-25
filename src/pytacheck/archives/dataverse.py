@@ -227,7 +227,9 @@ DATAVERSE_DOI_PREFIX_HOSTS: dict[str, tuple[str, ...]] = {
     "dataverse.lib.unb.ca": ("10.25545",),
     "dataverse.lib.virginia.edu": ("10.18130",),
     "dataverse.nl": ("10.34894",),
-    "dataverse.no": ("10.18710", "10.23642", "10.6084"),
+    # metacheck also lists 10.6084, Figshare's prefix, which made every Figshare
+    # DOI a DataverseNO dataset (U32)
+    "dataverse.no": ("10.18710", "10.23642"),
     "dataverse.openforestdata.pl": ("10.48370",),
     "dataverse.orc.gmu.edu": ("10.13021",),
     "dataverse.rhi.hi.is": ("10.34881",),
@@ -296,19 +298,17 @@ def _dollar(x: Any, name: str) -> Any:
     """R ``x$name`` on JSON parsed by ``httr2::resp_body_json()`` (no simplification).
 
     An object is a named list: an exact name, else a unique prefix (R's partial
-    matching); an array is an unnamed list (``NULL``); ``NULL`` gives ``NULL``;
-    a scalar is an atomic vector, for which R raises an error.
+    matching); an array is an unnamed list (``NULL``); ``NULL`` gives ``NULL``.
+    A scalar has no fields either (``None``): R raises "$ operator is invalid
+    for atomic vectors" there, so one API record with a plain string where an
+    object is expected aborted the whole call (U34).
     """
-    if x is None:
-        return None
     if isinstance(x, dict):
         if name in x:
             return x[name]
         hits = [k for k in x if isinstance(k, str) and k.startswith(name)]
         return x[hits[0]] if len(hits) == 1 else None
-    if isinstance(x, list | tuple):
-        return None
-    raise TypeError("$ operator is invalid for atomic vectors")
+    return None
 
 
 def _dollars(x: Any, *names: str) -> Any:
@@ -480,11 +480,6 @@ def _invalid_utf8(s: str | None) -> bool:
     return s is not None and any("\udc80" <= ch <= "\udcff" for ch in s)
 
 
-def _r_shown(s: str) -> str:
-    """How R prints an invalid-UTF-8 string in a message (``<ff>`` for each bad byte)."""
-    return "".join(f"<{ord(ch) - 0xDC00:02x}>" if "\udc80" <= ch <= "\udcff" else ch for ch in s)
-
-
 _URL_RESERVED_OK = frozenset("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789._~-")
 
 
@@ -596,53 +591,6 @@ def _resp_json(resp: httpx.Response) -> Any:
         return _resp_body_json(resp)
     except Exception:
         return None
-
-
-#: ``DataFrame.attrs`` key naming the columns that are R *named* vectors whose
-#: names are never ``NA`` (the ``dryad_doi`` / ``figshare_id`` columns that
-#: ``dryad_links()`` / ``figshare_links()`` build with ``vapply()``, named by
-#: the link URLs). pandas carries ``attrs`` through copies, row filters and
-#: reordering, as R carries the names; a new table (e.g. ``*_info()`` output)
-#: starts without them, as ``data.frame()`` drops them in R.
-R_NAMED_IDS = "pytacheck.r_named_ids"
-
-
-def _mark_named_ids(df: pd.DataFrame, column: str) -> pd.DataFrame:
-    """Record that *column* of *df* is a URL-named vector in R (see :data:`R_NAMED_IDS`)."""
-    df.attrs[R_NAMED_IDS] = (*df.attrs.get(R_NAMED_IDS, ()), column)
-    return df
-
-
-def _id_col_named(x: Any, id_col: Any) -> bool:
-    """Is ``x[[id_col]]`` a URL-named vector in R (see :data:`R_NAMED_IDS`)?"""
-    if not isinstance(x, pd.DataFrame):
-        return False
-    marked = x.attrs.get(R_NAMED_IDS, ())
-    if not marked:
-        return False
-    if isinstance(id_col, numbers.Real) and not isinstance(id_col, bool):
-        pos = int(id_col) - 1
-        return 0 <= pos < x.shape[1] and x.columns[pos] in marked
-    return id_col in marked
-
-
-def _check_named_ids(urls: Sequence[Any], x: Any = None, id_col: Any = 1) -> None:
-    """R's error from ``data.frame(url = urls, id = .<archive>_id(urls))``.
-
-    ``.dryad_doi()`` / ``.figshare_id()`` return a vector named by the URLs
-    (``vapply(USE.NAMES = TRUE)``) when given two or more strings, and
-    ``data.frame()`` takes those names as row names unless some are
-    duplicated -- which fails when one is ``NA``. When the input column is
-    itself a named vector (*x*'s *id_col*, see :func:`_id_col_named`),
-    ``vapply()`` keeps those names instead, and they are never ``NA``.
-    """
-    if len(urls) < 2 or _id_col_named(x, id_col):
-        return
-    if not all(is_na(u) or isinstance(u, str) for u in urls) or all(is_na(u) for u in urls):
-        return  # not a character vector: vapply() adds no names
-    names = ["\x00NA" if is_na(u) else u for u in urls]
-    if "\x00NA" in names and len(set(names)) == len(names):
-        raise ValueError("row names contain missing values")
 
 
 def _info_table(x: Any, id_col: int | str, url_col: str, drop: Sequence[str]) -> pd.DataFrame:
@@ -906,10 +854,6 @@ def _omit_msg(key: Any, size: float) -> str:
     return f"- omitting {_paste(key)} ({_paste(r_round(size / 1024 / 1024, 1))}MB)"
 
 
-class EmptyBodyError(ValueError):
-    """httr2's ``resp_body_raw()`` error for a response without a body."""
-
-
 def _fetch_file(
     url: str,
     headers: dict[str, str],
@@ -923,10 +867,10 @@ def _fetch_file(
     than held in memory); request failures give False, as R's ``tryCatch``.
     *reauth*, given a non-200 response, may return fresh headers to send the
     request once more with (httr2 re-authenticates once after an OAuth
-    ``invalid_token`` answer). A 200 answer without a body raises
-    :class:`EmptyBodyError`: R's ``writeBin(httr2::resp_body_raw(resp), ...)``
-    sits outside that ``tryCatch``, and ``resp_body_raw()`` refuses an empty
-    body, so the whole download aborts.
+    ``invalid_token`` answer). A 200 answer without a body is an empty file
+    (verification then compares its size with the listed one); in metacheck
+    ``resp_body_raw()`` refuses it outside the ``tryCatch()``, so one
+    zero-byte file aborted the whole download (U36).
     """
     import httpx
 
@@ -944,13 +888,9 @@ def _fetch_file(
                         return False
                     headers = fresh
                     continue
-                size = 0
                 with open(target, "wb") as fh:
                     for chunk in resp.iter_bytes():
                         fh.write(chunk)
-                        size += len(chunk)
-                if size == 0:
-                    raise EmptyBodyError("Can't retrieve empty body.")
                 return True
         except (httpx.HTTPError, httpx.StreamError, httpx.InvalidURL):
             return False
@@ -979,15 +919,21 @@ def _download_file_table(
     verify: Callable[[pd.DataFrame, str], pd.DataFrame],
     what: str,
     reauth: Callable[[httpx.Response], dict[str, str] | None] | None = None,
-) -> tuple[pd.DataFrame, str] | None:
+) -> tuple[pd.DataFrame, str | None]:
     """Everything the three ``*_file_download()`` functions do after listing files.
 
     *files* has ``id``, ``key``, ``size``, ``checksum``, (``checksum_type``,)
     ``self``. Applies the size caps (a zip named in *unzip_types* is exempt),
     creates the target folder, extracts wanted zip members or downloads each
     file, copies files under their names, verifies them and warns about any
-    that did not arrive. Returns the verified table and the folder, or
-    ``None`` when every file was omitted.
+    that did not arrive. Returns the verified table and the folder.
+
+    Files omitted by the size caps stay in the table with ``downloaded =
+    False``, as metacheck documents (its code drops them: U36); when every
+    file is omitted no folder is created and the folder is ``None``. The
+    folder for an existing ``<name>`` is ``<name>_1``, ``<name>_2``...
+    (metacheck strips a trailing ``_<digits>`` from the name itself, so an
+    existing ``figshare_123`` gives ``figshare_1``: U37).
     """
     from pytacheck.archives import _tick
     from pytacheck.archives.osf import _normalize
@@ -1003,48 +949,46 @@ def _download_file_table(
         ]
 
     sizes = [math.nan if is_na(v) else float(v) for v in files["size"].tolist()]
+    omitted = [False] * n
     if _cap_on(max_file_size):
         assert max_file_size is not None
         cap = max_file_size * _MB
-        too_big = [
-            i for i in range(n) if not math.isnan(sizes[i]) and sizes[i] > cap and not unzippable[i]
-        ]
-        if too_big:
-            for i in too_big:
+        for i in range(n):
+            if not math.isnan(sizes[i]) and sizes[i] > cap and not unzippable[i]:
                 _tick(pb, _omit_msg(files["key"].iloc[i], sizes[i]))
-            keep = [i for i in range(n) if i not in set(too_big)]
-            files = files.iloc[keep].reset_index(drop=True)
-            unzippable = [unzippable[i] for i in keep]
-            sizes = [sizes[i] for i in keep]
+                omitted[i] = True
 
     if _cap_on(max_download_size):
         assert max_download_size is not None
         cap = max_download_size * _MB
-        while any(not u for u in unzippable) and (
-            sum(s for s, u in zip(sizes, unzippable, strict=True) if not u and not math.isnan(s))
-            > cap
-        ):
-            capped = [i for i, u in enumerate(unzippable) if not u]
+        while True:
+            capped = [i for i in range(n) if not unzippable[i] and not omitted[i]]
+            if not capped or sum(sizes[i] for i in capped if not math.isnan(sizes[i])) <= cap:
+                break
             max_file = max(
                 (i for i in capped if not math.isnan(sizes[i])), key=lambda i: (sizes[i], -i)
             )
             _tick(pb, _omit_msg(files["key"].iloc[max_file], sizes[max_file]))
-            files = files.drop(index=max_file).reset_index(drop=True)
-            del unzippable[max_file]
-            del sizes[max_file]
+            omitted[max_file] = True
 
-    if len(files) == 0:
+    if all(omitted):
         _tick(pb, "- All files omitted due to size constraints")
-        return None
+        files = files.copy()
+        files["downloaded"] = pd.Series([False] * n, dtype="boolean")
+        files["extracted"] = pd.Series([None] * n, dtype="Int64")
+        files["path"] = _string_series([None] * n)
+        files["size_on_disk"] = pd.Series([math.nan] * n, dtype="float64")
+        files["checksum_ok"] = pd.Series([None] * n, dtype="boolean")
+        return files, None
 
     # --- target directory (avoid overwrite) ----
     download_to = _normalize(download_to)
     if os.path.isdir(download_to):
         download_to = f"{download_to}/{folder_name}"
+    base = download_to
     i = 0
     while os.path.isdir(download_to):
         i += 1
-        base = sub(r"_\d+$", "", download_to)
         download_to = f"{base}_{i}"
     try:
         os.mkdir(download_to)
@@ -1054,13 +998,17 @@ def _download_file_table(
 
     temppath = tempfile.mkdtemp()
     try:
-        n = len(files)
         downloaded = [False] * n
         extracted: list[int | None] = [None] * n
         keys = [None if is_na(v) else str(v) for v in files["key"].tolist()]
         ids = [None if is_na(v) else str(v) for v in files["id"].tolist()]
         selfs = [None if is_na(v) else str(v) for v in files["self"].tolist()]
+        n_wanted = n - sum(omitted)
+        k = 0
         for i in range(n):
+            if omitted[i]:
+                continue
+            k += 1
             if unzippable[i]:
                 _tick(pb, f"Reading zip contents of {_paste(keys[i])}")
                 try:
@@ -1101,7 +1049,7 @@ def _download_file_table(
                         reauth,
                     )
             downloaded[i] = ok
-            _tick(pb, f"Downloading file {i + 1} of {n}")
+            _tick(pb, f"Downloading file {k} of {n_wanted}")
 
         # copy to the flat target directory using the original file name if available
         paths: list[str | None] = [None] * n
@@ -1109,7 +1057,7 @@ def _download_file_table(
             if extracted[i] is not None or not downloaded[i]:
                 continue
             src = f"{temppath}/{_paste(ids[i])}"
-            # R: a file with neither a name nor an id is still copied (file.path()
+            # a file with neither a name nor an id is still copied (file.path()
             # turns NA into "NA"), but its path is recorded as NA, so the
             # verification step marks it as not downloaded.
             fname = keys[i] if keys[i] is not None and keys[i] != "" else ids[i]
@@ -1133,11 +1081,13 @@ def _download_file_table(
     # --- verify what actually reached the disk ----
     files = verify(files, download_to)
 
-    missing = [not bool(v) for v in files["downloaded"].tolist()]
+    missing = [
+        not bool(v) and not o for v, o in zip(files["downloaded"].tolist(), omitted, strict=True)
+    ]
     n_missing = sum(missing)
     if n_missing > 0:
         worst = [_paste(k) for k, m in zip(files["key"].tolist(), missing, strict=True) if m][:3]
-        nf = len(files)
+        nf = n_wanted
         warnings.warn(
             f"{n_missing} of {nf} file{plural(nf)} from {what} {ident} did not arrive intact "
             f"(e.g. {', '.join(worst)}). The returned table marks "
@@ -1148,12 +1098,13 @@ def _download_file_table(
 
 
 def _finish_file_table(
-    files: pd.DataFrame, download_to: str, ids: dict[str, Any], columns: Sequence[str]
+    files: pd.DataFrame, download_to: str | None, ids: dict[str, Any], columns: Sequence[str]
 ) -> pd.DataFrame:
     """``files$folder <- basename(download_to)``, the id columns, then R's column order."""
     files = files.copy()
     n = len(files)
-    files["folder"] = _string_series([download_to.rstrip("/").rpartition("/")[2]] * n)
+    folder = None if download_to is None else download_to.rstrip("/").rpartition("/")[2]
+    files["folder"] = _string_series([folder] * n)
     for name, value in ids.items():
         files[name] = (
             _string_series([value] * n)
@@ -1248,7 +1199,9 @@ def _dataverse_host_from_doi(doi: Any) -> Any:
 
 @functools.cache
 def _host_rx() -> Any:
-    return compile_r(_dataverse_host_regex(), ignore_case=True, perl=True)
+    # a known host, not the start of a longer host name (dataverse.no is not
+    # dataverse.northwestern.edu)
+    return compile_r(f"(?:{_dataverse_host_regex()})(?![A-Za-z0-9-])", ignore_case=True, perl=True)
 
 
 _DOI_PARAM = r"""persistentId=doi:([^&\s"']+)"""
@@ -1263,10 +1216,11 @@ def _dataverse_parse(url: Any) -> pd.DataFrame:
     the ``persistentId=doi:`` parameter (URL-decoded), else a bare
     ``10.xxxx/...`` in the URL, without a trailing ``"."``.
 
-    Reproduces R's realignment quirk: hosts found by one vectorised
-    ``regmatches()`` are assigned in order to every non-empty URL, so a URL
-    without a host name shifts the hosts of the URLs after it (only URLs left
-    without a host are re-matched one by one).
+    Each URL is matched on its own. metacheck assigns the hosts found by one
+    vectorised ``regmatches()`` by position, so a URL without a host name
+    takes the next URL's host (U31). A ``persistentId`` whose escapes do not
+    decode to valid UTF-8 (or hold a NUL) is not a DOI: that URL gets no DOI,
+    where metacheck's string functions abort the call for every URL (U39).
     """
     urls, _ = _chr_values(url)
     n = len(urls)
@@ -1276,35 +1230,37 @@ def _dataverse_parse(url: Any) -> pd.DataFrame:
         return pd.DataFrame({"host": _string_series(host), "doi": _string_series([None] * n)})
 
     rx = _host_rx()
-    found = [m.group(0).lower() for u in urls if u is not None and (m := rx.search(u))]
-    k = sum(has_url)
-    aligned = iter(found[:k] + [None] * (k - len(found)))
-    for i in range(n):
+    for i, u in enumerate(urls):
         if has_url[i]:
-            host[i] = next(aligned)
-    for i in range(n):
-        if has_url[i] and not host[i]:
-            m = rx.search(urls[i])  # type: ignore[arg-type]
+            m = rx.search(u)  # type: ignore[arg-type]
             host[i] = m.group(0).lower() if m else None
 
     doi_rx = compile_r(_DOI_PARAM, ignore_case=True, perl=True)
     doi: list[str | None] = []
-    for u in urls:
+    bad = [False] * n
+    for i, u in enumerate(urls):
         m = doi_rx.search(u) if u is not None else None
-        doi.append(_url_decode(m.group(1)) if m else None)
+        d = None
+        if m:
+            try:
+                with warnings.catch_warnings():
+                    warnings.simplefilter("ignore")
+                    d = _url_decode(m.group(1))
+            except ValueError:  # an embedded NUL
+                d = None
+                bad[i] = True
+            if _invalid_utf8(d):
+                d = None
+                bad[i] = True
+        doi.append(d)
 
-    if any(d is None and h for d, h in zip(doi, has_url, strict=True)):
+    if any(d is None and h and not b for d, h, b in zip(doi, has_url, bad, strict=True)):
         bare_rx = compile_r(_BARE_DOI, perl=True)
         for i, u in enumerate(urls):
-            if doi[i] is None and has_url[i]:
+            if doi[i] is None and has_url[i] and not bad[i]:
                 m = bare_rx.search(u)  # type: ignore[arg-type]
                 doi[i] = m.group(1) if m else None
 
-    for i, d in enumerate(doi):
-        if _invalid_utf8(d):
-            # R: TRE's sub() cannot convert the URL-decoded DOI to wide characters
-            warnings.warn(f"unable to translate '{_r_shown(d)}' to a wide string", stacklevel=2)  # type: ignore[arg-type]
-            raise ValueError(f"input string {i + 1} is invalid")
     doi = sub(r"\.$", "", doi)
 
     needed = [i for i in range(n) if has_url[i] and not host[i] and doi[i] is not None]
@@ -1407,6 +1363,10 @@ def dataverse_info(
         ids = ids.drop_duplicates()
         ids = ids[ids["dataverse_url"].notna().to_numpy()].reset_index(drop=True)
         valid = ids[(ids["dataverse_host"].notna() & ids["dataverse_doi"].notna()).to_numpy()]
+        # one request per dataset: two URLs for the same dataset (e.g. with and
+        # without a trailing ".") share it, and each joins to one info row
+        # (metacheck fetches it once per URL, and the join then repeats rows: U35)
+        valid = valid.drop_duplicates(["dataverse_host", "dataverse_doi"])
 
         if len(valid) == 0:
             _tick(bar, "No valid Dataverse links")
@@ -1471,8 +1431,11 @@ def _dataverse_info(host: Any, doi: Any, pb: Any = None) -> pd.DataFrame:
             return pd.DataFrame(obj)
 
         data = _dollar(rec, "data")
+        if not isinstance(data, dict):
+            obj["error"] = _cell("parse_error")
+            return pd.DataFrame(obj)
         version = _dollar(data, "latestVersion")
-        if version is None:
+        if not isinstance(version, dict):
             version = {}
         fields = _dollars(version, "metadataBlocks", "citation", "fields")
         if fields is None:
@@ -1504,7 +1467,12 @@ def _dataverse_info(host: Any, doi: Any, pb: Any = None) -> pd.DataFrame:
         obj["publication_date"] = _field_cell(pub)
         obj["updated_date"] = _field_cell(_empty_or(_dollar(version, "lastUpdateTime"), None))
         obj["authors"] = _list_cell(authors)
-        obj["license"] = _field_cell(_empty_or(_dollars(version, "license", "name"), None))
+        # older installations give the licence as a plain string ("CC0"), which
+        # metacheck's `license$name` cannot read (U34)
+        licence = _dollar(version, "license")
+        if not isinstance(licence, str):
+            licence = _dollar(licence, "name") if isinstance(licence, dict) else None
+        obj["license"] = _field_cell(_empty_or(licence, None))
         obj["files"] = _list_cell(files if files is not None else [])
         return pd.DataFrame(obj)
 

@@ -82,7 +82,7 @@ def test_constant_ties_and_label_collisions() -> None:
     assert C.data_check_constant([True, False], threshold=0.5)["values"] == "FALSE"
 
 
-# -- .scale_typo_of(): the digits of an integer come from as.character(<integer>) --------------
+# -- .scale_typo_of(): a whole number's digits are its decimal digits -------------------------
 
 
 def test_scale_values_integer_typo_path() -> None:
@@ -92,8 +92,10 @@ def test_scale_values_integer_typo_path() -> None:
     )
     assert as_int["classes"] == ["unexplained"]
     assert as_int["values"] == [100000]
+    # U59: a double gets the same digits (R read as.character(1e5) = "1e+05"
+    # and called 100000 a typo of 5)
     as_dbl = C.data_check_scale_values([float(v) for v in [*base, 100000]], valid_range=[2, 10])
-    assert as_dbl["classes"] == ["typo:5"]  # as.character(1e5) is "1e+05"
+    assert as_dbl["classes"] == ["unexplained"]
 
 
 # -- as.character(<POSIXct>) keeps fractional seconds -----------------------------------------

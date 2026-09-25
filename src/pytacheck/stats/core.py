@@ -62,14 +62,15 @@ def _match_statcheck_args(
                 raise _ArgError(f'formal argument "{f}" matched by multiple actual arguments')
             bound[f] = value
             used[j] = 1
-    if any(tag and not used[j] for j, (tag, _) in enumerate(supplied)):
-        raise _ArgError("unused argument")
+    unused = [tag for j, (tag, _) in enumerate(supplied) if tag and not used[j]]
+    if unused:
+        raise _ArgError("unused argument " + ", ".join(repr(u) for u in unused))
     # 3. positional
     free = [f for f in _STATCHECK_FORMALS if f not in bound]
     for tag, value in supplied:
         if tag is None:
             if not free:
-                raise _ArgError("unused argument")
+                raise _ArgError(f"unused argument {value!r}")
             bound[free.pop(0)] = value
     return bound
 
@@ -81,21 +82,21 @@ def _stats_generic(
     import contextlib
     import io
 
-    from pytacheck.stats.statcheck import _ON_WARNING, RError, _Abort, statcheck
+    from pytacheck.stats.statcheck import _ON_WARNING, RError, statcheck
 
-    def abort(msg: str) -> None:
-        raise _Abort(msg)
+    def ignore(_msg: str) -> None:
+        return None
 
     sources: list[int] = []
     frames: list[pd.DataFrame] = []
-    token = _ON_WARNING.set(abort)
+    token = _ON_WARNING.set(ignore)
     try:
         for i, txt in enumerate(texts):
+            bound = _match_statcheck_args(txt, args, kwargs)
             try:
-                bound = _match_statcheck_args(txt, args, kwargs)
                 with contextlib.redirect_stdout(io.StringIO()):
                     sc = statcheck(**bound)
-            except (RError, _Abort, _ArgError, TypeError, ValueError):
+            except RError:
                 continue
             if sc is None or len(sc) == 0:
                 continue
@@ -110,7 +111,7 @@ def _stats_generic(
 
 
 def stats(text: Any, *args: Any, **kwargs: Any) -> pd.DataFrame:
-    """Check the statistics in a paper, paper list or text table (``stats()``).
+    """Check the statistics in a paper, paper list, text table or strings (``stats()``).
 
     Port of ``R/stats.R::stats()``: every sentence that contains a digit is
     run through statcheck (:func:`pytacheck.stats.statcheck.statcheck`, which
@@ -119,12 +120,16 @@ def stats(text: Any, *args: Any, **kwargs: Any) -> pd.DataFrame:
     ``AllPValues``, matched by R's rules, including unique prefixes and
     positional arguments). Returns statcheck's columns (without ``source``)
     followed by the columns of the matching sentence (``text``, ``paper_id``,
-    ``header`` ...), or an empty DataFrame when nothing is found.
+    ``header`` ...), or an empty DataFrame when nothing is found. A string or
+    a sequence of strings gives statcheck's columns followed by ``text``.
 
-    As in R, a sentence whose check raises an error or a warning (for example
-    an unparseable p-value such as ``p = .05-.10``) contributes no rows, and
-    arguments statcheck() does not accept (a typo, ``messages``) silently give
-    an empty result.
+    Differs from metacheck (U4): a sentence keeps its other results when one
+    of them cannot be checked (metacheck drops the whole sentence on the
+    first R warning or error, e.g. for an unrelated ``p = .05-.10``);
+    arguments statcheck() does not accept (a typo, ``messages``) raise
+    :class:`TypeError` and invalid values :class:`ValueError` instead of
+    silently giving an empty result; and strings are accepted (metacheck
+    fails on a character vector).
     """
     from pytacheck.stats.statcheck import _statcheck_quiet
     from pytacheck.text.search import text_search
@@ -132,17 +137,16 @@ def stats(text: Any, *args: Any, **kwargs: Any) -> pd.DataFrame:
     # lines with stats must have at least one number
     table = text_search(text, "[0-9]")
     if not isinstance(table, pd.DataFrame):
-        # R: nrow() of a character vector is NULL, so `if (n == 0)` fails
-        raise TypeError("argument is of length zero")
-    if len(table) == 0:
-        return pd.DataFrame()
+        # a string or a character vector: the matching strings
+        table = pd.DataFrame({"text": pd.Series(table, dtype="string")})
 
     texts = [None if pd.isna(t) else str(t) for t in table["text"].tolist()]
     subtext = object()
     try:
         bound = _match_statcheck_args(subtext, args, kwargs)
-    except _ArgError:
-        # every statcheck() call errors, and every error becomes data.frame()
+    except _ArgError as exc:
+        raise TypeError(f"stats(): statcheck() arguments: {exc}") from None
+    if len(table) == 0:
         return pd.DataFrame()
     if bound["texts"] is subtext:
         bound.pop("texts")

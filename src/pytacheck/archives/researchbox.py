@@ -188,7 +188,12 @@ def _rbox_info(rb_url: Any, pb: Any = None) -> pd.DataFrame:
         obj: dict[str, pd.Series] = {"rb_url": _cell(rb_url)}
 
         resp = _get(_paste(rb_url))
-        body_text = _body_string(resp)
+        # an empty body is no page (metacheck reads it before the status check,
+        # so an empty answer was an error rather than "unfound": U45)
+        try:
+            body_text = _body_string(resp)
+        except ValueError:
+            body_text = None
         # R: grepl(pattern, NA) is FALSE
         redirect = [] if body_text is None else regextract_all(_REDIRECT, body_text, perl=True)
         if redirect:
@@ -196,7 +201,7 @@ def _rbox_info(rb_url: Any, pb: Any = None) -> pd.DataFrame:
                 raise ValueError("`base_url` must be a single string, not a character vector.")
             resp = _get(redirect[0])
 
-        if resp.status_code != 200:
+        if resp.status_code != 200 or not resp.content:
             warnings.warn(f"{_paste(rb_url)} could not be found", stacklevel=2)
             obj["error"] = _cell("unfound")
             return pd.DataFrame(obj)
@@ -307,9 +312,7 @@ def rbox_file_download(rb_url: Any, pb: Any = None) -> pd.DataFrame | None:
             info = bind_rows(file_lists)
             orig = pd.DataFrame({"rb_url": pd.Series(urls, dtype="string")})
             if "rb_url" not in info.columns:
-                raise ValueError(
-                    "Join columns in `y` must be present in the data.\n✖ Problem with `rb_url`."
-                )
+                return None  # every URL failed (metacheck's join errors here: U43)
             return left_join(orig, info, by="rb_url")
 
         if not urls:

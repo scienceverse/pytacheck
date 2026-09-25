@@ -43,9 +43,10 @@ def test_private_info(mock_api: object) -> None:
     assert _mendeley_info("notjson")["error"].iloc[0] == "parse_error"
     with pytest.warns(UserWarning, match="zzz999 could not be found"):
         assert _mendeley_info("zzz999")["error"].iloc[0] == "unfound"
-    # R: `rec$doi$id` on a string is an error
-    with pytest.raises(TypeError, match=r"\$ operator is invalid for atomic vectors"):
-        _mendeley_info("strdoi")
+    # U34: a plain-string doi is the DOI (metacheck's `rec$doi$id` fails on it)
+    info = _mendeley_info("strdoi")
+    assert "error" not in info.columns
+    assert isinstance(info["doi"].iloc[0], str) and info["doi"].iloc[0].startswith("10.")
 
 
 def test_info_table(mock_api: object) -> None:

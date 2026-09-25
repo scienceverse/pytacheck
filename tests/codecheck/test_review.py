@@ -216,10 +216,16 @@ def test_purl_yaml_labels() -> None:
     assert core.code_extract_r(text=doc) == ["x <- 1", "y"]
     doc = ["```{r}", "#| label: [a, b]", "x <- 1", "```", "```{r}", "<<a>>", "```"]
     assert core.code_extract_r(text=doc) == ["x <- 1", "x <- 1"]
-    # a numeric label is a position in knit_code: [[3]] is out of bounds here
+    # a numeric or logical label is the chunk's name, not a position in
+    # knit_code (knitr: "subscript out of bounds" / the first chunk, U153)
     doc = ["```{r}", "#| label: 3", "x <- 1", "```"]
-    with pytest.raises(ValueError, match="subscript out of bounds"):
-        core.code_extract_r(text=doc)
+    assert core.code_extract_r(text=doc) == ["x <- 1"]
+    doc = ["```{r}", "#| label: 3", "x <- 1", "```", "```{r}", "<<3>>", "```"]
+    assert core.code_extract_r(text=doc) == ["x <- 1", "x <- 1"]
+    doc = ["```{r}", "a <- 1", "```", "```{r}", "#| label: TRUE", "b <- 2", "```"]
+    assert core.code_extract_r(text=doc) == ["a <- 1", "b <- 2"]
+    doc = ["```{r}", "a <- 1", "```", "```{r}", "#| label: 1", "b <- 2", "```"]
+    assert core.code_extract_r(text=doc) == ["a <- 1", "b <- 2"]
 
 
 def test_purl_na_lines() -> None:

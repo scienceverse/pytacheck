@@ -219,8 +219,13 @@ def _repo_check(
     if isinstance(local_path, os.PathLike):
         local_path = os.fspath(local_path)
 
+    def pids() -> list[Any]:
+        # paper = None (code_check()'s "local files only") has one paper of
+        # unknown id; R stops in paper_id(NULL) (UPSTREAM_ISSUES U78)
+        return [None] if paper is None else list(paper_ids(paper))
+
     # get repository links ----
-    if local_only is True:
+    if local_only is True or paper is None:
         repos = rc.Repos(rc.empty_links())
     else:
         links, fs_links = rc.collect_links(paper)
@@ -230,7 +235,7 @@ def _repo_check(
     # get files ----
     osf_urls = repos.urls("osf")
     osf_ids = rc.vals(repos.df["paper_id"][(repos.df["repo_type"] == "osf").fillna(False)])
-    osf_paper_id = osf_ids[0] if osf_ids else paper_ids(paper)[0]
+    osf_paper_id = osf_ids[0] if osf_ids else pids()[0]
 
     osf_meta = rc.meta_frame()
     if osf_license is True and osf_urls:
@@ -248,11 +253,12 @@ def _repo_check(
     if local_path is not None:
         local_files_df = rc.list_local(local_path)
         paths = [local_path] if isinstance(local_path, str) else list(local_path)
-        repos.add(rc.repo_rows(paper_ids(paper)[0], paths, "local", rc.NA_SCALAR))
+        pid = pids()[0]
+        repos.add(rc.repo_rows(rc.NA_SCALAR if pid is None else pid, paths, "local", rc.NA_SCALAR))
 
     # no repos found ----
     if len(repos.df) == 0:
-        ids = paper_ids(paper)
+        ids = pids()
         n = len(ids)
         return {
             "traffic_light": "na",
@@ -459,20 +465,35 @@ def _prepare_files(all_files: pd.DataFrame, repos: rc.Repos) -> tuple[pd.DataFra
     """De-duplicate, drop R package trees, mark READMEs and add ``repo_name``."""
     is_readme: list[bool] = []
     if len(all_files) > 0:
-        # R: duplicated(file_url) & duplicated(file_path), each on its own
+        # a file listed twice (one record linked as a URL and as a DOI, or a
+        # folder given twice) is kept once: a remote file is identified by its
+        # file_url and file_path, a local one by its location. R tests
+        # duplicated(file_url) & duplicated(file_path) each on its own, so a
+        # file whose URL and path each occurred before, in different rows, was
+        # dropped as well: every local file (no file_url) whose relative path
+        # another listed file shares, e.g. data.csv in a second folder
+        # (UPSTREAM_ISSUES U121)
         key = "file_path" if "file_path" in all_files.columns else "file_name"
-        urls = rc.vals(all_files["file_url"]) if "file_url" in all_files.columns else []
-        if len(urls) != len(all_files):
-            dupes = [True] * len(all_files)  # R: logical(0) drops every row
-            all_files = all_files.iloc[0:0]
-        else:
-            dupes = [
-                a and b
-                for a, b in zip(
-                    rc.duplicated(urls), rc.duplicated(all_files[key].tolist()), strict=True
-                )
-            ]
-            all_files = rc.take(all_files, [not d for d in dupes])
+        n = len(all_files)
+        urls = rc.vals(all_files["file_url"]) if "file_url" in all_files.columns else [None] * n
+        locs = (
+            rc.vals(all_files["file_location"])
+            if "file_location" in all_files.columns
+            else [None] * n
+        )
+        repo_urls = rc.vals(all_files["repo_url"]) if "repo_url" in all_files.columns else [None] * n
+        paths = rc.vals(all_files[key])
+
+        def ident(i: int) -> tuple[Any, ...]:
+            path = None if rc._na(paths[i]) else paths[i]
+            if not rc._na(urls[i]) and urls[i] != "":
+                return ("url", urls[i], path)
+            if not rc._na(locs[i]) and locs[i] != "":
+                return ("location", locs[i])
+            return ("path", None if rc._na(repo_urls[i]) else repo_urls[i], path)
+
+        dupes = rc.duplicated([ident(i) for i in range(n)])
+        all_files = rc.take(all_files, [not d for d in dupes])
         # keep repos with explicit errors (e.g. gated/private) in summary/reporting
         in_files = [
             a or not rc._na(e)
@@ -780,7 +801,6 @@ def _report(
     roster_check: Any,
 ) -> tuple[list[Any], list[str], dict[str, Any]]:
     """The report blocks, the summary lines and the traffic-light inputs."""
-    from pytacheck.fileinfo.naming import check_file_naming
     from pytacheck.report.blocks import collapse_section, link, scroll_table
 
     files_n = int(repos["files_n"].sum())
@@ -966,7 +986,7 @@ def _report(
 
     # file-naming conventions
     paths = rc.vals(all_files["file_path"])
-    naming_issues = check_file_naming(names, file_path=paths, data_type=dtypes)
+    naming_issues = _check_naming(names, paths, dtypes)
     sev = rc.vals(naming_issues["severity"])
     n_naming_bad = sum(1 for s in sev if s == "bad")
     n_naming_suggest = len(
@@ -1121,10 +1141,25 @@ def _roster_mismatch(roster_check: Any) -> bool:
     )
 
 
-def _naming_by_paper(all_files: pd.DataFrame, naming_issues: pd.DataFrame) -> pd.DataFrame:
-    """``check_file_naming()`` per paper, tagged with ``paper_id`` (R: ``split()`` by paper)."""
+def _check_naming(names: list[Any], paths: list[Any], dtypes: list[Any]) -> pd.DataFrame:
+    """``check_file_naming()`` of the files that have a name.
+
+    A listed file without a name (a platform record missing it) has nothing
+    to check; R's ``check_file_naming()`` fails on it ("missing value where
+    TRUE/FALSE needed") and the whole module errors (UPSTREAM_ISSUES U122).
+    """
     from pytacheck.fileinfo.naming import check_file_naming
 
+    keep = [i for i, n in enumerate(names) if not rc._na(n)]
+    return check_file_naming(
+        [names[i] for i in keep],
+        file_path=[names[i] if rc._na(paths[i]) else paths[i] for i in keep],
+        data_type=[dtypes[i] for i in keep],
+    )
+
+
+def _naming_by_paper(all_files: pd.DataFrame, naming_issues: pd.DataFrame) -> pd.DataFrame:
+    """``check_file_naming()`` per paper, tagged with ``paper_id`` (R: ``split()`` by paper)."""
     if len(all_files) == 0:
         return naming_issues.iloc[0:0].copy()
     pids = rc.vals(all_files["paper_id"])
@@ -1141,10 +1176,8 @@ def _naming_by_paper(all_files: pd.DataFrame, naming_issues: pd.DataFrame) -> pd
     parts = []
     for pid in levels:
         idx = rows_of[pid]
-        pf = check_file_naming(
-            [names[i] for i in idx],
-            file_path=[paths[i] for i in idx],
-            data_type=[dtypes[i] for i in idx],
+        pf = _check_naming(
+            [names[i] for i in idx], [paths[i] for i in idx], [dtypes[i] for i in idx]
         )
         if len(pf) > 0:
             pf = pf.copy()

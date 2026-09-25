@@ -121,6 +121,11 @@ def test_report_paperlist(tmp_path):
         assert rep.save_path == str(tmp_path / f"{pid}_x.qmd")
         assert Path(rep.save_path).exists()
     assert list(paper_report.save_path) == paper.names
+    # U130: a name without a leading separator gets one (R: "<id>x.qmd")
+    named = report(paper, modules, tmp_path / "x.qmd", "qmd")
+    assert [r.save_path for r in named.values()] == [
+        str(tmp_path / f"{pid}_x.qmd") for pid in paper.names
+    ]
 
     # single reports match
     pr1 = report(paper[[0]], modules, tmp_path / "one.qmd", "qmd")
@@ -248,11 +253,82 @@ def test_module_report_howitworks(demo, test_module):
     assert "Demo description" in rep
     assert "Demo details..." in rep
 
+    # no description, details or authors: no callout
     module_output = module_run(demo, test_module("rp_no_details"))
     rep = module_report(module_output)
     assert re.match(r"^### \S* No Details Module \{#no-details-module \.green\}", rep)
     assert "This module was developed by" not in rep
     assert "How It Works" not in rep
+
+
+_DESCRIBED = """
+from pytacheck.module import module
+
+
+@module(
+    title="No Details But Described",
+    description="What it does.",
+    keywords=["general"],
+    author=["Jane Doe <jane@example.org>", "John Roe"],
+)
+def rp_described(paper):
+    return {"traffic_light": "green", "summary_text": "Fine.", "report": "Fine."}
+"""
+
+_BLUE = """
+from pytacheck.module import module
+
+
+@module(title="Blue Module", description="d", keywords=["general"])
+def rp_blue(paper):
+    return {"traffic_light": "blue", "summary_text": "Blue.", "report": "Blue report."}
+"""
+
+
+def test_module_report_howitworks_without_details(tmp_path):
+    # U129: R's gregexpr() on NULL details errors and drops the whole callout,
+    # description and authors included
+    path = tmp_path / "rp_described.py"
+    path.write_text(_DESCRIBED, encoding="utf-8")
+    rep = module_report(module_run(pc.test_paper(["x"]), str(path)))
+    assert rep.endswith(
+        '::: {.callout-note title="How It Works" collapse="true"}\n\nWhat it does.\n\n'
+        "This module was developed by Jane Doe and John Roe\n\n:::\n"
+    )
+
+
+def test_module_report_undefined_traffic_light(tmp_path):
+    # U128: R's sprintf() with a NULL emoji drops the heading and prints the
+    # summary line of report_qmd() as "character(0)"
+    path = tmp_path / "rp_blue.py"
+    path.write_text(_BLUE, encoding="utf-8")
+    op = module_run(pc.test_paper(["x"]), str(path))
+    assert module_report(op).startswith("### Blue Module {#blue-module .blue}\n\nBlue.")
+    assert module_report(op, header=0).startswith("Blue Module\n\nBlue.")
+    qmd = report_qmd(op, pc.test_paper(["x"]))
+    assert "- [Blue Module](#blue-module){.blue}: Blue.  " in qmd
+    assert "character(0)" not in qmd
+
+
+def test_report_qmd_without_paper():
+    # U128: metacheck's default `paper = list()` always errors
+    op = module_run(pc.test_paper(["x"]), "marginal")
+    qmd = report_qmd(op)
+    assert qmd.startswith("---\ntitle: MetaCheck Report\nsubtitle: \"\"\n")
+    assert "DOI:" not in qmd
+    assert "## Summary" in qmd
+
+
+def test_module_report_two_authors_on_one_line():
+    # U6: R's greedy email gsub cut "A (\\email{..}) and B (\\email{..})" to "A"
+    from pytacheck.report.report import _strip_email
+
+    line = "Lisa DeBruine (\\email{lisa@x.org}) and Daniel Lakens (\\email{d@y.nl})"
+    assert _strip_email(line) == "Lisa DeBruine and Daniel Lakens"
+    assert _strip_email("A B (\\email{a@b.c})") == "A B"
+    assert _strip_email("A B <a@b.c>") == "A B"
+    rep = module_report(module_run(pc.test_paper(["p = 0.04"]), "stat_p_exact"))
+    assert "This module was developed by Lisa DeBruine and Daniel Lakens\n" in rep
 
 
 def test_module_report_validation(demo, test_module):
@@ -275,10 +351,12 @@ def test_module_report_details_wrapper(demo, test_module):
     # a report identical to the summary is dropped
     same = module_report(module_run(demo, test_module("rp_no_details")))
     assert same.count("All good.") == 1
-    # without a summary text the report is dropped too (R quirk)
+    # without a summary text the report is shown unwrapped (U129: R shows
+    # "..." and drops the report)
     null = module_report(module_run(demo, test_module("rp_null_summary")))
-    assert "Some report text." not in null
-    assert "\n\n...\n\n" in null
+    assert ".info}\n\nSome report text.\n\nMore report text.\n\n::: {.callout" in null
+    assert "..." not in null
+    assert "<details>" not in null
 
 
 def test_module_report_tables_are_r_chunks(demo):
@@ -328,8 +406,8 @@ def test_report_qmd(demo, test_module):
     assert "## Results Modules" in report_text
     assert "%s" not in report_text
     assert "font-size: 150%;" in report_text
-    with pytest.raises(ValueError):
-        report_qmd(mo)
+    # U128: without a paper there is no subtitle or DOI (R always errors)
+    assert report_qmd(mo).startswith('---\ntitle: MetaCheck Report\nsubtitle: ""\n')
     # tables as HTML for Quarto without R
     html_tables = report_qmd(mo, demo, tables="html")
     assert "```{=html}" in html_tables and "```{r}" not in html_tables

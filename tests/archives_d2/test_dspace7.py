@@ -70,7 +70,8 @@ def test_info_by_uuid_and_by_handle(mock_api: object) -> None:
 
 
 def test_info_unfound(mock_api: object) -> None:
-    with pytest.warns(UserWarning, match=r"repository.gatech.edu \(NA\) could not be found"):
+    # U42: the item is named by its handle when it has no uuid (metacheck: "(NA)")
+    with pytest.warns(UserWarning, match=r"repository.gatech.edu \(1853/404\) could not be found"):
         info = _dspace7_info("repository.gatech.edu", handle="1853/404")
     assert list(info.columns) == ["dspace7_host", "error"]
 
@@ -81,9 +82,11 @@ def test_file_download_lists_the_original_bundle(mock_api: object) -> None:
     assert list(files.columns) == [
         "dspace7_url", "name", "file_url", "file_location", "size", "isdir", "ext", "type"
     ]  # fmt: skip
-    # .rds is listed under two file types, so it appears twice (as in R)
-    assert files["name"].tolist() == ["data.CSV", "analysis.R", "model.rds", "model.rds", "noext"]
-    assert files["ext"].tolist() == ["csv", "r", "rds", "rds", ""]
+    # U46: .rds is listed under two file types; the file is one row with the
+    # first (metacheck repeats it once per type)
+    assert files["name"].tolist() == ["data.CSV", "analysis.R", "model.rds", "noext"]
+    assert files["ext"].tolist() == ["csv", "r", "rds", ""]
+    assert files["type"].tolist()[2] == "code"
     assert files["file_location"].isna().all()
 
 
@@ -95,5 +98,5 @@ def test_file_download_edge_cases(mock_api: object) -> None:
     both = dspace7_file_download([GT_URL, no_files, None])
     assert both["dspace7_url"].iloc[-2] == no_files
     assert pd.isna(both["dspace7_url"].iloc[-1])
-    with pytest.raises(ValueError, match="Join columns"):
-        dspace7_file_download(["https://example.org/a", "https://example.org/b"])
+    # U43: several URLs that all fail give None (metacheck's join errors)
+    assert dspace7_file_download(["https://example.org/a", "https://example.org/b"]) is None

@@ -187,35 +187,73 @@ def test_infer_group_maps_experiment_context_to_group_codes() -> None:
 # -- behaviour pinned by R runs (not reachable from a YAML parity case) -------
 
 
-def test_match_column_labels_needs_the_id_columns() -> None:
-    """R's data.frame() refuses a NULL paper_id / source_file next to real rows."""
+_COLS = [
+    "paper_id", "source_file", "column_name", "group", "label", "codebook_variable",
+    "label_source", "label_status", "label_method", "value_labels", "missing_values",
+    "question", "coding_instructions", "scale_group",
+]  # fmt: skip
+
+
+def test_match_column_labels_tolerates_absent_id_columns() -> None:
+    """U58: absent id columns are NA, and NULL / zero-row input gives zero rows
+    (R's data.frame() refuses a NULL paper_id next to real rows, and the early
+    return fails on NULL or zero-row columns_df)."""
     cols = pd.DataFrame({"source_file": ["d.csv"], "column_name": ["age"]})
     cbk = pd.DataFrame(
         {"codebook_variable": ["age"], "label": ["Age"], "codebook_source": ["cb"], "group": [None]}
     )
-    with pytest.raises(ValueError, match="differing number of rows: 0, 1"):
-        match_column_labels(cols, cbk)
-    with pytest.raises(ValueError, match="invalid 'times' argument"):
-        match_column_labels(None, cbk)
+    res = match_column_labels(cols, cbk)
+    assert list(res.columns) == _COLS
+    assert res["paper_id"].isna().all()
+    assert res["label"].tolist() == ["Age"]
+    for empty in (None, cols.iloc[:0]):
+        res = match_column_labels(empty, cbk)
+        assert list(res.columns) == _COLS
+        assert len(res) == 0
+    # no column_name: nothing can match, one unlabelled row per column
+    res = match_column_labels(pd.DataFrame({"paper_id": ["p", "p"]}), cbk)
+    assert res["label_status"].tolist() == ["unlabelled", "unlabelled"]
 
 
 def test_match_column_labels_expands_ranges_without_mutating_inputs() -> None:
-    cols = pd.DataFrame({"paper_id": "p", "source_file": "d.csv", "column_name": ["V2", "V5"]})
+    cols = pd.DataFrame(
+        {"paper_id": "p", "source_file": "d.csv", "column_name": ["V2", "V5", "V10", "T1-T2"]}
+    )
     cbk = pd.DataFrame(
         {
-            "codebook_variable": ["V1-V3", "V4-6"],
-            "label": ["Ratings", "Scores"],
-            "codebook_source": ["cb", "cb"],
-            "group": [None, None],
+            "codebook_variable": ["V1-V3", "V4-6", "V9 – V10", "T1-T2", "A1-B3"],
+            "label": ["Ratings", "Scores", "Late", "Change score", "Mixed"],
+            "codebook_source": ["cb"] * 5,
+            "group": [None] * 5,
         }
     )
     before_cols, before_cbk = cols.copy(), cbk.copy()
     res = match_column_labels(cols, cbk)
-    # R's range pattern has no second prefix: "V1-V3" is NOT expanded (only "V4-6")
-    assert res["label_status"].tolist() == ["unlabelled", "labelled"]
-    assert res["codebook_variable"].tolist()[1] == "V5"
+    # U58: "V1-V3" (prefix repeated) is expanded like "V4-6"; a range whose
+    # own name is a data column ("T1-T2") is that variable, not a range
+    assert res["label"].tolist() == ["Ratings", "Scores", "Late", "Change score"]
+    assert res["codebook_variable"].tolist() == ["V2", "V5", "V10", "T1-T2"]
     pd.testing.assert_frame_equal(cols, before_cols)
     pd.testing.assert_frame_equal(cbk, before_cbk)
+
+
+def test_match_column_labels_na_group() -> None:
+    """U58: a column without a group takes unscoped definitions only; with
+    only group-scoped ones it is ambiguous (R labelled it NA / "x | NA")."""
+    cols = pd.DataFrame(
+        {"paper_id": "p", "source_file": "d.csv", "column_name": ["age", "sex"], "group": None}
+    )
+    cbk = pd.DataFrame(
+        {
+            "codebook_variable": ["age", "sex", "sex"],
+            "label": ["Age", "Sex", "Gender"],
+            "codebook_source": ["a.csv", "a.csv", "b.csv"],
+            "group": ["ex1", None, "ex2"],
+        }
+    )
+    res = match_column_labels(cols, cbk)
+    assert res["label_status"].tolist() == ["ambiguous_experiment", "labelled"]
+    assert res["label"].tolist() == ["Age", "Sex"]
 
 
 def test_parse_codebook_scopes_to_group_but_json_in_csv_returns_early() -> None:
@@ -239,13 +277,28 @@ def test_parse_codebook_missing_file_is_none() -> None:
     assert parse_codebook(FIX / "does_not_exist.csv") is None
 
 
-def test_haven_value_labels_na_label_name_errors_like_r() -> None:
-    from pytacheck.datacheck.columns import _haven_value_labels
+def test_haven_value_labels_na_label_name() -> None:
+    from pytacheck.datacheck.columns import _haven_value_labels, _looks_like_freetext_labels
 
-    # R: structure(1:2, labels = setNames(1:5, c("a", "b", "c", "d", NA)))
+    # U60: R: structure(1:2, labels = setNames(1:5, c("a", "b", "c", "d", NA)))
+    # fails in `&&` because the free-text test returns NA; the NA-named code is
+    # dropped as it is with fewer labels
     attrs = {"labels": [("a", 1.0), ("b", 2.0), ("c", 3.0), ("d", 4.0), (None, 5.0)]}
-    with pytest.raises(ValueError, match="missing value where TRUE/FALSE needed"):
-        _haven_value_labels(None, attrs)
+    res = _haven_value_labels(None, attrs)
+    assert res == {"value_labels": '{"1":"a","2":"b","3":"c","4":"d"}', "missing_values": None}
+    assert _looks_like_freetext_labels(["x" * 50] * 5 + [None]) is True
+    assert _looks_like_freetext_labels(["x" * 50] * 4 + [None]) is False
     # fewer than five labels are never judged, so an NA name passes through
     res = _haven_value_labels(None, {"labels": [("a", 1.0), (None, 2.0)]})
     assert res == {"value_labels": '{"1":"a"}', "missing_values": None}
+
+
+def test_parse_codebook_utf8_with_na_cell_stays_utf8() -> None:
+    # U64: an "NA" cell is not invalid UTF-8 (metacheck re-reads the file as
+    # Latin-1 and turns "générale" into "gÃ©nÃ©rale")
+    res = parse_codebook(FIX / "utf8_na.csv")
+    assert res["label"].tolist() == [
+        "Âge du participant",
+        "Sexe (1 = homme; 2 = femme)",
+        "Humeur générale",
+    ]

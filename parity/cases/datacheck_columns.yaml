@@ -2370,6 +2370,12 @@
   "args":
     "path":
       "$file": "tests/datacheck_columns/fixtures/no_sq.qsf"
+- "id": "parse_codebook.utf8_na.csv"
+  "r": "parse_codebook"
+  "py": "pytacheck.datacheck.columns.parse_codebook"
+  "args":
+    "path":
+      "$file": "tests/datacheck_columns/fixtures/utf8_na.csv"
 - "id": "parse_codebook.codebook.pdf"
   "r": "parse_codebook"
   "py": "pytacheck.datacheck.columns.parse_codebook"

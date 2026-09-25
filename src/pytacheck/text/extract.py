@@ -193,12 +193,15 @@ def extract_p_values(paper: Any) -> pd.DataFrame:
     plus ``p_comp`` (the comparator) and ``p_value`` (the number; ``NaN`` for
     ``"n.s."``). Text such as "the p-value is 0.03" is deliberately not
     matched; scientific notation (``5.0 x 10^-2``, ``5.0e-2``) and the
-    comparators ``= < > ~ ≈ ≠ ≤ ≥ ≪ ≫`` are.
+    comparators ``= < > ~ ≈ ≠ ≤ ≥ ≪ ≫`` are. Strings are searched as a text
+    table (metacheck fails on a character vector; U150).
     """
     from pytacheck.text.json_expand import as_numeric
 
-    p = text_search(paper, _P_PATTERN, return_="match", perl=True, ignore_case=False)
-    if not isinstance(p, pd.DataFrame):  # R: `$` on the character vector of matches
+    p = text_search(
+        _strings_table(paper), _P_PATTERN, return_="match", perl=True, ignore_case=False
+    )
+    if not isinstance(p, pd.DataFrame):  # pragma: no cover - strings became a table
         raise TypeError("$ operator is invalid for atomic vectors")
     texts = [None if pd.isna(t) else str(t) for t in p["text"].tolist()]
     comps = regextract(_OP_RUN, texts, perl=True)
@@ -243,18 +246,42 @@ def _sort_key(x: Any) -> tuple[int, Any]:
     return (0, x)
 
 
+def _strings_table(paper: Any) -> Any:
+    """A string or a sequence of strings as a text table (other input unchanged)."""
+    if isinstance(paper, str):
+        return pd.DataFrame({"text": pd.Series([paper], dtype="string")})
+    if isinstance(paper, list | tuple) and all(isinstance(x, str) for x in paper):
+        return pd.DataFrame({"text": pd.Series(list(paper), dtype="string")})
+    return paper
+
+
+_ROW = ".pytacheck_row."
+
+
 def extract_eq(paper: Any) -> pd.DataFrame:
     """List all equations in the text (port of ``extract_eq()``).
 
     This is metacheck's canonical extractor for reported statistics: one row
     per ``name (df) <op> value`` fragment, with the columns ``text_id``,
-    ``grp_id`` (the sentence group, numbered per paper in search order),
-    ``lhs``, ``df`` (e.g. ``"(2, 57)"`` or ``NA``), ``comp``, ``rhs`` and
-    ``paper_id``, sorted by ``paper_id``, ``text_id`` and ``grp_id``.
+    ``grp_id`` (the sentence's number within its paper), ``lhs``, ``df``
+    (e.g. ``"(2, 57)"`` or ``NA``), ``comp``, ``rhs`` and ``paper_id``,
+    sorted by ``paper_id``, ``text_id`` and ``grp_id``. *paper* can also be a
+    text table or strings (``text_id`` and ``paper_id`` are then ``NA`` when
+    the table has none).
+
+    Differs from metacheck (U10, U150): ``grp_id`` numbers the sentences in
+    text order (metacheck numbered them in the order its per-operator
+    searches found them, so the first sentence could be group 7); a table
+    without ``paper_id`` works (metacheck failed on ``NA`` comparisons once
+    there were two equations); and strings are accepted (metacheck fails).
     """
-    eq = text_search(_search_table(paper, f"[{_OPS}]"), list(_OPERATORS))
+    table = _search_table(_strings_table(paper), f"[{_OPS}]")
+    if isinstance(table, pd.DataFrame):
+        # the source row of each match, to tell sentences apart without text_id
+        table = table.assign(**{_ROW: range(len(table))})
+    eq = text_search(table, list(_OPERATORS))
     eq = text_search(eq, _EQ_PATTERN, return_="match", perl=True, ignore_case=True)
-    if not isinstance(eq, pd.DataFrame):  # R: nrow() of a character vector is NULL
+    if not isinstance(eq, pd.DataFrame):  # pragma: no cover - strings became a table
         raise TypeError("argument is of length zero")
     if len(eq) == 0:
         return _empty_eq()
@@ -283,22 +310,20 @@ def extract_eq(paper: Any) -> pd.DataFrame:
     lhs = trimws(lhs)
     rhs = trimws(rhs)
 
-    # set group equal to sentence for now (numbered in search order, per paper)
-    paper_ids = eq["paper_id"].tolist()
+    # set group equal to sentence: sentences numbered in text order per paper
+    paper_ids = [None if _is_missing(v) else v for v in eq["paper_id"].tolist()]
     text_ids = eq["text_id"].tolist()
-    grp: list[float] = []
+    rows = eq[_ROW].tolist()
+    first: dict[tuple[Any, int], Any] = {}
     for i in range(len(eq)):
-        if i == 0:
-            grp.append(1.0)
-            continue
-        if _is_missing(paper_ids[i]) or _is_missing(paper_ids[i - 1]):
-            raise ValueError("missing value where TRUE/FALSE needed")
-        if paper_ids[i] != paper_ids[i - 1]:
-            grp.append(1.0)
-            continue
-        if _is_missing(text_ids[i]) or _is_missing(text_ids[i - 1]):
-            raise ValueError("missing value where TRUE/FALSE needed")
-        grp.append(grp[-1] if text_ids[i] == text_ids[i - 1] else grp[-1] + 1)
+        first.setdefault((paper_ids[i], rows[i]), text_ids[i])
+    sentences = sorted(first, key=lambda k: (_sort_key(k[0]), _sort_key(first[k]), k[1]))
+    number: dict[tuple[Any, int], int] = {}
+    per_paper: dict[Any, int] = {}
+    for key in sentences:
+        per_paper[key[0]] = per_paper.get(key[0], 0) + 1
+        number[key] = per_paper[key[0]]
+    grp = [float(number[(paper_ids[i], rows[i])]) for i in range(len(eq))]
 
     out = pd.DataFrame(
         {

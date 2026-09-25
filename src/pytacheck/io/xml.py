@@ -388,17 +388,22 @@ def _xml_find1_text(xml: XmlLike, xpath: str) -> str:
     return str(_xml_find_text(xml, xpath)[0])
 
 
-# Operators used to glue a number to the operator after it (as in extract_eq()).
-_OPERATORS = "=<>~\u2248\u2260\u2264\u2265\u226a\u226b"
+# Operators a number is glued to ("XX  2 = ?" -> "XX2 = ?", as in extract_eq()).
+# The clean-up runs on the raw XML text, where a literal "<" is always markup (a
+# "<" in the text is written "&lt;"), so "<" is left out: metacheck's class
+# includes it, which glued every number printed before a tag to the word before
+# it ("Smith et al., 2015</ref>" -> "Smith et al.,2015", "Study 2</head>" ->
+# "Study2", "p = .27.</p>" -> "p =.27."; U16).
+_OPERATORS = "=>~\u2248\u2260\u2264\u2265\u226a\u226b"
 
 # The TEI clean-up replacements of .xml_read_grobid(), in order: (TRE pattern,
 # replacement). Patterns are the R regexes after string-literal unescaping.
 _GROBID_FIXES: tuple[tuple[str, str], ...] = (
     ("\\s+([\u00b20-9.]+\\s*[" + _OPERATORS + "])", "\\1"),
     ("r\\s*p\\s*2", "rp\u00b2"),
-    # R writes "\u03C\\s*p..." intending omega (U+03C9), but R reads "\u03C"
-    # as U+003C ("<"), so the pattern really starts with "<" (reproduced).
-    ("<\\s*p\\s*2", "<p\u00b2"),
+    # omega (metacheck writes "\u03C" for U+03C9, which R reads as "<" and so
+    # never fixes omega; U16)
+    ("\u03c9\\s*p\\s*[2\u00b2]", "\u03c9p\u00b2"),
     ("\u03b7\\s*p\\s*[2\u00b2]", "\u03b7p\u00b2"),
     ("\u03b7\\s*G\\s*[2\u00b2]", "\u03b7G\u00b2"),
     ("\u03b7\\s*[2\u00b2]", "\u03b7\u00b2"),
@@ -412,8 +417,8 @@ _GROBID_FIXES: tuple[tuple[str, str], ...] = (
     ("\u03a7[2\u00b2]\\s*\\((\\s*\\d+)\\s*\\)", "\u03a7\u00b2(\\1)"),
     ("\\br\\s*\\((\\s*\\d+)\\s*\\)", "r(\\1)"),
     ("\\bd\\s+z\\b", "dz"),
-    # "\\g" is not an escape in TRE: this matches "dgz", "dggz", ...
-    ("\\bd\\g+z\\b", "gz"),
+    # Hedges' g_z (metacheck writes "\\bd\\g+z\\b", which matches "dgz"; U16)
+    ("\\bg\\s+z\\b", "gz"),
     ("\\bBF\\s+([10]{2})\\b", "BF\\1"),
     ("(https?://)\\s+", "\\1"),
     ("(\\d\\.)\\s+(\\d)", "\\1\\2"),
@@ -469,6 +474,11 @@ def _xml_read_grobid(path: str | PathLike[str]) -> etree._ElementTree:
     ``"rp²"``, ``"Fig. 1"`` -> ``"Fig 1"``, ...) to the raw file text, parses
     it (blank text nodes dropped) and strips the TEI default namespace so
     XPath needs no prefixes.
+
+    Differences from metacheck (bug fixes): a number printed before a tag is
+    not glued to the word before it, the omega and Hedges' g_z fixes do what
+    their comments say (U16), and Grobid's sentence tags (``<s>``) are
+    unwrapped (U28, see :func:`_unwrap_sentences`).
     """
     p = Path(path)
     if not p.exists():
@@ -479,4 +489,29 @@ def _xml_read_grobid(path: str | PathLike[str]) -> etree._ElementTree:
     text = text.replace("</ref><ref", "</ref> <ref")
     tree = read_xml(text)
     _strip_default_namespaces(tree)
+    _unwrap_sentences(tree)
     return tree
+
+
+def _unwrap_sentences(tree: etree._ElementTree) -> None:
+    """Drop the ``<s>`` elements of Grobid's sentence segmentation, keeping their contents.
+
+    Grobid run with ``segmentSentences=1`` wraps every sentence in ``<s>``
+    and prints no space between two of them. metacheck keeps the tags, so a
+    paragraph serialised with them is indented between the sentences and its
+    text is one row with runs of spaces (``"First.   Second."``), or with no
+    space at all in a caption (``"First.Second."``; U28). Unwrapping them
+    (with one space between two sentences) gives the paragraph Grobid prints
+    without segmentation, which is split into sentences as usual.
+    """
+    from lxml import etree
+
+    root = tree.getroot()
+    found = False
+    for s in root.iter("s"):
+        found = True
+        nxt = s.getnext()
+        if not s.tail and nxt is not None and nxt.tag == "s":
+            s.tail = " "
+    if found:
+        etree.strip_tags(root, "s")

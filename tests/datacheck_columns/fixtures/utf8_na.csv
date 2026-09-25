@@ -1,0 +1,4 @@
+variable,label,values
+age,Âge du participant,NA
+sexe,Sexe (1 = homme; 2 = femme),1-2
+humeur,Humeur générale,1-7

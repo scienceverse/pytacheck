@@ -244,19 +244,23 @@ def test_haven_labels_and_formats() -> None:
     assert str(df["stamp"].dt.tz) == "UTC"
 
 
-def test_head_drops_attributes_without_subset_method() -> None:
-    # head() keeps a factor's levels/class but not its label; unclassed columns
-    # lose their label; haven (vctrs) columns keep everything
+def test_rds_and_rdata_keep_column_attributes() -> None:
+    # U61: labels and classes are kept as stored, for any n_rows (R's head()
+    # drops the label of unclassed and factor columns, haven labels survive
+    # only when vctrs is loaded, and the .RData child calls head() only for a
+    # finite n_rows)
     attrs = F.data_read_head(DATA / "labs.rds", n_rows=INF).attrs["col_attrs"]
-    assert "plain" not in attrs
-    assert attrs["f"] == {"class": "factor"}
+    assert attrs["plain"] == {"label": "Plain label"}
+    assert attrs["f"] == {"label": "F label", "class": "factor"}
     assert attrs["lab"]["label"] == "Agreed?"
     assert attrs["when"] == {"class": ["POSIXct", "POSIXt"], "tzone": "Europe/Amsterdam"}
-    # the .RData child only calls head() for finite n_rows and has no vctrs
+    head = F.data_read_head(DATA / "labs.rds", n_rows=2).attrs["col_attrs"]
+    assert head["plain"] == attrs["plain"] and head["f"] == attrs["f"]
     full = F.data_read_head(DATA / "labs_ws.RData", n_rows=INF).attrs["col_attrs"]
-    assert full["plain"] == {"label": "Plain label"}
     part = F.data_read_head(DATA / "labs_ws.RData", n_rows=2).attrs["col_attrs"]
-    assert "lab" not in part and "plain" not in part
+    assert full["plain"] == part["plain"] == {"label": "Plain label"}
+    assert part["lab"]["label"] == full["lab"]["label"]
+    assert part["lab"]["class"] == ["haven_labelled", "vctrs_vctr", "double"]
 
 
 def test_integer64_is_kept_as_int64() -> None:

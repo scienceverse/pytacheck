@@ -1,0 +1,147 @@
+# Data lane (datacheck_*, mod_data_check*, mod_codebook*, mod_psychds*): cases in
+# generated case files whose R golden records a metacheck bug that pytacheck fixes
+# (or a deliberate, better behaviour). Format (see parity/cases.py):
+# "<area>/<id>": {kind, ref, reason}; ref is the docs/UPSTREAM_ISSUES.md entry.
+
+# U55: data_check_outliers() / data_check_scale_values() crashes
+"datacheck_checks/data_check_outliers.iqr_nan":
+  kind: r_bug_fixed
+  ref: U55
+  reason: both quartiles are Inf (IQR NaN), which pytacheck treats as no spread (no outliers); R fails in `if (iqr == 0)`
+"datacheck_checks/data_check_scale_values.noninteger_range_error":
+  kind: r_bug_fixed
+  ref: U55
+  reason: a valid_range with fractional bounds is a continuous interval and the bounds print as decimals; R builds 1.5:3.5 and fails on sprintf("%d")
+
+# U59: .scale_typo_of() takes a double's digits from as.character() ("1e+05")
+"datacheck_checks_review/data_check_scale_values.review.dbl_1e5":
+  kind: r_bug_fixed
+  ref: U59
+  reason: 100000 (double) has no digit that is a plausible typo on a 2-10 scale; R reads "1e+05" and calls it a typo of 5
+"datacheck_columns_review/.scale_typo_of.dbl_1e5":
+  kind: r_bug_fixed
+  ref: U59
+  reason: a whole double's digits are its decimal digits (100000 -> none inside 2-10), as for an integer; R reads "1e+05" and returns 5
+
+# U58: match_column_labels()
+"datacheck_columns/match_column_labels.ranges": &u58_range
+  kind: r_bug_fixed
+  ref: U58
+  reason: range notation with a repeated prefix ("V1-V3", "q1 - q2") is expanded, as R's own comment intends; R's pattern only expands "V1-3"
+"datacheck_columns/match_column_labels.na_group": &u58_na
+  kind: r_bug_fixed
+  ref: U58
+  reason: a column of unknown (NA) group takes only unscoped definitions, else is ambiguous_experiment; R's df[NA, ] gives it NA labels or " | NA" conflicts
+"datacheck_columns_review/match_column_labels.na_group_scoped": *u58_na
+"datacheck_columns/match_column_labels.null_columns": &u58_empty
+  kind: r_bug_fixed
+  ref: U58
+  reason: NULL or zero-row columns_df gives a zero-row result with all columns; R's early return fails (invalid 'times' / differing number of rows)
+"datacheck_columns/match_column_labels.empty_columns": *u58_empty
+"datacheck_columns/match_column_labels.no_paper_col": &u58_absent
+  kind: r_bug_fixed
+  ref: U58
+  reason: an absent paper_id/source_file/column_name (or codebook_source/value_labels) column is NA in the result; R fails building the data.frame or on `if` with a zero-length or NA condition
+"datacheck_columns/match_column_labels.no_source_col": *u58_absent
+"datacheck_columns/match_column_labels.no_paper_col_empty_cb": *u58_absent
+"datacheck_columns/match_column_labels.qsf_no_source": *u58_absent
+"datacheck_columns_review/match_column_labels.qsf_no_value_labels_col": *u58_absent
+"datacheck_columns/match_column_labels.no_colname_qsf": &u58_qsfname
+  kind: r_bug_fixed
+  ref: U58
+  reason: the .qsf question-tag fallback skips columns with an absent or NA name and compares numeric names as text; R stops the whole labelling on them
+"datacheck_columns/match_column_labels.na_colname_qsf": *u58_qsfname
+"datacheck_columns_review/match_column_labels.qsf_numeric_colname": *u58_qsfname
+"datacheck_columns_review/match_column_labels.qsf_chr_na_colname": *u58_qsfname
+"datacheck_columns_review/match_column_labels.qsf_na_after_match": *u58_qsfname
+
+# U60: .looks_like_freetext_labels() with an NA label
+"datacheck_columns/.looks_like_freetext_labels.na": &u60
+  kind: r_bug_fixed
+  ref: U60
+  reason: NA labels are left out like empty ones, so the answer is TRUE/FALSE; R returns NA and .haven_value_labels() then fails in `&&`
+"datacheck_columns_review/.looks_like_freetext_labels.na_long": *u60
+
+# U61: data_read_head() on .rds/.RData loses column attributes depending on the R session
+"datacheck_files/data_read_head.attrs.labs.rds": &u61
+  kind: r_bug_fixed
+  ref: U61
+  reason: column labels/classes are kept as stored; R's head() drops the label of unclassed and factor columns (and haven labels without vctrs)
+"datacheck_files/data_read_head.attrs.labs.rds.n2": *u61
+"datacheck_files/data_read_head.attrs.labs_ws.RData.n2": *u61
+"datacheck_files/data_read_head.attrs.odd.rds": *u61
+
+# U154: readxl's isDateFormat() "General" shortcut
+"datacheck_files_review/review.read_head_typed.era_date.xlsx":
+  kind: r_bug_fixed
+  ref: U154
+  reason: a Japanese era date format (ggge"年"m"月"d"日") is a date; readxl's General shortcut stops at any g followed by six characters and returns the serial number (43586)
+
+# U62: manifest writing
+"datacheck_files/manifest_merge.create": &u62
+  kind: r_bug_fixed
+  ref: U62
+  reason: a null already in the manifest stays null on re-merge (R rewrites it as {}), and 0.000012345 keeps its precision (jsonlite digits = 4 writes 0)
+"datacheck_files/manifest_merge.remove_key": *u62
+"datacheck_files_review/review.write_manifest.no_repo_url":
+  kind: r_bug_fixed
+  ref: U62
+  reason: a missing repository URL is written as null; R writes its NULL as an empty object {}
+"datacheck_files_review/review.write_manifest.no_repo_url_gated":
+  kind: r_bug_fixed
+  ref: U62
+  reason: a file listing without repo_url cannot match a gated repository, so its files fall through to the other skip reasons; R fails on `if (NULL %in% gated_urls)`
+
+# U63: text that is not valid UTF-8
+"datacheck_files/text_peek.latin1_notes.txt": &u63
+  kind: r_bug_fixed
+  ref: U63
+  reason: lines that are not valid UTF-8 are read as Latin-1, so an 8-bit text file can be peeked at and classified; R fails splitting it into lines
+"datacheck_files/txt_classify_content.latin1_notes.txt": *u63
+"datacheck_files/data_code_refs.latin1":
+  kind: r_bug_fixed
+  ref: U63
+  reason: a Latin-1 script's data-file references are found (its lines are read as Latin-1); R's gregexpr() matches nothing on invalid UTF-8 (or fails)
+
+# U64: a valid UTF-8 table with an NA cell is re-read as Latin-1
+"datacheck_files_review/review.read_head_typed.rt_fallback_latin1.csv": &u64
+  kind: r_bug_fixed
+  ref: U64
+  reason: only text that is not valid UTF-8 triggers the Latin-1 re-read; R's is.na(iconv()) is also TRUE for an NA cell, so "café" becomes "cafÃ©"
+"datacheck_columns/parse_codebook.utf8_na.csv": *u64
+
+# U98: data_check's early return when no tabular file could be read
+"mod_data_check/data_check.nodata": &u98
+  kind: r_bug_fixed
+  ref: U98
+  reason: with no readable table the module still returns its summary text, report, per-paper summary table and column table (spreadsheet findings go to findings), and a light that counts undownloaded data; R's empty() returns only the validation half (dv_summary_text/dv_report, which reach no report)
+"mod_data_check/data_check.nolocal_only": *u98
+"mod_data_check/data_check.nolocal_download_none": *u98
+"mod_data_check/data_check.nolocal_download_false": *u98
+"mod_data_check/data_check.txt_download_none": *u98
+"mod_data_check/data_check.download_skip_data": *u98
+"mod_data_check/data_check.download_none": *u98
+"mod_data_check/data_check.download_oversize": *u98
+"mod_data_check/data_check.download_gated": *u98
+"mod_data_check_review/review.nodata_list": *u98
+"mod_data_check_review/review.broken_list": *u98
+"mod_data_check_review/review.broken_list.dv_report": *u98
+"mod_data_check_review/review.download_count_cap": *u98
+"mod_data_check_review/review.archives_download_none": *u98
+
+# U99: data_check counts
+"mod_data_check/data_check.spreadsheets": &u99
+  kind: r_bug_fixed
+  ref: U99
+  reason: '"extracted N columns from M of them" counts the files columns were extracted from; R also counts unreadable and workspace-only files'
+"mod_data_check/data_check.local.spreadsheets": *u99
+"mod_data_check/data_check.rdata": *u99
+"mod_data_check/data_check.nontabular": *u99
+"mod_data_check_review/review.mixed_list": *u99
+"mod_data_check_review/review.text": *u99
+
+# U100: data_check crashes
+"mod_data_check/data_check.nourl":
+  kind: r_bug_fixed
+  ref: U100
+  reason: a repo_check table without repo_url (local files) gives NA repo_url columns; R fails building the column table (differing number of rows)

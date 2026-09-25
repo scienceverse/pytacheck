@@ -14,7 +14,6 @@ from typing import Any
 import pandas as pd
 
 from pytacheck._r import grepl
-from pytacheck.fileinfo._strings import invalid_utf8
 
 __all__ = ["file_category", "filetype"]
 
@@ -96,9 +95,12 @@ def _tolower(s: str) -> str:
 
 
 def _grepl(pattern: str, x: list[str | None], ignore_case: bool = False) -> list[bool]:
-    """``grepl()``, which is ``FALSE`` for ``NA`` and for a string that is not valid UTF-8."""
-    hits = grepl(pattern, x, ignore_case=ignore_case)
-    return [bool(h) and not invalid_utf8(v) for h, v in zip(hits, x, strict=True)]
+    """``grepl()`` (``FALSE`` for ``NA``).
+
+    A name with bytes that are not valid UTF-8 is matched too (R's ``grepl()``
+    is ``FALSE`` for it, so metacheck classifies it as nothing: U76).
+    """
+    return [bool(h) for h in grepl(pattern, x, ignore_case=ignore_case)]
 
 
 def _last_ext(name: str) -> str:
@@ -128,8 +130,6 @@ def _name_filetype(name: str | None) -> str:
     """
     if name is None:
         return ""
-    if invalid_utf8(name):
-        return ""  # R: grepl() is FALSE for a string that is not valid UTF-8
     from pytacheck.fileinfo.types import ext_rows
 
     rows = ext_rows()
@@ -259,8 +259,7 @@ def filetype(filename: Any) -> pd.Series:
     table = ext_types()
     types: list[str] = []
     for name in names:
-        if name is None or invalid_utf8(name):
-            # R: strsplit() gives NA for a string that is not valid UTF-8
+        if name is None:
             types.append("NA")
             continue
         types.append(table.get(_tolower(_last_ext(name)), "NA"))

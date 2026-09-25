@@ -118,7 +118,6 @@ def _mendeley_info(mendeley_id: Any, pb: Any = None) -> pd.DataFrame:
     from pytacheck.archives.dataverse import (
         _cell,
         _dollar,
-        _dollars,
         _elements,
         _empty_or,
         _field_cell,
@@ -157,7 +156,11 @@ def _mendeley_info(mendeley_id: Any, pb: Any = None) -> pd.DataFrame:
         )
 
         obj["title"] = _field_cell(_empty_or(_dollar(rec, "name"), None))
-        obj["doi"] = _field_cell(_empty_or(_dollars(rec, "doi", "id"), None))
+        # a plain-string `doi` is the DOI itself (metacheck's `rec$doi$id` fails on it: U34)
+        doi = _dollar(rec, "doi")
+        if not isinstance(doi, str):
+            doi = _dollar(doi, "id")
+        obj["doi"] = _field_cell(_empty_or(doi, None))
         obj["description"] = _field_cell(_empty_or(_dollar(rec, "description"), None))
         obj["publication_date"] = _field_cell(_empty_or(_dollar(rec, "publish_date"), None))
         obj["updated_date"] = _field_cell(_empty_or(_dollar(rec, "modified_on"), None))

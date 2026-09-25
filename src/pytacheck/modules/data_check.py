@@ -116,12 +116,6 @@ _NA_REPLACE = {
     "spreadsheet_file_n": 0,
     "spreadsheet_flagged_file_n": 0,
 }
-_NA_REPLACE_EMPTY = {
-    "column_n": 0,
-    "flagged_n": 0,
-    "spreadsheet_file_n": 0,
-    "spreadsheet_flagged_file_n": 0,
-}
 
 
 # -----------------------------------------------------------------------------
@@ -518,7 +512,9 @@ def data_check(
     )
     n_tabular_all = ex["n_tabular_all"]
     n_no_local = ex["n_no_local"]
-    n_extracted = ex["n_data_files"] - len(ex["manifest_files"]) - len(ex["non_tabular"])
+    # the files columns were actually extracted from (R subtracts manifests and
+    # non-rectangular files but not unreadable or workspace-only ones)
+    n_extracted = ex["n_extracted"]
     summary_data = (
         f"We found {n_tabular_all:d} tabular data file{plural(n_tabular_all)} and extracted "
         f"{n_columns:d} column{plural(n_columns)} from {n_extracted:d} of them."
@@ -682,21 +678,8 @@ def data_check(
         plot_distributions=plot_distributions,
         max_facets=max_facets,
     )
-    if dv["empty"]:
-        return {
-            "table": dv["spreadsheet_findings"],
-            "summary_table": dv["summary_table"],
-            "na_replace": dict(_NA_REPLACE_EMPTY),
-            "traffic_light": dv["traffic_light"],
-            "dv_summary_text": dv["summary_text"],
-            "dv_report": dv["report"],
-            "structure": all_files,
-            "previews": file_previews,
-            "gated_repos": listing_gated,
-            "manifest_path": manifest_path,
-            "group_no_evidence": state["group_no_evidence"],
-        }
-
+    if not file_previews and tl == "green":
+        tl = "na"  # tabular files exist but none could be read: nothing was checked
     rank = {"na": 0, "green": 1, "yellow": 2, "red": 3}
     both = [t for t in (tl, dv["traffic_light"]) if t in rank]
     final_tl = max(both, key=lambda t: rank[t]) if both else "na"
@@ -826,8 +809,10 @@ def _classify(
             ref_by[i] = r_vals[k]
         _set(all_files, "group", group)
         _set(all_files, "referenced_by", ref_by, dtype=object)
-        # R reads `grp$model` -- a column, not the "model" attribute -- so the
-        # study-group model never reaches the report (see UPSTREAM_ISSUES)
+        # the study-group model is reported like the file-type one (R reads
+        # `grp$model`, a column that does not exist, so it never was)
+        if llm_model_used is None:
+            llm_model_used = grp.attrs.get("model")
         roster_check = grp.attrs.get("roster_check")
         group_unresolved = list(grp.attrs.get("unresolved") or [])
         group_no_evidence = h._is_true(grp.attrs.get("no_evidence"))
@@ -1012,12 +997,16 @@ def _download(
                 keep_rows = [i for i in range(n) if i not in drop]
                 all_files = all_files.iloc[keep_rows].reset_index(drop=True)
                 want = [want[i] for i in keep_rows]
+                # keep the zip-peek reasons aligned with the rows (R does not,
+                # so the manifest can give a file another file's reason)
+                zip_peek_reason = [zip_peek_reason[i] for i in keep_rows]
                 if extracted:
                     from pytacheck._r import bind_rows
 
                     added = bind_rows(extracted)
                     all_files = bind_rows([all_files, added]).reset_index(drop=True)
                     want = want + [True] * len(added)
+                    zip_peek_reason = zip_peek_reason + [None] * len(added)
                 n = len(all_files)
                 names = h._col(all_files, "file_name") or [None] * n
 
@@ -1144,14 +1133,11 @@ def _file_columns(
     rep_counts = df.attrs.get("utf8_repaired") or {}
     utf8_fixed = [int(rep_counts[nm]) if nm in rep_counts else 0 for nm in names]
 
-    if "repo_url" not in f:
-        # R: data.frame(..., repo_url = f$repo_url = NULL, ...) cannot recycle a NULL
-        sizes = ", ".join(str(n) for n in dict.fromkeys([1, 0, p]))
-        raise ValueError(f"arguments imply differing number of rows: {sizes}")
     data: dict[str, pd.Series] = {}
     pid = f.get("paper_id", "__absent__")
     data["paper_id"] = _str_series([pid_fallback if pid == "__absent__" else pid] * p)
-    data["repo_url"] = _str_series([f["repo_url"]] * p)
+    # a listing without repo_url (local files) gives NA (R fails building the frame)
+    data["repo_url"] = _str_series([f.get("repo_url")] * p)
     data["source_file"] = _str_series([f.get("file_name")] * p)
     data["group"] = _str_series([f.get("group")] * p)
     data["column_name"] = _str_series(names)
@@ -1245,6 +1231,7 @@ def _extract(
     previews: dict[str, pd.DataFrame] = {}
     columns_df: pd.DataFrame | None = None
     llm_col_updates = 0
+    n_extracted = 0
 
     if data_rows:
         from pytacheck._r import bind_rows
@@ -1292,6 +1279,7 @@ def _extract(
                 continue
             previews[fname] = df
             per_file.append(_file_columns(f, df, cls, pid_fallback))
+            n_extracted += 1
         columns_df = bind_rows(per_file).reset_index(drop=True) if per_file else pd.DataFrame()
 
         header_sig: list[str] | None = None
@@ -1355,6 +1343,7 @@ def _extract(
         "n_tabular_all": n_tabular_all,
         "n_no_local": n_no_local,
         "n_data_files": len(data_rows),
+        "n_extracted": n_extracted,
         "manifest_files": manifest_files,
         "workspace_files": workspace_files,
         "non_tabular": non_tabular,
@@ -1574,32 +1563,38 @@ def _validate(
 ) -> dict[str, Any]:
     from pytacheck.module import get_prev_outputs
 
+    from pytacheck._r import bind_rows
+
     labels_df = get_prev_outputs("codebook_check", "table")
     sp = h.dv_spreadsheet_findings(structure_df)
     sp_df: pd.DataFrame = sp["findings"]
     n_sp_files = sp["n_files"]
 
     if not previews:
+        # no readable table: the spreadsheet findings are all there is to report
         text = "We found no readable tabular data files to validate."
-        n_flag_sp = len(h._unique(h._col(sp_df, "source_file") or []))
         has = len(sp_df) > 0
+        sp_files_by_paper, sp_flagged_by_paper = _spreadsheet_counts(structure_df, sp_df)
+        ids = h._unique(
+            [None if h._na(v) else v for v in sp_files_by_paper["paper_id"].tolist()]
+        )
+        dv_summary = pd.DataFrame({"paper_id": _str_series(ids)})
+        for y in (sp_files_by_paper, sp_flagged_by_paper):
+            dv_summary = _left_join(dv_summary, y)
+        for c in ("spreadsheet_file_n", "spreadsheet_flagged_file_n"):
+            dv_summary[c] = dv_summary[c].astype("Int64").fillna(0)
+        dv_summary.insert(1, "flagged_n", pd.Series([0] * len(ids), dtype="Int64"))
         return {
-            "empty": True,
-            "spreadsheet_findings": sp_df,
-            "summary_table": pd.DataFrame(
-                {
-                    "paper_id": _str_series([_pid(paper, columns_df)]),
-                    "column_n": pd.Series([0.0]),
-                    "flagged_n": pd.Series([0.0]),
-                    "spreadsheet_file_n": pd.Series([n_sp_files], dtype="Int64"),
-                    "spreadsheet_flagged_file_n": pd.Series([n_flag_sp], dtype="Int64"),
-                }
-            ),
+            "findings": bind_rows([_findings_df([]), sp_df]).reset_index(drop=True),
+            "careless": _careless({}, columns_df, labels_df)["careless"],
+            "demographics": _demographics({}, columns_df),
+            "qualtrics": pd.DataFrame(),
+            "summary_table": dv_summary,
             "traffic_light": "yellow" if has else "na",
             "summary_text": f"{text} {h.dv_spreadsheet_summary_text(sp_df, n_sp_files)}"
             if has
             else text,
-            "report": h.dv_spreadsheet_report(sp_df, n_sp_files) if has else None,
+            "report": h.dv_spreadsheet_report(sp_df, n_sp_files) if has else [],
         }
 
     labels = _label_lookup(labels_df)
@@ -1626,8 +1621,6 @@ def _validate(
     car = _careless(previews, columns_df, labels_df)
     careless_df: pd.DataFrame = car["careless"]
 
-    from pytacheck._r import bind_rows
-
     findings_df = _findings_df(findings)
     findings_df = bind_rows([findings_df, sp_df]).reset_index(drop=True)
     n_columns = (
@@ -1652,15 +1645,6 @@ def _validate(
             key_f = None if h._na(src_f) else src_f
             if key_f not in file_to_paper:
                 file_to_paper[key_f] = None if h._na(p) else p
-    sp_file_to_paper: dict[Any, Any] = {}
-    if structure_df is not None and len(structure_df) > 0:
-        for nm_f, p in zip(
-            h._col(structure_df, "file_name") or [],
-            h._col(structure_df, "paper_id") or [],
-            strict=False,
-        ):
-            if nm_f not in sp_file_to_paper:
-                sp_file_to_paper[nm_f] = p
     if n_columns > 0 and columns_df is not None:
         cpid = [None if h._na(v) else v for v in columns_df["paper_id"].tolist()]
         k, v = _summarise_by(cpid, [1] * len(cpid), len)
@@ -1672,21 +1656,7 @@ def _validate(
         flagged_by_paper = _frame_by("flagged_n", k, v)
     else:
         flagged_by_paper = _frame_by("flagged_n", [], [])
-    xl_rows = h._spreadsheet_rows(structure_df)
-    if xl_rows:
-        spid = h._col(structure_df, "paper_id") or [None] * len(structure_df)
-        k, v = _summarise_by([spid[i] for i in xl_rows], [1] * len(xl_rows), len)
-        sp_files_by_paper = _frame_by("spreadsheet_file_n", k, v)
-    else:
-        sp_files_by_paper = _frame_by("spreadsheet_file_n", [], [])
-    if len(sp_df) > 0:
-        sp_src = h._col(sp_df, "source_file") or []
-        k, v = _summarise_by(
-            [sp_file_to_paper.get(s) for s in sp_src], sp_src, lambda x: len(set(x))
-        )
-        sp_flagged_by_paper = _frame_by("spreadsheet_flagged_file_n", k, v)
-    else:
-        sp_flagged_by_paper = _frame_by("spreadsheet_flagged_file_n", [], [])
+    sp_files_by_paper, sp_flagged_by_paper = _spreadsheet_counts(structure_df, sp_df)
 
     # per-check tally (distinct columns per check, most first; ties by name, C locale)
     distinct = h._unique(list(zip(cf_src, cf_col, cf_chk, strict=True)))
@@ -1813,7 +1783,6 @@ def _validate(
         qualtrics_df = pd.DataFrame()
 
     return {
-        "empty": False,
         "findings": findings_df,
         "careless": careless_df,
         "demographics": demo_df,
@@ -1823,6 +1792,38 @@ def _validate(
         "summary_text": dv_text,
         "report": report,
     }
+
+
+def _spreadsheet_counts(
+    structure_df: pd.DataFrame | None, sp_df: pd.DataFrame
+) -> tuple[pd.DataFrame, pd.DataFrame]:
+    """Per paper: spreadsheets examined, and spreadsheets with a finding."""
+    xl_rows = h._spreadsheet_rows(structure_df)
+    if xl_rows:
+        assert structure_df is not None
+        spid = h._col(structure_df, "paper_id") or [None] * len(structure_df)
+        k, v = _summarise_by([spid[i] for i in xl_rows], [1] * len(xl_rows), len)
+        sp_files_by_paper = _frame_by("spreadsheet_file_n", k, v)
+    else:
+        sp_files_by_paper = _frame_by("spreadsheet_file_n", [], [])
+    sp_file_to_paper: dict[Any, Any] = {}
+    if structure_df is not None and len(structure_df) > 0:
+        for nm_f, p in zip(
+            h._col(structure_df, "file_name") or [],
+            h._col(structure_df, "paper_id") or [],
+            strict=False,
+        ):
+            if nm_f not in sp_file_to_paper:
+                sp_file_to_paper[nm_f] = p
+    if len(sp_df) > 0:
+        sp_src = h._col(sp_df, "source_file") or []
+        k, v = _summarise_by(
+            [sp_file_to_paper.get(s) for s in sp_src], sp_src, lambda x: len(set(x))
+        )
+        sp_flagged_by_paper = _frame_by("spreadsheet_flagged_file_n", k, v)
+    else:
+        sp_flagged_by_paper = _frame_by("spreadsheet_flagged_file_n", [], [])
+    return sp_files_by_paper, sp_flagged_by_paper
 
 
 def _label_lookup(labels_df: Any) -> dict[tuple[Any, Any], Any]:

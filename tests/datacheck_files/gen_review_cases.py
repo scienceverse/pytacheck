@@ -112,6 +112,8 @@ HEAD_FILES = [
 ]  # fmt: skip
 for name in HEAD_FILES:
     typed_head(name)
+# U154: a Japanese era date format is a date (readxl reads the serial number)
+typed_head("era_date.xlsx")
 for name in ("tab_in_quotes.tsv", "rt_nrows.csv", "rt_wrap.csv", "stata_int_na.dta",
              "int64.csv", "bom_comment_cr.txt"):  # fmt: skip
     typed_head(name, 5)

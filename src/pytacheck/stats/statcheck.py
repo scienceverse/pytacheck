@@ -9,7 +9,7 @@ significance decision (``decision_error``).
 Everything here mirrors the *installed* statcheck 1.5.0 function by function
 (``statcheck:::extract_stats``, ``extract_df``, ``extract_test_stats``,
 ``extract_p_value``, ``compute_p``, ``error_test``, ``decision_error_test``,
-``process_stats``, ``calc_APA_factor`` ...), including its quirks:
+``process_stats``, ``calc_APA_factor`` ...):
 
 * every regular expression runs on the engine R runs it on (PCRE for
   ``extract_pattern()`` and the ``perl = TRUE`` substitutions, TRE for the
@@ -19,9 +19,16 @@ Everything here mirrors the *installed* statcheck 1.5.0 function by function
   (:class:`RError`), exactly where R stops;
 * R warnings (``NAs introduced by coercion``, ``NaNs produced``) are
   reported with :func:`warnings.warn` by :func:`statcheck` (and computation
-  goes on, as in R), while metacheck's ``stats()`` discards a sentence on
-  its first warning (its ``tryCatch(warning = ...)``) -- see
-  :func:`_statcheck_quiet`.
+  goes on, as in R); ``stats()`` ignores them (:func:`_statcheck_quiet`).
+
+Where statcheck 1.5.0 is wrong, pytacheck fixes it (docs/UPSTREAM_ISSUES.md
+U5, U149): a result that cannot be parsed or checked (no test name, zero or
+infinite degrees of freedom, an unparseable p-value) is dropped instead of
+failing the whole call with an R error; each result keeps its own p-value
+(statcheck could give one result another's); a correlation's rounding
+interval stops at +-1 (``r = 1.00``); the Q-test subtype is read from the
+``Q`` token (``Q-Between`` is ``Qb``); ``ns`` is recognised by the engine
+that found it; and invalid flag values are rejected up front.
 
 The file-reading front ends (``checkPDF``, ``checkHTML``, ``checkdir`` ...),
 the plotting methods and ``statcheckReport()`` are not ported: metacheck
@@ -133,7 +140,7 @@ _TRE_CHI2 = compile_r(RGX_CHI2, posix=False)
 _TRE_DF1_I_L = compile_r(RGX_DF1_I_L, posix=False)
 _TRE_DEC = compile_r(RGX_DEC)
 
-_TRE_NS_ICASE = compile_r(RGX_NS, True, posix=False)
+_PCRE_NS_ICASE = compile_r(RGX_NS, True, True)
 _TRE_1TAIL = compile_r("one.?sided|one.?tailed|directional", True, posix=False)
 
 
@@ -150,12 +157,8 @@ class StatcheckWarning(RuntimeWarning):
     """A warning R would emit while running statcheck."""
 
 
-class _Abort(Exception):
-    """Raised on the first R warning inside metacheck's ``tryCatch(warning = )``."""
-
-
 # How R warnings are handled: None -> warnings.warn (statcheck() called
-# directly); a callable -> called with the message (stats() makes it raise).
+# directly); a callable -> called with the message (stats() ignores them).
 _ON_WARNING: contextvars.ContextVar[Callable[[str], None] | None] = contextvars.ContextVar(
     "pytacheck_statcheck_on_warning", default=None
 )
@@ -442,7 +445,10 @@ def _extract_p_value(raw: str | None) -> list[_P]:
     strs: list[str | None] = []
     decs: list[float] = []
     for pr in p_raw:
-        if _TRE_NS_ICASE.search(pr):
+        # statcheck tests for "ns" with TRE, which disagrees with the PCRE match
+        # above on case folding (a long s, "nſ", made R fail with "replacement
+        # has length zero"; U149): use the engine that found it
+        if _PCRE_NS_ICASE.search(pr):
             comps.append("ns")
             strs.append(None)
             decs.append(math.nan)
@@ -497,18 +503,23 @@ class _Row:
 
 
 def _test_type(test_raw: list[str] | None) -> str | None:
-    """The if/else chain of ``extract_stats()`` classifying one result."""
-    if test_raw is None:
-        raise RError("argument is of length zero")
-    if len(test_raw) > 1:
-        raise RError("the condition has length > 1")
+    """The if/else chain of ``extract_stats()`` classifying one result (``None``: unknown).
+
+    Differs from statcheck 1.5.0 (U5): no test name (``MZ = 2.1``) is an
+    unclassified result rather than an error; with several candidates
+    (``t(20) = (2.1``) the first, which the result starts with, is used
+    rather than failing on a length-2 ``if ()``; and the Q-test subtype is
+    read from the ``Q`` token's suffix, ignoring case (statcheck looks for a
+    lowercase ``b`` and then ``w`` anywhere, so ``Q-Between`` became ``Qw``
+    and ``QWithin`` plain ``Q``).
+    """
+    if not test_raw:
+        return None
     tr = test_raw[0]
-    if _TRE_Q.search(tr):
-        if RGX_QB in tr:
-            return "Qb"
-        if RGX_QW in tr:
-            return "Qw"
-        return "Q"
+    q = _TRE_Q.search(tr)
+    if q:
+        sub = (q.group(1) or "")[:1].lower()
+        return {"b": "Qb", "w": "Qw"}.get(sub, "Q")
     if RGX_T in tr:
         return "t"
     if RGX_F in tr:
@@ -530,47 +541,48 @@ _NHST = compile_r(RGX_NHST, False, True)
 
 
 def _extract_stats_rows(txt: str | None, stat: Sequence[str]) -> list[_Row] | None:
-    """``extract_stats()`` as a list of rows; ``None`` is R's ``data.frame(NULL)``."""
+    """``extract_stats()`` as a list of rows; ``None`` is R's ``data.frame(NULL)``.
+
+    Differs from statcheck 1.5.0 (U5): a result that cannot be parsed (no or
+    several test names, no degrees of freedom, no test value) is skipped
+    instead of failing the whole text, and every result keeps its own
+    p-value. statcheck collects the p-values of all results in one vector
+    and ``data.frame()`` recycles it when a result has none (its
+    case-insensitive ``RGX_P_NS`` misses ``Nns`` that the case-sensitive
+    NHST pattern accepted), which gave results each other's p-values.
+    """
     nhst_raw = _extract(txt, RGX_NHST, ignore_case=False)
     if nhst_raw is None:
         return None
-    parsed: list[tuple[str, str | None, float, float, _Test]] = []
-    pvals: list[_P] = []
+    rows: list[_Row] = []
     for raw in nhst_raw:
-        # an unclassified result makes extract_df() fail on `if (NA == "Z")`
         test_type = _test_type(_extract(raw, RGX_TEST_TYPE))
-        df1, df2 = _extract_df(raw, test_type)
-        n_test, test = _extract_test_stats(raw)
+        if test_type is None:
+            continue
+        try:
+            df1, df2 = _extract_df(raw, test_type)
+            n_test, test = _extract_test_stats(raw)
+        except RError:
+            continue
         if n_test > 1:
             test = _Test(None, math.nan, math.nan)
-        parsed.append((raw, test_type, df1, df2, test))
         ps = _extract_p_value(raw)
-        # rbind(pvals, p): an NA row for several p-values, nothing for none
-        if len(ps) > 1:
-            pvals.append(_P(None, math.nan, math.nan))
-        elif ps:
-            pvals.append(ps[0])
-    # data.frame(Raw = ..., Reported.Comparison = pvals$p_comp, ...): a raw
-    # whose p-value the case-insensitive RGX_P_NS misses (e.g. "Nns") leaves
-    # the p-value columns short; R recycles them when it can, else errors
-    n, m = len(parsed), len(pvals)
-    if m != n and (m == 0 or n % m != 0):
-        raise RError(f"arguments imply differing number of rows: {n}, {m}")
-    rows = [
-        _Row(
-            raw=raw.strip(_WS),
-            statistic=test_type,
-            df1=df1,
-            df2=df2,
-            test_comp=test.comp,
-            value=test.value,
-            testdec=test.dec,
-            p_comp=pvals[i % m].comp,
-            p_value=pvals[i % m].value,
-            dec=pvals[i % m].dec,
+        # one p-value per result; none or several give an NA row (dropped below)
+        p = ps[0] if len(ps) == 1 else _P(None, math.nan, math.nan)
+        rows.append(
+            _Row(
+                raw=raw.strip(_WS),
+                statistic=test_type,
+                df1=df1,
+                df2=df2,
+                test_comp=test.comp,
+                value=test.value,
+                testdec=test.dec,
+                p_comp=p.comp,
+                p_value=p.value,
+                dec=p.dec,
+            )
         )
-        for i, (raw, test_type, df1, df2, test) in enumerate(parsed)
-    ]
     out = []
     for r in rows:
         if not (_isna(r.p_value) or r.p_value <= 1):
@@ -687,6 +699,10 @@ def error_test(
         low_stat, up_stat = test_stat + half, test_stat - half
     else:  # pragma: no cover
         raise RError("object 'low_stat' not found")
+    if test_type == "r":
+        # a correlation cannot pass +-1: r = 1.00 is anything in [.995, 1]
+        # (statcheck took r = 1.005, whose p is NaN, and failed; U5)
+        low_stat, up_stat = (max(-1.0, min(1.0, x)) for x in (low_stat, up_stat))
     up_p = compute_p(test_type, low_stat, df1, df2, two_tailed)
     low_p = compute_p(test_type, up_stat, df1, df2, two_tailed)
     if _if(_and(_eq_true(pZeroError), _le(reported_p, 0))):
@@ -973,38 +989,50 @@ def _check_texts(
     pZeroError: bool,
     OneTailedTxt: bool,
 ) -> tuple[list[_Result], list[tuple[Any, _P]]]:
-    """The body of ``statcheck()`` for (source, text) pairs."""
-    results: list[_Result] = []
+    """The body of ``statcheck()`` for (source, text) pairs.
+
+    Differs from statcheck 1.5.0 (U5): a result whose consistency cannot be
+    decided (an unparseable p-value such as ``p = .05-.10``, zero degrees of
+    freedom: statcheck fails on ``if (NA)``) is dropped, and the other
+    results of the text are kept.
+    """
+    candidates: list[_Result] = []
     pres: list[tuple[Any, _P]] = []
     for source, txt in items:
         pres.extend((source, p) for p in _extract_p_value(txt))
         rows = _extract_stats_rows(txt, stat)
         if rows:
             one_tailed = extract_1tail(txt)
-            results.extend(_Result(source, r, one_tailed) for r in rows)
-    if results:
+            candidates.extend(_Result(source, r, one_tailed) for r in rows)
+    results: list[_Result] = []
+    if candidates:
         two_tailed = not _if(_eq_true(OneTailedTests))
-        for res in results:
+        for res in candidates:
             r = res.row
             assert r.statistic is not None and r.test_comp is not None and r.p_comp is not None
-            res.computed, res.error, res.decision_error = _process_stats(
-                test_type=r.statistic,
-                test_stat=r.value,
-                df1=r.df1,
-                df2=r.df2,
-                reported_p=r.p_value,
-                p_comparison=r.p_comp,
-                test_comparison=r.test_comp,
-                p_dec=r.dec,
-                test_dec=r.testdec,
-                OneTailedInTxt=res.one_tailed,
-                two_tailed=two_tailed,
-                alpha=alpha,
-                pZeroError=pZeroError,
-                pEqualAlphaSig=pEqualAlphaSig,
-                OneTailedTxt=OneTailedTxt,
-                OneTailedTests=OneTailedTests,
-            )
+            try:
+                res.computed, res.error, res.decision_error = _process_stats(
+                    test_type=r.statistic,
+                    test_stat=r.value,
+                    df1=r.df1,
+                    df2=r.df2,
+                    reported_p=r.p_value,
+                    p_comparison=r.p_comp,
+                    test_comparison=r.test_comp,
+                    p_dec=r.dec,
+                    test_dec=r.testdec,
+                    OneTailedInTxt=res.one_tailed,
+                    two_tailed=two_tailed,
+                    alpha=alpha,
+                    pZeroError=pZeroError,
+                    pEqualAlphaSig=pEqualAlphaSig,
+                    OneTailedTxt=OneTailedTxt,
+                    OneTailedTests=OneTailedTests,
+                )
+            except RError:
+                continue
+            results.append(res)
+    if results:
         apa = _apa_factors([str(r.source) for r in results], [str(s) for s, _ in pres])
         for res, a in zip(results, apa, strict=True):
             res.apa = a
@@ -1068,6 +1096,40 @@ def _source_names(texts: Any) -> tuple[list[str], list[str | None]]:
     return names, values
 
 
+def _check_args(
+    OneTailedTests: Any,
+    alpha: Any,
+    pEqualAlphaSig: Any,
+    pZeroError: Any,
+    OneTailedTxt: Any,
+    AllPValues: Any,
+    messages: Any = False,
+) -> None:
+    """Reject the argument values statcheck 1.5.0 fails on half-way (U149).
+
+    An ``NA`` flag or ``alpha`` makes an ``if ()`` fail on some texts only,
+    and a *pEqualAlphaSig* other than ``TRUE``/``FALSE`` (e.g. ``2``) made
+    ``decision_error_test()`` return ``NULL`` and ``process_stats()`` fail
+    for every inconsistent result. Other values keep R's ``x == TRUE``
+    semantics.
+    """
+    flags = {
+        "OneTailedTests": OneTailedTests,
+        "pEqualAlphaSig": pEqualAlphaSig,
+        "pZeroError": pZeroError,
+        "OneTailedTxt": OneTailedTxt,
+        "AllPValues": AllPValues,
+        "messages": messages,
+    }
+    for name, value in flags.items():
+        if _isna(value) or value is pd.NA:
+            raise ValueError(f"`{name}` must be TRUE or FALSE, not NA")
+    if not (_eq_true(pEqualAlphaSig) or _eq_false(pEqualAlphaSig)):
+        raise ValueError(f"`pEqualAlphaSig` must be TRUE or FALSE, not {pEqualAlphaSig!r}")
+    if alpha is None or alpha is pd.NA or isinstance(alpha, bool) or _isna(float(alpha)):
+        raise ValueError("`alpha` must be a number")
+
+
 def statcheck(
     texts: str | Sequence[str | None] | Mapping[str, str] | pd.Series,
     stat: str | Iterable[str] = _ALL_STATS,
@@ -1095,7 +1157,9 @@ def statcheck(
     nothing is found.
     """
     names, values = _source_names(texts)
-    _if(_eq_true(messages))  # `if (messages == TRUE)`: NA is an error
+    _check_args(
+        OneTailedTests, alpha, pEqualAlphaSig, pZeroError, OneTailedTxt, AllPValues, messages
+    )
     stats_ = _stat_arg(stat)
     results, pres = _check_texts(
         zip(names, values, strict=True),
@@ -1137,27 +1201,28 @@ def _statcheck_quiet(
 ) -> tuple[list[int], dict[str, pd.Series]]:
     """statcheck() on each text separately, as metacheck's ``stats()`` runs it.
 
-    Each text is checked inside R's ``tryCatch(error = , warning = )``: an
-    error or the first warning discards that text's results. Returns the
-    0-based index of the text each output row came from, and the columns.
-    Texts that cannot contain a result are skipped up front with a single
-    regex search (statcheck would return ``NULL`` for them).
+    Returns the 0-based index of the text each output row came from, and the
+    columns. Texts that cannot contain a result are skipped up front with a
+    single regex search (statcheck would return ``NULL`` for them).
+
+    metacheck runs each text inside ``tryCatch(error = , warning = )``, so an
+    error or the first R warning (``NAs introduced by coercion`` for an
+    unrelated ``p = .05-.10``) discarded every result of the sentence (U4).
+    Here warnings are ignored and a result that cannot be checked is dropped
+    on its own (see :func:`_check_texts`).
     """
     stats_ = _stat_arg(stat)
-    all_p_false = _eq_false(AllPValues)
-    if all_p_false is None:
-        # `if (AllPValues == FALSE)` fails at the end of every statcheck() call
-        return [], _results_columns([])
-    AllPValues = not all_p_false
+    _check_args(OneTailedTests, alpha, pEqualAlphaSig, pZeroError, OneTailedTxt, AllPValues)
+    AllPValues = not _eq_false(AllPValues)
     probe = _pcre(RGX_P_NS, True) if AllPValues else _NHST
     sources: list[int] = []
     results: list[_Result] = []
     pvals: list[tuple[Any, _P]] = []
 
-    def abort(msg: str) -> None:
-        raise _Abort(msg)
+    def ignore(_msg: str) -> None:
+        return None
 
-    token = _ON_WARNING.set(abort)
+    token = _ON_WARNING.set(ignore)
     try:
         for i, txt in enumerate(texts):
             if txt is None:
@@ -1178,7 +1243,7 @@ def _statcheck_quiet(
                     pZeroError,
                     OneTailedTxt,
                 )
-            except (RError, _Abort):
+            except RError:  # pragma: no cover - results are checked one by one
                 continue
             if AllPValues:
                 pvals.extend(pres)

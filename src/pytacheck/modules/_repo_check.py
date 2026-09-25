@@ -456,13 +456,25 @@ def join_file_types(files: pd.DataFrame) -> pd.DataFrame:
     ``code`` and ``data``) repeats the file; the module's de-duplication drops
     the repeat later.
     """
-    from pytacheck.fileinfo.types import file_types
-
     if len(files) == 0:
         out = files.copy()
         out["file_type"] = pd.Series([], dtype="string")
         return out
-    names = vals(files["file_name"])
+    idx: list[int] = []
+    types: list[str | None] = []
+    for i, matches in enumerate(_ext_types(vals(files["file_name"]))):
+        for t in matches:
+            idx.append(i)
+            types.append(t)
+    out = files.iloc[idx].reset_index(drop=True)
+    out["file_type"] = pd.Series(types, dtype="string")
+    return out
+
+
+def _ext_types(names: Sequence[Any]) -> list[list[str | None]]:
+    """The ``file_types`` types of each file name's extension (``[None]`` for none)."""
+    from pytacheck.fileinfo.types import file_types
+
     bases = [r_basename(v) for v in names]
     ext: list[str | None] = [None if b is None else r_tolower(sub(r"^.*\.", "", b)) for b in bases]
     no_ext = [(not _na(n)) and not grepl(r"\.", b) for n, b in zip(names, bases, strict=True)]
@@ -471,16 +483,7 @@ def join_file_types(files: pd.DataFrame) -> pd.DataFrame:
     lookup: dict[str, list[str | None]] = {}
     for e, t in zip(vals(ft["ext"]), vals(ft["type"]), strict=True):
         lookup.setdefault(e, []).append(None if _na(t) else t)
-    idx: list[int] = []
-    types: list[str | None] = []
-    for i, e in enumerate(ext):
-        matches = lookup.get(e) if e is not None else None
-        for t in matches or [None]:
-            idx.append(i)
-            types.append(t)
-    out = files.iloc[idx].reset_index(drop=True)
-    out["file_type"] = pd.Series(types, dtype="string")
-    return out
+    return [(lookup.get(e) if e is not None else None) or [None] for e in ext]
 
 
 def _file_rows(
@@ -585,30 +588,22 @@ def _osf_file_frame(files: pd.DataFrame, repo_url: list[Any]) -> pd.DataFrame:
     )
 
 
-def _osf_type_error(arg: str) -> str:
-    """dplyr's error when an OSF listing has no ``osf_type`` column.
-
-    In the module's ``filter()`` calls ``osf_type`` then names metacheck's
-    ``osf_type()`` function, so ``%in%`` fails in ``match()``.
-    """
-    return (
-        f"ℹ In argument: `{arg}`.\nCaused by error in `match()`:\n"
-        "! 'match' requires vector arguments"
-    )
-
-
 def _osf_files(info: pd.DataFrame) -> pd.DataFrame:
-    """``info |> filter(kind == "file", !isFALSE(public))``."""
+    """The listed files that are not marked private (``public`` ``FALSE``).
+
+    R's ``filter(kind == "file", !isFALSE(public))`` tests the whole
+    ``public`` column at once, which excludes anything only when the listing
+    is a single private row (UPSTREAM_ISSUES U123).
+    """
     if "public" not in info.columns:
         raise RError(
             "ℹ In argument: `!isFALSE(public)`.\nCaused by error:\n! object 'public' not found"
         )
     kind = vals(info["kind"])
-    keep = [(not _na(k)) and k == "file" for k in kind]
     public = vals(info["public"])
-    # isFALSE() of the whole column: TRUE only for a single FALSE
-    if len(public) == 1 and public[0] is False:
-        keep = [False] * len(keep)
+    keep = [
+        (not _na(k)) and k == "file" and p is not False for k, p in zip(kind, public, strict=True)
+    ]
     return take(info, keep)
 
 
@@ -635,18 +630,22 @@ def list_osf(
     osf_files_df = placeholder()
     if not osf_urls:
         return osf_files_df
+    reg_pairs: list[tuple[Any, str]] = []
     try:
         osf_info_df = _quiet(lambda: _osf_listing(osf_urls, pb, cache))
 
+        # a link OSF does not know (an invalid id) has no osf_type: when no
+        # link resolved there is no osf_type column at all
+        otypes = (
+            vals(osf_info_df["osf_type"])
+            if "osf_type" in osf_info_df.columns
+            else [None] * len(osf_info_df)
+        )
+        ourls = vals(osf_info_df["osf_url"])
+
         # registration URL -> the project it was registered from (R: a named vector)
-        reg_pairs: list[tuple[Any, str]] = []
         if "parent" in osf_info_df.columns:
-            otype = vals(osf_info_df["osf_type"]) if "osf_type" in osf_info_df.columns else None
-            if otype is None:
-                raise RError(_osf_type_error('osf_type %in% "registrations"'))
-            for t, parent, url in zip(
-                otype, vals(osf_info_df["parent"]), vals(osf_info_df["osf_url"]), strict=True
-            ):
+            for t, parent, url in zip(otypes, vals(osf_info_df["parent"]), ourls, strict=True):
                 if t == "registrations" and not _na(parent) and not _na(url):
                     reg_pairs.append((url, f"https://osf.io/{parent}"))
 
@@ -661,21 +660,24 @@ def list_osf(
             file_repo_url = [reg_map.get(u, u) for u in vals(file_list["repo_name"])]
             osf_files_df = _osf_file_frame(file_list, file_repo_url)
 
-        # registrations (and anything that is not a node/file) are never the storage location
-        if "osf_type" not in osf_info_df.columns:
-            raise RError(_osf_type_error('!osf_type %in% c("nodes", "files", "private")'))
-        otypes = vals(osf_info_df["osf_type"])
-        ourls = vals(osf_info_df["osf_url"])
+        # registrations (and anything that is not a node/file) are never the
+        # storage location. A link OSF does not know stays, flagged: R drops
+        # it silently beside valid links, and without any valid link its
+        # filter() finds metacheck's osf_type() function and stores "'match'
+        # requires vector arguments" as the error (UPSTREAM_ISSUES U122)
         to_remove = [
             u
             for t, u in zip(otypes, ourls, strict=True)
-            if _na(t) or t not in ("nodes", "files", "private")
+            if not _na(t) and t not in ("nodes", "files", "private")
         ]
         repos.keep([not v for v in r_in(vals(repos.df["repo_url"]), to_remove)])
 
         private = [u for t, u in zip(otypes, ourls, strict=True) if t == "private"]
         if private:
             repos.flag(private, "private")
+        unknown = [u for t, u in zip(otypes, ourls, strict=True) if _na(t) and not _na(u)]
+        if unknown:
+            repos.flag(unknown, "invalid or inaccessible OSF link")
 
         # follow registrations back to their origin project
         parent_urls_all = unique(p for _, p in reg_pairs)
@@ -692,13 +694,17 @@ def list_osf(
                             _osf_file_frame(parent_files, vals(parent_files["repo_name"])),
                         ]
                     )
-            if "osf_type" not in parent_info.columns:
-                raise RError(_osf_type_error('is.na(osf_type) | osf_type %in% "private"'))
+            # a parent OSF cannot list (no osf_type) counts as closed
             p_urls = vals(parent_info["osf_url"])
+            p_types = (
+                vals(parent_info["osf_type"])
+                if "osf_type" in parent_info.columns
+                else [None] * len(p_urls)
+            )
             p_in = r_in(p_urls, parent_urls_new)
             closed_parent_urls = unique(
                 u
-                for u, t, isin in zip(p_urls, vals(parent_info["osf_type"]), p_in, strict=True)
+                for u, t, isin in zip(p_urls, p_types, p_in, strict=True)
                 if isin and (_na(t) or t == "private")
             )
             closed_parent_urls = unique([*closed_parent_urls, *setdiff(parent_urls_new, p_urls)])
@@ -731,7 +737,27 @@ def list_osf(
             if orphans:
                 repos.add(repo_rows(osf_paper_id, orphans, "osf", NA_SCALAR))
     except Exception as e:
-        repos.flag_unflagged(osf_urls, condition_message(e))
+        msg = condition_message(e)
+        # a link removed above (a registration, to be replaced by its source
+        # project) comes back with the error, holding the files already listed
+        # for it: R's handler finds nothing left to flag, and the paper
+        # reported "no repositories found" (UPSTREAM_ISSUES U122)
+        present = set(vals(repos.df["repo_url"]))
+        lost = [u for u in unique(osf_urls) if u not in present]
+        if lost:
+            repos.add(repo_rows(osf_paper_id, lost, "osf", msg))
+            back: dict[str, Any] = {}
+            for reg, parent in reg_pairs:
+                back.setdefault(parent, reg)
+            if back and "repo_url" in osf_files_df.columns and len(osf_files_df) > 0:
+                present = set(vals(repos.df["repo_url"]))
+                moved = [
+                    u if u in present else back.get(u, u) for u in vals(osf_files_df["repo_url"])
+                ]
+                osf_files_df = osf_files_df.assign(
+                    repo_url=pd.Series(moved, index=osf_files_df.index, dtype="string")
+                )
+        repos.flag_unflagged(osf_urls, msg)
     return osf_files_df
 
 
@@ -955,10 +981,12 @@ def _meta_from(info: pd.DataFrame, url_col: str, col_chr: bool = False) -> pd.Da
         return meta_frame(_col_chr(info, url_col), _col_chr(info, "doi"), _col_chr(info, "license"))
 
     def chr_col(name: str) -> list[Any]:
-        # as.character(NULL) is character(0): a missing column is a zero-length
-        # one, which data.frame() refuses beside the n-row repo_url
+        # a missing column (a listing without doi or license, such as a
+        # Figshare private share link's) is NA; R's data.frame() refuses the
+        # zero-length as.character(NULL) and the whole platform block fails
+        # (UPSTREAM_ISSUES U122)
         values = _col(info, name)
-        return [] if values is None else [_as_chr(v) for v in values]
+        return [None] * len(info) if values is None else [_as_chr(v) for v in values]
 
     return r_frame(
         [
@@ -991,7 +1019,9 @@ def _api_listing(
             listed = _file_rows(info, url_col, row_fn)
             files_df = _typed_listing(listed)
     except Exception as e:
-        repos.flag(urls, condition_message(e))
+        # an informative error already recorded (e.g. a Figshare private share
+        # link) is kept
+        repos.flag_unflagged(urls, condition_message(e))
     return files_df, meta
 
 
@@ -1123,4 +1153,14 @@ def list_local(local_path: Any) -> pd.DataFrame:
         paths.append(name if rel == "" else rel)
     out = df.copy()
     out["file_path"] = pd.Series(paths, dtype="string")
+    # a file file_category() cannot place (most extensions: .zip, .tar.gz,
+    # .txt, .pdf, images) takes its type from the extension, as the files of
+    # an online repository do; R leaves it NA, so a local archive was not
+    # counted as one (UPSTREAM_ISSUES U123)
+    if "file_type" in out.columns:
+        by_ext = [types[0] for types in _ext_types(vals(out["file_name"]))]
+        out["file_type"] = pd.Series(
+            [e if _na(t) else t for t, e in zip(vals(out["file_type"]), by_ext, strict=True)],
+            dtype="string",
+        )
     return out

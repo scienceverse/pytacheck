@@ -1,0 +1,49 @@
+# Cases in generated case files of the text-module lane (causal_claims, ethics_check,
+# funding_check, power, prereg_check, ref_accuracy, ref_pubpeer, ref_summary, ...) that
+# differ from R on purpose. Format (see parity/cases.py): "<area>/<id>": {kind, ref,
+# reason}; kind is one of parity.cases.DIVERGENCE_KINDS, ref the docs/UPSTREAM_ISSUES.md
+# entry.
+
+# causal_claims -------------------------------------------------------------------
+"mod_causal/causal_claims.random_several":
+  kind: r_bug_fixed
+  ref: U85
+  reason: '"Trials were presented in random order after participants were randomized." counts; the "random order" exclusion no longer drops the whole sentence'
+"mod_causal/causal_claims.title_na":
+  kind: r_bug_fixed
+  ref: U84
+  reason: a missing (NA) title is skipped; metacheck stops with "missing value where TRUE/FALSE needed"
+"mod_causal/causal_claims.paperlist_no_abstract": &u84_list_network
+  kind: r_bug_fixed
+  ref: U84
+  reason: the titles of a paper list are classified (metacheck never reads them), which needs the classifier; fake.paperlist_random covers the list offline
+"mod_causal/causal_claims.paperlist_none": *u84_list_network
+"mod_causal/causal_claims.fake.paperlist_duplicate":
+  kind: r_bug_fixed
+  ref: U84
+  reason: the paper list's causal title is found, and a sentence shared by two papers counts once for each (metacheck 2, 2)
+"mod_causal/causal_claims.fake.paperlist_info_id":
+  kind: r_bug_fixed
+  ref: U84
+  reason: the causal title of a paper in a list is found (metacheck never classifies list titles)
+"mod_causal_review/causal_claims.review.pattern_quirks":
+  kind: r_bug_fixed
+  ref: U85
+  reason: British "Randomisation" and "randomly assigned ... random intercepts/effects" count, "not randomized" does not (10 sentences, metacheck 8)
+"mod_causal_review/causal_claims.review.paperlist_empty_member": *u84_list_network
+"mod_causal_review/causal_claims.review.fake.dup_same_paper":
+  kind: r_bug_fixed
+  ref: U84
+  reason: a sentence repeated twice in the abstract counts its relation twice, not four times (join by text)
+"mod_causal_review/causal_claims.review.fake.paperlist_single":
+  kind: r_bug_fixed
+  ref: U84
+  reason: the causal title of the only paper in a list is found (yellow; metacheck never classifies list titles)
+"mod_causal_review/causal_claims.review.error.title_na":
+  kind: r_bug_fixed
+  ref: U84
+  reason: a missing (NA) title is skipped; metacheck stops with "missing value where TRUE/FALSE needed"
+"mod_causal_review/causal_claims.review.fake.report.full":
+  kind: r_bug_fixed
+  ref: U85
+  reason: '"... in random order after participants were randomized." counts as describing randomization (7 sentences, metacheck 6)'

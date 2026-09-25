@@ -98,6 +98,7 @@
         "text": ["1 = 2", "3 < 4 and 5 > 6"]
   "compare": {"ignore": ["paper_id"]}
 - "id": "extract_eq.review.text_id_na_error"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U10", "reason": "rows without text_id are grouped by their source sentence (R fails on NA comparisons)"}
   "r": "extract_eq"
   "py": "pytacheck.text.extract.extract_eq"
   "args":
@@ -106,6 +107,7 @@
         "text": ["t = 2.1", "F = 3"]
         "paper_id": ["a", "a"]
 - "id": "extract_eq.review.paperlist_ids"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U10", "reason": "grp_id numbers sentences in text order within each paper (R: per-operator search order)"}
   "r": "extract_eq"
   "py": "pytacheck.text.extract.extract_eq"
   "args":
@@ -221,6 +223,7 @@
         "r": "local({p <- test_paper(c('first sentence')); p$paper_id <- 'eqp'; p$eq <- data.frame(text_id = c(1L, 1L), lhs = c('t', 'p'), comp = c('=', '<'), rhs = c('1.5', '.03')); p})"
         "py": "(lambda p: (p.__setitem__('paper_id', 'eqp'), p.__setitem__('eq', pd.DataFrame({'text_id': pd.Series([1, 1], dtype='Int64'), 'lhs': ['t', 'p'], 'comp': ['=', '<'], 'rhs': ['1.5', '.03']})), p)[2])(pc.test_paper(['first sentence']))"
 - "id": "extract_tests.review.paperlist"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U10", "reason": "a paper list gives each paper's tests once (R repeats every test once per paper id)"}
   "r": "extract_tests"
   "py": "pytacheck.text.extract_tests.extract_tests"
   "args":

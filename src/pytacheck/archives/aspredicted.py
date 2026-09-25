@@ -153,9 +153,8 @@ _USER_AGENT = (
 def _aspredicted_info(ap_url: str) -> pd.DataFrame:
     """Port of R/archive-aspredicted.R::.aspredicted_info(): fetch and parse one page.
 
-    A non-200 success status gives an ``error`` column; an HTTP error status
-    raises (R ``httr2::req_perform()`` errors on it); a CAPTCHA page gives
-    ``error = "captcha"``.
+    A non-200 status gives an ``error`` column (the status description) and a
+    warning; a CAPTCHA page gives ``error = "captcha"``.
     """
     from pytacheck import http
     from pytacheck.archives import _message
@@ -173,8 +172,8 @@ def _aspredicted_info(ap_url: str) -> pd.DataFrame:
     )
     if resp is None:
         raise RuntimeError(f"Failed to perform HTTP request: {ap_url}")
-    if resp.status_code >= 400:
-        raise RuntimeError(f"HTTP {resp.status_code} {resp.reason_phrase}.")
+    # any status but 200 (a 404 for a withdrawn page too) is this page's error;
+    # metacheck raises on 4xx/5xx before its own check, aborting every URL (U54)
     if resp.status_code != 200:
         warnings.warn(f"{ap_url} error: {resp.reason_phrase}", stacklevel=2)
         return pd.DataFrame(

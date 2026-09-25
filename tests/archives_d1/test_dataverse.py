@@ -235,10 +235,12 @@ def test_dataverse_file_download(
             download_to=str(tmp_path),
             max_file_size=10,
         )
-    assert dl is not None and len(dl) == 1
-    assert dl["dataverse_doi"].tolist() == ["10.7910/DVN/ABC123"]
-    assert dl["key"].tolist() == ["small.csv"]
-    assert dl["downloaded"].tolist() == [False]
+    # the omitted big.bin stays in the table, not downloaded (U36)
+    assert dl is not None and len(dl) == 2
+    assert dl["dataverse_doi"].tolist() == ["10.7910/DVN/ABC123"] * 2
+    assert dl["key"].tolist() == ["small.csv", "big.bin"]
+    assert dl["downloaded"].tolist() == [False, False]
+    assert dl["path"].isna().all()
     folder = tmp_path / "10.7910_DVN_ABC123"
     assert folder.is_dir()
     assert list(folder.iterdir()) == []
@@ -404,9 +406,10 @@ def test_allowlists_are_complete() -> None:
     assert all(h in DATAVERSE_HOSTS for h in dataverse.DATAVERSE_DOI_PREFIX_HOSTS)
 
 
-def test_dataverse_parse_realignment_quirk() -> None:
-    # R assigns vectorised regmatches() results in order, so a URL without a
-    # host name takes the next URL's host (reproduced on purpose)
+def test_dataverse_parse_matches_each_url_on_its_own() -> None:
+    # U31: metacheck assigns vectorised regmatches() results in order, so a URL
+    # without a host name took the next URL's host (dataverse.harvard.edu,
+    # dataverse.nl, dataverse.nl here); each URL gets its own host
     parsed = _dataverse_parse(
         [
             "https://doi.org/10.18167/DVN1/T0DMFJ",
@@ -414,7 +417,20 @@ def test_dataverse_parse_realignment_quirk() -> None:
             "https://dataverse.nl/x",
         ]
     )
-    assert parsed["host"].tolist() == ["dataverse.harvard.edu", "dataverse.nl", "dataverse.nl"]
+    assert parsed["host"].tolist() == ["dataverse.cirad.fr", "dataverse.harvard.edu", "dataverse.nl"]
+    assert parsed["doi"].fillna("NA").tolist() == ["10.18167/DVN1/T0DMFJ", "10.7910/DVN/X", "NA"]
+
+
+def test_figshare_dois_are_not_dataverse_links() -> None:
+    # U32: metacheck lists Figshare's prefix 10.6084 under dataverse.no
+    parsed = _dataverse_parse(["https://doi.org/10.6084/m9.figshare.10744937"])
+    assert parsed["host"].isna().all()
+    paper = pc.test_paper(
+        ["Data: https://doi.org/10.6084/m9.figshare.10744937 and doi:10.18710/ABCDEF."]
+    )
+    links = dataverse_links(paper)
+    assert links["dataverse_host"].tolist() == ["dataverse.no"]
+    assert links["dataverse_doi"].tolist() == ["10.18710/ABCDEF"]
 
 
 def test_url_decode_matches_r() -> None:
@@ -439,9 +455,24 @@ def test_dataverse_info_found_and_offline(mock_api: Any, monkeypatch: pytest.Mon
     assert out.columns.tolist() == ["dataverse_url", "dataverse_host", "dataverse_doi"]
 
 
-def test_dataverse_info_old_string_license_errors_like_r(mock_api: Any) -> None:
-    with pytest.raises(TypeError, match=r"\$ operator is invalid for atomic vectors"):
-        dataverse_info("https://dataverse.no/dataset.xhtml?persistentId=doi:10.18710/OLDLIC")
+def test_dataverse_info_reads_an_old_string_license(mock_api: Any) -> None:
+    # U34: older installations give the licence as a plain string, which
+    # metacheck's `license$name` fails on (aborting the whole call)
+    out = dataverse_info("https://dataverse.no/dataset.xhtml?persistentId=doi:10.18710/OLDLIC")
+    assert out["license"].tolist() == ["CC0"]
+    assert "error" not in out.columns or out["error"].isna().all()
+
+
+def test_dataverse_info_fetches_a_dataset_once_per_dataset(mock_api: Any) -> None:
+    # U35: the same dataset with and without a trailing "." is one request and
+    # one row per URL (metacheck: two requests, four rows)
+    urls = [
+        "https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/ABC123",
+        "https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/ABC123.",
+    ]
+    out = dataverse_info(urls)
+    assert out["dataverse_url"].tolist() == urls
+    assert out["dataverse_doi"].tolist() == ["10.7910/DVN/ABC123"] * 2
 
 
 def test_dataverse_verify_downloads_only_hashes_md5(tmp_path: Path) -> None:
@@ -463,17 +494,17 @@ def test_dataverse_verify_downloads_only_hashes_md5(tmp_path: Path) -> None:
 # ---------------------------------------------------------------- review round 2
 
 
-def test_dataverse_parse_invalid_utf8_escape_is_an_error_like_r() -> None:
-    # R: URLdecode() gives invalid UTF-8, which sub("\\.$", "", doi) refuses
+def test_dataverse_parse_invalid_utf8_escape_is_no_doi() -> None:
+    # U39: a persistentId decoding to invalid UTF-8 is no DOI; metacheck's
+    # string functions then abort the call for every URL
     urls = [
         "https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/Y",
         "https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/X%FF",
+        "https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/Z%00Q",
     ]
-    with (
-        pytest.warns(UserWarning, match=r"unable to translate '10\.7910/DVN/X<ff>'"),
-        pytest.raises(ValueError, match="input string 2 is invalid"),
-    ):
-        _dataverse_parse(urls)
+    out = _dataverse_parse(urls)
+    assert out["doi"].fillna("NA").tolist() == ["10.7910/DVN/Y", "NA", "NA"]
+    assert out["host"].tolist() == ["dataverse.harvard.edu"] * 3
     # valid multi-byte escapes decode normally
     out = _dataverse_parse(
         ["https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/X%E2%80%93."]
@@ -494,22 +525,17 @@ def test_links_on_an_empty_paper_list_keep_rs_columns() -> None:
     assert len(out) == 0
 
 
-def test_file_download_aborts_on_an_empty_body_like_r(mock_api: Any, tmp_path: Path) -> None:
-    # R: writeBin(httr2::resp_body_raw(resp), ...) sits outside the tryCatch,
-    # and resp_body_raw() refuses an empty body
-    with pytest.raises(ValueError, match="Can't retrieve empty body"):
-        dataverse_file_download(
-            "dataverse.harvard.edu", "10.7910/DVN/EMPTY", download_to=str(tmp_path)
-        )
-    # a vectorised call warns and drops that dataset
-    with pytest.warns(UserWarning, match="10.7910/DVN/EMPTY resulted in an error"):
-        out = dataverse_file_download(
-            "dataverse.harvard.edu",
-            ["10.7910/DVN/EMPTY", "10.7910/DVN/REV2"],
-            download_to=str(tmp_path),
-        )
+def test_file_download_keeps_an_empty_file(mock_api: Any, tmp_path: Path) -> None:
+    # U36: a zero-byte file is a file; metacheck's resp_body_raw() refuses the
+    # empty body outside its tryCatch(), aborting the whole download
+    out = dataverse_file_download(
+        "dataverse.harvard.edu", "10.7910/DVN/EMPTY", download_to=str(tmp_path)
+    )
     assert out is not None
-    assert set(out["dataverse_doi"]) == {"10.7910/DVN/REV2"}
+    assert out["key"].tolist() == ["a.csv", "empty.txt"]
+    assert out["downloaded"].tolist() == [True, True]
+    assert out["size_on_disk"].tolist()[1] == 0
+    assert (tmp_path / "10.7910_DVN_EMPTY" / "empty.txt").read_bytes() == b""
 
 
 def test_one_element_json_arrays_become_list_cells(mock_api: Any) -> None:

@@ -16,9 +16,11 @@ def test_study_ids() -> None:
     assert _fsd_study_id("fsd_1234567") == "FSD123456"
     assert _fsd_study_id("FSD12") is None
     assert _fsd_study_id(None) is None
-    assert _fsd_study_id(["x", "FSD1234"]) == "FSD1234"
-    with pytest.raises(ValueError):
-        _fsd_study_id(["FSD1234", "FSD5678"])
+    # U44: a vector gives a list aligned with it (metacheck drops non-matches
+    # and fails on two ids)
+    assert _fsd_study_id(["x", "FSD1234"]) == [None, "FSD1234"]
+    assert _fsd_study_id(["FSD1234", "FSD5678"]) == ["FSD1234", "FSD5678"]
+    assert _fsd_study_id([]) == []
 
 
 def test_links() -> None:

@@ -113,11 +113,12 @@ def test_local_files_no_extension(tmp_path: Path, category: None) -> None:
     assert result.loc[result["file_name"] == "Makefile", "file_type"].isna().all()
 
 
-def test_local_files_vector_ignores_recursive(tmp_path: Path, category: None) -> None:
-    # metacheck does not pass `recursive` on for several paths (reproduced)
+def test_local_files_vector_passes_recursive(tmp_path: Path, category: None) -> None:
+    # U49: each path is listed with `recursive` (metacheck drops it for several paths)
     sub = tmp_path / "a" / "deep"
     sub.mkdir(parents=True)
     (sub / "x.R").write_text("1\n")
     (tmp_path / "b").mkdir()
     result = local_files([str(tmp_path / "a"), str(tmp_path / "b")], recursive=True)
-    assert len(result) == 0
+    assert result["file_name"].tolist() == ["x.R"]
+    assert len(local_files([str(tmp_path / "a"), str(tmp_path / "b")])) == 0

@@ -277,6 +277,12 @@ fake_case(
         mk(["We measured more things."], ["We randomly assigned people."], id="q2"),
     ),
 )
+# paperlist_no_abstract with the classifier faked: pytacheck classifies the
+# titles of a paper list (U84), and "Test Paper" is not causal
+fake_case(
+    "paperlist_random",
+    plist(test_paper(RANDOM_ONE, "pl_one"), test_paper(RANDOM_NONE, "pl_none")),
+)
 
 
 class QuotedDumper(yaml.SafeDumper):

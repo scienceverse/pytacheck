@@ -117,6 +117,7 @@ def data_check_scale_values(
     valid_set: list[Any] | None
     lo: Any = None
     hi: Any = None
+    interval = False  # a continuous [lo, hi] range rather than a set of levels
     if valid_values is not None and len(rvec(valid_values)) > 0:
         vv = sorted({f for f in num(valid_values) if f is not None and f == f})
         vv = [f for f in vv if not math.isinf(f)]
@@ -147,16 +148,22 @@ def data_check_scale_values(
         vr = [float(f) for f in num(valid_range)]  # type: ignore[arg-type]
         lo = min(vr)
         hi = max(vr)
-        valid_set = r_colon(lo, hi)
+        # A range with whole-number bounds is a rating scale (its integer
+        # levels); fractional bounds describe a continuous interval. (R builds
+        # lo:hi either way -- 1.5:3.5 is {1.5, 2.5, 3.5}, so 2.0 would be "out"
+        # -- and then fails formatting the bounds with %d.)
+        interval = lo != round(lo) or hi != round(hi)
+        valid_set = None if interval else r_colon(lo, hi)
     else:
         valid_set = None
 
-    if valid_set is not None:
-        vs = set(valid_set)
-        if _mean([e in vs for e in xv]) < min_ground_truth_coverage:
+    if valid_set is not None or interval:
+        inside = _inside(xv, valid_set, lo, hi)
+        if _mean(inside) < min_ground_truth_coverage:
             valid_set = None
+            interval = False
 
-    if valid_set is None:
+    if valid_set is None and not interval:
         sc = _likert_scale(xv)
         if sc is None:
             return none
@@ -164,8 +171,8 @@ def data_check_scale_values(
         hi = sc["hi"]
         valid_set = r_colon(lo, hi)
 
-    vs = set(valid_set)
-    out = sorted(unique(e for e in xv if e not in vs))
+    inside = _inside(xv, valid_set, lo, hi)
+    out = sorted(unique(e for e, ok in zip(xv, inside, strict=True) if not ok))
     if not out:
         return {
             "problem": False,
@@ -205,7 +212,7 @@ def data_check_scale_values(
     n_show = min(len(out), int(n_max))
     parts = [describe(out[i], classes[i]) for i in range(n_show)]
     msg = (
-        f"{len(out)} value{plural(len(out))} outside the {fmt_d(lo)}-{fmt_d(hi)} scale: "
+        f"{len(out)} value{plural(len(out))} outside the {_bound(lo)}-{_bound(hi)} scale: "
         + ", ".join(parts)
         + (", ..." if len(out) > n_max else "")
     )
@@ -217,6 +224,23 @@ def data_check_scale_values(
         "upper": hi,
         "classes": classes,
     }
+
+
+def _inside(xv: list[Any], valid_set: list[Any] | None, lo: Any, hi: Any) -> list[bool]:
+    """Which values are valid: members of *valid_set*, or within ``[lo, hi]``
+    when there is no set (a continuous range)."""
+    if valid_set is None:
+        return [lo <= e <= hi for e in xv]
+    vs = set(valid_set)
+    return [e in vs for e in xv]
+
+
+def _bound(v: Any) -> str:
+    """A scale bound in a message: ``%d`` for a whole number, else its decimal
+    form (R's ``sprintf("%d")`` fails on a fractional ground-truth bound)."""
+    if isinstance(v, int) or (v == v and not math.isinf(v) and v == round(v)):
+        return fmt_d(v)
+    return dbl_chr(v)
 
 
 def _likert_scale(xv: list[Any]) -> Any:
@@ -268,9 +292,9 @@ def data_check_outliers(x: Any, k: float = 1.5, n_max: int = 10) -> dict[str, An
         return none
     q1, q3 = quantile7(np.sort(a), (0.25, 0.75), is_sorted=True)
     iqr = q3 - q1
-    if iqr != iqr:
-        raise ValueError("missing value where TRUE/FALSE needed")
-    if iqr == 0:
+    # Both quartiles the same infinity (c(1, Inf, Inf, Inf)): Inf - Inf is NaN,
+    # which is "no spread" just like iqr == 0 (R fails on it in `if`).
+    if iqr != iqr or iqr == 0:
         return none
     lower = q1 - k * iqr
     upper = q3 + k * iqr
@@ -599,10 +623,9 @@ def data_check_colname_collisions(col_names: Any) -> dict[str, str]:
     returns a dict mapping each colliding column name to a message (empty
     when all names stay distinct).
 
-    Empty (``""``) column names get no entry: R's ``out[[""]] <- msg``
-    appends an unnamed element that ``out[[""]]`` can never retrieve, so a
-    lookup by name finds nothing in either language (the unreachable
-    elements themselves cannot be held in a dict).
+    Blank (``""``) names collide like any other and get an entry (R's
+    ``out[[""]] <- msg`` appends unnamed elements that no lookup by name can
+    retrieve, so there a blank column's collision is never reported).
     """
     nms = chr(col_names)
     keys = gsub(r"[^\p{L}\p{N}]", "_", nms, perl=True)
@@ -621,8 +644,6 @@ def data_check_colname_collisions(col_names: Any) -> dict[str, str]:
         members = [nms[i] for i in idx]
         for i in idx:
             me = nms[i]
-            if me == "":
-                continue
             others = unique(m for m in members if m != me)
             if not others:
                 n_same = sum(1 for m in members if m == me) - 1

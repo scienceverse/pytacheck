@@ -95,12 +95,15 @@ def _chr(x: Any) -> str | None:
 
 
 def _fmt_int(x: float) -> str:
-    """``sprintf("%d", x)`` for a whole double (R errors on a fractional one)."""
+    """``sprintf("%d", x)`` for a count; a fractional value is shown as it is
+    (R's ``sprintf("%d")`` fails on it, U73)."""
+    from pytacheck._r import as_character
+
     if _is_missing(x):
         return "NA"
     v = float(x)
     if not v.is_integer():
-        raise ValueError("invalid format '%d'; use format %f, %e, %g or %a for numeric objects")
+        return as_character(v) or "NA"
     return str(int(v))
 
 
@@ -967,8 +970,11 @@ def _download_one(
         if _is_login_page(dest):
             _unlink(dest)
             return "not authorised (the OSF returned a sign-in page; see ?osf_pat)"
-        if os.path.exists(dest) and os.path.getsize(dest) > 0:
+        if os.path.exists(dest) and (os.path.getsize(dest) > 0 or expected_bytes == 0):
             return None
+        # no file is left behind: the next run would take it as cached (metacheck
+        # keeps the 0-byte file: U75)
+        _unlink(dest)
         return "empty response"
     except Exception as e:
         if os.path.exists(dest):
@@ -1058,7 +1064,8 @@ def _download_many_parallel(
             else:
                 errs.append(f"HTTP {sc:d}")
             continue
-        if not os.path.exists(dest) or os.path.getsize(dest) == 0:
+        if not os.path.exists(dest) or (os.path.getsize(dest) == 0 and expected[i] != 0):
+            _unlink(dest)  # not left to be taken as cached next time (U75)
             errs.append("empty response")
             continue
         if _is_login_page(dest, expected[i]):
@@ -1131,9 +1138,10 @@ def _download_zip_to_cache(
 
     from pytacheck import http
     from pytacheck._r import r_round
-    from pytacheck.fileinfo._strings import invalid_utf8, raise_if_invalid
     from pytacheck.report.blocks import _cap_num
 
+    if "file_path" not in files.columns and "file_name" not in files.columns:
+        return files  # nothing to match the archive's members on: no download
     timeout_s = _zip_timeout_for_size(timeout_s, expected_bytes)
     skip = skip_on_api_limit is True  # R: isTRUE(skip_on_api_limit), the argument only
 
@@ -1198,7 +1206,9 @@ def _download_zip_to_cache(
                 cap = _cap_num(float(r_round(max_bytes / _MB)))
                 dl_err = f"archive exceeded the {cap} MB cap during download and was aborted"
             elif timed_out:
-                dl_err = f"archive download exceeded the {_fmt_int(timeout_s)}s timeout"
+                # a whole number of seconds (metacheck's sprintf("%d") fails on the
+                # size-scaled fractional timeout: U73)
+                dl_err = f"archive download exceeded the {math.ceil(timeout_s):d}s timeout"
             elif not os.path.exists(zip_tmp) or os.path.getsize(zip_tmp) == 0:
                 dl_err = "empty response"
         except Exception as e:
@@ -1218,15 +1228,10 @@ def _download_zip_to_cache(
             names = _zip_names(zf)
             if not infos:
                 return files
-            # R: grepl("/$") is FALSE for a name that is not valid UTF-8, and the
-            # sub()/gsub() below then refuse it
             entries = [
-                (nm, info)
-                for nm, info in zip(names, infos, strict=True)
-                if invalid_utf8(nm) or not nm.endswith("/")
+                (nm, info) for nm, info in zip(names, infos, strict=True) if not nm.endswith("/")
             ]
             zip_entries = [nm for nm, _ in entries]
-            raise_if_invalid(zip_entries)
             lookup = (
                 [sub("^[^/]*/", "", nm) for nm in zip_entries] if strip_dir else list(zip_entries)
             )
@@ -1235,9 +1240,11 @@ def _download_zip_to_cache(
             for k, p in enumerate(lookup):
                 first.setdefault(p, k)
 
-            if "file_path" not in files.columns:
-                return files  # R: files$file_path is NULL, so nothing can match
-            paths = files["file_path"].tolist()
+            # without a file_path column the file names are matched (metacheck
+            # matches nothing, having downloaded the whole archive: U73)
+            paths = (
+                files["file_path"].tolist() if "file_path" in files.columns else [None] * len(files)
+            )
             fnames = (
                 files["file_name"].tolist() if "file_name" in files.columns else [None] * len(files)
             )
@@ -1430,7 +1437,6 @@ def download_repo_files(
     for i, v in enumerate(repo_urls):
         if not _is_missing(v):
             rows_of.setdefault(v, []).append(i)
-    any_na_repo = any(v is pd.NA for v in repo_urls)
 
     def rows_for(repo: Any) -> list[int]:
         return [] if _is_missing(repo) else rows_of.get(repo, [])
@@ -1651,9 +1657,8 @@ def download_repo_files(
             return rows_for(repo)
 
         def record_count(repo: Any) -> float:
-            """``sum(files$repo_url == repo)`` (NA when any repo_url is NA)."""
-            if any_na_repo:
-                return math.nan
+            """The rows of *repo* (metacheck's ``sum(files$repo_url == repo)`` is NA
+            when any repo_url is NA, which skips the zip: U74)."""
             return float(len(rows_for(repo)))
 
         def in_repo(repo: Any) -> list[int]:
@@ -1667,7 +1672,10 @@ def download_repo_files(
             return float(sum(v for v in vals if not is_na(v)))
 
         def filled(rows: list[int]) -> set[int]:
-            return {i for i in rows if not _is_missing(location(i))}
+            # rows the zip wrote to their cache path (metacheck counts any
+            # file_location, so a row that arrived with a stale one is never
+            # fetched: U74)
+            return {i for i in rows if location(i) == cache_paths[i]}
 
         def gate(repo: Any, zip_bytes: float, n_wanted: int, total_n: float, what: str) -> bool:
             size_ok = not is_na(zip_bytes) and (

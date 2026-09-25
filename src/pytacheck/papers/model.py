@@ -37,8 +37,14 @@ _RESERVED = frozenset({"paper_id", "extra", "_tables", "_raw", "_columns", "_gen
 _GENERATION = itertools.count(1)
 
 
+# Papers created in the same clock tick (a coarse clock, e.g. on Windows) must not
+# share an id, so the process-wide count of ids made goes into the hash too.
+_ID_COUNT = itertools.count(1)
+
+
 def _random_id() -> str:
-    stamp = f"{time.time():.6f}".encode()
+    """A 14-character id hashed from the time, as ``metacheck::paper()`` makes one."""
+    stamp = f"{time.time():.6f}-{next(_ID_COUNT)}".encode()
     return hashlib.md5(stamp, usedforsecurity=False).hexdigest()[:14]
 
 

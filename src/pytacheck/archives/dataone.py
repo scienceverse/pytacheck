@@ -150,9 +150,13 @@ def _host_one(url: Any) -> str | None:
     u = _clean_one(url)
     if u is None:
         return None
+    # a host name in the URL wins over a DOI prefix: metacheck tries each host's
+    # name and then its prefix in list order, so a KNB landing page citing a
+    # 10.18739 DOI went to arcticdata.io (U40)
     for h in DATAONE_HOSTS:
         if str(h["host"]) in u:
             return str(h["host"])
+    for h in DATAONE_HOSTS:
         prefix = h["doi_prefix"]
         if prefix is not None and grepl(_escape_dots(prefix) + "/", u, perl=True):
             return str(h["host"])
@@ -174,14 +178,15 @@ def _map(x: Any, one: Any) -> Any:
 def _dataone_host(dataone_url: Any) -> Any:
     """Port of R/archive-dataone.R::.dataone_host(): the member node of each URL or DOI.
 
-    A URL naming a known host, or containing a known host's DOI prefix, gives
-    that host (hosts are tried in :data:`DATAONE_HOSTS` order, host name
-    before prefix); anything else ``None``.
+    A URL naming a known host gives that host; otherwise a URL containing a
+    known host's DOI prefix gives that host; anything else ``None``.
     """
     return _map(dataone_url, _host_one)
 
 
-_PID_MARKED = r"doi:(10\.[0-9]+/[A-Za-z0-9._-]+)"
+# the marked form allows a slash in the suffix, as the bare form does (a
+# PISCO PID such as doi:10.6085/AA/marine_ltm.20.1); metacheck's cannot (U40)
+_PID_MARKED = r"doi:(10\.[0-9]+/[A-Za-z0-9._/-]+)"
 _PID_BARE = r"(?:doi\.org/)?(10\.[0-9]+/[A-Za-z0-9._/-]+)$"
 
 
@@ -192,7 +197,10 @@ def _pid_one(url: Any) -> str | None:
     for pattern in (_PID_MARKED, _PID_BARE):
         groups = regexec(pattern, u, perl=True, ignore_case=True)
         if len(groups) >= 2:
-            return f"doi:{groups[1]}"
+            # a DOI does not end in "." or "/": sentence-final punctuation
+            # caught in the link is dropped (metacheck keeps it: U40)
+            pid = sub("[./]+$", "", str(groups[1]))
+            return f"doi:{pid}"
     return None
 
 
@@ -200,9 +208,9 @@ def _dataone_pid(dataone_url: Any) -> Any:
     """Port of R/archive-dataone.R::.dataone_pid(): DataONE PIDs from URLs or DOIs.
 
     A ``doi:10.xxx/...`` marker (as in a landing-page URL) is taken as is;
-    otherwise a DOI at the end of the string (its suffix may contain
-    slashes). The result is in DataONE's ``doi:<prefix>/<suffix>`` form, or
-    ``None``.
+    otherwise a DOI at the end of the string (in both, the suffix may contain
+    slashes; a trailing ``.`` is dropped). The result is in DataONE's
+    ``doi:<prefix>/<suffix>`` form, or ``None``.
     """
     return _map(dataone_url, _pid_one)
 
@@ -223,7 +231,7 @@ def dataone_info(
     """
     from pytacheck._r import bind_rows
     from pytacheck.archives import _spinner, _tick
-    from pytacheck.archives.dataverse import _check_named_ids, _info_table, _string_series
+    from pytacheck.archives.dataverse import _info_table, _string_series
     from pytacheck.archives.info_cache import (
         _repo_info_cache_get,
         _repo_info_cache_put,
@@ -234,7 +242,6 @@ def dataone_info(
     with _spinner(pb, "DataONE Retrieve") as bar:
         table = _info_table(dataone_url, id_col, "dataone_url", ("dataone_host", "dataone_pid"))
         urls = table["dataone_url"].tolist()
-        _check_named_ids(urls)
         ids = pd.DataFrame(
             {
                 "dataone_url": table["dataone_url"].to_numpy(),
@@ -247,6 +254,9 @@ def dataone_info(
         ids = ids.drop_duplicates()
         ids = ids[ids["dataone_url"].notna().to_numpy()].reset_index(drop=True)
         valid = ids[(ids["dataone_host"].notna() & ids["dataone_pid"].notna()).to_numpy()]
+        # one request per dataset, joined to one info row per URL (metacheck
+        # fetches a dataset once per URL and the join then repeats rows: U35)
+        valid = valid.drop_duplicates(["dataone_host", "dataone_pid"])
 
         if len(valid) == 0:
             _tick(bar, "No valid DataONE links")
@@ -458,17 +468,17 @@ def _dataone_info(pid: Any, host: Any, pb: Any = None) -> pd.DataFrame:
 
 
 def _creator_name(creator: etree._Element) -> str | None:
-    """One EML ``<creator>`` as R's ``vapply()`` names it.
+    """One EML ``<creator>``: the given name and surname, else the organisation.
 
-    ``paste(given, surname)`` where a missing part is R's ``NA`` (so it reads
-    ``"NA"``, as in R); the organisation name only when both parts are
-    present but blank.
+    A missing name part is left out (metacheck pastes R's ``NA`` in, giving
+    ``"NA Smith"``, and ``"NA NA"`` for an organisation: U40).
     """
     given = _text_of(creator, _local("givenName"))
     surname = _text_of(creator, _local("surName"))
     org = _text_of(creator, _local("organizationName"))
-    full = trimws(f"{'NA' if given is None else given} {'NA' if surname is None else surname}")
+    parts = [trimws(x) for x in (given, surname) if x is not None]
+    full = " ".join(str(x) for x in parts if x)
     if full:
-        return str(full)
-    # R: if (nzchar(org)) org else NA -- nzchar(NA) is TRUE, so a missing org is NA
-    return org if org else None
+        return full
+    org = None if org is None else trimws(org)
+    return str(org) if org else None

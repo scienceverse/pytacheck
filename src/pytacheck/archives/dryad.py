@@ -27,7 +27,6 @@ from pytacheck.archives.dataverse import (
     RequestAbort,
     _as_numeric,
     _cell,
-    _check_named_ids,
     _chr_values,
     _collect_links,
     _dollar,
@@ -43,7 +42,6 @@ from pytacheck.archives.dataverse import (
     _invalid_utf8,
     _link_matches,
     _list_cell,
-    _mark_named_ids,
     _paste,
     _query,
     _resp_json,
@@ -133,7 +131,7 @@ def dryad_links(paper: Any) -> pd.DataFrame:
     links = _collect_links([found_href, other_dryad])
     links["dryad_url"] = links["href"]
     links["dryad_doi"] = _string_series(_dryad_doi(links["dryad_url"].tolist()))
-    return _mark_named_ids(links, "dryad_doi")
+    return links
 
 
 @functools.cache
@@ -201,7 +199,6 @@ def dryad_info(
     with _spinner(pb, "Dryad Retrieve") as bar:
         table = _info_table(dryad_url, id_col, "dryad_url", ("dryad_doi",))
         urls = table["dryad_url"].tolist()
-        _check_named_ids(urls, dryad_url, id_col)
         ids = pd.DataFrame(
             {
                 "dryad_url": table["dryad_url"].to_numpy(),
@@ -274,11 +271,7 @@ def _dryad_info(dryad_doi: Any, pb: Any = None) -> pd.DataFrame:
         version_href = _dollars(rec, "_links", "stash:version", "href")
         files_list: Any = []
         if version_href is not None:
-            files_resp = _dryad_query(f"https://datadryad.org{_paste(version_href)}/files")
-            if files_resp is not None and files_resp.status_code == 200:
-                files_rec = _resp_json(files_resp)
-                listed = _dollars(files_rec, "_embedded", "stash:files")
-                files_list = listed if listed is not None else []
+            files_list = _dryad_files(f"https://datadryad.org{_paste(version_href)}/files")
 
         obj["title"] = _field_cell(_empty_or(_dollar(rec, "title"), None))
         obj["doi"] = _field_cell(_empty_or(_dollar(rec, "identifier"), None))
@@ -288,6 +281,39 @@ def _dryad_info(dryad_doi: Any, pb: Any = None) -> pd.DataFrame:
         obj["license"] = _field_cell(_empty_or(_dollar(rec, "license"), None))
         obj["files"] = _list_cell(files_list)
         return pd.DataFrame(obj)
+
+
+_MAX_FILE_PAGES = 1000
+
+
+def _dryad_files(url: str) -> Any:
+    """The ``stash:files`` records of a version's file listing, every page of it.
+
+    The listing is paged (HAL ``_links.next``); metacheck reads only the
+    first page, so a large dataset was listed incompletely (U38). A page
+    that fails ends the listing with the pages read so far.
+    """
+    pages: list[Any] = []
+    seen: set[str] = set()
+    next_url: str | None = url
+    while next_url is not None and next_url not in seen and len(seen) < _MAX_FILE_PAGES:
+        seen.add(next_url)
+        resp = _dryad_query(next_url)
+        if resp is None or resp.status_code != 200:
+            break
+        rec = _resp_json(resp)
+        listed = _dollars(rec, "_embedded", "stash:files")
+        if listed is not None:
+            pages.append(listed)
+        href = _dollars(rec, "_links", "next", "href")
+        next_url = None
+        if isinstance(href, str) and href != "":
+            next_url = (
+                href if href.startswith(("http://", "https://")) else f"https://datadryad.org{href}"
+            )
+    if len(pages) == 1:
+        return pages[0]
+    return [x for page in pages for x in _elements(page)]
 
 
 # ---------------------------------------------------------------------------

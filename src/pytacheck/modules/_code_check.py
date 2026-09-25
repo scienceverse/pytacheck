@@ -166,13 +166,15 @@ def _read_lines(path: Any, file_name: Any, language: Any) -> list[str | None]:
 def _parse_text(lines: list[str | None]) -> list[str]:
     """What ``code_parse_r(text = lines)`` hands to ``parse()``.
 
-    R errors (caught per file by ``code_check()``) when there is no text,
-    and purls a text whose first line is a YAML ``---`` fence.
+    A text whose first line is a YAML ``---`` fence is purled first. An
+    empty file parses (nothing to parse); R's ``code_parse_r(text =
+    character(0))`` fails with "subscript out of bounds", which
+    ``code_check()`` recorded as the file's error (UPSTREAM_ISSUES U87).
     """
     from pytacheck.codecheck.core import code_extract_r
 
     if not lines:
-        raise IndexError("subscript out of bounds")
+        return []
     if lines[0] is not None and grepl(r"^---\s*$", lines[0]):
         lines = list(code_extract_r(text=cast(Any, lines)) or [])
     return ["NA" if v is None else v for v in lines]
@@ -202,7 +204,7 @@ def analyse_files(
     The loop of ``code_check()``: one dict of per-file results per row (in
     the order R sets them, so a file whose check failed half-way keeps the
     columns set before the error, plus ``error``), and the R code text of
-    each file keyed by ``paper_id`` then ``file_name``. R's ``parse()`` of
+    each file keyed by ``paper_id`` then row. R's ``parse()`` of
     every R file runs as one batch (one ``Rscript`` process with the R
     parser engine) rather than one per file.
     """
@@ -260,13 +262,11 @@ def analyse_files(
             row["error"] = _msg(exc)
             continue
         if langs[i] == "R":
+            # keyed by row, not by file name: R keeps only the last of two
+            # same-named files, and of the files of an NA paper id only the
+            # last one (UPSTREAM_ISSUES U89)
             pid = pids[i] if has_pid else "_all"
-            if pid is None:
-                # R: r_text_by_paper[[NA]] never finds the entry it assigned, so
-                # each NA-paper file replaces the texts of the ones before it
-                r_text_by_paper[None] = {names[i]: lines}
-            else:
-                r_text_by_paper.setdefault(pid, {})[names[i]] = lines
+            r_text_by_paper.setdefault(pid, {})[i] = lines
         row["parse_error"] = None
         row["parse_error_msg"] = None
         if langs[i] == "R":
@@ -398,6 +398,9 @@ def summary_table(
     version_pin: Mapping[str, Any],
     skip_on_api_limit: bool,
     max_files_per_repo: float,
+    max_file_size: float = 100,
+    max_download_size: float = 500,
+    cache: bool = False,
 ) -> pd.DataFrame:
     """The per-paper ``summary_table`` of ``code_check()``.
 
@@ -462,10 +465,9 @@ def summary_table(
                 "code_missing_files": total("loaded_files_missing", rows),
                 "code_min_comments": min(pcs) if pcs else math.nan,
                 "code_parse_errors": total("parse_error", rows),
-                # R: split() drops NA paper ids, whose count is then set to 0
-                "code_packages_n": (
-                    0 if key is None else len(code_packages([packages[i] for i in rows]))
-                ),
+                # files of an NA paper id (paper = None) count as one paper;
+                # R's split() drops them and reports 0 (UPSTREAM_ISSUES U78)
+                "code_packages_n": len(code_packages([packages[i] for i in rows])),
             }
         )
     out = pd.DataFrame(recs)
@@ -476,22 +478,28 @@ def summary_table(
     out["code_min_comments"] = out["code_min_comments"].astype("float64")
 
     if "paper_id" in all_files.columns:
+        # per paper, the files of an NA paper id (paper = None) as one paper
+        # (R: split() drops them, so they are never pinned; UPSTREAM_ISSUES U78)
         af = all_files.reset_index(drop=True)
-        by_paper: dict[str, list[int]] = {}
+        by_paper: dict[str | None, list[int]] = {}
         for i, v in enumerate(af["paper_id"].tolist()):
-            if not is_na(v):
-                by_paper.setdefault(str(as_character(v)), []).append(i)
-        pinned: dict[str, bool] = {}
+            by_paper.setdefault(None if is_na(v) else str(as_character(v)), []).append(i)
+        pinned: dict[str | None, bool] = {}
         for pid, rows in by_paper.items():
+            # the module's download caps and cache apply here too (R's
+            # per-paper check falls back to the defaults, UPSTREAM_ISSUES U88)
             res = _code_version_pin_check(
                 af.iloc[rows].reset_index(drop=True),
                 code_text_list=dict(r_text_by_paper.get(pid) or {}),
+                max_file_size=max_file_size,
+                max_download_size=max_download_size,
+                cache=cache,
                 skip_on_api_limit=skip_on_api_limit,
                 max_files_per_repo=max_files_per_repo,
             )
             pinned[pid] = bool(res.get("pinned") is True)
         out["code_version_pinned"] = [
-            False if is_na(p) else pinned.get(str(p), False) for p in out["paper_id"].tolist()
+            pinned.get(None if is_na(p) else str(p), False) for p in out["paper_id"].tolist()
         ]
     else:
         out["code_version_pinned"] = bool(version_pin.get("pinned") is True)
@@ -606,7 +614,7 @@ def merge_manifests(
     else:
         from pytacheck.papers.tables import paper_id
 
-        ids: list[Any] = list(paper_id(paper))
+        ids: list[Any] = [] if paper is None else list(paper_id(paper))
         pids = ids or [getattr(paper, "paper_id", None)]
     packages = col(code_files, "packages")
     code_pids = col(code_files, "paper_id")

@@ -68,3 +68,25 @@ w("rt_fallback_latin1.csv", b'v\0x\n"a"b\nNA\ncaf\xc3\xa9\n')
 w("rt_nrows.csv", 'v\n"x"y\n' + "".join(f"r{i}\n" for i in range(10)))
 # duplicated column names: each keeps its own class (IDate, integer64)
 w("dup_names.csv", "d,d,x\n2020-01-01,5000000000,1\n2020-02-01,6000000000,2\n")
+
+
+# readxl's isDateFormat() ends its scan at any "g" followed by six characters
+# (its "General" shortcut), so a Japanese era date format reads as a number
+def _era_date_xlsx() -> None:
+    import datetime as dt
+
+    import openpyxl
+
+    wb = openpyxl.Workbook()
+    ws = wb.active
+    ws.append(["id", "date_jp", "date_iso", "weight"])
+    for i, d in enumerate([dt.date(2019, 5, 1), dt.date(2020, 1, 15)]):
+        ws.append([i + 1, d, d, 1.5 + i])
+        ws.cell(i + 2, 2).number_format = '[$-411]ggge"年"m"月"d"日"'
+        ws.cell(i + 2, 3).number_format = "yyyy-mm-dd"
+        ws.cell(i + 2, 4).number_format = '0.0 "kg"'
+    wb.properties.created = dt.datetime(2026, 1, 1)
+    wb.save(HERE / "era_date.xlsx")
+
+
+_era_date_xlsx()

@@ -96,7 +96,8 @@ def test_gitlab_tree_files(mocks: object) -> None:
     files = res["files"]
     assert list(files.columns) == TREE_COLS
     # both tree pages were read; tree entries (folders) are not files
-    assert files["path"].tolist() == ["README.md", "data/d1.csv", "src/run.py", "x.json", "x.json"]
+    # x.json is one row, though json has two file types (U46)
+    assert files["path"].tolist() == ["README.md", "data/d1.csv", "src/run.py", "x.json"]
     assert files["download_url"].iloc[0] == (
         "https://gitlab.com/gzorg/sub/glproj/-/raw/develop/README.md"
     )

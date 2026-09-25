@@ -87,29 +87,45 @@ def test_statcheck_options() -> None:
     assert list(all_table.columns[:3]) == ["p_comp", "reported_p", "p_decimals"]
 
 
-def test_invalid_statcheck_arguments_give_empty_table() -> None:
-    # R's tryCatch() turns statcheck()'s "unused argument" error into data.frame()
-    assert stats(TEST_TEXT, bogus=1).shape == (0, 0)
-    assert stats(TEST_TEXT, messages=True).shape == (0, 0)
+def test_invalid_statcheck_arguments_raise() -> None:
+    # U4: R's tryCatch() turned statcheck()'s "unused argument" error into data.frame()
+    with pytest.raises(TypeError, match="bogus"):
+        stats(TEST_TEXT, bogus=1)
+    with pytest.raises(TypeError, match="messages"):
+        stats(TEST_TEXT, messages=True)
 
 
-def test_character_vector_errors_like_r() -> None:
-    with pytest.raises(TypeError, match="length zero"):
-        stats("t(20) = 4.23, p = .002")
+def test_character_vector_is_checked() -> None:
+    # U4: R fails ("argument is of length zero")
+    table = stats(["t(20) = 4.23, p < .001", "no numbers", "t(20) = 4.23, p = .02"])
+    assert table[VAR_RAW].tolist() == ["t(20) = 4.23, p < .001", "t(20) = 4.23, p = .02"]
+    assert table["error"].tolist() == [False, True]
+    assert table.columns[-1] == "text"
+    assert stats("t(20) = 4.23, p = .002")["reported_p"].tolist() == [0.002]
+    assert stats(["no numbers"]).shape == (0, 0)
 
 
-def test_sentences_with_warnings_or_errors_are_dropped() -> None:
+def test_sentences_keep_the_results_that_can_be_checked() -> None:
+    # U4: R drops every result of a sentence on the first warning or error
     paper = pc.test_paper(
         [
-            "Zero df t(0) = 2.1, p = .03.",  # pt() warns
-            "Perfect r(20) = 1.00, p < .001.",  # sqrt() of a negative warns
+            "Zero df t(0) = 2.1, p = .03.",  # cannot be checked
+            "Perfect r(20) = 1.00, p < .001.",  # R: sqrt() of a negative warns
             "Range t(28) = 2.20, p = .036, with p = .05-.10 elsewhere.",  # coercion warning
-            "Bracket t(20) = (2.1, p = .03.",  # if () on two values errors
+            "Bracket t(20) = (2.1, p = .03.",  # R: if () on two values errors
+            "Both t(0) = 2.1, p = .03 and t(28) = 2.20, p = .036.",
             "Fine t(28) = 2.20, p = .036.",
         ]
     )
     table = stats(paper)
-    assert table[VAR_RAW].tolist() == ["t(28) = 2.20, p = .036"]
+    assert table[VAR_RAW].tolist() == [
+        "r(20) = 1.00, p < .001",
+        "t(28) = 2.20, p = .036",
+        "t(20) = (2.1, p = .03",
+        "t(28) = 2.20, p = .036",
+        "t(28) = 2.20, p = .036",
+    ]
+    assert table["error"].tolist() == [False, False, True, False, False]
 
 
 def test_error_psychsci(psychsci: pc.PaperList) -> None:

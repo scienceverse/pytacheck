@@ -72,19 +72,21 @@ def test_file_download(mock_api: object, tmp_path: Path) -> None:
         "folder", "reshare_id", "id", "key", "path", "size", "size_on_disk", "checksum",
         "checksum_ok", "self", "downloaded", "extracted",
     ]  # fmt: skip
-    # guide.pdf (20MB) is over the 10MB default cap
-    assert files["key"].tolist() == ["interviews.csv", "notes.txt", "gone.txt"]
-    assert files["downloaded"].tolist() == [True, False, False]
-    assert files["checksum_ok"].tolist()[:2] == [True, False]
+    # guide.pdf (20MB) is over the 10MB default cap: listed, not downloaded (U36)
+    assert files["key"].tolist() == ["interviews.csv", "guide.pdf", "notes.txt", "gone.txt"]
+    assert files["downloaded"].tolist() == [True, False, False, False]
+    assert files["checksum_ok"].iloc[0] == True  # noqa: E712
+    assert pd.isna(files["checksum_ok"].iloc[1])  # omitted: not checked
+    assert files["checksum_ok"].iloc[2] == False  # noqa: E712
     assert files["self"].iloc[0].startswith("https://")  # upgraded from http
     folder = tmp_path / "reshare_854001"
     assert (folder / "interviews.csv").read_bytes() == b"id,answer\n1,yes\n2,no\n"
 
-    # a second download goes to a new folder; R's "_<n>" suffix logic strips the
-    # deposit id itself ("reshare_854001" -> "reshare" + "_1"), reproduced here
+    # a second download goes to a new folder "reshare_854001_1" (U37: metacheck
+    # strips the deposit id itself and uses "reshare_1")
     with pytest.warns(UserWarning):
         again = reshare_file_download("854001", str(tmp_path))
-    assert again["folder"].iloc[0] == "reshare_1"
+    assert again["folder"].iloc[0] == "reshare_854001_1"
 
 
 def test_file_download_edge_cases(mock_api: object, tmp_path: Path) -> None:

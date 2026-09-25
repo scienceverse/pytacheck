@@ -216,9 +216,10 @@ def test_code_abs_path() -> None:
 
 
 def test_code_abs_path_empty_inputs() -> None:
-    # R: "" keeps (abs_path, line); character(0) loses `text` and gives (line, abs_path)
+    # no code has the usual columns (R: character(0) gives (line, abs_path), U67)
     assert list(code_abs_path("").columns) == ["abs_path", "line"]
-    assert list(code_abs_path([]).columns) == ["line", "abs_path"]
+    assert list(code_abs_path([]).columns) == ["abs_path", "line"]
+    assert len(code_abs_path([])) == 0
 
 
 # ---------------------------------------------------------------------------
@@ -461,8 +462,12 @@ def test_code_line_stats_empty() -> None:
     obs = code_line_stats("")
     assert obs["total_lines"] == 0
     assert math.isnan(obs["percent_comments"])
-    with pytest.raises(TypeError):  # R: strsplit(NULL) after character(0)
-        code_line_stats([])
+    # no code counts like "" (R: "non-character argument", U67)
+    for lang in ("R", "Python"):
+        obs = code_line_stats([], lang)
+        assert obs["total_lines"] == obs["comment_lines"] == obs["code_lines"] == 0
+        assert math.isnan(obs["percent_comments"])
+    assert code_line_stats([], "Python")["has_docstring"] is False
 
 
 # ---------------------------------------------------------------------------

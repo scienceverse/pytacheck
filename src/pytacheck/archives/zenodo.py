@@ -187,16 +187,6 @@ def _zenodo_info_table(zenodo_url: Any, id_col: int | str, pb: Any, cache: bool)
         table = pd.DataFrame({"zenodo_url": pd.Series(raw_urls, dtype="string")})
 
     urls = table["zenodo_url"].tolist()
-    if (
-        len(urls) > 1
-        and _is_character(table["zenodo_url"])
-        and any(is_na(u) for u in urls)
-        and len({None if is_na(u) else u for u in urls}) == len(urls)
-    ):
-        # metacheck: .zenodo_id() names its result by the URLs, and data.frame()
-        # takes those names as row names unless some are duplicated (then it
-        # warns and drops them), refusing an NA one
-        raise ValueError("row names contain missing values")
     ids = pd.DataFrame(
         {
             "zenodo_url": table["zenodo_url"].reset_index(drop=True),
@@ -400,11 +390,13 @@ def _zenodo_info(zenodo_id: Any, pb: Any = None, resp: Any = _UNSET) -> pd.DataF
         metadata = r_dollar(rec, "metadata")
         lic = r_dollar(metadata, "license")
         if lic is not None and not isinstance(lic, dict | list):
-            # R: `metadata$license$id` on a string
-            raise TypeError("$ operator is invalid for atomic vectors")
-        license_value = _empty_or(
-            r_dollar(lic, "id"), _empty_or(r_dollar(lic, "title"), _empty_or(lic))
-        )
+            # older records give the licence as a plain string ("cc-by"), which
+            # metacheck's `metadata$license$id` cannot read (U34)
+            license_value = lic
+        else:
+            license_value = _empty_or(
+                r_dollar(lic, "id"), _empty_or(r_dollar(lic, "title"), _empty_or(lic))
+            )
         stats = r_dollar(rec, "stats")
         row = {
             "zenodo_id": zid,
@@ -562,7 +554,7 @@ def _zenodo_download_one(
     unzip_types: Any,
     pb: Any,
 ) -> pd.DataFrame | None:
-    from pytacheck._r import plural, sub
+    from pytacheck._r import plural
     from pytacheck.archives import _message, _tick
     from pytacheck.archives.osf import _normalize, _r_basename, _r_dirname
 
@@ -594,75 +586,69 @@ def _zenodo_download_one(
             for z, s in zip(zips, selfs, strict=True)
         ]
 
-    def drop(rows: list[int]) -> None:
-        nonlocal files, unzippable
-        gone = set(rows)
-        keep = [i for i in range(len(files)) if i not in gone]
-        files = files.iloc[keep].reset_index(drop=True)
-        unzippable = [unzippable[i] for i in keep]
+    n = len(files)
+    # files omitted by the size caps stay in the table with downloaded = FALSE,
+    # as metacheck documents (its code drops them: U36)
+    omitted = [False] * n
 
     def omitting(i: int) -> None:
         key = files["key"].iloc[i]
         size = files["size"].iloc[i]
         _tick(pb, f"- omitting {'NA' if is_na(key) else key} ({_r_num_str(size / _MB)}MB)")
+        omitted[i] = True
 
     # --- size filters (MB) ----
     if _limit(max_file_size):
         assert max_file_size is not None
-        too_big = [
-            i
-            for i, (s, u) in enumerate(zip(files["size"].tolist(), unzippable, strict=True))
-            if not is_na(s) and s > max_file_size * _MB and not u
-        ]
-        if too_big:
-            for i in too_big:
+        for i, (s, u) in enumerate(zip(files["size"].tolist(), unzippable, strict=True)):
+            if not is_na(s) and s > max_file_size * _MB and not u:
                 omitting(i)
-            drop(too_big)
 
     # remove the largest files until the total fits (only whole transfers count)
     if _limit(max_download_size):
         assert max_download_size is not None
+        size_list = files["size"].tolist()
         while True:
-            capped = [i for i, u in enumerate(unzippable) if not u]
+            capped = [i for i, u in enumerate(unzippable) if not u and not omitted[i]]
             if not capped:
                 break
-            size_list = files["size"].tolist()
             total = sum(size_list[i] for i in capped if not is_na(size_list[i]))
             if not total > max_download_size * _MB:
                 break
             present = [i for i in capped if not is_na(size_list[i])]
             max_file = max(present, key=lambda i: (size_list[i], -i))
             omitting(max_file)
-            drop([max_file])
 
-    if len(files) == 0:
+    if all(omitted):
         _tick(pb, "- All files omitted due to size constraints")
-        return None
+        target = None
+    else:
+        # --- target directory (never overwrite; an existing <dir> gives
+        # <dir>_1, <dir>_2...: metacheck strips a trailing _<digits> from the
+        # name itself, U37) ----
+        target = _normalize(download_to)
+        if os.path.isdir(target):
+            target = os.path.join(target, str(zid))
+        base = target
+        i = 0
+        while os.path.isdir(target):
+            i += 1
+            target = f"{base}_{i}"
+        with contextlib.suppress(OSError):
+            os.mkdir(target)
+        _tick(pb, f"- Created directory {target}")
 
-    # --- target directory (never overwrite) ----
-    target = _normalize(download_to)
-    if os.path.isdir(target):
-        target = os.path.join(target, str(zid))
-    i = 0
-    while os.path.isdir(target):
-        i += 1
-        base = sub(r"_\d+$", "", target)
-        target = f"{base}_{i}"
-    with contextlib.suppress(OSError):
-        os.mkdir(target)
-    _tick(pb, f"- Created directory {target}")
-
-    n = len(files)
     downloaded = [False] * n
     extracted: list[int | None] = [None] * n
     ids = files["id"].tolist()
     keys = files["key"].tolist()
     selfs = files["self"].tolist()
 
+    paths: list[str | None] = [None] * n
     with tempfile.TemporaryDirectory() as temppath:
         # --- the whole-record archive, when no file was filtered out ---
-        used_bulk = False
-        if n == len(files_list) and not any(unzippable):
+        used_bulk = target is None  # every file was omitted: nothing to fetch
+        if n == len(files_list) and not any(unzippable) and not any(omitted):
             zip_url = f"https://zenodo.org/api/records/{zid}/files-archive"
             zip_path = os.path.join(temppath, "archive.zip")
             dl_ok = _download_archive(zip_url, zip_path)
@@ -674,9 +660,12 @@ def _zenodo_download_one(
 
         # --- file by file (bulk skipped or incomplete) ----
         if not used_bulk:
+            n_wanted = n - sum(omitted)
+            k = 0
             for i in range(n):
-                if downloaded[i]:
+                if downloaded[i] or omitted[i]:
                     continue
+                k += 1
                 if unzippable[i]:
                     _tick(pb, f"Reading zip contents of {_na(keys[i])}")
                     try:
@@ -708,10 +697,9 @@ def _zenodo_download_one(
                 if selfs[i] is not None and not is_na(selfs[i]) and selfs[i] != "":
                     ok = _download_file(selfs[i], os.path.join(temppath, _na(ids[i])))
                 downloaded[i] = ok
-                _tick(pb, f"Downloading file {i + 1} of {n}")
+                _tick(pb, f"Downloading file {k} of {n_wanted}")
 
         # copy into the target folder under the original file names
-        paths: list[str | None] = [None] * n
         for i in range(n):
             if extracted[i] is not None:
                 continue  # members were written straight into the target folder
@@ -733,13 +721,20 @@ def _zenodo_download_one(
     )
 
     # --- check what actually reached the disk ----
-    files = _zenodo_verify_downloads(files, target)
+    if target is not None:
+        files = _zenodo_verify_downloads(files, target)
+    else:
+        files = files.assign(
+            size_on_disk=pd.Series([math.nan] * len(files), dtype="float64"),
+            checksum_ok=pd.Series([None] * len(files), dtype="boolean"),
+        )
 
     dl = files["downloaded"].tolist()
-    n_missing = sum(1 for v in dl if v is not True)
+    missing = [v is not True and not o for v, o in zip(dl, omitted, strict=True)]
+    n_missing = sum(missing)
     if n_missing > 0:
-        worst = [_na(k) for k, v in zip(files["key"].tolist(), dl, strict=True) if v is not True]
-        nrow = len(files)
+        worst = [_na(k) for k, m in zip(files["key"].tolist(), missing, strict=True) if m]
+        nrow = n - sum(omitted)
         warnings.warn(
             f"{n_missing} of {nrow} file{plural(nrow)} from Zenodo record {zid} did not "
             f"arrive intact (e.g. {', '.join(worst[:3])}). The returned table marks "
@@ -747,7 +742,8 @@ def _zenodo_download_one(
             stacklevel=3,
         )
 
-    files["folder"] = pd.Series([_r_basename(target)] * len(files), dtype="string")
+    folder = None if target is None else _r_basename(target)
+    files["folder"] = pd.Series([folder] * len(files), dtype="string")
     files["zenodo_id"] = pd.Series([str(zid)] * len(files), dtype="string")
     return files[
         [

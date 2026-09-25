@@ -164,9 +164,8 @@ def code_check(
         _code_expand_spv,
         _code_expand_zip,
         _code_predownload,
-        _code_version_pin_check,
         _repo_file_counts,
-        code_lang,
+        _version_pin_scan,
         code_packages,
     )
 
@@ -198,8 +197,7 @@ def code_check(
     all_files.attrs = {}
 
     def set_language(df: pd.DataFrame) -> pd.DataFrame:
-        langs = code_lang(col(df, "file_name")) if len(df) else []
-        df["language"] = pd.Series(langs, index=df.index, dtype="string")
+        df["language"] = pd.Series(file_languages(df), index=df.index, dtype="string")
         return df
 
     set_language(all_files)
@@ -220,6 +218,9 @@ def code_check(
         failed_parts.append(all_files.attrs.get("failed"))
         all_files = all_files.copy()
         all_files.attrs = {}
+        # a notebook's or Quarto document's language is read from the copy
+        # just downloaded (UPSTREAM_ISSUES U86)
+        set_language(all_files)
 
     # rendered outputs whose code can be recovered (.spv, .smcl, .out, .html)
     # and unexpanded remote .zip archives
@@ -255,7 +256,8 @@ def code_check(
     if len(code_files) == 0:
         from pytacheck.papers.tables import paper_id
 
-        pids = paper_id(paper)
+        # paper = None (local files only) is one paper of unknown id
+        pids: list[Any] = [None] if paper is None else list(paper_id(paper))
         return {
             "table": code_files,
             "traffic_light": "na",
@@ -280,7 +282,10 @@ def code_check(
                 max_file_size=max_file_size,
                 max_download_size=max_download_size,
                 max_files_per_repo=max_files_per_repo,
-                repo_file_counts=_repo_file_counts(checked_files),
+                # the repository's whole listing, as in the pre-pass: R
+                # counts only its code files, so a refused repository was
+                # reported twice with different counts (UPSTREAM_ISSUES U88)
+                repo_file_counts=_repo_file_counts(all_files),
                 cache=cache,
                 skip_on_api_limit=skip_on_api_limit,
             )
@@ -493,7 +498,7 @@ def code_check(
     code_text_list = [
         text for paper_texts in r_text_by_paper.values() for text in paper_texts.values()
     ]
-    version_pin = _code_version_pin_check(
+    version_pin, pin_locations = _version_pin_scan(
         all_files,
         code_text_list=code_text_list,
         max_file_size=max_file_size,
@@ -502,7 +507,7 @@ def code_check(
         skip_on_api_limit=skip_on_api_limit,
         max_files_per_repo=max_files_per_repo,
     )
-    all_files = _splice_locations(all_files, version_pin.get("file_location"))
+    all_files = _splice_locations(all_files, pin_locations)
     report_version_pin, summary_version_pin, report_table_version_pin = version_pin_report(
         version_pin
     )
@@ -562,6 +567,9 @@ def code_check(
         all_files,
         r_text_by_paper,
         version_pin,
+        max_file_size=max_file_size,
+        max_download_size=max_download_size,
+        cache=cache,
         skip_on_api_limit=skip_on_api_limit,
         max_files_per_repo=max_files_per_repo,
     )
@@ -597,6 +605,39 @@ def code_check(
 # ---------------------------------------------------------------------------
 # helpers
 # ---------------------------------------------------------------------------
+
+
+def file_languages(df: pd.DataFrame) -> list[str | None]:
+    """The code language of each row of a file listing.
+
+    :func:`~pytacheck.codecheck.code_lang` of the file name, except that the
+    language of a notebook (``.ipynb``) or Quarto document (``.qmd``) is read
+    from the row's local copy (``file_location``), the file the checks read.
+    R passes the file name, a path relative to the working directory, so a
+    Python-engine ``.qmd`` was purled as R and an R notebook checked as
+    Python (UPSTREAM_ISSUES U86). Without a local copy the default applies
+    (``"R"`` for ``.qmd``, ``"Python"`` for ``.ipynb``); a missing name has
+    no language.
+    """
+    from pytacheck.codecheck.core import _file_ext, _ipynb_lang, _qmd_lang, code_lang
+
+    names = col(df, "file_name")
+    locs = col(df, "file_location")
+    out: list[str | None] = []
+    for name, loc in zip(names, locs, strict=True):
+        if name is None:
+            out.append(None)
+            continue
+        ext = _file_ext(str(name)).lower()
+        if ext not in ("qmd", "ipynb"):
+            out.append(code_lang(str(name)))
+            continue
+        local = str(loc) if loc is not None and str(loc) and os.path.isfile(str(loc)) else None
+        if ext == "qmd":
+            out.append(_qmd_lang(local) if local else "R")
+        else:
+            out.append(_ipynb_lang(local) if local else "Python")
+    return out
 
 
 def code_langs_of(df: pd.DataFrame, i: int) -> Any:
@@ -661,27 +702,23 @@ def _set_file_location(
     return out
 
 
-def _splice_locations(all_files: pd.DataFrame, locations: Any) -> pd.DataFrame:
+def _splice_locations(all_files: pd.DataFrame, locations: dict[int, Any]) -> pd.DataFrame:
     """Copy the pinning files' resolved locations back into *all_files*.
 
-    R matches each located file by name (its first row of that name) and
-    skips empty paths, so later per-paper checks download nothing again.
+    *locations* maps row positions to local paths (empty paths are skipped),
+    so later per-paper checks download nothing again. R matches the files by
+    name, which puts every location of a repeated name (two READMEs) into
+    that name's first row (UPSTREAM_ISSUES U89).
     """
-    if locations is None or len(locations) == 0:
+    if not locations:
         return all_files
-    names = col(all_files, "file_name")
-    first: dict[Any, int] = {}
-    for i, n in enumerate(names):
-        if n is not None and n not in first:
-            first[n] = i
     out = all_files.copy()
     like = out["file_location"] if "file_location" in out.columns else None
     locs = like.astype(object).tolist() if like is not None else [None] * len(out)
-    for name, loc in zip(list(locations.index), locations.tolist(), strict=True):
-        m = first.get(name)
-        if m is None or (not is_na(loc) and str(loc) == ""):
+    for pos, loc in locations.items():
+        if not is_na(loc) and str(loc) == "":
             continue
-        locs[m] = None if is_na(loc) else loc
+        locs[pos] = None if is_na(loc) else loc
     out["file_location"] = location_series(locs, out.index, like)
     return out
 
@@ -697,13 +734,13 @@ def _files_table(code_files: pd.DataFrame) -> pd.DataFrame:
     """The report's table of code files, with links and formatted comment percentages."""
     cols = [c for c in (*_COL_LABELS, "file_url") if c in code_files.columns]
     table = code_files.loc[:, cols].drop_duplicates().reset_index(drop=True)
-    if "file_url" not in table.columns:
-        # R: link(NULL, file_name) is character(0)
-        raise ValueError(f"replacement has 0 rows, data has {len(table)}")
-    table["file_name"] = pd.Series(
-        link(col(table, "file_url"), col(table, "file_name")), dtype="string"
-    )
-    table = table.drop(columns="file_url")
+    # a listing without file_url (local files) shows plain names; R's
+    # link(NULL, file_name) fails the whole module (UPSTREAM_ISSUES U87)
+    if "file_url" in table.columns:
+        table["file_name"] = pd.Series(
+            link(col(table, "file_url"), col(table, "file_name")), dtype="string"
+        )
+        table = table.drop(columns="file_url")
     if "percentage_comment" in table.columns:
         table["percentage_comment"] = pd.Series(
             [
