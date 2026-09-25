@@ -296,15 +296,8 @@ for tag, names, paths, fn in [
     add(
         f"review.data_classify_files.invalid_utf8.{tag}",
         r="identity",
-        py=f"{HELP}.classify_or_error",
-        args={
-            "x": {
-                "$expr": {
-                    "r": f"tryCatch(suppressWarnings({call}), error = function(e) conditionMessage(e))",
-                    "py": "None",
-                }
-            }
-        },
+        py=f"{HELP}.classify",
+        args={"x": {"$expr": {"r": f"suppressWarnings({call})", "py": "None"}}},
         py_drop=["x"],
         py_args={"file_name": names, "file_path": paths, "fn": fn},
     )

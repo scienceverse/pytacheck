@@ -81,14 +81,6 @@ def run_llm_with(
     return scoped(lambda: module_run(paper, "power", **kwargs), opts, envs)
 
 
-def catch(fn: Callable[[], Any]) -> Any:
-    """R ``tryCatch(expr, error = function(e) conditionMessage(e))``."""
-    try:
-        return fn()
-    except Exception as exc:
-        return str(exc)
-
-
 def report_tables(out: Any) -> list[pd.DataFrame]:
     """The data of the ``scroll_table()`` blocks of a module report.
 

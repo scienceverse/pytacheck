@@ -6,98 +6,85 @@
   "value": {
     "t": "list",
     "names": [
-      "value",
-      "warnings"
+      "temperature",
+      "topP",
+      "topK",
+      "frequencyPenalty",
+      "presencePenalty",
+      "seed",
+      "maxOutputTokens",
+      "responseLogprobs",
+      "stopSequences",
+      "thinkingLevel",
+      "thinkingBudget"
     ],
     "v": [
       {
-        "t": "list",
-        "names": [
-          "temperature",
-          "topP",
-          "topK",
-          "frequencyPenalty",
-          "presencePenalty",
-          "seed",
-          "maxOutputTokens",
-          "responseLogprobs",
-          "stopSequences",
-          "thinkingLevel",
-          "thinkingBudget"
-        ],
+        "t": "dbl",
         "v": [
-          {
-            "t": "dbl",
-            "v": [
-              0
-            ]
-          },
-          {
-            "t": "dbl",
-            "v": [
-              0.5
-            ]
-          },
-          {
-            "t": "dbl",
-            "v": [
-              3
-            ]
-          },
-          {
-            "t": "dbl",
-            "v": [
-              1
-            ]
-          },
-          {
-            "t": "dbl",
-            "v": [
-              1
-            ]
-          },
-          {
-            "t": "dbl",
-            "v": [
-              2
-            ]
-          },
-          {
-            "t": "dbl",
-            "v": [
-              10
-            ]
-          },
-          {
-            "t": "lgl",
-            "v": [
-              true
-            ]
-          },
-          {
-            "t": "chr",
-            "v": [
-              "a",
-              "b"
-            ]
-          },
-          {
-            "t": "chr",
-            "v": [
-              "low"
-            ]
-          },
-          {
-            "t": "dbl",
-            "v": [
-              5
-            ]
-          }
+          0
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0.5
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          3
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          1
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          1
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          2
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          10
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true
         ]
       },
       {
         "t": "chr",
-        "v": []
+        "v": [
+          "a",
+          "b"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "low"
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          5
+        ]
       }
     ]
   },

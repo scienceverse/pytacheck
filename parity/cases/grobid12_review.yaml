@@ -152,17 +152,17 @@ cases:
   "r": "identity"
   "py": "tests.grobid12._parity_helpers.identity"
   "args":
-    "x": {"$expr": {"r": "tryCatch(.grobid_to_bibr('upstream/metacheck/tests/testthat/fixtures/problems/corrupt.xml', schema_version = '12.0'), error = conditionMessage)", "py": "__import__('tests.grobid12._parity_helpers', fromlist=['x']).convert_error('upstream/metacheck/tests/testthat/fixtures/problems/corrupt.xml')"}}
+    "x": {"$expr": {"r": ".grobid_to_bibr('upstream/metacheck/tests/testthat/fixtures/problems/corrupt.xml', schema_version = '12.0')", "py": "__import__('pytacheck.io.grobid', fromlist=['x'])._grobid_to_bibr(str(__import__('tests.grobid12._parity_helpers', fromlist=['x'])._path('upstream/metacheck/tests/testthat/fixtures/problems/corrupt.xml')), None, '12.0')"}}
 - "id": ".grobid_to_bibr.error_message.url_empty"
   "r": "identity"
   "py": "tests.grobid12._parity_helpers.identity"
   "args":
-    "x": {"$expr": {"r": "tryCatch(.grobid_to_bibr('tests/io/fixtures/url_empty.tei.xml', schema_version = '12.0'), error = conditionMessage)", "py": "__import__('tests.grobid12._parity_helpers', fromlist=['x']).convert_error('tests/io/fixtures/url_empty.tei.xml')"}}
+    "x": {"$expr": {"r": ".grobid_to_bibr('tests/io/fixtures/url_empty.tei.xml', schema_version = '12.0')", "py": "__import__('pytacheck.io.grobid', fromlist=['x'])._grobid_to_bibr(str(__import__('tests.grobid12._parity_helpers', fromlist=['x'])._path('tests/io/fixtures/url_empty.tei.xml')), None, '12.0')"}}
 - "id": ".grobid_to_bibr.error_message.missing_file"
   "r": "identity"
   "py": "tests.grobid12._parity_helpers.identity"
   "args":
-    "x": {"$expr": {"r": "tryCatch(.grobid_to_bibr('tests/grobid12/fixtures/no_such_file.tei.xml', schema_version = '12.0'), error = conditionMessage)", "py": "__import__('tests.grobid12._parity_helpers', fromlist=['x']).convert_error('tests/grobid12/fixtures/no_such_file.tei.xml')"}}
+    "x": {"$expr": {"r": ".grobid_to_bibr('tests/grobid12/fixtures/no_such_file.tei.xml', schema_version = '12.0')", "py": "__import__('pytacheck.io.grobid', fromlist=['x'])._grobid_to_bibr(str(__import__('tests.grobid12._parity_helpers', fromlist=['x'])._path('tests/grobid12/fixtures/no_such_file.tei.xml')), None, '12.0')"}}
 - "id": "module.all_urls.review"
   "module": "all_urls"
   "args":

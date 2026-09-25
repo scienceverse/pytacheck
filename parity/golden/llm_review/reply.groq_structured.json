@@ -2,96 +2,83 @@
   "id": "reply.groq_structured",
   "ok": true,
   "error": null,
-  "warnings": [],
+  "warnings": [
+    "Note (not fatal): 1 of 4 LLM extractions failed and was left blank; the other 3 succeeded and all checks continued.\nRow 1: reason\n  subscript out of bounds"
+  ],
   "value": {
-    "t": "list",
+    "t": "df",
+    "nrow": 4,
     "names": [
-      "value",
-      "warnings"
+      "text",
+      ".error",
+      ".error_msg",
+      "name",
+      "n",
+      "tags",
+      "sub"
     ],
     "v": [
       {
-        "t": "df",
-        "nrow": 4,
-        "names": [
-          "text",
-          ".error",
-          ".error_msg",
-          "name",
-          "n",
-          "tags",
-          "sub"
-        ],
+        "t": "chr",
         "v": [
-          {
-            "t": "chr",
-            "v": [
-              "reply empty choices",
-              "reply null content",
-              "reply parts",
-              "reply no choices"
-            ]
-          },
-          {
-            "t": "lgl",
-            "v": [
-              true,
-              null,
-              null,
-              null
-            ]
-          },
-          {
-            "t": "chr",
-            "v": [
-              "subscript out of bounds",
-              null,
-              null,
-              null
-            ]
-          },
-          {
-            "t": "lgl",
-            "v": [
-              null,
-              null,
-              null,
-              null
-            ]
-          },
-          {
-            "t": "lgl",
-            "v": [
-              null,
-              null,
-              null,
-              null
-            ]
-          },
-          {
-            "t": "lgl",
-            "v": [
-              null,
-              null,
-              null,
-              null
-            ]
-          },
-          {
-            "t": "lgl",
-            "v": [
-              null,
-              null,
-              null,
-              null
-            ]
-          }
+          "reply empty choices",
+          "reply null content",
+          "reply parts",
+          "reply no choices"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true,
+          null,
+          null,
+          null
         ]
       },
       {
         "t": "chr",
         "v": [
-          "Note (not fatal): 1 of 4 LLM extractions failed and was left blank; the other 3 succeeded and all checks continued.\nRow 1: reason\n  subscript out of bounds"
+          "subscript out of bounds",
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          null,
+          null,
+          null,
+          null
         ]
       }
     ]

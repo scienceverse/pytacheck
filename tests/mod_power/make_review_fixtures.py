@@ -23,6 +23,7 @@ from R's makes the R golden fail (check that every golden is ``ok``).
 
 from __future__ import annotations
 
+import contextlib
 import json
 import sys
 import warnings
@@ -502,15 +503,11 @@ def llm_case(
     py_options: str = "None",
     key: str = "'test-key'",
     py_env: str = "None",
-    error: bool = False,
     tables: bool = False,
 ) -> None:
-    """A module run with the LLM on (``error``: compare the error message)."""
+    """A module run with the LLM on (when it fails in R, Python must fail too)."""
     run_r = r_llm(f"module_run({paper.r}, 'power'{kwargs})", r_options, key)
     run_py = f"{H}.run_llm_with({paper.py}, {py_options}, {py_env}{py_kwargs})"
-    if error:
-        run_r = f"tryCatch({run_r}, error = function(e) conditionMessage(e))"
-        run_py = f"{H}.catch(lambda: {run_py})"
     if tables:
         run_r = R_TABLES.format(run=run_r)
         run_py = f"{H}.report_tables({run_py})"
@@ -537,8 +534,8 @@ expr_case(
 )
 expr_case(
     "power.review.empty_paperlist",
-    "tryCatch(module_run(paperlist(), 'power'), error = function(e) conditionMessage(e))",
-    f"{H}.catch(lambda: pc.module_run(pc.PaperList([]), 'power'))",
+    "module_run(paperlist(), 'power')",
+    "pc.module_run(pc.PaperList([]), 'power')",
 )
 tricky = paras(TRICKY, list(range(1, len(TRICKY) + 1)))
 expr_case(
@@ -577,10 +574,8 @@ llm_case("power.review.fallback.control_char", tp(FB_CONTROL))
 llm_case("power.review.fallback.control_char_mixed", paras([FB_CONTROL, FB_COMPLETE], [0, 1]))
 llm_case("power.review.llm.seed_null", tp(S.COMPLETE), ", seed = NULL", ", seed=None")
 # ellmer::params() rejects these before any request: the module errors
-llm_case("power.review.llm.seed_fraction", tp(S.COMPLETE), ", seed = 1.5", ", seed=1.5", error=True)
-llm_case(
-    "power.review.llm.seed_string", tp(S.COMPLETE), ", seed = 'abc'", ", seed='abc'", error=True
-)
+llm_case("power.review.llm.seed_fraction", tp(S.COMPLETE), ", seed = 1.5", ", seed=1.5")
+llm_case("power.review.llm.seed_string", tp(S.COMPLETE), ", seed = 'abc'", ", seed='abc'")
 llm_case(
     "power.review.llm.no_key",
     tp(S.COMPLETE),
@@ -592,7 +587,6 @@ llm_case(
     tp(S.COMPLETE),
     r_options={"metacheck.llm.model": "NULL"},
     py_options="{'metacheck.llm.model': None}",
-    error=True,
 )
 llm_case(
     "power.review.llm.max_calls",
@@ -600,7 +594,6 @@ llm_case(
     r_options={"metacheck.llm_max_calls": "1L"},
     py_options="{'metacheck.llm_max_calls': __import__('pytacheck.llm._rds', "
     "fromlist=['_']).RInt(1)}",
-    error=True,
 )
 
 # llm_use(TRUE), structured output rejected: prompt-based fallback ----
@@ -634,7 +627,6 @@ llm_case("power.review.llm.all_null.tables", tp(ALL_NULL), tables=True)
 llm_case(
     "power.review.fallback.partial_http_fail",
     paras([FB_COMPLETE, FB_FAIL], [0, 1]),
-    error=True,
 )
 
 
@@ -684,7 +676,8 @@ def record_mocks() -> dict[str, tuple[int, Any]]:
         with respx.mock(assert_all_called=False) as router, warnings.catch_warnings():
             warnings.simplefilter("ignore")
             router.route().mock(side_effect=handler)
-            eval(code, ns)
+            with contextlib.suppress(Exception):  # a run that fails still made its requests
+                eval(code, ns)
     return recorded
 
 

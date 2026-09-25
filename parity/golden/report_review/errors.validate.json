@@ -1,5 +1,5 @@
 {
-  "id": "errors.validate_messages",
+  "id": "errors.validate",
   "ok": true,
   "error": null,
   "warnings": [],
@@ -14,9 +14,9 @@
         ],
         "v": [
           {
-            "t": "chr",
+            "t": "lgl",
             "v": [
-              "`x` and `y` must share the same src.\nℹ `x` is a <data.frame> object.\nℹ `y` is `NULL`.\nℹ Set `copy = TRUE` if `y` can be copied to the same source as `x` (may be\n  slow)."
+              true
             ]
           }
         ]
@@ -28,9 +28,9 @@
         ],
         "v": [
           {
-            "t": "chr",
+            "t": "lgl",
             "v": [
-              "`x` and `y` must share the same src.\nℹ `x` is a <data.frame> object.\nℹ `y` is the string \"All good.\".\nℹ Set `copy = TRUE` if `y` can be copied to the same source as `x` (may be\n  slow)."
+              true
             ]
           }
         ]
@@ -42,9 +42,9 @@
         ],
         "v": [
           {
-            "t": "chr",
+            "t": "lgl",
             "v": [
-              "Join columns in `y` must be present in the data.\n✖ Problem with `text`."
+              true
             ]
           }
         ]

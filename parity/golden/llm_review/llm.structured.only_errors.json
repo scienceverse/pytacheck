@@ -2,50 +2,37 @@
   "id": "llm.structured.only_errors",
   "ok": true,
   "error": null,
-  "warnings": [],
+  "warnings": [
+    "Note (not fatal): 2 of 2 LLM extractions failed and were left blank; the other 0 succeeded and all checks continued.\nRows 1, 2: reasons\n  HTTP 400 Bad Request.\nℹ Failed to validate JSON. Please adjust your prompt. See 'failed_generation'\n  for more details.\n  Provider says: Failed to validate JSON. Please adjust your prompt. See 'failed_generation' for more details."
+  ],
   "value": {
-    "t": "list",
+    "t": "df",
+    "nrow": 2,
     "names": [
-      "value",
-      "warnings"
+      "text",
+      ".error",
+      ".error_msg"
     ],
     "v": [
       {
-        "t": "df",
-        "nrow": 2,
-        "names": [
-          "text",
-          ".error",
-          ".error_msg"
-        ],
+        "t": "chr",
         "v": [
-          {
-            "t": "chr",
-            "v": [
-              "bad schema",
-              "bad schema"
-            ]
-          },
-          {
-            "t": "lgl",
-            "v": [
-              true,
-              true
-            ]
-          },
-          {
-            "t": "chr",
-            "v": [
-              "HTTP 400 Bad Request.\nℹ Failed to validate JSON. Please adjust your prompt. See 'failed_generation'\n  for more details.\n  Provider says: Failed to validate JSON. Please adjust your prompt. See 'failed_generation' for more details.",
-              "HTTP 400 Bad Request.\nℹ Failed to validate JSON. Please adjust your prompt. See 'failed_generation'\n  for more details.\n  Provider says: Failed to validate JSON. Please adjust your prompt. See 'failed_generation' for more details."
-            ]
-          }
+          "bad schema",
+          "bad schema"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true,
+          true
         ]
       },
       {
         "t": "chr",
         "v": [
-          "Note (not fatal): 2 of 2 LLM extractions failed and were left blank; the other 0 succeeded and all checks continued.\nRows 1, 2: reasons\n  HTTP 400 Bad Request.\nℹ Failed to validate JSON. Please adjust your prompt. See 'failed_generation'\n  for more details.\n  Provider says: Failed to validate JSON. Please adjust your prompt. See 'failed_generation' for more details."
+          "HTTP 400 Bad Request.\nℹ Failed to validate JSON. Please adjust your prompt. See 'failed_generation'\n  for more details.\n  Provider says: Failed to validate JSON. Please adjust your prompt. See 'failed_generation' for more details.",
+          "HTTP 400 Bad Request.\nℹ Failed to validate JSON. Please adjust your prompt. See 'failed_generation'\n  for more details.\n  Provider says: Failed to validate JSON. Please adjust your prompt. See 'failed_generation' for more details."
         ]
       }
     ]

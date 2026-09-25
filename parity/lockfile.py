@@ -25,27 +25,35 @@ locking different cases merge cleanly::
 A digest is the first 16 hex digits of the SHA-256 of the value's JSON, keys
 sorted, with every double rounded to 10 significant digits: a last-digit
 difference between platforms is not a change (the comparison allows a relative
-1e-9), and a change the comparison would see is. What differs from run to run
-is written as parity/r/run_cases.R writes it in goldens: the temporary
-directory ``<tmp>``, the random names of temporary files and directories in it
-``<tempfile>``, and date-time stamps from while the case ran ``<now>``.
+1e-9), and a change the comparison would see is. What differs from one run of a
+case to the next (:class:`Run`) is written as parity/r/run_cases.R writes it in
+goldens: the random names ``tempfile`` gave while the case ran ``<tempfile>``,
+the temporary directory ``<tmp>``, the run's data and cache directories
+``<data>`` and ``<cache>``, and date-time stamps from while the case ran
+``<now>``.
 
 ``python -m parity lock`` writes the entries; ``python -m parity check`` reports
 a marked case whose fingerprints still match as ``xfail``, and otherwise as
 ``xpass`` (it matches R now: remove the mark), ``r_changed`` (the golden
 changed), ``py_changed`` (Python's result or the differing paths changed) or
-``unlocked`` (no entry). See docs/PARITY.md.
+``unlocked`` (no entry). ``r_changed`` and ``py_changed`` fail a tier-1 case;
+for a tier-2 case they are warnings (:class:`LockWarning` under pytest), unless
+Python now raises where it returned a value. See docs/PARITY.md.
 """
 
 from __future__ import annotations
 
+import contextlib
 import datetime as dt
 import hashlib
 import json
+import math
 import os
 import re
 import tempfile
-from dataclasses import dataclass
+import time
+from collections.abc import Iterator
+from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
@@ -57,10 +65,13 @@ LOCK_DIR = ROOT / "parity" / "lock"
 R_ERROR_PY_VALUE = "<R error, Python value>"
 #: ``diff`` of a case where R returned a value and Python raised an exception
 R_VALUE_PY_ERROR = "<R value, Python error>"
-#: ``diff`` of a case whose error messages differ (``compare: {error: contains|exact}``)
-ERROR_MESSAGE = "<error message>"
 
 _DIGITS = 10  # significant digits of a double in a digest
+
+
+class LockWarning(UserWarning):
+    """A tier-2 marked case whose golden or Python result changed since it was
+    locked (``r_changed`` / ``py_changed`` that only warn): review and re-lock it."""
 
 
 @dataclass(frozen=True)
@@ -104,49 +115,78 @@ def _rounded(x: Any) -> Any:
     return x
 
 
-def digest(value: Any, ran: tuple[float, float] | None = None) -> str:
-    """The digest of a canonical value (see the module docstring).
+@dataclass
+class Run:
+    """What differs from one run of a case to the next (see :func:`watch_run`)."""
 
-    *ran* is when the value was made (``time.time()`` before and after): its
-    date-time stamps from then are ``<now>``.
-    """
+    #: ``time.time()`` when the case started and finished
+    started: float
+    finished: float = math.inf
+    #: the random names ``tempfile`` gave meanwhile (``tmp9npv2h8g`` -> ``9npv2h8g``)
+    names: set[str] = field(default_factory=set)
+    #: the run's own directories (``PYTACHECK_DATA_DIR``, ``PYTACHECK_CACHE_DIR``)
+    dirs: dict[str, str] = field(default_factory=dict)
+
+
+@contextlib.contextmanager
+def watch_run() -> Iterator[Run]:
+    """Record what makes this run of a case differ from the next: when it ran,
+    every random name ``tempfile`` gives (in any thread), and the data and cache
+    directories it runs with."""
+    run = Run(time.time())
+    for var, placeholder in (("PYTACHECK_DATA_DIR", "<data>"), ("PYTACHECK_CACHE_DIR", "<cache>")):
+        folder = os.environ.get(var)
+        if folder:
+            run.dirs.update(dict.fromkeys({folder, os.path.realpath(folder)}, placeholder))
+    # every name tempfile makes up comes from this iterator class
+    names: Any = getattr(tempfile, "_RandomNameSequence")  # noqa: B009 -- private
+    saved = names.__next__
+
+    def recorded(self: Any) -> str:
+        name = str(saved(self))
+        run.names.add(name)
+        return name
+
+    names.__next__ = recorded
+    try:
+        yield run
+    finally:
+        names.__next__ = saved
+        run.finished = time.time()
+
+
+def digest(value: Any, run: Run | None = None) -> str:
+    """The digest of a canonical value (see the module docstring); *run* is the
+    run of the case that made it."""
     text = json.dumps(_rounded(value), sort_keys=True, ensure_ascii=True, separators=(",", ":"))
-    return hashlib.sha256(_steady(text, ran).encode("ascii")).hexdigest()[:16]
+    if run is not None:
+        text = steady(text, run)
+    return hashlib.sha256(text.encode("ascii")).hexdigest()[:16]
 
 
-_TMP_ROOTS = sorted(
-    {tempfile.gettempdir(), os.path.realpath(tempfile.gettempdir())}, key=len, reverse=True
-)
-_TMP_PATH = re.compile(
-    "(?:" + "|".join(re.escape(r) for r in _TMP_ROOTS) + r")(?![^/\s\"'\\<>])((?:/[^/\s\"'\\<>]+)*)"
-)
-#: a name tempfile gives (``tmp9npv2h8g``, ``pytacheck-parity-cache-x1_y2z3w``)
-_TEMP_NAME = re.compile(r"[A-Za-z_.-]*[a-z0-9_]{8}")
-_STAMP = re.compile(r"\d{4}-\d{2}-\d{2}[T ]\d{2}:\d{2}:\d{2}(?:\.\d+)?(Z|[+-]\d{2}:?\d{2})?")
+_TMP_ROOTS = {tempfile.gettempdir(), os.path.realpath(tempfile.gettempdir())}
+_STAMP = re.compile(r"\d{4}-\d{2}-\d{2}[T ]\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:?\d{2})?")
 
 
-def _steady(text: str, ran: tuple[float, float] | None) -> str:
-    """*text* with the temporary directory, temporary names and (with *ran*) the
-    stamps of the run written as placeholders."""
-    names: set[str] = set()
+def _dir(path: str) -> re.Pattern[str]:
+    """*path* where it starts a path: not inside a longer one
+    (``/opt/grobid/grobid-home/tmp/x`` is not in ``/tmp``)."""
+    return re.compile(r"(?<![\w.~-])" + re.escape(path) + r"(?![\w.~-])")
 
-    def tmp(m: re.Match[str]) -> str:
-        for part in m.group(1).split("/")[1:]:
-            stem = part.split(".", 1)[0] if not part.startswith(".") else part
-            if _TEMP_NAME.fullmatch(stem):
-                names.add(stem)
-        return "<tmp>" + m.group(1)
 
-    text = _TMP_PATH.sub(tmp, text)
-    for name in sorted(names, key=len, reverse=True):
+def steady(text: str, run: Run) -> str:
+    """*text* with what differs from run to run written as placeholders."""
+    dirs = {**run.dirs, **dict.fromkeys(_TMP_ROOTS, "<tmp>")}
+    # the longest first: the cache directory is in the temporary directory
+    for folder in sorted(dirs, key=len, reverse=True):
+        text = _dir(folder).sub(dirs[folder], text)
+    for name in sorted(run.names, key=len, reverse=True):
         text = text.replace(name, "<tempfile>")
-    if ran is not None:
-        text = _STAMP.sub(lambda m: "<now>" if _during(m, ran) else m.group(0), text)
-    return text
+    return _STAMP.sub(lambda m: "<now>" if _during(m, run) else m.group(0), text)
 
 
-def _during(m: re.Match[str], ran: tuple[float, float]) -> bool:
-    """Whether the stamp *m* is a time from *ran* (a zone-less stamp is UTC: cases
+def _during(m: re.Match[str], run: Run) -> bool:
+    """Whether the stamp *m* is a time from *run* (a zone-less stamp is UTC: cases
     run in UTC)."""
     try:
         t = dt.datetime.fromisoformat(m.group(0).replace(" ", "T").replace("Z", "+00:00"))
@@ -154,7 +194,7 @@ def _during(m: re.Match[str], ran: tuple[float, float]) -> bool:
         return False
     if t.tzinfo is None:
         t = t.replace(tzinfo=dt.UTC)
-    return int(ran[0]) - 1 <= t.timestamp() <= ran[1] + 1
+    return int(run.started) - 1 <= t.timestamp() <= run.finished + 1
 
 
 def r_digest(golden: dict[str, Any]) -> str:
@@ -174,7 +214,7 @@ def lock_path(area: str) -> Path:
     return LOCK_DIR / f"{area}.json"
 
 
-_CACHE: dict[str, tuple[int, dict[str, Fingerprint]]] = {}
+_CACHE: dict[Path, tuple[int, dict[str, Fingerprint]]] = {}
 
 
 def read_lock(area: str) -> dict[str, Fingerprint]:
@@ -186,16 +226,16 @@ def read_lock(area: str) -> dict[str, Fingerprint]:
     try:
         mtime = path.stat().st_mtime_ns
     except FileNotFoundError:
-        _CACHE.pop(area, None)
+        _CACHE.pop(path, None)
         return {}
-    cached = _CACHE.get(area)
+    cached = _CACHE.get(path)
     if cached is not None and cached[0] == mtime:
         return cached[1]
     data = json.loads(path.read_text(encoding="utf-8"))
     if not isinstance(data, dict):
         raise ValueError(f"{path.name}: a lock file maps case ids to entries")
     entries = {k: Fingerprint.from_json(f"{path.name}: {k}", v) for k, v in data.items()}
-    _CACHE[area] = (mtime, entries)
+    _CACHE[path] = (mtime, entries)
     return entries
 
 
@@ -213,7 +253,7 @@ def format_lock(entries: dict[str, Fingerprint]) -> str:
 def write_lock(area: str, entries: dict[str, Fingerprint]) -> None:
     """Write *area*'s lock (remove the file when there is nothing to lock)."""
     path = lock_path(area)
-    _CACHE.pop(area, None)
+    _CACHE.pop(path, None)
     if not entries:
         path.unlink(missing_ok=True)
         return

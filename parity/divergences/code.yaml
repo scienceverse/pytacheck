@@ -104,11 +104,10 @@
   reason: same-named files in two local folders are distinct files; R drops the second folder's copies (and the folder)
 "mod_repo_check_review/repo_check.local.two_folders.report": *u121_local
 "mod_repo_check_review/repo_check.local.several_folders.paperlist": *u121_local
-"mod_repo_check/repo_check.osf.invalid_id": &u122_osf
+"mod_repo_check/repo_check.bibr12.paperlist": &u122_osf
   kind: r_bug_fixed
   ref: U122
   reason: an OSF link OSF does not know is kept and flagged "invalid or inaccessible OSF link"; R stores a dplyr match() error, or drops it silently beside valid links
-"mod_repo_check/repo_check.bibr12.paperlist": *u122_osf
 "mod_repo_check_review/repo_check.osf_license.invalid": *u122_osf
 "mod_repo_check/repo_check.osf.registration2":
   kind: r_bug_fixed
@@ -140,10 +139,6 @@
   ref: U43
   reason: a DSpace item its host does not know is flagged "invalid or inaccessible DSpace item" (gated_repos, and the Error column of the report's repository table); R's download function returns NULL and the repository is left unflagged
 "mod_repo_check/repo_check.dspace7.unfound": *u43_one
-"mod_repo_check/repo_check.dspace.unfound_two":
-  kind: r_bug_fixed
-  ref: U43
-  reason: DSpace items their host does not know are flagged "invalid or inaccessible DSpace item"; R stores the join error of its all-NULL listing ("Join columns in `y` must be present in the data.")
 "mod_repo_check/repo_check.dspace.found_and_unfound":
   kind: r_bug_fixed
   ref: U43

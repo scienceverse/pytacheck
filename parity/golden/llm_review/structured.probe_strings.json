@@ -4,81 +4,68 @@
   "error": null,
   "warnings": [],
   "value": {
-    "t": "list",
+    "t": "df",
+    "nrow": 1,
     "names": [
-      "value",
-      "warnings"
+      "text",
+      "items.name",
+      "items.count",
+      "items.score",
+      "items.flag",
+      "items.kind",
+      "items.tags"
     ],
     "v": [
       {
-        "t": "df",
-        "nrow": 1,
-        "names": [
-          "text",
-          "items.name",
-          "items.count",
-          "items.score",
-          "items.flag",
-          "items.kind",
-          "items.tags"
-        ],
+        "t": "chr",
         "v": [
-          {
-            "t": "chr",
-            "v": [
-              "probe strings"
-            ]
-          },
-          {
-            "t": "chr",
-            "v": [
-              null
-            ]
-          },
-          {
-            "t": "int",
-            "v": [
-              null
-            ]
-          },
-          {
-            "t": "dbl",
-            "v": [
-              null
-            ]
-          },
-          {
-            "t": "lgl",
-            "v": [
-              null
-            ]
-          },
-          {
-            "t": "chr",
-            "v": [
-              null
-            ]
-          },
-          {
-            "t": "list",
-            "names": null,
-            "v": [
-              {
-                "t": "chr",
-                "v": [
-                  null,
-                  "a",
-                  null,
-                  null
-                ]
-              }
-            ]
-          }
+          "probe strings"
         ]
       },
       {
         "t": "chr",
-        "v": []
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "a",
+              null,
+              null
+            ]
+          }
+        ]
       }
     ]
   },

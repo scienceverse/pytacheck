@@ -4,63 +4,50 @@
   "error": null,
   "warnings": [],
   "value": {
-    "t": "list",
+    "t": "df",
+    "nrow": 2,
     "names": [
-      "value",
-      "warnings"
+      "id",
+      "owned_by",
+      "cached_input",
+      "input",
+      "output"
     ],
     "v": [
       {
-        "t": "df",
-        "nrow": 2,
-        "names": [
-          "id",
-          "owned_by",
-          "cached_input",
-          "input",
-          "output"
-        ],
+        "t": "chr",
         "v": [
-          {
-            "t": "chr",
-            "v": [
-              "deepseek-chat",
-              "deepseek-reasoner"
-            ]
-          },
-          {
-            "t": "chr",
-            "v": [
-              "deepseek",
-              "deepseek"
-            ]
-          },
-          {
-            "t": "dbl",
-            "v": [
-              null,
-              null
-            ]
-          },
-          {
-            "t": "dbl",
-            "v": [
-              null,
-              null
-            ]
-          },
-          {
-            "t": "dbl",
-            "v": [
-              null,
-              null
-            ]
-          }
+          "deepseek-chat",
+          "deepseek-reasoner"
         ]
       },
       {
         "t": "chr",
-        "v": []
+        "v": [
+          "deepseek",
+          "deepseek"
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          null,
+          null
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          null,
+          null
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          null,
+          null
+        ]
       }
     ]
   },

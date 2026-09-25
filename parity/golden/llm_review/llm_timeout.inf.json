@@ -4,22 +4,9 @@
   "error": null,
   "warnings": [],
   "value": {
-    "t": "list",
-    "names": [
-      "value",
-      "warnings"
-    ],
+    "t": "dbl",
     "v": [
-      {
-        "t": "dbl",
-        "v": [
-          "Inf"
-        ]
-      },
-      {
-        "t": "chr",
-        "v": []
-      }
+      "Inf"
     ]
   },
   "metacheck_version": "0.3.1",

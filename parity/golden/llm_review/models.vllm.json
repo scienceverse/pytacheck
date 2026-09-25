@@ -4,30 +4,17 @@
   "error": null,
   "warnings": [],
   "value": {
-    "t": "list",
+    "t": "df",
+    "nrow": 1,
     "names": [
-      "value",
-      "warnings"
+      "id"
     ],
     "v": [
       {
-        "t": "df",
-        "nrow": 1,
-        "names": [
-          "id"
-        ],
-        "v": [
-          {
-            "t": "chr",
-            "v": [
-              "GLM-5"
-            ]
-          }
-        ]
-      },
-      {
         "t": "chr",
-        "v": []
+        "v": [
+          "GLM-5"
+        ]
       }
     ]
   },

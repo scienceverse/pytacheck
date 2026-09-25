@@ -4,68 +4,55 @@
   "error": null,
   "warnings": [],
   "value": {
-    "t": "list",
+    "t": "df",
+    "nrow": 3,
     "names": [
-      "value",
-      "warnings"
+      "text",
+      "variables.label",
+      "variables.variable_name",
+      "variables.label.extracted",
+      "variables.kind"
     ],
     "v": [
       {
-        "t": "df",
-        "nrow": 3,
-        "names": [
-          "text",
-          "variables.label",
-          "variables.variable_name",
-          "variables.label.extracted",
-          "variables.kind"
-        ],
+        "t": "chr",
         "v": [
-          {
-            "t": "chr",
-            "v": [
-              "two vars",
-              "two vars",
-              "none"
-            ]
-          },
-          {
-            "t": "chr",
-            "v": [
-              "in1",
-              "in1",
-              "in2"
-            ]
-          },
-          {
-            "t": "chr",
-            "v": [
-              "dv",
-              "iv",
-              null
-            ]
-          },
-          {
-            "t": "chr",
-            "v": [
-              "outcome",
-              null,
-              null
-            ]
-          },
-          {
-            "t": "chr",
-            "v": [
-              "a",
-              null,
-              null
-            ]
-          }
+          "two vars",
+          "two vars",
+          "none"
         ]
       },
       {
         "t": "chr",
-        "v": []
+        "v": [
+          "in1",
+          "in1",
+          "in2"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "dv",
+          "iv",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "outcome",
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "a",
+          null,
+          null
+        ]
       }
     ]
   },

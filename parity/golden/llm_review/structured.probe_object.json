@@ -2,47 +2,34 @@
   "id": "structured.probe_object",
   "ok": true,
   "error": null,
-  "warnings": [],
+  "warnings": [
+    "Note (not fatal): 1 of 1 LLM extraction failed and was left blank; the other 0 succeeded and all checks continued.\nRow 1: reason\n  subscript out of bounds"
+  ],
   "value": {
-    "t": "list",
+    "t": "df",
+    "nrow": 1,
     "names": [
-      "value",
-      "warnings"
+      "text",
+      ".error",
+      ".error_msg"
     ],
     "v": [
       {
-        "t": "df",
-        "nrow": 1,
-        "names": [
-          "text",
-          ".error",
-          ".error_msg"
-        ],
+        "t": "chr",
         "v": [
-          {
-            "t": "chr",
-            "v": [
-              "probe object"
-            ]
-          },
-          {
-            "t": "lgl",
-            "v": [
-              true
-            ]
-          },
-          {
-            "t": "chr",
-            "v": [
-              "subscript out of bounds"
-            ]
-          }
+          "probe object"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true
         ]
       },
       {
         "t": "chr",
         "v": [
-          "Note (not fatal): 1 of 1 LLM extraction failed and was left blank; the other 0 succeeded and all checks continued.\nRow 1: reason\n  subscript out of bounds"
+          "subscript out of bounds"
         ]
       }
     ]

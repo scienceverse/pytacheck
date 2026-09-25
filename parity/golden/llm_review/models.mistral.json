@@ -4,71 +4,58 @@
   "error": null,
   "warnings": [],
   "value": {
-    "t": "list",
+    "t": "df",
+    "nrow": 2,
     "names": [
-      "value",
-      "warnings"
+      "id",
+      "name",
+      "created_at",
+      "cached_input",
+      "input",
+      "output"
     ],
     "v": [
       {
-        "t": "df",
-        "nrow": 2,
-        "names": [
-          "id",
-          "name",
-          "created_at",
-          "cached_input",
-          "input",
-          "output"
-        ],
+        "t": "chr",
         "v": [
-          {
-            "t": "chr",
-            "v": [
-              "mistral-small-latest",
-              "open-mistral-nemo"
-            ]
-          },
-          {
-            "t": "chr",
-            "v": [
-              "mistral-small-2506",
-              "open-mistral-nemo"
-            ]
-          },
-          {
-            "t": "chr",
-            "v": [
-              "2025-10-09T08:53:20",
-              "2025-10-09T08:53:21"
-            ]
-          },
-          {
-            "t": "dbl",
-            "v": [
-              0.015,
-              null
-            ]
-          },
-          {
-            "t": "dbl",
-            "v": [
-              0.15,
-              0.3
-            ]
-          },
-          {
-            "t": "dbl",
-            "v": [
-              0.6,
-              0.3
-            ]
-          }
+          "mistral-small-latest",
+          "open-mistral-nemo"
         ]
       },
       {
         "t": "chr",
-        "v": []
+        "v": [
+          "mistral-small-2506",
+          "open-mistral-nemo"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "2025-10-09T08:53:20",
+          "2025-10-09T08:53:21"
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0.015,
+          null
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0.15,
+          0.3
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0.6,
+          0.3
+        ]
       }
     ]
   },

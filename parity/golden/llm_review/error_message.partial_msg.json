@@ -4,22 +4,9 @@
   "error": null,
   "warnings": [],
   "value": {
-    "t": "list",
-    "names": [
-      "value",
-      "warnings"
-    ],
+    "t": "chr",
     "v": [
-      {
-        "t": "chr",
-        "v": [
-          "HTTP error\n  Provider says: inner partial"
-        ]
-      },
-      {
-        "t": "chr",
-        "v": []
-      }
+      "HTTP error\n  Provider says: inner partial"
     ]
   },
   "metacheck_version": "0.3.1",

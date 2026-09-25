@@ -19,7 +19,6 @@
   kind: r_bug_fixed
   ref: U19
   reason: numeric texts are answered (R makes every call and then fails joining a double column with the character answers)
-"llm_review/msg.llm.groq.numeric_text": *numeric
 "llm_review/llm.input.logical":
   kind: r_bug_fixed
   ref: U19
@@ -28,17 +27,11 @@
   kind: r_bug_fixed
   ref: U19
   reason: when some texts fail, the others keep their answers and the failures are warned about (R's bind_rows() cannot combine ellmer_output with NA and loses every answer)
-"llm_review/msg.llm.groq.mixed_error": *mixed
 "llm_review/llm.input.mixed_order_1": *mixed
 "llm_review/llm.input.mixed_order_2": *mixed
 "llm_review/llm.input.mixed_order_3": *mixed
 "llm_review/reply.groq_plain": *mixed
 "llm_review/reply.gemini_plain": *mixed
-"llm_review/llm.input.duplicate_errors_no_warning": &warn
-  kind: r_bug_fixed
-  ref: U19
-  reason: failed rows are warned about whatever their number (R's isTRUE(answer_df$error) warns only for a single-row result)
-"llm_review/msg.llm.groq.error400_rows": *warn
 "llm_review/llm.input.text_col_answer":
   kind: r_bug_fixed
   ref: U19

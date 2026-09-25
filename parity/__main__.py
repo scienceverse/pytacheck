@@ -14,12 +14,19 @@ Examples::
     python -m parity check --only text_search.demo.significant
     python -m parity check --tier 1 --jobs 4       # the realistic corpus, 4 processes
     python -m parity check --md summary.md         # also a Markdown summary
+    python -m parity check --report out.json       # the per-case JSON report
     python -m parity lock --area text              # after changing a marked case
     python -m parity lock -k json_expand --suggest # also propose marks for R crashes
 
 ``generate`` uses the ``Rscript`` on PATH unless ``PYTACHECK_RSCRIPT`` or
 ``--rscript`` points elsewhere, and always runs R under ``C.UTF-8`` / UTC
 so goldens do not depend on the machine's locale.
+
+``check`` and ``lock`` run each case offline (a connection or host-name lookup
+is an ``error``), with a fresh cache directory, and keep what it prints out of
+the terminal (``-v`` shows it; the report keeps it for failing cases). The
+report goes to a new ``parity/_out/report-<time>-<pid>.json`` unless
+``--report`` names a file, so runs side by side do not overwrite each other.
 
 Statuses of ``check`` (see docs/PARITY.md and ``parity.lockfile``): ``pass``;
 ``xfail`` (marked ``known_divergence``, and R's golden, Python's result and the
@@ -42,6 +49,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
+import textwrap
 import time
 import traceback
 from collections import Counter, defaultdict
@@ -52,7 +60,7 @@ from typing import Any
 
 import orjson
 
-from parity.canonical import canonical, portable
+from parity.canonical import canonical
 from parity.cases import (
     NEEDS_R_REASON,
     ROOT,
@@ -69,12 +77,10 @@ from parity.compare import (
     Options,
     comparable,
     compare_paths,
-    error_matches,
     rewrite_r_text,
     summarize,
 )
 from parity.lockfile import (
-    ERROR_MESSAGE,
     R_ERROR_PY_VALUE,
     R_VALUE_PY_ERROR,
     Fingerprint,
@@ -84,6 +90,7 @@ from parity.lockfile import (
     r_digest,
     raised,
     read_lock,
+    watch_run,
     write_lock,
 )
 
@@ -160,6 +167,9 @@ class CaseResult:
     fingerprint: Fingerprint | None = None
     #: R's error message when R raised and Python returned a value
     r_error: str | None = None
+    #: what the case printed (its last ``OUTPUT_LIMIT`` characters), when the
+    #: runner keeps it (``run_cases``)
+    output: str = ""
 
     @classmethod
     def of(cls, case: Case) -> CaseResult:
@@ -202,6 +212,7 @@ class CaseResult:
             "lock": self.fingerprint.as_json() if self.fingerprint else None,
             "problems": self.problems,
             "seconds": round(self.seconds, 4),
+            **({"output": self.output} if self.output and (self.failing or self.warning) else {}),
         }
 
 
@@ -238,17 +249,16 @@ def run_case(case: Case, lock: Mapping[str, Fingerprint] | None = None) -> CaseR
     subs = r_text(case.spec)
     used = [False] * len(subs)
     compared = golden
-    if subs:
-        key = "value" if golden["ok"] else "error"
-        compared = {**golden, key: rewrite_r_text(golden[key], subs, used)}
+    if subs and golden["ok"]:  # R's error text is never compared: nothing to rewrite
+        compared = {**golden, "value": rewrite_r_text(golden["value"], subs, used)}
     options = Options.from_case(case.spec.get("compare"))
     from tests.httpmock import no_network
 
     attempts: list[str] = []
     err: Exception | None = None
-    start, wall = time.perf_counter(), time.time()
+    start = time.perf_counter()
     try:
-        with no_network(attempts), _case_cache_dir():
+        with watch_run() as run, no_network(attempts), _case_cache_dir():
             result = run_python(case)
     except RWithoutReference:
         res.seconds = time.perf_counter() - start
@@ -256,7 +266,6 @@ def run_case(case: Case, lock: Mapping[str, Fingerprint] | None = None) -> CaseR
     except Exception as exc:
         result, err = None, exc
     res.seconds = time.perf_counter() - start
-    ran = (wall, time.time())
     if attempts:
         return res.done(
             ERROR,
@@ -295,7 +304,7 @@ def run_case(case: Case, lock: Mapping[str, Fingerprint] | None = None) -> CaseR
 
     fp = Fingerprint(
         r=r_digest(golden),
-        py=raised(err) if err is not None else digest(comparable(py, options), ran),
+        py=raised(err) if err is not None else digest(comparable(py, options), run),
         diff=tuple(paths),
     )
     res.fingerprint = fp
@@ -314,37 +323,34 @@ def run_case(case: Case, lock: Mapping[str, Fingerprint] | None = None) -> CaseR
     failing = case.tier == 1 or (fp.raises and not entry.raises)
     if entry.r != fp.r:
         what = ["R's golden changed since the case was locked: check that the mark still holds"]
-        return res.done(R_CHANGED, what + _changes(entry, fp) + problems, failing)
-    return res.done(PY_CHANGED, _changes(entry, fp) + problems, failing)
+        return res.done(R_CHANGED, what + _changes(entry, fp, case.id) + problems, failing)
+    return res.done(PY_CHANGED, _changes(entry, fp, case.id) + problems, failing)
 
 
-def _changes(entry: Fingerprint, fp: Fingerprint) -> list[str]:
+def _changes(entry: Fingerprint, fp: Fingerprint, case_id: str) -> list[str]:
     out = []
     if entry.py != fp.py:
         out.append(f"Python's result changed since the case was locked ({entry.py} -> {fp.py})")
     if entry.diff != fp.diff:
         out.append(f"the differing paths changed: {list(entry.diff)} -> {list(fp.diff)}")
-    return [*out, "re-lock it once reviewed: `python -m parity lock -k <id>`"]
+    return [*out, f"re-lock it once reviewed: `python -m parity lock -k {case_id}`"]
 
 
 def _differences(
     golden: dict[str, Any], py: Any, err: Exception | None, options: Options
 ) -> tuple[list[str], list[str]]:
     """The problems of Python's canonical result *py* (or exception *err*) against
-    *golden*, and the paths where they differ (see ``parity.lockfile``)."""
+    *golden*, and the paths where they differ (see ``parity.lockfile``).
+
+    When R raised an error, Python raising too is a match, whatever the texts say.
+    """
     if not golden["ok"]:
         if err is None:
             return (
                 [f"R raised an error ({golden['error']}) but Python returned a value"],
                 [R_ERROR_PY_VALUE],
             )
-        message = portable(str(err))
-        if error_matches(golden["error"], message, options.error):
-            return [], []
-        return (
-            [f"error: R={golden['error']!r} py={type(err).__name__}: {message!r}"],
-            [ERROR_MESSAGE],
-        )
+        return [], []
     if err is not None:
         tb = "".join(traceback.format_exception_only(type(err), err)).strip()
         return [f"Python raised {tb}"], [R_VALUE_PY_ERROR]
@@ -376,6 +382,48 @@ def _case_cache_dir() -> Iterator[None]:
 
 # -- many cases -------------------------------------------------------------------------
 
+#: the end of a case's output kept in its result
+OUTPUT_LIMIT = 4000
+
+
+@contextlib.contextmanager
+def _captured(res: CaseResult) -> Iterator[None]:
+    """Keep what a case prints in *res* instead of the terminal: Python's
+    ``sys.stdout``/``sys.stderr`` (``print``, warnings) and the process's file
+    descriptors 1 and 2 (R and any other program it starts)."""
+    sys.stdout.flush()
+    sys.stderr.flush()
+    saved_fds = os.dup(1), os.dup(2)
+    saved_streams = sys.stdout, sys.stderr
+    with tempfile.TemporaryFile() as sink:
+        text = open(  # noqa: SIM115 -- closed below, before the sink
+            sink.fileno(), "w", encoding="utf-8", errors="backslashreplace", closefd=False
+        )
+        os.dup2(sink.fileno(), 1)
+        os.dup2(sink.fileno(), 2)
+        sys.stdout = sys.stderr = text
+        try:
+            yield
+        finally:
+            text.close()
+            sys.stdout, sys.stderr = saved_streams
+            for fd, old in zip((1, 2), saved_fds, strict=True):
+                os.dup2(old, fd)
+                os.close(old)
+            size = sink.seek(0, os.SEEK_END)
+            sink.seek(max(0, size - OUTPUT_LIMIT))
+            kept = sink.read().decode("utf-8", "replace")
+            res.output = ("..." if size > OUTPUT_LIMIT else "") + kept
+
+
+def _run_quietly(case: Case, lock: Mapping[str, Fingerprint] | None) -> CaseResult:
+    holder = CaseResult.of(case)
+    with _captured(holder):
+        res = run_case(case, lock)
+    res.output = holder.output
+    return res
+
+
 _POOL_CASES: list[Case] = []
 _POOL_USE_LOCK = True
 
@@ -390,7 +438,7 @@ def _pool_init(keys: list[str], use_lock: bool) -> None:
 
 
 def _pool_task(i: int) -> tuple[int, CaseResult]:
-    return i, run_case(_POOL_CASES[i], None if _POOL_USE_LOCK else {})
+    return i, _run_quietly(_POOL_CASES[i], None if _POOL_USE_LOCK else {})
 
 
 def run_cases(
@@ -399,26 +447,29 @@ def run_cases(
     use_lock: bool = True,
     progress: Callable[[CaseResult], None] | None = None,
 ) -> list[CaseResult]:
-    """:func:`run_case` for every case, in *jobs* processes; results in case order.
+    """:func:`run_case` for every case, in *jobs* processes (0: one per CPU), with
+    each case's output kept in its result; results in case order.
 
     Without *use_lock*, expected failures come out ``unlocked`` with their
     fingerprints (what ``lock`` records).
     """
     global _POOL_CASES
     jobs = jobs if jobs > 0 else os.cpu_count() or 1
+    lock: Mapping[str, Fingerprint] | None = None if use_lock else {}
     if jobs == 1 or len(cases) < 2:
         out = []
         for case in cases:
-            res = run_case(case, None if use_lock else {})
+            res = _run_quietly(case, lock)
             if progress:
                 progress(res)
             out.append(res)
         return out
     results: list[CaseResult | None] = [None] * len(cases)
-    methods = multiprocessing.get_all_start_methods()
-    # forked workers inherit the loaded cases and the imported modules
-    ctx = multiprocessing.get_context("fork" if "fork" in methods else "spawn")
-    _POOL_CASES = cases if ctx.get_start_method() == "fork" else []
+    # forked workers share the loaded cases and the imported modules; fork is
+    # unsafe with the system libraries of macOS, where workers are spawned
+    method = "fork" if sys.platform.startswith("linux") else "spawn"
+    ctx = multiprocessing.get_context(method)
+    _POOL_CASES = cases if method == "fork" else []
     try:
         with ctx.Pool(
             min(jobs, len(cases)),
@@ -470,13 +521,29 @@ def _root_entries() -> set[str]:
     return {p.name for p in ROOT.iterdir()}
 
 
-def _print_result(res: CaseResult, verbose: bool) -> None:
-    if res.status in (PASS, XFAIL) and not verbose:
-        return
-    note = " (warning)" if res.warning else ""
-    print(f"[{res.status.upper():10}] {res.key} ({res.seconds * 1000:.0f} ms){note}", flush=True)
-    if res.problems and (verbose or res.failing or res.warning):
-        print(summarize(res.problems), flush=True)
+class _Progress:
+    """Prints each case that fails or warns (every case with *verbose*; none
+    without *cases*) as it finishes, and on a terminal how many cases are done."""
+
+    def __init__(self, total: int, verbose: bool, cases: bool = True) -> None:
+        self.total, self.verbose, self.cases, self.done = total, verbose, cases, 0
+        self.tty = sys.stderr.isatty()
+
+    def __call__(self, res: CaseResult) -> None:
+        self.done += 1
+        if self.tty:
+            sys.stderr.write("\r\033[K")
+        if self.cases and (self.verbose or res.failing or res.warning):
+            note = " (warning)" if res.warning else ""
+            print(f"[{res.status.upper():10}] {res.key} ({res.seconds * 1000:.0f} ms){note}")
+            if res.problems:
+                print(summarize(res.problems))
+            if res.output and (self.verbose or res.failing):
+                print(textwrap.indent(res.output.rstrip(), "  | "))
+            sys.stdout.flush()
+        if self.tty and self.done < self.total:
+            sys.stderr.write(f"{self.done}/{self.total} cases")
+            sys.stderr.flush()
 
 
 def _default_report() -> Path:
@@ -487,7 +554,7 @@ def cmd_check(ns: argparse.Namespace) -> int:
     root_before = _root_entries()
     started = time.perf_counter()
     cases = _select(ns)
-    results = run_cases(cases, ns.jobs, progress=lambda r: _print_result(r, ns.verbose))
+    results = run_cases(cases, ns.jobs, progress=_Progress(len(cases), ns.verbose))
     elapsed = time.perf_counter() - started
     stale = (
         [] if _partial(ns) else stale_lock_entries(cases, None if ns.area is None else [ns.area])
@@ -669,11 +736,14 @@ def cmd_lock(ns: argparse.Namespace) -> int:
     started = time.perf_counter()
     cases = _select(ns)
     targets = cases if ns.suggest else [c for c in cases if c.spec.get("known_divergence")]
-    results = run_cases(targets, ns.jobs, use_lock=False)
+    results = run_cases(
+        targets, ns.jobs, use_lock=False, progress=_Progress(len(targets), False, cases=False)
+    )
     by_area: dict[str, list[CaseResult]] = defaultdict(list)
     for res in results:
         by_area[res.area].append(res)
-    everything = load_cases(ns.area)  # to tell stale entries from unselected ones
+    # every case of the areas, to tell stale entries from unselected ones
+    everything = load_cases(ns.area) if _partial(ns) else cases
     expected: dict[str, set[str]] = defaultdict(set)
     for case in everything:
         if expected_to_fail(case.spec):
@@ -682,7 +752,8 @@ def cmd_lock(ns: argparse.Namespace) -> int:
     areas = set(by_area) | {c.area for c in cases}
     if not _partial(ns):  # lock files of areas without cases
         areas |= set(locked_areas()) if ns.area is None else {ns.area}
-    tally: Counter[str] = Counter()
+    changes: dict[str, list[str]] = defaultdict(list)
+    total = 0
     for area in sorted(areas):
         old = read_lock(area)
         new = {
@@ -694,18 +765,28 @@ def cmd_lock(ns: argparse.Namespace) -> int:
             if res.status == UNLOCKED and res.fingerprint is not None:
                 new[res.id] = res.fingerprint
             elif res.id in old and res.id in expected[area] and res.status != XPASS:
-                new[res.id] = old[res.id]  # not run (skip), or broken (fail): keep the entry
-        tally["new"] += sum(k not in old for k in new)
-        tally["changed"] += sum(k in old and old[k] != new[k] for k in new)
-        tally["unchanged"] += sum(k in old and old[k] == new[k] for k in new)
-        tally["removed"] += sum(k not in new for k in old)
+                new[res.id] = old[res.id]  # not run (skip) or broken (error): keep the entry
+        for case_id in sorted(set(old) | set(new)):
+            if case_id not in old:
+                changes["new"].append(f"{area}/{case_id}")
+            elif case_id not in new:
+                changes["removed"].append(f"{area}/{case_id}")
+            elif old[case_id] != new[case_id]:
+                changes["changed"].append(f"{area}/{case_id}")
         write_lock(area, new)
-    total = sum(len(read_lock(a)) for a in sorted(areas))
+        total += len(new)
+    counts = ", ".join(f"{len(changes[k])} {k}" for k in ("new", "changed", "removed"))
     print(
-        f"locked {total} cases in {sum(lock_path(a).exists() for a in areas)} areas "
-        f"({tally['new']} new, {tally['changed']} changed, {tally['unchanged']} unchanged, "
-        f"{tally['removed']} removed) in {time.perf_counter() - started:.0f} s"
+        f"locked {total} cases in {sum(lock_path(a).exists() for a in areas)} areas ({counts}) "
+        f"in {time.perf_counter() - started:.0f} s"
     )
+    for what in ("new", "changed", "removed"):
+        keys = changes[what]
+        if keys:
+            shown = ", ".join(keys[:30]) + (
+                f" ... and {len(keys) - 30} more" if len(keys) > 30 else ""
+            )
+            print(f"  {what}: {shown}")
     problems = [
         r for r in results if r.status in (XPASS, FAIL, ERROR) and (r.kind or r.status == XPASS)
     ]

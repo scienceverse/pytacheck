@@ -4,83 +4,70 @@
   "error": null,
   "warnings": [],
   "value": {
-    "t": "list",
+    "t": "df",
+    "nrow": 4,
     "names": [
-      "value",
-      "warnings"
+      "id",
+      "created_at",
+      "owned_by",
+      "cached_input",
+      "input",
+      "output"
     ],
     "v": [
       {
-        "t": "df",
-        "nrow": 4,
-        "names": [
-          "id",
-          "created_at",
-          "owned_by",
-          "cached_input",
-          "input",
-          "output"
-        ],
+        "t": "chr",
         "v": [
-          {
-            "t": "chr",
-            "v": [
-              "gpt-4.1-mini",
-              "my-custom",
-              "gpt-4.1-mini-2025-04-14",
-              "gpt-4o"
-            ]
-          },
-          {
-            "t": "chr",
-            "v": [
-              "2025-04-10",
-              "2025-04-10",
-              "2025-04-10",
-              "2024-05-10"
-            ]
-          },
-          {
-            "t": "chr",
-            "v": [
-              "system",
-              "user-x",
-              "system",
-              "system"
-            ]
-          },
-          {
-            "t": "dbl",
-            "v": [
-              0.1,
-              null,
-              0.1,
-              1.25
-            ]
-          },
-          {
-            "t": "dbl",
-            "v": [
-              0.4,
-              null,
-              0.4,
-              2.5
-            ]
-          },
-          {
-            "t": "dbl",
-            "v": [
-              1.6,
-              null,
-              1.6,
-              10
-            ]
-          }
+          "gpt-4.1-mini",
+          "my-custom",
+          "gpt-4.1-mini-2025-04-14",
+          "gpt-4o"
         ]
       },
       {
         "t": "chr",
-        "v": []
+        "v": [
+          "2025-04-10",
+          "2025-04-10",
+          "2025-04-10",
+          "2024-05-10"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "system",
+          "user-x",
+          "system",
+          "system"
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0.1,
+          null,
+          0.1,
+          1.25
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0.4,
+          null,
+          0.4,
+          2.5
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          1.6,
+          null,
+          1.6,
+          10
+        ]
       }
     ]
   },

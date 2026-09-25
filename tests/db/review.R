@@ -22,27 +22,19 @@ review_work_files <- function() {
 
 review_work <- function(f) jsonlite::read_json(f)$message
 
-# .crossref_parse_item() on every recorded work, one select at a time;
-# errors become their message
+# .crossref_parse_item() on every recorded work, one select at a time; a
+# failure is list(error = TRUE) (pc_catch(), parity/r/helpers.R)
 review_parse_each <- function(selects) {
   files <- review_work_files()
   lapply(selects, \(sel) {
-    lapply(files, \(f) {
-      tryCatch(
-        metacheck:::.crossref_parse_item(review_work(f), sel),
-        error = \(e) paste("ERROR:", conditionMessage(e))
-      )
-    })
+    lapply(files, \(f) pc_catch(metacheck:::.crossref_parse_item(review_work(f), sel)))
   })
 }
 
 # .crossref_query_parse() of all recorded works as one item list
 review_query_parse_all <- function(select, min_score = 0) {
   items <- lapply(review_work_files(), review_work)
-  tryCatch(
-    metacheck:::.crossref_query_parse(items, min_score, select),
-    error = \(e) paste("ERROR:", conditionMessage(e))
-  )
+  metacheck:::.crossref_query_parse(items, min_score, select)
 }
 
 # every recorded search response (api.crossref.org/works-*.json)
@@ -57,14 +49,6 @@ review_query_files <- function() {
 review_query_parse_each <- function(select, min_score = 50) {
   lapply(review_query_files(), \(f) {
     j <- jsonlite::read_json(f)
-    tryCatch(
-      metacheck:::.crossref_query_parse(j$message$items, min_score, select),
-      error = \(e) paste("ERROR:", conditionMessage(e))
-    )
+    pc_catch(metacheck:::.crossref_query_parse(j$message$items, min_score, select))
   })
-}
-
-# R's error message (or the value) of an expression
-review_try <- function(expr) {
-  tryCatch(expr, error = \(e) paste("ERROR:", conditionMessage(e)))
 }

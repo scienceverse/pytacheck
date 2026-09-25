@@ -197,8 +197,6 @@ def r_expr(spec: dict[str, Any], fakes: str = R_FAKES) -> str:
         steps.append(f"x$table$id[c({rows})] <- NA_character_")
     if spec.get("empty_table"):
         steps.append("x$table <- x$table[0, ]")
-    if spec.get("catch"):
-        run = f"tryCatch({run}, error = function(e) conditionMessage(e))"
     steps.append(f"mo <- {run}")
     if spec.get("tables"):
         steps.append(
@@ -564,12 +562,12 @@ REVIEW: list[tuple[str, str, dict[str, Any]]] = [
             "fake": "echo",
         },
     ),
-    # RegCheck tables without some columns (data.frame() length errors)
+    # RegCheck tables without some columns (data.frame() length errors: Python fails too)
     *[
         (
             f"missing_column.{name}",
             f"RegCheck table without {col}",
-            {**OER, "fake": name, "catch": True},
+            {**OER, "fake": name},
         )
         for name, col in DROP_COLUMNS.items()
     ],

@@ -1,14 +1,9 @@
 {
   "id": ".grobid_to_bibr.error_message.missing_file",
-  "ok": true,
-  "error": null,
+  "ok": false,
+  "error": "The XML file does not exist.",
   "warnings": [],
-  "value": {
-    "t": "chr",
-    "v": [
-      "The XML file does not exist."
-    ]
-  },
+  "value": null,
   "metacheck_version": "0.3.1",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

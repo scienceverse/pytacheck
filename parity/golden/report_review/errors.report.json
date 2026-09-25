@@ -1,5 +1,5 @@
 {
-  "id": "errors.report_messages",
+  "id": "errors.report",
   "ok": true,
   "error": null,
   "warnings": [],
@@ -14,9 +14,9 @@
         ],
         "v": [
           {
-            "t": "chr",
+            "t": "lgl",
             "v": [
-              "There were no modules that matched notamodule\nuse module_list() to see a list of built-in modules."
+              true
             ]
           }
         ]
@@ -28,9 +28,9 @@
         ],
         "v": [
           {
-            "t": "chr",
+            "t": "lgl",
             "v": [
-              "The paper argument must be a paper object (e.g., created with `read()`)"
+              true
             ]
           }
         ]
@@ -42,9 +42,9 @@
         ],
         "v": [
           {
-            "t": "chr",
+            "t": "lgl",
             "v": [
-              "The output_file is not a valid path."
+              true
             ]
           }
         ]
@@ -56,9 +56,9 @@
         ],
         "v": [
           {
-            "t": "chr",
+            "t": "lgl",
             "v": [
-              "`path` must be a single path to a repository folder"
+              true
             ]
           }
         ]
@@ -70,9 +70,23 @@
         ],
         "v": [
           {
-            "t": "chr",
+            "t": "lgl",
             "v": [
-              "No folder found at no/such/folder/here.\nCheck the path, or download the repository first with osf_file_download()."
+              true
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "error"
+        ],
+        "v": [
+          {
+            "t": "lgl",
+            "v": [
+              true
             ]
           }
         ]

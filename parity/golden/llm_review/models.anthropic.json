@@ -4,83 +4,70 @@
   "error": null,
   "warnings": [],
   "value": {
-    "t": "list",
+    "t": "df",
+    "nrow": 4,
     "names": [
-      "value",
-      "warnings"
+      "id",
+      "name",
+      "created_at",
+      "cached_input",
+      "input",
+      "output"
     ],
     "v": [
       {
-        "t": "df",
-        "nrow": 4,
-        "names": [
-          "id",
-          "name",
-          "created_at",
-          "cached_input",
-          "input",
-          "output"
-        ],
+        "t": "chr",
         "v": [
-          {
-            "t": "chr",
-            "v": [
-              "claude-sonnet-4-5-20250929",
-              "claude-sonnet-4-5",
-              "claude-late",
-              "claude-3-5-haiku-20241022"
-            ]
-          },
-          {
-            "t": "chr",
-            "v": [
-              "Claude Sonnet 4.5",
-              "Claude Sonnet 4.5 (alias)",
-              "Later same day",
-              "Claude Haiku 3.5"
-            ]
-          },
-          {
-            "t": "chr",
-            "v": [
-              "2025-09-29T00:00:00",
-              "2025-09-29T00:00:00",
-              "2025-09-29T00:00:00",
-              "2024-10-22T00:00:00"
-            ]
-          },
-          {
-            "t": "dbl",
-            "v": [
-              0.3,
-              0.3,
-              null,
-              null
-            ]
-          },
-          {
-            "t": "dbl",
-            "v": [
-              3,
-              3,
-              null,
-              null
-            ]
-          },
-          {
-            "t": "dbl",
-            "v": [
-              15,
-              15,
-              null,
-              null
-            ]
-          }
+          "claude-sonnet-4-5-20250929",
+          "claude-sonnet-4-5",
+          "claude-late",
+          "claude-3-5-haiku-20241022"
         ]
       },
       {
         "t": "chr",
-        "v": []
+        "v": [
+          "Claude Sonnet 4.5",
+          "Claude Sonnet 4.5 (alias)",
+          "Later same day",
+          "Claude Haiku 3.5"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "2025-09-29T00:00:00",
+          "2025-09-29T00:00:00",
+          "2025-09-29T00:00:00",
+          "2024-10-22T00:00:00"
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0.3,
+          0.3,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          3,
+          3,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          15,
+          15,
+          null,
+          null
+        ]
       }
     ]
   },

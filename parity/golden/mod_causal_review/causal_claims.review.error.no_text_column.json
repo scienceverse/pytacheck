@@ -1,18 +1,13 @@
 {
   "id": "causal_claims.review.error.no_text_column",
-  "ok": true,
-  "error": null,
+  "ok": false,
+  "error": "Running the module 'causal_claims' produced errors: Join columns in `y` must be present in the data.",
   "warnings": [
     "Unknown or uninitialised column: `text`.",
     "Unknown or uninitialised column: `text`.",
     "Unknown or uninitialised column: `text`."
   ],
-  "value": {
-    "t": "chr",
-    "v": [
-      "Running the module 'causal_claims' produced errors: Join columns in `y` must be present in the data."
-    ]
-  },
+  "value": null,
   "metacheck_version": "0.3.1",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

@@ -9,15 +9,7 @@ import warnings
 from pathlib import Path
 from typing import Any
 
-from tests.report.parity_helpers import _args, _mods, _unpath, rp_mask, rp_report_module_run
-
-
-def rv_error(fn: Any) -> Any:
-    """``tryCatch(expr, error = ...)``: the value, or ``{"error": message}``."""
-    try:
-        return fn()
-    except Exception as exc:  # mirrors tryCatch(error = ...)
-        return {"error": str(exc)}
+from tests.report.parity_helpers import _args, _mods, _unpath, rp_mask
 
 
 def rv_report_list(
@@ -56,7 +48,3 @@ def rv_report_list(
         }
     finally:
         shutil.rmtree(d, ignore_errors=True)
-
-
-def rv_module_run_list(paper: Any, modules: Any, args: Any = None) -> Any:
-    return rv_error(lambda: rp_report_module_run(paper, modules, args))

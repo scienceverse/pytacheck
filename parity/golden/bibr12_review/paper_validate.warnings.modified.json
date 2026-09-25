@@ -2,26 +2,13 @@
   "id": "paper_validate.warnings.modified",
   "ok": true,
   "error": null,
-  "warnings": [],
+  "warnings": [
+    "The role column of the author table is a character type, but should be a list type\nThe text_id column of the text table is a double type, but should be a integer type\nThe paragraph_id column of the text table is a double type, but should be a integer type\nThe section_id column of the text table is a double type, but should be a integer type\nThe page_number column of the text table is a double type, but should be a integer type\nThe bib table has extra columns:\n extra_col\nThe year column of the bib table is a double type, but should be a integer type\nThe volume column of the bib table is a double type, but should be a character type\nThe is_in_press column of the bib table is a character type, but should be a logical type"
+  ],
   "value": {
-    "t": "list",
-    "names": [
-      "value",
-      "warnings"
-    ],
+    "t": "lgl",
     "v": [
-      {
-        "t": "lgl",
-        "v": [
-          true
-        ]
-      },
-      {
-        "t": "chr",
-        "v": [
-          "The role column of the author table is a character type, but should be a list type\nThe text_id column of the text table is a double type, but should be a integer type\nThe paragraph_id column of the text table is a double type, but should be a integer type\nThe section_id column of the text table is a double type, but should be a integer type\nThe page_number column of the text table is a double type, but should be a integer type\nThe bib table has extra columns:\n extra_col\nThe year column of the bib table is a double type, but should be a integer type\nThe volume column of the bib table is a double type, but should be a character type\nThe is_in_press column of the bib table is a character type, but should be a logical type"
-        ]
-      }
+      true
     ]
   },
   "metacheck_version": "0.3.1",

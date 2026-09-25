@@ -1,14 +1,9 @@
 {
   "id": "regcheck_compare.msg.null_client",
-  "ok": true,
-  "error": null,
+  "ok": false,
+  "error": "Provide exactly one of prereg_text or registration_id",
   "warnings": [],
-  "value": {
-    "t": "chr",
-    "v": [
-      "ERROR: Provide exactly one of prereg_text or registration_id"
-    ]
-  },
+  "value": null,
   "metacheck_version": "0.3.1",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

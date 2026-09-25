@@ -1,35 +1,9 @@
 {
   "id": "chat_ollama.not_installed",
-  "ok": true,
-  "error": null,
+  "ok": false,
+  "error": "Model \"nope-model:latest-version-with-a-long-name\" is not installed\nlocally.\nℹ Run `ollama pull nope-model:latest-version-with-a-long-name` in your terminal\n  or `ollamar::pull(\"nope-model:latest-version-with-a-long-name\")` in R to\n  install the model.\nℹ See locally installed models with `ellmer::models_ollama()`.",
   "warnings": [],
-  "value": {
-    "t": "list",
-    "names": [
-      "value",
-      "warnings"
-    ],
-    "v": [
-      {
-        "t": "list",
-        "names": [
-          "error"
-        ],
-        "v": [
-          {
-            "t": "chr",
-            "v": [
-              "Model \"nope-model:latest-version-with-a-long-name\" is not installed\nlocally.\nℹ Run `ollama pull nope-model:latest-version-with-a-long-name` in your terminal\n  or `ollamar::pull(\"nope-model:latest-version-with-a-long-name\")` in R to\n  install the model.\nℹ See locally installed models with `ellmer::models_ollama()`."
-            ]
-          }
-        ]
-      },
-      {
-        "t": "chr",
-        "v": []
-      }
-    ]
-  },
+  "value": null,
   "metacheck_version": "0.3.1",
   "r_version": "R version 4.5.3 (2026-03-11)"
 }

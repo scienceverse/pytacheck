@@ -6,40 +6,27 @@
   "value": {
     "t": "list",
     "names": [
-      "value",
-      "warnings"
+      "params_list",
+      "api_args"
     ],
     "v": [
       {
         "t": "list",
         "names": [
-          "params_list",
-          "api_args"
+          "thinking"
         ],
         "v": [
           {
-            "t": "list",
-            "names": [
-              "thinking"
-            ],
+            "t": "lgl",
             "v": [
-              {
-                "t": "lgl",
-                "v": [
-                  true
-                ]
-              }
+              true
             ]
-          },
-          {
-            "t": "list",
-            "names": null,
-            "v": []
           }
         ]
       },
       {
-        "t": "chr",
+        "t": "list",
+        "names": null,
         "v": []
       }
     ]

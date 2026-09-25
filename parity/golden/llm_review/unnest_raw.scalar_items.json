@@ -4,37 +4,24 @@
   "error": null,
   "warnings": [],
   "value": {
-    "t": "list",
+    "t": "df",
+    "nrow": 1,
     "names": [
-      "value",
-      "warnings"
+      "items..x.",
+      "items..y."
     ],
     "v": [
       {
-        "t": "df",
-        "nrow": 1,
-        "names": [
-          "items..x.",
-          "items..y."
-        ],
+        "t": "chr",
         "v": [
-          {
-            "t": "chr",
-            "v": [
-              "x"
-            ]
-          },
-          {
-            "t": "chr",
-            "v": [
-              "y"
-            ]
-          }
+          "x"
         ]
       },
       {
         "t": "chr",
-        "v": []
+        "v": [
+          "y"
+        ]
       }
     ]
   },

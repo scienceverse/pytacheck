@@ -4,50 +4,37 @@
   "error": null,
   "warnings": [],
   "value": {
-    "t": "list",
+    "t": "df",
+    "nrow": 3,
     "names": [
-      "value",
-      "warnings"
+      "id",
+      "text",
+      "answer"
     ],
     "v": [
       {
-        "t": "df",
-        "nrow": 3,
-        "names": [
-          "id",
-          "text",
-          "answer"
-        ],
+        "t": "int",
         "v": [
-          {
-            "t": "int",
-            "v": [
-              3,
-              2,
-              1
-            ]
-          },
-          {
-            "t": "chr",
-            "v": [
-              "12",
-              "hello",
-              "12"
-            ]
-          },
-          {
-            "t": "chr",
-            "v": [
-              "TRUE",
-              "FALSE",
-              "TRUE"
-            ]
-          }
+          3,
+          2,
+          1
         ]
       },
       {
         "t": "chr",
-        "v": []
+        "v": [
+          "12",
+          "hello",
+          "12"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "TRUE",
+          "FALSE",
+          "TRUE"
+        ]
       }
     ]
   },

@@ -2,90 +2,77 @@
   "id": "reply.gemini_structured",
   "ok": true,
   "error": null,
-  "warnings": [],
+  "warnings": [
+    "Found 2 JSON responses, using the first.",
+    "Note (not fatal): 2 of 3 LLM extractions failed and were left blank; the other 1 succeeded and all checks continued.\nRows 1, 2: reasons\n  Data extraction failed: no JSON responses found.\n  subscript out of bounds"
+  ],
   "value": {
-    "t": "list",
+    "t": "df",
+    "nrow": 3,
     "names": [
-      "value",
-      "warnings"
+      "text",
+      ".error",
+      ".error_msg",
+      "name",
+      "n",
+      "tags",
+      "sub"
     ],
     "v": [
       {
-        "t": "df",
-        "nrow": 3,
-        "names": [
-          "text",
-          ".error",
-          ".error_msg",
-          "name",
-          "n",
-          "tags",
-          "sub"
-        ],
+        "t": "chr",
         "v": [
-          {
-            "t": "chr",
-            "v": [
-              "gemini blocked",
-              "gemini no candidates",
-              "gemini two parts"
-            ]
-          },
-          {
-            "t": "lgl",
-            "v": [
-              true,
-              true,
-              null
-            ]
-          },
-          {
-            "t": "chr",
-            "v": [
-              "Data extraction failed: no JSON responses found.",
-              "subscript out of bounds",
-              null
-            ]
-          },
-          {
-            "t": "chr",
-            "v": [
-              null,
-              null,
-              "a"
-            ]
-          },
-          {
-            "t": "int",
-            "v": [
-              null,
-              null,
-              1
-            ]
-          },
-          {
-            "t": "lgl",
-            "v": [
-              null,
-              null,
-              null
-            ]
-          },
-          {
-            "t": "lgl",
-            "v": [
-              null,
-              null,
-              null
-            ]
-          }
+          "gemini blocked",
+          "gemini no candidates",
+          "gemini two parts"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true,
+          true,
+          null
         ]
       },
       {
         "t": "chr",
         "v": [
-          "Found 2 JSON responses, using the first.",
-          "Note (not fatal): 2 of 3 LLM extractions failed and were left blank; the other 1 succeeded and all checks continued.\nRows 1, 2: reasons\n  Data extraction failed: no JSON responses found.\n  subscript out of bounds"
+          "Data extraction failed: no JSON responses found.",
+          "subscript out of bounds",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          "a"
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          null,
+          null,
+          1
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          null,
+          null,
+          null
         ]
       }
     ]

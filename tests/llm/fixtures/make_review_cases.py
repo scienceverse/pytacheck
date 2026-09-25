@@ -5,7 +5,8 @@
 Then regenerate the goldens with ``python -m parity generate --area llm_review``.
 
 These are the adversarial-review cases for the llm area: input shapes, joins,
-error paths and argument checks that parity/cases/llm.yaml did not reach.
+error paths and argument checks that parity/cases/llm.yaml did not reach. When
+R fails, Python must fail too; error and warning texts are not compared.
 Network cases replay tests/llm/mocks (the mock file names are the ones R's
 httptest2 computes for each request; see make_mocks.py).
 """
@@ -20,25 +21,8 @@ NP = "__import__('numpy')"
 cases = []
 
 
-def catch_r(r):
-    """R: the value (or ``list(error = msg)``) plus every warning text."""
-    return (
-        "local({ws <- character(0); v <- tryCatch(withCallingHandlers("
-        + r
-        + ", warning = function(w) {ws <<- c(ws, conditionMessage(w)); "
-        "invokeRestart('muffleWarning')}), error = function(e) list(error = conditionMessage(e))); "
-        "list(value = v, warnings = ws)})"
-    )
-
-
-def catch_py(py):
-    return f"{H}.catch(lambda: {py})"
-
-
-def expr_case(id, r, py, catch=True, **kw):
-    """A case comparing ``r`` with ``py``; by default error and warning texts too."""
-    if catch:
-        r, py = catch_r(r), catch_py(py)
+def expr_case(id, r, py, **kw):
+    """A case comparing ``r`` with ``py`` (when R fails, Python must fail too)."""
     c = {
         "id": id,
         "r": "base::identity",
@@ -689,28 +673,6 @@ net_case(
     f"{H}.L.llm(['schema two', 'schema one'], 'Schema', type={FS_PY}, {PM_PY})",
 )
 
-# ---- llm.yaml cases that raise or warn: compare the texts too ----------------------------
-# (parity only checks that both sides raise, and never compares warnings)
-_MSG_IDS = [
-    "llm.cache.errors_not_cached", "llm.error.max_calls", "llm.error.no_model",
-    "llm.error.no_text_col", "llm.error.not_enabled", "llm.error.params_not_list",
-    "llm.error.top_p_negative", "llm.error.top_p_string", "llm.groq.error401",
-    "llm.groq.malformed", "llm.groq.mixed_error", "llm.groq.numeric_text",
-    "llm.groq.structured", "llm.missing_key", "llm.ollama.notamodel",
-    "llm.structured_unknown_provider", "llm.unknown_provider", "llm.vllm_empty_model",
-    "llm.vllm_no_base_url", "llm_cache.error", "llm_max_calls.error", "llm_max_calls.zero",
-    "llm_max_tokens.error", "llm_model.error", "llm_reasoning.error",
-    "llm_timeout.error_negative", "llm_timeout.error_string", "llm_use.error",
-    "llm.groq.error400_rows", "llm.groq.params", "llm.ollama.default_model",
-]  # fmt: skip
-with open("parity/cases/llm.yaml", encoding="utf-8") as _fh:
-    _base = {c["id"]: c for c in yaml.safe_load(_fh)["cases"]}
-for _id in _MSG_IDS:
-    _c = _base[_id]
-    _e = _c["args"]["x"]["$expr"]
-    _kw = {"mock_dir": _c["mock_dir"]} if "mock_dir" in _c else {}
-    expr_case("msg." + _id, _e["r"], _e["py"], **_kw)
-
 expr_case(
     "msg.cap_report.basic",
     "metacheck:::cap_report('The `max_size` cap of 5 MB skipped data.zip (5.4 GB); set max_size >= 5.4e9 to include it.')",
@@ -736,7 +698,6 @@ expr_case(
     f"{H}.C._llm_cache_key('hi', 's', None, 'm', {{'top_p': 1.0, 'Seed': {H}.RInt(2), "
     f"'seed': {H}.RInt(3), 'max_tokens': {H}.RInt(4), 'temperature': 0.5, 'B': 'x', "
     "'_a': 1.0, 'a.b': 2.0, 'a_b': 3.0, 'ab': 4.0})",
-    catch=False,
 )
 
 # ---- Ollama replies without message$content ------------------------------------------

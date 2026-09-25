@@ -4,89 +4,76 @@
   "error": null,
   "warnings": [],
   "value": {
-    "t": "list",
+    "t": "df",
+    "nrow": 2,
     "names": [
-      "value",
-      "warnings"
+      "text",
+      "items.name",
+      "items.count",
+      "items.score",
+      "items.flag",
+      "items.kind",
+      "items.tags"
     ],
     "v": [
       {
-        "t": "df",
-        "nrow": 2,
-        "names": [
-          "text",
-          "items.name",
-          "items.count",
-          "items.score",
-          "items.flag",
-          "items.kind",
-          "items.tags"
-        ],
+        "t": "chr",
         "v": [
-          {
-            "t": "chr",
-            "v": [
-              "probe types",
-              "probe types"
-            ]
-          },
-          {
-            "t": "chr",
-            "v": [
-              "a",
-              "b"
-            ]
-          },
-          {
-            "t": "int",
-            "v": [
-              2,
-              7
-            ]
-          },
-          {
-            "t": "dbl",
-            "v": [
-              3,
-              1.5
-            ]
-          },
-          {
-            "t": "lgl",
-            "v": [
-              true,
-              false
-            ]
-          },
-          {
-            "t": "chr",
-            "v": [
-              "x",
-              null
-            ]
-          },
-          {
-            "t": "list",
-            "names": null,
-            "v": [
-              {
-                "t": "chr",
-                "v": [
-                  "t1",
-                  "t2"
-                ]
-              },
-              {
-                "t": "chr",
-                "v": []
-              }
-            ]
-          }
+          "probe types",
+          "probe types"
         ]
       },
       {
         "t": "chr",
-        "v": []
+        "v": [
+          "a",
+          "b"
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          2,
+          7
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          3,
+          1.5
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true,
+          false
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "x",
+          null
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "t1",
+              "t2"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": []
+          }
+        ]
       }
     ]
   },

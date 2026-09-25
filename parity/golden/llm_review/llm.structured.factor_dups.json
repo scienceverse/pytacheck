@@ -4,73 +4,60 @@
   "error": null,
   "warnings": [],
   "value": {
-    "t": "list",
+    "t": "df",
+    "nrow": 4,
     "names": [
-      "value",
-      "warnings"
+      "id",
+      "txt",
+      "variables.variable_name",
+      "variables.label",
+      "variables.kind"
     ],
     "v": [
       {
-        "t": "df",
-        "nrow": 4,
-        "names": [
-          "id",
-          "txt",
-          "variables.variable_name",
-          "variables.label",
-          "variables.kind"
-        ],
+        "t": "int",
         "v": [
-          {
-            "t": "int",
-            "v": [
-              1,
-              2,
-              2,
-              3
-            ]
-          },
-          {
-            "t": "chr",
-            "v": [
-              "none",
-              "two vars",
-              "two vars",
-              "none"
-            ]
-          },
-          {
-            "t": "chr",
-            "v": [
-              null,
-              "dv",
-              "iv",
-              null
-            ]
-          },
-          {
-            "t": "chr",
-            "v": [
-              null,
-              "outcome",
-              null,
-              null
-            ]
-          },
-          {
-            "t": "chr",
-            "v": [
-              null,
-              "a",
-              null,
-              null
-            ]
-          }
+          1,
+          2,
+          2,
+          3
         ]
       },
       {
         "t": "chr",
-        "v": []
+        "v": [
+          "none",
+          "two vars",
+          "two vars",
+          "none"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "dv",
+          "iv",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "outcome",
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "a",
+          null,
+          null
+        ]
       }
     ]
   },
