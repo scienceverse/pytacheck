@@ -94,6 +94,19 @@ def test_ref_consistency_missing_xrefs() -> None:
     assert tbl["reference"].tolist()[-1] == out.table["text"].tolist()[-1]
 
 
+def test_ref_consistency_duplicate_bib_match_rows() -> None:
+    # U114: ref_table() repeats a reference for each bib_match row; metacheck then
+    # counts 7 references (n_bib) and lists reference 3 twice for the demo's 5
+    out = pc.module_run(ra_demo(dup_match=[2, 3]), "ref_consistency")
+    assert out.summary_table.loc[0, ["n_bib", "n_xrefs", "n_missing", "n_extra"]].tolist() == [
+        5,
+        1,
+        0,
+        4,
+    ]
+    assert out.table["bib_id"].tolist() == [0, 1, 3, 4]
+
+
 def test_ref_consistency_paperlist_fills_zero() -> None:
     papers = pc.PaperList([pc.demopaper(), ra_demo(empty=["bib"], paper_id="nobib")])
     out = pc.module_run(papers, "ref_consistency")
@@ -267,6 +280,40 @@ def test_clean_and_deaccent() -> None:
         None,
         "σοφια ince",
     ]
+
+
+def test_clean_folds_dashes_to_spaces() -> None:
+    # U114: metacheck's clean() removes dashes ("retractedevil"), although its
+    # comments say they fold to spaces
+    assert ra._clean(["Retracted\u2014Evil", "Self-control: a well–studied topic"]) == [
+        "retracted evil",
+        "self control: a well studied topic",
+    ]
+
+
+def test_norm_title_drops_superscripts() -> None:
+    # U114: metacheck's norm_title() looks for <sup> after clean() has removed the
+    # tags, so footnote markers stayed in titles ("effectsof1sleep")
+    titles = ["Effects of<sup>1</sup> sleep", "Effects of sleep", None]
+    assert ra._norm_title(ra._clean(ra._drop_sup(titles))) == [
+        "effectsofsleep",
+        "effectsofsleep",
+        None,
+    ]
+
+
+def test_ref_accuracy_duplicate_bib_match_rows() -> None:
+    # U114: two bib_match rows for references 2 and 3; metacheck's three left joins
+    # give 2 x 2 x 2 rows for each
+    out = pc.module_run(
+        ra_demo([("bib", 2, "container", "Psychological Review")], dup_match=[2, 3]),
+        "ref_accuracy",
+    )
+    single = pc.module_run(
+        ra_demo([("bib", 2, "container", "Psychological Review")]), "ref_accuracy"
+    )
+    assert out.table["bib_id"].tolist() == single.table["bib_id"].tolist()
+    assert out.summary_table.to_dict("list") == single.summary_table.to_dict("list")
 
 
 @pytest.mark.parametrize(

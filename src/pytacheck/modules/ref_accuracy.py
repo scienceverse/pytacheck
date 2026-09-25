@@ -501,9 +501,10 @@ def ref_accuracy(
         # traffic light (U30)
         return {"traffic_light": "fail", "summary_text": _NO_MATCH}
 
-    refs = ref_table(paper).drop(columns="doi")
     # one record per reference: metacheck's three left joins give k * k * k rows
-    # for a reference with k bib_match rows (U114)
+    # for a reference with k bib_match rows (ref_table() repeats it too, U114)
+    refs = ref_table(paper).drop(columns="doi")
+    refs = refs.loc[~refs.duplicated(subset=_KEYS).to_numpy(dtype=bool)]
     bib_match = bib_match.loc[~bib_match.duplicated(subset=_KEYS).to_numpy(dtype=bool)]
     # left join so every reference is kept, including those with no CrossRef record
     table = _left_join(bib.loc[:, _COLS], bib_match.loc[:, _COLS], (".orig", ".match"))

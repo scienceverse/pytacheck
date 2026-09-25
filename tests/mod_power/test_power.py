@@ -927,3 +927,12 @@ def test_power_highlight_is_tre_case_insensitive(llm_off: None) -> None:
     texts = [b.data for b in mo.report if hasattr(b, "data")][1]["text"].tolist()
     assert texts[0] == "An A PRİORİ <strong>power</strong> analysis required 50 participants."
     assert texts[1].startswith("An <strong>a priori</strong> <strong>power</strong> analysis")
+
+
+def test_help_text_without_metacheck_typos() -> None:
+    # U83: metacheck's help says "uses uses" and "LMM" for LLM
+    info = pc.module_info("power")
+    assert "This module uses regular expressions" in info.description
+    assert "large language model (LLM)" in info.description
+    assert "uses uses" not in info.description
+    assert "LMM" not in info.description and "LMM" not in info.details
