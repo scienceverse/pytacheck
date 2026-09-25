@@ -47,3 +47,41 @@
   kind: r_bug_fixed
   ref: U85
   reason: '"... in random order after participants were randomized." counts as describing randomization (7 sentences, metacheck 6)'
+
+# ethics_check --------------------------------------------------------------------
+"mod_ethics/ethics_check.duplicates":
+  kind: r_bug_fixed
+  ref: U102
+  reason: the report quotes "The IRB approved the protocol." once, not once per row
+"mod_ethics/ethics_check.paperlist_empty_member":
+  kind: r_bug_fixed
+  ref: U102
+  reason: the paper with an empty info table is summarised under its own ID, so the two-paper list gets the paper-list summary ("1 of 2 papers ...") and no single-paper report
+"mod_ethics/ethics_check.duplicate_ids":
+  kind: r_bug_fixed
+  ref: U101
+  reason: papers with duplicated IDs are summarised together; metacheck stops ("factor level [2] is duplicated")
+"mod_ethics/ethics_check.empty_paper":
+  kind: r_bug_fixed
+  ref: U102
+  reason: paper() (an empty info table) is summarised under its own ID ("na"); metacheck stops ("invalid subscript type 'list'", also U79)
+"mod_ethics_review/ethics_check.no_text_column_ethics_match": &u102_no_text
+  kind: r_bug_fixed
+  ref: U102
+  reason: a text table without a `text` column has no sentences ("na"); metacheck searches its first column and stops with an opaque error
+"mod_ethics_review/ethics_check.no_text_column_live_match": *u102_no_text
+"mod_ethics_review/ethics_check.no_info_member_with_text": &u102_no_info
+  kind: r_bug_fixed
+  ref: U102
+  reason: the paper without an info row keeps its ID (p1) instead of an NA paper_id, and is summarised; the list gets the paper-list summary
+"mod_ethics_review/ethics_check.direct_no_info_member_with_text": *u102_no_info
+"mod_ethics_review/ethics_check.no_info_single_with_text":
+  kind: r_bug_fixed
+  ref: U102
+  reason: a paper without an info row is summarised under its own ID; metacheck stops ("invalid subscript type 'list'")
+"mod_ethics_review/ethics_check.duplicated_sections": &u102_quote
+  kind: r_bug_fixed
+  ref: U102
+  reason: the report quotes each ethics statement once (metacheck repeats a sentence found at several rows)
+"mod_ethics_review/ethics_check.direct_duplicated_sections": *u102_quote
+"mod_ethics_review/ethics_check.approved_no_need_repeated": *u102_quote

@@ -509,15 +509,70 @@ def test_no_files() -> None:
     assert len(mo.table) == 0 and len(mo.structure) == 0
 
 
-def test_no_readable_tabular_data_returns_the_validation_early_exit() -> None:
+def test_no_readable_tabular_data_keeps_the_whole_result() -> None:
+    # U98: metacheck's early exit returned only the validation half (no
+    # summary_text or report, dv_* keys no report shows, a one-row summary)
     mo = dc.dc_run("nodata")
-    # metacheck's early exit returns only the validation half: no summary_text,
-    # the module's own traffic light and report replaced
     assert mo.traffic_light == "na"
-    assert mo.summary_text is None
-    assert mo.dv_summary_text == "We found no readable tabular data files to validate."
-    assert mo.report == ""
-    assert "findings" not in list(mo.keys())
+    assert mo.summary_text.startswith("\n-  We classified 3 files: 1 code, 2 documentation.")
+    assert mo.summary_text.endswith("We found no readable tabular data files to validate.")
+    assert "dv_summary_text" not in list(mo.keys())
+    assert len(mo.table) == 0 and len(mo.findings) == 0
+    assert mo.summary_table.columns.tolist()[:4] == [
+        "paper_id", "data_file_n", "column_n", "empty_col_n",
+    ]  # fmt: skip
+    # tabular files that were not downloaded make the light yellow, as they
+    # do next to a readable file
+    mo = dc.dc_run("nolocal_only")
+    assert mo.traffic_light == "yellow"
+    assert "could not be read because they were not downloaded" in mo.summary_text
+
+
+def test_unreadable_spreadsheet_is_attributed_to_its_own_paper() -> None:
+    # U98: R's early exit put the spreadsheet counts on the first paper
+    mo = dc.dc_run("review_broken_list")
+    st = mo.summary_table.set_index("paper_id")
+    assert st.loc["p1", "spreadsheet_file_n"] == 0
+    assert st.loc["p2", "spreadsheet_file_n"] == 1
+    assert st.loc["p2", "spreadsheet_flagged_file_n"] == 1
+    assert mo.traffic_light == "yellow"
+    assert "#### Spreadsheet Formatting" in [b for b in mo.report if isinstance(b, str)]
+    assert list(mo.findings["source_file"]) == ["broken.xlsx"]
+
+
+def test_extracted_count_is_the_files_read() -> None:
+    # U99: unreadable, empty and workspace-only files are not "extracted from"
+    mo = dc.dc_run("nontabular")
+    assert "We found 4 tabular data files and extracted 2 columns from 1 of them." in (
+        mo.summary_text
+    )
+    mo = dc.dc_run("rdata")
+    assert "extracted 4 columns from 2 of them." in mo.summary_text
+
+
+def test_listing_without_repo_url() -> None:
+    # U100: local files without repo_url (R fails building the column table)
+    mo = dc.dc_run("nourl")
+    assert mo.table["repo_url"].isna().all()
+    assert list(mo.table["column_name"]) == ["id", "age", "gender", "score"]
+
+
+def test_study_group_model_is_reported(monkeypatch: pytest.MonkeyPatch) -> None:
+    # U99: the study-group pass's model is used when the file-type pass made
+    # no call (R reads grp$model, a column that does not exist)
+    from pytacheck.datacheck import files as F
+    from pytacheck.modules import data_check as D
+
+    def fake_group(files: pd.DataFrame, **_: Any) -> pd.DataFrame:
+        out = pd.DataFrame({"group": pd.Series(["ex1"] * len(files), dtype="string")})
+        out["referenced_by"] = pd.Series([None] * len(files), dtype=object)
+        out.attrs["model"] = "mock/group"
+        return out
+
+    monkeypatch.setattr(F, "data_group_llm", fake_group)
+    files = pd.DataFrame({"file_name": ["study.csv"], "file_path": ["data/study.csv"]})
+    state = D._classify(files, None, "m", {}, use_llm=False)
+    assert state["llm_model_used"] == "mock/group"
 
 
 def test_traffic_lights() -> None:
@@ -567,7 +622,7 @@ def test_download_argument() -> None:
         dc.dc_run("basic", download="bogus")
     a = dc.dc_run("nolocal_urls", download="none")
     b = dc.dc_run("nolocal_urls", download=False)
-    assert a.dv_summary_text == b.dv_summary_text
+    assert a.summary_text == b.summary_text
 
 
 def test_archives_are_expanded() -> None:
@@ -843,3 +898,33 @@ def test_stack_stats_matches_bind_rows() -> None:
     # an unexpected shape falls back to bind_rows
     odd = [stats[0], pd.DataFrame({"n": [1], "x": ["y"]})]
     assert list(_stack_stats(odd).columns) == list(bind_rows(odd).columns)
+
+
+def test_zip_peek_reasons_stay_with_their_rows(monkeypatch: pytest.MonkeyPatch) -> None:
+    # U99: expanding an archive drops its row and appends its contents; the
+    # zip-peek reasons must follow (R keeps the old positions, so the manifest
+    # could give the reason to another file)
+    import pytacheck.archives.zip_peek as zp
+    from pytacheck.modules import data_check as D
+
+    monkeypatch.setattr(
+        zp, "zip_decision", lambda url, skip_types=None: {"worth": False, "reason": "no data"}
+    )
+    tar = REPOS / "archives" / "results.tar.gz"
+    files = pd.DataFrame(
+        {
+            "file_name": ["results.tar.gz", "stimuli.zip"],
+            "file_path": ["results.tar.gz", "stimuli.zip"],
+            "file_url": [None, "https://example.org/stimuli.zip"],
+            "file_location": [str(tar), None],
+            "data_type": ["unknown", "unknown"],
+            "doc_role": [None, None],
+            "data_format": [None, None],
+        }
+    )
+    dl = D._download(files, "all", None, True, 100, 500, math.inf, False, False)
+    names = dl["all_files"]["file_name"].tolist()
+    assert "results.tar.gz" not in names
+    reasons = dict(zip(names, dl["zip_peek_reason"], strict=True))
+    assert reasons["stimuli.zip"] == "zip skipped: no data"
+    assert sum(r is not None for r in reasons.values()) == 1

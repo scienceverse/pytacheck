@@ -324,10 +324,14 @@ def _codebook_check(
         cv = _vals(v, "codebook_variable") or [None] * len(v)
         lab = _vals(v, "label") or [None] * len(v)
         grp = _vals(v, "group") or [None] * len(v)
+        pid = _vals(v, "paper_id") or [None] * len(v)
         norm = normalize_varname(cv) if cv else []
+        # exact duplicates within one paper; the same definition in two papers
+        # documents both (R's key has no paper_id, so the second paper's column
+        # was reported as undocumented)
         keys = [
-            f"{_pstr(a)}\x01{_pstr(b)}\x01{'' if g is None else _pstr(g)}"
-            for a, b, g in zip(norm, lab, grp, strict=True)
+            f"{_pstr(a)}\x01{_pstr(b)}\x01{'' if g is None else _pstr(g)}\x01{_pstr(p)}"
+            for a, b, g, p in zip(norm, lab, grp, pid, strict=True)
         ]
         seen: set[str] = set()
         keep = []

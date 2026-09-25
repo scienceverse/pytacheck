@@ -173,13 +173,34 @@ def test_on_request_report() -> None:
     mo = run(pc.test_paper(texts))
     assert mo.traffic_light == "red"
     assert mo.summary_text == "Shared code detected; some sharing is only on request."
-    assert len(mo.report) == 4
+    # U107: one paragraph quotes every on-request sentence (metacheck: one each)
+    assert len(mo.report) == 3
     assert mo.report[0].startswith("We did not detect open sharing of data")
     assert mo.report[1] == (
         "Code was openly shared for this article, based on the following text:\n\n> " + texts[0]
     )
-    assert mo.report[2].endswith("> " + texts[1])
-    assert mo.report[3].endswith("> " + texts[2])
+    assert mo.report[2].endswith("> " + texts[1] + "\n\n> " + texts[2])
+
+
+def test_on_request_ignores_case() -> None:
+    # U107: "ON REQUEST" passes the (case-insensitive) repository search, so it is
+    # flagged too (metacheck's case-sensitive grepl() missed it)
+    mo = run(pc.test_paper(["Analysis scripts are available ON REQUEST."]))
+    assert mo.table["on_request"].tolist() == [True]
+    assert mo.traffic_light == "red"
+    assert mo.summary_text == "Neither shared data nor code detected; some sharing is only on request."
+
+
+def test_lowercase_r_is_not_a_code_word() -> None:
+    # U107: metacheck searched \bR\b ignoring case, so "r(76) = .10" or "osf.io/r" made
+    # a code statement
+    texts = [
+        "Scores were correlated, r(76) = .10 (see https://osf.io/abc).",
+        "The R2 values are available at https://osf.io/r.",
+        "R scripts are available at https://osf.io/xyz.",
+    ]
+    mo = run(pc.test_paper(texts))
+    assert mo.summary_table["code_statements"].iloc[0] == [texts[2]]
 
 
 def test_statements_columns(demo: pc.Paper) -> None:
@@ -192,7 +213,8 @@ def test_statements_columns(demo: pc.Paper) -> None:
 
 
 def test_paperlist_single_summary_row() -> None:
-    # only one paper has statements: R's single-paper branch applies
+    # U106: only one paper has statements, but a list gets the paper-list summary
+    # (metacheck: the single-paper branch, "Shared data detected; ...", red)
     paper = pc.PaperList(
         [
             pc.test_paper(["Nothing to see."]),
@@ -202,9 +224,11 @@ def test_paperlist_single_summary_row() -> None:
         ]
     )
     mo = run(paper)
-    assert mo.traffic_light == "red"
-    assert mo.summary_text == "Shared data detected; some sharing is only on request."
-    assert len(mo.report) == 3
+    assert mo.traffic_light == "info"
+    assert mo.summary_text == (
+        "0 papers shared both data and code, 1 only data, 0 only code, and 1 neither."
+    )
+    assert mo.report == mo.summary_text
     assert mo.summary_table["data_open"].tolist() == [False, True]
     assert mo.summary_table["on_request"].isna().tolist() == [True, False]
 
@@ -213,8 +237,9 @@ def test_paperlist_summary_text(psychsci: pc.PaperList, demo: pc.Paper) -> None:
     papers = pc.PaperList([*psychsci, demo])
     mo = run(papers)
     assert mo.traffic_light == "info"
+    # U106: the two papers without a flagged sentence count as "neither" (metacheck: 0)
     assert mo.summary_text == (
-        "1 papers shared both data and code, 1 only data, 0 only code, and 0 neither."
+        "1 papers shared both data and code, 1 only data, 0 only code, and 2 neither."
     )
     assert mo.report == mo.summary_text
     # table rows follow the paper order, then text_id
@@ -224,8 +249,11 @@ def test_paperlist_summary_text(psychsci: pc.PaperList, demo: pc.Paper) -> None:
 
 
 def test_duplicate_paper_ids(demo: pc.Paper) -> None:
-    with pytest.raises(ModuleError, match=r"factor level \[2\] is duplicated"):
-        run(pc.PaperList([demo, demo]))
+    # U101: metacheck stops with "factor level [2] is duplicated"
+    single = run(demo)
+    mo = run(pc.PaperList([demo, demo]))
+    assert mo.traffic_light == single.traffic_light
+    assert mo.summary_text == single.summary_text
 
 
 def test_empty_paper_list_errors_like_r() -> None:
@@ -339,7 +367,7 @@ def test_rows_follow_paper_list_order_not_sorted_ids() -> None:
     assert mo.table["paper_id"].tolist() == ["zeta", "beta", "Beta"]
     assert mo.summary_table["paper_id"].tolist() == ["zeta", "Alpha", "beta", "Beta"]
     assert mo.summary_text == (
-        "1 papers shared both data and code, 1 only data, 1 only code, and 0 neither."
+        "1 papers shared both data and code, 1 only data, 1 only code, and 1 neither."
     )
 
 

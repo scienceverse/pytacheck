@@ -62,16 +62,21 @@ def researchdata4tu_links(paper: Any) -> pd.DataFrame:
     return links
 
 
+#: An id as it is: digits, or a bare uuid (metacheck takes only digits, so a
+#: uuid it resolved itself is not an id the second time round: U41).
+_BARE_ID = "^([0-9]+|[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12})$"
+
+
 def _researchdata4tu_id_one(x: Any) -> str | None:
     from pytacheck.archives.reshare import _id_one
 
-    return _id_one(x, "^[0-9]+$", _ID_PATTERNS)
+    return _id_one(x, _BARE_ID, _ID_PATTERNS)
 
 
 def _researchdata4tu_id(researchdata4tu_url: Any) -> Any:
     """Port of R/archive-4tu.R::.researchdata4tu_id(): article ids from URLs or DOIs.
 
-    A digits-only value is an id; otherwise the numeric id or uuid is taken
+    A digits-only value or a bare uuid is an id; otherwise the numeric id or uuid is taken
     from a ``10.4121`` DOI (the version suffix is dropped) or a
     ``data.4tu.nl`` URL; ``None`` where there is none. A string gives a
     string, a sequence a list.
