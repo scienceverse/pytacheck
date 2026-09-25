@@ -39,7 +39,9 @@ def node(osf_id: str, attributes: dict[str, Any]) -> dict[str, Any]:
                 **attributes,
             },
             "embeds": {
-                "license": {"data": {"attributes": {"name": "CC-By Attribution 4.0 International"}}},
+                "license": {
+                    "data": {"attributes": {"name": "CC-By Attribution 4.0 International"}}
+                },
                 "bibliographic_contributors": {
                     "data": [
                         {

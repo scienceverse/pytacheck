@@ -90,7 +90,7 @@ def spv_attrs(path: str) -> list[dict[str, Any]]:
 def data_labels(fn: str, path: str) -> dict[str, Any]:
     """Per-column variable and value labels of ``import_jasp()``/``import_omv()``."""
     df = _fn(fn)(str(ROOT / path))["data"]
-    col_attrs = df.attrs.get("col_attrs", {})
+    from pytacheck.datacheck._colattrs import col_attrs_at
 
     def lab(v: Any) -> Any:
         if isinstance(v, list):  # (label, code) pairs: R's named vector
@@ -98,8 +98,8 @@ def data_labels(fn: str, path: str) -> dict[str, Any]:
         return v
 
     out = {}
-    for c in df.columns:
-        a = col_attrs.get(c, {})
+    for j, c in enumerate(df.columns):
+        a = col_attrs_at(df, j)
         labels = a.get("labels", [])
         out[str(c)] = {
             "label": lab(a.get("label")),

@@ -495,8 +495,9 @@ def test_zenodo_info_internal_with_several_ids(tmp_path: Path) -> None:
         out = zenodo._zenodo_info(["5559007", "5559001"])
         assert out["zenodo_id"].tolist() == ["5559007", "5559001"]
         assert out["title"].tolist() == ["T7", "T7"]
-        with pytest.warns(UserWarning, match="55590045559001 could not be found"), pytest.raises(
-            ValueError, match="differing number of rows: 2, 1"
+        with (
+            pytest.warns(UserWarning, match="55590045559001 could not be found"),
+            pytest.raises(ValueError, match="differing number of rows: 2, 1"),
         ):
             zenodo._zenodo_info(["5559004", "5559001"])
         with pytest.raises(ValueError, match="replacement has 1 row, data has 0"):

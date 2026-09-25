@@ -525,8 +525,7 @@ ZENODO_JSON_QUIRKS: dict[str, tuple[bytes, str]] = {
     ),
     # an escaped NUL ends the string; a lone high surrogate becomes "?"
     "5559203": (
-        b'{"id": 5559203, "metadata": {"title": "before\\u0000after",'
-        b' "description": "x\\ud800y"}}',
+        b'{"id": 5559203, "metadata": {"title": "before\\u0000after", "description": "x\\ud800y"}}',
         "application/json",
     ),
     # a byte-order mark is dropped (with a warning)
