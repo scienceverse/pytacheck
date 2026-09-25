@@ -1,5 +1,5 @@
 {
-  "id": "reproducibility_check.exec_timeout",
+  "id": "reproducibility_check.exec_timeout_10s",
   "ok": true,
   "error": null,
   "warnings": [],
@@ -188,10 +188,10 @@
           "#### Missing inputs",
           "Every data file the code reads is either produced by an earlier script or present in the repository.",
           "#### Execution",
-          "**The code was run.** Each script ran in an isolated subprocess against a throwaway copy of the Psych-DS layout, in the run order above, with a 2-second per-script timeout. Of 1 script: 0 ran without error, 0 errored, 1 timed out, 0 were skipped (inputs unavailable), 0 could not run because one of its own dependencies is unavailable, and 0 did not parse. Running against current package versions: a break can reflect version drift, which argues for pinning versions.",
+          "**The code was run.** Each script ran in an isolated subprocess against a throwaway copy of the Psych-DS layout, in the run order above, with a 10-second per-script timeout. Of 1 script: 0 ran without error, 0 errored, 1 timed out, 0 were skipped (inputs unavailable), 0 could not run because one of its own dependencies is unavailable, and 0 did not parse. Running against current package versions: a break can reflect version drift, which argues for pinning versions.",
           "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = \"sleep.R\", Outcome = \"timed_out\", Detail = \"timeout\", \n    \"Time (s)\" = 0), row.names = c(NA, -1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 15, FALSE)\n```\n",
           "*Expand a row below to see the output each script produced.*",
-          "::: {.callout-tip title=\"Output — sleep.R (timed_out)\" collapse=\"true\"}\n\n**Output (stdout):**\n````\n> Sys.sleep(20)\n````\n\n:::\n"
+          "::: {.callout-tip title=\"Output — sleep.R (timed_out)\" collapse=\"true\"}\n\n**Output (stdout):**\n````\n> Sys.sleep(60)\n````\n\n:::\n"
         ]
       },
       {
@@ -336,7 +336,7 @@
           {
             "t": "chr",
             "v": [
-              "> Sys.sleep(20)"
+              "> Sys.sleep(60)"
             ]
           },
           {
@@ -358,7 +358,7 @@
               {
                 "t": "chr",
                 "v": [
-                  "Sys.sleep(20)",
+                  "Sys.sleep(60)",
                   "cat(\"done\\n\")"
                 ]
               }

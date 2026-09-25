@@ -163,7 +163,7 @@
     - "table.paper_id"
     - "summary_table.paper_id"
 - "id": "open_practices.review.materials_only"
-  "known_divergence": {"kind": "r_bug_fixed", "ref": "U83", "reason": "The no-code report says 'not recognized' (metacheck: 'not reconized')."}
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U83", "reason": "The no-code report says 'not recognized' (metacheck: 'not reconized').", "r_text": [["reconized", "recognized"]]}
   "module": "open_practices"
   "args":
     "paper":
@@ -303,7 +303,7 @@
     "paper":
       "$paper": "upstream/metacheck/tests/testthat/fixtures/formats/published.cermine.xml"
 - "id": "open_practices.review.single_0956797615569889"
-  "known_divergence": {"kind": "r_bug_fixed", "ref": "U83", "reason": "The no-code report says 'not recognized' (metacheck: 'not reconized')."}
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U83", "reason": "The no-code report says 'not recognized' (metacheck: 'not reconized').", "r_text": [["reconized", "recognized"]]}
   "module": "open_practices"
   "args":
     "paper":

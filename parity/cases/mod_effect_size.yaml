@@ -2,11 +2,11 @@
 "cases":
 # ---------------------------------------------------------------- real papers
 - "id": "stat_effect_size.demo"
-  "known_divergence": {"kind": "r_bug_fixed", "ref": "U125", "reason": "The missing-effect-size summary ends with a full stop (metacheck: '... consider adding effect sizes' without one)."}
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U125", "reason": "The missing-effect-size summary ends with a full stop (metacheck: '... consider adding effect sizes' without one).", "r_text": [["consider adding effect sizes$", "consider adding effect sizes.", "regex"]]}
   "module": "stat_effect_size"
   "args": {"paper": {"$paper": "demo"}}
 - "id": "stat_effect_size.psychsci"
-  "known_divergence": {"kind": "r_bug_fixed", "ref": "U125", "reason": "The missing-effect-size summary ends with a full stop (metacheck: '... consider adding effect sizes' without one)."}
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U125", "reason": "The missing-effect-size summary ends with a full stop (metacheck: '... consider adding effect sizes' without one).", "r_text": [["consider adding effect sizes$", "consider adding effect sizes.", "regex"]]}
   "module": "stat_effect_size"
   "args":
     "paper": {"$read": ["upstream/metacheck/tests/testthat/fixtures/psychsci/0956797613520608.json", "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614522816.json", "upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614527830.json", "upstream/metacheck/inst/demos/to_err_is_human.json"]}
@@ -52,19 +52,19 @@
     "paper": {"$test_paper": {"text": ["The mean was M = 3.2, SD = 1.1.", "An F = 4.50 without df and F(2.5, 30) = 4.50, ηp² = .23 with non-integer df."]}}
   "compare": {"ignore": ["paper_id", "summary_table.paper_id"]}
 - "id": "stat_effect_size.red.missing"
-  "known_divergence": {"kind": "r_bug_fixed", "ref": "U125", "reason": "The missing-effect-size summary ends with a full stop (metacheck: '... consider adding effect sizes' without one)."}
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U125", "reason": "The missing-effect-size summary ends with a full stop (metacheck: '... consider adding effect sizes' without one).", "r_text": [["consider adding effect sizes$", "consider adding effect sizes.", "regex"]]}
   "module": "stat_effect_size"
   "args":
     "paper": {"$test_paper": {"text": ["A was bigger than B, t(124) = 1.23, p 0.013.", "We also ran an ANOVA, F(1, 13) = 2.34, p = .23."]}}
   "compare": {"ignore": ["paper_id", "table.paper_id", "summary_table.paper_id"]}
 - "id": "stat_effect_size.red.missing_one"
-  "known_divergence": {"kind": "r_bug_fixed", "ref": "U125", "reason": "The missing-effect-size summary ends with a full stop (metacheck: '... consider adding effect sizes' without one)."}
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U125", "reason": "The missing-effect-size summary ends with a full stop (metacheck: '... consider adding effect sizes' without one).", "r_text": [["consider adding effect sizes$", "consider adding effect sizes.", "regex"]]}
   "module": "stat_effect_size"
   "args":
     "paper": {"$test_paper": {"text": ["A was bigger than B, t(124) = 1.23, p 0.013."]}}
   "compare": {"ignore": ["paper_id", "table.paper_id", "summary_table.paper_id"]}
 - "id": "stat_effect_size.yellow"
-  "known_divergence": {"kind": "r_bug_fixed", "ref": "U125", "reason": "The missing-effect-size summary ends with a full stop (metacheck: '... consider adding effect sizes' without one)."}
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U125", "reason": "The missing-effect-size summary ends with a full stop (metacheck: '... consider adding effect sizes' without one).", "r_text": [["consider adding effect sizes$", "consider adding effect sizes.", "regex"]]}
   "module": "stat_effect_size"
   "args":
     "paper": {"$test_paper": {"text": ["A was bigger than B, t(124) = 1.23, p 0.013, d = 0.34.", "We also ran an ANOVA, F(1, 13) = 2.34, p = .23."]}}
@@ -90,14 +90,14 @@
     "paper": {"$test_paper": {"text": ["F(1, 13) = 2.34, ηp² = 0.35."]}}
   "compare": {"ignore": ["paper_id", "table.paper_id", "summary_table.paper_id"]}
 - "id": "stat_effect_size.red.missing_and_nomatch"
-  "known_divergence": {"kind": "r_bug_fixed", "ref": "U125", "reason": "The missing-effect-size summary ends with a full stop (metacheck: '... consider adding effect sizes' without one)."}
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U125", "reason": "The missing-effect-size summary ends with a full stop (metacheck: '... consider adding effect sizes' without one).", "r_text": [["consider adding effect sizes$", "consider adding effect sizes.", "regex"]]}
   "module": "stat_effect_size"
   "args":
     "paper": {"$test_paper": {"text": ["t(20) = 1.00, d = 3.00.", "t(20) = 1.00, d = 3.00, and F(1, 13) = 2.34, ηp² = 0.35.", "t(12) = 2.2, p = .04.", "F(2, 30) = 4.50."]}}
   "compare": {"ignore": ["paper_id", "table.paper_id", "summary_table.paper_id"]}
 # ---------------------------------------------------------------- paper lists
 - "id": "stat_effect_size.paperlist"
-  "known_divergence": {"kind": "r_bug_fixed", "ref": "U125", "reason": "The missing-effect-size summary ends with a full stop (metacheck: '... consider adding effect sizes' without one)."}
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U125", "reason": "The missing-effect-size summary ends with a full stop (metacheck: '... consider adding effect sizes' without one).", "r_text": [["consider adding effect sizes$", "consider adding effect sizes.", "regex"]]}
   "module": "stat_effect_size"
   "args":
     "paper":
@@ -202,7 +202,7 @@
   "args":
     "paper": {"$test_paper": {"text": ["Zero, F(0, 0) = 1.00, ηp² = 0.50."]}}
 - "id": "stat_effect_size.f_zero_df_no_es"
-  "known_divergence": {"kind": "r_bug_fixed", "ref": "U125", "reason": "The missing-effect-size summary ends with a full stop (metacheck: '... consider adding effect sizes' without one)."}
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U125", "reason": "The missing-effect-size summary ends with a full stop (metacheck: '... consider adding effect sizes' without one).", "r_text": [["consider adding effect sizes$", "consider adding effect sizes.", "regex"]]}
   "module": "stat_effect_size"
   "args":
     "paper": {"$test_paper": {"text": ["Zero, F(0, 0) = 1.00, p = .5."]}}

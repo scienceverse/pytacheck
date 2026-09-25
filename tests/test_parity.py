@@ -35,8 +35,22 @@ def test_parity(case) -> None:
     if status == "skip":
         pytest.skip(problems[0])
     if status == "xfail":
-        pytest.xfail(case.spec["known_divergence"])
+        pytest.xfail(_mark_text(case.spec["known_divergence"]))
     assert status == "pass", f"{case.key} differs from R:\n{summarize(problems)}"
+
+
+def _mark_text(div: object) -> str:
+    """A ``known_divergence`` as the one-line reason pytest reports for an xfail."""
+    if not isinstance(div, dict):
+        return str(div)
+    head = " ".join(str(div[k]) for k in ("kind", "ref") if div.get(k))
+    return f"{head}: {div.get('reason', '')}" if head else str(div.get("reason", ""))
+
+
+def test_xfail_reasons_are_text() -> None:
+    div = {"kind": "r_bug_fixed", "ref": "U84", "reason": "a missing title is skipped"}
+    assert _mark_text(div) == "r_bug_fixed U84: a missing title is skipped"
+    assert _mark_text("R bug: typed columns") == "R bug: typed columns"
 
 
 # -- the harness ---------------------------------------------------------------
@@ -453,3 +467,151 @@ def test_other_programs_still_run(tmp_path, monkeypatch, no_reference_r) -> None
     )
     spec = {"py": "copy.copy", "args": {"x": {"$expr": {"py": code}}}}
     assert check_case(_golden_case(tmp_path, monkeypatch, golden, spec))[0] == "pass"
+
+
+# r_text: a known_divergence that only corrects R's text ------------------------------
+
+
+def _chr_golden(*values: str) -> dict:
+    return {"ok": True, "error": None, "value": {"t": "chr", "v": list(values)}}
+
+
+def _copy_case(value: list[str], mark: dict | None) -> dict:
+    spec: dict = {"py": "copy.copy", "args": {"x": {"$chr": value}}}
+    if mark is not None:
+        spec["known_divergence"] = mark
+    return spec
+
+
+def test_parse_r_text() -> None:
+    from parity.compare import TextSub, parse_r_text
+
+    assert parse_r_text(None) == []
+    assert parse_r_text({"kind": "r_bug_fixed", "reason": "x"}) == []
+    assert parse_r_text({"r_text": [["a", "b"], ["c$", "d", "regex"]]}) == [
+        TextSub("a", "b"),
+        TextSub("c$", "d", regex=True),
+    ]
+    for bad in (
+        [],
+        [["a"]],
+        [["a", "b", "re"]],
+        [["", "b"]],
+        [["a", 1]],
+        "a",
+        [["(", "b", "regex"]],
+    ):
+        with pytest.raises(ValueError, match="r_text"):
+            parse_r_text({"r_text": bad})
+
+
+def test_rewrite_r_text_touches_string_values_only() -> None:
+    from parity.compare import TextSub, rewrite_r_text
+
+    golden = {
+        "t": "list",
+        "names": ["likley", "n"],
+        "v": [
+            {"t": "chr", "v": ["is likley", None, "likley likley"]},
+            {"t": "df", "nrow": 1, "names": ["likley"], "v": [{"t": "chr", "v": ["likley"]}]},
+        ],
+    }
+    used = [False, False]
+    subs = [TextSub("likley", "likely"), TextSub(r"^is (\w+)$", r"was \1", regex=True)]
+    out = rewrite_r_text(golden, subs, used)
+    assert out["names"] == ["likley", "n"]
+    assert out["v"][0]["v"] == ["was likely", None, "likely likely"]
+    assert out["v"][1]["names"] == ["likley"]
+    assert out["v"][1]["v"][0]["v"] == ["likely"]
+    assert used == [True, True]
+    assert golden["v"][0]["v"][0] == "is likley"  # the golden itself is left alone
+    assert rewrite_r_text("an likley error", subs, [False, False]) == "an likely error"
+
+
+def test_r_text_mark_passes_on_corrected_text_only(tmp_path, monkeypatch) -> None:
+    mark = {"kind": "r_bug_fixed", "ref": "U83", "reason": "typo", "r_text": [["likley", "likely"]]}
+    golden = _chr_golden("likley", "same")
+    case = _golden_case(tmp_path, monkeypatch, golden, _copy_case(["likely", "same"], mark))
+    assert check_case(case)[0] == "pass"
+    # any other difference fails: the mark describes the whole difference
+    case.spec = _copy_case(["likely", "other"], mark)
+    status, problems, _ = check_case(case)
+    assert status == "fail"
+    assert "other" in problems[0]
+    # ... unless the case also differs for another reason
+    case.spec = _copy_case(["likely", "other"], {**mark, "xfail": True})
+    assert check_case(case)[0] == "xfail"
+    # a substitution that changes nothing is a stale mark
+    stale = {**mark, "r_text": [["likley", "likely"], ["reconized", "recognized"]]}
+    case.spec = _copy_case(["likely", "same"], stale)
+    status, problems, _ = check_case(case)
+    assert status == "fail"
+    assert "reconized" in problems[0]
+    # without r_text, a mark is an expected failure as before
+    plain = {"kind": "r_bug_fixed", "ref": "U83", "reason": "typo"}
+    case.spec = _copy_case(["likely", "same"], plain)
+    assert check_case(case)[0] == "xfail"
+
+
+def test_r_text_rewrites_r_error_messages(tmp_path, monkeypatch) -> None:
+    golden = {"ok": False, "error": "no such paper: likley", "value": None}
+    spec = {
+        "py": "parity.pyhelpers.github_readme_probe",
+        "args": {
+            "repo": {"$expr": {"py": "(_ for _ in ()).throw(ValueError('no such paper: likely'))"}}
+        },
+        "compare": {"error": "exact"},
+        "known_divergence": {
+            "kind": "r_bug_fixed",
+            "ref": "U83",
+            "reason": "typo",
+            "r_text": [["likley", "likely"]],
+        },
+    }
+    case = _golden_case(tmp_path, monkeypatch, golden, spec)
+    assert check_case(case)[0] == "pass"
+    # with error: any the message is not compared, so the mark is not needed
+    case.spec["compare"] = {"error": "any"}
+    status, problems, _ = check_case(case)
+    assert status == "fail"
+    assert "without its r_text" in problems[0]
+
+
+def test_r_text_on_skipped_text_is_a_stale_mark(tmp_path, monkeypatch) -> None:
+    # the substitution changes R's golden, but only where the comparison does
+    # not look (an ignored element), so the case passes without the mark
+    golden = {
+        "ok": True,
+        "error": None,
+        "value": {
+            "t": "list",
+            "names": ["a", "b"],
+            "v": [{"t": "chr", "v": ["same"]}, {"t": "chr", "v": ["likley"]}],
+        },
+    }
+    mark = {"kind": "r_bug_fixed", "ref": "U83", "reason": "typo", "r_text": [["likley", "likely"]]}
+    spec = {
+        "py": "copy.copy",
+        "args": {"x": {"$expr": {"py": "{'a': 'same', 'b': 'likely'}"}}},
+        "known_divergence": mark,
+    }
+    case = _golden_case(tmp_path, monkeypatch, golden, spec)
+    assert check_case(case)[0] == "pass"
+    case.spec["compare"] = {"ignore": ["b"]}
+    status, problems, _ = check_case(case)
+    assert status == "fail"
+    assert "without its r_text" in problems[0]
+
+
+def test_malformed_marks_are_refused(tmp_path, monkeypatch) -> None:
+    (tmp_path / "x.yaml").write_text(
+        '"a/b": {kind: r_bug_fixed, ref: U83, reason: typo, r_text: [["x"]]}\n'
+    )
+    monkeypatch.setattr(pcases, "DIVERGENCES_DIR", tmp_path)
+    with pytest.raises(ValueError, match="r_text"):
+        pcases.load_divergences()
+    (tmp_path / "x.yaml").write_text(
+        '"a/b": {kind: r_bug_fixed, ref: U83, reason: typo, xfail: true}\n'
+    )
+    with pytest.raises(ValueError, match="xfail belongs to a mark with r_text"):
+        pcases.load_divergences()

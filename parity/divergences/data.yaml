@@ -139,12 +139,20 @@
 "mod_data_check_review/review.archives_download_none": *u98
 
 # U99: data_check counts
-"mod_data_check/data_check.spreadsheets": &u99
+"mod_data_check/data_check.rdata": &u99
   kind: r_bug_fixed
   ref: U99
   reason: '"extracted N columns from M of them" counts the files columns were extracted from; R also counts unreadable and workspace-only files'
-"mod_data_check/data_check.local.spreadsheets": *u99
-"mod_data_check/data_check.rdata": *u99
+# (the spreadsheet findings with a count of one also take a singular verb: U82)
+"mod_data_check/data_check.spreadsheets": &u99_sheet
+  kind: r_bug_fixed
+  ref: U99
+  reason: '"extracted N columns from M of them" counts the files columns were extracted from; R also counts unreadable and workspace-only files (and U82: "1 merged range ... breaks", "1 column is empty or has a blank header")'
+  r_text:
+  - ['\b1 merged range \(([^)]*)\) break the', '1 merged range (\1) breaks the', regex]
+  - ["1 column is empty or have a blank header", "1 column is empty or has a blank header"]
+  xfail: true
+"mod_data_check/data_check.local.spreadsheets": *u99_sheet
 "mod_data_check/data_check.nontabular": *u99
 "mod_data_check_review/review.mixed_list": *u99
 "mod_data_check_review/review.text": *u99
@@ -258,25 +266,6 @@
   kind: r_bug_fixed
   ref: U78
   reason: paper = NULL (documented as allowed) returns the "na" result with paper_id NA; R's empty_summary() calls .pid(), whose paper_id(NULL) stops
-
-# U82: data_check count sentences that ignored a count of one
-"mod_data_check/data_check.careless": &u82_dc
-  kind: r_bug_fixed
-  ref: U82
-  reason: a count of one takes a singular verb ("1 distinct respondent was flagged", "1 file contains survey data", "Of these, **1 was flagged"); R's sprintf() always uses the plural verb
-"mod_data_check/data_check.careless_two": *u82_dc
-"mod_data_check/data_check.careless_missing": *u82_dc
-"mod_data_check/data_check.qualtrics": *u82_dc
-"mod_data_check/data_check.codebook_chain": *u82_dc
-"mod_data_check/data_check.psychsci": *u82_dc
-"mod_data_check/data_check_tables.spreadsheets": &u82_sheet
-  kind: r_bug_fixed
-  ref: U82
-  reason: a spreadsheet finding with a count of one takes a singular verb ("1 merged range ... breaks", "1 column is empty or has a blank header"); R's sprintf() always uses the plural verb
-"mod_data_check/dv_spreadsheet_findings.fixture": *u82_sheet
-"mod_data_check_review/review.sheets": *u82_sheet
-"mod_data_check_review/review_tables.sheets": *u82_sheet
-"mod_data_check_review/review.dv_spreadsheet_findings.handmade": *u82_sheet
 
 # U79: data_check on an empty paper or paper list
 "mod_data_check_review/data_check.empty_paper": &u79_dc

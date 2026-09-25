@@ -79,14 +79,30 @@ def _no_http_sleep(monkeypatch: pytest.MonkeyPatch) -> None:
 # warning names the test it appeared in (with pytest-xdist, also any test that
 # ran at the same time).
 
-# what pytest and the linters themselves keep in the root
+# what pytest, its plugins and the linters themselves keep in the root: CI runs
+# `pytest --cov --cov-report=xml`, and pytest-cov writes coverage.xml before
+# pytest_sessionfinish (and .coverage.<suffix> files in parallel mode)
 _ROOT_TOOL_ENTRIES = frozenset(
-    {".pytest_cache", ".hypothesis", ".ruff_cache", ".mypy_cache", ".benchmarks", ".coverage"}
+    {
+        ".pytest_cache",
+        ".hypothesis",
+        ".ruff_cache",
+        ".mypy_cache",
+        ".benchmarks",
+        "coverage.xml",
+        "coverage.json",
+        "coverage.lcov",
+        "htmlcov",
+    }
 )
 
 
 def _root_entries() -> frozenset[str]:
-    return frozenset(p.name for p in ROOT.iterdir()) - _ROOT_TOOL_ENTRIES
+    return frozenset(
+        p.name
+        for p in ROOT.iterdir()
+        if p.name not in _ROOT_TOOL_ENTRIES and not p.name.startswith(".coverage")
+    )
 
 
 def _is_xdist_worker(config: pytest.Config) -> bool:

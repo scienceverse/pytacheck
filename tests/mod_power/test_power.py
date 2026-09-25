@@ -876,6 +876,17 @@ def test_power_empty_paperlist(llm_off: None) -> None:
     assert len(mo.summary_table) == 0
 
 
+def test_power_paper_without_info(llm_off: None) -> None:
+    # U79: paper() has no info row, so paper_id() is empty and R's
+    # `summary_table$power_n <- 0` stops ("replacement has 1 row, data has 0")
+    paper = pc.paper()
+    mo = module_run(paper, "power")
+    assert mo.traffic_light == "na"
+    assert mo.summary_text == "No power analyses were detected."
+    assert mo.summary_table["paper_id"].tolist() == [paper.paper_id]
+    assert mo.summary_table["power_n"].tolist() == [0]
+
+
 def test_power_empty_paper(llm_off: None) -> None:
     paper = pc.test_paper([])
     paper.paper_id = "p1"

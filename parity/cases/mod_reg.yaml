@@ -14,7 +14,7 @@
         "r": "(function() { p <- test_paper(\"There are no links here.\"); p$paper_id <- \"p_plain\"; p })()"
         "py": "__import__(\"tests.mod_prereg.parity_support\", fromlist=[\"_\"]).tp([], \"p_plain\", [\"There are no links here.\"])"
 - "id": "reg_check.module.empty_paperlist"
-  "note": "module_run() directly: an empty paper list (prereg_check errors)"
+  "note": "module_run() directly: an empty paper list (metacheck: prereg_check errors, U79)"
   "module": "reg_check"
   "args":
     "paper":
@@ -93,7 +93,7 @@
     "double": true
     "papers": *id002
 - "id": "reg_check.all_fail"
-  "note": "every comparison fails: error light"
+  "note": "every comparison fails: fail light (metacheck: error, U30)"
   "r": "identity"
   "py": "tests.mod_reg.parity_support.run_reg"
   "args":
@@ -122,7 +122,7 @@
     "pre": *id001
     "fake": "partial"
 - "id": "reg_check.empty_result"
-  "note": "RegCheck returns no dimensions: error light without a reason"
+  "note": "RegCheck returns no dimensions: fail light without a reason (metacheck: error, U30)"
   "r": "identity"
   "py": "tests.mod_reg.parity_support.run_reg"
   "args":

@@ -57,17 +57,6 @@
   ref: U89
   reason: every R file is scanned for groundhog/checkpoint pins; R keeps one text per file name (and per NA paper id)
 "mod_code_review/code_check.na_pid_pin": *u89
-"mod_code/code_check.parse_errors": &u82_cc
-  kind: r_bug_fixed
-  ref: U82
-  reason: "one file with libraries at several places is \"In 1 code file\"; R's sprintf() always says \"code files\""
-"mod_code/code_check.psychsci": *u82_cc
-"mod_code/code_check.mixed": *u82_cc
-"mod_code/code_check.paperlist": *u82_cc
-"mod_code_review/code_check.gaps": *u82_cc
-"mod_code_review/code_check.na_pid": *u82_cc
-"mod_code_review/local_path.parse_errors": *u82_cc
-"mod_code_review/local_path.mixed_local_only": *u82_cc
 "mod_code_review/code_check.empty_paper": &u79_cc
   kind: r_bug_fixed
   ref: U79
@@ -149,7 +138,7 @@
 "mod_repo_check/repo_check.dspace.unfound": &u43_one
   kind: r_bug_fixed
   ref: U43
-  reason: a DSpace item its host does not know is flagged "invalid or inaccessible DSpace item" (gated_repos); R's download function returns NULL and the repository is left unflagged
+  reason: a DSpace item its host does not know is flagged "invalid or inaccessible DSpace item" (gated_repos, and the Error column of the report's repository table); R's download function returns NULL and the repository is left unflagged
 "mod_repo_check/repo_check.dspace7.unfound": *u43_one
 "mod_repo_check/repo_check.dspace.unfound_two":
   kind: r_bug_fixed
