@@ -28,7 +28,12 @@ PSYCHSCI = [
 import sys
 
 sys.path.insert(0, str(ROOT))
-from tests.mod_reg.parity_support import MOCK_TABLE, ODD_TABLE
+from tests.mod_reg.parity_support import (
+    DROP_COLUMNS,
+    HTTP_SCENARIOS,
+    MOCK_TABLE,
+    ODD_TABLE,
+)
 
 
 def rstr(s: str) -> str:
@@ -95,6 +100,42 @@ R_FAKES = (
     'paper_content_summary = "none", registration_content_summary = "none"))) }; '
 )
 
+#: R fakes used only by the review cases
+R_REVIEW_FAKES = "".join(
+    f".fake_{name} <- function(...) {{ .calls <<- .calls + 1; "
+    f'.tbl[, names(.tbl) != "{col}", drop = FALSE] }}; '
+    for name, col in DROP_COLUMNS.items()
+)
+R_REVIEW_FAKES += (
+    ".poll_full <- function(url, api_token, task_id, poll_interval = 5, timeout = 3600) { "
+    'list(items = list(list(dimension = "Full text", deviation_judgement = "no", '
+    "paper_content_summary = .cap$paper_text, "
+    "registration_content_summary = .cap$prereg_text))) }; "
+    # httr2 mocked responses: endpoint kind -> list(list(status, json or NULL), ...)
+    ".http <- function(spec) { n <- new.env(); function(req) { u <- req$url; "
+    'kind <- if (grepl("/api/v1/comparisons/text$", u)) "text" '
+    'else if (grepl("/api/v1/comparisons$", u)) "multipart" else "poll"; '
+    "n[[kind]] <- (if (is.null(n[[kind]])) 0 else n[[kind]]) + 1; "
+    "rs <- spec[[kind]]; if (is.null(rs)) rs <- list(list(404L, NULL)); "
+    "r <- rs[[min(n[[kind]], length(rs))]]; "
+    "if (is.null(r[[2]])) httr2::response(r[[1]]) else "
+    'httr2::response(r[[1]], headers = list(`Content-Type` = "application/json"), '
+    "body = charToRaw(r[[2]])) } }; "
+)
+
+
+def r_http(name: str) -> str:
+    """The R twin of ``HTTP_SCENARIOS[name]`` (an ``.http()`` spec)."""
+    kinds = []
+    for kind, responses in HTTP_SCENARIOS[name].items():
+        rs = ", ".join(
+            f"list({status}L, {'NULL' if body is None else rstr(body)})"
+            for status, body in responses
+        )
+        kinds.append(f"{kind} = list({rs})")
+    return f"list({', '.join(kinds)})"
+
+
 R_HTTR2 = {
     "connfail": 'rlang::abort("Could not connect to server", class = c("httr2_failure", "error"))',
     "unauthorized": 'rlang::abort("HTTP 401 Unauthorized", '
@@ -112,14 +153,22 @@ def r_args(spec: dict[str, Any]) -> str:
     return "".join(", " + a for a in args)
 
 
-def r_expr(spec: dict[str, Any]) -> str:
+def r_expr(spec: dict[str, Any], fakes: str = R_FAKES) -> str:
     fake = spec.get("fake", "table")
     run = f'module_run(x, "reg_check"{r_args(spec)})'
-    if fake == "echo":
+    if fake in ("echo", "fulltext"):
+        poll = ".poll" if fake == "echo" else ".poll_full"
         run = (
             f"httptest2::with_mock_dir({rstr(APIS)}, testthat::with_mocked_bindings({run}, "
-            '.regcheck_submit = .submit, .regcheck_poll = .poll, .package = "metacheck"))'
+            f'.regcheck_submit = .submit, .regcheck_poll = {poll}, .package = "metacheck"))'
         )
+    elif fake.startswith("http:") or fake == "refused":
+        # real httr2 requests: outside the recorded responses, so reg_check
+        # must reuse a chained prereg_check table
+        if "prereg_check" not in spec.get("pre", []):
+            raise ValueError(f"fake {fake!r} needs a chained prereg_check")
+        if fake != "refused":
+            run = f"httr2::with_mocked_responses(.http({r_http(fake[5:])}), {run})"
     elif fake in R_HTTR2:
         if "prereg_check" not in spec.get("pre", []):
             raise ValueError(f"fake {fake!r} needs a chained prereg_check")
@@ -141,6 +190,15 @@ def r_expr(spec: dict[str, Any]) -> str:
         steps.append("x$table <- rbind(x$table, x$table)")
     if spec.get("na_paper_id"):
         steps.append("x$table$paper_id <- NA_character_")
+    if spec.get("set_paper_id") is not None:
+        steps.append(f"x$table$paper_id <- {rstr(spec['set_paper_id'])}")
+    if spec.get("na_id"):
+        rows = ", ".join(str(i + 1) for i in spec["na_id"])
+        steps.append(f"x$table$id[c({rows})] <- NA_character_")
+    if spec.get("empty_table"):
+        steps.append("x$table <- x$table[0, ]")
+    if spec.get("catch"):
+        run = f"tryCatch({run}, error = function(e) conditionMessage(e))"
     steps.append(f"mo <- {run}")
     if spec.get("tables"):
         steps.append(
@@ -165,7 +223,7 @@ def r_expr(spec: dict[str, Any]) -> str:
         f"withr::local_envvar(c({env})); "
         "tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); "
         "p$paper_id <- id; p }; "
-        f"{R_FAKES}" + "; ".join(steps) + "; mo })()"
+        f"{fakes}" + "; ".join(steps) + "; mo })()"
     )
 
 
@@ -443,6 +501,193 @@ SRC = (
 PYFN = '__import__("pytacheck.modules.reg_check", fromlist=["_"]).prereg_row_text'
 
 
+# --- review cases (parity/cases/mod_reg_review.yaml)
+TWO = {"papers": [{"url": osf("5xysn", "48ncu"), "id": "p_two", "text": ["Two preregistrations."]}]}
+LOCAL_DEAD = {"base_url": "http://127.0.0.1:1"}
+
+REVIEW: list[tuple[str, str, dict[str, Any]]] = [
+    # base R df[NA, ] in the report sections
+    (
+        "na_id.first",
+        "chained table with an NA id: NA prereg_id rows",
+        {**TWO, **CHAIN, "na_id": [0]},
+    ),
+    (
+        "na_id.first.tables",
+        "an NA prereg_id selects NA rows in every section's tables",
+        {**TWO, **CHAIN, "na_id": [0], "tables": True},
+    ),
+    (
+        "na_id.first.report",
+        "module_report() with an NA prereg_id",
+        {**TWO, **CHAIN, "na_id": [0], "report": True},
+    ),
+    (
+        "na_id.all",
+        "every id NA: duplicated() drops the second row",
+        {**TWO, **CHAIN, "na_id": [0, 1]},
+    ),
+    (
+        "na_id.all.tables",
+        "every id NA: the one section has only NA rows",
+        {**TWO, **CHAIN, "na_id": [0, 1], "tables": True},
+    ),
+    (
+        "chained.empty_table",
+        "a chained prereg_check table without rows: no preregistrations",
+        {**OER, **CHAIN, "empty_table": True},
+    ),
+    (
+        "chained.duplicates_all_fail",
+        "duplicates are dropped before counting a failure",
+        {**OER, **CHAIN, "double": True, "fake": "error"},
+    ),
+    (
+        "ghost_paper_id.single",
+        "a chained paper_id that is not the paper's: summary row replaced by 0",
+        {**OER, **CHAIN, "set_paper_id": "ghost"},
+    ),
+    (
+        "ghost_paper_id.paperlist",
+        "a paper list and a paper_id not in it: no paper text, comparison fails",
+        {
+            "papers": [
+                {"url": osf("5xysn"), "id": "pa", "text": ["Paper A."]},
+                {"url": [], "id": "pb", "text": ["Paper B."]},
+            ],
+            **CHAIN,
+            "set_paper_id": "ghost",
+            "fake": "echo",
+        },
+    ),
+    # RegCheck tables without some columns (data.frame() length errors)
+    *[
+        (
+            f"missing_column.{name}",
+            f"RegCheck table without {col}",
+            {**OER, "fake": name, "catch": True},
+        )
+        for name, col in DROP_COLUMNS.items()
+    ],
+    # client matching
+    (
+        "echo.partial_client",
+        "match.arg() partial matching of client",
+        {**OER, "fake": "echo", "args": {"client": "gr"}, "envvars": {"REGCHECK_API_TOKEN": "tok"}},
+    ),
+    (
+        "ambiguous_client",
+        "an ambiguous partial client",
+        {**OER, "fake": "real", "args": {"client": "o"}},
+    ),
+    # the real RegCheck client against faked HTTP responses (real httr2 errors)
+    (
+        "http.404",
+        "no /text endpoint, multipart fallback 404",
+        {**OER, **CHAIN, "fake": "http:http404"},
+    ),
+    ("http.500", "server error on submit", {**OER, **CHAIN, "fake": "http:http500"}),
+    ("http.422", "unprocessable request", {**OER, **CHAIN, "fake": "http:http422"}),
+    ("http.401", "the local server rejects the token", {**OER, **CHAIN, "fake": "http:http401"}),
+    (
+        "http.401_groq",
+        "the hosted server rejects the token",
+        {
+            **OER,
+            **CHAIN,
+            "fake": "http:http401",
+            "args": {"client": "groq"},
+            "envvars": {"REGCHECK_API_TOKEN": "tok"},
+        },
+    ),
+    ("http.pollfail", "the task fails on the server", {**OER, **CHAIN, "fake": "http:pollfail"}),
+    (
+        "http.pollfail_nostatus",
+        "the task fails without a status",
+        {**OER, **CHAIN, "fake": "http:pollfail_nostatus"},
+    ),
+    ("http.poll503", "polling gets a 503", {**OER, **CHAIN, "fake": "http:poll503"}),
+    (
+        "http.success_null",
+        "the task succeeds with a null result: no dimensions",
+        {**OER, **CHAIN, "fake": "http:success_null"},
+    ),
+    (
+        "http.success",
+        "JSON result with nulls, missing fields and case-mapping traps",
+        {**OER, **CHAIN, "fake": "http:success"},
+    ),
+    (
+        "http.success.tables",
+        "report tables of the JSON result",
+        {**OER, **CHAIN, "fake": "http:success", "tables": True},
+    ),
+    (
+        "http.success.report",
+        "module_report() of the JSON result",
+        {**OER, **CHAIN, "fake": "http:success", "report": True},
+    ),
+    (
+        "http.fallback",
+        "405 on /text: multipart upload, then success",
+        {**OER, **CHAIN, "fake": "http:fallback"},
+    ),
+    (
+        "refused",
+        "no RegCheck server running (a real refused connection)",
+        {**OER, **CHAIN, "fake": "refused", "args": LOCAL_DEAD},
+    ),
+    (
+        "refused.report",
+        "module_report() when no RegCheck server is running",
+        {**OER, **CHAIN, "fake": "refused", "args": LOCAL_DEAD, "report": True},
+    ),
+    # the complete texts sent to RegCheck
+    (
+        "fulltext.demo",
+        "the demo paper's complete text and prereg text",
+        {"demo": True, "fake": "fulltext"},
+    ),
+    (
+        "fulltext.psychsci_demo",
+        "complete texts from a read paper list",
+        {
+            "read": [*PSYCHSCI, "upstream/metacheck/inst/demos/to_err_is_human.json"],
+            "fake": "fulltext",
+        },
+    ),
+    (
+        "fulltext.paperlist",
+        "each paper's own complete text",
+        {
+            "papers": [
+                {"url": osf("48ncu"), "id": "paper_a", "text": ["A one.", "A two.", "A three."]},
+                {"url": osf("5xysn"), "id": "paper_b", "text": ["B \u03b1 = .05", "B two."]},
+            ],
+            "fake": "fulltext",
+        },
+    ),
+]
+
+
+def module_case(
+    prefix: str, cid: str, note: str, spec: dict[str, Any], fakes: str = R_FAKES
+) -> dict[str, Any]:
+    """A ``run_reg`` parity case (R: the same run with the R fakes)."""
+    py_args = {k: v for k, v in spec.items() if k != "papers"}
+    if spec.get("papers"):
+        py_args["papers"] = spec["papers"]
+    return {
+        "id": f"{prefix}.{cid}",
+        "note": note,
+        "r": "identity",
+        "py": "tests.mod_reg.parity_support.run_reg",
+        "args": {"x": py_expr(r_expr(spec, fakes))},
+        "py_drop": ["x"],
+        "py_args": py_args,
+    }
+
+
 cases: list[dict[str, Any]] = [
     # plain module cases (no HTTP: papers without links return before any request)
     {
@@ -473,21 +718,7 @@ cases: list[dict[str, Any]] = [
         "args": {"paper": {"$read": PSYCHSCI}},
     },
 ]
-for cid, note, spec in CASES:
-    py_args = {k: v for k, v in spec.items() if k != "papers"}
-    if spec.get("papers"):
-        py_args["papers"] = spec["papers"]
-    cases.append(
-        {
-            "id": f"reg_check.{cid}",
-            "note": note,
-            "r": "identity",
-            "py": "tests.mod_reg.parity_support.run_reg",
-            "args": {"x": py_expr(r_expr(spec))},
-            "py_drop": ["x"],
-            "py_args": py_args,
-        }
-    )
+cases.extend(module_case("reg_check", cid, note, spec) for cid, note, spec in CASES)
 for cid, note, r_row, py_row in ROW_TEXT:
     cases.append(
         {
@@ -518,16 +749,33 @@ class _Dumper(yaml.SafeDumper):
 
 _Dumper.add_representer(str, _quote_all)
 
-out = ROOT / "parity" / "cases" / "mod_reg.yaml"
-out.write_text(
-    HEADER
-    + yaml.dump(
-        {"area": "mod_reg", "cases": cases},
-        Dumper=_Dumper,
-        sort_keys=False,
-        allow_unicode=True,
-        width=10_000,
-    ),
-    encoding="utf-8",
-)
-print(f"wrote {len(cases)} cases to {out.relative_to(ROOT)}")
+REVIEW_HEADER = """\
+# Review parity cases for the reg_check module (inst/modules/reg_check.R):
+# base-R NA subsetting in the report, data.frame() length errors, client
+# matching, the real RegCheck client against faked HTTP responses (httr2's
+# with_mocked_responses() in R) and a real refused connection, and the
+# complete texts sent to RegCheck. Generated by tests/mod_reg/make_cases.py.
+"""
+
+review_cases = [
+    module_case("reg_check.review", cid, note, spec, R_FAKES + R_REVIEW_FAKES)
+    for cid, note, spec in REVIEW
+]
+
+for area, header, items in (
+    ("mod_reg", HEADER, cases),
+    ("mod_reg_review", REVIEW_HEADER, review_cases),
+):
+    out = ROOT / "parity" / "cases" / f"{area}.yaml"
+    out.write_text(
+        header
+        + yaml.dump(
+            {"area": area, "cases": items},
+            Dumper=_Dumper,
+            sort_keys=False,
+            allow_unicode=True,
+            width=10_000,
+        ),
+        encoding="utf-8",
+    )
+    print(f"wrote {len(items)} cases to {out.relative_to(ROOT)}")

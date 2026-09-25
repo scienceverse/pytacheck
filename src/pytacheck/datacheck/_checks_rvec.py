@@ -31,6 +31,7 @@ __all__ = [
     "RVec",
     "as_numeric_str",
     "chr",
+    "chr_counts",
     "df_columns",
     "is_na",
     "is_whole",
@@ -44,7 +45,9 @@ __all__ = [
     "tolower",
     "toupper",
     "trim",
+    "trimmed_counts",
     "unique",
+    "weighted_median",
 ]
 
 _INT_MAX = 2147483647
@@ -189,10 +192,22 @@ def _scalar_chr(v: Any) -> str:
 
 
 def _posix_chr(v: Any) -> str:
-    """``as.character(<POSIXct>)`` (R >= 4.3): the time part only when non-zero."""
-    if v.hour == 0 and v.minute == 0 and v.second == 0 and getattr(v, "microsecond", 0) == 0:
-        return v.strftime("%Y-%m-%d")
-    return v.strftime("%Y-%m-%d %H:%M:%S")
+    """``as.character(<POSIXct>)`` (R >= 4.3, ``base::as.character.POSIXt``).
+
+    The date is ``"%d-%02d-%02d"``; the time is added when the (unrounded)
+    time of day is non-zero, with the seconds rounded to 6 digits and printed
+    in fixed notation without trailing zeros, zero-padded below 10
+    (``"10:00:09.25"``).
+    """
+    from pytacheck._r.base import r_round
+
+    date = f"{v.year}-{v.month:02d}-{v.day:02d}"
+    sec = v.second + getattr(v, "microsecond", 0) / 1e6 + getattr(v, "nanosecond", 0) / 1e9
+    if v.hour + v.minute + sec == 0:
+        return date
+    s = float(r_round(sec, 6))
+    txt = f"{s:.6f}".rstrip("0").rstrip(".")
+    return f"{date} {v.hour:02d}:{v.minute:02d}:{'0' if s < 10 else ''}{txt}"
 
 
 def rvec(x: Any) -> RVec:
@@ -233,11 +248,10 @@ def _from_array(x: Any) -> RVec:
         return RVec("factor", [None if c < 0 else cats[c] for c in codes.tolist()], cats)
     arr = x.array if isinstance(x, pd.Series | pd.Index) else x
     if pd.api.types.is_bool_dtype(dtype):
-        return RVec("logical", [None if is_na(v) else bool(v) for v in list(arr)])
+        return RVec("logical", _object_list(arr))
     if pd.api.types.is_integer_dtype(dtype):
-        vals = list(arr)
-        ints = [None if is_na(v) else int(v) for v in vals]
-        if any(v is not None and abs(v) > _INT_MAX for v in ints):
+        ints = _object_list(arr)
+        if ints and _max_abs_int(arr) > _INT_MAX:
             return RVec("double", [None if v is None else float(v) for v in ints])
         return RVec("integer", ints)
     if pd.api.types.is_float_dtype(dtype):
@@ -247,8 +261,32 @@ def _from_array(x: Any) -> RVec:
         ts = pd.Series(arr)
         return RVec("POSIXct", [None if is_na(v) else v for v in ts.tolist()])
     if isinstance(dtype, pd.StringDtype):
-        return RVec("character", [None if is_na(v) else str(v) for v in list(arr)])
+        return RVec("character", _object_list(arr))
     return _from_elements(list(arr))
+
+
+def _object_list(arr: Any) -> list[Any]:
+    """The Python values of a boolean / integer / string array, ``None`` for NA.
+
+    Vectorised: ``to_numpy(object)`` gives Python ``bool``/``int``/``str``
+    scalars (a NumPy array has no missing values).
+    """
+    import numpy as np
+
+    if hasattr(arr, "to_numpy") and not isinstance(arr, np.ndarray):
+        return arr.to_numpy(dtype=object, na_value=None).tolist()  # type: ignore[no-any-return]
+    return np.asarray(arr).tolist()  # type: ignore[no-any-return]
+
+
+def _max_abs_int(arr: Any) -> int:
+    """The largest absolute value in an integer array (NA ignored)."""
+    import numpy as np
+
+    if hasattr(arr, "to_numpy") and not isinstance(arr, np.ndarray):
+        a = arr.to_numpy(dtype="float64", na_value=0.0)
+    else:
+        a = np.asarray(arr, dtype="float64")
+    return int(np.abs(a).max()) if a.size else 0
 
 
 # -- coercions -----------------------------------------------------------------
@@ -271,6 +309,56 @@ def chr(x: Any) -> list[str | None]:
     if k == "POSIXct":
         return [None if d is None else _posix_chr(d) for d in v.values]
     return [None if e is None else _scalar_chr(e) for e in v.values]
+
+
+def chr_counts(x: Any) -> dict[str | None, int]:
+    """How often each value of ``as.character(x)`` occurs (``None`` = ``NA``).
+
+    Keys are in order of first appearance, so a check that only needs the
+    multiset of values (``unique()``, ``mean()``, ``table()``) converts each
+    distinct value once instead of every element.
+    """
+    from collections import Counter
+
+    v = rvec(x)
+    raw = Counter(v.values)
+    labels = chr(RVec(v.kind, list(raw), v.levels))
+    out: dict[str | None, int] = {}
+    for lab, n in zip(labels, raw.values(), strict=True):
+        out[lab] = out.get(lab, 0) + n
+    return out
+
+
+def trimmed_counts(x: Any) -> dict[str, int]:
+    """``table(trimws(as.character(x)))`` without NA and blanks, in first-appearance order."""
+    out: dict[str, int] = {}
+    for s, n in chr_counts(x).items():
+        if s is None:
+            continue
+        t = s.strip(" \t\r\n")
+        if t:
+            out[t] = out.get(t, 0) + n
+    return out
+
+
+def weighted_median(pairs: Iterable[tuple[float, int]]) -> float:
+    """``stats::median()`` of a vector given as ``(value, count)`` pairs."""
+    items = sorted(pairs)
+    n = sum(c for _, c in items)
+    if n == 0:
+        return math.nan
+    lo_i, hi_i = (n - 1) // 2, n // 2  # 0-based middle positions
+    lo = hi = None
+    seen = 0
+    for val, c in items:
+        if lo is None and seen + c > lo_i:
+            lo = val
+        if seen + c > hi_i:
+            hi = val
+            break
+        seen += c
+    assert lo is not None and hi is not None
+    return float(lo) if lo == hi else (lo + hi) / 2
 
 
 def _dbl_chr_list(values: list[Any]) -> list[str | None]:

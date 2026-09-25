@@ -43,7 +43,6 @@ from __future__ import annotations
 
 import bz2
 import codecs
-import gzip
 import io
 import lzma
 import re

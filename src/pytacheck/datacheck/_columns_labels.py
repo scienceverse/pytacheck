@@ -439,7 +439,19 @@ def _json_loads(text: str) -> Any:
     Objects become :class:`_JsonObject` (ordered pairs, duplicates kept),
     arrays lists, ``null`` ``None``. Raises ``ValueError`` on invalid JSON.
     """
+    if not _valid_utf8(text):
+        # yajl: "lexical error: invalid bytes in UTF8 string"
+        raise ValueError("invalid bytes in UTF8 string")
     return json.loads(text, object_pairs_hook=_JsonObject, parse_constant=_reject_constant)
+
+
+def _valid_utf8(text: str) -> bool:
+    """Is *text* valid UTF-8 (no ``surrogateescape``-d raw bytes)?"""
+    try:
+        text.encode("utf-8")
+    except UnicodeEncodeError:
+        return False
+    return True
 
 
 def _reject_constant(name: str) -> Any:
@@ -599,11 +611,7 @@ def _is_value_labels(x: Any) -> bool:
     """Is *x* a haven ``labels`` attribute (a mapping or ``(label, code)`` pairs)?"""
     if isinstance(x, Mapping | pd.Series):
         return True
-    return (
-        isinstance(x, list)
-        and bool(x)
-        and all(isinstance(p, tuple) and len(p) == 2 for p in x)
-    )
+    return isinstance(x, list) and bool(x) and all(isinstance(p, tuple) and len(p) == 2 for p in x)
 
 
 def _column_attrs(col: Any, attrs: Mapping[str, Any] | None = None) -> Mapping[str, Any]:

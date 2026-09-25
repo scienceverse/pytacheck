@@ -151,7 +151,7 @@ def _is_numeric_vector(values: Any) -> bool:
             return False
         if pd.api.types.is_numeric_dtype(dtype):
             return True
-        if dtype != object:
+        if not pd.api.types.is_object_dtype(dtype):
             return False  # string, datetime, ... columns
         vals = values.tolist()
     else:
@@ -528,9 +528,7 @@ def _numeric_summary(x: np.ndarray) -> dict[str, float]:
             "kurtosis": math.nan,
         }
         if n > 2 and not math.isnan(s) and s > 0:
-            stats["skewness"] = float(
-                np.float64(_r_mean(_r_pow(d, 3))) / np.float64(_r_pow(s, 3))
-            )
+            stats["skewness"] = float(np.float64(_r_mean(_r_pow(d, 3))) / np.float64(_r_pow(s, 3)))
         if n > 3 and not math.isnan(s) and s > 0:
             stats["kurtosis"] = float(
                 np.float64(_r_mean(_r_pow(d, 4))) / np.float64(_r_pow(s, 4)) - 3
@@ -679,8 +677,6 @@ def _osd_code_and_provenance(scale: Any, prefix: Any, scale_source: Any, dict: A
     """
     src = "" if scale_source is None else scale_source
     in_dict = False
-    if scale is None:  # R: !is.na(NULL) && ... is NA inside if()
-        raise ValueError("missing value where TRUE/FALSE needed")
     if not _na(scale) and _chr(scale) != "":
         in_dict = bool(_dict_rows(dict, scale))
     code = _osd_slug(name=scale, prefix=prefix)
@@ -1201,34 +1197,38 @@ def _r_colon(lo: float, hi: float) -> list[float]:
     return [lo + step * k for k in range(n + 1)]
 
 
-def _scale_typo_of(v: Any, lo: float, hi: float) -> float | None:
+def _scale_typo_of(v: Any, lo: float, hi: float) -> float | int | None:
     """Could an out-of-scale value be a keying typo of an in-scale value?
 
     Port of ``.scale_typo_of()``: the most plausible intended value inside
     ``[lo, hi]`` (a repeated / doubled digit, a dropped or added minus, an
-    extra leading digit), or ``None``.
+    extra leading digit), or ``None``. A Python ``int`` is an R integer, whose
+    digits come from ``as.character(100000L)`` = ``"100000"``; a ``float`` is
+    a double, and ``as.character(1e5)`` is ``"1e+05"`` (so its "digits" are
+    ``1``, ``0``, ``5`` and the leading ``"1e+0"`` parses as 1).
     """
     if _na(v):
         return None
-    v = float(v)
+    is_int = isinstance(v, int | np.integer) and not isinstance(v, bool | np.bool_)
+    v = int(v) if is_int else float(v)
     if v in _r_colon(lo, hi):
         return None
-    cand: list[float | None] = []
+    cand: list[float | int | None] = []
     av = abs(v)
-    if v == _r_round0(v):
-        s = _chr(av) or ""
+    if is_int or v == _r_round0(v):
+        s = str(av) if is_int else (_chr(av) or "")
         if len(s) >= 2:
             cand += [_as_int_str(c) for c in s]
             cand += [_as_int_str(s[1:]), _as_int_str(s[:-1])]
     cand.append(-v)
-    uniq: list[float] = []
+    uniq: list[float | int] = []
     for c in cand:
         if c is not None and not _na(c) and c not in uniq:
-            uniq.append(float(c))
+            uniq.append(c if is_int else float(c))
     inside = [c for c in uniq if lo <= c <= hi]
     if not inside:
         return None
-    target = math.fmod(av, 10)
+    target = av % 10 if is_int else math.fmod(av, 10)
     best = min(range(len(inside)), key=lambda k: (abs(inside[k] - target), k))
     return inside[best]
 

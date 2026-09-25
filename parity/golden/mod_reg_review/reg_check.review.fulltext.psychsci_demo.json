@@ -1,0 +1,201 @@
+{
+  "id": "reg_check.review.fulltext.psychsci_demo",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "reg_check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "RegCheck Preregistration Comparison"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "method"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 2,
+        "names": [
+          "dimension",
+          "deviation_judgement",
+          "paper_summary",
+          "prereg_summary",
+          "deviation_information",
+          "paper_quotes",
+          "prereg_quotes",
+          "prereg_id",
+          "paper_id"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Full text",
+              "Full text"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "no",
+              "no"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "This paper demonstrates some good and poor practices for use with the {metacheck} R package. All data are simulated. The paper shows examples of (1) open and closed OSF links; (2a) citation of retracted papers, (2b) citations without a doi, (2c) citations with Pubpeer comments, (2d) citations in the FLoRA replication database, and (2e) missing/mismatched/incorrect citations and references; (3a) R files with code on GitHub that do not load libraries in one location, (3b) load files that are not shared in the repository, (3c) lack comments, and (3d) have absolute file paths; (4) imprecise reporting of non-significant p-values; (5) tests with and without effect sizes; (6) use of \"marginally significant\" to describe non-significant findings; (7) a power analysis reporting some of the essential attributes; and (8) retrieving information from preregistrations. Although intentional dishonesty might be a successful way to boost creativity (Gino and Wiltermuth 2014), it is safe to say most mistakes researchers make are unintentional. From a human factors perspective, human error is a symptom of a poor design (Smithy, 2020). Automation can be used to check for errors in scientific manuscripts, and inform authors about possible corrections. In this study we examine the usefulness of metacheck to improve best practices. In this studyfoot_0 we examine whether automated checks reduce the amount of errors that researchers make in scientific manuscripts. This study was preregistered at https://osf.io/48ncu and on AsPredicted at https://aspredicted.org/by8i8v.pdf. We randomly assigned 50 scientists to a condition where their manuscript was automatically checked for errors, and 50 scientists to a control condition with a checklist. Scientists had the opportunity to make changes to their manuscript based on the feedback of the tool. We subsequently coded all manuscripts for mistakes, and counted the total number of mistakes. We also measured the expertise of researchers (in years) to explore whether the automated tool would be more useful, the less research experience researchers had. We also asked researchers to rate how useful they found the checklist or app on a scale from 1 (not at all) to 7 (extremely useful). On average researchers in the experimental (app) condition made fewer mistakes (M = 9.12) than researchers in the control (checklist) condition (M = 10.9), t(97.7) = 2.9, p = 0.005, d =0.59. On average researchers in the experimental condition found the app marginally significantly more useful (M = 5.06) than researchers in the control condition found the checklist (M = 4.5), t(97.2) = -1.96, p =0.152. There was no effect of experience on the reduction in errors when using the tool (p > .05), as the correlation was non-significant (Figure 2). Since our data are simulated for demonstration purposes, of course they confirm our hypotheses. It seems automated tools can help prevent errors by providing researchers with feedback about potential mistakes, and researchers feel the app Data and analysis code is available on GitHub from https://github.com/Lak-ens/to_err_is_human and from https://researchbox.org/4377. Data is also available from https://osf.io/5tbm9 and code is also available from https://osf.io/629bx. The authors declare a conflict of interest. We really want to see this project succeed and help researchers make their papers better. We conducted a sensitivity power analysis 2 to determine that a Cohen's d of 0.50 is the smallest effect size that we could detect with N = 50 participants in each group and 80% power. We simulated the data using Faux (DeBruine 2025) (Table 1, Figure 1).2 The code we used for this analysis is as follows. pwr::pwr.t.test(n = 50, power = 0.8, alternative = \"greater\") is useful. We conclude the use of automated checks has potential to reduce the number of mistakes in scientific manuscripts. Figure2: The effect of experience on the reduction in errors. The average number of mistakes and usefulness score for the control and experimental conditions. The simulated data. Remember, this is a demo and none of this is real. DeBruine, Lisa. 2025. Faux: Simulation for Factorial Designs. Zenodo. https: //doi.org/10.5281/10.5281/zenodo.2669586. Eagly, Alice H., and Wendy Wood. 1999. \"The Origins of Sex Differences in Human Behavior: Evolved Dispositions Versus Social Roles.\" American Psychologist 54 (6): 408-23. https://doi.org/10.1037/0003-066x.54.6.408. Gino, Francesca, and Scott S. Wiltermuth. 2014. \"Evil Genius? How Dishonesty Can Lead to Greater Creativity.\" Psychological Science 25 (4): 973-81. https://doi.org/10.1177/0956797614520714. Lakens, Daniël. 2018. \"Equivalence Testing for Psychological Research.\" Ad- vances in Methods and Practices in Psychological Science 1: 259-70. Smith, F. 2021. \"Human Error Is a Symptom of a Poor Design.\" Journal of Journals. https://doi.org/10.0000/0123456789.",
+              "This paper demonstrates some good and poor practices for use with the {metacheck} R package. All data are simulated. The paper shows examples of (1) open and closed OSF links; (2a) citation of retracted papers, (2b) citations without a doi, (2c) citations with Pubpeer comments, (2d) citations in the FLoRA replication database, and (2e) missing/mismatched/incorrect citations and references; (3a) R files with code on GitHub that do not load libraries in one location, (3b) load files that are not shared in the repository, (3c) lack comments, and (3d) have absolute file paths; (4) imprecise reporting of non-significant p-values; (5) tests with and without effect sizes; (6) use of \"marginally significant\" to describe non-significant findings; (7) a power analysis reporting some of the essential attributes; and (8) retrieving information from preregistrations. Although intentional dishonesty might be a successful way to boost creativity (Gino and Wiltermuth 2014), it is safe to say most mistakes researchers make are unintentional. From a human factors perspective, human error is a symptom of a poor design (Smithy, 2020). Automation can be used to check for errors in scientific manuscripts, and inform authors about possible corrections. In this study we examine the usefulness of metacheck to improve best practices. In this studyfoot_0 we examine whether automated checks reduce the amount of errors that researchers make in scientific manuscripts. This study was preregistered at https://osf.io/48ncu and on AsPredicted at https://aspredicted.org/by8i8v.pdf. We randomly assigned 50 scientists to a condition where their manuscript was automatically checked for errors, and 50 scientists to a control condition with a checklist. Scientists had the opportunity to make changes to their manuscript based on the feedback of the tool. We subsequently coded all manuscripts for mistakes, and counted the total number of mistakes. We also measured the expertise of researchers (in years) to explore whether the automated tool would be more useful, the less research experience researchers had. We also asked researchers to rate how useful they found the checklist or app on a scale from 1 (not at all) to 7 (extremely useful). On average researchers in the experimental (app) condition made fewer mistakes (M = 9.12) than researchers in the control (checklist) condition (M = 10.9), t(97.7) = 2.9, p = 0.005, d =0.59. On average researchers in the experimental condition found the app marginally significantly more useful (M = 5.06) than researchers in the control condition found the checklist (M = 4.5), t(97.2) = -1.96, p =0.152. There was no effect of experience on the reduction in errors when using the tool (p > .05), as the correlation was non-significant (Figure 2). Since our data are simulated for demonstration purposes, of course they confirm our hypotheses. It seems automated tools can help prevent errors by providing researchers with feedback about potential mistakes, and researchers feel the app Data and analysis code is available on GitHub from https://github.com/Lak-ens/to_err_is_human and from https://researchbox.org/4377. Data is also available from https://osf.io/5tbm9 and code is also available from https://osf.io/629bx. The authors declare a conflict of interest. We really want to see this project succeed and help researchers make their papers better. We conducted a sensitivity power analysis 2 to determine that a Cohen's d of 0.50 is the smallest effect size that we could detect with N = 50 participants in each group and 80% power. We simulated the data using Faux (DeBruine 2025) (Table 1, Figure 1).2 The code we used for this analysis is as follows. pwr::pwr.t.test(n = 50, power = 0.8, alternative = \"greater\") is useful. We conclude the use of automated checks has potential to reduce the number of mistakes in scientific manuscripts. Figure2: The effect of experience on the reduction in errors. The average number of mistakes and usefulness score for the control and experimental conditions. The simulated data. Remember, this is a demo and none of this is real. DeBruine, Lisa. 2025. Faux: Simulation for Factorial Designs. Zenodo. https: //doi.org/10.5281/10.5281/zenodo.2669586. Eagly, Alice H., and Wendy Wood. 1999. \"The Origins of Sex Differences in Human Behavior: Evolved Dispositions Versus Social Roles.\" American Psychologist 54 (6): 408-23. https://doi.org/10.1037/0003-066x.54.6.408. Gino, Francesca, and Scott S. Wiltermuth. 2014. \"Evil Genius? How Dishonesty Can Lead to Greater Creativity.\" Psychological Science 25 (4): 973-81. https://doi.org/10.1177/0956797614520714. Lakens, Daniël. 2018. \"Equivalence Testing for Psychological Research.\" Ad- vances in Methods and Practices in Psychological Science 1: 259-70. Smith, F. 2021. \"Human Error Is a Symptom of a Poor Design.\" Journal of Journals. https://doi.org/10.0000/0123456789."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "template_name\nOSF Preregistration\n\ntitle\nPapercheck Test\n\nid\n48ncu\n\ndate_created\n2025-11-28T19:14:24.639665\n\ndate_modified\n2025-08-05T11:55:35.267689\n\ndate_registered\n2025-11-28T19:14:24.608826\n\nresearch_questions\nAutomation can be used to check for errors in scientific manuscripts, and inform authors about possible corrections. In this study we examine the usefulness of metacheck to improve best practices.\n\nstudy_type\nExperiment - A researcher randomly assigns treatments to study subjects, this includes field or lab experiments. This is also known as an intervention experiment and includes randomized controlled trials.\n\nblinding\nNo blinding is involved in this study.\n\nstudy_design_overview\nTwo conditions. In one, researchers receive automated feedback. In the control condition, they do not receive feedback.\n\nrandomization\nWe randomly assign to conditions\n\nexisting_data\nRegistration prior to creation of data\n\ndata_collection_procedures\nWe will include all scientists who are willing to participate.\n\nsample_size\nWe randomly assigned 50 scientists to a condition where their manuscript was automatically checked for errors, and 50 scientists to a control condition with a checklist.\n\nsample_size_rationale\nBased on an a-priori power analysis for an independent t-test, with an expected effect size of d = 0.6, an alpha of 0.05, and a desired power of 0.85, we needed to collect at least 50 participants per group.\n\nstopping_rule\nWe will stop after data from 100 researchers has been collected.\n\nmanipulated_variables\nTwo conditions. In one, researchers receive automated feedback. In the control condition, they do not receive feedback.\n\nmeasured_variables\nWe will code all manuscripts for mistakes, and count the total number of mistakes per manuscript.\n\nstatistical_tests\nWe will perform an independent t-test on the number of mistakes in each group.\n\ninference_criteria\nWe will interpret effects as significant if p &lt; .05\n\ndata_exclusion_criteria\nNo exclusions are expected.\n\nmissing_data_handling\nNo missing data is expected.\n\nexploratory_analyses\nWe also measured the expertise of researchers (in years) to explore whether the automated tool would be more useful, the less research experience researchers had. We also asked researchers to rate how useful they found the checklist or app on a scale from 1 (not at all) to 7 (extremely useful).",
+              "template_name\nAsPredicted\n\ntitle\nTo err is human\n\nid\nby8i8v\n\ndate_created\n2025/11/27 23:20 (PT)\n\nresearch_questions\nAutomation can be used to check for errors in scientific manuscripts, and inform authors about possible corrections. In this study we examine the usefulness of metacheck to improve best practices.\n\nstudy_design_overview\nTwo conditions. In one, researchers receive automated feedback. In the control condition, they do not receive feedback.\n\nsample_size\nWe randomly assigned 50 scientists to a condition where their manuscript was automatically checked for errors, and 50 scientists to a control condition with a checklist.\n\nstatistical_tests\nWe will perform an independent t-test on the number of mistakes in each group.\n\nexisting_data_explanation\nNo, no data have been collected for this study yet.\n\ndesign_dependent_variables\nWe will code all manuscripts for mistakes, and count the total number of mistakes per manuscript.\n\noutliers_and_exclusions\nnone are expected.\n\nadditional_comments\nWe also measured the expertise of researchers (in years) to explore whether the automated tool would be more useful, the less research experience researchers had. We also asked researchers to rate how useful they found the checklist or app on a scale from 1 (not at all) to 7 (extremely useful)."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "48ncu",
+              "by8i8v"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "to_err_is_human",
+              "to_err_is_human"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "RegCheck compared the paper with 2 preregistrations on 2 dimensions, and flagged 0 potential deviations (0 dimensions not specified in the preregistration). These judgements are generated by a large language model: treat them as pointers for manual checking, not as conclusions, and always verify them against the original documents.",
+          "Comparison with preregistration 48ncu:",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(dimension = \"Full text\", judgement = \"consistent\", \n    explanation = NA_character_), row.names = c(NA, -1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 2, FALSE)\n```\n",
+          "::: {.callout-tip title=\"RegCheck evidence for 48ncu\" collapse=\"true\"}\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(dimension = \"Full text\", paper_summary = \"This paper demonstrates some good and poor practices for use with the {metacheck} R package. All data are simulated. The paper shows examples of (1) open and closed OSF links; (2a) citation of retracted papers, (2b) citations without a doi, (2c) citations with Pubpeer comments, (2d) citations in the FLoRA replication database, and (2e) missing/mismatched/incorrect citations and references; (3a) R files with code on GitHub that do not load libraries in one location, (3b) load files that are not shared in the repository, (3c) lack comments, and (3d) have absolute file paths; (4) imprecise reporting of non-significant p-values; (5) tests with and without effect sizes; (6) use of \\\"marginally significant\\\" to describe non-significant findings; (7) a power analysis reporting some of the essential attributes; and (8) retrieving information from preregistrations. Although intentional dishonesty might be a successful way to boost creativity (Gino and Wiltermuth 2014), it is safe to say most mistakes researchers make are unintentional. From a human factors perspective, human error is a symptom of a poor design (Smithy, 2020). Automation can be used to check for errors in scientific manuscripts, and inform authors about possible corrections. In this study we examine the usefulness of metacheck to improve best practices. In this studyfoot_0 we examine whether automated checks reduce the amount of errors that researchers make in scientific manuscripts. This study was preregistered at https://osf.io/48ncu and on AsPredicted at https://aspredicted.org/by8i8v.pdf. We randomly assigned 50 scientists to a condition where their manuscript was automatically checked for errors, and 50 scientists to a control condition with a checklist. Scientists had the opportunity to make changes to their manuscript based on the feedback of the tool. We subsequently coded all manuscripts for mistakes, and counted the total number of mistakes. We also measured the expertise of researchers (in years) to explore whether the automated tool would be more useful, the less research experience researchers had. We also asked researchers to rate how useful they found the checklist or app on a scale from 1 (not at all) to 7 (extremely useful). On average researchers in the experimental (app) condition made fewer mistakes (M = 9.12) than researchers in the control (checklist) condition (M = 10.9), t(97.7) = 2.9, p = 0.005, d =0.59. On average researchers in the experimental condition found the app marginally significantly more useful (M = 5.06) than researchers in the control condition found the checklist (M = 4.5), t(97.2) = -1.96, p =0.152. There was no effect of experience on the reduction in errors when using the tool (p > .05), as the correlation was non-significant (Figure 2). Since our data are simulated for demonstration purposes, of course they confirm our hypotheses. It seems automated tools can help prevent errors by providing researchers with feedback about potential mistakes, and researchers feel the app Data and analysis code is available on GitHub from https://github.com/Lak-ens/to_err_is_human and from https://researchbox.org/4377. Data is also available from https://osf.io/5tbm9 and code is also available from https://osf.io/629bx. The authors declare a conflict of interest. We really want to see this project succeed and help researchers make their papers better. We conducted a sensitivity power analysis 2 to determine that a Cohen's d of 0.50 is the smallest effect size that we could detect with N = 50 participants in each group and 80% power. We simulated the data using Faux (DeBruine 2025) (Table 1, Figure 1).2 The code we used for this analysis is as follows. pwr::pwr.t.test(n = 50, power = 0.8, alternative = \\\"greater\\\") is useful. We conclude the use of automated checks has potential to reduce the number of mistakes in scientific manuscripts. Figure2: The effect of experience on the reduction in errors. The average number of mistakes and usefulness score for the control and experimental conditions. The simulated data. Remember, this is a demo and none of this is real. DeBruine, Lisa. 2025. Faux: Simulation for Factorial Designs. Zenodo. https: //doi.org/10.5281/10.5281/zenodo.2669586. Eagly, Alice H., and Wendy Wood. 1999. \\\"The Origins of Sex Differences in Human Behavior: Evolved Dispositions Versus Social Roles.\\\" American Psychologist 54 (6): 408-23. https://doi.org/10.1037/0003-066x.54.6.408. Gino, Francesca, and Scott S. Wiltermuth. 2014. \\\"Evil Genius? How Dishonesty Can Lead to Greater Creativity.\\\" Psychological Science 25 (4): 973-81. https://doi.org/10.1177/0956797614520714. Lakens, Daniël. 2018. \\\"Equivalence Testing for Psychological Research.\\\" Ad- vances in Methods and Practices in Psychological Science 1: 259-70. Smith, F. 2021. \\\"Human Error Is a Symptom of a Poor Design.\\\" Journal of Journals. https://doi.org/10.0000/0123456789.\", \n    prereg_summary = \"template_name<br>OSF Preregistration<br><br>title<br>Papercheck Test<br><br>id<br>48ncu<br><br>date_created<br>2025-11-28T19:14:24.639665<br><br>date_modified<br>2025-08-05T11:55:35.267689<br><br>date_registered<br>2025-11-28T19:14:24.608826<br><br>research_questions<br>Automation can be used to check for errors in scientific manuscripts, and inform authors about possible corrections. In this study we examine the usefulness of metacheck to improve best practices.<br><br>study_type<br>Experiment - A researcher randomly assigns treatments to study subjects, this includes field or lab experiments. This is also known as an intervention experiment and includes randomized controlled trials.<br><br>blinding<br>No blinding is involved in this study.<br><br>study_design_overview<br>Two conditions. In one, researchers receive automated feedback. In the control condition, they do not receive feedback.<br><br>randomization<br>We randomly assign to conditions<br><br>existing_data<br>Registration prior to creation of data<br><br>data_collection_procedures<br>We will include all scientists who are willing to participate.<br><br>sample_size<br>We randomly assigned 50 scientists to a condition where their manuscript was automatically checked for errors, and 50 scientists to a control condition with a checklist.<br><br>sample_size_rationale<br>Based on an a-priori power analysis for an independent t-test, with an expected effect size of d = 0.6, an alpha of 0.05, and a desired power of 0.85, we needed to collect at least 50 participants per group.<br><br>stopping_rule<br>We will stop after data from 100 researchers has been collected.<br><br>manipulated_variables<br>Two conditions. In one, researchers receive automated feedback. In the control condition, they do not receive feedback.<br><br>measured_variables<br>We will code all manuscripts for mistakes, and count the total number of mistakes per manuscript.<br><br>statistical_tests<br>We will perform an independent t-test on the number of mistakes in each group.<br><br>inference_criteria<br>We will interpret effects as significant if p &lt; .05<br><br>data_exclusion_criteria<br>No exclusions are expected.<br><br>missing_data_handling<br>No missing data is expected.<br><br>exploratory_analyses<br>We also measured the expertise of researchers (in years) to explore whether the automated tool would be more useful, the less research experience researchers had. We also asked researchers to rate how useful they found the checklist or app on a scale from 1 (not at all) to 7 (extremely useful).\", \n    paper_quotes = NA_character_, prereg_quotes = NA_character_), row.names = c(NA, \n-1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 5, FALSE)\n```\n\n\n:::\n",
+          "Comparison with preregistration by8i8v:",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(dimension = \"Full text\", judgement = \"consistent\", \n    explanation = NA_character_), row.names = c(NA, -1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 2, FALSE)\n```\n",
+          "::: {.callout-tip title=\"RegCheck evidence for by8i8v\" collapse=\"true\"}\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(dimension = \"Full text\", paper_summary = \"This paper demonstrates some good and poor practices for use with the {metacheck} R package. All data are simulated. The paper shows examples of (1) open and closed OSF links; (2a) citation of retracted papers, (2b) citations without a doi, (2c) citations with Pubpeer comments, (2d) citations in the FLoRA replication database, and (2e) missing/mismatched/incorrect citations and references; (3a) R files with code on GitHub that do not load libraries in one location, (3b) load files that are not shared in the repository, (3c) lack comments, and (3d) have absolute file paths; (4) imprecise reporting of non-significant p-values; (5) tests with and without effect sizes; (6) use of \\\"marginally significant\\\" to describe non-significant findings; (7) a power analysis reporting some of the essential attributes; and (8) retrieving information from preregistrations. Although intentional dishonesty might be a successful way to boost creativity (Gino and Wiltermuth 2014), it is safe to say most mistakes researchers make are unintentional. From a human factors perspective, human error is a symptom of a poor design (Smithy, 2020). Automation can be used to check for errors in scientific manuscripts, and inform authors about possible corrections. In this study we examine the usefulness of metacheck to improve best practices. In this studyfoot_0 we examine whether automated checks reduce the amount of errors that researchers make in scientific manuscripts. This study was preregistered at https://osf.io/48ncu and on AsPredicted at https://aspredicted.org/by8i8v.pdf. We randomly assigned 50 scientists to a condition where their manuscript was automatically checked for errors, and 50 scientists to a control condition with a checklist. Scientists had the opportunity to make changes to their manuscript based on the feedback of the tool. We subsequently coded all manuscripts for mistakes, and counted the total number of mistakes. We also measured the expertise of researchers (in years) to explore whether the automated tool would be more useful, the less research experience researchers had. We also asked researchers to rate how useful they found the checklist or app on a scale from 1 (not at all) to 7 (extremely useful). On average researchers in the experimental (app) condition made fewer mistakes (M = 9.12) than researchers in the control (checklist) condition (M = 10.9), t(97.7) = 2.9, p = 0.005, d =0.59. On average researchers in the experimental condition found the app marginally significantly more useful (M = 5.06) than researchers in the control condition found the checklist (M = 4.5), t(97.2) = -1.96, p =0.152. There was no effect of experience on the reduction in errors when using the tool (p > .05), as the correlation was non-significant (Figure 2). Since our data are simulated for demonstration purposes, of course they confirm our hypotheses. It seems automated tools can help prevent errors by providing researchers with feedback about potential mistakes, and researchers feel the app Data and analysis code is available on GitHub from https://github.com/Lak-ens/to_err_is_human and from https://researchbox.org/4377. Data is also available from https://osf.io/5tbm9 and code is also available from https://osf.io/629bx. The authors declare a conflict of interest. We really want to see this project succeed and help researchers make their papers better. We conducted a sensitivity power analysis 2 to determine that a Cohen's d of 0.50 is the smallest effect size that we could detect with N = 50 participants in each group and 80% power. We simulated the data using Faux (DeBruine 2025) (Table 1, Figure 1).2 The code we used for this analysis is as follows. pwr::pwr.t.test(n = 50, power = 0.8, alternative = \\\"greater\\\") is useful. We conclude the use of automated checks has potential to reduce the number of mistakes in scientific manuscripts. Figure2: The effect of experience on the reduction in errors. The average number of mistakes and usefulness score for the control and experimental conditions. The simulated data. Remember, this is a demo and none of this is real. DeBruine, Lisa. 2025. Faux: Simulation for Factorial Designs. Zenodo. https: //doi.org/10.5281/10.5281/zenodo.2669586. Eagly, Alice H., and Wendy Wood. 1999. \\\"The Origins of Sex Differences in Human Behavior: Evolved Dispositions Versus Social Roles.\\\" American Psychologist 54 (6): 408-23. https://doi.org/10.1037/0003-066x.54.6.408. Gino, Francesca, and Scott S. Wiltermuth. 2014. \\\"Evil Genius? How Dishonesty Can Lead to Greater Creativity.\\\" Psychological Science 25 (4): 973-81. https://doi.org/10.1177/0956797614520714. Lakens, Daniël. 2018. \\\"Equivalence Testing for Psychological Research.\\\" Ad- vances in Methods and Practices in Psychological Science 1: 259-70. Smith, F. 2021. \\\"Human Error Is a Symptom of a Poor Design.\\\" Journal of Journals. https://doi.org/10.0000/0123456789.\", \n    prereg_summary = \"template_name<br>AsPredicted<br><br>title<br>To err is human<br><br>id<br>by8i8v<br><br>date_created<br>2025/11/27 23:20 (PT)<br><br>research_questions<br>Automation can be used to check for errors in scientific manuscripts, and inform authors about possible corrections. In this study we examine the usefulness of metacheck to improve best practices.<br><br>study_design_overview<br>Two conditions. In one, researchers receive automated feedback. In the control condition, they do not receive feedback.<br><br>sample_size<br>We randomly assigned 50 scientists to a condition where their manuscript was automatically checked for errors, and 50 scientists to a control condition with a checklist.<br><br>statistical_tests<br>We will perform an independent t-test on the number of mistakes in each group.<br><br>existing_data_explanation<br>No, no data have been collected for this study yet.<br><br>design_dependent_variables<br>We will code all manuscripts for mistakes, and count the total number of mistakes per manuscript.<br><br>outliers_and_exclusions<br>none are expected.<br><br>additional_comments<br>We also measured the expertise of researchers (in years) to explore whether the automated tool would be more useful, the less research experience researchers had. We also asked researchers to rate how useful they found the checklist or app on a scale from 1 (not at all) to 7 (extremely useful).\", \n    paper_quotes = NA_character_, prereg_quotes = NA_character_), row.names = c(NA, \n-1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 5, FALSE)\n```\n\n\n:::\n",
+          "::: {.callout-tip title=\"Learn More\" collapse=\"true\"}\n\nRegCheck was developed by Jamie Cummins (<https://github.com/JamieCummins/regcheck>); the local Ollama server bundled in metacheck is inspired by the Ollama integration work of Matilda Fogato (<https://github.com/Matilda03/regcheck-fork>).\n\nFor metascientific articles demonstrating the rate of deviations from preregistrations, see:\n\nvan den Akker O, Bakker M, van Assen M, Pennington C, Verweij L, Elsherif M, Claesen A, Gaillard S, Yeung S, Frankenberger J, Krautter K, Cockcroft J, Kreuer K, Evans T, Heppel F, Schoch S, Korbmacher M, Yamada Y, Albayrak-Aydemir N, Wicherts J (2024). &ldquo;The potential of preregistration in psychology: Assessing preregistration producibility and preregistration-study consistency.&rdquo; <em>Psychological Methods<\/em>. <a href=\"https://doi.org/10.1037/met0000687\">doi:10.1037/met0000687<\/a>.\n\nFor educational material on how to report deviations from preregistrations, see:\n\nLakens, Daniël (2024). &ldquo;When and How to Deviate From a Preregistration.&rdquo; <em>Collabra: Psychology<\/em>, <b>10<\/b>(1), 117094. <a href=\"https://doi.org/10.1525/collabra.117094\">doi:10.1525/collabra.117094<\/a>.\n\n:::\n"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "info"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "RegCheck compared the paper with 2 preregistrations on 2 dimensions, and flagged 0 potential deviations (0 dimensions not specified in the preregistration)."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 4,
+        "names": [
+          "paper_id",
+          "regcheck_deviations",
+          "regcheck_consistent",
+          "regcheck_unclear"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "0956797613520608",
+              "0956797614522816",
+              "0956797614527830",
+              "to_err_is_human"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0,
+              0,
+              0,
+              2
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0,
+              0,
+              0,
+              0
+            ]
+          }
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -33,6 +33,7 @@ import os
 import shutil
 import subprocess
 import tempfile
+import typing
 from collections.abc import Sequence
 from dataclasses import dataclass, field
 from typing import Any
@@ -110,7 +111,7 @@ class Sym:
     """An R symbol (interned: compare with ``is``)."""
 
     __slots__ = ("name",)
-    _table: dict[str, Sym] = {}
+    _table: typing.ClassVar[dict[str, Sym]] = {}
 
     def __new__(cls, name: str) -> Sym:
         sym = cls._table.get(name)
@@ -602,7 +603,7 @@ class _Parser:
         use_wcs = False
         while True:
             c = self.getc()
-            if c == R_EOF or c == quote:
+            if c in (R_EOF, quote):
                 break
             if c == 0x0A:
                 self.ungetc(c)
@@ -759,13 +760,11 @@ class _Parser:
             self.yylval = Sym(text)
             return SYMBOL
         if use_wcs and oct_or_hex:
-            raise self.lex_error(
-                "mixing Unicode and octal/hex escapes in a string is not allowed"
-            )
+            raise self.lex_error("mixing Unicode and octal/hex escapes in a string is not allowed")
         self.yylval = Const(text, "character")
         return STR_CONST
 
-    def raw_string_value(self, c0: int, c: int) -> int:
+    def raw_string_value(self, c0: int, c: int) -> int:  # noqa: ARG002 - as in R
         quote = c
         ndash = 0
         while self.nextchar(0x2D):
@@ -1260,7 +1259,7 @@ class _Parser:
 
     # -- grammar actions -----------------------------------------------------
 
-    def _action(self, rule: int, v: list[Any], locs: list[_Loc], loc: _Loc) -> Any:
+    def _action(self, rule: int, v: list[Any], locs: list[_Loc], loc: _Loc) -> Any:  # noqa: ARG002
         if rule == 2:
             return (0, None)
         if rule == 3:
@@ -1358,9 +1357,7 @@ class _Parser:
                 raise RParseError("bad value")
             for name, _ in formals.items:
                 if name is v[2]:
-                    raise self.parse_error_at(
-                        f"repeated formal argument '{v[2].name}'", locs[2]
-                    )
+                    raise self.parse_error_at(f"repeated formal argument '{v[2].name}'", locs[2])
             default = MISSING if rule == 92 else v[4]
             return Formals([*formals.items, [v[2], default]])
         if rule == 94:
@@ -1402,11 +1399,7 @@ class _Parser:
         if expr.fun.name not in ("[", "[[", "$", "@") or not expr.args:
             return None
         arg1 = expr.args[0]
-        phcell = (
-            arg1
-            if arg1[1] is PLACEHOLDER_TOKEN
-            else self._extractor_chain(rhs, arg1[1], loc)
-        )
+        phcell = arg1 if arg1[1] is PLACEHOLDER_TOKEN else self._extractor_chain(rhs, arg1[1], loc)
         if phcell is not None and any(_has_placeholder(a[1]) for a in expr.args[1:]):
             raise self.parse_error_at("pipe placeholder may only appear once", loc)
         return phcell
@@ -1638,7 +1631,7 @@ def _parse_errors_r(texts: Sequence[Sequence[str | None]], script: str) -> list[
         with open(code, "w", encoding="utf-8") as fh:
             fh.write(_R_SCRIPT)
         env = {**os.environ, "LANG": "C.UTF-8", "LC_ALL": "C.UTF-8"}
-        subprocess.run(
+        subprocess.run(  # noqa: S603 - our own script, paths we created
             [script, "--vanilla", code, src, dst],
             check=True,
             capture_output=True,

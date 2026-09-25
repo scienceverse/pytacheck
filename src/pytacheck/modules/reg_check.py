@@ -74,6 +74,50 @@ def _strip_refs(values: Sequence[Any]) -> list[str | None]:
     return list(gsub(_REFS, "", _chr(values)))
 
 
+def _tolower(x: str) -> str:
+    """R ``tolower()``: the per-character (simple) lower-case mapping.
+
+    Python's ``str.lower()`` applies Unicode's full, context-sensitive mapping
+    (``"İ"`` -> ``"i̇"``, a word-final ``"Σ"`` -> ``"ς"``); R lowers each
+    character on its own (``"İ"`` -> ``"i"``, ``"Σ"`` -> ``"σ"``).
+    """
+    if x.isascii():
+        return x.lower()
+    return "".join((c.lower() or c)[0] for c in x)
+
+
+def _judgements(values: Sequence[Any]) -> list[str | None]:
+    """``tolower(trimws(x))`` of a judgement column (``None`` for ``NA``)."""
+    return [None if v is None else _tolower(trimws(v)) for v in _chr(values)]
+
+
+def _take(values: list[Any], rows: Sequence[int | None]) -> list[Any]:
+    """Cells *rows* of a column; ``None`` selects an ``NA`` (base R ``df[NA, ]``).
+
+    A missing column (``[]``, R ``NULL``) stays empty.
+    """
+    return [None if i is None else values[i] for i in rows] if values else []
+
+
+def _data_frame(columns: dict[str, list[Any]]) -> pd.DataFrame:
+    """``data.frame()`` of character columns (a ``NULL`` column has length 0).
+
+    Columns are recycled to the longest one when its length is a multiple of
+    theirs; otherwise R stops with "arguments imply differing number of rows".
+    """
+    lengths = [len(v) for v in columns.values()]
+    nr = max(lengths, default=0)
+    if any(n < nr and (n == 0 or nr % n) for n in lengths):
+        shown = ", ".join(str(n) for n in dict.fromkeys(lengths))
+        raise ValueError(f"arguments imply differing number of rows: {shown}")
+    return pd.DataFrame(
+        {
+            name: pd.Series(values * (nr // len(values)) if values else [], dtype="string")
+            for name, values in columns.items()
+        }
+    )
+
+
 def _cell_text(value: Any) -> str | None:
     """``as.character(val)[[1]]`` of one cell (list cells as R deparses them)."""
     if isinstance(value, list | tuple):
@@ -141,7 +185,7 @@ def _full_text(paper: Any) -> str:
     """``paste(p$text$text, collapse = " ")``."""
     if paper is None:
         return ""
-    text = paper["text"]
+    text = paper.get("text")  # R: p$text is NULL when absent
     if text is None or "text" not in text.columns:
         return ""
     return " ".join("NA" if is_na(t) else str(t) for t in text["text"].tolist())
@@ -329,8 +373,8 @@ def reg_check(
     tl = "info"
 
     # summary counts ----
-    judgements = _chr(_col(regcheck_table, "deviation_judgement"))
-    j: list[str | None] = [None if v is None else trimws(v).lower() for v in judgements]
+    raw_judgements = _col(regcheck_table, "deviation_judgement")
+    j = _judgements(raw_judgements)
     paper_col = _chr(_col(regcheck_table, "paper_id"))
     prereg_col = _chr(_col(regcheck_table, "prereg_id"))
     if len(j) != len(paper_col):
@@ -372,32 +416,49 @@ def reg_check(
     # report ----
     report_intro = f"{summary_text} {_DISCLAIMER}"
 
+    report_cols = {
+        name: _col(regcheck_table, name)
+        for name in (
+            "dimension",
+            "deviation_information",
+            "paper_summary",
+            "prereg_summary",
+            "paper_quotes",
+            "prereg_quotes",
+        )
+    }
+    report_cols["deviation_judgement"] = raw_judgements
+
     prereg_sections: list[Any] = []
     for rid in dict.fromkeys(prereg_col):
-        mask = [r == rid for r in prereg_col]
-        sub = regcheck_table.loc[mask]
-        raw = _col(sub, "deviation_judgement")
-        sub_j = [None if v is None else trimws(as_character(v)).lower() for v in raw]
-        labels = [_JUDGEMENT_LABEL.get(v) if v is not None else None for v in sub_j]
+        # R: regcheck_table[regcheck_table$prereg_id == rid, ] on a data.frame,
+        # where an NA comparison selects a row of NAs (so an NA rid gives only
+        # NA rows, and rows with an NA prereg_id add NA rows to every section)
+        if rid is None:
+            rows: list[int | None] = [None] * len(prereg_col)
+        else:
+            rows = [
+                None if r is None else i for i, r in enumerate(prereg_col) if r is None or r == rid
+            ]
+
+        raw = _take(report_cols["deviation_judgement"], rows)
         labels = [
-            lab if lab is not None else as_character(orig)
-            for lab, orig in zip(labels, raw, strict=True)
+            _JUDGEMENT_LABEL.get(v, as_character(orig)) if v is not None else None
+            for v, orig in zip(_judgements(raw), raw, strict=True)
         ]
-        dimension = pd.Series(_chr(_col(sub, "dimension")), dtype="string")
-        judgement_table = pd.DataFrame(
+        dimension = _chr(_take(report_cols["dimension"], rows))
+        judgement_table = _data_frame(
             {
                 "dimension": dimension,
-                "judgement": pd.Series(labels, dtype="string"),
-                "explanation": pd.Series(
-                    _strip_refs(_col(sub, "deviation_information")), dtype="string"
-                ),
+                "judgement": labels,
+                "explanation": _strip_refs(_take(report_cols["deviation_information"], rows)),
             }
         )
-        evidence_table = pd.DataFrame(
+        evidence_table = _data_frame(
             {
                 "dimension": dimension,
                 **{
-                    col: pd.Series(_strip_refs(_col(sub, col)), dtype="string")
+                    col: _strip_refs(_take(report_cols[col], rows))
                     for col in ("paper_summary", "prereg_summary", "paper_quotes", "prereg_quotes")
                 },
             }

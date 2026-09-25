@@ -1,0 +1,40 @@
+{
+  "id": "data_strip_qualtrics_header.review.na_leading_text_column",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 2,
+    "names": [
+      "StartDate",
+      "EndDate",
+      "Q1"
+    ],
+    "v": [
+      {
+        "t": "dbl",
+        "v": [
+          1,
+          2
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          3,
+          4
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "x"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

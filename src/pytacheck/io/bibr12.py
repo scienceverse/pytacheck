@@ -37,7 +37,7 @@ import numpy as np
 import orjson
 import pandas as pd
 
-from pytacheck._r.base import as_character
+from pytacheck._r.base import as_character, trimws
 from pytacheck._r.regex import grepl, is_na, sub
 from pytacheck.papers.model import Paper
 from pytacheck.papers.schema import (
@@ -55,6 +55,7 @@ __all__ = [
     "is_bibr12",
     "paper_to_bibr12",
     "read_bibr12",
+    "write_bibr12",
 ]
 
 # The columns of each 12.0 table, in the order bibr writes them, and their
@@ -472,7 +473,9 @@ def _column_values(v: Any) -> list[Any]:
     return [None if _scalar_na(e) else e for e in v]
 
 
-def _bibr12_columns(columns: Mapping[str, Any], cols: Mapping[str, str], n: int) -> dict[str, list[Any]]:
+def _bibr12_columns(
+    columns: Mapping[str, Any], cols: Mapping[str, str], n: int
+) -> dict[str, list[Any]]:
     """The typed columns of ``.bibr12_df()``, as lists (``None`` for NA).
 
     Scalar columns hold values of the column's type (converted as ``unlist()``
@@ -568,12 +571,11 @@ def _bibr12_records(
     scalar = [col for col, typ in cols.items() if typ in _SCALAR_SCHEMA and col not in drop]
     special = [(col, typ) for col, typ in cols.items() if typ in ("chr[]", "int[]", "chr[][]")]
     out = []
-    for r in records:
-        if not isinstance(r, dict):
-            r = {}
+    for row in records:
+        r: dict[str, Any] = row if isinstance(row, dict) else {}
         rec: dict[str, Any] | None = None
         for col in scalar:
-            v = r.get(col)
+            v: Any = r.get(col)
             t = type(v)
             if v is None or t is str or t is float or t is bool:
                 continue
@@ -781,8 +783,6 @@ def _bibr12_doi(x: Sequence[Any]) -> list[str | None]:
         if s is None:
             out.append(None)
             continue
-        from pytacheck._r.base import trimws
-
         s = str(trimws(s)).lower()
         s = sub(r"^(https?://(dx\.)?doi\.org/|doi:\s*)", "", s)
         out.append(s if grepl(r"^10\.[0-9]{4,9}/\S+$", s) else None)
@@ -1027,12 +1027,6 @@ def paper_to_bibr12(paper: Paper) -> dict[str, Any]:
 
 
 _paper_to_bibr12 = paper_to_bibr12
-
-
-def _values(v: Any) -> list[Any]:
-    if isinstance(v, pd.Series):
-        return [None if is_na(e) else e for e in v.tolist()]
-    return list(v)
 
 
 def _info_first(info: pd.DataFrame, col: str, na_if_missing: bool = False) -> Any:

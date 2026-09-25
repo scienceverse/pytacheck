@@ -1,0 +1,14 @@
+{
+  "id": "parse_codebook.escapes.rtf",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "Times; Riched20; age: Age in years sex: 1 = m e9le; 2 = f ?male brace and and backslash next bold text hyphen nbsp"
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

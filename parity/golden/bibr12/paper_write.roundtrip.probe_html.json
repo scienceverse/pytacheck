@@ -2,9 +2,7 @@
   "id": "paper_write.roundtrip.probe_html",
   "ok": true,
   "error": null,
-  "warnings": [
-    "path[1]=\"/tmp/Rtmpmffufb/pc_bibr12_32d931b4b5c9\": No such file or directory"
-  ],
+  "warnings": [],
   "value": {
     "t": "paper",
     "names": [

@@ -84,10 +84,14 @@ def _dollar(df: pd.DataFrame, name: str) -> pd.Series | None:
 
 
 def _tolower(s: str) -> str:
-    """R ``tolower()``: ``towlower()`` per character (no multi-character mappings)."""
+    """R ``tolower()``: ``towlower()`` per character (no multi-character mappings).
+
+    The one character whose full lower case is two characters, ``"İ"``
+    (U+0130), becomes a plain ``"i"`` as glibc's ``towlower()`` makes it.
+    """
     if s.isascii():
         return s.lower()
-    return "".join(lc if len(lc := c.lower()) == 1 else c for c in s)
+    return "".join(lc if len(lc := c.lower()) == 1 else lc[0] for c in s)
 
 
 def _last_ext(name: str) -> str:

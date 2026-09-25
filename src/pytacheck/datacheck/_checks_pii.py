@@ -21,7 +21,9 @@ from pytacheck.datacheck._checks_rvec import (
     scalar_chr,
     tolower,
     trim,
+    trimmed_counts,
     unique,
+    weighted_median,
 )
 
 __all__ = [
@@ -208,14 +210,18 @@ def data_check_pii_values(x: Any, broad_min_frac: float = 0.30) -> dict[str, Any
     ``values`` holds the matched pattern names, never the data.
     """
     none: dict[str, Any] = {"problem": False, "message": "", "values": None}
-    xs = [t for s in chr(x) if s is not None and (t := trim(s)) != ""]  # type: ignore[misc]
-    if len(xs) < 3:
+    counts = trimmed_counts(x)  # each distinct value is matched once
+    n_total = sum(counts.values())
+    if n_total < 3:
         return none
+    uniq = list(counts)
     hits: list[str] = []
     names: list[str] = []
     for nm, spec in _PII_VALUE_PATTERNS.items():
-        m = grepl(spec["regex"], xs, perl=True)
-        matched = [s for s, hit in zip(xs, m, strict=True) if hit]
+        need = _PII_PREFILTER[nm]
+        cand = [s for s in uniq if need(s)]
+        m = grepl(spec["regex"], cand, perl=True) if cand else []
+        matched = [s for s, hit in zip(cand, m, strict=True) if hit]
         if not matched:
             continue
         validate = spec.get("validate")
@@ -224,8 +230,8 @@ def data_check_pii_values(x: Any, broad_min_frac: float = 0.30) -> dict[str, Any
             matched = [s for s in matched if vfun(s)]
             if not matched:
                 continue
-        n_valid = len(matched)
-        frac = n_valid / len(xs)
+        n_valid = sum(counts[s] for s in matched)
+        frac = n_valid / n_total
         flag = n_valid >= 1 if spec["kind"] == "specific" else frac >= broad_min_frac
         if flag:
             hits.append(f"{nm} ({n_valid} value{plural(n_valid)}, {fmt_pct0(100 * frac)}%)")
@@ -239,6 +245,18 @@ def data_check_pii_values(x: Any, broad_min_frac: float = 0.30) -> dict[str, Any
         ),
         "values": names,
     }
+
+
+_NO_DIGITS = str.maketrans("", "", "0123456789")
+
+#: A cheap test each pattern's matches must pass (a literal the regex requires),
+#: so the regex only runs on candidate values: exact, never a false negative.
+_PII_PREFILTER: dict[str, Any] = {
+    "email": lambda s: "@" in s,
+    "ip_address": lambda s: s.count(".") >= 3,
+    "ssn": lambda s: s.count("-") >= 2,
+    "credit_card": lambda s: len(s) - len(s.translate(_NO_DIGITS)) >= 13,
+}
 
 
 def _pii_split_name(x: Any) -> list[str | None]:
@@ -365,19 +383,23 @@ def data_check_pii_freetext(
     v = rvec(x)
     if v.is_numeric:
         return none
-    xs = [t for s in chr(v) if s is not None and (t := trim(s)) != ""]  # type: ignore[misc]
-    if len(xs) < 5:
+    counts = trimmed_counts(v)
+    n_total = sum(counts.values())
+    if n_total < 5:
         return none
-    lens = [len(s) for s in xs]
-    med = median(lens)
-    uniq_frac = len(set(xs)) / len(xs)
+    med = weighted_median((len(s), c) for s, c in counts.items())
+    uniq_frac = len(counts) / n_total
     if med < min_median_chars or uniq_frac < min_unique_frac:
         return none
-    multi = grepl(r"\w\s+\w", xs)
-    if sum(multi) / len(xs) < min_multiword_frac:
+    uniq = list(counts)
+    multi = grepl(r"\w\s+\w", uniq)
+    if (
+        sum(counts[s] for s, hit in zip(uniq, multi, strict=True) if hit) / n_total
+        < min_multiword_frac
+    ):
         return none
-    dist = [abs(n - med) for n in lens]
-    typical = xs[dist.index(min(dist))]
+    # x[order(abs(nchar(x) - med))][1]: the first value (in data order) closest to the median
+    typical = min(uniq, key=lambda s: abs(len(s) - med))
     n_alpha = sum(1 for c in typical if "A" <= c <= "Z" or "a" <= c <= "z")
     alpha_frac = n_alpha / len(typical) if typical else 0
     if alpha_frac < min_alpha_frac:
