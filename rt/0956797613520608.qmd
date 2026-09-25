@@ -1,0 +1,800 @@
+---
+title: MetaCheck Report
+subtitle: "Mirror neurons, originally discovered in macaque monkeys using single-cell recordings, are active when an animal is either performing a particular action or observing another agent performing the same or a similar action (di"
+metacheck:
+  version: "0.3.1 (pytacheck 0.3.1.dev1)"
+  report-created: "2026-09-25"
+format:
+  html:
+    theme: 
+      light: flatly
+      dark: darkly
+    respect-user-color-scheme: true
+    toc: true
+    toc-title: >
+      <ul class="emoji-key">
+        <li class="red">⚠️ possible problems detected;</li> 
+        <li class="yellow">🔍 something to check;</li> 
+        <li class="green">✅️ no problems detected;</li>  
+        <li class="info">ℹ️ informational only;</li>  
+        <li class="na">⬜ not applicable;</li>  
+        <li class="fail">☠️ check failed</li>
+      <ul>
+      <hr/>
+      **Table of Contents**
+    toc-location: right
+    toc-expand: 3
+    page-layout: full
+    title-block-banner: "#15342A"    #"#327118"
+    title-block-banner-color: "white"
+    link-external-newwindow: true
+    embed-resources: true
+    format-links: false
+    smooth-scroll: true
+execute: 
+  echo: false
+  error: true
+---
+
+<style>
+  #TOC * { border-left: none; }
+  #TOC > ul { border-left: 1px solid #15342A; }
+  #TOC > ul > li > ul > li { text-indent: -1.2em; margin-left: 1.2em; }
+  main h2, main h3 { margin-left: -20px; }
+  main h2 { font-size: 150%; font-face: italics; }
+  main h3 { font-size: 125%; }
+  main h4 { font-size: 110%; }
+  .emoji-key li { margin-bottom: 0.5em; }
+  section::before { content: '' !important; }
+  th { background-color: #555; color: white; }
+  table.dataTable, .dataTables_scrollBody { margin: 0.5em 0; }
+  #info { position: absolute; top: 2.5em; right: 2.5em; color: white; }
+  #info a { color: white !important; }
+  .quarto-dark tr.even { background-color: #333; }
+  .quarto-dark tr.odd { background-color: #222; }
+  .quarto-dark div.datatables { color: white; }
+  .quarto-dark table.dataTable { border: 1px solid #555; }
+  table strong { color: red; }
+  .quarto-dark table strong { color: yellow; }
+  summary { color: #333; }
+  .quarto-dark summary { color: #CCC; }
+  .validation { display: block; 
+                border: 2px solid #15342A; 
+                border-radius: 1em; 
+                padding: 0.5em 1em 0; 
+                margin-bottom: 0.5em;
+                background-color: #15342A33;}
+</style>
+
+::: {#info}
+[MetaCheck](http://www.scienceverse.org/metacheck) version {{< meta metacheck.version >}}  
+Report Created: {{< meta metacheck.report-created >}}  
+DOI: [10.1177/0956797613520608](https://doi.org/10.1177/0956797613520608) <!-- doi, if exists -->
+:::
+
+[Metacheck](https://www.scienceverse.org/metacheck/) is a tool that screens scientific manuscripts and aims to identify potential issues for improvement. Our goal is to guide researchers towards best practices, especially with respect to practices that researchers easily forget, or might not have learned about yet. Metacheck is developed to help researchers correctly and completely report statistical results, will point to possibly relevant information about citations, and provides feedback about data and code sharing.
+
+Metacheck combines existing and new checks in a module-based tool. It is open source, and anyone can contribute modules. It mainly relies on text search or retrieving information from external sources through API’s or web-scraping, but the power modules can optionally use large language models. The use of LLM's is always optional and opt-in. The development of Metacheck is guided by our [values statement](https://www.scienceverse.org/metacheck/#our-values).
+
+::: {.validation}
+In light with our values, our modules are validated on sets of open-access papers. In each validated module, there will be a sentence explaining the prevalence of false positives (incorrect detection/classification) and false negatives (incorrect omission). For example, if a hypothetical module detects the inappropriate practice of "woozling", the sentence might read:
+
+> In a sample of 250 papers from the *Journal of X*, there were 350 instances of woozling. This module correctly detected 340 of them, and incorrectly identified 7. Therefore 3% of true instances are missed, and 2% of detections are false positives.
+
+There is an inherent tradeoff between false positives and false negatives. Many of our modules are designed like "smoke detectors", where they are more likely to detect a practice that needs attention, but also more likely to incorrectly flag something. Therefore, you need to check the output of each module, keeping the validated error rates in mind.
+:::
+
+Metacheck is under continuous development. It can be surprisingly difficult to automatically retrieve information from papers, and there is a large amount of edge-cases where our tool might not yet work accurately. By using our tool, and providing us with feedback about what we can't get right yet, you will help to improve the tool for all other users. Issues can be submitted [on Github](https://github.com/scienceverse/metacheck/issues), and suggestions for improvement or feedback can be sent to [metacheck@scienceverse.org](mailto:metacheck@scienceverse.org).
+
+
+## Summary
+
+- ✅️ [Funding Check](#funding-check){.green}: A funding statement was detected.  
+- ✅️ [COI Check](#coi-check){.green}: A conflict of interest statement was detected.  
+- ℹ️ [List All URLs](#list-all-urls){.info}:   
+- ⚠️ [Open Practices Check](#open-practices-check){.red}: Neither shared data nor code detected.  
+- ✅️ [Ethics Approval Check](#ethics-approval-check){.green}: All papers that appeared to involve live data collection contained an ethics approval statement.  
+- ✅️ [Funding Check (Overinclusive)](#funding-check-(overinclusive)){.green}: A funding statement was detected.  
+- ✅️ [COI Check Overinclusive](#coi-check-overinclusive){.green}: A conflict of interest statement was detected.  
+- ⬜ [Preregistration Check](#preregistration-check){.na}: No preregistration links were found.  
+- ⬜ [Power Analysis Check](#power-analysis-check){.na}: No power analyses were detected.  
+- ⬜ [Repository Check](#repository-check){.na}: We found no links to repositories on the Open Science Framework, Github, ResearchBox, DSpace, Zenodo, Dataverse, Figshare, Dryad, ReShare, 4TU.ResearchData, Mendeley Data, or DataONE.  
+- ⬜ [Code Check](#code-check){.na}: We found 0 R, 0 Python, 0 SAS, 0 SPSS, 0 Stata, 0 Mplus, 0 MATLAB, and 0 JASP code files.  
+- ✅️ [StatCheck](#statcheck){.green}: We detected no errors in t-tests or F-tests.  
+- ✅️ [Exact P-Values](#exact-p-values){.green}: We found no imprecise *p* values or *p*-values of exactly zero out of 6 detected.  
+- ✅️ [Non-Significant P Value Check](#non-significant-p-value-check){.green}: We detected no nonsignificant p values.  
+- ⚠️ [Effect Sizes in t-tests and F-tests](#effect-sizes-in-t-tests-and-f-tests){.red}: All effect sizes were reported, but some appear inconsistent with the test statistic. This can be because the effect size is not clearly labeled (e.g., d, instead of d_rm), because the effect sizes is not reported with enough precisions (e.g., 0.3 instead of 0.32), or because the effect size is incorrectly reported.  
+- ✅️ [Marginal Significance](#marginal-significance){.green}: You described 0 effects with terms related to 'marginally significant'.  
+- ℹ️ [List All P-Values](#list-all-p-values){.info}: We found 6 p-values  
+- ⬜ [Data Check](#data-check){.na}: We found no files to analyse.  
+- ⬜ [Codebook Check](#codebook-check){.na}: We found no extracted data columns to check against a codebook.  
+- ⬜ [Psych-DS Check](#psych-ds-check){.na}: We found no repository files to check for Psych-DS compliance.  
+- ⬜ [Reproducibility Check](#reproducibility-check){.na}: 
+    -  We found no R code files to assess for reproducibility.  
+- ✅️ [Reference Accuracy](#reference-accuracy){.green}: We checked the 0 references that supplied a DOI against the record that DOI points to, and found 0 incoherent references to check for parsing errors or mistakes. 4 references had no DOI and could not be checked. Incoherent references are mostly PDF parsing errors (we are working on improving reference parsing). Adding a DOI to every reference that has one lets the other reference checks (retraction, PubPeer, and replication) run on them too.  
+- ⬜ [Replication Check](#replication-check){.na}: No citations to articles in the FLoRA database were found.  
+- ⬜ [RetractionWatch](#retractionwatch){.na}: No citations to articles in the RetractionWatch database were found.  
+- ℹ️ [Summarise References](#summarise-references){.info}: Summary information provided for 41 references  
+- ⚠️ [Reference Consistency](#reference-consistency){.red}: There are cross-references that are not in the bibliography and/or bibliography entries not cross-referenced in the text  
+- ✅️ [Miscitation](#miscitation){.green}: We detected no miscited papers  
+- ☠️ [ref_pubpeer](#ref_pubpeer){.fail}: This module failed to run  
+
+
+
+## General Modules
+
+### ✅️ Funding Check {#funding-check .green}
+
+A funding statement was detected.
+
+<details><summary>View detailed feedback</summary><div>
+
+The following funding statement was detected:
+
+```{r}
+#| echo: false
+
+# table data --------------------------------------
+table <- structure(list("J. Michael was supported by a grant from the European Cooperation in Science and Technology Short-Term Scientific MissionBM0605-8202. M. Overgaard and K. Sandberg were supported by a starting grant from the European Research Council."), names = "", class = "data.frame", row.names = c(NA, 
+-1L))
+
+# display table -----------------------------------
+metacheck::report_table(table, "auto", 2, FALSE)
+```
+
+</div></details>
+
+::: {.callout-note title="How It Works" collapse="true"}
+
+Identify and extract funding statements.
+
+The Funding Check module uses regular expressions to check sentences for words related to funding statements. It will return the sentences in which the conflict of interest statement was found.
+
+The function incorporates code from [rtransparent](https://github.com/serghiou/rtransparent), which is no longer maintained. For their validation, see [the paper](https://doi.org/10.1371/journal.pbio.3001107).
+
+This module was developed by Daniel Lakens
+
+:::
+
+### ✅️ COI Check {#coi-check .green}
+
+A conflict of interest statement was detected.
+
+<details><summary>View detailed feedback</summary><div>
+
+The following conflict of interest statement was detected.
+
+```{r}
+#| echo: false
+
+# table data --------------------------------------
+table <- structure(list("The authors declared that they had no conflicts of interest with respect to their authorship or the publication of this article."), names = "", class = "data.frame", row.names = c(NA, 
+-1L))
+
+# display table -----------------------------------
+metacheck::report_table(table, "auto", 2, FALSE)
+```
+
+</div></details>
+
+::: {.callout-note title="How It Works" collapse="true"}
+
+Identify and extract Conflicts of Interest (COI) statements.
+
+The COI Check module uses regular expressions to check sentences for words related to conflict of interest statements. It will return the sentences in which the conflict of interest statement was found.
+
+The function incorporates code from [rtransparent](https://github.com/serghiou/rtransparent), which is no longer maintained. For their validation, see [the paper](https://doi.org/10.1371/journal.pbio.3001107).
+
+This module was developed by Daniel Lakens
+
+:::
+
+### ℹ️ List All URLs {#list-all-urls .info}
+
+...
+
+::: {.callout-note title="How It Works" collapse="true"}
+
+List all the URLs in the main text.
+
+Checks for valid URLs using a regular expression.
+
+This module was developed by Daniel Lakens
+
+:::
+
+### ⚠️ Open Practices Check {#open-practices-check .red}
+
+Neither shared data nor code detected.
+
+::: {.callout-note title="How It Works" collapse="true"}
+
+This module searches for open data, code, materials, and registration statements.
+
+It is much faster than the previous ODDPub version of this module, and has a lower false negative rate, but also a higher false positive rate.
+
+This module was developed by Lisa DeBruine
+
+:::
+
+### ✅️ Ethics Approval Check {#ethics-approval-check .green}
+
+All papers that appeared to involve live data collection contained an ethics approval statement.
+
+<details><summary>View detailed feedback</summary><div>
+
+Based on the following text, we would expect an ethics approval statement, and it was present:
+
+> Each participant took part in a preliminary session in which a T1 structural scan was performed, and then in two experimental sessions, each of which was preceded by a TMS session (see Fig. 2).
+
+> After completing their second experimental session, participants were debriefed.
+
+> In the intermediate block, participants were asked to choose the object that best complemented the action pantomimed.
+
+> In each block, participants completed 80 trials (depicting 40 hand actions and 40 mouth actions), the order of which was randomized.
+
+> Participants were instructed to complete each trial as quickly and accurately as possible.
+
+> In the simple block, the three images were of a hand or mouth, and participants were told to "choose the image that depicts the same action as the video you just saw."
+
+> Participants were then shown three new images, from which they had to choose the one that best complemented the video.
+
+> For this reason, participants were asked immediately prior to the administering of cTBS in this experiment to clench their fist while relaxing their lip, and then to relax their fist while squeezing their lips together, in alternation, for 5 min.
+
+> Also using rTMS to create virtual lesions in left IFG, Tidoni, Borgomaneri, di Pellegrino, and Avenanti (2013) found that participants were impaired in identifying videos of actions in which the actor was attempting to deceive them about the weight of an object, and Urgesi, Candidi, Ionta, and Aglioti (2006) reported that rTMS over left ventral PMC specifically impaired visual discrimination of actions but not visual discrimination of bodily identity.
+
+Ethics approval statement:
+
+> The ethics committee for the region of Midtjylland, Denmark, approved the experiment.
+
+</div></details>
+
+::: {.callout-note title="How It Works" collapse="true"}
+
+This module searches for statements of ethics approval, IRB approval,
+institutional review board approval, and related terms.
+
+Patterns are designed to capture:
+
+**Human research committee names**
+- `Institutional Review Board` / IRB (US standard)
+- `Independent Ethics Committee` / IEC (ICH-GCP international clinical trial term)
+- `Ethical/Ethics Review Board` (generic)
+- `Ethics (Advisory/Review) Committee/Board/Panel/Sub-committee`
+- `Research Ethics Committee/Board/Panel` (UK/Canada/Australia)
+- `Medical Ethics Committee`
+- `Human Subjects/Research Committee` / `Human Research Ethics (Advisory) Panel`
+- `Committee for/on the Protection of Human Subjects`
+- `Committee on (Health) Research Ethics`
+- `Office of Research Ethics`
+- Abbreviations: IEC, REC, REB, ERB, METC, DEC. REC/REB/ERB/DEC are short
+  enough to collide with unrelated jargon (e.g. `REC` as a recognition-heuristic
+  model abbreviation, `DEC` as a decision-task label, `Reb` as an author surname),
+  so these four require an ethics/approval/committee/board/panel/institutional/
+  protocol word within ~30 characters in the same sentence. IRB and IEC are kept
+  unconstrained as they are not observed to collide in practice.
+- Dutch: `Medisch-ethische toetsingscommissie` (METC)
+- French: `Comité d'éthique` / `Comité d'Ethique`
+
+**Animal research committee names**
+- `Institutional Animal Care and Use Committee` / IACUC (US standard)
+- Any sentence containing `animal(s)` and `committee` (or `board`/`panel`) within ~5 words
+  of each other — catches `Experimental Animal Care and Use Committee`,
+  `Animal Ethics Committee`, `Animal Welfare Board`, `Animal Welfare Ethical Review Body`, etc.
+- UK: `Animal Welfare Ethical Review Body` / AWERB
+- Dutch: `Dierexperimentencommissie` / DEC (see DEC constraint above); `Instantie voor Dierenwelzijn` / IvD
+- German: `Tierversuchskommission` / TvK (advisory committee under §15 Tierschutzgesetz)
+- French: `Comité d'éthique en expérimentation animale` / CEEA; `Comité d'éthique animale`
+- Spanish: `Comité de ética en experimentación animal` / CEEA
+
+**Approval phrasing**
+- `Ethics/Ethical (approval|clearance) [was] (granted|obtained|received|given|secured)`
+- `Ethically approved`
+- `Approved by the (ethics|irb|institutional|independent|local|review|research) ...`
+- `This/The study/protocol/experiment/procedures/methods/research [was] (approved|reviewed) by`
+- `Study was ethically approved`
+- `(Followed|met|follow) the ethical (guidelines|standards|requirements)`
+- `In accordance with ... ethical (guidelines|standards)`
+- `Ethics protocol`
+- `Approved under (protocol|reference|number)`
+
+**Waiver / exemption**
+- `Ethics/Ethical (waiver|exemption)`
+- `IRB (waiver|exemption|exempt)`
+- `Exempted from (ethics|irb|institutional review)`
+- `Waived by the (ethics|irb|institutional|review) (committee|board)`
+- `Deemed exempt`
+
+**Declaration of Helsinki**
+- `Declaration of Helsinki` / `Helsinki Declaration`
+
+Patterns are NOT designed to capture:
+- General ethical considerations or ethical dilemmas in study content
+- Mentions of "ethics" in theoretical or philosophical contexts
+- Author approval of a manuscript (e.g. "all authors approved the final version")
+- Ethical behaviour as a measured variable (e.g. "ethical decision-making")
+- URLs containing "ethics" in path components
+
+Live data collection is detected by the internal helper `.detect_live_data()`,
+which searches for sentences indicating that data were collected directly from
+human or animal participants. Papers without any live-data signal are not
+flagged as missing ethics approval. The helper uses conservative patterns to
+avoid flagging secondary data analyses, computational experiments, or
+economics papers that analyse existing survey data. See `.detect_live_data()`
+for the full list of patterns and intentional exclusions.
+
+:::
+
+### ✅️ Funding Check (Overinclusive) {#funding-check-(overinclusive) .green}
+
+A funding statement was detected.
+
+<details><summary>View detailed feedback</summary><div>
+
+The following funding statement was detected:
+
+```{r}
+#| echo: false
+
+# table data --------------------------------------
+table <- structure(list(c("J. Michael was supported by a grant from the European Cooperation in Science and Technology Short-Term Scientific MissionBM0605-8202. M. Overgaard and K. Sandberg were supported by a starting grant from the European Research Council.", 
+"The project could not have been completed without the generous support and advice of Alessandro D'Aussilio and Luciano Fadiga."
+)), names = "", class = "data.frame", row.names = c(NA, -2L))
+
+# display table -----------------------------------
+metacheck::report_table(table, "auto", 2, FALSE)
+```
+
+</div></details>
+
+::: {.callout-note title="How It Works" collapse="true"}
+
+Identify and extract funding statements.
+
+The Funding Check module uses regular expressions to check sentences for words related to funding statements. It will return the sentences in which the conflict of interest statement was found.
+
+The function is based on code from [rtransparent](https://github.com/serghiou/rtransparent), which is no longer maintained. For their validation, see [the paper](https://doi.org/10.1371/journal.pbio.3001107).
+
+This version is over-inclusive, so will have more false positives, but is less likely to miss something.
+
+This module was developed by Daniel Lakens and Lisa DeBruine
+
+:::
+
+### ✅️ COI Check Overinclusive {#coi-check-overinclusive .green}
+
+A conflict of interest statement was detected.
+
+<details><summary>View detailed feedback</summary><div>
+
+The following conflict of interest statement was detected.
+
+```{r}
+#| echo: false
+
+# table data --------------------------------------
+table <- structure(list("The authors declared that they had no conflicts of interest with respect to their authorship or the publication of this article."), names = "", class = "data.frame", row.names = c(NA, 
+-1L))
+
+# display table -----------------------------------
+metacheck::report_table(table, "auto", 2, FALSE)
+```
+
+</div></details>
+
+::: {.callout-note title="How It Works" collapse="true"}
+
+Identify and extract Conflicts of Interest (COI) statements.
+
+The COI Check module uses regular expressions to check sentences for words related to conflict of interest statements. It will return the sentences in which the conflict of interest statement was found.
+
+The function is based on code from [rtransparent](https://github.com/serghiou/rtransparent), which is no longer maintained. For their validation, see [the paper](https://doi.org/10.1371/journal.pbio.3001107).
+
+This version is over-inclusive, so will have more false positives, but is less likely to miss something.
+
+This module was developed by Daniel Lakens
+
+:::
+
+## Results Modules
+
+### ✅️ StatCheck {#statcheck .green}
+
+We detected no errors in t-tests or F-tests.
+
+::: {.callout-note title="How It Works" collapse="true"}
+
+Check consistency of p-values and test statistics
+
+The Statcheck module runs Statcheck. Statcheck searches for regular expressions that match a predefined pattern, and identifies APA reported statistical tests. More information on the package can be found at <https://github.com/cran/statcheck>. The module only returns Statcheck results for t-tests and F-tests, as these are the only tests which have been validated, see <https://osf.io/preprints/psyarxiv/tcxaj_v1/>.
+
+Statcheck was developed by Michèle Nuijten and Sascha Epskamp.
+
+Statcheck considers p = 0.000 an error, as you should report p < 0.001. Furthermore, p < 0.03 is an error if the p-value was 0.031, and one should simply report exact p-values (p = 0.031). Statcheck might miss one-sided tests, and falsely assume the p-value is incorrect. For more information, see [StatCheck](https://statcheck.io/).
+
+This module only checks statistical results reported in the running text of the manuscript. It cannot (yet) process statistics reported only in tables.
+
+This module was developed by Daniel Lakens and Lisa DeBruine
+
+:::
+
+::: {.validation}
+Validation: In a sample of 685 tests with 34 instances of inconsistent reporting, Statcheck correctly detected 34 of them, and incorrectly identified 26. Therefore 0% of true instances were missed, and 43% of detections were false positives. See <https://osf.io/preprints/psyarxiv/tcxaj_v1/> for more details of the validation.
+:::
+
+### ✅️ Exact P-Values {#exact-p-values .green}
+
+We found no imprecise *p* values or *p*-values of exactly zero out of 6 detected.
+
+::: {.callout-note title="How It Works" collapse="true"}
+
+List any p-values reported with insufficient precision (e.g., p < .05 or p = n.s.) or reported as exactly zero (e.g., p = .000).
+
+This module uses regular expressions to identify p-values. It will flag any values reported as p > ? or p < numbers greater than .001. It will also flag p-values reported as exactly zero (e.g., p = .000, p = 0.00), which are mathematically impossible — p-values are never exactly zero and should instead be reported as p < .001.
+
+We try to exclude figure and table notes like "* p < .05", but may not succeed at excluding all false positives.
+
+This module only checks p-values reported in the running text of the manuscript. It cannot (yet) process p-values reported only in tables (as opposed to a table's footnote text, which the module does see and tries to exclude — see above).
+
+This module was developed by Lisa DeBruine
+
+:::
+
+::: {.validation}
+Validation: In a sample of 225 papers containing 405 instances of non-exact p-values, the module correctly detected 269 cases (true positives) and incorrectly identified 78 (false positives). It missed 136 instances of imprecisely reported p-values (false negatives) and correctly identified 4557 cases of precisely reported p-values (true negative). Additionally, 78% of positive detections were correct (positive predictive value).
+:::
+
+### ✅️ Non-Significant P Value Check {#non-significant-p-value-check .green}
+
+We detected no nonsignificant p values.
+
+::: {.callout-note title="How It Works" collapse="true"}
+
+This module checks for imprecisely reported p values. If p > .05 is detected, it warns for misinterpretations.
+
+The nonsignificant p-value check searches for regular expressions that match a predefined pattern. The module identifies all p-values in a manuscript and selects those that are not reported to be smaller than or equal to 0.05. It returns all sentences containing non-significant p-values.
+
+In the future, the Metacheck team aims to incorporate a machine learning classifier to only return sentences likely to contain misinterpretations. If you want to help to improve the module, reach out to the Metacheck development team.
+
+This module only checks p-values reported in the running text of the manuscript. It cannot (yet) process p-values reported only in tables.
+
+This module was developed by Daniel Lakens
+
+:::
+
+::: {.validation}
+Validation: In a sample of 194 papers with 1602 instances of non-significant p-values, this module correctly detected 1486 of them, and incorrectly identified 153. Additionally, 91% of detections were true instances (positive predictive value). That is, when this module flags non-significant p-values in a paper, it correctly identifies an issue 91% of the time.
+:::
+
+### ⚠️ Effect Sizes in t-tests and F-tests {#effect-sizes-in-t-tests-and-f-tests .red}
+
+All effect sizes were reported, but some appear inconsistent with the test statistic. This can be because the effect size is not clearly labeled (e.g., d, instead of d_rm), because the effect sizes is not reported with enough precisions (e.g., 0.3 instead of 0.32), or because the effect size is incorrectly reported.
+
+<details><summary>View detailed feedback</summary><div>
+
+All tests had effect sizes, but some effect sizes do not match the reported test statistic.
+
+For F-tests with a reported eta-squared effect size, coherence checks yielded 5 matches under assumptions, 1 no match.
+
+::: {.callout-tip title="Learn More" collapse="true"}
+
+For metascientific articles demonstrating that effect sizes are often not reported:
+
+* Peng, C.-Y. J., Chen, L.-T., Chiang, H.-M., & Chiang, Y.-C. (2013). The Impact of APA and AERA Guidelines on Effect Size Reporting. Educational Psychology Review, 25(2), 157–209. doi:[10.1007/s10648-013-9218-2](https://doi.org/10.1007/s10648-013-9218-2).
+
+For educational material on reporting effect sizes:
+
+* [Guide to Effect Sizes and Confidence Intervals](https://matthewbjane.quarto.pub/guide-to-effect-sizes-and-confidence-intervals/)
+
+:::
+
+::: {.callout-tip title="All detected and assessed stats" collapse="true"}
+
+```{r}
+#| echo: false
+
+# table data --------------------------------------
+table <- structure(list(Sentence = c("For hit rates (see Fig. 3), a 3 (complexity level: simple, intermediate, complex) × 2 (TMS site: hand, lip) × 2 (video type: hand action, mouth action) analysis of variance (ANOVA) revealed a main effect of complexity level, F(2, 38) = 16.58, p < .001, ηp² = .47; as complexity level increased, hit rates decreased.", 
+"A main effect of video type also occurred, F(1, 19) = 33.56, p < .001, ηp² = .64; specifically, hit rates were lower for mouth actions than for hand actions.", 
+"There was also a significant interaction between complexity level and video type, F(2, 38) = 36.79, p < .001, ηp² = .67, with hit rates for mouth actions being more dramatically reduced by increasing complexity than those for hand actions.", 
+"More important, there was a significant interaction between TMS site and video type, F(1, 19) = 6.98, p = .016, ηp² = .27.", 
+"For response time (RT), a 3 (complexity level) × 2 (TMS site) × 2 (video type) ANOVA revealed a main effect of complexity level, F(2, 38) = 20.82, p < .001, ηp² = .52, and a significant interaction between complexity level and video type, F(2, 38) = 51.86, p < .001, ηp² = .73.", 
+"For response time (RT), a 3 (complexity level) × 2 (TMS site) × 2 (video type) ANOVA revealed a main effect of complexity level, F(2, 38) = 20.82, p < .001, ηp² = .52, and a significant interaction between complexity level and video type, F(2, 38) = 51.86, p < .001, ηp² = .73."
+), "Effect Size" = c("ηp² = .47", "ηp² = .64", "ηp² = .67", 
+"ηp² = .27", "ηp² = .52", "ηp² = .73"), "Reported Test" = c("F(2, 38) = 16.58", 
+"F(1, 19) = 33.56", "F(2, 38) = 36.79", "F(1, 19) = 6.98", "F(2, 38) = 20.82", 
+"F(2, 38) = 51.86"), "Test Type" = c("F-test", "F-test", "F-test", 
+"F-test", "F-test", "F-test"), "d Coherence" = c(NA_character_, 
+NA_character_, NA_character_, NA_character_, NA_character_, NA_character_
+), "d Assumption" = c(NA_character_, NA_character_, NA_character_, 
+NA_character_, NA_character_, NA_character_), "d Coherence Note" = c(NA_character_, 
+NA_character_, NA_character_, NA_character_, NA_character_, NA_character_
+), "eta Coherence" = c("match_under_assumptions", "match_under_assumptions", 
+"no_match", "match_under_assumptions", "match_under_assumptions", 
+"match_under_assumptions"), "eta Assumption" = c("partial_eta_squared", 
+"partial_eta_squared", "partial_eta_squared", "partial_eta_squared", 
+"partial_eta_squared", "partial_eta_squared"), "eta Coherence Note" = c("Match under partial eta-squared formula from F and dfs.", 
+"Match under partial eta-squared formula from F and dfs.", "No match under partial eta-squared formula from F and dfs. Tolerance = 0.01. A no-match can occur when fewer than 2 decimal places are reported.", 
+"Match under partial eta-squared formula from F and dfs.", "Match under partial eta-squared formula from F and dfs.", 
+"Match under partial eta-squared formula from F and dfs.")), row.names = c(NA, 
+-6L), class = "data.frame")
+
+# display table -----------------------------------
+metacheck::report_table(table, "auto", 5, FALSE)
+```
+
+:::
+
+</div></details>
+
+::: {.callout-note title="How It Works" collapse="true"}
+
+The Effect Size module checks if effect sizes are correctly reported in t-tests and F-tests.
+
+The Effect Size check searches for regular expressions that match typical ways in which effect sizes are reported. It subsequently checks different ways in which Cohen's d, g, ηp2, and ωp2 can be computed against the reported value. If effects are missing, or might be incorrect, you the module provides a warning. The module was validated on APA reported statistical tests, and might miss effect sizes that were reported in other reporting styles. It was validated by the Metacheck team on papers published in Psychological Science.
+
+This module only checks statistical results reported in the running text of the manuscript. It cannot (yet) process statistics reported only in tables.
+
+This module was developed by Daniel Lakens and Lisa DeBruine
+
+:::
+
+::: {.validation}
+Validation: In a sample of 161 papers with 1469 tests, this module correctly detected 1106 reported effect sizes (true positives) and correctly identified 295 cases where no effect size was present (true negatives). However, it missed 23 that were reported (false negatives), and incorrectly identified 45 effect sizes when none were reported (false positives). Among all instances detected by the module, 96% were true cases (positive predictive value). In a validation against 221 reported Cohen's d effect sizes, it correctly indicated coherence in 218 cases (99%). In a validation against 485 partial eta-squared effect sizes, it correctly indicated coherence in 480 (99%)
+:::
+
+### ✅️ Marginal Significance {#marginal-significance .green}
+
+You described 0 effects with terms related to 'marginally significant'.
+
+No effects were described with terms related to 'marginally significant'.
+
+::: {.callout-note title="How It Works" collapse="true"}
+
+List all sentences that describe an effect as 'marginally significant'.
+
+The marginal module searches for regular expressions that match a predefined pattern. The list of terms is a subset of those listed in a [blog post by Matthew Hankins](https://web.archive.org/web/20251001114321/https://mchankins.wordpress.com/2013/04/21/still-not-significant-2/). The module returns all sentences that match terms describing ‘marginally significant’ results.
+
+Some of the terms identified might not be problematic in some contexts, and there are ways to describe ‘marginal significance’ that are not detected by the module.
+
+This module was developed by Daniel Lakens
+
+:::
+
+::: {.validation}
+Validation: In a sample of 51 papers with 87 statements, this module correctly identified 38 statements (true positives) and incorrectly flagged 22 statements (false positives). It failed to detect 27 statements. Thus, among all statements flagged by the module, 63% were genuine cases (positive predictive value). However, the module missed 42% of all true statements (false negative rate).
+:::
+
+### ℹ️ List All P-Values {#list-all-p-values .info}
+
+We found 6 p-values
+
+<details><summary>View detailed feedback</summary><div>
+
+```{r}
+#| echo: false
+
+# table data --------------------------------------
+table <- structure(list(Text = c("p < .001", "p < .001", "p < .001", "p = .016", 
+"p < .001", "p < .001"), Sentence = c("For hit rates (see Fig. 3), a 3 (complexity level: simple, intermediate, complex) × 2 (TMS site: hand, lip) × 2 (video type: hand action, mouth action) analysis of variance (ANOVA) revealed a main effect of complexity level, F(2, 38) = 16.58, p < .001, ηp² = .47; as complexity level increased, hit rates decreased.", 
+"A main effect of video type also occurred, F(1, 19) = 33.56, p < .001, ηp² = .64; specifically, hit rates were lower for mouth actions than for hand actions.", 
+"There was also a significant interaction between complexity level and video type, F(2, 38) = 36.79, p < .001, ηp² = .67, with hit rates for mouth actions being more dramatically reduced by increasing complexity than those for hand actions.", 
+"More important, there was a significant interaction between TMS site and video type, F(1, 19) = 6.98, p = .016, ηp² = .27.", 
+"For response time (RT), a 3 (complexity level) × 2 (TMS site) × 2 (video type) ANOVA revealed a main effect of complexity level, F(2, 38) = 20.82, p < .001, ηp² = .52, and a significant interaction between complexity level and video type, F(2, 38) = 51.86, p < .001, ηp² = .73.", 
+"For response time (RT), a 3 (complexity level) × 2 (TMS site) × 2 (video type) ANOVA revealed a main effect of complexity level, F(2, 38) = 20.82, p < .001, ηp² = .52, and a significant interaction between complexity level and video type, F(2, 38) = 51.86, p < .001, ηp² = .73."
+)), row.names = c(NA, -6L), class = "data.frame")
+
+# display table -----------------------------------
+metacheck::report_table(table, c("5em", NA), 2, FALSE)
+```
+
+This will catch most comparators like =<>~≈≠≤≥≪≫ and most versions of scientific notation like 5.0 x 10^-2 or 5.0e-2. If you find any formats that are not correctly handled by this function, please contact debruine@gmail.com.
+
+</div></details>
+
+::: {.callout-note title="How It Works" collapse="true"}
+
+List all p-values in the text, returning the matched text (e.g., 'p = 0.04') and document location in a table.
+
+Note that this will not catch p-values reported like "the p-value is 0.03" because that results in a ton of false positives when papers discuss p-value thresholds. If you need to detect text like that, use `text_search()` function and a custom pattern like "\\bp(-| )?values?\\s+.{1,20}\\s+[0-9\\.]+"
+
+This will catch most comparators like =<>~≈≠≤≥≪≫ and most versions of scientific notation like 5.0 x 10^-2 or 5.0e-2. If you find any formats that are not correctly handled by this function, please contact the author.
+
+This module only checks p-values reported in the running text of the manuscript. It cannot (yet) process p-values reported only in tables.
+
+This module was developed by Lisa DeBruine
+
+:::
+
+## Reference Modules
+
+### ✅️ Reference Accuracy {#reference-accuracy .green}
+
+We checked the 0 references that supplied a DOI against the record that DOI points to, and found 0 incoherent references to check for parsing errors or mistakes. 4 references had no DOI and could not be checked. Incoherent references are mostly PDF parsing errors (we are working on improving reference parsing). Adding a DOI to every reference that has one lets the other reference checks (retraction, PubPeer, and replication) run on them too.
+
+<details><summary>View detailed feedback</summary><div>
+
+### References without a DOI
+
+These references have no DOI, so they could not be checked here, and they also cannot be checked by the other reference modules (retraction, PubPeer, and replication checks all rely on the DOI). We searched CrossRef for a matching DOI; where a confident match was found it is suggested below. We recommend adding a DOI to every reference that has one: it lets these checks run and makes each cited work easier to find and verify.
+
+```{r}
+#| echo: false
+
+# table data --------------------------------------
+table <- structure(list(Reference = c("Cook, R., Bird, G., Catmur, C., Press, C., & Heyes, C. M. (in press). Mirror neurons: From origin to function. Behavioral & Brain Sciences.", 
+"Iacoboni, M., Molnar-Szakacs, I., Gallese, V., Buccino, G., Mazziotta, J. C., & Rizzolatti, G. (2005). Grasping the intentions of others with one's own mirror neuron sys- tem. PLoS Biology, 3, 529-535. Retrieved from http://www .plosbiology.org/article/info%3Adoi%2F10.1371%2Fjournal .pbio.0030079", 
+"Marquardt, T., & Sussman, H. (1984). The elusive lesion-apraxia of speech link in Broca's aphasia. In J. C. Rosenbek, M. R. McNeil, & A. E. Aronson (Eds.), Apraxia of speech: Physiology, acoustics, linguistics, management (pp. 91- 112). San Diego, CA: College-Hill Press.", 
+"Schneider, W., Eschman, A., & Zuccolotto, A. (2001). E-Prime user's guide. Pittsburgh, PA: Psychology Software Tools."
+), "Suggested DOI" = c("", "", "", "")), row.names = c(NA, -4L
+), class = "data.frame")
+
+# display table -----------------------------------
+metacheck::report_table(table, c(0.7, 0.3), 5, FALSE)
+```
+
+</div></details>
+
+::: {.callout-note title="How It Works" collapse="true"}
+
+This module checks whether each reference with a DOI is internally coherent: it compares the details the paper cites for a reference against the authoritative record that the reference's DOI points to, and flags any reference whose cited details do not match.
+
+This module looks for *incoherent* references: a reference is incoherent when the title, authors, journal, or year that the paper cites disagree with the record that the reference's own DOI points to. Currently, it will most often be a parsing error where the reference list from the PDF is not extracted perfectly accurately, but the module can point out AI generated references, of mistakes in citations. You will need check the original source.
+
+The module uses the `bib_match` table, which holds the metadata retrieved from CrossRef for each reference (added or refreshed with `add_bib_match()`, which makes live network calls).
+
+**Only references that supply their own DOI are checked.** For these, we look up the record that exact DOI points to and compare it field by field against what the paper cites. A reference with no DOI is *not* checked: the only record we could find for it comes from a CrossRef title search, which often returns the wrong paper, so any "mismatch" would be CrossRef's error rather than the citation's. References without a DOI are instead listed separately, with a recommendation to add a DOI where one exists. For those, a suggested DOI is offered only when CrossRef found a high-confidence match (controlled by `suggest_score`).
+
+For each checked reference we compare five fields against the DOI's record:
+
+- **DOI** — flagged only when the reference printed a DOI that differs from the record (a blank cited DOI is never a mismatch).
+- **Year** — flagged when the cited year is more than `year_tolerance` years from the record (online-first and print years routinely differ by one year, so this is allowed by default).
+- **Journal** — flagged when the cited journal disagrees with the record. Journal names are matched tolerantly: standard ISO-4 abbreviations (e.g. "J. Pers. Soc. Psychol." for "Journal of Personality and Social Psychology"), "&"/"and", and "the" are treated as equivalent.
+- **Title** — flagged when the cited title is too different from the record's title, judged by character-level similarity (`title_similarity`) after stripping case, punctuation, footnote markers and diacritics. This ignores cosmetic differences (colons, question marks, em-dash spacing, line-break word splits) while still catching a genuinely different title.
+- **Authors** — flagged when the leading author surnames (the first `max_authors`) from the record are not all present in the cited author list. Only the leading authors are required because author lists are routinely truncated with "et al.". Diacritics are ignored, so "Gredebäck" and "Gredeback" match.
+
+DOI, journal and year are reliable signals and flag a reference on their own. Title and author mismatches are more often caused by imperfect PDF parsing, so these are governed by `min_mismatches`: the default (1) flags a reference when either the title or the authors disagree. Set `min_mismatches = 2` to be more conservative and require both to disagree (fewer false positives, lower recall).
+
+The report lists each incoherent reference with the specific cited value struck through and the record's value beside it, so the discrepancy is visible at a glance.
+
+This module was developed by Daniel Lakens and Lisa DeBruine
+
+:::
+
+::: {.validation}
+Validation: In validation on psychology references with a DOI, the module flagged genuine, coherent references at a low rate: around 8% of checked references at the default setting (min_mismatches = 1), and about 3% with the more conservative setting (min_mismatches = 2). On deliberately corrupted references it caught journal and year fabrications reliably (about 96-100%) at either setting, and essentially all single-field fabrications (including single title or author changes) at min_mismatches = 1. Importantly, in a hand-review of references flagged across 10 papers from 5 fields, the large majority of flags were imperfect extraction of the reference from the PDF (for example a journal name mis-parsed, or two references merged) rather than genuine citation errors. Real citation mistakes are rare, so even though the false positive rate is low, a flag should be read as "check this reference against the original source", not as a confirmed error.
+:::
+
+### ℹ️ Summarise References {#summarise-references .info}
+
+Summary information provided for 41 references
+
+<details><summary>View detailed feedback</summary><div>
+
+See the specific reports above for details.
+
+```{r}
+#| echo: false
+
+# table data --------------------------------------
+table <- structure(list(text = c("Basso, A., Capitani, E., Della Sala, S., Laiacona, M., & Spinnler, H. (1987). Recovery from ideomotor apraxia: A study on acute stroke patients. Brain, 110, 747-760.", 
+"Buccino, G., Binkofski, F., Fink, G. R., Fadiga, L., Fogassi, L., Gallese, V., . . . Freund, H. J. (2001). Action observation activates premotor and parietal areas in a somatotopic man- ner: An fMRI study. European Journal of Neuroscience, 13, 400-404.", 
+"Buxbaum, L. J., Kyle, K. M., & Menon, R. (2005). On beyond mirror neurons: Internal representations subserving imi- tation and recognition of skilled object-related actions in humans. Cognitive Brain Research, 25, 226-239.", 
+"Cattaneo, L., Sandrini, M., & Schwarzbach, J. (2010). State- dependent TMS reveals a hierarchical representation of observed acts in the temporal, parietal, and premotor corti- ces. Cerebral Cortex, 20, 2252-2258.", 
+"Chen, R., Tam, A., Butefisch, C., Corwell, B., Ziemann, U., Rothwell, J. C., & Cohen, L. G. (1998). Intracortical inhi- bition and facilitation in different representations of the human motor cortex. Journal of Neurophysiology, 80, 2870- 2881.", 
+"Cook, R., Bird, G., Catmur, C., Press, C., & Heyes, C. M. (in press). Mirror neurons: From origin to function. Behavioral & Brain Sciences.", 
+"Csibra, G. (2008). Action mirroring and action understanding: An alternative account. In P. Haggard, Y. Rossetti, & M. Kawato (Eds.), Sensorimotor foundation of higher cogni- tion: Attention and performance (pp. 435-458). Oxford, England: Oxford University Press.", 
+"di Pellegrino, G., Fadiga, L., Fogassi, L., Gallese, V., & Rizzolatti, G. (1992). Understanding motor events: A neurophysiologi- cal study. Experimental Brain Research, 91, 176-180.", 
+"Frith, C. D., & Singer, T. (2008). The role of social cognition in decision making. Philosophical Transactions of the Royal Society B: Biological Sciences, 363, 3875-3886.", 
+"Gallese, V., Fadiga, L., Fogassi, L., & Rizzolatti, G. (1996). Action recognition in the premotor cortex. Brain, 119, 593-609.", 
+"Gallese, V., Keysers, C., & Rizzolatti, G. (2004). A unifying view of the basis of social cognition. Trends in Cognitive Sciences, 8, 396-403.", 
+"Gazzola, V., & Keysers, C. (2009). The observation and execu- tion of actions share motor and somatosensory voxels in all tested subjects: Single-subject analyses of unsmoothed fMRI data. Cerebral Cortex, 19, 1239-1255.", 
+"Gentilucci, M., Fogassi, L., Luppino, G., Matelli, M., Camarda, R., & Rizzolatti, G. (1988). Functional organization of infe- rior area 6 in the macaque monkey: I. Somatotopy and the control of proximal movements. Experimental Brain Research, 71, 475-490.", 
+"Gentner, R., Wankerl, K., Reinsberger, C., Zeller, D., & Classen, J. (2008). Depression of human corticospinal excitability induced by magnetic theta-burst stimulation: Evidence of rapid polarity-reversing metaplasticity. Cerebral Cortex, 18, 2046-2053.", 
+"Godschalk, M., Mitz, A. R., van Duin, B., & van der Burg, H. (1995). Somatotopy of monkey premotor cortex examined with microstimulation. Neuroscience Research, 23, 269-279.", 
+"Hamilton, A., & Grafton, S. (2007). The motor hierarchy: From kinematics to goals and intentions. In P. Haggard, Y. Rossetti, & M. Kawato (Eds.), Sensorimotor foundations of higher cognition: Attention and performance (pp. 381- 408). Oxford, England: Oxford University Press.", 
+"Hauk, O., Johnsrude, I., & Pulvermüller, F. (2004). Somatotopic representation of action words in the motor and premotor cortex. Neuron, 41, 301-307.", 
+"Hickok, G. (2009). Eight problems for the mirror neuron theory of action understanding in monkeys and humans. Journal of Cognitive Neuroscience, 21, 1229-1243.", 
+"Huang, Y. Z., Edwards, M. J., Rounis, E., Bhatia, K. P., & Rothwell, J. C. (2005). Theta burst stimulation of the human motor cortex. Neuron, 45, 201-206.", 
+"Huang, Y. Z., Rothwell, J. C., Lu, C. S., Wang, J., Weng, Y. H., Lai, S. C., & Chen, R. S. (2009). The effect of con- tinuous theta burst stimulation over premotor cortex on circuits in primary motor cortex and spinal cord. Clinical Neurophysiology, 120, 796-801.", 
+"Iacoboni, M., Molnar-Szakacs, I., Gallese, V., Buccino, G., Mazziotta, J. C., & Rizzolatti, G. (2005). Grasping the intentions of others with one's own mirror neuron sys- tem. PLoS Biology, 3, 529-535. Retrieved from http://www .plosbiology.org/article/info%3Adoi%2F10.1371%2Fjournal .pbio.0030079", 
+"Jastorff, J., Begliomini, C., Fabbri-Destro, M., Rizzolatti, G., & Orban, G. (2010). Coding observed motor acts: Different organizational principles in parietal and premotor cortex of humans. Journal of Neurophysiology, 104, 128-140.", 
+"Kilner, J., Friston, K., & Frith, C. (2007). Predictive coding: An account of the mirror neuron system. Cognitive Processing, 8, 159-166.", 
+"Kilner, J., Neal, A., Weiskopf, N., Friston, K., & Frith, C. (2009). Evidence of mirror neurons in human inferior frontal gyrus. The Journal of Neuroscience, 29, 10153-10159.", 
+"Kroeger, J., Bäumer, T., Jonas, M., Rothwell, J., Siebner, H., & Münchau, A. (2010). Charting the excitability of premo- tor to motor connections while withholding or initiating a selected movement. European Journal of Neuroscience, 32, 1771-1779.", 
+"Marquardt, T., & Sussman, H. (1984). The elusive lesion-apraxia of speech link in Broca's aphasia. In J. C. Rosenbek, M. R. McNeil, & A. E. Aronson (Eds.), Apraxia of speech: Physiology, acoustics, linguistics, management (pp. 91- 112). San Diego, CA: College-Hill Press.", 
+"Moro, V., Urgesi, C., Pernigo, S., Lanteri, P., Pazzaglia, M., & Aglioti, S. M. (2008). The neural basis of body form and body action agnosia. Neuron, 60, 235-246.", 
+"Mukamel, R., Ekstrom, A. D., Kaplan, J., Iacoboni, M., & Fried, I. (2010). Single-neuron responses in humans during exe- cution and observation of actions. Current Biology, 20, 750-756.", 
+"Münchau, A., Bloem, B. R., Irlbacher, K., Trimble, M. R., & Rothwell, J. C. (2002). Functional connectivity of human premotor and motor cortex explored with repetitive trans- cranial magnetic stimulation. The Journal of Neuroscience, 22, 554-561.", 
+"Pazzaglia, M., Smania, N., Corato, E., & Aglioti, S. M. (2008). Neural underpinnings of gesture discrimination in patients with limb apraxia. The Journal of Neuroscience, 28, 3030- 3041.", 
+"Pobric, G., & Hamilton, A. (2006). Action understanding requires the left inferior frontal cortex. Current Biology, 16, 524-529.", 
+"Rapcsak, S. Z., Ochipa, C., Anderson, K. C., & Poizner, H. (1995). Progressive ideomotor apraxia: Evidence for a selec- tive impairment of the action production system. Brain and Cognition, 27, 213-236.", 
+"Rizzolatti, G., Camarda, R., Fogassi, L., Gentilucci, M., Luppino, G., & Matelli, M. (1988). Functional organization of inferior area 6 in the macaque monkey: II. Area F5 and the control of distal movements. Experimental Brain Research, 71, 491-507.", 
+"Rizzolatti, G., & Craighero, L. (2004). The mirror-neuron sys- tem. Annual Review of Neuroscience, 27, 169-192.", 
+"Rizzolatti, G., Fadiga, L., Gallese, V., & Fogassi, L. (1996). Premotor cortex and the recognition of motor actions. Cognitive Brain Research, 3, 131-141.", 
+"Saygin, A. P., Wilson, S. M., Dronkers, N. F., & Bates, E. (2004). Action comprehension in aphasia: Linguistic and nonlin- guistic deficits and their lesion correlates. Neuropsychologia, 42, 1788-1804.", 
+"Schneider, W., Eschman, A., & Zuccolotto, A. (2001). E-Prime user's guide. Pittsburgh, PA: Psychology Software Tools.", 
+"Schubotz, R., & von Cramon, Y. (2003). Functional-anatomical concepts of human premotor cortex: Evidence from fMRI and PET studies. NeuroImage, 20, S120-S131.", 
+"Tidoni, E., Borgomaneri, S., di Pellegrino, G., & Avenanti, A. (2013). Action simulation plays a critical role in decep- tive action recognition. The Journal of Neuroscience, 33, 611-623.", 
+"Urgesi, C., Candidi, M., Ionta, S., & Aglioti, S. (2006). Representation of body identity and body actions in extrastriate body area and ventral premotor cortex. Nature Neuroscience, 10, 30-31.", 
+"Vogt, S., Buccino, G., Wohlschlager, A. M., Canessa, N., Shah, N. J., Zilles, K., . . . Fink, G. R. (2007). Prefrontal involve- ment in imitation learning of hand actions: Effects of prac- tice and expertise. NeuroImage, 37, 1371-1383."
+), accuracy_mismatch = c(NA, NA, NA, NA, NA, NA, "year", NA, 
+NA, NA, NA, NA, "title", NA, "author", "year", NA, NA, NA, NA, 
+NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, "author", NA, NA, NA, 
+NA, NA, NA, NA, NA, NA, NA)), row.names = c(NA, -41L), class = "data.frame")
+
+# display table -----------------------------------
+metacheck::report_table(table, c(0.75, NA), 10, FALSE)
+```
+
+</div></details>
+
+::: {.callout-note title="How It Works" collapse="true"}
+
+Summarise information about each reference in a paper.
+
+This module summarises previously-run reference section modules: ref_accuracy, ref_pubpeer, ref_replication, and ref_retraction.
+
+This module was developed by Lisa DeBruine
+
+:::
+
+### ⚠️ Reference Consistency {#reference-consistency .red}
+
+There are cross-references that are not in the bibliography and/or bibliography entries not cross-referenced in the text
+
+<details><summary>View detailed feedback</summary><div>
+
+This module relies on Grobid correctly parsing the references. There are likley to be some false positives.
+
+```{r}
+#| echo: false
+
+# table data --------------------------------------
+table <- structure(list(bib_id = c(5L, 7L, 8L, 9L, 25L, 34L, NA, NA), 
+    type = c("extra", "extra", "extra", "extra", "extra", "extra", 
+    "missing", "missing"), contents = c(NA, NA, NA, NA, NA, NA, 
+    "Cook, Bird, Catmur, Press, and Heyes (in press", "Marquart & Sussman, 1984;"
+    ), reference = c("Cook, R., Bird, G., Catmur, C., Press, C., & Heyes, C. M. (in press). Mirror neurons: From origin to function. Behavioral & Brain Sciences.", 
+    "di Pellegrino, G., Fadiga, L., Fogassi, L., Gallese, V., & Rizzolatti, G. (1992). Understanding motor events: A neurophysiologi- cal study. Experimental Brain Research, 91, 176-180.", 
+    "Frith, C. D., & Singer, T. (2008). The role of social cognition in decision making. Philosophical Transactions of the Royal Society B: Biological Sciences, 363, 3875-3886.", 
+    "Gallese, V., Fadiga, L., Fogassi, L., & Rizzolatti, G. (1996). Action recognition in the premotor cortex. Brain, 119, 593-609.", 
+    "Marquardt, T., & Sussman, H. (1984). The elusive lesion-apraxia of speech link in Broca's aphasia. In J. C. Rosenbek, M. R. McNeil, & A. E. Aronson (Eds.), Apraxia of speech: Physiology, acoustics, linguistics, management (pp. 91- 112). San Diego, CA: College-Hill Press.", 
+    "Rizzolatti, G., Fadiga, L., Gallese, V., & Fogassi, L. (1996). Premotor cortex and the recognition of motor actions. Cognitive Brain Research, 3, 131-141.", 
+    "Because identifying the goals of bodily movements is a complex process that likely involves multiple components, we agree with Cook, Bird, Catmur, Press, and Heyes (in press) that research on the contribution of the MNS to action understanding must attempt to isolate and operationalize distinct components of action understanding.", 
+    "Third, lesion studies have confirmed that patients with lesions in more dorsal areas of PMC have greater difficulties performing hand actions, whereas patients with more ventral lesions have greater difficulties performing mouth actions (Basso, Capitani, Della Sala, Laiacona, & Spinnler, 1987;Marquart & Sussman, 1984;Pazzaglia, Smania, Corato, & Aglioti, 2008)."
+    )), row.names = c(NA, -8L), class = "data.frame")
+
+# display table -----------------------------------
+metacheck::report_table(table, "auto", 2, FALSE)
+```
+
+</div></details>
+
+::: {.callout-note title="How It Works" collapse="true"}
+
+Check if all references are cited and all citations are referenced
+
+This module is currently under development and should not be relied on until we have increased the accuracy of the reference labeling while importing papers. It has a high false-positive rate because grobid (the PDF-importing tool) tends to miss some references and falsely identify some text as citations.
+
+This module was developed by Lisa DeBruine
+
+:::
+
+### ✅️ Miscitation {#miscitation .green}
+
+We detected no miscited papers
+
+::: {.callout-note title="How It Works" collapse="true"}
+
+Check for frequently miscited papers. This module is just a proof of concept -- the miscite database is not yet populated with real examples.
+
+If you want to use your own database, create a data frame with the columns "doi", "reftext", and "warning", which will be used to match the DOI in papers (use short DOIs like xxx/1234, not https://doi.org/xxx/1234) and produce the report text.
+
+This module was developed by Lisa DeBruine
+
+:::
+
+
+
+

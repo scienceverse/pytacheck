@@ -3,7 +3,7 @@
   "ok": true,
   "error": null,
   "warnings": [
-    "Download failed or resulted in an empty file: /tmp/RtmpfDX8YV/pytacheck-parity-cache/.metacheck_repo_cache/researchbox.org_4377/archive.zip"
+    "Download failed or resulted in an empty file: <tempdir>/pytacheck-parity-cache/.metacheck_repo_cache/researchbox.org_4377/archive.zip"
   ],
   "value": {
     "t": "module_output",

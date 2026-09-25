@@ -3,7 +3,7 @@
   "ok": true,
   "error": null,
   "warnings": [
-    "cannot open file '/tmp/RtmpvSO7TZ/rv_1fc831b794bc/a/b.csv': Not a directory"
+    "cannot open file '<tempdir>/<tempfile>/a/b.csv': Not a directory"
   ],
   "value": {
     "t": "list",

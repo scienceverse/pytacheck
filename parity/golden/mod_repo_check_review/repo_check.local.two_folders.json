@@ -93,9 +93,9 @@
           {
             "t": "chr",
             "v": [
-              "/home/user/pytacheck/tests/mod_repo_check/fixtures/review/dup_a/data.csv",
-              "/home/user/pytacheck/tests/mod_repo_check/fixtures/review/dup_a/only_a.R",
-              "/home/user/pytacheck/tests/mod_repo_check/fixtures/review/dup_a/README.md"
+              "<repo>/tests/mod_repo_check/fixtures/review/dup_a/data.csv",
+              "<repo>/tests/mod_repo_check/fixtures/review/dup_a/only_a.R",
+              "<repo>/tests/mod_repo_check/fixtures/review/dup_a/README.md"
             ]
           },
           {

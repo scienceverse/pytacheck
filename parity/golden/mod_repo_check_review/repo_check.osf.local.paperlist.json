@@ -142,11 +142,11 @@
               null,
               null,
               null,
-              "/home/user/pytacheck/tests/mod_repo_check/fixtures/review/suggest_only/analysis.R",
-              "/home/user/pytacheck/tests/mod_repo_check/fixtures/review/suggest_only/data_1.csv",
-              "/home/user/pytacheck/tests/mod_repo_check/fixtures/review/suggest_only/data_10.csv",
-              "/home/user/pytacheck/tests/mod_repo_check/fixtures/review/suggest_only/data_2.csv",
-              "/home/user/pytacheck/tests/mod_repo_check/fixtures/review/suggest_only/README.md"
+              "<repo>/tests/mod_repo_check/fixtures/review/suggest_only/analysis.R",
+              "<repo>/tests/mod_repo_check/fixtures/review/suggest_only/data_1.csv",
+              "<repo>/tests/mod_repo_check/fixtures/review/suggest_only/data_10.csv",
+              "<repo>/tests/mod_repo_check/fixtures/review/suggest_only/data_2.csv",
+              "<repo>/tests/mod_repo_check/fixtures/review/suggest_only/README.md"
             ]
           },
           {

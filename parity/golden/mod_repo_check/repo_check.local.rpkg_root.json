@@ -109,13 +109,13 @@
           {
             "t": "chr",
             "v": [
-              "/home/user/pytacheck/tests/mod_repo_check/fixtures/rpkg_root/data/study_data.rda",
-              "/home/user/pytacheck/tests/mod_repo_check/fixtures/rpkg_root/DESCRIPTION",
-              "/home/user/pytacheck/tests/mod_repo_check/fixtures/rpkg_root/LICENSE",
-              "/home/user/pytacheck/tests/mod_repo_check/fixtures/rpkg_root/man/foo.Rd",
-              "/home/user/pytacheck/tests/mod_repo_check/fixtures/rpkg_root/NAMESPACE",
-              "/home/user/pytacheck/tests/mod_repo_check/fixtures/rpkg_root/R/foo.R",
-              "/home/user/pytacheck/tests/mod_repo_check/fixtures/rpkg_root/README.md"
+              "<repo>/tests/mod_repo_check/fixtures/rpkg_root/data/study_data.rda",
+              "<repo>/tests/mod_repo_check/fixtures/rpkg_root/DESCRIPTION",
+              "<repo>/tests/mod_repo_check/fixtures/rpkg_root/LICENSE",
+              "<repo>/tests/mod_repo_check/fixtures/rpkg_root/man/foo.Rd",
+              "<repo>/tests/mod_repo_check/fixtures/rpkg_root/NAMESPACE",
+              "<repo>/tests/mod_repo_check/fixtures/rpkg_root/R/foo.R",
+              "<repo>/tests/mod_repo_check/fixtures/rpkg_root/README.md"
             ]
           },
           {

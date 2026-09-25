@@ -15,7 +15,7 @@
       {
         "t": "chr",
         "v": [
-          "/home/user/pytacheck/upstream/metacheck/tests/testthat/fixtures/parse-errors/error.qmd"
+          "<repo>/upstream/metacheck/tests/testthat/fixtures/parse-errors/error.qmd"
         ]
       },
       {

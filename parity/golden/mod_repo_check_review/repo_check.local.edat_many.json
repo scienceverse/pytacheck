@@ -129,18 +129,18 @@
           {
             "t": "chr",
             "v": [
-              "/home/user/pytacheck/tests/mod_repo_check/fixtures/review/edat_many/README.md",
-              "/home/user/pytacheck/tests/mod_repo_check/fixtures/review/edat_many/run01.edat2",
-              "/home/user/pytacheck/tests/mod_repo_check/fixtures/review/edat_many/run01.txt",
-              "/home/user/pytacheck/tests/mod_repo_check/fixtures/review/edat_many/run02.edat2",
-              "/home/user/pytacheck/tests/mod_repo_check/fixtures/review/edat_many/run03.edat2",
-              "/home/user/pytacheck/tests/mod_repo_check/fixtures/review/edat_many/run04.edat2",
-              "/home/user/pytacheck/tests/mod_repo_check/fixtures/review/edat_many/run05.edat2",
-              "/home/user/pytacheck/tests/mod_repo_check/fixtures/review/edat_many/run06.edat2",
-              "/home/user/pytacheck/tests/mod_repo_check/fixtures/review/edat_many/run07.edat2",
-              "/home/user/pytacheck/tests/mod_repo_check/fixtures/review/edat_many/run08.edat2",
-              "/home/user/pytacheck/tests/mod_repo_check/fixtures/review/edat_many/run09.edat2",
-              "/home/user/pytacheck/tests/mod_repo_check/fixtures/review/edat_many/run10.edat2"
+              "<repo>/tests/mod_repo_check/fixtures/review/edat_many/README.md",
+              "<repo>/tests/mod_repo_check/fixtures/review/edat_many/run01.edat2",
+              "<repo>/tests/mod_repo_check/fixtures/review/edat_many/run01.txt",
+              "<repo>/tests/mod_repo_check/fixtures/review/edat_many/run02.edat2",
+              "<repo>/tests/mod_repo_check/fixtures/review/edat_many/run03.edat2",
+              "<repo>/tests/mod_repo_check/fixtures/review/edat_many/run04.edat2",
+              "<repo>/tests/mod_repo_check/fixtures/review/edat_many/run05.edat2",
+              "<repo>/tests/mod_repo_check/fixtures/review/edat_many/run06.edat2",
+              "<repo>/tests/mod_repo_check/fixtures/review/edat_many/run07.edat2",
+              "<repo>/tests/mod_repo_check/fixtures/review/edat_many/run08.edat2",
+              "<repo>/tests/mod_repo_check/fixtures/review/edat_many/run09.edat2",
+              "<repo>/tests/mod_repo_check/fixtures/review/edat_many/run10.edat2"
             ]
           },
           {

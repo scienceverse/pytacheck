@@ -93,7 +93,7 @@
               {
                 "t": "chr",
                 "v": [
-                  "/home/user/pytacheck/upstream/metacheck/tests/testthat/fixtures/debruine/debruine-child.xml"
+                  "<repo>/upstream/metacheck/tests/testthat/fixtures/debruine/debruine-child.xml"
                 ]
               },
               {
@@ -2691,7 +2691,7 @@
               {
                 "t": "chr",
                 "v": [
-                  "/home/user/pytacheck/upstream/metacheck/tests/testthat/fixtures/debruine/debruine-fret.xml"
+                  "<repo>/upstream/metacheck/tests/testthat/fixtures/debruine/debruine-fret.xml"
                 ]
               },
               {
@@ -5037,7 +5037,7 @@
               {
                 "t": "chr",
                 "v": [
-                  "/home/user/pytacheck/upstream/metacheck/tests/testthat/fixtures/debruine/debruine-sex.xml"
+                  "<repo>/upstream/metacheck/tests/testthat/fixtures/debruine/debruine-sex.xml"
                 ]
               },
               {
@@ -7696,7 +7696,7 @@
               {
                 "t": "chr",
                 "v": [
-                  "/home/user/pytacheck/upstream/metacheck/tests/testthat/fixtures/debruine/debruine-tnl.xml"
+                  "<repo>/upstream/metacheck/tests/testthat/fixtures/debruine/debruine-tnl.xml"
                 ]
               },
               {

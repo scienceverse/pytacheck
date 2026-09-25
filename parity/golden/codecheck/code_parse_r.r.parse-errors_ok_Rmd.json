@@ -15,7 +15,7 @@
       {
         "t": "chr",
         "v": [
-          "/home/user/pytacheck/upstream/metacheck/tests/testthat/fixtures/parse-errors/ok.Rmd"
+          "<repo>/upstream/metacheck/tests/testthat/fixtures/parse-errors/ok.Rmd"
         ]
       },
       {

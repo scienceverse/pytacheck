@@ -42,9 +42,9 @@
       {
         "t": "chr",
         "v": [
-          "/home/user/pytacheck/upstream/metacheck/tests/testthat/fixtures/file.html",
-          "/home/user/pytacheck/upstream/metacheck/tests/testthat/fixtures/spv-test-corpus.md",
-          "/home/user/pytacheck/upstream/metacheck/tests/testthat/fixtures/study_1_script.do"
+          "<repo>/upstream/metacheck/tests/testthat/fixtures/file.html",
+          "<repo>/upstream/metacheck/tests/testthat/fixtures/spv-test-corpus.md",
+          "<repo>/upstream/metacheck/tests/testthat/fixtures/study_1_script.do"
         ]
       },
       {

@@ -150,9 +150,6 @@ HARNESS_DIVERGENCES: dict[str, str] = {
         "wrong error: R 'attempt to select less than one element in get1index <real>', "
         "pytacheck 'subscript out of bounds'"
     ),
-    "archives_osf_review/.osf_parse_response.review.json_nan_error": (
-        "jsonlite's lexical error shows the text around the NaN; pytacheck does not"
-    ),
     "bibr12/paper_write.error.version": (
         "D1: pytacheck's paper_write() also takes schema_version 'auto', and says so"
     ),
@@ -199,7 +196,6 @@ HARNESS_DIVERGENCES: dict[str, str] = {
             "mod_coi_review/coi_check.paperlist_one_errors",
             "mod_funding/funding_check.error",
             "mod_effect_size_review/stat_effect_size.review.empty_paperlist",
-            "mod_ref_db_review/ref_miscitation.bib_without_text_id",
         ],
         "module error: R reports dplyr's context ('In argument: ...'), pytacheck the "
         "underlying error",
@@ -213,20 +209,12 @@ HARNESS_DIVERGENCES: dict[str, str] = {
     "mod_ref_accuracy_review/ref_accuracy.error.character_key": (
         "module error: R's join type error, pytacheck pandas' merge error"
     ),
-    "mod_ref_db_review/ref_miscitation.cermine_no_doi": (
-        "module error: R 'Join columns in `x` must be present in the data.', pytacheck "
-        "KeyError 'doi'"
-    ),
     "repo_download_review/decision.cp437.zip": (
         "invalid multibyte string: R shows the text from the bad byte ('<82>es'), "
         "pytacheck the whole name ('donn<82>es')"
     ),
     "report/report.error.format": (
         "pytacheck's report() also writes 'md', and its message says so"
-    ),
-    "text_extract/extract_eq.chr": (
-        "wrong error for character input: R 'Argument 1 must be a data frame or a "
-        "named atomic vector.', pytacheck 'argument is of length zero'"
     ),
     **dict.fromkeys(
         [

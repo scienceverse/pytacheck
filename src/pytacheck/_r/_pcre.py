@@ -36,8 +36,17 @@ _ASCII_WORD: cs.Ranges = ((0x30, 0x39), (0x41, 0x5A), (0x5F, 0x5F), (0x61, 0x7A)
 _ASCII_ALPHA: cs.Ranges = ((0x41, 0x5A), (0x61, 0x7A))
 _SPACE: cs.Ranges = ((0x09, 0x0D), (0x20, 0x20))
 _HSPACE: cs.Ranges = cs.norm(
-    [(0x09, 0x09), (0x20, 0x20), (0xA0, 0xA0), (0x1680, 0x1680), (0x180E, 0x180E)]
-    + [(0x2000, 0x200A), (0x202F, 0x202F), (0x205F, 0x205F), (0x3000, 0x3000)]
+    [
+        (0x09, 0x09),
+        (0x20, 0x20),
+        (0xA0, 0xA0),
+        (0x1680, 0x1680),
+        (0x180E, 0x180E),
+        (0x2000, 0x200A),
+        (0x202F, 0x202F),
+        (0x205F, 0x205F),
+        (0x3000, 0x3000),
+    ]
 )
 _VSPACE: cs.Ranges = ((0x0A, 0x0D), (0x85, 0x85), (0x2028, 0x2029))
 _ESCAPE_SETS: dict[str, tuple[cs.Ranges, bool]] = {
@@ -251,9 +260,7 @@ class _Translator:
         return name, neg
 
     def prop_expr(self, name: str, neg: bool) -> str:
-        if self.frame.icase and name in _CASED_PROPS:
-            name = "LC"
-        elif name == "L&":
+        if (self.frame.icase and name in _CASED_PROPS) or name == "L&":
             name = "LC"
         return f"\\{'P' if neg else 'p'}{{{name}}}"
 
@@ -344,8 +351,8 @@ class _Translator:
                 if not text:
                     return None
                 # all but the last character are plain members
-                for ch in text[:-1]:
-                    one = ((ord(ch), ord(ch)),)
+                for member in text[:-1]:
+                    one = ((ord(member), ord(member)),)
                     plain.extend(cs.pcre_caseless_closure(one) if icase else one)
                 return ord(text[-1])
             if e == "E":
@@ -490,7 +497,7 @@ class _Translator:
 
     # -- main loop ---------------------------------------------------------
 
-    def translate(self) -> Translation:  # noqa: C901
+    def translate(self) -> Translation:
         p = self.p
         # leading verbs such as (*UCP) or (*UTF)
         while p.startswith("(*", self.i):
@@ -566,15 +573,15 @@ class _Translator:
         self.emit(_Quant(q + suffix))
 
     def escape(self) -> None:
-        p, fr = self.p, self.frame
+        p = self.p
         e = self.at(1)
         self.check_escape(e, False)
         if e == "Q":
             end = p.find("\\E", self.i + 2)
             text = p[self.i + 2 :] if end == -1 else p[self.i + 2 : end]
             self.i = self.n if end == -1 else end + 2
-            for ch in text:
-                self.lit(ord(ch))
+            for t in text:
+                self.lit(ord(t))
             return
         if e == "E":
             self.i += 2
@@ -627,7 +634,9 @@ class _Translator:
             self.lit(ch)
             return
         if e == "g":
-            m = regex.match(r"g(?:\{(-?\d+|[A-Za-z_]\w*)\}|(-?\d+)|<([^>]+)>|'([^']+)')", p[self.i + 1 :])
+            m = regex.match(
+                r"g(?:\{(-?\d+|[A-Za-z_]\w*)\}|(-?\d+)|<([^>]+)>|'([^']+)')", p[self.i + 1 :]
+            )
             if not m:
                 raise self.fail("a numbered reference must not be zero")
             self.i += 1 + m.end()

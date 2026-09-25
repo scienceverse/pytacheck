@@ -3,7 +3,7 @@
   "ok": true,
   "error": null,
   "warnings": [
-    "cannot open file '/tmp/RtmpvSO7TZ/rv_sess_1fc83f2661da/example.org_rp/.archive_members/srv.example.org_paths.zip.contents/a/b.csv': Not a directory",
+    "cannot open file '<tempdir>/<tempfile>/example.org_rp/.archive_members/srv.example.org_paths.zip.contents/a/b.csv': Not a directory",
     "unable to translate 'donn<82>es/' to a wide string",
     "input string 1 is invalid",
     "unable to translate 'donn<82>es/r<82>sum<82>.csv' to a wide string",

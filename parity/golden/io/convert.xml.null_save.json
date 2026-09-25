@@ -87,7 +87,7 @@
           {
             "t": "chr",
             "v": [
-              "/home/user/pytacheck/upstream/metacheck/tests/testthat/fixtures/problems/0956797615569889.xml"
+              "<repo>/upstream/metacheck/tests/testthat/fixtures/problems/0956797615569889.xml"
             ]
           },
           {

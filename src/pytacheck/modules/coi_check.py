@@ -245,7 +245,8 @@ _AUTHORS_LAST = "|".join(
 
 def _cut_after_authors(coi_text: str) -> str:
     """``gsub(paste(val1, ..., val7, sep = "|"), "\\1...\\7", coi_text)``."""
-    return gsub(_AUTHORS_LAST, r"\1\2\3\4\5\6\7", coi_text)
+    cut: str = gsub(_AUTHORS_LAST, r"\1\2\3\4\5\6\7", coi_text)
+    return cut
 
 
 def _str_count(x: str, pattern: str) -> int:

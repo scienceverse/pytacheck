@@ -121,16 +121,16 @@
           {
             "t": "chr",
             "v": [
-              "/home/user/pytacheck/tests/mod_repo_check/fixtures/review/sizes/b999.csv",
-              "/home/user/pytacheck/tests/mod_repo_check/fixtures/review/sizes/empty.csv",
-              "/home/user/pytacheck/tests/mod_repo_check/fixtures/review/sizes/k1000.csv",
-              "/home/user/pytacheck/tests/mod_repo_check/fixtures/review/sizes/k1049.csv",
-              "/home/user/pytacheck/tests/mod_repo_check/fixtures/review/sizes/k1050.csv",
-              "/home/user/pytacheck/tests/mod_repo_check/fixtures/review/sizes/k1150.csv",
-              "/home/user/pytacheck/tests/mod_repo_check/fixtures/review/sizes/k12345.csv",
-              "/home/user/pytacheck/tests/mod_repo_check/fixtures/review/sizes/k1250.csv",
-              "/home/user/pytacheck/tests/mod_repo_check/fixtures/review/sizes/k99950.csv",
-              "/home/user/pytacheck/tests/mod_repo_check/fixtures/review/sizes/README.md"
+              "<repo>/tests/mod_repo_check/fixtures/review/sizes/b999.csv",
+              "<repo>/tests/mod_repo_check/fixtures/review/sizes/empty.csv",
+              "<repo>/tests/mod_repo_check/fixtures/review/sizes/k1000.csv",
+              "<repo>/tests/mod_repo_check/fixtures/review/sizes/k1049.csv",
+              "<repo>/tests/mod_repo_check/fixtures/review/sizes/k1050.csv",
+              "<repo>/tests/mod_repo_check/fixtures/review/sizes/k1150.csv",
+              "<repo>/tests/mod_repo_check/fixtures/review/sizes/k12345.csv",
+              "<repo>/tests/mod_repo_check/fixtures/review/sizes/k1250.csv",
+              "<repo>/tests/mod_repo_check/fixtures/review/sizes/k99950.csv",
+              "<repo>/tests/mod_repo_check/fixtures/review/sizes/README.md"
             ]
           },
           {

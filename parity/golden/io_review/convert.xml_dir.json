@@ -101,7 +101,7 @@
               {
                 "t": "chr",
                 "v": [
-                  "/home/user/pytacheck/tests/io/fixtures/bom_paragraphs.tei.xml"
+                  "<repo>/tests/io/fixtures/dir_case/bom_paragraphs.tei.xml"
                 ]
               },
               {
@@ -524,7 +524,7 @@
               {
                 "t": "chr",
                 "v": [
-                  "/home/user/pytacheck/tests/io/fixtures/crlf_nonamespace.tei.xml"
+                  "<repo>/tests/io/fixtures/dir_case/crlf_nonamespace.tei.xml"
                 ]
               },
               {
@@ -922,7 +922,7 @@
               {
                 "t": "chr",
                 "v": [
-                  "/home/user/pytacheck/tests/io/fixtures/edge_body.tei.xml"
+                  "<repo>/tests/io/fixtures/dir_case/edge_body.tei.xml"
                 ]
               },
               {
@@ -1942,7 +1942,7 @@
               {
                 "t": "chr",
                 "v": [
-                  "/home/user/pytacheck/tests/io/fixtures/empty_body.tei.xml"
+                  "<repo>/tests/io/fixtures/dir_case/empty_body.tei.xml"
                 ]
               },
               {
@@ -2302,7 +2302,7 @@
               {
                 "t": "chr",
                 "v": [
-                  "/home/user/pytacheck/tests/io/fixtures/figure_first.tei.xml"
+                  "<repo>/tests/io/fixtures/dir_case/figure_first.tei.xml"
                 ]
               },
               {
@@ -2724,7 +2724,7 @@
               {
                 "t": "chr",
                 "v": [
-                  "/home/user/pytacheck/tests/io/fixtures/figure_twice.tei.xml"
+                  "<repo>/tests/io/fixtures/dir_case/figure_twice.tei.xml"
                 ]
               },
               {
@@ -3123,7 +3123,7 @@
               {
                 "t": "chr",
                 "v": [
-                  "/home/user/pytacheck/tests/io/fixtures/nonfatal_errors.tei.xml"
+                  "<repo>/tests/io/fixtures/dir_case/nonfatal_errors.tei.xml"
                 ]
               },
               {
@@ -3530,7 +3530,7 @@
               {
                 "t": "chr",
                 "v": [
-                  "/home/user/pytacheck/tests/io/fixtures/ref_token_literal.tei.xml"
+                  "<repo>/tests/io/fixtures/dir_case/ref_token_literal.tei.xml"
                 ]
               },
               {
@@ -3965,7 +3965,7 @@
               {
                 "t": "chr",
                 "v": [
-                  "/home/user/pytacheck/tests/io/fixtures/tables_empty_first.tei.xml"
+                  "<repo>/tests/io/fixtures/dir_case/tables_empty_first.tei.xml"
                 ]
               },
               {
@@ -4531,7 +4531,7 @@
               {
                 "t": "chr",
                 "v": [
-                  "/home/user/pytacheck/tests/io/fixtures/tables_empty_second.tei.xml"
+                  "<repo>/tests/io/fixtures/dir_case/tables_empty_second.tei.xml"
                 ]
               },
               {
@@ -5114,7 +5114,7 @@
               {
                 "t": "chr",
                 "v": [
-                  "/home/user/pytacheck/tests/io/fixtures/xlink_ns.tei.xml"
+                  "<repo>/tests/io/fixtures/dir_case/xlink_ns.tei.xml"
                 ]
               },
               {

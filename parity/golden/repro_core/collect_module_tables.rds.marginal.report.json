@@ -3,7 +3,7 @@
   "ok": true,
   "error": null,
   "warnings": [
-    "2 *.rds file(s) found in /home/user/pytacheck/tests/repro_core/fixtures/tables_rds, but none had a \"marginal\" module with a non-empty \"report\"."
+    "2 *.rds file(s) found in <repo>/tests/repro_core/fixtures/tables_rds, but none had a \"marginal\" module with a non-empty \"report\"."
   ],
   "value": {
     "t": "df",

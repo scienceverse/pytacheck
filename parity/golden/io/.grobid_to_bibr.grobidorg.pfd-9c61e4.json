@@ -86,7 +86,7 @@
           {
             "t": "chr",
             "v": [
-              "/home/user/pytacheck/upstream/metacheck/tests/testthat/apis/grobidorg-grobid.hf.space/api/processFulltextDocument-9c61e4-POST.xml"
+              "<repo>/upstream/metacheck/tests/testthat/apis/grobidorg-grobid.hf.space/api/processFulltextDocument-9c61e4-POST.xml"
             ]
           },
           {

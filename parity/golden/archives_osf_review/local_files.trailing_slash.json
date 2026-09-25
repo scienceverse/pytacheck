@@ -39,8 +39,8 @@
       {
         "t": "chr",
         "v": [
-          "/home/user/pytacheck/upstream/metacheck/inst/--CITATION",
-          "/home/user/pytacheck/upstream/metacheck/inst/CITATION"
+          "<repo>/upstream/metacheck/inst/--CITATION",
+          "<repo>/upstream/metacheck/inst/CITATION"
         ]
       },
       {

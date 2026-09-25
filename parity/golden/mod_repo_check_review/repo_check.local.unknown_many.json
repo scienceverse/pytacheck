@@ -133,19 +133,19 @@
           {
             "t": "chr",
             "v": [
-              "/home/user/pytacheck/tests/mod_repo_check/fixtures/review/unknown_many/blob01.qqz1",
-              "/home/user/pytacheck/tests/mod_repo_check/fixtures/review/unknown_many/blob02.qqz2",
-              "/home/user/pytacheck/tests/mod_repo_check/fixtures/review/unknown_many/blob03.qqz3",
-              "/home/user/pytacheck/tests/mod_repo_check/fixtures/review/unknown_many/blob04.qqz4",
-              "/home/user/pytacheck/tests/mod_repo_check/fixtures/review/unknown_many/blob05.qqz5",
-              "/home/user/pytacheck/tests/mod_repo_check/fixtures/review/unknown_many/blob06.qqz6",
-              "/home/user/pytacheck/tests/mod_repo_check/fixtures/review/unknown_many/blob07.qqz7",
-              "/home/user/pytacheck/tests/mod_repo_check/fixtures/review/unknown_many/blob08.qqz8",
-              "/home/user/pytacheck/tests/mod_repo_check/fixtures/review/unknown_many/blob09.qqz9",
-              "/home/user/pytacheck/tests/mod_repo_check/fixtures/review/unknown_many/blob10.qqz10",
-              "/home/user/pytacheck/tests/mod_repo_check/fixtures/review/unknown_many/blob11.qqz11",
-              "/home/user/pytacheck/tests/mod_repo_check/fixtures/review/unknown_many/blob12.qqz12",
-              "/home/user/pytacheck/tests/mod_repo_check/fixtures/review/unknown_many/README.md"
+              "<repo>/tests/mod_repo_check/fixtures/review/unknown_many/blob01.qqz1",
+              "<repo>/tests/mod_repo_check/fixtures/review/unknown_many/blob02.qqz2",
+              "<repo>/tests/mod_repo_check/fixtures/review/unknown_many/blob03.qqz3",
+              "<repo>/tests/mod_repo_check/fixtures/review/unknown_many/blob04.qqz4",
+              "<repo>/tests/mod_repo_check/fixtures/review/unknown_many/blob05.qqz5",
+              "<repo>/tests/mod_repo_check/fixtures/review/unknown_many/blob06.qqz6",
+              "<repo>/tests/mod_repo_check/fixtures/review/unknown_many/blob07.qqz7",
+              "<repo>/tests/mod_repo_check/fixtures/review/unknown_many/blob08.qqz8",
+              "<repo>/tests/mod_repo_check/fixtures/review/unknown_many/blob09.qqz9",
+              "<repo>/tests/mod_repo_check/fixtures/review/unknown_many/blob10.qqz10",
+              "<repo>/tests/mod_repo_check/fixtures/review/unknown_many/blob11.qqz11",
+              "<repo>/tests/mod_repo_check/fixtures/review/unknown_many/blob12.qqz12",
+              "<repo>/tests/mod_repo_check/fixtures/review/unknown_many/README.md"
             ]
           },
           {

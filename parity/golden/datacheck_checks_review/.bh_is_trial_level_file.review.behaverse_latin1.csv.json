@@ -3,8 +3,8 @@
   "ok": true,
   "error": null,
   "warnings": [
-    "invalid input found on input connection '/home/user/pytacheck/tests/datacheck_checks/data/behaverse_latin1.csv'",
-    "incomplete final line found by readTableHeader on '/home/user/pytacheck/tests/datacheck_checks/data/behaverse_latin1.csv'"
+    "invalid input found on input connection '<repo>/tests/datacheck_checks/data/behaverse_latin1.csv'",
+    "incomplete final line found by readTableHeader on '<repo>/tests/datacheck_checks/data/behaverse_latin1.csv'"
   ],
   "value": {
     "t": "lgl",

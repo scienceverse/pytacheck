@@ -1,0 +1,102 @@
+{
+  "id": "f09.exec.5",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": null,
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "ab123",
+          "a",
+          "b123"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "a1b22",
+          "a1",
+          "b22"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": []
+      },
+      {
+        "t": "chr",
+        "v": []
+      },
+      {
+        "t": "chr",
+        "v": [
+          "abab",
+          "a",
+          "bab"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "xabab",
+          "xa",
+          "bab"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": []
+      },
+      {
+        "t": "chr",
+        "v": [
+          "xayby",
+          "xay",
+          "by"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "a_b_c",
+          "a_",
+          "b_c"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "a.b-c d",
+          "a.",
+          "b-c d"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "read.csv('a.csv') and 'b'",
+          "read.csv('a.csv') and '",
+          "b'"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": []
+      },
+      {
+        "t": "chr",
+        "v": []
+      },
+      {
+        "t": "chr",
+        "v": []
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

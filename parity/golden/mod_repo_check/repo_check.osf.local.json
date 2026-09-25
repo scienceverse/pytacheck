@@ -133,13 +133,13 @@
               null,
               null,
               null,
-              "/home/user/pytacheck/upstream/metacheck/tests/testthat/fixtures/code_files/analysis_no_comments.R",
-              "/home/user/pytacheck/upstream/metacheck/tests/testthat/fixtures/code_files/analysis.R",
-              "/home/user/pytacheck/upstream/metacheck/tests/testthat/fixtures/code_files/data.csv",
-              "/home/user/pytacheck/upstream/metacheck/tests/testthat/fixtures/code_files/README.md",
-              "/home/user/pytacheck/upstream/metacheck/tests/testthat/fixtures/code_files/stata_latin1.do",
-              "/home/user/pytacheck/upstream/metacheck/tests/testthat/fixtures/code_files/stata_utf16.do",
-              "/home/user/pytacheck/upstream/metacheck/tests/testthat/fixtures/code_files/subdir/helper.R"
+              "<repo>/upstream/metacheck/tests/testthat/fixtures/code_files/analysis_no_comments.R",
+              "<repo>/upstream/metacheck/tests/testthat/fixtures/code_files/analysis.R",
+              "<repo>/upstream/metacheck/tests/testthat/fixtures/code_files/data.csv",
+              "<repo>/upstream/metacheck/tests/testthat/fixtures/code_files/README.md",
+              "<repo>/upstream/metacheck/tests/testthat/fixtures/code_files/stata_latin1.do",
+              "<repo>/upstream/metacheck/tests/testthat/fixtures/code_files/stata_utf16.do",
+              "<repo>/upstream/metacheck/tests/testthat/fixtures/code_files/subdir/helper.R"
             ]
           },
           {

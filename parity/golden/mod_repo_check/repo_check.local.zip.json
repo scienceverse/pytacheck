@@ -93,9 +93,9 @@
           {
             "t": "chr",
             "v": [
-              "/home/user/pytacheck/tests/mod_repo_check/fixtures/zip_local/archive.7z",
-              "/home/user/pytacheck/tests/mod_repo_check/fixtures/zip_local/bundle.zip",
-              "/home/user/pytacheck/tests/mod_repo_check/fixtures/zip_local/README.md"
+              "<repo>/tests/mod_repo_check/fixtures/zip_local/archive.7z",
+              "<repo>/tests/mod_repo_check/fixtures/zip_local/bundle.zip",
+              "<repo>/tests/mod_repo_check/fixtures/zip_local/README.md"
             ]
           },
           {

@@ -3,7 +3,7 @@
   "ok": true,
   "error": null,
   "warnings": [
-    "cannot open file '/home/user/pytacheck/tests/statout_readers/fixtures/text/none.out': No such file or directory"
+    "cannot open file '<repo>/tests/statout_readers/fixtures/text/none.out': No such file or directory"
   ],
   "value": {
     "t": "lgl",

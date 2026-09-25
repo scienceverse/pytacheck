@@ -3,8 +3,8 @@
   "ok": true,
   "error": null,
   "warnings": [
-    "cannot open file '/home/user/pytacheck/tests/repro_core/fixtures/tables_review/d.rds': it is a directory",
-    "6 *.rds file(s) found in /home/user/pytacheck/tests/repro_core/fixtures/tables_review, but none had a \"mymod\" module with a non-empty \"summary_table\"."
+    "cannot open file '<repo>/tests/repro_core/fixtures/tables_review/d.rds': it is a directory",
+    "6 *.rds file(s) found in <repo>/tests/repro_core/fixtures/tables_review, but none had a \"mymod\" module with a non-empty \"summary_table\"."
   ],
   "value": {
     "t": "df",

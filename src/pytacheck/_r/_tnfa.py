@@ -49,6 +49,7 @@ class _N:
         "chars",
         "copy_chars",
         "firstpos",
+        "group",
         "kind",
         "lastpos",
         "left",
@@ -72,6 +73,7 @@ class _N:
         self.copy_chars: cs.Ranges | None = None
         self.value = -1  # assertion bits, tag id or back reference number
         self.position = -1
+        self.group = -1  # the bracket (in one copy) a CHAR literal belongs to
         self.left: _N | None = None
         self.right: _N | None = None
         self.arg: _N | None = None
@@ -87,7 +89,17 @@ class _N:
 
     def assign(self, other: _N) -> None:
         """Take over *other*'s node contents (``node->obj = other->obj``)."""
-        for k in ("type", "kind", "chars", "copy_chars", "value", "position", "left", "right"):
+        for k in (
+            "type",
+            "kind",
+            "chars",
+            "copy_chars",
+            "value",
+            "position",
+            "group",
+            "left",
+            "right",
+        ):
             setattr(self, k, getattr(other, k))
         for k in ("arg", "min", "max", "minimal"):
             setattr(self, k, getattr(other, k))
@@ -150,6 +162,7 @@ class Unsupported(Exception):
 class _Builder:
     def __init__(self) -> None:
         self.position = 0
+        self.groups = 0
 
     def build(self, n: _tre.Node) -> _N:
         k = n.kind
@@ -157,9 +170,11 @@ class _Builder:
             pos = self.position
             self.position += 1
             leaves = []
+            self.groups += 1
             for _ in range(max(n.n_items, 1)):
                 leaf = _lit(CHAR, position=pos)
                 leaf.chars, leaf.copy_chars = n.chars, n.copy_chars
+                leaf.group = self.groups
                 leaves.append(leaf)
             t = leaves[0]
             for leaf in leaves[1:]:
@@ -251,7 +266,7 @@ def _purge(regset: _Regset, tnfa: _TNFA, tag: int) -> None:
     regset.clear()
 
 
-def _add_tags(tree: _N, tnfa: _TNFA | None) -> int:  # noqa: C901 - a port
+def _add_tags(tree: _N, tnfa: _TNFA | None) -> int:
     """Port of ``tre_add_tags()``; the first pass (``tnfa`` None) counts tags."""
     first_pass = tnfa is None
     regset = _Regset()
@@ -374,12 +389,12 @@ def _add_tags(tree: _N, tnfa: _TNFA | None) -> int:  # noqa: C901 - a port
                 node.num_tags = node.arg.num_tags + int(bool(extra))
                 minimal_tag = -1
             else:
-                minimal = stack.pop()
+                was_minimal = stack.pop()
                 enter_tag = stack.pop()
                 assert isinstance(enter_tag, int)
-                if minimal:
+                if was_minimal:
                     minimal_tag = enter_tag
-                direction = MINIMIZE if minimal else MAXIMIZE
+                direction = MINIMIZE if was_minimal else MAXIMIZE
             continue
         if symbol == "AFTER_CAT_LEFT":
             new_tag = stack.pop()
@@ -400,15 +415,17 @@ def _add_tags(tree: _N, tnfa: _TNFA | None) -> int:  # noqa: C901 - a port
             regset.base = len(regset.items)
             continue
         if symbol == "AFTER_UNION_RIGHT":
-            left = stack.pop()
-            right = stack.pop()
+            branch_l = stack.pop()
+            branch_r = stack.pop()
             node = stack.pop()
             added = stack.pop()
             base = stack.pop()
             tag_left = stack.pop()
             tag_right = stack.pop()
-            assert isinstance(node, _N) and isinstance(left, _N) and isinstance(right, _N)
-            assert isinstance(base, int) and isinstance(tag_left, int) and isinstance(tag_right, int)
+            assert isinstance(node, _N) and isinstance(branch_l, _N) and isinstance(branch_r, _N)
+            assert (
+                isinstance(base, int) and isinstance(tag_left, int) and isinstance(tag_right, int)
+            )
             if first_pass:
                 assert node.left is not None and node.right is not None
                 node.num_tags = (
@@ -421,9 +438,9 @@ def _add_tags(tree: _N, tnfa: _TNFA | None) -> int:  # noqa: C901 - a port
             if node.num_submatches > 0:
                 if not first_pass:
                     assert tnfa is not None
-                    _add_tag_right(left, tag_left)
+                    _add_tag_right(branch_l, tag_left)
                     tnfa.tag_directions[tag_left] = MAXIMIZE
-                    _add_tag_right(right, tag_right)
+                    _add_tag_right(branch_r, tag_right)
                     tnfa.tag_directions[tag_right] = MAXIMIZE
                 num_tags += 2
             direction = MAXIMIZE
@@ -449,30 +466,55 @@ COPY_MAXIMIZE_FIRST_TAG = 2
 
 
 class _Expander:
-    def __init__(self, tnfa: _TNFA, next_position: int, wide: bool) -> None:
+    """``tre_expand_ast()`` with its position arithmetic.
+
+    TRE renumbers the positions of copied literals with a running offset
+    (``pos_add``) that grows by the number of literal *nodes* copied (a
+    bracket's items share one position, so this leaves holes) and is wound
+    back by one copy after each expansion; positions after an expansion
+    nested in another iteration are shifted by that wound-back offset. Two
+    literals can end up with the same position, and TRE then merges their
+    states: ``(-*|([.-]{1,2})+\\s\\s)?`` matches ``"- "`` in R. The
+    arithmetic is reproduced so that such patterns match as in R.
+    """
+
+    def __init__(self, tnfa: _TNFA, position: int, wide: bool, groups: int = 0) -> None:
         self.tnfa = tnfa
-        self.next_position = next_position
+        self.position = position  # the parser's next position
         self.wide = wide
+        self.groups = groups
+        self.pos_add = 0
+        self.pos_add_total = 0
+        self.max_pos = 0
+        self.iter_depth = 0
 
     def copy(self, node: _N, flags: int) -> _N:
-        """``tre_copy_ast()``: fresh positions, tags removed or maximized."""
-        mapping: dict[int, int] = {}
-        first_tag = [True]
+        """``tre_copy_ast()``: positions offset by ``pos_add``, which then
+        grows by the number of literal nodes copied; tags removed or the
+        first one maximized."""
+        num_copied = 0
+        first_tag = True
+        groups: dict[int, int] = {}
 
         def rec(n: _N) -> _N:
+            nonlocal num_copied, first_tag
             if n.type == LIT:
                 kind, value, pos = n.kind, n.value, n.position
                 if kind in (CHAR, BACKREF):
-                    if pos not in mapping:
-                        mapping[pos] = self.next_position
-                        self.next_position += 1
-                    pos = mapping[pos]
+                    pos += self.pos_add
+                    num_copied += 1
                 elif kind == TAG and flags & COPY_REMOVE_TAGS:
                     kind, value, pos = EMPTY, -1, -1
-                elif kind == TAG and flags & COPY_MAXIMIZE_FIRST_TAG and first_tag[0]:
+                elif kind == TAG and flags & COPY_MAXIMIZE_FIRST_TAG and first_tag:
                     self.tnfa.tag_directions[value] = MAXIMIZE
-                    first_tag[0] = False
+                    first_tag = False
+                self.max_pos = max(self.max_pos, pos)
                 out = _lit(kind, value, pos)
+                if n.group >= 0:
+                    if n.group not in groups:
+                        self.groups += 1
+                        groups[n.group] = self.groups
+                    out.group = groups[n.group]
                 # the copy keeps u.class but not neg_classes
                 out.chars = n.copy_chars if (self.wide and n.copy_chars is not None) else n.chars
                 out.copy_chars = n.copy_chars
@@ -490,10 +532,15 @@ class _Expander:
             out.min, out.max, out.minimal = n.min, n.max, n.minimal
             return out
 
-        return rec(node)
+        out = rec(node)
+        self.pos_add += num_copied
+        return out
 
     def expand(self, node: _N) -> None:
         if node.type == LIT:
+            if node.kind in (CHAR, BACKREF):
+                node.position += self.pos_add
+                self.max_pos = max(self.max_pos, node.position)
             return
         if node.type in (CAT, UNION):
             assert node.left is not None and node.right is not None
@@ -501,29 +548,48 @@ class _Expander:
             self.expand(node.right)
             return
         assert node.arg is not None
-        self.expand(node.arg)
         mn, mx = node.min, node.max
-        if not (mn > 1 or mx > 1):
-            return
-        seq1: _N | None = None
-        for j in range(mn):
-            flags = COPY_REMOVE_TAGS if j + 1 < mn else COPY_MAXIMIZE_FIRST_TAG
-            c = self.copy(node.arg, flags)
-            seq1 = c if seq1 is None else _cat(seq1, c)
-        seq2: _N | None = None
-        if mx == -1:
-            seq2 = _iter(self.copy(node.arg, 0), 0, -1, False)
-        else:
-            for _ in range(mn, mx):
-                c = self.copy(node.arg, 0)
-                seq2 = c if seq2 is None else _cat(c, seq2)
-                seq2 = _union(_lit(EMPTY), seq2)
-        if seq1 is None:
-            seq1 = seq2
-        elif seq2 is not None:
-            seq1 = _cat(seq1, seq2)
-        assert seq1 is not None
-        node.assign(seq1)
+        expanded = mn > 1 or mx > 1
+        saved = self.pos_add
+        if expanded:
+            # the copies get their positions when they are made
+            self.pos_add = 0
+        self.iter_depth += 1
+        self.expand(node.arg)
+        self.pos_add = pos_add_last = saved
+        if expanded:
+            pos_add_save = self.pos_add
+            seq1: _N | None = None
+            for j in range(mn):
+                flags = COPY_REMOVE_TAGS if j + 1 < mn else COPY_MAXIMIZE_FIRST_TAG
+                pos_add_save = self.pos_add
+                c = self.copy(node.arg, flags)
+                seq1 = c if seq1 is None else _cat(seq1, c)
+            seq2: _N | None = None
+            if mx == -1:
+                pos_add_save = self.pos_add
+                seq2 = _iter(self.copy(node.arg, 0), 0, -1, False)
+            else:
+                for _ in range(mn, mx):
+                    pos_add_save = self.pos_add
+                    c = self.copy(node.arg, 0)
+                    seq2 = c if seq2 is None else _cat(c, seq2)
+                    seq2 = _union(_lit(EMPTY), seq2)
+            self.pos_add = pos_add_save
+            if seq1 is None:
+                seq1 = seq2
+            elif seq2 is not None:
+                seq1 = _cat(seq1, seq2)
+            assert seq1 is not None
+            node.assign(seq1)
+        self.iter_depth -= 1
+        self.pos_add_total += self.pos_add - pos_add_last
+        if self.iter_depth == 0:
+            self.pos_add = self.pos_add_total
+
+    def final_position(self) -> int:
+        """The position of the final state's dummy literal."""
+        return max(self.position + self.pos_add_total, self.max_pos)
 
 
 # ---------------------------------------------------------------------------
@@ -652,9 +718,9 @@ def compile_tnfa(pattern: str, icase: bool = False, wide: bool = False) -> _TNFA
     tnfa = _TNFA(nsub)
     _add_tags(tree, None)
     _add_tags(tree, tnfa)
-    exp = _Expander(tnfa, builder.position, wide)
+    exp = _Expander(tnfa, builder.position, wide, builder.groups)
     exp.expand(tree)
-    final = _lit(CHAR, position=exp.next_position)
+    final = _lit(CHAR, position=exp.final_position())
     final.chars = ((0, 0),)
     root = _cat(tree, final)
     _compute_nfl(root)
@@ -662,6 +728,40 @@ def compile_tnfa(pattern: str, icase: bool = False, wide: bool = False) -> _TNFA
     tnfa.initial = root.firstpos
     tnfa.final = root.lastpos[0].position
     return tnfa
+
+
+def _shares_positions(tree: _N, final: int) -> bool:
+    """Do two brackets (or a bracket and the final state) share a position?"""
+    owner: dict[int, int] = {}
+    stack = [tree]
+    while stack:
+        n = stack.pop()
+        if n.type == LIT:
+            if n.kind in (CHAR, BACKREF) and owner.setdefault(n.position, n.group) != n.group:
+                return True
+        elif n.type == ITER:
+            assert n.arg is not None
+            stack.append(n.arg)
+        else:
+            assert n.left is not None and n.right is not None
+            stack += [n.left, n.right]
+    return final in owner
+
+
+@functools.lru_cache(maxsize=4096)
+def merges_states(pattern: str, icase: bool = False) -> bool:
+    """Does ``tre_expand_ast()`` give two literals of *pattern* one position
+    (see :class:`_Expander`), so that only this matcher matches it as R does?
+    ``False`` for patterns with back references (not handled here)."""
+    try:
+        tree_src, nsub = _tre.parse(pattern, icase)
+        builder = _Builder()
+        tree = builder.build(tree_src)
+    except Unsupported:
+        return False
+    exp = _Expander(_TNFA(nsub), builder.position, False, builder.groups)
+    exp.expand(tree)
+    return _shares_positions(tree, exp.final_position())
 
 
 # ---------------------------------------------------------------------------
@@ -682,9 +782,7 @@ def _check_assertions(a: int, pos: int, prev_c: int, next_c: int, notbol: bool) 
         return True
     if a & ASSERT_AT_WB and pos != 0 and next_c != 0 and word(prev_c) == word(next_c):
         return True
-    return bool(
-        a & ASSERT_AT_WB_NEG and (pos == 0 or next_c == 0 or word(prev_c) != word(next_c))
-    )
+    return bool(a & ASSERT_AT_WB_NEG and (pos == 0 or next_c == 0 or word(prev_c) != word(next_c)))
 
 
 @functools.cache
@@ -714,9 +812,7 @@ def _tag_wins(dirs: dict[int, int], num_tags: int, t1: list[int], t2: list[int])
     return False
 
 
-def run(
-    tnfa: _TNFA, s: str, offset: int = 0, notbol: bool = False
-) -> list[tuple[int, int]] | None:
+def run(tnfa: _TNFA, s: str, offset: int = 0, notbol: bool = False) -> list[tuple[int, int]] | None:
     """Match against ``s[offset:]`` like R does (a new string at *offset*);
     returns the submatch spans (absolute, ``(-1, -1)`` unset) or ``None``."""
     text = [ord(c) for c in s[offset:]]
@@ -739,7 +835,9 @@ def run(
         if match_eo < 0:
             for p in tnfa.initial:
                 if reach_pos.get(p.position, -1) < pos:
-                    if p.assertions and _check_assertions(p.assertions, pos, prev_c, next_c, notbol):
+                    if p.assertions and _check_assertions(
+                        p.assertions, pos, prev_c, next_c, notbol
+                    ):
                         continue
                     tags = [-1] * num_tags
                     for t in p.tags:
@@ -812,14 +910,20 @@ def run(
     return _fill_pmatch(tnfa, match_tags, match_eo, offset)
 
 
-def _fill_pmatch(
-    tnfa: _TNFA, tags: list[int], match_eo: int, offset: int
-) -> list[tuple[int, int]]:
+def _fill_pmatch(tnfa: _TNFA, tags: list[int], match_eo: int, offset: int) -> list[tuple[int, int]]:
     out: list[tuple[int, int]] = []
     for i in range(tnfa.num_submatches):
         so_tag, eo_tag = tnfa.so_tag[i], tnfa.eo_tag[i]
-        so = match_eo if so_tag == tnfa.end_tag else (tags[so_tag] if 0 <= so_tag < len(tags) else -1)
-        eo = match_eo if eo_tag == tnfa.end_tag else (tags[eo_tag] if 0 <= eo_tag < len(tags) else -1)
+        so = (
+            match_eo
+            if so_tag == tnfa.end_tag
+            else (tags[so_tag] if 0 <= so_tag < len(tags) else -1)
+        )
+        eo = (
+            match_eo
+            if eo_tag == tnfa.end_tag
+            else (tags[eo_tag] if 0 <= eo_tag < len(tags) else -1)
+        )
         if so == -1 or eo == -1:
             so = eo = -1
         out.append((so, eo))

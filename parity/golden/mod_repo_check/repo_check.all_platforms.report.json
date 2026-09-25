@@ -5,7 +5,7 @@
   "warnings": [
     "Repository https://github.com/gzorg/bigrepo was not listed: GitHub repo tree truncated (>100 000 items); too large to list.",
     "Repository https://gitlab.com/gzorg/missing was not listed: invalid or inaccessible GitLab repository.",
-    "Download failed or resulted in an empty file: /tmp/RtmpfDX8YV/pytacheck-parity-cache/.metacheck_repo_cache/researchbox.org_4377/archive.zip",
+    "Download failed or resulted in an empty file: <tempdir>/pytacheck-parity-cache/.metacheck_repo_cache/researchbox.org_4377/archive.zip",
     "10.7910/DVN/NOPE could not be found on dataverse.harvard.edu",
     "10.5061/dryad.missing could not be found on Dryad"
   ],

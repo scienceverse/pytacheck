@@ -101,11 +101,11 @@
           {
             "t": "chr",
             "v": [
-              "/home/user/pytacheck/tests/mod_repo_check/fixtures/edat_ok/README.txt",
-              "/home/user/pytacheck/tests/mod_repo_check/fixtures/edat_ok/stroop.edat2",
-              "/home/user/pytacheck/tests/mod_repo_check/fixtures/edat_ok/Stroop.edat3",
-              "/home/user/pytacheck/tests/mod_repo_check/fixtures/edat_ok/stroop.TXT",
-              "/home/user/pytacheck/tests/mod_repo_check/fixtures/edat_ok/Stroop.txt"
+              "<repo>/tests/mod_repo_check/fixtures/edat_ok/README.txt",
+              "<repo>/tests/mod_repo_check/fixtures/edat_ok/stroop.edat2",
+              "<repo>/tests/mod_repo_check/fixtures/edat_ok/Stroop.edat3",
+              "<repo>/tests/mod_repo_check/fixtures/edat_ok/stroop.TXT",
+              "<repo>/tests/mod_repo_check/fixtures/edat_ok/Stroop.txt"
             ]
           },
           {

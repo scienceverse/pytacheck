@@ -3,9 +3,9 @@
   "ok": true,
   "error": null,
   "warnings": [
-    "cannot create file '/tmp/Rtmp6AFqhb/filed0533c0ee60/root/a/b.csv', reason 'Not a directory'",
+    "cannot create file '<tempdir>/<tempfile>/root/a/b.csv', reason 'Not a directory'",
     "directories are omitted unless 'recursive = TRUE'",
-    "cannot create file '/tmp/Rtmp6AFqhb/filed0533c0ee60/root/a/c/orig.csv', reason 'Not a directory'"
+    "cannot create file '<tempdir>/<tempfile>/root/a/c/orig.csv', reason 'Not a directory'"
   ],
   "value": {
     "t": "list",

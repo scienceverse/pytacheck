@@ -79,7 +79,7 @@
           {
             "t": "chr",
             "v": [
-              "/home/user/pytacheck/tests/io/fixtures/ref_token_literal.tei.xml"
+              "<repo>/tests/io/fixtures/ref_token_literal.tei.xml"
             ]
           },
           {
