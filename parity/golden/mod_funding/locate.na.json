@@ -7,7 +7,6 @@
     "t": "list",
     "names": [
       "get_support_1",
-      "get_support_2",
       "get_support_3",
       "get_support_4",
       "get_support_5",
@@ -28,7 +27,6 @@
       "get_fund_2",
       "get_fund_3",
       "get_fund_acknow",
-      "get_fund_acknow_new",
       "get_supported_1",
       "get_financial_1",
       "get_financial_2",
@@ -45,13 +43,9 @@
       "get_common_5",
       "get_acknow_1",
       "get_acknow_2",
-      "negate_disclosure_1",
-      "negate_disclosure_2",
-      "negate_conflict_1",
       "negate_absence_1",
       ".where_refs_txt",
-      ".where_acknows_txt",
-      ".where_methods_txt"
+      ".where_acknows_txt"
     ],
     "v": [
       {
@@ -62,10 +56,6 @@
       },
       {
         "t": "int",
-        "v": []
-      },
-      {
-        "t": "int",
         "v": [
           2
         ]
@@ -150,12 +140,6 @@
       },
       {
         "t": "int",
-        "v": [
-          2
-        ]
-      },
-      {
-        "t": "int",
         "v": []
       },
       {
@@ -225,34 +209,6 @@
           false,
           false
         ]
-      },
-      {
-        "t": "lgl",
-        "v": [
-          false,
-          false,
-          false
-        ]
-      },
-      {
-        "t": "lgl",
-        "v": [
-          false,
-          false,
-          false
-        ]
-      },
-      {
-        "t": "lgl",
-        "v": [
-          false,
-          false,
-          false
-        ]
-      },
-      {
-        "t": "int",
-        "v": []
       },
       {
         "t": "int",

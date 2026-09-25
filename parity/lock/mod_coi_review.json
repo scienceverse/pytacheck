@@ -10,5 +10,6 @@
 "coi_check_oi.fixture_sections": {"r": "74ffd7b5545235a6", "py": "fb491070918f3b7e", "diff": ["table.header[]"]},
 "coi_check_oi.newline_in_sentence": {"r": "531b6196f20546b7", "py": "e176b5ceb5c61277", "diff": ["table.header[]"]},
 "coi_check_oi.paperlist_empty_middle": {"r": "d54047df519a8723", "py": "c4b92d37d06fb9c7", "diff": ["table.header[]"]},
-"coi_check_oi.paperlist_one_errors": {"r": "c94b61d600e405ec", "py": "596d4628f70a100e", "diff": ["table.header[]"]}
+"coi_check_oi.paperlist_one_errors": {"r": "c94b61d600e405ec", "py": "596d4628f70a100e", "diff": ["table.header[]"]},
+"coi_check_oi.turkish_dotted_i": {"r": "bb7175fe86087b97", "py": "32d7763729f00ea6", "diff": ["report[]", "summary_table.coi_found[]", "summary_text[]", "table", "traffic_light[]"]}
 }

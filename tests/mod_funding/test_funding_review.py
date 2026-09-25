@@ -20,49 +20,15 @@ DOTLESS = "\u0131"
 
 
 # ---------------------------------------------------------------------------
-# PCRE caseless matching of non-ASCII letters
+# Non-ASCII letters (Turkish dotted/dotless i, long s, the Kelvin sign)
 # ---------------------------------------------------------------------------
-
-CHARS = ["a", "A", "s", "S", LONG_S, KELVIN, DOTTED, DOTLESS, "1", "_", ".", "\u00e9", "k"]
-
-#: grepl(p, CHARS, perl = TRUE) in R
-R_CLASSES = {
-    "(?i)\\w": "1111000011001",
-    "(?i)^\\W$": "0000111100110",
-    "(?i)[[:alnum:]]": "1111000010001",
-    "(?i)[[:upper:]]": "1111000000001",
-    "(?i)[[:lower:]]": "1111000000001",
-    "(?i)[^[:upper:]]": "0000111111110",
-    "(?i)[[:upper:][:digit:]]": "1111000010001",
-    "(?i)[^\\W]": "1111000011001",
-    "(?i)[\\W]": "0000111100110",
-    "(?i)[a-zA-Z0-9\\s,()\\[\\]/:-]": "1111110010001",
-    "(?i)[^a-z]": "0000001111110",
-    "(?i)[Kk]": "0000010000001",
-    "(?i)[Ii]": "0000000000000",
-    "(?i)[Ss]": "0011100000000",
-    "(?i)\\bs\\b": "0011000000000",
-}
+# Caseless matching is the regex module's Unicode simple case folding, not
+# PCRE2's (docs/PORTING.md, section 3): the parity cases that depend on the
+# difference are marked in parity/divergences/regex.yaml.
 
 
-@pytest.mark.parametrize("pattern", sorted(R_CLASSES))
-def test_caseless_classes_match_pcre2(pattern: str) -> None:
-    expected = [c == "1" for c in R_CLASSES[pattern]]
-    assert F._Article(CHARS).mask(pattern).tolist() == expected
-
-
-def test_caseless_pcre_rewrites() -> None:
-    assert F._caseless_pcre("(?i)\\w+") == "(?i)(?-i:\\w)+"
-    assert F._caseless_pcre("(?i)[[:alnum:]]") == "(?i)(?-i:[[:alnum:]])"
-    assert F._caseless_pcre("(?i)[[:upper:][:digit:]]") == "(?i)(?-i:[[:alpha:][:digit:]])"
-    # negated escapes in sets rely on the foundation's ASCII scoping: untouched
-    assert F._caseless_pcre("(?i)[^\\W]") == "(?i)[^\\W]"
-    # explicit members are folded by PCRE2 too: untouched
-    assert F._caseless_pcre("(?i)[a-z]\\.") == "(?i)[a-z]\\."
-
-
-def test_dotted_i_rows_with_prefilter() -> None:
-    """The literal prefilter and the U+0130/U+0131 re-match give the full scan's answer."""
+def test_prefilter_gives_the_full_scan() -> None:
+    """The literal prefilter and the shared column cache give a full scan's answer."""
     from pytacheck._r.regex import grepl
     from tests.mod_funding.test_funding_check import _all_patterns
 
@@ -82,12 +48,7 @@ def test_dotted_i_rows_with_prefilter() -> None:
             texts.append(t.replace("s", ch, 1).replace("k", ch, 1))
     for pattern in _all_patterns():
         for ignore_case in (False, True):
-            caseless = ignore_case or "(?i)" in pattern
-            run = F._caseless_pcre(pattern) if caseless else pattern
-            subject = [
-                t.translate(F._DOTTED_I) if (t is not None and caseless) else t for t in texts
-            ]
-            full = np.array(grepl(run, subject, ignore_case=ignore_case, perl=True))
+            full = np.array(grepl(pattern, texts, ignore_case=ignore_case, perl=True))
             fast = F._Article(texts).mask(pattern, ignore_case)
             assert (full == fast).all(), pattern
 
@@ -95,7 +56,8 @@ def test_dotted_i_rows_with_prefilter() -> None:
 @pytest.mark.parametrize(
     ("article", "expected"),
     [
-        (["FUND" + DOTTED + "NG", "The NIH provided money."], []),
+        # the regex module folds "İ" to "i" ignoring case (R's PCRE2 does not: [])
+        (["FUND" + DOTTED + "NG", "The NIH provided money."], [0, 1]),
         (["A" + LONG_S + " grant support: NIH R01"], []),
         (["Awor" + KELVIN + " grant support: NIH"], []),
         (["Awork grant support: NIH"], [0]),
@@ -106,9 +68,7 @@ def test_grant_and_title_locators(article: list[str], expected: list[int]) -> No
     assert F.get_grant_1(article) + F.get_fund_2(article) == expected
 
 
-def test_fund_acknow_dotted_i() -> None:
-    # ignore.case = TRUE: PCRE2 does not fold U+0130 to "i"
-    assert F.get_fund_acknow(["This study was f" + DOTTED + "nanced by NIH."]) == []
+def test_fund_acknow() -> None:
     assert F.get_fund_acknow(["This study was financed by NIH."]) == [0]
 
 

@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 # Create the exact R reference environment the parity goldens are generated
 # with (R 4.5.3 + pinned conda-forge builds, linux-64), then install the
-# pinned metacheck from the upstream/metacheck submodule.
+# pinned metacheck from the upstream/metacheck submodule and, for the accuracy
+# report, metacheck's suggested careless (parity/r/install-suggests.R).
 #
 #   parity/r/setup-reference.sh [PREFIX]          # default PREFIX: .r-reference
 #   export PYTACHECK_RSCRIPT="$PREFIX/bin/Rscript"
@@ -27,5 +28,8 @@ git clone --quiet https://github.com/nealrichardson/httptest2.git "$tmp/httptest
 git -C "$tmp/httptest2" checkout --quiet 37efe13ff4c51504570c5e6ac2d93fff71a416a2
 "$PREFIX/bin/R" CMD INSTALL "$tmp/httptest2"
 "$PREFIX/bin/R" CMD INSTALL --no-test-load "$ROOT/upstream/metacheck"
+# metacheck's suggested careless (not on conda-forge), in its own library that
+# only the accuracy report loads
+"$PREFIX/bin/Rscript" "$ROOT/parity/r/install-suggests.R"
 "$PREFIX/bin/Rscript" -e 'suppressPackageStartupMessages(library(metacheck)); cat("metacheck", as.character(packageVersion("metacheck")), "ready\n")'
 echo "export PYTACHECK_RSCRIPT=$PREFIX/bin/Rscript"

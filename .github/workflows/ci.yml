@@ -40,6 +40,8 @@ jobs:
       - name: mypy
         run: uv run mypy
 
+  # Unit tests on every platform, with the tier-1 parity cases (the realistic
+  # corpus, parity/corpus.toml); the `parity` job runs every case once.
   test:
     name: Tests (${{ matrix.os }}, py${{ matrix.python }})
     runs-on: ${{ matrix.os }}
@@ -64,16 +66,66 @@ jobs:
           version: ${{ env.UV_VERSION }}
           python-version: ${{ matrix.python }}
       - run: uv sync --locked --all-extras
-      - name: Tests (unit + parity against committed R goldens)
-        run: uv run pytest -n auto -m "not network and not r" --cov --cov-report=xml
-      - name: Parity report
-        if: always()
-        run: uv run python -m parity check
+      - name: Tests (unit + tier-1 parity against committed R goldens)
+        run: uv run pytest -n auto -m "not network and not r and (not parity or tier1)" --cov --cov-report=xml
       - uses: codecov/codecov-action@0b35c9ecc4f0529d0eb674914510c22f85b196b4 # v7.0.2
         if: matrix.os == 'ubuntu-latest' && matrix.python == '3.12'
         with:
           files: coverage.xml
           fail_ci_if_error: false
+
+  # Every parity case once (docs/PARITY.md), with the per-case report, and the
+  # accuracy gate: pytacheck against metacheck on the realistic corpus, scored
+  # from the committed R outputs (parity/accuracy/golden).
+  parity:
+    name: Parity and accuracy (committed R goldens)
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v6.0.2
+        with:
+          persist-credentials: false
+          submodules: true
+      - uses: astral-sh/setup-uv@bec219d24cd3e171d82865faccec33120bb574f4 # v10.1.0
+        with:
+          version: ${{ env.UV_VERSION }}
+          python-version: ${{ env.PRIMARY_PYTHON }}
+      - run: uv sync --locked --all-extras
+      - name: Parity (every case)
+        run: >-
+          uv run python -m parity check --jobs 0
+          --report parity/_out/report.json --md "$GITHUB_STEP_SUMMARY"
+      - name: Accuracy gate (realistic corpus)
+        if: always()
+        run: >-
+          uv run python -m parity accuracy --gate
+          --report parity/_out/accuracy.json --md "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        if: always()
+        with:
+          name: parity-report
+          path: |
+            parity/_out/report.json
+            parity/_out/accuracy.json
+
+  # pandas 3 stores strings in Arrow when pyarrow is installed, and Arrow
+  # rejects text that is not valid Unicode: the realistic cases must pass there too.
+  parity-pyarrow:
+    name: Tier-1 parity with pyarrow
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v6.0.2
+        with:
+          persist-credentials: false
+          submodules: true
+      - uses: astral-sh/setup-uv@bec219d24cd3e171d82865faccec33120bb574f4 # v10.1.0
+        with:
+          version: ${{ env.UV_VERSION }}
+          python-version: ${{ env.PRIMARY_PYTHON }}
+      - run: uv sync --locked --all-extras
+      - name: Tier-1 parity cases with pyarrow installed
+        run: uv run --with pyarrow pytest -n auto -m "parity and tier1"
 
   benchmark:
     name: Performance

@@ -3,7 +3,7 @@
 "funding_check.na_index": {"r": "9cbc6b96a20436ff", "py": "337e38279f19c3e4", "diff": ["table.text[]"]},
 "funding_check_oi.sectioned_none": {"r": "fed9c89af8159d56", "py": "927ece575535bbb6", "diff": ["table"]},
 "helpers.create_synonyms": {"r": "e22e9a779e7f20f7", "py": "0e993319d479f08e", "diff": ["References[]", "conflict_title[]", "foundation[]", "foundation_award[]", "researches[]"]},
-"helpers.patterns": {"r": "8dde01113112bad9", "py": "b3f4d5d8580235a7", "diff": ["get_developed_1[]", "get_received_2[]", "get_support_10[]", "get_support_1[]", "get_support_2[]", "get_support_5[]", "get_support_6[]", "get_support_8[]", "get_support_9[]", "negate_conflict_1[]", "where_refs_txt[]"]},
+"helpers.patterns": {"r": "19a775d623fc5553", "py": "fca8c37ed381e44b", "diff": ["get_developed_1[]", "get_received_2[]", "get_support_10[]", "get_support_1[]", "get_support_5[]", "get_support_6[]", "get_support_8[]", "get_support_9[]", "where_refs_txt[]"]},
 "locate.error.acknow_1": {"r": "ac5146cf65ca52a8", "py": "8418223326b503e1", "diff": ["<R error, Python value>"]},
 "locate.error.financial_1": {"r": "ac5146cf65ca52a8", "py": "40dfce029d8c7730", "diff": ["<R error, Python value>"]},
 "locate.error.fund_2": {"r": "ac5146cf65ca52a8", "py": "33507235fc1c4b27", "diff": ["<R error, Python value>"]},

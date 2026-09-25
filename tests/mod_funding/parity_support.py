@@ -27,7 +27,6 @@ def _pattern_table() -> dict[str, Callable[[], list[str]]]:
     """
     return {
         "get_support_1": lambda: list(F._patterns_support_1()),
-        "get_support_2": lambda: list(F._patterns_support_2()),
         "get_support_3": lambda: [F._pattern_support_3()],
         "get_support_4": lambda: [F._pattern_support_4()],
         "get_support_5": lambda: [F._pattern_support_5()],
@@ -48,7 +47,6 @@ def _pattern_table() -> dict[str, Callable[[], list[str]]]:
         "get_fund_2": lambda: _title("funding_title"),
         "get_fund_3": lambda: [F._pattern_fund_3()],
         "get_fund_acknow": lambda: [F._pattern_fund_acknow()],
-        "get_fund_acknow_new": lambda: [F._pattern_fund_acknow_new()],
         "get_supported_1": lambda: [F._pattern_supported_1()],
         "get_financial_1": lambda: _title("financial_title"),
         "get_financial_2": lambda: [F._pattern_financial_2()],
@@ -63,9 +61,6 @@ def _pattern_table() -> dict[str, Callable[[], list[str]]]:
         "get_common_3": lambda: ["required to disclose.*disclosed none"],
         "get_common_4": lambda: [F._pattern_common_4()],
         "get_common_5": lambda: [F._pattern_common_5()],
-        "negate_disclosure_1": lambda: list(F._patterns_negate_disclosure_1()),
-        "negate_disclosure_2": lambda: [F._pattern_negate_disclosure_2()],
-        "negate_conflict_1": lambda: [F._pattern_negate_conflict_1()],
         "negate_absence_1": lambda: [F._pattern_negate_absence_1()],
         "get_acknow_1": lambda: [F._ACKNOW_1],
         "get_acknow_2": lambda: [F._ACKNOW_2],
@@ -77,10 +72,6 @@ def _pattern_table() -> dict[str, Callable[[], list[str]]]:
             _title("grant_title")[0],
             F._pattern_grant_1_within(),
         ],
-        ".where_methods_txt": lambda: list(F._patterns_where_methods()),
-        "obliterate_conflict_1": lambda: [F._pattern_obliterate_conflict_1()],
-        "obliterate_disclosure_1": lambda: [F._pattern_obliterate_disclosure_1()],
-        ".obliterate_refs_1": lambda: ["^.*\\([0-9]{4}\\).*$", "^.* et al\\..*$"],
     }
 
 
@@ -117,8 +108,8 @@ def call(fn: str, *args: Any, **kwargs: Any) -> Any:
 
 def masks(patterns: Sequence[str], x: Sequence[str | None], ignore_case: bool = False) -> list[Any]:
     """``lapply(patterns, grepl, x, perl = TRUE, ignore.case = ...)`` through
-    :class:`pytacheck.modules._funding._Article` (literal prefilter, shared
-    column cache and the PCRE caseless corrections the locators rely on)."""
+    :class:`pytacheck.modules._funding._Article` (literal prefilter and shared
+    column cache)."""
     art = F._Article([v if isinstance(v, str) else None for v in x])
     return [art.mask(p, ignore_case).tolist() for p in patterns]
 

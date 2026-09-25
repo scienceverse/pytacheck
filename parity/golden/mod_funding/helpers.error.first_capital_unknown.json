@@ -1,9 +1,0 @@
-{
-  "id": "helpers.error.first_capital_unknown",
-  "ok": false,
-  "error": "Unknown location in .first_capital",
-  "warnings": [],
-  "value": null,
-  "metacheck_version": "0.3.1",
-  "r_version": "R version 4.5.3 (2026-03-11)"
-}

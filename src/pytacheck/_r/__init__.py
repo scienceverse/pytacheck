@@ -1,27 +1,25 @@
-"""R-compatibility layer.
+"""R conventions that reach users.
 
-Everything a port needs to reproduce R/dplyr semantics exactly lives here:
-regular expressions (:mod:`pytacheck._r.regex`), base-R formatting and
-collation (:mod:`pytacheck._r.base`) and dplyr idioms
-(:mod:`pytacheck._r.frames`). See ``docs/PORTING.md``.
+metacheck's behaviour that users see depends on a few R conventions, kept here
+(docs/PORTING.md, section 3): R's regular expressions with R's replacement
+syntax (:mod:`pytacheck._r.regex`), R's number formatting, rounding and string
+collation (:mod:`pytacheck._r.base`) and the dplyr idioms whose pandas
+spelling gives a different table (:mod:`pytacheck._r.frames`).
 """
 
 from pytacheck._r.base import (
     as_character,
     format_num,
     is_na,
-    nchar,
     paste,
-    paste0,
     plural,
     r_round,
     r_sort_key,
     r_sorted,
     signif,
-    substr,
     trimws,
 )
-from pytacheck._r.frames import bind_rows, count, empty_like, ensure_columns
+from pytacheck._r.frames import bind_rows, count
 from pytacheck._r.regex import (
     RegexError,
     compile_r,
@@ -42,17 +40,13 @@ __all__ = [
     "bind_rows",
     "compile_r",
     "count",
-    "empty_like",
-    "ensure_columns",
     "format_num",
     "gregexpr_all",
     "grep",
     "grepl",
     "gsub",
     "is_na",
-    "nchar",
     "paste",
-    "paste0",
     "plural",
     "r_round",
     "r_sort_key",
@@ -63,6 +57,5 @@ __all__ = [
     "signif",
     "strsplit",
     "sub",
-    "substr",
     "trimws",
 ]

@@ -8,11 +8,17 @@ name: Upstream sync
 #      it is merged into dev, go back to dev and drop it from the pin
 #      (scripts/upstream_sync.py);
 #   2. install the new metacheck in the pinned R environment and regenerate every
-#      golden (changed goldens = upstream behaviour changes);
+#      golden and the accuracy report's R outputs (changed goldens = upstream
+#      behaviour changes); the brief lists the marked cases whose golden changed
+#      (r_changed) or that now match R (xpass), and the accuracy report before
+#      porting;
 #   3. let Claude Code port the changes (brief: .upstream-sync/brief.md, rules:
 #      docs/PORTING.md, prompt: .github/prompts/upstream-sync.md);
-#   4. verify (parity, tests, lint) and open a pull request. The PR can only be
-#      merged once the CI and Parity workflows are green (branch protection).
+#   4. verify (parity, the accuracy gate, tests, lint) and open a pull request. It
+#      is a draft labelled needs-human-review when tier-1 marks,
+#      parity/accuracy/expected.yaml or D-entries changed, or the accuracy report
+#      warns (scripts/upstream_sync.py review). The PR can only be merged once the
+#      CI and Parity workflows are green (branch protection).
 #
 # Requires the repository secret ANTHROPIC_API_KEY (or CLAUDE_CODE_OAUTH_TOKEN).
 
@@ -138,21 +144,27 @@ jobs:
           R CMD INSTALL /tmp/httptest2
           Rscript -e 'if (!requireNamespace("remotes", quietly = TRUE)) install.packages("remotes", repos = "https://cloud.r-project.org"); remotes::install_deps("upstream/metacheck", dependencies = NA, upgrade = "never", repos = "https://cloud.r-project.org")'
           R CMD INSTALL --no-test-load upstream/metacheck
+          # metacheck's suggested careless, in the library only the accuracy report loads
+          Rscript parity/r/install-suggests.R
           echo "PYTACHECK_RSCRIPT=$(command -v Rscript)" >> "$GITHUB_ENV"
 
       - name: Regenerate goldens with the new metacheck
         run: |
           uv run python -m parity generate || true
+          uv run python -m parity accuracy --generate \
+            --report .upstream-sync/accuracy-before.json || true
+          uv run python -m parity check --jobs 0 \
+            --report .upstream-sync/check-before.json > /dev/null 2>&1 || true
           {
             echo ""
             echo "## Goldens that changed with the new metacheck"
             echo ""
-            git diff --stat -- parity/golden | sed 's/^/    /'
-            echo ""
-            echo "## Parity after regeneration (before porting)"
-            echo ""
-            uv run python -m parity check 2>&1 | tail -n 80 | sed 's/^/    /'
+            git diff --stat -- parity/golden parity/accuracy/golden | sed 's/^/    /'
           } >> .upstream-sync/brief.md
+          uv run python scripts/upstream_sync.py brief-parity \
+            --check .upstream-sync/check-before.json \
+            --accuracy .upstream-sync/accuracy-before.json
+          uv run python scripts/upstream_sync.py tier1-marks --out .upstream-sync/tier1-marks.json
 
       - name: Load the porting prompt
         id: prompt
@@ -179,11 +191,19 @@ jobs:
         run: |
           set +e
           uv run ruff format . >/dev/null
-          uv run python -m parity check > .upstream-sync/parity.txt 2>&1; parity=$?
-          uv run pytest -n auto -m "not network and not r" -q > .upstream-sync/pytest.txt 2>&1; tests=$?
+          uv run python -m parity check --jobs 0 --report .upstream-sync/check.json \
+            --md .upstream-sync/parity.md > .upstream-sync/parity.txt 2>&1; parity=$?
+          uv run python -m parity accuracy --gate --report .upstream-sync/accuracy.json \
+            --md .upstream-sync/accuracy.md > .upstream-sync/accuracy.txt 2>&1; accuracy=$?
+          uv run pytest -n auto -m "not network and not r and not parity" -q > .upstream-sync/pytest.txt 2>&1; tests=$?
           uv run ruff check . > .upstream-sync/ruff.txt 2>&1; lint=$?
-          ok=$([ $parity -eq 0 ] && [ $tests -eq 0 ] && [ $lint -eq 0 ] && echo true || echo false)
+          ok=$([ $parity -eq 0 ] && [ $accuracy -eq 0 ] && [ $tests -eq 0 ] && [ $lint -eq 0 ] && echo true || echo false)
           echo "ok=$ok" >> "$GITHUB_OUTPUT"
+          uv run python scripts/upstream_sync.py review --marks .upstream-sync/tier1-marks.json \
+            --accuracy .upstream-sync/accuracy.json > .upstream-sync/review.json
+          # a review that could not be computed asks for one
+          review=$(python3 -c "import json; print(str(json.load(open('.upstream-sync/review.json'))['needs_review']).lower())" 2>/dev/null || echo true)
+          echo "needs_review=$review" >> "$GITHUB_OUTPUT"
 
       - name: Commit, push and open the pull request
         env:
@@ -202,19 +222,32 @@ jobs:
             warning=$(meta warning)
             [ -z "$warning" ] || { echo "$warning"; echo; }
             if [ "${{ steps.verify.outputs.ok }}" = "true" ]; then
-              echo "✅ Parity, tests and lint pass."
+              echo "✅ Parity, the accuracy gate, tests and lint pass."
             else
               echo "❌ Verification failed — needs attention (see below)."
             fi
             echo
+            if [ "${{ steps.verify.outputs.needs_review }}" = "true" ]; then
+              echo "## Needs human review"
+              python3 -c "import json; [print('-', r) for r in json.load(open('.upstream-sync/review.json'))['reasons']]"
+              echo
+            fi
             [ -f .upstream-sync/notes.md ] && { echo "## Notes from the porting agent"; cat .upstream-sync/notes.md; echo; }
-            echo "## Parity"; echo '```'; tail -n 40 .upstream-sync/parity.txt; echo '```'
+            echo "<details><summary>Parity</summary>"; echo; head -c 20000 .upstream-sync/parity.md; echo; echo "</details>"
+            echo "<details><summary>Accuracy</summary>"; echo; head -c 20000 .upstream-sync/accuracy.md; echo; echo "</details>"
             echo "## Tests"; echo '```'; tail -n 20 .upstream-sync/pytest.txt; echo '```'
             echo "<details><summary>Upstream brief</summary>"; echo; head -c 50000 .upstream-sync/brief.md; echo; echo "</details>"
           } > .upstream-sync/pr.md
-          draft=$([ "${{ steps.verify.outputs.ok }}" = "true" ] || echo --draft)
+          flags=(--label upstream-sync)
+          if [ "${{ steps.verify.outputs.ok }}" != "true" ] || [ "${{ steps.verify.outputs.needs_review }}" = "true" ]; then
+            flags+=(--draft)
+          fi
+          if [ "${{ steps.verify.outputs.needs_review }}" = "true" ]; then
+            flags+=(--label needs-human-review)
+          fi
           gh label create upstream-sync --color 0e8a16 --description "Automated metacheck sync" 2>/dev/null || true
-          gh pr create --base main --head "${{ steps.branch.outputs.name }}" $draft \
-            --label upstream-sync \
+          gh label create needs-human-review --color d93f0b \
+            --description "Changes what pytacheck may do differently from metacheck" 2>/dev/null || true
+          gh pr create --base main --head "${{ steps.branch.outputs.name }}" "${flags[@]}" \
             --title "$title" \
             --body-file .upstream-sync/pr.md

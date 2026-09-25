@@ -1,76 +1,42 @@
-"""R-compatible regular expressions.
+"""R's regular expression functions on the `regex` module.
 
-metacheck is written in R, whose regex functions (``grepl``, ``sub``,
-``gsub``, ``regexpr``, ``gregexpr``, ``regmatches``, ``strsplit``) run one of
-two engines:
+metacheck's patterns are written for R's two engines, and pytacheck keeps them
+as they are (docs/PORTING.md, section 3). Patterns are the regex after R's
+string-literal unescaping: the R source ``"\\\\d+"`` is the Python ``r"\\d+"``.
 
-* ``perl = FALSE`` (the default): the TRE engine, POSIX *extended* regular
-  expressions with *leftmost-longest* match semantics.
-* ``perl = TRUE``: PCRE2, *leftmost-first* (backtracking) semantics.
+* ``perl = FALSE`` (R's default) is TRE, a POSIX extended regex engine.
+  :func:`translate_tre` rewrites the few constructs whose meaning differs in
+  the `regex` module: ``\\<`` and ``\\>`` are word start and end; ``\\d`` is
+  ``[0-9]``; ``\\s`` has no no-break spaces (as glibc); a backslash inside
+  ``[...]`` is literal; ``.`` matches a newline; ``$`` is the very end; an
+  unknown escape is the character itself. POSIX classes are the `regex`
+  module's. Match extents are leftmost-longest (``regex.POSIX``), except
+  for patterns with a lazy quantifier, which keep their laziness.
+* ``perl = TRUE`` is PCRE2 without Unicode properties: :func:`translate_pcre`
+  makes ``\\w \\d \\s \\b`` and the POSIX classes ASCII, and ``\\Z``/``\\z``
+  PCRE's. Inline flags such as ``(?i)`` pass through: `regex` (``V0``) scopes
+  them to the end of their group, as PCRE2 does.
 
-Python's :mod:`re` behaves like neither in several ways that change results
-on real papers, so every port in pytacheck must go through this module
-instead of calling :mod:`re` or pandas ``.str`` regex methods directly.
-
-The differences reproduced here were measured against R 4.5 under a
-``C.UTF-8`` locale (the locale the parity goldens are generated in):
-
-=========================  ==========================  ==========================
-behaviour                  TRE (``perl=False``)        PCRE (``perl=True``)
-=========================  ==========================  ==========================
-alternation ``a|ab``       longest (``"ab"``)          first (``"a"``)
-``\\w`` ``\\b``            glibc ``iswalnum`` + ``_``  ASCII only
-``\\d``                    ASCII ``[0-9]``             ASCII ``[0-9]``
-``\\s``                    no NBSP (glibc iswspace)    ASCII whitespace only
-``[[:alpha:]]`` etc.       glibc ``iswctype``          ASCII only
-``\\`` inside ``[...]``    a *literal* backslash       an escape
-``.``                      matches ``\\n``             does not match ``\\n``
-``$``                      only at the very end        end or before final ``\\n``
-``\\<`` ``\\>``            word start / end            (literal ``<`` / ``>``)
-case-insensitive           ``towupper``/``towlower``   PCRE2's caseless sets (no
-                           of each letter              ``İ``/``ı`` for ``i``/``I``)
-``*`` with nothing before  repeats the empty string    an error
-``a*?``                    TRE's tag rules             backtracking
-=========================  ==========================  ==========================
-
-The TRE side is a port: :mod:`pytacheck._r._tre` parses patterns as
-``tre_parse()`` does (errors included) and writes them in `regex` syntax,
-with R's character tables (:mod:`pytacheck._r._ctype_tables`); the patterns
-that syntax cannot express the way TRE matches them (minimal repetitions,
-repeated capture groups whose submatches are used, and a few TRE quirks) run
-on a port of TRE's own matcher, :mod:`pytacheck._r._tnfa`. The PCRE side
-(:mod:`pytacheck._r._pcre`) validates the pattern and spells out PCRE2's
-caseless matching and ASCII classes. The functions reproduce R's search
-loops (empty matches, ``gregexpr``'s byte steps with PCRE, byte versus
-wide-character mode with TRE).
-
-TRE's matcher can report a later match than the leftmost one when two
-paths reach the end of the pattern together after a first match; that is
-reproduced only for the patterns run on the TRE matcher.
-
-Patterns passed to these functions are the *regex* after R string-literal
-unescaping, i.e. the R source ``"\\\\d+"`` becomes the Python raw string
-``r"\\d+"``.
-
-All functions are vectorised like their R namesakes: they accept a scalar,
-a list/tuple, or a :class:`pandas.Series` and return the same kind of
-container (a Series keeps its index). Missing values (``None``, ``pd.NA``,
-``NaN``) follow R: ``grepl`` gives ``False``, ``sub``/``gsub`` give ``NA``.
+The functions keep what R users see: vectorisation (a scalar, list, tuple or
+Series in, the same kind out; a Series keeps its index), ``NA`` handling
+(``grepl`` gives ``False``, ``sub``/``gsub`` give ``NA``), R's replacement
+syntax (``\\1``-``\\9``; ``\\U \\L \\E`` with ``perl = TRUE``), and R's
+rules for empty matches in ``gsub``, ``gregexpr`` and ``strsplit``. R's
+error texts and TRE/PCRE behaviour on malformed patterns or glibc character
+table corner cases are not reproduced: an invalid pattern raises
+:class:`RegexError`.
 """
 
 from __future__ import annotations
 
 import functools
-import math
 from collections.abc import Callable, Iterable, Sequence
-from dataclasses import dataclass
 from typing import Any, TypeVar
 
+import pandas as pd
 import regex
 
-from pytacheck._r import _charset as _cs
-from pytacheck._r import _pcre, _tnfa, _tre
-from pytacheck._r._charset import RegexError
+from pytacheck._values import is_missing
 
 __all__ = [
     "RegexError",
@@ -84,182 +50,147 @@ __all__ = [
     "regextract_all",
     "strsplit",
     "sub",
-    "translate",
 ]
 
 T = TypeVar("T")
 
+#: R's ``is.na()`` for one value (the shared helper).
+is_na = is_missing
+
+
+class RegexError(ValueError):
+    """An R regular expression that cannot be compiled."""
+
 
 # ---------------------------------------------------------------------------
-# Translation of R (TRE / PCRE) syntax to the Python `regex` module
+# Translation
 # ---------------------------------------------------------------------------
 
-
-@functools.lru_cache(maxsize=4096)
-def translate(pattern: str, perl: bool = False) -> str:
-    """Translate an R regular expression into `regex`-module syntax."""
-    return _pcre.translate(pattern).pattern if perl else _tre.translate(pattern).pattern
-
-
-def _pcre_nullable(translated: str) -> bool:
-    """Can the translated PCRE pattern match the empty string? (``True`` when unsure.)"""
-    try:
-        import re._parser as sre_parse  # type: ignore[import-not-found]  # match widths
-
-        return bool(sre_parse.parse(translated).getwidth()[0] == 0)
-    except Exception:  # regex-module syntax the stdlib cannot parse
-        return True
+# glibc's iswspace() and iswblank(): Unicode white space without the no-break
+# spaces (U+00A0, U+2007, U+202F) and U+0085
+_SPACE = "\\t\\n\\v\\f\\r \\u1680\\u2000-\\u2006\\u2008-\\u200a\\u2028\\u2029\\u205f\\u3000"
+_BLANK = "\\t \\u1680\\u2000-\\u2006\\u2008-\\u200a\\u205f\\u3000"
+_TRE_ESCAPES = {
+    **{c: "\\" + c for c in "wWbBntrfax"},
+    **{"<": r"\m", ">": r"\M", "d": "[0-9]", "D": "[^0-9]", "e": r"\x1b"},
+    **{"s": f"[{_SPACE}]", "S": f"[^{_SPACE}]"},
+}
+_TRE_CLASSES = {"space": _SPACE, "blank": _BLANK}
 
 
-@dataclass(frozen=True)
-class _Compiled:
-    rx: regex.Pattern[str]
-    nullable: bool  # can match the empty string
-    wide_differs: bool  # TRE: R's wide-character mode matches differently
-    # TRE with the `regex` module's word characters (see _tre.Translation.fast)
-    fast: regex.Pattern[str] | None = None
+def _tre_bracket(p: str, i: int) -> tuple[str, int]:
+    """The bracket expression starting at ``p[i] == "["``, and the index after it."""
+    out = ["["]
+    i += 1
+    if p.startswith("^", i):
+        out.append("^")
+        i += 1
+    first = True
+    while i < len(p):
+        c = p[i]
+        if c == "]" and not first:
+            out.append("]")
+            return "".join(out), i + 1
+        first = False
+        if p.startswith(("[:", "[=", "[."), i):
+            end = p.find(p[i + 1] + "]", i + 2)
+            if end < 0:
+                break
+            name = p[i + 2 : end]
+            if p[i + 1] == ":":
+                out.append(_TRE_CLASSES.get(name, f"[:{name}:]"))
+            else:  # an equivalence class or collating element: the character
+                out.append(regex.escape(name))
+            i = end + 2
+            continue
+        out.append("\\" + c if c in "\\[]^" else c)  # a backslash is literal
+        i += 1
+    raise RegexError(f"invalid regular expression '{p}': missing ']'")
 
-    def pick(self, s: str) -> regex.Pattern[str]:
-        """The pattern to run on the subject *s*."""
-        if self.fast is not None and not _cs.word_divergent(s):
-            return self.fast
-        return self.rx
+
+@functools.lru_cache(maxsize=8192)
+def translate_tre(p: str) -> str:
+    """A TRE (POSIX extended) pattern in `regex` syntax (compile with DOTALL)."""
+    out: list[str] = []
+    i, n = 0, len(p)
+    while i < n:
+        c = p[i]
+        if c == "\\":
+            if i + 1 == n:
+                raise RegexError(f"invalid regular expression '{p}': trailing backslash")
+            e = p[i + 1]
+            if e == "Q":  # literal text up to \E
+                end = p.find("\\E", i + 2)
+                end = n if end < 0 else end
+                out.append(regex.escape(p[i + 2 : end]))
+                i = end + 2
+                continue
+            if e in _TRE_ESCAPES:
+                out.append(_TRE_ESCAPES[e])
+            elif e.isdigit():
+                out.append("\\" + e)
+            else:  # any other escaped character stands for itself ("\g" is "g")
+                out.append(regex.escape(e))
+            i += 2
+        elif c == "[":
+            s, i = _tre_bracket(p, i)
+            out.append(s)
+        else:
+            out.append(r"\Z" if c == "$" else c)
+            i += 1
+    return "".join(out)
 
 
-@functools.lru_cache(maxsize=4096)
-def _compile(
-    pattern: str,
-    ignore_case: bool,
-    perl: bool,
-    fixed: bool,
-    posix: bool,
-    wide: bool = False,
-    tnfa: bool = True,
-    groups: bool = False,
-) -> _Compiled:
-    """Compile *pattern*; ``wide`` selects TRE's wide-character mode (see
-    :func:`_compile_for`), ``tnfa`` allows TRE's own matcher where the
-    translation is not exact, ``groups`` says that submatches are used."""
+# fmt: off
+_ASCII_ITEMS = {  # PCRE2's classes in a bracket expression: ASCII only
+    r"\w": "0-9A-Za-z_", "[:word:]": "0-9A-Za-z_", r"\d": "0-9", "[:digit:]": "0-9",
+    r"\s": r"\t\n\v\f\r ", "[:space:]": r"\t\n\v\f\r ", "[:blank:]": r"\t ",
+    "[:alpha:]": "A-Za-z", "[:alnum:]": "0-9A-Za-z", "[:upper:]": "A-Z", "[:lower:]": "a-z",
+    "[:punct:]": r"!-/:-@\[-`{-~", "[:xdigit:]": "0-9A-Fa-f", "[:cntrl:]": r"\x00-\x1f\x7f",
+    "[:print:]": r" -~", "[:graph:]": "!-~", "[:ascii:]": r"\x00-\x7f",
+}
+# fmt: on
+_SET_ITEM = regex.compile(r"\\[wds]|\[:[a-z]+:\]")
+# an escape, or a bracket expression (its POSIX classes and escapes as groups)
+_PCRE_TOKEN = regex.compile(r"\\(.)|\[(\^?)(\]?(?:\[:\^?[a-z]+:\]|\\.|[^\]])*)\]", regex.DOTALL)
+
+
+def _pcre_token(m: Any) -> str:
+    e = m.group(1)
+    if e is None:  # inside sets, explicit ASCII ranges: a scoped (?a:[...]) still
+        # folds non-ASCII letters under IGNORECASE
+        body = _SET_ITEM.sub(lambda k: _ASCII_ITEMS.get(k.group(0), k.group(0)), m.group(3))
+        return f"[{m.group(2)}{body}]"
+    if e in "wWdDsSbB":
+        return f"(?a:\\{e})"
+    # PCRE's \Z is the end or before a final newline, its \z the end
+    return r"(?=\n?\Z)" if e == "Z" else r"\Z" if e == "z" else m.group(0)
+
+
+@functools.lru_cache(maxsize=8192)
+def translate_pcre(p: str) -> str:
+    """A PCRE2 pattern (R's: no Unicode properties) in `regex` syntax."""
+    return _PCRE_TOKEN.sub(_pcre_token, p) if "\\" in p or "[:" in p else p
+
+
+_LAZY = regex.compile(r"[*+?}]\?")
+
+
+@functools.lru_cache(maxsize=8192)
+def _compile(pattern: str, ignore_case: bool, perl: bool, fixed: bool, posix: bool) -> Any:
     if fixed:
-        return _Compiled(regex.compile(regex.escape(pattern)), pattern == "", False)
-    flags = regex.VERSION0
-    wide_differs = False
-    fast_body = None
-    if perl:
-        # PCRE2: case-insensitivity is spelled out by the translation too
-        body = _pcre.translate(pattern, ignore_case).pattern
-        nullable = _pcre_nullable(body)
-    else:
-        # TRE: case-insensitivity is spelled out by the translation
-        tre = _tre.translate(pattern, ignore_case)
-        body = tre.pattern_wide if wide else tre.pattern
-        fast_body = tre.fast_wide if wide else tre.fast
-        nullable = tre.nullable
-        wide_differs = tre.pattern_wide != tre.pattern
-        flags |= regex.DOTALL
-        if (
-            tnfa
-            and not tre.backrefs
-            and (
-                # minimal repetitions (the `regex` translation finds the
-                # same matches, so detection alone does not need TRE's own
-                # matcher); alternatives TRE matches empty in only one way;
-                # TRE's merged states; wide-character mode's copies of
-                # negated brackets and copies of groups, whose matches TRE
-                # does not always find leftmost; submatches of repeated groups
-                (posix and (tre.minimal or tre.copied_groups or (groups and tre.iter_groups)))
-                or tre.empty_paths
-                or (wide and wide_differs)
-                or _tnfa.merges_states(pattern, ignore_case)
-            )
-        ):
-            tnfa_rx: Any = _TnfaPattern(pattern, ignore_case, wide)
-            return _Compiled(tnfa_rx, nullable, wide_differs)
-        # TRE is leftmost-longest; POSIX mode (with backtracking for the rare
-        # lazy repetition with back references)
-        if posix and not tre.minimal:
-            flags |= regex.POSIX
+        return regex.compile(regex.escape(pattern))
+    flags = regex.V0 | (regex.IGNORECASE if ignore_case else 0)
     try:
-        fast = None if fast_body is None else regex.compile(fast_body, flags)
-        return _Compiled(regex.compile(body, flags), nullable, wide_differs, fast)
-    except regex.error as exc:  # pragma: no cover - message depends on regex version
-        raise RegexError(f"invalid regular expression {pattern!r}: {exc}") from exc
-
-
-class _TnfaMatch:
-    """What :class:`_TnfaPattern` returns: the parts of ``regex.Match`` used here."""
-
-    __slots__ = ("_s", "_spans")
-
-    def __init__(self, s: str, spans: list[tuple[int, int]]) -> None:
-        self._s, self._spans = s, spans
-
-    def start(self, g: int = 0) -> int:
-        return self._spans[g][0]
-
-    def end(self, g: int = 0) -> int:
-        return self._spans[g][1]
-
-    def span(self, g: int = 0) -> tuple[int, int]:
-        return self._spans[g]
-
-    def group(self, g: int = 0) -> str | None:
-        a, b = self._spans[g]
-        return None if a < 0 else self._s[a:b]
-
-    def groups(self) -> tuple[str | None, ...]:
-        return tuple(self.group(g) for g in range(1, len(self._spans)))
-
-
-class _TnfaPattern:
-    """A TRE pattern matched by TRE's own algorithm (:mod:`pytacheck._r._tnfa`):
-    minimal repetitions and the patterns the `regex` translation cannot
-    express; offers the ``regex.Pattern`` methods used here."""
-
-    def __init__(self, pattern: str, icase: bool, wide: bool) -> None:
-        self.pattern = pattern
-        self._run = _tnfa.run
-        self._tnfa = _tnfa.compile_tnfa(pattern, icase, wide)
-
-    def search(self, s: str, pos: int = 0) -> _TnfaMatch | None:
-        # a search from `pos` is R's search of the rest of the string (REG_NOTBOL)
-        spans = self._run(self._tnfa, s, pos, pos > 0)
-        return None if spans is None else _TnfaMatch(s, spans)
-
-    def finditer(self, s: str) -> list[_TnfaMatch]:
-        out, pos = [], 0
-        while pos <= len(s) and (m := self.search(s, pos)) is not None:
-            out.append(m)
-            pos = m.end() if m.end() > m.start() else m.start() + 1
-        return out
-
-    def sub(self, repl: Callable[[Any], str], s: str, count: int = 0) -> str:
-        assert count == 1 and callable(repl)
-        m = self.search(s)
-        return s if m is None else s[: m.start()] + repl(m) + s[m.end() :]
-
-
-def _compile_for(
-    pattern: str,
-    ignore_case: bool,
-    perl: bool,
-    fixed: bool,
-    x: Any,
-    posix: bool = True,
-    extra: str = "",
-    groups: bool = False,
-) -> _Compiled:
-    """:func:`_compile` for a call on the vector *x*.
-
-    R runs TRE in byte mode when the pattern (and *extra*, gsub's replacement)
-    and every element of *x* are ASCII, and in wide-character mode otherwise;
-    the two differ for a few patterns (:class:`pytacheck._r._tre.Translation`).
-    ``groups``: the caller uses submatches.
-    """
-    c = _compile(pattern, ignore_case, perl, fixed, posix, False, True, groups)
-    if c.wide_differs and not (pattern.isascii() and extra.isascii() and _all_ascii(x)):
-        c = _compile(pattern, ignore_case, perl, fixed, posix, True, True, groups)
-    return c
+        if perl:
+            return regex.compile(translate_pcre(pattern), flags)
+        flags |= regex.DOTALL
+        # TRE is leftmost-longest; POSIX mode would override lazy quantifiers
+        if posix and not _LAZY.search(pattern):
+            flags |= regex.POSIX
+        return regex.compile(translate_tre(pattern), flags)
+    except regex.error as exc:
+        raise RegexError(f"invalid regular expression '{pattern}': {exc}") from exc
 
 
 def compile_r(
@@ -270,70 +201,40 @@ def compile_r(
     posix: bool | None = None,
     wide: bool = False,
 ) -> regex.Pattern[str]:
-    """Compile an R pattern with R's semantics.
+    """Compile an R pattern into a `regex` pattern.
 
-    ``posix`` selects leftmost-longest matching; it defaults to ``True`` for
-    TRE patterns (``perl=False``), which is what R does. Pure *detection*
-    (``grepl``) does not depend on it, so :func:`grepl` turns it off for speed.
-    Invalid patterns raise :class:`RegexError` where R raises an error.
-
-    The TRE word assertions (``\\b``, ``\\<``, ...) hold at the position a
-    search starts from, as they do when R restarts a search after a match; use
-    ``rx.search(s, pos)`` (not slicing) to continue a search. ``wide`` gives
-    TRE's wide-character mode, which R uses when the pattern or any element of
-    the input is non-ASCII (it only matters for negated ``[:class:]`` brackets
-    in bounded repetitions such as ``\\W{2}``).
-
-    TRE resolves minimal repetitions (``.*?``) in its own way, which only the
-    R functions here reproduce (with :mod:`pytacheck._r._tnfa`); the pattern
-    returned for such a TRE pattern matches minimally by backtracking.
+    ``posix`` selects leftmost-longest matching for a TRE pattern (the
+    default, as R); detection alone does not depend on it, so ``posix=False``
+    is faster where only whether a pattern matches is used. ``wide`` is
+    accepted for compatibility and has no effect. Raises :class:`RegexError`
+    for an invalid pattern.
     """
-    return _compile(pattern, ignore_case, perl, fixed, posix is None or posix, wide, False).rx
+    del wide
+    return _compile(pattern, ignore_case, perl, fixed, posix is None or posix)
 
 
 # ---------------------------------------------------------------------------
-# Vectorisation helpers
+# Vectorisation
 # ---------------------------------------------------------------------------
-
-
-def is_na(x: Any) -> bool:
-    """R's ``is.na()`` for a single value."""
-    if x is None:
-        return True
-    if isinstance(x, float):
-        return math.isnan(x)
-    try:
-        import pandas as pd
-
-        return x is pd.NA or x is pd.NaT
-    except ImportError:  # pragma: no cover
-        return False
 
 
 def _vectorize(x: Any, fn: Callable[[Any], T]) -> Any:
     """Apply *fn* elementwise, returning the same container type as *x*."""
     if isinstance(x, str) or x is None or not isinstance(x, Iterable):
         return fn(x)
-    try:
-        import pandas as pd
-
-        if isinstance(x, pd.Series):
-            return pd.Series([fn(v) for v in x], index=x.index, dtype=object)
-        if isinstance(x, pd.Index):
-            return [fn(v) for v in x]
-    except ImportError:  # pragma: no cover
-        pass
+    if isinstance(x, pd.Series):
+        return pd.Series([fn(v) for v in x], index=x.index, dtype=object)
     return [fn(v) for v in x]
 
 
 def _as_str(x: Any) -> str | None:
-    if is_na(x):
-        return None
-    return x if isinstance(x, str) else str(x)
+    if type(x) is str:
+        return x
+    return None if is_missing(x) else str(x)
 
 
 # ---------------------------------------------------------------------------
-# R functions
+# A literal prefilter for grepl
 # ---------------------------------------------------------------------------
 
 
@@ -396,15 +297,24 @@ def _leading_literal(branch: str) -> str:
     return "".join(lit)
 
 
-@functools.lru_cache(maxsize=4096)
+_TURKISH_I = str.maketrans({"\u0130": "i", "\u0131": "i"})
+
+
+def _casefold(s: str) -> str:
+    """``s.casefold()``, with the dotted capital and the dotless small I as ``i``:
+    ignoring case, the engine matches ``İ`` to ``i`` and ``ı`` to ``I``, which their
+    case folding (``i`` + U+0307 and ``ı``) does not show."""
+    return s.translate(_TURKISH_I).casefold()
+
+
+@functools.lru_cache(maxsize=8192)
 def _prefilter(pattern: str, ignore_case: bool) -> tuple[str, ...] | None:
     """Literals of which every match must contain one, or ``None``.
 
-    Used to skip the regex engine for text that cannot match: metacheck's
-    patterns are mostly keyword alternations, so this avoids running the
-    engine on nearly every sentence of a corpus. The test only ever keeps
-    too much (never too little): texts are casefolded, which folds at least
-    as much as the engine's case-insensitive matching.
+    metacheck's patterns are mostly keyword alternations, so this skips the
+    regex engine for nearly every sentence of a paper. It only ever keeps too
+    much, never too little: texts are casefolded (:func:`_casefold`), which
+    folds at least as much as the engine's case-insensitive matching.
     """
     if _INLINE_FLAGS.search(pattern):
         return None
@@ -420,36 +330,28 @@ def _prefilter(pattern: str, ignore_case: bool) -> tuple[str, ...] | None:
     return tuple(dict.fromkeys(literals))
 
 
+# ---------------------------------------------------------------------------
+# R functions
+# ---------------------------------------------------------------------------
+
+
 def grepl(
-    pattern: str,
-    x: Any,
-    ignore_case: bool = False,
-    perl: bool = False,
-    fixed: bool = False,
+    pattern: str, x: Any, ignore_case: bool = False, perl: bool = False, fixed: bool = False
 ) -> Any:
     """R ``grepl()``: does each element contain a match? ``NA`` gives ``False``."""
     if fixed:
         return _vectorize(x, lambda v: (s := _as_str(v)) is not None and pattern in s)
-    c = _compile_for(pattern, ignore_case, perl, False, x, posix=False)
-    pick = c.pick
-    # (TRE's merged states can match without a literal the pattern requires)
-    literals = None if isinstance(c.rx, _TnfaPattern) else _prefilter(pattern, ignore_case)
+    search = _compile(pattern, ignore_case, perl, False, False).search
+    literals = _prefilter(pattern, ignore_case)
     if literals is None:
-        if c.fast is None:
-            search = c.rx.search
-            return _vectorize(x, lambda v: (s := _as_str(v)) is not None and search(s) is not None)
-        return _vectorize(
-            x, lambda v: (s := _as_str(v)) is not None and pick(s).search(s) is not None
-        )
+        return _vectorize(x, lambda v: (s := _as_str(v)) is not None and search(s) is not None)
 
     def match(v: Any) -> bool:
         s = _as_str(v)
         if s is None:
             return False
-        folded = s.casefold() if ignore_case else s
-        if not any(lit in folded for lit in literals):
-            return False
-        return pick(s).search(s) is not None
+        folded = (s.casefold() if s.isascii() else _casefold(s)) if ignore_case else s
+        return any(lit in folded for lit in literals) and search(s) is not None
 
     return _vectorize(x, match)
 
@@ -464,158 +366,87 @@ def grep(
     invert: bool = False,
 ) -> list[Any]:
     """R ``grep()``: 0-based indices (or values) of matching elements."""
-    hits = grepl(pattern, list(x), ignore_case, perl, fixed)
     items = list(x)
+    hits = grepl(pattern, items, ignore_case, perl, fixed)
     return [items[i] if value else i for i, h in enumerate(hits) if h != invert]
 
 
 @functools.lru_cache(maxsize=4096)
-def _literal_template(repl: str, perl: bool) -> str | None:
-    """A ``regex.sub`` template for *repl* if it is plain text, otherwise ``None``."""
-    if "\\" in repl:
-        if regex.search(r"\\[1-9]", repl) or (perl and regex.search(r"\\[ULE]", repl)):
-            return None
-        # an escaped character stands for itself; a trailing lone backslash is dropped
-        stripped = regex.sub(r"\\(.)|\\\Z", r"\1", repl, flags=regex.DOTALL)
-    else:
-        stripped = repl
-    return stripped.replace("\\", "\\\\")
+def _replacement(repl: str, perl: bool) -> str | Callable[[Any], str]:
+    """R's replacement syntax: the literal text, or a function of the match.
 
-
-def _r_replacement(repl: str, perl: bool) -> Callable[[regex.Match[str]], str]:
-    """Build a replacement function implementing R's replacement syntax.
-
-    ``\\1``-``\\9`` are backreferences (``\\0`` is a literal ``0``); with ``perl=TRUE``
-    ``\\U``/``\\L``/``\\E`` switch case conversion, which (as in R's
-    ``R_pcre_string_adj()``) applies to the back-referenced text only, never
-    to literal text. Any other escaped character stands for itself, and a
-    trailing lone backslash is dropped.
+    ``\\1``-``\\9`` are back references (``\\0`` is a literal ``0``); with
+    ``perl=TRUE`` ``\\U``/``\\L``/``\\E`` switch case conversion, which (as in
+    R) applies to back-referenced text only. Any other escaped character
+    stands for itself, and a trailing lone backslash is dropped.
     """
     parts: list[tuple[str, Any]] = []
-    i, n = 0, len(repl)
-    lit: list[str] = []
-    while i < n:
-        c = repl[i]
-        if c == "\\" and i + 1 == n:
-            break  # R drops a trailing lone backslash
-        if c == "\\" and i + 1 < n:
-            e = repl[i + 1]
-            if e in "123456789":
-                if lit:
-                    parts.append(("lit", "".join(lit)))
-                    lit = []
-                parts.append(("grp", int(e)))
-            elif perl and e in "ULE":
-                if lit:
-                    parts.append(("lit", "".join(lit)))
-                    lit = []
-                parts.append(("case", e))
-            else:
-                lit.append(e)
-            i += 2
-        else:
-            lit.append(c)
-            i += 1
-    if lit:
-        parts.append(("lit", "".join(lit)))
+    for m in regex.finditer(r"\\([1-9])|\\([ULE])|\\(.)|\\\Z|([^\\]+)", repl, flags=regex.DOTALL):
+        if m.group(1):
+            parts.append(("grp", int(m.group(1))))
+        elif m.group(2) and perl:
+            parts.append(("case", m.group(2)))
+        elif lit := m.group(2) or m.group(3) or m.group(4):
+            parts.append(("lit", lit))
+    if all(kind == "lit" for kind, _ in parts):
+        return "".join(val for _, val in parts)
 
-    def replace(m: regex.Match[str]) -> str:
+    def replace(m: Any) -> str:
         buf: list[str] = []
         mode = "E"
         for kind, val in parts:
             if kind == "case":
                 mode = val
-                continue
-            if kind == "grp":
+            elif kind == "lit":
+                buf.append(val)
+            else:
                 try:
                     piece = m.group(val) or ""
                 except IndexError:
                     piece = ""
-                if mode == "U":
-                    piece = piece.upper()
-                elif mode == "L":
-                    piece = piece.lower()
-            else:
-                piece = val
-            buf.append(piece)
+                buf.append(
+                    piece.upper() if mode == "U" else piece.lower() if mode == "L" else piece
+                )
         return "".join(buf)
 
     return replace
 
 
-_TRE_BACKREF = regex.compile(r"\\[1-9]")
+# a pattern that can match the empty string somewhere (true when unsure)
+_NULLABLE = regex.compile(r"[*?]|\{0?,|\{0\}|\\[bB<>]|[\^$]|\(\?[=!<]|\|\||\(\||\|\)|^\||\|$")
 
 
 def _substitute(
-    pattern: str,
-    repl: str,
-    x: Any,
-    ignore_case: bool,
-    perl: bool,
-    fixed: bool,
-    count: int,
+    pattern: str, repl: str, x: Any, ignore_case: bool, perl: bool, fixed: bool, count: int
 ) -> Any:
     if fixed:
+        n = 1 if count == 1 else -1
+        return _vectorize(
+            x, lambda v: None if (s := _as_str(v)) is None else s.replace(pattern, repl, n)
+        )
+    rx = _compile(pattern, ignore_case, perl, False, True)
+    r = _replacement(repl, perl)
+    if count == 1 or not _NULLABLE.search(pattern):
+        template = r.replace("\\", "\\\\") if isinstance(r, str) else r
+        return _vectorize(
+            x, lambda v: None if (s := _as_str(v)) is None else rx.sub(template, s, count=count)
+        )
 
-        def fixed_sub(v: Any) -> str | None:
-            s = _as_str(v)
-            if s is None:
-                return None
-            return s.replace(pattern, repl, count if count else -1)
+    def rsub(s: str) -> str:
+        # R's gsub does not replace an empty match right at the end of the
+        # previous match (Python's sub does)
+        last = -1
 
-        return _vectorize(x, fixed_sub)
-    backrefs = not perl and _TRE_BACKREF.search(repl) is not None
-    c = _compile_for(pattern, ignore_case, perl, False, x, extra=repl, groups=backrefs)
-    pick, nullable = c.pick, c.nullable
-    literal = _literal_template(repl, perl)
-    if literal is not None and (count == 1 or not nullable) and not isinstance(c.rx, _TnfaPattern):
-        # Fast path: a plain replacement, and (for gsub) a pattern that cannot
-        # match the empty string, so R's loop is exactly `regex.sub()`.
-        n_sub = 1 if count == 1 else 0
+        def one(m: Any) -> str:
+            nonlocal last
+            if m.end() <= last:
+                return ""
+            last = m.end()
+            return r if isinstance(r, str) else r(m)
 
-        def literal_sub(v: Any) -> str | None:
-            s = _as_str(v)
-            return None if s is None else pick(s).sub(literal, s, count=n_sub)
+        return rx.sub(one, s)
 
-        return _vectorize(x, literal_sub)
-    fn = _r_replacement(repl, perl)
-    if count == 1:
-
-        def do_sub(v: Any) -> str | None:
-            s = _as_str(v)
-            return None if s is None else pick(s).sub(fn, s, count=1)
-
-        return _vectorize(x, do_sub)
-
-    def do_gsub(v: Any) -> str | None:
-        s = _as_str(v)
-        if s is None:
-            return None
-        rx = pick(s)
-        # R's do_gsub(): search from `offset`; an empty match right at the end
-        # of the previous match is not replaced, and after an empty match the
-        # next character is copied before searching again.
-        out: list[str] = []
-        offset, last_end, n = 0, -1, len(s)
-        search = rx.search
-        while (m := search(s, offset)) is not None:
-            start, end = m.span()
-            out.append(s[offset:start])
-            if end > last_end:
-                out.append(fn(m))
-                last_end = end
-            offset = end
-            if offset >= n:
-                break
-            if start == end:
-                out.append(s[offset])
-                offset += 1
-        if not out:
-            return s
-        out.append(s[offset:])
-        return "".join(out)
-
-    return _vectorize(x, do_gsub)
+    return _vectorize(x, lambda v: None if (s := _as_str(v)) is None else rsub(s))
 
 
 def sub(
@@ -642,247 +473,102 @@ def gsub(
     return _substitute(pattern, replacement, x, ignore_case, perl, fixed, 0)
 
 
+def _first(pattern: str, x: Any, flags: tuple[bool, bool, bool], fn: Callable[[Any], T]) -> Any:
+    """*fn* of each element's first match (``None`` for no match or ``NA``)."""
+    search = _compile(pattern, *flags, True).search
+    return _vectorize(x, lambda v: fn(None if (s := _as_str(v)) is None else search(s)))
+
+
+def _all(pattern: str, x: Any, flags: tuple[bool, bool, bool], fn: Callable[[Any], T]) -> Any:
+    """*fn* of each of the matches R's ``gregexpr()`` finds in each element: R
+    does not search again at the very end after a match, and TRE finds nothing
+    in ``""``."""
+    rx = _compile(pattern, *flags, True)
+    tre = not (flags[1] or flags[2])
+
+    def each(v: Any) -> list[T]:
+        s = _as_str(v)
+        if s is None:
+            return []
+        out = list(rx.finditer(s))
+        if out and out[-1].start() == len(s) and (s or tre):
+            out.pop()
+        return [fn(m) for m in out]
+
+    return _vectorize(x, each)
+
+
 def regextract(
-    pattern: str,
-    x: Any,
-    ignore_case: bool = False,
-    perl: bool = False,
-    fixed: bool = False,
+    pattern: str, x: Any, ignore_case: bool = False, perl: bool = False, fixed: bool = False
 ) -> Any:
     """First match per element, aligned with *x* (``None`` when no match).
 
-    Note that R's ``regmatches(x, regexpr(p, x))`` *drops* non-matching
-    elements; filter out the ``None`` values to reproduce that.
+    R's ``regmatches(x, regexpr(p, x))`` *drops* non-matching elements;
+    filter out the ``None`` values to reproduce that.
     """
-    pick = _compile_for(pattern, ignore_case, perl, fixed, x).pick
-
-    def first(v: Any) -> str | None:
-        s = _as_str(v)
-        if s is None:
-            return None
-        m = pick(s).search(s)
-        return None if m is None else m.group(0)
-
-    return _vectorize(x, first)
-
-
-class _Span:
-    """A match R reports that the `regex` module cannot produce (see
-    :func:`_r_finditer`)."""
-
-    __slots__ = ("_end", "_start", "_text")
-
-    def __init__(self, start: int, end: int, text: str) -> None:
-        self._start, self._end, self._text = start, end, text
-
-    def start(self) -> int:
-        return self._start
-
-    def end(self) -> int:
-        return self._end
-
-    def group(self, _k: int = 0) -> str:
-        return self._text
-
-
-def _r_finditer(
-    rx: regex.Pattern[str], s: str, nullable: bool = True, perl: bool = False
-) -> list[Any]:
-    """The matches R's ``gregexpr()`` finds.
-
-    After a match R searches again from its end, or from the next character
-    after an empty match; TRE (``perl = FALSE``) does not search at the very
-    end of the string (so ``""`` has no match), PCRE does once.
-
-    PCRE moves on by one *byte* after an empty match, so before a character of
-    k UTF-8 bytes it may search from inside the character, where PCRE2 reads
-    the continuation bytes as characters of their own (U+0080 to U+00BF), see
-    :func:`_pcre_mid_char`. R reports such a match at the next character, with
-    the bytes counted as characters.
-    """
-    if not nullable:
-        return list(rx.finditer(s))
-    out: list[Any] = []
-    offset, n = 0, len(s)
-    while perl or offset < n:
-        m = rx.search(s, offset)
-        if m is None:
-            break
-        out.append(m)
-        if m.end() > m.start():
-            offset = m.end()
-        else:
-            p = m.start()
-            offset = p + 1
-            if perl and p < n and ord(s[p]) > 0x7F:
-                offset, stop = _pcre_mid_char(rx, s, p, out)
-                if stop:
-                    break
-        if offset >= n:
-            break
-    return out
-
-
-def _pcre_mid_char(rx: regex.Pattern[str], s: str, p: int, out: list[Any]) -> tuple[int, bool]:
-    """PCRE's searches from inside the multibyte character ``s[p]``; returns
-    the next search position and whether the search loop ends.
-
-    PCRE2 (with R's ``PCRE2_NO_UTF_CHECK``) reads the continuation bytes from
-    the start offset on as characters of their own (U+0080 to U+00BF), looks
-    back to the whole character ``s[p]``, and when the match attempt there
-    fails moves on to the next character.
-    """
-    raw = s[p].encode("utf-8")
-    width = len(raw)
-    k = 1  # the byte of s[p] the search starts at
-    while k < width:
-        rest = width - k
-        t = s[: p + 1] + "".join(map(chr, raw[k:])) + s[p + 1 :]
-        m = rx.match(t, p + 1)
-        if m is None:
-            return p + 1, False
-        # R counts the bytes read as characters: the match is reported at the
-        # next character with that many characters (even past the end)
-        start = p + 1
-        end = start + m.end() - m.start()
-        out.append(_Span(start, end, s[start:end]))
-        if m.end() == m.start():
-            k += 1
-        elif m.end() < p + 1 + rest:
-            k += m.end() - m.start()  # ended inside the character
-        else:
-            return m.end() - rest, False
-    return p + 1, False
-
-
-def regextract_all(
-    pattern: str,
-    x: Any,
-    ignore_case: bool = False,
-    perl: bool = False,
-    fixed: bool = False,
-) -> Any:
-    """R ``regmatches(x, gregexpr(p, x))``: all matches per element."""
-    c = _compile_for(pattern, ignore_case, perl, fixed, x)
-    pick, nullable = c.pick, c.nullable
-
-    def all_matches(v: Any) -> list[str]:
-        s = _as_str(v)
-        if s is None:
-            return []
-        return [m.group(0) for m in _r_finditer(pick(s), s, nullable, perl or fixed)]
-
-    return _vectorize(x, all_matches)
-
-
-def gregexpr_all(
-    pattern: str,
-    x: Any,
-    ignore_case: bool = False,
-    perl: bool = False,
-    fixed: bool = False,
-) -> Any:
-    """R ``gregexpr()``: ``(start, length)`` pairs per element, 1-based starts.
-
-    Elements without a match give an empty list (R gives ``-1``).
-    """
-    c = _compile_for(pattern, ignore_case, perl, fixed, x)
-    pick, nullable = c.pick, c.nullable
-
-    def spans(v: Any) -> list[tuple[int, int]]:
-        s = _as_str(v)
-        if s is None:
-            return []
-        return [
-            (m.start() + 1, m.end() - m.start())
-            for m in _r_finditer(pick(s), s, nullable, perl or fixed)
-        ]
-
-    return _vectorize(x, spans)
+    return _first(pattern, x, (ignore_case, perl, fixed), lambda m: m and m.group(0))
 
 
 def regexec(
-    pattern: str,
-    x: Any,
-    ignore_case: bool = False,
-    perl: bool = False,
-    fixed: bool = False,
+    pattern: str, x: Any, ignore_case: bool = False, perl: bool = False, fixed: bool = False
 ) -> Any:
     """R ``regmatches(x, regexec(p, x))``: ``[match, group1, ...]`` or ``[]``.
 
     Unmatched optional groups give ``""`` like R.
     """
-    pick = _compile_for(pattern, ignore_case, perl, fixed, x, groups=True).pick
-
-    def groups(v: Any) -> list[str]:
-        s = _as_str(v)
-        if s is None:
-            return []
-        m = pick(s).search(s)
-        if m is None:
-            return []
-        return [m.group(0)] + [g if g is not None else "" for g in m.groups()]
-
-    return _vectorize(x, groups)
+    return _first(
+        pattern,
+        x,
+        (ignore_case, perl, fixed),
+        lambda m: [] if m is None else [m.group(0), *(g or "" for g in m.groups())],
+    )
 
 
-def _all_ascii(x: Any) -> bool:
-    if isinstance(x, str) or x is None or not isinstance(x, Iterable):
-        v = _as_str(x)
-        return v is None or v.isascii()
-    return all(v is None or v.isascii() for v in map(_as_str, x))
-
-
-def strsplit(
-    x: Any,
-    split: str,
-    perl: bool = False,
-    fixed: bool = False,
+def regextract_all(
+    pattern: str, x: Any, ignore_case: bool = False, perl: bool = False, fixed: bool = False
 ) -> Any:
-    """R ``strsplit()``, including its quirks.
+    """R ``regmatches(x, gregexpr(p, x))``: all matches per element."""
+    return _all(pattern, x, (ignore_case, perl, fixed), lambda m: m.group(0))
 
-    The pattern is re-applied to the *remaining* string after every match
-    (so anchors re-match), a leading match yields ``""``, a trailing match
-    does not add a trailing ``""``, and an empty split or an empty match at
-    the start of the remainder splits off single characters. With TRE
-    (``perl = FALSE``) that piece is ``""`` instead for an ASCII element and
-    *split* when another element is non-ASCII (R then takes its wide-character
-    code path, which builds the piece with length 0 for ASCII input).
+
+def gregexpr_all(
+    pattern: str, x: Any, ignore_case: bool = False, perl: bool = False, fixed: bool = False
+) -> Any:
+    """R ``gregexpr()``: ``(start, length)`` pairs per element, 1-based starts.
+
+    Elements without a match give an empty list (R gives ``-1``).
     """
-    c = None if (fixed or split == "") else _compile_for(split, False, perl, False, x)
-    # do_strsplit(): useBytes when everything is ASCII, otherwise wide strings
-    # and mkCharWLenASCII(piece, 0, ascii_split && ascii_xi)
-    wide_empty = not (perl or fixed) and split.isascii() and not _all_ascii(x)
+    return _all(
+        pattern, x, (ignore_case, perl, fixed), lambda m: (m.start() + 1, m.end() - m.start())
+    )
+
+
+def strsplit(x: Any, split: str, perl: bool = False, fixed: bool = False) -> Any:
+    """R ``strsplit()``.
+
+    The pattern is applied again to the *rest* of the string after every
+    match (so anchors match again), a leading match gives ``""``, a trailing
+    match adds no trailing ``""``, and an empty split or an empty match at
+    the start of the rest splits off one character.
+    """
+    search = _compile(split, False, perl, fixed, True).search
 
     def split_one(v: Any) -> list[str | None]:
         s = _as_str(v)
         if s is None:
             return [None]
-        pieces: list[str | None] = []
         if split == "":
             return list(s)
-        ascii_v = s.isascii()
+        pieces: list[str | None] = []
         while s:
-            if fixed:
-                k = s.find(split)
-                if k == -1:
-                    pieces.append(s)
-                    break
-                pieces.append(s[:k])
-                s = s[k + len(split) :]
-                continue
-            assert c is not None
-            m = c.pick(s).search(s)
+            m = search(s)
             if m is None:
                 pieces.append(s)
                 break
-            if m.end() == 0:
-                # an empty match at the start: split off one character
-                pieces.append("" if wide_empty and ascii_v else s[0])
+            if m.end() == 0:  # an empty match at the start: split off one character
+                pieces.append(s[0])
                 s = s[1:]
-            else:
-                # R tests the match *end*, so an empty match further in
-                # splits there too
+            else:  # R tests the match end, so an empty match further in splits too
                 pieces.append(s[: m.start()])
                 s = s[m.end() :]
         return pieces

@@ -1,0 +1,5 @@
+{
+"grepl.posix_punct.tre": {"r": "46e8c6e93e5d8594", "py": "545f8d9609d72307", "diff": ["[]"]},
+"regextract_all.posix_punct.tre": {"r": "de646d2bb5af5381", "py": "b2b74b5c470b48cc", "diff": ["[]"]},
+"regextract_all.posix_punct.tre.icase": {"r": "de646d2bb5af5381", "py": "b2b74b5c470b48cc", "diff": ["[]"]}
+}

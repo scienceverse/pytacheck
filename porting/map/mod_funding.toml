@@ -1,6 +1,10 @@
 # R source -> Python location for the funding_check modules (see docs/PORTING.md).
 # The module files define their helpers locally; R names below are those of
-# inst/modules/funding_check.R unless prefixed with the file name.
+# inst/modules/funding_check.R unless prefixed with the file name. The rtransparent
+# helpers funding_check() never calls are not ported: .title_strict, .first_capital,
+# obliterate_fullstop_1, .obliterate_{semicolon,comma,apostrophe,hash,punct,line_break,refs}_1,
+# obliterate_conflict_1, obliterate_disclosure_1, .where_methods_txt, get_support_2,
+# get_fund_acknow_new, negate_disclosure_1, negate_disclosure_2, negate_conflict_1.
 [files]
 "inst/modules/funding_check.R" = ["src/pytacheck/modules/funding_check.py", "src/pytacheck/modules/_funding.py"]
 "inst/modules/funding_check_oi.R" = ["src/pytacheck/modules/funding_check_oi.py", "src/pytacheck/modules/funding_check.py"]
@@ -15,23 +19,9 @@ rtransparent_funding = "pytacheck.modules._funding:rtransparent_funding"
 ".bound" = "pytacheck.modules._funding:_bound"
 ".max_words" = "pytacheck.modules._funding:_max_words"
 ".title" = "pytacheck.modules._funding:_title"
-".title_strict" = "pytacheck.modules._funding:_title_strict"
-".first_capital" = "pytacheck.modules._funding:_first_capital"
-obliterate_fullstop_1 = "pytacheck.modules._funding:obliterate_fullstop_1"
-".obliterate_semicolon_1" = "pytacheck.modules._funding:_obliterate_semicolon_1"
-".obliterate_comma_1" = "pytacheck.modules._funding:_obliterate_comma_1"
-".obliterate_apostrophe_1" = "pytacheck.modules._funding:_obliterate_apostrophe_1"
-".obliterate_hash_1" = "pytacheck.modules._funding:_obliterate_hash_1"
-".obliterate_punct_1" = "pytacheck.modules._funding:_obliterate_punct_1"
-".obliterate_line_break_1" = "pytacheck.modules._funding:_obliterate_line_break_1"
-".obliterate_refs_1" = "pytacheck.modules._funding:_obliterate_refs_1"
-obliterate_conflict_1 = "pytacheck.modules._funding:obliterate_conflict_1"
-obliterate_disclosure_1 = "pytacheck.modules._funding:obliterate_disclosure_1"
 ".where_refs_txt" = "pytacheck.modules._funding:_where_refs_txt"
 ".where_acknows_txt" = "pytacheck.modules._funding:_where_acknows_txt"
-".where_methods_txt" = "pytacheck.modules._funding:_where_methods_txt"
 get_support_1 = "pytacheck.modules._funding:get_support_1"
-get_support_2 = "pytacheck.modules._funding:get_support_2"
 get_support_3 = "pytacheck.modules._funding:get_support_3"
 get_support_4 = "pytacheck.modules._funding:get_support_4"
 get_support_5 = "pytacheck.modules._funding:get_support_5"
@@ -52,7 +42,6 @@ get_fund_1 = "pytacheck.modules._funding:get_fund_1"
 get_fund_2 = "pytacheck.modules._funding:get_fund_2"
 get_fund_3 = "pytacheck.modules._funding:get_fund_3"
 get_fund_acknow = "pytacheck.modules._funding:get_fund_acknow"
-get_fund_acknow_new = "pytacheck.modules._funding:get_fund_acknow_new"
 get_supported_1 = "pytacheck.modules._funding:get_supported_1"
 get_financial_1 = "pytacheck.modules._funding:get_financial_1"
 get_financial_2 = "pytacheck.modules._funding:get_financial_2"
@@ -67,9 +56,6 @@ get_common_2 = "pytacheck.modules._funding:get_common_2"
 get_common_3 = "pytacheck.modules._funding:get_common_3"
 get_common_4 = "pytacheck.modules._funding:get_common_4"
 get_common_5 = "pytacheck.modules._funding:get_common_5"
-negate_disclosure_1 = "pytacheck.modules._funding:negate_disclosure_1"
-negate_disclosure_2 = "pytacheck.modules._funding:negate_disclosure_2"
-negate_conflict_1 = "pytacheck.modules._funding:negate_conflict_1"
 negate_absence_1 = "pytacheck.modules._funding:negate_absence_1"
 get_acknow_1 = "pytacheck.modules._funding:get_acknow_1"
 get_acknow_2 = "pytacheck.modules._funding:get_acknow_2"
