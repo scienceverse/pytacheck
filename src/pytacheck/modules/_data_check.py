@@ -107,11 +107,9 @@ def _chr(x: Any) -> list[str | None]:
 
 def _is_integer64(df: pd.DataFrame, j: int) -> bool:
     """Whether column *j* carries bit64's ``integer64`` class (``df.attrs["col_attrs"]``)."""
-    ca = df.attrs.get("col_attrs") if isinstance(df.attrs, Mapping) else None
-    if not isinstance(ca, Mapping):
-        return False
-    a = ca.get(df.columns[j]) or {}
-    cls = a.get("class") if isinstance(a, Mapping) else None
+    from pytacheck.datacheck._colattrs import col_attrs_at
+
+    cls = col_attrs_at(df, j).get("class")
     cls = [cls] if isinstance(cls, str) else list(cls or [])
     return "integer64" in cls
 

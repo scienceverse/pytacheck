@@ -1081,13 +1081,21 @@ def _excel_sheets(path: str) -> list[str]:
 
 
 def _facets(df: pd.DataFrame) -> tuple[list[dict[str, Any]], list[str]]:
+    from pytacheck.datacheck._colattrs import col_attrs_at
     from pytacheck.datacheck.checks import _detect_scale_blocks, data_col_facets
 
     names = [str(c) for c in df.columns]
     blocks = _detect_scale_blocks(df)
     scale_cols = {names[j] for b in blocks for j in b}
     cls = [
-        data_col_facets(names[j], df.iloc[:, j], in_scale_block=names[j] in scale_cols)
+        # by position, as R's data_col_facets(names(df)[j], df[[j]]): a repeated
+        # column name must not pick up the other column's class
+        data_col_facets(
+            names[j],
+            df.iloc[:, j],
+            in_scale_block=names[j] in scale_cols,
+            col_class=col_attrs_at(df, j).get("class", []),
+        )
         for j in range(df.shape[1])
     ]
     return cls, sorted(scale_cols)

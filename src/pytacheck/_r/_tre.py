@@ -79,6 +79,9 @@ class Node:
     # a negated bracket's set without its [:class:] exclusions: what the copies
     # made by tre_expand_ast() match (tre_copy_ast() drops `neg_classes`)
     copy_chars: cs.Ranges | None = None
+    # the number of literal nodes TRE builds for a set (a bracket or a
+    # case-insensitive letter is a union of them), for pytacheck._r._tnfa
+    n_items: int = 1
 
 
 def _set(ranges: cs.Ranges) -> Node:
@@ -305,7 +308,9 @@ def _parse_bracket(ctx: _Ctx) -> Node:
         out = cs.norm(items)
         for cls in classes:
             out = cs.union(out, _class_set(ctx, cls))
-        return _set(out)
+        node = _set(out)
+        node.n_items = len(items) + len(classes)
+        return node
     # TRE complements the sorted items; an item that overlaps an earlier one
     # extends the gap's end but not its start (so "[^a-cb-e]" matches "d").
     items.sort(key=lambda it: it[0])  # stable, like glibc's qsort (merge sort)
@@ -321,9 +326,10 @@ def _parse_bracket(ctx: _Ctx) -> Node:
             curr_min = curr_max = mx + 1
     kept.append((curr_min, cs.MAX_CP))
     out = cs.norm(r for r in kept if r[0] <= r[1])
-    if not classes:
-        return _set(out)
     node = _set(out)
+    node.n_items = sum(1 for r in kept if r[0] <= r[1])
+    if not classes:
+        return node
     node.copy_chars = out
     for cls in classes:
         node.chars = cs.difference(node.chars, _class_set(ctx, cls))
@@ -332,7 +338,9 @@ def _parse_bracket(ctx: _Ctx) -> Node:
 
 def _literal(ctx: _Ctx, c: int) -> Node:
     if ctx.cflags & ICASE and (cs.iswupper(c) or cs.iswlower(c)):
-        return _set(cs.tre_literal_icase(c))
+        node = _set(cs.tre_literal_icase(c))
+        node.n_items = 2  # union(towupper(c), towlower(c))
+        return node
     return _char(c)
 
 

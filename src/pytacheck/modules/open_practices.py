@@ -280,8 +280,15 @@ def open_practices(paper: Any) -> dict[str, Any]:
 
     # R: on an empty paper list the searches return no `text` column, so
     # `table$text` is NULL (grepl() and arrange() still work on the 0 rows) and
-    # the summarise() below fails on `text[data]` (U79)
+    # the summarise() below fails on `text[data]` (U79). A text table without a
+    # `text` column whose first column matched (text_search() searches it and
+    # drops `text`) has rows, and the tibble refuses the 0-length on_request
     if "text" not in table.columns:
+        if len(table) > 0:
+            raise ValueError(
+                "Assigned data `grepl(on_request, table$text)` must be compatible with "
+                "existing data."
+            )
         raise ValueError("In argument: `data_statements = list(unique(text[data]))`.")
 
     # flag on_request

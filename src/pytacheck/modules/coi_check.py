@@ -25,7 +25,7 @@ from typing import Any
 import pandas as pd
 
 from pytacheck._r.base import paste, trimws
-from pytacheck._r.regex import compile_r, gregexpr_all, grepl, gsub, regextract_all, strsplit
+from pytacheck._r.regex import grepl, gsub, regextract_all, strsplit
 from pytacheck.module import module
 from pytacheck.report import scroll_table
 from pytacheck.text import text_search
@@ -228,37 +228,24 @@ _AUTHORS_NO = "|".join(
         r"^.*(None of the author.+no.*conflict.+interest.*$)",
     ]
 )
-# The seven alternatives of R's `vals` (val1 ... val7), each `(<group>) [A-Z].*$`.
-_AUTHORS_LAST = (
-    r"^.*The author.+no.*competing.+interest.*?\.",
-    r"^.*The author.+no.*conflict.+interest.*?\.",
-    r"^.*All authors.+no.*conflict.+interest.*?\.",
-    r"^.*Both authors.+no.*conflict.+interest.*?\.",
-    r"^.*No conflicts of interest.{0,12}?\.",
-    r"^.*No conflicting.{0,12} interest.{0,12}?\.",
-    r"^.*No competing.{0,12} interest.{0,12}?\.",
+# R's `vals` (val1 ... val7): TRE resolves their minimal `.*?` / `{0,12}?` in its
+# own way, which pytacheck._r.regex reproduces (pytacheck._r._tnfa)
+_AUTHORS_LAST = "|".join(
+    [
+        r"(^.*The author.+no.*competing.+interest.*?\.) [A-Z].*$",
+        r"(^.*The author.+no.*conflict.+interest.*?\.) [A-Z].*$",
+        r"(^.*All authors.+no.*conflict.+interest.*?\.) [A-Z].*$",
+        r"(^.*Both authors.+no.*conflict.+interest.*?\.) [A-Z].*$",
+        r"(^.*No conflicts of interest.{0,12}?\.) [A-Z].*$",
+        r"(^.*No conflicting.{0,12} interest.{0,12}?\.) [A-Z].*$",
+        r"(^.*No competing.{0,12} interest.{0,12}?\.) [A-Z].*$",
+    ]
 )
 
 
 def _cut_after_authors(coi_text: str) -> str:
-    """``gsub(paste(val1, ..., val7, sep = "|"), "\\1...\\7", coi_text)`` with TRE semantics.
-
-    Each alternative is ``(<group>) [A-Z].*$`` where the group contains a lazy
-    ``.*?``/``{0,12}?``. TRE (unlike a backtracking engine, which lets the
-    greedy ``^.*`` and ``.+`` run first) resolves such a match with the *earliest*
-    possible end of the group, and prefers the first alternative that matches at
-    all (measured against R 4.5). The whole string is matched, so the result is
-    the group of the first matching alternative, cut at its earliest ``". [A-Z]"``.
-    """
-    ends = [start for start, _ in gregexpr_all(r"\. [A-Z]", coi_text)]
-    if not ends:
-        return coi_text
-    for group in _AUTHORS_LAST:
-        rx = compile_r(group)
-        for e in ends:
-            if rx.fullmatch(coi_text, 0, e):
-                return coi_text[:e]
-    return coi_text
+    """``gsub(paste(val1, ..., val7, sep = "|"), "\\1...\\7", coi_text)``."""
+    return gsub(_AUTHORS_LAST, r"\1\2\3\4\5\6\7", coi_text)
 
 
 def _str_count(x: str, pattern: str) -> int:

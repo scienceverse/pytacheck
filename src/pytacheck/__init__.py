@@ -84,8 +84,12 @@ _EXPORTS: dict[str, str] = {
     "read_bibr": "pytacheck.papers",
     "ref_table": "pytacheck.papers",
     "test_paper": "pytacheck.papers",
-    # reports and validation
+    # bundled tables (metacheck's datasets, as functions)
     "emojis": "pytacheck.report.emojis",
+    "file_types": "pytacheck.fileinfo.types",
+    "scales": "pytacheck.datacheck.scales",
+    "tasks": "pytacheck.datacheck.tasks",
+    # reports and validation
     "module_report": "pytacheck.report.report",
     "report": "pytacheck.report.report",
     "report_module_run": "pytacheck.report.report",
@@ -366,6 +370,9 @@ def __dir__() -> list[str]:
 
 if TYPE_CHECKING:  # pragma: no cover
     from pytacheck.config import cache_dir, email, verbose
+    from pytacheck.datacheck.scales import scales
+    from pytacheck.datacheck.tasks import tasks
+    from pytacheck.fileinfo.types import file_types
     from pytacheck.io.bibr import chew
     from pytacheck.io.read import read
     from pytacheck.log import lastlog, logger, logpath

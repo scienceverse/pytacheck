@@ -109,10 +109,16 @@ class _Compiled:
 
 @functools.lru_cache(maxsize=4096)
 def _compile(
-    pattern: str, ignore_case: bool, perl: bool, fixed: bool, posix: bool, wide: bool = False
+    pattern: str,
+    ignore_case: bool,
+    perl: bool,
+    fixed: bool,
+    posix: bool,
+    wide: bool = False,
+    tnfa: bool = True,
 ) -> _Compiled:
     """Compile *pattern*; ``wide`` selects TRE's wide-character mode (see
-    :func:`_compile_for`)."""
+    :func:`_compile_for`), ``tnfa`` TRE's own matcher for minimal repetitions."""
     if fixed:
         return _Compiled(regex.compile(regex.escape(pattern)), pattern == "", False)
     flags = regex.VERSION0
@@ -130,8 +136,14 @@ def _compile(
         nullable = tre.nullable
         wide_differs = tre.pattern_wide != tre.pattern
         flags |= regex.DOTALL
-        # TRE is leftmost-longest, but honours lazy quantifiers (`.*?`)
-        # as minimal; backtracking gives that result, POSIX mode does not.
+        if tnfa and posix and tre.minimal and not tre.backrefs:
+            # minimal repetitions: TRE's own matcher (no match is missed by
+            # the `regex` translation, so detection alone does not need it)
+            return _Compiled(
+                _TnfaPattern(pattern, ignore_case, wide), nullable, wide_differs  # type: ignore[arg-type]
+            )
+        # TRE is leftmost-longest; POSIX mode (with backtracking for the rare
+        # lazy repetition with back references)
         if posix and not tre.minimal:
             flags |= regex.POSIX
     try:
@@ -139,6 +151,60 @@ def _compile(
         return _Compiled(regex.compile(body, flags), nullable, wide_differs, fast)
     except regex.error as exc:  # pragma: no cover - message depends on regex version
         raise RegexError(f"invalid regular expression {pattern!r}: {exc}") from exc
+
+
+class _TnfaMatch:
+    """What :class:`_TnfaPattern` returns: the parts of ``regex.Match`` used here."""
+
+    __slots__ = ("_s", "_spans")
+
+    def __init__(self, s: str, spans: list[tuple[int, int]]) -> None:
+        self._s, self._spans = s, spans
+
+    def start(self, g: int = 0) -> int:
+        return self._spans[g][0]
+
+    def end(self, g: int = 0) -> int:
+        return self._spans[g][1]
+
+    def span(self, g: int = 0) -> tuple[int, int]:
+        return self._spans[g]
+
+    def group(self, g: int = 0) -> str | None:
+        a, b = self._spans[g]
+        return None if a < 0 else self._s[a:b]
+
+    def groups(self) -> tuple[str | None, ...]:
+        return tuple(self.group(g) for g in range(1, len(self._spans)))
+
+
+class _TnfaPattern:
+    """A TRE pattern with minimal repetitions, matched by TRE's own algorithm
+    (:mod:`pytacheck._r._tnfa`); offers the ``regex.Pattern`` methods used here."""
+
+    def __init__(self, pattern: str, icase: bool, wide: bool) -> None:
+        from pytacheck._r import _tnfa
+
+        self.pattern = pattern
+        self._run = _tnfa.run
+        self._tnfa = _tnfa.compile_tnfa(pattern, icase, wide)
+
+    def search(self, s: str, pos: int = 0) -> _TnfaMatch | None:
+        # a search from `pos` is R's search of the rest of the string (REG_NOTBOL)
+        spans = self._run(self._tnfa, s, pos, pos > 0)
+        return None if spans is None else _TnfaMatch(s, spans)
+
+    def finditer(self, s: str) -> list[_TnfaMatch]:
+        out, pos = [], 0
+        while pos <= len(s) and (m := self.search(s, pos)) is not None:
+            out.append(m)
+            pos = m.end() if m.end() > m.start() else m.start() + 1
+        return out
+
+    def sub(self, repl: Callable[[Any], str], s: str, count: int = 0) -> str:
+        assert count == 1 and callable(repl)
+        m = self.search(s)
+        return s if m is None else s[: m.start()] + repl(m) + s[m.end() :]
 
 
 def _compile_for(
@@ -183,8 +249,12 @@ def compile_r(
     TRE's wide-character mode, which R uses when the pattern or any element of
     the input is non-ASCII (it only matters for negated ``[:class:]`` brackets
     in bounded repetitions such as ``\\W{2}``).
+
+    TRE resolves minimal repetitions (``.*?``) in its own way, which only the
+    R functions here reproduce (with :mod:`pytacheck._r._tnfa`); the pattern
+    returned for such a TRE pattern matches minimally by backtracking.
     """
-    return _compile(pattern, ignore_case, perl, fixed, posix is None or posix, wide).rx
+    return _compile(pattern, ignore_case, perl, fixed, posix is None or posix, wide, False).rx
 
 
 # ---------------------------------------------------------------------------
@@ -457,7 +527,7 @@ def _substitute(
     c = _compile_for(pattern, ignore_case, perl, False, x, extra=repl)
     pick, nullable = c.pick, c.nullable
     literal = _literal_template(repl, perl)
-    if literal is not None and (count == 1 or not nullable):
+    if literal is not None and (count == 1 or not nullable) and not isinstance(c.rx, _TnfaPattern):
         # Fast path: a plain replacement, and (for gsub) a pattern that cannot
         # match the empty string, so R's loop is exactly `regex.sub()`.
         n_sub = 1 if count == 1 else 0

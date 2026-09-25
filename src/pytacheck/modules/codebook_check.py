@@ -992,26 +992,9 @@ def _haven_labels_frame(path: str, ext: str) -> Any:
     ``(label, code)`` pairs in file order, as
     :func:`pytacheck.datacheck._columns_codebook._haven_frame` keeps them).
     """
-    import pyreadstat
+    from pytacheck.datacheck._files_readers import read_stat_file
 
-    from pytacheck.datacheck._files_readers import read_stat_file, vec_as_names_unique
-
-    df = read_stat_file(path, ext, 0)
-    reader = {"sav": pyreadstat.read_sav, "dta": pyreadstat.read_dta,
-              "sas7bdat": pyreadstat.read_sas7bdat}[ext]  # fmt: skip
-    _, meta = reader(path, metadataonly=True)
-    raw_names = list(meta.column_names)
-    col_attrs = df.attrs.get("col_attrs") or {}
-    value_labels = meta.variable_value_labels or {}
-    for raw, name in zip(raw_names, vec_as_names_unique(raw_names), strict=True):
-        labels = value_labels.get(raw)
-        attrs = col_attrs.get(name)
-        if labels and attrs and "labels" in attrs:
-            is_string = any(isinstance(c, str) for c in labels)
-            attrs["labels"] = [
-                (str(lab), str(code) if is_string else float(code)) for code, lab in labels.items()
-            ]
-    return df
+    return read_stat_file(path, ext, 0)
 
 
 def _backfill_scale_groups(scale_groups: Any, labels_df: Any, cb: Any) -> Any:

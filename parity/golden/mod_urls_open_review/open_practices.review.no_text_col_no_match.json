@@ -1,0 +1,12 @@
+{
+  "id": "open_practices.review.no_text_col_no_match",
+  "ok": false,
+  "error": "Running the module 'open_practices' produced errors: In argument: `data_statements = list(unique(text[data]))`.",
+  "warnings": [
+    "Unknown or uninitialised column: `text`.",
+    "Unknown or uninitialised column: `text`."
+  ],
+  "value": null,
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}
