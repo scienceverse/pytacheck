@@ -73,3 +73,49 @@
   ref: U120
   reason: each report section holds its own rows; R's regcheck_table[prereg_id == rid, ] adds a row of NAs per NA prereg_id
 "mod_reg_review/reg_check.review.na_id.all.tables": *u120_na
+
+# --- repo_check module (inst/modules/repo_check.R) --------------------------
+"mod_repo_check/repo_check.all_platforms": &u121
+  kind: r_bug_fixed
+  ref: U121
+  reason: files are de-duplicated per file (URL and path, or location); R's duplicated(file_url) & duplicated(file_path) also dropped a distinct DataONE readme.txt
+"mod_repo_check/repo_check.all_platforms.paperlist": *u121
+"mod_repo_check/repo_check.all_platforms.report": *u121
+"mod_repo_check/repo_check.all_platforms.tables": *u121
+"mod_repo_check_review/repo_check.local.two_folders": &u121_local
+  kind: r_bug_fixed
+  ref: U121
+  reason: same-named files in two local folders are distinct files; R drops the second folder's copies (and the folder)
+"mod_repo_check_review/repo_check.local.two_folders.report": *u121_local
+"mod_repo_check_review/repo_check.local.several_folders.paperlist": *u121_local
+"mod_repo_check/repo_check.osf.invalid_id": &u122_osf
+  kind: r_bug_fixed
+  ref: U122
+  reason: an OSF link OSF does not know is kept and flagged "invalid or inaccessible OSF link"; R stores a dplyr match() error, or drops it silently beside valid links
+"mod_repo_check/repo_check.bibr12.paperlist": *u122_osf
+"mod_repo_check_review/repo_check.osf_license.invalid": *u122_osf
+"mod_repo_check/repo_check.osf.registration2":
+  kind: r_bug_fixed
+  ref: U122
+  reason: when following a registration to its source project fails, the registration is reported with its files and the error; R reports "no repositories found"
+"mod_repo_check/repo_check.figshare.share_link":
+  kind: r_bug_fixed
+  ref: U122
+  reason: a Figshare listing without doi/license has NA metadata; R's data.frame() error overwrites the share link's informative error
+"mod_repo_check/repo_check.dataone.nameless": &u122_nameless
+  kind: r_bug_fixed
+  ref: U122
+  reason: a listed file without a name is skipped by the naming check; R's check_file_naming() fails the module
+"mod_repo_check/repo_check.zenodo.nameless": *u122_nameless
+"mod_repo_check/repo_check.local.messy": &u123
+  kind: r_bug_fixed
+  ref: U123
+  reason: a local file file_category() cannot place takes its type from the extension like an online one, so a local .tar.gz/.zip counts as an archive; R leaves it NA
+"mod_repo_check/repo_check.local.roster_extra": *u123
+"mod_repo_check/repo_check.local.edat_ok": *u123
+"mod_repo_check/repo_check.local.zip": *u123
+"mod_repo_check/repo_check.report.messy": *u123
+"mod_repo_check/repo_check.tables.messy": *u123
+"mod_repo_check_review/repo_check.local.edat_many": *u123
+"mod_repo_check_review/repo_check.local.unicode": *u123
+"mod_repo_check_review/repo_check.local.unicode.tables": *u123

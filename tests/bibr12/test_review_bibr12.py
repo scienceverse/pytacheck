@@ -16,7 +16,7 @@ import pytest
 
 import pytacheck as pc
 from pytacheck.io import bibr12
-from pytacheck.papers.io import _dollar
+from pytacheck.papers.io import _field
 
 FX = Path(__file__).resolve().parent / "fixtures"
 
@@ -43,41 +43,59 @@ def written(paper: Any, tmp_path: Path) -> dict[str, Any]:
         (28, "(28)"),
         (2.5, "(2.5)"),
         (True, "(TRUE)"),
-        ("", "()"),
+        # no df (metacheck: "()" and "(NULL)"; U24)
+        ("", None),
+        ("  ", None),
+        ([None], None),
         ("(1) and (2)", "(1) and (2)"),
         ("1,\n2", "(1,\n2)"),
         (["4"], "(4)"),
         (["(5)"], "(5)"),
         ({"k": 6}, "(6)"),
-        ([None], "(NULL)"),
+        # an array keeps its first value (metacheck stops: "'length = 2' in
+        # coercion to 'logical(1)'", "missing value where TRUE/FALSE needed"; U24)
+        (["(3)", "4"], "(3)"),
+        ([], None),
     ],
 )
-def test_eq_df_is_kept_in_parentheses(tmp_path: Path, df: Any, expected: str) -> None:
+def test_eq_df_is_kept_in_parentheses(tmp_path: Path, df: Any, expected: str | None) -> None:
     path = write_json(
         tmp_path, {"paper_id": "p", "schema_version": "12.0", "eq": [{"eq_id": 1, "df": df}]}
     )
-    assert pc.read(path).eq["df"].iloc[0] == expected
+    got = pc.read(path).eq["df"].iloc[0]
+    assert (None if pd.isna(got) else got) == expected
 
 
-@pytest.mark.parametrize(
-    ("df", "message"),
-    [
-        (["(3)", "4"], "'length = 2' in coercion to 'logical(1)'"),
-        ([], "missing value where TRUE/FALSE needed"),
-    ],
-)
-def test_eq_df_array_of_other_length_stops_as_in_r(tmp_path: Path, df: Any, message: str) -> None:
-    path = write_json(
-        tmp_path, {"paper_id": "p", "schema_version": "12.0", "eq": [{"eq_id": 1, "df": df}]}
-    )
-    with pytest.raises(ValueError, match=message.replace("(", r"\(").replace(")", r"\)")):
-        bibr12.read_bibr12(path)
+# -- scalar fields holding arrays: row by row (U24) ------------------------------------
+
+
+def test_scalar_field_arrays_are_read_row_by_row() -> None:
+    # metacheck unlist()s the column: bib 1 gets bib 2's title ("B"), bib 2 "C"
+    p = pc.read(FX / "malformed" / "scalar_shifted.json")
+    assert p.bib["title"].tolist()[0] is pd.NA or pd.isna(p.bib["title"].iloc[0])
+    assert p.bib["title"].tolist()[1] == "B"
+    # metacheck recycles bib 1's id into bib 2
+    p = pc.read(FX / "malformed" / "scalar_null_array_recycled.json")
+    assert p.bib["bib_id"].isna().tolist() == [False, True]
+    assert p.bib["title"].tolist() == ["A", "B"]
+    # metacheck: "replacement has 2 rows, data has 3"
+    p = pc.read(FX / "malformed" / "scalar_null_array.json")
+    assert len(p.table) == 3
+
+
+def test_metadata_source_and_producer_arrays_keep_the_first_value() -> None:
+    # metacheck: "replacement has 0 rows, data has 1" / "... 2 rows, data has 1"
+    assert pd.isna(pc.read(FX / "malformed" / "metadata_null_array.json").info["title"].iloc[0])
+    info = pc.read(FX / "malformed" / "source_value_array.json").info
+    assert info["file_name"].tolist() == ["a"]
+    info = pc.read(FX / "malformed" / "producer_version_array.json").info
+    assert info["bibr_version"].tolist() == ["1"]
 
 
 # -- the given/family names of match persons (names_df()) ------------------------------
 
 
-def test_match_person_names_follow_r() -> None:
+def test_match_person_names() -> None:
     names = bibr12._names_records([{"given": "A", "family": "B"}, None, ["x"], {"given": 5}])
     assert names == [
         {"given": "A", "family": "B"},
@@ -90,22 +108,17 @@ def test_match_person_names_follow_r() -> None:
     assert bibr12._names_records({"given": ["A"]}) == [{"given": None, "family": None}]
     assert len(bibr12._names_records([])) == 0
     assert len(bibr12._names_records(None)) == 0
+    # a name given as an array: its first value (metacheck: "values must be length 1"; U24)
+    assert bibr12._names_records([{"given": ["A", "B"]}, {"given": []}, {"given": [None]}]) == [
+        {"given": "A", "family": None},
+        {"given": None, "family": None},
+        {"given": None, "family": None},
+    ]
 
 
-@pytest.mark.parametrize(
-    ("persons", "message"),
-    [
-        (["Smith"], r"\$ operator is invalid for atomic vectors"),
-        ("Smith", r"\$ operator is invalid for atomic vectors"),
-        (
-            [{"given": ["A", "B"]}],
-            r"values must be length 1,\n but FUN\(X\[\[1\]\]\) result is length 2",
-        ),
-        ([{"family": "X"}, {"given": []}], r"FUN\(X\[\[2\]\]\) result is length 0"),
-    ],
-)
-def test_match_person_names_errors_follow_r(persons: Any, message: str) -> None:
-    with pytest.raises(ValueError, match=message):
+@pytest.mark.parametrize("persons", [["Smith"], "Smith"])
+def test_match_person_that_is_not_an_object_stops(persons: Any) -> None:
+    with pytest.raises(ValueError, match=r"\$ operator is invalid for atomic vectors"):
         bibr12._names_records(persons)
 
 
@@ -221,20 +234,23 @@ def test_older_info_array_keywords_are_the_column() -> None:
     assert p.bib_match["authors"].tolist()[0] == []
 
 
-def test_older_file_without_bib_reads_bib_match_as_bib() -> None:
-    """``data$bib`` partially matches ``bib_match`` (R's ``$``)."""
+def test_older_file_without_bib_has_no_references() -> None:
+    """Keys match exactly (metacheck's ``data$bib`` partially matches ``bib_match``; U25)."""
     p = pc.read(FX / "legacy_no_bib.json")
-    assert p.bib["title"].tolist() == ["A", "B"]
+    assert len(p.bib) == 0
+    assert p.bib_match["title"].tolist() == ["A", "B"]
 
 
-def test_dollar_matches_a_unique_prefix() -> None:
-    assert _dollar({"bib_match": 1}, "bib") == 1
-    assert _dollar({"bib": 0, "bib_match": 1}, "bib") == 0
-    assert _dollar({"bib_a": 1, "bib_b": 2}, "bib") is None
-    assert _dollar(["x"], "bib") is None
+def test_field_matches_keys_exactly() -> None:
+    assert _field({"bib_match": 1}, "bib") is None
+    assert _field({"bib": 0, "bib_match": 1}, "bib") == 0
+    assert _field(["x"], "bib") is None
 
 
-def test_root_schema_version_prefix_goes_to_the_12x_reader(tmp_path: Path) -> None:
+def test_root_schema_version_key_must_match_exactly(tmp_path: Path) -> None:
+    # metacheck's `$` sends "schema_version_x" to the 12.x reader, which refuses 11.0 (U25)
     path = write_json(tmp_path, {"paper_id": "p", "schema_version_x": "11.0"})
-    with pytest.raises(ValueError, match=r"bibr export schema 11\.0 is not supported"):
-        pc.papers.io.read_bibr(path)
+    p = pc.papers.io.read_bibr(path)
+    assert p.paper_id == "p"
+    assert not bibr12.is_bibr12(p)
+    assert p.extra["schema_version_x"] == "11.0"

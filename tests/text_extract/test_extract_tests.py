@@ -138,6 +138,20 @@ def test_extract_tests_test_paper() -> None:
     assert tests["n_components"].tolist() == [3, 2, 3]
 
 
+def test_extract_tests_paper_list(psychsci) -> None:
+    # U10: R gives every test to every paper id (348 = 3 x 116 rows) with NA sentences
+    tests = extract_tests(psychsci)
+    assert len(tests) == 116
+    assert list(tests.columns) == COLUMNS
+    for pid in psychsci.names:
+        one = extract_tests(psychsci[pid])
+        mine = tests.loc[tests["paper_id"] == pid].reset_index(drop=True)
+        assert mine["reported"].tolist() == one["reported"].tolist()
+        assert mine["test_no"].tolist() == list(range(1, len(one) + 1))
+    assert tests["sentence"].notna().all()
+    assert len(extract_tests(pc.PaperList([pc.test_paper(["No stats."])]))) == 0
+
+
 def test_extract_tests_empty() -> None:
     tests = extract_tests(pc.test_paper(["No statistics here.", "Only SD = 2."]))
     assert len(tests) == 0

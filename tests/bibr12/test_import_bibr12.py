@@ -255,8 +255,8 @@ def test_paper_write_writes_bibr12_that_reads_back_the_same(
         "build_sha": None,
     }
     del orig["extraction"]["converter"], json["extraction"]["converter"]
-    # (expect_equal(): doubles are written with 15 significant digits, as jsonlite does)
-    assert not same(json, orig)
+    # every value exactly (metacheck rounds doubles to 15 significant digits; U22)
+    assert json == orig
 
     # and it reads back the same paper
     paper2 = pc.read(json_path)

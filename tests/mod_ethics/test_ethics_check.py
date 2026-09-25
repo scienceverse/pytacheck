@@ -226,8 +226,8 @@ def test_summary_texts() -> None:
     assert mo.report == mo.summary_text
 
 
-def test_report_lists_every_ethics_row() -> None:
-    # R quotes table$text[table$ethics] (duplicates kept) but unique live statements
+def test_report_quotes_each_ethics_statement_once() -> None:
+    # U102: metacheck quotes table$text[table$ethics], every row (duplicates kept)
     mo = run(
         pc.test_paper(
             [
@@ -242,7 +242,7 @@ def test_report_lists_every_ethics_row() -> None:
     assert mo.report == (
         "Based on the following text, we would expect an ethics approval statement, and it "
         "was present:\n\n> Participants were recruited.\n\nEthics approval statement:\n\n"
-        "> The IRB approved it.\n\n> The IRB approved it."
+        "> The IRB approved it."
     )
 
 
@@ -278,17 +278,29 @@ def test_references_are_not_searched() -> None:
 @pytest.mark.parametrize(
     ("paper", "message"),
     [
-        (lambda: pc.paper(), "invalid subscript type 'list'"),
         (lambda: pc.PaperList([]), "Join columns in `x` must be present in the data."),
-        (
-            lambda: ec_papers(["d1", "d1"], [["The IRB approved it."], ["Nothing."]]),
-            "factor level [2] is duplicated",
-        ),
     ],
 )
 def test_r_errors(paper: Any, message: str) -> None:
     with pytest.raises(ModuleError, match=re.escape(message)):
         run(paper())
+
+
+def test_duplicated_paper_ids_are_summarised_together() -> None:
+    # U101: metacheck stops with "factor level [2] is duplicated"
+    papers = ec_papers(["d1", "d1"], [["The IRB approved it."], ["Participants were recruited."]])
+    out = direct(papers)
+    assert out["summary_table"]["paper_id"].tolist() == ["d1"]
+    assert out["summary_table"]["ethics_approved"].tolist() == [True]
+    assert out["summary_table"]["needs_ethics"].tolist() == [True]
+    assert run(papers).traffic_light == "green"
+
+
+def test_paper_without_info_row_is_summarised() -> None:
+    # U102: metacheck stops on paper() ("invalid subscript type 'list'")
+    mo = run(pc.paper())
+    assert mo.traffic_light == "na"
+    assert len(mo.summary_table) == 1
 
 
 def test_does_not_mutate_input() -> None:
@@ -342,29 +354,6 @@ _FORMATTED_FIRST = ["formatted", "text_id", "section_id", "paragraph_id"]
         ),
         # list() is a paper list without papers, like paperlist()
         (lambda: [], ValueError, "Join columns in `x` must be present in the data."),
-        # no `text` column and a first column that matches: character(0) cannot be
-        # assigned to a table with rows; `text` is graphics::text() in summarise()
-        (
-            lambda: _select_text(
-                ec_paper(["The IRB approved it.", "Participants were recruited."]),
-                _FORMATTED_FIRST,
-            ),
-            ValueError,
-            "Assigned data `character(0)` must be compatible with existing data.",
-        ),
-        (
-            lambda: _select_text(
-                ec_paper(["Nothing.", "Participants were recruited."]), _FORMATTED_FIRST
-            ),
-            TypeError,
-            "In argument: `live_data_statements = list(unique(text[live_data]))`.",
-        ),
-        # a paper without an info row has no paper ID
-        (
-            lambda: _no_info(ec_paper(["The IRB approved it."])),
-            TypeError,
-            "invalid subscript type 'list'",
-        ),
     ],
 )
 def test_direct_r_errors(paper: Any, exc: type[Exception], message: str) -> None:
@@ -372,16 +361,27 @@ def test_direct_r_errors(paper: Any, exc: type[Exception], message: str) -> None
         direct(paper())
 
 
-def test_module_run_error_message() -> None:
-    paper = _select_text(
-        ec_paper(["The IRB approved it.", "Participants were recruited."]), _FORMATTED_FIRST
-    )
-    with pytest.raises(ModuleError) as err:
-        run(paper)
-    assert str(err.value) == (
-        "Running the module 'ethics_check' produced errors: "
-        "Assigned data `character(0)` must be compatible with existing data."
-    )
+@pytest.mark.parametrize(
+    "texts",
+    [
+        ["The IRB approved it.", "Participants were recruited."],
+        ["Nothing.", "Participants were recruited."],
+    ],
+)
+def test_text_table_without_text_column_has_no_sentences(texts: list[str]) -> None:
+    # U102: metacheck searches the first column instead and stops with opaque
+    # errors ("Assigned data `character(0)` ...", "`text` is graphics::text()")
+    out = direct(_select_text(ec_paper(texts), _FORMATTED_FIRST))
+    assert len(out["table"]) == 0
+    assert out["traffic_light"] == "na"
+    assert out["summary_table"]["ethics_approved"].tolist() == [False]
+
+
+def test_paper_without_info_row_uses_its_own_id() -> None:
+    # U102: metacheck stops ("invalid subscript type 'list'")
+    out = direct(_no_info(ec_paper(["The IRB approved it."], "solo")))
+    assert out["summary_table"]["paper_id"].tolist() == ["solo"]
+    assert out["summary_table"]["ethics_approved"].tolist() == [True]
 
 
 @pytest.mark.parametrize("container", [list, tuple, lambda ps: {"x": ps[0], "y": ps[1]}])
@@ -440,26 +440,23 @@ def test_text_table_without_text_column() -> None:
 
 
 def test_sentences_of_a_paper_without_info_row() -> None:
-    # paper_id() skips a paper without an info row: its sentences have no factor
-    # level (NA paper_id, sorted last), the list gets a one-paper report that
-    # quotes them, and its live-data sentences count for no paper
+    # U102: a paper without an info row keeps its own ID (metacheck: its
+    # sentences get an NA paper_id, it is left out of the summary, and the list
+    # gets a one-paper report quoting the other paper's and its sentences)
     p1 = _no_info(ec_paper(["The IRB approved it.", "Participants were recruited."], "p1"))
     p2 = ec_paper(["The ethics committee approved it."], "p2")
     out = direct(pc.PaperList([p1, p2]))
     table = out["table"]
-    assert table["paper_id"].tolist() == ["p2", pd.NA, pd.NA]
+    assert table["paper_id"].tolist() == ["p1", "p2", "p1"]
     assert table["text"].tolist() == [
-        "The ethics committee approved it.",
         "The IRB approved it.",
+        "The ethics committee approved it.",
         "Participants were recruited.",
     ]
-    assert out["summary_table"]["paper_id"].tolist() == ["p2"]
-    assert out["summary_table"]["needs_ethics"].tolist() == [False]
-    assert out["traffic_light"] == "na"
-    assert out["report"] == (
-        "An ethics approval statement was detected, based on the following text:\n\n"
-        "> The ethics committee approved it.\n\n> The IRB approved it."
-    )
+    assert out["summary_table"]["paper_id"].tolist() == ["p1", "p2"]
+    assert out["summary_table"]["needs_ethics"].tolist() == [True, False]
+    assert out["traffic_light"] == "green"
+    assert out["report"] is None
 
 
 def test_rows_sorted_by_text_id_with_missing_last() -> None:

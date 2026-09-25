@@ -19,6 +19,7 @@ from __future__ import annotations
 
 import functools
 import math
+import re
 from collections.abc import Callable, Iterable, Mapping, Sequence
 from typing import Any
 
@@ -1744,23 +1745,30 @@ def _scale_text_report(text_scales: pd.DataFrame | None, matched: Sequence[Any] 
     """The "Scales in the manuscript" report section. Port of ``.scale_text_report()``."""
     if text_scales is None or len(text_scales) == 0:
         return []
+    # a missing (NA) name, acronym or item count is simply absent (R's
+    # nzchar(NA) is TRUE, so it listed "**NA**", "(NA; NA items)" and matched
+    # the acronym "NA"); acronyms are matched literally as whole words (R pastes
+    # them into a regex, so "C++" or "(X" stops the module)
     names = text_scales["scale_name"].tolist()
-    keep = [i for i, n in enumerate(names) if _na(n) or trimws(_pstr(n)) != ""]
+    keep = [i for i, n in enumerate(names) if not _na(n) and trimws(_pstr(n)) != ""]
     ts = text_scales.iloc[keep].reset_index(drop=True)
     if len(ts) == 0:
         return []
+
+    def present(v: Any) -> str | None:
+        return None if v is None or trimws(_pstr(v)) == "" else trimws(_pstr(v))
+
     if len(matched):
-        m = [None if _na(x) else tolower(_pstr(x)) for x in matched]
+        m = [tolower(_pstr(x)) for x in matched if not _na(x)]
         m_set = set(m)
         hit_rows = []
         for i in range(len(ts)):
-            nm = _cell(ts, "scale_name", i)
-            name_hit = (None if nm is None else tolower(_pstr(nm))) in m_set
-            a = _cell(ts, "acronym", i)
-            a = None if a is None else tolower(trimws(_pstr(a)))
-            acr_hit = False
-            if a is None or a != "":  # nzchar(NA) is TRUE: the pattern is \bNA\b
-                acr_hit = any(grepl("\\b" + _pstr(a) + "\\b", m))
+            name_hit = tolower(_pstr(_cell(ts, "scale_name", i))) in m_set
+            a = present(_cell(ts, "acronym", i))
+            acr_hit = a is not None and any(
+                re.search(r"(?<!\w)" + re.escape(tolower(a)) + r"(?!\w)", x)
+                for x in m
+            )
             hit_rows.append(name_hit or acr_hit)
         ts = ts.iloc[[i for i, h in enumerate(hit_rows) if not h]].reset_index(drop=True)
     if len(ts) == 0:
@@ -1768,12 +1776,12 @@ def _scale_text_report(text_scales: pd.DataFrame | None, matched: Sequence[Any] 
     lines = []
     for i in range(len(ts)):
         bits = []
-        acr = _cell(ts, "acronym", i)
-        if acr is None or trimws(_pstr(acr)) != "":
-            bits.append(trimws(_pstr(acr)))
-        nit = _cell(ts, "n_items", i)
-        if nit is None or trimws(_pstr(nit)) != "":
-            bits.append(f"{trimws(_pstr(nit))} items")
+        acr = present(_cell(ts, "acronym", i))
+        if acr is not None:
+            bits.append(acr)
+        nit = present(_cell(ts, "n_items", i))
+        if nit is not None:
+            bits.append(f"{nit} items")
         adm = _cell(ts, "administered", i)
         if adm is not None and tolower(trimws(_pstr(adm))) == "unclear":
             bits.append("possibly not administered here")
@@ -1860,6 +1868,10 @@ def _identify_scales_prefix_llm(
     have_keys = labels_df is not None and all(
         c in labels_df.columns for c in ("source_file", "column_name")
     )
+    # sentences come from the paper owning each file (on a paper list R built
+    # this lookup but then required `paper` itself to be one paper, so it sent
+    # no manuscript sentences at all)
+    pff = _PaperForFile(paper, labels_df)
 
     def wording_of(file: Any, cols: Sequence[Any]) -> list[Any]:
         if not have_keys:
@@ -1901,7 +1913,7 @@ def _identify_scales_prefix_llm(
             resp = _strip(
                 _llm_try(
                     text=pd.DataFrame(
-                        {"text": [_prefix_llm_text(file, groups, paper, wording_of)]}
+                        {"text": [_prefix_llm_text(file, groups, pff(file), wording_of)]}
                     ),
                     text_col="text",
                     system_prompt=_PREFIX_PROMPT,
@@ -1950,8 +1962,9 @@ def _identify_scales_prefix_llm(
                     "columns": list(gg["columns"]),
                 }
             )
-        if n_calls >= max_calls:
-            break
+        # (no early stop at the call cap: every file's groups are listed, named
+        # or not; R breaks here even with the LLM off, so codebook_max_calls = 0
+        # ended the inventory after the first file with groups)
 
     if not rows:
         return None
@@ -2616,12 +2629,13 @@ _SYNONYM_STOP = frozenset(
 
 
 def _synonym_tokens(s: Any) -> list[str]:
-    """``toks()`` of ``.selfgen_merge_synonyms()``.
+    """``toks()`` of ``.selfgen_merge_synonyms()``: lower-cased word tokens.
 
-    R strips ``[^a-z ]`` BEFORE lower-casing, so capital letters become
-    spaces ("Emotion Recognition" -> "motion ecognition"); reproduced.
+    (R strips ``[^a-z ]`` before lower-casing, so capital letters become
+    spaces -- "Emotion Recognition" -> "motion ecognition" -- and capitalised
+    labels never merge with lower-case ones.)
     """
-    x = tolower(gsub("[^a-z ]+", " ", _pstr(s))) or ""
+    x = gsub("[^a-z ]+", " ", tolower(_pstr(s)) or "") or ""
     t = _unique(strsplit([x], "\\s+")[0])
     return [w for w in t if w is not None and len(w) > 0 and w not in _SYNONYM_STOP]
 

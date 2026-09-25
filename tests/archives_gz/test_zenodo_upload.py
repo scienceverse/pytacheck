@@ -526,3 +526,27 @@ def test_zenodo_zip_members(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> 
 
     fake.zip_peek = lambda url: None  # type: ignore[attr-defined]
     assert zenodo._zenodo_zip_members("https://x/z.zip", str(tmp_path)) is None
+
+
+def test_zenodo_upload_as_zip_leaves_out_skipped_files(
+    respx_mock: respx.MockRouter, tmp_path: Path
+) -> None:
+    # U47: the zip holds only the files kept (metacheck re-lists the folder, so
+    # the OSF metadata and oversized files it reports as skipped are zipped too)
+    proj = tmp_path / "p"
+    (proj / "x").mkdir(parents=True)
+    (proj / "README.md").write_text("top\n")
+    (proj / "x" / "data.csv").write_text("a\n1\n")
+    (proj / "big.bin").write_bytes(b"0" * 2048)
+    (proj / "_osf_metadata").mkdir()
+    (proj / "_osf_metadata" / "log.txt").write_text("log\n")
+    fake = _Zenodo(respx_mock)
+
+    out = zenodo_upload(
+        str(proj), zenodo_pat="fake-token", ask=False, split_materials=None,
+        upload_osf_metadata=False, max_file_size=0.001,
+    )  # fmt: skip
+    assert out["files_skipped"].tolist() == [1]
+    assert list(fake.files) == ["p.zip"]
+    with zipfile.ZipFile(__import__("io").BytesIO(fake.files["p.zip"])) as zf:
+        assert sorted(zf.namelist()) == ["p/README.md", "p/x/data.csv"]
