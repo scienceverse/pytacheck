@@ -6,15 +6,16 @@ and reuse it on a later call instead of re-querying the host, so restarting
 an interrupted corpus run does not re-spend a host's API quota.
 
 metacheck stores entries with ``saveRDS()`` as ``<key>.rds``; pytacheck
-stores the same values pickled as ``<key>.pkl`` (the cache is local to one
-machine and one package, so only the key scheme needs to match).
+stores versioned, typed JSON as ``<key>.json`` (the codec of
+:mod:`pytacheck.repro.tables`, never pickle: the cache lives under the working
+directory, so a cloned project could plant a file there). Legacy ``.pkl``
+entries are never loaded; :func:`repo_info_cache_clear` removes them.
 """
 
 from __future__ import annotations
 
 import contextlib
 import os
-import pickle
 from pathlib import Path
 from typing import Any
 
@@ -22,7 +23,10 @@ from pytacheck._r import as_character, gsub, is_na
 
 __all__ = ["repo_info_cache", "repo_info_cache_clear"]
 
-_SUFFIX = ".pkl"
+_SUFFIX = ".json"
+_LEGACY_SUFFIX = ".pkl"  # older pytacheck versions; removed by clear(), never read
+_FORMAT = "pytacheck.repo_info_cache"
+_VERSION = 1
 
 
 def repo_info_cache(enabled: bool | None = None) -> bool:
@@ -43,7 +47,9 @@ def repo_info_cache_clear() -> int:
     Returns the number of entries removed.
     """
     root = Path(_repo_info_cache_dir())
-    files = [f for f in root.iterdir() if f.is_file() and f.name.endswith(_SUFFIX)]
+    files = [
+        f for f in root.iterdir() if f.is_file() and f.name.endswith((_SUFFIX, _LEGACY_SUFFIX))
+    ]
     for f in files:
         f.unlink(missing_ok=True)
     return len(files)
@@ -80,24 +86,40 @@ def _repo_info_cache_path(host: str, id: Any) -> str:
 
 def _repo_info_cache_get(host: str, id: Any) -> Any:
     """Port of R/repo-info-cache.R::.repo_info_cache_get(): a cached value, or ``None``."""
+    import orjson
+
+    from pytacheck.repro.tables import _decode
+
     path = _repo_info_cache_path(host, id)
     if not os.path.exists(path):
         return None
     try:
         with open(path, "rb") as fh:
-            return pickle.load(fh)  # noqa: S301 - our own local cache
+            payload = orjson.loads(fh.read())
+        if (
+            not isinstance(payload, dict)
+            or payload.get("format") != _FORMAT
+            or payload.get("version") != _VERSION
+        ):
+            return None
+        return _decode(payload["value"])
     except Exception:
         return None
 
 
 def _repo_info_cache_put(host: str, id: Any, value: Any) -> Any:
     """Port of R/repo-info-cache.R::.repo_info_cache_put(): store a value (errors ignored)."""
+    import orjson
+
+    from pytacheck.repro.tables import _encode
+
     # a caching miss is never worse than the uncached behaviour
     with contextlib.suppress(Exception):
+        data = orjson.dumps({"format": _FORMAT, "version": _VERSION, "value": _encode(value)})
         path = _repo_info_cache_path(host, id)
         tmp = f"{path}.{os.getpid()}.tmp"
         with open(tmp, "wb") as fh:
-            pickle.dump(value, fh, protocol=pickle.HIGHEST_PROTOCOL)
+            fh.write(data)
         os.replace(tmp, path)
     return value
 

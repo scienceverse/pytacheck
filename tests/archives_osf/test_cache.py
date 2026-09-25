@@ -91,13 +91,58 @@ def test_repo_info_cache_roundtrip(tmp_path: Path) -> None:
         assert _repo_info_cache_get("dryad", "10.5061/x") is None
         value = pd.DataFrame({"a": [1, 2], "b": ["x", None]})
         assert _repo_info_cache_put("dryad", "10.5061/x", value) is value
-        assert Path(_repo_info_cache_path("dryad", "10.5061/x")).name == "dryad_10.5061_x.pkl"
+        assert Path(_repo_info_cache_path("dryad", "10.5061/x")).name == "dryad_10.5061_x.json"
         pd.testing.assert_frame_equal(_repo_info_cache_get("dryad", "10.5061/x"), value)
-        Path(_repo_info_cache_path("osf", "bad")).write_bytes(b"not a pickle")
+        Path(_repo_info_cache_path("osf", "bad")).write_bytes(b"not json")
         assert _repo_info_cache_get("osf", "bad") is None
+        Path(_repo_info_cache_path("osf", "old")).write_bytes(
+            b'{"format": "pytacheck.repo_info_cache", "version": 0, "value": 1}'
+        )
+        assert _repo_info_cache_get("osf", "old") is None
         (tmp_path / "info" / "other.txt").write_text("keep")
-        assert repo_info_cache_clear() == 2
+        (tmp_path / "info" / "legacy.pkl").write_bytes(b"x")
+        assert repo_info_cache_clear() == 4
         assert (tmp_path / "info" / "other.txt").exists()
+
+
+def test_repo_info_cache_shapes(tmp_path: Path) -> None:
+    listing = pd.DataFrame(
+        {
+            "name": pd.array(["a.csv", None], dtype="string"),
+            "size": pd.array([10, None], dtype="Int64"),
+            "ratio": [0.5, float("nan")],
+            "folder": pd.array([True, None], dtype="boolean"),
+            "tags": [["x", "y"], []],
+        }
+    )
+    tree = {"gated": False, "reason": None, "files": listing, "default_branch": "main"}
+    with local_options({"metacheck.repo_info_cache.dir": str(tmp_path)}):
+        _repo_info_cache_put("zenodo", "1", listing)
+        pd.testing.assert_frame_equal(_repo_info_cache_get("zenodo", "1"), listing)
+        _repo_info_cache_put("github", "o/r", tree)
+        got = _repo_info_cache_get("github", "o/r")
+        assert {k: v for k, v in got.items() if k != "files"} == {
+            k: v for k, v in tree.items() if k != "files"
+        }
+        pd.testing.assert_frame_equal(got["files"], listing)
+
+
+def test_repo_info_cache_never_unpickles(tmp_path: Path) -> None:
+    import pickle
+
+    sentinel = tmp_path / "pwned"
+
+    class Planted:
+        def __reduce__(self):  # a pickle that runs code when loaded
+            return (sentinel.write_text, ("x",))
+
+    with local_options({"metacheck.repo_info_cache.dir": str(tmp_path)}):
+        for suffix in (".pkl", ".json"):
+            path = Path(_repo_info_cache_path("osf", "abcde")).with_suffix(suffix)
+            path.write_bytes(pickle.dumps(Planted()))
+        assert _repo_info_cache_get("osf", "abcde") is None
+        assert not sentinel.exists()
+        assert repo_info_cache_clear() == 2
 
 
 def test_repo_info_cache_key() -> None:
