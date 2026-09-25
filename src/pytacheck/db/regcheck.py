@@ -364,7 +364,7 @@ def regcheck_compare(
     paper_text: Any,
     prereg_text: str | None = None,
     registration_id: str | None = None,
-    client: str | Sequence[str] = _CLIENTS,
+    client: str | Sequence[str] | None = _CLIENTS,
     base_url: str | None = None,
     api_token: str | None = None,
     dimensions: pd.DataFrame | None = None,

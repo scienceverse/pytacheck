@@ -780,6 +780,70 @@
   "py_args":
     "path": "tests/datacheck_files/data/review/int64.csv"
     "n_rows": null
+- "id": "review.read_head_attrs.dup_labels.sav"
+  "r": "identity"
+  "py": "tests.datacheck_files.parity_helpers.read_head_attrs"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({d <- data_read_head(rpath(\"tests/datacheck_files/data/review/dup_labels.sav\"),\
+          \ n_rows = Inf); list(names = names(d), attrs = lapply(d, function(x) {a <- attributes(x); a$levels\
+          \ <- NULL; a$names <- NULL; if (!is.null(a$labels)) a$labels <- as.list(a$labels); if (length(a))\
+          \ a[order(names(a))] else NULL}), utf8_repaired = NULL)})"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "path": "tests/datacheck_files/data/review/dup_labels.sav"
+    "n_rows": null
+- "id": "review.read_head_attrs.dup_labels.dta"
+  "r": "identity"
+  "py": "tests.datacheck_files.parity_helpers.read_head_attrs"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({d <- data_read_head(rpath(\"tests/datacheck_files/data/review/dup_labels.dta\"),\
+          \ n_rows = Inf); list(names = names(d), attrs = lapply(d, function(x) {a <- attributes(x); a$levels\
+          \ <- NULL; a$names <- NULL; if (!is.null(a$labels)) a$labels <- as.list(a$labels); if (length(a))\
+          \ a[order(names(a))] else NULL}), utf8_repaired = NULL)})"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "path": "tests/datacheck_files/data/review/dup_labels.dta"
+    "n_rows": null
+- "id": "review.read_head_attrs.dup_labels.rds"
+  "r": "identity"
+  "py": "tests.datacheck_files.parity_helpers.read_head_attrs"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({d <- data_read_head(rpath(\"tests/datacheck_files/data/review/dup_labels.rds\"),\
+          \ n_rows = Inf); list(names = names(d), attrs = lapply(d, function(x) {a <- attributes(x); a$levels\
+          \ <- NULL; a$names <- NULL; if (!is.null(a$labels)) a$labels <- as.list(a$labels); if (length(a))\
+          \ a[order(names(a))] else NULL}), utf8_repaired = NULL)})"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "path": "tests/datacheck_files/data/review/dup_labels.rds"
+    "n_rows": null
+- "id": "review.read_head_attrs.dup_names.rds"
+  "r": "identity"
+  "py": "tests.datacheck_files.parity_helpers.read_head_attrs"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({d <- data_read_head(rpath(\"tests/datacheck_files/data/review/dup_names.rds\"), n_rows\
+          \ = Inf); list(names = names(d), attrs = lapply(d, function(x) {a <- attributes(x); a$levels\
+          \ <- NULL; a$names <- NULL; if (!is.null(a$labels)) a$labels <- as.list(a$labels); if (length(a))\
+          \ a[order(names(a))] else NULL}), utf8_repaired = NULL)})"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "path": "tests/datacheck_files/data/review/dup_names.rds"
+    "n_rows": null
 - "id": "review.read_delim.rt_quotes.csv.hdr"
   "r": "identity"
   "py": "tests.datacheck_files.review_helpers.read_delim_typed"

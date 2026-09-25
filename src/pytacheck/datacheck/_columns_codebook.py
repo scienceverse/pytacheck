@@ -886,32 +886,12 @@ def _parse_delimited(path: str, ext: str, src: str, observed: Any, header_lookah
 def _haven_frame(path: str, ext: str) -> pd.DataFrame:
     """``as.data.frame(haven::read_sav/read_dta/read_sas(path))`` with its column attributes.
 
-    Value labels are re-read as ``(label, code)`` pairs in file order: the
-    ``{label: code}`` mapping of ``read_stat_file()`` keeps one code per label
-    text, while haven keeps every code (several codes are often all labelled
-    "Missing").
+    Value labels are ``(label, code)`` pairs in file order, so several codes
+    labelled alike ("Missing") are all kept, as haven keeps them.
     """
-    import pyreadstat
+    from pytacheck.datacheck._files_readers import read_stat_file
 
-    from pytacheck.datacheck._files_readers import read_stat_file, vec_as_names_unique
-
-    df = read_stat_file(path, ext, math.inf)
-    reader = {"sav": pyreadstat.read_sav, "dta": pyreadstat.read_dta,
-              "sas7bdat": pyreadstat.read_sas7bdat}[ext]  # fmt: skip
-    _, meta = reader(path, metadataonly=True)
-    raw_names = list(meta.column_names)
-    names = vec_as_names_unique(raw_names)
-    col_attrs = df.attrs.get("col_attrs") or {}
-    value_labels = meta.variable_value_labels or {}
-    for raw, name in zip(raw_names, names, strict=True):
-        labels = value_labels.get(raw)
-        attrs = col_attrs.get(name)
-        if labels and attrs and "labels" in attrs:
-            is_string = any(isinstance(c, str) for c in labels)
-            attrs["labels"] = [
-                (str(lab), str(code) if is_string else float(code)) for code, lab in labels.items()
-            ]
-    return df
+    return read_stat_file(path, ext, math.inf)
 
 
 def _import_data(path: str, ext: str) -> pd.DataFrame | None:

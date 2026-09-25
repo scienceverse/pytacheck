@@ -10,7 +10,7 @@ from which the reproducible R call (``jmv::ttestIS(...)``) is recovered as
 text.
 
 Variable and value labels live in ``data.attrs["col_attrs"][column]``
-(``"label"``, and ``"labels"`` as ``{label: code}``), as for
+(``"label"``, and ``"labels"`` as ``(label, code)`` pairs), as for
 :func:`pytacheck.statout.jasp.import_jasp`.
 """
 
@@ -154,8 +154,8 @@ def import_omv(path: str | os.PathLike[str]) -> dict[str, Any]:
     }
 
 
-def _omv_labels(field: Any, xdat: Any) -> dict[str | None, float]:
-    """Port of R/omv.R::.omv_labels(): ``{label: code}`` for one field."""
+def _omv_labels(field: Any, xdat: Any) -> list[tuple[str | None, float]]:
+    """Port of R/omv.R::.omv_labels(): ``(label, code)`` pairs for one field."""
     lst = _dollar(field, "labels")
     if not lst:
         name = _dollar(field, "name")

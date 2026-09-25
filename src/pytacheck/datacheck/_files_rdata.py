@@ -606,8 +606,12 @@ def _strvec(obj: Any) -> list[str | None]:
     return []
 
 
-def _attr_value(obj: Any) -> Any:
-    """A column attribute in plain Python (named vectors become dicts)."""
+def _attr_value(obj: Any, pairs: bool = False) -> Any:
+    """A column attribute in plain Python (named vectors become dicts).
+
+    With *pairs* a named vector becomes a list of ``(name, value)`` pairs,
+    which keeps repeated names (haven ``labels``: ``c(Missing = -9, Missing = -8)``).
+    """
     if not isinstance(obj, RObject):
         return obj
     names = _strvec(obj.attr("names"))
@@ -622,6 +626,8 @@ def _attr_value(obj: Any) -> Any:
     else:
         return None
     if names and len(names) == len(vals):
+        if pairs:
+            return [("" if n is None else n, v) for n, v in zip(names, vals, strict=True)]
         return {("" if n is None else n): v for n, v in zip(names, vals, strict=True)}
     return vals[0] if len(vals) == 1 else vals
 
@@ -909,22 +915,28 @@ def r_frame_to_pandas(
     names = (names + [""] * len(cols))[: len(cols)]
     keep = n if not math.isfinite(n_rows) else max(0, min(n, int(n_rows)))
     series = []
-    col_attrs: dict[str, dict[str, Any]] = {}
-    seen: set[str] = set()
-    for name, col in zip(names, cols, strict=True):
+    per: list[dict[str, Any] | None] = []
+    for col in cols:
         s = _column_to_pandas(col, n)
         series.append(s.iloc[:keep].reset_index(drop=True))
         if isinstance(col, RObject) and not _is_flattened(col):
-            kept = {a: _attr_value(col.attrs[a]) for a in _KEPT_ATTRS if a in col.attrs}
+            kept = {
+                a: _attr_value(col.attrs[a], pairs=a == "labels")
+                for a in _KEPT_ATTRS
+                if a in col.attrs
+            }
             if subset:
                 kept = _attrs_after_subset(kept, col.classes, vctrs)
             kept.pop("levels", None)
-            key = "" if name is None else name
-            if kept and key not in seen:  # duplicated names: the first column's
-                col_attrs[key] = kept
-        seen.add("" if name is None else name)
+            per.append(kept)
+        else:
+            per.append(None)
     out = pd.DataFrame(dict(enumerate(series))) if series else pd.DataFrame(index=range(keep))
     out.columns = pd.Index(["" if nm is None else nm for nm in names], dtype=object)
-    if col_attrs:
+    from pytacheck.datacheck._colattrs import ColAttrs
+
+    # keyed by name (a repeated name: its first column) and by position
+    col_attrs = ColAttrs(list(out.columns), per)
+    if col_attrs.any():
         out.attrs["col_attrs"] = col_attrs
     return out

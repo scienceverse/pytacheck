@@ -927,21 +927,21 @@ def fread(
     cols = [_column(types[j], rows2 if bumped[j] else rows, j, gram) for j in range(ncol)]
     out = pd.DataFrame(dict(enumerate(cols)))
     out.columns = pd.Index(names, dtype=object)
-    col_attrs: dict[str, dict[str, Any]] = {}
-    seen: set[str] = set()
-    for j, t in enumerate(types):
-        # attrs are keyed by name: with duplicated names they describe the
-        # first column, the one R's df[[name]] / df$name returns
-        if names[j] in seen:
-            continue
-        seen.add(names[j])
+    from pytacheck.datacheck._colattrs import ColAttrs
+
+    per: list[dict[str, Any] | None] = []
+    for t in types:
         if t == CT_ISO8601_DATE:
-            col_attrs[names[j]] = {"class": ["IDate", "Date"]}
+            per.append({"class": ["IDate", "Date"]})
         elif t == CT_ISO8601_TIME:
-            col_attrs[names[j]] = {"class": ["POSIXct", "POSIXt"], "tzone": "UTC"}
+            per.append({"class": ["POSIXct", "POSIXt"], "tzone": "UTC"})
         elif t == CT_INT64:  # bit64::integer64 (values kept exactly as Int64)
-            col_attrs[names[j]] = {"class": "integer64"}
-    if col_attrs:
+            per.append({"class": "integer64"})
+        else:
+            per.append(None)
+    # keyed by name (a repeated name: its first column) and by position
+    col_attrs = ColAttrs(names, per)
+    if col_attrs.any():
         out.attrs["col_attrs"] = col_attrs
     return out
 

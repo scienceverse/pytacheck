@@ -93,18 +93,18 @@ def data_labels(fn: str, path: str) -> dict[str, Any]:
     col_attrs = df.attrs.get("col_attrs", {})
 
     def lab(v: Any) -> Any:
-        if isinstance(v, dict):
-            return {"codes": list(v.values()), "labels": list(v.keys())}
+        if isinstance(v, list):  # (label, code) pairs: R's named vector
+            return {"codes": [p[1] for p in v], "labels": [p[0] for p in v]}
         return v
 
     out = {}
     for c in df.columns:
         a = col_attrs.get(c, {})
-        labels = a.get("labels", {})
+        labels = a.get("labels", [])
         out[str(c)] = {
             "label": lab(a.get("label")),
-            "codes": list(labels.values()),
-            "labels": list(labels.keys()),
+            "codes": [p[1] for p in labels],
+            "labels": [p[0] for p in labels],
         }
     return out
 
@@ -115,9 +115,9 @@ def jasp_summary(path: str) -> list[str]:
     return _jasp_analyses_summary(import_jasp(str(ROOT / path)).get("analyses"))
 
 
-def labels_pairs(labs: dict[str | None, float]) -> dict[str, list[Any]]:
-    """A ``{label: code}`` value-label dict as R's ``unname()``/``names()`` pair."""
-    return {"codes": list(labs.values()), "labels": list(labs.keys())}
+def labels_pairs(labs: list[tuple[str | None, float]]) -> dict[str, list[Any]]:
+    """``(label, code)`` value-label pairs as R's ``unname()``/``names()`` pair."""
+    return {"codes": [p[1] for p in labs], "labels": [p[0] for p in labs]}
 
 
 def call(fn: str, **kwargs: Any) -> Any:

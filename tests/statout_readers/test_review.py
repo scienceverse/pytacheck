@@ -81,7 +81,7 @@ def test_jasp_omv_labels_use_the_datacheck_col_attrs_convention() -> None:
     df = import_omv(REVIEW / "review.omv")["data"]
     col_attrs = df.attrs["col_attrs"]
     # repeated codes are kept (R's named vector c(label = code))
-    assert col_attrs["n"]["labels"] == {"one": 1.0, "uno": 1.0, "two": 2.0}
+    assert col_attrs["n"]["labels"] == [("one", 1.0), ("uno", 1.0), ("two", 2.0)]
     assert col_attrs["n"]["label"] == "5"
     assert col_attrs["a"]["label"] == "partial match"  # f$description partial match
     assert "t" not in col_attrs  # description "" wins over title
