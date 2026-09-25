@@ -7,7 +7,8 @@ pytacheck-only releases. The pinned metacheck commit is in `parity/UPSTREAM.toml
 ## Unreleased
 
 Complete rebuild as a parity-tested Python port of metacheck `dev`
-(`85c8c87`, metacheck 0.3.1).
+(`85c8c87`, metacheck 0.3.1) plus scienceverse/metacheck#423 (`b239264`,
+bibr export schema 12.0), which pytacheck targets ahead of its merge.
 
 - R-faithful regular expressions (TRE leftmost-longest and PCRE semantics),
   number formatting, collation and dplyr idioms (`pytacheck._r`).

@@ -82,25 +82,3 @@
 "_metacheck.Rproj" = "RStudio project file."
 "makefile" = "R package build helper."
 "codecov.yml" = "R CI coverage configuration."
-
-[drop.bibr_schema_downgrade]
-reason = """pytacheck's own v11/v12 -> v10.x converter (docs/UPSTREAM_ISSUES.md D1). \
-metacheck PR #423 made it obsolete: .read_bibr() now reads bibr export schema 12.x \
-natively (.read_bibr12(): 12.x table names, target_id, 0-1 scores, the extraction block) \
-and refuses any other root schema_version, v11 included. Remove it once the \
-.read_bibr12() port is in place, and route from_bibr(), read(), the in-process bibr path \
-and the API upload reader through that port."""
-r = []
-python = [
-    "pytacheck.io.bibr_schema:to_metacheck_schema",
-    "pytacheck.io.bibr_schema:is_modern_bibr",
-    "pytacheck.io.bibr_schema:schema_major",
-    "pytacheck.papers.io:from_bibr (its `upgrade` argument and the call to to_metacheck_schema)",
-]
-files = [
-    "src/pytacheck/io/bibr_schema.py",
-    "src/pytacheck/papers/io.py: from_bibr(upgrade=...) and its docstring",
-    "tests/foundation/test_bibr_schema.py (rewrite against the 12.x reader; metacheck's tests/testthat/fixtures/bibr12 has the upstream fixtures)",
-    "docs/BIBR.md: section 2's 'Any bibr version works ... converted' paragraph",
-    "docs/UPSTREAM_ISSUES.md: deliberate difference D1",
-]
