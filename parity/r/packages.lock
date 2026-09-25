@@ -43,4 +43,5 @@ rlang==1.3.0
 tibble==3.3.1
 purrr==1.2.2
 xfun==0.60
+psych==2.6.3
 httptest2==github:nealrichardson/httptest2@37efe13ff4c51504570c5e6ac2d93fff71a416a2

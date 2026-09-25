@@ -34,10 +34,6 @@ __all__ = [
 ]
 
 
-def _is_whole(x: float) -> bool:
-    return math.isfinite(x) and x == math.floor(x)
-
-
 def format_num(x: Any, digits: int = 7) -> str:
     """R ``format(x)`` for a single number (default ``digits = 7``).
 
@@ -65,9 +61,7 @@ def format_num(x: Any, digits: int = 7) -> str:
     sci_repr = mantissa + exp_part
     decimals = max(0, sig - 1 - exponent)
     fixed_repr = f"{x:.{decimals}f}"
-    if len(fixed_repr) <= len(sci_repr):
-        return fixed_repr
-    return sci_repr
+    return fixed_repr if len(fixed_repr) <= len(sci_repr) else sci_repr
 
 
 def as_character(x: Any) -> str | None:
@@ -140,22 +134,14 @@ _MAX_DIGITS = 308 + 15
 
 def _r_pow_di(x: float, n: int) -> float:
     """R's ``R_pow_di()``: x^n by repeated squaring (matches R bit for bit)."""
-    xn = 1.0
-    if n != 0:
-        neg = n < 0
-        if neg:
-            n = -n
-        while True:
-            if n & 1:
-                xn *= x
-            n >>= 1
-            if n:
-                x *= x
-            else:
-                break
-        if neg:
-            xn = 1.0 / xn
-    return xn
+    xn, neg, n = 1.0, n < 0, abs(n)
+    while n:
+        if n & 1:
+            xn *= x
+        n >>= 1
+        if n:
+            x *= x
+    return 1.0 / xn if neg else xn
 
 
 def r_round(x: Any, digits: float = 0) -> Any:

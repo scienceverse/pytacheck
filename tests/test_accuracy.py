@@ -207,6 +207,26 @@ def test_committed_matrix_expected_and_goldens() -> None:
         golden = acc.read_golden(module)
         assert golden is not None, f"no accuracy golden for {module}"
         assert set(golden["outputs"]) == {o.input for o in outs}, module
+    assert {p.name for p in acc.GOLDEN_DIR.glob("*.json.gz")} == {
+        acc.golden_path(m).name for m in modules
+    }
+
+
+def test_left_over_goldens_are_problems(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """A golden of a module, or an output, that the matrix no longer has fails the gate."""
+    monkeypatch.setattr(acc, "GOLDEN_DIR", tmp_path)
+    failed = {"ok": False, "error": "x"}
+    o = acc.Output("m", "a.xml", "paper")
+    acc.write_golden("m", {"module": "m", "outputs": {"a.xml": failed, "b.xml": failed}})
+    acc.write_golden("gone", {"module": "gone", "outputs": {}})
+    rep = acc.score([o], {o: failed}, acc.Expected([], {}), partial=False)
+    assert rep.problems == [
+        "m: R's golden has inputs not in the matrix: ['b.xml']",
+        "golden gone.json.gz: no module of the matrix has it: delete it",
+    ]
+    assert not rep.passed
+    partial = acc.score([o], {o: failed}, acc.Expected([], {}), partial=True)
+    assert len(partial.problems) == 1  # -m runs check only the modules they run
 
 
 def test_matrix_inputs_must_be_in_the_corpus(tmp_path: Path) -> None:

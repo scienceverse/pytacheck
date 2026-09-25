@@ -4,5 +4,6 @@
 /parity/divergences/                 @thesanogoeffect
 /parity/lock/                        @thesanogoeffect
 /parity/accuracy/expected.yaml       @thesanogoeffect
+/parity/accuracy/matrix.toml         @thesanogoeffect
 /docs/UPSTREAM_ISSUES.md             @thesanogoeffect
 /.github/CODEOWNERS                  @thesanogoeffect

@@ -395,17 +395,18 @@ depend on whether R is installed. It takes about 35 s.
 
 **R's outputs** are committed under `parity/accuracy/golden/<module>.json.gz`
 (gzip without a time stamp, so regenerating unchanged outputs rewrites the same
-bytes): about 0.4 MB, so the report needs no R. `--generate` writes a transient case
+bytes): about 0.3 MB, so the report needs no R. `--generate` writes a transient case
 file and runs it with `parity/r/run_cases.R --out`, which reads each paper once per
 session; R's network is disabled (its proxy points at a closed port), because an R
 module that reached the network would give other results where it is reachable. It
 takes about 105 s. R runs as a user with metacheck's suggested packages installed:
 `careless`, which `data_check` needs to screen survey data for careless responding,
 lives in its own library, `<R.home()>/suggests`, which only this report puts on R's
-library path (`parity/r/install-suggests.R` installs it, and `setup-reference.sh`,
-`install-with-pak.R` and the workflows call it). The parity cases keep switching
-`careless` on and off themselves (`tests/mod_data_check/dc_helpers.R`), so their
-goldens do not depend on it.
+library path (`parity/r/install-suggests.R` installs it there, called by
+`setup-reference.sh` and the workflows; `install-with-pak.R` does the same with pak).
+Its one dependency, `psych`, is pinned in both lock files. The parity cases keep
+switching `careless` on and off themselves (`tests/mod_data_check/dc_helpers.R`), so
+their goldens do not depend on it.
 
 **Scoring.** Each output is compared field by field:
 
@@ -451,8 +452,9 @@ them metacheck bugs pytacheck fixes (Grobid clean-up and URL handling U16/U28, U
 U30, U80, U82, U83, U86, U98, U99, U115, U123, U125, U158).
 
 **The gate** (`--gate`) fails on a difference no entry explains, an entry that
-explains none (stale; checked on full runs, not with `-m`), a missing golden, or an
-output that used the network or started R. A module whose traffic lights agree with
+explains none (stale; checked on full runs, not with `-m`), a missing golden, a golden
+of a module or input the matrix no longer has, or an output that used the network or
+started R. A module whose traffic lights agree with
 metacheck's on fewer than 90% of its inputs is a warning, unless a `floors` entry
 names the share expected and why; the upstream sync turns such a warning into the
 `needs-human-review` label. The JSON report (`--report PATH`, by default
@@ -475,7 +477,7 @@ U- or D-entry). Changing the matrix means `--generate` with the reference R.
     tier, marks by tier, kind and ref) on the run page, then the accuracy gate,
     `python -m parity accuracy --gate`, from the committed R outputs;
   * the `parity-pyarrow` job runs the tier-1 cases with pyarrow installed
-    (`uv run --with pyarrow pytest -m "parity and tier1"`): pandas 3 then stores
+    (`uv run --with pyarrow pytest -n auto -m "parity and tier1"`): pandas 3 then stores
     strings in Arrow, which rejects text that is not valid Unicode;
 * **parity workflow** (`parity.yml`, with the reference R, when `parity/**` or
   `upstream/**` change and weekly): regenerates every golden and the accuracy
@@ -490,7 +492,9 @@ U- or D-entry). Changing the matrix means `--generate` with the reference R.
   An AI agent then ports the changes until `parity check`, the accuracy gate, the
   tests and the linters pass. The pull request is a draft labelled
   `needs-human-review` when tier-1 marks, `parity/accuracy/expected.yaml` or
-  D-entries changed, or the accuracy report warns or fails
-  (`scripts/upstream_sync.py review`); `.github/CODEOWNERS` requires a code owner's
-  review of changes to the marks, the lock, `expected.yaml` and
-  `docs/UPSTREAM_ISSUES.md`.
+  `matrix.toml` (dropping an input would hide its differences), or D-entries changed
+  since the commit the sync branched from (committed by the agent or not), or the
+  accuracy report warns or fails (`scripts/upstream_sync.py review`);
+  `.github/CODEOWNERS` names the code owners of the marks, the lock, `expected.yaml`,
+  `matrix.toml` and `docs/UPSTREAM_ISSUES.md`, whose review a change to them needs
+  once branch protection requires code-owner review.
