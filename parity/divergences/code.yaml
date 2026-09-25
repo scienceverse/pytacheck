@@ -303,3 +303,16 @@
 "statout_match_review/match_reported_output.table_paper.no_table_id": *u142_tab
 "statout_match_review/match_reported_output.table_paper.no_table_id.summary": *u142_tab
 "statout_match_review/table_tests.no_section_id": *u142_tab
+# U143 (bibr12 cases): a table's own caption is used for any paper, not only 12.x ones
+"bibr12/.table_tests.correlation_caption.older":
+  kind: r_bug_fixed
+  ref: U143
+  reason: "a table's own caption column is used whatever the paper's schema version (R reads it only for 12.x papers)"
+"bibr12/match_reported_output.descriptive_caption.older":
+  kind: r_bug_fixed
+  ref: U143
+  reason: "a table's own caption column is used whatever the paper's schema version (R reads it only for 12.x papers)"
+"bibr12/match_reported_output.descriptive_caption.older.summary":
+  kind: r_bug_fixed
+  ref: U143
+  reason: "a table's own caption column is used whatever the paper's schema version (R reads it only for 12.x papers)"

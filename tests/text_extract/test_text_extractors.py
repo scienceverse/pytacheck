@@ -35,6 +35,15 @@ def test_extract_urls() -> None:
     assert len(urls) == 0
 
 
+def test_extract_urls_et_al_glued_to_a_word_is_not_a_url() -> None:
+    # U158: metacheck lists "al.Premotor" (psychsci) and "al.Inhibitory" as URLs
+    texts = ["Catarino et al.Inhibitory Control", "as in Smith et al.Premotor areas"]
+    assert len(extract_urls(pc.test_paper(texts))) == 0
+    # a real host name after another word is still found
+    urls = extract_urls(pc.test_paper(["data: set al.com and osf.io/abc"]))
+    assert urls["text"].tolist() == ["al.com", "osf.io/abc"]
+
+
 def test_extract_urls_paperlist(psychsci) -> None:
     urls = extract_urls(psychsci)
     assert set(urls["paper_id"]) <= set(psychsci.names)

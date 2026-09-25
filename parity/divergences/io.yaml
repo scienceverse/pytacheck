@@ -192,10 +192,6 @@
 "grobid12_review/module.ref_consistency.review": *module
 "grobid12_review/module.ref_summary.review": *module
 "grobid12_review/module.stat_check.review": *module
-"grobid12/module.all_urls.0956797615569889": &all_urls_fp
-  kind: r_bug_fixed
-  ref: U28
-  reason: "the words of the crossmark link are kept (R replaces them by the URL) and extract_urls() matches 'al.Inhibitory' in them (a text-lane URL pattern false positive); R's corrupted hrefs are gone"
 "grobid12_review/.grobid_to_bibr.error_message.url_empty": &url_empty
   kind: r_bug_fixed
   ref: U17

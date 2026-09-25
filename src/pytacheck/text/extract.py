@@ -26,8 +26,10 @@ __all__ = ["extract_eq", "extract_p_values", "extract_urls"]
 _OPERATORS = ("=", "<", ">", "~", "≈", "≠", "≤", "≥", "≪", "≫")
 _OPS = "".join(_OPERATORS)
 
+# "et al." glued to the next word ("et al.Premotor") is not a host name (U158)
 _URL_PATTERN = (
-    r"\b((doi:)?(https?://)?(([\w.-]+\.[a-z]{2,})|(\d{1,3}(\.\d{1,3}){3}))(:\d+)?(/[^\s]*)?)\b"
+    r"\b(?<!\bet )"
+    r"((doi:)?(https?://)?(([\w.-]+\.[a-z]{2,})|(\d{1,3}(\.\d{1,3}){3}))(:\d+)?(/[^\s]*)?)\b"
 )
 
 _P_PATTERN = (

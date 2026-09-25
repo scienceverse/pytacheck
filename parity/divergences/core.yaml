@@ -124,3 +124,12 @@
   kind: r_bug_fixed
   ref: U14
   reason: pubpeer_comments() always returns the url and users columns, so feedback without a url is reported (R's table lacks the column and the module fails)
+# U158
+"text_extract/extract_urls.psychsci":
+  kind: r_bug_fixed
+  ref: U158
+  reason: "\"et al.Premotor\" (et al. glued to the next word) is not a URL"
+"mod_urls_open/all_urls.psychsci":
+  kind: r_bug_fixed
+  ref: U158
+  reason: "\"et al.Premotor\" (et al. glued to the next word) is not a URL"

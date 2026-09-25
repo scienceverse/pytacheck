@@ -27,6 +27,16 @@ bibr export schema 12.0), which pytacheck targets ahead of its merge.
 See `docs/UPSTREAM_ISSUES.md`; every affected parity case is a documented
 `known_divergence`.
 
+- Reading papers (U16-U18, U21, U22, U24-U28, U158): Grobid TEI conversion
+  keeps the space before numbers (`Hamilton 1964`, `p = .27`) and joins
+  reference DOIs split by line breaks; tables without rows, references
+  without text, one-ended page ranges, nested and back-matter divs, the paper
+  DOI (header only) and figure/table rows are handled correctly; URL hrefs are
+  printed once, where their link is, without dropping link words; Grobid
+  `<s>` tags are unwrapped. bibr 12.x keys match exactly, array values in
+  scalar fields are read row by row, `df` arrays keep both degrees of
+  freedom, doubles keep full precision and date-times four-digit years.
+  `extract_urls()` no longer takes "et al.Word" for a host name.
 - Archives (U31-U54, U69-U76, U152, U155, U156): Dataverse hosts are matched
   per URL and Figshare DOIs are no longer Dataverse links; files left out by
   the size caps stay in the `*_file_download()` tables; zero-byte files,
