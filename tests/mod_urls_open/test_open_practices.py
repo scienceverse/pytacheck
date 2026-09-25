@@ -85,6 +85,12 @@ def test_only_open_data() -> None:
     assert mo.table["data"].tolist() == [True]
     assert mo.traffic_light == "yellow"
     assert mo.summary_text == "Shared data detected."
+    # U83: metacheck's report says "not reconized"
+    assert mo.report[1] == (
+        "We did not detect open sharing of code, which could be because there is no code "
+        "related to this article, or the repository is not recognized by our code. If there "
+        "is code, please consider sharing it in a repository."
+    )
 
 
 def test_only_open_code() -> None:
@@ -258,15 +264,14 @@ def test_duplicate_paper_ids(demo: pc.Paper) -> None:
     assert mo.summary_text == single.summary_text
 
 
-def test_empty_paper_list_errors_like_r() -> None:
-    # U79: R's summarise() fails on `text[data]` (the searches have no text column)
-    msg = (
-        "Running the module 'open_practices' produced errors: "
-        "In argument: `data_statements = list(unique(text[data]))`."
-    )
-    with pytest.raises(ModuleError) as err:
-        run(pc.PaperList([]))
-    assert str(err.value) == msg
+def test_empty_paper_list() -> None:
+    # U79: metacheck's summarise() fails on `text[data]` (its searches of an empty
+    # list have no text column); an empty list has no statements
+    mo = run(pc.PaperList([]))
+    assert mo.traffic_light == "red"
+    assert mo.summary_text == "Neither shared data nor code detected."
+    assert len(mo.table) == 0
+    assert len(mo.summary_table) == 0
 
 
 def test_text_table_without_text_column_errors_like_r() -> None:
@@ -373,10 +378,10 @@ def test_rows_follow_paper_list_order_not_sorted_ids() -> None:
     )
 
 
-def test_chained_na_replace_keeps_list_columns_r_like() -> None:
-    # all_urls' unnamed na_replace (0) applies to every summary column, including
-    # open_practices' list columns: R replaces the NA_character_ cells with the
-    # number 0 and leaves the NULL cells of papers without any statement alone.
+def test_chained_na_replace_leaves_open_practices_columns() -> None:
+    # U77: all_urls' unnamed na_replace (0) applies only to its own summary column;
+    # metacheck applied it to every column of the chain, putting the number 0 in
+    # open_practices' list columns and turning its logical NA columns numeric
     papers = pc.PaperList(
         [
             _paper(["The data and code are available at https://osf.io/abcde."], "p1"),
@@ -388,11 +393,12 @@ def test_chained_na_replace_keeps_list_columns_r_like() -> None:
     st = mo.summary_table
     data = st["data_statements"].tolist()
     assert data[0] == ["The data and code are available at https://osf.io/abcde."]
-    assert pd.isna(data[1])  # R: NULL (unmatched in the left join), not replaced
-    assert data[2] == 0 and not isinstance(data[2], str)
+    assert pd.isna(data[1]) and pd.isna(data[2])
     assert st["materials_statements"].tolist()[2] == ["Materials are available on request."]
-    assert st["prereg_statements"].tolist()[0] == 0
-    # logical NA columns become numeric 0, as `summary_table[is.na(x), col] <- 0` does
-    assert st["materials_open"].tolist() == [0.0, 0.0, 0.0]
-    assert st["on_request"].tolist() == [0.0, 0.0, 1.0]
+    assert pd.isna(st["prereg_statements"].tolist()[0])
+    # open_practices' own na_replace: data_open and code_open are FALSE for p2
+    assert st["data_open"].tolist() == [True, False, False]
+    assert st["materials_open"].tolist()[::2] == [False, False]
+    assert pd.isna(st["materials_open"].tolist()[1])
+    assert st["on_request"].tolist()[::2] == [False, True]
     assert st["urls"].tolist() == [1, 0, 1]

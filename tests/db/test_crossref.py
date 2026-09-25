@@ -418,6 +418,46 @@ def test_openalex_query(apis) -> None:
     assert len(loose) == 1
 
 
+def test_openalex_query_ranks_relevance_as_numbers(monkeypatch) -> None:
+    # U13: R sorted relevance_score as text, so "9.5" came before "10.2"
+    def work(wid: str, score: float) -> dict:
+        return {
+            "id": wid,
+            "relevance_score": score,
+            "display_name": "Same title",
+            "primary_location": {"source": {"display_name": f"J{wid}"}},
+            "authorships": [],
+        }
+
+    body = {"results": [work("W1", 9.5), work("W2", 10.2), work("W3", 100.0)]}
+    with respx.mock() as router:
+        router.route(host="api.openalex.org").mock(return_value=httpx.Response(200, json=body))
+        best = cr.openalex_query("Same title", "Elsewhere", strict=False)
+    assert best["id"].tolist() == ["W3"]
+
+
+def test_crossref_doi_connection_failure_is_a_network_error(monkeypatch) -> None:
+    # U13: R's dead inherits(resp, "error") branch gave "`resp` must be an HTTP
+    # response object", which add_bib_match() never counted as a network error
+    monkeypatch.setattr(cr._utils, "online", lambda url: True)
+    with respx.mock() as router:
+        router.route(host="api.labs.crossref.org").mock(side_effect=httpx.ConnectError("down"))
+        out = cr.crossref_doi("10.1098/rspb.2002.2034")
+        paper = paper_with_bib(
+            {
+                "bib_id": [1],
+                "doi": ["10.1098/rspb.2002.2034"],
+                "title": ["Facial resemblance enhances trust"],
+                "container": ["Proc R Soc B"],
+                "authors": ["Lisa DeBruine"],
+            }
+        )
+        with pytest.warns(UserWarning, match="1 of 1 reference lookups did not complete"):
+            cr.add_bib_match(paper)
+    assert out["DOI"].tolist() == ["10.1098/rspb.2002.2034"]
+    assert out["error"].tolist() == ["connection failed"]
+
+
 def test_openalex_query_colon_retry() -> None:
     urls = []
 

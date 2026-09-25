@@ -54,11 +54,12 @@ _STOPWORDS = frozenset(["of", "and", "the", "for", "in", "on", "a", "an", "de", 
 _NO_REFS = "We found no references"
 _NO_MATCH = "We found no bib_match entries. You may need to add them with `add_bib_match()`."
 
+# metacheck's typos ("Such an incoherent", "ar an AI") are fixed (U83)
 _GUIDANCE = (
     "The references below supplied a DOI, but one or more of the cited details (title, "
     "authors, journal, or year) does not match the record that DOI points to. Such an "
-    "incoherent is most often an error in reading the reference from the PDF, but it could be "
-    "a mistake, ar an AI generated reference. Check each against the original source. "
+    "incoherence is most often an error in reading the reference from the PDF, but it could be "
+    "a mistake, or an AI generated reference. Check each against the original source. "
     "Incoherent references are mostly PDF parsing errors (we are working on improving "
     "reference parsing)."
 )
@@ -532,6 +533,8 @@ def ref_accuracy(
         if o is None or o == "":
             doi_mismatch.append(False)
         elif m is None:
+            # no record DOI to compare with: unknown (the reference is flagged by
+            # its "unresolved" tier and no_match instead)
             doi_mismatch.append(None)  # TRUE & TRUE & NA
         else:
             doi_mismatch.append(_tolower(o) != _tolower(m))

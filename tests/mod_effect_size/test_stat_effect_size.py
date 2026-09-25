@@ -219,9 +219,10 @@ def test_output_structure(demo) -> None:
         "No parseable d effect size found.",
     ]
     assert out.extras["na_replace"] == 0
+    # U125: with the full stop metacheck leaves out
     assert out.summary_text == (
         "We found 1 t-test and/or F-test where effect sizes are not reported. Check these tests "
-        "in the table below, and consider adding effect sizes"
+        "in the table below, and consider adding effect sizes."
     )
 
 

@@ -389,7 +389,8 @@ def extract_tests(paper: Any) -> pd.DataFrame:
     if is_paper_list(paper) and not isinstance(paper, str | pd.DataFrame):
         from pytacheck._r.frames import bind_rows
 
-        parts = [extract_tests(p) for p in paper]
+        papers = paper.values() if isinstance(paper, Mapping) else paper
+        parts = [extract_tests(p) for p in papers]
         parts = [t for t in parts if len(t) > 0]
         return bind_rows(parts).reset_index(drop=True) if parts else _empty_tests()
 

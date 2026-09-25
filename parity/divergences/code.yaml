@@ -73,6 +73,11 @@
   ref: U120
   reason: each report section holds its own rows; R's regcheck_table[prereg_id == rid, ] adds a row of NAs per NA prereg_id
 "mod_reg_review/reg_check.review.na_id.all.tables": *u120_na
+# caused by the text lane's prereg_check() fix (U109), not by this lane
+"mod_reg/reg_check.paperlist.aspredicted":
+  kind: r_bug_fixed
+  ref: U109
+  reason: each paper's AsPredicted preregistration is compared for that paper (prereg_check fix); R pastes both into one row with an NA paper_id, so 3 comparisons instead of 4
 # caused by the report lane's module_report() fix (U128), not by this lane
 "mod_reg/reg_check.report.all_fail": &u128_err
   kind: r_bug_fixed
@@ -116,7 +121,7 @@
 "mod_repo_check/repo_check.local.messy": &u123
   kind: r_bug_fixed
   ref: U123
-  reason: a local file file_category() cannot place takes its type from the extension like an online one, so a local .tar.gz/.zip counts as an archive; R leaves it NA
+  reason: a local file file_category() cannot place takes its extension's type (when it has one) like an online file, so a local .tar.gz/.zip counts as an archive; R leaves it NA
 "mod_repo_check/repo_check.local.roster_extra": *u123
 "mod_repo_check/repo_check.local.edat_ok": *u123
 "mod_repo_check/repo_check.local.zip": *u123
@@ -145,6 +150,10 @@
   kind: r_bug_fixed
   ref: U135
   reason: without a file_size column the withheld file is reported without its size; R stops ("argument is of length zero")
+"repro_core/repro_rewrite_paths.mirror_tie":
+  kind: r_bug_fixed
+  ref: U135
+  reason: of byte-identical mirrors split evenly between study groups the first listed is kept, as metacheck's comment says; R's which.max(table()) keeps the alphabetically first group
 "repro_core/repro_install_deps.main_lib_skip":
   kind: r_bug_fixed
   ref: U135

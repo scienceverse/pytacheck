@@ -355,22 +355,23 @@ def test_na_causal_flag_keeps_r_semantics() -> None:
     assert res["traffic_light"] == "yellow"
 
 
-@pytest.mark.parametrize(
-    "paper",
-    [
-        pytest.param(lambda: pc.PaperList([]), id="empty-paper-list"),
-        pytest.param(
-            lambda: (lambda p: (setattr(p, "text", p.text.drop(columns=["text"])), p)[1])(
-                untitled(["Participants were randomly assigned."], id="nt")
-            ),
-            id="no-text-column",
-        ),
-    ],
-)
-def test_no_text_column_is_a_join_error(paper: Any) -> None:
+def test_no_text_column_is_a_join_error() -> None:
     # R: text_search() returns no `text` column, so the left_join() fails
+    paper = untitled(["Participants were randomly assigned."], id="nt")
+    paper.text = paper.text.drop(columns=["text"])
     with pytest.raises(ModuleError, match=r"Join columns in `y` must be present in the data\."):
-        pc.module_run(paper(), "causal_claims")
+        pc.module_run(paper, "causal_claims")
+
+
+def test_empty_paper_list() -> None:
+    # U79: metacheck's text_search() of an empty list has no `text` column, so the
+    # module failed ("Join columns in `y` must be present"); an empty list has
+    # nothing to report
+    res = pc.module_run(pc.PaperList([]), "causal_claims")
+    assert res.traffic_light == "green"
+    assert len(res.table) == 0
+    assert len(res.summary_table) == 0
+    assert "We identified no sentences describing randomization." in res.summary_text
 
 
 def test_references_are_not_searched() -> None:

@@ -416,7 +416,8 @@ def perform(
 
     Up to *max_tries* attempts (default: the ``ellmer_max_tries`` option, 3),
     retrying transient statuses and transport failures, each bounded by
-    *timeout* (default: the ``ellmer_timeout_s`` option, 300 s).
+    *timeout* (default: the ``ellmer_timeout_s`` option, else
+    :func:`~pytacheck.llm.core.llm_timeout`).
     """
     from pytacheck import http
     from pytacheck.utils import get_option

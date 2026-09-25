@@ -19,6 +19,7 @@ from __future__ import annotations
 import json
 import math
 import os
+import re
 import struct
 import tempfile
 import zipfile
@@ -804,23 +805,59 @@ def _jmv_structured_tables(analysis_files: Sequence[str]) -> list[dict[str, Any]
 def _html_parser() -> Any:
     from lxml import etree
 
-    # xml2::read_html()'s options: RECOVER, NOERROR, NOBLANKS. The reference
-    # xml2 links libxml2 2.15, whose HTML parser decodes a file as UTF-8
-    # whatever its <meta charset> says (invalid bytes become U+FFFD); lxml
-    # would guess Latin-1 for a file without a declaration, so the encoding
-    # is fixed here.
+    # xml2::read_html()'s options: RECOVER, NOERROR, NOBLANKS. The text is
+    # decoded before parsing (see _html_encoding()), so the parser reads UTF-8.
     return etree.HTMLParser(recover=True, remove_blank_text=True, encoding="utf-8")
 
 
+_META_CHARSET = re.compile(rb"""<meta[^>]*?charset\s*=\s*["']?\s*([A-Za-z0-9._:-]+)""", re.I)
+
+
+def _html_encoding(data: bytes) -> str:
+    """The encoding of an HTML file: its byte-order mark or ``<meta charset>``, else UTF-8.
+
+    The declaration is looked for in the first 1024 bytes, as browsers do,
+    and resolved as the HTML standard says (a declared UTF-16 is UTF-8, and
+    ``iso-8859-1``/``ascii`` are windows-1252). A file without one is UTF-8.
+    metacheck's result depends on the xml2 build: with libxml2 2.15 the
+    declaration is ignored, so a windows-1252 export (``café``, ``±``) is
+    read with U+FFFD in place of its accented letters and symbols
+    (UPSTREAM_ISSUES U141).
+    """
+    import codecs
+
+    if data.startswith(codecs.BOM_UTF8):
+        return "utf-8-sig"
+    if data.startswith((codecs.BOM_UTF16_LE, codecs.BOM_UTF16_BE)):
+        return "utf-16"
+    m = _META_CHARSET.search(data[:1024])
+    if m is None:
+        return "utf-8"
+    try:
+        name = codecs.lookup(m.group(1).decode("ascii")).name
+    except LookupError:
+        return "utf-8"
+    if name.startswith("utf-16") or name.startswith("utf-32"):
+        return "utf-8"
+    if name in ("latin-1", "iso8859-1", "ascii"):
+        return "cp1252"
+    return name
+
+
 def _read_html_file(path: str) -> Any:
-    """``xml2::read_html(<file>)`` (``None`` on failure)."""
+    """``xml2::read_html(<file>)`` (``None`` on failure), in the file's declared encoding."""
     from lxml import etree
 
     try:
-        tree = etree.parse(path, _html_parser())
-    except (etree.LxmlError, OSError, ValueError):
+        data = Path(path).read_bytes()
+    except OSError:
         return None
-    return tree if tree.getroot() is not None else None
+    text = data.decode(_html_encoding(data), errors="replace")
+    try:
+        root = etree.fromstring(text.encode("utf-8"), _html_parser())
+    except (etree.LxmlError, ValueError):
+        return None
+    return None if root is None else root.getroottree()
 
 
 def _read_html_string(x: str) -> Any:

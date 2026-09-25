@@ -523,6 +523,7 @@ def _tei_text_columns(xml: Any) -> dict[str, list[Any]]:
         if t is not None and t != "references" and t not in types:
             types.append(t)
     back_rows: list[tuple[Any, int, Any, str]] | None = None
+    read: set[Any] = set()  # a typed div inside another is read once, with the outer one
     for t in types:
         # the divs inside a typed div, and the typed div itself when it holds
         # paragraphs of its own (metacheck drops those; U17)
@@ -530,8 +531,9 @@ def _tei_text_columns(xml: Any) -> dict[str, list[Any]]:
         bdivs = [
             d
             for d in xml_find_all(xml, f"{typed} | {typed} //div")
-            if d.get("type") != t or _own(xml_find_all(d, ".//p"), d)
+            if d not in read and (d.get("type") != t or _own(xml_find_all(d, ".//p"), d))
         ]
+        read.update(bdivs)
         if not bdivs:
             continue
         back_rows = back_rows or []
@@ -765,8 +767,13 @@ def _printed_url(link_text: str, href: str) -> tuple[str, int, int] | None:
     * A link text that prints the URL or part of it (``https:// osf.io/abc``,
       ``osf  .io/abc;``, ``osf.io``) is the href, with the punctuation around
       the link text kept (``https://osf.io/abc;``).
-    * A link in words (``the GitHub repo``, ``code``, ``OSF``: no ``.`` or
-      ``/``) keeps its words, with the href printed after them.
+      A ``doi:`` link text is a URL too (``doi:10.1234/abc`` is
+      ``https://doi.org/10.1234/abc``).
+    * A link in words that prints the whole URL among them
+      (``OSF (https://osf.io/abc)``) keeps its words, without the stray spaces
+      in the URL; the href is not printed a second time.
+    * Any other link in words (``the GitHub repo``, ``code``, ``OSF``: no
+      ``.`` or ``/``) keeps its words, with the href printed after them.
     * A relative link that Grobid resolved against its own files
       (``file://localhost/opt/grobid/grobid-home/tmp/osf.io/abc``) is printed
       as the paper prints it, without the stray spaces (``osf.io/abc``), and
@@ -777,7 +784,7 @@ def _printed_url(link_text: str, href: str) -> tuple[str, int, int] | None:
     lead = s[: len(s) - len(core)]
     stripped = core.rstrip(_URL_TRAIL)
     trail = core[len(stripped) :]
-    printed = regex.sub(r"(?i)^https?://", "", stripped).lower()
+    printed = regex.sub(r"(?i)^(https?://|doi:)", "", stripped).lower()
     url_like = printed != "" and ("." in printed or "/" in printed)
     if regex.match(r"(?i)file:", href):
         if not url_like or not href.lower().endswith(printed):
@@ -786,13 +793,38 @@ def _printed_url(link_text: str, href: str) -> tuple[str, int, int] | None:
     target = regex.sub(r"(?i)^https?://", "", href).lower()
     at = target.find(printed) if url_like else -1
     if at < 0:
-        return f"{link_text} {href}", len(link_text) + 1, len(link_text) + 1 + len(href)
+        return _url_in_words(link_text, target) or (
+            f"{link_text} {href}",
+            len(link_text) + 1,
+            len(link_text) + 1 + len(href),
+        )
     # punctuation the href prints itself right after that part stays with it
     after = target[at + len(printed) :]
     k = 0
     while k < len(trail) and k < len(after) and trail[k].lower() == after[k]:
         k += 1
     return f"{lead}{href}{trail[k:]}", len(lead), len(lead) + len(href)
+
+
+def _url_in_words(link_text: str, target: str) -> tuple[str, int, int] | None:
+    """*link_text* with the URL *target* (no scheme) it prints among other words, cleaned.
+
+    ``None`` when it does not print the whole URL.
+    """
+    url = regex.sub(r"^www\.", "", target.rstrip("/"))
+    if "." not in url and "/" not in url:
+        return None
+    pattern = (
+        r"(?i)(?<![\w.-])(?:https?://\s*)?(?:www\.\s*)?"
+        + r"\s*".join(regex.escape(c) for c in url)
+        + r"/?(?![\w/-])"
+    )
+    m = regex.search(pattern, link_text)
+    if m is None:
+        return None
+    printed = regex.sub(r"\s", "", m.group())
+    out = link_text[: m.start()] + printed + link_text[m.end() :]
+    return out, m.start(), m.start() + len(printed)
 
 
 def _prints_url(link_text: str, href: str) -> bool:

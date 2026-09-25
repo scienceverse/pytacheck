@@ -125,12 +125,16 @@ def test_unzip_quirks(tmp_path: Path) -> None:
     assert len(read_stat_tables(bad)) > 0
 
 
-def test_html_is_decoded_as_utf8() -> None:
+def test_html_is_decoded_in_its_declared_encoding() -> None:
+    # without a declaration: UTF-8
     tabs = read_stat_tables(DATA / "review_nometa.jasp")
     assert tabs[0]["analysis"] == "Tést α"
     assert list(tabs[0]["data"].columns) == ["V1", "éffect", "p"]
+    # <meta charset="latin1"> is honoured (U141; R's xml2 on libxml2 2.15
+    # ignores it and reads "T\ufffdst")
     latin = read_stat_tables(DATA / "review_latin.jasp")
-    assert latin[0]["analysis"] == "T�st"  # libxml2 2.15 ignores <meta charset>
+    assert latin[0]["analysis"] == "Tést"
+    assert list(latin[0]["data"].columns) == ["a", "bé"]
 
 
 def test_rows_without_content_are_dropped() -> None:

@@ -321,6 +321,34 @@ def test_rewrite_collapses_byte_identical_mirrors(tmp_path: Path) -> None:
     assert bool(out["matched"].iloc[0]) and not bool(out["ambiguous"].iloc[0])
 
 
+def test_rewrite_mirror_tie_keeps_the_first_listed(tmp_path: Path) -> None:
+    # U135: byte-identical mirrors split evenly between study groups: the
+    # first listed is kept, as metacheck's comment says (its which.max(table())
+    # keeps the alphabetically first group, study-ex2 here)
+    t1, t2 = tmp_path / "a.csv", tmp_path / "b.csv"
+    t1.write_text("a,b\n1,2\n")
+    t2.write_text("a,b\n1,2\n")
+    structure_df = pd.DataFrame(
+        {
+            "file_name": ["a/demographics.csv", "b/demographics.csv"],
+            "file_location": [str(t1), str(t2)],
+        }
+    )
+    targets = ["study-ex3/data/d.csv", "study-ex2/data/d.csv"]
+    for order in (targets, targets[::-1]):
+        plan = pd.DataFrame(
+            {"file_name": ["a/demographics.csv", "b/demographics.csv"], "target_path": order}
+        )
+        out = repro_rewrite_paths(
+            'd <- read.csv("demographics.csv")',
+            "shared/analysis.R",
+            plan,
+            structure_df=structure_df,
+        )
+        assert out["target"].tolist() == [order[0]]
+        assert not bool(out["ambiguous"].iloc[0])
+
+
 # repro_run_order() -------------------------------------------------------------------
 
 

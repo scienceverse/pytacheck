@@ -107,6 +107,7 @@
         "text": ["t = 2.1", "F = 3"]
         "paper_id": ["a", "a"]
 - "id": "extract_eq.review.paperlist_ids"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U10", "reason": "each sentence of a paper in a list keeps its own grp_id (R restarts at 1 whenever its search order moves to another paper: both of paper B's sentences get grp_id 1)"}
   "r": "extract_eq"
   "py": "pytacheck.text.extract.extract_eq"
   "args":
