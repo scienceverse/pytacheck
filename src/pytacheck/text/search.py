@@ -139,8 +139,17 @@ def text_search(
                 for p in patterns
             ]
             if isinstance(parts[0], list):
-                merged = [t for part in parts for t in part]
-                return list(dict.fromkeys(merged))
+                return _combine_vectors(parts, exclude)
+            if exclude and len(parts) > 2:
+                # dplyr::intersect(x, y, ...) on data frames: the dots must be empty
+                extra = "\n".join(
+                    f"• ..{i} = <tibble[,{part.shape[1]}]>"
+                    for i, part in enumerate(parts[2:], start=1)
+                )
+                raise ValueError(
+                    f"`...` must be empty.\n✖ Problematic argument{'s' if len(parts) > 3 else ''}:"
+                    f"\n{extra}\nℹ Did you forget to name an argument?"
+                )
             if exclude:
                 result = parts[0]
                 for part in parts[1:]:
@@ -218,3 +227,22 @@ def text_search(
 
 
 search_text = text_search
+
+
+def _combine_vectors(parts: list[list[str | None]], exclude: bool) -> list[str | None]:
+    """R's combination of the per-pattern results of a search of character strings.
+
+    ``dplyr::bind_rows()`` refuses character vectors, so several patterns
+    always fail unless ``exclude = TRUE``; then ``dplyr::intersect()`` is
+    ``base::intersect(x, y)`` (unique strings of the first result that are in
+    the second), which has no room for a third result.
+    """
+    if not exclude:
+        raise ValueError("Argument 1 must be a data frame or a named atomic vector.")
+    if len(parts) > 2:
+        from pytacheck.report.render import deparse
+
+        extra = ", ".join("".join(deparse(part)) if part else "character(0)" for part in parts[2:])
+        raise TypeError(f"unused argument{'s' if len(parts) > 3 else ''} ({extra})")
+    second = set(parts[1])
+    return [t for t in dict.fromkeys(parts[0]) if t in second]

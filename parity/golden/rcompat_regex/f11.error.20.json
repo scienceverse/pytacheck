@@ -1,0 +1,11 @@
+{
+  "id": "f11.error.20",
+  "ok": false,
+  "error": "invalid regular expression '[[:foo:]]', reason 'Unknown character class name'",
+  "warnings": [
+    "TRE pattern compilation error 'Unknown character class name'"
+  ],
+  "value": null,
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

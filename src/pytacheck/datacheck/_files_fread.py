@@ -1146,17 +1146,73 @@ class _Rows:
         self.n = min(self.n, n)
 
 
-def _fast_rows(sc: _Scanner, ch: int, ncol: int, rows: _Rows, limit: float) -> int:
-    """Split quote-free, NUL-free ``\\n`` / ``\\r\\n`` data with bytes.split().
+def _merge_quoted(parts: list[bytes], sep: bytes) -> list[bytes] | None:
+    """Rejoin the pieces of quoted fields that hold the separator (quote rule 0).
 
-    Adds whole rows until one does not have *ncol* fields and returns where the
-    general tokenizer must take over (eof when everything was read).
+    A piece starting with a quote takes the following pieces until it ends
+    with its closing quote -- the first quote not doubled, pairs skipped from
+    the left as ``bytes.replace()`` removes them. ``None`` when a quoted field
+    does not close on this line.
+    """
+    out: list[bytes] = []
+    i, n = 0, len(parts)
+    while i < n:
+        acc = parts[i]
+        i += 1
+        if acc[:1] == b'"' and (acc.count(b'"') != 2 or acc[-1] != _QUOTE or len(acc) < 2):
+            while len(acc) < 2 or acc[-1] != _QUOTE or b'"' in acc[1:-1].replace(b'""', b""):
+                if i >= n:
+                    return None
+                acc += sep + parts[i]
+                i += 1
+        out.append(acc)
+    return out
+
+
+def _quoted_row_values(parts: list[bytes]) -> list[bytes | None] | None:
+    """Field() values of one row's fields under quote rule 0 (``None``: not simple).
+
+    A simple field is quote-free (its value strips blanks, ``NA`` is missing)
+    or one whole ``"..."`` span whose inner quotes are doubled (its value is
+    the text between the quotes, the doubled quotes kept; a quoted ``"NA"`` is
+    a string).
+    """
+    out: list[bytes | None] = []
+    for p in parts:
+        if p[:1] == b'"':
+            if len(p) < 2 or p[-1] != _QUOTE:
+                return None
+            if p.count(b'"') != 2 and b'"' in p[1:-1].replace(b'""', b""):
+                return None
+            out.append(p[1:-1])
+        elif b'"' in p:
+            return None
+        else:
+            v = p.strip(b" ")
+            out.append(None if v == _NA_STRING else v)
+    return out
+
+
+def _fast_rows(sc: _Scanner, ch: int, ncol: int, rows: _Rows, limit: float) -> int:
+    """Split NUL-free ``\\n`` / ``\\r\\n`` data with bytes.split().
+
+    Adds whole rows until one does not have *ncol* simple fields and returns
+    where the general tokenizer must take over (eof when everything was read).
+    Quote-free lines are split on the separator. Under quote rule 0 a line
+    with quotes is split too, the pieces of a quoted field holding the
+    separator rejoined, as long as every field is simple (see
+    :func:`_quoted_row_values`: a quoted field running on to the next line,
+    blanks around quotes or a stray quote are not). These rows tokenize
+    exactly as :meth:`_Scanner.read_row` does.
     """
     buf, eof = sc.buf, sc.eof
     region = buf[ch:eof]
     crlf = b"\r" in region
     lines = region.split(b"\n")
     sep = sc.sep_b
+    quoted_ok = sc.rule == 0
+    any_quote = b'"' in region
+    all_quoted = b'"' + sep + b'"'  # the separator between two quoted fields
     spans, vals = rows.spans, rows.vals
     pos = ch
     for line in lines:
@@ -1164,12 +1220,40 @@ def _fast_rows(sc: _Scanner, ch: int, ncol: int, rows: _Rows, limit: float) -> i
             break
         body = line.rstrip(b"\r") if crlf else line
         parts = body.split(sep)
-        if len(parts) != ncol:
-            return pos
-        for j, part in enumerate(parts):
-            spans[j].append(part)
-            v = part.strip(b" ")
-            vals[j].append(None if v == _NA_STRING else v)
+        if not any_quote or b'"' not in body:
+            if len(parts) != ncol:
+                return pos
+            for j, part in enumerate(parts):
+                spans[j].append(part)
+                v = part.strip(b" ")
+                vals[j].append(None if v == _NA_STRING else v)
+        else:
+            if not quoted_ok:
+                return pos
+            if (
+                len(parts) == ncol
+                and body[:1] == b'"'
+                and body[-1] == _QUOTE
+                and body.count(b'"') == 2 * ncol
+                and body.count(all_quoted) == ncol - 1
+                and min(map(len, parts)) >= 2
+            ):
+                # every field is "..." with no other quote (write.csv, Qualtrics)
+                for j, part in enumerate(parts):
+                    spans[j].append(part)
+                    vals[j].append(part[1:-1])
+            else:
+                if len(parts) != ncol:
+                    merged = _merge_quoted(parts, sep)
+                    if merged is None or len(merged) != ncol:
+                        return pos
+                    parts = merged
+                fvals = _quoted_row_values(parts)
+                if fvals is None:
+                    return pos
+                for j, part in enumerate(parts):
+                    spans[j].append(part)
+                    vals[j].append(fvals[j])
         rows.n += 1
         pos += len(line) + 1
     return min(pos, eof)
@@ -1197,7 +1281,7 @@ def _read_rows(
     if (
         ncol > 1
         and not sc.eol_one_r
-        and b'"' not in region
+        and (sc.rule == 0 or b'"' not in region)
         and b"\0" not in region
         and region.count(b"\r") == region.count(b"\r\n")
     ):

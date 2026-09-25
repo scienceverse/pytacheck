@@ -111,4 +111,4 @@
 "list.files(recursive = TRUE)" = "pytacheck.archives.researchbox:_list_files"
 "utils::unzip()" = "pytacheck.archives.researchbox:_unzip"
 "POST download_files.php (req_body_json, req_perform(path))" = "pytacheck.archives.researchbox:_download_zip"
-".repo_cache_subdir() (fallback until R/repo-download.R is ported)" = "pytacheck.archives.researchbox:_cache_subdir"
+".repo_cache_subdir()" = "pytacheck.archives.download:_repo_cache_subdir"

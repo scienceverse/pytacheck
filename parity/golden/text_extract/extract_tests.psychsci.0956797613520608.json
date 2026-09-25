@@ -1,0 +1,923 @@
+{
+  "id": "extract_tests.psychsci.0956797613520608",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 6,
+    "names": [
+      "paper_id",
+      "test_no",
+      "text_id",
+      "paragraph_id",
+      "section_id",
+      "sentence",
+      "anchor",
+      "n_components",
+      "reported",
+      "components"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "0956797613520608",
+          "0956797613520608",
+          "0956797613520608",
+          "0956797613520608",
+          "0956797613520608",
+          "0956797613520608"
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          99,
+          100,
+          101,
+          102,
+          105,
+          105
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          8,
+          8,
+          8,
+          8,
+          8,
+          8
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "For hit rates (see Fig. 3), a 3 (complexity level: simple, intermediate, complex) × 2 (TMS site: hand, lip) × 2 (video type: hand action, mouth action) analysis of variance (ANOVA) revealed a main effect of complexity level, F(2, 38) = 16.58, p < .001, ηp² = .47; as complexity level increased, hit rates decreased.",
+          "A main effect of video type also occurred, F(1, 19) = 33.56, p < .001, ηp² = .64; specifically, hit rates were lower for mouth actions than for hand actions.",
+          "There was also a significant interaction between complexity level and video type, F(2, 38) = 36.79, p < .001, ηp² = .67, with hit rates for mouth actions being more dramatically reduced by increasing complexity than those for hand actions.",
+          "More important, there was a significant interaction between TMS site and video type, F(1, 19) = 6.98, p = .016, ηp² = .27.",
+          "For response time (RT), a 3 (complexity level) × 2 (TMS site) × 2 (video type) ANOVA revealed a main effect of complexity level, F(2, 38) = 20.82, p < .001, ηp² = .52, and a significant interaction between complexity level and video type, F(2, 38) = 51.86, p < .001, ηp² = .73.",
+          "For response time (RT), a 3 (complexity level) × 2 (TMS site) × 2 (video type) ANOVA revealed a main effect of complexity level, F(2, 38) = 20.82, p < .001, ηp² = .52, and a significant interaction between complexity level and video type, F(2, 38) = 51.86, p < .001, ηp² = .73."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "f",
+          "f",
+          "f",
+          "f",
+          "f",
+          "f"
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          3,
+          3,
+          3,
+          3,
+          3,
+          3
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "F(2, 38) = 16.58, p < .001, ηp² = .47",
+          "F(1, 19) = 33.56, p < .001, ηp² = .64",
+          "F(2, 38) = 36.79, p < .001, ηp² = .67",
+          "F(1, 19) = 6.98, p = .016, ηp² = .27",
+          "F(2, 38) = 20.82, p < .001, ηp² = .52",
+          "F(2, 38) = 51.86, p < .001, ηp² = .73"
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "list",
+                "names": [
+                  "name",
+                  "comp",
+                  "value",
+                  "df",
+                  "sentence_pos"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "F"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "="
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "16.58"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "(2, 38)"
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      1
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "name",
+                  "comp",
+                  "value",
+                  "df",
+                  "sentence_pos"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "p"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "<"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ".001"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      null
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      2
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "name",
+                  "comp",
+                  "value",
+                  "df",
+                  "sentence_pos"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "ηp²"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "="
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ".47"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      null
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      3
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "list",
+                "names": [
+                  "name",
+                  "comp",
+                  "value",
+                  "df",
+                  "sentence_pos"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "F"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "="
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "33.56"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "(1, 19)"
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      1
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "name",
+                  "comp",
+                  "value",
+                  "df",
+                  "sentence_pos"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "p"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "<"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ".001"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      null
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      2
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "name",
+                  "comp",
+                  "value",
+                  "df",
+                  "sentence_pos"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "ηp²"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "="
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ".64"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      null
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      3
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "list",
+                "names": [
+                  "name",
+                  "comp",
+                  "value",
+                  "df",
+                  "sentence_pos"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "F"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "="
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "36.79"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "(2, 38)"
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      1
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "name",
+                  "comp",
+                  "value",
+                  "df",
+                  "sentence_pos"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "p"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "<"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ".001"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      null
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      2
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "name",
+                  "comp",
+                  "value",
+                  "df",
+                  "sentence_pos"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "ηp²"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "="
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ".67"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      null
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      3
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "list",
+                "names": [
+                  "name",
+                  "comp",
+                  "value",
+                  "df",
+                  "sentence_pos"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "F"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "="
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "6.98"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "(1, 19)"
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      1
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "name",
+                  "comp",
+                  "value",
+                  "df",
+                  "sentence_pos"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "p"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "="
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ".016"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      null
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      2
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "name",
+                  "comp",
+                  "value",
+                  "df",
+                  "sentence_pos"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "ηp²"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "="
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ".27"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      null
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      3
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "list",
+                "names": [
+                  "name",
+                  "comp",
+                  "value",
+                  "df",
+                  "sentence_pos"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "F"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "="
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "20.82"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "(2, 38)"
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      1
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "name",
+                  "comp",
+                  "value",
+                  "df",
+                  "sentence_pos"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "p"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "<"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ".001"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      null
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      2
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "name",
+                  "comp",
+                  "value",
+                  "df",
+                  "sentence_pos"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "ηp²"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "="
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ".52"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      null
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      3
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "list",
+                "names": [
+                  "name",
+                  "comp",
+                  "value",
+                  "df",
+                  "sentence_pos"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "F"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "="
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "51.86"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "(2, 38)"
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      4
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "name",
+                  "comp",
+                  "value",
+                  "df",
+                  "sentence_pos"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "p"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "<"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ".001"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      null
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      5
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "name",
+                  "comp",
+                  "value",
+                  "df",
+                  "sentence_pos"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "ηp²"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "="
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ".73"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      null
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      6
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

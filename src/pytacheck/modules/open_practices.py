@@ -278,6 +278,12 @@ def open_practices(paper: Any) -> dict[str, Any]:
     for flag, values in zip(_FLAGS, flags, strict=True):
         table[flag] = pd.Series(values, dtype="boolean")
 
+    # R: on an empty paper list the searches return no `text` column, so
+    # `table$text` is NULL (grepl() and arrange() still work on the 0 rows) and
+    # the summarise() below fails on `text[data]` (U79)
+    if "text" not in table.columns:
+        raise ValueError("In argument: `data_statements = list(unique(text[data]))`.")
+
     # flag on_request
     texts = table["text"].tolist()
     table["on_request"] = pd.Series(grepl(_ON_REQUEST, texts), dtype="boolean")

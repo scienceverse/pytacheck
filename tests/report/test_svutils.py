@@ -7,7 +7,7 @@ import io
 import pytest
 
 from pytacheck.config import verbose
-from pytacheck.utils import ProgressBar, message, pb
+from pytacheck.utils import ProgressBar, message, pb, suppress_messages
 
 
 @pytest.fixture(autouse=True)
@@ -38,6 +38,21 @@ def test_message_interactive_is_green(monkeypatch):
     verbose(True)
     message("hi")
     assert stream.getvalue() == "\033[32mhi\033[39m\n"
+
+
+def test_suppress_messages_is_local_to_the_block_and_thread(capsys):
+    # R's suppressMessages(): only the block's messages, not other threads'
+    import threading
+
+    verbose(True)
+    with suppress_messages():
+        message("hidden")
+        worker = threading.Thread(target=message, args=("other thread",))
+        worker.start()
+        worker.join()
+    message("shown")
+    assert capsys.readouterr().err == "other thread\nshown\n"
+    assert verbose() is True
 
 
 def test_pb_requires_total():

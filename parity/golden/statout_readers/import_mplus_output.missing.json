@@ -1,7 +1,7 @@
 {
   "id": "import_mplus_output.missing",
   "ok": false,
-  "error": "File not found: /home/user/pytacheck/tests/statout_readers/fixtures/text/none.out",
+  "error": "File not found: <repo>/tests/statout_readers/fixtures/text/none.out",
   "warnings": [],
   "value": null,
   "metacheck_version": "0.3.1",

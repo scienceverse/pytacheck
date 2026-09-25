@@ -69,10 +69,47 @@ def email(address: str | None = None) -> str | None:
     return str(value) if value else None
 
 
-def verbose(value: bool | None = None) -> bool:
-    """Get or set whether progress messages are printed (default ``True``)."""
+def _as_logical(x: Any) -> bool | None:
+    """R ``as.logical()`` of a scalar (``None`` for ``NA``)."""
+    if hasattr(x, "item") and not isinstance(x, str | bytes):  # numpy scalar
+        try:
+            x = x.item()
+        except (TypeError, ValueError):
+            return None
+    if isinstance(x, bool):
+        return x
+    if isinstance(x, int | float | complex):
+        return None if x != x else x != 0  # NaN is NA (as.logical(1i) is TRUE)
+    if isinstance(x, str):
+        # only these spellings, untrimmed (as.logical(" TRUE") is NA)
+        if x in ("TRUE", "true", "True", "T"):
+            return True
+        if x in ("FALSE", "false", "False", "F"):
+            return False
+    return None
+
+
+def verbose(value: Any = None) -> bool:
+    """Get or set whether progress messages are printed (default ``True``).
+
+    Port of ``verbose()`` (R/svutils-utils.R): a value is converted as R's
+    ``as.logical()`` converts it (``"FALSE"``, ``"F"``, ``0`` are false,
+    ``"TRUE"``, ``"T"``, any other number true); anything else raises
+    ``ValueError("set verbose with TRUE or FALSE")``.
+    """
     if value is not None:
-        _state["verbose"] = bool(value)
+        if getattr(value, "ndim", 0) >= 1:  # a numpy array or pandas Series: an R vector
+            value = list(value)
+        if isinstance(value, list | tuple):  # an R vector: if () needs exactly one value
+            if len(value) != 1:
+                raise ValueError(
+                    "argument is of length zero" if not value else "the condition has length > 1"
+                )
+            value = value[0]
+        flag = _as_logical(value)
+        if flag is None:
+            raise ValueError("set verbose with TRUE or FALSE")
+        _state["verbose"] = flag
     if "verbose" in _state:
         return bool(_state["verbose"])
     env = os.environ.get("PYTACHECK_VERBOSE")

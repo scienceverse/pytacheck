@@ -19,6 +19,7 @@ import pytacheck as pc
 from pytacheck._r import grepl
 from pytacheck.module import ModuleError
 from pytacheck.modules.ethics_check import _ETHICS_ANY, _ETHICS_WORDS
+from pytacheck.text.extract import _LIVE_ANY, _LIVE_WORDS, _detect_live_data
 from tests.mod_ethics.make_parity_cases import SWEEP
 from tests.mod_ethics.parity_support import ec_paper, ec_papers
 
@@ -181,10 +182,14 @@ def test_ethics_check_paperlist() -> None:
     assert mo.summary_table["needs_ethics"].tolist() == [True, False]
 
 
-@pytest.mark.skip(reason="needs the psychsci corpus (downloaded by metacheck's test setup)")
-def test_error_argument_is_of_length_zero() -> None:  # pragma: no cover
-    # R: psychsci$`0956797617714811`; ethics_approved is FALSE
-    raise AssertionError
+def test_error_argument_is_of_length_zero(psychsci: pc.PaperList) -> None:
+    # R uses psychsci$`0956797617714811` (not in the fixtures); this fixture
+    # paper has no ethics approval statement either (R 4.5.3 / metacheck:
+    # ethics_approved FALSE, needs_ethics TRUE, traffic light red)
+    mo = run(psychsci["0956797614522816"])
+    assert mo.summary_table["ethics_approved"].tolist() == [False]
+    assert mo.summary_table["needs_ethics"].tolist() == [True]
+    assert mo.traffic_light == "red"
 
 
 # -- R behaviour measured with metacheck ---------------------------------------
@@ -474,7 +479,7 @@ def test_rows_sorted_by_text_id_with_missing_last() -> None:
 _LITERALS = _ETHICS_ANY.split("|")
 
 
-def _covered(items: Any) -> bool:
+def _covered(items: Any, literals: list[str] = _LITERALS) -> bool:
     """Does every match of the parsed sequence *items* contain a prefilter literal?
 
     True when a run of literal characters contains one of the literals, or a
@@ -485,7 +490,7 @@ def _covered(items: Any) -> bool:
     def flush() -> bool:
         s = "".join(run_chars).lower()
         run_chars.clear()
-        return any(lit in s for lit in _LITERALS)
+        return any(lit in s for lit in literals)
 
     for op, av in items:
         name = str(op)
@@ -494,11 +499,11 @@ def _covered(items: Any) -> bool:
             continue
         if flush():
             return True
-        if name == "SUBPATTERN" and _covered(av[-1]):
+        if name == "SUBPATTERN" and _covered(av[-1], literals):
             return True
-        if name == "BRANCH" and all(_covered(b) for b in av[1]):
+        if name == "BRANCH" and all(_covered(b, literals) for b in av[1]):
             return True
-        if name in ("MAX_REPEAT", "MIN_REPEAT") and av[0] >= 1 and _covered(av[2]):
+        if name in ("MAX_REPEAT", "MIN_REPEAT") and av[0] >= 1 and _covered(av[2], literals):
             return True
     return flush()
 
@@ -537,3 +542,33 @@ def test_prefiltered_search_equals_plain_search() -> None:
     plain = pc.text_search(paper, list(_ETHICS_WORDS))
     plain = plain.sort_values("text_id", kind="stable").reset_index(drop=True)
     pd.testing.assert_frame_equal(ethics, plain, check_dtype=False)
+
+
+# -- the live-data prefilter (pytacheck.text.extract._LIVE_ANY) -----------------------
+
+
+@pytest.mark.parametrize("pattern", _LIVE_WORDS)
+def test_live_prefilter_covers_every_pattern(pattern: str) -> None:
+    assert _covered(sre_parse.parse(pattern), _LIVE_ANY.split("|"))
+
+
+def test_live_prefilter_keeps_every_matching_sentence(fixtures_dir: Path) -> None:
+    papers = pc.read(
+        [
+            *sorted((fixtures_dir / "psychsci").glob("*.json")),
+            *sorted((fixtures_dir / "debruine").glob("*.xml")),
+            fixtures_dir / "problems" / "0956797615569889.xml",
+        ]
+    )
+    texts = [t for p in papers for t in p.text["text"].tolist()] + SWEEP
+    keep = grepl(_LIVE_ANY, texts, ignore_case=True)
+    assert not all(keep)  # it does filter
+    for pattern in _LIVE_WORDS:
+        hits = grepl(pattern, texts, ignore_case=True)
+        assert all(k for h, k in zip(hits, keep, strict=True) if h), pattern
+
+
+def test_live_prefiltered_search_equals_plain_search(psychsci: pc.PaperList) -> None:
+    for paper in [pc.test_paper(SWEEP), psychsci]:
+        plain = pc.text_search(paper, list(_LIVE_WORDS))
+        pd.testing.assert_frame_equal(_detect_live_data(paper), plain)

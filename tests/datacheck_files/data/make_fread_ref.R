@@ -1,12 +1,16 @@
 # data.table::fread() reference for tests/datacheck_files/test_fread.py. The
-# inputs (fread_cases.json: base64 file bytes, sep, header, nrows) are small
+# inputs (<battery>_cases.json: base64 file bytes, sep, header, nrows) are small
 # randomly generated delimited files; run from the repository root with the
 # metacheck reference R in a UTF-8 locale:
-#   LC_ALL=C.UTF-8 TZ=UTC Rscript tests/datacheck_files/data/make_fread_ref.R
+#   LC_ALL=C.UTF-8 TZ=UTC Rscript tests/datacheck_files/data/make_fread_ref.R [battery]
+# where battery is "fread" (the default: fread_cases.json -> fread_ref.json) or
+# "fread_quoted" (written by make_fread_quoted_cases.py).
 suppressPackageStartupMessages({library(data.table); library(jsonlite)})
 source("parity/r/canonical.R")
 dir <- "tests/datacheck_files/data"
-cases <- fromJSON(file.path(dir, "fread_cases.json"), simplifyVector = FALSE)
+battery <- commandArgs(trailingOnly = TRUE)[1]
+if (is.na(battery)) battery <- "fread"
+cases <- fromJSON(file.path(dir, paste0(battery, "_cases.json")), simplifyVector = FALSE)
 tmp <- tempfile(fileext = ".csv")
 out <- lapply(cases, function(cs) {
   writeBin(base64_dec(cs$b64), tmp)
@@ -19,4 +23,4 @@ out <- lapply(cases, function(cs) {
   for (j in seq_along(df)) if (inherits(df[[j]], "integer64")) df[[j]] <- as.character(df[[j]])
   list(name = cs$name, value = pc_canonical(df), classes = I(cls))
 })
-writeLines(pc_to_json(out), file.path(dir, "fread_ref.json"))
+writeLines(pc_to_json(out), file.path(dir, paste0(battery, "_ref.json")))

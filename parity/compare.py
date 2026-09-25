@@ -10,6 +10,7 @@ only about representation details that carry no meaning:
   Python holds ``None``/``[]``);
 * ``NaN`` and ``NA`` are equivalent for doubles;
 * a list whose elements are all length-1 vectors equals the vector of them;
+* a data frame with no rows and no columns (R's ``tibble()``) is empty too;
 * a matrix with a single row or column equals the vector of its values.
 * an unnamed list of records (named lists of scalars with the same names)
   equals the data frame of them (the Python encoder turns a list of
@@ -25,6 +26,12 @@ Per-case options (``compare:`` in the case YAML):
                 and R code chunks), ``exact`` or ``ignore``
 ``col_order``   compare data-frame column order (default ``true``)
 ``ws``          collapse runs of whitespace before comparing strings
+``strict_names`` compare named lists by position, names in order, instead of
+                as maps (a name R repeats must be repeated in Python even
+                without this)
+``error``       when R raised an error, how Python's error message must match
+                R's (see :func:`error_matches`): ``contains`` (default),
+                ``exact`` or ``any``
 """
 
 from __future__ import annotations
@@ -48,6 +55,8 @@ class Options:
     report: str = "prose"
     col_order: bool = True
     ws: bool = False
+    strict_names: bool = False
+    error: str = "contains"
 
     @classmethod
     def from_case(cls, spec: dict[str, Any] | None) -> Options:
@@ -62,7 +71,48 @@ class Options:
             report=spec.get("report", "prose"),
             col_order=bool(spec.get("col_order", True)),
             ws=bool(spec.get("ws", False)),
+            strict_names=bool(spec.get("strict_names", False)),
+            error=_error_mode(spec.get("error", "contains")),
         )
+
+
+def _error_mode(mode: Any) -> str:
+    if mode not in ("contains", "exact", "any"):
+        raise ValueError(f"compare: error must be contains, exact or any, not {mode!r}")
+    return str(mode)
+
+
+# cli/rlang bullets at the start of a line of an R condition message
+_BULLET = re.compile(r"(?m)^[ \t]*[!✖ℹ✔•*](?=[ \t])[ \t]*")
+_ANSI = re.compile(r"\x1b\[[0-9;]*m")
+_ERROR_IN = re.compile(r"^(?:Error in .*? : |Error: )", re.S)
+
+
+def normalize_error(msg: str) -> str:
+    """An error message without ANSI colours, a leading ``Error in <call> :``,
+    cli bullets (``!``, ``✖``, ``ℹ``, ...) and runs of whitespace."""
+    msg = _ANSI.sub("", msg)
+    msg = _ERROR_IN.sub("", msg.strip())
+    msg = _BULLET.sub("", msg)
+    return re.sub(r"\s+", " ", msg).strip()
+
+
+def error_matches(r_msg: str | None, py_msg: str | None, mode: str = "contains") -> bool:
+    """Whether Python's error message matches R's.
+
+    ``exact``: equal after :func:`normalize_error`. ``contains`` (the default):
+    also when R's message is part of Python's (Python adds detail, e.g. a
+    module name) or Python's is the start of R's (Python leaves out R's cli
+    details). ``any``: any error matches.
+    """
+    if mode == "any":
+        return True
+    r, p = normalize_error(r_msg or ""), normalize_error(py_msg or "")
+    if r == p:
+        return True
+    if mode == "exact":
+        return False
+    return r in p or (p != "" and r.startswith(p))
 
 
 def _is_empty(x: dict[str, Any]) -> bool:
@@ -72,6 +122,8 @@ def _is_empty(x: dict[str, Any]) -> bool:
     if t in _VECTOR_TYPES or t == "list":
         v = x.get("v", [])
         return len(v) == 0 or (len(v) == 1 and v[0] is None)
+    if t == "df":
+        return x.get("nrow") == 0 and not x.get("names")
     return False
 
 
@@ -235,6 +287,22 @@ class Comparator:
     def named(self, r: dict[str, Any], p: dict[str, Any], path: str) -> None:
         rn = r.get("names") or []
         pn = p.get("names") or []
+        repeated = sorted({n for n in rn if rn.count(n) > 1 and n != ""})
+        if self.o.strict_names or repeated:
+            # a map would collapse the repeated names: compare by position
+            if rn != pn:
+                what = f"repeated names {repeated} in R; " if repeated else ""
+                self.fail(path, f"{what}names R={_fmt(rn)} py={_fmt(pn)}")
+                return
+            for i, (n, a, b) in enumerate(zip(rn, r.get("v", []), p.get("v", []), strict=True)):
+                sub = f"{path}.{n}".lstrip(".") if n else f"{path}[{i}]"
+                if sub in self.o.ignore:
+                    continue
+                if n == "report" and r.get("t") == "module_output":
+                    self.report(a, b, sub)
+                else:
+                    self.value(a, b, sub)
+            return
         rmap = dict(zip(rn, r.get("v", []), strict=False))
         pmap = dict(zip(pn, p.get("v", []), strict=False))
         for n in rn:

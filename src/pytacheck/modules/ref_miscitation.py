@@ -61,7 +61,10 @@ def _pivot_wider(counts: pd.DataFrame) -> pd.DataFrame:
     One row per ``paper_id`` and one column per DOI, both in order of first
     appearance. When a paper has several references with the same DOI the
     values are not uniquely identified: like tidyr, every value column then
-    becomes a list column (missing cells ``None``) and a warning is given.
+    becomes a list column and a warning is given. Its missing cells are
+    tidyr's ``NULL`` cells, stored as ``NaN`` (the module system's ``NULL``
+    list cell, which a later ``na_replace`` leaves alone, as R's ``is.na()``
+    does) rather than ``None`` (``NA``).
     """
     pids = counts["paper_id"].tolist()
     dois = counts["doi"].tolist()
@@ -92,7 +95,8 @@ def _pivot_wider(counts: pd.DataFrame) -> pd.DataFrame:
             stacklevel=3,
         )
     n = len(id_vals)
-    values: list[list[Any]] = [[None] * n for _ in doi_vals]
+    missing: Any = float("nan") if listcols else None
+    values: list[list[Any]] = [[missing] * n for _ in doi_vals]
     for (i, j), v in cells.items():
         values[j][i] = v if listcols else v[0]
 
@@ -142,27 +146,32 @@ def ref_miscitation(paper: Any, db: pd.DataFrame | None = None) -> dict[str, Any
     """
     from pytacheck.papers.tables import paper_table
 
+    # consolidate bib tables and filter to relevant DOI
+    bibs = paper_table(paper, "bib", ["paper_id", "bib_id", "doi"])
     if db is None:
         db = _miscite_db()
     elif not isinstance(db, pd.DataFrame):
         db = pd.DataFrame(db)
-    if "doi" in db.columns:
-        doi = db["doi"]
-        character = (
-            pd.api.types.is_string_dtype(doi)
-            or doi.dtype == object
-            or isinstance(doi.dtype, pd.CategoricalDtype)
-        )
-        if not character:
-            # dplyr joins a character key only to a character (or factor) key, or
-            # to a non-empty all-NA logical column (vctrs "unspecified"), which is
-            # what pandas infers as an all-NaN float64 column
-            if len(doi) == 0 or not bool(doi.isna().all()):
-                raise TypeError("Can't join `x$doi` with `y$doi` due to incompatible types.")
-            db = db.assign(doi=doi.astype("string"))
-
-    # consolidate bib tables and filter to relevant DOI
-    bibs = paper_table(paper, "bib", ["paper_id", "bib_id", "doi"])
+    # dplyr::inner_join(bibs, db, by = "doi"): both tables need the key, which
+    # must have compatible types
+    for side, df in (("x", bibs), ("y", db)):
+        if "doi" not in df.columns:  # e.g. a CERMINE paper's bib table has no doi
+            raise ValueError(
+                f"Join columns in `{side}` must be present in the data.\n✖ Problem with `doi`."
+            )
+    doi = db["doi"]
+    character = (
+        pd.api.types.is_string_dtype(doi)
+        or doi.dtype == object
+        or isinstance(doi.dtype, pd.CategoricalDtype)
+    )
+    if not character:
+        # dplyr joins a character key only to a character (or factor) key, or
+        # to a non-empty all-NA logical column (vctrs "unspecified"), which is
+        # what pandas infers as an all-NaN float64 column
+        if len(doi) == 0 or not bool(doi.isna().all()):
+            raise TypeError("Can't join `x$doi` with `y$doi` due to incompatible types.")
+        db = db.assign(doi=doi.astype("string"))
     bibs = (
         bibs.merge(db, on="doi", how="inner", sort=False, suffixes=(".x", ".y"))
         .drop_duplicates()
@@ -182,6 +191,9 @@ def ref_miscitation(paper: Any, db: pd.DataFrame | None = None) -> dict[str, Any
             is_bib = xref["xref_type"].isin(["bib"]).to_numpy(dtype=bool)
             xref = xref.copy()
             xref.loc[v12, "xref_id"] = xref["target_id"].where(is_bib, pd.NA)[v12]
+    if "xref_id" not in xref.columns:
+        # R: dplyr::filter(!is.na(xref_id)) on an xref table without xref_id
+        raise ValueError("In argument: `!is.na(xref_id)`.")
     xref = xref.loc[xref["xref_id"].notna().to_numpy(dtype=bool)]
     joined = xref.merge(
         text, on=["paper_id", "text_id"], how="left", sort=False, suffixes=(".x", ".y")

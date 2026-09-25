@@ -166,7 +166,7 @@ def _search_frame(paper: Any) -> pd.DataFrame:
 
     frame, is_vector = _text_frame(paper)
     if is_vector:
-        raise ValueError("Argument 1 must be a data frame or a named atomic vector.")
+        text_search(paper, list(_ETHICS_WORDS))  # raises R's bind_rows() error
     return frame
 
 

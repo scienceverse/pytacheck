@@ -31,9 +31,18 @@ from typing import Any
 
 import orjson
 
-from parity.canonical import canonical
-from parity.cases import ROOT, Case, iter_case_files, load_cases, run_python
-from parity.compare import Options, compare, summarize
+from parity.canonical import canonical, portable
+from parity.cases import (
+    NEEDS_R_REASON,
+    ROOT,
+    Case,
+    RWithoutReference,
+    iter_case_files,
+    load_cases,
+    run_python,
+    skip_reason,
+)
+from parity.compare import Options, compare, error_matches, summarize
 
 
 def _rscript(explicit: str | None) -> str:
@@ -61,43 +70,66 @@ def cmd_generate(ns: argparse.Namespace) -> int:
     if not files:
         print("no case files matched")
         return 1
-    cmd = [_rscript(ns.rscript), str(ROOT / "parity" / "r" / "run_cases.R"), str(ROOT), *files]
-    if ns.only:
-        cmd += ["--only", ",".join(ns.only)]
+    rscript = _rscript(ns.rscript)
     env = {**os.environ, "LANG": "C.UTF-8", "LC_ALL": "C.UTF-8", "TZ": "UTC"}
-    return subprocess.call(cmd, env=env, cwd=ROOT)
+    status = 0
+    # one R session per case file: what a case leaves behind (a package it
+    # loaded, an option it set) must not change the goldens of other areas, so
+    # that `--area x` and a full run write the same files
+    for f in files:
+        cmd = [rscript, str(ROOT / "parity" / "r" / "run_cases.R"), str(ROOT), f]
+        if ns.only:
+            cmd += ["--only", ",".join(ns.only)]
+        status = max(status, subprocess.call(cmd, env=env, cwd=ROOT))
+    return status
 
 
 def check_case(case: Case) -> tuple[str, list[str], float]:
-    """Return ``(status, problems, seconds)``; status is pass/fail/missing/xfail/error."""
+    """Return ``(status, problems, seconds)``; status is pass/fail/missing/xfail/error/skip.
+
+    ``skip`` is a case whose Python side runs R when no reference R is
+    configured (see ``parity.cases.run_python``).
+    """
     if not case.golden_path.exists():
         return "missing", ["no golden file; run `python -m parity generate`"], 0.0
+    reason = skip_reason(case)
+    if reason:
+        return "skip", [reason], 0.0
     golden = orjson.loads(case.golden_path.read_bytes())
+    options = Options.from_case(case.spec.get("compare"))
     start = time.perf_counter()
     try:
         result = run_python(case)
         err = None
+    except RWithoutReference:
+        return "skip", [NEEDS_R_REASON], time.perf_counter() - start
     except Exception as exc:
         result = None
         err = exc
     elapsed = time.perf_counter() - start
+    failed = "xfail" if case.spec.get("known_divergence") else "fail"
     if not golden["ok"]:
-        if err is not None:
+        if err is None:
+            return (
+                failed,
+                [f"R raised an error ({golden['error']}) but Python returned a value"],
+                elapsed,
+            )
+        message = portable(str(err))
+        if error_matches(golden["error"], message, options.error):
             return "pass", [], elapsed
         return (
-            "xfail" if case.spec.get("known_divergence") else "fail",
-            [f"R raised an error ({golden['error']}) but Python returned a value"],
+            failed,
+            [f"error: R={golden['error']!r} py={type(err).__name__}: {message!r}"],
             elapsed,
         )
     if err is not None:
         tb = "".join(traceback.format_exception_only(type(err), err)).strip()
         status = "xfail" if case.spec.get("known_divergence") else "error"
         return status, [f"Python raised {tb}"], elapsed
-    problems = compare(
-        golden["value"], canonical(result), Options.from_case(case.spec.get("compare"))
-    )
+    problems = compare(golden["value"], canonical(result), options)
     if problems:
-        return ("xfail" if case.spec.get("known_divergence") else "fail"), problems, elapsed
+        return failed, problems, elapsed
     return "pass", [], elapsed
 
 

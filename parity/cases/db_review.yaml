@@ -295,7 +295,7 @@
   "args":
     "x":
       "$expr":
-        "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(datacite_doi(c(\"10.9999/dc2\")), dir = file.path(root, \"tests/db/data/mock_review\")); x$authors <- lapply(x$authors, \\(a) if (NROW(a) == 0) character(0) else a); x"
+        "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(datacite_doi(c(\"10.9999/dc2\")), dir = file.path(root, \"tests/db/data/mock_review\")); x"
         "py": "__import__('tests.db.review_helpers', fromlist=['x']).call_mock('pytacheck.db.crossref.datacite_doi', ['10.9999/dc2'])"
 - "id": "datacite_doi.mock.both"
   "r": "identity"
@@ -311,7 +311,7 @@
   "args":
     "x":
       "$expr":
-        "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(datacite_doi(c(NA, \"10.9999/dc3\")), dir = file.path(root, \"tests/db/data/mock_review\")); x$authors <- lapply(x$authors, \\(a) if (NROW(a) == 0) character(0) else a); x"
+        "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(datacite_doi(c(NA, \"10.9999/dc3\")), dir = file.path(root, \"tests/db/data/mock_review\")); x"
         "py": "__import__('tests.db.review_helpers', fromlist=['x']).call_mock('pytacheck.db.crossref.datacite_doi', [None, '10.9999/dc3'])"
 - "id": "datacite_doi.mock.html_first"
   "r": "identity"
@@ -319,7 +319,7 @@
   "args":
     "x":
       "$expr":
-        "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(datacite_doi(c(\"10.9999/dc3\", \"10.9999/dc1\")), dir = file.path(root, \"tests/db/data/mock_review\")); x$authors <- lapply(x$authors, \\(a) if (NROW(a) == 0) character(0) else a); x"
+        "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(datacite_doi(c(\"10.9999/dc3\", \"10.9999/dc1\")), dir = file.path(root, \"tests/db/data/mock_review\")); x"
         "py": "__import__('tests.db.review_helpers', fromlist=['x']).call_mock('pytacheck.db.crossref.datacite_doi', ['10.9999/dc3', '10.9999/dc1'])"
 - "id": "openalex_doi.mock.oa"
   "r": "identity"
@@ -794,7 +794,7 @@
   "args":
     "x":
       "$expr":
-        "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(datacite_doi(c(NA, \"10.9999/dc2\")), dir = file.path(root, \"tests/db/data/mock_review\")); x$authors <- lapply(x$authors, \\(a) if (NROW(a) == 0) character(0) else a); x"
+        "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(datacite_doi(c(NA, \"10.9999/dc2\")), dir = file.path(root, \"tests/db/data/mock_review\")); x"
         "py": "__import__('tests.db.review_helpers', fromlist=['x']).call_mock('pytacheck.db.crossref.datacite_doi', [None, '10.9999/dc2'])"
 - "id": "datacite_doi.mock.na_only"
   "r": "identity"
@@ -802,7 +802,7 @@
   "args":
     "x":
       "$expr":
-        "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(datacite_doi(c(NA)), dir = file.path(root, \"tests/db/data/mock_review\")); x$authors <- lapply(x$authors, \\(a) if (NROW(a) == 0) character(0) else a); x"
+        "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(datacite_doi(c(NA)), dir = file.path(root, \"tests/db/data/mock_review\")); x"
         "py": "__import__('tests.db.review_helpers', fromlist=['x']).call_mock('pytacheck.db.crossref.datacite_doi', [None])"
 - "id": "datacite_doi.mock.na_dc1"
   "r": "identity"
@@ -810,7 +810,7 @@
   "args":
     "x":
       "$expr":
-        "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(datacite_doi(c(\"10.9999/dc1\", NA)), dir = file.path(root, \"tests/db/data/mock_review\")); x$authors <- lapply(x$authors, \\(a) if (NROW(a) == 0) character(0) else a); x"
+        "r": "source(file.path(root, \"tests/db/replay.R\")); x <- db_replay(datacite_doi(c(\"10.9999/dc1\", NA)), dir = file.path(root, \"tests/db/data/mock_review\")); x"
         "py": "__import__('tests.db.review_helpers', fromlist=['x']).call_mock('pytacheck.db.crossref.datacite_doi', ['10.9999/dc1', None])"
 - "id": "crossref_query.offline.df"
   "r": "identity"

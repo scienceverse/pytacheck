@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0">
+<teiHeader><fileDesc><titleStmt><title level="a" type="main">Only references</title></titleStmt></fileDesc></teiHeader>
+<text><body></body><back><div type="references"><listBibl>
+<biblStruct xml:id="b0"><monogr><title level="j">Journal</title><imprint><date type="published" when="1999">1999</date></imprint></monogr><note type="raw_reference">A reference. 1999.</note></biblStruct>
+</listBibl></div></back></text></TEI>

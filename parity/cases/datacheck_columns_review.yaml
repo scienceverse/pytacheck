@@ -1591,6 +1591,28 @@
   "args":
     "path":
       "$file": "tests/datacheck_columns/fixtures/review/latin1.qsf"
+- "id": "as_matrix_format.battery"
+  "r": "base::identity"
+  "py": "copy.copy"
+  "args":
+    "x":
+      "$expr":
+        "r": "lapply(list(c(1, 1.5, 0.25), c(2, 1e-10, 3), c(3, -7, NA), c(1e-99, 1), c(1e-100, 1), c(1e100,\
+          \ -1), c(9999999.6, 0.5), c(99999.99999, 1), c(123456.7, 1234567.8), c(1/3, 2/3, NA), c(0.1\
+          \ + 0.2, 100), c(Inf, -Inf, NA, 1.5), c(NA, NA), c(0, -0.5, 1e5), c(1e15, 1), c(123456789012,\
+          \ 0.001), c(-1e-5, 1e5), c(0.00012345, 12345), c(-Inf, NA), c(1e5, 2e5, 3e5), c(1L, -20L, NA),\
+          \ c(TRUE, FALSE, NA)), function(v) unname(as.matrix(data.frame(a = 'x', b = v))[, 2]))"
+        "py": "[__import__('pytacheck.datacheck._columns_codebook', fromlist=['_'])._format_column(s)\
+          \ for s in [pd.Series([1, 1.5, 0.25], dtype=float), pd.Series([2, 1e-10, 3], dtype=float), pd.Series([3,\
+          \ -7, None], dtype=float), pd.Series([1e-99, 1], dtype=float), pd.Series([1e-100, 1], dtype=float),\
+          \ pd.Series([1e100, -1], dtype=float), pd.Series([9999999.6, 0.5], dtype=float), pd.Series([99999.99999,\
+          \ 1], dtype=float), pd.Series([123456.7, 1234567.8], dtype=float), pd.Series([1/3, 2/3, None],\
+          \ dtype=float), pd.Series([0.1 + 0.2, 100], dtype=float), pd.Series([float('inf'), float('-inf'),\
+          \ None, 1.5], dtype=float), pd.Series([None, None], dtype=float), pd.Series([0, -0.5, 1e5],\
+          \ dtype=float), pd.Series([1e15, 1], dtype=float), pd.Series([123456789012, 0.001], dtype=float),\
+          \ pd.Series([-1e-5, 1e5], dtype=float), pd.Series([0.00012345, 12345], dtype=float), pd.Series([float('-inf'),\
+          \ None], dtype=float), pd.Series([1e5, 2e5, 3e5], dtype=float), pd.Series([1, -20, None], dtype='Int64'),\
+          \ pd.Series([True, False, None], dtype='boolean')]]"
 - "id": "parse_codebook.nan_literal.json"
   "r": "parse_codebook"
   "py": "pytacheck.datacheck.columns.parse_codebook"
@@ -1699,6 +1721,12 @@
   "args":
     "path":
       "$file": "tests/datacheck_columns/fixtures/review/latin1_table.md"
+- "id": "parse_codebook.tagged_na.dta"
+  "r": "parse_codebook"
+  "py": "pytacheck.datacheck.columns.parse_codebook"
+  "args":
+    "path":
+      "$file": "tests/datacheck_files/data/review/tagged_na.dta"
 - "id": "parse_codebook.values_shapes.group"
   "r": "parse_codebook"
   "py": "pytacheck.datacheck.columns.parse_codebook"
@@ -2380,3 +2408,54 @@
         "group":
         - "g1"
         - "g2"
+- "id": "match_column_labels.qsf_numeric_colname"
+  "r": "match_column_labels"
+  "py": "pytacheck.datacheck.columns.match_column_labels"
+  "args":
+    "columns_df":
+      "$expr":
+        "r": "data.frame(paper_id = 'p', source_file = 'd.csv', column_name = 5)"
+        "py": "pd.DataFrame({'paper_id': 'p', 'source_file': 'd.csv', 'column_name': pd.Series([5.0])})"
+    "codebook_vars_df": &id005
+      "$df":
+        "codebook_variable":
+        - "Q1_1"
+        - "Q2"
+        "label":
+        - "Item 1"
+        - "Q two"
+        "codebook_source":
+        - "s.qsf"
+        - "s.qsf"
+        "group":
+        - !!null "null"
+        - !!null "null"
+        "question":
+        - "Rate"
+        - "Other"
+        "scale_group":
+        - "Q1"
+        - "Q2"
+        "parse_method":
+        - "qsf"
+        - "qsf"
+- "id": "match_column_labels.qsf_chr_na_colname"
+  "r": "match_column_labels"
+  "py": "pytacheck.datacheck.columns.match_column_labels"
+  "args":
+    "columns_df":
+      "$expr":
+        "r": "data.frame(paper_id = 'p', source_file = 'd.csv', column_name = NA_character_)"
+        "py": "pd.DataFrame({'paper_id': 'p', 'source_file': 'd.csv', 'column_name': pd.Series([None],\
+          \ dtype='string')})"
+    "codebook_vars_df": *id005
+- "id": "match_column_labels.qsf_na_after_match"
+  "r": "match_column_labels"
+  "py": "pytacheck.datacheck.columns.match_column_labels"
+  "args":
+    "columns_df":
+      "$expr":
+        "r": "data.frame(paper_id = 'p', source_file = 'd.csv', column_name = c('Q1_1', NA))"
+        "py": "pd.DataFrame({'paper_id': 'p', 'source_file': 'd.csv', 'column_name': pd.Series(['Q1_1',\
+          \ None], dtype='string')})"
+    "codebook_vars_df": *id005

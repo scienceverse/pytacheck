@@ -117,6 +117,24 @@ def _join(x: pd.DataFrame, y: pd.DataFrame, by: Sequence[str], how: str) -> pd.D
             raise ValueError(
                 f"Join columns in `{side}` must be present in the data.\n✖ Problem with {problem}."
             )
+    # vctrs casts each key pair to a common type: a character (or factor) key
+    # never joins a number or logical one, even when all its values are NA
+    # (e.g. a hand-edited earlier module's table with a character bib_id),
+    # and an integer key joined to a double one comes back as a double
+    from pytacheck.modules.ref_accuracy import _key_kind
+
+    to_double: list[str] = []
+    for k in by:
+        kx, ky = _key_kind(x[k]), _key_kind(y[k])
+        if "chr" in (kx, ky) and {kx, ky} & {"num", "lgl"}:
+            raise TypeError(f"Can't join `x${k}` with `y${k}` due to incompatible types.")
+        if (
+            ky == "num"
+            and pd.api.types.is_float_dtype(y[k])
+            and kx in ("num", "lgl")
+            and not pd.api.types.is_float_dtype(x[k])
+        ):
+            to_double.append(k)
     nx, ny = len(x), len(y)
     xc, yc = _key_codes([x, y], by)
     if ny:
@@ -144,6 +162,8 @@ def _join(x: pd.DataFrame, y: pd.DataFrame, by: Sequence[str], how: str) -> pd.D
     cols: dict[str, pd.Series] = {}
     for c, col in zip(x_cols, x.columns, strict=True):
         cols[x_names.get(c, c)] = x[col].iloc[x_idx].reset_index(drop=True)
+    for k in to_double:
+        cols[k] = cols[k].astype("Float64").astype("float64")
     for c, col in zip(y_cols, y.columns, strict=True):
         if c not in by:
             cols[y_names[c]] = _take(y[col], y_idx).reset_index(drop=True)
@@ -263,6 +283,9 @@ def _accuracy_mismatches(acc: pd.DataFrame) -> pd.DataFrame:
     missing = [c for c in cols if c not in acc.columns]
     if missing:
         raise ValueError(f"Can't subset columns that don't exist.\n✖ Column `{missing[0]}`")
+    # `tables$accuracy[, cols]`: a repeated name selects its first column (as
+    # often as grep() lists the name)
+    acc = _first_columns(acc)
     # tidyselect's ends_with() ignores case
     value_cols = [c for c in cols if c.lower().endswith("_mismatch")]
     if not value_cols:
@@ -296,8 +319,19 @@ def _accuracy_mismatches(acc: pd.DataFrame) -> pd.DataFrame:
     )
 
 
+def _first_columns(df: pd.DataFrame) -> pd.DataFrame:
+    """*df* without the later columns of a repeated name.
+
+    Selecting a column by name in R (``df[, cols]``, ``df$x``) takes the
+    first column with that name, e.g. in a hand-edited earlier module table.
+    """
+    later = pd.Index(df.columns).duplicated()
+    return df.loc[:, ~later] if later.any() else df
+
+
 def _select(df: pd.DataFrame, cols: Sequence[str]) -> pd.DataFrame:
-    return df.loc[:, list(cols)].reset_index(drop=True)
+    """``df[, cols]`` (by name: the first column of a repeated name)."""
+    return _first_columns(df).loc[:, list(cols)].reset_index(drop=True)
 
 
 def _has_rows(x: Any) -> bool:
@@ -367,7 +401,7 @@ def ref_summary(paper: Any, **kwargs: Any) -> dict[str, Any]:  # noqa: ARG001 - 
     ## retraction ----
     if _has_rows(tables["retraction"]):
         ret = tables["retraction"]
-        cols = [c for c in ret.columns if c not in ("text", "doi")]
+        cols = list(dict.fromkeys(c for c in ret.columns if c not in ("text", "doi")))
         table = _join(table, _select(ret, cols), _KEYS, "left")
 
     ## traffic light ----

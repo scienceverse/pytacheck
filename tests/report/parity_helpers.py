@@ -159,6 +159,32 @@ def rp_report_repository(folder: str, modules: Any, args: Any = None) -> dict[st
     return {"output": out, "file": rp_mask(_unpath(txt))}
 
 
+def rp_report_repository_dir(path: str, modules: Any = None, args: Any = None) -> dict[str, Any]:
+    """``report_repository()`` on a repository folder of the checkout (repo-relative *path*)."""
+    from pytacheck.report.report import report_repository
+
+    fd, f = tempfile.mkstemp(suffix=".qmd")
+    os.close(fd)
+    extra: dict[str, Any] = {} if modules is None else {"modules": _mods(modules)}
+    try:
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            res = report_repository(
+                str(ROOT / path), output_file=f, output_format="qmd", args=args or {}, **extra
+            )
+        txt = Path(f).read_text(encoding="utf-8")
+        txt = txt[:-1] if txt.endswith("\n") else txt
+    finally:
+        os.unlink(f)
+    out = rp_norm_output(res)
+    for op in out.values():
+        if op.summary_table is not None and "paper_id" in op.summary_table.columns:
+            st = op.summary_table.copy()
+            st["paper_id"] = "test_paper"
+            op.summary_table = st
+    return {"output": out, "file": rp_mask(txt)}
+
+
 def rp_validate(gt: Any, module: str) -> Any:
     from pytacheck.validate import validate
 

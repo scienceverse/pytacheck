@@ -121,6 +121,16 @@ def _labels_from_list(lst: Any) -> list[tuple[str | None, float]]:
     ]
 
 
+def _xdat_entry(xdat: Any, name: Any) -> Any:
+    """R ``xdat[[field$name]]`` on parsed ``xdata.json`` (``None`` when absent).
+
+    A field without a name indexes with ``NULL``, which R refuses for a list.
+    """
+    if name is None and isinstance(xdat, dict | list):
+        raise ValueError("attempt to select less than one element in get1index")
+    return xdat.get(name) if isinstance(xdat, dict) and isinstance(name, str) else None
+
+
 def _jasp_binary_labels(field: Any, xdat: Any) -> list[tuple[str | None, float]]:
     """Port of R/jasp.R::.jasp_binary_labels().
 
@@ -129,8 +139,7 @@ def _jasp_binary_labels(field: Any, xdat: Any) -> list[tuple[str | None, float]]
     """
     lst = _dollar(field, "labels")
     if not lst:
-        name = _dollar(field, "name")
-        x = xdat.get(name) if isinstance(xdat, dict) and isinstance(name, str) else None
+        x = _xdat_entry(xdat, _dollar(field, "name"))
         lst = _dollar(x, "labels") if x is not None else None
     return _labels_from_list(lst)
 

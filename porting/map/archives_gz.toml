@@ -53,7 +53,7 @@
 "tools::file_ext" = "pytacheck.archives.github:_file_ext"
 "utils::URLencode" = "pytacheck.archives.github:_url_encode"
 "%empty_or%" = "pytacheck.archives.github:_empty_or"
-"metacheck::file_types (until pytacheck.fileinfo.types exists)" = "pytacheck.archives.github:_file_types"
+"metacheck::file_types" = "pytacheck.fileinfo.types:file_types"
 "gitcreds::gitcreds_get" = "pytacheck.archives.github:_github_token"
 "tools::md5sum" = "pytacheck.archives.zenodo:_md5sum"
 ".is_zip (fallback until pytacheck.archives.zip_peek exists)" = "pytacheck.archives.zenodo:_is_zip"

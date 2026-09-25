@@ -439,3 +439,53 @@ def test_read_dir_skips_any_unreadable_file(tmp_path: Path) -> None:
     assert p.paper_id == "b"
     with pytest.raises(AttributeError):
         read(tmp_path / "a.json")  # a single file raises the real error (U21)
+
+
+# ---------------------------------------------------------------------------
+# convert_grobid(save_path = None): the PDF is the 12.0 paper's source
+# ---------------------------------------------------------------------------
+
+
+def test_convert_grobid_null_save_path_names_the_pdf(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    import hashlib
+    import tempfile
+
+    demo = IO_FIXTURES.parents[2] / "upstream/metacheck/inst/demos/to_err_is_human.pdf"
+    pdf = tmp_path / "My Paper.PDF"  # any name: the source keeps it
+    pdf.write_bytes(demo.read_bytes())
+    tmp = tmp_path / "tmp"
+    tmp.mkdir()
+    monkeypatch.setattr(tempfile, "tempdir", str(tmp))
+    with api("apis"):  # the reply is the same whatever the file name
+        paper = convert_grobid(pdf, None, api_url=GROBID_URL)
+    info = paper.info.iloc[0]
+    assert paper.paper_id == "My Paper"
+    assert (info["file_name"], info["input_format"]) == ("My Paper.PDF", "pdf")
+    assert info["sha256"] == hashlib.sha256(demo.read_bytes()).hexdigest()
+    codes = [w["code"] for w in paper.extraction["warnings"]]
+    assert "METACHECK_SOURCE_IS_TEI" not in codes
+    # the temporary folder (TEI and PDF link) is removed
+    assert list(tmp.iterdir()) == []
+    assert pdf.exists()
+
+
+def test_read_empty_dir_messages_on_stderr(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    from pytacheck.config import verbose
+    from pytacheck.io.read import read
+
+    old = verbose()
+    try:
+        verbose(True)
+        assert len(read(tmp_path)) == 0
+        out = capsys.readouterr()
+        # metacheck's message(): stderr, silenced by verbose(FALSE)
+        assert (out.out, out.err.strip()) == ("", "No JSON or XML files found.")
+        verbose(False)
+        assert len(read(tmp_path)) == 0
+        assert capsys.readouterr().err == ""
+    finally:
+        verbose(old)

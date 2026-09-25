@@ -1,0 +1,141 @@
+{
+  "id": "review.read_head_attrs.tagged_na.dta",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "names",
+      "attrs",
+      "utf8_repaired"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "q",
+          "s"
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "q",
+          "s"
+        ],
+        "v": [
+          {
+            "t": "list",
+            "names": [
+              "class",
+              "format.stata",
+              "label",
+              "labels"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "haven_labelled",
+                  "vctrs_vctr",
+                  "double"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "%10.0g"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Question"
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "Yes",
+                  "No",
+                  "Refused",
+                  "Don't know"
+                ],
+                "v": [
+                  {
+                    "t": "dbl",
+                    "v": [
+                      1
+                    ]
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      2
+                    ]
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      null
+                    ]
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      null
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "class",
+              "format.stata",
+              "labels"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "haven_labelled",
+                  "vctrs_vctr",
+                  "character"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "%-9s"
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "Ex"
+                ],
+                "v": [
+                  {
+                    "t": "dbl",
+                    "v": [
+                      0
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "null"
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

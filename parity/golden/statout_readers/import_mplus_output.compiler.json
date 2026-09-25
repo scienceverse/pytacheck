@@ -1,7 +1,7 @@
 {
   "id": "import_mplus_output.compiler",
   "ok": false,
-  "error": "Not a Mplus .out file: /home/user/pytacheck/tests/statout_readers/fixtures/text/compiler.out",
+  "error": "Not a Mplus .out file: <repo>/tests/statout_readers/fixtures/text/compiler.out",
   "warnings": [],
   "value": null,
   "metacheck_version": "0.3.1",

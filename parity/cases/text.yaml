@@ -297,6 +297,77 @@
       - "p < .001 again"
     "pattern": "[0-9.]+"
     "return": "match"
+# several patterns on strings: bind_rows() refuses character vectors; exclude
+# intersects (base::intersect(x, y), so a third pattern is an unused argument)
+- "id": "text_search.vector.multi"
+  "r": "text_search"
+  "py": "pytacheck.text_search"
+  "args":
+    "paper":
+      "$chr": ["ethics approval here", "no"]
+    "pattern": ["ethic", "approv"]
+- "id": "text_search.vector.multi.one_hit"
+  "r": "text_search"
+  "py": "pytacheck.text_search"
+  "args":
+    "paper":
+      "$chr": ["ethics approval here", "no"]
+    "pattern": ["ethic", "zzz"]
+- "id": "text_search.vector.multi.no_hits"
+  "r": "text_search"
+  "py": "pytacheck.text_search"
+  "args":
+    "paper":
+      "$chr": ["ethics approval here", "no"]
+    "pattern": ["zzz", "yyy"]
+- "id": "text_search.vector.multi.exclude"
+  "r": "text_search"
+  "py": "pytacheck.text_search"
+  "args":
+    "paper":
+      "$chr": ["ethics approval here", "no", "approv only", "no"]
+    "pattern": ["ethic", "approv"]
+    "exclude": true
+- "id": "text_search.vector.multi.exclude.three"
+  "r": "text_search"
+  "py": "pytacheck.text_search"
+  "args":
+    "paper":
+      "$chr": ["ethics approval here", "no", "approv only", "no"]
+    "pattern": ["ethic", "approv", "zz"]
+    "exclude": true
+- "id": "text_search.vector.multi.exclude.four"
+  "r": "text_search"
+  "py": "pytacheck.text_search"
+  "args":
+    "paper":
+      "$chr": ["ethics approval here", "no", "approv only", "no"]
+    "pattern": ["ethic", "approv", "zz", "no"]
+    "exclude": true
+- "id": "text_search.vector.multi.exclude.three_empty"
+  "r": "text_search"
+  "py": "pytacheck.text_search"
+  "args":
+    "paper":
+      "$chr": ["ethics approval here", "no", "approv only", "no"]
+    "pattern": ["e", "o", "n"]
+    "exclude": true
+- "id": "text_search.demo.multi.exclude.three"
+  "r": "text_search"
+  "py": "pytacheck.text_search"
+  "args":
+    "paper":
+      "$paper": "demo"
+    "pattern": ["the", "a", "zz"]
+    "exclude": true
+- "id": "text_search.demo.multi.exclude.four"
+  "r": "text_search"
+  "py": "pytacheck.text_search"
+  "args":
+    "paper":
+      "$paper": "demo"
+    "pattern": ["the", "a", "zz", "yy"]
+    "exclude": true
 - "id": "text_search.chain"
   "r": "text_search"
   "py": "pytacheck.text_search"

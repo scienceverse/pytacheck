@@ -306,8 +306,12 @@ def _from_json(text: str) -> Any:
 def _json_loads(text: str) -> Any:
     import json
 
-    def constant(name: str) -> Any:
-        raise ValueError(f"lexical error: invalid char in json text ({name})")
+    def constant(name: str) -> Any:  # yajl's lexical error (the first line of it)
+        if name.startswith("-"):
+            raise ValueError(
+                "lexical error: malformed number, a digit is required after the minus sign."
+            )
+        raise ValueError("lexical error: invalid char in json text.")
 
     def parse_int(s: str) -> int | float:
         v = int(s)

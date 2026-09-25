@@ -48,3 +48,13 @@ dupnames <- data.frame(d = as.Date(c("2020-01-01", "2020-02-01")),
                        d = labelled(c(1, 2), c(A = 1, B = 2)),
                        x = factor(c("u", "v")), check.names = FALSE)
 saveRDS(dupnames, "review/dup_names.rds")
+
+# Stata extended missing values (.a, .b) carrying value labels: haven reads
+# them as tagged NA codes; a Stata label set is numeric even on a string column.
+tagged <- data.frame(
+  q = labelled(c(1, tagged_na("a"), 2, tagged_na("b")),
+               c(Yes = 1, No = 2, Refused = tagged_na("a"), "Don't know" = tagged_na("b")),
+               label = "Question"),
+  s = labelled(c("x", "y", "x", NA), c(Ex = "x")),
+  stringsAsFactors = FALSE)
+write_dta(tagged, "review/tagged_na.dta")

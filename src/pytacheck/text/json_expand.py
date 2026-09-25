@@ -838,41 +838,73 @@ def _has_na(x: Any) -> bool:
     return False
 
 
-def _na_width(col: Any) -> int:
-    """Columns ``col`` contributes to ``is.na(<data frame>)`` (a matrix)."""
+def _na_leaves(col: Any, nrow: int) -> list[list[bool]]:
+    """The columns ``col`` contributes to ``is.na(<data frame>)`` (a logical matrix).
+
+    ``is.na.data.frame()`` ``cbind()``s ``is.na()`` of every column, so a
+    nested data frame contributes one column per (nested) leaf column.
+    """
     if isinstance(col, _Frame):
-        return sum(_na_width(c) for c in col.columns)
-    return 1
+        return [m for c in col.columns for m in _na_leaves(c, col.nrow)]
+    if isinstance(col, _Vec):
+        return [[v is None or (isinstance(v, float) and math.isnan(v)) for v in col.values]]
+    if isinstance(col, _List):
+        return [[_is_na_elt(el) for el in col.items]]
+    return [[False] * nrow]
+
+
+def _assign_na_labels(col: Any, mask: list[bool], labels: list[str]) -> Any:
+    """``x[[v]][thisvar] <- labels`` inside ``[<-.data.frame``'s logical-matrix branch."""
+    if isinstance(col, _Frame):
+        # a data frame indexed by one logical vector selects its *columns*:
+        # seq_along(x)[thisvar] is NA for a TRUE beyond the last column, and
+        # the one selected column becomes the label, recycled to every row
+        if len(col.columns) != 1:
+            raise _JSONError("unsupported matrix index in replacement")
+        if not mask[0] or any(mask[1:]):
+            raise _JSONError("attempt to select less than one element in integerOneIndex")
+        return _Frame(col.names, [_Vec("character", labels * col.nrow)], col.nrow)
+    it = iter(labels)
+    if isinstance(col, _List):
+        return _List(
+            [
+                _Vec("character", [next(it)]) if m else el
+                for el, m in zip(col.items, mask, strict=True)
+            ],
+            col.names,
+        )
+    if isinstance(col, _Vec):
+        return _Vec(
+            "character",
+            [
+                next(it) if m else _coerce(v, col.type, "character")
+                for v, m in zip(col.values, mask, strict=True)
+            ],
+        )
+    return col
 
 
 def _replace_frame_na(rn: _Frame) -> list[Any]:
-    """``rn[is.na(rn)] <- paste0("NA_", ...)`` on a ``_row`` data frame."""
+    """``rn[is.na(rn)] <- paste0("NA_", ...)`` on a ``_row`` data frame.
+
+    ``[<-.data.frame`` takes a logical matrix index only when it has the
+    frame's dimensions, i.e. when every nested data frame column is one
+    (leaf) column wide; column ``v`` then gets the labels of the matrix's
+    column ``v`` (U9: a nested data frame is indexed by columns, see
+    :func:`_assign_na_labels`).
+    """
     if not _has_na(rn):
         return list(rn.columns)
-    if sum(_na_width(c) for c in rn.columns) != len(rn.columns) or any(
-        isinstance(c, _Frame) for c in rn.columns
-    ):
+    leaves = [m for c in rn.columns for m in _na_leaves(c, rn.nrow)]
+    if len(leaves) != len(rn.columns):
         raise _JSONError("unsupported matrix index in replacement")
     k = 0
     out: list[Any] = []
-    for col in rn.columns:
-        if isinstance(col, _Vec) and _has_na(col):
-            vals = []
-            for v in col.values:
-                if v is None or (isinstance(v, float) and math.isnan(v)):
-                    k += 1
-                    vals.append(f"NA_{k}")
-                else:
-                    vals.append(_coerce(v, col.type, "character"))
-            col = _Vec("character", vals)
-        elif isinstance(col, _List) and _has_na(col):
-            items = []
-            for el in col.items:
-                if _is_na_elt(el):
-                    k += 1
-                    el = _Vec("character", [f"NA_{k}"])
-                items.append(el)
-            col = _List(items, col.names)
+    for col, mask in zip(rn.columns, leaves, strict=True):
+        nv = sum(mask)
+        if nv:
+            col = _assign_na_labels(col, mask, [f"NA_{k + i + 1}" for i in range(nv)])
+        k += nv
         out.append(col)
     return out
 

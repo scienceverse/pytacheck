@@ -106,6 +106,53 @@ _LIVE_WORDS = (
 )
 
 
+#: Literals one of which every match of a :data:`_LIVE_WORDS` pattern contains
+#: (case-insensitively), so sentences without any of them are dropped before
+#: the 29 searches (tests/mod_ethics checks the coverage pattern by pattern).
+_LIVE_ANY = "|".join(
+    (
+        "particip",
+        "subject",
+        "volunteer",
+        "respondent",
+        "recruited",
+        "enrolled",
+        "debriefed",
+        "collected",
+        "conducted",
+        "randomi",
+        "consent",
+        "mturk",
+        "mechanical",
+        "prolific",
+        "cloudresearch",
+        "turkprime",
+        "sona",
+        "student",
+        "criteri",
+        "mice",
+        "rat",
+        "monkey",
+        "pigeon",
+        "zebrafish",
+        "ferret",
+        "rabbit",
+        "hamster",
+        "gerbil",
+        "guinea",
+        "macaque",
+        "marmoset",
+        "implanted",
+        "surgically",
+        "injected",
+        "anesthetized",
+        "anaesthetized",
+        "sacrificed",
+        "perfused",
+    )
+)
+
+
 def _search_table(paper: Any, any_of: str | None = None, perl: bool = False) -> Any:
     """The (uncleaned) table ``text_search()`` builds from *paper*.
 
@@ -283,4 +330,4 @@ def _detect_live_data(paper: Any) -> pd.DataFrame:
     recruitment platforms, student pools, inclusion/exclusion criteria and
     animal data collection. Used by the ``ethics_check`` module.
     """
-    return text_search(_search_table(paper), list(_LIVE_WORDS))
+    return text_search(_search_table(paper, _LIVE_ANY), list(_LIVE_WORDS))

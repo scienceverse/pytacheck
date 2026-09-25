@@ -28,7 +28,6 @@ def names(x: Any) -> Any:
     return None if x is None else [str(k) for k in x]
 
 
-
 _EMPTY_TEI = "tests/io/fixtures/empty_body.tei.xml"
 _PROBE_JSON = "upstream/metacheck/tests/testthat/fixtures/bibr12/probe_docx.json"
 
@@ -62,6 +61,28 @@ def read_list() -> list[str]:
     """Paths for ``read()``: a repeated path, an XML twin of a ``.JSON`` and of a ``.json``."""
     d = _copies({_EMPTY_TEI: ["Z.xml", "p.xml", "q.xml"], _PROBE_JSON: ["p.JSON", "q.json"]})
     return [f"{d}/{n}" for n in ["Z.xml", "p.JSON", "p.xml", "q.json", "q.xml", "Z.xml"]]
+
+
+def read_file_names() -> dict[str, list[str]]:
+    """``info$file_name`` of TEI papers ``read()`` from ``dir/``, ``dir/./p.xml``, ``dir//q.xml``.
+
+    R stores each XML path exactly as ``read()`` got it (``list.files()`` of
+    ``"dir/"`` gives ``"dir//p.xml"``); the temporary directory is written ``D``.
+    """
+    import pytacheck as pc
+    from pytacheck.papers import PaperList
+
+    d = _copies({_EMPTY_TEI: ["p.xml", "q.xml"]})
+
+    def fn(x: Any) -> list[str]:
+        papers = list(x) if isinstance(x, PaperList) else [x]
+        return [str(p.info["file_name"].iloc[0]).replace(d, "D", 1) for p in papers]
+
+    return {
+        "dir_slash": fn(pc.read(d + "/", schema_version=None)),
+        "dot": fn(pc.read(f"{d}/./p.xml", schema_version=None)),
+        "double": fn(pc.read([f"{d}//q.xml", f"{d}/p.xml"], schema_version=None)),
+    }
 
 
 def identity(x: Any) -> Any:

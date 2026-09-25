@@ -53,13 +53,13 @@
   "args":
     "xml_path": {"$file": "tests/io/fixtures/bom_paragraphs.tei.xml"}
 # grobid_to_bibr() on a directory (successes and failures) ------------------------
-# NB: these read every *.xml in tests/io/fixtures; regenerate their goldens when
-# an XML fixture is added there.
+# They read tests/io/fixtures/dir_case, a copy of the XML fixtures kept apart so
+# that adding a fixture to tests/io/fixtures does not change these goldens.
 - "id": "grobid_to_bibr.dir.null_save"
   "r": "grobid_to_bibr"
   "py": "pytacheck.io.grobid.grobid_to_bibr"
   "args":
-    "xml_path": {"$file": "tests/io/fixtures"}
+    "xml_path": {"$file": "tests/io/fixtures/dir_case"}
     "save_path": {"$null": true}
 - "id": "grobid_to_bibr.dir.save_path"
   "r": "basename"
@@ -70,7 +70,7 @@
         "r": "grobid_to_bibr"
         "py": "pytacheck.io.grobid.grobid_to_bibr"
         "args":
-          "xml_path": {"$file": "tests/io/fixtures"}
+          "xml_path": {"$file": "tests/io/fixtures/dir_case"}
           "save_path": {"$expr": {"r": "file.path(tempdir(), 'pc_io_review_json')", "py": "__import__('os').path.join(__import__('tempfile').mkdtemp(), 'pc_io_review_json')"}}
 - "id": "grobid_to_bibr.empty_dir.save_path"
   "r": "grobid_to_bibr"
@@ -274,7 +274,7 @@
   "r": "convert"
   "py": "pytacheck.io.convert.convert"
   "args":
-    "file_path": {"$file": "tests/io/fixtures"}
+    "file_path": {"$file": "tests/io/fixtures/dir_case"}
     "save_path": {"$null": true}
     "api_url": "unused"
 # convert_grobid(): a directory of PDFs ---------------------------------------------
@@ -356,3 +356,10 @@
   "py": "tests.io._parity_helpers.identity"
   "args":
     "x": {"$expr": {"r": "local({d <- tempfile('pc_io_read_'); dir.create(d); file.copy('tests/io/fixtures/empty_body.tei.xml', file.path(d, c('Z.xml', 'p.xml', 'q.xml'))); file.copy('upstream/metacheck/tests/testthat/fixtures/bibr12/probe_docx.json', file.path(d, c('p.JSON', 'q.json'))); p <- read(file.path(d, c('Z.xml', 'p.JSON', 'p.xml', 'q.json', 'q.xml', 'Z.xml'))); for (i in seq_along(p)) p[[i]]$info$file_name <- basename(p[[i]]$info$file_name); p})", "py": "__import__('tests.io._parity_helpers', fromlist=['x']).read_basenames(__import__('tests.io._parity_helpers', fromlist=['x']).read_list())"}}
+# read() keeps each path as given: an XML paper's info$file_name is "dir//p.xml" for
+# read("dir/") and "dir/./p.xml" for read("dir/./p.xml") (the temp dir is written D)
+- "id": "read.file_name_verbatim"
+  "r": "identity"
+  "py": "tests.io._parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "local({d <- tempfile('pc_io_read_'); dir.create(d); file.copy('tests/io/fixtures/empty_body.tei.xml', file.path(d, c('p.xml', 'q.xml'))); fn <- function(x) vapply(if (inherits(x, 'scivrs_paper')) list(x) else x, function(p) sub(d, 'D', p$info$file_name, fixed = TRUE), ''); list(dir_slash = fn(read(paste0(d, '/'))), dot = fn(read(file.path(d, '.', 'p.xml'))), double = fn(read(c(paste0(d, '//q.xml'), file.path(d, 'p.xml')))))})", "py": "__import__('tests.io._parity_helpers', fromlist=['x']).read_file_names()"}}

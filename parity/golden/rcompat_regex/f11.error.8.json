@@ -1,0 +1,11 @@
+{
+  "id": "f11.error.8",
+  "ok": false,
+  "error": "invalid regular expression 'a{1}*', reason 'Invalid use of repetition operators'",
+  "warnings": [
+    "TRE pattern compilation error 'Invalid use of repetition operators'"
+  ],
+  "value": null,
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

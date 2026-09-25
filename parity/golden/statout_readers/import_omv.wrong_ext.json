@@ -1,7 +1,7 @@
 {
   "id": "import_omv.wrong_ext",
   "ok": false,
-  "error": "Not a .omv file: /home/user/pytacheck/upstream/metacheck/tests/testthat/fixtures/formats/sample.jasp",
+  "error": "Not a .omv file: <repo>/upstream/metacheck/tests/testthat/fixtures/formats/sample.jasp",
   "warnings": [],
   "value": null,
   "metacheck_version": "0.3.1",

@@ -26,6 +26,7 @@ from __future__ import annotations
 
 import datetime as dt
 import hashlib
+import json
 import math
 import os
 from collections.abc import Mapping, Sequence
@@ -1371,25 +1372,25 @@ def _rows_out(columns: Mapping[str, list[Any]], cols: Mapping[str, str]) -> list
     return [dict(zip(names, row, strict=True)) for row in zip(*lists, strict=True)]
 
 
-# jsonlite's string escapes: quote, backslash, the control characters (and "</")
-_ESCAPES = {i: f"\\u{i:04x}" for i in range(0x20)}
-_ESCAPES.update(
-    {
-        ord('"'): '\\"',
-        ord("\\"): "\\\\",
-        ord("\b"): "\\b",
-        ord("\f"): "\\f",
-        ord("\n"): "\\n",
-        ord("\r"): "\\r",
-        ord("\t"): "\\t",
-    }
-)
+# jsonlite's string escapes: quote, backslash and the control characters (as
+# \b \f \n \r \t or \u00xx), which is exactly what the json module's
+# C-accelerated encoder escapes with ensure_ascii=False; "</" is written "<\/"
+_encode_basestring = json.encoder.encode_basestring
 
 
 def _json_atom(x: Any) -> str:
     """A scalar as jsonlite writes it (``na = "null"``, ``digits = NA``)."""
+    tx = type(x)
+    if tx is str:
+        return _encode_basestring(x).replace("</", "<\\/")
     if x is None or x is pd.NA:
         return "null"
+    if tx is bool:
+        return "true" if x else "false"
+    if tx is int:
+        return str(x) if -_INT_MAX <= x <= _INT_MAX else f"{float(x):.15g}"
+    if tx is float:
+        return "null" if math.isnan(x) or math.isinf(x) else f"{x:.15g}"
     if isinstance(x, str):
         return _json_string(x)
     if isinstance(x, bool | np.bool_):
@@ -1405,34 +1406,42 @@ def _json_atom(x: Any) -> str:
 
 def _json_string(s: str) -> str:
     """A JSON string as jsonlite escapes it (``</`` too, as ``<\\/``)."""
-    return '"' + s.translate(_ESCAPES).replace("</", "<\\/") + '"'
+    return _encode_basestring(s).replace("</", "<\\/")
 
 
 def _json_pretty(x: Any, indent: str, out: list[str]) -> None:
-    if isinstance(x, _Array):
-        out.append("[" + ", ".join(_json_atom(v) for v in x) + "]")
-    elif isinstance(x, Mapping):
+    # hot path: exact-type checks first (the ABC Mapping check is slow)
+    tx = type(x)
+    if tx is str:
+        out.append(_encode_basestring(x).replace("</", "<\\/"))
+    elif tx is dict or (tx is not _Array and isinstance(x, Mapping)):
         if not x:
             out.append("{}")
             return
         inner = indent + "  "
-        out.append("{\n")
-        for i, (k, v) in enumerate(x.items()):
-            if i:
-                out.append(",\n")
-            out.append(inner + _json_string(str(k)) + ": ")
-            _json_pretty(v, inner, out)
+        sep = "{\n"
+        for k, v in x.items():
+            out.append(sep + inner + _json_string(str(k)) + ": ")
+            sep = ",\n"
+            if type(v) is str:
+                out.append(_encode_basestring(v).replace("</", "<\\/"))
+            else:
+                _json_pretty(v, inner, out)
         out.append("\n" + indent + "}")
-    elif isinstance(x, list | tuple):
+    elif tx is _Array:
+        out.append("[" + ", ".join([_json_atom(v) for v in x]) + "]")
+    elif tx is list or isinstance(x, list | tuple):
+        if isinstance(x, _Array):
+            out.append("[" + ", ".join([_json_atom(v) for v in x]) + "]")
+            return
         if not x:
             out.append("[]")
             return
         inner = indent + "  "
-        out.append("[\n")
-        for i, v in enumerate(x):
-            if i:
-                out.append(",\n")
-            out.append(inner)
+        sep = "[\n"
+        for v in x:
+            out.append(sep + inner)
+            sep = ",\n"
             _json_pretty(v, inner, out)
         out.append("\n" + indent + "]")
     elif isinstance(x, pd.DataFrame):

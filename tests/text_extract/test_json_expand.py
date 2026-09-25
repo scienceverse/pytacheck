@@ -332,3 +332,19 @@ def test_json_expand_mongo_dates() -> None:
     ]
     assert _vals(out["error"]) == [None, "not a list", None, None, None]
     assert _vals(out["d"]) == [None, None, "1970-01-02", "1970-01-01 00:00:01.5", None]
+
+
+def test_row_names_of_nested_objects_with_na() -> None:
+    # U9 (R 4.5.3 / jsonlite): rn[is.na(rn)] <- ... through a logical matrix
+    # labels a one-field nested object by column; an NA below its first row
+    # stops the element ("attempt to select less than one element")
+    answers = [
+        '[{"_row": {"a": {"b": null}}, "x": 1}, {"_row": {"a": {"b": "q"}}, "x": 2}]',
+        '[{"_row": {"a": {"b": null}}, "x": 1}, {"_row": {"a": {"b": null}}, "x": 2}]',
+        '[{"_row": {"a": {"b": null}, "c": null}, "x": 1}, {"_row": {"a": {"b": "u"}, "c": "v"}, "x": 2}]',
+        '[{"_row": {"a": {"b": 1, "e": null}}, "x": 1}, {"_row": {"a": {"b": 2, "e": 3}}, "x": 2}]',
+    ]
+    out = json_expand(pd.DataFrame({"id": [1, 2, 3, 4], "answer": answers}))
+    assert _vals(out["id"]) == [1, 1, 2, 3, 3, 4]
+    assert _vals(out["x"]) == [1, 2, None, 1, 2, None]
+    assert _vals(out["error"]) == [None, None, "parsing error", None, None, "parsing error"]

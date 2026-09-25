@@ -301,3 +301,13 @@
         "$expr":
           "r": "data.frame(doi = factor(c(\"10.1000/x\", \"10.1000/y\", \"10.1000/z\")), reftext = c(\"a\", \"b\", \"c\"), warning = c(\"w1\", \"w2\", \"w3\"))"
           "py": "pd.DataFrame({\"doi\": pd.Categorical([\"10.1000/x\", \"10.1000/y\", \"10.1000/z\"]), \"reftext\": [\"a\", \"b\", \"c\"], \"warning\": [\"w1\", \"w2\", \"w3\"]})"
+  # F50: tidyr's NULL cells of the list columns (a DOI cited twice in one paper)
+  # stay NULL when a chained module's unnamed na_replace fills NA cells (U77)
+  - "id": "ref_miscitation.listcol_null_chain_marginal"
+    "r": "identity"
+    "py": "copy.copy"
+    "args":
+      "x":
+        "$expr":
+          "r": "source(file.path(root, \"tests/mod_ref_db/helpers.R\")); suppressWarnings(module_run(module_run(paperlist(ref_paper(c(\"10.1000/a\", \"10.1000/a\"), id = \"p1\", cites = list(0L, 1L)), ref_paper(\"10.1000/b\", id = \"p2\", cites = list(0L))), \"ref_miscitation\", db = data.frame(doi = c(\"10.1000/a\", \"10.1000/b\"), reftext = c(\"Ref A\", \"Ref B\"), warning = c(\"Warn A\", \"Warn B\"))), \"marginal\")$summary_table)"
+          "py": "(lambda H: pc.module_run(pc.module_run(pc.PaperList([H.ref_paper([\"10.1000/a\", \"10.1000/a\"], id=\"p1\", cites=[0, 1]), H.ref_paper([\"10.1000/b\"], id=\"p2\", cites=[0])]), \"ref_miscitation\", db=pd.DataFrame({\"doi\": [\"10.1000/a\", \"10.1000/b\"], \"reftext\": [\"Ref A\", \"Ref B\"], \"warning\": [\"Warn A\", \"Warn B\"]})), \"marginal\")[\"summary_table\"])(__import__(\"tests.mod_ref_db.helpers\", fromlist=[\"x\"]))"

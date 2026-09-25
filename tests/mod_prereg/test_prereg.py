@@ -265,3 +265,20 @@ def test_module_metadata() -> None:
 def test_table_dtypes() -> None:
     mo = run(pc.demopaper())
     assert all(pd.api.types.is_string_dtype(mo.table[c]) for c in mo.table.columns)
+
+
+def test_aspredicted_info_messages_are_suppressed(capsys: pytest.CaptureFixture[str]) -> None:
+    # R: table_ap <- suppressMessages(aspredicted_info(links_ap$href)); the
+    # messages would be "Starting AsPredicted retrieval ...", "* Retrieving
+    # info from ..." and "...AsPredicted retrieval complete!" (or "No valid
+    # AsPredicted links" for a paper with only OSF links)
+    from pytacheck.config import verbose
+
+    old = verbose()
+    try:
+        verbose(True)
+        run(pc.demopaper())  # an AsPredicted and an OSF link
+        run(osf_paper("48ncu"))
+    finally:
+        verbose(old)
+    assert "AsPredicted" not in capsys.readouterr().err

@@ -4395,7 +4395,7 @@
     "x":
       "$expr":
         "r": "osf_links(paperlist(test_paper(\"see osf.io/abcde\"))[0])"
-        "py": "lambda: __import__(\"pytacheck.archives.osf\", fromlist=[\"_\"]).osf_links(__import__(\"pytacheck\").PaperList([]))"
+        "py": "lambda: __import__(\"pytacheck.archives.osf\", fromlist=[\"_\"]).osf_links(__import__(\"pytacheck\").PaperList([__import__(\"pytacheck\").test_paper(\"see osf.io/abcde\")])[0:0])"
 - "id": "aspredicted_links.review.empty_paperlist"
   "r": "identity"
   "py": "tests.archives_osf.parity_support.run"

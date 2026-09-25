@@ -2,8 +2,11 @@
 
 ``data/fread_cases.json`` holds 150 small randomly generated delimited files
 (quote rules, type ladders, ragged rows, blank lines, NA strings, dates...);
-``data/fread_ref.json`` is what fread 1.18 returned for each (written by
-``data/make_fread_ref.R``).
+``data/fread_quoted_cases.json`` 80 quote-heavy ones (every field quoted, or
+strings quoted as ``write.csv()`` does, with separators and doubled quotes
+inside quotes and the odd line only the general tokenizer reads; written by
+``data/make_fread_quoted_cases.py``). ``data/<battery>_ref.json`` is what
+fread 1.18 returned for each (written by ``data/make_fread_ref.R``).
 """
 
 from __future__ import annotations
@@ -23,11 +26,17 @@ from parity.compare import Options, compare
 from pytacheck.datacheck._files_fread import FreadError, fread
 
 DATA = Path(__file__).parent / "data"
-CASES = json.loads((DATA / "fread_cases.json").read_text(encoding="utf-8"))
+_BATTERIES = ("fread", "fread_quoted")
+CASES = [
+    c
+    for b in _BATTERIES
+    for c in json.loads((DATA / f"{b}_cases.json").read_text(encoding="utf-8"))
+]
 # invalid UTF-8 read by fread stays raw bytes in R's JSON (surrogate escapes here)
 REF = {
     r["name"]: r
-    for r in json.loads((DATA / "fread_ref.json").read_bytes().decode("utf-8", "surrogateescape"))
+    for b in _BATTERIES
+    for r in json.loads((DATA / f"{b}_ref.json").read_bytes().decode("utf-8", "surrogateescape"))
 }
 
 _R_CLASS = {"Int64": "integer", "float64": "numeric", "boolean": "logical",

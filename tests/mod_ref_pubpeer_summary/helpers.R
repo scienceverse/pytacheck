@@ -174,6 +174,30 @@ rv_ret_keys <- function() {
     drop_table_cols("retractionwatch")
 }
 
+# ref_retraction's table with a bib_id of another type: dplyr refuses to join a
+# character key (even an all-NA one) to the integer bib_id of ref_table(),
+# joins a double or logical one by value (a double makes the result's bib_id a
+# double) and an all-NA logical one to nothing.
+rv_ret_bib_id <- function(type) {
+  out <- chain(demopaper(), "ref_retraction")
+  b <- out$table$bib_id
+  out$table$bib_id <- switch(type,
+    chr = as.character(b),
+    na_chr = rep(NA_character_, length(b)),
+    dbl = as.numeric(b),
+    lgl = as.logical(b),
+    na_lgl = rep(NA, length(b))
+  )
+  out
+}
+
+# Rename a column of a module output's table (a repeated name selects the first
+# column of that name in ref_summary's `tbl[, cols]`).
+rename_table_col <- function(out, from, to) {
+  names(out$table)[names(out$table) == from] <- to
+  out
+}
+
 # duplicated ref_accuracy rows: one in the same group (names repeat), one in a
 # new no_match group (the reference gets two rows, in group order).
 rv_acc_dup <- function() {

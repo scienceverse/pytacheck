@@ -111,9 +111,12 @@ def _llm_cache_key(
 ) -> str:
     """Port of ``.llm_cache_key()``: the MD5 key R computes for these inputs.
 
-    Parameters are sorted by name; the type spec is reduced to its printed
-    form (``capture.output(print(type))``) so any schema change misses.
+    Parameters are sorted by name as ``order()`` sorts them (ICU collation:
+    ``B, max_tokens, seed, Seed, temperature``); the type spec is reduced to
+    its printed form (``capture.output(print(type))``) so any schema change
+    misses.
     """
+    from pytacheck._r import r_sort_key
     from pytacheck.llm._rds import RList, RVec, serialize
     from pytacheck.llm.types import as_type, type_print_lines
 
@@ -121,7 +124,7 @@ def _llm_cache_key(
     if params is None:
         p = None  # NULL
     elif params:
-        names = sorted(params)
+        names = sorted(params, key=r_sort_key)
         p = RList([_param_robj(params[k]) for k in names], {"names": RVec("chr", names)})
     else:
         p = RList([])

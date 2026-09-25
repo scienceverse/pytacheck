@@ -34,6 +34,7 @@ from pytacheck.statout.jasp import (
     _read_doubles,
     _read_int32s,
     _read_json,
+    _xdat_entry,
 )
 from pytacheck.statout.spv import _unzip
 
@@ -158,8 +159,7 @@ def _omv_labels(field: Any, xdat: Any) -> list[tuple[str | None, float]]:
     """Port of R/omv.R::.omv_labels(): ``(label, code)`` pairs for one field."""
     lst = _dollar(field, "labels")
     if not lst:
-        name = _dollar(field, "name")
-        x = xdat.get(name) if isinstance(xdat, dict) and isinstance(name, str) else None
+        x = _xdat_entry(xdat, _dollar(field, "name"))
         lst = _dollar(x, "labels") if x is not None else None
     return _labels_from_list(lst)
 
