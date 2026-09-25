@@ -20,6 +20,13 @@ twins of the R fakes written by ``make_cases.py``:
 ``connfail`` the RegCheck server cannot be reached (``req_perform()`` fails)
 ``unauthorized`` the RegCheck server answers 401
 ``real``     nothing is faked (for errors raised before any request)
+``nodim`` / ``noinfo`` / ``noquotes``  the testthat table without its
+             ``dimension`` / ``deviation_information`` / ``paper_quotes`` column
+``fulltext`` like ``echo``, but the result holds the complete paper and
+             preregistration texts that were sent
+``http:<name>`` the real RegCheck client runs against faked HTTP responses
+             (:data:`HTTP_SCENARIOS`; R: ``httr2::with_mocked_responses()``)
+``refused``  the real client connects to a closed local port (no mocks)
 """
 
 from __future__ import annotations
@@ -65,6 +72,98 @@ ODD_TABLE: dict[str, list[Any]] = {
 
 TIDY_COLUMNS = list(MOCK_TABLE)
 
+#: RegCheck fakes that return the testthat table without some columns
+DROP_COLUMNS: dict[str, str] = {
+    "nodim": "dimension",
+    "noinfo": "deviation_information",
+    "noquotes": "paper_quotes",
+}
+
+_TASK = '{"task_id": "t-1", "status_url": "/api/v1/comparisons/t-1"}'
+_RUNNING = '{"state": "running", "processed_dimensions": 1, "total_dimensions": 6}'
+
+#: a RegCheck result with R-vs-Python case-mapping traps, JSON nulls, missing
+#: fields, non-breaking spaces and quote references (ASCII JSON, \u escapes)
+SUCCESS_ITEMS: list[dict[str, Any]] = [
+    {
+        "dimension": "Sample size",
+        "deviation_judgement": "M\u0130SS\u0130NG",
+        "paper_content_summary": "N = 120 [PAPER_0001]",
+        "registration_content_summary": None,
+        "deviation_information": "The paper reports 120.\u00a0[REG_0001]",
+        "paper_content_quotes": '"120 participants" [PAPER_0001]',
+        "registration_content_quotes": "",
+    },
+    {
+        "dimension": "Hypotheses",
+        "deviation_judgement": "\tNO\n",
+        "deviation_information": "Same [REG_0002, PAPER_0003]",
+    },
+    {"dimension": None, "deviation_judgement": "", "paper_content_summary": "x"},
+    {
+        "dimension": "\u03a3 test",
+        "deviation_judgement": "\u0391\u03a3",
+        "paper_content_summary": "\u03b1 = .05\n[PAPER_0004]",
+        "registration_content_summary": "\u2265 2",
+        "deviation_information": "Yes\u00a0",
+    },
+    {
+        "dimension": "Analysis",
+        "deviation_judgement": "Yes\u00a0",
+        "deviation_information": "a judgement ending in a non-breaking space",
+    },
+    {"dimension": "Outliers", "deviation_judgement": " yes ", "deviation_information": "ok"},
+]
+
+
+def _json(x: Any) -> str:
+    import json
+
+    return json.dumps(x)
+
+
+#: faked RegCheck HTTP exchanges: endpoint kind -> responses (status, JSON body
+#: or None) in call order, the last one repeating; unlisted kinds answer 404.
+#: Kinds: ``text`` (POST .../comparisons/text), ``multipart`` (POST
+#: .../comparisons), ``poll`` (GET .../comparisons/<task>).
+HTTP_SCENARIOS: dict[str, dict[str, list[tuple[int, str | None]]]] = {
+    "http404": {"text": [(404, None)], "multipart": [(404, None)]},
+    "http500": {"text": [(500, None)]},
+    "http422": {"text": [(422, None)]},
+    "http401": {"text": [(401, None)]},
+    "pollfail": {
+        "text": [(200, _TASK)],
+        "poll": [(200, '{"state": "failure", "status": "worker crashed"}')],
+    },
+    "pollfail_nostatus": {"text": [(200, _TASK)], "poll": [(200, '{"state": "failure"}')]},
+    "poll503": {"text": [(200, _TASK)], "poll": [(503, None)]},
+    "success_null": {
+        "text": [(200, _TASK)],
+        "poll": [(200, '{"state": "success", "result": null}')],
+    },
+    "success": {
+        "text": [(200, _TASK)],
+        "poll": [
+            (200, _RUNNING),
+            (200, _json({"state": "success", "result": {"items": SUCCESS_ITEMS}})),
+        ],
+    },
+    "fallback": {
+        "text": [(405, None)],
+        "multipart": [(200, _TASK)],
+        "poll": [(200, _json({"state": "success", "result": {"items": SUCCESS_ITEMS[:2]}}))],
+    },
+}
+
+
+def http_kind(url: str) -> str:
+    """Which RegCheck endpoint *url* is (see :data:`HTTP_SCENARIOS`)."""
+    if url.endswith("/api/v1/comparisons/text"):
+        return "text"
+    if url.endswith("/api/v1/comparisons"):
+        return "multipart"
+    return "poll"
+
 
 def frame(data: Mapping[str, Sequence[Any]]) -> pd.DataFrame:
     """A character data frame like the R fakes' ``data.frame()``."""
@@ -79,8 +178,9 @@ def empty_frame() -> pd.DataFrame:
 class _Echo:
     """Fake ``.regcheck_submit()`` / ``.regcheck_poll()`` echoing their input."""
 
-    def __init__(self) -> None:
+    def __init__(self, full: bool = False) -> None:
         self.n = 0
+        self.full = full
         self.sent: dict[str, Any] = {}
 
     def submit(
@@ -113,6 +213,17 @@ class _Echo:
         timeout: float = 3600,
     ) -> dict[str, Any]:
         s = self.sent
+        if self.full:
+            return {
+                "items": [
+                    {
+                        "dimension": "Full text",
+                        "deviation_judgement": "no",
+                        "paper_content_summary": s["paper_text"],
+                        "registration_content_summary": s["prereg_text"],
+                    }
+                ]
+            }
         info = (
             f"client: {s['client']} url: {url} task: {task_id} token: {api_token} "
             f"dims: {s['dims']} [PAPER_0001, REG_0002]"
@@ -183,8 +294,32 @@ def fake_regcheck(fake: str = "table") -> Iterator[list[int]]:
         raise RuntimeError("second prereg failed")
 
     target = "pytacheck.db.regcheck.regcheck_compare"
-    if fake == "real":
+    if fake in ("real", "refused"):
         yield calls
+    elif fake.startswith("http:"):
+        import httpx
+
+        scenario = HTTP_SCENARIOS[fake.removeprefix("http:")]
+        counts: dict[str, int] = {}
+
+        def respond(method: str, url: str, **kwargs: Any) -> httpx.Response:
+            calls[0] += 1
+            kind = http_kind(url)
+            counts[kind] = counts.get(kind, 0) + 1
+            responses = scenario.get(kind) or [(404, None)]
+            status, body = responses[min(counts[kind], len(responses)) - 1]
+            request = httpx.Request(method, url)
+            if body is None:
+                return httpx.Response(status, request=request)
+            return httpx.Response(
+                status,
+                content=body.encode(),
+                headers={"Content-Type": "application/json"},
+                request=request,
+            )
+
+        with umock.patch("pytacheck.http.request", respond):
+            yield calls
     elif fake in ("connfail", "unauthorized"):
         # R: httr2::req_perform() raising httr2_failure / httr2_http_401;
         # pytacheck.http.request() returns None / the 401 response instead
@@ -198,8 +333,8 @@ def fake_regcheck(fake: str = "table") -> Iterator[list[int]]:
 
         with umock.patch("pytacheck.http.request", request):
             yield calls
-    elif fake == "echo":
-        echo = _Echo()
+    elif fake in ("echo", "fulltext"):
+        echo = _Echo(full=fake == "fulltext")
         with (
             umock.patch("pytacheck.db.regcheck._regcheck_submit", echo.submit),
             umock.patch("pytacheck.db.regcheck._regcheck_poll", echo.poll),
@@ -212,6 +347,10 @@ def fake_regcheck(fake: str = "table") -> Iterator[list[int]]:
             "empty": returning(None),
             "error": failing,
             "partial": partial,
+            **{
+                name: returning({k: v for k, v in MOCK_TABLE.items() if k != col})
+                for name, col in DROP_COLUMNS.items()
+            },
         }[fake]
         with umock.patch(target, fn):
             yield calls
@@ -261,18 +400,24 @@ def run_reg(
     envvars: Mapping[str, str] | None = None,
     tables: bool = False,
     report: bool = False,
+    na_id: Sequence[int] = (),
+    empty_table: bool = False,
+    catch: bool = False,
+    set_paper_id: str | None = None,
 ) -> Any:
     """``module_run(<paper>, "reg_check")`` on recorded responses (a parity case).
 
     *pre* are modules run first (chained: ``"prereg_check"`` makes
     ``reg_check`` reuse its table); *double* then repeats the prereg_check
-    table (a paper linking the same preregistration twice) and *na_paper_id*
-    blanks its ``paper_id`` column. *fake* picks the RegCheck fake (see the
-    module docstring); *args* are extra module arguments and *dims* the
-    ``dimension`` column of a ``dimensions`` argument. *envvars* are set
-    around the run (``REGCHECK_API_TOKEN`` and ``REGCHECK_BASE_URL`` default
-    to empty). With *tables*, returns the report's tables; with *report*,
-    ``module_report()`` with its R code chunks masked.
+    table (a paper linking the same preregistration twice), *na_paper_id*
+    blanks its ``paper_id`` column (*set_paper_id* sets it), *na_id* blanks the ``id`` of those
+    (0-based) rows and *empty_table* drops all its rows. *fake* picks the
+    RegCheck fake (see the module docstring); *args* are extra module
+    arguments and *dims* the ``dimension`` column of a ``dimensions``
+    argument. *envvars* are set around the run (``REGCHECK_API_TOKEN`` and
+    ``REGCHECK_BASE_URL`` default to empty). With *tables*, returns the
+    report's tables; with *report*, ``module_report()`` with its R code chunks
+    masked; with *catch*, the message of an error instead of raising it.
     """
     import pytacheck as pc
     from tests.mod_prereg.parity_support import mocked
@@ -282,20 +427,45 @@ def run_reg(
     if dims is not None:
         kwargs["dimensions"] = dimensions_frame(dims)
     variables = {"REGCHECK_API_TOKEN": "", "REGCHECK_BASE_URL": "", **(envvars or {})}
+
+    def run(x: Any) -> Any:
+        try:
+            return pc.module_run(x, "reg_check", **kwargs)
+        except Exception as e:
+            if catch:
+                return str(e)
+            raise
+
     with (
-        mocked(),
         umock.patch("pytacheck.utils.online", return_value=True),
         env(**variables),
     ):
-        x: Any = paper
-        for m in pre:
-            x = pc.module_run(x, m)
-        if double:
-            x.table = pd.concat([x.table, x.table], ignore_index=True)
-        if na_paper_id:
-            x.table = x.table.assign(paper_id=pd.Series([pd.NA] * len(x.table), dtype="string"))
-        with fake_regcheck(fake):
-            mo = pc.module_run(x, "reg_check", **kwargs)
+        with mocked():
+            x: Any = paper
+            for m in pre:
+                x = pc.module_run(x, m)
+            if double:
+                x.table = pd.concat([x.table, x.table], ignore_index=True)
+            if na_paper_id:
+                x.table = x.table.assign(paper_id=pd.Series([pd.NA] * len(x.table), dtype="string"))
+            if set_paper_id is not None:
+                x.table = x.table.assign(
+                    paper_id=pd.Series([set_paper_id] * len(x.table), dtype="string")
+                )
+            if na_id:
+                table = x.table.copy()
+                table.loc[table.index[list(na_id)], "id"] = pd.NA
+                x.table = table
+            if empty_table:
+                x.table = x.table.iloc[0:0]
+            if fake != "refused":
+                with fake_regcheck(fake):
+                    mo = run(x)
+        if fake == "refused":
+            # a real connection attempt, outside the recorded responses
+            mo = run(x)
+    if isinstance(mo, str):
+        return mo
     if tables:
         return report_tables(mo)
     if report:

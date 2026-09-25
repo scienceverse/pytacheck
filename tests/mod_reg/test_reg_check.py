@@ -347,3 +347,115 @@ def test_tables_via_run_reg() -> None:
     ]
     # strip_refs() removes the [PAPER_0001] quote references
     assert tables[1]["paper_quotes"].tolist() == [" quote"] * 3
+
+
+# --- review: divergences found after the port --------------------------------------
+
+
+def test_tolower_is_rs_per_character_mapping() -> None:
+    from pytacheck.modules.reg_check import _tolower
+
+    # R (glibc towlower): U+0130 -> "i" and no final-sigma rule
+    assert _tolower("MİSSİNG") == "missing"
+    assert _tolower("ΑΣ") == "ασ"
+    assert _tolower(" YES ") == " yes "
+
+
+def test_judgement_with_dotted_capital_i_counts_as_missing() -> None:
+    mo = run_reg(**_OER, pre=["prereg_check"], fake="http:success")
+    assert mo.traffic_light == "info"
+    # MİSSİNG -> missing; " yes " -> yes; "Yes " is not trimmed (not "yes")
+    assert mo.summary_text == (
+        "RegCheck compared the paper with 1 preregistration on 6 dimensions, and flagged "
+        "1 potential deviation (1 dimension not specified in the preregistration)."
+    )
+    tables = run_reg(**_OER, pre=["prereg_check"], fake="http:success", tables=True)
+    assert tables[0]["judgement"].tolist() == [
+        "unclear",
+        "consistent",
+        "",
+        "ΑΣ",
+        "Yes ",
+        "deviation",
+    ]
+
+
+_OER: dict[str, Any] = {
+    "papers": [
+        {
+            "url": ["https://osf.io/5xysn"],
+            "id": "p_oer",
+            "text": ["We preregistered this study.", "It had 120 participants."],
+        }
+    ]
+}
+_TWO: dict[str, Any] = {
+    "papers": [
+        {
+            "url": ["https://osf.io/5xysn", "https://osf.io/48ncu"],
+            "id": "p_two",
+            "text": ["Two preregistrations."],
+        }
+    ]
+}
+
+
+def test_na_prereg_id_selects_na_rows_like_base_r() -> None:
+    # R: regcheck_table[regcheck_table$prereg_id == rid, ] on a data.frame gives
+    # a row of NAs wherever prereg_id is NA
+    tables = run_reg(**_TWO, pre=["prereg_check"], na_id=[0], tables=True)
+    na_section, other_section = tables[0], tables[2]
+    assert len(na_section) == 6
+    assert na_section.isna().all().all()
+    assert len(other_section) == 6
+    assert other_section["dimension"].isna().tolist() == [True] * 3 + [False] * 3
+    assert other_section["dimension"].tolist()[3:] == MOCK_TABLE["dimension"]
+
+
+def test_all_na_prereg_ids_are_duplicates() -> None:
+    mo = run_reg(**_TWO, pre=["prereg_check"], na_id=[0, 1])
+    # duplicated() treats (p_two, NA) twice as a duplicate: one comparison
+    assert len(mo.table) == 3
+    assert mo.table["prereg_id"].isna().all()
+
+
+@pytest.mark.parametrize(
+    ("fake", "lengths"), [("nodim", "0, 3"), ("noinfo", "3, 0"), ("noquotes", "3, 0")]
+)
+def test_missing_regcheck_columns_raise_like_data_frame(fake: str, lengths: str) -> None:
+    msg = run_reg(**_OER, fake=fake, catch=True)
+    assert msg == (
+        "Running the module 'reg_check' produced errors: "
+        f"arguments imply differing number of rows: {lengths}"
+    )
+
+
+def test_data_frame_recycles_and_checks_lengths() -> None:
+    from pytacheck.modules.reg_check import _data_frame
+
+    df = _data_frame({"a": ["x", "y"], "b": ["z"]})
+    assert df["b"].tolist() == ["z", "z"]
+    with pytest.raises(ValueError, match="differing number of rows: 3, 2"):
+        _data_frame({"a": ["x", "y", "z"], "b": ["u", "v"]})
+
+
+def test_http_errors_become_the_error_summary() -> None:
+    mo = run_reg(**_OER, pre=["prereg_check"], fake="http:http404")
+    assert mo.traffic_light == "error"
+    assert mo.summary_text == (
+        "We found 1 preregistration, but the RegCheck comparison failed: HTTP 404 Not Found.."
+    )
+    assert mo.summary_table["regcheck_deviations"].isna().all()
+
+
+def test_empty_chained_table_means_no_preregistrations() -> None:
+    mo = run_reg(**_OER, pre=["prereg_check"], empty_table=True, fake="error")
+    assert mo.traffic_light == "na"
+    assert mo.summary_table["regcheck_deviations"].tolist() == [0]
+
+
+def test_full_texts_are_sent() -> None:
+    mo = run_reg(**_OER, fake="fulltext")
+    sent = mo.table["paper_summary"].tolist()[0]
+    assert sent == "We preregistered this study. It had 120 participants."
+    assert mo.table["prereg_summary"].tolist()[0].startswith("template_name\n")

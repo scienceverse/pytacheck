@@ -46,6 +46,7 @@ from pytacheck.datacheck._columns_labels import (
     _tolower,
     _trim,
     _unlist_scalars,
+    _valid_utf8,
     _vl_split_pairs,
     chr_frame,
 )
@@ -96,6 +97,13 @@ def _read_lines_bytes(path: str | os.PathLike[str], n: int = -1) -> list[bytes]:
 def _read_lines(path: str | os.PathLike[str], n: int = -1) -> list[str]:
     """R ``readLines(path, warn = FALSE)`` in a UTF-8 locale (bytes kept as-is)."""
     return [ln.decode("utf-8", "surrogateescape") for ln in _read_lines_bytes(path, n)]
+
+
+def _seq_len(n: float) -> range:
+    """R ``seq_len(n)`` as 0-based indices (a negative or NA *n* is an error)."""
+    if n != n or n < 0:
+        raise ValueError("argument must be coercible to non-negative integer")
+    return range(int(n))
 
 
 def _r_split(s: str, sep: str = "\n") -> list[str]:
@@ -304,7 +312,7 @@ def _extract_spreadsheet_codebook(
     read: Callable[[str | None, bool], pd.DataFrame | None],
     src: str,
     observed: Any,
-    header_lookahead: int,
+    header_lookahead: float,
 ) -> pd.DataFrame | None:
     """Parse a multi-sheet spreadsheet codebook, format-agnostically.
 
@@ -335,7 +343,7 @@ def _extract_spreadsheet_codebook(
             except Exception:
                 hdrless = None
             if hdrless is not None and len(hdrless) > 1:
-                for k in range(min(len(hdrless) - 1, header_lookahead)):
+                for k in _seq_len(min(len(hdrless) - 1, header_lookahead)):
                     hdr = [_trim(v) for v in _unlist_row(hdrless, k)]
                     if _find_codebook_cols(hdr) is None:
                         continue
@@ -515,7 +523,12 @@ def _pdf_codebook_lines(
 
 
 def _strip_rtf(text: str) -> str:
-    """Port of ``.strip_rtf()``: strip RTF control words and groups."""
+    """Port of ``.strip_rtf()``: strip RTF control words and groups.
+
+    Like R's (TRE) ``gsub()``, text that is not valid UTF-8 is an error.
+    """
+    if not _valid_utf8(text):
+        raise ValueError("input string 1 is invalid in this locale")
     text = gsub(r"\\[a-z]+\-?[0-9]*\s?", " ", text)
     text = gsub("\\\\[^a-z\n]", " ", text)
     text = gsub("[{}]", "", text)
@@ -550,8 +563,6 @@ def _docx_orphan_copies(root: Any, doc_index: dict[Any, int]) -> int:
     ``NA`` to ``NA``, so a run whose ``doc_index`` is ``NA`` becomes one
     "table cell" per missing combination.
     """
-    from lxml import etree
-
     w = f"{{{_W}}}"
     tbl_index = {t: i + 1 for i, t in enumerate(root.iter(f"{w}tbl"))}
     tr_index = {t: i + 1 for i, t in enumerate(root.iter(f"{w}tr"))}
@@ -591,7 +602,6 @@ def _docx_orphan_copies(root: Any, doc_index: dict[Any, int]) -> int:
     n_t = len({k[0] for k in combos})
     n_r = len({k[1] for k in combos})
     n_c = len({k[2] for k in combos})
-    del etree
     return n_t * n_r * n_c - len(combos)
 
 
@@ -664,6 +674,8 @@ def _odt_text(path: str | os.PathLike[str]) -> str:
                 return ""
             raw = "\n".join(_read_lines(xml_path))
         except Exception:
+            return ""
+        if not _valid_utf8(raw):  # R's gsub() errors -> tryCatch(..., "")
             return ""
         txt = gsub("<[^>]+>", " ", raw)
         for a, b in (
@@ -797,17 +809,17 @@ def _read_delim_codebook(path: str, sep: str, encoding: str | None) -> pd.DataFr
 
 
 def _has_invalid_utf8(df: pd.DataFrame) -> bool:
+    """``any(is.na(iconv(col, "UTF-8", "UTF-8")))`` over the character columns."""
     for j in range(df.shape[1]):
         col = df.iloc[:, j]
         if not _is_character(col):
             continue
-        for v in col.tolist():
-            if isinstance(v, str) and any("\udc80" <= ch <= "\udcff" for ch in v):
-                return True
+        if not _valid_utf8("".join(v for v in col.tolist() if isinstance(v, str))):
+            return True
     return False
 
 
-def _parse_delimited(path: str, ext: str, src: str, observed: Any, header_lookahead: int) -> Any:
+def _parse_delimited(path: str, ext: str, src: str, observed: Any, header_lookahead: float) -> Any:
     from pytacheck.datacheck.files import _sniff_delimiter
 
     try:
@@ -840,7 +852,7 @@ def _parse_delimited(path: str, ext: str, src: str, observed: Any, header_lookah
     if col1 and sum(v in _WIDE_STATS for v in col1 if v is not None) / len(col1) >= 0.5:
         raw = _transpose_wide(raw)
     header_row = None
-    for k in range(min(len(raw), header_lookahead)):
+    for k in _seq_len(min(len(raw), header_lookahead)):
         hdr = [_trim(v) for v in _row_as_character(raw, k)]
         if _find_codebook_cols(hdr) is not None:
             header_row = k
@@ -914,7 +926,7 @@ def _import_data(path: str, ext: str) -> pd.DataFrame | None:
     return df if isinstance(df, pd.DataFrame) else None
 
 
-def _dispatch(path: str, ext: str, src: str, observed: Any, header_lookahead: int) -> Any:
+def _dispatch(path: str, ext: str, src: str, observed: Any, header_lookahead: float) -> Any:
     """The ``switch(ext, ...)`` of ``parse_codebook()``: ``(kind, result)``."""
     if ext == "json":
         return ("value", _extract_json_codebook(path, src))
@@ -987,7 +999,7 @@ def parse_codebook(
     src = _basename(p)
     obs = observed or {}
     try:
-        kind, result = _dispatch(p, ext, src, obs, int(header_lookahead))
+        kind, result = _dispatch(p, ext, src, obs, header_lookahead)
     except Exception:
         kind, result = "value", None
     if kind == "return":

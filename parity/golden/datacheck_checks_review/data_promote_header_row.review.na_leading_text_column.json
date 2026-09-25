@@ -1,0 +1,79 @@
+{
+  "id": "data_promote_header_row.review.na_leading_text_column",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "df",
+      "promoted",
+      "stripped"
+    ],
+    "v": [
+      {
+        "t": "df",
+        "nrow": 5,
+        "names": [
+          "Participant",
+          "Score",
+          "V3"
+        ],
+        "v": [
+          {
+            "t": "dbl",
+            "v": [
+              1,
+              2,
+              3,
+              4,
+              5
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              3,
+              4,
+              5,
+              6,
+              7
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              "z"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          1
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "...1",
+              "...2",
+              "...3"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

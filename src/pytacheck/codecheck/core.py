@@ -312,7 +312,19 @@ def _yaml_loader() -> Any:
     def construct_bool(loader: Any, node: Any) -> bool:
         return str(loader.construct_scalar(node)).lower() in ("y", "yes", "true", "on")
 
+    def construct_mapping(loader: Any, node: Any, deep: bool = False) -> dict[Any, Any]:
+        # R's yaml fails on a repeated key ("Duplicate map key: 'x'")
+        loader.flatten_mapping(node)
+        out: dict[Any, Any] = {}
+        for key_node, value_node in node.value:
+            key = loader.construct_object(key_node, deep=deep)
+            if key in out:
+                raise yaml.constructor.ConstructorError(None, None, f"Duplicate map key: '{key}'")
+            out[key] = loader.construct_object(value_node, deep=deep)
+        return out
+
     Loader.add_constructor("tag:yaml.org,2002:bool", construct_bool)
+    Loader.add_constructor("tag:yaml.org,2002:map", construct_mapping)
     return Loader
 
 
@@ -322,6 +334,8 @@ def _r_yaml(x: Any) -> Any:
     Mappings stay dicts (named lists); a sequence of scalars of one type is an
     atomic vector (a tuple here), any other sequence a list.
     """
+    if type(x).__name__ == "_RExpr":
+        return x
     if isinstance(x, dict):
         return {str(k): _r_yaml(v) for k, v in x.items()}
     if isinstance(x, list):

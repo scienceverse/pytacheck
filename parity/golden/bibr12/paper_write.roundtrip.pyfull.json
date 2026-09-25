@@ -2,9 +2,7 @@
   "id": "paper_write.roundtrip.pyfull",
   "ok": true,
   "error": null,
-  "warnings": [
-    "path[1]=\"/tmp/Rtmpmffufb/pc_bibr12_32d9ebd6bd3\": No such file or directory"
-  ],
+  "warnings": [],
   "value": {
     "t": "paper",
     "names": [

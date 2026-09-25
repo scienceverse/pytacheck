@@ -1279,12 +1279,12 @@
   "py": "pytacheck.datacheck.columns._osd_safe_code"
   "args":
     "x": "The quick brown fox jumps over the lazy dog again"
-- "id": ".osd_code_and_provenance.null_scale"
+- "id": ".osd_code_and_provenance.na_scale_na_prefix"
   "r": "metacheck:::.osd_code_and_provenance"
   "py": "pytacheck.datacheck.columns._osd_code_and_provenance"
   "args":
-    "scale": *id001
-    "prefix": "x"
+    "scale": *id003
+    "prefix": *id003
     "scale_source": *id001
     "dict":
       "$df":
@@ -1524,6 +1524,12 @@
   "args":
     "path":
       "$file": "tests/datacheck_columns/fixtures/review/tag_empty.qsf"
+- "id": "parse_qsf.latin1.qsf"
+  "r": "parse_qsf"
+  "py": "pytacheck.datacheck.columns.parse_qsf"
+  "args":
+    "path":
+      "$file": "tests/datacheck_columns/fixtures/review/latin1.qsf"
 - "id": "parse_codebook.nan_literal.json"
   "r": "parse_codebook"
   "py": "pytacheck.datacheck.columns.parse_codebook"
@@ -1614,6 +1620,18 @@
   "args":
     "path":
       "$file": "tests/datacheck_columns/fixtures/review/numeric.ods"
+- "id": "parse_codebook.handmade.ods"
+  "r": "parse_codebook"
+  "py": "pytacheck.datacheck.columns.parse_codebook"
+  "args":
+    "path":
+      "$file": "tests/datacheck_columns/fixtures/review/handmade.ods"
+- "id": "parse_codebook.latin1_table.md"
+  "r": "parse_codebook"
+  "py": "pytacheck.datacheck.columns.parse_codebook"
+  "args":
+    "path":
+      "$file": "tests/datacheck_columns/fixtures/review/latin1_table.md"
 - "id": "parse_codebook.values_shapes.group"
   "r": "parse_codebook"
   "py": "pytacheck.datacheck.columns.parse_codebook"
@@ -1638,6 +1656,88 @@
     "path":
       "$file": "tests/datacheck_columns/fixtures/review/tricky.xlsx"
     "header_lookahead": !!int "1"
+- "id": ".extract_rich_text.run_order.docx"
+  "r": "metacheck:::.extract_rich_text"
+  "py": "pytacheck.datacheck.columns._extract_rich_text"
+  "args":
+    "path":
+      "$file": "tests/datacheck_columns/fixtures/review/run_order.docx"
+    "ext": "docx"
+- "id": "parse_codebook.run_order.docx"
+  "r": "parse_codebook"
+  "py": "pytacheck.datacheck.columns.parse_codebook"
+  "args":
+    "path":
+      "$file": "tests/datacheck_columns/fixtures/review/run_order.docx"
+- "id": ".extract_rich_text.tricky.docx"
+  "r": "metacheck:::.extract_rich_text"
+  "py": "pytacheck.datacheck.columns._extract_rich_text"
+  "args":
+    "path":
+      "$file": "tests/datacheck_columns/fixtures/review/tricky.docx"
+    "ext": "docx"
+- "id": "parse_codebook.tricky.docx"
+  "r": "parse_codebook"
+  "py": "pytacheck.datacheck.columns.parse_codebook"
+  "args":
+    "path":
+      "$file": "tests/datacheck_columns/fixtures/review/tricky.docx"
+- "id": ".extract_rich_text.orphan_no_table.docx"
+  "r": "metacheck:::.extract_rich_text"
+  "py": "pytacheck.datacheck.columns._extract_rich_text"
+  "args":
+    "path":
+      "$file": "tests/datacheck_columns/fixtures/review/orphan_no_table.docx"
+    "ext": "docx"
+- "id": "parse_codebook.orphan_no_table.docx"
+  "r": "parse_codebook"
+  "py": "pytacheck.datacheck.columns.parse_codebook"
+  "args":
+    "path":
+      "$file": "tests/datacheck_columns/fixtures/review/orphan_no_table.docx"
+- "id": ".extract_rich_text.escapes.rtf"
+  "r": "metacheck:::.extract_rich_text"
+  "py": "pytacheck.datacheck.columns._extract_rich_text"
+  "args":
+    "path":
+      "$file": "tests/datacheck_columns/fixtures/review/escapes.rtf"
+    "ext": "rtf"
+- "id": "parse_codebook.escapes.rtf"
+  "r": "parse_codebook"
+  "py": "pytacheck.datacheck.columns.parse_codebook"
+  "args":
+    "path":
+      "$file": "tests/datacheck_columns/fixtures/review/escapes.rtf"
+- "id": ".extract_rich_text.latin1.rtf"
+  "r": "metacheck:::.extract_rich_text"
+  "py": "pytacheck.datacheck.columns._extract_rich_text"
+  "args":
+    "path":
+      "$file": "tests/datacheck_columns/fixtures/review/latin1.rtf"
+    "ext": "rtf"
+- "id": ".extract_json_codebook.latin1"
+  "r": "metacheck:::.extract_json_codebook"
+  "py": "pytacheck.datacheck.columns._extract_json_codebook"
+  "args":
+    "path":
+      "$file": "tests/datacheck_columns/fixtures/review/latin1.json"
+    "src": "latin1.json"
+- "id": ".strip_rtf.invalid_utf8"
+  "r": "metacheck:::.strip_rtf"
+  "py": "pytacheck.datacheck.columns._strip_rtf"
+  "args":
+    "text":
+      "$expr":
+        "r": "'caf\\xe9 \\\\par'"
+        "py": "'caf\\udce9 \\\\par'"
+- "id": ".decode_value_labels.invalid_utf8"
+  "r": "metacheck:::.decode_value_labels"
+  "py": "pytacheck.datacheck.columns._decode_value_labels"
+  "args":
+    "s":
+      "$expr":
+        "r": "'{\"1\": \"caf\\xe9\"}'"
+        "py": "'{\"1\": \"caf\\udce9\"}'"
 - "id": ".extract_markdown_codebook.multi"
   "r": "metacheck:::.extract_markdown_codebook"
   "py": "pytacheck.datacheck.columns._extract_markdown_codebook"
@@ -1670,6 +1770,55 @@
           \ 'sav')"
     "src": "dup_labels.sav"
     "group": "g1"
+- "id": ".scale_typo_of.int_1e5"
+  "r": "metacheck:::.scale_typo_of"
+  "py": "pytacheck.datacheck.columns._scale_typo_of"
+  "args":
+    "v": !!int "100000"
+    "lo": !!int "2"
+    "hi": !!int "6"
+- "id": ".scale_typo_of.dbl_1e5"
+  "r": "metacheck:::.scale_typo_of"
+  "py": "pytacheck.datacheck.columns._scale_typo_of"
+  "args":
+    "v": !!float "100000.0"
+    "lo": !!int "2"
+    "hi": !!int "6"
+- "id": ".scale_typo_of.int_neg"
+  "r": "metacheck:::.scale_typo_of"
+  "py": "pytacheck.datacheck.columns._scale_typo_of"
+  "args":
+    "v": !!int "-33"
+    "lo": !!int "-3"
+    "hi": !!int "3"
+- "id": ".scale_typo_of.int_big"
+  "r": "metacheck:::.scale_typo_of"
+  "py": "pytacheck.datacheck.columns._scale_typo_of"
+  "args":
+    "v": !!int "2147483647"
+    "lo": !!int "1"
+    "hi": !!int "7"
+- "id": ".scale_typo_of.dbl_1e15"
+  "r": "metacheck:::.scale_typo_of"
+  "py": "pytacheck.datacheck.columns._scale_typo_of"
+  "args":
+    "v": !!float "1000000000000000.0"
+    "lo": !!int "1"
+    "hi": !!int "7"
+- "id": ".scale_typo_of.dbl_neg_zero_range"
+  "r": "metacheck:::.scale_typo_of"
+  "py": "pytacheck.datacheck.columns._scale_typo_of"
+  "args":
+    "v": !!float "-0.0"
+    "lo": !!int "1"
+    "hi": !!int "7"
+- "id": ".scale_typo_of.dbl_half"
+  "r": "metacheck:::.scale_typo_of"
+  "py": "pytacheck.datacheck.columns._scale_typo_of"
+  "args":
+    "v": !!float "2.5"
+    "lo": !!int "3"
+    "hi": !!int "7"
 - "id": "match_column_labels.no_label_col"
   "r": "match_column_labels"
   "py": "pytacheck.datacheck.columns.match_column_labels"

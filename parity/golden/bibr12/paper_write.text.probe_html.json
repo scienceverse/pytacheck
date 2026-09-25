@@ -2,9 +2,7 @@
   "id": "paper_write.text.probe_html",
   "ok": true,
   "error": null,
-  "warnings": [
-    "path[1]=\"/tmp/Rtmpmffufb/pc_bibr12_32d949d2d30f\": No such file or directory"
-  ],
+  "warnings": [],
   "value": {
     "t": "chr",
     "v": [

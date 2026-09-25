@@ -2,9 +2,7 @@
   "id": "paper_write.default.probe_html",
   "ok": true,
   "error": null,
-  "warnings": [
-    "path[1]=\"/tmp/Rtmpmffufb/pc_bibr12_32d92776f9a\": No such file or directory"
-  ],
+  "warnings": [],
   "value": {
     "t": "list",
     "names": [

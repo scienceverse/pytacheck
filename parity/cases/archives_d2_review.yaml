@@ -476,6 +476,78 @@
       "$expr":
         "r": "testthat::with_mocked_bindings(reshare_info(NULL), online = function(...) TRUE, .package = \"metacheck\")"
         "py": "lambda m: m.reshare.reshare_info(None)"
+- "id": "dataone_info.review.empty_vector"
+  "r": "identity"
+  "py": "tests.archives_d2.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "testthat::with_mocked_bindings(dataone_info(character(0)), online = function(...) TRUE, .package = \"metacheck\")"
+        "py": "lambda m: m.dataone.dataone_info([])"
+- "id": "mendeley_info.review.empty_vector"
+  "r": "identity"
+  "py": "tests.archives_d2.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "testthat::with_mocked_bindings(mendeley_info(character(0)), online = function(...) TRUE, .package = \"metacheck\")"
+        "py": "lambda m: m.mendeley.mendeley_info([])"
+- "id": "reshare_info.review.empty_vector"
+  "r": "identity"
+  "py": "tests.archives_d2.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "testthat::with_mocked_bindings(reshare_info(character(0)), online = function(...) TRUE, .package = \"metacheck\")"
+        "py": "lambda m: m.reshare.reshare_info([])"
+- "id": "researchdata4tu_info.review.empty_vector"
+  "r": "identity"
+  "py": "tests.archives_d2.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "testthat::with_mocked_bindings(researchdata4tu_info(character(0)), online = function(...) TRUE, .package = \"metacheck\")"
+        "py": "lambda m: m.fourtu.researchdata4tu_info([])"
+- "id": "psycharchives_info.review.empty_vector"
+  "r": "identity"
+  "py": "tests.archives_d2.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "testthat::with_mocked_bindings(psycharchives_info(character(0)), online = function(...) TRUE, .package = \"metacheck\")"
+        "py": "lambda m: m.psycharchives.psycharchives_info([])"
+- "id": "rbox_info.review.empty_vector"
+  "r": "identity"
+  "py": "tests.archives_d2.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "testthat::with_mocked_bindings(rbox_info(character(0)), online = function(...) TRUE, .package = \"metacheck\")"
+        "py": "lambda m: m.researchbox.rbox_info([])"
+- "id": "fsd_info.review.empty_vector"
+  "r": "identity"
+  "py": "tests.archives_d2.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "testthat::with_mocked_bindings(fsd_info(character(0)), online = function(...) TRUE, .package = \"metacheck\")"
+        "py": "lambda m: m.fsd.fsd_info([])"
+- "id": "reshare_file_download.review.all_na"
+  "r": "identity"
+  "py": "tests.archives_d2.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "reshare_file_download(c(NA, NA))"
+        "py": "lambda m: m.reshare.reshare_file_download([None, None])"
+- "id": "researchdata4tu_file_download.review.all_na"
+  "r": "identity"
+  "py": "tests.archives_d2.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "researchdata4tu_file_download(c(NA, NA))"
+        "py": "lambda m: m.fourtu.researchdata4tu_file_download([None, None])"
 - "id": ".psycharchives_info.review.json_904"
   "r": "identity"
   "py": "tests.archives_d2.parity_support.run"

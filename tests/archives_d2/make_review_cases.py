@@ -786,6 +786,30 @@ for fn, mod in (("mendeley_info", "mendeley"), ("reshare_info", "reshare")):
         f"{fn}.review.null_error", online(f"{fn}(NULL)"), f"lambda m: m.{mod}.{fn}(None)", None
     )
 
+# an empty vector: a zero-row table that keeps R's columns
+for fn, mod in (
+    ("dataone_info", "dataone"),
+    ("mendeley_info", "mendeley"),
+    ("reshare_info", "reshare"),
+    ("researchdata4tu_info", "fourtu"),
+    ("psycharchives_info", "psycharchives"),
+    ("rbox_info", "researchbox"),
+    ("fsd_info", "fsd"),
+):
+    expr_case(
+        f"{fn}.review.empty_vector",
+        online(f"{fn}(character(0))"),
+        f"lambda m: m.{mod}.{fn}([])",
+        None,
+    )
+for fn, mod in (
+    ("reshare_file_download", "reshare"),
+    ("researchdata4tu_file_download", "fourtu"),
+):
+    expr_case(
+        f"{fn}.review.all_na", f"{fn}(c(NA, NA))", f"lambda m: m.{mod}.{fn}([None, None])", None
+    )
+
 # JSON read as httr2 + jsonlite read it (see the mocks)
 for handle in ("904", "905", "906", "907", "909"):
     expr_case(

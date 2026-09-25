@@ -1,5 +1,5 @@
 # bibr export schema 12.x: read and write natively (R/import-bibr12.R; metacheck PR #423).
-# Generated goldens: python -m parity generate --area bibr12
+# Written by tests/bibr12/gen_parity_cases.py; goldens: python -m parity generate --area bibr12
 #
 # Fixtures: metacheck's tests/testthat/fixtures/bibr12 exports (PMC4383902, full, preprint,
 # probe_docx, probe_html) and pytacheck's tests/fixtures/bibr_v12_full.json (= full.json) and
@@ -49,11 +49,11 @@ cases:
   "args":
     "file_path": {"$file": "upstream/metacheck/tests/testthat/fixtures/bibr12/probe_docx.json"}
     "include_images": true
-- "id": ".read_bibr12.preprint"
+- "id": ".read_bibr12.probe_html"
   "r": "metacheck:::.read_bibr12"
   "py": "pytacheck.io.bibr12.read_bibr12"
   "args":
-    "file_path": {"$file": "upstream/metacheck/tests/testthat/fixtures/bibr12/preprint.json"}
+    "file_path": {"$file": "upstream/metacheck/tests/testthat/fixtures/bibr12/probe_html.json"}
 - "id": ".read_bibr.full"
   "r": "metacheck:::.read_bibr"
   "py": "pytacheck.papers.io.read_bibr"
@@ -63,7 +63,7 @@ cases:
   "r": "read"
   "py": "pytacheck.read"
   "args":
-    "file_path": {"$expr": {"r": "c('upstream/metacheck/tests/testthat/fixtures/bibr12/PMC4383902.json', 'upstream/metacheck/tests/testthat/fixtures/bibr12/full.json', 'upstream/metacheck/tests/testthat/fixtures/bibr12/preprint.json', 'upstream/metacheck/tests/testthat/fixtures/bibr12/probe_html.json', 'tests/fixtures/bibr_v12_inspect.json')", "py": "[__import__('tests.bibr12._parity_helpers', fromlist=['x'])._path('upstream/metacheck/tests/testthat/fixtures/bibr12/PMC4383902.json'), __import__('tests.bibr12._parity_helpers', fromlist=['x'])._path('upstream/metacheck/tests/testthat/fixtures/bibr12/full.json'), __import__('tests.bibr12._parity_helpers', fromlist=['x'])._path('upstream/metacheck/tests/testthat/fixtures/bibr12/preprint.json'), __import__('tests.bibr12._parity_helpers', fromlist=['x'])._path('upstream/metacheck/tests/testthat/fixtures/bibr12/probe_html.json'), __import__('tests.bibr12._parity_helpers', fromlist=['x'])._path('tests/fixtures/bibr_v12_inspect.json')]"}}
+    "file_path": {"$expr": {"r": "c('upstream/metacheck/tests/testthat/fixtures/bibr12/full.json', 'upstream/metacheck/tests/testthat/fixtures/bibr12/probe_html.json', 'tests/fixtures/bibr_v12_inspect.json')", "py": "[__import__('tests.bibr12._parity_helpers', fromlist=['x'])._path('upstream/metacheck/tests/testthat/fixtures/bibr12/full.json'), __import__('tests.bibr12._parity_helpers', fromlist=['x'])._path('upstream/metacheck/tests/testthat/fixtures/bibr12/probe_html.json'), __import__('tests.bibr12._parity_helpers', fromlist=['x'])._path('tests/fixtures/bibr_v12_inspect.json')]"}}
 # schema versions: a later 12.x reads (unknown keys ignored); 11.x, 13.x and non-12 versions stop
 - "id": "read.later_12x"
   "r": "read"
@@ -554,134 +554,128 @@ cases:
   "r": "identity"
   "py": "tests.bibr12._parity_helpers.identity"
   "args":
-    "x": {"$expr": {"r": "local({f <- paper_write(read('upstream/metacheck/tests/testthat/fixtures/bibr12/PMC4383902.json'), NULL, save_path = tempfile('pc_bibr12_'), schema_version = '12.0'); x <- readLines(f, encoding = 'UTF-8'); i <- which(trimws(x) == '\"converter\": {'); x[i + 1] <- '<converter name>'; x[i + 2] <- '<converter version>'; x})", "py": "__import__('tests.bibr12._parity_helpers', fromlist=['x']).written_lines(pc.read(__import__('tests.bibr12._parity_helpers', fromlist=['x'])._path('upstream/metacheck/tests/testthat/fixtures/bibr12/PMC4383902.json')), None)"}}
+    "x": {"$expr": {"r": "local({f <- paper_write(read('upstream/metacheck/tests/testthat/fixtures/bibr12/PMC4383902.json'), NULL, save_path = local({d <- tempfile('pc_bibr12_'); dir.create(d); d}), schema_version = '12.0'); x <- readLines(f, encoding = 'UTF-8'); i <- which(trimws(x) == '\"converter\": {'); x[i + 1] <- '<converter name>'; x[i + 2] <- '<converter version>'; x})", "py": "__import__('tests.bibr12._parity_helpers', fromlist=['x']).written_lines(pc.read(__import__('tests.bibr12._parity_helpers', fromlist=['x'])._path('upstream/metacheck/tests/testthat/fixtures/bibr12/PMC4383902.json')), None)"}}
 - "id": "paper_write.text.full"
   "r": "identity"
   "py": "tests.bibr12._parity_helpers.identity"
   "args":
-    "x": {"$expr": {"r": "local({f <- paper_write(read('upstream/metacheck/tests/testthat/fixtures/bibr12/full.json'), NULL, save_path = tempfile('pc_bibr12_'), schema_version = '12.0'); x <- readLines(f, encoding = 'UTF-8'); i <- which(trimws(x) == '\"converter\": {'); x[i + 1] <- '<converter name>'; x[i + 2] <- '<converter version>'; x})", "py": "__import__('tests.bibr12._parity_helpers', fromlist=['x']).written_lines(pc.read(__import__('tests.bibr12._parity_helpers', fromlist=['x'])._path('upstream/metacheck/tests/testthat/fixtures/bibr12/full.json')), None)"}}
+    "x": {"$expr": {"r": "local({f <- paper_write(read('upstream/metacheck/tests/testthat/fixtures/bibr12/full.json'), NULL, save_path = local({d <- tempfile('pc_bibr12_'); dir.create(d); d}), schema_version = '12.0'); x <- readLines(f, encoding = 'UTF-8'); i <- which(trimws(x) == '\"converter\": {'); x[i + 1] <- '<converter name>'; x[i + 2] <- '<converter version>'; x})", "py": "__import__('tests.bibr12._parity_helpers', fromlist=['x']).written_lines(pc.read(__import__('tests.bibr12._parity_helpers', fromlist=['x'])._path('upstream/metacheck/tests/testthat/fixtures/bibr12/full.json')), None)"}}
 - "id": "paper_write.text.preprint"
   "r": "identity"
   "py": "tests.bibr12._parity_helpers.identity"
   "args":
-    "x": {"$expr": {"r": "local({f <- paper_write(read('upstream/metacheck/tests/testthat/fixtures/bibr12/preprint.json'), NULL, save_path = tempfile('pc_bibr12_'), schema_version = '12.0'); x <- readLines(f, encoding = 'UTF-8'); i <- which(trimws(x) == '\"converter\": {'); x[i + 1] <- '<converter name>'; x[i + 2] <- '<converter version>'; x})", "py": "__import__('tests.bibr12._parity_helpers', fromlist=['x']).written_lines(pc.read(__import__('tests.bibr12._parity_helpers', fromlist=['x'])._path('upstream/metacheck/tests/testthat/fixtures/bibr12/preprint.json')), None)"}}
+    "x": {"$expr": {"r": "local({f <- paper_write(read('upstream/metacheck/tests/testthat/fixtures/bibr12/preprint.json'), NULL, save_path = local({d <- tempfile('pc_bibr12_'); dir.create(d); d}), schema_version = '12.0'); x <- readLines(f, encoding = 'UTF-8'); i <- which(trimws(x) == '\"converter\": {'); x[i + 1] <- '<converter name>'; x[i + 2] <- '<converter version>'; x})", "py": "__import__('tests.bibr12._parity_helpers', fromlist=['x']).written_lines(pc.read(__import__('tests.bibr12._parity_helpers', fromlist=['x'])._path('upstream/metacheck/tests/testthat/fixtures/bibr12/preprint.json')), None)"}}
 - "id": "paper_write.text.probe_docx"
   "r": "identity"
   "py": "tests.bibr12._parity_helpers.identity"
   "args":
-    "x": {"$expr": {"r": "local({f <- paper_write(read('upstream/metacheck/tests/testthat/fixtures/bibr12/probe_docx.json'), NULL, save_path = tempfile('pc_bibr12_'), schema_version = '12.0'); x <- readLines(f, encoding = 'UTF-8'); i <- which(trimws(x) == '\"converter\": {'); x[i + 1] <- '<converter name>'; x[i + 2] <- '<converter version>'; x})", "py": "__import__('tests.bibr12._parity_helpers', fromlist=['x']).written_lines(pc.read(__import__('tests.bibr12._parity_helpers', fromlist=['x'])._path('upstream/metacheck/tests/testthat/fixtures/bibr12/probe_docx.json')), None)"}}
+    "x": {"$expr": {"r": "local({f <- paper_write(read('upstream/metacheck/tests/testthat/fixtures/bibr12/probe_docx.json'), NULL, save_path = local({d <- tempfile('pc_bibr12_'); dir.create(d); d}), schema_version = '12.0'); x <- readLines(f, encoding = 'UTF-8'); i <- which(trimws(x) == '\"converter\": {'); x[i + 1] <- '<converter name>'; x[i + 2] <- '<converter version>'; x})", "py": "__import__('tests.bibr12._parity_helpers', fromlist=['x']).written_lines(pc.read(__import__('tests.bibr12._parity_helpers', fromlist=['x'])._path('upstream/metacheck/tests/testthat/fixtures/bibr12/probe_docx.json')), None)"}}
 - "id": "paper_write.text.probe_html"
   "r": "identity"
   "py": "tests.bibr12._parity_helpers.identity"
   "args":
-    "x": {"$expr": {"r": "local({f <- paper_write(read('upstream/metacheck/tests/testthat/fixtures/bibr12/probe_html.json'), NULL, save_path = tempfile('pc_bibr12_'), schema_version = '12.0'); x <- readLines(f, encoding = 'UTF-8'); i <- which(trimws(x) == '\"converter\": {'); x[i + 1] <- '<converter name>'; x[i + 2] <- '<converter version>'; x})", "py": "__import__('tests.bibr12._parity_helpers', fromlist=['x']).written_lines(pc.read(__import__('tests.bibr12._parity_helpers', fromlist=['x'])._path('upstream/metacheck/tests/testthat/fixtures/bibr12/probe_html.json')), None)"}}
+    "x": {"$expr": {"r": "local({f <- paper_write(read('upstream/metacheck/tests/testthat/fixtures/bibr12/probe_html.json'), NULL, save_path = local({d <- tempfile('pc_bibr12_'); dir.create(d); d}), schema_version = '12.0'); x <- readLines(f, encoding = 'UTF-8'); i <- which(trimws(x) == '\"converter\": {'); x[i + 1] <- '<converter name>'; x[i + 2] <- '<converter version>'; x})", "py": "__import__('tests.bibr12._parity_helpers', fromlist=['x']).written_lines(pc.read(__import__('tests.bibr12._parity_helpers', fromlist=['x'])._path('upstream/metacheck/tests/testthat/fixtures/bibr12/probe_html.json')), None)"}}
 - "id": "paper_write.text.pyfull"
   "r": "identity"
   "py": "tests.bibr12._parity_helpers.identity"
   "args":
-    "x": {"$expr": {"r": "local({f <- paper_write(read('tests/fixtures/bibr_v12_full.json'), NULL, save_path = tempfile('pc_bibr12_'), schema_version = '12.0'); x <- readLines(f, encoding = 'UTF-8'); i <- which(trimws(x) == '\"converter\": {'); x[i + 1] <- '<converter name>'; x[i + 2] <- '<converter version>'; x})", "py": "__import__('tests.bibr12._parity_helpers', fromlist=['x']).written_lines(pc.read(__import__('tests.bibr12._parity_helpers', fromlist=['x'])._path('tests/fixtures/bibr_v12_full.json')), None)"}}
+    "x": {"$expr": {"r": "local({f <- paper_write(read('tests/fixtures/bibr_v12_full.json'), NULL, save_path = local({d <- tempfile('pc_bibr12_'); dir.create(d); d}), schema_version = '12.0'); x <- readLines(f, encoding = 'UTF-8'); i <- which(trimws(x) == '\"converter\": {'); x[i + 1] <- '<converter name>'; x[i + 2] <- '<converter version>'; x})", "py": "__import__('tests.bibr12._parity_helpers', fromlist=['x']).written_lines(pc.read(__import__('tests.bibr12._parity_helpers', fromlist=['x'])._path('tests/fixtures/bibr_v12_full.json')), None)"}}
 - "id": "paper_write.text.inspect"
   "r": "identity"
   "py": "tests.bibr12._parity_helpers.identity"
   "args":
-    "x": {"$expr": {"r": "local({f <- paper_write(read('tests/fixtures/bibr_v12_inspect.json'), 'inspect', save_path = tempfile('pc_bibr12_'), schema_version = '12.0'); x <- readLines(f, encoding = 'UTF-8'); i <- which(trimws(x) == '\"converter\": {'); x[i + 1] <- '<converter name>'; x[i + 2] <- '<converter version>'; x})", "py": "__import__('tests.bibr12._parity_helpers', fromlist=['x']).written_lines(pc.read(__import__('tests.bibr12._parity_helpers', fromlist=['x'])._path('tests/fixtures/bibr_v12_inspect.json')), 'inspect')"}}
+    "x": {"$expr": {"r": "local({f <- paper_write(read('tests/fixtures/bibr_v12_inspect.json'), 'inspect', save_path = local({d <- tempfile('pc_bibr12_'); dir.create(d); d}), schema_version = '12.0'); x <- readLines(f, encoding = 'UTF-8'); i <- which(trimws(x) == '\"converter\": {'); x[i + 1] <- '<converter name>'; x[i + 2] <- '<converter version>'; x})", "py": "__import__('tests.bibr12._parity_helpers', fromlist=['x']).written_lines(pc.read(__import__('tests.bibr12._parity_helpers', fromlist=['x'])._path('tests/fixtures/bibr_v12_inspect.json')), 'inspect')"}}
 - "id": "paper_write.text.probe_docx.images"
   "r": "identity"
   "py": "tests.bibr12._parity_helpers.identity"
   "args":
-    "x": {"$expr": {"r": "local({f <- paper_write(read('upstream/metacheck/tests/testthat/fixtures/bibr12/probe_docx.json', include_images = TRUE), NULL, save_path = tempfile('pc_bibr12_'), schema_version = '12.0'); x <- readLines(f, encoding = 'UTF-8'); i <- which(trimws(x) == '\"converter\": {'); x[i + 1] <- '<converter name>'; x[i + 2] <- '<converter version>'; x})", "py": "__import__('tests.bibr12._parity_helpers', fromlist=['x']).written_lines(pc.read(__import__('tests.bibr12._parity_helpers', fromlist=['x'])._path('upstream/metacheck/tests/testthat/fixtures/bibr12/probe_docx.json'), include_images=True), None)"}}
+    "x": {"$expr": {"r": "local({f <- paper_write(read('upstream/metacheck/tests/testthat/fixtures/bibr12/probe_docx.json', include_images = TRUE), NULL, save_path = local({d <- tempfile('pc_bibr12_'); dir.create(d); d}), schema_version = '12.0'); x <- readLines(f, encoding = 'UTF-8'); i <- which(trimws(x) == '\"converter\": {'); x[i + 1] <- '<converter name>'; x[i + 2] <- '<converter version>'; x})", "py": "__import__('tests.bibr12._parity_helpers', fromlist=['x']).written_lines(pc.read(__import__('tests.bibr12._parity_helpers', fromlist=['x'])._path('upstream/metacheck/tests/testthat/fixtures/bibr12/probe_docx.json'), include_images=True), None)"}}
 # ... and read back: the same paper
 - "id": "paper_write.roundtrip.PMC4383902"
   "r": "identity"
   "py": "tests.bibr12._parity_helpers.identity"
   "args":
-    "x": {"$expr": {"r": "read(paper_write(read('upstream/metacheck/tests/testthat/fixtures/bibr12/PMC4383902.json'), NULL, save_path = tempfile('pc_bibr12_'), schema_version = '12.0'))", "py": "__import__('tests.bibr12._parity_helpers', fromlist=['x']).write_read(pc.read(__import__('tests.bibr12._parity_helpers', fromlist=['x'])._path('upstream/metacheck/tests/testthat/fixtures/bibr12/PMC4383902.json')), None)"}}
+    "x": {"$expr": {"r": "read(paper_write(read('upstream/metacheck/tests/testthat/fixtures/bibr12/PMC4383902.json'), NULL, save_path = local({d <- tempfile('pc_bibr12_'); dir.create(d); d}), schema_version = '12.0'))", "py": "__import__('tests.bibr12._parity_helpers', fromlist=['x']).write_read(pc.read(__import__('tests.bibr12._parity_helpers', fromlist=['x'])._path('upstream/metacheck/tests/testthat/fixtures/bibr12/PMC4383902.json')), None)"}}
   "compare": {"ignore": ["extraction.converter"]}
 - "id": "paper_write.roundtrip.full"
   "r": "identity"
   "py": "tests.bibr12._parity_helpers.identity"
   "args":
-    "x": {"$expr": {"r": "read(paper_write(read('upstream/metacheck/tests/testthat/fixtures/bibr12/full.json'), NULL, save_path = tempfile('pc_bibr12_'), schema_version = '12.0'))", "py": "__import__('tests.bibr12._parity_helpers', fromlist=['x']).write_read(pc.read(__import__('tests.bibr12._parity_helpers', fromlist=['x'])._path('upstream/metacheck/tests/testthat/fixtures/bibr12/full.json')), None)"}}
-  "compare": {"ignore": ["extraction.converter"]}
-- "id": "paper_write.roundtrip.preprint"
-  "r": "identity"
-  "py": "tests.bibr12._parity_helpers.identity"
-  "args":
-    "x": {"$expr": {"r": "read(paper_write(read('upstream/metacheck/tests/testthat/fixtures/bibr12/preprint.json'), NULL, save_path = tempfile('pc_bibr12_'), schema_version = '12.0'))", "py": "__import__('tests.bibr12._parity_helpers', fromlist=['x']).write_read(pc.read(__import__('tests.bibr12._parity_helpers', fromlist=['x'])._path('upstream/metacheck/tests/testthat/fixtures/bibr12/preprint.json')), None)"}}
+    "x": {"$expr": {"r": "read(paper_write(read('upstream/metacheck/tests/testthat/fixtures/bibr12/full.json'), NULL, save_path = local({d <- tempfile('pc_bibr12_'); dir.create(d); d}), schema_version = '12.0'))", "py": "__import__('tests.bibr12._parity_helpers', fromlist=['x']).write_read(pc.read(__import__('tests.bibr12._parity_helpers', fromlist=['x'])._path('upstream/metacheck/tests/testthat/fixtures/bibr12/full.json')), None)"}}
   "compare": {"ignore": ["extraction.converter"]}
 - "id": "paper_write.roundtrip.probe_docx"
   "r": "identity"
   "py": "tests.bibr12._parity_helpers.identity"
   "args":
-    "x": {"$expr": {"r": "read(paper_write(read('upstream/metacheck/tests/testthat/fixtures/bibr12/probe_docx.json'), NULL, save_path = tempfile('pc_bibr12_'), schema_version = '12.0'))", "py": "__import__('tests.bibr12._parity_helpers', fromlist=['x']).write_read(pc.read(__import__('tests.bibr12._parity_helpers', fromlist=['x'])._path('upstream/metacheck/tests/testthat/fixtures/bibr12/probe_docx.json')), None)"}}
+    "x": {"$expr": {"r": "read(paper_write(read('upstream/metacheck/tests/testthat/fixtures/bibr12/probe_docx.json'), NULL, save_path = local({d <- tempfile('pc_bibr12_'); dir.create(d); d}), schema_version = '12.0'))", "py": "__import__('tests.bibr12._parity_helpers', fromlist=['x']).write_read(pc.read(__import__('tests.bibr12._parity_helpers', fromlist=['x'])._path('upstream/metacheck/tests/testthat/fixtures/bibr12/probe_docx.json')), None)"}}
   "compare": {"ignore": ["extraction.converter"]}
 - "id": "paper_write.roundtrip.probe_html"
   "r": "identity"
   "py": "tests.bibr12._parity_helpers.identity"
   "args":
-    "x": {"$expr": {"r": "read(paper_write(read('upstream/metacheck/tests/testthat/fixtures/bibr12/probe_html.json'), NULL, save_path = tempfile('pc_bibr12_'), schema_version = '12.0'))", "py": "__import__('tests.bibr12._parity_helpers', fromlist=['x']).write_read(pc.read(__import__('tests.bibr12._parity_helpers', fromlist=['x'])._path('upstream/metacheck/tests/testthat/fixtures/bibr12/probe_html.json')), None)"}}
+    "x": {"$expr": {"r": "read(paper_write(read('upstream/metacheck/tests/testthat/fixtures/bibr12/probe_html.json'), NULL, save_path = local({d <- tempfile('pc_bibr12_'); dir.create(d); d}), schema_version = '12.0'))", "py": "__import__('tests.bibr12._parity_helpers', fromlist=['x']).write_read(pc.read(__import__('tests.bibr12._parity_helpers', fromlist=['x'])._path('upstream/metacheck/tests/testthat/fixtures/bibr12/probe_html.json')), None)"}}
   "compare": {"ignore": ["extraction.converter"]}
 - "id": "paper_write.roundtrip.pyfull"
   "r": "identity"
   "py": "tests.bibr12._parity_helpers.identity"
   "args":
-    "x": {"$expr": {"r": "read(paper_write(read('tests/fixtures/bibr_v12_full.json'), NULL, save_path = tempfile('pc_bibr12_'), schema_version = '12.0'))", "py": "__import__('tests.bibr12._parity_helpers', fromlist=['x']).write_read(pc.read(__import__('tests.bibr12._parity_helpers', fromlist=['x'])._path('tests/fixtures/bibr_v12_full.json')), None)"}}
+    "x": {"$expr": {"r": "read(paper_write(read('tests/fixtures/bibr_v12_full.json'), NULL, save_path = local({d <- tempfile('pc_bibr12_'); dir.create(d); d}), schema_version = '12.0'))", "py": "__import__('tests.bibr12._parity_helpers', fromlist=['x']).write_read(pc.read(__import__('tests.bibr12._parity_helpers', fromlist=['x'])._path('tests/fixtures/bibr_v12_full.json')), None)"}}
   "compare": {"ignore": ["extraction.converter"]}
 - "id": "paper_write.roundtrip.inspect"
   "r": "identity"
   "py": "tests.bibr12._parity_helpers.identity"
   "args":
-    "x": {"$expr": {"r": "read(paper_write(read('tests/fixtures/bibr_v12_inspect.json'), 'inspect', save_path = tempfile('pc_bibr12_'), schema_version = '12.0'))", "py": "__import__('tests.bibr12._parity_helpers', fromlist=['x']).write_read(pc.read(__import__('tests.bibr12._parity_helpers', fromlist=['x'])._path('tests/fixtures/bibr_v12_inspect.json')), 'inspect')"}}
+    "x": {"$expr": {"r": "read(paper_write(read('tests/fixtures/bibr_v12_inspect.json'), 'inspect', save_path = local({d <- tempfile('pc_bibr12_'); dir.create(d); d}), schema_version = '12.0'))", "py": "__import__('tests.bibr12._parity_helpers', fromlist=['x']).write_read(pc.read(__import__('tests.bibr12._parity_helpers', fromlist=['x'])._path('tests/fixtures/bibr_v12_inspect.json')), 'inspect')"}}
   "compare": {"ignore": ["extraction.converter"]}
 - "id": "paper_write.roundtrip.probe_docx.images"
   "r": "identity"
   "py": "tests.bibr12._parity_helpers.identity"
   "args":
-    "x": {"$expr": {"r": "read(paper_write(read('upstream/metacheck/tests/testthat/fixtures/bibr12/probe_docx.json', include_images = TRUE), NULL, save_path = tempfile('pc_bibr12_'), schema_version = '12.0'))", "py": "__import__('tests.bibr12._parity_helpers', fromlist=['x']).write_read(pc.read(__import__('tests.bibr12._parity_helpers', fromlist=['x'])._path('upstream/metacheck/tests/testthat/fixtures/bibr12/probe_docx.json'), include_images=True), None)"}}
+    "x": {"$expr": {"r": "read(paper_write(read('upstream/metacheck/tests/testthat/fixtures/bibr12/probe_docx.json', include_images = TRUE), NULL, save_path = local({d <- tempfile('pc_bibr12_'); dir.create(d); d}), schema_version = '12.0'))", "py": "__import__('tests.bibr12._parity_helpers', fromlist=['x']).write_read(pc.read(__import__('tests.bibr12._parity_helpers', fromlist=['x'])._path('upstream/metacheck/tests/testthat/fixtures/bibr12/probe_docx.json'), include_images=True), None)"}}
   "compare": {"ignore": ["extraction.converter"]}
 # match rows made by add_bib_match() are converted to 12.0 columns
 - "id": "paper_write.text.add_bib_match"
   "r": "identity"
   "py": "tests.bibr12._parity_helpers.identity"
   "args":
-    "x": {"$expr": {"r": "local({f <- paper_write(local({p <- read('upstream/metacheck/tests/testthat/fixtures/bibr12/full.json'); p$bib_match <- data.frame(bib_id = 1L, service = 'crossref', service_id = NA_character_, score = 61.7, bib_type = 'article', doi = '10.1234/PRIOR', title = 'A Prior Study', publisher = NA_character_, year = 2020L, date = NA_character_, container = 'Journal of Things'); p$bib_match$authors <- list(data.frame(given = 'Jane', family = 'Smith')); p$bib_match$editors <- list(data.frame(given = character(0), family = character(0))); p}), NULL, save_path = tempfile('pc_bibr12_'), schema_version = '12.0'); x <- readLines(f, encoding = 'UTF-8'); i <- which(trimws(x) == '\"converter\": {'); x[i + 1] <- '<converter name>'; x[i + 2] <- '<converter version>'; x})", "py": "__import__('tests.bibr12._parity_helpers', fromlist=['x']).written_lines(__import__('tests.bibr12._parity_helpers', fromlist=['x']).add_bib_match_rows(), None)"}}
+    "x": {"$expr": {"r": "local({f <- paper_write(local({p <- read('upstream/metacheck/tests/testthat/fixtures/bibr12/full.json'); p$bib_match <- data.frame(bib_id = 1L, service = 'crossref', service_id = NA_character_, score = 61.7, bib_type = 'article', doi = '10.1234/PRIOR', title = 'A Prior Study', publisher = NA_character_, year = 2020L, date = NA_character_, container = 'Journal of Things'); p$bib_match$authors <- list(data.frame(given = 'Jane', family = 'Smith')); p$bib_match$editors <- list(data.frame(given = character(0), family = character(0))); p}), NULL, save_path = local({d <- tempfile('pc_bibr12_'); dir.create(d); d}), schema_version = '12.0'); x <- readLines(f, encoding = 'UTF-8'); i <- which(trimws(x) == '\"converter\": {'); x[i + 1] <- '<converter name>'; x[i + 2] <- '<converter version>'; x})", "py": "__import__('tests.bibr12._parity_helpers', fromlist=['x']).written_lines(__import__('tests.bibr12._parity_helpers', fromlist=['x']).add_bib_match_rows(), None)"}}
 - "id": "paper_write.text.match_variants"
   "r": "identity"
   "py": "tests.bibr12._parity_helpers.identity"
   "args":
-    "x": {"$expr": {"r": "local({f <- paper_write(local({p <- read('upstream/metacheck/tests/testthat/fixtures/bibr12/full.json'); p$bib_match <- data.frame(bib_id = c(1L, 1L, 1L, 1L), service = c('crossref', 'pubmed', NA, 'ror'), score = c(0.5, -1, 100, NA), bib_type = c('inproceedings', 'posted-content', 'weird', NA), doi = c(' https://doi.org/10.1234/ABC ', 'doi: 10.5555/x.y', 'not a doi', NA), title = c('A', 'B', 'C', 'D'), year = c(2020L, NA, 2021L, 2022L), date = c('2020-05', 'May 2020', NA, '2022-01-02')); p$bib_match$authors <- list(data.frame(given = c('Jane', NA), family = c('Smith', 'Doe')), NULL, data.frame(given = character(0), family = character(0)), data.frame(given = NA_character_, family = NA_character_)); p$info_match$score <- 99; p}), NULL, save_path = tempfile('pc_bibr12_'), schema_version = '12.0'); x <- readLines(f, encoding = 'UTF-8'); i <- which(trimws(x) == '\"converter\": {'); x[i + 1] <- '<converter name>'; x[i + 2] <- '<converter version>'; x})", "py": "__import__('tests.bibr12._parity_helpers', fromlist=['x']).written_lines(__import__('tests.bibr12._parity_helpers', fromlist=['x']).match_rows_variants(), None)"}}
+    "x": {"$expr": {"r": "local({f <- paper_write(local({p <- read('upstream/metacheck/tests/testthat/fixtures/bibr12/full.json'); p$bib_match <- data.frame(bib_id = c(1L, 1L, 1L, 1L), service = c('crossref', 'pubmed', NA, 'ror'), score = c(0.5, -1, 100, NA), bib_type = c('inproceedings', 'posted-content', 'weird', NA), doi = c(' https://doi.org/10.1234/ABC ', 'doi: 10.5555/x.y', 'not a doi', NA), title = c('A', 'B', 'C', 'D'), year = c(2020L, NA, 2021L, 2022L), date = c('2020-05', 'May 2020', NA, '2022-01-02')); p$bib_match$authors <- list(data.frame(given = c('Jane', NA), family = c('Smith', 'Doe')), NULL, data.frame(given = character(0), family = character(0)), data.frame(given = NA_character_, family = NA_character_)); p$info_match$score <- 99; p}), NULL, save_path = local({d <- tempfile('pc_bibr12_'); dir.create(d); d}), schema_version = '12.0'); x <- readLines(f, encoding = 'UTF-8'); i <- which(trimws(x) == '\"converter\": {'); x[i + 1] <- '<converter name>'; x[i + 2] <- '<converter version>'; x})", "py": "__import__('tests.bibr12._parity_helpers', fromlist=['x']).written_lines(__import__('tests.bibr12._parity_helpers', fromlist=['x']).match_rows_variants(), None)"}}
 # paper_write() without schema_version (R's default; pytacheck's schema_version=None) saves the paper object
 - "id": "paper_write.default.probe_html"
   "r": "identity"
   "py": "tests.bibr12._parity_helpers.identity"
   "args":
-    "x": {"$expr": {"r": "local({p <- read('upstream/metacheck/tests/testthat/fixtures/bibr12/probe_html.json'); f <- paper_write(p, save_path = tempfile('pc_bibr12_')); json <- jsonlite::read_json(f); list(names = names(json), title = json$info[[1]]$title, schema_version = json$schema_version)})", "py": "__import__('tests.bibr12._parity_helpers', fromlist=['x']).legacy_summary(pc.read(__import__('tests.bibr12._parity_helpers', fromlist=['x'])._path('upstream/metacheck/tests/testthat/fixtures/bibr12/probe_html.json')))"}}
+    "x": {"$expr": {"r": "local({p <- read('upstream/metacheck/tests/testthat/fixtures/bibr12/probe_html.json'); f <- paper_write(p, save_path = local({d <- tempfile('pc_bibr12_'); dir.create(d); d})); json <- jsonlite::read_json(f); list(names = names(json), title = json$info[[1]]$title, schema_version = json$schema_version)})", "py": "__import__('tests.bibr12._parity_helpers', fromlist=['x']).legacy_summary(pc.read(__import__('tests.bibr12._parity_helpers', fromlist=['x'])._path('upstream/metacheck/tests/testthat/fixtures/bibr12/probe_html.json')))"}}
 - "id": "paper_write.paperlist"
   "r": "identity"
   "py": "tests.bibr12._parity_helpers.identity"
   "args":
-    "x": {"$expr": {"r": "unname(basename(paper_write(read(c('upstream/metacheck/tests/testthat/fixtures/bibr12/full.json', 'upstream/metacheck/tests/testthat/fixtures/bibr12/preprint.json')), save_path = tempfile('pc_bibr12_'), schema_version = '12.0')))", "py": "__import__('tests.bibr12._parity_helpers', fromlist=['x']).paperlist_write(['upstream/metacheck/tests/testthat/fixtures/bibr12/full.json', 'upstream/metacheck/tests/testthat/fixtures/bibr12/preprint.json'])"}}
+    "x": {"$expr": {"r": "unname(basename(paper_write(read(c('upstream/metacheck/tests/testthat/fixtures/bibr12/full.json', 'upstream/metacheck/tests/testthat/fixtures/bibr12/preprint.json')), save_path = local({d <- tempfile('pc_bibr12_'); dir.create(d); d}), schema_version = '12.0')))", "py": "__import__('tests.bibr12._parity_helpers', fromlist=['x']).paperlist_write(['upstream/metacheck/tests/testthat/fixtures/bibr12/full.json', 'upstream/metacheck/tests/testthat/fixtures/bibr12/preprint.json'])"}}
 # refusals: an older paper, a later 12.x paper, an unknown schema_version
 - "id": "paper_write.error.older_format"
   "r": "paper_write"
   "py": "pytacheck.paper_write"
   "args":
     "paper": {"$paper": "demo"}
-    "save_path": {"$expr": {"r": "tempfile('pc_bibr12_')", "py": "str(__import__('tests.bibr12._parity_helpers', fromlist=['x'])._tempdir())"}}
+    "save_path": {"$expr": {"r": "local({d <- tempfile('pc_bibr12_'); dir.create(d); d})", "py": "str(__import__('tests.bibr12._parity_helpers', fromlist=['x'])._tempdir())"}}
     "schema_version": "12.0"
 - "id": "paper_write.error.later_12x"
   "r": "paper_write"
   "py": "pytacheck.paper_write"
   "args":
     "paper": {"$expr": {"r": "local({p <- read('upstream/metacheck/tests/testthat/fixtures/bibr12/probe_html.json'); p$info$schema_version <- '12.1'; p})", "py": "__import__('tests.bibr12._parity_helpers', fromlist=['x']).with_schema_version('upstream/metacheck/tests/testthat/fixtures/bibr12/probe_html.json', '12.1')"}}
-    "save_path": {"$expr": {"r": "tempfile('pc_bibr12_')", "py": "str(__import__('tests.bibr12._parity_helpers', fromlist=['x'])._tempdir())"}}
+    "save_path": {"$expr": {"r": "local({d <- tempfile('pc_bibr12_'); dir.create(d); d})", "py": "str(__import__('tests.bibr12._parity_helpers', fromlist=['x'])._tempdir())"}}
     "schema_version": "12.0"
 - "id": "paper_write.error.version"
   "r": "paper_write"
   "py": "pytacheck.paper_write"
   "args":
     "paper": {"$paper": "upstream/metacheck/tests/testthat/fixtures/bibr12/probe_html.json"}
-    "save_path": {"$expr": {"r": "tempfile('pc_bibr12_')", "py": "str(__import__('tests.bibr12._parity_helpers', fromlist=['x'])._tempdir())"}}
+    "save_path": {"$expr": {"r": "local({d <- tempfile('pc_bibr12_'); dir.create(d); d})", "py": "str(__import__('tests.bibr12._parity_helpers', fromlist=['x'])._tempdir())"}}
     "schema_version": "11.0"
 # .table_tests(): 12.x tables use their own caption (not the text of their section)
 - "id": ".table_tests.full"
@@ -714,6 +708,32 @@ cases:
   "py": "pytacheck.statout.match_table._table_tests"
   "args":
     "paper": {"$expr": {"r": "local({p <- read('upstream/metacheck/tests/testthat/fixtures/bibr12/full.json'); p$table$contents <- list(list(c('', '1.', '2.'), c('1. Anxiety', '-', ''), c('2. Depression', '.45*', '-'))); p$table$caption <- 'Table 1. Correlations between measures'; p$info$schema_version <- NA_character_; p})", "py": "__import__('tests.bibr12._parity_helpers', fromlist=['x']).correlation_table(None)"}}
+# match_reported_output(include_tables = TRUE): a 12.x table's caption names its statistics
+- "id": "match_reported_output.descriptive_caption"
+  "r": "identity"
+  "py": "tests.bibr12._parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "metacheck::match_reported_output(local({p <- read('upstream/metacheck/tests/testthat/fixtures/bibr12/full.json'); p$table$contents <- list(list(c('', '1', '2'), c('Condition A', '1.93', '-0.15'))); p$table$caption <- 'Table 1. Descriptive statistics'; p}), metacheck::stat_results_long(metacheck::read_stat_tables('upstream/metacheck/tests/testthat/fixtures/formats/sample.jasp'), source_file = 'sample.jasp'), include_tables = TRUE, min_components = 1L)", "py": "__import__('tests.bibr12._parity_helpers', fromlist=['x']).match_jasp(__import__('tests.bibr12._parity_helpers', fromlist=['x']).descriptive_table())"}}
+- "id": "match_reported_output.descriptive_caption.summary"
+  "r": "identity"
+  "py": "tests.bibr12._parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "attr(metacheck::match_reported_output(local({p <- read('upstream/metacheck/tests/testthat/fixtures/bibr12/full.json'); p$table$contents <- list(list(c('', '1', '2'), c('Condition A', '1.93', '-0.15'))); p$table$caption <- 'Table 1. Descriptive statistics'; p}), metacheck::stat_results_long(metacheck::read_stat_tables('upstream/metacheck/tests/testthat/fixtures/formats/sample.jasp'), source_file = 'sample.jasp'), include_tables = TRUE, min_components = 1L), 'summary')", "py": "__import__('tests.bibr12._parity_helpers', fromlist=['x']).match_jasp(__import__('tests.bibr12._parity_helpers', fromlist=['x']).descriptive_table(), 'summary')"}}
+- "id": "match_reported_output.descriptive_caption.older"
+  "r": "identity"
+  "py": "tests.bibr12._parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "metacheck::match_reported_output(local({p <- read('upstream/metacheck/tests/testthat/fixtures/bibr12/full.json'); p$table$contents <- list(list(c('', '1', '2'), c('Condition A', '1.93', '-0.15'))); p$table$caption <- 'Table 1. Descriptive statistics'; p$info$schema_version <- NA_character_; p}), metacheck::stat_results_long(metacheck::read_stat_tables('upstream/metacheck/tests/testthat/fixtures/formats/sample.jasp'), source_file = 'sample.jasp'), include_tables = TRUE, min_components = 1L)", "py": "__import__('tests.bibr12._parity_helpers', fromlist=['x']).match_jasp(__import__('tests.bibr12._parity_helpers', fromlist=['x']).descriptive_table(None))"}}
+- "id": "match_reported_output.descriptive_caption.older.summary"
+  "r": "identity"
+  "py": "tests.bibr12._parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "attr(metacheck::match_reported_output(local({p <- read('upstream/metacheck/tests/testthat/fixtures/bibr12/full.json'); p$table$contents <- list(list(c('', '1', '2'), c('Condition A', '1.93', '-0.15'))); p$table$caption <- 'Table 1. Descriptive statistics'; p$info$schema_version <- NA_character_; p}), metacheck::stat_results_long(metacheck::read_stat_tables('upstream/metacheck/tests/testthat/fixtures/formats/sample.jasp'), source_file = 'sample.jasp'), include_tables = TRUE, min_components = 1L), 'summary')", "py": "__import__('tests.bibr12._parity_helpers', fromlist=['x']).match_jasp(__import__('tests.bibr12._parity_helpers', fromlist=['x']).descriptive_table(None), 'summary')"}}
+- "id": ".table_tests.descriptive_caption"
+  "r": "metacheck:::.table_tests"
+  "py": "pytacheck.statout.match_table._table_tests"
+  "args":
+    "paper": {"$expr": {"r": "local({p <- read('upstream/metacheck/tests/testthat/fixtures/bibr12/full.json'); p$table$contents <- list(list(c('', '1', '2'), c('Condition A', '1.93', '-0.15'))); p$table$caption <- 'Table 1. Descriptive statistics'; p})", "py": "__import__('tests.bibr12._parity_helpers', fromlist=['x']).descriptive_table()"}}
 # module_run() of every built-in module that needs no network or LLM
 - "id": "module.all_urls.preprint"
   "module": "all_urls"
@@ -727,10 +747,6 @@ cases:
   "module": "all_urls"
   "args":
     "paper": {"$paper": "upstream/metacheck/tests/testthat/fixtures/bibr12/full.json"}
-- "id": "module.all_urls.list"
-  "module": "all_urls"
-  "args":
-    "paper": {"$read": ["upstream/metacheck/tests/testthat/fixtures/bibr12/PMC4383902.json", "upstream/metacheck/tests/testthat/fixtures/bibr12/full.json", "upstream/metacheck/tests/testthat/fixtures/bibr12/preprint.json", "upstream/metacheck/tests/testthat/fixtures/bibr12/probe_html.json", "tests/fixtures/bibr_v12_inspect.json"]}
 - "id": "module.all_urls.mixed"
   "module": "all_urls"
   "args":
@@ -747,10 +763,6 @@ cases:
   "module": "coi_check"
   "args":
     "paper": {"$paper": "upstream/metacheck/tests/testthat/fixtures/bibr12/full.json"}
-- "id": "module.coi_check.list"
-  "module": "coi_check"
-  "args":
-    "paper": {"$read": ["upstream/metacheck/tests/testthat/fixtures/bibr12/PMC4383902.json", "upstream/metacheck/tests/testthat/fixtures/bibr12/full.json", "upstream/metacheck/tests/testthat/fixtures/bibr12/preprint.json", "upstream/metacheck/tests/testthat/fixtures/bibr12/probe_html.json", "tests/fixtures/bibr_v12_inspect.json"]}
 - "id": "module.coi_check.mixed"
   "module": "coi_check"
   "args":
@@ -767,10 +779,6 @@ cases:
   "module": "coi_check_oi"
   "args":
     "paper": {"$paper": "upstream/metacheck/tests/testthat/fixtures/bibr12/full.json"}
-- "id": "module.coi_check_oi.list"
-  "module": "coi_check_oi"
-  "args":
-    "paper": {"$read": ["upstream/metacheck/tests/testthat/fixtures/bibr12/PMC4383902.json", "upstream/metacheck/tests/testthat/fixtures/bibr12/full.json", "upstream/metacheck/tests/testthat/fixtures/bibr12/preprint.json", "upstream/metacheck/tests/testthat/fixtures/bibr12/probe_html.json", "tests/fixtures/bibr_v12_inspect.json"]}
 - "id": "module.coi_check_oi.mixed"
   "module": "coi_check_oi"
   "args":
@@ -787,10 +795,6 @@ cases:
   "module": "ethics_check"
   "args":
     "paper": {"$paper": "upstream/metacheck/tests/testthat/fixtures/bibr12/full.json"}
-- "id": "module.ethics_check.list"
-  "module": "ethics_check"
-  "args":
-    "paper": {"$read": ["upstream/metacheck/tests/testthat/fixtures/bibr12/PMC4383902.json", "upstream/metacheck/tests/testthat/fixtures/bibr12/full.json", "upstream/metacheck/tests/testthat/fixtures/bibr12/preprint.json", "upstream/metacheck/tests/testthat/fixtures/bibr12/probe_html.json", "tests/fixtures/bibr_v12_inspect.json"]}
 - "id": "module.ethics_check.mixed"
   "module": "ethics_check"
   "args":
@@ -807,10 +811,6 @@ cases:
   "module": "funding_check"
   "args":
     "paper": {"$paper": "upstream/metacheck/tests/testthat/fixtures/bibr12/full.json"}
-- "id": "module.funding_check.list"
-  "module": "funding_check"
-  "args":
-    "paper": {"$read": ["upstream/metacheck/tests/testthat/fixtures/bibr12/PMC4383902.json", "upstream/metacheck/tests/testthat/fixtures/bibr12/full.json", "upstream/metacheck/tests/testthat/fixtures/bibr12/preprint.json", "upstream/metacheck/tests/testthat/fixtures/bibr12/probe_html.json", "tests/fixtures/bibr_v12_inspect.json"]}
 - "id": "module.funding_check.mixed"
   "module": "funding_check"
   "args":
@@ -827,10 +827,6 @@ cases:
   "module": "funding_check_oi"
   "args":
     "paper": {"$paper": "upstream/metacheck/tests/testthat/fixtures/bibr12/full.json"}
-- "id": "module.funding_check_oi.list"
-  "module": "funding_check_oi"
-  "args":
-    "paper": {"$read": ["upstream/metacheck/tests/testthat/fixtures/bibr12/PMC4383902.json", "upstream/metacheck/tests/testthat/fixtures/bibr12/full.json", "upstream/metacheck/tests/testthat/fixtures/bibr12/preprint.json", "upstream/metacheck/tests/testthat/fixtures/bibr12/probe_html.json", "tests/fixtures/bibr_v12_inspect.json"]}
 - "id": "module.funding_check_oi.mixed"
   "module": "funding_check_oi"
   "args":
@@ -847,10 +843,6 @@ cases:
   "module": "open_practices"
   "args":
     "paper": {"$paper": "upstream/metacheck/tests/testthat/fixtures/bibr12/full.json"}
-- "id": "module.open_practices.list"
-  "module": "open_practices"
-  "args":
-    "paper": {"$read": ["upstream/metacheck/tests/testthat/fixtures/bibr12/PMC4383902.json", "upstream/metacheck/tests/testthat/fixtures/bibr12/full.json", "upstream/metacheck/tests/testthat/fixtures/bibr12/preprint.json", "upstream/metacheck/tests/testthat/fixtures/bibr12/probe_html.json", "tests/fixtures/bibr_v12_inspect.json"]}
 - "id": "module.open_practices.mixed"
   "module": "open_practices"
   "args":
@@ -867,10 +859,6 @@ cases:
   "module": "all_p_values"
   "args":
     "paper": {"$paper": "upstream/metacheck/tests/testthat/fixtures/bibr12/full.json"}
-- "id": "module.all_p_values.list"
-  "module": "all_p_values"
-  "args":
-    "paper": {"$read": ["upstream/metacheck/tests/testthat/fixtures/bibr12/PMC4383902.json", "upstream/metacheck/tests/testthat/fixtures/bibr12/full.json", "upstream/metacheck/tests/testthat/fixtures/bibr12/preprint.json", "upstream/metacheck/tests/testthat/fixtures/bibr12/probe_html.json", "tests/fixtures/bibr_v12_inspect.json"]}
 - "id": "module.all_p_values.mixed"
   "module": "all_p_values"
   "args":
@@ -887,10 +875,6 @@ cases:
   "module": "marginal"
   "args":
     "paper": {"$paper": "upstream/metacheck/tests/testthat/fixtures/bibr12/full.json"}
-- "id": "module.marginal.list"
-  "module": "marginal"
-  "args":
-    "paper": {"$read": ["upstream/metacheck/tests/testthat/fixtures/bibr12/PMC4383902.json", "upstream/metacheck/tests/testthat/fixtures/bibr12/full.json", "upstream/metacheck/tests/testthat/fixtures/bibr12/preprint.json", "upstream/metacheck/tests/testthat/fixtures/bibr12/probe_html.json", "tests/fixtures/bibr_v12_inspect.json"]}
 - "id": "module.marginal.mixed"
   "module": "marginal"
   "args":
@@ -907,10 +891,6 @@ cases:
   "module": "stat_check"
   "args":
     "paper": {"$paper": "upstream/metacheck/tests/testthat/fixtures/bibr12/full.json"}
-- "id": "module.stat_check.list"
-  "module": "stat_check"
-  "args":
-    "paper": {"$read": ["upstream/metacheck/tests/testthat/fixtures/bibr12/PMC4383902.json", "upstream/metacheck/tests/testthat/fixtures/bibr12/full.json", "upstream/metacheck/tests/testthat/fixtures/bibr12/preprint.json", "upstream/metacheck/tests/testthat/fixtures/bibr12/probe_html.json", "tests/fixtures/bibr_v12_inspect.json"]}
 - "id": "module.stat_check.mixed"
   "module": "stat_check"
   "args":
@@ -927,10 +907,6 @@ cases:
   "module": "stat_effect_size"
   "args":
     "paper": {"$paper": "upstream/metacheck/tests/testthat/fixtures/bibr12/full.json"}
-- "id": "module.stat_effect_size.list"
-  "module": "stat_effect_size"
-  "args":
-    "paper": {"$read": ["upstream/metacheck/tests/testthat/fixtures/bibr12/PMC4383902.json", "upstream/metacheck/tests/testthat/fixtures/bibr12/full.json", "upstream/metacheck/tests/testthat/fixtures/bibr12/preprint.json", "upstream/metacheck/tests/testthat/fixtures/bibr12/probe_html.json", "tests/fixtures/bibr_v12_inspect.json"]}
 - "id": "module.stat_effect_size.mixed"
   "module": "stat_effect_size"
   "args":
@@ -947,10 +923,6 @@ cases:
   "module": "stat_p_exact"
   "args":
     "paper": {"$paper": "upstream/metacheck/tests/testthat/fixtures/bibr12/full.json"}
-- "id": "module.stat_p_exact.list"
-  "module": "stat_p_exact"
-  "args":
-    "paper": {"$read": ["upstream/metacheck/tests/testthat/fixtures/bibr12/PMC4383902.json", "upstream/metacheck/tests/testthat/fixtures/bibr12/full.json", "upstream/metacheck/tests/testthat/fixtures/bibr12/preprint.json", "upstream/metacheck/tests/testthat/fixtures/bibr12/probe_html.json", "tests/fixtures/bibr_v12_inspect.json"]}
 - "id": "module.stat_p_exact.mixed"
   "module": "stat_p_exact"
   "args":
@@ -967,10 +939,6 @@ cases:
   "module": "stat_p_nonsig"
   "args":
     "paper": {"$paper": "upstream/metacheck/tests/testthat/fixtures/bibr12/full.json"}
-- "id": "module.stat_p_nonsig.list"
-  "module": "stat_p_nonsig"
-  "args":
-    "paper": {"$read": ["upstream/metacheck/tests/testthat/fixtures/bibr12/PMC4383902.json", "upstream/metacheck/tests/testthat/fixtures/bibr12/full.json", "upstream/metacheck/tests/testthat/fixtures/bibr12/preprint.json", "upstream/metacheck/tests/testthat/fixtures/bibr12/probe_html.json", "tests/fixtures/bibr_v12_inspect.json"]}
 - "id": "module.stat_p_nonsig.mixed"
   "module": "stat_p_nonsig"
   "args":
@@ -1107,10 +1075,6 @@ cases:
   "module": "power"
   "args":
     "paper": {"$paper": "upstream/metacheck/tests/testthat/fixtures/bibr12/full.json"}
-- "id": "module.power.list"
-  "module": "power"
-  "args":
-    "paper": {"$read": ["upstream/metacheck/tests/testthat/fixtures/bibr12/PMC4383902.json", "upstream/metacheck/tests/testthat/fixtures/bibr12/full.json", "upstream/metacheck/tests/testthat/fixtures/bibr12/preprint.json", "upstream/metacheck/tests/testthat/fixtures/bibr12/probe_html.json", "tests/fixtures/bibr_v12_inspect.json"]}
 - "id": "module.power.mixed"
   "module": "power"
   "args":

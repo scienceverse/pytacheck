@@ -1,0 +1,115 @@
+{
+  "id": "parse_codebook.handmade.ods",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 5,
+    "names": [
+      "codebook_variable",
+      "label",
+      "codebook_source",
+      "group",
+      "value_labels",
+      "missing_values",
+      "question",
+      "coding_instructions",
+      "parse_method"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "q1",
+          "q2",
+          null,
+          null,
+          "q3"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "First line\nsecond line",
+          "0.5",
+          null,
+          null,
+          "Third"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "handmade.ods [Codebook]",
+          "handmade.ods [Codebook]",
+          "handmade.ods [Codebook]",
+          "handmade.ods [Codebook]",
+          "handmade.ods [Codebook]"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "{\"1\":\"no\",\"2\":\"yes\"}",
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "structured",
+          "structured",
+          "structured",
+          "structured",
+          "structured"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

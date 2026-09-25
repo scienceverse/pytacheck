@@ -1,0 +1,57 @@
+{
+  "id": "data_check_scale_values.review.int_1e5",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "problem",
+      "message",
+      "values",
+      "lower",
+      "upper",
+      "classes"
+    ],
+    "v": [
+      {
+        "t": "lgl",
+        "v": [
+          true
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "1 value outside the 2-10 scale: 100000 (outside the scale, cause unclear)"
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          100000
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          2
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          10
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "unexplained"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

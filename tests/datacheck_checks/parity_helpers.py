@@ -91,3 +91,9 @@ def profile_file(path: str) -> dict[str, Any] | None:
         "tabular_usable": C._tabular_usable(facets, d),
         "numeric_col_fraction": C._numeric_col_fraction(d),
     }
+
+
+def identity(x: Any) -> Any:
+    """``base::identity()``: the Python side of the ``datacheck_checks_review``
+    battery cases, whose ``$expr`` argument does the work on each side."""
+    return x

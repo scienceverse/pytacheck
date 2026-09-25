@@ -1,0 +1,61 @@
+{
+  "id": "data_check_scale_values.review.int_inferred_1e6",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "problem",
+      "message",
+      "values",
+      "lower",
+      "upper",
+      "classes"
+    ],
+    "v": [
+      {
+        "t": "lgl",
+        "v": [
+          true
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "3 values outside the 1-5 scale: 55 (looks like a typo of 5), 300000 (looks like a typo of 3), 1000000 (looks like a typo of 1)"
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          55,
+          300000,
+          1000000
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          1
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          5
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "typo:5",
+          "typo:3",
+          "typo:1"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

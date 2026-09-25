@@ -210,27 +210,48 @@ def match_rows_variants() -> Any:
     return p
 
 
-def correlation_table(schema_version: Any = "12.0") -> Any:
-    """full.json whose table is a correlation matrix with its caption (match-table.R)."""
+def table_paper12(contents: list[list[str]], caption: str, schema_version: Any = "12.0") -> Any:
+    """full.json whose one table has these contents and caption (match-table.R)."""
     p = pc.read(F12 / "full.json")
     tab = p.table.copy()
-    tab["contents"] = pd.Series(
-        [
-            [
-                ["", "1.", "2."],
-                ["1. Anxiety", "-", ""],
-                ["2. Depression", ".45*", "-"],
-            ]
-        ],
-        dtype=object,
-    )
-    tab["caption"] = pd.Series(["Table 1. Correlations between measures"], dtype="string")
+    tab["contents"] = pd.Series([contents], dtype=object)
+    tab["caption"] = pd.Series([caption], dtype="string")
     p.table = tab
     if schema_version != "12.0":
         info = p.info.copy()
         info["schema_version"] = pd.Series([schema_version], dtype="string")
         p.info = info
     return p
+
+
+def correlation_table(schema_version: Any = "12.0") -> Any:
+    """full.json whose table is a correlation matrix with its caption."""
+    return table_paper12(
+        [["", "1.", "2."], ["1. Anxiety", "-", ""], ["2. Depression", ".45*", "-"]],
+        "Table 1. Correlations between measures",
+        schema_version,
+    )
+
+
+def descriptive_table(schema_version: Any = "12.0") -> Any:
+    """full.json whose table holds means under numbered headers, named by its caption."""
+    return table_paper12(
+        [["", "1", "2"], ["Condition A", "1.93", "-0.15"]],
+        "Table 1. Descriptive statistics",
+        schema_version,
+    )
+
+
+def match_jasp(paper: Any, what: str = "table") -> Any:
+    """``match_reported_output(paper, <sample.jasp>, include_tables = TRUE)``."""
+    from pytacheck.statout.match_reported import match_reported_output
+    from pytacheck.statout.stat_output import stat_results_long
+    from pytacheck.statout.stat_tables import read_stat_tables
+
+    jasp = ROOT / "upstream/metacheck/tests/testthat/fixtures/formats/sample.jasp"
+    output = stat_results_long(read_stat_tables(str(jasp)), source_file="sample.jasp")
+    res = match_reported_output(paper, output, include_tables=True, min_components=1)
+    return res.attrs["summary"] if what == "summary" else res
 
 
 def schema_summary() -> dict[str, Any]:

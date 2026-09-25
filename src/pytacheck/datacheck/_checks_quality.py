@@ -8,13 +8,17 @@ from __future__ import annotations
 
 import itertools
 import math
+from collections import Counter
+from collections.abc import Callable
 from typing import Any
 
 from pytacheck._r.base import plural, r_sort_key, signif
 from pytacheck._r.regex import grepl, gsub, regextract_all
 from pytacheck.datacheck._checks_rvec import (
+    RVec,
     as_numeric_str,
     chr,
+    chr_counts,
     dbl_chr,
     fmt_d,
     fmt_g,
@@ -25,6 +29,7 @@ from pytacheck.datacheck._checks_rvec import (
     rvec,
     tolower,
     trim,
+    trimmed_counts,
     unique,
 )
 
@@ -300,32 +305,61 @@ def _signif4(e: float) -> str:
     return dbl_chr(float(signif(f, 4)))
 
 
-def _table(v: Any) -> tuple[list[str], list[int]]:
-    """``table(x)`` of a vector without NA: level labels and counts.
+def _table(v: Any) -> tuple[dict[Any, int], Callable[[Any], Any], Callable[[Any], str]]:
+    """``table(x)`` of a vector without NA, unsorted.
 
-    ``table()``'s default ``exclude = c(NA, NaN)`` is coerced to the type of a
-    non-factor *x*, so for a character vector it drops the string ``"NaN"``
-    (a factor keeps a ``"NaN"`` level).
+    Returns the counts per level, a sort key giving each level's position in
+    ``levels(factor(x))`` and a function giving a level's label (its
+    ``as.character()``). Sorting is left to the caller, which only ever needs
+    the first of a few tied levels. ``table()``'s default ``exclude = c(NA,
+    NaN)`` is coerced to the type of a non-factor *x*, so for a character
+    vector it drops the string ``"NaN"`` (a factor keeps a ``"NaN"`` level).
+    Distinct doubles that print alike (``as.character()`` keeps 15 significant
+    digits) share one level.
     """
     if v.kind == "factor":
-        labels = list(v.levels or [])
-        counts = dict.fromkeys(labels, 0)
-        for s in v.values:
-            counts[s] += 1
-        return labels, [counts[lab] for lab in labels]
+        levels = list(v.levels or [])
+        counts: dict[Any, int] = dict.fromkeys(levels, 0)
+        counts.update(Counter(v.values))
+        pos = {lab: i for i, lab in enumerate(levels)}
+        return counts, pos.__getitem__, str
+    raw = Counter(v.values)
     if v.kind == "character":
-        v = v.subset([s != "NaN" for s in v.values])
-    x_chr = chr(v)
-    y = unique(zip(v.values, x_chr, strict=True))
-    if v.kind == "character":
-        y.sort(key=lambda p: r_sort_key(p[0]))
-    else:
-        y.sort(key=lambda p: p[0])
-    labels = unique(p[1] for p in y)
-    counts = dict.fromkeys(labels, 0)
-    for s in x_chr:
-        counts[s] += 1
-    return labels, [counts[lab] for lab in labels]
+        raw.pop("NaN", None)
+        return dict(raw), r_sort_key, str
+    if v.kind == "double" and _doubles_may_collide(list(raw)):
+        labels = chr(RVec("double", list(raw)))
+        counts = {}
+        first: dict[Any, Any] = {}
+        for val, lab in zip(raw, labels, strict=True):
+            counts[lab] = counts.get(lab, 0) + raw[val]
+            first[lab] = val if lab not in first else min(first[lab], val)
+        return counts, first.__getitem__, str
+    # as.character() is one-to-one here: count raw values, label them on demand
+    kind = v.kind
+    return dict(raw), lambda val: val, lambda val: _label(kind, val)
+
+
+def _label(kind: str, val: Any) -> str:
+    """``as.character()`` of one value of an R vector of type *kind*."""
+    return chr(RVec(kind, [val]))[0]  # type: ignore[return-value]
+
+
+def _doubles_may_collide(values: list[float]) -> bool:
+    """Could two of these distinct doubles print alike under ``as.character()``?
+
+    Only values within a relative 1e-14 of each other can share 15 significant
+    digits, so the (vectorised) check is exact in the "no" direction.
+    """
+    import numpy as np
+
+    u = np.sort(np.asarray(values, dtype="float64"))
+    u = u[np.isfinite(u)]
+    if u.size < 2:
+        return False
+    d = np.diff(u)
+    scale = np.maximum(np.abs(u[:-1]), np.abs(u[1:]))
+    return bool(np.any(d <= 1e-14 * scale))
 
 
 def data_check_constant(x: Any, threshold: float = 0.99) -> dict[str, Any]:
@@ -338,23 +372,26 @@ def data_check_constant(x: Any, threshold: float = 0.99) -> dict[str, Any]:
     v = rvec(x).drop_na()
     if len(v) == 0:
         return {"problem": False, "message": "", "values": None, "near": False}
-    labels, counts = _table(v)
+    counts, key, label_of = _table(v)
     if not counts:  # every value was the string "NaN": `tab[[1]]` on an empty table
         raise IndexError("subscript out of bounds")
-    top = max(range(len(counts)), key=lambda i: (counts[i], -i))
-    top_frac = counts[top] / len(v)
+    top_count = max(counts.values())
+    top_frac = top_count / len(v)
     if len(counts) == 1:
+        label = label_of(next(iter(counts)))
         return {
             "problem": True,
-            "message": f'Column is constant: every value is "{labels[0]}".',
-            "values": labels[0],
+            "message": f'Column is constant: every value is "{label}".',
+            "values": label,
             "near": False,
         }
     if top_frac >= threshold:
+        # sort(table(x), decreasing = TRUE) is stable: the first tied level wins
+        label = label_of(min((lv for lv, c in counts.items() if c == top_count), key=key))
         return {
             "problem": True,
-            "message": f'Near-constant: {fmt_pct0(100 * top_frac)}% of values are "{labels[top]}".',
-            "values": labels[top],
+            "message": f'Near-constant: {fmt_pct0(100 * top_frac)}% of values are "{label}".',
+            "values": label,
             "near": True,
         }
     return {"problem": False, "message": "", "values": None, "near": False}
@@ -373,7 +410,7 @@ def data_check_empty(x: Any) -> dict[str, Any]:
     if v.is_numeric:
         filled = any(e is not None for e in v.values)
     else:
-        filled = any(s is not None and trim(s) != "" for s in chr(v))
+        filled = any(s is not None and trim(s) != "" for s in chr_counts(v))
     if filled:
         return none
     return {
@@ -445,7 +482,7 @@ def data_check_case_issues(x: Any) -> dict[str, Any]:
     v = rvec(x)
     if v.is_numeric:
         return none
-    xs = unique(s for s in chr(v) if s is not None and trim(s) != "")
+    xs = [s for s in chr_counts(v) if s is not None and trim(s) != ""]  # unique(), data order
     if not xs:
         return none
     lower = [tolower(s) for s in xs]
@@ -477,7 +514,7 @@ def data_check_whitespace(x: Any) -> dict[str, Any]:
     v = rvec(x)
     if v.is_numeric:
         return none
-    padded = unique(s for s in chr(v) if s is not None and (t := trim(s)) != s and t != "")
+    padded = [s for s in chr_counts(v) if s is not None and (t := trim(s)) != s and t != ""]
     if not padded:
         return none
     shown = ", ".join(f'"{s}"' for s in padded[:10])
@@ -499,14 +536,14 @@ def data_check_numeric_in_text(x: Any, threshold: float = 0.8, n_max: int = 10) 
     v = rvec(x)
     if v.is_numeric:
         return none
-    xs = [t for s in chr(v) if s is not None and (t := trim(s)) != ""]  # type: ignore[misc]
-    if len(xs) < 5:
+    counts = trimmed_counts(v)
+    n_total = sum(counts.values())
+    if n_total < 5:
         return none
-    ok = [(f := as_numeric_str(s.replace(",", "."))) is not None and f == f for s in xs]
-    frac_num = sum(ok) / len(ok)
+    bad = [s for s in counts if (f := as_numeric_str(s.replace(",", "."))) is None or f != f]
+    frac_num = (n_total - sum(counts[s] for s in bad)) / n_total
     if frac_num < threshold or frac_num >= 1:
         return none
-    bad = unique(s for s, good in zip(xs, ok, strict=True) if not good)
     shown = ", ".join(f'"{s}"' for s in bad[: int(n_max)])
     return {
         "problem": True,

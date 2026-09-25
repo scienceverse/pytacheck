@@ -168,6 +168,15 @@ def main() -> None:
     write("plain.csv", plain())
     write("notes.txt", "Some notes about the study.\nNothing tabular here.\n")
     write("empty.csv", "")
+    # fileEncoding = "UTF-8-BOM" sniffing: the BOM goes before read.table() skips
+    # blank lines, and the connection stops reading at the first invalid UTF-8 byte
+    write("jspsych_bom_blank.csv", "\n" + jspsych(), bom=True)
+    write(
+        "behaverse_latin1.csv",
+        behaverse().replace("participant_id", "participant_\xefd"),
+        "latin-1",
+    )
+    write("jspsych_latin1_body.csv", jspsych().replace("<p>red</p>", "<p>r\xf6d</p>"), "latin-1")
 
 
 if __name__ == "__main__":

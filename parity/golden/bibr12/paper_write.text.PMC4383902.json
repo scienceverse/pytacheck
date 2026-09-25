@@ -2,9 +2,7 @@
   "id": "paper_write.text.PMC4383902",
   "ok": true,
   "error": null,
-  "warnings": [
-    "path[1]=\"/tmp/Rtmpmffufb/pc_bibr12_32d967b4627f\": No such file or directory"
-  ],
+  "warnings": [],
   "value": {
     "t": "chr",
     "v": [

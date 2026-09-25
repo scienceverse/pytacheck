@@ -1,0 +1,154 @@
+{
+  "id": ".table_tests.descriptive_caption",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": null,
+    "v": [
+      {
+        "t": "list",
+        "names": [
+          "text_id",
+          "grp_id",
+          "components"
+        ],
+        "v": [
+          {
+            "t": "int",
+            "v": [
+              -1001001
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "list",
+                "names": [
+                  "family",
+                  "name",
+                  "value",
+                  "dec",
+                  "censored"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "mean"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "mean"
+                    ]
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      1.93
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      2
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "text_id",
+          "grp_id",
+          "components"
+        ],
+        "v": [
+          {
+            "t": "int",
+            "v": [
+              -1001002
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "list",
+                "names": [
+                  "family",
+                  "name",
+                  "value",
+                  "dec",
+                  "censored"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "mean"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "mean"
+                    ]
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      -0.15
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      2
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      ""
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}
