@@ -1,0 +1,106 @@
+{
+  "id": "paper_table.edge_types.xref",
+  "ok": true,
+  "error": null,
+  "warnings": [
+    "NAs introduced by coercion"
+  ],
+  "value": {
+    "t": "df",
+    "nrow": 5,
+    "names": [
+      "xref_id",
+      "target_id",
+      "xref_type",
+      "contents",
+      "text_id",
+      "start",
+      "end",
+      "paper_id"
+    ],
+    "v": [
+      {
+        "t": "int",
+        "v": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          1,
+          null,
+          2,
+          1,
+          1
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "bib",
+          "figure",
+          "bib",
+          "bibr",
+          "footnote"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "(Lee, 2020)",
+          "Fig. 1",
+          "[2]",
+          "old style",
+          "1"
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          1,
+          1,
+          6,
+          6,
+          1
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          14,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          25,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "edge_types",
+          "edge_types",
+          "edge_types",
+          "edge_types",
+          "edge_types"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

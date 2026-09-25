@@ -1,0 +1,41 @@
+{
+  "id": "data_check_case_issues.review.duplicates_order",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "problem",
+      "message",
+      "values"
+    ],
+    "v": [
+      {
+        "t": "lgl",
+        "v": [
+          true
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Categories differing only by case: male/MALE/Male; Female/female"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "male/MALE/Male",
+          "Female/female"
+        ],
+        "names": [
+          "male",
+          "female"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -1,0 +1,389 @@
+# Adversarial review of bibr export schema 12.x reading and writing (metacheck PR #423).
+# Written by tests/bibr12/gen_review_cases.py; goldens: python -m parity generate --area bibr12_review
+#
+# Fixtures: tests/bibr12/fixtures/edge_*.json (coercion edge cases, missing tables and keys,
+# unknown keys, jsonlite number/string formatting). $expr helpers: tests/bibr12/_review_helpers.py.
+area: "bibr12_review"
+cases:
+- "id": "read.edge_types"
+  "r": "read"
+  "py": "pytacheck.read"
+  "args":
+    "file_path": {"$file": "tests/bibr12/fixtures/edge_types.json"}
+- "id": "read.edge_minimal"
+  "r": "read"
+  "py": "pytacheck.read"
+  "args":
+    "file_path": {"$file": "tests/bibr12/fixtures/edge_minimal.json"}
+- "id": "read.edge_numeric_id"
+  "r": "read"
+  "py": "pytacheck.read"
+  "args":
+    "file_path": {"$file": "tests/bibr12/fixtures/edge_numeric_id.json"}
+- "id": "read.edge_types.images"
+  "r": "read"
+  "py": "pytacheck.read"
+  "args":
+    "file_path": {"$file": "tests/bibr12/fixtures/edge_types.json"}
+    "include_images": true
+- "id": "paper_table.edge_types.info"
+  "r": "paper_table"
+  "py": "pytacheck.paper_table"
+  "args":
+    "paper": {"$paper": "tests/bibr12/fixtures/edge_types.json"}
+    "table": "info"
+- "id": "paper_table.edge_types.author"
+  "r": "paper_table"
+  "py": "pytacheck.paper_table"
+  "args":
+    "paper": {"$paper": "tests/bibr12/fixtures/edge_types.json"}
+    "table": "author"
+- "id": "paper_table.edge_types.affiliation"
+  "r": "paper_table"
+  "py": "pytacheck.paper_table"
+  "args":
+    "paper": {"$paper": "tests/bibr12/fixtures/edge_types.json"}
+    "table": "affiliation"
+- "id": "paper_table.edge_types.funding"
+  "r": "paper_table"
+  "py": "pytacheck.paper_table"
+  "args":
+    "paper": {"$paper": "tests/bibr12/fixtures/edge_types.json"}
+    "table": "funding"
+- "id": "paper_table.edge_types.text"
+  "r": "paper_table"
+  "py": "pytacheck.paper_table"
+  "args":
+    "paper": {"$paper": "tests/bibr12/fixtures/edge_types.json"}
+    "table": "text"
+- "id": "paper_table.edge_types.section"
+  "r": "paper_table"
+  "py": "pytacheck.paper_table"
+  "args":
+    "paper": {"$paper": "tests/bibr12/fixtures/edge_types.json"}
+    "table": "section"
+- "id": "paper_table.edge_types.url"
+  "r": "paper_table"
+  "py": "pytacheck.paper_table"
+  "args":
+    "paper": {"$paper": "tests/bibr12/fixtures/edge_types.json"}
+    "table": "url"
+- "id": "paper_table.edge_types.bib"
+  "r": "paper_table"
+  "py": "pytacheck.paper_table"
+  "args":
+    "paper": {"$paper": "tests/bibr12/fixtures/edge_types.json"}
+    "table": "bib"
+- "id": "paper_table.edge_types.xref"
+  "r": "paper_table"
+  "py": "pytacheck.paper_table"
+  "args":
+    "paper": {"$paper": "tests/bibr12/fixtures/edge_types.json"}
+    "table": "xref"
+- "id": "paper_table.edge_types.figure"
+  "r": "paper_table"
+  "py": "pytacheck.paper_table"
+  "args":
+    "paper": {"$paper": "tests/bibr12/fixtures/edge_types.json"}
+    "table": "figure"
+- "id": "paper_table.edge_types.table"
+  "r": "paper_table"
+  "py": "pytacheck.paper_table"
+  "args":
+    "paper": {"$paper": "tests/bibr12/fixtures/edge_types.json"}
+    "table": "table"
+- "id": "paper_table.edge_types.footnote"
+  "r": "paper_table"
+  "py": "pytacheck.paper_table"
+  "args":
+    "paper": {"$paper": "tests/bibr12/fixtures/edge_types.json"}
+    "table": "footnote"
+- "id": "paper_table.edge_types.eq"
+  "r": "paper_table"
+  "py": "pytacheck.paper_table"
+  "args":
+    "paper": {"$paper": "tests/bibr12/fixtures/edge_types.json"}
+    "table": "eq"
+- "id": "paper_table.edge_types.info_match"
+  "r": "paper_table"
+  "py": "pytacheck.paper_table"
+  "args":
+    "paper": {"$paper": "tests/bibr12/fixtures/edge_types.json"}
+    "table": "info_match"
+- "id": "paper_table.edge_types.affiliation_match"
+  "r": "paper_table"
+  "py": "pytacheck.paper_table"
+  "args":
+    "paper": {"$paper": "tests/bibr12/fixtures/edge_types.json"}
+    "table": "affiliation_match"
+- "id": "paper_table.edge_types.funding_match"
+  "r": "paper_table"
+  "py": "pytacheck.paper_table"
+  "args":
+    "paper": {"$paper": "tests/bibr12/fixtures/edge_types.json"}
+    "table": "funding_match"
+- "id": "paper_table.edge_types.bib_match"
+  "r": "paper_table"
+  "py": "pytacheck.paper_table"
+  "args":
+    "paper": {"$paper": "tests/bibr12/fixtures/edge_types.json"}
+    "table": "bib_match"
+- "id": "paper_validate.edge_types"
+  "r": "paper_validate"
+  "py": "pytacheck.paper_validate"
+  "args":
+    "paper": {"$paper": "tests/bibr12/fixtures/edge_types.json"}
+- "id": "ref_table.edge_types"
+  "r": "ref_table"
+  "py": "pytacheck.ref_table"
+  "args":
+    "paper": {"$paper": "tests/bibr12/fixtures/edge_types.json"}
+- "id": "paper_validate.edge_minimal"
+  "r": "paper_validate"
+  "py": "pytacheck.paper_validate"
+  "args":
+    "paper": {"$paper": "tests/bibr12/fixtures/edge_minimal.json"}
+- "id": "ref_table.edge_minimal"
+  "r": "ref_table"
+  "py": "pytacheck.ref_table"
+  "args":
+    "paper": {"$paper": "tests/bibr12/fixtures/edge_minimal.json"}
+- "id": "paper_validate.edge_numeric_id"
+  "r": "paper_validate"
+  "py": "pytacheck.paper_validate"
+  "args":
+    "paper": {"$paper": "tests/bibr12/fixtures/edge_numeric_id.json"}
+- "id": "ref_table.edge_numeric_id"
+  "r": "ref_table"
+  "py": "pytacheck.ref_table"
+  "args":
+    "paper": {"$paper": "tests/bibr12/fixtures/edge_numeric_id.json"}
+- "id": "paper_write.text.edge_types"
+  "r": "identity"
+  "py": "tests.bibr12._parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "local({f <- paper_write(read('tests/bibr12/fixtures/edge_types.json'), NULL, save_path = local({d <- tempfile('pc_bibr12_'); dir.create(d); d}), schema_version = '12.0'); x <- readLines(f, encoding = 'UTF-8'); i <- which(trimws(x) == '\"converter\": {'); x[i + 1] <- '<converter name>'; x[i + 2] <- '<converter version>'; x})", "py": "__import__('tests.bibr12._review_helpers', fromlist=['x']).written(pc.read(__import__('tests.bibr12._review_helpers', fromlist=['x']).FX / 'edge_types.json'), blank_time=False)"}}
+- "id": "paper_write.roundtrip.edge_types"
+  "r": "identity"
+  "py": "tests.bibr12._parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "read(paper_write(read('tests/bibr12/fixtures/edge_types.json'), NULL, save_path = local({d <- tempfile('pc_bibr12_'); dir.create(d); d}), schema_version = '12.0'))", "py": "__import__('tests.bibr12._review_helpers', fromlist=['x']).roundtrip(pc.read(__import__('tests.bibr12._review_helpers', fromlist=['x']).FX / 'edge_types.json'))"}}
+  "compare":
+    "ignore": ["extraction.converter"]
+- "id": "paper_write.text.edge_minimal"
+  "r": "identity"
+  "py": "tests.bibr12._parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "local({f <- paper_write(read('tests/bibr12/fixtures/edge_minimal.json'), NULL, save_path = local({d <- tempfile('pc_bibr12_'); dir.create(d); d}), schema_version = '12.0'); x <- readLines(f, encoding = 'UTF-8'); i <- which(trimws(x) == '\"converter\": {'); x[i + 1] <- '<converter name>'; x[i + 2] <- '<converter version>'; x[grepl('^    \"completed_at\": ', x)] <- '<completed_at>'; x})", "py": "__import__('tests.bibr12._review_helpers', fromlist=['x']).written(pc.read(__import__('tests.bibr12._review_helpers', fromlist=['x']).FX / 'edge_minimal.json'), blank_time=True)"}}
+- "id": "paper_write.roundtrip.edge_minimal"
+  "r": "identity"
+  "py": "tests.bibr12._parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "read(paper_write(read('tests/bibr12/fixtures/edge_minimal.json'), NULL, save_path = local({d <- tempfile('pc_bibr12_'); dir.create(d); d}), schema_version = '12.0'))", "py": "__import__('tests.bibr12._review_helpers', fromlist=['x']).roundtrip(pc.read(__import__('tests.bibr12._review_helpers', fromlist=['x']).FX / 'edge_minimal.json'))"}}
+  "compare":
+    "ignore": ["extraction.converter", "extraction.completed_at"]
+- "id": "paper_write.text.edge_numeric_id"
+  "r": "identity"
+  "py": "tests.bibr12._parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "local({f <- paper_write(read('tests/bibr12/fixtures/edge_numeric_id.json'), NULL, save_path = local({d <- tempfile('pc_bibr12_'); dir.create(d); d}), schema_version = '12.0'); x <- readLines(f, encoding = 'UTF-8'); i <- which(trimws(x) == '\"converter\": {'); x[i + 1] <- '<converter name>'; x[i + 2] <- '<converter version>'; x})", "py": "__import__('tests.bibr12._review_helpers', fromlist=['x']).written(pc.read(__import__('tests.bibr12._review_helpers', fromlist=['x']).FX / 'edge_numeric_id.json'), blank_time=False)"}}
+- "id": "paper_write.roundtrip.edge_numeric_id"
+  "r": "identity"
+  "py": "tests.bibr12._parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "read(paper_write(read('tests/bibr12/fixtures/edge_numeric_id.json'), NULL, save_path = local({d <- tempfile('pc_bibr12_'); dir.create(d); d}), schema_version = '12.0'))", "py": "__import__('tests.bibr12._review_helpers', fromlist=['x']).roundtrip(pc.read(__import__('tests.bibr12._review_helpers', fromlist=['x']).FX / 'edge_numeric_id.json'))"}}
+  "compare":
+    "ignore": ["extraction.converter"]
+- "id": "paper_write.completed_at.now"
+  "r": "identity"
+  "py": "tests.bibr12._parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "local({f <- paper_write(read('tests/bibr12/fixtures/edge_minimal.json'), NULL, save_path = local({d <- tempfile('pc_bibr12_'); dir.create(d); d}), schema_version = '12.0'); grepl('^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$', jsonlite::read_json(f)$extraction$completed_at)})", "py": "__import__('tests.bibr12._review_helpers', fromlist=['x']).completed_at_is_iso(pc.read(__import__('tests.bibr12._review_helpers', fromlist=['x']).FX / 'edge_minimal.json'))"}}
+- "id": "paper_write.text.modified"
+  "r": "identity"
+  "py": "tests.bibr12._parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "local({f <- paper_write(local({p <- read('tests/bibr12/fixtures/edge_types.json'); tx <- p$text; n <- nrow(tx) + 1L; tx[n, ] <- NA; tx$text[n] <- 'Added row.'; tx$text_id <- as.double(tx$text_id); tx$text_id[n] <- 9; tx$paragraph_id <- as.double(tx$paragraph_id); tx$paragraph_id[n] <- 8; tx$section_id <- as.double(tx$section_id); tx$section_id[n] <- 2; tx$page_number <- as.double(tx$page_number); tx$formatted <- NULL; p$text <- tx; p$bib$year <- c(2019.9, NA); p$bib$volume <- c(12, 1e5); p$bib$is_in_press <- c('TRUE', 'no'); p$bib$extra_col <- c('x', 'y'); p$info$title <- NA_character_; p$info$keywords <- list(c('k1', 'k2')); p$author$role <- c('single', NA, 'x', 'y'); p$footnote <- NULL; p}), NULL, save_path = local({d <- tempfile('pc_bibr12_'); dir.create(d); d}), schema_version = '12.0'); x <- readLines(f, encoding = 'UTF-8'); i <- which(trimws(x) == '\"converter\": {'); x[i + 1] <- '<converter name>'; x[i + 2] <- '<converter version>'; x})", "py": "__import__('tests.bibr12._review_helpers', fromlist=['x']).written(__import__('tests.bibr12._review_helpers', fromlist=['x']).modified_edge())"}}
+- "id": "paper_write.roundtrip.modified"
+  "r": "identity"
+  "py": "tests.bibr12._parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "read(paper_write(local({p <- read('tests/bibr12/fixtures/edge_types.json'); tx <- p$text; n <- nrow(tx) + 1L; tx[n, ] <- NA; tx$text[n] <- 'Added row.'; tx$text_id <- as.double(tx$text_id); tx$text_id[n] <- 9; tx$paragraph_id <- as.double(tx$paragraph_id); tx$paragraph_id[n] <- 8; tx$section_id <- as.double(tx$section_id); tx$section_id[n] <- 2; tx$page_number <- as.double(tx$page_number); tx$formatted <- NULL; p$text <- tx; p$bib$year <- c(2019.9, NA); p$bib$volume <- c(12, 1e5); p$bib$is_in_press <- c('TRUE', 'no'); p$bib$extra_col <- c('x', 'y'); p$info$title <- NA_character_; p$info$keywords <- list(c('k1', 'k2')); p$author$role <- c('single', NA, 'x', 'y'); p$footnote <- NULL; p}), NULL, save_path = local({d <- tempfile('pc_bibr12_'); dir.create(d); d}), schema_version = '12.0'))", "py": "__import__('tests.bibr12._review_helpers', fromlist=['x']).roundtrip(__import__('tests.bibr12._review_helpers', fromlist=['x']).modified_edge())"}}
+  "compare":
+    "ignore": ["extraction.converter"]
+- "id": "paper_write.roundtrip.images"
+  "r": "identity"
+  "py": "tests.bibr12._parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "read(paper_write(read('tests/bibr12/fixtures/edge_types.json', include_images = TRUE), NULL, save_path = local({d <- tempfile('pc_bibr12_'); dir.create(d); d}), schema_version = '12.0'))", "py": "__import__('tests.bibr12._review_helpers', fromlist=['x']).roundtrip(pc.read(__import__('tests.bibr12._review_helpers', fromlist=['x']).FX / 'edge_types.json', include_images=True))"}}
+  "compare":
+    "ignore": ["extraction.converter"]
+- "id": "read.version.v12_0_1"
+  "r": "read"
+  "py": "pytacheck.read"
+  "args":
+    "file_path": {"$expr": {"r": "local({x <- readLines('tests/bibr12/fixtures/edge_types.json', encoding = 'UTF-8'); i <- which(grepl(\"\\\"schema_version\\\": \\\"12.0\\\"\", x, fixed = TRUE))[1]; x[i] <- sub(\"\\\"schema_version\\\": \\\"12.0\\\"\", \"\\\"schema_version\\\": \\\"12.0.1\\\"\", x[i], fixed = TRUE); path <- file.path(tempfile('pc_bibr12_'), 'v.json'); dir.create(dirname(path)); writeLines(x, path, useBytes = TRUE); path})", "py": "__import__('tests.bibr12._review_helpers', fromlist=['x']).version_variant('tests/bibr12/fixtures/edge_types.json', 'v.json', '\"12.0.1\"')"}}
+- "id": "read.version.v12_5_number"
+  "r": "read"
+  "py": "pytacheck.read"
+  "args":
+    "file_path": {"$expr": {"r": "local({x <- readLines('tests/bibr12/fixtures/edge_types.json', encoding = 'UTF-8'); i <- which(grepl(\"\\\"schema_version\\\": \\\"12.0\\\"\", x, fixed = TRUE))[1]; x[i] <- sub(\"\\\"schema_version\\\": \\\"12.0\\\"\", \"\\\"schema_version\\\": 12.5\", x[i], fixed = TRUE); path <- file.path(tempfile('pc_bibr12_'), 'v.json'); dir.create(dirname(path)); writeLines(x, path, useBytes = TRUE); path})", "py": "__import__('tests.bibr12._review_helpers', fromlist=['x']).version_variant('tests/bibr12/fixtures/edge_types.json', 'v.json', '12.5')"}}
+- "id": "read.version.v12_array"
+  "r": "read"
+  "py": "pytacheck.read"
+  "args":
+    "file_path": {"$expr": {"r": "local({x <- readLines('tests/bibr12/fixtures/edge_types.json', encoding = 'UTF-8'); i <- which(grepl(\"\\\"schema_version\\\": \\\"12.0\\\"\", x, fixed = TRUE))[1]; x[i] <- sub(\"\\\"schema_version\\\": \\\"12.0\\\"\", \"\\\"schema_version\\\": [\\\"12.0\\\"]\", x[i], fixed = TRUE); path <- file.path(tempfile('pc_bibr12_'), 'v.json'); dir.create(dirname(path)); writeLines(x, path, useBytes = TRUE); path})", "py": "__import__('tests.bibr12._review_helpers', fromlist=['x']).version_variant('tests/bibr12/fixtures/edge_types.json', 'v.json', '[\"12.0\"]')"}}
+- "id": "read.error_message.v12"
+  "r": "identity"
+  "py": "tests.bibr12._parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "tryCatch({metacheck:::.read_bibr(local({x <- readLines('tests/bibr12/fixtures/edge_types.json', encoding = 'UTF-8'); i <- which(grepl(\"\\\"schema_version\\\": \\\"12.0\\\"\", x, fixed = TRUE))[1]; x[i] <- sub(\"\\\"schema_version\\\": \\\"12.0\\\"\", \"\\\"schema_version\\\": \\\"12\\\"\", x[i], fixed = TRUE); path <- file.path(tempfile('pc_bibr12_'), 'v.json'); dir.create(dirname(path)); writeLines(x, path, useBytes = TRUE); path})); NULL}, error = \\(e) conditionMessage(e))", "py": "__import__('tests.bibr12._review_helpers', fromlist=['x']).error_message(lambda: __import__('pytacheck.papers.io', fromlist=['x']).read_bibr(__import__('tests.bibr12._review_helpers', fromlist=['x']).version_variant('tests/bibr12/fixtures/edge_types.json', 'v.json', '\"12\"')))"}}
+- "id": "read.error_message.v_true"
+  "r": "identity"
+  "py": "tests.bibr12._parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "tryCatch({metacheck:::.read_bibr(local({x <- readLines('tests/bibr12/fixtures/edge_types.json', encoding = 'UTF-8'); i <- which(grepl(\"\\\"schema_version\\\": \\\"12.0\\\"\", x, fixed = TRUE))[1]; x[i] <- sub(\"\\\"schema_version\\\": \\\"12.0\\\"\", \"\\\"schema_version\\\": true\", x[i], fixed = TRUE); path <- file.path(tempfile('pc_bibr12_'), 'v.json'); dir.create(dirname(path)); writeLines(x, path, useBytes = TRUE); path})); NULL}, error = \\(e) conditionMessage(e))", "py": "__import__('tests.bibr12._review_helpers', fromlist=['x']).error_message(lambda: __import__('pytacheck.papers.io', fromlist=['x']).read_bibr(__import__('tests.bibr12._review_helpers', fromlist=['x']).version_variant('tests/bibr12/fixtures/edge_types.json', 'v.json', 'true')))"}}
+- "id": "read.error_message.v_empty_string"
+  "r": "identity"
+  "py": "tests.bibr12._parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "tryCatch({metacheck:::.read_bibr(local({x <- readLines('tests/bibr12/fixtures/edge_types.json', encoding = 'UTF-8'); i <- which(grepl(\"\\\"schema_version\\\": \\\"12.0\\\"\", x, fixed = TRUE))[1]; x[i] <- sub(\"\\\"schema_version\\\": \\\"12.0\\\"\", \"\\\"schema_version\\\": \\\"\\\"\", x[i], fixed = TRUE); path <- file.path(tempfile('pc_bibr12_'), 'v.json'); dir.create(dirname(path)); writeLines(x, path, useBytes = TRUE); path})); NULL}, error = \\(e) conditionMessage(e))", "py": "__import__('tests.bibr12._review_helpers', fromlist=['x']).error_message(lambda: __import__('pytacheck.papers.io', fromlist=['x']).read_bibr(__import__('tests.bibr12._review_helpers', fromlist=['x']).version_variant('tests/bibr12/fixtures/edge_types.json', 'v.json', '\"\"')))"}}
+- "id": "read.error_message.v11_1"
+  "r": "identity"
+  "py": "tests.bibr12._parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "tryCatch({metacheck:::.read_bibr(local({x <- readLines('tests/bibr12/fixtures/edge_types.json', encoding = 'UTF-8'); i <- which(grepl(\"\\\"schema_version\\\": \\\"12.0\\\"\", x, fixed = TRUE))[1]; x[i] <- sub(\"\\\"schema_version\\\": \\\"12.0\\\"\", \"\\\"schema_version\\\": \\\"11.1\\\"\", x[i], fixed = TRUE); path <- file.path(tempfile('pc_bibr12_'), 'v.json'); dir.create(dirname(path)); writeLines(x, path, useBytes = TRUE); path})); NULL}, error = \\(e) conditionMessage(e))", "py": "__import__('tests.bibr12._review_helpers', fromlist=['x']).error_message(lambda: __import__('pytacheck.papers.io', fromlist=['x']).read_bibr(__import__('tests.bibr12._review_helpers', fromlist=['x']).version_variant('tests/bibr12/fixtures/edge_types.json', 'v.json', '\"11.1\"')))"}}
+- "id": "read.error_message.v_space"
+  "r": "identity"
+  "py": "tests.bibr12._parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "tryCatch({metacheck:::.read_bibr(local({x <- readLines('tests/bibr12/fixtures/edge_types.json', encoding = 'UTF-8'); i <- which(grepl(\"\\\"schema_version\\\": \\\"12.0\\\"\", x, fixed = TRUE))[1]; x[i] <- sub(\"\\\"schema_version\\\": \\\"12.0\\\"\", \"\\\"schema_version\\\": \\\" 12.0\\\"\", x[i], fixed = TRUE); path <- file.path(tempfile('pc_bibr12_'), 'v.json'); dir.create(dirname(path)); writeLines(x, path, useBytes = TRUE); path})); NULL}, error = \\(e) conditionMessage(e))", "py": "__import__('tests.bibr12._review_helpers', fromlist=['x']).error_message(lambda: __import__('pytacheck.papers.io', fromlist=['x']).read_bibr(__import__('tests.bibr12._review_helpers', fromlist=['x']).version_variant('tests/bibr12/fixtures/edge_types.json', 'v.json', '\" 12.0\"')))"}}
+- "id": "read.error_message.v_empty_array"
+  "r": "identity"
+  "py": "tests.bibr12._parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "tryCatch({metacheck:::.read_bibr(local({x <- readLines('tests/bibr12/fixtures/edge_types.json', encoding = 'UTF-8'); i <- which(grepl(\"\\\"schema_version\\\": \\\"12.0\\\"\", x, fixed = TRUE))[1]; x[i] <- sub(\"\\\"schema_version\\\": \\\"12.0\\\"\", \"\\\"schema_version\\\": []\", x[i], fixed = TRUE); path <- file.path(tempfile('pc_bibr12_'), 'v.json'); dir.create(dirname(path)); writeLines(x, path, useBytes = TRUE); path})); NULL}, error = \\(e) conditionMessage(e))", "py": "__import__('tests.bibr12._review_helpers', fromlist=['x']).error_message(lambda: __import__('pytacheck.papers.io', fromlist=['x']).read_bibr(__import__('tests.bibr12._review_helpers', fromlist=['x']).version_variant('tests/bibr12/fixtures/edge_types.json', 'v.json', '[]')))"}}
+- "id": "read.error_message.v_empty_object"
+  "r": "identity"
+  "py": "tests.bibr12._parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "tryCatch({metacheck:::.read_bibr(local({x <- readLines('tests/bibr12/fixtures/edge_types.json', encoding = 'UTF-8'); i <- which(grepl(\"\\\"schema_version\\\": \\\"12.0\\\"\", x, fixed = TRUE))[1]; x[i] <- sub(\"\\\"schema_version\\\": \\\"12.0\\\"\", \"\\\"schema_version\\\": {}\", x[i], fixed = TRUE); path <- file.path(tempfile('pc_bibr12_'), 'v.json'); dir.create(dirname(path)); writeLines(x, path, useBytes = TRUE); path})); NULL}, error = \\(e) conditionMessage(e))", "py": "__import__('tests.bibr12._review_helpers', fromlist=['x']).error_message(lambda: __import__('pytacheck.papers.io', fromlist=['x']).read_bibr(__import__('tests.bibr12._review_helpers', fromlist=['x']).version_variant('tests/bibr12/fixtures/edge_types.json', 'v.json', '{}')))"}}
+- "id": "read.error_message.v_array_11"
+  "r": "identity"
+  "py": "tests.bibr12._parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "tryCatch({metacheck:::.read_bibr(local({x <- readLines('tests/bibr12/fixtures/edge_types.json', encoding = 'UTF-8'); i <- which(grepl(\"\\\"schema_version\\\": \\\"12.0\\\"\", x, fixed = TRUE))[1]; x[i] <- sub(\"\\\"schema_version\\\": \\\"12.0\\\"\", \"\\\"schema_version\\\": [\\\"11.0\\\", \\\"12.0\\\"]\", x[i], fixed = TRUE); path <- file.path(tempfile('pc_bibr12_'), 'v.json'); dir.create(dirname(path)); writeLines(x, path, useBytes = TRUE); path})); NULL}, error = \\(e) conditionMessage(e))", "py": "__import__('tests.bibr12._review_helpers', fromlist=['x']).error_message(lambda: __import__('pytacheck.papers.io', fromlist=['x']).read_bibr(__import__('tests.bibr12._review_helpers', fromlist=['x']).version_variant('tests/bibr12/fixtures/edge_types.json', 'v.json', '[\"11.0\", \"12.0\"]')))"}}
+- "id": "read.error_message.edge_df_long"
+  "r": "identity"
+  "py": "tests.bibr12._parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "tryCatch({metacheck:::.read_bibr12('tests/bibr12/fixtures/edge_df_long.json'); NULL}, error = \\(e) conditionMessage(e))", "py": "__import__('tests.bibr12._review_helpers', fromlist=['x']).error_message(lambda: __import__('pytacheck.io.bibr12', fromlist=['x']).read_bibr12(__import__('tests.bibr12._review_helpers', fromlist=['x']).FX / 'edge_df_long.json'))"}}
+- "id": "read.error_message.edge_df_empty"
+  "r": "identity"
+  "py": "tests.bibr12._parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "tryCatch({metacheck:::.read_bibr12('tests/bibr12/fixtures/edge_df_empty.json'); NULL}, error = \\(e) conditionMessage(e))", "py": "__import__('tests.bibr12._review_helpers', fromlist=['x']).error_message(lambda: __import__('pytacheck.io.bibr12', fromlist=['x']).read_bibr12(__import__('tests.bibr12._review_helpers', fromlist=['x']).FX / 'edge_df_empty.json'))"}}
+- "id": "read.version.null"
+  "r": "read"
+  "py": "pytacheck.read"
+  "args":
+    "file_path": {"$expr": {"r": "local({x <- readLines('upstream/metacheck/tests/testthat/fixtures/bibr12/probe_html.json', encoding = 'UTF-8'); i <- which(grepl(\"\\\"schema_version\\\": \\\"12.0\\\"\", x, fixed = TRUE))[1]; x[i] <- sub(\"\\\"schema_version\\\": \\\"12.0\\\"\", \"\\\"schema_version\\\": null\", x[i], fixed = TRUE); path <- file.path(tempfile('pc_bibr12_'), 'v.json'); dir.create(dirname(path)); writeLines(x, path, useBytes = TRUE); path})", "py": "__import__('tests.bibr12._review_helpers', fromlist=['x']).version_variant('upstream/metacheck/tests/testthat/fixtures/bibr12/probe_html.json', 'v.json', 'null')"}}
+- "id": "paper_write.error_message.older_format"
+  "r": "identity"
+  "py": "tests.bibr12._parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "tryCatch({paper_write(demopaper(), NULL, save_path = local({d <- tempfile('pc_bibr12_'); dir.create(d); d}), schema_version = '12.0'); NULL}, error = \\(e) conditionMessage(e))", "py": "__import__('tests.bibr12._review_helpers', fromlist=['x']).error_message(lambda: pc.paper_write(pc.demopaper(), None, __import__('tests.bibr12._review_helpers', fromlist=['x'])._tempdir(), schema_version='12.0'))"}}
+- "id": "paper_write.error_message.later_12x"
+  "r": "identity"
+  "py": "tests.bibr12._parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "tryCatch({paper_write(read(local({x <- readLines('tests/bibr12/fixtures/edge_types.json', encoding = 'UTF-8'); i <- which(grepl(\"\\\"schema_version\\\": \\\"12.0\\\"\", x, fixed = TRUE))[1]; x[i] <- sub(\"\\\"schema_version\\\": \\\"12.0\\\"\", \"\\\"schema_version\\\": \\\"12.0.1\\\"\", x[i], fixed = TRUE); path <- file.path(tempfile('pc_bibr12_'), 'v.json'); dir.create(dirname(path)); writeLines(x, path, useBytes = TRUE); path})), NULL, save_path = local({d <- tempfile('pc_bibr12_'); dir.create(d); d}), schema_version = '12.0'); NULL}, error = \\(e) conditionMessage(e))", "py": "__import__('tests.bibr12._review_helpers', fromlist=['x']).error_message(lambda: pc.paper_write(pc.read(__import__('tests.bibr12._review_helpers', fromlist=['x']).version_variant('tests/bibr12/fixtures/edge_types.json', 'v.json', '\"12.0.1\"')), None, __import__('tests.bibr12._review_helpers', fromlist=['x'])._tempdir(), schema_version='12.0'))"}}
+- "id": "paper_validate.warnings.edge_types"
+  "r": "identity"
+  "py": "tests.bibr12._parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "local({p <- suppressWarnings(read('tests/bibr12/fixtures/edge_types.json')); w <- character(0); v <- withCallingHandlers(paper_validate(p), warning = function(x) {w <<- c(w, conditionMessage(x)); invokeRestart('muffleWarning')}); list(value = v, warnings = w)})", "py": "__import__('tests.bibr12._review_helpers', fromlist=['x']).validate_warnings(pc.read(__import__('tests.bibr12._review_helpers', fromlist=['x']).FX / 'edge_types.json'))"}}
+- "id": "paper_validate.warnings.edge_minimal"
+  "r": "identity"
+  "py": "tests.bibr12._parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "local({p <- suppressWarnings(read('tests/bibr12/fixtures/edge_minimal.json')); w <- character(0); v <- withCallingHandlers(paper_validate(p), warning = function(x) {w <<- c(w, conditionMessage(x)); invokeRestart('muffleWarning')}); list(value = v, warnings = w)})", "py": "__import__('tests.bibr12._review_helpers', fromlist=['x']).validate_warnings(pc.read(__import__('tests.bibr12._review_helpers', fromlist=['x']).FX / 'edge_minimal.json'))"}}
+- "id": "paper_validate.warnings.edge_numeric_id"
+  "r": "identity"
+  "py": "tests.bibr12._parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "local({p <- suppressWarnings(read('tests/bibr12/fixtures/edge_numeric_id.json')); w <- character(0); v <- withCallingHandlers(paper_validate(p), warning = function(x) {w <<- c(w, conditionMessage(x)); invokeRestart('muffleWarning')}); list(value = v, warnings = w)})", "py": "__import__('tests.bibr12._review_helpers', fromlist=['x']).validate_warnings(pc.read(__import__('tests.bibr12._review_helpers', fromlist=['x']).FX / 'edge_numeric_id.json'))"}}
+- "id": "paper_validate.warnings.PMC4383902"
+  "r": "identity"
+  "py": "tests.bibr12._parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "local({p <- suppressWarnings(read('upstream/metacheck/tests/testthat/fixtures/bibr12/PMC4383902.json')); w <- character(0); v <- withCallingHandlers(paper_validate(p), warning = function(x) {w <<- c(w, conditionMessage(x)); invokeRestart('muffleWarning')}); list(value = v, warnings = w)})", "py": "__import__('tests.bibr12._review_helpers', fromlist=['x']).validate_warnings(pc.read(__import__('tests.bibr12._review_helpers', fromlist=['x']).F12 / 'PMC4383902.json'))"}}
+- "id": "paper_validate.warnings.probe_docx"
+  "r": "identity"
+  "py": "tests.bibr12._parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "local({p <- suppressWarnings(read('upstream/metacheck/tests/testthat/fixtures/bibr12/probe_docx.json')); w <- character(0); v <- withCallingHandlers(paper_validate(p), warning = function(x) {w <<- c(w, conditionMessage(x)); invokeRestart('muffleWarning')}); list(value = v, warnings = w)})", "py": "__import__('tests.bibr12._review_helpers', fromlist=['x']).validate_warnings(pc.read(__import__('tests.bibr12._review_helpers', fromlist=['x']).F12 / 'probe_docx.json'))"}}
+- "id": "paper_validate.warnings.modified"
+  "r": "identity"
+  "py": "tests.bibr12._parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "local({p <- suppressWarnings(local({p <- read('tests/bibr12/fixtures/edge_types.json'); tx <- p$text; n <- nrow(tx) + 1L; tx[n, ] <- NA; tx$text[n] <- 'Added row.'; tx$text_id <- as.double(tx$text_id); tx$text_id[n] <- 9; tx$paragraph_id <- as.double(tx$paragraph_id); tx$paragraph_id[n] <- 8; tx$section_id <- as.double(tx$section_id); tx$section_id[n] <- 2; tx$page_number <- as.double(tx$page_number); tx$formatted <- NULL; p$text <- tx; p$bib$year <- c(2019.9, NA); p$bib$volume <- c(12, 1e5); p$bib$is_in_press <- c('TRUE', 'no'); p$bib$extra_col <- c('x', 'y'); p$info$title <- NA_character_; p$info$keywords <- list(c('k1', 'k2')); p$author$role <- c('single', NA, 'x', 'y'); p$footnote <- NULL; p})); w <- character(0); v <- withCallingHandlers(paper_validate(p), warning = function(x) {w <<- c(w, conditionMessage(x)); invokeRestart('muffleWarning')}); list(value = v, warnings = w)})", "py": "__import__('tests.bibr12._review_helpers', fromlist=['x']).validate_warnings(__import__('tests.bibr12._review_helpers', fromlist=['x']).modified_edge())"}}
+- "id": "paper_validate.warnings.demo"
+  "r": "identity"
+  "py": "tests.bibr12._parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "local({p <- suppressWarnings(demopaper()); w <- character(0); v <- withCallingHandlers(paper_validate(p), warning = function(x) {w <<- c(w, conditionMessage(x)); invokeRestart('muffleWarning')}); list(value = v, warnings = w)})", "py": "__import__('tests.bibr12._review_helpers', fromlist=['x']).validate_warnings(pc.demopaper())"}}
+- "id": "paper_validate.warnings.psychsci"
+  "r": "identity"
+  "py": "tests.bibr12._parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "local({p <- suppressWarnings(read('upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614527830.json')); w <- character(0); v <- withCallingHandlers(paper_validate(p), warning = function(x) {w <<- c(w, conditionMessage(x)); invokeRestart('muffleWarning')}); list(value = v, warnings = w)})", "py": "__import__('tests.bibr12._review_helpers', fromlist=['x']).validate_warnings(pc.read(__import__('pathlib').Path('upstream/metacheck/tests/testthat/fixtures/psychsci/0956797614527830.json')))"}}
+- "id": "paper_validate.warnings.grobid"
+  "r": "identity"
+  "py": "tests.bibr12._parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "local({p <- suppressWarnings(read('upstream/metacheck/tests/testthat/fixtures/debruine/debruine-child.xml')); w <- character(0); v <- withCallingHandlers(paper_validate(p), warning = function(x) {w <<- c(w, conditionMessage(x)); invokeRestart('muffleWarning')}); list(value = v, warnings = w)})", "py": "__import__('tests.bibr12._review_helpers', fromlist=['x']).validate_warnings(pc.read(__import__('pathlib').Path('upstream/metacheck/tests/testthat/fixtures/debruine/debruine-child.xml')))"}}
+- "id": "paper_validate.warnings.test_paper"
+  "r": "identity"
+  "py": "tests.bibr12._parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "local({p <- suppressWarnings(test_paper()); w <- character(0); v <- withCallingHandlers(paper_validate(p), warning = function(x) {w <<- c(w, conditionMessage(x)); invokeRestart('muffleWarning')}); list(value = v, warnings = w)})", "py": "__import__('tests.bibr12._review_helpers', fromlist=['x']).validate_warnings(pc.test_paper())"}}
+- "id": "paper_write.legacy_roundtrip.probe_html"
+  "r": "identity"
+  "py": "tests.bibr12._parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "read(paper_write(read('upstream/metacheck/tests/testthat/fixtures/bibr12/probe_html.json'), NULL, save_path = local({d <- tempfile('pc_bibr12_'); dir.create(d); d})))", "py": "__import__('tests.bibr12._review_helpers', fromlist=['x']).legacy_roundtrip(pc.read(__import__('tests.bibr12._review_helpers', fromlist=['x']).F12 / 'probe_html.json'))"}}
+- "id": "paper_write.legacy_roundtrip.edge_types"
+  "r": "identity"
+  "py": "tests.bibr12._parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "read(paper_write(read('tests/bibr12/fixtures/edge_types.json'), NULL, save_path = local({d <- tempfile('pc_bibr12_'); dir.create(d); d})))", "py": "__import__('tests.bibr12._review_helpers', fromlist=['x']).legacy_roundtrip(pc.read(__import__('tests.bibr12._review_helpers', fromlist=['x']).FX / 'edge_types.json'))"}}
+- "id": "paper_write.file_name.suffix"
+  "r": "identity"
+  "py": "tests.bibr12._parity_helpers.identity"
+  "args":
+    "x": {"$expr": {"r": "local({d <- local({d <- tempfile('pc_bibr12_'); dir.create(d); d}); p <- read('upstream/metacheck/tests/testthat/fixtures/bibr12/probe_html.json'); c(basename(paper_write(p, 'a.zip.json', d, '12.0')), basename(paper_write(p, 'b.json.zip', d, '12.0')), basename(paper_write(p, 'c.JSON', d, '12.0')))})", "py": "__import__('tests.bibr12._review_helpers', fromlist=['x']).file_names(pc.read(__import__('tests.bibr12._review_helpers', fromlist=['x']).F12 / 'probe_html.json'), ['a.zip.json', 'b.json.zip', 'c.JSON'])"}}
+- "id": "module.ref_consistency.edge_types"
+  "module": "ref_consistency"
+  "args":
+    "paper": {"$paper": "tests/bibr12/fixtures/edge_types.json"}
+- "id": "module.ref_miscitation.edge_types"
+  "module": "ref_miscitation"
+  "args":
+    "paper": {"$paper": "tests/bibr12/fixtures/edge_types.json"}
+- "id": "module.all_urls.edge_types"
+  "module": "all_urls"
+  "args":
+    "paper": {"$paper": "tests/bibr12/fixtures/edge_types.json"}
+- "id": "module.stat_check.edge_types"
+  "module": "stat_check"
+  "args":
+    "paper": {"$paper": "tests/bibr12/fixtures/edge_types.json"}
+- "id": "module.all_p_values.edge_types"
+  "module": "all_p_values"
+  "args":
+    "paper": {"$paper": "tests/bibr12/fixtures/edge_types.json"}
+- "id": "module.ref_summary.edge_types"
+  "module": "ref_summary"
+  "args":
+    "paper": {"$paper": "tests/bibr12/fixtures/edge_types.json"}

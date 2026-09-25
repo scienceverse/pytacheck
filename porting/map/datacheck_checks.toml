@@ -8,6 +8,8 @@
 # Data: data/scales.rda and data/tasks.rda -> src/pytacheck/resources/data/{scales,tasks}.json.gz
 # via scripts/convert_datacheck_data.R. Cases: tests/datacheck_checks/gen_parity_cases.py
 # (fixtures: tests/datacheck_checks/data/make_fixtures.py); goldens: parity/golden/datacheck_checks/.
+# Review cases (area datacheck_checks_review: fixed divergences, error paths, seeded
+# batteries for strptime() and the value classifiers): tests/datacheck_checks/gen_review_cases.py.
 [files]
 "R/data_check_helpers.R" = ["src/pytacheck/datacheck/checks.py", "src/pytacheck/datacheck/_checks_quality.py", "src/pytacheck/datacheck/_checks_pii.py", "src/pytacheck/datacheck/_checks_facets.py", "src/pytacheck/datacheck/_checks_format.py", "src/pytacheck/datacheck/_checks_blocks.py", "src/pytacheck/datacheck/_checks_rvec.py"]
 "R/scales.R" = ["src/pytacheck/datacheck/scales.py"]

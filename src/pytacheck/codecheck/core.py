@@ -1031,24 +1031,31 @@ def code_extract_qmd_py(
 def code_parse_r(
     file_path: str | os.PathLike[str] | Sequence[str] = "",
     text: str | Sequence[str] | None = None,
+    *,
+    engine: str | None = None,
 ) -> pd.DataFrame:
     """Check R code for parse errors.
 
     Port of ``R/code_check.R::code_parse_r()``: one row per file with columns
     ``file_path``, ``error`` and ``msg`` (R's parse error message, with
     ``<text>`` replaced by ``line``). R Markdown/Quarto files (text starting
-    with a ``---`` line) are purled first. R's own parser is used when an
-    ``Rscript`` is available (``PYTACHECK_RSCRIPT`` or on the ``PATH``);
-    otherwise a Python port of R's grammar reports the same errors.
+    with a ``---`` line) are purled first.
+
+    *engine* (pytacheck only) picks the parser: ``"r"`` runs R's own parser in
+    one ``Rscript`` process (``PYTACHECK_RSCRIPT`` or ``Rscript`` on the
+    ``PATH``; Python when there is none), ``"python"`` a Python port of R
+    4.5.3's parser that reproduces its messages, and ``None`` (default) uses
+    ``PYTACHECK_R_PARSER`` if set, else R when the reference R is configured
+    with ``PYTACHECK_RSCRIPT``, else Python.
     """
-    from pytacheck.codecheck._rparse import parse_error
+    from pytacheck.codecheck._rparse import parse_errors
 
     paths = [file_path] if isinstance(file_path, str | os.PathLike) else list(file_path)
     paths = [os.fspath(p) for p in paths]
     if all(p == "" for p in paths) and text is None:
         raise ValueError("You must specify one of file_path or text")
     given = None if text is None else list(_as_chr(text) or [])
-    rows = []
+    texts: list[list[str]] = []
     for fp in paths:
         lines = code_read(fp) if fp != "" else given
         if lines is None:
@@ -1057,16 +1064,18 @@ def code_parse_r(
             raise IndexError("subscript out of bounds")
         if lines[0] is not None and grepl(r"^---\s*$", lines[0]):
             lines = code_extract_r(text=lines)
-        msg = parse_error([("NA" if v is None else v) for v in lines])
-        if msg is None:
-            rows.append({"file_path": fp, "error": False, "msg": None})
-        else:
-            rows.append({"file_path": fp, "error": True, "msg": msg.replace("<text>", "line", 1)})
+        texts.append(["NA" if v is None else v for v in lines])
+    if not paths:
+        return pd.DataFrame()
+    msgs = parse_errors(texts, engine)
     return pd.DataFrame(
         {
-            "file_path": pd.Series([r["file_path"] for r in rows], dtype="string"),
-            "error": pd.Series([r["error"] for r in rows], dtype="boolean"),
-            "msg": pd.Series([r["msg"] for r in rows], dtype="string"),
+            "file_path": pd.Series(paths, dtype="string"),
+            "error": pd.Series([m is not None for m in msgs], dtype="boolean"),
+            "msg": pd.Series(
+                [None if m is None else m.replace("<text>", "line", 1) for m in msgs],
+                dtype="string",
+            ),
         }
     )
 

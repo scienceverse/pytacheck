@@ -1,0 +1,72 @@
+{
+  "id": "paper_table.edge_types.section",
+  "ok": true,
+  "error": null,
+  "warnings": [
+    "NAs introduced by coercion"
+  ],
+  "value": {
+    "t": "df",
+    "nrow": 3,
+    "names": [
+      "section_id",
+      "header",
+      "level",
+      "parent_section_id",
+      "section_type",
+      "paper_id"
+    ],
+    "v": [
+      {
+        "t": "int",
+        "v": [
+          1,
+          2,
+          3
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Intro",
+          null,
+          "References"
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          1,
+          2,
+          1
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          null,
+          1,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "intro",
+          "weird_type",
+          "references"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "edge_types",
+          "edge_types",
+          "edge_types"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

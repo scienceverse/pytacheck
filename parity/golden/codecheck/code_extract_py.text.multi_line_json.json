@@ -1,0 +1,16 @@
+{
+  "id": "code_extract_py.text.multi_line_json",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "x = 1",
+      "y = 2",
+      ""
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

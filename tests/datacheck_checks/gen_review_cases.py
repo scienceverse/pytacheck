@@ -371,6 +371,34 @@ add(
     },
 )
 
+two = {"a": ["x", "1", "2"], "b": ["y", "3", "4"]}
+add(
+    "data_strip_qualtrics_header.review.negative_max_strip",
+    "data_strip_qualtrics_header",
+    {"df": {"$df": two}, "max_strip": ex("-1L", "-1")},
+)
+add(
+    "data_strip_qualtrics_header.review.zero_max_strip",
+    "data_strip_qualtrics_header",
+    {"df": {"$df": two}, "max_strip": ex("0L", "0")},
+)
+add(
+    "data_promote_header_row.review.negative_max_scan",
+    "data_promote_header_row",
+    {"df": {"$df": two}, "max_scan": ex("-1L", "-1")},
+)
+add(
+    "data_promote_header_row.review.negative_max_scan_raw",
+    "data_promote_header_row",
+    {
+        "df": {"$df": two},
+        "raw_rows": ex(
+            'list(c("x", "y"), c("1", "3"), c("2", "4"))', "[['x', 'y'], ['1', '3'], ['2', '4']]"
+        ),
+        "max_scan": ex("-1L", "-1"),
+    },
+)
+
 # -- read.csv(fileEncoding = "UTF-8-BOM") header sniff ------------------------------------------
 
 for f in ("jspsych_bom_blank.csv", "behaverse_latin1.csv", "jspsych_latin1_body.csv"):
@@ -389,6 +417,97 @@ add(
         )
     },
 )
+
+# -- counts instead of elements: duplicates, first-appearance order, weighted medians ----------
+
+add(
+    "data_check_constant.review.tie_numeric",
+    "data_check_constant",
+    {"x": {"$dbl": [2.0, 1.0, 1.0, 2.0]}, "threshold": ex("0.5", "0.5")},
+)
+add(
+    "data_check_constant.review.tie_character",
+    "data_check_constant",
+    {"x": {"$chr": ["b", "B", "a", "A"]}, "threshold": ex("0.2", "0.2")},
+)
+add(
+    "data_check_constant.review.tie_logical",
+    "data_check_constant",
+    {"x": {"$lgl": [True, False]}, "threshold": ex("0.5", "0.5")},
+)
+add(
+    "data_check_constant.review.double_labels_merge",
+    "data_check_constant",
+    {
+        "x": ex("c(0.1 + 0.2, 0.3, 0.3, 1 + 1e-15, 1)", "[0.1 + 0.2, 0.3, 0.3, 1 + 1e-15, 1.0]"),
+        "threshold": ex("0.5", "0.5"),
+    },
+)
+add(
+    "data_check_numeric_in_text.review.duplicates_order",
+    "data_check_numeric_in_text",
+    {
+        "x": {"$chr": ["1", "2", "n/a", "3", " 4 ", "?", "n/a", "5", "6,5", "7", "n/a"]},
+        "threshold": ex("0.6", "0.6"),
+    },
+)
+add(
+    "data_check_pii_values.review.duplicates",
+    "data_check_pii_values",
+    {
+        "x": {
+            "$chr": [
+                "a@b.com",
+                "a@b.com",
+                " a@b.com ",
+                "x",
+                "y",
+                "4111 1111 1111 1111",
+                "4111111111111111",
+                "10.0.0.1",
+            ]
+        }
+    },
+)
+add(
+    "data_check_pii_freetext.review.duplicates_median",
+    "data_check_pii_freetext",
+    {
+        "x": {
+            "$chr": [
+                "I really enjoyed the study and would take part again next time.",
+                "The task was confusing at first but became clear to me later on.",
+                "short",
+                "short",
+                "My name is Jane and I live near the central station here.",
+                "It was fine, a bit long maybe but otherwise everything worked well.",
+                "Another long answer that clearly reads like written prose here.",
+            ]
+        },
+        "min_unique_frac": ex("0.5", "0.5"),
+    },
+)
+add(
+    "data_check_whitespace.review.duplicates_order",
+    "data_check_whitespace",
+    {"x": {"$chr": ["b ", "a", " c", "b ", " c", "\td", None, "  "]}},
+)
+add(
+    "data_check_case_issues.review.duplicates_order",
+    "data_check_case_issues",
+    {"x": {"$chr": ["male", "Female", "MALE", "male", "female", "Male", None, " "]}},
+)
+add(
+    "data_check_colname.review.multibyte_60_chars",
+    "data_check_colname",
+    {"col_name": "\u65e5\u672c" * 30},
+)
+add(
+    "data_check_colname.review.multibyte_66_chars",
+    "data_check_colname",
+    {"col_name": "\u65e5\u672c" * 33},
+)
+
 
 # -- batteries ----------------------------------------------------------------------------------
 

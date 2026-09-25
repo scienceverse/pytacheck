@@ -1,0 +1,16 @@
+{
+  "id": "code_file_refs.stata_quoted",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "07. Study 6 (Clean).csv",
+      "https://example.org//files/x.csv",
+      "myfile.dta"
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

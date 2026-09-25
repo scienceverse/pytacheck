@@ -1,0 +1,50 @@
+{
+  "id": "code_line_stats.my_qmd_first_chunk_python_qmd",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "total_lines",
+      "comment_lines",
+      "code_lines",
+      "percent_comments",
+      "has_docstring"
+    ],
+    "v": [
+      {
+        "t": "int",
+        "v": [
+          17
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          1
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          15
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0.0588235294117647
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          null
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

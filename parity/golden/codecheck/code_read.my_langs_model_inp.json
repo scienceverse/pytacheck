@@ -1,0 +1,17 @@
+{
+  "id": "code_read.my_langs_model_inp",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "TITLE: model;",
+      "! comment",
+      "DATA: FILE = \"data.dat\"; ! inline",
+      "VARIABLE: NAMES = x y;"
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

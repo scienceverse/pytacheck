@@ -1,0 +1,32 @@
+{
+  "id": "code_abs_path.tilde",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 2,
+    "names": [
+      "abs_path",
+      "line"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "~/file.R",
+          "~/Desktop/a b/c.csv"
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          1,
+          2
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

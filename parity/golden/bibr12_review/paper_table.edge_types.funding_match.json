@@ -1,0 +1,74 @@
+{
+  "id": "paper_table.edge_types.funding_match",
+  "ok": true,
+  "error": null,
+  "warnings": [
+    "NAs introduced by coercion"
+  ],
+  "value": {
+    "t": "df",
+    "nrow": 1,
+    "names": [
+      "funding_id",
+      "service",
+      "service_id",
+      "score",
+      "name",
+      "country_code",
+      "funder_doi",
+      "paper_id"
+    ],
+    "v": [
+      {
+        "t": "int",
+        "v": [
+          1
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "ror"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "x"
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "NSF"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "10.13039/100000001"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "edge_types"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

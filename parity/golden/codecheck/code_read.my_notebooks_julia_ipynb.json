@@ -1,0 +1,40 @@
+{
+  "id": "code_read.my_notebooks_julia_ipynb",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "{",
+      " \"cells\": [",
+      "  {",
+      "   \"cell_type\": \"code\",",
+      "   \"execution_count\": null,",
+      "   \"metadata\": {},",
+      "   \"outputs\": [],",
+      "   \"source\": [",
+      "    \"using DataFrames\\n\"",
+      "   ]",
+      "  },",
+      "  {",
+      "   \"cell_type\": \"markdown\",",
+      "   \"metadata\": {},",
+      "   \"source\": [",
+      "    \"# Title\\n\"",
+      "   ]",
+      "  }",
+      " ],",
+      " \"metadata\": {",
+      "  \"kernelspec\": {",
+      "   \"language\": \"julia\"",
+      "  }",
+      " },",
+      " \"nbformat\": 4,",
+      " \"nbformat_minor\": 5",
+      "}"
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

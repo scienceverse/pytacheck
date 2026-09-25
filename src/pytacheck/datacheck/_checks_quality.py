@@ -24,6 +24,7 @@ from pytacheck.datacheck._checks_rvec import (
     fmt_g,
     fmt_pct0,
     num,
+    numeric_array,
     quantile7,
     r_colon,
     rvec,
@@ -189,9 +190,7 @@ def data_check_scale_values(
             valid_set = None
 
     if valid_set is None:
-        from pytacheck.datacheck.files import _detect_likert_scale
-
-        sc = _detect_likert_scale(xv)
+        sc = _likert_scale(xv)
         if sc is None:
             return none
         lo = sc["lo"]
@@ -250,6 +249,24 @@ def data_check_scale_values(
     }
 
 
+def _likert_scale(xv: list[Any]) -> Any:
+    """``.detect_likert_scale(xv)`` for finite *xv*, skipping the call when its
+    own opening checks already return ``NULL``: fewer than 20 values, a
+    non-integer value, or fewer than 2 / more than 23 distinct levels (counted
+    only when every value is in R's integer range, as ``as.integer()`` turns
+    the others into ``NA``, which ``sort(unique())`` then drops)."""
+    if len(xv) < 20:
+        return None
+    u = set(xv)
+    if any(e != round(e) for e in u):
+        return None
+    if all(abs(e) <= 2147483647 for e in u) and not 2 <= len(u) <= 23:
+        return None
+    from pytacheck.datacheck.files import _detect_likert_scale
+
+    return _detect_likert_scale(xv)
+
+
 def _finite_pair(valid_range: Any) -> bool:
     """``length(valid_range) == 2 && all(is.finite(valid_range))``."""
     v = rvec(valid_range)
@@ -271,13 +288,15 @@ def data_check_outliers(x: Any, k: float = 1.5, n_max: int = 10) -> dict[str, An
         "lower": math.nan,
         "upper": math.nan,
     }
-    v = rvec(x)
-    if not v.is_numeric:
+    import numpy as np
+
+    got = numeric_array(x)
+    if got is None:
         return none
-    xs = [e for e in v.values if e is not None]
-    if len(xs) < 4:
+    a = got[0][~np.isnan(got[0])]
+    if a.size < 4:
         return none
-    q1, q3 = quantile7(xs, (0.25, 0.75))
+    q1, q3 = quantile7(np.sort(a), (0.25, 0.75), is_sorted=True)
     iqr = q3 - q1
     if iqr != iqr:
         raise ValueError("missing value where TRUE/FALSE needed")
@@ -285,7 +304,9 @@ def data_check_outliers(x: Any, k: float = 1.5, n_max: int = 10) -> dict[str, An
         return none
     lower = q1 - k * iqr
     upper = q3 + k * iqr
-    out = unique(e for e in xs if e < lower or e > upper)
+    out: list[Any] = list(dict.fromkeys(a[(a < lower) | (a > upper)].tolist()))  # unique()
+    if got[1]:
+        out = [int(e) for e in out]
     if not out:
         return {"problem": False, "message": "", "values": None, "lower": lower, "upper": upper}
     shown = sorted(out)[: int(n_max)]

@@ -1,0 +1,30 @@
+{
+  "id": "code_abs_path.my_langs_analysis_do",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 1,
+    "names": [
+      "abs_path",
+      "line"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "C:/project"
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          7
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -1,0 +1,21 @@
+{
+  "id": "code_lang.dup_names",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "R",
+      "R",
+      "Python"
+    ],
+    "names": [
+      "a.R",
+      "a.R",
+      "b.py"
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -1,0 +1,37 @@
+{
+  "id": "code_parse_r.python.parse-errors_error_Rmd",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 1,
+    "names": [
+      "file_path",
+      "error",
+      "msg"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "/home/user/pytacheck/upstream/metacheck/tests/testthat/fixtures/parse-errors/error.Rmd"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "line:4:1: unexpected symbol\n3: \n4: a\n   ^"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

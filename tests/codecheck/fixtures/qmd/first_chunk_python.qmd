@@ -1,0 +1,21 @@
+---
+title: C
+---
+
+Text.
+
+```{python}
+#| echo: false
+import numpy as np
+x = np.array([1])
+```
+
+```{r}
+y <- 2
+```
+
+````{python, eval=False}
+print('four')
+```
+still inside
+````

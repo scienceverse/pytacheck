@@ -1,0 +1,26 @@
+{
+  "id": "code_extract_py.notebooks_notebook_python_ipynb",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "import pandas as pd",
+      "import numpy as np",
+      "from scipy import stats  # comment",
+      "df = pd.read_csv('data/trials.csv')",
+      "",
+      "df.groupby('cond').agg(['mean'])",
+      "",
+      "print(stats.ttest_rel(a, b))",
+      "",
+      "plt.plot(x, y)",
+      "",
+      "x = 1  # never run",
+      ""
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -41,11 +41,21 @@ sides: R inside ``httptest2::with_mock_dir()``, Python inside
 ``tests.httpmock.replay()``. Relative names are metacheck test mock
 directories (``apis``, ``apis_papers_retag``, ...); paths starting with
 ``tests/`` or ``parity/`` are relative to this repository.
+
+The Python side runs with metacheck's defaults where pytacheck deliberately
+changed one (``METACHECK_DEFAULTS``): ``read()`` and ``grobid_to_bibr()``
+convert Grobid TEI with ``schema_version=None``, metacheck's older
+conversion, so ``$paper``/``$read`` of an XML file, ``$expr`` code and every
+function that reads TEI (``convert()``, ``convert_grobid()``, ...) match R's
+``read()``. A case compares the bibr 12.0 conversion by passing
+``schema_version = "12.0"`` on both sides.
 """
 
 from __future__ import annotations
 
+import contextlib
 import importlib
+import inspect
 import keyword
 from collections.abc import Iterator
 from dataclasses import dataclass
@@ -178,9 +188,54 @@ def _mock_dir(spec: dict[str, Any]) -> Any:
     return replay(path if path.is_absolute() else d)
 
 
+# pytacheck defaults that deliberately differ from metacheck's:
+# (module, function, argument, metacheck's default)
+METACHECK_DEFAULTS: tuple[tuple[str, str, str, Any], ...] = (
+    # bibr export schema 12.0 is pytacheck's paper format; metacheck's read()
+    # and grobid_to_bibr() convert Grobid TEI to its older format
+    ("pytacheck.io.read", "read", "schema_version", None),
+    ("pytacheck.io.grobid", "grobid_to_bibr", "schema_version", None),
+)
+
+
+@contextlib.contextmanager
+def metacheck_defaults() -> Iterator[None]:
+    """Run with metacheck's defaults for the arguments in ``METACHECK_DEFAULTS``.
+
+    The functions' own default values are swapped for the duration, so every
+    caller (argument constructors, ``$expr`` code, pytacheck functions that
+    call them) sees metacheck's behaviour; an explicit argument still wins.
+    """
+    saved: list[tuple[Any, str, Any]] = []
+    try:
+        for module_name, fn_name, arg, value in METACHECK_DEFAULTS:
+            fn = getattr(importlib.import_module(module_name), fn_name)
+            param = inspect.signature(fn).parameters[arg]
+            if param.kind is inspect.Parameter.KEYWORD_ONLY:
+                kwdefaults = dict(fn.__kwdefaults__ or {})
+                saved.append((fn, "__kwdefaults__", fn.__kwdefaults__))
+                kwdefaults[arg] = value
+                fn.__kwdefaults__ = kwdefaults
+            else:
+                names = [
+                    n
+                    for n, p in inspect.signature(fn).parameters.items()
+                    if p.kind is inspect.Parameter.POSITIONAL_OR_KEYWORD
+                    and p.default is not inspect.Parameter.empty
+                ]
+                defaults = list(fn.__defaults__)
+                saved.append((fn, "__defaults__", fn.__defaults__))
+                defaults[names.index(arg)] = value
+                fn.__defaults__ = tuple(defaults)
+        yield
+    finally:
+        for fn, attr, old in reversed(saved):
+            setattr(fn, attr, old)
+
+
 def run_python(case: Case) -> Any:
     """Run the Python side of *case* and return its result."""
-    with _mock_dir(case.spec):
+    with _mock_dir(case.spec), metacheck_defaults():
         return _run_python(case)
 
 

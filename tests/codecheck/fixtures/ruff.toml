@@ -1,0 +1,4 @@
+# Fixtures here are input data for code_read()/code_lang()/code_line_stats():
+# deliberately malformed notebooks and unidiomatic analysis scripts.
+extend = "../../../pyproject.toml"
+extend-exclude = ["*.ipynb", "langs/*.py"]

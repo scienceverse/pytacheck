@@ -1,0 +1,16 @@
+{
+  "id": "code_read.my_pin_README_md",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "# Project",
+      "",
+      "Analyses were run in R version 4.3.1 (2023-06-16) -- \"Beagle Scouts\"."
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -1,0 +1,15 @@
+{
+  "id": "code_read.my_encodings_shift_jis_R",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "# 分析の結果、参加者はサイズと頻度について報告しなければならない",
+      "x <- 1"
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

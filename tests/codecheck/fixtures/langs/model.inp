@@ -1,0 +1,4 @@
+TITLE: model;
+! comment
+DATA: FILE = "data.dat"; ! inline
+VARIABLE: NAMES = x y;

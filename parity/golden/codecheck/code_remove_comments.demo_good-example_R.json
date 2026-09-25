@@ -1,0 +1,19 @@
+{
+  "id": "code_remove_comments.demo_good-example_R",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "library(tidyverse) ",
+      "orig <- read_delim(\"folder/file.txt\")",
+      "df <- orig |>",
+      "  select(x = 1) |>",
+      "  mutate(y = rnorm(nrow(orig)))",
+      "t.test(x ~ y, data = df)"
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}
