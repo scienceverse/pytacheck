@@ -36,9 +36,12 @@ goes back to `dev` and drops `pull_request` and `base_commit` from the pin
      negative), do the right thing, mark the affected parity cases
      `known_divergence: {kind: r_bug_fixed, ref: U<n>, reason: ...}` and record the bug
      in `docs/UPSTREAM_ISSUES.md` so it can be reported upstream.
-   * **Be slightly opinionated.** A different design is welcome when it is clearly
-     better for users (`kind: better_logic`, recorded as a D-entry). When it is not
-     clearly better, keep metacheck's behaviour.
+   * **Stay generally faithful in what users see.** Modules, core functionality and
+     outputs follow metacheck: what a module checks, how it decides, and what it
+     reports. Change them only to fix a clear bug. Be opinionated in the internals
+     instead: idiomatic, well-structured Python, mature libraries, robustness,
+     speed. A different user-facing design is the exception, for when it is clearly
+     better (`kind: better_logic`, recorded as a D-entry).
    * **Don't emulate R internals.** R's error and warning texts, quirks of R's C
      libraries on malformed or synthetic input (data.table's `fread()`, yajl/jsonlite,
      TRE regex corner cases, readr/vroom) and R type details that do not reach users
