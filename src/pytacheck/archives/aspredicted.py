@@ -32,6 +32,10 @@ def aspredicted_links(paper: Any) -> pd.DataFrame:
     from pytacheck.papers.tables import paper_table
 
     urls = paper_table(paper, "url")
+    if "href" not in urls.columns:
+        # R: filter(grepl(..., href)) on the 0 x 0 url table of an empty paper
+        # list sees `href <- NULL` and keeps the empty table
+        return urls.copy()
     keep = pd.Series(
         [bool(v) for v in grepl(r"aspredicted\.org", urls["href"], ignore_case=True)],
         index=urls.index,

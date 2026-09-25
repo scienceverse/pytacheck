@@ -1,0 +1,114 @@
+{
+  "id": "tables.jasp_with_r",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": null,
+    "v": [
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "Order",
+          "File",
+          "Runs after",
+          "Basis"
+        ],
+        "v": [
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ok.R"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "—"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "none"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "Reported",
+          "Found",
+          "Confidence",
+          "Plausible",
+          "Matched values",
+          "Not matched",
+          "Source file",
+          "Analysis"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "t=2.81 df=47.2 p=0.007"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "full"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "yes"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "t=2.81, df=47.2, p=0.007"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "notebook_r.ipynb"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Cell 2 [2]"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

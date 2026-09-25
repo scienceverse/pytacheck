@@ -236,6 +236,90 @@ add(
 )
 
 
+# .data_group_seed is 8675309L: the llm() cache key must see an R integer
+add(
+    "review.data_group_llm.seed_cache_key",
+    r="identity",
+    py=f"{HELP}.data_group_cache_key",
+    args={
+        "x": {
+            "$expr": {
+                "r": (
+                    "local({key <- NULL; testthat::with_mocked_bindings(metacheck::data_group_llm("
+                    'data.frame(file_name = c("first_raw.csv", "second_raw.csv"), data_type = "data"), '
+                    'model = "m"), llm = function(..., params) {key <<- metacheck:::.llm_cache_key('
+                    '"t", "s", NULL, "m", do.call(ellmer::params, c(params, list(temperature = 0, '
+                    'max_tokens = 4096)))); stop("no llm")}, .package = "metacheck"); key})'
+                ),
+                "py": "None",
+            }
+        }
+    },
+    py_drop=["x"],
+)
+
+
+# file names that are not valid UTF-8 (UPSTREAM_ISSUES U76): tools::file_ext()'s
+# substring() and tolower() raise in R; names are written with R's \xff escapes
+def _r_chr(xs: list[str | None]) -> str:
+    return "c(" + ", ".join("NA" if x is None else f'"{x}"' for x in xs) + ")"
+
+
+for tag, names, paths, fn in [
+    ("ext_substring", ["a.csv", "b\\xff.txt"], None, "classify"),
+    ("tolower_only", ["b\\xff.txt"], None, "classify"),
+    ("tolower_second", ["a", "b\\xff"], None, "classify"),
+    ("na_first", [None, "b\\xff.txt"], None, "classify"),
+    ("invalid_first", ["b\\xff.txt", "a.csv"], None, "classify"),
+    ("budget_msg", ["a.csv", "abc\\xffdef.txt"], None, "classify"),
+    ("budget_multibyte", ["a.csv", "\\xffabcd\\xc3\\xa9xyz.txt"], None, "classify"),
+    ("surrogate_seq", ["a.csv", "abc\\xed\\xa0\\x80.txt"], None, "classify"),
+    ("path_invalid", ["a.csv", "b.csv"], ["x/a.csv", "y\\xff/b.csv"], "classify"),
+    ("glibc_valid", ["a.csv", "abc\\xf4\\x90\\x80\\x80.txt", "data/x\\xf4\\x90\\x80\\x80.csv"],
+     None, "classify"),
+    ("doc_role", ["a.csv", "b\\xff.txt"], None, "doc_role"),
+]:  # fmt: skip
+    call = (
+        f"metacheck:::.data_doc_role({_r_chr(names)})"
+        if fn == "doc_role"
+        else f"data_classify_files({_r_chr(names)}"
+        + ("" if paths is None else f", file_path = {_r_chr(paths)}")
+        + ")"
+    )
+    add(
+        f"review.data_classify_files.invalid_utf8.{tag}",
+        r="identity",
+        py=f"{HELP}.classify_or_error",
+        args={
+            "x": {
+                "$expr": {
+                    "r": f"tryCatch(suppressWarnings({call}), error = function(e) conditionMessage(e))",
+                    "py": "None",
+                }
+            }
+        },
+        py_drop=["x"],
+        py_args={"file_name": names, "file_path": paths, "fn": fn},
+    )
+add(
+    "review.data_read_head.invalid_utf8_name",
+    r="identity",
+    py=f"{HELP}.read_head_invalid_name",
+    args={
+        "x": {
+            "$expr": {
+                "r": (
+                    'local({d <- tempfile(); dir.create(d); p <- file.path(d, "b\\xff.csv"); '
+                    'writeBin(charToRaw("a,b\\n1,2\\n"), p); suppressWarnings(data_read_head(p))})'
+                ),
+                "py": "None",
+            }
+        }
+    },
+    py_drop=["x"],
+)
+
+
 class _Dumper(yaml.SafeDumper):
     pass
 

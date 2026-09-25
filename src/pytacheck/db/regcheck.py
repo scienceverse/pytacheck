@@ -112,8 +112,10 @@ def regcheck_base_url(client: str = "ollama", base_url: str | None = None) -> st
     return url.rstrip("/")
 
 
-def _match_client(client: str | Sequence[str]) -> str:
-    """``match.arg(client)`` with metacheck's friendly error."""
+def _match_client(client: str | Sequence[str] | None) -> str:
+    """``match.arg(client)`` with metacheck's friendly error (``NULL`` is the first client)."""
+    if client is None:
+        return _CLIENTS[0]
     shown = client
     if not isinstance(client, str):
         values = list(client)

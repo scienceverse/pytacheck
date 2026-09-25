@@ -1493,3 +1493,216 @@
   - "x"
   "py_args":
     "scenario": "dir_slash"
+- "id": "review.data_group_llm.seed_cache_key"
+  "r": "identity"
+  "py": "tests.datacheck_files.review_helpers.data_group_cache_key"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({key <- NULL; testthat::with_mocked_bindings(metacheck::data_group_llm(data.frame(file_name\
+          \ = c(\"first_raw.csv\", \"second_raw.csv\"), data_type = \"data\"), model = \"m\"), llm = function(...,\
+          \ params) {key <<- metacheck:::.llm_cache_key(\"t\", \"s\", NULL, \"m\", do.call(ellmer::params,\
+          \ c(params, list(temperature = 0, max_tokens = 4096)))); stop(\"no llm\")}, .package = \"metacheck\"\
+          ); key})"
+        "py": "None"
+  "py_drop":
+  - "x"
+- "id": "review.data_classify_files.invalid_utf8.ext_substring"
+  "r": "identity"
+  "py": "tests.datacheck_files.review_helpers.classify_or_error"
+  "args":
+    "x":
+      "$expr":
+        "r": "tryCatch(suppressWarnings(data_classify_files(c(\"a.csv\", \"b\\xff.txt\"))), error = function(e)\
+          \ conditionMessage(e))"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "file_name":
+    - "a.csv"
+    - "b\\xff.txt"
+    "file_path": null
+    "fn": "classify"
+- "id": "review.data_classify_files.invalid_utf8.tolower_only"
+  "r": "identity"
+  "py": "tests.datacheck_files.review_helpers.classify_or_error"
+  "args":
+    "x":
+      "$expr":
+        "r": "tryCatch(suppressWarnings(data_classify_files(c(\"b\\xff.txt\"))), error = function(e) conditionMessage(e))"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "file_name":
+    - "b\\xff.txt"
+    "file_path": null
+    "fn": "classify"
+- "id": "review.data_classify_files.invalid_utf8.tolower_second"
+  "r": "identity"
+  "py": "tests.datacheck_files.review_helpers.classify_or_error"
+  "args":
+    "x":
+      "$expr":
+        "r": "tryCatch(suppressWarnings(data_classify_files(c(\"a\", \"b\\xff\"))), error = function(e)\
+          \ conditionMessage(e))"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "file_name":
+    - "a"
+    - "b\\xff"
+    "file_path": null
+    "fn": "classify"
+- "id": "review.data_classify_files.invalid_utf8.na_first"
+  "r": "identity"
+  "py": "tests.datacheck_files.review_helpers.classify_or_error"
+  "args":
+    "x":
+      "$expr":
+        "r": "tryCatch(suppressWarnings(data_classify_files(c(NA, \"b\\xff.txt\"))), error = function(e)\
+          \ conditionMessage(e))"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "file_name":
+    - null
+    - "b\\xff.txt"
+    "file_path": null
+    "fn": "classify"
+- "id": "review.data_classify_files.invalid_utf8.invalid_first"
+  "r": "identity"
+  "py": "tests.datacheck_files.review_helpers.classify_or_error"
+  "args":
+    "x":
+      "$expr":
+        "r": "tryCatch(suppressWarnings(data_classify_files(c(\"b\\xff.txt\", \"a.csv\"))), error = function(e)\
+          \ conditionMessage(e))"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "file_name":
+    - "b\\xff.txt"
+    - "a.csv"
+    "file_path": null
+    "fn": "classify"
+- "id": "review.data_classify_files.invalid_utf8.budget_msg"
+  "r": "identity"
+  "py": "tests.datacheck_files.review_helpers.classify_or_error"
+  "args":
+    "x":
+      "$expr":
+        "r": "tryCatch(suppressWarnings(data_classify_files(c(\"a.csv\", \"abc\\xffdef.txt\"))), error\
+          \ = function(e) conditionMessage(e))"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "file_name":
+    - "a.csv"
+    - "abc\\xffdef.txt"
+    "file_path": null
+    "fn": "classify"
+- "id": "review.data_classify_files.invalid_utf8.budget_multibyte"
+  "r": "identity"
+  "py": "tests.datacheck_files.review_helpers.classify_or_error"
+  "args":
+    "x":
+      "$expr":
+        "r": "tryCatch(suppressWarnings(data_classify_files(c(\"a.csv\", \"\\xffabcd\\xc3\\xa9xyz.txt\"\
+          ))), error = function(e) conditionMessage(e))"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "file_name":
+    - "a.csv"
+    - "\\xffabcd\\xc3\\xa9xyz.txt"
+    "file_path": null
+    "fn": "classify"
+- "id": "review.data_classify_files.invalid_utf8.surrogate_seq"
+  "r": "identity"
+  "py": "tests.datacheck_files.review_helpers.classify_or_error"
+  "args":
+    "x":
+      "$expr":
+        "r": "tryCatch(suppressWarnings(data_classify_files(c(\"a.csv\", \"abc\\xed\\xa0\\x80.txt\"))),\
+          \ error = function(e) conditionMessage(e))"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "file_name":
+    - "a.csv"
+    - "abc\\xed\\xa0\\x80.txt"
+    "file_path": null
+    "fn": "classify"
+- "id": "review.data_classify_files.invalid_utf8.path_invalid"
+  "r": "identity"
+  "py": "tests.datacheck_files.review_helpers.classify_or_error"
+  "args":
+    "x":
+      "$expr":
+        "r": "tryCatch(suppressWarnings(data_classify_files(c(\"a.csv\", \"b.csv\"), file_path = c(\"\
+          x/a.csv\", \"y\\xff/b.csv\"))), error = function(e) conditionMessage(e))"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "file_name":
+    - "a.csv"
+    - "b.csv"
+    "file_path":
+    - "x/a.csv"
+    - "y\\xff/b.csv"
+    "fn": "classify"
+- "id": "review.data_classify_files.invalid_utf8.glibc_valid"
+  "r": "identity"
+  "py": "tests.datacheck_files.review_helpers.classify_or_error"
+  "args":
+    "x":
+      "$expr":
+        "r": "tryCatch(suppressWarnings(data_classify_files(c(\"a.csv\", \"abc\\xf4\\x90\\x80\\x80.txt\"\
+          , \"data/x\\xf4\\x90\\x80\\x80.csv\"))), error = function(e) conditionMessage(e))"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "file_name":
+    - "a.csv"
+    - "abc\\xf4\\x90\\x80\\x80.txt"
+    - "data/x\\xf4\\x90\\x80\\x80.csv"
+    "file_path": null
+    "fn": "classify"
+- "id": "review.data_classify_files.invalid_utf8.doc_role"
+  "r": "identity"
+  "py": "tests.datacheck_files.review_helpers.classify_or_error"
+  "args":
+    "x":
+      "$expr":
+        "r": "tryCatch(suppressWarnings(metacheck:::.data_doc_role(c(\"a.csv\", \"b\\xff.txt\"))), error\
+          \ = function(e) conditionMessage(e))"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "file_name":
+    - "a.csv"
+    - "b\\xff.txt"
+    "file_path": null
+    "fn": "doc_role"
+- "id": "review.data_read_head.invalid_utf8_name"
+  "r": "identity"
+  "py": "tests.datacheck_files.review_helpers.read_head_invalid_name"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({d <- tempfile(); dir.create(d); p <- file.path(d, \"b\\xff.csv\"); writeBin(charToRaw(\"\
+          a,b\\n1,2\\n\"), p); suppressWarnings(data_read_head(p))})"
+        "py": "None"
+  "py_drop":
+  - "x"

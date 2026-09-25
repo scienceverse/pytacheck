@@ -50,6 +50,8 @@ import pandas as pd
 from pytacheck._r.base import plural, trimws
 from pytacheck._r.regex import compile_r, gregexpr_all, grepl, gsub, regexec, strsplit, sub
 from pytacheck.datacheck._files_registry import EXT_REGISTRY
+from pytacheck.datacheck._strings import file_ext, tolower_checked
+from pytacheck.fileinfo._strings import invalid_utf8
 
 __all__ = [
     "data_classify_files",
@@ -101,7 +103,8 @@ _READABLE_EXTENSIONS: tuple[str, ...] = tuple(ext for ext, _t, ok, _l, _m in EXT
 #: R: .data_check_llm_batch
 _DATA_CHECK_LLM_BATCH = 50
 
-#: R: .data_group_seed
+#: R: .data_group_seed (``8675309L``, an R integer: wrapped in ``RInt`` where it is
+#: used, so the LLM cache key serialises it as R does)
 _DATA_GROUP_SEED = 8675309
 
 #: R: .blob_row_min_bytes
@@ -243,15 +246,16 @@ def _r_dirname(path: str) -> str:
     return head if head else "/"
 
 
-_FILE_EXT_RX = r"\.([[:alnum:]]+)$"
-
-
 def _file_ext(x: str | None) -> str | None:
-    """``tools::file_ext()``: the trailing alphanumeric extension, or ``""``."""
+    """``tools::file_ext()`` of one name: the trailing alphanumeric extension, or ``""``.
+
+    ``None`` (``NA``) stays ``None``; a name that is not valid UTF-8 has no
+    extension. Vectors go through :func:`pytacheck.datacheck._strings.file_ext`,
+    which also raises where R's ``substring()`` does.
+    """
     if x is None:
         return None
-    m = compile_r(_FILE_EXT_RX).search(x)
-    return m.group(1) if m else ""
+    return file_ext([x])[0]
 
 
 def _as_logical(x: Any) -> bool | None:
@@ -401,7 +405,7 @@ def data_classify_files(
         return []
     cat_raw = _file_category(names)
     cat = ["documentation" if c in ("readme", "codebook") else c for c in cat_raw]
-    ext = [None if f is None else _tolower(_file_ext(f)) for f in names]  # type: ignore[arg-type]
+    ext = [None if f is None else _tolower(f) for f in file_ext(names)]
     fixed = [_FIXED_EXT_TYPE.get(e) if e else None for e in ext]
     locked = [f if f is not None else c for f, c in zip(fixed, cat, strict=True)]
 
@@ -414,14 +418,18 @@ def data_classify_files(
         ]
     else:
         path_for_kw = list(names)
+    tolower_checked(path_for_kw)
     path_lc = [None if p is None else _tolower(p) for p in path_for_kw]
+    # R's regex engine refuses a string that is not valid UTF-8 (grepl() is FALSE);
+    # only names glibc can still convert get this far (tolower() raised for the rest)
+    r_invalid = [invalid_utf8(p) for p in path_lc]
 
     types = list(locked)
     claimed = [t is not None for t in locked]
     for rtype, pattern in _KEYWORD_RULES:
         hits = grepl(_tok(pattern), path_lc)
         for i, hit in enumerate(hits):
-            if hit and fixed[i] is None and not claimed[i]:
+            if hit and not r_invalid[i] and fixed[i] is None and not claimed[i]:
                 types[i] = rtype
                 claimed[i] = True
 
@@ -510,11 +518,12 @@ def _data_doc_role(file_name: Sequence[str | None] | str) -> list[str | None]:
         return []
     is_doc = [t == "documentation" for t in data_classify_files(names)]
     cat_raw = _file_category(names)
+    exts = file_ext(names)
     roles: list[str | None] = []
-    for nm, doc, cat in zip(names, is_doc, cat_raw, strict=True):
+    for nm, doc, cat, e in zip(names, is_doc, cat_raw, exts, strict=True):
         base = "" if nm is None else _r_basename(nm)
         low = _tolower(base)
-        ext = "" if nm is None else _tolower(_file_ext(nm) or "")
+        ext = _tolower(e or "")
         if cat == "readme":
             role: str | None = "readme"
         elif low == "ro-crate-metadata.json" or grepl(r"^readme($|\.)", low):
@@ -568,7 +577,7 @@ def data_is_manifest(
         is_ref = [_r_basename(v.replace("\\", "/")) in repo_base for v in vals]
         if sum(is_ref) / len(is_ref) < threshold:
             continue
-        exts = {_file_ext(v) for v, r in zip(vals, is_ref, strict=True) if r} - {""}
+        exts = set(file_ext([v for v, r in zip(vals, is_ref, strict=True) if r])) - {""}
         if len(exts) >= min_exts:
             return True
     return False
@@ -1393,7 +1402,9 @@ def _data_group_llm_impl(
         return None
     params = dict(params or {})
     if params.get("seed") is None:
-        params["seed"] = _DATA_GROUP_SEED
+        from pytacheck.llm._rds import RInt
+
+        params["seed"] = RInt(_DATA_GROUP_SEED)
     names = _col(files, "file_name") or [None] * len(files)
     raw_paths = _col(files, "file_path") if "file_path" in files.columns else names
     paths = [
@@ -2080,6 +2091,31 @@ def rscript_path() -> str | None:
 # -----------------------------------------------------------------------------
 
 
+def _likert_values(x: Any) -> np.ndarray:
+    """The finite numeric values of *x* (R: ``x[!is.na(x) & is.finite(x)]``) as doubles.
+
+    Strings and missing values are dropped; numeric arrays and Series take a
+    vectorised path.
+    """
+    arr: np.ndarray | None = None
+    if isinstance(x, pd.Series):
+        if pd.api.types.is_numeric_dtype(x.dtype) or pd.api.types.is_bool_dtype(x.dtype):
+            arr = x.to_numpy(dtype=float, na_value=np.nan)
+    elif isinstance(x, np.ndarray | list | tuple):
+        try:
+            a = np.asarray(x)
+        except (TypeError, ValueError, OverflowError):
+            a = None
+        if a is not None and a.dtype.kind in "biuf":
+            arr = a.astype(float, copy=False).ravel()
+    if arr is None:
+        arr = np.array(
+            [float(v) for v in _as_list(x) if v is not None and not isinstance(v, str)],
+            dtype=float,
+        )
+    return arr[np.isfinite(arr)]
+
+
 def _detect_likert_scale(
     x: Any,
     max_levels: int = 23,
@@ -2093,30 +2129,22 @@ def _detect_likert_scale(
     modal level, the floor anchored to 0/1, and everything outside the accepted
     range returned as ``suspects``. ``None`` when the column is not a scale.
     """
-    vals: list[float] = []
-    for v in _as_list(x):
-        if v is None or isinstance(v, str):
-            continue
-        f = float(v)
-        if math.isfinite(f):
-            vals.append(f)
-    if len(vals) < 20:
+    vals = _likert_values(x)
+    if vals.size < 20:
         return None
-    if any(v != round(v) for v in vals):
+    if bool(np.any(vals != np.round(vals))):
         return None
     # as.integer(round(x)): beyond .Machine$integer.max the value becomes NA,
     # which still counts in n but is no level and never a suspect
-    xs: list[int | None] = [None if abs(v) > 2147483647 else round(v) for v in vals]
-    u = sorted({v for v in xs if v is not None})
+    xs = vals[np.abs(vals) <= 2147483647].astype(np.int64)
+    levels, counts_arr = np.unique(xs, return_counts=True)
+    u = [int(v) for v in levels]
     if len(u) < 2 or len(u) > max_levels:
         return None
-    counts: dict[int, int] = {}
-    for v in xs:
-        if v is not None:
-            counts[v] = counts.get(v, 0) + 1
+    counts = dict(zip(u, (int(c) for c in counts_arr), strict=True))
     lv = u
     cnt = [counts[v] for v in lv]
-    n = len(xs)
+    n = int(vals.size)
     mode_i = cnt.index(max(cnt))
     common_floor = max(common_frac * n, 2)
     is_common = [c >= common_floor for c in cnt]
@@ -2144,18 +2172,16 @@ def _detect_likert_scale(
     if hi - lo + 1 < min_core:
         return None
     floor_inferred: list[int] = []
-    natural_floor = 0 if 0 in u else 1
+    natural_floor = 0 if 0 in counts else 1
     if natural_floor < lo <= natural_floor + 2 and natural_floor >= -11:
-        floor_inferred = [v for v in range(natural_floor, lo) if v not in u]
+        floor_inferred = [v for v in range(natural_floor, lo) if v not in counts]
         lo = natural_floor
     if lo < -11 or hi > 11:
         return None
-    accepted = set(range(lo, hi + 1))
-    in_range = [v in accepted for v in xs]
-    coverage = sum(in_range) / n
+    coverage = int(np.count_nonzero((xs >= lo) & (xs <= hi))) / n
     if coverage < min_coverage:
         return None
-    suspects = sorted({v for v, ok in zip(xs, in_range, strict=True) if not ok and v is not None})
+    suspects = [v for v in u if not lo <= v <= hi]
     levels_present = [v for v in range(lo, hi + 1) if v in counts]
     inf = ""
     if floor_inferred:

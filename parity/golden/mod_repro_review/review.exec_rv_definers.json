@@ -1,0 +1,732 @@
+{
+  "id": "review.exec_rv_definers",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "na_replace",
+      "run_results",
+      "install_results",
+      "stat_output",
+      "match_table",
+      "modifications",
+      "sandbox"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "reproducibility_check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Reproducibility Check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "results"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 8,
+        "names": [
+          "paper_id",
+          "file_name",
+          "parses",
+          "run_order",
+          "order_basis",
+          "depends_on",
+          "paths_rewritten",
+          "paths_ambiguous",
+          "setwd_removed",
+          "runnable",
+          "not_runnable_reason",
+          "unresolved_inputs",
+          "outcome",
+          "error_type",
+          "undefined_var",
+          "reads",
+          "writes"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "user.R",
+              "def_a.R",
+              "def_b.R",
+              "fn_user.R",
+              "setwd_var.R",
+              "quiet.R",
+              "msg_only.R",
+              "warn.R"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              7,
+              1,
+              2,
+              3,
+              6,
+              5,
+              4,
+              8
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "none",
+              "none",
+              "none",
+              "none",
+              "none",
+              "none",
+              "none",
+              "none"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "errored",
+              "ran_ok",
+              "ran_ok",
+              "errored",
+              "ran_ok",
+              "ran_ok",
+              "ran_ok",
+              "ran_ok"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "undefined_variable",
+              null,
+              null,
+              "undefined_variable",
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "shared_x",
+              null,
+              null,
+              "nonexistent_fun_xyz",
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "This module assesses whether the paper's code could be run on its data, and — because `execute = TRUE` — **actually ran it**. We examined 8 R code files.",
+          "#### Run order",
+          "No ordering signal (no data dependency, `source()` call, or numeric filename prefix) distinguishes the run order of these files. They may need to run in a specific order that could not be determined automatically — check this before running.",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Order = 1:8, File = c(\"def_a.R\", \"def_b.R\", \"fn_user.R\", \n\"msg_only.R\", \"quiet.R\", \"setwd_var.R\", \"user.R\", \"warn.R\"), \n    \"Runs after\" = c(\"—\", \"—\", \"—\", \"—\", \"—\", \"—\", \n    \"—\", \"—\"), Basis = c(\"none\", \"none\", \"none\", \"none\", \n    \"none\", \"none\", \"none\", \"none\")), row.names = c(NA, -8L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
+          "#### File paths",
+          "To run against the Psych-DS layout, 0 referenced data paths would be rewritten to their new locations.",
+          "#### Missing inputs",
+          "Every data file the code reads is either produced by an earlier script or present in the repository.",
+          "#### Execution",
+          "**The code was run.** Each script ran in an isolated subprocess against a throwaway copy of the Psych-DS layout, in the run order above, with a 60-second per-script timeout. Of 8 scripts: 6 ran without error, 2 errored, 0 timed out, 0 were skipped (inputs unavailable), 0 could not run because one of its own dependencies is unavailable, and 0 did not parse. Running against current package versions: a break can reflect version drift, which argues for pinning versions.",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"def_a.R\", \"def_b.R\", \"fn_user.R\", \"msg_only.R\", \n\"quiet.R\", \"setwd_var.R\", \"user.R\", \"warn.R\"), Outcome = c(\"ran_ok\", \n\"ran_ok\", \"errored\", \"ran_ok\", \"ran_ok\", \"ran_ok\", \"errored\", \n\"ran_ok\"), Detail = c(\"\", \"\", \"undefined_variable\", \"\", \"\", \"\", \n\"undefined_variable\", \"\"), \"Time (s)\" = 0), row.names = c(NA, -8L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 15, FALSE)\n```\n",
+          "**Undefined-variable errors**",
+          "**2 scripts failed on an undefined variable or function** (`object '...' not found` / `could not find function \"...\"`). This typically means the script expects a variable or function that another script defines — i.e. it is meant to be sourced into a larger session, not run on its own — or the symbol is simply never created. When another of the paper's own script files defines the same name, this is called out below as a likely sourcing/copy-paste gap. Each is counted as an error (red).",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"fn_user.R\", \"user.R\"), \"Missing variable\" = c(\"nonexistent_fun_xyz\", \n\"shared_x\"), \"Defined in\" = c(\"(not defined anywhere in the paper's code)\", \n\"def_a.R, def_b.R\")), row.names = c(NA, -2L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
+          "**`setwd()` in the code**",
+          "**1 script calls `setwd()`.** This is bad practice: it hardcodes where the code must run (often an absolute path on the author's own machine) and breaks the moment the code is run anywhere else. To run the code we commented these calls out. Any such script that then ran is **reproducible only after ignoring a `setwd()` that should not have been in the code and needs to be fixed**.",
+          "Reproducible after removing `setwd()`: setwd_var.R.",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = \"setwd_var.R\", \"setwd() removed\" = 1L, \n    \"Path(s) it set\" = \"(non-literal)\"), row.names = c(NA, -1L\n), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
+          "*Expand a row below to see the output each script produced.*",
+          "::: {.callout-tip title=\"Output — def_a.R (ran_ok)\" collapse=\"true\"}\n\n**Output (stdout):**\n````\n> shared_x <- 1\n````\n\n:::\n",
+          "::: {.callout-tip title=\"Output — def_b.R (ran_ok)\" collapse=\"true\"}\n\n**Output (stdout):**\n````\n> shared_x <- 2\n````\n\n:::\n",
+          "::: {.callout-tip title=\"Output — fn_user.R (errored)\" collapse=\"true\"}\n\n**Output (stdout):**\n````\n> y <- nonexistent_fun_xyz(1)\n````\n**Messages / errors (stderr):**\n````\nError in nonexistent_fun_xyz(1) : \n  could not find function \"nonexistent_fun_xyz\"\n````\n\n:::\n",
+          "::: {.callout-tip title=\"Output — msg_only.R (ran_ok)\" collapse=\"true\"}\n\n**Output (stdout):**\n````\n> message(\"hello from stderr\")\n````\n**Messages / errors (stderr):**\n````\nhello from stderr\n````\n\n:::\n",
+          "::: {.callout-tip title=\"Output — quiet.R (ran_ok)\" collapse=\"true\"}\n\n**Output (stdout):**\n````\n> x <- 1\n````\n\n:::\n",
+          "::: {.callout-tip title=\"Output — setwd_var.R (ran_ok)\" collapse=\"true\"}\n\n**Output (stdout):**\n````\n> d <- \".\"\n> cat(\"ok\\n\")\nok\n````\n\n:::\n",
+          "::: {.callout-tip title=\"Output — user.R (errored)\" collapse=\"true\"}\n\n**Output (stdout):**\n````\n> print(shared_x)\n````\n**Messages / errors (stderr):**\n````\nError in eval(e, envir = env) : object 'shared_x' not found\n````\n\n:::\n",
+          "::: {.callout-tip title=\"Output — warn.R (ran_ok)\" collapse=\"true\"}\n\n**Output (stdout):**\n````\n> warning(\"careful\")\n> cat(\"done\\n\")\ndone\n````\n**Messages / errors (stderr):**\n````\nWarning message:\nIn eval(e, envir = env) : careful\n````\n\n:::\n"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "red"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "\n-  We assessed AND ran 8 R code files for reproducibility (each in an isolated subprocess).\n-  8 files appear runnable so far (parses, inputs resolve, placeable in the run order).\n-  6 of 8 scripts ran without error when executed.\n-  0 installable dependencies detected."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "repro_code_n",
+          "repro_runnable",
+          "repro_missing_inputs",
+          "repro_deps",
+          "repro_ran_ok",
+          "repro_tests_reported",
+          "repro_tests_matched"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "p1"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              8
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              8
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              6
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              null
+            ]
+          }
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "names": [
+          "repro_code_n",
+          "repro_runnable",
+          "repro_missing_inputs",
+          "repro_deps",
+          "repro_ran_ok"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 8,
+        "names": [
+          "file_name",
+          "outcome",
+          "error",
+          "error_type",
+          "undefined_var",
+          "stdout",
+          "stderr",
+          "elapsed",
+          "script_lines",
+          "captures"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "def_a.R",
+              "def_b.R",
+              "fn_user.R",
+              "msg_only.R",
+              "quiet.R",
+              "setwd_var.R",
+              "user.R",
+              "warn.R"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ran_ok",
+              "ran_ok",
+              "errored",
+              "ran_ok",
+              "ran_ok",
+              "ran_ok",
+              "errored",
+              "ran_ok"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "",
+              "",
+              "! in callr subprocess.\nCaused by error in `nonexistent_fun_xyz(1)`:\n! could not find function \"nonexistent_fun_xyz\"",
+              "",
+              "",
+              "",
+              "! in callr subprocess.\nCaused by error in `eval(e, envir = env)`:\n! object 'shared_x' not found",
+              ""
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              "undefined_variable",
+              null,
+              null,
+              null,
+              "undefined_variable",
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              "nonexistent_fun_xyz",
+              null,
+              null,
+              null,
+              "shared_x",
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "> shared_x <- 1",
+              "> shared_x <- 2",
+              "> y <- nonexistent_fun_xyz(1)",
+              "> message(\"hello from stderr\")",
+              "> x <- 1",
+              "> d <- \".\"\n> cat(\"ok\\n\")\nok",
+              "> print(shared_x)",
+              "> warning(\"careful\")\n> cat(\"done\\n\")\ndone"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "",
+              "",
+              "Error in nonexistent_fun_xyz(1) : \n  could not find function \"nonexistent_fun_xyz\"",
+              "hello from stderr",
+              "",
+              "",
+              "Error in eval(e, envir = env) : object 'shared_x' not found",
+              "Warning message:\nIn eval(e, envir = env) : careful"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "shared_x <- 1"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "shared_x <- 2"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "y <- nonexistent_fun_xyz(1)"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "message(\"hello from stderr\")"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "x <- 1"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "d <- \".\"",
+                  "# [reproducibility_check removed setwd] setwd(d)",
+                  "cat(\"ok\\n\")"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "print(shared_x)"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "warning(\"careful\")",
+                  "cat(\"done\\n\")"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "list",
+                "names": null,
+                "v": []
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": []
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": []
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": []
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": []
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": []
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": []
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": []
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "null"
+      },
+      {
+        "t": "null"
+      },
+      {
+        "t": "null"
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "file_name",
+          "change_type",
+          "detail"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "<root>"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

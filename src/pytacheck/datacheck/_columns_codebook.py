@@ -9,7 +9,8 @@ rtf / odt for the LLM tier.
 
 PDF text is read with poppler's ``pdftotext -layout`` (what ``pdftools``
 wraps), found on ``PATH``, via ``$PYTACHECK_PDFTOTEXT``, or next to
-``$PYTACHECK_RSCRIPT``; without it ``pypdf``'s layout mode is used.
+``$PYTACHECK_RSCRIPT``: that is the parity engine. Without it ``pypdf``'s
+layout mode (the ``data`` extra) is used, whose text can differ on some PDFs.
 """
 
 from __future__ import annotations
@@ -28,7 +29,7 @@ import pandas as pd
 
 from pytacheck._r.base import trimws
 from pytacheck._r.frames import bind_rows
-from pytacheck._r.regex import grep, gsub, regextract, strsplit, sub
+from pytacheck._r.regex import grep, gsub, strsplit, sub
 from pytacheck.datacheck._columns_labels import (
     _cb_is_definition_line,
     _chr,
@@ -57,9 +58,10 @@ from pytacheck.datacheck._columns_labels import (
 
 
 def _file_ext(path: str) -> str:
-    """``tools::file_ext()``."""
-    m = regextract(r"\.([[:alnum:]]+)$", path)
-    return m[1:] if m is not None else ""
+    """``tools::file_ext()`` (``""`` for a path that is not valid UTF-8)."""
+    from pytacheck.datacheck._strings import file_ext1
+
+    return file_ext1(path)
 
 
 def _basename(path: str | os.PathLike[str]) -> str:

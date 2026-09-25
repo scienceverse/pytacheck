@@ -358,6 +358,10 @@ def _zenodo_info(zenodo_id: Any, pb: Any = None, resp: Any = _UNSET) -> pd.DataF
     columns empty, with ``error`` set to ``"unfound"`` / ``"parse_error"``.
     *resp* is the record's API response when it was already fetched
     (:func:`zenodo_info` fetches all of its records in one batch).
+
+    As in R, several IDs (which :func:`zenodo_info` never passes) give one
+    row per ID, every field taken from the first ID's record; when that
+    record cannot be read, or for no ID at all, R's ``data.frame()`` error.
     """
     from pytacheck import http
     from pytacheck.archives import _spinner, _tick
@@ -366,24 +370,32 @@ def _zenodo_info(zenodo_id: Any, pb: Any = None, resp: Any = _UNSET) -> pd.DataF
 
     with _spinner(pb) as bar:
         zid = _zenodo_id(zenodo_id)
-        if isinstance(zid, list):
-            zid = zid[0] if len(zid) == 1 else None
-        shown = "NA" if zid is None else zid
+        ids = zid if isinstance(zid, list) else [zid]
+        zid = ids[0] if ids else None
+        shown_ids = ["NA" if i is None else i for i in ids]
+        shown = shown_ids[0] if shown_ids else ""  # R: paste0() drops a character(0)
         _tick(bar, f"* Retrieving info from Zenodo ID {shown}...")
+
+        def unread(error: str) -> pd.DataFrame:
+            if len(ids) != 1:  # R: data.frame(zenodo_id = <n ids>, x = I(list(NULL)))
+                raise ValueError(f"arguments imply differing number of rows: {len(ids)}, 1")
+            return _zenodo_unread(zid, error)
 
         if resp is _UNSET:
             resp = http.batch_query([_record_url(shown)], msg=None)[0]
         if resp is None:
             raise TypeError("`resp` must be an HTTP response object, not `NULL`.")
         if resp.status_code != 200:
-            warnings.warn(f"{shown} could not be found", stacklevel=2)
-            return _zenodo_unread(zid, "unfound")
+            warnings.warn(f"{''.join(shown_ids)} could not be found", stacklevel=2)
+            return unread("unfound")
         try:
             rec = _body_json(resp)
         except Exception:
             rec = None
         if rec is None:
-            return _zenodo_unread(zid, "parse_error")
+            return unread("parse_error")
+        if not ids:  # R: obj$title <- ... on data.frame(zenodo_id = character(0))
+            raise ValueError("replacement has 1 row, data has 0")
 
         metadata = r_dollar(rec, "metadata")
         lic = r_dollar(metadata, "license")
@@ -412,7 +424,11 @@ def _zenodo_info(zenodo_id: Any, pb: Any = None, resp: Any = _UNSET) -> pd.DataF
             "views": _scalar_field(r_dollar(stats, "views")),
             "files": r_dollar(rec, "files"),
         }
-        return _info_frame(row)
+        out = _info_frame(row)
+        if len(ids) > 1:  # R recycles the one record's fields over the IDs
+            out = out.iloc[[0] * len(ids)].reset_index(drop=True)
+            out["zenodo_id"] = pd.Series(ids, dtype="string")
+        return out
 
 
 # ---------------------------------------------------------------------------
@@ -946,8 +962,13 @@ def _zenodo_verify_downloads(files: pd.DataFrame | None, download_to: str) -> pd
             checksum_ok[i] = got is not None and got.lower() == str(md5[i]).lower()
     ok = [o and c is not False for o, c in zip(ok, checksum_ok, strict=True)]
 
-    was = files["downloaded"].tolist() if "downloaded" in files.columns else [None] * n
-    downloaded = [o and w is True for o, w in zip(ok, was, strict=True)]
+    from pytacheck.archives.dataverse import _is_true
+
+    if "downloaded" not in files.columns:
+        # R: `files$downloaded <- ok & files$downloaded %in% TRUE` is a length-0 value
+        raise ValueError(f"replacement has 0 rows, data has {n}")
+    was = files["downloaded"].tolist()
+    downloaded = [o and _is_true(w) for o, w in zip(ok, was, strict=True)]
     downloaded = [True if u else d for d, u in zip(downloaded, unzipped, strict=True)]
 
     files["size_on_disk"] = pd.Series(size_on_disk, dtype="float64", index=files.index)

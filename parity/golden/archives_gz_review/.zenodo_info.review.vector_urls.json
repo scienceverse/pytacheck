@@ -1,0 +1,246 @@
+{
+  "id": ".zenodo_info.review.vector_urls",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 3,
+    "names": [
+      "zenodo_id",
+      "title",
+      "doi",
+      "description",
+      "publication_date",
+      "updated_date",
+      "creators",
+      "keywords",
+      "resource_type",
+      "journal",
+      "owners",
+      "license",
+      "downloads",
+      "unique_downloads",
+      "views",
+      "files"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "5559007",
+          "5559001",
+          "5559002"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "T7",
+          "T7",
+          "T7"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "10.5281/zenodo.X",
+          "10.5281/zenodo.X",
+          "10.5281/zenodo.X"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "2026-01-02T00:00:00+00:00",
+          "2026-01-02T00:00:00+00:00",
+          "2026-01-02T00:00:00+00:00"
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "null"
+          },
+          {
+            "t": "null"
+          },
+          {
+            "t": "null"
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "null"
+          },
+          {
+            "t": "null"
+          },
+          {
+            "t": "null"
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "null"
+          },
+          {
+            "t": "null"
+          },
+          {
+            "t": "null"
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "list",
+                "names": [
+                  "id"
+                ],
+                "v": [
+                  {
+                    "t": "int",
+                    "v": [
+                      7
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "list",
+                "names": [
+                  "id"
+                ],
+                "v": [
+                  {
+                    "t": "int",
+                    "v": [
+                      7
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "list",
+                "names": [
+                  "id"
+                ],
+                "v": [
+                  {
+                    "t": "int",
+                    "v": [
+                      7
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Plain title",
+          "Plain title",
+          "Plain title"
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "null"
+          },
+          {
+            "t": "null"
+          },
+          {
+            "t": "null"
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

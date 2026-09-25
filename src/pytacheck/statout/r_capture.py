@@ -353,10 +353,16 @@ def _r_capture_helpers() -> str:
     functions themselves for ``callr`` to serialise; here the list is built
     from source in the child. The STATO vocabulary keys the call-based
     fallback needs travel with it (as ``.mc_stato_tables``).
+
+    metacheck's closures unserialise with its namespace as their environment,
+    so they (and the runner, which shares their environment) find base R
+    before the global environment the script runs in: a script's own
+    ``sapply`` or ``trimws`` does not shadow base's for them. The helpers are
+    therefore defined in an environment whose parent is base's namespace.
     """
     stato_keys, mc_keys = _stato_vocab_keys()
     parts = [
-        "local({",
+        "local(envir = new.env(parent = .BaseNamespaceEnv), {",
         f"  .mc_stato_tables <- list(map = {_r_chr_vector(stato_keys)}, "
         f"mc_map = {_r_chr_vector(mc_keys)})",
     ]
@@ -383,8 +389,11 @@ def _runner_source(
 {_JSON_R}
   helpers <- {helpers}
   henv <- environment(helpers[[1L]])
-  for (nm in c(".mc_json", ".mc_json_str", ".mc_write_json"))
-    assign(nm, get(nm), envir = henv)
+  for (nm in c(".mc_json", ".mc_json_str", ".mc_write_json")) {{
+    f <- get(nm)
+    environment(f) <- henv  # base before the script's globals, as for the helpers
+    assign(nm, f, envir = henv)
+  }}
   runner <- {_RUNNER_R}
   environment(runner) <- henv
   res <- tryCatch(

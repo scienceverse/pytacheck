@@ -1,0 +1,90 @@
+{
+  "id": "tables.sniffed",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": null,
+    "v": [
+      {
+        "t": "df",
+        "nrow": 3,
+        "names": [
+          "Order",
+          "File",
+          "Runs after",
+          "Basis"
+        ],
+        "v": [
+          {
+            "t": "int",
+            "v": [
+              1,
+              2,
+              3
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "jags_model.R",
+              "json_dump.R",
+              "ok.R"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "—",
+              "—",
+              "—"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "none",
+              "none",
+              "none"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 2,
+        "names": [
+          "File",
+          "Detected",
+          "Detail"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "json_dump.R",
+              "jags_model.R"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "not_r_content",
+              "jags_model"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "file content does not appear to be R (detected: JSON)",
+              "JAGS/BUGS model definition (not standalone R)"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

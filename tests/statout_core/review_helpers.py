@@ -191,3 +191,32 @@ def write_tricky() -> list[Any]:
     from tests.statout_core._helpers import read_lines
 
     return [files, *[read_lines(os.path.join(out, f)) for f in files]]
+
+
+def null_na_tables() -> list[dict[str, Any]]:
+    """Two small tables for the ``source_file = NULL`` / ``NA`` cases."""
+    return [
+        {"analysis": "A", "data": chr_frame(lab=["x"], t=["1.5"], p=["0.04"]), "table_index": 1},
+        {"analysis": "B", "data": chr_frame(t=["2.5"]), "line": 3},
+    ]
+
+
+def write_null_na() -> list[Any]:
+    """stat_output_write() of items whose ``file`` is NA / NULL (R: ``"NA"`` / ``"result"``)."""
+    import os
+    import tempfile
+
+    import pandas as pd
+
+    so = _so()
+    tabs = null_na_tables()
+    root = tempfile.mkdtemp()
+    items = [
+        {"file": pd.NA, "json": so.stat_output_json(tabs, source_file=pd.NA)},
+        {"file": None, "json": so.stat_output_json(tabs, source_file=None)},
+    ]
+    out = so.stat_output_write(items, root)
+    files = sorted(os.listdir(out))
+    from tests.statout_core._helpers import read_lines
+
+    return [files, *[read_lines(os.path.join(out, f)) for f in files]]

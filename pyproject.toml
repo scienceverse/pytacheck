@@ -50,11 +50,17 @@ dependencies = [
 # `pytacheck check paper.pdf` run the bibr extraction pipeline in-process.
 bibr = ["bibr>=0.5.1"]
 # data_check & co.: SPSS/Stata/SAS files (pyreadstat), legacy .xls (xlrd; .xlsx
-# and .ods are read without extra packages) and distribution plots (matplotlib).
+# and .ods are read without extra packages), distribution plots (matplotlib),
+# Porter stemming of codebook labels (snowballstemmer, as metacheck's SnowballC;
+# without it R's crude trailing-"s" stripper is used) and PDF codebook text
+# (pypdf, a fallback: poppler's `pdftotext`, what metacheck's pdftools wraps, is
+# the parity engine and is used when found on PATH or via PYTACHECK_PDFTOTEXT).
 data = [
     "pyreadstat>=1.2.7",
     "xlrd>=2.0.1",
     "matplotlib>=3.8",
+    "snowballstemmer>=2.2",
+    "pypdf>=5.0",
 ]
 # REST API server (port of metacheck's plumber API).
 api = [

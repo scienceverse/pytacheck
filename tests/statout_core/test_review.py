@@ -212,11 +212,11 @@ def test_echo_chunks_first_matching_line() -> None:
 
 
 @pytest.mark.r
-@pytest.mark.parametrize("script", ["review_adversarial", "review_capture"])
+@pytest.mark.parametrize("script", ["review_adversarial", "review_capture", "review_shadow"])
 def test_capture_runner_matches_metacheck(script: str, reference_rscript: str, stato: None) -> None:
     """The Python capture runner reproduces metacheck's callr runner.
 
-    ``data/review_capture_expected/<script>.json`` holds what metacheck's own
+    ``data/review_capture_expected/<script>.json`` (``make_capture_expected.R``) holds what metacheck's own
     ``.r_capture_runner()`` (run with ``callr::r()``) printed and captured,
     plus ``.r_captures_to_tables()`` / ``.r_merge_captures()`` of it, in the
     parity harness' canonical encoding.

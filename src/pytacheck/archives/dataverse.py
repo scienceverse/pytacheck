@@ -396,8 +396,25 @@ def _as_numeric(x: Any) -> float:
 
 
 def _is_true(x: Any) -> bool:
-    """R ``x %in% TRUE`` / ``isTRUE(x)`` for one logical value."""
-    return not is_na(x) and bool(x) is True
+    """R ``x %in% TRUE`` for one element of an atomic vector.
+
+    ``match()`` coerces ``TRUE`` to the vector's type: a logical ``TRUE``, a
+    number equal to 1 and the string ``"TRUE"`` match; ``NA``, ``"T"``,
+    ``"true"``, 2 and anything else do not.
+    """
+    import numbers
+
+    import numpy as np
+
+    if isinstance(x, list | tuple | dict) or is_na(x):
+        return False
+    if isinstance(x, bool | np.bool_):
+        return bool(x)
+    if isinstance(x, str):
+        return x == "TRUE"
+    if isinstance(x, numbers.Number):
+        return bool(x == 1)
+    return False
 
 
 def _has_values(x: Any) -> bool:

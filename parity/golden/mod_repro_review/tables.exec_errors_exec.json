@@ -1,0 +1,86 @@
+{
+  "id": "tables.exec_errors_exec",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": null,
+    "v": [
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "Order",
+          "File",
+          "Runs after",
+          "Basis"
+        ],
+        "v": [
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "errors.R"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "—"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "none"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "File",
+          "Outcome",
+          "Detail",
+          "Time (s)"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "errors.R"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "errored"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "runtime"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

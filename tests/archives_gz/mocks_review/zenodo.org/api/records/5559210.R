@@ -1,0 +1,1 @@
+structure(list(method = "GET", url = "https://zenodo.org/api/records/5559210", status_code = 200L, headers = structure(list(`content-type` = "application/json"), class = "httr2_headers"), body = as.raw(c()), cache = new.env(parent = emptyenv())), class = "httr2_response")

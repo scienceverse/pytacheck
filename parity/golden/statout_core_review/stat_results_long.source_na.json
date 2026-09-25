@@ -1,0 +1,124 @@
+{
+  "id": "stat_results_long.source_na",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 3,
+    "names": [
+      "paper_id",
+      "source_file",
+      "test_id",
+      "result_id",
+      "analysis",
+      "table_title",
+      "row_label",
+      "statistic",
+      "stato_label",
+      "stato_iri",
+      "value",
+      "model_ref"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "na_na_t1_x",
+          "na_na_t1_x",
+          "na_l3_1"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "na_t1_r1_t",
+          "na_t1_r1_p",
+          "na_l3_1_r1_t"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "A",
+          "A",
+          "B"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "x",
+          "x",
+          ""
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "t",
+          "p",
+          "t"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "t-statistic",
+          "p-value",
+          "t-statistic"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "http://purl.obolibrary.org/obo/STATO_0000176",
+          "http://purl.obolibrary.org/obo/STATO_0000700",
+          "http://purl.obolibrary.org/obo/STATO_0000176"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "1.5",
+          "0.04",
+          "2.5"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

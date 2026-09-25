@@ -1,0 +1,13 @@
+---
+title: "Analysis"
+output: html_document
+---
+
+Some text.
+
+```{r}
+dat <- read.csv("data.csv")
+t.test(dat$x ~ dat$g)
+```
+
+More text.

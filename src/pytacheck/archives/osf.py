@@ -154,12 +154,18 @@ def osf_links(paper: Any) -> pd.DataFrame:
     from pytacheck.text.search import text_search
 
     urls = paper_table(paper, "url").copy()
-    urls["href"] = pd.Series(gsub(r"\s", "", urls["href"]), index=urls.index, dtype="string")
+    if "href" in urls.columns:
+        href = urls["href"]
+    else:  # R: `urls$href` on the 0 x 0 url table of an empty paper list is NULL
+        warnings.warn("Unknown or uninitialised column: `href`.", stacklevel=2)
+        href = []
+    urls["href"] = pd.Series(gsub(r"\s", "", href), index=urls.index, dtype="string")
     osf = pd.Series(grepl(r"osf\.io", urls["href"], ignore_case=True), index=urls.index)
     found_href = urls[osf.astype(bool)]
 
     other = text_search(paper, _OSF_BARE_REGEX, return_="match", perl=True)
-    keep = ["text"] + [c for c in ("text_id", "paper_id") if c in other.columns]
+    # R: select(href = text, any_of(...)); an empty search result has no `text`
+    keep = [c for c in ("text", "text_id", "paper_id") if c in other.columns]
     other_osf = other.loc[:, keep].rename(columns={"text": "href"})
 
     out = bind_rows([found_href, other_osf])

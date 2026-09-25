@@ -603,6 +603,39 @@ dl_case(
 )
 
 
+# ---------------------------------------------------------------- round 3
+# `files$downloaded %in% TRUE` on a hand-built character or numeric column:
+# only "TRUE" and 1 match (not "FALSE", "T", "true" or 2).
+VERIFY_DL_R = (
+    'writeLines("x,y", file.path(d, "a.csv")); '
+    'files <- data.frame(id = c("1", "2", "3", "4"), key = "a.csv", path = "a.csv", size = 4, '
+    "checksum = NA_character_, checksum_type = NA_character_, downloaded = {dl}); "
+    "metacheck:::.{fn}_verify_downloads(files, d)"
+)
+VERIFY_DL_PY = (
+    'm.{mod}._{fn}_verify_downloads((m.write_files(d, {{"a.csv": "x,y"}}), pd.DataFrame({{'
+    '"id": pd.array(["1", "2", "3", "4"], dtype="string"), '
+    '"key": pd.array(["a.csv"] * 4, dtype="string"), '
+    '"path": pd.array(["a.csv"] * 4, dtype="string"), "size": [4.0] * 4, '
+    '"checksum": pd.array([None] * 4, dtype="string"), '
+    '"checksum_type": pd.array([None] * 4, dtype="string"), "downloaded": {dl}}}))[1], d)'
+)
+for fn, mod in [("dryad", "dryad"), ("figshare", "figshare"), ("dataverse", "dataverse")]:
+    for cid, dl_r, dl_py in [
+        (
+            "character_downloaded",
+            'c("TRUE", "FALSE", "T", "true")',
+            'pd.array(["TRUE", "FALSE", "T", "true"], dtype="string")',
+        ),
+        ("numeric_downloaded", "c(1, 2, 0, NA)", '[1.0, 2.0, 0.0, float("nan")]'),
+    ]:
+        dl_case(
+            f".{fn}_verify_downloads.review.{cid}",
+            VERIFY_DL_R.format(dl=dl_r, fn=fn),
+            VERIFY_DL_PY.format(dl=dl_py, fn=fn, mod=mod),
+        )
+
+
 def main() -> None:
     doc = {"area": "archives_d1_review", "cases": cases}
     with open(OUT, "w", encoding="utf-8") as fh:

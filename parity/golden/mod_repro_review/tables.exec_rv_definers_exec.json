@@ -1,0 +1,203 @@
+{
+  "id": "tables.exec_rv_definers_exec",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": null,
+    "v": [
+      {
+        "t": "df",
+        "nrow": 8,
+        "names": [
+          "Order",
+          "File",
+          "Runs after",
+          "Basis"
+        ],
+        "v": [
+          {
+            "t": "int",
+            "v": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "def_a.R",
+              "def_b.R",
+              "fn_user.R",
+              "msg_only.R",
+              "quiet.R",
+              "setwd_var.R",
+              "user.R",
+              "warn.R"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "—",
+              "—",
+              "—",
+              "—",
+              "—",
+              "—",
+              "—",
+              "—"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "none",
+              "none",
+              "none",
+              "none",
+              "none",
+              "none",
+              "none",
+              "none"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 8,
+        "names": [
+          "File",
+          "Outcome",
+          "Detail",
+          "Time (s)"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "def_a.R",
+              "def_b.R",
+              "fn_user.R",
+              "msg_only.R",
+              "quiet.R",
+              "setwd_var.R",
+              "user.R",
+              "warn.R"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ran_ok",
+              "ran_ok",
+              "errored",
+              "ran_ok",
+              "ran_ok",
+              "ran_ok",
+              "errored",
+              "ran_ok"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "",
+              "",
+              "undefined_variable",
+              "",
+              "",
+              "",
+              "undefined_variable",
+              ""
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 2,
+        "names": [
+          "File",
+          "Missing variable",
+          "Defined in"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "fn_user.R",
+              "user.R"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "nonexistent_fun_xyz",
+              "shared_x"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "(not defined anywhere in the paper's code)",
+              "def_a.R, def_b.R"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "File",
+          "setwd() removed",
+          "Path(s) it set"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "setwd_var.R"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "(non-literal)"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

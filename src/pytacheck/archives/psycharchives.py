@@ -516,79 +516,12 @@ def _rest_json(url: str) -> Any:
 
 def _resp_json(resp: Any) -> Any:
     """``tryCatch(httr2::resp_body_json(resp), error = \\(e) NULL)`` (``None`` on failure)."""
+    from pytacheck.archives.osf_helpers import _resp_body_json
+
     try:
         return _resp_body_json(resp)
     except Exception:
         return None
-
-
-def _resp_body_json(resp: Any) -> Any:
-    """``httr2::resp_body_json(resp)``: the body parsed as jsonlite parses it; raises on failure.
-
-    The media type must be ``application/json`` or carry a ``+json`` suffix.
-    The body is read as ``resp_body_string(resp, "UTF-8")`` does, whatever
-    charset the response names: up to the first NUL byte, and bytes that are
-    not valid UTF-8 give ``NA``, which jsonlite refuses. jsonlite (yajl) then
-    drops a leading byte-order mark with a warning, refuses ``NaN`` and
-    ``Infinity``, ends a string at an escaped NUL (``\\u0000``) and keeps both
-    values of a repeated key, of which ``$`` finds the first (the one kept
-    here).
-    """
-    import json
-
-    from pytacheck._r import regexec
-    from pytacheck.archives.osf_helpers import _CONTENT_TYPE
-
-    header = resp.headers.get("content-type")
-    media = None if header is None else header.split(";", 1)[0].strip()
-    m = regexec(_CONTENT_TYPE, media, perl=True) if media is not None else []
-    base = f"{m[1]}/{m[2]}" if m else ""
-    suffix = (m[3] or "") if m else ""
-    if base != "application/json" and suffix != "json":
-        shown = "NA" if media is None else media
-        raise ValueError(
-            f'Unexpected content type "{shown}".\n'
-            '* Expecting type "application/json" or suffix "json".'
-        )
-    content = resp.content
-    if not content:
-        raise ValueError("Can't retrieve empty body.")
-    try:
-        text = content.split(b"\x00", 1)[0].decode("utf-8")
-    except UnicodeDecodeError:  # R: iconv() gives NA, and fromJSON(NA) fails
-        raise ValueError("missing value where TRUE/FALSE needed") from None
-    if text.startswith("﻿"):
-        warnings.warn("JSON string contains (illegal) UTF8 byte-order-mark!", stacklevel=2)
-        text = text[1:]
-
-    def constant(name: str) -> Any:
-        raise ValueError(f"lexical error: invalid char in json text ({name})")
-
-    def first_wins(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
-        out: dict[str, Any] = {}
-        for k, v in pairs:
-            if k not in out:
-                out[k] = v
-        return out
-
-    parsed = json.loads(text, parse_constant=constant, object_pairs_hook=first_wins)
-    return _cut_nul(parsed) if "\\u0000" in text else parsed
-
-
-def _cut_nul(x: Any) -> Any:
-    """Strings of parsed JSON ended at their first NUL, as R's strings are."""
-    if isinstance(x, str):
-        return x.split("\x00", 1)[0]
-    if isinstance(x, list):
-        return [_cut_nul(v) for v in x]
-    if isinstance(x, dict):
-        out: dict[str, Any] = {}
-        for k, v in x.items():
-            key = k.split("\x00", 1)[0]
-            if key not in out:
-                out[key] = _cut_nul(v)
-        return out
-    return x
 
 
 # ---------------------------------------------------------------------------

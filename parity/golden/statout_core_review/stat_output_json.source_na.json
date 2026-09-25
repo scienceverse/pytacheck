@@ -1,0 +1,258 @@
+{
+  "id": "stat_output_json.source_na",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "schema",
+      "schema_version",
+      "paper_id",
+      "source_file",
+      "source_format",
+      "analyses"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "metacheck-statistical-output"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "1.0"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "metacheck"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "unknown"
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "list",
+            "names": [
+              "analysis",
+              "results"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "A"
+                ]
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": [
+                  {
+                    "t": "list",
+                    "names": [
+                      "result_id",
+                      "test_id",
+                      "row_label",
+                      "values"
+                    ],
+                    "v": [
+                      {
+                        "t": "chr",
+                        "v": [
+                          "na_t1_r1"
+                        ]
+                      },
+                      {
+                        "t": "chr",
+                        "v": [
+                          "na_na_t1_x"
+                        ]
+                      },
+                      {
+                        "t": "chr",
+                        "v": [
+                          "x"
+                        ]
+                      },
+                      {
+                        "t": "list",
+                        "names": [
+                          "t",
+                          "p"
+                        ],
+                        "v": [
+                          {
+                            "t": "list",
+                            "names": [
+                              "value",
+                              "stato_label",
+                              "stato_iri"
+                            ],
+                            "v": [
+                              {
+                                "t": "dbl",
+                                "v": [
+                                  1.5
+                                ]
+                              },
+                              {
+                                "t": "chr",
+                                "v": [
+                                  "t-statistic"
+                                ]
+                              },
+                              {
+                                "t": "chr",
+                                "v": [
+                                  "http://purl.obolibrary.org/obo/STATO_0000176"
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "t": "list",
+                            "names": [
+                              "value",
+                              "stato_label",
+                              "stato_iri"
+                            ],
+                            "v": [
+                              {
+                                "t": "dbl",
+                                "v": [
+                                  0.04
+                                ]
+                              },
+                              {
+                                "t": "chr",
+                                "v": [
+                                  "p-value"
+                                ]
+                              },
+                              {
+                                "t": "chr",
+                                "v": [
+                                  "http://purl.obolibrary.org/obo/STATO_0000700"
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "analysis",
+              "results"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "B"
+                ]
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": [
+                  {
+                    "t": "list",
+                    "names": [
+                      "result_id",
+                      "test_id",
+                      "row_label",
+                      "values"
+                    ],
+                    "v": [
+                      {
+                        "t": "chr",
+                        "v": [
+                          "na_l3_1_r1"
+                        ]
+                      },
+                      {
+                        "t": "chr",
+                        "v": [
+                          "na_l3_1"
+                        ]
+                      },
+                      {
+                        "t": "chr",
+                        "v": [
+                          ""
+                        ]
+                      },
+                      {
+                        "t": "list",
+                        "names": [
+                          "t"
+                        ],
+                        "v": [
+                          {
+                            "t": "list",
+                            "names": [
+                              "value",
+                              "stato_label",
+                              "stato_iri"
+                            ],
+                            "v": [
+                              {
+                                "t": "dbl",
+                                "v": [
+                                  2.5
+                                ]
+                              },
+                              {
+                                "t": "chr",
+                                "v": [
+                                  "t-statistic"
+                                ]
+                              },
+                              {
+                                "t": "chr",
+                                "v": [
+                                  "http://purl.obolibrary.org/obo/STATO_0000176"
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}
