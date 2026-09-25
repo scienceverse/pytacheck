@@ -158,7 +158,12 @@ def _check(case: Case, golden: dict[str, Any]) -> tuple[str, list[str], float]:
     return "pass", [], elapsed
 
 
+def _root_entries() -> set[str]:
+    return {p.name for p in ROOT.iterdir()}
+
+
 def cmd_check(ns: argparse.Namespace) -> int:
+    root_before = _root_entries()
     cases = load_cases(ns.area)
     if ns.only:
         cases = [c for c in cases if c.id in ns.only or c.key in ns.only]
@@ -199,10 +204,16 @@ def cmd_check(ns: argparse.Namespace) -> int:
         print(f"{rewritten} of the passes compare with R's text as pytacheck corrects it (r_text)")
     if kinds:
         print("xfail by kind: " + ", ".join(f"{v} {k}" for k, v in sorted(kinds.items())))
+    # a case whose Python side saves a file without a save_path writes to the
+    # working directory, the checkout
+    left = sorted(_root_entries() - root_before)
+    if left:
+        print(f"cases left {', '.join(left)} in the repository root {ROOT}: give them a save_path")
     return (
         0
         if counts.get("fail", 0) == counts.get("error", 0) == 0
         and (ns.allow_missing or counts.get("missing", 0) == 0)
+        and not left
         else 1
     )
 
@@ -214,20 +225,31 @@ def cmd_list(ns: argparse.Namespace) -> int:
     return 0
 
 
-_DATA_DIR: Any = None  # the throwaway data dir, removed at exit
+_DATA_DIR: Any = None  # the throwaway data and cache dirs, removed at exit
 
 
 def _hermetic_env() -> None:
-    """No user/project config and a throwaway data dir, unless the caller set them."""
+    """No user/project config, and throwaway data and cache dirs, unless the caller set them.
+
+    As under pytest (``tests/conftest.py``): without ``PYTACHECK_CACHE_DIR``
+    the caches (``.metacheck_repo_cache``, the LLM cache, ...) would go to the
+    working directory, the checkout, as metacheck's do (the R runner points
+    them at a temporary directory too).
+    """
     global _DATA_DIR
     os.environ.setdefault("PYTACHECK_CONFIG", "none")
-    if not os.environ.get("PYTACHECK_DATA_DIR"):
+    dirs = {"PYTACHECK_DATA_DIR": "data", "PYTACHECK_CACHE_DIR": "cache"}
+    missing = {var: name for var, name in dirs.items() if not os.environ.get(var)}
+    if missing:
         import atexit
         import tempfile
 
-        _DATA_DIR = tempfile.TemporaryDirectory(prefix="pytacheck-parity-data-")
+        _DATA_DIR = tempfile.TemporaryDirectory(prefix="pytacheck-parity-")
         atexit.register(_DATA_DIR.cleanup)
-        os.environ["PYTACHECK_DATA_DIR"] = _DATA_DIR.name
+        for var, name in missing.items():
+            path = Path(_DATA_DIR.name) / name
+            path.mkdir()
+            os.environ[var] = str(path)
 
 
 def main(argv: list[str] | None = None) -> int:

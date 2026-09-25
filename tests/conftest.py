@@ -75,8 +75,9 @@ def _no_http_sleep(monkeypatch: pytest.MonkeyPatch) -> None:
 # A function that saves files takes metacheck's default ``save_path = "."``
 # (``paper_write()``, ``grobid_to_bibr()``, ``convert()``, the CLI's ``read``),
 # and pytest runs in the checkout, so a test that forgets the path leaves a
-# paper JSON in the repository root. Any new entry there fails the run; the
-# warning names the test it appeared in.
+# paper JSON in the repository root. Any new entry there fails the run; a
+# warning names the test it appeared in (with pytest-xdist, also any test that
+# ran at the same time).
 
 # what pytest and the linters themselves keep in the root
 _ROOT_TOOL_ENTRIES = frozenset(
