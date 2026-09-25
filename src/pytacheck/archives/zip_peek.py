@@ -81,7 +81,7 @@ def _chr_list(x: Any) -> list[str | None]:
     return [None if _is_missing(x) else str(x)]
 
 
-def _grepl(pattern: str, x: list[str | None], ignore_case: bool = False) -> list[bool]:
+def _grepl(pattern: str, x: Sequence[str | None], ignore_case: bool = False) -> list[bool]:
     """``grepl()``: ``FALSE`` for ``NA`` and for a string that is not valid UTF-8."""
     from pytacheck.fileinfo._strings import invalid_utf8
 
@@ -580,14 +580,33 @@ def _is_readable_archive(name: Any) -> list[bool]:
 
 
 def _list_files_all(root: str) -> list[str]:
-    """``list.files(root, recursive = TRUE, all.files = TRUE)``, sorted as R sorts them."""
+    """``list.files(root, recursive = TRUE, all.files = TRUE)``, sorted as R sorts them.
+
+    Like R, links to folders are followed (a link back into one of its own
+    parent folders is not, where R would recurse until the path is too long).
+    """
     from pytacheck._r import r_sorted
 
-    out = [
-        os.path.relpath(os.path.join(d, f), root).replace(os.sep, "/")
-        for d, _dirs, files in os.walk(root)
-        for f in files
-    ]
+    out: list[str] = []
+
+    def walk(d: str, rel: str, parents: frozenset[str]) -> None:
+        try:
+            entries = list(os.scandir(d))
+        except OSError:
+            return
+        for e in entries:
+            try:
+                is_dir = e.is_dir(follow_symlinks=True)
+            except OSError:
+                is_dir = False
+            if not is_dir:
+                out.append(rel + e.name)
+                continue
+            real = os.path.realpath(e.path)
+            if real not in parents:
+                walk(e.path, f"{rel}{e.name}/", parents | {real})
+
+    walk(root, "", frozenset({os.path.realpath(root)}))
     return list(r_sorted(out))
 
 
@@ -602,7 +621,9 @@ def _file_ext(x: list[str]) -> list[str]:
     from pytacheck.fileinfo._strings import as_bytes_text, invalid_utf8
 
     bad = [invalid_utf8(v) for v in x]
-    found = regextract(r"\.([[:alnum:]]+)$", [None if b else v for v, b in zip(x, bad, strict=True)])
+    found = regextract(
+        r"\.([[:alnum:]]+)$", [None if b else v for v, b in zip(x, bad, strict=True)]
+    )
     if any(bad) and any(m is not None for m in found):
         first = next(v for v, b in zip(x, bad, strict=True) if b)
         raise ValueError(f"invalid multibyte string at '{as_bytes_text(first)}'")
@@ -696,7 +717,7 @@ def _missing_path(path: Any) -> bool:
 
 def _zip_raw_name(info: Any) -> bytes:
     """A member's name as the bytes stored in the archive, up to the first NUL (a C string)."""
-    name = info.orig_filename
+    name: str = info.orig_filename
     raw = name.encode("utf-8" if info.flag_bits & 0x800 else "cp437")
     return raw.split(b"\x00", 1)[0]
 
@@ -721,12 +742,45 @@ def _r_member_path(raw: bytes) -> bytes:
     """R's internal unzip drops ``../`` path components (with a warning)."""
     if raw.startswith(b"../") or b"/../" in raw:
         shown = raw.decode("utf-8", "replace")
-        warnings.warn(f'skipped "../" path component(s) in \'{shown}\'', stacklevel=4)
+        warnings.warn(f"skipped \"../\" path component(s) in '{shown}'", stacklevel=4)
         while raw.startswith(b"../"):
             raw = raw[3:]
         while b"/../" in raw:
             raw = raw.replace(b"/../", b"/", 1)
     return raw
+
+
+def _minizip_can_open(fp: Any, info: Any) -> bool:
+    """minizip's ``unzOpenCurrentFile()`` checks, as R's internal unzip runs them.
+
+    The compression method must be one R can read, and the member's local
+    header must agree with its central-directory entry on the method, the
+    CRC and both sizes (unless the sizes follow in a data descriptor) and the
+    name length; otherwise the zip "is corrupt".
+    """
+    import struct
+
+    if info.compress_type not in _R_UNZIP_METHODS:
+        return False
+    fp.seek(info.header_offset)
+    head = fp.read(30)
+    if len(head) < 30 or head[:4] != _LOCAL_SIG:
+        return False
+    _ver, flags, method, _t, _d, crc, csize, usize, nlen, _x = struct.unpack(
+        "<HHHHHIIIHH", head[4:]
+    )
+    descriptor = bool(flags & 8)
+    if method != info.compress_type:
+        return False
+    if not descriptor and (
+        crc != info.CRC
+        or (csize != 0xFFFFFFFF and csize != info.compress_size)
+        or (usize != 0xFFFFFFFF and usize != info.file_size)
+    ):
+        return False
+    return bool(
+        nlen == len(info.orig_filename.encode("utf-8" if info.flag_bits & 0x800 else "cp437"))
+    )
 
 
 def _unzip_all(zip_path: str, exdir: str) -> None:
@@ -736,15 +790,17 @@ def _unzip_all(zip_path: str, exdir: str) -> None:
     ``C:/x`` makes a folder ``C:``, a leading ``/`` is harmless), except that
     ``../`` components are dropped. Parent folders are made as needed; a
     member that cannot be written (a file is in the way) is an error that
-    ends the extraction, and so is -- as a warning -- a compression method
-    R cannot read. CRC mismatches are not checked.
+    ends the extraction, and so is -- as a warning, "zip file is corrupt" --
+    a member minizip will not open (a compression method R cannot read, a
+    local header that disagrees with the central directory). The CRC of the
+    data itself is not checked.
     """
     import shutil
     import zipfile
 
     ex = os.fsencode(exdir)
     os.makedirs(ex, exist_ok=True)
-    with zipfile.ZipFile(zip_path) as zf:
+    with zipfile.ZipFile(zip_path) as zf, open(zip_path, "rb") as fp:
         for info in zf.infolist():
             out = ex + b"/" + _r_member_path(_zip_raw_name(info))
             if out.endswith(b"/"):  # a directory entry
@@ -763,15 +819,13 @@ def _unzip_all(zip_path: str, exdir: str) -> None:
                     except OSError:
                         pass
                 pp = k + 1
-            if info.compress_type not in _R_UNZIP_METHODS:
+            if not _minizip_can_open(fp, info):
                 warnings.warn("zip file is corrupt", stacklevel=3)
                 return
             try:
                 fout = open(out, "wb")  # noqa: SIM115
             except OSError as e:
-                raise RuntimeError(
-                    f"cannot open file '{os.fsdecode(out)}': {e.strerror}"
-                ) from e
+                raise RuntimeError(f"cannot open file '{os.fsdecode(out)}': {e.strerror}") from e
             with fout, zf.open(info) as src:
                 src._expected_crc = None  # type: ignore[attr-defined]  # R ignores CRCs
                 shutil.copyfileobj(src, fout)

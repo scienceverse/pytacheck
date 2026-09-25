@@ -1,0 +1,68 @@
+{
+  "id": "scale_word_helpers.misc",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": null,
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "pp",
+          "p1",
+          "power",
+          "q3_1_",
+          "ab12",
+          "",
+          "äb1",
+          "_a1",
+          "123",
+          "x_y"
+        ],
+        "names": [
+          "PP",
+          "p1",
+          "power.PP170",
+          "Q3_1_",
+          "ab12cd34",
+          "",
+          "ÄB1",
+          "_a1",
+          "123",
+          "x_y_12"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "pp",
+          "p",
+          "power.pp",
+          "q",
+          "ab",
+          "",
+          "äb",
+          "_a",
+          "",
+          "x_y"
+        ],
+        "names": [
+          "PP",
+          "p1",
+          "power.PP170",
+          "Q3_1_",
+          "ab12cd34",
+          "",
+          "ÄB1",
+          "_a1",
+          "123",
+          "x_y_12"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

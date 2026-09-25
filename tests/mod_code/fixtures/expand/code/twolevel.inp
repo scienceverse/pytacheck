@@ -1,0 +1,12 @@
+TITLE: Two-level regression;
+DATA: FILE = data.dat;
+VARIABLE: NAMES = clus y x w;
+CLUSTER = clus;
+WITHIN = x;
+BETWEEN = w;
+ANALYSIS: TYPE = TWOLEVEL;
+MODEL:
+%WITHIN%
+y ON x;
+%BETWEEN%
+y ON w;

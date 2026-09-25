@@ -1,0 +1,648 @@
+{
+  "id": "code_check.parse_errors",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "na_replace",
+      "version_pin"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "code_check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Code Check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "results"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 8,
+        "names": [
+          "paper_id",
+          "repo_name",
+          "repo_url",
+          "file_name",
+          "file_path",
+          "file_url",
+          "file_location",
+          "file_size",
+          "language",
+          "checked",
+          "parse_error",
+          "parse_error_msg",
+          "code_abs_path",
+          "absolute_paths",
+          "code_setwd",
+          "setwd_calls",
+          "code_install_packages",
+          "install_packages_calls",
+          "library_lines",
+          "library_max_between",
+          "packages_n",
+          "packages",
+          "comment_lines",
+          "code_lines",
+          "percentage_comment",
+          "has_docstring",
+          "loaded_files_missing",
+          "loaded_files_missing_names"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "parse-errors",
+              "parse-errors",
+              "parse-errors",
+              "parse-errors",
+              "parse-errors",
+              "parse-errors",
+              "parse-errors",
+              "parse-errors"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "upstream/metacheck/tests/testthat/fixtures/parse-errors",
+              "upstream/metacheck/tests/testthat/fixtures/parse-errors",
+              "upstream/metacheck/tests/testthat/fixtures/parse-errors",
+              "upstream/metacheck/tests/testthat/fixtures/parse-errors",
+              "upstream/metacheck/tests/testthat/fixtures/parse-errors",
+              "upstream/metacheck/tests/testthat/fixtures/parse-errors",
+              "upstream/metacheck/tests/testthat/fixtures/parse-errors",
+              "upstream/metacheck/tests/testthat/fixtures/parse-errors"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "error-ok.qmd",
+              "error.R",
+              "error.Rmd",
+              "error.qmd",
+              "knit-error.Rmd",
+              "ok.R",
+              "ok.Rmd",
+              "ok.qmd"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "error-ok.qmd",
+              "error.R",
+              "error.Rmd",
+              "error.qmd",
+              "knit-error.Rmd",
+              "ok.R",
+              "ok.Rmd",
+              "ok.qmd"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "upstream/metacheck/tests/testthat/fixtures/parse-errors/error-ok.qmd",
+              "upstream/metacheck/tests/testthat/fixtures/parse-errors/error.R",
+              "upstream/metacheck/tests/testthat/fixtures/parse-errors/error.Rmd",
+              "upstream/metacheck/tests/testthat/fixtures/parse-errors/error.qmd",
+              "upstream/metacheck/tests/testthat/fixtures/parse-errors/knit-error.Rmd",
+              "upstream/metacheck/tests/testthat/fixtures/parse-errors/ok.R",
+              "upstream/metacheck/tests/testthat/fixtures/parse-errors/ok.Rmd",
+              "upstream/metacheck/tests/testthat/fixtures/parse-errors/ok.qmd"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              155,
+              57,
+              212,
+              336,
+              102,
+              127,
+              304,
+              304
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "R",
+              "R",
+              "R",
+              "R",
+              "R",
+              "R",
+              "R",
+              "R"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true,
+              true,
+              true,
+              true,
+              false,
+              false,
+              false,
+              false
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "line:5:1: unexpected symbol\n4: \n5: a\n   ^",
+              "line:4:1: unexpected symbol\n3: \n4: a\n   ^",
+              "line:4:1: unexpected symbol\n3: \n4: a\n   ^",
+              "line:4:1: unexpected symbol\n3: \n4: a\n   ^",
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "",
+              "",
+              "",
+              "/User/lisa/file.csv",
+              "",
+              "",
+              "",
+              ""
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1,
+              1,
+              1,
+              1,
+              0,
+              3,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              5,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1,
+              1,
+              1,
+              1,
+              0,
+              2,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "dplyr",
+              "dplyr",
+              "dplyr",
+              "dplyr",
+              "",
+              "dplyr, tidyr",
+              "",
+              ""
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1,
+              1,
+              1,
+              3,
+              1,
+              2,
+              4,
+              4
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              4,
+              2,
+              2,
+              3,
+              1,
+              7,
+              1,
+              1
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0.2,
+              0.333333333333333,
+              0.333333333333333,
+              0.5,
+              0.5,
+              0.222222222222222,
+              0.8,
+              0.8
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "",
+              "",
+              "",
+              "file.csv",
+              "",
+              "",
+              "",
+              ""
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Below, we describe some best coding practices and give the results of automatic evaluation of these practices in the code files below. This check may miss things or produce false positives if your scripts are less typical.",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(\"File Name\" = c(NA_character_, NA_character_, \nNA_character_, NA_character_, NA_character_, NA_character_, NA_character_, \nNA_character_), \"% Comments\" = c(\"20%\", \"33%\", \"33%\", \"50%\", \n\"50%\", \"22%\", \"80%\", \"80%\"), \"Missing Files\" = c(0L, 0L, 0L, \n1L, 0L, 0L, 0L, 0L), \"Absolute Paths\" = c(0L, 0L, 0L, 1L, 0L, \n0L, 0L, 0L), \"Code Between Libraries\" = c(NA, NA, NA, NA, NA, \n5L, NA, NA)), row.names = c(NA, 8L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 5, FALSE)\n```\n",
+          "#### Code Comments",
+          "Best programming practice is to add comments to code, to explain what the code does (to yourself in the future, or peers who want to re-use your code). All your code files had comments.",
+          "#### Missing Files",
+          "The scripts load files, but 1 script loaded 1 file that could not be automatically identified in the repository. Check if the following files are made available, so that others can reproduce your code, or that the files are missing:",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(\"File name\" = \"error.qmd\", \"Missing Files\" = \"file.csv\"), row.names = 4L, class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 5, FALSE)\n```\n",
+          "#### Absolute Paths",
+          "Best programming practice is to use relative file paths (e.g., './files') instead of absolute file paths (e.g., 'C://Lakens/project_dir/files') as these folder names do not exist on other computers. The following absolute file paths were found in 1 code file. However, these may be false positives in code like `paste0(dir, '/file.csv')`. ",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(\"File name\" = \"error.qmd\", \"Absolute paths found\" = \"/User/lisa/file.csv\"), row.names = 4L, class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 5, FALSE)\n```\n",
+          "#### Working Directory (setwd)",
+          "Best programming practice is to avoid `setwd()` in analysis code: it hardcodes an assumption about the working directory (often an absolute path on the author's own machine), so the code breaks when run anywhere else. Keep the working directory as the caller sets it and use relative paths. No `setwd()` calls were found in any of the code files.",
+          "",
+          "#### Package Installation (install.packages)",
+          "Best programming practice is to avoid `install.packages()` in analysis code: it installs software on whoever runs the script without asking, which is at minimum disruptive (an unexpected install, network access, a package version the author never tested against) and at worst a security risk if it points at an untrusted repository. Document required packages instead (a README, a `renv.lock`/`DESCRIPTION`). No `install.packages()` calls were found in any of the code files.",
+          "",
+          "#### Libraries / Imports",
+          "Best programming practice is to load all required libraries/imports in one block near the top of the code. In 1 code files, libraries/imports were at multiple places (i.e., with more than 3 non-comment lines in between).",
+          "#### Packages / Dependencies",
+          "The code files load 2 distinct packages/libraries: dplyr, tidyr. These are the names found in the source (no version information is available from static analysis).",
+          "#### Reproducible Environment",
+          "No `renv.lock` file, `sessionInfo()`/`session_info()` record, or `groundhog`/`checkpoint` date-pin call was found anywhere in the repository. Without one of these, the exact R and package versions used for the analysis are not recoverable, and package versions may drift between when this analysis was run and any later reproduction attempt. Consider depositing an `renv.lock` (via the `renv` package), a `sessionInfo()` text dump, or (for R) a `groundhog`/`checkpoint` date-pin alongside the code — or, for Python code, a `requirements.txt` (not currently checked for by this module, but still good practice to include).",
+          "",
+          "#### Parsable code",
+          "We encountered parsing issues when trying to read in R-type code files. The following errors were found in 4 code files:",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(\"File name\" = c(\"error-ok.qmd\", \"error.R\", \"error.Rmd\", \n\"error.qmd\"), \"Error Message\" = c(\"line:5:1: unexpected symbol<br>4: <br>5: a<br>   ^\", \n\"line:4:1: unexpected symbol<br>3: <br>4: a<br>   ^\", \"line:4:1: unexpected symbol<br>3: <br>4: a<br>   ^\", \n\"line:4:1: unexpected symbol<br>3: <br>4: a<br>   ^\")), row.names = c(NA, \n4L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 2, FALSE)\n```\n"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "yellow"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "\n-  We found 8 R, 0 Python, 0 SAS, 0 SPSS, 0 Stata, 0 Mplus, 0 MATLAB, and 0 JASP code files.\n-  All your code files had comments.\n-  1 file loaded in the code was missing in the repository.\n-  Absolute file paths were found.\n-  No setwd() calls were found.\n-  No install.packages() calls were found.\n-  Libraries/imports were loaded in multiple places.\n-  The code loaded 2 distinct packages.\n-  No pinned R/package environment (renv.lock, sessionInfo(), or groundhog/checkpoint) was found.\n-  Parsing issues of R-type files were found."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "code_n",
+          "code_checked",
+          "code_abs_path",
+          "code_setwd",
+          "code_install_packages",
+          "code_missing_files",
+          "code_min_comments",
+          "code_parse_errors",
+          "code_packages_n",
+          "code_version_pinned"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "p1"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              8
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              8
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0.2
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              4
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          }
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0
+        ],
+        "names": [
+          "code_n"
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "pinned",
+          "mechanisms",
+          "r_versions",
+          "renv_files",
+          "renv_packages",
+          "sessioninfo_files",
+          "file_location"
+        ],
+        "v": [
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "df",
+            "nrow": 0,
+            "names": [
+              "file_name",
+              "package",
+              "version",
+              "source"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

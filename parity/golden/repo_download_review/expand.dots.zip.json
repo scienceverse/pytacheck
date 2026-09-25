@@ -1,0 +1,97 @@
+{
+  "id": "expand.dots.zip",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 3,
+    "names": [
+      "repo_url",
+      "file_name",
+      "file_path",
+      "file_url",
+      "file_location",
+      "file_size",
+      "data_type",
+      "doc_role",
+      "data_format"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "r",
+          "r",
+          "r"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "..\\win.csv",
+          "b.csv",
+          "first.csv"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "dots.zip/..\\win.csv",
+          "dots.zip/a../b.csv",
+          "dots.zip/first.csv"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "<TMP>/dots.zip.contents/..\\win.csv",
+          "<TMP>/dots.zip.contents/a../b.csv",
+          "<TMP>/dots.zip.contents/first.csv"
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          817,
+          817,
+          817
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "data",
+          "data",
+          "data"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "tabular",
+          "tabular",
+          "tabular"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -1,0 +1,72 @@
+{
+  "id": "check_file_naming.odd_paths",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 8,
+    "names": [
+      "file_name",
+      "rule",
+      "severity",
+      "detail"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "~/data 1.csv",
+          "C:\\x\\y 2.csv",
+          "C:\\x\\y 2.csv",
+          "20200230.csv",
+          "run 01.csv",
+          "run 1.csv",
+          "20200230.csv",
+          "run 1.csv"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "spaces",
+          "spaces",
+          "special-characters",
+          "date-format",
+          "spaces",
+          "spaces",
+          "zero-padding",
+          "zero-padding"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "bad",
+          "bad",
+          "bad",
+          "bad",
+          "bad",
+          "bad",
+          "suggestion",
+          "suggestion"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "contains a space",
+          "contains a space",
+          "contains a character other than letters, digits, underscore, or dash",
+          "'20200230' is not a valid YYYYMMDD date",
+          "contains a space",
+          "contains a space",
+          "numbered inconsistently with sibling files (pad to 16 digits so names sort in numeric order)",
+          "numbered inconsistently with sibling files (pad to 2 digits so names sort in numeric order)"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

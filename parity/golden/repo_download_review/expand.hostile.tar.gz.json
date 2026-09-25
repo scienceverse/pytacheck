@@ -1,0 +1,124 @@
+{
+  "id": "expand.hostile.tar.gz",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 6,
+    "names": [
+      "repo_url",
+      "file_name",
+      "file_path",
+      "file_url",
+      "file_location",
+      "file_size",
+      "data_type",
+      "doc_role",
+      "data_format"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "r",
+          "r",
+          "r",
+          "r",
+          "r",
+          "r"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "b.csv",
+          "abs.csv",
+          "last.csv",
+          "data.csv",
+          "rel_link.csv",
+          "sub\\win.csv"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "hostile.tar.gz/a/b.csv",
+          "hostile.tar.gz/abs.csv",
+          "hostile.tar.gz/last.csv",
+          "hostile.tar.gz/ok/data.csv",
+          "hostile.tar.gz/rel_link.csv",
+          "hostile.tar.gz/sub\\win.csv"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "<TMP>/hostile.tar.gz.contents/a/b.csv",
+          "<TMP>/hostile.tar.gz.contents/abs.csv",
+          "<TMP>/hostile.tar.gz.contents/last.csv",
+          "<TMP>/hostile.tar.gz.contents/ok/data.csv",
+          "<TMP>/hostile.tar.gz.contents/rel_link.csv",
+          "<TMP>/hostile.tar.gz.contents/sub\\win.csv"
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          817,
+          817,
+          817,
+          817,
+          817,
+          817
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "data",
+          "data",
+          "data",
+          "data",
+          "data",
+          "data"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "tabular",
+          "tabular",
+          "tabular",
+          "tabular",
+          "tabular",
+          "tabular"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

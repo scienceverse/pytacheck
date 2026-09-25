@@ -6,7 +6,7 @@ structurally.
 
 ```
 parity/
-  UPSTREAM.toml          pinned metacheck repo/branch/commit/version
+  UPSTREAM.toml          pinned metacheck repo/branch/commit/version (+ pull request)
   cases/<area>.yaml      what to run (R function / module + arguments)
   golden/<area>/*.json   R's results, canonically encoded (committed)
   r/run_cases.R          R runner: evaluates cases, writes goldens
@@ -54,6 +54,16 @@ What is compared (`parity/compare.py`):
 * representation-only differences are ignored: `NULL` vs empty vs single `NA`,
   NaN vs NA, a list of scalars vs a vector, a 1-row matrix vs a vector.
 
+## Deliberate pytacheck defaults
+
+pytacheck produces bibr export schema 12.x where metacheck's defaults keep the older
+format (see [UPSTREAM_ISSUES.md](UPSTREAM_ISSUES.md) D1). The Python side of every case
+runs with metacheck's defaults (`METACHECK_DEFAULTS` in `parity/cases.py`): `read()` and
+`grobid_to_bibr()` convert Grobid TEI with `schema_version=None`, so `$paper` and `$read`
+of an XML file, `$expr` code and functions such as `convert()` compare with R's
+`read()`. A case that tests the 12.0 conversion passes `schema_version = "12.0"` on
+both sides. `paper_write()` is not swapped, so its cases always pass `schema_version`.
+
 ## Network-dependent functions
 
 Cases with `mock_dir: apis` (or another metacheck mock directory) run against
@@ -67,5 +77,6 @@ clients and network-backed modules are parity-tested offline and deterministical
 * **parity workflow** (R installed): regenerates all goldens at the pinned commit and
   fails if they differ from the committed ones (goldens can never drift from R), then
   runs the Python comparison;
-* **upstream-sync workflow**: when metacheck `dev` moves, regenerates goldens at the new
-  commit and asks an AI agent to port the changes until parity is green again.
+* **upstream-sync workflow**: when metacheck `dev` moves (or, while the pin names a
+  pull request, that pull request's head), regenerates goldens at the new commit and
+  asks an AI agent to port the changes until parity is green again.

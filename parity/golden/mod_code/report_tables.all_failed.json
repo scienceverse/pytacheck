@@ -1,0 +1,30 @@
+{
+  "id": "report_tables.all_failed",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": null,
+    "v": [
+      {
+        "t": "df",
+        "nrow": 2,
+        "names": [
+          "File Name"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "<a href='/does/not/exist/analysis.R' target='_blank'>analysis.R<\/a>",
+              "<a href='/does/not/exist/helpers.R' target='_blank'>helpers.R<\/a>"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -1,0 +1,115 @@
+{
+  "id": "expand.dirlink.tar.gz",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 5,
+    "names": [
+      "repo_url",
+      "file_name",
+      "file_path",
+      "file_url",
+      "file_location",
+      "file_size",
+      "data_type",
+      "doc_role",
+      "data_format"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "r",
+          "r",
+          "r",
+          "r",
+          "r"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "y.R",
+          "x.csv",
+          "y.R",
+          "x.csv",
+          "z.csv"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "dirlink.tar.gz/alias/sub/y.R",
+          "dirlink.tar.gz/alias/x.csv",
+          "dirlink.tar.gz/real/sub/y.R",
+          "dirlink.tar.gz/real/x.csv",
+          "dirlink.tar.gz/z.csv"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "<TMP>/dirlink.tar.gz.contents/alias/sub/y.R",
+          "<TMP>/dirlink.tar.gz.contents/alias/x.csv",
+          "<TMP>/dirlink.tar.gz.contents/real/sub/y.R",
+          "<TMP>/dirlink.tar.gz.contents/real/x.csv",
+          "<TMP>/dirlink.tar.gz.contents/z.csv"
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          6,
+          817,
+          6,
+          817,
+          817
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "code",
+          "data",
+          "code",
+          "data",
+          "data"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "raw",
+          "tabular",
+          "raw",
+          "tabular",
+          "tabular"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

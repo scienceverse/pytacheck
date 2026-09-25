@@ -1,0 +1,192 @@
+{
+  "id": "expand.climb.zip",
+  "ok": true,
+  "error": null,
+  "warnings": [
+    "skipped \"../\" path component(s) in '../evil.csv'",
+    "skipped \"../\" path component(s) in 'z/../../up.csv'",
+    "skipped \"../\" path component(s) in 'q/../inside.csv'",
+    "skipped \"../\" path component(s) in 'a/b/../../c.csv'"
+  ],
+  "value": {
+    "t": "df",
+    "nrow": 13,
+    "names": [
+      "repo_url",
+      "file_name",
+      "file_path",
+      "file_url",
+      "file_location",
+      "file_size",
+      "data_type",
+      "doc_role",
+      "data_format"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "r",
+          "r",
+          "r",
+          "r",
+          "r",
+          "r",
+          "r",
+          "r",
+          "r",
+          "r",
+          "r",
+          "r",
+          "r"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "z.csv",
+          "c.csv",
+          "abs.csv",
+          "drive.csv",
+          "dot.csv",
+          "evil.csv",
+          "k..csv",
+          "data.csv",
+          "inside.csv",
+          "sub\\win.csv",
+          "y2.csv",
+          "y.csv",
+          "up.csv"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "climb.zip/..../z.csv",
+          "climb.zip/a/b/c.csv",
+          "climb.zip/abs.csv",
+          "climb.zip/C:/drive.csv",
+          "climb.zip/dot.csv",
+          "climb.zip/evil.csv",
+          "climb.zip/k..csv",
+          "climb.zip/ok/data.csv",
+          "climb.zip/q/inside.csv",
+          "climb.zip/sub\\win.csv",
+          "climb.zip/x/..../y2.csv",
+          "climb.zip/x/y.csv",
+          "climb.zip/z/up.csv"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "<TMP>/climb.zip.contents/..../z.csv",
+          "<TMP>/climb.zip.contents/a/b/c.csv",
+          "<TMP>/climb.zip.contents/abs.csv",
+          "<TMP>/climb.zip.contents/C:/drive.csv",
+          "<TMP>/climb.zip.contents/dot.csv",
+          "<TMP>/climb.zip.contents/evil.csv",
+          "<TMP>/climb.zip.contents/k..csv",
+          "<TMP>/climb.zip.contents/ok/data.csv",
+          "<TMP>/climb.zip.contents/q/inside.csv",
+          "<TMP>/climb.zip.contents/sub\\win.csv",
+          "<TMP>/climb.zip.contents/x/..../y2.csv",
+          "<TMP>/climb.zip.contents/x/y.csv",
+          "<TMP>/climb.zip.contents/z/up.csv"
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          817,
+          817,
+          817,
+          817,
+          817,
+          817,
+          817,
+          817,
+          817,
+          817,
+          817,
+          817,
+          817
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "data",
+          "data",
+          "data",
+          "data",
+          "data",
+          "data",
+          "data",
+          "data",
+          "data",
+          "data",
+          "data",
+          "data",
+          "data"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "tabular",
+          "tabular",
+          "tabular",
+          "tabular",
+          "tabular",
+          "tabular",
+          "tabular",
+          "tabular",
+          "tabular",
+          "tabular",
+          "tabular",
+          "tabular",
+          "tabular"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

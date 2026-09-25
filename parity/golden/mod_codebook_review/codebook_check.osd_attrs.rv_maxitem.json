@@ -1,0 +1,100 @@
+{
+  "id": "codebook_check.osd_attrs.rv_maxitem",
+  "ok": true,
+  "error": null,
+  "warnings": [
+    "no non-missing arguments to max; returning -Inf"
+  ],
+  "value": {
+    "t": "list",
+    "names": null,
+    "v": [
+      {
+        "t": "list",
+        "names": [
+          "write",
+          "code",
+          "orphan_total",
+          "scale",
+          "dedup_key"
+        ],
+        "v": [
+          {
+            "t": "lgl",
+            "v": [
+              true
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "abc"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "abc\u0002abc_99999999997\u0001abc_99999999998\u0001abc_99999999999"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "write",
+          "code",
+          "orphan_total",
+          "scale",
+          "dedup_key"
+        ],
+        "v": [
+          {
+            "t": "lgl",
+            "v": [
+              true
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "sat"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "sat\u0002sat_1\u0001sat_2\u0001sat_3\u0001sat_4"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

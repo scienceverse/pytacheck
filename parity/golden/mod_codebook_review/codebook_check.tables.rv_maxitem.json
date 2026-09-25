@@ -1,0 +1,172 @@
+{
+  "id": "codebook_check.tables.rv_maxitem",
+  "ok": true,
+  "error": null,
+  "warnings": [
+    "no non-missing arguments to max; returning -Inf"
+  ],
+  "value": {
+    "t": "list",
+    "names": null,
+    "v": [
+      {
+        "t": "df",
+        "nrow": 8,
+        "names": [
+          "Column",
+          "Documented",
+          "Label",
+          "Codebook Variable",
+          "Source",
+          "Status"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "abc_99999999997",
+              "abc_99999999998",
+              "abc_99999999999",
+              "id",
+              "sat_1",
+              "sat_2",
+              "sat_3",
+              "sat_4"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "no",
+              "no",
+              "no",
+              "no",
+              "yes",
+              "yes",
+              "yes",
+              "yes"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              "",
+              "",
+              "Satisfaction with colleagues",
+              ""
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              "sat_1",
+              "sat_2",
+              "sat_3",
+              "sat_4"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              "codebook.csv",
+              "codebook.csv",
+              "codebook.csv",
+              "codebook.csv"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "unlabelled",
+              "unlabelled",
+              "unlabelled",
+              "unlabelled",
+              "labelled",
+              "labelled",
+              "labelled",
+              "labelled"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 2,
+        "names": [
+          "File",
+          "Abbrev",
+          "Columns",
+          "Max item",
+          "Scale",
+          "Confidence",
+          "Source"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "s.csv",
+              "s.csv"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ABC",
+              "SAT"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              3,
+              4
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "-Inf",
+              "4"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "— not matched to a named scale —",
+              "— not matched to a named scale —"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "",
+              ""
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "",
+              ""
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

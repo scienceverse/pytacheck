@@ -1,0 +1,79 @@
+{
+  "id": "fetch.cp437_valid_names",
+  "ok": true,
+  "error": null,
+  "warnings": [
+    "unable to translate 'donn<82>es/' to a wide string",
+    "input string 1 is invalid",
+    "unable to translate 'donn<82>es/r<82>sum<82>.csv' to a wide string",
+    "input string 2 is invalid",
+    "unable to translate 'caf<82>.R' to a wide string",
+    "input string 3 is invalid"
+  ],
+  "value": {
+    "t": "list",
+    "names": [
+      "result",
+      "files",
+      "sizes"
+    ],
+    "v": [
+      {
+        "t": "df",
+        "nrow": 2,
+        "names": [
+          "name",
+          "path",
+          "size",
+          "ok"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "plain.csv",
+              "nul.csv"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "<TMP>/plain.csv",
+              "<TMP>/nul.csv"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              817,
+              8
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true,
+              true
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "nul.csv",
+          "plain.csv"
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          8,
+          817
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

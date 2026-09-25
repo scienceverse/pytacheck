@@ -1,0 +1,86 @@
+{
+  "id": "propagate_scale_by_prefix.empty_prefix",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 8,
+    "names": [
+      "source_file",
+      "column_name",
+      "scale",
+      "scale_confidence",
+      "scale_source"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "s.csv",
+          "s.csv",
+          "s.csv",
+          "s.csv",
+          "s.csv",
+          "s.csv",
+          "t.csv",
+          "t.csv"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "1",
+          "2",
+          "_3",
+          "q_1",
+          "q_2",
+          "__",
+          "q_1",
+          "q_9"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "S",
+          null,
+          null,
+          "Q",
+          "Q",
+          null,
+          "T",
+          "T"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "high",
+          null,
+          null,
+          "medium",
+          "medium",
+          null,
+          "low",
+          "low"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "manuscript",
+          null,
+          null,
+          "matched",
+          "matched",
+          null,
+          "self_generated",
+          "self_generated"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

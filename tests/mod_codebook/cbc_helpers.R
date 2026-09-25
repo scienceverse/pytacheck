@@ -50,7 +50,9 @@ cbc_decode <- function(x) {
 
 # The stored data_check output of a fixture scenario.
 cbc_dc <- function(scenario) {
-  path <- file.path(cbc_fixtures, "dc", paste0(scenario, ".json"))
+  # rv_* scenarios come from fixtures/make_review_fixtures.R
+  sub_dir <- if (startsWith(scenario, "rv_")) "dc_review" else "dc"
+  path <- file.path(cbc_fixtures, sub_dir, paste0(scenario, ".json"))
   jsonlite::fromJSON(path, simplifyVector = FALSE)
 }
 
@@ -189,9 +191,12 @@ cbc_mock_llm <- function(spec) {
         vars <- substr(def, 1, pos - 1)
         labs <- substr(def, pos + 3, nchar(def))
         keep <- grepl("^[A-Za-z_][A-Za-z0-9_.]*$", vars)
-        data.frame(variables.variable_name = vars[keep], variables.label = labs[keep],
-                   variables.experiment_context = rep("", sum(keep)),
-                   check.names = FALSE, stringsAsFactors = FALSE)
+        ctx <- if (is.null(spec$parse_context)) "" else .cbc_str(spec$parse_context)[1]
+        out <- data.frame(variables.variable_name = vars[keep], variables.label = labs[keep],
+                          variables.experiment_context = rep(ctx, sum(keep)),
+                          check.names = FALSE, stringsAsFactors = FALSE)
+        if (isTRUE(spec$parse_no_context)) out$variables.experiment_context <- NULL
+        out
       },
       "Matching codebook columns" = if (startsWith(txt, "Column: ")) {
         cand <- sub("^- ", "", lines[startsWith(lines, "- ")])

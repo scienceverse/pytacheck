@@ -2,6 +2,11 @@ name: Upstream sync
 
 # Keeps pytacheck in step with metacheck's dev branch. When dev moves:
 #   1. move the upstream/metacheck submodule + pin to the new commit;
+#      while the pin names a pull request (pull_request/base_commit in
+#      parity/UPSTREAM.toml, e.g. #423 = bibr export schema 12.0), follow that
+#      pull request's head instead, and warn about dev commits it lacks; once
+#      it is merged into dev, go back to dev and drop it from the pin
+#      (scripts/upstream_sync.py);
 #   2. install the new metacheck in the pinned R environment and regenerate every
 #      golden (changed goldens = upstream behaviour changes);
 #   3. let Claude Code port the changes (brief: .upstream-sync/brief.md, rules:
@@ -17,8 +22,12 @@ on:
   workflow_dispatch:
     inputs:
       to:
-        description: "metacheck commit to sync to (default: head of dev)"
+        description: "metacheck commit to sync to (default: the pinned pull request's head while it is open, else head of dev)"
         required: false
+      drop_pr:
+        description: "stop tracking the pinned pull request (e.g. closed unmerged) and sync to dev"
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -32,7 +41,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     outputs:
-      behind: ${{ steps.status.outputs.behind }}
+      sync: ${{ steps.status.outputs.sync }}
       head: ${{ steps.status.outputs.head }}
       open_pr: ${{ steps.pr.outputs.open }}
     permissions:
@@ -44,13 +53,24 @@ jobs:
           persist-credentials: false
           submodules: true
       - id: status
+        env:
+          TO: ${{ inputs.to }}
+          DROP_PR: ${{ inputs.drop_pr }}
         run: |
-          json=$(python3 scripts/upstream_sync.py status)
+          args=()
+          [ -z "$TO" ] || args+=(--to "$TO")
+          [ "$DROP_PR" != "true" ] || args+=(--drop-pr)
+          json=$(python3 scripts/upstream_sync.py status "${args[@]}")
           echo "$json"
-          head="${{ inputs.to }}"
-          [ -n "$head" ] || head=$(echo "$json" | python3 -c 'import json,sys; print(json.load(sys.stdin)["head"])')
-          echo "head=$head" >> "$GITHUB_OUTPUT"
-          echo "behind=$(echo "$json" | python3 -c 'import json,sys; print(json.load(sys.stdin)["behind"])')" >> "$GITHUB_OUTPUT"
+          field() { echo "$json" | python3 -c "import json,sys; v=json.load(sys.stdin)['$1']; print(str(v).lower() if isinstance(v, bool) else v)"; }
+          echo "head=$(field head)" >> "$GITHUB_OUTPUT"
+          echo "sync=$(field sync)" >> "$GITHUB_OUTPUT"
+          if [ "$(field mode)" = "pull_request" ] && [ "$(field not_in_pr)" != "0" ]; then
+            echo "::warning::metacheck dev has $(field not_in_pr) commit(s) that pull request #$(field pull_request) lacks; they are not synced until it is merged or rebased."
+          fi
+          if [ "$(field mode)" = "merged" ]; then
+            echo "::notice::pull request #$(field pull_request) was merged into dev ($(field pr_merged)); syncing back to dev."
+          fi
       - id: pr
         env:
           GH_TOKEN: ${{ github.token }}
@@ -60,7 +80,7 @@ jobs:
 
   sync:
     needs: detect
-    if: needs.detect.outputs.behind != '0' && needs.detect.outputs.open_pr == '0'
+    if: needs.detect.outputs.sync == 'true' && needs.detect.outputs.open_pr == '0'
     runs-on: ubuntu-latest
     timeout-minutes: 240
     permissions:
@@ -78,8 +98,10 @@ jobs:
 
       - name: Branch
         id: branch
+        env:
+          HEAD_SHA: ${{ needs.detect.outputs.head }}
         run: |
-          short=$(echo "${{ needs.detect.outputs.head }}" | cut -c1-10)
+          short=$(echo "$HEAD_SHA" | cut -c1-10)
           echo "name=upstream-sync/$short" >> "$GITHUB_OUTPUT"
           git switch -c "upstream-sync/$short"
 
@@ -90,7 +112,13 @@ jobs:
       - run: uv sync --locked --all-extras
 
       - name: Move the pin and write the brief
-        run: uv run python scripts/upstream_sync.py prepare --to "${{ needs.detect.outputs.head }}"
+        env:
+          HEAD_SHA: ${{ needs.detect.outputs.head }}
+          DROP_PR: ${{ inputs.drop_pr }}
+        run: |
+          args=(--to "$HEAD_SHA")
+          [ "$DROP_PR" != "true" ] || args+=(--drop-pr)
+          uv run python scripts/upstream_sync.py prepare "${args[@]}"
 
       - name: R reference environment
         uses: mamba-org/setup-micromamba@v2
@@ -161,17 +189,18 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          meta=.upstream-sync/meta.json
-          version=$(python3 -c "import json; print(json.load(open('$meta'))['version'])")
-          to=$(python3 -c "import json; print(json.load(open('$meta'))['to'])")
+          meta() { python3 -c "import json; print(json.load(open('.upstream-sync/meta.json'))['$1'])"; }
+          title=$(meta title)
           git config user.name "pytacheck upstream sync"
           git config user.email "upstream-sync@users.noreply.github.com"
           git add -A -- . ':!.upstream-sync'
-          git commit -m "Sync with metacheck dev ${to:0:10} (${version})"
+          git commit -m "$title"
           git push -u origin "${{ steps.branch.outputs.name }}"
           {
-            echo "Automated port of metacheck \`dev\` → \`${to:0:10}\` (metacheck ${version})."
+            meta summary
             echo
+            warning=$(meta warning)
+            [ -z "$warning" ] || { echo "$warning"; echo; }
             if [ "${{ steps.verify.outputs.ok }}" = "true" ]; then
               echo "✅ Parity, tests and lint pass."
             else
@@ -187,5 +216,5 @@ jobs:
           gh label create upstream-sync --color 0e8a16 --description "Automated metacheck sync" 2>/dev/null || true
           gh pr create --base main --head "${{ steps.branch.outputs.name }}" $draft \
             --label upstream-sync \
-            --title "Sync with metacheck dev ${to:0:10} (${version})" \
+            --title "$title" \
             --body-file .upstream-sync/pr.md

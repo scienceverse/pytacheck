@@ -1,0 +1,82 @@
+{
+  "id": "fetch.paths_dir_first",
+  "ok": true,
+  "error": null,
+  "warnings": [
+    "cannot open file '/tmp/RtmpvSO7TZ/rv_1fc831b794bc/a/b.csv': Not a directory"
+  ],
+  "value": {
+    "t": "list",
+    "names": [
+      "result",
+      "files",
+      "sizes"
+    ],
+    "v": [
+      {
+        "t": "df",
+        "nrow": 4,
+        "names": [
+          "name",
+          "path",
+          "size",
+          "ok"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "a",
+              "a/b.csv",
+              "C:/drive.csv",
+              "z/../../up.csv"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "<TMP>/a",
+              null,
+              "<TMP>/drive.csv",
+              null
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              13,
+              817,
+              6,
+              3
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true,
+              false,
+              true,
+              false
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "a",
+          "drive.csv"
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          13,
+          6
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

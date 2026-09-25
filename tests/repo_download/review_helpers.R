@@ -136,7 +136,7 @@ rv_cd <- function(fixture) {
   rv_df_bytes(metacheck:::.parse_zip_central_dir(readBin(p, "raw", file.size(p))))
 }
 
-rv_download <- function(routes, files, twice = FALSE, ...) {
+rv_download <- function(routes, files, twice = FALSE, disk = TRUE, ...) {
   sess <- tempfile("rv_sess_")
   old <- options(metacheck.repo_cache.session_dir = sess,
                  metacheck.repo_cache.notified = TRUE)
@@ -151,14 +151,19 @@ rv_download <- function(routes, files, twice = FALSE, ...) {
   }
   dl <- rv_serve(routes, run)
   on_disk <- sort(list.files(sess, recursive = TRUE, all.files = TRUE))
-  list(
+  out <- list(
     file_location = sub(sess, "<SESSION>", dl$file_location, fixed = TRUE),
     gated = attr(dl, "gated"),
     oversize_skipped = attr(dl, "oversize_skipped"),
-    failed = attr(dl, "failed"),
-    on_disk = on_disk,
-    sizes = unname(file.size(file.path(sess, on_disk)))
+    failed = attr(dl, "failed")
   )
+  # httr2's mocked responses are not streamed to `path`, so an empty body
+  # leaves no file behind in R: `disk = FALSE` leaves the listing out
+  if (isTRUE(disk)) {
+    out$on_disk <- on_disk
+    out$sizes <- unname(file.size(file.path(sess, on_disk)))
+  }
+  out
 }
 
 rv_expand <- function(fn, fixture, skip_types = "materials") {
@@ -175,4 +180,12 @@ rv_expand <- function(fn, fixture, skip_types = "materials") {
   out <- expand(f, row, skip_types = skip_types)
   out$file_location <- sub(d, "<TMP>", out$file_location, fixed = TRUE)
   rv_df_bytes(out)
+}
+
+rv_category <- function(x) rv_df_bytes(file_category(x))
+
+rv_filetype <- function(x) {
+  out <- filetype(x)
+  names(out) <- rv_bytes(names(out))
+  out
 }

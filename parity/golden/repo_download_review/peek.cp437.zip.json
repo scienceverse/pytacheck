@@ -1,0 +1,89 @@
+{
+  "id": "peek.cp437.zip",
+  "ok": true,
+  "error": null,
+  "warnings": [
+    "unable to translate 'donn<82>es/' to a wide string",
+    "input string 1 is invalid",
+    "unable to translate 'donn<82>es/r<82>sum<82>.csv' to a wide string",
+    "input string 2 is invalid",
+    "unable to translate 'caf<82>.R' to a wide string",
+    "input string 3 is invalid"
+  ],
+  "value": {
+    "t": "df",
+    "nrow": 5,
+    "names": [
+      "name",
+      "size",
+      "method",
+      "csize",
+      "offset",
+      "crc"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "donn<82>es/",
+          "donn<82>es/r<82>sum<82>.csv",
+          "caf<82>.R",
+          "plain.csv",
+          "nul.csv"
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0,
+          817,
+          7,
+          817,
+          8
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0,
+          8,
+          8,
+          8,
+          8
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0,
+          407,
+          9,
+          407,
+          10
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0,
+          38,
+          493,
+          538,
+          984
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0,
+          3490621840,
+          1829490220,
+          3490621840,
+          177670011
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

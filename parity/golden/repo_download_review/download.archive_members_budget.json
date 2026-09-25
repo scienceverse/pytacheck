@@ -1,0 +1,124 @@
+{
+  "id": "download.archive_members_budget",
+  "ok": true,
+  "error": null,
+  "warnings": [
+    "An archive in repository https://example.org/rp exceeds the 0.0 MB per-repository budget: fetched the smallest members up to the cap, 1 member omitted. Raise `max_download_size` to include more."
+  ],
+  "value": {
+    "t": "list",
+    "names": [
+      "file_location",
+      "gated",
+      "oversize_skipped",
+      "failed",
+      "on_disk",
+      "sizes"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          null,
+          "<SESSION>/example.org_rp/.archive_members/srv.example.org_paths.zip.contents/dup.csv",
+          null,
+          "<SESSION>/example.org_rp/.archive_members/srv.example.org_paths.zip.contents/abs.csv"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "repo_url",
+          "message"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "https://example.org/rp"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "An archive in repository https://example.org/rp exceeds the 0.0 MB per-repository budget: fetched the smallest members up to the cap, 1 member omitted. Raise `max_download_size` to include more."
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "repo_url",
+          "file_name",
+          "file_size"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "dbl",
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "repo_url",
+          "file_name",
+          "file_url",
+          "paper_id",
+          "error"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "example.org_rp/.archive_members/srv.example.org_paths.zip.contents/abs.csv",
+          "example.org_rp/.archive_members/srv.example.org_paths.zip.contents/dup.csv"
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          4,
+          12
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

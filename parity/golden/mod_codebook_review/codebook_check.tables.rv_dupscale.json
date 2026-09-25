@@ -1,0 +1,151 @@
+{
+  "id": "codebook_check.tables.rv_dupscale",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": null,
+    "v": [
+      {
+        "t": "df",
+        "nrow": 6,
+        "names": [
+          "Column",
+          "Documented",
+          "Label",
+          "Codebook Variable",
+          "Source",
+          "Status"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "id",
+              "bfi_1",
+              "bfi_2",
+              "bfi_2",
+              "bfi_3",
+              "bfi_4"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "no",
+              "yes",
+              "yes",
+              "yes",
+              "yes",
+              "yes"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "Personality item 1",
+              "Personality item 2",
+              "Personality item 2",
+              "Personality item 3",
+              "Personality item 4"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "bfi_1",
+              "bfi_2",
+              "bfi_2",
+              "bfi_3",
+              "bfi_4"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "codebook.csv",
+              "codebook.csv",
+              "codebook.csv",
+              "codebook.csv",
+              "codebook.csv"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "unlabelled",
+              "labelled",
+              "labelled",
+              "labelled",
+              "labelled",
+              "labelled"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "File",
+          "Abbrev",
+          "Columns",
+          "Max item",
+          "Scale",
+          "Confidence",
+          "Source"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "s.csv"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "BFI"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              5
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "4"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "— not matched to a named scale —"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

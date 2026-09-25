@@ -51,5 +51,27 @@
   "errors": {
     "error_phases": ["Matching scales to text", "Identifying scales in the manuscript", "Labelling scales"],
     "merge": {"equivalent": true, "canonical": "first"}
+  },
+  "rv_names": {
+    "text_scales": {
+      "scale_name": ["Big Five Inventory", "job satisfaction scale", "Alphabet Test"],
+      "acronym": ["BFI", "", "ABC"],
+      "n_items": ["44", "4", ""],
+      "administered": ["yes", "yes", "unclear"],
+      "confidence": ["high", "medium", "low"]
+    },
+    "prefix_names": {
+      "BFI": ["Big Five Inventory", "high"],
+      "ABC": ["Alphabet Scale", "medium"],
+      "SAT": ["Job Satisfaction Scale", "LOW"]
+    }
+  },
+  "rv_parse_ctx": {
+    "parse_context": "Experiment 2",
+    "match_prefix": 3
+  },
+  "rv_parse_noctx": {
+    "parse_no_context": true,
+    "match_prefix": 3
   }
 }

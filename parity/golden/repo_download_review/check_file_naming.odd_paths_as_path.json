@@ -1,0 +1,80 @@
+{
+  "id": "check_file_naming.odd_paths_as_path",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 10,
+    "names": [
+      "file_name",
+      "rule",
+      "severity",
+      "detail"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "f0.csv",
+          "f1.csv",
+          "f2.csv",
+          "f3.csv",
+          "f4.csv",
+          "f5.csv",
+          "f6.csv",
+          "f7.csv",
+          "f8.csv",
+          "f9.csv"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "zero-padding",
+          "zero-padding",
+          "zero-padding",
+          "zero-padding",
+          "zero-padding",
+          "zero-padding",
+          "zero-padding",
+          "zero-padding",
+          "zero-padding",
+          "zero-padding"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "suggestion",
+          "suggestion",
+          "suggestion",
+          "suggestion",
+          "suggestion",
+          "suggestion",
+          "suggestion",
+          "suggestion",
+          "suggestion",
+          "suggestion"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "numbered inconsistently with sibling files (pad to 2 digits so names sort in numeric order)",
+          "numbered inconsistently with sibling files (pad to 2 digits so names sort in numeric order)",
+          "numbered inconsistently with sibling files (pad to 2 digits so names sort in numeric order)",
+          "numbered inconsistently with sibling files (pad to 2 digits so names sort in numeric order)",
+          "numbered inconsistently with sibling files (pad to 2 digits so names sort in numeric order)",
+          "numbered inconsistently with sibling files (pad to 2 digits so names sort in numeric order)",
+          "numbered inconsistently with sibling files (pad to 2 digits so names sort in numeric order)",
+          "numbered inconsistently with sibling files (pad to 2 digits so names sort in numeric order)",
+          "numbered inconsistently with sibling files (pad to 2 digits so names sort in numeric order)",
+          "numbered inconsistently with sibling files (pad to 2 digits so names sort in numeric order)"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

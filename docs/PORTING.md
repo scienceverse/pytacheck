@@ -9,6 +9,18 @@ agents porting code, including the automated upstream-sync workflow.
 The pinned upstream lives in the `upstream/metacheck` git submodule; its commit is
 recorded in `parity/UPSTREAM.toml` and `src/pytacheck/_version.py`.
 
+**The pin is `dev` plus pull request
+[#423](https://github.com/scienceverse/metacheck/pull/423)** (bibr export schema 12.0:
+reading and writing 12.x, Grobid TEI to 12.0), which pytacheck targets before it is
+merged. The pin records it as `pull_request = 423` and `base_commit`, the `dev` commit
+the pull request is built on. The R reference is installed from the pinned commit, so
+the pull request's behaviour is the behaviour to match. Until it is merged, the
+upstream-sync workflow follows the pull request's head (`refs/pull/423/head`) and warns
+about `dev` commits the pull request does not contain yet. Those commits are not in the
+reference and are not ported. Once the pull request is merged into `dev`, the workflow
+goes back to `dev` and drops `pull_request` and `base_commit` from the pin
+(`scripts/upstream_sync.py`; `prepare --drop-pr` stops following it by hand).
+
 ## 1. Golden rules
 
 1. **Reproduce R's behaviour exactly**, including quirks. Same rows, same row order,
@@ -41,7 +53,7 @@ recorded in `parity/UPSTREAM.toml` and `src/pytacheck/_version.py`.
 | R source | Python package |
 |---|---|
 | `R/paper.R`, `R/import-read.R`, `R/validate.R` (paper validation) | `pytacheck.papers` |
-| `R/import-bibr.R`, `R/import-grobid.R`, `R/import-convert.R`, `R/import-papers.R`, `R/svutils-xml.R` | `pytacheck.io` |
+| `R/import-bibr.R`, `R/import-bibr12.R`, `R/import-grobid.R`, `R/import-grobid-bibr12.R`, `R/import-convert.R`, `R/import-papers.R`, `R/svutils-xml.R` | `pytacheck.io` |
 | `R/text_search.R`, `R/text_expand.R`, `R/text-*.R`, `R/extract-tests.R`, `R/causal_sentences.R` | `pytacheck.text` |
 | `R/stats.R`, `R/stat_helpers.R` (+ the statcheck package) | `pytacheck.stats` |
 | `R/report*.R`, `R/html-output.R`, `inst/templates` | `pytacheck.report` |
