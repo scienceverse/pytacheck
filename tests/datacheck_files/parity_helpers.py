@@ -43,11 +43,12 @@ def _r_attributes(df: pd.DataFrame) -> dict[str, Any]:
     ``labels`` (``(label, code)`` pairs) is compared as the R side's
     ``as.list(labels)``, repeated label texts included.
     """
-    col_attrs = df.attrs.get("col_attrs", {})
+    from pytacheck.datacheck._colattrs import col_attrs_at
+
     out: dict[str, Any] = {}
     for j, name in enumerate(df.columns):
         s = df.iloc[:, j]
-        attrs = dict(col_attrs.get(name, {}))
+        attrs = dict(col_attrs_at(df, j))
         attrs.pop("levels", None)
         if isinstance(attrs.get("labels"), list):
             attrs["labels"] = _NamedList(attrs["labels"])

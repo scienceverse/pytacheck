@@ -57,8 +57,9 @@ def _typed(df: pd.DataFrame | None) -> dict[str, Any] | None:
         return None
     from pytacheck.datacheck._files_rdata import _complex_as_character
 
-    col_attrs = df.attrs.get("col_attrs", {})
-    types = [r_type(df.iloc[:, j], col_attrs.get(str(c), {})) for j, c in enumerate(df.columns)]
+    from pytacheck.datacheck._colattrs import col_attrs_at
+
+    types = [r_type(df.iloc[:, j], col_attrs_at(df, j)) for j in range(df.shape[1])]
     data = df.copy()
     for j in range(data.shape[1]):
         if pd.api.types.is_complex_dtype(data.iloc[:, j].dtype):
