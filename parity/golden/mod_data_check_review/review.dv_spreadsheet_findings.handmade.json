@@ -1,0 +1,131 @@
+{
+  "id": "review.dv_spreadsheet_findings.handmade",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "findings",
+      "n_files"
+    ],
+    "v": [
+      {
+        "t": "df",
+        "nrow": 14,
+        "names": [
+          "source_file",
+          "column",
+          "label",
+          "check",
+          "detail"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "noname.xlsx",
+              "noname.xlsx",
+              "noname.xlsx",
+              "noname.xlsx",
+              "noname.xlsx",
+              "gaps.xlsx",
+              "gaps.xlsx",
+              "gaps.xlsx",
+              "gaps.xlsx",
+              "edge.fods",
+              "edge.fods",
+              "edge.fods",
+              "edge.fods",
+              "edge.fods"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              "sheet2",
+              "Data",
+              "Data",
+              "Other",
+              "sheet2",
+              "Sheet1",
+              "Sheet1",
+              "Sheet1",
+              "Sheet1",
+              "Second"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Colour coding",
+              "Merged cells",
+              "Empty rows",
+              "Empty or unnamed columns",
+              "Empty or unnamed columns",
+              "Empty rows",
+              "Empty or unnamed columns",
+              "Empty or unnamed columns",
+              "Empty or unnamed columns",
+              "Colour coding",
+              "Merged cells",
+              "Empty rows",
+              "Empty or unnamed columns",
+              "Empty or unnamed columns"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "3 cells use fill colour to encode information; colour is lost on CSV export.",
+              "7 merged ranges (A1:B1, C3:D3, A5:A6, B5:C5, D5:E6) break the rectangular grid.",
+              "1 fully empty row inside the data range.",
+              "4 columns are empty or have a blank header.",
+              "1 column is empty or have a blank header.",
+              "3 fully empty rows inside the data range.",
+              "3 columns are empty or have a blank header.",
+              "1 column is empty or have a blank header.",
+              "1 column is empty or have a blank header.",
+              "7 cells use fill colour to encode information; colour is lost on CSV export.",
+              "2 merged ranges (B1:C1, A7:C8) break the rectangular grid.",
+              "3 fully empty rows inside the data range.",
+              "2 columns are empty or have a blank header.",
+              "2 columns are empty or have a blank header."
+            ]
+          }
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          3
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

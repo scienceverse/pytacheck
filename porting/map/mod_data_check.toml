@@ -8,6 +8,12 @@
 # LLM passes with a deterministic llm() mock (fixtures/llm_mock.json); the
 # careless-responding path with the vendored longstring()/irv() of the careless
 # package (fixtures/careless, loaded with pkgload in R).
+# Review cases: parity/cases/mod_data_check_review.yaml (area mod_data_check_review,
+# also written by make_cases.py; goldens parity/golden/mod_data_check_review/):
+# reader column types (integer64, POSIXct, IDate, ...), copies of the
+# tests/datacheck_files reader fixtures, one-header Qualtrics exports, empty()
+# returns on paper lists, hand-built workbooks (fixtures/make_review_xlsx.py) and
+# R's format() display widths in the data tree.
 [files]
 "inst/modules/data_check.R" = ["src/pytacheck/modules/data_check.py", "src/pytacheck/modules/_data_check.py"]
 

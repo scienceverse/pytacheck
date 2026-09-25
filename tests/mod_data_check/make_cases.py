@@ -204,6 +204,20 @@ REVIEW_SCENARIOS: dict[str, Any] = {
     "review_qualtrics": {"repos": [repo("review_qualtrics", "https://osf.io/qual2")]},
     # a careless screen whose identifier column is integer64
     "review_int64": {"repos": [repo("review_int64", "https://osf.io/int64")]},
+    # the reader fixtures of tests/datacheck_files (copies): statistics-package
+    # and R files, delimited text, spreadsheets
+    "review_stats": {"repos": [repo("review_stats", "https://osf.io/stats")]},
+    "review_text": {"repos": [repo("review_text", "https://osf.io/textf")]},
+    "review_sheets": {"repos": [repo("review_sheets", "https://osf.io/sheet")]},
+    # a paper list whose second paper (listed first) only has an unreadable
+    # spreadsheet, the first clean data, the third nothing
+    "review_mixed_list": {
+        "papers": ["p1", "p2", "p3"],
+        "repos": [
+            repo("review_broken", "https://osf.io/brok2", paper_id="p2"),
+            repo("basic", "https://osf.io/abcde", paper_id="p1"),
+        ],
+    },
 }
 SCENARIOS.update(REVIEW_SCENARIOS)
 
@@ -615,6 +629,8 @@ def cases() -> list[dict[str, Any]]:
     return out
 
 
+RX = "'tests/mod_data_check/fixtures/review_xlsx/"
+PX = f"{PY_HELPERS}.FIXTURES / 'review_xlsx' / "
 I64_TYPES = ["previews.types.csv.big"]
 I64_INT64 = ["previews.survey.csv.participant"]
 
@@ -645,8 +661,61 @@ def review_cases() -> list[dict[str, Any]]:
             tables=True,
             ignore=["[0].participant"],
         ),
+        module_case("review.mixed_list", "review_mixed_list"),
+        module_case("review.stats", "review_stats"),
+        module_case("review_tables.stats", "review_stats", tables=True),
+        module_case("review.text", "review_text", ignore=["previews.big_int.csv.big"]),
+        module_case("review_tables.text", "review_text", tables=True, ignore=["[0].big"]),
+        module_case("review.sheets", "review_sheets"),
+        module_case("review_tables.sheets", "review_sheets", tables=True),
+        module_case("review.download_count_cap", "download_capped", max_files_per_repo=1),
         module_case("review.download_true", "basic", download=True),
         module_case("review.archives_download_none", "archives", peek_zips=True, download="none"),
+        # hand-built workbooks (fixtures/make_review_xlsx.py): a nameless sheet,
+        # a worksheet with no <sheet> entry, cells without a reference, seven
+        # merges, rgb/theme/white fills, blank rows and header gaps
+        helper_case(
+            "review.dv_excel_inspect.noname",
+            f"e$.dv_excel_inspect({RX}noname.xlsx')",
+            f"{PY_H}.dv_excel_inspect({PX}'noname.xlsx')",
+        ),
+        helper_case(
+            "review.dv_excel_inspect.gaps",
+            f"e$.dv_excel_inspect({RX}gaps.xlsx')",
+            f"{PY_H}.dv_excel_inspect({PX}'gaps.xlsx')",
+        ),
+        helper_case(
+            "review.dv_ods_inspect.edge",
+            f"e$.dv_ods_inspect({RX}edge.fods')",
+            f"{PY_H}.dv_ods_inspect({PX}'edge.fods')",
+        ),
+        helper_case(
+            "review.dv_spreadsheet_offset_header.edge",
+            f"e$.dv_spreadsheet_offset_header({RX}edge.fods')",
+            f"{PY_H}.dv_spreadsheet_offset_header({PX}'edge.fods')",
+        ),
+        helper_case(
+            "review.dv_spreadsheet_findings.handmade",
+            "e$.dv_spreadsheet_findings(data.frame(file_name = c('noname.xlsx', 'gaps.xlsx', "
+            f"'edge.fods'), file_location = c({RX}noname.xlsx', {RX}gaps.xlsx', {RX}edge.fods')))",
+            f"{PY_H}.dv_spreadsheet_findings(__import__('pandas').DataFrame({{"
+            "'file_name': ['noname.xlsx', 'gaps.xlsx', 'edge.fods'], "
+            f"'file_location': [str({PX}'noname.xlsx'), str({PX}'gaps.xlsx'), "
+            f"str({PX}'edge.fods')]}}))",
+        ),
+        # the tree pads its columns by R's display width (nchar(type = "width"))
+        helper_case(
+            "review.repo_tree_block.widths",
+            "e$repo_tree_block(data.frame(repo_url = 'r', file_name = c('a\\u00adb.csv', "
+            "'\\u65e5\\u672c.csv', 'x\\U0001F7F0.txt', 'tab\\there.R', 'e\\u0301.csv', "
+            "'\\U0001F600.png'), data_type = c('data', 'data', 'unknown', 'code', 'data', "
+            "'materials'), group = c('ex1', 'ex2', NA, 'ex1', 'ex1', NA)))",
+            f"{PY_H}.repo_tree_block(__import__('pandas').DataFrame({{'repo_url': ['r'] * 6, "
+            "'file_name': ['a\\u00adb.csv', '\\u65e5\\u672c.csv', 'x\\U0001F7F0.txt', "
+            "'tab\\there.R', 'e\\u0301.csv', '\\U0001F600.png'], 'data_type': ['data', "
+            "'data', 'unknown', 'code', 'data', 'materials'], 'group': ['ex1', 'ex2', None, "
+            "'ex1', 'ex1', None]}))",
+        ),
     ]
 
 

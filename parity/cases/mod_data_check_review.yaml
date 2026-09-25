@@ -112,6 +112,77 @@
   "compare":
     "ignore":
     - "[0].participant"
+- "id": "review.mixed_list"
+  "r": "base::identity"
+  "py": "tests.mod_data_check.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_data_check/dc_helpers.R', local = TRUE); dc_run('review_mixed_list')})"
+        "py": "__import__('tests.mod_data_check.helpers', fromlist=['_']).dc_run('review_mixed_list')"
+- "id": "review.stats"
+  "r": "base::identity"
+  "py": "tests.mod_data_check.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_data_check/dc_helpers.R', local = TRUE); dc_run('review_stats')})"
+        "py": "__import__('tests.mod_data_check.helpers', fromlist=['_']).dc_run('review_stats')"
+- "id": "review_tables.stats"
+  "r": "base::identity"
+  "py": "tests.mod_data_check.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_data_check/dc_helpers.R', local = TRUE); dc_run_tables('review_stats')})"
+        "py": "__import__('tests.mod_data_check.helpers', fromlist=['_']).dc_run_tables('review_stats')"
+- "id": "review.text"
+  "r": "base::identity"
+  "py": "tests.mod_data_check.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_data_check/dc_helpers.R', local = TRUE); dc_run('review_text')})"
+        "py": "__import__('tests.mod_data_check.helpers', fromlist=['_']).dc_run('review_text')"
+  "compare":
+    "ignore":
+    - "previews.big_int.csv.big"
+- "id": "review_tables.text"
+  "r": "base::identity"
+  "py": "tests.mod_data_check.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_data_check/dc_helpers.R', local = TRUE); dc_run_tables('review_text')})"
+        "py": "__import__('tests.mod_data_check.helpers', fromlist=['_']).dc_run_tables('review_text')"
+  "compare":
+    "ignore":
+    - "[0].big"
+- "id": "review.sheets"
+  "r": "base::identity"
+  "py": "tests.mod_data_check.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_data_check/dc_helpers.R', local = TRUE); dc_run('review_sheets')})"
+        "py": "__import__('tests.mod_data_check.helpers', fromlist=['_']).dc_run('review_sheets')"
+- "id": "review_tables.sheets"
+  "r": "base::identity"
+  "py": "tests.mod_data_check.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_data_check/dc_helpers.R', local = TRUE); dc_run_tables('review_sheets')})"
+        "py": "__import__('tests.mod_data_check.helpers', fromlist=['_']).dc_run_tables('review_sheets')"
+- "id": "review.download_count_cap"
+  "r": "base::identity"
+  "py": "tests.mod_data_check.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_data_check/dc_helpers.R', local = TRUE); dc_run('download_capped',\
+          \ max_files_per_repo = 1)})"
+        "py": "__import__('tests.mod_data_check.helpers', fromlist=['_']).dc_run('download_capped', max_files_per_repo=1)"
 - "id": "review.download_true"
   "r": "base::identity"
   "py": "tests.mod_data_check.helpers.identity"
@@ -131,3 +202,67 @@
           \ = TRUE, download = 'none')})"
         "py": "__import__('tests.mod_data_check.helpers', fromlist=['_']).dc_run('archives', peek_zips=True,\
           \ download='none')"
+- "id": "review.dv_excel_inspect.noname"
+  "r": "base::identity"
+  "py": "tests.mod_data_check.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_data_check/dc_helpers.R', local = TRUE); e <- dc_env(); e$.dv_excel_inspect('tests/mod_data_check/fixtures/review_xlsx/noname.xlsx')})"
+        "py": "__import__('pytacheck.modules._data_check', fromlist=['_']).dv_excel_inspect(__import__('tests.mod_data_check.helpers',\
+          \ fromlist=['_']).FIXTURES / 'review_xlsx' / 'noname.xlsx')"
+- "id": "review.dv_excel_inspect.gaps"
+  "r": "base::identity"
+  "py": "tests.mod_data_check.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_data_check/dc_helpers.R', local = TRUE); e <- dc_env(); e$.dv_excel_inspect('tests/mod_data_check/fixtures/review_xlsx/gaps.xlsx')})"
+        "py": "__import__('pytacheck.modules._data_check', fromlist=['_']).dv_excel_inspect(__import__('tests.mod_data_check.helpers',\
+          \ fromlist=['_']).FIXTURES / 'review_xlsx' / 'gaps.xlsx')"
+- "id": "review.dv_ods_inspect.edge"
+  "r": "base::identity"
+  "py": "tests.mod_data_check.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_data_check/dc_helpers.R', local = TRUE); e <- dc_env(); e$.dv_ods_inspect('tests/mod_data_check/fixtures/review_xlsx/edge.fods')})"
+        "py": "__import__('pytacheck.modules._data_check', fromlist=['_']).dv_ods_inspect(__import__('tests.mod_data_check.helpers',\
+          \ fromlist=['_']).FIXTURES / 'review_xlsx' / 'edge.fods')"
+- "id": "review.dv_spreadsheet_offset_header.edge"
+  "r": "base::identity"
+  "py": "tests.mod_data_check.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_data_check/dc_helpers.R', local = TRUE); e <- dc_env(); e$.dv_spreadsheet_offset_header('tests/mod_data_check/fixtures/review_xlsx/edge.fods')})"
+        "py": "__import__('pytacheck.modules._data_check', fromlist=['_']).dv_spreadsheet_offset_header(__import__('tests.mod_data_check.helpers',\
+          \ fromlist=['_']).FIXTURES / 'review_xlsx' / 'edge.fods')"
+- "id": "review.dv_spreadsheet_findings.handmade"
+  "r": "base::identity"
+  "py": "tests.mod_data_check.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_data_check/dc_helpers.R', local = TRUE); e <- dc_env(); e$.dv_spreadsheet_findings(data.frame(file_name\
+          \ = c('noname.xlsx', 'gaps.xlsx', 'edge.fods'), file_location = c('tests/mod_data_check/fixtures/review_xlsx/noname.xlsx',\
+          \ 'tests/mod_data_check/fixtures/review_xlsx/gaps.xlsx', 'tests/mod_data_check/fixtures/review_xlsx/edge.fods')))})"
+        "py": "__import__('pytacheck.modules._data_check', fromlist=['_']).dv_spreadsheet_findings(__import__('pandas').DataFrame({'file_name':\
+          \ ['noname.xlsx', 'gaps.xlsx', 'edge.fods'], 'file_location': [str(__import__('tests.mod_data_check.helpers',\
+          \ fromlist=['_']).FIXTURES / 'review_xlsx' / 'noname.xlsx'), str(__import__('tests.mod_data_check.helpers',\
+          \ fromlist=['_']).FIXTURES / 'review_xlsx' / 'gaps.xlsx'), str(__import__('tests.mod_data_check.helpers',\
+          \ fromlist=['_']).FIXTURES / 'review_xlsx' / 'edge.fods')]}))"
+- "id": "review.repo_tree_block.widths"
+  "r": "base::identity"
+  "py": "tests.mod_data_check.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_data_check/dc_helpers.R', local = TRUE); e <- dc_env(); e$repo_tree_block(data.frame(repo_url\
+          \ = 'r', file_name = c('a\\u00adb.csv', '\\u65e5\\u672c.csv', 'x\\U0001F7F0.txt', 'tab\\there.R',\
+          \ 'e\\u0301.csv', '\\U0001F600.png'), data_type = c('data', 'data', 'unknown', 'code', 'data',\
+          \ 'materials'), group = c('ex1', 'ex2', NA, 'ex1', 'ex1', NA)))})"
+        "py": "__import__('pytacheck.modules._data_check', fromlist=['_']).repo_tree_block(__import__('pandas').DataFrame({'repo_url':\
+          \ ['r'] * 6, 'file_name': ['a\\u00adb.csv', '\\u65e5\\u672c.csv', 'x\\U0001F7F0.txt', 'tab\\\
+          there.R', 'e\\u0301.csv', '\\U0001F600.png'], 'data_type': ['data', 'data', 'unknown', 'code',\
+          \ 'data', 'materials'], 'group': ['ex1', 'ex2', None, 'ex1', 'ex1', None]}))"

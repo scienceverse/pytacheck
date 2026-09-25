@@ -1,0 +1,2732 @@
+{
+  "id": "reproducibility_check.spv_notebook_py",
+  "ok": true,
+  "error": null,
+  "warnings": [
+    "spv: could not decode light-binary table: spv binary: needed 32 bytes at offset 300, only 1 available",
+    "spv: could not decode light-binary table: spv binary: unsupported light-table version 2"
+  ],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "na_replace",
+      "run_results",
+      "install_results",
+      "stat_output",
+      "match_table",
+      "modifications"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "reproducibility_check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Reproducibility Check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "results"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "file_name",
+          "parses",
+          "run_order",
+          "order_basis",
+          "depends_on",
+          "paths_rewritten",
+          "paths_ambiguous",
+          "setwd_removed",
+          "runnable",
+          "not_runnable_reason",
+          "unresolved_inputs",
+          "outcome",
+          "error_type",
+          "undefined_var",
+          "reads",
+          "writes"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "p1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ok.R"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "none"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "data.csv"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "chr",
+                "v": []
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "This module assesses whether the paper's code could be run on its data. It performs static analysis only here: **no code is run**. We examined 1 R code file.",
+          "#### Run order",
+          "The scripts were ordered by their data dependencies (a script writing a file another reads runs first), `source()` calls, and numeric filename prefixes.",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Order = 1L, File = \"ok.R\", \"Runs after\" = \"—\", \n    Basis = \"none\"), row.names = c(NA, -1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
+          "#### File paths",
+          "To run against the Psych-DS layout, 1 referenced data path would be rewritten to its new location.",
+          "#### Missing inputs",
+          "Every data file the code reads is either produced by an earlier script or present in the repository.",
+          "*Executing the code is a separate, opt-in phase (run with `execute = TRUE`). This report describes what a run would involve; it did not run anything.*",
+          "#### Reported vs. reproduced",
+          "1 statistical test reported in the manuscript text was checked against the extracted analysis output: 1 matched (1 fully, 0 partially) — 100% found.",
+          "Some reported values were only found alongside OTHER components after being separated from their own originally-reported neighbours (e.g. a mean split from its own confidence interval). The \"Plausible\" column marks whether that split is well-supported: TRUE when the pieces still trace back to the same underlying variable (via the output's own row labels), FALSE when no such link was found — a FALSE match is not necessarily wrong, but is worth checking against its own Source file/Analysis columns before treating it as confirmed.",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Reported = \"t=3.41 df=48 p=0.001\", Found = TRUE, \n    Confidence = \"full\", Plausible = \"yes\", \"Matched values\" = \"t=3.41, df=48, p=0.001\", \n    \"Not matched\" = \"\", \"Source file\" = \"notebook_python.ipynb\", \n    Analysis = \"Cell 3 [2]\"), row.names = c(NA, -1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 15, FALSE)\n```\n",
+          "#### Self-reproducible output (JASP / jamovi / SPSS Viewer / Jupyter notebook)",
+          "2 JASP/jamovi/SPSS-Viewer/notebook files bundle the analyses and their saved results together, so the reported statistics are recoverable from the files itself, with nothing re-run. We extracted 6 result tables (36 individual statistics), typed with the STATO ontology, and export them as a statistical-output JSON document (in the logs) and as queryable rows."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "green"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "\n-  We assessed 1 R code file for reproducibility (static analysis; no code was run).\n-  1 file appears runnable so far (parses, inputs resolve, placeable in the run order).\n-  0 installable dependencies detected.\n-  36 statistics stored from the extracted output; 1 of 1 reported test matched (100%)."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "repro_code_n",
+          "repro_runnable",
+          "repro_missing_inputs",
+          "repro_deps",
+          "repro_ran_ok",
+          "repro_tests_reported",
+          "repro_tests_matched"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "p1"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          }
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "names": [
+          "repro_code_n",
+          "repro_runnable",
+          "repro_missing_inputs",
+          "repro_deps",
+          "repro_ran_ok"
+        ]
+      },
+      {
+        "t": "null"
+      },
+      {
+        "t": "null"
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "list",
+            "names": [
+              "file",
+              "n_tables",
+              "json",
+              "long"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "modern.spv"
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  4
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "schema",
+                  "schema_version",
+                  "paper_id",
+                  "source_file",
+                  "source_format",
+                  "analyses"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "metacheck-statistical-output"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "1.0"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "p1"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "modern.spv"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "SPSS"
+                    ]
+                  },
+                  {
+                    "t": "list",
+                    "names": null,
+                    "v": [
+                      {
+                        "t": "list",
+                        "names": [
+                          "analysis",
+                          "results"
+                        ],
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "Descriptives"
+                            ]
+                          },
+                          {
+                            "t": "list",
+                            "names": null,
+                            "v": [
+                              {
+                                "t": "list",
+                                "names": [
+                                  "result_id",
+                                  "test_id",
+                                  "row_label",
+                                  "values"
+                                ],
+                                "v": [
+                                  {
+                                    "t": "chr",
+                                    "v": [
+                                      "modern_spv_t2_r1"
+                                    ]
+                                  },
+                                  {
+                                    "t": "chr",
+                                    "v": [
+                                      "modern_spv_modern_spv_t2_n_scales_age"
+                                    ]
+                                  },
+                                  {
+                                    "t": "chr",
+                                    "v": [
+                                      "N Scales / age"
+                                    ]
+                                  },
+                                  {
+                                    "t": "list",
+                                    "names": [
+                                      "gender",
+                                      "value"
+                                    ],
+                                    "v": [
+                                      {
+                                        "t": "list",
+                                        "names": [
+                                          "value"
+                                        ],
+                                        "v": [
+                                          {
+                                            "t": "dbl",
+                                            "v": [
+                                              1
+                                            ]
+                                          }
+                                        ]
+                                      },
+                                      {
+                                        "t": "list",
+                                        "names": [
+                                          "value"
+                                        ],
+                                        "v": [
+                                          {
+                                            "t": "dbl",
+                                            "v": [
+                                              120
+                                            ]
+                                          }
+                                        ]
+                                      }
+                                    ]
+                                  }
+                                ]
+                              },
+                              {
+                                "t": "list",
+                                "names": [
+                                  "result_id",
+                                  "test_id",
+                                  "row_label",
+                                  "values"
+                                ],
+                                "v": [
+                                  {
+                                    "t": "chr",
+                                    "v": [
+                                      "modern_spv_t2_r2"
+                                    ]
+                                  },
+                                  {
+                                    "t": "chr",
+                                    "v": [
+                                      "modern_spv_modern_spv_t2_n_scales_score"
+                                    ]
+                                  },
+                                  {
+                                    "t": "chr",
+                                    "v": [
+                                      "N Scales / Score"
+                                    ]
+                                  },
+                                  {
+                                    "t": "list",
+                                    "names": [
+                                      "gender",
+                                      "value"
+                                    ],
+                                    "v": [
+                                      {
+                                        "t": "list",
+                                        "names": [
+                                          "value"
+                                        ],
+                                        "v": [
+                                          {
+                                            "t": "dbl",
+                                            "v": [
+                                              1
+                                            ]
+                                          }
+                                        ]
+                                      },
+                                      {
+                                        "t": "list",
+                                        "names": [
+                                          "value"
+                                        ],
+                                        "v": [
+                                          {
+                                            "t": "dbl",
+                                            "v": [
+                                              34.5678901234568
+                                            ]
+                                          }
+                                        ]
+                                      }
+                                    ]
+                                  }
+                                ]
+                              },
+                              {
+                                "t": "list",
+                                "names": [
+                                  "result_id",
+                                  "test_id",
+                                  "row_label",
+                                  "values"
+                                ],
+                                "v": [
+                                  {
+                                    "t": "chr",
+                                    "v": [
+                                      "modern_spv_t2_r3"
+                                    ]
+                                  },
+                                  {
+                                    "t": "chr",
+                                    "v": [
+                                      "modern_spv_modern_spv_t2_n_valid_n_listwise"
+                                    ]
+                                  },
+                                  {
+                                    "t": "chr",
+                                    "v": [
+                                      "N Valid N (listwise)"
+                                    ]
+                                  },
+                                  {
+                                    "t": "list",
+                                    "names": [
+                                      "gender",
+                                      "value"
+                                    ],
+                                    "v": [
+                                      {
+                                        "t": "list",
+                                        "names": [
+                                          "value"
+                                        ],
+                                        "v": [
+                                          {
+                                            "t": "dbl",
+                                            "v": [
+                                              1
+                                            ]
+                                          }
+                                        ]
+                                      },
+                                      {
+                                        "t": "list",
+                                        "names": [
+                                          "value"
+                                        ],
+                                        "v": [
+                                          {
+                                            "t": "dbl",
+                                            "v": [
+                                              0.333333333333333
+                                            ]
+                                          }
+                                        ]
+                                      }
+                                    ]
+                                  }
+                                ]
+                              },
+                              {
+                                "t": "list",
+                                "names": [
+                                  "result_id",
+                                  "test_id",
+                                  "row_label",
+                                  "values"
+                                ],
+                                "v": [
+                                  {
+                                    "t": "chr",
+                                    "v": [
+                                      "modern_spv_t2_r4"
+                                    ]
+                                  },
+                                  {
+                                    "t": "chr",
+                                    "v": [
+                                      "modern_spv_modern_spv_t2_mean_scales_age"
+                                    ]
+                                  },
+                                  {
+                                    "t": "chr",
+                                    "v": [
+                                      "Mean Scales / age"
+                                    ]
+                                  },
+                                  {
+                                    "t": "list",
+                                    "names": [
+                                      "gender",
+                                      "value"
+                                    ],
+                                    "v": [
+                                      {
+                                        "t": "list",
+                                        "names": [
+                                          "value"
+                                        ],
+                                        "v": [
+                                          {
+                                            "t": "dbl",
+                                            "v": [
+                                              1
+                                            ]
+                                          }
+                                        ]
+                                      },
+                                      {
+                                        "t": "list",
+                                        "names": [
+                                          "value"
+                                        ],
+                                        "v": [
+                                          {
+                                            "t": "dbl",
+                                            "v": [
+                                              118
+                                            ]
+                                          }
+                                        ]
+                                      }
+                                    ]
+                                  }
+                                ]
+                              },
+                              {
+                                "t": "list",
+                                "names": [
+                                  "result_id",
+                                  "test_id",
+                                  "row_label",
+                                  "values"
+                                ],
+                                "v": [
+                                  {
+                                    "t": "chr",
+                                    "v": [
+                                      "modern_spv_t2_r5"
+                                    ]
+                                  },
+                                  {
+                                    "t": "chr",
+                                    "v": [
+                                      "modern_spv_modern_spv_t2_mean_scales_score"
+                                    ]
+                                  },
+                                  {
+                                    "t": "chr",
+                                    "v": [
+                                      "Mean Scales / Score"
+                                    ]
+                                  },
+                                  {
+                                    "t": "list",
+                                    "names": [
+                                      "gender",
+                                      "value"
+                                    ],
+                                    "v": [
+                                      {
+                                        "t": "list",
+                                        "names": [
+                                          "value"
+                                        ],
+                                        "v": [
+                                          {
+                                            "t": "dbl",
+                                            "v": [
+                                              1
+                                            ]
+                                          }
+                                        ]
+                                      },
+                                      {
+                                        "t": "list",
+                                        "names": [
+                                          "value"
+                                        ],
+                                        "v": [
+                                          {
+                                            "t": "dbl",
+                                            "v": [
+                                              0
+                                            ]
+                                          }
+                                        ]
+                                      }
+                                    ]
+                                  }
+                                ]
+                              },
+                              {
+                                "t": "list",
+                                "names": [
+                                  "result_id",
+                                  "test_id",
+                                  "row_label",
+                                  "values"
+                                ],
+                                "v": [
+                                  {
+                                    "t": "chr",
+                                    "v": [
+                                      "modern_spv_t2_r6"
+                                    ]
+                                  },
+                                  {
+                                    "t": "chr",
+                                    "v": [
+                                      "modern_spv_modern_spv_t2_mean_valid_n_listwise"
+                                    ]
+                                  },
+                                  {
+                                    "t": "chr",
+                                    "v": [
+                                      "Mean Valid N (listwise)"
+                                    ]
+                                  },
+                                  {
+                                    "t": "list",
+                                    "names": [
+                                      "gender",
+                                      "value"
+                                    ],
+                                    "v": [
+                                      {
+                                        "t": "list",
+                                        "names": [
+                                          "value"
+                                        ],
+                                        "v": [
+                                          {
+                                            "t": "dbl",
+                                            "v": [
+                                              1
+                                            ]
+                                          }
+                                        ]
+                                      },
+                                      {
+                                        "t": "list",
+                                        "names": [
+                                          "value"
+                                        ],
+                                        "v": [
+                                          {
+                                            "t": "chr",
+                                            "v": [
+                                              null
+                                            ]
+                                          }
+                                        ]
+                                      }
+                                    ]
+                                  }
+                                ]
+                              },
+                              {
+                                "t": "list",
+                                "names": [
+                                  "result_id",
+                                  "test_id",
+                                  "row_label",
+                                  "values"
+                                ],
+                                "v": [
+                                  {
+                                    "t": "chr",
+                                    "v": [
+                                      "modern_spv_t2_r7"
+                                    ]
+                                  },
+                                  {
+                                    "t": "chr",
+                                    "v": [
+                                      "modern_spv_modern_spv_t2_std_deviation_scales_age"
+                                    ]
+                                  },
+                                  {
+                                    "t": "chr",
+                                    "v": [
+                                      "Std. Deviation Scales / age"
+                                    ]
+                                  },
+                                  {
+                                    "t": "list",
+                                    "names": [
+                                      "gender",
+                                      "value"
+                                    ],
+                                    "v": [
+                                      {
+                                        "t": "list",
+                                        "names": [
+                                          "value"
+                                        ],
+                                        "v": [
+                                          {
+                                            "t": "dbl",
+                                            "v": [
+                                              1
+                                            ]
+                                          }
+                                        ]
+                                      },
+                                      {
+                                        "t": "list",
+                                        "names": [
+                                          "value"
+                                        ],
+                                        "v": [
+                                          {
+                                            "t": "dbl",
+                                            "v": [
+                                              1e+20
+                                            ]
+                                          }
+                                        ]
+                                      }
+                                    ]
+                                  }
+                                ]
+                              },
+                              {
+                                "t": "list",
+                                "names": [
+                                  "result_id",
+                                  "test_id",
+                                  "row_label",
+                                  "values"
+                                ],
+                                "v": [
+                                  {
+                                    "t": "chr",
+                                    "v": [
+                                      "modern_spv_t2_r8"
+                                    ]
+                                  },
+                                  {
+                                    "t": "chr",
+                                    "v": [
+                                      "modern_spv_modern_spv_t2_std_deviation_scales_score"
+                                    ]
+                                  },
+                                  {
+                                    "t": "chr",
+                                    "v": [
+                                      "Std. Deviation Scales / Score"
+                                    ]
+                                  },
+                                  {
+                                    "t": "list",
+                                    "names": [
+                                      "gender"
+                                    ],
+                                    "v": [
+                                      {
+                                        "t": "list",
+                                        "names": [
+                                          "value"
+                                        ],
+                                        "v": [
+                                          {
+                                            "t": "dbl",
+                                            "v": [
+                                              1
+                                            ]
+                                          }
+                                        ]
+                                      }
+                                    ]
+                                  }
+                                ]
+                              },
+                              {
+                                "t": "list",
+                                "names": [
+                                  "result_id",
+                                  "test_id",
+                                  "row_label",
+                                  "values"
+                                ],
+                                "v": [
+                                  {
+                                    "t": "chr",
+                                    "v": [
+                                      "modern_spv_t2_r9"
+                                    ]
+                                  },
+                                  {
+                                    "t": "chr",
+                                    "v": [
+                                      "modern_spv_modern_spv_t2_std_deviation_valid_n_listwise"
+                                    ]
+                                  },
+                                  {
+                                    "t": "chr",
+                                    "v": [
+                                      "Std. Deviation Valid N (listwise)"
+                                    ]
+                                  },
+                                  {
+                                    "t": "list",
+                                    "names": [
+                                      "gender",
+                                      "value"
+                                    ],
+                                    "v": [
+                                      {
+                                        "t": "list",
+                                        "names": [
+                                          "value"
+                                        ],
+                                        "v": [
+                                          {
+                                            "t": "dbl",
+                                            "v": [
+                                              1
+                                            ]
+                                          }
+                                        ]
+                                      },
+                                      {
+                                        "t": "list",
+                                        "names": [
+                                          "value"
+                                        ],
+                                        "v": [
+                                          {
+                                            "t": "chr",
+                                            "v": [
+                                              "^1 of ^2"
+                                            ]
+                                          }
+                                        ]
+                                      }
+                                    ]
+                                  }
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "t": "list",
+                        "names": [
+                          "analysis",
+                          "results"
+                        ],
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "T-Test"
+                            ]
+                          },
+                          {
+                            "t": "list",
+                            "names": null,
+                            "v": [
+                              {
+                                "t": "list",
+                                "names": [
+                                  "result_id",
+                                  "test_id",
+                                  "row_label",
+                                  "values"
+                                ],
+                                "v": [
+                                  {
+                                    "t": "chr",
+                                    "v": [
+                                      "modern_spv_t3_r1"
+                                    ]
+                                  },
+                                  {
+                                    "t": "chr",
+                                    "v": [
+                                      "modern_spv_modern_spv_t3_t_score"
+                                    ]
+                                  },
+                                  {
+                                    "t": "chr",
+                                    "v": [
+                                      "t score"
+                                    ]
+                                  },
+                                  {
+                                    "t": "list",
+                                    "names": [
+                                      "value"
+                                    ],
+                                    "v": [
+                                      {
+                                        "t": "list",
+                                        "names": [
+                                          "value"
+                                        ],
+                                        "v": [
+                                          {
+                                            "t": "dbl",
+                                            "v": [
+                                              12.345678
+                                            ]
+                                          }
+                                        ]
+                                      }
+                                    ]
+                                  }
+                                ]
+                              },
+                              {
+                                "t": "list",
+                                "names": [
+                                  "result_id",
+                                  "test_id",
+                                  "row_label",
+                                  "values"
+                                ],
+                                "v": [
+                                  {
+                                    "t": "chr",
+                                    "v": [
+                                      "modern_spv_t3_r2"
+                                    ]
+                                  },
+                                  {
+                                    "t": "chr",
+                                    "v": [
+                                      "modern_spv_modern_spv_t3_df_score"
+                                    ]
+                                  },
+                                  {
+                                    "t": "chr",
+                                    "v": [
+                                      "df score"
+                                    ]
+                                  },
+                                  {
+                                    "t": "list",
+                                    "names": [
+                                      "value"
+                                    ],
+                                    "v": [
+                                      {
+                                        "t": "list",
+                                        "names": [
+                                          "value"
+                                        ],
+                                        "v": [
+                                          {
+                                            "t": "dbl",
+                                            "v": [
+                                              117
+                                            ]
+                                          }
+                                        ]
+                                      }
+                                    ]
+                                  }
+                                ]
+                              },
+                              {
+                                "t": "list",
+                                "names": [
+                                  "result_id",
+                                  "test_id",
+                                  "row_label",
+                                  "values"
+                                ],
+                                "v": [
+                                  {
+                                    "t": "chr",
+                                    "v": [
+                                      "modern_spv_t3_r3"
+                                    ]
+                                  },
+                                  {
+                                    "t": "chr",
+                                    "v": [
+                                      "modern_spv_modern_spv_t3_sig_2_tailed_score"
+                                    ]
+                                  },
+                                  {
+                                    "t": "chr",
+                                    "v": [
+                                      "Sig. (2-tailed) score"
+                                    ]
+                                  },
+                                  {
+                                    "t": "list",
+                                    "names": [
+                                      "value"
+                                    ],
+                                    "v": [
+                                      {
+                                        "t": "list",
+                                        "names": [
+                                          "value"
+                                        ],
+                                        "v": [
+                                          {
+                                            "t": "dbl",
+                                            "v": [
+                                              4.7e-108
+                                            ]
+                                          }
+                                        ]
+                                      }
+                                    ]
+                                  }
+                                ]
+                              },
+                              {
+                                "t": "list",
+                                "names": [
+                                  "result_id",
+                                  "test_id",
+                                  "row_label",
+                                  "values"
+                                ],
+                                "v": [
+                                  {
+                                    "t": "chr",
+                                    "v": [
+                                      "modern_spv_t3_r4"
+                                    ]
+                                  },
+                                  {
+                                    "t": "chr",
+                                    "v": [
+                                      "modern_spv_modern_spv_t3_t_na"
+                                    ]
+                                  },
+                                  {
+                                    "t": "chr",
+                                    "v": [
+                                      "t NA"
+                                    ]
+                                  },
+                                  {
+                                    "t": "list",
+                                    "names": [
+                                      "value"
+                                    ],
+                                    "v": [
+                                      {
+                                        "t": "list",
+                                        "names": [
+                                          "value"
+                                        ],
+                                        "v": [
+                                          {
+                                            "t": "dbl",
+                                            "v": [
+                                              0.0004
+                                            ]
+                                          }
+                                        ]
+                                      }
+                                    ]
+                                  }
+                                ]
+                              },
+                              {
+                                "t": "list",
+                                "names": [
+                                  "result_id",
+                                  "test_id",
+                                  "row_label",
+                                  "values"
+                                ],
+                                "v": [
+                                  {
+                                    "t": "chr",
+                                    "v": [
+                                      "modern_spv_t3_r5"
+                                    ]
+                                  },
+                                  {
+                                    "t": "chr",
+                                    "v": [
+                                      "modern_spv_modern_spv_t3_sig_2_tailed_na"
+                                    ]
+                                  },
+                                  {
+                                    "t": "chr",
+                                    "v": [
+                                      "Sig. (2-tailed) NA"
+                                    ]
+                                  },
+                                  {
+                                    "t": "list",
+                                    "names": [
+                                      "value"
+                                    ],
+                                    "v": [
+                                      {
+                                        "t": "list",
+                                        "names": [
+                                          "value"
+                                        ],
+                                        "v": [
+                                          {
+                                            "t": "dbl",
+                                            "v": [
+                                              -2.5
+                                            ]
+                                          }
+                                        ]
+                                      }
+                                    ]
+                                  }
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "t": "list",
+                        "names": [
+                          "analysis",
+                          "results"
+                        ],
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              null
+                            ]
+                          },
+                          {
+                            "t": "list",
+                            "names": null,
+                            "v": [
+                              {
+                                "t": "list",
+                                "names": [
+                                  "result_id",
+                                  "test_id",
+                                  "row_label",
+                                  "values"
+                                ],
+                                "v": [
+                                  {
+                                    "t": "chr",
+                                    "v": [
+                                      "modern_spv_t4_r1"
+                                    ]
+                                  },
+                                  {
+                                    "t": "chr",
+                                    "v": [
+                                      "modern_spv_modern_spv_t4_t_score"
+                                    ]
+                                  },
+                                  {
+                                    "t": "chr",
+                                    "v": [
+                                      "t score"
+                                    ]
+                                  },
+                                  {
+                                    "t": "list",
+                                    "names": [
+                                      "value"
+                                    ],
+                                    "v": [
+                                      {
+                                        "t": "list",
+                                        "names": [
+                                          "value"
+                                        ],
+                                        "v": [
+                                          {
+                                            "t": "dbl",
+                                            "v": [
+                                              12.345678
+                                            ]
+                                          }
+                                        ]
+                                      }
+                                    ]
+                                  }
+                                ]
+                              },
+                              {
+                                "t": "list",
+                                "names": [
+                                  "result_id",
+                                  "test_id",
+                                  "row_label",
+                                  "values"
+                                ],
+                                "v": [
+                                  {
+                                    "t": "chr",
+                                    "v": [
+                                      "modern_spv_t4_r2"
+                                    ]
+                                  },
+                                  {
+                                    "t": "chr",
+                                    "v": [
+                                      "modern_spv_modern_spv_t4_df_score"
+                                    ]
+                                  },
+                                  {
+                                    "t": "chr",
+                                    "v": [
+                                      "df score"
+                                    ]
+                                  },
+                                  {
+                                    "t": "list",
+                                    "names": [
+                                      "value"
+                                    ],
+                                    "v": [
+                                      {
+                                        "t": "list",
+                                        "names": [
+                                          "value"
+                                        ],
+                                        "v": [
+                                          {
+                                            "t": "dbl",
+                                            "v": [
+                                              117
+                                            ]
+                                          }
+                                        ]
+                                      }
+                                    ]
+                                  }
+                                ]
+                              },
+                              {
+                                "t": "list",
+                                "names": [
+                                  "result_id",
+                                  "test_id",
+                                  "row_label",
+                                  "values"
+                                ],
+                                "v": [
+                                  {
+                                    "t": "chr",
+                                    "v": [
+                                      "modern_spv_t4_r3"
+                                    ]
+                                  },
+                                  {
+                                    "t": "chr",
+                                    "v": [
+                                      "modern_spv_modern_spv_t4_sig_2_tailed_score"
+                                    ]
+                                  },
+                                  {
+                                    "t": "chr",
+                                    "v": [
+                                      "Sig. (2-tailed) score"
+                                    ]
+                                  },
+                                  {
+                                    "t": "list",
+                                    "names": [
+                                      "value"
+                                    ],
+                                    "v": [
+                                      {
+                                        "t": "list",
+                                        "names": [
+                                          "value"
+                                        ],
+                                        "v": [
+                                          {
+                                            "t": "dbl",
+                                            "v": [
+                                              4.7e-108
+                                            ]
+                                          }
+                                        ]
+                                      }
+                                    ]
+                                  }
+                                ]
+                              },
+                              {
+                                "t": "list",
+                                "names": [
+                                  "result_id",
+                                  "test_id",
+                                  "row_label",
+                                  "values"
+                                ],
+                                "v": [
+                                  {
+                                    "t": "chr",
+                                    "v": [
+                                      "modern_spv_t4_r4"
+                                    ]
+                                  },
+                                  {
+                                    "t": "chr",
+                                    "v": [
+                                      "modern_spv_modern_spv_t4_t_na"
+                                    ]
+                                  },
+                                  {
+                                    "t": "chr",
+                                    "v": [
+                                      "t NA"
+                                    ]
+                                  },
+                                  {
+                                    "t": "list",
+                                    "names": [
+                                      "value"
+                                    ],
+                                    "v": [
+                                      {
+                                        "t": "list",
+                                        "names": [
+                                          "value"
+                                        ],
+                                        "v": [
+                                          {
+                                            "t": "dbl",
+                                            "v": [
+                                              0.0004
+                                            ]
+                                          }
+                                        ]
+                                      }
+                                    ]
+                                  }
+                                ]
+                              },
+                              {
+                                "t": "list",
+                                "names": [
+                                  "result_id",
+                                  "test_id",
+                                  "row_label",
+                                  "values"
+                                ],
+                                "v": [
+                                  {
+                                    "t": "chr",
+                                    "v": [
+                                      "modern_spv_t4_r5"
+                                    ]
+                                  },
+                                  {
+                                    "t": "chr",
+                                    "v": [
+                                      "modern_spv_modern_spv_t4_sig_2_tailed_na"
+                                    ]
+                                  },
+                                  {
+                                    "t": "chr",
+                                    "v": [
+                                      "Sig. (2-tailed) NA"
+                                    ]
+                                  },
+                                  {
+                                    "t": "list",
+                                    "names": [
+                                      "value"
+                                    ],
+                                    "v": [
+                                      {
+                                        "t": "list",
+                                        "names": [
+                                          "value"
+                                        ],
+                                        "v": [
+                                          {
+                                            "t": "dbl",
+                                            "v": [
+                                              -2.5
+                                            ]
+                                          }
+                                        ]
+                                      }
+                                    ]
+                                  }
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "df",
+                "nrow": 27,
+                "names": [
+                  "paper_id",
+                  "source_file",
+                  "test_id",
+                  "result_id",
+                  "analysis",
+                  "table_title",
+                  "row_label",
+                  "statistic",
+                  "stato_label",
+                  "stato_iri",
+                  "value",
+                  "model_ref"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "p1",
+                      "p1",
+                      "p1",
+                      "p1",
+                      "p1",
+                      "p1",
+                      "p1",
+                      "p1",
+                      "p1",
+                      "p1",
+                      "p1",
+                      "p1",
+                      "p1",
+                      "p1",
+                      "p1",
+                      "p1",
+                      "p1",
+                      "p1",
+                      "p1",
+                      "p1",
+                      "p1",
+                      "p1",
+                      "p1",
+                      "p1",
+                      "p1",
+                      "p1",
+                      "p1"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "modern.spv",
+                      "modern.spv",
+                      "modern.spv",
+                      "modern.spv",
+                      "modern.spv",
+                      "modern.spv",
+                      "modern.spv",
+                      "modern.spv",
+                      "modern.spv",
+                      "modern.spv",
+                      "modern.spv",
+                      "modern.spv",
+                      "modern.spv",
+                      "modern.spv",
+                      "modern.spv",
+                      "modern.spv",
+                      "modern.spv",
+                      "modern.spv",
+                      "modern.spv",
+                      "modern.spv",
+                      "modern.spv",
+                      "modern.spv",
+                      "modern.spv",
+                      "modern.spv",
+                      "modern.spv",
+                      "modern.spv",
+                      "modern.spv"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "modern_spv_modern_spv_t2_scales_age",
+                      "modern_spv_modern_spv_t2_scales_age",
+                      "modern_spv_modern_spv_t2_scales_score",
+                      "modern_spv_modern_spv_t2_scales_score",
+                      "modern_spv_modern_spv_t2_valid_n_listwise",
+                      "modern_spv_modern_spv_t2_valid_n_listwise",
+                      "modern_spv_modern_spv_t2_scales_age",
+                      "modern_spv_modern_spv_t2_scales_age",
+                      "modern_spv_modern_spv_t2_scales_score",
+                      "modern_spv_modern_spv_t2_scales_score",
+                      "modern_spv_modern_spv_t2_valid_n_listwise",
+                      "modern_spv_modern_spv_t2_valid_n_listwise",
+                      "modern_spv_modern_spv_t2_scales_age",
+                      "modern_spv_modern_spv_t2_scales_age",
+                      "modern_spv_modern_spv_t2_scales_score",
+                      "modern_spv_modern_spv_t2_valid_n_listwise",
+                      "modern_spv_modern_spv_t2_valid_n_listwise",
+                      "modern_spv_modern_spv_t3_t_score",
+                      "modern_spv_modern_spv_t3_df_score",
+                      "modern_spv_modern_spv_t3_sig_2_tailed_score",
+                      "modern_spv_modern_spv_t3_t_na",
+                      "modern_spv_modern_spv_t3_sig_2_tailed_na",
+                      "modern_spv_modern_spv_t4_t_score",
+                      "modern_spv_modern_spv_t4_df_score",
+                      "modern_spv_modern_spv_t4_sig_2_tailed_score",
+                      "modern_spv_modern_spv_t4_t_na",
+                      "modern_spv_modern_spv_t4_sig_2_tailed_na"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "modern_spv_t2_r1_gender",
+                      "modern_spv_t2_r1_value",
+                      "modern_spv_t2_r2_gender",
+                      "modern_spv_t2_r2_value",
+                      "modern_spv_t2_r3_gender",
+                      "modern_spv_t2_r3_value",
+                      "modern_spv_t2_r4_gender",
+                      "modern_spv_t2_r4_value",
+                      "modern_spv_t2_r5_gender",
+                      "modern_spv_t2_r5_value",
+                      "modern_spv_t2_r6_gender",
+                      "modern_spv_t2_r6_value",
+                      "modern_spv_t2_r7_gender",
+                      "modern_spv_t2_r7_value",
+                      "modern_spv_t2_r8_gender",
+                      "modern_spv_t2_r9_gender",
+                      "modern_spv_t2_r9_value",
+                      "modern_spv_t3_r1_value",
+                      "modern_spv_t3_r2_value",
+                      "modern_spv_t3_r3_value",
+                      "modern_spv_t3_r4_value",
+                      "modern_spv_t3_r5_value",
+                      "modern_spv_t4_r1_value",
+                      "modern_spv_t4_r2_value",
+                      "modern_spv_t4_r3_value",
+                      "modern_spv_t4_r4_value",
+                      "modern_spv_t4_r5_value"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Descriptives",
+                      "Descriptives",
+                      "Descriptives",
+                      "Descriptives",
+                      "Descriptives",
+                      "Descriptives",
+                      "Descriptives",
+                      "Descriptives",
+                      "Descriptives",
+                      "Descriptives",
+                      "Descriptives",
+                      "Descriptives",
+                      "Descriptives",
+                      "Descriptives",
+                      "Descriptives",
+                      "Descriptives",
+                      "Descriptives",
+                      "T-Test",
+                      "T-Test",
+                      "T-Test",
+                      "T-Test",
+                      "T-Test",
+                      null,
+                      null,
+                      null,
+                      null,
+                      null
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Descriptive Statistics",
+                      "Descriptive Statistics",
+                      "Descriptive Statistics",
+                      "Descriptive Statistics",
+                      "Descriptive Statistics",
+                      "Descriptive Statistics",
+                      "Descriptive Statistics",
+                      "Descriptive Statistics",
+                      "Descriptive Statistics",
+                      "Descriptive Statistics",
+                      "Descriptive Statistics",
+                      "Descriptive Statistics",
+                      "Descriptive Statistics",
+                      "Descriptive Statistics",
+                      "Descriptive Statistics",
+                      "Descriptive Statistics",
+                      "Descriptive Statistics",
+                      "One-Sample Test",
+                      "One-Sample Test",
+                      "One-Sample Test",
+                      "One-Sample Test",
+                      "One-Sample Test",
+                      "One-Sample Test",
+                      "One-Sample Test",
+                      "One-Sample Test",
+                      "One-Sample Test",
+                      "One-Sample Test"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Scales / age",
+                      "Scales / age",
+                      "Scales / Score",
+                      "Scales / Score",
+                      "Valid N (listwise)",
+                      "Valid N (listwise)",
+                      "Scales / age",
+                      "Scales / age",
+                      "Scales / Score",
+                      "Scales / Score",
+                      "Valid N (listwise)",
+                      "Valid N (listwise)",
+                      "Scales / age",
+                      "Scales / age",
+                      "Scales / Score",
+                      "Valid N (listwise)",
+                      "Valid N (listwise)",
+                      "t score",
+                      "df score",
+                      "Sig. (2-tailed) score",
+                      "t NA",
+                      "Sig. (2-tailed) NA",
+                      "t score",
+                      "df score",
+                      "Sig. (2-tailed) score",
+                      "t NA",
+                      "Sig. (2-tailed) NA"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "N",
+                      "N",
+                      "N",
+                      "N",
+                      "N",
+                      "N",
+                      "Mean",
+                      "Mean",
+                      "Mean",
+                      "Mean",
+                      "Mean",
+                      "Mean",
+                      "Std. Deviation",
+                      "Std. Deviation",
+                      "Std. Deviation",
+                      "Std. Deviation",
+                      "Std. Deviation",
+                      "value",
+                      "value",
+                      "value",
+                      "value",
+                      "value",
+                      "value",
+                      "value",
+                      "value",
+                      "value",
+                      "value"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "study group population size",
+                      "study group population size",
+                      "study group population size",
+                      "study group population size",
+                      "study group population size",
+                      "study group population size",
+                      "sample mean",
+                      "sample mean",
+                      "sample mean",
+                      "sample mean",
+                      "sample mean",
+                      "sample mean",
+                      "standard deviation for sample",
+                      "standard deviation for sample",
+                      "standard deviation for sample",
+                      "standard deviation for sample",
+                      "standard deviation for sample",
+                      "",
+                      "",
+                      "",
+                      "",
+                      "",
+                      "",
+                      "",
+                      "",
+                      "",
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "http://purl.obolibrary.org/obo/STATO_0000088",
+                      "http://purl.obolibrary.org/obo/STATO_0000088",
+                      "http://purl.obolibrary.org/obo/STATO_0000088",
+                      "http://purl.obolibrary.org/obo/STATO_0000088",
+                      "http://purl.obolibrary.org/obo/STATO_0000088",
+                      "http://purl.obolibrary.org/obo/STATO_0000088",
+                      "http://purl.obolibrary.org/obo/STATO_0000401",
+                      "http://purl.obolibrary.org/obo/STATO_0000401",
+                      "http://purl.obolibrary.org/obo/STATO_0000401",
+                      "http://purl.obolibrary.org/obo/STATO_0000401",
+                      "http://purl.obolibrary.org/obo/STATO_0000401",
+                      "http://purl.obolibrary.org/obo/STATO_0000401",
+                      "http://purl.obolibrary.org/obo/STATO_0000684",
+                      "http://purl.obolibrary.org/obo/STATO_0000684",
+                      "http://purl.obolibrary.org/obo/STATO_0000684",
+                      "http://purl.obolibrary.org/obo/STATO_0000684",
+                      "http://purl.obolibrary.org/obo/STATO_0000684",
+                      "",
+                      "",
+                      "",
+                      "",
+                      "",
+                      "",
+                      "",
+                      "",
+                      "",
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "1",
+                      "120",
+                      "1",
+                      "34.5678901234568",
+                      "1",
+                      "0.333333333333333",
+                      "1",
+                      "118",
+                      "1",
+                      "0",
+                      "1",
+                      null,
+                      "1",
+                      "1e+20",
+                      "1",
+                      "1",
+                      "^1 of ^2",
+                      "12.345678",
+                      "117",
+                      "4.7e-108",
+                      "4e-04",
+                      "-2.5",
+                      "12.345678",
+                      "117",
+                      "4.7e-108",
+                      "4e-04",
+                      "-2.5"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      null,
+                      null,
+                      null,
+                      null,
+                      null,
+                      null,
+                      null,
+                      null,
+                      null,
+                      null,
+                      null,
+                      null,
+                      null,
+                      null,
+                      null,
+                      null,
+                      null,
+                      null,
+                      null,
+                      null,
+                      null,
+                      null,
+                      null,
+                      null,
+                      null,
+                      null,
+                      null
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "file",
+              "n_tables",
+              "json",
+              "long"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "notebook_python.ipynb"
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  2
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "schema",
+                  "schema_version",
+                  "paper_id",
+                  "source_file",
+                  "source_format",
+                  "analyses"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "metacheck-statistical-output"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "1.0"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "p1"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "notebook_python.ipynb"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "unknown"
+                    ]
+                  },
+                  {
+                    "t": "list",
+                    "names": null,
+                    "v": [
+                      {
+                        "t": "list",
+                        "names": [
+                          "analysis",
+                          "results"
+                        ],
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "Cell 3 [2]"
+                            ]
+                          },
+                          {
+                            "t": "list",
+                            "names": null,
+                            "v": [
+                              {
+                                "t": "list",
+                                "names": [
+                                  "result_id",
+                                  "test_id",
+                                  "row_label",
+                                  "values"
+                                ],
+                                "v": [
+                                  {
+                                    "t": "chr",
+                                    "v": [
+                                      "notebook_python_ipynb_t1_r1"
+                                    ]
+                                  },
+                                  {
+                                    "t": "chr",
+                                    "v": [
+                                      "notebook_python_ipynb_notebook_python_ipynb_t1_massed"
+                                    ]
+                                  },
+                                  {
+                                    "t": "chr",
+                                    "v": [
+                                      "massed"
+                                    ]
+                                  },
+                                  {
+                                    "t": "list",
+                                    "names": [
+                                      "t",
+                                      "df",
+                                      "p"
+                                    ],
+                                    "v": [
+                                      {
+                                        "t": "list",
+                                        "names": [
+                                          "value",
+                                          "stato_label",
+                                          "stato_iri"
+                                        ],
+                                        "v": [
+                                          {
+                                            "t": "dbl",
+                                            "v": [
+                                              3.41
+                                            ]
+                                          },
+                                          {
+                                            "t": "chr",
+                                            "v": [
+                                              "t-statistic"
+                                            ]
+                                          },
+                                          {
+                                            "t": "chr",
+                                            "v": [
+                                              "http://purl.obolibrary.org/obo/STATO_0000176"
+                                            ]
+                                          }
+                                        ]
+                                      },
+                                      {
+                                        "t": "list",
+                                        "names": [
+                                          "value",
+                                          "stato_label",
+                                          "stato_iri"
+                                        ],
+                                        "v": [
+                                          {
+                                            "t": "dbl",
+                                            "v": [
+                                              48
+                                            ]
+                                          },
+                                          {
+                                            "t": "chr",
+                                            "v": [
+                                              "number of degrees of freedom"
+                                            ]
+                                          },
+                                          {
+                                            "t": "chr",
+                                            "v": [
+                                              "http://purl.obolibrary.org/obo/STATO_0000069"
+                                            ]
+                                          }
+                                        ]
+                                      },
+                                      {
+                                        "t": "list",
+                                        "names": [
+                                          "value",
+                                          "stato_label",
+                                          "stato_iri"
+                                        ],
+                                        "v": [
+                                          {
+                                            "t": "dbl",
+                                            "v": [
+                                              0.001
+                                            ]
+                                          },
+                                          {
+                                            "t": "chr",
+                                            "v": [
+                                              "p-value"
+                                            ]
+                                          },
+                                          {
+                                            "t": "chr",
+                                            "v": [
+                                              "http://purl.obolibrary.org/obo/STATO_0000700"
+                                            ]
+                                          }
+                                        ]
+                                      }
+                                    ]
+                                  }
+                                ]
+                              },
+                              {
+                                "t": "list",
+                                "names": [
+                                  "result_id",
+                                  "test_id",
+                                  "row_label",
+                                  "values"
+                                ],
+                                "v": [
+                                  {
+                                    "t": "chr",
+                                    "v": [
+                                      "notebook_python_ipynb_t1_r2"
+                                    ]
+                                  },
+                                  {
+                                    "t": "chr",
+                                    "v": [
+                                      "notebook_python_ipynb_notebook_python_ipynb_t1_spaced"
+                                    ]
+                                  },
+                                  {
+                                    "t": "chr",
+                                    "v": [
+                                      "spaced"
+                                    ]
+                                  },
+                                  {
+                                    "t": "list",
+                                    "names": [
+                                      "t",
+                                      "df",
+                                      "p"
+                                    ],
+                                    "v": [
+                                      {
+                                        "t": "list",
+                                        "names": [
+                                          "value",
+                                          "stato_label",
+                                          "stato_iri"
+                                        ],
+                                        "v": [
+                                          {
+                                            "t": "dbl",
+                                            "v": [
+                                              2.07
+                                            ]
+                                          },
+                                          {
+                                            "t": "chr",
+                                            "v": [
+                                              "t-statistic"
+                                            ]
+                                          },
+                                          {
+                                            "t": "chr",
+                                            "v": [
+                                              "http://purl.obolibrary.org/obo/STATO_0000176"
+                                            ]
+                                          }
+                                        ]
+                                      },
+                                      {
+                                        "t": "list",
+                                        "names": [
+                                          "value",
+                                          "stato_label",
+                                          "stato_iri"
+                                        ],
+                                        "v": [
+                                          {
+                                            "t": "dbl",
+                                            "v": [
+                                              48
+                                            ]
+                                          },
+                                          {
+                                            "t": "chr",
+                                            "v": [
+                                              "number of degrees of freedom"
+                                            ]
+                                          },
+                                          {
+                                            "t": "chr",
+                                            "v": [
+                                              "http://purl.obolibrary.org/obo/STATO_0000069"
+                                            ]
+                                          }
+                                        ]
+                                      },
+                                      {
+                                        "t": "list",
+                                        "names": [
+                                          "value",
+                                          "stato_label",
+                                          "stato_iri"
+                                        ],
+                                        "v": [
+                                          {
+                                            "t": "dbl",
+                                            "v": [
+                                              0.044
+                                            ]
+                                          },
+                                          {
+                                            "t": "chr",
+                                            "v": [
+                                              "p-value"
+                                            ]
+                                          },
+                                          {
+                                            "t": "chr",
+                                            "v": [
+                                              "http://purl.obolibrary.org/obo/STATO_0000700"
+                                            ]
+                                          }
+                                        ]
+                                      }
+                                    ]
+                                  }
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "t": "list",
+                        "names": [
+                          "analysis",
+                          "results"
+                        ],
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "Cell 4 [3]"
+                            ]
+                          },
+                          {
+                            "t": "list",
+                            "names": null,
+                            "v": [
+                              {
+                                "t": "list",
+                                "names": [
+                                  "result_id",
+                                  "test_id",
+                                  "row_label",
+                                  "values"
+                                ],
+                                "v": [
+                                  {
+                                    "t": "chr",
+                                    "v": [
+                                      "notebook_python_ipynb_t2_r1"
+                                    ]
+                                  },
+                                  {
+                                    "t": "chr",
+                                    "v": [
+                                      "notebook_python_ipynb_notebook_python_ipynb_t2"
+                                    ]
+                                  },
+                                  {
+                                    "t": "chr",
+                                    "v": [
+                                      ""
+                                    ]
+                                  },
+                                  {
+                                    "t": "list",
+                                    "names": [
+                                      "statistic",
+                                      "pvalue",
+                                      "df"
+                                    ],
+                                    "v": [
+                                      {
+                                        "t": "list",
+                                        "names": [
+                                          "value",
+                                          "stato_label",
+                                          "stato_iri"
+                                        ],
+                                        "v": [
+                                          {
+                                            "t": "dbl",
+                                            "v": [
+                                              4.8977
+                                            ]
+                                          },
+                                          {
+                                            "t": "chr",
+                                            "v": [
+                                              "t-statistic"
+                                            ]
+                                          },
+                                          {
+                                            "t": "chr",
+                                            "v": [
+                                              "http://purl.obolibrary.org/obo/STATO_0000176"
+                                            ]
+                                          }
+                                        ]
+                                      },
+                                      {
+                                        "t": "list",
+                                        "names": [
+                                          "value",
+                                          "stato_label",
+                                          "stato_iri"
+                                        ],
+                                        "v": [
+                                          {
+                                            "t": "dbl",
+                                            "v": [
+                                              7e-05
+                                            ]
+                                          },
+                                          {
+                                            "t": "chr",
+                                            "v": [
+                                              "p-value"
+                                            ]
+                                          },
+                                          {
+                                            "t": "chr",
+                                            "v": [
+                                              "http://purl.obolibrary.org/obo/STATO_0000700"
+                                            ]
+                                          }
+                                        ]
+                                      },
+                                      {
+                                        "t": "list",
+                                        "names": [
+                                          "value",
+                                          "stato_label",
+                                          "stato_iri"
+                                        ],
+                                        "v": [
+                                          {
+                                            "t": "dbl",
+                                            "v": [
+                                              22
+                                            ]
+                                          },
+                                          {
+                                            "t": "chr",
+                                            "v": [
+                                              "number of degrees of freedom"
+                                            ]
+                                          },
+                                          {
+                                            "t": "chr",
+                                            "v": [
+                                              "http://purl.obolibrary.org/obo/STATO_0000069"
+                                            ]
+                                          }
+                                        ]
+                                      }
+                                    ]
+                                  }
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "df",
+                "nrow": 9,
+                "names": [
+                  "paper_id",
+                  "source_file",
+                  "test_id",
+                  "result_id",
+                  "analysis",
+                  "table_title",
+                  "row_label",
+                  "statistic",
+                  "stato_label",
+                  "stato_iri",
+                  "value",
+                  "model_ref"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "p1",
+                      "p1",
+                      "p1",
+                      "p1",
+                      "p1",
+                      "p1",
+                      "p1",
+                      "p1",
+                      "p1"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "notebook_python.ipynb",
+                      "notebook_python.ipynb",
+                      "notebook_python.ipynb",
+                      "notebook_python.ipynb",
+                      "notebook_python.ipynb",
+                      "notebook_python.ipynb",
+                      "notebook_python.ipynb",
+                      "notebook_python.ipynb",
+                      "notebook_python.ipynb"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "notebook_python_ipynb_notebook_python_ipynb_t1_massed",
+                      "notebook_python_ipynb_notebook_python_ipynb_t1_massed",
+                      "notebook_python_ipynb_notebook_python_ipynb_t1_massed",
+                      "notebook_python_ipynb_notebook_python_ipynb_t1_spaced",
+                      "notebook_python_ipynb_notebook_python_ipynb_t1_spaced",
+                      "notebook_python_ipynb_notebook_python_ipynb_t1_spaced",
+                      "notebook_python_ipynb_notebook_python_ipynb_t2",
+                      "notebook_python_ipynb_notebook_python_ipynb_t2",
+                      "notebook_python_ipynb_notebook_python_ipynb_t2"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "notebook_python_ipynb_t1_r1_t",
+                      "notebook_python_ipynb_t1_r1_df",
+                      "notebook_python_ipynb_t1_r1_p",
+                      "notebook_python_ipynb_t1_r2_t",
+                      "notebook_python_ipynb_t1_r2_df",
+                      "notebook_python_ipynb_t1_r2_p",
+                      "notebook_python_ipynb_t2_r1_statistic",
+                      "notebook_python_ipynb_t2_r1_pvalue",
+                      "notebook_python_ipynb_t2_r1_df"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Cell 3 [2]",
+                      "Cell 3 [2]",
+                      "Cell 3 [2]",
+                      "Cell 3 [2]",
+                      "Cell 3 [2]",
+                      "Cell 3 [2]",
+                      "Cell 4 [3]",
+                      "Cell 4 [3]",
+                      "Cell 4 [3]"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      null,
+                      null,
+                      null,
+                      null,
+                      null,
+                      null,
+                      "stdout (cell 4)",
+                      "stdout (cell 4)",
+                      "stdout (cell 4)"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "massed",
+                      "massed",
+                      "massed",
+                      "spaced",
+                      "spaced",
+                      "spaced",
+                      "",
+                      "",
+                      ""
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "t",
+                      "df",
+                      "p",
+                      "t",
+                      "df",
+                      "p",
+                      "statistic",
+                      "pvalue",
+                      "df"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "t-statistic",
+                      "number of degrees of freedom",
+                      "p-value",
+                      "t-statistic",
+                      "number of degrees of freedom",
+                      "p-value",
+                      "t-statistic",
+                      "p-value",
+                      "number of degrees of freedom"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "http://purl.obolibrary.org/obo/STATO_0000176",
+                      "http://purl.obolibrary.org/obo/STATO_0000069",
+                      "http://purl.obolibrary.org/obo/STATO_0000700",
+                      "http://purl.obolibrary.org/obo/STATO_0000176",
+                      "http://purl.obolibrary.org/obo/STATO_0000069",
+                      "http://purl.obolibrary.org/obo/STATO_0000700",
+                      "http://purl.obolibrary.org/obo/STATO_0000176",
+                      "http://purl.obolibrary.org/obo/STATO_0000700",
+                      "http://purl.obolibrary.org/obo/STATO_0000069"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "3.41",
+                      "48",
+                      "0.001",
+                      "2.07",
+                      "48",
+                      "0.044",
+                      "4.8977",
+                      "0.00007",
+                      "22"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      null,
+                      null,
+                      null,
+                      null,
+                      null,
+                      null,
+                      null,
+                      null,
+                      null
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "text_id",
+          "grp_id",
+          "reported",
+          "n_components",
+          "n_matched",
+          "found",
+          "match_values",
+          "not_matched",
+          "source_file",
+          "analysis",
+          "confidence",
+          "plausible_split"
+        ],
+        "v": [
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "t=3.41 df=48 p=0.001"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              3
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              3
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "t=3.41, df=48, p=0.001"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              ""
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "notebook_python.ipynb"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Cell 3 [2]"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "full"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "file_name",
+          "change_type",
+          "detail"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "ok.R"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "path_rewrite"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "\"data.csv\" -> \"data.csv\""
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -11,6 +11,35 @@
       "$expr":
         "r": "vapply(c(0.0, 1.0, 999.0, 1000.0, 1049.0, 1050.0, 1150.0, 1250.0, 1350.0, 12345.0, 99950.0, 999949.0, 999950.0, 1000000.0, 1250000.0, 1500000000.0, 123456789012.0, 1000000000000000.0, 2.5e+21, 1e+27, 1e+30, 3e+33, NA, -1, Inf, NaN), function(x) { if (is.na(x) || !is.finite(x) || x < 0) return(\"\\u2014\"); utils:::format.object_size(x, units = \"auto\", standard = \"SI\", digits = 1) }, character(1))"
         "py": "[__import__('pytacheck.modules._repo_check', fromlist=['size_label']).size_label(x) for x in [0.0, 1.0, 999.0, 1000.0, 1049.0, 1050.0, 1150.0, 1250.0, 1350.0, 12345.0, 99950.0, 999949.0, 999950.0, 1000000.0, 1250000.0, 1500000000.0, 123456789012.0, 1000000000000000.0, 2.5e+21, 1e+27, 1e+30, 3e+33, None, -1.0, float('inf'), float('nan')]]"
+- "id": "repo_check.module.no_links"
+  "note": "module_run() of a test paper without repository links"
+  "module": "repo_check"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "No repositories here."
+  "compare":
+    "ignore":
+    - "paper_id"
+    - "table.paper_id"
+    - "summary_table.paper_id"
+- "id": "repo_check.module.local_tidy"
+  "note": "module_run() of a test paper with a local folder"
+  "module": "repo_check"
+  "args":
+    "paper":
+      "$test_paper":
+        "text":
+        - "Data and code are shared."
+    "local_path": "tests/mod_repo_check/fixtures/tidy"
+  "compare":
+    "ignore":
+    - "table.file_location"
+    - "paper_id"
+    - "table.paper_id"
+    - "summary_table.paper_id"
+    - "naming_issues.paper_id"
 - "id": "repo_check.local.sizes"
   "note": "file sizes at SI unit boundaries and R round() halves"
   "r": "identity"
@@ -526,6 +555,167 @@
       "id": "p_nopeek_zr"
     "args":
       "peek_zips": false
+    "report": true
+- "id": "repo_check.zenodo.peek_rich"
+  "note": "a peeked zip holding a README, folders, a zip, a .tar.gz and an E-Prime file"
+  "r": "identity"
+  "py": "tests.mod_repo_check.parity_support.run_repo"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2:::with_mock_path(c(\"tests/mod_repo_check/mocks\", \"upstream/metacheck/tests/testthat/apis\"), httptest2::with_mock_api(testthat::with_mocked_bindings(module_run(tp(c(\"https://zenodo.org/records/5559101\"), \"p_peek_rich\"), \"repo_check\"), online = function(...) TRUE, .package = \"metacheck\")), replace = TRUE) })()"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "papers":
+    - "url":
+      - "https://zenodo.org/records/5559101"
+      "id": "p_peek_rich"
+  "compare":
+    "ignore":
+    - "table.file_location"
+- "id": "repo_check.zenodo.peek_rich.report"
+  "note": "module_report(): a peeked zip with rich contents"
+  "r": "identity"
+  "py": "tests.mod_repo_check.parity_support.run_repo"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2:::with_mock_path(c(\"tests/mod_repo_check/mocks\", \"upstream/metacheck/tests/testthat/apis\"), httptest2::with_mock_api(testthat::with_mocked_bindings(gsub(\"(?s)\\n```\\\\{r\\\\}.*?\\n```\\n\", \"\\n<R-CHUNK>\\n\", module_report(module_run(tp(c(\"https://zenodo.org/records/5559101\"), \"p_peek_rich_r\"), \"repo_check\")), perl = TRUE), online = function(...) TRUE, .package = \"metacheck\")), replace = TRUE) })()"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "papers":
+    - "url":
+      - "https://zenodo.org/records/5559101"
+      "id": "p_peek_rich_r"
+    "report": true
+- "id": "repo_check.zenodo.peek_rich.tables"
+  "note": "report tables: a peeked zip with rich contents"
+  "r": "identity"
+  "py": "tests.mod_repo_check.parity_support.run_repo"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2:::with_mock_path(c(\"tests/mod_repo_check/mocks\", \"upstream/metacheck/tests/testthat/apis\"), httptest2::with_mock_api(testthat::with_mocked_bindings((function(mo) { rep <- unlist(mo$report); m <- unlist(regmatches(rep, gregexpr(\"(?s)(?<=\\ntable <- ).*?(?=\\n\\n# display table)\", rep, perl = TRUE))); lapply(m, function(s) as.data.frame(eval(parse(text = s)))) })(module_run(tp(c(\"https://zenodo.org/records/5559101\"), \"p_peek_rich_t\"), \"repo_check\")), online = function(...) TRUE, .package = \"metacheck\")), replace = TRUE) })()"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "papers":
+    - "url":
+      - "https://zenodo.org/records/5559101"
+      "id": "p_peek_rich_t"
+    "tables": true
+- "id": "repo_check.zenodo.peek_same_zip"
+  "note": "two records list the same zip URL: the second record's copy is a duplicate"
+  "r": "identity"
+  "py": "tests.mod_repo_check.parity_support.run_repo"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2:::with_mock_path(c(\"tests/mod_repo_check/mocks\", \"upstream/metacheck/tests/testthat/apis\"), httptest2::with_mock_api(testthat::with_mocked_bindings(module_run(tp(c(\"https://zenodo.org/records/5559101\", \"https://zenodo.org/records/5559102\"), \"p_peek_same\"), \"repo_check\"), online = function(...) TRUE, .package = \"metacheck\")), replace = TRUE) })()"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "papers":
+    - "url":
+      - "https://zenodo.org/records/5559101"
+      - "https://zenodo.org/records/5559102"
+      "id": "p_peek_same"
+  "compare":
+    "ignore":
+    - "table.file_location"
+- "id": "repo_check.zenodo.peek_shared.paperlist"
+  "note": "two papers share a record with a peeked zip"
+  "r": "identity"
+  "py": "tests.mod_repo_check.parity_support.run_repo"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2:::with_mock_path(c(\"tests/mod_repo_check/mocks\", \"upstream/metacheck/tests/testthat/apis\"), httptest2::with_mock_api(testthat::with_mocked_bindings(module_run(paperlist(tp(c(\"https://zenodo.org/records/5559101\"), \"p_zb\"), tp(c(\"https://zenodo.org/records/5559101\"), \"p_za\")), \"repo_check\"), online = function(...) TRUE, .package = \"metacheck\")), replace = TRUE) })()"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "papers":
+    - "url":
+      - "https://zenodo.org/records/5559101"
+      "id": "p_zb"
+    - "url":
+      - "https://zenodo.org/records/5559101"
+      "id": "p_za"
+  "compare":
+    "ignore":
+    - "table.file_location"
+- "id": "repo_check.osf.reg.paperlist"
+  "note": "registrations in two papers: source-project rows take the first OSF paper's id"
+  "r": "identity"
+  "py": "tests.mod_repo_check.parity_support.run_repo"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2:::with_mock_path(c(\"tests/mod_repo_check/mocks\", \"upstream/metacheck/tests/testthat/apis\"), httptest2::with_mock_api(testthat::with_mocked_bindings(module_run(paperlist(tp(c(\"https://github.com/gzorg/treerepo\"), \"p_gh_only\"), tp(c(\"https://osf.io/regc1\"), \"p_reg_b\"), tp(c(\"https://osf.io/regp3\", \"https://osf.io/regor\"), \"p_reg_a\")), \"repo_check\"), online = function(...) TRUE, .package = \"metacheck\")), replace = TRUE) })()"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "papers":
+    - "url":
+      - "https://github.com/gzorg/treerepo"
+      "id": "p_gh_only"
+    - "url":
+      - "https://osf.io/regc1"
+      "id": "p_reg_b"
+    - "url":
+      - "https://osf.io/regp3"
+      - "https://osf.io/regor"
+      "id": "p_reg_a"
+  "compare":
+    "ignore":
+    - "table.file_location"
+- "id": "repo_check.osf.reg.closed_parent_linked"
+  "note": "a registration and its closed source project, both linked"
+  "r": "identity"
+  "py": "tests.mod_repo_check.parity_support.run_repo"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2:::with_mock_path(c(\"tests/mod_repo_check/mocks\", \"upstream/metacheck/tests/testthat/apis\"), httptest2::with_mock_api(testthat::with_mocked_bindings(module_run(tp(c(\"https://osf.io/regc1\", \"https://osf.io/parc1\", \"https://osf.io/regc2\"), \"p_reg_closed_linked\"), \"repo_check\"), online = function(...) TRUE, .package = \"metacheck\")), replace = TRUE) })()"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "papers":
+    - "url":
+      - "https://osf.io/regc1"
+      - "https://osf.io/parc1"
+      - "https://osf.io/regc2"
+      "id": "p_reg_closed_linked"
+  "compare":
+    "ignore":
+    - "table.file_location"
+- "id": "repo_check.osf.reg.closed_parent_linked.report"
+  "note": "module_report(): a registration and its closed source project, both linked"
+  "r": "identity"
+  "py": "tests.mod_repo_check.parity_support.run_repo"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2:::with_mock_path(c(\"tests/mod_repo_check/mocks\", \"upstream/metacheck/tests/testthat/apis\"), httptest2::with_mock_api(testthat::with_mocked_bindings(gsub(\"(?s)\\n```\\\\{r\\\\}.*?\\n```\\n\", \"\\n<R-CHUNK>\\n\", module_report(module_run(tp(c(\"https://osf.io/regc1\", \"https://osf.io/parc1\", \"https://osf.io/regc2\"), \"p_reg_closed_linked_r\"), \"repo_check\")), perl = TRUE), online = function(...) TRUE, .package = \"metacheck\")), replace = TRUE) })()"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "papers":
+    - "url":
+      - "https://osf.io/regc1"
+      - "https://osf.io/parc1"
+      - "https://osf.io/regc2"
+      "id": "p_reg_closed_linked_r"
     "report": true
 - "id": "repo_check.figshare.share_link_and_article"
   "note": "a private share link beside a Figshare article"

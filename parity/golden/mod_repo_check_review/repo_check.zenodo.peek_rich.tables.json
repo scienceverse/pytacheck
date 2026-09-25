@@ -1,0 +1,381 @@
+{
+  "id": "repo_check.zenodo.peek_rich.tables",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": null,
+    "v": [
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "Repository",
+          "Platform",
+          "All Files",
+          "Data Files",
+          "Code Files",
+          "READMEs",
+          "Archives"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "<a href='https://zenodo.org/records/5559101' target='_blank'>zenodo.org/records/5559101<\/a>"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "zenodo"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              10
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              4
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 10,
+        "names": [
+          "Repository",
+          "File",
+          "Size",
+          "Type"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "https://zenodo.org/records/5559101",
+              "https://zenodo.org/records/5559101",
+              "https://zenodo.org/records/5559101",
+              "https://zenodo.org/records/5559101",
+              "https://zenodo.org/records/5559101",
+              "https://zenodo.org/records/5559101",
+              "https://zenodo.org/records/5559101",
+              "https://zenodo.org/records/5559101",
+              "https://zenodo.org/records/5559101",
+              "https://zenodo.org/records/5559101"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "<a href='https://zenodo.org/api/records/5559101/files/analysis.R/content' target='_blank'>analysis.R<\/a>",
+              "README.md",
+              "raw data.csv",
+              "participant_01.csv",
+              "participant_2.csv",
+              "analysis.R",
+              "données.csv",
+              "inner.zip",
+              "results.tar.gz",
+              "task.edat2"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "300 B",
+              "10 B",
+              "18 B",
+              "24 B",
+              "23 B",
+              "19 B",
+              "13 B",
+              "10 B",
+              "15 B",
+              "11 B"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "code",
+              "text",
+              "data",
+              "data",
+              "data",
+              "code",
+              "data",
+              "archive",
+              "archive",
+              "file"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 5,
+        "names": [
+          "File",
+          "Rule",
+          "Severity",
+          "Detail"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "raw data.csv",
+              "données.csv",
+              "données.csv",
+              "inner.zip",
+              "participant_2.csv"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "spaces",
+              "special-characters",
+              "diacritics",
+              "unclassifiable",
+              "zero-padding"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "bad",
+              "bad",
+              "bad",
+              "bad",
+              "suggestion"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "contains a space",
+              "contains a character other than letters, digits, underscore, or dash",
+              "contains non-ASCII characters (e.g. accented letters)",
+              "could not be classified by name or extension (data_type is 'unknown'); add a recognisable keyword (data, code, materials, ...) or a known extension",
+              "numbered inconsistently with sibling files (pad to 2 digits so names sort in numeric order)"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 2,
+        "names": [
+          "File",
+          "Group",
+          "Path"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "analysis.R",
+              "analysis.R"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ex1",
+              "ex1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "analysis.R",
+              "deposit.zip/Study 1/analysis.R"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 4,
+        "names": [
+          "File",
+          "Group",
+          "Path"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "raw data.csv",
+              "participant_01.csv",
+              "participant_2.csv",
+              "données.csv"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "deposit.zip/data/raw data.csv",
+              "deposit.zip/data/participant_01.csv",
+              "deposit.zip/data/participant_2.csv",
+              "deposit.zip/données.csv"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "File",
+          "Group",
+          "Path"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "README.md"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "—"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "deposit.zip/README.md"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "File",
+          "Group",
+          "Path"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "task.edat2"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ex1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "deposit.zip/task.edat2"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "File",
+          "Group",
+          "Path"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "results.tar.gz"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "—"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "deposit.zip/results.tar.gz"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "File",
+          "Group",
+          "Path"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "inner.zip"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "—"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "deposit.zip/inner.zip"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

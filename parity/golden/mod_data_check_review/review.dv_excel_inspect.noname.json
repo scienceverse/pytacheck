@@ -1,0 +1,110 @@
+{
+  "id": "review.dv_excel_inspect.noname",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "sheets"
+    ],
+    "v": [
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "list",
+            "names": [
+              "name",
+              "color_cells",
+              "merges",
+              "empty_rows",
+              "empty_cols"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  null
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  3
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "A1:B1",
+                  "C3:D3",
+                  "A5:A6",
+                  "B5:C5",
+                  "D5:E6",
+                  "F1:G1",
+                  "H2:H9"
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  1
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  4
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "name",
+              "color_cells",
+              "merges",
+              "empty_rows",
+              "empty_cols"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "sheet2"
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  0
+                ]
+              },
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "int",
+                "v": [
+                  0
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  1
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}
