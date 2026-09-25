@@ -133,43 +133,12 @@ _TRE_CHI2 = compile_r(RGX_CHI2, posix=False)
 _TRE_DF1_I_L = compile_r(RGX_DF1_I_L, posix=False)
 _TRE_DEC = compile_r(RGX_DEC)
 
-# R's `ignore.case = TRUE`, spelled out. For the ASCII letters these patterns
-# contain, PCRE2 (perl = TRUE) also folds k/K with U+212A (Kelvin sign) and s/S
-# with U+017F (long s), but never i/I with U+0130/U+0131; TRE folds an ASCII
-# letter only with its ASCII other case. The `regex` module's IGNORECASE differs
-# from both for these four characters, so the case-insensitive patterns are
-# written out and compiled case-sensitively.
-_LONG_S = "\u017f"
-_KELVIN = "\u212a"
-_PCRE_ICASE = {
-    RGX_TEST_TYPE: rf"([^a-zA-Z{_LONG_S}{_KELVIN}](z|Z))|{RGX_OPEN_BRACKET}",
-    RGX_DF: (
-        rf"({RGX_DF_T_R_Q})"
-        r"|(\(\s?\d*\.?([Ii]|[lL]|\d+)\s?,\s?\d*\.?\d+\s?\))"
-        r"|(\(\s?\d*\.?\d+\s?(,\s?([Nn]|[Nn])\s?\=\s?\d*\,?\d*\,?\d+\s?)?\))"
-    ),
-    RGX_TEST_VALUE: rf"[<>=]\s?[^a-zA-Z{_LONG_S}{_KELVIN}\d\.]{{0,3}}\s?\d*,?\d*\.?\d+\s?,",
-    RGX_P_NS: (
-        rf"(([^a-zA-Z{_LONG_S}{_KELVIN}][nN]\.?[sS{_LONG_S}]\.?)"
-        r"|([pP]\s?[<>=]\s?\d?\.\d+[eE]?-?\d*))"
-    ),
-    RGX_COMP: RGX_COMP,
-}
-_TRE_NS_ICASE = compile_r(r"([^a-zA-Z][nN]\.?[sS]\.?)", posix=False)
-_TRE_1TAIL = compile_r(
-    "[oO][nN][eE].?[sS][iI][dD][eE][dD]|[oO][nN][eE].?[tT][aA][iI][lL][eE][dD]"
-    "|[dD][iI][rR][eE][cC][tT][iI][oO][nN][aA][lL]",
-    posix=False,
-)
+_TRE_NS_ICASE = compile_r(RGX_NS, True, posix=False)
+_TRE_1TAIL = compile_r("one.?sided|one.?tailed|directional", True, posix=False)
 
 
 def _pcre(pattern: str, ignore_case: bool) -> Any:
-    """``gregexpr(pattern, perl = TRUE, ignore.case)``'s compiled pattern.
-
-    statcheck's own patterns use their spelled-out case-insensitive form.
-    """
-    if ignore_case and pattern in _PCRE_ICASE:
-        return compile_r(_PCRE_ICASE[pattern], False, True)
+    """``gregexpr(pattern, perl = TRUE, ignore.case)``'s compiled pattern."""
     return compile_r(pattern, ignore_case, True)
 
 

@@ -74,6 +74,10 @@ def main(root: Path) -> None:
     )
     _write(types / "dupnames.csv", "x,x,y\n1,2,3\n4,5,6\n7,8,9\n")
     _write(types / "headeronly.csv", "a,b,c\n")
+    _write(
+        root / "review_dupclass" / "data" / "dupclass.csv",
+        "d,d,n\n" + "".join(f"2020-01-{i:02d},{i},{i * 3}\n" for i in range(1, 13)),
+    )
 
     random.seed(7)
     hdr = [

@@ -849,6 +849,17 @@
       }
     ]
   },
+  "review_dupclass": {
+    "repos": [
+      {
+        "dir": "review_dupclass",
+        "repo_url": "https://osf.io/dupcl",
+        "files": [
+          "data/dupclass.csv"
+        ]
+      }
+    ]
+  },
   "review_mixed_list": {
     "papers": [
       "p1",

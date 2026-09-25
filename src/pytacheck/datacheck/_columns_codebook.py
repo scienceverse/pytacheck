@@ -790,7 +790,7 @@ def _format_real(vals: list[Any], digits: int = 7) -> list[str]:
         if _na(v):
             out.append("NA".rjust(w))
             continue
-        x = float(v)
+        x = float(v) + 0.0  # R prints -0 as 0
         if math.isinf(x):
             out.append(_format_other(x).rjust(w))
         elif fixed:

@@ -239,6 +239,27 @@ def test_empty_paper_list_errors_like_r() -> None:
     assert str(err.value) == msg
 
 
+def test_text_table_without_text_column_errors_like_r() -> None:
+    # text_search() searches the first column and drops `text`: with matching rows
+    # R's tibble refuses the 0-length on_request (R 4.5.3 / metacheck), without
+    # them summarise() fails on `text[data]` as for an empty paper list
+    prefix = "Running the module 'open_practices' produced errors: "
+    p = pc.test_paper(["hello"])
+    t = p.text.assign(note="data are available on the osf")
+    p.text = t[["note"] + [c for c in t.columns if c not in ("note", "text")]]
+    with pytest.raises(ModuleError) as err:
+        run(p)
+    assert str(err.value) == (
+        prefix
+        + "Assigned data `grepl(on_request, table$text)` must be compatible with existing data."
+    )
+    p = pc.test_paper(["data are available on the osf"])
+    p.text = p.text.drop(columns="text")
+    with pytest.raises(ModuleError) as err:
+        run(p)
+    assert str(err.value) == prefix + "In argument: `data_statements = list(unique(text[data]))`."
+
+
 def test_does_not_mutate_paper(demo: pc.Paper) -> None:
     before = demo.text.copy()
     run(demo)

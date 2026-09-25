@@ -166,6 +166,14 @@
       "$expr":
         "r": "local({source('tests/mod_data_check/dc_helpers.R', local = TRUE); dc_run('review_sheets')})"
         "py": "__import__('tests.mod_data_check.helpers', fromlist=['_']).dc_run('review_sheets')"
+- "id": "review.dupclass"
+  "r": "base::identity"
+  "py": "tests.mod_data_check.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_data_check/dc_helpers.R', local = TRUE); dc_run('review_dupclass')})"
+        "py": "__import__('tests.mod_data_check.helpers', fromlist=['_']).dc_run('review_dupclass')"
 - "id": "review_tables.sheets"
   "r": "base::identity"
   "py": "tests.mod_data_check.helpers.identity"

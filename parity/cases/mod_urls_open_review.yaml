@@ -446,6 +446,23 @@
       "$expr":
         "r": "paperlist(list())"
         "py": "pc.PaperList([])"
+# a text table without a `text` column: text_search() searches its first column
+# and drops `text`; with matches the tibble refuses the 0-length on_request,
+# without them summarise() fails on `text[data]`
+- "id": "open_practices.review.no_text_col_match"
+  "module": "open_practices"
+  "args":
+    "paper":
+      "$expr":
+        "r": "local({p <- test_paper(\"hello\"); p$text$note <- \"data are available on the osf\"; p$text <- p$text[, c(\"note\", setdiff(names(p$text), c(\"note\", \"text\")))]; p})"
+        "py": "(lambda p: (setattr(p, \"text\", (lambda t: t[[\"note\"] + [c for c in t.columns if c not in (\"note\", \"text\")]])(p.text.assign(note=\"data are available on the osf\"))), p)[1])(pc.test_paper([\"hello\"]))"
+- "id": "open_practices.review.no_text_col_no_match"
+  "module": "open_practices"
+  "args":
+    "paper":
+      "$expr":
+        "r": "local({p <- test_paper(\"data are available on the osf\"); p$text$text <- NULL; p})"
+        "py": "(lambda p: (setattr(p, \"text\", p.text.drop(columns=\"text\")), p)[1])(pc.test_paper([\"data are available on the osf\"]))"
 - "id": "all_urls.review.empty_list"
   "module": "all_urls"
   "args":

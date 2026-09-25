@@ -237,14 +237,16 @@ portable_json <- function(json, started, finished) {
   for (stamp in stamps) {
     utc <- grepl("Z$", stamp)
     zone <- regmatches(stamp, regexpr("[+-][0-9]{2}:?[0-9]{2}$", stamp))
-    t <- as.POSIXct(substr(sub("T", " ", stamp), 1, 19), tz = "UTC")
+    text <- substr(sub("T", " ", stamp), 1, 19)
+    t <- tryCatch(
+      as.numeric(as.POSIXct(text, tz = if (utc || length(zone)) "UTC" else "",
+                            format = "%Y-%m-%d %H:%M:%S")),
+      error = function(e) NA_real_
+    )
     if (length(zone)) {
       z <- as.integer(gsub(":", "", zone))
       t <- t - sign(z) * ((abs(z) %/% 100) * 3600 + (abs(z) %% 100) * 60)
-    } else if (!utc) {
-      t <- as.POSIXct(substr(sub("T", " ", stamp), 1, 19))  # local time
     }
-    t <- as.numeric(t)
     if (!is.na(t) && t >= floor(as.numeric(started)) - 1 && t <= as.numeric(finished) + 1) {
       json <- gsub(stamp, "<now>", json, fixed = TRUE)
     }

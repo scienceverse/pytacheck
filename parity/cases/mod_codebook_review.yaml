@@ -770,6 +770,14 @@
       "$expr":
         "r": "local({source('tests/mod_codebook/review_helpers.R', local = TRUE); rv_haven_labels('tests/datacheck_columns/fixtures/review/dup_labels.sav')})"
         "py": "__import__('tests.mod_codebook.review_helpers', fromlist=['_']).rv_haven_labels('tests/datacheck_columns/fixtures/review/dup_labels.sav')"
+- "id": "haven_labels.8"
+  "r": "base::identity"
+  "py": "tests.mod_codebook.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_codebook/review_helpers.R', local = TRUE); rv_haven_labels('tests/datacheck_files/data/review/tagged_na.dta')})"
+        "py": "__import__('tests.mod_codebook.review_helpers', fromlist=['_']).rv_haven_labels('tests/datacheck_files/data/review/tagged_na.dta')"
 - "id": "paradata_name.misc"
   "r": "base::identity"
   "py": "tests.mod_codebook.helpers.identity"

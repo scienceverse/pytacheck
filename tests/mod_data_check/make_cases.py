@@ -209,6 +209,9 @@ REVIEW_SCENARIOS: dict[str, Any] = {
     "review_stats": {"repos": [repo("review_stats", "https://osf.io/stats")]},
     "review_text": {"repos": [repo("review_text", "https://osf.io/textf")]},
     "review_sheets": {"repos": [repo("review_sheets", "https://osf.io/sheet")]},
+    # a repeated column name over an IDate and an integer column: each column
+    # keeps its own class (data_col_facets() is called by position)
+    "review_dupclass": {"repos": [repo("review_dupclass", "https://osf.io/dupcl")]},
     # a paper list whose second paper (listed first) only has an unreadable
     # spreadsheet, the first clean data, the third nothing
     "review_mixed_list": {
@@ -667,6 +670,7 @@ def review_cases() -> list[dict[str, Any]]:
         module_case("review.text", "review_text", ignore=["previews.big_int.csv.big"]),
         module_case("review_tables.text", "review_text", tables=True, ignore=["[0].big"]),
         module_case("review.sheets", "review_sheets"),
+        module_case("review.dupclass", "review_dupclass"),
         module_case("review_tables.sheets", "review_sheets", tables=True),
         module_case("review.download_count_cap", "download_capped", max_files_per_repo=1),
         module_case("review.download_true", "basic", download=True),

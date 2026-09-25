@@ -47,6 +47,7 @@ HAVEN_FILES = [
     "tests/datacheck_files/data/iris.sas7bdat",
     "tests/datacheck_files/data/labelled.sav",
     "tests/datacheck_columns/fixtures/review/dup_labels.sav",
+    "tests/datacheck_files/data/review/tagged_na.dta",
 ]
 # paper lists: empty-data summaries per paper, and two papers sharing a data file name
 PAPER_LISTS = {
