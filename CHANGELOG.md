@@ -24,6 +24,24 @@ bibr export schema 12.0), which pytacheck targets ahead of its merge.
 
 ### Parity harness
 
+- Accuracy contract (docs/PORTING.md section 1): pytacheck is checked against
+  metacheck on every change and must be at least as accurate on realistic
+  inputs; metacheck's bugs are fixed, not reproduced; R's error texts and C
+  library quirks are not emulated.
+- Tiers: cases on realistic inputs (`parity/corpus.toml`) are tier 1 and must
+  agree with R apart from documented bug fixes; synthetic edge cases are tier
+  2. `python -m parity check --tier`, pytest marks `tier1`/`tier2`.
+- Divergence marks are validated against `docs/UPSTREAM_ISSUES.md` (which now
+  has a status column) and the Python output of every marked case is pinned
+  in `parity/lock/<area>.json`: a changed value (`py_changed`), a changed R
+  golden (`r_changed`) or an upstream fix (`xpass`) is reported.
+- Errors: when R fails, only Python failing too is checked; R's messages are
+  never compared (`$catch` constructor, `presence` compare option).
+- `--jobs N` (full check in about 3 minutes on 4 CPUs instead of 10),
+  per-run reports, a network guard inside cases, case loading 0.9 s (8.3 s).
+- Shared helpers `pytacheck._json`, `pytacheck._values` and
+  `pytacheck.http.resp_json`; `python-calamine` joins the core dependencies
+  and `chardet` is the optional `charset` extra.
 - A `known_divergence` can carry `r_text` substitutions applied to R's golden
   before the comparison, so a case whose only difference is text pytacheck
   corrects (typos, plurals, a full stop) is still compared with R for
