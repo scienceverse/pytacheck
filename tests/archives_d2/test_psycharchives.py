@@ -205,3 +205,20 @@ def test_vector_download_is_aligned_with_input(apis: object) -> None:
     assert files["pa_url"].tolist()[0] == PA
     assert files["pa_url"].isna().sum() == 1
     assert files.attrs["rights"] == {PA: "restrictedAccess"}
+
+
+def test_file_lists_name_the_items_not_found(apis: object) -> None:
+    # U43: repo_check() reports the items that could not be found
+    from pytacheck.archives.psycharchives import _psycharchives_file_lists
+
+    with pytest.warns(UserWarning):
+        files, unfound = _psycharchives_file_lists([PA, None, "https://osf.io/x"])
+    assert unfound == ["https://osf.io/x"]
+    assert files is not None and files.attrs["rights"] == {PA: "restrictedAccess"}
+    with pytest.warns(UserWarning):
+        assert _psycharchives_file_lists(["https://osf.io/x", "https://osf.io/y"]) == (
+            None,
+            ["https://osf.io/x", "https://osf.io/y"],
+        )
+    with pytest.warns(UserWarning):
+        assert _psycharchives_file_lists(None) == (None, [])

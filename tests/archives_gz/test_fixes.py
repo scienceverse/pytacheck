@@ -107,3 +107,16 @@ def test_zenodo_string_license() -> None:
     info = _zenodo_info("42", resp=resp)
     assert info["license"].tolist() == ["cc-by"]
     assert info["title"].tolist() == ["Old record"]
+
+
+@pytest.mark.parametrize("fn", ["github_links", "gitlab_links", "zenodo_links"])
+def test_links_of_an_empty_paper_list(fn: str) -> None:
+    # U79: the url table of an empty paper list has no columns; the (empty) link
+    # table still has href (R's github_links()/gitlab_links() have none, so
+    # repo_check() stops; pytacheck's zenodo_links() indexed it)
+    import pytacheck as pc
+
+    links = getattr(pc, fn)(pc.PaperList([]))
+    assert len(links) == 0
+    assert list(links.columns[:3]) == ["href", "text_id", "paper_id"]
+    assert str(links["href"].dtype) == "string"

@@ -48,6 +48,12 @@ R_FAKE_NA = (
     'out$causal[grepl("maybe", tolower(out$sentence), fixed = TRUE)] <- NA; out }; '
 )
 
+# an empty paper with the ID "e"
+EMPTY = (
+    '(function() { p <- paper(); p$paper_id <- "e"; p })()',
+    "(lambda p: (setattr(p, 'paper_id', 'e'), p)[1])(pc.paper())",
+)
+
 cases: list[dict[str, Any]] = []
 
 
@@ -199,16 +205,9 @@ module_case(
     "info_no_title",
     r_then(untitled(RANDOM_ONE, id="notitle"), "p$info$title <- NULL", "without_title"),
 )
-module_case(
-    "paperlist_empty_member",
-    plist(
-        (
-            '(function() { p <- paper(); p$paper_id <- "e"; p })()',
-            "(lambda p: (setattr(p, 'paper_id', 'e'), p)[1])(pc.paper())",
-        ),
-        test_paper(RANDOM_SEVERAL, "s"),
-    ),
-)
+# a blank title: pytacheck classifies the titles of a paper list (U84); the
+# fake.paperlist_empty_member_random case keeps test_paper()'s "Test Paper"
+module_case("paperlist_empty_member_untitled", plist(EMPTY, untitled(RANDOM_SEVERAL, id="s")))
 module_case(
     "duplicate_random_sentence",
     untitled(
@@ -247,16 +246,8 @@ fake_case(
     "paperlist_single",
     plist(mk(["We measured things."], [], title="Heat causes thirst", id="solo")),
 )
-fake_case(
-    "paperlist_empty_member",
-    plist(
-        (
-            '(function() { p <- paper(); p$paper_id <- "e"; p })()',
-            "(lambda p: (setattr(p, 'paper_id', 'e'), p)[1])(pc.paper())",
-        ),
-        mk(["Heat causes thirst."], [], id="h"),
-    ),
-)
+fake_case("paperlist_empty_member", plist(EMPTY, mk(["Heat causes thirst."], [], id="h")))
+fake_case("paperlist_empty_member_random", plist(EMPTY, test_paper(RANDOM_SEVERAL, "s")))
 fake_case(
     "chain_self",
     mk(["X causes Y."], ["Participants were randomly assigned."], title="A causes B", id="c1"),

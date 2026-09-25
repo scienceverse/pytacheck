@@ -513,6 +513,15 @@
   kind: type_detail
   ref: U79
   reason: "empty paper list: text_search() now returns a typed empty text table (U79, text lane), so the empty link table has href first, as a non-empty one does (R orders an empty table's columns differently)"
+"archives_gz_review/github_links.review.empty_paperlist": &u79_host
+  kind: r_bug_fixed
+  ref: U79
+  reason: "empty paper list: the (empty) link table has its href column, as a non-empty one does; R's has none (the url table of an empty list has no columns), so repo_check() and the modules that call it stop"
+"archives_gz_review/gitlab_links.review.empty_paperlist": *u79_host
+"archives_gz_review/zenodo_links.review.empty_paperlist":
+  kind: type_detail
+  ref: U79
+  reason: "empty paper list: the empty link table has href first, as a non-empty one does (R orders an empty table's columns differently); pytacheck's zenodo_links() indexed the missing href column of the empty url table"
 # U69, cases of the data_check module whose archives hold a .gz file
 "mod_data_check/data_check.archives":
   kind: r_bug_fixed

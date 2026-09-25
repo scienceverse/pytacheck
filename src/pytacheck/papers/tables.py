@@ -11,7 +11,7 @@ from pytacheck._r.frames import bind_rows
 from pytacheck.papers.model import Paper, PaperList, is_paper_list
 from pytacheck.papers.schema import empty_table, records_to_frame, table_names
 
-__all__ = ["as_paper_list", "paper_id", "paper_table", "ref_table"]
+__all__ = ["as_paper_list", "empty_paper_table", "paper_id", "paper_table", "ref_table"]
 
 
 def as_paper_list(paper: Any) -> PaperList:
@@ -118,8 +118,34 @@ def paper_id(paper: Any) -> list[str]:
     return [str(v) for v in info["paper_id"].tolist()]
 
 
+def empty_paper_table(table: str) -> pd.DataFrame:
+    """*table* with its ``paper.json`` columns and ``paper_id``, but no rows.
+
+    What a module can use in place of ``paper_table()`` of an empty paper list,
+    which has no columns at all (a paper with an empty table has them all).
+    """
+    return empty_table(table).assign(paper_id=pd.Series([], dtype="string"))
+
+
+def _empty_ref_table() -> pd.DataFrame:
+    """The columns and types of ``ref_table()`` with no rows."""
+    bib = empty_table("bib")
+    return pd.DataFrame(
+        {
+            "paper_id": pd.Series([], dtype="string"),
+            "bib_id": bib["bib_id"],
+            "doi": bib["doi"],
+            "text": empty_table("text")["text"],
+        }
+    )
+
+
 def ref_table(paper: Any) -> pd.DataFrame:
     """``ref_table()``: references with their (possibly matched) DOIs and text."""
+    if len(as_paper_list(paper)) == 0:
+        # an empty paper list has no references; metacheck's inner_join() stops
+        # because its empty tables have no paper_id or text_id column (U79)
+        return _empty_ref_table()
     cols = ["paper_id", "bib_id", "doi"]
     bib_orig = paper_table(paper, "bib", cols)
     bib_match = paper_table(paper, "bib_match", cols)

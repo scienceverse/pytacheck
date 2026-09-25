@@ -38,12 +38,14 @@ from parity.cases import (
     Case,
     RWithoutReference,
     divergence_kind,
+    expected_to_fail,
     iter_case_files,
     load_cases,
+    r_text,
     run_python,
     skip_reason,
 )
-from parity.compare import Options, compare, error_matches, summarize
+from parity.compare import Options, compare, error_matches, rewrite_r_text, summarize
 
 
 def _rscript(explicit: str | None) -> str:
@@ -89,7 +91,10 @@ def check_case(case: Case) -> tuple[str, list[str], float]:
     """Return ``(status, problems, seconds)``; status is pass/fail/missing/xfail/error/skip.
 
     ``skip`` is a case whose Python side runs R when no reference R is
-    configured (see ``parity.cases.run_python``).
+    configured (see ``parity.cases.run_python``). A ``known_divergence`` with
+    ``r_text`` compares Python with R's golden as rewritten by its
+    substitutions; a difference left over is a failure unless the mark also
+    says ``xfail: true``.
     """
     if not case.golden_path.exists():
         return "missing", ["no golden file; run `python -m parity generate`"], 0.0
@@ -97,6 +102,24 @@ def check_case(case: Case) -> tuple[str, list[str], float]:
     if reason:
         return "skip", [reason], 0.0
     golden = orjson.loads(case.golden_path.read_bytes())
+    stale: list[str] = []
+    subs = r_text(case.spec)
+    if subs:
+        used = [False] * len(subs)
+        key = "value" if golden["ok"] else "error"
+        golden[key] = rewrite_r_text(golden[key], subs, used)
+        stale = [
+            f"r_text {sub} changes nothing in R's golden: remove it from the mark"
+            for sub, u in zip(subs, used, strict=True)
+            if not u
+        ]
+    status, problems, elapsed = _check(case, golden)
+    if stale and status != "skip":
+        return "fail", stale + problems, elapsed
+    return status, problems, elapsed
+
+
+def _check(case: Case, golden: dict[str, Any]) -> tuple[str, list[str], float]:
     options = Options.from_case(case.spec.get("compare"))
     start = time.perf_counter()
     try:
@@ -108,7 +131,8 @@ def check_case(case: Case) -> tuple[str, list[str], float]:
         result = None
         err = exc
     elapsed = time.perf_counter() - start
-    failed = "xfail" if case.spec.get("known_divergence") else "fail"
+    expected = expected_to_fail(case.spec)
+    failed = "xfail" if expected else "fail"
     if not golden["ok"]:
         if err is None:
             return (
@@ -126,7 +150,7 @@ def check_case(case: Case) -> tuple[str, list[str], float]:
         )
     if err is not None:
         tb = "".join(traceback.format_exception_only(type(err), err)).strip()
-        status = "xfail" if case.spec.get("known_divergence") else "error"
+        status = "xfail" if expected else "error"
         return status, [f"Python raised {tb}"], elapsed
     problems = compare(golden["value"], canonical(result), options)
     if problems:
@@ -142,6 +166,7 @@ def cmd_check(ns: argparse.Namespace) -> int:
         cases = [c for c in cases if ns.k in c.key]
     counts: dict[str, int] = {}
     kinds: dict[str, int] = {}
+    rewritten = 0  # passes compared with R's text as pytacheck corrects it (r_text)
     report: list[dict[str, Any]] = []
     for case in cases:
         status, problems, secs = check_case(case)
@@ -149,11 +174,14 @@ def cmd_check(ns: argparse.Namespace) -> int:
         kind = divergence_kind(case.spec) if status == "xfail" else None
         if kind:
             kinds[kind] = kinds.get(kind, 0) + 1
+        with_r_text = bool(r_text(case.spec))
+        rewritten += status == "pass" and with_r_text
         report.append(
             {
                 "case": case.key,
                 "status": status,
                 "kind": kind,
+                "r_text": with_r_text,
                 "problems": problems,
                 "seconds": secs,
             }
@@ -167,6 +195,8 @@ def cmd_check(ns: argparse.Namespace) -> int:
     (out / "report.json").write_bytes(orjson.dumps(report, option=orjson.OPT_INDENT_2))
     total = sum(counts.values())
     print(f"\n{total} cases: " + ", ".join(f"{v} {k}" for k, v in sorted(counts.items())))
+    if rewritten:
+        print(f"{rewritten} of the passes compare with R's text as pytacheck corrects it (r_text)")
     if kinds:
         print("xfail by kind: " + ", ".join(f"{v} {k}" for k, v in sorted(kinds.items())))
     return (

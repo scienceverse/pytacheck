@@ -17,7 +17,7 @@ import pytest
 import respx
 
 import pytacheck as pc
-from pytacheck.module import ModuleError, module_list, module_run
+from pytacheck.module import module_list, module_run
 from pytacheck.modules import _power
 from tests.mod_power.parity_helpers import paragraphs
 from tests.mod_power.support import FakeChat, structured_lookup
@@ -865,11 +865,15 @@ def test_read_lines_url(monkeypatch: pytest.MonkeyPatch) -> None:
         assert _power._read_lines_url("https://example.org/x.json") == "a\nb\nc\n\nd"
 
 
-def test_power_empty_paperlist_errors(llm_off: None) -> None:
-    # R: `summary_table$power_n <- 0` on the 0-row summary table of an empty
-    # paper list errors (reproduced; parity case power.review.empty_paperlist)
-    with pytest.raises(ModuleError, match="replacement has 1 row, data has 0"):
-        module_run(pc.PaperList([]), "power")
+def test_power_empty_paperlist(llm_off: None) -> None:
+    # U79: R's `summary_table$power_n <- 0` on the 0-row summary table of an
+    # empty paper list stops ("replacement has 1 row, data has 0"; parity case
+    # power.review.empty_paperlist)
+    mo = module_run(pc.PaperList([]), "power")
+    assert mo.traffic_light == "na"
+    assert mo.summary_text == "No power analyses were detected."
+    assert mo.summary_table.columns.tolist() == ["paper_id", "power_n", "power_complete"]
+    assert len(mo.summary_table) == 0
 
 
 def test_power_empty_paper(llm_off: None) -> None:

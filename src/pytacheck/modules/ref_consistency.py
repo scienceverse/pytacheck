@@ -134,7 +134,13 @@ def ref_consistency(paper: Any) -> dict[str, Any]:
     """Port of ``inst/modules/ref_consistency.R::ref_consistency()``."""
     from pytacheck._r.frames import count
     from pytacheck.io.bibr12 import _bibr12_paper_ids
-    from pytacheck.papers.tables import paper_id, paper_table, ref_table
+    from pytacheck.papers.tables import (
+        as_paper_list,
+        empty_paper_table,
+        paper_id,
+        paper_table,
+        ref_table,
+    )
     from pytacheck.report import scroll_table
 
     # detailed table of results ----
@@ -144,7 +150,13 @@ def ref_consistency(paper: Any) -> dict[str, Any]:
     # bib_match rows, which inflated n_bib and n_extra (U114)
     bibs = bibs.loc[~bibs.duplicated(subset=_KEYS).to_numpy(dtype=bool)].reset_index(drop=True)
     xref_all = paper_table(paper, "xref")
-    if len(xref_all.columns) == 0:
+    text = paper_table(paper, "text")
+    if len(as_paper_list(paper)) == 0:
+        # an empty paper list has no tables at all: no references, no citations
+        # (metacheck stops in ref_table(), U79)
+        xref_all = empty_paper_table("xref")
+        text = empty_paper_table("text")
+    elif len(xref_all.columns) == 0:
         # a paper list with no xref tables at all: dplyr::select() would fail on it
         raise ValueError(
             "Can't select columns that don't exist.\n✖ Column `paper_id` doesn't exist."
@@ -165,7 +177,7 @@ def ref_consistency(paper: Any) -> dict[str, Any]:
         columns={"xref_id": "bib_id"}
     )
     xrefs = xrefs.reset_index(drop=True)
-    text = paper_table(paper, "text").loc[:, ["paper_id", "text_id", "text"]]
+    text = text.loc[:, ["paper_id", "text_id", "text"]]
 
     joined, from_xref = _full_join(bibs, xrefs, _KEYS)
     # a citation is missing from the bibliography when it has no bib_id or its

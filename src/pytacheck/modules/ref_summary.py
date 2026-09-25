@@ -170,6 +170,25 @@ def _join(x: pd.DataFrame, y: pd.DataFrame, by: Sequence[str], how: str) -> pd.D
     return pd.DataFrame(cols)
 
 
+def _join_doi(x: pd.DataFrame, y: pd.DataFrame, y_doi: str = "doi") -> pd.DataFrame:
+    """``dplyr::inner_join(x, y, by = c(doi = y_doi))`` with DOIs compared case-insensitively.
+
+    DOIs are case-insensitive, but the databases keep the publishers' capitals
+    (13,123 RetractionWatch DOIs, e.g. ``10.1016/S0140-6736(97)11096-0``) and
+    reference DOIs are mostly lower case, so metacheck's exact join missed them
+    (U157). *x* keeps its own ``doi``; *y*'s DOI column is dropped. Missing
+    DOIs match nothing.
+    """
+    key = ".doi_key"
+    x_key = x["doi"].astype("string").str.lower()
+    y_key = y[y_doi].astype("string").str.lower()
+    wanted = set(x_key.dropna().tolist())
+    keep = (y_key.notna() & y_key.isin(wanted)).to_numpy(dtype=bool)
+    y = y.loc[keep].drop(columns=y_doi).assign(**{key: y_key[keep].array})
+    table = _join(x.assign(**{key: x_key.array}), y, [key], "inner")
+    return table.drop(columns=key)
+
+
 # -- ref_accuracy -----------------------------------------------------------------------
 
 

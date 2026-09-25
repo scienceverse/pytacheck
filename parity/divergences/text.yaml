@@ -13,11 +13,11 @@
   kind: r_bug_fixed
   ref: U84
   reason: a missing (NA) title is skipped; metacheck stops with "missing value where TRUE/FALSE needed"
-"mod_causal/causal_claims.paperlist_no_abstract": &u84_list_network
+"mod_causal/causal_claims.paperlist_no_abstract_untitled": &u85_list_random_order
   kind: r_bug_fixed
-  ref: U84
-  reason: the titles of a paper list are classified (metacheck never reads them), which needs the classifier; fake.paperlist_random covers the list offline
-"mod_causal/causal_claims.paperlist_none": *u84_list_network
+  ref: U85
+  reason: '"Trials were presented in random order after participants were randomized." counts in the list''s pl_several paper (7 sentences, metacheck 6)'
+"mod_causal/causal_claims.fake.paperlist_no_abstract": *u85_list_random_order
 "mod_causal/causal_claims.fake.paperlist_duplicate":
   kind: r_bug_fixed
   ref: U84
@@ -30,7 +30,11 @@
   kind: r_bug_fixed
   ref: U85
   reason: British "Randomisation" and "randomly assigned ... random intercepts/effects" count, "not randomized" does not (10 sentences, metacheck 8)
-"mod_causal_review/causal_claims.review.paperlist_empty_member": *u84_list_network
+"mod_causal_review/causal_claims.review.paperlist_empty_member_untitled": &u85_empty_member_random_order
+  kind: r_bug_fixed
+  ref: U85
+  reason: '"Trials were presented in random order after participants were randomized." counts (6 sentences, metacheck 5)'
+"mod_causal_review/causal_claims.review.fake.paperlist_empty_member_random": *u85_empty_member_random_order
 "mod_causal_review/causal_claims.review.fake.dup_same_paper":
   kind: r_bug_fixed
   ref: U84
@@ -348,3 +352,79 @@
   ref: U16
   reason: "only the sentence text read from the TEI differs ('G*Power 3.1', metacheck 'G*Power3.1'; io fix of the number-before-tag clean-up)"
 "mod_power/power.psychsci.tables": *u16_power
+
+# marginal (U3) -------------------------------------------------------------------
+# The Olsson-Collentine et al. (2019) reference in marginal's guidance is formatted
+# from person() authors ("Olsson-Collentine A, van Assen MALM, Hartgerink CHJ");
+# metacheck's author string is mangled by R's bibentry formatter. Every case that
+# shows marginal's red report differs in that one string (the report lane's
+# hand-written report cases are listed here too).
+"mod_marginal/marginal.demo": &u3_marg_ref
+  kind: r_bug_fixed
+  ref: U3
+  reason: 'the guidance cites "Olsson-Collentine A, van Assen MALM, Hartgerink CHJ (2019)" (metacheck: "Olsson-Collentine, A., van Assen, M. MAL, Hartgerink &amp;, J. CH")'
+"mod_marginal/marginal.psychsci": *u3_marg_ref
+"mod_marginal/marginal.synthetic": *u3_marg_ref
+"bibr12/module.marginal.preprint": *u3_marg_ref
+"bibr12/module.marginal.mixed": *u3_marg_ref
+"grobid12/module.marginal.published": *u3_marg_ref
+"report/module_report.marginal.demo": *u3_marg_ref
+"report/module_report.marginal.header4": *u3_marg_ref
+"report/module_report.marginal.header0": *u3_marg_ref
+"report/module_report.marginal.header_null": *u3_marg_ref
+"report/report_module_run.demo.marginal": *u3_marg_ref
+"report/report_module_run.demo.sections": *u3_marg_ref
+"report/report_module_run.demo.error_middle": *u3_marg_ref
+"report/report_module_run.demo.error_first": *u3_marg_ref
+"report/report_module_run.demo.error_last": *u3_marg_ref
+"report/report_module_run.args": *u3_marg_ref
+"report/report_module_run.paperlist": *u3_marg_ref
+"report/report_qmd.demo.marginal": *u3_marg_ref
+"report/report.qmd.demo": *u3_marg_ref
+"report/report.qmd.args": *u3_marg_ref
+"report_review/report_qmd.title_doi_fail_summary": *u3_marg_ref
+"report_review/report_module_run.unknown_module_in_chain": *u3_marg_ref
+"report_review/report_module_run.same_module_twice": *u3_marg_ref
+"report_review/report_qmd.demo.real_modules": *u3_marg_ref
+"repro_core/capture_module_tables.roundtrip.demo": *u3_marg_ref
+
+# empty paper lists (U79) ---------------------------------------------------------
+# An empty paper list gives the module's empty result (a summary table without
+# rows); metacheck stops, because paper_id() of an empty list is NULL and
+# data.frame(paper_id = NULL) has no rows or no column.
+"mod_ethics/ethics_check.empty_paperlist": &u79_empty_list
+  kind: r_bug_fixed
+  ref: U79
+  reason: an empty paper list gives the module's empty result ("na", a summary table without rows); metacheck stops
+"mod_ethics_review/ethics_check.direct_empty_list": *u79_empty_list
+"mod_power_review/power.review.empty_paperlist": *u79_empty_list
+"mod_prereg_review/prereg_check.empty_paperlist": *u79_empty_list
+"mod_reg/reg_check.module.empty_paperlist": *u79_empty_list
+
+# reg_check: a light for a check that could not run (U30) --------------------------
+# When every RegCheck comparison fails, reg_check's light is "fail" (what report()
+# gives a module that fails); metacheck returns "error", which is not a traffic light.
+"mod_reg/reg_check.all_fail": &u30_reg_fail
+  kind: r_bug_fixed
+  ref: U30
+  reason: every RegCheck comparison failed, so the check could not run and the light is "fail"; metacheck's "error" is not a traffic light
+"mod_reg/reg_check.empty_result": *u30_reg_fail
+"mod_reg/reg_check.paperlist.all_fail": *u30_reg_fail
+"mod_reg/reg_check.unknown_client": *u30_reg_fail
+"mod_reg/reg_check.groq_no_token": *u30_reg_fail
+"mod_reg/reg_check.empty_text": *u30_reg_fail
+"mod_reg/reg_check.connfail": *u30_reg_fail
+"mod_reg/reg_check.unauthorized": *u30_reg_fail
+"mod_reg_review/reg_check.review.chained.duplicates_all_fail": *u30_reg_fail
+"mod_reg_review/reg_check.review.ghost_paper_id.paperlist": *u30_reg_fail
+"mod_reg_review/reg_check.review.ambiguous_client": *u30_reg_fail
+"mod_reg_review/reg_check.review.http.404": *u30_reg_fail
+"mod_reg_review/reg_check.review.http.500": *u30_reg_fail
+"mod_reg_review/reg_check.review.http.422": *u30_reg_fail
+"mod_reg_review/reg_check.review.http.401": *u30_reg_fail
+"mod_reg_review/reg_check.review.http.401_groq": *u30_reg_fail
+"mod_reg_review/reg_check.review.http.pollfail": *u30_reg_fail
+"mod_reg_review/reg_check.review.http.pollfail_nostatus": *u30_reg_fail
+"mod_reg_review/reg_check.review.http.poll503": *u30_reg_fail
+"mod_reg_review/reg_check.review.http.success_null": *u30_reg_fail
+"mod_reg_review/reg_check.review.refused": *u30_reg_fail

@@ -356,9 +356,9 @@ def ethics_check(paper: Any) -> dict[str, Any]:
     Like R, *paper* may also be a plain list of papers. Papers with duplicated
     IDs are summarised together, a paper without an ``info`` row is summarised
     under its own ID, and a text table without a ``text`` column has no
-    sentences (metacheck stops or mislabels these, U101/U102). Reproduces R's
-    errors for an empty paper list, a table or a character vector instead of a
-    paper.
+    sentences (metacheck stops or mislabels these, U101/U102). An empty paper
+    list gives an empty result (metacheck stops, U79). Reproduces R's errors
+    for a table or a character vector instead of a paper.
     """
     from pytacheck.text.extract import _detect_live_data
 
@@ -370,15 +370,9 @@ def ethics_check(paper: Any) -> dict[str, Any]:
         # (metacheck searches its first column instead and fails, U102)
         frame = frame.iloc[0:0]
     # a table fails here: "paper must be a paper or paperlist object."
+    # An empty paper list has no IDs and gets a summary table without rows
+    # (metacheck stops: data.frame(paper_id = NULL) has no column to join by, U79)
     paper_ids = _paper_ids(paper)
-    # R: these checks fail later in the module (left_join() and the list-column
-    # assignment on a 0-row summary table); failing first is cheaper
-    if not paper_ids:
-        if not isinstance(paper, Paper) and is_paper_list(paper) and len(paper) == 0:
-            # paper_id() is NULL, and data.frame(paper_id = NULL) has no column to join by
-            raise ValueError("Join columns in `x` must be present in the data.")
-        # sapply(list(), is.null) is list(), an invalid subscript
-        raise TypeError("invalid subscript type 'list'")
 
     table = text_search(_may_mention_ethics(frame), list(_ETHICS_WORDS))
     table["ethics"] = pd.Series([True] * len(table), index=table.index, dtype="boolean")

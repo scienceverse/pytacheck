@@ -16,6 +16,7 @@
           "r": "source(file.path(root, \"tests/mod_ref_db/helpers.R\")); report_tbl(module_run(paperlist(ref_paper(\"10.1177/0956797614520714\", id = \"zeta\"), demopaper(), ref_paper(c(\"10.1371/journal.ppat.1000066\", \"10.1177/0956797614520714\", \"10.1177/0956797614520714\"), id = \"Alpha\")), \"ref_retraction\"))"
           "py": "(lambda H: H.report_tbl(pc.module_run(pc.PaperList([H.ref_paper([\"10.1177/0956797614520714\"], id=\"zeta\"), pc.demopaper(), H.ref_paper([\"10.1371/journal.ppat.1000066\", \"10.1177/0956797614520714\", \"10.1177/0956797614520714\"], id=\"Alpha\")]), \"ref_retraction\")))(__import__(\"tests.mod_ref_db.helpers\", fromlist=[\"x\"]))"
   - "id": "ref_retraction.exact_doi_match"
+    "known_divergence": {"kind": "r_bug_fixed", "ref": "U157", "reason": "DOIs match whatever their case: 10.1371/JOURNAL.PPAT.1000066 is the RetractionWatch entry 10.1371/journal.ppat.1000066 (metacheck: exact match, no hit); the padded DOIs still do not match"}
     "module": "ref_retraction"
     "args":
       "paper":
@@ -91,6 +92,7 @@
           "r": "source(file.path(root, \"tests/mod_ref_db/helpers.R\")); report_tbl(module_run(ref_paper(\"10.1037/0022-3514.71.2.230\"), \"ref_replication\"))"
           "py": "(lambda H: H.report_tbl(pc.module_run(H.ref_paper([\"10.1037/0022-3514.71.2.230\"]), \"ref_replication\")))(__import__(\"tests.mod_ref_db.helpers\", fromlist=[\"x\"]))"
   - "id": "ref_replication.nohit.show_outcomes"
+    "known_divergence": {"kind": "r_bug_fixed", "ref": "U157", "reason": "DOIs match whatever their case: 10.1126/SCIENCE.1239918 is the FLoRA original 10.1126/science.1239918 with 6 replications (metacheck: exact match, no hit)"}
     "module": "ref_replication"
     "args":
       "paper":
@@ -168,6 +170,7 @@
           "r": "data.frame(doi = character(0), reftext = character(0), warning = character(0))"
           "py": "pd.DataFrame({\"doi\": pd.Series([], dtype=\"string\"), \"reftext\": pd.Series([], dtype=\"string\"), \"warning\": pd.Series([], dtype=\"string\")})"
   - "id": "ref_miscitation.no_match"
+    "known_divergence": {"kind": "r_bug_fixed", "ref": "U157", "reason": "DOIs match whatever their case: the reference 10.1000/A is the database entry 10.1000/a (metacheck: exact match, no hit)"}
     "module": "ref_miscitation"
     "args":
       "paper":
@@ -320,3 +323,40 @@
         "$expr":
           "r": "source(file.path(root, \"tests/mod_ref_db/helpers.R\")); suppressWarnings(module_run(module_run(paperlist(ref_paper(c(\"10.1000/a\", \"10.1000/a\"), id = \"p1\", cites = list(0L, 1L)), ref_paper(\"10.1000/b\", id = \"p2\", cites = list(0L))), \"ref_miscitation\", db = data.frame(doi = c(\"10.1000/a\", \"10.1000/b\"), reftext = c(\"Ref A\", \"Ref B\"), warning = c(\"Warn A\", \"Warn B\"))), \"marginal\")$summary_table)"
           "py": "(lambda H: pc.module_run(pc.module_run(pc.PaperList([H.ref_paper([\"10.1000/a\", \"10.1000/a\"], id=\"p1\", cites=[0, 1]), H.ref_paper([\"10.1000/b\"], id=\"p2\", cites=[0])]), \"ref_miscitation\", db=pd.DataFrame({\"doi\": [\"10.1000/a\", \"10.1000/b\"], \"reftext\": [\"Ref A\", \"Ref B\"], \"warning\": [\"Warn A\", \"Warn B\"]})), \"marginal\")[\"summary_table\"])(__import__(\"tests.mod_ref_db.helpers\", fromlist=[\"x\"]))"
+  # U157: DOIs are case-insensitive, RetractionWatch keeps the publishers' capitals
+  # (the retracted Wakefield et al. 1998 Lancet paper is 10.1016/S0140-6736(97)11096-0)
+  # and lists 10.1212/wnl.57.3.445 (Retraction) and 10.1212/WNL.57.3.445 (Expression
+  # of concern) as two entries, whose notices pytacheck joins for either spelling
+  - "id": "ref_retraction.doi_case"
+    "known_divergence": {"kind": "r_bug_fixed", "ref": "U157", "reason": "DOIs match whatever their case: the lower-case Wakefield DOI is flagged (Correction;Retraction) and both spellings of 10.1212/wnl.57.3.445 get its two notices, 'Retraction;Expression of concern' (metacheck: exact match, one notice each, Wakefield missed)"}
+    "module": "ref_retraction"
+    "args":
+      "paper":
+        "$expr":
+          "r": "source(file.path(root, \"tests/mod_ref_db/helpers.R\")); ref_paper(c(\"10.1016/s0140-6736(97)11096-0\", \"10.1212/WNL.57.3.445\", \"10.1212/wnl.57.3.445\"))"
+          "py": "(lambda H: H.ref_paper([\"10.1016/s0140-6736(97)11096-0\", \"10.1212/WNL.57.3.445\", \"10.1212/wnl.57.3.445\"]))(__import__(\"tests.mod_ref_db.helpers\", fromlist=[\"x\"]))"
+  # U79: an empty paper list has no references (metacheck's ref_table() stops)
+  - "id": "ref_retraction.empty_paperlist"
+    "known_divergence": {"kind": "r_bug_fixed", "ref": "U79", "reason": "an empty paper list has no references ('na', empty summary table); metacheck's ref_table() stops ('Join columns in `x` must be present in the data.')"}
+    "module": "ref_retraction"
+    "args":
+      "paper":
+        "$expr":
+          "r": "paperlist()"
+          "py": "pc.PaperList([])"
+  - "id": "ref_replication.empty_paperlist"
+    "known_divergence": {"kind": "r_bug_fixed", "ref": "U79", "reason": "an empty paper list has no references ('na', empty summary table); metacheck's ref_table() stops ('Join columns in `x` must be present in the data.')"}
+    "module": "ref_replication"
+    "args":
+      "paper":
+        "$expr":
+          "r": "paperlist()"
+          "py": "pc.PaperList([])"
+  - "id": "ref_miscitation.empty_paperlist"
+    "known_divergence": {"kind": "r_bug_fixed", "ref": "U79", "reason": "an empty paper list has no references ('green', empty summary table); metacheck's inner_join() stops ('Join columns in `x` must be present in the data.', no doi column)"}
+    "module": "ref_miscitation"
+    "args":
+      "paper":
+        "$expr":
+          "r": "paperlist()"
+          "py": "pc.PaperList([])"

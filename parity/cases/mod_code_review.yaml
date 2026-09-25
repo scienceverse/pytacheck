@@ -441,3 +441,17 @@
       "$expr":
         "r": "local({source('tests/mod_code/cc_helpers.R', local = TRUE); cc_report_tables('review_dashes')})"
         "py": "__import__('tests.mod_code.helpers', fromlist=['_']).cc_report_tables('review_dashes')"
+- "id": "code_check.empty_paper"
+  "module": "code_check"
+  "args":
+    "paper":
+      "$expr":
+        "r": "paper()"
+        "py": "pc.paper()"
+- "id": "code_check.empty_paperlist"
+  "module": "code_check"
+  "args":
+    "paper":
+      "$expr":
+        "r": "paperlist()"
+        "py": "pc.PaperList([])"

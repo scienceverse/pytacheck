@@ -286,6 +286,8 @@ REPO_TYPES = (
 )
 
 _FIGSHARE_SHARE = "private share link (figshare.com/s/...) cannot be resolved without a browser"
+#: a DSpace item its host does not know (or a link that names no item)
+_DSPACE_UNFOUND = "invalid or inaccessible DSpace item"
 
 
 @dataclass
@@ -452,38 +454,36 @@ def _typed_files(rows: dict[str, list[Any]]) -> pd.DataFrame:
 def join_file_types(files: pd.DataFrame) -> pd.DataFrame:
     """Add ``file_type`` from the file extension (``left_join(file_types, by = "ext")``).
 
-    As in R, an extension listed twice in ``file_types`` (``json`` is both
-    ``code`` and ``data``) repeats the file; the module's de-duplication drops
-    the repeat later.
+    One row per file: an extension ``file_types`` lists twice (``json`` is
+    both ``code`` and ``data``) takes its first type in table order, what the
+    module's de-duplication kept, as in github_files() and the other
+    listings. R's join repeats such a file once per type (UPSTREAM_ISSUES U46).
     """
-    if len(files) == 0:
-        out = files.copy()
+    out = files.reset_index(drop=True)
+    if len(out) == 0:
+        out = out.copy()
         out["file_type"] = pd.Series([], dtype="string")
         return out
-    idx: list[int] = []
-    types: list[str | None] = []
-    for i, matches in enumerate(_ext_types(vals(files["file_name"]))):
-        for t in matches:
-            idx.append(i)
-            types.append(t)
-    out = files.iloc[idx].reset_index(drop=True)
+    types = [t[0] for t in _ext_types(vals(out["file_name"]))]
+    out = out.copy()
     out["file_type"] = pd.Series(types, dtype="string")
     return out
 
 
 def _ext_types(names: Sequence[Any]) -> list[list[str | None]]:
-    """The ``file_types`` types of each file name's extension (``[None]`` for none)."""
-    from pytacheck.fileinfo.types import file_types
+    """The ``file_types`` types of each file name's extension, in table order
+    (``[None]`` for none)."""
+    from pytacheck.fileinfo.types import ext_rows
 
     bases = [r_basename(v) for v in names]
     ext: list[str | None] = [None if b is None else r_tolower(sub(r"^.*\.", "", b)) for b in bases]
     no_ext = [(not _na(n)) and not grepl(r"\.", b) for n, b in zip(names, bases, strict=True)]
     ext = [None if ne else e for e, ne in zip(ext, no_ext, strict=True)]
-    ft = file_types()
-    lookup: dict[str, list[str | None]] = {}
-    for e, t in zip(vals(ft["ext"]), vals(ft["type"]), strict=True):
-        lookup.setdefault(e, []).append(None if _na(t) else t)
-    return [(lookup.get(e) if e is not None else None) or [None] for e in ext]
+    lookup = ext_rows()
+    return [
+        [None if _na(t) else t for _, t in lookup[e]] if e is not None and e in lookup else [None]
+        for e in ext
+    ]
 
 
 def _file_rows(
@@ -899,14 +899,20 @@ def list_dspace(
     repos: Repos, urls: list[str], pb: Any, cache: bool
 ) -> tuple[pd.DataFrame, pd.DataFrame]:
     """The legacy DSpace block (PsychArchives and other DSpace 5/6 hosts)."""
-    from pytacheck.archives.psycharchives import psycharchives_file_download
+    from pytacheck.archives.psycharchives import _psycharchives_file_lists
 
     files_df = placeholder()
     meta = meta_frame()
     if not urls:
         return files_df, meta
     try:
-        pa = psycharchives_file_download(urls, pb=pb, cache=cache)
+        # psycharchives_file_download(), and the items it could not find
+        pa, unfound = _psycharchives_file_lists(urls, pb=pb, cache=cache)
+        # an item that could not be found is reported like other failed
+        # repositories; R leaves it unflagged (or, when every item of several
+        # failed, stores its join error: UPSTREAM_ISSUES U43)
+        if unfound:
+            repos.flag(unfound, _DSPACE_UNFOUND)
         attrs = pa.attrs if isinstance(pa, pd.DataFrame) else {}
         rights = attrs.get("rights") or None
         if rights:
@@ -947,13 +953,19 @@ def list_dspace(
 
 def list_dspace7(repos: Repos, urls: list[str], pb: Any) -> pd.DataFrame:
     """The DSpace 7+ block."""
-    from pytacheck.archives.dspace7 import dspace7_file_download
+    from pytacheck.archives.dspace7 import _dspace7_file_lists
 
     files_df = placeholder()
     if not urls:
         return files_df
     try:
-        ds = dspace7_file_download(urls, pb=pb)
+        # dspace7_file_download(), and the items it could not find (an item
+        # without files was found): reported like other failed repositories;
+        # R leaves them unflagged, or stores its join error when every item of
+        # several listed nothing, empty items included (UPSTREAM_ISSUES U43)
+        ds, unfound = _dspace7_file_lists(urls, pb=pb)
+        if unfound:
+            repos.flag(unfound, _DSPACE_UNFOUND)
         if ds is not None and len(ds) > 0:
             ds = _filter_not_dir(ds)
             names = _col(ds, "name")

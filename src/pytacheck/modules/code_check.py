@@ -335,8 +335,10 @@ def code_check(
         )
         summary_library = "All libraries/imports were loaded in one block."
     else:
+        # R: "In %d code files" whatever the count (UPSTREAM_ISSUES U82)
+        n = len(library_issue)
         report_library = (
-            f"{_LIBRARY} In {len(library_issue)} code files, libraries/imports were at multiple "
+            f"{_LIBRARY} In {n} code file{plural(n)}, libraries/imports were at multiple "
             "places (i.e., with more than 3 non-comment lines in between)."
         )
         summary_library = "Libraries/imports were loaded in multiple places."

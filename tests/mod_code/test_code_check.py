@@ -1251,3 +1251,26 @@ def test_zip_expansion_honours_skip_on_api_limit(monkeypatch: pytest.MonkeyPatch
     _code_expand_zip(table, skip_on_api_limit=True)
     _code_expand_zip(table)
     assert seen == [True, False]
+
+
+def test_one_file_with_scattered_libraries_is_singular(tmp_path: Path) -> None:
+    # U82: metacheck says "In 1 code files, libraries/imports were at multiple places"
+    lines = ["library(a)", *[f"x{i} <- {i}" for i in range(5)], "library(b)"]
+    write(tmp_path / "one.R", lines)
+    text = report_text(run_dir(tmp_path))
+    assert "In 1 code file, libraries/imports were at multiple places" in text
+    write(tmp_path / "two.R", lines)
+    text = report_text(run_dir(tmp_path))
+    assert "In 2 code files, libraries/imports were at multiple places" in text
+
+
+@pytest.mark.parametrize("empty", [pc.paper, lambda: pc.PaperList([])], ids=["paper", "list"])
+def test_empty_paper_gives_the_na_result(empty: Any) -> None:
+    # U79: metacheck's repo_check stops on paper() and paperlist()
+    paper = empty()
+    mo = module_run(paper, "code_check")
+    assert mo.traffic_light == "na"
+    assert len(mo.table) == 0
+    ids = [] if isinstance(paper, pc.PaperList) else [paper.paper_id]
+    assert mo.summary_table["paper_id"].tolist() == ids
+    assert mo.summary_table["code_n"].tolist() == [0] * len(ids)

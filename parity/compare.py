@@ -32,6 +32,12 @@ Per-case options (``compare:`` in the case YAML):
 ``error``       when R raised an error, how Python's error message must match
                 R's (see :func:`error_matches`): ``any`` (default: Python must
                 raise, its message is its own), ``contains`` or ``exact``
+
+A case whose only difference from R is text pytacheck corrected on purpose (a
+typo, a plural, a full stop in report prose) describes the correction with
+``r_text`` in its ``known_divergence`` (see ``parity.cases``): substitutions
+that :func:`rewrite_r_text` applies to every string of R's golden before the
+comparison, so the case is still compared with R for everything else.
 """
 
 from __future__ import annotations
@@ -113,6 +119,96 @@ def error_matches(r_msg: str | None, py_msg: str | None, mode: str = "contains")
     if mode == "exact":
         return False
     return r in p or (p != "" and r.startswith(p))
+
+
+# -- r_text: R's text as pytacheck corrects it ------------------------------------------
+
+
+@dataclass(frozen=True)
+class TextSub:
+    """One ``r_text`` substitution: *old* -> *new* in every string of R's golden.
+
+    A literal replacement of every occurrence, or with ``regex`` Python's
+    ``re.sub(old, new, s)`` (``\\1`` in *new* is a group).
+    """
+
+    old: str
+    new: str
+    regex: bool = False
+
+    def apply(self, s: str) -> str:
+        if self.regex:
+            return re.sub(self.old, self.new, s)
+        return s.replace(self.old, self.new)
+
+    def __str__(self) -> str:
+        flag = ", regex" if self.regex else ""
+        return f"[{self.old!r}, {self.new!r}{flag}]"
+
+
+def parse_r_text(div: Any) -> list[TextSub]:
+    """The ``r_text`` substitutions of a ``known_divergence`` (none for other marks).
+
+    ``r_text`` is a list of ``[old, new]`` pairs (literal text) or ``[old, new,
+    "regex"]`` triples (a Python regular expression and its replacement),
+    applied in order.
+    """
+    if not isinstance(div, dict) or "r_text" not in div:
+        return []
+    items = div["r_text"]
+    if not isinstance(items, list) or not items:
+        raise ValueError("r_text must be a non-empty list of [old, new] or [old, new, regex]")
+    subs = []
+    for item in items:
+        ok = (
+            isinstance(item, list)
+            and len(item) in (2, 3)
+            and all(isinstance(s, str) for s in item)
+            and item[0] != ""
+            and (len(item) == 2 or item[2] == "regex")
+        )
+        if not ok:
+            raise ValueError(f"r_text: {item!r} is not [old, new] or [old, new, regex]")
+        sub = TextSub(item[0], item[1], len(item) == 3)
+        if sub.regex:
+            try:
+                re.compile(sub.old)
+            except re.error as exc:
+                raise ValueError(f"r_text: {item!r}: {exc}") from None
+        subs.append(sub)
+    return subs
+
+
+def rewrite_r_text(x: Any, subs: list[TextSub], used: list[bool]) -> Any:
+    """A copy of the canonical value *x* with *subs* applied to every string value.
+
+    Strings are the values of character vectors (names are left alone);
+    ``used[i]`` becomes true when ``subs[i]`` changed a string.
+    """
+
+    def text(s: str) -> str:
+        for i, sub in enumerate(subs):
+            new = sub.apply(s)
+            if new != s:
+                used[i] = True
+                s = new
+        return s
+
+    def walk(node: Any) -> Any:
+        if isinstance(node, dict):
+            if node.get("t") == "chr":
+                return {
+                    **node,
+                    "v": [text(s) if isinstance(s, str) else s for s in node.get("v", [])],
+                }
+            return {k: walk(v) for k, v in node.items()}
+        if isinstance(node, list):
+            return [walk(v) for v in node]
+        return node
+
+    if isinstance(x, str):
+        return text(x)
+    return walk(x)
 
 
 def _is_empty(x: dict[str, Any]) -> bool:

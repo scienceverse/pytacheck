@@ -1,5 +1,5 @@
 {
-  "id": "causal_claims.paperlist_none",
+  "id": "causal_claims.paperlist_no_abstract_untitled",
   "ok": true,
   "error": null,
   "warnings": [],
@@ -68,8 +68,12 @@
         "v": [
           "Journal Article Reporting Standards require details about randomization procedures, or how possible bias due to non-randomization is mitigated. This information is often not reported. Furthermore, researchers sometimes make causal claims that are not warranted, for example because there was no random assignment to conditions. This module checks how (non)randomization is reported, and checks for causal claims in the title and abstract. Researchers are asked to double check whether this information is reported completely and correctly.",
           "#### Randomization",
-          "Metacheck's text matching algorithm did not identify sentences describing randomization. If random assignment was present, please clearly report this (e.g., participants were randomly assigned to...). If this was a non-randomized study, the journal article reporting standards (JARS) ask that you describe the following:",
-          "- Procedures employed to help minimize potential bias due to nonrandomization (e.g., matching, propensity score matching).",
+          "We identified 6 sentences describing randomization.",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(c(\"Participants were randomly assigned to the experimental or control condition.\", \n\"Participants were randomly assigned to one of three conditions.\", \n\"Randomization was performed with a computer script.\", \"Subjects were assigned at random to the two groups.\", \n\"Participants were RANDOMLY ALLOCATED to groups.\", \"The sample was randomly split into halves.\"\n)), names = \"\", class = \"data.frame\", row.names = c(NA, -6L))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 2, FALSE)\n```\n",
+          "If this was a study that contained random assignment to conditions, the journal article reporting standards (JARS) ask that you describe the following:",
+          "1. Random assignment method: Procedure used to generate the random assignment sequence, including details of any restriction (e.g., blocking, stratification)",
+          "2. Random assignment concealment: Whether sequence was concealed until interventions were assigned",
+          "3. Random assignment implementation: Who generated the assignment sequence, who enrolled participants, who assigned participants to groups",
           "#### Causal Claims",
           "No causal claims were observed in the title.",
           "No causal claims were observed in the abstract.",
@@ -87,12 +91,12 @@
       {
         "t": "chr",
         "v": [
-          "\n-  We identified no sentences describing randomization.\n-  No causal claims were observed in the title.\n-  No causal claims were observed in the abstract."
+          "\n-  We identified 6 sentences describing randomization.\n-  No causal claims were observed in the title.\n-  No causal claims were observed in the abstract."
         ]
       },
       {
         "t": "df",
-        "nrow": 2,
+        "nrow": 3,
         "names": [
           "paper_id",
           "causal"
@@ -101,13 +105,15 @@
           {
             "t": "chr",
             "v": [
-              "pl_a",
-              "pl_b"
+              "pl_one",
+              "pl_none",
+              "pl_several"
             ]
           },
           {
             "t": "dbl",
             "v": [
+              0,
               0,
               0
             ]

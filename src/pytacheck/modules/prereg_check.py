@@ -51,14 +51,15 @@ def _unique(values: Iterable[Any]) -> list[Any]:
 
 
 def _no_prereg_summary(paper: Any) -> pd.DataFrame:
-    """``data.frame(paper_id = paper_id(paper), preregistration = 0)``."""
+    """``data.frame(paper_id = paper_id(paper), preregistration = 0)``.
+
+    An empty paper list gives a table without rows; metacheck's
+    ``data.frame()`` stops there ("arguments imply differing number of rows:
+    0, 1", U79).
+    """
     from pytacheck.papers.tables import paper_id
 
     ids = paper_id(paper)
-    if not ids:
-        # an empty paper list: paper_id() is NULL, and R 4.5's data.frame()
-        # does not recycle the length-one column to zero rows
-        raise ValueError("arguments imply differing number of rows: 0, 1")
     return pd.DataFrame(
         {"paper_id": pd.Series(ids, dtype="string"), "preregistration": [0.0] * len(ids)}
     )

@@ -213,6 +213,7 @@ def _repo_check(
     bar: Any,
 ) -> dict[str, Any]:
     """The body of :func:`repo_check` (*bar* is the module's progress spinner)."""
+    from pytacheck.papers.tables import as_paper_list
     from pytacheck.papers.tables import paper_id as paper_ids
 
     params = dict(params or {})
@@ -222,10 +223,22 @@ def _repo_check(
     def pids() -> list[Any]:
         # paper = None (code_check()'s "local files only") has one paper of
         # unknown id; R stops in paper_id(NULL) (UPSTREAM_ISSUES U78)
-        return [None] if paper is None else list(paper_ids(paper))
+        if paper is None:
+            return [None]
+        # an empty paper (paper()) has no info row, so paper_id() has no id for
+        # it: its own id then (an empty paper list has none)
+        return list(paper_ids(paper)) or [p.paper_id for p in as_paper_list(paper)]
+
+    def first_pid() -> Any:
+        # an empty paper list has no paper: rows added for it (a local folder)
+        # get an NA paper_id; R's paper_id(paper)[[1]] stops with "subscript out
+        # of bounds" there and for paper() (UPSTREAM_ISSUES U79)
+        ids = pids()
+        return ids[0] if ids else None
 
     # get repository links ----
-    if local_only is True or paper is None:
+    # an empty paper list has no links (R's link tables for it lack `href`, U79)
+    if local_only is True or paper is None or len(as_paper_list(paper)) == 0:
         repos = rc.Repos(rc.empty_links())
     else:
         links, fs_links = rc.collect_links(paper)
@@ -235,7 +248,7 @@ def _repo_check(
     # get files ----
     osf_urls = repos.urls("osf")
     osf_ids = rc.vals(repos.df["paper_id"][(repos.df["repo_type"] == "osf").fillna(False)])
-    osf_paper_id = osf_ids[0] if osf_ids else pids()[0]
+    osf_paper_id = osf_ids[0] if osf_ids else first_pid()
 
     osf_meta = rc.meta_frame()
     if osf_license is True and osf_urls:
@@ -254,7 +267,7 @@ def _repo_check(
         local_files_df = rc.list_local(local_path)
         # a folder given twice is one repository
         paths = [local_path] if isinstance(local_path, str) else list(dict.fromkeys(local_path))
-        pid = pids()[0]
+        pid = first_pid()
         repos.add(rc.repo_rows(rc.NA_SCALAR if pid is None else pid, paths, "local", rc.NA_SCALAR))
 
     # no repos found ----

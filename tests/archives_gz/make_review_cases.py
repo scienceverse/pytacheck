@@ -101,6 +101,13 @@ case(
     }}},
     compare=IGN_PID,
 )  # fmt: skip
+# an empty paper list (UPSTREAM_ISSUES U79): its url table has no columns
+for _fn, _mod in (("github_links", GH), ("gitlab_links", GL), ("zenodo_links", ZE)):
+    wrapped(
+        f"{_fn}.review.empty_paperlist",
+        f'{_fn}(paperlist(test_paper("a"))[0])',
+        f'{imp(_mod)}.{_fn}(__import__("pytacheck").PaperList([]))',
+    )
 case(
     "zenodo_links.review.tricky",
     "zenodo_links",

@@ -260,11 +260,9 @@ def power(paper: Any, seed: Any = 8675309) -> dict[str, Any]:
         tl = "na"
         summary_text = _LLM_FAILED_TEXT if llm_failed else "No power analyses were detected."
         report = [summary_text, collapse_section(_GUIDANCE)]
+        # an empty paper list gives a summary table without rows (metacheck's
+        # `summary_table$power_n <- 0` on data.frame(paper_id = NULL) stops, U79)
         ids = paper_id(paper)
-        if len(ids) == 0:
-            # R: `summary_table$power_n <- 0` on the 0-row data.frame(paper_id = NULL)
-            # of an empty paper list errors (an upstream bug, reproduced)
-            raise ValueError("replacement has 1 row, data has 0")
         summary_table = pd.DataFrame(
             {
                 "paper_id": pd.Series(ids, dtype="string"),

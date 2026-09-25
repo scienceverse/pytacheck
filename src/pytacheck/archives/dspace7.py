@@ -312,6 +312,16 @@ def dspace7_file_download(dspace7_url: Any, pb: Any = None) -> pd.DataFrame | No
     host, the item cannot be found or it has no files. A sequence of URLs
     gives one table, aligned with the input.
     """
+    return _dspace7_file_lists(dspace7_url, pb)[0]
+
+
+def _dspace7_file_lists(dspace7_url: Any, pb: Any = None) -> tuple[pd.DataFrame | None, list[str]]:
+    """:func:`dspace7_file_download` and the URLs it could not list.
+
+    The second value names the URLs whose item was not found (no known DSpace
+    7 host, or the host does not know the item), which repo_check() reports
+    as inaccessible; an item without files was found.
+    """
     from pytacheck._r import bind_rows
     from pytacheck.archives import _spinner, _tick
     from pytacheck.archives.dataverse import _paste
@@ -322,32 +332,34 @@ def dspace7_file_download(dspace7_url: Any, pb: Any = None) -> pd.DataFrame | No
     with _spinner(pb) as bar:
         if len(urls) > 1:
             unique_urls = [u for u in dict.fromkeys(urls) if u is not None]
-            file_lists = [dspace7_file_download(u, pb=bar) for u in unique_urls]
-            info = bind_rows(file_lists)
+            results = [_dspace7_file_lists(u, pb=bar) for u in unique_urls]
+            unfound = [u for _, failed in results for u in failed]
+            info = bind_rows([df for df, _ in results])
             orig = pd.DataFrame({"dspace7_url": pd.Series(urls, dtype="string")})
             if "dspace7_url" not in info.columns:
-                return None  # every URL failed (metacheck's join errors here: U43)
-            return left_join(orig, info, by="dspace7_url")
+                return None, unfound  # no URL listed a file (metacheck's join errors here: U43)
+            return left_join(orig, info, by="dspace7_url"), unfound
 
         url = urls[0] if urls else None
+        unlisted = [] if url is None else [url]
         _tick(bar, f"* Listing files from {_paste(url) if urls else ''}...")
         parsed = _dspace7_parse(urls)
         if len(parsed) == 0:
             raise IndexError("subscript out of bounds")
         host = parsed["host"].iloc[0]
         if is_na(host):
-            return None
+            return None, unlisted
 
         info = _dspace7_info(
             str(host), uuid=parsed["uuid"].iloc[0], handle=parsed["handle"].iloc[0], pb=bar
         )
         if "error" in info.columns:
-            return None
+            return None, unlisted
 
         file_list = info["files"].iloc[0]
         if file_list is None or len(file_list) == 0:
             _tick(bar, f"- {_paste(url)} contained no files")
-            return None
+            return None, []
 
         n = len(file_list)
         df = pd.DataFrame(
@@ -360,4 +372,4 @@ def dspace7_file_download(dspace7_url: Any, pb: Any = None) -> pd.DataFrame | No
                 "isdir": pd.Series([False] * n, dtype="boolean"),
             }
         )
-        return _add_ext_type(df)
+        return _add_ext_type(df), []

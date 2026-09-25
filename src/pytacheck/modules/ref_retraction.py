@@ -23,6 +23,35 @@ def _refs_with_doi(paper: Any) -> pd.DataFrame:
     return bib.loc[keep].reset_index(drop=True)
 
 
+def _rw_entries(rw: pd.DataFrame, dois: pd.Series) -> pd.DataFrame:
+    """The RetractionWatch rows of *dois*, one per DOI whatever its case.
+
+    RetractionWatch joins the notices of one DOI with ``;`` ("Retraction;Expression
+    of concern"), but lists a few DOIs under two spellings with a notice each
+    (10.1212/wnl.57.3.445: Retraction, 10.1212/WNL.57.3.445: Expression of concern);
+    their notices are joined the same way, so a citation gets both and counts as
+    one article.
+    """
+    key = rw["doi"].astype("string").str.lower()
+    wanted = set(dois.astype("string").str.lower().dropna().tolist())
+    keep = (key.notna() & key.isin(wanted)).to_numpy(dtype=bool)
+    hits = rw.loc[keep].assign(doi=key[keep].array)
+    if not hits["doi"].duplicated().any():
+        return hits
+
+    def notices(values: pd.Series) -> str | None:
+        parts = [p for v in values.dropna().tolist() for p in str(v).split(";")]
+        return ";".join(dict.fromkeys(parts)) if parts else None
+
+    types = hits.groupby("doi", sort=False)["retractionwatch"].agg(notices)
+    return pd.DataFrame(
+        {
+            "doi": pd.array(types.index.tolist(), dtype="string"),
+            "retractionwatch": pd.array(types.tolist(), dtype="string"),
+        }
+    )
+
+
 def _summarise_by_paper(table: pd.DataFrame, values: pd.Series, name: str) -> pd.DataFrame:
     """``dplyr::summarise(table, .by = "paper_id", <name> = sum(values))``.
 
@@ -62,9 +91,11 @@ def ref_retraction(paper: Any) -> dict[str, Any]:
     """Port of ``inst/modules/ref_retraction.R::ref_retraction()``.
 
     Joins the paper's references (with their ``bib_match``-fixed DOIs, via
-    ``ref_table()``) to the RetractionWatch database on the DOI.
+    ``ref_table()``) to the RetractionWatch database on the DOI, ignoring
+    its case.
     """
     from pytacheck.db.retractionwatch import retractionwatch
+    from pytacheck.modules.ref_summary import _join_doi
 
     # table ----
     bib = _refs_with_doi(paper)
@@ -73,10 +104,10 @@ def ref_retraction(paper: Any) -> dict[str, Any]:
     if len(bib) == 0:
         return dict(_NO_REFS)
 
-    ## join to rw table (dplyr::inner_join keeps bib's order)
-    rw = retractionwatch()
-    rw = rw.loc[rw["doi"].isin(bib["doi"]).to_numpy(dtype=bool)]
-    table = bib.merge(rw, on="doi", how="inner", sort=False).reset_index(drop=True)
+    ## join to rw table (dplyr::inner_join keeps bib's order), ignoring the case
+    ## of DOIs: metacheck's exact join missed the RetractionWatch DOIs with
+    ## capitals, about a fifth of them (U157)
+    table = _join_doi(bib, _rw_entries(retractionwatch(), bib["doi"]))
 
     # traffic_light ----
     tl = "info" if len(table) else "na"

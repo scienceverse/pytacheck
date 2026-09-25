@@ -1840,3 +1840,81 @@
       "id": "p_cache"
     "args":
       "cache": true
+- "id": "repo_check.dspace.unfound"
+  "note": "a PsychArchives item that does not exist"
+  "r": "identity"
+  "py": "tests.mod_repo_check.parity_support.run_repo"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2:::with_mock_path(c(\"tests/mod_repo_check/mocks\", \"upstream/metacheck/tests/testthat/apis\"), httptest2::with_mock_api(testthat::with_mocked_bindings(module_run(tp(c(\"https://www.psycharchives.org/handle/20.500.12034/99991\"), \"p_dspace_unfound\"), \"repo_check\"), online = function(...) TRUE, .package = \"metacheck\")), replace = TRUE) })()"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "papers":
+    - "url":
+      - "https://www.psycharchives.org/handle/20.500.12034/99991"
+      "id": "p_dspace_unfound"
+  "compare":
+    "ignore":
+    - "table.file_location"
+- "id": "repo_check.dspace.unfound_two"
+  "note": "two PsychArchives items that do not exist"
+  "r": "identity"
+  "py": "tests.mod_repo_check.parity_support.run_repo"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2:::with_mock_path(c(\"tests/mod_repo_check/mocks\", \"upstream/metacheck/tests/testthat/apis\"), httptest2::with_mock_api(testthat::with_mocked_bindings(module_run(tp(c(\"https://www.psycharchives.org/handle/20.500.12034/99991\", \"https://www.psycharchives.org/handle/20.500.12034/99992\"), \"p_dspace_unfound_two\"), \"repo_check\"), online = function(...) TRUE, .package = \"metacheck\")), replace = TRUE) })()"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "papers":
+    - "url":
+      - "https://www.psycharchives.org/handle/20.500.12034/99991"
+      - "https://www.psycharchives.org/handle/20.500.12034/99992"
+      "id": "p_dspace_unfound_two"
+  "compare":
+    "ignore":
+    - "table.file_location"
+- "id": "repo_check.dspace.found_and_unfound"
+  "note": "a PsychArchives item and one that does not exist"
+  "r": "identity"
+  "py": "tests.mod_repo_check.parity_support.run_repo"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2:::with_mock_path(c(\"tests/mod_repo_check/mocks\", \"upstream/metacheck/tests/testthat/apis\"), httptest2::with_mock_api(testthat::with_mocked_bindings(module_run(tp(c(\"https://www.psycharchives.org/handle/20.500.12034/17526\", \"https://www.psycharchives.org/handle/20.500.12034/99991\"), \"p_dspace_found_and_unfound\"), \"repo_check\"), online = function(...) TRUE, .package = \"metacheck\")), replace = TRUE) })()"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "papers":
+    - "url":
+      - "https://www.psycharchives.org/handle/20.500.12034/17526"
+      - "https://www.psycharchives.org/handle/20.500.12034/99991"
+      "id": "p_dspace_found_and_unfound"
+  "compare":
+    "ignore":
+    - "table.file_location"
+- "id": "repo_check.dspace7.unfound"
+  "note": "a DSpace 7 item that does not exist"
+  "r": "identity"
+  "py": "tests.mod_repo_check.parity_support.run_repo"
+  "args":
+    "x":
+      "$expr":
+        "r": "(function() { .r <- httptest2::get_current_redactor(); httptest2::set_redactor(function(req) { req$url <- gsub(\"[?&]page(%5[Bb]size%5[Dd]|\\\\[size\\\\])=100\", \"\", req$url); req }); Sys.setenv(TESTTHAT = \"true\"); on.exit({ httptest2::set_redactor(.r); Sys.unsetenv(\"TESTTHAT\") }); tp <- function(url, id, text = LETTERS) { p <- test_paper(text, url); p$paper_id <- id; p }; httptest2:::with_mock_path(c(\"tests/mod_repo_check/mocks\", \"upstream/metacheck/tests/testthat/apis\"), httptest2::with_mock_api(testthat::with_mocked_bindings(module_run(tp(c(\"https://repository.gatech.edu/entities/publication/00000000-0000-4000-8000-000000000000\"), \"p_dspace7_unfound\"), \"repo_check\"), online = function(...) TRUE, .package = \"metacheck\")), replace = TRUE) })()"
+        "py": "None"
+  "py_drop":
+  - "x"
+  "py_args":
+    "papers":
+    - "url":
+      - "https://repository.gatech.edu/entities/publication/00000000-0000-4000-8000-000000000000"
+      "id": "p_dspace7_unfound"
+  "compare":
+    "ignore":
+    - "table.file_location"

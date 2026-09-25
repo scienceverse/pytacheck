@@ -17,7 +17,6 @@ import pytest
 
 import pytacheck as pc
 from pytacheck._r import grepl
-from pytacheck.module import ModuleError
 from pytacheck.modules.ethics_check import _ETHICS_ANY, _ETHICS_WORDS
 from pytacheck.text.extract import _LIVE_ANY, _LIVE_WORDS, _detect_live_data
 from tests.mod_ethics.make_parity_cases import SWEEP
@@ -275,15 +274,18 @@ def test_references_are_not_searched() -> None:
     assert mo.traffic_light == "red"
 
 
-@pytest.mark.parametrize(
-    ("paper", "message"),
-    [
-        (lambda: pc.PaperList([]), "Join columns in `x` must be present in the data."),
-    ],
-)
-def test_r_errors(paper: Any, message: str) -> None:
-    with pytest.raises(ModuleError, match=re.escape(message)):
-        run(paper())
+@pytest.mark.parametrize("paper", [lambda: pc.PaperList([]), lambda: []])
+def test_empty_paperlist_has_an_empty_result(paper: Any) -> None:
+    # U79: metacheck stops ("Join columns in `x` must be present in the data.")
+    out = direct(paper())
+    assert out["traffic_light"] == "na"
+    assert out["summary_table"].columns.tolist()[:2] == ["paper_id", "ethics_approved"]
+    assert len(out["summary_table"]) == 0
+    assert len(out["table"]) == 0
+    assert out["report"] is None
+    mo = run(pc.PaperList([]))
+    assert mo.traffic_light == "na"
+    assert len(mo.summary_table) == 0
 
 
 def test_duplicated_paper_ids_are_summarised_together() -> None:
@@ -352,8 +354,6 @@ _FORMATTED_FIRST = ["formatted", "text_id", "section_id", "paragraph_id"]
             TypeError,
             "paper must be a paper or paperlist object.",
         ),
-        # list() is a paper list without papers, like paperlist()
-        (lambda: [], ValueError, "Join columns in `x` must be present in the data."),
     ],
 )
 def test_direct_r_errors(paper: Any, exc: type[Exception], message: str) -> None:

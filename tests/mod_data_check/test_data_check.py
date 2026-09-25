@@ -931,3 +931,55 @@ def test_zip_peek_reasons_stay_with_their_rows(
     reasons = dict(zip(names, dl["zip_peek_reason"], strict=True))
     assert reasons["stimuli.zip"] == "zip skipped: no data"
     assert sum(r is not None for r in reasons.values()) == 1
+
+
+# -----------------------------------------------------------------------------
+# counts of one (UPSTREAM_ISSUES U82) and empty input (U79)
+# -----------------------------------------------------------------------------
+
+
+def test_careless_counts_of_one_are_singular(tmp_path: Path) -> None:
+    # metacheck: "1 distinct respondent were flagged", "1 file contain survey data"
+    _write_csv(make_careless_survey(), tmp_path / "dc_careless" / "data" / "survey.csv")
+    assert "1 distinct respondent was flagged for **straightlining**" in report_text(
+        run_dir(tmp_path / "dc_careless")
+    )
+    skipped = report_text(run_dir(tmp_path / "dc_careless", careless=False))
+    assert "1 file contains survey data with an identifier" in skipped
+
+
+def test_spreadsheet_counts_of_one_are_singular(tmp_path: Path) -> None:
+    # metacheck: "1 merged range (A7:B7) break", "1 column is empty or have a blank header"
+    details = set(run_dir(make_excel_repo(tmp_path)).findings["detail"].dropna())
+    assert "1 merged range (A7:B7) breaks the rectangular grid." in details
+    assert "1 column is empty or has a blank header." in details
+    assert any(d.startswith("2 cells use fill colour") for d in details)
+
+
+def test_one_colour_coded_cell_is_singular(tmp_path: Path) -> None:
+    from openpyxl import Workbook
+    from openpyxl.styles import PatternFill
+
+    wb = Workbook()
+    ws = wb.active
+    ws.append(["id", "val"])
+    ws.append([1, 2])
+    ws.cell(row=2, column=2).fill = PatternFill("solid", fgColor="FFFFCC00")
+    wb.save(tmp_path / "one.xlsx")
+    found = h.dv_spreadsheet_findings(
+        pd.DataFrame({"file_name": ["one.xlsx"], "file_location": [str(tmp_path / "one.xlsx")]})
+    )
+    assert found["findings"]["detail"].tolist() == [
+        "1 cell uses fill colour to encode information; colour is lost on CSV export."
+    ]
+
+
+@pytest.mark.parametrize("empty", [pc.paper, lambda: pc.PaperList([])], ids=["paper", "list"])
+def test_empty_paper_gives_the_na_result(empty: Any) -> None:
+    # metacheck's repo_check stops on paper() and paperlist()
+    paper = empty()
+    mo = module_run(paper, "data_check")
+    assert mo.traffic_light == "na"
+    assert mo.summary_text == "We found no files to analyse."
+    ids = [] if isinstance(paper, pc.PaperList) else [paper.paper_id]
+    assert mo.summary_table["paper_id"].tolist() == ids
