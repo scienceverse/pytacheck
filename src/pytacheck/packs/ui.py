@@ -3,6 +3,8 @@
 Everything that asks the user goes through :func:`confirm` / :func:`ask`, so
 tests (and embedding applications) can replace them. Without an interactive
 terminal nothing is ever confirmed: pass ``yes=True`` / ``--yes`` instead.
+Questions are shown through :func:`pytacheck.packs.auth.redact`, so a URL
+typed with a password or token is never echoed back.
 """
 
 from __future__ import annotations
@@ -38,7 +40,13 @@ def interactive() -> bool:
 
 
 def confirm(question: str, *, default: bool = False) -> bool:
-    """Ask a yes/no question (``[y/N]``); ``False`` when nobody can answer."""
+    """Ask a yes/no question (``[y/N]``); ``False`` when nobody can answer.
+
+    The question is shown redacted (a URL's password or token never is).
+    """
+    from pytacheck.packs.auth import redact
+
+    question = redact(question)
     if not interactive():
         console().print(
             f"{question} [y/N] [dim](no terminal to ask: pass --yes / yes=True to confirm)[/]"
@@ -50,10 +58,14 @@ def confirm(question: str, *, default: bool = False) -> bool:
 
 
 def ask(question: str, *, default: str = "") -> str:
-    """Ask for a line of text (the default when nobody can answer)."""
+    """Ask for a line of text (the default when nobody can answer); shown redacted."""
     if not interactive():
         return default
     from rich.prompt import Prompt
+
+    from pytacheck.packs.auth import redact
+
+    question = redact(question)
 
     return str(Prompt.ask(question, default=default, console=console()))
 

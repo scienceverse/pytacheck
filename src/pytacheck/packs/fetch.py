@@ -43,6 +43,7 @@ __all__ = [
     "MAX_DOWNLOAD",
     "MAX_FILES",
     "DownloadError",
+    "GitMissing",
     "api_tarball_url",
     "clone_url",
     "copy_tree",
@@ -50,6 +51,7 @@ __all__ = [
     "extract_tarball",
     "fetch_source",
     "git_fetch",
+    "git_read_file",
     "git_rev",
     "resolve_rev",
     "tarball_url",
@@ -82,7 +84,7 @@ def _refuse_native(rel: str) -> None:
 def _slug(source: Mapping[str, Any], host: str) -> str:
     slug = str(source.get(host) or "").strip("/")
     if not re.match(r"^[A-Za-z0-9_.-]+(/[A-Za-z0-9_.-]+)+$", slug) or ".." in slug.split("/"):
-        raise PackError(f"Invalid {host} source {slug!r}: expected 'owner/repo'")
+        raise PackError(f"Invalid {host} source {redact(slug)!r}: expected 'owner/repo'")
     return slug
 
 
@@ -101,7 +103,10 @@ def _subdir(source: Mapping[str, Any]) -> str:
 
 
 def describe_source(source: Mapping[str, Any]) -> str:
-    """A one-line description, e.g. ``github janedoe/psych (packs/psych)``."""
+    """A one-line description, e.g. ``github janedoe/psych (packs/psych)``.
+
+    Credentials in a URL (from an older pin) are shown redacted.
+    """
     host = _host(source)
     if host is not None:
         text = f"{host} {source[host]}"
@@ -114,7 +119,7 @@ def describe_source(source: Mapping[str, Any]) -> str:
     else:
         text = str(dict(source))
     sub = source.get("subdir")
-    return f"{text} ({sub})" if sub else text
+    return redact(f"{text} ({sub})" if sub else text)
 
 
 def tarball_url(source: Mapping[str, Any], rev: str) -> str | None:
@@ -396,6 +401,94 @@ def _run_git(
     )
 
 
+def _run_git_bytes(
+    *args: str, cwd: str | os.PathLike[str] | None = None
+) -> subprocess.CompletedProcess[bytes]:
+    return subprocess.run(  # noqa: S603 - fixed git binary, validated URL, no shell
+        [_git_bin(), *_GIT_CONFIG, *args],
+        cwd=cwd,
+        env=_git_env(),
+        capture_output=True,
+        timeout=600,
+        check=False,
+    )
+
+
+class GitMissing(PackError):
+    """git read the repository, and it has no such file (so access is not the problem)."""
+
+
+def git_read_file(url: str, ref: str, path: str, *, limit: int) -> bytes:
+    """One file of a git repository at *ref* (a branch, tag, commit or ``HEAD``), nothing else.
+
+    A shallow, blob-less fetch (``--depth 1 --filter=blob:none``: commits and
+    trees only, where the server allows it) into a bare temporary repository,
+    then ``git cat-file`` of that file alone (git fetches just that blob).
+    Nothing is checked out, so the repository's other files (symlinks, large
+    or binary files) do not matter. Refuses files over *limit* bytes. Uses
+    the user's git credentials; errors are redacted and name no temporary
+    path. :class:`GitMissing` means git read the repository but it has no
+    *path* (the file is missing, not the access).
+    """
+    _check_git_url(url)
+    if not ref or ref.startswith("-") or not re.match(r"^[\w./+-]+$", ref):
+        raise PackError(f"Invalid git ref {ref!r}")
+    rel = str(PurePosixPath(path))
+    if not path or rel.startswith(("/", "-")) or ".." in PurePosixPath(rel).parts:
+        raise PackError(f"Invalid path {path!r}")
+    shown = redact(url)
+
+    def failed(what: str, res: subprocess.CompletedProcess[Any]) -> DownloadError:
+        err = res.stderr.decode("utf-8", "replace") if isinstance(res.stderr, bytes) else res.stderr
+        detail = " ".join(redact(err or "").replace(str(work), "<repo>").split())
+        return DownloadError(f"git could not {what} of {shown}: {detail or 'failed'}")
+
+    with tempfile.TemporaryDirectory(prefix="pytacheck-git-") as tmp:
+        work = Path(tmp) / "repo.git"
+        res = _run_git("init", "-q", "--bare", str(work))
+        if res.returncode != 0:
+            raise PackError("git init failed")
+        res = _run_git("remote", "add", "origin", url, cwd=work)
+        if res.returncode != 0:
+            raise failed("add the remote", res)
+        res = _run_git(
+            "fetch", "-q", "--depth", "1", "--filter=blob:none", "--no-tags",
+            "--no-recurse-submodules", "origin", ref, cwd=work,
+        )  # fmt: skip
+        if res.returncode != 0:
+            if "couldn't find remote ref" in res.stderr:
+                raise GitMissing(f"the repository {shown} has no branch or tag {ref!r}")
+            raise failed(f"fetch {ref}", res)
+        commit = _run_git("rev-parse", "--verify", "-q", "FETCH_HEAD^{commit}", cwd=work)
+        sha = commit.stdout.strip()
+        where = f"{ref} ({sha[:12]})" if sha and ref != sha else ref
+        # "<mode> <type> <object>\t<path>" of that one entry (trees only: no blob is read)
+        entry = _run_git("ls-tree", "--full-tree", "FETCH_HEAD", "--", rel, cwd=work)
+        if entry.returncode != 0:
+            raise failed(f"read {rel}", entry)
+        fields = entry.stdout.split("\t", 1)[0].split()
+        if not fields:
+            raise GitMissing(f"the repository {shown} has no {rel} at {where}")
+        if len(fields) != 3 or fields[1] != "blob" or fields[0] not in ("100644", "100755"):
+            raise GitMissing(f"{rel} in the repository {shown} is not a regular file at {where}")
+        obj = fields[2]
+        size = _run_git("cat-file", "-s", obj, cwd=work)  # fetches this blob alone
+        if size.returncode != 0:
+            raise failed(f"read {rel}", size)
+        try:
+            n = int(size.stdout.strip())
+        except ValueError:
+            n = 0
+        if n > limit:
+            raise PackError(f"{rel} of {shown} is too large ({n} bytes; limit {limit})")
+        blob = _run_git_bytes("cat-file", "blob", obj, cwd=work)
+        if blob.returncode != 0:
+            raise failed(f"read {rel}", blob)
+        if len(blob.stdout) > limit:
+            raise PackError(f"{rel} of {shown} is too large (limit {limit} bytes)")
+        return blob.stdout
+
+
 def git_fetch(url: str, rev: str, dest: str | os.PathLike[str], subdir: str = "") -> int:
     """Check out commit *rev* of *url* with hardened git and copy *subdir* to *dest*.
 
@@ -495,7 +588,7 @@ def resolve_rev(source: Mapping[str, Any], ref: str | None = None) -> str:
             denied = f"github {slug}: {res.problem()}"
     remote = clone_url(source)
     if remote is None:
-        raise PackError(f"Cannot resolve a revision for the source {dict(source)}")
+        raise PackError(f"Cannot resolve a revision for the source {redact(dict(source))}")
     short = bool(ref and re.match(r"^[0-9a-f]{4,39}$", ref.lower()))
     try:
         return _ls_remote(remote, ref)
@@ -530,7 +623,7 @@ def fetch_source(
         if not folder.is_absolute():
             if base is None:
                 raise PackError(
-                    f"The source {dict(source)} is a path relative to its store, and this "
+                    f"The source {redact(dict(source))} is a path relative to its store, and this "
                     "store is not a local folder (its CI regenerates the index with commits)"
                 )
             folder = Path(base) / folder
@@ -554,4 +647,4 @@ def fetch_source(
         return extract_tarball(data, dest, sub)
     if "git" in source:
         return git_fetch(str(source["git"]), rev, dest, sub)
-    raise PackError(f"Unsupported pack source {dict(source)}")
+    raise PackError(f"Unsupported pack source {redact(dict(source))}")

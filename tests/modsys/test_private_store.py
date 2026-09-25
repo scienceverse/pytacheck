@@ -7,12 +7,16 @@ and a token in the environment.
 
 from __future__ import annotations
 
+import contextlib
+import io
 import json
 import logging
 import os
 import re
 import secrets
 import shutil
+import warnings
+from collections.abc import Iterator
 from pathlib import Path
 from typing import Any
 
@@ -313,14 +317,16 @@ def test_git_fallback_for_the_index_and_the_tarball(private, ms, monkeypatch) ->
     """No token: the API, raw and codeload all answer 404; git (the user's credentials) works."""
     monkeypatch.delenv("PYTACHECK_GITHUB_TOKEN")
     fetched: list[tuple[str, str, str]] = []
+    read: list[tuple[str, str, str]] = []
+
+    def git_read_file(url: str, ref: str, path: str, *, limit: int) -> bytes:
+        read.append((url, ref, path))
+        return private.index()
 
     def git_fetch(url: str, rev: str, dest: str | os.PathLike[str], subdir: str = "") -> int:
         fetched.append((url, rev, subdir))
         out = Path(dest)
         out.mkdir(parents=True, exist_ok=True)
-        if not subdir:
-            (out / "index.json").write_bytes(private.index())
-            return 1
         for rel, data in private.trees[rev].items():
             if rel.startswith(subdir + "/"):
                 target = out / rel[len(subdir) + 1 :]
@@ -329,11 +335,12 @@ def test_git_fallback_for_the_index_and_the_tarball(private, ms, monkeypatch) ->
         return 1
 
     monkeypatch.setattr(fetch, "git_fetch", git_fetch)
-    monkeypatch.setattr(fetch, "_ls_remote", lambda url, ref: REV_D if ref is None else "?")
+    monkeypatch.setattr(fetch, "git_read_file", git_read_file)
     monkeypatch.setattr(shutil, "which", lambda name: "/usr/bin/git" if name == "git" else None)
     pack = pack_install("demo", yes=True)
     clone = f"https://github.com/{STORE_REPO}.git"
-    assert fetched == [(clone, REV_D, ""), (clone, REV_C, "packs/demo")]
+    assert read == [(clone, "HEAD", "index.json")]  # the index file alone, no checkout
+    assert fetched == [(clone, REV_C, "packs/demo")]
     assert pack.rev == REV_C and (pack.root / "hello.py").is_file()
     assert json.loads((pack.root / INSTALL_RECORD).read_text())["source"] == {
         "github": STORE_REPO,
@@ -349,7 +356,11 @@ def test_failures_say_how_to_authenticate_without_the_secret(private, ms, monkey
         # as git prints it when a credential helper URL carries the token
         raise DownloadError(f"fatal: unable to access 'https://x:{TOKEN}@github.com/{STORE_REPO}/'")
 
+    def git_read_file(url: str, ref: str, path: str, *, limit: int) -> bytes:
+        return git_fetch(url, ref, "", path)  # type: ignore[return-value]
+
     monkeypatch.setattr(fetch, "git_fetch", git_fetch)
+    monkeypatch.setattr(fetch, "git_read_file", git_read_file)
     monkeypatch.setattr(fetch, "_ls_remote", lambda url, ref: REV_D)
     monkeypatch.setenv("GH_TOKEN", TOKEN)  # a second token in the environment is redacted too
     with pytest.raises(StoreError) as info:
@@ -378,6 +389,224 @@ def test_credentials_in_urls_are_refused(ms) -> None:
         store_add("mine", f"https://{TOKEN}@github.com/o/store")
     assert TOKEN not in str(info.value)
     assert not ms.config_file.exists()
+
+
+# --- the git fallback reads the index file alone ------------------------------------------
+
+
+def _git(*args: str, cwd: Path | None = None) -> str:
+    import subprocess
+
+    res = subprocess.run(
+        ["git", "-c", "user.name=t", "-c", "user.email=t@example.org", *args],
+        cwd=cwd,
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+    return res.stdout.strip()
+
+
+@pytest.fixture
+def store_repo(tmp_path: Path) -> Path:
+    """A store repository with what a pack install would refuse: a symlink, a .so, many files."""
+    if shutil.which("git") is None:
+        pytest.skip("git is not installed")
+    repo = tmp_path / "store-repo"
+    repo.mkdir()
+    _git("init", "-q", "-b", "main", str(repo))
+    (repo / "index.json").write_text('{"schema": 1, "name": "lab", "packs": []}')
+    (repo / "packs" / "a").mkdir(parents=True)
+    (repo / "packs" / "a" / "README.md").write_text("pack a")
+    (repo / "README.md").symlink_to("packs/a/README.md")
+    (repo / "native.so").write_bytes(b"\x7fELF")
+    (repo / "sub").mkdir()
+    (repo / "sub" / "index.json").write_text('{"schema": 1, "packs": [{"name": "x"}]}')
+    _git("add", "-A", cwd=repo)
+    _git("commit", "-qm", "store", cwd=repo)
+    _git("tag", "v1", cwd=repo)
+    return repo
+
+
+@pytest.mark.parametrize("filtering", [False, True])
+def test_git_index_reads_only_the_index_file(store_repo: Path, filtering: bool) -> None:
+    from pytacheck.packs.stores import _git_index
+
+    if filtering:  # a server that honours --filter=blob:none (as GitHub does): lazy blobs
+        _git("config", "uploadpack.allowFilter", "true", cwd=store_repo)
+    url = f"file://{store_repo}"
+    assert json.loads(_git_index(url, "HEAD", "index.json"))["name"] == "lab"
+    assert json.loads(_git_index(url, "main", "sub/index.json"))["packs"] == [{"name": "x"}]
+    assert json.loads(_git_index(url, "v1", "index.json"))["name"] == "lab"
+    sha = _git("rev-parse", "HEAD", cwd=store_repo)
+    assert json.loads(_git_index(url, sha, "index.json"))["name"] == "lab"
+
+
+def test_git_index_errors_name_the_problem_not_a_temp_folder(store_repo: Path) -> None:
+    url = f"file://{store_repo}"
+    sha = _git("rev-parse", "HEAD", cwd=store_repo)
+    with pytest.raises(fetch.GitMissing) as info:
+        fetch.git_read_file(url, "HEAD", "nope/index.json", limit=1000)
+    text = str(info.value)
+    assert text == f"the repository {url} has no nope/index.json at HEAD ({sha[:12]})"
+    with pytest.raises(fetch.GitMissing, match="has no branch or tag 'gone'"):
+        fetch.git_read_file(url, "gone", "index.json", limit=1000)
+    with pytest.raises(fetch.GitMissing, match="is not a regular file"):
+        fetch.git_read_file(url, "HEAD", "packs", limit=1000)
+    with pytest.raises(fetch.GitMissing, match="is not a regular file"):
+        fetch.git_read_file(url, "HEAD", "README.md", limit=1000)  # a symlink
+    with pytest.raises(PackError, match="too large"):
+        fetch.git_read_file(url, "HEAD", "index.json", limit=10)
+    with pytest.raises(DownloadError) as info:
+        fetch.git_read_file(f"file://{store_repo.parent}/missing", "HEAD", "index.json", limit=10)
+    for exc_text in (text, str(info.value)):
+        assert "pytacheck-git-" not in exc_text and "Refusing to install" not in exc_text
+    for bad in ("--upload-pack=x", "a b", ""):
+        with pytest.raises(PackError, match="Invalid git ref"):
+            fetch.git_read_file(url, bad, "index.json", limit=10)
+    for bad in ("../x.json", "/etc/passwd", "-x"):
+        with pytest.raises(PackError, match="Invalid path"):
+            fetch.git_read_file(url, "HEAD", bad, limit=10)
+
+
+def test_a_missing_index_in_a_readable_repo_is_not_an_access_problem(ms, monkeypatch) -> None:
+    """A public repo without index.json: git reads it, so the error does not ask for a token."""
+    monkeypatch.setenv("PYTACHECK_STORE_URL", STORE_URL)
+    asked: list[tuple[str, str, str]] = []
+
+    def git_read_file(url: str, ref: str, path: str, *, limit: int) -> bytes:
+        asked.append((url, ref, path))
+        raise fetch.GitMissing(f"the repository {url} has no {path} at {ref} (0123456789ab)")
+
+    monkeypatch.setattr(fetch, "git_read_file", git_read_file)
+    monkeypatch.setattr(shutil, "which", lambda name: "/usr/bin/git" if name == "git" else None)
+    with respx.mock() as router:
+        router.route().respond(404, text="404: Not Found")
+        with pytest.raises(StoreError) as info:
+            store_index("pytacheck")
+    text = str(info.value)
+    assert asked == [(f"https://github.com/{STORE_REPO}.git", "HEAD", "index.json")]
+    assert "HTTP 404; git: the repository" in text and "has no index.json at HEAD" in text
+    assert "PYTACHECK_GITHUB_TOKEN" not in text and "private" not in text
+
+
+# --- ~/.netrc logins for store indexes on other hosts -------------------------------------
+
+LAB = "https://lab.example.org/store/index.json"
+
+
+@pytest.fixture
+def netrc_file(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
+    path = tmp_path / "netrc"
+    path.write_text(
+        "machine lab.example.org login alice password s3cret-netrc\n"
+        "machine api.github.com login bob password gh-netrc\n"
+        "machine 127.0.0.1 login carol password loop-netrc\n"
+        "machine plain.example.org login dave password plain-netrc\n"
+        "default login eve password default-netrc\n"
+    )
+    path.chmod(0o600)
+    monkeypatch.setenv("NETRC", str(path))
+    return path
+
+
+def _basic(login: str, password: str) -> str:
+    import base64
+
+    return "Basic " + base64.b64encode(f"{login}:{password}".encode()).decode()
+
+
+def test_a_store_behind_a_login_reads_it_from_netrc(ms, netrc_file) -> None:
+    from pytacheck.packs.stores import store_add
+
+    store_add("lab", "https://lab.example.org/store")
+    index = json.dumps({"schema": 1, "name": "lab", "packs": []})
+    with respx.mock() as router:
+        route = router.get(LAB).mock(
+            side_effect=lambda r: httpx.Response(
+                200 if r.headers.get("Authorization") == _basic("alice", "s3cret-netrc") else 401,
+                text=index,
+            )
+        )
+        assert store_index("lab")["name"] == "lab"
+        assert route.call_count == 1
+    meta = (ms.data / "stores" / "lab" / "meta.json").read_text()
+    assert "s3cret" not in meta and "alice" not in meta
+    assert "s3cret" not in ms.config_file.read_text()
+
+
+def test_netrc_logins_go_only_to_their_own_host(netrc_file) -> None:
+    with respx.mock() as router:
+        route = router.route().respond(200, text="{}")
+        get(LAB, netrc=True)
+        get("https://api.github.com/x", netrc=True)  # GitHub: tokens only
+        get("http://plain.example.org/x", netrc=True)  # plain http: never
+        get("http://127.0.0.1:8765/index.json", netrc=True)  # this machine: yes
+        get("https://other.example.org/x", netrc=True)  # the default entry: ignored
+        get(LAB)  # netrc=False
+        sent = [(str(c.request.url), c.request.headers.get("Authorization")) for c in route.calls]
+    assert sent == [
+        (LAB, _basic("alice", "s3cret-netrc")),
+        ("https://api.github.com/x", None),
+        ("http://plain.example.org/x", None),
+        ("http://127.0.0.1:8765/index.json", _basic("carol", "loop-netrc")),
+        ("https://other.example.org/x", None),
+        (LAB, None),
+    ]
+
+
+@pytest.mark.parametrize(
+    ("target", "keeps"),
+    [
+        ("https://evil.example.org/steal", False),
+        ("http://lab.example.org/store/index.json", False),  # a downgrade
+        ("/store/moved.json", True),
+    ],
+)
+def test_netrc_logins_do_not_follow_redirects_elsewhere(netrc_file, target, keeps) -> None:
+    with respx.mock() as router:
+        router.get(LAB).respond(302, headers={"Location": target})
+        final = router.route(path__regex=r"^/(steal|store/index\.json|store/moved\.json)$")
+        final.respond(200, text="{}")
+        assert get(LAB, netrc=True).ok
+        (call,) = [c for c in final.calls if str(c.request.url) != LAB]
+    header = call.request.headers.get("Authorization")
+    assert header == (_basic("alice", "s3cret-netrc") if keeps else None)
+
+
+def test_a_redirect_with_credentials_in_it_is_refused(netrc_file) -> None:
+    with respx.mock() as router:
+        router.get(LAB).respond(302, headers={"Location": "https://u:pw@lab.example.org/x"})
+        with pytest.raises(DownloadError, match="a redirect to a URL with credentials") as info:
+            get(LAB, netrc=True)
+    assert "pw@" not in str(info.value)
+
+
+def test_without_a_login_the_error_points_to_netrc(ms, monkeypatch) -> None:
+    from pytacheck.packs.stores import store_add
+
+    monkeypatch.setenv("NETRC", str(ms.root / "no-such-netrc"))
+    store_add("lab", "https://lab.example.org/store")
+    with respx.mock() as router:
+        router.get(LAB).respond(401)
+        with pytest.raises(StoreError) as info:
+            store_index("lab")
+    text = str(info.value)
+    assert "HTTP 401" in text and "~/.netrc" in text and "PYTACHECK_GITHUB_TOKEN" not in text
+    with pytest.raises(StoreError) as info:
+        store_add("lab2", "https://alice:pw@lab.example.org/store")
+    assert "~/.netrc" in str(info.value) and "PYTACHECK_GITHUB_TOKEN" not in str(info.value)
+    assert "pw@" not in str(info.value)
+
+
+def test_a_malformed_netrc_warns_without_quoting_it(tmp_path, monkeypatch) -> None:
+    path = tmp_path / "netrc"
+    path.write_text("machine lab.example.org login alice password\nleaked-value junk junk\n")
+    path.chmod(0o600)
+    monkeypatch.setenv("NETRC", str(path))
+    with pytest.warns(UserWarning, match="cannot be read") as caught:
+        assert auth.netrc_login(LAB) is None
+    assert all("leaked-value" not in str(w.message) for w in caught)
 
 
 # --- nothing is ever written ---------------------------------------------------------------
@@ -434,9 +663,42 @@ def _network_selected(request: pytest.FixtureRequest) -> bool:
     return "network" in expr and "not network" not in expr
 
 
+@contextlib.contextmanager
+def _private_http_log() -> Iterator[io.StringIO]:
+    """DEBUG records of httpx and httpcore, kept out of pytest's report.
+
+    They go to a buffer of the test's own and do not propagate, so a failing
+    live test never shows them in its "Captured log" section.
+    """
+    buf = io.StringIO()
+    handler = logging.StreamHandler(buf)
+    handler.setFormatter(logging.Formatter("%(name)s %(levelname)s %(message)s"))
+    saved = []
+    for name in ("httpx", "httpcore"):
+        logger = logging.getLogger(name)
+        saved.append((logger, logger.level, logger.propagate))
+        logger.setLevel(logging.DEBUG)
+        logger.propagate = False
+        logger.addHandler(handler)
+    try:
+        yield buf
+    finally:
+        for logger, level, propagate in saved:
+            logger.removeHandler(handler)
+            logger.setLevel(level)
+            logger.propagate = propagate
+
+
 @pytest.mark.network
-def test_live_private_store(live_github_token, ms, monkeypatch, capsys, caplog, request) -> None:
-    """``pack search`` and ``pack install clinical_trials`` from the real (private) store."""
+def test_live_private_store(live_github_token, ms, monkeypatch, capsys, request) -> None:
+    """``pack search`` and ``pack install clinical_trials`` from the real (private) store.
+
+    This test holds a real token, so nothing that might contain it reaches
+    pytest's report: the HTTP debug log goes to a private buffer, warnings are
+    recorded here, output is read before any assertion, the leak checks come
+    first and report only indexes and paths, and the other checks run on text
+    that passed them.
+    """
     if not live_github_token:
         pytest.skip("no GitHub token (PYTACHECK_GITHUB_TOKEN, GH_TOKEN or GITHUB_TOKEN)")
     if not _network_selected(request):
@@ -446,29 +708,58 @@ def test_live_private_store(live_github_token, ms, monkeypatch, capsys, caplog, 
 
     monkeypatch.setenv("PYTACHECK_GITHUB_TOKEN", live_github_token)
     monkeypatch.delenv("GIT_ALLOW_PROTOCOL", raising=False)
-    caplog.set_level(logging.DEBUG)
-    assert main(["pack", "search", "trial"]) == 0
-    assert "clinical_trials" in capsys.readouterr().out
-    assert main(["pack", "install", "clinical_trials", "--yes"]) == 0
+    paper = pc.test_paper(["The trial was registered at ClinicalTrials.gov (NCT01234567)."])
+    failure: str | None = None
+    chain = None
+    with _private_http_log() as http_log, warnings.catch_warnings(record=True) as caught:
+        warnings.simplefilter("always")
+        rc_search = main(["pack", "search", "trial"])
+        searched = capsys.readouterr()
+        rc_install = main(["pack", "install", "clinical_trials", "--yes"])
+        try:
+            chain = run_modules(
+                paper, ["clinical_trials::trial_registration"], record=ms.work / "run.json"
+            )
+        except Exception as exc:  # checked for leaks below, then reported
+            failure = f"{type(exc).__name__}: {exc}"
+    printed = capsys.readouterr()
+    texts = [
+        searched.out,
+        searched.err,
+        printed.out,
+        printed.err,
+        http_log.getvalue(),
+        "\n".join(str(w.message) for w in caught),
+        failure or "",
+    ]
+    files = _written(ms.root)
+    log_file = Path(os.environ["PYTACHECK_LOG"])
+    if log_file.is_file():
+        texts.append(log_file.read_text(errors="replace"))
+
+    # 1. leaks first; a failure names only indexes into `texts` and file paths
+    signed = re.compile(r"[?&]token=(?!\*\*\*)[^&\s'\"]+")
+    leaked_files = [p for p, data in files.items() if live_github_token.encode() in data]
+    signed_files = [p for p, d in files.items() if signed.search(d.decode("utf-8", "replace"))]
+    leaks = [i for i, t in enumerate(texts) if live_github_token in t]
+    signed_leaks = [i for i, t in enumerate(texts) if signed.search(t)]
+    assert not leaked_files, f"the token is in {leaked_files}"
+    assert not signed_files, f"a signed URL is in {signed_files}"
+    assert not leaks, f"the token is in text number {leaks}"
+    assert not signed_leaks, f"a signed URL is in text number {signed_leaks}"
+    assert "legacy.tar.gz" in texts[4] or "tarball" in texts[4]  # the log was captured
+
+    # 2. what should have happened (these texts passed the leak checks)
+    assert failure is None, failure
+    assert (rc_search, rc_install) == (0, 0), searched.err + printed.err
+    assert "clinical_trials" in searched.out
     pin = json.loads(ms.config_file.read_text())["packs"]["clinical_trials"]
     assert pin["source"] == {
         "github": "thesanogoeffect/pytacheck-modules",
         "subdir": "packs/clinical_trials",
     }
     assert re.fullmatch(r"[0-9a-f]{40}", pin["rev"]) and pin["store"] == "pytacheck"
-    paper = pc.test_paper(["The trial was registered at ClinicalTrials.gov (NCT01234567)."])
-    chain = run_modules(paper, ["clinical_trials::trial_registration"], record=ms.work / "run.json")
+    assert chain is not None
     out = chain.last
     assert out.traffic_light == "green" and out.table["trial_id"].tolist() == ["NCT01234567"]
-    printed = capsys.readouterr()
-    texts = [printed.out, printed.err, caplog.text]
-    files = _written(ms.root)
-    log_file = Path(os.environ["PYTACHECK_LOG"])
-    if log_file.is_file():
-        texts.append(log_file.read_text(errors="replace"))
-    assert files and not [p for p, data in files.items() if live_github_token.encode() in data]
-    assert not [t for t in texts if live_github_token in t]
-    signed = re.compile(r"[?&]token=(?!\*\*\*)[^&\s'\"]+")
-    assert not [t for t in texts if signed.search(t)]
-    assert not [p for p, data in files.items() if signed.search(data.decode("utf-8", "replace"))]
-    assert auth._client is not None  # the GitHub requests used the HTTP/1.1 client
+    assert files and auth._client is not None  # the GitHub requests used the HTTP/1.1 client
