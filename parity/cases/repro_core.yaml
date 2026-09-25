@@ -500,6 +500,16 @@
         - "study-ex2/data/study-demographics_data.csv"
         - "data/scores_data.csv"
         - null
+- "id": "repro_rewrite_paths.paste_sep_call"
+  "r": "repro_rewrite_paths"
+  "py": "pytacheck.repro.core.repro_rewrite_paths"
+  "args":
+    "code_text":
+      "$chr":
+      - "wd <- \"raw\""
+      - "d <- read.csv(paste(wd, \"demographics.csv\", sep = \"/\"))"
+    "file_name": "ex1/analysis.R"
+    "plan": *id003
 - "id": "repro_rewrite_paths.na_and_empty_targets"
   "r": "repro_rewrite_paths"
   "py": "pytacheck.repro.core.repro_rewrite_paths"

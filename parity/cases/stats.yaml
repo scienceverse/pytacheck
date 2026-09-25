@@ -189,7 +189,7 @@
       - "F"
   "compare": *id001
 - "id": "stats.synthetic.stat.cor_chisq"
-  "known_divergence": {"kind": "r_bug_fixed", "ref": "U4", "reason": "stats() keeps the valid results of sentences R drops on the first warning or error (p = .05-.10, t(20) = (2.1, r = 1.00), labels Q-Between Qb (R: Qw) and drops a Q result that borrowed another result's p-value (U5)"}
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U5", "reason": "r(20) = 1.00, p < .001 is checked with the rounding interval capped at 1 (statcheck fails on if (NA), so R's stats() drops the sentence)"}
   "r": "stats"
   "py": "pytacheck.stats.stats"
   "args":
@@ -200,7 +200,7 @@
       - "chisq"
   "compare": *id001
 - "id": "stats.synthetic.stat.ZQ"
-  "known_divergence": {"kind": "r_bug_fixed", "ref": "U4", "reason": "stats() keeps the valid results of sentences R drops on the first warning or error (p = .05-.10, t(20) = (2.1, r = 1.00), labels Q-Between Qb (R: Qw) and drops a Q result that borrowed another result's p-value (U5)"}
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U5", "reason": "labels Q-Between Qb (R: Qw) and drops the QB result R gave another result's p-value by data.frame() recycling (a false error)"}
   "r": "stats"
   "py": "pytacheck.stats.stats"
   "args":
