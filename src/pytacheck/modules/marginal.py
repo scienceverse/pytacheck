@@ -9,9 +9,11 @@ from pytacheck.module import module
 from pytacheck.report import collapse_section, format_ref, scroll_table
 from pytacheck.text import text_search
 
-# R: format_ref(marg_ref), rendered by R's bibentry html style.
+# R's format_ref() (bibentry html style) of marg_ref with its authors given as person()
+# objects. metacheck passes them as one "Last, F., ..., & Last, F." string, which the
+# bibentry formatter mangles into "van Assen, M. MAL, Hartgerink &amp;, J. CH" (U3).
 _MARG_REF = (
-    "Olsson-Collentine, A., van Assen, M. MAL, Hartgerink &amp;, J. CH (2019). "
+    "Olsson-Collentine A, van Assen MALM, Hartgerink CHJ (2019). "
     "&ldquo;The Prevalence of Marginally Significant Results in Psychology Over Time.&rdquo; "
     "<em>Psychological Science</em>, <b>30</b>, 576&ndash;586. "
     '<a href="https://doi.org/10.1177/0956797619830326">doi:10.1177/0956797619830326</a>.'
