@@ -215,7 +215,7 @@
 "grobid12_review/.grobid_to_bibr.review_url_na": &urls
   kind: r_bug_fixed
   ref: U28
-  reason: "URL link texts are replaced only in their own row, once (R: 'https://https://osf.io/q2.io/q2' and link texts replaced in other rows and references); a URL without a target leaves its rows alone (R: NA)"
+  reason: "each URL is printed only at its own link, once (R: 'https://https://osf.io/q2.io/q2' and link texts replaced in other rows and references); a link in words keeps them with the href after them ('osf https://osf.io/q2'), and a URL without a target leaves its rows alone (R: NA)"
 "grobid12_review/.grobid_to_bibr.review_urls": *urls
 "grobid12_review/write_read.review_url_na": *urls
 "grobid12_review/write_read.review_urls": *urls

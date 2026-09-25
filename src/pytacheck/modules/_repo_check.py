@@ -1155,10 +1155,12 @@ def list_local(local_path: Any) -> pd.DataFrame:
     out["file_path"] = pd.Series(paths, dtype="string")
     # a file file_category() cannot place (most extensions: .zip, .tar.gz,
     # .txt, .pdf, images) takes its type from the extension, as the files of
-    # an online repository do; R leaves it NA, so a local archive was not
-    # counted as one (UPSTREAM_ISSUES U123)
+    # an online repository do, when the extension has one type; R leaves it
+    # NA, so a local archive was not counted as one (UPSTREAM_ISSUES U123).
+    # An extension with several types (.json and .rds: code or data; .html:
+    # code or web) stays unclassified rather than counted as code.
     if "file_type" in out.columns:
-        by_ext = [types[0] for types in _ext_types(vals(out["file_name"]))]
+        by_ext = [t[0] if len(t) == 1 else None for t in _ext_types(vals(out["file_name"]))]
         out["file_type"] = pd.Series(
             [e if _na(t) else t for t, e in zip(vals(out["file_type"]), by_ext, strict=True)],
             dtype="string",

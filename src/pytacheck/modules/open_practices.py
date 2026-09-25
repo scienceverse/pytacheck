@@ -97,9 +97,10 @@ _NO_DATA_REPORT = (
     "to this article, or the repository is not recognized by our code. If there is data, please "
     "consider sharing it in a repository."
 )
+# metacheck's typo "reconized" is fixed (U83)
 _NO_CODE_REPORT = (
     "We did not detect open sharing of code, which could be because there is no code related "
-    "to this article, or the repository is not reconized by our code. If there is code, please "
+    "to this article, or the repository is not recognized by our code. If there is code, please "
     "consider sharing it in a repository."
 )
 _DATA_REPORT = "Data was openly shared for this article, based on the following text:\n\n> {}"

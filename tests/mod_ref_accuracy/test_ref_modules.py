@@ -23,8 +23,20 @@ def test_ref_consistency(demo: pc.Paper) -> None:
     assert len(out.table) == 4
     assert out.module == module
     assert list(out.table.columns) == ["paper_id", "bib_id", "reference", "contents", "text"]
-    assert list(out.summary_table.columns) == ["paper_id", "n_bib", "n_xrefs", "n_extra"]
-    assert out.summary_table.loc[0, ["n_bib", "n_xrefs", "n_extra"]].tolist() == [5, 1, 4]
+    # U115: n_missing is there without missing citations (metacheck drops the column)
+    assert list(out.summary_table.columns) == [
+        "paper_id",
+        "n_bib",
+        "n_xrefs",
+        "n_missing",
+        "n_extra",
+    ]
+    assert out.summary_table.loc[0, ["n_bib", "n_xrefs", "n_missing", "n_extra"]].tolist() == [
+        5,
+        1,
+        0,
+        4,
+    ]
 
 
 def test_ref_consistency_iteration(psychsci: pc.PaperList) -> None:
@@ -54,11 +66,14 @@ def test_ref_consistency_green_and_na() -> None:
     assert out.traffic_light == "green"
     assert len(out.table) == 0
     assert out.summary_text.startswith("All cross-references were in the bibliography")
+    # U83: metacheck says "likley"
     assert out.report == [
-        "This module relies on Grobid correctly parsing the references. There are likley to "
+        "This module relies on Grobid correctly parsing the references. There are likely to "
         "be some false positives.",
         "",
     ]
+    # U115: the count columns are there when nothing is flagged
+    assert out.summary_table.loc[0, ["n_missing", "n_extra"]].tolist() == [0, 0]
 
     out = pc.module_run(pc.test_paper("No references."), "ref_consistency")
     assert out.traffic_light == "na"
@@ -83,7 +98,8 @@ def test_ref_consistency_paperlist_fills_zero() -> None:
     papers = pc.PaperList([pc.demopaper(), ra_demo(empty=["bib"], paper_id="nobib")])
     out = pc.module_run(papers, "ref_consistency")
     st = out.summary_table.set_index("paper_id")
-    assert st.loc["nobib", ["n_bib", "n_xrefs", "n_extra"]].tolist() == [0, 1, 0]
+    # U115: its citation points at a reference that is not in the (empty) bibliography
+    assert st.loc["nobib", ["n_bib", "n_xrefs", "n_missing", "n_extra"]].tolist() == [0, 1, 1, 0]
 
 
 # ---------------------------------------------------------------------------
@@ -140,6 +156,12 @@ def test_ref_accuracy_demo(demo: pc.Paper) -> None:
     assert unresolved["incoherent"].all()
     # an unresolved DOI has no record: its DOI comparison is NA (as in R)
     assert unresolved["doi_mismatch"].isna().all()
+
+    # U83: the guidance without metacheck's typos ("Such an incoherent", "ar an AI")
+    prose = " ".join(b for b in out.report if isinstance(b, str))
+    assert "Such an incoherence is most often an error in reading the reference" in prose
+    assert "it could be a mistake, or an AI generated reference." in prose
+    assert "incoherent is most" not in prose and " ar an " not in prose
 
 
 def _checked_id(demo: pc.Paper) -> int:

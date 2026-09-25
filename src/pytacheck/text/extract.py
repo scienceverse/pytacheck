@@ -17,7 +17,7 @@ import pandas as pd
 from pytacheck._r.base import trimws
 from pytacheck._r.regex import compile_r, grepl, gsub, regextract, strsplit
 from pytacheck.papers.model import Paper, PaperList
-from pytacheck.text.search import text_search
+from pytacheck.text.search import _text_frame, text_search
 
 __all__ = ["extract_eq", "extract_p_values", "extract_urls"]
 
@@ -164,8 +164,6 @@ def _search_table(paper: Any, any_of: str | None = None, perl: bool = False) -> 
     ``text_search()`` then returns the same rows, in the same order, faster.
     """
     if isinstance(paper, Paper | PaperList):
-        from pytacheck.text.search import _text_frame
-
         paper = _text_frame(paper)[0]
     if any_of is not None and isinstance(paper, pd.DataFrame) and "text" in paper.columns:
         keep = grepl(any_of, paper["text"].tolist(), ignore_case=True, perl=perl)
@@ -269,14 +267,20 @@ def extract_eq(paper: Any) -> pd.DataFrame:
     text table or strings (``text_id`` and ``paper_id`` are then ``NA`` when
     the table has none).
 
-    Differs from metacheck (U10, U150): a table without ``paper_id`` or
-    ``text_id`` works (metacheck failed on ``NA`` comparisons once there were
-    two equations), and strings are accepted (metacheck fails).
+    Differs from metacheck (U10, U150): in a paper list each sentence of a
+    paper has its own ``grp_id``, the one it gets when the paper is searched
+    alone (metacheck restarted the count whenever its search order moved to
+    another paper, so different sentences shared a ``grp_id``); a table without
+    ``paper_id`` or ``text_id`` works (metacheck failed on ``NA`` comparisons
+    once there were two equations); and strings are accepted (metacheck
+    fails).
     """
-    table = _search_table(_strings_table(paper), f"[{_OPS}]")
-    if isinstance(table, pd.DataFrame):
-        # the source row of each match, to tell sentences apart without text_id
-        table = table.assign(**{_ROW: range(len(table))})
+    table = _strings_table(paper)
+    if not isinstance(table, pd.DataFrame):
+        table = _text_frame(table)[0]
+    table = _search_table(table, f"[{_OPS}]")
+    # the source row of each match, to tell sentences apart without text_id
+    table = table.assign(**{_ROW: range(len(table))})
     eq = text_search(table, list(_OPERATORS))
     eq = text_search(eq, _EQ_PATTERN, return_="match", perl=True, ignore_case=True)
     if not isinstance(eq, pd.DataFrame):  # pragma: no cover - strings became a table
@@ -308,18 +312,24 @@ def extract_eq(paper: Any) -> pd.DataFrame:
     lhs = trimws(lhs)
     rhs = trimws(rhs)
 
-    # set group equal to sentence for now: consecutive matches of one source
-    # sentence share a group, numbered per paper in search order (metacheck's
-    # numbering). Sentences are told apart by their row, so a table without
-    # text_id or paper_id works (metacheck fails on NA comparisons; U10)
+    # set group equal to sentence for now: the matches of one source sentence
+    # share a group, numbered per paper in search order (metacheck's numbering
+    # for a single paper). Differs from metacheck (U10): a paper's count goes
+    # on where it left off when a paper list's search order moves between
+    # papers (metacheck restarted at 1 each time, so different sentences of a
+    # paper shared a grp_id), and sentences are told apart by their row, so a
+    # table without text_id or paper_id works (metacheck fails on NA
+    # comparisons)
     paper_ids = [None if _is_missing(v) else v for v in eq["paper_id"].tolist()]
     rows = eq[_ROW].tolist()
     grp: list[float] = []
-    for i in range(len(eq)):
-        if i == 0 or paper_ids[i] != paper_ids[i - 1]:
-            grp.append(1.0)
-        else:
-            grp.append(grp[-1] if rows[i] == rows[i - 1] else grp[-1] + 1)
+    count: dict[Any, int] = {}
+    last_row: dict[Any, Any] = {}
+    for pid, row in zip(paper_ids, rows, strict=True):
+        if pid not in last_row or last_row[pid] != row:
+            count[pid] = count.get(pid, 0) + 1
+            last_row[pid] = row
+        grp.append(float(count[pid]))
 
     out = pd.DataFrame(
         {

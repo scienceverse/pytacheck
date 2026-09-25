@@ -210,6 +210,37 @@ def test_extract_eq_grp_id_follows_search_order() -> None:
     assert eq["grp_id"].tolist() == [3.0, 1.0, 2.0, 2.0]
 
 
+def test_extract_eq_paper_list_grp_id_per_paper(psychsci) -> None:
+    # U10: R restarts the count at 1 whenever its search order moves to another
+    # paper, so different sentences of one paper shared a grp_id
+    papers = []
+    for pid, texts in [
+        ("b", ["a < 2 and b = 3", "c = 4", "d > 5, e = 6", "f \u2264 7"]),
+        ("B", ["g > 5", "h = 1"]),
+        ("a", ["none", "k \u2248 2 and m < 3"]),
+    ]:
+        p = pc.test_paper(texts)
+        p.paper_id = pid
+        papers.append(p)
+    eq = extract_eq(pc.PaperList(papers))
+    b = eq.loc[eq["paper_id"] == "B"]
+    assert b["text_id"].tolist() == [1, 2]
+    assert b["grp_id"].tolist() == [2.0, 1.0]  # R: [1, 1]
+    # a paper's grp_ids are the ones it gets when searched alone
+    for p in papers:
+        alone = extract_eq(p).reset_index(drop=True)
+        mine = eq.loc[eq["paper_id"] == p.paper_id].reset_index(drop=True)
+        pd.testing.assert_frame_equal(mine, alone)
+    # a real paper list: every (paper, grp_id) is one sentence
+    real = extract_eq(psychsci)
+    assert (real.groupby(["paper_id", "grp_id"])["text_id"].nunique() == 1).all()
+    # a plain list or a dict of papers works like a PaperList
+    pd.testing.assert_frame_equal(extract_eq(list(psychsci)), real)
+    pd.testing.assert_frame_equal(
+        extract_eq(dict(zip(psychsci.names, psychsci, strict=True))), real
+    )
+
+
 def test_extract_eq_missing_paper_id_and_text_id() -> None:
     # U10: R fails on NA comparisons once there are two equations
     one = extract_eq(pd.DataFrame({"text": ["t = 2.1"]}))

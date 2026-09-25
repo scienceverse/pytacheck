@@ -74,6 +74,7 @@ def test_search_section(client: TestClient, demo_json: bytes) -> None:
     assert {row["section_type"] for row in everywhere} == {"abstract", "method"}
     method = search(pattern="significant", section="method")
     assert method == [row for row in everywhere if row["section_type"] == "method"]
+    assert search(pattern="significant", section="Method") == method
     both = search(pattern="significant", section="abstract, method", **{"return": "paragraph"})
     assert [row["section_type"] for row in both] == ["abstract", "method", "method"]
     assert search(pattern="significant", section="results") == []

@@ -1256,10 +1256,11 @@ def stat_effect_size(paper: Any) -> dict[str, Any]:
         else:
             if has_missing:
                 s = "" if n_missing == 1 else "s"
+                # metacheck leaves out the full stop (U125)
                 summary_text = (
                     f"We found {n_missing:d} t-test{s} and/or F-test{s} where effect sizes are "
                     "not reported. Check these tests in the table below, and consider adding "
-                    "effect sizes"
+                    "effect sizes."
                 )
                 report_text = (
                     "We recommend checking the sentences below, and add any missing effect sizes."

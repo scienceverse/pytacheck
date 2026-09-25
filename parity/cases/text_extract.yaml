@@ -250,6 +250,7 @@
         - "t(1,2,3) = 5 and F(1, 2) (3) = 4"
   "compare": {"ignore": ["paper_id"]}
 - "id": "extract_eq.psychsci"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U10", "reason": "each sentence of a paper in a list keeps its own grp_id, the one it has when the paper is searched alone (R restarts at 1 whenever its search order moves to another paper, so different sentences of a paper share grp_id 1 or 2)"}
   "r": "extract_eq"
   "py": "pytacheck.text.extract.extract_eq"
   "args":

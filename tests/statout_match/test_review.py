@@ -176,6 +176,35 @@ def test_table_tests_missing_columns() -> None:
     assert _table_tests(c)
 
 
+def test_table_caption_column_is_used() -> None:
+    # U143: a paper that is not bibr 12.x but whose tables carry a caption
+    # column is typed by that caption; R reads only the text rows sharing the
+    # table's section_id, so an ambiguous correlation matrix went untyped
+    import pytacheck as pc
+
+    p = pc.test_paper(["Results are in Table 1.", "Table 1. Scales"])
+    p.text = p.text.assign(section_id=[1.0, 2.0])
+    matrix = [["", "1", "2"], ["1. Anxiety", "", ""], ["2. Mood", ".45", ""]]
+    p.table = pd.DataFrame(
+        {
+            "table_id": pd.Series([1], dtype="Int64"),
+            "section_id": pd.Series([2], dtype="Int64"),
+            "contents": pd.Series([matrix], dtype=object),
+        }
+    )
+    # the text-row caption ("Table 1. Scales") names no statistic
+    assert _table_tests(p) == []
+    p.table = p.table.assign(caption=["Correlations between the scales"])
+    comps = [c for t in _table_tests(p) for c in t["components"]]
+    assert [(c["family"], c["value"]) for c in comps] == [("r", 0.45)]
+    # a missing or empty caption falls back to the text rows
+    p.table = p.table.assign(caption=[""])
+    assert _table_tests(p) == []
+    p.text = p.text.assign(text=["Results are in Table 1.", "Table 1. Correlations"])
+    comps = [c for t in _table_tests(p) for c in t["components"]]
+    assert [c["family"] for c in comps] == ["r"]
+
+
 def test_paper_list_is_refused_clearly() -> None:
     import pytacheck as pc
 
@@ -208,3 +237,37 @@ def test_duplicated_components_keep_their_own_tests() -> None:
     long = _long([("x", "t", "2.103"), ("x", "p", "0.048"), ("y", "t", "2.1")])
     out = _regroup_by_evidence(tests, _build_sites(long))
     assert sum(len(t["components"]) for t in out) == 3
+
+
+def test_output_row_without_test_id_forms_no_site() -> None:
+    # U142: an output row without a test_id beside a jamovi "_residuals" row
+    # belongs to no site and changes nothing (R adds an NA site and val_in()
+    # fails the whole call: "non-numeric argument to mathematical function")
+    import pytacheck as pc
+
+    paper = pc.test_paper(
+        ["A one-way ANOVA showed an effect of gender, F(2, 2159) = 6.76, p = .001."]
+    )
+
+    def long(rows: list[tuple[str | None, str, str, str]]) -> pd.DataFrame:
+        return pd.DataFrame(
+            {
+                "source_file": ["o.omv"] * len(rows),
+                "test_id": pd.Series([r[0] for r in rows], dtype="string"),
+                "analysis": ["ANOVA"] * len(rows),
+                "row_label": [r[3] for r in rows],
+                "statistic": [r[1] for r in rows],
+                "value": [r[2] for r in rows],
+            }
+        )
+
+    rows = [
+        ("an_a_gender", "F", "6.76", "gender"),
+        ("an_a_gender", "df", "2", "gender"),
+        ("an_a_gender", "p", "0.0012", "gender"),
+        ("an_a_residuals", "df", "2159", "residuals"),
+    ]
+    clean = match_reported_output(paper, long(rows))
+    with_na = match_reported_output(paper, long([*rows, (None, "F", "5.5", "z")]))
+    assert clean["n_matched"].tolist() == [4]
+    pd.testing.assert_frame_equal(clean, with_na)

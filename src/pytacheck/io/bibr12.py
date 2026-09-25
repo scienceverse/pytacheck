@@ -968,6 +968,8 @@ def _paren_df(df: Any) -> str | None:
         values: list[Any] = []
         _flatten(df, values)
         parts = [str(sub(r"^\((.*)\)$", r"\1", as_character(_jnum(v)))) for v in values]
+        # (blank values are no degrees of freedom: ["", ""] is no df, not "(, )")
+        parts = [p for p in parts if p.strip()]
         s = ", ".join(parts) if parts else None
     else:
         s = _chr_first(df)

@@ -26,8 +26,9 @@ _REPORT = {
     "na": "No bibliography entries were detected",
 }
 
+# metacheck's typo "likley" is fixed (U83)
 _CAVEAT = (
-    "This module relies on Grobid correctly parsing the references. There are likley to be "
+    "This module relies on Grobid correctly parsing the references. There are likely to be "
     "some false positives."
 )
 
@@ -105,15 +106,15 @@ def _full_join(x: pd.DataFrame, y: pd.DataFrame, by: list[str]) -> tuple[pd.Data
     return out, from_y
 
 
-def _flag_counts(table: pd.DataFrame, flag: pd.Series, papers: pd.Series) -> pd.Series | None:
+def _flag_counts(table: pd.DataFrame, flag: pd.Series, papers: pd.Series) -> pd.Series:
     """``count(table, paper_id, x = flag) |> pivot_wider(...)``, keeping only ``x_TRUE``.
 
-    ``None`` when no row has the flag (pivot_wider makes no ``_TRUE`` column);
-    otherwise per paper: the number of flagged rows, 0 for a paper whose rows
-    are all unflagged (``values_fill = 0``) and NA for a paper with no rows.
+    Per paper: the number of flagged rows, 0 for a paper whose rows are all
+    unflagged and NA for a paper with no rows (``module_run()``'s ``na_replace``
+    makes it 0). metacheck's ``pivot_wider()`` makes no ``_TRUE`` column when
+    no row has the flag, so the ``n_missing``/``n_extra`` columns came and went
+    with the input (U115); here they are always there.
     """
-    if not bool(flag.any()):
-        return None
     counts = flag.astype(int).groupby(table["paper_id"], sort=False, dropna=False).sum()
     values = [int(counts[p]) if p in counts.index else pd.NA for p in papers.tolist()]
     return pd.Series(values, index=papers.index, dtype="Int64")
@@ -186,9 +187,7 @@ def ref_consistency(paper: Any) -> dict[str, Any]:
         ("n_missing", is_missing),
         ("n_extra", table["contents"].isna() & ~is_missing),
     ):
-        col = _flag_counts(table, flag, summary_table["paper_id"])
-        if col is not None:
-            summary_table[name] = col
+        summary_table[name] = _flag_counts(table, flag, summary_table["paper_id"])
 
     # traffic light ----
     if len(bibs) == 0:

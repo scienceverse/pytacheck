@@ -142,6 +142,19 @@ def test_back_matter_outside_an_inner_div(tmp_path: Path) -> None:
     assert p.section["section_type"].tolist() == ["intro", "availability", "acknowledgement"]
 
 
+@pytest.mark.parametrize("schema_version", [None, "12.0"])
+def test_typed_div_inside_a_typed_div_is_read_once(
+    tmp_path: Path, schema_version: str | None
+) -> None:
+    # read with the outer div, as metacheck reads it (not a second time for its own type)
+    back = (
+        '<div type="annex"><div><head>Appendix A</head><p>Annex text.</p></div>'
+        '<div type="acknowledgement"><head>Ack</head><p>We thank A.</p></div></div>'
+    )
+    p = convert(tei(tmp_path, "<div><head>Intro</head><p>Text.</p></div>", back), schema_version)
+    assert texts(p) == ["Text.", "Annex text.", "We thank A."]
+
+
 def test_each_reference_has_its_own_raw_text(tmp_path: Path) -> None:
     refs = "".join(
         f'<biblStruct xml:id="b{i}"><monogr><title level="j">J</title><imprint>'
@@ -235,6 +248,24 @@ def test_print_hrefs_prints_each_url_at_its_own_link() -> None:
         [1, 1],
     )
     assert out == ["See https://osf.io/xyz/; and (https://en.wikipedia.org/wiki/X_(Y))."]
+
+
+def test_print_hrefs_does_not_print_a_url_twice() -> None:
+    # a doi: link text prints the DOI's URL; words that print the whole URL keep it
+    # (without the stray spaces) and get no second copy of the href
+    out = _print_hrefs(
+        ["See doi:10.1234/abc and OSF (osf .io/xyz) and www.osf.io/q2 here."],
+        [1],
+        ["doi:10.1234/abc", "OSF (osf .io/xyz)", "www.osf.io/q2 here"],
+        ["https://doi.org/10.1234/abc", "https://osf.io/xyz/", "https://osf.io/q2"],
+        [1, 1, 1],
+    )
+    assert out == ["See https://doi.org/10.1234/abc and OSF (osf.io/xyz) and www.osf.io/q2 here."]
+    # a longer URL in the words is not the link's URL: the href is printed after them
+    out = _print_hrefs(
+        ["At osf.io/abcdef now."], [1], ["osf.io/abcdef now"], ["https://osf.io/abc"], [1]
+    )
+    assert out == ["At osf.io/abcdef now https://osf.io/abc."]
 
 
 @pytest.mark.parametrize("schema_version", [None, "12.0"])

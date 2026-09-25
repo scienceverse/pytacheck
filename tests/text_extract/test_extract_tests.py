@@ -150,6 +150,11 @@ def test_extract_tests_paper_list(psychsci) -> None:
         assert mine["test_no"].tolist() == list(range(1, len(one) + 1))
     assert tests["sentence"].notna().all()
     assert len(extract_tests(pc.PaperList([pc.test_paper(["No stats."])]))) == 0
+    # a plain list or a dict of papers works like a PaperList
+    pd.testing.assert_frame_equal(extract_tests(list(psychsci)), tests)
+    pd.testing.assert_frame_equal(
+        extract_tests(dict(zip(psychsci.names, psychsci, strict=True))), tests
+    )
 
 
 def test_extract_tests_empty() -> None:

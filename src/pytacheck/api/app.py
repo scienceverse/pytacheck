@@ -338,9 +338,10 @@ def create_app() -> FastAPI:
             if mp.get("section"):
                 from pytacheck.text.search import _text_frame
 
-                wanted = [x.strip() for x in str(mp["section"]).split(",") if x.strip()]
+                wanted = [x.strip().lower() for x in str(mp["section"]).split(",") if x.strip()]
                 table, _ = _text_frame(paper)
-                table = table.loc[table["section_type"].isin(wanted).fillna(False).astype(bool)]
+                types = table["section_type"].astype("string").str.lower()
+                table = table.loc[types.isin(wanted).fillna(False).astype(bool)]
                 target = table.reset_index(drop=True)
                 # searching the references is what asking for them means
                 params["include_refs"] = "references" in wanted

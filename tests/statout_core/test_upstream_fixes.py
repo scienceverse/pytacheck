@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from pathlib import Path
+
 from pytacheck.statout.r_output import _r_echo_chunks, _r_output_oneline, _r_output_tables
 from pytacheck.statout.stat_output import _stat_result_ids, _stat_test_id, stat_output_validate
 from pytacheck.statout.stat_tables import _ipynb_stat_line
@@ -69,3 +71,37 @@ def test_validate_accepts_a_json_string() -> None:
     res = stat_output_validate(doc)
     assert res["valid"] is True
     assert res["summary"] == {"n_errors": 0, "n_analyses": 1, "n_results": 1}
+
+
+def test_html_tables_are_read_in_their_declared_encoding(tmp_path: Path) -> None:
+    # U141: an HTML export's <meta charset> is honoured (R's xml2 on libxml2
+    # 2.15 decodes every file as UTF-8, so "café" became "caf�")
+    import zipfile
+
+    from pytacheck.statout.stat_tables import _html_encoding, read_stat_tables
+
+    assert _html_encoding(b"<html><body>x</body></html>") == "utf-8"
+    assert _html_encoding(b'<meta charset="UTF-8">') == "utf-8"
+    assert (
+        _html_encoding(
+            b"<meta http-equiv='Content-Type' content='text/html; charset=windows-1252'>"
+        )
+        == "cp1252"
+    )
+    assert _html_encoding(b'<META CHARSET="iso-8859-1">') == "cp1252"
+    assert _html_encoding(b'<meta charset="utf-16">') == "utf-8"
+    assert _html_encoding(b'<meta charset="no-such-codec">') == "utf-8"
+    assert _html_encoding(b"\xef\xbb\xbf<meta charset='latin1'>") == "utf-8-sig"
+
+    table = "<table><tr><th>Café</th><th>M ± SD</th></tr><tr><td>1</td><td>2</td></tr></table>"
+
+    def jasp(name: str, html: bytes) -> str:
+        path = tmp_path / name
+        with zipfile.ZipFile(path, "w") as zf:
+            zf.writestr("index.html", html)
+        return str(path)
+
+    for head, enc in (('<meta charset="windows-1252">', "cp1252"), ("", "utf-8")):
+        doc = f"<html><head>{head}</head><body><h3>Test</h3>{table}</body></html>"
+        tables = read_stat_tables(jasp(f"{enc}.jasp", doc.encode(enc)))
+        assert list(tables[0]["data"].columns) == ["Café", "M ± SD"], enc

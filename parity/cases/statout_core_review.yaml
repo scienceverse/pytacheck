@@ -49,6 +49,7 @@
   "py": "pytacheck.statout.stat_tables.read_stat_tables"
   "args": {"path": {"$file": "tests/statout_core/data/review_nometa.jasp"}}
 - "id": "read_stat_tables.html.latin_meta"
+  "known_divergence": {"kind": "r_bug_fixed", "ref": "U141", "reason": "the HTML's <meta charset> (latin1) is honoured: 'Tést' (R's xml2 on libxml2 2.15 ignores it: 'T\ufffdst')"}
   "r": "read_stat_tables"
   "py": "pytacheck.statout.stat_tables.read_stat_tables"
   "args": {"path": {"$file": "tests/statout_core/data/review_latin.jasp"}}

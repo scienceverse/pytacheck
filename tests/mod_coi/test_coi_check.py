@@ -181,10 +181,16 @@ def test_coi_section_headers() -> None:
         "Disclosure: none reported.",
         "None declared.",
     ]
-    # R row order (one text_search() per pattern, then bind_rows) and R's NA headers
-    # after return = "section"
+    # R row order (one text_search() per pattern, then bind_rows); each section keeps
+    # its header (metacheck's return = "section" gives NA headers, U80)
     assert mo.table["section_id"].tolist() == [2, 5, 3, 4, 6]
-    assert mo.table["header"].isna().all()
+    assert mo.table["header"].tolist() == [
+        "Conflict of Interest",
+        "Financial Disclosure",
+        "Competing Interests",
+        "COI",
+        "Declaration of interests",
+    ]
 
 
 @pytest.mark.parametrize("module", MODULES)
