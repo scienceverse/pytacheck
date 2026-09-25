@@ -34,6 +34,8 @@ def _diffs(r: dict, p: dict, module: str = "m", inp: str = "x.xml") -> list[acc.
         ("likley to be", "likely to be", "wording"),
         ("We found 36 p-values", "We found 37 p-values", "values"),
         ("t(20) = -2.3", "t(20) = 2.3", "values"),  # a sign flip
+        ("r(68) = -.58", "r(68) = .58", "values"),  # also without a leading zero
+        ("see Fig.3", "see Figure 3", "wording"),
         ("t(20) = \u22122.3", "t(20) = -2.3", "wording"),  # a typographic minus
         ("COVID-19 in 2020-2021", "COVID\u201319 in 2020\u20132021", "wording"),  # dashes
         ("", "Text", "wording"),
@@ -49,6 +51,37 @@ def test_cell_level_numbers_to_relative_1e9() -> None:
     assert acc.cell_level(1.0, 1.001) == "values"
     assert acc.cell_level(None, 0) == "values"
     assert acc.cell_level("a  b", "a b") is None
+    # NA, logicals and NaN are values: a change to one is never 'wording'
+    assert acc.cell_level(None, "Author Notes") == "values"
+    assert acc.cell_level(True, False) == "values"
+    assert acc.cell_level("NaN", "Inf") == "values"
+    assert acc.cell_level("a b", "ab") == "whitespace"
+
+
+@pytest.mark.parametrize(
+    ("r", "p", "level"),
+    [
+        (["p =.05", None], ["p = .05", None], "whitespace"),
+        (["Python"], ["R"], "wording"),
+        ([None, "x"], ["Author Notes", "x"], "values"),  # a value added where R has NA
+        ([False, None], [None, False], None),  # the same cells, other rows
+        ([False], [None], "values"),  # a logical lost
+        ([True, False], [True, True], "values"),
+        (["n = 12"], ["n = 13"], "values"),
+    ],
+)
+def test_column_level(r: list, p: list, level: str | None) -> None:
+    assert acc._column_level(r, p) == level
+
+
+def test_rows_that_pair_cells_differently_are_a_difference() -> None:
+    import pandas as pd
+
+    r = _output(table=pd.DataFrame({"text": ["a", "b"], "p": [0.01, 0.2]}))
+    p = _output(table=pd.DataFrame({"text": ["a", "b"], "p": [0.2, 0.01]}))
+    assert [(d.field, d.level) for d in _diffs(r, p)] == [("table", "values")]
+    same_rows = _output(table=pd.DataFrame({"text": ["b", "a"], "p": [0.2, 0.01]}))
+    assert _diffs(r, same_rows) == []  # the row order is not compared
 
 
 def test_row_f1_is_a_multiset_score() -> None:
@@ -195,6 +228,9 @@ def test_floors_must_be_below_the_default(tmp_path: Path) -> None:
             "floors:\n  - {module: m, traffic_light: 0.95, kind: r_bug_fixed, ref: U30, "
             "reason: r}\n",
         )
+    floor = "  - {module: m, traffic_light: 0.5, kind: r_bug_fixed, ref: U30, reason: r}\n"
+    with pytest.raises(ValueError, match="already has a floor"):
+        _expected(tmp_path, "floors:\n" + floor + floor)
 
 
 def test_committed_matrix_expected_and_goldens() -> None:

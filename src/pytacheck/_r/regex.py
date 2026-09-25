@@ -142,7 +142,7 @@ def translate_tre(p: str) -> str:
 
 
 # fmt: off
-_ASCII_ITEMS = {  # PCRE2's classes in a bracket expression: ASCII only
+_ASCII_ITEMS = {  # PCRE2's classes in a set are ASCII (\W \D \S [:^x:], unused, stay Unicode)
     r"\w": "0-9A-Za-z_", "[:word:]": "0-9A-Za-z_", r"\d": "0-9", "[:digit:]": "0-9",
     r"\s": r"\t\n\v\f\r ", "[:space:]": r"\t\n\v\f\r ", "[:blank:]": r"\t ",
     "[:alpha:]": "A-Za-z", "[:alnum:]": "0-9A-Za-z", "[:upper:]": "A-Z", "[:lower:]": "a-z",
@@ -150,7 +150,7 @@ _ASCII_ITEMS = {  # PCRE2's classes in a bracket expression: ASCII only
     "[:print:]": r" -~", "[:graph:]": "!-~", "[:ascii:]": r"\x00-\x7f",
 }
 # fmt: on
-_SET_ITEM = regex.compile(r"\\[wds]|\[:[a-z]+:\]")
+_SET_ITEM = regex.compile(r"\\.|\[:[a-z]+:\]", regex.DOTALL)  # escapes are pairs: [\\w]
 # an escape, or a bracket expression (its POSIX classes and escapes as groups)
 _PCRE_TOKEN = regex.compile(r"\\(.)|\[(\^?)(\]?(?:\[:\^?[a-z]+:\]|\\.|[^\]])*)\]", regex.DOTALL)
 

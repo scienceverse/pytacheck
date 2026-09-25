@@ -7,9 +7,11 @@
 # glibc's character classes in R's C.UTF-8 locale
 "rcompat/*.posix_punct.tre*":
   kind: c_quirk
+  ref: D29
   reason: "glibc's [[:punct:]] contains the no-break space U+00A0; the regex module's POSIX class (Unicode punctuation and symbols) does not"
 "archives_osf_review/path_sanitize.fuzz.default": &cntrl_separators
   kind: c_quirk
+  ref: D29
   reason: "glibc's [[:cntrl:]] contains the line and paragraph separators U+2028/U+2029, so R deletes them; the regex module's (Unicode Cc) does not, and path_sanitize() treats them as white space"
 "archives_osf_review/path_sanitize.fuzz.dash": *cntrl_separators
 "archives_osf_review/path_sanitize.fuzz.keep_ws": *cntrl_separators
@@ -20,27 +22,34 @@
 # the regex module uses Unicode simple case folding
 "stats_review/statcheck.review.icase.dotted_I_ns": &dotted_I_ns
   kind: c_quirk
+  ref: D29
   reason: "caseless matching of 'İ' (R's PCRE2 does not fold it to i, the regex module does): R takes the 'ns' in 'İnsan' for a p-value, pytacheck does not"
 "stats_review/statcheck.review.icase.dotted_I_ns.AllPValues": *dotted_I_ns
 "stats_review/statcheck.review.icase.dotted_I_z":
   kind: c_quirk
+  ref: D29
   reason: "caseless matching of 'İ' (not folded by R's engines, folded to i by the regex module): 'İz = 1.96' is not a z test here"
 "stats_review/statcheck.review.icase.one_long_s_ided":
   kind: c_quirk
+  ref: D29
   reason: "caseless matching of the long s: TRE's towlower/towupper do not match 'ſ' to s, the regex module's case folding does, so '(one-ſided)' counts as one-sided"
 "mod_power_review/power.review.tricky": &a_priori
   kind: c_quirk
+  ref: D29
   reason: "caseless matching of 'İ': the regex module folds it to i, so 'A PRİORİ' is found (and highlighted) as 'a priori' (R's PCRE2 does not fold it)"
 "mod_power_review/power.review.tricky.tables": *a_priori
 "mod_coi_review/coi_check_oi.turkish_dotted_i":
   kind: c_quirk
+  ref: D29
   reason: "caseless matching of 'İ' (R's PCRE2 does not fold it to i, the regex module does): 'CONFLİCT OF İNTEREST: NONE.' is a conflict of interest statement"
 "mod_funding_review/unicode.classes.inline": &pcre_caseless_classes
   kind: c_quirk
+  ref: D29
   reason: "PCRE2's caseless matching: (?i)\\w, [[:alnum:]] and [[:upper:]]/[[:lower:]] do not fold the long s or the Kelvin sign to s/k, and 'İ'/'ı' do not match i/I; in the regex module they do"
 "mod_funding_review/unicode.classes.ignore_case": *pcre_caseless_classes
 "mod_funding_review/unicode.column.case": &dotted_I_words
   kind: c_quirk
+  ref: D29
   reason: "caseless matching of 'İ' (R's PCRE2 does not fold it to i, the regex module does): 'FİNANCIAL', 'fİnanced' and 'aİd' read as the English words"
 "mod_funding_review/unicode.column.ignore_case": *dotted_I_words
 "mod_funding_review/unicode.locate.fund_title_dotted": *dotted_I_words
@@ -52,5 +61,6 @@
 "mod_funding_review/funding_check_oi.unicode_fund_acknow_dotted": *dotted_I_words
 "mod_funding_review/funding_check.tre_caseless": &tre_caseless
   kind: c_quirk
+  ref: D29
   reason: "TRE's ignore.case (towlower/towupper) does not match the long s to s or the Kelvin sign to k, and 'İ' not to i; the regex module's case folding does, so 'fellowſhip', 'worK' and 'FUNDİNG' are read as the English words"
 "mod_funding_review/funding_check_oi.tre_caseless": *tre_caseless

@@ -38,11 +38,12 @@ Around the porting agent, the workflow also calls:
 run after the goldens were regenerated, before porting: the marked cases whose R
 golden changed (``r_changed``) or that now match R (``xpass``: upstream may have
 fixed the bug), the failing cases and the accuracy differences no entry of
-parity/accuracy/expected.yaml explains. ``tier1-marks`` records the marks of the
-tier-1 (realistic) cases before porting; ``review`` says, after porting, whether
-the pull request needs human review: tier-1 marks, parity/accuracy/expected.yaml,
-its matrix.toml or D-entries of docs/UPSTREAM_ISSUES.md changed since BASE (the
-commit the sync branched from), or the accuracy report warns or fails.
+parity/accuracy/expected.yaml explains. ``tier1-marks`` records the tier-1
+(realistic) cases and their marks before porting; ``review`` says, after porting,
+whether the pull request needs human review: tier-1 marks changed or a case left
+tier 1, or parity/accuracy/expected.yaml, its matrix.toml, parity/corpus.toml or
+D-entries of docs/UPSTREAM_ISSUES.md changed since BASE (the commit the sync
+branched from), or the accuracy report warns or fails.
 """
 
 from __future__ import annotations
@@ -594,6 +595,8 @@ def parity_brief(check: list[dict[str, Any]], accuracy: dict[str, Any] | None) -
                 out.append(
                     f"| {d['module']} | `{d['input']}` | {d['field']} | {d['level']} | {detail} |"
                 )
+            if len(unexplained) > 150:
+                out.append(f"| ... and {len(unexplained) - 150} more | | | | |")
         out += [f"- stale: {e}" for e in accuracy["stale"]]
         out.append("")
     return out
@@ -612,15 +615,12 @@ def cmd_brief_parity(ns: argparse.Namespace) -> int:
 
 
 def tier1_marks() -> dict[str, Any]:
-    """The marks of the tier-1 (realistic) parity cases, by case key."""
+    """The tier-1 (realistic) parity cases and their marks (``None``: unmarked), by
+    case key."""
     sys.path.insert(0, str(ROOT))
     from parity.cases import load_cases
 
-    return {
-        c.key: c.spec["known_divergence"]
-        for c in load_cases()
-        if c.tier == 1 and c.spec.get("known_divergence")
-    }
+    return {c.key: c.spec.get("known_divergence") for c in load_cases() if c.tier == 1}
 
 
 def cmd_tier1_marks(ns: argparse.Namespace) -> int:
@@ -639,16 +639,25 @@ def review_reasons(
     whether or not it was committed since."""
     reasons = []
     after = tier1_marks()
-    changed = sorted(k for k in set(before) | set(after) if before.get(k) != after.get(k))
+    # a case that leaves tier 1 (a `tier:` override, an input dropped from corpus.toml)
+    # may then carry any mark, so it counts as a mark removed; a new unmarked one is fine
+    left = [k for k in before if k not in after]
+    marked = [k for k in after if after[k] != before.get(k)]
+    changed = sorted(left + marked)
     if changed:
         shown = ", ".join(changed[:20]) + (" ..." if len(changed) > 20 else "")
         reasons.append(
-            f"{len(changed)} tier-1 (realistic) marks added, removed or changed: {shown}"
+            f"{len(changed)} tier-1 (realistic) marks added, removed or changed, or cases "
+            f"no longer tier 1: {shown}"
         )
-    # the matrix too: dropping an input would hide its differences from the gate
+    # the matrix and the corpus too: dropping an input would hide its differences
     reasons += [
         f"{path} changed"
-        for path in ("parity/accuracy/expected.yaml", "parity/accuracy/matrix.toml")
+        for path in (
+            "parity/accuracy/expected.yaml",
+            "parity/accuracy/matrix.toml",
+            "parity/corpus.toml",
+        )
         if git("diff", "--name-only", base, "--", path, cwd=ROOT).strip()
     ]
     diff = git("diff", base, "--", "docs/UPSTREAM_ISSUES.md", cwd=ROOT)

@@ -88,7 +88,7 @@ differences:
   - module: coi_check_oi
     input: "*"
     field: table.header
-    match: wording
+    match: values
     kind: r_bug_fixed
     ref: U80
     reason: the table names the section the statement is in (metacheck leaves the header NA)
@@ -128,7 +128,10 @@ differences:
     reason: the missing-effect-size summary ends with a full stop
   # references ------------------------------------------------------------------
   - module: ref_accuracy
-    input: "*"
+    # the 12 papers without bib_match rows: a light that changes on another paper
+    # is not this fix
+    input: ["demos/to_err_is_human.xml", "formats/*.pdf.tei.xml", "problems/*", "debruine/*",
+            bibr12/PMC4383902.json]
     field: traffic_light
     match: values
     kind: r_bug_fixed
@@ -155,7 +158,7 @@ differences:
   # repositories ----------------------------------------------------------------
   - module: code_check
     input: notebooks
-    field: "*"
+    field: [summary_text, report, "summary_table.*", "table.*"]
     match: values
     kind: r_bug_fixed
     ref: U86
@@ -163,16 +166,24 @@ differences:
       a notebook's language is read from its local copy, so the R notebook is checked as R
       (dplyr, ggplot2 and its missing scores.csv are found); metacheck reads a path relative
       to the working directory and checks it as Python
-  - module: [data_check, codebook_check]
+  - module: data_check
     input: [demo, notebooks, parse-errors]
     field: [summary_text, report, summary_table, table]
     match: values
     kind: r_bug_fixed
     ref: U98
     reason: >-
-      with no readable data file data_check still returns its summary text, report and
-      per-paper summary table (codebook_check reports data_check's column table); metacheck
-      returns only the validation half
+      with no readable data file data_check still returns its summary text, report,
+      per-paper summary table and column table; metacheck returns only the validation half
+  - module: codebook_check
+    input: [demo, notebooks, parse-errors]
+    field: table
+    match: values
+    kind: r_bug_fixed
+    ref: U98
+    reason: >-
+      codebook_check reports data_check's table, which with no readable data file is the
+      column table (U98) where metacheck's is the validation table
   - module: data_check
     input: repos/spreadsheets
     field: summary_text

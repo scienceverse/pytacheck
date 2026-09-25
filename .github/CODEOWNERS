@@ -5,5 +5,6 @@
 /parity/lock/                        @thesanogoeffect
 /parity/accuracy/expected.yaml       @thesanogoeffect
 /parity/accuracy/matrix.toml         @thesanogoeffect
+/parity/corpus.toml                  @thesanogoeffect
 /docs/UPSTREAM_ISSUES.md             @thesanogoeffect
 /.github/CODEOWNERS                  @thesanogoeffect
