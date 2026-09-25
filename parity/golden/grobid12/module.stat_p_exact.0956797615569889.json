@@ -1,0 +1,579 @@
+{
+  "id": "module.stat_p_exact.0956797615569889",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "stat_p_exact"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Exact P-Values"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "results"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 28,
+        "names": [
+          "text",
+          "text_id",
+          "paragraph_id",
+          "section_id",
+          "page_number",
+          "formatted",
+          "paper_id",
+          "header",
+          "section_type",
+          "p_comp",
+          "p_value",
+          "expanded",
+          "imprecise",
+          "zero"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "p = .010",
+              "p = .036",
+              "p = .015",
+              "p = .279",
+              "p = .041",
+              "p < .001",
+              "p = .594",
+              "p = .001",
+              "p < .001",
+              "p = .643",
+              "p = .032",
+              "p = .054",
+              "p = .754",
+              "p < .001",
+              "p = .004",
+              "p = .07",
+              "p = .049",
+              "p = .001",
+              "p = .026",
+              "p = .014",
+              "p = .002",
+              "p = .062",
+              "p = .058",
+              "p < .05",
+              "p < .01",
+              "p < .001",
+              "p < .001 ",
+              "p =.07"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              115,
+              116,
+              117,
+              117,
+              119,
+              120,
+              120,
+              123,
+              124,
+              124,
+              126,
+              126,
+              126,
+              132,
+              133,
+              137,
+              138,
+              145,
+              145,
+              146,
+              146,
+              148,
+              152,
+              277,
+              277,
+              277,
+              278,
+              278
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              27,
+              27,
+              27,
+              27,
+              28,
+              28,
+              28,
+              29,
+              29,
+              29,
+              29,
+              29,
+              29,
+              31,
+              31,
+              32,
+              32,
+              34,
+              34,
+              34,
+              34,
+              35,
+              36,
+              106,
+              106,
+              106,
+              107,
+              107
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              14,
+              14,
+              14,
+              14,
+              15,
+              15,
+              15,
+              16,
+              16,
+              16,
+              16,
+              16,
+              16,
+              18,
+              18,
+              19,
+              19,
+              20,
+              20,
+              20,
+              20,
+              20,
+              21,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "0956797615569889",
+              "0956797615569889",
+              "0956797615569889",
+              "0956797615569889",
+              "0956797615569889",
+              "0956797615569889",
+              "0956797615569889",
+              "0956797615569889",
+              "0956797615569889",
+              "0956797615569889",
+              "0956797615569889",
+              "0956797615569889",
+              "0956797615569889",
+              "0956797615569889",
+              "0956797615569889",
+              "0956797615569889",
+              "0956797615569889",
+              "0956797615569889",
+              "0956797615569889",
+              "0956797615569889",
+              "0956797615569889",
+              "0956797615569889",
+              "0956797615569889",
+              "0956797615569889",
+              "0956797615569889",
+              "0956797615569889",
+              "0956797615569889",
+              "0956797615569889"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "TNT-task performance",
+              "TNT-task performance",
+              "TNT-task performance",
+              "TNT-task performance",
+              "Gist.",
+              "Gist.",
+              "Gist.",
+              "Details.",
+              "Details.",
+              "Details.",
+              "Details.",
+              "Details.",
+              "Details.",
+              "Thought Control Ability Questionnaire",
+              "Thought Control Ability Questionnaire",
+              "Posttraumatic Stress Diagnostic Scale",
+              "Posttraumatic Stress Diagnostic Scale",
+              "The effects of depressive symptoms",
+              "The effects of depressive symptoms",
+              "The effects of depressive symptoms",
+              "The effects of depressive symptoms",
+              "The effects of depressive symptoms",
+              "Conditionalized final-test data",
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "results",
+              "results",
+              "results",
+              "results",
+              "results",
+              "results",
+              "results",
+              "results",
+              "results",
+              "results",
+              "results",
+              "results",
+              "results",
+              "results",
+              "results",
+              "results",
+              "results",
+              "results",
+              "results",
+              "results",
+              "results",
+              "results",
+              "results",
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "=",
+              "=",
+              "=",
+              "=",
+              "=",
+              "<",
+              "=",
+              "=",
+              "<",
+              "=",
+              "=",
+              "=",
+              "=",
+              "<",
+              "=",
+              "=",
+              "=",
+              "=",
+              "=",
+              "=",
+              "=",
+              "=",
+              "=",
+              "<",
+              "<",
+              "<",
+              "<",
+              "="
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0.01,
+              0.036,
+              0.015,
+              0.279,
+              0.041,
+              0.001,
+              0.594,
+              0.001,
+              0.001,
+              0.643,
+              0.032,
+              0.054,
+              0.754,
+              0.001,
+              0.004,
+              0.07,
+              0.049,
+              0.001,
+              0.026,
+              0.014,
+              0.002,
+              0.062,
+              0.058,
+              0.05,
+              0.01,
+              0.001,
+              0.001,
+              0.07
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "A significant group difference was found in suppression-induced forgetting, as revealed by a significant condition-by-group interaction, F(1, 30) = 7.556, p = .010, ηp² = .201.",
+              "This interaction was driven by a significant inversion of suppression-induced forgetting in the PTSD group (i.e., better memory performance for suppress items compared with baseline items; M = -5.2%), F(1, 15) = 5.288, p = .036, ηp² = .261 (Bayes factor favoring the alternative hypothesis = 2.09), in the absence of significant suppression in the control group (M = 3.5%, n.s.).",
+              "Although the PTSD group showed a significant facilitation effect (M = 5.9%), F(1, 15) = 7.525, p = .015, ηp² = .334, and the control group did not (M = 2.8%, n.s.), there was no significant group difference in facilitation, F(1, 30) = 1.215, p = .279, ηp² = .039 (Fig. 3a).",
+              "Although the PTSD group showed a significant facilitation effect (M = 5.9%), F(1, 15) = 7.525, p = .015, ηp² = .334, and the control group did not (M = 2.8%, n.s.), there was no significant group difference in facilitation, F(1, 30) = 1.215, p = .279, ηp² = .039 (Fig. 3a).",
+              "A significant group difference in suppressioninduced forgetting was observed, as indicated by a significant condition-by-group interaction, F(1, 30) = 4.573, p = .041, ηp² = .132.",
+              "This interaction was driven by significant suppression-induced forgetting in the control group (M = 10.8%), F(1, 15) = 22.123, p < .001, ηp² = .596, in the absence of significant suppression-induced forgetting in the PTSD group (M = 1.7%), F(1, 15) = 0.297, p = .594, ηp² = .019.",
+              "This interaction was driven by significant suppression-induced forgetting in the control group (M = 10.8%), F(1, 15) = 22.123, p < .001, ηp² = .596, in the absence of significant suppression-induced forgetting in the PTSD group (M = 1.7%), F(1, 15) = 0.297, p = .594, ηp² = .019.",
+              "As for the two previous measures, a significant group difference in suppression-induced forgetting was observed, established by a significant condition-by-group interaction, F(1, 30) = 14.231, p = .001, ηp² = .322.",
+              "This interaction was driven once again by a significant suppression effect in the control group (M = 1.19), F(1, 15) = 33.548, p < .001, ηp² = .691, in the absence of significant suppression in the PTSD group (M = -0.14), F(1, 15) = 0.224, p = .643, ηp² = .015.",
+              "This interaction was driven once again by a significant suppression effect in the control group (M = 1.19), F(1, 15) = 33.548, p < .001, ηp² = .691, in the absence of significant suppression in the PTSD group (M = -0.14), F(1, 15) = 0.224, p = .643, ηp² = .015.",
+              "Although the PTSD group showed a significant facilitation effect (M = 0.68), F(1, 15) = 5.575, p = .032, ηp² = .271, and the control group showed only a marginally significant effect (M = 0.56), F(1, 15) = 4.368, p = .054, ηp² = .226, the difference between the groups was not significant, F(1, 30) = 0.100, p = .754, ηp² = .003 (Fig. 3c).",
+              "Although the PTSD group showed a significant facilitation effect (M = 0.68), F(1, 15) = 5.575, p = .032, ηp² = .271, and the control group showed only a marginally significant effect (M = 0.56), F(1, 15) = 4.368, p = .054, ηp² = .226, the difference between the groups was not significant, F(1, 30) = 0.100, p = .754, ηp² = .003 (Fig. 3c).",
+              "Although the PTSD group showed a significant facilitation effect (M = 0.68), F(1, 15) = 5.575, p = .032, ηp² = .271, and the control group showed only a marginally significant effect (M = 0.56), F(1, 15) = 4.368, p = .054, ηp² = .226, the difference between the groups was not significant, F(1, 30) = 0.100, p = .754, ηp² = .003 (Fig. 3c).",
+              "Across all participants, suppression-induced forgetting on our details measure and TCAQ scores had a robust positive correlation (Kendall's τ = .5, p < .001; Fig. 4a).",
+              "This correlation remained significant when we covaried out BDI-II scores using semipartial correlation analyses (τ = .34, p = .004), which suggests that the correlation was not simply a function of participants' current symptom levels.",
+              "A marginally significant negative correlation was found between suppression-induced forgetting on the details measure and PDS scores in the PTSD group (Kendall's τ = -.33, p = .07; Fig. 4b).",
+              "This correlation was rendered significant when we covaried out BDI-II scores using semipartial correlation analyses (τ = -.35, p = .049).",
+              "Specifically, both groups showed significant suppression-induced forgetting on the gist measure-low group: M = 13%, F(1, 6) = 30.388, p = .001, ηp² = .835; high group: M = 8%, F(1, 6) = 8.641, p = .026, ηp² = .590.",
+              "Specifically, both groups showed significant suppression-induced forgetting on the gist measure-low group: M = 13%, F(1, 6) = 30.388, p = .001, ηp² = .835; high group: M = 8%, F(1, 6) = 8.641, p = .026, ηp² = .590.",
+              "They also showed highly significant suppression-induced forgetting on the details measure-low group: M = 1.35, F(1, 6) = 11.631, p = .014, ηp² = .660; high group: M = 1.03, F(1, 6) = 27.222, p = .002, ηp² = .819.",
+              "They also showed highly significant suppression-induced forgetting on the details measure-low group: M = 1.35, F(1, 6) = 11.631, p = .014, ηp² = .660; high group: M = 1.03, F(1, 6) = 27.222, p = .002, ηp² = .819.",
+              "When we more closely matched depression symptoms by comparing the low-BDI-II PTSD group with the high-BDI-II control group, we observed a marginally significant group-by-condition interaction for the details measure, F(1, 16) = 4.032, p = .062, ηp² = .201.",
+              "In that analysis, the group difference in suppression-induced forgetting only approached significance, F(1, 30) = 3.869, p = .058, ηp² =.114. Foa, 1995).",
+              "Fig 3. Memory performance in the final test for the trauma-exposed control group (n = 18; left column) and the posttraumatic stress disorder (PTSD) group (n = 18; right column). Results are shown separately for baseline, recall, and suppress items for each dependent measure: (a) identification, (b) gist, and (c) details. Suppression-induced forgetting is when significantly fewer suppress than baseline items are remembered. Memory facilitation is when significantly more recall than baseline items are remembered. Error bars represent ±1 SE. Asterisks indicate significant differences between conditions (*p < .05; **p < .01; ***p < .001).",
+              "Fig 3. Memory performance in the final test for the trauma-exposed control group (n = 18; left column) and the posttraumatic stress disorder (PTSD) group (n = 18; right column). Results are shown separately for baseline, recall, and suppress items for each dependent measure: (a) identification, (b) gist, and (c) details. Suppression-induced forgetting is when significantly fewer suppress than baseline items are remembered. Memory facilitation is when significantly more recall than baseline items are remembered. Error bars represent ±1 SE. Asterisks indicate significant differences between conditions (*p < .05; **p < .01; ***p < .001).",
+              "Fig 3. Memory performance in the final test for the trauma-exposed control group (n = 18; left column) and the posttraumatic stress disorder (PTSD) group (n = 18; right column). Results are shown separately for baseline, recall, and suppress items for each dependent measure: (a) identification, (b) gist, and (c) details. Suppression-induced forgetting is when significantly fewer suppress than baseline items are remembered. Memory facilitation is when significantly more recall than baseline items are remembered. Error bars represent ±1 SE. Asterisks indicate significant differences between conditions (*p < .05; **p < .01; ***p < .001).",
+              "51, p < .001 τ = -.33, p =.07",
+              "51, p < .001 τ = -.33, p =.07"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "We found no imprecise *p* values or *p*-values of exactly zero out of 28 detected."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "green"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "We found no imprecise *p* values or *p*-values of exactly zero out of 28 detected."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "n_imprecise",
+          "n_zero"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "0956797615569889"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0
+            ]
+          }
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

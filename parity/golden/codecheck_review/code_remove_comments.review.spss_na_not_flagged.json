@@ -1,0 +1,15 @@
+{
+  "id": "code_remove_comments.review.spss_na_not_flagged",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      null,
+      "GET FILE='x.sav'."
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

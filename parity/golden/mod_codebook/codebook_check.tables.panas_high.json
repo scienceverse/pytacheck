@@ -1,0 +1,187 @@
+{
+  "id": "codebook_check.tables.panas_high",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": null,
+    "v": [
+      {
+        "t": "df",
+        "nrow": 12,
+        "names": [
+          "Column",
+          "Documented",
+          "Label",
+          "Codebook Variable",
+          "Source",
+          "Status"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "id",
+              "PANAS1",
+              "PANAS10",
+              "PANAS2",
+              "PANAS3",
+              "PANAS4",
+              "PANAS5",
+              "PANAS6",
+              "PANAS7",
+              "PANAS8",
+              "PANAS9",
+              "PANAS_total"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "no",
+              "yes",
+              "yes",
+              "yes",
+              "yes",
+              "yes",
+              "yes",
+              "yes",
+              "yes",
+              "yes",
+              "yes",
+              "yes"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "Affect item 1",
+              "Affect item 10",
+              "Affect item 2",
+              "Affect item 3",
+              "Affect item 4",
+              "Affect item 5",
+              "Affect item 6",
+              "Affect item 7",
+              "Affect item 8",
+              "Affect item 9",
+              "Total affect score"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "PANAS1",
+              "PANAS10",
+              "PANAS2",
+              "PANAS3",
+              "PANAS4",
+              "PANAS5",
+              "PANAS6",
+              "PANAS7",
+              "PANAS8",
+              "PANAS9",
+              "PANAS_total"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "codebook.csv",
+              "codebook.csv",
+              "codebook.csv",
+              "codebook.csv",
+              "codebook.csv",
+              "codebook.csv",
+              "codebook.csv",
+              "codebook.csv",
+              "codebook.csv",
+              "codebook.csv",
+              "codebook.csv"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "unlabelled",
+              "labelled",
+              "labelled",
+              "labelled",
+              "labelled",
+              "labelled",
+              "labelled",
+              "labelled",
+              "labelled",
+              "labelled",
+              "labelled",
+              "labelled"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "File",
+          "Abbrev",
+          "Columns",
+          "Max item",
+          "Scale",
+          "Confidence",
+          "Source"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "affect.csv"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "PANAS"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              10
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "10"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Positive and Negative Affect Schedule"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "high"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "matched"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

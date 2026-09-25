@@ -1,0 +1,124 @@
+{
+  "id": "expand.zip_skip_code",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 3,
+    "names": [
+      "repo_url",
+      "file_name",
+      "file_path",
+      "file_url",
+      "file_location",
+      "file_size",
+      "file_type",
+      "paper_id",
+      "data_type",
+      "doc_role",
+      "data_format",
+      "group"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "r",
+          "r",
+          "r"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "README.txt",
+          "study.csv",
+          "codebook.csv"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "mixed.zip/README.txt",
+          "mixed.zip/study.csv",
+          "mixed.zip/sub/codebook.csv"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "<TMP>/mixed.zip.contents/README.txt",
+          "<TMP>/mixed.zip.contents/study.csv",
+          "<TMP>/mixed.zip.contents/sub/codebook.csv"
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          6,
+          1440,
+          38
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "archive",
+          "archive",
+          "archive"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "p.1",
+          "p.1",
+          "p.1"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "documentation",
+          "data",
+          "documentation"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "readme",
+          null,
+          "codebook"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "tabular",
+          "tabular",
+          "tabular"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

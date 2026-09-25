@@ -1,0 +1,146 @@
+{
+  "id": "scale_prefix_groups.zero_pad",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "aq",
+      "crs_exp"
+    ],
+    "v": [
+      {
+        "t": "list",
+        "names": [
+          "prefix",
+          "display",
+          "columns",
+          "derived",
+          "totals_only",
+          "n_columns",
+          "max_item"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "aq"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "AQ"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "AQ01",
+              "AQ02",
+              "AQ03",
+              "AQ04",
+              "AQ05",
+              "AQ06",
+              "AQ07",
+              "AQ08",
+              "AQ09",
+              "AQ10",
+              "AQ11",
+              "AQ12",
+              "AQ13",
+              "AQ14",
+              "AQ15",
+              "AQ16",
+              "AQ17",
+              "AQ18",
+              "AQ19",
+              "AQ20"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              20
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              20
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "prefix",
+          "display",
+          "columns",
+          "derived",
+          "totals_only",
+          "n_columns",
+          "max_item"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "crs_exp"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "CRS_EXP"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "CRS_EXP1",
+              "CRS_EXP2",
+              "CRS_EXP3"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              3
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              3
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

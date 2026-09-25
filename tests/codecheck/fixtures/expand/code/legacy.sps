@@ -1,0 +1,1 @@
+T-TEST /TESTVAL=0 /VARIABLES=age score.

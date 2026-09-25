@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0">
+	<teiHeader><fileDesc><titleStmt><title>Unicode captions</title></titleStmt></fileDesc>
+		<encodingDesc><appInfo><application version="0.8.1" ident="GROBID" when="2025-07-24T14:36+0000"/></appInfo></encodingDesc>
+	</teiHeader>
+	<text>
+		<body>
+<div><head>Body</head><p>See <ref type="figure" target="#fig_0">Figure 1</ref> and <ref type="figure" target="#fig_2">Fig. 3</ref>.</p></div>
+			<figure xml:id="fig_0">
+				<head>Figure 1</head>
+				<figDesc>Figure 1 caption with a no-break space.</figDesc>
+			</figure>
+			<figure xml:id="fig_1">
+				<head>Figure 2 :</head>
+				<figDesc>Caption after a no-break head.</figDesc>
+			</figure>
+			<figure xml:id="fig_2">
+				<head>Fig. 3 .</head>
+				<figDesc>thin space　ideographicnel ls en caption.</figDesc>
+			</figure>
+			<figure xml:id="fig_3">
+				<head>ÉTUDE 4</head>
+				<figDesc>étude 4 starts with the head in lower case.</figDesc>
+			</figure>
+			<figure xml:id="fig_4">
+				<head>İSTANBUL 5</head>
+				<figDesc>i̇stanbul 5 dotted capital I.</figDesc>
+			</figure>
+			<figure xml:id="fig_5">
+				<head>Tablo 6</head>
+				<figDesc> Leading no-break space caption.</figDesc>
+			</figure>
+			<figure xml:id="fig_6">
+				<head>　Figure 7　</head>
+				<figDesc>​Zero width start.</figDesc>
+			</figure>
+			<figure xml:id="fig_7">
+				<head>Figure 8</head>
+				<figDesc>FIGURE 8 thin space after the label.</figDesc>
+			</figure>
+			<figure xml:id="fig_8">
+				<head>Figure 9</head>
+				<figDesc>Figures 9 and 10 plural label.</figDesc>
+			</figure>
+			<figure xml:id="fig_9">
+				<head>Figure 11</head>
+				<figDesc>Fig.S11 supplementary glued.</figDesc>
+			</figure>
+			<figure xml:id="fig_10">
+				<head>Figure 12</head>
+				<figDesc>Table ABC1 three letters.</figDesc>
+			</figure>
+			<note place="foot" n="1" xml:id="foot_0"> Note　withodd spaces </note>
+		</body>
+	</text>
+</TEI>

@@ -1,0 +1,15 @@
+{
+  "id": "code_extract_py.review.int32_bounds",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "21474836472147483648-2147483648-2147483647",
+      ""
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

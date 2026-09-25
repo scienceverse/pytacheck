@@ -1,0 +1,105 @@
+{
+  "id": "zip_decision.folder_entries",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "worth",
+      "reason",
+      "n_entries",
+      "types",
+      "contents"
+    ],
+    "v": [
+      {
+        "t": "lgl",
+        "v": [
+          true
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "contains archivable content"
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          2
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          1,
+          1
+        ],
+        "names": [
+          "data",
+          "materials"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 2,
+        "names": [
+          "name",
+          "size",
+          "method",
+          "csize",
+          "offset",
+          "crc"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "folder/results.csv",
+              "folder/plot.png"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              1440,
+              72
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              8,
+              8
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              696,
+              74
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              39,
+              783
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              773114359,
+              2149987689
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

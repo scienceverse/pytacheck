@@ -1,0 +1,45 @@
+{
+  "id": "scale_split_items.agg_name",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "items",
+      "derived",
+      "totals_only"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "AQ01",
+          "AQ02",
+          "AQ03",
+          "AQ04",
+          "AQ05",
+          "AQ06",
+          "AQ07",
+          "AQ08",
+          "AQ09",
+          "AQ10"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "AQ_SUM"
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -1,0 +1,117 @@
+{
+  "id": "code_version_pin_check.review.jsonlite_quirks",
+  "ok": true,
+  "error": null,
+  "warnings": [
+    "JSON string contains (illegal) UTF8 byte-order-mark!"
+  ],
+  "value": {
+    "t": "list",
+    "names": [
+      "pinned",
+      "mechanisms",
+      "r_versions",
+      "renv_files",
+      "renv_packages",
+      "sessioninfo_files",
+      "file_location"
+    ],
+    "v": [
+      {
+        "t": "lgl",
+        "v": [
+          true
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "renv.lock",
+          "sessionInfo",
+          "groundhog",
+          "checkpoint"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "4.3.1",
+          "4.2",
+          "4.4.2"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "renv.lock",
+          "sub/renv.lock"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 3,
+        "names": [
+          "file_name",
+          "package",
+          "version",
+          "source"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "renv.lock",
+              "renv.lock",
+              "sub/renv.lock"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "dplyr",
+              "x",
+              "a"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "1.1.0",
+              null,
+              "1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Repository",
+              null,
+              "CRAN"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "SESSION-INFO.txt"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "tests/codecheck/fixtures/review/pin/renv.lock",
+          "tests/codecheck/fixtures/review/pin/sub/renv.lock",
+          "tests/codecheck/fixtures/review/pin/SESSION-INFO.txt"
+        ],
+        "names": [
+          "renv.lock",
+          "sub/renv.lock",
+          "SESSION-INFO.txt"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

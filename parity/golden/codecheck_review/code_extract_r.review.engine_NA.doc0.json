@@ -1,0 +1,9 @@
+{
+  "id": "code_extract_r.review.engine_NA.doc0",
+  "ok": false,
+  "error": "missing value where TRUE/FALSE needed",
+  "warnings": [],
+  "value": null,
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

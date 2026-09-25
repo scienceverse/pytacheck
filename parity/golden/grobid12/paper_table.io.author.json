@@ -1,0 +1,195 @@
+{
+  "id": "paper_table.io.author",
+  "ok": true,
+  "error": null,
+  "warnings": [
+    "ID x already defined [513]",
+    "Namespace prefix xlink for href on ptr is not defined [201]",
+    "Namespace prefix p on q is not defined [201]",
+    "ID x already defined [513]",
+    "Namespace prefix xlink for href on ptr is not defined [201]",
+    "Namespace prefix p on q is not defined [201]",
+    "Namespace prefix xlink for href on ptr is not defined [201]",
+    "There were 2 errors; use lastlog(1:2)"
+  ],
+  "value": {
+    "t": "df",
+    "nrow": 6,
+    "names": [
+      "author_id",
+      "given",
+      "family",
+      "suffix",
+      "literal",
+      "email",
+      "corresponding",
+      "orcid",
+      "role",
+      "credit_roles",
+      "paper_id"
+    ],
+    "v": [
+      {
+        "t": "int",
+        "v": [
+          1,
+          2,
+          1,
+          2,
+          3,
+          4
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Ann",
+          null,
+          "Åsa",
+          "Bo",
+          "Cy",
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Smith",
+          "Doe",
+          "Müller",
+          "Berg",
+          "Cole",
+          "Dee"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "ann@example.org",
+          null,
+          "asa@example.org",
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false,
+          false,
+          false,
+          false,
+          false,
+          false
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "https://orcid.org/0000-0002-1825-0097",
+          null,
+          "https://orcid.org/0000-0002-1825-009X",
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "edge_body.tei",
+          "edge_body.tei",
+          "v12_edges.tei",
+          "v12_edges.tei",
+          "v12_edges.tei",
+          "v12_edges.tei"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -1,0 +1,6 @@
+varname,description
+participant_id,Participant number
+age,Age in years
+gender,Gender of the participant
+income_thousands,Income in thousands
+mood,Positive affect

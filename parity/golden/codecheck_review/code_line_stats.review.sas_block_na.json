@@ -1,0 +1,50 @@
+{
+  "id": "code_line_stats.review.sas_block_na",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "total_lines",
+      "comment_lines",
+      "code_lines",
+      "percent_comments",
+      "has_docstring"
+    ],
+    "v": [
+      {
+        "t": "int",
+        "v": [
+          4
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          1
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          null
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          null
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

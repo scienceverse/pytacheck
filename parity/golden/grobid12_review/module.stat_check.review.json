@@ -1,0 +1,289 @@
+{
+  "id": "module.stat_check.review",
+  "ok": true,
+  "error": null,
+  "warnings": [
+    "ID fig_0 already defined [513]",
+    "ID b1 already defined [513]",
+    "ID fig_0 already defined [513]",
+    "ID b1 already defined [513]"
+  ],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "stat_check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "StatCheck"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "results"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "test_type",
+          "df1",
+          "df2",
+          "test_comp",
+          "test_value",
+          "p_comp",
+          "reported_p",
+          "computed_p",
+          "raw",
+          "error",
+          "decision_error",
+          "one_tailed_in_txt",
+          "apa_factor",
+          "text",
+          "text_id",
+          "paragraph_id",
+          "section_id",
+          "page_number",
+          "formatted",
+          "paper_id",
+          "header",
+          "section_type"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "t"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              28
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "="
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              2.2
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "="
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0.036
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0.0362254847788378
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "t(28) = 2.20, p =.036"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "We tested t(28) = 2.20, p =.036. See Fig.1 and Smith (2020)."
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "review_sentences.tei"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "1 Introduction"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "intro"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "We detected no errors in t-tests or F-tests."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "green"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "We detected no errors in t-tests or F-tests."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 6,
+        "names": [
+          "paper_id",
+          "statcheck_found",
+          "statcheck_errors",
+          "statcheck_decision_errors"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "review_urls.tei",
+              "review_url_na.tei",
+              "review_noapp.tei",
+              "review_inline.tei",
+              "review_sentences.tei",
+              "v12_edges.tei"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0,
+              0,
+              0,
+              0,
+              1,
+              0
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          }
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

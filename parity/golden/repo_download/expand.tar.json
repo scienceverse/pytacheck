@@ -1,0 +1,112 @@
+{
+  "id": "expand.tar",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 2,
+    "names": [
+      "repo_url",
+      "file_name",
+      "file_path",
+      "file_url",
+      "file_location",
+      "file_size",
+      "file_type",
+      "paper_id",
+      "data_type",
+      "doc_role",
+      "data_format",
+      "group"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "r",
+          "r"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "code.R",
+          "data.csv"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "archive.tar.gz/proj/code.R",
+          "archive.tar.gz/proj/data.csv"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "<TMP>/archive.tar.gz.contents/proj/code.R",
+          "<TMP>/archive.tar.gz.contents/proj/data.csv"
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          6,
+          1440
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "archive",
+          "archive"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "p.1",
+          "p.1"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "code",
+          "data"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "raw",
+          "tabular"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

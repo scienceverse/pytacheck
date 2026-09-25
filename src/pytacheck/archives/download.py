@@ -124,8 +124,26 @@ def _repo_cache_dir() -> str:
     )
 
 
+def _scalar(x: Any, what: str = "x") -> Any:
+    """A length-1 vector argument as its value (R's scalar ``if()`` conditions)."""
+    if isinstance(x, str | bytes) or x is None or not isinstance(x, Sequence | Iterable):
+        return x
+    if isinstance(x, Mapping):
+        return x
+    values = list(x)
+    if len(values) == 1:
+        return values[0]
+    if not values:
+        raise ValueError("argument is of length zero")
+    raise ValueError(f"the condition has length > 1 ({what})")
+
+
 def _repo_key(repo_url: Any) -> str:
     """The filesystem-safe cache key of a repository URL (``NULL`` -> ``"unknown"``)."""
+    if repo_url is not None and not isinstance(repo_url, str):
+        repo_url = _scalar(repo_url, "repo_url")
+        if repo_url is None:
+            repo_url = float("nan")  # an element of a vector: NA, not NULL
     if repo_url is None:
         key: str = "unknown"
     elif is_na(repo_url):
@@ -324,20 +342,91 @@ class _RequestError(Exception):
 
 
 class _HttpError(Exception):
-    """httr2's ``httr2_http_<status>`` error (``req_perform()`` without ``req_error()``)."""
+    """httr2's ``httr2_http_<status>`` error (``req_perform()`` without ``req_error()``).
+
+    The message is httr2's: ``HTTP 404 Not Found.``, with its status
+    descriptions, plus a bullet per ``WWW-Authenticate: Bearer`` parameter
+    (httr2's ``resp_auth_message()``), formatted as cli formats them.
+    """
 
     def __init__(self, resp: Any) -> None:
         self.resp = resp
         status = int(resp.status_code)
         phrase = _reason_phrase(status)
-        super().__init__(f"HTTP {status} {phrase}." if phrase else f"HTTP {status}.")
+        lines = [f"HTTP {status} {phrase}." if phrase else f"HTTP {status}."]
+        lines += [_cli_bullet(m) for m in _resp_auth_message(resp)]
+        super().__init__("\n".join(lines))
 
 
 def _reason_phrase(status: int) -> str:
+    """``httr2::resp_status_desc()`` (``""`` for R's ``NA``)."""
     import httpx
 
+    from pytacheck.archives.zenodo_upload import _HTTR2_STATUS_DESC
+
+    if status in _HTTR2_STATUS_DESC:
+        return _HTTR2_STATUS_DESC[status] or ""
     phrase = httpx.codes.get_reason_phrase(status)
     return phrase if phrase else ""
+
+
+def _scan_fields(text: str) -> list[str]:
+    """``scan(text = x, what = "", sep = ",", quote = '"', strip.white = TRUE)``."""
+    if text == "":
+        return []
+    fields: list[str] = []
+    buf: list[str] = []
+    quoted = False
+    for ch in text:
+        if ch == '"':
+            quoted = not quoted
+        elif ch == "," and not quoted:
+            fields.append("".join(buf).strip(" \t"))
+            buf = []
+        else:
+            buf.append(ch)
+    fields.append("".join(buf).strip(" \t"))
+    return fields
+
+
+def _resp_auth_message(resp: Any) -> list[str]:
+    """httr2's ``resp_auth_message()``: the OAuth details of a ``WWW-Authenticate: Bearer``."""
+    www = resp.headers.get("www-authenticate")
+    if www is None:
+        return []
+    scheme, sep, rest = www.partition(" ")
+    if not sep:
+        rest = ""
+    params: list[tuple[str, str]] = []
+    for field in _scan_fields(rest):
+        name, eq, value = field.partition("=")
+        params.append((name, value if eq else ""))
+    if scheme != "Bearer":
+        return []
+    named = dict(reversed(params))  # `$`: the first of duplicated names
+    if "error" in named:
+        msg = f"OAuth error: {named['error']}"
+        if "error_description" in named:
+            msg = f"{msg} - {named['error_description']}"
+    else:
+        msg = "OAuth error"
+    others = [(n, v) for n, v in params if not (n.startswith("error") or n == "scheme")]
+    # paste0(names(x), ": ", x) of nothing is still ": "
+    return [msg, *([f"{n}: {v}" for n, v in others] or [": "])]
+
+
+def _cli_bullet(text: str, width: int = 79) -> str:
+    """A cli ``*`` bullet: whitespace collapsed, wrapped to 80 columns, indented 2."""
+    words = text.split()
+    lines: list[str] = []
+    line = "\u2022"
+    for w in words:
+        if len(line) + 1 + len(w) > width and line.strip() not in ("", "\u2022"):
+            lines.append(line)
+            line = " "
+        line = f"{line} {w}"
+    lines.append(line)
+    return "\n".join(lines)
 
 
 def _host(url: Any) -> str | None:
@@ -811,6 +900,7 @@ def _zip_timeout_for_size(
     *timeout_s* is a floor; with a known *expected_bytes* the timeout is at
     least the time the transfer takes at *min_bytes_per_s* (200 KB/s).
     """
+    expected_bytes = _scalar(expected_bytes, "expected_bytes")
     if _is_missing(expected_bytes) or expected_bytes <= 0:
         return timeout_s
     return max(timeout_s, expected_bytes / min_bytes_per_s)
@@ -1137,7 +1227,7 @@ def _download_zip_to_cache(
                 files["file_name"].tolist() if "file_name" in files.columns else [None] * len(files)
             )
             cache = files[".cache_path"].tolist()
-            loc_col = files.columns.get_loc("file_location")
+            loc_col = int(files.columns.get_loc("file_location"))  # type: ignore[arg-type]
             matched: list[int | None] = []
             for i in row_idx:
                 rel = paths[i]
@@ -1180,6 +1270,11 @@ def _download_zip_to_cache(
 # ---------------------------------------------------------------------------
 # download_repo_files()
 # ---------------------------------------------------------------------------
+
+
+def _loc(df: pd.DataFrame) -> int:
+    """The position of the ``file_location`` column."""
+    return int(df.columns.get_loc("file_location"))  # type: ignore[arg-type]
 
 
 def _frame(cols: dict[str, tuple[list[Any], str]]) -> pd.DataFrame:
@@ -1274,13 +1369,13 @@ def download_repo_files(
     if files is None or len(files) == 0:
         return files
     index = files.index
-    files = files.copy().reset_index(drop=True)
-    n = len(files)
-    if "file_location" not in files.columns:
-        files["file_location"] = pd.Series([None] * n, dtype=object)
+    df = files.copy().reset_index(drop=True)
+    n = len(df)
+    if "file_location" not in df.columns:
+        df["file_location"] = pd.Series([None] * n, dtype=object)
     else:
-        files["file_location"] = pd.Series(
-            [None if _is_missing(v) else v for v in files["file_location"].tolist()], dtype=object
+        df["file_location"] = pd.Series(
+            [None if _is_missing(v) else v for v in df["file_location"].tolist()], dtype=object
         )
 
     cache_root = None if cache is True else _repo_session_dir()
@@ -1290,40 +1385,47 @@ def download_repo_files(
             return str(_repo_cache_path(repo_url, file_path))
         return _file_path(cache_root, str(_repo_cache_rel(repo_url, file_path)))
 
-    repo_urls = (
-        [pd.NA if _is_missing(v) else v for v in files["repo_url"].tolist()]
-        if ("repo_url" in files.columns)
-        else [pd.NA] * n
+    # a missing repo_url column is R's NULL (cache key "unknown"); a missing value is NA
+    repo_urls: list[Any] = (
+        [pd.NA if _is_missing(v) else v for v in df["repo_url"].tolist()]
+        if ("repo_url" in df.columns)
+        else [None] * n
     )
-    file_names = _col(files, "file_name") or [None] * n
-    rel_path = _col(files, "file_path")
+    file_names = _col(df, "file_name") or [None] * n
+    rel_path = _col(df, "file_path")
     if rel_path is None:
         rel_path = list(file_names)
     rel_path = [fn if p is None else p for p, fn in zip(rel_path, file_names, strict=True)]
     cache_paths = [_safe_write_path(cache_path(repo_urls[i], rel_path[i])) or "" for i in range(n)]
-    files[".cache_path"] = pd.Series(cache_paths, dtype=object)
+    df[".cache_path"] = pd.Series(cache_paths, dtype=object)
 
     already = [os.path.exists(p) for p in cache_paths]
-    loc_col = files.columns.get_loc("file_location")
+    loc_col = int(df.columns.get_loc("file_location"))  # type: ignore[arg-type]
     for i in range(n):
         if already[i]:
-            files.iat[i, loc_col] = cache_paths[i]
+            df.iat[i, loc_col] = cache_paths[i]
 
     gated_rows: list[tuple[Any, str]] = []
     oversize_rows: list[tuple[Any, Any, float]] = []
 
-    def repo_eq(i: int, repo: Any) -> bool:
-        v = repo_urls[i]
-        return not _is_missing(v) and v == repo
+    # which(files$repo_url == repo), computed once: rows per repository (NA rows in none)
+    rows_of: dict[Any, list[int]] = {}
+    for i, v in enumerate(repo_urls):
+        if not _is_missing(v):
+            rows_of.setdefault(v, []).append(i)
+    any_na_repo = any(v is pd.NA for v in repo_urls)
 
-    sizes_col = _col(files, "file_size")
+    def rows_for(repo: Any) -> list[int]:
+        return [] if _is_missing(repo) else rows_of.get(repo, [])
+
+    sizes_col = _col(df, "file_size")
 
     # -- archive members (repo_check's zip-peek expansion) --------------------
-    if "archive_url" in files.columns:
+    if "archive_url" in df.columns:
         from pytacheck.archives.zip_peek import _zip_fetch_members
 
-        arcs = _col(files, "archive_url") or [None] * n
-        members = _col(files, "archive_member") or [None] * n
+        arcs = _col(df, "archive_url") or [None] * n
+        members = _col(df, "archive_member") or [None] * n
         is_member = [
             not already[i] and arcs[i] is not None and str(arcs[i]) != "" and members[i] is not None
             for i in range(n)
@@ -1349,10 +1451,10 @@ def download_repo_files(
             order = sorted(range(len(cand)), key=lambda k: cand_size[k])
             used = 0.0
             keep = [False] * len(cand)
-            for o in order:
-                if used + cand_size[o] <= cap_bytes:
-                    keep[o] = True
-                    used += cand_size[o]
+            for k in order:
+                if used + cand_size[k] <= cap_bytes:
+                    keep[k] = True
+                    used += cand_size[k]
             if not all(keep) and math.isfinite(cap_bytes):
                 n_out = keep.count(False)
                 msg = (
@@ -1389,15 +1491,15 @@ def download_repo_files(
                 ]
                 if not hits or _is_missing(f_path[hits[0]]):
                     continue
-                files.iat[k, loc_col] = f_path[hits[0]]
+                df.iat[k, loc_col] = f_path[hits[0]]
 
-    file_urls = _col(files, "file_url") or [None] * n
+    file_urls = _col(df, "file_url") or [None] * n
     has_url = [u is not None and str(u) != "" for u in file_urls]
     to_get: list[int] = []
 
     # -- per-repository budget + per-file size filter -------------------------
     for repo in dict.fromkeys(repo_urls[i] for i in range(n) if has_url[i]):
-        idx = [i for i in range(n) if has_url[i] and repo_eq(i, repo)]
+        idx = [i for i in rows_for(repo) if has_url[i]]
         if not idx:
             continue
         if repo_file_counts is not None and repo in repo_file_counts:
@@ -1457,7 +1559,8 @@ def download_repo_files(
                 used += c_size[k]
         to_get.extend(c_idx[k] for k in take_missing)
 
-        omitted = [k for k in missing_order if k not in set(take_missing)]
+        taken = set(take_missing)
+        omitted = [k for k in missing_order if k not in taken]
         if omitted and math.isfinite(cap_bytes):
             msg = (
                 f"Repository {repo} exceeds the {_cap_num(max_download_size)} MB per-repository "
@@ -1489,19 +1592,19 @@ def download_repo_files(
 
     # -- download what passed the gates ----------------------------------------
     failed_rows: list[tuple[Any, Any, Any, Any, str]] = []
-    paper_ids = _col(files, "paper_id")
+    paper_ids = _col(df, "paper_id")
     zip_kw: dict[str, Any] = {
         "timeout_s": zip_timeout_s,
         "skip_on_api_limit": skip_on_api_limit,
     }
 
     def location(i: int) -> Any:
-        return files.iat[i, files.columns.get_loc("file_location")]
+        return df.iat[i, _loc(df)]
 
     if to_get:
         remaining = list(to_get)
         repo_list = list(repo_urls)
-        providers = _col(files, "provider")
+        providers = _col(df, "provider")
 
         def in_remaining(pattern: str) -> list[Any]:
             hits = grepl(pattern, [_chr(repo_list[i]) for i in remaining], ignore_case=True)
@@ -1518,13 +1621,18 @@ def download_repo_files(
             return bool(grepl("/providers/osfstorage/", str(url), ignore_case=True))
 
         def repo_rows(repo: Any) -> list[int]:
-            return [i for i in range(n) if repo_eq(i, repo)]
+            return rows_for(repo)
 
         def record_count(repo: Any) -> float:
             """``sum(files$repo_url == repo)`` (NA when any repo_url is NA)."""
-            if any(_is_missing(v) for v in repo_list):
+            if any_na_repo:
                 return math.nan
-            return float(sum(1 for v in repo_list if v == repo))
+            return float(len(rows_for(repo)))
+
+        def in_repo(repo: Any) -> list[int]:
+            """``intersect(remaining, which(files$repo_url == repo))``."""
+            own = set(rows_for(repo))
+            return [i for i in remaining if i in own]
 
         def expected_of(rows: list[int]) -> float:
             if sizes_col is None:
@@ -1563,8 +1671,8 @@ def download_repo_files(
                 )
 
         def run_zip(rows: list[int], zip_url: str, **kw: Any) -> None:
-            nonlocal files, remaining
-            files = _download_zip_to_cache(files, rows, zip_url, **kw)
+            nonlocal df, remaining
+            df = _download_zip_to_cache(df, rows, zip_url, **kw)
             done = filled(rows)
             remaining = [i for i in remaining if i not in done]
 
@@ -1572,7 +1680,7 @@ def download_repo_files(
         from pytacheck.archives.osf_helpers import _osf_headers
 
         for repo in in_remaining(r"osf\.io"):
-            ridx = [i for i in remaining if repo_eq(i, repo)]
+            ridx = in_repo(repo)
             if not ridx:
                 continue
             ridx_zip = [i for i in ridx if is_osfstorage(i)]
@@ -1622,7 +1730,7 @@ def download_repo_files(
 
         # Zenodo: files-archive
         for repo in in_remaining("zenodo"):
-            ridx = [i for i in remaining if repo_eq(i, repo)]
+            ridx = in_repo(repo)
             if not ridx:
                 continue
             try:
@@ -1657,7 +1765,7 @@ def download_repo_files(
         )
 
         for repo in in_remaining(_dataverse_host_regex()):
-            ridx = [i for i in remaining if repo_eq(i, repo)]
+            ridx = in_repo(repo)
             if not ridx:
                 continue
             parsed = _dataverse_parse(repo)
@@ -1686,7 +1794,7 @@ def download_repo_files(
         from pytacheck.archives.dryad import _dryad_headers
 
         for repo in in_remaining(r"datadryad\.org|doi\.org/10\.5061/dryad"):
-            ridx = [i for i in remaining if repo_eq(i, repo)]
+            ridx = in_repo(repo)
             if not ridx:
                 continue
             try:
@@ -1711,12 +1819,12 @@ def download_repo_files(
             quota_worth_it = n_wanted > 12
             ratio_ok = None if is_na(record_n) else record_n <= 2 * n_wanted
             worth_count = True if n_wanted > 50 else ratio_ok
-            worth_it = (
+            dryad_worth: bool | None = (
                 (worth_count and quota_worth_it)
                 if worth_count is not None
                 else (None if quota_worth_it else False)
             )
-            if not (size_ok and worth_it is True):
+            if not (size_ok and dryad_worth is True):
                 if not size_ok:
                     shown = (
                         "unknown" if is_na(zip_bytes) else _cap_num(float(_rround(zip_bytes / _MB)))
@@ -1759,7 +1867,7 @@ def download_repo_files(
 
         for pattern, host_kind in ((r"github\.com", "github"), (r"gitlab\.com", "gitlab")):
             for repo in in_remaining(pattern):
-                ridx = [i for i in remaining if repo_eq(i, repo)]
+                ridx = in_repo(repo)
                 if not ridx:
                     continue
                 if host_kind == "github":
@@ -1826,7 +1934,7 @@ def download_repo_files(
 
                 pb = make_pb(len(remaining), "Downloading files [:bar] :current/:total")
             try:
-                cache_now = files[".cache_path"].tolist()
+                cache_now = df[".cache_path"].tolist()
                 zen = grepl(
                     r"zenodo\.org", [_chr(file_urls[i]) for i in remaining], ignore_case=True
                 )
@@ -1852,7 +1960,7 @@ def download_repo_files(
                     )
                     for i, err in zip(remaining_parallel, errs, strict=True):
                         if err is None:
-                            files.iat[i, files.columns.get_loc("file_location")] = cache_now[i]
+                            df.iat[i, _loc(df)] = cache_now[i]
                         else:
                             fail(i, err)
                         if pb is not None:
@@ -1865,7 +1973,7 @@ def download_repo_files(
                         expected_bytes=_num(sizes_col[i]) if sizes_col is not None else math.nan,
                     )
                     if err is None:
-                        files.iat[i, files.columns.get_loc("file_location")] = cache_now[i]
+                        df.iat[i, _loc(df)] = cache_now[i]
                     else:
                         fail(i, err)
                     if pb is not None:
@@ -1877,14 +1985,14 @@ def download_repo_files(
     # -- report failures ------------------------------------------------------
     if failed_rows:
         for repo in dict.fromkeys(r[0] for r in failed_rows):
-            rows = [
+            frows = [
                 r for r in failed_rows if r[0] is repo or (not _is_missing(r[0]) and r[0] == repo)
             ]
-            k = len(rows)
-            first_err = sub("\n.*", "", rows[0][4])
+            k = len(frows)
+            first_err = sub("\n.*", "", frows[0][4])
             _message(
                 f"{k} download{plural(k)} from {_chr(repo) or 'NA'} failed after retries "
-                f"(e.g. {_chr(rows[0][1]) or 'NA'}: {first_err}). Re-run to retry: cached "
+                f"(e.g. {_chr(frows[0][1]) or 'NA'}: {first_err}). Re-run to retry: cached "
                 "files are reused, only the missing files are fetched."
             )
 
@@ -1895,7 +2003,7 @@ def download_repo_files(
         )
         options({"metacheck.repo_cache.notified": True})
 
-    out = files.drop(columns=[".cache_path"])
+    out = df.drop(columns=[".cache_path"])
     out["file_location"] = pd.Series(
         [None if _is_missing(v) else str(v) for v in out["file_location"].tolist()],
         dtype="string",

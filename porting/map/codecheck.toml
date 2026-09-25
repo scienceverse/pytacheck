@@ -1,8 +1,9 @@
 # R source -> Python location for codecheck (see docs/PORTING.md).
 # _encoding/_icu: readr::guess_encoding (stringi/ICU) + readr::read_lines (vroom) + readLines;
-# _rparse: R's gram.y parser (parse errors); _purl/_reval: knitr::purl and chunk-option evaluation.
+# _rparse: R's gram.y parser (parse errors); _purl/_reval: knitr::purl and chunk-option evaluation;
+# _rjson: jsonlite::fromJSON(simplifyVector = FALSE) (yajl quirks) and unlist()/as.character() of its values.
 [files]
-"R/code_check.R" = ["src/pytacheck/codecheck/core.py", "src/pytacheck/codecheck/_encoding.py", "src/pytacheck/codecheck/_icu.py", "src/pytacheck/codecheck/_icu_tables.py", "src/pytacheck/codecheck/_rparse.py", "src/pytacheck/codecheck/_rparse_tables.py", "src/pytacheck/codecheck/_purl.py", "src/pytacheck/codecheck/_reval.py"]
+"R/code_check.R" = ["src/pytacheck/codecheck/core.py", "src/pytacheck/codecheck/_encoding.py", "src/pytacheck/codecheck/_icu.py", "src/pytacheck/codecheck/_icu_tables.py", "src/pytacheck/codecheck/_rparse.py", "src/pytacheck/codecheck/_rparse_tables.py", "src/pytacheck/codecheck/_purl.py", "src/pytacheck/codecheck/_reval.py", "src/pytacheck/codecheck/_rjson.py"]
 
 [functions]
 code_read = "pytacheck.codecheck.core:code_read"

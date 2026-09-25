@@ -54,14 +54,15 @@ def test_multiple_papers_one_fails(fixtures_dir: Path) -> None:
         str(fixtures_dir / "problems" / "corrupt.xml"),
     ]
     with pytest.warns(UserWarning):
-        papers = grobid_to_bibr(xml_file, None)
+        papers = grobid_to_bibr(xml_file, None, schema_version=None)
     assert isinstance(papers, pc.PaperList)
     assert len(papers) == 1
     assert papers[0].info["file_name"].iloc[0] == xml_file[0]
 
 
 def test_one_paper_null_save_path(demo_xml: Path) -> None:
-    paper = grobid_to_bibr(demo_xml, None)
+    # metacheck's default conversion (pytacheck's default is bibr export schema 12.0)
+    paper = grobid_to_bibr(demo_xml, None, schema_version=None)
 
     assert isinstance(paper, pc.Paper)
     assert "10.0000/0123456789" in list(paper.bib["doi"])

@@ -1,0 +1,14 @@
+{
+  "id": "psychds_tree_html.review.slash_dupes",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "<pre style=\"line-height:1.4\">\n├── &lt;x&gt;/\n│   └── &amp;y <span style=\"color:#b9770e\">(&lt;from&gt;)<\/span>\n├── a/\n│   └── b/ <span style=\"color:#b9770e\">(from \\old)<\/span>\n│       └── c\n└── d/\n    └── e/\n        └── f\n<\/pre>"
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

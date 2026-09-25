@@ -1,0 +1,29 @@
+# R source -> Python location for Grobid TEI -> bibr export schema 12.0 (metacheck
+# PR #423, commit b239264; see docs/PORTING.md). bibr export schema 12.0 is the
+# schema pytacheck targets: grobid_to_bibr() and read() of a TEI file default to
+# schema_version = "12.0" (metacheck: NULL, its older format).
+[files]
+"R/import-grobid-bibr12.R" = ["src/pytacheck/io/grobid_bibr12.py"]
+# the schema_version argument of grobid_to_bibr() / .grobid_to_bibr()
+"R/import-grobid.R" = ["src/pytacheck/io/grobid.py"]
+# read(): TEI dispatch (schema_version, keyword-only)
+"R/import-read.R" = ["src/pytacheck/io/read.py"]
+"tests/testthat/test-import-grobid-bibr12.R" = ["tests/grobid12/test_import_grobid_bibr12.py"]
+
+[functions]
+# R/import-grobid-bibr12.R
+".grobid_to_bibr12" = "pytacheck.io.grobid_bibr12:_grobid_to_bibr12"
+".bibr12_utc" = "pytacheck.io.grobid_bibr12:_bibr12_utc"
+
+# helpers standing in for base R / package functions the R file uses
+[helpers]
+"squish <- function(x) trimws(gsub('\\s+', ' ', x))" = "pytacheck.io.grobid_bibr12:_squish"
+"na_if_empty()" = "pytacheck.io.grobid_bibr12:_na_if_empty"
+"base::tolower() (towlower: one character per character)" = "pytacheck.io.grobid_bibr12:_tolower"
+"tools::file_path_sans_ext()" = "pytacheck.io.grobid_bibr12:_file_path_sans_ext"
+"xml2::xml_remove()" = "pytacheck.io.grobid_bibr12:_xml_remove"
+"as.integer() of a character vector" = "pytacheck.io.grobid_bibr12:_as_integer"
+".bibr12_df() of column lists, as records" = "pytacheck.io.grobid_bibr12:_records"
+"R_strtod() (strptime %OS)" = "pytacheck.io.grobid_bibr12:_r_strtod"
+"strptime() get_number()" = "pytacheck.io.grobid_bibr12:_get_number"
+"strptime(x, '%Y-%m-%dT%H:%M[:%OS]%z')" = "pytacheck.io.grobid_bibr12:_strptime_iso"

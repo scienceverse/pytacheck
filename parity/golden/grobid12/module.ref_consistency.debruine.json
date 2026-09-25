@@ -1,0 +1,253 @@
+{
+  "id": "module.ref_consistency.debruine",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "ref_consistency"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Reference Consistency"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "reference"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 18,
+        "names": [
+          "paper_id",
+          "bib_id",
+          "reference",
+          "contents",
+          "text"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "debruine-child",
+              "debruine-child",
+              "debruine-sex",
+              "debruine-sex",
+              "debruine-sex",
+              "debruine-tnl",
+              "debruine-tnl",
+              "debruine-tnl",
+              "debruine-child",
+              "debruine-child",
+              "debruine-child",
+              "debruine-child",
+              "debruine-child",
+              "debruine-fret",
+              "debruine-sex",
+              "debruine-tnl",
+              "debruine-tnl",
+              "debruine-tnl"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              4,
+              9,
+              7,
+              26,
+              27,
+              8,
+              9,
+              10,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Bressan, P., & Grassi, M. Parental. resemblance in one-year-olds and the Gaussian curve. Evolution and Human Behavior, 25, 133 -141.",
+              "DeBruine, L. M. Context-specific responses to a cue of kinship: Facial resemblance increases the attractiveness of same-sex faces more than other-sex faces. Proceedings of the Royal Society of London B. Submitted for publication.",
+              "Facial resemblance increases attractiveness L. M. DeBruine 2089 Proc. R. Soc. Lond. B (2004) Downloaded from https://royalsocietypublishing.org/ on 24 July2025",
+              "Penton-Voak, I. S., Perrett, D. I. & Peirce, J. W. 1999a Com- puter graphic studies of the role of facial similarity in judge- ments of attractiveness. Curr. Psychol. 18, 104-117.",
+              "Penton-Voak, I. S., Perrett, D. I., Castles, D. L., Kobayashi, T., Burt, D. M., Murray, L. K. & Minamisawa, R. 1999b Men- strual cycle alters face preference. Nature 399, 741-742.",
+              "DeBruine, L. M. 2002 Facial resemblance enhances trust. Proc. R. Soc. B 269, 1307-1312.",
+              "DeBruine, L. M. 2004a Facial resemblance increases the attractiveness of same-sex faces more than other-sex faces. Proc. R. Soc. B 271, 2085-2090.",
+              "DeBruine, L. M. 2004b Resemblance to self increases the appeal of child faces to both men and women. Evol. Hum. Behav. 25, 142-154.",
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              "Bressan & Grassi, in press;",
+              "(Platek, personal communication)",
+              "Platek et al. resized",
+              "Platek et al. (Fig 1c",
+              "Platek et al.'s method.",
+              "Soc. Lond. B (2002)",
+              "(Penton-Voak et al. 1999b;",
+              "DeBruine 2004a)",
+              "(DeBruine 2004b)",
+              "DeBruine 2004a,b)"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              "It might seem adaptive for infants to unequivocally resemble their fathers (sensu Christenfeld & Hill, 1995), but little evidence exists for such an adaptation, although infants and children are consistently found to resemble both their mothers and fathers to a small degree (Bre ´dart & French, 1999; Bressan & Grassi, in press; McLain, Setters, Moulton, & Pratt, 2000; Nesse, Silverman, & Bortz, 1990).",
+              "Although the morphing procedure ''tended to limit greatly the determination of gender'' (Platek, personal communication), it is still possible that the inclusion of child morphs made from both male and female adult faces affected the results.",
+              "This changes the face proportions to be somewhat closer to those of a child, but the resulting child morph (Fig. 1d) may not satisfactorily resemble a real child.  Platek et al. (2002 Platek et al. ( , 2003) ) to that used in this study. Platek et al. resized an experimental participant's face (a, b) to the same aspect ratio as a child's face (c) and blended the two faces together in a 50/50 ratio to produce a child morph (d).",
+              "The resulting images were separately blended in shape and color with the male and female child images used by Platek et al. (Fig 1c).",
+              "Morphs were made using either the method used by Platek et al. or the method used in the current study. Platek et al.'s method. Participants matched faces within each group at levels greater than chance (all t(17) > 5.2, P < .001).",
+              "R. Soc. Lond. B (2002) possibility, as no effect of attractiveness on either trusting or self ishness was seen, even for non-self morphs.",
+              "Raters' attributes, such as own attractiveness, ovarian cycle stage, and romantic relationship status, also affect judgements (Penton-Voak et al. 1999b; Johnston & Barry 2001; Little et al.2001 Little et al. , 2002)).",
+              "Consistent with this hypothesis, experimentally produced facial resemblance, a potential cue of kinship, has been shown to increase trusting behaviour (DeBruine 2002), self-reported preference for children (Platek et al.2002 (Platek et al. , 2003;; DeBruine 2004a) and the attractiveness of same-sex faces (DeBruine 2004b).",
+              "Consistent with this hypothesis, experimentally produced facial resemblance, a potential cue of kinship, has been shown to increase trusting behaviour (DeBruine 2002), self-reported preference for children (Platek et al.2002 (Platek et al. , 2003;; DeBruine 2004a) and the attractiveness of same-sex faces (DeBruine 2004b).",
+              "Contrary to numerous findings that romantic partners tend to resemble one another (Griffths & Kunz 1973; Zajonc et al. 1987; Hinsz 1989; Bereczkei et al. 2002; Bereczkei et al.2004), experimentally produced facial resemblance does not significantly increase the attractiveness of other-sex faces (Penton-Voak et al. 1999; DeBruine 2004a,b)."
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "This module relies on Grobid correctly parsing the references. There are likley to be some false positives.",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(bib_id = c(4L, 9L, 7L, 26L, 27L, 8L, 9L, 10L, \nNA, NA, NA, NA, NA, NA, NA, NA, NA, NA), type = c(\"extra\", \"extra\", \n\"extra\", \"extra\", \"extra\", \"extra\", \"extra\", \"extra\", \"missing\", \n\"missing\", \"missing\", \"missing\", \"missing\", \"missing\", \"missing\", \n\"missing\", \"missing\", \"missing\"), contents = c(NA, NA, NA, NA, \nNA, NA, NA, NA, \"Bressan & Grassi, in press;\", \"(Platek, personal communication)\", \n\"Platek et al. resized\", \"Platek et al. (Fig 1c\", \"Platek et al.'s method.\", \n\"Soc. Lond. B (2002)\", \"(Penton-Voak et al. 1999b;\", \"DeBruine 2004a)\", \n\"(DeBruine 2004b)\", \"DeBruine 2004a,b)\"), reference = c(\"Bressan, P., & Grassi, M. Parental. resemblance in one-year-olds and the Gaussian curve. Evolution and Human Behavior, 25, 133 -141.\", \n\"DeBruine, L. M. Context-specific responses to a cue of kinship: Facial resemblance increases the attractiveness of same-sex faces more than other-sex faces. Proceedings of the Royal Society of London B. Submitted for publication.\", \n\"Facial resemblance increases attractiveness L. M. DeBruine 2089 Proc. R. Soc. Lond. B (2004) Downloaded from https://royalsocietypublishing.org/ on 24 July2025\", \n\"Penton-Voak, I. S., Perrett, D. I. & Peirce, J. W. 1999a Com- puter graphic studies of the role of facial similarity in judge- ments of attractiveness. Curr. Psychol. 18, 104-117.\", \n\"Penton-Voak, I. S., Perrett, D. I., Castles, D. L., Kobayashi, T., Burt, D. M., Murray, L. K. & Minamisawa, R. 1999b Men- strual cycle alters face preference. Nature 399, 741-742.\", \n\"DeBruine, L. M. 2002 Facial resemblance enhances trust. Proc. R. Soc. B 269, 1307-1312.\", \n\"DeBruine, L. M. 2004a Facial resemblance increases the attractiveness of same-sex faces more than other-sex faces. Proc. R. Soc. B 271, 2085-2090.\", \n\"DeBruine, L. M. 2004b Resemblance to self increases the appeal of child faces to both men and women. Evol. Hum. Behav. 25, 142-154.\", \n\"It might seem adaptive for infants to unequivocally resemble their fathers (sensu Christenfeld & Hill, 1995), but little evidence exists for such an adaptation, although infants and children are consistently found to resemble both their mothers and fathers to a small degree (Bre ´dart & French, 1999; Bressan & Grassi, in press; McLain, Setters, Moulton, & Pratt, 2000; Nesse, Silverman, & Bortz, 1990).\", \n\"Although the morphing procedure ''tended to limit greatly the determination of gender'' (Platek, personal communication), it is still possible that the inclusion of child morphs made from both male and female adult faces affected the results.\", \n\"This changes the face proportions to be somewhat closer to those of a child, but the resulting child morph (Fig. 1d) may not satisfactorily resemble a real child.  Platek et al. (2002 Platek et al. ( , 2003) ) to that used in this study. Platek et al. resized an experimental participant's face (a, b) to the same aspect ratio as a child's face (c) and blended the two faces together in a 50/50 ratio to produce a child morph (d).\", \n\"The resulting images were separately blended in shape and color with the male and female child images used by Platek et al. (Fig 1c).\", \n\"Morphs were made using either the method used by Platek et al. or the method used in the current study. Platek et al.'s method. Participants matched faces within each group at levels greater than chance (all t(17) > 5.2, P < .001).\", \n\"R. Soc. Lond. B (2002) possibility, as no effect of attractiveness on either trusting or self ishness was seen, even for non-self morphs.\", \n\"Raters' attributes, such as own attractiveness, ovarian cycle stage, and romantic relationship status, also affect judgements (Penton-Voak et al. 1999b; Johnston & Barry 2001; Little et al.2001 Little et al. , 2002)).\", \n\"Consistent with this hypothesis, experimentally produced facial resemblance, a potential cue of kinship, has been shown to increase trusting behaviour (DeBruine 2002), self-reported preference for children (Platek et al.2002 (Platek et al. , 2003;; DeBruine 2004a) and the attractiveness of same-sex faces (DeBruine 2004b).\", \n\"Consistent with this hypothesis, experimentally produced facial resemblance, a potential cue of kinship, has been shown to increase trusting behaviour (DeBruine 2002), self-reported preference for children (Platek et al.2002 (Platek et al. , 2003;; DeBruine 2004a) and the attractiveness of same-sex faces (DeBruine 2004b).\", \n\"Contrary to numerous findings that romantic partners tend to resemble one another (Griffths & Kunz 1973; Zajonc et al. 1987; Hinsz 1989; Bereczkei et al. 2002; Bereczkei et al.2004), experimentally produced facial resemblance does not significantly increase the attractiveness of other-sex faces (Penton-Voak et al. 1999; DeBruine 2004a,b).\"\n)), row.names = c(NA, -18L), class = c(\"tbl_df\", \"tbl\", \"data.frame\"\n))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 2, FALSE)\n```\n"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "red"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "There are cross-references that are not in the bibliography and/or bibliography entries not cross-referenced in the text"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 4,
+        "names": [
+          "paper_id",
+          "n_bib",
+          "n_xrefs",
+          "n_missing",
+          "n_extra"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "debruine-child",
+              "debruine-fret",
+              "debruine-sex",
+              "debruine-tnl"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              23,
+              22,
+              40,
+              32
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              53,
+              26,
+              49,
+              42
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              5,
+              1,
+              1,
+              3
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2,
+              0,
+              3,
+              3
+            ]
+          }
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

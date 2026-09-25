@@ -1,0 +1,9 @@
+{
+  "id": "code_version_pin_check.review.no_file_location",
+  "ok": false,
+  "error": "attempt to set an attribute on NULL",
+  "warnings": [],
+  "value": null,
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

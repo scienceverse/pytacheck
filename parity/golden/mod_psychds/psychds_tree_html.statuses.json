@@ -1,0 +1,14 @@
+{
+  "id": "psychds_tree_html.statuses",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "<pre style=\"line-height:1.4\">\n├── a/\n│   ├── b/\n│   │   ├── c.txt\n│   │   └── <span style=\"color:#c0392b\">missing.txt  ← missing<\/span>\n│   ├── moved_no_note.R\n│   └── moved.R <span style=\"color:#b9770e\">(move from x/moved.R)<\/span>\n├── abs/\n│   └── double.txt\n├── <span style=\"color:#c0392b\">docs/  ← missing<\/span>\n│   └── x.md\n├── scaffold/\n│   └── README\n├── win/\n│   └── path/\n│       └── f.txt <span style=\"color:#b9770e\">(move from &lt;old&gt; &amp; new)<\/span>\n├── Top.txt\n└── top2.txt\n<\/pre>"
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

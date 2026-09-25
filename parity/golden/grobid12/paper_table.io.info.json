@@ -1,0 +1,791 @@
+{
+  "id": "paper_table.io.info",
+  "ok": true,
+  "error": null,
+  "warnings": [
+    "ID x already defined [513]",
+    "Namespace prefix xlink for href on ptr is not defined [201]",
+    "Namespace prefix p on q is not defined [201]",
+    "ID x already defined [513]",
+    "Namespace prefix xlink for href on ptr is not defined [201]",
+    "Namespace prefix p on q is not defined [201]",
+    "Namespace prefix xlink for href on ptr is not defined [201]",
+    "There were 2 errors; use lastlog(1:2)"
+  ],
+  "value": {
+    "t": "df",
+    "nrow": 15,
+    "names": [
+      "title",
+      "abstract",
+      "keywords",
+      "doi",
+      "pmid",
+      "pmcid",
+      "arxiv",
+      "language",
+      "paper_type",
+      "oecd_l1",
+      "oecd_l2",
+      "journal",
+      "volume",
+      "issue",
+      "first_page",
+      "last_page",
+      "issn",
+      "publisher",
+      "published",
+      "published_date",
+      "license",
+      "license_url",
+      "license_spdx",
+      "funding_statement",
+      "coi_statement",
+      "ethics_statement",
+      "data_availability",
+      "file_name",
+      "sha256",
+      "input_format",
+      "schema_version",
+      "file_hash",
+      "bibr_version",
+      "paper_id"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "Byte order marks",
+          "No namespace, CRLF",
+          "Edge Cases: A Synthetic Paper",
+          null,
+          "Unlabelled figure and table divs",
+          "Two figure sentences",
+          "Non-fatal parser errors",
+          "Tokens",
+          "Only references",
+          "Table without rows",
+          "Review fixture",
+          "Review fixture",
+          "Review fixture",
+          "Namespaces in text",
+          "Edges of the 12.0 Conversion"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "﻿First sentence. Second one.",
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          "First 1 paragraph. Second sentence.",
+          null,
+          null,
+          "An abstract sentence. Another one.",
+          "An abstract sentence. Another one.",
+          "An abstract sentence. Another one.",
+          "Abstract with a pointer. And x maths.",
+          "First abstract paragraph. Second one."
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": [
+              "replication",
+              "meta science"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": [
+              "grobid",
+              "schema twelve"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          "10.1234/edge.1",
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "bom_paragraphs.tei.xml",
+          "crlf_nonamespace.tei.xml",
+          "edge_body.tei.xml",
+          "empty_body.tei.xml",
+          "figure_first.tei.xml",
+          "figure_twice.tei.xml",
+          "nonfatal_errors.tei.xml",
+          "ref_token_literal.tei.xml",
+          "refs_no_text.tei.xml",
+          "table_norows.tei.xml",
+          "tables_empty_first.tei.xml",
+          "tables_empty_second.tei.xml",
+          "tables_three_one_empty.tei.xml",
+          "xlink_ns.tei.xml",
+          "v12_edges.tei.xml"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "b25e12a728af0337ddd2c29ac8ad2aabeb98bfe22fc96ef9cdf3246d6aebaae5",
+          "f8bd2a27f441e7fb00d7d744133d8987bfe901e83103b2bc023f77d20776ed9f",
+          "c8501db2050d63047d7a7663ef56c69bad48be6437ee871354aa1d7c20628bb0",
+          "4d7dd6cf0ab7cdd3d948a9a9b56b0d44410007bc33c0236d3150d60cb6d69e0a",
+          "875da2e4eea5879618f212c9fdd84b6c9f454784bff8fad25c3defd76d967181",
+          "555840271f2364f80a31b45b8ed8ee24cd27f96b4ef5edac62d03b902d011294",
+          "e01105670b14f9cce7e1dabec89956534d15a8a36f207165e1b872a28c8a4b64",
+          "7d09d8403dad4d0ad7d0e691aaa20a3f10092ced595cdd28e9d2d9ddcd4da541",
+          "092c821b0e6b0b0e79c643f030c48fdc2ff87ed1b34dad89b93564c63fb85f51",
+          "330d8217b595664d88bc103bf44291c46f2a19adea37d4544c67b4b0456ddfbd",
+          "8fb0f91b2d44d152b83fd1b7fab26c68d3ab3e19cf6c53adac1e553aad133930",
+          "ff550784fa897c628b6218e20c9ae333f4ebc169abf3a7179c5440c23f05f5b5",
+          "32d38e89030308f4c9333ebeda847599f4c5e413a1a3edce4dec64ae03d5c37e",
+          "63aea3f630d63a93128e59ef34184755adbeabb8ef35d187f791c5cc8be6f8ce",
+          "a50d7049e1ee5f8e6ca0568d71095cdc25445af54987a4b8ff28e9e424b1a0cf"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "tei",
+          "tei",
+          "tei",
+          "tei",
+          "tei",
+          "tei",
+          "tei",
+          "tei",
+          "tei",
+          "tei",
+          "tei",
+          "tei",
+          "tei",
+          "tei",
+          "tei"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "12.0",
+          "12.0",
+          "12.0",
+          "12.0",
+          "12.0",
+          "12.0",
+          "12.0",
+          "12.0",
+          "12.0",
+          "12.0",
+          "12.0",
+          "12.0",
+          "12.0",
+          "12.0",
+          "12.0"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "b25e12a728af0337",
+          "f8bd2a27f441e7fb",
+          "c8501db2050d6304",
+          "4d7dd6cf0ab7cdd3",
+          "875da2e4eea58796",
+          "555840271f2364f8",
+          "e01105670b14f9cc",
+          "7d09d8403dad4d0a",
+          "092c821b0e6b0b0e",
+          "330d8217b595664d",
+          "8fb0f91b2d44d152",
+          "ff550784fa897c62",
+          "32d38e89030308f4",
+          "63aea3f630d63a93",
+          "a50d7049e1ee5f8e"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "bom_paragraphs.tei",
+          "crlf_nonamespace.tei",
+          "edge_body.tei",
+          "empty_body.tei",
+          "figure_first.tei",
+          "figure_twice.tei",
+          "nonfatal_errors.tei",
+          "ref_token_literal.tei",
+          "refs_no_text.tei",
+          "table_norows.tei",
+          "tables_empty_first.tei",
+          "tables_empty_second.tei",
+          "tables_three_one_empty.tei",
+          "xlink_ns.tei",
+          "v12_edges.tei"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

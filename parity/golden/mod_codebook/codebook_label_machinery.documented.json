@@ -1,0 +1,58 @@
+{
+  "id": "codebook_label_machinery.documented",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 1,
+    "names": [
+      "source_file",
+      "column_name",
+      "label",
+      "codebook_variable",
+      "label_status",
+      "label_method"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "s.csv"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Q2_TEXT"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Other, please specify"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Q2_TEXT"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "labelled"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "rules"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

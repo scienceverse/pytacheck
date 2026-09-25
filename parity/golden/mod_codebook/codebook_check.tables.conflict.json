@@ -1,0 +1,113 @@
+{
+  "id": "codebook_check.tables.conflict",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": null,
+    "v": [
+      {
+        "t": "df",
+        "nrow": 2,
+        "names": [
+          "Column",
+          "Documented",
+          "Label",
+          "Codebook Variable",
+          "Source",
+          "Status"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "mood",
+              "id"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "conflict",
+              "no"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Sleep quality rating | Positive affect",
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "mood",
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "codebook_b.csv | codebook.csv",
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "conflicting_definition",
+              "unlabelled"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "File",
+          "Column",
+          "Conflicting Labels",
+          "Sources",
+          "Issue"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "s.csv"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "mood"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Sleep quality rating | Positive affect"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "codebook_b.csv | codebook.csv"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "conflicting_definition"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

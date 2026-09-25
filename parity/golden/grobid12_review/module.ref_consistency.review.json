@@ -1,0 +1,238 @@
+{
+  "id": "module.ref_consistency.review",
+  "ok": true,
+  "error": null,
+  "warnings": [
+    "ID fig_0 already defined [513]",
+    "ID b1 already defined [513]",
+    "ID fig_0 already defined [513]",
+    "ID b1 already defined [513]"
+  ],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "ref_consistency"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Reference Consistency"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "reference"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 12,
+        "names": [
+          "paper_id",
+          "bib_id",
+          "reference",
+          "contents",
+          "text"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "review_urls.tei",
+              "review_noapp.tei",
+              "review_noapp.tei",
+              "review_noapp.tei",
+              "review_noapp.tei",
+              "v12_edges.tei",
+              "v12_edges.tei",
+              "v12_edges.tei",
+              "review_urls.tei",
+              "review_urls.tei",
+              "review_urls.tei",
+              "v12_edges.tei"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              3,
+              2,
+              3,
+              4,
+              5,
+              3,
+              4,
+              5,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Duplicate id.",
+              "B.",
+              "C.",
+              "D.",
+              "E.",
+              "A Book (999).",
+              "Another Book.",
+              "Fourth (3001).",
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              "[1]",
+              "[x]",
+              "[?]",
+              "(Missing 1999)"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              "A div without a head citing Table1 and Figure1 and [2] and [1] and [x] and 9 and [?].",
+              "A div without a head citing Table1 and Figure1 and [2] and [1] and [x] and 9 and [?].",
+              "A div without a head citing Table1 and Figure1 and [2] and [1] and [x] and 9 and [?].",
+              "Müller and Ångström report (Smith 2020; Jones 2021) and (Missing 1999) and (Empty 2000).1 We saw (Twice) and (Twice) again."
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "This module relies on Grobid correctly parsing the references. There are likley to be some false positives.",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(bib_id = c(3L, 2L, 3L, 4L, 5L, 3L, 4L, 5L, NA, \nNA, NA, NA), type = c(\"extra\", \"extra\", \"extra\", \"extra\", \"extra\", \n\"extra\", \"extra\", \"extra\", \"missing\", \"missing\", \"missing\", \"missing\"\n), contents = c(NA, NA, NA, NA, NA, NA, NA, NA, \"[1]\", \"[x]\", \n\"[?]\", \"(Missing 1999)\"), reference = c(\"Duplicate id.\", \"B.\", \n\"C.\", \"D.\", \"E.\", \"A Book (999).\", \"Another Book.\", \"Fourth (3001).\", \n\"A div without a head citing Table1 and Figure1 and [2] and [1] and [x] and 9 and [?].\", \n\"A div without a head citing Table1 and Figure1 and [2] and [1] and [x] and 9 and [?].\", \n\"A div without a head citing Table1 and Figure1 and [2] and [1] and [x] and 9 and [?].\", \n\"Müller and Ångström report (Smith 2020; Jones 2021) and (Missing 1999) and (Empty 2000).1 We saw (Twice) and (Twice) again.\"\n)), row.names = c(NA, -12L), class = c(\"tbl_df\", \"tbl\", \"data.frame\"\n))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 2, FALSE)\n```\n"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "red"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "There are cross-references that are not in the bibliography and/or bibliography entries not cross-referenced in the text"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 6,
+        "names": [
+          "paper_id",
+          "n_bib",
+          "n_xrefs",
+          "n_missing",
+          "n_extra"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "review_urls.tei",
+              "review_url_na.tei",
+              "review_noapp.tei",
+              "review_inline.tei",
+              "review_sentences.tei",
+              "v12_edges.tei"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              3,
+              0,
+              5,
+              1,
+              1,
+              5
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              8,
+              0,
+              1,
+              1,
+              5,
+              6
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              3,
+              0,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              1,
+              0,
+              4,
+              0,
+              0,
+              3
+            ]
+          }
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

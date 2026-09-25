@@ -1,0 +1,19 @@
+{
+  "id": "repo_cache_rel.url1",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "github.com_o_r/data/a.csv",
+      "github.com_o_r/win//b.R",
+      "github.com_o_r/abs/c.txt",
+      "github.com_o_r/",
+      "github.com_o_r/NA",
+      "github.com_o_r/déjà/vu.txt"
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -1,0 +1,140 @@
+{
+  "id": "scale_prefix_groups.loop",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "power.pp1",
+      "slider"
+    ],
+    "v": [
+      {
+        "t": "list",
+        "names": [
+          "prefix",
+          "display",
+          "columns",
+          "derived",
+          "totals_only",
+          "n_columns",
+          "max_item"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "power.pp1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "POWER.PP1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "POWER.PP1_1",
+              "POWER.PP1_2",
+              "POWER.PP1_3",
+              "POWER.PP1_4",
+              "POWER.PP2_1",
+              "POWER.PP2_2",
+              "POWER.PP2_3",
+              "POWER.PP2_4",
+              "POWER.PP3_1",
+              "POWER.PP3_2",
+              "POWER.PP3_3",
+              "POWER.PP3_4"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              12
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              4
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "prefix",
+          "display",
+          "columns",
+          "derived",
+          "totals_only",
+          "n_columns",
+          "max_item"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "slider"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "SLIDER"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "slider_1",
+              "slider_2",
+              "slider_3",
+              "slider_4",
+              "slider_5"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              5
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              5
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

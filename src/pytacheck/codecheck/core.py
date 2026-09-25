@@ -17,7 +17,6 @@ recovery, zip peeking) are imported lazily where they are used.
 
 from __future__ import annotations
 
-import json
 import math
 import os
 import re
@@ -39,6 +38,7 @@ from pytacheck._r.regex import (
     strsplit,
     sub,
 )
+from pytacheck.codecheck._rjson import RList, r_as_character, r_unlist_chr
 
 __all__ = [
     "code_abs_path",
@@ -132,27 +132,11 @@ def _is_na(x: Any) -> bool:
     return x is None or x is pd.NA or (isinstance(x, float) and math.isnan(x))
 
 
-class _RList(list):  # type: ignore[type-arg]
-    """A JSON object as jsonlite gives it: a named list (duplicate names kept)."""
-
-    def names(self) -> list[str]:
-        return [k for k, _ in self]
-
-
 def _json_load(text: str) -> Any:
     """``jsonlite::fromJSON(text, simplifyVector = FALSE)`` (``None`` on error)."""
-    try:
-        return json.loads(
-            text,
-            object_pairs_hook=_RList,
-            parse_constant=_reject_constant,
-        )
-    except (ValueError, RecursionError):
-        return None
+    from pytacheck.codecheck._rjson import json_load
 
-
-def _reject_constant(name: str) -> Any:
-    raise ValueError(f"invalid JSON constant {name}")
+    return json_load(text)
 
 
 def _dollar(x: Any, name: str) -> Any:
@@ -162,7 +146,7 @@ def _dollar(x: Any, name: str) -> Any:
     """
     if x is None:
         return None
-    if isinstance(x, _RList):
+    if isinstance(x, RList):
         for k, v in x:
             if k == name:
                 return v
@@ -179,28 +163,13 @@ def _dollar(x: Any, name: str) -> Any:
 
 
 def _r_as_character1(x: Any) -> str | None:
-    """``as.character(x)[[1]]`` for a parsed JSON/YAML value."""
+    """``as.character(x)[[1]]`` for a parsed JSON/YAML value (``NULL`` gives ``None``)."""
     if x is None:
         return None
-    if isinstance(x, bool):
-        return "TRUE" if x else "FALSE"
-    if isinstance(x, int | float):
-        from pytacheck._r.base import as_character
-
-        return as_character(x)
-    if isinstance(x, str):
-        return x
-    if isinstance(x, list | tuple):
-        values = [v for _, v in x] if isinstance(x, _RList) else list(x)
-        if not values:
-            raise IndexError("subscript out of bounds")
-        first = values[0]
-        if isinstance(first, str | bool | int | float):
-            return _r_as_character1(first)
-        return str(first)
-    if isinstance(x, dict):
-        return _r_as_character1(_RList(x.items()))
-    return str(x)
+    values = r_as_character(x)
+    if not values:
+        raise IndexError("subscript out of bounds")
+    return values[0]
 
 
 # ---------------------------------------------------------------------------
@@ -265,7 +234,7 @@ def _try_code_read(file_name: str) -> list[str] | None:
 
 def _file_ext(x: str) -> str:
     """``tools::file_ext()``."""
-    m = re.search(r"\.([A-Za-z0-9]+)$", x)
+    m = re.search(r"\.([^\W_]+)\Z", x)  # TRE: [[:alnum:]], "$" only at the very end
     return m.group(1) if m else ""
 
 
@@ -323,9 +292,33 @@ def _yaml_loader() -> Any:
             out[key] = loader.construct_object(value_node, deep=deep)
         return out
 
+    def construct_string(loader: Any, node: Any) -> str:
+        return str(loader.construct_scalar(node))
+
+    def construct_tagged(loader: Any, suffix: str, node: Any) -> Any:
+        # R's yaml ignores tags it does not know: a scalar is kept as its
+        # text (no implicit typing), a sequence becomes a list (never an
+        # atomic vector) and a mapping a named list; !expr (not evaluated
+        # without eval.expr = TRUE) is only allowed on a scalar
+        if isinstance(node, yaml.ScalarNode):
+            return str(loader.construct_scalar(node))
+        if suffix == "expr":
+            raise yaml.constructor.ConstructorError(None, None, "Invalid tag: expr")
+        if isinstance(node, yaml.SequenceNode):
+            return _RTaggedSeq(loader.construct_object(v, deep=True) for v in node.value)
+        return construct_mapping(loader, node, deep=True)
+
     Loader.add_constructor("tag:yaml.org,2002:bool", construct_bool)
     Loader.add_constructor("tag:yaml.org,2002:map", construct_mapping)
+    Loader.add_constructor("tag:yaml.org,2002:binary", construct_string)
+    Loader.add_constructor("tag:yaml.org,2002:timestamp", construct_string)
+    Loader.add_multi_constructor("!", construct_tagged)
+    Loader.add_multi_constructor("tag:", construct_tagged)
     return Loader
+
+
+class _RTaggedSeq(list):  # type: ignore[type-arg]
+    """A tagged YAML sequence: R's yaml keeps it a list (not an atomic vector)."""
 
 
 def _r_yaml(x: Any) -> Any:
@@ -338,6 +331,8 @@ def _r_yaml(x: Any) -> Any:
         return x
     if isinstance(x, dict):
         return {str(k): _r_yaml(v) for k, v in x.items()}
+    if isinstance(x, _RTaggedSeq):
+        return [_r_yaml(v) for v in x]
     if isinstance(x, list):
         items = [_r_yaml(v) for v in x]
         kinds = {type(v) for v in items}
@@ -526,6 +521,10 @@ def _code_predownload(
     """
     from pytacheck.datacheck._files_registry import EXT_REGISTRY
 
+    # R: a missing language/file_location/file_url column is NULL, and the
+    # zero-length logical vectors it produces make need_dl empty
+    if not {"language", "file_location", "file_url"} <= set(all_files.columns):
+        return all_files
     langs = {r[3] for r in EXT_REGISTRY if r[3] is not None} - {"JASP", "jamovi"}
     langs.add("Python")
     names = _col(all_files, "file_name")
@@ -576,6 +575,7 @@ def _expand_output(
     """Shared body of the ``.code_expand_spv/smcl/mplus()`` steps."""
     is_match = grepl(pattern, _col(all_files, "file_name"), ignore_case=True)
     sub_files = all_files.loc[is_match].reset_index(drop=True)
+    _require_file_location(sub_files)
     need = _empty_loc(_col(sub_files, "file_location"))
     if any(need) and "file_url" in sub_files.columns:
         dl = _download(
@@ -601,6 +601,12 @@ def _expand_output(
             continue
         new_rows.append(_synthetic_row(sub_files, i, str(path)))
     return sub_files, is_match, new_rows
+
+
+def _require_file_location(files: pd.DataFrame) -> None:
+    """R's ``file.exists(files$file_location[i])`` fails when the column is absent."""
+    if len(files) and "file_location" not in files.columns:
+        raise TypeError("invalid 'file' argument")
 
 
 def _synthetic_row(files: pd.DataFrame, i: int, path: str) -> pd.DataFrame:
@@ -759,6 +765,7 @@ def _code_expand_html(
     from pytacheck.report import html_output
 
     html_files = all_files.loc[is_html].reset_index(drop=True)
+    _require_file_location(html_files)
     need = _empty_loc(_col(html_files, "file_location"))
     if any(need) and "file_url" in html_files.columns:
         dl = _download(
@@ -805,6 +812,11 @@ def _code_expand_html(
     return _bind(all_files, new_rows)
 
 
+def _as_lang_list(x: Any) -> list[Any]:
+    """``code_lang()`` of one name is a scalar, of several a list."""
+    return x if isinstance(x, list) else [x]
+
+
 def _code_expand_zip(
     all_files: pd.DataFrame,
     skip_on_api_limit: bool = False,  # noqa: ARG001 - unused in R too
@@ -823,21 +835,22 @@ def _code_expand_zip(
     ]
     if not any(is_zip):
         return all_files
+    from pytacheck.archives.download import _repo_cache_path
+    from pytacheck.archives.zip_peek import _zip_fetch_members, zip_peek
+
     new_rows: list[pd.DataFrame] = []
     for i, z in enumerate(is_zip):
         if not z:
             continue
         url = urls[i]
         try:
-            from pytacheck.archives.zip_peek import zip_peek
-
             peek = zip_peek(url)
         except Exception:
             peek = None
         if peek is None or len(peek) == 0:
             continue
         members = peek["name"].tolist()
-        is_code = [lang is not None for lang in code_lang(members)]
+        is_code = [lang is not None for lang in _as_lang_list(code_lang(members))]
         if not any(is_code):
             continue
         if "file_path" in all_files.columns:
@@ -845,11 +858,9 @@ def _code_expand_zip(
             base = "NA" if _is_na(fp) else str(fp)
         else:
             base = str(names[i])
+        # .repo_cache_path() is outside R's tryCatch(); the fetch is inside
+        dest = _repo_cache_path(_col(all_files, "repo_url")[i], f"{base}.contents")
         try:
-            from pytacheck.archives.download import _repo_cache_path
-            from pytacheck.archives.zip_peek import _zip_fetch_members
-
-            dest = _repo_cache_path(_col(all_files, "repo_url")[i], f"{base}.contents")
             fetched = _zip_fetch_members(
                 url, names=[m for m, c in zip(members, is_code, strict=True) if c], dest=dest
             )
@@ -900,9 +911,9 @@ def code_extract_r(
     roxygen comments too). Returns the code lines, or *save_path* after
     writing them there.
     """
-    from pytacheck.codecheck._purl import purl
+    from pytacheck.codecheck._purl import NA_LINE, purl
 
-    lines = ["NA" if t is None else t for t in _text_arg(file_path, text)]
+    lines = [NA_LINE if t is None else t for t in _text_arg(file_path, text)]
     out = purl(lines, documentation=documentation)
     from pytacheck.codecheck._encoding import code_read_bytes
 
@@ -939,7 +950,7 @@ def code_extract_py(
             src = _dollar(cl, "source")
             if src is None or _r_length(src) == 0:
                 continue
-            joined = "".join(_r_unlist_chr(src))
+            joined = "".join(r_unlist_chr(src))
             cell_lines = [s for piece in strsplit([joined], "\n") for s in piece]
             keep = grepl(r"^\s*[%!]", cell_lines)
             cell_lines = [s for s, k in zip(cell_lines, keep, strict=True) if not k]
@@ -960,28 +971,11 @@ def _r_length(x: Any) -> int:
 
 
 def _r_elements(x: Any) -> list[Any]:
-    if isinstance(x, _RList):
+    if isinstance(x, RList):
         return [v for _, v in x]
     if isinstance(x, list):
         return list(x)
     return [x]
-
-
-def _r_unlist_chr(x: Any) -> list[str]:
-    """``unlist(x)`` of JSON values, as character."""
-    out: list[Any] = []
-
-    def walk(v: Any) -> None:
-        if isinstance(v, list):
-            for e in _r_elements(v):
-                walk(e)
-        elif v is not None:
-            out.append(v)
-
-    walk(x)
-    if any(isinstance(v, str) for v in out):
-        return [v if isinstance(v, str) else (_r_as_character1(v) or "") for v in out]
-    return [_r_as_character1(v) or "" for v in out]
 
 
 def code_extract_qmd_py(
@@ -1130,7 +1124,19 @@ def code_abs_path(code_text: str | Sequence[str]) -> pd.DataFrame:
                 "abs_path": pd.Series([], dtype="string"),
             }
         )
-    ids, texts = _search_matches(lines, _ABS_PATH)
+    # R runs search_text() twice: the first (return = "sentence") keeps the
+    # matching lines but normalises their text the way search_text() does for
+    # every non-"match" return (whitespace runs -> " ", " , " -> ", ", the
+    # paragraph marker -> "\n\n"); the paths are then extracted from that
+    # normalised text, so "C:/My   Docs/a , b.csv" is reported as
+    # "C:/My Docs/a, b.csv".
+    hits = grepl(_ABS_PATH, lines, ignore_case=True, perl=True)
+    line_ids = [i + 1 for i, h in enumerate(hits) if h]
+    normed = gsub(r"\s+", " ", [s for s, h in zip(lines, hits, strict=True) if h])
+    normed = gsub(" , ", ", ", normed, fixed=True)
+    normed = gsub("<~p~>", "\n\n", normed, fixed=True)
+    ids, texts = _search_matches(normed, _ABS_PATH)
+    ids = [line_ids[i - 1] for i in ids]
     paths = gsub("[\"']$", "", gsub("^[\"']", "", texts))
     return pd.DataFrame(
         {
@@ -1434,10 +1440,14 @@ def code_line_stats(
     assert lines is not None
     flags = _code_comment_flags(lines, lang)
     blank = trimws(lines)
-    comment_lines = sum(
+    # R: sum(flags & trimws(code_text) != ""), where a flagged NA line gives
+    # TRUE & NA = NA and so an NA sum (and percentage)
+    comment_lines: int | None = sum(
         1 for f, b in zip(flags, blank, strict=True) if f and b is not None and b != ""
     )
-    percent = comment_lines / total if total > 0 else math.nan
+    if any(f and b is None for f, b in zip(flags, blank, strict=True)):
+        comment_lines = None
+    percent = (math.nan if comment_lines is None else comment_lines / total) if total else math.nan
     has_doc = _code_has_docstring(lines) if lang == "Python" else None
     return {
         "total_lines": total,
@@ -1649,7 +1659,7 @@ def _code_version_pin_check(
     all_files = all_files.reset_index(drop=True)
     names = _col(all_files, "file_name")
     base_nm = [
-        None if _is_na(n) else os.path.basename(str(n).replace("\\", "/").rstrip("/")) or "/"
+        None if _is_na(n) else os.path.basename(str(n).replace("\\", "/").rstrip("/"))
         for n in names
     ]
     dl_args = {
@@ -1663,6 +1673,9 @@ def _code_version_pin_check(
 
     def fetch(mask: list[bool]) -> pd.DataFrame:
         rows = all_files.loc[mask].reset_index(drop=True)
+        if "file_location" not in rows.columns:
+            # setNames(NULL, file_name): "attempt to set an attribute on NULL"
+            raise TypeError("attempt to set an attribute on NULL")
         need = [
             e and h
             for e, h in zip(
@@ -1693,7 +1706,7 @@ def _code_version_pin_check(
             out["renv_files"].append(fname)
             rv = _dollar(_dollar(lock, "R"), "Version")
             if rv is not None:
-                out["r_versions"].append(_r_as_character1(rv))
+                out["r_versions"].extend(r_as_character(rv))
             pkgs = _dollar(lock, "Packages")
             if pkgs is not None and _r_length(pkgs) > 0:
                 recs = [

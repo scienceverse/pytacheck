@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0">
+	<teiHeader><fileDesc><titleStmt><title>URL without a target</title></titleStmt></fileDesc></teiHeader>
+	<text><body>
+		<div><head>Methods</head><p>Materials are at <ref type="url">osf</ref> online.</p><p>No link here.</p><p>But osf is here.</p></div>
+	</body></text>
+</TEI>

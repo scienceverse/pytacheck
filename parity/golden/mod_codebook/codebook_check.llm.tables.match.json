@@ -1,0 +1,117 @@
+{
+  "id": "codebook_check.llm.tables.match",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": null,
+    "v": [
+      {
+        "t": "df",
+        "nrow": 5,
+        "names": [
+          "Column",
+          "Documented",
+          "Label",
+          "Codebook Variable",
+          "Source",
+          "Status"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "id",
+              "age_years",
+              "gender_code",
+              "income_k",
+              "mood"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "no",
+              "yes",
+              "yes",
+              "yes",
+              "yes"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "Age in years",
+              "Gender of the participant",
+              "Income in thousands",
+              "Positive affect"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "age",
+              "gender",
+              "income_thousands",
+              "mood"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "codebook.csv",
+              "codebook.csv",
+              "codebook.csv",
+              "codebook.csv"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "unlabelled",
+              "llm",
+              "llm",
+              "llm",
+              "labelled"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "Variable",
+          "Label",
+          "Source"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "participant_id"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Participant number"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "codebook.csv"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -1,0 +1,282 @@
+{
+  "id": "module.all_urls.published",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "all_urls"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "List All URLs"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "general"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 15,
+        "names": [
+          "text",
+          "text_id",
+          "paragraph_id",
+          "section_id",
+          "page_number",
+          "formatted",
+          "paper_id",
+          "header",
+          "section_type"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "https://osf.io/n9uvj",
+              "AsPredicted.org",
+              "https://aspredicted.org/3tq2y.pdf",
+              "1.9.12.31",
+              "AsPredicted.org",
+              "https://aspredicted.org/i9vw6.pdf).foot_2",
+              "AsPredicted.org",
+              "https://aspredicted.org/ej26f.pdf",
+              "https://osf.io/n9uvj",
+              "https://aspredicted.org/3tq2y.pdf",
+              "https://aspredicted.org/i9vw6.pdf",
+              "https://aspredicted.org/ej26f.pdf",
+              "publishers.This",
+              "OSF.INFERRING",
+              "publishers.This"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              118,
+              129,
+              129,
+              157,
+              227,
+              227,
+              333,
+              333,
+              499,
+              500,
+              500,
+              500,
+              587,
+              588,
+              591
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              19,
+              20,
+              20,
+              27,
+              36,
+              36,
+              52,
+              52,
+              81,
+              81,
+              81,
+              81,
+              168,
+              169,
+              172
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              6,
+              7,
+              7,
+              11,
+              14,
+              14,
+              22,
+              22,
+              34,
+              34,
+              34,
+              34,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "published",
+              "published",
+              "published",
+              "published",
+              "published",
+              "published",
+              "published",
+              "published",
+              "published",
+              "published",
+              "published",
+              "published",
+              "published",
+              "published",
+              "published"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "The Current Research",
+              "Study1",
+              "Study1",
+              "Results",
+              "Study2",
+              "Study2",
+              "Study3",
+              "Study3",
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "intro",
+              "intro",
+              "intro",
+              "results",
+              "discussion",
+              "discussion",
+              "discussion",
+              "discussion",
+              "data_availability",
+              "data_availability",
+              "data_availability",
+              "data_availability",
+              null,
+              null,
+              null
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          ""
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "info"
+        ]
+      },
+      {
+        "t": "null"
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "urls"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "published"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              15
+            ]
+          }
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

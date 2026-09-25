@@ -8,7 +8,11 @@ answers a vanilla ``Rscript`` session gives:
 * constants, ``T``/``F``, ``pi``, ``LETTERS``/``letters``, ``.Platform``;
 * ``(``, ``{``, ``if``, ``!``, ``&&``, ``||``, ``&``, ``|``, comparisons (with
   R's string coercion and ``numeric_version`` comparisons), arithmetic,
-  ``%in%``, ``c()``, ``$``/``[[``/``[`` on named values;
+  ``from:to``, ``%in%``, ``c()``, ``$``/``[[``/``[`` on named values;
+* ``seq_len()``, ``seq_along()``, the ``integer()``/``numeric()``/
+  ``double()``/``logical()``/``character()`` constructors, ``sum()``/
+  ``max()``/``min()``, ``is.numeric()``/``is.character()``/``is.logical()``,
+  ``Sys.time()``/``Sys.Date()`` (as numbers);
 * ``isTRUE()``, ``isFALSE()``, ``is.null()``, ``is.na()``, ``identical()``,
   ``any()``, ``all()``, ``length()``, ``nchar()``, ``nzchar()``, ``tolower()``,
   ``toupper()``, ``as.logical()``/``as.numeric()``/``as.integer()``/
@@ -18,7 +22,10 @@ answers a vanilla ``Rscript`` session gives:
   ``dir.exists()`` (relative to the working directory), ``Sys.which()``,
   ``exists()`` (the datasets package's objects), ``require()``/``requireNamespace()``/``rlang::is_installed()``
   (``FALSE``: packages are not assumed to be installed), and knitr's
-  ``is_html_output()``/``is_latex_output()`` (``FALSE`` when purling text).
+  ``is_html_output()``/``is_latex_output()``/``pandoc_to()``, answered from
+  the ``out_format()`` of the document being tangled (:data:`OUT_FORMAT`:
+  ``"markdown"`` for R Markdown, so ``is_html_output()`` is ``TRUE`` there;
+  ``"latex"`` for Rnw).
 
 Anything else raises :class:`EvalError`, which is what R does for a variable
 the document has not defined (e.g. ``params``).
@@ -26,6 +33,7 @@ the document has not defined (e.g. ``params``).
 
 from __future__ import annotations
 
+import contextvars
 import math
 import os
 import platform
@@ -36,6 +44,10 @@ from pytacheck.codecheck._rparse import MISSING, Const, Lang, Sym
 __all__ = ["NA", "EvalError", "RVersion", "is_false", "r_eval"]
 
 R_VERSION = (4, 5, 3)
+
+# knitr's out_format() while tangling: "markdown" for R Markdown, "latex" for
+# Rnw, ... (set by the purl port for the document being tangled)
+OUT_FORMAT: contextvars.ContextVar[str | None] = contextvars.ContextVar("OUT_FORMAT", default=None)
 
 
 class EvalError(Exception):
@@ -162,6 +174,26 @@ def _arith(a: Any, b: Any, op: str) -> Any:
         return x / y if y else (math.inf if x > 0 else -math.inf if x < 0 else math.nan)
 
     return _vectorise(a, b, one)
+
+
+def _colon(a: Any, b: Any) -> Any:
+    """R ``from:to`` (steps of 1 from *from* towards *to*)."""
+    ends = []
+    for v in (a, b):
+        x = _first(v)
+        if isinstance(x, str):
+            try:
+                x = float(x)
+            except ValueError as exc:
+                raise EvalError("NA/NaN argument") from exc
+        if x is NA or x is None or (isinstance(x, float) and math.isnan(x)):
+            raise EvalError("NA/NaN argument")
+        ends.append(float(x))
+    lo, hi = ends
+    count = math.floor(abs(hi - lo) + 1e-10) + 1
+    step = 1.0 if hi >= lo else -1.0
+    out = [lo + step * i for i in range(count)]
+    return out[0] if len(out) == 1 else out
 
 
 def _as_logical(v: Any) -> Any:
@@ -332,6 +364,8 @@ def _call(name: str, args: list[Any], tags: list[str | None]) -> Any:
         return _vectorise(r_eval(args[0]), r_eval(args[1]), lambda p, q: _cmp_values(p, q, name))
     if name in ("+", "-", "*", "/", "^") and n == 2:
         return _arith(r_eval(args[0]), r_eval(args[1]), name)
+    if name == ":" and n == 2:
+        return _colon(r_eval(args[0]), r_eval(args[1]))
     if name == "%in%" and n == 2:
         table = _as_list(r_eval(args[1]))
         v = r_eval(args[0])
@@ -447,11 +481,66 @@ def _call(name: str, args: list[Any], tags: list[str | None]) -> Any:
         return res3[0] if len(res3) == 1 else res3
     if name in ("require", "requireNamespace", "is_installed"):
         return False
-    if name in ("is_html_output", "is_latex_output", "is_word_output"):
-        return False
+    if name == "is_html_output":
+        fmt = named.get("fmt", values[0] if n > 0 and tags[0] is None else None)
+        excludes = named.get("excludes", values[1] if n > 1 and tags[1] is None else None)
+        fmt = _first(fmt) if fmt is not None else OUT_FORMAT.get()
+        if fmt is None:
+            return False
+        fmt = "markdown" if str(fmt).startswith("markdown") else str(fmt)
+        fmt = "epub" if fmt == "epub3" else fmt
+        html = ["markdown", "epub", "epub2", "html", "html4", "html5", "revealjs", "s5"]
+        html += ["slideous", "slidy", "gfm"]
+        return fmt in [f for f in html if f not in _as_list(excludes)]
+    if name == "is_latex_output" and n == 0:
+        return OUT_FORMAT.get() in ("latex", "sweave", "listings")
     if name == "pandoc_to":
-        return None
+        return None if n == 0 else False
+    if name in ("seq_len", "seq_along") and n == 1:
+        count = len(_as_list(values[0])) if name == "seq_along" else _count(values[0])
+        return _vector([float(i) for i in range(1, count + 1)])
+    if name in ("integer", "numeric", "double", "logical", "character"):
+        count = _count(values[0]) if n else 0
+        fill = {"logical": False, "character": ""}.get(name, 0.0)
+        return _vector([fill] * count)
+    if name in ("sum", "max", "min") and values:
+        nums = [e for v in values for e in _as_list(_as_numeric(v))]
+        if any(e is NA for e in nums):
+            return NA
+        if name == "sum":
+            return float(sum(nums))
+        if not nums:
+            return -math.inf if name == "max" else math.inf
+        return max(nums) if name == "max" else min(nums)
+    if name in ("is.numeric", "is.character", "is.logical") and n == 1:
+        kind = {"is.numeric": (int, float), "is.character": (str,), "is.logical": (bool,)}[name]
+        vals = _as_list(values[0])
+        if name == "is.numeric":
+            return all(isinstance(e, int | float) and not isinstance(e, bool) for e in vals) and (
+                bool(vals) or isinstance(values[0], list)
+            )
+        return all(isinstance(e, kind) for e in vals) and not any(e is NA for e in vals)
+    if name == "Sys.time" and n == 0:
+        import time
+
+        return time.time()
+    if name == "Sys.Date" and n == 0:
+        import time
+
+        return float(int(time.time() // 86400))
     raise EvalError(f'could not find function "{name}"')
+
+
+def _count(v: Any) -> int:
+    x = _first(_as_numeric(v))
+    if x is NA or (isinstance(x, float) and math.isnan(x)) or x < 0:
+        raise EvalError("argument must be coercible to non-negative integer")
+    return int(x)
+
+
+def _vector(vals: list[Any]) -> Any:
+    """An R vector: a scalar when it has one element, else a list."""
+    return vals[0] if len(vals) == 1 else vals
 
 
 def is_false(v: Any) -> bool:

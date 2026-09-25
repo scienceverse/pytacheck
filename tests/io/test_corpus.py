@@ -161,7 +161,8 @@ def test_read_rds_paperlist_equals_json(fixtures_dir: Path) -> None:
     papers = _read_rds(IO_FIXTURES / "papers_small.rds")
     fx = fixtures_dir / "psychsci"
     direct = pc.read(
-        [fx / "0956797613520608.json", fx / "0956797614522816.json", pc.demofile("xml")]
+        [fx / "0956797613520608.json", fx / "0956797614522816.json", pc.demofile("xml")],
+        schema_version=None,  # the RDS holds metacheck's read() of the TEI
     )
     # the RDS was written from a checkout with a different demo path
     ignore = {"to_err_is_human.info.file_name"}

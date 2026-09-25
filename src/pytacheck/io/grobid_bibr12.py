@@ -301,10 +301,10 @@ def _get_number(s: str, p: int, lo: int, hi: int, width: int) -> tuple[int, int]
     return val, p
 
 
-def _strptime_iso(x: str, with_seconds: bool) -> tuple[int, ...] | None:
+def _strptime_iso(x: str, with_seconds: bool) -> tuple[Any, ...] | None:
     """R's ``strptime(x, "%Y-%m-%dT%H:%M[:%OS]%z")``: the fields, or ``None``.
 
-    Returns ``(year, month, day, hour, minute, second, fraction_us, offset_s)``.
+    Returns ``(year, month, day, hour, minute, second, fraction, offset_s)``.
     Trailing input is ignored, as in R.
     """
     p = 0
@@ -351,7 +351,7 @@ def _strptime_iso(x: str, with_seconds: bool) -> tuple[int, ...] | None:
     if mm >= 60 or hh * 100 + (mm * 50) // 30 > 1400:
         return None
     offset = (hh * 3600 + mm * 60) * (-1 if neg else 1)
-    return (*fields, sec, round(frac * 1e6), offset)
+    return (*fields, sec, frac, offset)
 
 
 def _days_from_civil(y: int, m: int, d: int) -> int:
@@ -397,20 +397,17 @@ def _bibr12_utc(x: Any) -> str | None:
         f = _strptime_iso(s, with_seconds)
         if f is None:
             continue
-        year, month, day, hour, minute, sec, frac_us, offset = f
+        year, month, day, hour, minute, sec, frac, offset = f
         # R's validation: the day of the month, a leap second, 24:00:00
         if day > _month_days(year, month) or sec > 60:
             continue
         if hour == 24 and (minute > 0 or sec > 0):
             continue
-        total = (
-            _days_from_civil(year, month, day) * 86400
-            + hour * 3600
-            + minute * 60
-            + sec
-            - offset
-            + (1 if frac_us >= 1_000_000 else 0)
+        whole = (
+            _days_from_civil(year, month, day) * 86400 + hour * 3600 + minute * 60 + sec - offset
         )
+        # a POSIXct is a double; format() shows its whole seconds
+        total = math.floor(float(whole) + frac)
         days, rem = divmod(total, 86400)
         y, m, d = _civil_from_days(days)
         hh, rem = divmod(rem, 3600)
@@ -891,7 +888,9 @@ def _grobid_to_bibr12(xml_path: str | PathLike[str], schema_version: Any = "12.0
         "warnings": warns,
     }
 
-    info = _bibr12_info(metadata, source, "12.0", producer)
+    # the metadata are strings (keywords a list of them): nothing for
+    # .paper_coerce() to stop at
+    info, _issues = _bibr12_info(metadata, source, "12.0", extraction)
     return _bibr12_paper(paper_id, info, tables, extraction)
 
 

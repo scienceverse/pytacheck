@@ -1,0 +1,194 @@
+{
+  "id": "module.power.0956797615569889",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "power"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Power Analysis Check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "method"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "text",
+          "text_id",
+          "paragraph_id",
+          "section_id",
+          "page_number",
+          "formatted",
+          "paper_id",
+          "header",
+          "section_type",
+          "power_type",
+          "complete",
+          "power_id"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Eighteen individuals with a current diagnosis of PTSD (11 females; mean age = 34 years, SD = 13) and a control group of 18 trauma-exposed individuals with no current or past history of PTSD (11 females; mean age = 37 years, SD = 14) were recruited from the local community and departmental participant panels through print advertisements. Sample size was calculated with an a priori power analysis, using the effect sizes reported by Küpper et al. (2014), who used identical procedures, materials, and dependent measures. We determined that a minimum sample size of 7 per group would be necessary for 95% power to detect an effect. Additionally, our choice of a sample size of 18 per group is consistent with sample sizes used in previous think/no-think (TNT) studies (Anderson et al., 2004; Benoit & Anderson, 2012; Benoit, Hulbert, Huddleston, & Anderson, 2015; Gagnepain et al., 2014; Küpper et al., 2014). Diagnostic status was determined using the Structured Clinical Interview for the DSM-IV Axis I Disorders (First, Spitzer, Gibbon, & Williams, 1996). Exclusion criteria for PTSD participants included a current diagnosis of psychosis or borderline personality disorder. Control participants with any current psychiatric disorder were also excluded."
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              8
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              4
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "0956797615569889"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Participants"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "method"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "apriori"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "You chose to not use an LLM to assess if all information was reported, so please check for all required information manually.",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(power_type = \"apriori\"), row.names = c(NA, -1L\n), class = c(\"tbl_df\", \"tbl\", \"data.frame\"))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 5, FALSE)\n```\n",
+          "",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(text = \"Eighteen individuals with a current diagnosis of PTSD (11 females; mean age = 34 years, SD = 13) and a control group of 18 trauma-exposed individuals with no current or past history of PTSD (11 females; mean age = 37 years, SD = 14) were recruited from the local community and departmental participant panels through print advertisements. Sample size was calculated with an <strong>a priori<\/strong> <strong>power<\/strong> analysis, using the effect sizes reported by Küpper et al. (2014), who used identical procedures, materials, and dependent measures. We determined that a minimum sample size of 7 per group would be necessary for 95% <strong>power<\/strong> to detect an effect. Additionally, our choice of a sample size of 18 per group is consistent with sample sizes used in previous think/no-think (TNT) studies (Anderson et al., 2004; Benoit & Anderson, 2012; Benoit, Hulbert, Huddleston, & Anderson, 2015; Gagnepain et al., 2014; Küpper et al., 2014). Diagnostic status was determined using the Structured Clinical Interview for the DSM-IV Axis I Disorders (First, Spitzer, Gibbon, & Williams, 1996). Exclusion criteria for PTSD participants included a current diagnosis of psychosis or borderline personality disorder. Control participants with any current psychiatric disorder were also excluded.\"), row.names = c(NA, \n-1L), class = c(\"tbl_df\", \"tbl\", \"data.frame\"))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 5, FALSE)\n```\n",
+          "::: {.callout-tip title=\"Learn More\" collapse=\"true\"}\n\nPower analyses need to contain the following information to be interpretable: the type of power analysis, the statistical test, the software used, sample size, critical alpha criterion, power level, effect size, and an effect size metric. In addition, it is recommended to make sure the power analysis is reproducible (by sharing the code, or a screenshot, of the power analysis), and to provide good arguments for why the study was designed to detect an effect of this size.\n\nFor an a-priori power analysis, where the sample size is determined, reporting all information would look like:\n\n> An a priori power analysis for an independent samples t-test, conducted using the pwr.t.test function from pwr (Champely, 2020), indicated that for a Cohen's d = 0.5, an alpha level of 0.05, and a desired power level of 80% required at least 64 participants in each group.\n\nFor a sensitivity power analysis, this sentence would look like:\n\n> A sensitivity power analysis for an independent samples t-test, conducted using the pwr.t.test function from pwr (Champely, 2020), indicated that with 64 participants in each group, and an alpha level of 0.05, a desired power level of 80% was reached for an effect size of d = 0.5.\n\n:::\n"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "yellow"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "We detected 1 potential power analysis."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "power_n",
+          "power_complete"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "0956797615569889"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              null
+            ]
+          }
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0
+        ],
+        "names": [
+          "power_n"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

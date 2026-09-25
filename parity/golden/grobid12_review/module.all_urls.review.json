@@ -1,0 +1,288 @@
+{
+  "id": "module.all_urls.review",
+  "ok": true,
+  "error": null,
+  "warnings": [
+    "ID fig_0 already defined [513]",
+    "ID b1 already defined [513]",
+    "ID fig_0 already defined [513]",
+    "ID b1 already defined [513]"
+  ],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "all_urls"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "List All URLs"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "general"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 14,
+        "names": [
+          "text",
+          "text_id",
+          "paragraph_id",
+          "section_id",
+          "page_number",
+          "formatted",
+          "paper_id",
+          "header",
+          "section_type"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "https://github.com/ab/c",
+              "https://osf.io/q2.io/q2.io/q",
+              "https://osf.io/q2.io/q2",
+              "https://osf.io/q2.io/q2",
+              "https://x.org/y",
+              "https://osf.io/q2.io/q2",
+              "https://t.org",
+              "https://n.org/z",
+              "https://osf.io/abc",
+              "note.With",
+              "https://n.org",
+              "https://osf.io/xyz",
+              "https://osf.io/abc",
+              "https://osf.io/abc"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1,
+              1,
+              2,
+              2,
+              3,
+              14,
+              18,
+              19,
+              5,
+              9,
+              9,
+              6,
+              6,
+              6
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1,
+              1,
+              1,
+              1,
+              2,
+              13,
+              17,
+              18,
+              5,
+              9,
+              9,
+              6,
+              6,
+              6
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1,
+              1,
+              1,
+              1,
+              1,
+              null,
+              null,
+              null,
+              3,
+              null,
+              null,
+              3,
+              3,
+              3
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "review_urls.tei",
+              "review_urls.tei",
+              "review_urls.tei",
+              "review_urls.tei",
+              "review_urls.tei",
+              "review_urls.tei",
+              "review_urls.tei",
+              "review_urls.tei",
+              "review_sentences.tei",
+              "review_sentences.tei",
+              "review_sentences.tei",
+              "v12_edges.tei",
+              "v12_edges.tei",
+              "v12_edges.tei"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Methods",
+              "Methods",
+              "Methods",
+              "Methods",
+              "Methods",
+              null,
+              null,
+              null,
+              "Results",
+              null,
+              null,
+              "Results",
+              "Results",
+              "Results"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "method",
+              "method",
+              "method",
+              "method",
+              "method",
+              null,
+              null,
+              null,
+              "results",
+              null,
+              null,
+              "results",
+              "results",
+              "results"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          ""
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "info"
+        ]
+      },
+      {
+        "t": "null"
+      },
+      {
+        "t": "df",
+        "nrow": 6,
+        "names": [
+          "paper_id",
+          "urls"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "review_urls.tei",
+              "review_url_na.tei",
+              "review_noapp.tei",
+              "review_inline.tei",
+              "review_sentences.tei",
+              "v12_edges.tei"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              8,
+              0,
+              0,
+              0,
+              3,
+              3
+            ]
+          }
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

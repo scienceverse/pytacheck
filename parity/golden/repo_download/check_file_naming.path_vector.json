@@ -1,0 +1,56 @@
+{
+  "id": "check_file_naming.path_vector",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 4,
+    "names": [
+      "file_name",
+      "rule",
+      "severity",
+      "detail"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "a b.R",
+          "pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp.R",
+          "pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp.R",
+          "pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp.R"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "spaces",
+          "path-length-255",
+          "path-length-228",
+          "filename-length-50"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "bad",
+          "bad",
+          "suggestion",
+          "suggestion"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "contains a space",
+          "path-length-255 is 262 characters, over the 255-character budget",
+          "path-length-228 is 262 characters, over the 228-character budget",
+          "filename-length-50 is 262 characters, over the 50-character budget"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

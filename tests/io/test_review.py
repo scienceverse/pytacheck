@@ -211,7 +211,7 @@ def test_grobid_to_bibr_directory_of_dotfiles_only() -> None:
 def test_grobid_to_bibr_directory_keeps_successes() -> None:
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")
-        papers = grobid_to_bibr(IO_FIXTURES, save_path=None)
+        papers = grobid_to_bibr(IO_FIXTURES, save_path=None, schema_version=None)
     assert isinstance(papers, PaperList)
     ids = papers.names
     assert "xlink_ns.tei" in ids

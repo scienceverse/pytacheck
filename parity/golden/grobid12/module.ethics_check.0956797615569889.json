@@ -1,0 +1,441 @@
+{
+  "id": "module.ethics_check.0956797615569889",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "ethics_check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Ethics Approval Check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "general"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 20,
+        "names": [
+          "text",
+          "text_id",
+          "paragraph_id",
+          "section_id",
+          "page_number",
+          "formatted",
+          "paper_id",
+          "header",
+          "section_type",
+          "ethics",
+          "live_data"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "This study received ethical approval from the Cambridgeshire and Peterborough Research Ethics Committee.",
+              "Eighteen individuals with a current diagnosis of PTSD (11 females; mean age = 34 years, SD = 13) and a control group of 18 trauma-exposed individuals with no current or past history of PTSD (11 females; mean age = 37 years, SD = 14) were recruited from the local community and departmental participant panels through print advertisements.",
+              "Exclusion criteria for PTSD participants included a current diagnosis of psychosis or borderline personality disorder.",
+              "We recruited a heterogeneous trauma group because our hypothesis was that a key symptom of the disorder-intrusive, difficult-to-control memories-reflects at least a partial deficit in retrieval suppression, which ought to transcend trauma type.",
+              "All participants were native English speakers with no history of severe head injury, neurological disease, or learning disability.",
+              "All participants provided written informed consent.",
+              "Next, in the main phase of the experiment, the cue objects were presented, and participants were asked to either recall or suppress their memories for the associated scenes.",
+              "At the final test, participants were shown the cue objects and asked to provide brief descriptions of the associated scenes.",
+              "At the end of the experiment, participants filled out the following questionnaires.",
+              "On each test trial, participants were shown a cue object and indicated, by pressing the \"yes\" or \"no\" button, whether they could recall the scene with which it had been paired.",
+              "During the think/ no-think (TNT) phase, participants were instructed to directly suppress memories associated with cue objects presented inside a red frame and to recall memories associated with cue objects presented inside a green frame.",
+              "Finally, in the test phase, participants were asked to remember and verbally describe all the scenes that they had previously recalled (recall items) or suppressed (suppress items), as well as all the scenes that they had initially learned but had not seen during the TNT phase (baseline items).",
+              "In this phase, participants were shown the cue objects alone.",
+              "Participants were asked to suppress the associated scene when an object was surrounded by a red frame (no-think trial) and to recall the associated scene when an object was surrounded by a green frame (think trial).",
+              "At the start of this phase, participants were given direct suppression instructions for nothink trials (Benoit & Anderson, 2012), which requested them to suppress the associated scene and additionally avoid any distracting thoughts from coming into awareness.",
+              "For recall trials, participants were instructed to recall the scene in as much detail as possible.",
+              "Following practice, participants were presented with 32 critical experimental cue objects: 16 in the recall condition and 16 in the suppress condition.",
+              "On each trial, participants were given 15 s to verbally describe the associated scene in as much detail as possible, so that it could be uniquely identified.",
+              "Although our data do not provide an answer to this question, our results show that trauma exposure, by itself, is not sufficient to impair memory suppression, as all participants had experienced trauma.",
+              "Fig.2. Schematic representation of the experimental procedure. In the study phase, participants encoded cue-target pairs. During the think/ no-think (TNT) phase, participants were instructed to directly suppress memories associated with cue objects presented inside a red frame and to recall memories associated with cue objects presented inside a green frame. Finally, in the test phase, participants were asked to remember and verbally describe all the scenes that they had previously recalled (recall items) or suppressed (suppress items), as well as all the scenes that they had initially learned but had not seen during the TNT phase (baseline items)."
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              39,
+              27,
+              32,
+              36,
+              37,
+              40,
+              42,
+              43,
+              53,
+              64,
+              72,
+              73,
+              75,
+              77,
+              78,
+              80,
+              82,
+              88,
+              172,
+              276
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              10,
+              8,
+              8,
+              9,
+              10,
+              10,
+              11,
+              11,
+              14,
+              16,
+              17,
+              17,
+              18,
+              18,
+              18,
+              18,
+              18,
+              19,
+              39,
+              105
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              4,
+              4,
+              4,
+              4,
+              4,
+              4,
+              5,
+              5,
+              5,
+              7,
+              8,
+              8,
+              8,
+              8,
+              8,
+              8,
+              8,
+              9,
+              22,
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "0956797615569889",
+              "0956797615569889",
+              "0956797615569889",
+              "0956797615569889",
+              "0956797615569889",
+              "0956797615569889",
+              "0956797615569889",
+              "0956797615569889",
+              "0956797615569889",
+              "0956797615569889",
+              "0956797615569889",
+              "0956797615569889",
+              "0956797615569889",
+              "0956797615569889",
+              "0956797615569889",
+              "0956797615569889",
+              "0956797615569889",
+              "0956797615569889",
+              "0956797615569889",
+              "0956797615569889"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Participants",
+              "Participants",
+              "Participants",
+              "Participants",
+              "Participants",
+              "Participants",
+              "Materials",
+              "Materials",
+              "Materials",
+              "Study phase.",
+              "Study Phase TNT Phase Final Test Phase",
+              "Study Phase TNT Phase Final Test Phase",
+              "Study Phase TNT Phase Final Test Phase",
+              "Study Phase TNT Phase Final Test Phase",
+              "Study Phase TNT Phase Final Test Phase",
+              "Study Phase TNT Phase Final Test Phase",
+              "Study Phase TNT Phase Final Test Phase",
+              "Final test phase.",
+              "Discussion",
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "method",
+              "method",
+              "method",
+              "method",
+              "method",
+              "method",
+              "method",
+              "method",
+              "method",
+              "method",
+              "method",
+              "method",
+              "method",
+              "method",
+              "method",
+              "method",
+              "method",
+              "method",
+              "discussion",
+              null
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              null,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Based on the following text, we would expect an ethics approval statement, and it was present:\n\n> Eighteen individuals with a current diagnosis of PTSD (11 females; mean age = 34 years, SD = 13) and a control group of 18 trauma-exposed individuals with no current or past history of PTSD (11 females; mean age = 37 years, SD = 14) were recruited from the local community and departmental participant panels through print advertisements.\n\n> Exclusion criteria for PTSD participants included a current diagnosis of psychosis or borderline personality disorder.\n\n> We recruited a heterogeneous trauma group because our hypothesis was that a key symptom of the disorder-intrusive, difficult-to-control memories-reflects at least a partial deficit in retrieval suppression, which ought to transcend trauma type.\n\n> All participants were native English speakers with no history of severe head injury, neurological disease, or learning disability.\n\n> All participants provided written informed consent.\n\n> Next, in the main phase of the experiment, the cue objects were presented, and participants were asked to either recall or suppress their memories for the associated scenes.\n\n> At the final test, participants were shown the cue objects and asked to provide brief descriptions of the associated scenes.\n\n> At the end of the experiment, participants filled out the following questionnaires.\n\n> On each test trial, participants were shown a cue object and indicated, by pressing the \"yes\" or \"no\" button, whether they could recall the scene with which it had been paired.\n\n> During the think/ no-think (TNT) phase, participants were instructed to directly suppress memories associated with cue objects presented inside a red frame and to recall memories associated with cue objects presented inside a green frame.\n\n> Finally, in the test phase, participants were asked to remember and verbally describe all the scenes that they had previously recalled (recall items) or suppressed (suppress items), as well as all the scenes that they had initially learned but had not seen during the TNT phase (baseline items).\n\n> In this phase, participants were shown the cue objects alone.\n\n> Participants were asked to suppress the associated scene when an object was surrounded by a red frame (no-think trial) and to recall the associated scene when an object was surrounded by a green frame (think trial).\n\n> At the start of this phase, participants were given direct suppression instructions for nothink trials (Benoit & Anderson, 2012), which requested them to suppress the associated scene and additionally avoid any distracting thoughts from coming into awareness.\n\n> For recall trials, participants were instructed to recall the scene in as much detail as possible.\n\n> Following practice, participants were presented with 32 critical experimental cue objects: 16 in the recall condition and 16 in the suppress condition.\n\n> On each trial, participants were given 15 s to verbally describe the associated scene in as much detail as possible, so that it could be uniquely identified.\n\n> Although our data do not provide an answer to this question, our results show that trauma exposure, by itself, is not sufficient to impair memory suppression, as all participants had experienced trauma.\n\n> Fig.2. Schematic representation of the experimental procedure. In the study phase, participants encoded cue-target pairs. During the think/ no-think (TNT) phase, participants were instructed to directly suppress memories associated with cue objects presented inside a red frame and to recall memories associated with cue objects presented inside a green frame. Finally, in the test phase, participants were asked to remember and verbally describe all the scenes that they had previously recalled (recall items) or suppressed (suppress items), as well as all the scenes that they had initially learned but had not seen during the TNT phase (baseline items).\n\nEthics approval statement:\n\n> This study received ethical approval from the Cambridgeshire and Peterborough Research Ethics Committee."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "green"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "All papers that appeared to involve live data collection contained an ethics approval statement."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "ethics_approved",
+          "ethics_statements",
+          "needs_ethics",
+          "live_data_statements"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "0956797615569889"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "This study received ethical approval from the Cambridgeshire and Peterborough Research Ethics Committee."
+                ]
+              }
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Eighteen individuals with a current diagnosis of PTSD (11 females; mean age = 34 years, SD = 13) and a control group of 18 trauma-exposed individuals with no current or past history of PTSD (11 females; mean age = 37 years, SD = 14) were recruited from the local community and departmental participant panels through print advertisements.",
+                  "Exclusion criteria for PTSD participants included a current diagnosis of psychosis or borderline personality disorder.",
+                  "We recruited a heterogeneous trauma group because our hypothesis was that a key symptom of the disorder-intrusive, difficult-to-control memories-reflects at least a partial deficit in retrieval suppression, which ought to transcend trauma type.",
+                  "All participants were native English speakers with no history of severe head injury, neurological disease, or learning disability.",
+                  "All participants provided written informed consent.",
+                  "Next, in the main phase of the experiment, the cue objects were presented, and participants were asked to either recall or suppress their memories for the associated scenes.",
+                  "At the final test, participants were shown the cue objects and asked to provide brief descriptions of the associated scenes.",
+                  "At the end of the experiment, participants filled out the following questionnaires.",
+                  "On each test trial, participants were shown a cue object and indicated, by pressing the \"yes\" or \"no\" button, whether they could recall the scene with which it had been paired.",
+                  "During the think/ no-think (TNT) phase, participants were instructed to directly suppress memories associated with cue objects presented inside a red frame and to recall memories associated with cue objects presented inside a green frame.",
+                  "Finally, in the test phase, participants were asked to remember and verbally describe all the scenes that they had previously recalled (recall items) or suppressed (suppress items), as well as all the scenes that they had initially learned but had not seen during the TNT phase (baseline items).",
+                  "In this phase, participants were shown the cue objects alone.",
+                  "Participants were asked to suppress the associated scene when an object was surrounded by a red frame (no-think trial) and to recall the associated scene when an object was surrounded by a green frame (think trial).",
+                  "At the start of this phase, participants were given direct suppression instructions for nothink trials (Benoit & Anderson, 2012), which requested them to suppress the associated scene and additionally avoid any distracting thoughts from coming into awareness.",
+                  "For recall trials, participants were instructed to recall the scene in as much detail as possible.",
+                  "Following practice, participants were presented with 32 critical experimental cue objects: 16 in the recall condition and 16 in the suppress condition.",
+                  "On each trial, participants were given 15 s to verbally describe the associated scene in as much detail as possible, so that it could be uniquely identified.",
+                  "Although our data do not provide an answer to this question, our results show that trauma exposure, by itself, is not sufficient to impair memory suppression, as all participants had experienced trauma.",
+                  "Fig.2. Schematic representation of the experimental procedure. In the study phase, participants encoded cue-target pairs. During the think/ no-think (TNT) phase, participants were instructed to directly suppress memories associated with cue objects presented inside a red frame and to recall memories associated with cue objects presented inside a green frame. Finally, in the test phase, participants were asked to remember and verbally describe all the scenes that they had previously recalled (recall items) or suppressed (suppress items), as well as all the scenes that they had initially learned but had not seen during the TNT phase (baseline items)."
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "ethics_approved"
+        ],
+        "v": [
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

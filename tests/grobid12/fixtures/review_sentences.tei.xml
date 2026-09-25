@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xml:space="preserve" xmlns="http://www.tei-c.org/ns/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<teiHeader xml:lang="en">
+		<fileDesc><titleStmt><title level="a" type="main">Segmented sentences</title></titleStmt></fileDesc>
+		<encodingDesc><appInfo><application version="0.8.2" ident="GROBID" when="2026-02-04T16:41+0000"><desc>GROBID</desc><ref target="https://github.com/kermitt2/grobid"/></application></appInfo></encodingDesc>
+		<profileDesc><abstract><div xmlns="http://www.tei-c.org/ns/1.0"><p><s coords="1,2,3,4,5">First abstract sentence.</s><s coords="1,2,3,4,5">Second one cites <ref type="bibr" target="#b0">[1]</ref>.</s></p></div></abstract></profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1">Introduction</head><p><s coords="2,1,1,1,1">We tested t(28) = 2.20, p = .036.</s><s coords="2,1,1,1,1">See <ref type="figure" target="#fig_0" coords="2,3,3,3,3">Fig. 1</ref> and <ref type="bibr" target="#b0" coords="2,3,3,3,3">Smith (2020)</ref>.</s></p><p><ref type="bibr" target="#b0">[1]</ref></p><p><s>Only sentence.</s></p><formula xml:id="formula_0"><label>(1)</label>y = x</formula></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Results</head><p><s>Data at <ref type="url" target="https://osf.io/abc">osf.io/abc</ref>.</s><s>Nested <hi rend="italic">italic <ref type="bibr" target="#b0">(Smith, 2020)</ref></hi> ref.</s></p></div>
+			<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0" coords="3,1,1,1,1">
+				<head>Fig. 1 .</head>
+				<label>1</label>
+				<figDesc><div><p><s coords="3,1,1,1,1">Segmented caption with <ref type="bibr" target="#b0">[1]</ref>.</s><s>Second caption sentence.</s></p></div></figDesc>
+				<graphic url="fig1.png" coords="3,1,1,1,1" type="bitmap"/>
+			</figure>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="1" xml:id="foot_0" coords="4,1,1,1,1"><p><s>Segmented note.</s><s>With <ref type="url" target="https://n.org">n.org</ref>.</s></p></note>
+		</body>
+		<back>
+			<div type="acknowledgement"><div xmlns="http://www.tei-c.org/ns/1.0"><head>Acknowledgements</head><p><s>Thanks.</s><s>Really.</s></p></div></div>
+			<div type="references"><listBibl>
+<biblStruct xml:id="b0"><analytic><title level="a" type="main">A</title><author><persName><forename>J</forename><surname>Smith</surname></persName></author></analytic><monogr><title level="j">J</title><imprint><date type="published" when="2020">2020</date></imprint></monogr><note type="raw_reference">Smith (2020). A. J.</note></biblStruct>
+			</listBibl></div>
+		</back>
+	</text>
+</TEI>

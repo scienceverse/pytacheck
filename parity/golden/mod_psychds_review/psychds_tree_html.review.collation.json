@@ -1,0 +1,14 @@
+{
+  "id": "psychds_tree_html.review.collation",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "<pre style=\"line-height:1.4\">\n├── _d/\n│   └── z\n├── a/\n│   └── y\n├── Ä/\n│   └── q\n├── B/\n│   └── x\n├── (x)\n├── #x\n├── ~x\n├── 01.R\n├── 1.R\n├── a_b.R\n├── a-b.R\n├── a.b.R\n├── A.R\n├── a.R\n├── Ä.R\n├── Ab\n├── ab.R\n├── b 1.R\n├── B.R\n├── b1.R\n├── é\n├── İx\n├── ix\n├── ss\n├── ß\n├── x!\n└── z.R\n<\/pre>"
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

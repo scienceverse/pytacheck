@@ -26,7 +26,7 @@ def error_message(fn: Callable[[], Any]) -> str | None:
     """``tryCatch(expr, error = \\(e) conditionMessage(e))``: the error message, or None."""
     try:
         fn()
-    except Exception as exc:  # noqa: BLE001 - the message is the result
+    except Exception as exc:  # the message is the result
         return str(exc)
     return None
 
@@ -48,13 +48,22 @@ def completed_at_is_iso(paper: Any) -> bool:
     """Whether the ``completed_at`` written for *paper* is an ISO 8601 UTC time."""
     path = pc.paper_write(paper, None, _tempdir(), schema_version="12.0")
     json = orjson.loads(Path(path).read_bytes())  # type: ignore[arg-type]
-    return bool(re.fullmatch(r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z", json["extraction"]["completed_at"]))
+    return bool(
+        re.fullmatch(r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z", json["extraction"]["completed_at"])
+    )
 
 
-def roundtrip(paper: Any) -> Any:
-    """``read(paper_write(paper, schema_version = "12.0"))``."""
+def roundtrip(paper: Any, blank_time: bool = False) -> Any:
+    """``read(paper_write(paper, schema_version = "12.0"))``.
+
+    With *blank_time*, ``extraction.completed_at`` (then the time of writing)
+    is set to a constant, so the goldens do not change.
+    """
     path = pc.paper_write(paper, None, _tempdir(), schema_version="12.0")
-    return pc.read(path)  # type: ignore[arg-type]
+    out = pc.read(path)  # type: ignore[arg-type]
+    if blank_time:
+        out["extraction"]["completed_at"] = "<completed_at>"  # type: ignore[index]
+    return out
 
 
 def variant(path: str | Path, name: str = "variant.json", **changes: Any) -> str:
@@ -132,3 +141,40 @@ def file_names(paper: Any, names: list[str]) -> list[str]:
     """The basenames ``paper_write(paper, name, schema_version = "12.0")`` writes."""
     d = _tempdir()
     return [Path(pc.paper_write(paper, n, d, schema_version="12.0")).name for n in names]  # type: ignore[arg-type]
+
+
+def full_with_crossref_matches() -> Any:
+    """full.json whose bib is replaced and matched with ``add_bib_match(p, 0)`` (recorded API)."""
+    from tests.db.parity_replay import call
+
+    p = pc.read(F12 / "full.json")
+    p.bib = pd.DataFrame(
+        {
+            "bib_id": [1, 2],
+            "doi": [None, None],
+            "title": ["Facial resemblance enhances trust", "Trustworthy but not Lustworthy"],
+            "container": ["Proceedings of the Royal Society of London B"] * 2,
+            "authors": [["Lisa DeBruine"], ["Lisa DeBruine"]],
+        }
+    )
+    return call("pytacheck.db.crossref.add_bib_match", p, 0)
+
+
+def read_or_error(path: str) -> Any:
+    """``tryCatch(.read_bibr(path), error = \\(e) paste("ERROR:", conditionMessage(e)))``."""
+    from pytacheck.papers.io import read_bibr
+
+    try:
+        return read_bibr(_path(path))
+    except Exception as exc:  # the message is the result
+        return f"ERROR: {exc}"
+
+
+def written_or_error(path: str) -> Any:
+    """The lines of ``paper_write(.read_bibr(path), schema_version = "12.0")``, or the error."""
+    from pytacheck.papers.io import read_bibr
+
+    try:
+        return written(read_bibr(_path(path)))
+    except Exception as exc:  # the message is the result
+        return f"ERROR: {exc}"
