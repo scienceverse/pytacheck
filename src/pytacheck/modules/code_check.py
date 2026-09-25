@@ -22,6 +22,7 @@ from pytacheck.modules._code_check import (
     col,
     collected_frame,
     is_na,
+    location_series,
     merge_manifests,
     seed_analysis_cols,
     summary_table,
@@ -81,7 +82,7 @@ _COL_LABELS = {
     title="Code Check",
     description="""
         This module retrieves information from repositories checked by repo_check about code files (R, SAS, SPSS, Stata).
-    """,  # noqa: E501
+    """,
     details="""
         The Code Check module checks R, Rmd, Qmd, SAS, SPSS, and Stata files, using regular expressions to check the code. The regular expression search will detect the number of comments, the lines at which libraries/imports are loaded, attempts to detect absolute paths to files, and lists files that are loaded, and checks if these files are in the repository. The module will return suggestions to improve the code if there are no comments, if libraries/imports are loaded in lines further than 4 lines apart, if files that are loaded are not in the repository, and if absolute file paths are found.
 
@@ -90,7 +91,7 @@ _COL_LABELS = {
         The module also checks whether the repository pins the R/package versions the analysis actually depended on: an `renv.lock` file (parsed for the R version and every locked package + its version/source), a `sessionInfo()`/`sessioninfo::session_info()` text dump (matched by filename \u2014 `sessionInfo.txt`/`session_info.txt` and similar, or embedded in a README), or a `groundhog::groundhog.library()`/`checkpoint::checkpoint()` date-pin call in the code (a bare `library(groundhog)`/`library(checkpoint)` does not count \u2014 the pinning call itself must be present). When none of these is found, the report flags it as a reproducibility gap: package versions may drift between when the analysis was run and any later reproduction attempt.
 
         If you want to extend the package to perform additional checks on code files, or make the checks work on other types of code files, reach out to the Metacheck development team.
-    """,  # noqa: E501
+    """,
     keywords=["results"],
     requires=["network"],
     author=[
@@ -188,7 +189,10 @@ def code_check(
         all_files = mo.table
         if all_files is None:
             all_files = pd.DataFrame(
-                {"file_name": pd.Series([], dtype="string"), "repo_url": pd.Series([], dtype="string")}
+                {
+                    "file_name": pd.Series([], dtype="string"),
+                    "repo_url": pd.Series([], dtype="string"),
+                }
             )
     all_files = all_files.reset_index(drop=True).copy()
     all_files.attrs = {}
@@ -229,7 +233,9 @@ def code_check(
         if _any_name(all_files, pattern):
             all_files = set_language(expand(all_files, *size_args).reset_index(drop=True))
     if _any_name(all_files, r"\.zip$"):
-        all_files = set_language(_code_expand_zip(all_files, skip_on_api_limit).reset_index(drop=True))
+        all_files = set_language(
+            _code_expand_zip(all_files, skip_on_api_limit).reset_index(drop=True)
+        )
     all_files.attrs = {}
 
     ## find relevant code files ----
@@ -332,9 +338,7 @@ def code_check(
     absolute_issues = [names[i] for i in abs_rows]
     report_table_absolute = None
     if not absolute_issues:
-        report_absolute = (
-            f"{_ABSOLUTE} No absolute file paths were found in any of the code files."
-        )
+        report_absolute = f"{_ABSOLUTE} No absolute file paths were found in any of the code files."
         summary_absolute = "No absolute file paths were found."
     else:
         n = len(absolute_issues)
@@ -345,7 +349,9 @@ def code_check(
         )
         summary_absolute = "Absolute file paths were found."
         report_table_absolute = _subtable(
-            code_files, abs_rows, {"file_name": "File name", "absolute_paths": "Absolute paths found"}
+            code_files,
+            abs_rows,
+            {"file_name": "File name", "absolute_paths": "Absolute paths found"},
         )
 
     ## setwd() ----
@@ -454,8 +460,7 @@ def code_check(
     report_table_parse = None
     if parse_issues == 0:
         report_parse = (
-            "All R-type code files (.R, .Rmd, .qmd) could be read in. There were no parsing "
-            "issues."
+            "All R-type code files (.R, .Rmd, .qmd) could be read in. There were no parsing issues."
         )
         summary_parse = "No parsing issues of R-type files were found."
     else:
@@ -485,7 +490,9 @@ def code_check(
         summary_packages = f"The code loaded {k} distinct package{plural(k)}."
 
     ## Reproducible environment (version pinning) ----
-    code_text_list = [text for paper_texts in r_text_by_paper.values() for text in paper_texts.values()]
+    code_text_list = [
+        text for paper_texts in r_text_by_paper.values() for text in paper_texts.values()
+    ]
     version_pin = _code_version_pin_check(
         all_files,
         code_text_list=code_text_list,
@@ -631,9 +638,7 @@ def _need_download(files: pd.DataFrame) -> list[bool]:
     if "file_location" not in files.columns:
         return []
     empty = [v is None or str(v) == "" for v in col(files, "file_location")]
-    return [
-        e and (u or a) for e, u, a in zip(empty, has_url, has_archive, strict=True)
-    ]
+    return [e and (u or a) for e, u, a in zip(empty, has_url, has_archive, strict=True)]
 
 
 def _set_file_location(
@@ -652,10 +657,7 @@ def _set_file_location(
             v = new[k % len(new)]
             locs[i] = None if is_na(v) else v
             k += 1
-    dtype = out["file_location"].dtype
-    out["file_location"] = pd.Series(
-        locs, index=out.index, dtype=dtype if dtype != object else object
-    )
+    out["file_location"] = location_series(locs, out.index, files["file_location"])
     return out
 
 
@@ -673,16 +675,14 @@ def _splice_locations(all_files: pd.DataFrame, locations: Any) -> pd.DataFrame:
         if n is not None and n not in first:
             first[n] = i
     out = all_files.copy()
-    if "file_location" not in out.columns:
-        out["file_location"] = pd.Series([None] * len(out), dtype=object)
-    locs = out["file_location"].astype(object).tolist()
+    like = out["file_location"] if "file_location" in out.columns else None
+    locs = like.astype(object).tolist() if like is not None else [None] * len(out)
     for name, loc in zip(list(locations.index), locations.tolist(), strict=True):
         m = first.get(name)
         if m is None or (not is_na(loc) and str(loc) == ""):
             continue
         locs[m] = None if is_na(loc) else loc
-    dtype = out["file_location"].dtype
-    out["file_location"] = pd.Series(locs, index=out.index, dtype=dtype)
+    out["file_location"] = location_series(locs, out.index, like)
     return out
 
 

@@ -120,8 +120,7 @@ def test_no_code_files_text() -> None:
     # R: "no code files" -- the summary counts every listed language
     mo = cc_run("nocode")
     exp = (
-        "We found 0 R, 0 Python, 0 SAS, 0 SPSS, 0 Stata, 0 Mplus, 0 MATLAB, and 0 JASP "
-        "code files."
+        "We found 0 R, 0 Python, 0 SAS, 0 SPSS, 0 Stata, 0 Mplus, 0 MATLAB, and 0 JASP code files."
     )
     assert mo.summary_text == exp
     assert mo.report == exp
@@ -276,7 +275,10 @@ def test_library_groundhog_is_not_a_pin(tmp_path: Path) -> None:
 
 @pytest.mark.parametrize(
     ("code", "mechanism"),
-    [('groundhog.library("dplyr", "2022-01-01")', "groundhog"), ('checkpoint("2022-01-01")', "checkpoint")],
+    [
+        ('groundhog.library("dplyr", "2022-01-01")', "groundhog"),
+        ('checkpoint("2022-01-01")', "checkpoint"),
+    ],
 )
 def test_date_pins(tmp_path: Path, code: str, mechanism: str) -> None:
     write(tmp_path / "analysis.R", [code, "x <- 1"])
@@ -288,7 +290,9 @@ def test_date_pins(tmp_path: Path, code: str, mechanism: str) -> None:
 def test_pins_are_per_paper() -> None:
     # the same file name in two papers: one paper's groundhog call must not pin the other
     mo = cc_run("paperlist_pins")
-    assert dict(zip(mo.summary_table["paper_id"], mo.summary_table["code_version_pinned"], strict=True)) == {
+    assert dict(
+        zip(mo.summary_table["paper_id"], mo.summary_table["code_version_pinned"], strict=True)
+    ) == {
         "p1": True,
         "p2": False,
         "p3": True,
@@ -428,9 +432,7 @@ def test_manifest_split_per_paper(tmp_path: Path, monkeypatch: pytest.MonkeyPatc
         ]
     )
     mdir = tmp_path / "manifests"
-    module_run(
-        fake_repo_check(table, pids=["paperX", "paperY"]), "code_check", manifest=str(mdir)
-    )
+    module_run(fake_repo_check(table, pids=["paperX", "paperY"]), "code_check", manifest=str(mdir))
     mf = _manifests(mdir)
     assert set(mf) == {"paperX.manifest.json", "paperY.manifest.json"}
     mx, my = mf["paperX.manifest.json"]["code"], mf["paperY.manifest.json"]["code"]
@@ -776,7 +778,9 @@ def test_bibr12_paper_matches_the_legacy_paper(scenario: str) -> None:
 
 def test_default_reader_paper_runs() -> None:
     p = pc.read(BIBR12_PREPRINT)
-    out = module_run(fake_repo_check(dir_listing(CODE_FILES, pid=p.paper_id), paper=p), "code_check")
+    out = module_run(
+        fake_repo_check(dir_listing(CODE_FILES, pid=p.paper_id), paper=p), "code_check"
+    )
     assert out.traffic_light == "yellow"
     assert out.summary_table["paper_id"].tolist() == [p.paper_id]
     assert st(out)["code_n"] == 5

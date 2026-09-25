@@ -96,10 +96,16 @@ def _frame(rows: list[dict[str, Any]], drop: list[str]) -> pd.DataFrame:
         values = [r.get(c) for r in rows]
         numeric = c == "file_size" or (
             any(v is not None for v in values)
-            and all(isinstance(v, int | float) and not isinstance(v, bool) for v in values if v is not None)
+            and all(
+                isinstance(v, int | float) and not isinstance(v, bool)
+                for v in values
+                if v is not None
+            )
         )
         if numeric:
-            data[c] = pd.Series([float("nan") if v is None else float(v) for v in values], dtype="float64")
+            data[c] = pd.Series(
+                [float("nan") if v is None else float(v) for v in values], dtype="float64"
+            )
         else:
             data[c] = pd.Series(values, dtype="string")
     df = pd.DataFrame(data, columns=cols)
@@ -229,7 +235,9 @@ def dir_listing(
     return _frame(rows, [])
 
 
-def fake_repo_check(table: pd.DataFrame | None, paper: Any = None, pids: list[str] | None = None) -> Any:
+def fake_repo_check(
+    table: pd.DataFrame | None, paper: Any = None, pids: list[str] | None = None
+) -> Any:
     """A repo_check output holding *table*, for ``module_run(<it>, "code_check")``."""
     import pytacheck as pc
 
