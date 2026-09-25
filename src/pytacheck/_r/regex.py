@@ -127,7 +127,7 @@ def translate_tre(p: str) -> str:
                 continue
             if e in _TRE_ESCAPES:
                 out.append(_TRE_ESCAPES[e])
-            elif e.isdigit():
+            elif "0" <= e <= "9":  # a back reference
                 out.append("\\" + e)
             else:  # any other escaped character stands for itself ("\g" is "g")
                 out.append(regex.escape(e))
@@ -177,10 +177,10 @@ _LAZY = regex.compile(r"[*+?}]\?")
 
 
 @functools.lru_cache(maxsize=8192)
-def _compile(pattern: str, ignore_case: bool, perl: bool, fixed: bool, posix: bool) -> Any:
+def _compile(pattern: str, icase: bool, perl: bool, fixed: bool, posix: bool) -> regex.Pattern[str]:
     if fixed:
         return regex.compile(regex.escape(pattern))
-    flags = regex.V0 | (regex.IGNORECASE if ignore_case else 0)
+    flags = regex.V0 | (regex.IGNORECASE if icase else 0)
     try:
         if perl:
             return regex.compile(translate_pcre(pattern), flags)
@@ -300,7 +300,7 @@ def _leading_literal(branch: str) -> str:
 _TURKISH_I = str.maketrans({"\u0130": "i", "\u0131": "i"})
 
 
-def _casefold(s: str) -> str:
+def casefold(s: str) -> str:
     """``s.casefold()``, with the dotted capital and the dotless small I as ``i``:
     ignoring case, the engine matches ``İ`` to ``i`` and ``ı`` to ``I``, which their
     case folding (``i`` + U+0307 and ``ı``) does not show."""
@@ -313,7 +313,7 @@ def _prefilter(pattern: str, ignore_case: bool) -> tuple[str, ...] | None:
 
     metacheck's patterns are mostly keyword alternations, so this skips the
     regex engine for nearly every sentence of a paper. It only ever keeps too
-    much, never too little: texts are casefolded (:func:`_casefold`), which
+    much, never too little: texts are casefolded (:func:`casefold`), which
     folds at least as much as the engine's case-insensitive matching.
     """
     if _INLINE_FLAGS.search(pattern):
@@ -350,7 +350,7 @@ def grepl(
         s = _as_str(v)
         if s is None:
             return False
-        folded = (s.casefold() if s.isascii() else _casefold(s)) if ignore_case else s
+        folded = (s.casefold() if s.isascii() else casefold(s)) if ignore_case else s
         return any(lit in folded for lit in literals) and search(s) is not None
 
     return _vectorize(x, match)
@@ -442,7 +442,7 @@ def _substitute(
             if m.end() <= last:
                 return ""
             last = m.end()
-            return r if isinstance(r, str) else r(m)
+            return r if isinstance(r, str) else str(r(m))
 
         return rx.sub(one, s)
 

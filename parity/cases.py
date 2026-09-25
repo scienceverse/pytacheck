@@ -722,6 +722,30 @@ def _resolve(dotted: str) -> Any:
     return getattr(obj, attr)
 
 
+_PC_PATH = re.compile(r"\bpc((?:\.[A-Za-z_]\w*)+)")
+
+
+def _import_named_modules(expr: str) -> None:
+    """Import the pytacheck modules an expression names (``pc.statout.jasp.f``).
+    A package exposes a submodule as an attribute only once it is imported, so
+    without this a case would pass or fail with what earlier cases in the same
+    process imported (``check --jobs`` and ``pytest -n`` order cases differently)."""
+    for m in _PC_PATH.finditer(expr):
+        obj: Any = importlib.import_module("pytacheck")
+        for part in m.group(1).split(".")[1:]:
+            name = f"{obj.__name__}.{part}"
+            if not hasattr(obj, part):  # never import over an attribute (pc.read)
+                try:
+                    importlib.import_module(name)
+                except ModuleNotFoundError as exc:
+                    if exc.name != name:  # the module exists and failed to import
+                        raise
+                    break
+            obj = getattr(obj, part, None)
+            if not inspect.ismodule(obj):
+                break
+
+
 def py_name(r_name: str) -> str:
     name = r_name.replace(".", "_")
     return f"{name}_" if keyword.iskeyword(name) else name
@@ -762,6 +786,7 @@ def decode(x: Any) -> Any:
         if key == "$file":
             return str(ROOT / val)
         if key == "$expr":
+            _import_named_modules(val["py"])
             return eval(val["py"], {"pc": pc, "pd": pd, "np": np})
         if key == "$call":
             fn = _resolve(val["py"])

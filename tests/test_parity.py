@@ -1339,3 +1339,17 @@ def test_no_network_refuses_proxies_and_local_ports(monkeypatch) -> None:
     ]
     with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:  # restored
         assert s.sendto(b"x", ("127.0.0.1", 9)) == 1
+
+
+def test_expr_imports_the_modules_it_names() -> None:
+    """``pc.statout.jasp`` resolves in a fresh process, whatever ran before
+    (``check --jobs`` and ``pytest -n`` give each worker other cases first)."""
+    import sys
+
+    code = (
+        "import sys; from parity.cases import decode\n"
+        "import pytacheck as pc; read = pc.read\n"
+        "f, g = decode({'$expr': {'py': '(pc.statout.jasp._jasp_analyses_summary, pc.read)'}})\n"
+        "assert f.__module__ == 'pytacheck.statout.jasp' and g is read is pc.read\n"
+    )
+    subprocess.run([sys.executable, "-c", code], check=True, cwd=ROOT)
