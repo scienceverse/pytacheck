@@ -1,12 +1,11 @@
 {
-  "id": "code_check.qmd",
+  "id": "code_check.download_budget",
   "ok": true,
   "error": null,
   "warnings": [
-    "Unknown or uninitialised column: `text`.",
-    "Unknown or uninitialised column: `abs_path`.",
-    "Unknown or uninitialised column: `text`.",
-    "Unknown or uninitialised column: `text`."
+    "Repository https://osf.io/dlmixed exceeds the 0.0 MB per-repository budget: downloaded the smallest files up to the cap, 3 files omitted. Raise `max_download_size` to include more.",
+    "Repository https://osf.io/dlmixed exceeds the 0.0 MB per-repository budget: downloaded the smallest files up to the cap, 3 files omitted. Raise `max_download_size` to include more.",
+    "Repository https://osf.io/dlmixed exceeds the 0.0 MB per-repository budget: downloaded the smallest files up to the cap, 3 files omitted. Raise `max_download_size` to include more."
   ],
   "value": {
     "t": "module_output",
@@ -43,7 +42,7 @@
       },
       {
         "t": "df",
-        "nrow": 6,
+        "nrow": 5,
         "names": [
           "paper_id",
           "repo_name",
@@ -55,6 +54,7 @@
           "file_size",
           "language",
           "checked",
+          "error",
           "parse_error",
           "parse_error_msg",
           "code_abs_path",
@@ -82,96 +82,87 @@
               "p1",
               "p1",
               "p1",
-              "p1",
               "p1"
             ]
           },
           {
             "t": "chr",
             "v": [
-              "qmd",
-              "qmd",
-              "notebooks",
-              "notebooks",
-              "qmd",
-              "qmd"
+              "mixed",
+              "mixed",
+              "mixed",
+              "mixed",
+              "mixed"
             ]
           },
           {
             "t": "chr",
             "v": [
-              "https://osf.io/qmd",
-              "https://osf.io/qmd",
-              "https://osf.io/nb",
-              "https://osf.io/nb",
-              "https://osf.io/qmd",
-              "https://osf.io/qmd"
+              "https://osf.io/dlmixed",
+              "https://osf.io/dlmixed",
+              "https://osf.io/dlmixed",
+              "https://osf.io/dlmixed",
+              "https://osf.io/dlmixed"
             ]
           },
           {
             "t": "chr",
             "v": [
-              "py_engine.qmd",
-              "r_engine.qmd",
-              "notebook_r.ipynb",
-              "notebook_python.ipynb",
-              "tests/mod_code/fixtures/qmd/py_engine.qmd",
-              "upstream/metacheck/tests/testthat/fixtures/notebooks/notebook_r.ipynb"
+              "analysis.R",
+              "analysis.do",
+              "report.Rmd",
+              "script.py",
+              "results.jasp"
             ]
           },
           {
             "t": "chr",
             "v": [
-              "py_engine.qmd",
-              "r_engine.qmd",
-              "notebook_r.ipynb",
-              "notebook_python.ipynb",
-              "py_engine.qmd",
-              "notebook_r.ipynb"
+              "analysis.R",
+              "analysis.do",
+              "report.Rmd",
+              "script.py",
+              "results.jasp"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "file:///home/user/pytacheck/tests/mod_code/fixtures/mixed/analysis.R",
+              "file:///home/user/pytacheck/tests/mod_code/fixtures/mixed/analysis.do",
+              "file:///home/user/pytacheck/tests/mod_code/fixtures/mixed/report.Rmd",
+              "file:///home/user/pytacheck/tests/mod_code/fixtures/mixed/script.py",
+              "file:///home/user/pytacheck/tests/mod_code/fixtures/mixed/results.jasp"
             ]
           },
           {
             "t": "chr",
             "v": [
               null,
-              null,
-              null,
+              "/tmp/RtmpDHsXCz/metacheck-repo-files/osf.io_dlmixed/analysis.do",
               null,
               null,
               null
             ]
           },
           {
-            "t": "chr",
-            "v": [
-              "tests/mod_code/fixtures/qmd/py_engine.qmd",
-              "tests/mod_code/fixtures/qmd/r_engine.qmd",
-              "upstream/metacheck/tests/testthat/fixtures/notebooks/notebook_r.ipynb",
-              "upstream/metacheck/tests/testthat/fixtures/notebooks/notebook_python.ipynb",
-              "tests/mod_code/fixtures/qmd/py_engine.qmd",
-              "upstream/metacheck/tests/testthat/fixtures/notebooks/notebook_r.ipynb"
-            ]
-          },
-          {
             "t": "dbl",
             "v": [
-              71,
-              44,
-              905,
-              2489,
-              70,
-              1000
+              263,
+              59,
+              176,
+              155,
+              11513
             ]
           },
           {
             "t": "chr",
             "v": [
               "R",
+              "Stata",
               "R",
               "Python",
-              "Python",
-              "Python",
-              "R"
+              "JASP"
             ]
           },
           {
@@ -181,173 +172,17 @@
               true,
               true,
               true,
-              true,
-              true
-            ]
-          },
-          {
-            "t": "lgl",
-            "v": [
-              false,
-              false,
-              null,
-              null,
-              null,
               false
             ]
           },
           {
             "t": "chr",
             "v": [
+              "'file:///home/user/pytacheck/tests/mod_code/fixtures/mixed/analysis.R' does not exist in current working directory ('/home/user/pytacheck').",
               null,
-              null,
-              null,
-              null,
-              null,
+              "'file:///home/user/pytacheck/tests/mod_code/fixtures/mixed/report.Rmd' does not exist in current working directory ('/home/user/pytacheck').",
+              "'file:///home/user/pytacheck/tests/mod_code/fixtures/mixed/script.py' does not exist in current working directory ('/home/user/pytacheck').",
               null
-            ]
-          },
-          {
-            "t": "int",
-            "v": [
-              0,
-              0,
-              0,
-              0,
-              0,
-              0
-            ]
-          },
-          {
-            "t": "chr",
-            "v": [
-              "",
-              "",
-              "",
-              "",
-              "",
-              ""
-            ]
-          },
-          {
-            "t": "int",
-            "v": [
-              0,
-              0,
-              0,
-              0,
-              0,
-              0
-            ]
-          },
-          {
-            "t": "chr",
-            "v": [
-              "",
-              "",
-              "",
-              "",
-              "",
-              ""
-            ]
-          },
-          {
-            "t": "int",
-            "v": [
-              0,
-              0,
-              0,
-              0,
-              0,
-              0
-            ]
-          },
-          {
-            "t": "chr",
-            "v": [
-              "",
-              "",
-              "",
-              "",
-              "",
-              ""
-            ]
-          },
-          {
-            "t": "int",
-            "v": [
-              0,
-              1,
-              0,
-              3,
-              1,
-              2
-            ]
-          },
-          {
-            "t": "int",
-            "v": [
-              null,
-              null,
-              null,
-              1,
-              null,
-              1
-            ]
-          },
-          {
-            "t": "int",
-            "v": [
-              0,
-              1,
-              0,
-              3,
-              1,
-              2
-            ]
-          },
-          {
-            "t": "chr",
-            "v": [
-              "",
-              "dplyr",
-              "",
-              "numpy, pandas, scipy",
-              "pandas",
-              "dplyr, ggplot2"
-            ]
-          },
-          {
-            "t": "int",
-            "v": [
-              1,
-              0,
-              0,
-              2,
-              0,
-              0
-            ]
-          },
-          {
-            "t": "int",
-            "v": [
-              0,
-              1,
-              4,
-              8,
-              1,
-              4
-            ]
-          },
-          {
-            "t": "dbl",
-            "v": [
-              1,
-              0,
-              0,
-              0.25,
-              0,
-              0
             ]
           },
           {
@@ -355,32 +190,179 @@
             "v": [
               null,
               null,
-              false,
-              false,
-              false,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
               null
             ]
           },
           {
             "t": "int",
             "v": [
+              null,
               0,
-              0,
-              0,
-              1,
-              0,
-              1
+              null,
+              null,
+              null
             ]
           },
           {
             "t": "chr",
             "v": [
+              null,
               "",
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              null,
+              0,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
               "",
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              null,
+              0,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
               "",
-              "trials.csv",
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              null,
+              0,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              null,
+              0,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
               "",
-              "scores.csv"
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              null,
+              2,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              null,
+              3,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              0.5,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              null,
+              1,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "data.dta",
+              null,
+              null,
+              null
             ]
           }
         ]
@@ -389,12 +371,12 @@
         "t": "chr",
         "v": [
           "Below, we describe some best coding practices and give the results of automatic evaluation of these practices in the code files below. This check may miss things or produce false positives if your scripts are less typical.",
-          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(\"File Name\" = c(NA_character_, NA_character_, \nNA_character_, NA_character_, NA_character_, NA_character_), \n    \"% Comments\" = c(\"100%\", \"0%\", \"0%\", \"25%\", \"0%\", \"0%\"), \n    \"Missing Files\" = c(0L, 0L, 0L, 1L, 0L, 1L), \"Absolute Paths\" = c(0L, \n    0L, 0L, 0L, 0L, 0L), \"Code Between Libraries\" = c(NA, NA, \n    NA, 1L, NA, 1L)), row.names = c(NA, 6L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 5, FALSE)\n```\n",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(\"File Name\" = c(\"<a href='file:///home/user/pytacheck/tests/mod_code/fixtures/mixed/analysis.R' target='_blank'>analysis.R<\/a>\", \n\"<a href='file:///home/user/pytacheck/tests/mod_code/fixtures/mixed/analysis.do' target='_blank'>analysis.do<\/a>\", \n\"<a href='file:///home/user/pytacheck/tests/mod_code/fixtures/mixed/report.Rmd' target='_blank'>report.Rmd<\/a>\", \n\"<a href='file:///home/user/pytacheck/tests/mod_code/fixtures/mixed/script.py' target='_blank'>script.py<\/a>\", \n\"<a href='file:///home/user/pytacheck/tests/mod_code/fixtures/mixed/results.jasp' target='_blank'>results.jasp<\/a>\"\n), \"% Comments\" = c(\"\", \"50%\", \"\", \"\", \"\"), \"Missing Files\" = c(NA, \n1L, NA, NA, NA), \"Absolute Paths\" = c(NA, 0L, NA, NA, NA), \"Code Between Libraries\" = c(NA_integer_, \nNA_integer_, NA_integer_, NA_integer_, NA_integer_)), row.names = c(NA, \n5L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 5, FALSE)\n```\n",
           "#### Code Comments",
-          "Best programming practice is to add comments to code, to explain what the code does (to yourself in the future, or peers who want to re-use your code).",
+          "Best programming practice is to add comments to code, to explain what the code does (to yourself in the future, or peers who want to re-use your code). All your code files had comments.",
           "#### Missing Files",
-          "The scripts load files, but 2 scripts loaded 2 files that could not be automatically identified in the repository. Check if the following files are made available, so that others can reproduce your code, or that the files are missing:",
-          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(\"File name\" = c(\"notebook_python.ipynb\", \"upstream/metacheck/tests/testthat/fixtures/notebooks/notebook_r.ipynb\"\n), \"Missing Files\" = c(\"trials.csv\", \"scores.csv\")), row.names = c(4L, \n6L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 5, FALSE)\n```\n",
+          "The scripts load files, but 1 script loaded 1 file that could not be automatically identified in the repository. Check if the following files are made available, so that others can reproduce your code, or that the files are missing:",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(\"File name\" = \"analysis.do\", \"Missing Files\" = \"data.dta\"), row.names = 2L, class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 5, FALSE)\n```\n",
           "#### Absolute Paths",
           "Best programming practice is to use relative file paths (e.g., './files') instead of absolute file paths (e.g., 'C://Lakens/project_dir/files') as these folder names do not exist on other computers. No absolute file paths were found in any of the code files.",
           "",
@@ -407,7 +389,7 @@
           "#### Libraries / Imports",
           "Best programming practice is to load all required libraries/imports in one block near the top of the code. In all code files, libraries/imports were loaded in one block.",
           "#### Packages / Dependencies",
-          "The code files load 5 distinct packages/libraries: dplyr, ggplot2, numpy, pandas, scipy. These are the names found in the source (no version information is available from static analysis).",
+          "No packages/libraries were detected as loaded in the code files. (This check reads R and Python imports; other languages are not scanned for packages.) Even when no imports are detected, it is good practice to record the exact package versions the analysis depended on — see \"Reproducible Environment\" below.",
           "#### Reproducible Environment",
           "No `renv.lock` file, `sessionInfo()`/`session_info()` record, or `groundhog`/`checkpoint` date-pin call was found anywhere in the repository. Without one of these, the exact R and package versions used for the analysis are not recoverable, and package versions may drift between when this analysis was run and any later reproduction attempt. Consider depositing an `renv.lock` (via the `renv` package), a `sessionInfo()` text dump, or (for R) a `groundhog`/`checkpoint` date-pin alongside the code — or, for Python code, a `requirements.txt` (not currently checked for by this module, but still good practice to include).",
           "",
@@ -425,7 +407,7 @@
       {
         "t": "chr",
         "v": [
-          "\n-  We found 3 R, 3 Python, 0 SAS, 0 SPSS, 0 Stata, 0 Mplus, 0 MATLAB, and 0 JASP code files.\n-  4 code files had no comments.\n-  2 files loaded in the code were missing in the repository.\n-  No absolute file paths were found.\n-  No setwd() calls were found.\n-  No install.packages() calls were found.\n-  All libraries/imports were loaded in one block.\n-  The code loaded 5 distinct packages.\n-  No pinned R/package environment (renv.lock, sessionInfo(), or groundhog/checkpoint) was found.\n-  No parsing issues of R-type files were found."
+          "\n-  We found 2 R, 1 Python, 0 SAS, 0 SPSS, 1 Stata, 0 Mplus, 0 MATLAB, and 1 JASP code files. Repository https://osf.io/dlmixed exceeds the 0.0 MB per-repository budget: downloaded the smallest files up to the cap, 3 files omitted. Raise `max_download_size` to include more.\n-  All your code files had comments.\n-  1 file loaded in the code was missing in the repository.\n-  No absolute file paths were found.\n-  No setwd() calls were found.\n-  No install.packages() calls were found.\n-  All libraries/imports were loaded in one block.\n-  No packages/libraries were detected in the code.\n-  No pinned R/package environment (renv.lock, sessionInfo(), or groundhog/checkpoint) was found.\n-  No parsing issues of R-type files were found."
         ]
       },
       {
@@ -454,19 +436,13 @@
           {
             "t": "int",
             "v": [
-              6
+              5
             ]
           },
           {
             "t": "int",
             "v": [
-              6
-            ]
-          },
-          {
-            "t": "int",
-            "v": [
-              0
+              4
             ]
           },
           {
@@ -484,13 +460,19 @@
           {
             "t": "int",
             "v": [
-              2
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
             ]
           },
           {
             "t": "dbl",
             "v": [
-              0
+              0.5
             ]
           },
           {
@@ -502,7 +484,7 @@
           {
             "t": "int",
             "v": [
-              5
+              0
             ]
           },
           {

@@ -232,6 +232,46 @@
       "$expr":
         "r": "local({source('tests/mod_code/cc_helpers.R', local = TRUE); cc_prev('urls')})"
         "py": "__import__('tests.mod_code.helpers', fromlist=['_']).cc_prev('urls')"
+- "id": "code_check.download"
+  "module": "code_check"
+  "args":
+    "paper":
+      "$expr":
+        "r": "local({source('tests/mod_code/cc_helpers.R', local = TRUE); cc_prev('download')})"
+        "py": "__import__('tests.mod_code.helpers', fromlist=['_']).cc_prev('download')"
+  "compare": &id001
+    "ignore":
+    - "table.file_url"
+    - "table.file_location"
+    - "table.error"
+    - "version_pin.file_location"
+- "id": "code_check.download_no_download"
+  "module": "code_check"
+  "args":
+    "paper":
+      "$expr":
+        "r": "local({source('tests/mod_code/cc_helpers.R', local = TRUE); cc_prev('download')})"
+        "py": "__import__('tests.mod_code.helpers', fromlist=['_']).cc_prev('download')"
+    "download": !!bool "false"
+  "compare": *id001
+- "id": "code_check.download_file_cap"
+  "module": "code_check"
+  "args":
+    "paper":
+      "$expr":
+        "r": "local({source('tests/mod_code/cc_helpers.R', local = TRUE); cc_prev('download_mixed')})"
+        "py": "__import__('tests.mod_code.helpers', fromlist=['_']).cc_prev('download_mixed')"
+    "max_files_per_repo": !!int "2"
+  "compare": *id001
+- "id": "code_check.download_budget"
+  "module": "code_check"
+  "args":
+    "paper":
+      "$expr":
+        "r": "local({source('tests/mod_code/cc_helpers.R', local = TRUE); cc_prev('download_mixed')})"
+        "py": "__import__('tests.mod_code.helpers', fromlist=['_']).cc_prev('download_mixed')"
+    "max_download_size": !!float "0.0001"
+  "compare": *id001
 - "id": "report_tables.code_files"
   "r": "identity"
   "py": "tests.mod_code.helpers.identity"

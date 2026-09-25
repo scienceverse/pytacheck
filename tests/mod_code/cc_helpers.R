@@ -25,7 +25,9 @@ cc_base_cols <- c("paper_id", "repo_name", "repo_url", "file_name", "file_path",
       repo_url = repo$repo_url %||% NA_character_,
       file_name = basename(rel),
       file_path = rel,
-      file_url = if (is.null(repo$file_url)) NA_character_ else paste0(repo$file_url, rel),
+      file_url = if (is.null(repo$file_url)) NA_character_
+        else if (identical(repo$file_url, "local")) paste0("file://", normalizePath(path))
+        else paste0(repo$file_url, rel),
       file_location = if (isTRUE(local)) path else NA_character_,
       file_size = as.double(file.size(path))
     )

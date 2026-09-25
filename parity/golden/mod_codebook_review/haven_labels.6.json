@@ -1,0 +1,88 @@
+{
+  "id": "haven_labels.6",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 3,
+    "names": [
+      "codebook_variable",
+      "label",
+      "codebook_source",
+      "group",
+      "value_labels",
+      "missing_values",
+      "question",
+      "coding_instructions"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "gender",
+          "score",
+          "likert"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Respondent gender",
+          "Total score",
+          "Agreement"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "labelled.sav",
+          "labelled.sav",
+          "labelled.sav"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "g1",
+          "g1",
+          "g1"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "{\"1\":\"Male\",\"2\":\"Female\",\"9\":\"Refused\"}",
+          null,
+          "{\"1\":\"Strongly disagree\",\"5\":\"Strongly agree\",\"99\":\"No answer\"}"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "{\"9\":\"Refused\"}",
+          null,
+          "{\"99\":\"No answer\"}"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -17,7 +17,7 @@ Scenario keys:
 ``repos``      ``{paper_id, repo_url, dir, files, [repo_name], [file_url], [local]}``:
                one row per file of *dir* (a path relative to the repository
                root); ``local: false`` leaves ``file_location`` NA; ``file_url``
-               is prefixed to the file path
+               is prefixed to the file path (``"local"``: a ``file://`` URL of it)
 ``rows``       explicit extra rows (JSON ``null`` is NA)
 ``drop``       columns to remove from the listing
 ``structure``  extra rows that only data_check's ``structure`` has (the
@@ -71,7 +71,13 @@ def _repo_rows(repo: dict[str, Any], default_pid: str) -> list[dict[str, Any]]:
                 "repo_url": repo.get("repo_url"),
                 "file_name": os.path.basename(rel),
                 "file_path": rel,
-                "file_url": (repo["file_url"] + rel) if repo.get("file_url") else None,
+                "file_url": (
+                    "file://" + str(ROOT / path)
+                    if repo.get("file_url") == "local"
+                    else (repo["file_url"] + rel)
+                    if repo.get("file_url")
+                    else None
+                ),
                 "file_location": path if local else None,
                 "file_size": float(os.path.getsize(ROOT / path)),
             }

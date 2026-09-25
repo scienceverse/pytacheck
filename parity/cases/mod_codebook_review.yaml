@@ -427,6 +427,70 @@
       "$expr":
         "r": "local({source('tests/mod_codebook/review_helpers.R', local = TRUE); rv_scales_to_osd()})"
         "py": "__import__('tests.mod_codebook.review_helpers', fromlist=['_']).rv_scales_to_osd()"
+- "id": "haven_labels.0"
+  "r": "base::identity"
+  "py": "tests.mod_codebook.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_codebook/review_helpers.R', local = TRUE); rv_haven_labels('tests/datacheck_files/data/labelled.dta')})"
+        "py": "__import__('tests.mod_codebook.review_helpers', fromlist=['_']).rv_haven_labels('tests/datacheck_files/data/labelled.dta')"
+- "id": "haven_labels.1"
+  "r": "base::identity"
+  "py": "tests.mod_codebook.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_codebook/review_helpers.R', local = TRUE); rv_haven_labels('tests/datacheck_files/data/review/zero_rows.dta')})"
+        "py": "__import__('tests.mod_codebook.review_helpers', fromlist=['_']).rv_haven_labels('tests/datacheck_files/data/review/zero_rows.dta')"
+- "id": "haven_labels.2"
+  "r": "base::identity"
+  "py": "tests.mod_codebook.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_codebook/review_helpers.R', local = TRUE); rv_haven_labels('tests/datacheck_files/data/review/all_na_dates.sav')})"
+        "py": "__import__('tests.mod_codebook.review_helpers', fromlist=['_']).rv_haven_labels('tests/datacheck_files/data/review/all_na_dates.sav')"
+- "id": "haven_labels.3"
+  "r": "base::identity"
+  "py": "tests.mod_codebook.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_codebook/review_helpers.R', local = TRUE); rv_haven_labels('tests/datacheck_files/data/review/stata_int_na.dta')})"
+        "py": "__import__('tests.mod_codebook.review_helpers', fromlist=['_']).rv_haven_labels('tests/datacheck_files/data/review/stata_int_na.dta')"
+- "id": "haven_labels.4"
+  "r": "base::identity"
+  "py": "tests.mod_codebook.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_codebook/review_helpers.R', local = TRUE); rv_haven_labels('tests/datacheck_files/data/review/zero_rows.sav')})"
+        "py": "__import__('tests.mod_codebook.review_helpers', fromlist=['_']).rv_haven_labels('tests/datacheck_files/data/review/zero_rows.sav')"
+- "id": "haven_labels.5"
+  "r": "base::identity"
+  "py": "tests.mod_codebook.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_codebook/review_helpers.R', local = TRUE); rv_haven_labels('tests/datacheck_files/data/iris.sas7bdat')})"
+        "py": "__import__('tests.mod_codebook.review_helpers', fromlist=['_']).rv_haven_labels('tests/datacheck_files/data/iris.sas7bdat')"
+- "id": "haven_labels.6"
+  "r": "base::identity"
+  "py": "tests.mod_codebook.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_codebook/review_helpers.R', local = TRUE); rv_haven_labels('tests/datacheck_files/data/labelled.sav')})"
+        "py": "__import__('tests.mod_codebook.review_helpers', fromlist=['_']).rv_haven_labels('tests/datacheck_files/data/labelled.sav')"
+- "id": "haven_labels.7"
+  "r": "base::identity"
+  "py": "tests.mod_codebook.helpers.identity"
+  "args":
+    "x":
+      "$expr":
+        "r": "local({source('tests/mod_codebook/review_helpers.R', local = TRUE); rv_haven_labels('tests/datacheck_columns/fixtures/review/dup_labels.sav')})"
+        "py": "__import__('tests.mod_codebook.review_helpers', fromlist=['_']).rv_haven_labels('tests/datacheck_columns/fixtures/review/dup_labels.sav')"
 - "id": "paradata_name.misc"
   "r": "base::identity"
   "py": "tests.mod_codebook.helpers.identity"
