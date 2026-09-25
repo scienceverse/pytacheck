@@ -41,6 +41,7 @@ from typing import Any
 
 from pytacheck.config import Config, data_dir, load_config
 from pytacheck.module import ModuleError, ModuleSpec, _spec_from_pymodule
+from pytacheck.packs.auth import clean_source
 from pytacheck.packs.manifest import (
     MODULE_NAME_RE,
     Pack,
@@ -245,7 +246,17 @@ def _installed_pack(name: str, pin: Mapping[str, Any], origin: str) -> Pack:
                 f"({key} {record[key]} != {pin[key]}); reinstall it with `pytacheck pack install`"
             )
     rev = pin.get("rev") or record.get("rev")
-    source = dict(pin.get("source") or record.get("source") or {})
+    # a pin or record from before credentials in URLs were refused: never passed on
+    # (to run records, `pack show`), the files are still checked against rev and tree
+    raw = dict(pin.get("source") or record.get("source") or {})
+    source = clean_source(raw)
+    if source != raw:
+        warnings.warn(
+            f"The recorded source of the pack '{name}' contains credentials; they are left "
+            "out of run records and `pack show`. pytacheck no longer accepts credentials in "
+            "URLs: remove the pack and install it again from the plain URL",
+            stacklevel=3,
+        )
     if rev:
         source.setdefault("rev", rev)
     store = pin.get("store") or record.get("store")

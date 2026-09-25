@@ -318,17 +318,44 @@ it is private) or pack repository needs read access, in either of two ways:
   or a fine-grained token with "Contents: read" on the repository. pytacheck then
   reads the index and pack tarballs through GitHub's API;
 * git credentials for github.com (for example `gh auth setup-git` or a credential
-  helper): when GitHub answers 401/403/404, pytacheck falls back to a shallow
-  `git fetch`, which never prompts.
+  helper): when GitHub answers 401/403/404, pytacheck falls back to git, which
+  never prompts. For a store index it fetches only commits and trees
+  (`--depth 1 --filter=blob:none`) and reads `index.json` alone, so nothing else
+  of the repository is downloaded or checked out.
 
 The token is sent only over HTTPS to `api.github.com`, `github.com`,
 `raw.githubusercontent.com` and `codeload.github.com`, never on a redirect to
 another host, and is never written anywhere: pins, install records, run records
 and index caches keep the plain source (`{"github": "owner/repo", "rev": ...}`),
 so they work on a machine that authenticates differently. An expired token does
-not break public stores (a 401 is retried without it). Put credentials in the
-environment, not in a store or pack URL: URLs with a password or token are
-refused.
+not break public stores (a 401 is retried without it).
+
+A store on another host whose `index.json` needs a login (an intranet server
+with HTTP basic auth, say) reads it from `~/.netrc`, or from the file `NETRC`
+names:
+
+```text
+machine store.example.org login alice password <secret>
+```
+
+Only an explicit `machine` entry for exactly that host is used (never
+`default`), only over HTTPS (or plain HTTP to this machine), and only for the
+host the index URL names, not on a redirect elsewhere. GitLab stores and pack
+repositories on other hosts use your git credentials (a credential helper, or
+`~/.netrc`, which git reads too).
+
+**No credentials in URLs.** Store URLs and pack sources are shown on screen and
+written to config, install records and run records, so a URL that carries a
+credential is refused: a password or user info (`https://user:pw@...`,
+`https://TOKEN@...`, `ssh://git:pw@...`), or a secret query parameter
+(`?token=`, `?access_token=`, `?private_token=`, `?sig=`...). The error shows
+the URL redacted and says what to do instead. (Before, `https://u:pw@host/...`
+store URLs were accepted and sent as HTTP basic auth: move such logins to
+`~/.netrc`.) A store or pin from an older config that carries a credential is
+never shown or recorded with it: `store list` shows it as `https://***@...`, the
+store is skipped with a warning, the pinned pack is not (re)installed or
+updated, and an already installed one runs with the credential left out of its
+run records (with a warning to pin the plain URL).
 
 ---
 

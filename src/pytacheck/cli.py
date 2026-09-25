@@ -615,7 +615,9 @@ def cmd_store(ns: argparse.Namespace) -> int:
     if action == "add":
         from pytacheck.config import config_path
 
-        if not _confirm(ns, f"Add the store '{ns.name}' ({ns.url}) to {config_path(_scope(ns))}?"):
+        # refuse URLs with credentials before the prompt shows them
+        url = stores.check_store_url(ns.url)
+        if not _confirm(ns, f"Add the store '{ns.name}' ({url}) to {config_path(_scope(ns))}?"):
             return _err("cancelled")
         path = stores.store_add(ns.name, ns.url, scope=_scope(ns))
         print(f"Added the store '{ns.name}' to {path}")

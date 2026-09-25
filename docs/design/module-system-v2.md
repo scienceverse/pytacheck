@@ -832,16 +832,48 @@ packs on private GitHub repositories work (`pytacheck/packs/auth.py`):
   exactly as before.
 * **Git fallback.** When the index or a tarball gets 401/403/404 and git is
   installed, the hardened git machinery (`GIT_TERMINAL_PROMPT=0`, no askpass)
-  fetches the pinned commit (or the ref's commit) shallowly, so the user's own
-  git credential helpers work; the token is never handed to git. If everything
+  takes over, so the user's own git credential helpers work; the token is never
+  handed to git. A tarball becomes a shallow fetch of the pinned commit. The
+  index is read alone (`fetch.git_read_file`): a bare temporary repository,
+  `git fetch --depth 1 --filter=blob:none origin <ref>` (commits and trees
+  only where the server allows filtering, as GitHub does), then `git cat-file`
+  of `index.json` with a size cap. Nothing is checked out, so the pack-install
+  rules (no symlinks, no `.so`, 5000 files) do not apply to the rest of the
+  store repository, and a public repository without an index costs a few
+  kilobytes, not a clone. When git reads the repository but finds no index
+  (`GitMissing`), the error says so and does not suggest a token. If everything
   fails, the error says how to authenticate (`PYTACHECK_GITHUB_TOKEN`, `gh auth
   token`, `gh auth setup-git`).
+* **Other hosts.** A non-GitHub index behind a login reads it from `~/.netrc`
+  (or `$NETRC`): an explicit `machine` entry for exactly that host (never
+  `default`), sent as HTTP basic auth only over https (or http to a loopback
+  host), only to that origin; a redirect to a URL with user info is refused.
+  This replaces `https://user:pw@host/index.json` store URLs, which httpx used
+  to turn into basic auth and which are now refused (see below). Errors for
+  such hosts point to `~/.netrc`, never to `PYTACHECK_GITHUB_TOKEN`.
+* **No credentials in URLs.** `auth.has_credentials()` flags a password or
+  user info (any scheme; a bare user name in `ssh://git@host` or
+  `git@host:o/r` is fine), a secret query or fragment parameter (`token`,
+  `access_token`, `private_token`, `x-amz-security-token`, `sig`,
+  `signature`) and any token value from the environment. Such a URL is refused
+  by `store add` (`stores.check_store_url()`, which a caller can run before
+  asking) and when reading a store, and every pack source is checked at the
+  top of `install._install()`, which covers URL installs, pin syncs, updates,
+  store entries and run-record reinstalls (an unlisted update is checked before
+  `resolve_rev`). What an older config or install record already holds is
+  never passed on: `store list`/`store update` redact the URL column,
+  `describe_source()` (the consent card) and confirmation prompts go through
+  `redact()`, and `registry._installed_pack()` strips credentials from the
+  pack's `source` (`auth.clean_source()`) with a warning, so run records and
+  `pack show` never carry them.
 * **No leaks.** Pins, install records, run records and index caches keep the
   canonical source (`{"github": "owner/repo", "rev": ...}`) and the cache key
   stays the raw URL. Errors name the URL that was asked for, never a redirect
   target; git's messages, httpx's request log and httpcore's header log pass
-  through `redact()` (token values, `token=` query values, URL passwords).
-  Store and pack URLs with a password or token are refused. The tests
-  (`tests/modsys/test_private_store.py`) install, update and run a pack with a
-  sentinel token and grep every written file, the logs and the output for it;
-  a live test (`-m network`, with a token) does the same against the real store.
+  through `redact()` (token values, secret query values, URL passwords). The
+  tests (`tests/modsys/test_private_store.py`, `tests/modsys/test_credentials.py`)
+  install, update and run a pack with a sentinel token and grep every written
+  file, the logs and the output for it, and seed legacy pins, records, store
+  URLs and run records with one; a live test (`-m network`, with a token) does
+  the same against the real store, reporting only which output leaked, never
+  its text.

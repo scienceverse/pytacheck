@@ -18,9 +18,16 @@ Private stores. With a GitHub token in the environment
 (``api.github.com/repos/<owner>/<repo>/contents/index.json``), since
 raw.githubusercontent.com does not serve private files to a token; the raw
 URL is then tried without the token. When both answer 401/403/404 and git is
-installed, the index is read from a shallow git fetch of the repository
-(GitHub and GitLab stores), so the user's git credentials work too. Nothing
-of this changes where the index is cached or what is recorded.
+installed, the index file alone is read with git (a shallow, blob-less
+fetch of the repository and ``git cat-file``; GitHub and GitLab stores), so
+the user's git credentials work too. Nothing of this changes where the index
+is cached or what is recorded.
+
+A store on another host that needs a login reads it from ``~/.netrc`` (see
+:func:`pytacheck.packs.auth.netrc_login`). Store URLs may not carry
+credentials themselves (a password, user info, ``?private_token=``...): they
+are shown and written to config, so ``store add`` refuses them, and an entry
+from an older config is skipped with a warning and shown redacted.
 
 Fetched indexes are cached in ``<data>/stores/<name>/index.json`` for an
 hour. When a store cannot be reached the cached copy is used with a
@@ -32,14 +39,13 @@ from __future__ import annotations
 import json
 import re
 import shutil
-import tempfile
 import time
 import warnings
 from collections.abc import Mapping
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
-from urllib.parse import unquote, urlsplit
+from urllib.parse import unquote, urlsplit, urlunsplit
 
 from pytacheck.config import BUILTIN_STORE, config_path, data_dir, load_config, update_config
 from pytacheck.packs.manifest import PACK_NAME_RE, PackError
@@ -51,6 +57,7 @@ __all__ = [
     "INDEX_SCHEMA",
     "INDEX_TTL",
     "StoreError",
+    "check_store_url",
     "find_entry",
     "index_location",
     "store_add",
@@ -65,8 +72,8 @@ __all__ = [
 INDEX_SCHEMA = 1
 INDEX_TTL = 3600.0  # seconds a fetched index stays fresh
 INDEX_LIMIT = 20 * 1024 * 1024  # bytes
-_GITHUB = re.compile(r"^https?://(?:www\.)?github\.com/([^/]+)/([^/]+?)(?:\.git)?/?$")
-_GITLAB = re.compile(r"^https?://(?:www\.)?gitlab\.com/(.+?)(?:\.git)?/?$")
+_GITHUB = re.compile(r"^https?://(?:www\.)?github\.com/([^/?#]+)/([^/?#]+?)(?:\.git)?/?$")
+_GITLAB = re.compile(r"^https?://(?:www\.)?gitlab\.com/([^?#]+?)(?:\.git)?/?$")
 _RAW_GITHUB = re.compile(
     r"^https://raw\.githubusercontent\.com/([A-Za-z0-9_.-]+)/([A-Za-z0-9_.-]+)/([^/?#]+)/([^?#]+)$"
 )
@@ -87,22 +94,40 @@ def _is_url(value: str) -> bool:
 
 
 def _refuse_credentials(url: str) -> None:
-    """A store URL may not carry a password or token (it is shown and written to config)."""
-    try:
-        parts = urlsplit(url)
-    except ValueError:
-        return
-    if parts.scheme in ("http", "https") and "@" in parts.netloc:
-        from pytacheck.packs.auth import redact
+    """A store URL may not carry a credential: it is shown, and written to config.
 
+    A password or user info (any scheme), a secret query or fragment parameter
+    (``?private_token=``, ``?token=``...) or a token value from the environment
+    (see :func:`pytacheck.packs.auth.has_credentials`).
+    """
+    from pytacheck.packs.auth import credentials_help, has_credentials, redact
+
+    if has_credentials(url):
         raise StoreError(
-            f"The store URL {redact(url)} contains credentials; use the plain URL and set "
-            "PYTACHECK_GITHUB_TOKEN (or configure git credentials) instead"
+            f"The store URL {redact(url)} contains credentials, which would be shown and "
+            f"written to your config; use the plain URL and {credentials_help(url, index=True)}"
         )
+
+
+def check_store_url(url: str) -> str:
+    """The store URL (or absolute folder) that ``store add`` would write; raises if unusable.
+
+    Call it before asking the user: it refuses URLs with credentials and
+    unsupported schemes without showing any secret.
+    """
+    if not isinstance(url, str) or not url.strip():
+        raise StoreError("A store needs a URL or a folder")
+    url = url.strip()
+    if not _is_url(url):
+        url = str(Path(url).expanduser().resolve())
+    index_location(url)
+    return url
 
 
 def index_location(url: str) -> tuple[str, str]:
     """Where a store's ``index.json`` is: ``("file", path)`` or ``("http", url)``."""
+    from pytacheck.packs.auth import redact
+
     _refuse_credentials(url)
     if url.startswith("file://"):
         url = unquote(urlsplit(url).path)
@@ -111,18 +136,29 @@ def index_location(url: str) -> tuple[str, str]:
         return ("file", str(path if path.suffix == ".json" else path / "index.json"))
     if url.startswith("git@") or url.startswith("ssh://"):
         raise StoreError(
-            f"The store URL {url} uses ssh; point it at an https:// repository or index.json"
+            f"The store URL {redact(url)} uses ssh; point it at an https:// repository or "
+            "index.json"
+        )
+    try:
+        parts = urlsplit(url)
+    except ValueError:
+        raise StoreError(f"The store URL {redact(url)} is not a valid URL") from None
+    if parts.scheme.lower() not in ("http", "https") or not parts.netloc:
+        raise StoreError(
+            f"The store URL {redact(url)} is not supported: use an https:// repository or "
+            "index.json, a local folder or a file:// URL"
         )
     m = _GITHUB.match(url)
     if m:
         owner, repo = m.groups()
         return ("http", f"https://raw.githubusercontent.com/{owner}/{repo}/HEAD/index.json")
-    if url.rstrip("/").endswith(".json"):
+    if parts.path.rstrip("/").endswith(".json"):
         return ("http", url)
     m = _GITLAB.match(url)
     if m:
         return ("http", f"{url.rstrip('/').removesuffix('.git')}/-/raw/HEAD/index.json")
-    return ("http", url.rstrip("/") + "/index.json")
+    path = parts.path.rstrip("/") + "/index.json"
+    return ("http", urlunsplit((parts.scheme, parts.netloc, path, parts.query, parts.fragment)))
 
 
 def _cache(name: str) -> Path:
@@ -194,22 +230,27 @@ def _index_repo(url: str) -> tuple[str | None, str, str, str] | None:
 
 
 def _git_index(clone: str, ref: str, path: str) -> bytes:
-    """The index file read from a shallow, hardened git fetch (the user's git credentials)."""
+    """The index file alone, read with hardened git (the user's git credentials).
+
+    Nothing is checked out: see :func:`pytacheck.packs.fetch.git_read_file`.
+    """
     from pytacheck.packs import fetch
 
-    rev = fetch.git_rev(clone, None if ref == "HEAD" else ref)
-    folder, _, name = path.rpartition("/")
-    with tempfile.TemporaryDirectory(prefix="pytacheck-store-") as tmp:
-        fetch.git_fetch(clone, rev, tmp, folder)
-        try:
-            return (Path(tmp) / name).read_bytes()
-        except OSError:
-            raise StoreError(f"the repository has no {path} at {rev[:12]}") from None
+    return fetch.git_read_file(clone, ref, path, limit=INDEX_LIMIT)
 
 
 def _fetch(url: str) -> dict[str, Any]:
     """Fetch and parse an index: GitHub's contents API with a token, the URL, then git."""
-    from pytacheck.packs.auth import AUTH_HELP, DownloadError, Fetched, get, github_token, redact
+    from pytacheck.packs.auth import (
+        AUTH_HELP,
+        NETRC_HELP,
+        DownloadError,
+        Fetched,
+        get,
+        github_token,
+        redact,
+    )
+    from pytacheck.packs.fetch import GitMissing
 
     repo = _index_repo(url)
     attempts: list[tuple[str, bool, str]] = []
@@ -220,9 +261,10 @@ def _fetch(url: str) -> dict[str, Any]:
     attempts.append((url, False, "application/json"))
     answers: list[Fetched] = []
     failures: list[str] = []
+    opts: dict[str, Any] = {"limit": INDEX_LIMIT, "tries": 2, "timeout": 30.0}
     for where, token, accept in attempts:
         try:
-            res = get(where, token=token, accept=accept, limit=INDEX_LIMIT, tries=2, timeout=30.0)
+            res = get(where, token=token, netrc=not token, accept=accept, **opts)
         except DownloadError:
             failures.append("cannot connect")
             continue
@@ -235,6 +277,8 @@ def _fetch(url: str) -> dict[str, Any]:
     if repo is not None and denied and shutil.which("git") is not None:
         try:
             content = _git_index(repo[1], repo[2], repo[3])
+        except GitMissing as exc:  # git read the repository: access is not the problem
+            raise StoreError(f"{problem}; git: {' '.join(redact(str(exc)).split())}") from None
         except PackError as exc:
             problem += f"; git: {' '.join(redact(str(exc)).split())}"
         else:
@@ -242,6 +286,8 @@ def _fetch(url: str) -> dict[str, Any]:
     if repo is not None and denied:
         private = "If the repository is private, configure git credentials for it"
         problem += f". {AUTH_HELP if repo[0] is not None else private}"
+    elif any(a.status in (401, 403) and not a.rate_limited for a in answers):
+        problem += f". If the index needs a login, {NETRC_HELP}"
     raise StoreError(problem)
 
 
@@ -262,6 +308,8 @@ def store_index(name: str, *, refresh: bool = False, offline: bool = False) -> d
     ``refresh=True`` ignores the cache's age; ``offline=True`` only reads the
     cache. An unreachable store falls back to its cached copy with a warning.
     """
+    from pytacheck.packs.auth import redact
+
     url = _store_url(name)
     kind, where = index_location(url)
     if kind == "file":
@@ -293,7 +341,7 @@ def store_index(name: str, *, refresh: bool = False, offline: bool = False) -> d
             )
             return validate_index(cached[0], where)
         raise StoreError(
-            f"The store '{name}' ({url}) is unreachable and there is no cached copy of its "
+            f"The store '{name}' ({redact(url)}) is unreachable and there is no cached copy of its "
             f"index: {exc}. Check your connection, or add another store with "
             "`pytacheck store add NAME URL` (see `pytacheck store list`)."
         ) from None
@@ -334,8 +382,11 @@ def store_list() -> pd.DataFrame:
     """The configured stores: ``name``, ``url``, ``defined_in``, ``packs``, ``updated``.
 
     Nothing is fetched: ``packs`` and ``updated`` come from the local cache.
+    A URL with credentials (from an older config) is shown redacted.
     """
     import pandas as pd
+
+    from pytacheck.packs.auth import redact
 
     config = load_config()
     rows = []
@@ -357,7 +408,8 @@ def store_list() -> pd.DataFrame:
             if cached is not None:
                 n = len(cached[0].get("packs", []))
                 updated = datetime.fromtimestamp(cached[1], UTC).strftime("%Y-%m-%dT%H:%M:%SZ")
-        rows.append((name, url, src[1] if src[0] != "builtin" else "builtin", n, updated))
+        shown = redact(url)  # a URL from an older config may carry a credential
+        rows.append((name, shown, src[1] if src[0] != "builtin" else "builtin", n, updated))
     return pd.DataFrame(
         {
             "name": pd.Series([r[0] for r in rows], dtype="string"),
@@ -372,12 +424,7 @@ def store_list() -> pd.DataFrame:
 def store_add(name: str, url: str, *, scope: str = "user") -> Path:
     """Add (or change) a store in the *scope* config file; returns that file."""
     _validate_store_name(name)
-    if not isinstance(url, str) or not url.strip():
-        raise StoreError("A store needs a URL or a folder")
-    url = url.strip()
-    if not _is_url(url):
-        url = str(Path(url).expanduser().resolve())
-    index_location(url)  # rejects unsupported URLs early
+    url = check_store_url(url)  # rejects unsupported URLs and credentials early
 
     def edit(cfg: dict[str, Any]) -> None:
         stores = cfg.get("stores")
@@ -417,13 +464,16 @@ def store_update(name: str | None = None) -> pd.DataFrame:
 
     Returns ``name``, ``url``, ``packs`` and ``status`` (``"ok"`` or the
     problem). With a *name*, an unreachable store without a cache raises.
+    A URL with credentials (from an older config) is shown redacted.
     """
     import pandas as pd
+
+    from pytacheck.packs.auth import redact
 
     names = [name] if name is not None else list(load_config().stores)
     rows: list[tuple[str, str, int | None, str]] = []
     for n in names:
-        url = _store_url(n)
+        url = redact(_store_url(n))
         try:
             with warnings.catch_warnings(record=True) as caught:
                 warnings.simplefilter("always")

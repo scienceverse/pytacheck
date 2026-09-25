@@ -200,22 +200,31 @@ def _split_url_ref(url: str) -> tuple[str, str | None]:
 
 
 def _refuse_credentials(url: str) -> None:
-    """Pins and install records are shared: a URL may not carry a password or token."""
-    from urllib.parse import urlsplit
+    """Pins, install records and run records are shared: a URL may not carry a credential.
 
-    from pytacheck.packs.auth import redact
+    A password or user info, a secret query or fragment parameter
+    (``?access_token=``...) or a token value from the environment (see
+    :func:`pytacheck.packs.auth.has_credentials`); the error shows it redacted.
+    """
+    from pytacheck.packs.auth import credentials_help, has_credentials, redact
 
-    try:
-        parts = urlsplit(url)
-        password = parts.password
-    except ValueError:
-        return
-    if password or (parts.scheme in ("http", "https") and "@" in parts.netloc):
+    if has_credentials(url):
         raise PackError(
             f"The URL {redact(url)} contains credentials, which would be written to your "
-            "config and install record; use the plain URL and set PYTACHECK_GITHUB_TOKEN "
-            "(or configure git credentials) instead"
+            f"config, install record and run records; use the plain URL and "
+            f"{credentials_help(url)}"
         )
+
+
+def _check_source(source: Mapping[str, Any]) -> None:
+    """Refuse a source (from a URL, a pin, a store index or a run record) with credentials.
+
+    Every source that is installed is written to the install record, a pin and
+    the run records of its modules, so none may carry a credential.
+    """
+    for key, value in source.items():
+        if isinstance(value, str) and (key == "git" or "://" in value or "@" in value):
+            _refuse_credentials(value)
 
 
 def _url_source(url: str) -> tuple[dict[str, Any], str | None]:
@@ -522,6 +531,7 @@ def _install(
     previous: Mapping[str, Any] | None = None,
 ) -> Pack:
     """Fetch, verify, confirm, move into place, record and (with *scope*) pin."""
+    _check_source(cand.source)
     if cand.name and cand.rev:
         existing = install_dir(cand.name, {"rev": cand.rev})
         if _record_matches(existing, cand.rev, cand.tree_sha256):
@@ -876,6 +886,7 @@ def pack_update(name: str | None = None, *, yes: bool = False) -> list[dict[str,
                 cand = _store_candidate(pin["store"], n, None, refresh=True)
             else:
                 source = _source_without_rev(pin.get("source"))
+                _check_source(source)  # before git or the API sees it
                 cand = _Candidate(name=n, source=source, rev=resolve_rev(source, None))
                 cand.notes.append("Unlisted pack: updating to its default branch.")
             same = (cand.rev and cand.rev == pin.get("rev")) or (
