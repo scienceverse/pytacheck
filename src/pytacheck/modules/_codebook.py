@@ -2375,7 +2375,7 @@ def _osd_reference_block(reference: Any, ref_match: pd.DataFrame | None) -> dict
     block: dict[str, Any] = {"registry": "OpenScales", "code": g("code"), "name": g("name")}
     for k in ("license", "citation", "url"):
         v = g(k)
-        if v is not None and v != "":
+        if v is None or v != "":  # nzchar(NA) is TRUE: an NA field is kept (as NA)
             block[k] = v
     block["n_items"] = n_items
     block["n_reverse"] = g("n_reverse")

@@ -235,3 +235,21 @@ def rv_haven_labels(f: str) -> Any:
 
     ext = f.rsplit(".", 1)[1].lower()
     return _extract_haven_labels(_haven_labels_frame(f, ext), os.path.basename(f), group="g1")
+
+
+def rv_text_paper() -> Any:
+    import pytacheck as pc
+
+    p = pc.test_paper(
+        [
+            "We used the BFI-2 questionnaire to measure personality.",
+            "Participants felt enthusiastic and determined during the task.",
+            "The q.x variable was coded by two raters.",
+            "An unrelated sentence about the weather.",
+            "ITEM responses were recorded on a scale from 1 to 5.",
+            "The Perceived Stress Scale (PSS) contains 10 items.",
+            "Enthusiastic participants were more determined.",
+        ]
+    )
+    p.paper_id = "tp"
+    return p

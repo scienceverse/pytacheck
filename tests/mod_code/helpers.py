@@ -204,3 +204,45 @@ def cc_report_tables(name: str, **kwargs: Any) -> list[pd.DataFrame]:
 def identity(x: Any) -> Any:
     """R ``base::identity()``."""
     return x
+
+
+def dir_listing(
+    path: str | os.PathLike[str], pid: str = "p1", repo_url: str | None = None
+) -> pd.DataFrame:
+    """A repo_check-like table of every file under *path* (like a ``local_path`` listing)."""
+    root = Path(path)
+    files = sorted(p for p in root.rglob("*") if p.is_file()) if root.is_dir() else [root]
+    base = root if root.is_dir() else root.parent
+    rows = [
+        {
+            "paper_id": pid,
+            "repo_name": base.name,
+            "repo_url": repo_url or str(path),
+            "file_name": f.name,
+            "file_path": f.relative_to(base).as_posix(),
+            "file_url": None,
+            "file_location": str(f),
+            "file_size": float(f.stat().st_size),
+        }
+        for f in files
+    ]
+    return _frame(rows, [])
+
+
+def fake_repo_check(table: pd.DataFrame | None, paper: Any = None, pids: list[str] | None = None) -> Any:
+    """A repo_check output holding *table*, for ``module_run(<it>, "code_check")``."""
+    import pytacheck as pc
+
+    if paper is None:
+        paper = pc.test_paper(["Some text."])
+        paper.paper_id = (pids or ["p1"])[0]
+    if pids is None:
+        pids = [paper.paper_id] if not isinstance(paper, pc.PaperList) else list(paper.names)
+    return _output("repo_check", paper, pids, {}, table=table)
+
+
+def run_dir(path: str | os.PathLike[str], **kwargs: Any) -> Any:
+    """code_check on every file under *path* (the ``local_path`` tests' listing)."""
+    from pytacheck.module import module_run
+
+    return module_run(fake_repo_check(dir_listing(path)), "code_check", **kwargs)

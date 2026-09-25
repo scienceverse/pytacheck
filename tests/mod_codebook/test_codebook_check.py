@@ -18,6 +18,7 @@ from __future__ import annotations
 import copy
 import math
 import random
+from pathlib import Path
 from typing import Any
 
 import pandas as pd
@@ -798,3 +799,59 @@ def test_large_corpus_run_is_fast() -> None:
     module_run(prev, "codebook_check")
     assert time.perf_counter() - t0 < 30
     assert math.isfinite(t0)
+
+
+# ── review findings ──────────────────────────────────────────────────────────
+
+
+def test_empty_prefix_siblings_become_na_as_in_r() -> None:
+    """R looks a sibling's prefix up by name: an empty prefix ("1", "_3", "__")
+    never matches, so those rows are set to NA rather than given the scale."""
+    from pytacheck.modules._codebook import _propagate_scale_by_prefix
+    from tests.mod_codebook.review_helpers import rv_propagate_df
+
+    out = _propagate_scale_by_prefix(rv_propagate_df())
+    assert out is not None
+    got = out[["column_name", "scale", "scale_confidence", "scale_source"]]
+    rows = {r[0]: tuple(None if pd.isna(v) else v for v in r[1:]) for r in got.itertuples(False)}
+    assert rows["1"] == ("S", "high", "manuscript")  # the named column itself
+    assert rows["2"] == (None, None, None)  # prefix "" -> NA, not "S"
+    assert rows["_3"] == (None, None, None)  # an empty-string scale is wiped too
+    assert rows["__"] == (None, None, None)
+    assert rows["q_2"] == ("Q", "medium", "matched")  # an ordinary prefix still fills
+
+
+def test_haven_labels_are_read_without_the_data() -> None:
+    """Embedded labels are harvested labels-only, as R's n_max = 0L read."""
+    from pytacheck.datacheck._columns_codebook import _haven_frame
+    from pytacheck.datacheck.columns import _extract_haven_labels
+    from pytacheck.modules.codebook_check import _haven_labels_frame
+
+    for rel in (
+        "tests/datacheck_files/data/labelled.sav",
+        "tests/datacheck_files/data/labelled.dta",
+    ):
+        f = str(Path(__file__).resolve().parents[2] / rel)
+        ext = f.rsplit(".", 1)[1]
+        lab = _haven_labels_frame(f, ext)
+        assert len(lab) == 0
+        a = _extract_haven_labels(lab, "x")
+        b = _extract_haven_labels(_haven_frame(f, ext), "x")
+        pd.testing.assert_frame_equal(a, b)
+
+
+def test_osd_attributes_mark_redundant_and_orphan_totals() -> None:
+    from tests.mod_codebook.review_helpers import rv_scales_to_osd
+
+    res = rv_scales_to_osd()
+    got = [
+        (a["code"], a["write"], a["orphan_total"], o["definition"]["metacheck"]["source_files"])
+        for o, a in zip(res["osd"], res["attrs"], strict=True)
+    ]
+    assert got == [
+        ("autism_quotient", True, False, ["s.csv", "t.csv"]),  # same items in 2 files: merged
+        ("autism_quotient", False, False, ["s.csv"]),  # totals of a scale with items: redundant
+        ("zz", False, False, ["s.csv", "t.csv"]),  # unnamed, not rating-like: report only
+        ("made_up", False, False, ["s.csv"]),  # self-generated, 2 items: too small
+        ("orphan_total", True, True, ["s.csv"]),  # totals with no items anywhere: flagged
+    ]

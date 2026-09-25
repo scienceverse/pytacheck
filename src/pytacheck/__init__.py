@@ -325,6 +325,9 @@ _EXPORTS: dict[str, str] = {
     "repro_run_order": "pytacheck.repro.core",
     "repro_run_scripts": "pytacheck.repro.core",
     "repro_write_scripts": "pytacheck.repro.core",
+    "repro_docker_available": "pytacheck.repro.docker",
+    "repro_install_deps_docker": "pytacheck.repro.docker",
+    "repro_run_scripts_docker": "pytacheck.repro.docker",
     # report building blocks
     "cap_gate_count": "pytacheck.report.blocks",
     "collapse_section": "pytacheck.report.blocks",
@@ -635,6 +638,11 @@ if TYPE_CHECKING:  # pragma: no cover
         repro_run_order,
         repro_run_scripts,
         repro_write_scripts,
+    )
+    from pytacheck.repro.docker import (
+        repro_docker_available,
+        repro_install_deps_docker,
+        repro_run_scripts_docker,
     )
     from pytacheck.statout.jasp import export_jasp_html, import_jasp
     from pytacheck.statout.match_reported import match_reported_output

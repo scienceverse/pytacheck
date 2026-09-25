@@ -585,10 +585,8 @@ def merge_manifests(
     else:
         from pytacheck.papers.tables import paper_id
 
-        ids: list[Any] = list(paper_id(paper)) if paper is not None else []
-        if not ids:
-            ids = [getattr(paper, "paper_id", None)]
-        pids = ids
+        ids: list[Any] = list(paper_id(paper))
+        pids = ids or [getattr(paper, "paper_id", None)]
     packages = col(code_files, "packages")
     code_pids = col(code_files, "paper_id")
     has_failed = failed is not None and len(failed) > 0

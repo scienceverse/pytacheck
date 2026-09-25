@@ -162,3 +162,16 @@ rv_haven_labels <- function(f) {
     sas7bdat = as.data.frame(haven::read_sas(f, n_max = 0L)))
   metacheck:::.extract_haven_labels(df, basename(f), group = "g1")
 }
+
+rv_text_paper <- function() {
+  p <- test_paper(c(
+    "We used the BFI-2 questionnaire to measure personality.",
+    "Participants felt enthusiastic and determined during the task.",
+    "The q.x variable was coded by two raters.",
+    "An unrelated sentence about the weather.",
+    "ITEM responses were recorded on a scale from 1 to 5.",
+    "The Perceived Stress Scale (PSS) contains 10 items.",
+    "Enthusiastic participants were more determined."))
+  p$paper_id <- "tp"
+  p
+}
