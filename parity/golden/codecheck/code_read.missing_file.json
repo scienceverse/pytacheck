@@ -1,7 +1,7 @@
 {
   "id": "code_read.missing_file",
   "ok": false,
-  "error": "'/home/user/pytacheck/tests/codecheck/fixtures/no_such_file.R' does not exist.",
+  "error": "'<repo>/tests/codecheck/fixtures/no_such_file.R' does not exist.",
   "warnings": [],
   "value": null,
   "metacheck_version": "0.3.1",

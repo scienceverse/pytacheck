@@ -242,7 +242,7 @@ def _parse_bound(ctx: _Ctx, result: Node) -> Node:
     return Node("iter", left=result, min=mn, max=mx, minimal=minimal)
 
 
-def _bracket_items(ctx: _Ctx, negate: bool) -> tuple[list[tuple[int, int]], list[str]]:
+def _bracket_items(ctx: _Ctx) -> tuple[list[tuple[int, int]], list[str]]:
     """Port of ``tre_parse_bracket_items()``: the items (ranges, with the
     opposite-case counterparts under ``REG_ICASE``) and, for a positive
     bracket, the character classes (``neg_classes`` for a negated one)."""
@@ -303,7 +303,7 @@ def _parse_bracket(ctx: _Ctx) -> Node:
     negate = ctx.at() == "^"
     if negate:
         ctx.i += 1
-    items, classes = _bracket_items(ctx, negate)
+    items, classes = _bracket_items(ctx)
     if not negate:
         out = cs.norm(items)
         for cls in classes:
@@ -344,7 +344,7 @@ def _literal(ctx: _Ctx, c: int) -> Node:
     return _char(c)
 
 
-def _parse(ctx: _Ctx, nofirstsub: bool = False) -> Node:  # noqa: C901 - a port
+def _parse(ctx: _Ctx, nofirstsub: bool = False) -> Node:
     """Port of ``tre_parse()``."""
     stack: list[object] = []
     result: Node | None = None
@@ -452,7 +452,7 @@ def _parse(ctx: _Ctx, nofirstsub: bool = False) -> Node:  # noqa: C901 - a port
     return result
 
 
-def _parse_atom(  # noqa: C901 - a port
+def _parse_atom(
     ctx: _Ctx, stack: list[object], depth: int, temporary_cflags: int
 ) -> tuple[Node, int, int]:
     re, end = ctx.re, ctx.end
@@ -673,6 +673,15 @@ class Translation:
     # subjects without glibc-divergent word characters; None if no different
     fast: str | None = None
     fast_wide: str | None = None
+    # an alternative "(^|x?)" can match empty only as "^" in TRE (see
+    # _Emitter), which the `regex` translation does not express
+    empty_paths: bool = False
+    # a capture group inside a repetition: its submatch follows TRE's tag
+    # rules, which POSIX mode does not always reproduce
+    iter_groups: bool = False
+    # ... inside a repetition tre_expand_ast() spells out ("([.]?){2}"): the
+    # tags of the copies can make TRE prefer a later match start
+    copied_groups: bool = False
 
 
 def _quant(node: Node) -> str:
@@ -701,15 +710,21 @@ class _Emitter:
         self.backrefs = False
         self.in_copy = 0  # inside an iteration tre_expand_ast() spells out
         self.quirk = False  # a negated bracket with classes was copied
+        self.empty_paths = False  # see Translation.empty_paths
+        self.iter_depth = 0
+        self.iter_groups = False  # see Translation.iter_groups
+        self.copied_groups = False  # see Translation.copied_groups
 
     def emit(self, node: Node) -> tuple[str, int]:
         """`regex` syntax for *node* and its minimum match length."""
         body, width = self._emit(node)
         if node.submatch_id > 0:
+            self.iter_groups = self.iter_groups or self.iter_depth > 0
+            self.copied_groups = self.copied_groups or self.in_copy > 0
             return f"({body})", width
         return body, width
 
-    def _emit(self, node: Node) -> tuple[str, int]:  # noqa: C901
+    def _emit(self, node: Node) -> tuple[str, int]:
         k = node.kind
         if k == "set":
             chars = node.chars
@@ -749,13 +764,18 @@ class _Emitter:
                 # TRE takes the empty path of the first nullable branch only
                 # (tre_match_empty()), so "(^|)" is "^"
                 b = "(?!)"
+            elif _nullable(node.left) and _nullable(node.right) and _empty_asserts(node.left):
+                # "(^|x?)": empty only as "^", else one "x"
+                self.empty_paths = True
             return f"(?:{a}|{b})", min(wa, wb)
         if k == "iter":
             assert node.left is not None
             self.minimal = self.minimal or node.minimal
             expanded = node.min > 1 or node.max > 1
             self.in_copy += expanded
+            self.iter_depth += 1
             body, width = self.emit(node.left)
+            self.iter_depth -= 1
             self.in_copy -= expanded
             mn, mx = _tre_bounds(node)
             if body == "":
@@ -782,6 +802,25 @@ def _nullable(node: Node) -> bool:
         assert node.right is not None
         return _nullable(node.left) or _nullable(node.right)
     return _tre_bounds(node)[0] == 0 or _nullable(node.left)
+
+
+def _empty_asserts(node: Node) -> bool:
+    """Has the empty path TRE takes through the nullable *node*
+    (``tre_match_empty()``) an assertion?"""
+    k = node.kind
+    if k in ("empty", "assert"):
+        return k == "assert"
+    assert node.left is not None
+    if k == "cat":
+        assert node.right is not None
+        return _empty_asserts(node.left) or _empty_asserts(node.right)
+    if k == "union":
+        assert node.right is not None
+        return _empty_asserts(node.left if _nullable(node.left) else node.right)
+    if node.max == 0 or not _nullable(node.left):
+        return False
+    # an expanded {0,n} starts with an empty alternative
+    return not (node.min <= 0 and node.max > 1) and _empty_asserts(node.left)
 
 
 def _only_empty(node: Node) -> bool:
@@ -855,8 +894,8 @@ def translate(pattern: str, icase: bool = False) -> Translation:
     body, width = em.emit(tree)
     wide = _Emitter(wide=True).emit(tree)[0] if em.quirk else body
     fem = _Emitter(wide=False, fast=True)
-    fast = fem.emit(tree)[0]
-    fast_wide = None
+    fast: str | None = fem.emit(tree)[0]
+    fast_wide: str | None = None
     if not fem.used_fast:
         fast = None
     elif em.quirk:
@@ -867,4 +906,16 @@ def translate(pattern: str, icase: bool = False) -> Translation:
         regex.compile(body, regex.VERSION0 | regex.DOTALL)
     except regex.error as exc:  # pragma: no cover - a bug in the emitter
         raise RegexError(f"invalid regular expression {pattern!r}: {exc}") from exc
-    return Translation(body, wide, nsub, width == 0, em.minimal, em.backrefs, fast, fast_wide)
+    return Translation(
+        body,
+        wide,
+        nsub,
+        width == 0,
+        em.minimal,
+        em.backrefs,
+        fast,
+        fast_wide,
+        em.empty_paths,
+        em.iter_groups,
+        em.copied_groups,
+    )

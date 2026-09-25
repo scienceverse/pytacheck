@@ -85,7 +85,7 @@
           {
             "t": "chr",
             "v": [
-              "/home/user/pytacheck/upstream/metacheck/tests/testthat/fixtures/code_files/analysis.R"
+              "<repo>/upstream/metacheck/tests/testthat/fixtures/code_files/analysis.R"
             ]
           },
           {

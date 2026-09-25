@@ -89,8 +89,8 @@
           {
             "t": "chr",
             "v": [
-              "/home/user/pytacheck/tests/mod_repo_check/fixtures/desc_only/analysis.R",
-              "/home/user/pytacheck/tests/mod_repo_check/fixtures/desc_only/DESCRIPTION"
+              "<repo>/tests/mod_repo_check/fixtures/desc_only/analysis.R",
+              "<repo>/tests/mod_repo_check/fixtures/desc_only/DESCRIPTION"
             ]
           },
           {

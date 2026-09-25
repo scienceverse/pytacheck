@@ -86,7 +86,7 @@
           {
             "t": "chr",
             "v": [
-              "/home/user/pytacheck/upstream/metacheck/tests/testthat/fixtures/debruine/debruine-fret.xml"
+              "<repo>/upstream/metacheck/tests/testthat/fixtures/debruine/debruine-fret.xml"
             ]
           },
           {

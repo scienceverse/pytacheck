@@ -79,7 +79,7 @@
           {
             "t": "chr",
             "v": [
-              "/home/user/pytacheck/upstream/metacheck/inst/demos/to_err_is_human.xml"
+              "<repo>/upstream/metacheck/inst/demos/to_err_is_human.xml"
             ]
           },
           {

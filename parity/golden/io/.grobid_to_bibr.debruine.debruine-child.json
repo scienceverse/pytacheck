@@ -84,7 +84,7 @@
           {
             "t": "chr",
             "v": [
-              "/home/user/pytacheck/upstream/metacheck/tests/testthat/fixtures/debruine/debruine-child.xml"
+              "<repo>/upstream/metacheck/tests/testthat/fixtures/debruine/debruine-child.xml"
             ]
           },
           {

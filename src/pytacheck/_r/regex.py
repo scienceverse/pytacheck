@@ -19,16 +19,34 @@ The differences reproduced here were measured against R 4.5 under a
 behaviour                  TRE (``perl=False``)        PCRE (``perl=True``)
 =========================  ==========================  ==========================
 alternation ``a|ab``       longest (``"ab"``)          first (``"a"``)
-``\\w`` ``\\b``            Unicode letters             ASCII only
+``\\w`` ``\\b``            glibc ``iswalnum`` + ``_``  ASCII only
 ``\\d``                    ASCII ``[0-9]``             ASCII ``[0-9]``
 ``\\s``                    no NBSP (glibc iswspace)    ASCII whitespace only
-``[[:alpha:]]`` etc.       Unicode                     ASCII only
+``[[:alpha:]]`` etc.       glibc ``iswctype``          ASCII only
 ``\\`` inside ``[...]``    a *literal* backslash       an escape
 ``.``                      matches ``\\n``             does not match ``\\n``
 ``$``                      only at the very end        end or before final ``\\n``
 ``\\<`` ``\\>``            word start / end            (literal ``<`` / ``>``)
-case-insensitive           a letter's own upper/lower  Unicode case folding
+case-insensitive           ``towupper``/``towlower``   PCRE2's caseless sets (no
+                           of each letter              ``İ``/``ı`` for ``i``/``I``)
+``*`` with nothing before  repeats the empty string    an error
+``a*?``                    TRE's tag rules             backtracking
 =========================  ==========================  ==========================
+
+The TRE side is a port: :mod:`pytacheck._r._tre` parses patterns as
+``tre_parse()`` does (errors included) and writes them in `regex` syntax,
+with R's character tables (:mod:`pytacheck._r._ctype_tables`); the patterns
+that syntax cannot express the way TRE matches them (minimal repetitions,
+repeated capture groups whose submatches are used, and a few TRE quirks) run
+on a port of TRE's own matcher, :mod:`pytacheck._r._tnfa`. The PCRE side
+(:mod:`pytacheck._r._pcre`) validates the pattern and spells out PCRE2's
+caseless matching and ASCII classes. The functions reproduce R's search
+loops (empty matches, ``gregexpr``'s byte steps with PCRE, byte versus
+wide-character mode with TRE).
+
+TRE's matcher can report a later match than the leftmost one when two
+paths reach the end of the pattern together after a first match; that is
+reproduced only for the patterns run on the TRE matcher.
 
 Patterns passed to these functions are the *regex* after R string-literal
 unescaping, i.e. the R source ``"\\\\d+"`` becomes the Python raw string
@@ -44,14 +62,14 @@ from __future__ import annotations
 
 import functools
 import math
-from dataclasses import dataclass
 from collections.abc import Callable, Iterable, Sequence
+from dataclasses import dataclass
 from typing import Any, TypeVar
 
 import regex
 
 from pytacheck._r import _charset as _cs
-from pytacheck._r import _pcre, _tre
+from pytacheck._r import _pcre, _tnfa, _tre
 from pytacheck._r._charset import RegexError
 
 __all__ = [
@@ -76,6 +94,7 @@ T = TypeVar("T")
 # Translation of R (TRE / PCRE) syntax to the Python `regex` module
 # ---------------------------------------------------------------------------
 
+
 @functools.lru_cache(maxsize=4096)
 def translate(pattern: str, perl: bool = False) -> str:
     """Translate an R regular expression into `regex`-module syntax."""
@@ -85,9 +104,9 @@ def translate(pattern: str, perl: bool = False) -> str:
 def _pcre_nullable(translated: str) -> bool:
     """Can the translated PCRE pattern match the empty string? (``True`` when unsure.)"""
     try:
-        import re._parser as sre_parse  # the stdlib parser computes match widths
+        import re._parser as sre_parse  # type: ignore[import-not-found]  # match widths
 
-        return sre_parse.parse(translated).getwidth()[0] == 0
+        return bool(sre_parse.parse(translated).getwidth()[0] == 0)
     except Exception:  # regex-module syntax the stdlib cannot parse
         return True
 
@@ -116,9 +135,11 @@ def _compile(
     posix: bool,
     wide: bool = False,
     tnfa: bool = True,
+    groups: bool = False,
 ) -> _Compiled:
     """Compile *pattern*; ``wide`` selects TRE's wide-character mode (see
-    :func:`_compile_for`), ``tnfa`` TRE's own matcher for minimal repetitions."""
+    :func:`_compile_for`), ``tnfa`` allows TRE's own matcher where the
+    translation is not exact, ``groups`` says that submatches are used."""
     if fixed:
         return _Compiled(regex.compile(regex.escape(pattern)), pattern == "", False)
     flags = regex.VERSION0
@@ -136,12 +157,24 @@ def _compile(
         nullable = tre.nullable
         wide_differs = tre.pattern_wide != tre.pattern
         flags |= regex.DOTALL
-        if tnfa and posix and tre.minimal and not tre.backrefs:
-            # minimal repetitions: TRE's own matcher (no match is missed by
-            # the `regex` translation, so detection alone does not need it)
-            return _Compiled(
-                _TnfaPattern(pattern, ignore_case, wide), nullable, wide_differs  # type: ignore[arg-type]
+        if (
+            tnfa
+            and not tre.backrefs
+            and (
+                # minimal repetitions (the `regex` translation finds the
+                # same matches, so detection alone does not need TRE's own
+                # matcher); alternatives TRE matches empty in only one way;
+                # TRE's merged states; wide-character mode's copies of
+                # negated brackets and copies of groups, whose matches TRE
+                # does not always find leftmost; submatches of repeated groups
+                (posix and (tre.minimal or tre.copied_groups or (groups and tre.iter_groups)))
+                or tre.empty_paths
+                or (wide and wide_differs)
+                or _tnfa.merges_states(pattern, ignore_case)
             )
+        ):
+            tnfa_rx: Any = _TnfaPattern(pattern, ignore_case, wide)
+            return _Compiled(tnfa_rx, nullable, wide_differs)
         # TRE is leftmost-longest; POSIX mode (with backtracking for the rare
         # lazy repetition with back references)
         if posix and not tre.minimal:
@@ -179,12 +212,11 @@ class _TnfaMatch:
 
 
 class _TnfaPattern:
-    """A TRE pattern with minimal repetitions, matched by TRE's own algorithm
-    (:mod:`pytacheck._r._tnfa`); offers the ``regex.Pattern`` methods used here."""
+    """A TRE pattern matched by TRE's own algorithm (:mod:`pytacheck._r._tnfa`):
+    minimal repetitions and the patterns the `regex` translation cannot
+    express; offers the ``regex.Pattern`` methods used here."""
 
     def __init__(self, pattern: str, icase: bool, wide: bool) -> None:
-        from pytacheck._r import _tnfa
-
         self.pattern = pattern
         self._run = _tnfa.run
         self._tnfa = _tnfa.compile_tnfa(pattern, icase, wide)
@@ -215,16 +247,18 @@ def _compile_for(
     x: Any,
     posix: bool = True,
     extra: str = "",
+    groups: bool = False,
 ) -> _Compiled:
     """:func:`_compile` for a call on the vector *x*.
 
     R runs TRE in byte mode when the pattern (and *extra*, gsub's replacement)
     and every element of *x* are ASCII, and in wide-character mode otherwise;
     the two differ for a few patterns (:class:`pytacheck._r._tre.Translation`).
+    ``groups``: the caller uses submatches.
     """
-    c = _compile(pattern, ignore_case, perl, fixed, posix)
+    c = _compile(pattern, ignore_case, perl, fixed, posix, False, True, groups)
     if c.wide_differs and not (pattern.isascii() and extra.isascii() and _all_ascii(x)):
-        c = _compile(pattern, ignore_case, perl, fixed, posix, True)
+        c = _compile(pattern, ignore_case, perl, fixed, posix, True, True, groups)
     return c
 
 
@@ -398,12 +432,15 @@ def grepl(
         return _vectorize(x, lambda v: (s := _as_str(v)) is not None and pattern in s)
     c = _compile_for(pattern, ignore_case, perl, False, x, posix=False)
     pick = c.pick
-    literals = _prefilter(pattern, ignore_case)
+    # (TRE's merged states can match without a literal the pattern requires)
+    literals = None if isinstance(c.rx, _TnfaPattern) else _prefilter(pattern, ignore_case)
     if literals is None:
         if c.fast is None:
             search = c.rx.search
             return _vectorize(x, lambda v: (s := _as_str(v)) is not None and search(s) is not None)
-        return _vectorize(x, lambda v: (s := _as_str(v)) is not None and pick(s).search(s) is not None)
+        return _vectorize(
+            x, lambda v: (s := _as_str(v)) is not None and pick(s).search(s) is not None
+        )
 
     def match(v: Any) -> bool:
         s = _as_str(v)
@@ -506,6 +543,9 @@ def _r_replacement(repl: str, perl: bool) -> Callable[[regex.Match[str]], str]:
     return replace
 
 
+_TRE_BACKREF = regex.compile(r"\\[1-9]")
+
+
 def _substitute(
     pattern: str,
     repl: str,
@@ -524,7 +564,8 @@ def _substitute(
             return s.replace(pattern, repl, count if count else -1)
 
         return _vectorize(x, fixed_sub)
-    c = _compile_for(pattern, ignore_case, perl, False, x, extra=repl)
+    backrefs = not perl and _TRE_BACKREF.search(repl) is not None
+    c = _compile_for(pattern, ignore_case, perl, False, x, extra=repl, groups=backrefs)
     pick, nullable = c.pick, c.nullable
     literal = _literal_template(repl, perl)
     if literal is not None and (count == 1 or not nullable) and not isinstance(c.rx, _TnfaPattern):
@@ -654,11 +695,10 @@ def _r_finditer(
     end of the string (so ``""`` has no match), PCRE does once.
 
     PCRE moves on by one *byte* after an empty match, so before a character of
-    k UTF-8 bytes it searches k - 1 times from inside the character, where
-    PCRE2 reads the continuation bytes as characters of their own (U+0080 to
-    U+00BF). R reports such a match at the next character, with the bytes
-    counted as characters. (Assertions looking at the bytes, such as ``\\b``
-    next to them, are not reproduced exactly.)
+    k UTF-8 bytes it may search from inside the character, where PCRE2 reads
+    the continuation bytes as characters of their own (U+0080 to U+00BF), see
+    :func:`_pcre_mid_char`. R reports such a match at the next character, with
+    the bytes counted as characters.
     """
     if not nullable:
         return list(rx.finditer(s))
@@ -685,24 +725,22 @@ def _r_finditer(
 
 def _pcre_mid_char(rx: regex.Pattern[str], s: str, p: int, out: list[Any]) -> tuple[int, bool]:
     """PCRE's searches from inside the multibyte character ``s[p]``; returns
-    the next search position and whether the search loop ends."""
+    the next search position and whether the search loop ends.
+
+    PCRE2 (with R's ``PCRE2_NO_UTF_CHECK``) reads the continuation bytes from
+    the start offset on as characters of their own (U+0080 to U+00BF), looks
+    back to the whole character ``s[p]``, and when the match attempt there
+    fails moves on to the next character.
+    """
     raw = s[p].encode("utf-8")
     width = len(raw)
-    # the character's bytes as characters of their own, as PCRE2 reads them
-    t = s[:p] + "".join(map(chr, raw)) + s[p + 1 :]
-
-    def to_s(q: int) -> int:
-        return q - width + 1 if q >= p + width else p + 1
-
-    k = 1
+    k = 1  # the byte of s[p] the search starts at
     while k < width:
-        m = rx.search(t, p + k)
+        rest = width - k
+        t = s[: p + 1] + "".join(map(chr, raw[k:])) + s[p + 1 :]
+        m = rx.match(t, p + 1)
         if m is None:
-            return len(s), True
-        if m.start() >= p + width:  # found at a later character
-            start, end = to_s(m.start()), to_s(m.end())
-            out.append(_Span(start, end, s[start:end]))
-            return (end if end > start else start + 1), False
+            return p + 1, False
         # R counts the bytes read as characters: the match is reported at the
         # next character with that many characters (even past the end)
         start = p + 1
@@ -710,10 +748,10 @@ def _pcre_mid_char(rx: regex.Pattern[str], s: str, p: int, out: list[Any]) -> tu
         out.append(_Span(start, end, s[start:end]))
         if m.end() == m.start():
             k += 1
-        elif m.end() < p + width:
-            k = m.end() - p  # ended inside the character: search on from there
+        elif m.end() < p + 1 + rest:
+            k += m.end() - m.start()  # ended inside the character
         else:
-            return to_s(m.end()), False
+            return m.end() - rest, False
     return p + 1, False
 
 
@@ -774,7 +812,7 @@ def regexec(
 
     Unmatched optional groups give ``""`` like R.
     """
-    pick = _compile_for(pattern, ignore_case, perl, fixed, x).pick
+    pick = _compile_for(pattern, ignore_case, perl, fixed, x, groups=True).pick
 
     def groups(v: Any) -> list[str]:
         s = _as_str(v)

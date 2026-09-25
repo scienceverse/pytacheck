@@ -1,0 +1,27 @@
+{
+  "id": "f09.sub.6",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "ab123",
+      "a1b22",
+      "123",
+      "x9",
+      "abab",
+      "xabab",
+      "aaa",
+      "[a]by",
+      "a_b_c",
+      "a.b-c d",
+      "read.csv('a.csv') and 'b'",
+      "[ \"]\" 'z'",
+      "JaspColumn_[_Encoded_]_Encoded_z",
+      ""
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

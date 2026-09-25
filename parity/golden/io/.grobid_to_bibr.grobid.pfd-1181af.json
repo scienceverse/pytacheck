@@ -86,7 +86,7 @@
           {
             "t": "chr",
             "v": [
-              "/home/user/pytacheck/upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-1181af-POST.xml"
+              "<repo>/upstream/metacheck/tests/testthat/apis/grobid.hti.ieis.tue.nl/api/processFulltextDocument-1181af-POST.xml"
             ]
           },
           {

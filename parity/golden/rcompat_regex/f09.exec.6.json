@@ -1,0 +1,79 @@
+{
+  "id": "f09.exec.6",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": null,
+    "v": [
+      {
+        "t": "chr",
+        "v": []
+      },
+      {
+        "t": "chr",
+        "v": []
+      },
+      {
+        "t": "chr",
+        "v": []
+      },
+      {
+        "t": "chr",
+        "v": []
+      },
+      {
+        "t": "chr",
+        "v": []
+      },
+      {
+        "t": "chr",
+        "v": []
+      },
+      {
+        "t": "chr",
+        "v": []
+      },
+      {
+        "t": "chr",
+        "v": [
+          "xay",
+          "a"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": []
+      },
+      {
+        "t": "chr",
+        "v": []
+      },
+      {
+        "t": "chr",
+        "v": []
+      },
+      {
+        "t": "chr",
+        "v": [
+          "x \"y",
+          " \""
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "x_Encoded_y",
+          "_Encoded_"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": []
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

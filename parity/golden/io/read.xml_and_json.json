@@ -93,7 +93,7 @@
               {
                 "t": "chr",
                 "v": [
-                  "/home/user/pytacheck/upstream/metacheck/tests/testthat/fixtures/formats/preprint.pdf.tei.xml"
+                  "<repo>/upstream/metacheck/tests/testthat/fixtures/formats/preprint.pdf.tei.xml"
                 ]
               },
               {

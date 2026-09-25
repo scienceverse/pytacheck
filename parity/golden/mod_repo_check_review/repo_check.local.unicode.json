@@ -101,11 +101,11 @@
           {
             "t": "chr",
             "v": [
-              "/home/user/pytacheck/tests/mod_repo_check/fixtures/review/unicode/données.csv",
-              "/home/user/pytacheck/tests/mod_repo_check/fixtures/review/unicode/études/Étude 1.csv",
-              "/home/user/pytacheck/tests/mod_repo_check/fixtures/review/unicode/README.md",
-              "/home/user/pytacheck/tests/mod_repo_check/fixtures/review/unicode/Übersicht.R",
-              "/home/user/pytacheck/tests/mod_repo_check/fixtures/review/unicode/日本語.txt"
+              "<repo>/tests/mod_repo_check/fixtures/review/unicode/données.csv",
+              "<repo>/tests/mod_repo_check/fixtures/review/unicode/études/Étude 1.csv",
+              "<repo>/tests/mod_repo_check/fixtures/review/unicode/README.md",
+              "<repo>/tests/mod_repo_check/fixtures/review/unicode/Übersicht.R",
+              "<repo>/tests/mod_repo_check/fixtures/review/unicode/日本語.txt"
             ]
           },
           {

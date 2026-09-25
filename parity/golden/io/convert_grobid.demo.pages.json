@@ -22,7 +22,7 @@
       {
         "t": "chr",
         "v": [
-          "file2eda62b3a8b9"
+          "<tempfile>"
         ]
       },
       {
@@ -79,7 +79,7 @@
           {
             "t": "chr",
             "v": [
-              "/tmp/RtmpnOWGSb/file2eda62b3a8b9.xml"
+              "<tempdir>/<tempfile>.xml"
             ]
           },
           {

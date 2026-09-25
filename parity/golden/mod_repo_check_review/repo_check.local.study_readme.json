@@ -105,12 +105,12 @@
           {
             "t": "chr",
             "v": [
-              "/home/user/pytacheck/tests/mod_repo_check/fixtures/review/study_readme/LICENSE",
-              "/home/user/pytacheck/tests/mod_repo_check/fixtures/review/study_readme/README.md",
-              "/home/user/pytacheck/tests/mod_repo_check/fixtures/review/study_readme/study1/data.csv",
-              "/home/user/pytacheck/tests/mod_repo_check/fixtures/review/study_readme/study1/README.md",
-              "/home/user/pytacheck/tests/mod_repo_check/fixtures/review/study_readme/study2/data.csv",
-              "/home/user/pytacheck/tests/mod_repo_check/fixtures/review/study_readme/study2/readme.txt"
+              "<repo>/tests/mod_repo_check/fixtures/review/study_readme/LICENSE",
+              "<repo>/tests/mod_repo_check/fixtures/review/study_readme/README.md",
+              "<repo>/tests/mod_repo_check/fixtures/review/study_readme/study1/data.csv",
+              "<repo>/tests/mod_repo_check/fixtures/review/study_readme/study1/README.md",
+              "<repo>/tests/mod_repo_check/fixtures/review/study_readme/study2/data.csv",
+              "<repo>/tests/mod_repo_check/fixtures/review/study_readme/study2/readme.txt"
             ]
           },
           {

@@ -97,10 +97,10 @@
           {
             "t": "chr",
             "v": [
-              "/home/user/pytacheck/tests/mod_repo_check/fixtures/review/readme_variants/data.csv",
-              "/home/user/pytacheck/tests/mod_repo_check/fixtures/review/readme_variants/Read_Me.pdf",
-              "/home/user/pytacheck/tests/mod_repo_check/fixtures/review/readme_variants/READ-ME.md",
-              "/home/user/pytacheck/tests/mod_repo_check/fixtures/review/readme_variants/sub/read me.txt"
+              "<repo>/tests/mod_repo_check/fixtures/review/readme_variants/data.csv",
+              "<repo>/tests/mod_repo_check/fixtures/review/readme_variants/Read_Me.pdf",
+              "<repo>/tests/mod_repo_check/fixtures/review/readme_variants/READ-ME.md",
+              "<repo>/tests/mod_repo_check/fixtures/review/readme_variants/sub/read me.txt"
             ]
           },
           {

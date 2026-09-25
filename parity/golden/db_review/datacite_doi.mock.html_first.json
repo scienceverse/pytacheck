@@ -69,7 +69,9 @@
         "names": null,
         "v": [
           {
-            "t": "chr",
+            "t": "df",
+            "nrow": 0,
+            "names": [],
             "v": []
           },
           {

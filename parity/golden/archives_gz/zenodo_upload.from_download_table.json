@@ -25,8 +25,8 @@
       {
         "t": "chr",
         "v": [
-          "/home/user/pytacheck/tests/archives_gz/fixtures/upload/proj_fromosf",
-          "/home/user/pytacheck/tests/archives_gz/fixtures/upload/proj_plain"
+          "<repo>/tests/archives_gz/fixtures/upload/proj_fromosf",
+          "<repo>/tests/archives_gz/fixtures/upload/proj_plain"
         ]
       },
       {

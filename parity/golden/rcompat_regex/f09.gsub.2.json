@@ -1,0 +1,27 @@
+{
+  "id": "f09.gsub.2",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "[a|]b123",
+      "[a|]1b22",
+      "123",
+      "x9",
+      "[a|]b[a|]b",
+      "x[a|]b[a|]b",
+      "[a|aa]",
+      "x[a|]yby",
+      "[a|]_b_c",
+      "[a|].b-c d",
+      "re[a|]d.csv('[a|].csv') [a|]nd 'b'",
+      "x \"y\" 'z'",
+      "J[a|]spColumn_x_Encoded_y_Encoded_z",
+      ""
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

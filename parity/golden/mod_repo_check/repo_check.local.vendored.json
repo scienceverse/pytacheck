@@ -89,8 +89,8 @@
           {
             "t": "chr",
             "v": [
-              "/home/user/pytacheck/tests/mod_repo_check/fixtures/vendored/analysis.R",
-              "/home/user/pytacheck/tests/mod_repo_check/fixtures/vendored/data.csv"
+              "<repo>/tests/mod_repo_check/fixtures/vendored/analysis.R",
+              "<repo>/tests/mod_repo_check/fixtures/vendored/data.csv"
             ]
           },
           {

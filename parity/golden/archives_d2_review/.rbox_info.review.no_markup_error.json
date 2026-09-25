@@ -1,7 +1,7 @@
 {
   "id": ".rbox_info.review.no_markup_error",
   "ok": false,
-  "error": "'OK' does not exist in current working directory\n('/home/user/pytacheck').",
+  "error": "'OK' does not exist in current working directory\n('<repo>').",
   "warnings": [],
   "value": null,
   "metacheck_version": "0.3.1",

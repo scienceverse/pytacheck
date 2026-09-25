@@ -3,7 +3,7 @@
   "ok": true,
   "error": null,
   "warnings": [
-    "2 *.rds file(s) found in /home/user/pytacheck/tests/repro_core/fixtures/tables_rds, but none had a \"not_a_module\" module with a non-empty \"table\"."
+    "2 *.rds file(s) found in <repo>/tests/repro_core/fixtures/tables_rds, but none had a \"not_a_module\" module with a non-empty \"table\"."
   ],
   "value": {
     "t": "df",

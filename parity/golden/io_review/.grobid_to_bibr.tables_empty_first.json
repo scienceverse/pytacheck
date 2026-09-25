@@ -79,7 +79,7 @@
           {
             "t": "chr",
             "v": [
-              "/home/user/pytacheck/tests/io/fixtures/tables_empty_first.tei.xml"
+              "<repo>/tests/io/fixtures/tables_empty_first.tei.xml"
             ]
           },
           {

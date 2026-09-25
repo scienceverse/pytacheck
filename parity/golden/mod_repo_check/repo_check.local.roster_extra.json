@@ -137,20 +137,20 @@
           {
             "t": "chr",
             "v": [
-              "/home/user/pytacheck/tests/mod_repo_check/fixtures/messy/docs/codebook.csv",
-              "/home/user/pytacheck/tests/mod_repo_check/fixtures/messy/fig1.png",
-              "/home/user/pytacheck/tests/mod_repo_check/fixtures/messy/fig10.png",
-              "/home/user/pytacheck/tests/mod_repo_check/fixtures/messy/fig2.png",
-              "/home/user/pytacheck/tests/mod_repo_check/fixtures/messy/LICENSE.txt",
-              "/home/user/pytacheck/tests/mod_repo_check/fixtures/messy/materials/task.edat",
-              "/home/user/pytacheck/tests/mod_repo_check/fixtures/messy/materials/task.txt",
-              "/home/user/pytacheck/tests/mod_repo_check/fixtures/messy/merged.emrg2",
-              "/home/user/pytacheck/tests/mod_repo_check/fixtures/messy/notes (final)!.docx",
-              "/home/user/pytacheck/tests/mod_repo_check/fixtures/messy/results.tar.gz",
-              "/home/user/pytacheck/tests/mod_repo_check/fixtures/messy/Study 1/raw data.csv",
-              "/home/user/pytacheck/tests/mod_repo_check/fixtures/messy/study2/analysis.R",
-              "/home/user/pytacheck/tests/mod_repo_check/fixtures/messy/study3/stimuli.edat2",
-              "/home/user/pytacheck/tests/mod_repo_check/fixtures/messy/weird.xyz123"
+              "<repo>/tests/mod_repo_check/fixtures/messy/docs/codebook.csv",
+              "<repo>/tests/mod_repo_check/fixtures/messy/fig1.png",
+              "<repo>/tests/mod_repo_check/fixtures/messy/fig10.png",
+              "<repo>/tests/mod_repo_check/fixtures/messy/fig2.png",
+              "<repo>/tests/mod_repo_check/fixtures/messy/LICENSE.txt",
+              "<repo>/tests/mod_repo_check/fixtures/messy/materials/task.edat",
+              "<repo>/tests/mod_repo_check/fixtures/messy/materials/task.txt",
+              "<repo>/tests/mod_repo_check/fixtures/messy/merged.emrg2",
+              "<repo>/tests/mod_repo_check/fixtures/messy/notes (final)!.docx",
+              "<repo>/tests/mod_repo_check/fixtures/messy/results.tar.gz",
+              "<repo>/tests/mod_repo_check/fixtures/messy/Study 1/raw data.csv",
+              "<repo>/tests/mod_repo_check/fixtures/messy/study2/analysis.R",
+              "<repo>/tests/mod_repo_check/fixtures/messy/study3/stimuli.edat2",
+              "<repo>/tests/mod_repo_check/fixtures/messy/weird.xyz123"
             ]
           },
           {

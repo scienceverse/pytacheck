@@ -23,8 +23,8 @@
       {
         "t": "chr",
         "v": [
-          "/home/user/pytacheck/tests/archives_gz/fixtures/upload/proj_osf",
-          "/home/user/pytacheck/tests/archives_gz/fixtures/upload/proj_plain"
+          "<repo>/tests/archives_gz/fixtures/upload/proj_osf",
+          "<repo>/tests/archives_gz/fixtures/upload/proj_plain"
         ]
       },
       {

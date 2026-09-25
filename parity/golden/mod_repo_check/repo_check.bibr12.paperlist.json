@@ -114,9 +114,9 @@
               null,
               null,
               null,
-              "/home/user/pytacheck/tests/mod_repo_check/fixtures/tidy/code/analysis.R",
-              "/home/user/pytacheck/tests/mod_repo_check/fixtures/tidy/data/scores.csv",
-              "/home/user/pytacheck/tests/mod_repo_check/fixtures/tidy/README.md"
+              "<repo>/tests/mod_repo_check/fixtures/tidy/code/analysis.R",
+              "<repo>/tests/mod_repo_check/fixtures/tidy/data/scores.csv",
+              "<repo>/tests/mod_repo_check/fixtures/tidy/README.md"
             ]
           },
           {

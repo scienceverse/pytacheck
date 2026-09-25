@@ -3,8 +3,8 @@
   "ok": true,
   "error": null,
   "warnings": [
-    "'raw = FALSE' but '/home/user/pytacheck/tests/datacheck_columns/fixtures/' is not a regular file",
-    "cannot open file '/home/user/pytacheck/tests/datacheck_columns/fixtures/': it is a directory"
+    "'raw = FALSE' but '<repo>/tests/datacheck_columns/fixtures/' is not a regular file",
+    "cannot open file '<repo>/tests/datacheck_columns/fixtures/': it is a directory"
   ],
   "value": {
     "t": "null"

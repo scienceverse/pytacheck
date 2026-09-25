@@ -89,8 +89,8 @@
           {
             "t": "chr",
             "v": [
-              "/home/user/pytacheck/tests/mod_repo_check/fixtures/review/hidden/README.md",
-              "/home/user/pytacheck/tests/mod_repo_check/fixtures/review/hidden/visible.csv"
+              "<repo>/tests/mod_repo_check/fixtures/review/hidden/README.md",
+              "<repo>/tests/mod_repo_check/fixtures/review/hidden/visible.csv"
             ]
           },
           {

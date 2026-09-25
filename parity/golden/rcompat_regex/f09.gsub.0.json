@@ -1,0 +1,27 @@
+{
+  "id": "f09.gsub.0",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "123",
+      "22",
+      "123",
+      "9",
+      "abab",
+      "xabab",
+      "aaa",
+      "xayby",
+      "a_b_c",
+      "a.b-c d",
+      "read.csv('a.csv') and 'b'",
+      "x \"y\" 'z'",
+      "JaspColumn_x_Encoded_y_Encoded_z",
+      ""
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

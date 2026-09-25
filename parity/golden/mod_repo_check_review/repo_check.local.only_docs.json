@@ -89,8 +89,8 @@
           {
             "t": "chr",
             "v": [
-              "/home/user/pytacheck/tests/mod_repo_check/fixtures/review/only_docs/LICENSE",
-              "/home/user/pytacheck/tests/mod_repo_check/fixtures/review/only_docs/README.md"
+              "<repo>/tests/mod_repo_check/fixtures/review/only_docs/LICENSE",
+              "<repo>/tests/mod_repo_check/fixtures/review/only_docs/README.md"
             ]
           },
           {
