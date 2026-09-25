@@ -66,3 +66,5 @@ w("rt_cr_cr.csv", b'v\r"x"y\r\r\na\r\rb\r')
 # fread fails (NUL in the name), read.delim() reads an NA -> the latin1 re-read
 w("rt_fallback_latin1.csv", b'v\0x\n"a"b\nNA\ncaf\xc3\xa9\n')
 w("rt_nrows.csv", 'v\n"x"y\n' + "".join(f"r{i}\n" for i in range(10)))
+# duplicated column names: each keeps its own class (IDate, integer64)
+w("dup_names.csv", "d,d,x\n2020-01-01,5000000000,1\n2020-02-01,6000000000,2\n")

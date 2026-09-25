@@ -1,0 +1,86 @@
+{
+  "id": "review.read_head_typed.dup_names.csv",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "names",
+      "types",
+      "data"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "d",
+          "d",
+          "x"
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "integer",
+              "IDate",
+              "Date"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "double",
+              "integer64"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "integer",
+              "integer"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 2,
+        "names": [
+          "d",
+          "d",
+          "x"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "2020-01-01",
+              "2020-02-01"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              5000000000,
+              6000000000
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1,
+              2
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

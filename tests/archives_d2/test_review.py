@@ -14,10 +14,10 @@ import pytest
 
 import pytacheck as pc
 from pytacheck.archives.fsd import fsd_links
+from pytacheck.archives.osf_helpers import _resp_body_json
 from pytacheck.archives.psycharchives import (
     PasteLengthError,
     _paste_json,
-    _resp_body_json,
     _resp_json,
     _url_piece,
 )

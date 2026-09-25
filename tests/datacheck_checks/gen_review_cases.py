@@ -156,6 +156,20 @@ add(
     },
 )
 
+# -- an hms / difftime column is not numeric in R: facets come from its text --------------
+for cid, name, r_x, py_x, cls in [
+    ("hms", "start_time", "hms::hms(c(3600, 3723, 7200, 10, NA, 59, 90000, 61.5))",
+     "[3600, 3723, 7200, 10, None, 59, 90000, 61.5]", ["hms", "difftime"]),
+    ("difftime", "rt", "as.difftime(c(350, 420.5, 515, 610, 380, 455), units = 'secs')",
+     "[350, 420.5, 515, 610, 380, 455]", ["difftime"]),
+]:  # fmt: skip
+    add(
+        f"data_col_facets.review.class_{cid}",
+        "data_col_facets",
+        {"col_name": name, "values": ex(r_x, f"pd.Series({py_x}, dtype='float64')")},
+        py_args={"col_class": cls},
+    )
+
 # -- table() drops the string "NaN" from a character vector (exclude = c(NA, NaN)) ----------
 
 add(
