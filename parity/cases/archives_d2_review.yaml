@@ -656,6 +656,42 @@
         "r": "metacheck:::.dspace7_info(\"scholarworks.umass.edu\", uuid = \"55555555-6666-7777-8888-999999999999\")"
         "py": "lambda m: m.dspace7._dspace7_info(\"scholarworks.umass.edu\", uuid=\"55555555-6666-7777-8888-999999999999\")"
   "mock_dir": "tests/archives_d2/mocks_review"
+- "id": "psycharchives_info.review.table_collisions"
+  "r": "identity"
+  "py": "tests.archives_d2.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "testthat::with_mocked_bindings(psycharchives_info(data.frame(x = 1:3, href = c(\"https://hdl.handle.net/20.500.12034/17526\", NA, \"https://hdl.handle.net/20.500.12034/17526\"), pa_url = c(\"old1\", \"old2\", \"old3\"), PA_title = \"mine\"), id_col = 2), online = function(...) TRUE, .package = \"metacheck\")"
+        "py": "lambda m: m.psycharchives.psycharchives_info(m.pd.DataFrame({'x': [1, 2, 3], 'href': [\"https://hdl.handle.net/20.500.12034/17526\", None, \"https://hdl.handle.net/20.500.12034/17526\"], 'pa_url': ['old1', 'old2', 'old3'], 'PA_title': ['mine'] * 3}), id_col=2)"
+  "mock_dir": "apis"
+- "id": "mendeley_info.review.table_collisions"
+  "r": "identity"
+  "py": "tests.archives_d2.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "testthat::with_mocked_bindings(mendeley_info(data.frame(u = c(\"10.17632/vjtxybrc28.2\", \"zzz999\", \"nope nope\"), mendeley_url = \"old\", mendeley_id = \"stale\", title = \"mine\"), id_col = \"u\"), online = function(...) TRUE, .package = \"metacheck\")"
+        "py": "lambda m: m.mendeley.mendeley_info(m.pd.DataFrame({'u': ['10.17632/vjtxybrc28.2', 'zzz999', 'nope nope'], 'mendeley_url': ['old'] * 3, 'mendeley_id': ['stale'] * 3, 'title': ['mine'] * 3}), id_col='u')"
+  "mock_dir": "tests/archives_d2/mocks"
+- "id": "dataone_info.review.table_collisions"
+  "r": "identity"
+  "py": "tests.archives_d2.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "dataone_info(data.frame(dataone_pid = \"stale\", u = c(\"10.18739/A2GT5FG86\", \"https://arcticdata.io/catalog/view/doi:10.18739/A2GT5FG86\", \"10.18739/MISSING\"), dataone_host = \"stale\", title = \"mine\"), id_col = 2)"
+        "py": "lambda m: m.dataone.dataone_info(m.pd.DataFrame({'dataone_pid': ['stale'] * 3, 'u': ['10.18739/A2GT5FG86', 'https://arcticdata.io/catalog/view/doi:10.18739/A2GT5FG86', '10.18739/MISSING'], 'dataone_host': ['stale'] * 3, 'title': ['mine'] * 3}), id_col=2)"
+  "mock_dir": "tests/archives_d2/mocks"
+- "id": "reshare_info.review.table_collisions"
+  "r": "identity"
+  "py": "tests.archives_d2.parity_support.run"
+  "args":
+    "x":
+      "$expr":
+        "r": "testthat::with_mocked_bindings(reshare_info(data.frame(reshare_id = \"stale\", u = c(\"854001\", \"10.5255/UKDA-SN-854001\"), files = \"mine\"), id_col = \"u\"), online = function(...) TRUE, .package = \"metacheck\")"
+        "py": "lambda m: m.reshare.reshare_info(m.pd.DataFrame({'reshare_id': ['stale'] * 2, 'u': ['854001', '10.5255/UKDA-SN-854001'], 'files': ['mine'] * 2}), id_col='u')"
+  "mock_dir": "tests/archives_d2/mocks"
 - "id": ".fsd_info.review.files"
   "r": "identity"
   "py": "tests.archives_d2.parity_support.run"

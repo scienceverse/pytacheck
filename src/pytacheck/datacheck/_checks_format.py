@@ -600,14 +600,52 @@ def _bh_is_trial_level_file(path: Any) -> bool:
     return data_check_is_behaverse(hdr) or data_check_is_inquisit(hdr) or data_check_is_jspsych(hdr)
 
 
+#: How much of a file the header sniff reads. ``read.csv(nrows = 1)`` only
+#: looks at the header and the first data line, so a prefix cut at a line end
+#: gives the same result as the whole file.
+_SNIFF_BYTES = 1 << 20
+
+
+def _utf8_bom_connection(raw: bytes, complete: bool) -> bytes:
+    """The bytes R reads through ``file(path, encoding = "UTF-8-BOM")``.
+
+    The connection drops a leading byte-order mark and stops at the first
+    invalid UTF-8 sequence ("invalid input found on input connection"),
+    keeping what it had read up to that byte. *complete* says whether *raw*
+    is the whole file (else a trailing partial line is dropped first).
+    """
+    if raw.startswith(b"\xef\xbb\xbf"):
+        raw = raw[3:]
+    if not complete:
+        cut = max(raw.rfind(b"\n"), raw.rfind(b"\r"))
+        raw = raw[: cut + 1] if cut >= 0 else raw
+    try:
+        raw.decode("utf-8")
+    except UnicodeDecodeError as e:
+        raw = raw[: e.start]
+    return raw
+
+
 def _read_csv_header(path: str, sep: str) -> pd.DataFrame | None:
     """``utils::read.csv(path, check.names = FALSE, nrows = 1, fileEncoding = "UTF-8-BOM", sep)``.
 
-    The ``read.table()`` port drops a leading UTF-8 byte-order mark itself.
+    The ``fileEncoding`` connection is emulated byte-wise (see
+    :func:`_utf8_bom_connection`) -- the BOM goes before ``read.table()``
+    looks for blank lines, and reading stops at invalid UTF-8 -- and the
+    result is parsed by the ``read.table()`` port.
     """
+    import tempfile
+
     from pytacheck.datacheck._files_readtable import read_table
 
-    return read_table(path, sep=sep, header=True, nrows=1)
+    with open(path, "rb") as fh:
+        raw = fh.read(_SNIFF_BYTES + 1)
+    data = _utf8_bom_connection(raw[:_SNIFF_BYTES], complete=len(raw) <= _SNIFF_BYTES)
+    with tempfile.TemporaryDirectory(prefix="pytacheck-sniff-") as tmp:
+        tmp_path = os.path.join(tmp, "header.txt")
+        with open(tmp_path, "wb") as fh:
+            fh.write(data)
+        return read_table(tmp_path, sep=sep, header=True, nrows=1)
 
 
 def _names(df: Any) -> list[str]:
