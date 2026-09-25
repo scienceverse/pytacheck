@@ -45,9 +45,7 @@ _PADDING_RX = "^(.*?)([0-9]+)([^0-9]*)$"
 
 _DETAIL = {
     "spaces": "contains a space",
-    "special-characters": (
-        "contains a character other than letters, digits, underscore, or dash"
-    ),
+    "special-characters": ("contains a character other than letters, digits, underscore, or dash"),
     "diacritics": "contains non-ASCII characters (e.g. accented letters)",
     "unclassifiable": (
         "could not be classified by name or extension (data_type is 'unknown'); "
@@ -141,10 +139,7 @@ def _valid_yyyymmdd(d: str) -> bool:
 
 def _frame(rows: Sequence[tuple[Any, ...]], columns: Sequence[str]) -> pd.DataFrame:
     return pd.DataFrame(
-        {
-            col: pd.Series([r[i] for r in rows], dtype="string")
-            for i, col in enumerate(columns)
-        }
+        {col: pd.Series([r[i] for r in rows], dtype="string") for i, col in enumerate(columns)}
     )
 
 
@@ -169,9 +164,11 @@ def _check_rows(file_names: list[str | None], data_types: list[str | None]) -> l
             rows.append((f, "diacritics", _DETAIL["diacritics"]))
         if data_types[i] is not None and data_types[i] == "unknown":
             rows.append((f, "unclassifiable", _DETAIL["unclassifiable"]))
-        for d in dates[i] or []:
-            if not _valid_yyyymmdd(d):
-                rows.append((f, "date-format", f"'{d}' is not a valid YYYYMMDD date"))
+        rows.extend(
+            (f, "date-format", f"'{d}' is not a valid YYYYMMDD date")
+            for d in dates[i] or []
+            if not _valid_yyyymmdd(d)
+        )
     return rows
 
 
@@ -259,9 +256,13 @@ def _length_rows(file_path: list[str | None]) -> list[Row]:
             return
         for p, h, a in zip(paths, hit, actual, strict=True):
             if h is None:  # x[NA] is NA
-                rows.append((None, rule, f"{rule} is NA characters, over the {budget}-character budget"))
+                rows.append(
+                    (None, rule, f"{rule} is NA characters, over the {budget}-character budget")
+                )
             elif h:
-                rows.append((p, rule, f"{rule} is {a:d} characters, over the {budget}-character budget"))
+                rows.append(
+                    (p, rule, f"{rule} is {a:d} characters, over the {budget}-character budget")
+                )
 
     n_path = nchar(paths)
     add_rows(n_path, "path-length-255", 255)
@@ -294,9 +295,7 @@ def _rep_len(x: Any, n: int) -> list[str | None]:
     return [values[i % len(values)] for i in range(n)]
 
 
-def check_file_naming(
-    file_name: Any, file_path: Any = None, data_type: Any = None
-) -> pd.DataFrame:
+def check_file_naming(file_name: Any, file_path: Any = None, data_type: Any = None) -> pd.DataFrame:
     """Check repository files against the FAIR file-naming conventions.
 
     Port of ``R/file-naming.R::check_file_naming()``.

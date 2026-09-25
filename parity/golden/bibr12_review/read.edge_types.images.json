@@ -1,0 +1,2586 @@
+{
+  "id": "read.edge_types.images",
+  "ok": true,
+  "error": null,
+  "warnings": [
+    "NAs introduced by coercion"
+  ],
+  "value": {
+    "t": "paper",
+    "names": [
+      "paper_id",
+      "info",
+      "author",
+      "text",
+      "section",
+      "url",
+      "bib",
+      "xref",
+      "figure",
+      "table",
+      "eq",
+      "affiliation",
+      "funding",
+      "footnote",
+      "info_match",
+      "affiliation_match",
+      "funding_match",
+      "bib_match",
+      "extraction"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "edge_types"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "title",
+          "abstract",
+          "keywords",
+          "doi",
+          "pmid",
+          "pmcid",
+          "arxiv",
+          "language",
+          "paper_type",
+          "oecd_l1",
+          "oecd_l2",
+          "journal",
+          "volume",
+          "issue",
+          "first_page",
+          "last_page",
+          "issn",
+          "publisher",
+          "published",
+          "published_date",
+          "license",
+          "license_url",
+          "license_spdx",
+          "funding_statement",
+          "coi_statement",
+          "ethics_statement",
+          "data_availability",
+          "file_name",
+          "sha256",
+          "input_format",
+          "schema_version",
+          "file_hash",
+          "bibr_version"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Edge \"quoted\" title <\/script>   café "
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "single keyword"
+                ]
+              }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "12345678"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "J1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "12"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "1e+05"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "1.5"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "1.50"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "TRUE"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2020"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "edge.pdf"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "pdf"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "12.0"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "12"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 4,
+        "names": [
+          "author_id",
+          "given",
+          "family",
+          "suffix",
+          "literal",
+          "email",
+          "corresponding",
+          "orcid",
+          "role",
+          "credit_roles"
+        ],
+        "v": [
+          {
+            "t": "int",
+            "v": [
+              1,
+              2,
+              2,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Ann",
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Lee",
+              "Kim",
+              "Park",
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              "TRUE",
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "Kim, B.",
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              "x@y.z",
+              null
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "1234",
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "writer"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "a",
+                  "3"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "chr",
+                "v": []
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 8,
+        "names": [
+          "text",
+          "text_id",
+          "paragraph_id",
+          "section_id",
+          "page_number",
+          "formatted"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Body sentence (Lee, 2020) with t(28) = 2.1, p = .04.",
+              "42",
+              "Figure 1. A caption.",
+              "Table 1. Means and SDs.",
+              "1 A footnote with https://osf.io/abcde.",
+              "Second body sentence [2].",
+              "Lee, A. (2020). A title. Journal, 1, 1-2.",
+              "Kim, B. (2021). Another title."
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1,
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1,
+              1,
+              null,
+              null,
+              null,
+              2,
+              3,
+              3
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1,
+              2,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Body <i>sentence<\/i>",
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 3,
+        "names": [
+          "section_id",
+          "header",
+          "level",
+          "parent_section_id",
+          "section_type"
+        ],
+        "v": [
+          {
+            "t": "int",
+            "v": [
+              1,
+              2,
+              3
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Intro",
+              null,
+              "References"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1,
+              2,
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              null,
+              1,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "intro",
+              "weird_type",
+              "references"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 2,
+        "names": [
+          "url_id",
+          "href",
+          "link_text",
+          "text_id",
+          "start",
+          "end"
+        ],
+        "v": [
+          {
+            "t": "int",
+            "v": [
+              1,
+              2
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              " https://osf.io/abc. ",
+              "https://example.org"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              5,
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              5,
+              null
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 2,
+        "names": [
+          "bib_id",
+          "text_id",
+          "bib_type",
+          "doi",
+          "title",
+          "authors",
+          "editors",
+          "publisher",
+          "year",
+          "year_suffix",
+          "date",
+          "published_date",
+          "container",
+          "volume",
+          "issue",
+          "first_page",
+          "last_page",
+          "edition",
+          "version",
+          "url",
+          "is_in_press",
+          "arxiv",
+          "pmid",
+          "series",
+          "access_date",
+          "note"
+        ],
+        "v": [
+          {
+            "t": "int",
+            "v": [
+              1,
+              2
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              7,
+              8
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "journal_article",
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "10.1234/xyz",
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "A title",
+              "Another title"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Lee, A.",
+              "Kim, B."
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              null,
+              2021
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "b"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "5",
+              null
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 5,
+        "names": [
+          "xref_id",
+          "target_id",
+          "xref_type",
+          "contents",
+          "text_id",
+          "start",
+          "end"
+        ],
+        "v": [
+          {
+            "t": "int",
+            "v": [
+              1,
+              2,
+              3,
+              4,
+              5
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1,
+              null,
+              2,
+              1,
+              1
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "bib",
+              "figure",
+              "bib",
+              "bibr",
+              "footnote"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "(Lee, 2020)",
+              "Fig. 1",
+              "[2]",
+              "old style",
+              "1"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1,
+              1,
+              6,
+              6,
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              14,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              25,
+              null,
+              null,
+              null,
+              null
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "figure_id",
+          "label",
+          "section_id",
+          "text_id",
+          "image",
+          "caption",
+          "page_number"
+        ],
+        "v": [
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Figure 1"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              3
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data:image/png;base64,AAAA"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Figure 1. A caption."
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              null
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 3,
+        "names": [
+          "table_id",
+          "label",
+          "section_id",
+          "text_id",
+          "html",
+          "contents",
+          "caption",
+          "page_number"
+        ],
+        "v": [
+          {
+            "t": "int",
+            "v": [
+              1,
+              2,
+              3
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Table 1",
+              null,
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              4,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "<table><\/table>",
+              null,
+              null
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "list",
+                "names": null,
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "M",
+                      "SD"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "1.5",
+                      "2",
+                      "TRUE"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": []
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "scalar"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "nested"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": []
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": []
+              }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Table 1. Means and SDs.",
+              null,
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              3,
+              null,
+              null
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 15,
+        "names": [
+          "eq_id",
+          "text_id",
+          "start",
+          "end",
+          "grp_id",
+          "verbatim",
+          "lhs",
+          "df",
+          "comp",
+          "rhs"
+        ],
+        "v": [
+          {
+            "t": "int",
+            "v": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13,
+              14,
+              15
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              30,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              41,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "t(28) = 2.1",
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "t",
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              "1",
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "(28)",
+              "(28)",
+              "(28)",
+              "()",
+              null,
+              "(1) and (2)",
+              "(1, 2))",
+              "((1, 2)",
+              "(2.5)",
+              "(1,\n2)",
+              "(TRUE)",
+              "(4)",
+              "(5)",
+              "(6)",
+              "(NULL)"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "=",
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2.1",
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              "0.05",
+              null,
+              null,
+              null,
+              null
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 3,
+        "names": [
+          "affiliation_id",
+          "text",
+          "institution",
+          "department",
+          "city",
+          "country",
+          "author_ids"
+        ],
+        "v": [
+          {
+            "t": "int",
+            "v": [
+              1,
+              2,
+              3
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Uni A",
+              "Uni B",
+              "Uni C"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "NL",
+              null
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "int",
+                "v": [
+                  1,
+                  2,
+                  2
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  3
+                ]
+              },
+              {
+                "t": "int",
+                "v": []
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 2,
+        "names": [
+          "funding_id",
+          "funder",
+          "award_ids"
+        ],
+        "v": [
+          {
+            "t": "int",
+            "v": [
+              1,
+              2
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "NSF",
+              null
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "A1",
+                  "2",
+                  "2.5"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": []
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 2,
+        "names": [
+          "footnote_id",
+          "label",
+          "text_id"
+        ],
+        "v": [
+          {
+            "t": "int",
+            "v": [
+              1,
+              2
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "2"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              5,
+              5
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "service",
+          "service_id",
+          "score",
+          "bib_type",
+          "doi",
+          "title",
+          "author",
+          "editor",
+          "publisher",
+          "year",
+          "published_date",
+          "container",
+          "volume",
+          "issue",
+          "first_page",
+          "last_page",
+          "edition",
+          "version",
+          "url",
+          "license_url",
+          "license_spdx",
+          "funder",
+          "authors",
+          "editors"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "crossref"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "10.1234/xyz"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0.97
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "journal-article"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://doi.org/10.1234/XYZ"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Edge"
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "list",
+                "names": null,
+                "v": [
+                  {
+                    "t": "list",
+                    "names": [
+                      "given",
+                      "family",
+                      "orcid",
+                      "affiliation"
+                    ],
+                    "v": [
+                      {
+                        "t": "chr",
+                        "v": [
+                          "A"
+                        ]
+                      },
+                      {
+                        "t": "chr",
+                        "v": [
+                          "B"
+                        ]
+                      },
+                      {
+                        "t": "null"
+                      },
+                      {
+                        "t": "list",
+                        "names": null,
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "U"
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "t": "list",
+                    "names": [
+                      "family"
+                    ],
+                    "v": [
+                      {
+                        "t": "chr",
+                        "v": [
+                          "C"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "null"
+              }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2020
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2020-01"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "list",
+                "names": null,
+                "v": [
+                  {
+                    "t": "list",
+                    "names": [
+                      "name",
+                      "award_ids"
+                    ],
+                    "v": [
+                      {
+                        "t": "chr",
+                        "v": [
+                          "F"
+                        ]
+                      },
+                      {
+                        "t": "list",
+                        "names": null,
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "1"
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "df",
+                "nrow": 3,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "A",
+                      null,
+                      null
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "B",
+                      "C",
+                      null
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "df",
+                "nrow": 0,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": []
+                  },
+                  {
+                    "t": "chr",
+                    "v": []
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "affiliation_id",
+          "service",
+          "service_id",
+          "score",
+          "name",
+          "country_code"
+        ],
+        "v": [
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ror"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://ror.org/x"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Uni A"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "US"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "funding_id",
+          "service",
+          "service_id",
+          "score",
+          "name",
+          "country_code",
+          "funder_doi"
+        ],
+        "v": [
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ror"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "x"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "NSF"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "10.13039/100000001"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 3,
+        "names": [
+          "bib_id",
+          "service",
+          "service_id",
+          "score",
+          "bib_type",
+          "doi",
+          "title",
+          "author",
+          "editor",
+          "publisher",
+          "year",
+          "published_date",
+          "container",
+          "volume",
+          "issue",
+          "first_page",
+          "last_page",
+          "edition",
+          "version",
+          "url",
+          "license_url",
+          "license_spdx",
+          "funder",
+          "authors",
+          "editors"
+        ],
+        "v": [
+          {
+            "t": "int",
+            "v": [
+              1,
+              2,
+              1
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "crossref",
+              "openalex",
+              "somewhere"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "10.1234/xyz",
+              null,
+              null
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0.5,
+              1,
+              0
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "book",
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "10.1234/xyz",
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "A title",
+              null,
+              null
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "list",
+                "names": null,
+                "v": []
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": [
+                  {
+                    "t": "list",
+                    "names": [
+                      "given",
+                      "family"
+                    ],
+                    "v": [
+                      {
+                        "t": "null"
+                      },
+                      {
+                        "t": "chr",
+                        "v": [
+                          "X"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "t": "list",
+                    "names": [
+                      "given",
+                      "family"
+                    ],
+                    "v": [
+                      {
+                        "t": "int",
+                        "v": [
+                          5
+                        ]
+                      },
+                      {
+                        "t": "chr",
+                        "v": [
+                          "Y"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "null"
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "list",
+                "names": null,
+                "v": [
+                  {
+                    "t": "list",
+                    "names": [
+                      "given"
+                    ],
+                    "v": [
+                      {
+                        "t": "chr",
+                        "v": [
+                          "E"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "null"
+              },
+              {
+                "t": "null"
+              }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2020,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "null"
+              },
+              {
+                "t": "null"
+              },
+              {
+                "t": "null"
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "df",
+                "nrow": 0,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": []
+                  },
+                  {
+                    "t": "chr",
+                    "v": []
+                  }
+                ]
+              },
+              {
+                "t": "df",
+                "nrow": 2,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      null,
+                      "5"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "X",
+                      "Y"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "df",
+                "nrow": 0,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": []
+                  },
+                  {
+                    "t": "chr",
+                    "v": []
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "df",
+                "nrow": 1,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "E"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      null
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "df",
+                "nrow": 0,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": []
+                  },
+                  {
+                    "t": "chr",
+                    "v": []
+                  }
+                ]
+              },
+              {
+                "t": "df",
+                "nrow": 0,
+                "names": [
+                  "given",
+                  "family"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": []
+                  },
+                  {
+                    "t": "chr",
+                    "v": []
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "producer",
+          "completed_at",
+          "settings",
+          "timings",
+          "diagnostics",
+          "warnings",
+          "custom_key",
+          "ocr"
+        ],
+        "v": [
+          {
+            "t": "list",
+            "names": [
+              "name",
+              "version",
+              "build_sha"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "bibr"
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  12
+                ]
+              },
+              {
+                "t": "null"
+              }
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2026-01-02T03:04:05Z"
+            ]
+          },
+          {
+            "t": "list",
+            "names": [],
+            "v": []
+          },
+          {
+            "t": "list",
+            "names": [
+              "total_seconds",
+              "tiny",
+              "pi",
+              "big",
+              "neg",
+              "list",
+              "nested",
+              "exp",
+              "int_like"
+            ],
+            "v": [
+              {
+                "t": "dbl",
+                "v": [
+                  100000
+                ]
+              },
+              {
+                "t": "dbl",
+                "v": [
+                  1e-07
+                ]
+              },
+              {
+                "t": "dbl",
+                "v": [
+                  3.14159265358979
+                ]
+              },
+              {
+                "t": "dbl",
+                "v": [
+                  3000000000
+                ]
+              },
+              {
+                "t": "dbl",
+                "v": [
+                  -0
+                ]
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": [
+                  {
+                    "t": "int",
+                    "v": [
+                      1
+                    ]
+                  },
+                  {
+                    "t": "dbl",
+                    "v": [
+                      2.5
+                    ]
+                  },
+                  {
+                    "t": "null"
+                  },
+                  {
+                    "t": "lgl",
+                    "v": [
+                      true
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "s"
+                    ]
+                  },
+                  {
+                    "t": "list",
+                    "names": null,
+                    "v": []
+                  },
+                  {
+                    "t": "list",
+                    "names": [],
+                    "v": []
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": [
+                  {
+                    "t": "list",
+                    "names": null,
+                    "v": [
+                      {
+                        "t": "int",
+                        "v": [
+                          1
+                        ]
+                      },
+                      {
+                        "t": "int",
+                        "v": [
+                          2
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "t": "list",
+                    "names": null,
+                    "v": [
+                      {
+                        "t": "int",
+                        "v": [
+                          3
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "dbl",
+                "v": [
+                  100000
+                ]
+              },
+              {
+                "t": "dbl",
+                "v": [
+                  5
+                ]
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": [
+              "citation_linking",
+              "str",
+              "empty_obj",
+              "empty_arr"
+            ],
+            "v": [
+              {
+                "t": "dbl",
+                "v": [
+                  0.941176470588235
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "é \u0001 <\/x>  \t"
+                ]
+              },
+              {
+                "t": "list",
+                "names": [],
+                "v": []
+              },
+              {
+                "t": "list",
+                "names": null,
+                "v": []
+              }
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": []
+          },
+          {
+            "t": "list",
+            "names": [
+              "dropped"
+            ],
+            "v": [
+              {
+                "t": "lgl",
+                "v": [
+                  true
+                ]
+              }
+            ]
+          },
+          {
+            "t": "null"
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

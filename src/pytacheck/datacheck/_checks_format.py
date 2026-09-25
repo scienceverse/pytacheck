@@ -243,6 +243,8 @@ def data_strip_qualtrics_header(df: Any, max_strip: int = 2) -> Any:
     if df is None or len(df) == 0:
         return df
     n_scan = min(int(max_strip), len(df))
+    if n_scan < 0:  # seq_len() of a negative number
+        raise ValueError("argument must be coercible to non-negative integer")
     row = _Rows(df, n_scan)
     drop = 0
     for i in range(n_scan):
@@ -496,6 +498,8 @@ def data_promote_header_row(df: Any, raw_rows: Any = None, max_scan: int = 4) ->
         rows = [chr(r) for r in raw_rows]
     else:
         n_scan = min(int(max_scan), len(df))
+        if n_scan < 0:  # seq_len() of a negative number
+            raise ValueError("argument must be coercible to non-negative integer")
         row = _Rows(df, n_scan)
         header_as_row = [str(c) for c in df.columns]
         body_rows = [row(i) for i in range(n_scan)]

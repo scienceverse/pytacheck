@@ -499,11 +499,42 @@ def _bibr12_columns(
                 vals = coerce_column(infer_column(vals), schema_type).tolist()
             out[col] = [None if e is None or e is pd.NA or e != e else e for e in vals]
             continue
-        cells: list[Any] = [None] * n if v is None else _column_values(v)
         if typ in ("chr[]", "int[]", "chr[][]"):
-            out[col] = [_cell(_to_json_value(e), typ) for e in cells]
+            out[col] = _array_cells(v, n, typ)
+            continue
+        cells: list[Any] = [None] * n if v is None else _column_values(v)
+        out[col] = [None if _scalar_na(e) else e for e in cells]
+    return out
+
+
+def _array_cells(v: Any, n: int, typ: str) -> list[Any]:
+    """The cells of an array column, as ``lapply(v, \\(e) as.character(unlist(e)))`` makes them.
+
+    ``unlist()`` drops ``NULL`` but keeps ``NA``. A Series without list cells
+    is an atomic vector, so its missing cells are ``[NA]`` (``[[NA]]`` for
+    ``chr[][]``); in a list column (a Series with list cells, or a plain
+    Python list of cells) ``None`` is ``NULL`` (``[]``) and ``pd.NA`` / NaN
+    (what pandas fills in when rows are added) is ``NA``, as in metacheck.
+    """
+    if v is None:
+        return [_cell(None, typ) for _ in range(n)]
+    atomic = isinstance(v, pd.Series | np.ndarray) and (
+        v.dtype != object or not _is_list_column(pd.Series(v) if isinstance(v, np.ndarray) else v)
+    )
+    if isinstance(v, pd.Series | np.ndarray):
+        values = v.tolist()
+    elif isinstance(v, list | tuple):
+        values = list(v)
+    else:
+        values = [v]
+    out = []
+    for e in values:
+        if not isinstance(e, list | tuple | dict | np.ndarray | pd.DataFrame | pd.Series) and (
+            (atomic and is_na(e)) or (e is not None and is_na(e))
+        ):
+            out.append([[None]] if typ == "chr[][]" else [None])
         else:
-            out[col] = [None if _scalar_na(e) else e for e in cells]
+            out.append(_cell(_to_json_value(e), typ))
     return out
 
 
@@ -637,15 +668,45 @@ def _names_records(persons: Any) -> Any:
     as it does for the data frames jsonlite makes from JSON arrays of objects,
     and an empty one as a zero-row data frame.
     """
-    people = persons if isinstance(persons, list) else [] if persons is None else [persons]
+    # vapply() runs over the elements of a JSON array or object; a scalar is
+    # a length-1 vector
+    if persons is None:
+        people: list[Any] = []
+    elif isinstance(persons, list):
+        people = persons
+    elif isinstance(persons, Mapping):
+        people = list(persons.values())
+    else:
+        people = [persons]
     if not people:
         return _EMPTY_NAMES.copy(deep=False)  # zero rows: nothing to share
     out = []
-    for p in people:
-        if not isinstance(p, Mapping):
+    for i, p in enumerate(people, start=1):
+        if p is not None and not isinstance(p, list | Mapping):
             raise ValueError("$ operator is invalid for atomic vectors")
-        out.append({"given": _chr1(_jnum(p.get("given"))), "family": _chr1(_jnum(p.get("family")))})
+        # NULL$given and an unnamed list's $given are NULL: NA
+        person = p if isinstance(p, Mapping) else {}
+        out.append(
+            {"given": _person_name(person.get("given"), i), "family": _person_name(person.get("family"), i)}
+        )
     return out
+
+
+def _person_name(v: Any, i: int) -> str | None:
+    """``as.character(p$given %||% NA)`` as ``vapply(..., "")`` accepts it (one string)."""
+    if isinstance(v, list | Mapping):
+        values = list(v.values()) if isinstance(v, Mapping) else v
+        if len(values) != 1:
+            raise ValueError(
+                f"values must be length 1,\n but FUN(X[[{i}]]) result is length {len(values)}"
+            )
+        e = values[0]
+        if e is None:
+            return "NULL"
+        if isinstance(e, list | Mapping):
+            return orjson.dumps(e).decode()  # R deparses it; not a name bibr writes
+        return as_character(_jnum(e))
+    return _chr1(_jnum(v))
 
 
 _EMPTY_NAMES = pd.DataFrame(
@@ -744,12 +805,29 @@ def _as_rows(rows: Any) -> list[Any]:
 
 
 def _paren_df(df: Any) -> Any:
-    """``if (is.null(df) || grepl("^\\(.*\\)$", df)) df else paste0("(", df, ")")``."""
-    if df is None or isinstance(df, list | dict):
+    """``if (is.null(df) || grepl("^\\(.*\\)$", df)) df else paste0("(", df, ")")``.
+
+    A JSON array or object ``df`` is an R list: ``grepl()`` and ``paste0()``
+    see ``as.character()`` of its one element (``"NULL"`` for null), an empty
+    one stops with "missing value where TRUE/FALSE needed" and a longer one
+    with "'length = n' in coercion to 'logical(1)'", as in metacheck.
+    """
+    if df is None:
         return df
-    s = as_character(_jnum(df))
-    s = "NA" if s is None else s
-    if len(s) >= 2 and s.startswith("(") and s.endswith(")"):
+    if isinstance(df, list | dict):
+        values = list(df.values()) if isinstance(df, dict) else df
+        if not values:
+            raise ValueError("missing value where TRUE/FALSE needed")
+        if len(values) > 1:
+            raise ValueError(f"'length = {len(values)}' in coercion to 'logical(1)'")
+        e = values[0]
+        s = "NULL" if e is None else as_character(_jnum(e)) if not isinstance(e, list | dict) else None
+        if s is None:
+            s = "NA" if not isinstance(e, list | dict) else orjson.dumps(e).decode()
+    else:
+        s = as_character(_jnum(df))
+        s = "NA" if s is None else s
+    if grepl(r"^\(.*\)$", s):
         return df
     return f"({s})"
 

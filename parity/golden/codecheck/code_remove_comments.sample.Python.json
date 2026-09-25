@@ -1,0 +1,22 @@
+{
+  "id": "code_remove_comments.sample.Python",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "import os, sys",
+      "import numpy as np  ",
+      "from a.b import c",
+      "from . import d",
+      "x = 'a#b'  ",
+      "\"\"\"doc\"\"\"",
+      "    import json",
+      "df = pd.read_csv('d.csv')",
+      "open('f.txt')"
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

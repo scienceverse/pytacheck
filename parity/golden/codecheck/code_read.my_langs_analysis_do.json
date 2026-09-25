@@ -1,0 +1,20 @@
+{
+  "id": "code_read.my_langs_analysis_do",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "* comment",
+      "use data.dta, clear // load",
+      "/* block */",
+      "merge 1:1 id using \"other file.dta\"",
+      "insheet using raw.csv",
+      "ssc install estout",
+      "cd \"C:/project\""
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

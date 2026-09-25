@@ -1,0 +1,122 @@
+{
+  "id": "code_version_pin_check.files",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "pinned",
+      "mechanisms",
+      "r_versions",
+      "renv_files",
+      "renv_packages",
+      "sessioninfo_files",
+      "file_location"
+    ],
+    "v": [
+      {
+        "t": "lgl",
+        "v": [
+          true
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "renv.lock",
+          "sessionInfo"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "4.3.1",
+          "4.2.0",
+          "4.2.3"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "renv.lock",
+          "sub/renv.lock"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 3,
+        "names": [
+          "file_name",
+          "package",
+          "version",
+          "source"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "renv.lock",
+              "renv.lock",
+              "renv.lock"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "dplyr",
+              "rlang",
+              "local"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "1.1.2",
+              "1.1.1",
+              "0.1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Repository",
+              "Repository",
+              null
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "session_info.txt",
+          "README.md"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "tests/codecheck/fixtures/pin/renv.lock",
+          "tests/codecheck/fixtures/pin/sub/renv.lock",
+          "tests/codecheck/fixtures/pin/nope.lock",
+          "tests/codecheck/fixtures/pin/session_info.txt",
+          "tests/codecheck/fixtures/pin/README.md",
+          "tests/codecheck/fixtures/pin/readme_plain.txt",
+          "tests/codecheck/fixtures/pin/sessionInfo_empty.txt"
+        ],
+        "names": [
+          "renv.lock",
+          "sub/renv.lock",
+          "missing/renv.lock",
+          "session_info.txt",
+          "README.md",
+          "readme_plain.txt",
+          "sessionInfo_empty.txt"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

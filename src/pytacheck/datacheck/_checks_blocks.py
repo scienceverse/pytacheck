@@ -8,6 +8,7 @@ block detectors are 0-based (R's are 1-based).
 from __future__ import annotations
 
 import math
+from collections import Counter
 from collections.abc import Mapping
 from typing import Any
 
@@ -18,16 +19,15 @@ from pytacheck._r.regex import grepl, sub
 from pytacheck.datacheck._checks_facets import _ACC_NAME_RE, _RT_NAME_RE
 from pytacheck.datacheck._checks_rvec import (
     RVec,
+    as_numeric_str,
     chr,
     dbl_chr,
     df_columns,
-    is_whole,
-    median,
     num,
     num_chr,
+    numeric_array,
     rvec,
     tolower,
-    unique,
 )
 
 __all__ = [
@@ -57,20 +57,43 @@ _COND_TASK_RE = (
 )
 
 
-def _numeric_values(x: Any) -> list[float | None] | None:
-    """The shared coercion step: a numeric vector as is, otherwise
-    ``as.numeric(as.character(x))``, rejected (``None``) when empty or more than
-    20% missing."""
-    v = rvec(x)
-    if v.is_numeric:
-        return list(v.values)
-    xn = num_chr(chr(v))
-    if not xn:
+def _numeric_array(x: Any) -> Any:
+    """*x* as a float64 array (NaN = NA) when it is an R numeric vector, else ``None``."""
+    got = numeric_array(x)
+    return None if got is None else got[0]
+
+
+def _coerce_text(v: RVec) -> Any:
+    """``as.numeric(as.character(x))`` of a non-numeric vector as a float64 array,
+    ``None`` when it is empty or more than 20% missing (the shared rejection).
+
+    Distinct strings are parsed once, and parsing stops as soon as the missing
+    share is known to exceed 20%.
+    """
+    import numpy as np
+
+    strs = chr(v)
+    n = len(strs)
+    if not n:
         return None
-    na_frac = sum(1 for f in xn if f is None or f != f) / len(xn)
-    if na_frac > 0.2:
-        return None
-    return xn
+    limit = 0.2 * n
+    parsed: dict[str | None, float | None] = {}
+    n_na = 0
+    for s, c in Counter(strs).items():
+        f = as_numeric_str(s)
+        parsed[s] = f
+        if f is None or f != f:
+            n_na += c
+            if n_na > limit:
+                return None
+    return np.array([np.nan if (f := parsed[s]) is None else f for s in strs], dtype="float64")
+
+
+def _values_array(x: Any) -> Any:
+    """The shared coercion step of the value classifiers: a numeric vector as is,
+    otherwise ``as.numeric(as.character(x))`` (``None`` when rejected)."""
+    a = _numeric_array(x)
+    return a if a is not None else _coerce_text(rvec(x))
 
 
 def _is_likert_item(x: Any) -> bool:
@@ -78,17 +101,19 @@ def _is_likert_item(x: Any) -> bool:
 
     Port of ``R/data_check_helpers.R::.is_likert_item()``.
     """
-    vals = _numeric_values(x)
-    if vals is None:
+    import numpy as np
+
+    a = _values_array(x)
+    if a is None:
         return False
-    xs = [f for f in vals if f is not None and f == f]
-    if len(xs) < 10:
+    a = a[~np.isnan(a)]
+    if a.size < 10:
         return False
-    if not all(is_whole(f) for f in xs):
+    if not np.all(a == np.round(a)):  # Inf counts as whole, as in R
         return False
-    u = unique(xs)
-    lo, hi = min(u), max(u)
-    return 3 <= len(u) <= 11 and (hi - lo) <= 12 and lo >= -5 and hi <= 100
+    u = np.unique(a)
+    lo, hi = float(u[0]), float(u[-1])
+    return bool(3 <= u.size <= 11 and (hi - lo) <= 12 and lo >= -5 and hi <= 100)
 
 
 def _looks_like_rt(x: Any) -> bool:
@@ -96,20 +121,43 @@ def _looks_like_rt(x: Any) -> bool:
 
     Port of ``R/data_check_helpers.R::.looks_like_rt()``.
     """
-    vals = _numeric_values(x)
-    if vals is None:
+    import numpy as np
+
+    a = _values_array(x)
+    if a is None:
         return False
-    xs = [f for f in vals if f is not None and math.isfinite(f)]
-    if len(xs) < 10:
+    a = a[np.isfinite(a)]
+    if a.size < 10:
         return False
-    if any(f < 0 for f in xs):
+    if np.any(a < 0):
         return False
-    u = unique(xs)
-    if len(u) < 10:
+    if np.unique(a).size < 10:
         return False
-    rng = max(xs) - min(xs)
-    med = median(xs)
-    return (rng > 12 and med > 20) or (any(not is_whole(f) for f in xs) and rng > 0.05 and med < 60)
+    rng = float(a.max() - a.min())
+    med = float(np.median(a))
+    return bool((rng > 12 and med > 20) or (np.any(a != np.round(a)) and rng > 0.05 and med < 60))
+
+
+def _logical_count(x: Any) -> int | None:
+    """The number of non-NA values when *x* is an R logical vector, else ``None``."""
+    if _numeric_array_dtype(x):
+        return None
+    v = rvec(x)
+    if v.kind != "logical":
+        return None
+    return sum(1 for b in v.values if b is not None)
+
+
+def _numeric_array_dtype(x: Any) -> bool:
+    """Is *x* a pandas / NumPy integer or float column (so not logical)?"""
+    if isinstance(x, RVec) or not hasattr(x, "dtype"):
+        return False
+    dt = x.dtype
+    return (
+        not isinstance(dt, pd.CategoricalDtype)
+        and not pd.api.types.is_bool_dtype(dt)
+        and (pd.api.types.is_integer_dtype(dt) or pd.api.types.is_float_dtype(dt))
+    )
 
 
 def _looks_like_accuracy(x: Any) -> bool:
@@ -117,19 +165,21 @@ def _looks_like_accuracy(x: Any) -> bool:
 
     Port of ``R/data_check_helpers.R::.looks_like_accuracy()``.
     """
-    v = rvec(x)
-    if v.kind == "logical":
-        return sum(1 for b in v.values if b is not None) >= 10
-    vals = _numeric_values(v)
-    if vals is None:
+    import numpy as np
+
+    n_lgl = _logical_count(x)
+    if n_lgl is not None:
+        return n_lgl >= 10
+    a = _values_array(x)
+    if a is None:
         return False
-    xs = [f for f in vals if f is not None and math.isfinite(f)]
-    if len(xs) < 10:
+    a = a[np.isfinite(a)]
+    if a.size < 10:
         return False
-    u = unique(xs)
-    if all(f in (0, 1) for f in u):
+    u = np.unique(a)
+    if np.all((u == 0) | (u == 1)):
         return True
-    return all(0 <= f <= 1 for f in xs) and len(u) > 2
+    return bool(np.all((a >= 0) & (a <= 1)) and u.size > 2)
 
 
 def _names(df: Any) -> list[str]:
@@ -160,15 +210,16 @@ def _detect_task_columns(df: Any) -> pd.DataFrame:
     key = [tolower(s) for s in nm]
     rt_name = [bool(b) for b in grepl(_RT_NAME_RE, key, perl=True)]
     acc_name = [bool(b) for b in grepl(_ACC_NAME_RE, key, perl=True)]
-    cols = [rvec(c) for c in df_columns(df)]
+    cols = df_columns(df)
     rt_val = [_looks_like_rt(c) for c in cols]
     acc_val = [_looks_like_accuracy(c) for c in cols]
     cond_name = [bool(b) for b in grepl(_COND_TASK_RE, key, perl=True)]
     cond_shape = []
     for c in cols:
-        v = [e for e in c.values if e is not None]
-        k = len(unique(v))
-        cond_shape.append(len(v) >= 10 and 2 <= k <= 8)
+        counts = Counter(rvec(c).values)
+        counts.pop(None, None)
+        n_obs = sum(counts.values())
+        cond_shape.append(n_obs >= 10 and 2 <= len(counts) <= 8)
     kind = [""] * len(nm)
     for i in range(len(nm)):
         if acc_name[i] and acc_val[i]:
@@ -195,16 +246,19 @@ def _is_accuracy_item(x: Any) -> bool:
 
     Port of ``R/data_check_helpers.R::.is_accuracy_item()``.
     """
-    v = rvec(x)
-    if v.kind == "logical":
-        return sum(1 for b in v.values if b is not None) >= 10
-    vals = _numeric_values(v)
-    if vals is None:
+    import numpy as np
+
+    n_lgl = _logical_count(x)
+    if n_lgl is not None:
+        return n_lgl >= 10
+    a = _values_array(x)
+    if a is None:
         return False
-    xs = [f for f in vals if f is not None and f == f]
-    if len(xs) < 10:
+    a = a[~np.isnan(a)]  # x[!is.na(x)]: infinite values stay
+    if a.size < 10:
         return False
-    return sorted(set(xs)) == [0, 1]
+    u = np.unique(a)
+    return bool(u.size == 2 and u[0] == 0 and u[1] == 1)
 
 
 def _scale_name_prefix(nm: Any) -> Any:

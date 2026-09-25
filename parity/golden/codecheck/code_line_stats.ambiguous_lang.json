@@ -1,0 +1,9 @@
+{
+  "id": "code_line_stats.ambiguous_lang",
+  "ok": false,
+  "error": "'arg' should be one of “R”, “Python”, “SPSS”, “SAS”, “Stata”, “Mplus”, “MATLAB”",
+  "warnings": [],
+  "value": null,
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

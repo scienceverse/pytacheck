@@ -1,0 +1,7 @@
+---
+jupyter: ir
+---
+
+```{python}
+x = 1
+```

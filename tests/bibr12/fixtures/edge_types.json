@@ -1,0 +1,121 @@
+{
+  "paper_id": "edge_types",
+  "schema_version": "12.0",
+  "source": {"file_name": "edge.pdf", "sha256": null, "input_format": "pdf", "extra_source_key": "x"},
+  "metadata": {
+    "title": "Edge \"quoted\" title </script>   café \u007f",
+    "abstract": {},
+    "keywords": "single keyword",
+    "doi": [],
+    "pmid": 12345678,
+    "pmcid": null,
+    "journal": ["J1", "J2"],
+    "volume": 12,
+    "issue": 100000.0,
+    "first_page": 1.5,
+    "last_page": "1.50",
+    "published": true,
+    "published_date": "2020",
+    "license": null,
+    "unknown_metadata": "ignored"
+  },
+  "author": [
+    {"author_id": 1, "given": "Ann", "family": "Lee", "corresponding": "true", "role": "writer", "credit_roles": null, "orcid": 1234},
+    {"author_id": "2", "given": null, "family": "Kim", "literal": "Kim, B.", "corresponding": 0, "role": ["a", null, 3], "credit_roles": []},
+    {"author_id": 2.7, "family": "Park", "corresponding": "yes", "email": ["x@y.z", "w@y.z"], "suffix": true},
+    {}
+  ],
+  "affiliation": [
+    {"affiliation_id": 1, "text": "Uni A", "author_ids": [1, "2", null, 2.5]},
+    {"affiliation_id": 2, "text": "Uni B", "author_ids": 3, "country": "NL"},
+    {"affiliation_id": 3, "text": "Uni C"}
+  ],
+  "funding": [
+    {"funding_id": 1, "funder": "NSF", "award_ids": ["A1", 2, 2.5]},
+    {"funding_id": 2, "funder": null, "award_ids": null}
+  ],
+  "text": [
+    {"text": "Body sentence (Lee, 2020) with t(28) = 2.1, p = .04.", "text_id": 1, "paragraph_id": 1, "section_id": 1, "page_number": 1, "formatted": "Body <i>sentence</i>", "extra_key": "ignored"},
+    {"text": 42, "text_id": 2.0, "paragraph_id": 1, "section_id": 1, "page_number": "2"},
+    {"text": "Figure 1. A caption.", "text_id": 3, "paragraph_id": 2, "section_id": null, "page_number": null, "formatted": null},
+    {"text": "Table 1. Means and SDs.", "text_id": 4, "paragraph_id": 3},
+    {"text": "1 A footnote with https://osf.io/abcde.", "text_id": 5, "paragraph_id": 4, "section_id": null},
+    {"text": "Second body sentence [2].", "text_id": 6, "paragraph_id": 5, "section_id": 2},
+    {"text": "Lee, A. (2020). A title. Journal, 1, 1-2.", "text_id": 7, "paragraph_id": 6, "section_id": 3},
+    {"text": "Kim, B. (2021). Another title.", "text_id": 8, "paragraph_id": 7, "section_id": 3}
+  ],
+  "section": [
+    {"section_id": 1, "header": "Intro", "level": "1", "parent_section_id": null, "section_type": "intro"},
+    {"section_id": 2, "header": null, "level": 2.0, "parent_section_id": 1, "section_type": "weird_type"},
+    {"section_id": 3, "header": "References", "level": 1, "section_type": "references"}
+  ],
+  "url": [
+    {"url_id": 1, "href": " https://osf.io/abc. ", "link_text": null, "text_id": 5, "start": 0, "end": 5},
+    {"url_id": "2", "href": "https://example.org", "text_id": 1}
+  ],
+  "bib": [
+    {"bib_id": 1, "text_id": 7, "bib_type": "journal_article", "doi": "10.1234/xyz", "title": "A title", "authors": ["Lee, A.", "Other"], "year": "2020a", "is_in_press": "false", "note": 5},
+    {"bib_id": 2, "text_id": 8, "year": 2021.0, "is_in_press": null, "year_suffix": "b", "authors": "Kim, B.", "title": "Another title"}
+  ],
+  "xref": [
+    {"xref_id": 1, "target_id": 1, "xref_type": "bib", "contents": "(Lee, 2020)", "text_id": 1, "start": 14, "end": 25},
+    {"xref_id": 2, "target_id": null, "xref_type": "figure", "contents": "Fig. 1", "text_id": 1},
+    {"xref_id": 3, "target_id": 2, "xref_type": "bib", "contents": "[2]", "text_id": 6},
+    {"xref_id": 4, "target_id": 1, "xref_type": "bibr", "contents": "old style", "text_id": 6},
+    {"xref_id": 5, "target_id": 1, "xref_type": "footnote", "contents": "1", "text_id": 1}
+  ],
+  "figure": [
+    {"figure_id": 1, "label": "Figure 1", "section_id": 1, "text_id": 3, "image": "data:image/png;base64,AAAA", "caption": "Figure 1. A caption.", "page_number": null}
+  ],
+  "table": [
+    {"table_id": 1, "label": "Table 1", "section_id": 1, "text_id": 4, "html": "<table></table>", "contents": [["M", "SD"], ["1.5", 2, null, true], [], "scalar", [["nested"]]], "caption": "Table 1. Means and SDs.", "page_number": 3},
+    {"table_id": 2, "contents": null},
+    {"table_id": 3, "contents": []}
+  ],
+  "footnote": [
+    {"footnote_id": 1, "label": null, "text_id": 5},
+    {"footnote_id": 2, "label": 2, "text_id": 5}
+  ],
+  "eq": [
+    {"eq_id": 1, "text_id": 1, "start": 30, "end": 41, "grp_id": 1, "verbatim": "t(28) = 2.1", "lhs": "t", "df": "28", "comp": "=", "rhs": "2.1"},
+    {"eq_id": 2, "df": "(28)"},
+    {"eq_id": 3, "df": 28},
+    {"eq_id": 4, "df": ""},
+    {"eq_id": 5, "df": null},
+    {"eq_id": 6, "df": "(1) and (2)"},
+    {"eq_id": 7, "df": "1, 2)"},
+    {"eq_id": 8, "df": "(1, 2"},
+    {"eq_id": 9, "df": 2.5},
+    {"eq_id": 10, "df": "1,\n2"},
+    {"eq_id": 11, "rhs": 0.05, "lhs": 1, "df": true},
+    {"eq_id": 12, "df": ["4"]},
+    {"eq_id": 13, "df": ["(5)"]},
+    {"eq_id": 14, "df": {"k": 6}},
+    {"eq_id": 15, "df": [null]}
+  ],
+  "metadata_match": [
+    {"service": "crossref", "service_id": "10.1234/xyz", "score": 0.97, "bib_type": "journal-article", "doi": "https://doi.org/10.1234/XYZ", "title": "Edge", "author": [{"given": "A", "family": "B", "orcid": null, "affiliation": ["U"]}, {"family": "C"}, null], "editor": null, "funder": [{"name": "F", "award_ids": ["1"]}], "year": "2020", "published_date": "2020-01"}
+  ],
+  "affiliation_match": [
+    {"affiliation_id": 1, "service": "ror", "service_id": "https://ror.org/x", "score": 1, "name": "Uni A", "country_code": "US"}
+  ],
+  "funding_match": [
+    {"funding_id": 1, "service": "ror", "service_id": "x", "score": null, "name": "NSF", "country_code": null, "funder_doi": "10.13039/100000001"}
+  ],
+  "bib_match": [
+    {"bib_id": 1, "service": "crossref", "service_id": "10.1234/xyz", "score": 0.5, "doi": "10.1234/xyz", "title": "A title", "author": [], "editor": [{"given": "E"}], "year": 2020},
+    {"bib_id": 2, "service": "openalex", "score": 1, "author": [{"given": null, "family": "X"}, {"given": 5, "family": "Y"}], "bib_type": "book"},
+    {"bib_id": 1, "service": "somewhere", "extra": "k", "score": 0}
+  ],
+  "extraction": {
+    "producer": {"name": "bibr", "version": 12, "build_sha": null},
+    "completed_at": "2026-01-02T03:04:05Z",
+    "settings": {},
+    "timings": {"total_seconds": 100000.0, "tiny": 1e-7, "pi": 3.141592653589793, "big": 3000000000, "neg": -0.0, "list": [1, 2.5, null, true, "s", [], {}], "nested": [[1, 2], [3]], "exp": 1E5, "int_like": 5.0},
+    "diagnostics": {"citation_linking": 0.9411764705882353, "str": "é \u0001 </x> \u007f \t", "empty_obj": {}, "empty_arr": []},
+    "warnings": [],
+    "custom_key": {"dropped": true},
+    "ocr": null
+  },
+  "extra_root_key": {"x": 1}
+}

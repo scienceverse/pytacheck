@@ -1,0 +1,50 @@
+{
+  "id": "code_line_stats.parse-errors_error_qmd",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "total_lines",
+      "comment_lines",
+      "code_lines",
+      "percent_comments",
+      "has_docstring"
+    ],
+    "v": [
+      {
+        "t": "int",
+        "v": [
+          21
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          2
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          18
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0.0952380952380952
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          null
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

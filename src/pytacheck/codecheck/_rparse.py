@@ -1613,12 +1613,13 @@ jsonlite::write_json(out, args[2], auto_unbox = TRUE, null = "null")
 """
 
 
-def rscript() -> str | None:
-    """The ``Rscript`` to use: ``PYTACHECK_RSCRIPT`` or ``Rscript`` on the ``PATH``."""
+def rscript(search_path: bool = True) -> str | None:
+    """The ``Rscript`` to use: ``PYTACHECK_RSCRIPT``, else (with *search_path*)
+    ``Rscript`` on the ``PATH``."""
     env = os.environ.get("PYTACHECK_RSCRIPT")
     if env and os.path.exists(env):
         return env
-    return shutil.which("Rscript")
+    return shutil.which("Rscript") if search_path else None
 
 
 def _parse_errors_r(texts: Sequence[Sequence[str | None]], script: str) -> list[str | None]:
@@ -1648,19 +1649,24 @@ def parse_errors(
 ) -> list[str | None]:
     """R's ``parse(text = x)`` error message (or ``None``) for each text.
 
-    *engine* is ``"r"`` (an Rscript, one process for all texts), ``"python"``
-    (this module's port) or ``None``: ``PYTACHECK_R_PARSER`` if set, else R when
-    an Rscript is found, else Python.
+    *engine* ``"python"`` uses this module's port of R 4.5.3's parser; ``"r"``
+    runs R's own parser, all texts in one ``Rscript`` process
+    (``PYTACHECK_RSCRIPT``, else ``Rscript`` on the ``PATH``), falling back to
+    Python when no R is found. ``None`` (default) takes ``PYTACHECK_R_PARSER``
+    if set, else R when the reference R is configured (``PYTACHECK_RSCRIPT``),
+    else Python -- an arbitrary ``Rscript`` on the ``PATH`` may be a different
+    R version whose messages differ.
     """
     engine = engine or os.environ.get("PYTACHECK_R_PARSER") or None
-    if engine != "python":
+    if engine is None:
+        engine = "r" if rscript(search_path=False) is not None else "python"
+    if engine == "r":
         script = rscript()
         if script is not None:
             try:
                 return _parse_errors_r(texts, script)
             except (OSError, subprocess.SubprocessError, ValueError):
-                if engine == "r":
-                    raise
+                pass
     return [_parse_error_py(t) for t in texts]
 
 

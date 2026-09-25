@@ -47,7 +47,11 @@ def _info_frame(info: Any) -> pd.DataFrame:
     """
     if isinstance(info, list):
         record = info[0] if info else {}
+        # R: info$keywords of the data frame jsonlite makes is the column, so
+        # an array value is wrapped in one more list (list(c("a", "b")))
         keywords: Any = record.get("keywords")
+        if isinstance(keywords, list):
+            keywords = [keywords]
         row = dict(record)
     elif isinstance(info, Mapping):
         row = dict(info)
@@ -88,6 +92,32 @@ def _union_columns(records: Sequence[Mapping[str, Any]]) -> list[str]:
         for k in r:
             order.setdefault(k, None)
     return list(order)
+
+
+def _is_record_list(v: Any) -> bool:
+    return isinstance(v, list) and all(isinstance(e, Mapping) for e in v)
+
+
+def _empty_record_frames(records: list[dict[str, Any]], columns: Sequence[str]) -> None:
+    """jsonlite's simplification of a column of arrays of objects, in place.
+
+    When every row holds an array whose elements are all objects (an empty
+    array included) and one of them is not empty, jsonlite makes each cell a
+    data frame, so an empty array is a 0 x 0 data frame, not ``list()``. The
+    non-empty cells stay lists of records (the same data to the parity
+    harness and to pytacheck's code).
+    """
+    for col in columns:
+        cells = [r.get(col, None) for r in records]
+        if (
+            cells
+            and all(_is_record_list(v) for v in cells)
+            and any(len(v) for v in cells)
+            and any(not len(v) for v in cells)
+        ):
+            for r in records:
+                if not r[col]:
+                    r[col] = pd.DataFrame()
 
 
 def from_bibr(data: Mapping[str, Any] | Any, include_images: bool = False) -> Paper:
@@ -148,13 +178,16 @@ def _from_bibr_legacy(data: Mapping[str, Any], include_images: bool) -> Paper:
                         list(row) if isinstance(row, list) else row for row in contents
                     ]
             columns = [c for c in columns if c != "caption"]
+        _empty_record_frames(records, columns)
         p._set_raw(name, records, columns)
 
     bib_match = data.get("bib_match")
     if bib_match:
         records = [dict(r) for r in bib_match]
+        columns = _union_columns(records)
+        _empty_record_frames(records, columns)
         p._tables["bib_match"] = None
-        p._set_raw("bib_match", records, _union_columns(records))
+        p._set_raw("bib_match", records, columns)
 
     known = {"paper_id", "info", "bib_match", *_BIBR_TABLES}
     p.extra.update({k: v for k, v in data.items() if k not in known})
@@ -316,8 +349,11 @@ def paper_write(
         ]
     p = paper
     name = str(file_name) if file_name is not None else str(p.paper_id)
+    # R: gsub("\\.(json|zip)$", "", file_name) drops one suffix
     for suffix in (".json", ".zip"):
-        name = name.removesuffix(suffix)
+        if name.endswith(suffix):
+            name = name.removesuffix(suffix)
+            break
     path = save_dir / f"{name}.json"
     if schema_version == "auto":
         from pytacheck.io.bibr12 import is_bibr12

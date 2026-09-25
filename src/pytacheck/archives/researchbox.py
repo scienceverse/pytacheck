@@ -248,25 +248,9 @@ def _rbox_info(rb_url: Any, pb: Any = None) -> pd.DataFrame:
 
 def _cache_subdir(rb_url: str) -> str:
     """``.repo_cache_subdir(rb_url)`` (R/repo-download.R)."""
-    try:
-        from pytacheck.archives.download import _repo_cache_subdir
-    except ImportError:  # the repo-download port may not be available yet
-        _repo_cache_subdir = None
-    if _repo_cache_subdir is not None:
-        return str(_repo_cache_subdir(rb_url))
-    from pytacheck._r import gsub
-    from pytacheck.archives.cache import _metacheck_cache_subdir
-    from pytacheck.utils import get_option
+    from pytacheck.archives.download import _repo_cache_subdir
 
-    key = gsub("^https?://", "", rb_url)
-    key = gsub("[^A-Za-z0-9._-]+", "_", key)
-    key = gsub("^_+|_+$", "", key)
-    if not key:
-        key = "unknown"
-    root = _metacheck_cache_subdir(
-        ".metacheck_repo_cache", override=get_option("metacheck.repo_cache.dir")
-    )
-    return f"{root}/{key}"
+    return str(_repo_cache_subdir(rb_url))
 
 
 def _list_files(root: str) -> list[str]:

@@ -1,0 +1,32 @@
+{
+  "id": "code_remove_comments.my_notebooks_ir_kernel_name_ipynb",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "{",
+      " \"cells\": [",
+      "  {",
+      "   \"cell_type\": \"code\",",
+      "   \"execution_count\": null,",
+      "   \"metadata\": {},",
+      "   \"outputs\": [],",
+      "   \"source\": \"library(ggplot2)\\n%%R\\n!ls\\n\"",
+      "  }",
+      " ],",
+      " \"metadata\": {",
+      "  \"kernelspec\": {",
+      "   \"name\": \"ir\",",
+      "   \"language\": \"IR\"",
+      "  }",
+      " },",
+      " \"nbformat\": 4,",
+      " \"nbformat_minor\": 5",
+      "}"
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

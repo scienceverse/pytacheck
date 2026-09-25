@@ -1,0 +1,108 @@
+{
+  "id": "code_version_pin_check.backslash_names",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "pinned",
+      "mechanisms",
+      "r_versions",
+      "renv_files",
+      "renv_packages",
+      "sessioninfo_files",
+      "file_location"
+    ],
+    "v": [
+      {
+        "t": "lgl",
+        "v": [
+          true
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "renv.lock",
+          "sessionInfo"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "4.3.1"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "sub\\renv.lock"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 3,
+        "names": [
+          "file_name",
+          "package",
+          "version",
+          "source"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "sub\\renv.lock",
+              "sub\\renv.lock",
+              "sub\\renv.lock"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "dplyr",
+              "rlang",
+              "local"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "1.1.2",
+              "1.1.1",
+              "0.1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Repository",
+              "Repository",
+              null
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "docs\\README.md"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "tests/codecheck/fixtures/pin/renv.lock",
+          "tests/codecheck/fixtures/pin/README.md"
+        ],
+        "names": [
+          "sub\\renv.lock",
+          "docs\\README.md"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

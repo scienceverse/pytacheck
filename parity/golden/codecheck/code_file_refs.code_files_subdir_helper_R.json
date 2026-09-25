@@ -1,0 +1,12 @@
+{
+  "id": "code_file_refs.code_files_subdir_helper_R",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": []
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

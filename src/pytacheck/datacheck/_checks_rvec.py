@@ -37,6 +37,7 @@ __all__ = [
     "is_whole",
     "median",
     "num",
+    "numeric_array",
     "quantile7",
     "r_colon",
     "row_as_character",
@@ -390,6 +391,8 @@ _HEX = compile_r(
     r"([+-]?)0[xX]((?:[0-9a-fA-F]+\.?[0-9a-fA-F]*|\.[0-9a-fA-F]+)(?:[pP][+-]?[0-9]+)?)", perl=True
 )
 _SPECIAL = {"nan": math.nan, "inf": math.inf, "infinity": math.inf}
+#: what a parseable number can start with (sign, digit, point, NA / NaN / Inf)
+_NUM_START = frozenset("+-.0123456789nNiI")
 
 
 @functools.lru_cache(maxsize=65536)
@@ -403,7 +406,7 @@ def as_numeric_str(s: str | None) -> float | None:
     if s is None:
         return None
     body = s.strip(_C_SPACE)
-    if not body or body == "NA":
+    if not body or body == "NA" or body[0] not in _NUM_START:
         return None
     if _DECIMAL.fullmatch(body):
         return float(body)
@@ -457,6 +460,38 @@ def _posix_seconds(d: Any) -> float:
             return float(d.replace(tzinfo=dt.UTC).timestamp())
         return float(ts())
     return float("nan")
+
+
+def numeric_array(x: Any) -> tuple[Any, bool] | None:
+    """*x* as ``(float64 array with NaN for NA, is_integer)`` when ``is.numeric(x)``.
+
+    ``None`` for any other R type. Integer and float pandas / NumPy columns are
+    converted without a Python loop; anything else goes through :func:`rvec`.
+    """
+    import numpy as np
+    import pandas as pd
+
+    if not isinstance(x, RVec) and hasattr(x, "dtype") and hasattr(x, "__len__"):
+        dt = x.dtype
+        if (
+            not isinstance(dt, pd.CategoricalDtype)
+            and not pd.api.types.is_bool_dtype(dt)
+            and (pd.api.types.is_integer_dtype(dt) or pd.api.types.is_float_dtype(dt))
+        ):
+            arr = x.array if isinstance(x, pd.Series | pd.Index) else x
+            if not isinstance(arr, np.ndarray) and hasattr(arr, "to_numpy"):
+                a = arr.to_numpy(dtype="float64", na_value=np.nan)
+            else:
+                a = np.asarray(arr, dtype="float64")
+            is_int = pd.api.types.is_integer_dtype(dt) and (
+                a.size == 0 or float(np.nanmax(np.abs(a), initial=0.0)) <= _INT_MAX
+            )
+            return a, bool(is_int)
+    v = rvec(x)
+    if not v.is_numeric:
+        return None
+    a = np.array([np.nan if e is None else e for e in v.values], dtype="float64")
+    return a, v.kind == "integer"
 
 
 def num_chr(values: Iterable[str | None]) -> list[float | None]:
@@ -578,9 +613,11 @@ def median(values: Sequence[float]) -> float:
     return (s[h - 1] + s[h]) / 2
 
 
-def quantile7(values: Sequence[float], probs: Sequence[float]) -> list[float]:
+def quantile7(
+    values: Sequence[float], probs: Sequence[float], is_sorted: bool = False
+) -> list[float]:
     """``stats::quantile(x, probs, names = FALSE)`` (type 7) of non-NA numbers."""
-    x = sorted(values)
+    x = values if is_sorted else sorted(values)
     n = len(x)
     out = []
     for p in probs:

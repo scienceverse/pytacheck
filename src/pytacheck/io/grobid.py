@@ -989,14 +989,21 @@ def _extract_eq(paper: Paper) -> pd.DataFrame:
     return eq.reset_index(drop=True)
 
 
-def _grobid_to_bibr(xml_path: PathLikeStr, pb: Any = None) -> Paper:
+def _grobid_to_bibr(xml_path: PathLikeStr, pb: Any = None, schema_version: Any = None) -> Paper:
     """Port of ``R/import-grobid.R::.grobid_to_bibr()``: one TEI XML file to a paper.
 
+    ``schema_version=None`` (the default, as in metacheck) converts as
+    metacheck always has; ``"12.0"`` makes a paper in bibr export schema 12.x
+    form (:func:`pytacheck.io.grobid_bibr12._grobid_to_bibr12`).
     ``pb`` (R's progress bar) is accepted for signature compatibility and ignored.
     """
     from pytacheck.papers.io import coerce_paper
 
     del pb
+    if schema_version is not None:
+        from pytacheck.io.grobid_bibr12 import _grobid_to_bibr12
+
+        return _grobid_to_bibr12(xml_path, schema_version)
 
     path_str = os.fspath(xml_path)
     path = Path(path_str)
@@ -1224,6 +1231,7 @@ def grobid_to_bibr(
     xml_path: PathLikeStr | Sequence[PathLikeStr],
     save_path: PathLikeStr | None = ".",
     crossref_lookup: bool = False,
+    schema_version: str | None = "12.0",
 ) -> Any:
     """Port of ``R/import-grobid.R::grobid_to_bibr()``: convert Grobid TEI XML to papers.
 
@@ -1232,10 +1240,20 @@ def grobid_to_bibr(
     xml_path:
         A TEI XML file, a list of them, or a directory of ``.xml`` files.
     save_path:
-        Directory to save the bibr JSON files in; ``None`` returns paper
-        objects instead.
+        Directory to save the JSON files in; ``None`` returns paper objects
+        instead.
     crossref_lookup:
         Whether to add a ``bib_match`` table from CrossRef.
+    schema_version:
+        ``"12.0"`` (the default) makes papers in bibr export schema 12.x form
+        and saves bibr 12.0 files (see :func:`pytacheck.paper_write`). Their
+        source is the PDF Grobid read when it is next to the XML
+        (``published.pdf`` for ``published.pdf.tei.xml`` or ``published.xml``),
+        else the XML file. ``None`` converts as metacheck does by default (its
+        older paper format, saved as a paper object).
+
+        Deliberate difference: metacheck's default is ``NULL`` (the older
+        format); bibr export schema 12.0 is the schema pytacheck targets.
 
     Returns
     -------
@@ -1243,6 +1261,11 @@ def grobid_to_bibr(
     :class:`PaperList` (failed files dropped). Otherwise the saved JSON
     path(s) (``None`` for files that failed).
     """
+    if schema_version is not None and (
+        not isinstance(schema_version, str) or schema_version != "12.0"
+    ):
+        raise ValueError('schema_version must be None or "12.0"')
+
     if isinstance(xml_path, str | PathLike):
         paths: list[PathLikeStr] = [xml_path]
     elif isinstance(xml_path, Sequence):
@@ -1256,7 +1279,7 @@ def grobid_to_bibr(
     results: list[Any] = []
     for xp in paths:
         try:
-            p: Paper | None = _grobid_to_bibr(xp)
+            p: Paper | None = _grobid_to_bibr(xp, None, schema_version)
         except Exception as exc:
             errors += 1
             logger("grobid_to_bibr", {"xml_path": os.fspath(xp), "error": str(exc)})
@@ -1276,7 +1299,7 @@ def grobid_to_bibr(
         from pytacheck.papers.io import paper_write
 
         file_name = gsub(r"\.xml$", "", Path(xp).name)
-        results.append(str(paper_write(p, file_name, save_path)))
+        results.append(str(paper_write(p, file_name, save_path, schema_version)))
 
     if errors > 0:
         e = "" if errors == 1 else f"1:{errors}"

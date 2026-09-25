@@ -1,0 +1,31 @@
+{
+  "id": "code_remove_comments.sample.R",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "library(dplyr); library(tidyr)",
+      "require('x')",
+      "x <- read.csv('a#b.csv') ",
+      "y <- 'no # here'",
+      "setwd('D:/proj') ",
+      "install.packages(c('a', 'b'))",
+      "utils::install.packages(\"z\")",
+      "message('run setwd(x) first')",
+      "z <- \"C:\\\\Users\\\\me\\\\f.csv\"",
+      "pacman::p_load(ggplot2, readr)",
+      "w <- readr::read_csv(\"sub/f.csv\")",
+      "v <- sprintf('%.2f', 1)",
+      "save(x, file = 'out.RData')",
+      "write.csv(x, 'out.csv')",
+      "SETWD('/Users/me/x')",
+      "src <- source('f.R')",
+      "p <- '/login'",
+      "q <- '~/data/x.csv'"
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

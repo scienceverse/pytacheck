@@ -1,0 +1,41 @@
+{
+  "id": "code_read.parse-errors_ok_qmd",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "---",
+      "title: \"No Parse Errors\"",
+      "format: html",
+      "---",
+      "",
+      "This is not executable R code:",
+      "",
+      "``` r",
+      "library(dplyr",
+      "",
+      "a <- 1 + 1",
+      "```",
+      "",
+      "But this is:",
+      "",
+      "```{r}",
+      "# this should not give a parse error",
+      "# library(dplyr",
+      "",
+      "a <- 1 + 1",
+      "```",
+      "",
+      "This is not detected yet as it's python:",
+      "",
+      "```{python}",
+      "# also a parse error",
+      "import numpy s np",
+      "```"
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

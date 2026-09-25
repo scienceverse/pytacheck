@@ -1,0 +1,1 @@
+structure(list(method = "GET", url = "https://mock.example.org/zips/refused.zip", status_code = 403L, headers = structure(list(`Content-Type` = "application/zip"), class = "httr2_headers"), body = as.raw(c(0x46, 0x6f, 0x72, 0x62, 0x69, 0x64, 0x64, 0x65, 0x6e)), timing = NULL, cache = new.env(parent = emptyenv())), class = "httr2_response")

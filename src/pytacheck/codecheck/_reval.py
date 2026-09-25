@@ -224,7 +224,7 @@ _DATASETS = frozenset(
     state.division state.name state.region state.x77 sunspot.m2014 sunspot.month sunspot.year
     sunspots swiss Theoph Titanic ToothGrowth treering trees UCBAdmissions UKDriverDeaths UKgas
     USAccDeaths USArrests UScitiesD USJudgeRatings USPersonalExpenditure uspop VADeaths volcano
-    warpbreaks women WorldPhones WWWusage""".split()
+    warpbreaks women WorldPhones WWWusage""".split()  # noqa: SIM905
 )
 
 _PLATFORM = {

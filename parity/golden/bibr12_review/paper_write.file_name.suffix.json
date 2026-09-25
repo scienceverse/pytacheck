@@ -1,0 +1,16 @@
+{
+  "id": "paper_write.file_name.suffix",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "a.zip.json",
+      "b.json.json",
+      "c.JSON.json"
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}
