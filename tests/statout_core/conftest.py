@@ -26,6 +26,19 @@ def rscript() -> str:
     return exe
 
 
+@pytest.fixture(scope="session")
+def reference_rscript() -> str:
+    """The R reference (``PYTACHECK_RSCRIPT``) for tests compared with values it recorded.
+
+    Another R build (a different version or BLAS) can differ in the last digit of
+    fitted estimates, so these tests do not fall back to the ``Rscript`` on PATH.
+    """
+    exe = os.environ.get("PYTACHECK_RSCRIPT")
+    if not exe:
+        pytest.skip("PYTACHECK_RSCRIPT (the R reference) is not set")
+    return exe
+
+
 @pytest.fixture
 def stato_vocab(monkeypatch: pytest.MonkeyPatch) -> None:
     """Make the capture helpers buildable even before ``stato_map`` is ported."""

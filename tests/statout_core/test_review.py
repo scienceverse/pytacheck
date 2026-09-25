@@ -211,8 +211,9 @@ def test_echo_chunks_first_matching_line() -> None:
 # -- capture runner == metacheck's callr runner ------------------------------------
 
 
+@pytest.mark.r
 @pytest.mark.parametrize("script", ["review_adversarial", "review_capture"])
-def test_capture_runner_matches_metacheck(script: str, rscript: str, stato: None) -> None:
+def test_capture_runner_matches_metacheck(script: str, reference_rscript: str, stato: None) -> None:
     """The Python capture runner reproduces metacheck's callr runner.
 
     ``data/review_capture_expected/<script>.json`` holds what metacheck's own
@@ -234,7 +235,7 @@ def test_capture_runner_matches_metacheck(script: str, rscript: str, stato: None
         (DATA / "review_capture_expected" / f"{script}.json").read_text(encoding="utf-8")
     )
     path = DATA / f"{script}.R"
-    res = _r_capture_run(path, rscript=rscript)
+    res = _r_capture_run(path, rscript=reference_rscript)
     assert res.stdout + "\n" == expected["stdout"]
     if expected["error"] is None:
         assert res.error is None

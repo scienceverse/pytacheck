@@ -453,9 +453,10 @@ def cmd_version(_: argparse.Namespace) -> int:
     from pytacheck.io.bibr import bibr_version
 
     print(f"pytacheck {__version__}")
-    print(
-        f"metacheck parity: {UPSTREAM['version']} ({UPSTREAM['branch']}@{UPSTREAM['commit'][:10]})"
-    )
+    pin = f"{UPSTREAM['branch']}@{UPSTREAM['commit'][:10]}"
+    if UPSTREAM.get("pull_request"):
+        pin += f" + #{UPSTREAM['pull_request']}"
+    print(f"metacheck parity: {UPSTREAM['version']} ({pin})")
     print(f"bibr: {bibr_version() or 'not installed'}")
     return 0
 
