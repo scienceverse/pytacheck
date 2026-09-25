@@ -5,7 +5,7 @@ pytacheck is a Python rewrite of [metacheck](https://github.com/scienceverse/met
 metacheck's, nothing invented, and a leaner, faster code base.** Accuracy is validated
 against the real R package: every ported function and module is checked against
 golden outputs produced by running metacheck (see [PARITY.md](PARITY.md)), and every
-difference is either an agreement within tolerance or a documented divergence. This
+difference is either within the margins of section 1 or a documented divergence. This
 document is the rulebook for humans and AI agents porting code, including the
 automated upstream-sync workflow.
 
@@ -17,7 +17,7 @@ recorded in `parity/UPSTREAM.toml` and `src/pytacheck/_version.py`.
 reading and writing 12.x, Grobid TEI to 12.0), which pytacheck targets before it is
 merged. The pin records it as `pull_request = 423` and `base_commit`, the `dev` commit
 the pull request is built on. The R reference is installed from the pinned commit, so
-the pull request's behaviour is the behaviour to match. Until it is merged, the
+pytacheck is compared with the pull request's behaviour. Until it is merged, the
 upstream-sync workflow follows the pull request's head (`refs/pull/423/head`) and warns
 about `dev` commits the pull request does not contain yet. Those commits are not in the
 reference and are not ported. Once the pull request is merged into `dev`, the workflow
@@ -388,7 +388,7 @@ Cross-lane rules:
   `text/extract.py`), `stats._rmath.as_numeric` (`archives/download.py`,
   `archives/zip_peek.py`), `datacheck.files._r_as_numeric` (`archives/dryad.py`,
   `archives/dataverse.py`), `datacheck._strip_llm_wrapper` (`modules/_power.py`,
-  `modules/_codebook.py`) and the `datacheck._files_rdata` API (`io/corpus.py`,
+  `modules/_codebook.py`) and the `datacheck._files_rdata` API (`repro/docker.py`,
   `repro/tables.py`).
 * **Consolidate private helpers in your own files.** Replace a file's private
   `_is_na`/`_chr`/`_dollar`/`as_numeric` copies with `pytacheck._values` when you

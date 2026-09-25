@@ -60,12 +60,14 @@ def loads(data: str | bytes | bytearray | memoryview) -> Any:
     """Parse a JSON document into dicts, lists, strings, numbers, booleans and ``None``.
 
     Raises :class:`JSONDecodeError` (a ``ValueError``) when *data* is not
-    valid JSON.
+    valid JSON, and ``TypeError`` when it is not text or bytes.
     """
     if isinstance(data, str):
         data = data.removeprefix(_BOM)
-    else:
+    elif isinstance(data, bytes | bytearray | memoryview):
         data = bytes(data).removeprefix(_BOM_UTF8)
+    else:  # bytes(5) would be five NUL bytes, bytes([1]) one byte
+        raise TypeError(f"JSON must be str or bytes, not {type(data).__name__}")
     try:
         return orjson.loads(data)
     except orjson.JSONDecodeError as exc:

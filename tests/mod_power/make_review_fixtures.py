@@ -18,7 +18,9 @@ Provider replies are chosen by a substring of the paragraph (see ``REPLIES``):
 error status), ``fallback`` answers the prompt-based one (the reply text,
 or an ``int``). Mock paths are computed by running the Python port with a
 recording router, as ``make_fixtures.py`` does; a request whose body differs
-from R's makes the R golden fail (check that every golden is ``ok``).
+from R's makes the R golden fail (check that every golden is ``ok``, except the
+cases where metacheck itself fails: the empty paper list, the rejected seed, model
+and max_calls settings, and the partly failing fallback).
 """
 
 from __future__ import annotations

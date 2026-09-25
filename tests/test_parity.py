@@ -94,6 +94,13 @@ def test_tiers_split_the_cases() -> None:
     assert {"mod_marginal/marginal.demo", "text/text_search.demo.significant"} <= {
         c.key for c in realistic
     }
+    # every input of a tier-1 case is a file of the corpus that exists
+    corpus = pcases.load_corpus()
+    for case in realistic:
+        if "tier" not in case.spec and corpus.override(case.key) is None:
+            inputs = pcases.case_inputs(case.spec, corpus)
+            assert inputs.paths and not inputs.synthetic, case.key
+            assert all((ROOT / pcases._normpath(p)).exists() for p in inputs.paths), case.key
 
 
 def _reference_r() -> str:
@@ -265,7 +272,7 @@ def test_case_files_reject_bad_compare_options(tmp_path, monkeypatch) -> None:
         "    compare: {error: exact}\n"
     )
     monkeypatch.setattr(pcases, "CASES_DIR", tmp_path)
-    with pytest.raises(ValueError, match="harness.yaml: harness/c: compare: error is gone"):
+    with pytest.raises(ValueError, match=r"harness\.yaml: harness/c: compare: error is gone"):
         load_cases("harness")
 
 
@@ -296,7 +303,9 @@ def test_catch_leaves_skips_and_network_use_alone(tmp_path, monkeypatch) -> None
     golden = {"ok": True, "error": None, "value": canonical({"error": True})}
     spec = {
         "py": "parity.pyhelpers.github_readme_probe",
-        "args": {"repo": {"$catch": {"$expr": {"py": "__import__('socket').getaddrinfo('x.org', 443)"}}}},
+        "args": {
+            "repo": {"$catch": {"$expr": {"py": "__import__('socket').getaddrinfo('x.org', 443)"}}}
+        },
     }
     status, problems, _ = check_case(_golden_case(tmp_path, monkeypatch, golden, spec))
     assert status == "error"
@@ -315,9 +324,9 @@ def test_r_runner_catch(tmp_path: Path) -> None:
     cases.write_text(
         "area: harness\ncases:\n"
         "  - id: caught\n    r: identity\n"
-        '    args: {x: {$list: [{$catch: {$expr: {r: "stop(\'boom\')"}}}, {$catch: {$chr: [a]}}]}}\n'
+        "    args: {x: {$list: [{$catch: {$expr: {r: \"stop('boom')\"}}}, {$catch: {$chr: [a]}}]}}\n"
         "  - id: uncaught\n    r: identity\n"
-        '    args: {x: {$expr: {r: "stop(\'boom\')"}}}\n'
+        "    args: {x: {$expr: {r: \"stop('boom')\"}}}\n"
     )
     env = {**os.environ, "LANG": "C.UTF-8", "LC_ALL": "C.UTF-8", "TZ": "UTC"}
     subprocess.run(
@@ -344,12 +353,27 @@ def _frame(**cols: list) -> dict:
 
 
 def test_presence_compares_only_whether_values_are_there() -> None:
-    r = {"t": "list", "names": ["repos"], "v": [_frame(url=["a", "b", "c"], repo_error=[
-        "ℹ In argument: `x`.\nCaused by error", None, ""])]}
-    same = {"t": "list", "names": ["repos"], "v": [_frame(url=["a", "b", "c"], repo_error=[
-        "invalid or inaccessible OSF link", None, None])]}
-    missing = {"t": "list", "names": ["repos"], "v": [_frame(url=["a", "b", "c"], repo_error=[
-        None, "x", None])]}
+    r = {
+        "t": "list",
+        "names": ["repos"],
+        "v": [
+            _frame(
+                url=["a", "b", "c"], repo_error=["ℹ In argument: `x`.\nCaused by error", None, ""]
+            )
+        ],
+    }
+    same = {
+        "t": "list",
+        "names": ["repos"],
+        "v": [
+            _frame(url=["a", "b", "c"], repo_error=["invalid or inaccessible OSF link", None, None])
+        ],
+    }
+    missing = {
+        "t": "list",
+        "names": ["repos"],
+        "v": [_frame(url=["a", "b", "c"], repo_error=[None, "x", None])],
+    }
     assert compare(r, same, Options())  # the texts differ
     for presence in (["repo_error"], ["repos.repo_error"]):
         options = Options.from_case({"presence": presence})
@@ -363,8 +387,11 @@ def test_presence_compares_only_whether_values_are_there() -> None:
         assert comparable(same, options) == comparable(r, options)
         assert comparable(missing, options) != comparable(r, options)
     # other columns are compared as always, and so is a column of another name
-    other = {"t": "list", "names": ["repos"], "v": [_frame(url=["a", "x", "c"], repo_error=[
-        "?", None, None])]}
+    other = {
+        "t": "list",
+        "names": ["repos"],
+        "v": [_frame(url=["a", "x", "c"], repo_error=["?", None, None])],
+    }
     assert compare(r, other, Options.from_case({"presence": ["repo_error"]})) == [
         "repos.url[1]: R='b' py='x'"
     ]
@@ -801,7 +828,7 @@ def corpus(tmp_path):
         "[[override]]\ntier = 2\n"
         'reason = "synthetic mocks"\ncases = ["area/mocked.*"]\n'
     )
-    return pcases.load_corpus(toml)
+    return pcases.load_corpus(toml, root=None)  # the globs alone: no file need exist
 
 
 @pytest.mark.parametrize(
@@ -849,6 +876,16 @@ def corpus(tmp_path):
             },
             1,
         ),
+        # a constant or a temporary path is an argument, not an input
+        ("text", {"args": {"p": {"$paper": "demo"}, "n": {"$expr": {"r": "Inf"}}}}, 1),
+        ("text", {"args": {"p": {"$paper": "demo"}, "f": {"$expr": {"r": "tempfile()"}}}}, 1),
+        ("text", {"args": {"p": {"$paper": "demo"}, "n": {"$expr": {"r": "Inf + x"}}}}, 2),
+        # a test paper is synthetic, whatever real inputs the code also names
+        (
+            "text",
+            {"args": {"x": {"$expr": {"r": "f(demopaper(), test_paper('a', 'https://x'))"}}}},
+            2,
+        ),
         # explicit tiers
         ("area", {"id": "mocked.x", "args": {"paper": {"$paper": "demo"}}}, 2),
         ("text_review", {"id": "y", "args": {}, "tier": {"level": 1, "reason": "real"}}, 1),
@@ -856,6 +893,19 @@ def corpus(tmp_path):
 )
 def test_classify_tier(corpus, area: str, spec: dict, tier: int) -> None:
     assert pcases.classify_tier(area, {"id": "c", **spec}, corpus) == tier
+
+
+def test_corpus_inputs_must_exist(tmp_path) -> None:
+    (tmp_path / "corpus.toml").write_text('[corpus]\nfiles = ["data/**"]\n')
+    (tmp_path / "data").mkdir()
+    (tmp_path / "data" / "real.csv").write_text("a\n1\n")
+    corpus = pcases.load_corpus(tmp_path / "corpus.toml", root=tmp_path)
+    assert "data/real.csv" in corpus
+    assert "data/does_not_exist.csv" not in corpus  # a missing-file case is an edge case
+    spec = {"id": "c", "args": {"a": {"$file": "data/real.csv"}}}
+    assert pcases.classify_tier("x", spec, corpus) == 1
+    spec["args"]["b"] = {"$file": "data/does_not_exist.csv"}
+    assert pcases.classify_tier("x", spec, corpus) == 2
 
 
 def test_explicit_tiers_need_a_reason(corpus) -> None:
@@ -1036,6 +1086,13 @@ def test_lock_pins_values_where_r_fails(tmp_path, monkeypatch, lock_dir) -> None
     golden["error"] = "another message"
     (tmp_path / "harness" / "c.json").write_text(json.dumps(golden))
     assert check_case(case)[0] == "xfail"
+    # a value where R fails is a documented fix or decision: a quirk or a type
+    # detail cannot explain it, and it is not locked
+    for kind in ("c_quirk", "type_detail", "r_nondeterministic"):
+        case.spec = _copy_case(["fixed"], {"kind": kind, "reason": "no"})
+        res = run_case(case, {})
+        assert (res.status, res.fingerprint) == ("fail", None)
+        assert f"not {kind}" in res.problems[0]
     # Python raising where R returned a value is locked as the exception type
     golden = _chr_golden("a")
     spec = {**_copy_case(["b"], _MARK), "args": {"x": {"$expr": {"py": "{}['k']"}}}}
@@ -1274,4 +1331,11 @@ def test_no_network_refuses_proxies_and_local_ports(monkeypatch) -> None:
         with pytest.raises(ConnectionRefusedError), socket.socket() as s:
             s.connect(("127.0.0.1", 10))  # another local port: closed, not network use
         assert socket.getaddrinfo("localhost", 80)
-    assert tried == ["connect to ('127.0.0.1', 9) (a proxy)"]
+        with pytest.raises(NetworkUse), socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:
+            s.sendto(b"\0" * 12, ("192.0.2.1", 53))  # a DNS query of its own
+    assert tried == [
+        "connect to ('127.0.0.1', 9) (a proxy)",
+        "send a datagram to ('192.0.2.1', 53)",
+    ]
+    with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:  # restored
+        assert s.sendto(b"x", ("127.0.0.1", 9)) == 1

@@ -45,7 +45,15 @@ Every difference from R's goldens is marked, never hidden:
 - Other differences use the other kinds of `docs/PORTING.md` section 1, with a reason (a
   D-entry for `better_logic` and `deliberate`; `c_quirk` and `type_detail` only on
   synthetic cases, never on realistic ones).
-- A marked case that now matches R means upstream fixed the bug: remove its mark and say so.
+- Marks of generated cases go in the `parity/divergences/*.yaml` file of the area's lane
+  (`docs/PORTING.md`, section 6); hand-written case files carry them inline.
+- A marked case that now matches R (`xpass`) means upstream fixed the bug: remove its mark
+  and say so.
+- Every marked case is locked (`parity/lock/<area>.json`, see `docs/PARITY.md`). When
+  `check` reports `r_changed`, `py_changed` or `unlocked`, first check that the mark still
+  holds for the new outputs, then re-lock the case with
+  `uv run python -m parity lock -k <case>`. Never re-lock to silence a difference you
+  have not explained.
 - Nothing may be invented: no references, statistics, links or LLM-derived claims that are
   not grounded in the paper or its materials.
 

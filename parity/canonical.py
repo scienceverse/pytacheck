@@ -189,7 +189,8 @@ def _records_frame(records: list[Mapping[str, Any]]) -> dict[str, Any] | None:
 def canonical(x: Any) -> dict[str, Any]:
     """Encode *x* in the canonical parity form, the checkout directory written
     ``<repo>`` (as parity/r/run_cases.R writes goldens)."""
-    return portable(_encode(x))
+    encoded: dict[str, Any] = portable(_encode(x))
+    return encoded
 
 
 def portable(value: Any) -> Any:
