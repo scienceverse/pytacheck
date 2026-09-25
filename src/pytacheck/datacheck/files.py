@@ -24,8 +24,10 @@ downstream (haven's ``label``, ``labels``, ``na_values``, ``na_range``,
 ``format.*``, ``display_width``, plus ``class``, ``tzone`` and ``units``) are
 kept in ``df.attrs["col_attrs"][column]`` exactly as R's ``attributes()``
 would show them after reading -- so e.g. ``head()`` on an ``.rds`` frame
-drops the ``label`` of an unclassed column, as in R. ``labels`` is a dict
-mapping each label text to its code (R's named vector ``c(label = code)``).
+drops the ``label`` of an unclassed column, as in R. ``labels`` is a list of
+``(label text, code)`` pairs (R's named vector ``c(label = code)``, repeated
+label texts included); pyreadstat reports SPSS/Stata value labels as
+``{code: label}``, so a label set that repeats a code keeps only one of them.
 The per-column Latin-1 repair counts of ``.utf8_repair_df()`` are in
 ``df.attrs["utf8_repaired"]``.
 """
@@ -1883,13 +1885,13 @@ def _unlist(v: Any) -> list[str | None]:
 
 def _set_names(df: pd.DataFrame, names: list[str]) -> None:
     """``names(df) <- names``, carrying ``attrs["col_attrs"]`` over by position."""
-    old = [str(c) for c in df.columns]
+    from pytacheck.datacheck._colattrs import rename_col_attrs
+
+    old = list(df.columns)
     df.columns = pd.Index(names, dtype=object)
     col_attrs = df.attrs.get("col_attrs")
     if col_attrs:
-        df.attrs["col_attrs"] = {
-            new: col_attrs[o] for o, new in zip(old, names, strict=True) if o in col_attrs
-        }
+        df.attrs["col_attrs"] = rename_col_attrs(col_attrs, old, names)
 
 
 def _utf8_repair_df(df: pd.DataFrame | None) -> pd.DataFrame | None:

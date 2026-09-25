@@ -1006,10 +1006,13 @@ def _attr(attrs: Mapping[str, Any], which: str) -> Any:
 
 def _col_attrs(df: pd.DataFrame, j: int) -> Mapping[str, Any]:
     """The R attributes of column *j* (``df.attrs["col_attrs"]`` or ``Series.attrs``)."""
-    name = df.columns[j]
+    from pytacheck.datacheck._colattrs import col_attrs_at
+
     ca = df.attrs.get("col_attrs") if isinstance(df.attrs, Mapping) else None
-    if isinstance(ca, Mapping) and name in ca:
-        return ca[name] or {}
+    if isinstance(ca, Mapping):
+        a = col_attrs_at(df, j)  # by position: columns sharing a name keep their own
+        if a or df.columns[j] in ca:
+            return a
     a = getattr(df.iloc[:, j], "attrs", None)
     return a if isinstance(a, Mapping) else {}
 

@@ -236,7 +236,7 @@ def test_haven_labels_and_formats() -> None:
     df = F.data_read_head(DATA / "labelled.sav", n_rows=INF)
     attrs = df.attrs["col_attrs"]
     assert attrs["gender"]["label"] == "Respondent gender"
-    assert attrs["gender"]["labels"] == {"Male": 1.0, "Female": 2.0, "Refused": 9.0}
+    assert attrs["gender"]["labels"] == [("Male", 1.0), ("Female", 2.0), ("Refused", 9.0)]
     assert attrs["gender"]["class"] == ["haven_labelled", "vctrs_vctr", "double"]
     assert attrs["score"] == {"label": "Total score", "format.spss": "F8.2"}
     # user-missing 99 is read as NA (haven's user_na = FALSE)

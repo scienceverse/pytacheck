@@ -465,3 +465,34 @@ def test_crossref_parse_item_authors_and_year() -> None:
     ]
     with pytest.raises(ValueError, match="differing number of rows"):
         cr._crossref_parse_item({"DOI": "x", "volume": None})
+
+
+def test_crossref_query_offline_data_frame_shape(monkeypatch: pytest.MonkeyPatch) -> None:
+    """R: data.frame(bib_text = <list of 1-row data frames>, DOI = NA, error = "offline")."""
+    from pytacheck.db import _utils
+
+    monkeypatch.setattr(_utils, "online", lambda *a, **k: False)
+    refs = pd.DataFrame(
+        {"title": ["T1", "T2"], "author": ["A", None], "journal": ["J", "K"], "booktitle": "B"}
+    )
+    out = cr.crossref_query(refs)
+    assert list(out.columns) == [
+        "bib_text.title",
+        "bib_text.author",
+        "bib_text.container",
+        "bib_text.title.1",
+        "bib_text.author.1",
+        "bib_text.container.1",
+        "DOI",
+        "error",
+    ]
+    assert len(out) == 1
+    assert out.iloc[0, :4].tolist() == ["T1", "A", "J", "T2"]
+    assert pd.isna(out["bib_text.author.1"].iloc[0])
+    assert out["bib_text.container.1"].iloc[0] == "K"
+    assert pd.isna(out["DOI"].iloc[0]) and out["error"].iloc[0] == "offline"
+    with pytest.raises(ValueError, match="differing number of rows: 0, 1"):
+        cr.crossref_query(refs.iloc[0:0])
+    # text references keep one row each
+    text = cr.crossref_query(["ref one", "ref two"])
+    assert text["bib_text"].tolist() == ["ref one", "ref two"]

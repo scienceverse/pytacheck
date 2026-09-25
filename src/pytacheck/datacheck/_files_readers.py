@@ -1104,7 +1104,7 @@ def read_stat_file(path: str, ext: str, n_rows: float) -> pd.DataFrame:
     formats = meta.original_variable_types or {}
     rs_types = getattr(meta, "readstat_variable_types", None) or {}
     widths = getattr(meta, "variable_display_width", None) or {}
-    col_attrs: dict[str, dict[str, Any]] = {}
+    per: list[dict[str, Any] | None] = []
     series: dict[int, pd.Series] = {}
     offset = _HAVEN_DAYS_OFFSET[vendor]
     for j, name in enumerate(raw_names):
@@ -1153,14 +1153,19 @@ def read_stat_file(path: str, ext: str, n_rows: float) -> pd.DataFrame:
                     "vctrs_vctr",
                     "character" if is_string else "double",
                 ]
-            attrs["labels"] = {
-                str(lab): (str(code) if is_string else float(code)) for code, lab in labels.items()
-            }
-        if attrs:
-            col_attrs[names[j]] = attrs
+            # R's named vector c(label = code) as (label, code) pairs: several codes
+            # may share a label text ("Missing"). pyreadstat's {code: label} has
+            # already merged repeated codes (a documented limitation).
+            attrs["labels"] = [
+                (str(lab), str(code) if is_string else float(code)) for code, lab in labels.items()
+            ]
+        per.append(attrs)
     out = pd.DataFrame(series, index=range(nrow))
     out.columns = pd.Index(names, dtype=object)
-    if col_attrs:
+    from pytacheck.datacheck._colattrs import ColAttrs
+
+    col_attrs = ColAttrs(names, per)
+    if col_attrs.any():
         out.attrs["col_attrs"] = col_attrs
     return out
 

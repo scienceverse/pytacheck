@@ -236,3 +236,12 @@ def test_poll_failure_and_timeout(monkeypatch: pytest.MonkeyPatch) -> None:
         )
         with pytest.raises(RegCheckError, match="Timed out waiting for RegCheck task t4"):
             regcheck_compare("paper", "prereg", timeout=-1)
+
+
+def test_null_client_is_the_first_client() -> None:
+    """R: match.arg(NULL, choices) is choices[1] ("ollama")."""
+    from pytacheck.db.regcheck import _match_client
+
+    assert _match_client(None) == "ollama"
+    with pytest.raises(ValueError, match="exactly one of prereg_text"):
+        regcheck_compare("paper text", client=None)

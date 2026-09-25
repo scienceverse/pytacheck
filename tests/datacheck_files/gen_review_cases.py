@@ -114,7 +114,9 @@ for name in HEAD_FILES:
 for name in ("tab_in_quotes.tsv", "rt_nrows.csv", "rt_wrap.csv", "stata_int_na.dta",
              "int64.csv", "bom_comment_cr.txt"):  # fmt: skip
     typed_head(name, 5)
-for name in ("stata_int_na.dta", "all_na_dates.sav", "zero_rows.sav", "int64.csv"):
+for name in ("stata_int_na.dta", "all_na_dates.sav", "zero_rows.sav", "int64.csv",
+             # repeated value-label texts (F04) and duplicated column names (F32)
+             "dup_labels.sav", "dup_labels.dta", "dup_labels.rds", "dup_names.rds"):  # fmt: skip
     add(
         f"review.read_head_attrs.{name}",
         r="identity",

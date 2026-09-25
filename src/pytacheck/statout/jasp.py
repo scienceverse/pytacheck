@@ -198,11 +198,11 @@ def _frame_from_columns(
         ]
     df = pd.DataFrame(dict(enumerate(cols))) if cols else pd.DataFrame()
     df.columns = list(names)
-    kept: dict[Any, dict[str, Any]] = {}
-    for name, a in zip(names, attrs, strict=True):
-        if a:
-            kept.setdefault(name, a)
-    if kept:
+    from pytacheck.datacheck._colattrs import ColAttrs
+
+    # keyed by name (a repeated name: its first column) and by position
+    kept = ColAttrs(names, attrs)
+    if kept.any():
         df.attrs["col_attrs"] = kept
     return df
 

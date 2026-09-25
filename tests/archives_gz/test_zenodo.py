@@ -484,3 +484,20 @@ def test_zenodo_verify_downloads(tmp_path: Path) -> None:
     assert _zenodo_verify_downloads(None, str(tmp_path)) is None
     no_path = _zenodo_verify_downloads(pd.DataFrame({"size": [1.0]}), str(tmp_path))
     assert no_path["downloaded"].tolist() == [False]
+
+
+def test_zenodo_info_internal_with_several_ids(tmp_path: Path) -> None:
+    """R .zenodo_info(c(a, b)): one row per ID, every field from the first record."""
+    from tests.httpmock import replay
+
+    mocks = Path(__file__).resolve().parent / "mocks_review"
+    with replay(mocks):
+        out = zenodo._zenodo_info(["5559007", "5559001"])
+        assert out["zenodo_id"].tolist() == ["5559007", "5559001"]
+        assert out["title"].tolist() == ["T7", "T7"]
+        with pytest.warns(UserWarning, match="55590045559001 could not be found"), pytest.raises(
+            ValueError, match="differing number of rows: 2, 1"
+        ):
+            zenodo._zenodo_info(["5559004", "5559001"])
+        with pytest.raises(ValueError, match="replacement has 1 row, data has 0"):
+            zenodo._zenodo_info([])

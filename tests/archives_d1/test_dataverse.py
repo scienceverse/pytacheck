@@ -528,3 +528,15 @@ def test_cell_follows_r_replacement_rules() -> None:
     assert _cell([{"k": 1}]).iloc[0] == {"k": 1}
     with pytest.raises(ValueError, match="replacement has 2 rows, data has 1"):
         _cell(["a", "b"])
+
+
+def test_is_true_is_r_in_true() -> None:
+    """R `x %in% TRUE`: only TRUE, a number equal to 1 and the string "TRUE" match."""
+    import numpy as np
+
+    from pytacheck.archives.dataverse import _is_true
+
+    for x in (True, np.True_, 1, 1.0, np.int64(1), "TRUE"):
+        assert _is_true(x), x
+    for x in (False, None, pd.NA, float("nan"), 0, 2, "FALSE", "T", "true", [True]):
+        assert not _is_true(x), x

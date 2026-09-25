@@ -35,3 +35,16 @@ cells <- data.frame(id = 1:3)
 cells$l <- I(list(as.POSIXct(c("2020-01-01 10:00:00", "2020-01-01 00:00:00"), tz = "UTC"),
                   as.POSIXct("2020-01-01 10:00:00.5", tz = "UTC"), c(1i, 2 - 0.5i)))
 saveRDS(cells, "review/list_cells.rds")
+
+# Repeated value-label texts (several codes labelled "Missing") and duplicated
+# column names: R keeps every entry / every column's attributes.
+dup <- data.frame(
+  x = labelled(c(1, -9, -8, 2), c(Missing = -9, Missing = -8, Yes = 1, No = 2), label = "Answer"),
+  stringsAsFactors = FALSE)
+write_sav(dup, "review/dup_labels.sav")
+write_dta(dup, "review/dup_labels.dta")
+saveRDS(dup, "review/dup_labels.rds")
+dupnames <- data.frame(d = as.Date(c("2020-01-01", "2020-02-01")),
+                       d = labelled(c(1, 2), c(A = 1, B = 2)),
+                       x = factor(c("u", "v")), check.names = FALSE)
+saveRDS(dupnames, "review/dup_names.rds")

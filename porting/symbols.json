@@ -2943,6 +2943,12 @@
   "ported": true,
   "python": "pytacheck.repro.docker:_repro_docker_container_path"
  },
+ ".repro_docker_host_memory_bytes": {
+  "file": "",
+  "line": 0,
+  "ported": true,
+  "python": "pytacheck.modules._reproducibility:_repro_docker_host_memory_bytes"
+ },
  ".repro_docker_image_for": {
   "file": "R/reproducibility_check_docker.R",
   "line": 177,
@@ -2954,6 +2960,12 @@
   "line": 110,
   "ported": true,
   "python": "pytacheck.repro.docker:_repro_docker_resource_args"
+ },
+ ".repro_docker_resource_limits": {
+  "file": "",
+  "line": 0,
+  "ported": true,
+  "python": "pytacheck.modules._reproducibility:_repro_docker_resource_limits"
  },
  ".repro_docker_stop": {
   "file": "R/reproducibility_check_docker.R",
@@ -3002,6 +3014,12 @@
   "line": 402,
   "ported": true,
   "python": "pytacheck.statout.r_output:_repro_split_args"
+ },
+ ".reproducibility_check_batch": {
+  "file": "",
+  "line": 0,
+  "ported": true,
+  "python": "pytacheck.modules._reproducibility:_reproducibility_check_batch"
  },
  ".researchdata4tu_id": {
   "file": "R/archive-4tu.R",
@@ -5680,6 +5698,7 @@
  "module:reproducibility_check": {
   "file": "inst/modules/reproducibility_check.R",
   "line": 1,
+  "ported": true,
   "python": "pytacheck.modules.reproducibility_check:reproducibility_check"
  },
  "module:stat_check": {

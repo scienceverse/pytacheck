@@ -562,8 +562,11 @@ def _resolver(r_files: pd.DataFrame, structure_df: Any) -> Any:
             )
         )
     first_loc: dict[str | None, str | None] = {}
+    by_base: dict[str, list[str | None]] = {}  # basename -> locations, in row order
     for n, loc in lookup:
         first_loc.setdefault(n, loc)
+        if n is not None:
+            by_base.setdefault(str(h._basename(n)), []).append(loc)
 
     def resolve(i: int) -> str | None:
         if h._file_exists(own[i]):
@@ -571,10 +574,12 @@ def _resolver(r_files: pd.DataFrame, structure_df: Any) -> Any:
         fn = fnames[i]
         if fn in first_loc and h._file_exists(first_loc[fn]):
             return first_loc[fn]
-        if lookup:
-            b = h._basename(fn)
-            for n, loc in lookup:
-                if n is not None and h._basename(n) == b and h._file_exists(loc):
+        # basename fallback: the first existing location among the rows whose
+        # file_name has the same basename (basename(NA) matches nothing)
+        b = h._basename(fn)
+        if b is not None:
+            for loc in by_base.get(b, ()):
+                if h._file_exists(loc):
                     return loc
         url = urls[i]
         if url is not None and url != "":

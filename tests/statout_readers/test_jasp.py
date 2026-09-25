@@ -86,7 +86,7 @@ def test_import_jasp_reads_the_modern_sqlite_format(tmp_path: Path) -> None:
     assert r["data"]["grp"].tolist() == [1, 2, 1]
     assert r["data"]["score"].tolist() == [1.5, 2.5, 3.5]
     col_attrs = r["data"].attrs["col_attrs"]
-    assert col_attrs["grp"]["labels"] == {"Control": 1.0, "Treatment": 2.0}
+    assert col_attrs["grp"]["labels"] == [("Control", 1.0), ("Treatment", 2.0)]
     assert col_attrs["score"]["label"] == "Total"
     assert r["data_file_path"] == "orig.csv"
     assert "analyses" not in r
@@ -112,8 +112,8 @@ def test_binary_fixture_without_analyses() -> None:
     assert df.attrs["col_attrs"]["rt"] == {"label": "Reaction time"}
     # R quirk: attr(x, "label") partially matches "labels"
     assert df.attrs["col_attrs"]["cond"] == {
-        "labels": {"A": 1.0, "B": 2.0},
-        "label": {"A": 1.0, "B": 2.0},
+        "labels": [("A", 1.0), ("B", 2.0)],
+        "label": [("A", 1.0), ("B", 2.0)],
     }
     assert "id" not in df.attrs["col_attrs"]
     assert r["data_file_path"] == "C:/data/study.csv"
@@ -132,11 +132,18 @@ def test_import_jasp_errors(tmp_path: Path) -> None:
 
 def test_jasp_binary_labels_falls_back_to_xdata() -> None:
     xdat = {"g": {"labels": [[1, "a"], ["2", "b"], ["x", "bad"], [4, ""]]}}
-    assert _jasp_binary_labels({"name": "g", "labels": []}, xdat) == {"a": 1.0, "b": 2.0}
-    assert _jasp_binary_labels({"name": "h"}, xdat) == {}
-    assert _jasp_binary_labels({"name": "g", "labels": [[3, "own"]]}, xdat) == {"own": 3.0}
-    # repeated codes are kept (R's named vector), a JSON null entry is an error
-    assert _jasp_binary_labels({"labels": [[1, "one"], [1, "uno"]]}, {}) == {"one": 1.0, "uno": 1.0}
+    assert _jasp_binary_labels({"name": "g", "labels": []}, xdat) == [("a", 1.0), ("b", 2.0)]
+    assert _jasp_binary_labels({"name": "h"}, xdat) == []
+    assert _jasp_binary_labels({"name": "g", "labels": [[3, "own"]]}, xdat) == [("own", 3.0)]
+    # repeated codes and labels are kept (R's named vector), a JSON null entry is an error
+    assert _jasp_binary_labels({"labels": [[1, "one"], [1, "uno"]]}, {}) == [
+        ("one", 1.0),
+        ("uno", 1.0),
+    ]
+    assert _jasp_binary_labels({"labels": [[-9, "Missing"], [-8, "Missing"]]}, {}) == [
+        ("Missing", -9.0),
+        ("Missing", -8.0),
+    ]
     with pytest.raises(ValueError, match="values must be length 1"):
         _jasp_binary_labels({"labels": [[1, None]]}, {})
 

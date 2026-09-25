@@ -21,14 +21,36 @@ ROOT = Path(__file__).resolve().parents[2]
 DATA = "tests/datacheck_files/data"
 
 
+class _NamedList:
+    """R's ``as.list(c(a = 1, a = 2))``: a named list that may repeat names."""
+
+    def __init__(self, pairs: list[tuple[Any, Any]]) -> None:
+        self.pairs = pairs
+
+    def to_canonical(self) -> dict[str, Any]:
+        from parity.canonical import canonical
+
+        return {
+            "t": "list",
+            "names": ["" if k is None else str(k) for k, _ in self.pairs],
+            "v": [canonical(v) for _, v in self.pairs],
+        }
+
+
 def _r_attributes(df: pd.DataFrame) -> dict[str, Any]:
-    """Per-column R attributes (minus levels/names) as R's ``attributes()`` shows them."""
+    """Per-column R attributes (minus levels/names) as R's ``attributes()`` shows them.
+
+    ``labels`` (``(label, code)`` pairs) is compared as the R side's
+    ``as.list(labels)``, repeated label texts included.
+    """
     col_attrs = df.attrs.get("col_attrs", {})
     out: dict[str, Any] = {}
     for j, name in enumerate(df.columns):
         s = df.iloc[:, j]
         attrs = dict(col_attrs.get(name, {}))
         attrs.pop("levels", None)
+        if isinstance(attrs.get("labels"), list):
+            attrs["labels"] = _NamedList(attrs["labels"])
         if "class" not in attrs:
             if isinstance(s.dtype, pd.CategoricalDtype):
                 attrs["class"] = ["ordered", "factor"] if s.cat.ordered else "factor"

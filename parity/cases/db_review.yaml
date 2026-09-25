@@ -860,3 +860,19 @@
       "$expr":
         "r": "testthat::with_mocked_bindings(suppressMessages(crossref_query(c(\"ref one\", NA, \"ref two\"))), online = function(...) FALSE, .package = \"metacheck\")"
         "py": "__import__('tests.db.review_helpers', fromlist=['x']).call_offline('pytacheck.db.crossref.crossref_query', ['ref one', None, 'ref two'])"
+- "id": "regcheck_compare.msg.null_client"
+  "r": "identity"
+  "py": "copy.copy"
+  "args":
+    "x":
+      "$expr":
+        "r": "source(file.path(root, \"tests/db/review.R\")); withr::with_envvar(c(REGCHECK_API_TOKEN = NA), review_try(regcheck_compare(\"paper text\", client = NULL)))"
+        "py": "__import__('tests.db.review_helpers', fromlist=['x']).try_(lambda: __import__('pytacheck.db.regcheck', fromlist=['x']).regcheck_compare('paper text', client=None))"
+- "id": "regcheck_compare.msg.null_client_both"
+  "r": "identity"
+  "py": "copy.copy"
+  "args":
+    "x":
+      "$expr":
+        "r": "source(file.path(root, \"tests/db/review.R\")); withr::with_envvar(c(REGCHECK_API_TOKEN = NA), review_try(regcheck_compare(\"paper text\", prereg_text = \"r\", registration_id = \"NCT1\", client = NULL)))"
+        "py": "__import__('tests.db.review_helpers', fromlist=['x']).try_(lambda: __import__('pytacheck.db.regcheck', fromlist=['x']).regcheck_compare('paper text', prereg_text='r', registration_id='NCT1', client=None))"

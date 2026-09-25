@@ -205,3 +205,79 @@ def test_walk_nodes_pngda(mock_api: respx.MockRouter) -> None:
     assert {"ckjef", "6nt4v"} <= set(nodes["osf_id"])
     assert not nodes["osf_id"].duplicated().any()
     assert (nodes["title"] == "Raw Data").any()
+
+
+# follow-up review (group A1) --------------------------------------------------------------
+
+
+def test_links_on_an_empty_paper_list() -> None:
+    """R: osf_links(paperlist()) is 0 x 3 (with a warning), aspredicted_links() 0 x 0."""
+    import warnings
+
+    from pytacheck.archives.aspredicted import aspredicted_links
+    from pytacheck.archives.osf import osf_links
+    from pytacheck.papers import PaperList
+
+    with pytest.warns(UserWarning, match="uninitialised column: `href`"):
+        osf = osf_links(PaperList([]))
+    assert list(osf.columns) == ["href", "text_id", "paper_id"] and len(osf) == 0
+    with warnings.catch_warnings():
+        warnings.simplefilter("error")
+        ap = aspredicted_links(PaperList([]))
+    assert ap.shape == (0, 0)
+
+
+def test_metadata_json_numbers_as_jsonlite_writes_them() -> None:
+    """jsonlite's num_to_char(digits = 4), values checked in R."""
+    from pytacheck.archives.osf_metadata import _num_to_char
+
+    cases = [
+        (0.000012345, "0"),
+        (1234.56789, "1234.5679"),
+        (1e15, "1000000000000000"),
+        (1e16, "10000000000000000"),
+        (1e17, "1e+17"),
+        (-0.00001, "-1e-05"),
+        (1e-5, "1e-05"),
+        (9.9999e-06, "9.9999e-06"),
+        (0.00005, "0"),
+        (0.00015, "0.0001"),
+        (0.00025, "0.0002"),
+        (0.12345, "0.1234"),
+        (0.99995, "1"),
+        (12345.67895, "12345.6789"),
+        (2147483647.5, "2147483647.5"),
+        (1e300, "1.0000000000000001e+300"),
+        (0.0, "0"),
+        (-0.0, "-0"),
+        (-1.234e-05, "-0"),
+    ]
+    for x, expected in cases:
+        assert _num_to_char(x) == expected, x
+
+
+def test_metadata_json_simplifies_mixed_arrays_as_jsonlite() -> None:
+    """write_json(fromJSON(simplifyVector = TRUE)) of mixed arrays, checked in R."""
+    from pytacheck.archives.osf_metadata import _metadata_json
+
+    def tags(value: object) -> str:
+        return _metadata_json({"tags": value}).split('"tags": ', 1)[1].rsplit("\n}", 1)[0]
+
+    assert tags([1, None, 2.5]) == '[1, "NA", 2.5]'
+    assert tags([True, None, 1]) == '[1, "NA", 1]'
+    assert tags(["a", None, 3, True]) == '["a", null, "3", "TRUE"]'
+    # data frame columns share one type across rows
+    assert tags([{"a": 1}, {"a": "x"}, {"a": True}]) == (
+        '[\n    {\n      "a": "1"\n    },\n    {\n      "a": "x"\n    },\n'
+        '    {\n      "a": "TRUE"\n    }\n  ]'
+    )
+    # a nested object is a nested data frame: its NA row is {}
+    assert tags([{"a": {"x": 1}}, {"a": {"x": None}}, None]) == (
+        '[\n    {\n      "a": {\n        "x": 1\n      }\n    },\n    {\n      "a": {}\n    },\n'
+        '    {\n      "a": {}\n    }\n  ]'
+    )
+    # a list column writes its NULL element as null
+    assert tags([{"a": 1}, {"a": [1, 2]}, {"a": None}]) == (
+        '[\n    {\n      "a": 1\n    },\n    {\n      "a": [1, 2]\n    },\n'
+        '    {\n      "a": null\n    }\n  ]'
+    )
