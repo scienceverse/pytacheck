@@ -158,9 +158,12 @@
 "grobid12/module.all_urls.demo": *module
 "grobid12/module.all_urls.preprint": *module
 "grobid12/module.all_urls.published": *module
-"grobid12/module.marginal.0956797615569889": *module
-"grobid12/module.marginal.demo": *module
-"grobid12/module.marginal.preprint": *module
+"grobid12/module.marginal.0956797615569889": &marginal
+  kind: r_bug_fixed
+  ref: U16
+  reason: "the module runs on the fixed 12.0 conversion (U16/U28), so its table text or ids differ; its guidance also cites the reference with R's person formatting (U3)"
+"grobid12/module.marginal.demo": *marginal
+"grobid12/module.marginal.preprint": *marginal
 "grobid12/module.open_practices.preprint": *module
 "grobid12/module.open_practices.published": *module
 "grobid12/module.ref_consistency.0956797615569889": *module

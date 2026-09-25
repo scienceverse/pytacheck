@@ -15,7 +15,7 @@ parity/
   canonical.py           Python -> canonical JSON encoder
   compare.py             structural comparator
   cases.py               case loading, argument decoding, Python runner
-  divergences/*.yaml     known_divergence marks of generated cases (one file per lane)
+  divergences/*.yaml     known_divergence marks of generated cases (one file per lane or topic)
   __main__.py            `python -m parity generate|check|list`
 ```
 
@@ -120,7 +120,9 @@ comparison:
 failure: it passes when Python's result equals R's rewritten golden, and any other
 difference fails it, so the rest of its output stays compared with R. A
 substitution that changes nothing in the golden fails the case too (the mark is
-stale). A case that also differs for another reason adds `xfail: true` to its
+stale), and so does a case that also matches R's golden as it is (the
+substitutions only change text the comparison skips, such as an ignored element
+or an error message under `error: any`). A case that also differs for another reason adds `xfail: true` to its
 mark: it stays an expected failure, and `r_text` only keeps the text corrections
 out of its reported differences. The marks of generated cases whose only
 difference is prose are collected in `parity/divergences/prose.yaml` (hand-written
