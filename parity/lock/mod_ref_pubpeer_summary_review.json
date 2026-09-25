@@ -1,0 +1,6 @@
+{
+"ref_pubpeer.nourl_only": {"r": "ac5146cf65ca52a8", "py": "0f42b28b4aeb7244", "diff": ["<R error, Python value>"]},
+"ref_summary.acc_dup": {"r": "d5003711c6d68a8a", "py": "9817bd1b32478ab7", "diff": ["summary_text[]", "table"]},
+"ref_summary.acc_dup.report_table": {"r": "1e1f2bb8c5ee7c1b", "py": "977bcaa8e35a1ae3", "diff": ["table"]},
+"ref_summary.rep_no_type": {"r": "08b39f93e334fecf", "py": "4dd73d567b7842d0", "diff": ["summary_text[]", "table"]}
+}

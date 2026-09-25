@@ -1,0 +1,12 @@
+{
+"data_code_refs.latin1": {"r": "907a48e0ac2a769e", "py": "038ed00a09bcad54", "diff": ["<root>"]},
+"data_read_head.attrs.labs.rds": {"r": "454f6d8f44176c56", "py": "24fe1b1dbc7f25fd", "diff": ["attrs.f.label", "attrs.plain"]},
+"data_read_head.attrs.labs.rds.n2": {"r": "454f6d8f44176c56", "py": "24fe1b1dbc7f25fd", "diff": ["attrs.f.label", "attrs.plain"]},
+"data_read_head.attrs.labs_ws.RData.n2": {"r": "8cd3bc78fce92dd6", "py": "24fe1b1dbc7f25fd", "diff": ["attrs.f.label", "attrs.lab", "attrs.plain"]},
+"data_read_head.attrs.odd.rds": {"r": "ec399112596218f8", "py": "ac4872635283f74b", "diff": ["attrs.big"]},
+"data_read_head.odd.rds": {"r": "a51e6d419ebf1d75", "py": "27aafae122e82d73", "diff": ["big[]"]},
+"manifest_merge.create": {"r": "178258c6b246abb0", "py": "ed4f40f7fa454788", "diff": ["[]"]},
+"manifest_merge.remove_key": {"r": "b81ea22a7b7eeb14", "py": "c0e31678086c9b80", "diff": ["[]"]},
+"text_peek.latin1_notes.txt": {"r": "ac5146cf65ca52a8", "py": "fdc0cccfa3a1ae00", "diff": ["<R error, Python value>"]},
+"txt_classify_content.latin1_notes.txt": {"r": "ac5146cf65ca52a8", "py": "d33e6a78120356d0", "diff": ["<R error, Python value>"]}
+}

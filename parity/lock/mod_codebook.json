@@ -1,0 +1,7 @@
+{
+"codebook_check.llm.paperlist": {"r": "a7ab80f2f69cba14", "py": "b6812f841288a4ef", "diff": ["codebook_vars", "summary_table.clean_n[]", "summary_table.codebook_var_n[]", "summary_table.matched_n[]", "summary_table.unmatched_n[]", "summary_text[]", "table.codebook_variable[]", "table.label[]", "table.label_method[]", "table.label_source[]", "table.label_status[]"]},
+"codebook_check.llm.selfgen": {"r": "134591216e52a02e", "py": "c6a9b27f619c24e0", "diff": ["report[]", "scales_osd[].definition.metacheck.kind", "scales_osd[].definition.metacheck.note", "scales_osd[].definition.scale_info.code[]", "scales_osd[].definition.scale_info.name[]", "summary_table.scale_named_n[]", "table.scale[]"]},
+"codebook_check.max_calls_zero": {"r": "5a86b3deea1d5ffd", "py": "c497e27bdc4edd15", "diff": ["report[]", "scales_osd"]},
+"codebook_check.paperlist": {"r": "a71def9cc12df1f5", "py": "95eeb456bff7c5d3", "diff": ["codebook_vars", "summary_table.clean_n[]", "summary_table.codebook_var_n[]", "summary_table.matched_n[]", "summary_table.unmatched_n[]", "summary_text[]", "table.codebook_variable[]", "table.label[]", "table.label_method[]", "table.label_source[]", "table.label_status[]", "traffic_light[]"]},
+"scale_text_report.basic": {"r": "6a1703b9a7e9bfca", "py": "5a52c0a06d93d67c", "diff": ["<root>"]}
+}

@@ -1,0 +1,20 @@
+{
+"codebook_check.llm.osd_attrs.loop": {"r": "1ecfc817477ed9e0", "py": "ebcb2541f3cc4e61", "diff": ["code[]", "dedup_key[]", "orphan_total[]", "scale[]", "write[]"]},
+"codebook_check.llm.pl_scales.max_calls_1": {"r": "132fe95fed04328c", "py": "f32d83ab1d80b22e", "diff": ["report[]", "scales_osd"]},
+"codebook_check.llm.rv_dupscale": {"r": "1619f1e7b9b34c89", "py": "4b664b2bbee85a7d", "diff": ["scales_osd[].translations.en"]},
+"codebook_check.llm_odd.bibr12": {"r": "e7cdae1ed6e7fed7", "py": "56786c072023dba6", "diff": ["report[]"]},
+"codebook_check.llm_odd.demo": {"r": "9995d4ae8f9a449d", "py": "33bcf6841df58858", "diff": ["report[]"]},
+"codebook_check.llm_odd.panas_high": {"r": "c64ff4fc026e1654", "py": "6e274f14a0b21c92", "diff": ["report[]"]},
+"codebook_check.llm_odd.rv_dupscale": {"r": "10afac8f635ccfcc", "py": "f23e03d96c284907", "diff": ["scales_osd[].translations.en"]},
+"codebook_check.llm_odd.scales_mixed": {"r": "0ef39dd69376cc11", "py": "5c656a9420f1e8cd", "diff": ["report[]"]},
+"codebook_check.llm_odd_na.rv_dupscale": {"r": "bc78902aac50ef14", "py": "84e4e0473765b13b", "diff": ["scales_osd[].translations.en"]},
+"codebook_check.null_paper.empty": {"r": "ac5146cf65ca52a8", "py": "6f01f1d4ab1274ad", "diff": ["<R error, Python value>"]},
+"codebook_check.pl_onlycb_green": {"r": "3aeaa6119d5a96ac", "py": "8861b466b1adc3da", "diff": ["codebook_vars", "summary_table.clean_n[]", "summary_table.codebook_var_n[]", "summary_table.matched_n[]", "summary_table.unmatched_n[]", "summary_text[]", "table.codebook_variable[]", "table.label[]", "table.label_method[]", "table.label_source[]", "table.label_status[]", "traffic_light[]"]},
+"codebook_check.pl_samefile": {"r": "911928902fbc6e2a", "py": "e41905f9cf4eaba5", "diff": ["codebook_vars", "summary_table.clean_n[]", "summary_table.codebook_var_n[]", "summary_table.matched_n[]", "summary_table.unmatched_n[]", "summary_text[]", "table.codebook_variable[]", "table.label[]", "table.label_method[]", "table.label_source[]", "table.label_status[]", "traffic_light[]"]},
+"codebook_check.rv_dupscale": {"r": "2ebce1d93a332e9e", "py": "c6345dc9c02041b3", "diff": ["scales_osd[].translations.en"]},
+"scale_text_report.na_fields": {"r": "6ad0cc361f5043ab", "py": "ac7e143d2daf441b", "diff": ["<root>"]},
+"scale_text_report.name_only": {"r": "1f6f480cda302570", "py": "4d678012478bbe38", "diff": ["<root>"]},
+"scale_text_report.no_admin": {"r": "1929e7c3e1129b1a", "py": "94eaf56aa75e44f7", "diff": ["<root>"]},
+"scale_text_report.no_match": {"r": "af69d29335ab225d", "py": "c0abd1f1069a8bd7", "diff": ["<root>"]},
+"scale_text_report.special_acronyms": {"r": "ac5146cf65ca52a8", "py": "9b063a76c713f043", "diff": ["<R error, Python value>"]}
+}

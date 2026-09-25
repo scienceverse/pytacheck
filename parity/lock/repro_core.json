@@ -1,0 +1,11 @@
+{
+"repro_install_deps.main_lib_skip": {"r": "fbec3786f46c6d7d", "py": "7c7916b9509813ca", "diff": ["<root>"]},
+"repro_missing_inputs.withheld_missing_size_col": {"r": "ac5146cf65ca52a8", "py": "16cdbdd9a2d62f2b", "diff": ["<R error, Python value>"]},
+"repro_redirect_writes.inline_pipe": {"r": "033b8cbcfe218b70", "py": "637fba701bca2f0b", "diff": ["replacement[]"]},
+"repro_redirect_writes.named_arg": {"r": "f211e0901b0b2b03", "py": "3f8e5b1a9ca2c71c", "diff": ["replacement[]"]},
+"repro_redirect_writes.several": {"r": "7ee1882237e5a612", "py": "4800d5c3235610b2", "diff": ["replacement[]"]},
+"repro_redirect_writes.variable": {"r": "133cd5b94e50dccc", "py": "b4f23425632b0acb", "diff": ["replacement[]"]},
+"repro_rewrite_paths.mirror_tie": {"r": "608debcaa71ce5af", "py": "7f5c2e8f82bf0d1a", "diff": ["target[]"]},
+"repro_rewrite_paths.paste_sep_call": {"r": "97fda89bf8e57fce", "py": "ee17f18d38aef4e1", "diff": ["is_call[]", "ref[]"]},
+"repro_run_scripts.nopkg_failed_dep": {"r": "cd37637741c02164", "py": "e4a19d84a410fbd2", "diff": ["error_type[]", "outcome[]"]}
+}

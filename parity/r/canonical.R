@@ -7,8 +7,9 @@
 #   NULL                      {"t": "null"}
 #   atomic vector             {"t": "chr"|"dbl"|"int"|"lgl", "v": [...], "names": [...]?}
 #                             NA -> null; NaN -> "NaN"; Inf -> "Inf"/"-Inf"
-#   complex / raw             {"t": "cplx"|"raw", "v": [...]}: as.character() values
-#                             (parity/canonical.py ports R's complex formatting)
+#   complex                   {"t": "cplx", "v": [[re, im], ...]}: each part as in a
+#                             double vector; NA (an NA in either part) -> null
+#   raw                       {"t": "raw", "v": [...]}: as.character() (two hex digits)
 #   bit64::integer64          encoded as dbl
 #   factor / Date / POSIXct   encoded as chr
 #   data.frame                {"t": "df", "nrow": n, "names": [...], "v": [<column>, ...]}
@@ -43,6 +44,14 @@
   out
 }
 
+# one double: NA -> NULL (JSON null), NaN and infinities as strings
+.pc_dbl <- function(e) {
+  if (is.nan(e)) "NaN"
+  else if (is.na(e)) NULL
+  else if (is.infinite(e)) if (e > 0) "Inf" else "-Inf"
+  else e
+}
+
 .pc_atomic <- function(x) {
   if (inherits(x, "integer64")) {
     nms <- names(x)
@@ -57,13 +66,15 @@
     character = "chr", double = "dbl", integer = "int", logical = "lgl",
     complex = "cplx", raw = "raw", "other")
   vals <- if (type == "dbl") {
-    lapply(unclass(x), function(e) {
-      if (is.nan(e)) "NaN"
-      else if (is.na(e)) NULL
-      else if (is.infinite(e)) if (e > 0) "Inf" else "-Inf"
-      else e
+    lapply(unclass(x), .pc_dbl)
+  } else if (type == "cplx") {
+    lapply(unclass(x), function(z) {
+      re <- Re(z)
+      im <- Im(z)
+      if ((is.na(re) && !is.nan(re)) || (is.na(im) && !is.nan(im))) NULL
+      else list(.pc_dbl(re), .pc_dbl(im))
     })
-  } else if (type %in% c("cplx", "raw")) {
+  } else if (type == "raw") {
     as.list(as.character(x))
   } else {
     lapply(unclass(x), function(e) if (is.na(e)) NULL else e)

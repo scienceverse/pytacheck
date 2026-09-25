@@ -18,17 +18,23 @@ Usage::
             resp = pytacheck.http.request("GET", "https://api.crossref.org/works/10.1/x")
 
 Requests with no fixture get a 404 (as httptest2 errors), so a test cannot
-silently hit the network.
+silently hit the network. ``no_network()`` refuses every connection and name
+lookup outright (the parity runner runs each case inside it).
 """
 
 from __future__ import annotations
 
 import contextlib
+import errno
 import hashlib
+import ipaddress
+import os
 import re
+import socket
 import struct
 from collections.abc import Iterator
 from pathlib import Path
+from typing import Any
 from urllib.parse import urlsplit
 
 import httpx
@@ -174,3 +180,112 @@ def replay(*mock_dirs: str | Path, assert_all_called: bool = False) -> Iterator[
     with respx.mock(assert_all_called=assert_all_called) as router:
         router.route().mock(side_effect=handler)
         yield router
+
+
+# -- no network ------------------------------------------------------------------------
+
+
+class NetworkUse(ConnectionError):
+    """A connection or name lookup refused by :func:`no_network`."""
+
+
+_LOCAL_NAMES = {None, "", "localhost"}
+_PROXY_VARIABLES = ("http_proxy", "https_proxy", "all_proxy")
+
+
+def _proxies() -> set[tuple[str, int]]:
+    """The ``(host, port)`` of every proxy the environment configures."""
+    out = set()
+    for name in _PROXY_VARIABLES:
+        for value in (os.environ.get(name), os.environ.get(name.upper())):
+            if not value:
+                continue
+            url = urlsplit(value if "://" in value else f"http://{value}")
+            with contextlib.suppress(ValueError):
+                if url.hostname:
+                    out.add((url.hostname, url.port or 80))
+    return out
+
+
+def _is_loopback(host: Any) -> bool:
+    try:
+        return ipaddress.ip_address(str(host).split("%", 1)[0]).is_loopback
+    except ValueError:
+        return host == "localhost"
+
+
+@contextlib.contextmanager
+def no_network(attempts: list[str] | None = None) -> Iterator[list[str]]:
+    """Refuse every internet connection and every lookup of a host name.
+
+    A socket connecting to another host, or to a proxy the environment
+    configures (``HTTPS_PROXY``, ...), and ``getaddrinfo()``/``gethostbyname()``
+    of a name other than ``localhost`` raise :class:`NetworkUse`, and the attempt
+    is added to *attempts* (yielded), so code that catches the error still shows
+    up. Any other loopback address is refused as a closed port would refuse it
+    (``ConnectionRefusedError``, not an attempt: code may probe a local port on
+    purpose). Unix sockets (``asyncio``'s self-pipe) work as before; recorded
+    responses served by :func:`replay` never open a socket.
+    """
+    tried: list[str] = [] if attempts is None else attempts
+    proxies = _proxies()
+
+    def check(sock: socket.socket, address: Any) -> None:
+        if sock.family not in (socket.AF_INET, socket.AF_INET6):
+            return
+        host, port = address[0], address[1]
+        is_proxy = any(port == p and (host == h or _is_loopback(h)) for h, p in proxies)
+        if _is_loopback(host) and not is_proxy:
+            raise ConnectionRefusedError(errno.ECONNREFUSED, "no network in a parity case")
+        what = f"connect to {address!r}" + (" (a proxy)" if is_proxy else "")
+        tried.append(what)
+        raise NetworkUse(f"no network in a parity case: {what}")
+
+    def connect(self: socket.socket, address: Any) -> None:
+        check(self, address)
+        return saved_connect(self, address)
+
+    def connect_ex(self: socket.socket, address: Any) -> int:
+        check(self, address)
+        return saved_connect_ex(self, address)
+
+    def lookup(fn: Any) -> Any:
+        def guarded(host: Any, *args: Any, **kwargs: Any) -> Any:
+            name = host.decode() if isinstance(host, bytes) else host
+            if name not in _LOCAL_NAMES and not _is_address(name):
+                tried.append(f"look up {name!r}")
+                raise NetworkUse(f"no network in a parity case: look up {name!r}")
+            return fn(host, *args, **kwargs)
+
+        return guarded
+
+    saved_connect, saved_connect_ex = socket.socket.connect, socket.socket.connect_ex
+    lookups = {n: getattr(socket, n) for n in ("getaddrinfo", "gethostbyname", "gethostbyname_ex")}
+    own = {n: n in vars(socket.socket) for n in ("connect", "connect_ex")}
+    socket.socket.connect = connect  # type: ignore[method-assign]
+    socket.socket.connect_ex = connect_ex  # type: ignore[method-assign]
+    for name, fn in lookups.items():
+        setattr(socket, name, lookup(fn))
+    try:
+        yield tried
+    finally:
+        for name, restore in (("connect", saved_connect), ("connect_ex", saved_connect_ex)):
+            if own[name]:
+                setattr(socket.socket, name, restore)
+            else:  # inherited from _socket.socket
+                delattr(socket.socket, name)
+        for name, fn in lookups.items():
+            setattr(socket, name, fn)
+
+
+def _is_address(host: Any) -> bool:
+    """Whether *host* is a numeric IPv4/IPv6 address (no lookup needed)."""
+    if not isinstance(host, str):
+        return False
+    for family in (socket.AF_INET, socket.AF_INET6):
+        try:
+            socket.inet_pton(family, host.split("%", 1)[0])
+            return True
+        except OSError:
+            continue
+    return False

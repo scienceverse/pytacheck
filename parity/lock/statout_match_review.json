@@ -1,0 +1,22 @@
+{
+"match_reported_output.eq.empty_test_id.censored_only": {"r": "bade1440a44d102b", "py": "f63215500658c7ed", "diff": ["analysis[]", "confidence[]", "found[]", "match_values[]", "n_matched[]", "not_matched[]", "source_file[]"]},
+"match_reported_output.table_paper.no_section_id": {"r": "a52dd7ed25ecb64b", "py": "50b682967cb98ed3", "diff": ["<root>"]},
+"match_reported_output.table_paper.no_section_id.summary": {"r": "93b2ff0201cfec79", "py": "d737313bb3ec093a", "diff": ["n_found[]", "n_full[]", "n_tests[]", "pct_found[]"]},
+"match_reported_output.table_paper.no_table_id": {"r": "ac5146cf65ca52a8", "py": "50b682967cb98ed3", "diff": ["<R error, Python value>"]},
+"match_reported_output.table_paper.no_table_id.summary": {"r": "ac5146cf65ca52a8", "py": "d737313bb3ec093a", "diff": ["<R error, Python value>"]},
+"match_reported_output.tt.empty_test_id": {"r": "ac5146cf65ca52a8", "py": "a2bcbf58519dd92a", "diff": ["<R error, Python value>"]},
+"match_reported_output.tt.empty_test_id.censored_only": {"r": "ac5146cf65ca52a8", "py": "fe81d1037d0efb58", "diff": ["<R error, Python value>"]},
+"match_reported_output.tt.format_values": {"r": "255ddb1e24847211", "py": "bcd552fac0b4f2c3", "diff": ["match_values[]", "n_matched[]", "not_matched[]"]},
+"match_reported_output.tt.inf_value": {"r": "ac5146cf65ca52a8", "py": "017589a85856983e", "diff": ["<R error, Python value>"]},
+"match_reported_output.tt.inf_value_hit_first": {"r": "ac5146cf65ca52a8", "py": "017589a85856983e", "diff": ["<R error, Python value>"]},
+"match_reported_output.tt.na_sentence_pos": {"r": "2c455a78cefd5b15", "py": "08cac6aedaf9d83f", "diff": ["plausible_split[]"]},
+"match_reported_output.tt.na_text_id_all": {"r": "ac5146cf65ca52a8", "py": "7cc4c47ffa7a50f3", "diff": ["<R error, Python value>"]},
+"match_reported_output.tt.na_text_id_all.summary": {"r": "ac5146cf65ca52a8", "py": "258897cd008b9998", "diff": ["<R error, Python value>"]},
+"match_reported_output.tt.na_text_id_some": {"r": "c8fe0c85060ed428", "py": "7049c0979a90c5e8", "diff": ["<root>"]},
+"match_reported_output.tt.na_text_id_some.summary": {"r": "66bded7cd9bb8cde", "py": "258897cd008b9998", "diff": ["n_found[]", "n_full[]", "n_tests[]"]},
+"match_reported_output.tt.no_text_id": {"r": "ac5146cf65ca52a8", "py": "7cc4c47ffa7a50f3", "diff": ["<R error, Python value>"]},
+"match_reported_output.tt.no_text_id.no_sites": {"r": "ac5146cf65ca52a8", "py": "171d3b8485b58636", "diff": ["<R error, Python value>"]},
+"match_reported_output.tt.no_text_id.no_sites.summary": {"r": "ac5146cf65ca52a8", "py": "43df6928d70a407a", "diff": ["<R error, Python value>"]},
+"match_reported_output.tt.no_text_id.summary": {"r": "ac5146cf65ca52a8", "py": "258897cd008b9998", "diff": ["<R error, Python value>"]},
+"table_tests.no_section_id": {"r": "7dfc0f2fd70dd9c6", "py": "b1179fad8eb81858", "diff": ["<root>"]}
+}

@@ -1,0 +1,12 @@
+{
+"ref_pubpeer.paperlist": {"r": "fc0d5c6af9b68943", "py": "e730e5ad0602983c", "diff": ["report[]", "summary_table.pubpeer_comments[]", "summary_text[]", "table"]},
+"ref_pubpeer.paperlist.report_table": {"r": "dcdf3988104118d0", "py": "4edc6e373947f43e", "diff": ["table"]},
+"ref_pubpeer.request_failed": {"r": "ac5146cf65ca52a8", "py": "44ded917c6bc8762", "diff": ["<R error, Python value>"]},
+"ref_summary.accuracy.all_false": {"r": "53a272a3bd9c125c", "py": "a3bc2347fd5cbeeb", "diff": ["table.accuracy_mismatch[]"]},
+"ref_summary.accuracy.no_no_match_col": {"r": "ac5146cf65ca52a8", "py": "d81ff325261bbe8f", "diff": ["<R error, Python value>"]},
+"ref_summary.mixed.chain_all": {"r": "f7a32a5959496b8a", "py": "7826c51cdcd6cd51", "diff": ["summary_text[]", "table"]},
+"ref_summary.mixed.chain_all.report_table": {"r": "29e9f0828b45ed2d", "py": "dfe5df5e361b075c", "diff": ["table"]},
+"ref_summary.paperlist.chain_all": {"r": "238d63ac74650da7", "py": "20e136046d8d1078", "diff": ["summary_table.pubpeer_comments[]", "summary_text[]", "table"]},
+"ref_summary.psychsci.chain_accuracy": {"r": "f43358340d8216d3", "py": "d57e17d3b2210065", "diff": ["table.accuracy_mismatch[]"]},
+"ref_summary.psychsci.chain_all": {"r": "a37c74e4366208b6", "py": "b4df3186d5b7d896", "diff": ["table.accuracy_mismatch[]"]}
+}

@@ -1,0 +1,14 @@
+{
+"coi_check.heading_last_sentence": {"r": "ac5146cf65ca52a8", "py": "c9bf5a6dfb35c797", "diff": ["<R error, Python value>"]},
+"coi_check.heading_next_is_last": {"r": "a153b9f9a89b0d67", "py": "0acf9ab6af7b8985", "diff": ["table.text[]"]},
+"coi_check.nil_dropped": {"r": "cd59f0384ffee159", "py": "5b5adff73b952b07", "diff": ["report[]", "summary_table.coi_found[]", "summary_text[]", "table", "traffic_light[]"]},
+"coi_check_oi.demo": {"r": "23aa1e86dbc19768", "py": "4008d5e5b4a0fd66", "diff": ["table.header[]"]},
+"coi_check_oi.financial_excluded": {"r": "b3a9d6c69b05cc7b", "py": "f28d51bb87a39e8c", "diff": ["table.header[]"]},
+"coi_check_oi.fuzz_paperlist": {"r": "d881804c73d3a417", "py": "35096368a6c071b9", "diff": ["table.header[]"]},
+"coi_check_oi.has_coi": {"r": "d3ebe3beb0cf6de6", "py": "dec6ddf12ed27e6e", "diff": ["table.header[]"]},
+"coi_check_oi.interest_words": {"r": "beb8c402cb893d39", "py": "12e1c0731199e523", "diff": ["table.header[]"]},
+"coi_check_oi.merged_section": {"r": "afa34513b31d720c", "py": "ab68c0533b167ad2", "diff": ["table.header[]"]},
+"coi_check_oi.paperlist": {"r": "6846a1a94eef65fe", "py": "1685215828496a5d", "diff": ["table.header[]"]},
+"coi_check_oi.problems": {"r": "bc4626836ac657b6", "py": "849b224816305fa1", "diff": ["table.header[]"]},
+"coi_check_oi.psychsci": {"r": "cdd5554af593db3d", "py": "6bca7f66f45df980", "diff": ["table.header[]"]}
+}

@@ -1,0 +1,14 @@
+{
+"power.review.empty_paperlist": {"r": "d18b60c6bcba7b27", "py": "ce0441922d80f9a4", "diff": ["<root>"]},
+"power.review.fallback.all_fail": {"r": "e892d635a3ffbe1b", "py": "5f43ef45f4990f87", "diff": ["table"]},
+"power.review.fallback.control_char": {"r": "de0d5324fa8eab33", "py": "5f43ef45f4990f87", "diff": ["report[]", "summary_text[]", "table"]},
+"power.review.fallback.control_char_mixed": {"r": "db8b2d73e0d81576", "py": "576f36b409b28923", "diff": ["report[]", "summary_table", "summary_table.power_complete[]", "summary_table.power_n[]", "summary_text[]", "table", "traffic_light[]"]},
+"power.review.fallback.empty": {"r": "36f393bacf6d8e4a", "py": "b48e9668a06a2f5a", "diff": ["table"]},
+"power.review.fallback.empty_mixed": {"r": "242269b03b458699", "py": "74dd22b10640db3e", "diff": ["report[]", "summary_table", "summary_table.power_complete[]", "table", "table.complete[]", "traffic_light[]"]},
+"power.review.fallback.garbled": {"r": "d3ea3cf1b61c8e3e", "py": "653d4236f6fe1954", "diff": ["table"]},
+"power.review.fallback.omitted_key": {"r": "11b7be97f9e6f151", "py": "c54dde1d195129b9", "diff": ["report[]", "summary_table", "summary_table.power_complete[]", "table", "table.complete[]", "traffic_light[]"]},
+"power.review.fallback.partial_http_fail": {"r": "59aecee8c9feeaa7", "py": "09f8e16740126209", "diff": ["<root>"]},
+"power.review.llm.control_char": {"r": "7c633fcadd430786", "py": "3604e63bf717a1af", "diff": ["report[]", "summary_table", "summary_table.power_complete[]", "summary_table.power_n[]", "summary_text[]", "table", "traffic_light[]"]},
+"power.review.llm.control_char_mixed": {"r": "54e1a0f8e949c287", "py": "09481a5ed4c88892", "diff": ["summary_table.power_alpha_level[]", "summary_table.power_complete[]", "summary_table.power_effect_size[]", "summary_table.power_effect_size_metric[]", "summary_table.power_n[]", "summary_table.power_power[]", "summary_table.power_sample_size[]", "summary_table.power_software[]", "summary_table.power_statistical_test[]", "summary_text[]", "table"]},
+"power.review.llm.no_key": {"r": "e892d635a3ffbe1b", "py": "5f43ef45f4990f87", "diff": ["table"]}
+}

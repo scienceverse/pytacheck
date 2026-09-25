@@ -1,0 +1,5 @@
+{
+"stat_effect_size.review.empty_paperlist": {"r": "ac5146cf65ca52a8", "py": "e04d3d0e257a3a5f", "diff": ["<R error, Python value>"]},
+"stat_effect_size.review.f_variants": {"r": "918a357973d70abe", "py": "6a7bb709c744fc83", "diff": ["report[]", "summary_text[]", "table.eta_coherence[]", "table.eta_coherence_assumption[]", "table.eta_coherence_note[]"]},
+"stat_effect_size.review.inf_t_and_d": {"r": "ac5146cf65ca52a8", "py": "ca066ad0bc826070", "diff": ["<R error, Python value>"]}
+}

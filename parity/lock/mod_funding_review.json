@@ -1,0 +1,8 @@
+{
+"funding_check.paperlist_empty": {"r": "ac5146cf65ca52a8", "py": "440fc6a0ec3ba3c8", "diff": ["<R error, Python value>"]},
+"funding_check_oi.paperlist_empty": {"r": "ac5146cf65ca52a8", "py": "eb9547e8aaf28680", "diff": ["<R error, Python value>"]},
+"funding_check_oi.sectioned_acknowledgement": {"r": "17e03b316e0601bd", "py": "88f877083c31f994", "diff": ["table"]},
+"locate.boundary.acknow_1_blank_na": {"r": "7d255ac666350e86", "py": "3def624a103b6ecf", "diff": ["get_acknow_1"]},
+"negate_absence_1.match_limit": {"r": "2d3dc6937cbe6a8b", "py": "5b69a120cb4ea023", "diff": ["[]"]},
+"rtransparent_funding.boundaries": {"r": "05d39e923f61abb9", "py": "a69a0bcb9f2e69be", "diff": ["[]"]}
+}

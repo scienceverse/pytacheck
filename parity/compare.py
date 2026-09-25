@@ -272,18 +272,42 @@ def _records_as_frame(x: dict[str, Any]) -> dict[str, Any] | None:
     return {"t": "df", "nrow": len(items), "names": list(names), "v": columns}
 
 
+def _cplx(x: Any) -> list[Any] | None:
+    """A complex element ``[re, im]``, or ``None`` when it is missing (NA, or NaN in
+    both parts: NaN and NA are equivalent, as for doubles)."""
+    if not isinstance(x, list) or len(x) != 2:
+        return None
+    if all(part is None or part == "NaN" for part in x):
+        return None
+    return x
+
+
 def _fmt(x: Any, limit: int = 160) -> str:
     s = repr(x)
     return s if len(s) <= limit else s[: limit - 3] + "..."
 
 
+#: an element index in a path (``table.x[3]``); the lock records paths without them
+_INDEX = re.compile(r"\[\d+\]")
+
+
+def strip_indices(path: str) -> str:
+    """*path* with its element indices written ``[]`` (``table.x[3]`` -> ``table.x[]``)."""
+    return _INDEX.sub("[]", path)
+
+
 class Comparator:
+    #: the problems listed (every differing path is recorded in ``paths``)
+    MAX_PROBLEMS = 25
+
     def __init__(self, options: Options) -> None:
         self.o = options
         self.problems: list[str] = []
+        self.paths: set[str] = set()
 
     def fail(self, path: str, msg: str) -> None:
-        if len(self.problems) < 25:
+        self.paths.add(strip_indices(path or "<root>"))
+        if len(self.problems) < self.MAX_PROBLEMS:
             self.problems.append(f"{path or '<root>'}: {msg}")
 
     # -- scalars ---------------------------------------------------------------
@@ -301,6 +325,12 @@ class Comparator:
         if math.isinf(fa) or math.isinf(fb):
             return fa == fb
         return math.isclose(fa, fb, rel_tol=self.o.tol, abs_tol=self.o.tol * 1e-3)
+
+    def _cplx_eq(self, a: Any, b: Any) -> bool:
+        a, b = _cplx(a), _cplx(b)
+        if a is None or b is None:
+            return a is None and b is None
+        return self._num_eq(a[0], b[0]) and self._num_eq(a[1], b[1])
 
     def _str_eq(self, a: Any, b: Any) -> bool:
         if a is None or b is None:
@@ -321,11 +351,14 @@ class Comparator:
             self.fail(path, f"type R={rt} py={pt}; R={_fmt(rv[:5])} py={_fmt(pv[:5])}")
             return
         for i, (a, b) in enumerate(zip(rv, pv, strict=True)):
-            same = (
-                self._num_eq(a, b)
-                if rt in numeric or pt in numeric
-                else (self._str_eq(a, b) if rt == "chr" or pt == "chr" else a == b)
-            )
+            if rt in numeric or pt in numeric:
+                same = self._num_eq(a, b)
+            elif rt == "cplx" or pt == "cplx":
+                same = self._cplx_eq(a, b)
+            elif rt == "chr" or pt == "chr":
+                same = self._str_eq(a, b)
+            else:
+                same = a == b
             if not same:
                 self.fail(f"{path}[{i}]", f"R={_fmt(a)} py={_fmt(b)}")
         if r.get("names") and p.get("names") and r["names"] != p["names"]:
@@ -359,7 +392,8 @@ class Comparator:
         for n in common:
             self.column(rcols[n], pcols[n], f"{path}.{n}".lstrip("."), order_r, order_p)
 
-    def _row_order(self, cols: dict[str, Any], names: list[str], nrow: int) -> list[int]:
+    @staticmethod
+    def _row_order(cols: dict[str, Any], names: list[str], nrow: int) -> list[int]:
         def cell(col: dict[str, Any], i: int) -> str:
             v = col.get("v", [])
             return repr(v[i]) if i < len(v) else ""
@@ -520,9 +554,64 @@ class Comparator:
 
 def compare(r: dict[str, Any], p: dict[str, Any], options: Options) -> list[str]:
     """Return a list of human-readable differences (empty when equal)."""
+    return compare_paths(r, p, options)[0]
+
+
+def compare_paths(
+    r: dict[str, Any], p: dict[str, Any], options: Options
+) -> tuple[list[str], list[str]]:
+    """The differences (as :func:`compare`) and every differing path, sorted, with
+    element indices written ``[]`` (what the divergence lock records)."""
     c = Comparator(options)
     c.value(r, p, "")
-    return c.problems
+    return c.problems, sorted(c.paths)
+
+
+def comparable(x: Any, options: Options, path: str = "") -> Any:
+    """The canonical value *x* as the comparison sees it (what the divergence lock
+    fingerprints): elements ``ignore`` names dropped, a module output's report as
+    its prose blocks (or dropped, with ``report: ignore``), and the rows of
+    ``unordered`` data frames sorted."""
+    if not isinstance(x, dict):
+        return x
+    t = x.get("t")
+    if t == "df":
+        names, cols = [], []
+        for n, col in zip(x.get("names", []), x.get("v", []), strict=False):
+            sub = f"{path}.{n}".lstrip(".")
+            if sub not in options.ignore:
+                names.append(n)
+                cols.append(comparable(col, options, sub))
+        nrow = x.get("nrow", 0)
+        if (options.unordered_root and path == "") or path in options.unordered:
+            order = Comparator._row_order(dict(zip(names, cols, strict=True)), names, nrow)
+            cols = [
+                {**c, "v": [c["v"][i] for i in order]} if len(c.get("v", [])) == nrow else c
+                for c in cols
+            ]
+        return {**x, "names": names, "v": cols}
+    if t in ("list", "module_output", "paper", "paperlist"):
+        names = x.get("names")
+        kept_names: list[str] = []
+        kept: list[Any] = []
+        for i, el in enumerate(x.get("v", [])):
+            n = names[i] if names and i < len(names) else None
+            sub = f"{path}.{n}".lstrip(".") if n else f"{path}[{i}]"
+            if sub in options.ignore:
+                continue
+            if n == "report" and t == "module_output":
+                if options.report == "ignore":
+                    continue
+                if options.report == "prose":
+                    el = {"t": "prose", "v": Comparator._prose(el)}
+            else:
+                el = comparable(el, options, sub)
+            kept_names.append(n or "")
+            kept.append(el)
+        return {**x, "names": kept_names if names else names, "v": kept}
+    if t == "matrix":
+        return {**x, "v": comparable(x.get("v"), options, path)}
+    return x
 
 
 def summarize(problems: Iterable[str]) -> str:

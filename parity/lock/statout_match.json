@@ -1,0 +1,5 @@
+{
+"match_reported_output.synthetic.na_test_id": {"r": "ac5146cf65ca52a8", "py": "dbc3ee939288a1b4", "diff": ["<R error, Python value>"]},
+"norm_interval.batch": {"r": "4c9d3e988297bbe0", "py": "dd6b6c50fc2e2f89", "diff": ["[].hi.dec[]", "[].lo.dec[]"]},
+"norm_value.batch": {"r": "8017d385bd5855b7", "py": "03ab6fb21e418c14", "diff": ["dec[]"]}
+}

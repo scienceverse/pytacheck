@@ -5,6 +5,9 @@ share one R type (``int`` and ``float`` together are a double vector); any
 other list stays a list, as R keeps the element types of a list
 (``jsonlite::read_json(simplifyVector = FALSE)``, list columns). For the same
 reason a list of dicts is a data frame only when every column has one type.
+
+A complex number is the pair ``[re, im]`` (each part as in a double vector),
+on both sides: nothing reproduces R's printing of complex numbers.
 """
 
 from __future__ import annotations
@@ -57,21 +60,28 @@ def _scalar_value(x: Any, t: str) -> Any:
     if _is_na(x):
         return None
     if t == "cplx":
-        return complex_as_character(complex(x))
+        z = complex(x)
+        return [_dbl(z.real), _dbl(z.imag)]
     if t == "lgl":
         return bool(x)
     if t == "int":
         return int(x)
     if t == "dbl":
-        f = float(x)
-        if math.isinf(f):
-            return "Inf" if f > 0 else "-Inf"
-        return f
+        return _dbl(float(x))
     if isinstance(x, pd.Timestamp | dt.datetime):
         return x.strftime("%Y-%m-%dT%H:%M:%S")
     if isinstance(x, dt.date):
         return x.isoformat()
     return str(x)
+
+
+def _dbl(f: float) -> float | str:
+    """A double as parity/r/canonical.R writes it: NaN and infinities as strings."""
+    if math.isnan(f):
+        return "NaN"
+    if math.isinf(f):
+        return "Inf" if f > 0 else "-Inf"
+    return f
 
 
 def _vector_type(values: list[Any]) -> str | None:
@@ -105,108 +115,16 @@ def _raw(x: bytes | bytearray | memoryview) -> dict[str, Any]:
     return {"t": "raw", "v": [f"{b:02x}" for b in bytes(x)]}
 
 
-# -- R's as.character() of a complex number (R >= 4.4) -------------------------
-#
-# coerceToString() -> StringFromComplex(): formatComplex() formats Re(z) and
-# |Im(z)| separately with formatReal() at 15 significant digits, and
-# EncodeComplex() prints them with EncodeReal0(), which (unlike
-# as.character() of a double) keeps trailing zeros. formatReal()'s scientific()
-# scales by powers of ten in long double; its table holds the *double* literals
-# 1e0..1e27, so 1e23 and above are not exact, which decides some last digits
-# (5.7273955524584049e-12 gives "5.72739555245840e-12"). numpy's longdouble is
-# the same 80-bit x87 type on x86-64 Linux, where the goldens are made.
-
-_LD = np.longdouble
-_KP_MAX = 27
-_TBL = [_LD(float(10**k)) for k in range(_KP_MAX + 1)]
-_R_DIGITS = 15  # R_print.digits = DBL_DIG in coerceToString()
-
-
-def _scientific(x: float, digits: int = _R_DIGITS) -> tuple[int, int, int, bool]:
-    """``scientific()`` (src/main/format.c): ``(neg, kpower, nsig, roundingwidens)``."""
-    if x == 0.0:
-        return 0, 0, 1, False
-    neg = 1 if x < 0 else 0
-    r = -x if neg else x
-    kp = math.floor(math.log10(r)) - digits + 1
-    r_prec = _LD(r)
-    if abs(kp) <= _KP_MAX:
-        if kp > 0:
-            r_prec /= _TBL[kp]
-        elif kp < 0:
-            r_prec *= _TBL[-kp]
-    else:
-        r_prec /= np.power(_LD(10), _LD(kp))
-    if r_prec < _TBL[digits - 1]:
-        r_prec *= _LD(10)
-        kp -= 1
-    alpha = float(np.rint(r_prec))
-    nsig = digits
-    for _ in range(digits):
-        alpha /= 10.0
-        if alpha == math.floor(alpha):
-            nsig -= 1
-        else:
-            break
-    if nsig == 0 and digits > 0:
-        nsig = 1
-        kp += 1
-    kpower = kp + digits - 1
-    rgt = min(max(digits - kpower, 0), _KP_MAX)
-    fuzz = _LD(0.5 / float(_TBL[rgt]))
-    widens = bool(0 < kpower <= _KP_MAX and _LD(r) < _TBL[kpower] - fuzz)
-    return neg, kpower, nsig, widens
-
-
-def _format_real(x: float) -> tuple[int, int, int]:
-    """``formatReal()`` of one number: ``(w, d, e)`` (``scipen = 0``)."""
-    if not math.isfinite(x):
-        return (4 if x < 0 else 3), 0, 0
-    neg, kpower, nsig, widens = _scientific(x)
-    left = kpower + 1 - (1 if widens else 0)
-    sleft = neg + (1 if left <= 0 else left)
-    rgt = max(nsig - left, 0)
-    mxsl = 1 + neg if left < 0 else sleft
-    w_fixed = mxsl + rgt + (rgt != 0)
-    e = 2 if (left > 100 or left <= -99) else 1
-    d = nsig - 1
-    w = neg + (d > 0) + d + 4 + e
-    if w_fixed <= w:
-        return w_fixed, rgt, 0
-    return w, d, e
-
-
-def _encode_real0(x: float, w: int, d: int, e: int) -> str:
-    """``EncodeReal0()`` (src/main/printutils.c)."""
-    if x == 0.0:
-        x = 0.0  # no signed zeros
-    if not math.isfinite(x):
-        return ("NaN" if math.isnan(x) else "Inf" if x > 0 else "-Inf").rjust(w)
-    if e:
-        return format(x, f"{'#' if d else ''}{w}.{d}e")
-    return format(x, f"{w}.{d}f")
-
-
 def _r_na_bits(x: float) -> bool:
     """R's ``NA_real_`` (a NaN whose low word is 1954), not just any NaN."""
     return math.isnan(x) and struct.unpack("<Q", struct.pack("<d", x))[0] & 0xFFFFFFFF == 1954
 
 
 def _complex_is_na(z: complex) -> bool:
-    """``NA_complex_``: an R NA in either part, or (pytacheck's missing complex) NaN in both."""
+    """A missing complex number: R's ``NA_real_`` in either part (``is.na()`` in R and
+    not ``is.nan()``: parity/r/canonical.R writes it ``null``), or -- pytacheck's
+    missing complex -- NaN in both."""
     return _r_na_bits(z.real) or _r_na_bits(z.imag) or (math.isnan(z.real) and math.isnan(z.imag))
-
-
-def complex_as_character(z: complex) -> str:
-    """R's ``as.character()`` of a (non-NA) complex number, e.g. ``"1+2i"``."""
-    re_ = 0.0 if z.real == 0.0 else z.real
-    im = 0.0 if z.imag == 0.0 else z.imag
-    real = _encode_real0(re_, *_format_real(re_))
-    neg_im = im < 0
-    imag = _encode_real0(-im if neg_im else im, *_format_real(abs(im)))
-    if imag == "0":
-        neg_im = False
-    return f"{real}{'-' if neg_im else '+'}{imag}i"
 
 
 def _series_type(s: pd.Series) -> str | None:

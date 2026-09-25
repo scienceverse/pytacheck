@@ -1,0 +1,9 @@
+{
+"stat_effect_size.f_branches": {"r": "e88b1f85dfce5981", "py": "1e4b8794b6fb742f", "diff": ["report[]", "summary_text[]", "table.eta_coherence[]", "table.eta_coherence_assumption[]", "table.eta_coherence_note[]"]},
+"stat_effect_size.f_zero_df": {"r": "ac5146cf65ca52a8", "py": "9b020325779fb62a", "diff": ["<R error, Python value>"]},
+"stat_effect_size.green_paper": {"r": "bfee370efa08b0ce", "py": "9158dfde0e5c82ae", "diff": ["table.text[]"]},
+"stat_effect_size.preprint_tei": {"r": "02ce78736b29711a", "py": "bb3f37b64bd3f53b", "diff": ["summary_text[]", "table.text[]"]},
+"stat_effect_size.published_tei": {"r": "06f92c0dffe871a9", "py": "8ed854aedd9867b9", "diff": ["summary_text[]", "table.text[]"]},
+"stat_effect_size.tricky": {"r": "6aa5a9efcc96cbe9", "py": "bab117862172e391", "diff": ["report[]", "summary_text[]", "table.d_coherence[]", "table.d_coherence_assumption[]", "table.d_coherence_note[]", "table.d_implied_n[]", "traffic_light[]"]},
+"stat_effect_size.xml_unsorted": {"r": "50b9fcf6d56dad86", "py": "34fbe346a7c6ac06", "diff": ["summary_text[]", "table.text[]"]}
+}
