@@ -763,3 +763,83 @@ def test_fixture_listing_is_current() -> None:
         }
         assert listed == on_disk
     assert os.path.isdir(REPOS / "careless")
+
+
+# -----------------------------------------------------------------------------
+# review fixes
+# -----------------------------------------------------------------------------
+
+
+def test_pad_counts_r_format_widths() -> None:
+    # R's format() counts a tab as 2 (its escape "\t"), a C0 control as 4, a
+    # backslash as 2, a soft hyphen as 1 and U+1F7F0 (newer than R's width
+    # table) as 1
+    assert h._disp_width("a\tb") == 4
+    assert h._disp_width("a\x01b") == 6
+    assert h._disp_width("­x") == 2
+    assert h._disp_width("x\U0001f7f0") == 2
+    assert h._disp_width("a\\b") == 4
+    assert h._disp_width("é日") == 3
+    assert h._pad(["a\tb", "abcdef"], extra=2) == ["a\tb    ", "abcdef  "]
+
+
+def test_integer64_columns_print_as_exact_integers() -> None:
+    # fread types integers beyond 32 bits as bit64::integer64, whose
+    # as.character() never switches to scientific notation
+    out = dc.dc_run("review_types")
+    tbl = out.table
+    big = tbl.loc[(tbl["source_file"] == "types.csv") & (tbl["column_name"] == "big")]
+    assert big["sample_values"].tolist() == ["100000 | 200000 | 300000 | 123456789012 | 1"]
+    df = pd.DataFrame({"x": pd.Series([100000, None, 400000000000], dtype="Int64")})
+    df.attrs["col_attrs"] = {"x": {"class": "integer64"}}
+    assert h.col_chr(df, 0) == ["100000", None, "400000000000"]
+    df.attrs = {}
+    assert h.col_chr(df, 0) == ["1e+05", None, "4e+11"]
+
+
+def test_careless_respondent_ids_from_an_integer64_column() -> None:
+    out = dc.dc_run("review_int64", careless=True)
+    assert out["careless"]["respondent"].tolist() == ["100000000004", "100000000020"]
+
+
+def test_peek_zips_needs_a_single_true() -> None:
+    # isTRUE(peek_zips): a truthy non-logical value does not open the zips
+    with_true = dc.dc_run("archives", peek_zips=True)
+    with_one = dc.dc_run("archives", peek_zips=1)
+    names_true = set(with_true["structure"]["file_name"].tolist())
+    names_one = set(with_one["structure"]["file_name"].tolist())
+    assert "bundle.zip" not in names_true
+    assert "bundle.zip" in names_one
+
+
+def test_repo_tree_rows_scales_linearly() -> None:
+    import time
+
+    paths = [f"data/sub{i % 20}/file{i}.csv" for i in range(4000)]
+    paths += [f"flat{i}.txt" for i in range(4000)]
+    t = time.perf_counter()
+    rows = h.repo_tree_rows(paths)
+    assert time.perf_counter() - t < 1.5
+    assert len(rows) == 8021
+    # the 20 folders first (sub0, sub1, sub10, ...), then the flat files
+    assert rows["text"].tolist()[:2] == ["├── data/", "│   ├── sub0/"]
+    assert rows["text"].tolist()[-1] == "└── flat999.txt"
+
+
+def test_stack_stats_matches_bind_rows() -> None:
+    from pytacheck._r import bind_rows
+    from pytacheck.datacheck.columns import data_col_stats
+    from pytacheck.modules.data_check import _stack_stats
+
+    cols = [
+        pd.Series([1.0, 2.0, None]),
+        pd.Series(["a", "b", None], dtype="string"),
+        pd.Series([], dtype="float64"),
+    ]
+    stats = [data_col_stats(c, c) for c in cols]
+    fast = _stack_stats(stats)
+    ref = bind_rows(stats).reset_index(drop=True)
+    pd.testing.assert_frame_equal(fast, ref)
+    # an unexpected shape falls back to bind_rows
+    odd = [stats[0], pd.DataFrame({"n": [1], "x": ["y"]})]
+    assert list(_stack_stats(odd).columns) == list(bind_rows(odd).columns)

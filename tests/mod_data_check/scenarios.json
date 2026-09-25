@@ -784,5 +784,97 @@
         ]
       }
     ]
+  },
+  "review_stats": {
+    "repos": [
+      {
+        "dir": "review_stats",
+        "repo_url": "https://osf.io/stats",
+        "files": [
+          "iris.sas7bdat",
+          "labelled.dta",
+          "labelled.sav",
+          "labs.rds",
+          "portable.por",
+          "study.rds",
+          "tibble.rds",
+          "twoframes.rda",
+          "workspace.RData"
+        ]
+      }
+    ]
+  },
+  "review_text": {
+    "repos": [
+      {
+        "dir": "review_text",
+        "repo_url": "https://osf.io/textf",
+        "files": [
+          "big_int.csv",
+          "bom.csv",
+          "dates.csv",
+          "eprime_utf8.txt",
+          "na_strings.csv",
+          "pipe.txt",
+          "semicolon.csv",
+          "single_col.csv",
+          "tabbed.tsv",
+          "table.txt",
+          "title_line.csv",
+          "utf16_table.txt",
+          "whitespace.csv"
+        ]
+      }
+    ]
+  },
+  "review_sheets": {
+    "repos": [
+      {
+        "dir": "review_sheets",
+        "repo_url": "https://osf.io/sheet",
+        "files": [
+          "readxl_type-me.xls",
+          "title.ods",
+          "typed.ods",
+          "written.fods",
+          "xl_bools.xlsx",
+          "xl_dates.xlsx",
+          "xl_gaps.xlsx",
+          "xl_header_only.xlsx",
+          "xl_mixed.xlsx",
+          "xl_numhdr.xlsx",
+          "xl_sheets.xlsx",
+          "xl_title.xlsx"
+        ]
+      }
+    ]
+  },
+  "review_mixed_list": {
+    "papers": [
+      "p1",
+      "p2",
+      "p3"
+    ],
+    "repos": [
+      {
+        "dir": "review_broken",
+        "repo_url": "https://osf.io/brok2",
+        "files": [
+          "broken.xlsx"
+        ],
+        "paper_id": "p2"
+      },
+      {
+        "dir": "basic",
+        "repo_url": "https://osf.io/abcde",
+        "files": [
+          "README.md",
+          "analysis.R",
+          "data/study.csv",
+          "materials/stimulus.png"
+        ],
+        "paper_id": "p1"
+      }
+    ]
   }
 }

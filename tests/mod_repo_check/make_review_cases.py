@@ -22,7 +22,7 @@ HERE = Path(__file__).resolve().parent
 ROOT = HERE.parent.parent
 sys.path.insert(0, str(ROOT))
 
-from tests.mod_repo_check.make_cases import (  # noqa: E402
+from tests.mod_repo_check.make_cases import (
     CODE_FILES,
     FIX,
     LOCAL_IGNORE,
@@ -240,6 +240,68 @@ CASES: list[tuple[str, str, dict[str, Any], Any]] = [
         None,
     ),
     (
+        "zenodo.peek_rich",
+        "a peeked zip holding a README, folders, a zip, a .tar.gz and an E-Prime file",
+        one(["https://zenodo.org/records/5559101"], "p_peek_rich"),
+        {"ignore": ["table.file_location"]},
+    ),
+    (
+        "zenodo.peek_rich.report",
+        "module_report(): a peeked zip with rich contents",
+        one(["https://zenodo.org/records/5559101"], "p_peek_rich_r", report=True),
+        None,
+    ),
+    (
+        "zenodo.peek_rich.tables",
+        "report tables: a peeked zip with rich contents",
+        one(["https://zenodo.org/records/5559101"], "p_peek_rich_t", tables=True),
+        None,
+    ),
+    (
+        "zenodo.peek_same_zip",
+        "two records list the same zip URL: the second record's copy is a duplicate",
+        one(
+            ["https://zenodo.org/records/5559101", "https://zenodo.org/records/5559102"],
+            "p_peek_same",
+        ),
+        {"ignore": ["table.file_location"]},
+    ),
+    (
+        "zenodo.peek_shared.paperlist",
+        "two papers share a record with a peeked zip",
+        {
+            "papers": [
+                {"url": ["https://zenodo.org/records/5559101"], "id": "p_zb"},
+                {"url": ["https://zenodo.org/records/5559101"], "id": "p_za"},
+            ]
+        },
+        {"ignore": ["table.file_location"]},
+    ),
+    (
+        "osf.reg.paperlist",
+        "registrations in two papers: source-project rows take the first OSF paper's id",
+        {
+            "papers": [
+                {"url": ["https://github.com/gzorg/treerepo"], "id": "p_gh_only"},
+                {"url": osf("regc1"), "id": "p_reg_b"},
+                {"url": osf("regp3", "regor"), "id": "p_reg_a"},
+            ]
+        },
+        {"ignore": ["table.file_location"]},
+    ),
+    (
+        "osf.reg.closed_parent_linked",
+        "a registration and its closed source project, both linked",
+        one(osf("regc1", "parc1", "regc2"), "p_reg_closed_linked"),
+        {"ignore": ["table.file_location"]},
+    ),
+    (
+        "osf.reg.closed_parent_linked.report",
+        "module_report(): a registration and its closed source project, both linked",
+        one(osf("regc1", "parc1", "regc2"), "p_reg_closed_linked_r", report=True),
+        None,
+    ),
+    (
         "figshare.share_link_and_article",
         "a private share link beside a Figshare article",
         one(
@@ -282,8 +344,35 @@ def size_case() -> dict[str, Any]:
     }
 
 
+PID_IGNORE = ["paper_id", "table.paper_id", "summary_table.paper_id"]
+
+
+def module_cases() -> list[dict[str, Any]]:
+    """Plain ``module: repo_check`` cases (no network, so no mocks are needed)."""
+    return [
+        {
+            "id": "repo_check.module.no_links",
+            "note": "module_run() of a test paper without repository links",
+            "module": "repo_check",
+            "args": {"paper": {"$test_paper": {"text": ["No repositories here."]}}},
+            # test_paper() ids are random on both sides
+            "compare": {"ignore": PID_IGNORE},
+        },
+        {
+            "id": "repo_check.module.local_tidy",
+            "note": "module_run() of a test paper with a local folder",
+            "module": "repo_check",
+            "args": {
+                "paper": {"$test_paper": {"text": ["Data and code are shared."]}},
+                "local_path": FIX + "tidy",
+            },
+            "compare": {"ignore": [*LOCAL_IGNORE, *PID_IGNORE, "naming_issues.paper_id"]},
+        },
+    ]
+
+
 def main() -> None:
-    cases = [size_case()]
+    cases = [size_case(), *module_cases()]
     for cid, note, spec, ignore in CASES:
         c = case(cid, note, spec, ignore)
         cases.append(c)

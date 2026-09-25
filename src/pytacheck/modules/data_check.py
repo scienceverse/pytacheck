@@ -231,7 +231,7 @@ def _merge_all(x: pd.DataFrame, y: pd.DataFrame) -> pd.DataFrame:
     def take(df: pd.DataFrame, col: str, idx: list[int | None]) -> pd.Series:
         s = df[col]
         vals = [s.iloc[i] if i is not None else None for i in idx]
-        dtype = s.dtype
+        dtype: Any = s.dtype
         if pd.api.types.is_integer_dtype(dtype) or pd.api.types.is_bool_dtype(dtype):
             dtype = "Int64" if pd.api.types.is_integer_dtype(dtype) else "boolean"
         try:
@@ -897,7 +897,7 @@ def _download(
 
     file_url = h._col(all_files, "file_url")
     zip_peek_reason: list[Any] = [None] * n
-    if peek_zips and download != "none" and file_url is not None:
+    if h._is_true(peek_zips) and download != "none" and file_url is not None:
         from pytacheck.archives.zip_peek import zip_decision
 
         is_zip = [
@@ -991,7 +991,7 @@ def _download(
             zips = _is_zip(names)
             tars = _is_tar_archive(names)
             gzs = _is_single_compress(names)
-            da_zip = [i for i in range(n) if peek_zips and on_disk[i] and zips[i]]
+            da_zip = [i for i in range(n) if h._is_true(peek_zips) and on_disk[i] and zips[i]]
             da_tar = [i for i in range(n) if on_disk[i] and tars[i]]
             da_gz = [i for i in range(n) if on_disk[i] and gzs[i]]
             da = da_zip + da_tar + da_gz
@@ -1097,7 +1097,6 @@ def _file_columns(
     f: dict[str, Any], df: pd.DataFrame, cls: list[dict[str, Any]], pid_fallback: Any
 ) -> pd.DataFrame:
     """The per-column rows of one data file (the ``data.frame(...)`` of step 4)."""
-    from pytacheck._r import bind_rows
     from pytacheck.datacheck.checks import (
         _qualtrics_is_display_order,
         _qualtrics_tag_cols,
@@ -1132,7 +1131,7 @@ def _file_columns(
         ):
             x_for_stats = df.iloc[:, j]
         stats.append(data_col_stats(x_for_stats, df.iloc[:, j]))
-    stats_mat = bind_rows(stats).reset_index(drop=True)
+    stats_mat = _stack_stats(stats)
 
     rep_counts = df.attrs.get("utf8_repaired") or {}
     utf8_fixed = [int(rep_counts[nm]) if nm in rep_counts else 0 for nm in names]
@@ -1160,6 +1159,30 @@ def _file_columns(
     data["sample_values"] = _str_series([_sample_values(df, j) for j in range(p)])
     data["utf8_repaired"] = pd.Series(utf8_fixed, dtype="Int64")
     return pd.concat([pd.DataFrame(data), stats_mat], axis=1)
+
+
+def _stack_stats(stats: list[pd.DataFrame]) -> pd.DataFrame:
+    """``do.call(rbind, <one-row data_col_stats() frames>)``.
+
+    ``data_col_stats()`` always returns the same columns and types, so the
+    rows are stacked column by column; anything else goes through
+    :func:`~pytacheck._r.bind_rows` (R's type coercion).
+    """
+    from pytacheck._r import bind_rows
+
+    if not stats:
+        return bind_rows(stats).reset_index(drop=True)
+    first = stats[0]
+    cols = list(first.columns)
+    if all(len(s) == 1 and list(s.columns) == cols for s in stats):
+        rows = [s.to_dict("records")[0] for s in stats]
+        try:
+            return pd.DataFrame(
+                {c: pd.Series([r[c] for r in rows], dtype=first[c].dtype) for c in cols}
+            )
+        except (TypeError, ValueError):
+            pass
+    return bind_rows(stats).reset_index(drop=True)
 
 
 def _extract(
@@ -1218,7 +1241,7 @@ def _extract(
     if data_rows:
         from pytacheck._r import bind_rows
 
-        records = all_files.to_dict("records")
+        records: list[dict[str, Any]] = all_files.to_dict("records")  # type: ignore[assignment]
         pid_fallback = _pid(paper, all_files)
         per_file = []
         for i in data_rows:
@@ -1226,7 +1249,7 @@ def _extract(
                 k: (None if not isinstance(v, list) and h._na(v) else v)
                 for k, v in records[i].items()
             }
-            fname = f.get("file_name")
+            fname: Any = f.get("file_name")
             loc = str(f["file_location"])
             df = data_read_head(loc, n_rows=math.inf)
             if df is None or df.shape[1] == 0:
@@ -1384,9 +1407,9 @@ def _llm_concepts(
         cols = [str(c) for c in cname]
         key = [f"{sg}\r{c}" for sg, c in zip(header_sig, cols, strict=True)]
         rep_pos: dict[str, int] = {}
-        for i, (k, r) in enumerate(zip(key, rep_file, strict=True)):
-            if r and k not in rep_pos:
-                rep_pos[k] = i
+        for pos, (kk, r) in enumerate(zip(key, rep_file, strict=True)):
+            if r and kk not in rep_pos:
+                rep_pos[kk] = pos
         for facet in ("concept", "measurement_level"):
             vals_f = [None if h._na(v) else v for v in columns_df[facet].tolist()]
             new = list(vals_f)
@@ -1615,21 +1638,21 @@ def _validate(
     # per-paper counts
     file_to_paper: dict[Any, Any] = {}
     if columns_df is not None and len(columns_df) > 0:
-        for s, p in zip(
+        for src_f, p in zip(
             columns_df["source_file"].tolist(), columns_df["paper_id"].tolist(), strict=True
         ):
-            s = None if h._na(s) else s
-            if s not in file_to_paper:
-                file_to_paper[s] = None if h._na(p) else p
+            key_f = None if h._na(src_f) else src_f
+            if key_f not in file_to_paper:
+                file_to_paper[key_f] = None if h._na(p) else p
     sp_file_to_paper: dict[Any, Any] = {}
     if structure_df is not None and len(structure_df) > 0:
-        for s, p in zip(
+        for nm_f, p in zip(
             h._col(structure_df, "file_name") or [],
             h._col(structure_df, "paper_id") or [],
             strict=False,
         ):
-            if s not in sp_file_to_paper:
-                sp_file_to_paper[s] = p
+            if nm_f not in sp_file_to_paper:
+                sp_file_to_paper[nm_f] = p
     if n_columns > 0 and columns_df is not None:
         cpid = [None if h._na(v) else v for v in columns_df["paper_id"].tolist()]
         k, v = _summarise_by(cpid, [1] * len(cpid), len)

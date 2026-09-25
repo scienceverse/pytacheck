@@ -1,0 +1,153 @@
+{
+  "id": "module.nonr_only",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "na_replace",
+      "stat_output",
+      "match_table"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "reproducibility_check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Reproducibility Check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "results"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [],
+        "v": []
+      },
+      {
+        "t": "chr",
+        "v": [
+          "#### MATLAB code, no reproducible output",
+          "1 MATLAB code file is present, but this module has no way to extract statistics from MATLAB output, and no self-reproducible output (JASP/jamovi, SPSS-Viewer, a Stata output log, or Mplus output) was found to fall back on. Readers without a MATLAB license cannot currently see what the code produced. Consider depositing the results as well, so they are visible without MATLAB installed: run `diary('output.txt')` (or `diary on`) before the analysis and `diary off` after to save a plain-text transcript of everything printed to the Command Window, or use `publish('script.m', 'pdf')` (or the Live Editor's Export/Save As) to generate a single readable document with the code, its output, and any figures together.",
+          "#### Python code, no reproducible output",
+          "2 Python code files are present, but this module has no way to extract statistics from Python output, and no self-reproducible output (JASP/jamovi, SPSS-Viewer, a Stata output log, or Mplus output) was found to fall back on. Consider depositing the analysis output (a rendered results/log file), or re-running the analysis in **jamovi** or **JASP** (free; the `.omv`/`.jasp` file bundles data and results together).",
+          "#### SAS code, no reproducible output",
+          "1 SAS code file is present, but this module has no way to extract statistics from SAS output, and no self-reproducible output (JASP/jamovi, SPSS-Viewer, a Stata output log, or Mplus output) was found to fall back on. Consider re-running the analysis in **jamovi** or **JASP** (free; the `.omv`/`.jasp` file bundles data and results together) or depositing SAS's own output log if one exists.",
+          "#### SPSS syntax without data or output",
+          "1 SPSS syntax file (`.sps`) is present, but no output (`.spv`) was found. Without output, we cannot compare the results from the software against those reported in the manuscript to check whether all results can be reproduced based on the shared data, code, and results. Consider depositing an `.spv` file instead of (or alongside) the `.sav`/`.sps` pair — it bundles the data and analyses together and is fully self-reproducible from the file itself."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "info"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "\n-  We found no R code to run, but did find other code with no reproducible output to check it against — see below."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "repro_code_n",
+          "repro_runnable",
+          "repro_missing_inputs",
+          "repro_deps",
+          "repro_tests_reported",
+          "repro_tests_matched"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "p1"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              null
+            ]
+          }
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "names": [
+          "repro_code_n",
+          "repro_runnable",
+          "repro_missing_inputs",
+          "repro_deps"
+        ]
+      },
+      {
+        "t": "null"
+      },
+      {
+        "t": "null"
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

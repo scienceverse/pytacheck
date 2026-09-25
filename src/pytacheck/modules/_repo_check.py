@@ -486,18 +486,21 @@ def join_file_types(files: pd.DataFrame) -> pd.DataFrame:
 def _file_rows(
     info: pd.DataFrame,
     url_col: str,
-    row_fn: Callable[[int, Any], dict[str, Any]],
+    row_fn: Callable[[dict[str, Any], Any], dict[str, Any]],
 ) -> pd.DataFrame:
     """The R per-record/per-file ``lapply()`` over an ``*_info()`` table's ``files``.
 
-    ``row_fn(i, f)`` gives one file's fields; records without files add
-    nothing. The result is typed like R's ``bind_rows()`` of the per-file
-    data frames (a zero-column table when no record has files).
+    ``row_fn(record, f)`` gives one file's fields, where *record* holds the
+    record's other columns (``info$<col>[[i]]``, read once per record, not
+    once per file) and is shared by the record's files. Records without
+    files add nothing. The result is typed like R's ``bind_rows()`` of the
+    per-file data frames (a zero-column table when no record has files).
     """
     rows: dict[str, list[Any]] = {k: [] for k in _FILE_COLS}
     any_rows = False
-    for i in range(len(info)):
-        files_i = info["files"].iloc[i]
+    others = [c for c in info.columns if c != "files"]
+    columns = {c: info[c].tolist() for c in others}
+    for i, files_i in enumerate(info["files"].tolist()):
         if not isinstance(files_i, list | tuple | dict):
             if not _na(files_i):
                 # an atomic value: R's lapply() visits it, `f$x` then errors
@@ -505,12 +508,16 @@ def _file_rows(
             continue
         if len(files_i) == 0:
             continue
+        if url_col not in columns:
+            raise RError("subscript out of bounds")  # R: info$<url_col>[[i]] of NULL
+        record = {c: columns[c][i] for c in others}
+        repo_url = _as_chr(record[url_col])
         elements = list(files_i.values()) if isinstance(files_i, dict) else list(files_i)
         for f in elements:
             if f is not None and not isinstance(f, Mapping | list | tuple):
                 raise RError("$ operator is invalid for atomic vectors")
-            row = row_fn(i, f)
-            row.setdefault("repo_url", _as_chr(info[url_col].iloc[i]))
+            row = row_fn(record, f)
+            row.setdefault("repo_url", repo_url)
             for k in _FILE_COLS:
                 rows[k].append(row.get(k))
             any_rows = True
@@ -732,10 +739,11 @@ def list_osf(
 
 
 def list_git(
-    repos: Repos, urls: list[str], host: str, cache: bool
+    repos: Repos, urls: list[str], host: str, cache: bool, pb: Any = None
 ) -> tuple[pd.DataFrame, pd.DataFrame]:
     """The GitHub / GitLab block: the whole tree of each repository, and its licence."""
     from pytacheck._r import bind_rows
+    from pytacheck.archives import _tick
     from pytacheck.archives.info_cache import (
         _repo_info_cache_get,
         _repo_info_cache_put,
@@ -778,6 +786,8 @@ def list_git(
             reason = r.get("reason")
             repos.flag([url], reason)
             warnings.warn(f"Repository {url} was not listed: {reason}.", stacklevel=3)
+            label = "GitHub" if host == "github" else "GitLab"
+            _tick(pb, f"Skipping {label} repo ({reason}): {url}")
 
     good = [
         r.get("files")
@@ -964,7 +974,7 @@ def _api_listing(
     urls: list[str],
     info_fn: Callable[[], pd.DataFrame],
     url_col: str,
-    row_fn: Callable[[pd.DataFrame, int, Any], dict[str, Any]],
+    row_fn: Callable[[dict[str, Any], Any], dict[str, Any]],
     col_chr: bool = False,
 ) -> tuple[pd.DataFrame, pd.DataFrame]:
     """The shared shape of the Zenodo, Dataverse, Figshare, Dryad, ReShare,
@@ -978,7 +988,7 @@ def _api_listing(
         if len(info) > 0:
             meta = _meta_from(info, url_col, col_chr)
         if len(info) > 0 and "files" in info.columns:
-            listed = _file_rows(info, url_col, lambda i, f: row_fn(info, i, f))
+            listed = _file_rows(info, url_col, row_fn)
             files_df = _typed_listing(listed)
     except Exception as e:
         repos.flag(urls, condition_message(e))
@@ -1002,7 +1012,7 @@ def _row(name: Any, file_url: Any, size: Any) -> dict[str, Any]:
     }
 
 
-def zenodo_row(_info: pd.DataFrame, _i: int, f: Any) -> dict[str, Any]:
+def zenodo_row(_record: dict[str, Any], f: Any) -> dict[str, Any]:
     links = dollar(f, "links")
     file_url = None
     if links is not None:
@@ -1012,38 +1022,40 @@ def zenodo_row(_info: pd.DataFrame, _i: int, f: Any) -> dict[str, Any]:
     return _row(dollar(f, "key"), file_url, dollar(f, "size"))
 
 
-def dataverse_row(info: pd.DataFrame, i: int, f: Any) -> dict[str, Any]:
+def dataverse_row(record: dict[str, Any], f: Any) -> dict[str, Any]:
     df = dollar(f, "dataFile")
     if df is None:
         df = {}
     fid = dollar(df, "id")
     file_url = None
     if not (fid is None or (isinstance(fid, list | tuple) and len(fid) == 0)):
-        host = _as_chr(info["dataverse_host"].iloc[i])
+        if "dataverse_host" not in record:
+            raise RError("subscript out of bounds")  # R: .dv_info$dataverse_host[[i]] of NULL
+        host = _as_chr(record["dataverse_host"])
         file_url = f"https://{'NA' if host is None else host}/api/access/datafile/{_as_chr(fid)}"
     name = empty_or(empty_or(dollar(f, "label"), dollar(df, "filename")), None)
     return _row(name, file_url, dollar(df, "filesize"))
 
 
-def figshare_row(_info: pd.DataFrame, _i: int, f: Any) -> dict[str, Any]:
+def figshare_row(_record: dict[str, Any], f: Any) -> dict[str, Any]:
     return _row(
         dollar(f, "name"), _as_chr(empty_or(dollar(f, "download_url"), None)), dollar(f, "size")
     )
 
 
-def dryad_row(_info: pd.DataFrame, _i: int, f: Any) -> dict[str, Any]:
+def dryad_row(_record: dict[str, Any], f: Any) -> dict[str, Any]:
     href = empty_or(_f(f, "_links", "stash:download", "href"), None)
     file_url = None if _na(href) else "https://datadryad.org" + _as_chr(href)  # type: ignore[operator]
     return _row(dollar(f, "path"), file_url, dollar(f, "size"))
 
 
-def reshare_row(_info: pd.DataFrame, _i: int, f: Any) -> dict[str, Any]:
+def reshare_row(_record: dict[str, Any], f: Any) -> dict[str, Any]:
     uri = empty_or(dollar(f, "uri"), None)
     file_url = None if _na(uri) else sub("^http://", "https://", _as_chr(uri))
     return _row(dollar(f, "filename"), file_url, dollar(f, "filesize"))
 
 
-def mendeley_row(_info: pd.DataFrame, _i: int, f: Any) -> dict[str, Any]:
+def mendeley_row(_record: dict[str, Any], f: Any) -> dict[str, Any]:
     cd = dollar(f, "content_details")
     if cd is None:
         cd = {}
@@ -1054,14 +1066,21 @@ def mendeley_row(_info: pd.DataFrame, _i: int, f: Any) -> dict[str, Any]:
     )
 
 
-def dataone_row(info: pd.DataFrame, i: int, f: Any) -> dict[str, Any]:
-    from pytacheck.archives.dataone import _dataone_hosts
+def dataone_row(record: dict[str, Any], f: Any) -> dict[str, Any]:
+    if "dataone_host" not in record:
+        raise RError("subscript out of bounds")  # R: .dataone_info_tbl$dataone_host[[i]] of NULL
+    host = record["dataone_host"]
+    if "\0api_base" not in record:
+        # R: for (h in .dataone_hosts()) if (identical(h$host, host)) api_base <- h$api_base
+        # (once per record: the record is shared by its files)
+        from pytacheck.archives.dataone import _dataone_hosts
 
-    host = info["dataone_host"].iloc[i]
-    api_base = None
-    for h in _dataone_hosts():
-        if h.get("host") == host and not _na(host):
-            api_base = h.get("api_base")
+        api = None
+        for h in _dataone_hosts():
+            if h.get("host") == host and not _na(host):
+                api = h.get("api_base")
+        record["\0api_base"] = api
+    api_base = record["\0api_base"]
     pid = dollar(f, "pid")
     file_url = None
     has_pid = not (pid is None or (isinstance(pid, list | tuple) and len(pid) == 0))

@@ -1,0 +1,2191 @@
+{
+  "id": "review_tables.stats",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": null,
+    "v": [
+      {
+        "t": "df",
+        "nrow": 100,
+        "names": [
+          "Sepal_Length",
+          "Sepal_Width",
+          "Petal_Length",
+          "Petal_Width",
+          "Species"
+        ],
+        "v": [
+          {
+            "t": "dbl",
+            "v": [
+              5.1,
+              4.9,
+              4.7,
+              4.6,
+              5,
+              5.4,
+              4.6,
+              5,
+              4.4,
+              4.9,
+              5.4,
+              4.8,
+              4.8,
+              4.3,
+              5.8,
+              5.7,
+              5.4,
+              5.1,
+              5.7,
+              5.1,
+              5.4,
+              5.1,
+              4.6,
+              5.1,
+              4.8,
+              5,
+              5,
+              5.2,
+              5.2,
+              4.7,
+              4.8,
+              5.4,
+              5.2,
+              5.5,
+              4.9,
+              5,
+              5.5,
+              4.9,
+              4.4,
+              5.1,
+              5,
+              4.5,
+              4.4,
+              5,
+              5.1,
+              4.8,
+              5.1,
+              4.6,
+              5.3,
+              5,
+              7,
+              6.4,
+              6.9,
+              5.5,
+              6.5,
+              5.7,
+              6.3,
+              4.9,
+              6.6,
+              5.2,
+              5,
+              5.9,
+              6,
+              6.1,
+              5.6,
+              6.7,
+              5.6,
+              5.8,
+              6.2,
+              5.6,
+              5.9,
+              6.1,
+              6.3,
+              6.1,
+              6.4,
+              6.6,
+              6.8,
+              6.7,
+              6,
+              5.7,
+              5.5,
+              5.5,
+              5.8,
+              6,
+              5.4,
+              6,
+              6.7,
+              6.3,
+              5.6,
+              5.5,
+              5.5,
+              6.1,
+              5.8,
+              5,
+              5.6,
+              5.7,
+              5.7,
+              6.2,
+              5.1,
+              5.7
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              3.5,
+              3,
+              3.2,
+              3.1,
+              3.6,
+              3.9,
+              3.4,
+              3.4,
+              2.9,
+              3.1,
+              3.7,
+              3.4,
+              3,
+              3,
+              4,
+              4.4,
+              3.9,
+              3.5,
+              3.8,
+              3.8,
+              3.4,
+              3.7,
+              3.6,
+              3.3,
+              3.4,
+              3,
+              3.4,
+              3.5,
+              3.4,
+              3.2,
+              3.1,
+              3.4,
+              4.1,
+              4.2,
+              3.1,
+              3.2,
+              3.5,
+              3.6,
+              3,
+              3.4,
+              3.5,
+              2.3,
+              3.2,
+              3.5,
+              3.8,
+              3,
+              3.8,
+              3.2,
+              3.7,
+              3.3,
+              3.2,
+              3.2,
+              3.1,
+              2.3,
+              2.8,
+              2.8,
+              3.3,
+              2.4,
+              2.9,
+              2.7,
+              2,
+              3,
+              2.2,
+              2.9,
+              2.9,
+              3.1,
+              3,
+              2.7,
+              2.2,
+              2.5,
+              3.2,
+              2.8,
+              2.5,
+              2.8,
+              2.9,
+              3,
+              2.8,
+              3,
+              2.9,
+              2.6,
+              2.4,
+              2.4,
+              2.7,
+              2.7,
+              3,
+              3.4,
+              3.1,
+              2.3,
+              3,
+              2.5,
+              2.6,
+              3,
+              2.6,
+              2.3,
+              2.7,
+              3,
+              2.9,
+              2.9,
+              2.5,
+              2.8
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              1.4,
+              1.4,
+              1.3,
+              1.5,
+              1.4,
+              1.7,
+              1.4,
+              1.5,
+              1.4,
+              1.5,
+              1.5,
+              1.6,
+              1.4,
+              1.1,
+              1.2,
+              1.5,
+              1.3,
+              1.4,
+              1.7,
+              1.5,
+              1.7,
+              1.5,
+              1,
+              1.7,
+              1.9,
+              1.6,
+              1.6,
+              1.5,
+              1.4,
+              1.6,
+              1.6,
+              1.5,
+              1.5,
+              1.4,
+              1.5,
+              1.2,
+              1.3,
+              1.4,
+              1.3,
+              1.5,
+              1.3,
+              1.3,
+              1.3,
+              1.6,
+              1.9,
+              1.4,
+              1.6,
+              1.4,
+              1.5,
+              1.4,
+              4.7,
+              4.5,
+              4.9,
+              4,
+              4.6,
+              4.5,
+              4.7,
+              3.3,
+              4.6,
+              3.9,
+              3.5,
+              4.2,
+              4,
+              4.7,
+              3.6,
+              4.4,
+              4.5,
+              4.1,
+              4.5,
+              3.9,
+              4.8,
+              4,
+              4.9,
+              4.7,
+              4.3,
+              4.4,
+              4.8,
+              5,
+              4.5,
+              3.5,
+              3.8,
+              3.7,
+              3.9,
+              5.1,
+              4.5,
+              4.5,
+              4.7,
+              4.4,
+              4.1,
+              4,
+              4.4,
+              4.6,
+              4,
+              3.3,
+              4.2,
+              4.2,
+              4.2,
+              4.3,
+              3,
+              4.1
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0.2,
+              0.2,
+              0.2,
+              0.2,
+              0.2,
+              0.4,
+              0.3,
+              0.2,
+              0.2,
+              0.1,
+              0.2,
+              0.2,
+              0.1,
+              0.1,
+              0.2,
+              0.4,
+              0.4,
+              0.3,
+              0.3,
+              0.3,
+              0.2,
+              0.4,
+              0.2,
+              0.5,
+              0.2,
+              0.2,
+              0.4,
+              0.2,
+              0.2,
+              0.2,
+              0.2,
+              0.4,
+              0.1,
+              0.2,
+              0.2,
+              0.2,
+              0.2,
+              0.1,
+              0.2,
+              0.2,
+              0.3,
+              0.3,
+              0.2,
+              0.6,
+              0.4,
+              0.3,
+              0.2,
+              0.2,
+              0.2,
+              0.2,
+              1.4,
+              1.5,
+              1.5,
+              1.3,
+              1.5,
+              1.3,
+              1.6,
+              1,
+              1.3,
+              1.4,
+              1,
+              1.5,
+              1,
+              1.4,
+              1.3,
+              1.4,
+              1.5,
+              1,
+              1.5,
+              1.1,
+              1.8,
+              1.3,
+              1.5,
+              1.2,
+              1.3,
+              1.4,
+              1.4,
+              1.7,
+              1.5,
+              1,
+              1.1,
+              1,
+              1.2,
+              1.6,
+              1.5,
+              1.6,
+              1.5,
+              1.3,
+              1.3,
+              1.3,
+              1.2,
+              1.4,
+              1.2,
+              1,
+              1.3,
+              1.2,
+              1.3,
+              1.3,
+              1.1,
+              1.3
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "setosa",
+              "setosa",
+              "setosa",
+              "setosa",
+              "setosa",
+              "setosa",
+              "setosa",
+              "setosa",
+              "setosa",
+              "setosa",
+              "setosa",
+              "setosa",
+              "setosa",
+              "setosa",
+              "setosa",
+              "setosa",
+              "setosa",
+              "setosa",
+              "setosa",
+              "setosa",
+              "setosa",
+              "setosa",
+              "setosa",
+              "setosa",
+              "setosa",
+              "setosa",
+              "setosa",
+              "setosa",
+              "setosa",
+              "setosa",
+              "setosa",
+              "setosa",
+              "setosa",
+              "setosa",
+              "setosa",
+              "setosa",
+              "setosa",
+              "setosa",
+              "setosa",
+              "setosa",
+              "setosa",
+              "setosa",
+              "setosa",
+              "setosa",
+              "setosa",
+              "setosa",
+              "setosa",
+              "setosa",
+              "setosa",
+              "setosa",
+              "versic",
+              "versic",
+              "versic",
+              "versic",
+              "versic",
+              "versic",
+              "versic",
+              "versic",
+              "versic",
+              "versic",
+              "versic",
+              "versic",
+              "versic",
+              "versic",
+              "versic",
+              "versic",
+              "versic",
+              "versic",
+              "versic",
+              "versic",
+              "versic",
+              "versic",
+              "versic",
+              "versic",
+              "versic",
+              "versic",
+              "versic",
+              "versic",
+              "versic",
+              "versic",
+              "versic",
+              "versic",
+              "versic",
+              "versic",
+              "versic",
+              "versic",
+              "versic",
+              "versic",
+              "versic",
+              "versic",
+              "versic",
+              "versic",
+              "versic",
+              "versic",
+              "versic",
+              "versic",
+              "versic",
+              "versic",
+              "versic",
+              "versic"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 6,
+        "names": [
+          "id",
+          "gender",
+          "score",
+          "name",
+          "when"
+        ],
+        "v": [
+          {
+            "t": "dbl",
+            "v": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              1,
+              2,
+              1,
+              9,
+              null,
+              2
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              1.5,
+              2.25,
+              null,
+              4,
+              5,
+              6
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Ann",
+              "",
+              "Carl",
+              "",
+              "Eve",
+              "Fé"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2021-03-01",
+              "2021-03-02",
+              "2021-03-03",
+              "2021-03-04",
+              "2021-03-05",
+              "2021-03-06"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 6,
+        "names": [
+          "id",
+          "gender",
+          "score",
+          "likert",
+          "name",
+          "when",
+          "stamp"
+        ],
+        "v": [
+          {
+            "t": "dbl",
+            "v": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              1,
+              2,
+              1,
+              9,
+              null,
+              2
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              1.5,
+              2.25,
+              null,
+              4,
+              5,
+              6
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              1,
+              5,
+              3,
+              null,
+              2,
+              4
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Ann",
+              "",
+              "Carl",
+              "",
+              "Eve",
+              "Fé"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2021-03-01",
+              "2021-03-02",
+              "2021-03-03",
+              "2021-03-04",
+              "2021-03-05",
+              "2021-03-06"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2021-03-01T12:30:00",
+              "2021-03-01T13:30:00",
+              "2021-03-01T14:30:00",
+              "2021-03-01T15:30:00",
+              "2021-03-01T16:30:00",
+              "2021-03-01T17:30:00"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 3,
+        "names": [
+          "id",
+          "when",
+          "day",
+          "lab",
+          "plain",
+          "f"
+        ],
+        "v": [
+          {
+            "t": "int",
+            "v": [
+              1,
+              2,
+              3
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2021-01-01T00:00:00",
+              null,
+              "2021-06-01T00:00:00"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2020-01-01",
+              "2020-01-02",
+              "2020-01-03"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              1,
+              2,
+              1
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              1.5,
+              2,
+              3
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "a",
+              "b",
+              "a"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 3,
+        "names": [
+          "ID",
+          "SCORE",
+          "NAME"
+        ],
+        "v": [
+          {
+            "t": "dbl",
+            "v": [
+              1,
+              2,
+              3
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              2.5,
+              null,
+              4
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "a",
+              "b",
+              ""
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 5,
+        "names": [
+          "id",
+          "score",
+          "f",
+          "s",
+          "d",
+          "l"
+        ],
+        "v": [
+          {
+            "t": "int",
+            "v": [
+              1,
+              2,
+              3,
+              4,
+              5
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              1.5,
+              2,
+              3,
+              4,
+              5
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "a",
+              "b",
+              "a",
+              "c",
+              "b"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "x",
+              null,
+              "z",
+              "w",
+              "v"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2020-01-01",
+              "2020-01-02",
+              "2020-01-03",
+              "2020-01-04",
+              "2020-01-05"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true,
+              null,
+              false,
+              true,
+              true
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 3,
+        "names": [
+          "a",
+          "b"
+        ],
+        "v": [
+          {
+            "t": "int",
+            "v": [
+              1,
+              2,
+              3
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "x",
+              "y",
+              "z"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 5,
+        "names": [
+          "id",
+          "score",
+          "f",
+          "s",
+          "d",
+          "l"
+        ],
+        "v": [
+          {
+            "t": "int",
+            "v": [
+              1,
+              2,
+              3,
+              4,
+              5
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              1.5,
+              2,
+              3,
+              4,
+              5
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "a",
+              "b",
+              "a",
+              "c",
+              "b"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "x",
+              null,
+              "z",
+              "w",
+              "v"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2020-01-01",
+              "2020-01-02",
+              "2020-01-03",
+              "2020-01-04",
+              "2020-01-05"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true,
+              null,
+              false,
+              true,
+              true
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 3,
+        "names": [
+          "Column",
+          "Representation",
+          "Level",
+          "Concept",
+          "Role",
+          "Unit",
+          "Rows",
+          "% Missing",
+          "N Unique",
+          "Mean",
+          "SD",
+          "Min",
+          "Max"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "SCORE",
+              "ID",
+              "NAME"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "numeric",
+              "text",
+              "text"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "nominal",
+              "nominal",
+              "nominal"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "",
+              "id",
+              ""
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "measure",
+              "identifier",
+              "measure"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "",
+              "",
+              ""
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              3,
+              3,
+              3
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              33.3,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2,
+              3,
+              3
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              null,
+              null
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 6,
+        "names": [
+          "Column",
+          "Representation",
+          "Level",
+          "Concept",
+          "Role",
+          "Unit",
+          "Rows",
+          "% Missing",
+          "N Unique",
+          "Mean",
+          "SD",
+          "Min",
+          "Max"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "when",
+              "day",
+              "f",
+              "id",
+              "lab",
+              "plain"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "text",
+              "datetime",
+              "text",
+              "text",
+              "numeric",
+              "numeric"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "nominal",
+              "nominal",
+              "nominal",
+              "nominal",
+              "nominal",
+              "ratio"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "",
+              "date",
+              "",
+              "id",
+              "",
+              ""
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "measure",
+              "timestamp",
+              "measure",
+              "identifier",
+              "measure",
+              "measure"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              3,
+              3,
+              3,
+              3,
+              3,
+              3
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              33.3,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2,
+              3,
+              2,
+              3,
+              2,
+              3
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              2.167
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              0.764
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              1.5
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              3
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 6,
+        "names": [
+          "Column",
+          "Representation",
+          "Level",
+          "Concept",
+          "Role",
+          "Unit",
+          "Rows",
+          "% Missing",
+          "N Unique",
+          "Mean",
+          "SD",
+          "Min",
+          "Max"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "l",
+              "s",
+              "d",
+              "f",
+              "id",
+              "score"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "text",
+              "text",
+              "datetime",
+              "text",
+              "text",
+              "numeric"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "nominal",
+              "nominal",
+              "nominal",
+              "nominal",
+              "nominal",
+              "ratio"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "",
+              "",
+              "date",
+              "",
+              "id",
+              ""
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "measure",
+              "measure",
+              "timestamp",
+              "measure",
+              "identifier",
+              "measure"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              5,
+              5,
+              5,
+              5,
+              5,
+              5
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              20,
+              20,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2,
+              4,
+              5,
+              3,
+              5,
+              5
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              3.1
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              1.432
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              1.5
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              5
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 6,
+        "names": [
+          "Column",
+          "Representation",
+          "Level",
+          "Concept",
+          "Role",
+          "Unit",
+          "Rows",
+          "% Missing",
+          "N Unique",
+          "Mean",
+          "SD",
+          "Min",
+          "Max"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "l",
+              "s",
+              "d",
+              "f",
+              "id",
+              "score"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "text",
+              "text",
+              "datetime",
+              "text",
+              "text",
+              "numeric"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "nominal",
+              "nominal",
+              "nominal",
+              "nominal",
+              "nominal",
+              "ratio"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "",
+              "",
+              "date",
+              "",
+              "id",
+              ""
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "measure",
+              "measure",
+              "timestamp",
+              "measure",
+              "identifier",
+              "measure"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              5,
+              5,
+              5,
+              5,
+              5,
+              5
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              20,
+              20,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2,
+              4,
+              5,
+              3,
+              5,
+              5
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              3.1
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              1.432
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              1.5
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              5
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 5,
+        "names": [
+          "Column",
+          "Representation",
+          "Level",
+          "Concept",
+          "Role",
+          "Unit",
+          "Rows",
+          "% Missing",
+          "N Unique",
+          "Mean",
+          "SD",
+          "Min",
+          "Max"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "gender",
+              "score",
+              "id",
+              "name",
+              "when"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "numeric",
+              "numeric",
+              "text",
+              "text",
+              "datetime"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "nominal",
+              "ratio",
+              "nominal",
+              "nominal",
+              "nominal"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "gender",
+              "",
+              "id",
+              "",
+              "date"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "measure",
+              "measure",
+              "identifier",
+              "measure",
+              "timestamp"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "",
+              "",
+              "",
+              "",
+              ""
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              6,
+              6,
+              6,
+              6,
+              6
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              16.7,
+              16.7,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              3,
+              5,
+              6,
+              5,
+              6
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              3,
+              3.75,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              3.391,
+              1.871,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              1,
+              1.5,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              9,
+              6,
+              null,
+              null,
+              null
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 7,
+        "names": [
+          "Column",
+          "Representation",
+          "Level",
+          "Concept",
+          "Role",
+          "Unit",
+          "Rows",
+          "% Missing",
+          "N Unique",
+          "Mean",
+          "SD",
+          "Min",
+          "Max"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "gender",
+              "likert",
+              "score",
+              "id",
+              "name",
+              "stamp",
+              "when"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "numeric",
+              "numeric",
+              "numeric",
+              "text",
+              "text",
+              "datetime",
+              "datetime"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "nominal",
+              "ratio",
+              "ratio",
+              "nominal",
+              "nominal",
+              "nominal",
+              "nominal"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "gender",
+              "",
+              "",
+              "id",
+              "",
+              "date",
+              "date"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "measure",
+              "measure",
+              "measure",
+              "identifier",
+              "measure",
+              "timestamp",
+              "timestamp"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              6,
+              6,
+              6,
+              6,
+              6,
+              6,
+              6
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              16.7,
+              16.7,
+              16.7,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              3,
+              5,
+              5,
+              6,
+              5,
+              6,
+              6
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              3,
+              3,
+              3.75,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              3.391,
+              1.581,
+              1.871,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              1,
+              1,
+              1.5,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              9,
+              5,
+              6,
+              null,
+              null,
+              null,
+              null
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 5,
+        "names": [
+          "Column",
+          "Representation",
+          "Level",
+          "Concept",
+          "Role",
+          "Unit",
+          "Rows",
+          "% Missing",
+          "N Unique",
+          "Mean",
+          "SD",
+          "Min",
+          "Max"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Petal_Length",
+              "Petal_Width",
+              "Sepal_Length",
+              "Sepal_Width",
+              "Species"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "numeric",
+              "numeric",
+              "numeric",
+              "numeric",
+              "text"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ratio",
+              "ratio",
+              "ratio",
+              "ratio",
+              "nominal"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "",
+              "",
+              "",
+              "",
+              ""
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "measure",
+              "measure",
+              "measure",
+              "measure",
+              "measure"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "",
+              "",
+              "",
+              "",
+              ""
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              150,
+              150,
+              150,
+              150,
+              150
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              43,
+              22,
+              35,
+              23,
+              3
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              3.758,
+              1.199,
+              5.843,
+              3.057,
+              null
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              1.765,
+              0.762,
+              0.828,
+              0.436,
+              null
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              1,
+              0.1,
+              4.3,
+              2,
+              null
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              6.9,
+              2.5,
+              7.9,
+              4.4,
+              null
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 2,
+        "names": [
+          "Column",
+          "Representation",
+          "Level",
+          "Concept",
+          "Role",
+          "Unit",
+          "Rows",
+          "% Missing",
+          "N Unique",
+          "Mean",
+          "SD",
+          "Min",
+          "Max"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "a",
+              "b"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "numeric",
+              "text"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ratio",
+              "nominal"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "",
+              ""
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "measure",
+              "measure"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "",
+              ""
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              3,
+              3
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0,
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              3,
+              3
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              2,
+              null
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              1,
+              null
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              1,
+              null
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              3,
+              null
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

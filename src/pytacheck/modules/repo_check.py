@@ -13,6 +13,7 @@ The per-platform listing blocks live in :mod:`pytacheck.modules._repo_check`.
 
 from __future__ import annotations
 
+import contextlib
 import os
 from collections.abc import Mapping, Sequence
 from typing import Any
@@ -184,6 +185,34 @@ def repo_check(
     :func:`~pytacheck.llm_model` and, like *params*, is only used for study
     grouping when ``llm_use(TRUE)``.
     """
+    from pytacheck.archives import _tick
+    from pytacheck.utils import pb as make_pb
+
+    # R: pb(NA, "(:spin) :what"), finished by on.exit() (a no-op unless verbose())
+    bar = make_pb(None, "(:spin) :what")
+    _tick(bar, "Starting Repo Check")
+    try:
+        return _repo_check(
+            paper, local_path, local_only, peek_zips, osf_license, cache, model, params, bar
+        )
+    finally:
+        _tick(bar, "Repo Check Complete")
+        with contextlib.suppress(Exception):  # a progress display must never break a run
+            bar.terminate()
+
+
+def _repo_check(
+    paper: Any,
+    local_path: str | os.PathLike[str] | Sequence[str] | None,
+    local_only: bool,
+    peek_zips: bool,
+    osf_license: bool,
+    cache: bool,
+    model: str | None,
+    params: Mapping[str, Any] | None,
+    bar: Any,
+) -> dict[str, Any]:
+    """The body of :func:`repo_check` (*bar* is the module's progress spinner)."""
     from pytacheck.papers.tables import paper_id as paper_ids
 
     params = dict(params or {})
@@ -206,14 +235,14 @@ def repo_check(
     osf_meta = rc.meta_frame()
     if osf_license is True and osf_urls:
         osf_meta = _osf_license_meta(osf_urls)
-    osf_files = rc.list_osf(repos, osf_urls, osf_paper_id, None, cache)
+    osf_files = rc.list_osf(repos, osf_urls, osf_paper_id, bar, cache)
 
-    github_files, github_meta = rc.list_git(repos, repos.urls("github"), "github", cache)
-    gitlab_files, gitlab_meta = rc.list_git(repos, repos.urls("gitlab"), "gitlab", cache)
-    rb_files = rc.list_researchbox(repos, repos.urls("researchbox"), None)
-    pa_files, pa_meta = rc.list_dspace(repos, repos.urls("dspace"), None, cache)
-    dspace7_files = rc.list_dspace7(repos, repos.urls("dspace7"), None)
-    listings = _api_listings(repos, cache)
+    github_files, github_meta = rc.list_git(repos, repos.urls("github"), "github", cache, bar)
+    gitlab_files, gitlab_meta = rc.list_git(repos, repos.urls("gitlab"), "gitlab", cache, bar)
+    rb_files = rc.list_researchbox(repos, repos.urls("researchbox"), bar)
+    pa_files, pa_meta = rc.list_dspace(repos, repos.urls("dspace"), bar, cache)
+    dspace7_files = rc.list_dspace7(repos, repos.urls("dspace7"), bar)
+    listings = _api_listings(repos, cache, bar)
 
     local_files_df = rc.placeholder()
     if local_path is not None:
@@ -362,7 +391,9 @@ def _osf_license_meta(osf_urls: list[str]) -> pd.DataFrame:
     return rc.meta_frame(osf_urls, rc.NA_SCALAR, licenses)
 
 
-def _api_listings(repos: rc.Repos, cache: bool) -> dict[str, tuple[pd.DataFrame, pd.DataFrame]]:
+def _api_listings(
+    repos: rc.Repos, cache: bool, bar: Any = None
+) -> dict[str, tuple[pd.DataFrame, pd.DataFrame]]:
     """The Zenodo, Dataverse, Figshare, Dryad, ReShare, 4TU, Mendeley and DataONE blocks."""
     from pytacheck.archives import (
         dataone,
@@ -380,7 +411,7 @@ def _api_listings(repos: rc.Repos, cache: bool) -> dict[str, tuple[pd.DataFrame,
     out["zenodo"] = rc._api_listing(
         repos,
         urls,
-        lambda: zenodo.zenodo_info(urls, pb=None, cache=cache),
+        lambda: zenodo.zenodo_info(urls, pb=bar, cache=cache),
         "zenodo_url",
         rc.zenodo_row,
         col_chr=True,
@@ -557,37 +588,63 @@ def _peek_zips(all_files: pd.DataFrame) -> pd.DataFrame:
     for e, t in zip(rc.vals(ft["ext"]), rc.vals(ft["type"]), strict=True):
         first_type.setdefault(e, t)
 
+    from pytacheck.utils import pb as make_pb
+
     expanded: list[pd.DataFrame] = []
     consumed: list[int] = []
-    for i in [k for k, z in enumerate(is_zip) if z]:
-        try:
-            peek = zip_peek(urls[i])
-        except Exception:
-            peek = None
-        if peek is None or len(peek) == 0:
-            continue
-        members = [str(n) for n in rc.vals(peek["name"])]
-        rows = all_files.iloc[[i] * len(members)].reset_index(drop=True)
-        rows["file_name"] = pd.Series([rc.r_basename(m) for m in members], dtype="string")
-        rows["file_path"] = pd.Series([f"{names[i]}/{m}" for m in members], dtype="string")
-        rows["file_size"] = pd.Series(
-            [rc._as_num(s) for s in rc.vals(peek["size"])], dtype="float64"
-        )
-        rows["file_url"] = pd.Series([None] * len(members), dtype="string")
-        rows["archive_url"] = pd.Series([urls[i]] * len(members), dtype="string")
-        rows["archive_member"] = pd.Series(members, dtype="string")
-        if "file_type" in rows.columns:
-            types = []
-            for name in rc.vals(rows["file_name"]):
-                t = first_type.get(rc.file_ext(name).lower())
-                types.append("file" if rc._na(t) else t)
-            rows["file_type"] = pd.Series(types, dtype="string")
-        expanded.append(rows)
-        consumed.append(i)
+    zpb = make_pb(sum(is_zip), "Reading zip contents [:bar] :current/:total")
+    try:
+        for i in [k for k, z in enumerate(is_zip) if z]:
+            try:
+                peek = zip_peek(urls[i])
+            except Exception:
+                peek = None
+            with contextlib.suppress(Exception):  # a progress display must never break a run
+                zpb.tick()
+            if peek is not None and len(peek) > 0:
+                expanded.append(_zip_rows(all_files, i, names[i], urls[i], peek, first_type))
+                consumed.append(i)
+    finally:
+        with contextlib.suppress(Exception):
+            zpb.terminate()
     if not consumed:
         return all_files
     kept = all_files.drop(index=consumed)
     return bind_rows([kept, bind_rows(expanded)]).reset_index(drop=True)
+
+
+def _zip_rows(
+    all_files: pd.DataFrame,
+    i: int,
+    archive_name: Any,
+    archive_url: Any,
+    peek: pd.DataFrame,
+    first_type: Mapping[Any, Any],
+) -> pd.DataFrame:
+    """Row *i* of *all_files* (a ``.zip``) repeated for each entry *peek* lists.
+
+    R: the entry's name and size replace the archive's, the inner path is
+    prefixed with the archive's name, ``file_url`` is ``NA`` and
+    ``archive_url`` / ``archive_member`` locate the entry inside the archive;
+    ``file_type`` is re-derived from the entry's extension.
+    """
+    members = [str(n) for n in rc.vals(peek["name"])]
+    n = len(members)
+    rows = all_files.iloc[[i] * n].reset_index(drop=True)
+    rows["file_name"] = pd.Series([rc.r_basename(m) for m in members], dtype="string")
+    prefix = "NA" if rc._na(archive_name) else str(archive_name)
+    rows["file_path"] = pd.Series([f"{prefix}/{m}" for m in members], dtype="string")
+    rows["file_size"] = pd.Series([rc._as_num(v) for v in rc.vals(peek["size"])], dtype="float64")
+    rows["file_url"] = pd.Series([None] * n, dtype="string")
+    rows["archive_url"] = pd.Series([archive_url] * n, dtype="string")
+    rows["archive_member"] = pd.Series(members, dtype="string")
+    if "file_type" in rows.columns:
+        types = []
+        for name in rc.vals(rows["file_name"]):
+            t = first_type.get(rc.file_ext(name).lower())
+            types.append("file" if rc._na(t) else t)
+        rows["file_type"] = pd.Series(types, dtype="string")
+    return rows
 
 
 def _classify(
@@ -1077,9 +1134,13 @@ def _naming_by_paper(all_files: pd.DataFrame, naming_issues: pd.DataFrame) -> pd
     names = rc.vals(all_files["file_name"])
     paths = rc.vals(all_files["file_path"])
     dtypes = rc.vals(all_files["data_type"])
+    rows_of: dict[Any, list[int]] = {}
+    for i, p in enumerate(pids):
+        if p is not None:
+            rows_of.setdefault(p, []).append(i)
     parts = []
     for pid in levels:
-        idx = [i for i, p in enumerate(pids) if p == pid]
+        idx = rows_of[pid]
         pf = check_file_naming(
             [names[i] for i in idx],
             file_path=[paths[i] for i in idx],

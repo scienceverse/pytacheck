@@ -1,0 +1,73 @@
+{smcl}
+{com}{sf}{ul off}{txt}{.-}
+      name:  {res}<unnamed>
+       {txt}log:  {res}/Users/me/project/analysis.smcl
+  {txt}log type:  {res}smcl
+ {txt}opened on:  {res}24 Sep 2026, 10:15:32
+{txt}
+{com}. summarize price mpg weight
+
+{txt}    Variable {c |}        Obs        Mean    Std. dev.       Min        Max
+{hline 13}{c +}{hline 57}
+{space 7}price {c |}{res}{col 20}     74    6165.257    2949.496       3291      15906
+{txt}{space 9}mpg {c |}{res}{col 20}     74     21.2973    5.785503         12         41
+{txt}{space 6}weight {c |}{res}{col 20}     74    3019.459    777.1936       1760       4840
+
+{com}. regress price mpg weight
+
+{txt}      Source {c |}       SS           df       MS      Number of obs   ={res}        74
+{txt}{hline 13}{c +}{hline 34}   F(2, 71)        = {res}    14.74
+{txt}       Model {c |} {res} 186321280         2  93160639.9   {txt}Prob > F        ={res}    0.0000
+{txt}    Residual {c |} {res} 448744116        71  6320339.67   {txt}R-squared       ={res}    0.2934
+{txt}{hline 13}{c +}{hline 34}   Adj R-squared   ={res}    0.2735
+{txt}       Total {c |} {res} 634065396        73  8685827.34   {txt}Root MSE        =   {res} 2514
+
+{txt}{hline 13}{c TT}{hline 64}
+{col 1}       price{col 14}{c |} Coefficient{col 26}  Std. err.{col 37}      t{col 45}   P>|t|{col 53}     [95% con{col 66}f. interval]
+{hline 13}{c +}{hline 64}
+{space 9}mpg {c |}{col 14}{res}{space 2}-49.51222{col 26}{space 2} 86.15604{col 37}{space 1}   -0.57{col 45}{space 3}0.567{col 53}{space 4}-221.3025{col 66}{space 3} 122.2781
+{txt}{space 6}weight {c |}{col 14}{res}{space 2} 1.746559{col 26}{space 2} .6413538{col 37}{space 1}    2.72{col 45}{space 3}0.008{col 53}{space 4} .4677522{col 66}{space 3} 3.025366
+{txt}{space 7}_cons {c |}{col 14}{res}{space 2} 1946.069{col 26}{space 2}  3597.05{col 37}{space 1}    0.54{col 45}{space 3}0.590{col 53}{space 4}-5226.245{col 66}{space 3} 9118.382
+{txt}{hline 13}{c BT}{hline 64}
+{res}{txt}
+{com}. foreach v of varlist price mpg {c -(}
+{txt}  2{com}.   quietly summarize `v'
+{txt}  3{com}. {c )-}
+
+{com}. logit foreign mpg, nolog
+
+{txt}Iteration 0:{space 2}log likelihood = {res}-45.03321
+{txt}Iteration 1:{space 2}log likelihood = {res}-39.380959
+{txt}Logistic regression{col 49}Number of obs{col 67}= {res}        74
+{txt}{col 49}LR chi2({res}1{txt}){col 67}= {res}     11.30
+{txt}Log likelihood = {res}-39.380959{txt}{col 49}Pseudo R2{col 67}= {res}    0.1254
+
+{com}. tabulate rep78
+
+{txt}     Repair {c |}
+record 1978 {c |}      Freq.     Percent        Cum.
+{hline 12}{c +}{hline 35}
+          1 {c |}{res}          2        2.90        2.90
+{txt}          2 {c |}{res}          8       11.59       14.49
+{txt}{hline 12}{c +}{hline 35}
+      Total {c |}{res}         69      100.00
+{txt}
+{com}. display "{dup 3:ab} {char 65}{c 0x41} {ralign 8:xy}|{center 7:ab}|{lalign 5:z}|{res:-1.5}{it:x}{* note}"
+{txt}{hline 3}{c +}{hline 3}
+{col 5}{ralign 12:label} {rcenter 9:mid}{bf}
+{res}ababab AA       xy|  ab   |z    |-1.5x
+
+{com}. display "only text, no table"
+{txt}Some words here {hline}
+
+{com}. graph export "figure1.png", replace
+{txt}(file figure1.png written in PNG format)
+
+{com}. log close
+      {txt}name:  {res}<unnamed>
+       {txt}log:  {res}/Users/me/project/analysis.smcl
+  {txt}log type:  {res}smcl
+ {txt}closed on:  {res}24 Sep 2026, 10:16:01
+{txt}{.-}
+{smcl}
+{txt}{sf}{ul off}
