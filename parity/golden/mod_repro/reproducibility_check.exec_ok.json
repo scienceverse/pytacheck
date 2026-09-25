@@ -191,7 +191,7 @@
           "Every data file the code reads is either produced by an earlier script or present in the repository.",
           "#### Execution",
           "**The code was run.** Each script ran in an isolated subprocess against a throwaway copy of the Psych-DS layout, in the run order above, with a 60-second per-script timeout. Of 1 script: 1 ran without error, 0 errored, 0 timed out, 0 were skipped (inputs unavailable), 0 could not run because one of its own dependencies is unavailable, and 0 did not parse. Running against current package versions: a break can reflect version drift, which argues for pinning versions.",
-          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = \"ok.R\", Outcome = \"ran_ok\", Detail = \"\", \n    \"Time (s)\" = 0.3), row.names = c(NA, -1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 15, FALSE)\n```\n",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = \"ok.R\", Outcome = \"ran_ok\", Detail = \"\", \n    \"Time (s)\" = 0), row.names = c(NA, -1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 15, FALSE)\n```\n",
           "*Expand a row below to see the output each script produced.*",
           "::: {.callout-tip title=\"Output — ok.R (ran_ok)\" collapse=\"true\"}\n\n**Output (stdout):**\n````\n> dat <- read.csv(\"data.csv\")\n> t.test(dat$x ~ dat$g)\n\n\tWelch Two Sample t-test\n\ndata:  dat$x by dat$g\nt = -4.0415, df = 4.9592, p-value = 0.01008\nalternative hypothesis: true difference in means between group a and group b is not equal to 0\n95 percent confidence interval:\n -5.731711 -1.268289\nsample estimates:\nmean in group a mean in group b \n            2.0             5.5 \n````\n\n:::\n",
           "#### Reported vs. reproduced",
@@ -354,7 +354,7 @@
           {
             "t": "dbl",
             "v": [
-              0.314603090286255
+              0
             ]
           },
           {

@@ -22,12 +22,19 @@ ROOT = HERE.parent.parent
 
 U = "upstream/metacheck/tests/testthat/fixtures/repro/"
 S = "tests/mod_repro/fixtures/scripts/"
-O = "tests/mod_repro/fixtures/outputs/"
+OUT = "tests/mod_repro/fixtures/outputs/"
 
 
 def code(*rows: dict[str, Any], columns: tuple[str, ...] | None = None) -> dict[str, list[Any]]:
     """A code_check ``table`` (column-oriented) from row dicts."""
-    cols = columns or ("file_name", "file_location", "file_url", "language", "packages", "parse_error")
+    cols = columns or (
+        "file_name",
+        "file_location",
+        "file_url",
+        "language",
+        "packages",
+        "parse_error",
+    )
     defaults = {"file_url": None, "language": "R", "packages": "", "parse_error": False}
     out: dict[str, list[Any]] = {c: [] for c in cols}
     for r in rows:
@@ -56,7 +63,9 @@ SCENARIOS: dict[str, dict[str, Any]] = {
     "project": {"real": True},
     "ok_noplan": {
         "code": code(r("ok.R")),
-        "structure": table(file_name=["ok.R", "data.csv"], file_location=[U + "ok.R", U + "data.csv"]),
+        "structure": table(
+            file_name=["ok.R", "data.csv"], file_location=[U + "ok.R", U + "data.csv"]
+        ),
     },
     # -- static analysis ----------------------------------------------------------
     "ok_plan": {"code": code(r("ok.R")), "structure": DATA, "plan": PLAN},
@@ -159,7 +168,9 @@ SCENARIOS: dict[str, dict[str, Any]] = {
         "plan": PLAN,
     },
     "url_fallback": {
-        "code": code({"file_name": "url_only.R", "file_location": None, "file_url": S + "url_only.R"}),
+        "code": code(
+            {"file_name": "url_only.R", "file_location": None, "file_url": S + "url_only.R"}
+        ),
         "structure": DATA,
         "plan": PLAN,
     },
@@ -192,7 +203,9 @@ SCENARIOS: dict[str, dict[str, Any]] = {
     "spss_selfcontained": {
         "text": ["The effect was significant, t(67) = 3.75, p < .001."],
         "code": EMPTY_CODE,
-        "structure": table(file_name=["data.sav", "sample.omv"], file_location=[None, O + "sample.omv"]),
+        "structure": table(
+            file_name=["data.sav", "sample.omv"], file_location=[None, OUT + "sample.omv"]
+        ),
         "plan": PLAN,
     },
     "stata_red": {
@@ -214,7 +227,14 @@ SCENARIOS: dict[str, dict[str, Any]] = {
             {"file_name": "helper.py", "file_location": None, "language": "Python"},
         ),
         "structure": table(
-            file_name=["model.sas", "analysis.m", "script.py", "syntax.sps", "helper.py", "data.mat"],
+            file_name=[
+                "model.sas",
+                "analysis.m",
+                "script.py",
+                "syntax.sps",
+                "helper.py",
+                "data.mat",
+            ],
             file_location=[None] * 6,
         ),
         "plan": PLAN,
@@ -237,7 +257,8 @@ SCENARIOS: dict[str, dict[str, Any]] = {
         "text": ["The effect was significant, t(67) = 3.75, p < .001."],
         "code": EMPTY_CODE,
         "structure": table(
-            file_name=["sample.jasp", "sample.omv"], file_location=[O + "sample.jasp", O + "sample.omv"]
+            file_name=["sample.jasp", "sample.omv"],
+            file_location=[OUT + "sample.jasp", OUT + "sample.omv"],
         ),
         "plan": PLAN,
     },
@@ -246,7 +267,7 @@ SCENARIOS: dict[str, dict[str, Any]] = {
         "code": code(r("ok.R")),
         "structure": table(
             file_name=["data.csv", "sample.jasp", "notebook_r.ipynb"],
-            file_location=[U + "data.csv", O + "sample.jasp", O + "notebook_r.ipynb"],
+            file_location=[U + "data.csv", OUT + "sample.jasp", OUT + "notebook_r.ipynb"],
         ),
         "plan": PLAN,
     },
@@ -254,7 +275,7 @@ SCENARIOS: dict[str, dict[str, Any]] = {
         "code": EMPTY_CODE,
         "structure": table(
             file_name=["analysis.smcl", "twolevel.out", "compiler.out"],
-            file_location=[O + "analysis.smcl", O + "twolevel.out", O + "compiler.out"],
+            file_location=[OUT + "analysis.smcl", OUT + "twolevel.out", OUT + "compiler.out"],
         ),
         "plan": PLAN,
     },
@@ -263,7 +284,7 @@ SCENARIOS: dict[str, dict[str, Any]] = {
         "code": code(r("ok.R")),
         "structure": table(
             file_name=["data.csv", "modern.spv", "notebook_python.ipynb"],
-            file_location=[U + "data.csv", O + "modern.spv", O + "notebook_python.ipynb"],
+            file_location=[U + "data.csv", OUT + "modern.spv", OUT + "notebook_python.ipynb"],
         ),
         "plan": PLAN,
     },
@@ -271,7 +292,8 @@ SCENARIOS: dict[str, dict[str, Any]] = {
     "demo": {"paper": "demo", "code": code(r("ok.R")), "structure": DATA, "plan": PLAN},
     "psychsci": {
         "paper": "psychsci",
-        "code": code(r("ok.R"), r("errors.R")) | {"paper_id": ["0956797613520608", "0956797614522816"]},
+        "code": code(r("ok.R"), r("errors.R"))
+        | {"paper_id": ["0956797613520608", "0956797614522816"]},
         "structure": DATA,
         "plan": PLAN,
     },
@@ -281,7 +303,7 @@ SCENARIOS: dict[str, dict[str, Any]] = {
         "code": code(r("ok.R")),
         "structure": table(
             file_name=["data.csv", "sample.omv", "notebook_r.ipynb"],
-            file_location=[U + "data.csv", O + "sample.omv", O + "notebook_r.ipynb"],
+            file_location=[U + "data.csv", OUT + "sample.omv", OUT + "notebook_r.ipynb"],
         ),
         "plan": PLAN,
     },
@@ -301,7 +323,9 @@ SCENARIOS: dict[str, dict[str, Any]] = {
     "exec_errors": {"code": code(r("errors.R")), "structure": DATA, "plan": PLAN},
     "exec_setwd": {"code": code(r("bad_setwd.R")), "structure": DATA, "plan": PLAN},
     "exec_undefined": {
-        "code": code(r("undef_user.R", S + "undef_user.R"), r("undef_definer.R", S + "undef_definer.R")),
+        "code": code(
+            r("undef_user.R", S + "undef_user.R"), r("undef_definer.R", S + "undef_definer.R")
+        ),
         "structure": DATA,
         "plan": PLAN,
     },
@@ -325,7 +349,7 @@ SCENARIOS: dict[str, dict[str, Any]] = {
     "exec_model_object": {"code": code(r("model_object.R")), "structure": DATA, "plan": PLAN},
     "exec_timeout": {"code": code(r("sleep.R", S + "sleep.R")), "structure": DATA, "plan": PLAN},
     "exec_install": {
-        "code": code(r("needs_missing_pkg.R", S + "needs_missing_pkg.R", packages="notapkg123")),
+        "code": code(r("fake_dep.R", S + "fake_dep.R", packages="notapkg123")),
         "structure": DATA,
         "plan": PLAN,
     },
@@ -339,13 +363,14 @@ SCENARIOS: dict[str, dict[str, Any]] = {
     "exec_jasp": {
         "code": code(r("ok.R")),
         "structure": table(
-            file_name=["data.csv", "sample.jasp"], file_location=[U + "data.csv", O + "sample.jasp"]
+            file_name=["data.csv", "sample.jasp"],
+            file_location=[U + "data.csv", OUT + "sample.jasp"],
         ),
         "plan": PLAN,
     },
 }
 
-EXEC_IGNORE = ["run_results.elapsed"]
+EXEC_IGNORE: list[str] = []
 
 # (case id, scenario, R args, Python args, extra case keys)
 CASES: list[tuple[str, str, str, str, dict[str, Any]]] = []
@@ -361,7 +386,12 @@ for name in SCENARIOS:
     add(f"reproducibility_check.{name}", name)
 
 # keep_sandbox on a paper with extracted output: the sandbox is surfaced (scrubbed)
-add("reproducibility_check.jasp_only_keep_sandbox", "jasp_only", "keep_sandbox = TRUE", "keep_sandbox=True")
+add(
+    "reproducibility_check.jasp_only_keep_sandbox",
+    "jasp_only",
+    "keep_sandbox = TRUE",
+    "keep_sandbox=True",
+)
 add(
     "reproducibility_check.jasp_with_r_keep_sandbox",
     "jasp_with_r",
@@ -376,7 +406,7 @@ add(
     "project",
     PROJECT + ", execute = TRUE, timeout = 60, keep_sandbox = TRUE",
     PROJECT_PY + ", execute=True, timeout=60, keep_sandbox=True",
-    compare={"ignore": ["run_results.elapsed"]},
+    compare={"ignore": EXEC_IGNORE},
 )
 # a prior build's saved module tables (tables_dir) instead of a chain
 add("reproducibility_check.tables_dir", "pipeline", "tables = TRUE", "tables=True")
@@ -386,7 +416,10 @@ EXEC = "execute = TRUE, timeout = 60, keep_sandbox = TRUE"
 EXEC_PY = "execute=True, timeout=60, keep_sandbox=True"
 MOCKED = {
     "exec_install": ("install_missing = TRUE", "install_missing=True"),
-    "exec_docker": ('sandbox = "docker", install_missing = TRUE', 'sandbox="docker", install_missing=True'),
+    "exec_docker": (
+        'sandbox = "docker", install_missing = TRUE',
+        'sandbox="docker", install_missing=True',
+    ),
 }
 for name in SCENARIOS:
     if not name.startswith("exec_"):
@@ -398,7 +431,6 @@ for name in SCENARIOS:
             name,
             f"{EXEC}, {r_extra}",
             f"{EXEC_PY}, {py_extra}",
-            compare={"ignore": EXEC_IGNORE},
             mocked=True,
         )
         continue
@@ -411,7 +443,7 @@ for name in SCENARIOS:
             compare={"ignore": [*EXEC_IGNORE, "run_results.stdout", "run_results.stderr"]},
         )
         continue
-    add(f"reproducibility_check.{name}", name, EXEC, EXEC_PY, compare={"ignore": EXEC_IGNORE})
+    add(f"reproducibility_check.{name}", name, EXEC, EXEC_PY)
 # execution without keeping the sandbox: the throwaway root is removed (element absent)
 add(
     "reproducibility_check.exec_ok_no_keep",

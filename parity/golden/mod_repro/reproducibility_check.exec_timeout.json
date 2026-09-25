@@ -189,7 +189,7 @@
           "Every data file the code reads is either produced by an earlier script or present in the repository.",
           "#### Execution",
           "**The code was run.** Each script ran in an isolated subprocess against a throwaway copy of the Psych-DS layout, in the run order above, with a 2-second per-script timeout. Of 1 script: 0 ran without error, 0 errored, 1 timed out, 0 were skipped (inputs unavailable), 0 could not run because one of its own dependencies is unavailable, and 0 did not parse. Running against current package versions: a break can reflect version drift, which argues for pinning versions.",
-          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = \"sleep.R\", Outcome = \"timed_out\", Detail = \"timeout\", \n    \"Time (s)\" = 2), row.names = c(NA, -1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 15, FALSE)\n```\n",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = \"sleep.R\", Outcome = \"timed_out\", Detail = \"timeout\", \n    \"Time (s)\" = 0), row.names = c(NA, -1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 15, FALSE)\n```\n",
           "*Expand a row below to see the output each script produced.*",
           "::: {.callout-tip title=\"Output — sleep.R (timed_out)\" collapse=\"true\"}\n\n**Output (stdout):**\n````\n> Sys.sleep(20)\n````\n\n:::\n"
         ]
@@ -348,7 +348,7 @@
           {
             "t": "dbl",
             "v": [
-              2.02062177658081
+              0
             ]
           },
           {

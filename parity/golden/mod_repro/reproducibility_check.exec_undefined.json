@@ -212,7 +212,7 @@
           "Every data file the code reads is either produced by an earlier script or present in the repository.",
           "#### Execution",
           "**The code was run.** Each script ran in an isolated subprocess against a throwaway copy of the Psych-DS layout, in the run order above, with a 60-second per-script timeout. Of 2 scripts: 1 ran without error, 1 errored, 0 timed out, 0 were skipped (inputs unavailable), 0 could not run because one of its own dependencies is unavailable, and 0 did not parse. Running against current package versions: a break can reflect version drift, which argues for pinning versions. \n\n*a script hit an `object '...' not found` error, indicating it expected a variable another script defines. We inferred which script supplies it and re-ordered so that script runs first, and re-ran once. The outcomes above are from that corrected run.*",
-          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"undef_definer.R\", \"undef_user.R\"), Outcome = c(\"ran_ok\", \n\"errored\"), Detail = c(\"\", \"undefined_variable\"), \"Time (s)\" = c(0.3, \n0.4)), row.names = c(NA, -2L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 15, FALSE)\n```\n",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"undef_definer.R\", \"undef_user.R\"), Outcome = c(\"ran_ok\", \n\"errored\"), Detail = c(\"\", \"undefined_variable\"), \"Time (s)\" = 0), row.names = c(NA, -2L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 15, FALSE)\n```\n",
           "**Undefined-variable errors**",
           "**1 script failed on an undefined variable or function** (`object '...' not found` / `could not find function \"...\"`). This typically means the script expects a variable or function that another script defines — i.e. it is meant to be sourced into a larger session, not run on its own — or the symbol is simply never created. When another of the paper's own script files defines the same name, this is called out below as a likely sourcing/copy-paste gap. Each is counted as an error (red).",
           "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = \"undef_user.R\", \"Missing variable\" = \"helper_value\", \n    \"Defined in\" = \"undef_definer.R\"), row.names = c(NA, -1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
@@ -382,8 +382,8 @@
           {
             "t": "dbl",
             "v": [
-              0.341334342956543,
-              0.365233898162842
+              0,
+              0
             ]
           },
           {

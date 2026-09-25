@@ -21,7 +21,6 @@ import pytacheck as pc
 from pytacheck.module import ModuleOutput, module_find, module_list, module_run
 from pytacheck.modules import _reproducibility as h
 from pytacheck.report.blocks import ReportTable
-
 from tests.mod_repro import helpers as rh
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -45,7 +44,7 @@ def fake_module_output(
 def code_tbl_row(
     paper: Any,
     file_name: str | list[str],
-    file_location: str | None | list[str | None],
+    file_location: str | list[str | None] | None,
     language: str = "R",
     packages: str = "",
     parse_error: bool = False,
@@ -220,9 +219,7 @@ def test_stata_do_without_data_or_output_names_the_gap(paper: pc.Paper) -> None:
 
 
 def test_byte_identical_duplicates_run_once(paper: pc.Paper, repro_fixture: Any) -> None:
-    code_tbl = code_tbl_row(
-        paper, ["ok.R", "ok.R"], [repro_fixture("ok.R"), repro_fixture("ok.R")]
-    )
+    code_tbl = code_tbl_row(paper, ["ok.R", "ok.R"], [repro_fixture("ok.R"), repro_fixture("ok.R")])
     mo = module_run(
         chain(paper, code_tbl, data_structure(paper, repro_fixture)), "reproducibility_check"
     )
@@ -299,7 +296,7 @@ def test_self_reproducible_output_is_extracted_and_matched(area_fixtures: Path) 
     assert [s["file"] for s in mo.stat_output] == ["sample.jasp", "sample.omv"]
     assert mo.match_table is not None and mo.match_table["found"].any()
     assert mo.summary_table["repro_tests_matched"].tolist() == [1]
-    assert "sandbox" not in mo.keys()
+    assert mo.get("sandbox") is None
 
 
 def test_keep_sandbox_surfaces_statistical_output(area_fixtures: Path) -> None:
@@ -767,12 +764,14 @@ def test_batch_runs_papers_concurrently(tmp_path: Path, monkeypatch: pytest.Monk
     assert sorted(p.stem for p in tmp_path.glob("*.json")) == sorted(ids)
 
 
-def test_batch_not_used_for_process_sandbox(paper: pc.Paper, monkeypatch: pytest.MonkeyPatch) -> None:
+def test_batch_not_used_for_process_sandbox(
+    paper: pc.Paper, monkeypatch: pytest.MonkeyPatch
+) -> None:
     monkeypatch.setattr(h, "_reproducibility_check_batch", lambda *a, **k: pytest.fail("batched"))
     papers = pc.read([ROOT / f for f in rh.PSYCHSCI[:2]])
     # execute = FALSE: workers is ignored
     mo = module_run(papers, "reproducibility_check", workers=4, local_only=True)
-    assert "per_paper" not in mo.keys()
+    assert mo.get("per_paper") is None
 
 
 def test_docker_resource_limits(monkeypatch: pytest.MonkeyPatch) -> None:

@@ -189,7 +189,7 @@
           "Every data file the code reads is either produced by an earlier script or present in the repository.",
           "#### Execution",
           "**The code was run.** Each script ran in an isolated subprocess against a throwaway copy of the Psych-DS layout, in the run order above, with a 60-second per-script timeout. Of 1 script: 1 ran without error, 0 errored, 0 timed out, 0 were skipped (inputs unavailable), 0 could not run because one of its own dependencies is unavailable, and 0 did not parse. Running against current package versions: a break can reflect version drift, which argues for pinning versions. \n\n*a script hit a `could not find function \"...\"` error that resolved to exactly one package (`library(stringr)`); we injected the corresponding `library()` call, and re-ran once. The outcomes above are from that corrected run.*",
-          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = \"needs_stringr.R\", Outcome = \"ran_ok\", \n    Detail = \"\", \"Time (s)\" = 0.4), row.names = c(NA, -1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 15, FALSE)\n```\n",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = \"needs_stringr.R\", Outcome = \"ran_ok\", \n    Detail = \"\", \"Time (s)\" = 0), row.names = c(NA, -1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 15, FALSE)\n```\n",
           "*Expand a row below to see the output each script produced.*",
           "::: {.callout-tip title=\"Output — needs_stringr.R (ran_ok)\" collapse=\"true\"}\n\n**Output (stdout):**\n````\n> library(stringr)\n> x <- c(\"apple\", \"banana\")\n> print(str_detect(x, \"an\"))\n[1] FALSE  TRUE\n````\n**Messages / errors (stderr):**\n````\nWarning message:\nIn .S3methods(generic.function, class, envir, all.names = all.names,  :\n  function 'library' appears not to be S3 generic; found functions that look like S3 methods\n````\n\n:::\n"
         ]
@@ -348,7 +348,7 @@
           {
             "t": "dbl",
             "v": [
-              0.43316125869751
+              0
             ]
           },
           {

@@ -73,7 +73,7 @@
           {
             "t": "chr",
             "v": [
-              "needs_missing_pkg.R"
+              "fake_dep.R"
             ]
           },
           {
@@ -139,13 +139,13 @@
           {
             "t": "chr",
             "v": [
-              "errored"
+              "dependency_unavailable"
             ]
           },
           {
             "t": "chr",
             "v": [
-              "runtime"
+              "dependency_unavailable"
             ]
           },
           {
@@ -182,16 +182,19 @@
           "This module assesses whether the paper's code could be run on its data, and — because `execute = TRUE` — **actually ran it**. We examined 1 R code file.",
           "#### Run order",
           "The scripts were ordered by their data dependencies (a script writing a file another reads runs first), `source()` calls, and numeric filename prefixes.",
-          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Order = 1L, File = \"needs_missing_pkg.R\", \"Runs after\" = \"—\", \n    Basis = \"none\"), row.names = c(NA, -1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Order = 1L, File = \"fake_dep.R\", \"Runs after\" = \"—\", \n    Basis = \"none\"), row.names = c(NA, -1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
           "#### File paths",
           "To run against the Psych-DS layout, 0 referenced data paths would be rewritten to their new locations.",
           "#### Missing inputs",
           "Every data file the code reads is either produced by an earlier script or present in the repository.",
           "#### Execution",
-          "**The code was run.** Each script ran in an isolated subprocess against a throwaway copy of the Psych-DS layout, in the run order above, with a 60-second per-script timeout. Of 1 script: 0 ran without error, 1 errored, 0 timed out, 0 were skipped (inputs unavailable), 0 could not run because one of its own dependencies is unavailable, and 0 did not parse. Running against current package versions: a break can reflect version drift, which argues for pinning versions.",
-          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = \"needs_missing_pkg.R\", Outcome = \"errored\", \n    Detail = \"runtime\", \"Time (s)\" = 0.4), row.names = c(NA, \n-1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 15, FALSE)\n```\n",
+          "**The code was run.** Each script ran in an isolated subprocess against a throwaway copy of the Psych-DS layout, in the run order above, with a 60-second per-script timeout. Of 1 script: 0 ran without error, 0 errored, 0 timed out, 0 were skipped (inputs unavailable), 1 could not run because one of its own dependencies is unavailable, and 0 did not parse. Running against current package versions: a break can reflect version drift, which argues for pinning versions.",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = \"fake_dep.R\", Outcome = \"dependency_unavailable\", \n    Detail = \"dependency_unavailable\", \"Time (s)\" = 0), row.names = c(NA, \n-1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 15, FALSE)\n```\n",
+          "**Dependency-unavailable errors**",
+          "**1 script could not run because its own dependency is unavailable** — the package failed to install from both live CRAN and the CRAN Archive (or a GitHub/URL source could not be resolved). This is an infrastructure limitation, not a defect in the paper's code, so it does **not** force the traffic light red.",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = \"fake_dep.R\"), row.names = c(NA, -1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
           "*Expand a row below to see the output each script produced.*",
-          "::: {.callout-tip title=\"Output — needs_missing_pkg.R (errored)\" collapse=\"true\"}\n\n**Output (stdout):**\n````\n> library(notapkg123)\n````\n**Messages / errors (stderr):**\n````\nError in library(notapkg123) : there is no package called ‘notapkg123’\n````\n\n:::\n",
+          "::: {.callout-tip title=\"Output — fake_dep.R (dependency_unavailable)\" collapse=\"true\"}\n\n**Output (stdout):**\n````\n> x <- 1\n> stop(\"there is no package called 'oddpkg'\")\n````\n**Messages / errors (stderr):**\n````\nError in eval(e, envir = env) : there is no package called 'oddpkg'\n````\n\n:::\n",
           "Dependencies were installed into a throwaway library before running: 2 succeeded, 2 failed. notapkg123, oldpkg, oddpkg, fine were installed.",
           "**1 of these were no longer on live CRAN** and were instead installed from the **CRAN Archive**'s most recent published version — a real version the package once had, but not necessarily the one the paper's authors used: oldpkg.",
           "**Failed:** notapkg123 [not available on CRAN for this R version] (package is not available for this version of R); oddpkg [NA] (NA)"
@@ -200,13 +203,13 @@
       {
         "t": "chr",
         "v": [
-          "red"
+          "green"
         ]
       },
       {
         "t": "chr",
         "v": [
-          "\n-  We assessed AND ran 1 R code file for reproducibility (each in an isolated subprocess).\n-  1 file appears runnable so far (parses, inputs resolve, placeable in the run order).\n-  0 of 1 script ran without error when executed.\n-  1 installable dependency detected."
+          "\n-  We assessed AND ran 1 R code file for reproducibility (each in an isolated subprocess).\n-  1 file appears runnable so far (parses, inputs resolve, placeable in the run order).\n-  0 of 1 script ran without error when executed.\n-  1 script could not run because its own dependency is unavailable (not counted against the traffic light).\n-  1 installable dependency detected."
         ]
       },
       {
@@ -309,25 +312,25 @@
           {
             "t": "chr",
             "v": [
-              "needs_missing_pkg.R"
+              "fake_dep.R"
             ]
           },
           {
             "t": "chr",
             "v": [
-              "errored"
+              "dependency_unavailable"
             ]
           },
           {
             "t": "chr",
             "v": [
-              "! in callr subprocess.\nCaused by error in `library(notapkg123)`:\n! there is no package called ‘notapkg123’"
+              "! in callr subprocess.\nCaused by error in `eval(e, envir = env)`:\n! there is no package called 'oddpkg'"
             ]
           },
           {
             "t": "chr",
             "v": [
-              "runtime"
+              "dependency_unavailable"
             ]
           },
           {
@@ -339,19 +342,19 @@
           {
             "t": "chr",
             "v": [
-              "> library(notapkg123)"
+              "> x <- 1\n> stop(\"there is no package called 'oddpkg'\")"
             ]
           },
           {
             "t": "chr",
             "v": [
-              "Error in library(notapkg123) : there is no package called ‘notapkg123’"
+              "Error in eval(e, envir = env) : there is no package called 'oddpkg'"
             ]
           },
           {
             "t": "dbl",
             "v": [
-              0.362026691436768
+              0
             ]
           },
           {
@@ -361,8 +364,8 @@
               {
                 "t": "chr",
                 "v": [
-                  "library(notapkg123)",
-                  "print(\"never reached\")"
+                  "x <- 1",
+                  "stop(\"there is no package called 'oddpkg'\")"
                 ]
               }
             ]

@@ -28,7 +28,7 @@ from typing import Any
 import numpy as np
 import pandas as pd
 
-from pytacheck._r import as_character, grepl, plural
+from pytacheck._r import as_character, grepl, plural, sub
 from pytacheck.report import scroll_table
 
 # -- small R helpers ---------------------------------------------------------------
@@ -269,7 +269,9 @@ _SPSS_REC_NONE = (
 _SPSS_REC_SELF = " (A jamovi/JASP/SPSS-Viewer file is also present, which is self-reproducible.)"
 
 
-def spss_stata(fnames_all: Sequence[str | None], code_fnames: Sequence[str | None]) -> dict[str, Any]:
+def spss_stata(
+    fnames_all: Sequence[str | None], code_fnames: Sequence[str | None]
+) -> dict[str, Any]:
     """The SPSS/Stata data-without-syntax findings and their report sections."""
     both = [*fnames_all, *code_fnames]
     has_sav = _lgl_any(r"\.(sav|zsav|por)$", fnames_all)
@@ -380,7 +382,9 @@ def _n_stats(stat_output: Sequence[Mapping[str, Any]]) -> int:
     return sum(len(s["long"]) for s in stat_output)
 
 
-def self_repro(structure_df: Any, pid: Callable[[], str | None]) -> tuple[list[dict[str, Any]], list[str] | None]:
+def self_repro(
+    structure_df: Any, pid: Callable[[], str | None]
+) -> tuple[list[dict[str, Any]], list[str] | None]:
     """Extract JASP/jamovi/SPSS-Viewer/notebook, Stata ``.smcl`` and Mplus ``.out`` output.
 
     Returns the ``stat_output`` list and the ``self_repro_report`` section
@@ -553,7 +557,9 @@ def nonr_code(
 def non_r_note(structure_df: Any, nonr_lang: Sequence[str]) -> str:
     """The note on non-R code (and MATLAB ``.mat`` data) files the repository holds."""
     names = _chr_col(structure_df, "file_name")
-    code_hits = grepl(r"\.(py|jl|m|sas|sps|spss|do|ado|java|cpp|c|sql|inp)$", names, ignore_case=True)
+    code_hits = grepl(
+        r"\.(py|jl|m|sas|sps|spss|do|ado|java|cpp|c|sql|inp)$", names, ignore_case=True
+    )
     data_hits = grepl(r"\.(mat)$", names, ignore_case=True)
     n_non_r = sum(bool(h) for h in code_hits) if names else 0
     n_non_r_data = sum(bool(h) for h in data_hits) if names else 0
@@ -664,35 +670,44 @@ def _repro_docker_host_memory_bytes() -> float | None:
     ``None`` (R's ``NA``) when the platform-specific lookup fails.
     """
     sysname = platform.system()
+
+    def number(text: str | None) -> float | None:
+        # suppressWarnings(as.numeric(x)): NA when it is not a number
+        try:
+            return float(str(text).strip())
+        except ValueError:
+            return None
+
+    def command(args: list[str]) -> list[str]:
+        res = subprocess.run(args, capture_output=True, text=True, check=False)  # noqa: S603
+        return res.stdout.splitlines()
+
     try:
         if sysname == "Linux":
             with open("/proc/meminfo", encoding="utf-8") as fh:
                 first = fh.readline()
-            digits = "".join(ch for ch in first if ch.isdigit())
-            if digits:
-                return float(digits) * 1024
+            # sub("[^0-9]*([0-9]+).*", "\\1", meminfo)
+            kb = number(sub(r"[^0-9]*([0-9]+).*", r"\1", first.rstrip("\n")))
+            if kb is not None:
+                return kb * 1024
         elif sysname == "Darwin":
-            out = subprocess.run(  # noqa: S603
-                ["sysctl", "-n", "hw.memsize"],  # noqa: S607
-                capture_output=True,
-                text=True,
-                check=False,
-            ).stdout
-            return float(out.strip())
+            lines = command(["sysctl", "-n", "hw.memsize"])
+            b = number(lines[0]) if lines else None
+            if b is not None:
+                return b
         elif sysname == "Windows":
-            out = subprocess.run(  # noqa: S603
-                [  # noqa: S607
+            lines = command(
+                [
                     "powershell",
                     "-NoProfile",
                     "-Command",
                     "(Get-CimInstance Win32_ComputerSystem).TotalPhysicalMemory",
-                ],
-                capture_output=True,
-                text=True,
-                check=False,
-            ).stdout.strip().splitlines()
-            return float(out[-1].strip())
-    except (OSError, ValueError, IndexError):
+                ]
+            )
+            b = number(lines[-1]) if lines else None
+            if b is not None:
+                return b
+    except OSError:
         return None
     return None
 
@@ -772,8 +787,7 @@ def _reproducibility_check_batch(
         for i, pid in enumerate(pids):
             _message(f"[repro]   -> starting '{pid}'")
             futures[pool.submit(_batch_worker, paper[i], args, limits)] = pid
-        done = 0
-        for fut in as_completed(futures):
+        for done, fut in enumerate(as_completed(futures), 1):
             pid = futures[fut]
             try:
                 res: Any = fut.result()
@@ -795,7 +809,6 @@ def _reproducibility_check_batch(
                     capture_module_tables([res], results_dir, paper_id=pid)
                 except Exception as exc:
                     _message(f"[repro]   (could not write {pid} results to results_dir: {exc})")
-            done += 1
             _message(f"[repro]   <- '{pid}' done ({done}/{n})")
 
     def elem(res: Any, key: str) -> Any:
