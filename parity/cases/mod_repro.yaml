@@ -334,8 +334,7 @@
         "r": "local({source('tests/mod_repro/rc_helpers.R', local = TRUE); rc_run('project', local_path = 'tests/mod_repro/fixtures/project', local_only = TRUE, execute = TRUE, timeout = 60, keep_sandbox = TRUE)})"
         "py": "__import__('tests.mod_repro.helpers', fromlist=['_']).rc_run('project', local_path='tests/mod_repro/fixtures/project', local_only=True, execute=True, timeout=60, keep_sandbox=True)"
   "compare":
-    "ignore":
-    - "run_results.elapsed"
+    "ignore": []
 - "id": "reproducibility_check.tables_dir"
   "r": "identity"
   "py": "tests.mod_repro.helpers.identity"
@@ -360,9 +359,6 @@
       "$expr":
         "r": "local({source('tests/mod_repro/rc_helpers.R', local = TRUE); rc_run('exec_ok', execute = TRUE, timeout = 60, keep_sandbox = TRUE)})"
         "py": "__import__('tests.mod_repro.helpers', fromlist=['_']).rc_run('exec_ok', execute=True, timeout=60, keep_sandbox=True)"
-  "compare":
-    "ignore": &id001
-    - "run_results.elapsed"
 - "id": "reproducibility_check.exec_errors"
   "r": "identity"
   "py": "tests.mod_repro.helpers.identity"
@@ -371,8 +367,6 @@
       "$expr":
         "r": "local({source('tests/mod_repro/rc_helpers.R', local = TRUE); rc_run('exec_errors', execute = TRUE, timeout = 60, keep_sandbox = TRUE)})"
         "py": "__import__('tests.mod_repro.helpers', fromlist=['_']).rc_run('exec_errors', execute=True, timeout=60, keep_sandbox=True)"
-  "compare":
-    "ignore": *id001
 - "id": "reproducibility_check.exec_setwd"
   "r": "identity"
   "py": "tests.mod_repro.helpers.identity"
@@ -381,8 +375,6 @@
       "$expr":
         "r": "local({source('tests/mod_repro/rc_helpers.R', local = TRUE); rc_run('exec_setwd', execute = TRUE, timeout = 60, keep_sandbox = TRUE)})"
         "py": "__import__('tests.mod_repro.helpers', fromlist=['_']).rc_run('exec_setwd', execute=True, timeout=60, keep_sandbox=True)"
-  "compare":
-    "ignore": *id001
 - "id": "reproducibility_check.exec_undefined"
   "r": "identity"
   "py": "tests.mod_repro.helpers.identity"
@@ -391,8 +383,6 @@
       "$expr":
         "r": "local({source('tests/mod_repro/rc_helpers.R', local = TRUE); rc_run('exec_undefined', execute = TRUE, timeout = 60, keep_sandbox = TRUE)})"
         "py": "__import__('tests.mod_repro.helpers', fromlist=['_']).rc_run('exec_undefined', execute=True, timeout=60, keep_sandbox=True)"
-  "compare":
-    "ignore": *id001
 - "id": "reproducibility_check.exec_library"
   "r": "identity"
   "py": "tests.mod_repro.helpers.identity"
@@ -401,8 +391,6 @@
       "$expr":
         "r": "local({source('tests/mod_repro/rc_helpers.R', local = TRUE); rc_run('exec_library', execute = TRUE, timeout = 60, keep_sandbox = TRUE)})"
         "py": "__import__('tests.mod_repro.helpers', fromlist=['_']).rc_run('exec_library', execute=True, timeout=60, keep_sandbox=True)"
-  "compare":
-    "ignore": *id001
 - "id": "reproducibility_check.exec_mixed"
   "r": "identity"
   "py": "tests.mod_repro.helpers.identity"
@@ -411,8 +399,6 @@
       "$expr":
         "r": "local({source('tests/mod_repro/rc_helpers.R', local = TRUE); rc_run('exec_mixed', execute = TRUE, timeout = 60, keep_sandbox = TRUE)})"
         "py": "__import__('tests.mod_repro.helpers', fromlist=['_']).rc_run('exec_mixed', execute=True, timeout=60, keep_sandbox=True)"
-  "compare":
-    "ignore": *id001
 - "id": "reproducibility_check.exec_font"
   "r": "identity"
   "py": "tests.mod_repro.helpers.identity"
@@ -421,8 +407,6 @@
       "$expr":
         "r": "local({source('tests/mod_repro/rc_helpers.R', local = TRUE); rc_run('exec_font', execute = TRUE, timeout = 60, keep_sandbox = TRUE)})"
         "py": "__import__('tests.mod_repro.helpers', fromlist=['_']).rc_run('exec_font', execute=True, timeout=60, keep_sandbox=True)"
-  "compare":
-    "ignore": *id001
 - "id": "reproducibility_check.exec_model_object"
   "r": "identity"
   "py": "tests.mod_repro.helpers.identity"
@@ -431,8 +415,6 @@
       "$expr":
         "r": "local({source('tests/mod_repro/rc_helpers.R', local = TRUE); rc_run('exec_model_object', execute = TRUE, timeout = 60, keep_sandbox = TRUE)})"
         "py": "__import__('tests.mod_repro.helpers', fromlist=['_']).rc_run('exec_model_object', execute=True, timeout=60, keep_sandbox=True)"
-  "compare":
-    "ignore": *id001
 - "id": "reproducibility_check.exec_timeout"
   "r": "identity"
   "py": "tests.mod_repro.helpers.identity"
@@ -443,7 +425,6 @@
         "py": "__import__('tests.mod_repro.helpers', fromlist=['_']).rc_run('exec_timeout', execute=True, timeout=2, keep_sandbox=True)"
   "compare":
     "ignore":
-    - "run_results.elapsed"
     - "run_results.stdout"
     - "run_results.stderr"
 - "id": "reproducibility_check.exec_install"
@@ -454,8 +435,6 @@
       "$expr":
         "r": "local({source('tests/mod_repro/rc_helpers.R', local = TRUE); rc_run_mocked('exec_install', execute = TRUE, timeout = 60, keep_sandbox = TRUE, install_missing = TRUE)})"
         "py": "__import__('tests.mod_repro.helpers', fromlist=['_']).rc_run_mocked('exec_install', execute=True, timeout=60, keep_sandbox=True, install_missing=True)"
-  "compare":
-    "ignore": *id001
 - "id": "reproducibility_check.exec_docker"
   "r": "identity"
   "py": "tests.mod_repro.helpers.identity"
@@ -464,8 +443,6 @@
       "$expr":
         "r": "local({source('tests/mod_repro/rc_helpers.R', local = TRUE); rc_run_mocked('exec_docker', execute = TRUE, timeout = 60, keep_sandbox = TRUE, sandbox = \"docker\", install_missing = TRUE)})"
         "py": "__import__('tests.mod_repro.helpers', fromlist=['_']).rc_run_mocked('exec_docker', execute=True, timeout=60, keep_sandbox=True, sandbox=\"docker\", install_missing=True)"
-  "compare":
-    "ignore": *id001
 - "id": "reproducibility_check.exec_chatty"
   "r": "identity"
   "py": "tests.mod_repro.helpers.identity"
@@ -474,8 +451,6 @@
       "$expr":
         "r": "local({source('tests/mod_repro/rc_helpers.R', local = TRUE); rc_run('exec_chatty', execute = TRUE, timeout = 60, keep_sandbox = TRUE)})"
         "py": "__import__('tests.mod_repro.helpers', fromlist=['_']).rc_run('exec_chatty', execute=True, timeout=60, keep_sandbox=True)"
-  "compare":
-    "ignore": *id001
 - "id": "reproducibility_check.exec_jasp"
   "r": "identity"
   "py": "tests.mod_repro.helpers.identity"
@@ -484,8 +459,6 @@
       "$expr":
         "r": "local({source('tests/mod_repro/rc_helpers.R', local = TRUE); rc_run('exec_jasp', execute = TRUE, timeout = 60, keep_sandbox = TRUE)})"
         "py": "__import__('tests.mod_repro.helpers', fromlist=['_']).rc_run('exec_jasp', execute=True, timeout=60, keep_sandbox=True)"
-  "compare":
-    "ignore": *id001
 - "id": "reproducibility_check.exec_ok_no_keep"
   "r": "identity"
   "py": "tests.mod_repro.helpers.identity"
@@ -496,7 +469,6 @@
         "py": "__import__('tests.mod_repro.helpers', fromlist=['_']).rc_run('exec_ok', execute=True, timeout=60)"
   "compare":
     "ignore":
-    - "run_results.elapsed"
     - "run_results.script_lines"
 - "id": "module.ok_plan"
   "module": "reproducibility_check"

@@ -1843,10 +1843,10 @@
   "exec_install": {
    "code": {
     "file_name": [
-     "needs_missing_pkg.R"
+     "fake_dep.R"
     ],
     "file_location": [
-     "tests/mod_repro/fixtures/scripts/needs_missing_pkg.R"
+     "tests/mod_repro/fixtures/scripts/fake_dep.R"
     ],
     "file_url": [
      null

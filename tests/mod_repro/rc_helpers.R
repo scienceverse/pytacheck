@@ -111,7 +111,20 @@ rc_tables_dir <- function(name, td, tables) {
   x$paper
 }
 
+# Run times vary between runs: zero them (run_results$elapsed and the
+# execution table's "Time (s)", deparsed into the report's R chunk) so the
+# goldens are reproducible.
+rc_untime <- function(mo) {
+  if (!is.null(mo$run_results) && nrow(mo$run_results)) {
+    mo$run_results$elapsed <- 0
+    mo$report <- gsub('"Time \\(s\\)" = (c\\([^)]*\\)|[0-9.e+-]+)', '"Time (s)" = 0',
+                      mo$report)
+  }
+  mo
+}
+
 rc_scrub <- function(mo) {
+  mo <- rc_untime(mo)
   root <- mo$sandbox
   if (is.null(root)) return(mo)
   un <- function(x) if (is.character(x)) gsub(root, "<root>", x, fixed = TRUE) else x

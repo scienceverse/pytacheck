@@ -191,7 +191,7 @@
           "Every data file the code reads is either produced by an earlier script or present in the repository.",
           "#### Execution",
           "**The code was run.** Each script ran in an isolated subprocess against a throwaway copy of the Psych-DS layout, in the run order above, with a 60-second per-script timeout. Of 1 script: 1 ran without error, 0 errored, 0 timed out, 0 were skipped (inputs unavailable), 0 could not run because one of its own dependencies is unavailable, and 0 did not parse. Running against current package versions: a break can reflect version drift, which argues for pinning versions.",
-          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = \"bad_setwd.R\", Outcome = \"ran_ok\", Detail = \"\", \n    \"Time (s)\" = 0.4), row.names = c(NA, -1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 15, FALSE)\n```\n",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = \"bad_setwd.R\", Outcome = \"ran_ok\", Detail = \"\", \n    \"Time (s)\" = 0), row.names = c(NA, -1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 15, FALSE)\n```\n",
           "**`setwd()` in the code**",
           "**1 script calls `setwd()`.** This is bad practice: it hardcodes where the code must run (often an absolute path on the author's own machine) and breaks the moment the code is run anywhere else. To run the code we commented these calls out. Any such script that then ran is **reproducible only after ignoring a `setwd()` that should not have been in the code and needs to be fixed**.",
           "Reproducible after removing `setwd()`: bad_setwd.R.",
@@ -354,7 +354,7 @@
           {
             "t": "dbl",
             "v": [
-              0.358119964599609
+              0
             ]
           },
           {

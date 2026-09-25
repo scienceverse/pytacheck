@@ -152,7 +152,7 @@ def _tables_dir(name: str, td: str, tables: Any) -> Any:
     x = rc_input(name)
     if tables == "none":
         return x.paper
-    pid = list(paper_id(x.paper))[0]
+    pid = next(iter(paper_id(x.paper)))
     chain = [
         ModuleOutput(module="code_check", title="Code Check", section="results", table=x.table),
         ModuleOutput(
@@ -180,8 +180,32 @@ def _unroot(x: Any, root: str) -> Any:
     return x
 
 
+def _untime(mo: Any) -> None:
+    """Zero the run times, which vary between runs (R: ``rc_untime()``)."""
+    from pytacheck.report.blocks import ReportTable
+
+    rr = mo.get("run_results")
+    if not isinstance(rr, pd.DataFrame) or len(rr) == 0:
+        return
+    rr = rr.copy()
+    rr["elapsed"] = 0.0
+    mo.extras["run_results"] = rr
+
+    def fix(x: Any) -> Any:
+        if isinstance(x, ReportTable) and "Time (s)" in x.data.columns:
+            data = x.data.copy()
+            data["Time (s)"] = 0.0
+            return ReportTable(data, x.colwidths, x.maxrows, x.escape, x.column, x.options)
+        if isinstance(x, list):
+            return [fix(v) for v in x]
+        return x
+
+    mo.report = fix(mo.report)
+
+
 def rc_scrub(mo: Any) -> Any:
     """Replace the kept sandbox's path by ``"<root>"`` and delete it (R: ``rc_scrub()``)."""
+    _untime(mo)
     root = mo.get("sandbox")
     if root is None:
         return mo
@@ -198,7 +222,9 @@ def rc_scrub(mo: Any) -> Any:
     mods = mo.get("modifications")
     if isinstance(mods, pd.DataFrame) and len(mods):
         mods = mods.copy()
-        mods["detail"] = pd.array([_unroot(v, root) for v in mods["detail"].tolist()], dtype="string")
+        mods["detail"] = pd.array(
+            [_unroot(v, root) for v in mods["detail"].tolist()], dtype="string"
+        )
         mo.extras["modifications"] = mods
     mo.extras["sandbox"] = "<root>"
     shutil.rmtree(root, ignore_errors=True)
@@ -234,7 +260,9 @@ def fake_install(install_deps: pd.DataFrame, *args: Any, **kwargs: Any) -> pd.Da
                 dtype="string",
             ),
             "via_archive": pd.array([False] * n + [True, False, False], dtype="boolean"),
-            "category": pd.array(["cran_unavailable"] * n + [None, "mystery", None], dtype="string"),
+            "category": pd.array(
+                ["cran_unavailable"] * n + [None, "mystery", None], dtype="string"
+            ),
         }
     )
 
@@ -246,11 +274,24 @@ def rc_run_mocked(name: str, **kwargs: Any) -> Any:
 
     from pytacheck.repro import core, docker
 
-    def run_docker(run_tbl: Any, order: Any, sandbox_root: Any, lib_dir: Any = None,
-                   image: str = "", timeout: float = 600, skip: Any = (), parses: Any = None,
-                   failed_deps: Any = ()) -> Any:
+    def run_docker(
+        run_tbl: Any,
+        order: Any,
+        sandbox_root: Any,
+        lib_dir: Any = None,
+        image: str = "",
+        timeout: float = 600,
+        skip: Any = (),
+        parses: Any = None,
+        failed_deps: Any = (),
+    ) -> Any:
         return core.repro_run_scripts(
-            run_tbl, order, lib_dir=lib_dir, timeout=timeout, skip=skip, parses=parses,
+            run_tbl,
+            order,
+            lib_dir=lib_dir,
+            timeout=timeout,
+            skip=skip,
+            parses=parses,
             failed_deps=failed_deps,
         )
 

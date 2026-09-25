@@ -198,7 +198,7 @@ def _pick(values: Sequence[Any], idx: Sequence[int | None]) -> list[Any]:
         "non-root user) — a real containment boundary, appropriate for running\n"
         "code you do not trust. Requires Docker to be installed and running (see\n"
         "[repro_docker_available()]).",
-        "docker_use_declared_version": "if TRUE (and `sandbox = \"docker\"`), use\n"
+        "docker_use_declared_version": 'if TRUE (and `sandbox = "docker"`), use\n'
         "the R version `code_check`'s version-pinning detection found declared in\n"
         "the repository instead of the pre-built `metacheck_r` image.",
         "install_missing": "if TRUE (and `execute = TRUE`), install the code's\n"
@@ -627,8 +627,8 @@ def _assess_r(
     fnames = h._chr_col(r_files, "file_name")
     if n_dup > 0:
         descs = []
-        for i, d in enumerate(dup):
-            if not d:
+        for i, is_dup in enumerate(dup):
+            if not is_dup:
                 continue
             kept = hashes.index(hashes[i])
             dup_loc, kept_loc = resolve(i), resolve(kept)
@@ -645,7 +645,7 @@ def _assess_r(
             f"{plural(n_dup, 'It was', 'They were')} only run once, from its first occurrence, "
             "to avoid wasted duplicate execution: " + "; ".join(descs) + ".",
         ]
-        keep_rows = [i for i, d in enumerate(dup) if not d]
+        keep_rows = [i for i, is_dup in enumerate(dup) if not is_dup]
         r_files = r_files.iloc[keep_rows].reset_index(drop=True)
         resolve = _resolver(r_files, structure_df)
         fnames = h._chr_col(r_files, "file_name")
@@ -670,7 +670,6 @@ def _assess_r(
                 code_texts.append([])
         else:
             code_texts.append(raw)
-    raw_text_list = h.RNamedList(names, raw_texts)
     code_text_list = h.RNamedList(names, code_texts)
 
     # 3. Dependencies (pooled across files) -------------------------------------
@@ -717,7 +716,9 @@ def _assess_r(
         return [h._is_true(v) for v in h._col(d, col)]
 
     rewrites_n = [
-        n_true(d, [m and not am for m, am in zip(lgl(d, "matched"), lgl(d, "ambiguous"), strict=True)])
+        n_true(
+            d, [m and not am for m, am in zip(lgl(d, "matched"), lgl(d, "ambiguous"), strict=True)]
+        )
         for d in rewrites
     ]
     ambiguous_n = [n_true(d, lgl(d, "ambiguous")) for d in rewrites]
@@ -725,7 +726,9 @@ def _assess_r(
     for d in rewrites:
         if len(d):
             unresolved_refs.extend(
-                b for b, m in zip(h._chr_col(d, "basename"), lgl(d, "matched"), strict=True) if not m
+                b
+                for b, m in zip(h._chr_col(d, "basename"), lgl(d, "matched"), strict=True)
+                if not m
             )
     n_call_paths = 0
     n_call_unresolved = 0
@@ -781,7 +784,9 @@ def _assess_r(
     n_not_r_content = sum(s == "not_r_content" for s in sniff_type)
     n_jags_model = sum(s == "jags_model" for s in sniff_type)
 
-    parse_error_genuine = [p and s is None for p, s in zip(parse_error_raw, sniff_type, strict=True)]
+    parse_error_genuine = [
+        p and s is None for p, s in zip(parse_error_raw, sniff_type, strict=True)
+    ]
     parse_errs = sum(parse_error_genuine)
     parses = [not p for p in parse_error_genuine]
     runs_as_r = [not p for p in parse_error_raw]
@@ -1188,9 +1193,7 @@ def _assess_r(
             f"{n_missing_inputs:d} referenced input{plural(n_missing_inputs)} unavailable "
             f"({n_withheld:d} withheld due to size)."
         )
-    lines.append(
-        f"{n_deps:d} installable dependenc{'y' if n_deps == 1 else 'ies'} detected."
-    )
+    lines.append(f"{n_deps:d} installable dependenc{'y' if n_deps == 1 else 'ies'} detected.")
     if match_summary is not None:
         lines.append(
             f"{n_output_stats:d} statistic{plural(n_output_stats)} stored from the extracted "
@@ -1400,9 +1403,7 @@ def _execute(
         def def_of(v: str | None) -> list[str | None]:
             return [n for n, d in zip(def_names, def_sets, strict=True) if v in d]
 
-        candidate_pkgs = list(
-            dict.fromkeys([*h._chr_col(deps, "package"), *_repro_common_pkgs()])
-        )
+        candidate_pkgs = list(dict.fromkeys([*h._chr_col(deps, "package"), *_repro_common_pkgs()]))
         extra_edges: list[list[str]] = []
         for k, i in enumerate(undef_idx):
             user, v = users[i], vars_[i]
@@ -1413,15 +1414,13 @@ def _execute(
             if len(definers) == 1:
                 extra_edges.append([str(definers[0]), str(user)])
                 dbg(f"undefined-var edge: '{definers[0]}' defines '{v}' needed by '{user}'")
-            elif (
-                len(definers) == 0
-                and is_fn_missing[k]
-                and str(user) not in library_injections
-            ):
+            elif len(definers) == 0 and is_fn_missing[k] and str(user) not in library_injections:
                 pkg = _repro_find_export_pkg(v, candidate_pkgs)
                 if pkg is not None:
                     library_injections[str(user)] = pkg
-                    dbg(f"missing-library injection: '{v}' resolved to package '{pkg}' for '{user}'")
+                    dbg(
+                        f"missing-library injection: '{v}' resolved to package '{pkg}' for '{user}'"
+                    )
         if extra_edges or library_injections:
             order_tbl2 = repro_run_order(io, extra_edges=extra_edges) if extra_edges else order_tbl
             run_tbl2 = (
@@ -1541,7 +1540,9 @@ def _execution_report(
     names = h._chr_col(run_results, "file_name")
     report_setwd: list[Any] | None = None
     if run_tbl is not None and "setwd_removed" in run_tbl.columns:
-        hit = [h._is_true(v > 0) if not h._na(v) else False for v in h._col(run_tbl, "setwd_removed")]
+        hit = [
+            h._is_true(v > 0) if not h._na(v) else False for v in h._col(run_tbl, "setwd_removed")
+        ]
         setwd_files = [f for f, x in zip(h._chr_col(run_tbl, "file_name"), hit, strict=True) if x]
         setwd_n = [v for v, x in zip(h._col(run_tbl, "setwd_removed"), hit, strict=True) if x]
         setwd_paths = [p for p, x in zip(h._chr_col(run_tbl, "setwd_paths"), hit, strict=True) if x]
@@ -1559,7 +1560,9 @@ def _execution_report(
             ]
             if ok_after:
                 report_setwd.append(
-                    "Reproducible after removing `setwd()`: " + ", ".join(ok_after) + "."
+                    "Reproducible after removing `setwd()`: "
+                    + ", ".join("NA" if f is None else f for f in ok_after)
+                    + "."
                 )
             report_setwd.append(
                 scroll_table(
@@ -1780,7 +1783,7 @@ def _modifications(
     if execute and run_tbl is not None and len(run_tbl) > 0:
         rt_names = h._chr_col(run_tbl, "file_name")
         if "setwd_paths" in run_tbl.columns:
-            for fn, n, p in zip(
+            for rt_fn, n, p in zip(
                 rt_names,
                 h._col(run_tbl, "setwd_removed"),
                 h._chr_col(run_tbl, "setwd_paths"),
@@ -1788,9 +1791,9 @@ def _modifications(
             ):
                 if not h._na(n) and n > 0 and h._nzchar(p):
                     for x in strsplit("NA" if p is None else p, ", ", fixed=True):
-                        add(str(fn), "setwd_removed", x)
+                        add(str(rt_fn), "setwd_removed", x)
         if "family_detail" in run_tbl.columns:
-            for fn, n, p in zip(
+            for rt_fn, n, p in zip(
                 rt_names,
                 h._col(run_tbl, "family_replaced"),
                 h._chr_col(run_tbl, "family_detail"),
@@ -1798,7 +1801,7 @@ def _modifications(
             ):
                 if not h._na(n) and n > 0 and h._nzchar(p):
                     for x in strsplit("NA" if p is None else p, "; ", fixed=True):
-                        add(str(fn), "font_replaced", x)
+                        add(str(rt_fn), "font_replaced", x)
     if execute:
         for fn, pkg in library_injections.items():
             add(fn, "library_injected", f"library({pkg})")
