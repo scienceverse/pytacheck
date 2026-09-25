@@ -462,7 +462,9 @@ def test_bibr12_json_matches_jsonlite() -> None:
         '  "o": {},\n'
         '  "arr": ["a", null],\n'
         '  "arr0": [],\n'
-        '  "nums": [\n    1,\n    0.3,\n    1e-05,\n    100000,\n    1e+21,\n'
+        # a double 15 significant digits would change is written in full
+        # (jsonlite: 0.3; U22)
+        '  "nums": [\n    1,\n    0.30000000000000004,\n    1e-05,\n    100000,\n    1e+21,\n'
         "    2147483648,\n    null,\n    true\n  ],\n"
         '  "rows": [\n    {\n      "a": 1,\n      "b": [\n        ["x"]\n      ]\n    }\n  ]\n'
         "}"

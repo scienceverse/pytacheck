@@ -37,6 +37,11 @@ def _text_frame(paper: Any) -> tuple[pd.DataFrame, bool]:
         is_paper_list(paper) and not isinstance(paper, str)
     ):
         text = paper_table(paper, "text")
+        if "text" not in text.columns and len(text) == 0:
+            # an empty paper list (or a paper without text): the columns of a
+            # text table, typed, so that searches of it chain like any other
+            # (metacheck gives logical NA columns and drops `text`; U79)
+            return _empty_text_frame(), False
         sections = paper_table(paper, "section")
         cols = ["section_id", "paper_id", "header", "section_type"]
         if all(c in sections.columns for c in cols) and len(text.columns) > 0:
@@ -51,6 +56,21 @@ def _text_frame(paper: Any) -> tuple[pd.DataFrame, bool]:
         return pd.DataFrame({"text": pd.Series(list(paper), dtype="string")}), True
     raise TypeError(
         "The paper argument doesn't seem to be a scivrs_paper object or a list of paper objects"
+    )
+
+
+def _empty_text_frame() -> pd.DataFrame:
+    """A zero-row text table with the columns :func:`text_search` returns for papers."""
+    return pd.DataFrame(
+        {
+            "text": pd.Series([], dtype="string"),
+            "text_id": pd.Series([], dtype="Int64"),
+            "section_id": pd.Series([], dtype="Int64"),
+            "paragraph_id": pd.Series([], dtype="Int64"),
+            "paper_id": pd.Series([], dtype="string"),
+            "header": pd.Series([], dtype="string"),
+            "section_type": pd.Series([], dtype="string"),
+        }
     )
 
 
