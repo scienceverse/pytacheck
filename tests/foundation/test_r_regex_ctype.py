@@ -144,10 +144,18 @@ def test_tables_match_r() -> None:
         import gen_ctype_tables as gen
     finally:
         sys.path.pop(0)
-    stored = gen.OUT.read_text(encoding="utf-8")
-    fresh = gen.render(gen.run_r(), "VERSION")
+    from pytacheck._r import _ctype_tables as stored
 
-    def body(text: str) -> list[str]:
-        return text[text.index("CLASSES = {") :].splitlines()
+    fresh: dict[str, object] = {}
+    exec(gen.render(gen.run_r(), "VERSION"), fresh)
 
-    assert body(fresh) == body(stored)
+    def tokens(value: object) -> list[str]:
+        return "".join(value).split()  # type: ignore[arg-type]
+
+    for name in ("TOUPPER", "TOLOWER", "PCRE_CASELESS"):
+        assert tokens(fresh[name]) == tokens(getattr(stored, name)), name
+    classes = fresh["CLASSES"]
+    assert isinstance(classes, dict)
+    assert classes.keys() == stored.CLASSES.keys()
+    for name, ranges in classes.items():
+        assert tokens(ranges) == tokens(stored.CLASSES[name]), name

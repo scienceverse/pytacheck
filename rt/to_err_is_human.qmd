@@ -1,1 +1,946 @@
-test
+---
+title: MetaCheck Report
+subtitle: "To Err is Human: An Empirical Investigation"
+metacheck:
+  version: "0.3.1 (pytacheck 0.3.1.dev1)"
+  report-created: "2026-09-25"
+format:
+  html:
+    theme: 
+      light: flatly
+      dark: darkly
+    respect-user-color-scheme: true
+    toc: true
+    toc-title: >
+      <ul class="emoji-key">
+        <li class="red">⚠️ possible problems detected;</li> 
+        <li class="yellow">🔍 something to check;</li> 
+        <li class="green">✅️ no problems detected;</li>  
+        <li class="info">ℹ️ informational only;</li>  
+        <li class="na">⬜ not applicable;</li>  
+        <li class="fail">☠️ check failed</li>
+      <ul>
+      <hr/>
+      **Table of Contents**
+    toc-location: right
+    toc-expand: 3
+    page-layout: full
+    title-block-banner: "#15342A"    #"#327118"
+    title-block-banner-color: "white"
+    link-external-newwindow: true
+    embed-resources: true
+    format-links: false
+    smooth-scroll: true
+execute: 
+  echo: false
+  error: true
+---
+
+<style>
+  #TOC * { border-left: none; }
+  #TOC > ul { border-left: 1px solid #15342A; }
+  #TOC > ul > li > ul > li { text-indent: -1.2em; margin-left: 1.2em; }
+  main h2, main h3 { margin-left: -20px; }
+  main h2 { font-size: 150%; font-face: italics; }
+  main h3 { font-size: 125%; }
+  main h4 { font-size: 110%; }
+  .emoji-key li { margin-bottom: 0.5em; }
+  section::before { content: '' !important; }
+  th { background-color: #555; color: white; }
+  table.dataTable, .dataTables_scrollBody { margin: 0.5em 0; }
+  #info { position: absolute; top: 2.5em; right: 2.5em; color: white; }
+  #info a { color: white !important; }
+  .quarto-dark tr.even { background-color: #333; }
+  .quarto-dark tr.odd { background-color: #222; }
+  .quarto-dark div.datatables { color: white; }
+  .quarto-dark table.dataTable { border: 1px solid #555; }
+  table strong { color: red; }
+  .quarto-dark table strong { color: yellow; }
+  summary { color: #333; }
+  .quarto-dark summary { color: #CCC; }
+  .validation { display: block; 
+                border: 2px solid #15342A; 
+                border-radius: 1em; 
+                padding: 0.5em 1em 0; 
+                margin-bottom: 0.5em;
+                background-color: #15342A33;}
+</style>
+
+::: {#info}
+[MetaCheck](http://www.scienceverse.org/metacheck) version {{< meta metacheck.version >}}  
+Report Created: {{< meta metacheck.report-created >}}  
+DOI: [10.32614/10.5281/zenodo.2669586](https://doi.org/10.32614/10.5281/zenodo.2669586) <!-- doi, if exists -->
+:::
+
+[Metacheck](https://www.scienceverse.org/metacheck/) is a tool that screens scientific manuscripts and aims to identify potential issues for improvement. Our goal is to guide researchers towards best practices, especially with respect to practices that researchers easily forget, or might not have learned about yet. Metacheck is developed to help researchers correctly and completely report statistical results, will point to possibly relevant information about citations, and provides feedback about data and code sharing.
+
+Metacheck combines existing and new checks in a module-based tool. It is open source, and anyone can contribute modules. It mainly relies on text search or retrieving information from external sources through API’s or web-scraping, but the power modules can optionally use large language models. The use of LLM's is always optional and opt-in. The development of Metacheck is guided by our [values statement](https://www.scienceverse.org/metacheck/#our-values).
+
+::: {.validation}
+In light with our values, our modules are validated on sets of open-access papers. In each validated module, there will be a sentence explaining the prevalence of false positives (incorrect detection/classification) and false negatives (incorrect omission). For example, if a hypothetical module detects the inappropriate practice of "woozling", the sentence might read:
+
+> In a sample of 250 papers from the *Journal of X*, there were 350 instances of woozling. This module correctly detected 340 of them, and incorrectly identified 7. Therefore 3% of true instances are missed, and 2% of detections are false positives.
+
+There is an inherent tradeoff between false positives and false negatives. Many of our modules are designed like "smoke detectors", where they are more likely to detect a practice that needs attention, but also more likely to incorrectly flag something. Therefore, you need to check the output of each module, keeping the validated error rates in mind.
+:::
+
+Metacheck is under continuous development. It can be surprisingly difficult to automatically retrieve information from papers, and there is a large amount of edge-cases where our tool might not yet work accurately. By using our tool, and providing us with feedback about what we can't get right yet, you will help to improve the tool for all other users. Issues can be submitted [on Github](https://github.com/scienceverse/metacheck/issues), and suggestions for improvement or feedback can be sent to [metacheck@scienceverse.org](mailto:metacheck@scienceverse.org).
+
+
+## Summary
+
+- ⚠️ [Funding Check](#funding-check){.red}: No funding statement was detected.  
+- ✅️ [COI Check](#coi-check){.green}: A conflict of interest statement was detected.  
+- ℹ️ [List All URLs](#list-all-urls){.info}:   
+- ✅️ [Open Practices Check](#open-practices-check){.green}: Shared data and code detected.  
+- ⬜ [Ethics Approval Check](#ethics-approval-check){.na}: No papers appeared to involve live data collection requiring an ethics approval statement.  
+- ⚠️ [Funding Check (Overinclusive)](#funding-check-(overinclusive)){.red}: No funding statement was detected.  
+- ✅️ [COI Check Overinclusive](#coi-check-overinclusive){.green}: A conflict of interest statement was detected.  
+- 🔍 [Power Analysis Check](#power-analysis-check){.yellow}: We detected 3 potential power analyses.  
+- 🔍 [Repository Check](#repository-check){.yellow}: 
+    -  We found 1 empty repository.
+    -  We found 0 files in 1 repository.
+    -  We found 0 README files and 1 repository without READMEs.  
+- ⬜ [Code Check](#code-check){.na}: We found 0 R, 0 Python, 0 SAS, 0 SPSS, 0 Stata, 0 Mplus, 0 MATLAB, and 0 JASP code files.  
+- ⚠️ [StatCheck](#statcheck){.red}: 1 possible error in t-tests or F-tests  
+- ⚠️ [Exact P-Values](#exact-p-values){.red}: We found 1 imprecise *p* value out of 3 detected *p* values.  
+- 🔍 [Non-Significant P Value Check](#non-significant-p-value-check){.yellow}: We found 2 non-significant p values that should be checked for appropriate interpretation.  
+- 🔍 [Effect Sizes in t-tests and F-tests](#effect-sizes-in-t-tests-and-f-tests){.yellow}: We found 1 t-test and/or F-test where effect sizes are not reported. Check these tests in the table below, and consider adding effect sizes  
+- ⚠️ [Marginal Significance](#marginal-significance){.red}: You described 2 effects with terms related to 'marginally significant'.  
+- ℹ️ [List All P-Values](#list-all-p-values){.info}: We found 3 p-values  
+- ⬜ [Data Check](#data-check){.na}: We found no files to analyse.  
+- ⬜ [Codebook Check](#codebook-check){.na}: We found no extracted data columns to check against a codebook.  
+- ⬜ [Psych-DS Check](#psych-ds-check){.na}: We found no repository files to check for Psych-DS compliance.  
+- ⬜ [Reproducibility Check](#reproducibility-check){.na}: 
+    -  We found no R code files to assess for reproducibility.  
+- 🔍 [Reference Accuracy](#reference-accuracy){.yellow}: We checked the 4 references that supplied a DOI against the record that DOI points to, and found 2 incoherent references to check for parsing errors or mistakes. 0 references had no DOI and could not be checked. Incoherent references are mostly PDF parsing errors (we are working on improving reference parsing).  
+- ℹ️ [Replication Check](#replication-check){.info}: We found 1 replication for 1 original you cited.  
+- ℹ️ [RetractionWatch](#retractionwatch){.info}: You cited 1 article in the RetractionWatch database.  
+- ℹ️ [Summarise References](#summarise-references){.info}: Summary information provided for 5 references  
+- ⚠️ [Reference Consistency](#reference-consistency){.red}: There are cross-references that are not in the bibliography and/or bibliography entries not cross-referenced in the text  
+- ✅️ [Miscitation](#miscitation){.green}: We detected no miscited papers  
+- ☠️ [prereg_check](#prereg_check){.fail}: This module failed to run  
+- ☠️ [ref_pubpeer](#ref_pubpeer){.fail}: This module failed to run  
+
+
+
+## General Modules
+
+### ⚠️ Funding Check {#funding-check .red}
+
+No funding statement was detected.
+
+No funding statement was detected. Consider adding one.
+
+::: {.callout-note title="How It Works" collapse="true"}
+
+Identify and extract funding statements.
+
+The Funding Check module uses regular expressions to check sentences for words related to funding statements. It will return the sentences in which the conflict of interest statement was found.
+
+The function incorporates code from [rtransparent](https://github.com/serghiou/rtransparent), which is no longer maintained. For their validation, see [the paper](https://doi.org/10.1371/journal.pbio.3001107).
+
+This module was developed by Daniel Lakens
+
+:::
+
+### ✅️ COI Check {#coi-check .green}
+
+A conflict of interest statement was detected.
+
+<details><summary>View detailed feedback</summary><div>
+
+The following conflict of interest statement was detected.
+
+```{r}
+#| echo: false
+
+# table data --------------------------------------
+table <- structure(list("The authors declare a conflict of interest."), names = "", class = "data.frame", row.names = c(NA, 
+-1L))
+
+# display table -----------------------------------
+metacheck::report_table(table, "auto", 2, FALSE)
+```
+
+</div></details>
+
+::: {.callout-note title="How It Works" collapse="true"}
+
+Identify and extract Conflicts of Interest (COI) statements.
+
+The COI Check module uses regular expressions to check sentences for words related to conflict of interest statements. It will return the sentences in which the conflict of interest statement was found.
+
+The function incorporates code from [rtransparent](https://github.com/serghiou/rtransparent), which is no longer maintained. For their validation, see [the paper](https://doi.org/10.1371/journal.pbio.3001107).
+
+This module was developed by Daniel Lakens
+
+:::
+
+### ℹ️ List All URLs {#list-all-urls .info}
+
+...
+
+::: {.callout-note title="How It Works" collapse="true"}
+
+List all the URLs in the main text.
+
+Checks for valid URLs using a regular expression.
+
+This module was developed by Daniel Lakens
+
+:::
+
+### ✅️ Open Practices Check {#open-practices-check .green}
+
+Shared data and code detected.
+
+<details><summary>View detailed feedback</summary><div>
+
+Data was openly shared for this article, based on the following text:
+
+> The paper shows examples of (1) open and closed OSF links; (2a) citation of retracted papers, (2b) citations without a doi, (2c) citations with Pubpeer comments, (2d) citations in the FLoRA replication database, and (2e) missing/mismatched/incorrect citations and references; (3a) R files with code on GitHub that do not load libraries in one location, (3b) load files that are not shared in the repository, (3c) lack comments, and (3d) have absolute file paths; (4) imprecise reporting of non-significant p-values; (5) tests with and without effect sizes; (6) use of "marginally significant" to describe non-significant findings; (7) a power analysis reporting some of the essential attributes; and (8) retrieving information from preregistrations.
+
+> Data and analysis code is available on GitHub from https://github.com/Lak-ens/to_err_is_human and from https://researchbox.org/4377.
+
+> Data is also available from https://osf.io/5tbm9 and code is also available from https://osf.io/629bx.
+
+Code was openly shared for this article, based on the following text:
+
+> The paper shows examples of (1) open and closed OSF links; (2a) citation of retracted papers, (2b) citations without a doi, (2c) citations with Pubpeer comments, (2d) citations in the FLoRA replication database, and (2e) missing/mismatched/incorrect citations and references; (3a) R files with code on GitHub that do not load libraries in one location, (3b) load files that are not shared in the repository, (3c) lack comments, and (3d) have absolute file paths; (4) imprecise reporting of non-significant p-values; (5) tests with and without effect sizes; (6) use of "marginally significant" to describe non-significant findings; (7) a power analysis reporting some of the essential attributes; and (8) retrieving information from preregistrations.
+
+> Data and analysis code is available on GitHub from https://github.com/Lak-ens/to_err_is_human and from https://researchbox.org/4377.
+
+> Data is also available from https://osf.io/5tbm9 and code is also available from https://osf.io/629bx.
+
+</div></details>
+
+::: {.callout-note title="How It Works" collapse="true"}
+
+This module searches for open data, code, materials, and registration statements.
+
+It is much faster than the previous ODDPub version of this module, and has a lower false negative rate, but also a higher false positive rate.
+
+This module was developed by Lisa DeBruine
+
+:::
+
+### ⚠️ Funding Check (Overinclusive) {#funding-check-(overinclusive) .red}
+
+No funding statement was detected.
+
+No funding statement was detected. Consider adding one.
+
+::: {.callout-note title="How It Works" collapse="true"}
+
+Identify and extract funding statements.
+
+The Funding Check module uses regular expressions to check sentences for words related to funding statements. It will return the sentences in which the conflict of interest statement was found.
+
+The function is based on code from [rtransparent](https://github.com/serghiou/rtransparent), which is no longer maintained. For their validation, see [the paper](https://doi.org/10.1371/journal.pbio.3001107).
+
+This version is over-inclusive, so will have more false positives, but is less likely to miss something.
+
+This module was developed by Daniel Lakens and Lisa DeBruine
+
+:::
+
+### ✅️ COI Check Overinclusive {#coi-check-overinclusive .green}
+
+A conflict of interest statement was detected.
+
+<details><summary>View detailed feedback</summary><div>
+
+The following conflict of interest statement was detected.
+
+```{r}
+#| echo: false
+
+# table data --------------------------------------
+table <- structure(list("The authors declare a conflict of interest."), names = "", class = "data.frame", row.names = c(NA, 
+-1L))
+
+# display table -----------------------------------
+metacheck::report_table(table, "auto", 2, FALSE)
+```
+
+</div></details>
+
+::: {.callout-note title="How It Works" collapse="true"}
+
+Identify and extract Conflicts of Interest (COI) statements.
+
+The COI Check module uses regular expressions to check sentences for words related to conflict of interest statements. It will return the sentences in which the conflict of interest statement was found.
+
+The function is based on code from [rtransparent](https://github.com/serghiou/rtransparent), which is no longer maintained. For their validation, see [the paper](https://doi.org/10.1371/journal.pbio.3001107).
+
+This version is over-inclusive, so will have more false positives, but is less likely to miss something.
+
+This module was developed by Daniel Lakens
+
+:::
+
+## Method Modules
+
+### 🔍 Power Analysis Check {#power-analysis-check .yellow}
+
+We detected 3 potential power analyses.
+
+<details><summary>View detailed feedback</summary><div>
+
+You chose to not use an LLM to assess if all information was reported, so please check for all required information manually.
+
+```{r}
+#| echo: false
+
+# table data --------------------------------------
+table <- structure(list(power_id = 1:3, power_type = c("unknown", "sensitivity", 
+"unknown")), row.names = c(NA, -3L), class = "data.frame")
+
+# display table -----------------------------------
+metacheck::report_table(table, "auto", 5, FALSE)
+```
+
+```{r}
+#| echo: false
+
+# table data --------------------------------------
+table <- structure(list(power_id = c("1", "2", "3"), text = c("This paper demonstrates some good and poor practices for use with the {metacheck} R package. All data are simulated. The paper shows examples of (1) open and closed OSF links; (2a) citation of retracted papers, (2b) citations without a doi, (2c) citations with Pubpeer comments, (2d) citations in the FLoRA replication database, and (2e) missing/mismatched/incorrect citations and references; (3a) R files with code on GitHub that do not load libraries in one location, (3b) load files that are not shared in the repository, (3c) lack comments, and (3d) have absolute file paths; (4) imprecise reporting of non-significant p-values; (5) tests with and without effect sizes; (6) use of \"marginally significant\" to describe non-significant findings; (7) a <strong>power</strong> analysis reporting some of the essential attributes; and (8) retrieving information from preregistrations.", 
+"We conducted a <strong>sensitivity</strong> <strong>power</strong> analysis 2 to determine that a Cohen's d of 0.50 is the smallest effect size that we could detect with N = 50 participants in each group and 80% <strong>power</strong>.", 
+"pwr::pwr.t.test(n = 50, <strong>power</strong> = 0.8, alternative = \"greater\") is useful. We conclude the use of automated checks has potential to reduce the number of mistakes in scientific manuscripts."
+)), row.names = c(NA, -3L), class = "data.frame")
+
+# display table -----------------------------------
+metacheck::report_table(table, "auto", 5, FALSE)
+```
+
+::: {.callout-tip title="Learn More" collapse="true"}
+
+Power analyses need to contain the following information to be interpretable: the type of power analysis, the statistical test, the software used, sample size, critical alpha criterion, power level, effect size, and an effect size metric. In addition, it is recommended to make sure the power analysis is reproducible (by sharing the code, or a screenshot, of the power analysis), and to provide good arguments for why the study was designed to detect an effect of this size.
+
+For an a-priori power analysis, where the sample size is determined, reporting all information would look like:
+
+> An a priori power analysis for an independent samples t-test, conducted using the pwr.t.test function from pwr (Champely, 2020), indicated that for a Cohen's d = 0.5, an alpha level of 0.05, and a desired power level of 80% required at least 64 participants in each group.
+
+For a sensitivity power analysis, this sentence would look like:
+
+> A sensitivity power analysis for an independent samples t-test, conducted using the pwr.t.test function from pwr (Champely, 2020), indicated that with 64 participants in each group, and an alpha level of 0.05, a desired power level of 80% was reached for an effect size of d = 0.5.
+
+:::
+
+</div></details>
+
+::: {.callout-note title="How It Works" collapse="true"}
+
+This module uses uses regular expressions to identify sentences that contain a statistical power analysis. If specified by the user, it also uses a large language module (LLM) to extract information reported in power analyses, including the statistical test, sample size, alpha level, desired level of power, and magnitude and type of effect size.
+
+The Power Analysis Check module uses regular expressions to identify sentences that contain a statistical power analysis. Without the use of an LMM, the module uses regular expressions to classify the power analysis as a-priori, sensitivity or post-hoc. With the use of an LMM, it checks if the power analysis is reported with all required information.
+
+The regular expressions can miss power analyses, or fail to classify them correctly. The type of power analysis is often difficult to classify, which can easily be solved by explicitly specifying the type of power analysis as 'a-priori', 'sensitivity', or 'post-hoc'. Note that 'post-hoc' or 'observed' power is rarely useful. The LMM can fail to identify information in the paper, and will not have access to information in paragraphs in the paper other than those that contain the word 'power'. This package was validated by the Metacheck team on articles in Psychological Science.
+
+This module was developed by Lisa DeBruine, Daniel Lakens and Cristian Mesquida
+
+:::
+
+::: {.validation}
+Validation: In a sample of 128 papers with 246 instances of power statements, 203 were correctly detected (true positives), 22 were missed (false negatives) and 21 were incorrectly detected (false positives). Overall, among all instances flagged as power statements, 90.6% were correct (positive predictive value).
+:::
+
+## Results Modules
+
+### 🔍 Repository Check {#repository-check .yellow}
+
+-  We found 1 empty repository.
+-  We found 0 files in 1 repository.
+-  We found 0 README files and 1 repository without READMEs.
+
+<details><summary>View detailed feedback</summary><div>
+
+Double-check permissions on repositories with no detectable files.
+
+#### Repositories
+
+```{r}
+#| echo: false
+
+# table data --------------------------------------
+table <- structure(list(Repository = "<a href='https://researchbox.org/4377' target='_blank'>researchbox.org/4377</a>", 
+    Platform = "researchbox", Error = "Failed to perform HTTP request: https://researchbox.org/4377", 
+    "All Files" = 0L, "Data Files" = 0L, "Code Files" = 0L, READMEs = 0L, 
+    Archives = 0L), row.names = c(NA, -1L), class = "data.frame")
+
+# display table -----------------------------------
+metacheck::report_table(table, "auto", 10, FALSE)
+```
+
+#### README Files
+
+README files are a way to document the contents and structure of a folder, helping users locate the information they need. You can use a README to document changes to a repository, and explain how files are named. Please consider adding a README to each repository or including 'README' in the name of your overview document.
+
+</div></details>
+
+::: {.callout-note title="How It Works" collapse="true"}
+
+This module retrieves information from repositories.
+
+The Repository Check module lists files on the OSF, GitHub, ResearchBox, DSpace (PsychArchives and other legacy- and DSpace 7-based installations), Zenodo, Dataverse, Figshare, Dryad, ReShare, 4TU.ResearchData, Mendeley Data, and DataONE (Arctic Data Center, KNB, and other member nodes) based on links in the manuscript.
+
+When a linked OSF page is a registration, its `registered_from` project (the
+one it was registered from, which the manuscript itself may never link
+directly) is also checked: if that project is public its files are listed
+under its own URL, and if it is closed or otherwise inaccessible the report
+flags it explicitly, since some registrations only describe their content
+rather than mirroring it.
+
+If you want to extend the package to be able to download files from additional data repositories reach out to the Metacheck development team.
+
+This module was developed by Daniel Lakens and Lisa DeBruine
+
+:::
+
+### ⚠️ StatCheck {#statcheck .red}
+
+1 possible error in t-tests or F-tests
+
+<details><summary>View detailed feedback</summary><div>
+
+We detected possible errors in test statistics. Note that as the accuracy of statcheck has only been validated for *t*-tests and *F*-tests. As Metacheck only uses validated modules, we only provide statcheck results for *t* tests and *F*-tests.
+
+```{r}
+#| echo: false
+
+# table data --------------------------------------
+table <- structure(list(Text = "t(97.2) = -1.96, p =0.152", "Recomputed p" = 0.05286, 
+    Sentence = "On average researchers in the experimental condition found the app marginally significantly more useful (M = 5.06) than researchers in the control condition found the checklist (M = 4.5), t(97.2) = -1.96, p =0.152."), row.names = c(NA, 
+-1L), class = "data.frame")
+
+# display table -----------------------------------
+metacheck::report_table(table, c("10em", NA, NA, NA), 2, FALSE)
+```
+
+::: {.callout-tip title="Learn More" collapse="true"}
+
+For metascientific research on the validity of statcheck, and it's usefulness to prevent statistical reporting errors, see:
+
+Nuijten M, van Assen M, Hartgerink C, Epskamp S, Wicherts J (2017). &ldquo;The validity of the tool &quot;statcheck&quot; in discovering statistical reporting inconsistencies.&rdquo; <a href="https://doi.org/10.31234/osf.io/tcxaja">doi:10.31234/osf.io/tcxaja</a>, Preprint.
+
+Nuijten M, Wicherts J (2023). &ldquo;The effectiveness of implementing statcheck in the peer review process to avoid statistical reporting errors.&rdquo; <a href="https://doi.org/10.31234/osf.io/bxau9">doi:10.31234/osf.io/bxau9</a>, Preprint.
+
+:::
+
+</div></details>
+
+::: {.callout-note title="How It Works" collapse="true"}
+
+Check consistency of p-values and test statistics
+
+The Statcheck module runs Statcheck. Statcheck searches for regular expressions that match a predefined pattern, and identifies APA reported statistical tests. More information on the package can be found at <https://github.com/cran/statcheck>. The module only returns Statcheck results for t-tests and F-tests, as these are the only tests which have been validated, see <https://osf.io/preprints/psyarxiv/tcxaj_v1/>.
+
+Statcheck was developed by Michèle Nuijten and Sascha Epskamp.
+
+Statcheck considers p = 0.000 an error, as you should report p < 0.001. Furthermore, p < 0.03 is an error if the p-value was 0.031, and one should simply report exact p-values (p = 0.031). Statcheck might miss one-sided tests, and falsely assume the p-value is incorrect. For more information, see [StatCheck](https://statcheck.io/).
+
+This module only checks statistical results reported in the running text of the manuscript. It cannot (yet) process statistics reported only in tables.
+
+This module was developed by Daniel Lakens and Lisa DeBruine
+
+:::
+
+::: {.validation}
+Validation: In a sample of 685 tests with 34 instances of inconsistent reporting, Statcheck correctly detected 34 of them, and incorrectly identified 26. Therefore 0% of true instances were missed, and 43% of detections were false positives. See <https://osf.io/preprints/psyarxiv/tcxaj_v1/> for more details of the validation.
+:::
+
+### ⚠️ Exact P-Values {#exact-p-values .red}
+
+We found 1 imprecise *p* value out of 3 detected *p* values.
+
+<details><summary>View detailed feedback</summary><div>
+
+Reporting *p* values imprecisely (e.g., *p* < .05) reduces transparency, reproducibility, and re-use (e.g., in *p* value meta-analyses). Best practice is to report exact p-values with three decimal places (e.g., *p* = .032) unless *p* values are smaller than 0.001, in which case you can use *p* < .001.
+
+```{r}
+#| echo: false
+
+# table data --------------------------------------
+table <- structure(list("P-Value" = "p > .05", Text = "There was no effect of experience on the reduction in errors when using the tool (p > .05), as the correlation was non-significant (Figure 2)."), row.names = c(NA, 
+-1L), class = "data.frame")
+
+# display table -----------------------------------
+metacheck::report_table(table, c(0.1, 0.9), 2, FALSE)
+```
+
+::: {.callout-tip title="Learn More" collapse="true"}
+
+The APA manual states: Report exact *p* values (e.g., *p* = .031) to two or three decimal places. However, report *p* values less than .001 as *p* < .001. However, 2 decimals is too imprecise for many use-cases (e.g., a *p* value meta-analysis), so report *p* values with three digits.
+
+American Psychological Association (2020). <em>Publication manual of the American Psychological Association</em>, 7 edition. American Psychological Association.
+
+:::
+
+</div></details>
+
+::: {.callout-note title="How It Works" collapse="true"}
+
+List any p-values reported with insufficient precision (e.g., p < .05 or p = n.s.) or reported as exactly zero (e.g., p = .000).
+
+This module uses regular expressions to identify p-values. It will flag any values reported as p > ? or p < numbers greater than .001. It will also flag p-values reported as exactly zero (e.g., p = .000, p = 0.00), which are mathematically impossible — p-values are never exactly zero and should instead be reported as p < .001.
+
+We try to exclude figure and table notes like "* p < .05", but may not succeed at excluding all false positives.
+
+This module only checks p-values reported in the running text of the manuscript. It cannot (yet) process p-values reported only in tables (as opposed to a table's footnote text, which the module does see and tries to exclude — see above).
+
+This module was developed by Lisa DeBruine
+
+:::
+
+::: {.validation}
+Validation: In a sample of 225 papers containing 405 instances of non-exact p-values, the module correctly detected 269 cases (true positives) and incorrectly identified 78 (false positives). It missed 136 instances of imprecisely reported p-values (false negatives) and correctly identified 4557 cases of precisely reported p-values (true negative). Additionally, 78% of positive detections were correct (positive predictive value).
+:::
+
+### 🔍 Non-Significant P Value Check {#non-significant-p-value-check .yellow}
+
+We found 2 non-significant p values that should be checked for appropriate interpretation.
+
+<details><summary>View detailed feedback</summary><div>
+
+Meta-scientific research has shown nonsignificant p values are commonly misinterpreted. It is incorrect to infer that there is 'no effect', 'no difference', or that groups are 'the same' after p > 0.05.
+
+It is possible that there is a true non-zero effect, but that the study did not detect it. Make sure your inference acknowledges that it is possible that there is a non-zero effect. It is correct to include the effect is 'not significantly' different, although this just restates that p > 0.05.
+
+Metacheck does not yet analyze automatically whether sentences which include non-significant p-values are correct, but we recommend manually checking the sentences below for possible misinterpreted non-significant p values.
+
+```{r}
+#| echo: false
+
+# table data --------------------------------------
+table <- structure(list(Text = c("p =0.152", "p > .05"), Sentence = c("On average researchers in the experimental condition found the app marginally significantly more useful (M = 5.06) than researchers in the control condition found the checklist (M = 4.5), t(97.2) = -1.96, p =0.152.", 
+"There was no effect of experience on the reduction in errors when using the tool (p > .05), as the correlation was non-significant (Figure 2)."
+)), row.names = c(NA, -2L), class = "data.frame")
+
+# display table -----------------------------------
+metacheck::report_table(table, c(0.1, 0.9), 10, FALSE)
+```
+
+::: {.callout-tip title="Learn More" collapse="true"}
+
+For metascientific articles demonstrating the rate of misinterpretations of non-significant results is high, see:
+
+Aczel B, Palfi B, Szollosi A, Kovacs M, Szaszi B, Szecsi P, Zrubka M, Gronau Q, van den Bergh D, Wagenmakers E (2018). &ldquo;Quantifying Support for the Null Hypothesis in Psychology: An Empirical Investigation.&rdquo; <em>Advances in Methods and Practices in Psychological Science</em>, <b>1</b>(3), 357&ndash;366. <a href="https://doi.org/10.1177/2515245918773742">doi:10.1177/2515245918773742</a>.
+
+Murphy S, Merz R, Reimann L, Fernández A (2025). &ldquo;Nonsignificance misinterpreted as an effect’s absence in psychology: Prevalence and temporal analyses.&rdquo; <em>Royal Society Open Science</em>, <b>12</b>(3), 242167. <a href="https://doi.org/10.1098/rsos.242167">doi:10.1098/rsos.242167</a>.
+
+For educational material on preventing the misinterpretation of p values, see [Improving Your Statistical Inferences](https://lakens.github.io/statistical_inferences/01-pvalue.html#sec-misconception1).
+
+:::
+
+</div></details>
+
+::: {.callout-note title="How It Works" collapse="true"}
+
+This module checks for imprecisely reported p values. If p > .05 is detected, it warns for misinterpretations.
+
+The nonsignificant p-value check searches for regular expressions that match a predefined pattern. The module identifies all p-values in a manuscript and selects those that are not reported to be smaller than or equal to 0.05. It returns all sentences containing non-significant p-values.
+
+In the future, the Metacheck team aims to incorporate a machine learning classifier to only return sentences likely to contain misinterpretations. If you want to help to improve the module, reach out to the Metacheck development team.
+
+This module only checks p-values reported in the running text of the manuscript. It cannot (yet) process p-values reported only in tables.
+
+This module was developed by Daniel Lakens
+
+:::
+
+::: {.validation}
+Validation: In a sample of 194 papers with 1602 instances of non-significant p-values, this module correctly detected 1486 of them, and incorrectly identified 153. Additionally, 91% of detections were true instances (positive predictive value). That is, when this module flags non-significant p-values in a paper, it correctly identifies an issue 91% of the time.
+:::
+
+### 🔍 Effect Sizes in t-tests and F-tests {#effect-sizes-in-t-tests-and-f-tests .yellow}
+
+We found 1 t-test and/or F-test where effect sizes are not reported. Check these tests in the table below, and consider adding effect sizes
+
+<details><summary>View detailed feedback</summary><div>
+
+We recommend checking the sentences below, and add any missing effect sizes.
+
+For t-tests with a reported d, coherence checks yielded 1 indeterminate case.
+
+```{r}
+#| echo: false
+
+# table data --------------------------------------
+table <- structure(list("On average researchers in the experimental condition found the app marginally significantly more useful (M = 5.06) than researchers in the control condition found the checklist (M = 4.5), t(97.2) = -1.96, p =0.152."), names = "", class = "data.frame", row.names = c(NA, 
+-1L))
+
+# display table -----------------------------------
+metacheck::report_table(table, "auto", 2, FALSE)
+```
+
+::: {.callout-tip title="Learn More" collapse="true"}
+
+For metascientific articles demonstrating that effect sizes are often not reported:
+
+* Peng, C.-Y. J., Chen, L.-T., Chiang, H.-M., & Chiang, Y.-C. (2013). The Impact of APA and AERA Guidelines on Effect Size Reporting. Educational Psychology Review, 25(2), 157–209. doi:[10.1007/s10648-013-9218-2](https://doi.org/10.1007/s10648-013-9218-2).
+
+For educational material on reporting effect sizes:
+
+* [Guide to Effect Sizes and Confidence Intervals](https://matthewbjane.quarto.pub/guide-to-effect-sizes-and-confidence-intervals/)
+
+:::
+
+::: {.callout-tip title="All detected and assessed stats" collapse="true"}
+
+```{r}
+#| echo: false
+
+# table data --------------------------------------
+table <- structure(list(Sentence = c("On average researchers in the experimental (app) condition made fewer mistakes (M = 9.12) than researchers in the control (checklist) condition (M = 10.9), t(97.7) = 2.9, p = 0.005, d =0.59.", 
+"On average researchers in the experimental condition found the app marginally significantly more useful (M = 5.06) than researchers in the control condition found the checklist (M = 4.5), t(97.2) = -1.96, p =0.152."
+), "Effect Size" = c("d = 0.59", NA), "Reported Test" = c("t(97.7) = 2.9", 
+"t(97.2) = -1.96"), "Test Type" = c("t-test", "t-test"), "d Coherence" = c("indeterminate", 
+"indeterminate"), "d Assumption" = c("none", "none"), "d Coherence Note" = c("Non-integer df indicates Welch's t-test (unequal variances); sample sizes cannot be determined.", 
+"No parseable d effect size found."), "eta Coherence" = c(NA_character_, 
+NA_character_), "eta Assumption" = c(NA_character_, NA_character_
+), "eta Coherence Note" = c(NA_character_, NA_character_)), row.names = c(NA, 
+-2L), class = "data.frame")
+
+# display table -----------------------------------
+metacheck::report_table(table, "auto", 5, FALSE)
+```
+
+:::
+
+</div></details>
+
+::: {.callout-note title="How It Works" collapse="true"}
+
+The Effect Size module checks if effect sizes are correctly reported in t-tests and F-tests.
+
+The Effect Size check searches for regular expressions that match typical ways in which effect sizes are reported. It subsequently checks different ways in which Cohen's d, g, ηp2, and ωp2 can be computed against the reported value. If effects are missing, or might be incorrect, you the module provides a warning. The module was validated on APA reported statistical tests, and might miss effect sizes that were reported in other reporting styles. It was validated by the Metacheck team on papers published in Psychological Science.
+
+This module only checks statistical results reported in the running text of the manuscript. It cannot (yet) process statistics reported only in tables.
+
+This module was developed by Daniel Lakens and Lisa DeBruine
+
+:::
+
+::: {.validation}
+Validation: In a sample of 161 papers with 1469 tests, this module correctly detected 1106 reported effect sizes (true positives) and correctly identified 295 cases where no effect size was present (true negatives). However, it missed 23 that were reported (false negatives), and incorrectly identified 45 effect sizes when none were reported (false positives). Among all instances detected by the module, 96% were true cases (positive predictive value). In a validation against 221 reported Cohen's d effect sizes, it correctly indicated coherence in 218 cases (99%). In a validation against 485 partial eta-squared effect sizes, it correctly indicated coherence in 480 (99%)
+:::
+
+### ⚠️ Marginal Significance {#marginal-significance .red}
+
+You described 2 effects with terms related to 'marginally significant'.
+
+<details><summary>View detailed feedback</summary><div>
+
+You described effects with terms related to 'marginally significant'. If *p* values above 0.05 are interpreted as an effect, you inflate the alpha level, and increase the Type 1 error rate. If a *p* value is higher than the prespecified alpha level, it should be interpreted as a non-significant result.
+
+```{r}
+#| echo: false
+
+# table data --------------------------------------
+table <- structure(list(Text = c("The paper shows examples of (1) open and closed OSF links; (2a) citation of retracted papers, (2b) citations without a doi, (2c) citations with Pubpeer comments, (2d) citations in the FLoRA replication database, and (2e) missing/mismatched/incorrect citations and references; (3a) R files with code on GitHub that do not load libraries in one location, (3b) load files that are not shared in the repository, (3c) lack comments, and (3d) have absolute file paths; (4) imprecise reporting of non-significant p-values; (5) tests with and without effect sizes; (6) use of \"marginally significant\" to describe non-significant findings; (7) a power analysis reporting some of the essential attributes; and (8) retrieving information from preregistrations.", 
+"On average researchers in the experimental condition found the app marginally significantly more useful (M = 5.06) than researchers in the control condition found the checklist (M = 4.5), t(97.2) = -1.96, p =0.152."
+), "Section Header" = c("Abstract", "Procedure")), row.names = c(NA, 
+-2L), class = "data.frame")
+
+# display table -----------------------------------
+metacheck::report_table(table, "auto", 2, FALSE)
+```
+
+::: {.callout-tip title="Learn More" collapse="true"}
+
+For metascientific articles demonstrating the rate at which non-significant p-values are interpreted as marginally significant, see:
+
+Olsson-Collentine, A., van Assen, M. MAL, Hartgerink &amp;, J. CH (2019). &ldquo;The Prevalence of Marginally Significant Results in Psychology Over Time.&rdquo; <em>Psychological Science</em>, <b>30</b>, 576&ndash;586. <a href="https://doi.org/10.1177/0956797619830326">doi:10.1177/0956797619830326</a>.
+
+For the list of terms used to identifify marginally significant results, see this [blog post by Matthew Hankins](https://web.archive.org/web/20251001114321/https://mchankins.wordpress.com/2013/04/21/still-not-significant-2/).
+
+:::
+
+</div></details>
+
+::: {.callout-note title="How It Works" collapse="true"}
+
+List all sentences that describe an effect as 'marginally significant'.
+
+The marginal module searches for regular expressions that match a predefined pattern. The list of terms is a subset of those listed in a [blog post by Matthew Hankins](https://web.archive.org/web/20251001114321/https://mchankins.wordpress.com/2013/04/21/still-not-significant-2/). The module returns all sentences that match terms describing ‘marginally significant’ results.
+
+Some of the terms identified might not be problematic in some contexts, and there are ways to describe ‘marginal significance’ that are not detected by the module.
+
+This module was developed by Daniel Lakens
+
+:::
+
+::: {.validation}
+Validation: In a sample of 51 papers with 87 statements, this module correctly identified 38 statements (true positives) and incorrectly flagged 22 statements (false positives). It failed to detect 27 statements. Thus, among all statements flagged by the module, 63% were genuine cases (positive predictive value). However, the module missed 42% of all true statements (false negative rate).
+:::
+
+### ℹ️ List All P-Values {#list-all-p-values .info}
+
+We found 3 p-values
+
+<details><summary>View detailed feedback</summary><div>
+
+```{r}
+#| echo: false
+
+# table data --------------------------------------
+table <- structure(list(Text = c("p = 0.005", "p =0.152", "p > .05"), 
+    Sentence = c("On average researchers in the experimental (app) condition made fewer mistakes (M = 9.12) than researchers in the control (checklist) condition (M = 10.9), t(97.7) = 2.9, p = 0.005, d =0.59.", 
+    "On average researchers in the experimental condition found the app marginally significantly more useful (M = 5.06) than researchers in the control condition found the checklist (M = 4.5), t(97.2) = -1.96, p =0.152.", 
+    "There was no effect of experience on the reduction in errors when using the tool (p > .05), as the correlation was non-significant (Figure 2)."
+    )), row.names = c(NA, -3L), class = "data.frame")
+
+# display table -----------------------------------
+metacheck::report_table(table, c("5em", NA), 2, FALSE)
+```
+
+This will catch most comparators like =<>~≈≠≤≥≪≫ and most versions of scientific notation like 5.0 x 10^-2 or 5.0e-2. If you find any formats that are not correctly handled by this function, please contact debruine@gmail.com.
+
+</div></details>
+
+::: {.callout-note title="How It Works" collapse="true"}
+
+List all p-values in the text, returning the matched text (e.g., 'p = 0.04') and document location in a table.
+
+Note that this will not catch p-values reported like "the p-value is 0.03" because that results in a ton of false positives when papers discuss p-value thresholds. If you need to detect text like that, use `text_search()` function and a custom pattern like "\\bp(-| )?values?\\s+.{1,20}\\s+[0-9\\.]+"
+
+This will catch most comparators like =<>~≈≠≤≥≪≫ and most versions of scientific notation like 5.0 x 10^-2 or 5.0e-2. If you find any formats that are not correctly handled by this function, please contact the author.
+
+This module only checks p-values reported in the running text of the manuscript. It cannot (yet) process p-values reported only in tables.
+
+This module was developed by Lisa DeBruine
+
+:::
+
+## Reference Modules
+
+### 🔍 Reference Accuracy {#reference-accuracy .yellow}
+
+We checked the 4 references that supplied a DOI against the record that DOI points to, and found 2 incoherent references to check for parsing errors or mistakes. 0 references had no DOI and could not be checked. Incoherent references are mostly PDF parsing errors (we are working on improving reference parsing).
+
+<details><summary>View detailed feedback</summary><div>
+
+The references below supplied a DOI, but one or more of the cited details (title, authors, journal, or year) does not match the record that DOI points to. Such an incoherent is most often an error in reading the reference from the PDF, but it could be a mistake, ar an AI generated reference. Check each against the original source. Incoherent references are mostly PDF parsing errors (we are working on improving reference parsing).
+
+### Incoherent references
+
+The cited details of these references do not match the record their DOI points to.
+
+```{r}
+#| echo: false
+
+# table data --------------------------------------
+table <- structure(list(Reference = c("DeBruine, Lisa. 2025. Faux: Simulation for Factorial Designs. Zenodo. https: //doi.org/10.5281/10.5281/zenodo.2669586.", 
+"Smith, F. 2021. \"Human Error Is a Symptom of a Poor Design.\" Journal of Journals. https://doi.org/10.0000/0123456789."
+), "What is wrong (cited → record)" = c("<b>DOI:</b> the cited DOI <span style=\"color:#c00;text-decoration:line-through\">10.32614/10.5281/zenodo.2669586</span> could not be found in CrossRef", 
+"<b>DOI:</b> the cited DOI <span style=\"color:#c00;text-decoration:line-through\">10.0000/0123456789</span> could not be found in CrossRef"
+), Record = c("<a href='https://doi.org/10.32614/10.5281/zenodo.2669586' target='_blank'>10.32614/10.5281/zenodo.2669586</a>", 
+"<a href='https://doi.org/10.0000/0123456789' target='_blank'>10.0000/0123456789</a>"
+)), row.names = c(NA, -2L), class = "data.frame")
+
+# display table -----------------------------------
+metacheck::report_table(table, c(0.45, 0.4, 0.15), 5, FALSE)
+```
+
+</div></details>
+
+::: {.callout-note title="How It Works" collapse="true"}
+
+This module checks whether each reference with a DOI is internally coherent: it compares the details the paper cites for a reference against the authoritative record that the reference's DOI points to, and flags any reference whose cited details do not match.
+
+This module looks for *incoherent* references: a reference is incoherent when the title, authors, journal, or year that the paper cites disagree with the record that the reference's own DOI points to. Currently, it will most often be a parsing error where the reference list from the PDF is not extracted perfectly accurately, but the module can point out AI generated references, of mistakes in citations. You will need check the original source.
+
+The module uses the `bib_match` table, which holds the metadata retrieved from CrossRef for each reference (added or refreshed with `add_bib_match()`, which makes live network calls).
+
+**Only references that supply their own DOI are checked.** For these, we look up the record that exact DOI points to and compare it field by field against what the paper cites. A reference with no DOI is *not* checked: the only record we could find for it comes from a CrossRef title search, which often returns the wrong paper, so any "mismatch" would be CrossRef's error rather than the citation's. References without a DOI are instead listed separately, with a recommendation to add a DOI where one exists. For those, a suggested DOI is offered only when CrossRef found a high-confidence match (controlled by `suggest_score`).
+
+For each checked reference we compare five fields against the DOI's record:
+
+- **DOI** — flagged only when the reference printed a DOI that differs from the record (a blank cited DOI is never a mismatch).
+- **Year** — flagged when the cited year is more than `year_tolerance` years from the record (online-first and print years routinely differ by one year, so this is allowed by default).
+- **Journal** — flagged when the cited journal disagrees with the record. Journal names are matched tolerantly: standard ISO-4 abbreviations (e.g. "J. Pers. Soc. Psychol." for "Journal of Personality and Social Psychology"), "&"/"and", and "the" are treated as equivalent.
+- **Title** — flagged when the cited title is too different from the record's title, judged by character-level similarity (`title_similarity`) after stripping case, punctuation, footnote markers and diacritics. This ignores cosmetic differences (colons, question marks, em-dash spacing, line-break word splits) while still catching a genuinely different title.
+- **Authors** — flagged when the leading author surnames (the first `max_authors`) from the record are not all present in the cited author list. Only the leading authors are required because author lists are routinely truncated with "et al.". Diacritics are ignored, so "Gredebäck" and "Gredeback" match.
+
+DOI, journal and year are reliable signals and flag a reference on their own. Title and author mismatches are more often caused by imperfect PDF parsing, so these are governed by `min_mismatches`: the default (1) flags a reference when either the title or the authors disagree. Set `min_mismatches = 2` to be more conservative and require both to disagree (fewer false positives, lower recall).
+
+The report lists each incoherent reference with the specific cited value struck through and the record's value beside it, so the discrepancy is visible at a glance.
+
+This module was developed by Daniel Lakens and Lisa DeBruine
+
+:::
+
+::: {.validation}
+Validation: In validation on psychology references with a DOI, the module flagged genuine, coherent references at a low rate: around 8% of checked references at the default setting (min_mismatches = 1), and about 3% with the more conservative setting (min_mismatches = 2). On deliberately corrupted references it caught journal and year fabrications reliably (about 96-100%) at either setting, and essentially all single-field fabrications (including single title or author changes) at min_mismatches = 1. Importantly, in a hand-review of references flagged across 10 papers from 5 fields, the large majority of flags were imperfect extraction of the reference from the PDF (for example a journal name mis-parsed, or two references merged) rather than genuine citation errors. Real citation mistakes are rare, so even though the false positive rate is low, a flag should be read as "check this reference against the original source", not as a confirmed error.
+:::
+
+### ℹ️ Replication Check {#replication-check .info}
+
+We found 1 replication for 1 original you cited.
+
+<details><summary>View detailed feedback</summary><div>
+
+We checked 5 references with DOIs. We found 1 replication for 1 original you cited.
+
+Check if you are aware of the replication studies, and cite them where appropriate.
+
+```{r}
+#| echo: false
+
+# table data --------------------------------------
+table <- structure(list(Reference = "Eagly, Alice H., and Wendy Wood. 1999. \"The Origins of Sex Differences in Human Behavior: Evolved Dispositions Versus Social Roles.\" American Psychologist 54 (6): 408-23. https://doi.org/10.1037/0003-066x.54.6.408.", 
+    Replication = "Zhang, L., Lee, A. J., DeBruine, L. M., & Jones, B. C. (2019). Are Sex Differences in Preferences for Physical Attractiveness and Good Earning Capacity in Potential Mates Smaller in Countries With Greater Gender Equality? Evolutionary Psychology, 17(2). <a href='https://doi.org/10.1177/1474704919852921' target='_blank'>doi:10.1177/1474704919852921</a>"), row.names = c(NA, 
+-1L), class = "data.frame")
+
+# display table -----------------------------------
+metacheck::report_table(table, c(0.5, 0.5), 2, FALSE)
+```
+
+</div></details>
+
+::: {.callout-note title="How It Works" collapse="true"}
+
+This module checks references and warns for citations of original studies for which replication or reproduction studies exist in the FLoRA database.
+
+The Replication Check module compares the reference list against studies in the FLoRA (FORRT Library of Replication Attempts) database based on the DOI. If a study in the database is found, a reminder is provided that a replication or reproduction of the original study exists, and should be cited (currently, a warning is provided regardless of whether the replication/reproduction study is already cited).
+
+The module requires that the reference has a DOI. If you run the ref_doi_check module in a pipeline before this, it will use the enhanced DOI list from that module, otherwise it will only run on references with existing DOIs.
+
+It is possible the original study was cited for other reasons than the empirical claim tested, or that the replication/reproduction in the FLoRA database is for only one of the studies in the paper, and not the study the authors discuss.
+
+The database can be manually updated with the `FLoRA_update()` function. For more information, see <https://forrt.org/FLoRA/>.
+
+This module was developed by Daniel Lakens, Lisa DeBruine and Lukas Wallrich
+
+:::
+
+### ℹ️ RetractionWatch {#retractionwatch .info}
+
+You cited 1 article in the RetractionWatch database.
+
+<details><summary>View detailed feedback</summary><div>
+
+We checked 5 references with DOIs. You cited 1 article in the RetractionWatch database.
+
+Check if you are aware of the retraction, correction, or expression of concern for each reference, and consider whether it still supports your claims.
+
+```{r}
+#| echo: false
+
+# table data --------------------------------------
+table <- structure(list(Reference = "Gino, Francesca, and Scott S. Wiltermuth. 2014. \"Evil Genius? How Dishonesty Can Lead to Greater Creativity.\" Psychological Science 25 (4): 973-81. https://doi.org/10.1177/0956797614520714.", 
+    "RW Type" = "Retraction"), row.names = c(NA, -1L), class = "data.frame")
+
+# display table -----------------------------------
+metacheck::report_table(table, "auto", 2, FALSE)
+```
+
+</div></details>
+
+::: {.callout-note title="How It Works" collapse="true"}
+
+This module checks references and warns for citations in the RetractionWatch Database.
+
+The RetractionWatch Check module compares the reference list against studies in the RetractionWatch database based on the DOI. If a study in the database is found, a reminder is provided that the study was retracted, has an expression of concern, or a correction.
+
+The module requires that the reference has a DOI. If you run the ref_doi_check module in a pipeline before this, it will use the enhanced DOI list from that module, otherwise it will only run on references with existing DOIs.
+
+It is possible the authors are already aware that a study was retracted, but the module can't evaluate this.
+
+The database can be manually updated with the rw_update function. For more information, see https://gitlab.com/crossref/retraction-watch-data.
+
+This module was developed by Daniel Lakens and Lisa DeBruine
+
+:::
+
+### ℹ️ Summarise References {#summarise-references .info}
+
+Summary information provided for 5 references
+
+<details><summary>View detailed feedback</summary><div>
+
+See the specific reports above for details.
+
+```{r}
+#| echo: false
+
+# table data --------------------------------------
+table <- structure(list(text = c("DeBruine, Lisa. 2025. Faux: Simulation for Factorial Designs. Zenodo. https: //doi.org/10.5281/10.5281/zenodo.2669586.", 
+"Eagly, Alice H., and Wendy Wood. 1999. \"The Origins of Sex Differences in Human Behavior: Evolved Dispositions Versus Social Roles.\" American Psychologist 54 (6): 408-23. https://doi.org/10.1037/0003-066x.54.6.408.", 
+"Gino, Francesca, and Scott S. Wiltermuth. 2014. \"Evil Genius? How Dishonesty Can Lead to Greater Creativity.\" Psychological Science 25 (4): 973-81. https://doi.org/10.1177/0956797614520714.", 
+"Lakens, Daniël. 2018. \"Equivalence Testing for Psychological Research.\" Ad- vances in Methods and Practices in Psychological Science 1: 259-70.", 
+"Smith, F. 2021. \"Human Error Is a Symptom of a Poor Design.\" Journal of Journals. https://doi.org/10.0000/0123456789."
+), accuracy_mismatch = c("no match", NA, NA, "author", "no match"
+), replication_type = c(NA, "replication", NA, NA, NA), retractionwatch = c(NA, 
+NA, "Retraction", NA, NA)), row.names = c(NA, -5L), class = "data.frame")
+
+# display table -----------------------------------
+metacheck::report_table(table, c(0.75, NA, NA, NA), 10, FALSE)
+```
+
+</div></details>
+
+::: {.callout-note title="How It Works" collapse="true"}
+
+Summarise information about each reference in a paper.
+
+This module summarises previously-run reference section modules: ref_accuracy, ref_pubpeer, ref_replication, and ref_retraction.
+
+This module was developed by Lisa DeBruine
+
+:::
+
+### ⚠️ Reference Consistency {#reference-consistency .red}
+
+There are cross-references that are not in the bibliography and/or bibliography entries not cross-referenced in the text
+
+<details><summary>View detailed feedback</summary><div>
+
+This module relies on Grobid correctly parsing the references. There are likley to be some false positives.
+
+```{r}
+#| echo: false
+
+# table data --------------------------------------
+table <- structure(list(bib_id = c(0L, 1L, 3L, 4L), type = c("extra", 
+"extra", "extra", "extra"), contents = c(NA_character_, NA_character_, 
+NA_character_, NA_character_), reference = c("DeBruine, Lisa. 2025. Faux: Simulation for Factorial Designs. Zenodo. https: //doi.org/10.5281/10.5281/zenodo.2669586.", 
+"Eagly, Alice H., and Wendy Wood. 1999. \"The Origins of Sex Differences in Human Behavior: Evolved Dispositions Versus Social Roles.\" American Psychologist 54 (6): 408-23. https://doi.org/10.1037/0003-066x.54.6.408.", 
+"Lakens, Daniël. 2018. \"Equivalence Testing for Psychological Research.\" Ad- vances in Methods and Practices in Psychological Science 1: 259-70.", 
+"Smith, F. 2021. \"Human Error Is a Symptom of a Poor Design.\" Journal of Journals. https://doi.org/10.0000/0123456789."
+)), row.names = c(NA, -4L), class = "data.frame")
+
+# display table -----------------------------------
+metacheck::report_table(table, "auto", 2, FALSE)
+```
+
+</div></details>
+
+::: {.callout-note title="How It Works" collapse="true"}
+
+Check if all references are cited and all citations are referenced
+
+This module is currently under development and should not be relied on until we have increased the accuracy of the reference labeling while importing papers. It has a high false-positive rate because grobid (the PDF-importing tool) tends to miss some references and falsely identify some text as citations.
+
+This module was developed by Lisa DeBruine
+
+:::
+
+### ✅️ Miscitation {#miscitation .green}
+
+We detected no miscited papers
+
+::: {.callout-note title="How It Works" collapse="true"}
+
+Check for frequently miscited papers. This module is just a proof of concept -- the miscite database is not yet populated with real examples.
+
+If you want to use your own database, create a data frame with the columns "doi", "reftext", and "warning", which will be used to match the DOI in papers (use short DOIs like xxx/1234, not https://doi.org/xxx/1234) and produce the report text.
+
+This module was developed by Lisa DeBruine
+
+:::
+
+
+
+
