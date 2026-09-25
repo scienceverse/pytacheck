@@ -51,6 +51,38 @@ bibr export schema 12.0), which pytacheck targets ahead of its merge.
   parity and pytest fail when a run leaves a new file in the repository root.
 - Network-dependent causal_claims cases are replaced by offline variants; the
   2-second `reproducibility_check.exec_timeout` case by `exec_timeout_10s`.
+- `python -m parity accuracy [--generate] [--gate]`: every offline paper
+  module on 21 real papers and every repository module on 10 repositories
+  (439 outputs), scored against R field by field (traffic light, summary
+  table, table rows, summary text and report, numbers inside prose) with a
+  whitespace/wording/values level per difference. Every difference must be
+  explained by an entry in `parity/accuracy/expected.yaml` that cites a
+  U- or D-entry; unexplained or stale entries fail the gate. Today: traffic
+  lights agree on 421 of 434 outputs, 188 differences, all explained.
+- The reference R reads each paper once per session (`run_cases.R --out`);
+  `careless` is installed in a separate library that only the accuracy run
+  uses, so parity goldens do not change.
+- CI runs unit tests plus tier 1 on every Python version, the whole harness
+  and the accuracy gate once, and tier 1 with pyarrow. The upstream sync runs
+  the accuracy report before and after porting and opens a draft PR labelled
+  `needs-human-review` when tier-1 marks, a tier-1 case's tier,
+  `parity/corpus.toml`, `expected.yaml` or D-entries change.
+
+### Changed: regular expressions
+
+- R's regex dialects (TRE for `grepl`/`gsub`, PCRE with `perl = TRUE`) are
+  translated onto the `regex` module instead of being emulated: the
+  hand-written TRE matcher, the PCRE translator and the glibc character
+  tables are gone (`_r` went from 4,971 to 1,100 lines). A replay of 32,902
+  recorded realistic calls gives the same results as before; compiling the
+  2,591 realistic patterns takes 1.7 s instead of 8.4 s, and 13 modules on a
+  paper run in 1.2 s instead of 2.7 s.
+- Case-insensitive matching uses Unicode case folding, so `İ`, `ı`, `ſ` and
+  the Kelvin sign match like their ASCII letters (D29): for example
+  'CONFLİCT OF İNTEREST' is now found. glibc-only class members (NBSP in
+  `[[:punct:]]`, U+2028 in `[[:cntrl:]]`) are not reproduced.
+- Fixed: the literal prefilter in front of `grepl` could drop true matches of
+  dotted or dotless i.
 
 ### Fixed: metacheck bugs pytacheck no longer reproduces
 
