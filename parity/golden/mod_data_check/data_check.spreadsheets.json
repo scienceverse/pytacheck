@@ -1,0 +1,2643 @@
+{
+  "id": "data_check.spreadsheets",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "findings",
+      "careless",
+      "demographics",
+      "qualtrics",
+      "structure",
+      "previews",
+      "gated_repos",
+      "manifest_path",
+      "group_no_evidence",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "data_check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Data Check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "results"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 33,
+        "names": [
+          "paper_id",
+          "repo_url",
+          "source_file",
+          "group",
+          "column_name",
+          "representation",
+          "measurement_level",
+          "concept",
+          "role",
+          "unit",
+          "quality",
+          "parse_note",
+          "is_qualtrics",
+          "qualtrics_display_order",
+          "sample_values",
+          "utf8_repaired",
+          "n",
+          "n_missing",
+          "n_unique",
+          "mean",
+          "sd",
+          "se",
+          "median",
+          "min",
+          "max",
+          "range",
+          "p25",
+          "p75",
+          "iqr",
+          "skewness",
+          "kurtosis"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://osf.io/sheet",
+              "https://osf.io/sheet",
+              "https://osf.io/sheet",
+              "https://osf.io/sheet",
+              "https://osf.io/sheet",
+              "https://osf.io/sheet",
+              "https://osf.io/sheet",
+              "https://osf.io/sheet",
+              "https://osf.io/sheet",
+              "https://osf.io/sheet",
+              "https://osf.io/sheet",
+              "https://osf.io/sheet",
+              "https://osf.io/sheet",
+              "https://osf.io/sheet",
+              "https://osf.io/sheet",
+              "https://osf.io/sheet",
+              "https://osf.io/sheet",
+              "https://osf.io/sheet",
+              "https://osf.io/sheet",
+              "https://osf.io/sheet",
+              "https://osf.io/sheet",
+              "https://osf.io/sheet",
+              "https://osf.io/sheet",
+              "https://osf.io/sheet",
+              "https://osf.io/sheet",
+              "https://osf.io/sheet",
+              "https://osf.io/sheet",
+              "https://osf.io/sheet",
+              "https://osf.io/sheet",
+              "https://osf.io/sheet",
+              "https://osf.io/sheet",
+              "https://osf.io/sheet",
+              "https://osf.io/sheet"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "clean.ods",
+              "clean.ods",
+              "clean.xlsx",
+              "clean.xlsx",
+              "legacy.xls",
+              "legacy.xls",
+              "legacy.xls",
+              "legacy.xls",
+              "legacy.xls",
+              "legacy.xls",
+              "legacy.xls",
+              "legacy.xls",
+              "legacy.xls",
+              "legacy.xls",
+              "legacy.xls",
+              "messy.fods",
+              "messy.fods",
+              "messy.fods",
+              "messy.fods",
+              "messy.ods",
+              "messy.ods",
+              "messy.ods",
+              "messy.ods",
+              "messy.xlsx",
+              "messy.xlsx",
+              "messy.xlsx",
+              "messy.xlsx",
+              "offset.xlsx",
+              "offset.xlsx",
+              "offset.xlsx",
+              "twosheets.xlsx",
+              "twosheets.xlsx",
+              "twosheets.xlsx"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "id",
+              "value",
+              "id",
+              "score",
+              "mpg",
+              "cyl",
+              "disp",
+              "hp",
+              "drat",
+              "wt",
+              "qsec",
+              "vs",
+              "am",
+              "gear",
+              "carb",
+              "id",
+              "group",
+              "note",
+              "score",
+              "id",
+              "group",
+              "note",
+              "score",
+              "id",
+              "grp",
+              "empty",
+              "val",
+              "subject",
+              "rt",
+              "acc",
+              "pid",
+              "score",
+              "cond"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "text",
+              "numeric",
+              "text",
+              "numeric",
+              "numeric",
+              "numeric",
+              "numeric",
+              "numeric",
+              "numeric",
+              "numeric",
+              "numeric",
+              "numeric",
+              "numeric",
+              "numeric",
+              "numeric",
+              "text",
+              "text",
+              "empty",
+              "numeric",
+              "text",
+              "text",
+              "empty",
+              "numeric",
+              "text",
+              "text",
+              "empty",
+              "numeric",
+              "text",
+              "numeric",
+              "numeric",
+              "text",
+              "numeric",
+              "text"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "nominal",
+              "ratio",
+              "nominal",
+              "ratio",
+              "ratio",
+              "ratio",
+              "ratio",
+              "ratio",
+              "ratio",
+              "ratio",
+              "ratio",
+              "nominal",
+              "nominal",
+              "ratio",
+              "ratio",
+              "nominal",
+              "nominal",
+              null,
+              "ratio",
+              "nominal",
+              "nominal",
+              null,
+              "ratio",
+              "nominal",
+              "nominal",
+              null,
+              "ratio",
+              "nominal",
+              "ratio",
+              "nominal",
+              "nominal",
+              "ratio",
+              "nominal"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "id",
+              null,
+              "id",
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              "id",
+              "condition",
+              null,
+              null,
+              "id",
+              "condition",
+              null,
+              null,
+              "id",
+              null,
+              null,
+              null,
+              "id",
+              "reaction_time",
+              "accuracy",
+              "id",
+              null,
+              "condition"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "identifier",
+              "measure",
+              "identifier",
+              "measure",
+              "measure",
+              "measure",
+              "measure",
+              "measure",
+              "measure",
+              "measure",
+              "measure",
+              "measure",
+              "measure",
+              "measure",
+              "measure",
+              "identifier",
+              "condition",
+              "measure",
+              "measure",
+              "identifier",
+              "condition",
+              "measure",
+              "measure",
+              "identifier",
+              "measure",
+              "measure",
+              "measure",
+              "identifier",
+              "measure",
+              "measure",
+              "identifier",
+              "measure",
+              "condition"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              "milliseconds",
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ok",
+              "ok",
+              "ok",
+              "ok",
+              "ok",
+              "ok",
+              "ok",
+              "ok",
+              "ok",
+              "ok",
+              "ok",
+              "ok",
+              "ok",
+              "ok",
+              "ok",
+              "ok",
+              "ok",
+              "empty",
+              "ok",
+              "ok",
+              "ok",
+              "empty",
+              "ok",
+              "ok",
+              "ok",
+              "empty",
+              "ok",
+              "ok",
+              "ok",
+              "ok",
+              "ok",
+              "ok",
+              "ok"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "1 | 2 | 3",
+              "0.5 | 1.5 | 2.5",
+              "1 | 2 | 3",
+              "1.1 | 2.2 | 3.3",
+              "21 | 21 | 22.8 | 21.4 | 18.7",
+              "6 | 6 | 4 | 6 | 8",
+              "160 | 160 | 108 | 258 | 360",
+              "110 | 110 | 93 | 110 | 175",
+              "3.9 | 3.9 | 3.85 | 3.08 | 3.15",
+              "2.62 | 2.875 | 2.32 | 3.215 | 3.44",
+              "16.46 | 17.02 | 18.61 | 19.44 | 17.02",
+              "0 | 0 | 1 | 1 | 0",
+              "1 | 1 | 1 | 0 | 0",
+              "4 | 4 | 4 | 3 | 3",
+              "4 | 4 | 1 | 1 | 2",
+              "1 | 2 | total",
+              "a | b",
+              "",
+              "10 | 20 | 30",
+              "1 | 2 | total",
+              "a | b",
+              "",
+              "10 | 20 | 30",
+              "1 | 2 | 3 | 4",
+              "a | b | a | b",
+              "",
+              "10 | 20 | 30 | 40",
+              "1 | 2 | 3 | 4 | 5",
+              "400 | 450 | 500 | 550 | 600",
+              "1 | 0 | 1 | 1 | 0",
+              "1 | 2 | 3 | 4 | 5",
+              "3.2 | 4.1 | 2.8 | 3.9 | 4.4",
+              "a | b | a | b | a"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              3,
+              3,
+              3,
+              3,
+              32,
+              32,
+              32,
+              32,
+              32,
+              32,
+              32,
+              32,
+              32,
+              32,
+              32,
+              3,
+              2,
+              0,
+              3,
+              3,
+              2,
+              0,
+              3,
+              4,
+              4,
+              0,
+              4,
+              8,
+              8,
+              8,
+              6,
+              6,
+              6
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              2,
+              3,
+              5,
+              2,
+              2,
+              3,
+              5,
+              2,
+              0,
+              0,
+              4,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              3,
+              3,
+              3,
+              3,
+              25,
+              3,
+              27,
+              22,
+              22,
+              29,
+              30,
+              2,
+              2,
+              3,
+              6,
+              3,
+              2,
+              0,
+              3,
+              3,
+              2,
+              0,
+              3,
+              4,
+              2,
+              0,
+              4,
+              8,
+              8,
+              2,
+              6,
+              6,
+              2
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              1.5,
+              null,
+              2.2,
+              20.090625,
+              6.1875,
+              230.721875,
+              146.6875,
+              3.5965625,
+              3.21725,
+              17.84875,
+              null,
+              null,
+              3.6875,
+              2.8125,
+              null,
+              null,
+              null,
+              20,
+              null,
+              null,
+              null,
+              20,
+              null,
+              null,
+              null,
+              25,
+              null,
+              575,
+              null,
+              null,
+              3.56666666666667,
+              null
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              1,
+              null,
+              1.1,
+              6.0269480520891,
+              1.78592164694654,
+              123.938693831382,
+              68.5628684893206,
+              0.534678736070971,
+              0.978457442989697,
+              1.78694323609684,
+              null,
+              null,
+              0.737804065256947,
+              1.61519997763185,
+              null,
+              null,
+              null,
+              10,
+              null,
+              null,
+              null,
+              10,
+              null,
+              null,
+              null,
+              12.9099444873581,
+              null,
+              122.474487139159,
+              null,
+              null,
+              0.653197264742181,
+              null
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              0.577350269189626,
+              null,
+              0.635085296108588,
+              1.06542395937281,
+              0.315709326805937,
+              21.9094727148934,
+              12.1203173116,
+              0.0945187400080091,
+              0.172968473260116,
+              0.315889919959878,
+              null,
+              null,
+              0.130426564432547,
+              0.285529714288961,
+              null,
+              null,
+              null,
+              5.77350269189626,
+              null,
+              null,
+              null,
+              5.77350269189626,
+              null,
+              null,
+              null,
+              6.45497224367903,
+              null,
+              43.3012701892219,
+              null,
+              null,
+              0.266666666666667,
+              null
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              1.5,
+              null,
+              2.2,
+              19.2,
+              6,
+              196.3,
+              123,
+              3.695,
+              3.325,
+              17.71,
+              null,
+              null,
+              4,
+              2,
+              null,
+              null,
+              null,
+              20,
+              null,
+              null,
+              null,
+              20,
+              null,
+              null,
+              null,
+              25,
+              null,
+              575,
+              null,
+              null,
+              3.55,
+              null
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              0.5,
+              null,
+              1.1,
+              10.4,
+              4,
+              71.1,
+              52,
+              2.76,
+              1.513,
+              14.5,
+              null,
+              null,
+              3,
+              1,
+              null,
+              null,
+              null,
+              10,
+              null,
+              null,
+              null,
+              10,
+              null,
+              null,
+              null,
+              10,
+              null,
+              400,
+              null,
+              null,
+              2.8,
+              null
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              2.5,
+              null,
+              3.3,
+              33.9,
+              8,
+              472,
+              335,
+              4.93,
+              5.424,
+              22.9,
+              null,
+              null,
+              5,
+              8,
+              null,
+              null,
+              null,
+              30,
+              null,
+              null,
+              null,
+              30,
+              null,
+              null,
+              null,
+              40,
+              null,
+              750,
+              null,
+              null,
+              4.4,
+              null
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              2,
+              null,
+              2.2,
+              23.5,
+              4,
+              400.9,
+              283,
+              2.17,
+              3.911,
+              8.4,
+              null,
+              null,
+              2,
+              7,
+              null,
+              null,
+              null,
+              20,
+              null,
+              null,
+              null,
+              20,
+              null,
+              null,
+              null,
+              30,
+              null,
+              350,
+              null,
+              null,
+              1.6,
+              null
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              1,
+              null,
+              1.65,
+              15.425,
+              4,
+              120.825,
+              96.5,
+              3.08,
+              2.58125,
+              16.8925,
+              null,
+              null,
+              3,
+              2,
+              null,
+              null,
+              null,
+              15,
+              null,
+              null,
+              null,
+              15,
+              null,
+              null,
+              null,
+              17.5,
+              null,
+              487.5,
+              null,
+              null,
+              3.05,
+              null
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              2,
+              null,
+              2.75,
+              22.8,
+              8,
+              326,
+              180,
+              3.92,
+              3.61,
+              18.9,
+              null,
+              null,
+              4,
+              4,
+              null,
+              null,
+              null,
+              25,
+              null,
+              null,
+              null,
+              25,
+              null,
+              null,
+              null,
+              32.5,
+              null,
+              662.5,
+              null,
+              null,
+              4.05,
+              null
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              1,
+              null,
+              1.1,
+              7.375,
+              4,
+              205.175,
+              83.5,
+              0.84,
+              1.02875,
+              2.0075,
+              null,
+              null,
+              1,
+              2,
+              null,
+              null,
+              null,
+              10,
+              null,
+              null,
+              null,
+              10,
+              null,
+              null,
+              null,
+              15,
+              null,
+              175,
+              null,
+              null,
+              1,
+              null
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              0,
+              null,
+              -4.44894880946031e-16,
+              0.610655017573288,
+              -0.174611913930169,
+              0.381657034147599,
+              0.726023656361273,
+              0.265903904603492,
+              0.423146464177225,
+              0.369045278509436,
+              null,
+              null,
+              0.52885446231085,
+              1.05087376449851,
+              null,
+              null,
+              null,
+              0,
+              null,
+              null,
+              null,
+              0,
+              null,
+              null,
+              null,
+              0,
+              null,
+              0,
+              null,
+              null,
+              0.0511639296317025,
+              null
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              -0.372766029820891,
+              -1.76211977398177,
+              -1.2072119466699,
+              -0.135551121097421,
+              -0.714700615734489,
+              -0.0227107528393127,
+              0.335114219571393,
+              null,
+              null,
+              -1.06975067515432,
+              1.25704307347743,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              -2.0775,
+              null,
+              -1.65104166666667,
+              null,
+              null,
+              -2.04585774739583,
+              null
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "This module classifies repository files and, for tabular data files available locally, extracts each column's type and summary statistics.",
+          "#### Data Tree",
+          "Where the files sit within each repository. Each file is followed by how it was classified, which study it belongs to.",
+          "**Repository: https://osf.io/sheet**",
+          "```\n└── data/\n    ├── broken.xlsx     📊 data ex1\n    ├── clean.ods       📊 data ex1\n    ├── clean.xlsx      📊 data ex1\n    ├── coding.xlsx     📊 data ex1\n    ├── legacy.xls      📊 data ex1\n    ├── messy.fods      📊 data ex1\n    ├── messy.ods       📊 data ex1\n    ├── messy.xlsx      📊 data ex1\n    ├── offset.xlsx     📊 data ex1\n    └── twosheets.xlsx  📊 data ex1\n```",
+          "#### Data Files",
+          "::: {.panel-tabset}\n\n## clean.ods\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(id = c(1, 2, 3), value = c(0.5, 1.5, 2.5)), row.names = c(NA, \n3L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n## clean.xlsx\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(id = c(1, 2, 3), score = c(1.1, 2.2, 3.3)), row.names = c(NA, \n3L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n## legacy.xls\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(mpg = c(21, 21, 22.8, 21.4, 18.7, 18.1, 14.3, \n24.4, 22.8, 19.2, 17.8, 16.4, 17.3, 15.2, 10.4, 10.4, 14.7, 32.4, \n30.4, 33.9, 21.5, 15.5, 15.2, 13.3, 19.2, 27.3, 26, 30.4, 15.8, \n19.7, 15, 21.4), cyl = c(6, 6, 4, 6, 8, 6, 8, 4, 4, 6, 6, 8, \n8, 8, 8, 8, 8, 4, 4, 4, 4, 8, 8, 8, 8, 4, 4, 4, 8, 6, 8, 4), \n    disp = c(160, 160, 108, 258, 360, 225, 360, 146.7, 140.8, \n    167.6, 167.6, 275.8, 275.8, 275.8, 472, 460, 440, 78.7, 75.7, \n    71.1, 120.1, 318, 304, 350, 400, 79, 120.3, 95.1, 351, 145, \n    301, 121), hp = c(110, 110, 93, 110, 175, 105, 245, 62, 95, \n    123, 123, 180, 180, 180, 205, 215, 230, 66, 52, 65, 97, 150, \n    150, 245, 175, 66, 91, 113, 264, 175, 335, 109), drat = c(3.9, \n    3.9, 3.85, 3.08, 3.15, 2.76, 3.21, 3.69, 3.92, 3.92, 3.92, \n    3.07, 3.07, 3.07, 2.93, 3, 3.23, 4.08, 4.93, 4.22, 3.7, 2.76, \n    3.15, 3.73, 3.08, 4.08, 4.43, 3.77, 4.22, 3.62, 3.54, 4.11\n    ), wt = c(2.62, 2.875, 2.32, 3.215, 3.44, 3.46, 3.57, 3.19, \n    3.15, 3.44, 3.44, 4.07, 3.73, 3.78, 5.25, 5.424, 5.345, 2.2, \n    1.615, 1.835, 2.465, 3.52, 3.435, 3.84, 3.845, 1.935, 2.14, \n    1.513, 3.17, 2.77, 3.57, 2.78), qsec = c(16.46, 17.02, 18.61, \n    19.44, 17.02, 20.22, 15.84, 20, 22.9, 18.3, 18.9, 17.4, 17.6, \n    18, 17.98, 17.82, 17.42, 19.47, 18.52, 19.9, 20.01, 16.87, \n    17.3, 15.41, 17.05, 18.9, 16.7, 16.9, 14.5, 15.5, 14.6, 18.6\n    ), vs = c(0, 0, 1, 1, 0, 1, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, \n    0, 1, 1, 1, 1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1), am = c(1, \n    1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, \n    0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1), gear = c(4, 4, 4, 3, \n    3, 3, 3, 4, 4, 4, 4, 3, 3, 3, 3, 3, 3, 4, 4, 4, 3, 3, 3, \n    3, 3, 4, 5, 5, 5, 5, 5, 4), carb = c(4, 4, 1, 1, 2, 1, 4, \n    2, 2, 4, 4, 3, 3, 3, 4, 4, 4, 1, 2, 1, 1, 2, 2, 4, 2, 1, \n    2, 2, 4, 6, 8, 2)), row.names = c(NA, 32L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n## messy.fods\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(id = c(\"1\", \"2\", NA, NA, \"total\"), group = c(\"a\", \n\"b\", NA, NA, NA), note = c(NA, NA, NA, NA, NA), score = c(10, \n20, NA, NA, 30)), row.names = c(NA, 5L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n## messy.ods\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(id = c(\"1\", \"2\", NA, NA, \"total\"), group = c(\"a\", \n\"b\", NA, NA, NA), note = c(NA, NA, NA, NA, NA), score = c(10, \n20, NA, NA, 30)), row.names = c(NA, 5L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n## messy.xlsx\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(id = c(1, 2, 3, 4), grp = c(\"a\", \"b\", \"a\", \"b\"\n), empty = c(NA, NA, NA, NA), val = c(10, 20, 30, 40)), row.names = c(NA, \n4L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n## offset.xlsx\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(subject = c(1, 2, 3, 4, 5, 6, 7, 8), rt = c(400, \n450, 500, 550, 600, 650, 700, 750), acc = c(1, 0, 1, 1, 0, 1, \n1, 1)), row.names = c(NA, 8L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n## twosheets.xlsx\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(pid = c(1, 2, 3, 4, 5, 6), score = c(3.2, 4.1, \n2.8, 3.9, 4.4, 3), cond = c(\"a\", \"b\", \"a\", \"b\", \"a\", \"b\")), row.names = c(NA, \n6L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n:::",
+          "#### Descriptives Overview\n\nWe found 9 columns with at least one missing value. 3 columns are empty (no values in any row); store data without empty columns.",
+          "::: {.panel-tabset}\n\n## messy.xlsx\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Column = c(\"empty\", \"grp\", \"id\", \"val\"), Representation = c(\"empty\", \n\"text\", \"text\", \"numeric\"), Level = c(\"\", \"nominal\", \"nominal\", \n\"ratio\"), Concept = c(\"\", \"\", \"id\", \"\"), Role = c(\"measure\", \n\"measure\", \"identifier\", \"measure\"), Unit = c(\"\", \"\", \"\", \"\"), \n    Rows = c(4L, 4L, 4L, 4L), \"% Missing\" = c(100, 0, 0, 0), \n    \"N Unique\" = c(0L, 2L, 4L, 4L), Mean = c(NA, NA, NA, 25), \n    SD = c(NA, NA, NA, 12.91), Min = c(NA, NA, NA, 10), Max = c(NA, \n    NA, NA, 40)), row.names = c(\"empty\", \"grp\", \"id...22\", \"val\"\n), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 25, FALSE)\n```\n\n\n## messy.fods\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Column = c(\"note\", \"group\", \"id\", \"score\"), Representation = c(\"empty\", \n\"text\", \"text\", \"numeric\"), Level = c(\"\", \"nominal\", \"nominal\", \n\"ratio\"), Concept = c(\"\", \"condition\", \"id\", \"\"), Role = c(\"measure\", \n\"condition\", \"identifier\", \"measure\"), Unit = c(\"\", \"\", \"\", \"\"\n), Rows = c(5L, 5L, 5L, 5L), \"% Missing\" = c(100, 60, 40, 40), \n    \"N Unique\" = c(0L, 2L, 3L, 3L), Mean = c(NA, NA, NA, 20), \n    SD = c(NA, NA, NA, 10), Min = c(NA, NA, NA, 10), Max = c(NA, \n    NA, NA, 30)), row.names = c(\"note...2\", \"group...4\", \"id...6\", \n\"score...8\"), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 25, FALSE)\n```\n\n\n## messy.ods\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Column = c(\"note\", \"group\", \"id\", \"score\"), Representation = c(\"empty\", \n\"text\", \"text\", \"numeric\"), Level = c(\"\", \"nominal\", \"nominal\", \n\"ratio\"), Concept = c(\"\", \"condition\", \"id\", \"\"), Role = c(\"measure\", \n\"condition\", \"identifier\", \"measure\"), Unit = c(\"\", \"\", \"\", \"\"\n), Rows = c(5L, 5L, 5L, 5L), \"% Missing\" = c(100, 60, 40, 40), \n    \"N Unique\" = c(0L, 2L, 3L, 3L), Mean = c(NA, NA, NA, 20), \n    SD = c(NA, NA, NA, 10), Min = c(NA, NA, NA, 10), Max = c(NA, \n    NA, NA, 30)), row.names = c(\"note...3\", \"group...5\", \"id...7\", \n\"score...9\"), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 25, FALSE)\n```\n\n\n## offset.xlsx\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Column = c(\"acc\", \"rt\", \"subject\"), Representation = c(\"numeric\", \n\"numeric\", \"text\"), Level = c(\"nominal\", \"ratio\", \"nominal\"), \n    Concept = c(\"accuracy\", \"reaction_time\", \"id\"), Role = c(\"measure\", \n    \"measure\", \"identifier\"), Unit = c(\"\", \"milliseconds\", \"\"\n    ), Rows = c(8L, 8L, 8L), \"% Missing\" = c(0, 0, 0), \"N Unique\" = c(2L, \n    8L, 8L), Mean = c(NA, 575, NA), SD = c(NA, 122.474, NA), \n    Min = c(NA, 400, NA), Max = c(NA, 750, NA)), row.names = c(\"acc\", \n\"rt\", \"subject\"), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 25, FALSE)\n```\n\n\n## legacy.xls\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Column = c(\"am\", \"carb\", \"cyl\", \"disp\", \"drat\", \n\"gear\", \"hp\", \"mpg\", \"qsec\", \"vs\", \"wt\"), Representation = c(\"numeric\", \n\"numeric\", \"numeric\", \"numeric\", \"numeric\", \"numeric\", \"numeric\", \n\"numeric\", \"numeric\", \"numeric\", \"numeric\"), Level = c(\"nominal\", \n\"ratio\", \"ratio\", \"ratio\", \"ratio\", \"ratio\", \"ratio\", \"ratio\", \n\"ratio\", \"nominal\", \"ratio\"), Concept = c(\"\", \"\", \"\", \"\", \"\", \n\"\", \"\", \"\", \"\", \"\", \"\"), Role = c(\"measure\", \"measure\", \"measure\", \n\"measure\", \"measure\", \"measure\", \"measure\", \"measure\", \"measure\", \n\"measure\", \"measure\"), Unit = c(\"\", \"\", \"\", \"\", \"\", \"\", \"\", \"\", \n\"\", \"\", \"\"), Rows = c(32L, 32L, 32L, 32L, 32L, 32L, 32L, 32L, \n32L, 32L, 32L), \"% Missing\" = c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, \n0), \"N Unique\" = c(2L, 6L, 3L, 27L, 22L, 3L, 22L, 25L, 30L, 2L, \n29L), Mean = c(NA, 2.812, 6.188, 230.722, 3.597, 3.688, 146.688, \n20.091, 17.849, NA, 3.217), SD = c(NA, 1.615, 1.786, 123.939, \n0.535, 0.738, 68.563, 6.027, 1.787, NA, 0.978), Min = c(NA, 1, \n4, 71.1, 2.76, 3, 52, 10.4, 14.5, NA, 1.513), Max = c(NA, 8, \n8, 472, 4.93, 5, 335, 33.9, 22.9, NA, 5.424)), row.names = c(\"am\", \n\"carb\", \"cyl\", \"disp\", \"drat\", \"gear\", \"hp\", \"mpg\", \"qsec\", \"vs\", \n\"wt\"), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 25, FALSE)\n```\n\n\n## twosheets.xlsx\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Column = c(\"cond\", \"pid\", \"score\"), Representation = c(\"text\", \n\"text\", \"numeric\"), Level = c(\"nominal\", \"nominal\", \"ratio\"), \n    Concept = c(\"condition\", \"id\", \"\"), Role = c(\"condition\", \n    \"identifier\", \"measure\"), Unit = c(\"\", \"\", \"\"), Rows = c(6L, \n    6L, 6L), \"% Missing\" = c(0, 0, 0), \"N Unique\" = c(2L, 6L, \n    6L), Mean = c(NA, NA, 3.567), SD = c(NA, NA, 0.653), Min = c(NA, \n    NA, 2.8), Max = c(NA, NA, 4.4)), row.names = c(\"cond\", \"pid\", \n\"score...28\"), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 25, FALSE)\n```\n\n\n## clean.ods\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Column = c(\"id\", \"value\"), Representation = c(\"text\", \n\"numeric\"), Level = c(\"nominal\", \"ratio\"), Concept = c(\"id\", \n\"\"), Role = c(\"identifier\", \"measure\"), Unit = c(\"\", \"\"), Rows = c(3L, \n3L), \"% Missing\" = c(0, 0), \"N Unique\" = c(3L, 3L), Mean = c(NA, \n1.5), SD = c(NA, 1), Min = c(NA, 0.5), Max = c(NA, 2.5)), row.names = c(\"id...20\", \n\"value\"), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 25, FALSE)\n```\n\n\n## clean.xlsx\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Column = c(\"id\", \"score\"), Representation = c(\"text\", \n\"numeric\"), Level = c(\"nominal\", \"ratio\"), Concept = c(\"id\", \n\"\"), Role = c(\"identifier\", \"measure\"), Unit = c(\"\", \"\"), Rows = c(3L, \n3L), \"% Missing\" = c(0, 0), \"N Unique\" = c(3L, 3L), Mean = c(NA, \n2.2), SD = c(NA, 1.1), Min = c(NA, 1.1), Max = c(NA, 3.3)), row.names = c(\"id...21\", \n\"score...27\"), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 25, FALSE)\n```\n\n\n:::",
+          "This module runs automated data-quality checks (outliers, miscoded missing values, empty and constant columns, SPSS filter variables, category casing, problematic column names, mixed text encodings, spreadsheet formatting) on the extracted data files.",
+          "We examined 33 columns across 8 data files.",
+          "#### Issues Identified",
+          "12 file/column combinations have at least one issue.",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"broken.xlsx\", \"coding.xlsx\", \"coding.xlsx\", \n\"legacy.xls\", \"messy.fods\", \"messy.fods\", \"messy.ods\", \"messy.ods\", \n\"messy.xlsx\", \"messy.xlsx\", \"offset.xlsx\", \"offset.xlsx\"), Column = c(NA, \n\"coding\", NA, NA, \"Results\", \"note\", \"Results\", \"note\", \"Data\", \n\"empty\", \"Sheet1\", NA), Issues = c(\"<span title='The file could not be parsed as a .xlsx workbook.'>⚠️ Unreadable — The file could not be parsed as a <\/span>\", \n\"<span title='3 fully empty rows inside the data range.'>⬜ Empty rows — 3 fully empty rows inside the data range<\/span>\", \n\"<span title='This file reads as a table but is not a usable dataset (100% of columns are free text, not variables). Store the data as a plain rectangular table (one header row, one column per variable) with a codebook.'>📐 Not a rectangular dataset — This file reads as a table but is not a usable dataset (100% of col...<\/span>\", \n\"<span title='Legacy .xls format: colour, merged cells and empty rows/columns cannot be inspected. Convert to .xlsx or .ods for a full check.'>⚠️ Un-inspectable (.xls) — Legacy <\/span>\", \n\"<span title='2 cells use fill colour to encode information; colour is lost on CSV export.'>🎨 Colour coding — 2 cells use fill colour to encode information<\/span><br><span title='1 column is empty or have a blank header.'>⬜ Empty or unnamed columns — 1 column is empty or have a blank header<\/span><br><span title='2 fully empty rows inside the data range.'>⬜ Empty rows — 2 fully empty rows inside the data range<\/span><br><span title='1 merged range (A6:B6) break the rectangular grid.'>🔗 Merged cells — 1 merged range (A6:B6) break the rectangular grid<\/span>\", \n\"<span title='Column is empty: all 5 values are missing.'>⬜ Empty column — Column is empty: all 5 values are missing<\/span>\", \n\"<span title='2 cells use fill colour to encode information; colour is lost on CSV export.'>🎨 Colour coding — 2 cells use fill colour to encode information<\/span><br><span title='1 column is empty or have a blank header.'>⬜ Empty or unnamed columns — 1 column is empty or have a blank header<\/span><br><span title='2 fully empty rows inside the data range.'>⬜ Empty rows — 2 fully empty rows inside the data range<\/span><br><span title='1 merged range (A6:B6) break the rectangular grid.'>🔗 Merged cells — 1 merged range (A6:B6) break the rectangular grid<\/span>\", \n\"<span title='Column is empty: all 5 values are missing.'>⬜ Empty column — Column is empty: all 5 values are missing<\/span>\", \n\"<span title='2 cells use fill colour to encode information; colour is lost on CSV export.'>🎨 Colour coding — 2 cells use fill colour to encode information<\/span><br><span title='1 column is empty or have a blank header.'>⬜ Empty or unnamed columns — 1 column is empty or have a blank header<\/span><br><span title='1 merged range (A7:B7) break the rectangular grid.'>🔗 Merged cells — 1 merged range (A7:B7) break the rectangular grid<\/span>\", \n\"<span title='Column is empty: all 4 values are missing.'>⬜ Empty column — Column is empty: all 4 values are missing<\/span>\", \n\"<span title='2 columns are empty or have a blank header.'>⬜ Empty or unnamed columns — 2 columns are empty or have a blank header<\/span>\", \n\"<span title='The column header is on row 2; above it is a partial label row (Experiment 1 export). Remove the row above the header so the first row of the sheet is the column header — otherwise the file reads with invented column names (…1, …4) and the data mis-types.'>📋 Header not on first row — The column header is on row 2<\/span>\"\n)), row.names = c(NA, -12L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 20, FALSE)\n```\n",
+          "#### Spreadsheet Formatting",
+          "We examined 10 spreadsheet files in the repository; 7 have at least one formatting issue.",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"broken.xlsx\", \"coding.xlsx\", \"coding.xlsx\", \n\"legacy.xls\", \"messy.fods\", \"messy.fods\", \"messy.fods\", \"messy.fods\", \n\"messy.ods\", \"messy.ods\", \"messy.ods\", \"messy.ods\", \"messy.xlsx\", \n\"messy.xlsx\", \"messy.xlsx\", \"offset.xlsx\", \"offset.xlsx\"), Sheet = c(NA, \nNA, \"coding\", NA, \"Results\", \"Results\", \"Results\", \"Results\", \n\"Results\", \"Results\", \"Results\", \"Results\", \"Data\", \"Data\", \"Data\", \nNA, \"Sheet1\"), Issue = c(\"Unreadable\", \"Not a rectangular dataset\", \n\"Empty rows\", \"Un-inspectable (.xls)\", \"Colour coding\", \"Merged cells\", \n\"Empty rows\", \"Empty or unnamed columns\", \"Colour coding\", \"Merged cells\", \n\"Empty rows\", \"Empty or unnamed columns\", \"Colour coding\", \"Merged cells\", \n\"Empty or unnamed columns\", \"Header not on first row\", \"Empty or unnamed columns\"\n), Detail = c(\"The file could not be parsed as a .xlsx workbook.\", \n\"This file reads as a table but is not a usable dataset (100% of columns are free text, not variables). Store the data as a plain rectangular table (one header row, one column per variable) with a codebook.\", \n\"3 fully empty rows inside the data range.\", \"Legacy .xls format: colour, merged cells and empty rows/columns cannot be inspected. Convert to .xlsx or .ods for a full check.\", \n\"2 cells use fill colour to encode information; colour is lost on CSV export.\", \n\"1 merged range (A6:B6) break the rectangular grid.\", \"2 fully empty rows inside the data range.\", \n\"1 column is empty or have a blank header.\", \"2 cells use fill colour to encode information; colour is lost on CSV export.\", \n\"1 merged range (A6:B6) break the rectangular grid.\", \"2 fully empty rows inside the data range.\", \n\"1 column is empty or have a blank header.\", \"2 cells use fill colour to encode information; colour is lost on CSV export.\", \n\"1 merged range (A7:B7) break the rectangular grid.\", \"1 column is empty or have a blank header.\", \n\"The column header is on row 2; above it is a partial label row (Experiment 1 export). Remove the row above the header so the first row of the sheet is the column header — otherwise the file reads with invented column names (…1, …4) and the data mis-types.\", \n\"2 columns are empty or have a blank header.\")), row.names = c(NA, \n-17L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 20, FALSE)\n```\n",
+          "Spreadsheet formatting such as colour, merged cells, and blank rows/columns is not preserved when data are read programmatically or exported to CSV. Store data as a plain rectangular table (one header row, one column per variable, no colour-encoded meaning) so it is machine-readable.",
+          "#### Careless Responding",
+          "No file could be screened for careless responding.",
+          "**What this does not cover.** Only 0 of 8 data files could be screened: the rest had no detectable multi-item scale block, or too few respondents. Even in a screened file, these checks only look at multi-item rating scales — the only place where a repeated or flat answer pattern is interpretable. Single questions, open text, demographics and any item outside a detected scale block are never examined. A respondent can therefore answer most of a survey carelessly and still not be flagged here, and finding nothing is not evidence that a dataset is free of careless responding."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "yellow"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "\n-  We classified 10 files: 10 data.\n-  We found 10 tabular data files and extracted 33 columns from 9 of them.\n-  We grouped the files into 1 study group (ex1).\n-  The study-group step did not get an answer for 10 files (the model request failed); they were grouped by the fallback rules instead.\n-  1 file read as a table but is not a usable rectangular dataset (coding.xlsx: 100% of columns are free text, not variables). No columns were extracted and they were not sent to the LLM. Share the underlying data as a plain rectangular table (one header row, one column per variable) with a codebook: coding.xlsx. We ran automated data-quality checks on 33 columns; 3 columns have at least one potential issue (3 columns with no observed values (entirely empty)). 7 of 10 spreadsheet files have at least one formatting issue (colour coding, merged cells, empty rows/columns, or an offset header)."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "data_file_n",
+          "column_n",
+          "empty_col_n",
+          "col_empty",
+          "col_numeric",
+          "col_text",
+          "flagged_n",
+          "spreadsheet_file_n",
+          "spreadsheet_flagged_file_n"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "p1"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              10
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              33
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              3
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              3
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              19
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              11
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              3
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              10
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              7
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 20,
+        "names": [
+          "source_file",
+          "column",
+          "label",
+          "check",
+          "detail"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "messy.fods",
+              "messy.ods",
+              "messy.xlsx",
+              "broken.xlsx",
+              "coding.xlsx",
+              "coding.xlsx",
+              "legacy.xls",
+              "messy.fods",
+              "messy.fods",
+              "messy.fods",
+              "messy.fods",
+              "messy.ods",
+              "messy.ods",
+              "messy.ods",
+              "messy.ods",
+              "messy.xlsx",
+              "messy.xlsx",
+              "messy.xlsx",
+              "offset.xlsx",
+              "offset.xlsx"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "note",
+              "note",
+              "empty",
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              "coding",
+              null,
+              "Results",
+              "Results",
+              "Results",
+              "Results",
+              "Results",
+              "Results",
+              "Results",
+              "Results",
+              "Data",
+              "Data",
+              "Data",
+              null,
+              "Sheet1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Empty column",
+              "Empty column",
+              "Empty column",
+              "Unreadable",
+              "Not a rectangular dataset",
+              "Empty rows",
+              "Un-inspectable (.xls)",
+              "Colour coding",
+              "Merged cells",
+              "Empty rows",
+              "Empty or unnamed columns",
+              "Colour coding",
+              "Merged cells",
+              "Empty rows",
+              "Empty or unnamed columns",
+              "Colour coding",
+              "Merged cells",
+              "Empty or unnamed columns",
+              "Header not on first row",
+              "Empty or unnamed columns"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Column is empty: all 5 values are missing.",
+              "Column is empty: all 5 values are missing.",
+              "Column is empty: all 4 values are missing.",
+              "The file could not be parsed as a .xlsx workbook.",
+              "This file reads as a table but is not a usable dataset (100% of columns are free text, not variables). Store the data as a plain rectangular table (one header row, one column per variable) with a codebook.",
+              "3 fully empty rows inside the data range.",
+              "Legacy .xls format: colour, merged cells and empty rows/columns cannot be inspected. Convert to .xlsx or .ods for a full check.",
+              "2 cells use fill colour to encode information; colour is lost on CSV export.",
+              "1 merged range (A6:B6) break the rectangular grid.",
+              "2 fully empty rows inside the data range.",
+              "1 column is empty or have a blank header.",
+              "2 cells use fill colour to encode information; colour is lost on CSV export.",
+              "1 merged range (A6:B6) break the rectangular grid.",
+              "2 fully empty rows inside the data range.",
+              "1 column is empty or have a blank header.",
+              "2 cells use fill colour to encode information; colour is lost on CSV export.",
+              "1 merged range (A7:B7) break the rectangular grid.",
+              "1 column is empty or have a blank header.",
+              "The column header is on row 2; above it is a partial label row (Experiment 1 export). Remove the row above the header so the first row of the sheet is the column header — otherwise the file reads with invented column names (…1, …4) and the data mis-types.",
+              "2 columns are empty or have a blank header."
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "respondent",
+          "source_file",
+          "n_blocks_flagged",
+          "scales",
+          "reasons",
+          "max_longstring",
+          "irv",
+          "short_scale_only",
+          "threshold"
+        ],
+        "v": [
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "source_file",
+          "column",
+          "demographic"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [],
+        "v": []
+      },
+      {
+        "t": "df",
+        "nrow": 10,
+        "names": [
+          "paper_id",
+          "repo_name",
+          "repo_url",
+          "file_name",
+          "file_path",
+          "file_url",
+          "file_location",
+          "file_size",
+          "data_type",
+          "doc_role",
+          "data_format",
+          "group",
+          "referenced_by",
+          "tabular_usable",
+          "non_tabular_reason"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "spreadsheets",
+              "spreadsheets",
+              "spreadsheets",
+              "spreadsheets",
+              "spreadsheets",
+              "spreadsheets",
+              "spreadsheets",
+              "spreadsheets",
+              "spreadsheets",
+              "spreadsheets"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://osf.io/sheet",
+              "https://osf.io/sheet",
+              "https://osf.io/sheet",
+              "https://osf.io/sheet",
+              "https://osf.io/sheet",
+              "https://osf.io/sheet",
+              "https://osf.io/sheet",
+              "https://osf.io/sheet",
+              "https://osf.io/sheet",
+              "https://osf.io/sheet"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "broken.xlsx",
+              "clean.ods",
+              "clean.xlsx",
+              "coding.xlsx",
+              "legacy.xls",
+              "messy.fods",
+              "messy.ods",
+              "messy.xlsx",
+              "offset.xlsx",
+              "twosheets.xlsx"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data/broken.xlsx",
+              "data/clean.ods",
+              "data/clean.xlsx",
+              "data/coding.xlsx",
+              "data/legacy.xls",
+              "data/messy.fods",
+              "data/messy.ods",
+              "data/messy.xlsx",
+              "data/offset.xlsx",
+              "data/twosheets.xlsx"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "tests/mod_data_check/fixtures/repos/spreadsheets/data/broken.xlsx",
+              "tests/mod_data_check/fixtures/repos/spreadsheets/data/clean.ods",
+              "tests/mod_data_check/fixtures/repos/spreadsheets/data/clean.xlsx",
+              "tests/mod_data_check/fixtures/repos/spreadsheets/data/coding.xlsx",
+              "tests/mod_data_check/fixtures/repos/spreadsheets/data/legacy.xls",
+              "tests/mod_data_check/fixtures/repos/spreadsheets/data/messy.fods",
+              "tests/mod_data_check/fixtures/repos/spreadsheets/data/messy.ods",
+              "tests/mod_data_check/fixtures/repos/spreadsheets/data/messy.xlsx",
+              "tests/mod_data_check/fixtures/repos/spreadsheets/data/offset.xlsx",
+              "tests/mod_data_check/fixtures/repos/spreadsheets/data/twosheets.xlsx"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              23,
+              2688,
+              6199,
+              6422,
+              105472,
+              2519,
+              1067,
+              6373,
+              6330,
+              8094
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data",
+              "data",
+              "data",
+              "data",
+              "data",
+              "data",
+              "data",
+              "data",
+              "data",
+              "data"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "tabular",
+              "tabular",
+              "tabular",
+              "tabular",
+              "tabular",
+              "tabular",
+              "tabular",
+              "tabular",
+              "tabular",
+              "tabular"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1"
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "null"
+              },
+              {
+                "t": "null"
+              },
+              {
+                "t": "null"
+              },
+              {
+                "t": "null"
+              },
+              {
+                "t": "null"
+              },
+              {
+                "t": "null"
+              },
+              {
+                "t": "null"
+              },
+              {
+                "t": "null"
+              },
+              {
+                "t": "null"
+              },
+              {
+                "t": "null"
+              }
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true,
+              true,
+              true,
+              false,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              "100% of columns are free text, not variables",
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "clean.ods",
+          "clean.xlsx",
+          "legacy.xls",
+          "messy.fods",
+          "messy.ods",
+          "messy.xlsx",
+          "offset.xlsx",
+          "twosheets.xlsx"
+        ],
+        "v": [
+          {
+            "t": "df",
+            "nrow": 3,
+            "names": [
+              "id",
+              "value"
+            ],
+            "v": [
+              {
+                "t": "dbl",
+                "v": [
+                  1,
+                  2,
+                  3
+                ]
+              },
+              {
+                "t": "dbl",
+                "v": [
+                  0.5,
+                  1.5,
+                  2.5
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 3,
+            "names": [
+              "id",
+              "score"
+            ],
+            "v": [
+              {
+                "t": "dbl",
+                "v": [
+                  1,
+                  2,
+                  3
+                ]
+              },
+              {
+                "t": "dbl",
+                "v": [
+                  1.1,
+                  2.2,
+                  3.3
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 32,
+            "names": [
+              "mpg",
+              "cyl",
+              "disp",
+              "hp",
+              "drat",
+              "wt",
+              "qsec",
+              "vs",
+              "am",
+              "gear",
+              "carb"
+            ],
+            "v": [
+              {
+                "t": "dbl",
+                "v": [
+                  21,
+                  21,
+                  22.8,
+                  21.4,
+                  18.7,
+                  18.1,
+                  14.3,
+                  24.4,
+                  22.8,
+                  19.2,
+                  17.8,
+                  16.4,
+                  17.3,
+                  15.2,
+                  10.4,
+                  10.4,
+                  14.7,
+                  32.4,
+                  30.4,
+                  33.9,
+                  21.5,
+                  15.5,
+                  15.2,
+                  13.3,
+                  19.2,
+                  27.3,
+                  26,
+                  30.4,
+                  15.8,
+                  19.7,
+                  15,
+                  21.4
+                ]
+              },
+              {
+                "t": "dbl",
+                "v": [
+                  6,
+                  6,
+                  4,
+                  6,
+                  8,
+                  6,
+                  8,
+                  4,
+                  4,
+                  6,
+                  6,
+                  8,
+                  8,
+                  8,
+                  8,
+                  8,
+                  8,
+                  4,
+                  4,
+                  4,
+                  4,
+                  8,
+                  8,
+                  8,
+                  8,
+                  4,
+                  4,
+                  4,
+                  8,
+                  6,
+                  8,
+                  4
+                ]
+              },
+              {
+                "t": "dbl",
+                "v": [
+                  160,
+                  160,
+                  108,
+                  258,
+                  360,
+                  225,
+                  360,
+                  146.7,
+                  140.8,
+                  167.6,
+                  167.6,
+                  275.8,
+                  275.8,
+                  275.8,
+                  472,
+                  460,
+                  440,
+                  78.7,
+                  75.7,
+                  71.1,
+                  120.1,
+                  318,
+                  304,
+                  350,
+                  400,
+                  79,
+                  120.3,
+                  95.1,
+                  351,
+                  145,
+                  301,
+                  121
+                ]
+              },
+              {
+                "t": "dbl",
+                "v": [
+                  110,
+                  110,
+                  93,
+                  110,
+                  175,
+                  105,
+                  245,
+                  62,
+                  95,
+                  123,
+                  123,
+                  180,
+                  180,
+                  180,
+                  205,
+                  215,
+                  230,
+                  66,
+                  52,
+                  65,
+                  97,
+                  150,
+                  150,
+                  245,
+                  175,
+                  66,
+                  91,
+                  113,
+                  264,
+                  175,
+                  335,
+                  109
+                ]
+              },
+              {
+                "t": "dbl",
+                "v": [
+                  3.9,
+                  3.9,
+                  3.85,
+                  3.08,
+                  3.15,
+                  2.76,
+                  3.21,
+                  3.69,
+                  3.92,
+                  3.92,
+                  3.92,
+                  3.07,
+                  3.07,
+                  3.07,
+                  2.93,
+                  3,
+                  3.23,
+                  4.08,
+                  4.93,
+                  4.22,
+                  3.7,
+                  2.76,
+                  3.15,
+                  3.73,
+                  3.08,
+                  4.08,
+                  4.43,
+                  3.77,
+                  4.22,
+                  3.62,
+                  3.54,
+                  4.11
+                ]
+              },
+              {
+                "t": "dbl",
+                "v": [
+                  2.62,
+                  2.875,
+                  2.32,
+                  3.215,
+                  3.44,
+                  3.46,
+                  3.57,
+                  3.19,
+                  3.15,
+                  3.44,
+                  3.44,
+                  4.07,
+                  3.73,
+                  3.78,
+                  5.25,
+                  5.424,
+                  5.345,
+                  2.2,
+                  1.615,
+                  1.835,
+                  2.465,
+                  3.52,
+                  3.435,
+                  3.84,
+                  3.845,
+                  1.935,
+                  2.14,
+                  1.513,
+                  3.17,
+                  2.77,
+                  3.57,
+                  2.78
+                ]
+              },
+              {
+                "t": "dbl",
+                "v": [
+                  16.46,
+                  17.02,
+                  18.61,
+                  19.44,
+                  17.02,
+                  20.22,
+                  15.84,
+                  20,
+                  22.9,
+                  18.3,
+                  18.9,
+                  17.4,
+                  17.6,
+                  18,
+                  17.98,
+                  17.82,
+                  17.42,
+                  19.47,
+                  18.52,
+                  19.9,
+                  20.01,
+                  16.87,
+                  17.3,
+                  15.41,
+                  17.05,
+                  18.9,
+                  16.7,
+                  16.9,
+                  14.5,
+                  15.5,
+                  14.6,
+                  18.6
+                ]
+              },
+              {
+                "t": "dbl",
+                "v": [
+                  0,
+                  0,
+                  1,
+                  1,
+                  0,
+                  1,
+                  0,
+                  1,
+                  1,
+                  1,
+                  1,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  1,
+                  1,
+                  1,
+                  1,
+                  0,
+                  0,
+                  0,
+                  0,
+                  1,
+                  0,
+                  1,
+                  0,
+                  0,
+                  0,
+                  1
+                ]
+              },
+              {
+                "t": "dbl",
+                "v": [
+                  1,
+                  1,
+                  1,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  1,
+                  1,
+                  1,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  1,
+                  1,
+                  1,
+                  1,
+                  1,
+                  1,
+                  1
+                ]
+              },
+              {
+                "t": "dbl",
+                "v": [
+                  4,
+                  4,
+                  4,
+                  3,
+                  3,
+                  3,
+                  3,
+                  4,
+                  4,
+                  4,
+                  4,
+                  3,
+                  3,
+                  3,
+                  3,
+                  3,
+                  3,
+                  4,
+                  4,
+                  4,
+                  3,
+                  3,
+                  3,
+                  3,
+                  3,
+                  4,
+                  5,
+                  5,
+                  5,
+                  5,
+                  5,
+                  4
+                ]
+              },
+              {
+                "t": "dbl",
+                "v": [
+                  4,
+                  4,
+                  1,
+                  1,
+                  2,
+                  1,
+                  4,
+                  2,
+                  2,
+                  4,
+                  4,
+                  3,
+                  3,
+                  3,
+                  4,
+                  4,
+                  4,
+                  1,
+                  2,
+                  1,
+                  1,
+                  2,
+                  2,
+                  4,
+                  2,
+                  1,
+                  2,
+                  2,
+                  4,
+                  6,
+                  8,
+                  2
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 5,
+            "names": [
+              "id",
+              "group",
+              "note",
+              "score"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "1",
+                  "2",
+                  null,
+                  null,
+                  "total"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "a",
+                  "b",
+                  null,
+                  null,
+                  null
+                ]
+              },
+              {
+                "t": "lgl",
+                "v": [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ]
+              },
+              {
+                "t": "dbl",
+                "v": [
+                  10,
+                  20,
+                  null,
+                  null,
+                  30
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 5,
+            "names": [
+              "id",
+              "group",
+              "note",
+              "score"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "1",
+                  "2",
+                  null,
+                  null,
+                  "total"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "a",
+                  "b",
+                  null,
+                  null,
+                  null
+                ]
+              },
+              {
+                "t": "lgl",
+                "v": [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ]
+              },
+              {
+                "t": "dbl",
+                "v": [
+                  10,
+                  20,
+                  null,
+                  null,
+                  30
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 4,
+            "names": [
+              "id",
+              "grp",
+              "empty",
+              "val"
+            ],
+            "v": [
+              {
+                "t": "dbl",
+                "v": [
+                  1,
+                  2,
+                  3,
+                  4
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "a",
+                  "b",
+                  "a",
+                  "b"
+                ]
+              },
+              {
+                "t": "lgl",
+                "v": [
+                  null,
+                  null,
+                  null,
+                  null
+                ]
+              },
+              {
+                "t": "dbl",
+                "v": [
+                  10,
+                  20,
+                  30,
+                  40
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 8,
+            "names": [
+              "subject",
+              "rt",
+              "acc"
+            ],
+            "v": [
+              {
+                "t": "dbl",
+                "v": [
+                  1,
+                  2,
+                  3,
+                  4,
+                  5,
+                  6,
+                  7,
+                  8
+                ]
+              },
+              {
+                "t": "dbl",
+                "v": [
+                  400,
+                  450,
+                  500,
+                  550,
+                  600,
+                  650,
+                  700,
+                  750
+                ]
+              },
+              {
+                "t": "dbl",
+                "v": [
+                  1,
+                  0,
+                  1,
+                  1,
+                  0,
+                  1,
+                  1,
+                  1
+                ]
+              }
+            ]
+          },
+          {
+            "t": "df",
+            "nrow": 6,
+            "names": [
+              "pid",
+              "score",
+              "cond"
+            ],
+            "v": [
+              {
+                "t": "dbl",
+                "v": [
+                  1,
+                  2,
+                  3,
+                  4,
+                  5,
+                  6
+                ]
+              },
+              {
+                "t": "dbl",
+                "v": [
+                  3.2,
+                  4.1,
+                  2.8,
+                  3.9,
+                  4.4,
+                  3
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "a",
+                  "b",
+                  "a",
+                  "b",
+                  "a",
+                  "b"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "null"
+      },
+      {
+        "t": "null"
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "names": [
+          "data_file_n",
+          "column_n",
+          "empty_col_n",
+          "flagged_n",
+          "spreadsheet_file_n",
+          "spreadsheet_flagged_file_n"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

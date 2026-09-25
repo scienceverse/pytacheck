@@ -1,0 +1,369 @@
+{
+  "id": "review.broken_list",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "na_replace",
+      "dv_summary_text",
+      "dv_report",
+      "structure",
+      "previews",
+      "gated_repos",
+      "manifest_path",
+      "group_no_evidence"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "data_check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Data Check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "results"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "source_file",
+          "column",
+          "label",
+          "check",
+          "detail"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "broken.xlsx"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Unreadable"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "The file could not be parsed as a .xlsx workbook."
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          ""
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "yellow"
+        ]
+      },
+      {
+        "t": "null"
+      },
+      {
+        "t": "df",
+        "nrow": 2,
+        "names": [
+          "paper_id",
+          "column_n",
+          "flagged_n",
+          "spreadsheet_file_n",
+          "spreadsheet_flagged_file_n"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "p1",
+              "p2"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0,
+              0
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0,
+              0
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              1,
+              0
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              1,
+              0
+            ]
+          }
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "names": [
+          "column_n",
+          "flagged_n",
+          "spreadsheet_file_n",
+          "spreadsheet_flagged_file_n"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "We found no readable tabular data files to validate. 1 of 1 spreadsheet file has at least one formatting issue (colour coding, merged cells, empty rows/columns, or an offset header)."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "#### Spreadsheet Formatting",
+          "We examined 1 spreadsheet file in the repository; 1 has at least one formatting issue.",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = \"broken.xlsx\", Sheet = NA_character_, Issue = \"Unreadable\", \n    Detail = \"The file could not be parsed as a .xlsx workbook.\"), row.names = c(NA, \n-1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 20, FALSE)\n```\n",
+          "Spreadsheet formatting such as colour, merged cells, and blank rows/columns is not preserved when data are read programmatically or exported to CSV. Store data as a plain rectangular table (one header row, one column per variable, no colour-encoded meaning) so it is machine-readable."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 4,
+        "names": [
+          "paper_id",
+          "repo_name",
+          "repo_url",
+          "file_name",
+          "file_path",
+          "file_url",
+          "file_location",
+          "file_size",
+          "data_type",
+          "doc_role",
+          "data_format",
+          "group",
+          "referenced_by",
+          "tabular_usable",
+          "non_tabular_reason"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "p1",
+              "p1",
+              "p1",
+              "p2"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "nodata",
+              "nodata",
+              "nodata",
+              "review_broken"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://osf.io/nod01",
+              "https://osf.io/nod01",
+              "https://osf.io/nod01",
+              "https://osf.io/brok2"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "README.md",
+              "analysis.R",
+              "paper.pdf",
+              "broken.xlsx"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "README.md",
+              "code/analysis.R",
+              "paper.pdf",
+              "broken.xlsx"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "tests/mod_data_check/fixtures/repos/nodata/README.md",
+              "tests/mod_data_check/fixtures/repos/nodata/code/analysis.R",
+              "tests/mod_data_check/fixtures/repos/nodata/paper.pdf",
+              "tests/mod_data_check/fixtures/repos/review_broken/broken.xlsx"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              10,
+              7,
+              14,
+              23
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "documentation",
+              "code",
+              "documentation",
+              "data"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "readme",
+              null,
+              "supplemental",
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              "tabular"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "ex1",
+              "ex1",
+              "ex2"
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "null"
+              },
+              {
+                "t": "null"
+              },
+              {
+                "t": "null"
+              },
+              {
+                "t": "null"
+              }
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true,
+              true,
+              true,
+              true
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": []
+      },
+      {
+        "t": "null"
+      },
+      {
+        "t": "null"
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

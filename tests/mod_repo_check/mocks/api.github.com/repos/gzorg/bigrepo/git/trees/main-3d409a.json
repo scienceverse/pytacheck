@@ -1,0 +1,10 @@
+{
+ "tree": [
+  {
+   "path": "a.txt",
+   "type": "blob",
+   "size": 1
+  }
+ ],
+ "truncated": true
+}

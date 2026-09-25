@@ -1,0 +1,284 @@
+{
+  "id": "repo_check.local.unicode.tables",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": null,
+    "v": [
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "Repository",
+          "Platform",
+          "All Files",
+          "Data Files",
+          "Code Files",
+          "READMEs",
+          "Archives"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "<a href='tests/mod_repo_check/fixtures/review/unicode' target='_blank'>tests/mod_repo_check/fixtures/review/unicode<\/a>"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "local"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              5
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 5,
+        "names": [
+          "Repository",
+          "File",
+          "Size",
+          "Type"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "tests/mod_repo_check/fixtures/review/unicode",
+              "tests/mod_repo_check/fixtures/review/unicode",
+              "tests/mod_repo_check/fixtures/review/unicode",
+              "tests/mod_repo_check/fixtures/review/unicode",
+              "tests/mod_repo_check/fixtures/review/unicode"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "données.csv",
+              "Étude 1.csv",
+              "README.md",
+              "Übersicht.R",
+              "日本語.txt"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "4 B",
+              "4 B",
+              "10 B",
+              "7 B",
+              "5 B"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data",
+              "data",
+              "readme",
+              "code",
+              null
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 9,
+        "names": [
+          "File",
+          "Rule",
+          "Severity",
+          "Detail"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "données.csv",
+              "données.csv",
+              "Étude 1.csv",
+              "Étude 1.csv",
+              "Étude 1.csv",
+              "Übersicht.R",
+              "Übersicht.R",
+              "日本語.txt",
+              "日本語.txt"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "special-characters",
+              "diacritics",
+              "spaces",
+              "special-characters",
+              "diacritics",
+              "special-characters",
+              "diacritics",
+              "special-characters",
+              "diacritics"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "bad",
+              "bad",
+              "bad",
+              "bad",
+              "bad",
+              "bad",
+              "bad",
+              "bad",
+              "bad"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "contains a character other than letters, digits, underscore, or dash",
+              "contains non-ASCII characters (e.g. accented letters)",
+              "contains a space",
+              "contains a character other than letters, digits, underscore, or dash",
+              "contains non-ASCII characters (e.g. accented letters)",
+              "contains a character other than letters, digits, underscore, or dash",
+              "contains non-ASCII characters (e.g. accented letters)",
+              "contains a character other than letters, digits, underscore, or dash",
+              "contains non-ASCII characters (e.g. accented letters)"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "File",
+          "Group",
+          "Path"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Übersicht.R"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ex1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Übersicht.R"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 2,
+        "names": [
+          "File",
+          "Group",
+          "Path"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "données.csv",
+              "Étude 1.csv"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ex1",
+              "ex1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "données.csv",
+              "études/Étude 1.csv"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 2,
+        "names": [
+          "File",
+          "Group",
+          "Path"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "README.md",
+              "日本語.txt"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "—",
+              "ex1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "README.md",
+              "日本語.txt"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

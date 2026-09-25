@@ -25,6 +25,7 @@ attributes on a returned data frame are kept in ``DataFrame.attrs``.
 
 from __future__ import annotations
 
+import contextlib
 import functools
 import hashlib
 import json
@@ -36,7 +37,7 @@ import tempfile
 import time
 from collections.abc import Iterable, Mapping, Sequence
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 import pandas as pd
 
@@ -117,6 +118,11 @@ def _chr_list(x: Any) -> list[str | None]:
 def _col(df: pd.DataFrame, name: str) -> list[Any]:
     """A data-frame column as a plain list (``NA`` -> ``None``)."""
     return [None if _is_na(v) else v for v in df[name].tolist()]
+
+
+def _na_str(x: str | None) -> str:
+    """``paste()`` of one character value (``NA`` pastes as ``"NA"``)."""
+    return "NA" if x is None else x
 
 
 def _paste_lines(lines: Sequence[str | None]) -> str:
@@ -619,7 +625,7 @@ def _repro_format_call_refs(code_text: Any) -> pd.DataFrame:
             if all(v is not None for v in vals) and len(vals) == len(regextract_all("%[sd]", fmt)):
                 r = fmt
                 for v in vals:
-                    r = sub("%[sd]", v, r, perl=True)
+                    r = sub("%[sd]", str(v), r, perl=True)
                 resolved = r
         rows.append((call_text, fmt, resolved, line))
     return result()
@@ -868,11 +874,21 @@ def repro_rewrite_paths(
         c in structure_df.columns for c in ("file_name", "file_location")
     ):
         loc, loc_base = _location_lookup(structure_df)
-        plan_hash = [_md5(_find_source(f, loc, loc_base)) for f in plan_file]
+
+        # tools::md5sum() of each plan row's source; only ever needed for rows
+        # that share a basename, so computed on demand (and once)
+        @functools.cache
+        def plan_hash_of(i: int) -> str | None:
+            return _md5(_find_source(plan_file[i], loc, loc_base))
     else:
-        plan_hash = [None] * n_plan
+
+        def plan_hash_of(i: int) -> str | None:  # noqa: ARG001 - no structure_df: no hashes
+            return None
 
     def collapse_by_hash(cand: list[int]) -> list[int]:
+        if len(cand) < 2:
+            return cand
+        plan_hash = {i: plan_hash_of(i) for i in cand}
         h = [plan_hash[i] for i in cand]
         with_hash = [c for c, x in zip(cand, h, strict=True) if x is not None]
         if len(with_hash) < 2:
@@ -919,9 +935,15 @@ def repro_rewrite_paths(
             return (ref, key_base, True, pick_target(pick[0], key_ext), False, n, is_call)
         return (ref, key_base, True, None, True, n, is_call)
 
+    # which(plan_base == <basename> & has_target), indexed once
+    plan_index: dict[str, list[int]] = {}
+    for j in range(n_plan):
+        if has_target[j] and plan_base[j] is not None:
+            plan_index.setdefault(plan_base[j], []).append(j)
+
     rows: list[tuple[Any, ...]] = []
     for i, r in enumerate(refs):
-        cand = [j for j in range(n_plan) if plan_base[j] == ref_base[i] and has_target[j]]
+        cand = list(plan_index.get(ref_base[i], []))
         cand = collapse_by_hash(cand)
         rows.append(resolve(r, ref_base[i], ref_ext[i], r, cand, False))
 
@@ -934,7 +956,7 @@ def repro_rewrite_paths(
         key = resolved if resolved is not None else fmt
         key_base = _norm_base(key) or ""
         key_ext = _tolower(_file_ext(key_base)) or ""
-        cand = [j for j in range(n_plan) if plan_base[j] == key_base and has_target[j]]
+        cand = list(plan_index.get(key_base, []))
         rows.append(resolve(call_text, key_base, key_ext, key, cand, True))
 
     return _rewrite_frame(rows)
@@ -1012,31 +1034,39 @@ def repro_run_order(
             if j not in before[i]:
                 before[i].append(j)
 
-    writer_of: dict[str | None, list[int]] = {}
+    # writer_of[[w]]: R's list lookup by name never finds "" or NA, so an empty
+    # or missing basename is never written by anyone.
+    writer_of: dict[str, list[int]] = {}
     for j in range(n):
         for w in writes[j]:
-            writer_of.setdefault(_tolower(w), []).append(j)
+            key = _tolower(w)
+            if key is not None and key != "":
+                writer_of.setdefault(key, []).append(j)
     for i in range(n):
         for r in reads[i]:
-            w = _setdiff(writer_of.get(_tolower(r), []), [i])
-            if w:
-                union_into(i, w)
+            key = _tolower(r)
+            writers = writer_of.get(key, []) if key is not None else []
+            writers = _setdiff(writers, [i])
+            if writers:
+                union_into(i, writers)
 
     fuzzy: list[tuple[str | None, str | None]] = []
     norm_base = _repro_normalize_basename(base_name)
+    by_base: dict[str, list[int]] = {}
+    by_norm: dict[str, list[int]] = {}
+    for j in range(n):
+        if base_name[j] is not None:
+            by_base.setdefault(base_name[j], []).append(j)
+        if norm_base[j] is not None and norm_base[j] != "":
+            by_norm.setdefault(norm_base[j], []).append(j)
     for i in range(n):
         for s in sources[i]:
             s = _tolower(s)
-            js = _setdiff([j for j in range(n) if base_name[j] == s and s is not None], [i])
+            js = _setdiff(by_base.get(s, []) if s is not None else [], [i])
             if not js:
                 s_norm = _repro_normalize_basename(s)
                 js = _setdiff(
-                    [
-                        j
-                        for j in range(n)
-                        if s_norm is not None and s_norm != "" and norm_base[j] == s_norm
-                    ],
-                    [i],
+                    by_norm.get(s_norm, []) if s_norm is not None and s_norm != "" else [], [i]
                 )
                 if len(js) == 1:
                     fuzzy.append((fname[js[0]], fname[i]))
@@ -1045,10 +1075,14 @@ def repro_run_order(
             if js:
                 union_into(i, js)
 
+    by_name: dict[str, list[int]] = {}
+    for j, f in enumerate(fname):
+        if f is not None:
+            by_name.setdefault(f, []).append(j)
     for e in extra_edges or []:
         e = list(e)
-        frm = [j for j in range(n) if fname[j] == e[0]]
-        to = [j for j in range(n) if fname[j] == e[1]]
+        frm = by_name.get(e[0], []) if e[0] is not None else []
+        to = by_name.get(e[1], []) if e[1] is not None else []
         frm = _setdiff(frm, to)
         if frm and to:
             union_into(to[0], frm)
@@ -1104,7 +1138,7 @@ def repro_run_order(
     ord_: list[int | None] = [None] * n
     for pos, i in enumerate(order_idx, 1):
         ord_[i] = pos
-    depends_on = [", ".join("NA" if fname[j] is None else fname[j] for j in b) for b in before]
+    depends_on = [", ".join(_na_str(fname[j]) for j in b) for b in before]
 
     out = _frame(
         {
@@ -1152,14 +1186,17 @@ def repro_file_io(code_text_list: Any) -> pd.DataFrame:
     out_srcs: list[list[str]] = []
     for ct in texts:
         nc = _code_remove_comments(ct)
-        all_refs = list(code_file_refs(nc, "R", include_writes=True))
+        all_refs = list(code_file_refs(cast(list[str], nc), "R", include_writes=True))
         joined = _paste_lines(nc)
         ref_base = [_norm_base(r) for r in all_refs]
+        # grepl(write_fns, grep(ref, nc, fixed = TRUE, value = TRUE)): every
+        # line is classified once, then looked up per reference
+        lines = [s for s in nc if s is not None]
+        line_w = list(grepl(_IO_WRITE_PAT, lines, perl=True, ignore_case=True))
         is_write: list[bool] = []
         is_read: list[bool] = []
         for ref in all_refs:
-            lines = [s for s in nc if s is not None and ref in s]
-            w = list(grepl(_IO_WRITE_PAT, lines, perl=True, ignore_case=True))
+            w = [x for s, x in zip(lines, line_w, strict=True) if ref is not None and ref in s]
             is_write.append(any(w))
             is_read.append(any(not x for x in w))
         reads = [b for b, r in zip(ref_base, is_read, strict=True) if r]
@@ -1337,15 +1374,18 @@ def repro_missing_inputs(
         if skipped is not None and "file_name" in skipped.columns
         else []
     )
-    all_candidates = _unique(struct_base)
+    all_candidates: list[str | None] = _unique(struct_base)
 
     def find_similar(b: str | None) -> str | None:
         if len(all_candidates) == 0 or b is None:
             return None
         stem = _file_path_sans_ext(b)
-        for c in all_candidates:
-            if _file_path_sans_ext(c) == stem and stem != "":
-                return c
+        # all_candidates[cand_stems == stem & nzchar(stem)][[1]]: an NA candidate
+        # gives an NA index, which selects an NA element
+        if stem != "":
+            for c in all_candidates:
+                if c is None or _file_path_sans_ext(c) == stem:
+                    return c
         max_dist = min(3, len(b) // 4)
         if max_dist < 1:
             return None
@@ -1360,10 +1400,10 @@ def repro_missing_inputs(
 
     for b in ref_list:
         if b in skip_base:
-            i = skip_base.index(b)
             if skipped is None or "file_size" not in skipped.columns:
                 raise ValueError("argument is of length zero")
-            sz = _as_numeric(skipped["file_size"].iloc[i])
+            # which(skip_base == b)[1] is NA for an NA basename
+            sz = None if b is None else _as_numeric(skipped["file_size"].iloc[skip_base.index(b)])
             mb = f" ({sz / (1024 * 1024):.0f} MB)" if sz is not None and math.isfinite(sz) else ""
             rows.append(
                 (
@@ -1376,10 +1416,10 @@ def repro_missing_inputs(
             )
             continue
         if b in struct_base:
-            i = struct_base.index(b)
+            # which(struct_base == b)[1] is NA for an NA basename: location NA
             loc = (
-                _chr(structure_df["file_location"].iloc[i])  # type: ignore[index]
-                if "file_location" in structure_df.columns  # type: ignore[union-attr]
+                _chr(structure_df["file_location"].iloc[struct_base.index(b)])  # type: ignore[index]
+                if b is not None and "file_location" in structure_df.columns  # type: ignore[union-attr]
                 else None
             )
             downloaded = loc is not None and loc != "" and os.path.exists(loc)
@@ -1489,11 +1529,12 @@ def _repro_is_jags_model(
         return True
     if other_code_text is not None and len(other_code_text):
         fn_base = _basename(_bs2fs(fn)) or ""
-        others = (
-            list(other_code_text.values())
-            if isinstance(other_code_text, Mapping)
-            else list(other_code_text)
-        )
+        if isinstance(other_code_text, Mapping):
+            others = list(other_code_text.values())
+        elif isinstance(other_code_text, str):
+            others = [other_code_text]  # a character vector: each element is one file
+        else:
+            others = list(other_code_text)
         for ct in others:
             ct_lines = _chr_list(ct)
             if ct is None or not ct_lines:
@@ -1544,6 +1585,12 @@ def _copy_file(src: str, dest: str) -> bool:
     return True
 
 
+def _dir_create(path: str) -> None:
+    """``dir.create(path, recursive = TRUE, showWarnings = FALSE)``: failures are silent."""
+    with contextlib.suppress(OSError):
+        os.makedirs(path or ".", exist_ok=True)
+
+
 def repro_materialize_layout(
     plan: pd.DataFrame | None, structure_df: pd.DataFrame | None, root: str | os.PathLike[str]
 ) -> MaterialisedRoot:
@@ -1556,8 +1603,8 @@ def repro_materialize_layout(
     Returns *root* with the copy log in ``attrs["materialised"]``.
     """
     root_s = os.fspath(root)
-    os.makedirs(root_s, exist_ok=True)
-    os.makedirs(_file_path(root_s, "output"), exist_ok=True)
+    _dir_create(root_s)
+    _dir_create(_file_path(root_s, "output"))
     rows: list[tuple[str | None, str | None, bool]] = []
 
     def result() -> MaterialisedRoot:
@@ -1591,7 +1638,7 @@ def repro_materialize_layout(
                 rows.append((tgt, None, False))
                 continue
             dest = _file_path(root_s, tgt)
-            os.makedirs(os.path.dirname(dest) or ".", exist_ok=True)
+            _dir_create(os.path.dirname(dest))
             rows.append((tgt, src, _copy_file(src, dest)))
 
     copy_rows(_chr_list(plan["target_path"]))
@@ -1623,12 +1670,18 @@ def repro_write_scripts(
     ``setwd_paths``, ``family_replaced``, ``family_detail`` and
     ``library_injected``.
     """
+    if code_text_list is None or len(code_text_list) == 0:
+        return pd.DataFrame()  # dplyr::bind_rows(list()): no rows, no columns
     if not isinstance(code_text_list, Mapping):
         raise IndexError("subscript out of bounds")
     root_s = os.fspath(root)
     fnames = [str(k) for k in code_text_list]
     has_plan = plan is not None and "file_name" in plan.columns
-    plan_base = [_tolower(_basename(f)) for f in _chr_list(plan["file_name"])] if has_plan else []
+    plan_base = (
+        [_tolower(_basename(f)) for f in _chr_list(cast(pd.DataFrame, plan)["file_name"])]
+        if has_plan
+        else []
+    )
     plan_target: list[str | None] = (
         _chr_list(plan["target_path"])  # type: ignore[index]
         if has_plan and "target_path" in plan.columns  # type: ignore[union-attr]
@@ -1643,7 +1696,7 @@ def repro_write_scripts(
                     return t
         return _basename(fn) or ""
 
-    output_dir = _bs2fs(_file_path(root_s, "output")) + "/"
+    output_dir = str(_bs2fs(_file_path(root_s, "output"))) + "/"
     rows: list[tuple[Any, ...]] = []
     for fn in fnames:
         txt = _chr_list(code_text_list[fn])
@@ -1707,7 +1760,7 @@ def repro_write_scripts(
 
         tgt = script_target(fn)
         dest = _file_path(root_s, tgt)
-        os.makedirs(os.path.dirname(dest) or ".", exist_ok=True)
+        _dir_create(os.path.dirname(dest))
         _write_lines(txt, dest)
         rows.append(
             (
@@ -1779,6 +1832,13 @@ _INSTALL_ONE_R = r"""
   s <- gsub("\n", "\\n", s, fixed = TRUE)
   s <- gsub("\r", "\\r", s, fixed = TRUE)
   s <- gsub("\t", "\\t", s, fixed = TRUE)
+  s <- vapply(s, function(x) {
+    cp <- utf8ToInt(x)
+    if (length(cp) && any(is.na(cp))) return(x)
+    ctl <- cp < 32L
+    if (!any(ctl)) return(x)
+    paste(ifelse(ctl, sprintf("\\u%04x", cp), vapply(cp, intToUtf8, "")), collapse = "")
+  }, "", USE.NAMES = FALSE)
   paste0("\"", s, "\"")
 }
 old_lib <- .libPaths()
@@ -1791,11 +1851,12 @@ emit <- function(ok, msg, skipped = FALSE, extra = "")
   cat("\n<<repro-result>>{\"ok\":", if (isTRUE(ok)) "true" else "false",
       ",\"skipped\":", if (isTRUE(skipped)) "true" else "false",
       ",\"msg\":", .mc_json_str(msg), extra, "}\n", sep = "")
-if (mode == "install") {
+if (mode == "check_main") {
+  emit(TRUE, "", skipped = length(find.package(pkg, lib.loc = old_lib, quiet = TRUE)) > 0,
+       extra = paste0(",\"install_lib\":", .mc_json_str(old_lib[1])))
+} else if (mode == "install") {
   cran_main <- identical(src, "cran") && isTRUE(cran_to_main_lib)
-  if (cran_main && length(find.package(pkg, lib.loc = old_lib, quiet = TRUE)) > 0) {
-    emit(TRUE, "", skipped = TRUE)
-  } else {
+  {
     gh_avail <- requireNamespace("remotes", quietly = TRUE)
     install_lib <- if (cran_main) old_lib[1] else lib_dir
     res <- tryCatch({
@@ -1818,8 +1879,6 @@ if (mode == "install") {
     }, error = function(e) list(ok = FALSE, msg = conditionMessage(e)))
     emit(res$ok, res$msg, extra = paste0(",\"install_lib\":", .mc_json_str(install_lib)))
   }
-} else if (mode == "main_lib") {
-  emit(TRUE, "", extra = paste0(",\"install_lib\":", .mc_json_str(old_lib[1])))
 } else if (mode == "archive") {
   ok <- tryCatch({
     if (requireNamespace("remotes", quietly = TRUE)) {
@@ -1892,28 +1951,30 @@ def repro_install_deps(
     if install_deps is None or len(install_deps) == 0:
         return _install_frame([])
     lib = os.fspath(lib_dir)
-    os.makedirs(lib, exist_ok=True)
+    _dir_create(lib)
     pkgs = _chr_list(install_deps["package"])
     srcs = _chr_list(install_deps["source"])
     refs = _chr_list(install_deps["ref"]) if "ref" in install_deps.columns else [None] * len(pkgs)
     rows: list[dict[str, Any]] = []
     for pkg, src, ref in zip(pkgs, srcs, refs, strict=True):
-        cran_main = src == "cran" and cran_to_main_lib is True
-        res = _install_r(
-            "install", lib, pkg=pkg, src=src, ref=ref, cran_to_main_lib=bool(cran_to_main_lib)
-        )
-        if res.get("skipped"):
-            _message("[repro]     '", pkg, "' already installed (main library); skipping.")
-            rows.append(
-                {
-                    "package": pkg,
-                    "source": src,
-                    "installed": True,
-                    "message": "",
-                    "via_archive": False,
-                }
-            )
-            continue
+        cran_main = src == "cran" and _r_is_true(cran_to_main_lib)
+        main_lib: str | None = None
+        if cran_main:
+            # a CRAN package already in the REAL library (not the throwaway one)
+            chk = _install_r("check_main", lib, pkg=pkg)
+            main_lib = chk.get("install_lib")
+            if chk.get("skipped"):
+                _message("[repro]     '", pkg, "' already installed (main library); skipping.")
+                rows.append(
+                    {
+                        "package": pkg,
+                        "source": src,
+                        "installed": True,
+                        "message": "",
+                        "via_archive": False,
+                    }
+                )
+                continue
         _message(
             "[repro]     installing '",
             pkg,
@@ -1921,6 +1982,9 @@ def repro_install_deps(
             src,
             ", into main library" if cran_main else ", into throwaway library",
             ") ...",
+        )
+        res = _install_r(
+            "install", lib, pkg=pkg, src=src, ref=ref, cran_to_main_lib=_r_is_true(cran_to_main_lib)
         )
         ok = bool(res.get("ok"))
         msg = str(res.get("msg") or "")
@@ -1931,11 +1995,7 @@ def repro_install_deps(
                 pkg,
                 "' not available on live CRAN; trying the CRAN Archive (last published version) ...",
             )
-            install_lib = res.get("install_lib")
-            if install_lib is None:
-                install_lib = (
-                    _install_r("main_lib", lib).get("install_lib") if cran_main else lib
-                ) or lib
+            install_lib = res.get("install_lib") or (main_lib if cran_main else lib) or lib
             res2 = _repro_cran_archive_install(pkg, str(install_lib), lib)
             if res2["ok"]:
                 _message(
@@ -2010,7 +2070,7 @@ def _read_url_lines(url: str) -> list[str] | None:
     from pytacheck import http
 
     try:
-        resp = http.request("GET", url)
+        resp = http.request("GET", url, max_tries=1)
     except Exception:
         return None
     if resp is None or resp.status_code >= 400:
@@ -2107,13 +2167,12 @@ _DRIVER_R = r"""{libpaths}local({{
     try(stop(res))
     quit(save = "no", status = 1L)
   }}
-  writeLines("done", {done_file})
 }})
 """
 
 
 def _driver_source(
-    script: str, wd: str, capture_file: str, error_file: str, done_file: str, lib_dir: str | None
+    script: str | None, wd: str | None, capture_file: str, error_file: str, lib_dir: str | None
 ) -> str:
     from pytacheck.statout.r_capture import _JSON_R, _RUNNER_R, _r_capture_helpers
 
@@ -2127,7 +2186,6 @@ def _driver_source(
         wd=_r_string(wd),
         capture=_r_string(capture_file),
         error_file=_r_string(error_file),
-        done_file=_r_string(done_file),
     )
 
 
@@ -2148,8 +2206,8 @@ def _read_cap(path: str | os.PathLike[str]) -> str:
 
 
 def _callr_run(
-    script: str,
-    wd: str,
+    script: str | None,
+    wd: str | None,
     capture_file: str,
     lib_dir: str | None,
     timeout: float | None,
@@ -2169,15 +2227,15 @@ def _callr_run(
         )
     with tempfile.TemporaryDirectory(prefix="pytacheck_callr_") as tmp:
         error_file = os.path.join(tmp, "error.txt")
-        done_file = os.path.join(tmp, "done.txt")
         driver = os.path.join(tmp, "driver.R")
         Path(driver).write_text(
             _driver_source(
-                os.path.abspath(script),
-                os.path.abspath(wd),
+                # as given, like callr: the child starts in this process's
+                # working directory and resolves the script after setwd(wd)
+                script,
+                wd,
                 os.path.abspath(capture_file),
                 error_file,
-                done_file,
                 lib_dir,
             ),
             encoding="utf-8",
@@ -2215,7 +2273,9 @@ def _first_capture(pattern: str, src: str) -> str:
     return out
 
 
-def _classify_error(failed_deps: Sequence[str], sources: Sequence[str]) -> tuple[str | None, bool]:
+def _classify_error(
+    failed_deps: Sequence[str] | str, sources: Sequence[str]
+) -> tuple[str | None, bool]:
     """``(undefined_var, dependency_unavailable)`` of a failed run.
 
     *sources* are the texts searched, in order, for each pattern (the error
@@ -2236,7 +2296,7 @@ def _classify_error(failed_deps: Sequence[str], sources: Sequence[str]) -> tuple
         undef_var = _first_capture(_FN_PAT, undef_src)
     nopkg_src = next((s for s in sources if grepl(_NOPKG_PAT, s)), None)
     nopkg_var = _first_capture(_NOPKG_PAT, nopkg_src) if nopkg_src is not None else None
-    dep_unavailable = nopkg_var is not None and nopkg_var in list(failed_deps)
+    dep_unavailable = nopkg_var is not None and nopkg_var in _chr_list(failed_deps)
     return undef_var, dep_unavailable
 
 
@@ -2287,16 +2347,41 @@ def _run_row(
 def _ordered_names(run_tbl: pd.DataFrame, order: Any) -> list[str]:
     names = _chr_list(run_tbl["file_name"])
     order_l = _chr_list(order)
-    return [o for o in order_l if o in names] + _setdiff(names, order_l)  # type: ignore[misc]
+    first = [o for o in order_l if o is not None and o in names]
+    return first + [str(x) for x in _setdiff(names, order_l)]
 
 
-def _pre_run_outcome(
-    fn: str, skip: Sequence[str], parses: Mapping[str, Any] | None
-) -> dict[str, Any] | None:
-    """The ``not_parsed``/``skipped_missing_inputs`` row of a script that is not run."""
-    if parses is not None and fn in parses and parses[fn] is not True:
-        return _run_row(fn, "not_parsed")
-    if fn in list(skip):
+def _r_is_true(x: Any) -> bool:
+    """R ``isTRUE()``: a single logical ``TRUE`` (a numpy/pandas bool counts, a number does not)."""
+    import numpy as np
+
+    if isinstance(x, pd.Series | pd.Index | np.ndarray | list | tuple):
+        vals = list(x)
+        return len(vals) == 1 and _r_is_true(vals[0])
+    return isinstance(x, bool | np.bool_) and bool(x)
+
+
+def _named_value(named: Any, key: str) -> tuple[bool, Any]:
+    """``key %in% names(x)`` and ``x[[key]]`` (the first entry of that name)."""
+    if isinstance(named, pd.Series):
+        hits = [i for i, k in enumerate(named.index.tolist()) if k == key]
+        return (True, named.iloc[hits[0]]) if hits else (False, None)
+    if isinstance(named, Mapping):
+        return (True, named[key]) if key in named else (False, None)
+    return False, None
+
+
+def _pre_run_outcome(fn: str, skip: Any, parses: Any) -> dict[str, Any] | None:
+    """The ``not_parsed``/``skipped_missing_inputs`` row of a script that is not run.
+
+    *parses* is R's named logical vector (a mapping or a ``Series`` indexed by
+    file name); *skip* a character vector (a single string is one name).
+    """
+    if parses is not None:
+        found, value = _named_value(parses, fn)
+        if found and not _r_is_true(value):
+            return _run_row(fn, "not_parsed")
+    if fn in _chr_list(skip):
         return _run_row(fn, "skipped_missing_inputs")
     return None
 
@@ -2313,9 +2398,9 @@ def repro_run_scripts(
     order: Any,
     lib_dir: str | os.PathLike[str] | None = None,
     timeout: float = 600,
-    skip: Sequence[str] = (),
-    parses: Mapping[str, Any] | None = None,
-    failed_deps: Sequence[str] = (),
+    skip: Sequence[str] | str = (),
+    parses: Mapping[str, Any] | pd.Series | None = None,
+    failed_deps: Sequence[str] | str = (),
 ) -> pd.DataFrame:
     """Run the paper's scripts, in order, in isolated R subprocesses.
 
@@ -2366,9 +2451,7 @@ def repro_run_scripts(
                 t0 = time.monotonic()
                 error: _RunError | None = None
                 try:
-                    _callr_run(
-                        paths[i] or "", dirs[i] or ".", cap_file, lib, timeout, out_file, err_file
-                    )
+                    _callr_run(paths[i], dirs[i], cap_file, lib, timeout, out_file, err_file)
                 except _RunError as exc:
                     error = exc
                 elapsed = time.monotonic() - t0

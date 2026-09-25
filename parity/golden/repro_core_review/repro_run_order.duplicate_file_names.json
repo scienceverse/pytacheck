@@ -1,0 +1,86 @@
+{
+  "id": "repro_run_order.duplicate_file_names",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": null,
+    "v": [
+      {
+        "t": "df",
+        "nrow": 3,
+        "names": [
+          "file_name",
+          "order",
+          "depends_on",
+          "order_basis"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "dup.R",
+              "dup.R",
+              "w.R"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2,
+              3,
+              1
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "w.R",
+              "w.R",
+              ""
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "dependency",
+              "dependency",
+              "none"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": []
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "from",
+          "to"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

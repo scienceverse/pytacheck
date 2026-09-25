@@ -1,0 +1,662 @@
+{
+  "id": "repo_check.fuzz.07",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "gated_repos",
+      "naming_issues",
+      "repo_metadata",
+      "roster_check",
+      "group_no_evidence",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "repo_check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Repository Check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "results"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 20,
+        "names": [
+          "repo_name",
+          "repo_url",
+          "file_name",
+          "file_url",
+          "file_location",
+          "file_size",
+          "file_type",
+          "file_path",
+          "data_type",
+          "doc_role",
+          "group",
+          "paper_id"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "dep07",
+              "dep07",
+              "dep07",
+              "dep07",
+              "dep07",
+              "dep07",
+              "dep07",
+              "dep07",
+              "dep07",
+              "dep07",
+              "dep07",
+              "dep07",
+              "dep07",
+              "dep07",
+              "dep07",
+              "dep07",
+              "dep07",
+              "dep07",
+              "dep07",
+              "dep07"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep07",
+              "/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep07",
+              "/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep07",
+              "/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep07",
+              "/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep07",
+              "/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep07",
+              "/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep07",
+              "/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep07",
+              "/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep07",
+              "/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep07",
+              "/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep07",
+              "/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep07",
+              "/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep07",
+              "/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep07",
+              "/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep07",
+              "/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep07",
+              "/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep07",
+              "/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep07",
+              "/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep07",
+              "/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep07"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "script.CSV",
+              "data.html",
+              "analysis.edat",
+              "Figure 2.emrg2",
+              "pilot_results.7z",
+              "données.csv",
+              "study1_analysis.pdf",
+              "license.pdf",
+              "session-3.7z",
+              "pilot_results.do",
+              "preregistration.txt",
+              "notes (final)!.omv",
+              "dictionary.sps",
+              "variables.docx",
+              "manuscript.yml",
+              "README.m",
+              "notes (final)!.pdf",
+              "results.CSV",
+              "study1_analysis.rds",
+              "study1_analysis.Rmd"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep07/analysis/script.CSV",
+              "/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep07/data.html",
+              "/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep07/data/analysis.edat",
+              "/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep07/data/Figure 2.emrg2",
+              "/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep07/data/pilot_results.7z",
+              "/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep07/données.csv",
+              "/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep07/exp2a/study1_analysis.pdf",
+              "/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep07/Experiment_3/license.pdf",
+              "/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep07/Experiment_3/session-3.7z",
+              "/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep07/materials/pilot_results.do",
+              "/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep07/materials/preregistration.txt",
+              "/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep07/notes (final)!.omv",
+              "/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep07/pilot1/dictionary.sps",
+              "/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep07/pilot1/variables.docx",
+              "/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep07/raw data/manuscript.yml",
+              "/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep07/README.m",
+              "/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep07/S1/notes (final)!.pdf",
+              "/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep07/study_1/code/results.CSV",
+              "/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep07/study1_analysis.rds",
+              "/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep07/study2/study1_analysis.Rmd"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              32,
+              16,
+              8,
+              40,
+              8,
+              16,
+              16,
+              16,
+              32,
+              0,
+              24,
+              40,
+              8,
+              24,
+              8,
+              16,
+              40,
+              32,
+              0,
+              7
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data",
+              null,
+              null,
+              null,
+              null,
+              "data",
+              null,
+              null,
+              null,
+              "code",
+              null,
+              "data",
+              "code",
+              null,
+              null,
+              "readme",
+              null,
+              "data",
+              null,
+              "code"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "analysis/script.CSV",
+              "data.html",
+              "data/analysis.edat",
+              "data/Figure 2.emrg2",
+              "data/pilot_results.7z",
+              "données.csv",
+              "exp2a/study1_analysis.pdf",
+              "Experiment_3/license.pdf",
+              "Experiment_3/session-3.7z",
+              "materials/pilot_results.do",
+              "materials/preregistration.txt",
+              "notes (final)!.omv",
+              "pilot1/dictionary.sps",
+              "pilot1/variables.docx",
+              "raw data/manuscript.yml",
+              "README.m",
+              "S1/notes (final)!.pdf",
+              "study_1/code/results.CSV",
+              "study1_analysis.rds",
+              "study2/study1_analysis.Rmd"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data",
+              "data",
+              "materials",
+              "data",
+              "data",
+              "data",
+              "documentation",
+              "documentation",
+              "unknown",
+              "code",
+              "documentation",
+              "data",
+              "code",
+              "documentation",
+              "code",
+              "code",
+              "documentation",
+              "data",
+              "data",
+              "code"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              "supplemental",
+              "license",
+              null,
+              null,
+              "supplemental",
+              null,
+              null,
+              "supplemental",
+              null,
+              "readme",
+              "supplemental",
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "pilot1",
+              "pilot1",
+              "pilot1",
+              "pilot1",
+              "pilot1",
+              "pilot1",
+              "ex1",
+              "ex3",
+              null,
+              "pilot1",
+              "pilot1",
+              "pilot1",
+              "pilot1",
+              "pilot1",
+              "pilot1",
+              null,
+              "pilot1",
+              "ex1",
+              "ex1",
+              "ex1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "fz07",
+              "fz07",
+              "fz07",
+              "fz07",
+              "fz07",
+              "fz07",
+              "fz07",
+              "fz07",
+              "fz07",
+              "fz07",
+              "fz07",
+              "fz07",
+              "fz07",
+              "fz07",
+              "fz07",
+              "fz07",
+              "fz07",
+              "fz07",
+              "fz07",
+              "fz07"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "#### Repositories",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Repository = \"<a href='/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep07' target='_blank'>/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep07<\/a>\", \n    Platform = \"local\", \"All Files\" = 20L, \"Data Files\" = 4L, \n    \"Code Files\" = 3L, READMEs = 1L, Archives = 0L), row.names = c(NA, \n-1L), class = c(\"tbl_df\", \"tbl\", \"data.frame\"))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
+          "#### Files",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Repository = c(\"/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep07\", \n\"/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep07\", \n\"/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep07\", \n\"/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep07\", \n\"/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep07\", \n\"/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep07\", \n\"/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep07\", \n\"/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep07\", \n\"/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep07\", \n\"/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep07\", \n\"/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep07\", \n\"/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep07\", \n\"/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep07\", \n\"/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep07\", \n\"/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep07\", \n\"/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep07\", \n\"/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep07\", \n\"/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep07\", \n\"/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep07\", \n\"/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep07\"\n), File = c(\"script.CSV\", \"data.html\", \"analysis.edat\", \"Figure 2.emrg2\", \n\"pilot_results.7z\", \"données.csv\", \"study1_analysis.pdf\", \"license.pdf\", \n\"session-3.7z\", \"pilot_results.do\", \"preregistration.txt\", \"notes (final)!.omv\", \n\"dictionary.sps\", \"variables.docx\", \"manuscript.yml\", \"README.m\", \n\"notes (final)!.pdf\", \"results.CSV\", \"study1_analysis.rds\", \"study1_analysis.Rmd\"\n), Size = c(\"32 B\", \"16 B\", \"8 B\", \"40 B\", \"8 B\", \"16 B\", \"16 B\", \n\"16 B\", \"32 B\", \"0 B\", \"24 B\", \"40 B\", \"8 B\", \"24 B\", \"8 B\", \n\"16 B\", \"40 B\", \"32 B\", \"0 B\", \"7 B\"), Type = c(\"data\", NA, NA, \nNA, NA, \"data\", NA, NA, NA, \"code\", NA, \"data\", \"code\", NA, NA, \n\"readme\", NA, \"data\", NA, \"code\")), row.names = c(NA, -20L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
+          "README files were found in all repositories.",
+          "#### Proprietary E-Prime Files\n\nThe repository contains 2 E-Prime files (analysis.edat, Figure 2.emrg2). These are proprietary **binary** formats that only the E-Prime software can open, so metacheck does not download or read them and other researchers cannot reuse them directly. 2 of them have no matching plain-text export. Please also upload the E-Prime **.txt export** (File → Export in E-Prime) for each, so the trial-level data is readable without the proprietary software.",
+          "#### Unclassified Files\n\nWe could not classify 1 file by name or extension: session-3.7z. Add a recognisable keyword (`data`, `code`, `materials`, `documentation`, `output`) to the file name, or use a common extension, so both humans and machines can tell what kind of file it is.",
+          "#### Study/Repository Mismatch\n\nThe studies named in the manuscript do not match how the repository's files are grouped: the manuscript names a study (ex4) with no matching files in the repository; the repository separates out studies (ex1, ex3) not named in the manuscript. Check that every study has its own clearly-named folder or file prefix, and that the folder names match how the manuscript refers to each study.",
+          "#### File Naming",
+          "File names should be machine-parseable: no spaces or special characters, and every file should be classifiable by name or extension. We found 8 naming problems that should be fixed, and 0 files with a naming suggestion (not required, but a good habit).",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"Figure 2.emrg2\", \"données.csv\", \"données.csv\", \n\"session-3.7z\", \"notes (final)!.omv\", \"notes (final)!.omv\", \"notes (final)!.pdf\", \n\"notes (final)!.pdf\"), Rule = c(\"spaces\", \"special-characters\", \n\"diacritics\", \"unclassifiable\", \"spaces\", \"special-characters\", \n\"spaces\", \"special-characters\"), Severity = c(\"bad\", \"bad\", \"bad\", \n\"bad\", \"bad\", \"bad\", \"bad\", \"bad\"), Detail = c(\"contains a space\", \n\"contains a character other than letters, digits, underscore, or dash\", \n\"contains non-ASCII characters (e.g. accented letters)\", \"could not be classified by name or extension (data_type is 'unknown'); add a recognisable keyword (data, code, materials, ...) or a known extension\", \n\"contains a space\", \"contains a character other than letters, digits, underscore, or dash\", \n\"contains a space\", \"contains a character other than letters, digits, underscore, or dash\"\n)), row.names = c(NA, -8L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
+          "#### File Classification",
+          "::: {.callout-note title=\"See how every file was classified and grouped\" collapse=\"true\"}\n\n**code** (5 files)\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"pilot_results.do\", \"dictionary.sps\", \n\"manuscript.yml\", \"README.m\", \"study1_analysis.Rmd\"), Group = c(\"pilot1\", \n\"pilot1\", \"pilot1\", \"—\", \"ex1\"), Path = c(\"materials/pilot_results.do\", \n\"pilot1/dictionary.sps\", \"raw data/manuscript.yml\", \"README.m\", \n\"study2/study1_analysis.Rmd\")), row.names = c(NA, -5L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n**data** (8 files)\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"script.CSV\", \"data.html\", \"Figure 2.emrg2\", \n\"pilot_results.7z\", \"données.csv\", \"notes (final)!.omv\", \"results.CSV\", \n\"study1_analysis.rds\"), Group = c(\"pilot1\", \"pilot1\", \"pilot1\", \n\"pilot1\", \"pilot1\", \"pilot1\", \"ex1\", \"ex1\"), Path = c(\"analysis/script.CSV\", \n\"data.html\", \"data/Figure 2.emrg2\", \"data/pilot_results.7z\", \n\"données.csv\", \"notes (final)!.omv\", \"study_1/code/results.CSV\", \n\"study1_analysis.rds\")), row.names = c(NA, -8L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n**documentation** (5 files)\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"study1_analysis.pdf\", \"license.pdf\", \n\"preregistration.txt\", \"variables.docx\", \"notes (final)!.pdf\"\n), Group = c(\"ex1\", \"ex3\", \"pilot1\", \"pilot1\", \"pilot1\"), Path = c(\"exp2a/study1_analysis.pdf\", \n\"Experiment_3/license.pdf\", \"materials/preregistration.txt\", \n\"pilot1/variables.docx\", \"S1/notes (final)!.pdf\")), row.names = c(NA, \n-5L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n**materials** (1 file)\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = \"analysis.edat\", Group = \"pilot1\", Path = \"data/analysis.edat\"), row.names = c(NA, \n-1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n**unknown** (1 file)\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = \"session-3.7z\", Group = \"—\", Path = \"Experiment_3/session-3.7z\"), row.names = c(NA, \n-1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n:::\n"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "yellow"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "\n-  We found 20 files in 1 repository.\n-  We found 1 README file and 0 repositories without READMEs.\n-  We found 2 proprietary E-Prime files.\n-  We could not classify 1 file.\n-  The manuscript's studies and the repository's file groups do not match.\n-  We found 8 file naming problems to fix."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "repo_n",
+          "files_n",
+          "files_data",
+          "files_code",
+          "files_readme",
+          "files_zip",
+          "files_unknown",
+          "naming_issues",
+          "roster_mismatch"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "fz07"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              20
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              4
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              3
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              8
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "repo_url",
+          "repo_type",
+          "repo_error"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 8,
+        "names": [
+          "file_name",
+          "rule",
+          "severity",
+          "detail",
+          "paper_id"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Figure 2.emrg2",
+              "données.csv",
+              "données.csv",
+              "session-3.7z",
+              "notes (final)!.omv",
+              "notes (final)!.omv",
+              "notes (final)!.pdf",
+              "notes (final)!.pdf"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "spaces",
+              "special-characters",
+              "diacritics",
+              "unclassifiable",
+              "spaces",
+              "special-characters",
+              "spaces",
+              "special-characters"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "bad",
+              "bad",
+              "bad",
+              "bad",
+              "bad",
+              "bad",
+              "bad",
+              "bad"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "contains a space",
+              "contains a character other than letters, digits, underscore, or dash",
+              "contains non-ASCII characters (e.g. accented letters)",
+              "could not be classified by name or extension (data_type is 'unknown'); add a recognisable keyword (data, code, materials, ...) or a known extension",
+              "contains a space",
+              "contains a character other than letters, digits, underscore, or dash",
+              "contains a space",
+              "contains a character other than letters, digits, underscore, or dash"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "fz07",
+              "fz07",
+              "fz07",
+              "fz07",
+              "fz07",
+              "fz07",
+              "fz07",
+              "fz07"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "repo_url",
+          "doi",
+          "license",
+          "paper_id"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "roster",
+          "found",
+          "missing",
+          "extra",
+          "agrees"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "pilot1",
+              "ex4"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "pilot1",
+              "ex1",
+              "ex3"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ex4"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ex1",
+              "ex3"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          }
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

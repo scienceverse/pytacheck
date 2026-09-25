@@ -1,0 +1,2116 @@
+{
+  "id": "data_check.qualtrics",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "findings",
+      "careless",
+      "demographics",
+      "qualtrics",
+      "structure",
+      "previews",
+      "gated_repos",
+      "manifest_path",
+      "group_no_evidence",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "data_check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Data Check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "results"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 18,
+        "names": [
+          "paper_id",
+          "repo_url",
+          "source_file",
+          "group",
+          "column_name",
+          "representation",
+          "measurement_level",
+          "concept",
+          "role",
+          "unit",
+          "quality",
+          "parse_note",
+          "is_qualtrics",
+          "qualtrics_display_order",
+          "sample_values",
+          "utf8_repaired",
+          "n",
+          "n_missing",
+          "n_unique",
+          "mean",
+          "sd",
+          "se",
+          "median",
+          "min",
+          "max",
+          "range",
+          "p25",
+          "p75",
+          "iqr",
+          "skewness",
+          "kurtosis"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://osf.io/qualt",
+              "https://osf.io/qualt",
+              "https://osf.io/qualt",
+              "https://osf.io/qualt",
+              "https://osf.io/qualt",
+              "https://osf.io/qualt",
+              "https://osf.io/qualt",
+              "https://osf.io/qualt",
+              "https://osf.io/qualt",
+              "https://osf.io/qualt",
+              "https://osf.io/qualt",
+              "https://osf.io/qualt",
+              "https://osf.io/qualt",
+              "https://osf.io/qualt",
+              "https://osf.io/qualt",
+              "https://osf.io/qualt",
+              "https://osf.io/qualt",
+              "https://osf.io/qualt"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "survey.csv",
+              "survey.csv",
+              "survey.csv",
+              "survey.csv",
+              "survey.csv",
+              "survey.csv",
+              "survey.csv",
+              "survey.csv",
+              "survey.csv",
+              "survey.csv",
+              "survey.csv",
+              "survey.csv",
+              "survey.csv",
+              "survey.csv",
+              "survey.csv",
+              "survey.csv",
+              "survey.csv",
+              "survey.csv"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "StartDate",
+              "EndDate",
+              "Status",
+              "IPAddress",
+              "Progress",
+              "Duration (in seconds)",
+              "Finished",
+              "RecordedDate",
+              "ResponseId",
+              "LocationLatitude",
+              "LocationLongitude",
+              "Q1_DO_Q2",
+              "q_1",
+              "q_2",
+              "q_3",
+              "q_4",
+              "q_5",
+              "q_6"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "datetime",
+              "datetime",
+              "numeric",
+              "text",
+              "numeric",
+              "numeric",
+              "numeric",
+              "datetime",
+              "text",
+              "numeric",
+              "numeric",
+              "text",
+              "numeric",
+              "numeric",
+              "numeric",
+              "numeric",
+              "numeric",
+              "numeric"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "nominal",
+              "nominal",
+              "nominal",
+              "nominal",
+              "nominal",
+              "ratio",
+              "nominal",
+              "nominal",
+              "nominal",
+              "ratio",
+              "ratio",
+              "nominal",
+              "ordinal",
+              "ordinal",
+              "ordinal",
+              "ordinal",
+              "ordinal",
+              "ordinal"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "qualtrics_start",
+              "qualtrics_end",
+              "qualtrics_status",
+              "qualtrics_ip",
+              "qualtrics_progress",
+              "qualtrics_duration",
+              "qualtrics_finished",
+              "qualtrics_recorded",
+              "qualtrics_responseid",
+              "qualtrics_lat",
+              "qualtrics_lon",
+              null,
+              "likert",
+              "likert",
+              "likert",
+              "likert",
+              "likert",
+              "likert"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "timestamp",
+              "timestamp",
+              "measure",
+              "measure",
+              "measure",
+              "measure",
+              "measure",
+              "timestamp",
+              "identifier",
+              "measure",
+              "measure",
+              "measure",
+              "measure",
+              "measure",
+              "measure",
+              "measure",
+              "measure",
+              "measure"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ok",
+              "ok",
+              "ok",
+              "ok",
+              "ok",
+              "ok",
+              "ok",
+              "ok",
+              "ok",
+              "ok",
+              "ok",
+              "constant",
+              "ok",
+              "ok",
+              "ok",
+              "ok",
+              "ok",
+              "ok"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              true,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2021-05-02 10:01:00 | 2021-05-03 10:02:00 | 2021-05-04 10:03:00 | 2021-05-05 10:04:00 | 2021-05-06 10:05:00",
+              "2021-05-02 10:01:00 | 2021-05-03 10:02:00 | 2021-05-04 10:03:00 | 2021-05-05 10:04:00 | 2021-05-06 10:05:00",
+              "0 | 0 | 1 | 0 | 0",
+              "10.0.0.1 | 10.0.0.2 | 10.0.0.3 | 10.0.0.4 | 10.0.0.5",
+              "100 | 100 | 100 | 100 | 100",
+              "35 | 48 | 300 | 301 | 302",
+              "1 | 1 | 1 | 1 | 1",
+              "2021-05-02 10:01:00 | 2021-05-03 10:02:00 | 2021-05-04 10:03:00 | 2021-05-05 10:04:00 | 2021-05-06 10:05:00",
+              "R_0000007919 | R_0000015838 | R_0000023757 | R_0000031676 | R_0000039595",
+              "52.01 | 52.02 | 52.03 | 52.04 | 52.05",
+              "4.01 | 4.02 | 4.03 | 4.04 | 4.05",
+              "Q2|Q1 | Q2|Q1 | Q2|Q1 | Q2|Q1 | Q2|Q1",
+              "5 | 4 | 2 | 3 | 1",
+              "2 | 1 | 5 | 3 | 5",
+              "2 | 2 | 3 | 1 | 3",
+              "2 | 1 | 3 | 5 | 5",
+              "4 | 3 | 3 | 5 | 1",
+              "2 | 4 | 1 | 4 | 4"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              40,
+              40,
+              40,
+              40,
+              40,
+              40,
+              40,
+              40,
+              40,
+              40,
+              40,
+              40,
+              40,
+              40,
+              40,
+              40,
+              40,
+              40
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              40,
+              40,
+              2,
+              40,
+              2,
+              40,
+              2,
+              40,
+              40,
+              40,
+              40,
+              1,
+              5,
+              5,
+              5,
+              5,
+              5,
+              5
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              304.65,
+              null,
+              null,
+              null,
+              52.205,
+              4.205,
+              null,
+              3.25,
+              3,
+              2.8,
+              3.475,
+              2.825,
+              3.025
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              62.1080737143958,
+              null,
+              null,
+              null,
+              0.116904519445001,
+              0.116904519445001,
+              null,
+              1.37281294596729,
+              1.39596488090423,
+              1.34355059641541,
+              1.35849652944453,
+              1.46563191937025,
+              1.44093096686901
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              9.82014870115624,
+              null,
+              null,
+              null,
+              0.0184842275106824,
+              0.0184842275106824,
+              null,
+              0.217060785531115,
+              0.220721427863152,
+              0.212434001817518,
+              0.214797161323935,
+              0.231736753832712,
+              0.227831190318734
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              317.5,
+              null,
+              null,
+              null,
+              52.205,
+              4.205,
+              null,
+              3,
+              3,
+              2.5,
+              4,
+              3,
+              3
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              35,
+              null,
+              null,
+              null,
+              52.01,
+              4.01,
+              null,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              337,
+              null,
+              null,
+              null,
+              52.4,
+              4.4,
+              null,
+              5,
+              5,
+              5,
+              5,
+              5,
+              5
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              302,
+              null,
+              null,
+              null,
+              0.390000000000001,
+              0.390000000000001,
+              null,
+              4,
+              4,
+              4,
+              4,
+              4,
+              4
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              307.75,
+              null,
+              null,
+              null,
+              52.1075,
+              4.1075,
+              null,
+              2,
+              2,
+              2,
+              2,
+              1,
+              2
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              327.25,
+              null,
+              null,
+              null,
+              52.3025,
+              4.3025,
+              null,
+              4.25,
+              4,
+              4,
+              5,
+              4,
+              4
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              19.5,
+              null,
+              null,
+              null,
+              0.195,
+              0.194999999999999,
+              null,
+              2.25,
+              2,
+              2,
+              3,
+              3,
+              2
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              -3.77969816358265,
+              null,
+              null,
+              null,
+              4.65148135742348e-14,
+              -2.9379441415487e-15,
+              null,
+              -0.152190123237336,
+              0,
+              0.294398866542557,
+              -0.277721243105196,
+              0.104789024877265,
+              -0.0423974316303608
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              13.1853907461266,
+              null,
+              null,
+              null,
+              -1.2903018292683,
+              -1.29030182926829,
+              null,
+              -1.28232897750937,
+              -1.23568213296399,
+              -1.20554800490702,
+              -1.33785647754258,
+              -1.40273503002351,
+              -1.41563992083163
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "This module classifies repository files and, for tabular data files available locally, extracts each column's type and summary statistics.",
+          "#### Data Tree",
+          "Where the files sit within each repository. Each file is followed by how it was classified, which study it belongs to.",
+          "**Repository: https://osf.io/qualt**",
+          "```\n└── data/\n    └── survey.csv  📊 data ex1\n```",
+          "#### Data Files",
+          "::: {.panel-tabset}\n\n## survey.csv\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(StartDate = c(\"2021-05-02 10:01:00\", \"2021-05-03 10:02:00\", \n\"2021-05-04 10:03:00\", \"2021-05-05 10:04:00\", \"2021-05-06 10:05:00\", \n\"2021-05-07 10:06:00\", \"2021-05-08 10:07:00\", \"2021-05-09 10:08:00\", \n\"2021-05-10 10:09:00\", \"2021-05-11 10:10:00\", \"2021-05-12 10:11:00\", \n\"2021-05-13 10:12:00\", \"2021-05-14 10:13:00\", \"2021-05-15 10:14:00\", \n\"2021-05-16 10:15:00\", \"2021-05-17 10:16:00\", \"2021-05-18 10:17:00\", \n\"2021-05-19 10:18:00\", \"2021-05-20 10:19:00\", \"2021-05-21 10:20:00\", \n\"2021-05-22 10:21:00\", \"2021-05-23 10:22:00\", \"2021-05-24 10:23:00\", \n\"2021-05-25 10:24:00\", \"2021-05-26 10:25:00\", \"2021-05-27 10:26:00\", \n\"2021-05-28 10:27:00\", \"2021-05-01 10:28:00\", \"2021-05-02 10:29:00\", \n\"2021-05-03 10:30:00\", \"2021-05-04 10:31:00\", \"2021-05-05 10:32:00\", \n\"2021-05-06 10:33:00\", \"2021-05-07 10:34:00\", \"2021-05-08 10:35:00\", \n\"2021-05-09 10:36:00\", \"2021-05-10 10:37:00\", \"2021-05-11 10:38:00\", \n\"2021-05-12 10:39:00\", \"2021-05-13 10:40:00\"), EndDate = c(\"2021-05-02 10:01:00\", \n\"2021-05-03 10:02:00\", \"2021-05-04 10:03:00\", \"2021-05-05 10:04:00\", \n\"2021-05-06 10:05:00\", \"2021-05-07 10:06:00\", \"2021-05-08 10:07:00\", \n\"2021-05-09 10:08:00\", \"2021-05-10 10:09:00\", \"2021-05-11 10:10:00\", \n\"2021-05-12 10:11:00\", \"2021-05-13 10:12:00\", \"2021-05-14 10:13:00\", \n\"2021-05-15 10:14:00\", \"2021-05-16 10:15:00\", \"2021-05-17 10:16:00\", \n\"2021-05-18 10:17:00\", \"2021-05-19 10:18:00\", \"2021-05-20 10:19:00\", \n\"2021-05-21 10:20:00\", \"2021-05-22 10:21:00\", \"2021-05-23 10:22:00\", \n\"2021-05-24 10:23:00\", \"2021-05-25 10:24:00\", \"2021-05-26 10:25:00\", \n\"2021-05-27 10:26:00\", \"2021-05-28 10:27:00\", \"2021-05-01 10:28:00\", \n\"2021-05-02 10:29:00\", \"2021-05-03 10:30:00\", \"2021-05-04 10:31:00\", \n\"2021-05-05 10:32:00\", \"2021-05-06 10:33:00\", \"2021-05-07 10:34:00\", \n\"2021-05-08 10:35:00\", \"2021-05-09 10:36:00\", \"2021-05-10 10:37:00\", \n\"2021-05-11 10:38:00\", \"2021-05-12 10:39:00\", \"2021-05-13 10:40:00\"\n), Status = c(0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, \n1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, \n0, 0, 0), IPAddress = c(\"10.0.0.1\", \"10.0.0.2\", \"10.0.0.3\", \"10.0.0.4\", \n\"10.0.0.5\", \"10.0.0.6\", \"10.0.0.7\", \"10.0.0.8\", \"10.0.0.9\", \"10.0.0.10\", \n\"10.0.0.11\", \"10.0.0.12\", \"10.0.0.13\", \"10.0.0.14\", \"10.0.0.15\", \n\"10.0.0.16\", \"10.0.0.17\", \"10.0.0.18\", \"10.0.0.19\", \"10.0.0.20\", \n\"10.0.0.21\", \"10.0.0.22\", \"10.0.0.23\", \"10.0.0.24\", \"10.0.0.25\", \n\"10.0.0.26\", \"10.0.0.27\", \"10.0.0.28\", \"10.0.0.29\", \"10.0.0.30\", \n\"10.0.0.31\", \"10.0.0.32\", \"10.0.0.33\", \"10.0.0.34\", \"10.0.0.35\", \n\"10.0.0.36\", \"10.0.0.37\", \"10.0.0.38\", \"10.0.0.39\", \"10.0.0.40\"\n), Progress = c(100, 100, 100, 100, 100, 100, 100, 60, 100, 100, \n100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, \n100, 60, 100, 100, 100, 100, 100, 100, 100, 60, 100, 100, 100, \n100, 100, 100, 100), \"Duration (in seconds)\" = c(35, 48, 300, \n301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, \n314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326, \n327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337), Finished = c(1, \n1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, \n1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1), RecordedDate = c(\"2021-05-02 10:01:00\", \n\"2021-05-03 10:02:00\", \"2021-05-04 10:03:00\", \"2021-05-05 10:04:00\", \n\"2021-05-06 10:05:00\", \"2021-05-07 10:06:00\", \"2021-05-08 10:07:00\", \n\"2021-05-09 10:08:00\", \"2021-05-10 10:09:00\", \"2021-05-11 10:10:00\", \n\"2021-05-12 10:11:00\", \"2021-05-13 10:12:00\", \"2021-05-14 10:13:00\", \n\"2021-05-15 10:14:00\", \"2021-05-16 10:15:00\", \"2021-05-17 10:16:00\", \n\"2021-05-18 10:17:00\", \"2021-05-19 10:18:00\", \"2021-05-20 10:19:00\", \n\"2021-05-21 10:20:00\", \"2021-05-22 10:21:00\", \"2021-05-23 10:22:00\", \n\"2021-05-24 10:23:00\", \"2021-05-25 10:24:00\", \"2021-05-26 10:25:00\", \n\"2021-05-27 10:26:00\", \"2021-05-28 10:27:00\", \"2021-05-01 10:28:00\", \n\"2021-05-02 10:29:00\", \"2021-05-03 10:30:00\", \"2021-05-04 10:31:00\", \n\"2021-05-05 10:32:00\", \"2021-05-06 10:33:00\", \"2021-05-07 10:34:00\", \n\"2021-05-08 10:35:00\", \"2021-05-09 10:36:00\", \"2021-05-10 10:37:00\", \n\"2021-05-11 10:38:00\", \"2021-05-12 10:39:00\", \"2021-05-13 10:40:00\"\n), ResponseId = c(\"R_0000007919\", \"R_0000015838\", \"R_0000023757\", \n\"R_0000031676\", \"R_0000039595\", \"R_0000047514\", \"R_0000055433\", \n\"R_0000063352\", \"R_0000071271\", \"R_0000079190\", \"R_0000087109\", \n\"R_0000095028\", \"R_0000102947\", \"R_0000110866\", \"R_0000118785\", \n\"R_0000126704\", \"R_0000134623\", \"R_0000142542\", \"R_0000150461\", \n\"R_0000158380\", \"R_0000166299\", \"R_0000174218\", \"R_0000182137\", \n\"R_0000190056\", \"R_0000197975\", \"R_0000205894\", \"R_0000213813\", \n\"R_0000221732\", \"R_0000229651\", \"R_0000237570\", \"R_0000245489\", \n\"R_0000253408\", \"R_0000261327\", \"R_0000269246\", \"R_0000277165\", \n\"R_0000285084\", \"R_0000293003\", \"R_0000300922\", \"R_0000308841\", \n\"R_0000316760\"), LocationLatitude = c(52.01, 52.02, 52.03, 52.04, \n52.05, 52.06, 52.07, 52.08, 52.09, 52.1, 52.11, 52.12, 52.13, \n52.14, 52.15, 52.16, 52.17, 52.18, 52.19, 52.2, 52.21, 52.22, \n52.23, 52.24, 52.25, 52.26, 52.27, 52.28, 52.29, 52.3, 52.31, \n52.32, 52.33, 52.34, 52.35, 52.36, 52.37, 52.38, 52.39, 52.4), \n    LocationLongitude = c(4.01, 4.02, 4.03, 4.04, 4.05, 4.06, \n    4.07, 4.08, 4.09, 4.1, 4.11, 4.12, 4.13, 4.14, 4.15, 4.16, \n    4.17, 4.18, 4.19, 4.2, 4.21, 4.22, 4.23, 4.24, 4.25, 4.26, \n    4.27, 4.28, 4.29, 4.3, 4.31, 4.32, 4.33, 4.34, 4.35, 4.36, \n    4.37, 4.38, 4.39, 4.4), Q1_DO_Q2 = c(\"Q2|Q1\", \"Q2|Q1\", \"Q2|Q1\", \n    \"Q2|Q1\", \"Q2|Q1\", \"Q2|Q1\", \"Q2|Q1\", \"Q2|Q1\", \"Q2|Q1\", \"Q2|Q1\", \n    \"Q2|Q1\", \"Q2|Q1\", \"Q2|Q1\", \"Q2|Q1\", \"Q2|Q1\", \"Q2|Q1\", \"Q2|Q1\", \n    \"Q2|Q1\", \"Q2|Q1\", \"Q2|Q1\", \"Q2|Q1\", \"Q2|Q1\", \"Q2|Q1\", \"Q2|Q1\", \n    \"Q2|Q1\", \"Q2|Q1\", \"Q2|Q1\", \"Q2|Q1\", \"Q2|Q1\", \"Q2|Q1\", \"Q2|Q1\", \n    \"Q2|Q1\", \"Q2|Q1\", \"Q2|Q1\", \"Q2|Q1\", \"Q2|Q1\", \"Q2|Q1\", \"Q2|Q1\", \n    \"Q2|Q1\", \"Q2|Q1\"), q_1 = c(5, 4, 2, 3, 1, 2, 3, 2, 5, 4, \n    2, 4, 4, 5, 5, 1, 4, 4, 5, 2, 4, 2, 5, 5, 1, 1, 3, 5, 5, \n    3, 4, 3, 1, 3, 2, 3, 3, 3, 5, 2), q_2 = c(2, 1, 5, 3, 5, \n    2, 5, 2, 3, 2, 2, 3, 3, 4, 3, 4, 2, 5, 3, 1, 1, 5, 4, 5, \n    4, 4, 3, 1, 1, 4, 1, 5, 5, 3, 1, 3, 1, 3, 3, 3), q_3 = c(2, \n    2, 3, 1, 3, 2, 2, 5, 2, 2, 3, 2, 5, 4, 4, 1, 2, 1, 3, 2, \n    2, 2, 5, 4, 1, 4, 5, 4, 2, 1, 4, 1, 5, 5, 4, 2, 3, 3, 1, \n    3), q_4 = c(2, 1, 3, 5, 5, 5, 2, 4, 3, 2, 2, 4, 4, 2, 1, \n    4, 5, 3, 5, 5, 5, 3, 2, 3, 5, 4, 2, 4, 2, 5, 4, 3, 4, 3, \n    5, 1, 2, 5, 5, 5), q_5 = c(4, 3, 3, 5, 1, 4, 2, 3, 2, 1, \n    4, 1, 5, 2, 3, 2, 4, 5, 2, 4, 1, 3, 1, 5, 4, 3, 3, 5, 1, \n    2, 1, 1, 5, 3, 4, 5, 1, 3, 1, 1), q_6 = c(2, 4, 1, 4, 4, \n    5, 1, 5, 5, 1, 4, 1, 2, 3, 1, 3, 1, 4, 5, 2, 3, 5, 3, 1, \n    2, 4, 2, 2, 3, 4, 4, 5, 4, 1, 2, 3, 3, 2, 5, 5)), row.names = c(NA, \n40L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n:::",
+          "#### Descriptives Overview\n\nWe found 0 columns with at least one missing value.",
+          "::: {.panel-tabset}\n\n## survey.csv\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Column = c(\"Duration (in seconds)\", \"EndDate\", \n\"Finished\", \"IPAddress\", \"LocationLatitude\", \"LocationLongitude\", \n\"Progress\", \"Q1_DO_Q2\", \"RecordedDate\", \"ResponseId\", \"StartDate\", \n\"Status\", \"q_1\", \"q_2\", \"q_3\", \"q_4\", \"q_5\", \"q_6\"), Representation = c(\"numeric\", \n\"datetime\", \"numeric\", \"text\", \"numeric\", \"numeric\", \"numeric\", \n\"text\", \"datetime\", \"text\", \"datetime\", \"numeric\", \"numeric\", \n\"numeric\", \"numeric\", \"numeric\", \"numeric\", \"numeric\"), Level = c(\"ratio\", \n\"nominal\", \"nominal\", \"nominal\", \"ratio\", \"ratio\", \"nominal\", \n\"nominal\", \"nominal\", \"nominal\", \"nominal\", \"nominal\", \"ordinal\", \n\"ordinal\", \"ordinal\", \"ordinal\", \"ordinal\", \"ordinal\"), Concept = c(\"qualtrics_duration\", \n\"qualtrics_end\", \"qualtrics_finished\", \"qualtrics_ip\", \"qualtrics_lat\", \n\"qualtrics_lon\", \"qualtrics_progress\", \"\", \"qualtrics_recorded\", \n\"qualtrics_responseid\", \"qualtrics_start\", \"qualtrics_status\", \n\"likert\", \"likert\", \"likert\", \"likert\", \"likert\", \"likert\"), \n    Role = c(\"measure\", \"timestamp\", \"measure\", \"measure\", \"measure\", \n    \"measure\", \"measure\", \"measure\", \"timestamp\", \"identifier\", \n    \"timestamp\", \"measure\", \"measure\", \"measure\", \"measure\", \n    \"measure\", \"measure\", \"measure\"), Unit = c(\"\", \"\", \"\", \"\", \n    \"\", \"\", \"\", \"\", \"\", \"\", \"\", \"\", \"\", \"\", \"\", \"\", \"\", \"\"), \n    Rows = c(40L, 40L, 40L, 40L, 40L, 40L, 40L, 40L, 40L, 40L, \n    40L, 40L, 40L, 40L, 40L, 40L, 40L, 40L), \"% Missing\" = c(0, \n    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), \"N Unique\" = c(40L, \n    40L, 2L, 40L, 40L, 40L, 2L, 1L, 40L, 40L, 40L, 2L, 5L, 5L, \n    5L, 5L, 5L, 5L), Mean = c(304.65, NA, NA, NA, 52.205, 4.205, \n    NA, NA, NA, NA, NA, NA, 3.25, 3, 2.8, 3.475, 2.825, 3.025\n    ), SD = c(62.108, NA, NA, NA, 0.117, 0.117, NA, NA, NA, NA, \n    NA, NA, 1.373, 1.396, 1.344, 1.358, 1.466, 1.441), Min = c(35, \n    NA, NA, NA, 52.01, 4.01, NA, NA, NA, NA, NA, NA, 1, 1, 1, \n    1, 1, 1), Max = c(337, NA, NA, NA, 52.4, 4.4, NA, NA, NA, \n    NA, NA, NA, 5, 5, 5, 5, 5, 5)), row.names = c(\"Duration (in seconds)\", \n\"EndDate\", \"Finished\", \"IPAddress\", \"LocationLatitude\", \"LocationLongitude\", \n\"Progress\", \"Q1_DO_Q2\", \"RecordedDate\", \"ResponseId\", \"StartDate\", \n\"Status\", \"q_1\", \"q_2\", \"q_3\", \"q_4\", \"q_5\", \"q_6\"), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 25, FALSE)\n```\n\n\n:::",
+          "This module runs automated data-quality checks (outliers, miscoded missing values, empty and constant columns, SPSS filter variables, category casing, problematic column names, mixed text encodings, spreadsheet formatting) on the extracted data files.",
+          "We examined 18 columns across 1 data file.",
+          "#### Issues Identified",
+          "3 file/column combinations have at least one issue.\n\n**About the personal-information flags.** These are pattern matches, not confirmed disclosures, and they are tuned to over-report rather than miss something. Expect false positives:\n\n- **Column names** are matched against identifying words in English and other European languages (`email`, `telefoonnummer`, `geboortedatum`, ...). A column called `phone_number` flags whether or not it holds one, and an empty or already-anonymised column flags on its name alone.\n- **Values** are matched against the shape of an identifier. An IP address pattern also matches a version string or a dotted numeric code; a card-number pattern requires both a real issuer prefix and a checksum, but a long numeric ID can still coincide.\n- **Free text** is flagged when a column holds long, mostly-distinct prose — the shape open-ended answers take. Most such columns contain no names at all.\n\nA flag means *look at this column*. Where the data is already de-identified (an `ip` column reading `Anonymized`, a `name` column the authors emptied), no action is needed.",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"survey.csv\", \"survey.csv\", \"survey.csv\"\n), Column = c(\"IPAddress\", \"LocationLatitude\", \"LocationLongitude\"\n), Issues = c(\"<span title='Values look like personal information: ip_address (40 values, 100%). Review before sharing. Column name suggests personal information (matched: ip, address, ipaddress). Review before sharing.'>🔒 Personally Identifying Information — Values look like personal information: ip_address (40 values, 100%); Column name suggests personal information (matched: ip, address, ip...<\/span>\", \n\"<span title='Column name suggests geographic coordinates. Review before sharing.'>🌍 Geographic coordinates — Column name suggests geographic coordinates<\/span><br><span title='Column name suggests personal information (matched: latitude). Review before sharing.'>🔒 Personally Identifying Information — Column name suggests personal information (matched: latitude)<\/span>\", \n\"<span title='Column name suggests geographic coordinates. Review before sharing.'>🌍 Geographic coordinates — Column name suggests geographic coordinates<\/span><br><span title='Column name suggests personal information (matched: longitude). Review before sharing.'>🔒 Personally Identifying Information — Column name suggests personal information (matched: longitude)<\/span>\"\n)), row.names = c(NA, -3L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 20, FALSE)\n```\n",
+          "#### Qualtrics Survey Metadata",
+          "1 of the 1 data file is a Qualtrics survey export. The table below summarises the response metadata Qualtrics records for every survey (not the substantive question columns): how many rows look like previews or unfinished responses that usually need dropping before analysis, the typical completion time (with a count of implausibly fast responses), the data-collection window, and which Qualtrics fields carry personal information to review before sharing. Across these files, 5 rows are flagged as a preview, spam, or unfinished response — check whether they should be excluded.",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = \"survey.csv\", Responses = 40L, \"Preview/unfinished\" = 5L, \n    \"Median time\" = \"5.3 min\", \"Very fast\" = \"2\", Collected = \"2021-05-01 to 2021-05-28\", \n    \"PII fields\" = \"IP address, location\"), row.names = c(NA, \n-1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 20, FALSE)\n```\n",
+          "#### Careless Responding",
+          "1 file contain survey data with an identifier, but careless-response checks were skipped because the `careless` package is not installed. Install it with `install.packages(\"careless\")` to screen for straightlining and other careless responding."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "yellow"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "\n-  We classified 1 file: 1 data.\n-  We found 1 tabular data file and extracted 18 columns from 1 of them.\n-  We grouped the files into 1 study group (ex1).\n-  The study-group step did not get an answer for 1 file (the model request failed); it was grouped by the fallback rules instead. We ran automated data-quality checks on 18 columns; 3 columns have at least one potential issue (3 columns whose name suggests personal information; 2 columns that look like geographic coordinates; 1 column whose values look like personal information). 1 file is a Qualtrics survey export (5 rows look like previews/unfinished responses to review)."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "data_file_n",
+          "column_n",
+          "empty_col_n",
+          "col_datetime",
+          "col_numeric",
+          "col_text",
+          "flagged_n",
+          "spreadsheet_file_n",
+          "spreadsheet_flagged_file_n"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "p1"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              18
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              3
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              12
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              3
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              3
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 6,
+        "names": [
+          "source_file",
+          "column",
+          "label",
+          "check",
+          "detail"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "survey.csv",
+              "survey.csv",
+              "survey.csv",
+              "survey.csv",
+              "survey.csv",
+              "survey.csv"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "IPAddress",
+              "IPAddress",
+              "LocationLatitude",
+              "LocationLatitude",
+              "LocationLongitude",
+              "LocationLongitude"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Personal info (values)",
+              "Personal info (column name)",
+              "Personal info (column name)",
+              "Geographic coordinates",
+              "Personal info (column name)",
+              "Geographic coordinates"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Values look like personal information: ip_address (40 values, 100%). Review before sharing.",
+              "Column name suggests personal information (matched: ip, address, ipaddress). Review before sharing.",
+              "Column name suggests personal information (matched: latitude). Review before sharing.",
+              "Column name suggests geographic coordinates. Review before sharing.",
+              "Column name suggests personal information (matched: longitude). Review before sharing.",
+              "Column name suggests geographic coordinates. Review before sharing."
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "respondent",
+          "source_file",
+          "n_blocks_flagged",
+          "scales",
+          "reasons",
+          "max_longstring",
+          "irv",
+          "short_scale_only",
+          "threshold"
+        ],
+        "v": [
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "source_file",
+          "column",
+          "demographic"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "source_file",
+          "n_rows",
+          "n_drop",
+          "median_seconds",
+          "n_fast",
+          "date_min",
+          "date_max",
+          "pii_fields"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "survey.csv"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              40
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              5
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              317.5
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2021-05-01"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2021-05-28"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "IP address, location"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "repo_name",
+          "repo_url",
+          "file_name",
+          "file_path",
+          "file_url",
+          "file_location",
+          "file_size",
+          "data_type",
+          "doc_role",
+          "data_format",
+          "group",
+          "referenced_by",
+          "tabular_usable",
+          "non_tabular_reason"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "p1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "qualtrics"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://osf.io/qualt"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "survey.csv"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data/survey.csv"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "tests/mod_data_check/fixtures/repos/qualtrics/data/survey.csv"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              7566
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "tabular"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ex1"
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "null"
+              }
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "survey.csv"
+        ],
+        "v": [
+          {
+            "t": "df",
+            "nrow": 40,
+            "names": [
+              "StartDate",
+              "EndDate",
+              "Status",
+              "IPAddress",
+              "Progress",
+              "Duration (in seconds)",
+              "Finished",
+              "RecordedDate",
+              "ResponseId",
+              "LocationLatitude",
+              "LocationLongitude",
+              "Q1_DO_Q2",
+              "q_1",
+              "q_2",
+              "q_3",
+              "q_4",
+              "q_5",
+              "q_6"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "2021-05-02 10:01:00",
+                  "2021-05-03 10:02:00",
+                  "2021-05-04 10:03:00",
+                  "2021-05-05 10:04:00",
+                  "2021-05-06 10:05:00",
+                  "2021-05-07 10:06:00",
+                  "2021-05-08 10:07:00",
+                  "2021-05-09 10:08:00",
+                  "2021-05-10 10:09:00",
+                  "2021-05-11 10:10:00",
+                  "2021-05-12 10:11:00",
+                  "2021-05-13 10:12:00",
+                  "2021-05-14 10:13:00",
+                  "2021-05-15 10:14:00",
+                  "2021-05-16 10:15:00",
+                  "2021-05-17 10:16:00",
+                  "2021-05-18 10:17:00",
+                  "2021-05-19 10:18:00",
+                  "2021-05-20 10:19:00",
+                  "2021-05-21 10:20:00",
+                  "2021-05-22 10:21:00",
+                  "2021-05-23 10:22:00",
+                  "2021-05-24 10:23:00",
+                  "2021-05-25 10:24:00",
+                  "2021-05-26 10:25:00",
+                  "2021-05-27 10:26:00",
+                  "2021-05-28 10:27:00",
+                  "2021-05-01 10:28:00",
+                  "2021-05-02 10:29:00",
+                  "2021-05-03 10:30:00",
+                  "2021-05-04 10:31:00",
+                  "2021-05-05 10:32:00",
+                  "2021-05-06 10:33:00",
+                  "2021-05-07 10:34:00",
+                  "2021-05-08 10:35:00",
+                  "2021-05-09 10:36:00",
+                  "2021-05-10 10:37:00",
+                  "2021-05-11 10:38:00",
+                  "2021-05-12 10:39:00",
+                  "2021-05-13 10:40:00"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "2021-05-02 10:01:00",
+                  "2021-05-03 10:02:00",
+                  "2021-05-04 10:03:00",
+                  "2021-05-05 10:04:00",
+                  "2021-05-06 10:05:00",
+                  "2021-05-07 10:06:00",
+                  "2021-05-08 10:07:00",
+                  "2021-05-09 10:08:00",
+                  "2021-05-10 10:09:00",
+                  "2021-05-11 10:10:00",
+                  "2021-05-12 10:11:00",
+                  "2021-05-13 10:12:00",
+                  "2021-05-14 10:13:00",
+                  "2021-05-15 10:14:00",
+                  "2021-05-16 10:15:00",
+                  "2021-05-17 10:16:00",
+                  "2021-05-18 10:17:00",
+                  "2021-05-19 10:18:00",
+                  "2021-05-20 10:19:00",
+                  "2021-05-21 10:20:00",
+                  "2021-05-22 10:21:00",
+                  "2021-05-23 10:22:00",
+                  "2021-05-24 10:23:00",
+                  "2021-05-25 10:24:00",
+                  "2021-05-26 10:25:00",
+                  "2021-05-27 10:26:00",
+                  "2021-05-28 10:27:00",
+                  "2021-05-01 10:28:00",
+                  "2021-05-02 10:29:00",
+                  "2021-05-03 10:30:00",
+                  "2021-05-04 10:31:00",
+                  "2021-05-05 10:32:00",
+                  "2021-05-06 10:33:00",
+                  "2021-05-07 10:34:00",
+                  "2021-05-08 10:35:00",
+                  "2021-05-09 10:36:00",
+                  "2021-05-10 10:37:00",
+                  "2021-05-11 10:38:00",
+                  "2021-05-12 10:39:00",
+                  "2021-05-13 10:40:00"
+                ]
+              },
+              {
+                "t": "dbl",
+                "v": [
+                  0,
+                  0,
+                  1,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  1,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "10.0.0.1",
+                  "10.0.0.2",
+                  "10.0.0.3",
+                  "10.0.0.4",
+                  "10.0.0.5",
+                  "10.0.0.6",
+                  "10.0.0.7",
+                  "10.0.0.8",
+                  "10.0.0.9",
+                  "10.0.0.10",
+                  "10.0.0.11",
+                  "10.0.0.12",
+                  "10.0.0.13",
+                  "10.0.0.14",
+                  "10.0.0.15",
+                  "10.0.0.16",
+                  "10.0.0.17",
+                  "10.0.0.18",
+                  "10.0.0.19",
+                  "10.0.0.20",
+                  "10.0.0.21",
+                  "10.0.0.22",
+                  "10.0.0.23",
+                  "10.0.0.24",
+                  "10.0.0.25",
+                  "10.0.0.26",
+                  "10.0.0.27",
+                  "10.0.0.28",
+                  "10.0.0.29",
+                  "10.0.0.30",
+                  "10.0.0.31",
+                  "10.0.0.32",
+                  "10.0.0.33",
+                  "10.0.0.34",
+                  "10.0.0.35",
+                  "10.0.0.36",
+                  "10.0.0.37",
+                  "10.0.0.38",
+                  "10.0.0.39",
+                  "10.0.0.40"
+                ]
+              },
+              {
+                "t": "dbl",
+                "v": [
+                  100,
+                  100,
+                  100,
+                  100,
+                  100,
+                  100,
+                  100,
+                  60,
+                  100,
+                  100,
+                  100,
+                  100,
+                  100,
+                  100,
+                  100,
+                  100,
+                  100,
+                  100,
+                  100,
+                  100,
+                  100,
+                  100,
+                  100,
+                  100,
+                  60,
+                  100,
+                  100,
+                  100,
+                  100,
+                  100,
+                  100,
+                  100,
+                  60,
+                  100,
+                  100,
+                  100,
+                  100,
+                  100,
+                  100,
+                  100
+                ]
+              },
+              {
+                "t": "dbl",
+                "v": [
+                  35,
+                  48,
+                  300,
+                  301,
+                  302,
+                  303,
+                  304,
+                  305,
+                  306,
+                  307,
+                  308,
+                  309,
+                  310,
+                  311,
+                  312,
+                  313,
+                  314,
+                  315,
+                  316,
+                  317,
+                  318,
+                  319,
+                  320,
+                  321,
+                  322,
+                  323,
+                  324,
+                  325,
+                  326,
+                  327,
+                  328,
+                  329,
+                  330,
+                  331,
+                  332,
+                  333,
+                  334,
+                  335,
+                  336,
+                  337
+                ]
+              },
+              {
+                "t": "dbl",
+                "v": [
+                  1,
+                  1,
+                  1,
+                  1,
+                  1,
+                  1,
+                  1,
+                  0,
+                  1,
+                  1,
+                  1,
+                  1,
+                  1,
+                  1,
+                  1,
+                  1,
+                  1,
+                  1,
+                  1,
+                  1,
+                  1,
+                  1,
+                  1,
+                  1,
+                  0,
+                  1,
+                  1,
+                  1,
+                  1,
+                  1,
+                  1,
+                  1,
+                  0,
+                  1,
+                  1,
+                  1,
+                  1,
+                  1,
+                  1,
+                  1
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "2021-05-02 10:01:00",
+                  "2021-05-03 10:02:00",
+                  "2021-05-04 10:03:00",
+                  "2021-05-05 10:04:00",
+                  "2021-05-06 10:05:00",
+                  "2021-05-07 10:06:00",
+                  "2021-05-08 10:07:00",
+                  "2021-05-09 10:08:00",
+                  "2021-05-10 10:09:00",
+                  "2021-05-11 10:10:00",
+                  "2021-05-12 10:11:00",
+                  "2021-05-13 10:12:00",
+                  "2021-05-14 10:13:00",
+                  "2021-05-15 10:14:00",
+                  "2021-05-16 10:15:00",
+                  "2021-05-17 10:16:00",
+                  "2021-05-18 10:17:00",
+                  "2021-05-19 10:18:00",
+                  "2021-05-20 10:19:00",
+                  "2021-05-21 10:20:00",
+                  "2021-05-22 10:21:00",
+                  "2021-05-23 10:22:00",
+                  "2021-05-24 10:23:00",
+                  "2021-05-25 10:24:00",
+                  "2021-05-26 10:25:00",
+                  "2021-05-27 10:26:00",
+                  "2021-05-28 10:27:00",
+                  "2021-05-01 10:28:00",
+                  "2021-05-02 10:29:00",
+                  "2021-05-03 10:30:00",
+                  "2021-05-04 10:31:00",
+                  "2021-05-05 10:32:00",
+                  "2021-05-06 10:33:00",
+                  "2021-05-07 10:34:00",
+                  "2021-05-08 10:35:00",
+                  "2021-05-09 10:36:00",
+                  "2021-05-10 10:37:00",
+                  "2021-05-11 10:38:00",
+                  "2021-05-12 10:39:00",
+                  "2021-05-13 10:40:00"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "R_0000007919",
+                  "R_0000015838",
+                  "R_0000023757",
+                  "R_0000031676",
+                  "R_0000039595",
+                  "R_0000047514",
+                  "R_0000055433",
+                  "R_0000063352",
+                  "R_0000071271",
+                  "R_0000079190",
+                  "R_0000087109",
+                  "R_0000095028",
+                  "R_0000102947",
+                  "R_0000110866",
+                  "R_0000118785",
+                  "R_0000126704",
+                  "R_0000134623",
+                  "R_0000142542",
+                  "R_0000150461",
+                  "R_0000158380",
+                  "R_0000166299",
+                  "R_0000174218",
+                  "R_0000182137",
+                  "R_0000190056",
+                  "R_0000197975",
+                  "R_0000205894",
+                  "R_0000213813",
+                  "R_0000221732",
+                  "R_0000229651",
+                  "R_0000237570",
+                  "R_0000245489",
+                  "R_0000253408",
+                  "R_0000261327",
+                  "R_0000269246",
+                  "R_0000277165",
+                  "R_0000285084",
+                  "R_0000293003",
+                  "R_0000300922",
+                  "R_0000308841",
+                  "R_0000316760"
+                ]
+              },
+              {
+                "t": "dbl",
+                "v": [
+                  52.01,
+                  52.02,
+                  52.03,
+                  52.04,
+                  52.05,
+                  52.06,
+                  52.07,
+                  52.08,
+                  52.09,
+                  52.1,
+                  52.11,
+                  52.12,
+                  52.13,
+                  52.14,
+                  52.15,
+                  52.16,
+                  52.17,
+                  52.18,
+                  52.19,
+                  52.2,
+                  52.21,
+                  52.22,
+                  52.23,
+                  52.24,
+                  52.25,
+                  52.26,
+                  52.27,
+                  52.28,
+                  52.29,
+                  52.3,
+                  52.31,
+                  52.32,
+                  52.33,
+                  52.34,
+                  52.35,
+                  52.36,
+                  52.37,
+                  52.38,
+                  52.39,
+                  52.4
+                ]
+              },
+              {
+                "t": "dbl",
+                "v": [
+                  4.01,
+                  4.02,
+                  4.03,
+                  4.04,
+                  4.05,
+                  4.06,
+                  4.07,
+                  4.08,
+                  4.09,
+                  4.1,
+                  4.11,
+                  4.12,
+                  4.13,
+                  4.14,
+                  4.15,
+                  4.16,
+                  4.17,
+                  4.18,
+                  4.19,
+                  4.2,
+                  4.21,
+                  4.22,
+                  4.23,
+                  4.24,
+                  4.25,
+                  4.26,
+                  4.27,
+                  4.28,
+                  4.29,
+                  4.3,
+                  4.31,
+                  4.32,
+                  4.33,
+                  4.34,
+                  4.35,
+                  4.36,
+                  4.37,
+                  4.38,
+                  4.39,
+                  4.4
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Q2|Q1",
+                  "Q2|Q1",
+                  "Q2|Q1",
+                  "Q2|Q1",
+                  "Q2|Q1",
+                  "Q2|Q1",
+                  "Q2|Q1",
+                  "Q2|Q1",
+                  "Q2|Q1",
+                  "Q2|Q1",
+                  "Q2|Q1",
+                  "Q2|Q1",
+                  "Q2|Q1",
+                  "Q2|Q1",
+                  "Q2|Q1",
+                  "Q2|Q1",
+                  "Q2|Q1",
+                  "Q2|Q1",
+                  "Q2|Q1",
+                  "Q2|Q1",
+                  "Q2|Q1",
+                  "Q2|Q1",
+                  "Q2|Q1",
+                  "Q2|Q1",
+                  "Q2|Q1",
+                  "Q2|Q1",
+                  "Q2|Q1",
+                  "Q2|Q1",
+                  "Q2|Q1",
+                  "Q2|Q1",
+                  "Q2|Q1",
+                  "Q2|Q1",
+                  "Q2|Q1",
+                  "Q2|Q1",
+                  "Q2|Q1",
+                  "Q2|Q1",
+                  "Q2|Q1",
+                  "Q2|Q1",
+                  "Q2|Q1",
+                  "Q2|Q1"
+                ]
+              },
+              {
+                "t": "dbl",
+                "v": [
+                  5,
+                  4,
+                  2,
+                  3,
+                  1,
+                  2,
+                  3,
+                  2,
+                  5,
+                  4,
+                  2,
+                  4,
+                  4,
+                  5,
+                  5,
+                  1,
+                  4,
+                  4,
+                  5,
+                  2,
+                  4,
+                  2,
+                  5,
+                  5,
+                  1,
+                  1,
+                  3,
+                  5,
+                  5,
+                  3,
+                  4,
+                  3,
+                  1,
+                  3,
+                  2,
+                  3,
+                  3,
+                  3,
+                  5,
+                  2
+                ]
+              },
+              {
+                "t": "dbl",
+                "v": [
+                  2,
+                  1,
+                  5,
+                  3,
+                  5,
+                  2,
+                  5,
+                  2,
+                  3,
+                  2,
+                  2,
+                  3,
+                  3,
+                  4,
+                  3,
+                  4,
+                  2,
+                  5,
+                  3,
+                  1,
+                  1,
+                  5,
+                  4,
+                  5,
+                  4,
+                  4,
+                  3,
+                  1,
+                  1,
+                  4,
+                  1,
+                  5,
+                  5,
+                  3,
+                  1,
+                  3,
+                  1,
+                  3,
+                  3,
+                  3
+                ]
+              },
+              {
+                "t": "dbl",
+                "v": [
+                  2,
+                  2,
+                  3,
+                  1,
+                  3,
+                  2,
+                  2,
+                  5,
+                  2,
+                  2,
+                  3,
+                  2,
+                  5,
+                  4,
+                  4,
+                  1,
+                  2,
+                  1,
+                  3,
+                  2,
+                  2,
+                  2,
+                  5,
+                  4,
+                  1,
+                  4,
+                  5,
+                  4,
+                  2,
+                  1,
+                  4,
+                  1,
+                  5,
+                  5,
+                  4,
+                  2,
+                  3,
+                  3,
+                  1,
+                  3
+                ]
+              },
+              {
+                "t": "dbl",
+                "v": [
+                  2,
+                  1,
+                  3,
+                  5,
+                  5,
+                  5,
+                  2,
+                  4,
+                  3,
+                  2,
+                  2,
+                  4,
+                  4,
+                  2,
+                  1,
+                  4,
+                  5,
+                  3,
+                  5,
+                  5,
+                  5,
+                  3,
+                  2,
+                  3,
+                  5,
+                  4,
+                  2,
+                  4,
+                  2,
+                  5,
+                  4,
+                  3,
+                  4,
+                  3,
+                  5,
+                  1,
+                  2,
+                  5,
+                  5,
+                  5
+                ]
+              },
+              {
+                "t": "dbl",
+                "v": [
+                  4,
+                  3,
+                  3,
+                  5,
+                  1,
+                  4,
+                  2,
+                  3,
+                  2,
+                  1,
+                  4,
+                  1,
+                  5,
+                  2,
+                  3,
+                  2,
+                  4,
+                  5,
+                  2,
+                  4,
+                  1,
+                  3,
+                  1,
+                  5,
+                  4,
+                  3,
+                  3,
+                  5,
+                  1,
+                  2,
+                  1,
+                  1,
+                  5,
+                  3,
+                  4,
+                  5,
+                  1,
+                  3,
+                  1,
+                  1
+                ]
+              },
+              {
+                "t": "dbl",
+                "v": [
+                  2,
+                  4,
+                  1,
+                  4,
+                  4,
+                  5,
+                  1,
+                  5,
+                  5,
+                  1,
+                  4,
+                  1,
+                  2,
+                  3,
+                  1,
+                  3,
+                  1,
+                  4,
+                  5,
+                  2,
+                  3,
+                  5,
+                  3,
+                  1,
+                  2,
+                  4,
+                  2,
+                  2,
+                  3,
+                  4,
+                  4,
+                  5,
+                  4,
+                  1,
+                  2,
+                  3,
+                  3,
+                  2,
+                  5,
+                  5
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "null"
+      },
+      {
+        "t": "null"
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "names": [
+          "data_file_n",
+          "column_n",
+          "empty_col_n",
+          "flagged_n",
+          "spreadsheet_file_n",
+          "spreadsheet_flagged_file_n"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -1,0 +1,13 @@
+"id","Gender","score_txt","empty_col","filter_$","email","latitude","longitude","comments","a b","a_b","rt"
+1,"Male ","12",NA,1,"person01@example.org",52.1,4.3,"I found the task quite hard because the letters moved too quickly for me",-0.395836027095826,-0.891335142307256,300
+2,"male","13",NA,1,"person02@example.org",52.2,4.4,"The second block was easier than the first one and I enjoyed it a lot more",0.619648670891013,0.141393843324655,432
+3,"Female","n/a",NA,1,"person03@example.org",51.9,4.2,"My neighbour Jan helped me set up the laptop before I started the session",-0.0846293125066132,0.22491938952134,512
+4,"female","15",NA,1,"person04@example.org",52,4.5,"I was a bit tired today since I had to work late at the hospital yesterday",0.0263976116173211,-0.25709661229311,272
+5,"Male","16",NA,0,"person05@example.org",52.3,4.1,"Everything went fine, although the room was rather noisy during block three",-1.32798063744909,1.71214684090207,683
+6,"Female","17",NA,1,"person06@example.org",51.8,4.6,"I think I pressed the wrong key a few times near the end of the experiment",-1.47911310496303,1.52761254943381,278
+7,"Male","18",NA,1,"person07@example.org",52.4,4.3,"The instructions were clear and the break between the blocks was welcome",1.73122030858823,1.77032412081383,573
+8,"female","19",NA,1,"person08@example.org",52.1,4.4,"I did not understand what to do in the practice trials at the very start",1.54399635750641,-0.541585291404239,562
+9,"Female","20",NA,0,"person09@example.org",52,4.2,"My daughter was playing in the next room so I was distracted at times today",1.15697722551155,-1.69914567778504,220
+10,"Male","21",NA,1,"person10@example.org",51.7,4.5,"Nothing special to report, it all worked as expected on my own computer",-0.480178881741254,0.704940276515888,413
+11,"male","22",NA,1,"person11@example.org",52.2,4.3,"I would have liked more practice trials before the real task started here",-0.815910301097926,-0.846650345780404,241
+12,"Female","23",NA,1,"person12@example.org",52.3,4.4,"The sounds were too loud at first but I turned the volume down afterwards",0.109670035434469,1.08650065193509,584

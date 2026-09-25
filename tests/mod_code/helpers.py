@@ -287,3 +287,64 @@ def cc_norm(mo: Any) -> Any:
         )
         extras["version_pin"] = vp
     return replace(mo, table=table, extras=extras)
+
+
+def cc_errors(name: str, **kwargs: Any) -> list[str | None] | None:
+    """The table's read errors of scenario *name* (R's ``cc_errors()``).
+
+    Paths are machine-independent and R's `` in current working directory
+    ('<cwd>')`` suffix (which pytacheck's ``code_read()`` does not add yet) is
+    dropped: the cases check which path code_check hands to the reader.
+    """
+    from pytacheck._r.regex import sub
+
+    table = cc_norm(cc_run(name, **kwargs)).table
+    if "error" not in table.columns:
+        return None
+    return [
+        None if v is None else sub(r" in current working directory \('<ROOT>'\)\.$", ".", v)
+        for v in (None if pd.isna(x) else str(x) for x in table["error"].tolist())
+    ]
+
+
+def cc_manifest(name: str, file: bool = False, **kwargs: Any) -> dict[str, Any]:
+    """The manifests ``code_check(manifest=)`` writes for scenario *name*.
+
+    File name -> parsed JSON of every file in a fresh manifest directory (or
+    of the single ``one.manifest.json`` when *file* is true), as R's
+    ``cc_manifest()``.
+    """
+    import tempfile
+
+    from pytacheck._r.base import r_sorted
+
+    with tempfile.TemporaryDirectory(prefix="manifest") as d:
+        target = os.path.join(d, "one.manifest.json") if file else d
+        cc_run(name, manifest=target, **kwargs)
+        return {
+            f: json.loads(Path(d, f).read_text(encoding="utf-8")) for f in r_sorted(os.listdir(d))
+        }
+
+
+def cc_local(path: str, **kwargs: Any) -> Any:
+    """code_check with *local_path* (a fresh repo_check of it), R's ``cc_local()``."""
+    import pytacheck as pc
+    from pytacheck.module import module_run
+
+    paper = pc.test_paper(["Some text."])
+    paper.paper_id = "p1"
+    return cc_norm(module_run(paper, "code_check", local_path=path, **kwargs))
+
+
+def cc_prev_empty_structure(name: str) -> Any:
+    """Scenario *name*'s data_check output with a zero-row ``structure``.
+
+    R's ``%||%`` keeps it (it is not ``NULL``), so repo_check's table is not
+    used (R's ``cc_prev_empty_structure()``).
+    """
+    from dataclasses import replace
+
+    prev = cc_prev(name)
+    extras = dict(prev.extras)
+    extras["structure"] = extras["structure"].iloc[0:0]
+    return replace(prev, extras=extras)

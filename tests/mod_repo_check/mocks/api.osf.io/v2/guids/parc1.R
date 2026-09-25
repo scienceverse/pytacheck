@@ -1,0 +1,1 @@
+structure(list(method = "GET", url = "https://api.osf.io/v2/guids/parc1", status_code = 403L, headers = structure(list(`content-type` = "application/json; charset=utf-8"), class = "httr2_headers"), body = charToRaw("{\"errors\": [{\"detail\": \"You do not have permission to perform this action.\"}]}"), cache = new.env(parent = emptyenv())), class = "httr2_response")

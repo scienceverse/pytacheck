@@ -1,0 +1,19 @@
+{
+  "id": "repo_tree_block.naming",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "#### Data Tree",
+      "Where the files sit within each repository. Each file is followed by how it was classified, which study it belongs to, and any file-naming issue found by repo_check.",
+      "**Repository: r1**",
+      "```\n├── data/\n│   └── a.csv  📊 data      ex1  Generic name\n├── m/\n│   └── p.png  📁 materials ex1\n└── README.md  📄 readme\n```",
+      "**Repository: r2**",
+      "```\n└── x.R  💻 code ex2  Bad\n```"
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

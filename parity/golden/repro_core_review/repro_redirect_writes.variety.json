@@ -1,0 +1,76 @@
+{
+  "id": "repro_redirect_writes.variety",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 9,
+    "names": [
+      "call_text",
+      "replacement",
+      "redirected_name",
+      "line"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "write.csv (df, \"out.csv\")",
+          "save(a, b, file = \"ab.RData\")",
+          "ggsave(\"p.png\")",
+          "saveRDS(m, file.path(\"out\", \"m.rds\"))",
+          "write.csv(df, \"noext\", outfile)",
+          "export(df, \"x.xlsx\")",
+          "fwrite(dt, sprintf(\"%s.csv\", nm))",
+          "write.csv(y, \"ü.csv\")",
+          "write.table(x,\n  'multi.tsv',\n  sep = '\\t')"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "write.csv(df,\"{{REPRO_OUTPUT}}out.csv\")",
+          "save(a, b,\"{{REPRO_OUTPUT}}ab.RData\")",
+          "ggsave(\"{{REPRO_OUTPUT}}p.png\")",
+          "saveRDS(m,\"{{REPRO_OUTPUT}}write_4.rds\")",
+          "write.csv(df, \"noext\",\"{{REPRO_OUTPUT}}outfile.tsv\")",
+          "export(df,\"{{REPRO_OUTPUT}}x.xlsx\")",
+          "fwrite(dt,\"{{REPRO_OUTPUT}}write_7.csv\")",
+          "write.csv(y,\"{{REPRO_OUTPUT}}ü.csv\")",
+          "write.table(\"{{REPRO_OUTPUT}}x.csv\",\n  'multi.tsv',\n  sep = '\\t')"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "out.csv",
+          "ab.RData",
+          "p.png",
+          "write_4.rds",
+          "outfile.tsv",
+          "x.xlsx",
+          "write_7.csv",
+          "ü.csv",
+          "x.csv"
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          8,
+          9,
+          11,
+          13
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

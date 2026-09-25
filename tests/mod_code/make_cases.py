@@ -17,6 +17,7 @@ import yaml
 
 ROOT = Path(__file__).resolve().parents[2]
 OUT = ROOT / "parity" / "cases" / "mod_code.yaml"
+REVIEW_OUT = ROOT / "parity" / "cases" / "mod_code_review.yaml"
 
 _PY = "__import__('tests.mod_code.helpers', fromlist=['_'])"
 _R = "local({source('tests/mod_code/cc_helpers.R', local = TRUE); %s})"
@@ -90,6 +91,65 @@ TABLE_CASES: list[tuple[str, str, dict[str, Any]]] = [
 ]
 
 
+# review cases (parity/cases/mod_code_review.yaml): edge branches found in an
+# adversarial review -- readers that fail or return nothing, NA paper ids and
+# locations, R's ICU package order, repeated file names, library gaps, mixed
+# repositories, paper lists, and the manifests written per paper
+REVIEW_MODULE_CASES: list[tuple[str, str, dict[str, Any]]] = [
+    ("edge", "review_edge", {}),
+    ("blank_only", "review_blank_only", {}),
+    ("nochunk_only", "review_nochunk_only", {}),
+    ("pkgs", "review_pkgs", {}),
+    ("dupname", "review_dupname", {}),
+    ("dupname_rev", "review_dupname_rev", {}),
+    ("refs", "review_refs", {}),
+    ("gaps", "review_gaps", {}),
+    ("nopin", "review_nopin", {}),
+    ("mixed_repo", "review_mixed_repo", {}),
+    ("paperlist_jasp", "review_paperlist_jasp", {}),
+    ("na_pid", "review_na_pid", {}),
+    ("na_pid_pin", "review_na_pid_pin", {}),
+    ("na_pid_pin_rev", "review_na_pid_pin_rev", {}),
+    ("pins", "review_pins", {}),
+    ("pins_empty", "review_pins_empty", {}),
+    ("pins_one", "review_pins_one", {}),
+    ("i18n", "review_i18n", {}),
+    ("dashes", "review_dashes", {}),
+]
+
+# unreadable locations (NA / "") -- the error column is compared by the
+# `errors.*` cases below, as far as pytacheck's code_read() agrees with readr
+REVIEW_DOWNLOAD_CASES: list[tuple[str, str, dict[str, Any]]] = [
+    ("locs", "review_locs", {}),
+    ("locs_no_download", "review_locs", {"download": False}),
+    ("emptyloc", "review_emptyloc", {}),
+]
+
+# local_path: code_check runs its own repo_check of a local directory
+REVIEW_LOCAL_CASES: list[tuple[str, str, dict[str, Any]]] = [
+    ("code_files", "upstream/metacheck/tests/testthat/fixtures/code_files", {}),
+    ("parse_errors", "upstream/metacheck/tests/testthat/fixtures/parse-errors", {}),
+    ("pins", "tests/mod_code/fixtures/review/pins", {}),
+    ("mixed_local_only", "tests/mod_code/fixtures/mixed", {"local_only": True}),
+]
+
+REVIEW_ERROR_CASES: list[tuple[str, str, dict[str, Any]]] = [
+    ("locs", "review_locs", {}),
+    ("locs_no_download", "review_locs", {"download": False}),
+    ("edge", "review_edge", {}),
+]
+
+REVIEW_MANIFEST_CASES: list[tuple[str, str, dict[str, Any]]] = [
+    ("paperlist", "paperlist", {}),
+    ("paperlist_file", "paperlist", {"file": True}),
+    ("psychsci", "psychsci", {}),
+    ("pkgs", "review_pkgs", {}),
+    ("jasp_only", "jasp_only", {}),
+    ("na_pid", "review_na_pid", {}),
+    ("nocode", "nocode", {}),
+]
+
+
 def _r_args(args: dict[str, Any]) -> str:
     def lit(v: Any) -> str:
         if isinstance(v, bool):
@@ -155,6 +215,35 @@ def table_case(suffix: str, scenario: str, args: dict[str, Any]) -> dict[str, An
     }
 
 
+def helper_case(
+    kind: str, fn: str, suffix: str, scenario: str, args: dict[str, Any]
+) -> dict[str, Any]:
+    return {
+        "id": f"{kind}.{suffix}",
+        "r": "identity",
+        "py": "tests.mod_code.helpers.identity",
+        "args": {
+            "x": {
+                "$expr": {
+                    "r": _R % f"{fn}('{scenario}'{_r_args(args)})",
+                    "py": f"{_PY}.{fn}('{scenario}'{_py_args(args)})",
+                }
+            }
+        },
+    }
+
+
+def _dump(path: Path, header: str, area: str, cases: list[dict[str, Any]]) -> None:
+    body = yaml.safe_dump(
+        {"area": area, "cases": cases},
+        sort_keys=False,
+        allow_unicode=True,
+        width=1000,
+        default_style='"',
+    )
+    path.write_text(header + body, encoding="utf-8")
+
+
 def main() -> None:
     cases = (
         [module_case(*c) for c in MODULE_CASES]
@@ -168,14 +257,29 @@ def main() -> None:
         "# scenario in tests/mod_code/scenarios.json (tests/mod_code/cc_helpers.R and\n"
         "# helpers.py); report_tables cases compare the report's table data.\n"
     )
-    body = yaml.safe_dump(
-        {"area": "mod_code", "cases": cases},
-        sort_keys=False,
-        allow_unicode=True,
-        width=1000,
-        default_style='"',
+    _dump(OUT, header, "mod_code", cases)
+
+    empty_structure = module_case("empty_structure", "structure", {})
+    empty_structure["args"]["paper"]["$expr"] = {
+        "r": _R % "cc_prev_empty_structure('structure')",
+        "py": f"{_PY}.cc_prev_empty_structure('structure')",
+    }
+    review = (
+        [module_case(*c) for c in REVIEW_MODULE_CASES]
+        + [empty_structure]
+        + [download_case(*c) for c in REVIEW_DOWNLOAD_CASES]
+        + [helper_case("errors", "cc_errors", *c) for c in REVIEW_ERROR_CASES]
+        + [helper_case("local_path", "cc_local", *c) for c in REVIEW_LOCAL_CASES]
+        + [helper_case("manifest", "cc_manifest", *c) for c in REVIEW_MANIFEST_CASES]
+        + [table_case(s, sc, a) for s, sc, a in REVIEW_MODULE_CASES]
     )
-    OUT.write_text(header + body, encoding="utf-8")
+    review_header = (
+        "# code_check review cases (inst/modules/code_check.R), generated by\n"
+        "# tests/mod_code/make_cases.py -- edit that script, not this file.\n"
+        "# Edge branches: unreadable/empty files, NA paper ids and locations, package\n"
+        "# order, repeated file names, library gaps, paper lists, per-paper manifests.\n"
+    )
+    _dump(REVIEW_OUT, review_header, "mod_code_review", review)
 
 
 if __name__ == "__main__":

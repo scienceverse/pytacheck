@@ -1,0 +1,132 @@
+{
+  "id": "manifest.pkgs",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "p1.manifest.json"
+    ],
+    "v": [
+      {
+        "t": "list",
+        "names": [
+          "code"
+        ],
+        "v": [
+          {
+            "t": "list",
+            "names": [
+              "packages",
+              "ddi_mapping"
+            ],
+            "v": [
+              {
+                "t": "list",
+                "names": null,
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "abc"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "B2"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Bio"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "data.table"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "ggplot2"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Hmisc"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "MASS"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Matrix"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "numpy"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "pandas"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "sklearn"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "zoo"
+                    ]
+                  }
+                ]
+              },
+              {
+                "t": "list",
+                "names": [
+                  "code.packages",
+                  "code.files_failed"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "otherMat/software (loaded packages)"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "fileDscr/notes (code files whose download failed after retries)"
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

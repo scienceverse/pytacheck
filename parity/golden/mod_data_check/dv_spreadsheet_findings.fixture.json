@@ -1,0 +1,118 @@
+{
+  "id": "dv_spreadsheet_findings.fixture",
+  "ok": true,
+  "error": null,
+  "warnings": [
+    "error 1 in extracting from zip file"
+  ],
+  "value": {
+    "t": "list",
+    "names": [
+      "findings",
+      "n_files"
+    ],
+    "v": [
+      {
+        "t": "df",
+        "nrow": 11,
+        "names": [
+          "source_file",
+          "column",
+          "label",
+          "check",
+          "detail"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "messy.xlsx",
+              "messy.xlsx",
+              "messy.xlsx",
+              "coding.xlsx",
+              "coding.xlsx",
+              "legacy.xls",
+              "broken.xlsx",
+              "messy.fods",
+              "messy.fods",
+              "messy.fods",
+              "messy.fods"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Data",
+              "Data",
+              "Data",
+              null,
+              "coding",
+              null,
+              null,
+              "Results",
+              "Results",
+              "Results",
+              "Results"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Colour coding",
+              "Merged cells",
+              "Empty or unnamed columns",
+              "Not a rectangular dataset",
+              "Empty rows",
+              "Un-inspectable (.xls)",
+              "Unreadable",
+              "Colour coding",
+              "Merged cells",
+              "Empty rows",
+              "Empty or unnamed columns"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2 cells use fill colour to encode information; colour is lost on CSV export.",
+              "1 merged range (A7:B7) break the rectangular grid.",
+              "1 column is empty or have a blank header.",
+              "This file reads as a table but is not a usable dataset (mostly free text). Store the data as a plain rectangular table (one header row, one column per variable) with a codebook.",
+              "3 fully empty rows inside the data range.",
+              "Legacy .xls format: colour, merged cells and empty rows/columns cannot be inspected. Convert to .xlsx or .ods for a full check.",
+              "The file could not be parsed as a .xlsx workbook.",
+              "2 cells use fill colour to encode information; colour is lost on CSV export.",
+              "1 merged range (A6:B6) break the rectangular grid.",
+              "2 fully empty rows inside the data range.",
+              "1 column is empty or have a blank header."
+            ]
+          }
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          5
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

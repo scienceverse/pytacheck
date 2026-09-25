@@ -1,0 +1,277 @@
+{
+  "id": "repo_check.local.sizes.tables",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": null,
+    "v": [
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "Repository",
+          "Platform",
+          "All Files",
+          "Data Files",
+          "Code Files",
+          "READMEs",
+          "Archives"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "<a href='tests/mod_repo_check/fixtures/review/sizes' target='_blank'>tests/mod_repo_check/fixtures/review/sizes<\/a>"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "local"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              10
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              9
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 10,
+        "names": [
+          "Repository",
+          "File",
+          "Size",
+          "Type"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "tests/mod_repo_check/fixtures/review/sizes",
+              "tests/mod_repo_check/fixtures/review/sizes",
+              "tests/mod_repo_check/fixtures/review/sizes",
+              "tests/mod_repo_check/fixtures/review/sizes",
+              "tests/mod_repo_check/fixtures/review/sizes",
+              "tests/mod_repo_check/fixtures/review/sizes",
+              "tests/mod_repo_check/fixtures/review/sizes",
+              "tests/mod_repo_check/fixtures/review/sizes",
+              "tests/mod_repo_check/fixtures/review/sizes",
+              "tests/mod_repo_check/fixtures/review/sizes"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "b999.csv",
+              "empty.csv",
+              "k1000.csv",
+              "k1049.csv",
+              "k1050.csv",
+              "k1150.csv",
+              "k12345.csv",
+              "k1250.csv",
+              "k99950.csv",
+              "README.md"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "999 B",
+              "0 B",
+              "1 kB",
+              "1 kB",
+              "1 kB",
+              "1.1 kB",
+              "12.3 kB",
+              "1.2 kB",
+              "100 kB",
+              "8 B"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data",
+              "data",
+              "data",
+              "data",
+              "data",
+              "data",
+              "data",
+              "data",
+              "data",
+              "readme"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 5,
+        "names": [
+          "File",
+          "Rule",
+          "Severity",
+          "Detail"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "k1000.csv",
+              "k1049.csv",
+              "k1050.csv",
+              "k1150.csv",
+              "k1250.csv"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "zero-padding",
+              "zero-padding",
+              "zero-padding",
+              "zero-padding",
+              "zero-padding"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "suggestion",
+              "suggestion",
+              "suggestion",
+              "suggestion",
+              "suggestion"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "numbered inconsistently with sibling files (pad to 5 digits so names sort in numeric order)",
+              "numbered inconsistently with sibling files (pad to 5 digits so names sort in numeric order)",
+              "numbered inconsistently with sibling files (pad to 5 digits so names sort in numeric order)",
+              "numbered inconsistently with sibling files (pad to 5 digits so names sort in numeric order)",
+              "numbered inconsistently with sibling files (pad to 5 digits so names sort in numeric order)"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 9,
+        "names": [
+          "File",
+          "Group",
+          "Path"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "b999.csv",
+              "empty.csv",
+              "k1000.csv",
+              "k1049.csv",
+              "k1050.csv",
+              "k1150.csv",
+              "k12345.csv",
+              "k1250.csv",
+              "k99950.csv"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "b999.csv",
+              "empty.csv",
+              "k1000.csv",
+              "k1049.csv",
+              "k1050.csv",
+              "k1150.csv",
+              "k12345.csv",
+              "k1250.csv",
+              "k99950.csv"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "File",
+          "Group",
+          "Path"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "README.md"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "—"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "README.md"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

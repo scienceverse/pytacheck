@@ -1,0 +1,14 @@
+{
+  "id": "repo_check.local.edat_many.report",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "### ✅️ Repository Check {#repository-check .green}\n\n\n-  We found 12 files in 1 repository.\n-  We found 1 README file and 0 repositories without READMEs.\n-  We found 10 proprietary E-Prime files.\n\n<details><summary>View detailed feedback<\/summary><div>\n\n#### Repositories\n\n\n<R-CHUNK>\n\n\n#### Files\n\n\n<R-CHUNK>\n\n\nREADME files were found in all repositories.\n\n#### Proprietary E-Prime Files\n\nThe repository contains 10 E-Prime files (run01.edat2, run02.edat2, run03.edat2, run04.edat2, run05.edat2, run06.edat2, run07.edat2, run08.edat2). These are proprietary **binary** formats that only the E-Prime software can open, so metacheck does not download or read them and other researchers cannot reuse them directly. 9 of them have no matching plain-text export. Please also upload the E-Prime **.txt export** (File → Export in E-Prime) for each, so the trial-level data is readable without the proprietary software.\n\n#### File Classification\n\n::: {.callout-note title=\"See how every file was classified and grouped\" collapse=\"true\"}\n\n**documentation** (2 files)\n\n\n<R-CHUNK>\n\n\n**materials** (10 files)\n\n\n<R-CHUNK>\n\n\n:::\n\n\n<\/div><\/details>\n\n::: {.callout-note title=\"How It Works\" collapse=\"true\"}\n\nThis module retrieves information from repositories.\n\nThe Repository Check module lists files on the OSF, GitHub, ResearchBox, DSpace (PsychArchives and other legacy- and DSpace 7-based installations), Zenodo, Dataverse, Figshare, Dryad, ReShare, 4TU.ResearchData, Mendeley Data, and DataONE (Arctic Data Center, KNB, and other member nodes) based on links in the manuscript.\n\nWhen a linked OSF page is a registration, its `registered_from` project (the\none it was registered from, which the manuscript itself may never link\ndirectly) is also checked: if that project is public its files are listed\nunder its own URL, and if it is closed or otherwise inaccessible the report\nflags it explicitly, since some registrations only describe their content\nrather than mirroring it.\n\nIf you want to extend the package to be able to download files from additional data repositories reach out to the Metacheck development team.\n\nThis module was developed by Daniel Lakens and Lisa DeBruine\n\n:::\n"
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

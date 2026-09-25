@@ -1,0 +1,476 @@
+{
+  "id": "repo_check.local.unicode",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "gated_repos",
+      "naming_issues",
+      "repo_metadata",
+      "roster_check",
+      "group_no_evidence",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "repo_check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Repository Check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "results"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 5,
+        "names": [
+          "repo_name",
+          "repo_url",
+          "file_name",
+          "file_url",
+          "file_location",
+          "file_size",
+          "file_type",
+          "file_path",
+          "data_type",
+          "doc_role",
+          "group",
+          "paper_id"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "unicode",
+              "unicode",
+              "unicode",
+              "unicode",
+              "unicode"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "tests/mod_repo_check/fixtures/review/unicode",
+              "tests/mod_repo_check/fixtures/review/unicode",
+              "tests/mod_repo_check/fixtures/review/unicode",
+              "tests/mod_repo_check/fixtures/review/unicode",
+              "tests/mod_repo_check/fixtures/review/unicode"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "données.csv",
+              "Étude 1.csv",
+              "README.md",
+              "Übersicht.R",
+              "日本語.txt"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "/home/user/pytacheck/tests/mod_repo_check/fixtures/review/unicode/données.csv",
+              "/home/user/pytacheck/tests/mod_repo_check/fixtures/review/unicode/études/Étude 1.csv",
+              "/home/user/pytacheck/tests/mod_repo_check/fixtures/review/unicode/README.md",
+              "/home/user/pytacheck/tests/mod_repo_check/fixtures/review/unicode/Übersicht.R",
+              "/home/user/pytacheck/tests/mod_repo_check/fixtures/review/unicode/日本語.txt"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              4,
+              4,
+              10,
+              7,
+              5
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data",
+              "data",
+              "readme",
+              "code",
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "données.csv",
+              "études/Étude 1.csv",
+              "README.md",
+              "Übersicht.R",
+              "日本語.txt"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data",
+              "data",
+              "documentation",
+              "code",
+              "documentation"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              "readme",
+              null,
+              "supplemental"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ex1",
+              "ex1",
+              null,
+              "ex1",
+              "ex1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "p_local",
+              "p_local",
+              "p_local",
+              "p_local",
+              "p_local"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "#### Repositories",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Repository = \"<a href='tests/mod_repo_check/fixtures/review/unicode' target='_blank'>tests/mod_repo_check/fixtures/review/unicode<\/a>\", \n    Platform = \"local\", \"All Files\" = 5L, \"Data Files\" = 2L, \n    \"Code Files\" = 1L, READMEs = 1L, Archives = 0L), row.names = c(NA, \n-1L), class = c(\"tbl_df\", \"tbl\", \"data.frame\"))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
+          "#### Files",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Repository = c(\"tests/mod_repo_check/fixtures/review/unicode\", \n\"tests/mod_repo_check/fixtures/review/unicode\", \"tests/mod_repo_check/fixtures/review/unicode\", \n\"tests/mod_repo_check/fixtures/review/unicode\", \"tests/mod_repo_check/fixtures/review/unicode\"\n), File = c(\"données.csv\", \"Étude 1.csv\", \"README.md\", \"Übersicht.R\", \n\"日本語.txt\"), Size = c(\"4 B\", \"4 B\", \"10 B\", \"7 B\", \"5 B\"\n), Type = c(\"data\", \"data\", \"readme\", \"code\", NA)), row.names = c(NA, \n-5L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
+          "README files were found in all repositories.",
+          "#### File Naming",
+          "File names should be machine-parseable: no spaces or special characters, and every file should be classifiable by name or extension. We found 9 naming problems that should be fixed, and 0 files with a naming suggestion (not required, but a good habit).",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"données.csv\", \"données.csv\", \"Étude 1.csv\", \n\"Étude 1.csv\", \"Étude 1.csv\", \"Übersicht.R\", \"Übersicht.R\", \n\"日本語.txt\", \"日本語.txt\"), Rule = c(\"special-characters\", \n\"diacritics\", \"spaces\", \"special-characters\", \"diacritics\", \"special-characters\", \n\"diacritics\", \"special-characters\", \"diacritics\"), Severity = c(\"bad\", \n\"bad\", \"bad\", \"bad\", \"bad\", \"bad\", \"bad\", \"bad\", \"bad\"), Detail = c(\"contains a character other than letters, digits, underscore, or dash\", \n\"contains non-ASCII characters (e.g. accented letters)\", \"contains a space\", \n\"contains a character other than letters, digits, underscore, or dash\", \n\"contains non-ASCII characters (e.g. accented letters)\", \"contains a character other than letters, digits, underscore, or dash\", \n\"contains non-ASCII characters (e.g. accented letters)\", \"contains a character other than letters, digits, underscore, or dash\", \n\"contains non-ASCII characters (e.g. accented letters)\")), row.names = c(NA, \n-9L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
+          "#### File Classification",
+          "::: {.callout-note title=\"See how every file was classified and grouped\" collapse=\"true\"}\n\n**code** (1 file)\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = \"Übersicht.R\", Group = \"ex1\", Path = \"Übersicht.R\"), row.names = c(NA, \n-1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n**data** (2 files)\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"données.csv\", \"Étude 1.csv\"), Group = c(\"ex1\", \n\"ex1\"), Path = c(\"données.csv\", \"études/Étude 1.csv\")), row.names = c(NA, \n-2L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n**documentation** (2 files)\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"README.md\", \"日本語.txt\"), Group = c(\"—\", \n\"ex1\"), Path = c(\"README.md\", \"日本語.txt\")), row.names = c(NA, \n-2L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n:::\n"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "yellow"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "\n-  We found 5 files in 1 repository.\n-  We found 1 README file and 0 repositories without READMEs.\n-  We found 9 file naming problems to fix."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "repo_n",
+          "files_n",
+          "files_data",
+          "files_code",
+          "files_readme",
+          "files_zip",
+          "files_unknown",
+          "naming_issues",
+          "roster_mismatch"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "p_local"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              5
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              9
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "repo_url",
+          "repo_type",
+          "repo_error"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 9,
+        "names": [
+          "file_name",
+          "rule",
+          "severity",
+          "detail",
+          "paper_id"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "données.csv",
+              "données.csv",
+              "Étude 1.csv",
+              "Étude 1.csv",
+              "Étude 1.csv",
+              "Übersicht.R",
+              "Übersicht.R",
+              "日本語.txt",
+              "日本語.txt"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "special-characters",
+              "diacritics",
+              "spaces",
+              "special-characters",
+              "diacritics",
+              "special-characters",
+              "diacritics",
+              "special-characters",
+              "diacritics"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "bad",
+              "bad",
+              "bad",
+              "bad",
+              "bad",
+              "bad",
+              "bad",
+              "bad",
+              "bad"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "contains a character other than letters, digits, underscore, or dash",
+              "contains non-ASCII characters (e.g. accented letters)",
+              "contains a space",
+              "contains a character other than letters, digits, underscore, or dash",
+              "contains non-ASCII characters (e.g. accented letters)",
+              "contains a character other than letters, digits, underscore, or dash",
+              "contains non-ASCII characters (e.g. accented letters)",
+              "contains a character other than letters, digits, underscore, or dash",
+              "contains non-ASCII characters (e.g. accented letters)"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "p_local",
+              "p_local",
+              "p_local",
+              "p_local",
+              "p_local",
+              "p_local",
+              "p_local",
+              "p_local",
+              "p_local"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "repo_url",
+          "doi",
+          "license",
+          "paper_id"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "roster",
+          "found",
+          "missing",
+          "extra",
+          "agrees"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ex1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ex1"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          }
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

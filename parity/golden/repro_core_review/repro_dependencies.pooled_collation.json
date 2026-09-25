@@ -1,0 +1,88 @@
+{
+  "id": "repro_dependencies.pooled_collation",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 12,
+    "names": [
+      "package",
+      "source",
+      "ref",
+      "base"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "abc",
+          "ABC",
+          "data.table",
+          "dataverse",
+          "DBI",
+          "dplyr",
+          "edgeR",
+          "Matrix",
+          "R.utils",
+          "Rcpp",
+          "remotes",
+          "rlang"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "cran",
+          "cran",
+          "cran",
+          "cran",
+          "cran",
+          "cran",
+          "bioc",
+          "base",
+          "cran",
+          "cran",
+          "cran",
+          "cran"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          true,
+          false,
+          false,
+          false,
+          false
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

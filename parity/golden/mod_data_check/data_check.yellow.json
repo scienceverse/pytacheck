@@ -1,0 +1,1275 @@
+{
+  "id": "data_check.yellow",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "findings",
+      "careless",
+      "demographics",
+      "qualtrics",
+      "structure",
+      "previews",
+      "gated_repos",
+      "manifest_path",
+      "group_no_evidence",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "data_check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Data Check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "results"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 10,
+        "names": [
+          "paper_id",
+          "repo_url",
+          "source_file",
+          "group",
+          "column_name",
+          "representation",
+          "measurement_level",
+          "concept",
+          "role",
+          "unit",
+          "quality",
+          "parse_note",
+          "is_qualtrics",
+          "qualtrics_display_order",
+          "sample_values",
+          "utf8_repaired",
+          "n",
+          "n_missing",
+          "n_unique",
+          "mean",
+          "sd",
+          "se",
+          "median",
+          "min",
+          "max",
+          "range",
+          "p25",
+          "p75",
+          "iqr",
+          "skewness",
+          "kurtosis"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://github.com/lab/yellow",
+              "https://github.com/lab/yellow",
+              "https://github.com/lab/yellow",
+              "https://github.com/lab/yellow",
+              "https://github.com/lab/yellow",
+              "https://github.com/lab/yellow",
+              "https://github.com/lab/yellow",
+              "https://github.com/lab/yellow",
+              "https://github.com/lab/yellow",
+              "https://github.com/lab/yellow"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "clean.csv",
+              "clean.csv",
+              "clean.csv",
+              "clean.csv",
+              "clean.csv",
+              "clean.csv",
+              "clean.csv",
+              "clean.csv",
+              "clean.csv",
+              "clean.csv"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "m1",
+              "m2",
+              "m3",
+              "m4",
+              "m5",
+              "m6",
+              "m7",
+              "m8",
+              "m9",
+              "condition"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "numeric",
+              "numeric",
+              "numeric",
+              "numeric",
+              "numeric",
+              "numeric",
+              "numeric",
+              "numeric",
+              "numeric",
+              "text"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ratio",
+              "ratio",
+              "ratio",
+              "ratio",
+              "ratio",
+              "ratio",
+              "ratio",
+              "ratio",
+              "ratio",
+              "nominal"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              "condition"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "measure",
+              "measure",
+              "measure",
+              "measure",
+              "measure",
+              "measure",
+              "measure",
+              "measure",
+              "measure",
+              "condition"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ok",
+              "ok",
+              "ok",
+              "ok",
+              "ok",
+              "ok",
+              "ok",
+              "ok",
+              "ok",
+              "ok"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "54.4 | 59.6 | 58.1 | 47.1 | 39.1",
+              "38.6 | 53.1 | 60.7 | 65.6 | 55.7",
+              "44 | 33.6 | 48.3 | 47.7 | 61.2",
+              "40.5 | 60.5 | 46.7 | 72.3 | 49.5",
+              "48.5 | 34.5 | 38.8 | 53.7 | 58.5",
+              "45.1 | 61.4 | 60.5 | 58.9 | 30.4",
+              "51.2 | 52.5 | 62.4 | 56.8 | 54.2",
+              "68.8 | 53.6 | 74.1 | 55 | 67.7",
+              "47.1 | 45.8 | 40.5 | 37.2 | 52.3",
+              "control | control  | treatment | treatment | control"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              25,
+              25,
+              25,
+              25,
+              25,
+              25,
+              25,
+              25,
+              25,
+              25
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              24,
+              25,
+              25,
+              25,
+              25,
+              24,
+              24,
+              25,
+              24,
+              3
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              51.244,
+              51.016,
+              47.004,
+              53.08,
+              51.6,
+              51.744,
+              50.08,
+              54.912,
+              48.096,
+              null
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              8.48759290572618,
+              9.12988134278498,
+              9.39199481828364,
+              10.1401840877438,
+              9.80535567942336,
+              7.69459117389178,
+              8.30306168430256,
+              12.8986859795872,
+              8.26571634322559,
+              null
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              1.69751858114524,
+              1.825976268557,
+              1.87839896365673,
+              2.02803681754877,
+              1.96107113588467,
+              1.53891823477836,
+              1.66061233686051,
+              2.57973719591744,
+              1.65314326864512,
+              null
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              50.5,
+              49.1,
+              47.4,
+              52,
+              52.8,
+              53.1,
+              52.9,
+              54.2,
+              49.7,
+              null
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              36.6,
+              35.9,
+              28.1,
+              36.6,
+              34.5,
+              30.4,
+              31.1,
+              31.1,
+              28.8,
+              null
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              68.3,
+              67,
+              61.8,
+              73.9,
+              70.6,
+              61.8,
+              62.4,
+              75,
+              63.6,
+              null
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              31.7,
+              31.1,
+              33.7,
+              37.3,
+              36.1,
+              31.4,
+              31.3,
+              43.9,
+              34.8,
+              null
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              46.4,
+              44.2,
+              42.3,
+              46.7,
+              45.9,
+              46.8,
+              45.4,
+              43.7,
+              41.8,
+              null
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              58.1,
+              59,
+              54,
+              59.8,
+              58.5,
+              57.5,
+              56.1,
+              66,
+              53.9,
+              null
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              11.7,
+              14.8,
+              11.7,
+              13.1,
+              12.6,
+              10.7,
+              10.7,
+              22.3,
+              12.1,
+              null
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0.0491319485256738,
+              0.103474509745256,
+              -0.221384658942504,
+              0.276270498056173,
+              -0.179696557734724,
+              -0.817586337916034,
+              -0.751853405218028,
+              0.0462424935183315,
+              -0.401499618001336,
+              null
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              -0.891139579929148,
+              -1.2962424665659,
+              -0.748343048277873,
+              -0.663044757924382,
+              -0.806690371353782,
+              0.270162970466522,
+              -0.564374782591795,
+              -1.36013807457286,
+              -0.353240830230743,
+              null
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "This module classifies repository files and, for tabular data files available locally, extracts each column's type and summary statistics.",
+          "#### Data Tree",
+          "Where the files sit within each repository. Each file is followed by how it was classified, which study it belongs to.",
+          "**Repository: https://github.com/lab/yellow**",
+          "```\n├── clean.csv     📊 data          ex1\n└── codebook.csv  📖 documentation ex1\n```",
+          "#### Data Files",
+          "::: {.panel-tabset}\n\n## clean.csv\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(m1 = c(54.4, 59.6, 58.1, 47.1, 39.1, 50.7, 49.7, \n55.8, 37.4, 49.7, 58.9, 59.9, 50.5, 46.7, 54.3, 44.4, 65.5, 68.3, \n36.6, 40.2, 56.2, 48.1, 46.4, 59.5, 44), m2 = c(38.6, 53.1, 60.7, \n65.6, 55.7, 51.8, 61.7, 39.5, 45.4, 44.2, 47.3, 67, 55, 62.9, \n35.9, 59, 48.5, 38.5, 42.7, 46.8, 59.4, 43.6, 58.4, 49.1, 45), \n    m3 = c(44, 33.6, 48.3, 47.7, 61.2, 58.4, 42.3, 43.8, 54, \n    46.1, 47.4, 58.5, 44.2, 59.3, 61.8, 29.1, 51.1, 28.1, 56.8, \n    39.2, 41.4, 48.2, 45.1, 36.5, 49), m4 = c(40.5, 60.5, 46.7, \n    72.3, 49.5, 62.2, 52, 59.8, 46.3, 61.5, 50.8, 73.9, 43.5, \n    53.7, 57.4, 36.6, 55.8, 38.2, 51.2, 68.8, 37.9, 53.8, 47, \n    56.4, 50.7), m5 = c(48.5, 34.5, 38.8, 53.7, 58.5, 50.2, 53.1, \n    52.8, 35, 58.9, 52.6, 65.8, 55.9, 70.6, 64.3, 54.9, 59.9, \n    34.6, 45.9, 42.8, 48.2, 56.2, 51.1, 41.6, 61.6), m6 = c(45.1, \n    61.4, 60.5, 58.9, 30.4, 54.9, 60, 53.1, 56, 48, 46.2, 46, \n    42.2, 49.4, 49.2, 61.8, 54.7, 57, 54.2, 38.7, 51.4, 57.5, \n    51.4, 58.8, 46.8), m7 = c(51.2, 52.5, 62.4, 56.8, 54.2, 56.1, \n    50.8, 45.4, 59.9, 53.6, 36.4, 53, 56.1, 38.3, 53.4, 39.9, \n    43.7, 57.7, 47.5, 50.3, 31.1, 52.9, 55.3, 35.4, 58.1), m8 = c(68.8, \n    53.6, 74.1, 55, 67.7, 75, 65.4, 71.9, 43.7, 47.5, 54.2, 61, \n    54.5, 45.3, 43.4, 38.2, 39.3, 43.3, 66, 72.2, 49.3, 64.3, \n    46.9, 31.1, 41.1), m9 = c(47.1, 45.8, 40.5, 37.2, 52.3, 63.6, \n    41.2, 32.9, 28.8, 57.2, 49.7, 46.3, 55.1, 41.8, 54.9, 46.2, \n    53.9, 41.4, 51.9, 50.6, 50.6, 46.5, 50.5, 59.4, 57), condition = c(\"control\", \n    \"control \", \"treatment\", \"treatment\", \"control\", \"control\", \n    \"control \", \"treatment\", \"treatment\", \"control\", \"control\", \n    \"control \", \"treatment\", \"treatment\", \"control\", \"control\", \n    \"control \", \"treatment\", \"treatment\", \"control\", \"control\", \n    \"control \", \"treatment\", \"treatment\", \"control\")), row.names = c(NA, \n25L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n:::",
+          "#### Descriptives Overview\n\nWe found 0 columns with at least one missing value.",
+          "::: {.panel-tabset}\n\n## clean.csv\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Column = c(\"condition\", \"m1\", \"m2\", \"m3\", \"m4\", \n\"m5\", \"m6\", \"m7\", \"m8\", \"m9\"), Representation = c(\"text\", \"numeric\", \n\"numeric\", \"numeric\", \"numeric\", \"numeric\", \"numeric\", \"numeric\", \n\"numeric\", \"numeric\"), Level = c(\"nominal\", \"ratio\", \"ratio\", \n\"ratio\", \"ratio\", \"ratio\", \"ratio\", \"ratio\", \"ratio\", \"ratio\"\n), Concept = c(\"condition\", \"\", \"\", \"\", \"\", \"\", \"\", \"\", \"\", \"\"\n), Role = c(\"condition\", \"measure\", \"measure\", \"measure\", \"measure\", \n\"measure\", \"measure\", \"measure\", \"measure\", \"measure\"), Unit = c(\"\", \n\"\", \"\", \"\", \"\", \"\", \"\", \"\", \"\", \"\"), Rows = c(25L, 25L, 25L, \n25L, 25L, 25L, 25L, 25L, 25L, 25L), \"% Missing\" = c(0, 0, 0, \n0, 0, 0, 0, 0, 0, 0), \"N Unique\" = c(3L, 24L, 25L, 25L, 25L, \n25L, 24L, 24L, 25L, 24L), Mean = c(NA, 51.244, 51.016, 47.004, \n53.08, 51.6, 51.744, 50.08, 54.912, 48.096), SD = c(NA, 8.488, \n9.13, 9.392, 10.14, 9.805, 7.695, 8.303, 12.899, 8.266), Min = c(NA, \n36.6, 35.9, 28.1, 36.6, 34.5, 30.4, 31.1, 31.1, 28.8), Max = c(NA, \n68.3, 67, 61.8, 73.9, 70.6, 61.8, 62.4, 75, 63.6)), row.names = c(\"condition\", \n\"m1\", \"m2\", \"m3\", \"m4\", \"m5\", \"m6\", \"m7\", \"m8\", \"m9\"), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 25, FALSE)\n```\n\n\n:::",
+          "This module runs automated data-quality checks (outliers, miscoded missing values, empty and constant columns, SPSS filter variables, category casing, problematic column names, mixed text encodings, spreadsheet formatting) on the extracted data files.",
+          "We examined 10 columns across 1 data file.",
+          "#### Issues Identified",
+          "1 file/column combination has at least one issue.",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = \"clean.csv\", Column = \"condition\", Issues = \"<span title='1 value with leading/trailing whitespace: \\\"control \\\"'>↔️ Whitespace — 1 value with leading/trailing whitespace: \\\"control \\\"<\/span>\"), row.names = c(NA, \n-1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 20, FALSE)\n```\n",
+          "#### Careless Responding",
+          "No file could be screened for careless responding.",
+          "**What this does not cover.** Only 0 of 1 data file could be screened: the rest had no detectable multi-item scale block, or too few respondents. Even in a screened file, these checks only look at multi-item rating scales — the only place where a repeated or flat answer pattern is interpretable. Single questions, open text, demographics and any item outside a detected scale block are never examined. A respondent can therefore answer most of a survey carelessly and still not be flagged here, and finding nothing is not evidence that a dataset is free of careless responding."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "yellow"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "\n-  We classified 2 files: 1 data, 1 documentation.\n-  We found 1 tabular data file and extracted 10 columns from 1 of them.\n-  We grouped the files into 1 study group (ex1).\n-  The study-group step did not get an answer for 2 files (the model request failed); they were grouped by the fallback rules instead. We ran automated data-quality checks on 10 columns; 1 column has at least one potential issue (1 column with leading/trailing whitespace)."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "data_file_n",
+          "column_n",
+          "empty_col_n",
+          "col_numeric",
+          "col_text",
+          "flagged_n",
+          "spreadsheet_file_n",
+          "spreadsheet_flagged_file_n"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "p1"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              10
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              9
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "source_file",
+          "column",
+          "label",
+          "check",
+          "detail"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "clean.csv"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "condition"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Whitespace"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "1 value with leading/trailing whitespace: \"control \""
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "respondent",
+          "source_file",
+          "n_blocks_flagged",
+          "scales",
+          "reasons",
+          "max_longstring",
+          "irv",
+          "short_scale_only",
+          "threshold"
+        ],
+        "v": [
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "source_file",
+          "column",
+          "demographic"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [],
+        "v": []
+      },
+      {
+        "t": "df",
+        "nrow": 2,
+        "names": [
+          "paper_id",
+          "repo_name",
+          "repo_url",
+          "file_name",
+          "file_path",
+          "file_url",
+          "file_location",
+          "file_size",
+          "data_type",
+          "doc_role",
+          "data_format",
+          "group",
+          "referenced_by",
+          "tabular_usable",
+          "non_tabular_reason"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "p1",
+              "p1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "yellow",
+              "yellow"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://github.com/lab/yellow",
+              "https://github.com/lab/yellow"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "clean.csv",
+              "codebook.csv"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "clean.csv",
+              "codebook.csv"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "tests/mod_data_check/fixtures/repos/yellow/clean.csv",
+              "tests/mod_data_check/fixtures/repos/yellow/codebook.csv"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              1413,
+              209
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data",
+              "documentation"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "codebook"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "tabular",
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ex1",
+              "ex1"
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "null"
+              },
+              {
+                "t": "null"
+              }
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true,
+              true
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "clean.csv"
+        ],
+        "v": [
+          {
+            "t": "df",
+            "nrow": 25,
+            "names": [
+              "m1",
+              "m2",
+              "m3",
+              "m4",
+              "m5",
+              "m6",
+              "m7",
+              "m8",
+              "m9",
+              "condition"
+            ],
+            "v": [
+              {
+                "t": "dbl",
+                "v": [
+                  54.4,
+                  59.6,
+                  58.1,
+                  47.1,
+                  39.1,
+                  50.7,
+                  49.7,
+                  55.8,
+                  37.4,
+                  49.7,
+                  58.9,
+                  59.9,
+                  50.5,
+                  46.7,
+                  54.3,
+                  44.4,
+                  65.5,
+                  68.3,
+                  36.6,
+                  40.2,
+                  56.2,
+                  48.1,
+                  46.4,
+                  59.5,
+                  44
+                ]
+              },
+              {
+                "t": "dbl",
+                "v": [
+                  38.6,
+                  53.1,
+                  60.7,
+                  65.6,
+                  55.7,
+                  51.8,
+                  61.7,
+                  39.5,
+                  45.4,
+                  44.2,
+                  47.3,
+                  67,
+                  55,
+                  62.9,
+                  35.9,
+                  59,
+                  48.5,
+                  38.5,
+                  42.7,
+                  46.8,
+                  59.4,
+                  43.6,
+                  58.4,
+                  49.1,
+                  45
+                ]
+              },
+              {
+                "t": "dbl",
+                "v": [
+                  44,
+                  33.6,
+                  48.3,
+                  47.7,
+                  61.2,
+                  58.4,
+                  42.3,
+                  43.8,
+                  54,
+                  46.1,
+                  47.4,
+                  58.5,
+                  44.2,
+                  59.3,
+                  61.8,
+                  29.1,
+                  51.1,
+                  28.1,
+                  56.8,
+                  39.2,
+                  41.4,
+                  48.2,
+                  45.1,
+                  36.5,
+                  49
+                ]
+              },
+              {
+                "t": "dbl",
+                "v": [
+                  40.5,
+                  60.5,
+                  46.7,
+                  72.3,
+                  49.5,
+                  62.2,
+                  52,
+                  59.8,
+                  46.3,
+                  61.5,
+                  50.8,
+                  73.9,
+                  43.5,
+                  53.7,
+                  57.4,
+                  36.6,
+                  55.8,
+                  38.2,
+                  51.2,
+                  68.8,
+                  37.9,
+                  53.8,
+                  47,
+                  56.4,
+                  50.7
+                ]
+              },
+              {
+                "t": "dbl",
+                "v": [
+                  48.5,
+                  34.5,
+                  38.8,
+                  53.7,
+                  58.5,
+                  50.2,
+                  53.1,
+                  52.8,
+                  35,
+                  58.9,
+                  52.6,
+                  65.8,
+                  55.9,
+                  70.6,
+                  64.3,
+                  54.9,
+                  59.9,
+                  34.6,
+                  45.9,
+                  42.8,
+                  48.2,
+                  56.2,
+                  51.1,
+                  41.6,
+                  61.6
+                ]
+              },
+              {
+                "t": "dbl",
+                "v": [
+                  45.1,
+                  61.4,
+                  60.5,
+                  58.9,
+                  30.4,
+                  54.9,
+                  60,
+                  53.1,
+                  56,
+                  48,
+                  46.2,
+                  46,
+                  42.2,
+                  49.4,
+                  49.2,
+                  61.8,
+                  54.7,
+                  57,
+                  54.2,
+                  38.7,
+                  51.4,
+                  57.5,
+                  51.4,
+                  58.8,
+                  46.8
+                ]
+              },
+              {
+                "t": "dbl",
+                "v": [
+                  51.2,
+                  52.5,
+                  62.4,
+                  56.8,
+                  54.2,
+                  56.1,
+                  50.8,
+                  45.4,
+                  59.9,
+                  53.6,
+                  36.4,
+                  53,
+                  56.1,
+                  38.3,
+                  53.4,
+                  39.9,
+                  43.7,
+                  57.7,
+                  47.5,
+                  50.3,
+                  31.1,
+                  52.9,
+                  55.3,
+                  35.4,
+                  58.1
+                ]
+              },
+              {
+                "t": "dbl",
+                "v": [
+                  68.8,
+                  53.6,
+                  74.1,
+                  55,
+                  67.7,
+                  75,
+                  65.4,
+                  71.9,
+                  43.7,
+                  47.5,
+                  54.2,
+                  61,
+                  54.5,
+                  45.3,
+                  43.4,
+                  38.2,
+                  39.3,
+                  43.3,
+                  66,
+                  72.2,
+                  49.3,
+                  64.3,
+                  46.9,
+                  31.1,
+                  41.1
+                ]
+              },
+              {
+                "t": "dbl",
+                "v": [
+                  47.1,
+                  45.8,
+                  40.5,
+                  37.2,
+                  52.3,
+                  63.6,
+                  41.2,
+                  32.9,
+                  28.8,
+                  57.2,
+                  49.7,
+                  46.3,
+                  55.1,
+                  41.8,
+                  54.9,
+                  46.2,
+                  53.9,
+                  41.4,
+                  51.9,
+                  50.6,
+                  50.6,
+                  46.5,
+                  50.5,
+                  59.4,
+                  57
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "control",
+                  "control ",
+                  "treatment",
+                  "treatment",
+                  "control",
+                  "control",
+                  "control ",
+                  "treatment",
+                  "treatment",
+                  "control",
+                  "control",
+                  "control ",
+                  "treatment",
+                  "treatment",
+                  "control",
+                  "control",
+                  "control ",
+                  "treatment",
+                  "treatment",
+                  "control",
+                  "control",
+                  "control ",
+                  "treatment",
+                  "treatment",
+                  "control"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "null"
+      },
+      {
+        "t": "null"
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "names": [
+          "data_file_n",
+          "column_n",
+          "empty_col_n",
+          "flagged_n",
+          "spreadsheet_file_n",
+          "spreadsheet_flagged_file_n"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

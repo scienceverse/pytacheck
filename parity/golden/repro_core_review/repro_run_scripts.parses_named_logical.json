@@ -1,0 +1,219 @@
+{
+  "id": "repro_run_scripts.parses_named_logical",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 2,
+    "names": [
+      "file_name",
+      "outcome",
+      "error",
+      "error_type",
+      "undefined_var",
+      "stdout",
+      "stderr",
+      "script_lines",
+      "captures"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "ok.R",
+          "errors.R"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "ran_ok",
+          "not_parsed"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "",
+          ""
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "> dat <- read.csv(\"data.csv\")\n> t.test(dat$x ~ dat$g)\n\n\tWelch Two Sample t-test\n\ndata:  dat$x by dat$g\nt = -4.0415, df = 4.9592, p-value = 0.01008\nalternative hypothesis: true difference in means between group a and group b is not equal to 0\n95 percent confidence interval:\n -5.731711 -1.268289\nsample estimates:\nmean in group a mean in group b \n            2.0             5.5 \n",
+          ""
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "",
+          ""
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "dat <- read.csv(\"data.csv\")",
+              "t.test(dat$x ~ dat$g)"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "list",
+                "names": [
+                  "analysis",
+                  "method",
+                  "rows",
+                  "line",
+                  "call_text"
+                ],
+                "v": [
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Welch Two Sample t-test"
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "Welch Two Sample t-test"
+                    ]
+                  },
+                  {
+                    "t": "list",
+                    "names": null,
+                    "v": [
+                      {
+                        "t": "list",
+                        "names": [
+                          "label",
+                          "stats"
+                        ],
+                        "v": [
+                          {
+                            "t": "chr",
+                            "v": [
+                              "dat$x by dat$g"
+                            ]
+                          },
+                          {
+                            "t": "list",
+                            "names": [
+                              "t",
+                              "df",
+                              "p",
+                              "mean in group a",
+                              "mean in group b",
+                              "conf.low",
+                              "conf.high"
+                            ],
+                            "v": [
+                              {
+                                "t": "dbl",
+                                "v": [
+                                  -4.04145188432738
+                                ]
+                              },
+                              {
+                                "t": "dbl",
+                                "v": [
+                                  4.95918367346939
+                                ]
+                              },
+                              {
+                                "t": "dbl",
+                                "v": [
+                                  0.0100769433479889
+                                ]
+                              },
+                              {
+                                "t": "dbl",
+                                "v": [
+                                  2
+                                ]
+                              },
+                              {
+                                "t": "dbl",
+                                "v": [
+                                  5.5
+                                ]
+                              },
+                              {
+                                "t": "dbl",
+                                "v": [
+                                  -5.73171148133879
+                                ]
+                              },
+                              {
+                                "t": "dbl",
+                                "v": [
+                                  -1.26828851866121
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "t": "int",
+                    "v": [
+                      2
+                    ]
+                  },
+                  {
+                    "t": "chr",
+                    "v": [
+                      "t.test(dat$x ~ dat$g)"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "t": "null"
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

@@ -16,6 +16,7 @@ from collections.abc import Callable, Iterable, Mapping, Sequence
 from dataclasses import dataclass, field
 from typing import Any
 
+import numpy as np
 import pandas as pd
 
 from pytacheck._r import as_character, grepl, gsub, is_na, sub
@@ -73,6 +74,18 @@ def _as_num(x: Any) -> float:
         return math.nan
 
 
+def vals(s: pd.Series | Iterable[Any]) -> list[Any]:
+    """A column as a list, missing values as ``None``."""
+    values = s.tolist() if isinstance(s, pd.Series) else list(s)
+    return [None if _na(v) else v for v in values]
+
+
+def take(df: pd.DataFrame, mask: Iterable[Any]) -> pd.DataFrame:
+    """``df[mask, , drop = FALSE]`` for a logical row mask (index reset)."""
+    keep = np.asarray([bool(m) for m in mask], dtype=bool)
+    return df.iloc[np.flatnonzero(keep)].reset_index(drop=True)
+
+
 def _col(df: pd.DataFrame, name: str) -> list[Any] | None:
     """``df$name`` as a list (``None`` when the column is absent, R's ``NULL``)."""
     if name not in df.columns:
@@ -83,30 +96,40 @@ def _col(df: pd.DataFrame, name: str) -> list[Any] | None:
 def r_frame(columns: Sequence[tuple[str, Any, str]], tibble: bool = False) -> pd.DataFrame:
     """R ``data.frame()`` / ``tibble()`` of ``(name, values, dtype)`` columns.
 
-    ``None`` values (R ``NULL``) drop the column; a scalar (not a list) is
-    recycled to the other columns' length. Differing lengths raise R's
-    ``data.frame()`` error.
+    ``None`` values (R ``NULL``) drop the column; a scalar (not a list) is a
+    length-one vector. ``tibble()`` recycles length one to any size;
+    ``data.frame()`` recycles a length that divides the longest one, and a
+    zero-row table cannot take a length-one column (R's error).
     """
     kept = [(n, v, t) for n, v, t in columns if v is not None]
-    vec_lens = [len(v) for _, v, _ in kept if isinstance(v, list | tuple | pd.Series)]
-    lens = [len(v) if isinstance(v, list | tuple | pd.Series) else 1 for _, v, _ in kept]
-    n = max(vec_lens) if vec_lens else (1 if kept else 0)
-    if any(ln not in (n, 1) or (ln == 1 and n == 0) for ln in lens) or (
-        not tibble and any(n % ln for ln in lens if ln)
-    ):
-        uniq = list(dict.fromkeys(lens))
-        if tibble:
+
+    def length(v: Any) -> int:
+        return len(v) if isinstance(v, list | tuple | pd.Series) else 1
+
+    lens = [length(v) for _, v, _ in kept]
+    n = max(lens, default=0)
+    if tibble:
+        vec = [ln for ln in lens if ln != 1]
+        n = vec[0] if vec else n
+        if any(ln not in (1, n) for ln in lens):
             raise RError("Tibble columns must have compatible sizes.")
-        raise RError(f"arguments imply differing number of rows: {', '.join(map(str, uniq))}")
+    elif any(ln != n and (ln == 0 or n % ln) for ln in lens):
+        uniq = ", ".join(str(ln) for ln in dict.fromkeys(lens))
+        raise RError(f"arguments imply differing number of rows: {uniq}")
     out: dict[str, pd.Series] = {}
     for name, values, dtype in kept:
-        vals = list(values) if isinstance(values, list | tuple | pd.Series) else [values] * n
-        if dtype == "string":
-            out[name] = _chr(vals)
-        elif dtype == "float64":
-            out[name] = _dbl(vals)
+        if isinstance(values, list | tuple | pd.Series):
+            items = list(values)
         else:
-            out[name] = pd.Series(vals, dtype=dtype)
+            items = [None if isinstance(values, _NaScalar) else values]
+        if items and len(items) != n:
+            items = [items[i % len(items)] for i in range(n)]
+        if dtype == "string":
+            out[name] = _chr(items)
+        elif dtype == "float64":
+            out[name] = _dbl(items)
+        else:
+            out[name] = pd.Series(items, dtype=dtype)
     return pd.DataFrame(out)
 
 
@@ -279,19 +302,23 @@ class Repos:
 
     def flag(self, urls: Iterable[Any], message: str) -> None:
         """``repos$repo_error[repos$repo_url %in% urls] <- message``."""
-        mask = r_in(self.df["repo_url"].tolist(), list(urls))
+        mask = r_in(vals(self.df["repo_url"]), list(urls))
         if any(mask):
             errors = self.df["repo_error"].copy()
-            errors[mask] = message
+            errors[np.asarray(mask, dtype=bool)] = message
             self.df = self.df.assign(repo_error=errors)
 
     def flag_unflagged(self, urls: Sequence[Any], message: str) -> None:
-        """The error handler of the OSF / DSpace blocks: flag URLs without an error yet."""
-        current = dict(zip(self.df["repo_url"].tolist(), self.df["repo_error"].tolist(), strict=True))
-        pos: dict[Any, Any] = {}
-        for u, e in current.items():
-            pos.setdefault(u, e)
-        unflagged = [u for u in urls if _na(pos.get(u))]
+        """The error handler of the OSF / DSpace blocks: flag URLs without an error yet.
+
+        R: ``urls[is.na(repos$repo_error[match(urls, repos$repo_url)])]`` --
+        ``match()`` finds a URL's first row; a URL no longer in ``repos``
+        counts as unflagged (and then flags nothing).
+        """
+        first: dict[Any, Any] = {}
+        for u, e in zip(vals(self.df["repo_url"]), vals(self.df["repo_error"]), strict=True):
+            first.setdefault(u, e)
+        unflagged = [u for u in urls if _na(first.get(u))]
         self.flag(unflagged, message)
 
     def add(self, rows: pd.DataFrame) -> None:
@@ -300,7 +327,7 @@ class Repos:
         self.df = bind_rows([self.df, rows]).reset_index(drop=True)
 
     def keep(self, mask: Sequence[bool]) -> None:
-        self.df = self.df[list(mask)].reset_index(drop=True)
+        self.df = take(self.df, mask)
 
 
 def repo_rows(paper_id: Any, repo_url: Any, repo_type: str, repo_error: Any) -> pd.DataFrame:
@@ -340,7 +367,7 @@ def collect_links(paper: Any) -> tuple[pd.DataFrame, pd.DataFrame]:
     osf = osf_links(paper)
     if "href" in osf.columns:
         # exclude psychsci badges
-        osf = osf[[not v for v in grepl("tvyxz", osf["href"].tolist())]]
+        osf = take(osf, [not v for v in grepl("tvyxz", vals(osf["href"]))])
     found = {
         "osf": osf,
         "github": github_links(paper),
@@ -366,8 +393,8 @@ def collect_links(paper: Any) -> tuple[pd.DataFrame, pd.DataFrame]:
         parts.append(
             pd.DataFrame(
                 {
-                    "paper_id": _chr(df["paper_id"].tolist()),
-                    "href": _chr(df["href"].tolist()),
+                    "paper_id": _chr(vals(df["paper_id"])),
+                    "href": _chr(vals(df["href"])),
                     "repo_type": pd.Series([repo_type] * len(df), dtype="string"),
                 }
             )
@@ -394,10 +421,10 @@ def flag_figshare_share_links(repos: Repos, fs_links: pd.DataFrame | None) -> No
     """Private Figshare share links (``figshare.com/s/...``) cannot be resolved."""
     if fs_links is None or "figshare_unsupported" not in fs_links.columns:
         return
-    unsupported = [v is True or v is pd.NA and False for v in fs_links["figshare_unsupported"]]
-    unsupported = [bool(v) if not _na(v) else False for v in fs_links["figshare_unsupported"]]
+    # R: `figshare_unsupported %in% TRUE`
+    unsupported = [(not _na(v)) and bool(v) for v in fs_links["figshare_unsupported"]]
     if any(unsupported):
-        urls = [h for h, u in zip(fs_links["href"].tolist(), unsupported, strict=True) if u]
+        urls = [h for h, u in zip(vals(fs_links["href"]), unsupported, strict=True) if u]
         repos.flag(urls, _FIGSHARE_SHARE)
 
 
@@ -435,18 +462,14 @@ def join_file_types(files: pd.DataFrame) -> pd.DataFrame:
         out = files.copy()
         out["file_type"] = pd.Series([], dtype="string")
         return out
-    names = files["file_name"].tolist()
+    names = vals(files["file_name"])
     bases = [r_basename(v) for v in names]
-    ext: list[str | None] = [
-        None if b is None else r_tolower(sub(r"^.*\.", "", b)) for b in bases
-    ]
-    no_ext = [
-        (not _na(n)) and not grepl(r"\.", b) for n, b in zip(names, bases, strict=True)
-    ]
+    ext: list[str | None] = [None if b is None else r_tolower(sub(r"^.*\.", "", b)) for b in bases]
+    no_ext = [(not _na(n)) and not grepl(r"\.", b) for n, b in zip(names, bases, strict=True)]
     ext = [None if ne else e for e, ne in zip(ext, no_ext, strict=True)]
     ft = file_types()
     lookup: dict[str, list[str | None]] = {}
-    for e, t in zip(ft["ext"].tolist(), ft["type"].tolist(), strict=True):
+    for e, t in zip(vals(ft["ext"]), vals(ft["type"]), strict=True):
         lookup.setdefault(e, []).append(None if _na(t) else t)
     idx: list[int] = []
     types: list[str | None] = []
@@ -475,11 +498,12 @@ def _file_rows(
     any_rows = False
     for i in range(len(info)):
         files_i = info["files"].iloc[i]
-        if files_i is None or (not isinstance(files_i, list | tuple | dict)) or len(files_i) == 0:
-            if files_i is not None and not isinstance(files_i, list | tuple | dict):
-                if not _na(files_i):
-                    # an atomic value: R's lapply() visits it, `f$x` then errors
-                    raise RError("$ operator is invalid for atomic vectors")
+        if not isinstance(files_i, list | tuple | dict):
+            if not _na(files_i):
+                # an atomic value: R's lapply() visits it, `f$x` then errors
+                raise RError("$ operator is invalid for atomic vectors")
+            continue
+        if len(files_i) == 0:
             continue
         elements = list(files_i.values()) if isinstance(files_i, dict) else list(files_i)
         for f in elements:
@@ -521,8 +545,22 @@ def _quiet(fn: Callable[[], Any]) -> Any:
 # -- OSF --------------------------------------------------------------------
 
 
+class _NaScalar:
+    """A length-one ``NA`` for :func:`r_frame` (recycled like R's ``NA_character_``)."""
+
+    def __repr__(self) -> str:
+        return "NA"
+
+
+NA_SCALAR: Any = _NaScalar()
+
+
 def _osf_file_frame(files: pd.DataFrame, repo_url: list[Any]) -> pd.DataFrame:
-    """The OSF ``data.frame()`` of listed files (``provider`` kept for downloads)."""
+    """The OSF ``data.frame()`` of listed files (``provider`` kept for downloads).
+
+    ``provider`` is R's ``osf_file_list$provider %||% NA_character_``: a
+    missing column is a recycled ``NA`` (and R's row-count error on 0 rows).
+    """
     n = len(files)
     path = _col(files, "path")
     provider = _col(files, "provider")
@@ -535,31 +573,21 @@ def _osf_file_frame(files: pd.DataFrame, repo_url: list[Any]) -> pd.DataFrame:
             ("file_location", [None] * n, "string"),
             ("file_size", _col(files, "size"), "float64"),
             ("file_type", _col(files, "filetype"), "string"),
-            ("provider", provider if provider is not None else None, "string"),
-        ]
-        if provider is not None
-        else [
-            ("repo_url", repo_url, "string"),
-            ("file_name", _col(files, "name"), "string"),
-            ("file_path", None if path is None else list(gsub("^/+", "", path)), "string"),
-            ("file_url", _col(files, "download_url"), "string"),
-            ("file_location", [None] * n, "string"),
-            ("file_size", _col(files, "size"), "float64"),
-            ("file_type", _col(files, "filetype"), "string"),
-            # R: `osf_file_list$provider %||% NA_character_` (recycled, or an error on 0 rows)
-            ("provider", None if False else _NA_SCALAR, "string"),
+            ("provider", NA_SCALAR if provider is None else provider, "string"),
         ]
     )
 
 
-class _NaScalar:
-    """A length-one ``NA`` for :func:`r_frame` (recycled like R's ``NA_character_``)."""
+def _osf_type_error(arg: str) -> str:
+    """dplyr's error when an OSF listing has no ``osf_type`` column.
 
-    def __repr__(self) -> str:
-        return "NA"
-
-
-_NA_SCALAR = _NaScalar()
+    In the module's ``filter()`` calls ``osf_type`` then names metacheck's
+    ``osf_type()`` function, so ``%in%`` fails in ``match()``.
+    """
+    return (
+        f"ℹ In argument: `{arg}`.\nCaused by error in `match()`:\n"
+        "! 'match' requires vector arguments"
+    )
 
 
 def _osf_files(info: pd.DataFrame) -> pd.DataFrame:
@@ -568,13 +596,13 @@ def _osf_files(info: pd.DataFrame) -> pd.DataFrame:
         raise RError(
             "ℹ In argument: `!isFALSE(public)`.\nCaused by error:\n! object 'public' not found"
         )
-    kind = info["kind"].tolist()
+    kind = vals(info["kind"])
     keep = [(not _na(k)) and k == "file" for k in kind]
-    public = info["public"].tolist()
+    public = vals(info["public"])
     # isFALSE() of the whole column: TRUE only for a single FALSE
     if len(public) == 1 and public[0] is False:
         keep = [False] * len(keep)
-    return info[keep].reset_index(drop=True)
+    return take(info, keep)
 
 
 def _osf_listing(urls: list[str], pb: Any, cache: bool) -> pd.DataFrame:
@@ -591,7 +619,9 @@ def _osf_listing(urls: list[str], pb: Any, cache: bool) -> pd.DataFrame:
     return bind_rows(parts)
 
 
-def list_osf(repos: Repos, osf_urls: list[str], osf_paper_id: Any, pb: Any, cache: bool) -> pd.DataFrame:
+def list_osf(
+    repos: Repos, osf_urls: list[str], osf_paper_id: Any, pb: Any, cache: bool
+) -> pd.DataFrame:
     """The OSF block: list files, follow registrations to their source projects."""
     from pytacheck._r import bind_rows
 
@@ -604,44 +634,37 @@ def list_osf(repos: Repos, osf_urls: list[str], osf_paper_id: Any, pb: Any, cach
         # registration URL -> the project it was registered from (R: a named vector)
         reg_pairs: list[tuple[Any, str]] = []
         if "parent" in osf_info_df.columns:
-            otype = osf_info_df["osf_type"].tolist() if "osf_type" in osf_info_df.columns else None
+            otype = vals(osf_info_df["osf_type"]) if "osf_type" in osf_info_df.columns else None
             if otype is None:
-                raise RError(
-                    "ℹ In argument: `osf_type %in% \"registrations\"`.\n"
-                    "Caused by error:\n! object 'osf_type' not found"
-                )
+                raise RError(_osf_type_error('osf_type %in% "registrations"'))
             for t, parent, url in zip(
-                otype, osf_info_df["parent"].tolist(), osf_info_df["osf_url"].tolist(), strict=True
+                otype, vals(osf_info_df["parent"]), vals(osf_info_df["osf_url"]), strict=True
             ):
                 if t == "registrations" and not _na(parent) and not _na(url):
                     reg_pairs.append((url, f"https://osf.io/{parent}"))
 
-        def remap(url: Any) -> Any:
-            for name, parent in reg_pairs:
-                if not _na(url) and name == url:
-                    return parent
-            return None
+        # R: reg_url_to_parent[file_repo_url] -- a name matches its first entry
+        reg_map: dict[Any, str] = {}
+        for name, parent in reg_pairs:
+            reg_map.setdefault(name, parent)
 
         if "kind" in osf_info_df.columns:
+            # files found via a registration belong to the project it was registered from
             file_list = _osf_files(osf_info_df)
-            file_repo_url = file_list["repo_name"].tolist()
-            file_repo_url = [
-                remap(u) if remap(u) is not None else (None if _na(u) else u) for u in file_repo_url
-            ]
+            file_repo_url = [reg_map.get(u, u) for u in vals(file_list["repo_name"])]
             osf_files_df = _osf_file_frame(file_list, file_repo_url)
 
         # registrations (and anything that is not a node/file) are never the storage location
         if "osf_type" not in osf_info_df.columns:
-            raise RError(
-                'ℹ In argument: `!osf_type %in% c("nodes", "files", "private")`.\n'
-                "Caused by error:\n! object 'osf_type' not found"
-            )
-        otypes = osf_info_df["osf_type"].tolist()
-        ourls = osf_info_df["osf_url"].tolist()
+            raise RError(_osf_type_error('!osf_type %in% c("nodes", "files", "private")'))
+        otypes = vals(osf_info_df["osf_type"])
+        ourls = vals(osf_info_df["osf_url"])
         to_remove = [
-            u for t, u in zip(otypes, ourls, strict=True) if _na(t) or t not in ("nodes", "files", "private")
+            u
+            for t, u in zip(otypes, ourls, strict=True)
+            if _na(t) or t not in ("nodes", "files", "private")
         ]
-        repos.keep([not v for v in r_in(repos.df["repo_url"].tolist(), to_remove)])
+        repos.keep([not v for v in r_in(vals(repos.df["repo_url"]), to_remove)])
 
         private = [u for t, u in zip(otypes, ourls, strict=True) if t == "private"]
         if private:
@@ -657,28 +680,26 @@ def list_osf(repos: Repos, osf_urls: list[str], osf_paper_id: Any, pb: Any, cach
                 parent_files = _osf_files(parent_info)
                 if len(parent_files) > 0:
                     osf_files_df = bind_rows(
-                        [osf_files_df, _osf_file_frame(parent_files, parent_files["repo_name"].tolist())]
+                        [
+                            osf_files_df,
+                            _osf_file_frame(parent_files, vals(parent_files["repo_name"])),
+                        ]
                     )
             if "osf_type" not in parent_info.columns:
-                raise RError(
-                    'ℹ In argument: `is.na(osf_type) | osf_type %in% "private"`.\n'
-                    "Caused by error:\n! object 'osf_type' not found"
-                )
-            p_urls = parent_info["osf_url"].tolist()
+                raise RError(_osf_type_error('is.na(osf_type) | osf_type %in% "private"'))
+            p_urls = vals(parent_info["osf_url"])
             p_in = r_in(p_urls, parent_urls_new)
             closed_parent_urls = unique(
                 u
-                for u, t, isin in zip(p_urls, parent_info["osf_type"].tolist(), p_in, strict=True)
+                for u, t, isin in zip(p_urls, vals(parent_info["osf_type"]), p_in, strict=True)
                 if isin and (_na(t) or t == "private")
             )
-            closed_parent_urls = unique(
-                [*closed_parent_urls, *setdiff(parent_urls_new, p_urls)]
-            )
+            closed_parent_urls = unique([*closed_parent_urls, *setdiff(parent_urls_new, p_urls)])
 
         if parent_urls_all:
-            missing = setdiff(parent_urls_all, repos.df["repo_url"].tolist())
+            missing = setdiff(parent_urls_all, vals(repos.df["repo_url"]))
             if missing:
-                file_urls = osf_files_df["repo_url"].tolist() if "repo_url" in osf_files_df else []
+                file_urls = vals(osf_files_df["repo_url"]) if "repo_url" in osf_files_df else []
                 has_files = r_in(missing, file_urls)
                 is_closed = r_in(missing, closed_parent_urls)
                 errors: list[str | None] = []
@@ -697,12 +718,12 @@ def list_osf(repos: Repos, osf_urls: list[str], osf_paper_id: Any, pb: Any, cach
 
         # registrations without a parent keep their own URL for their files
         if "repo_url" in osf_files_df.columns:
-            fr = osf_files_df["repo_url"].tolist()
+            fr = vals(osf_files_df["repo_url"])
             linked = [u for u, isin in zip(fr, r_in(fr, osf_urls), strict=True) if isin]
-            orphans = setdiff(unique(linked), repos.df["repo_url"].tolist())
+            orphans = setdiff(unique(linked), vals(repos.df["repo_url"]))
             if orphans:
-                repos.add(repo_rows(osf_paper_id, orphans, "osf", _NA_SCALAR))
-    except Exception as e:  # noqa: BLE001 - R: tryCatch(error = ...)
+                repos.add(repo_rows(osf_paper_id, orphans, "osf", NA_SCALAR))
+    except Exception as e:
         repos.flag_unflagged(osf_urls, condition_message(e))
     return osf_files_df
 
@@ -723,12 +744,8 @@ def list_git(
 
     if host == "github":
         from pytacheck.archives.github import github_tree_files as tree_files
-
-        label = "GitHub"
     else:
         from pytacheck.archives.gitlab import gitlab_tree_files as tree_files
-
-        label = "GitLab"
 
     files_df = placeholder()
     if not urls:
@@ -742,7 +759,7 @@ def list_git(
             continue
         try:
             result = tree_files(url)
-        except Exception as e:  # noqa: BLE001 - R: tryCatch(error = ...)
+        except Exception as e:
             result = {
                 "gated": True,
                 "reason": condition_message(e),
@@ -761,7 +778,6 @@ def list_git(
             reason = r.get("reason")
             repos.flag([url], reason)
             warnings.warn(f"Repository {url} was not listed: {reason}.", stacklevel=3)
-            del label  # the progress message is not reproduced
 
     good = [
         r.get("files")
@@ -774,7 +790,7 @@ def list_git(
         if types is None:
             file_list = file_list.iloc[0:0]
         else:
-            file_list = file_list[[t is not None and t != "dir" for t in types]]
+            file_list = take(file_list, [t is not None and t != "dir" for t in types])
         if len(file_list) > 0:
             files_df = r_frame(
                 [
@@ -782,7 +798,7 @@ def list_git(
                     ("file_name", _col(file_list, "name"), "string"),
                     ("file_path", _col(file_list, "path"), "string"),
                     ("file_url", _col(file_list, "download_url"), "string"),
-                    ("file_location", _NA_SCALAR, "string"),
+                    ("file_location", NA_SCALAR, "string"),
                     ("file_size", _col(file_list, "size"), "float64"),
                     ("file_type", _col(file_list, "type"), "string"),
                 ],
@@ -790,7 +806,7 @@ def list_git(
             )
 
     licenses = [empty_or(results[u].get("license"), None) for u in urls]
-    return files_df, meta_frame(urls, _NA_SCALAR, licenses)
+    return files_df, meta_frame(urls, NA_SCALAR, licenses)
 
 
 # -- ResearchBox, DSpace --------------------------------------------------------
@@ -799,11 +815,9 @@ def list_git(
 def _filter_not_dir(df: pd.DataFrame) -> pd.DataFrame:
     """``dplyr::filter(!isdir)`` (``NA`` rows dropped)."""
     if "isdir" not in df.columns:
-        raise RError(
-            "ℹ In argument: `!isdir`.\nCaused by error:\n! object 'isdir' not found"
-        )
-    keep = [(not _na(v)) and not bool(v) for v in df["isdir"].tolist()]
-    return df[keep].reset_index(drop=True)
+        raise RError("ℹ In argument: `!isdir`.\nCaused by error:\n! object 'isdir' not found")
+    keep = [(not _na(v)) and not bool(v) for v in vals(df["isdir"])]
+    return take(df, keep)
 
 
 def list_researchbox(repos: Repos, urls: list[str], pb: Any) -> pd.DataFrame:
@@ -830,7 +844,7 @@ def list_researchbox(repos: Repos, urls: list[str], pb: Any) -> pd.DataFrame:
                 ("file_type", _col(rb, "type"), "string"),
             ]
         )
-    except Exception as e:  # noqa: BLE001
+    except Exception as e:
         repos.flag(urls, condition_message(e))
     return files_df
 
@@ -842,7 +856,9 @@ def _named_lookup(named: Mapping[str, Any] | None, keys: Sequence[str]) -> list[
     return [named.get(k) for k in keys]
 
 
-def list_dspace(repos: Repos, urls: list[str], pb: Any, cache: bool) -> tuple[pd.DataFrame, pd.DataFrame]:
+def list_dspace(
+    repos: Repos, urls: list[str], pb: Any, cache: bool
+) -> tuple[pd.DataFrame, pd.DataFrame]:
     """The legacy DSpace block (PsychArchives and other DSpace 5/6 hosts)."""
     from pytacheck.archives.psycharchives import psycharchives_file_download
 
@@ -885,7 +901,7 @@ def list_dspace(repos: Repos, urls: list[str], pb: Any, cache: bool) -> tuple[pd
                     ("file_type", _col(pa, "type"), "string"),
                 ]
             )
-    except Exception as e:  # noqa: BLE001
+    except Exception as e:
         repos.flag_unflagged(urls, condition_message(e))
     return files_df, meta
 
@@ -913,7 +929,7 @@ def list_dspace7(repos: Repos, urls: list[str], pb: Any) -> pd.DataFrame:
                     ("file_type", _col(ds, "type"), "string"),
                 ]
             )
-    except Exception as e:  # noqa: BLE001
+    except Exception as e:
         repos.flag(urls, condition_message(e))
     return files_df
 
@@ -926,13 +942,13 @@ def _meta_from(info: pd.DataFrame, url_col: str, col_chr: bool = False) -> pd.Da
     if col_chr:
         from pytacheck.utils import _col_chr
 
-        return meta_frame(
-            _col_chr(info, url_col), _col_chr(info, "doi"), _col_chr(info, "license")
-        )
+        return meta_frame(_col_chr(info, url_col), _col_chr(info, "doi"), _col_chr(info, "license"))
 
-    def chr_col(name: str) -> list[Any] | None:
+    def chr_col(name: str) -> list[Any]:
+        # as.character(NULL) is character(0): a missing column is a zero-length
+        # one, which data.frame() refuses beside the n-row repo_url
         values = _col(info, name)
-        return None if values is None else [_as_chr(v) for v in values]
+        return [] if values is None else [_as_chr(v) for v in values]
 
     return r_frame(
         [
@@ -964,7 +980,7 @@ def _api_listing(
         if len(info) > 0 and "files" in info.columns:
             listed = _file_rows(info, url_col, lambda i, f: row_fn(info, i, f))
             files_df = _typed_listing(listed)
-    except Exception as e:  # noqa: BLE001
+    except Exception as e:
         repos.flag(urls, condition_message(e))
     return files_df, meta
 
@@ -986,7 +1002,7 @@ def _row(name: Any, file_url: Any, size: Any) -> dict[str, Any]:
     }
 
 
-def zenodo_row(info: pd.DataFrame, i: int, f: Any) -> dict[str, Any]:
+def zenodo_row(_info: pd.DataFrame, _i: int, f: Any) -> dict[str, Any]:
     links = dollar(f, "links")
     file_url = None
     if links is not None:
@@ -1009,25 +1025,25 @@ def dataverse_row(info: pd.DataFrame, i: int, f: Any) -> dict[str, Any]:
     return _row(name, file_url, dollar(df, "filesize"))
 
 
-def figshare_row(info: pd.DataFrame, i: int, f: Any) -> dict[str, Any]:
+def figshare_row(_info: pd.DataFrame, _i: int, f: Any) -> dict[str, Any]:
     return _row(
         dollar(f, "name"), _as_chr(empty_or(dollar(f, "download_url"), None)), dollar(f, "size")
     )
 
 
-def dryad_row(info: pd.DataFrame, i: int, f: Any) -> dict[str, Any]:
+def dryad_row(_info: pd.DataFrame, _i: int, f: Any) -> dict[str, Any]:
     href = empty_or(_f(f, "_links", "stash:download", "href"), None)
     file_url = None if _na(href) else "https://datadryad.org" + _as_chr(href)  # type: ignore[operator]
     return _row(dollar(f, "path"), file_url, dollar(f, "size"))
 
 
-def reshare_row(info: pd.DataFrame, i: int, f: Any) -> dict[str, Any]:
+def reshare_row(_info: pd.DataFrame, _i: int, f: Any) -> dict[str, Any]:
     uri = empty_or(dollar(f, "uri"), None)
     file_url = None if _na(uri) else sub("^http://", "https://", _as_chr(uri))
     return _row(dollar(f, "filename"), file_url, dollar(f, "filesize"))
 
 
-def mendeley_row(info: pd.DataFrame, i: int, f: Any) -> dict[str, Any]:
+def mendeley_row(_info: pd.DataFrame, _i: int, f: Any) -> dict[str, Any]:
     cd = dollar(f, "content_details")
     if cd is None:
         cd = {}
@@ -1068,9 +1084,9 @@ def list_local(local_path: Any) -> pd.DataFrame:
     df = local_files(local_path, recursive=True)
     if len(df) == 0:
         return df
-    locs = df["file_location"].tolist()
-    roots = df["repo_url"].tolist()
-    names = df["file_name"].tolist()
+    locs = vals(df["file_location"])
+    roots = vals(df["repo_url"])
+    names = vals(df["file_name"])
     paths = []
     for loc, root, name in zip(locs, roots, names, strict=True):
         if _na(loc) or loc == "" or _na(root) or root == "":

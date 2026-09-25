@@ -137,3 +137,43 @@ cc_norm <- function(mo) {
   mo$report <- norm(mo$report)
   mo
 }
+
+# The table's read errors with machine-independent paths and without the
+# " in current working directory ('<cwd>')" suffix readr adds for a relative
+# path: pytacheck's code_read() (pytacheck.codecheck.core) does not add it
+# yet, and these cases check which path code_check() hands to the reader.
+cc_errors <- function(name, ...) {
+  mo <- cc_norm(cc_run(name, ...))
+  err <- mo$table$error
+  if (is.null(err)) return(NULL)
+  sub(" in current working directory \\('<ROOT>'\\)\\.$", ".", err)
+}
+
+# The manifests code_check(manifest = ) writes for scenario `name`: a named
+# list (file name -> parsed JSON) of every file in a fresh manifest directory,
+# or of the single `one.manifest.json` when `file = TRUE`.
+cc_manifest <- function(name, file = FALSE, ...) {
+  d <- tempfile("manifest")
+  dir.create(d)
+  on.exit(unlink(d, recursive = TRUE), add = TRUE)
+  target <- if (isTRUE(file)) file.path(d, "one.manifest.json") else d
+  cc_run(name, manifest = target, ...)
+  fs <- sort(list.files(d))
+  stats::setNames(lapply(file.path(d, fs), jsonlite::fromJSON, simplifyVector = FALSE), fs)
+}
+
+# code_check with `local_path` (a fresh repo_check of that directory), on a
+# test paper; paths made machine-independent.
+cc_local <- function(path, ...) {
+  p <- test_paper("Some text.")
+  p$paper_id <- "p1"
+  cc_norm(module_run(p, "code_check", local_path = path, ...))
+}
+
+# The data_check output of scenario `name` with a zero-row `structure`: R's
+# `%||%` keeps it (it is not NULL), so repo_check's table is not used.
+cc_prev_empty_structure <- function(name) {
+  prev <- cc_prev(name)
+  prev$structure <- prev$structure[0, , drop = FALSE]
+  prev
+}

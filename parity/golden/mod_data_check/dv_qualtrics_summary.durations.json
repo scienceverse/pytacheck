@@ -1,0 +1,62 @@
+{
+  "id": "dv_qualtrics_summary.durations",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "n_rows",
+      "n_drop",
+      "median_seconds",
+      "n_fast",
+      "date_min",
+      "date_max",
+      "pii_fields"
+    ],
+    "v": [
+      {
+        "t": "int",
+        "v": [
+          13
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          1
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          330
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          2
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "2021-01-02"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "2021-01-05"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": []
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

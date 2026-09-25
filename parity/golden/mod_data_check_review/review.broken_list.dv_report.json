@@ -1,0 +1,67 @@
+{
+  "id": "review.broken_list.dv_report",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "text",
+      "tables"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "#### Spreadsheet Formatting",
+          "We examined 1 spreadsheet file in the repository; 1 has at least one formatting issue.",
+          "Spreadsheet formatting such as colour, merged cells, and blank rows/columns is not preserved when data are read programmatically or exported to CSV. Store data as a plain rectangular table (one header row, one column per variable, no colour-encoded meaning) so it is machine-readable."
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "df",
+            "nrow": 1,
+            "names": [
+              "File",
+              "Sheet",
+              "Issue",
+              "Detail"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "broken.xlsx"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  null
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "Unreadable"
+                ]
+              },
+              {
+                "t": "chr",
+                "v": [
+                  "The file could not be parsed as a .xlsx workbook."
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

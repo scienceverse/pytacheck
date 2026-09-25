@@ -1,0 +1,32 @@
+{
+ "data": {
+  "project": {
+   "repository": {
+    "blobs": {
+     "nodes": [
+      {
+       "path": "f091.txt",
+       "size": "910"
+      },
+      {
+       "path": "f092.txt",
+       "size": "920"
+      },
+      {
+       "path": "f093.txt",
+       "size": "930"
+      },
+      {
+       "path": "f094.txt",
+       "size": "940"
+      },
+      {
+       "path": "f095.txt",
+       "size": "950"
+      }
+     ]
+    }
+   }
+  }
+ }
+}

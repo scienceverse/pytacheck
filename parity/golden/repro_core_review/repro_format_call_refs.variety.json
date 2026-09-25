@@ -1,0 +1,64 @@
+{
+  "id": "repro_format_call_refs.variety",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 6,
+    "names": [
+      "call_text",
+      "fmt",
+      "resolved",
+      "line"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "sprintf(\"%s/x.csv\", wd)",
+          "sprintf(\"%s/%d_y.csv\", wd, n)",
+          "sprintf(\"%s/%d_y.csv\", wd, \"lit\")",
+          "paste0(\"a/b.csv\"  ,  wd ,n)",
+          "sprintf(\"%s.csv\", wd, n)",
+          "sprintf(\"%s/%s.csv\", pct, wd)"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "%s/x.csv",
+          "%s/%d_y.csv",
+          "%s/%d_y.csv",
+          "a/b.csv",
+          "%s.csv",
+          "%s/%s.csv"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "E:/d/x.csv",
+          "E:/d/7_y.csv",
+          null,
+          null,
+          null,
+          "100E:/d/%s.csv"
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          2,
+          4,
+          6,
+          7,
+          8,
+          9
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

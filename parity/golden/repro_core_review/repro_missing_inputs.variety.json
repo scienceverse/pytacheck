@@ -1,0 +1,92 @@
+{
+  "id": "repro_missing_inputs.variety",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 13,
+    "names": [
+      "basename",
+      "status",
+      "detail",
+      "similar_to"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "big.csv",
+          "c.csv",
+          "d.csv",
+          "e.csv",
+          "data.csv",
+          "data2.csv",
+          "q.csv",
+          "dta.csv",
+          "data_final.csv",
+          "datx.csv",
+          "zz.r",
+          "data_fin.csv",
+          "half.csv"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "withheld_size",
+          "withheld_size",
+          "withheld_size",
+          "withheld_size",
+          "in_repo_not_downloaded",
+          "in_repo_not_downloaded",
+          "in_repo_not_downloaded",
+          "absent",
+          "absent",
+          "absent",
+          "absent",
+          "absent",
+          "withheld_size"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "referenced file is in the repository but was not downloaded (2 MB): over the size cap",
+          "referenced file is in the repository but was not downloaded (2 MB): over the size cap",
+          "referenced file is in the repository but was not downloaded: over the size cap",
+          "referenced file is in the repository but was not downloaded (1 MB): over the size cap",
+          "referenced file is listed in the repository but was not downloaded",
+          "referenced file is listed in the repository but was not downloaded",
+          "referenced file is listed in the repository but was not downloaded",
+          "referenced file is not present in the repository, but a similarly-named file exists: data.csv",
+          "referenced file is not present in the repository, but a similarly-named file exists: data_final.xlsx",
+          "referenced file is not present in the repository, but a similarly-named file exists: data.csv",
+          "referenced file is not present in the repository",
+          "referenced file is not present in the repository",
+          "referenced file is in the repository but was not downloaded (0 MB): over the size cap"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          "data.csv",
+          "data_final.xlsx",
+          "data.csv",
+          null,
+          null,
+          null
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

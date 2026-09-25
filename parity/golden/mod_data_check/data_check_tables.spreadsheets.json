@@ -1,0 +1,2017 @@
+{
+  "id": "data_check_tables.spreadsheets",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": null,
+    "v": [
+      {
+        "t": "df",
+        "nrow": 3,
+        "names": [
+          "id",
+          "value"
+        ],
+        "v": [
+          {
+            "t": "dbl",
+            "v": [
+              1,
+              2,
+              3
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0.5,
+              1.5,
+              2.5
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 3,
+        "names": [
+          "id",
+          "score"
+        ],
+        "v": [
+          {
+            "t": "dbl",
+            "v": [
+              1,
+              2,
+              3
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              1.1,
+              2.2,
+              3.3
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 32,
+        "names": [
+          "mpg",
+          "cyl",
+          "disp",
+          "hp",
+          "drat",
+          "wt",
+          "qsec",
+          "vs",
+          "am",
+          "gear",
+          "carb"
+        ],
+        "v": [
+          {
+            "t": "dbl",
+            "v": [
+              21,
+              21,
+              22.8,
+              21.4,
+              18.7,
+              18.1,
+              14.3,
+              24.4,
+              22.8,
+              19.2,
+              17.8,
+              16.4,
+              17.3,
+              15.2,
+              10.4,
+              10.4,
+              14.7,
+              32.4,
+              30.4,
+              33.9,
+              21.5,
+              15.5,
+              15.2,
+              13.3,
+              19.2,
+              27.3,
+              26,
+              30.4,
+              15.8,
+              19.7,
+              15,
+              21.4
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              6,
+              6,
+              4,
+              6,
+              8,
+              6,
+              8,
+              4,
+              4,
+              6,
+              6,
+              8,
+              8,
+              8,
+              8,
+              8,
+              8,
+              4,
+              4,
+              4,
+              4,
+              8,
+              8,
+              8,
+              8,
+              4,
+              4,
+              4,
+              8,
+              6,
+              8,
+              4
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              160,
+              160,
+              108,
+              258,
+              360,
+              225,
+              360,
+              146.7,
+              140.8,
+              167.6,
+              167.6,
+              275.8,
+              275.8,
+              275.8,
+              472,
+              460,
+              440,
+              78.7,
+              75.7,
+              71.1,
+              120.1,
+              318,
+              304,
+              350,
+              400,
+              79,
+              120.3,
+              95.1,
+              351,
+              145,
+              301,
+              121
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              110,
+              110,
+              93,
+              110,
+              175,
+              105,
+              245,
+              62,
+              95,
+              123,
+              123,
+              180,
+              180,
+              180,
+              205,
+              215,
+              230,
+              66,
+              52,
+              65,
+              97,
+              150,
+              150,
+              245,
+              175,
+              66,
+              91,
+              113,
+              264,
+              175,
+              335,
+              109
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              3.9,
+              3.9,
+              3.85,
+              3.08,
+              3.15,
+              2.76,
+              3.21,
+              3.69,
+              3.92,
+              3.92,
+              3.92,
+              3.07,
+              3.07,
+              3.07,
+              2.93,
+              3,
+              3.23,
+              4.08,
+              4.93,
+              4.22,
+              3.7,
+              2.76,
+              3.15,
+              3.73,
+              3.08,
+              4.08,
+              4.43,
+              3.77,
+              4.22,
+              3.62,
+              3.54,
+              4.11
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              2.62,
+              2.875,
+              2.32,
+              3.215,
+              3.44,
+              3.46,
+              3.57,
+              3.19,
+              3.15,
+              3.44,
+              3.44,
+              4.07,
+              3.73,
+              3.78,
+              5.25,
+              5.424,
+              5.345,
+              2.2,
+              1.615,
+              1.835,
+              2.465,
+              3.52,
+              3.435,
+              3.84,
+              3.845,
+              1.935,
+              2.14,
+              1.513,
+              3.17,
+              2.77,
+              3.57,
+              2.78
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              16.46,
+              17.02,
+              18.61,
+              19.44,
+              17.02,
+              20.22,
+              15.84,
+              20,
+              22.9,
+              18.3,
+              18.9,
+              17.4,
+              17.6,
+              18,
+              17.98,
+              17.82,
+              17.42,
+              19.47,
+              18.52,
+              19.9,
+              20.01,
+              16.87,
+              17.3,
+              15.41,
+              17.05,
+              18.9,
+              16.7,
+              16.9,
+              14.5,
+              15.5,
+              14.6,
+              18.6
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0,
+              0,
+              1,
+              1,
+              0,
+              1,
+              0,
+              1,
+              1,
+              1,
+              1,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              1,
+              1,
+              1,
+              1,
+              0,
+              0,
+              0,
+              0,
+              1,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              1,
+              1,
+              1,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              1,
+              1,
+              1,
+              0,
+              0,
+              0,
+              0,
+              0,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              4,
+              4,
+              4,
+              3,
+              3,
+              3,
+              3,
+              4,
+              4,
+              4,
+              4,
+              3,
+              3,
+              3,
+              3,
+              3,
+              3,
+              4,
+              4,
+              4,
+              3,
+              3,
+              3,
+              3,
+              3,
+              4,
+              5,
+              5,
+              5,
+              5,
+              5,
+              4
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              4,
+              4,
+              1,
+              1,
+              2,
+              1,
+              4,
+              2,
+              2,
+              4,
+              4,
+              3,
+              3,
+              3,
+              4,
+              4,
+              4,
+              1,
+              2,
+              1,
+              1,
+              2,
+              2,
+              4,
+              2,
+              1,
+              2,
+              2,
+              4,
+              6,
+              8,
+              2
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 5,
+        "names": [
+          "id",
+          "group",
+          "note",
+          "score"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "1",
+              "2",
+              null,
+              null,
+              "total"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "a",
+              "b",
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              10,
+              20,
+              null,
+              null,
+              30
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 5,
+        "names": [
+          "id",
+          "group",
+          "note",
+          "score"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "1",
+              "2",
+              null,
+              null,
+              "total"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "a",
+              "b",
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              10,
+              20,
+              null,
+              null,
+              30
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 4,
+        "names": [
+          "id",
+          "grp",
+          "empty",
+          "val"
+        ],
+        "v": [
+          {
+            "t": "dbl",
+            "v": [
+              1,
+              2,
+              3,
+              4
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "a",
+              "b",
+              "a",
+              "b"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              10,
+              20,
+              30,
+              40
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 8,
+        "names": [
+          "subject",
+          "rt",
+          "acc"
+        ],
+        "v": [
+          {
+            "t": "dbl",
+            "v": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              400,
+              450,
+              500,
+              550,
+              600,
+              650,
+              700,
+              750
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              1,
+              0,
+              1,
+              1,
+              0,
+              1,
+              1,
+              1
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 6,
+        "names": [
+          "pid",
+          "score",
+          "cond"
+        ],
+        "v": [
+          {
+            "t": "dbl",
+            "v": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              3.2,
+              4.1,
+              2.8,
+              3.9,
+              4.4,
+              3
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "a",
+              "b",
+              "a",
+              "b",
+              "a",
+              "b"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 4,
+        "names": [
+          "Column",
+          "Representation",
+          "Level",
+          "Concept",
+          "Role",
+          "Unit",
+          "Rows",
+          "% Missing",
+          "N Unique",
+          "Mean",
+          "SD",
+          "Min",
+          "Max"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "empty",
+              "grp",
+              "id",
+              "val"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "empty",
+              "text",
+              "text",
+              "numeric"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "",
+              "nominal",
+              "nominal",
+              "ratio"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "",
+              "",
+              "id",
+              ""
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "measure",
+              "measure",
+              "identifier",
+              "measure"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "",
+              "",
+              "",
+              ""
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              4,
+              4,
+              4,
+              4
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              100,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              2,
+              4,
+              4
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              null,
+              null,
+              25
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              null,
+              null,
+              12.91
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              null,
+              null,
+              10
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              null,
+              null,
+              40
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 4,
+        "names": [
+          "Column",
+          "Representation",
+          "Level",
+          "Concept",
+          "Role",
+          "Unit",
+          "Rows",
+          "% Missing",
+          "N Unique",
+          "Mean",
+          "SD",
+          "Min",
+          "Max"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "note",
+              "group",
+              "id",
+              "score"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "empty",
+              "text",
+              "text",
+              "numeric"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "",
+              "nominal",
+              "nominal",
+              "ratio"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "",
+              "condition",
+              "id",
+              ""
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "measure",
+              "condition",
+              "identifier",
+              "measure"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "",
+              "",
+              "",
+              ""
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              5,
+              5,
+              5,
+              5
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              100,
+              60,
+              40,
+              40
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              2,
+              3,
+              3
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              null,
+              null,
+              20
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              null,
+              null,
+              10
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              null,
+              null,
+              10
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              null,
+              null,
+              30
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 4,
+        "names": [
+          "Column",
+          "Representation",
+          "Level",
+          "Concept",
+          "Role",
+          "Unit",
+          "Rows",
+          "% Missing",
+          "N Unique",
+          "Mean",
+          "SD",
+          "Min",
+          "Max"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "note",
+              "group",
+              "id",
+              "score"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "empty",
+              "text",
+              "text",
+              "numeric"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "",
+              "nominal",
+              "nominal",
+              "ratio"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "",
+              "condition",
+              "id",
+              ""
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "measure",
+              "condition",
+              "identifier",
+              "measure"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "",
+              "",
+              "",
+              ""
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              5,
+              5,
+              5,
+              5
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              100,
+              60,
+              40,
+              40
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              2,
+              3,
+              3
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              null,
+              null,
+              20
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              null,
+              null,
+              10
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              null,
+              null,
+              10
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              null,
+              null,
+              30
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 3,
+        "names": [
+          "Column",
+          "Representation",
+          "Level",
+          "Concept",
+          "Role",
+          "Unit",
+          "Rows",
+          "% Missing",
+          "N Unique",
+          "Mean",
+          "SD",
+          "Min",
+          "Max"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "acc",
+              "rt",
+              "subject"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "numeric",
+              "numeric",
+              "text"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "nominal",
+              "ratio",
+              "nominal"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "accuracy",
+              "reaction_time",
+              "id"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "measure",
+              "measure",
+              "identifier"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "",
+              "milliseconds",
+              ""
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              8,
+              8,
+              8
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2,
+              8,
+              8
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              575,
+              null
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              122.474,
+              null
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              400,
+              null
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              750,
+              null
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 11,
+        "names": [
+          "Column",
+          "Representation",
+          "Level",
+          "Concept",
+          "Role",
+          "Unit",
+          "Rows",
+          "% Missing",
+          "N Unique",
+          "Mean",
+          "SD",
+          "Min",
+          "Max"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "am",
+              "carb",
+              "cyl",
+              "disp",
+              "drat",
+              "gear",
+              "hp",
+              "mpg",
+              "qsec",
+              "vs",
+              "wt"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "numeric",
+              "numeric",
+              "numeric",
+              "numeric",
+              "numeric",
+              "numeric",
+              "numeric",
+              "numeric",
+              "numeric",
+              "numeric",
+              "numeric"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "nominal",
+              "ratio",
+              "ratio",
+              "ratio",
+              "ratio",
+              "ratio",
+              "ratio",
+              "ratio",
+              "ratio",
+              "nominal",
+              "ratio"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "measure",
+              "measure",
+              "measure",
+              "measure",
+              "measure",
+              "measure",
+              "measure",
+              "measure",
+              "measure",
+              "measure",
+              "measure"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              32,
+              32,
+              32,
+              32,
+              32,
+              32,
+              32,
+              32,
+              32,
+              32,
+              32
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2,
+              6,
+              3,
+              27,
+              22,
+              3,
+              22,
+              25,
+              30,
+              2,
+              29
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              2.812,
+              6.188,
+              230.722,
+              3.597,
+              3.688,
+              146.688,
+              20.091,
+              17.849,
+              null,
+              3.217
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              1.615,
+              1.786,
+              123.939,
+              0.535,
+              0.738,
+              68.563,
+              6.027,
+              1.787,
+              null,
+              0.978
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              1,
+              4,
+              71.1,
+              2.76,
+              3,
+              52,
+              10.4,
+              14.5,
+              null,
+              1.513
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              8,
+              8,
+              472,
+              4.93,
+              5,
+              335,
+              33.9,
+              22.9,
+              null,
+              5.424
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 3,
+        "names": [
+          "Column",
+          "Representation",
+          "Level",
+          "Concept",
+          "Role",
+          "Unit",
+          "Rows",
+          "% Missing",
+          "N Unique",
+          "Mean",
+          "SD",
+          "Min",
+          "Max"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "cond",
+              "pid",
+              "score"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "text",
+              "text",
+              "numeric"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "nominal",
+              "nominal",
+              "ratio"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "condition",
+              "id",
+              ""
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "condition",
+              "identifier",
+              "measure"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "",
+              "",
+              ""
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              6,
+              6,
+              6
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2,
+              6,
+              6
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              null,
+              3.567
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              null,
+              0.653
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              null,
+              2.8
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              null,
+              4.4
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 2,
+        "names": [
+          "Column",
+          "Representation",
+          "Level",
+          "Concept",
+          "Role",
+          "Unit",
+          "Rows",
+          "% Missing",
+          "N Unique",
+          "Mean",
+          "SD",
+          "Min",
+          "Max"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "id",
+              "value"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "text",
+              "numeric"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "nominal",
+              "ratio"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "id",
+              ""
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "identifier",
+              "measure"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "",
+              ""
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              3,
+              3
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0,
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              3,
+              3
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              1.5
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              1
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              0.5
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              2.5
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 2,
+        "names": [
+          "Column",
+          "Representation",
+          "Level",
+          "Concept",
+          "Role",
+          "Unit",
+          "Rows",
+          "% Missing",
+          "N Unique",
+          "Mean",
+          "SD",
+          "Min",
+          "Max"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "id",
+              "score"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "text",
+              "numeric"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "nominal",
+              "ratio"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "id",
+              ""
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "identifier",
+              "measure"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "",
+              ""
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              3,
+              3
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              0,
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              3,
+              3
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              2.2
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              1.1
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              1.1
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              3.3
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 12,
+        "names": [
+          "File",
+          "Column",
+          "Issues"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "broken.xlsx",
+              "coding.xlsx",
+              "coding.xlsx",
+              "legacy.xls",
+              "messy.fods",
+              "messy.fods",
+              "messy.ods",
+              "messy.ods",
+              "messy.xlsx",
+              "messy.xlsx",
+              "offset.xlsx",
+              "offset.xlsx"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "coding",
+              null,
+              null,
+              "Results",
+              "note",
+              "Results",
+              "note",
+              "Data",
+              "empty",
+              "Sheet1",
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "<span title='The file could not be parsed as a .xlsx workbook.'>⚠️ Unreadable — The file could not be parsed as a <\/span>",
+              "<span title='3 fully empty rows inside the data range.'>⬜ Empty rows — 3 fully empty rows inside the data range<\/span>",
+              "<span title='This file reads as a table but is not a usable dataset (100% of columns are free text, not variables). Store the data as a plain rectangular table (one header row, one column per variable) with a codebook.'>📐 Not a rectangular dataset — This file reads as a table but is not a usable dataset (100% of col...<\/span>",
+              "<span title='Legacy .xls format: colour, merged cells and empty rows/columns cannot be inspected. Convert to .xlsx or .ods for a full check.'>⚠️ Un-inspectable (.xls) — Legacy <\/span>",
+              "<span title='2 cells use fill colour to encode information; colour is lost on CSV export.'>🎨 Colour coding — 2 cells use fill colour to encode information<\/span><br><span title='1 column is empty or have a blank header.'>⬜ Empty or unnamed columns — 1 column is empty or have a blank header<\/span><br><span title='2 fully empty rows inside the data range.'>⬜ Empty rows — 2 fully empty rows inside the data range<\/span><br><span title='1 merged range (A6:B6) break the rectangular grid.'>🔗 Merged cells — 1 merged range (A6:B6) break the rectangular grid<\/span>",
+              "<span title='Column is empty: all 5 values are missing.'>⬜ Empty column — Column is empty: all 5 values are missing<\/span>",
+              "<span title='2 cells use fill colour to encode information; colour is lost on CSV export.'>🎨 Colour coding — 2 cells use fill colour to encode information<\/span><br><span title='1 column is empty or have a blank header.'>⬜ Empty or unnamed columns — 1 column is empty or have a blank header<\/span><br><span title='2 fully empty rows inside the data range.'>⬜ Empty rows — 2 fully empty rows inside the data range<\/span><br><span title='1 merged range (A6:B6) break the rectangular grid.'>🔗 Merged cells — 1 merged range (A6:B6) break the rectangular grid<\/span>",
+              "<span title='Column is empty: all 5 values are missing.'>⬜ Empty column — Column is empty: all 5 values are missing<\/span>",
+              "<span title='2 cells use fill colour to encode information; colour is lost on CSV export.'>🎨 Colour coding — 2 cells use fill colour to encode information<\/span><br><span title='1 column is empty or have a blank header.'>⬜ Empty or unnamed columns — 1 column is empty or have a blank header<\/span><br><span title='1 merged range (A7:B7) break the rectangular grid.'>🔗 Merged cells — 1 merged range (A7:B7) break the rectangular grid<\/span>",
+              "<span title='Column is empty: all 4 values are missing.'>⬜ Empty column — Column is empty: all 4 values are missing<\/span>",
+              "<span title='2 columns are empty or have a blank header.'>⬜ Empty or unnamed columns — 2 columns are empty or have a blank header<\/span>",
+              "<span title='The column header is on row 2; above it is a partial label row (Experiment 1 export). Remove the row above the header so the first row of the sheet is the column header — otherwise the file reads with invented column names (…1, …4) and the data mis-types.'>📋 Header not on first row — The column header is on row 2<\/span>"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 17,
+        "names": [
+          "File",
+          "Sheet",
+          "Issue",
+          "Detail"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "broken.xlsx",
+              "coding.xlsx",
+              "coding.xlsx",
+              "legacy.xls",
+              "messy.fods",
+              "messy.fods",
+              "messy.fods",
+              "messy.fods",
+              "messy.ods",
+              "messy.ods",
+              "messy.ods",
+              "messy.ods",
+              "messy.xlsx",
+              "messy.xlsx",
+              "messy.xlsx",
+              "offset.xlsx",
+              "offset.xlsx"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              "coding",
+              null,
+              "Results",
+              "Results",
+              "Results",
+              "Results",
+              "Results",
+              "Results",
+              "Results",
+              "Results",
+              "Data",
+              "Data",
+              "Data",
+              null,
+              "Sheet1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Unreadable",
+              "Not a rectangular dataset",
+              "Empty rows",
+              "Un-inspectable (.xls)",
+              "Colour coding",
+              "Merged cells",
+              "Empty rows",
+              "Empty or unnamed columns",
+              "Colour coding",
+              "Merged cells",
+              "Empty rows",
+              "Empty or unnamed columns",
+              "Colour coding",
+              "Merged cells",
+              "Empty or unnamed columns",
+              "Header not on first row",
+              "Empty or unnamed columns"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "The file could not be parsed as a .xlsx workbook.",
+              "This file reads as a table but is not a usable dataset (100% of columns are free text, not variables). Store the data as a plain rectangular table (one header row, one column per variable) with a codebook.",
+              "3 fully empty rows inside the data range.",
+              "Legacy .xls format: colour, merged cells and empty rows/columns cannot be inspected. Convert to .xlsx or .ods for a full check.",
+              "2 cells use fill colour to encode information; colour is lost on CSV export.",
+              "1 merged range (A6:B6) break the rectangular grid.",
+              "2 fully empty rows inside the data range.",
+              "1 column is empty or have a blank header.",
+              "2 cells use fill colour to encode information; colour is lost on CSV export.",
+              "1 merged range (A6:B6) break the rectangular grid.",
+              "2 fully empty rows inside the data range.",
+              "1 column is empty or have a blank header.",
+              "2 cells use fill colour to encode information; colour is lost on CSV export.",
+              "1 merged range (A7:B7) break the rectangular grid.",
+              "1 column is empty or have a blank header.",
+              "The column header is on row 2; above it is a partial label row (Experiment 1 export). Remove the row above the header so the first row of the sheet is the column header — otherwise the file reads with invented column names (…1, …4) and the data mis-types.",
+              "2 columns are empty or have a blank header."
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

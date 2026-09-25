@@ -378,7 +378,11 @@ def test_manifest_records_failed_downloads(tmp_path: Path, monkeypatch: pytest.M
             }
         ]
     )
-    mo = module_run(fake_repo_check(table, paper=paper), "code_check", manifest=str(tmp_path))
+    # the file is then streamed from its URL: serve recorded responses only (a 404)
+    from tests.httpmock import replay
+
+    with replay("apis"):
+        mo = module_run(fake_repo_check(table, paper=paper), "code_check", manifest=str(tmp_path))
     assert mo.traffic_light == "na"
     mf = _manifests(tmp_path)
     assert list(mf) == [f"{paper.paper_id}.manifest.json"]
@@ -929,3 +933,47 @@ def test_unexpanded_zip_code_members_are_checked(
     assert r["file_location"] == str(member)
     assert r["packages"] == "dplyr"
     assert st(mo)["code_n"] == 1
+
+
+# ── review: NA paper ids and NA locations ────────────────────────────────────
+
+
+@pytest.mark.parametrize(
+    ("scenario", "pinned"), [("review_na_pid_pin", False), ("review_na_pid_pin_rev", True)]
+)
+def test_na_paper_id_keeps_only_the_last_r_text(scenario: str, pinned: bool) -> None:
+    # R keys the R code text by paper_id, but r_text_by_paper[[NA]] never finds
+    # the entry it assigned: each NA-paper file replaces the ones before it, so
+    # only the last one's groundhog/checkpoint call counts
+    mo = cc_run(scenario)
+    vp = mo.extras["version_pin"]
+    assert vp["pinned"] is pinned
+    assert vp["mechanisms"] == (["groundhog"] if pinned else [])
+    assert mo.traffic_light == ("green" if pinned else "yellow")
+    # the NA-paper files have no per-paper pin; p1's own clean.R has none either
+    assert mo.summary_table["paper_id"].tolist() == ["p1"]
+    assert mo.summary_table["code_version_pinned"].tolist() == [False]
+
+
+def test_na_file_url_is_read_as_the_path_na() -> None:
+    # R: file_path <- the_file$file_url is NA_character_, which the readers take
+    # as the path "NA"
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        mo = cc_run("review_locs", download=False)
+    errors = dict(zip(mo.table["file_name"], mo.table["error"], strict=True))
+    assert pd.isna(errors["clean.R"])
+    for name in ("naloc.R", "naloc.Rmd", "naloc.py"):
+        assert errors[name].startswith("'NA' does not exist")
+    assert mo.table["checked"].tolist() == [True] * 4
+
+
+def test_case_insensitive_match_uses_r_tolower() -> None:
+    # R's tolower() (towlower) maps "İ" to "i": "İNDEX.csv" is the repository's
+    # index.csv, "DATÉ.CSV" its daté.csv; only Ümlaut.csv is missing
+    from pytacheck.modules._code_check import _r_tolower
+
+    assert _r_tolower("İNDEX.CSV") == "index.csv"
+    assert _r_tolower("DATÉ.CSV ΣΑΣ Ǆ") == "daté.csv σασ ǆ"
+    mo = cc_run("review_i18n")
+    assert row(mo, "analysis.R")["loaded_files_missing_names"] == "Ümlaut.csv"

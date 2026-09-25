@@ -71,3 +71,23 @@ rc_run_scripts <- function(scripts, order = NULL, extra = NULL, lib = FALSE, ...
   out$script_lines <- lapply(out$script_lines, rc_unroot, root = root)
   out
 }
+
+# repro_core_review: layout copies that must fail quietly (a target whose
+# parent is a file, a directory source, a missing source) next to good ones.
+rc_materialize_review <- function() {
+  td <- tempfile()
+  dir.create(td)
+  src <- file.path(td, "src.csv")
+  writeLines("a", src)
+  srcdir <- file.path(td, "adir")
+  dir.create(srcdir)
+  plan <- data.frame(
+    file_name = c("src.csv", "src2.csv", "adir", "missing.csv", "src.csv"),
+    target_path = c("a", "a/b.csv", "d/dir", "m/x.csv", "e/f/g.csv"),
+    original_target = c(NA, "a/c/orig.csv", NA, "m/orig.csv", ""))
+  sd <- data.frame(file_name = c("src.csv", "src2.csv", "adir"),
+                   file_location = c(src, src, srcdir))
+  x <- rc_materialize(plan, sd)
+  x$materialised$source <- rc_unroot(x$materialised$source, td)
+  x
+}

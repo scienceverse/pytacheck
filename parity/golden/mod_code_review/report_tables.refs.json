@@ -1,0 +1,101 @@
+{
+  "id": "report_tables.refs",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": null,
+    "v": [
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "File Name",
+          "% Comments",
+          "Missing Files",
+          "Absolute Paths",
+          "Code Between Libraries"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "14%"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              3
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              null
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "File name",
+          "Missing Files"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "refs.R"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "missing.csv, Missing.R, other.csv"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "File name",
+          "Absolute paths found"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "refs.R"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "C:\\\\Users\\\\me\\\\other.csv"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

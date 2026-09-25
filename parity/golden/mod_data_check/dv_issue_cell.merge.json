@@ -1,0 +1,14 @@
+{
+  "id": "dv_issue_cell.merge",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "chr",
+    "v": [
+      "<span title=''>ℹ️ Mystery check<\/span>\n<span title='Values look like emails; review. More. The name suggests an email address that is really far too long to show in the table cell as a whole.'>🔒 Personally Identifying Information — Values look like emails; The name suggests an email address that is really far too long to s...<\/span>\n<span title='2 values have &#39;padding&#39; &lt;here&gt;'>↔️ Whitespace — 2 values have 'padding' &lt;here&gt;<\/span>"
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

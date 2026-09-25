@@ -1,0 +1,106 @@
+{
+  "id": "dv_careless_by_respondent.multi",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 4,
+    "names": [
+      "respondent",
+      "source_file",
+      "n_blocks_flagged",
+      "scales",
+      "reasons",
+      "max_longstring",
+      "irv",
+      "short_scale_only",
+      "threshold"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "10",
+          "9",
+          "2",
+          "b"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "s.csv",
+          "s.csv",
+          "t.csv",
+          "s.csv"
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          2,
+          1,
+          1,
+          1
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "panas (1-5, 10 items); rse (1-5, 6 items)",
+          "panas (1-5, 10 items)",
+          "rse (1-5, 6 items)",
+          "bfi (1-5, 6 items)"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "straightlining",
+          "straightlining",
+          "straightlining",
+          "straightlining"
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          8,
+          10,
+          6,
+          5
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0,
+          0.1,
+          0,
+          0.5
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false,
+          false,
+          true,
+          true
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "same answer 8 times in a row, out of 10 items (flagged at 8)",
+          "same answer 10 times in a row, out of 10 items (flagged at 8)",
+          "same answer 6 times in a row, out of 6 items (flagged at 5)",
+          "same answer 5 times in a row, out of 6 items (flagged at 5)"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

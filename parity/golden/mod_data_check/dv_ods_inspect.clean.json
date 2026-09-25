@@ -1,0 +1,62 @@
+{
+  "id": "dv_ods_inspect.clean",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "sheets"
+    ],
+    "v": [
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "list",
+            "names": [
+              "name",
+              "color_cells",
+              "merges",
+              "empty_rows",
+              "empty_cols"
+            ],
+            "v": [
+              {
+                "t": "chr",
+                "v": [
+                  "Sheet1"
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  0
+                ]
+              },
+              {
+                "t": "chr",
+                "v": []
+              },
+              {
+                "t": "int",
+                "v": [
+                  0
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  0
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

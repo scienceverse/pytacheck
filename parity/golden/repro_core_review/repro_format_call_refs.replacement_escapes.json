@@ -1,0 +1,52 @@
+{
+  "id": "repro_format_call_refs.replacement_escapes",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "df",
+    "nrow": 3,
+    "names": [
+      "call_text",
+      "fmt",
+      "resolved",
+      "line"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "sprintf(\"%s/x.csv\", wd)",
+          "sprintf(\"%s/y.csv\", w2)",
+          "sprintf(\"%s/z.csv\", w3)"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "%s/x.csv",
+          "%s/y.csv",
+          "%s/z.csv"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "C:sersmeq/x.csv",
+          "abcd/y.csv",
+          "tail\\/z.csv"
+        ]
+      },
+      {
+        "t": "int",
+        "v": [
+          2,
+          4,
+          6
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

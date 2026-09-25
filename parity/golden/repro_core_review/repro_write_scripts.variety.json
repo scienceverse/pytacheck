@@ -1,0 +1,156 @@
+{
+  "id": "repro_write_scripts.variety",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": [
+      "table",
+      "written",
+      "files"
+    ],
+    "v": [
+      {
+        "t": "df",
+        "nrow": 4,
+        "names": [
+          "file_name",
+          "script_path",
+          "run_dir",
+          "setwd_removed",
+          "setwd_paths",
+          "family_replaced",
+          "family_detail",
+          "library_injected"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "a.R",
+              "b.R",
+              "sub/c.R",
+              "d.R"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "<root>/a.R",
+              "<root>/b.R",
+              "<root>/code/c.R",
+              "<root>/d.R"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "<root>",
+              "<root>",
+              "<root>",
+              "<root>"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2,
+              1,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "C:/x",
+              "/z",
+              "",
+              ""
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              0,
+              3,
+              0
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "",
+              "",
+              "family=\"Times\" -> \"sans\"; base_family = 'Arial' -> \"sans\"; family=\"\" -> \"sans\"",
+              ""
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "",
+              null,
+              null,
+              "stats"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": null,
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "# [reproducibility_check removed setwd] setwd(\"C:/x\")",
+              "NA",
+              "  # [reproducibility_check removed setwd] setwd(dir)",
+              "x <- 1; setwd(\"y\")"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "d <- read.csv(\"C:\\data\\a\\1.csv\")",
+              "# [reproducibility_check removed setwd] setwd(\"/z\")",
+              "write.csv(\"<root>/output/d.csv\", \"o.csv\")",
+              ""
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "plot(1, family = \"sans\")",
+              "theme(base_family = \"sans\", family = \"sans\")"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "library(stats)  # [reproducibility_check injected]",
+              "a <- 1",
+              "  setwd(\"q\")",
+              "b <- 2"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "a.R",
+          "b.R",
+          "code",
+          "code/c.R",
+          "d.R"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

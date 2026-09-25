@@ -1,0 +1,1472 @@
+{
+  "id": "data_check.careless_clean",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "findings",
+      "careless",
+      "demographics",
+      "qualtrics",
+      "structure",
+      "previews",
+      "gated_repos",
+      "manifest_path",
+      "group_no_evidence",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "data_check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Data Check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "results"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 11,
+        "names": [
+          "paper_id",
+          "repo_url",
+          "source_file",
+          "group",
+          "column_name",
+          "representation",
+          "measurement_level",
+          "concept",
+          "role",
+          "unit",
+          "quality",
+          "parse_note",
+          "is_qualtrics",
+          "qualtrics_display_order",
+          "sample_values",
+          "utf8_repaired",
+          "n",
+          "n_missing",
+          "n_unique",
+          "mean",
+          "sd",
+          "se",
+          "median",
+          "min",
+          "max",
+          "range",
+          "p25",
+          "p75",
+          "iqr",
+          "skewness",
+          "kurtosis"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1",
+              "p1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://osf.io/clean",
+              "https://osf.io/clean",
+              "https://osf.io/clean",
+              "https://osf.io/clean",
+              "https://osf.io/clean",
+              "https://osf.io/clean",
+              "https://osf.io/clean",
+              "https://osf.io/clean",
+              "https://osf.io/clean",
+              "https://osf.io/clean",
+              "https://osf.io/clean"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "survey.csv",
+              "survey.csv",
+              "survey.csv",
+              "survey.csv",
+              "survey.csv",
+              "survey.csv",
+              "survey.csv",
+              "survey.csv",
+              "survey.csv",
+              "survey.csv",
+              "survey.csv"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "participant_id",
+              "panas_1",
+              "panas_2",
+              "panas_3",
+              "panas_4",
+              "panas_5",
+              "panas_6",
+              "panas_7",
+              "panas_8",
+              "panas_9",
+              "panas_10"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "text",
+              "numeric",
+              "numeric",
+              "numeric",
+              "numeric",
+              "numeric",
+              "numeric",
+              "numeric",
+              "numeric",
+              "numeric",
+              "numeric"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "nominal",
+              "nominal",
+              "ordinal",
+              "ordinal",
+              "ordinal",
+              "nominal",
+              "ordinal",
+              "ordinal",
+              "ordinal",
+              "ordinal",
+              "ordinal"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "id",
+              null,
+              "likert",
+              "likert",
+              "likert",
+              null,
+              "likert",
+              "likert",
+              "likert",
+              "likert",
+              "likert"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "identifier",
+              "measure",
+              "measure",
+              "measure",
+              "measure",
+              "measure",
+              "measure",
+              "measure",
+              "measure",
+              "measure",
+              "measure"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ok",
+              "ok",
+              "ok",
+              "ok",
+              "ok",
+              "ok",
+              "ok",
+              "ok",
+              "ok",
+              "ok",
+              "ok"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "1 | 2 | 3 | 4 | 5",
+              "1 | 5 | 1 | 5 | 1",
+              "5 | 3 | 5 | 1 | 4",
+              "2 | 5 | 2 | 5 | 3",
+              "3 | 1 | 1 | 3 | 2",
+              "2 | 4 | 2 | 4 | 2",
+              "4 | 5 | 4 | 4 | 4",
+              "3 | 3 | 3 | 5 | 3",
+              "1 | 4 | 4 | 2 | 4",
+              "5 | 2 | 4 | 2 | 5",
+              "4 | 3 | 5 | 4 | 1"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              40,
+              40,
+              40,
+              40,
+              40,
+              40,
+              40,
+              40,
+              40,
+              40,
+              40
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              40,
+              2,
+              5,
+              5,
+              5,
+              2,
+              5,
+              5,
+              5,
+              5,
+              5
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              null,
+              2.75,
+              3.15,
+              2.825,
+              null,
+              2.975,
+              2.825,
+              2.95,
+              3.325,
+              3.025
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              null,
+              1.48064435037847,
+              1.36907230428454,
+              1.39389695384871,
+              null,
+              1.42302494707577,
+              1.44803137804223,
+              1.33877096334948,
+              1.54235085303123,
+              1.49336137794179
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              null,
+              0.234110427592818,
+              0.216469338149712,
+              0.220394459886627,
+              null,
+              0.225,
+              0.228953863900288,
+              0.211678275474108,
+              0.243867082334115,
+              0.23612116620118
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              null,
+              3,
+              3,
+              3,
+              null,
+              3,
+              3,
+              3,
+              3.5,
+              3.5
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              null,
+              1,
+              1,
+              1,
+              null,
+              1,
+              1,
+              1,
+              1,
+              1
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              null,
+              5,
+              5,
+              5,
+              null,
+              5,
+              5,
+              5,
+              5,
+              5
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              null,
+              4,
+              4,
+              4,
+              null,
+              4,
+              4,
+              4,
+              4,
+              4
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              null,
+              1,
+              2,
+              2,
+              null,
+              2,
+              1.75,
+              2,
+              2,
+              1.75
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              null,
+              4,
+              4,
+              4,
+              null,
+              4,
+              4,
+              4,
+              5,
+              4
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              null,
+              3,
+              2,
+              2,
+              null,
+              2,
+              2.25,
+              2,
+              3,
+              2.25
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              null,
+              0.144407257164106,
+              0.0289345880182399,
+              0.1384301449078,
+              null,
+              -0.00933717786490064,
+              0.149414580511142,
+              -0.0365702788663121,
+              -0.250944368167934,
+              -0.176584190315923
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              null,
+              -1.48877250692521,
+              -1.44637431787687,
+              -1.32097441165528,
+              null,
+              -1.42343421353452,
+              -1.38146509727705,
+              -1.34818640746744,
+              -1.50839202524362,
+              -1.52705406684554
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "This module classifies repository files and, for tabular data files available locally, extracts each column's type and summary statistics.",
+          "#### Data Tree",
+          "Where the files sit within each repository. Each file is followed by how it was classified, which study it belongs to.",
+          "**Repository: https://osf.io/clean**",
+          "```\n└── survey.csv  📊 data ex1\n```",
+          "#### Data Files",
+          "::: {.panel-tabset}\n\n## survey.csv\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(participant_id = 1:40, panas_1 = c(1L, 5L, 1L, \n5L, 1L, 5L, 1L, 5L, 1L, 5L, 1L, 5L, 1L, 5L, 1L, 5L, 1L, 5L, 1L, \n5L, 1L, 5L, 1L, 5L, 1L, 5L, 1L, 5L, 1L, 5L, 1L, 5L, 1L, 5L, 1L, \n5L, 1L, 5L, 1L, 5L), panas_2 = c(5L, 3L, 5L, 1L, 4L, 2L, 2L, \n5L, 2L, 5L, 1L, 1L, 4L, 4L, 1L, 3L, 5L, 4L, 4L, 2L, 1L, 1L, 1L, \n4L, 3L, 2L, 1L, 2L, 1L, 1L, 3L, 1L, 4L, 3L, 4L, 5L, 4L, 1L, 2L, \n3L), panas_3 = c(2L, 5L, 2L, 5L, 3L, 2L, 4L, 2L, 2L, 5L, 1L, \n5L, 1L, 4L, 3L, 3L, 5L, 2L, 4L, 5L, 2L, 4L, 1L, 5L, 4L, 2L, 4L, \n5L, 4L, 2L, 3L, 4L, 2L, 1L, 3L, 2L, 4L, 2L, 5L, 2L), panas_4 = c(3L, \n1L, 1L, 3L, 2L, 2L, 4L, 3L, 5L, 2L, 4L, 2L, 1L, 3L, 2L, 5L, 1L, \n4L, 2L, 4L, 3L, 4L, 5L, 4L, 1L, 3L, 2L, 5L, 3L, 2L, 1L, 1L, 4L, \n5L, 5L, 2L, 4L, 3L, 1L, 1L), panas_5 = c(2L, 4L, 2L, 4L, 2L, \n4L, 2L, 4L, 2L, 4L, 2L, 4L, 2L, 4L, 2L, 4L, 2L, 4L, 2L, 4L, 2L, \n4L, 2L, 4L, 2L, 4L, 2L, 4L, 2L, 4L, 2L, 4L, 2L, 4L, 2L, 4L, 2L, \n4L, 2L, 4L), panas_6 = c(4L, 5L, 4L, 4L, 4L, 3L, 1L, 2L, 5L, \n2L, 4L, 3L, 3L, 4L, 3L, 2L, 2L, 4L, 2L, 2L, 4L, 1L, 5L, 1L, 3L, \n1L, 5L, 5L, 2L, 4L, 4L, 2L, 2L, 1L, 3L, 5L, 1L, 5L, 1L, 1L), \n    panas_7 = c(3L, 3L, 3L, 5L, 3L, 2L, 3L, 5L, 1L, 1L, 3L, 2L, \n    1L, 5L, 2L, 4L, 2L, 3L, 2L, 1L, 1L, 5L, 3L, 4L, 1L, 4L, 5L, \n    4L, 5L, 4L, 2L, 1L, 1L, 2L, 4L, 4L, 5L, 2L, 1L, 1L), panas_8 = c(1L, \n    4L, 4L, 2L, 4L, 1L, 2L, 4L, 1L, 4L, 3L, 1L, 2L, 1L, 1L, 4L, \n    4L, 5L, 4L, 2L, 2L, 3L, 2L, 3L, 5L, 3L, 4L, 2L, 1L, 5L, 5L, \n    3L, 2L, 4L, 5L, 2L, 2L, 4L, 3L, 4L), panas_9 = c(5L, 2L, \n    4L, 2L, 5L, 1L, 1L, 2L, 5L, 4L, 5L, 5L, 5L, 5L, 2L, 5L, 4L, \n    5L, 3L, 3L, 4L, 3L, 5L, 5L, 5L, 1L, 4L, 3L, 3L, 4L, 1L, 2L, \n    1L, 2L, 1L, 5L, 3L, 1L, 2L, 5L), panas_10 = c(4L, 3L, 5L, \n    4L, 1L, 4L, 1L, 5L, 5L, 5L, 3L, 1L, 1L, 2L, 4L, 3L, 1L, 5L, \n    4L, 1L, 2L, 2L, 4L, 4L, 4L, 4L, 4L, 1L, 1L, 2L, 4L, 4L, 4L, \n    2L, 3L, 2L, 5L, 5L, 1L, 1L)), row.names = c(NA, 40L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n:::",
+          "#### Descriptives Overview\n\nWe found 0 columns with at least one missing value.",
+          "::: {.panel-tabset}\n\n## survey.csv\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Column = c(\"panas_1\", \"panas_10\", \"panas_2\", \"panas_3\", \n\"panas_4\", \"panas_5\", \"panas_6\", \"panas_7\", \"panas_8\", \"panas_9\", \n\"participant_id\"), Representation = c(\"numeric\", \"numeric\", \"numeric\", \n\"numeric\", \"numeric\", \"numeric\", \"numeric\", \"numeric\", \"numeric\", \n\"numeric\", \"text\"), Level = c(\"nominal\", \"ordinal\", \"ordinal\", \n\"ordinal\", \"ordinal\", \"nominal\", \"ordinal\", \"ordinal\", \"ordinal\", \n\"ordinal\", \"nominal\"), Concept = c(\"\", \"likert\", \"likert\", \"likert\", \n\"likert\", \"\", \"likert\", \"likert\", \"likert\", \"likert\", \"id\"), \n    Role = c(\"measure\", \"measure\", \"measure\", \"measure\", \"measure\", \n    \"measure\", \"measure\", \"measure\", \"measure\", \"measure\", \"identifier\"\n    ), Unit = c(\"\", \"\", \"\", \"\", \"\", \"\", \"\", \"\", \"\", \"\", \"\"), \n    Rows = c(40L, 40L, 40L, 40L, 40L, 40L, 40L, 40L, 40L, 40L, \n    40L), \"% Missing\" = c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), \"N Unique\" = c(2L, \n    5L, 5L, 5L, 5L, 2L, 5L, 5L, 5L, 5L, 40L), Mean = c(NA, 3.025, \n    2.75, 3.15, 2.825, NA, 2.975, 2.825, 2.95, 3.325, NA), SD = c(NA, \n    1.493, 1.481, 1.369, 1.394, NA, 1.423, 1.448, 1.339, 1.542, \n    NA), Min = c(NA, 1, 1, 1, 1, NA, 1, 1, 1, 1, NA), Max = c(NA, \n    5, 5, 5, 5, NA, 5, 5, 5, 5, NA)), row.names = c(\"panas_1\", \n\"panas_10\", \"panas_2\", \"panas_3\", \"panas_4\", \"panas_5\", \"panas_6\", \n\"panas_7\", \"panas_8\", \"panas_9\", \"participant_id\"), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 25, FALSE)\n```\n\n\n:::",
+          "This module runs automated data-quality checks (outliers, miscoded missing values, empty and constant columns, SPSS filter variables, category casing, problematic column names, mixed text encodings, spreadsheet formatting) on the extracted data files.",
+          "We examined 11 columns across 1 data file.",
+          "#### Careless Responding",
+          "No respondent was flagged for straightlining in the 1 file that could be screened.",
+          "**What this does not cover.** Even in a screened file, these checks only look at multi-item rating scales — the only place where a repeated or flat answer pattern is interpretable. Single questions, open text, demographics and any item outside a detected scale block are never examined. A respondent can therefore answer most of a survey carelessly and still not be flagged here, and finding nothing is not evidence that a dataset is free of careless responding."
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "green"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "\n-  We classified 1 file: 1 data.\n-  We found 1 tabular data file and extracted 11 columns from 1 of them.\n-  We grouped the files into 1 study group (ex1).\n-  The study-group step did not get an answer for 1 file (the model request failed); it was grouped by the fallback rules instead. We ran automated data-quality checks on 11 columns and found no issues."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "data_file_n",
+          "column_n",
+          "empty_col_n",
+          "col_numeric",
+          "col_text",
+          "flagged_n",
+          "spreadsheet_file_n",
+          "spreadsheet_flagged_file_n"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "p1"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              11
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              10
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "source_file",
+          "column",
+          "label",
+          "check",
+          "detail"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "respondent",
+          "source_file",
+          "n_blocks_flagged",
+          "scales",
+          "reasons",
+          "max_longstring",
+          "irv",
+          "short_scale_only",
+          "threshold"
+        ],
+        "v": [
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          },
+          {
+            "t": "lgl",
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "source_file",
+          "column",
+          "demographic"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [],
+        "v": []
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "repo_name",
+          "repo_url",
+          "file_name",
+          "file_path",
+          "file_url",
+          "file_location",
+          "file_size",
+          "data_type",
+          "doc_role",
+          "data_format",
+          "group",
+          "referenced_by",
+          "tabular_usable",
+          "non_tabular_reason"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "p1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "careless_clean"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "https://osf.io/clean"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "survey.csv"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "survey.csv"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "tests/mod_data_check/fixtures/repos/careless_clean/survey.csv"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              1029
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "tabular"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ex1"
+            ]
+          },
+          {
+            "t": "list",
+            "names": null,
+            "v": [
+              {
+                "t": "null"
+              }
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null
+            ]
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "survey.csv"
+        ],
+        "v": [
+          {
+            "t": "df",
+            "nrow": 40,
+            "names": [
+              "participant_id",
+              "panas_1",
+              "panas_2",
+              "panas_3",
+              "panas_4",
+              "panas_5",
+              "panas_6",
+              "panas_7",
+              "panas_8",
+              "panas_9",
+              "panas_10"
+            ],
+            "v": [
+              {
+                "t": "int",
+                "v": [
+                  1,
+                  2,
+                  3,
+                  4,
+                  5,
+                  6,
+                  7,
+                  8,
+                  9,
+                  10,
+                  11,
+                  12,
+                  13,
+                  14,
+                  15,
+                  16,
+                  17,
+                  18,
+                  19,
+                  20,
+                  21,
+                  22,
+                  23,
+                  24,
+                  25,
+                  26,
+                  27,
+                  28,
+                  29,
+                  30,
+                  31,
+                  32,
+                  33,
+                  34,
+                  35,
+                  36,
+                  37,
+                  38,
+                  39,
+                  40
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  1,
+                  5,
+                  1,
+                  5,
+                  1,
+                  5,
+                  1,
+                  5,
+                  1,
+                  5,
+                  1,
+                  5,
+                  1,
+                  5,
+                  1,
+                  5,
+                  1,
+                  5,
+                  1,
+                  5,
+                  1,
+                  5,
+                  1,
+                  5,
+                  1,
+                  5,
+                  1,
+                  5,
+                  1,
+                  5,
+                  1,
+                  5,
+                  1,
+                  5,
+                  1,
+                  5,
+                  1,
+                  5,
+                  1,
+                  5
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  5,
+                  3,
+                  5,
+                  1,
+                  4,
+                  2,
+                  2,
+                  5,
+                  2,
+                  5,
+                  1,
+                  1,
+                  4,
+                  4,
+                  1,
+                  3,
+                  5,
+                  4,
+                  4,
+                  2,
+                  1,
+                  1,
+                  1,
+                  4,
+                  3,
+                  2,
+                  1,
+                  2,
+                  1,
+                  1,
+                  3,
+                  1,
+                  4,
+                  3,
+                  4,
+                  5,
+                  4,
+                  1,
+                  2,
+                  3
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  2,
+                  5,
+                  2,
+                  5,
+                  3,
+                  2,
+                  4,
+                  2,
+                  2,
+                  5,
+                  1,
+                  5,
+                  1,
+                  4,
+                  3,
+                  3,
+                  5,
+                  2,
+                  4,
+                  5,
+                  2,
+                  4,
+                  1,
+                  5,
+                  4,
+                  2,
+                  4,
+                  5,
+                  4,
+                  2,
+                  3,
+                  4,
+                  2,
+                  1,
+                  3,
+                  2,
+                  4,
+                  2,
+                  5,
+                  2
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  3,
+                  1,
+                  1,
+                  3,
+                  2,
+                  2,
+                  4,
+                  3,
+                  5,
+                  2,
+                  4,
+                  2,
+                  1,
+                  3,
+                  2,
+                  5,
+                  1,
+                  4,
+                  2,
+                  4,
+                  3,
+                  4,
+                  5,
+                  4,
+                  1,
+                  3,
+                  2,
+                  5,
+                  3,
+                  2,
+                  1,
+                  1,
+                  4,
+                  5,
+                  5,
+                  2,
+                  4,
+                  3,
+                  1,
+                  1
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  2,
+                  4,
+                  2,
+                  4,
+                  2,
+                  4,
+                  2,
+                  4,
+                  2,
+                  4,
+                  2,
+                  4,
+                  2,
+                  4,
+                  2,
+                  4,
+                  2,
+                  4,
+                  2,
+                  4,
+                  2,
+                  4,
+                  2,
+                  4,
+                  2,
+                  4,
+                  2,
+                  4,
+                  2,
+                  4,
+                  2,
+                  4,
+                  2,
+                  4,
+                  2,
+                  4,
+                  2,
+                  4,
+                  2,
+                  4
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  4,
+                  5,
+                  4,
+                  4,
+                  4,
+                  3,
+                  1,
+                  2,
+                  5,
+                  2,
+                  4,
+                  3,
+                  3,
+                  4,
+                  3,
+                  2,
+                  2,
+                  4,
+                  2,
+                  2,
+                  4,
+                  1,
+                  5,
+                  1,
+                  3,
+                  1,
+                  5,
+                  5,
+                  2,
+                  4,
+                  4,
+                  2,
+                  2,
+                  1,
+                  3,
+                  5,
+                  1,
+                  5,
+                  1,
+                  1
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  3,
+                  3,
+                  3,
+                  5,
+                  3,
+                  2,
+                  3,
+                  5,
+                  1,
+                  1,
+                  3,
+                  2,
+                  1,
+                  5,
+                  2,
+                  4,
+                  2,
+                  3,
+                  2,
+                  1,
+                  1,
+                  5,
+                  3,
+                  4,
+                  1,
+                  4,
+                  5,
+                  4,
+                  5,
+                  4,
+                  2,
+                  1,
+                  1,
+                  2,
+                  4,
+                  4,
+                  5,
+                  2,
+                  1,
+                  1
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  1,
+                  4,
+                  4,
+                  2,
+                  4,
+                  1,
+                  2,
+                  4,
+                  1,
+                  4,
+                  3,
+                  1,
+                  2,
+                  1,
+                  1,
+                  4,
+                  4,
+                  5,
+                  4,
+                  2,
+                  2,
+                  3,
+                  2,
+                  3,
+                  5,
+                  3,
+                  4,
+                  2,
+                  1,
+                  5,
+                  5,
+                  3,
+                  2,
+                  4,
+                  5,
+                  2,
+                  2,
+                  4,
+                  3,
+                  4
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  5,
+                  2,
+                  4,
+                  2,
+                  5,
+                  1,
+                  1,
+                  2,
+                  5,
+                  4,
+                  5,
+                  5,
+                  5,
+                  5,
+                  2,
+                  5,
+                  4,
+                  5,
+                  3,
+                  3,
+                  4,
+                  3,
+                  5,
+                  5,
+                  5,
+                  1,
+                  4,
+                  3,
+                  3,
+                  4,
+                  1,
+                  2,
+                  1,
+                  2,
+                  1,
+                  5,
+                  3,
+                  1,
+                  2,
+                  5
+                ]
+              },
+              {
+                "t": "int",
+                "v": [
+                  4,
+                  3,
+                  5,
+                  4,
+                  1,
+                  4,
+                  1,
+                  5,
+                  5,
+                  5,
+                  3,
+                  1,
+                  1,
+                  2,
+                  4,
+                  3,
+                  1,
+                  5,
+                  4,
+                  1,
+                  2,
+                  2,
+                  4,
+                  4,
+                  4,
+                  4,
+                  4,
+                  1,
+                  1,
+                  2,
+                  4,
+                  4,
+                  4,
+                  2,
+                  3,
+                  2,
+                  5,
+                  5,
+                  1,
+                  1
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "t": "null"
+      },
+      {
+        "t": "null"
+      },
+      {
+        "t": "lgl",
+        "v": [
+          true
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "names": [
+          "data_file_n",
+          "column_n",
+          "empty_col_n",
+          "flagged_n",
+          "spreadsheet_file_n",
+          "spreadsheet_flagged_file_n"
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

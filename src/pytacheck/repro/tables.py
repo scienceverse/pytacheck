@@ -162,7 +162,8 @@ def _decode_series(spec: Mapping[str, Any]) -> pd.Series:
         values = [_decode(v) for v in raw]
         return pd.Series(pd.Categorical(values, categories=cats, ordered=bool(spec.get("ordered"))))
     if dtype.startswith("datetime64"):
-        return pd.Series(pd.to_datetime(raw)).astype(dtype)
+        out: pd.Series = pd.Series(pd.to_datetime(raw, format="ISO8601")).astype(dtype)
+        return out
     values = [_decode(v) for v in raw]
     if dtype == "object":
         s = pd.Series([None] * len(values), dtype=object)
@@ -170,15 +171,19 @@ def _decode_series(spec: Mapping[str, Any]) -> pd.Series:
             s.iat[i] = v
         return s
     try:
-        return pd.Series(values, dtype=dtype)
+        typed: pd.Series = pd.Series(values, dtype=dtype)
     except (TypeError, ValueError):
-        return pd.Series(values, dtype=object)
+        typed = pd.Series(values, dtype=object)
+    return typed
 
 
 def _decode_index(spec: Any) -> pd.Index | None:
     if spec is None:
         return None
-    return pd.Index([_decode(v) for v in spec.get("values", [])], name=_decode(spec.get("name")))
+    idx: pd.Index = pd.Index(
+        [_decode(v) for v in spec.get("values", [])], name=_decode(spec.get("name"))
+    )
+    return idx
 
 
 def _decode(x: Any) -> Any:
@@ -221,7 +226,8 @@ def _decode(x: Any) -> Any:
             cols = [_decode_series(c) for c in val["columns"]]
             nrow = int(val.get("nrow", len(cols[0]) if cols else 0))
             df = pd.DataFrame(dict(enumerate(cols))) if cols else pd.DataFrame(index=range(nrow))
-            df.columns = pd.Index(names, dtype=object) if cols else df.columns
+            if cols:
+                df.columns = pd.Index(names)
             idx = _decode_index(val.get("index"))
             if idx is not None:
                 df.index = idx
@@ -326,7 +332,7 @@ def _frame_from_r(df: Any) -> pd.DataFrame:
             series.append(rd._column_to_pandas(col, n).reset_index(drop=True))
     out = pd.DataFrame(dict(enumerate(series))) if series else pd.DataFrame(index=range(n))
     if series:
-        out.columns = pd.Index(["" if nm is None else nm for nm in names], dtype=object)
+        out.columns = pd.Index(["" if nm is None else nm for nm in names])
     return out
 
 
@@ -454,7 +460,7 @@ def capture_module_tables(
             combined = st
 
     os.makedirs(results_dir, exist_ok=True)
-    path = os.path.join(os.fspath(results_dir), f"{pid}.json")
+    path = _file_path(os.fspath(results_dir), f"{pid}.json")
     payload = {
         "format": _FORMAT,
         "version": _VERSION,
@@ -474,12 +480,19 @@ def _saved_files(results_dir: str | os.PathLike[str]) -> list[str]:
         names = os.listdir(d)
     except OSError:
         return []
+    # list.files(pattern = "[.]rds$", full.names = TRUE): visible entries only
+    # (no dot-files), directories included (they then fail to read and are skipped)
     files = [
-        os.path.join(d, f)
+        _file_path(d, f)
         for f in names
-        if (f.endswith(".rds") or f.endswith(".json")) and os.path.isfile(os.path.join(d, f))
+        if not f.startswith(".") and (f.endswith(".rds") or f.endswith(".json"))
     ]
     return sorted(files, key=r_sort_key)
+
+
+def _file_path(*parts: str) -> str:
+    """R ``file.path()``: the parts joined with ``/``."""
+    return "/".join(parts)
 
 
 def collect_module_tables(
@@ -544,7 +557,7 @@ def _load_module_tables(results_dir: str | os.PathLike[str], paper_id: str, pape
     """
     from pytacheck.module import ModuleOutput
 
-    base = os.path.join(os.fspath(results_dir), str(paper_id))
+    base = _file_path(os.fspath(results_dir), str(paper_id))
     path = next((p for p in (base + ".json", base + ".rds") if os.path.exists(p)), None)
     if path is None:
         return None

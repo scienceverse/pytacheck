@@ -1,0 +1,725 @@
+{
+  "id": "review_tables.qualtrics",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "list",
+    "names": null,
+    "v": [
+      {
+        "t": "df",
+        "nrow": 14,
+        "names": [
+          "StartDate",
+          "EndDate",
+          "Status",
+          "Progress",
+          "Finished",
+          "RecordedDate",
+          "ResponseId",
+          "RecipientEmail",
+          "ExternalReference",
+          "RecipientFirstName",
+          "q_1",
+          "q_2",
+          "q_3",
+          "q_4",
+          "q_5",
+          "q_6"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "2022-03-02T09:01:00",
+              "2022-03-03T00:00:00",
+              "2022-03-04T09:03:00",
+              "2022-03-05T09:04:00",
+              "2022-03-06T09:05:00",
+              "2022-03-07T09:06:00",
+              "2022-03-08T09:07:00",
+              "2022-03-09T09:08:00",
+              "2022-03-01T00:00:00",
+              "2022-03-02T09:10:00",
+              "2022-03-03T09:11:00",
+              "2022-03-04T09:12:00",
+              "2022-03-05T09:13:00",
+              "2022-03-06T09:14:00"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2022-03-02T09:01:30",
+              "2022-03-03T00:05:00",
+              "2022-03-04T09:13:00",
+              "2022-03-05T09:14:10",
+              "2022-03-06T08:00:00",
+              "2022-03-07T09:16:30",
+              "2022-03-08T09:17:40",
+              "2022-03-09T09:18:50",
+              "2022-03-01T09:20:00",
+              "2022-03-02T09:21:10",
+              "2022-03-03T09:22:20",
+              "2022-03-04T09:23:30",
+              "2022-03-05T09:24:40",
+              "2022-03-06T09:25:50"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "IP Address",
+              "IP Address",
+              "Survey Preview",
+              "IP Address",
+              "IP Address",
+              "IP Address",
+              "Spam",
+              "IP Address",
+              "IP Address",
+              "IP Address",
+              "IP Address",
+              "IP Address",
+              "IP Address",
+              "IP Address"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              100,
+              100,
+              100,
+              75,
+              100,
+              100,
+              100,
+              100,
+              100,
+              100,
+              75,
+              null,
+              100,
+              100
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true,
+              true,
+              true,
+              false,
+              true,
+              true,
+              true,
+              true,
+              true,
+              true,
+              false,
+              true,
+              true,
+              true
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2022-03-02T09:01:00",
+              "2022-03-03T00:00:00",
+              "2022-03-04T09:03:00",
+              "2022-03-05T09:04:00",
+              "2022-03-06T09:05:00",
+              "2022-03-07T09:06:00",
+              "2022-03-08T09:07:00",
+              "2022-03-09T09:08:00",
+              "2022-03-01T00:00:00",
+              "2022-03-02T09:10:00",
+              "2022-03-03T09:11:00",
+              "2022-03-04T09:12:00",
+              "2022-03-05T09:13:00",
+              "2022-03-06T09:14:00"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "R_0000104729",
+              "R_0000209458",
+              "R_0000314187",
+              "R_0000418916",
+              "R_0000523645",
+              "R_0000628374",
+              "R_0000733103",
+              "R_0000837832",
+              "R_0000942561",
+              "R_0001047290",
+              "R_0001152019",
+              "R_0001256748",
+              "R_0001361477",
+              "R_0001466206"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "p1@example.org",
+              "p2@example.org",
+              "p3@example.org",
+              "p4@example.org",
+              "p5@example.org",
+              "p6@example.org",
+              "p7@example.org",
+              "p8@example.org",
+              "p9@example.org",
+              "p10@example.org",
+              "p11@example.org",
+              "p12@example.org",
+              "p13@example.org",
+              "p14@example.org"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "PANEL001",
+              "PANEL002",
+              "PANEL003",
+              "PANEL004",
+              "PANEL005",
+              "PANEL006",
+              "PANEL007",
+              "PANEL008",
+              "PANEL009",
+              "PANEL010",
+              "PANEL011",
+              "PANEL012",
+              "PANEL013",
+              "PANEL014"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "Name1",
+              "Name2",
+              "Name3",
+              "Name4",
+              "Name5",
+              "Name6",
+              "Name7",
+              "Name8",
+              "Name9",
+              "Name10",
+              "Name11",
+              "Name12",
+              "Name13",
+              "Name14"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              3,
+              1,
+              1,
+              1,
+              2,
+              1,
+              4,
+              5,
+              3,
+              5,
+              4,
+              2,
+              4,
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2,
+              3,
+              1,
+              5,
+              5,
+              2,
+              2,
+              2,
+              1,
+              2,
+              5,
+              2,
+              3,
+              5
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              4,
+              5,
+              4,
+              4,
+              1,
+              1,
+              5,
+              1,
+              5,
+              4,
+              4,
+              1,
+              4,
+              4
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1,
+              1,
+              4,
+              1,
+              5,
+              5,
+              1,
+              5,
+              1,
+              5,
+              3,
+              5,
+              3,
+              2
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1,
+              5,
+              1,
+              5,
+              5,
+              2,
+              5,
+              5,
+              5,
+              4,
+              3,
+              3,
+              5,
+              3
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              5,
+              2,
+              2,
+              1,
+              4,
+              3,
+              3,
+              2,
+              1,
+              3,
+              2,
+              5,
+              1,
+              2
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 16,
+        "names": [
+          "Column",
+          "Representation",
+          "Level",
+          "Concept",
+          "Role",
+          "Unit",
+          "Rows",
+          "% Missing",
+          "N Unique",
+          "Mean",
+          "SD",
+          "Min",
+          "Max"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "Progress",
+              "EndDate",
+              "ExternalReference",
+              "Finished",
+              "RecipientEmail",
+              "RecipientFirstName",
+              "RecordedDate",
+              "ResponseId",
+              "StartDate",
+              "Status",
+              "q_1",
+              "q_2",
+              "q_3",
+              "q_4",
+              "q_5",
+              "q_6"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "numeric",
+              "datetime",
+              "text",
+              "text",
+              "text",
+              "text",
+              "datetime",
+              "text",
+              "datetime",
+              "text",
+              "numeric",
+              "numeric",
+              "numeric",
+              "numeric",
+              "numeric",
+              "numeric"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "nominal",
+              "nominal",
+              "nominal",
+              "nominal",
+              "nominal",
+              "nominal",
+              "nominal",
+              "nominal",
+              "nominal",
+              "nominal",
+              "ordinal",
+              "ordinal",
+              "ordinal",
+              "ordinal",
+              "ordinal",
+              "ordinal"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "qualtrics_progress",
+              "qualtrics_end",
+              "qualtrics_externalref",
+              "qualtrics_finished",
+              "qualtrics_email",
+              "qualtrics_recipient",
+              "qualtrics_recorded",
+              "qualtrics_responseid",
+              "qualtrics_start",
+              "qualtrics_status",
+              "likert",
+              "likert",
+              "likert",
+              "likert",
+              "likert",
+              "likert"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "measure",
+              "timestamp",
+              "measure",
+              "measure",
+              "measure",
+              "measure",
+              "timestamp",
+              "identifier",
+              "timestamp",
+              "measure",
+              "measure",
+              "measure",
+              "measure",
+              "measure",
+              "measure",
+              "measure"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              14,
+              14,
+              14,
+              14,
+              14,
+              14,
+              14,
+              14,
+              14,
+              14,
+              14,
+              14,
+              14,
+              14,
+              14,
+              14
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              7.1,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              2,
+              14,
+              14,
+              2,
+              14,
+              14,
+              14,
+              14,
+              14,
+              3,
+              5,
+              4,
+              3,
+              5,
+              5,
+              5
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              2.643,
+              2.857,
+              3.357,
+              3,
+              3.714,
+              2.571
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              1.55,
+              1.512,
+              1.598,
+              1.797,
+              1.541,
+              1.342
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              5,
+              5,
+              5,
+              5,
+              5,
+              5
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 2,
+        "names": [
+          "File",
+          "Column",
+          "Issues"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "survey.csv",
+              "survey.csv"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "RecipientEmail",
+              "RecipientFirstName"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "<span title='Values look like personal information: email (14 values, 100%). Review before sharing. Column name suggests personal information (matched: email). Review before sharing.'>🔒 Personally Identifying Information — Values look like personal information: email (14 values, 100%); Column name suggests personal information (matched: email)<\/span>",
+              "<span title='Column name suggests personal information (matched: firstname). Review before sharing.'>🔒 Personally Identifying Information — Column name suggests personal information (matched: firstname)<\/span>"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "File",
+          "Responses",
+          "Preview/unfinished",
+          "Median time",
+          "Very fast",
+          "Collected",
+          "PII fields"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "survey.csv"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              14
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              4
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "10.8 min"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "1"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "2022-03-01 to 2022-03-09"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "email, external reference (e.g. panel ID), recipient name"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}

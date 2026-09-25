@@ -1,0 +1,653 @@
+{
+  "id": "repo_check.fuzz.37",
+  "ok": true,
+  "error": null,
+  "warnings": [],
+  "value": {
+    "t": "module_output",
+    "names": [
+      "module",
+      "title",
+      "section",
+      "table",
+      "report",
+      "traffic_light",
+      "summary_text",
+      "summary_table",
+      "gated_repos",
+      "naming_issues",
+      "repo_metadata",
+      "roster_check",
+      "group_no_evidence",
+      "na_replace"
+    ],
+    "v": [
+      {
+        "t": "chr",
+        "v": [
+          "repo_check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "Repository Check"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "results"
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 22,
+        "names": [
+          "repo_name",
+          "repo_url",
+          "file_name",
+          "file_url",
+          "file_location",
+          "file_size",
+          "file_type",
+          "file_path",
+          "data_type",
+          "doc_role",
+          "group",
+          "paper_id"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "dep37",
+              "dep37",
+              "dep37",
+              "dep37",
+              "dep37",
+              "dep37",
+              "dep37",
+              "dep37",
+              "dep37",
+              "dep37",
+              "dep37",
+              "dep37",
+              "dep37",
+              "dep37",
+              "dep37",
+              "dep37",
+              "dep37",
+              "dep37",
+              "dep37",
+              "dep37",
+              "dep37",
+              "dep37"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep37",
+              "/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep37",
+              "/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep37",
+              "/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep37",
+              "/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep37",
+              "/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep37",
+              "/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep37",
+              "/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep37",
+              "/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep37",
+              "/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep37",
+              "/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep37",
+              "/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep37",
+              "/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep37",
+              "/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep37",
+              "/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep37",
+              "/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep37",
+              "/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep37",
+              "/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep37",
+              "/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep37",
+              "/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep37",
+              "/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep37",
+              "/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep37"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data.xyz",
+              "variables.sps",
+              "script.zip",
+              "data.sps",
+              "results.psyexp",
+              "exp1_data.csv",
+              "preregistration.dta",
+              "raw_data.edat2",
+              "figure1.xlsx",
+              "exp1_data.sav",
+              "LICENSE.dta",
+              "manuscript.m",
+              "session-3",
+              "clean.docx",
+              "ro-crate-metadata.rds",
+              "task.RData",
+              "clean.png",
+              "exp1_data.CSV",
+              "participant_10.png",
+              "ro-crate-metadata.txt",
+              "README",
+              "session-3.xlsx"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep37/analysis/data.xyz",
+              "/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep37/analysis/variables.sps",
+              "/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep37/data/script.zip",
+              "/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep37/docs/data.sps",
+              "/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep37/docs/results.psyexp",
+              "/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep37/ex1/exp1_data.csv",
+              "/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep37/Experiment_3/preregistration.dta",
+              "/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep37/Experiment_3/raw_data.edat2",
+              "/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep37/figure1.xlsx",
+              "/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep37/materials/exp1_data.sav",
+              "/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep37/materials/LICENSE.dta",
+              "/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep37/pilot1/manuscript.m",
+              "/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep37/pilot1/session-3",
+              "/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep37/raw data/clean.docx",
+              "/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep37/ro-crate-metadata.rds",
+              "/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep37/S1/task.RData",
+              "/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep37/study_1/code/clean.png",
+              "/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep37/Study2/data/exp1_data.CSV",
+              "/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep37/Study2/data/participant_10.png",
+              "/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep37/Study2/data/ro-crate-metadata.txt",
+              "/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep37/study2/README",
+              "/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep37/study2/session-3.xlsx"
+            ]
+          },
+          {
+            "t": "dbl",
+            "v": [
+              40,
+              32,
+              24,
+              0,
+              16,
+              8,
+              32,
+              8,
+              24,
+              40,
+              40,
+              8,
+              24,
+              16,
+              40,
+              40,
+              40,
+              8,
+              40,
+              0,
+              16,
+              16
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              "code",
+              null,
+              "code",
+              null,
+              "data",
+              "data",
+              null,
+              "data",
+              "data",
+              "data",
+              "code",
+              null,
+              null,
+              null,
+              "data",
+              null,
+              "data",
+              null,
+              null,
+              "readme",
+              "data"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "analysis/data.xyz",
+              "analysis/variables.sps",
+              "data/script.zip",
+              "docs/data.sps",
+              "docs/results.psyexp",
+              "ex1/exp1_data.csv",
+              "Experiment_3/preregistration.dta",
+              "Experiment_3/raw_data.edat2",
+              "figure1.xlsx",
+              "materials/exp1_data.sav",
+              "materials/LICENSE.dta",
+              "pilot1/manuscript.m",
+              "pilot1/session-3",
+              "raw data/clean.docx",
+              "ro-crate-metadata.rds",
+              "S1/task.RData",
+              "study_1/code/clean.png",
+              "Study2/data/exp1_data.CSV",
+              "Study2/data/participant_10.png",
+              "Study2/data/ro-crate-metadata.txt",
+              "study2/README",
+              "study2/session-3.xlsx"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "data",
+              "code",
+              "data",
+              "code",
+              "materials",
+              "data",
+              "data",
+              "materials",
+              "data",
+              "data",
+              "data",
+              "code",
+              "unknown",
+              "data",
+              "data",
+              "data",
+              "code",
+              "data",
+              "data",
+              "data",
+              "documentation",
+              "data"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              "license",
+              null,
+              null,
+              "supplemental",
+              null,
+              null,
+              null,
+              null,
+              null,
+              "supplemental",
+              "readme",
+              null
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex3",
+              "ex3",
+              "ex1",
+              "ex1",
+              null,
+              "pilot1",
+              null,
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex1",
+              "ex2",
+              "ex2",
+              "ex2",
+              "ex2"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "fz37",
+              "fz37",
+              "fz37",
+              "fz37",
+              "fz37",
+              "fz37",
+              "fz37",
+              "fz37",
+              "fz37",
+              "fz37",
+              "fz37",
+              "fz37",
+              "fz37",
+              "fz37",
+              "fz37",
+              "fz37",
+              "fz37",
+              "fz37",
+              "fz37",
+              "fz37",
+              "fz37",
+              "fz37"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "#### Repositories",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Repository = \"<a href='/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep37' target='_blank'>/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep37<\/a>\", \n    Platform = \"local\", \"All Files\" = 22L, \"Data Files\" = 8L, \n    \"Code Files\" = 3L, READMEs = 1L, Archives = 0L), row.names = c(NA, \n-1L), class = c(\"tbl_df\", \"tbl\", \"data.frame\"))\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
+          "#### Files",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(Repository = c(\"/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep37\", \n\"/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep37\", \n\"/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep37\", \n\"/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep37\", \n\"/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep37\", \n\"/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep37\", \n\"/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep37\", \n\"/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep37\", \n\"/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep37\", \n\"/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep37\", \n\"/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep37\", \n\"/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep37\", \n\"/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep37\", \n\"/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep37\", \n\"/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep37\", \n\"/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep37\", \n\"/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep37\", \n\"/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep37\", \n\"/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep37\", \n\"/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep37\", \n\"/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep37\", \n\"/tmp/claude-0/-home-user-pytacheck/7a7b1f52-e1d1-55eb-8a56-a5f0943689fa/scratchpad/fuzz/dep37\"\n), File = c(\"data.xyz\", \"variables.sps\", \"script.zip\", \"data.sps\", \n\"results.psyexp\", \"exp1_data.csv\", \"preregistration.dta\", \"raw_data.edat2\", \n\"figure1.xlsx\", \"exp1_data.sav\", \"LICENSE.dta\", \"manuscript.m\", \n\"session-3\", \"clean.docx\", \"ro-crate-metadata.rds\", \"task.RData\", \n\"clean.png\", \"exp1_data.CSV\", \"participant_10.png\", \"ro-crate-metadata.txt\", \n\"README\", \"session-3.xlsx\"), Size = c(\"40 B\", \"32 B\", \"24 B\", \n\"0 B\", \"16 B\", \"8 B\", \"32 B\", \"8 B\", \"24 B\", \"40 B\", \"40 B\", \n\"8 B\", \"24 B\", \"16 B\", \"40 B\", \"40 B\", \"40 B\", \"8 B\", \"40 B\", \n\"0 B\", \"16 B\", \"16 B\"), Type = c(NA, \"code\", NA, \"code\", NA, \n\"data\", \"data\", NA, \"data\", \"data\", \"data\", \"code\", NA, NA, NA, \n\"data\", NA, \"data\", NA, NA, \"readme\", \"data\")), row.names = c(NA, \n-22L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
+          "README files were found in all repositories.",
+          "#### Proprietary E-Prime Files\n\nThe repository contains 1 E-Prime file (raw_data.edat2). These are proprietary **binary** formats that only the E-Prime software can open, so metacheck does not download or read them and other researchers cannot reuse them directly. 1 of them has no matching plain-text export. Please also upload the E-Prime **.txt export** (File → Export in E-Prime) for each, so the trial-level data is readable without the proprietary software.",
+          "#### Unclassified Files\n\nWe could not classify 1 file by name or extension: session-3. Add a recognisable keyword (`data`, `code`, `materials`, `documentation`, `output`) to the file name, or use a common extension, so both humans and machines can tell what kind of file it is.",
+          "#### Study/Repository Mismatch\n\nThe studies named in the manuscript do not match how the repository's files are grouped: the manuscript names a study (ex4) with no matching files in the repository; the repository separates out studies (ex1, pilot1, ex2) not named in the manuscript. Check that every study has its own clearly-named folder or file prefix, and that the folder names match how the manuscript refers to each study.",
+          "#### File Naming",
+          "File names should be machine-parseable: no spaces or special characters, and every file should be classifiable by name or extension. We found 1 naming problem that should be fixed, and 0 files with a naming suggestion (not required, but a good habit).",
+          "\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = \"session-3\", Rule = \"unclassifiable\", Severity = \"bad\", \n    Detail = \"could not be classified by name or extension (data_type is 'unknown'); add a recognisable keyword (data, code, materials, ...) or a known extension\"), row.names = c(NA, \n-1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n",
+          "#### File Classification",
+          "::: {.callout-note title=\"See how every file was classified and grouped\" collapse=\"true\"}\n\n**code** (4 files)\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"variables.sps\", \"data.sps\", \"manuscript.m\", \n\"clean.png\"), Group = c(\"ex1\", \"ex1\", \"pilot1\", \"ex1\"), Path = c(\"analysis/variables.sps\", \n\"docs/data.sps\", \"pilot1/manuscript.m\", \"study_1/code/clean.png\"\n)), row.names = c(NA, -4L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n**data** (14 files)\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"data.xyz\", \"script.zip\", \"exp1_data.csv\", \n\"preregistration.dta\", \"figure1.xlsx\", \"exp1_data.sav\", \"LICENSE.dta\", \n\"clean.docx\", \"ro-crate-metadata.rds\", \"task.RData\", \"exp1_data.CSV\", \n\"participant_10.png\", \"ro-crate-metadata.txt\", \"session-3.xlsx\"\n), Group = c(\"ex1\", \"ex1\", \"ex1\", \"ex3\", \"ex1\", \"ex1\", \"—\", \n\"ex1\", \"ex1\", \"ex1\", \"ex1\", \"ex2\", \"ex2\", \"ex2\"), Path = c(\"analysis/data.xyz\", \n\"data/script.zip\", \"ex1/exp1_data.csv\", \"Experiment_3/preregistration.dta\", \n\"figure1.xlsx\", \"materials/exp1_data.sav\", \"materials/LICENSE.dta\", \n\"raw data/clean.docx\", \"ro-crate-metadata.rds\", \"S1/task.RData\", \n\"Study2/data/exp1_data.CSV\", \"Study2/data/participant_10.png\", \n\"Study2/data/ro-crate-metadata.txt\", \"study2/session-3.xlsx\")), row.names = c(NA, \n-14L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n**documentation** (1 file)\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = \"README\", Group = \"ex2\", Path = \"study2/README\"), row.names = c(NA, \n-1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n**materials** (2 files)\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = c(\"results.psyexp\", \"raw_data.edat2\"), \n    Group = c(\"ex1\", \"ex3\"), Path = c(\"docs/results.psyexp\", \n    \"Experiment_3/raw_data.edat2\")), row.names = c(NA, -2L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n**unknown** (1 file)\n\n\n```{r}\n#| echo: false\n\n\n# table data --------------------------------------\ntable <- structure(list(File = \"session-3\", Group = \"—\", Path = \"pilot1/session-3\"), row.names = c(NA, \n-1L), class = \"data.frame\")\n\n# display table -----------------------------------\nmetacheck::report_table(table, \"auto\", 10, FALSE)\n```\n\n\n:::\n"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "yellow"
+        ]
+      },
+      {
+        "t": "chr",
+        "v": [
+          "\n-  We found 22 files in 1 repository.\n-  We found 1 README file and 0 repositories without READMEs.\n-  We found 1 proprietary E-Prime file.\n-  We could not classify 1 file.\n-  The manuscript's studies and the repository's file groups do not match.\n-  We found 1 file naming problem to fix."
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "paper_id",
+          "repo_n",
+          "files_n",
+          "files_data",
+          "files_code",
+          "files_readme",
+          "files_zip",
+          "files_unknown",
+          "naming_issues",
+          "roster_mismatch"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "fz37"
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              22
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              8
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              3
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              0
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "int",
+            "v": [
+              1
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              true
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "repo_url",
+          "repo_type",
+          "repo_error"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 1,
+        "names": [
+          "file_name",
+          "rule",
+          "severity",
+          "detail",
+          "paper_id"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "session-3"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "unclassifiable"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "bad"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "could not be classified by name or extension (data_type is 'unknown'); add a recognisable keyword (data, code, materials, ...) or a known extension"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "fz37"
+            ]
+          }
+        ]
+      },
+      {
+        "t": "df",
+        "nrow": 0,
+        "names": [
+          "repo_url",
+          "doi",
+          "license",
+          "paper_id"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          },
+          {
+            "t": "chr",
+            "v": []
+          }
+        ]
+      },
+      {
+        "t": "list",
+        "names": [
+          "roster",
+          "found",
+          "missing",
+          "extra",
+          "agrees"
+        ],
+        "v": [
+          {
+            "t": "chr",
+            "v": [
+              "ex3",
+              "ex4"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ex1",
+              "ex3",
+              "pilot1",
+              "ex2"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ex4"
+            ]
+          },
+          {
+            "t": "chr",
+            "v": [
+              "ex1",
+              "pilot1",
+              "ex2"
+            ]
+          },
+          {
+            "t": "lgl",
+            "v": [
+              false
+            ]
+          }
+        ]
+      },
+      {
+        "t": "lgl",
+        "v": [
+          false
+        ]
+      },
+      {
+        "t": "dbl",
+        "v": [
+          0
+        ]
+      }
+    ]
+  },
+  "metacheck_version": "0.3.1",
+  "r_version": "R version 4.5.3 (2026-03-11)"
+}
